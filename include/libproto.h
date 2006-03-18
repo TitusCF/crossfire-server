@@ -75,10 +75,10 @@ extern void dump_abilities(void);
 extern void print_monsters(void);
 extern void bitstostring(long bits, int num, char *str);
 /* image.c */
-extern void ReadBmapNames(void);
-extern int FindFace(const char *name, int error);
-extern int ReadSmooth(void);
-extern int FindSmooth(uint16 face, uint16 *smoothed);
+extern void read_bmap_names(void);
+extern int find_face(const char *name, int error);
+extern int read_smooth(void);
+extern int find_smooth(uint16 face, uint16 *smoothed);
 extern void free_all_images(void);
 /* init.c */
 extern void init_library(void);
@@ -185,7 +185,7 @@ extern void get_rangevector(object *op1, object *op2, rv_vector *retval, int fla
 extern void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags);
 extern int on_same_map(const object *op1, const object *op2);
 /* object.c */
-extern int CAN_MERGE(object *ob1, object *ob2);
+extern int can_merge(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);
 extern object *object_get_env_recursive(object *op);
 extern object *is_player_inv(object *op);
@@ -246,7 +246,6 @@ extern int can_see_monsterP(mapstruct *m, int x, int y, int dir);
 extern int can_pick(const object *who, const object *item);
 extern object *object_create_clone(object *asrc);
 extern int was_destroyed(const object *op, tag_t old_tag);
-extern object *load_object_str(const char *obstr);
 extern object *find_obj_by_type_subtype(const object *who, int type, int subtype);
 extern key_value *get_ob_key_link(const object *ob, const char *key);
 extern const char *get_ob_key_value(const object *op, const char *const key);

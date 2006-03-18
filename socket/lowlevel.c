@@ -88,7 +88,8 @@ void SockList_AddInt64(SockList *sl, uint64 data)
     sl->buf[sl->len++] =( char )(  data & 0xff );
 }
 
-/* Basically does the reverse of SockList_AddInt, but on
+/**
+ * Basically does the reverse of SockList_AddInt, but on
  * strings instead.  Same for the GetShort, but for 16 bits.
  */
 int GetInt_String(unsigned char *data)
@@ -239,7 +240,7 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
  * data, and len is the number of bytes to add.
  */
 
-static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
+static void add_to_buffer(socket_struct *ns, unsigned char *buf, int len)
 {
     int avail, end;
 
@@ -280,7 +281,7 @@ static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
  * When the socket is clear to write, and we have backlogged data, this
  * is called to write it out.
  */
-void write_socket_buffer(NewSocket *ns)
+void write_socket_buffer(socket_struct *ns)
 {
     int amt, max;
 
@@ -339,7 +340,7 @@ void write_socket_buffer(NewSocket *ns)
  * of bytes to write.  IT doesn't return anything - rather, it
  * updates the ns structure if we get an  error.
  */
-void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
+void Write_To_Socket(socket_struct *ns, unsigned char *buf, int len)
 {
     int amt=0;
     unsigned char *pos=buf;
@@ -405,7 +406,7 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
-void cs_write_string(NewSocket *ns, const char *buf, int len)
+void cs_write_string(socket_struct *ns, const char *buf, int len)
 {
     SockList sl;
 
@@ -421,7 +422,7 @@ void cs_write_string(NewSocket *ns, const char *buf, int len)
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
  */
-void Send_With_Handling(NewSocket *ns,SockList  *msg)
+void Send_With_Handling(socket_struct *ns,SockList  *msg)
 {
     unsigned char sbuf[4];
 
@@ -447,7 +448,7 @@ void Send_With_Handling(NewSocket *ns,SockList  *msg)
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
-void Write_String_To_Socket(NewSocket *ns, char *buf, int len)
+void Write_String_To_Socket(socket_struct *ns, char *buf, int len)
 {
     SockList sl;
 

@@ -36,7 +36,8 @@
 #include <spells.h>
 #include <sounds.h>
 
-/* cast_magic_storm: This is really used mostly for spell
+/**
+ * This is really used mostly for spell
  * fumbles at the like.  tmp is the object to propogate.
  * op is what is casting this.
  */
@@ -123,7 +124,8 @@ int recharge(object *op, object *caster, object *spell_ob) {
  * an item of proper value is generated.
  */
 
-/* polymorph_living - takes a living object (op) and turns it into 
+/**
+ * Takes a living object (op) and turns it into 
  * another monster of some sort.  Currently, we only deal with single
  * space monsters.
  */
@@ -212,7 +214,8 @@ void polymorph_living(object *op) {
 }
 
 
-/* polymorph_melt Destroys item from polymorph failure 
+/**
+ * Destroys item from polymorph failure 
  * who is the caster of the polymorph, op is the
  * object destroyed.  We should probably do something
  * more clever ala nethack - create an iron golem or
@@ -230,7 +233,8 @@ void polymorph_melt(object *who, object *op)
     return;
 }
 
-/* polymorph_item - changes an item to another item of similar type.
+/**
+ * Changes an item to another item of similar type.
  * who is the caster of spell, op is the object to be changed.
  */
 void polymorph_item(object *who, object *op) {
@@ -311,7 +315,7 @@ void polymorph_item(object *who, object *op) {
     insert_ob_in_map(new_ob,who->map,new_ob,INS_NO_MERGE | INS_NO_WALK_ON);
 }
 
-/* polymorh - caster who has hit object op. */
+/** Caster who has hit object op. */
 void polymorph(object *op, object *who) {
 
     int tmp;
@@ -350,7 +354,8 @@ void polymorph(object *op, object *who) {
 }
 
 
-/* cast_polymorph -
+/**
+ * cast_polymorph -
  * object *op is the player/monster
  * caster is object that cast it.
  * spell_ob is the actually spell object.
@@ -404,7 +409,8 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
 
 
 
-/* Create a missile (nonmagic - magic +4). Will either create bolts or arrows
+/**
+ * Create a missile (nonmagic - magic +4). Will either create bolts or arrows
  * based on whether a crossbow or bow is equiped. If neither, it defaults to
  * arrows.
  * Sets the plus based on the casters level. It is also settable with the
@@ -495,8 +501,10 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
 }
 
 
-/*  allows the choice of what sort of food object to make.
- *  If stringarg is NULL, it will create food dependent on level  --PeterM*/
+/**
+ * allows the choice of what sort of food object to make.
+ *  If stringarg is NULL, it will create food dependent on level  --PeterM
+ */
 int cast_create_food(object *op,object *caster, object *spell_ob, int dir, const char *stringarg)
 {
     int food_value;
@@ -596,7 +604,8 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
 }
 
 
-/* This checks to see if 'pl' is invisible to 'mon'.
+/**
+ * This checks to see if 'pl' is invisible to 'mon'.
  * does race check, undead check, etc
  * Returns TRUE if mon can't see pl, false
  * otherwise.  This doesn't check range, walls, etc.  It
@@ -627,7 +636,8 @@ int makes_invisible_to(object *pl, object *mon)
     }
 }
 
-/* Makes the player or character invisible.
+/**
+ * Makes the player or character invisible.
  * Note the spells to 'stack', but perhaps in odd ways.
  * the duration for all is cumulative.
  * In terms of invis undead/normal invis, it is the last one cast that
@@ -678,7 +688,8 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
     return 1;
 }
 
-/* earth to dust spell.  Basically destroys earthwalls in the area.
+/**
+ * Basically destroys earthwalls in the area.
  */
 int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
     object *tmp, *next;
@@ -716,7 +727,9 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
     return 1;
 }
 
-
+/**
+ * Handles the actual word of recalling. Called when force in player inventory expires.
+ */
 void execute_word_of_recall(object *op) {
     object *wor=op;
     while(op!=NULL && op->type!=PLAYER)
@@ -732,7 +745,8 @@ void execute_word_of_recall(object *op) {
     free_object(wor);
 }
 
-/* Word of recall causes the player to return 'home'.
+/**
+ * Word of recall causes the player to return 'home'.
  * we put a force into the player object, so that there is a 
  * time delay effect.
  */
@@ -780,7 +794,7 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     return 1;
 }
 
-/* cast_wonder
+/**
  * wonder is really just a spell that will likely cast another
  * spell.
  */
@@ -859,8 +873,7 @@ int perceive_self(object *op) {
     return 1;
 }
 
-/* int cast_create_town_portal (object *op, object *caster, int dir)
- *
+/**
  * This function cast the spell of town portal for op
  *
  * The spell operates in two passes. During the first one a place
@@ -1099,7 +1112,8 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 }
 
 
-/* This creates magic walls.  Really, it can create most any object,
+/**
+ * This creates magic walls.  Really, it can create most any object,
  * within some reason.
  */
 
@@ -1348,13 +1362,14 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
         return 1;
 
     if (op->type == PLAYER)
-	MapNewmapCmd(op->contr);
+        map_newmap_cmd(op->contr);
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }
 
 
-/* cast_heal: Heals something.
+/**
+ * Heals something.
  * op is the caster.
  * dir is the direction he is casting it in.
  * spell is the spell object.
@@ -1457,7 +1472,8 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
 }
 
 
-/* This is used for the spells that gain stats.  There are no spells
+/**
+ * This is used for the spells that gain stats.  There are no spells
  * right now that icnrease wis/int/pow on a temp basis, so no
  * good comments for those.
  */
@@ -1584,7 +1600,8 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
     return 1;
 }
 
-/* This used to be part of cast_change_ability, but it really didn't make
+/**
+ * This used to be part of cast_change_ability, but it really didn't make
  * a lot of sense, since most of the values it derives are from the god
  * of the caster.
  */
@@ -1864,7 +1881,8 @@ int alchemy(object *op, object *caster, object *spell_ob)
 }
 
 
-/* This function removes the cursed/damned status on equipped
+/**
+ * This function removes the cursed/damned status on equipped
  * items.
  */
 int remove_curse(object *op, object *caster, object *spell) {
@@ -1903,8 +1921,7 @@ int remove_curse(object *op, object *caster, object *spell) {
     return success;
 }
 
-/* Identifies objects in the players inventory/on the ground */
-
+/** Identifies objects in the players inventory/on the ground */
 int cast_identify(object *op, object *caster, object *spell) {
     object *tmp;
     int success = 0, num_ident;
@@ -2159,7 +2176,7 @@ static void charge_mana_effect(object *victim, int caster_level)
     }
 }
 
-/* cast_transfer
+/**
  * This spell transfers sp from the player to another person.
  * We let the target go above their normal maximum SP.
  */
@@ -2225,7 +2242,8 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
 }
 
 
-/* counterspell:  nullifies spell effects.
+/**
+ * Nullifies spell effects.
  * op is the counterspell object, dir is the direction
  * it was cast in.
  * Basically, if the object has a magic attacktype,
@@ -2294,7 +2312,7 @@ void counterspell(object *op,int dir)
 
 
 
-/* cast_consecrate() - a spell to make an altar your god's */
+/** A spell to make an altar your god's */
 int cast_consecrate(object *op, object *caster, object *spell) {
     char buf[MAX_BUF];
 
@@ -2332,7 +2350,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
     return 0;
 }
 
-/* animate_weapon - 
+/**
  * Generalization of staff_to_snake.  Makes a golem out of the caster's weapon.
  * The golem is based on the archetype specified, modified by the caster's level
  * and the attributes of the weapon.  The weapon is inserted in the golem's 
@@ -2529,9 +2547,7 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
     return 1;
 }
 
-/* cast_daylight() - changes the map darkness level *lower* */
-
-/* cast_change_map_lightlevel: Was cast_daylight/nightfall.
+/**
  * This changes the light level for the entire map.
  */
 
@@ -2554,7 +2570,8 @@ int cast_change_map_lightlevel( object *op, object *caster, object *spell ) {
 
 
 
-/* create an aura spell object and put it in the player's inventory.
+/**
+ * Create an aura spell object and put it in the player's inventory.
  * as usual, op is player, caster is the object casting the spell,
  * spell is the spell object itself.
  */
@@ -2586,7 +2603,8 @@ int create_aura(object *op, object *caster, object *spell)
 }
 
 
-/* move aura function.  An aura is a part of someone's inventory,
+/**
+ * An aura is a part of someone's inventory,
  * which he carries with him, but which acts on the map immediately
  * around him.
  * Aura parameters:
@@ -2655,7 +2673,8 @@ void move_aura(object *aura) {
     insert_ob_in_ob(aura, env);
 }
 
-/* moves the peacemaker spell.
+/**
+ * moves the peacemaker spell.
  * op is the piece object.
  */      
 
@@ -2701,7 +2720,8 @@ void move_peacemaker(object *op) {
 }   
       
 
-/* This writes a rune that contains the appropriate message.
+/**
+ * This writes a rune that contains the appropriate message.
  * There really isn't any adjustments we make.
  */
 

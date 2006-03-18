@@ -77,24 +77,24 @@
  * we end up having 2 tables.
  */
 
-typedef void (*func_uint8_int_ns) (char*, int, NewSocket *);
+typedef void (*func_uint8_int_ns) (char*, int, socket_struct *);
 
-struct NsCmdMapping {
+struct client_cmd_mapping {
     const char *cmdname;
-    func_uint8_int_ns  cmdproc;
+    func_uint8_int_ns cmdproc;
 };
 
 typedef void (*func_uint8_int_pl)(char*, int, player *);
-struct PlCmdMapping {
+struct player_cmd_mapping {
     const char *cmdname;
     func_uint8_int_pl cmdproc;
     uint8   flag;
 };
 
 /**
- * Dispatch table for the server.
+ * Dispatch tables for the server.
  *
- * CmdMapping is the dispatch table for the server, used in HandleClient,
+ * CmdMapping is the dispatch table for the server, used in handle_client,
  * which gets called when the client has input.  All commands called here 
  * use the same parameter form (char* data, int len, int clientnum.
  * We do implicit casts, because the data that is being passed is
@@ -104,41 +104,42 @@ struct PlCmdMapping {
  * flag is 1 if the player must be in the playing state to issue the
  * command, 0 if they can issue it at any time.
  */
-static struct PlCmdMapping plcommands[] = {
-    { "examine",	ExamineCmd,	1},
-    { "apply",		ApplyCmd,	1},
-    { "move",		MoveCmd,	1},
-    { "reply",		ReplyCmd,	0},
-    { "command",	PlayerCmd,	1},
-    { "ncom",		(func_uint8_int_pl)NewPlayerCmd, 1},
-    { "lookat",		LookAt,		1},
-    { "lock",		(func_uint8_int_pl)LockItem,	1},
-    { "mark",		(func_uint8_int_pl)MarkItem,	1},
-    { "mapredraw",	MapRedrawCmd,	0},	/* Added: phil */
+/** Commands sent by the player during the game play itself */
+static struct player_cmd_mapping player_commands[] = {
+    { "examine",	examine_cmd,	1},
+    { "apply",		apply_cmd,	1},
+    { "move",		move_cmd,	1},
+    { "reply",		reply_cmd,	0},
+    { "command",	player_cmd,	1},
+    { "ncom",		(func_uint8_int_pl)new_player_cmd, 1},
+    { "lookat",		look_at_cmd,		1},
+    { "lock",		(func_uint8_int_pl)lock_item_cmd,	1},
+    { "mark",		(func_uint8_int_pl)mark_item_cmd,	1},
+    { "mapredraw",	map_redraw_cmd,	0},	/* Added: phil */
     { NULL, NULL, 0}	/* terminator */
 };
 
-/** Face-related commands */
-static struct NsCmdMapping nscommands[] = {
-    { "addme",		AddMeCmd },
-    { "askface",	SendFaceCmd},	/* Added: phil */
-    { "requestinfo",	RequestInfo},
-    { "setfacemode",	SetFaceMode},
-    { "setsound",	SetSound},
-    { "setup",		SetUp},
-    { "version",	VersionCmd },
-    { "toggleextendedinfos", ToggleExtendedInfos}, /*Added: tchize*/
-    { "toggleextendedtext", ToggleExtendedText},   /*Added: tchize*/
-    { "asksmooth", AskSmooth},   /*Added: tchize (smoothing technologies)*/ 
+/** Commands sent directly by client, when connecting */
+static struct client_cmd_mapping client_commands[] = {
+    { "addme",		add_me_cmd },
+    { "askface",	send_face_cmd},	/* Added: phil */
+    { "requestinfo",	request_info_cmd},
+    { "setfacemode",	set_face_mode_cmd},
+    { "setsound",	set_sound_cmd},
+    { "setup",		set_up_cmd},
+    { "version",	version_cmd },
+    { "toggleextendedinfos", toggle_extended_infos_cmd}, /*Added: tchize*/
+    { "toggleextendedtext", toggle_extended_text_cmd},   /*Added: tchize*/
+    { "asksmooth", ask_smooth_cmd},   /*Added: tchize (smoothing technologies)*/ 
     { NULL, NULL}	/* terminator (I, II & III)*/
 };
 
 /**
- * RequestInfo is sort of a meta command. There is some specific
+ * request_info_cmd is sort of a meta command. There is some specific
  * request of information, but we call other functions to provide
  * that information.
  */
-void RequestInfo(char *buf, int len, NewSocket *ns)
+void request_info_cmd(char *buf, int len, socket_struct *ns)
 {
     char    *params=NULL, *cp;
     /* No match */
@@ -171,10 +172,10 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
 /**
  * Handles old socket format.
  */
-void Handle_Oldsocket(NewSocket *ns)
+void handle_oldsocket(socket_struct *ns)
 {
     int stat,i;
-    CommFunc	command;
+    command_function	command;
     char buf[MAX_BUF],*cp;
     object ob;
     player pl;
@@ -315,14 +316,14 @@ void Handle_Oldsocket(NewSocket *ns)
 /**
  * Handle client input.
  *
- * HandleClient is actually not named really well - we only get here once
+ * handle_client is actually not named really well - we only get here once
  * there is input, so we don't do exception or other stuff here.
  * sock is the output socket information.  pl is the player associated
  * with this socket, null if no player (one of the init_sockets for just
  * starting a connection)
  */
 
-void HandleClient(NewSocket *ns, player *pl)
+void handle_client(socket_struct *ns, player *pl)
 {
     int len=0,i;
     unsigned char *data;
@@ -337,7 +338,7 @@ void HandleClient(NewSocket *ns, player *pl)
 	}
 	    
 	if (ns->status == Ns_Old) {
-	    Handle_Oldsocket(ns);
+	    handle_oldsocket(ns);
 	    return;
 	}
 	i=SockList_ReadPacket(ns->fd, &ns->inbuf, MAXSOCKBUF-1);
@@ -356,7 +357,7 @@ void HandleClient(NewSocket *ns, player *pl)
 
 	if (i<0) {
 #ifdef ESRV_DEBUG
-	    LOG(llevDebug,"HandleClient: Read error on connection player %s\n", (pl?pl->ob->name:"None"));
+	    LOG(llevDebug,"handle_client: Read error on connection player %s\n", (pl?pl->ob->name:"None"));
 #endif
 	    /* Caller will take care of cleaning this up */
 	    ns->status =Ns_Dead;
@@ -379,9 +380,9 @@ void HandleClient(NewSocket *ns, player *pl)
 	else len=0;
 
 	ns->inbuf.buf[ns->inbuf.len]='\0';  /* Terminate buffer - useful for string data */
-	for (i=0; nscommands[i].cmdname !=NULL; i++) {
-	    if (strcmp((char*)ns->inbuf.buf+2,nscommands[i].cmdname)==0) {
-		nscommands[i].cmdproc((char*)data,len,ns);
+	for (i=0; client_commands[i].cmdname !=NULL; i++) {
+	    if (strcmp((char*)ns->inbuf.buf+2,client_commands[i].cmdname)==0) {
+		client_commands[i].cmdproc((char*)data,len,ns);
 		ns->inbuf.len=0;
 		return;
 	    }
@@ -393,10 +394,10 @@ void HandleClient(NewSocket *ns, player *pl)
 	 * at the map causes a crash.  If the command is valid, but
 	 * one they can't use, we still swallow it up.
 	 */
-	if (pl) for (i=0; plcommands[i].cmdname !=NULL; i++) {
-	    if (strcmp((char*)ns->inbuf.buf+2,plcommands[i].cmdname)==0) {
-		if (pl->state == ST_PLAYING || plcommands[i].flag == 0)
-		    plcommands[i].cmdproc((char*)data,len,pl);
+	if (pl) for (i=0; player_commands[i].cmdname !=NULL; i++) {
+	    if (strcmp((char*)ns->inbuf.buf+2,player_commands[i].cmdname)==0) {
+		if (pl->state == ST_PLAYING || player_commands[i].flag == 0)
+		    player_commands[i].cmdproc((char*)data,len,pl);
 		ns->inbuf.len=0;
 		return;
 	    }
@@ -594,7 +595,7 @@ void doeric_server(void)
 #endif
 	/* If this is the case, all sockets currently in used */
 	if (socket_info.allocated_sockets <= socket_info.nconns) {
-	    init_sockets = realloc(init_sockets,sizeof(NewSocket)*(socket_info.nconns+1));
+	    init_sockets = realloc(init_sockets,sizeof(socket_struct)*(socket_info.nconns+1));
 	    if (!init_sockets) fatal(OUT_OF_MEMORY);
 	    newsocknum = socket_info.allocated_sockets;
 	    socket_info.allocated_sockets++;
@@ -619,7 +620,7 @@ void doeric_server(void)
 	else {
 	    char buf[MAX_BUF];
 	    long ip;
-	    NewSocket *ns;
+	    socket_struct *ns;
 
 	    ns = &init_sockets[newsocknum];
 
@@ -632,7 +633,7 @@ void doeric_server(void)
 		init_sockets[newsocknum].fd = -1;
 	    }
 	    else {
-		InitConnection(ns, buf);
+		init_connection(ns, buf);
 		socket_info.nconns++;
 	    }
 	}
@@ -648,7 +649,7 @@ void doeric_server(void)
 	    continue;
 	}
 	if (FD_ISSET(init_sockets[i].fd, &tmp_read)) {
-	    HandleClient(&init_sockets[i], NULL);
+        handle_client(&init_sockets[i], NULL);
 	}
 	if (FD_ISSET(init_sockets[i].fd, &tmp_write)) {
 	    init_sockets[i].can_write=1;
@@ -686,7 +687,7 @@ void doeric_server(void)
 	    final_free_player(pl);
 	}
 	else {
-	    HandleClient(&pl->socket, pl);
+        handle_client(&pl->socket, pl);
 	    /* If the player has left the game, then the socket status
 	     * will be set to this be the leave function.  We don't
 	     * need to call leave again, as it has already been called

@@ -32,7 +32,7 @@
 #include <sproto.h>
 #endif
 
-/* global weathermap */
+/** global weathermap */
 weathermap_t **weathermap;
 
 void set_logfile(char *val) { settings.logfilename=val; }
@@ -81,7 +81,7 @@ void set_csport(char *val)
 #endif /* win32 */
 }
 
-/* Most of this is shamelessly stolen from XSysStats.  But since that is
+/** Most of this is shamelessly stolen from XSysStats.  But since that is
  * also my program, no problem.
  */
 struct Command_Line_Options {
@@ -94,7 +94,7 @@ struct Command_Line_Options {
 			     */
 };
 
-/* The way this system works is pretty simple - parse_args takes
+/** The way this system works is pretty simple - parse_args takes
  * the options passed to the program and a pass number.  If an option
  * matches both in name and in pass (and we have enough options),
  * we call the associated function.  This makes writing a multi
@@ -102,7 +102,7 @@ struct Command_Line_Options {
  */
 struct Command_Line_Options options[] = {
 
-/* Pass 1 functions - STuff that can/should be called before we actually
+/** Pass 1 functions - STuff that can/should be called before we actually
  * initialize any data.
  */
 {"-h", 0, 1, help},
@@ -132,13 +132,13 @@ struct Command_Line_Options options[] = {
 {"-srv", 0, 1, service_handle},
 #endif
 
-/* Pass 2 functions.  Most of these could probably be in pass 1, 
+/** Pass 2 functions.  Most of these could probably be in pass 1, 
  * as they don't require much of anything to bet set up.
  */
 {"-csport", 1, 2, set_csport},
 {"-detach", 0, 2, set_daemon},
 
-/* Start of pass 3 information. In theory, by pass 3, all data paths
+/** Start of pass 3 information. In theory, by pass 3, all data paths
  * and defaults should have been set up. 
  */
 {"-o", 0, 3, compile_info},
@@ -158,7 +158,7 @@ struct Command_Line_Options options[] = {
 };
 
 
-/* Note since this may be called before the library has been set up,
+/** Note since this may be called before the library has been set up,
  * we don't use any of crossfires built in logging functions.
  */
 static void parse_args(int argc, char *argv[], int pass)
@@ -326,7 +326,8 @@ static void load_materials(void)
     fclose(fp);
 }
 
-/* This loads the settings file.  There could be debate whether this should
+/**
+ * This loads the settings file.  There could be debate whether this should
  * be here or in the common directory - but since only the server needs this
  * information, having it here probably makes more sense.
  */
@@ -697,7 +698,7 @@ static void load_settings(void)
 }
 
 
-/*
+/**
  * init() is called only once, when starting the program.
  */
 
@@ -732,9 +733,9 @@ void init(int argc, char **argv) {
 
     parse_args(argc, argv, 3);
 
-#ifndef WIN32 /* ***win32: no BecomeDaemon in windows */
+#ifndef WIN32 /* ***win32: no become_daemon in windows */
     if (settings.daemonmode)
-	logfile = BecomeDaemon(settings.logfilename[0]=='\0'?"logfile":settings.logfilename);
+	logfile = become_daemon(settings.logfilename[0]=='\0'?"logfile":settings.logfilename);
 #endif
 
     init_beforeplay();
@@ -855,7 +856,7 @@ void init_startup(void) {
   }
 }
 
-/*
+/**
  * compile_info(): activated with the -o flag.
  * It writes out information on how Imakefile and config.h was configured
  * at compile time.
@@ -1007,7 +1008,8 @@ void init_signals(void) {
 #endif /* win32 */
 }
 
-/* init_races() - reads the races file in the lib/ directory, then
+/** 
+ * Reads the races file in the lib/ directory, then
  * overwrites old 'race' entries. This routine allow us to quickly
  * re-configure the 'alignment' of monsters, objects. Useful for
  * putting together lists of creatures, etc that belong to gods.

@@ -29,7 +29,7 @@
 /** \file
  * Image related communication
  *
- *  \date 2003-12-02
+ *  \date 2006-03-18
  *
  * This file deals with the image related communication to the
  * client.  I've located all the functions in this file - this
@@ -47,11 +47,11 @@
 #define MAX_FACE_SETS	20  /**< Maximum number of image sets the program will handle */
 
 /** Information about one image */
-typedef struct FaceInfo {
+typedef struct face_info {
   uint8 *data;		    /**< image data */
   uint16 datalen;	    /**< length of the xpm data */
   uint32 checksum;	    /**< Checksum of face data */
-} FaceInfo;
+} face_info;
 
 /** Information about one face set */
 typedef struct {
@@ -61,10 +61,10 @@ typedef struct {
     char    *size;
     char    *extension;
     char    *comment;
-    FaceInfo	*faces; /**< images in this faceset */
-} FaceSets;
+    face_info	*faces; /**< images in this faceset */
+} face_sets;
 
-static FaceSets facesets[MAX_FACE_SETS];    /**< All facesets */
+static face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
 /**
  * Checks specified faceset is valid
@@ -223,7 +223,7 @@ void read_client_images(void)
     for (fileno=0; fileno<MAX_FACE_SETS; fileno++) {
 	/* if prefix is not set, this is not used */
 	if (!facesets[fileno].prefix) continue;
-	facesets[fileno].faces = calloc(nrofpixmaps, sizeof(FaceInfo));
+	facesets[fileno].faces = calloc(nrofpixmaps, sizeof(face_info));
 
 	sprintf(filename,"%s/crossfire.%d",settings.datadir, fileno);
 	LOG(llevDebug,"Loading image file %s\n", filename);
@@ -275,10 +275,9 @@ void read_client_images(void)
 /**
  * Client tells us what type of faces it wants.  Also sets
  * the caching attribute.
- *
  */
 
-void SetFaceMode(char *buf, int len, NewSocket *ns)
+void set_face_mode_cmd(char *buf, int len, socket_struct *ns)
 {
     char tmp[256];
 
@@ -290,7 +289,7 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
 	sprintf(tmp,"drawinfo %d %s", NDI_RED,"Warning - send unsupported face mode.  Will use Png");
 	Write_String_To_Socket(ns, tmp, strlen(tmp));
 #ifdef ESRV_DEBUG
-	LOG(llevDebug,"SetFaceMode: Invalid mode from client: %d\n", mode);
+	LOG(llevDebug,"set_face_mode_cmd: Invalid mode from client: %d\n", mode);
 #endif
     }
     if (mask) {
@@ -304,7 +303,7 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
  * caching images.
  */
 
-void SendFaceCmd(char *buff, int len, NewSocket *ns)
+void send_face_cmd(char *buff, int len, socket_struct *ns)
 {
     long tmpnum = atoi(buff);
     short facenum=tmpnum & 0xffff;
@@ -322,7 +321,7 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
  * we look at the facecache, and if set, send the image name.
  */
 
-void esrv_send_face(NewSocket *ns,short face_num, int nocache)
+void esrv_send_face(socket_struct *ns,short face_num, int nocache)
 {
     SockList sl;
     char fallback;
@@ -383,7 +382,7 @@ void esrv_send_face(NewSocket *ns,short face_num, int nocache)
  * if you want further detail.
  */
 
-void send_image_info(NewSocket *ns, char *params)
+void send_image_info(socket_struct *ns, char *params)
 {
     SockList sl;
     int i;
@@ -412,7 +411,7 @@ void send_image_info(NewSocket *ns, char *params)
  *  - checksum
  *  - name
  */
-void send_image_sums(NewSocket *ns, char *params)
+void send_image_sums(socket_struct *ns, char *params)
 {
     int start, stop;
     short i;

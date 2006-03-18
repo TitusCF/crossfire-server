@@ -82,7 +82,7 @@ int ReadImages(Display *gdisp, Pixmap **pixmaps, Pixmap **masks,
     GC	gc= XCreateGC(gdisp, root, 0, NULL);
 
     if (!nrofpixmaps)
-	ReadBmapNames ();
+        read_bmap_names();
 
     /* The processes that create a pixmap already allocates the space for
      * the pixmap data.  Therefor, only space for the pointers to that data

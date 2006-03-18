@@ -43,7 +43,7 @@
 
 #define NUM_LOOK_OBJECTS 50
 
-struct MapCell {
+struct map_cell_struct {
   short faces[MAP_LAYERS];
   uint16 smooth[MAP_LAYERS];
   int count;	/* This is really darkness in the map1 command */
@@ -60,7 +60,7 @@ struct MapCell {
 #define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)
 
 struct Map {
-  struct MapCell cells[MAX_CLIENT_X][MAX_CLIENT_Y];
+  struct map_cell_struct cells[MAX_CLIENT_X][MAX_CLIENT_Y];
 };
 
 /* True max is 16383 given current map compaction method */
@@ -92,16 +92,16 @@ enum MapMode {Map0Cmd = 0, Map1Cmd = 1, Map1aCmd=2 };
  * data that the OS can't handle right away.
  */
 
-typedef struct Buffer {
+typedef struct buffer_struct {
     char    data[SOCKETBUFSIZE];
     int	    start;
     int	    len;
-} Buffer;
+} buffer_struct;
 
 /* how many times we are allowed to give the wrong password before being kicked. */
 #define MAX_PASSWORD_FAILURES 5 
 
-typedef struct NewSocket {
+typedef struct socket_struct {
     enum Sock_Status status;
     int fd;
     struct Map lastmap;
@@ -113,7 +113,7 @@ typedef struct NewSocket {
     SockList	inbuf;
     char    *host;	    /* Which host it is connected from (ip address)*/
     uint8   password_fails; /* how many times the player has failed to give the right password */
-    Buffer  outputbuffer;   /* For undeliverable data */
+    buffer_struct outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* If true, client is caching images */
     uint32  sent_scroll:1;
     uint32  sound:1;	    /* does the client want sound */
@@ -141,7 +141,7 @@ typedef struct NewSocket {
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */
     enum Old_Mode old_mode;
-} NewSocket;
+} socket_struct;
 
 
 #define CLIENT_SUPPORT_READABLES(__sockPtr,__type)\

@@ -115,7 +115,7 @@ static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
 static PyObject* CFPythonError;
 
-/* Set up an Python exception object. */
+/** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
 {
     char buf[1024];
@@ -754,7 +754,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
     va_list args;
     const char* propname;
     int i;
-    static CommArray_s rtn_cmd;
+    static command_array_struct rtn_cmd;
 
     va_start(args, type);
     propname = va_arg(args, const char *);

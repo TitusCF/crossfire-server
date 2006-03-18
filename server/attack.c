@@ -43,7 +43,8 @@ typedef struct att_msg_str {
 
 /*#define ATTACK_DEBUG*/
 
-/* cancels object *op.  Cancellation basically means an object loses
+/**
+ * Cancels object *op.  Cancellation basically means an object loses
  * its magical benefits.
  */
 void cancellation(object *op)
@@ -75,7 +76,8 @@ void cancellation(object *op)
 
 
 
-/* did_make_save_item just checks to make sure the item actually
+/**
+ * did_make_save_item just checks to make sure the item actually
  * made its saving throw based on the tables.  It does not take
  * any further action (like destroying the item).
  */
@@ -136,7 +138,8 @@ int did_make_save_item(object *op, int type, object *originator) {
     return TRUE;
 }
 
-/* This function calls did_make_save_item.  It then performs the
+/**
+ * This function calls did_make_save_item.  It then performs the
  * appropriate actions to the item (such as burning the item up,
  * calling cancellation, etc.)
  */
@@ -241,7 +244,8 @@ void save_throw_object (object *op, int type, object *originator)
     }
 }
 
-/* Object op is hitting the map.
+/**
+ * Object op is hitting the map.
  * op is going in direction 'dir'
  * type is the attacktype of the object.
  * full_hit is set if monster area does not matter.
@@ -842,7 +846,8 @@ int attack_ob (object *op, object *hitter)
     return attack_ob_simple (op, hitter, hitter->stats.dam, hitter->stats.wc);
 }
 
-/* op is the arrow, tmp is what is stopping the arrow.
+/**
+ * op is the arrow, tmp is what is stopping the arrow.
  *
  * Returns 1 if op was inserted into tmp's inventory, 0 otherwise.
  */
@@ -866,7 +871,8 @@ static int stick_arrow (object *op, object *tmp)
 	return 0;
 }
 
-/* hit_with_arrow() disassembles the missile, attacks the victim and
+/**
+ * hit_with_arrow() disassembles the missile, attacks the victim and
  * reassembles the missile.
  *
  * It returns a pointer to the reassembled missile, or NULL if the missile
@@ -1024,7 +1030,8 @@ void scare_creature(object *target, object *hitter)
 }
 
 
-/* This returns the amount of damage hitter does to op with the
+/**
+ * This returns the amount of damage hitter does to op with the
  * appropriate attacktype.  Only 1 attacktype should be set at a time.
  * This doesn't damage the player, but returns how much it should
  * take.  However, it will do other effects (paralyzation, slow, etc.)
@@ -1324,7 +1331,8 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 }
 
 
-/* GROS: This code comes from hit_player. It has been made external to
+/**
+ * GROS: This code comes from hit_player. It has been made external to
  * allow script procedures to "kill" objects in a combat-like fashion.
  * It was initially used by (kill-object) developed for the Collector's
  * Sword. Note that nothing has been changed from the original version
@@ -1402,7 +1410,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
     /* Player killed something */
     if(owner->type==PLAYER) {
-	Log_Kill(owner->name,
+	log_kill(owner->name,
 		 query_name(op),op->type,
                 (owner!=hitter) ? query_name(hitter) : NULL,
                 (owner!=hitter) ? hitter->type : 0);
@@ -1598,7 +1606,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
     return maxdam;
 }
 
-/* Find out if this is friendly fire (PVP and attacker is peaceful) or not 
+/**
+ * Find out if this is friendly fire (PVP and attacker is peaceful) or not 
  *  Returns 0 this is not friendly fire
  */
 
@@ -1628,16 +1637,17 @@ int friendly_fire(object *op, object *hitter){
 }
 
 
-/* This isn't used just for players, but in fact most objects.
+/**
+ * This isn't used just for players, but in fact most objects.
  * op is the object to be hit, dam is the amount of damage, hitter
  * is what is hitting the object, type is the attacktype, and
  * full_hit is set if monster area does not matter.
  * dam is base damage - protections/vulnerabilities/slaying matches can
  * modify it.
+ *
+ * Oct 95 - altered the following slightly for MULTIPLE_GODS hack
+ * which needs new attacktype AT_HOLYWORD to work . b.t.
  */
-
-  /* Oct 95 - altered the following slightly for MULTIPLE_GODS hack
-   * which needs new attacktype AT_HOLYWORD to work . b.t. */
 
 int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
     int maxdam=0, ndam=0, attacktype=1, magic=(type & AT_MAGIC);
@@ -2060,7 +2070,8 @@ void paralyze_player(object *op, object *hitter, int dam)
 }
 
 
-/* Attempts to kill 'op'.  hitter is the attack object, dam is
+/**
+ * Attempts to kill 'op'.  hitter is the attack object, dam is
  * the computed damaged.
  */
 void deathstrike_player(object *op, object *hitter, int *dam) 
@@ -2110,7 +2121,8 @@ void deathstrike_player(object *op, object *hitter, int *dam)
     }
 }
 
-/* thrown_item_effect() - handles any special effects of thrown
+/**
+ * handles any special effects of thrown
  * items (like attacking living creatures--a potion thrown at a
  * monster).
  */
@@ -2142,7 +2154,7 @@ static void thrown_item_effect (object *hitter, object *victim)
     }
 }
 
-/* adj_attackroll() - adjustments to attacks by various conditions */
+/** adj_attackroll() - adjustments to attacks by various conditions */
 
 int adj_attackroll (object *hitter, object *target) {
   object *attacker = hitter;
@@ -2213,7 +2225,7 @@ int adj_attackroll (object *hitter, object *target) {
 } 
 
 
-/* determine if the object is an 'aimed' missile */
+/** determine if the object is an 'aimed' missile */
 int is_aimed_missile ( object *op) {
 
     /* I broke what used to be one big if into a few nested

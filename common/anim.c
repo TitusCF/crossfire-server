@@ -108,9 +108,9 @@ void init_anim(void) {
 	    }
 
 	} else {
-	    if (!(faces[num_frames++] = FindFace(buf,0)))
-		LOG(llevDebug,"Could not find face %s for animation %s\n",
-		    buf, animations[num_animations].name);
+        if (!(faces[num_frames++] = find_face(buf,0)))
+		    LOG(llevDebug,"Could not find face %s for animation %s\n",
+		        buf, animations[num_animations].name);
 	}
     }
     fclose(fp);
@@ -121,7 +121,8 @@ static int anim_compare(const Animations *a, const Animations *b) {
     return strcmp(a->name, b->name);
 }
 
-/* Tries to find the animation id that matches name.  Returns an integer match 
+/**
+ * Tries to find the animation id that matches name.  Returns an integer match 
  * 0 if no match found (animation 0 is initialized as the 'bug' face
  */
 int find_animation(const char *name)
@@ -139,7 +140,7 @@ int find_animation(const char *name)
     return 0;
 }
 
-/*
+/**
  * animate_object(object) updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
  * op is the object to animate.

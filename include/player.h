@@ -108,7 +108,7 @@ typedef struct party_struct {
 
 typedef struct pl {
     struct pl	*next;		    /* Pointer to next player, NULL if this is last */
-    NewSocket	socket;		    /* Socket information for this player */
+    socket_struct	socket;		    /* Socket information for this player */
     char	maplevel[MAX_BUF];  /* On which level is the player? */
     struct mapdef *loading;	    /* When entering a map in progress of loading, not really used */
     char	savebed_map[MAX_BUF];  /* map where player will respawn after death */

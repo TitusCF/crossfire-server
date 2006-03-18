@@ -34,7 +34,8 @@
 
 extern weathermap_t **weathermap;
 
-/* Handles misc. input request - things like hash table, malloc, maps,
+/**
+ * Handles misc. input request - things like hash table, malloc, maps,
  * who, etc.
  */
 
@@ -61,7 +62,8 @@ void map_info(object *op, char *search) {
   }
 }
 
-/* This command dumps the body information for object *op.
+/**
+ * This command dumps the body information for object *op.
  * it doesn't care what the params are.
  * This is mostly meant as a debug command.
  */
@@ -198,7 +200,7 @@ void malloc_info(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 }
 
-/* 
+/**
  * Pretty much identical to current map_info, but on a bigger scale 
  * This function returns the name of the players current region, and
  * a description of it. It is there merely for flavour text.
@@ -296,7 +298,7 @@ typedef struct
       int login_order;
     } chars_names;
 
-/*local functon for qsort comparison*/
+/** local functon for qsort comparison*/
 static int name_cmp (const chars_names *c1, const chars_names *c2)
     {
       return strcasecmp (c1->namebuf, c2->namebuf);
@@ -371,7 +373,7 @@ int command_who (object *op, char *params) {
     return 1;
 }
 
-/* Display a line of 'who' to op, about pl, using the formatting specified by format */
+/** Display a line of 'who' to op, about pl, using the formatting specified by format */
 void display_who_entry(object *op, player *pl, const char *format) {
     char tmpbuf[MAX_BUF];
     char outbuf[MAX_BUF];
@@ -397,7 +399,8 @@ void display_who_entry(object *op, player *pl, const char *format) {
     new_draw_info(NDI_UNIQUE, 0, op, outbuf);
 }
 
-/* Returns the value of the escape code used in the who format specifier
+/**
+ * Returns the value of the escape code used in the who format specifier
  * the values are:
  * N	Name of character
  * t	title of character
@@ -651,7 +654,7 @@ int command_debug (object *op, char *params)
   }
 
 
-/*
+/**
  * Those dumps should be just one dump with good parser
  */
 
@@ -712,46 +715,46 @@ int command_wizcast (object *op, char *params)
 
 int command_dumpallobjects (object *op, char *params)
 {
-        dump_all_objects();
-  return 0;
+    dump_all_objects();
+    return 0;
 }
 
 int command_dumpfriendlyobjects (object *op, char *params)
 {
-        dump_friendly_objects();
-  return 0;
+    dump_friendly_objects();
+    return 0;
 }
 
 int command_dumpallarchetypes (object *op, char *params)
 {
-        dump_all_archetypes();
-  return 0;
-      }
+    dump_all_archetypes();
+    return 0;
+}
 
 int command_ssdumptable (object *op, char *params)
 {
-      (void) ss_dump_table(1);
-  return 0;
+    ss_dump_table(1);
+    return 0;
 }
 
 int command_dumpmap (object *op, char *params)
 {
-  if(op)
+    if(op)
         dump_map(op->map);
-  return 0;
+    return 0;
 }
 
 int command_dumpallmaps (object *op, char *params)
 {
-        dump_all_maps();
-  return 0;
+    dump_all_maps();
+    return 0;
 }
 
 int command_printlos (object *op, char *params)
 {
-  if (op)
+    if (op)
         print_los(op);
-  return 0;
+    return 0;
 }
 
 
@@ -832,7 +835,8 @@ int command_listen (object *op, char *params)
     return 1;
 }
 
-/* Prints out some useful information for the character.  Everything we print
+/**
+ * Prints out some useful information for the character.  Everything we print
  * out can be determined by the docs, so we aren't revealing anything extra -
  * rather, we are making it convenient to find the values.  params have
  * no meaning here.
@@ -1152,12 +1156,11 @@ int command_resistances(object *op, char *params)
 
 return 0;
 }
-/*
+
+/**
  * Actual commands.
  * Those should be in small separate files (c_object.c, c_wiz.c, cmove.c,...)
  */
-
-
 static void help_topics(object *op, int what)
 {
     DIR *dirp;
@@ -1206,8 +1209,8 @@ static void show_commands(object *op, int what)
 {
   char line[80];
   int i, size, namelen, linelen=0;
-  CommArray_s *ap;
-  extern CommArray_s Commands[], WizCommands[];
+  command_array_struct *ap;
+  extern command_array_struct Commands[], WizCommands[];
   extern const int CommandsSize, WizCommandsSize;
   
   switch (what) {
@@ -1384,7 +1387,7 @@ int command_quit (object *op, char *params)
     return 1;
   }
 
-/*
+/**
  * don't allow people to exit explore mode.  It otherwise becomes
  * really easy to abuse this.
  */
@@ -1420,7 +1423,8 @@ int command_sound (object *op, char *params)
     return 1;
 }
 
-/* Perhaps these should be in player.c, but that file is
+/**
+ * Perhaps these should be in player.c, but that file is
  * already a bit big.
  */
 
@@ -1464,7 +1468,7 @@ void receive_player_password(object *op,char k) {
     new_draw_info(NDI_UNIQUE, 0,op," ");
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
     new_draw_info(NDI_UNIQUE, 0,op," ");
-    Roll_Again(op);
+    roll_again(op);
     op->contr->state=ST_ROLL_STAT;
     return;
   }

@@ -31,7 +31,7 @@
 #include <sproto.h>
 #endif
 
-/*
+/**
  * move_object() tries to move object op in the direction "dir".
  * If it fails (something blocks the passage), it returns 0,
  * otherwise 1.
@@ -44,7 +44,8 @@ int move_object(object *op, int dir) {
 }
 
 
-/* object op is trying to move in direction dir.
+/**
+ * object op is trying to move in direction dir.
  * originator is typically the same as op, but
  * can be different if originator is causing op to
  * move (originator is pushing op)
@@ -159,7 +160,7 @@ int move_ob (object *op, int dir, object *originator)
 }
 
 
-/*
+/**
  * transfer_ob(): Move an object (even linked objects) to another spot
  * on the same map.
  *
@@ -192,12 +193,12 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator)
 	tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
 
     tmp = insert_ob_in_map(op,op->map,originator,0);
-    if (op && op->type == PLAYER) MapNewmapCmd(op->contr);
+    if (op && op->type == PLAYER) map_newmap_cmd(op->contr);
     if (tmp) return 0;
     else return 1;
 }
 
-/*
+/**
  * Return value: 1 if object was destroyed, 0 otherwise.
  * Modified so that instead of passing the 'originator' that had no
  * real use, instead we pass the 'user' of the teleporter.  All the
@@ -289,7 +290,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
            (tmp->arch==NULL?0:tmp->arch->clone.y);
     }
     tmp = insert_ob_in_map(user,other_teleporter->map,NULL,0);
-    if (tmp && tmp->type == PLAYER) MapNewmapCmd(tmp->contr);
+    if (tmp && tmp->type == PLAYER) map_newmap_cmd(tmp->contr);
     return (tmp == NULL);
 }
 
@@ -305,7 +306,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
   return;
 }
 
-/*
+/**
  * This is a new version of blocked, this one handles objects
  * that can be passed through by monsters with the CAN_PASS_THRU defined.
  *
@@ -347,7 +348,7 @@ int try_fit (object *op, mapstruct *m, int x, int y)
     return 0;
 }
 
-/*
+/**
  * this is not perfect yet. 
  * it does not roll objects behind multipart objects properly.
  * Support for rolling multipart objects is questionable.
@@ -398,7 +399,7 @@ int roll_ob(object *op,int dir, object *pusher) {
     return 1;
 }
 
-/* returns 1 if pushing invokes a attack, 0 when not */
+/** returns 1 if pushing invokes a attack, 0 when not */
 int push_ob(object *who, int dir, object *pusher) {
     int str1, str2;
     object *owner;

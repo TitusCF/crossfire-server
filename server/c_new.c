@@ -40,32 +40,33 @@
 
 static int compare_A(const void *a, const void *b)
 {
-  return strcmp(((CommArray_s *)a)->name, ((CommArray_s *)b)->name);
+    return strcmp(((command_array_struct *)a)->name, ((command_array_struct *)b)->name);
 }
 
-static CommArray_s *find_command_element(char *cmd, CommArray_s *commarray,
+static command_array_struct *find_command_element(char *cmd, command_array_struct *commarray,
     int commsize)
 {
-  CommArray_s *asp, dummy;
+  command_array_struct *asp, dummy;
   char *cp;
 
   for (cp=cmd; *cp; cp++)
     *cp =tolower(*cp);
 
   dummy.name =cmd;
-  asp =(CommArray_s *)bsearch((void *)&dummy,
+  asp =(command_array_struct *)bsearch((void *)&dummy,
 			      (void *)commarray, commsize,
-			      sizeof(CommArray_s), compare_A);
+			      sizeof(command_array_struct), compare_A);
   return asp;
 }
 
-/* This function is called from the new client/server code.
+/**
+ * This function is called from the new client/server code.
  * pl is the player who is issuing the command, command is the
  * command.
  */
 int execute_newserver_command(object *pl, char *command)
 {
-    CommArray_s *csp;
+    command_array_struct *csp;
     char *cp;
 
     pl->contr->has_hit=0;

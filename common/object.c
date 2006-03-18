@@ -69,7 +69,7 @@ int freedir[SIZEOFFREE]= {
   1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8};
 
 
-/* Returns TRUE if every key_values in wants has a partner with the same value in has. */
+/** Returns TRUE if every key_values in wants has a partner with the same value in has. */
 static int compare_ob_value_lists_one(const object * wants, const object * has) {
     key_value * wants_field;
     
@@ -103,7 +103,7 @@ static int compare_ob_value_lists_one(const object * wants, const object * has) 
     return TRUE;
 }
 
-/* Returns TRUE if ob1 has the same key_values as ob2. */
+/** Returns TRUE if ob1 has the same key_values as ob2. */
 static int compare_ob_value_lists(const object * ob1, const object * ob2) {
     /* However, there may be fields in has which aren't partnered in wants,
      * so we need to run the comparison *twice*. :(
@@ -111,20 +111,20 @@ static int compare_ob_value_lists(const object * ob1, const object * ob2) {
     return compare_ob_value_lists_one(ob1, ob2) && compare_ob_value_lists_one(ob2, ob1);
 }
 
-/* Function examines the 2 objects given to it, and returns true if
+/** Examines the 2 objects given to it, and returns true if
  * they can be merged together.
  *
  * Note that this function appears a lot longer than the macro it
  * replaces - this is mostly for clarity - a decent compiler should hopefully
  * reduce this to the same efficiency.
  *
- * Check nrof variable *before* calling CAN_MERGE()
+ * Check nrof variable *before* calling can_merge()
  *
  * Improvements made with merge:  Better checking on potion, and also
  * check weight
  */
 
-int CAN_MERGE(object *ob1, object *ob2) {
+int can_merge(object *ob1, object *ob2) {
 
     /* A couple quicksanity checks */
     if ((ob1 == ob2) || (ob1->type != ob2->type)) return 0;
@@ -152,7 +152,7 @@ int CAN_MERGE(object *ob1, object *ob2) {
 	if ((ob1->inv && !ob2->inv) || (ob2->inv && !ob1->inv)) return 0;
 
 	/* Now check to see if the two inventory objects could merge */
-	if (!CAN_MERGE(ob1->inv, ob2->inv)) return 0;
+ if (!can_merge(ob1->inv, ob2->inv)) return 0;
 
 	/* inventory ok - still need to check rest of this object to see
 	 * if it is valid.
@@ -234,7 +234,7 @@ int CAN_MERGE(object *ob1, object *ob2) {
     return 1;
 }
 
-/*
+/**
  * sum_weight() is a recursive function which calculates the weight
  * an object is carrying.  It goes through in figures out how much
  * containers are carrying, and sums it up.
@@ -264,7 +264,7 @@ object *object_get_env_recursive (object *op) {
     return op;
 }
 
-/*
+/**
  * Eneq(@csd.uu.se): Since we can have items buried in a character we need
  * a better check.  We basically keeping traversing up until we can't
  * or find a player.
@@ -277,7 +277,7 @@ object *is_player_inv (object *op) {
     return op;
 }
 
-/*
+/**
  * Used by: Crossedit: dump. Server DM commands: dumpbelow, dump.
  *	Some error messages.
  * The result of the dump is stored in the static global errmsg array.
@@ -320,7 +320,7 @@ void dump_object2(object *op) {
   }
 }
 
-/*
+/**
  * Dumps an object.  Returns output in the static global errmsg array.
  */
 
@@ -333,7 +333,7 @@ void dump_object(object *op) {
   dump_object2(op);
 }
 
-/* GROS - Dumps an object. Return the result into a string                   */
+/** GROS - Dumps an object. Return the result into a string                   */
 /* Note that no checking is done for the validity of the target string, so   */
 /* you need to be sure that you allocated enough space for it.               */
 void dump_me(object *op, char *outstr)
@@ -368,7 +368,7 @@ void dump_me(object *op, char *outstr)
     }
 }
 
-/*
+/**
  * This is really verbose...Can be triggered by the P key while in DM mode.
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
  */
@@ -381,7 +381,7 @@ void dump_all_objects(void) {
   }
 }
 
-/*
+/**
  * get_nearest_part(multi-object, object 2) returns the part of the
  * multi-object 1 which is closest to the second object.
  * If it's not a multi-object, it is returned.
@@ -398,7 +398,7 @@ object *get_nearest_part(object *op, const object *pl) {
   return closest;
 }
 
-/*
+/**
  * Returns the object which has the count-variable equal to the argument.
  */
 
@@ -410,7 +410,7 @@ object *find_object(tag_t i) {
  return op;
 }
 
-/*
+/**
  * Returns the first object which has a name equal to the argument.
  * Used only by the patch command, but not all that useful.
  * Enables features like "patch <name-of-other-player> food 999"
@@ -442,7 +442,7 @@ void free_all_object_data(void) {
 	nrofallocobjects, nroffreeobjects,STARTMAX);
 }
 
-/*
+/**
  * Returns the object which this object marks as being the owner.
  * A id-scheme is used to avoid pointing to objects which have been
  * freed and are now reused.  If this is detected, the owner is
@@ -479,7 +479,7 @@ void clear_owner(object *op)
 
 
 
-/*
+/**
  * Sets the owner and sets the skill and exp pointers to owner's current
  * skill and experience objects.
  */
@@ -510,7 +510,8 @@ void set_owner (object *op, object *owner)
 
 }
 
-/* Set the owner to clone's current owner and set the skill and experience
+/**
+ * Set the owner to clone's current owner and set the skill and experience
  * objects to clone's objects (typically those objects that where the owner's
  * current skill and experience objects at the time when clone's owner was
  * set - not the owner's current skill and experience objects).
@@ -534,7 +535,7 @@ void copy_owner (object *op, object *clone)
 
 }
 
-/*
+/**
  * Resets vital variables in an object
  */
 
@@ -553,7 +554,8 @@ void reset_object(object *op) {
     clear_object(op);
 }
 
-/* Zero the key_values on op, decrementing the shared-string
+/**
+ * Zero the key_values on op, decrementing the shared-string
  * refcounts and freeing the links. 
  */
 static void free_key_values(object * op) {
@@ -576,7 +578,7 @@ static void free_key_values(object * op) {
 }
 
 
-/*
+/**
  * clear_object() frees everything allocated by an object, and also
  * clears all variables and flags to default settings.
  */
@@ -650,7 +652,7 @@ void clear_object(object *op) {
 
 }
 
-/*
+/**
  * copy object first frees everything allocated by the second object,
  * and then copies the contends of the first object into the second
  * object, allocating what needs to be allocated.  Basically, any
@@ -763,7 +765,7 @@ void copy_object(object *op2, object *op) {
     update_ob_speed(op);
 }
 
-/*
+/**
  * expand_objects() allocates more objects for the list of unused objects.
  * It is called from get_object() if the unused list is empty.
  */
@@ -796,7 +798,7 @@ void expand_objects(void) {
   nroffreeobjects += OBJ_EXPAND;
 }
 
-/*
+/**
  * get_object() grabs an object from the list of unused objects, makes
  * sure it is initialised, and returns it.
  * If there are no free objects, expand_objects() is called to get more.
@@ -848,7 +850,7 @@ object *get_object(void) {
   return op;
 }
 
-/*
+/**
  * If an object with the IS_TURNABLE() flag needs to be turned due
  * to the closest player being on the other side, this function can
  * be called to update the face variable, _and_ how it looks on the map.
@@ -861,7 +863,7 @@ void update_turn_face(object *op) {
     update_object(op,UP_OBJ_FACE);
 }
 
-/*
+/**
  * Updates the speed of an object.  If the speed changes from 0 to another
  * value, or vice versa, then add/remove the object from the active list.
  * This function needs to be called whenever the speed of an object changes.
@@ -917,7 +919,8 @@ void update_ob_speed(object *op) {
     }
 }
 
-/* This function removes object 'op' from the list of active
+/**
+ * This function removes object 'op' from the list of active
  * objects.
  * This should only be used for style maps or other such 
  * reference maps where you don't want an object that isn't
@@ -945,7 +948,7 @@ void remove_from_active_list(object *op)
     op->active_prev = NULL;
 }
 
-/*
+/**
  * update_object() updates the array which represents the map.
  * It takes into account invisible objects (and represent squares covered
  * by invisible objects by whatever is below them (unless it's another
@@ -1051,7 +1054,7 @@ void update_object(object *op, int action) {
 }
 
 
-/*
+/**
  * free_object() frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
  * free objects.  The IS_FREED() flag is set in the object.
@@ -1178,7 +1181,7 @@ void free_object2(object *ob, int free_inventory) {
 #endif
 }
 
-/*
+/**
  * count_free() returns the number of objects on the list of free objects.
  */
 
@@ -1190,7 +1193,7 @@ int count_free(void) {
   return i;
 }
 
-/*
+/**
  * count_used() returns the number of objects on the list of used objects.
  */
 
@@ -1202,7 +1205,7 @@ int count_used(void) {
   return i;
 }
 
-/*
+/**
  * count_active() returns the number of objects on the list of active objects.
  */
 
@@ -1214,7 +1217,7 @@ int count_active(void) {
   return i;
 }
 
-/*
+/**
  * sub_weight() recursively (outwards) subtracts a number from the
  * weight of an object (and what is carried by it's environment(s)).
  */
@@ -1229,7 +1232,7 @@ void sub_weight (object *op, signed long weight) {
   }
 }
 
-/* remove_ob(op):
+/**
  *   This function removes the object op from the linked list of objects
  *   which it is currently tied to.  When this function is done, the
  *   object will have no environment.  If the object previously had an
@@ -1412,9 +1415,7 @@ void remove_ob(object *op) {
 
 }
 
-/*
- * merge_ob(op,top):
- *
+/**
  * This function goes through all objects below and including top, and
  * merges op to the first matching object.
  * If top is NULL, it is calculated.
@@ -1429,7 +1430,7 @@ object *merge_ob(object *op, object *top) {
   for(;top!=NULL;top=top->below) {
     if(top==op)
       continue;
-    if (CAN_MERGE(op,top))
+    if (can_merge(op,top))
     {
       top->nrof+=op->nrof;
 /*      CLEAR_FLAG(top,FLAG_STARTEQUIP);*/
@@ -1442,7 +1443,7 @@ object *merge_ob(object *op, object *top) {
   return NULL;
 }
 
-/*
+/**
  * same as insert_ob_in_map except it handle separate coordinates and do a clean
  * job preparing multi-part monsters
  */
@@ -1457,8 +1458,7 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
     return insert_ob_in_map (op, m, originator, flag);
 }
 
-/*
- * insert_ob_in_map (op, map, originator, flag):
+/**
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
  * The second argument specifies the map, and the x and y variables
@@ -1550,7 +1550,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
      */
     if(op->nrof && !(flag & INS_NO_MERGE)) {
 	for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above)
-	    if (CAN_MERGE(op,tmp)) {
+        if (can_merge(op,tmp)) {
 		op->nrof+=tmp->nrof;
 		remove_ob(tmp);
 		free_object(tmp);
@@ -1717,9 +1717,10 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     return op;
 }
 
-/* this function inserts an object in the map, but if it
- *  finds an object of its own type, it'll remove that one first. 
- *  op is the object to insert it under:  supplies x and the map.
+/**
+ * this function inserts an object in the map, but if it
+ * finds an object of its own type, it'll remove that one first. 
+ * op is the object to insert it under:  supplies x and the map.
  */
 void replace_insert_ob_in_map(const char *arch_string, object *op) {
     object *tmp;
@@ -1741,7 +1742,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
     insert_ob_in_map(tmp1,op->map,op,0);
 }        
 
-/*
+/**
  * get_split_ob(ob,nr) splits up ob into two parts.  The part which
  * is returned contains nr objects, and the remaining parts contains
  * the rest (or is removed and freed if that number is 0).
@@ -1779,7 +1780,7 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
     return newob;
 }
 
-/*
+/**
  * decrease_ob_nr(object, number) decreases a specified number from
  * the amount of an object.  If the amount reaches 0, the object
  * is subsequently removed and freed.
@@ -1863,7 +1864,7 @@ object *decrease_ob_nr (object *op, uint32 i)
     }
 }
 
-/*
+/**
  * add_weight(object, weight) adds the specified weight to an object,
  * and also updates how much the environment(s) is/are carrying.
  */
@@ -1878,7 +1879,7 @@ void add_weight (object *op, signed long weight) {
   }
 }
 
-/*
+/**
  * insert_ob_in_ob(op,environment):
  *   This function inserts the object op in the linked list
  *   inside the object environment.
@@ -1919,7 +1920,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   CLEAR_FLAG(op, FLAG_REMOVED);
   if(op->nrof) {
     for(tmp=where->inv;tmp!=NULL;tmp=tmp->below)
-      if ( CAN_MERGE(tmp,op) ) {
+        if ( can_merge(tmp,op) ) {
 	/* return the original object and remove inserted object
            (client needs the original object) */
         tmp->nrof += op->nrof;
@@ -1981,7 +1982,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   return op;
 }
 
-/*
+/**
  * Checks if any objects has a move_type that matches objects
  * that effect this object on this space.  Call apply() to process
  * these events.
@@ -2093,7 +2094,7 @@ int check_move_on (object *op, object *originator)
     return 0;
 }
 
-/*
+/**
  * present_arch(arch, map, x, y) searches for any objects with
  * a matching archetype at the given map and coordinates.
  * The first matching object is returned, or NULL if none.
@@ -2111,7 +2112,7 @@ object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
   return NULL;
 }
 
-/*
+/**
  * present(type, map, x, y) searches for any objects with
  * a matching type variable at the given map and coordinates.
  * The first matching object is returned, or NULL if none.
@@ -2129,7 +2130,7 @@ object *present(unsigned char type,mapstruct *m, int x,int y) {
   return NULL;
 }
 
-/*
+/**
  * present_in_ob(type, object) searches for any objects with
  * a matching type variable in the inventory of the given object.
  * The first matching object is returned, or NULL if none.
@@ -2143,7 +2144,7 @@ object *present_in_ob(unsigned char type, const object *op) {
   return NULL;
 }
 
-/*
+/**
  * present_in_ob (type, str, object) searches for any objects with
  * a matching type & name variable in the inventory of the given object.
  * The first matching object is returned, or NULL if none.
@@ -2168,7 +2169,7 @@ object *present_in_ob_by_name(int type, const char *str, const object *op) {
     return NULL;
 }
 
-/*
+/**
  * present_arch_in_ob(archetype, object) searches for any objects with
  * a matching archetype in the inventory of the given object.
  * The first matching object is returned, or NULL if none.
@@ -2182,7 +2183,7 @@ object *present_arch_in_ob(const archetype *at, const object *op)  {
   return NULL;
 }
 
-/*
+/**
  * activate recursively a flag on an object inventory
  */
 void flag_inv(object*op, int flag){
@@ -2192,7 +2193,9 @@ void flag_inv(object*op, int flag){
         SET_FLAG(tmp, flag);
         flag_inv(tmp,flag);
       }
-}/*
+}
+
+/**
  * desactivate recursively a flag on an object inventory
  */
 void unflag_inv(object*op, int flag){
@@ -2204,7 +2207,7 @@ void unflag_inv(object*op, int flag){
       }
 }
 
-/*
+/**
  * set_cheat(object) sets the cheat flag (WAS_WIZ) in the object and in
  * all it's inventory (recursively).
  * If checksums are used, a player will get set_cheat called for
@@ -2216,7 +2219,7 @@ void set_cheat(object *op) {
     flag_inv(op, FLAG_WAS_WIZ);
 }
 
-/*
+/**
  * find_free_spot(object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
  * the given object.  start and stop specifies how many squares
@@ -2262,10 +2265,10 @@ int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop
     return altern[RANDOM()%index];
 }
 
-/*
+/**
  * find_first_free_spot(archetype, mapstruct, x, y) works like
  * find_free_spot(), but it will search max number of squares.
- * But it will return the first available spot, not a random choice.
+ * It will return the first available spot, not a random choice.
  * Changed 0.93.2: Have it return -1 if there is no free spot available.
  */
 
@@ -2278,7 +2281,7 @@ int find_first_free_spot(const object *ob, mapstruct *m,int x,int y) {
     return -1;
 }
 
-/*
+/**
  * The function permute(arr, begin, end) randomly reorders the array
  * arr[begin..end-1].
  */
@@ -2297,7 +2300,8 @@ static void permute(int *arr, int begin, int end)
     }
 }
 
-/* new function to make monster searching more efficient, and effective! 
+/**
+ * new function to make monster searching more efficient, and effective! 
  * This basically returns a randomized array (in the passed pointer) of
  * the spaces to find monsters.  In this way, it won't always look for
  * monsters to the north first.  However, the size of the array passed
@@ -2318,7 +2322,7 @@ void get_search_arr(int *search_arr)
     permute(search_arr, SIZEOFFREE2+1, SIZEOFFREE);
 }
 
-/*
+/**
  * find_dir(map, x, y, exclude) will search some close squares in the
  * given map at the given coordinates for live objects.
  * It will not considered the object given as exclude among possible
@@ -2375,7 +2379,7 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
     return 0;
 }
 
-/*
+/**
  * distance(object 1, object 2) will return the square of the
  * distance between the two given objects.
  */
@@ -2387,7 +2391,7 @@ int distance(const object *ob1, const object *ob2) {
   return i;
 }
 
-/*
+/**
  * find_dir_2(delta-x,delta-y) will return a direction in which
  * an object which has subtracted the x and y coordinates of another
  * object, needs to travel toward it.
@@ -2421,7 +2425,7 @@ int find_dir_2(int x, int y) {
   return 3 ;
 }
 
-/*
+/**
  * absdir(int): Returns a number between 1 and 8, which represent
  * the "absolute" direction of a number (it actually takes care of
  * "overflow" in previous calculations of a direction).
@@ -2433,7 +2437,7 @@ int absdir(int d) {
   return d;
 }
 
-/*
+/**
  * dirdiff(dir1, dir2) returns how many 45-degrees differences there is
  * between two directions (which are expected to be absolute (see absdir())
  */
@@ -2446,7 +2450,8 @@ int dirdiff(int dir1, int dir2) {
   return d;
 }
 
-/* peterm:
+/**
+ * peterm:
  * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
  * Basically, this is a table of directions, and what directions
  * one could go to go back to us.  Eg, entry 15 below is 4, 14, 16.
@@ -2507,7 +2512,8 @@ int reduction_dir[SIZEOFFREE][3] = {
   {23,24,-1}, /* 47 */
   {24,9,-1}}; /* 48 */
 
-/* Recursive routine to step back and see if we can
+/**
+ * Recursive routine to step back and see if we can
  * find a path to that monster that we found.  If not,
  * we don't bother going toward it.  Returns 1 if we
  * can see a direct way to get it
@@ -2544,7 +2550,7 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
   
   
 	
-/*
+/**
  * can_pick(picker, item): finds out if an object is possible to be
  * picked up by the picker.  Returnes 1 if it can be
  * picked up, otherwise 0.
@@ -2563,7 +2569,7 @@ int can_pick(const object *who, const object *item) {
 }
 
 
-/*
+/**
  * create clone from object to another
  */
 object *object_create_clone (object *asrc) {
@@ -2599,7 +2605,7 @@ object *object_create_clone (object *asrc) {
     return dst;
 }
 
-/* return true if the object was destroyed, 0 otherwise */
+/** return true if the object was destroyed, 0 otherwise */
 int was_destroyed (const object *op, tag_t old_tag)
 {
     /* checking for FLAG_FREED isn't necessary, but makes this function more
@@ -2607,44 +2613,8 @@ int was_destroyed (const object *op, tag_t old_tag)
     return op->count != old_tag || QUERY_FLAG (op, FLAG_FREED);
 }
 
-/* GROS - Creates an object using a string representing its content.         */
-/* Basically, we save the content of the string to a temp file, then call    */
-/* load_object on it. I admit it is a highly inefficient way to make things, */
-/* but it was simple to make and allows reusing the load_object function.    */
-/* Remember not to use load_object_str in a time-critical situation.         */
-/* Also remember that multiparts objects are not supported for now.          */
-
-object* load_object_str(const char *obstr)
-{
-    object *op;
-    FILE *tempfile;
-    char filename[MAX_BUF];
-    sprintf(filename,"%s/cfloadobstr2044",settings.tmpdir);
-    tempfile=fopen(filename,"w");
-    if (tempfile == NULL)
-    {
-        LOG(llevError,"Error - Unable to access load object temp file\n");
-        return NULL;
-    };
-    fprintf(tempfile,obstr);
-    fclose(tempfile);
-
-    op=get_object();
-
-    tempfile=fopen(filename,"r");
-    if (tempfile == NULL)
-    {
-        LOG(llevError,"Error - Unable to read object temp file\n");
-        return NULL;
-    };
-    load_object(tempfile,op,LO_NEWFILE,0);
-    LOG(llevDebug," load str completed, object=%s\n",op->name);
-    CLEAR_FLAG(op,FLAG_REMOVED);
-    fclose(tempfile);
-    return op;
-}
-
-/* This returns the first object in who's inventory that
+/**
+ * This returns the first object in who's inventory that
  * has the same type and subtype match.
  * returns NULL if no match.
  */
@@ -2658,7 +2628,8 @@ object *find_obj_by_type_subtype(const object *who, int type, int subtype)
     return NULL;
 }
 
-/* If ob has a field named key, return the link from the list,
+/**
+ * If ob has a field named key, return the link from the list,
  * otherwise return NULL. 
  *
  * key must be a passed in shared string - otherwise, this won't
@@ -2676,7 +2647,7 @@ key_value * get_ob_key_link(const object * ob, const char * key) {
     return NULL;
 }  
 
-/* 
+/**
  * Returns the value of op has an extra_field for key, or NULL.
  *
  * The argument doesn't need to be a shared string.
@@ -2710,7 +2681,7 @@ const char * get_ob_key_value(const object * op, const char * const key) {
 }
 
 
-/*
+/**
  * Updates the canonical_key in op to value.
  *
  * canonical_key is a shared string (value doesn't have to be).
@@ -2779,7 +2750,7 @@ int set_ob_key_value_s(object * op, const char * canonical_key, const char * val
     return TRUE;
 }
 
-/*
+/**
  * Updates the key in op to value.
  *
  * If add_key is FALSE, this will only update existing keys,

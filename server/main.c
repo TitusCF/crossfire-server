@@ -150,7 +150,8 @@ void start_info(object *op) {
   }
 }
 
-/* Really, there is no reason to crypt the passwords  any system.  But easier
+/**
+ * Really, there is no reason to crypt the passwords  any system.  But easier
  * to just leave this enabled for backward compatibility.  Put the
  * simple case at top - no encryption - makes it easier to read.
  */
@@ -181,7 +182,8 @@ int check_password(char *typed,char *crypted) {
   return !strcmp(crypt_string(typed,crypted),crypted);
 }
 
-/* This is a basic little function to put the player back to his
+/**
+ * This is a basic little function to put the player back to his
  * savebed.  We do some error checking - its possible that the
  * savebed map may no longer exist, so we make sure the player
  * goes someplace.
@@ -217,7 +219,8 @@ void enter_player_savebed(object *op)
     free_object(tmp);
 }
 
-/* All this really is is a glorified remove_object that also updates
+/**
+ * All this really is is a glorified remove_object that also updates
  * the counts on the map if needed.
  */
 void leave_map(object *op)
@@ -235,7 +238,7 @@ void leave_map(object *op)
     }
 }
 
-/*
+/**
  *  enter_map():  Moves the player and pets from current map (if any) to
  * new map.  map, x, y must be set.  map is the map we are moving the
  * player to - it could be the map he just came from if the load failed for
@@ -360,7 +363,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     swap_below_max (newmap->path);
 
     if( op->type == PLAYER)
-        MapNewmapCmd( op->contr);
+        map_newmap_cmd(op->contr);
 }
 
 void set_map_timeout(mapstruct *oldmap)
@@ -385,7 +388,8 @@ void set_map_timeout(mapstruct *oldmap)
 }
 
 
-/* clean_path takes a path and replaces all / with _
+/**
+ * clean_path takes a path and replaces all / with _
  * We do a strcpy so that we do not change the original string.
  */
 char *clean_path(const char *file)
@@ -401,7 +405,8 @@ char *clean_path(const char *file)
 }
 
 
-/* unclean_path takes a path and replaces all _ with /
+/**
+ * unclean_path takes a path and replaces all _ with /
  * This basically undoes clean path.
  * We do a strcpy so that we do not change the original string.
  * We are smart enough to start after the last / in case we
@@ -426,7 +431,8 @@ char *unclean_path(const char *src)
 }
 
 
-/* The player is trying to enter a randomly generated map.  In this case, generate the
+/**
+ * The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
  */
 
@@ -487,7 +493,8 @@ static void enter_random_map(object *pl, object *exit_ob)
     }
 }
 
-/* The player is trying to enter a non-randomly generated template map.  In this
+/**
+ * The player is trying to enter a non-randomly generated template map.  In this
  * case, use a map file for a template
  */
 
@@ -568,7 +575,8 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
 }
 
 
-/* The player is trying to enter a randomly generated template map.  In this
+/**
+ * The player is trying to enter a randomly generated template map.  In this
  * case, generate the map as needed.
  */
 
@@ -633,7 +641,8 @@ static void enter_random_template_map(object *pl, object *exit_ob)
 }
 
 
-/* Code to enter/detect a character entering a unique map.
+/**
+ * Code to enter/detect a character entering a unique map.
  */
 static void enter_unique_map(object *op, object *exit_ob)
 {
@@ -704,7 +713,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 }
 
 
-/* Tries to move 'op' to exit_ob.  op is the character or monster that is
+/**
+ * Tries to move 'op' to exit_ob.  op is the character or monster that is
  * using the exit, where exit_ob is the exit object (boat, door, teleporter,
  * etc.)  if exit_ob is null, then op->contr->maplevel contains that map to
  * move the object to.  This is used when loading the player.
@@ -868,12 +878,11 @@ void enter_exit(object *op, object *exit_ob) {
     }
 }
 
-/*
+/**
  * process_active_maps(): Works like process_events(), but it only
  * processes maps which a player is on.
  * It will check that it isn't called too often, and abort
  * if time since last call is less than MAX_TIME.
- *
  */
 
 void process_active_maps(void) {
@@ -893,7 +902,8 @@ void process_active_maps(void) {
     }
 }
 
-/* process_players1 and process_players2 do all the player related stuff.
+/**
+ * process_players1 and process_players2 do all the player related stuff.
  * I moved it out of process events and process_map.  This was to some
  * extent for debugging as well as to get a better idea of the time used
  * by the various functions.  process_players1() does the processing before
@@ -1161,7 +1171,7 @@ void clean_tmp_files(void) {
   write_todclock(); /* lets just write the clock here */
 }
 
-/* clean up everything before exiting */
+/** clean up everything before exiting */
 void cleanup(void)
 {
     LOG(llevDebug,"Cleanup called.  freeing data.\n");
@@ -1262,7 +1272,7 @@ int forbid_play(void)
 #endif
 }
 
-/*
+/**
  *  do_specials() is a collection of functions to call from time to time.
  * Modified 2000-1-14 MSW to use the global pticks count to determine how
  * often to do things.  This will allow us to spred them out more often.

@@ -41,7 +41,7 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
-/* Can transport hold object op?
+/** Can transport hold object op?
  * This is a pretty trivial function,
  * but in the future, possible transport may have more restrictions
  * or weight reduction like containers
@@ -55,7 +55,7 @@ int transport_can_hold(const object *transport, const object *op, int nrof)
 }
 
 
-/*
+/**
  * Player is trying to use a transport.  This returns same values as
  * manual_apply() does.  This function basically checks to see if
  * the player can use the transport, and if so, sets up the appropriate
@@ -160,7 +160,7 @@ int apply_transport(object *pl, object *transport, int aflag) {
 
 	    str = get_ob_key_value(transport, "face_full");
 	    if (str)
-		transport->face = &new_faces[FindFace(str, 
+		transport->face = &new_faces[find_face(str, 
 					      transport->face->number)];
 	    str = get_ob_key_value(transport, "anim_full");
 	    if (str)
@@ -2730,7 +2730,7 @@ int manual_apply (object *op, object *tmp, int aflag)
 }
 
 
-/* quiet suppresses the "don't know how to apply" and "you must get it first"
+/** quiet suppresses the "don't know how to apply" and "you must get it first"
  * messages as needed by player_apply_below().  But there can still be
  * "but you are floating high above the ground" messages.
  *
@@ -3868,6 +3868,9 @@ void scroll_failure(object *op, int failure, int power)
     }
 }
 
+/**
+ * Applies (race) changes to a player.
+ */
 void apply_changes_to_player(object *pl, object *change) {
     int excess_stat=0;  /* if the stat goes over the maximum
                          for the race, put the excess stat some

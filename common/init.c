@@ -31,7 +31,7 @@
 #include <global.h>
 #include <object.h>
 
-/* You unforunately need to looking in include/global.h to see what these
+/** You unforunately need to looking in include/global.h to see what these
  * correspond to.
  */
 struct Settings settings = {
@@ -98,7 +98,7 @@ ARMOR_SPEED_LINEAR,
 1, /* no_player_stealing */
 };
 
-/* perhaps not the best place for this, but needs to be
+/** perhaps not the best place for this, but needs to be
  * in some file in the common area so that standalone
  * programs, like the random map generator, can be built.
  */
@@ -126,7 +126,7 @@ const char* const spellpathnames[NRSPELLPATHS] = {
 };
 
 
-/* This loads the emergency map information from a
+/** This loads the emergency map information from a
  * .emergency file in the map directory.  Doing this makes
  * it easier to switch between map distributions (don't need
  * to recompile.  Note that there is no reason I see that
@@ -168,7 +168,7 @@ static void init_emergency_mappath(void)
 }
     
 
-/*
+/**
  * It is vital that init_library() is called by any functions
  * using this library.
  * If you want to lessen the size of the program using the library,
@@ -184,8 +184,8 @@ void init_library(void) {
     init_objects();
     init_vars();
     init_block();
-    ReadBmapNames ();
-    ReadSmooth();
+    read_bmap_names ();
+    read_smooth();
     init_anim();    /* Must be after we read in the bitmaps */
     init_archetypes();	/* Reads all archetypes from file */
     init_dynamic ();
@@ -196,7 +196,7 @@ void init_library(void) {
 }
 
 
-/* init_environ initializes values from the environmental variables.
+/** init_environ initializes values from the environmental variables.
  * it needs to be called very early, since command line options should
  * overwrite these if specified.
  */
@@ -224,7 +224,7 @@ void init_environ(void) {
 }
     
 
-/*
+/**
  * Initialises all global variables.
  * Might use environment-variables as default for some of them.
  */
@@ -264,7 +264,7 @@ void init_globals(void) {
     init_defaults();
 }
 
-/*
+/**
  * Sets up and initialises the linked list of free and used objects.
  * Allocates a certain chunk of objects and puts them on the free list.
  * Called by init_library();
@@ -297,7 +297,7 @@ void init_objects(void) {
 #endif
 }
 
-/*
+/**
  * Initialises global variables which can be changed by options.
  * Called by init_library().
  */
@@ -307,7 +307,9 @@ void init_defaults(void) {
   nroferrors=0;
 }
 
-
+/**
+ * Initializes first_map_path from the archetype collection.
+ */
 void init_dynamic (void) {
     archetype *at = first_archetype;
     while (at) {
@@ -323,7 +325,7 @@ void init_dynamic (void) {
 
 unsigned long todtick;
 
-/*
+/**
  * Write out the current time to the file so time does not
  * reset every time the server reboots.
  */
@@ -342,7 +344,7 @@ void write_todclock(void)
     fclose(fp);
 }
 
-/*
+/**
  * Initializes the gametime and TOD counters
  * Called by init_library().
  */
@@ -371,13 +373,12 @@ void init_clocks(void)
     fclose(fp);
 }
 
-/*
+attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
+
+/**
  * Initializes the attack messages.
  * Called by init_library().
  */
-
-attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
-
 void init_attackmess(void){
     char buf[MAX_BUF];
     char filename[MAX_BUF];

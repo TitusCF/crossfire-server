@@ -107,7 +107,7 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS,
 };
 
 /** This is the Setup cmd - easy first implementation */
-void SetUp(char *buf, int len, NewSocket *ns)
+void set_up_cmd(char *buf, int len, socket_struct *ns)
 {
     int s, slen;
     char *cmd, *param, cmdback[HUGE_BUF];
@@ -258,7 +258,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
  * I am not sure if this file is the best place for this function.  however,
  * it either has to be here or init_sockets needs to be exported.
  */
-void AddMeCmd(char *buf, int len, NewSocket *ns)
+void add_me_cmd(char *buf, int len, socket_struct *ns)
 {
     Settings oldsettings;
     oldsettings=settings;
@@ -278,7 +278,8 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 }
 
 /** Reply to ExtendedInfos command */
-void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
+void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns)
+{
      char cmdback[MAX_BUF];
      char command[50];
      int info,nextinfo;
@@ -321,7 +322,8 @@ void ToggleExtendedInfos (char *buf, int len, NewSocket *ns){
 #define MSG_TYPE_MONUMENT        5
 #define MSG_TYPE_SCRIPTED_DIALOG 6*/
 /** Reply to ExtendedInfos command */
-void ToggleExtendedText (char *buf, int len, NewSocket *ns){
+void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns)
+{
      char cmdback[MAX_BUF];
      char temp[10];
      char command[50];
@@ -365,7 +367,7 @@ void ToggleExtendedText (char *buf, int len, NewSocket *ns){
  * if we know the client wants it, might as well push it to the
  * client.
  */
-static void SendSmooth(NewSocket *ns, uint16 face) {
+static void send_smooth(socket_struct *ns, uint16 face) {
      uint16 smoothface;
      uint8 reply[MAX_BUF];
      SockList sl;
@@ -373,8 +375,8 @@ static void SendSmooth(NewSocket *ns, uint16 face) {
     /* If we can't find a face, return and set it so we won't try to send this
      * again.
      */
-    if ((!FindSmooth (face, &smoothface)) &&
-         (!FindSmooth ( smooth_face->number, &smoothface))) {
+    if ((!find_smooth(face, &smoothface)) &&
+         (!find_smooth( smooth_face->number, &smoothface))) {
 
         LOG(llevError,"could not findsmooth for %d. Neither default (%s)\n",face,smooth_face->name);
 	ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
@@ -398,11 +400,11 @@ static void SendSmooth(NewSocket *ns, uint16 face) {
   * Tells client the picture it has to use 
   * to smooth a picture number given as argument.
   */
-void AskSmooth (char *buf, int len, NewSocket *ns){
+void ask_smooth_cmd(char *buf, int len, socket_struct *ns){
     uint16 facenbr;
 
     facenbr=atoi (buf);
-    SendSmooth(ns, facenbr);
+    send_smooth(ns, facenbr);
 }
 
 
@@ -413,7 +415,7 @@ void AskSmooth (char *buf, int len, NewSocket *ns){
  * This handles the general commands from the client (ie, north, fire, cast,
  * etc.)
  */
-void PlayerCmd(char *buf, int len, player *pl)
+void player_cmd(char *buf, int len, player *pl)
 {
 
     /* The following should never happen with a proper or honest client.
@@ -434,7 +436,7 @@ void PlayerCmd(char *buf, int len, player *pl)
 	buf=strchr(buf,' ');	/* advance beyond the numbers */
 	if (!buf) {
 #ifdef ESRV_DEBUG
-	    LOG(llevDebug,"PlayerCmd: Got count but no command.\n");
+	    LOG(llevDebug,"player_cmd: Got count but no command.\n");
 #endif
 	    return;
 	}
@@ -459,11 +461,11 @@ void PlayerCmd(char *buf, int len, player *pl)
 
 /**
  * This handles the general commands from the client (ie, north, fire, cast,
- * etc.).  It is a lot like PlayerCmd above, but is called with the
+ * etc.).  It is a lot like player_cmd above, but is called with the
  * 'ncom' method which gives more information back to the client so it
  * can throttle.
  */
-void NewPlayerCmd(uint8 *buf, int len, player *pl)
+void new_player_cmd(uint8 *buf, int len, player *pl)
 {
     int time,repeat;
     short packet;
@@ -524,7 +526,7 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 
 
 /** This is a reply to a previous query. */
-void ReplyCmd(char *buf, int len, player *pl)
+void reply_cmd(char *buf, int len, player *pl)
 {
     /* This is to synthesize how the data would be stored if it
      * was normally entered.  A bit of a hack, and should be cleaned up
@@ -593,7 +595,7 @@ void ReplyCmd(char *buf, int len, player *pl)
  * backwards compatible, having it be a later version should not be a 
  * problem.
  */
-void VersionCmd(char *buf, int len,NewSocket *ns)
+void version_cmd(char *buf, int len,socket_struct *ns)
 {
     char *cp;
     char version_warning[256];
@@ -642,14 +644,14 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 
 /** sound related functions. */
  
-void SetSound(char *buf, int len, NewSocket *ns)
+void set_sound_cmd(char *buf, int len, socket_struct *ns)
 {
     ns->sound = atoi(buf);
 }
 
 /** client wants the map resent */
 
-void MapRedrawCmd(char *buf, int len, player *pl)
+void map_redraw_cmd(char *buf, int len, player *pl)
 {
 /* This function is currently disabled; just clearing the map state results in
  * display errors. It should clear the cache and send a newmap command.
@@ -666,7 +668,7 @@ void MapRedrawCmd(char *buf, int len, player *pl)
 }
 
 /** Newmap command */
-void MapNewmapCmd( player *pl)
+void map_newmap_cmd( player *pl)
 {
     if( pl->socket.newmapcmd == 1) {
         memset(&pl->socket.lastmap, 0, sizeof(pl->socket.lastmap));
@@ -680,7 +682,7 @@ void MapNewmapCmd( player *pl)
  * Moves an object (typically, container to inventory).
  * syntax is: move (to) (tag) (nrof)
  */
-void MoveCmd(char *buf, int len,player *pl)
+void move_cmd(char *buf, int len,player *pl)
 {
     int vals[3], i;
 
@@ -715,7 +717,7 @@ void MoveCmd(char *buf, int len,player *pl)
  * Asks the client to query the user.  This way, the client knows
  * it needs to send something back (vs just printing out a message)
  */
-void send_query(NewSocket *ns, uint8 flags, char *text)
+void send_query(socket_struct *ns, uint8 flags, char *text)
 {
     char buf[MAX_BUF];
 
@@ -888,7 +890,7 @@ void esrv_new_player(player *pl, uint32 weight)
  * how much we are sending - on the other hand, this should only happen
  * when the player logs in and picks stuff up.
  */
-void esrv_send_animation(NewSocket *ns, short anim_num)
+void esrv_send_animation(socket_struct *ns, short anim_num)
 {
     SockList sl;
     int i;
@@ -931,7 +933,7 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
  * This adds face_num to a map cell at x,y.  If the client doesn't have
  * the face yet, we will also send it.
  */
-static void esrv_map_setbelow(NewSocket *ns, int x,int y,
+static void esrv_map_setbelow(socket_struct *ns, int x,int y,
 			      short face_num, struct Map *newmap)
 {
     if(newmap->cells[x][y].count >= MAP_LAYERS) {
@@ -956,7 +958,7 @@ struct MapLayer {
 };
 
 /** Checkes if map cells have changed */
-static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
+static int mapcellchanged(socket_struct *ns,int i,int j, struct Map *newmap)
 {
   int k;
 
@@ -977,7 +979,7 @@ static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
  * this data into.  we return the end of the data.  layers is
  * how many layers of data we should back.
  */  
-static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers, 
+static uint8 *compactlayer(socket_struct *ns, unsigned char *cur, int numlayers, 
 			   struct Map *newmap)
 {
     int x,y,k;
@@ -1042,7 +1044,7 @@ static uint8 *compactlayer(NewSocket *ns, unsigned char *cur, int numlayers,
     return cur;
 }
 
-static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
+static void esrv_map_doneredraw(socket_struct *ns, struct Map *newmap)
 {
     static long frames,bytes,tbytes,tframes;
     uint8 *cur;
@@ -1076,7 +1078,7 @@ static void esrv_map_doneredraw(NewSocket *ns, struct Map *newmap)
 
 
 /** Clears a map cell */
-static void map_clearcell(struct MapCell *cell, int face0, int face1, int face2, int count)
+static void map_clearcell(struct map_cell_struct *cell, int face0, int face1, int face2, int count)
 {
     cell->count=count;
     cell->faces[0] = face0;
@@ -1116,7 +1118,7 @@ static inline int have_head(int ax, int ay) {
  * if needed, and returning 1.  If this no data needs to get
  * sent, it returns zero.
  */
-static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int layer)
+static inline int check_head(SockList *sl, socket_struct *ns, int ax, int ay, int layer)
 {
     short face_num;
 
@@ -1157,7 +1159,7 @@ static inline int check_head(SockList *sl, NewSocket *ns, int ax, int ay, int la
  * actually match.
  */
 
-static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
+static inline int update_space(SockList *sl, socket_struct *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
 {
     object *ob, *head;
     uint16 face_num;
@@ -1356,7 +1358,7 @@ static inline int update_space(SockList *sl, NewSocket *ns, mapstruct  *mp, int 
  * take.  
  */
 
-static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
+static inline int update_smooth(SockList *sl, socket_struct *ns, mapstruct  *mp, int mx, int my, int sx, int sy, int layer)
 {
     object *ob;
     int smoothlevel; /* old face_num;*/
@@ -1370,7 +1372,7 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
     else {
 	smoothlevel = ob->smoothlevel;
 	if (smoothlevel && !(ns->faces_sent[ob->face->number] & NS_FACESENT_SMOOTH))
-	    SendSmooth(ns, ob->face->number);
+        send_smooth(ns, ob->face->number);
     } /* else not already head object or blank face */
 
     /* We've gotten what face we want to use for the object.  Now see if
@@ -1394,7 +1396,7 @@ static inline int update_smooth(SockList *sl, NewSocket *ns, mapstruct  *mp, int
  * mapextended. There are CLIENTMAPX*CLIENTMAPY*LAYERS entries
  * available.
  */
-int getExtendedMapInfoSize(NewSocket* ns){
+static int get_extended_mapinfo_size(socket_struct* ns){
     int result=0;
     if (ns->ext_mapinfos){
         if (ns->EMI_smooth)
@@ -1456,7 +1458,7 @@ void draw_client_map1(object *pl)
         ewhatflag=extendedinfos; /*The EMI_NOREDRAW bit
                                    could need to be taken away*/
         SockList_AddChar(&esl, extendedinfos);
-        eentrysize=getExtendedMapInfoSize(&(pl->contr->socket));
+        eentrysize=get_extended_mapinfo_size(&(pl->contr->socket));
         SockList_AddChar(&esl, eentrysize);
         estartlen = esl.len;
     } else {
@@ -1591,7 +1593,7 @@ void draw_client_map1(object *pl)
 		    pl->contr->socket.lastmap.cells[ax][ay].count = count;
 
 		} else {
-		    struct MapCell *cell = &pl->contr->socket.lastmap.cells[ax][ay];
+		    struct map_cell_struct *cell = &pl->contr->socket.lastmap.cells[ax][ay];
 		    /* properly clear a previously sent big face */
 		    if(cell->faces[0] != 0
 		    || cell->faces[1] != 0
@@ -1851,7 +1853,7 @@ void draw_client_map(object *pl)
 }
 
 
-void esrv_map_scroll(NewSocket *ns,int dx,int dy)
+void esrv_map_scroll(socket_struct *ns,int dx,int dy)
 {
     struct Map newmap;
     int x,y, mx, my;
@@ -1885,15 +1887,15 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 	for(y=0; y<my; y++) {
 	    if(x >= ns->mapx || y >= ns->mapy) {
 		/* clear cells outside the viewable area */
-		memset(&newmap.cells[x][y], 0, sizeof(struct MapCell));
+		memset(&newmap.cells[x][y], 0, sizeof(struct map_cell_struct));
 	    }
 	    else if ((x+dx) < 0 || (x+dx) >= ns->mapx || (y+dy) < 0 || (y + dy) >= ns->mapy) {
 		/* clear newly visible tiles within the viewable area */
-		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
+		memset(&(newmap.cells[x][y]), 0, sizeof(struct map_cell_struct));
 	    }
 	    else {
 		memcpy(&(newmap.cells[x][y]),
-		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct MapCell));
+           &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct map_cell_struct));
 	    }
 	}
     }
@@ -1906,11 +1908,11 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     ns->sent_scroll = 1;
 }
 
-/*****************************************************************************/
-/* GROS: The following one is used to allow a plugin to send a generic cmd to*/
-/* a player. Of course, the client need to know the command to be able to    */
-/* manage it !                                                               */
-/*****************************************************************************/
+/**
+ * GROS: The following one is used to allow a plugin to send a generic cmd to
+ * a player. Of course, the client need to know the command to be able to
+ * manage it !
+ */
 void send_plugin_custom_message(object *pl, char *buf)
 {
     cs_write_string(&pl->contr->socket,buf,strlen(buf));
@@ -1920,7 +1922,7 @@ void send_plugin_custom_message(object *pl, char *buf)
  * This sends the skill number to name mapping.  We ignore
  * the params - we always send the same info no matter what.
  */
-void send_skill_info(NewSocket *ns, char *params)
+void send_skill_info(socket_struct *ns, char *params)
 {
     SockList sl;
     int i;
@@ -1944,7 +1946,7 @@ void send_skill_info(NewSocket *ns, char *params)
  * This sends the spell path to name mapping.  We ignore
  * the params - we always send the same info no matter what.
  */
-void send_spell_paths (NewSocket *ns, char *params) {
+void send_spell_paths (socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
@@ -2018,7 +2020,7 @@ void esrv_remove_spell(player *pl, object *spell) {
     free(sl.buf);
 }
 
-/* appends the spell *spell to the Socklist we will send the data to. */
+/** appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell (player *pl, SockList *sl, object *spell) {
     int len, i, skill=0; 
 

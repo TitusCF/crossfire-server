@@ -180,7 +180,7 @@
 #define P_WALL		P_NO_PASS   /* Just to match naming of wall function */
 #endif
 
-/* Can't use MapCell as that is used in newserver.h
+/* Can't use map_cell_struct as that is used in newserver.h
  * Instead of having numerous arrays that have information on a
  * particular space (was map, floor, floor2, map_ob),
  * have this structure take care of that information.

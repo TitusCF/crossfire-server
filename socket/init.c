@@ -60,14 +60,14 @@
 #include <newserver.h>
 
 Socket_Info socket_info;
-NewSocket *init_sockets;
+socket_struct* init_sockets;
 
 /**
  * Initializes a connection. Really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
-void InitConnection(NewSocket *ns, const char *from_ip)
+void init_connection(socket_struct *ns, const char *from_ip)
 {
     SockList sl;
     unsigned char buf[256];
@@ -79,10 +79,10 @@ void InitConnection(NewSocket *ns, const char *from_ip)
 	int temp = 1;	
 
 	if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
-		LOG(llevError,"InitConnection:  Error on ioctlsocket.\n");
+		LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
 #else 
     if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
-		LOG(llevError,"InitConnection:  Error on fcntl.\n");
+		LOG(llevError,"init_connection:  Error on fcntl.\n");
     }
 #endif /* end win32 */
 
@@ -93,7 +93,7 @@ void InitConnection(NewSocket *ns, const char *from_ip)
 	LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
 	if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(&bufsize))) {
-	    LOG(llevError,"InitConnection: setsockopt unable to set output buf size to %d\n", bufsize);
+	    LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
 	}
     }
     buflen=sizeof(oldbufsize);
@@ -133,7 +133,7 @@ void InitConnection(NewSocket *ns, const char *from_ip)
     ns->inbuf.len=0;
     ns->inbuf.buf=malloc( sizeof( unsigned char ) * MAXSOCKBUF );
     /* Basic initialization. Needed because we do a check in
-     * HandleClient for oldsocketmode without checking the
+     * handle_client for oldsocketmode without checking the
      * length of data.
      */
     memset( ns->inbuf.buf, 0, sizeof( unsigned char ) * MAXSOCKBUF );
@@ -207,7 +207,7 @@ void init_ericserver(void)
 
     LOG(llevDebug,"Initialize new client/server data\n");
     socket_info.nconns = 1;
-    init_sockets = malloc(sizeof(NewSocket));
+    init_sockets = malloc(sizeof(socket_struct));
     init_sockets[0].faces_sent = NULL; /* unused */
     socket_info.allocated_sockets=1;
 
@@ -303,7 +303,7 @@ void free_all_newserver(void)
  * update the list
  */
 
-void free_newsocket(NewSocket *ns)
+void free_newsocket(socket_struct *ns)
 {
 #ifdef WIN32 /* ***win32: closesocket in windows style */
 	shutdown(ns->fd,SD_BOTH);

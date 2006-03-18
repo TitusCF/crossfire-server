@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Massive code cleanup. Changed FunctionsInCamelCase to conform to conventions.
+Changed comments to doxygen syntax. Made function/variable/structure names more
+ coherent.
+There shouldn't be any functional change.
+Modified files:
+ common/anim.c image.c loader.[cl] object.c
+ crossedit/xutil.c
+ include/commands.h global.h libproto.h  newserver.h object.h player.h sockproto.h /sproto.h
+ plugins/cfpython/cfpython.c
+ server/apply.c attack.c c_misc.c commands.c init.c main.c move.c player.c plugins.c spell_effect.c time.c
+ socket/image.c info.c init.c item.c loop.c request.c
+
+Ryo 2006-03-18
+
 Apply patch #1450408 (Improved hash table) by cf.schmorp.de development team.
 The new hash function seems to produce fewer collisions than the previous
 function. This especially holds for strings that share a common prefix: the

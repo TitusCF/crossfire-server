@@ -45,7 +45,7 @@
 /*
  * Normal game commands
  */
-CommArray_s Commands[] = {
+command_array_struct Commands[] = {
   {"save", command_save,	0.0},
 
   {"sound", command_sound,	0.0},
@@ -133,9 +133,9 @@ CommArray_s Commands[] = {
   {"northwest", command_northwest,	1.0},
 };
 
-const int CommandsSize =sizeof(Commands) / sizeof(CommArray_s);
+const int CommandsSize =sizeof(Commands) / sizeof(command_array_struct);
 
-CommArray_s CommunicationCommands [] = {
+command_array_struct CommunicationCommands [] = {
   /* begin emotions */
   {"tell", command_tell,		0.1},
   {"reply", command_reply,		0.0},
@@ -202,21 +202,21 @@ CommArray_s CommunicationCommands [] = {
   {"printlos", command_printlos,0.0},
 };
 
-const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommArray_s);
+const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(command_array_struct);
 
-CommArray_s NewServerCommands [] = {
+command_array_struct NewServerCommands [] = {
   {"run", command_run, 1.0},
   {"run_stop", command_run_stop, 0.0},
   {"fire", command_fire, 1.0},
   {"fire_stop", command_fire_stop, 0.0}
 };
 
-const int NewServerCommandSize = sizeof(NewServerCommands)/ sizeof(CommArray_s);
+const int NewServerCommandSize = sizeof(NewServerCommands)/ sizeof(command_array_struct);
 
 /*
  * Wizard commands (for both)
  */
-CommArray_s WizCommands [] = {
+command_array_struct WizCommands [] = {
   {"abil", command_abil,0.0},
   {"addexp", command_addexp,0.0},
   {"arrest", command_arrest,0.0},
@@ -268,12 +268,12 @@ CommArray_s WizCommands [] = {
   {"mon_aggr", command_mon_aggr, 0.0},
   {"loadtest", command_loadtest, 0.0},
 };
-const int WizCommandsSize =sizeof(WizCommands) / sizeof(CommArray_s);
+const int WizCommandsSize =sizeof(WizCommands) / sizeof(command_array_struct);
 
 /* Socket commands - these should really do nothing more than output things
  * to the various players/sockets.
  */
-CommArray_s Socket_Commands[] = {
+command_array_struct Socket_Commands[] = {
   {"hiscore", command_hiscore,	0.0},
   {"logs", command_logs,	0.0},
   {"maps", command_maps,	0.0},
@@ -283,35 +283,35 @@ CommArray_s Socket_Commands[] = {
   {"who", command_who,		0.0},
 };
 
-const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(CommArray_s);
+const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(command_array_struct);
 
 
 /* Socket commands - these should really do nothing more than output things
  * to the various players/sockets.
  */
-CommArray_s Socket2_Commands[] = {
+command_array_struct Socket2_Commands[] = {
   {"shout", command_shout,	0.1},
   {"chat", command_chat,	0.1},
   {"tell", command_tell,	0.1},
 };
 
-const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(CommArray_s);
+const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(command_array_struct);
 
 
 
 static int compare_A(const void *a, const void *b)
 {
-  return strcmp(((CommArray_s *)a)->name, ((CommArray_s *)b)->name);
+    return strcmp(((command_array_struct *)a)->name, ((command_array_struct *)b)->name);
 }
 
 void init_commands(void)
 {
-  qsort(Commands, CommandsSize, sizeof(CommArray_s), compare_A);
-  qsort(CommunicationCommands, CommunicationCommandSize, sizeof(CommArray_s), compare_A);
-  qsort(NewServerCommands, NewServerCommandSize, sizeof(CommArray_s), compare_A);
-  qsort(WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
-  qsort(Socket_Commands, Socket_CommandsSize, sizeof(CommArray_s), compare_A);
-  qsort(Socket2_Commands, Socket2_CommandsSize, sizeof(CommArray_s), compare_A);
+    qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
+    qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
+    qsort(NewServerCommands, NewServerCommandSize, sizeof(command_array_struct), compare_A);
+    qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
+    qsort(Socket_Commands, Socket_CommandsSize, sizeof(command_array_struct), compare_A);
+    qsort(Socket2_Commands, Socket2_CommandsSize, sizeof(command_array_struct), compare_A);
 }
 
 #ifndef tolower
@@ -319,9 +319,9 @@ void init_commands(void)
 #endif
 
 
-CommFunc find_oldsocket_command(char *cmd)
+command_function find_oldsocket_command(char *cmd)
 {
-  CommArray_s *asp, dummy;
+  command_array_struct *asp, dummy;
   char *cp;
 
   for (cp=cmd; *cp; cp++) {
@@ -329,17 +329,17 @@ CommFunc find_oldsocket_command(char *cmd)
   }
 
   dummy.name =cmd;
-  asp =(CommArray_s *)bsearch((void *)&dummy,
+  asp =(command_array_struct *)bsearch((void *)&dummy,
 			      (void *)Socket_Commands, Socket_CommandsSize,
-			      sizeof(CommArray_s), compare_A);
+			      sizeof(command_array_struct), compare_A);
   if (asp)
     return asp->func;
   return NULL;
 }
 
-CommFunc find_oldsocket_command2(char *cmd)
+command_function find_oldsocket_command2(char *cmd)
 {
-  CommArray_s *asp, dummy;
+  command_array_struct *asp, dummy;
   char *cp;
 
   for (cp=cmd; *cp; cp++) {
@@ -347,35 +347,35 @@ CommFunc find_oldsocket_command2(char *cmd)
   }
 
   dummy.name =cmd;
-  asp =(CommArray_s *)bsearch((void *)&dummy,
+  asp =(command_array_struct *)bsearch((void *)&dummy,
 			      (void *)Socket2_Commands, Socket2_CommandsSize,
-			      sizeof(CommArray_s), compare_A);
+			      sizeof(command_array_struct), compare_A);
   if (asp)
     return asp->func;
   return NULL;
 }
 
-static CommFunc find_command(char *cmd)
+static command_function find_command(char *cmd)
 {
-  CommArray_s *asp, dummy;
+  command_array_struct *asp, dummy;
   char *cp;
 
   for (cp=cmd; *cp; cp++)
     *cp =tolower(*cp);
 
   dummy.name =cmd;
-  asp =(CommArray_s *)bsearch((void *)&dummy,
+  asp =(command_array_struct *)bsearch((void *)&dummy,
 			      (void *)Commands, CommandsSize,
-			      sizeof(CommArray_s), compare_A);
+			      sizeof(command_array_struct), compare_A);
   LOG(llevDebug, "Getting asp for command string %s\n", cmd);
   if (asp)
     return asp->func;
   else
   {
     LOG(llevDebug, "Now we are here\n");
-    asp =(CommArray_s *)bsearch((void *)&dummy,
+    asp =(command_array_struct *)bsearch((void *)&dummy,
       (void *)CommunicationCommands, CommunicationCommandSize,
-      sizeof(CommArray_s), compare_A);
+      sizeof(command_array_struct), compare_A);
     if (asp)
       return asp->func;
     else
@@ -383,25 +383,25 @@ static CommFunc find_command(char *cmd)
   };
 }
 
-static CommFunc find_wizcommand(char *cmd)
+static command_function find_wizcommand(char *cmd)
 {
-  CommArray_s *asp, dummy;
+  command_array_struct *asp, dummy;
   char *cp;
 
   for (cp=cmd; *cp; cp++)
     *cp =tolower(*cp);
 
   dummy.name =cmd;
-  asp =(CommArray_s *)bsearch((void *)&dummy,
+  asp =(command_array_struct *)bsearch((void *)&dummy,
 			      (void *)WizCommands, WizCommandsSize,
-			      sizeof(CommArray_s), compare_A);
+			      sizeof(command_array_struct), compare_A);
   if (asp)
     return asp->func;
   return NULL;
 }
 
 
-/*
+/**
  * parse_string may be called from a player in the game or from a socket
  * (op is NULL if it's a socket).
  * It returnes 1 if it recognized the command, otherwise 0.
@@ -410,9 +410,9 @@ static CommFunc find_wizcommand(char *cmd)
 
 int parse_string(object *op, char *str)
 {
-    CommFunc f;
+    command_function f;
     char *cp;
-    CommArray_s *asp;
+    command_array_struct *asp;
 
 #ifdef INPUT_DEBUG
     LOG(llevDebug, "Command: '%s'\n", str);
@@ -468,7 +468,7 @@ int parse_string(object *op, char *str)
 }
 
 
-/*  this function handles splitting up a ; separated
+/**  this function handles splitting up a ; separated
  *  compound command into sub-commands:  it is recursive.
  */
 int parse_command(object *op, char *str) {

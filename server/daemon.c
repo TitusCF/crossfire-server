@@ -65,7 +65,7 @@
 #include <stdio.h>
 #include <sys/file.h>
 
-FILE *BecomeDaemon (char *filename)
+FILE *become_daemon (char *filename)
 {
   FILE *logfile;
   register int i;

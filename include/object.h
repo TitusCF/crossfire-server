@@ -35,13 +35,13 @@ typedef uint32 tag_t;
 
 /* See common/item.c */
 
-typedef struct Body_Locations {
+typedef struct body_locations_struct {
     const char *save_name;	/* Name used to load/save it to disk */
     const char *use_name;	/* Name used when describing an item we can use */
     const char *nonuse_name;	/* Name to describe objects we can't use */
-} Body_Locations;
+} body_locations_struct;
 
-extern Body_Locations body_locations[NUM_BODY_LOCATIONS];
+extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
 
 typedef struct _event
 {

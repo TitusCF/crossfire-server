@@ -248,10 +248,8 @@ extern New_Face *smooth_face;
 
 
 extern long max_time;	/* loop time */
-extern NewSocket *init_sockets;
+extern socket_struct *init_sockets;
 
-
-EXTERN char *font_graphic;
 
 #ifndef __CEXTRACT__
 #include "libproto.h"

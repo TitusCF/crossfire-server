@@ -32,7 +32,7 @@
 
 New_Face *new_faces;
 
-/* bmappair and xbm are used when looking for the image id numbers
+/** bmappair and xbm are used when looking for the image id numbers
  * of a face by name.  xbm is sorted alphabetically so that bsearch
  * can be used to quickly find the entry for a name.  the number is
  * then an index into the new_faces array.
@@ -43,31 +43,28 @@ New_Face *new_faces;
  * xbm, it may not.  At current time, these do in fact match because
  * the bmaps file is created in a sorted order.
  */
-
 struct bmappair {
     char *name;
     unsigned int number;
 };
-
+/** The xbm array (which contains name and number information, and
+ * is then sorted) contains nroffiles entries. 
+ */
 static struct bmappair *xbm=NULL;
 
-/* Following can just as easily be pointers, but 
+/** Following can just as easily be pointers, but 
  * it is easier to keep them like this.
  */
 New_Face *blank_face, *dark_faces[3], *empty_face, *smooth_face;
 
 
-/* nroffiles is the actual number of bitmaps defined.
- * nrofpixmaps is the number of bitmaps loaded.  With
+/** nroffiles is the actual number of bitmaps defined. */
+static int nroffiles = 0;
+
+/** nrofpixmaps is the number of bitmaps loaded.  With
  * the automatic generation of the bmaps file, this is now equal
  * to nroffiles.
- *
- * The xbm array (which contains name and number information, and
- * is then sorted) contains nroffiles entries.  the xbm_names
- * array (which is used for converting the numeric face to
- * a name) contains nrofpixmaps entries.
  */
-static int nroffiles = 0;
 int nrofpixmaps = 0;
 
 /**
@@ -85,7 +82,7 @@ struct smoothing {
 static struct smoothing *smooth=NULL;
 int nrofsmooth=0;
 
-/* the only thing this table is used for now is to
+/** the only thing this table is used for now is to
  * translate the colorname in the magicmap field of the
  * face into a numeric index that is then sent to the
  * client for magic map commands.  The order of this table
@@ -119,7 +116,7 @@ static int compar_smooth (const struct smoothing *a, const struct smoothing *b) 
 }
 
 
-/*
+/**
  * Returns the matching color in the coloralias if found,
  * 0 otherwise.  Note that 0 will actually be black, so there is no
  * way the calling function can tell if an error occurred or not
@@ -134,11 +131,11 @@ static uint8 find_color(const char *name) {
   return 0;
 }
 
-/* This reads the lib/faces file, getting color and visibility information.
- * it is called by ReadBmapNames.
+/** This reads the lib/faces file, getting color and visibility information.
+ * it is called by read_bmap_names.
  */
 
-static void ReadFaceData(void)
+static void read_face_data(void)
 {
     char buf[MAX_BUF], *cp;
     New_Face *on_face=NULL;
@@ -161,7 +158,7 @@ static void ReadFaceData(void)
 	     cp = buf + 5;
 	     cp[strlen(cp)-1] = '\0';	/* remove newline */
 
-	     if ((tmp=FindFace(cp,-1))==-1) {
+	     if ((tmp=find_face(cp,-1))==-1) {
 		LOG(llevError,"Could not find face %s\n", cp);
 		continue;
 	     }
@@ -197,13 +194,13 @@ static void ReadFaceData(void)
     fclose(fp);
 }
 
-/* This reads the bmaps file to get all the bitmap names and
+/** This reads the bmaps file to get all the bitmap names and
  * stuff.  It only needs to be done once, because it is player
  * independent (ie, what display the person is on will not make a
  * difference.)
  */
 
-void ReadBmapNames (void) {
+void read_bmap_names(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int value, nrofbmaps = 0, i;
@@ -280,7 +277,7 @@ void ReadBmapNames (void) {
 
     qsort (xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
 
-    ReadFaceData();
+    read_face_data();
 
     for (i = 0; i < nrofpixmaps; i++) {
 	if (new_faces[i].magicmap==255) {
@@ -294,19 +291,19 @@ void ReadBmapNames (void) {
     /* Actually forcefully setting the colors here probably should not
      * be done - it could easily create confusion.
      */
-    blank_face = &new_faces[FindFace(BLANK_FACE_NAME, 0)];
+    blank_face = &new_faces[find_face(BLANK_FACE_NAME, 0)];
     blank_face->magicmap = find_color ("khaki") | FACE_FLOOR;
 
-    empty_face = &new_faces[FindFace(EMPTY_FACE_NAME, 0)];
+    empty_face = &new_faces[find_face(EMPTY_FACE_NAME, 0)];
 
-    dark_faces[0] = &new_faces[FindFace (DARK_FACE1_NAME,0)];
-    dark_faces[1] = &new_faces[FindFace (DARK_FACE2_NAME,0)];
-    dark_faces[2] = &new_faces[FindFace (DARK_FACE3_NAME,0)];
+    dark_faces[0] = &new_faces[find_face(DARK_FACE1_NAME,0)];
+    dark_faces[1] = &new_faces[find_face(DARK_FACE2_NAME,0)];
+    dark_faces[2] = &new_faces[find_face(DARK_FACE3_NAME,0)];
 
-    smooth_face = &new_faces[FindFace(SMOOTH_FACE_NAME,0)];
+    smooth_face = &new_faces[find_face(SMOOTH_FACE_NAME,0)];
 }
 
-/* This returns an the face number of face 'name'.  Number is constant
+/** This returns an the face number of face 'name'.  Number is constant
  * during an invocation, but not necessarily between versions (this
  * is because the faces are arranged in alphabetical order, so
  * if a face is removed or added, all faces after that will now
@@ -319,7 +316,7 @@ void ReadBmapNames (void) {
  * (needed in client, so that it will know to request that image
  * from the server)
  */
-int FindFace (const char *name, int error) {
+int find_face(const char *name, int error) {
     struct bmappair *bp, tmp;
     char *p;
 
@@ -333,14 +330,14 @@ int FindFace (const char *name, int error) {
     return bp ? bp->number : error;
 }
 
-/* Reads the smooth file to know how to smooth datas.
+/** Reads the smooth file to know how to smooth datas.
  * the smooth file if made of 2 elements lines.
  * lines starting with # are comment
  * the first element of line is face to smooth
  * the next element is the 16x2 faces picture
  * used for smoothing
  */
-int ReadSmooth (void) {
+int read_smooth(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
     int smoothcount = 0;
@@ -370,9 +367,9 @@ int ReadSmooth (void) {
             continue;
         *p='\0';
         q=buf;
-        smooth[nrofsmooth].id=FindFace(q,0);
+        smooth[nrofsmooth].id=find_face(q,0);
         q=p+1;
-        smooth[nrofsmooth].smooth=FindFace(q,0);
+        smooth[nrofsmooth].smooth=find_face(q,0);
         nrofsmooth++;
     }
     fclose(fp);
@@ -391,7 +388,7 @@ int ReadSmooth (void) {
  *
  * @return 1=smooth face found, 0=no smooth face found
  */
-int FindSmooth (uint16 face, uint16* smoothed) {
+int find_smooth(uint16 face, uint16* smoothed) {
     struct smoothing *bp, tmp;
 
     tmp.id = face;
@@ -404,7 +401,7 @@ int FindSmooth (uint16 face, uint16* smoothed) {
 }
 
 /**
- * Deallocates memory allocated by ReadBmapNames() and ReadSmooth().
+ * Deallocates memory allocated by read_bmap_names() and read_smooth().
  */
 void free_all_images(void)
 {

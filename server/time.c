@@ -37,7 +37,7 @@
 #include <sproto.h>
 #endif
 
-/* The following removes doors.  The functions check to see if similar 
+/** The following removes doors.  The functions check to see if similar 
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
  */
@@ -62,6 +62,9 @@ void remove_door(object *op) {
   free_object(op);
 }
 
+/**
+ * Same as remove_door but for locked doors.
+ */
 void remove_door2(object *op) {
   int i;
   object *tmp;
@@ -83,7 +86,7 @@ void remove_door2(object *op) {
   free_object(op);
 }
 
-/* Will generate a monster according to content
+/** Will generate a monster according to content
  * of generator.
  */
 void generate_monster_inv(object *gen) {
@@ -365,7 +368,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     } /* gate is going up */
 }
 
-/*  hp      : how long door is open/closed
+/**  hp      : how long door is open/closed
  *  maxhp   : initial value for hp
  *  sp      : 1 = open, 0 = close
  */
@@ -388,13 +391,12 @@ void move_timed_gate(object *op)
   }
 }
 
-/*  slaying:    name of the thing the detector is to look for
+/**  slaying:    name of the thing the detector is to look for
  *	 speed:      frequency of 'glances'
  *	 connected:  connected value of detector
  *  sp:         1 if detection sets buttons
  *              -1 if detection unsets buttons
  */
-
 void move_detector(object *op) 
 {
     object *tmp;
@@ -488,7 +490,7 @@ void move_hole(object *op) { /* 1 = opening, 0 = closing */
 }
 
 
-/* stop_item() returns a pointer to the stopped object.  The stopped object
+/** stop_item() returns a pointer to the stopped object.  The stopped object
  * may or may not have been removed from maps or inventories.  It will not
  * have been merged with other items.
  *
@@ -528,7 +530,7 @@ object *stop_item (object *op)
     }
 }
 
-/* fix_stopped_item() - put stopped item where stop_item() had found it.
+/** fix_stopped_item() - put stopped item where stop_item() had found it.
  * Inserts item into the old map, or merges it if it already is on the map.
  *
  * 'map' must be the value of op->map before stop_item() was called.
@@ -574,7 +576,7 @@ object *fix_stopped_arrow (object *op)
     } else
 	op->slaying = NULL;
 
-    /* Reset these to zero, so that CAN_MERGE will work properly */
+    /* Reset these to zero, so that can_merge will work properly */
     op->spellarg = NULL;
     op->stats.sp = 0;
     op->stats.hp = 0;
@@ -586,7 +588,7 @@ object *fix_stopped_arrow (object *op)
     return op;
 }
 
-/* stop_arrow() - what to do when a non-living flying object
+/** stop_arrow() - what to do when a non-living flying object
  * has to stop. Sept 96 - I added in thrown object code in
  * here too. -b.t.
  *
@@ -612,7 +614,7 @@ static void stop_arrow (object *op)
     }
 }
 
-/* Move an arrow along its course.  op is the arrow or thrown object.
+/** Move an arrow along its course.  op is the arrow or thrown object.
  */
 
 void move_arrow(object *op) {
@@ -795,11 +797,11 @@ void move_arrow(object *op) {
     insert_ob_in_map (op, m, op,0);
 }
 
-/* This routine doesnt seem to work for "inanimate" objects that
+/** This routine doesnt seem to work for "inanimate" objects that
  * are being carried, ie a held torch leaps from your hands!. 
  * Modified this routine to allow held objects. b.t. */
 
-void change_object(object *op) { /* Doesn`t handle linked objs yet */
+static void change_object(object *op) { /* Doesn`t handle linked objs yet */
   object *tmp,*env,*pl;
   int i,j;
 
@@ -897,12 +899,11 @@ void move_teleporter(object *op) {
 }
 
 
-/*  This object will teleport someone to a different map
-    and will also apply changes to the player from its inventory.
-    This was invented for giving classes, but there's no reason it
-    can't be generalized.
-*/
-
+/**  This object will teleport someone to a different map
+  *  and will also apply changes to the player from its inventory.
+  *  This was invented for giving classes, but there's no reason it
+  *  can't be generalized.
+  */
 void move_player_changer(object *op) {
     object *player;
     object *walk;
@@ -942,7 +943,8 @@ void move_player_changer(object *op) {
     }
 }
 
-/* firewalls fire other spells.
+/**
+ * firewalls fire other spells.
  * The direction of the wall is stored in op->stats.sp.
  * walls can have hp, so they can be torn down.
  */
@@ -964,7 +966,8 @@ void move_firewall(object *op) {
 }
 
 
-/*  move_player_mover:  this function takes a "player mover" as an
+/**
+ * move_player_mover:  this function takes a "player mover" as an
  * argument, and performs the function of a player mover, which is:
  *
  * a player mover finds any players that are sitting on it.  It
@@ -1045,7 +1048,7 @@ void move_player_mover(object *op) {
     }
 }
 
-/*
+/**
  * Will duplicate a specified object placed on top of it.
  * connected: what will trigger it.
  * level: multiplier.  0 to destroy.
@@ -1073,7 +1076,8 @@ void move_duplicator(object *op) {
     }
 }
 
-/* move_creator (by peterm) 
+/**
+ * move_creator (by peterm) 
  * it has the creator object create it's other_arch right on top of it.
  * connected:  what will trigger it
  * hp:  how many times it may create before stopping
@@ -1086,7 +1090,6 @@ void move_duplicator(object *op) {
  * more concern with large objects, most notably a part being placed
  * outside of the map which would cause the server to crash
 */
-
 void move_creator(object *creator) {
     object *new_ob;
 
@@ -1136,15 +1139,15 @@ void move_creator(object *creator) {
     }
 }
 
-/* move_marker --peterm@soda.csua.berkeley.edu
-   when moved, a marker will search for a player sitting above
-   it, and insert an invisible, weightless force into him
-   with a specific code as the slaying field.
-   At that time, it writes the contents of its own message
-   field to the player.  The marker will decrement hp to
-   0 and then delete itself every time it grants a mark.
-   unless hp was zero to start with, in which case it is infinite.*/
-
+/**
+ * move_marker --peterm@soda.csua.berkeley.edu
+ * when moved, a marker will search for a player sitting above
+ * it, and insert an invisible, weightless force into him
+ * with a specific code as the slaying field.
+ * At that time, it writes the contents of its own message
+ * field to the player.  The marker will decrement hp to
+ * 0 and then delete itself every time it grants a mark.
+ * unless hp was zero to start with, in which case it is infinite.*/
 void move_marker(object *op) {
     object *tmp,*tmp2;
   

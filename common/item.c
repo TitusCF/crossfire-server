@@ -52,7 +52,7 @@
  * Basically, for the use/nonuse, the code does something like:
  * "This item goes %s\n", with the use/nonuse values filling in the %s
  */
-Body_Locations body_locations[NUM_BODY_LOCATIONS] = {
+body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
 {"body_range",	"in your range slot",	"in a human's range slot"},
 {"body_arm",	"on your arm",		"on a human's arm"},
 {"body_torso",	"on your body",		"on a human's torso"},
@@ -223,30 +223,7 @@ static const typedata item_types[] = {
 
 const int item_types_size=sizeof(item_types)/sizeof(*item_types);
 
-/*
-materialtype material[NROFMATERIALS] = {
-  *  		  P  M  F  E  C  C  A  D  W  G  P S P T F  C D D C C G H B  I *
-   *		  H  A  I  L  O  O  C  R  E  H  O L A U E  A E E H O O O L  N *
-   *		  Y  G  R  E  L  N  I  A  A  O  I O R R A  N P A A U D L I  T *
-   *		  S  I  E  C  D  F  D  I  P  S  S W A N R  C L T O N   Y N  R *
-   *		  I  C     T     U     N  O  T  O   L      E E H S T P   D  N *
-  {"paper", 	{15,10,17, 9, 5, 7,13, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
-  {"metal", 	{ 2,12, 3,12, 2,10, 7, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
-  {"glass", 	{14,11, 8, 3,10, 5, 1, 0,20,15, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
-  {"leather", 	{ 5,10,10, 3, 3,10,10, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0}},
-  {"wood", 	{10,11,13, 2, 2,10, 9, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0}},
-  {"organics", 	{ 3,12, 9,11, 3,10, 9, 0,20,15, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
-  {"stone", 	{ 2, 5, 2, 2, 2, 2, 1, 0,20,15, 0,0,0,0,0, 5,0,0,0,0,0,0,0,0}},
-  {"cloth", 	{14,11,13, 4, 4, 5,10, 0,20,15, 0,0,0,0,0, 5,0,0,0,0,0,0,0,0}},
-  {"adamant", 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
-  {"liquid", 	{ 0, 8, 9, 6,17, 0,15, 0,20,15,12,0,0,0,0,11,0,0,0,0,0,0,0,0}},
-  {"soft metal",{ 6,12, 6,14, 2,10, 1, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
-  {"bone", 	{10, 9, 4, 5, 3,10,10, 0,20,15, 0,0,0,0,0, 2,0,0,0,0,0,0,0,0}},
-  {"ice", 	{14,11,16, 5, 0, 5, 6, 0,20,15, 0,0,0,0,0, 7,0,0,0,0,0,0,0,0}}
-};
-*/
-
-/* This curve may be too steep.  But the point is that there should
+/** This curve may be too steep.  But the point is that there should
  * be tough choices - there is no real point to this if everyone can
  * wear whatever they want with no worries.  Perhaps having the steep
  * curve is good (maybe even steeper), but allowing players to
@@ -269,7 +246,7 @@ int get_power_from_ench(int ench)
     return enc_to_item_power[ench];
 }
 
-/* This takes an object 'op' and figures out what its item_power
+/** This takes an object 'op' and figures out what its item_power
  * rating should be.  This should only really be used by the treasure
  * generation code, and when loading legacy objects.  It returns
  * the item_power it calculates.
@@ -340,7 +317,7 @@ int calc_item_power(const object *op, int flag)
 
 }
 
-/* returns the typedata that has a number equal to itemtype, if there 
+/** returns the typedata that has a number equal to itemtype, if there 
  * isn't one, returns NULL */
 
 const typedata *get_typedata(int itemtype) {
@@ -350,7 +327,7 @@ const typedata *get_typedata(int itemtype) {
     return NULL;
 }
 
-/* returns the typedata that has a name equal to itemtype, if there 
+/** returns the typedata that has a name equal to itemtype, if there 
  * isn't one, return the plural name that matches, if there still isn't
  * one return NULL */
 
@@ -367,10 +344,10 @@ const typedata *get_typedata_by_name(const char *name) {
 	}
     return NULL;
 }
-/* describe_resistance generates the visible naming for resistances.
- * returns a static array of the description.  This can return
+/** Generates the visible naming for resistances.
+ * Returns a static array of the description.  This can return
  * a big buffer.
- * if newline is true, we don't put parens around the description
+ * If newline is true, we don't put parens around the description
  * but do put a newline at the end.  Useful when dumping to files
  */
 char *describe_resistance(const object *op, int newline)
@@ -394,7 +371,7 @@ char *describe_resistance(const object *op, int newline)
 }
 
 
-/*
+/**
  * query_weight(object) returns a character pointer to a static buffer
  * containing the text-representation of the weight of the given object.
  * The buffer will be overwritten by the next call to query_weight().
@@ -413,7 +390,7 @@ char *query_weight(const object *op) {
   return buf;
 }
 
-/*
+/**
  * Returns the pointer to a static buffer containing
  * the number requested (of the form first, second, third...)
  */
@@ -434,7 +411,7 @@ char *get_levelnumber(int i) {
 }
 
 
-/*
+/**
  * get_number(integer) returns the text-representation of the given number
  * in a static buffer.  The buffer might be overwritten at the next
  * call to get_number().
@@ -451,7 +428,7 @@ char *get_number(int i) {
   }
 }
 
-/*
+/**
  *  Returns pointer to static buffer containing ring's or amulet's
  *  abilities
  *  These are taken from old query_name(), but it would work better
@@ -459,8 +436,8 @@ char *get_number(int i) {
  *  caller would handle FULL_RING_DESCRIPTION definition.
  *  Or make FULL_RING_DESCRIPTION standard part of a game and let
  *  client handle names.
- */
-/* Aug 95 modified this slightly so that Skill tools don't have magic bonus
+ * 
+ * Aug 95 modified this slightly so that Skill tools don't have magic bonus
  * from stats.sp - b.t.
  */
 char *ring_desc (const object *op) 
@@ -525,7 +502,7 @@ char *ring_desc (const object *op)
     return buf;
 }
 
-/*
+/**
  * query_short_name(object) is similar to query_name, but doesn't 
  * contain any information about object status (worn/cursed/etc.)
  */
@@ -592,7 +569,7 @@ const char *query_short_name(const object *op)
     return buf;
 }
 
-/*
+/**
  * query_name(object) returns a character pointer pointing to a static
  * buffer which contains a verbose textual representation of the name
  * of the given object.
@@ -697,7 +674,7 @@ char *query_name(const object *op) {
     return buf[use_buf];
 }
 
-/*
+/**
  * query_base_name(object) returns a character pointer pointing to a static
  * buffer which contains a verbose textual representation of the name
  * of the given object.  The buffer will be overwritten at the next
@@ -789,7 +766,7 @@ const char *query_base_name(const object *op, int plural) {
     return buf;
 }
 
-/* Break this off from describe_item - that function was way
+/** Break this off from describe_item - that function was way
  * too long, making it difficult to read.  This function deals
  * with describing the monsters & players abilities.  It should only
  * be called with monster & player objects.  Returns a description
@@ -936,7 +913,7 @@ static char *describe_monster(const object *op) {
 }
 
 
-/*
+/**
  * Returns a pointer to a static buffer which contains a
  * description of the given object.
  * If it is a monster, lots of information about its abilities
@@ -1248,7 +1225,7 @@ char *describe_item(const object *op, object *owner) {
     return retbuf;
 }
 
-/* Return true if the item is magical.  A magical item is one that
+/** Return true if the item is magical.  A magical item is one that
  * increases/decreases any abilities, provides a resistance,
  * has a generic magical bonus, or is an artifact.
  * This function is used by detect_magic to determine if an item
@@ -1321,7 +1298,7 @@ int is_magical(const object *op) {
     return 0;
 }
 
-/* need_identify returns true if the item should be identified.  This 
+/** need_identify returns true if the item should be identified.  This 
  * function really should not exist - by default, any item not identified
  * should need it.
  */
@@ -1372,7 +1349,7 @@ int need_identify(const object *op) {
 }
 
 
-/*
+/**
  * Supposed to fix face-values as well here, but later.
  */
 

@@ -1772,7 +1772,7 @@ void* cfapi_object_get_property(int* type, ...)
             {
                 object* op2;
                 op2 = va_arg(args, object*);
-                ri = CAN_MERGE(op, op2);
+                ri = can_merge(op, op2);
                 rv = &ri;
             }
             *type = CFAPI_INT;
@@ -3522,11 +3522,11 @@ void* cfapi_region_get_property(int* type, ...)
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
-CommArray_s *find_plugin_command(char *cmd, object *op)
+command_array_struct *find_plugin_command(char *cmd, object *op)
 {
     int i;
     crossfire_plugin* cp;
-    CommArray_s* rtn_cmd;
+    command_array_struct* rtn_cmd;
 
     if (plugins_list == NULL)
         return NULL;

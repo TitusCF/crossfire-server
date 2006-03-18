@@ -133,11 +133,12 @@ unsigned int query_flags (object *op)
     return flags;
 }
 
-/* Used in the send_look to put object head into SockList
+/**
+ * Used in the send_look to put object head into SockList
  * sl for socket ns.  Need socket to know if we need to send
  * animation of face to the client.
  */
-static void add_object_to_socklist(NewSocket *ns, SockList *sl, object *head)
+static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head)
 {
     int flags, len, anim_speed;
     char item_n[MAX_BUF];
@@ -569,7 +570,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
 
 
 /** Client wants to examine some object.  So lets do so. */
-void ExamineCmd(char *buf, int len,player *pl)
+void examine_cmd(char *buf, int len,player *pl)
 {
     long tag = atoi(buf);
     object *op = esrv_get_ob_from_count(pl->ob, tag);
@@ -583,7 +584,7 @@ void ExamineCmd(char *buf, int len,player *pl)
 }
 
 /** Client wants to apply some object.  Lets do so. */
-void ApplyCmd(char *buf, int len,player *pl)
+void apply_cmd(char *buf, int len,player *pl)
 {
     uint32 tag = atoi(buf);
     object *op = esrv_get_ob_from_count(pl->ob, tag);
@@ -609,7 +610,7 @@ void ApplyCmd(char *buf, int len,player *pl)
 }
 
 /** Client wants to apply some object.  Lets do so. */
-void LockItem(uint8 *data, int len,player *pl)
+void lock_item_cmd(uint8 *data, int len,player *pl)
 {
     int flag, tag;
     object *op;
@@ -630,7 +631,7 @@ void LockItem(uint8 *data, int len,player *pl)
 }
 
 /** Client wants to apply some object.  Lets do so. */
-void MarkItem(uint8 *data, int len,player *pl)
+void mark_item_cmd(uint8 *data, int len,player *pl)
 {
     int tag;
     object *op;
@@ -648,7 +649,7 @@ void MarkItem(uint8 *data, int len,player *pl)
 
 
 /**
- * look_at prints items on the specified square.
+ * Prints items on the specified square.
  *
  * [ removed EARTHWALL check and added check for containers inventory.
  *   Tero.Haatanen@lut.fi ]
@@ -708,7 +709,7 @@ void look_at(object *op,int dx,int dy) {
 
 
 /** Client wants to look at some object.  Lets do so. */
-void LookAt(char *buf, int len,player *pl)
+void look_at_cmd(char *buf, int len,player *pl)
 {
     int dx, dy;
     char *cp;

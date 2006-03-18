@@ -46,16 +46,16 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-typedef int (*CommFunc)(object *op, char *params);
+typedef int (*command_function)(object *op, char *params);
 
 typedef struct {		/* global list's structure */
   const char *name;
-  CommFunc func;
+  command_function func;
   float	time;			/* How long it takes to execute this command */
-} CommArray_s;
+} command_array_struct;
 
 
-extern CommArray_s Commands[],NewServerCommands [],SocketCommands[],
+extern command_array_struct Commands[],NewServerCommands [],SocketCommands[],
 	WizCommands [], CommunicationCommands[];
 
 extern const int CommandsSize,NewServerCommandSize,

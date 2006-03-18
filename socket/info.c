@@ -48,7 +48,7 @@
  * parameter.  the esrv_drawinfo functions should probably be
  * replaced with this, just using black as the color.
  */
-static void esrv_print_msg(NewSocket *ns,int color, const char *str)
+static void esrv_print_msg(socket_struct *ns,int color, const char *str)
 {
     char buf[HUGE_BUF];
 
@@ -70,7 +70,7 @@ static void esrv_print_msg(NewSocket *ns,int color, const char *str)
  * intro   Intro message to send with main message if client does not support the message type
  * message The main message
  */
-static void esrv_print_ext_msg(NewSocket *ns,int color,uint8 type, uint8 subtype, const char *message)
+static void esrv_print_ext_msg(socket_struct *ns,int color,uint8 type, uint8 subtype, const char *message)
 {
     char buf[HUGE_BUF];
     snprintf(buf,HUGE_BUF, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
@@ -611,7 +611,7 @@ void draw_magic_map(object *pl)
  * Send a kill log record to sockets
  */
 
-void Log_Kill(const char *Who,
+void log_kill(const char *Who,
             const char *What, int WhatType,
             const char *With, int WithType)
 {
