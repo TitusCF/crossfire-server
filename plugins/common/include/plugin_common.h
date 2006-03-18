@@ -100,7 +100,7 @@ extern int          cf_object_teleport( object* ob, mapstruct* map, int x, int y
 extern void         cf_object_update( object* op, int flags);
 extern void         cf_object_pickup( object* op, object* what);
 extern char*        cf_object_get_key(object* op, char* keyname);
-extern void         cf_object_set_key(object* op, char* keyname, char* value);
+extern void         cf_object_set_key(object* op, char* keyname, char* value, int add_key);
 extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern void         cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* op);

@@ -1537,17 +1537,18 @@ static PyObject* Crossfire_Object_ReadKey( Crossfire_Object* who, PyObject* args
 
     val = cf_object_get_key(who->obj, keyname);
 
-    return Py_BuildValue("s",val);
+    return Py_BuildValue("s",val ? val : "");
 }
 static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* args )
 {
     char* keyname;
     char* value;
+    int add_key = 0;
 
-    if (!PyArg_ParseTuple(args,"ss",&keyname,&value))
+    if (!PyArg_ParseTuple(args,"ss|i",&keyname,&value,&add_key))
         return NULL;
 
-    cf_object_set_key(who->obj, keyname, value);
+    cf_object_set_key(who->obj, keyname, value, add_key);
     Py_INCREF(Py_None);
     return Py_None;
 }

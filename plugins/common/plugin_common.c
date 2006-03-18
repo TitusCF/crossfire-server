@@ -732,10 +732,10 @@ char* cf_object_get_key(object* op, char* keyname)
     int val;
     return (char*)cfapiObject_get_key(&val, op, keyname);
 }
-void cf_object_set_key(object* op, char* keyname, char* value)
+void cf_object_set_key(object* op, char* keyname, char* value, int add_key)
 {
     int val;
-    cfapiObject_set_key(&val, op, keyname, value);
+    cfapiObject_set_key(&val, op, keyname, value, add_key);
 }
 
 /* Archetype-related functions */
