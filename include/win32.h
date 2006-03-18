@@ -42,8 +42,6 @@
 #endif
 #define snprintf _snprintf
 
-#include "version.h"
-
 /* include all needed autoconfig.h defines */
 #define CS_LOGSTATS
 #define HAVE_SRAND
