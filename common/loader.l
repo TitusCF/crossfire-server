@@ -757,7 +757,7 @@ A	.+
 			else FREE_AND_COPY(op->title, y);
 		    }
 
-^face{S}	op->face = &new_faces[FindFace(yval(), 0)];
+^face{S}	op->face = &new_faces[find_face(yval(), 0)];
 ^str{S}		op->stats.Str = IVAL;
 ^dex{S}		op->stats.Dex = IVAL;
 ^con{S}		op->stats.Con = IVAL;
