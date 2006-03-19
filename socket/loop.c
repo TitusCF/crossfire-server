@@ -232,14 +232,14 @@ void handle_oldsocket(socket_struct *ns)
     }
     if (!strcasecmp(ns->inbuf.buf, "listen")) {
 	if (cp) {
-	    char *buf="Socket switched to listen mode\n";
+	    const char *buf="Socket switched to listen mode\n";
 
 	    free(ns->comment);
 	    ns->comment = strdup_local(cp);
 	    ns->old_mode = Old_Listen;
 	    cs_write_string(ns, buf, strlen(buf));
 	} else {
-	    char *buf="Need to supply a comment/url to listen\n";
+	    const char *buf="Need to supply a comment/url to listen\n";
 	    cs_write_string(ns, buf, strlen(buf));
 	}
 	return;
@@ -252,13 +252,13 @@ void handle_oldsocket(socket_struct *ns)
 	    while (isspace(*cp1)) cp1++;
 	}
 	if (!cp || !cp1) {
-	    char *buf="Need to provide a name/password to name\n";
+	    const char *buf="Need to provide a name/password to name\n";
 	    cs_write_string(ns, buf, strlen(buf));
 	    return;
 	}
 
 	if (verify_player(cp, cp1)==0) {
-	    char *buf="Welcome back\n";
+	    const char *buf="Welcome back\n";
 	    free(ns->comment);
 	    ns->comment = strdup_local(cp);
 	    ns->old_mode = Old_Player;
@@ -267,19 +267,19 @@ void handle_oldsocket(socket_struct *ns)
 	else if (verify_player(cp, cp1)==2) {
 	    ns->password_fails++;
 	    if (ns->password_fails >= MAX_PASSWORD_FAILURES) {
-		char *buf="You failed to log in too many times, you will now be kicked.\n";
+		const char *buf="You failed to log in too many times, you will now be kicked.\n";
 		LOG(llevInfo, "A player connecting from %s in oldsocketmode has been dropped for password failure\n",
 		    ns->host); 
 		cs_write_string(ns, buf, strlen(buf));
 		ns->status = Ns_Dead;
 	    }
 	    else {
-		char *buf="Could not login you in.  Check your name and password.\n";
+		const char *buf="Could not login you in.  Check your name and password.\n";
 		cs_write_string(ns, buf, strlen(buf));
 	    }
 	}	
 	else {
-	    char *buf="Could not login you in.  Check your name and password.\n";
+	    const char *buf="Could not login you in.  Check your name and password.\n";
 	    cs_write_string(ns, buf, strlen(buf));
 	}
 	return;

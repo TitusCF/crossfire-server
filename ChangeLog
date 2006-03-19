@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch by Stefan Huehner: add const where appropriate.
+---
+Affected files: include/sockproto.h, socket/{loop.c,lowlevel.c}
+Andreas Kirschbaum 2006-03-19
+
 Use const when possible. Patch courtesy Stefan Huehner.
  common/item.c map.c porting.c readable.c shstr.c utils.c
  crossedit/Attr.c CrEdit.c

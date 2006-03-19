@@ -92,12 +92,12 @@ void SockList_AddInt64(SockList *sl, uint64 data)
  * Basically does the reverse of SockList_AddInt, but on
  * strings instead.  Same for the GetShort, but for 16 bits.
  */
-int GetInt_String(unsigned char *data)
+int GetInt_String(const unsigned char *data)
 {
     return ((data[0]<<24) + (data[1]<<16) + (data[2]<<8) + data[3]);
 }
 
-short GetShort_String(unsigned char *data) {
+short GetShort_String(const unsigned char *data) {
     return ((data[0]<<8)+data[1]);
 }
 
@@ -240,7 +240,7 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
  * data, and len is the number of bytes to add.
  */
 
-static void add_to_buffer(socket_struct *ns, unsigned char *buf, int len)
+static void add_to_buffer(socket_struct *ns, const unsigned char *buf, int len)
 {
     int avail, end;
 
@@ -340,10 +340,10 @@ void write_socket_buffer(socket_struct *ns)
  * of bytes to write.  IT doesn't return anything - rather, it
  * updates the ns structure if we get an  error.
  */
-void Write_To_Socket(socket_struct *ns, unsigned char *buf, int len)
+static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len)
 {
     int amt=0;
-    unsigned char *pos=buf;
+    const unsigned char *pos=buf;
 
     if (ns->status == Ns_Dead || !buf) {
 	LOG(llevDebug,"Write_To_Socket called with dead socket\n");
@@ -411,7 +411,7 @@ void cs_write_string(socket_struct *ns, const char *buf, int len)
     SockList sl;
 
     sl.len = len;
-    sl.buf = (unsigned char*)buf;
+    sl.buf = (unsigned char *)buf;
     Send_With_Handling(ns, &sl);
 }
 
@@ -422,7 +422,7 @@ void cs_write_string(socket_struct *ns, const char *buf, int len)
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
  */
-void Send_With_Handling(socket_struct *ns,SockList  *msg)
+void Send_With_Handling(socket_struct *ns, const SockList *msg)
 {
     unsigned char sbuf[4];
 
@@ -448,12 +448,12 @@ void Send_With_Handling(socket_struct *ns,SockList  *msg)
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
-void Write_String_To_Socket(socket_struct *ns, char *buf, int len)
+void Write_String_To_Socket(socket_struct *ns, const char *buf, int len)
 {
     SockList sl;
 
     sl.len = len;
-    sl.buf = (uint8*)buf;
+    sl.buf = (unsigned char *)buf;
     Send_With_Handling(ns, &sl);
 }
 
