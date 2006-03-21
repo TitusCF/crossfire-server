@@ -3,8 +3,8 @@ Unit tests and functional tests documentation.
 Crossfire uses the 'check' C automated testing framework available at
 http://check.sourceforge.net
 The presence of this framework at compile time is not required but is STRONGLY
-recommanded for developpers. You should not commit changes to the CVS if they
-are not unit tested. In fact you should even write you new test before writing
+recommended for developpers. You should not commit changes to the CVS if they
+are not unit tested. In fact you should even write your new test before writing
 the change.
 
 Organization
@@ -27,7 +27,7 @@ test
  +-bugs  ** contains test of known bugs (fixed and opened)
  |  +-bugtrack   ** Each file has the number of associated sourceforge bug id
  |  |    +-bug_<id>.c
- |  +-unrelated  ** Bugs that for a reason or another where not referenced on sf
+ |  +-unrelated  ** Bugs that for a reason or another were not referenced on sf
  +-functional  ** contains all functional tests with structure of tested code
  |  +-common
  |  +-socket
@@ -36,7 +36,7 @@ test
  |  +-crossedit
  |  +-general  ** put here func test not in previous func categories
  +-plugins
-    //structure still tonow be defined
+    //structure still to be defined
 
 All source file having tests in them should be named test_*.c
 
@@ -53,10 +53,10 @@ they are not unit tests and should go to functional/*
 when test/unit is complete, each function of crossfire will be tested at least
 once.
 
-Note: because crossfire make heavy use of macros, macros must be considered as
-function and so must be unit tested too. Because macros are define in .h file,
+Note: because crossfire makeis heavy use of macros, macros must be considered as
+function and so must be unit tested too. Because macros are defined in .h file,
 the unit test should have the form test_xxx for testing xxx.h. All unit tests
-for .h files goes to test/headers
+for .h files go to test/headers
 
 Functional Test
 ===============
@@ -71,13 +71,13 @@ in test/functional/general.
 Bugs
 ====
 When a bug is discovered, here is the procedure to follow:
-  1) write a testcase reproducing it (either in test/bugtrack either in
+  1) write a testcase reproducing it (either in test/bugtrack or in
      test/unrelated, depending upon the bug being reported on sf or not)
   2) if the bug was not reported on sourceforge, provide enough information in
      testcase comments to describe the bug, preferrably at the top of test
      file, after the GPL licence header.
   3) when you successfully wrote a failing testcase demonstrating the bug, start
-     to fix it (by writting the test you probably got a good idea of what goes
+     to fix it (by writing the test you probably got a good idea of what goes
      wrong and the automated test will test each fix attempt for you)
   4) provide short information in test source code on what was wrong. If a later
      change in crossfire revive the bug, it will help fix it quickly.
@@ -92,14 +92,14 @@ are all provided in rsc or a subdirectory of it. Try to name those files
 explicitly. Do not name it things like test-map or alike. Prefer forms like
 rsc/maps/walls_blocks_move or like rsc/arch/selection_of_magic_books
 each file in src/* should be documented in rsc/index.txt so other coders can
-reuse those resources. each subdirectory of rsc should have it's own index file.
+reuse those resources. Each subdirectory of rsc should have its own index file.
 
 Toolkits
 ========
-For some testcases (specially the functionnal one), you may need to have a
+For some testcases (especially the functionnal one), you may need to have a
 specific crossfire configuration loaded, or to do specific map operation. It
 won't be surprising some of those operation are generic enough to be shared
-amongst all testcases. such support function (aka toolkits) will be made
+amongst all testcases. Such support function (aka toolkits) will be made
 available in the toolkit directory.
 
 Includes
