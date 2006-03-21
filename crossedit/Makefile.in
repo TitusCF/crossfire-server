@@ -40,7 +40,8 @@
 #   The author can be reached via e-mail to mwedel@scruz.net
 
 
-SOURCES = $(crossedit_SOURCES)
+
+SOURCES = $(libcrossedit_a_SOURCES) $(crossedit_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -76,18 +77,24 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/utils/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/include/autoconf.h
 CONFIG_CLEAN_FILES =
+LIBRARIES = $(noinst_LIBRARIES)
+ARFLAGS = cru
+libcrossedit_a_AR = $(AR) $(ARFLAGS)
+libcrossedit_a_LIBADD =
+am_libcrossedit_a_OBJECTS = Attr.$(OBJEXT) MapAttr.$(OBJEXT) \
+	CrFace.$(OBJEXT) CrEdit.$(OBJEXT) CrList.$(OBJEXT) \
+	CrUtil.$(OBJEXT) Edit.$(OBJEXT) App.$(OBJEXT) \
+	Bitmaps.$(OBJEXT) Str.$(OBJEXT) xutil.$(OBJEXT) \
+	stubs.$(OBJEXT)
+libcrossedit_a_OBJECTS = $(am_libcrossedit_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_crossedit_OBJECTS = crossedit.$(OBJEXT) Attr.$(OBJEXT) \
-	MapAttr.$(OBJEXT) CrFace.$(OBJEXT) CrEdit.$(OBJEXT) \
-	CrList.$(OBJEXT) CrUtil.$(OBJEXT) Edit.$(OBJEXT) App.$(OBJEXT) \
-	Bitmaps.$(OBJEXT) Str.$(OBJEXT) xutil.$(OBJEXT) \
-	stubs.$(OBJEXT)
+am_crossedit_OBJECTS = crossedit.$(OBJEXT)
 crossedit_OBJECTS = $(am_crossedit_OBJECTS)
 am__DEPENDENCIES_1 =
-crossedit_DEPENDENCIES = ../common/libcross.a Cnv/libCnv.a \
-	$(am__DEPENDENCIES_1)
+crossedit_DEPENDENCIES = ../common/libcross.a libcrossedit.a \
+	Cnv/libCnv.a $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
@@ -99,8 +106,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(crossedit_SOURCES)
-DIST_SOURCES = $(crossedit_SOURCES)
+SOURCES = $(libcrossedit_a_SOURCES) $(crossedit_SOURCES)
+DIST_SOURCES = $(libcrossedit_a_SOURCES) $(crossedit_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-exec-recursive install-info-recursive \
@@ -127,6 +134,8 @@ BZIP = @BZIP@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CHECK_CFLAGS = @CHECK_CFLAGS@
+CHECK_LIBS = @CHECK_LIBS@
 COMPRESS = @COMPRESS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
@@ -147,6 +156,8 @@ F77 = @F77@
 FFLAGS = @FFLAGS@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
+HAVE_CHECK_FALSE = @HAVE_CHECK_FALSE@
+HAVE_CHECK_TRUE = @HAVE_CHECK_TRUE@
 HAVE_LIBDL_FALSE = @HAVE_LIBDL_FALSE@
 HAVE_LIBDL_TRUE = @HAVE_LIBDL_TRUE@
 HAVE_X_FALSE = @HAVE_X_FALSE@
@@ -244,8 +255,11 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
+noinst_LIBRARIES = libcrossedit.a
 crossedit_SOURCES = \
-	crossedit.c \
+	crossedit.c 
+
+libcrossedit_a_SOURCES = \
 	Attr.c \
 	MapAttr.c \
 	CrFace.c \
@@ -278,7 +292,7 @@ crossedit_SOURCES = \
 noinst_HEADERS = png.c
 EXTRA_DIST = README TODO Crossedit.ad Crossedit.ad.h 
 SUBDIRS = include Cnv bitmaps doc
-crossedit_LDADD = ../common/libcross.a Cnv/libCnv.a $(X11LIBS)
+crossedit_LDADD = ../common/libcross.a libcrossedit.a Cnv/libCnv.a $(X11LIBS)
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include -I$(srcdir)/Cnv \
 	      -DDATADIR=\"$(pkgdatadir)\" -DLIBDIR=\"$(pkglibdir)\" \
 	      -DLOCALDIR=\"$(pkgstatedir)\"
@@ -316,6 +330,13 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libcrossedit.a: $(libcrossedit_a_OBJECTS) $(libcrossedit_a_DEPENDENCIES) 
+	-rm -f libcrossedit.a
+	$(libcrossedit_a_AR) libcrossedit.a $(libcrossedit_a_OBJECTS) $(libcrossedit_a_LIBADD)
+	$(RANLIB) libcrossedit.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(mkdir_p) "$(DESTDIR)$(bindir)"
@@ -575,7 +596,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(HEADERS)
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)"; do \
@@ -607,7 +628,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -rf ./$(DEPDIR)
@@ -659,14 +681,14 @@ uninstall-info: uninstall-info-recursive
 
 .PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am check check-am \
 	clean clean-binPROGRAMS clean-generic clean-libtool \
-	clean-recursive ctags ctags-recursive distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-recursive distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-exec install-exec-am \
-	install-info install-info-am install-man install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic \
+	clean-noinstLIBRARIES clean-recursive ctags ctags-recursive \
+	distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-recursive distclean-tags distdir \
+	dvi dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-exec \
+	install-exec-am install-info install-info-am install-man \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
 	maintainer-clean-recursive mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool mostlyclean-recursive \
 	pdf pdf-am ps ps-am tags tags-recursive uninstall uninstall-am \

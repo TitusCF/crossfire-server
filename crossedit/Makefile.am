@@ -24,9 +24,10 @@
 #   The author can be reached via e-mail to mwedel@scruz.net
 
 bin_PROGRAMS = crossedit
-
+noinst_LIBRARIES = libcrossedit.a
 crossedit_SOURCES = \
-	crossedit.c \
+	crossedit.c 
+libcrossedit_a_SOURCES = \
 	Attr.c \
 	MapAttr.c \
 	CrFace.c \
@@ -61,7 +62,7 @@ EXTRA_DIST = README TODO Crossedit.ad Crossedit.ad.h
 
 SUBDIRS = include Cnv bitmaps doc
 
-crossedit_LDADD = ../common/libcross.a Cnv/libCnv.a $(X11LIBS)
+crossedit_LDADD = ../common/libcross.a libcrossedit.a Cnv/libCnv.a $(X11LIBS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(srcdir)/include -I$(srcdir)/Cnv \
 	      -DDATADIR=\"$(pkgdatadir)\" -DLIBDIR=\"$(pkglibdir)\" \

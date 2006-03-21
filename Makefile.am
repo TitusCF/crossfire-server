@@ -3,7 +3,11 @@ if HAVE_X
   CROSSEDIT = crossedit
 endif
 
-SUBDIRS = common random_maps socket server include lib utils doc plugins devel $(CROSSEDIT)
+if HAVE_CHECK
+  UNIT_TEST = test
+endif
+
+SUBDIRS = common random_maps socket server include lib utils doc plugins devel $(UNIT_TEST) $(CROSSEDIT)
 
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 

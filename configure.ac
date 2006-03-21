@@ -225,7 +225,9 @@ if test "x$cf_have_libdl" = "xyes" ; then
 	###############
 	# Python plugin
 	CF_CHECK_PYTHON(
-		[PLUGIN_PYTHON="cfpython.la"],
+		[PLUGIN_PYTHON="cfpython.la"]
+		[cf_will_build_python="yes"],
+		[cf_will_build_python="no"]
 		[AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
 	)
 	dnl *** Put other plugins configuration code here ***
@@ -234,6 +236,14 @@ else
 fi
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
+
+########################
+# Unit test configuration
+
+AM_PATH_CHECK(,[have_check="yes"],
+  AC_MSG_WARN([Check not found; cannot run unit tests!])
+  [have_check="no"])
+AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
 
 AC_OUTPUT([Makefile
 	crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile
@@ -251,4 +261,42 @@ AC_OUTPUT([Makefile
 	plugins/cfanim/include/Makefile
 	plugins/common/Makefile plugins/common/include/Makefile
 	devel/Makefile
+	test/Makefile test/unit/Makefile test/toolkit/Makefile
+	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile
 	 ])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([Configuration resume....])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([  Paths])
+AC_MSG_NOTICE([    prefix default value                 ${prefix}])
+AC_MSG_NOTICE([    exec_prefix default value            ${exec_prefix}])
+AC_MSG_NOTICE([    Will put executables in              $bindir])
+AC_MSG_NOTICE([    Will put ressources in               $datadir])
+AC_MSG_NOTICE([    Will put config in                   $sysconfdir])
+AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([  Build options])
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([    Will build crossedit? (*)            No fucking way to know! ])
+AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
+		
+if test "x$cf_have_libdl" = "xyes" ; then
+AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
+			
+fi
+AC_MSG_NOTICE([    Will process unit testing?           $have_check ])
+if test "x$have_check" = "xyes" ; then
+AC_MSG_NOTICE([      (run make; make -k check)])
+else
+AC_MSG_NOTICE([      If you are a developper, you MUST install the check framework])
+AC_MSG_NOTICE([      and write automated tests for all you add-ons!])
+fi
+AC_MSG_NOTICE([])
+AC_MSG_NOTICE([  * because there is now way to know if crossedit will be compilable])
+AC_MSG_NOTICE([  on this platform, it may be that automated tests depending on it])
+AC_MSG_NOTICE([  fail with awfull make error messages. As checks are run with])
+AC_MSG_NOTICE([  make -k this should not affect other checks])
+
+

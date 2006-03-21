@@ -26,7 +26,9 @@
 
 bin_PROGRAMS = crossfire
 
-crossfire_SOURCES = \
+noinst_LIBRARIES = libserver.a
+crossfire_SOURCES = main.c
+libserver_a_SOURCES = \
 	alchemy.c\
 	apply.c\
 	attack.c\
@@ -48,7 +50,6 @@ crossfire_SOURCES = \
 	gods.c\
 	init.c\
 	login.c\
-	main.c\
 	monster.c\
 	move.c\
 	pets.c\
@@ -79,7 +80,7 @@ else
 LIBDL=
 crossfire_LDFLAGS=
 endif
-crossfire_LDADD = ../common/libcross.a ../random_maps/librandom_map.a \
+crossfire_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
 		../socket/libsocket.a $(LIBDL)
 
 ../common/libcross.a:

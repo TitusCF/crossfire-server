@@ -1,3 +1,135 @@
+Unit tests and functional tests documentation.
+
+Crossfire uses the 'check' C automated testing framework available at
+http://check.sourceforge.net
+The presence of this framework at compile time is not required but is STRONGLY
+recommanded for developpers. You should not commit changes to the CVS if they
+are not unit tested. In fact you should even write you new test before writing
+the change.
+
+Organization
+============
+
+All automated tests are in subfolders of the test directory. Directory
+structure is as follow:
+
+test
+ +-rsc   ** contains all runtime ressources unit tests might need (maps, etc)
+ +-include  ** include files specific to unit tests
+ +-toolkit  ** generic function and toolkit shared by several tests
+ +-unit  ** contains all unit tests separated with same structure as tested code
+ |  +-headers
+ |  +-common
+ |  +-socket
+ |  +-random_maps
+ |  +-server
+ |  +-crossedit
+ +-bugs  ** contains test of known bugs (fixed and opened)
+ |  +-bugtrack   ** Each file has the number of associated sourceforge bug id
+ |  |    +-bug_<id>.c
+ |  +-unrelated  ** Bugs that for a reason or another where not referenced on sf
+ +-functional  ** contains all functional tests with structure of tested code
+ |  +-common
+ |  +-socket
+ |  +-random_maps
+ |  +-server
+ |  +-crossedit
+ |  +-general  ** put here func test not in previous func categories
+ +-plugins
+    //structure still tonow be defined
+
+All source file having tests in them should be named test_*.c
+
+Unit Test
+=========
+Put in subfolders of test/unit, They test the various crossfire functions. You
+must write exactly one test_xxx.c for each xxx.c in crossfire sourcecode. You
+must test in this test_xxx each function available in xxx.c. If you add a
+function to xxx.c, write a testcase in test_xxx.c
+Do no put files other than the test_xyz.c where xyz.c is a crossfire
+source file. If you need to write test that does not conform to this, this mean
+they are not unit tests and should go to functional/*
+
+when test/unit is complete, each function of crossfire will be tested at least
+once.
+
+Note: because crossfire make heavy use of macros, macros must be considered as
+function and so must be unit tested too. Because macros are define in .h file,
+the unit test should have the form test_xxx for testing xxx.h. All unit tests
+for .h files goes to test/headers
+
+Functional Test
+===============
+While unit tests are testing each function of the code, functionnal tests are
+testing behaviour of the whole. They can test behaviour of server after a
+specific series of actions and check the integration of various modules. So
+they are not tied to specific .c file or specific function. However, most
+testcases will be concerned by specific module, so try to put the in
+corresponding test/function/<module> folder. If that's not possible, put them
+in test/functional/general.
+
+Bugs
+====
+When a bug is discovered, here is the procedure to follow:
+  1) write a testcase reproducing it (either in test/bugtrack either in
+     test/unrelated, depending upon the bug being reported on sf or not)
+  2) if the bug was not reported on sourceforge, provide enough information in
+     testcase comments to describe the bug, preferrably at the top of test
+     file, after the GPL licence header.
+  3) when you successfully wrote a failing testcase demonstrating the bug, start
+     to fix it (by writting the test you probably got a good idea of what goes
+     wrong and the automated test will test each fix attempt for you)
+  4) provide short information in test source code on what was wrong. If a later
+     change in crossfire revive the bug, it will help fix it quickly.
+  5) Commit your fix along with test.
+  6) If bug was reported on sourceforge, mark it closed or ask an admin to
+     close it. Mention you wrote a testcase for the bug.
+
+Test ressources
+===============
+Some test requires maps, archetype or other kind of ressources to run. Those
+are all provided in rsc or a subdirectory of it. Try to name those files
+explicitly. Do not name it things like test-map or alike. Prefer forms like
+rsc/maps/walls_blocks_move or like rsc/arch/selection_of_magic_books
+each file in src/* should be documented in rsc/index.txt so other coders can
+reuse those resources. each subdirectory of rsc should have it's own index file.
+
+Toolkits
+========
+For some testcases (specially the functionnal one), you may need to have a
+specific crossfire configuration loaded, or to do specific map operation. It
+won't be surprising some of those operation are generic enough to be shared
+amongst all testcases. such support function (aka toolkits) will be made
+available in the toolkit directory.
+
+Includes
+========
+Testcases will share some include files not present in crossfire core. Those
+test specific headers will be put in includes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** old test plan file ***
+This is kept below for history reason and as a guide to automated map testing.
+Don't rely on this if you develop new features
+
+*** old test plan file ***
+*** old test plan file ***
+
 This file contains various test plans when making changes to the code.
 These steps are intended to give people an idea of possible things to
 try out when changing the code.
@@ -20,4 +152,3 @@ left there?
 4) Repeat steps 1-3 with a per player unique map.
 5) Repeat steps 1-3 with a map that has the outdoor flag set
 6) Kill server, and re-run tests.
-
