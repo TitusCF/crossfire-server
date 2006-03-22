@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix exploit with alchemy spell. This effectively removes the improvement
+implemented at 2006-03-07.
+---
+server/spell_effect.c: Use query_cost() to determine value of nuggets.
+Andreas Kirschbaum 2006-03-22
+
 Apply patch by Stefan Huehner: add const where appropriate.
 ---
 Affected files: include/sockproto.h, socket/{loop.c,lowlevel.c}

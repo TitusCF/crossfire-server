@@ -1720,6 +1720,7 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
  * is finished.
  */
 static object *small, *large;
+static uint64 small_value, large_value;
 
 static void alchemy_object(object *obj, int *small_nuggets,
 	 int *large_nuggets, int *weight)
@@ -1744,10 +1745,10 @@ static void alchemy_object(object *obj, int *small_nuggets,
     if ((obj->value>0) && rndm(0, 29)) {
 	int count;
 
-	count = value / large->value;
+	count = value / large_value;
 	*large_nuggets += count;
-	value -= (uint64)count * (uint64)large->value;
-	count = value / small->value;
+	value -= (uint64)count * large_value;
+	count = value / small_value;
 	*small_nuggets += count;
     }
 
@@ -1755,10 +1756,10 @@ static void alchemy_object(object *obj, int *small_nuggets,
      * of large nuggets is not evenly divisable by the small nugget
      * value, take off an extra small_nugget (Assuming small_nuggets!=0)
      */
-    if (*small_nuggets * small->value >= large->value) {
+    if (*small_nuggets * small_value >= large_value) {
 	(*large_nuggets)++;
-	*small_nuggets -= large->value / small->value;
-	if (*small_nuggets && large->value % small->value)
+	*small_nuggets -= large_value / small_value;
+	if (*small_nuggets && large_value % small_value)
 		(*small_nuggets)--;
     }
     weight += obj->weight;
@@ -1813,6 +1814,8 @@ int alchemy(object *op, object *caster, object *spell_ob)
     weight_max *= 1000;
     small=get_archetype("smallnugget"),
     large=get_archetype("largenugget");
+    small_value = query_cost(small, NULL, F_TRUE);
+    large_value = query_cost(large, NULL, F_TRUE);
 
     for(y= op->y-1;y<=op->y+1;y++) {
 	for(x= op->x-1;x<=op->x+1;x++) {
