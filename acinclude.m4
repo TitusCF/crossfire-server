@@ -279,3 +279,31 @@ int main ()
 
   fi
 ])
+
+
+dnl CF_CHECK_CROSSEDIT(X11LIBS, ACTION-IF-FOUND , ACTION-IF-NOT-FOUND)
+dnl check if a sample X test code can compile
+dnl
+
+AC_DEFUN([CF_CHECK_CROSSEDIT],[
+
+    ac_save_LIBS="$LIBS"
+
+    LIBS="$1 $LIBS" 
+    AC_MSG_CHECKING(for crossedit required headers)
+    AC_TRY_LINK([
+#include <Posix.h>
+#include <Xaw.h>
+#include <Ansi.h>
+#include <config.h>
+#include <includes.h>
+#include <debug.h>
+#include <assert.h>
+
+    ], ,
+	AC_MSG_RESULT(yes)
+	[$2],
+	AC_MSG_RESULT(no)
+	[$3])
+    LIBS="$ac_save_LIBS"
+])

@@ -60,7 +60,7 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = common random_maps socket server include lib utils doc \
-	plugins devel test crossedit
+	plugins devel test @CROSSEDIT@
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -92,6 +92,7 @@ CHECK_LIBS = @CHECK_LIBS@
 COMPRESS = @COMPRESS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CROSSEDIT = @CROSSEDIT@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -208,7 +209,6 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-@HAVE_X_TRUE@CROSSEDIT = crossedit
 @HAVE_CHECK_TRUE@UNIT_TEST = test
 SUBDIRS = common random_maps socket server include lib utils doc plugins devel $(UNIT_TEST) $(CROSSEDIT)
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat

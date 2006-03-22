@@ -1,7 +1,5 @@
 
-if HAVE_X
-  CROSSEDIT = crossedit
-endif
+CROSSEDIT = @CROSSEDIT@
 
 if HAVE_CHECK
   UNIT_TEST = test

@@ -238,6 +238,13 @@ AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
 ########################
+# crossedit compilability check
+CF_CHECK_CROSSEDIT(["$X11LIBS"],
+	[cf_will_build_crossedit="yes"]
+	AC_SUBST(CROSSEDIT, 'crossedit'), 
+	[cf_will_build_crossedit="no"] )
+
+########################
 # Unit test configuration
 
 AM_PATH_CHECK(,[have_check="yes"],
@@ -279,7 +286,7 @@ AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Build options])
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([    Will build crossedit? (*)            No fucking way to know! ])
+AC_MSG_NOTICE([    Will build crossedit? (*)            $cf_will_build_crossedit ])
 AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
 		
 if test "x$cf_have_libdl" = "xyes" ; then
@@ -294,9 +301,8 @@ AC_MSG_NOTICE([      If you are a developper, you MUST install the check framewo
 AC_MSG_NOTICE([      and write automated tests for all you add-ons!])
 fi
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([  * because there is now way to know if crossedit will be compilable])
-AC_MSG_NOTICE([  on this platform, it may be that automated tests depending on it])
-AC_MSG_NOTICE([  fail with awfull make error messages. As checks are run with])
-AC_MSG_NOTICE([  make -k this should not affect other checks])
+AC_MSG_NOTICE([  * this check is new and may be unaccurate. If you find it says])
+AC_MSG_NOTICE([  yes but compilation failed or you have good reason to think])
+AC_MSG_NOTICE([  script guessed wrong, please inform mailing list or sf tracker.])
 
 

@@ -1,3 +1,4 @@
+CROSSEDIT = @CROSSEDIT@
 
-SUBDIRS = common random_maps socket server crossedit
+SUBDIRS = common random_maps socket server $(CROSSEDIT)
 

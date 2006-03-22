@@ -77,6 +77,7 @@ CHECK_LIBS = @CHECK_LIBS@
 COMPRESS = @COMPRESS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CROSSEDIT = @CROSSEDIT@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -193,7 +194,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-SUBDIRS = common random_maps socket server crossedit
+SUBDIRS = common random_maps socket server $(CROSSEDIT)
 all: all-recursive
 
 .SUFFIXES:

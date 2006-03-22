@@ -467,7 +467,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LEX LEXLIB LEX_OUTPUT_ROOT LATEX GZIP GUNZIP TAR PERL BASENAME COMPRESS UNCOMPRESS BZIP BUNZIP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS LIBOBJS x_includes x_libraries no_x HAVE_X_TRUE HAVE_X_FALSE X11LIBS pkgstatedir pkgconfdir HAVE_LIBDL_TRUE HAVE_LIBDL_FALSE PYTHON_LIB PY_LIBS PY_INCLUDES PYTHON_PLUGIN_TRUE PYTHON_PLUGIN_FALSE PLUGIN_PYTHON CHECK_CFLAGS CHECK_LIBS HAVE_CHECK_TRUE HAVE_CHECK_FALSE LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar MAINTAINER_MODE_TRUE MAINTAINER_MODE_FALSE MAINT build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL LEX LEXLIB LEX_OUTPUT_ROOT LATEX GZIP GUNZIP TAR PERL BASENAME COMPRESS UNCOMPRESS BZIP BUNZIP X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS LIBOBJS x_includes x_libraries no_x HAVE_X_TRUE HAVE_X_FALSE X11LIBS pkgstatedir pkgconfdir HAVE_LIBDL_TRUE HAVE_LIBDL_FALSE PYTHON_LIB PY_LIBS PY_INCLUDES PYTHON_PLUGIN_TRUE PYTHON_PLUGIN_FALSE PLUGIN_PYTHON CROSSEDIT CHECK_CFLAGS CHECK_LIBS HAVE_CHECK_TRUE HAVE_CHECK_FALSE LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -27408,6 +27408,78 @@ fi
 
 
 ########################
+# crossedit compilability check
+
+
+    ac_save_LIBS="$LIBS"
+
+    LIBS=""$X11LIBS" $LIBS"
+    echo "$as_me:$LINENO: checking for crossedit required headers" >&5
+echo $ECHO_N "checking for crossedit required headers... $ECHO_C" >&6
+    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <Posix.h>
+#include <Xaw.h>
+#include <Ansi.h>
+#include <config.h>
+#include <includes.h>
+#include <debug.h>
+#include <assert.h>
+
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+	cf_will_build_crossedit="yes"
+	CROSSEDIT='crossedit'
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+	cf_will_build_crossedit="no"
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+    LIBS="$ac_save_LIBS"
+
+
+########################
 # Unit test configuration
 
 
@@ -28470,6 +28542,7 @@ s,@PY_INCLUDES@,$PY_INCLUDES,;t t
 s,@PYTHON_PLUGIN_TRUE@,$PYTHON_PLUGIN_TRUE,;t t
 s,@PYTHON_PLUGIN_FALSE@,$PYTHON_PLUGIN_FALSE,;t t
 s,@PLUGIN_PYTHON@,$PLUGIN_PYTHON,;t t
+s,@CROSSEDIT@,$CROSSEDIT,;t t
 s,@CHECK_CFLAGS@,$CHECK_CFLAGS,;t t
 s,@CHECK_LIBS@,$CHECK_LIBS,;t t
 s,@HAVE_CHECK_TRUE@,$HAVE_CHECK_TRUE,;t t
@@ -29221,8 +29294,8 @@ echo "$as_me: " >&6;}
 echo "$as_me:   Build options" >&6;}
 { echo "$as_me:$LINENO: " >&5
 echo "$as_me: " >&6;}
-{ echo "$as_me:$LINENO:     Will build crossedit? (*)            No fucking way to know! " >&5
-echo "$as_me:     Will build crossedit? (*)            No fucking way to know! " >&6;}
+{ echo "$as_me:$LINENO:     Will build crossedit? (*)            $cf_will_build_crossedit " >&5
+echo "$as_me:     Will build crossedit? (*)            $cf_will_build_crossedit " >&6;}
 { echo "$as_me:$LINENO:     Will build plugins?                  $cf_have_libdl" >&5
 echo "$as_me:     Will build plugins?                  $cf_have_libdl" >&6;}
 
@@ -29244,13 +29317,11 @@ echo "$as_me:       and write automated tests for all you add-ons!" >&6;}
 fi
 { echo "$as_me:$LINENO: " >&5
 echo "$as_me: " >&6;}
-{ echo "$as_me:$LINENO:   * because there is now way to know if crossedit will be compilable" >&5
-echo "$as_me:   * because there is now way to know if crossedit will be compilable" >&6;}
-{ echo "$as_me:$LINENO:   on this platform, it may be that automated tests depending on it" >&5
-echo "$as_me:   on this platform, it may be that automated tests depending on it" >&6;}
-{ echo "$as_me:$LINENO:   fail with awfull make error messages. As checks are run with" >&5
-echo "$as_me:   fail with awfull make error messages. As checks are run with" >&6;}
-{ echo "$as_me:$LINENO:   make -k this should not affect other checks" >&5
-echo "$as_me:   make -k this should not affect other checks" >&6;}
+{ echo "$as_me:$LINENO:   * this check is new and may be unaccurate. If you find it says" >&5
+echo "$as_me:   * this check is new and may be unaccurate. If you find it says" >&6;}
+{ echo "$as_me:$LINENO:   yes but compilation failed or you have good reason to think" >&5
+echo "$as_me:   yes but compilation failed or you have good reason to think" >&6;}
+{ echo "$as_me:$LINENO:   script guessed wrong, please inform mailing list or sf tracker." >&5
+echo "$as_me:   script guessed wrong, please inform mailing list or sf tracker." >&6;}
 
 
