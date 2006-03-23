@@ -76,8 +76,12 @@ START_TEST (test_add_refcount)
 {
     const char * str1;
     const char * str2;
-    str2 = add_string(str1);
+    str1 = add_string("Crossfire Rulez");
+    str2 = add_refcount(str1);
     fail_unless(str1==str2, "result of add_refcount (%p) should be the same as original pointer (%p).",str2,str1);
+    fail_unless(query_refcount(str1)==2, 
+                "add_refcount (%p) should have made refcount to value 2 but was %d",
+                str1,query_refcount(str1));
 }
 END_TEST
 
