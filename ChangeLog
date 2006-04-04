@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/swamp.c: Use the object name for swamp messages. Allows custom swamp
+  names to work better
+Alex Schultz 2006-04-04
+
 Fix exploit with alchemy spell. This effectively removes the improvement
 implemented at 2006-03-07.
 ---

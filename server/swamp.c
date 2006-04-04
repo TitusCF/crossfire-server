@@ -38,7 +38,7 @@
 void walk_on_deep_swamp (object *op, object *victim)
 {
     if (victim->type == PLAYER && victim->stats.hp >= 0 && !(victim->move_type & MOVE_FLYING)) {
-	new_draw_info (NDI_UNIQUE, 0, victim, "You are down to your knees in the swamp.");
+	new_draw_info_format(NDI_UNIQUE, 0, victim, "You are down to your knees in the %s.", op->name);
 	op->stats.food = 1;
 	victim->speed_left -= op->move_slow_penalty;
     }
@@ -61,8 +61,8 @@ void move_deep_swamp (object *op)
 	    switch(op->stats.food) {
 		case 1:
 		    if (rndm(0, 2) == 0) {
-			new_draw_info(NDI_UNIQUE, 0,above, 
-				      "You are down to your waist in the wet swamp.");
+			new_draw_info_format(NDI_UNIQUE, 0,above, 
+				      "You are down to your waist in the wet %s.", op->name);
 			op->stats.food = 2;
 			above->speed_left -= op->move_slow_penalty;
 		    }
@@ -70,10 +70,10 @@ void move_deep_swamp (object *op)
 
 		case 2:
 		    if (rndm(0, 2) == 0) {
-			new_draw_info(NDI_UNIQUE | NDI_RED, 0,above,
-			      "You are down to your NECK in the dangerous swamp.");
+			new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,above,
+			      "You are down to your NECK in the dangerous %s.", op->name);
 			op->stats.food = 3;
-			strcpy(above->contr->killer,"drowning in a swamp");
+			sprintf(above->contr->killer,"drowning in a %s", op->name);
 			above->stats.hp--;
 			above->speed_left -= op->move_slow_penalty;
 		    }
@@ -87,16 +87,16 @@ void move_deep_swamp (object *op)
 			if (!woodsman) {
 			    op->stats.food = 0;
 			    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
-					 "%s disappeared into a swamp.",above->name);
-			    strcpy(above->contr->killer,"drowning in a swamp");
+					 "%s disappeared into a %s.",above->name, op->name);
+			    sprintf(above->contr->killer,"drowning in a %s", op->name);
 	      
 			    above->stats.hp = -1;
 			    kill_player(above); /* player dies in the swamp */
 			}
 			else {
 			    op->stats.food = 2;
-			    new_draw_info(NDI_UNIQUE, 0,above, 
-				  "You almost drowned in the swamp! You survived due to your woodsman skill.");
+			    new_draw_info_format(NDI_UNIQUE, 0,above, 
+				  "You almost drowned in the %s! You survived due to your woodsman skill.", op->name);
 			}
 		    }
 		    break;
