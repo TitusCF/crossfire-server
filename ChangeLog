@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/config.h: Increase Archtable to 8192, the new hashing algorithm
+  works better with a table size that is a power of 2, and the current value
+  is very close to being exceeded anyway. Suggested by Crossfire+ Development
+  Team http://cf.schmorp.de
+Brendan Lally 2006-04-06
+
 server/swamp.c: Use the object name for swamp messages. Allows custom swamp
   names to work better
 Alex Schultz 2006-04-04

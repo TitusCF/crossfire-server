@@ -602,7 +602,7 @@
 
 #define HIGHSCORE_LENGTH 1000	/* How many entries there are room for */
 
-#define ARCHTABLE 5003		/* Used when hashing archetypes */
+#define ARCHTABLE 8192		/* Used when hashing archetypes */
 #define MAXSTRING 20
 
 #define COMMAND_HASH_SIZE 107	/* If you change this, delete all characters :) */
