@@ -79,7 +79,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
 	esrv_del_item(op->contr, wand->count);
 	remove_ob(wand);
 	free_object(wand);
-	tmp = get_archetype("fireball");
+	tmp = create_archetype("fireball");
 	tmp->stats.dam = (spell_ob->stats.dam + SP_level_dam_adjust(caster, spell_ob)) / 10;
 	if (!tmp->stats.dam) tmp->stats.dam = 1;
 	tmp->stats.hp = tmp->stats.dam / 2;
@@ -442,7 +442,7 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
 	    missile_name);
 	return 0;
     }
-    missile = get_archetype(missile_name);
+    missile = create_archetype(missile_name);
 
     if (stringarg) {
 	/* If it starts with a letter, presume it is a description */
@@ -763,10 +763,10 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
         return 1;
     }
 
-    dummy=get_archetype(FORCE_NAME);
+    dummy=create_archetype(FORCE_NAME);
     if(dummy == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"cast_word_of_recall: get_archetype(force) failed!\n");
+	LOG(llevError,"cast_word_of_recall: create_archetype(force) failed!\n");
 	return 0;
     }
     time = spell_ob->duration - SP_level_duration_adjust(caster, spell_ob);
@@ -952,7 +952,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      */
 
     /* First step: killing existing town portals */
-    dummy=get_archetype(spell->race);
+    dummy=create_archetype(spell->race);
     if(dummy == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
@@ -1033,7 +1033,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      */
 
     snprintf (portal_name,1024,"%s's portal to %s",op->name,force->name);
-    dummy=get_archetype(spell->slaying); /*The portal*/
+    dummy=create_archetype(spell->slaying); /*The portal*/
     if(dummy == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
@@ -1052,7 +1052,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      * object, so on future castings, we can know that he has an active
      * town portal.
      */
-    tmp=get_archetype(spell->race);
+    tmp=create_archetype(spell->race);
     if(tmp == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
@@ -1071,7 +1071,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      * where this portal goes to.
      */
     snprintf (portal_name,1024,"%s's portal to %s",op->name,op->map->path);
-    dummy=get_archetype (spell->slaying); /*The portal*/
+    dummy=create_archetype (spell->slaying); /*The portal*/
     if(dummy == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
@@ -1091,7 +1091,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     /* Now we create another town portal marker that
      * points back to the one we just made
      */
-    tmp=get_archetype(spell->race);
+    tmp=create_archetype(spell->race);
     if(tmp == NULL){
 	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
 	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
@@ -1518,7 +1518,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
 	}
     }
     if(force==NULL) {
-	force=get_archetype(FORCE_NAME);
+	force=create_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
@@ -1633,7 +1633,7 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
 	}
     }
     if(force==NULL) {
-	force=get_archetype(FORCE_NAME);
+	force=create_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
@@ -1812,8 +1812,8 @@ int alchemy(object *op, object *caster, object *spell_ob)
      */
     weight_max = spell_ob->duration + +SP_level_duration_adjust(caster,spell_ob);
     weight_max *= 1000;
-    small=get_archetype("smallnugget"),
-    large=get_archetype("largenugget");
+    small=create_archetype("smallnugget"),
+    large=create_archetype("largenugget");
     small_value = query_cost(small, NULL, F_TRUE);
     large_value = query_cost(large, NULL, F_TRUE);
 
@@ -2156,7 +2156,7 @@ static void charge_mana_effect(object *victim, int caster_level)
         new_draw_info(NDI_UNIQUE, 0, victim, "Your head explodes!");
 
         /* Explodes a fireball centered at player */
-        tmp = get_archetype(EXPLODING_FIREBALL);
+        tmp = create_archetype(EXPLODING_FIREBALL);
         tmp->dam_modifier = random_roll(1, caster_level, victim, PREFER_LOW)/5+1;
         tmp->stats.maxhp = random_roll(1, caster_level, victim, PREFER_LOW)/10+2;
         tmp->x = victim->x;

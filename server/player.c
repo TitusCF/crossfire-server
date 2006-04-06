@@ -2886,7 +2886,7 @@ void kill_player(object *op)
 	    object *force;
 	    int  at;
 
-	    force=get_archetype(FORCE_NAME);
+	    force=create_archetype(FORCE_NAME);
 	    /* 50 ticks should be enough time for the spell to abate */
 	    force->speed=0.1;
 	    force->speed_left=-5.0;

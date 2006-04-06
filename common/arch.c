@@ -41,6 +41,8 @@ int arch_cmp=0;		/* How many strcmp's */
 int arch_search=0;	/* How many searches */
 int arch_init;		/* True if doing arch initialization */
 
+static void load_archetypes(void);
+
 /* The naming of these functions is really poor - they are all
  * pretty much named '.._arch_...', but they may more may not
  * return archetypes.  Some make the arch_to_object call, and thus
@@ -62,14 +64,18 @@ int arch_init;		/* True if doing arch initialization */
  */
 archetype *find_archetype_by_object_name(const char *name) {
     archetype *at;
+    const char* tmp;
 
     if (name == NULL)
 	return (archetype *) NULL;
-
+    tmp=add_string(name);
     for(at = first_archetype;at!=NULL;at=at->next) {
-	if (!strcmp(at->clone.name, name))
-		return at;
+        if (at->clone.name==tmp){
+            free_string(tmp);
+            return at;
+        }
     }
+    free_string(tmp);
     return NULL;
 }
 
@@ -97,7 +103,7 @@ archetype *find_archetype_by_object_type_name(int type, const char *name) {
  * against (eg, to only match against skills or only skill objects for example).
  * If type is -1, ew don't match on type.
  */
-object *get_archetype_by_skill_name(const char *skill, int type) {
+archetype *get_archetype_by_skill_name(const char *skill, int type) {
     archetype *at;
 
     if (skill == NULL)
@@ -105,8 +111,8 @@ object *get_archetype_by_skill_name(const char *skill, int type) {
 
     for(at = first_archetype;at!=NULL;at=at->next) {
 	if ( ((type == -1) || (type == at->clone.type)) &&
-	     (!strcmp(at->clone.skill, skill)))
-		return arch_to_object(at);
+            (at->clone.skill) &&(!strcmp(at->clone.skill, skill)))
+		return at;
     }
     return NULL;
 }
@@ -133,7 +139,7 @@ archetype *get_archetype_by_type_subtype(int type, int subtype) {
  * GROS - this returns a new object given the name that appears during the game
  * (for example, "writing pen" instead of "stylus").
  * Params:
- * - name: The name we're searching for (ex: "writing pen");
+ * - name: The name we're searching for (ex: "writing pen") NOT NULL;
  * Return value:
  * - a corresponding object if found; a singularity object if not found.
  * Note by MSW - it appears that it takes the full name and keeps
@@ -141,7 +147,7 @@ archetype *get_archetype_by_type_subtype(int type, int subtype) {
  * doesn't malloc it each time - not that this function is used much,
  * but it otherwise had a big memory leak.
  */
-object *get_archetype_by_object_name(const char *name) {
+object *create_archetype_by_object_name(const char *name) {
     archetype *at;
     char tmpname[MAX_BUF];
     int i;
@@ -157,126 +163,6 @@ object *get_archetype_by_object_name(const char *name) {
         }
     }
     return create_singularity(name);
-}
-
- /* GROS - find_best_weapon_used_match and item_matched_string moved there */
-object *find_best_weapon_used_match(object *pl, const char *params)
- {
-   object *tmp, *best=NULL;
-   int match_val=0,tmpmatch;
-
-   for (tmp=pl->inv; tmp; tmp=tmp->below) {
-     if (tmp->invisible) continue;
-     if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val)
-     {
-       if ((QUERY_FLAG(tmp, FLAG_APPLIED))&&(tmp->type==WEAPON))
-       {
-         match_val=tmpmatch;
-         best=tmp;
-       };
-     }
-   }
-   return best;
- }
-
- /* This is a subset of the parse_id command.  Basically, name can be
-  * a string seperated lists of things to match, with certain keywords.
-  * pl is the player (only needed to set count properly)
-  * op is the item we are trying to match.  Calling function takes care
-  * of what action might need to be done and if it is valid
-  * (pickup, drop, etc.)  Return NONZERO if we have a match.  A higher
-  * value means a better match.  0 means no match.
-  *
-  * Brief outline of the procedure:
-  * We take apart the name variable into the individual components.
-  * cases for 'all' and unpaid are pretty obvious.
-  * Next, we check for a count (either specified in name, or in the
-  * player object.)
-  * If count is 1, make a quick check on the name.
-  * IF count is >1, we need to make plural name.  Return if match.
-  * Last, make a check on the full name.
-  */
-int item_matched_string(object *pl, object *op, const char *name)
-{
-    char *cp, local_name[MAX_BUF];
-    int count,retval=0;
-    strcpy(local_name, name);	/* strtok is destructive to name */
-
-    for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
-	while (cp[0]==' ') ++cp;	/* get rid of spaces */
-
-	/*	LOG(llevDebug,"Trying to match %s\n", cp);*/
-	/* All is a very generic match - low match value */
-	if (!strcmp(cp,"all")) return 1;
-
-	/* unpaid is a little more specific */
-	if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
-	if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
-	    (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
-	    return 2;
-
-	if (!strcmp(cp,"unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
-	    return 2;
-
-	/* Allow for things like '100 arrows' */
-	if ((count=atoi(cp))!=0) {
-	    cp=strchr(cp, ' ');
-	    while (cp && cp[0]==' ') ++cp;	/* get rid of spaces */
-	}
-	else {
-	    if (pl->type==PLAYER)
-		count=pl->contr->count;
-	    else
-		count = 0;
-	}
-
-	if (!cp || cp[0]=='\0' || count<0) return 0;
-
-
-	/* The code here should go from highest retval to lowest.  That
-	 * is because of the 'else' handling - we don't want to match on
-	 * something and set a low retval, even though it may match a higher retcal
-	 * later.  So keep it in descending order here, so we try for the best
-	 * match first, and work downward.
-	 */
-	if (!strcasecmp(cp,query_name(op))) retval=20;
-	else if (!strcasecmp(cp,query_short_name(op))) retval=18;
-	else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
-	else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
-	else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
-	else if (!strncasecmp(cp,query_base_name(op,0),
-			      strlen(cp))) retval=14;
-	else if (!strncasecmp(cp,query_base_name(op,1),
-			      strlen(cp))) retval=14;
-
-	/* Do substring checks, so things like 'Str+1' will match.
-	 * retval of these should perhaps be lower - they are lower
-	 * then the specific strcasecmp aboves, but still higher than
-	 * some other match criteria.
-	 */
-	else if (strstr(query_base_name(op,1), cp)) retval = 12;
-	else if (strstr(query_base_name(op,0), cp)) retval = 12;
-	else if (strstr(query_short_name(op), cp)) retval = 12;
-
-	/* Check against plural/non plural based on count. */
-	else if (count>1 && !strcasecmp(cp,op->name_pl)) {
-		retval=6;
-	}
-	else if (count==1 && !strcasecmp(op->name,cp)) {
-		retval=6;
-	}
-	/* base name matched - not bad */
-	else if (strcasecmp(cp,op->name)==0 && !count) retval=4;
-	/* Check for partial custom name, but give a real low priority */
-	else if (op->custom_name && strstr(op->custom_name, cp)) retval = 3;
-
-	if (retval) {
-	    if (pl->type == PLAYER)
-		pl->contr->count=count;
-	    return retval;
-	}
-    }
-   return 0;
 }
 
 /*
@@ -365,6 +251,7 @@ void free_all_archs(void)
 	free(at);
 	i++;
     }
+    first_archetype = NULL;
     LOG(llevDebug,"Freed %d archetypes, %d faces\n", i, f);
 }
 
@@ -392,6 +279,7 @@ archetype *get_archetype_struct(void) {
   SET_FLAG((&new->clone), FLAG_REMOVED); /* doesn't copy these flags... */
   new->head=NULL;
   new->more=NULL;
+  new->clone.arch=new;
   return new;
 }
 
@@ -399,7 +287,7 @@ archetype *get_archetype_struct(void) {
  * Reads/parses the archetype-file, and copies into a linked list
  * of archetype-structures.
  */
-void first_arch_pass(FILE *fp) {
+static void first_arch_pass(FILE *fp) {
     object *op;
     archetype *at,*head=NULL,*last_more=NULL;
     int i,first=2;
@@ -473,7 +361,7 @@ void first_arch_pass(FILE *fp) {
  * archetypes.
  */
 
-void second_arch_pass(FILE *fp) {
+static void second_arch_pass(FILE *fp) {
   char buf[MAX_BUF],*variable=buf,*argument,*cp;
   archetype *at=NULL,*other;
 
@@ -527,7 +415,7 @@ void check_generators(void) {
  * Then initialises treasures by calling load_treasures().
  */
 
-void load_archetypes(void) {
+static void load_archetypes(void) {
     FILE *fp;
     char filename[MAX_BUF];
     int comp;
@@ -620,7 +508,7 @@ object *create_singularity(const char *name) {
  * object containing a copy of the archetype.
  */
 
-object *get_archetype(const char *name) {
+object *create_archetype(const char *name) {
   archetype *at;
   at = find_archetype(name);
   if (at == NULL)
@@ -636,7 +524,7 @@ unsigned long
 hasharch(const char *str, int tablesize) {
     unsigned long hash = 0;
     int i = 0;
-    const unsigned char *p;
+    const char *p;
 
     /* use the one-at-a-time hash function, which supposedly is
      * better than the djb2-like one used by perl5.005, but
@@ -720,7 +608,11 @@ archetype *type_to_archetype(int type) {
  * the given type.
  * Used in treasure-generation.
  */
-
+ 
+/*
+ * Commented as it does not seems used in code. If you uncomment
+ * this function, make sure you write appropriate unit test!!!!!!!
+ * 
 object *clone_arch(int type) {
   archetype *at;
   object *op=get_object();
@@ -733,9 +625,12 @@ object *clone_arch(int type) {
   copy_object(&at->clone,op);
   return op;
 }
+*/
 
-/*
- * member: make instance from class
+/**
+ * Create a full object using the given archetype. 
+ * This instanciate not only the archetype but also
+ * all linked archetypes in case of multisquare archetype.
  */
 
 object *object_create_arch (archetype * at)

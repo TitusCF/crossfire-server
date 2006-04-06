@@ -827,7 +827,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 	    if (op->stats.sp && !op->randomitems) {
 		object *tmp;
 
-		tmp = get_archetype(spell_mapping[op->stats.sp]);
+		tmp = create_archetype(spell_mapping[op->stats.sp]);
 		insert_ob_in_ob(tmp, op);
 		op->stats.sp=0;
 	    }
@@ -858,7 +858,7 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 		if (op->stats.sp && !op->randomitems) {
 		    object *tmp;
 
-		    tmp = get_archetype(spell_mapping[op->stats.sp]);
+		    tmp = create_archetype(spell_mapping[op->stats.sp]);
 		    insert_ob_in_ob(tmp, op);
 		    op->stats.sp=0;
 		}

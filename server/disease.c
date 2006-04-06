@@ -401,7 +401,7 @@ int do_symptoms(object *disease) {
 		    return 0;  /*Immune! */
 	}
 		
-	new_symptom = get_archetype(ARCH_SYMPTOM);
+	new_symptom = create_archetype(ARCH_SYMPTOM);
 
 	/* Something special done with dam.  We want diseases to be more
 	 * random in what they'll kill, so we'll make the damage they
@@ -500,7 +500,7 @@ int grant_immunity(object *disease) {
 		return 1; /* just update the existing immunity. */
 	 }
   }
-  immunity = get_archetype("immunity");
+  immunity = create_archetype("immunity");
   immunity->name = add_string(disease->name);
   immunity->level = disease->level;
   immunity->move_block = 0;

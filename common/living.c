@@ -1502,11 +1502,17 @@ void dragon_level_gain(object *who) {
 object *give_skill_by_name(object *op, const char *skill_name)
 {
     object *skill_obj;
+    archetype *skill_arch;
 
-    skill_obj = get_archetype_by_skill_name(skill_name, SKILL);
-    if (!skill_obj) {
+    skill_arch = get_archetype_by_skill_name(skill_name, SKILL);
+    if (!skill_arch) {
 	LOG(llevError, "add_player_exp: couldn't find skill %s\n", skill_name);
 	return NULL;
+    }
+    skill_obj = arch_to_object(skill_arch);
+    if (!skill_obj) {
+        LOG(llevError, "add_player_exp: couldn't instanciate skill %s\n", skill_name);
+        return NULL;
     }
     /* clear the flag - exp goes into this bucket, but player
      * still doesn't know it.

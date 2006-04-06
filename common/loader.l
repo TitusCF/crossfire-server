@@ -421,7 +421,7 @@ static void check_loaded_object(object *op) {
 	/* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
 	 * in that spell was stored in sp.
 	 */
-	tmp = get_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
+	tmp = create_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
 	insert_ob_in_ob(tmp, op);
 	op->randomitems = NULL;	/* So another spell isn't created for this object */
     }
@@ -430,7 +430,7 @@ static void check_loaded_object(object *op) {
     if ((op->type == SPELLBOOK || op->type == RUNE) && op->slaying && !op->inv && !arch_init) {
 	object *tmp;
 
-	tmp = get_archetype_by_object_name(op->slaying);
+	tmp = create_archetype_by_object_name(op->slaying);
 	insert_ob_in_ob(tmp, op);
 	op->randomitems = NULL;	/* So another spell isn't created for this object */
 	/* without this, value is all screwed up */

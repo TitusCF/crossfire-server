@@ -1176,7 +1176,7 @@ void move_marker(object *op) {
       
 	    /* if we didn't find our own MARK */
 	    if(tmp2==NULL) {
-		object *force = get_archetype(FORCE_NAME);
+		object *force = create_archetype(FORCE_NAME);
 
 		force->speed = 0;
 		if(op->stats.food) {

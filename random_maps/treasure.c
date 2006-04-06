@@ -176,7 +176,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   object *the_chest;
   int i,xl,yl;
 
-  the_chest = get_archetype("chest");  /* was "chest_2" */
+  the_chest = create_archetype("chest");  /* was "chest_2" */
 
   /* first, find a place to put the chest. */
   i = find_first_free_spot(the_chest,map,x,y);
@@ -290,7 +290,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
   object *the_key;
 
   /* get a key and set its keycode */
-  the_key = get_archetype("key2");
+  the_key = create_archetype("key2");
   the_key->slaying = add_string(keycode); 
 
 
@@ -596,7 +596,7 @@ static object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int 
     
     if(!wall_blocked(map,x1,y1)
        || layout[x1][y1]=='>') {/* place a door */
-      object * new_door=get_archetype( (freearr_x[i]==0)?doors[1]:doors[0]);
+      object * new_door=create_archetype( (freearr_x[i]==0)?doors[1]:doors[0]);
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];
       remove_monsters(new_door->x,new_door->y,map);
@@ -694,7 +694,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
   
   if(opts & DOORED) {
     for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
-      object *new_door=get_archetype("locked_door1");
+      object *new_door=create_archetype("locked_door1");
       char keybuf[256];
       door=doorlist[i];
       new_door->face = door->face;

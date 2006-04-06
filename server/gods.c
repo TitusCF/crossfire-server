@@ -297,7 +297,7 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 		angry=3;
 		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
                                 "Foul Priest! %s punishes you!",pl_god->name);
-		tmp=get_archetype(LOOSE_MANA);
+		tmp=create_archetype(LOOSE_MANA);
 		cast_magic_storm(pl,tmp, pl_god->level+20);
 	    } else 
 		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
@@ -437,7 +437,7 @@ void become_follower (object *op, object *new_god) {
 	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",
 			     new_god->name);
         if(random_roll(0, op->level-1, op, PREFER_LOW)-5>0) {
-	    object *tmp = get_archetype(LOOSE_MANA);
+	    object *tmp = create_archetype(LOOSE_MANA);
 	    cast_magic_storm(op,tmp, new_god->level+10);
 	}
 	return;
@@ -798,7 +798,7 @@ void god_intervention (object *op, object *god, object *skill)
                 /* Follower lacks the required grace for the following
                  * treasure list items. */
 
-		        tmp = get_archetype(HOLY_POSSESSION);
+		        tmp = create_archetype(HOLY_POSSESSION);
                 cast_change_ability(op, op, tmp, 0, 1);
 		        free_object(tmp);
                 return;
@@ -851,7 +851,7 @@ void god_intervention (object *op, object *god, object *skill)
 	    object *tmp;
 	    int success;
 
-	    tmp = get_archetype_by_object_name(item->slaying);
+	    tmp = create_archetype_by_object_name(item->slaying);
 
 	    success = cast_heal (op, op, tmp, 0);
 	    free_object(tmp);
@@ -990,7 +990,7 @@ int god_examines_priest (object *op, object *god) {
 	change_exp(op, -random_roll(0, loss*angry-1, op, PREFER_LOW),
 		   skop?skop->skill:"none", SK_SUBTRACT_SKILL_EXP);
 	if(random_roll(0, angry, op, PREFER_LOW)) {
-	    object *tmp = get_archetype(LOOSE_MANA);
+	    object *tmp = create_archetype(LOOSE_MANA);
 	    cast_magic_storm(op,tmp,op->level+(angry*3));
 	}
 	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,

@@ -1116,7 +1116,7 @@ change_book (object *book, int msgtype)
 		    object *tmpbook;
 
 		    /* alter book properties */
-		    if ((tmpbook = get_archetype (t->archname)) != NULL)
+		    if ((tmpbook = create_archetype (t->archname)) != NULL)
 		      {
 			  if (tmpbook->msg)
 			      free_string (book->msg);

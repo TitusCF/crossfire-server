@@ -1206,7 +1206,7 @@ int make_object_glow(object *op, int radius, int time) {
     if(op->path_denied&PATH_LIGHT) 
 	return 0;
 
-    tmp=get_archetype(FORCE_NAME);
+    tmp=create_archetype(FORCE_NAME);
     tmp->speed = 0.01;
     tmp->stats.food = time;
     SET_FLAG(tmp, FLAG_IS_USED_UP);
@@ -1334,7 +1334,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     }
 
     if(force==NULL) {
-	force=get_archetype(FORCE_NAME);
+	force=create_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
 	if (spell_ob->race) 
@@ -1735,7 +1735,7 @@ int fire_swarm (object *op, object *caster, object *spell, int dir)
 
     if (!spell->other_arch) return 0;
 
-    tmp=get_archetype(SWARM_SPELL);
+    tmp=create_archetype(SWARM_SPELL);
     tmp->x=op->x;
     tmp->y=op->y;	    
     set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
@@ -1924,7 +1924,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,walk->name);
 
 			 free_object(disease); /* don't need this one anymore */
-			 flash=get_archetype(ARCH_DETECT_MAGIC);
+			 flash=create_archetype(ARCH_DETECT_MAGIC);
 			 flash->x = x;
 			 flash->y = y;
 			 flash->map = walk->map;

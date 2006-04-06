@@ -414,7 +414,7 @@ object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch
      * allow players to create massive amounts of artifacts easily */
     if(create_item && (!item || item->nrof > 1)) {
         *rp_arch_index = RANDOM()%rp->arch_names;
-        item = get_archetype(rp->arch_name[*rp_arch_index]);
+        item = create_archetype(rp->arch_name[*rp_arch_index]);
     }
 
 #ifdef ALCHEMY_DEBUG
@@ -463,7 +463,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 		    material |= tmp->material; 
 		tmp=tmp->below;
 	    }
-	    tmp = get_archetype("rock");
+	    tmp = create_archetype("rock");
 	    tmp->weight=weight;
 	    tmp->value=0;
 	    tmp->material=material;
@@ -531,7 +531,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	remove_contents(cauldron->inv,NULL);
 	switch(rndm(0, 2)) {
 	    case 0: 
-		tmp=get_archetype("bomb");
+		tmp=create_archetype("bomb");
 		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
 		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
 		new_draw_info_format(NDI_UNIQUE,0,op,"The %s creates a bomb!",
@@ -539,7 +539,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 		break; 
 
 	    default:
-		tmp=get_archetype("fireball");
+		tmp=create_archetype("fireball");
 		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
 		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
 		new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
@@ -556,7 +556,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	remove_contents(cauldron->inv,NULL);
 	return;
     } else if (level<80) {                	/* MAJOR FIRE */
-	object *fb = get_archetype(SP_MED_FIREBALL);
+	object *fb = create_archetype(SP_MED_FIREBALL);
 	remove_contents(cauldron->inv,NULL);
 	fire_arch_from_position(cauldron, cauldron,cauldron->x, cauldron->y,
 	    0, fb);
@@ -606,7 +606,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
   	 * to be made (rather than only those on the given
 	 * formulalist) */
 	if(!rp) rp=get_random_recipe((recipelist *) NULL);
-	if(rp && (tmp=get_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) { 
+	if(rp && (tmp=create_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) { 
 	    generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
 	    if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
 		remove_contents(cauldron->inv,tmp);
@@ -616,7 +616,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	}
 	return;
   } else {               	/* MANA STORM - watch out!! */
-	object *tmp = get_archetype(LOOSE_MANA);
+	object *tmp = create_archetype(LOOSE_MANA);
 	new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
 	remove_contents (cauldron->inv,NULL);
 	cast_magic_storm(op,tmp, level);

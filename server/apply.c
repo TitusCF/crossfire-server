@@ -314,7 +314,7 @@ static void handle_apply_yield(object* tmp)
     yield = get_ob_key_value(tmp,"on_use_yield");
     if (yield != NULL)
     {
-        object* drop = get_archetype(yield);
+        object* drop = create_archetype(yield);
         if (tmp->env)
         {
             drop = insert_ob_in_ob(drop,tmp->env);
@@ -446,7 +446,7 @@ int apply_potion(object *op, object *tmp)
 
 	    new_draw_info(NDI_UNIQUE,0,op, "Yech!  Your lungs are on fire!");
             /* Explodes a fireball centered at player */
-            fball = get_archetype(EXPLODING_FIREBALL);
+            fball = create_archetype(EXPLODING_FIREBALL);
             fball->dam_modifier=random_roll(1, op->level, op, PREFER_LOW)/5+1;
             fball->stats.maxhp=random_roll(1, op->level, op, PREFER_LOW)/10+2;
             fball->x = op->x;
@@ -465,7 +465,7 @@ int apply_potion(object *op, object *tmp)
     force=NULL;
     for (i=0; i<NROFATTACKS; i++) {
 	if (tmp->resist[i]) {
-	    if (!force) force=get_archetype(FORCE_NAME);
+	    if (!force) force=create_archetype(FORCE_NAME);
 	    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
 	    force->type=POTION_EFFECT;
 	    break;  /* Only need to find one protection since we copy entire batch */
@@ -1632,7 +1632,7 @@ void move_apply (object *trap, object *victim, object *originator)
 
 		new_draw_info_format(NDI_UNIQUE, 0, originator, "The %s seems to be broken!", query_name(trap));
 
-		op = get_archetype("burnout");
+		op = create_archetype("burnout");
 		if (op != NULL) {
 		    op->x = trap->x;
 		    op->y = trap->y;
@@ -2440,8 +2440,8 @@ extern void apply_poison (object *op, object *tmp)
  * A valid 2 way exit means:
  *   -You can come back (there is another exit at the other side)
  *   -You are
- *         ° the owner of the exit
- *         ° or in the same party as the owner
+ *          the owner of the exit
+ *          or in the same party as the owner
  *
  * Note: a owner in a 2 way exit is saved as the owner's name
  * in the field exit->name cause the field exit->owner doesn't
@@ -3698,7 +3698,7 @@ void eat_special_food(object *who, object *food) {
     int i, did_one=0; 
     sint8 k;
 
-    force = get_archetype(FORCE_NAME);
+    force = create_archetype(FORCE_NAME);
 
     for (i=0; i < NUM_STATS; i++) {
 	k = get_attr_value(&food->stats, i);
@@ -3840,7 +3840,7 @@ void scroll_failure(object *op, int failure, int power)
 	object *tmp;
 
 	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
-	tmp=get_archetype(SPELL_WONDER);
+	tmp=create_archetype(SPELL_WONDER);
 	cast_wonder(op, op, 0, tmp);
 	free_object(tmp);
     } else if (failure <= -15&&failure > -35) {/* drain mana */
@@ -3860,7 +3860,7 @@ void scroll_failure(object *op, int failure, int power)
 	    blind_player(op,op,power);
 	} else if (failure <= -80) {/* blast the immediate area */
 	    object *tmp;
-	    tmp=get_archetype(LOOSE_MANA);
+	    tmp=create_archetype(LOOSE_MANA);
 	    cast_magic_storm(op,tmp, power);
 	    new_draw_info(NDI_UNIQUE, 0,op,"You unlease uncontrolled mana!");
 	    free_object(tmp);
@@ -4017,7 +4017,7 @@ void apply_item_transformer( object* pl, object* transformer )
     got[len] = '\0';
 
     /* Now create new item, remove used ones when required. */
-    new_item = get_archetype( got );
+    new_item = create_archetype( got );
     if ( !new_item )
         {
         new_draw_info_format( NDI_UNIQUE, 0, pl, "This %s is strange, better to not use it.", query_base_name( marked, 0 ) );

@@ -2,7 +2,7 @@ BUILT_SOURCES=../../logs/unit/common
 noinst_LIBRARIES = libstubs.a
 libstubs_a_SOURCES=stubs_common.c
 INCLUDES = -I../../../include -I../../include
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(srcdir)/../../logs\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(srcdir)/../../logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
 LDADD = ../../../common/libcross.a libstubs.a $(LIBDL) @CHECK_LIBS@
 
 ../../logs/unit/common:

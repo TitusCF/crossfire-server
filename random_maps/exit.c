@@ -207,7 +207,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     /* surround the exits with notices that this is a random map. */
     for(j=1;j<9;j++) {
       if(!wall_blocked(map,the_exit_up->x+freearr_x[j],the_exit_up->y+freearr_y[j])) {
-        random_sign = get_archetype("sign");
+        random_sign = create_archetype("sign");
         random_sign->x = the_exit_up->x+freearr_x[j];
         random_sign->y = the_exit_up->y+freearr_y[j];
 		  

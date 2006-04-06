@@ -341,7 +341,7 @@ void quest_apply_items( object* wrapper, player* pl )
             case QUEST_START_QUEST:
                 if ( quest_get_player_quest( pl->ob, QUEST_NAME(item), NULL ) )
                     return;
-                qm = get_archetype("quest_in_progress");
+                qm = create_archetype("quest_in_progress");
                 FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
                 if ( item->lore )
                 {
@@ -353,7 +353,7 @@ void quest_apply_items( object* wrapper, player* pl )
             case QUEST_END_QUEST:
                 if ( !quest_get_player_quest( pl->ob, QUEST_NAME(item), NULL ) )
                     return;
-                qm = get_archetype("quest_done_quest");
+                qm = create_archetype("quest_done_quest");
                 FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
                 if ( item->lore )
                 {
@@ -366,7 +366,7 @@ void quest_apply_items( object* wrapper, player* pl )
             case QUEST_START_TASK:
                 if ( quest_get_player_quest( pl->ob, QUEST_NAME(item), TASK_NAME(item) ) )
                     return;
-                qm = get_archetype("quest_in_progress");
+                qm = create_archetype("quest_in_progress");
                 FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
                 FREE_AND_COPY(TASK_NAME(qm), TASK_NAME(item));
                 if ( item->lore )
@@ -379,7 +379,7 @@ void quest_apply_items( object* wrapper, player* pl )
             case QUEST_END_TASK:
                 if ( !quest_get_player_quest( pl->ob, QUEST_NAME(item), TASK_NAME(item) ) )
                     return;
-                qm = get_archetype("quest_done_task");
+                qm = create_archetype("quest_done_task");
                 FREE_AND_COPY(QUEST_NAME(qm), QUEST_NAME(item));
                 FREE_AND_COPY(TASK_NAME(qm), TASK_NAME(item));
                 if ( item->lore )

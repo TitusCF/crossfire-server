@@ -171,7 +171,7 @@ void save_throw_object (object *op, int type, object *originator)
 		op = decrease_ob_nr (op, 1);
                 if (op)
                     fix_stopped_item (op, m, originator);
-		if((op = get_archetype(arch))!=NULL) {
+		if((op = create_archetype(arch))!=NULL) {
                    if(env) {  
 			op->x=env->x,op->y=env->y;
 			insert_ob_in_ob(op,env);
@@ -207,7 +207,7 @@ void save_throw_object (object *op, int type, object *originator)
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
 	      if(env) {
-                op=get_archetype("burnout");
+                op=create_archetype("burnout");
 		op->x=env->x,op->y=env->y;
                 insert_ob_in_ob(op,env);
 	      } else { 
@@ -1984,7 +1984,7 @@ void confuse_player(object *op, object *hitter, int dam)
     
     tmp = present_in_ob_by_name(FORCE,"confusion", op);
     if(!tmp) {
-	tmp = get_archetype(FORCE_NAME);
+	tmp = create_archetype(FORCE_NAME);
 	tmp = insert_ob_in_ob(tmp,op);
     }
     
@@ -2014,7 +2014,7 @@ void blind_player(object *op, object *hitter, int dam)
 
     tmp = present_in_ob(BLINDNESS,op);
     if(!tmp) { 
-      tmp = get_archetype("blindness");
+      tmp = create_archetype("blindness");
       SET_FLAG(tmp, FLAG_BLIND);
       SET_FLAG(tmp, FLAG_APPLIED);
       /* use floats so we don't lose too much precision due to rounding errors.

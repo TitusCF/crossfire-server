@@ -526,7 +526,7 @@ int strtoint (const char *buf) {
 }
 
 artifact * locate_recipe_artifact(const recipe *rp, size_t idx) {
-   object *item=get_archetype(rp->arch_name[idx]);
+   object *item=create_archetype(rp->arch_name[idx]);
    artifactlist *at=NULL;
    artifact *art=NULL;
 

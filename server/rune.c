@@ -136,7 +136,7 @@ int write_rune(object *op,object *caster, object *spell, int dir, const char *ru
     if (rune_spell->type == RUNE) {
 	rune = rune_spell;
     } else {
-	rune = get_archetype(GENERIC_RUNE);
+	rune = create_archetype(GENERIC_RUNE);
 	sprintf(buf,"You set off a rune of %s\n",rune_spell->name);
 	rune->msg=add_string(buf);
 	tmp = get_object();
@@ -372,7 +372,7 @@ int trap_show(object *trap, object *where) {
     object *tmp2;
 
     if(where==NULL) return 0;
-    tmp2=get_archetype("runedet");
+    tmp2=create_archetype("runedet");
     tmp2->face=&new_faces[GET_ANIMATION(trap, 0)];
     tmp2->x=where->x;tmp2->y=where->y;tmp2->map=where->map;
     insert_ob_in_map(tmp2,where->map,NULL,0);

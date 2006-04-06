@@ -157,7 +157,7 @@ int find_or_create_connection_for_map( object* pl, short x, short y, object* run
             return -1;
             }
 
-        force = get_archetype( FORCE_NAME );
+        force = create_archetype( FORCE_NAME );
         force->speed = 0;
         update_ob_speed( force );
         force->slaying = add_string( pl->map->path );

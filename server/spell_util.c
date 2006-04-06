@@ -722,7 +722,7 @@ void put_a_monster(object *op,const char *monstername) {
 	insert_ob_in_map(head,op->map,op,0);
 
 	/* thought it'd be cool to insert a burnout, too.*/
-	tmp=get_archetype("burnout");
+	tmp=create_archetype("burnout");
 	tmp->map = op->map;
 	tmp->x=op->x+freearr_x[dir];
 	tmp->y=op->y+freearr_y[dir];
@@ -829,7 +829,7 @@ void prayer_failure(object *op, int failure,int power)
     if(failure<= -20 && failure > -40) /* wonder */
     {
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s gives a sign to renew your faith.",godname);
-	tmp = get_archetype(SPELL_WONDER);
+	tmp = create_archetype(SPELL_WONDER);
 	cast_cone(op,op,0,tmp);
 	free_object(tmp);
     }
@@ -847,7 +847,7 @@ void prayer_failure(object *op, int failure,int power)
     }
     else if (failure <= -150) /* blast the immediate area */
     { 
-	tmp = get_archetype(GOD_POWER);
+	tmp = create_archetype(GOD_POWER);
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
 	cast_magic_storm(op,tmp, power);
     }
@@ -872,7 +872,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
     if (failure<=-20 && failure > -40) /* wonder */
     {
 	new_draw_info(NDI_UNIQUE, 0,op,"Your spell causes an unexpected effect.");
-	tmp = get_archetype(SPELL_WONDER);
+	tmp = create_archetype(SPELL_WONDER);
 	cast_cone(op,op,0,tmp);
 	free_object(tmp);
     }
@@ -897,7 +897,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
 
 	} else {
 	    new_draw_info(NDI_UNIQUE, 0,op,"You lose control of the mana!  The uncontrolled magic blasts you!");
-	    tmp=get_archetype(LOOSE_MANA);
+	    tmp=create_archetype(LOOSE_MANA);
 	    tmp->level=skill->level;
 	    tmp->x=op->x;
 	    tmp->y=op->y;

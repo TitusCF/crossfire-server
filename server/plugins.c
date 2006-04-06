@@ -2693,12 +2693,12 @@ void* cfapi_object_create(int* type, ...)
             object* op;
             sval = va_arg(args, char*);
 
-            op = get_archetype_by_object_name(sval);
+            op = create_archetype_by_object_name(sval);
 
             if (strncmp(query_name(op), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                 free_object(op);
                 /* Try with archetype names... */
-                op = get_archetype(sval);
+                op = create_archetype(sval);
                 if (strncmp(query_name(op), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                     free_object(op);
                     *type = CFAPI_NONE;

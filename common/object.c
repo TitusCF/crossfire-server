@@ -2782,3 +2782,149 @@ int set_ob_key_value(object * op, const char * key, const char * value, int add_
     
     return ret;
 }
+
+
+ /*
+  * Gros has put find_best_weapon_used_match in arch.c but it manipulates 
+  * only objects so i moved it here.    -tchize
+  */
+object *find_best_weapon_used_match(object *pl, const char *params)
+ {
+   object *tmp, *best=NULL;
+   int match_val=0,tmpmatch;
+
+   for (tmp=pl->inv; tmp; tmp=tmp->below) {
+     if (tmp->invisible) continue;
+     if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val)
+     {
+       if ((QUERY_FLAG(tmp, FLAG_APPLIED))&&(tmp->type==WEAPON))
+       {
+         match_val=tmpmatch;
+         best=tmp;
+       };
+     }
+   }
+   return best;
+ }
+
+ /** This is a subset of the parse_id command.  Basically, name can be
+  * a string seperated lists of things to match, with certain keywords.
+  * pl is the player (only needed to set count properly)
+  * op is the item we are trying to match.  Calling function takes care
+  * of what action might need to be done and if it is valid
+  * (pickup, drop, etc.)  Return NONZERO if we have a match.  A higher
+  * value means a better match.  0 means no match.
+  *
+  * Brief outline of the procedure:
+  * We take apart the name variable into the individual components.
+  * cases for 'all' and unpaid are pretty obvious.
+  * Next, we check for a count (either specified in name, or in the
+  * player object.)
+  * If count is 1, make a quick check on the name.
+  * IF count is >1, we need to make plural name.  Return if match.
+  * Last, make a check on the full name.
+  *
+  * Details on values output (highest is output):
+  * match type                 return value
+  * ---------------------------------------
+  * nothing                    0
+  * 'all'                      1
+  * 'unpaid'                   2
+  * 'cursed'                   2
+  * 'unlocked'                 2
+  * partial custom name        3
+  * op->name with count >1     4
+  * op->name with count <2     6
+  * op->name_pl with count >1  6
+  * inside base name           12
+  * inside short name          12
+  * begin of base name         14
+  * custom name                15
+  * base name                  16
+  * short name                 18
+  * full name                  20
+  * (note, count is extracted from begin of name parameter or 
+  *  from pl->contr->count, name has priority)
+  */
+int item_matched_string(object *pl, object *op, const char *name)
+{
+    char *cp, local_name[MAX_BUF];
+    int count,retval=0;
+    strcpy(local_name, name);   /* strtok is destructive to name */
+
+    for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
+    while (cp[0]==' ') ++cp;    /* get rid of spaces */
+
+    /*  LOG(llevDebug,"Trying to match %s\n", cp);*/
+    /* All is a very generic match - low match value */
+    if (!strcmp(cp,"all")) return 1;
+
+    /* unpaid is a little more specific */
+    if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
+    if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
+        (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
+        return 2;
+
+    if (!strcmp(cp,"unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
+        return 2;
+
+    /* Allow for things like '100 arrows' */
+    if ((count=atoi(cp))!=0) {
+        cp=strchr(cp, ' ');
+        while (cp && cp[0]==' ') ++cp;  /* get rid of spaces */
+    }
+    else {
+        if (pl->type==PLAYER)
+        count=pl->contr->count;
+        else
+        count = 0;
+    }
+
+    if (!cp || cp[0]=='\0' || count<0) return 0;
+
+
+    /* The code here should go from highest retval to lowest.  That
+     * is because of the 'else' handling - we don't want to match on
+     * something and set a low retval, even though it may match a higher retcal
+     * later.  So keep it in descending order here, so we try for the best
+     * match first, and work downward.
+     */
+    if (!strcasecmp(cp,query_name(op))) retval=20;
+    else if (!strcasecmp(cp,query_short_name(op))) retval=18;
+    else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
+    else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+    else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
+    else if (!strncasecmp(cp,query_base_name(op,0),
+                  strlen(cp))) retval=14;
+    else if (!strncasecmp(cp,query_base_name(op,1),
+                  strlen(cp))) retval=14;
+
+    /* Do substring checks, so things like 'Str+1' will match.
+     * retval of these should perhaps be lower - they are lower
+     * then the specific strcasecmp aboves, but still higher than
+     * some other match criteria.
+     */
+    else if (strstr(query_base_name(op,1), cp)) retval = 12;
+    else if (strstr(query_base_name(op,0), cp)) retval = 12;
+    else if (strstr(query_short_name(op), cp)) retval = 12;
+
+    /* Check against plural/non plural based on count. */
+    else if (count>1 && !strcasecmp(cp,op->name_pl)) {
+        retval=6;
+    }
+    else if (count==1 && !strcasecmp(op->name,cp)) {
+        retval=6;
+    }
+    /* base name matched - not bad */
+    else if (strcasecmp(cp,op->name)==0 && !count) retval=4;
+    /* Check for partial custom name, but give a real low priority */
+    else if (op->custom_name && strstr(op->custom_name, cp)) retval = 3;
+
+    if (retval) {
+        if (pl->type == PLAYER)
+        pl->contr->count=count;
+        return retval;
+    }
+    }
+   return 0;
+}
