@@ -38,9 +38,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/check-fragment.am
 noinst_PROGRAMS = $(am__EXEEXT_1)
 subdir = test/unit/server
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
@@ -467,6 +468,8 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PLUGIN_PYTHON = @PLUGIN_PYTHON@
+PROCESS_XSLT_FALSE = @PROCESS_XSLT_FALSE@
+PROCESS_XSLT_TRUE = @PROCESS_XSLT_TRUE@
 PYTHON_LIB = @PYTHON_LIB@
 PYTHON_PLUGIN_FALSE = @PYTHON_PLUGIN_FALSE@
 PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
@@ -480,6 +483,7 @@ TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
 VERSION = @VERSION@
 X11LIBS = @X11LIBS@
+XSLTENGINE = @XSLTENGINE@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
@@ -505,6 +509,9 @@ build_alias = @build_alias@
 build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
+check_xslt_forcedprogfound = @check_xslt_forcedprogfound@
+check_xslt_sablotronfound = @check_xslt_sablotronfound@
+check_xslt_xsltprocfound = @check_xslt_xsltprocfound@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -532,17 +539,23 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-BUILT_SOURCES = ../../logs/unit/server
-INCLUDES = -I../../../include -I../../include
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(srcdir)/../../logs\"
 LDADD = ../../../common/libcross.a ../../../socket/libsocket.a ../../../random_maps/librandom_map.a ../../../server/libserver.a $(LIBDL) @CHECK_LIBS@
 TESTS = check_alchemy check_apply check_attack check_ban check_build_map check_c_chat check_c_misc check_c_move check_c_new check_c_object check_commands check_c_party check_c_range check_c_wiz check_daemon check_disease check_egoitem check_gods check_hiscore check_init check_login check_main check_monster check_move check_pets check_player check_plugins check_resurrection check_rune check_shop check_skills check_skill_util check_spell_attack check_spell_effect check_spell_util check_swamp check_swap check_time check_timers check_weather check_win32
+CHECK_ROOT = ../../
+CHECK_FOLDER = unit/server
+CHECK_PARENT_NAME = Unit
+LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
+INCLUDES = -I$($top_srcdir)/include -I$($top_srcdir)/test/include
+BUILT_SOURCES = $(LOGDIR)
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+@PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
+@PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/check-fragment.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -903,6 +916,7 @@ check-TESTS: $(TESTS)
 	else :; fi
 
 distdir: $(DISTFILES)
+	$(mkdir_p) $(distdir)/../../..
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -930,7 +944,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS check-local
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS)
@@ -963,7 +977,7 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+clean-am: clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -1012,14 +1026,14 @@ ps-am:
 
 uninstall-am: uninstall-info-am
 
-.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
-	clean-generic clean-libtool clean-noinstPROGRAMS ctags \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am check-local \
+	clean clean-generic clean-libtool clean-local \
+	clean-noinstPROGRAMS ctags distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-exec install-exec-am \
+	install-info install-info-am install-man install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-info-am
@@ -1035,6 +1049,101 @@ uninstall-am: uninstall-info-am
 	( cd ../../../random_maps ; make librandom_map.a )
 ../../../server/libserver.a:
 	( cd ../../../server ; make libserver.a )
+$(LOGDIR):
+	mkdir -p $(LOGDIR)
+automenu:
+	@echo "Building menu entry..."
+	@subdirs='$(SUBDIRS)';\
+	list='$(TESTS)'; \
+	dir='$(LOGDIR)'; \
+	srcdir='$(top_srcdir)'; \
+	output_menu=$${dir}/.automenu.xml; \
+	parentfoldername=$(CHECK_PARENT_NAME); \
+	echo '<?xml version="1.0"?><menu>' > $$output_menu; \
+	echo '<parentMenu>$(CHECK_PARENT_NAME)</parentMenu>' >> $$output_menu;\
+	for tst in $$list; do \
+	  tst=$${tst/check_/} ; \
+	  tst=$${tst/-/_} ; \
+	  xml=$(LOGDIR)/$${tst}.xml ;\
+	  if test -e "$$xml"; then \
+	      successCount=`grep -c 'result="success"' $$xml`;\
+	      errorCount=`grep -c 'result="error"' $$xml`;\
+	      failureCount=`grep -c 'result="failure"' $$xml`;\
+	      echo '<entry success="'$${successCount}'" error="'$${errorCount}'" failure="'$${failureCount}'">'$$tst'</entry>' >> $$output_menu; \
+	  fi; \
+	done; \
+	for sub in $$subdirs; do \
+	    if test -e $${dir}/$${sub}/.automenu.xml; then \
+	       echo '<subDirectory name="'$${sub}'"/>' >> $$output_menu; \
+	    fi; \
+	done;\
+	echo "</menu>" >> $$output_menu
+
+logreport: automenu
+	@echo "processing logs to html..."
+	@list='$(TESTS)'; \
+	srcdir='$(top_srcdir)'; \
+	xsl=$${srcdir}/test/templates/logresult.xsl ; \
+	xsltproc='$(XSLTENGINE)';\
+	xsltproc=$${xsltproc/\%2/$$xsl};\
+	xml_siteuri='$(CHECK_ROOT)' ;\
+	xml_check_folder='../logs/$(CHECK_FOLDER)' ;\
+	runxml='.autorun.xml';\
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    tst=$${tst/check_/} ; \
+	    tst=$${tst/-/_} ; \
+	    checkFile=$${tst}.xml ;\
+	    echo '<?xml version="1.0"?><config>' > $$runxml;\
+	    echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
+	    echo "<checkFile>$$checkFile</checkFile>" >> $$runxml;\
+	    echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
+	    html=$(LOGDIR)/$${tst}.html ;\
+	    if test -e "$(LOGDIR)/$$xml"; then \
+	        torun=$${xsltproc/\%1/$$runxml};\
+	        torun=$${torun/\%3/$$html};\
+	        echo "running $$torun";\
+	        $$torun; \
+	    fi; \
+	  done; \
+	else :; fi; \
+	echo '<?xml version="1.0"?><config>' > $$runxml;\
+	echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
+	echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
+	html=$(LOGDIR)/.index.html ;\
+	torun=$${xsltproc/\%1/$$runxml};\
+	torun=$${torun/\%3/$$html};\
+	echo "running $$torun";\
+	$$torun;
+template-copy: $(LOGDIR)
+	@echo copying template
+	@if test -d "$(top_srcdir)/test/templates/$(CHECK_FOLDER)"; then \
+	    cp $(top_srcdir)/test/templates/$(CHECK_FOLDER)/* $(LOGDIR)/;\
+	fi
+textlog:
+	@echo "processing logs to text..."
+	@srcdir='$(top_srcdir)'; \
+	xsl=$${srcdir}/test/templates/checkTextResult.xsl ; \
+	xsltproc='$(XSLTENGINE)';\
+	xsltproc=$${xsltproc/\%2/$$xsl};\
+	xml_siteuri='$(CHECK_ROOT)' ;\
+	xml_check_folder='../logs/$(CHECK_FOLDER)' ;\
+	runxml='.autorun.xml';\
+	echo '<?xml version="1.0"?><config>' > $$runxml;\
+	echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
+	echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
+	txt=$(LOGDIR)/testlog.txt ;\
+	torun=$${xsltproc/\%1/$$runxml};\
+	torun=$${torun/\%3/$$txt};\
+	echo "running $$torun";\
+	$$torun;
+check-html: $(CHECK_HTML)
+check-text: $(CHECK_TXT)
+clean-unit:
+	rm autorun.xml
+
+check-local: check-html
+clean-local: clean-unit
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

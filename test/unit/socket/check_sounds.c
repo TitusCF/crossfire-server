@@ -68,6 +68,7 @@ int main(void)
   Suite *s = sounds_suite();
   SRunner *sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/socket/sounds.xml");
+  srunner_set_log(sr,LOGDIR "/unit/socket/sounds.out");
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);

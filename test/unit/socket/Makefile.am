@@ -1,8 +1,5 @@
-BUILT_SOURCES=../../logs/unit/socket
 noinst_LIBRARIES = libstubs.a
 libstubs_a_SOURCES=stubs_socket.c
-INCLUDES = -I../../../include -I../../include
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(srcdir)/../../logs\"
 LDADD = ../../../common/libcross.a  ../../../socket/libsocket.a libstubs.a $(LIBDL) @CHECK_LIBS@
 
 ../../logs/unit/socket:
@@ -15,4 +12,11 @@ LDADD = ../../../common/libcross.a  ../../../socket/libsocket.a libstubs.a $(LIB
 
 TESTS= check_image check_info check_init check_item check_loop check_lowlevel check_metaserver check_request check_sounds
 
-noinst_PROGRAMS=$(TESTS)
+
+CHECK_ROOT=../../
+CHECK_FOLDER=unit/socket
+CHECK_PARENT_NAME=Unit
+include $(top_srcdir)/check-fragment.am
+
+check-local: check-html
+clean-local: clean-unit

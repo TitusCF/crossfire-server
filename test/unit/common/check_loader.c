@@ -68,6 +68,7 @@ int main(void)
   Suite *s = loader_suite();
   SRunner *sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/common/loader.xml");
+  srunner_set_log(sr,LOGDIR "/unit/common/loader.out");
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);

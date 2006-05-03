@@ -68,6 +68,7 @@ int main(void)
   Suite *s = square_spiral_suite();
   SRunner *sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/random_maps/square_spiral.xml");
+  srunner_set_log(sr,LOGDIR "/unit/random_maps/square_spiral.out");
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);

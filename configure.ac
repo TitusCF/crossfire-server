@@ -243,7 +243,6 @@ CF_CHECK_CROSSEDIT(["$X11LIBS"],
 	[cf_will_build_crossedit="yes"]
 	AC_SUBST(CROSSEDIT, 'crossedit'), 
 	[cf_will_build_crossedit="no"] )
-
 ########################
 # Unit test configuration
 
@@ -251,7 +250,9 @@ AM_PATH_CHECK(,[have_check="yes"],
   AC_MSG_WARN([Check not found; cannot run unit tests!])
   [have_check="no"])
 AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
-
+CF_CHECK_XSLT(xsltengine)
+AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$xsltengine" != x])
+AC_SUBST(XSLTENGINE,[$xsltengine])
 AC_OUTPUT([Makefile
 	crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile
 	crossedit/Cnv/Makefile crossedit/bitmaps/Makefile
@@ -293,7 +294,10 @@ if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
 			
 fi
-AC_MSG_NOTICE([    Will process unit testing?           $have_check ])
+if test x"$xsltengine" != x ; then
+    check_complement=["(will generate report)"]
+fi
+AC_MSG_NOTICE([    Will process unit testing?           $have_check $check_complement])
 if test "x$have_check" = "xyes" ; then
 AC_MSG_NOTICE([      (run make; make -k check)])
 else
@@ -304,5 +308,4 @@ AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  * this check is new and may be unaccurate. If you find it says])
 AC_MSG_NOTICE([  yes but compilation failed or you have good reason to think])
 AC_MSG_NOTICE([  script guessed wrong, please inform mailing list or sf tracker.])
-
 
