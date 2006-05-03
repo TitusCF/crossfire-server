@@ -881,7 +881,7 @@ static int stick_arrow (object *op, object *tmp)
 object *hit_with_arrow (object *op, object *victim)
 {
     object *container, *hitter;
-    int hit_something;
+    int hit_something=0;
     tag_t victim_tag, hitter_tag;
     sint16 victim_x, victim_y;
 
@@ -1199,7 +1199,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
 	
 	if(op->resist[ATNR_DRAIN] >= 0) 
 	  rate = 50 + op->resist[ATNR_DRAIN] / 2;
-	else if(op->resist[ATNR_DRAIN] < 0)
+	else
 	  rate = 5000 / (100 - op->resist[ATNR_DRAIN]);
 	
 	/* full protection has no effect.  Nothing else in this
