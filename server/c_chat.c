@@ -97,7 +97,7 @@ int command_orcknuckle(object *op, char *params)
     return 0;
 }
 
-static int command_tell_all(object *op, char *params, int pri, int color, char *desc)
+static int command_tell_all(object *op, char *params, int pri, int color, const char *desc)
 {
     if (op->contr->no_shout == 1){
 	new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout or chat.");

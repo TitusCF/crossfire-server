@@ -193,7 +193,6 @@ int command_fire(object *op, char *params);
 int command_fire_stop(object *op, char *params);
 int bad_command(object *op, char *params);
 /* c_object.c */
-object *find_best_object_match(object *pl, const char *params);
 int command_build(object *pl, char *params);
 int command_uskill(object *pl, char *params);
 int command_rskill(object *pl, char *params);
@@ -201,7 +200,7 @@ int command_search(object *op, char *params);
 int command_disarm(object *op, char *params);
 int command_throw(object *op, char *params);
 int command_apply(object *op, char *params);
-int sack_can_hold(object *pl, object *sack, object *op, uint32 nrof);
+int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof);
 void pick_up(object *op, object *alt);
 int command_take(object *op, char *params);
 void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof);
@@ -213,11 +212,10 @@ int command_examine(object *op, char *params);
 object *find_marked_object(object *op);
 int command_mark(object *op, char *params);
 void examine_monster(object *op, object *tmp);
-char *long_desc(object *tmp, object *pl);
+const char *long_desc(const object *tmp, const object *pl);
 void examine(object *op, object *tmp);
 void inventory(object *op, object *inv);
 int command_pickup(object *op, char *params);
-void set_pickup_mode(object *op, int i);
 int command_search_items(object *op, char *params);
 int command_rename_item(object *op, char *params);
 /* c_party.c */
@@ -293,7 +291,7 @@ void init_commands(void);
 command_function find_oldsocket_command(char *cmd);
 command_function find_oldsocket_command2(char *cmd);
 /* daemon.c */
-FILE *become_daemon(char *filename);
+FILE *become_daemon(const char *filename);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
@@ -303,7 +301,6 @@ int cure_disease(object *sufferer, object *caster);
 /* egoitem.c */
 int apply_power_crystal(object *op, object *crystal);
 /* hiscore.c */
-char *spool(char *bp, char *error);
 void check_score(object *op);
 void display_high_score(object *op, int max, const char *match);
 /* gods.c */

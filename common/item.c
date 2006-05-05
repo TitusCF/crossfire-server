@@ -940,7 +940,7 @@ static char *describe_monster(const object *op) {
  * item (eg, debug dump or the like)
  */
 
-char *describe_item(const object *op, object *owner) {
+char *describe_item(const object *op, const object *owner) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
     int identified,i;

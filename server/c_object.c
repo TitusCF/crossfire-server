@@ -35,24 +35,15 @@
 #endif
 #include <living.h>
 #include <math.h>
+
+static void set_pickup_mode(const object *op, int i);
+
 /*
  * Object id parsing functions
  */
 
 #define OBLINKMALLOC(p) if(!((p)=(objectlink *)malloc(sizeof(objectlink))))\
                           fatal(OUT_OF_MEMORY);
-
-#define ADD_ITEM(NEW,COUNT)\
-	  if(!first) {\
-	    OBLINKMALLOC(first);\
-	    last=first;\
-	  } else {\
-	    OBLINKMALLOC(last->next);\
-	    last=last->next;\
-	  }\
-	  last->next=NULL;\
-	  last->ob=(NEW);\
-          last->id=(COUNT);
 
 /**
  * Search the inventory of 'pl' for what matches best with params.
@@ -81,7 +72,7 @@ static object *find_best_apply_object_match(object *pl, const char *params, enum
 /**
  * Shortcut to find_best_apply_object_match(pl, params, AF_NULL);
  **/
-object *find_best_object_match(object *pl, const char *params)
+static object *find_best_object_match(object *pl, const char *params)
 {
     return find_best_apply_object_match(pl, params, AP_NULL);
 }
@@ -495,7 +486,7 @@ int command_apply (object *op, char *params)
  * certain number of objects to drop, so we can pass that number, and
  * not need to use split_ob and stuff.
  */
-int sack_can_hold (object *pl, object *sack, object *op, uint32 nrof) {
+int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof) {
 
     if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
 	new_draw_info_format(NDI_UNIQUE, 0, pl, 
@@ -1355,7 +1346,7 @@ void examine_monster(object *op,object *tmp) {
 
 
 /* tmp is the object being described, pl is who is examing it. */
-char *long_desc(object *tmp, object *pl) {
+const char *long_desc(const object *tmp, const object *pl) {
     static char buf[VERY_BIG_BUF];
     char *cp;
 
@@ -1543,7 +1534,7 @@ void examine(object *op, object *tmp) {
  */
 void inventory(object *op,object *inv) {
   object *tmp;
-  char *in;
+  const char *in;
   int items = 0, length;
 
   if (inv==NULL && op==NULL) {
@@ -1596,7 +1587,7 @@ void inventory(object *op,object *inv) {
   }
 }
 
-static void display_new_pickup( object* op )
+static void display_new_pickup(const object* op)
     {
     int i = op->contr->mode;
 
@@ -1703,7 +1694,7 @@ int command_pickup (object *op, char *params)
   return 1;
 }
 
-void set_pickup_mode(object *op,int i) {
+static void set_pickup_mode(const object *op, int i) {
   switch(op->contr->mode=i) {
     case 0:
       new_draw_info(NDI_UNIQUE, 0,op,"Mode: Don't pick up.");

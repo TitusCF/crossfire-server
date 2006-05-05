@@ -17,6 +17,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Applied patch #1453869 (code-cleanup) courtesy Stefan Huehner (shuehner).
+Modified files for first patch:
+ include/funcpoint.h sproto.h
+ server/alchemy.c apply.c attack.c commands.c disease.c egoitem.c gods.c init.c login.c
+  main.c monster.c move.c pets.c player.c resurrection.c rune.c skill_util.c skills.c
+  spell_attack.c spell_effect.c spell_util.c swap.c time.c timers.c
+
+Modified files for second patch:
+ crossedit/stubs.c
+ include/sockproto.h
+ random_maps/standalone.c
+ socket/info.c item.c request.c sounds.c
+ test/unit/common/stubs_common.c
+ test/unit/random_maps/stubs_random.c
+
+Modified files for third and last patch:
+ common/item.c
+ include/libproto.h sproto.h
+ server/c_chat.c c_object.c c_wiz.c daemon.c hiscore.c main.c shop.c 
+
+Ryo 2006-05-05
+
 Commit patch #1456016 courtesy schmorp.de development team.
  server/pets.c
 Add Map.Insert(object,x,y) and Player.CanPay( ) to Python plugin.

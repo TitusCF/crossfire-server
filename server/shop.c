@@ -1009,7 +1009,7 @@ typedef struct shopinv {
  */
 static int shop_sort(const void *a1, const void *a2)
 {
-    shopinv *s1 = (shopinv*)a1, *s2= (shopinv*)a2;
+    const shopinv *s1 = (const shopinv*)a1, *s2= (const shopinv*)a2;
 
     if (s1->type<s2->type) return -1;
     if (s1->type>s2->type) return 1;

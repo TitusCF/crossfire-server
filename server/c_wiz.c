@@ -1949,7 +1949,6 @@ int command_diff(object *op, char *params) {
 int command_insert_into(object* op, char *params)
 {
     object *left, *right, *inserted;
-    const char *diff;
     int left_from, right_from;
 
     left = get_dm_object(op->contr, &params, &left_from);

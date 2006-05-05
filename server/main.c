@@ -162,7 +162,7 @@ char *crypt_string(char *str, char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
     return(str);
 #else
-    static char *c=
+    static const char *c=
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     char s[2];
 

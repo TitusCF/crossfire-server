@@ -98,7 +98,7 @@ extern char *get_number(int i);
 extern const char *query_short_name(const object *op);
 extern char *query_name(const object *op);
 extern const char *query_base_name(const object *op, int plural);
-extern char *describe_item(const object *op, object *owner);
+extern char *describe_item(const object *op, const object *owner);
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);
 extern void identify(object *op);

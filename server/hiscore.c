@@ -50,7 +50,7 @@ typedef struct scr {
  * log a specified error message if something goes wrong.
  */
 
-char *spool(char *bp,char *error) {
+static char *spool(char *bp, const char *error) {
   static char *prev_pos = NULL;
   char *next_pos;
   if (bp == NULL) {
@@ -78,7 +78,7 @@ char *spool(char *bp,char *error) {
  * to the second one.
  */
 
-static void copy_score(score *sc1,score *sc2) {
+static void copy_score(const score *sc1, score *sc2) {
     strncpy(sc2->name, sc1->name, BIG_NAME);
     sc2->name[BIG_NAME - 1] = '\0';
     strncpy(sc2->title, sc1->title, BIG_NAME);
@@ -97,7 +97,7 @@ static void copy_score(score *sc1,score *sc2) {
  * a pointer to it.
  */
 
-static char *put_score(score *sc) {
+static char *put_score(const score *sc) {
   static char buf[MAX_BUF];
 #ifndef WIN32
   sprintf(buf,"%s:%s:%lld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
@@ -163,7 +163,7 @@ static score *get_score(char *bp) {
   return &sc;
 }
 
-static char * draw_one_high_score(score *sc) {
+static char * draw_one_high_score(const score *sc) {
     static char retbuf[MAX_BUF];
 
     if(!strncmp(sc->killer,"quit",MAX_NAME))
