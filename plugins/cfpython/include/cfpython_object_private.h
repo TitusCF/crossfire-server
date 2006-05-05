@@ -452,6 +452,7 @@ static int Player_SetMarkedItem(Crossfire_Player* whoptr, PyObject* value, void*
 static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args );
 static PyObject* Player_GetParty(Crossfire_Player* whoptr, void* closure);
 static int Player_SetParty(Crossfire_Player* whoptr, PyObject* value, void* closure);
+static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args );
 
 static PyGetSetDef Player_getseters[] = {
     { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
@@ -463,6 +464,7 @@ static PyGetSetDef Player_getseters[] = {
 static PyMethodDef PlayerMethods[] = {
     { "Message",          (PyCFunction)Crossfire_Player_Message,        METH_VARARGS},
     { "Write",          (PyCFunction)Crossfire_Player_Message, METH_VARARGS},
+    { "CanPay",         (PyCFunction)Crossfire_Player_CanPay, METH_VARARGS},
     {NULL, NULL }
 };
 

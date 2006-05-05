@@ -193,6 +193,17 @@ static PyObject* Map_Next(Crossfire_Map* map, PyObject* args)
 	return Crossfire_Map_wrap(cf_map_get_property(map->map,CFAPI_MAP_PROP_NEXT));
 }
 
+static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args)
+{
+    int x, y;
+    Crossfire_Object* what;
+    
+    if (!PyArg_ParseTuple(args,"O!ii", &Crossfire_ObjectType, &what, &x, &y))
+        return NULL;
+
+    return Crossfire_Object_wrap(cf_map_insert_object(map->map, what->obj, x, y));
+}
+
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)
 {
 	return left->map < right->map ? -1 : ( left->map == right->map ? 0 : 1 );

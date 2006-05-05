@@ -103,6 +103,7 @@ static f_plug_api cfapiArchetype_get_first = NULL;
 static f_plug_api cfapiArchetype_get_property = NULL;
 static f_plug_api cfapiParty_get_property = NULL;
 static f_plug_api cfapiRegion_get_property = NULL;
+static f_plug_api cfapiPlayer_can_pay = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -182,6 +183,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiArchetype_get_property, "cfapi_archetype_get_property", z );
     GET_HOOK( cfapiParty_get_property, "cfapi_party_get_property", z );
     GET_HOOK( cfapiRegion_get_property, "cfapi_region_get_property", z );
+    GET_HOOK( cfapiPlayer_can_pay, "cfapi_player_can_pay", z );
     return 1;
 }
 
@@ -365,6 +367,11 @@ void cf_player_set_party(object* op, partylist* party)
 {
 	int val;
 	cfapiObject_set_property(&val, op, CFAPI_PLAYER_PROP_PARTY, party);
+}
+int cf_player_can_pay(object* pl)
+{
+    int val;
+    return *(int*)cfapiPlayer_can_pay(&val, pl);
 }
 
 mapstruct* cf_map_get_map( char* name )

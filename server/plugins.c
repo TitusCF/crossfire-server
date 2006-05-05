@@ -43,7 +43,7 @@
 #include <sproto.h>
 #endif
 
-#define NR_OF_HOOKS 74
+#define NR_OF_HOOKS 75
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -121,6 +121,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
     {cfapi_party_get_property,      72, "cfapi_party_get_property"},
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
+    {cfapi_player_can_pay,          74, "cfapi_player_can_pay"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -3308,6 +3309,19 @@ void *cfapi_player_send_inventory(int *type, ...)
     /* Currently a stub. Do we really need this anymore ? */
     *type = CFAPI_NONE;
     return NULL;
+}
+
+void *cfapi_player_can_pay(int *type, ...)
+{
+    va_list args;
+    static int rv;
+    object* pl;
+    
+    va_start(args, type);
+    pl = va_arg(args, object*);
+    rv = can_pay(pl);
+    *type = CFAPI_INT;
+    return &rv;
 }
 
 void* cfapi_object_teleport(int *type, ...)

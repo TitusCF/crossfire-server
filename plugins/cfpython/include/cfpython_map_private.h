@@ -54,6 +54,7 @@ static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Check(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Next(Crossfire_Map* map, PyObject* args);
+static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args);
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
 
@@ -95,6 +96,7 @@ static PyMethodDef MapMethods[] = {
     { "CreateObject", (PyCFunction)Map_CreateObject, METH_VARARGS},
     { "Check",    (PyCFunction)Map_Check, METH_VARARGS},
     { "Next",    (PyCFunction)Map_Next, METH_VARARGS},
+    { "Insert",  (PyCFunction)Map_Insert, METH_VARARGS},
     {NULL, NULL, 0}
 };
 

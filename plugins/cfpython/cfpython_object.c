@@ -69,6 +69,11 @@ static int Player_SetParty(Crossfire_Player* whoptr, PyObject* value, void* clos
 	return 0;
 }
 
+static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args )
+{
+    return Py_BuildValue("i", cf_player_can_pay(who->obj));
+}
+
 /* Object properties. Get and maybe set. */
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
 {

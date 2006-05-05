@@ -145,6 +145,7 @@ extern object*      cf_player_send_inventory(object* op);
 extern void         cf_player_move(player* pl, int dir);
 extern partylist*   cf_player_get_party(object* op);
 extern void         cf_player_set_party(object* op, partylist* party);
+extern int          cf_player_can_pay(object* op);
 
 /* Archetypes */
 extern archetype*	cf_archetype_get_first(void);
