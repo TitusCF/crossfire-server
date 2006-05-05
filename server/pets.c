@@ -610,7 +610,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
     }
 
     if(!dir)
-	dir=find_free_spot(NULL,op->map,op->x,op->y,1,9);
+	dir=find_free_spot(NULL,op->map,op->x,op->y,1,SIZEOFFREE1+1);
 
     if ((dir==-1) || ob_blocked(&at->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
 	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
@@ -785,6 +785,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 {
     sint16 x,y, nrof=1, i;
     archetype *summon_arch;
+    int ndir;
 
     if (spell_ob->other_arch) {
 	summon_arch = spell_ob->other_arch;
@@ -813,7 +814,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 
     } else if (spell_ob->race && !strcmp(spell_ob->race,"GODCULTMON")) {
 	object *god=find_god(determine_god(op)), *mon, *owner;
-	int summon_level, tries, ndir;
+	int summon_level, tries;
 
 	if (!god && ((owner=get_owner(op))!=NULL)) {
 	    god = find_god(determine_god(owner));
@@ -865,25 +866,28 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	return 0;
     }
 
-    if (!dir)
-	dir = find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
-
-    if (dir > 0) {
-	x = op->x + freearr_x[dir];
-	y = op->y + freearr_y[dir];
-    } else {
-	x = 0;
-	y = 0;
-    }
-
-    if (dir == -1 || ob_blocked(&summon_arch->clone, op->map, x, y)){
-	new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
-	return 0;
-    }
-
     for (i=1; i <= nrof; i++) {
 	archetype *atmp;
 	object *prev=NULL, *head=NULL, *tmp;
+
+        if (dir) {
+            ndir = dir;
+            dir = absdir (dir+1);
+        } else
+            ndir = find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
+
+        if (ndir > 0) {
+            x = freearr_x[ndir];
+            y = freearr_y[ndir];
+        }
+
+        if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y)){
+            new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
+            if (nrof > 1)
+		new_draw_info(NDI_UNIQUE, 0,op, "No more pets for this casting.");
+
+            return nrof > 1;
+        }
 
 	for (atmp = summon_arch; atmp!=NULL; atmp=atmp->more) {
 	    tmp = arch_to_object(atmp);
@@ -915,11 +919,11 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 		prev->more = tmp;
 	    }
 	    prev = tmp;
-	    tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
-	    tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
+	    tmp->x = op->x + x + tmp->arch->clone.x;
+	    tmp->y = op->y + y + tmp->arch->clone.y;
 	    tmp->map = op->map;
 	}
-	head->direction = dir;
+	head->direction = freedir[ndir];
 	head->stats.exp = 0;
 	head = insert_ob_in_map(head, head->map, op, 0);
 	if (head && head->randomitems) {
@@ -927,14 +931,6 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	    create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
 	    for (tmp=head->inv; tmp; tmp=tmp->below)
 		if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
-	}
-	dir = absdir(dir + 1);
-	if (ob_blocked(&summon_arch->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
-	    if (i < nrof) {
-		new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way,");
-		new_draw_info(NDI_UNIQUE, 0,op, "No more pets for this casting.");
-		return 1;
-	    }
 	}
     } /* for i < nrof */
     return 1;
