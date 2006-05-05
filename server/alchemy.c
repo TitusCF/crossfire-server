@@ -67,7 +67,15 @@ static const char* const cauldron_effect [] = {
 
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
 static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
-
+static int content_recipe_value (object *op);
+static int numb_ob_inside (object *op);
+static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger);
+static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches);
+static int calc_alch_danger(object *caster,object *cauldron, recipe *rp);
+static object * make_item_from_recipe(object *cauldron, recipe *rp);
+static void remove_contents (object *first_ob, object *save_item);
+static void adjust_product(object *item, int lvl, int yield);
+static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
 
 /** Returns a random selection from cauldron_effect[] */
 static const char *cauldron_sound(void) {
@@ -209,7 +217,7 @@ void attempt_do_alchemy(object *caster, object *cauldron) {
  * ok, but the possibility of duplicate hashes is certainly possible - msw
   */
 
-int content_recipe_value (object *op) {
+static int content_recipe_value (object *op) {
   char name[MAX_BUF];
   object *tmp=op->inv;
   int tval=0, formula=0;
@@ -237,7 +245,7 @@ int content_recipe_value (object *op) {
  * Returns total number of items in op
  */
 
-int numb_ob_inside (object *op) {
+static int numb_ob_inside (object *op) {
   object *tmp=op->inv;
   int number=0,o_number=0;
 
@@ -261,7 +269,7 @@ int numb_ob_inside (object *op) {
  * failed recipe)
  */ 
  
-object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches) { 
+static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches) { 
 
     object *item=NULL, *skop;
     /* this should be passed to this fctn, not effiecent cpu use this way */
@@ -324,7 +332,7 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
  * on the item's default parameters, and the relevant caster skill level.
  */
 
-void adjust_product(object *item, int lvl, int yield) {
+static void adjust_product(object *item, int lvl, int yield) {
     int nrof=1;
 
     if (!yield)
@@ -351,7 +359,7 @@ void adjust_product(object *item, int lvl, int yield) {
  * @return the newly created object, NULL if something failed
  */
 
-object * make_item_from_recipe(object *cauldron, recipe *rp) {
+static object * make_item_from_recipe(object *cauldron, recipe *rp) {
   artifact *art=NULL;
   object *item=NULL;
     size_t rp_arch_index;
@@ -391,7 +399,7 @@ object * make_item_from_recipe(object *cauldron, recipe *rp) {
  * set to zero if not using a transmution formula
  */
  
-object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
+static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
    object *item=NULL;
  
    *rp_arch_index = 0;
@@ -437,7 +445,7 @@ object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch
  * adjustment for playbalance. -b.t.
  */
  
-void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
+static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
     int level=0;
  
     if(!op || !cauldron) return; 
@@ -631,7 +639,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
  * of objects in the cauldron inventory (ex icecube has stuff in it).  
  */
  
-void remove_contents (object *first_ob, object *save_item) {
+static void remove_contents (object *first_ob, object *save_item) {
   object *next,*tmp=first_ob;
  
     while(tmp) {
@@ -658,7 +666,7 @@ void remove_contents (object *first_ob, object *save_item) {
  * -b.t. 
  */
  
-int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
+static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    object *item; 
    char name[MAX_BUF];
    int danger=0,nrofi=0; 

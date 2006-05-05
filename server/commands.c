@@ -408,7 +408,7 @@ static command_function find_wizcommand(char *cmd)
  * Actually return value is used as can-repeat -flag
  */
 
-int parse_string(object *op, char *str)
+static int parse_string(object *op, char *str)
 {
     command_function f;
     char *cp;
@@ -471,7 +471,7 @@ int parse_string(object *op, char *str)
 /**  this function handles splitting up a ; separated
  *  compound command into sub-commands:  it is recursive.
  */
-int parse_command(object *op, char *str) {
+static int parse_command(object *op, char *str) {
   char *tmp,*tmp2;
   int i;
   /* if it's a keybinding command, ignore semicolons */

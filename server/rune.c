@@ -193,7 +193,7 @@ void move_rune(object *op) {
  */
 
 
-void rune_attack(object *op,object *victim)
+static void rune_attack(object *op,object *victim)
 {
     if(victim) {
          tag_t tag = victim->count;

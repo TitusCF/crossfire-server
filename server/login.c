@@ -38,6 +38,8 @@ extern void sub_weight (object *, signed long);
 extern void add_weight (object *, signed long);
 extern long pticks;
 
+static void copy_file(const char *filename, FILE *fpout);
+
 /* If flag is non zero, it means that we want to try and save everyone, but
  * keep the game running.  Thus, we don't want to free any information.
  */
@@ -186,7 +188,7 @@ int check_name(player *me,const char *name) {
     return 1;
 }
 
-int create_savedir_if_needed(char *savedir)
+static int create_savedir_if_needed(char *savedir)
 {
   struct stat *buf;
 
@@ -403,7 +405,7 @@ int save_player(object *op, int flag) {
   return 1;
 }
 
-void copy_file(const char *filename, FILE *fpout) {
+static void copy_file(const char *filename, FILE *fpout) {
   FILE *fp;
   char buf[MAX_BUF];
   if((fp = fopen(filename,"r")) == NULL)

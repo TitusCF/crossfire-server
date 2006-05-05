@@ -32,44 +32,55 @@
 #include <sproto.h>
 #endif
 
+static void help(void);
+static void usage(void);
+static void init_beforeplay(void);
+static void init_startup(void);
+static void compile_info(void);
+static void init_signals(void);
+static void init_races(void);
+static void dump_races(void);
+static void add_to_racelist(const char *race_name, object *op);
+static racelink *get_racelist(void);
+
 /** global weathermap */
 weathermap_t **weathermap;
 
-void set_logfile(char *val) { settings.logfilename=val; }
-void call_version(void) { version(NULL); exit(0); }
-void showscores(void) { display_high_score(NULL,9999,NULL); exit(0); }
-void set_debug(void) { settings.debug=llevDebug; }
-void unset_debug(void) { settings.debug=llevInfo; }
-void set_mondebug(void) { settings.debug=llevMonster; }
-void set_dumpmon1(void) {settings.dumpvalues=1; }
-void set_dumpmon2(void) {settings.dumpvalues=2; }
-void set_dumpmon3(void) {settings.dumpvalues=3; }
-void set_dumpmon4(void) {settings.dumpvalues=4; }
-void set_dumpmon5(void) {settings.dumpvalues=5; }
-void set_dumpmon6(void) {settings.dumpvalues=6; }
-void set_dumpmon7(void) {settings.dumpvalues=7; }
-void set_dumpmon8(void) {settings.dumpvalues=8; }
-void set_dumpmon9(void) {settings.dumpvalues=9; }
-void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
-void set_daemon(void) {settings.daemonmode=1; }
-void set_datadir(char *path) { settings.datadir=path; }
-void set_confdir(char *path) { settings.confdir=path; }
-void set_localdir(char *path) { settings.localdir=path; }
-void set_mapdir(char *path) { settings.mapdir=path; }
-void set_archetypes(char *path) { settings.archetypes=path; }
-void set_regions(char *path) { settings.regions=path; }
-void set_treasures(char *path) { settings.treasures=path; }
-void set_uniquedir(char *path) { settings.uniquedir=path; }
-void set_templatedir(char *path) { settings.templatedir=path; }
-void set_playerdir(char *path) { settings.playerdir=path; }
-void set_tmpdir(char *path) { settings.tmpdir=path; }
+static void set_logfile(char *val) { settings.logfilename=val; }
+static void call_version(void) { version(NULL); exit(0); }
+static void showscores(void) { display_high_score(NULL,9999,NULL); exit(0); }
+static void set_debug(void) { settings.debug=llevDebug; }
+static void unset_debug(void) { settings.debug=llevInfo; }
+static void set_mondebug(void) { settings.debug=llevMonster; }
+static void set_dumpmon1(void) {settings.dumpvalues=1; }
+static void set_dumpmon2(void) {settings.dumpvalues=2; }
+static void set_dumpmon3(void) {settings.dumpvalues=3; }
+static void set_dumpmon4(void) {settings.dumpvalues=4; }
+static void set_dumpmon5(void) {settings.dumpvalues=5; }
+static void set_dumpmon6(void) {settings.dumpvalues=6; }
+static void set_dumpmon7(void) {settings.dumpvalues=7; }
+static void set_dumpmon8(void) {settings.dumpvalues=8; }
+static void set_dumpmon9(void) {settings.dumpvalues=9; }
+static void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
+static void set_daemon(void) {settings.daemonmode=1; }
+static void set_datadir(char *path) { settings.datadir=path; }
+static void set_confdir(char *path) { settings.confdir=path; }
+static void set_localdir(char *path) { settings.localdir=path; }
+static void set_mapdir(char *path) { settings.mapdir=path; }
+static void set_archetypes(char *path) { settings.archetypes=path; }
+static void set_regions(char *path) { settings.regions=path; }
+static void set_treasures(char *path) { settings.treasures=path; }
+static void set_uniquedir(char *path) { settings.uniquedir=path; }
+static void set_templatedir(char *path) { settings.templatedir=path; }
+static void set_playerdir(char *path) { settings.playerdir=path; }
+static void set_tmpdir(char *path) { settings.tmpdir=path; }
 
-void showscoresparm(char *data) { 
+static void showscoresparm(char *data) { 
     display_high_score(NULL,9999,data); 
     exit(0); 
 }
 
-void set_csport(char *val)
+static void set_csport(char *val)
 { 
     settings.csport=atoi(val);
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
@@ -745,12 +756,12 @@ void init(int argc, char **argv) {
     init_done=1;
 }
 
-void usage(void) {
+static void usage(void) {
   (void) fprintf(logfile,
 	"Usage: crossfire [-h] [-<flags>]...\n");
 }
 
-void help(void) {
+static void help(void) {
 /* The information in usage is redundant with what is given below, so why call it? */
 /*    usage();*/
     printf("Flags:\n");
@@ -791,7 +802,7 @@ void help(void) {
     exit(0);
 }
 
-void init_beforeplay(void) {
+static void init_beforeplay(void) {
   init_archetypes(); /* If not called before, reads all archetypes from file */
   init_artifacts();  /* If not called before, reads all artifacts from file */
   init_spells();     /* If not called before, links archtypes used by spells */
@@ -835,7 +846,7 @@ void init_beforeplay(void) {
   }
 }
 
-void init_startup(void) {
+static void init_startup(void) {
   char buf[MAX_BUF];
   FILE *fp;
   int comp;
@@ -991,7 +1002,7 @@ void fatal_signal(int make_core, int close_sockets) {
   exit(0);
 }
 
-void init_signals(void) {
+static void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
   signal(SIGHUP,rec_sighup);
   signal(SIGINT,rec_sigint);
@@ -1015,7 +1026,7 @@ void init_signals(void) {
  * putting together lists of creatures, etc that belong to gods.
  */
  
-void init_races (void) {
+static void init_races(void) {
   FILE *file;
   char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
   archetype *mon=NULL;
@@ -1078,7 +1089,7 @@ void init_races (void) {
     LOG(llevDebug,"done.\n");
 }
 
-void dump_races(void)
+static void dump_races(void)
 { 
     racelink *list;
     objectlink *tmp;
@@ -1090,7 +1101,7 @@ void dump_races(void)
     fprintf(stderr,"\n");
 }
 
-void add_to_racelist (const char *race_name, object *op) {
+static void add_to_racelist(const char *race_name, object *op) {
   racelink *race;
  
   if(!op||!race_name) return;
@@ -1112,7 +1123,7 @@ void add_to_racelist (const char *race_name, object *op) {
   race->member->ob = op;
 }
 
-racelink * get_racelist ( ) {
+static racelink * get_racelist(void) {
   racelink *list;
  
   list = (racelink *) malloc(sizeof(racelink ));
@@ -1124,7 +1135,7 @@ racelink * get_racelist ( ) {
   return list;
 }
  
-racelink * find_racelink( const char *name ) {
+racelink * find_racelink(const char *name) {
   racelink *test=NULL;
  
   if(name&&first_race)

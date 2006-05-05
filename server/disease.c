@@ -139,6 +139,14 @@ speed            speed of movement, from DISEASE
 #include <sounds.h>
 #include <skills.h>
 
+static int remove_symptoms(object *disease);
+static object *find_symptom(object *disease);
+static int check_infection(object *disease);
+static int do_symptoms(object *disease);
+static int grant_immunity(object *disease);
+
+
+
 /*  IMPLEMENTATION NOTES  
 	 
 	 Diseases may be contageous.  They are objects which exist in a player's
@@ -207,7 +215,7 @@ int move_disease(object *disease) {
  * more than one symtpom to a disease.
  */
  
-int remove_symptoms(object *disease) {
+static int remove_symptoms(object *disease) {
     object *symptom, *victim=NULL;
 
     while ((symptom = find_symptom(disease)) != NULL) {
@@ -220,7 +228,7 @@ int remove_symptoms(object *disease) {
 }
 
 /* argument is a disease */
-object * find_symptom(object *disease) {
+static object * find_symptom(object *disease) {
   object *walk;
 
   /* check the inventory for symptoms */
@@ -230,7 +238,7 @@ object * find_symptom(object *disease) {
 }
   
 /*  searches around for more victims to infect */
-int check_infection(object *disease) {
+static int check_infection(object *disease) {
     int x,y,range, mflags;
     mapstruct *map, *map2;
     object *tmp;
@@ -368,7 +376,7 @@ int infect_object(object *victim, object *disease, int force) {
 causes symptoms, and modifies existing symptoms in the case of
 existing diseases.  */
 
-int do_symptoms(object *disease) {
+static int do_symptoms(object *disease) {
     object *symptom;
     object *victim;
     object *tmp;
@@ -488,7 +496,7 @@ int do_symptoms(object *disease) {
 
 
 /*  grants immunity to plagues we've seen before.  */
-int grant_immunity(object *disease) {
+static int grant_immunity(object *disease) {
   object * immunity;
   object *walk;
   /* Don't give immunity to this disease if last_heal is set. */
@@ -566,7 +574,7 @@ int check_physically_infect(object *victim, object *hitter) {
 }
 
 /*  find a disease in someone*/
-object *find_disease(object *victim) {
+static object *find_disease(object *victim) {
   object *walk;
   for(walk=victim->inv;walk;walk=walk->below)
 	 if(walk->type==DISEASE) return walk;
@@ -618,7 +626,7 @@ int cure_disease(object *sufferer,object *caster) {
  * return true if we actually reduce a disease.
  */
 
-int reduce_symptoms(object *sufferer, int reduction) {
+static int reduce_symptoms(object *sufferer, int reduction) {
     object *walk;
     int success=0;
 

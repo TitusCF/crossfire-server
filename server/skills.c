@@ -608,7 +608,7 @@ static int do_skill_detect_magic(object *pl, object *skill) {
 /* Helper function for do_skill_ident, so that we can loop
  * over inventory AND objects on the ground conveniently.  
  */
-int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill) 
+static int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill) 
 {
     int success=0,chance, ip;
     int skill_value = skill->level * pl->stats.Int?pl->stats.Int:10;

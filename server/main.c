@@ -50,6 +50,9 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
+static void process_active_maps(void);
+static void process_events (mapstruct *map);
+
 static char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -113,7 +116,7 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
-void info_keys(object *op) {
+static void info_keys(object *op) {
   clear_win_info(op);
   new_draw_info(NDI_UNIQUE, 0,op,"Push `hjklynub' to walk in a direction.");
   new_draw_info(NDI_UNIQUE, 0,op,"Shift + dir = fire, Ctrl + dir = run");
@@ -392,7 +395,7 @@ void set_map_timeout(mapstruct *oldmap)
  * clean_path takes a path and replaces all / with _
  * We do a strcpy so that we do not change the original string.
  */
-char *clean_path(const char *file)
+static char *clean_path(const char *file)
 {
     static char newpath[MAX_BUF],*cp;
 
@@ -413,7 +416,7 @@ char *clean_path(const char *file)
  * are getting passed a string that points to a unique map
  * path.
  */
-char *unclean_path(const char *src)
+static char *unclean_path(const char *src)
 {
     static char newpath[MAX_BUF],*cp;
 
@@ -885,7 +888,7 @@ void enter_exit(object *op, object *exit_ob) {
  * if time since last call is less than MAX_TIME.
  */
 
-void process_active_maps(void) {
+static void process_active_maps(void) {
   mapstruct *map;
 
 
@@ -911,7 +914,7 @@ void process_active_maps(void) {
  * is needed after the players have been updated.
  */
 
-void process_players1(mapstruct *map)
+static void process_players1(mapstruct *map)
 {
     int flag;
     player *pl,*plnext;
@@ -976,7 +979,7 @@ void process_players1(mapstruct *map)
     }
 }
 
-void process_players2(mapstruct *map)
+static void process_players2(mapstruct *map)
 {
     player *pl;
 
@@ -1012,7 +1015,7 @@ void process_players2(mapstruct *map)
 #define SPEED_DEBUG
 
 
-void process_events (mapstruct *map)
+static void process_events (mapstruct *map)
 {
     object *op;
     object marker;
@@ -1288,7 +1291,7 @@ int forbid_play(void)
 
 extern unsigned long todtick;
 
-void do_specials(void) {
+static void do_specials(void) {
 
 #ifdef WATCHDOG
     if (!(pticks % 503))

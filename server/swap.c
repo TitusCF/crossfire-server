@@ -195,7 +195,7 @@ void check_active_maps(void) {
  * map_least_timeout() returns the map with the lowest timeout variable (not 0)
  */
 
-mapstruct *map_least_timeout(char *except_level) {
+static mapstruct *map_least_timeout(char *except_level) {
   mapstruct *map, *chosen=NULL;
   int timeout = MAP_MAXTIMEOUT + 1;
   for(map = first_map;map != NULL; map = map->next)

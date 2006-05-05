@@ -41,6 +41,11 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
+static int dragon_eat_flesh(object *op, object *meal);
+static void apply_item_transformer(object *pl, object *transformer);
+static void apply_lighter(object *who, object *lighter);
+static void scroll_failure(object *op, int failure, int power);
+
 /** Can transport hold object op?
  * This is a pretty trivial function,
  * but in the future, possible transport may have more restrictions
@@ -641,7 +646,7 @@ static int check_sacrifice(object *op, const object *improver)
 /**
  * Actually improves the weapon, and tells user.
  */
-int improve_weapon_stat(object *op,object *improver,object *weapon,
+static int improve_weapon_stat(object *op,object *improver,object *weapon,
 			signed char *stat,int sacrifice_count,const char *statname)
 {
 
@@ -676,7 +681,7 @@ int improve_weapon_stat(object *op,object *improver,object *weapon,
  * Checks for sacrifice, and so on.
  */
 
-int prepare_weapon(object *op, object *improver, object *weapon)
+static int prepare_weapon(object *op, object *improver, object *weapon)
 {
     int sacrifice_count,i;
     char buf[MAX_BUF];
@@ -732,7 +737,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
  * last_eat numbers for an object.  Hopefully this won't break anything ?? 
  * level == max improve last_eat == current improve
  */
-int improve_weapon(object *op,object *improver,object *weapon)
+static int improve_weapon(object *op,object *improver,object *weapon)
 {
   int sacrifice_count, sacrifice_needed=0;
 
@@ -850,7 +855,7 @@ int improve_weapon(object *op,object *improver,object *weapon)
  * Checks a few things (not on a non-magic square, marked weapon, ...),
  * then calls improve_weapon to do the dirty work.
  */
-int check_improve_weapon (object *op, object *tmp)
+static int check_improve_weapon (object *op, object *tmp)
 {
     object *otmp;
 
@@ -897,7 +902,7 @@ int check_improve_weapon (object *op, object *tmp)
  * Modified by MSW for partial resistance.  Only support
  * changing of physical area right now.
  */
-int improve_armour(object *op, object *improver, object *armour)
+static int improve_armour(object *op, object *improver, object *armour)
 {
     object *tmp;
 
@@ -991,7 +996,7 @@ int improve_armour(object *op, object *improver, object *armour)
  * item is the object that triggered the converter - if it is not
  * what the converter wants, this will not do anything.
  */
-int convert_item(object *item, object *converter) {
+static int convert_item(object *item, object *converter) {
     int nr=0;
     object *tmp;
     int is_in_shop;
@@ -1089,7 +1094,7 @@ int convert_item(object *item, object *converter) {
  * added the alchemical cauldron to the code -b.t.
  */
 
-int apply_container (object *op, object *sack)
+static int apply_container (object *op, object *sack)
 {
     char buf[MAX_BUF];
     object *tmp;
@@ -2206,7 +2211,7 @@ static void apply_food (object *op, object *tmp)
  * return:
  *     int               1 if eating successful, 0 if it doesn't work
  */
-int dragon_eat_flesh(object *op, object *meal) {
+static int dragon_eat_flesh(object *op, object *meal) {
   object *skin = NULL;    /* pointer to dragon skin force*/
   object *abil = NULL;    /* pointer to dragon ability force*/
   object *tmp = NULL;     /* tmp. object */
@@ -2447,7 +2452,7 @@ extern void apply_poison (object *op, object *tmp)
  * in the field exit->name cause the field exit->owner doesn't
  * survive in the swapping (in fact the whole exit doesn't survive).
  */
-int is_legal_2ways_exit (object* op, object *exit)
+static int is_legal_2ways_exit (object* op, object *exit)
    {
    object * tmp;
    object * exit_owner;
@@ -2974,7 +2979,7 @@ static int unapply_special (object *who, object *op, int aflags)
  * invisible other objects that use
  * up body locations can be used as restrictions.
  */
-object *get_item_from_body_location(object *start, int loc)
+static object *get_item_from_body_location(object *start, int loc)
 {
     object *tmp;
 
@@ -3000,7 +3005,7 @@ object *get_item_from_body_location(object *start, int loc)
  * instead of doing it.  This is a lot less code than having
  * another function that does just that.
  */
-int unapply_for_ob(object *who, object *op, int aflags)
+static int unapply_for_ob(object *who, object *op, int aflags)
 {
     int i;
     object *tmp=NULL, *last;
@@ -3521,7 +3526,7 @@ int apply_special (object *who, object *op, int aflags)
 }
 
 
-int monster_apply_special (object *who, object *op, int aflags)
+static int monster_apply_special (object *who, object *op, int aflags)
 {
   if (QUERY_FLAG (op, FLAG_UNPAID) && ! QUERY_FLAG (op, FLAG_APPLIED))
     return 1;
@@ -3763,7 +3768,7 @@ void eat_special_food(object *who, object *food) {
  * the selected object to "burn". -b.t.
  */
 
-void apply_lighter(object *who, object *lighter) {
+static void apply_lighter(object *who, object *lighter) {
     object *item;
     int is_player_env=0;
     uint32 nrof;
@@ -3832,7 +3837,7 @@ void apply_lighter(object *who, object *lighter) {
  * op made some mistake with a scroll, this takes care of punishment.
  * scroll_failure()- hacked directly from spell_failure
  */
-void scroll_failure(object *op, int failure, int power)
+static void scroll_failure(object *op, int failure, int power)
 {
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
 
@@ -3954,7 +3959,7 @@ void apply_changes_to_player(object *pl, object *change) {
  * This way an item can be transformed in many things, and/or many objects.
  * The 'slaying' field for transformer is used as verb for the action.
  */
-void apply_item_transformer( object* pl, object* transformer )
+static void apply_item_transformer( object* pl, object* transformer )
     {
     object* marked;
     object* new_item;

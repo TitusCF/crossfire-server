@@ -40,6 +40,9 @@
 #include <skills.h>
 #include <newclient.h>
 
+static archetype *get_player_archetype(archetype* at);
+static int action_makes_visible (object *op);
+
 player *find_player(const char *plname)
 {
   player *pl;
@@ -341,7 +344,7 @@ int add_player(socket_struct *ns) {
  * list. Not very efficient routine, but used only creating new players.
  * Note: there MUST be at least one player archetype!
  */
-archetype *get_player_archetype(archetype* at)
+static archetype *get_player_archetype(archetype* at)
 {
     archetype *start = at;
     for (;;) {
@@ -1083,7 +1086,7 @@ int key_confirm_quit(object *op, char key)
     return 1;
 }
 
-void flee_player(object *op) {
+static void flee_player(object *op) {
     int dir,diff;
     rv_vector rv;
 
@@ -1408,7 +1411,7 @@ int check_pick(object *op) {
  *  in the right type container (quiver). Pointer to the 
  *  found object is returned.
  */
-object *find_arrow(object *op, const char *type)
+static object *find_arrow(object *op, const char *type)
 {
     object *tmp = NULL;
 
@@ -1428,7 +1431,7 @@ object *find_arrow(object *op, const char *type)
  * the hall.  Failing that it does it's best to pick the highest plus arrow.
  */
 
-object *find_better_arrow(object *op, object *target, const char *type, int *better)
+static object *find_better_arrow(object *op, object *target, const char *type, int *better)
 {
     object *tmp = NULL, *arrow, *ntmp;
     int attacknum, attacktype, betterby=0, i;
@@ -1491,7 +1494,7 @@ object *find_better_arrow(object *op, object *target, const char *type, int *bet
  * dir = fire direction
  */
 
-object *pick_arrow_target(object *op, const char *type, int dir)
+static object *pick_arrow_target(object *op, const char *type, int dir)
 {
     object *tmp = NULL;
     mapstruct *m;
@@ -1714,7 +1717,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
  * this function should only be called if 'op' is a player,
  * hence the function name.
  */
-int player_fire_bow(object *op, int dir)
+static int player_fire_bow(object *op, int dir)
 {
     int ret=0, wcmod=0;
 
@@ -1748,7 +1751,7 @@ int player_fire_bow(object *op, int dir)
  * Fires a misc (wand/rod/horn) object in 'dir'.
  * Broken apart from 'fire' to keep it more readable.
  */
-void fire_misc_object(object *op, int dir)
+static void fire_misc_object(object *op, int dir)
 {
     object  *item;
 
@@ -2311,7 +2314,7 @@ static int save_life(object *op) {
  * function will descend into containers.  op is the object to start the search
  * from.
  */
-void remove_unpaid_objects(object *op, object *env)
+static void remove_unpaid_objects(object *op, object *env)
 {
     object *next;
 
@@ -3218,7 +3221,7 @@ int player_can_view (object *pl,object *op) {
  * effected by this. If we arent invisible to begin with, we 
  * return 0. 
  */
-int action_makes_visible (object *op) {
+static int action_makes_visible (object *op) {
 
     if(op->invisible && QUERY_FLAG(op,FLAG_ALIVE)) {
 	if(QUERY_FLAG(op,FLAG_MAKE_INVIS)) 

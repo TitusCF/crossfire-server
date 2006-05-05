@@ -43,11 +43,18 @@ typedef struct att_msg_str {
 
 /*#define ATTACK_DEBUG*/
 
+static void slow_player(object *op, object *hitter, int dam);
+static void deathstrike_player(object *op, object *hitter, int *dam);
+static int adj_attackroll(object *hitter, object *target);
+static int is_aimed_missile(object *op);
+static int did_make_save_item(object *op, int type, object *originator);
+static void poison_player(object *op, object *hitter, int dam);
+
 /**
  * Cancels object *op.  Cancellation basically means an object loses
  * its magical benefits.
  */
-void cancellation(object *op)
+static void cancellation(object *op)
 {
     object *tmp;
 
@@ -82,7 +89,7 @@ void cancellation(object *op)
  * any further action (like destroying the item).
  */
 
-int did_make_save_item(object *op, int type, object *originator) {
+static int did_make_save_item(object *op, int type, object *originator) {
     int i, roll, saves=0, attacks=0, number;
     materialtype_t *mt;
 
@@ -376,7 +383,7 @@ int hit_map(object *op, int dir, int type, int full_hit) {
     return 0;
 }
 
-void attack_message(int dam, int type, object *op, object *hitter) {
+static void attack_message(int dam, int type, object *op, object *hitter) {
   char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
   int i, found=0;
   mapstruct *map;
@@ -976,7 +983,7 @@ object *hit_with_arrow (object *op, object *victim)
 }
 
 
-void tear_down_wall(object *op)
+static void tear_down_wall(object *op)
 {
     int perc=0;
 
@@ -1019,7 +1026,7 @@ void tear_down_wall(object *op)
     }
 }
 
-void scare_creature(object *target, object *hitter)
+static void scare_creature(object *target, object *hitter)
 {
     object *owner = get_owner(hitter);
 
@@ -1038,7 +1045,7 @@ void scare_creature(object *target, object *hitter)
  * Note - changed for PR code - we now pass the attack number and not
  * the attacktype.  Makes it easier for the PR code.  */
 
-int hit_player_attacktype(object *op, object *hitter, int dam, 
+static int hit_player_attacktype(object *op, object *hitter, int dam, 
 	uint32 attacknum, int magic) {
   
     int doesnt_slay = 1;
@@ -1347,7 +1354,7 @@ int hit_player_attacktype(object *op, object *hitter, int dam,
  * a bit - I think it should be functionally equivalant.
  * MSW 2002-07-17
  */
-int kill_object(object *op,int dam, object *hitter, int type)
+static int kill_object(object *op,int dam, object *hitter, int type)
 {
     char buf[MAX_BUF];
     const char *skill;
@@ -1906,7 +1913,7 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
 }
 
 
-void poison_player(object *op, object *hitter, int dam)
+static void poison_player(object *op, object *hitter, int dam)
 {
     archetype *at = find_archetype("poisoning");
     object *tmp=present_arch_in_ob(at,op);
@@ -1960,7 +1967,7 @@ void poison_player(object *op, object *hitter, int dam)
 	tmp->stats.food++;
 }
 
-void slow_player(object *op,object *hitter,int dam)
+static void slow_player(object *op,object *hitter,int dam)
 {    archetype *at = find_archetype("slowness");
     object *tmp;
     if(at == NULL) {
@@ -2074,7 +2081,7 @@ void paralyze_player(object *op, object *hitter, int dam)
  * Attempts to kill 'op'.  hitter is the attack object, dam is
  * the computed damaged.
  */
-void deathstrike_player(object *op, object *hitter, int *dam) 
+static void deathstrike_player(object *op, object *hitter, int *dam) 
 {
     /*  The intention of a death attack is to kill outright things
     **  that are a lot weaker than the attacker, have a chance of killing
@@ -2156,7 +2163,7 @@ static void thrown_item_effect (object *hitter, object *victim)
 
 /** adj_attackroll() - adjustments to attacks by various conditions */
 
-int adj_attackroll (object *hitter, object *target) {
+static int adj_attackroll (object *hitter, object *target) {
   object *attacker = hitter;
   int adjust=0;
 
@@ -2226,7 +2233,7 @@ int adj_attackroll (object *hitter, object *target) {
 
 
 /** determine if the object is an 'aimed' missile */
-int is_aimed_missile ( object *op) {
+static int is_aimed_missile ( object *op) {
 
     /* I broke what used to be one big if into a few nested
      * ones so that figuring out the logic is at least possible.

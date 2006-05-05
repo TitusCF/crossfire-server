@@ -12,7 +12,7 @@
 /* GROS: I put this here, because no other file seemed quite good. Returns 1 if
  * the artifact could be created.
  */
-int create_artifact(object *op, const char *artifactname)
+static int create_artifact(object *op, const char *artifactname)
 {
         artifactlist *al;
         artifact *art;

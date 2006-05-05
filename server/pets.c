@@ -408,7 +408,7 @@ void pet_move(object * ob)
  * direction the monster should be placed in.
  * is_golem is to note that this is a golem spell.
  */
-object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem ) {
+static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) {
     archetype *atmp;
     object *tmp=NULL, *prev=NULL, *head=NULL; 
  
@@ -712,7 +712,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
  * This returns NULL if no match was found.
  */
 
-object *choose_cult_monster(object *pl, object *god, int summon_level) {
+static object *choose_cult_monster(object *pl, object *god, int summon_level) {
     char buf[MAX_BUF];
     const char *race;
     int racenr, mon_nr,i;
@@ -938,7 +938,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 
 /* recursively look through the owner property of objects until the real owner
 is found */
-object *get_real_owner(object *ob) {
+static object *get_real_owner(object *ob) {
 	object *realowner = ob;
 	
 	if (realowner == NULL) return NULL;

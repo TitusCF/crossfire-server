@@ -47,7 +47,7 @@
  * op is the spell object.
  */
 
-void check_spell_knockback(object *op) {
+static void check_spell_knockback(object *op) {
     object *tmp, *tmp2; /* object on the map */
     int weight_move;
 	int frictionmod=2; /*poor man's physics - multipy targets weight by this amount */
@@ -111,7 +111,7 @@ void check_spell_knockback(object *op) {
  * is the first piece of the fork.
  */
 
-void forklightning(object *op, object *tmp) {
+static void forklightning(object *op, object *tmp) {
     int new_dir=1;  /* direction or -1 for left, +1 for right 0 if no new bolt */
     int t_dir; /* stores temporary dir calculation */
     mapstruct *m;
@@ -375,7 +375,7 @@ void explosion(object *op) {
  * poison cloud ball, etc.  op is the object to
  * explode.
  */
-void explode_bullet(object *op)
+static void explode_bullet(object *op)
 {
     tag_t op_tag = op->count;
     object *tmp, *owner;
@@ -659,7 +659,7 @@ int fire_bullet(object *op,object *caster,int dir,object *spob) {
 
 
 /* drops an object based on what is in the cone's "other_arch" */
-void cone_drop(object *op) {
+static void cone_drop(object *op) {
     object *new_ob = arch_to_object(op->other_arch);
 
     new_ob->x = op->x;
@@ -997,7 +997,7 @@ int create_bomb(object *op,object *caster,int dir, object *spell) {
  * this info is used for blocked magic/unholy spaces.
  */
  
-object *get_pointed_target(object *op, int dir, int range, int type) {
+static object *get_pointed_target(object *op, int dir, int range, int type) {
     object *target;
     sint16 x,y;
     int dist, mflags;
@@ -1199,7 +1199,7 @@ void move_missile(object *op) {
  * give them the capability to have an inventory. b.t.
  */
 
-int make_object_glow(object *op, int radius, int time) {
+static int make_object_glow(object *op, int radius, int time) {
     object *tmp;
 
     /* some things are unaffected... */

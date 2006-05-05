@@ -42,10 +42,18 @@
 #include <sproto.h>
 #endif
 
+static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string);
+static void stop_using_item(object *op, int type, int number);
+static void update_priest_flag (object *god, object *exp_ob, uint32 flag);
+static void god_intervention(object *op, object *god, object *skill);
+static int god_examines_priest (object *op, object *god);
+static int god_examines_item(object *god, object *item);
+static const char *get_god_for_race(const char *race);
+
 /**
  * Returns the id of specified god.
  */
-int lookup_god_by_name(const char *name) {
+static int lookup_god_by_name(const char *name) {
     int godnr=-1;
     size_t nmlen = strlen(name);
  
@@ -552,7 +560,7 @@ void become_follower (object *op, object *new_god) {
  * string is the string to print out.
  */
 
-int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *string) {
+static int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *string) {
 
   if(QUERY_FLAG(&op->arch->clone,flag))
     if(QUERY_FLAG(op,flag)!=QUERY_FLAG(exp_obj,flag)) {
@@ -570,7 +578,7 @@ int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *s
 /**
  * Unapplies up to number worth of items of type
  */
-void stop_using_item ( object *op, int type, int number ) {
+static void stop_using_item ( object *op, int type, int number ) {
   object *tmp;
 
   for(tmp=op->inv;tmp&&number;tmp=tmp->below)
@@ -586,7 +594,7 @@ void stop_using_item ( object *op, int type, int number ) {
  * already exist. For players only!
  */
 
-void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
+static void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
       if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
           SET_FLAG(exp_ob,flag);
       else if(QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag))
@@ -743,7 +751,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
  * called from pray_at_altar() currently. 
  */
 
-void god_intervention (object *op, object *god, object *skill)
+static void god_intervention (object *op, object *god, object *skill)
 {
     treasure *tr;
 
@@ -967,7 +975,7 @@ void god_intervention (object *op, object *god, object *skill)
  * All applied items are examined, if player is using more items of other gods,
  * s/he loses experience in praying or general experience if no praying.
  */
-int god_examines_priest (object *op, object *god) {
+static int god_examines_priest (object *op, object *god) {
     int reaction=1;
     object *item=NULL, *skop;
 
@@ -1006,7 +1014,7 @@ int god_examines_priest (object *op, object *god) {
  * god, it can be bad...-b.t.
  */
 
-int god_examines_item(object *god, object *item) {
+static int god_examines_item(object *god, object *item) {
   char buf[MAX_BUF];
 
   if(!god||!item) return 0;
@@ -1036,7 +1044,7 @@ int god_examines_item(object *god, object *item) {
  * Straight calls lookup_god_by_name
  */
 
-int get_god(object *priest) {
+static int get_god(object *priest) {
   int godnr=lookup_god_by_name(determine_god(priest)); 
 
   return godnr;
@@ -1047,7 +1055,7 @@ int get_god(object *priest) {
  * creature of who has race *race
  * if we can't find a god that is appropriate, we return NULL
  */
-const char *get_god_for_race(const char *race) {
+static const char *get_god_for_race(const char *race) {
     godlink *gl=first_god;
     const char *godname=NULL;
 

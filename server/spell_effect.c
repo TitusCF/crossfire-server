@@ -130,7 +130,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
  * space monsters.
  */
 
-void polymorph_living(object *op) {
+static void polymorph_living(object *op) {
     archetype *at;
     int nr = 0, x = op->x, y = op->y, numat=0, choice,friendly;
     mapstruct *map = op->map;
@@ -221,7 +221,7 @@ void polymorph_living(object *op) {
  * more clever ala nethack - create an iron golem or
  * something.
  */
-void polymorph_melt(object *who, object *op)
+static void polymorph_melt(object *who, object *op)
 {
     /* Not unique */
     new_draw_info_format(NDI_GREY, 0, who,
@@ -237,7 +237,7 @@ void polymorph_melt(object *who, object *op)
  * Changes an item to another item of similar type.
  * who is the caster of spell, op is the object to be changed.
  */
-void polymorph_item(object *who, object *op) {
+static void polymorph_item(object *who, object *op) {
     archetype *at;
     int max_value, difficulty, tries=0,choice, charges=op->stats.food,numat=0;
     object *new_ob;

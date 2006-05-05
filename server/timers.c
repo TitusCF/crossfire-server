@@ -3,6 +3,8 @@
 #include <sproto.h>
 #endif
 
+static void cftimer_process_event(object* ob);
+
 /*****************************************************************************/
 /* Processes all timers.                                                     */
 /*****************************************************************************/
@@ -36,7 +38,7 @@ void cftimer_process_timers(void)
 /*****************************************************************************/
 /* Triggers the EVENT_TIMER of the given object                              */
 /*****************************************************************************/
-void cftimer_process_event(object* ob)
+static void cftimer_process_event(object* ob)
 {
     execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
 }

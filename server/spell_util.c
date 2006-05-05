@@ -167,7 +167,7 @@ void spell_effect (object *spob, int x, int y, mapstruct *map,
  * spell is the spell object.
  * Returns modified level.
  */
-int min_casting_level(object *caster, object *spell)
+static int min_casting_level(object *caster, object *spell)
 {
     int new_level;
 
@@ -684,7 +684,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
  * also deals with multipart monsters properly.
  */
 
-void put_a_monster(object *op,const char *monstername) {
+static void put_a_monster(object *op,const char *monstername) {
     object *tmp,*head=NULL,*prev=NULL;
     archetype *at;
     int dir;
@@ -819,7 +819,7 @@ void shuffle_attack(object *op,int change_face)
  * power is how much grace the spell would normally take to cast.
  */
 
-void prayer_failure(object *op, int failure,int power)
+static void prayer_failure(object *op, int failure, int power)
 {  
     const char *godname;
     object *tmp;
@@ -914,7 +914,7 @@ void spell_failure(object *op, int failure,int power, object *skill)
     }
 }
 
-int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
+static int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
     {
     int success;
     player *pl;
@@ -1472,7 +1472,7 @@ void move_spell_effect(object *op) {
 /* this checks to see if something special should happen if 
  * something runs into the object.
  */
-void check_spell_effect(object *op) {
+static void check_spell_effect(object *op) {
 
     switch (op->subtype) {
 	case SP_BOLT:

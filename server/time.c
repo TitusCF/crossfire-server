@@ -89,7 +89,7 @@ void remove_door2(object *op) {
 /** Will generate a monster according to content
  * of generator.
  */
-void generate_monster_inv(object *gen) {
+static void generate_monster_inv(object *gen) {
     int i;
     object *op,*head=NULL;
 
@@ -127,7 +127,7 @@ void generate_monster_inv(object *gen) {
                       gen->map->difficulty,0);
 }
 
-void generate_monster_arch(object *gen) {
+static void generate_monster_arch(object *gen) {
     int i;
     object *op,*head=NULL,*prev=NULL;
     archetype *at=gen->other_arch;
@@ -167,7 +167,7 @@ void generate_monster_arch(object *gen) {
     }
 }
 
-void generate_monster(object *gen) {
+static void generate_monster(object *gen) {
 
     if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
@@ -178,7 +178,7 @@ void generate_monster(object *gen) {
 
 }
 
-void remove_force(object *op) {
+static void remove_force(object *op) {
     if (--op->duration > 0) return;
 
     switch (op->subtype) {
@@ -199,7 +199,7 @@ void remove_force(object *op) {
     free_object(op);
 }
 
-void remove_blindness(object *op) {
+static void remove_blindness(object *op) {
   if(--op->stats.food > 0)
     return;
   CLEAR_FLAG(op, FLAG_APPLIED);
@@ -211,7 +211,7 @@ void remove_blindness(object *op) {
   free_object(op);
 }
 
-void poison_more(object *op) {
+static void poison_more(object *op) {
   if(op->env==NULL||!QUERY_FLAG(op->env,FLAG_ALIVE)||op->env->stats.hp<0) {
     remove_ob(op);
     free_object(op);
@@ -240,7 +240,7 @@ void poison_more(object *op) {
 }
 
 
-void move_gate(object *op) { /* 1 = going down, 0 = goind up */
+static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     object *tmp;
 
     if(op->stats.wc < 0 || (int)op->stats.wc  >= NUM_ANIMATIONS(op)) {
@@ -372,7 +372,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
  *  maxhp   : initial value for hp
  *  sp      : 1 = open, 0 = close
  */
-void move_timed_gate(object *op)
+static void move_timed_gate(object *op)
 {
   int v = op->value;
 
@@ -397,7 +397,7 @@ void move_timed_gate(object *op)
  *  sp:         1 if detection sets buttons
  *              -1 if detection unsets buttons
  */
-void move_detector(object *op) 
+static void move_detector(object *op) 
 {
     object *tmp;
     int last = op->value;
@@ -443,7 +443,7 @@ void move_detector(object *op)
 }
 
 
-void animate_trigger (object *op)
+static void animate_trigger(object *op)
 {
   if((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op)) {
     op->stats.wc = 0;
@@ -454,7 +454,7 @@ void animate_trigger (object *op)
   }
 }
 
-void move_hole(object *op) { /* 1 = opening, 0 = closing */
+static void move_hole(object *op) { /* 1 = opening, 0 = closing */
     object *next,*tmp;
 
     if(op->value) { /* We're opening */

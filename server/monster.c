@@ -33,6 +33,31 @@
 #include <skills.h>
 #endif
 
+static int can_hit(object *ob1, object *ob2, rv_vector *rv);
+static int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector *rv);
+static int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
+static int monster_use_skill(object *head, object *part, object *pl, int dir);
+static int monster_use_range(object *head, object *part, object *pl, int dir);
+static int monster_use_bow(object *head, object *part, object *pl, int dir);
+static void monster_check_pickup(object *monster);
+static int monster_can_pick(object *monster, object *item);
+static void monster_apply_below(object *monster);
+static int dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int hitrun_att(int dir, object *ob, object *enemy);
+static int wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static int wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
+static void circ1_move(object *ob);
+static void circ2_move(object *ob);
+static void pace_movev(object *ob);
+static void pace_moveh(object *ob);
+static void pace2_movev(object *ob);
+static void pace2_moveh(object *ob);
+static void rand_move(object *ob);
+static int talk_to_npc(object *op, object *npc, const char *txt);
+static int talk_to_wall(object *pl, object *npc, const char *txt);
+
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
 
@@ -167,7 +192,7 @@ object *find_nearest_living_creature(object *npc) {
  * many cases.
  */
 
-object *find_enemy(object *npc, rv_vector *rv)
+static object *find_enemy(object *npc, rv_vector *rv)
 {
     object *attacker, *tmp=NULL;
 
@@ -243,7 +268,7 @@ object *find_enemy(object *npc, rv_vector *rv)
  * returns 1 if the monster should wake up, 0 otherwise.
  */
 
-int check_wakeup(object *op, object *enemy, rv_vector *rv) {
+static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     int radius = op->stats.Wis>MIN_MON_RADIUS?op->stats.Wis:MIN_MON_RADIUS;
 
     /* Trim work - if no enemy, no need to do anything below */
@@ -277,7 +302,7 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     return 0;
 }
 
-int move_randomly(object *op) {
+static int move_randomly(object *op) {
     int i;
 
     /* Give up to 15 chances for a monster to move randomly */
@@ -644,7 +669,8 @@ int move_monster(object *op) {
     }
     return 0;
 }
-int can_hit(object *ob1,object *ob2, rv_vector *rv) {
+
+static int can_hit(object *ob1,object *ob2, rv_vector *rv) {
     object *more;
     rv_vector rv1;
 
@@ -703,7 +729,7 @@ static int monster_should_cast_spell(object *monster, object *spell_ob)
  * wizard spells, as the check is against sp, and not grace.
  * can mosnters know cleric spells?
  */
-object *monster_choose_random_spell(object *monster) {
+static object *monster_choose_random_spell(object *monster) {
     object *altern[MAX_KNOWN_SPELLS];
     object *tmp;
     int i=0;
@@ -734,7 +760,7 @@ object *monster_choose_random_spell(object *monster) {
  * rv is the vector which describes where the enemy is.
  */
 
-int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector *rv) {
+static int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector *rv) {
     object *spell_item;
     object *owner;
     rv_vector	rv1;
@@ -802,7 +828,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
 }
 
 
-int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv) {
+static int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv) {
     object *scroll;
     object *owner;
     rv_vector	rv1;
@@ -855,7 +881,7 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
  * stealing. TODO: This should be more integrated in the game. -MT, 25.11.01
  */  
 
-int monster_use_skill(object *head, object *part, object *pl,int dir) {
+static int monster_use_skill(object *head, object *part, object *pl,int dir) {
     object *skill, *owner;
 
     if(!(dir=path_to_player(part,pl,0)))
@@ -893,7 +919,7 @@ int monster_use_skill(object *head, object *part, object *pl,int dir) {
 
 /* Monster will use a ranged spell attack. */
 
-int monster_use_range(object *head,object *part,object *pl,int dir)
+static int monster_use_range(object *head,object *part,object *pl,int dir)
     {
     object *wand, *owner;
     int at_least_one = 0;
@@ -960,7 +986,7 @@ int monster_use_range(object *head,object *part,object *pl,int dir)
 	return 0;
     }
 
-int monster_use_bow(object *head, object *part, object *pl, int dir) {
+static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     object *owner;
 
     if(!(dir=path_to_player(part,pl,0)))
@@ -986,7 +1012,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
  * return true if item is a better object.
  */
 
-int check_good_weapon(object *who, object *item) {
+static int check_good_weapon(object *who, object *item) {
     object *other_weap;
     int val=0, i;
 
@@ -1016,7 +1042,7 @@ int check_good_weapon(object *who, object *item) {
 
 }
 
-int check_good_armour(object *who, object *item) {
+static int check_good_armour(object *who, object *item) {
     object *other_armour;
     int val=0,i;
 
@@ -1067,7 +1093,7 @@ int check_good_armour(object *who, object *item) {
  * affect stacking on this space.
  */
 
-void monster_check_pickup(object *monster) {
+static void monster_check_pickup(object *monster) {
     object *tmp,*next;
     int next_tag;
 
@@ -1093,7 +1119,7 @@ void monster_check_pickup(object *monster) {
  * I've already utilized flags for bows, wands, rings, etc, etc. -Frank.
  */
 
-int monster_can_pick(object *monster, object *item) {
+static int monster_can_pick(object *monster, object *item) {
     int flag=0;
     int i;
 
@@ -1179,7 +1205,7 @@ int monster_can_pick(object *monster, object *item) {
  * then make him apply it
  */
 
-void monster_apply_below(object *monster) {
+static void monster_apply_below(object *monster) {
     object *tmp, *next;
 
     for(tmp=monster->below;tmp!=NULL;tmp=next) {
@@ -1404,7 +1430,7 @@ int wait_att2 (int dir, object *ob,object *enemy,object *part, rv_vector *rv) {
     return 0;
 }
 
-void circ1_move (object *ob) {
+static void circ1_move (object *ob) {
   static int circle [12] = {3,3,4,5,5,6,7,7,8,1,1,2};
   if(++ob->move_status > 11)
     ob->move_status = 0;
@@ -1412,7 +1438,7 @@ void circ1_move (object *ob) {
     (void) move_object(ob,RANDOM()%8+1);
 }
 
-void circ2_move (object *ob) {
+static void circ2_move (object *ob) {
   static int circle[20] = {3,3,3,4,4,5,5,5,6,6,7,7,7,8,8,1,1,1,2,2};
   if(++ob->move_status > 19)
     ob->move_status = 0;
@@ -1420,7 +1446,7 @@ void circ2_move (object *ob) {
     (void) move_object(ob,RANDOM()%8+1);
 }
 
-void pace_movev(object *ob) {
+static void pace_movev(object *ob) {
   if (ob->move_status++ > 6)
     ob->move_status = 0;
   if (ob->move_status < 4)
@@ -1429,7 +1455,7 @@ void pace_movev(object *ob) {
     (void) move_object(ob,1);
 }
 
-void pace_moveh (object *ob) {
+static void pace_moveh (object *ob) {
   if (ob->move_status++ > 6)
     ob->move_status = 0;
   if (ob->move_status < 4)
@@ -1438,7 +1464,7 @@ void pace_moveh (object *ob) {
     (void) move_object(ob,7);
 }
 
-void pace2_movev (object *ob) {
+static void pace2_movev (object *ob) {
   if (ob->move_status ++ > 16)
     ob->move_status = 0;
   if (ob->move_status <6)
@@ -1450,7 +1476,7 @@ void pace2_movev (object *ob) {
   else return;
 }       
 
-void pace2_moveh (object *ob) {
+static void pace2_moveh (object *ob) {
   if (ob->move_status ++ > 16)
     ob->move_status = 0;
   if (ob->move_status <6)
@@ -1462,7 +1488,7 @@ void pace2_moveh (object *ob) {
   else return;
 }       
 
-void rand_move (object *ob) {
+static void rand_move (object *ob) {
   int i;
   if (ob->move_status <1 || ob->move_status >8 ||
       !(move_object(ob,ob->move_status|| ! (RANDOM()% 9))))
@@ -1640,7 +1666,7 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
     return 0;
 }
 
-int talk_to_npc(object *op, object *npc, const char *txt) {
+static int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
@@ -1681,7 +1707,7 @@ static int do_talk_wall(object* pl, object* npc, object* override, const char* t
     return 1;
 }
 
-int talk_to_wall(object* pl, object *npc, const char *txt) {
+static int talk_to_wall(object* pl, object *npc, const char *txt) {
 
     object* inv;
 
@@ -1701,7 +1727,7 @@ int talk_to_wall(object* pl, object *npc, const char *txt) {
  * first, then throw any non equipped weapon.
  */
 
-object *find_mon_throw_ob( object *op ) {
+object *find_mon_throw_ob(object *op) {
     object *tmp = NULL;
   
     if(op->head) tmp=op->head; else tmp=op;  

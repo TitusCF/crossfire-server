@@ -52,6 +52,9 @@
 #include <living.h>     /* for defs of STR,CON,DEX,etc. -b.t.*/
 #include <spells.h>
 
+static int attack_hth(object *pl, int dir, const char *string, object *skill);
+static int attack_melee_weapon(object *op, int dir, const char *string, object *skill);
+
 const char *skill_names[NUM_SKILLS];
 
 /* init_skills basically just sets up the skill_names table
@@ -992,7 +995,7 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
  * function skill_attack() we actually attack.
  */
 
-int attack_hth(object *pl, int dir, const char *string, object *skill) {
+static int attack_hth(object *pl, int dir, const char *string, object *skill) {
     object *enemy=NULL,*weapon;
 
     if(QUERY_FLAG(pl, FLAG_READY_WEAPON))
@@ -1022,7 +1025,7 @@ int attack_hth(object *pl, int dir, const char *string, object *skill) {
  * weapon type.
  */
 
-int attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
+static int attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
 
     if(!QUERY_FLAG(op, FLAG_READY_WEAPON)) {
 	if(op->type==PLAYER)

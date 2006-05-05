@@ -43,6 +43,7 @@ extern int sys_nerr;
 extern char **classname;
 extern object *objects;
 
+static int resurrection_fails(int levelcaster,int leveldead);
 
 
 /*  name of the person to resurrect and which spell was used
@@ -232,7 +233,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 }
 
 
-int resurrection_fails(int levelcaster,int leveldead)
+static int resurrection_fails(int levelcaster,int leveldead)
 {
     int chance=9;
     /*  scheme:  equal in level, 50% success.
@@ -267,7 +268,7 @@ void dead_player(object *op)
 
 
 
-void dead_character(const char *name) {
+static void dead_character(const char *name) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
@@ -281,7 +282,7 @@ void dead_character(const char *name) {
 }
 
 
-int dead_player_exists(const char *name) {
+static int dead_player_exists(const char *name) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s/%s",settings.localdir,settings.playerdir,name, name);

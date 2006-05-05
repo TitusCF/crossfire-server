@@ -31,6 +31,8 @@
 #include <sproto.h>
 #endif
 
+static int roll_ob(object *op, int dir, object *pusher);
+
 /**
  * move_object() tries to move object op in the direction "dir".
  * If it fails (something blocks the passage), it returns 0,
@@ -315,7 +317,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
  * Returns 1 if object does not fit, 0 if it does.
  */
 
-int try_fit (object *op, mapstruct *m, int x, int y) 
+static int try_fit (object *op, mapstruct *m, int x, int y) 
 {
     object *tmp, *more;
     sint16 tx, ty;
@@ -354,7 +356,7 @@ int try_fit (object *op, mapstruct *m, int x, int y)
  * Support for rolling multipart objects is questionable.
  */
 
-int roll_ob(object *op,int dir, object *pusher) {
+static int roll_ob(object *op,int dir, object *pusher) {
     object *tmp;
     sint16 x, y;
     int flags;
