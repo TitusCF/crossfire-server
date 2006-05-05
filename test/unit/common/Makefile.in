@@ -923,7 +923,7 @@ textlog:
 check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
-	rm autorun.xml
+	rm -f autorun.xml
 
 $(top_srcdir)/common/libcross.a:
 	( cd $(top_srcdir)/common ; make libcross.a )

@@ -876,7 +876,7 @@ textlog:
 check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
-	rm autorun.xml
+	rm -f autorun.xml
 
 ../../logs/unit/random_maps:
 	(mkdir ../../logs; mkdir ../../logs/unit; mkdir ../../logs/unit/random_maps)

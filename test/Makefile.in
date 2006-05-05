@@ -631,7 +631,7 @@ textlog:
 check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
-	rm autorun.xml
+	rm -f autorun.xml
 check-local: check-html check-text
 clean-local: clean-unit
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
