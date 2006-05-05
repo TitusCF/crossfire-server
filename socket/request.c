@@ -717,7 +717,7 @@ void move_cmd(char *buf, int len,player *pl)
  * Asks the client to query the user.  This way, the client knows
  * it needs to send something back (vs just printing out a message)
  */
-void send_query(socket_struct *ns, uint8 flags, char *text)
+void send_query(socket_struct *ns, uint8 flags, const char *text)
 {
     char buf[MAX_BUF];
 

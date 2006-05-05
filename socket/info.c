@@ -281,7 +281,7 @@ void draw_ext_info(
 void draw_ext_info_format(
         int flags, int pri, const object *pl, uint8 type, 
         uint8 subtype, const char* old_format, 
-        char* new_format, ...){
+        const char* new_format, ...){
             
     char buf[HUGE_BUF];
 	if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
@@ -309,7 +309,7 @@ void draw_ext_info_format(
  * Writes to everyone on the map *except* op.  This is useful for emotions.
  */
 
-void new_info_map_except(int color, mapstruct *map, object *op, const char *str) {
+void new_info_map_except(int color, const mapstruct *map, const object *op, const char *str) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -322,7 +322,7 @@ void new_info_map_except(int color, mapstruct *map, object *op, const char *str)
  * Writes to everyone on the map except op1 and op2
  */
 
-void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
+void new_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2,
 			  const char *str) {
     player *pl;
 
@@ -337,7 +337,7 @@ void new_info_map_except2(int color, mapstruct *map, object *op1, object *op2,
  * Writes to everyone on the specified map
  */
 
-void new_info_map(int color, mapstruct *map, const char *str) {
+void new_info_map(int color, const mapstruct *map, const char *str) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -359,7 +359,7 @@ void clear_win_info(object *op)
 /**
  * Get player's current range attack in obuf.
  */
-void rangetostring(object *pl,char *obuf)
+void rangetostring(const object *pl,char *obuf)
 {
     switch(pl->contr->shoottype) {
 	case range_none:
@@ -432,7 +432,7 @@ void rangetostring(object *pl,char *obuf)
 /**
  * Sets player title.
  */
-void set_title(object *pl, char *buf)
+void set_title(const object *pl, char *buf)
 {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
     if (pl->contr->own_title[0]=='\0')

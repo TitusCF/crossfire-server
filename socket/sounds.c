@@ -53,7 +53,7 @@ void play_sound_player_only(player *pl, short soundnum,  sint8 x, sint8 y)
 #define POW2(x) ((x) * (x))
 
 /** Plays some sound on map at x,y.  */
-void play_sound_map(mapstruct *map, int x, int y, short sound_num)
+void play_sound_map(const mapstruct *map, int x, int y, short sound_num)
 {
     player *pl;
 

@@ -62,7 +62,7 @@
  * single byte in length.  If the data is longer than that byte, it is
  * truncated approprately.
  */
-inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl)
+static inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl)
 {
     int len;
 
@@ -77,7 +77,7 @@ inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl)
  *  This is a similar to query_name, but returns flags
  *  to be sended to client. 
  */
-unsigned int query_flags (object *op)
+static unsigned int query_flags(const object *op)
 {
     unsigned int flags = 0;
 
@@ -535,7 +535,7 @@ void esrv_del_item(player *pl, int tag)
  * pointer, or null if it can't be found.
  */
 
-object *esrv_get_ob_from_count(object *pl, tag_t count)
+static object *esrv_get_ob_from_count(object *pl, tag_t count)
 {
     object *op, *tmp;
 

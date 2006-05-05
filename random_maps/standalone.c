@@ -175,7 +175,7 @@ void new_draw_info(int a, int b, const object *ob, const char *txt)
     {
     fprintf(logfile, "%s\n", txt);
     }
-void new_info_map(int color, mapstruct *map, const char *str)
+void new_info_map(int color, const mapstruct *map, const char *str)
     {
     fprintf(logfile, "new_info_map: %s\n", str);
     }
