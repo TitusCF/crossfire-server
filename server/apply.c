@@ -3060,7 +3060,7 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		}
 		/* If we are just printing, we don't care about cursed status */
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
-		    (!(QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+		    (!(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))) {
 		    if (aflags & AP_PRINT) 
 			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
 		    else
