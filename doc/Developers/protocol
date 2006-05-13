@@ -683,7 +683,7 @@ S->C: image2 <face><set><len><data>
 	image2 command will be used.  This includes the faceset the
 	image belongs to (8 bit data).
 
-	There is no image1 command.  Image2 was used to keep the versionin
+	There is no image1 command.  Image2 was used to keep the version
 	in sync with the face2 command below.  It is also more intuitive
 	as in the server, the image2 flag is used to determine if we are
 	using these new commands.
@@ -1237,8 +1237,8 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	facecache (0/1)
 	    Determines if the client is caching images (1) or wants the
-	    images sent to it without caching them.  This replaces the
-	    setfacemode command.
+	    images sent to it without caching them (0).  Default is 0.  This
+	    replaces the setfacemode command.
 
 	faceset (8 bit)
 	    Faceset the client wishes to use.  If the faceset is not
