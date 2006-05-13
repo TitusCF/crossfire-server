@@ -429,7 +429,7 @@ void Send_With_Handling(socket_struct *ns, const SockList *msg)
     if (ns->status == Ns_Dead || !msg)
 	return;
 
-    if (msg->len >= MAXSOCKBUF) {
+    if (msg->len > MAXSOCKBUF) {
 	LOG(llevError,"Trying to send a buffer beyond properly size, len =%d\n",
 	    msg->len);
 	/* Almost certainly we've overflowed a buffer, so quite now to make

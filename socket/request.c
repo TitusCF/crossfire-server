@@ -2070,7 +2070,7 @@ static void append_spell (player *pl, SockList *sl, object *spell) {
 }
 
 /**
- * This tells the client to add the spell *ob, if *ob is NULL, then add 
+ * This tells the client to add the spell *spell, if spell is NULL, then add
  * all spells in the player's inventory.
  */
 void esrv_add_spells(player *pl, object *spell) {
@@ -2085,20 +2085,15 @@ void esrv_add_spells(player *pl, object *spell) {
     sl.len=strlen((char*)sl.buf);
     if (!spell) {
 	for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
+	    if (spell->type != SPELL) continue;
 	    /* were we to simply keep appending data here, we could exceed 
 	     * MAXSOCKBUF if the player has enough spells to add, we know that
-	     * append_spells will always append 19 data bytes, plus 4 length
-             * bytes and 3 strings (because that is the spec) so we need to
-             * check that the length of those 3 strings, plus the 23 bytes, 
-             * won't take us over the length limit for the socket, if it does,
-             * we need to send what we already have, and restart packet formation 
-             */
-	    /* Seeing crashes by overflowed buffers.  Quick arithemetic seems
-	     * to show add_spell is 26 bytes + 2 strings.  However, the overun
-	     * is hundreds of bytes off, so correcting 22 vs 26 doesn't seem
-	     * like it will fix this
+	     * append_spell will always append 23 data bytes, plus 3 length
+	     * bytes and 2 strings (because that is the spec) so we need to
+	     * check that the length of those 2 strings, plus the 26 bytes, 
+	     * won't take us over the length limit for the socket, if it does,
+	     * we need to send what we already have, and restart packet formation 
 	     */
-	    if (spell->type != SPELL) continue;
 	    if (sl.len > (MAXSOCKBUF - (26 + strlen(spell->name) + 
 				(spell->msg?strlen(spell->msg):0)))) {
 		Send_With_Handling(&pl->socket, &sl);

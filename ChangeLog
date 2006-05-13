@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix server crash when sending addspell command(s).
+---
+socket/lowlevel.c: Do not abort if output buffer is completely filled. (Was
+   off-by-one, so if addspell did fill the complete buffer, the server did
+   detect an buffer-overflow error.)
+socket/request.c: Update comments.
+Andreas Kirschbaum 2006-05-13
+
 server/spell_effect.c: Disallow town portal while in transports (caused 
   map corruption, crashes and other nasty things)
 Alex Schultz 2006-05-12
