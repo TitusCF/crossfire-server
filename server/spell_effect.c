@@ -909,7 +909,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     }
 
     /* Check to see if the player is on a transport */
-    if (op->transport) {
+    if (op->contr && op->contr->transport) {
 	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You need to exit the transport to cast that.\n");
         return 0;
     }
