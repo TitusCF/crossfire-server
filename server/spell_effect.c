@@ -908,6 +908,12 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 	return 0;
     }
 
+    /* Check to see if the player is on a transport */
+    if (op->transport) {
+	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You need to exit the transport to cast that.\n");
+        return 0;
+    }
+
     /* The first thing to do is to check if we have a marked destination
      * dummy is used to make a check inventory for the force
      */

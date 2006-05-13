@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: Disallow town portal while in transports (caused 
+  map corruption, crashes and other nasty things)
+Alex Schultz 2006-05-12
+
 Fix for bug #1473941 (damnation bug)
  server/apply.c: wrong parenthesis for cursed/damned logic
 Ryo 2006-05-05
