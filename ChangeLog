@@ -17,6 +17,65 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This commit adds support for the map2 protocol command (10 layer map).
+This changes how the data is stored and sent to the client.  This also
+implements the idea of client handling map animations, so adds some object
+flags so that the server knows if it should let the client handle animations
+or not.  Support for the original map protocol command is removed.
+---
+aclocal.m4: rebuilt
+configure.ac: Add checks for zlib.h, libz - not used right now, but will
+   probably be used in the future, so no reason to remove it.
+common/loader.l: Add client_anim_sync, client_anim_random FLAGS.
+common/map.c: Add add_face_layer() to set face for a layer.   Redo/simplify
+   update_position to store faces away based on layering criteria.
+common/time.c: Replace long pticks with a uint32, since size of a long will
+   vary, and we now send pticks to the client as a 32 bit value.
+crossedit/CrEdit.c: Update the draw logic based on the fact there are more
+   layers now.
+crossedit/Edit.c: Comment out some code that probably should be fixed.
+   Replace calls of SET_MAP_FACE with SET_MAP_FACE_OBJ
+doc/Developers/protocol: Updated with map2, tick protocol additions.
+   Reorganize the parameters in the setup protocol command so they are now
+   listed in alphabetical order.
+include/autoconf.h.in: Add HAVE_ZLIB_H define.
+include/define.h: Update for the FLAG_CLIENT_ANIM values.
+include/face.h: Remove MapLook structure - no longer used.
+include/global.h: change extern type for pticks from long to uint32
+include/map.h: Change MAP_LAYERS to 10.  Add definitions for what each
+   map layer is.  Remove GET/SET_MAP_FACE macro - no longer used,
+   GET/SET_MAP_FACE_OBJ replaces it.  Add GET_MAP_FACE_OBJS which
+   returns pointer to all the object info for the space.  Remove
+   faces from MapSpace structure.
+include/newclient.h: Update with new defines used for map2 protocol
+   command.
+include/newserver.h:  Change type of faces in map_cell_struct to be
+   uint16 to be consistent.  Change 'count' to 'darkness' to more
+   accurately describe what it represents.  Add MAP2_COORD_OFFSET
+   define.  Add Map2Cmd to MapMode enum.  Add map_scroll_x/y
+   to socket structure so we send those as part of map2 command.
+   Add tick field to socket structure to know if we should send
+   tick data to the client.
+server/login.c: Remove extern long pticks declaration - declared
+   in global.h - don't need to declare it again locally.
+socket/info.c: Rewrite magic map code to use GET_MAP_FACE_OBJ
+   instead of GET_MAP_FACE macros.
+socket/init.c: Initialize new fields in socket structure to 0.
+socket/loop.c: If client wants tick data sent, send one each tick.
+socket/request.c: Add setup responses for tick, map2 requests.  Remove some
+   extra code in Map1a setup.  Send error message to client if not using
+   at least Map1 protocol level.  Modify map_newmap_cmd() to clear
+   scroll information when using Map2.  Remove original (map0) protocol
+   logic.  Update map_clearcell() to clear all 10 layers.  Replace
+   MAX_LAYERS with MAP_LAYERS.  Add add_head() to remove some of the
+   complication from update_space().  Add code in draw_client_map1()
+   to find which 3 layers to send to the client from the 10 we now have.
+   Add map2_add_ob(), map2_delete_layer(), check_space_for_heads(),
+   draw_client_map2() to handle map2 protocol.  Add send_tick() -
+   sends tick to client, but also forces flush of data to reduce lag.
+utils/config.guess.utils/config.sub,utils/ltmain.sh: rebuilt
+MSW 2006-05-15
+
 Fix server crash when sending addspell command(s).
 ---
 socket/lowlevel.c: Do not abort if output buffer is completely filled. (Was

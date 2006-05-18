@@ -471,8 +471,8 @@ extern typedata ItemTypes[];
 #define FLAG_USE_SHIELD		7 /* Can this creature use a shield? */
 
 #define FLAG_NO_PICK	 	8 /* Object can't be picked up */
-/*#define FLAG_WALK_ON	 	9*//*  Applied when it's walked upon */
-/*#define FLAG_NO_PASS		10*//* Nothing can pass (wall() is true) */
+#define FLAG_CLIENT_ANIM_SYNC 	9 /* Let client animate this, synchronized */
+#define FLAG_CLIENT_ANIM_RANDOM	10/* Client animate this, randomized */
 #define FLAG_ANIMATE		11 /* The object looks at archetype for faces */
 /*#define FLAG_SLOW_MOVE	12*//* Uses the stats.exp/1000 to slow down */
 /*#define FLAG_FLYING		13*//* Not affected by WALK_ON or SLOW_MOVE) */

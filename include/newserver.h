@@ -44,9 +44,9 @@
 #define NUM_LOOK_OBJECTS 50
 
 struct map_cell_struct {
-  short faces[MAP_LAYERS];
+  uint16 faces[MAP_LAYERS];
   uint16 smooth[MAP_LAYERS];
-  int count;	/* This is really darkness in the map1 command */
+  int darkness;
 };
 
 /* This basically defines the largest size an 
@@ -58,6 +58,12 @@ struct map_cell_struct {
 
 #define MAX_CLIENT_X (MAP_CLIENT_X + MAX_HEAD_OFFSET)
 #define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)
+
+/* How much the x,y coordinates in the map2 are off from
+ * actual upper left corner.  Necessary for light sources
+ * that may be off the edge of the visible map.
+ */
+#define MAP2_COORD_OFFSET   15
 
 struct Map {
   struct map_cell_struct cells[MAX_CLIENT_X][MAX_CLIENT_Y];
@@ -84,9 +90,11 @@ enum Old_Mode {Old_Listen=1, Old_Player=2};
 
 /* Only one map mode can actually be used, so lets make it a switch
  * instead of having a bunch of different fields that needed to
- * get toggled.
+ * get toggled.  Note ordering here is important - 
+ * Map2Cmd > Map1aCmd > Map1Cmd.  This way, when a new feature is
+ * added, a simple > compare can be done instead a bunch of ==
  */
-enum MapMode {Map0Cmd = 0, Map1Cmd = 1, Map1aCmd=2 };
+enum MapMode {Map0Cmd = 0, Map1Cmd = 1, Map1aCmd=2, Map2Cmd = 3 };
 
 /* The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
@@ -105,6 +113,7 @@ typedef struct socket_struct {
     enum Sock_Status status;
     int fd;
     struct Map lastmap;
+    sint8 map_scroll_x, map_scroll_y;
     size_t faces_sent_len;  /* This is the number of elements allocated in faces_sent[] */
     uint8 *faces_sent;      /* This is a bitmap on sent face status */
     uint8 anims_sent[MAXANIMNUM];
@@ -126,6 +135,7 @@ typedef struct socket_struct {
     uint32  has_readable_type:1; /* If true client accept additional text information
                                     used to arrange text in books, scrolls, or scripted dialogs */
     uint32  monitor_spells:1; /* Client wishes to be informed when their spell list changes */
+    uint32  tick:1;	    /* Client wishes to get tick commands */
     uint32  supported_readables; /* each bit is a readable supported by client */                    
     uint32  cs_version, sc_version; /* versions of the client */
     enum MapMode mapmode;   /* Type of map commands the client wants. */
@@ -148,7 +158,6 @@ typedef struct socket_struct {
 	( ((__type)>0) &&\
 	  ((__sockPtr)->has_readable_type) && \
 	  ((__sockPtr)->supported_readables & (1<<(__type))) )
-
 
 /* Bitmask for the faces_sent[] array - what
  * portion of the face have we sent?

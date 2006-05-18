@@ -921,68 +921,128 @@ S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2
 
 S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 
-	NOTE: THIS IS ONLY A PROPOSAL.  This is not currently implemented.
-	Mail has been sent to the mailing list
-
 	This is an update of the map1 commands above.  It is meant to be
 	extensible.  It is also meant to incorporate the ideas of the
 	extended map info command.
 
 	All data is in standard binary form.
 
-	The coord value is 16 bites.
+	The coord value is 16 bits.
 
 	the coord values are length + x + y values.
 	The data represented looks like this:
 
-	first 5 bits: The x coordinate (0-31)
-	next 5 bits: the y coordinate (0-31)
-	last 6 bits: the number of type/data pairs to follow (0-63).  While
-	a limit of 63 data encodings is hard coded, I can't forsee reaching
-	that limit anytime soon - remember, this is the number of type/data
-	pairs that are sent for this space - there could be cases where there
-	are 300 things on the space, but if we are only sending 63 of them
-	this is also fine.
+	first 6 bits: The x coordinate (0-63)
+	next 6 bits: the y coordinate (0-63)
+	LSB 0-3:  Has the following meaning:
+	    0: Normal coordinate
+	    1: Use this coordinate for scroll information and not
+	       an actual coordinate.  This removes the need for the
+	       mapscroll command.  Note that coordinate are still
+	       modified with the MAP2_COORD_OFFSET as described below -
+	       as an example, if 14, 14 is passed, that means effective
+	       scroll of -1, -1.  This should only be set in the first
+	       coordinate value.  Another (real) coordinate pair
+	       will immediately follow this coordinate pair.
+	    2-15: Unused/reserved.
+
+
+	The x & y coordinates are offset by MAP2_COORD_OFFSET (15).
+	This is necessary because there may be effects noticable to the
+	player (light sources) that to the left/above the visible map.
+	By using this offset, we can use a coordinate like
+	10, 27 to denote that something is 5 spaces above the top
+	of the map.
 
 	<len/type> This is a single byte of data.
-	This describes the data that is to follow.
+	This describes the data that is to follow.  If this byte is 255,
+	then this is a coordinate termination byte - this means a 7+
+	length field of type 1f is not possible.
 
 	The top 3 bits (len) denote the number of bytes that follow - it is
 	possible that this is zero, to denote all the relevant information is
 	included in the type.  If this is 7 (all bits set) then the following
-	byte is an additive length value.
+	byte is an additive length value.  Currently, nothing has a 7+
+	bit length.
 
 	The bottom 5 bits is the type of data - this allows for 31 different
 	types of data (0-31/0x0-0x1f).  The meaning of the data itself depends
 	on what the type is.  List of various types:
 
 	0x0: Denotes this space should be cleared.  Length in this case should
-	also be zero, as there is no data that follows.
+	    also be zero, as there is no data that follows.  Clear in this 
+	    context means that all data associated with the space should
+	    be purged, eg, images, sound, darkness, whatever.
 
-	0x1: Darkness information - typically a single byte follows that
-	    denotes how dark the square is.
+	0x1: Darkness information - a single byte follows on how light/dark
+	    the space is.  0 is completely dark, 255 is full bright.
+	    Note that 0 will never be sent - if the space is completely
+	    dark, players won't be able to see it.
 
 	0x2: Sound?
 
-	0x10-0x17: Image information - 2 or 3 bytes follow, which is the image
-	    for the particular layer.  Layer 0x10 is the lowest, 0x17 is the
-	    highest.  If 3 bytes follow, the first byte is smoothing
-	    information, followed by 2 bytes for the face.  If only 2 bytes
-	    follow, then this is only the face.  The number of bytes that
-	    follow is determined by the len field above.
+	0x3: Light sources?
+	0x4 - 0xf: Unused
+
+	0x10-0x1a: Image information.  Layer 0x10 is the lowest, 0x1a is the
+	    highest.  There are several forms of this data depending on the
+	    length:
+
+	    2 bytes: This is only the face number.
+	    3 bytes: <face num>[<smooth>|<animspeed>]
+	    4 bytes: <face num><animspeed><smooth>
+
+		smooth is a single byte for smoothing information.
+		if face_num has the high bit set, then this object is
+		an animation, and the byte after the animation is animation
+		speed (see below for more details).  Smooth information
+		may still be sent for animations, and that would follow
+		the animspeed.
+
+	    If face is 0, that means that the face (or animation)
+	    is no longer visible, and smooth information should also be
+	    cleared.
+
+	    For animations:
+		face will have the high bit set to denote it is not a
+		face but an animation id. 
+
+		MSB-1, MSB-2: These are used to denote type of animation:
+		0: Normal animation - start at first phase, etc.
+		1: Randomize - randomize the animation phase & timing.
+		2: Synchronize - this animation should be in the same phase
+		   as other animations with the same id.  Used for things
+		   like oceans.
+
+		Like the itemcmd, the server will send information for
+		the animation to the client before using the animation
+		id.
+
+		Animations have an extra byte after the animation id -
+		this is the animation speed.  Like the itemcmd, it is
+		how long, in ticks, between animations.  1 means it should
+		be animated every tick.
 
 	Some notes:
 	
-	Coordinates outside the viewable map may
-	be sent.  In these cases, it means that a big image that extends onto
-	the viewable map is on that space.  For big images, only the bottom
-	right coordinate is sent - this is why it may be off the viewable
-	coordinates.  For such spaces, only the actual big image itself will
-	be sent for that space.
+	Coordinates outside the viewable map may be sent.  In these cases, it
+	means that a big image that extends onto the viewable map is on that
+	space.  For big images, only the bottom right coordinate is sent -
+	this is why it may be off the viewable coordinates.  For such spaces,
+	only the actual big image itself will be sent for that space.
 
-	Note that unless the 0x0 code to clear the space is sent, all
-	operations are considered updates to the space (eg, new image, new
-	light level, etc)
+	Note that all operations are considered updates to the space (eg, new
+	image, new light level, etc).  The exception would be the clear
+	command, which means clear all data with the space.
+
+	Note that while not used now, order of these subpackets is important.
+	A clear (0x00) followed by other data should be parsed in that order -
+ 	clear the data, then process the data.  In contrast, sending
+	data followed by a clear byte makes no sense.  This functionality
+	will likely be used in the future - for example, if 6 layers need
+	to be cleared and the other 2 remain the same, it will be more
+	efficient to send that clear byte followed by the 2 layers to
+	redisplay instead of sending 6 layers with an empty face..
 
 	Relative to the map1/map1a commands, this is more bandwidth intensive -
 	basically, an additional byte is needed for each piece of data sent.
@@ -996,8 +1056,21 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 	does not need to be sent.  With the map2 command, the mapextend
 	command is deprecated and is not used.
 
-	
+	General design notes:  For data types that vary in length because
+	of optional data, the required data should be sent first, followed
+	by optional data if appropriate.  An example of this is the face
+	information - we send the 2 face bytes first, then follow that
+	with optional data (smoothing and/or animation data).  This makes
+	parsing on the client easier - basically, the client should be
+	able to parse the data a byte (or pairing at a time).
 
+S->C: tick <tickno>
+	This is really only useful when used with the map2 command.
+	<tickno> is an unsigned 32 bit binary value.
+	This just tells the client what the current tick is.  Right now,
+	the client only uses this to know when to animate the images that
+	the client is responsible for animating.  This will only be sent
+	if negotiated with the setup command.
 
 S->C: map_scroll <dx> <dy>
 	This tells the client to scroll the map dx and dy direction.  dx and
@@ -1152,10 +1225,19 @@ S->C: setup <option1> <value1> <option2> <value2>
 	in some value (option1).
 
 	The following options are supported:
+	(please keep this alphabetized to make it easier to see different
+	options)
 
-	sound
-	    Set to true if the client wants to get sent sound information.
-	    This is an integer in string form (0/1).
+	darkness (0/1 value):
+	    If set to 1 (default), the server will send darkness information
+	    in the map protocol commands.  If 0, the server will not
+	    include darkness, thus saving a minor amount of bandwidth.
+	    Since the client is free to ignore the darkness information,
+	    this does not allow the client to cheat.  In the case of the
+	    old 'map' protocol command, turning darkness off will result
+	    in the masking faces not getting sent to the client.
+	    Note: This is ignored if the map2 protocol command is being
+	    used, as darkness is always set then.
 
 	exp64: If true, client can handle the 64 bit exp values that
 	    are now used.  Otherwise, values are sent as 32 bit.  Setting
@@ -1163,10 +1245,32 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    be sent in revised method as described in the stats command.
 	    Value is an integer in string format.
 
-	sexp (send skill experience):
-	    Obsolete - was used to denote that client wanted skill exp
-	    sent.  Under revised skill system, this info just doesn't
-	    exist anymore in the same form.
+	extendedMapInfos (0/1)
+	    Toggle sending from server of extended map informations.
+  	    What lies in this extended info depended on what extended
+	    infos the client asked. See ToggleExtendedInfos command for
+	    details.
+
+	extendedTextInfos (0/1)
+	    Toggle sending from server of extended text informations.
+	    What lies in this extended info depended on what extended
+	    infos the client asked. See toggleextendedtext command for details.
+
+	facecache (0/1)
+	    Determines if the client is caching images (1) or wants the
+	    images sent to it without caching them (0).  Default is 0.  This
+	    replaces the setfacemode command.
+
+	faceset (8 bit)
+	    Faceset the client wishes to use.  If the faceset is not
+	    valid, the server returns the faceset the client will be
+	    using (default 0).
+
+	itemcmd (1/2):
+	    Defines the revision of the item command that will be used to send
+	    information about objects. If set to 1 (the default) item1 commands
+	    will be sent. If set to 2, item2 commands will be sent. This may in
+	    future accept extra values beyond these two. 
 
 	map1cmd: parameter is an integer in string form like above.
 	   this requests the server to use/not use the map1 protocol
@@ -1182,21 +1286,17 @@ S->C: setup <option1> <value1> <option2> <value2>
 	   send back a 'setup map1cmd 1' because it will still end up
 	   using the map1cmd due to the map size.
 
-	itemcmd (1/2):
-	    Defines the revision of the item command that will be used to send
-	    information about objects. If set to 1 (the default) item1 commands
-	    will be sent. If set to 2, item2 commands will be sent. This may in
-	    future accept extra values beyond these two. 
+	map1acmd:  Specifies that the server uses the map1a protocol format -
+	    this is largely the same as the map1 command, but adds support
+	    for big images.
 
-	darkness (0/1 value):
-	    If set to 1 (default), the server will send darkness information
-	    in the map protocol commands.  If 0, the server will not
-	    include darkness, thus saving a minor amount of bandwidth.
-	    Since the client is free to ignore the darkness information,
-	    this does not allow the client to cheat.  In the case of the
-	    old 'map' protocol command, turning darkness off will result
-	    in the masking faces not getting sent to the client.
-
+	map2cmd: This indicates client support for the map2 protocol command.
+	    See the map2 protocol details above for the main differences.
+	    Note that if map2 protocol is used, the following setup commands
+	    have no effect, either as being redundant or not applicable:
+	    darkness: always on
+	    extendedMapInfos: Data is included in map2
+ 	
 	mapsize x X y
 	    Sets the map size to x X y.  Note the spaces here are only for
 	    clarity - there should be no spaces when actually sent (it
@@ -1235,29 +1335,22 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    of war mode to receive newmap commands from the server each time
 	    the player changes maps.
 
-	facecache (0/1)
-	    Determines if the client is caching images (1) or wants the
-	    images sent to it without caching them (0).  Default is 0.  This
-	    replaces the setfacemode command.
-
-	faceset (8 bit)
-	    Faceset the client wishes to use.  If the faceset is not
-	    valid, the server returns the faceset the client will be
-	    using (default 0).
-
-	extendedMapInfos (0/1)
-		Toggle sending from server of extended map informations.
-		What lies in this extended info depended on what extended
-		infos the client asked. See ToggleExtendedInfos command for details.
-
-	extendedTextInfos (0/1)
-		Toggle sending from server of extended text informations.
-		What lies in this extended info depended on what extended
-		infos the client asked. See toggleextendedtext command for details.
+	sound
+	    Set to true if the client wants to get sent sound information.
+	    This is an integer in string form (0/1).
 
 	spellmon (0/1)
 	    If set to 1 the client has indicated that it wishes to be
 	    sent the spell list and updated when it changes.
+
+	sexp (send skill experience):
+	    Obsolete - was used to denote that client wanted skill exp
+	    sent.  Under revised skill system, this info just doesn't
+	    exist anymore in the same form.
+
+	tick (0/1)
+	    If set, the client want tick commands so it knows animation
+	    timing.
 
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace

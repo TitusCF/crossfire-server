@@ -236,6 +236,10 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define SOUND_NORMAL	0
 #define SOUND_SPELL	1
 
+#define FACE_IS_ANIM    1<<15
+#define ANIM_RANDOM	1<<13
+#define ANIM_SYNC	2<<13
+
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList {
     int len;

@@ -455,10 +455,11 @@ void set_title(const object *pl, char *buf)
  */
 static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py)
 {
-    int x, y, dx, dy,mflags;
+    int x, y, dx, dy,mflags, l;
     sint16 nx, ny;
     mapstruct *mp;
     New_Face *f;
+    object *ob;
 
     for (dx = -1; dx <= 1; dx++) {
 	for (dy = -1; dy <= 1; dy++) {
@@ -475,17 +476,19 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 	    if (mflags & P_OUT_OF_MAP) continue;
 
 	    if (map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] == 0) {
-		f= GET_MAP_FACE(mp, nx, ny, 0);
-		if (f == blank_face)
-		    f= GET_MAP_FACE(mp, nx, ny, 1);
-		if (f == blank_face)
-		    f= GET_MAP_FACE(mp, nx, ny, 2);
-
+		for (l=0; l < MAP_LAYERS; l++) {
+		    ob = GET_MAP_FACE_OBJ(mp, nx, ny, l);
+		    if (ob && !ob->invisible && ob->face != blank_face) break;
+		}
+		if (ob) f = ob->face;
+		else f = blank_face;
+		
 		/* Should probably have P_NO_MAGIC here also, but then shops don't
 		 * work.
 		 */
 		if (mflags & P_BLOCKSVIEW)
-		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
+		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = 
+			FACE_WALL | (f?f->magicmap:0);
 		else {
 		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
 		    magic_mapping_mark_recursive(pl, map_mark, x, y);
@@ -514,10 +517,11 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 
 void magic_mapping_mark(object *pl, char *map_mark, int strength)
 {
-    int x, y, mflags;
+    int x, y, mflags, l;
     sint16 nx, ny;
     mapstruct *mp;
     New_Face *f;
+    object *ob;
 
     for (x = -strength; x <strength; x++) {
 	for (y = -strength; y <strength; y++) {
@@ -528,11 +532,12 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
 	    if (mflags & P_OUT_OF_MAP)
 		continue;
 	    else {
-		f= GET_MAP_FACE(mp, nx, ny, 0);
-		if (f == blank_face)
-		    f= GET_MAP_FACE(mp, nx, ny, 1);
-		if (f == blank_face)
-		    f= GET_MAP_FACE(mp, nx, ny, 2);
+		for (l=0; l < MAP_LAYERS; l++) {
+		    ob = GET_MAP_FACE_OBJ(mp, nx, ny, l);
+		    if (ob && !ob->invisible && ob->face != blank_face) break;
+		}
+		if (ob) f = ob->face;
+		else f = blank_face;
 	    }
 
 	    if (mflags & P_BLOCKSVIEW)

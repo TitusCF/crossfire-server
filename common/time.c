@@ -48,7 +48,7 @@ long psaveind;
 long process_max_utime = 0;
 long process_min_utime = 999999999;
 long process_tot_mtime;
-long pticks;
+uint32 pticks;
 long process_utime_long_count;
 
 const char *season_name[] =

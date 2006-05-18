@@ -809,6 +809,8 @@ A	.+
 ^need_ie{S}	    { /* not used - jsut ignore */ }
 ^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
 ^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
+^client_anim_sync{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC, IVAL);
+^client_anim_random{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM, IVAL);
 
 %{ /* These are all legacy - any new objects should use the move_ .. values */ 
 %}
@@ -1441,7 +1443,7 @@ int set_variable(object *op,char *buf) {
  */
 static const char *const flag_names[NUM_FLAGS+1] = {
 "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
-"can_use_shield", "no_pick", NULL /* walk_on*/, NULL /* no_pass */, /* 10 */
+"can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
 "is_animated", NULL /* slow_move */, 
 NULL /* flying */, "monster", "friendly", "generator",
 "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */

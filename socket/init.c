@@ -124,6 +124,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->has_readable_type = 0;
     ns->supported_readables = 0;
     ns->monitor_spells = 0;
+    ns->tick=0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
@@ -141,6 +142,8 @@ void init_connection(socket_struct *ns, const char *from_ip)
     memset(ns->faces_sent, 0, ns->faces_sent_len*sizeof(*ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
     memset(&ns->stats,0,sizeof(struct statsinfo));
+    ns->map_scroll_x=0;
+    ns->map_scroll_y=0;
     /* Do this so we don't send a face command for the client for
      * this face.  Face 0 is sent to the client to say clear
      * face information.

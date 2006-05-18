@@ -1714,6 +1714,79 @@ int change_map_light(mapstruct *m, int change) {
     return 1;
 }
 
+/* This function is used for things that can have multiple
+ * layers - NO_PICK, ITEM, LIVING, FLYING.
+ * Basically, we want to store in the empty spot,
+ * and if both full, store highest visiblity objects.
+ * Since update_position() goes from bottom to top order,
+ * if the new object is equal to existing we take the new
+ * object since it is higher in the stack.
+ * low_layer is the lower bounds, high_layer is upper
+ * bounds.
+ * honor_visibility is just that - if it is set to 0,
+ * then we do a pure stacking logic - this is used
+ * for the no pick layer, since stacking ordering there
+ * is basically fixed - don't want to re-order walls,
+ * pentagrams, etc.
+ */
+static void inline add_face_layer(int low_layer, int high_layer, object *ob, object *layers[], int honor_visibility)
+{
+    int l, l1;
+    object *tmp;
+
+    for (l=low_layer; l<=high_layer; l++) {
+	if (!layers[l]) {
+	    /* found an empty spot.  now, we want to make sure
+	     * highest visibility at top, etc. 
+	     */
+	    layers[l] = ob;
+	    if (!honor_visibility) return;
+
+	    /* This is basically a mini bubble sort.  Only swap
+	     * position if the lower face has greater (not equal)
+	     * visibility - map stacking is secondary consideration here.
+	     */
+	    for (l1=(l-1); l1>=low_layer; l1--) {
+		if (layers[l1]->face->visibility > layers[l1+1]->face->visibility) {
+		    tmp = layers[l1+1];
+		    layers[l1 + 1] = layers[l1];
+		    layers[l1] = tmp;
+		}
+	    }
+	    /* Nothing more to do - face inserted */
+	    return;
+	}
+    }
+    /* If we get here, all the layers have an object..
+     */
+    if (!honor_visibility) {
+	/* Basically, in this case, it is pure stacking logic, so
+	 * new object goes on the top.
+	 */
+	for (l=low_layer; l<high_layer; l++)
+	    layers[l] = layers[l+1];
+	layers[high_layer] = ob;
+
+    } 
+    /* If this object doesn't have higher visibility than
+     * the lowest object, no reason to go further.
+     */
+    else if (ob->face->visibility >= layers[low_layer]->face->visibility) {
+	/*
+	 * Stop at the top (highest visibility) layer and work down.
+	 * once this face exceed that of the layer, push down those
+	 * other layers, and then replace the layer with our object.
+	 */
+	for (l=high_layer; l>=low_layer; l--) {
+	    if (ob->face->visibility >= layers[l]->face->visibility) {
+		for (l1=(l-1); l1>=low_layer; l1--)
+		    layers[l1] = layers[l1+1];
+		layers[l] = ob;
+	    }
+	}
+    }
+}
+
 
 /* 
  * This function updates various attributes about a specific space
@@ -1723,9 +1796,9 @@ int change_map_light(mapstruct *m, int change) {
  */
 void update_position (mapstruct *m, int x, int y) {
     object *tmp, *last = NULL;
-    uint8 flags = 0, oldflags, light=0, anywhere=0;
-    New_Face *top,*floor, *middle;
-    object *top_obj, *floor_obj, *middle_obj;
+    uint8 flags = 0, oldflags, light=0;
+    object *layers[MAP_LAYERS];
+
     MoveType	move_block=0, move_slow=0, move_on=0, move_off=0, move_allow=0;
 
     oldflags = GET_MAP_FLAGS(m,x,y);
@@ -1735,59 +1808,41 @@ void update_position (mapstruct *m, int x, int y) {
 	return;
     }
 
-    middle=blank_face;
-    top=blank_face;
-    floor=blank_face;
-
-    middle_obj = NULL;
-    top_obj = NULL;
-    floor_obj = NULL;
+    memset(layers, 0, MAP_LAYERS * sizeof(object*));
 
     for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
 
 	/* This could be made additive I guess (two lights better than
 	 * one).  But if so, it shouldn't be a simple additive - 2
 	 * light bulbs do not illuminate twice as far as once since
-	 * it is a disapation factor that is squared (or is it cubed?)
+	 * it is a dissipation factor that is squared (or is it cubed?)
 	 */
 	if (tmp->glow_radius > light) light = tmp->glow_radius;
 
-	/* This call is needed in order to update objects the player
-	 * is standing in that have animations (ie, grass, fire, etc).
-	 * However, it also causes the look window to be re-drawn
-	 * 3 times each time the player moves, because many of the
-	 * functions the move_player calls eventualy call this.
-	 *
-	 * Always put the player down for drawing.
+	/* if this object is visible and not a blank face,
+	 * update the objects that show how this space
+	 * looks.
 	 */
-	if (!tmp->invisible) {
-	    if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
-		top = tmp->face;
-		top_obj = tmp;
+	if (!tmp->invisible && tmp->face != blank_face) {
+	    if (tmp->move_type & MOVE_FLYING) {
+		add_face_layer(MAP_LAYER_FLY1, MAP_LAYER_FLY2, tmp, layers, 1);
+	    }
+	    else if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
+		add_face_layer(MAP_LAYER_LIVING1, MAP_LAYER_LIVING2, tmp, layers, 1);
 	    }
 	    else if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
-		/* If we got a floor, that means middle and top were below it,
-		* so should not be visible, so we clear them.
-		*/
-		middle=blank_face;
-		top=blank_face;
-		floor = tmp->face;
-		floor_obj = tmp;
+		layers[MAP_LAYER_FLOOR] = tmp;
+		/* floors hide everything else */
+		memset(layers + 1, 0, (MAP_LAYERS - 1) * sizeof(object*));
 	    }
-	    /* Flag anywhere have high priority */
-	    else if (QUERY_FLAG(tmp, FLAG_SEE_ANYWHERE)) {
-		middle = tmp->face;
-
-		middle_obj = tmp;
-		anywhere =1;
-	    }
-	    /* Find the highest visible face around.  If equal
-	     * visibilities, we still want the one nearer to the
-	     * top
+	    /* Check for FLAG_SEE_ANYWHERE is removed - objects
+	     * with that flag should just have a high visibility
+	     * set - we shouldn't need special code here.
 	     */
-	    else if (middle == blank_face || (tmp->face->visibility > middle->visibility && !anywhere)) {
-    		middle = tmp->face;
-		middle_obj = tmp;
+	    else if (QUERY_FLAG(tmp, FLAG_NO_PICK)) {
+		add_face_layer(MAP_LAYER_NO_PICK1, MAP_LAYER_NO_PICK2, tmp, layers, 0);
+	    } else {
+		add_face_layer(MAP_LAYER_ITEM1, MAP_LAYER_ITEM3, tmp, layers, 1);
 	    }
 	}
 	if (tmp==tmp->above) {
@@ -1827,77 +1882,10 @@ void update_position (mapstruct *m, int x, int y) {
     SET_MAP_MOVE_ON(m, x, y, move_on);
     SET_MAP_MOVE_OFF(m, x, y, move_off);
     SET_MAP_MOVE_SLOW(m, x, y, move_slow);
-
-    /* At this point, we have a floor face (if there is a floor),
-     * and the floor is set - we are not going to touch it at
-     * this point.
-     * middle contains the highest visibility face. 
-     * top contains a player/monster face, if there is one.
-     *
-     * We now need to fill in top.face and/or middle.face.
-     */
-
-    /* If the top face also happens to be high visibility, re-do our
-     * middle face.  This should not happen, as we already have the
-     * else statement above so middle should not get set.  OTOH, it 
-     * may be possible for the faces to match but be different objects.
-     */
-    if (top == middle) middle=blank_face;
-
-    /* There are three posibilities at this point:
-     * 1) top face is set, need middle to be set.
-     * 2) middle is set, need to set top.
-     * 3) neither middle or top is set - need to set both.
-     */
-
-    for (tmp=last; tmp; tmp=tmp->below) {
-	/* Once we get to a floor, stop, since we already have a floor object */
-	if (QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
-
-	/* If two top faces are already set, quit processing */
-	if ((top != blank_face) && (middle != blank_face)) break;
-
-	/* Only show visible faces, unless its the editor - show all */
-	if (!tmp->invisible || editor) {
-	    /* Fill in top if needed */
-	    if (top == blank_face) {
-		top = tmp->face;
-		top_obj = tmp;
-		if (top == middle) middle=blank_face;
-	    } else {
-		/* top is already set - we should only get here if
-		 * middle is not set
-		 *
-		 * Set the middle face and break out, since there is nothing
-		 * more to fill in.  We don't check visiblity here, since
-		 * 
-		 */
-		if (tmp->face  != top ) {
-		    middle = tmp->face;
-		    middle_obj = tmp;
-		    break;
-		}
-	    }
-	}
-    }
-    if (middle == floor) middle = blank_face;
-    if (top == middle) middle = blank_face;
-    SET_MAP_FACE(m,x,y,top,0);
-    if(top != blank_face)
-        SET_MAP_FACE_OBJ(m,x,y,top_obj,0);
-    else
-        SET_MAP_FACE_OBJ(m,x,y,NULL,0);
-    SET_MAP_FACE(m,x,y,middle,1);
-    if(middle != blank_face)
-        SET_MAP_FACE_OBJ(m,x,y,middle_obj,1);
-    else
-        SET_MAP_FACE_OBJ(m,x,y,NULL,1);
-    SET_MAP_FACE(m,x,y,floor,2);
-    if(floor != blank_face)
-        SET_MAP_FACE_OBJ(m,x,y,floor_obj,2);
-    else
-        SET_MAP_FACE_OBJ(m,x,y,NULL,2);
     SET_MAP_LIGHT(m,x,y,light);
+
+    /* Note it is intentional we copy everything, including NULL values. */
+    memcpy(GET_MAP_FACE_OBJS(m, x, y), layers, sizeof(object*) * MAP_LAYERS);
 }
 
 

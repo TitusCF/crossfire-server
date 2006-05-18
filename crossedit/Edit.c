@@ -57,12 +57,22 @@ static void copy_map(mapstruct *m1, mapstruct *m2) {
 
     memcpy(m2, m1, sizeof(mapstruct));
 
+#if 0
+    /* I'm really not sure how this is used - in any
+     * case, we need to copy the objects now, and
+     * I think we'd really need to make a copy of the objects,
+     * but I'm not sure of the callback structure of this and
+     * where this is used.  Once that is figured out,
+     * this can probably be fixed to do the right thing.
+     * MSW 2006-03-14
+     */
     for(x=0;x<MAP_WIDTH(m1)&&x<MAP_WIDTH(m2);x++)
 	for(y=0;y<MAP_HEIGHT(m1)&&y<MAP_HEIGHT(m2);y++) {
 	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,0),0);
 	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,1),1);
 	    SET_MAP_FACE(m2,x,y,GET_MAP_FACE(m1,x,y,2),2);
 	}
+#endif
 }
 
 /*
@@ -201,7 +211,7 @@ static int MapInsertObjectZ(mapstruct *emap,object *o,int x, int y, int z)
     if (above)
         above->below = o;
     else {
-	SET_MAP_FACE (emap, o->x, o->y, o->face,0);
+	SET_MAP_FACE_OBJ (emap, o->x, o->y, o, 0);
     }
     if (below)
         below->above = o;

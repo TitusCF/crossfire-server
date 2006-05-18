@@ -118,6 +118,8 @@ dnl Misc libraries.
 AC_CHECK_LIB(crypt, main)
 AC_CHECK_LIB(des, des_crypt)
 
+AC_CHECK_LIB(z, compress)
+
 dnl Gros - Changed this to support some external programs that do not like dmalloc (like Python).
 dnl If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
 
@@ -130,7 +132,7 @@ fi
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h)
+AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h zlib.h)
 
 
 dnl Checks for typedefs, structures, and compiler characteristics.

@@ -408,21 +408,15 @@ static void UpdatePosition (Widget w, int x, int y,Boolean inv)
         }
 
         if (displaymode==Dm_Png) {
-          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 2);
-          if (op != NULL)
-              DrawPartObject(w, self->crEdit.gc, op,
-                    x * self->crEdit.fontSize,
-                    y * self->crEdit.fontSize);
-          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 1);
-          if (op != NULL && op->face->number != blank_face->number)
-              DrawPartObject(w, self->crEdit.gc, op,
-                    x * self->crEdit.fontSize,
-                    y * self->crEdit.fontSize);
-          op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, 0);
-          if (op != NULL && op->face->number != blank_face->number)
-              DrawPartObject(w, self->crEdit.gc, op,
-                    x * self->crEdit.fontSize,
-                    y * self->crEdit.fontSize);
+	    int l;
+
+	    for (l = 0; l < MAP_LAYERS; l++) {
+		op = GET_MAP_FACE_OBJ(self->crEdit.map, x, y, l);
+		if (op != NULL)
+		    DrawPartObject(w, self->crEdit.gc, op,
+				   x * self->crEdit.fontSize,
+				   y * self->crEdit.fontSize);
+	    }
 	}
 	op=get_map_ob(self->crEdit.map, x, y);
 	while (op && op->above) op=op->above;

@@ -39,12 +39,6 @@ typedef struct new_face_struct {
     uint8	magicmap;	/* Color to show this in magic map */
 } New_Face;
 
-typedef struct map_look_struct {
-    New_Face *face;
-    uint8	flags;
-} MapLook;
-
-
 typedef struct {
     const char *name;             /* Name of the animation sequence */
     uint8 num_animations;   /* How many different faces to animate */

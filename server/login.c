@@ -36,7 +36,6 @@
 
 extern void sub_weight (object *, signed long);
 extern void add_weight (object *, signed long);
-extern long pticks;
 
 static void copy_file(const char *filename, FILE *fpout);
 

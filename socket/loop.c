@@ -687,7 +687,7 @@ void doeric_server(void)
 	    final_free_player(pl);
 	}
 	else {
-        handle_client(&pl->socket, pl);
+	    handle_client(&pl->socket, pl);
 	    /* If the player has left the game, then the socket status
 	     * will be set to this be the leave function.  We don't
 	     * need to call leave again, as it has already been called
@@ -717,6 +717,7 @@ void doeric_server(void)
 		 */
 		draw_client_map(pl->ob);
 		if (pl->socket.update_look) esrv_draw_look(pl->ob);
+		if (pl->socket.tick) send_tick(pl);
 	    }
 	}
     }

@@ -48,7 +48,23 @@
 #define MAGIC_MAP_HALF  MAGIC_MAP_SIZE/2
 
 
-#define MAP_LAYERS		4
+/* This correspondes to the map layers in the map2 protocol.
+ * The MAP_LAYER_... correspond to what goes on what layer -
+ * this removes the need for hardcoding, and also makes sure
+ * we don't overstep the number of layers.
+ */
+#define MAP_LAYERS		10
+
+#define MAP_LAYER_FLOOR		0
+#define MAP_LAYER_NO_PICK1	1   /* Non pickable ground objects */
+#define MAP_LAYER_NO_PICK2	2   /* Non pickable ground objects */
+#define MAP_LAYER_ITEM1		3   /* Items that can be picked up */
+#define MAP_LAYER_ITEM2		4
+#define MAP_LAYER_ITEM3		5
+#define MAP_LAYER_LIVING1	6   /* Living creatures */
+#define MAP_LAYER_LIVING2	7
+#define MAP_LAYER_FLY1		8   /* Flying objects - creatures, spells */
+#define MAP_LAYER_FLY2		9   /* Arrows, etc */
 
 /* This is when the map will reset */
 #define MAP_WHEN_RESET(m)	((m)->reset_time)
@@ -117,11 +133,12 @@
 #define SET_MAP_TOP(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
 #define set_map_ob SET_MAP_OB
 
-#define SET_MAP_FACE(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L] = C )
-#define GET_MAP_FACE(M,X,Y,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces[L]  )
-
 #define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C )
 #define GET_MAP_FACE_OBJ(M,X,Y,L)   ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L]  )
+/* Returns the layers array so update_position can just copy
+ * the entire array over.
+ */
+#define GET_MAP_FACE_OBJS(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj  )
 
 #define GET_MAP_MOVE_BLOCK(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].move_block )
 #define SET_MAP_MOVE_BLOCK(M,X,Y,C) ( (M)->spaces[(X) + (M)->width * (Y)].move_block = C )
@@ -156,7 +173,7 @@
  */
 
 #define AB_NO_PASS       0x04
-/*#define P_PASS_THRU     0x08	*//* */
+/*#define P_PASS_THRU	0x08	*//* */
 #define P_IS_ALIVE      0x10	/* something alive is on this space */
 #define P_NO_CLERIC     0x20	/* no clerical spells cast here */
 #define P_NEED_UPDATE	0x40	/* this space is out of date */
@@ -191,8 +208,7 @@
 typedef struct MapSpace {
     object	*bottom;	/* lowest object on this space */
     object	*top;		/* Highest object on this space */
-    New_Face	*faces[MAP_LAYERS];	/* faces for the 3 layers */
-    object	*faces_obj[MAP_LAYERS];	/* face objects for the 3 layers */
+    object	*faces_obj[MAP_LAYERS];	/* face objects for the layers */
     uint8	flags;		/* flags about this space (see the P_ values above) */
     sint8	light;		/* How much light this space provides */
     MoveType	move_block;	/* What movement types this space blocks */

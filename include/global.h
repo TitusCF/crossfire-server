@@ -196,7 +196,7 @@ EXTERN long init_done;			/* Ignores signals until init_done is true */
 EXTERN long trying_emergency_save;	/* True when emergency_save() is reached */
 EXTERN long nroferrors;		/* If it exceeds MAX_ERRORS, call fatal() */
 
-extern long pticks;		/* used by various function to determine */
+extern uint32 pticks;		/* used by various function to determine */
 				/* how often to save the character */
 /*
  * Misc global variables:
