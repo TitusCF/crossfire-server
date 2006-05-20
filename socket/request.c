@@ -243,6 +243,9 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
 	} else if (!strcmp(cmd,"tick")) {
 	    ns->tick = atoi(param);
 	    safe_strcat(cmdback, param, &slen, HUGE_BUF);
+	} else if (!strcmp(cmd,"bot")) {
+		ns->is_bot = ( atoi(param) != 0 ? 1 : 0 );
+		safe_strcat(cmdback, ns->is_bot ? "1" : "0", &slen, HUGE_BUF);
 	} else {
 	    /* Didn't get a setup command we understood -
 	     * report a failure to the client.
@@ -2431,7 +2434,6 @@ void esrv_add_spells(player *pl, object *spell) {
 void send_tick(player *pl)
 {
     SockList sl;
-    char buf[MAX_BUF];
     int tmp;
 
 

@@ -144,6 +144,7 @@ typedef struct socket_struct {
     uint8   itemcmd;	    /* What version of the 'item' protocol command to use */
     uint8   faceset;	    /* Set the client is using, default 0 */
     uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
+    uint32	is_bot:1;		/* Client shouldn't be reported to metaserver */
     /* Below are flags for extedend infos to pass to client 
      * with S->C mapextended command */
     uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/    

@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+This adds a "bot" flag for players. Such players won't be counted when
+ sending information to metaserver. To enable it, just send "bot 1"
+ through the "setup" command.
+include/newserver.h: add new is_bot flag.
+lib/settings: add %b to default formats.
+server/c_misc.c: add %b to who options, for [BOT] flag.
+socket/init.c: init is_bot.
+socket/metaserver.c: don't count bots.
+socket/request.c: new "bot" setup command.
+Ryo 2006-05-20
+
 This commit adds support for the map2 protocol command (10 layer map).
 This changes how the data is stored and sent to the client.  This also
 implements the idea of client handling map animations, so adds some object

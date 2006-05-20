@@ -312,6 +312,7 @@ int command_who (object *op, char *params) {
     int num_players = 0;
     int num_wiz = 0;
     int num_afk = 0;
+    int num_bot = 0;
     chars_names *chars = NULL;
     
     /* 
@@ -321,9 +322,9 @@ int command_who (object *op, char *params) {
      * new formats have been specified, and if not we will use the old defaults.
      */
     if (!strcmp(settings.who_format,"")) 
-    	strcpy(settings.who_format, "%N_%T%t%h%d%n[%m]");
+    	strcpy(settings.who_format, "%N_%T%t%h%d%b%n[%m]");
     if (!strcmp(settings.who_wiz_format,"")) 
-    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%nLevel %l [%m](@%i)(%c)");
+    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l [%m](@%i)(%c)");
     if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
     	format=settings.who_wiz_format;
     else
@@ -353,18 +354,20 @@ int command_who (object *op, char *params) {
 	      num_wiz++;
 	    if (QUERY_FLAG(pl->ob,FLAG_AFK))
 	      num_afk++;
+		if (pl->socket.is_bot)
+			num_bot++;
 	}
     }
     if (first_player != (player *) NULL) {
     	if (reg == NULL) 
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players (%d) -- WIZ(%d) AFK(%d)", 
-      	    	num_players, num_wiz, num_afk);
-	else if (reg->longname == NULL)
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d)", 
-      	    	reg->name, num_players, num_wiz, num_afk);
-	else
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d)", 
-      	    	reg->longname, num_players, num_wiz, num_afk);
+			new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
+      	    	num_players, num_wiz, num_afk, num_bot);
+		else if (reg->longname == NULL)
+     		new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
+				reg->name, num_players, num_wiz, num_afk, num_bot);
+		else
+			new_draw_info_format(NDI_UNIQUE, 0, op, "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
+      	    		reg->longname, num_players, num_wiz, num_afk, num_bot);
     }
     qsort (chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
     for (i=0;i<num_players;i++)
@@ -410,12 +413,13 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * h	[Hostile] if character is hostile, nothing otherwise
  * d	[WIZ] if character is a dm, nothing otherwise
  * a	[AFK] if character is afk, nothing otherwise
+ * b	[BOT] if character is a bot, nothing otherwise
  * l	the level of the character
  * m	the map path the character is currently on
  * M	the map name of the map the character is currently on
  * r	the region name (eg scorn, wolfsburg)
  * R	the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
- * i	player's ip adress
+ * i	player's ip address
  * %	a literal %
  * _	a literal underscore
  */
@@ -444,7 +448,9 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 			  break;
 	case 'a' :    strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":""));
 			  break;
-	case 'm' :    strcpy(return_val,pl->ob->map->path);
+	case 'b' :    strcpy(return_val,(pl->socket.is_bot == 1)?" [BOT]":"");
+			  break;
+     case 'm' :    strcpy(return_val,pl->ob->map->path);
 		 	  break;
 	case 'M' :    strcpy(return_val,pl->ob->map->name?pl->ob->map->name:"Untitled");
 			  break;		

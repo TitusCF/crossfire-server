@@ -125,6 +125,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->supported_readables = 0;
     ns->monitor_spells = 0;
     ns->tick=0;
+    ns->is_bot = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start

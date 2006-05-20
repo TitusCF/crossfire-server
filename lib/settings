@@ -64,6 +64,7 @@ item_power_factor 1.0
 # %h	[Hostile] if character is hostile, nothing otherwise
 # %d	[WIZ] if character is a dm, nothing otherwise
 # %a	[AFK] if character is afk, nothing otherwise
+# %b	[BOT] if character is a bot, nothing otherwise
 # %l	the level of the character
 # %m	the map path the character is currently on
 # %M	the map name of the map the character is currently on
@@ -77,8 +78,8 @@ item_power_factor 1.0
 # if you prefer)
 # who_wiz_format is the same but for those with dm powers
 
-who_format %N %T%t%h%d%n[%m]
-who_wiz_format %N %T%t%h%d%nLevel %l [%m](@%i)(%c)
+who_format %N %T%t%h%d%b%n[%m]
+who_wiz_format %N %T%t%h%d%b%nLevel %l [%m](@%i)(%c)
 
 # See notes for most of these in include/config.h
 

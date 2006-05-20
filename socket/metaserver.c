@@ -130,7 +130,7 @@ void metaserver_update(void)
      * costly.
      */
     for (pl=first_player; pl!=NULL; pl=pl->next) {
-	if (!pl->hidden) num_players++;
+        if (!pl->hidden && (pl->socket.is_bot == 0)) num_players++;
     }
 
     sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 
