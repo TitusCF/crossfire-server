@@ -1,26 +1,20 @@
-Release notes for Crossfire Server (Windows), February, 26th 2006
------------------------------------------------------------------
+Release notes for Crossfire Server (Windows), May, 20th 2006
+------------------------------------------------------------
 
-This is version 1.9.0 of the Crossfire server.
+This is version 1.9.0 snapshot of the Crossfire server.
 
 --------------------------------------------------------------
 For complete changes, see the Changelog file included with the software. Major
-changes since last snapshot:
-* new Python API. Defined objects for many Crossfire items. Old scripts are not
- compatible. Check http://wiki.metalforge.net/doku.php/cfpython for reference.
-* bug fix for large item piles
-* improved newpickup command: add new flag PU_NOT_CURSED to ignore cursed items.
-* improved newpickup command: rings/amulets
-* fix bug #1082534 (monks with weapons)
-* new blocking code. Objects can now block eg flying but not walking, or walking
- but not swimming
-* improved kick: kick banned hosts at once, inverted ban entries
-* improved learn_spell and forget_spell
-* prefer marked item when throwing objects.
-* regional jails
-* new DM command: insert_into
-* spell list can now be requested by client in a computer-friendly manner
-* many fixes
+changes since version 1.9.0:
+* new settings permanent_experience_percentage, death_penalty_percentage and
+death_penalty_levels (see settings file).
+* improve the alchemy spell to yield more nuggets.
+* fix possible exploit with shadow alchemy.
+* add IP address to log for incoming connections.
+* add 'add_key' parameter to object.set_key for plugins.
+* add Map.Insert(object,x,y) and Player.CanPay( ) to Python plugin.
+* new map2 protocol command
+* misc bug fixes
 --------------------------------------------------------------
 
 Once you have installed the server, you MUST download a map set.

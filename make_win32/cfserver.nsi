@@ -1,7 +1,7 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.9.0"
+Name "Crossfire Server 1.9.0 snapshot 20060520"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
