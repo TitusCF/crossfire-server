@@ -673,7 +673,7 @@ static int do_script(CFPContext* context, int silent)
     scriptfile = fopen(context->script, "r");
     if (scriptfile == NULL) {
         if (!silent)
-            printf( "cfpython - The Script file %s can't be opened\n", context->script);
+            cf_log( llevError, "cfpython - The Script file %s can't be opened\n", context->script);
         return 0;
     }
     pushContext(context);
@@ -705,7 +705,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     PyObject *m, *d;
     int i;
     gethook = gethooksptr;
-    printf("CFPython 2.0a init\n");
+    cf_init_plugin( gethook );
+    cf_log(llevDebug, "CFPython 2.0a init\n");
 
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
@@ -795,7 +796,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     rv = 0;
 
     if (current_command < 0) {
-        printf("Illegal call of runPluginCommand, call find_plugin_command first.\n");
+        cf_log(llevError, "Illegal call of runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
     snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script));
@@ -831,12 +832,11 @@ CF_PLUGIN int postInitPlugin()
     int rtype = 0;
     FILE*   scriptfile;
 
-    printf("CFPython 2.0a post init\n");
+    cf_log(llevDebug, "CFPython 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype, hooktype, "cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype, hooktype, "cfapi_system_unregister_global_event");
     systemDirectory       = gethook(&rtype, hooktype, "cfapi_system_directory");
     reCmp                 = gethook(&rtype, hooktype, "cfapi_system_re_cmp");
-    cf_init_plugin( gethook );
     initContextStack();
     registerGlobalEvent(NULL, EVENT_BORN, PLUGIN_NAME, globalEventListener);
     /*registerGlobalEvent(NULL, EVENT_CLOCK, PLUGIN_NAME, globalEventListener);*/
@@ -890,7 +890,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     strcpy(context->options, "");
     switch(context->event_code) {
         case EVENT_CRASH:
-            printf( "Unimplemented for now\n");
+            cf_log(llevDebug, "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             op = va_arg(args, object*);
@@ -1044,7 +1044,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
 CF_PLUGIN int   closePlugin()
 {
-    printf("CFPython 2.0a closing\n");
+    cf_log(llevDebug, "CFPython 2.0a closing\n");
     Py_Finalize();
     return 0;
 }

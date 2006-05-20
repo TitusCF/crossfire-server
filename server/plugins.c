@@ -43,7 +43,7 @@
 #include <sproto.h>
 #endif
 
-#define NR_OF_HOOKS 75
+#define NR_OF_HOOKS 76
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -122,6 +122,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_party_get_property,      72, "cfapi_party_get_property"},
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
     {cfapi_player_can_pay,          74, "cfapi_player_can_pay"},
+    {cfapi_log,                     75, "cfapi_log"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -787,6 +788,21 @@ void* cfapi_system_directory(int* type, ...)
     return NULL;
 }
 
+/* Logging hook */
+void* cfapi_log(int* type, ...)
+{
+    va_list args;
+    LogLevel logLevel;
+    const char* message;
+
+    va_start(args, type);
+    logLevel = va_arg(args, LogLevel);
+    message = va_arg(args, const char*);
+    LOG(logLevel, message);
+    va_end(args);
+
+    return NULL;
+}
 
 /* MAP RELATED HOOKS */
 

@@ -66,7 +66,7 @@ int runmovement(struct CFanimation_struct* animation, long int id, void* paramet
 {
     object* op=animation->victim;
     int dir=id;
-    printf ("CFAnim: Moving in direction %ld\n",id);
+    cf_log(llevDebug, "CFAnim: Moving in direction %ld\n",id);
     if (op->type==PLAYER)
         cf_player_move(op->contr,dir);
     else
@@ -84,7 +84,7 @@ long int initfire(char* name,char* parameters,struct CFmovement_struct* move_ent
 
 int runfire(struct CFanimation_struct* animation, long int id, void* parameters)
 {
-    printf ("CFAnim: Firing in direction %ld\n",id);
+    cf_log(llevDebug, "CFAnim: Firing in direction %ld\n",id);
     return 1;
 }
 
@@ -101,7 +101,7 @@ int runturn(struct CFanimation_struct* animation, long int id, void* parameters)
     object* op=animation->victim;
     int dir=id;
     int face;
-    printf ("CFAnim: Turning in direction %ld\n",id);
+    cf_log(llevDebug, "CFAnim: Turning in direction %ld\n",id);
     op->facing=dir;
     cf_object_set_int_property(op,CFAPI_OBJECT_ANIMATION,face);
     return 1;
@@ -116,7 +116,7 @@ long int initcamera(char* name,char* parameters,struct CFmovement_struct* move_e
 }
 int runcamera(struct CFanimation_struct* animation, long int id, void* parameters)
 {
-    printf ("CFAnim: Moving the camera in direction %ld\n",id);
+    cf_log(llevDebug, "CFAnim: Moving the camera in direction %ld\n",id);
     return 1;
     /*if (animation->victim->type==PLAYER)
         hook_scroll_map(animation->victim,id);
@@ -129,7 +129,7 @@ long int initvisible (char* name, char* parameters, struct CFmovement_struct* mo
     int result;
     if (get_boolean (parameters,&result))
         return result;
-    printf ("CFAnim: Error in animation - possible values for 'invisible' are 'yes' and 'no'\n");
+    cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'invisible' are 'yes' and 'no'\n");
     return -1;
 }
 int runvisible(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -145,7 +145,7 @@ long int initwizard (char* name, char* parameters, struct CFmovement_struct* mov
     int result;
     if (get_boolean (parameters,&result))
         return result;
-    printf ("CFAnim: Error in animation - possible values for 'wizard' are 'yes' and 'no'\n");
+    cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'wizard' are 'yes' and 'no'\n");
     return -1;
 }
 int runwizard(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -161,7 +161,7 @@ long int initsay (char* name, char* parameters, struct CFmovement_struct* move_e
         move_entity->parameters=cf_strdup_local (parameters);
     else
         move_entity->parameters=NULL;
-    printf ("CFAnim: init say: parameters: %p\n",parameters);
+    cf_log(llevDebug, "CFAnim: init say: parameters: %p\n",parameters);
     return 1;
 }
 int runsay(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -172,7 +172,7 @@ int runsay(struct CFanimation_struct* animation, long int id, void* parameters)
         free (parameters);
     }
     else
-        printf ("CFAnim: Error in animation: nothing to say with say function\n");
+        cf_log(llevDebug, "CFAnim: Error in animation: nothing to say with say function\n");
     return 1;
 }
 long int initapply (char* name, char* parameters, struct CFmovement_struct* move_entity)
@@ -268,7 +268,7 @@ long int initghosted (char* name, char* parameters, struct CFmovement_struct* mo
     int result;
     if (get_boolean(parameters,&result))
         return result;
-    printf ("CFAnim: Error in animation: possible values for 'ghosted' are 'yes' and 'no'\n");
+    cf_log(llevDebug, "CFAnim: Error in animation: possible values for 'ghosted' are 'yes' and 'no'\n");
     return -1;
 }
 int runghosted(struct CFanimation_struct* animation, long int id, void* parameters)
@@ -317,14 +317,14 @@ long int initteleport (char* name, char* parameters, struct CFmovement_struct* m
     int mapy;
     teleport_params* teleport;
     move_entity->parameters=NULL;
-    printf (".(%s)\n",parameters);
+    cf_log(llevDebug, ".(%s)\n",parameters);
     if (!parameters)
     {
-        printf ("CFAnim: Error - no parameters for teleport\n");
+        cf_log(llevDebug, "CFAnim: Error - no parameters for teleport\n");
         return 0;
     }
     mapname=strstr (parameters," ");
-    printf (".(%s)\n",parameters);
+    cf_log(llevDebug, ".(%s)\n",parameters);
     if (!mapname)
         return 0;
     *mapname='\0';
@@ -333,12 +333,12 @@ long int initteleport (char* name, char* parameters, struct CFmovement_struct* m
     parameters=mapname;
     if (!parameters)
     {
-        printf ("CFAnim: Error - not enough parameters for teleport\n");
+        cf_log(llevDebug, "CFAnim: Error - not enough parameters for teleport\n");
         return 0;
     }
-    printf (".(%s)\n",parameters);
+    cf_log(llevDebug, ".(%s)\n",parameters);
     mapname=strstr (parameters," ");
-    printf (".\n");
+    cf_log(llevDebug, ".\n");
     if (!mapname)
         return 0;
     *mapname='\0';
@@ -461,7 +461,7 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
     int tick;
     CFanimationHook* animationhook;
     if (parent->verbose)
-        printf ("CFAnim: In parse block for %s\n",buffer);
+        cf_log(llevDebug, "CFAnim: In parse block for %s\n",buffer);
     while (fgets(buffer,buffer_size,fichier))
     {
         if (buffer[0]=='[') break;
@@ -491,13 +491,13 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
             if (*parameters=='\0') parameters=NULL;
         }
         animationhook= get_command (name);
-        printf ("\n");
+        cf_log(llevDebug, "\n");
         if (parent->verbose)
         {
             if (!animationhook)
-                printf ("CFAnim: %s - Unknown animation command\n",name);
+                cf_log(llevDebug, "CFAnim: %s - Unknown animation command\n",name);
             else
-                printf ("CFAnim: Parsed %s -> %p\n",name,animationhook);
+                cf_log(llevDebug, "CFAnim: Parsed %s -> %p\n",name,animationhook);
         }
         if (!animationhook)
         {
@@ -518,7 +518,7 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
         else first=next;
         current=next;
     }
-    printf ("\n");
+    cf_log(llevDebug, "\n");
     return first;
 }
 
@@ -583,7 +583,7 @@ int is_animated_player (object* pl)
         if ((current->victim==pl) && (current->paralyze))
         {
             if (current->verbose)
-                printf("CFAnim: Getting a command for a paralyzed player %s.\n",pl->name);
+                cf_log(llevDebug, "CFAnim: Getting a command for a paralyzed player %s.\n",pl->name);
             return 1;
         }
     return 0;
@@ -659,7 +659,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     fichier = fopen(cf_get_maps_directory(file),"r");
     if (fichier == NULL)
     {
-        printf("CFAnim: Unable to open %s\n", cf_get_maps_directory(file));
+        cf_log(llevDebug, "CFAnim: Unable to open %s\n", cf_get_maps_directory(file));
         return 0;
     }
     while (fgets(buffer,HUGE_BUF,fichier))
@@ -668,13 +668,13 @@ int start_animation (object* who,object* activator,char* file, char* options)
         if (buffer[0]=='#') continue;
         if (!strcmp(buffer,"\n")) continue;
         errors_found=1;
-        printf ("CFAnim: '%s' has an invalid syntax.\n",buffer);
+        cf_log(llevDebug, "CFAnim: '%s' has an invalid syntax.\n",buffer);
     }
     if (feof(fichier))
         return 0;
     if (strncmp (buffer,"[Config]",8))
     {
-        printf ("CFAnim: Fatal error in %s: [Config] must be the first group defined.\n",file);
+        cf_log(llevDebug, "CFAnim: Fatal error in %s: [Config] must be the first group defined.\n",file);
         return 0;
     }
     while (fgets(buffer,HUGE_BUF,fichier))
@@ -701,7 +701,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
             }
             else if (!strcmp (variable,"victim"))
             {
-                printf ("Setting victim to %s\n",value);
+                cf_log(llevDebug, "Setting victim to %s\n",value);
                 if (!strcmp (value,"who"))
                     victim=who;
                 else if (!strcmp (value,"activator"))
@@ -710,7 +710,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
                     if (!who)
                     {
                         errors_found=1;
-                        printf("Warning: object \"who\" doesn't exist and you victimized it's owner\n");
+                        cf_log(llevDebug, "Warning: object \"who\" doesn't exist and you victimized it's owner\n");
                     }
                     else
                         victim=who->env;
@@ -718,7 +718,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
                     if (!activator)
                     {
                         errors_found=1;
-                        printf ("Warning: object \"activator\" doesn't exist and you victimized it's owner\n");
+                        cf_log(llevDebug, "Warning: object \"activator\" doesn't exist and you victimized it's owner\n");
                     }
                     else
                         victim=activator->env;
@@ -780,12 +780,12 @@ int start_animation (object* who,object* activator,char* file, char* options)
     }
     if (buffer[0]=='\0')
     {
-        printf ("CFAnim: Errors occurred during the parsing of %s\n", cf_get_maps_directory(file));
+        cf_log(llevDebug, "CFAnim: Errors occurred during the parsing of %s\n", cf_get_maps_directory(file));
         return 0;
     }
     if (!(current_anim=create_animation()))
     {
-        printf ("CFAnim: Fatal error - Not enough memory.\n");
+        cf_log(llevDebug, "CFAnim: Fatal error - Not enough memory.\n");
         return 0;
     }
     if (always_delete)
@@ -795,14 +795,14 @@ int start_animation (object* who,object* activator,char* file, char* options)
     }
     if (!victim)
     {
-        printf ("CFAnim: Fatal error - victim is NULL");
+        cf_log(llevDebug,  "CFAnim: Fatal error - victim is NULL");
         return 0;
     }
     if ( ( (victim->type==PLAYER) && (victimtype==1)) ||
             ( (victim->type!=PLAYER) && (victimtype==0))  ||
             ( errors_found && !errors_allowed) )
     {
-        if (verbose) printf ("CFAnim: No correct victim found or errors found, aborting.\n");
+        if (verbose) cf_log(llevDebug, "CFAnim: No correct victim found or errors found, aborting.\n");
         return 0;
     }
     if (unique && !always_delete)
@@ -841,14 +841,14 @@ static void animate_one(CFanimation *animation, long int milliseconds)
         animation->tick_left+=milliseconds;
     else animation->tick_left++;
     if (animation->verbose)
-        printf("CFAnim: Ticking %s for %s. Tickleft is %ld\n",
+        cf_log(llevDebug, "CFAnim: Ticking %s for %s. Tickleft is %ld\n",
                animation->name,animation->victim->name,animation->tick_left);
     if (animation->invisible)
         animation->victim->invisible=10;
     if (animation->wizard)
     {
         if (animation->verbose)
-            printf ("CFAnim: Setting wizard flags\n");
+            cf_log(llevDebug, "CFAnim: Setting wizard flags\n");
         cf_object_set_flag(animation->victim, FLAG_WIZPASS,1);
         cf_object_set_flag(animation->victim, FLAG_WIZCAST,1);
         cf_object_set_flag(animation->victim, FLAG_WIZ,1);
@@ -955,7 +955,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     gethook = gethooksptr;
 
-    printf("CFAnim 2.0a init\n");
+    cf_init_plugin( gethook );
+    cf_log(llevDebug, "CFAnim 2.0a init\n");
 
     /* Place your initialization code here */
     return 0;
@@ -992,12 +993,11 @@ CF_PLUGIN int postInitPlugin(void)
     int hooktype = 1;
     int rtype = 0;
 
-    printf("CFAnim 2.0a post init\n");
+    cf_log(llevDebug, "CFAnim 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
     systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
     reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
-    cf_init_plugin( gethook );
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */
     registerGlobalEvent(NULL,EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
@@ -1025,7 +1025,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     switch(context->event_code)
     {
         case EVENT_CRASH:
-            printf( "Unimplemented for now\n");
+            cf_log(llevDebug, "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             context->activator = va_arg(args, object*);
@@ -1129,7 +1129,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     pushContext(context);
     /* Put your plugin action(s) here */
-    printf("CFAnim: %s called animator script %s, options are %s\n",
+    cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
            context->activator->name,
            context->script,
            context->options);
@@ -1140,13 +1140,13 @@ CF_PLUGIN void* eventListener(int* type, ...)
     context = popContext();
     rv = context->returnvalue;
     free(context);
-    printf("Execution complete");
+    cf_log(llevDebug, "Execution complete");
     return &rv;
 }
 
 CF_PLUGIN int   closePlugin()
 {
-    printf("CFAnim 2.0a closing\n");
+    cf_log(llevDebug, "CFAnim 2.0a closing\n");
     return 0;
 }
 

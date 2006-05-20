@@ -17,9 +17,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Added a 'cf_log' function for plugins. Replace printf in plugins with correct call.
+---
+include/plugin.h: include required header for log level definitions.
+include/sproto.h: new function.
+plugins/cfanim/cfanim.c: replace printf with calls to cf_log.
+plugins/cfpython/cfpython.c: replace printf with calls to cf_log.
+plugins/cfpython/cfpython_map.c: replace printf with calls to cf_log.
+plugins/common/plugin_common.c: new cf_log function.
+plugins/common/include/plugin_common.h: new cf_log function.
+server/plugins.c: new hook.
+Ryo 2006-05-20
+
 This adds a "bot" flag for players. Such players won't be counted when
  sending information to metaserver. To enable it, just send "bot 1"
  through the "setup" command.
+---
 include/newserver.h: add new is_bot flag.
 lib/settings: add %b to default formats.
 server/c_misc.c: add %b to who options, for [BOT] flag.

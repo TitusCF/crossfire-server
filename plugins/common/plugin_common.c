@@ -41,6 +41,7 @@ static f_plug_api cfapiSystem_remove_string = NULL;
 static f_plug_api cfapiSystem_unregister_global_event = NULL;
 static f_plug_api cfapiSystem_strdup_local = NULL;
 static f_plug_api cfapiSystem_find_animation = NULL;
+static f_plug_api cfapiSystem_log = NULL;
 
 static f_plug_api cfapiMap_create_path = NULL;
 
@@ -184,6 +185,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiParty_get_property, "cfapi_party_get_property", z );
     GET_HOOK( cfapiRegion_get_property, "cfapi_region_get_property", z );
     GET_HOOK( cfapiPlayer_can_pay, "cfapi_player_can_pay", z );
+    GET_HOOK( cfapiSystem_log, "cfapi_log", z );
     return 1;
 }
 
@@ -733,6 +735,22 @@ int cf_find_animation(char* txt)
 {
     int val;
     return *(int*)cfapiSystem_find_animation(&val, txt);
+}
+void cf_log( LogLevel logLevel, const char* format, ... )
+{
+    int val;
+
+    /* Copied from common/logger.c */
+    char buf[20480];  /* This needs to be really really big - larger than any other buffer, since that buffer may
+    	need to be put in this one. */
+    va_list ap;
+    va_start(ap, format);
+    buf[0] = '\0';
+    vsprintf(buf, format, ap);
+
+    cfapiSystem_log(&val, logLevel, buf);
+
+    va_end(ap);
 }
 char* cf_object_get_key(object* op, char* keyname)
 {

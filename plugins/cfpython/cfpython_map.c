@@ -176,7 +176,7 @@ static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
     /* make sure the map is swapped in */
     if (map->map->in_memory != MAP_IN_MEMORY)
     {
-        printf("MAP AIN'T READY !\n");
+        cf_log(llevError, "MAP AIN'T READY !\n");
     }
 
     mflags = cf_map_get_flags(map->map, &(map->map), (sint16)x, (sint16)y, &nx, &ny);

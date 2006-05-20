@@ -30,6 +30,7 @@
 
 #include <global.h>
 #include <object.h>
+#include <logger.h>
 
 #ifdef HAVE_TIME_H
 #include <time.h>
