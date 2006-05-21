@@ -39,7 +39,7 @@
 
 #define YY_DECL int lex_load(object *op, int map_flags)
 
-static char *yval();
+static char *yval(void);
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
