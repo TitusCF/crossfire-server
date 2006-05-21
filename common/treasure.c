@@ -1534,14 +1534,14 @@ static int legal_artifact_combination(object *op, artifact *art) {
  * it should have due to the second artifact-template.
  */
 
-void give_artifact_abilities(object *op, object *artifct) {
+void give_artifact_abilities(object *op, object *artifact) {
   char new_name[MAX_BUF];
 
-  sprintf(new_name, "of %s", artifct->name);
+  sprintf(new_name, "of %s", artifact->name);
   if (op->title)
     free_string(op->title);
   op->title = add_string(new_name);
-  add_abilities(op, artifct); /* Give out the bonuses */
+  add_abilities(op, artifact); /* Give out the bonuses */
 
 #if 0 /* Bit verbose, but keep it here until next time I need it... */
   {
