@@ -381,7 +381,7 @@ AttrDef AttrDescription[] = {
     {"WeightL",	        TypeString, getWeightL,		putWeightL},
     {"Brand",	        TypeString, getBrand,		putBrand},
 	 {"Makes",  TypeString, getMakes, putMakes},  /* other_arch */
-    {NULL,		0,		0,		NULL}
+    {NULL,		0,		NULL,		NULL}
 };
 
 static char *allowed_variables[] = {
