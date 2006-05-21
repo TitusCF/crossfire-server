@@ -350,6 +350,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 	if (op->stats.wc && IS_WEAPON(op))
 	    op->stats.wc += lmt->wc;
 	if (IS_ARMOR(op)) {
+	    int j;
 	    if (op->stats.ac)
 		op->stats.ac += lmt->ac;
 	    for (j=0; j < NROFATTACKS; j++)
