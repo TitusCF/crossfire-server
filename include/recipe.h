@@ -11,7 +11,7 @@ typedef struct recipestruct {
     int transmute;     /* if defined, one of the formula ingredients is
 			* used as the basis for the product object */
     int yield;         /* The maximum number of items produced by the recipe */
-    linked_char *ingred; /* comma delimited list of ingredients */
+    linked_char *ingred; /* list of ingredients */
     struct recipestruct *next;
     const char *keycode;     /* keycode needed to use the recipe */
     const char *skill;       /* skill name used to make this recipe */
