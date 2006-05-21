@@ -140,7 +140,7 @@ void remove_directory(const char *path)
 	    }
 	    sprintf(buf,"%s/%s", path, de->d_name);
 	    if (unlink(buf)) {
-		LOG(llevError,"Unable to remove directory %s\n", path);
+		LOG(llevError,"Unable to remove %s\n", path);
 	    }
 	}
 	closedir(dirp);
