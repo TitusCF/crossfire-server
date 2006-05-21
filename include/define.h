@@ -100,7 +100,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BIG_NAME 32
 #define MAX_EXT_TITLE 98
 
-/* Fatal variables: */
+/* Fatal variables; used as arguments to fatal() */
 #define OUT_OF_MEMORY		0
 #define MAP_ERROR		1
 #define ARCHTABLE_TOO_SMALL	2
