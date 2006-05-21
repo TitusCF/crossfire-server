@@ -1657,7 +1657,7 @@ int command_pickup (object *op, char *params)
     return 0;
   }
 
-  while ( *params == ' ' && *params )
+  while ( *params == ' ' )
       params++;
 
   if ( *params == '+' || *params == '-' )
