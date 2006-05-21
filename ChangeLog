@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/holy.c, include/libproto.h: Declare some functions as "static".
+Andreas Kirschbaum 2006-05-21
+
 Make socket handling more robust.
 ---
 include/newclient.h: Split MAXSOCKBUF into MAXSOCKRECVBUF and MAXSOCKSENDBUF.

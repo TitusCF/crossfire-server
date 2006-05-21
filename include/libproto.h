@@ -60,8 +60,6 @@ extern int is_friendly(const object *op);
 extern void fatal(int err);
 /* holy.c */
 extern void init_gods(void);
-extern void add_god_to_list(archetype *god_arch);
-extern int baptize_altar(object *op);
 extern godlink *get_rand_god(void);
 extern object *pntr_to_god_obj(godlink *godlnk);
 extern void free_all_god(void);

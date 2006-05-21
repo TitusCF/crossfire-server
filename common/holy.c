@@ -7,6 +7,8 @@
 #include <living.h>
 #include <spells.h>
 
+static void add_god_to_list (archetype *god_arch);
+
 static godlink *init_godslist(void) {
     godlink *gl = (godlink *) malloc(sizeof(godlink));
     if(gl==NULL)
@@ -33,8 +35,7 @@ void init_gods (void) {
   LOG(llevDebug,"done.\n");
 }
   
-/* add_god_to_list()- called only from init_gods */
-void add_god_to_list (archetype *god_arch) {
+static void add_god_to_list (archetype *god_arch) {
   godlink *god;
   
   if(!god_arch) {
@@ -63,7 +64,7 @@ void add_god_to_list (archetype *god_arch) {
  * god in question, then set the title for later use. -b.t.
  */
  
-int baptize_altar(object *op) {
+static int baptize_altar(object *op) {
    char buf[MAX_BUF];
    
    /* if the title field is pre-set, then that altar is
