@@ -900,7 +900,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 
 /*
  *  This function was part of drop, now is own function.
- *  Player 'op' tries to drop object 'tmp', if tmp is non zero, then
+ *  Player 'op' tries to drop object 'tmp', if nrof is non zero, then
  *  nrof objects is tried to dropped.
  * This is used when dropping objects onto the floor.
  */
