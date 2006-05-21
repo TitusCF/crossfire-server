@@ -223,7 +223,7 @@ FILE *popen_local(const char *command, const char *type)
  * unix variants.
  */
 char *strdup_local(const char *str) {
-  char *c=(char *)malloc(sizeof(char)*(strlen(str)+1));
+  char *c=(char *)malloc(strlen(str)+1);
   if (c!=NULL)
     strcpy(c,str);
   return c;
