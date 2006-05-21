@@ -1022,7 +1022,7 @@ static uint16 add_head(object *ob, int sx, int sy, int p_layer)
 {
     object *head;
     int bx, by, i;
-    uint face_num=0;
+    uint16 face_num=0;
 
     if (ob->head) head = ob->head;
     else head = ob;
