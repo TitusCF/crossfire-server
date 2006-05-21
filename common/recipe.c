@@ -60,7 +60,9 @@ static recipe *get_empty_formula(void) {
   return t;
 }
  
-/* get_formulalist() - returns pointer to the formula list */
+/* get_formulalist() - returns pointer to the formula list
+ * i is the number of ingredients.
+ */
 
 recipelist * get_formulalist ( int i ) {
   recipelist *fl=formulalist;
