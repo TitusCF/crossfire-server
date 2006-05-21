@@ -224,7 +224,8 @@ FILE *popen_local(const char *command, const char *type)
  */
 char *strdup_local(const char *str) {
   char *c=(char *)malloc(sizeof(char)*(strlen(str)+1));
-  strcpy(c,str);
+  if (c!=NULL)
+    strcpy(c,str);
   return c;
 }
 
