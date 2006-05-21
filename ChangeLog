@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make socket handling more robust.
+---
+include/newclient.h: Split MAXSOCKBUF into MAXSOCKRECVBUF and MAXSOCKSENDBUF.
+   Increase the receive buffer size to be able to handle all valid packets;
+   decrease send buffer size to 10239 to not overflow the receive buffer of old
+   clients.
+socket/{image.c,info.c,init.c,item.c,loop.c,lowlevel.c,request.c,sounds.c}: Use
+   renamed constants.
+socket/image.c: In send_image_sums() prevent buffer overflows. Reject the
+   command instead.
+socket/request.c: In send_skill_info() and send_spell_paths() prevent buffer
+   overflows. Instead send only as much information as fits into the buffer.
+socket/loop.c: In handle_client() prevent possible array out-of-bounds access.
+Andreas Kirschbaum 2006-05-21
+
 Added a 'cf_log' function for plugins. Replace printf in plugins with correct call.
 ---
 include/plugin.h: include required header for log level definitions.

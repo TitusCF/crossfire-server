@@ -185,7 +185,7 @@ void handle_oldsocket(socket_struct *ns)
      * or no more characters to read.
      */
     do {
-	if (ns->inbuf.len >= MAXSOCKBUF-1) {
+	if (ns->inbuf.len >= MAXSOCKRECVBUF-1) {
 	    ns->status = Ns_Dead;
 	    LOG(llevDebug, "Old input socket sent too much data without newline\n");
 	    return;
@@ -341,7 +341,7 @@ void handle_client(socket_struct *ns, player *pl)
 	    handle_oldsocket(ns);
 	    return;
 	}
-	i=SockList_ReadPacket(ns->fd, &ns->inbuf, MAXSOCKBUF-1);
+	i=SockList_ReadPacket(ns->fd, &ns->inbuf, MAXSOCKRECVBUF-1);
 	/* Special hack - let the user switch to old mode if in the Ns_Add
 	 * phase.  Don't demand they add in the special length bytes
 	 */
@@ -366,6 +366,8 @@ void handle_client(socket_struct *ns, player *pl)
 	/* Still dont have a full packet */
 	if (i==0) return;
 
+	ns->inbuf.buf[ns->inbuf.len]='\0';  /* Terminate buffer - useful for string data */
+
 	/* First, break out beginning word.  There are at least
 	 * a few commands that do not have any paremeters.  If
 	 * we get such a command, don't worry about trying
@@ -379,7 +381,6 @@ void handle_client(socket_struct *ns, player *pl)
 	}
 	else len=0;
 
-	ns->inbuf.buf[ns->inbuf.len]='\0';  /* Terminate buffer - useful for string data */
 	for (i=0; client_commands[i].cmdname !=NULL; i++) {
 	    if (strcmp((char*)ns->inbuf.buf+2,client_commands[i].cmdname)==0) {
 		client_commands[i].cmdproc((char*)data,len,ns);

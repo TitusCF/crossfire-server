@@ -39,7 +39,7 @@ void play_sound_player_only(player *pl, short soundnum,  sint8 x, sint8 y)
     }
     else soundtype=SOUND_NORMAL;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf, "sound ");
     sl.len=strlen((char*)sl.buf);
     SockList_AddChar(&sl, x);

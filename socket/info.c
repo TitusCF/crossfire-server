@@ -595,8 +595,8 @@ void draw_magic_map(object *pl)
 	}
     }
 
-    sl.buf=malloc(MAXSOCKBUF);
-    snprintf((char*)sl.buf, MAXSOCKBUF, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
+    sl.buf=malloc(MAXSOCKSENDBUF);
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
 	    MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
     sl.len=strlen((char*)sl.buf);
     

@@ -48,11 +48,17 @@
 #ifndef NEWCLIENT_H
 #define NEWCLIENT_H
 
-/* Maximum size of any packet we expect.  Using this makes it so we don't need to
- * allocated and deallocated teh same buffer over and over again and the price
- * of using a bit of extra memory.  IT also makes the code simpler.
+/* Maximum size of any packet we expect. This number includes both the length
+ * bytes (2 bytes) at the start of each packet and the trailing '\0' (1 byte)
+ * at the end of each packet.
  */
-#define MAXSOCKBUF 10240
+#define MAXSOCKRECVBUF (2+65535+1)
+
+/* Maximum size of any packet we send. This number does not include the length
+ * bytes at the start of each packet. The value is chosen to not overflow the
+ * input buffer of old clients (2006-05-21).
+ */
+#define MAXSOCKSENDBUF 10239
 
 
 #define CS_QUERY_YESNO	0x1	/* Yes/no question */

@@ -109,10 +109,10 @@ short GetShort_String(const unsigned char *data) {
 
 /**
  * This reads from fd and puts the data in sl.  We return true if we think
- * we have a full packet, 0 if we have a partial packet.  The only processing
- * we do is remove the intial size value.  len (As passed) is the size of the
- * buffer allocated in the socklist.  We make the assumption the buffer is
- * at least 2 bytes long.
+ * we have a full packet, 0 if we have a partial packet, or -1 if an error
+ * occurred.  The only processing we do is remove the initial size value.  len
+ * (As passed) is the size of the buffer allocated in the socklist.  We make
+ * the assumption the buffer is at least 2 bytes long.
  */
  
 int SockList_ReadPacket(int fd, SockList *sl, int len)
@@ -424,14 +424,14 @@ void cs_write_string(socket_struct *ns, const char *buf, int len)
  */
 void Send_With_Handling(socket_struct *ns, const SockList *msg)
 {
-    unsigned char sbuf[4];
+    unsigned char sbuf[2];
 
     if (ns->status == Ns_Dead || !msg)
 	return;
 
-    if (msg->len > MAXSOCKBUF) {
-	LOG(llevError,"Trying to send a buffer beyond properly size, len =%d\n",
-	    msg->len);
+    if (msg->len > MAXSOCKSENDBUF) {
+	LOG(llevError,"Trying to send a buffer beyond properly size, len %d > max len %d\n",
+	    msg->len, MAXSOCKSENDBUF);
 	/* Almost certainly we've overflowed a buffer, so quite now to make
 	 * it easier to debug.
 	 */

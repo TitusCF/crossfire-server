@@ -331,7 +331,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
 	return;
     }
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     fallback = get_face_fallback(ns->faceset, face_num);
 
     if (facesets[fallback].faces[face_num].data == NULL) {
@@ -387,7 +387,7 @@ void send_image_info(socket_struct *ns, char *params)
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
 
     sprintf(sl.buf,"replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
     for (i=0; i<MAX_FACE_SETS; i++) {
@@ -419,7 +419,7 @@ void send_image_sums(socket_struct *ns, char *params)
     char *cp, buf[MAX_BUF];
     SockList sl;
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
 
     start = atoi(params);
     for (cp = params; *cp != '\0'; cp++)
@@ -436,6 +436,13 @@ void send_image_sums(socket_struct *ns, char *params)
     sl.len = strlen(sl.buf);
 
     for (i=start; i<=stop; i++) {
+	if (sl.len+2+4+1+1+strlen(new_faces[i].name)+1 > MAXSOCKSENDBUF) {
+	    LOG(llevError, "send_image_sums: buffer overflow, rejecting range %d..%d\n", start, stop);
+	    sprintf(buf, "replyinfo image_sums %d %d", start, stop);
+	    cs_write_string(ns, buf, strlen(buf));
+	    return;
+	}
+
 	SockList_AddShort(&sl, i);
 	ns->faces_sent[i] |= NS_FACESENT_FACE;
 
@@ -448,15 +455,6 @@ void send_image_sums(socket_struct *ns, char *params)
 	strcpy(sl.buf + sl.len, new_faces[i].name);
 	sl.len += qq;
 	SockList_AddChar(&sl, 0);
-    }
-    /* It would make more sense to catch this pre-emptively in the code above.
-     * however, if this really happens, we probably just want to cut down the
-     * size to less than 1000, since that is what we claim the protocol would
-     * support.
-     */
-    if (sl.len > MAXSOCKBUF) {
-	LOG(llevError,"send_image_send: buffer overrun, %d > %d\n", sl.len, MAXSOCKBUF);
-	abort();
     }
     Send_With_Handling(ns, &sl);
     free(sl.buf);

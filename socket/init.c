@@ -133,12 +133,12 @@ void init_connection(socket_struct *ns, const char *from_ip)
      * just open and close connections could get this total up.
      */
     ns->inbuf.len=0;
-    ns->inbuf.buf=malloc( sizeof( unsigned char ) * MAXSOCKBUF );
+    ns->inbuf.buf=malloc(MAXSOCKRECVBUF);
     /* Basic initialization. Needed because we do a check in
      * handle_client for oldsocketmode without checking the
      * length of data.
      */
-    memset( ns->inbuf.buf, 0, sizeof( unsigned char ) * MAXSOCKBUF );
+    memset(ns->inbuf.buf, 0, MAXSOCKRECVBUF);
     memset(&ns->lastmap,0,sizeof(struct Map));
     memset(ns->faces_sent, 0, ns->faces_sent_len*sizeof(*ns->faces_sent));
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));

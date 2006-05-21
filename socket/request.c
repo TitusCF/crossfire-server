@@ -791,7 +791,7 @@ void esrv_update_stats(player *pl)
     char buf[MAX_BUF];
     uint16 flags;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"stats ");
     sl.len=strlen((char*)sl.buf);
     
@@ -886,7 +886,7 @@ void esrv_new_player(player *pl, uint32 weight)
 
     pl->last_weight = weight;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     strcpy((char*)sl.buf,"player ");
     sl.len=strlen((char*)sl.buf);
@@ -925,7 +925,7 @@ void esrv_send_animation(socket_struct *ns, short anim_num)
 	return;
     }
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf, "anim ");
     sl.len=5;
     SockList_AddShort(&sl, anim_num);
@@ -1333,7 +1333,7 @@ void draw_client_map1(object *pl)
     mapstruct *m;
     object *m_ob, *t_ob, *ob;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
     if (pl->contr->socket.mapmode == Map1Cmd)
 	strcpy((char*)sl.buf,"map1 ");
     else
@@ -1342,7 +1342,7 @@ void draw_client_map1(object *pl)
     startlen = sl.len;
     /*Extendedmapinfo structure initialisation*/
     if (pl->contr->socket.ext_mapinfos){
-        esl.buf=malloc(MAXSOCKBUF);
+        esl.buf=malloc(MAXSOCKSENDBUF);
         strcpy((char*)esl.buf,"mapextended ");
         esl.len=strlen((char*)esl.buf);
         extendedinfos=EMI_NOREDRAW;
@@ -1928,7 +1928,7 @@ void draw_client_map2(object *pl)
     mapstruct *m;
     object *ob;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"map2 ");
     sl.len=strlen((char*)sl.buf);
     startlen = sl.len;
@@ -2157,7 +2157,7 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy)
 {
     struct Map newmap;
     int x,y, mx, my;
-    char buf[MAXSOCKBUF];
+    char buf[MAXSOCKSENDBUF];
 
     if (ns->mapmode == Map2Cmd) {
 	ns->map_scroll_x += dx;
@@ -2232,16 +2232,20 @@ void send_skill_info(socket_struct *ns, char *params)
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"replyinfo skill_info\n");
-    for (i=1; i< NUM_SKILLS; i++) {
-	sprintf((char*)sl.buf + strlen((char*)sl.buf), "%d:%s\n", i + CS_STAT_SKILLINFO,
-		skill_names[i]);
-    }
     sl.len = strlen((char*)sl.buf);
-    if (sl.len > MAXSOCKBUF) {
-	LOG(llevError,"Buffer overflow in send_skill_info!\n");
-	fatal(0);
+    for (i=1; i< NUM_SKILLS; i++) {
+	int len;
+
+	len = 16+strlen(skill_names[i]); /* upper bound for length */
+	if (sl.len+len > MAXSOCKSENDBUF) {
+	    LOG(llevError, "Buffer overflow in send_skill_info, not sending all skill information\n");
+	    break;
+	}
+
+	sprintf((char*)sl.buf+sl.len, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
+	sl.len += strlen((char*)sl.buf+sl.len);
     }
     Send_With_Handling(ns, &sl);
     free(sl.buf);
@@ -2255,14 +2259,20 @@ void send_spell_paths (socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"replyinfo spell_paths\n");
-    for(i=0; i<NRSPELLPATHS; i++)
-	sprintf((char*)sl.buf + strlen((char*)sl.buf), "%d:%s\n", 1<<i, spellpathnames[i]);
     sl.len = strlen((char*)sl.buf);
-    if (sl.len > MAXSOCKBUF) {
-	LOG(llevError,"Buffer overflow in send_spell_paths!\n");
-	fatal(0);
+    for(i=0; i<NRSPELLPATHS; i++) {
+	int len;
+
+	len = 16+strlen(spellpathnames[i]); /* upper bound for length */
+	if (sl.len+len > MAXSOCKSENDBUF) {
+	    LOG(llevError, "Buffer overflow in send_spell_paths, not sending all spell information\n");
+	    break;
+	}
+
+	sprintf((char*)sl.buf+sl.len, "%d:%s\n", 1<<i, spellpathnames[i]);
+	sl.len += strlen((char*)sl.buf+sl.len);
     }
     Send_With_Handling(ns, &sl);
     free(sl.buf);
@@ -2293,7 +2303,7 @@ void esrv_update_spells(player *pl) {
 		flags |= UPD_SP_DAMAGE;
 	    }
 	    if (flags !=0) {
-		sl.buf = malloc(MAXSOCKBUF);
+		sl.buf = malloc(MAXSOCKSENDBUF);
 		strcpy((char*)sl.buf,"updspell ");
 		sl.len=strlen((char*)sl.buf);
 		SockList_AddChar(&sl, flags);
@@ -2317,7 +2327,7 @@ void esrv_remove_spell(player *pl, object *spell) {
 	LOG(llevError, "Invalid call to esrv_remove_spell");
 	return;
     }
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"delspell ");
     sl.len=strlen((char*)sl.buf);
     SockList_AddInt(&sl, spell->count);
@@ -2385,21 +2395,21 @@ void esrv_add_spells(player *pl, object *spell) {
 	return;
     }
     if (!pl->socket.monitor_spells) return;
-    sl.buf = malloc(MAXSOCKBUF);
+    sl.buf = malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"addspell ");
     sl.len=strlen((char*)sl.buf);
     if (!spell) {
 	for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
 	    if (spell->type != SPELL) continue;
 	    /* were we to simply keep appending data here, we could exceed 
-	     * MAXSOCKBUF if the player has enough spells to add, we know that
+	     * MAXSOCKSENDBUF if the player has enough spells to add, we know that
 	     * append_spell will always append 23 data bytes, plus 3 length
 	     * bytes and 2 strings (because that is the spec) so we need to
 	     * check that the length of those 2 strings, plus the 26 bytes, 
 	     * won't take us over the length limit for the socket, if it does,
 	     * we need to send what we already have, and restart packet formation 
 	     */
-	    if (sl.len > (MAXSOCKBUF - (26 + strlen(spell->name) + 
+	    if (sl.len > (MAXSOCKSENDBUF - (26 + strlen(spell->name) + 
 				(spell->msg?strlen(spell->msg):0)))) {
 		Send_With_Handling(&pl->socket, &sl);
 		strcpy((char*)sl.buf,"addspell ");
@@ -2413,7 +2423,7 @@ void esrv_add_spells(player *pl, object *spell) {
 	return;
     }
     else append_spell(pl, &sl, spell);
-    if (sl.len > MAXSOCKBUF) {
+    if (sl.len > MAXSOCKSENDBUF) {
 	LOG(llevError,"Buffer overflow in esrv_add_spells!\n");
 	fatal(0);
     }
@@ -2436,8 +2446,7 @@ void send_tick(player *pl)
     SockList sl;
     int tmp;
 
-
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"tick ");
     sl.len=strlen((char*)sl.buf);
     SockList_AddInt(&sl, pticks);

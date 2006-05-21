@@ -227,7 +227,7 @@ void esrv_draw_look(object *pl)
     else
 	for (tmp=get_map_ob(pl->map,pl->x,pl->y); tmp && tmp->above;tmp=tmp->above) ;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
     sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
@@ -291,7 +291,7 @@ void esrv_draw_look(object *pl)
 	    add_object_to_socklist(&pl->contr->socket, &sl, head);
 	    got_one++;
 
-	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
+	    if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
 		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
 		sl.len=strlen((char*)sl.buf);
@@ -315,7 +315,7 @@ void esrv_send_inventory(object *pl, object *op)
     int got_one=0;
     SockList sl;
     
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     sprintf((char*)sl.buf,"delinv %d", op->count);
     sl.len=strlen((char*)sl.buf);
@@ -341,7 +341,7 @@ void esrv_send_inventory(object *pl, object *op)
 	     * items (especially with some of the bags out there) to
 	     * overflow the buffer.  IF so, send multiple item commands.
 	     */
-	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
+	    if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
 		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
 		sl.len=strlen((char*)sl.buf);
@@ -383,7 +383,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 	 */
 	LOG(llevDebug,"We have not sent item %s (%d)\n", op->name, op->count);
     }
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     strcpy((char*)sl.buf,"upditem ");
     sl.len=strlen((char*)sl.buf);
@@ -488,7 +488,7 @@ void esrv_send_item(object *pl, object*op)
 	}
     }
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
     sl.len=strlen((char*)sl.buf);
@@ -513,7 +513,7 @@ void esrv_del_item(player *pl, int tag)
 {
     SockList sl;
 
-    sl.buf=malloc(MAXSOCKBUF);
+    sl.buf=malloc(MAXSOCKSENDBUF);
 
     strcpy((char*)sl.buf,"delitem ");
     sl.len=strlen((char*)sl.buf);
