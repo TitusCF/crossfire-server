@@ -686,7 +686,9 @@ char *query_name(const object *op) {
 const char *query_base_name(const object *op, int plural) {
     static char buf[MAX_BUF], buf2[MAX_BUF];
     int len;
+#ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
+#endif
 
     if((!plural && !op->name) || (plural && !op->name_pl))
 	return "(null)";
@@ -694,11 +696,13 @@ const char *query_base_name(const object *op, int plural) {
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
 	return op->name; /* To speed things up (or make things slower?) */
 
+#ifdef NEW_MATERIAL_CODE
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
 	mt = name_to_material(op->materialname);
+    else
+	mt = NULL;
 
-#ifdef NEW_MATERIAL_CODE
-    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname && mt &&
+    if (mt &&
 	op->arch->clone.materialname != mt->name &&
 	!(op->material & M_SPECIAL)) {
 	strcpy(buf, mt->description);
