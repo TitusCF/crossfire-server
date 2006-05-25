@@ -497,6 +497,12 @@ int move_monster(object *op) {
      * into themselves.
      */
     get_rangevector(op, enemy, &rv, 0);
+    if ( op->direction != rv.direction )
+    {
+    	op->direction = rv.direction;
+     	op->facing = op->direction;
+     	animate_object(op, op->direction);
+    }
 
     /* Move the check for scared up here - if the monster was scared,
      * we were not doing any of the logic below, so might as well save
