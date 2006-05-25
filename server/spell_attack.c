@@ -1702,8 +1702,7 @@ void move_swarm_spell(object *op)
      */
     
     if (op->spell && op->spell->type == SPELL && 
-	!(get_map_flags(op->map, &m, target_x, target_y, &target_x, &target_y) & P_OUT_OF_MAP) &&
-	!(OB_TYPE_MOVE_BLOCK(op->spell, GET_MAP_MOVE_BLOCK(m, target_x, target_y)))) {
+	!(get_map_flags(op->map, &m, target_x, target_y, &target_x, &target_y) & P_OUT_OF_MAP)) {
 
 	/* Bullet spells have a bunch more customization that needs to be done */
 	if (op->spell->subtype == SP_BULLET)

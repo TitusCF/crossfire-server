@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make swarm spells work again. These spells did not work anymore on tiles which
+had a move_block type set (for example cobblestones).
+---
+server/spell_attack.c: In move_swarm_spell() remove check for blocked
+   movement. This check was incorrect since it did check the SPELL object
+   instead of the SPELL_EFFECT object. Also, this check is not necessary since
+   it is also present in the called functions fire_xxx().
+Andreas Kirschbaum 2006-05-25
+
 Fix monster not changing direction when attacking adjacent object.
  server/monster.c: update facing/direction according to enemy.
 Ryo 2006-05-25
