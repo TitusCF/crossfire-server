@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Make attacking with melee in 'fire command work again. Now attacking with
+<shift>+<direction> works again.
+---
+server/skill_util.c: In skill_attack() also attack if the destination tile has
+   P_IS_ALIVE set.
+Andreas Kirschbaum 2006-05-27
+
 Make swarm spells work again. These spells did not work anymore on tiles which
 had a move_block type set (for example cobblestones).
 ---

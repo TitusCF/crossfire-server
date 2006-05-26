@@ -966,7 +966,10 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
 	if (mflags & P_OUT_OF_MAP) return 0;
 
 	/* space must be blocked for there to be anything interesting to do */
-	if (!OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, tx,ty))) return 0;
+	if (!(mflags&P_IS_ALIVE)
+	&& !OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, tx, ty))) {
+	    return 0;
+	}
 
 	for(tmp=get_map_ob(m, tx, ty); tmp; tmp=tmp->above)
 	    if((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->stats.hp>=0)
