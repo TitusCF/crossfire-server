@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Monsters now cannot anymore see through earthwalls/monsters. This restores the
+behavior to what it was before the new movement code. For players this
+basically means that monsters will not anymore cast spells though earthwalls or
+other monsters.
+---
+server/player.c: In path_to_player() consider tiles with P_IS_ALIVE set as
+   blocking.
+Andreas Kirschbaum 2006-05-27
+
 Make attacking with melee in 'fire command work again. Now attacking with
 <shift>+<direction> works again.
 ---

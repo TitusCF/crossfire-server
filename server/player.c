@@ -492,7 +492,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
 	blocked = (mflags & P_OUT_OF_MAP) ? MOVE_ALL : GET_MAP_MOVE_BLOCK(m, x, y);
 
 	/* Space is blocked - try changing direction a little */
-	if ((mflags & P_OUT_OF_MAP) || ((OB_TYPE_MOVE_BLOCK(mon, blocked))
+	if ((mflags & P_OUT_OF_MAP) || ((OB_TYPE_MOVE_BLOCK(mon, blocked) || (mflags&P_IS_ALIVE))
 	   && (m == mon->map && blocked_link(mon, m, x, y)))) {
 	    /* recalculate direction from last good location.  Possible
 	     * we were not traversing ideal location before.
@@ -536,6 +536,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
 		    if (mflags & P_OUT_OF_MAP) continue;
 		    blocked = GET_MAP_MOVE_BLOCK(m, x, y);
 		    if (OB_TYPE_MOVE_BLOCK(mon, blocked)) continue;
+		    if (mflags & P_IS_ALIVE) continue;
 
 		    if (m == mon->map && blocked_link(mon, m, x, y)) break;
 		}
