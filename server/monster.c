@@ -501,7 +501,8 @@ int move_monster(object *op) {
     {
     	op->direction = rv.direction;
      	op->facing = op->direction;
-     	animate_object(op, op->direction);
+	if (op->animation_id)
+	    animate_object(op, op->direction);
     }
 
     /* Move the check for scared up here - if the monster was scared,
