@@ -236,6 +236,7 @@ typedef struct obj {
     uint8	last_anim;	/* last sequence used to draw face */
     sint32	elevation;	/* elevation of this terrain - not currently used */
     uint8	smoothlevel;    /* how to smooth this square around*/
+    uint8	map_layer;	/* What level to draw this on the map */
 
     MoveType   move_type;	/* Type of movement this object uses */
     MoveType   move_block;	/* What movement types this blocks */

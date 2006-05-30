@@ -17,6 +17,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Various bug fixes, related to the new map display code.
+common/loader.c, common/loader.l: Add map_layer attribute so object can
+   override what layer it should go on (fix for levitation boots).
+common/map.c: Add support for map_layer to override layering.  Fix bug
+   where if there were more objects than would fit on a layer, not all
+   would be drawn (same object was duplicated onto multiple layers).
+common/object.c: Add check for ob->map_layer in can_merge()
+include/map.h: Add extern declaration for map_layer_name[]
+include/object.h: Add map_layer to object.
+socket/request.c:  In map1 compatibility mode, make sure we always
+   send the player.
+MSW 2006-05-29
+
+server/monster.c: Only call animate_object() if object is animated -
+    otherwise, animate_object() spews bunch of error about being called
+    with non animated object.
+MSW 2006-05-29
+
+
 Monsters now cannot anymore see through earthwalls/monsters. This restores the
 behavior to what it was before the new movement code. For players this
 basically means that monsters will not anymore cast spells though earthwalls or

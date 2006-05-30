@@ -203,7 +203,9 @@ int can_merge(object *ob1, object *ob2) {
 	(ob1->move_on != ob2->move_on) ||
 	(ob1->move_off != ob2->move_off) ||
 	(ob1->move_slow != ob2->move_slow) ||
-	(ob1->move_slow_penalty != ob2->move_slow_penalty) 
+	(ob1->move_slow_penalty != ob2->move_slow_penalty) ||
+	(ob1->map_layer != ob2->map_layer)
+
 	) 
 	    return 0;
 

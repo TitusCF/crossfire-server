@@ -1590,12 +1590,18 @@ void draw_client_map1(object *pl)
 			     */
 			    if (m_ob->face->visibility >= t_ob->face->visibility) {
 				if (ob->face->visibility >= t_ob->face->visibility) {
+				    if (t_ob->type == PLAYER) {
+					m_ob = t_ob;
+					m_layer = t_layer;  
+				    }
 				    t_ob = ob;
 				    t_layer = o_layer;
 				}
 			    } else if (ob->face->visibility >= m_ob->face->visibility) {
-				m_ob = t_ob;
-				m_layer = t_layer;
+				if (m_ob->type != PLAYER) {
+				    m_ob = t_ob;
+				    m_layer = t_layer;
+				}
 				t_ob = ob;
 				t_layer = o_layer;
 			    }

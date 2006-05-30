@@ -55,6 +55,9 @@
  */
 #define MAP_LAYERS		10
 
+extern const char *map_layer_name[MAP_LAYERS];
+
+
 #define MAP_LAYER_FLOOR		0
 #define MAP_LAYER_NO_PICK1	1   /* Non pickable ground objects */
 #define MAP_LAYER_NO_PICK2	2   /* Non pickable ground objects */

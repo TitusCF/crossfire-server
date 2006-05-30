@@ -1011,6 +1011,23 @@ A	.+
 ^casting_time{S}	op->casting_time = FVAL;
 ^elevation{S}		op->elevation = IVAL;
 ^smoothlevel{S}		op->smoothlevel = IVAL;
+^map_layer{S}		{
+			    if (IVAL) op->map_layer = IVAL;
+			    else {
+				int i;
+				char *cp = yval();
+
+				for (i=0; i < MAP_LAYERS; i++) {
+				    if (!strcasecmp(cp, map_layer_name[i])) {
+					op->map_layer = i;
+					break;
+				    }
+				}
+				if (i == MAP_LAYERS) {
+				    LOG(llevError,"Invalid map_layer name found: %s\n", cp);
+				}
+			    }
+			}
 ^client_type{S}		op->client_type = IVAL;
 ^body_{A}		set_body_info(op, yytext);
 ^duration{S}		op->duration = IVAL;
@@ -1889,6 +1906,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"will_apply ",op->will_apply,11);
   if(op->smoothlevel!=op2->smoothlevel)
     FAST_SAVE_LONG(fastbuf,"smoothlevel ",op->smoothlevel,12);
+
+  if(op->map_layer!=op2->map_layer)
+    ADD_STRINGLINE_ENTRY(fastbuf,"map_layer ",map_layer_name[op->map_layer],10);
 
   if (op->current_weapon_script!=op2->current_weapon_script){
     ADD_STRINGLINE_ENTRY(fastbuf,"current_weapon_script ",op->current_weapon_script,22);

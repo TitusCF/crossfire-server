@@ -40,6 +40,30 @@
 
 extern int nrofallocobjects,nroffreeobjects;
 
+/* These correspond to the layer names in map.h -
+ * since some of the types can be on multiple layers,
+ * names are duplicated to correspond to that layer.
+ */
+const char *map_layer_name[MAP_LAYERS] = {"floor", "no_pick", "no_pick", "item", "item", "item",
+	    "living", "living", "fly", "fly" } ;
+
+typedef struct Map_Layer_Info {
+    uint8   high_layer;
+    uint8   honor_visibility;
+} Map_Layer_Info;
+
+/* the ob->map_layer holds the low layer.  For the update_position()
+ * logic, we also need to know the higher layer and whether 
+ * visibility should be honored.  This table has that information,
+ * so that it doesn't need to be hardcoded.
+ */
+static Map_Layer_Info map_layer_info[MAP_LAYERS] = {
+{MAP_LAYER_FLOOR, 1},
+{MAP_LAYER_NO_PICK2, 0}, {MAP_LAYER_NO_PICK2, 0},
+{MAP_LAYER_ITEM3, 1}, {MAP_LAYER_ITEM3, 1}, {MAP_LAYER_ITEM3, 1},
+{MAP_LAYER_LIVING2, 1}, {MAP_LAYER_LIVING2, 1},
+{MAP_LAYER_FLY2, 1}, {MAP_LAYER_FLY2, 1}
+};
 
 /*
  * Returns the mapstruct which has a name matching the given argument.
@@ -1773,15 +1797,16 @@ static void inline add_face_layer(int low_layer, int high_layer, object *ob, obj
      */
     else if (ob->face->visibility >= layers[low_layer]->face->visibility) {
 	/*
-	 * Stop at the top (highest visibility) layer and work down.
+	 * Start at the top (highest visibility) layer and work down.
 	 * once this face exceed that of the layer, push down those
 	 * other layers, and then replace the layer with our object.
 	 */
 	for (l=high_layer; l>=low_layer; l--) {
 	    if (ob->face->visibility >= layers[l]->face->visibility) {
-		for (l1=(l-1); l1>=low_layer; l1--)
+		for (l1=low_layer; l1<l; l1++)
 		    layers[l1] = layers[l1+1];
 		layers[l] = ob;
+		break;
 	    }
 	}
     }
@@ -1795,7 +1820,7 @@ static void inline add_face_layer(int low_layer, int high_layer, object *ob, obj
  * through, etc)
  */
 void update_position (mapstruct *m, int x, int y) {
-    object *tmp, *last = NULL;
+    object *tmp;
     uint8 flags = 0, oldflags, light=0;
     object *layers[MAP_LAYERS];
 
@@ -1810,7 +1835,7 @@ void update_position (mapstruct *m, int x, int y) {
 
     memset(layers, 0, MAP_LAYERS * sizeof(object*));
 
-    for (tmp = get_map_ob (m, x, y); tmp; last = tmp, tmp = tmp->above) {
+    for (tmp = get_map_ob (m, x, y); tmp; tmp = tmp->above) {
 
 	/* This could be made additive I guess (two lights better than
 	 * one).  But if so, it shouldn't be a simple additive - 2
@@ -1824,7 +1849,11 @@ void update_position (mapstruct *m, int x, int y) {
 	 * looks.
 	 */
 	if (!tmp->invisible && tmp->face != blank_face) {
-	    if (tmp->move_type & MOVE_FLYING) {
+	    if (tmp->map_layer) {
+		add_face_layer(tmp->map_layer, map_layer_info[tmp->map_layer].high_layer,
+			       tmp, layers, map_layer_info[tmp->map_layer].honor_visibility);
+	    }
+	    else if (tmp->move_type & MOVE_FLYING) {
 		add_face_layer(MAP_LAYER_FLY1, MAP_LAYER_FLY2, tmp, layers, 1);
 	    }
 	    else if ((tmp->type==PLAYER || QUERY_FLAG(tmp, FLAG_MONSTER))) {
