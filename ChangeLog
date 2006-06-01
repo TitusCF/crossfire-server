@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Do not merge locked and unlocked items.
+---
+common/object.c: In can_merge() do not ignore FLAG_INV_LOCKED anymore.
+socket/item.c: In lock_item_cmd() try to merge the affected item.
+Andreas Kirschbaum 2006-06-01
+
 lib/artifacts: Fix typo to not anymore generate "boots of of steel".
 lib/artifacts: Fix typo to make bows of Sorig work.
 lib/archetypes, lib/treasures.bld: Rebuilt.

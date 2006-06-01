@@ -172,15 +172,11 @@ int can_merge(object *ob1, object *ob2) {
 	SET_FLAG(ob2, FLAG_BEEN_APPLIED);
 
 
-    /* the 0x400000 on flags2 is FLAG_INV_LOCK.  I don't think something
-     * being locked in inventory should prevent merging.
-     * 0x4 in flags3 is CLIENT_SENT
-     */
     if ((ob1->arch != ob2->arch) || 
 	(ob1->flags[0] != ob2->flags[0]) || 
 	(ob1->flags[1] != ob2->flags[1]) ||
-	((ob1->flags[2] & ~0x400000) != (ob2->flags[2] & ~ 0x400000)) ||
-	((ob1->flags[3] & ~0x4) != (ob2->flags[3] & ~0x4)) || 
+	(ob1->flags[2] != ob2->flags[2]) ||
+	((ob1->flags[3] & ~0x4) != (ob2->flags[3] & ~0x4)) || /* ignore CLIENT_SENT */
 	(ob1->name != ob2->name) || 
 	(ob1->title != ob2->title) ||
 	(ob1->msg != ob2->msg) || 

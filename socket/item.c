@@ -614,6 +614,7 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
 {
     int flag, tag;
     object *op;
+    object *tmp;
 
     flag = data[0];
     tag = GetInt_String(data+1);
@@ -627,7 +628,16 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
 	CLEAR_FLAG(op,FLAG_INV_LOCKED);
     else
 	SET_FLAG(op,FLAG_INV_LOCKED);
-    esrv_update_item(UPD_FLAGS, pl->ob, op);
+
+    tmp = merge_ob(op, NULL);
+    if (tmp == NULL) {
+	/* object was not merged */
+	esrv_update_item(UPD_FLAGS, pl->ob, op);
+    } else {
+	/* object was merged into tmp */
+	esrv_del_item(pl, tag);
+	esrv_send_item(pl->ob, tmp);
+    }
 }
 
 /** Client wants to apply some object.  Lets do so. */
