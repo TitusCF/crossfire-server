@@ -1,5 +1,25 @@
+if HAVE_LIBDL
+LIBDL=-ldl
+LDFLAGS=-export-dynamic
+else
+LIBDL=
+LDFLAGS=
+endif
+#note all .a are here twice for compilation problems
+AM_LIBTOOLFLAGS= --preserve-dup-deps
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+        --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+       $(LDFLAGS) -o $@
 
-LDADD = ../../../common/libcross.a ../../../socket/libsocket.a ../../../random_maps/librandom_map.a ../../../server/libserver.a $(LIBDL) @CHECK_LIBS@
+LDADD = ../../../server/libserver.a \
+                ../../../common/libcross.a \
+                ../../../random_maps/librandom_map.a \
+                ../../../socket/libsocket.a \
+                ../../../server/libserver.a \
+                ../../../common/libcross.a \
+                ../../../random_maps/librandom_map.a \
+                ../../../socket/libsocket.a \
+                $(LIBDL) @CHECK_LIBS@
 
 ../../logs/unit/server:
 	(mkdir ../../logs; mkdir ../../logs/unit; mkdir ../../logs/unit/server)

@@ -92,7 +92,7 @@ am_libserver_a_OBJECTS = alchemy.$(OBJEXT) apply.$(OBJEXT) \
 	skills.$(OBJEXT) skill_util.$(OBJEXT) spell_attack.$(OBJEXT) \
 	spell_effect.$(OBJEXT) spell_util.$(OBJEXT) swamp.$(OBJEXT) \
 	swap.$(OBJEXT) time.$(OBJEXT) timers.$(OBJEXT) \
-	weather.$(OBJEXT)
+	weather.$(OBJEXT) server.$(OBJEXT)
 libserver_a_OBJECTS = $(am_libserver_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -303,7 +303,8 @@ libserver_a_SOURCES = \
 	swap.c\
 	time.c\
 	timers.c\
-	weather.c
+	weather.c\
+	server.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \
@@ -423,6 +424,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugins.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/resurrection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rune.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/server.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skill_util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/skills.Po@am__quote@

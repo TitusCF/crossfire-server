@@ -74,290 +74,414 @@ PROGRAMS = $(noinst_PROGRAMS)
 check_alchemy_SOURCES = check_alchemy.c
 check_alchemy_OBJECTS = check_alchemy.$(OBJEXT)
 check_alchemy_LDADD = $(LDADD)
-check_alchemy_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+am__DEPENDENCIES_1 =
+check_alchemy_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_apply_SOURCES = check_apply.c
 check_apply_OBJECTS = check_apply.$(OBJEXT)
 check_apply_LDADD = $(LDADD)
-check_apply_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_apply_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_attack_SOURCES = check_attack.c
 check_attack_OBJECTS = check_attack.$(OBJEXT)
 check_attack_LDADD = $(LDADD)
-check_attack_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_attack_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_ban_SOURCES = check_ban.c
 check_ban_OBJECTS = check_ban.$(OBJEXT)
 check_ban_LDADD = $(LDADD)
-check_ban_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_ban_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_build_map_SOURCES = check_build_map.c
 check_build_map_OBJECTS = check_build_map.$(OBJEXT)
 check_build_map_LDADD = $(LDADD)
-check_build_map_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_build_map_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_chat_SOURCES = check_c_chat.c
 check_c_chat_OBJECTS = check_c_chat.$(OBJEXT)
 check_c_chat_LDADD = $(LDADD)
-check_c_chat_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_chat_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_misc_SOURCES = check_c_misc.c
 check_c_misc_OBJECTS = check_c_misc.$(OBJEXT)
 check_c_misc_LDADD = $(LDADD)
-check_c_misc_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_misc_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_move_SOURCES = check_c_move.c
 check_c_move_OBJECTS = check_c_move.$(OBJEXT)
 check_c_move_LDADD = $(LDADD)
-check_c_move_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_move_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_new_SOURCES = check_c_new.c
 check_c_new_OBJECTS = check_c_new.$(OBJEXT)
 check_c_new_LDADD = $(LDADD)
-check_c_new_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_new_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_object_SOURCES = check_c_object.c
 check_c_object_OBJECTS = check_c_object.$(OBJEXT)
 check_c_object_LDADD = $(LDADD)
-check_c_object_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_object_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_party_SOURCES = check_c_party.c
 check_c_party_OBJECTS = check_c_party.$(OBJEXT)
 check_c_party_LDADD = $(LDADD)
-check_c_party_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_party_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_range_SOURCES = check_c_range.c
 check_c_range_OBJECTS = check_c_range.$(OBJEXT)
 check_c_range_LDADD = $(LDADD)
-check_c_range_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_range_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_c_wiz_SOURCES = check_c_wiz.c
 check_c_wiz_OBJECTS = check_c_wiz.$(OBJEXT)
 check_c_wiz_LDADD = $(LDADD)
-check_c_wiz_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_c_wiz_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_commands_SOURCES = check_commands.c
 check_commands_OBJECTS = check_commands.$(OBJEXT)
 check_commands_LDADD = $(LDADD)
-check_commands_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_commands_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_daemon_SOURCES = check_daemon.c
 check_daemon_OBJECTS = check_daemon.$(OBJEXT)
 check_daemon_LDADD = $(LDADD)
-check_daemon_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_daemon_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_disease_SOURCES = check_disease.c
 check_disease_OBJECTS = check_disease.$(OBJEXT)
 check_disease_LDADD = $(LDADD)
-check_disease_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_disease_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_egoitem_SOURCES = check_egoitem.c
 check_egoitem_OBJECTS = check_egoitem.$(OBJEXT)
 check_egoitem_LDADD = $(LDADD)
-check_egoitem_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_egoitem_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_gods_SOURCES = check_gods.c
 check_gods_OBJECTS = check_gods.$(OBJEXT)
 check_gods_LDADD = $(LDADD)
-check_gods_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_gods_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_hiscore_SOURCES = check_hiscore.c
 check_hiscore_OBJECTS = check_hiscore.$(OBJEXT)
 check_hiscore_LDADD = $(LDADD)
-check_hiscore_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_hiscore_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_init_SOURCES = check_init.c
 check_init_OBJECTS = check_init.$(OBJEXT)
 check_init_LDADD = $(LDADD)
-check_init_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_init_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_login_SOURCES = check_login.c
 check_login_OBJECTS = check_login.$(OBJEXT)
 check_login_LDADD = $(LDADD)
-check_login_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_login_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_main_SOURCES = check_main.c
 check_main_OBJECTS = check_main.$(OBJEXT)
 check_main_LDADD = $(LDADD)
-check_main_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_main_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_monster_SOURCES = check_monster.c
 check_monster_OBJECTS = check_monster.$(OBJEXT)
 check_monster_LDADD = $(LDADD)
-check_monster_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_monster_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_move_SOURCES = check_move.c
 check_move_OBJECTS = check_move.$(OBJEXT)
 check_move_LDADD = $(LDADD)
-check_move_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_move_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_pets_SOURCES = check_pets.c
 check_pets_OBJECTS = check_pets.$(OBJEXT)
 check_pets_LDADD = $(LDADD)
-check_pets_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_pets_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_player_SOURCES = check_player.c
 check_player_OBJECTS = check_player.$(OBJEXT)
 check_player_LDADD = $(LDADD)
-check_player_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_player_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_plugins_SOURCES = check_plugins.c
 check_plugins_OBJECTS = check_plugins.$(OBJEXT)
 check_plugins_LDADD = $(LDADD)
-check_plugins_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_plugins_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_resurrection_SOURCES = check_resurrection.c
 check_resurrection_OBJECTS = check_resurrection.$(OBJEXT)
 check_resurrection_LDADD = $(LDADD)
-check_resurrection_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_resurrection_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_rune_SOURCES = check_rune.c
 check_rune_OBJECTS = check_rune.$(OBJEXT)
 check_rune_LDADD = $(LDADD)
-check_rune_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_rune_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_shop_SOURCES = check_shop.c
 check_shop_OBJECTS = check_shop.$(OBJEXT)
 check_shop_LDADD = $(LDADD)
-check_shop_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_shop_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_skill_util_SOURCES = check_skill_util.c
 check_skill_util_OBJECTS = check_skill_util.$(OBJEXT)
 check_skill_util_LDADD = $(LDADD)
-check_skill_util_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_skill_util_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_skills_SOURCES = check_skills.c
 check_skills_OBJECTS = check_skills.$(OBJEXT)
 check_skills_LDADD = $(LDADD)
-check_skills_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_skills_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_spell_attack_SOURCES = check_spell_attack.c
 check_spell_attack_OBJECTS = check_spell_attack.$(OBJEXT)
 check_spell_attack_LDADD = $(LDADD)
-check_spell_attack_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_spell_attack_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_spell_effect_SOURCES = check_spell_effect.c
 check_spell_effect_OBJECTS = check_spell_effect.$(OBJEXT)
 check_spell_effect_LDADD = $(LDADD)
-check_spell_effect_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_spell_effect_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_spell_util_SOURCES = check_spell_util.c
 check_spell_util_OBJECTS = check_spell_util.$(OBJEXT)
 check_spell_util_LDADD = $(LDADD)
-check_spell_util_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_spell_util_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_swamp_SOURCES = check_swamp.c
 check_swamp_OBJECTS = check_swamp.$(OBJEXT)
 check_swamp_LDADD = $(LDADD)
-check_swamp_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_swamp_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_swap_SOURCES = check_swap.c
 check_swap_OBJECTS = check_swap.$(OBJEXT)
 check_swap_LDADD = $(LDADD)
-check_swap_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_swap_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_time_SOURCES = check_time.c
 check_time_OBJECTS = check_time.$(OBJEXT)
 check_time_LDADD = $(LDADD)
-check_time_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_time_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_timers_SOURCES = check_timers.c
 check_timers_OBJECTS = check_timers.$(OBJEXT)
 check_timers_LDADD = $(LDADD)
-check_timers_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_timers_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_weather_SOURCES = check_weather.c
 check_weather_OBJECTS = check_weather.$(OBJEXT)
 check_weather_LDADD = $(LDADD)
-check_weather_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_weather_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 check_win32_SOURCES = check_win32.c
 check_win32_OBJECTS = check_win32.$(OBJEXT)
 check_win32_LDADD = $(LDADD)
-check_win32_DEPENDENCIES = ../../../common/libcross.a \
-	../../../socket/libsocket.a \
+check_win32_DEPENDENCIES = ../../../server/libserver.a \
+	../../../common/libcross.a \
 	../../../random_maps/librandom_map.a \
-	../../../server/libserver.a
+	../../../socket/libsocket.a ../../../server/libserver.a \
+	../../../common/libcross.a \
+	../../../random_maps/librandom_map.a \
+	../../../socket/libsocket.a $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
@@ -367,8 +491,6 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = check_alchemy.c check_apply.c check_attack.c check_ban.c \
 	check_build_map.c check_c_chat.c check_c_misc.c check_c_move.c \
 	check_c_new.c check_c_object.c check_c_party.c check_c_range.c \
@@ -445,6 +567,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LATEX = @LATEX@
+@HAVE_LIBDL_FALSE@LDFLAGS = 
+@HAVE_LIBDL_TRUE@LDFLAGS = -export-dynamic
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
@@ -539,7 +663,24 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-LDADD = ../../../common/libcross.a ../../../socket/libsocket.a ../../../random_maps/librandom_map.a ../../../server/libserver.a $(LIBDL) @CHECK_LIBS@
+@HAVE_LIBDL_FALSE@LIBDL = 
+@HAVE_LIBDL_TRUE@LIBDL = -ldl
+#note all .a are here twice for compilation problems
+AM_LIBTOOLFLAGS = --preserve-dup-deps
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+        --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+       $(LDFLAGS) -o $@
+
+LDADD = ../../../server/libserver.a \
+                ../../../common/libcross.a \
+                ../../../random_maps/librandom_map.a \
+                ../../../socket/libsocket.a \
+                ../../../server/libserver.a \
+                ../../../common/libcross.a \
+                ../../../random_maps/librandom_map.a \
+                ../../../socket/libsocket.a \
+                $(LIBDL) @CHECK_LIBS@
+
 TESTS = check_alchemy check_apply check_attack check_ban check_build_map check_c_chat check_c_misc check_c_move check_c_new check_c_object check_commands check_c_party check_c_range check_c_wiz check_daemon check_disease check_egoitem check_gods check_hiscore check_init check_login check_main check_monster check_move check_pets check_player check_plugins check_resurrection check_rune check_shop check_skills check_skill_util check_spell_attack check_spell_effect check_spell_util check_swamp check_swap check_time check_timers check_weather check_win32
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/server

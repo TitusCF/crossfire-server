@@ -67,7 +67,8 @@ libserver_a_SOURCES = \
 	swap.c\
 	time.c\
 	timers.c\
-	weather.c
+	weather.c\
+	server.c
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \
