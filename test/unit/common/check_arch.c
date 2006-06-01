@@ -34,23 +34,12 @@
 #include <stdlib.h>
 #include <check.h>
 #include <loader.h>
-
+#include <toolkit_common.h>
 
 void setup(void) {
-    settings.datadir=SOURCE_ROOT "lib" ;
-    settings.archetypes="archetypes";
-    settings.treasures="treasures.bld";
-    settings.logfilename=LOGDIR "/unit/common/arch.out";
-    init_globals();
-    init_hash_table();
-    init_objects();
-    init_vars();
-    init_block();
-    read_bmap_names ();
-    read_smooth();
-    init_anim();
-    init_archetypes();
-    /* put any initialisation steps here, they will be run before each testcase */
+    cctk_setdatadir(SOURCE_ROOT "lib");
+    cctk_setlog(LOGDIR "/unit/common/arch.out");
+    cctk_init_std_archetypes();
 }
 
 void teardown(void)
