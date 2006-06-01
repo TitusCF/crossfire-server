@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/archetypes, lib/treasures.bld: Rebuilt.
+Andreas Kirschbaum 2006-06-01
+
 Various bug fixes, related to the new map display code.
 common/loader.c, common/loader.l: Add map_layer attribute so object can
    override what layer it should go on (fix for levitation boots).
