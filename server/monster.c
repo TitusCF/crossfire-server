@@ -1368,7 +1368,7 @@ void npc_call_help(object *op) {
 }
 
 
-int dist_att (int dir , object *ob, object *enemy, object *part, rv_vector *rv) {
+static int dist_att (int dir , object *ob, object *enemy, object *part, rv_vector *rv) {
 
     if (can_hit(part,enemy,rv))
     	return dir;
@@ -1379,7 +1379,7 @@ int dist_att (int dir , object *ob, object *enemy, object *part, rv_vector *rv) 
     return 0;
 }
 
-int run_att (int dir, object *ob, object *enemy,object *part, rv_vector *rv) {
+static int run_att (int dir, object *ob, object *enemy,object *part, rv_vector *rv) {
 
     if ((can_hit (part,enemy,rv) && ob->move_status <20) || ob->move_status <20) {
 	ob->move_status++;
@@ -1390,7 +1390,7 @@ int run_att (int dir, object *ob, object *enemy,object *part, rv_vector *rv) {
     return absdir (dir+4);
 }
 
-int hitrun_att (int dir, object *ob,object *enemy) {
+static int hitrun_att (int dir, object *ob,object *enemy) {
     if (ob->move_status ++ < 25)  
 	return dir;
     else if (ob->move_status <50) 
@@ -1400,7 +1400,7 @@ int hitrun_att (int dir, object *ob,object *enemy) {
     return absdir(dir+4);
 }
 
-int wait_att (int dir, object *ob,object *enemy,object *part,rv_vector *rv) {
+static int wait_att (int dir, object *ob,object *enemy,object *part,rv_vector *rv) {
 
     int inrange = can_hit (part, enemy,rv);
       
@@ -1417,7 +1417,7 @@ int wait_att (int dir, object *ob,object *enemy,object *part,rv_vector *rv) {
     return 0;
 }
 
-int disthit_att (int dir, object *ob, object *enemy, object *part,rv_vector *rv) {
+static int disthit_att (int dir, object *ob, object *enemy, object *part,rv_vector *rv) {
 
     /* The logic below here looked plain wrong before.  Basically, what should
      * happen is that if the creatures hp percentage falls below run_away,
@@ -1431,7 +1431,7 @@ int disthit_att (int dir, object *ob, object *enemy, object *part,rv_vector *rv)
     return dist_att (dir,ob,enemy,part,rv);
 }
 
-int wait_att2 (int dir, object *ob,object *enemy,object *part, rv_vector *rv) {
+static int wait_att2 (int dir, object *ob,object *enemy,object *part, rv_vector *rv) {
     if (rv->distance < 9)
 	return absdir (dir+4);
     return 0;

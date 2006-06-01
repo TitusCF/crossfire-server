@@ -873,7 +873,7 @@ static void init_startup(void) {
  * at compile time.
  */
 
-void compile_info(void) {
+static void compile_info(void) {
   int i=0;
   printf("Non-standard include files:\n");
 #if !defined (__STRICT_ANSI__) || defined (__sun__)
