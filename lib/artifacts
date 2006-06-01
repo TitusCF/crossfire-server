@@ -3374,7 +3374,7 @@ attacktype 4
 item_power 2
 end
 #
-Allowed any
+Allowed all
 chance 12
 Object Sorig
 type 14
