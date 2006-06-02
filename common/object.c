@@ -228,6 +228,10 @@ int can_merge(object *ob1, object *ob2) {
 	    break;
 
     }
+
+    /* Don't merge items with differing custom names. */
+    if (ob1->custom_name != ob2->custom_name) return 0;
+
     /* Everything passes, must be OK. */
     return 1;
 }

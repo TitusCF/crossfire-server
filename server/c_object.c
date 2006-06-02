@@ -1768,8 +1768,10 @@ int command_rename_item(object *op, char *params)
   char buf[VERY_BIG_BUF];
   int itemnumber;
   object *item=NULL;
+  object *tmp;
   char *closebrace;
   size_t counter;
+  tag_t tag;
 
   if (params) {
     /* Let's skip white spaces */
@@ -1880,21 +1882,36 @@ int command_rename_item(object *op, char *params)
 
   /* Coming here, everything is fine... */
   if(!strlen(buf)) {
-     /* Clear custom name */
-    if(item->custom_name) {
-      FREE_AND_CLEAR_STR(item->custom_name);
-
-      new_draw_info_format(NDI_UNIQUE, 0, op,"You stop calling your %s with weird names.",query_base_name(item,item->nrof>1?1:0));
-      esrv_update_item(UPD_NAME,op,item);
-    } else {
+    /* Clear custom name */
+    if(item->custom_name == NULL) {
       new_draw_info(NDI_UNIQUE,0,op,"This item has no custom name.");
+      return 1;
     }
+
+    FREE_AND_CLEAR_STR(item->custom_name);
+
+    new_draw_info_format(NDI_UNIQUE, 0, op,"You stop calling your %s with weird names.",query_base_name(item,item->nrof>1?1:0));
   } else {
+    if(item->custom_name != NULL && strcmp(item->custom_name, buf) == 0) {
+      new_draw_info_format(NDI_UNIQUE, 0, op,"You keep calling your %s %s.",query_base_name(item,item->nrof>1?1:0),buf);
+      return 1;
+    }
+
     /* Set custom name */
     FREE_AND_COPY(item->custom_name,buf);
 
     new_draw_info_format(NDI_UNIQUE, 0, op,"Your %s will now be called %s.",query_base_name(item,item->nrof>1?1:0),buf);
-    esrv_update_item(UPD_NAME,op,item);
+  }
+
+  tag = item->count;
+  tmp = merge_ob(item, NULL);
+  if (tmp == NULL) {
+    /* object was not merged */
+    esrv_update_item(UPD_NAME, op, item);
+  } else {
+    /* object was merged into tmp */
+    esrv_del_item(op->contr, tag);
+    esrv_send_item(op, tmp);
   }
 
   return 1;
