@@ -67,7 +67,9 @@ void cctk_setdatadir(char* datadir){
     SET_TKFLAG(STATUS_DATADIR);
 }
 /**
- * Loads up to archetype initialisation using standard crossfire files in source tree
+ * Loads up to archetype initialisation using standard crossfire files in source
+ * tree. This function requires that cctk_setlog and cctk_setdatadir have both
+ * been run already.
  */
 void cctk_init_std_archetypes(){
     CCTK_ASSERT(STATUS_LOGDIR|STATUS_DATADIR);
