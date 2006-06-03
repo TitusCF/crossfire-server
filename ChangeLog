@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add a name 'dungeon_name' for random maps, and put it in the random key's name.
+ This implements feature request #815622 (keys in random maps should note map they are from)
+ https://sourceforge.net/tracker/index.php?func=detail&aid=815622&group_id=13833&atid=363833
+
+random_maps/random_map.c: fix a memory leak. Add random name.
+random_maps/reader.[cl]: read 'dungeon_name'. Use strncpy instead of strcpy.
+random_maps/random_map.h: add new field, use a #define instead of hardcoded constant.
+
 Do not merge renamed items with differing custom names.
 ---
 common/object.c: In can_merge() check for differing custom_name field.

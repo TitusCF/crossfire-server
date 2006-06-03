@@ -187,7 +187,10 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   xl = x + freearr_x[i]; yl = y +  freearr_y[i];
 
   /* if the placement is blocked, return a fail. */
-  if(wall_blocked(map,xl,yl)) return 0;
+  if(wall_blocked(map,xl,yl)) {
+      free_object(the_chest);
+      return 0;
+  }
   
   
   /* put the treasures in the chest. */
@@ -288,10 +291,14 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
   int kx,ky;
   object *the_keymaster; /* the monster that gets the key. */
   object *the_key;
+  char keybuf[256];
 
   /* get a key and set its keycode */
   the_key = create_archetype("key2");
   the_key->slaying = add_string(keycode); 
+  free_string(the_key->name);
+  snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
+  the_key->name = add_string(keybuf);
 
 
   if(door_flag==PASS_DOORS) {
@@ -704,7 +711,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       free_object(door);
       doorlist[i]=new_door;
       insert_ob_in_map(new_door,map,NULL,0);
-      sprintf(keybuf,"%d",(int)RANDOM());
+      snprintf(keybuf,256,"%d",(int)RANDOM());
       new_door->slaying = add_string(keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
     }

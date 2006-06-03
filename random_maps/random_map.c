@@ -642,6 +642,11 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
     strcat(buf,small_buf);
   }
 
+  if(RP->dungeon_name[0]) {
+      sprintf(small_buf,"dungeon_name %s\n",RP->dungeon_name);
+      strcat(buf,small_buf);
+  }
+
   if(RP->decoroptions) {
     sprintf(small_buf,"decoroptions %d\n",RP->decoroptions);
     strcat(buf,small_buf);

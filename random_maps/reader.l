@@ -72,13 +72,13 @@ WS	[ \t]*
 
 
 
-^wallstyle{S}	    strcpy(RP->wallstyle,rmap_yval());
-^floorstyle{S}	    strcpy(RP->floorstyle,rmap_yval());
-^monsterstyle{S}    strcpy(RP->monsterstyle,rmap_yval());
-^treasurestyle{S}   strcpy(RP->treasurestyle,rmap_yval());
-^layoutstyle{S}	    strcpy(RP->layoutstyle,rmap_yval());
-^doorstyle{S}	    strcpy(RP->doorstyle,rmap_yval());
-^decorstyle{S}	    strcpy(RP->decorstyle,rmap_yval());
+^wallstyle{S}	    strncpy(RP->wallstyle,rmap_yval(),RM_SIZE);
+^floorstyle{S}	    strncpy(RP->floorstyle,rmap_yval(),RM_SIZE);
+^monsterstyle{S}    strncpy(RP->monsterstyle,rmap_yval(),RM_SIZE);
+^treasurestyle{S}   strncpy(RP->treasurestyle,rmap_yval(),RM_SIZE);
+^layoutstyle{S}	    strncpy(RP->layoutstyle,rmap_yval(),RM_SIZE);
+^doorstyle{S}	    strncpy(RP->doorstyle,rmap_yval(),RM_SIZE);
+^decorstyle{S}	    strncpy(RP->decorstyle,rmap_yval(),RM_SIZE);
 ^xsize{S}	    RP->Xsize = IVAL;
 ^ysize{S}	    RP->Ysize = IVAL;
 ^expand2x{S}        RP->expand2x = IVAL;
@@ -89,17 +89,18 @@ WS	[ \t]*
 ^difficulty{S}        RP->difficulty = IVAL;
 ^difficulty_increase{S}        RP->difficulty_increase = FVAL;
 ^decoroptions{S}      RP->decoroptions = IVAL;
-^exitstyle{S}       strcpy(RP->exitstyle,rmap_yval());
+^exitstyle{S}       strncpy(RP->exitstyle,rmap_yval(),RM_SIZE);
 ^dungeon_level{S}   RP->dungeon_level = IVAL;
+^dungeon_name{S}	strncpy(RP->dungeon_name, rmap_yval(),RM_SIZE);
 ^dungeon_depth{S}   RP->dungeon_depth = IVAL;
-^final_map{S}       strcpy(RP->final_map,rmap_yval());
+^final_map{S}       strncpy(RP->final_map,rmap_yval(),RM_SIZE);
 ^orientation{S}    RP-> orientation = IVAL;
 ^origin_x{S}        RP->origin_x = IVAL;
 ^origin_y{S}       RP-> origin_y = IVAL;
-^origin_map{S}       strcpy(RP->origin_map,rmap_yval());
+^origin_map{S}       strncpy(RP->origin_map,rmap_yval(),RM_SIZE);
 ^random_seed{S}        RP->random_seed = IVAL;
 ^treasureoptions{S}    RP->treasureoptions = IVAL;
-^exit_on_final_map{S} strcpy(RP->exit_on_final_map,rmap_yval());
+^exit_on_final_map{S} strncpy(RP->exit_on_final_map,rmap_yval(),RM_SIZE);
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
