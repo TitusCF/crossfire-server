@@ -39,6 +39,20 @@
 #include <funcpoint.h>
 #include <skills.h>
 #include <loader.h>
+
+static int compare_ob_value_lists_one(const object *, const object *);
+static int compare_ob_value_lists(const object *, const object *);
+static void dump_object2(object *);
+static void dump_me(object *, char *);
+static object *get_nearest_part(object *, const object *);
+static void free_key_values(object *);
+static void expand_objects(void);
+static void free_object2(object *, int);
+static void permute(int *, int, int);
+static int set_ob_key_value_s(object *, const char *, const char *, int);
+
+
+
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;
 int nrofallocobjects = 0;
@@ -285,7 +299,7 @@ object *is_player_inv (object *op) {
  * The result of the dump is stored in the static global errmsg array.
  */
 
-void dump_object2(object *op) {
+static void dump_object2(object *op) {
   char *cp;
 /*  object *tmp;*/
 
@@ -338,7 +352,7 @@ void dump_object(object *op) {
 /** GROS - Dumps an object. Return the result into a string                   */
 /* Note that no checking is done for the validity of the target string, so   */
 /* you need to be sure that you allocated enough space for it.               */
-void dump_me(object *op, char *outstr)
+static void dump_me(object *op, char *outstr)
 {
     char *cp;
 
@@ -389,7 +403,7 @@ void dump_all_objects(void) {
  * If it's not a multi-object, it is returned.
  */
 
-object *get_nearest_part(object *op, const object *pl) {
+static object *get_nearest_part(object *op, const object *pl) {
   object *tmp,*closest;
   int last_dist,i;
   if(op->more==NULL)
@@ -772,7 +786,7 @@ void copy_object(object *op2, object *op) {
  * It is called from get_object() if the unused list is empty.
  */
 
-void expand_objects(void) {
+static void expand_objects(void) {
   int i;
   object *new;
   new = (object *) CALLOC(OBJ_EXPAND,sizeof(object));
@@ -1070,7 +1084,7 @@ void update_object(object *op, int action) {
 void free_object(object *ob) {
     free_object2(ob, 0);
 }
-void free_object2(object *ob, int free_inventory) {
+static void free_object2(object *ob, int free_inventory) {
     object *tmp,*op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
@@ -2693,7 +2707,7 @@ const char * get_ob_key_value(const object * op, const char * const key) {
  *
  * Returns TRUE on success.
  */
-int set_ob_key_value_s(object * op, const char * canonical_key, const char * value, int add_key) {
+static int set_ob_key_value_s(object * op, const char * canonical_key, const char * value, int add_key) {
     key_value * field = NULL, *last=NULL;
     
     LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value, add_key);
