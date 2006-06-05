@@ -43,8 +43,6 @@
 static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
 static void dump_object2(object *);
-static void dump_me(object *, char *);
-static object *get_nearest_part(object *, const object *);
 static void free_key_values(object *);
 static void expand_objects(void);
 static void free_object2(object *, int);
@@ -349,6 +347,11 @@ void dump_object(object *op) {
   dump_object2(op);
 }
 
+#if 0
+/* dump_me() is not currently used - perhaps should be removed?
+ * MSW 2006-06-05
+ */
+
 /** GROS - Dumps an object. Return the result into a string                   */
 /* Note that no checking is done for the validity of the target string, so   */
 /* you need to be sure that you allocated enough space for it.               */
@@ -383,6 +386,7 @@ static void dump_me(object *op, char *outstr)
         strcat(outstr,"end\n");
     }
 }
+#endif
 
 /**
  * This is really verbose...Can be triggered by the P key while in DM mode.
@@ -396,6 +400,12 @@ void dump_all_objects(void) {
     fprintf(logfile, "Object %d\n:%s\n", op->count, errmsg);
   }
 }
+
+
+#if 0
+/* get_nearest_part is not used, and should perhaps be removed?
+ * MSW 2006-06-04
+ */
 
 /**
  * get_nearest_part(multi-object, object 2) returns the part of the
@@ -413,6 +423,7 @@ static object *get_nearest_part(object *op, const object *pl) {
       closest=tmp,last_dist=i;
   return closest;
 }
+#endif
 
 /**
  * Returns the object which has the count-variable equal to the argument.
@@ -1587,6 +1598,14 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     CLEAR_FLAG(op, FLAG_INV_LOCKED);
     if (!QUERY_FLAG(op, FLAG_ALIVE))
 	CLEAR_FLAG(op, FLAG_NO_STEAL);
+
+    /* In many places, a player is passed as the originator, which
+     * is fine.  However, if the player is on a transport, they are not
+     * actually on the map, so we can't use them for the linked pointers,
+     * nor should the walk on function below use them either.
+     */
+    if (originator && originator->contr && originator->contr->transport) 
+	originator=originator->contr->transport;
 
     if (flag & INS_BELOW_ORIGINATOR) { 
 	if (originator->map != op->map || originator->x != op->x ||

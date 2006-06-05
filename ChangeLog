@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix problem with create food when used on transports.  Rather than put a
+  specific check in the create food code, modify insert_ob_in_map to
+  check to see of the passed in originator is on a transport, and if so,
+  find out the right info - this probably fixes the same type of bug that
+  happens from other areas of the code.
+common/object.c: Above change, as well as #if 0 out some unused functions.
+MSW 2006-06-04
+
 Clean up some compiler warnings.  Most of the changes are related to replaced
  %lld with FMT64 defines so that the format will be correct, no matter if
  the 64 bit type is a long, long long, or if this is windows.  #if 0 out a 
