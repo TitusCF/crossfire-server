@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -88,6 +88,9 @@ typedef signed __int64		sint64;
 /* Needed for experience */
 #define atoll	_atoi64
 
+#define FMT64		    "I64d"
+#define FMT64U		    "I64u"
+
 /* To reduce number of warnings */
 #pragma warning( disable: 4244 ) /* conversion from 'xxx' to 'yyy', possible loss of data */
 #pragma warning( disable: 4305 ) /* initializing float f = 0.05; instead of f = 0.05f; */
@@ -95,11 +98,18 @@ typedef signed __int64		sint64;
 #else /* WIN32 */
 
 #if SIZEOF_LONG == 8
+
 typedef unsigned long	    uint64;
 typedef signed long	    sint64;
+#define FMT64		    "ld"
+#define FMT64U		    "ld"
+
 #elif SIZEOF_LONG_LONG == 8
 typedef unsigned long long	uint64;
 typedef signed long long 	sint64;
+#define FMT64		    "lld"
+#define FMT64U		    "lld"
+
 #else
 #error do not know how to get a 64 bit value on this system.
 #error correct and send mail to crossfire-devel on how to do this
@@ -247,7 +257,7 @@ extern New_Face *dark_faces[];
 extern New_Face *smooth_face;
 
 
-extern long max_time;	/* loop time */
+extern uint32 max_time;	/* loop time */
 extern socket_struct *init_sockets;
 
 

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001-2003 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1301,13 +1301,8 @@ int new_save_map(mapstruct *m, int flag) {
 	fprintf(fp,"shopitems %s\n", shop);
     }
     if (m->shopgreed) fprintf(fp,"shopgreed %f\n", m->shopgreed);
-#ifndef WIN32
-    if (m->shopmin) fprintf(fp,"shopmin %llu\n", m->shopmin);
-    if (m->shopmax) fprintf(fp,"shopmax %llu\n", m->shopmax);
-#else
-    if (m->shopmin) fprintf(fp,"shopmin %I64u\n", m->shopmin);
-    if (m->shopmax) fprintf(fp,"shopmax %I64u\n", m->shopmax);
-#endif
+    if (m->shopmin) fprintf(fp,"shopmin %" FMT64U "\n", m->shopmin);
+    if (m->shopmax) fprintf(fp,"shopmax %" FMT64U "\n", m->shopmax);
     if (m->shoprace) fprintf(fp,"shoprace %s\n", m->shoprace);
     if (m->darkness) fprintf(fp,"darkness %d\n", m->darkness);
     if (m->width) fprintf(fp,"width %d\n", m->width);

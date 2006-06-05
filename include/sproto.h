@@ -241,7 +241,7 @@ void do_wizard_hide(object *op, int silent_dm);
 int command_hide(object *op, char *params);
 int command_setgod(object *op, char *params);
 int command_banish(object *op, char *params);
-int command_kick(object *op, char *params);
+int command_kick(object *op, const char *params);
 int command_save_overlay(object *op, char *params);
 int command_toggle_shout(object *op, char *params);
 int command_shutdown(object *op, char *params);

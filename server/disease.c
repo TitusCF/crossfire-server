@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -573,6 +573,12 @@ int check_physically_infect(object *victim, object *hitter) {
   return 1;
 }
 
+#if 0
+/*
+ * find_disease no longer used - perhaps should be removed.
+ * MSW 2006-06-02
+ */
+
 /*  find a disease in someone*/
 static object *find_disease(object *victim) {
   object *walk;
@@ -580,6 +586,7 @@ static object *find_disease(object *victim) {
 	 if(walk->type==DISEASE) return walk;
   return NULL;
 }
+#endif
 	
 /* do the cure disease stuff, from the spell "cure disease" */
 
@@ -622,6 +629,13 @@ int cure_disease(object *sufferer,object *caster) {
   return 1;
 }
 
+
+#if 0
+/*
+ * reduce_symptoms is no longer used - should perhaps be removed.
+ * MSW 2006-06-02
+ */
+
 /* reduces disease progression:  reduce_symptoms 
  * return true if we actually reduce a disease.
  */
@@ -646,3 +660,5 @@ static int reduce_symptoms(object *sufferer, int reduction) {
     return success;
 }
   
+#endif
+

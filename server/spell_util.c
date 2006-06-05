@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1469,6 +1469,11 @@ void move_spell_effect(object *op) {
     }
 }
 
+#if 0
+/* check_spell_effect is no longer used - should perhaps be removed.
+ * MSW 2006-06-02
+ */
+
 /* this checks to see if something special should happen if 
  * something runs into the object.
  */
@@ -1485,6 +1490,8 @@ static void check_spell_effect(object *op) {
     }
 
 }
+#endif
+
 
 /* This is called by move_apply.  Basically, if someone
  * moves onto a spell effect and the walk_on or fly_on flags

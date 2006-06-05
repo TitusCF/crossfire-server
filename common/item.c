@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -456,7 +456,7 @@ static const char *ring_desc (const object *op)
 	}
     }
     if(op->stats.exp)
-	sprintf(buf+strlen(buf), "(speed %+lld)", op->stats.exp);
+	sprintf(buf+strlen(buf), "(speed %+" FMT64 ")", op->stats.exp);
     if(op->stats.wc)
 	sprintf(buf+strlen(buf), "(wc%+d)", op->stats.wc);
     if(op->stats.dam)
@@ -1062,7 +1062,7 @@ char *describe_item(const object *op, const object *owner) {
 	}
 
 	if(op->stats.exp) {
-	    sprintf(buf,"(speed %+lld)",op->stats.exp);
+	    sprintf(buf,"(speed %+" FMT64 ")",op->stats.exp);
 	    strcat(retbuf,buf);
 	}
 

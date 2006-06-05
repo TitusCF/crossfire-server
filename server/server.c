@@ -1,12 +1,12 @@
 /*
- * static char *rcsid_main_c =
+ * static char *rcsid_server_c =
  *    "$Id$";
  */
 
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001-2003 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
-static void process_active_maps(void);
 static void process_events (mapstruct *map);
 
 static char days[7][4] = {
@@ -116,27 +115,6 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
-static void info_keys(object *op) {
-  clear_win_info(op);
-  new_draw_info(NDI_UNIQUE, 0,op,"Push `hjklynub' to walk in a direction.");
-  new_draw_info(NDI_UNIQUE, 0,op,"Shift + dir = fire, Ctrl + dir = run");
-  new_draw_info(NDI_UNIQUE, 0,op,"(To fire at yourself, hit `.'");
-  new_draw_info(NDI_UNIQUE, 0,op,"To attack, walk into the monsters.");
-  new_draw_info(NDI_UNIQUE, 0,op,"\"  = speak        ' = extended command");
-  new_draw_info(NDI_UNIQUE, 0,op,"i  = inventory    , = get         : = look");
-  new_draw_info(NDI_UNIQUE, 0,op,"<> = rotate       d = drop        ? = help");
-  new_draw_info(NDI_UNIQUE, 0,op,"a  = apply        A = apply below t = throw");
-  new_draw_info(NDI_UNIQUE, 0,op,"e  = examine      E = exa below   @ = autopick");
-  new_draw_info(NDI_UNIQUE, 0,op,"C  = configure    s = brace       v = version");
-  new_draw_info(NDI_UNIQUE, 0,op,"+- = change range <tab> = browse spells");
-  new_draw_info(NDI_UNIQUE, 0,op,"x  = change inventory type");
-  new_draw_info(NDI_UNIQUE, 0,op,"Mouse: L = examine,  M = apply,  R = drop/get");
-  new_draw_info(NDI_UNIQUE, 0,op,"'help  = info about extended commands.");
-  new_draw_info(NDI_UNIQUE, 0,op,"Ctrl-R = refresh   Ctrl-C = clear");
-  new_draw_info(NDI_UNIQUE, 0,op,"You can type a number before most commands.");
-  new_draw_info(NDI_UNIQUE, 0,op,"(For instance 3d drops 3 items.)");
-}
-
 void start_info(object *op) {
   char buf[MAX_BUF];
 
@@ -149,7 +127,6 @@ void start_info(object *op) {
   if(!op->contr->name_changed) {
     new_draw_info(NDI_UNIQUE, 0,op,"Note that you must set your name with the name");
     new_draw_info(NDI_UNIQUE, 0,op,"command to enter the highscore list.");
-    new_draw_info(NDI_UNIQUE, 0,op,"(You can also use the crossfire.name X-resource.)");
   }
 }
 
@@ -881,6 +858,11 @@ void enter_exit(object *op, object *exit_ob) {
     }
 }
 
+#if 0
+/* process_active_maps no longer used - should perhaps be removed.
+ * MSW 2006-06-02
+ */
+
 /**
  * process_active_maps(): Works like process_events(), but it only
  * processes maps which a player is on.
@@ -890,7 +872,6 @@ void enter_exit(object *op, object *exit_ob) {
 
 static void process_active_maps(void) {
   mapstruct *map;
-
 
     /*
      * If enough time has elapsed, do some work.
@@ -904,6 +885,7 @@ static void process_active_maps(void) {
 	}
     }
 }
+#endif
 
 /**
  * process_players1 and process_players2 do all the player related stuff.

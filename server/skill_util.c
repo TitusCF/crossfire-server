@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copryight (C) 2002 Mark Wedel & Crossfire Development Team
+    Copryight (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -667,31 +667,16 @@ void show_skills(object *op, const char* search) {
 	    buf[40] = 0;
 
 	    if (settings.permanent_exp_ratio) {
-#ifdef WIN32
-		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%I64d/%I64d/%d%%)",
+		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%" FMT64 "/%" FMT64 "/%d%%)",
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
 			 clipped_percent(tmp->perm_exp,tmp->stats.exp));
-#else
-		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%lld/%lld/%d%%)",
-			 buf,tmp->level,
-			 tmp->stats.exp,
-			 level_exp(tmp->level+1, op->expmul),
-			 clipped_percent(tmp->perm_exp,tmp->stats.exp));
-#endif
 	    } else {
-#ifdef WIN32
-		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%I64d/%I64d)",
+		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%" FMT64 "/%" FMT64 ")",
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul));
-#else
-		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%lld/%lld)",
-			 buf,tmp->level,
-			 tmp->stats.exp,
-			 level_exp(tmp->level+1, op->expmul));
-#endif
 	    }
 	    /* I don't know why some characters get a bunch of skills, but
 	     * it sometimes happens (maybe a leftover from bugier earlier code

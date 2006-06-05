@@ -5,8 +5,8 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 2002 Tim Rightnour
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,6 @@ static void let_it_snow(mapstruct *m, int wx, int wy);
 static void singing_in_the_rain(mapstruct *m, int wx, int wy);
 static void plant_a_garden(mapstruct *m, int wx, int wy);
 static void change_the_world(mapstruct *m, int wx, int wy);
-static void feather_map(mapstruct *m, int wx, int wy);
 static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
 static int polar_distance(int x, int y, int equator);
 static void update_humid(void);
@@ -2178,6 +2177,11 @@ static void change_the_world(mapstruct *m, int wx, int wy)
 }
 
 
+#if 0
+/* feather_map is no longer used - should perhaps be removed.
+ * MSW 2006-06-02
+ */
+
 /*
  * Reduce the blockiness of the maps. m is the map we are currently processing.
  * wx and wy are
@@ -2274,6 +2278,7 @@ static void feather_map(mapstruct *m, int wx, int wy)
 	}
     }
 }
+#endif
 
 
 /* provide wx and wy. Will fill in with weathermap coordinates.  Requires
@@ -2291,7 +2296,7 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m)
     spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
 
     while (*filename == '/')
-	*filename++;
+	filename++;
 
     fx = MAP_WORLDPARTX(m);
     fy = MAP_WORLDPARTY(m);

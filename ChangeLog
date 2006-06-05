@@ -17,6 +17,48 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Clean up some compiler warnings.  Most of the changes are related to replaced
+ %lld with FMT64 defines so that the format will be correct, no matter if
+ the 64 bit type is a long, long long, or if this is windows.  #if 0 out a 
+ bunch of code that isn't used.
+--
+common/exp.c: Replaced lld with FMT64
+common/holy.c: #if 0 out baptize_altar().  Add banner copyright at top of file.
+common/info.c, common/item.c, common/loader.l, common/loader.c, common/map.c:
+   common/porting.c Replaced lld with FMT64
+common/time.c: Replace a bunch of variables declared as longs to be uint32.
+   Update various sprintf appropriately.
+include/global.h: Add FMT64 and FMT64U as appropriate for different systems.
+   Change max_time to be a uint32
+include/sockproto.h, include/sproto.h: rebuilt
+server/apply.c: #if 0 out monster_apply_special
+server/c_range.c: Add != 0 in assignment if statement - same meaning, clearer
+   on intention and avoids compiler warning.
+server/c_wiz.c: Update command_kick() to take const char.  Update command_speed()
+   to operate properly based on max_time being a uint32.  Update various lld
+   to FMT64.  Clarify ambiguous if/if/else statement in command_insert_into()
+server/commands.c: Add cast to command_kick for new function prototype.  #if 
+   0 out find_command(), parse_string(), parse_command()
+server/disease.c: #if 0 out find_disease(), reduce_symptoms()
+server/egoitem.c: #if 0 out create_artifact().  Add copyright at top of file.
+server/gods.c: #if 0 out get_god()
+server/hiscore.c: Replace lld with FMT64
+server/login.c: #if 0 out create_savedir_if_needed()
+server/resurrection.c: Replace lld with FMT64.  #if 0 out dead_character() and
+    dead_player_exists()
+server/server.c: Remove info_keys() - hasn't been used in a long time.  #if 0
+   out process_active_maps()
+server/skill_util.c: Replace lld with FMT64
+server/spell_util.c: #if 0 out check_spell_effect()
+server/weather.c: #if 0 out feather_map().  Fix what I suspect is an error
+   in worldmap_to_weathermap() to skip over starting slashes.
+socket/image.c: Add a fair number of char * casts to suppress warnings.
+socket/init.c: Change buflen in init_connection() to socklen_t to match
+   function prototype.  Add some char * casts.
+socket/loop.c: Add some char * casts.
+--
+MSW 2006-06-04
+
 Add a name 'dungeon_name' for random maps, and put it in the random key's name.
  This implements feature request #815622 (keys in random maps should note map they are from)
  https://sourceforge.net/tracker/index.php?func=detail&aid=815622&group_id=13833&atid=363833

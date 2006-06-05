@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -347,7 +347,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
 	else
 	    strcpy((char*)sl.buf, "face ");
 
-	sl.len=strlen(sl.buf);
+	sl.len=strlen((char*)sl.buf);
 	SockList_AddShort(&sl, face_num);
 	if (ns->image2)
 	    SockList_AddChar(&sl, fallback);
@@ -389,15 +389,15 @@ void send_image_info(socket_struct *ns, char *params)
 
     sl.buf = malloc(MAXSOCKSENDBUF);
 
-    sprintf(sl.buf,"replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
+    sprintf((char*)sl.buf,"replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
     for (i=0; i<MAX_FACE_SETS; i++) {
 	if (facesets[i].prefix) {
-	    sprintf(sl.buf + strlen(sl.buf), "%d:%s:%s:%d:%s:%s:%s",
+	    sprintf((char*)sl.buf + strlen((char*)sl.buf), "%d:%s:%s:%d:%s:%s:%s",
 		    i,  facesets[i].prefix, facesets[i].fullname, facesets[i].fallback,
 		    facesets[i].size, facesets[i].extension, facesets[i].comment);
 	}
     }
-    sl.len = strlen(sl.buf);
+    sl.len = strlen((char*)sl.buf);
     Send_With_Handling(ns, &sl);
     free(sl.buf);
 }
@@ -431,9 +431,9 @@ void send_image_sums(socket_struct *ns, char *params)
 	cs_write_string(ns, buf, strlen(buf));
 	return;
     }
-    sprintf(sl.buf,"replyinfo image_sums %d %d ", start, stop);
+    sprintf((char*)sl.buf,"replyinfo image_sums %d %d ", start, stop);
 
-    sl.len = strlen(sl.buf);
+    sl.len = strlen((char*)sl.buf);
 
     for (i=start; i<=stop; i++) {
 	if (sl.len+2+4+1+1+strlen(new_faces[i].name)+1 > MAXSOCKSENDBUF) {
@@ -452,7 +452,7 @@ void send_image_sums(socket_struct *ns, char *params)
 
 	qq = strlen(new_faces[i].name);
 	SockList_AddChar(&sl, ( char )( qq + 1 ));
-	strcpy(sl.buf + sl.len, new_faces[i].name);
+	strcpy((char*)sl.buf + sl.len, new_faces[i].name);
 	sl.len += qq;
 	SockList_AddChar(&sl, 0);
     }

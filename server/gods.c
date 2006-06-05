@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1039,6 +1039,13 @@ static int god_examines_item(object *god, object *item) {
   return 0; /* item is sacred to a non-enemy god/or is otherwise magical */ 
 }
 
+
+#if 0
+/*
+ * get_god no longer used - should perhaps be removed.
+ * MSW 2006-06-02
+ */
+
 /**
  * Returns priest's god's id. 
  * Straight calls lookup_god_by_name
@@ -1049,6 +1056,7 @@ static int get_god(object *priest) {
 
   return godnr;
 }
+#endif
 
 /**
  * Returns a string that is the name of the god that should be natively worshipped by a 

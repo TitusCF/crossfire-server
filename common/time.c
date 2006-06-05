@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -39,17 +39,17 @@
 /*
  * Gloabal variables:
  */
-long max_time = MAX_TIME;
+uint32 max_time = MAX_TIME;
 struct timeval last_time;
 
 #define PBUFLEN 100
-long process_utime_save[PBUFLEN];
-long psaveind;
-long process_max_utime = 0;
-long process_min_utime = 999999999;
-long process_tot_mtime;
+uint32 process_utime_save[PBUFLEN];
+uint32 psaveind;
+uint32 process_max_utime = 0;
+uint32 process_min_utime = 999999999;
+uint32 process_tot_mtime;
 uint32 pticks;
-long process_utime_long_count;
+uint32 process_utime_long_count;
 
 const char *season_name[] =
 {
@@ -284,19 +284,19 @@ time_info(object *op)
     return;
 
   new_draw_info (NDI_UNIQUE, 0,op,"Total time:");
-  sprintf(errmsg,"ticks=%ld  time=%ld.%2ld",
+  sprintf(errmsg,"ticks=%d  time=%d.%2d",
           pticks, process_tot_mtime/1000, process_tot_mtime%1000);
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"avg time=%ldms  max time=%ldms  min time=%ldms",
+  sprintf(errmsg,"avg time=%dms  max time=%dms  min time=%dms",
           process_tot_mtime/pticks, process_max_utime/1000,
           process_min_utime/1000);
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"ticks longer than max time (%ldms) = %ld (%ld%%)",
+  sprintf(errmsg,"ticks longer than max time (%dms) = %d (%d%%)",
           max_time/1000,
           process_utime_long_count, 100*process_utime_long_count/pticks);
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
-  sprintf(errmsg,"Time last %ld ticks:", pticks > PBUFLEN ? PBUFLEN : pticks);
+  sprintf(errmsg,"Time last %d ticks:", pticks > PBUFLEN ? PBUFLEN : pticks);
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
   for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
@@ -306,11 +306,11 @@ time_info(object *op)
     if (process_utime_save[i] > max_time) long_count++;
   }
 
-  sprintf(errmsg,"avg time=%ldms  max time=%dms  min time=%dms",
+  sprintf(errmsg,"avg time=%dms  max time=%dms  min time=%dms",
           tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
           mint/1000);
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"ticks longer than max time (%ldms) = %d (%ld%%)",
+  sprintf(errmsg,"ticks longer than max time (%dms) = %d (%d%%)",
           max_time/1000, long_count,
           100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
   new_draw_info (NDI_UNIQUE, 0,op,errmsg);

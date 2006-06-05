@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -236,7 +236,7 @@ void dump_experience(void)
     int i;
 
     for (i=1; i<= settings.max_level; i++) {
-	fprintf(logfile,"%4d %20lld\n", i, levels[i]);
+	fprintf(logfile,"%4d %20"  FMT64  "\n", i, levels[i]);
     }
     exit(0);
 }

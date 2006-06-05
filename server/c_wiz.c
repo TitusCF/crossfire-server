@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -243,7 +243,7 @@ int command_banish(object *op, char *params) {
     return 1;
 }
 
-int command_kick(object *op, char *params) {
+int command_kick(object *op, const char *params) {
     struct pl *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next) {
@@ -1137,8 +1137,7 @@ int command_speed(object *op, char *params) {
     int i;
 
     if (params == NULL || !sscanf(params, "%d", &i)) {
-        sprintf(errmsg, "Current speed is %ld", max_time);
-        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %d", max_time);
         return 1;
     }
 
@@ -1178,13 +1177,8 @@ int command_stats(object *op, char *params) {
             sprintf(buf, "Int : %-2d    Damage : %d",
                 pl->ob->stats.Int, pl->ob->stats.dam);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
-#ifndef WIN32
-            sprintf(buf, "Wis : %-2d       EXP : %lld",
+            sprintf(buf, "Wis : %-2d       EXP : %" FMT64,
                 pl->ob->stats.Wis, pl->ob->stats.exp);
-#else
-            sprintf(buf, "Wis : %-2d       EXP : %I64d",
-                pl->ob->stats.Wis, pl->ob->stats.exp);
-#endif
             new_draw_info(NDI_UNIQUE, 0, op, buf);
             sprintf(buf, "Pow : %-2d    Grace : %d",
                 pl->ob->stats.Pow, pl->ob->stats.grace);
@@ -2000,14 +1994,13 @@ int command_insert_into(object* op, char *params)
     if (!QUERY_FLAG(right,FLAG_REMOVED))
         remove_ob(right);
     inserted = insert_ob_in_ob(right,left);
-    if (left->type == PLAYER)
+    if (left->type == PLAYER) {
         if (inserted == right)
             esrv_send_item(left,right);
         else
             esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF,left,inserted);
-
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Inserted %s in %s", query_name(inserted),query_name(left));
-
+    }
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Inserted %s in %s", query_name(inserted),query_name(left));
     return 0;
 
 }

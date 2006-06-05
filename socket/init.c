@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
     unsigned char buf[256];
     int	bufsize=65535;	/*Supposed absolute upper limit */
     int oldbufsize;
-    int buflen=sizeof(int);
+    socklen_t buflen=sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
 	int temp = 1;	

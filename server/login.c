@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -187,6 +187,12 @@ int check_name(player *me,const char *name) {
     return 1;
 }
 
+#if 0
+/*
+ * create_savedir_if_needed no longer needed.  Should perhaps get removed.
+ * MSW 2006-06-02
+ */
+
 static int create_savedir_if_needed(char *savedir)
 {
   struct stat *buf;
@@ -206,6 +212,7 @@ static int create_savedir_if_needed(char *savedir)
   }
  return 1;
 }
+#endif
 
 void destroy_object (object *op)
 {

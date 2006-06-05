@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -448,11 +448,7 @@ void save_long(char *buf, const char *name, long n) {
 void save_long_long(char *buf, char *name, sint64 n) {
     char buf2[MAX_BUF];
 
-#ifndef WIN32
-    sprintf(buf2,"%s %lld\n", name, n);
-#else
-    sprintf(buf2,"%s %I64d\n", name, n);
-#endif
+    sprintf(buf2,"%s %" FMT64 "\n", name, n);
     strcat(buf,buf2);
 }
 

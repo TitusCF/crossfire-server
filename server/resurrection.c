@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -119,18 +119,10 @@ static int resurrect_player(object *op,char *playername,object *spell)
 	fgets(buf,255,deadplayer);
 	sscanf(buf,"%s",buf2);
 	if( ! (strcmp(buf2,"exp"))) {
-#ifndef WIN32
-	    sscanf(buf,"%s %lld",buf2,&exp);
-#else
-	    sscanf(buf,"%s %I64d",buf2,&exp);
-#endif
+	    sscanf(buf,"%s %" FMT64, buf2, &exp);
 	    if (spell->stats.exp) {
 		exp-=exp/spell->stats.exp;
-#ifndef WIN32
-		sprintf(buf,"exp %lld\n",exp);
-#else
-		sprintf(buf,"exp %I64d\n",exp);
-#endif
+		sprintf(buf,"exp %" FMT64 "\n",exp);
 	    }
 	}
 	if(! (strcmp(buf2,"Con"))) {
@@ -268,6 +260,11 @@ void dead_player(object *op)
 
 
 
+#if 0
+/* dead_character & dead_player_exists are no longer used - should perhaps be
+ * removed.  MSW 2006-06-02
+ */
+
 static void dead_character(const char *name) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
@@ -290,4 +287,4 @@ static int dead_player_exists(const char *name) {
     return !(access(buf,0));
 }
 
-
+#endif 

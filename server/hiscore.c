@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -98,15 +98,12 @@ static void copy_score(const score *sc1, score *sc2) {
  */
 
 static char *put_score(const score *sc) {
-  static char buf[MAX_BUF];
-#ifndef WIN32
-  sprintf(buf,"%s:%s:%lld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
-          sc->maxhp,sc->maxsp,sc->maxgrace);
-#else
-  sprintf(buf,"%s:%s:%I64d:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
-          sc->maxhp,sc->maxsp,sc->maxgrace);
-#endif
-  return buf;
+    static char buf[MAX_BUF];
+
+    snprintf(buf, MAX_BUF,
+	 "%s:%s:%" FMT64 ":%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
+         sc->maxhp,sc->maxsp,sc->maxgrace);
+    return buf;
 }
 
 /*
@@ -133,11 +130,8 @@ static score *get_score(char *bp) {
 
   if ((cp = spool(NULL, "score")) == NULL)
     return NULL;
-#ifndef WIN32
-  sscanf(cp,"%lld",&sc.exp);
-#else
-  sscanf(cp,"%I64d",&sc.exp);
-#endif
+
+  sscanf(cp,"%" FMT64,&sc.exp);
 
   if ((cp = spool(NULL, "killer")) == NULL)
     return NULL;
@@ -167,15 +161,15 @@ static char * draw_one_high_score(const score *sc) {
     static char retbuf[MAX_BUF];
 
     if(!strncmp(sc->killer,"quit",MAX_NAME))
-	sprintf(retbuf,"%3d %10lld %s the %s quit the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10" FMT64 " %s the %s quit the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else if(!strncmp(sc->killer,"left",MAX_NAME))
-	sprintf(retbuf,"%3d %10lld %s the %s left the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10" FMT64 " %s the %s left the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else
-	sprintf(retbuf,"%3d %10lld %s the %s was killed by %s on map %s [%d][%d][%d].",
+	sprintf(retbuf,"%3d %10" FMT64 " %s the %s was killed by %s on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->killer,sc->maplevel,
             sc->maxhp,sc->maxsp,sc->maxgrace);
     return retbuf;

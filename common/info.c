@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -59,13 +59,8 @@ void dump_abilities(void) {
     }
 
     ch = describe_item(&at->clone, NULL);
-#ifndef WIN32
-    printf("%-16s|%6lld|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
+    printf("%-16s|%6" FMT64 "|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
-#else
-    printf("%-16s|%6I64d|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
-           at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
-#endif
   }
 }
 
@@ -91,7 +86,7 @@ void print_monsters(void) {
 		   op->stats.wc,attbuf);
 	    for (i=0; i<NROFATTACKS; i++)
 		printf("%4d", op->resist[i]);
-	    printf("|%8lld|%9d|\n",op->stats.exp, new_exp(op));
+	    printf("|%8" FMT64 "|%9d|\n",op->stats.exp, new_exp(op));
     }
     free_object(op);
   }

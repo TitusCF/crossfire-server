@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -150,7 +150,7 @@ int command_cast_spell (object *op, char *params, char command)
 
     if(params!=NULL) {
 	int spellnumber = 0;
-	if (spellnumber = atoi(params)) 
+	if ((spellnumber = atoi(params))!=0)
 	    for (spob = op->inv; spob && spob->count != spellnumber; spob=spob->below);
 	else spob = lookup_spell_by_name(op, params);
 

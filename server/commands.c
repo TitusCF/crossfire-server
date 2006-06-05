@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -238,7 +238,7 @@ command_array_struct WizCommands [] = {
   {"hide", command_hide,0.0},
   {"insert_into", command_insert_into,0.0},
   {"invisible", command_invisible,0.0},
-  {"kick", command_kick, 0.0},
+  {"kick", (command_function)command_kick, 0.0},
   {"learn_special_prayer", command_learn_special_prayer, 0.0},
   {"learn_spell", command_learn_spell, 0.0},
   {"plugin",command_loadplugin,0.0},
@@ -355,6 +355,13 @@ command_function find_oldsocket_command2(char *cmd)
   return NULL;
 }
 
+#if 0
+/* find_command is only used by parse_string, so if parse_string
+ * isn't needed, neither is find_command.  But parse_string
+ * is only used by parse_command.
+ * MSW 2006-06-02
+ */
+
 static command_function find_command(char *cmd)
 {
   command_array_struct *asp, dummy;
@@ -400,6 +407,10 @@ static command_function find_wizcommand(char *cmd)
   return NULL;
 }
 
+/* parse_string is only used by parse_command, so if parse_command
+ * isn't needed, neither is parse_string
+ * MSW 2006-06-02
+ */
 
 /**
  * parse_string may be called from a player in the game or from a socket
@@ -468,6 +479,10 @@ static int parse_string(object *op, char *str)
 }
 
 
+/* Parse command is no longer used - should probably be removed.
+ * MSW 2006-06-02
+ */
+
 /**  this function handles splitting up a ; separated
  *  compound command into sub-commands:  it is recursive.
  */
@@ -504,3 +519,4 @@ static int parse_command(object *op, char *str) {
   }
   return 0;
 }
+#endif

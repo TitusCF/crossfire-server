@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1787,20 +1787,12 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
 
   if(op->stats.exp!=op2->stats.exp) {
-#ifndef WIN32
-    sprintf(buf2,"%lld", op->stats.exp);
-#else
-    sprintf(buf2,"%I64d", op->stats.exp);
-#endif
+    sprintf(buf2,"%" FMT64 , op->stats.exp);
     ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
   }
 
   if(op->perm_exp!=op2->perm_exp) {
-#ifndef WIN32
-    sprintf(buf2,"%lld", op->perm_exp);
-#else
-    sprintf(buf2,"%I64d", op->perm_exp);
-#endif
+    sprintf(buf2,"%" FMT64 , op->perm_exp);
     ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
   }
 

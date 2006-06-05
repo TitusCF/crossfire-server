@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -3526,12 +3526,18 @@ int apply_special (object *who, object *op, int aflags)
 }
 
 
+#if 0
+/* monster_apply_special is no longer used - should probably be
+ * removed if in fact it won't be used by anything.
+ * MSW 2006-06-02
+ */
 static int monster_apply_special (object *who, object *op, int aflags)
 {
   if (QUERY_FLAG (op, FLAG_UNPAID) && ! QUERY_FLAG (op, FLAG_APPLIED))
     return 1;
   return apply_special (who, op, aflags);
 }
+#endif
 
 /**
  * Map was just loaded, handle op's initialisation.

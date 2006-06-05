@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002-2003 Mark Wedel & The Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & The Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ void handle_oldsocket(socket_struct *ns)
 
     ns->inbuf.buf[ns->inbuf.len]=0;
 
-    cp = strchr(ns->inbuf.buf, ' ');
+    cp = strchr((char*)ns->inbuf.buf, ' ');
     if (cp) {
 	/* Replace the space with a null, skip any more spaces */
 	*cp++=0;
@@ -226,11 +226,11 @@ void handle_oldsocket(socket_struct *ns)
 
     /* If just a return, don't do anything */
     if (ns->inbuf.buf[0] == 0) return;
-    if (!strcasecmp(ns->inbuf.buf,"quit")) {
+    if (!strcasecmp((char*)ns->inbuf.buf,"quit")) {
 	ns->status = Ns_Dead;
 	return;
     }
-    if (!strcasecmp(ns->inbuf.buf, "listen")) {
+    if (!strcasecmp((char*)ns->inbuf.buf, "listen")) {
 	if (cp) {
 	    const char *buf="Socket switched to listen mode\n";
 
@@ -244,7 +244,7 @@ void handle_oldsocket(socket_struct *ns)
 	}
 	return;
     }
-    if (!strcasecmp(ns->inbuf.buf, "name")) {
+    if (!strcasecmp((char*)ns->inbuf.buf, "name")) {
 	char *cp1=NULL;
 	if (cp) cp1= strchr(cp, ' ');
 	if (cp1) {
@@ -285,9 +285,9 @@ void handle_oldsocket(socket_struct *ns)
 	return;
     }
 
-    command = find_oldsocket_command(ns->inbuf.buf);
+    command = find_oldsocket_command((char*)ns->inbuf.buf);
     if (!command && ns->old_mode==Old_Player) {
-	command = find_oldsocket_command2(ns->inbuf.buf);
+	command = find_oldsocket_command2((char*)ns->inbuf.buf);
     }
     if (!command) {
 	snprintf(buf, sizeof(buf), "Could not find command: %s\n", ns->inbuf.buf);
@@ -346,7 +346,7 @@ void handle_client(socket_struct *ns, player *pl)
 	 * phase.  Don't demand they add in the special length bytes
 	 */
 	if (ns->status == Ns_Add) {
-	    if (!strncasecmp(ns->inbuf.buf,"oldsocketmode", 13)) {
+	    if (!strncasecmp((char*)ns->inbuf.buf,"oldsocketmode", 13)) {
 		ns->status = Ns_Old;
 		ns->inbuf.len=0;
 		cs_write_string(ns, "Switched to old socket mode\n", 28);
