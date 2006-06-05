@@ -39,7 +39,10 @@
  * See include/logger.h for possible logLevels.  Messages with llevInfo
  * and llevError are always printed, regardless of debug mode.
  */
-
+static char* loglevel_names[] = {"[Error]   ",
+                                 "[Info]    ",
+                                 "[Debug]   ",
+                                 "[Monster] "};
 void LOG (LogLevel logLevel, const char *format, ...)
 {
   char buf[20480];  /* This needs to be really really big - larger
@@ -55,13 +58,17 @@ void LOG (LogLevel logLevel, const char *format, ...)
   {
     vsprintf(buf, format, ap);
 #ifdef WIN32 /* ---win32 change log handling for win32 */
-	fputs(buf, logfile);    /* wrote to file or stdout */
+	fputs(loglevel_names[logLevel], logfile);    /* wrote to file or stdout */
+  fputs(buf, logfile);    /* wrote to file or stdout */
 #ifdef DEBUG				/* if we have a debug version, we want see ALL output */
 		fflush(logfile);    /* so flush this! */
 #endif
-	if(logfile != stderr)   /* if was it a logfile wrote it to screen too */ 
-		fputs(buf, stderr); 
+  if(logfile != stderr){   /* if was it a logfile wrote it to screen too */ 
+    fputs(loglevel_names[logLevel], stderr); 
+    fputs(buf, stderr); 
+  }
 #else
+    fputs(loglevel_names[logLevel], logfile);
     fputs(buf, logfile);
 #endif
   }
