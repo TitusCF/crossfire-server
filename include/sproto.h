@@ -114,6 +114,8 @@ int command_think(object *op, char *params);
 void map_info(object *op, char *search);
 int command_body(object *op, char *params);
 int command_motd(object *op, char *params);
+int command_rules(object *op, char *params);
+int command_news(object *op, char *params);
 int command_bug(object *op, char *params);
 void malloc_info(object *op);
 void current_region_info(object *op);

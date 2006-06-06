@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Add commands rules and news to display the rules/news files.
+---
+include/sproto.h: Add prototypes for new commands.
+lib/help/{motd,news,rules}: Add help files.
+lib/Makefile.am: Add new help files.
+lib/Makefile.in: Rebuilt.
+server/c_misc: Add functions to implement the commands.
+server/commands: Add new commands to commands list.
+Andreas Kirschbaum 2006-06-06
+
 Fix problem with create food when used on transports.  Rather than put a
   specific check in the create food code, modify insert_ob_in_map to
   check to see of the passed in originator is on a transport, and if so,

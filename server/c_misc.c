@@ -101,6 +101,18 @@ int command_motd(object *op, char *params)
 	return 1;
 }
 
+int command_rules(object *op, char *params)
+{
+	send_rules(op);
+	return 1;
+}
+
+int command_news(object *op, char *params)
+{
+	send_news(op);
+	return 1;
+}
+
 int command_bug(object *op, char *params)
 {
     char buf[MAX_BUF];

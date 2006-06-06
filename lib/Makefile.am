@@ -43,12 +43,13 @@ dist_help_DATA = help/apply help/applymode \
 	help/keys help/killpets \
 	help/listen \
 	help/mark help/melee help/mode \
-	help/mouse help/move \
-	help/output \
+	help/motd help/mouse help/move \
+	help/news help/output \
 	help/output-count help/output-sync \
 	help/party help/peaceful \
 	help/petmode help/pickup help/quests \
 	help/quit help/range help/rename \
+	help/rules \
 	help/save help/shout help/showpets \
 	help/sort_inventory help/spells \
 	help/statistics help/take help/traps \
