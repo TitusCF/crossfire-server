@@ -951,6 +951,10 @@ SOURCE=..\server\rune.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\server\server.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\server\shop.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
