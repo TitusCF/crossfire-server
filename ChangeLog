@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: in insert_ob_in_map() don't stop processing flying objects
+  if the object also has floor set.  This fixes crashes when an object
+  is both flying and has floor set.
+MSW 2006-06-06
+
 Add commands rules and news to display the rules/news files.
 ---
 include/sproto.h: Add prototypes for new commands.
