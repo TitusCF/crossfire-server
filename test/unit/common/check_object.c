@@ -30,12 +30,18 @@
  * This is the unit tests file for common/object.c
  */
 
+#include <global.h>
 #include <stdlib.h>
 #include <check.h>
+#include <loader.h>
+#include <toolkit_common.h>
 
 
 void setup(void) {
-    /* put any initialisation steps here, they will be run before each testcase */
+  cctk_setdatadir(SOURCE_ROOT "lib");
+  cctk_setlog(LOGDIR "/unit/common/object.out");
+  printf("set log to %s\n",LOGDIR "/unit/common/object.out");
+  cctk_init_std_archetypes();
 }
 
 void teardown(void)
@@ -113,7 +119,21 @@ void teardown(void)
  */
 START_TEST (test_can_merge)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  ob1=cctk_create_game_object(NULL);
+  ob2=cctk_create_game_object(NULL);
+  fail_unless(can_merge(ob1,ob2),"Should be able to merge 2 same object");
+  ob2->name=add_string("Not same name");
+  fail_unless(!can_merge(ob1,ob2),"Should not be able to merge 2 object with different names");
+  ob2=cctk_create_game_object(NULL);
+  ob2->type++;
+  fail_unless(!can_merge(ob1,ob2),"Should not be able to merge 2 object with different types");
+  ob2=cctk_create_game_object(NULL);
+  ob1->nrof=(1UL<<31)-1;
+  ob2->nrof=1;
+  fail_unless(!can_merge(ob1,ob2),"Should not be able to merge 2 object if result nrof goes to 1<<31 or higher");
+  /*TESTME*/
 }
 END_TEST
 
@@ -123,7 +143,27 @@ END_TEST
  */
 START_TEST (test_sum_weight)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  unsigned long sum;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  ob1->weight=10; /*This should not be taken into account by sum_weight*/
+  ob1->type=CONTAINER;
+  ob1->stats.Str=40; /*40% reduction of weight*/
+  ob2->weight=6;
+  ob2->nrof=10;
+  ob3->weight=7;
+  ob4->weight=8;
+  insert_ob_in_ob(ob2,ob1);
+  insert_ob_in_ob(ob3,ob1);
+  insert_ob_in_ob(ob4,ob1);
+  sum=sum_weight(ob1);
+  fail_unless(sum==45,"Sum of object's inventory should be 45 ((6*10+7+8)*.6) but was %lu.",sum);
 }
 END_TEST
 
@@ -133,7 +173,20 @@ END_TEST
  */
 START_TEST (test_object_get_env_recursive)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  object *result;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  insert_ob_in_ob(ob2,ob1);
+  insert_ob_in_ob(ob3,ob2);
+  insert_ob_in_ob(ob4,ob3);
+  result=object_get_env_recursive(ob4);
+  fail_unless(result==ob1,"Getting top level container for ob4(%p) should bring ob1(%p) but brought %p.",ob4,ob1,result);
 }
 END_TEST
 
@@ -143,7 +196,23 @@ END_TEST
  */
 START_TEST (test_is_player_inv)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  object *result;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  insert_ob_in_ob(ob2,ob1);
+  insert_ob_in_ob(ob3,ob2);
+  insert_ob_in_ob(ob4,ob3);
+  result=is_player_inv(ob4);
+  fail_unless(result==NULL,"Getting containing player for ob4(%p) should bring NULL but brought %p while not contained in a player.",ob4,result);
+  ob1->type=PLAYER;
+  result=is_player_inv(ob4);
+  fail_unless(result==ob1,"Getting containing player for ob4(%p) should bring ob1(%p) but brought %p while ob1 is player.",ob4,ob1,result);
 }
 END_TEST
 
@@ -153,7 +222,17 @@ END_TEST
  */
 START_TEST (test_dump_object)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  insert_ob_in_ob(ob2,ob1);
+  insert_ob_in_ob(ob3,ob2);
+  strcpy(errmsg,"----");
+  dump_object(ob1);
+  fail_unless(strstr(errmsg,"arch")!=NULL,"The object dump should contain 'arch' but was %s",errmsg);
 }
 END_TEST
 
@@ -163,7 +242,13 @@ END_TEST
  */
 START_TEST (test_dump_all_objects)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  dump_all_objects(); /*Should not crash, that all i can test*/ 
 }
 END_TEST
 
@@ -173,7 +258,13 @@ END_TEST
  */
 START_TEST (test_find_object)
 {
-    /*TESTME*/
+  object *ob1;
+  object *result;
+  ob1 = cctk_create_game_object(NULL);
+  ob1 = cctk_create_game_object(NULL);
+  ob1 = cctk_create_game_object(NULL);
+  result=find_object(ob1->count);
+  fail_unless(result==ob1,"Should find ob1(%p) while search for item %d but got %p",ob1,ob1->count,result);
 }
 END_TEST
 
@@ -183,7 +274,16 @@ END_TEST
  */
 START_TEST (test_find_object_name)
 {
-    /*TESTME*/
+  object *ob1;
+  object *result;
+  ob1 = cctk_create_game_object(NULL);
+  ob1->name=add_string("This is a name");
+  ob1 = cctk_create_game_object(NULL);
+  ob1->name=add_string("This is another name");
+  ob1 = cctk_create_game_object(NULL);
+  ob1->name=add_string("This is the key name");
+  result=find_object_name(add_string("This is the key name"));
+  fail_unless(result==ob1,"Searching for object with name 'This is the key name' returned %p(%s) instead of ob1(%p)",result,result?result->name:"null",ob1);
 }
 END_TEST
 
@@ -193,7 +293,7 @@ END_TEST
  */
 START_TEST (test_free_all_object_data)
 {
-    /*TESTME*/
+  /*TESTME*/
 }
 END_TEST
 
@@ -203,7 +303,12 @@ END_TEST
  */
 START_TEST (test_get_owner)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  set_owner(ob2,ob1);
+  fail_unless(get_owner(ob2)==ob1,"Owner of ob2(%p) shoud be ob1(%p) but was %p",ob2,ob1,get_owner(ob2));
 }
 END_TEST
 
@@ -213,7 +318,17 @@ END_TEST
  */
 START_TEST (test_clear_owner)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  int refcount;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  set_owner(ob2,ob1);
+  refcount = ob1->refcount;
+  fail_unless(ob2->owner!=NULL,"Prior to testing clear_owner, owner of ob2 was wrongly initialized");
+  clear_owner(ob2);
+  fail_unless(ob2->owner==NULL,"After clear_owner ob2 still had an owner");
+  fail_unless(ob1->refcount<refcount,"After clear_owner of ob2, ob1 refcont should be decreased. Before clear_ower:%d , after %d",refcount,ob1->refcount);
 }
 END_TEST
 
@@ -223,7 +338,14 @@ END_TEST
  */
 START_TEST (test_set_owner)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  int refcount;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  refcount = ob1->refcount;
+  set_owner(ob2,ob1);
+  fail_unless(ob2->owner==ob1,"After set_owner ob2(%p) owner should be ob1(%p) but was (%p)",ob2,ob1,ob2->owner);
 }
 END_TEST
 
@@ -233,7 +355,16 @@ END_TEST
  */
 START_TEST (test_copy_owner)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  set_owner(ob2,ob1);
+  copy_owner(ob3,ob2);
+  fail_unless(get_owner(ob2)==get_owner(ob3),"After copy_owner, ob3 and ob2 should have same owner (ob1=%p) but got %p and %p",
+              get_owner(ob3),get_owner(ob2));
 }
 END_TEST
 
@@ -243,7 +374,20 @@ END_TEST
  */
 START_TEST (test_reset_object)
 {
-    /*TESTME*/
+  object *ob1;
+  object *result;
+  ob1 = cctk_create_game_object(NULL);
+  reset_object(ob1);
+  fail_unless(ob1->name == NULL,"Field name of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->name_pl == NULL,"Field name_pl of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->title == NULL,"Field title of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->race == NULL,"Field race of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->slaying == NULL,"Field slaying of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->skill == NULL,"Field skill of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->msg == NULL,"Field msg of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->materialname == NULL,"Field materialname of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->lore == NULL,"Field lore of ob1 was not NULLified by reset_object");
+  fail_unless(ob1->current_weapon_script == NULL,"Field current_weapon_script of ob1 was not NULLified by reset_object");
 }
 END_TEST
 
@@ -253,7 +397,24 @@ END_TEST
  */
 START_TEST (test_clear_object)
 {
-    /*TESTME*/
+  object *ob1;
+  const char* reference;
+  ob1 = cctk_create_game_object(NULL);
+  cctk_set_object_strings(ob1,"This is a test String");
+  reference=add_string("This is a test String");
+  clear_object(ob1);
+  fail_unless(ob1->name == NULL,"Field name of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->name_pl == NULL,"Field name_pl of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->title == NULL,"Field title of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->race == NULL,"Field race of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->slaying == NULL,"Field slaying of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->skill == NULL,"Field skill of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->msg == NULL,"Field msg of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->materialname == NULL,"Field materialname of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->lore == NULL,"Field lore of ob1 was not cleaned by clear_object");
+  fail_unless(ob1->current_weapon_script == NULL,"Field current_weapon_script of ob1 was not cleaned by clear_object");
+  fail_unless(query_refcount(reference)==1,
+              "The number of references to string should drop back to 1 but was %d",query_refcount(reference));
 }
 END_TEST
 
@@ -263,17 +424,60 @@ END_TEST
  */
 START_TEST (test_copy_object)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  const char* reference;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  cctk_set_object_strings(ob1,"test String1");
+  cctk_set_object_strings(ob2,"test String2");
+  reference=add_string("test String2");
+  copy_object(ob1,ob2);
+  fail_unless(ob1->name==ob2->name,"Field name of ob1 should match ob2");
+  fail_unless(ob1->name_pl==ob2->name_pl,"Field name_pl of ob1 should match ob2");
+  fail_unless(ob1->title==ob2->title,"Field title of ob1 should match ob2");
+  fail_unless(ob1->race==ob2->race,"Field race of ob1 should match ob2");
+  fail_unless(ob1->slaying==ob2->slaying,"Field slaying of ob1 should match ob2");
+  fail_unless(ob1->skill==ob2->skill,"Field skill of ob1 should match ob2");
+  fail_unless(ob1->msg==ob2->msg,"Field msg of ob1 should match ob2");
+  fail_unless(ob1->materialname==ob2->materialname,"Field materialname of ob1 should match ob2");
+  fail_unless(ob1->lore==ob2->lore,"Field lore of ob1 should match ob2");
+  fail_unless(ob1->current_weapon_script==ob2->current_weapon_script,"Field current_weapon_script of ob1 should match ob2");
+  fail_unless(query_refcount(reference)==1, "refcount of marker string is not dropped to 1 after copy object, some string field were not cleaned. refcount: %d",query_refcount(reference));
 }
 END_TEST
 
 
-/** This is the test to check the behaviour of the method
+/**
+ *  This is the test to check the behaviour of the method
  *  object *get_object(void);
  */
 START_TEST (test_get_object)
 {
-    /*TESTME*/
+  object* ob;
+  long int i;
+  ob=get_object();
+  fail_unless(ob!=NULL,"Should get an object after calling get_object()");
+  fail_unless(ob->name==NULL,"Field name has not been nullified by get_object()");
+  fail_unless(ob->name_pl==NULL,"Field name_pl has not been nullified by get_object()");
+  fail_unless(ob->title==NULL,"Field title has not been nullified by get_object()");
+  fail_unless(ob->race==NULL,"Field race has not been nullified by get_object()");
+  fail_unless(ob->slaying==NULL,"Field slaying has not been nullified by get_object()");
+  fail_unless(ob->skill==NULL,"Field skill has not been nullified by get_object()");
+  fail_unless(ob->lore==NULL,"Field lore has not been nullified by get_object()");
+  fail_unless(ob->msg==NULL,"Field msg has not been nullified by get_object()");
+  fail_unless(ob->materialname==NULL,"Field materialname has not been nullified by get_object()");
+  fail_unless(ob->prev==NULL,"Field prev has not been nullified by get_object()");
+  fail_unless(ob->active_next==NULL,"Field active_next has not been nullified by get_object()");
+  fail_unless(ob->active_prev==NULL,"Field active_prev has not been nullified by get_object()");
+  /* did you really thing i'll go with only one object? */
+  /* let's go for about 2M allocations in a row, let's test roughness */
+  for(i=0;i<1U<<17;i++){
+    ob=get_object();
+    fail_unless(ob!=NULL,"Should get an object after calling get_object() (iteration %l)",i);
+    if (!(i&((1<<13)-1)))
+        LOG(llevDebug,"%ldk items created with get_object\n",i>>10);
+  }
 }
 END_TEST
 
@@ -730,12 +934,13 @@ START_TEST (test_item_matched_string)
 END_TEST
 
 
+
 Suite *object_suite(void)
 {
   Suite *s = suite_create("object");
   TCase *tc_core = tcase_create("Core");
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown); 
+  tcase_add_unchecked_fixture(tc_core,setup,teardown); 
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_can_merge);
@@ -807,10 +1012,11 @@ Suite *object_suite(void)
 int main(void)
 {
   int nf;
+  SRunner *sr;
   Suite *s = object_suite();
-  SRunner *sr = srunner_create(s);
+  sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/common/object.xml");
-  srunner_set_log(sr,LOGDIR "/unit/common/object.out");
+
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);
