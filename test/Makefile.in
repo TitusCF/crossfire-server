@@ -609,7 +609,7 @@ logreport: automenu
 template-copy: $(LOGDIR)
 	@echo copying template
 	@if test -d "$(top_srcdir)/test/templates/$(CHECK_FOLDER)"; then \
-	    cp $(top_srcdir)/test/templates/$(CHECK_FOLDER)/* $(LOGDIR)/;\
+	    cp $(top_srcdir)/test/templates/$(CHECK_FOLDER)/[^C]* $(LOGDIR)/;\
 	fi
 textlog:
 	@echo "processing logs to text..."

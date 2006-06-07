@@ -608,6 +608,7 @@ void check_login(object *op) {
 	 * Even the load code below will someday be replaced by spells being
 	 * objects.
 	 */
+     /*TODO remove block inside #if 0*/
 	} else if (!strcmp(buf,"known_spell")) {
 #if 0
 	    /* Logic is left here in case someone wants to try
@@ -630,6 +631,7 @@ void check_login(object *op) {
     leave_map(op);
     op->speed=0;
     update_ob_speed(op);
+    /*FIXME dangerous call, reset_object should be used to init freshly allocated obj struct!*/
     reset_object(op);
     op->contr = pl;
     pl->ob = op;

@@ -146,6 +146,7 @@ int can_merge(object *ob1, object *ob2) {
      * be animated or have a very low speed.  Is this an attempted monster
      * check?
      */
+    /*TODO is this check really needed?*/
     if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
 	return 0;
 
@@ -158,7 +159,8 @@ int can_merge(object *ob1, object *ob2) {
 
     /* This is really a spellbook check - really, we should
      * check all objects in the inventory.
-     */
+    */
+    /*TODO is this check really needed?*/
     if (ob1->inv || ob2->inv) {
 	/* if one object has inventory but the other doesn't, not equiv */
 	if ((ob1->inv && !ob2->inv) || (ob2->inv && !ob1->inv)) return 0;
@@ -177,6 +179,8 @@ int can_merge(object *ob1, object *ob2) {
      * are not equal - just if it has been identified, the been_applied
      * flags lose any meaning.
      */
+    
+    /*TODO is this hack on BEEN_APPLIED really needed? */
     if (QUERY_FLAG(ob1, FLAG_IDENTIFIED))
 	SET_FLAG(ob1, FLAG_BEEN_APPLIED);
 
@@ -234,6 +238,7 @@ int can_merge(object *ob1, object *ob2) {
         }
     }
 
+    /*TODO should this really be limited to scrolls?*/
     switch (ob1->type) {
 	case SCROLL:
 	    if (ob1->level != ob2->level) return 0;
@@ -253,18 +258,18 @@ int can_merge(object *ob1, object *ob2) {
  * an object is carrying.  It goes through in figures out how much
  * containers are carrying, and sums it up.
  */
+ /* TODO should check call this this are made a place where we really need reevaluaton of whole tree */
 signed long sum_weight(object *op) {
   signed long sum;
   object *inv;
   for(sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
     if (inv->inv)
-	sum_weight(inv);
+      sum_weight(inv);
     sum += inv->carrying + inv->weight * (inv->nrof ? inv->nrof : 1);
   }
   if (op->type == CONTAINER && op->stats.Str)
     sum = (sum * (100 - op->stats.Str))/100;
-  if(op->carrying != sum)
-    op->carrying = sum;
+  op->carrying = sum;
   return sum;
 }
 
@@ -283,11 +288,12 @@ object *object_get_env_recursive (object *op) {
  * a better check.  We basically keeping traversing up until we can't
  * or find a player.
  */
-
+/*TODO this function is badly named*/
 object *is_player_inv (object *op) { 
     for (;op!=NULL&&op->type!=PLAYER; op=op->env)
+      /*TODO this is patching the structure on the flight as side effect. Shoudln't be needed in clean code */
       if (op->env==op)
-	op->env = NULL;
+        op->env = NULL;
     return op;
 }
 
@@ -480,6 +486,9 @@ void free_all_object_data(void) {
  * anything - once an object is removed, it is basically dead anyways.
  */
 
+/* TODO a side effect of this function is to clean owner chain for not existing anymore owner.
+ * This is not the place to do such a cleaning
+ */
 object *get_owner(object *op) {
     if(op->owner==NULL)
 	return NULL;
@@ -487,7 +496,7 @@ object *get_owner(object *op) {
     if (!QUERY_FLAG(op->owner,FLAG_FREED) && !QUERY_FLAG(op->owner, FLAG_REMOVED) &&
 	op->owner->count==op->ownercount)
 	return op->owner;
-
+    LOG(llevError,"I had to clean an owner when in get_owner, this isn't my job.\n");
     op->owner=NULL;
     op->ownercount=0;
     return NULL;
@@ -528,7 +537,12 @@ void set_owner (object *op, object *owner)
     /* IF the owner still has an owner, we did not resolve to a final owner.
      * so lets not add to that.
      */
-    if (owner->owner) return;
+    if (owner->owner){
+      LOG(llevError,"owner id %d could not be resolved to a parent owner sin set_owner(). This is bad!"
+          "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d ",
+          owner,owner->owner,owner->ownercount, owner->owner->count);
+      return;
+    }
 
     op->owner=owner;
 
@@ -552,11 +566,12 @@ void copy_owner (object *op, object *clone)
 {
     object *owner = get_owner (clone);
     if (owner == NULL) {
-	/* players don't have owners - they own themselves.  Update
-	 * as appropriate.
-	 */
-	if (clone->type == PLAYER) owner=clone;
-	else return;
+    /* players don't have owners - they own themselves.  Update
+     * as appropriate.
+     */
+      /*TODO owner=self is dangerous and should be avoided*/
+      if (clone->type == PLAYER) owner=clone;
+      else return;
     }
     set_owner(op, owner);
 
@@ -615,6 +630,7 @@ void clear_object(object *op) {
     event *evt;
     event *evt2;
 
+    /*TODO this comment must be investigated*/
     /* redo this to be simpler/more efficient. Was also seeing
      * crashes in the old code.  Move this to the top - am
      * seeing periodic crashes in this code, and would like to have
@@ -707,13 +723,13 @@ void copy_object(object *op2, object *op) {
 
     /* Basically, same code as from clear_object() */
     for (evt = op->events; evt; evt=evt2) {
-	evt2 = evt->next;
+      evt2 = evt->next;
 
-	if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
-	if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
-	if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
+      if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
+      if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
+      if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
 
-	free(evt);
+      free(evt);
     }
     op->events = NULL;
 
