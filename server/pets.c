@@ -967,7 +967,7 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 		towner = 0;	
 	}
 	
-	/* if the pet has now owner, exit with error */
+	/* if the pet has no owner, exit with error */
 	if (rowner == NULL) {
 		LOG(llevError,"Pet has no owner.\n");
 		return 0;
