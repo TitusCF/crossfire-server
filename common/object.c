@@ -913,53 +913,53 @@ void update_turn_face(object *op) {
  */
 
 void update_ob_speed(object *op) {
-    extern int arch_init;
+  /* FIXME what the hell is this crappy hack?*/
+  extern int arch_init;
 
-    /* No reason putting the archetypes objects on the speed list,
-     * since they never really need to be updated.
-     */
+  /* No reason putting the archetypes objects on the speed list,
+   * since they never really need to be updated.
+   */
 
-    if (QUERY_FLAG(op, FLAG_FREED) && op->speed) {
-	LOG(llevError,"Object %s is freed but has speed.\n", op->name);
+  if (QUERY_FLAG(op, FLAG_FREED) && op->speed) {
+    LOG(llevError,"Object %s is freed but has speed.\n", op->name);
 #ifdef MANY_CORES
-	abort();
+    abort();
 #else
-	op->speed = 0;
+    op->speed = 0;
 #endif
-    }
-    if (arch_init) {
-	return;
-    }
-    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
-	/* If already on active list, don't do anything */
-	if (op->active_next || op->active_prev || op==active_objects)
-	    return;
+  }
+  if (arch_init) {
+    return;
+  }
+  if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
+    /* If already on active list, don't do anything */
+    /* TODO this check can probably be simplified a lot */
+    if (op->active_next || op->active_prev || op==active_objects)
+      return;
 
-        /* process_events() expects us to insert the object at the beginning
-         * of the list. */
-	op->active_next = active_objects;
-	if (op->active_next!=NULL)
-		op->active_next->active_prev = op;
-	active_objects = op;
-    }
-    else {
-	/* If not on the active list, nothing needs to be done */
-	if (!op->active_next && !op->active_prev && op!=active_objects)
-	    return;
+    /* process_events() expects us to insert the object at the beginning
+     * of the list. */
+    op->active_next = active_objects;
+    if (op->active_next!=NULL)
+      op->active_next->active_prev = op;
+    active_objects = op;
+  } else {
+    /* If not on the active list, nothing needs to be done */
+    if (!op->active_next && !op->active_prev && op!=active_objects)
+      return;
 
-	if (op->active_prev==NULL) {
-	    active_objects = op->active_next;
-	    if (op->active_next!=NULL)
-		op->active_next->active_prev = NULL;
-	}
-	else {
-	    op->active_prev->active_next = op->active_next;
-	    if (op->active_next)
-		op->active_next->active_prev = op->active_prev;
-	}
-	op->active_next = NULL;
-	op->active_prev = NULL;
+    if (op->active_prev==NULL) {
+      active_objects = op->active_next;
+      if (op->active_next!=NULL)
+        op->active_next->active_prev = NULL;
+    } else {
+      op->active_prev->active_next = op->active_next;
+      if (op->active_next)
+      op->active_next->active_prev = op->active_prev;
     }
+    op->active_next = NULL;
+    op->active_prev = NULL;
+  }
 }
 
 /**
@@ -973,22 +973,21 @@ void update_ob_speed(object *op) {
  */
 void remove_from_active_list(object *op)
 {
-    /* If not on the active list, nothing needs to be done */
-    if (!op->active_next && !op->active_prev && op!=active_objects)
-	return;
+  /* If not on the active list, nothing needs to be done */
+  if (!op->active_next && !op->active_prev && op!=active_objects)
+    return;
 
-    if (op->active_prev==NULL) {
-	active_objects = op->active_next;
-	if (op->active_next!=NULL)
-	    op->active_next->active_prev = NULL;
-    }
-    else {
-	op->active_prev->active_next = op->active_next;
-	if (op->active_next)
-	    op->active_next->active_prev = op->active_prev;
-    }
-    op->active_next = NULL;
-    op->active_prev = NULL;
+  if (op->active_prev==NULL) {
+    active_objects = op->active_next;
+  if (op->active_next!=NULL)
+    op->active_next->active_prev = NULL;
+  } else {
+    op->active_prev->active_next = op->active_next;
+    if (op->active_next)
+      op->active_next->active_prev = op->active_prev;
+  }
+  op->active_next = NULL;
+  op->active_prev = NULL;
 }
 
 /**
@@ -1012,11 +1011,13 @@ void remove_from_active_list(object *op)
  *  as that is easier than trying to look at what may have changed.
  * UP_OBJ_FACE: only the objects face has changed.
  */
-
+/* FIXME this function should be renames something like update_object_map, update_object is a too general term
+ * Also it might be worth moving it to map.c
+ */
 void update_object(object *op, int action) {
     int update_now=0, flags;
-    MoveType	move_on, move_off, move_block, move_slow;
-    
+    MoveType move_on, move_off, move_block, move_slow;
+
     if (op == NULL) {
         /* this should never happen */
         LOG(llevDebug,"update_object() called for NULL object.\n");
@@ -1109,118 +1110,116 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-    free_object2(ob, 0);
+  free_object2(ob, 0);
 }
 static void free_object2(object *ob, int free_inventory) {
-    object *tmp,*op;
+  object *tmp,*op;
 
-    if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
-	LOG(llevDebug,"Free object called with non removed object\n");
-	dump_object(ob);
+  if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
+    LOG(llevDebug,"Free object called with non removed object\n");
+    dump_object(ob);
 #ifdef MANY_CORES
-	abort();
+    abort();
 #endif
+  }
+  if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
+    LOG(llevMonster,"Warning: tried to free friendly object.\n");
+    remove_friendly_object(ob);
+  }
+  if(QUERY_FLAG(ob,FLAG_FREED)) {
+    dump_object(ob);
+    LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
+    return;
+  }
+  if(ob->more!=NULL) {
+    free_object2(ob->more, free_inventory);
+    ob->more=NULL;
+  }
+  if (ob->inv) {
+  /* Only if the space blocks everything do we not process -
+   * if some form of movemnt is allowed, let objects
+   * drop on that space.
+   */
+    if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
+        (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) 
+    {
+      op=ob->inv;
+      while(op!=NULL) {
+        tmp=op->below;
+        remove_ob(op);
+        free_object2(op, free_inventory);
+        op=tmp;
+      }
+    } else { /* Put objects in inventory onto this space */
+      op=ob->inv;
+      while(op!=NULL) {
+        tmp=op->below;
+        remove_ob(op);
+        if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
+           op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+          free_object(op);
+        else {
+          op->x=ob->x;
+          op->y=ob->y;
+          insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+        }
+      op=tmp;
+      }
     }
-    if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
-	LOG(llevMonster,"Warning: tried to free friendly object.\n");
-	remove_friendly_object(ob);
-    }
-    if(QUERY_FLAG(ob,FLAG_FREED)) {
-	dump_object(ob);
-	LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
-	return;
-    }
-    if(ob->more!=NULL) {
-	free_object2(ob->more, free_inventory);
-	ob->more=NULL;
-    }
-    if (ob->inv) {
-	/* Only if the space blocks everything do we not process -
-	 * if some form of movemnt is allowed, let objects
-	 * drop on that space.
-	 */
-	if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-	    (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) 
-	{
-	    op=ob->inv;
-	    while(op!=NULL) {
-		tmp=op->below;
-		remove_ob(op);
-		free_object2(op, free_inventory);
-		op=tmp;
-	    }
-	}
-	else {	/* Put objects in inventory onto this space */
-	    op=ob->inv;
-	    while(op!=NULL) {
-		tmp=op->below;
-		remove_ob(op);
-		if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-		   op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
-		free_object(op);
-		else {
-		    op->x=ob->x;
-		    op->y=ob->y;
-		    insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
-		}
-		op=tmp;
-	    }
-	}
-    }
-    /* Remove object from the active list */
-    ob->speed = 0;
-    update_ob_speed(ob);
+  }
+  /* Remove object from the active list */
+  ob->speed = 0;
+  update_ob_speed(ob);
 
-    SET_FLAG(ob, FLAG_FREED);
-    ob->count = 0;
+  SET_FLAG(ob, FLAG_FREED);
+  ob->count = 0;
 
-    /* Remove this object from the list of used objects */
-    if(ob->prev==NULL) {
-	objects=ob->next;
-	if(objects!=NULL)
-	    objects->prev=NULL;
-    }
-    else {
-	ob->prev->next=ob->next;
-	if(ob->next!=NULL)
-	    ob->next->prev=ob->prev;
-    }
-  
-    if(ob->name!=NULL)	    FREE_AND_CLEAR_STR(ob->name);
-    if(ob->name_pl!=NULL)   FREE_AND_CLEAR_STR(ob->name_pl);
-    if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
-    if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
-    if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
-    if(ob->skill!=NULL)	    FREE_AND_CLEAR_STR(ob->skill);
-    if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
-    if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
-    if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
+  /* Remove this object from the list of used objects */
+  if(ob->prev==NULL) {
+    objects=ob->next;
+    if(objects!=NULL)
+    objects->prev=NULL;
+  } else {
+    ob->prev->next=ob->next;
+    if(ob->next!=NULL)
+      ob->next->prev=ob->prev;
+  }
 
-    
-    /* Why aren't events freed? */
-    free_key_values(ob);
+  if(ob->name!=NULL)	    FREE_AND_CLEAR_STR(ob->name);
+  if(ob->name_pl!=NULL)   FREE_AND_CLEAR_STR(ob->name_pl);
+  if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
+  if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
+  if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
+  if(ob->skill!=NULL)	    FREE_AND_CLEAR_STR(ob->skill);
+  if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
+  if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
+  if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
+
+
+  /* Why aren't events freed? */
+  free_key_values(ob);
 
 #if 0 /* MEMORY_DEBUG*/
-    /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
-     * presumes the freed_object will stick around for at least a little
-     * bit
-     */ 
-    /* this is necessary so that memory debugging programs will
-     * be able to accurately report source of malloc.  If we recycle
-     * objects, then some other area may be doing the get_object
-     * and not freeing it, but the original one that malloc'd the
-     * object will get the blame.
-     */
-    free(ob);
+  /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
+   * presumes the freed_object will stick around for at least a little
+   * bit
+   */ 
+  /* this is necessary so that memory debugging programs will
+   * be able to accurately report source of malloc.  If we recycle
+   * objects, then some other area may be doing the get_object
+   * and not freeing it, but the original one that malloc'd the
+   * object will get the blame.
+   */
+  free(ob);
 #else
 
     /* Now link it with the free_objects list: */
-    ob->prev=NULL;
-    ob->next=free_objects;
-    if(free_objects!=NULL)
-	free_objects->prev=ob;
-    free_objects=ob;
-    nroffreeobjects++;
+  ob->prev=NULL;
+  ob->next=free_objects;
+  if(free_objects!=NULL)
+  free_objects->prev=ob;
+  free_objects=ob;
+  nroffreeobjects++;
 #endif
 }
 

@@ -51,23 +51,6 @@ void teardown(void)
 
 /*
  * Things to check
- * can_merge
- * sum_weight
- * object_get_env_recursive
- * is_player_inv
- * dump_object
- * dump_all_objects
- * find_object
- * find_object_name
- * free_all_object_data
- * get_owner
- * clear_owner
- * set_owner
- * copy_owner
- * reset_object
- * clear_object
- * copy_object
- * get_object
  * update_turn_face
  * update_ob_speed
  * remove_from_active_list
@@ -487,29 +470,83 @@ END_TEST
  */
 START_TEST (test_update_turn_face)
 {
-    /*TESTME*/
+  object *ob1;
+  New_Face *face1;
+  New_Face *face2;
+  const char* reference;
+  ob1 = cctk_create_game_object("xan");
+  ob1->direction=1;
+  update_turn_face(ob1);
+  face1=ob1->face;
+  ob1->direction=5;
+  update_turn_face(ob1);
+  face2=ob1->face;
+  fail_unless(face2!=face1,"2 opposite direction should provide different faces after update_turn_face");
+  
 }
 END_TEST
 
-
+#define IS_OBJECT_ACTIVE(op) (op->active_next || op->active_prev || op==active_objects)
 /** This is the test to check the behaviour of the method
  *  void update_ob_speed(object *op);
  */
 START_TEST (test_update_ob_speed)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  ob1->speed=MIN_ACTIVE_SPEED;
+  update_ob_speed(ob1);
+  fail_unless(!IS_OBJECT_ACTIVE(ob1),"Object with absolute speed <=MIN_ACTIVE_SPEED(%f) should not be made active (speed=%f)",MIN_ACTIVE_SPEED,ob1->speed);
+  ob1->speed=-MIN_ACTIVE_SPEED;
+  update_ob_speed(ob1);
+  fail_unless(!IS_OBJECT_ACTIVE(ob1),"Object with absolute speed <=MIN_ACTIVE_SPEED(%f) should not be made active (speed=%f)",MIN_ACTIVE_SPEED,ob1->speed);
+  ob1->speed=MIN_ACTIVE_SPEED*2;
+  update_ob_speed(ob1);
+  fail_unless(IS_OBJECT_ACTIVE(ob1),"Object with absolute speed >MIN_ACTIVE_SPEED(%f) should be made active (speed=%f)",MIN_ACTIVE_SPEED,ob1->speed);
+  ob2->speed=-MIN_ACTIVE_SPEED*2;
+  update_ob_speed(ob2);
+  fail_unless(IS_OBJECT_ACTIVE(ob2),"Object with absolute speed >MIN_ACTIVE_SPEED(%f) should be made active (speed=%f)",MIN_ACTIVE_SPEED,ob2->speed);
+  ob4->speed=ob3->speed=ob2->speed;
+  update_ob_speed(ob3);
+  update_ob_speed(ob4);
+  fail_unless(IS_OBJECT_ACTIVE(ob3),"Object with absolute speed >MIN_ACTIVE_SPEED(%f) should be made active (speed=%f)",MIN_ACTIVE_SPEED,ob3->speed);
+  fail_unless(IS_OBJECT_ACTIVE(ob4),"Object with absolute speed >MIN_ACTIVE_SPEED(%f) should be made active (speed=%f)",MIN_ACTIVE_SPEED,ob4->speed);
+  ob1->speed=0.0;
+  ob2->speed=0.0;
+  ob3->speed=0.0;
+  ob4->speed=0.0;
+  update_ob_speed(ob1);
+  update_ob_speed(ob2);
+  update_ob_speed(ob3);
+  update_ob_speed(ob4);
+  fail_unless(!IS_OBJECT_ACTIVE(ob1),"Object with absolute speed 0.0 should be inactivated",ob1->speed);
+  fail_unless(!IS_OBJECT_ACTIVE(ob2),"Object with absolute speed 0.0 should be inactivated",ob2->speed);
+  fail_unless(!IS_OBJECT_ACTIVE(ob3),"Object with absolute speed 0.0 should be inactivated",ob3->speed);
+  fail_unless(!IS_OBJECT_ACTIVE(ob4),"Object with absolute speed 0.0 should be inactivated",ob4->speed);
 }
 END_TEST
-
 
 /** This is the test to check the behaviour of the method
  *  void remove_from_active_list(object *op);
  */
 START_TEST (test_remove_from_active_list)
 {
-    /*TESTME*/
+  object *ob1;
+  ob1 = cctk_create_game_object(NULL);
+  ob1->speed=MIN_ACTIVE_SPEED*2;
+  update_ob_speed(ob1);
+  fail_unless(IS_OBJECT_ACTIVE(ob1),"Object with absolute speed >MIN_ACTIVE_SPEED(%f) should be made active (speed=%f)",MIN_ACTIVE_SPEED,ob1->speed);
+  remove_from_active_list(ob1);
+  fail_unless(!IS_OBJECT_ACTIVE(ob1),"After call to remove_from_active_list, object should be made inactive");
 }
 END_TEST
+#undef IS_OBJECT_ACTIVE
 
 
 /** This is the test to check the behaviour of the method
@@ -517,7 +554,7 @@ END_TEST
  */
 START_TEST (test_update_object)
 {
-    /*TESTME*/
+    /*TESTME (this one need a map loading, left for later*/
 }
 END_TEST
 
@@ -527,7 +564,14 @@ END_TEST
  */
 START_TEST (test_free_object)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  insert_ob_in_ob(ob2,ob1);
+  free_object(ob1);
+  fail_unless(QUERY_FLAG(ob1,FLAG_FREED),"Freeing ob1 should mark it freed");
+  fail_unless(QUERY_FLAG(ob2,FLAG_FREED),"Freeing ob1 should mark it's content freed");
 }
 END_TEST
 
@@ -537,7 +581,13 @@ END_TEST
  */
 START_TEST (test_count_free)
 {
-    /*TESTME*/
+  object *ob1;
+  int free1,free2;
+  ob1 = cctk_create_game_object(NULL);
+  free1 = count_free();
+  ob1 = cctk_create_game_object(NULL);
+  free2 = count_free();
+  fail_unless((free2==free1-1),"after creating an object, the count_free() should return one less (%d) but returned %d",free1-1,free2);
 }
 END_TEST
 
@@ -547,7 +597,13 @@ END_TEST
  */
 START_TEST (test_count_used)
 {
-    /*TESTME*/
+  object *ob1;
+  int used1,used2;
+  ob1 = cctk_create_game_object(NULL);
+  used1 = count_used();
+  ob1 = cctk_create_game_object(NULL);
+  used2 = count_used();
+  fail_unless((used2==used1+1),"after creating an object, the count_used() should return one more (%d) but returned %d",used1-1,used2);
 }
 END_TEST
 
@@ -557,7 +613,17 @@ END_TEST
  */
 START_TEST (test_count_active)
 {
-    /*TESTME*/
+  object *ob1;
+  int active1,active2;
+  ob1 = cctk_create_game_object(NULL);
+  ob1->speed=MIN_ACTIVE_SPEED*2;
+  update_ob_speed(ob1);
+  active1=count_active();
+  ob1 = cctk_create_game_object(NULL);
+  ob1->speed=MIN_ACTIVE_SPEED*2;
+  update_ob_speed(ob1);
+  active2=count_active();
+  fail_unless((active2==active1+1),"after activating an additional object, count_active should return one less %d but returned %d",active1-1,active2);
 }
 END_TEST
 
@@ -567,7 +633,31 @@ END_TEST
  */
 START_TEST (test_sub_weight)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  unsigned long sum;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  ob1->weight=10; /*This should not be taken into account by sum_weight*/
+  ob1->type=CONTAINER;
+  ob2->type=CONTAINER;
+  ob3->type=CONTAINER;
+  ob1->stats.Str=40; /*40% reduction of weight*/
+  ob2->weight=10;
+  ob3->weight=10;
+  ob4->weight=10;
+  insert_ob_in_ob(ob2,ob1);
+  insert_ob_in_ob(ob3,ob2);
+  insert_ob_in_ob(ob4,ob3);
+  sum=sum_weight(ob1);
+  fail_unless(sum==18,"Sum of object's inventory should be 18 (30*0.6+10) but was %lu.",sum);
+  sub_weight(ob4,10);
+  fail_unless(ob1->carrying==12,"after call to sub_weight, carrying of ob1 should be 22 but was %d",ob1->carrying);
+  
 }
 END_TEST
 
