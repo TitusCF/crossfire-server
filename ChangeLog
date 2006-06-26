@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Patch from schmorp - when dealing with traps, don't put them
+  underneath the player when a disarm failure happens, instead, update the
+  direction to hit the player - prevents a recursion problems causing
+  hundreds of objects.
+MSW 2006-06-25
+
 common/object.c: don't consider FLAG_INV_LOCKED for can_merge.
 Ryo 2006-06-24
 

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2003 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2003,2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -261,20 +261,16 @@ void spring_trap(object *trap,object *victim)
     if ((trap->inv && trap->inv->type == SPELL) ||
 	(trap->other_arch && trap->other_arch->clone.type == SPELL)) {
 	object *spell;
-	/* This is necessary if the trap is inside something else */
-	remove_ob(trap);
-	trap->x=victim->x;
-	trap->y=victim->y;
-	insert_ob_in_map(trap,victim->map,trap,0);
-	if (was_destroyed (trap, trap_tag))
-	    return;
+
+	if (trap->direction)
+	    rv.direction = trap->direction;
 
 	for(i = 0; i < MAX(1, trap->stats.maxhp); i++) {
 	    if (trap->inv)
-		cast_spell(trap,trap,trap->direction,trap->inv,NULL);
+		cast_spell(env,trap,rv.direction,trap->inv,NULL);
 	    else {
 		spell = arch_to_object(trap->other_arch);
-		cast_spell(trap,trap,trap->direction,spell,NULL);
+		cast_spell(env,trap,rv.direction,spell,NULL);
 		free_object(spell);
 	    }
 	}
