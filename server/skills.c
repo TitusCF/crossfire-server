@@ -997,6 +997,9 @@ int remove_trap (object *op, int dir, object *skill) {
 			if(trap_disarm(op,tmp2,1, skill) && (!tmp2->owner || tmp2->owner->type!=PLAYER)) {
 			    tmp->stats.exp = tmp->stats.Cha * tmp->level; 
 			    success += calc_skill_exp(op,tmp2, skill);
+			} else {
+			    /* Can't continue to disarm after failure */
+			    return success;
 			}
 		    }
 	    }
@@ -1005,6 +1008,9 @@ int remove_trap (object *op, int dir, object *skill) {
 		if (trap_disarm(op,tmp,1,skill) && (!tmp->owner || tmp->owner->type!=PLAYER)) {
 		    tmp->stats.exp = tmp->stats.Cha * tmp->level; 
 		    success += calc_skill_exp(op,tmp,skill);
+		} else {
+		    /* Can't continue to disarm after failure */
+		    return success;
 		}
 	    }
 	}

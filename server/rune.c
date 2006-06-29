@@ -262,15 +262,21 @@ void spring_trap(object *trap,object *victim)
 	(trap->other_arch && trap->other_arch->clone.type == SPELL)) {
 	object *spell;
 
-	if (trap->direction)
-	    rv.direction = trap->direction;
+	/* This is necessary if the trap is inside something else */
+	remove_ob(trap);
+	trap->x=victim->x;
+	trap->y=victim->y;
+	insert_ob_in_map(trap,victim->map,trap,0);
+
+	if (was_destroyed (trap, trap_tag))
+	    return;
 
 	for(i = 0; i < MAX(1, trap->stats.maxhp); i++) {
 	    if (trap->inv)
-		cast_spell(env,trap,rv.direction,trap->inv,NULL);
+		cast_spell(trap,trap,trap->direction,trap->inv,NULL);
 	    else {
 		spell = arch_to_object(trap->other_arch);
-		cast_spell(env,trap,rv.direction,spell,NULL);
+		cast_spell(trap,trap,trap->direction,spell,NULL);
 		free_object(spell);
 	    }
 	}

@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Undo last patch - breaks summoning runes.
+server/skills.c: Change disarm logic - after first failure, don't continue
+  to disarm traps (makes sense anyways - can really only disarm one thing
+  at a time) - this fixes the problem that last change to rune.c tried
+  to fix.
+MSW 2006-06-27
+
 server/rune.c: Patch from schmorp - when dealing with traps, don't put them
   underneath the player when a disarm failure happens, instead, update the
   direction to hit the player - prevents a recursion problems causing
