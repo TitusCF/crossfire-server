@@ -290,6 +290,7 @@ AC_DEFUN([CF_CHECK_CROSSEDIT],[
     ac_save_LIBS="$LIBS"
 
     LIBS="$1 $LIBS" 
+    CFLAGS="-Iinclude -Icrossedit/include"
     AC_MSG_CHECKING(for crossedit required headers)
     AC_TRY_LINK([
 #include <Posix.h>
@@ -306,6 +307,7 @@ AC_DEFUN([CF_CHECK_CROSSEDIT],[
 	AC_MSG_RESULT(no)
 	[$3])
     LIBS="$ac_save_LIBS"
+    CFLAGS=$OCFLAGS
 ])
 
 dnl CF_IS_XSLT_COMPLIANT(progpath,ACTION-IF-FOUND, ACTION_IF_NOT_FOUND)

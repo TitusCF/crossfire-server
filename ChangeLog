@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+acinclude.m4, aclocal.m4, configure, configure.ac:  Fix crossedit header
+  detection - even when passed --with-x to configure and having all the files,
+  it wouldn't find the headers because it didn't pass in the correct -I
+  options for where they sit.   Also, update for 1.9.1 release.
+MSW 2006-06-29
+
 server/rune.c: Undo last patch - breaks summoning runes.
 server/skills.c: Change disarm logic - after first failure, don't continue
   to disarm traps (makes sense anyways - can really only disarm one thing
