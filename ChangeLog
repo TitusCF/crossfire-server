@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+------------------------------------------------------------------------------
+Changes for 1.9.1:
+
 acinclude.m4, aclocal.m4, configure, configure.ac:  Fix crossedit header
   detection - even when passed --with-x to configure and having all the files,
   it wouldn't find the headers because it didn't pass in the correct -I
