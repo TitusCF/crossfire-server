@@ -175,9 +175,9 @@ END_TEST
 
 
 /** This is the test to check the behaviour of the method
- *  object *is_player_inv(object *op);
+ *  object *get_player_container(object *op);
  */
-START_TEST (test_is_player_inv)
+START_TEST (test_get_player_container)
 {
   object *ob1;
   object *ob2;
@@ -191,10 +191,10 @@ START_TEST (test_is_player_inv)
   insert_ob_in_ob(ob2,ob1);
   insert_ob_in_ob(ob3,ob2);
   insert_ob_in_ob(ob4,ob3);
-  result=is_player_inv(ob4);
+  result=get_player_container(ob4);
   fail_unless(result==NULL,"Getting containing player for ob4(%p) should bring NULL but brought %p while not contained in a player.",ob4,result);
   ob1->type=PLAYER;
-  result=is_player_inv(ob4);
+  result=get_player_container(ob4);
   fail_unless(result==ob1,"Getting containing player for ob4(%p) should bring ob1(%p) but brought %p while ob1 is player.",ob4,ob1,result);
 }
 END_TEST
@@ -291,6 +291,8 @@ START_TEST (test_get_owner)
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
   set_owner(ob2,ob1);
+  CLEAR_FLAG(ob1, FLAG_REMOVED);
+  CLEAR_FLAG(ob2, FLAG_REMOVED);
   fail_unless(get_owner(ob2)==ob1,"Owner of ob2(%p) shoud be ob1(%p) but was %p",ob2,ob1,get_owner(ob2));
 }
 END_TEST
@@ -667,7 +669,11 @@ END_TEST
  */
 START_TEST (test_remove_ob)
 {
-    /*TESTME*/
+  /*TESTME test those
+     ob with more
+     player inv
+     remove from map
+  */
 }
 END_TEST
 
@@ -677,7 +683,26 @@ END_TEST
  */
 START_TEST (test_merge_ob)
 {
-    /*TESTME*/
+  object *ob1;
+  object *ob2;
+  object *ob3;
+  object *ob4;
+  object *op;
+  ob1 = cctk_create_game_object(NULL);
+  ob2 = cctk_create_game_object(NULL);
+  ob3 = cctk_create_game_object(NULL);
+  ob4 = cctk_create_game_object(NULL);
+  op = cctk_create_game_object(NULL);
+  ob1->below=ob2;
+  ob2->below=ob3;
+  ob3->below=ob4;
+  ob2->above=ob1;
+  ob3->above=ob2;
+  ob4->above=ob3;
+  ob1->name=add_string("test");
+  ob2->name=add_string("test2");
+  ob3->name=add_string("test3");
+  
 }
 END_TEST
 
@@ -1036,7 +1061,7 @@ Suite *object_suite(void)
   tcase_add_test(tc_core, test_can_merge);
   tcase_add_test(tc_core, test_sum_weight);
   tcase_add_test(tc_core, test_object_get_env_recursive);
-  tcase_add_test(tc_core, test_is_player_inv);
+  tcase_add_test(tc_core, test_get_player_container);
   tcase_add_test(tc_core, test_dump_object);
   tcase_add_test(tc_core, test_dump_all_objects);
   tcase_add_test(tc_core, test_find_object);

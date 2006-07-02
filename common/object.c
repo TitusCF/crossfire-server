@@ -289,7 +289,7 @@ object *object_get_env_recursive (object *op) {
  * or find a player.
  */
 /*TODO this function is badly named*/
-object *is_player_inv (object *op) { 
+object *get_player_container(object *op) { 
     for (;op!=NULL&&op->type!=PLAYER; op=op->env)
       /*TODO this is patching the structure on the flight as side effect. Shoudln't be needed in clean code */
       if (op->env==op)
@@ -1282,179 +1282,165 @@ void sub_weight (object *op, signed long weight) {
  *   the previous environment.
  *   Beware: This function is called from the editor as well!
  */
-
+/* TODO this function is a piece of overbloated crap or at lest
+ * look like need cleanup it does to much different things.
+ */
 void remove_ob(object *op) {
-    object *tmp,*last=NULL;
-    object *otmp;
-    tag_t tag;
-    int check_walk_off;
-    mapstruct *m;
-    sint16 x,y;
-    
+  object *tmp,*last=NULL;
+  object *otmp;
+  tag_t tag;
+  int check_walk_off;
+  mapstruct *m;
+  sint16 x,y;
 
-    if(QUERY_FLAG(op,FLAG_REMOVED)) {
-	dump_object(op);
-	LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
+  if(QUERY_FLAG(op,FLAG_REMOVED)) {
+    dump_object(op);
+    LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
+    abort();
+  }
+  if(op->more!=NULL)
+    remove_ob(op->more);
 
-	/* Changed it to always dump core in this case.  As has been learned
-	 * in the past, trying to recover from errors almost always
-	 * make things worse, and this is a real error here - something
-	 * that should not happen.
-	 * Yes, if this was a mission critical app, trying to do something
-	 * to recover may make sense, but that is because failure of the app    
-	 * may have other disastrous problems.  Cf runs out of a script
-	 * so is easily enough restarted without any real problems.
-	 * MSW 2001-07-01
-	 */
-	abort();
-    }
-    if(op->more!=NULL)
-	remove_ob(op->more);
+  SET_FLAG(op, FLAG_REMOVED);
 
-    SET_FLAG(op, FLAG_REMOVED);
-
-    /* 
-     * In this case, the object to be removed is in someones
-     * inventory.
-     */
-    if(op->env!=NULL) {
-	if(op->nrof)
-	    sub_weight(op->env, op->weight*op->nrof);
-	else
-	    sub_weight(op->env, op->weight+op->carrying);
-
-	/* NO_FIX_PLAYER is set when a great many changes are being
-	 * made to players inventory.  If set, avoiding the call
-	 * to save cpu time.
-	 */
-	if ((otmp=is_player_inv(op->env))!=NULL && otmp->contr && 
-	    !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-	    fix_player(otmp);
-
-	if(op->above!=NULL)
-	    op->above->below=op->below;
-	else
-	    op->env->inv=op->below;
-
-	if(op->below!=NULL)
-	    op->below->above=op->above;
-
-	/* we set up values so that it could be inserted into
-	 * the map, but we don't actually do that - it is up
-	 * to the caller to decide what we want to do.
-	 */
-	op->x=op->env->x,op->y=op->env->y;
-	op->ox=op->x,op->oy=op->y;
-	op->map=op->env->map;
-	op->above=NULL,op->below=NULL;
-	op->env=NULL;
-	return;
-    }
-
-    /* If we get here, we are removing it from a map */
-    if (op->map == NULL) return;
-
-    x = op->x;
-    y = op->y;
-    m = get_map_from_coord(op->map, &x, &y);
-
-    if (!m) {
-	LOG(llevError,"remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n",
-	    op->map->path, op->x, op->y);
-	/* in old days, we used to set x and y to 0 and continue.
-	 * it seems if we get into this case, something is probablye
-	 * screwed up and should be fixed.
-	 */
-	abort();
-    }
-    if (op->map != m) {
-	LOG(llevDebug,"remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n",
-	    op->map->path, m->path, op->x, op->y, x, y);
-    }
-
-    /* Re did the following section of code - it looks like it had
-     * lots of logic for things we no longer care about
-     */
-
-    /* link the object above us */
-    if (op->above)
-	op->above->below=op->below;
+  /*
+   * In this case, the object to be removed is in someones
+   * inventory.
+   */
+  /* TODO try to call a generic inventory weight adjusting function like sub_weight */
+  if(op->env!=NULL) {
+    if(op->nrof)
+      sub_weight(op->env, op->weight*op->nrof);
     else
-	SET_MAP_TOP(m,x,y,op->below); /* we were top, set new top */
-    
-    /* Relink the object below us, if there is one */
-    if(op->below) {
-	op->below->above=op->above;
-    } else {
-	/* Nothing below, which means we need to relink map object for this space 
-	 * use translated coordinates in case some oddness with map tiling is
-	 * evident
-	 */
-	if(GET_MAP_OB(m,x,y)!=op) {
-	    dump_object(op);
-	    LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", errmsg);
-	    dump_object(GET_MAP_OB(m,x,y));
-	    LOG(llevError,"%s\n",errmsg);
-	}
-	SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
-    }
-    op->above=NULL;                      
+      sub_weight(op->env, op->weight+op->carrying);
+
+  /* NO_FIX_PLAYER is set when a great many changes are being
+   * made to players inventory.  If set, avoiding the call
+   * to save cpu time.
+   */
+    if ((otmp=get_player_container(op->env))!=NULL && otmp->contr && 
+        !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+        fix_player(otmp);
+
+    if(op->above!=NULL)
+        op->above->below=op->below;
+    else
+        op->env->inv=op->below;
+
+    if(op->below!=NULL)
+      op->below->above=op->above;
+
+    /* we set up values so that it could be inserted into
+     * the map, but we don't actually do that - it is up
+     * to the caller to decide what we want to do.
+     */
+    op->x=op->env->x;
+    op->y=op->env->y;
+    op->ox=op->x;
+    op->oy=op->y;
+    op->map=op->env->map;
+    op->above=NULL;
     op->below=NULL;
+    op->env=NULL;
+    return;
+  }
 
-    if (op->map->in_memory == MAP_SAVING)
-	return;
+  /* If we get here, we are removing it from a map */
+  if (op->map == NULL) return;
 
-    tag = op->count;
-    check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
-    for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above) {
-	/* No point updating the players look faces if he is the object
-	 * being removed.
-	 */
+  x = op->x;
+  y = op->y;
+  m = get_map_from_coord(op->map, &x, &y);
 
-	if(tmp->type==PLAYER && tmp!=op) {
-	    /* If a container that the player is currently using somehow gets
-	     * removed (most likely destroyed), update the player view
-	     * appropriately.
-	     */
-	    if (tmp->container==op) {
-		CLEAR_FLAG(op, FLAG_APPLIED);
-		tmp->container=NULL;
-	    }
-	    tmp->contr->socket.update_look=1;
-	}
-	/* See if player moving off should effect something */
-	if (check_walk_off && ((op->move_type & tmp->move_off) &&
-	      (op->move_type & ~tmp->move_off & ~tmp->move_block)==0)) {
+  if (!m) {
+    LOG(llevError,"remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n",
+        op->map->path, op->x, op->y);
+    abort();
+  }
+  if (op->map != m) {
+    LOG(llevError,"remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n",
+        op->map->path, m->path, op->x, op->y, x, y);
+  }
 
-	    move_apply(tmp, op, NULL);
-	    if (was_destroyed (op, tag)) {
-		LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
-		     "leaving object\n", tmp->name, tmp->arch->name);
-	    }
-	}
+  /* link the object above us */
+  if (op->above)
+    op->above->below=op->below;
+  else
+    SET_MAP_TOP(m,x,y,op->below); /* we were top, set new top */
 
-	/* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
-
-	if(tmp->above == tmp)
-	    tmp->above = NULL;
-	last=tmp;
+  /* Relink the object below us, if there is one */
+  if(op->below) {
+    op->below->above=op->above;
+  } else {
+  /* Nothing below, which means we need to relink map object for this space 
+   * use translated coordinates in case some oddness with map tiling is
+   * evident
+   */
+    /*TODO is this check really needed?*/
+    if(GET_MAP_OB(m,x,y)!=op) {
+      dump_object(op);
+      LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", errmsg);
+      dump_object(GET_MAP_OB(m,x,y));
+      LOG(llevError,"%s\n",errmsg);
     }
-    /* last == NULL of there are no objects on this space */
-    if (last==NULL) {
-	/* set P_NEED_UPDATE, otherwise update_position will complain.  In theory,
-	 * we could preserve the flags (GET_MAP_FLAGS), but update_position figures
-	 * those out anyways, and if there are any flags set right now, they won't
-	 * be correct anyways.
-	 */
-	SET_MAP_FLAGS(op->map, op->x, op->y,  P_NEED_UPDATE);
-	update_position(op->map, op->x, op->y);
+    SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
+  }
+  op->above=NULL;
+  op->below=NULL;
+
+  if (op->map->in_memory == MAP_SAVING)
+    return;
+
+  tag = op->count;
+  check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
+  for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above) {
+    /* No point updating the players look faces if he is the object
+     * being removed.
+     */
+
+    if(tmp->type==PLAYER && tmp!=op) {
+      /* If a container that the player is currently using somehow gets
+       * removed (most likely destroyed), update the player view
+       * appropriately.
+       */
+      if (tmp->container==op) {
+        CLEAR_FLAG(op, FLAG_APPLIED);
+        tmp->container=NULL;
+      }
+      tmp->contr->socket.update_look=1;
     }
-    else
-	update_object(last, UP_OBJ_REMOVE);
+    /* See if player moving off should effect something */
+    if (check_walk_off && ((op->move_type & tmp->move_off) &&
+          (op->move_type & ~tmp->move_off & ~tmp->move_block)==0)) {
 
-    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius != 0)) 
-	update_all_los(op->map, op->x, op->y);
+      move_apply(tmp, op, NULL);
+      if (was_destroyed (op, tag)) {
+        LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
+            "leaving object\n", tmp->name, tmp->arch->name);
+      }
+    }
 
+    /* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
+
+    if(tmp->above == tmp)
+        tmp->above = NULL;
+    last=tmp;
+  }
+  /* last == NULL or there are no objects on this space */
+  if (last==NULL) {
+    /* set P_NEED_UPDATE, otherwise update_position will complain.  In theory,
+     * we could preserve the flags (GET_MAP_FLAGS), but update_position figures
+     * those out anyways, and if there are any flags set right now, they won't
+     * be correct anyways.
+     */
+    SET_MAP_FLAGS(op->map, op->x, op->y,  P_NEED_UPDATE);
+    update_position(op->map, op->x, op->y);
+  }
+  else
+    update_object(last, UP_OBJ_REMOVE);
+
+  if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius != 0))
+    update_all_los(op->map, op->x, op->y);
 }
 
 /**
@@ -1475,7 +1461,6 @@ object *merge_ob(object *op, object *top) {
     if (can_merge(op,top))
     {
       top->nrof+=op->nrof;
-/*      CLEAR_FLAG(top,FLAG_STARTEQUIP);*/
       op->weight = 0; /* Don't want any adjustements now */
       remove_ob(op);
       free_object(op);
@@ -1860,7 +1845,7 @@ object *decrease_ob_nr (object *op, uint32 i)
 	/* is this object in the players inventory, or sub container
 	 * therein?
 	 */
-        tmp = is_player_inv (op->env);
+        tmp = get_player_container (op->env);
 	/* nope.  Is this a container the player has opened?
 	 * If so, set tmp to that player.
 	 * IMO, searching through all the players will mostly
@@ -1998,7 +1983,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   } else
     add_weight (where, (op->weight+op->carrying));
 
-  otmp=is_player_inv(where);
+  otmp=get_player_container(where);
   if (otmp&&otmp->contr!=NULL) {
     if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
       fix_player(otmp);

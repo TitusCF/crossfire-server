@@ -179,7 +179,7 @@ extern int on_same_map(const object *op1, const object *op2);
 extern int can_merge(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);
 extern object *object_get_env_recursive(object *op);
-extern object *is_player_inv(object *op);
+extern object *get_player_container(object *op);
 extern void dump_object(object *op);
 extern void dump_all_objects(void);
 extern object *find_object(tag_t i);

@@ -159,7 +159,7 @@ static void send_changed_object(object *op)
     player *pl;
 
     if (op->env != NULL) {
-        tmp = is_player_inv(op->env);
+        tmp = get_player_container(op->env);
         if (!tmp) {
             for (pl = first_player; pl; pl = pl->next)
                 if (pl->ob->container == op->env)
@@ -194,7 +194,7 @@ static void send_removed_object(object *op)
         return;
     }
 
-    tmp = is_player_inv(op->env);
+    tmp = get_player_container(op->env);
     if (!tmp) {
         for (pl = first_player; pl; pl = pl->next)
             if (pl->ob->container == op->env)
@@ -2050,7 +2050,7 @@ void* cfapi_object_set_property(int* type, ...)
                 player *pl;
                 op->nrof = iarg;
                 if (op->env != NULL) {
-                    tmp = is_player_inv(op->env);
+                    tmp = get_player_container(op->env);
                     if (!tmp) {
                         for (pl = first_player; pl; pl = pl->next)
                             if (pl->ob->container == op->env)
@@ -2186,7 +2186,7 @@ void* cfapi_object_set_property(int* type, ...)
                 player *pl;
                 op->weight = iarg;
                 if (op->env != NULL) {
-                    tmp = is_player_inv(op->env);
+                    tmp = get_player_container(op->env);
                     if (!tmp) {
                         for (pl = first_player; pl; pl = pl->next)
                             if (pl->ob->container == op->env)
@@ -2676,7 +2676,7 @@ void* cfapi_object_find(int* type, ...)
 
     case 3:
         op = va_arg(args, object*);
-        rv = is_player_inv(op);
+        rv = get_player_container(op);
         break;
 
     default:

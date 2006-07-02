@@ -1386,7 +1386,7 @@ void identify(object *op) {
     if (op->map)
 	update_object(op,UP_OBJ_FACE);
     else {
-	pl = is_player_inv(op->env);
+	pl = get_player_container(op->env);
 	if (pl)
 	    /* A lot of the values can change from an update - might as well send
 	     * it all.

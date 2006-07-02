@@ -3816,7 +3816,7 @@ static void apply_lighter(object *who, object *lighter) {
 	 * some sense.
 	 */
 	strcpy(item_name, item->name);
-	if (who == is_player_inv(item)) is_player_env=1;
+	if (who == get_player_container(item)) is_player_env=1;
 
 	save_throw_object(item,AT_FIRE,who);
 	/* Change to check count and not freed, since the object pointer

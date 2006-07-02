@@ -1796,7 +1796,7 @@ static void fire_misc_object(object *op, int dir)
 		    item->speed = 0;
 		    update_ob_speed(item);
 		}
-		if ((tmp=is_player_inv(item)))
+		if ((tmp=get_player_container(item)))
 		    esrv_update_item(UPD_ANIM, tmp, item);
 	    }
 	}

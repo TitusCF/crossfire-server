@@ -829,7 +829,7 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	 * client of the change.  Insert_ob_in_map takes care of the
 	 * updating the client, so we don't need to do that below.
 	 */
-	if ((pl=is_player_inv(env))!=NULL) {
+	if ((pl=get_player_container(env))!=NULL) {
 	    esrv_del_item(pl->contr, op->count);
 	    esrv_send_item(pl, tmp);
 	}
@@ -1237,7 +1237,7 @@ int process_object(object *op) {
 	    remove_force(op);
 	else {
 	    /* IF necessary, delete the item from the players inventory */
-	    object *pl=is_player_inv(op);
+	    object *pl=get_player_container(op);
 	    if (pl)
 		esrv_del_item(pl->contr, op->count);
 	    remove_ob(op);

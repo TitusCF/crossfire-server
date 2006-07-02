@@ -292,7 +292,7 @@ static void put_treasure (object *op, object *creator, int flags)
         op = insert_ob_in_ob (op, creator);
         if ((flags & GT_APPLY) && QUERY_FLAG (creator, FLAG_MONSTER))
             monster_check_apply(creator, op);
-        if ((flags & GT_UPDATE_INV) && (tmp = is_player_inv (creator)) != NULL)
+        if ((flags & GT_UPDATE_INV) && (tmp = get_player_container (creator)) != NULL)
             esrv_send_item(tmp, op);
     }
 }

@@ -542,7 +542,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
      * containers not allowed as of now)
      */
     if((pl->move_type & MOVE_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && 
-       is_player_inv(tmp)!=pl) {
+       get_player_container(tmp)!=pl) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "You are levitating, you can't reach the ground!");
 	return;
     }

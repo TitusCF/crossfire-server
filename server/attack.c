@@ -202,7 +202,7 @@ void save_throw_object (object *op, int type, object *originator)
                   fix_stopped_item (op, m, originator);
 	} else {
 	    if (op->env) {
-		object *tmp= is_player_inv(op->env);
+		object *tmp= get_player_container(op->env);
 
 		if (tmp) {
 		    esrv_del_item(tmp->contr, op->count);
