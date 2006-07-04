@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/region.c: wrong order for memset call.
+Ryo 2006-07-04
+
+common/object.c: revert my previous fix, it's actually a feature :)
+Ryo 2006-06-27
+
 ------------------------------------------------------------------------------
 Changes for 1.9.1:
 

@@ -255,7 +255,7 @@ region *get_region_struct(void) {
     if(new==NULL)
         fatal(OUT_OF_MEMORY);
 
-    memset(new, sizeof(region), '\0');
+    memset(new, '\0', sizeof(region));
   
     return new;
 }
