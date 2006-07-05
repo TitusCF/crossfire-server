@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/daemon.c: Patch by wart, tracker 1489902 - open a file like /dev/null
+   to then dup - this fixes -detach crash problem.  Might be better to use
+   some other file, but in theory, shouldn't be much going here, and I
+   don't think we can safely use a file that is already opened by the
+   server.
+MSW 2006-07-05
+
 common/region.c: wrong order for memset call.
 Ryo 2006-07-04
 

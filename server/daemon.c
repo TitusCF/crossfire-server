@@ -103,7 +103,7 @@ FILE *become_daemon (const char *filename)
     /*
      * Set up the standard file descriptors.
      */
-    (void) open ("/", O_RDONLY);	/* root inode already in core */
+    (void) open ("/dev/null", O_RDONLY);	/* root inode already in core */
     (void) dup2 (0, 1);
     (void) dup2 (0, 2);
 
