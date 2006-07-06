@@ -27118,6 +27118,7 @@ fi
     ac_save_LIBS="$LIBS"
 
     LIBS=""$X11LIBS" $LIBS"
+    OCFLAGS=$CFLAGS
     CFLAGS="-Iinclude -Icrossedit/include"
     echo "$as_me:$LINENO: checking for crossedit required headers" >&5
 echo $ECHO_N "checking for crossedit required headers... $ECHO_C" >&6

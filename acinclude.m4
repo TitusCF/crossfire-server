@@ -290,6 +290,7 @@ AC_DEFUN([CF_CHECK_CROSSEDIT],[
     ac_save_LIBS="$LIBS"
 
     LIBS="$1 $LIBS" 
+    OCFLAGS=$CFLAGS
     CFLAGS="-Iinclude -Icrossedit/include"
     AC_MSG_CHECKING(for crossedit required headers)
     AC_TRY_LINK([

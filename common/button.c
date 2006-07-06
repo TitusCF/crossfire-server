@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006,2002 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -401,8 +401,10 @@ int check_trigger (object *op, object *cause)
 		    if (op->stats.ac == push)
 			return 0;
 		    op->stats.ac = push;
-		    SET_ANIMATION (op, push);
-		    update_object (op, UP_OBJ_FACE);
+		    if (NUM_ANIMATIONS(op)>1) {
+			SET_ANIMATION (op, push);
+			update_object (op, UP_OBJ_FACE);
+		    }
 		    if (in_movement || ! push)
 			return 0;
 		}
@@ -426,8 +428,10 @@ int check_trigger (object *op, object *cause)
 		if (op->stats.ac == push)
 		    return 0;
 		op->stats.ac = push;
-		SET_ANIMATION (op, push);
-		update_object(op,UP_OBJ_FACE);
+		if (NUM_ANIMATIONS(op)>1) {
+		    SET_ANIMATION (op, push);
+		    update_object(op,UP_OBJ_FACE);
+		}
 		if (in_movement || ! push)
 		    return 0;
 	    }
@@ -439,8 +443,10 @@ int check_trigger (object *op, object *cause)
 		if (in_movement)
 		    return 0;
 		if (operate_altar (op, &cause)) {
-		    SET_ANIMATION (op, 1);
-		    update_object(op,UP_OBJ_FACE);
+		    if (NUM_ANIMATIONS(op)>1) {
+			SET_ANIMATION (op, 1);
+			update_object(op,UP_OBJ_FACE);
+		    }
 	    
 		    if (op->last_sp >= 0) {
 			trigger_move (op, 1);
@@ -461,8 +467,10 @@ int check_trigger (object *op, object *cause)
 		    return 0;
 		}
 	    } else {
-		SET_ANIMATION (op, 0);
-		update_object(op,UP_OBJ_FACE);
+		if (NUM_ANIMATIONS(op)>1) {
+		    SET_ANIMATION (op, 0);
+		    update_object(op,UP_OBJ_FACE);
+		}
 	  
 		/* If trigger_altar has "last_sp > 0" set on the map,
 		 * it will push the connected value only once per sacrifice.
@@ -486,8 +494,10 @@ int check_trigger (object *op, object *cause)
 		    return 0;
 		push = 1;
 	    }
-	    SET_ANIMATION (op, push);
-	    update_object(op,UP_OBJ_FACE);
+	    if (NUM_ANIMATIONS(op)>1) {
+		SET_ANIMATION (op, push);
+		update_object(op,UP_OBJ_FACE);
+	    }
 	    trigger_move (op, push);
 	    return 1;
 

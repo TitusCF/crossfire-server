@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/button.c: Fix for sourceforge bug common/button.c - harpsicord crashes
+   client.  The problem is that the trigger code presumed that the object
+   would be animated, and blindly set teh face to the second animation frame.
+   harpsicords are not animated, so this could amount to garbage.  So add
+   check for trigger objects to see if they are in fact animated before
+   blindly setting the face.
+MSW 2006-07-05
+
 server/daemon.c: Patch by wart, tracker 1489902 - open a file like /dev/null
    to then dup - this fixes -detach crash problem.  Might be better to use
    some other file, but in theory, shouldn't be much going here, and I
