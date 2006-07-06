@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+acinclude.m4, configure: Fix last fix which discarded any passed in
+   CFLAGS or if that is set in the environment.
+MSW 2006-07-05
+
 common/button.c: Fix for sourceforge bug common/button.c - harpsicord crashes
    client.  The problem is that the trigger code presumed that the object
    would be animated, and blindly set teh face to the second animation frame.
