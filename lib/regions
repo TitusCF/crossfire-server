@@ -153,11 +153,11 @@ msg
 Describe Lake Country
 endmsg
 end
-region portjoesph
+region portjoseph
 parent world
-longname Port Joesph
+longname Port Joseph
 msg 
-Describe Port Joesph
+Describe Port Joseph
 endmsg
 end
 region pupland

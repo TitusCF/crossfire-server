@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/regions: Fix typo in region "portjoseph". Bug #1518392 (Port Joseph
+   region spelling inconsistent with map directory) by Kevin R. Bulgrien.
+Andreas Kirschbaum 2006-07-07
+
 acinclude.m4, configure: Fix last fix which discarded any passed in
    CFLAGS or if that is set in the environment.
 MSW 2006-07-05
