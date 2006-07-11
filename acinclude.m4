@@ -298,7 +298,7 @@ AC_DEFUN([CF_CHECK_CROSSEDIT],[
 #include <Xaw.h>
 #include <Ansi.h>
 #include <config.h>
-#include <includes.h>
+/*include <includes.h>*/
 #include <debug.h>
 #include <assert.h>
 
