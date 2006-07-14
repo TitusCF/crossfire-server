@@ -901,11 +901,13 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 
     /* Check to see if the map the player is currently on is a per player unique
      * map.  This can be determined in that per player unique maps have the
-     * full pathname listed.
+     * full pathname listed. Ignore if settings.create_home_portals is true.
      */
-    if (!strncmp(op->map->path, settings.localdir, strlen(settings.localdir))) {
-	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You can't cast that here.\n");
-	return 0;
+    if (!settings.create_home_portals) {
+        if (!strncmp(op->map->path, settings.localdir, strlen(settings.localdir))) {
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You can't cast that here.\n");
+            return 0;
+        }
     }
 
     /* Check to see if the player is on a transport */

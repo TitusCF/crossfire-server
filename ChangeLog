@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c, include/global.h, common/init.c, server/init.c: Add 
+    setting "create_home_portals" which allows server admins to allow town
+    portals to be created in apartments. Based on a patch by pippijn in the
+    cf-ext project.
+lib/settings: Set default create_home_portals to FALSE
+Alex Schultz 2006-07-12
+
 lib/regions: Fix typo in region "portjoseph". Bug #1518392 (Port Joseph
    region spelling inconsistent with map directory) by Kevin R. Bulgrien.
 Andreas Kirschbaum 2006-07-07

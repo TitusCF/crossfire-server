@@ -96,6 +96,7 @@ ARMOR_WEIGHT_LINEAR,
 ARMOR_SPEED_IMPROVEMENT,
 ARMOR_SPEED_LINEAR,
 1, /* no_player_stealing */
+0, /* create_home_portals */
 };
 
 /** perhaps not the best place for this, but needs to be

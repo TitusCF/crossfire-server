@@ -701,6 +701,15 @@ static void load_settings(void)
 		LOG(llevError, "load_settings: unknown value for no_player_stealing: %s\n", cp);
         }
 
+    } else if ( !strcasecmp( buf, "create_home_portals" ) ) {
+	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+		settings.no_player_stealing = TRUE;
+	    } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+		settings.create_home_portals = FALSE;
+	    } else {
+		LOG(llevError, "load_settings: unknown value for create_home_portals: %s\n", cp);
+        }
+
     } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}

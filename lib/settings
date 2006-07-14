@@ -284,3 +284,8 @@ set_friendly_fire 5
 # disable stealing from other players, if you wish to enable stealing from other players
 # then replace the below with: no_player_stealing FALSE
 no_player_stealing       TRUE
+
+# disable creation of town portals inside of unique maps (apartments). To enable, replace
+# the below with: create_home_portals TRUE
+create_home_portals      FALSE
+
