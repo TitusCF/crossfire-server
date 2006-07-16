@@ -126,11 +126,18 @@ void metaserver_update(void)
 
     /* We could use socket_info.nconns, but that is not quite as accurate,
      * as connections in the progress of being established, are listening
-     * but don't have a player, etc.  This operation below should not be that
-     * costly.
+     * but don't have a player, etc.  The checks below are basically the
+     * same as for the who commands with the addition that WIZ, AFK, and BOT
+     * players are not counted.
      */
     for (pl=first_player; pl!=NULL; pl=pl->next) {
-        if (!pl->hidden && (pl->socket.is_bot == 0)) num_players++;
+        if (pl->ob->map == NULL) continue;
+        if (pl->hidden) continue;
+        if (QUERY_FLAG(pl->ob, FLAG_WIZ)) continue;
+        if (QUERY_FLAG(pl->ob, FLAG_AFK)) continue;
+        if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD) continue;
+        if (pl->socket.is_bot) continue;
+        num_players++;
     }
 
     sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 

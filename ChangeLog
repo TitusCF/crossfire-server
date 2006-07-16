@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix player count reporting to the metaserver. It now excludes connections with
+not-yet-logged-in players and AFK/WIZ/BOT players.
+---
+socket/metaserver.c: In metaserver_update() use the same conditions as for the
+   who command.
+Andreas Kirschbaum 2006-07-16
+
 server/spell_effect.c, include/global.h, common/init.c, server/init.c: Add 
     setting "create_home_portals" which allows server admins to allow town
     portals to be created in apartments. Based on a patch by pippijn in the
