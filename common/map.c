@@ -377,7 +377,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
 	    /* Broke apart a big nasty if into several here to make
 	     * this more readable.  first check - if the space blocks
 	     * movement, can't move here.
-	     * second - if a monster, can't move there, unles it is a 
+	     * second - if a monster, can't move there, unless it is a 
 	     * hidden dm
 	     */
 	    if (OB_MOVE_BLOCK(ob, tmp)) return 1;
