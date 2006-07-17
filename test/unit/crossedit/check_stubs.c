@@ -68,7 +68,6 @@ int main(void)
   Suite *s = stubs_suite();
   SRunner *sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/crossedit/stubs.xml");
-  srunner_set_out(sr,LOGDIR "/unit/crossedit/stubs.out");
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);
