@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_attack.c: Target the head of monsters diseases are cast at.
+Alex Schultz 2006-07-16
+
 Fix player count reporting to the metaserver. It now excludes connections with
 not-yet-logged-in players and AFK/WIZ/BOT players.
 ---

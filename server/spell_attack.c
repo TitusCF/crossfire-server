@@ -1833,7 +1833,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
 int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
     sint16  x,y;
     int	i,  mflags, range, dam_mod, dur_mod;
-    object  *walk;
+    object  *walk, *target_head;
     mapstruct *m;
 
     x = op->x;
@@ -1869,6 +1869,12 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 	    for(walk=get_map_ob(m,x,y);walk;walk=walk->above)
 		if (QUERY_FLAG(walk,FLAG_MONSTER) || (walk->type==PLAYER)) {  /* found a victim */
 		    object *disease = arch_to_object(spell->other_arch);
+                    
+                    /* Handle multitile monsters */
+                    if (walk->head)
+                        target_head = walk->head;
+                    else
+                        target_head = walk;
 
 		    set_owner(disease,op);
 		    set_spell_skill(op, caster, spell, disease);
@@ -1917,10 +1923,10 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 		    if(disease->stats.sp)
 			 disease->stats.sp -= dam_mod;
 		  
-		    if(infect_object(walk,disease,1)) {
+		    if(infect_object(target_head,disease,1)) {
 			 object *flash;  /* visual effect for inflicting disease */
 
-			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,walk->name);
+			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,target_head->name);
 
 			 free_object(disease); /* don't need this one anymore */
 			 flash=create_archetype(ARCH_DETECT_MAGIC);
