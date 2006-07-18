@@ -17,8 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+scommon/map.c: Add check to block_linked() to make sure things never block themself.
 server/spell_attack.c: Target the head of monsters diseases are cast at.
-Alex Schultz 2006-07-16
+Alex Schultz 2006-07-18
 
 Fix player count reporting to the metaserver. It now excludes connections with
 not-yet-logged-in players and AFK/WIZ/BOT players.

@@ -309,7 +309,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
  */
 
 int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
-    object *tmp;
+    object *tmp. *tmp_head;
     int mflags, blocked;
 
     /* Make sure the coordinates are valid - they should be, as caller should
@@ -351,9 +351,16 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
      * ob is blocking it, so return 0.
      */
     for(tmp = GET_MAP_OB(m,sx,sy); tmp!= NULL; tmp = tmp->above) {
-
-	/* This must be before the checks below.  Code for inventory checkers. */
-	if (tmp->type==CHECK_INV && OB_MOVE_BLOCK(ob, tmp)) {
+        /* Never block part of self. */
+        if (tmp->head)
+            tmp_head = tmp->head;
+        else
+            tmp_head = tmp;
+        if (tmp_head == ob) {
+            continue;
+	}
+        /* This must be before the checks below.  Code for inventory checkers. */
+	else if (tmp->type==CHECK_INV && OB_MOVE_BLOCK(ob, tmp)) {
 	    /* If last_sp is set, the player/monster needs an object,
 	     * so we check for it.  If they don't have it, they can't
 	     * pass through this space.
