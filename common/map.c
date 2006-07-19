@@ -309,7 +309,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
  */
 
 int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
-    object *tmp. *tmp_head;
+    object *tmp, *tmp_head;
     int mflags, blocked;
 
     /* Make sure the coordinates are valid - they should be, as caller should
