@@ -409,7 +409,8 @@ void become_follower (object *op, object *new_god) {
     treasure *tr;
     object *item, *skop, *next;
     int i,sk_applied;
-    
+    int undeadified = 0; /* Turns to true if changing god can changes the undead
+                          * status of the player.*/
     old_god = find_god(determine_god(op));
     
     /* take away any special god-characteristic items. */
@@ -476,11 +477,21 @@ void become_follower (object *op, object *new_god) {
 
     sk_applied=QUERY_FLAG(skop,FLAG_APPLIED); /* save skill status */
 
+    /* Clear the "undead" status. We also need to force a call to change_abil,
+     * so I set undeadified for that.
+     * - gros, 21th July 2006.
+     */
+    if ((old_god)&&(QUERY_FLAG(old_god,FLAG_UNDEAD)))
+    {
+        CLEAR_FLAG(skop,FLAG_UNDEAD);
+        undeadified=1;
+    }
+
     if(skop->title) { /* get rid of old god */ 
 	new_draw_info_format(NDI_UNIQUE,0,op,
 	       "%s's blessing is withdrawn from you.",skop->title);
 	/* The point of this is to really show what abilities the player just lost */
-	if (sk_applied) {
+	if (sk_applied||undeadified) {
 	    CLEAR_FLAG(skop,FLAG_APPLIED); 
 	    (void) change_abil(op,skop);
 	}
