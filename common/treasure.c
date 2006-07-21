@@ -762,271 +762,321 @@ void fix_generated_item (object *op, object *creator, int difficulty,
 {
     int was_magic = op->magic, num_enchantments=0, save_item_power;
 
-    if(!creator||creator->type==op->type) creator=op; /*safety & to prevent polymorphed
-							* objects giving attributes */ 
+    if(!creator||creator->type==op->type)
+        creator=op; /* safety & to prevent polymorphed objects giving
+                     * attributes
+                     */
 
     /* If we make an artifact, this information will be destroyed */
     save_item_power = op->item_power;
     op->item_power = 0;
 
-    if (op->randomitems && op->type != SPELL) {
-	create_treasure(op->randomitems, op,flags ,difficulty, 0);
-	if (!op->inv) LOG(llevDebug,"fix_generated_item: Unable to generate treasure for %s\n",
-			  op->name);
-	/* So the treasure doesn't get created again */
-	op->randomitems = NULL;
+    if (op->randomitems && op->type != SPELL)
+    {
+        create_treasure(op->randomitems, op,flags ,difficulty, 0);
+        if (!op->inv)
+            LOG(llevDebug,
+                "fix_generated_item: Unable to generate treasure for %s\n",
+                op->name);
+        /* So the treasure doesn't get created again */
+        op->randomitems = NULL;
     }
 
     if (difficulty<1) difficulty=1;
-    if (!(flags & GT_MINIMAL)) {
-	if (op->arch == crown_arch) {
-	    set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
-	    num_enchantments = calc_item_power(op, 1);
-	    generate_artifact(op,difficulty);
-	} else {
-	    if(!op->magic && max_magic)
-		set_magic(difficulty,op,max_magic, flags);
-	    num_enchantments = calc_item_power(op, 1);
-	    if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
-		difficulty >= 999 )
-	    generate_artifact(op, difficulty);
-	}
+    if (!(flags & GT_MINIMAL))
+    {
+        if (op->arch == crown_arch)
+        {
+            set_magic(difficulty>25?30:difficulty+5, op, max_magic, flags);
+            num_enchantments = calc_item_power(op, 1);
+            generate_artifact(op,difficulty);
+        }
+        else
+        {
+            if(!op->magic && max_magic)
+                set_magic(difficulty,op,max_magic, flags);
+            num_enchantments = calc_item_power(op, 1);
+            if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT))
+                || op->type == HORN || difficulty >= 999 )
+                generate_artifact(op, difficulty);
+        }
 
-	/* Object was made an artifact.  Calculate its item_power rating.
-	 * the item_power in the object is what the artfiact adds.
-	 */
-	if (op->title) {
-	    /* if save_item_power is set, then most likely we started with an
-	     * artifact and have added new abilities to it - this is rare, but
-	     * but I have seen things like 'strange rings of fire'.  So just figure
-	     * out the power from the base power plus what this one adds.  Note
-	     * that since item_power is not quite linear, this actually ends up
-	     * being somewhat of a bonus
-	     */
-	    if (save_item_power) {
-		op->item_power = save_item_power + get_power_from_ench(op->item_power);
-	    } else {
-		op->item_power = get_power_from_ench(op->item_power + num_enchantments);
-	    }
-	} else if (save_item_power) {
-	    /* restore the item_power field to the object if we haven't changed it.
-	     * we don't care about num_enchantments - that will basically just
-	     * have calculated some value from the base attributes of the archetype.
-	     */
-	    op->item_power = save_item_power;
-	}
+        /* Object was made an artifact.  Calculate its item_power rating.
+         * the item_power in the object is what the artfiact adds.
+         */
+        if (op->title)
+        {
+            /* if save_item_power is set, then most likely we started with an
+             * artifact and have added new abilities to it - this is rare, but
+             * but I have seen things like 'strange rings of fire'.  So just
+             * figure out the power from the base power plus what this one adds.
+             * Note that since item_power is not quite linear, this actually
+             * ends up being somewhat of a bonus.
+             */
+            if (save_item_power)
+                op->item_power = save_item_power +
+                    get_power_from_ench(op->item_power);
+            else
+                op->item_power = get_power_from_ench(op->item_power
+                    + num_enchantments);
+        }
+        else if (save_item_power)
+        {
+            /* restore the item_power field to the object if we haven't changed
+             * it. we don't care about num_enchantments - that will basically
+             * just have calculated some value from the base attributes of the
+             * archetype.
+             */
+            op->item_power = save_item_power;
+        }
+        else
+        {
+            /* item_power was zero. This is suspicious, as it may be because it
+             * was never previously calculated. Let's compute a value and see if
+             * it is non-zero. If it indeed is, then assign it as the new
+             * item_power value.
+             * - gros, 21th of July 2006.
+             */
+            op->item_power = calc_item_power(op,0);
+            save_item_power = op->item_power; /* Just in case it would get used
+                                               * again below */
+        }
     }
 
     /* materialtype modifications.  Note we allow this on artifacts. */
 
     set_materialname(op, difficulty, NULL);
 
-    if (flags & GT_MINIMAL) {
-	if (op->type == POTION)
-	    /* Handle healing and magic power potions */
-	    if (op->stats.sp && !op->randomitems) {
-		object *tmp;
-
-		tmp = create_archetype(spell_mapping[op->stats.sp]);
-		insert_ob_in_ob(tmp, op);
-		op->stats.sp=0;
-	    }
+    if (flags & GT_MINIMAL)
+    {
+        if (op->type == POTION)
+        /* Handle healing and magic power potions */
+            if (op->stats.sp && !op->randomitems)
+            {
+                object *tmp;
+                tmp = create_archetype(spell_mapping[op->stats.sp]);
+                insert_ob_in_ob(tmp, op);
+                op->stats.sp=0;
+            }
     }
     else if (!op->title) /* Only modify object if not special */
-	switch(op->type) {
-	    case WEAPON:
-	    case ARMOUR:
-	    case SHIELD:
-	    case HELMET:
-	    case CLOAK:
-		if (QUERY_FLAG(op, FLAG_CURSED) && !(RANDOM()%4))
-		    set_ring_bonus(op, -DICE2);
-		break;
+    {
+        switch(op->type) {
+            case WEAPON:
+            case ARMOUR:
+            case SHIELD:
+            case HELMET:
+            case CLOAK:
+                if (QUERY_FLAG(op, FLAG_CURSED) && !(RANDOM()%4))
+                    set_ring_bonus(op, -DICE2);
+                break;
 
-	    case BRACERS:
-		if (!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20))) {
-		    set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
-		    if (!QUERY_FLAG(op, FLAG_CURSED))
-			op->value*=3;
-		}
-		break;
+            case BRACERS:
+                if (!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20)))
+                {
+                    set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
+                    if (!QUERY_FLAG(op, FLAG_CURSED))
+                        op->value*=3;
+                }
+                break;
 
-	    case POTION: {
-		int too_many_tries=0,is_special=0;
+            case POTION:
+            {
+                int too_many_tries=0,is_special=0;
 
-		/* Handle healing and magic power potions */
-		if (op->stats.sp && !op->randomitems) {
-		    object *tmp;
+                /* Handle healing and magic power potions */
+                if (op->stats.sp && !op->randomitems)
+                {
+                    object *tmp;
+                    tmp = create_archetype(spell_mapping[op->stats.sp]);
+                    insert_ob_in_ob(tmp, op);
+                    op->stats.sp=0;
+                }
 
-		    tmp = create_archetype(spell_mapping[op->stats.sp]);
-		    insert_ob_in_ob(tmp, op);
-		    op->stats.sp=0;
-		}
+                while(!(is_special=special_potion(op)) && !op->inv)
+                {
+                    generate_artifact(op,difficulty);
+                    if(too_many_tries++ > 10) break;
+                }
+                /* don't want to change value for healing/magic power potions,
+                 * since the value set on those is already correct.
+                 */
+                if (op->inv && op->randomitems)
+                {
+                    /* value multiplier is same as for scrolls */
+                    op->value=(op->value*op->inv->value);
+                    op->level = op->inv->level/2+ RANDOM()%difficulty
+                        + RANDOM()%difficulty;
+                }
+                else
+                {
+                    FREE_AND_COPY(op->name, "potion");
+                    FREE_AND_COPY(op->name_pl, "potions");
+                }
+                if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
+                    SET_FLAG(op, FLAG_CURSED);
+                break;
+            }
+            case AMULET:
+                if(op->arch==amulet_arch)
+                    op->value*=5; /* Since it's not just decoration */
+            case RING:
+                if(op->arch==NULL)
+                {
+                    remove_ob(op);
+                    free_object(op);
+                    op=NULL;
+                    break;
+                }
+                if(op->arch!=ring_arch&&op->arch!=amulet_arch)
+                /* It's a special artifact!*/
+                    break;
 
-		while(!(is_special=special_potion(op)) && !op->inv) {
-		    generate_artifact(op,difficulty);
-		    if(too_many_tries++ > 10) break;
-		}
-		/* don't want to change value for healing/magic power potions,
-		 * since the value set on those is already correct.
-		 */
-		if (op->inv && op->randomitems) { 
-		    /* value multiplier is same as for scrolls */
-		    op->value=(op->value*op->inv->value);
-		    op->level = op->inv->level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-		} else {
-		    FREE_AND_COPY(op->name, "potion");
-		    FREE_AND_COPY(op->name_pl, "potions");
-		}
-		if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
-		    SET_FLAG(op, FLAG_CURSED);
-		break; 		
-	    }
+                if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
+                    SET_FLAG(op, FLAG_CURSED);
+                set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
+                if(op->type!=RING) /* Amulets have only one ability */
+                    break;
+                if(!(RANDOM()%4))
+                {
+                    int d=(RANDOM()%2 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
+                    if(d>0)
+                        op->value*=3;
+                    set_ring_bonus(op,d);
+                    if(!(RANDOM()%4))
+                    {
+                        int d=(RANDOM()%3 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
+                        if(d>0)
+                            op->value*=5;
+                        set_ring_bonus(op,d);
+                    }
+                }
+                if(GET_ANIM_ID(op))
+                    SET_ANIMATION(op, RANDOM()%((int) NUM_ANIMATIONS(op)));
+                break;
 
-	    case AMULET:
-		if(op->arch==amulet_arch)
-		    op->value*=5; /* Since it's not just decoration */
+            case BOOK:
+                /* Is it an empty book?, if yes lets make a special
+                 * msg for it, and tailor its properties based on the
+                 * creator and/or map level we found it on.
+                 */
+                if(!op->msg&&RANDOM()%10)
+                {
+                    /* set the book level properly */
+                    if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE))
+                    {
+                        if(op->map&&op->map->difficulty)
+                            op->level=RANDOM()%(op->map->difficulty)
+                                +RANDOM()%10+1;
+                        else
+                            op->level=RANDOM()%20+1;
+                    }
+                    else
+                        op->level=RANDOM()%creator->level;
 
-	    case RING:
-		if(op->arch==NULL) {
-		    remove_ob(op);
-		    free_object(op);
-		    op=NULL;
-		    break;
-		}
-		if(op->arch!=ring_arch&&op->arch!=amulet_arch) /* It's a special artifact!*/
-		    break;
+                    tailor_readable_ob(op,(creator&&creator->stats.sp)?
+                        creator->stats.sp:-1);
+                    /* books w/ info are worth more! */
+                    op->value*=((op->level>10?op->level:(op->level+1)/2)*
+                        ((strlen(op->msg)/250)+1));
+                    /* creator related stuff */
 
-		if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
-		    SET_FLAG(op, FLAG_CURSED);
-		set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2);
-		if(op->type!=RING) /* Amulets have only one ability */
-		    break;
-		if(!(RANDOM()%4)) {
-		    int d=(RANDOM()%2 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
-		    if(d>0)
-			op->value*=3;
-		    set_ring_bonus(op,d);
-		    if(!(RANDOM()%4)) {
-			int d=(RANDOM()%3 || QUERY_FLAG(op, FLAG_CURSED))?-DICE2:DICE2;
-			if(d>0)
-			    op->value*=5;
-			set_ring_bonus(op,d);
-		    }
-		}
-		if(GET_ANIM_ID(op))
-		    SET_ANIMATION(op, RANDOM()%((int) NUM_ANIMATIONS(op)));
-		break;
+                    /* for library, chained books.  Note that some monsters have
+                     * no_pick set - we don't want to set no pick in that case.
+                     */
+                    if(QUERY_FLAG(creator,FLAG_NO_PICK) &&
+                        !QUERY_FLAG(creator, FLAG_MONSTER))
+                        SET_FLAG(op,FLAG_NO_PICK);
+                    if(creator->slaying&&!op->slaying) /* for check_inv floors */
+                        op->slaying = add_string(creator->slaying);
 
-	    case BOOK:
-		/* Is it an empty book?, if yes lets make a special 
-		 * msg for it, and tailor its properties based on the 
-		 * creator and/or map level we found it on.
-		 */
-		if(!op->msg&&RANDOM()%10) { 
-		    /* set the book level properly */
-		    if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE)) {
-			if(op->map&&op->map->difficulty)
-			    op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
-			else
-			    op->level=RANDOM()%20+1;
-		    } else 
-			op->level=RANDOM()%creator->level;
+                    /* add exp so reading it gives xp (once)*/
+                    op->stats.exp = op->value>10000?op->value/5:op->value/10;
+                }
+                break;
 
-		    tailor_readable_ob(op,(creator&&creator->stats.sp)?creator->stats.sp:-1);
-		    /* books w/ info are worth more! */
-		    op->value*=((op->level>10?op->level:(op->level+1)/2)*((strlen(op->msg)/250)+1));
-		    /* creator related stuff */
+            case SPELLBOOK:
+                op->value=op->value* op->inv->value;
+                /* add exp so learning gives xp */
+                op->level = op->inv->level;
+                op->stats.exp = op->value;
+                break;
 
-		    /* for library, chained books.  Note that some monsters have no_pick
-		     * set - we don't want to set no pick in that case.
-		     */
-		    if(QUERY_FLAG(creator,FLAG_NO_PICK) &&
-		       !QUERY_FLAG(creator, FLAG_MONSTER))
-			SET_FLAG(op,FLAG_NO_PICK);
-		    if(creator->slaying&&!op->slaying) /* for check_inv floors */
-			op->slaying = add_string(creator->slaying);
+            case WAND:
+                /* nrof in the treasure list is number of charges,
+                 * not number of wands.  So copy that into food (charges),
+                 * and reset nrof.
+                 */
+                op->stats.food=op->inv->nrof;
+                op->nrof=1;
+                /* If the spell changes by level, choose a random level
+                 * for it, and adjust price.  If the spell doesn't
+                 * change by level, just set the wand to the level of
+                 * the spell, and value calculation is simpler.
+                 */
+                if (op->inv->duration_modifier || op->inv->dam_modifier ||
+                    op->inv->range_modifier)
+                {
+                    op->level = level_for_item(op, difficulty, 0);
+                    op->value= op->value* op->inv->value * (op->level +50)/
+                        (op->inv->level + 50);
+                }
+                else
+                {
+                    op->level = op->inv->level;
+                    op->value = op->value * op->inv->value;
+                }
+                break;
 
-		    /* add exp so reading it gives xp (once)*/
-		    op->stats.exp = op->value>10000?op->value/5:op->value/10;
-		}
-		break;
+            case ROD:
+                op->level = level_for_item(op, difficulty, 0);
+                /* Add 50 to both level an divisor to keep prices a little
+                 * more reasonable.  Otherwise, a high level version of a
+                 * low level spell can be worth tons a money (eg, level 20
+                 * rod, level 2 spell = 10 time multiplier).  This way, the
+                 * value are a bit more reasonable.
+                 */
+                op->value= op->value * op->inv->value * (op->level +50) /
+                    (op->inv->level + 50);
+                /* maxhp is used to denote how many 'charges' the rod holds
+                 * before */
+                if (op->stats.maxhp)
+                    op->stats.maxhp *= MAX(op->inv->stats.sp, op->inv->stats.grace);
+                else
+                    op->stats.maxhp = 2 * MAX(op->inv->stats.sp, op->inv->stats.grace);
 
-	    case SPELLBOOK:
-		op->value=op->value* op->inv->value;
-		/* add exp so learning gives xp */
-		op->level = op->inv->level;
-		op->stats.exp = op->value;
-		break;
+                op->stats.hp = op->stats.maxhp;
+                break;
 
-	    case WAND:
-		/* nrof in the treasure list is number of charges,
-		 * not number of wands.  So copy that into food (charges),
-		 * and reset nrof.
-		 */
-		op->stats.food=op->inv->nrof;
-		op->nrof=1;
-		/* If the spell changes by level, choose a random level
-		 * for it, and adjust price.  If the spell doesn't
-		 * change by level, just set the wand to the level of
-		 * the spell, and value calculation is simpler.
-		 */
-		if (op->inv->duration_modifier || op->inv->dam_modifier ||
-		  op->inv->range_modifier) {
-		    op->level = level_for_item(op, difficulty, 0);
-		    op->value= op->value* op->inv->value * (op->level +50)/ 
-			(op->inv->level + 50);
-		}
-		else {
-		    op->level = op->inv->level;
-		    op->value = op->value * op->inv->value;
-		}
-		break;
+            case SCROLL:
+                op->level = level_for_item(op, difficulty, 0);
+                op->value= op->value * op->inv->value * (op->level +50) /
+                    (op->inv->level + 50);
+                /* add exp so reading them properly gives xp */
+                op->stats.exp = op->value/5;
+                op->nrof = op->inv->nrof;
+                break;
 
-	    case ROD:
-		op->level = level_for_item(op, difficulty, 0);
-		/* Add 50 to both level an divisor to keep prices a little more
-		 * reasonable.  Otherwise, a high level version of a low level
-		 * spell can be worth tons a money (eg, level 20 rod, level 2 spell =
-		 * 10 time multiplier).  This way, the value are a bit more reasonable.
-		 */
-		op->value= op->value * op->inv->value * (op->level +50) / (op->inv->level + 50);
-		/* maxhp is used to denote how many 'charges' the rod holds before */
-		if (op->stats.maxhp)
-		    op->stats.maxhp *= MAX(op->inv->stats.sp, op->inv->stats.grace);
-		else
-		    op->stats.maxhp = 2 * MAX(op->inv->stats.sp, op->inv->stats.grace);
+            case RUNE:
+                trap_adjust(op,difficulty);
+                break;
 
-		op->stats.hp = op->stats.maxhp;
-		break;
-
-	    case SCROLL:
-		op->level = level_for_item(op, difficulty, 0);
-		op->value= op->value * op->inv->value * (op->level +50) / (op->inv->level + 50);
-		/* add exp so reading them properly gives xp */ 
-		op->stats.exp = op->value/5;
-		op->nrof = op->inv->nrof;
-		break;
-
-	    case RUNE:
-		trap_adjust(op,difficulty);
-		break;
-		
-		case TRAP:
-		trap_adjust(op,difficulty);
-		break;
-	} /* switch type */
-
-    if (flags & GT_STARTEQUIP) {
-	if (op->nrof < 2 && op->type != CONTAINER
-	    && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
-	    SET_FLAG (op, FLAG_STARTEQUIP);
-	else if (op->type != MONEY)
-	    op->value = 0;
+            case TRAP:
+                trap_adjust(op,difficulty);
+                break;
+        } /* switch type */
+    }
+    if (flags & GT_STARTEQUIP)
+    {
+        if (op->nrof < 2 && op->type != CONTAINER
+            && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
+            SET_FLAG (op, FLAG_STARTEQUIP);
+        else if (op->type != MONEY)
+            op->value = 0;
     }
 
     if ( ! (flags & GT_ENVIRONMENT))
-	fix_flesh_item (op, creator);
+        fix_flesh_item (op, creator);
 }
 
 /*
