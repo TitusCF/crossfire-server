@@ -784,9 +784,16 @@ static object *find_best_player_hth_skill(object *op)
     object *tmp, *best_skill=NULL;
     int	dragon = is_dragon_pl(op), last_skill=sizeof(unarmed_skills), i;
 
+    /* Dragons are a special case - gros 25th July 2006 */
+    if (dragon)
+    {
+        tmp = find_skill_by_number(op, SK_CLAWING);
+        if (tmp) /* I suppose it should always be true - but maybe there's
+                  * draconic toothache ? :) */
+            return tmp;
+    }
     for (tmp=op->inv; tmp; tmp=tmp->below) {
 	if (tmp->type == SKILL) {
-	    if (dragon && tmp->subtype == SK_CLAWING) return tmp;
 
 	    /* The order in the array is preferred order.  So basically,
 	     * we just cut down the number to search - eg, if we find a skill
