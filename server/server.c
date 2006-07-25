@@ -1010,87 +1010,98 @@ static void process_events (mapstruct *map)
     marker.active_next = active_objects;
 
     if (marker.active_next)
-	marker.active_next->active_prev = &marker;
+        marker.active_next->active_prev = &marker;
     marker.active_prev = NULL;
     active_objects = &marker;
- 
-    while (marker.active_next) {
-	op = marker.active_next;
-	tag = op->count;
 
-	/* Move marker forward - swap op and marker */
-	op->active_prev = marker.active_prev;
+    while (marker.active_next)
+    {
+        op = marker.active_next;
+        tag = op->count;
 
-	if (op->active_prev)
-	    op->active_prev->active_next = op;
-	else
-	    active_objects = op;
+        /* Move marker forward - swap op and marker */
+        op->active_prev = marker.active_prev;
 
-	marker.active_next = op->active_next;
+        if (op->active_prev)
+            op->active_prev->active_next = op;
+        else
+            active_objects = op;
 
-	if (marker.active_next)
-	    marker.active_next->active_prev = &marker;
-	marker.active_prev = op;
-	op->active_next = &marker;
+        marker.active_next = op->active_next;
 
-	/* Now process op */
-	if (QUERY_FLAG (op, FLAG_FREED)) {
-	    LOG (llevError, "BUG: process_events(): Free object on list\n");
-	    op->speed = 0;
-	    update_ob_speed (op);
-	    continue;
-	}
+        if (marker.active_next)
+            marker.active_next->active_prev = &marker;
+        marker.active_prev = op;
+        op->active_next = &marker;
 
-	/* I've seen occasional crashes due to this - the object is removed,
-	 * and thus the map it points to (last map it was on) may be bogus
-	 * The real bug is to try to find out the cause of this - someone
-	 * is probably calling remove_ob without either an insert_ob or
-	 * free_object afterwards, leaving an object dangling.  But I'd
-	 * rather log this and continue on instead of crashing.
-	 * Don't remove players - when a player quits, the object is in
+        /* Now process op */
+        if (QUERY_FLAG (op, FLAG_FREED))
+        {
+            LOG (llevError, "BUG: process_events(): Free object on list\n");
+            op->speed = 0;
+            update_ob_speed (op);
+            continue;
+        }
+
+        /* I've seen occasional crashes due to this - the object is removed,
+         * and thus the map it points to (last map it was on) may be bogus
+         * The real bug is to try to find out the cause of this - someone
+         * is probably calling remove_ob without either an insert_ob or
+         * free_object afterwards, leaving an object dangling.  But I'd
+         * rather log this and continue on instead of crashing.
+         * Don't remove players - when a player quits, the object is in
          * sort of a limbo, of removed, but something we want to keep
-	 * around.
-	 */
-	if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER && 
-	    op->map && op->map->in_memory != MAP_IN_MEMORY) {
-	    LOG (llevError, "BUG: process_events(): Removed object on list\n");
-	    dump_object(op);
-	    LOG(llevError, errmsg);
-	    free_object(op);
-	    continue;
+         * around.
+         */
+        if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER &&
+            op->map && op->map->in_memory != MAP_IN_MEMORY)
+        {
+            LOG (llevError, "BUG: process_events(): Removed object on list\n");
+            dump_object(op);
+            LOG(llevError, errmsg);
+            free_object(op);
+            continue;
+        }
+
+        if ( ! op->speed)
+        {
+            LOG (llevError, "BUG: process_events(): Object %s has no speed, "
+                "but is on active list\n", op->arch->name);
+            update_ob_speed (op);
+            continue;
+        }
+
+        if (op->map == NULL && op->env == NULL && op->name &&
+            op->type != MAP && map == NULL)
+        {
+            LOG (llevError, "BUG: process_events(): Object without map or "
+                "inventory is on active list: %s (%d)\n", op->name, op->count);
+            op->speed = 0;
+            update_ob_speed (op);
+            continue;
 	}
 
-	if ( ! op->speed) {
-	    LOG (llevError, "BUG: process_events(): Object %s has no speed, "
-		 "but is on active list\n", op->arch->name);
-	    update_ob_speed (op);
-	    continue;
-	}
+        if (map != NULL && op->map != map)
+            continue;
 
-	if (op->map == NULL && op->env == NULL && op->name &&
-	    op->type != MAP && map == NULL) {
-	    LOG (llevError, "BUG: process_events(): Object without map or "
-		 "inventory is on active list: %s (%d)\n",
-		 op->name, op->count);
-	    op->speed = 0;
-	    update_ob_speed (op);
-	    continue;
-	}
+        /* Animate the object.  Bug of feature that andim_speed
+         * is based on ticks, and not the creatures speed?
+         */
+        if (op->anim_speed && op->last_anim >= op->anim_speed)
+        {
+            if ((op->type==PLAYER)||(op->type==MONSTER))
+                animate_object(op, op->facing);
+            else
+                animate_object (op, op->direction);
+            op->last_anim = 1;
+        }
+        else
+        {
+            op->last_anim++;
+        }
 
-	if (map != NULL && op->map != map)
-	    continue;
-
-	/* Animate the object.  Bug of feature that andim_speed
-	 * is based on ticks, and not the creatures speed?
-	 */
-	if (op->anim_speed && op->last_anim >= op->anim_speed) {
-	    animate_object (op, op->direction);
-	    op->last_anim = 1;
-	} else {
-	    op->last_anim++;
-	}
-
-	if (op->speed_left > 0) {
+        if (op->speed_left > 0)
+        {
 #if 0
 	    /* I've seen occasional crashes in move_symptom() with it
 	     * crashing because op is removed - add some debugging to
@@ -1105,22 +1116,22 @@ static void process_events (mapstruct *map)
 		    op->name?op->name:"null");
 	    }
 #endif
-	    --op->speed_left;
-	    process_object (op);
-	    if (was_destroyed (op, tag))
-		continue;
-	}
-	if (settings.casting_time == TRUE && op->casting_time > 0)
-	    op->casting_time--;
-	if (op->speed_left <= 0)
-	    op->speed_left += FABS (op->speed);
+            --op->speed_left;
+            process_object (op);
+            if (was_destroyed (op, tag))
+                continue;
+        }
+        if (settings.casting_time == TRUE && op->casting_time > 0)
+            op->casting_time--;
+        if (op->speed_left <= 0)
+            op->speed_left += FABS (op->speed);
     }
 
     /* Remove marker object from active list */
     if (marker.active_prev != NULL)
-	marker.active_prev->active_next = NULL;
+        marker.active_prev->active_next = NULL;
     else
-	active_objects = NULL;
+        active_objects = NULL;
 
     process_players2 (map);
 }
