@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: call update_ob_speed if removed object is animated.
+Ryo 2006-07-25
+
 server/server.c: Select op->facing instead of op->direction in process_events
     for players and monsters as the direction reference for the face to display.
     Fix for bug #1528182. (*few* ! that's a lot of bugs ! :))

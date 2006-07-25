@@ -1058,6 +1058,10 @@ int command_remove (object *op, char *params) {
     /* Always work on the head - otherwise object will get in odd state */
     if (tmp->head)
         tmp = tmp->head;
+    if (tmp->speed != 0) {
+        tmp->speed = 0;
+        update_ob_speed(tmp);
+    }
     remove_ob(tmp);
     return 1;
 }
