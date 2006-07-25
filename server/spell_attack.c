@@ -1659,7 +1659,7 @@ void move_swarm_spell(object *op)
     object *owner;
 
     owner = get_owner(op);
-    if(op->duration == 0 || owner == NULL) {
+    if(op->duration == 0 || owner == NULL || owner->x != op->x || owner->y != op->y) {
 	remove_ob(op);
 	free_object(op);
 	return;

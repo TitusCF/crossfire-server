@@ -520,7 +520,9 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
 	return 0;
 
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, x, y))) {
-	new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
+        if ( caster->type == PLAYER )
+            /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
+            new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
 	free_object(tmp);
 	return 0;
     }

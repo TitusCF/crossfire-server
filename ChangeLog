@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 server/c_wiz.c: call update_ob_speed if removed object is animated.
+server/spell_attack.c: stop generating swarm/bullet if player moved. This
+ fixes bug #1528194.
+server/spell_util.c: don't report blocking if caster is not player. It then
+ is a swarm spell or equivalent, so position is random, no need to warn.
 Ryo 2006-07-25
 
 server/server.c: Select op->facing instead of op->direction in process_events
@@ -30,7 +34,7 @@ server/c_wiz.c: Prevents the use of reset on self-map while in a transport.
     Work-around for bug #1528172.
 server/skill_util.c: Make dragons prefer clawing over anything else as unarmed
     combat technique. Fix for bug #1528197
-Yann Chachkoff 2006-07-21
+Yann Chachkoff 2006-07-25
 
 common/treasure.c: Added explicit item_power calculation for generated items that
     got an item_power of 0 - should solve bug #1460354.
