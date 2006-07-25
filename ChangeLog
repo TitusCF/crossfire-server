@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: Prevents the use of reset on self-map while in a transport.
+    Work-around for bug #1528172.
+server/skill_util.c: Make dragons prefer clawing over anything else as unarmed
+    combat technique. Fix for bug #1528197
+Yann Chachkoff 2006-07-21
+
 common/treasure.c: Added explicit item_power calculation for generated items that
     got an item_power of 0 - should solve bug #1460354.
 Yann Chachkoff 2006-07-21

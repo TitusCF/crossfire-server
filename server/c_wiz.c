@@ -1264,6 +1264,15 @@ int command_reset (object *op, char *params) {
         return 1;
     }
 
+    /* Forbid using reset on our own map when we're in a transport, as
+     * it has the displeasant effect of crashing the server.
+     * - gros, July 25th 2006 */
+    if ((op->contr && op->contr->transport)&&(op->map == m))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You need to disembark first.");
+        return 1;
+    }
+
     if (m->in_memory != MAP_SWAPPED) {
         if (m->in_memory != MAP_IN_MEMORY) {
             LOG(llevError, "Tried to swap out map which was not in memory.\n");
