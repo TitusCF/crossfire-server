@@ -600,33 +600,52 @@ object *find_target_for_friendly_spell(object *op,int dir) {
      * we then make the owner of this object the target.
      * The owner could very well be no where near op.
      */
-    if(op->type!=PLAYER && op->type!=RUNE) {
-	tmp=get_owner(op);
-	/* If the owner does not exist, or is not a monster, than apply the spell
-	 * to the caster.
-	 */
-	if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER)) tmp=op;
+    if(op->type!=PLAYER && op->type!=RUNE)
+    {
+        tmp=get_owner(op);
+        /* If the owner does not exist, or is not a monster, than apply the spell
+         * to the caster.
+         */
+        if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER)) tmp=op;
     }
-    else {
-	m = op->map;
-	x =  op->x+freearr_x[dir];
-	y =  op->y+freearr_y[dir];
+    else
+    {
+        m = op->map;
+        x =  op->x+freearr_x[dir];
+        y =  op->y+freearr_y[dir];
 
-	mflags = get_map_flags(m, &m, x, y, &x, &y);
+        mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-	if (mflags & P_OUT_OF_MAP)
-	    tmp=NULL;
-	else  {
-	    for(tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above)
-		if(tmp->type==PLAYER)
-		    break;
-	}
+        if (mflags & P_OUT_OF_MAP)
+            tmp=NULL;
+        else
+        {
+            for(tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above)
+            {
+                if(tmp->type==PLAYER)
+                    break;
+            }
+        }
     }
     /* didn't find a player there, look in current square for a player */
     if(tmp==NULL)
-	for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-	    if(tmp->type==PLAYER)
-		break;
+        for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+        {
+            if(tmp->type==PLAYER)
+                break;
+            /* Don't forget to browse inside transports ! - gros 2006/07/25 */
+            if(tmp->type==TRANSPORT)
+            {
+                object* inv;
+                for (inv=tmp->inv; inv; inv=inv->below)
+                {
+                    if (inv->type == PLAYER)
+                    {
+                        return inv;
+                    }
+                }
+            }
+        }
     return tmp;
 }
 

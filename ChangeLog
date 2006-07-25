@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_util.c: Make the search for a friendly target for some spells also
+    browse transports located in the square from which the spell was cast.
+    This is a fix for bug #1528018
 server/c_wiz.c: Prevents the use of reset on self-map while in a transport.
     Work-around for bug #1528172.
 server/skill_util.c: Make dragons prefer clawing over anything else as unarmed
