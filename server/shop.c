@@ -479,11 +479,11 @@ int pay_for_amount(uint64 to_pay,object *pl) {
     to_pay = pay_from_container(pl, pl, to_pay);
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
-	if (pouch->type == CONTAINER
-	    && QUERY_FLAG(pouch, FLAG_APPLIED)
-	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(pl, pouch, to_pay);
-	}
+        if (pouch->type == CONTAINER
+          && QUERY_FLAG(pouch, FLAG_APPLIED)
+          && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+            to_pay = pay_from_container(pl, pouch, to_pay);
+        }
     }
     fix_player(pl);
     return 1;
@@ -514,14 +514,14 @@ int pay_for_item(object *op,object *pl) {
     to_pay = pay_from_container(pl, pl, to_pay);
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
-	if (pouch->type == CONTAINER
-	    && QUERY_FLAG(pouch, FLAG_APPLIED)
-	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(pl, pouch, to_pay);
-	}
+        if (pouch->type == CONTAINER
+                && QUERY_FLAG(pouch, FLAG_APPLIED)
+                && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+            to_pay = pay_from_container(pl, pouch, to_pay);
+        }
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
-	SET_FLAG(op, FLAG_WAS_WIZ);
+        SET_FLAG(op, FLAG_WAS_WIZ);
     fix_player(pl);
     return 1;
 }
@@ -553,86 +553,86 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 
     /* This hunk should remove all the money objects from the player/container */
     for (tmp=pouch->inv; tmp; tmp=next) {
-	next = tmp->below;
+        next = tmp->below;
+        if (tmp->type == MONEY) {
+            for (i=0; i<NUM_COINS; i++) {
+                if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name) &&
+                        (tmp->value == tmp->arch->clone.value) ) {
 
-	if (tmp->type == MONEY) {
-	    for (i=0; i<NUM_COINS; i++) {
-		if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name) &&
-		    (tmp->value == tmp->arch->clone.value) ) {
-
-		    /* This should not happen, but if it does, just		*
-		     * merge the two.						*/
-		    if (coin_objs[i]!=NULL) {
-			LOG(llevError,"%s has two money entries of (%s)\n",
-			    pouch->name, coins[NUM_COINS-1-i]);
-			remove_ob(tmp);
-			coin_objs[i]->nrof += tmp->nrof;
-			esrv_del_item(pl->contr, tmp->count);
-			free_object(tmp);
-		    }
-		    else {
-			remove_ob(tmp);
-			if(pouch->type==PLAYER) esrv_del_item(pl->contr, tmp->count);
-			coin_objs[i] = tmp;
-		    }
-		    break;
-		}
-	    }
-	    if (i==NUM_COINS)
-		LOG(llevError,"in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
-	}
+                    /* This should not happen, but if it does, just		*
+                     * merge the two.						
+                     */
+                    if (coin_objs[i]!=NULL) {
+                        LOG(llevError,"%s has two money entries of (%s)\n",
+                            pouch->name, coins[NUM_COINS-1-i]);
+                        remove_ob(tmp);
+                        coin_objs[i]->nrof += tmp->nrof;
+                        esrv_del_item(pl->contr, tmp->count);
+                        free_object(tmp);
+                    } else {
+                        remove_ob(tmp);
+                        if(pouch->type==PLAYER) esrv_del_item(pl->contr, tmp->count);
+                        coin_objs[i] = tmp;
+                    }
+                    break;
+                }
+            }
+            if (i==NUM_COINS)
+            LOG(llevError,"in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
+        }
     }
 
-    /* Fill in any gaps in the coin_objs array - needed to make change. */
+    /* Fill in any gaps in the coin_objs array - needed to make change.      */
     /* Note that the coin_objs array goes from least value to greatest value */
     for (i=0; i<NUM_COINS; i++)
-	if (coin_objs[i]==NULL) {
-	    at = find_archetype(coins[NUM_COINS-1-i]);
-	    if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
-	    coin_objs[i] = get_object();
-	    copy_object(&at->clone, coin_objs[i]);
-	    coin_objs[i]->nrof = 0;
-	}
+        if (coin_objs[i]==NULL) {
+            at = find_archetype(coins[NUM_COINS-1-i]);
+            if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
+            coin_objs[i] = get_object();
+            copy_object(&at->clone, coin_objs[i]);
+            coin_objs[i]->nrof = 0;
+        }
 
     for (i=0; i<NUM_COINS; i++) {
-	int num_coins;
-
-	if (coin_objs[i]->nrof*coin_objs[i]->value> remain) {
-	    num_coins = remain / coin_objs[i]->value;
-	    if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) num_coins++;
-	} else {
-	    num_coins = coin_objs[i]->nrof;
-	}
-	remain -= (sint64) num_coins * (sint64)coin_objs[i]->value;
-	coin_objs[i]->nrof -= num_coins;
-	/* Now start making change.  Start at the coin value
-	 * below the one we just did, and work down to
-	 * the lowest value.
-	 */
-	count=i-1;
-	while (remain<0 && count>=0) {
-		num_coins = -remain/ coin_objs[count]->value;
-		coin_objs[count]->nrof += num_coins;
-		remain += num_coins * coin_objs[count]->value;
-		count--;
-	}
+        int num_coins;
+        if (coin_objs[i]->nrof*coin_objs[i]->value> remain) {
+            num_coins = remain / coin_objs[i]->value;
+            if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) num_coins++;
+        } else {
+            num_coins = coin_objs[i]->nrof;
+        }
+        remain -= (sint64) num_coins * (sint64)coin_objs[i]->value;
+        coin_objs[i]->nrof -= num_coins;
+        /* Now start making change.  Start at the coin value
+         * below the one we just did, and work down to
+         * the lowest value.
+         */
+        count=i-1;
+        while (remain<0 && count>=0) {
+            num_coins = -remain/ coin_objs[count]->value;
+            coin_objs[count]->nrof += num_coins;
+            remain += num_coins * coin_objs[count]->value;
+            count--;
+        }
     }
     for (i=0; i<NUM_COINS; i++) {
-	if (coin_objs[i]->nrof) {
-	    object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
+        if (coin_objs[i]->nrof) {
+            object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
 
-	    esrv_send_item(pl, tmp);
-	    esrv_send_item (pl, pouch);
-	    if (pl != pouch) esrv_update_item (UPD_WEIGHT, pl, pouch);
-	    if (pl->type != PLAYER) {
-		esrv_send_item (pl, pl);
-	    }
-	} else {
-	    free_object(coin_objs[i]);
-	}
+            esrv_send_item(pl, tmp);
+            esrv_send_item (pl, pouch);
+            if (pl != pouch) 
+                esrv_update_item (UPD_WEIGHT, pl, pouch);
+            if (pl->type != PLAYER) {
+                esrv_send_item (pl, pl);
+            }
+        } else {
+            free_object(coin_objs[i]);
+        }
     }
     return(remain);
 }
+
 
 /* Checks all unpaid items in op's inventory, adds up all the money they
  * have, and checks that they can actually afford what they want to buy.
@@ -647,41 +647,45 @@ int can_pay(object *pl) {
     object *item;
     uint32 coincount[NUM_COINS];
     if (!pl || pl->type != PLAYER) {
-	LOG(llevError, "can_pay(): called against something that isn't a player\n");
-	return 0;
+        LOG(llevError, "can_pay(): called against something that isn't a player\n");
+        return 0;
     }
-    for (i=0; i< NUM_COINS; i++) coincount[i] = 0; 
+    for (i=0; i< NUM_COINS; i++)
+        coincount[i] = 0;
     for (item = pl->inv;item;) {
-	if QUERY_FLAG(item, FLAG_UNPAID) {
-	    unpaid_count++;
-	    unpaid_price += query_cost(item, pl, F_BUY | F_SHOP);
-	}
-	/* merely converting the player's monetary wealth won't do, if we did that, 
-	 * we could print the wrong numbers for the coins, so we count the money instead 
-	 */
-	for (i=0; i< NUM_COINS; i++) 
-	    if (!strcmp(coins[i], item->arch->name)) 
-		coincount[i] += item->nrof;
-	if (item->inv) item = item->inv; 
-	else if (item->below) item = item->below;
-	else if (item->env && item->env != pl && item->env->below) item = item->env->below;
-	else item = NULL; 
+        if QUERY_FLAG(item, FLAG_UNPAID) {
+            unpaid_count++;
+            unpaid_price += query_cost(item, pl, F_BUY | F_SHOP);
+        }
+        /* merely converting the player's monetary wealth won't do, if we did that, 
+         * we could print the wrong numbers for the coins, so we count the money instead 
+         */
+        for (i=0; i< NUM_COINS; i++)
+            if (!strcmp(coins[i], item->arch->name))
+                coincount[i] += item->nrof;
+        if (item->inv) 
+            item = item->inv; 
+        else if (item->below) 
+            item = item->below;
+        else if (item->env && item->env != pl && item->env->below) 
+            item = item->env->below;
+        else item = NULL; 
     }
     if (unpaid_price > player_wealth) {
-	char buf[MAX_BUF], coinbuf[MAX_BUF];
-	int denominations = 0;
-	sprintf(buf, "You have %d unpaid items that would cost you %s, but you only have", 
-	    unpaid_count, cost_string_from_value(unpaid_price));
-	for (i=0; i< NUM_COINS; i++) {
-	    if (coincount[i] > 0 && coins[i]) {
-		denominations++;
-		sprintf(coinbuf, " %d %s,", coincount[i], find_archetype(coins[i])->clone.name_pl);
-		strcat (buf, coinbuf);
-	    }
-	}
-	if (denominations > 1) make_list_like(buf);
-	new_draw_info(NDI_UNIQUE, 0, pl, buf);
-	return 0;
+        char buf[MAX_BUF], coinbuf[MAX_BUF];
+        int denominations = 0;
+        sprintf(buf, "You have %d unpaid items that would cost you %s, but you only have", 
+                unpaid_count, cost_string_from_value(unpaid_price));
+        for (i=0; i< NUM_COINS; i++) {
+            if (coincount[i] > 0 && coins[i]) {
+                denominations++;
+                sprintf(coinbuf, " %d %s,", coincount[i], find_archetype(coins[i])->clone.name_pl);
+                strcat (buf, coinbuf);
+            }
+        }
+        if (denominations > 1) make_list_like(buf);
+        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+        return 0;
     }
     else return 1;
 }
@@ -711,35 +715,35 @@ int get_payment(object *pl, object *op) {
 
     if (!ret) 
         return 0;
-   
+
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
         strncpy(buf,query_cost_string(op,pl,F_BUY | F_SHOP),MAX_BUF);
         buf[MAX_BUF-1] = '\0';
         if(!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
-	    CLEAR_FLAG(op, FLAG_UNPAID);
-	    new_draw_info_format(NDI_UNIQUE, 0, pl,
-		"You lack %s to buy %s.", cost_string_from_value(i),
-		query_name(op));
-	    SET_FLAG(op, FLAG_UNPAID);
+            CLEAR_FLAG(op, FLAG_UNPAID);
+            new_draw_info_format(NDI_UNIQUE, 0, pl,
+                    "You lack %s to buy %s.", cost_string_from_value(i),
+                    query_name(op));
+            SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
-	    object *tmp;
-	    tag_t c = op->count;
+            object *tmp;
+            tag_t c = op->count;
 
-	    CLEAR_FLAG(op, FLAG_UNPAID);
-	    CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		"You paid %s for %s.",buf,query_name(op));
-	    tmp=merge_ob(op,NULL);
-	    if (pl->type == PLAYER) {
-		if (tmp) {      /* it was merged */
-		    esrv_del_item (pl->contr, c);
-		    op = tmp;
-		}
-	        esrv_send_item(pl, op);
-	    }
-	}
+            CLEAR_FLAG(op, FLAG_UNPAID);
+            CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
+            new_draw_info_format(NDI_UNIQUE, 0, op,
+                    "You paid %s for %s.",buf,query_name(op));
+            tmp=merge_ob(op,NULL);
+            if (pl->type == PLAYER) {
+                if (tmp) {      /* it was merged */
+                    esrv_del_item (pl->contr, c);
+                    op = tmp;
+                }
+                esrv_send_item(pl, op);
+            }
+        }
     }
     return 1;
 }
