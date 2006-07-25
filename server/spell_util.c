@@ -639,10 +639,8 @@ object *find_target_for_friendly_spell(object *op,int dir) {
                 object* inv;
                 for (inv=tmp->inv; inv; inv=inv->below)
                 {
-                    if (inv->type == PLAYER)
-                    {
+                    if ((inv->type == PLAYER)&&(op == inv))
                         return inv;
-                    }
                 }
             }
         }
