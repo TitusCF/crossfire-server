@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: prevent a DM to reset a random map if (s)he is on that map.
+    Workaround for bug #1528173.
+Yann Chachkoff 2006-07-26
+
 server/c_wiz.c: call update_ob_speed if removed object is animated.
 server/spell_attack.c: stop generating swarm/bullet if player moved. This
  fixes bug #1528194.

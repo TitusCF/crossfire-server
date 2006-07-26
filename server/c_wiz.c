@@ -1288,6 +1288,20 @@ int command_reset (object *op, char *params) {
          * players or wiz's.
          */
         if (op->map == m) {
+            if (strncmp(m->path, "/random/", 8)==0) {
+            /* This is not a very satisfying solution - it would be much better
+             * to recreate a random map with the same seed value as the old one.
+             * Unfortunately, I think recreating the map would require some
+             * knowledge about its 'parent', which appears very non-trivial to
+             * me.
+             * On the other hand, this should prevent the freeze that this
+             * situation caused. - gros, 26th July 2006.
+             */
+                new_draw_info(NDI_UNIQUE, 0, op,
+                    "You cannot reset a random map when inside it.");
+                return 1;
+            }
+
             dummy = get_object();
             dummy->map = NULL;
             EXIT_X(dummy) = op->x;
