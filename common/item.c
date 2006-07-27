@@ -981,11 +981,11 @@ char *describe_item(const object *op, const object *owner) {
 
 	case POWER_CRYSTAL:
 	    if (op->stats.maxsp>1000){ /*higher capacity crystals*/
-	        i = (op->stats.maxsp%100)/10;
+	        i = (op->stats.maxsp%1000)/100;
 	        if (i)
-	            snprintf(buf,MAX_BUF,"(capacity %d.%dk). It is ",op->stats.maxsp/100,i);
+	            snprintf(buf,MAX_BUF,"(capacity %d.%dk). It is ",op->stats.maxsp/1000,i);
                 else
-	            snprintf(buf,MAX_BUF,"(capacity %dk). It is ",op->stats.maxsp/100);
+	            snprintf(buf,MAX_BUF,"(capacity %dk). It is ",op->stats.maxsp/1000);
 	    }else
 	        snprintf(buf,MAX_BUF,"(capacity %d). It is ",op->stats.maxsp);
 	    strcat(retbuf,buf);

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/item.c: In describe_item() correct capacity description of large
+   (>1000 maxsp) Glowing Crystals.
+Andreas Kirschbaum 2006-07-28
+
 plugins/cfpython/cfpython.c: Added compilePython() function to split the compiling
     of python bytecode from the execution of it. Add support for caching the
     bytecode for a fixed number of scripts (default of 16) to increase speed.
