@@ -61,6 +61,15 @@
 #include <stdarg.h>
 
 #define PYTHON_DEBUG   /* give us some general infos out */
+#define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */
+
+typedef struct {
+    char *file;
+    PyCodeObject *code;
+    time_t cached_time, used_time;
+} pycode_cache_entry;
+
+static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
 
 f_plug_api gethook;
 f_plug_api registerGlobalEvent;
@@ -660,9 +669,101 @@ void freeContext(CFPContext* context)
     free(context);
 }
 
+/* Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
+static PyCodeObject *compilePython(char *filename) {
+    FILE*   scriptfile;
+    char  *sh_path;
+    struct  stat stat_buf;
+    struct _node *n;
+    int i;
+    pycode_cache_entry *replace = NULL, *run = NULL;
+    
+    if (!(scriptfile = fopen(filename, "r"))) {
+        cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
+        return NULL;
+    }
+    if(fstat(fileno(scriptfile), &stat_buf)) {
+        cf_log(llevDebug, "cfpython - The Script file %s can't be stat:ed\n", filename);
+        if(scriptfile)
+            fclose(scriptfile);
+        return NULL;
+    } 
+    
+    sh_path = cf_add_string(filename);
+    
+    /* Search through cache. Three cases:
+     * 1) script in cache, but older than file  -> replace cached
+     * 2) script in cache and up to date        -> use cached
+     * 3) script not in cache, cache not full   -> add to end of cache
+     * 4) script not in cache, cache full       -> replace least recently used
+     */
+    for(i=0; i < PYTHON_CACHE_SIZE; i++) {
+        if(pycode_cache[i].file == NULL) {  /* script not in cache, cache not full */
+            replace = &pycode_cache[i];     /* add to end of cache */
+            break;
+        } else if(pycode_cache[i].file == sh_path) {
+            /* script in cache */
+            if(pycode_cache[i].code == NULL || (pycode_cache[i].cached_time<stat_buf.st_mtime)) {
+                /* cache older than file, replace cached */
+                replace = &pycode_cache[i];
+            } else {
+                /* cache uptodate, use cached*/
+                replace = NULL;
+                run = &pycode_cache[i];
+            }
+            break;
+        } else if(replace == NULL || pycode_cache[i].used_time < replace->used_time) 
+            /* if we haven't found it yet, set replace to the oldest cache */
+            replace = &pycode_cache[i];
+    }
+
+    /* replace a specific cache index with the file */
+    if(replace) {
+        Py_XDECREF(replace->code); /* safe to call on NULL */
+        replace->code = NULL;
+
+        /* Need to replace path string? */
+        if (replace->file != sh_path) {
+            if(replace->file) {
+                cf_free_string(replace->file);
+            }
+            replace->file = cf_add_string(sh_path); 
+        }
+
+        /* Load, parse and compile */
+        if (!scriptfile && !(scriptfile = fopen(filename, "r"))) {
+            cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
+            replace->code = NULL;
+            return NULL;
+        } else {  
+            if((n = PyParser_SimpleParseFile (scriptfile, filename, Py_file_input))) {
+                replace->code = PyNode_Compile(n, filename);
+                PyNode_Free (n);
+            } 
+
+            if(PyErr_Occurred()) 
+                PyErr_Print();
+            else
+                replace->cached_time = stat_buf.st_mtime;
+            run = replace;
+        }
+    }
+
+    cf_free_string(sh_path);    
+
+    if(scriptfile)
+        fclose(scriptfile);
+    
+    if (run)
+        return run->code;
+    else
+        return NULL;
+}
+
+
 static int do_script(CFPContext* context, int silent)
 {
-    FILE*   scriptfile;
+    PyCodeObject *pycode;
     PyObject* dict;
     PyObject* ret;
 #if 0
@@ -670,34 +771,31 @@ static int do_script(CFPContext* context, int silent)
     int item;
 #endif
 
-    scriptfile = fopen(context->script, "r");
-    if (scriptfile == NULL) {
-        if (!silent)
-            cf_log( llevError, "cfpython - The Script file %s can't be opened\n", context->script);
-        return 0;
-    }
-    pushContext(context);
-    dict = PyDict_New();
-    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
-    ret = PyRun_File(scriptfile, context->script, Py_file_input, dict, dict);
-    if (PyErr_Occurred()) {
-        PyErr_Print();
-    }
-    Py_XDECREF(ret);
-#if 0
-    printf( "cfpython - %d items in heap\n", PyDict_Size(dict));
-    list = PyDict_Values(dict);
-    for (item = PyList_Size(list) - 1; item >= 0; item--) {
-        dict = PyList_GET_ITEM(list, item);
-        ret = PyObject_Str(dict);
-        printf(" ref %s = %d\n", PyString_AsString(ret), dict->ob_refcnt);
+    pycode = compilePython(context->script);
+    if (pycode) {
+        pushContext(context);
+        dict = PyDict_New();
+        PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
+        ret = PyEval_EvalCode(pycode, dict, NULL);
+        if (PyErr_Occurred()) {
+            PyErr_Print();
+        }
         Py_XDECREF(ret);
-    }
-    Py_DECREF(list);
+#if 0
+        printf( "cfpython - %d items in heap\n", PyDict_Size(dict));
+        list = PyDict_Values(dict);
+        for (item = PyList_Size(list) - 1; item >= 0; item--) {
+            dict = PyList_GET_ITEM(list, item);
+            ret = PyObject_Str(dict);
+            printf(" ref %s = %d\n", PyString_AsString(ret), dict->ob_refcnt);
+            Py_XDECREF(ret);
+        }
+        Py_DECREF(list);
 #endif
-    Py_DECREF(dict);
-    fclose(scriptfile);
-    return 1;
+        Py_DECREF(dict);
+        return 1;
+    } else
+        return 0;
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)

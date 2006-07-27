@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/cfpython.c: Added compilePython() function to split the compiling
+    of python bytecode from the execution of it. Add support for caching the
+    bytecode for a fixed number of scripts (default of 16) to increase speed.
+Alex Schultz 2006-07-27
+
 server/c_wiz.c: prevent a DM to reset a random map if (s)he is on that map.
     Workaround for bug #1528173.
 Yann Chachkoff 2006-07-26
