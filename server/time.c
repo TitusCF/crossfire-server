@@ -1058,6 +1058,11 @@ void move_player_mover(object *op) {
 void move_duplicator(object *op) {
     object *tmp;
 
+    if ( !op->other_arch ) {
+        LOG(llevInfo, "Duplicator with no other_arch! %d %d %s\n", op->x, op->y, op->map ? op->map->path : "nullmap");
+        return;
+    }
+
     if (op->above == NULL)
 	return;
     for (tmp=op->above; tmp != NULL; tmp=tmp->above) {

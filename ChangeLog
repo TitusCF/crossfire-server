@@ -18,6 +18,7 @@ else.  With this, include the file(s) that you changed.
 Changes for CVS:
 
 server/c_wiz.c: fix addexp not working on skills.
+server/time.c: don't crash if duplicator doesn't have other_arch set.
 Ryo 2006-07-28
 
 plugins/cfpython/include/cfpython.h: Include compile.h which Python.h doesn't
