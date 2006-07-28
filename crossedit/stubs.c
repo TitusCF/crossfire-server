@@ -86,3 +86,8 @@ void monster_check_apply( object* ob, object* obt )
 void trap_adjust( object* ob, int x )
     {
     }
+    
+int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
+    {
+    return 0;
+    }

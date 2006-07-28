@@ -66,26 +66,27 @@
 #define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
 #define EVENT_CLOSE    11 /* Container closed.                               */
 #define EVENT_TIMER    12 /* Timer connected triggered it.                   */
+#define EVENT_DESTROY  13 /* Object destroyed (includes map reset/swapout)   */
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
 /*****************************************************************************/
-#define EVENT_BORN     13 /* A new character has been created.               */
-#define EVENT_CLOCK    14 /* Global time event.                              */
-#define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
-#define EVENT_PLAYER_DEATH  16 /* Global Death event                         */
-#define EVENT_GKILL    17 /* Triggered when anything got killed by anyone.   */
-#define EVENT_LOGIN    18 /* Player login.                                   */
-#define EVENT_LOGOUT   19 /* Player logout.                                  */
-#define EVENT_MAPENTER 20 /* A player entered a map.                         */
-#define EVENT_MAPLEAVE 21 /* A player left a map.                            */
-#define EVENT_MAPRESET 22 /* A map is resetting.                             */
-#define EVENT_REMOVE   23 /* A Player character has been removed.            */
-#define EVENT_SHOUT    24 /* A player 'shout' something.                     */
-#define EVENT_TELL     25 /* A player 'tell' something.						 */
-#define EVENT_MUZZLE   26 /* A player was Muzzled (no_shout set).			 */
-#define EVENT_KICK     27 /* A player was Kicked by a DM                     */
+#define EVENT_BORN     14 /* A new character has been created.               */
+#define EVENT_CLOCK    15 /* Global time event.                              */
+#define EVENT_CRASH    16 /* Triggered when the server crashes. Not recursive*/
+#define EVENT_PLAYER_DEATH  17 /* Global Death event                         */
+#define EVENT_GKILL    18 /* Triggered when anything got killed by anyone.   */
+#define EVENT_LOGIN    19 /* Player login.                                   */
+#define EVENT_LOGOUT   20 /* Player logout.                                  */
+#define EVENT_MAPENTER 21 /* A player entered a map.                         */
+#define EVENT_MAPLEAVE 22 /* A player left a map.                            */
+#define EVENT_MAPRESET 23 /* A map is resetting.                             */
+#define EVENT_REMOVE   24 /* A Player character has been removed.            */
+#define EVENT_SHOUT    25 /* A player 'shout' something.                     */
+#define EVENT_TELL     26 /* A player 'tell' something.                      */
+#define EVENT_MUZZLE   27 /* A player was Muzzled (no_shout set).            */
+#define EVENT_KICK     28 /* A player was Kicked by a DM                     */
 
-#define NR_EVENTS 28
+#define NR_EVENTS 29
 
 #include <stdarg.h>
 

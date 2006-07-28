@@ -1132,6 +1132,10 @@ static void free_object2(object *ob, int free_inventory) {
     LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
     return;
   }
+  
+  /* Handle for plugin destroy event */
+  execute_event(ob, EVENT_DESTROY,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
+  
   if(ob->more!=NULL) {
     free_object2(ob->more, free_inventory);
     ob->more=NULL;

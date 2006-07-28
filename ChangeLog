@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+include/plugin.h, common/object.c: Add EVENT_DESTROY, a local event triggered when
+    an object is freed.
+include/funcpoint.h, crossedit/stubs.c, random_maps/standalone.c,
+    test/unit/common/stubs_common.c: Allow execute_event to be called from common
+    and add appropriate stubs.
+Alex Schultz 2006-07-28
+
 common/item.c: In describe_item() correct capacity description of large
    (>1000 maxsp) Glowing Crystals.
 Andreas Kirschbaum 2006-07-28
