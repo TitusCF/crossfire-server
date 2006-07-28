@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: fix addexp not working on skills.
+Ryo 2006-07-28
+
 plugins/cfpython/include/cfpython.h: Include compile.h which Python.h doesn't
     include on it's own in versions of python older than 2.4.
 include/plugin.h, common/object.c: Add EVENT_DESTROY, a local event triggered when
