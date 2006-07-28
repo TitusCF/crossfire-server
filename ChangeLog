@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/include/cfpython.h: Include compile.h which Python.h doesn't
+    include on it's own in versions of python older than 2.4.
 include/plugin.h, common/object.c: Add EVENT_DESTROY, a local event triggered when
     an object is freed.
 include/funcpoint.h, crossedit/stubs.c, random_maps/standalone.c,

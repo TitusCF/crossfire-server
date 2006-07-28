@@ -30,6 +30,11 @@
 
 /* First the required header files - only the CF module interface and Python */
 #include <Python.h>
+
+/* include compile.h from python. Python.h doesn't pull it in with versions
+ * 2.3 and older, and it does have protection from double-imports.
+ */
+#include <compile.h>
 #include <plugin.h>
 
 #undef MODULEAPI
