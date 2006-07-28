@@ -677,7 +677,7 @@ static PyCodeObject *compilePython(char *filename) {
     struct _node *n;
     int i;
     pycode_cache_entry *replace = NULL, *run = NULL;
-    
+
     if (!(scriptfile = fopen(filename, "r"))) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
         return NULL;
@@ -687,10 +687,10 @@ static PyCodeObject *compilePython(char *filename) {
         if(scriptfile)
             fclose(scriptfile);
         return NULL;
-    } 
-    
+    }
+
     sh_path = cf_add_string(filename);
-    
+
     /* Search through cache. Three cases:
      * 1) script in cache, but older than file  -> replace cached
      * 2) script in cache and up to date        -> use cached
@@ -712,7 +712,7 @@ static PyCodeObject *compilePython(char *filename) {
                 run = &pycode_cache[i];
             }
             break;
-        } else if(replace == NULL || pycode_cache[i].used_time < replace->used_time) 
+        } else if(replace == NULL || pycode_cache[i].used_time < replace->used_time)
             /* if we haven't found it yet, set replace to the oldest cache */
             replace = &pycode_cache[i];
     }
@@ -727,7 +727,7 @@ static PyCodeObject *compilePython(char *filename) {
             if(replace->file) {
                 cf_free_string(replace->file);
             }
-            replace->file = cf_add_string(sh_path); 
+            replace->file = cf_add_string(sh_path);
         }
 
         /* Load, parse and compile */
@@ -735,13 +735,13 @@ static PyCodeObject *compilePython(char *filename) {
             cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
             replace->code = NULL;
             return NULL;
-        } else {  
+        } else {
             if((n = PyParser_SimpleParseFile (scriptfile, filename, Py_file_input))) {
                 replace->code = PyNode_Compile(n, filename);
                 PyNode_Free (n);
-            } 
+            }
 
-            if(PyErr_Occurred()) 
+            if(PyErr_Occurred())
                 PyErr_Print();
             else
                 replace->cached_time = stat_buf.st_mtime;
@@ -749,11 +749,11 @@ static PyCodeObject *compilePython(char *filename) {
         }
     }
 
-    cf_free_string(sh_path);    
+    cf_free_string(sh_path);
 
     if(scriptfile)
         fclose(scriptfile);
-    
+
     if (run)
         return run->code;
     else
