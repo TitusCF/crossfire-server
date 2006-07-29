@@ -1114,95 +1114,106 @@ void free_object(object *ob) {
   free_object2(ob, 0);
 }
 static void free_object2(object *ob, int free_inventory) {
-  object *tmp,*op;
+    object *tmp,*op;
 
-  if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
-    LOG(llevDebug,"Free object called with non removed object\n");
-    dump_object(ob);
+    if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
+      LOG(llevDebug,"Free object called with non removed object\n");
+      dump_object(ob);
 #ifdef MANY_CORES
-    abort();
+      abort();
 #endif
-  }
-  if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
-    LOG(llevMonster,"Warning: tried to free friendly object.\n");
-    remove_friendly_object(ob);
-  }
-  if(QUERY_FLAG(ob,FLAG_FREED)) {
-    dump_object(ob);
-    LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
-    return;
-  }
-  
-  /* Handle for plugin destroy event */
-  execute_event(ob, EVENT_DESTROY,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
-  
-  if(ob->more!=NULL) {
-    free_object2(ob->more, free_inventory);
-    ob->more=NULL;
-  }
-  if (ob->inv) {
-  /* Only if the space blocks everything do we not process -
-   * if some form of movemnt is allowed, let objects
-   * drop on that space.
-   */
-    if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-        (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) 
-    {
-      op=ob->inv;
-      while(op!=NULL) {
-        tmp=op->below;
-        remove_ob(op);
-        free_object2(op, free_inventory);
-        op=tmp;
-      }
-    } else { /* Put objects in inventory onto this space */
-      op=ob->inv;
-      while(op!=NULL) {
-        tmp=op->below;
-        remove_ob(op);
-        if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-           op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
-          free_object(op);
-        else {
-          op->x=ob->x;
-          op->y=ob->y;
-          insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
-        }
-      op=tmp;
-      }
     }
-  }
-  /* Remove object from the active list */
-  ob->speed = 0;
-  update_ob_speed(ob);
+    if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
+        LOG(llevMonster,"Warning: tried to free friendly object.\n");
+        remove_friendly_object(ob);
+    }
+    if(QUERY_FLAG(ob,FLAG_FREED)) {
+        dump_object(ob);
+        LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
+        return;
+    }
 
-  SET_FLAG(ob, FLAG_FREED);
-  ob->count = 0;
+    /* Handle for plugin destroy event */
+    execute_event(ob, EVENT_DESTROY,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
 
-  /* Remove this object from the list of used objects */
-  if(ob->prev==NULL) {
-    objects=ob->next;
-    if(objects!=NULL)
-    objects->prev=NULL;
-  } else {
-    ob->prev->next=ob->next;
-    if(ob->next!=NULL)
-      ob->next->prev=ob->prev;
-  }
+    if(ob->more!=NULL) {
+        free_object2(ob->more, free_inventory);
+        ob->more=NULL;
+    }
+    if (ob->inv) {
+        /* Only if the space blocks everything do we not process -
+         * if some form of movemnt is allowed, let objects
+         * drop on that space.
+         */
+        if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
+            (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
+            op=ob->inv;
+            while(op!=NULL) {
+                tmp=op->below;
+                remove_ob(op);
+                free_object2(op, free_inventory);
+                op=tmp;
+            }
+        } else { /* Put objects in inventory onto this space */
+            op=ob->inv;
+            while(op!=NULL) {
+                tmp=op->below;
+                remove_ob(op);
+                if(QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
+                   op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+                    free_object(op);
+                else {
+                    if ( QUERY_FLAG(op,FLAG_ALIVE) ) {
+                        int pos = find_free_spot(op,ob->map,ob->x, ob->y, 0, SIZEOFFREE);
+                        if ( pos == -1 )
+                            free_object(op);
+                        else {
+                            op->x=ob->x + freearr_x[ pos ];
+                            op->y=ob->y + freearr_y[ pos ];
+                            insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+                        }
+                    }
+                    else {
+                        op->x=ob->x;
+                        op->y=ob->y;
+                        insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+                    }
+                }
+                op=tmp;
+            }
+        }
+    }
+    /* Remove object from the active list */
+    ob->speed = 0;
+    update_ob_speed(ob);
 
-  if(ob->name!=NULL)	    FREE_AND_CLEAR_STR(ob->name);
-  if(ob->name_pl!=NULL)   FREE_AND_CLEAR_STR(ob->name_pl);
-  if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
-  if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
-  if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
-  if(ob->skill!=NULL)	    FREE_AND_CLEAR_STR(ob->skill);
-  if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
-  if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
-  if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
+    SET_FLAG(ob, FLAG_FREED);
+    ob->count = 0;
+
+    /* Remove this object from the list of used objects */
+    if(ob->prev==NULL) {
+        objects=ob->next;
+        if(objects!=NULL)
+            objects->prev=NULL;
+    } else {
+        ob->prev->next=ob->next;
+        if(ob->next!=NULL)
+            ob->next->prev=ob->prev;
+    }
+
+    if(ob->name!=NULL)	    FREE_AND_CLEAR_STR(ob->name);
+    if(ob->name_pl!=NULL)   FREE_AND_CLEAR_STR(ob->name_pl);
+    if(ob->title!=NULL)	    FREE_AND_CLEAR_STR(ob->title);
+    if(ob->race!=NULL)	    FREE_AND_CLEAR_STR(ob->race);
+    if(ob->slaying!=NULL)   FREE_AND_CLEAR_STR(ob->slaying);
+    if(ob->skill!=NULL)	    FREE_AND_CLEAR_STR(ob->skill);
+    if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
+    if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
+    if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
 
 
-  /* Why aren't events freed? */
-  free_key_values(ob);
+    /* Why aren't events freed? */
+    free_key_values(ob);
 
 #if 0 /* MEMORY_DEBUG*/
   /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
@@ -1215,16 +1226,16 @@ static void free_object2(object *ob, int free_inventory) {
    * and not freeing it, but the original one that malloc'd the
    * object will get the blame.
    */
-  free(ob);
+      free(ob);
 #else
 
     /* Now link it with the free_objects list: */
-  ob->prev=NULL;
-  ob->next=free_objects;
-  if(free_objects!=NULL)
-  free_objects->prev=ob;
-  free_objects=ob;
-  nroffreeobjects++;
+    ob->prev=NULL;
+    ob->next=free_objects;
+    if(free_objects!=NULL)
+    free_objects->prev=ob;
+    free_objects=ob;
+    nroffreeobjects++;
 #endif
 }
 

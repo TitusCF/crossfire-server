@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: fix bug #1526364 (stacking Royal Guards). Use find_free_spot
+ to place dropped items if living. Also fix indent of function free_object2.
 server/c_object.c: fix bug #1529969 (shop floor not working in random maps).
 Ryo 2006-07-29
 
