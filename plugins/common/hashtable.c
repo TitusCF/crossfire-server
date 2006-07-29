@@ -31,8 +31,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <stddef.h>
-#include <sys/types.h>
 #include <string.h>
 #include <stdint.h>
 
