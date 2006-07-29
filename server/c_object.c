@@ -970,18 +970,21 @@ void drop_object (object *op, object *tmp, uint32 nrof)
      * of what he is dropping?
      */
     if (op->type == PLAYER && !QUERY_FLAG(tmp, FLAG_UNPAID) &&
-      (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000) &&
-      (op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
-	  save_player(op, 1);
-	  op->contr->last_save_time = time(NULL);
+        (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000) &&
+        (op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
+        save_player(op, 1);
+        op->contr->last_save_time = time(NULL);
     }
 #endif /* SAVE_INTERVAL */
 
 
-    floor = get_map_ob (op->map, op->x, op->y);
-    if( floor && floor->type == SHOP_FLOOR &&
-       !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
-      sell_item(tmp,op);
+    if ( !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY ) {
+        floor = get_map_ob (op->map, op->x, op->y);
+        while ( floor && floor->type != SHOP_FLOOR )
+            floor = floor->above;
+        if ( floor )
+            sell_item(tmp,op);
+    }
 
     tmp->x = op->x;
     tmp->y = op->y;

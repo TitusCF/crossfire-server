@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_object.c: fix bug #1529969 (shop floor not working in random maps).
+Ryo 2006-07-29
+
 server/c_wiz.c: fix addexp not working on skills.
 server/time.c: don't crash if duplicator doesn't have other_arch set.
 Ryo 2006-07-28
