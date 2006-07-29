@@ -27,6 +27,25 @@
 /*                                                                           */ /*****************************************************************************/
 #include <cfpython.h>
 #include <cfpython_object_private.h>
+#include <hashtable.h>
+
+/* Table for keeping track of which PyObject goes with with Crossfire object */
+static ptr_assoc_table object_assoc_table;
+
+/* Helper functions for dealing with object_assoc_table */
+void init_object_assoc_table() {
+    init_ptr_assoc_table(object_assoc_table);
+}
+static void add_object_assoc(object *key, PyObject *value) {
+    add_ptr_assoc(object_assoc_table, key, value);
+}
+static PyObject *find_assoc_pyobject(object *key) {
+    return (PyObject*)find_assoc_value(object_assoc_table, key);
+}
+static void free_object_assoc(object *key) {
+    free_ptr_assoc(object_assoc_table, key);
+}
+
 
 static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure)
 {
@@ -1682,11 +1701,30 @@ static PyObject *
 
     return (PyObject *)self;
 }
+static void Crossfire_Object_dealloc(PyObject *obj)
+{
+    Crossfire_Object *self;
+    self = (Crossfire_Object *)obj;
+    if(self && self->obj)
+        free_object_assoc(self->obj);
+
+    self->ob_type->tp_free(obj);
+}
+static void Crossfire_Player_dealloc(PyObject *obj)
+{
+    Crossfire_Player *self;
+    self = (Crossfire_Player *)obj;
+    if(self && self->obj)
+        free_object_assoc(self->obj);
+
+    self->ob_type->tp_free(obj);
+}
 
 PyObject *Crossfire_Object_wrap(object *what)
 {
     Crossfire_Object *wrapper;
     Crossfire_Player *plwrap;
+    PyObject *pyobj;
 
     /* return None if no object was to be wrapped */
     if(what == NULL) {
@@ -1694,18 +1732,25 @@ PyObject *Crossfire_Object_wrap(object *what)
         return Py_None;
     }
 
-    if (what->type == PLAYER)
-    {
-        plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
-        if(plwrap != NULL)
-            plwrap->obj = what;
-        return (PyObject *)plwrap;
+    pyobj = find_assoc_pyobject(what);
+    if (!pyobj) {
+        if (what->type == PLAYER)
+        {
+            plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
+            if(plwrap != NULL)
+                plwrap->obj = what;
+            pyobj = (PyObject *)plwrap;
+        }
+        else
+        {
+            wrapper = PyObject_NEW(Crossfire_Object, &Crossfire_ObjectType);
+            if(wrapper != NULL)
+                wrapper->obj = what;
+            pyobj = (PyObject *)wrapper;
+        }
+        add_object_assoc(what, pyobj);
+    } else {
+        Py_INCREF(pyobj);
     }
-    else
-    {
-        wrapper = PyObject_NEW(Crossfire_Object, &Crossfire_ObjectType);
-        if(wrapper != NULL)
-            wrapper->obj = what;
-        return (PyObject *)wrapper;
-    }
+    return pyobj;
 }

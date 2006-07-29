@@ -806,6 +806,8 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     cf_init_plugin( gethook );
     cf_log(llevDebug, "CFPython 2.0a init\n");
 
+    init_object_assoc_table();
+
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
     Crossfire_MapType.tp_new    = PyType_GenericNew;

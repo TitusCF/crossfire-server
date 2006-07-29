@@ -397,6 +397,7 @@ static PyNumberMethods ObjectConvert[ ] = {
         0
 };
 
+static void Crossfire_Object_dealloc(PyObject *obj);
 static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 /* Our actual Python ObjectType */
@@ -406,7 +407,7 @@ PyTypeObject Crossfire_ObjectType = {
             "Crossfire.Object",        /* tp_name*/
             sizeof(Crossfire_Object),  /* tp_basicsize*/
             0,                         /* tp_itemsize*/
-            0,                         /* tp_dealloc*/
+            Crossfire_Object_dealloc,  /* tp_dealloc*/
             0,                         /* tp_print*/
             0,                         /* tp_getattr*/
             0,                         /* tp_setattr*/
@@ -468,6 +469,7 @@ static PyMethodDef PlayerMethods[] = {
     {NULL, NULL }
 };
 
+static void Crossfire_Player_dealloc(PyObject *obj);
 static PyObject *Crossfire_Player_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 /* Our actual Python ObjectPlayerType */
@@ -477,7 +479,7 @@ PyTypeObject Crossfire_PlayerType = {
             "Crossfire.Player",        /* tp_name*/
             sizeof(Crossfire_Player),  /* tp_basicsize*/
             0,                         /* tp_itemsize*/
-            0,                         /* tp_dealloc*/
+            Crossfire_Player_dealloc,  /* tp_dealloc*/
             0,                         /* tp_print*/
             0,                         /* tp_getattr*/
             0,                         /* tp_setattr*/

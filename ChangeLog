@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/cfpython/cfpython.c, plugins/cfpython/cfpython_object.c,
+    plugins/cfpython/include/cfpython_object_private.h: Modify
+    Crossfire_Object_wrap() to use the hash tables provided by hashtable.c
+    to avoid creating more python wrapper objects than is needed.
+Alex Schultz 2006-07-29
+
 common/object.c: fix bug #1526364 (stacking Royal Guards). Use find_free_spot
  to place dropped items if living. Also fix indent of function free_object2.
 server/c_object.c: fix bug #1529969 (shop floor not working in random maps).
