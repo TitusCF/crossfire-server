@@ -38,7 +38,8 @@ cfpython_la_SOURCES = cfpython.c\
 	cfpython_map.c\
 	cfpython_party.c\
 	cfpython_region.c\
-	../common/plugin_common.c
+	../common/plugin_common.c\
+	../common/hashtable.c
 
 cfpython_la_CPSOURCES = cfpython.c\
 	cfpython_archetype.c\

@@ -1,2 +1,4 @@
 
-noinst_HEADERS = plugin_common.h
+noinst_HEADERS = \
+	plugin_common.h\
+	hashtable.h

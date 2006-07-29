@@ -21,6 +21,10 @@ server/c_wiz.c: fix addexp not working on skills.
 server/time.c: don't crash if duplicator doesn't have other_arch set.
 Ryo 2006-07-28
 
+plugins/common/hashtable.c, plugins/common/include/hashtable.h, 
+    plugins/common/Makefile.am, plugins/common/include/Makefile.am,
+    plugins/cfpython/Makefile.am: Add hashtable.c, to add ptr-to-ptr hash tables
+    for plugins to use. (Useful to use a cf object as a key for the table)
 plugins/cfpython/include/cfpython.h: Include compile.h which Python.h doesn't
     include on it's own in versions of python older than 2.4.
 include/plugin.h, common/object.c: Add EVENT_DESTROY, a local event triggered when
