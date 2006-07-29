@@ -4,13 +4,6 @@
  */
 #define PTR_ASSOC_TABLESIZE 251
 
-/* The offsetof macro is part of ANSI C, but many compilers lack it, for
- * example "gcc -ansi"
- */
-#if !defined (offsetof)
-#define offsetof(type, member) (int)&(((type *)0)->member)
-#endif
-
 typedef struct _ptr_assoc {
     struct _ptr_assoc **array;
     struct _ptr_assoc *previous;
