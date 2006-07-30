@@ -4,8 +4,8 @@ longname Somewhere out in the Wilderness
 fallback 1
 msg
 Grass, mountains, trees, rivers, and not a soul to be seen for miles around,
-the wilderness is not the most civilised of places, and stories 
-that have reached the towns tell of fearsome creatures and laberythian
+the wilderness is not the most civilized of places, and stories 
+that have reached the towns tell of fearsome creatures and labyrinthine
 dungeons far under the surface. Of course, these rumours have never been
 verified, though the few who have tried have taken a long time in doing so....
 endmsg
@@ -33,7 +33,7 @@ The Imperial Highway was built long ago, so much so that its origins are
 now long since passed out of recorded history and into the stuff of legends.
 In the years since its construction it has gained the name "The yellow Brick
 Road" on account of the distinctive colour of its paving. Whilst in former
-times the Imperial highway was safe to all who woul dpass along it, in
+times the Imperial highway was safe to all who would pass along it, in
 recent times it has started to decay, as the toll of centuries comes to bear
 on this once-splendid testament to past powers.
 endmsg
@@ -55,7 +55,7 @@ Imperial highway allows it to maintain its importance as a stopping off
 point between the other major cities along the route and an attractive
 location for trade and commerce. This combined with the sheltered harbour and
 extensive shipping lines, ensures that Scorn remains a key crossroads
-bustling with activity, long after its former military dominence has
+bustling with activity, long after its former military dominance has
 diminished.
 endmsg
 end
@@ -72,14 +72,17 @@ region streetsofscorn
 parent scorn
 msg
 Here, in amidst the trading activity at the heart of scorn you find
-yourself scarely able to hear yourself think with the din of commerce all around
+yourself scarcely able to hear yourself think with the din of commerce all around
 you as shop keepers and traders shout their wares.
 endmsg
 end
 region scornarena
 parent scorn
 msg
-A giant ampitheatre made of white stone that glistens in the sunlight. People in the stands cheering and screaming for blood. The finality of the gates that come crashing down behind the gladiators below them, and the certain knowledge that only one will survive.
+A giant amphitheatre made of white stone that glistens in the sunlight. People
+in the stands cheering and screaming for blood. The finality of the gates that
+come crashing down behind the gladiators below them, and the certain knowledge
+that only one will survive.
 endmsg
 end
 region scornoldcity
@@ -134,9 +137,9 @@ region wolfsburg
 parent world
 longname The Port of Wolfsburg
 msg
-Located on an island far away from the coast, wolfsburg relies entirely on its
+Located on an island far away from the coast, Wolfsburg relies entirely on its
 quay to supply the town and as a result has a strong seafaring tradition among
-its populence. 
+its populace. 
 endmsg
 end
 region santodominion
@@ -241,10 +244,10 @@ region kingdomofsaints
 parent dream
 longname The Kingdom of Saints
 msg
-A kingdom where pagan worship is outlawed and magic scorned. Dispite this there is said to
-be much advanced knowlege known to it, outside the realms of sorcery and superstition.
+A kingdom where pagan worship is outlawed and magic scorned. Despite this there is said to
+be much advanced knowledge known to it, outside the realms of sorcery and superstition.
 The kingdom has a severe shortage of gold and thus prefers outsiders to pay debts in the metal,
-however it is rich in iron and copper ore, aswell as emeralds, though it's emerald production
+however it is rich in iron and copper ore, as well as emeralds, though it's emerald production
 has recently sharply decreased due to an unknown reason.
 endmsg
 end
@@ -252,8 +255,8 @@ region kingdomofsaintsborder
 parent kingdomofsaints
 longname The Kingdom of Saints Border
 msg
-A kingdom where pagan worship is outlawed and magic scorned. Dispite this there is said to
-be much advanced knowlege known to it, outside the realms of sorcery and superstition. To the
+A kingdom where pagan worship is outlawed and magic scorned. Despite this there is said to
+be much advanced knowledge known to it, outside the realms of sorcery and superstition. To the
 east of here lies the Valley of Gehennom. To the north and south is unknown wilderness.
 endmsg
 end
@@ -282,8 +285,8 @@ The town of St. Bartholomew is the capital of the Kingdom of Saints.
 Situated between two mountain ranges rich in iron and copper ore St.
 Bartholomew is well protected and well supplied with minerals useful
 in wartime production. St. Bartholomew boasts a world class
-bank, a well stocked libary, and one of the only two power generation 
-plants in existance, as well as the only working centerfuge throughout the
+bank, a well stocked library, and one of the only two power generation 
+plants in existence, as well as the only working centrifuge throughout the
 explored world.
 endmsg
 end
