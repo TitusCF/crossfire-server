@@ -956,12 +956,15 @@ int key_roll_stat(object *op, char key)
 }
 
 /* This function takes the key that is passed, and does the
- * appropriate action with it (change class, or other things.
+ * appropriate action with it (change race, or other things).
+ * The function name is for historical reasons - now we have
+ * separate race and class; this actually changes the RACE,
+ * not the class.
  */
 
 int key_change_class(object *op, char key)
 {
-      int tmp_loop;
+    int tmp_loop;
 
     if(key=='q'||key=='Q') {
       remove_ob(op);
@@ -1002,10 +1005,32 @@ int key_change_class(object *op, char key)
 	link_player_skills(op);
 	esrv_send_inventory(op, op);
 	fix_player(op);
+
+        /* This moves the player to a different start map, if there
+         * is one for this race
+         */
+        if(*first_map_ext_path) {
+            object *tmp;
+            mapstruct *oldmap = op->map;
+            char mapname[MAX_BUF];
+            snprintf(mapname, MAX_BUF-1, "%s/%s",
+                     first_map_ext_path, op->arch->name);
+            printf("%s\n", mapname);
+            tmp=get_object();
+            EXIT_PATH(tmp) = add_string(mapname);
+            EXIT_X(tmp) = op->x;
+            EXIT_Y(tmp) = op->y;
+            enter_exit(op,tmp); /* we don't really care if it succeeded;
+                                 * if the map isn't there, then stay on the
+                                 * default initial map */
+            free_object(tmp);
+        } else {
+            LOG(llevDebug,"first_map_ext_path not set\n");
+        }
 	return 0;
     }
 
-    /* Following actually changes the class - this is the default command
+    /* Following actually changes the race - this is the default command
      * if we don't match with one of the options above.
      */
 

@@ -111,7 +111,7 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"David Gervais       [david_eg@mail.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
   new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Mårten Woxberg      [maxmc@telia.com]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Mï¿½ten Woxberg      [maxmc@telia.com]");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
@@ -718,143 +718,140 @@ void enter_exit(object *op, object *exit_ob) {
     /* First, lets figure out what map the player is going to go to */
     if (exit_ob){ 
 
-	/* check to see if we make a template map */
-	if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='@') {
-            if (EXIT_PATH(exit_ob)[2]=='!') {
-               	/* generate a template map randomly */
-                enter_random_template_map(op, exit_ob);
-            } else {
-               	/* generate a template map from a fixed template */
-                enter_fixed_template_map(op, exit_ob);
+    /* check to see if we make a template map */
+    if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='@') {
+        if (EXIT_PATH(exit_ob)[2]=='!') {
+            /* generate a template map randomly */
+            enter_random_template_map(op, exit_ob);
+        } else {
+            /* generate a template map from a fixed template */
+            enter_fixed_template_map(op, exit_ob);
+        }
+    }
+    /* check to see if we make a randomly generated map */
+    else if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
+        enter_random_map(op, exit_ob);
+    }
+    else if (QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
+        enter_unique_map(op, exit_ob);
+    } else {
+        int x=EXIT_X(exit_ob), y=EXIT_Y(exit_ob);
+        /* 'Normal' exits that do not do anything special
+        * Simple enough we don't need another routine for it.
+        */
+        mapstruct	*newmap;
+        if (exit_ob->map) {
+            newmap = ready_map_name(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+            /* Random map was previously generated, but is no longer about.  Lets generate a new
+             * map.
+             */
+            if (!newmap && !strncmp(EXIT_PATH(exit_ob),"/random/",8)) {
+            /* Maps that go down have a message set.  However, maps that go
+             * up, don't.  If the going home has reset, there isn't much
+             * point generating a random map, because it won't match the maps.
+             */
+                if (exit_ob->msg) {
+                    enter_random_map(op, exit_ob);
+                } else {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+                    return;
+                }
+
+            /* For exits that cause damages (like pits).  Don't know if any
+             * random maps use this or not.
+             */
+            if(exit_ob->stats.dam && op->type==PLAYER)
+                hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
+            return;
             }
-	}
-       	/* check to see if we make a randomly generated map */
-	else if(EXIT_PATH(exit_ob)&&EXIT_PATH(exit_ob)[1]=='!') {
-	    enter_random_map(op, exit_ob);
-	}
-	else if (QUERY_FLAG(exit_ob, FLAG_UNIQUE)) {
-	    enter_unique_map(op, exit_ob);
-	} else {
-	    int x=EXIT_X(exit_ob), y=EXIT_Y(exit_ob);
-	    /* 'Normal' exits that do not do anything special
-	     * Simple enough we don't need another routine for it.
-	     */
-	    mapstruct	*newmap;
-	    if (exit_ob->map) {
-		newmap = ready_map_name(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
-		/* Random map was previously generated, but is no longer about.  Lets generate a new
-		 * map.
-		 */
-		if (!newmap && !strncmp(EXIT_PATH(exit_ob),"/random/",8)) {
-		    /* Maps that go down have a message set.  However, maps that go
-		     * up, don't.  If the going home has reset, there isn't much
-		     * point generating a random map, because it won't match the maps.
-		     */
-		    if (exit_ob->msg) {
-			enter_random_map(op, exit_ob);
-		    } else {
-			new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
-			return;
-		    }
+        } else {
+            /* For word of recall and other force objects
+             * They contain the full pathname of the map to go back to,
+             * so we don't need to normalize it.
+             * But we do need to see if it is unique or not 
+             */
+            if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
+                newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_PLAYER_UNIQUE);
+            else
+                newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
+        }
+        if (!newmap) {
+            if (exit_ob->name)
+                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+                /* don't cry to momma if name is not set - as in tmp objects
+                 * used by the savebed code and character creation */
+            return;
+        }
 
-		    /* For exits that cause damages (like pits).  Don't know if any
-		     * random maps use this or not.
-		     */
-		    if(exit_ob->stats.dam && op->type==PLAYER)
-			hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
-		    return;
-		}
-	    } else {
-		/* For word of recall and other force objects
-		 * They contain the full pathname of the map to go back to,
-		 * so we don't need to normalize it.
-		 * But we do need to see if it is unique or not 
-		 */
-		if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
-		    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_PLAYER_UNIQUE);
-		else
-		    newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
-	    }
-            if (!newmap)
-            {
-		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
-		return;
-	    }
+        /* This supports the old behaviour, but it really should not be used.
+         * I will note for example that with this method, it is impossible to
+         * set 0,0 destination coordinates.  Really, if we want to support
+         * using the new maps default coordinates, the exit ob should use
+         * something like -1, -1 so it is clear to do that.
+         */
+        if (x==0 && y==0) {
+            x=MAP_ENTER_X(newmap);
+            y=MAP_ENTER_Y(newmap);
+            LOG(llevDebug,"enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
+                exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
+                exit_ob->map?exit_ob->map->path:"(none)");
+        }
 
-	    /* This supports the old behaviour, but it really should not be used.
-	     * I will note for example that with this method, it is impossible to
-	     * set 0,0 destination coordinates.  Really, if we want to support
-	     * using the new maps default coordinates, the exit ob should use
-	     * something like -1, -1 so it is clear to do that.
-	     */
-	    if (x==0 && y==0) {
-		x=MAP_ENTER_X(newmap);
-		y=MAP_ENTER_Y(newmap);
-		LOG(llevDebug,"enter_exit: Exit %s (%d,%d) on map %s is 0 destination coordinates\n",
-		    exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y, 
-		    exit_ob->map?exit_ob->map->path:"(none)");
-	    }
-
-            /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
-            if (QUERY_FLAG(exit_ob, FLAG_DAMNED)) {
-              /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
-              for(tmp=op->inv; tmp != NULL; tmp = tmp->below) {
+        /* mids 02/13/2002 if exit is damned, update players death & WoR home-position and delete town portal */
+        if (QUERY_FLAG(exit_ob, FLAG_DAMNED)) {
+            /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
+            for(tmp=op->inv; tmp != NULL; tmp = tmp->below) {
                 if(tmp->type == FORCE && tmp->slaying && !strcmp(tmp->slaying, PORTAL_DESTINATION_NAME)) break;
-              }
-              if(tmp) {
+            }
+            if(tmp) {
                 remove_ob(tmp);
                 free_object(tmp);
-              }
- 
-              strcpy(op->contr->savebed_map, path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)));
-              op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
-              save_player(op, 1);
-              /* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
-               * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
-               * path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))); */
             }
 
-	    enter_map(op, newmap, x, y);
-	}
-	/* For exits that cause damages (like pits) */
-	if(exit_ob->stats.dam && op->type==PLAYER)
-	    hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
+            strcpy(op->contr->savebed_map, path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)));
+            op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
+            save_player(op, 1);
+            /* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
+             * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
+             * path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))); */
+        }
+
+        enter_map(op, newmap, x, y);
+    }
+    /* For exits that cause damages (like pits) */
+    if(exit_ob->stats.dam && op->type==PLAYER)
+        hit_player(op,exit_ob->stats.dam,exit_ob,exit_ob->attacktype,1);
     } else {
-	int flags = 0;
-	mapstruct *newmap;
+        int flags = 0;
+        mapstruct *newmap;
 
 
-	/* Hypothetically, I guess its possible that a standard map matches
-	 * the localdir, but that seems pretty unlikely - unlikely enough that
-	 * I'm not going to attempt to try to deal with that possibility.
-	 * We use the fact that when a player saves on a unique map, it prepends
-	 * the localdir to that name.  So its an easy way to see of the map is
-	 * unique or not.
-	 */
-	if (!strncmp(op->contr->maplevel, settings.localdir, strlen(settings.localdir)))
-	    flags = MAP_PLAYER_UNIQUE;
+        /* Hypothetically, I guess its possible that a standard map matches
+         * the localdir, but that seems pretty unlikely - unlikely enough that
+         * I'm not going to attempt to try to deal with that possibility.
+         * We use the fact that when a player saves on a unique map, it prepends
+         * the localdir to that name.  So its an easy way to see of the map is
+         * unique or not.
+         */
+        if (!strncmp(op->contr->maplevel, settings.localdir, strlen(settings.localdir)))
+            flags = MAP_PLAYER_UNIQUE;
 
-	/* newmap returns the map (if already loaded), or loads it for
-	 * us.
-	 */
-	newmap = ready_map_name(op->contr->maplevel, flags);
-        if (!newmap)
-        {
-            LOG(llevError,
-                "enter_exit: Pathname to map does not exist! (%s)\n",
-                op->contr->maplevel);
-	    newmap = ready_map_name(settings.emergency_mapname, 0);
-	    op->x = settings.emergency_x;
-	    op->y = settings.emergency_y;
-	    /* If we can't load the emergency map, something is probably really
-	     * screwed up, so bail out now.
-	     */
-	    if (!newmap) {
-		LOG(llevError,"enter_exit: could not load emergency map? Fatal error\n");
-		abort();
-	    }
-	}
-	enter_map(op, newmap, op->x, op->y);
+        /* newmap returns the map (if already loaded), or loads it for us. */
+        newmap = ready_map_name(op->contr->maplevel, flags);
+        if (!newmap) {
+            LOG(llevError, "enter_exit: Pathname to map does not exist! (%s)\n", op->contr->maplevel);
+            newmap = ready_map_name(settings.emergency_mapname, 0);
+            op->x = settings.emergency_x;
+            op->y = settings.emergency_y;
+            /* If we can't load the emergency map, something is probably really
+             * screwed up, so bail out now.
+             */
+            if (!newmap) {
+                LOG(llevError,"enter_exit: could not load emergency map? Fatal error\n");
+                abort();
+            }
+        }
+        enter_map(op, newmap, op->x, op->y);
     }
 }
 

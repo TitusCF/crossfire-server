@@ -249,8 +249,8 @@ void init_globals(void) {
     first_treasurelist=NULL;
     first_artifactlist=NULL;
     first_archetype=NULL;
+    *first_map_ext_path=0;
     warn_archetypes=0;
-    first_map=NULL;
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr=0;
@@ -314,9 +314,14 @@ void init_defaults(void) {
 void init_dynamic (void) {
     archetype *at = first_archetype;
     while (at) {
-	if (at->clone.type == MAP && EXIT_PATH (&at->clone)) {
-	    strcpy (first_map_path, EXIT_PATH (&at->clone));
-	    return;
+	if (at->clone.type == MAP) {
+            if (at->clone.race) {
+                strcpy (first_map_ext_path, at->clone.race);
+            }
+            if (EXIT_PATH (&at->clone)) {
+                strcpy (first_map_path, EXIT_PATH (&at->clone));
+                return;
+            }
 	}
 	at = at->next;
     }
