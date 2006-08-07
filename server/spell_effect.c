@@ -2360,6 +2360,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 new_altar = arch_to_object(altar_arch);
                 new_altar->x = tmp->x;
                 new_altar->y = tmp->y;
+                new_altar->level = tmp->level;
                 insert_ob_in_map(new_altar,tmp->map,tmp,INS_BELOW_ORIGINATOR);
                 if(op->type==PLAYER) {
                     esrv_del_item(op->contr, tmp->count);
