@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Commit patch #1389033 (Large-value coins) courtesy Lalo Martins
+ server/shop.c: accept jade & amber coins, never give'em back.
+Ryo 2006-08-07
+
 Fix bug #1534727 (create_home_portals TRUE doesn't work)
  server/init.c: wrong variable changed.
 Ryo 2006-08-05

@@ -56,8 +56,9 @@ static uint64 value_limit(uint64 val, int quantity, const object *who, int issho
 static double shop_specialisation_ratio(const object *item, const mapstruct *map);
 static double shop_greed(const mapstruct *map);
 
-#define NUM_COINS 3	/* number of coin types */
-static const char* const coins[] = {"platinacoin", "goldcoin", "silvercoin", NULL};
+#define NUM_COINS 5	/* number of coin types */
+#define LARGEST_COIN_GIVEN 2 /* never give amber or jade, but accept them */
+static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin", "goldcoin", "silvercoin", NULL};
 
 /* Added F_TRUE flag to define.h to mean that the price should not
  * be adjusted by players charisma. With F_TRUE, it returns the amount
@@ -338,7 +339,8 @@ static const char *cost_string_from_value(uint64 cost)
     static char buf[MAX_BUF];
     archetype *coin, *next_coin;
     char *endbuf;
-    int num, cointype = 0;
+    int num;
+    int cointype = LARGEST_COIN_GIVEN;
 
     coin = find_next_coin(cost, &cointype);
     if (coin == NULL)
@@ -415,7 +417,8 @@ const char *query_cost_string(const object *tmp,object *who,int flag) {
 	    if (!idskill2 || !find_skill_by_number(who, idskill2)) {
 		if (!find_skill_by_number(who,SK_BARGAINING)) {
 		    static char buf[MAX_BUF];
-		    int num, cointype = 0;
+		    int num;
+		    int cointype = LARGEST_COIN_GIVEN;
 		    archetype *coin = find_next_coin(real_value, &cointype);
 	
 		    if (coin == NULL) return "nothing";
