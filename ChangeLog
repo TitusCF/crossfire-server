@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Tell player whether she's the transport's captain or not.
+ server/apply.c
+Ryo 2006-08-07
+
 Commit patch #1389033 (Large-value coins) courtesy Lalo Martins
  server/shop.c: accept jade & amber coins, never give'em back.
 Ryo 2006-08-07

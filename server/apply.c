@@ -151,7 +151,13 @@ int apply_transport(object *pl, object *transport, int aflag) {
 
 	/* Everything checks out OK - player can get on the transport */
 	pl->contr->transport = transport;
-	if (!transport->contr) transport->contr = pl->contr;
+    if (transport->contr) {
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s's captain is currently %s", query_name(transport), transport->contr->ob->name);
+    }
+    else {
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "You're the %s's captain", query_name(transport));
+        transport->contr = pl->contr;
+    }
 	remove_ob(pl);
 	insert_ob_in_ob(pl, transport);
 	sum_weight(transport);
