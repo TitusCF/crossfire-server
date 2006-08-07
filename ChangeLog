@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Implement feature request #1528641 (consecrate should change face of altar). This simply
+ removes the altar, and add the god's altar. Note that the name of the altar should be
+ altar_<god's name>, which seems to be the case everywhere.
+ server/spell_effect.c
+Ryo 2006-08-07
+
 Tell player whether she's the transport's captain or not.
  server/apply.c
 Ryo 2006-08-07

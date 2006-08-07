@@ -2330,32 +2330,46 @@ int cast_consecrate(object *op, object *caster, object *spell) {
     object *tmp, *god=find_god(determine_god(op));
 
     if(!god) {
-	new_draw_info(NDI_UNIQUE, 0,op,
-		      "You can't consecrate anything if you don't worship a god!");
+        new_draw_info(NDI_UNIQUE, 0,op,"You can't consecrate anything if you don't worship a god!");
         return 0;
     }
- 
+
     for(tmp=op->below;tmp;tmp=tmp->below) {
-	if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
+        if(QUERY_FLAG(tmp,FLAG_IS_FLOOR)) break;
         if(tmp->type==HOLY_ALTAR) {
 
-	    if(tmp->level > caster_level(caster, spell)) {
-		new_draw_info_format(NDI_UNIQUE, 0,op,
-		    "You are not powerful enough to reconsecrate the %s", tmp->name);
-		return 0;
-	    } else {
-		/* If we got here, we are consecrating an altar */
-		if(tmp->name)	free_string(tmp->name);
-		sprintf(buf,"Altar of %s",god->name);
-		tmp->name = add_string(buf);
-		tmp->level = caster_level(caster, spell);
-		tmp->other_arch = god->arch;
-		if(op->type==PLAYER) esrv_update_item(UPD_NAME, op, tmp);
-		new_draw_info_format(NDI_UNIQUE,0, op,
-				     "You consecrated the altar to %s!",god->name);
-		return 1;
-	    }
-	}
+            if(tmp->level > caster_level(caster, spell)) {
+                new_draw_info_format(NDI_UNIQUE, 0,op,"You are not powerful enough to reconsecrate the %s", tmp->name);
+                return 0;
+            } else {
+                /* If we got here, we are consecrating an altar */
+                object* new_altar;
+                int letter;
+                archetype* altar_arch;
+                snprintf(buf,MAX_BUF,"altar_");
+                letter=strlen(buf);
+                strncpy(buf+letter,god->name,MAX_BUF-letter);
+                for (; letter < strlen(buf); letter++)
+                    buf[letter] = tolower(buf[letter]);
+                altar_arch = find_archetype(buf);
+                if (!altar_arch) {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You fail to consecrate the altar.");
+                    LOG(llevError, "cast_consecrate: can't find altar %s for god %s", buf, god->name);
+                    return;
+                }
+                new_altar = arch_to_object(altar_arch);
+                new_altar->x = tmp->x;
+                new_altar->y = tmp->y;
+                insert_ob_in_map(new_altar,tmp->map,tmp,INS_BELOW_ORIGINATOR);
+                if(op->type==PLAYER) {
+                    esrv_del_item(op->contr, tmp->count);
+                    esrv_send_item(op, new_altar);
+                }
+                remove_ob(tmp);
+                new_draw_info_format(NDI_UNIQUE,0, op,"You consecrated the altar to %s!",god->name);
+                return 1;
+            }
+        }
     }
     new_draw_info(NDI_UNIQUE, 0,op,"You are not standing over an altar!");
     return 0;
