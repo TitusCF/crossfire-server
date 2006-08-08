@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Feature request #1465397 (improved feedback in character creation for existing names).
+Made message more explicit.
+ server/login.c
+Ryo 2006-08-08
+
 Implement feature request #821645 (change password command). This introduces 3 new
  player states, "entering current password", "new password", "confirm new password".
 include/define.h: new states.

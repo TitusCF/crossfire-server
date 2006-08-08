@@ -483,8 +483,9 @@ void check_login(object *op) {
     }
     if (!correct) {
 	new_draw_info(NDI_UNIQUE, 0,op," ");
-	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
-	new_draw_info(NDI_UNIQUE, 0,op," ");
+	new_draw_info(NDI_UNIQUE, 0,op,"A character with this name already exists.");
+    new_draw_info(NDI_UNIQUE, 0,op,"Please choose another name, or make sure you entered your password correctly.");
+    new_draw_info(NDI_UNIQUE, 0,op," ");
 	FREE_AND_COPY(op->name, "noname");
 	FREE_AND_COPY(op->name_pl, "noname");
 	op->contr->socket.password_fails++;
