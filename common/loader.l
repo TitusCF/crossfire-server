@@ -2034,6 +2034,10 @@ void save_object(FILE *fp,object *op, int flag) {
 	return;
     }
 
+    /* If the object has no_save set, just return */
+    if(op->no_save)
+        return;
+
     if((at=op->arch)==NULL) at=empty_archetype;
     fprintf(fp,"arch %s\n",at->name);
 

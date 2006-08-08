@@ -1957,6 +1957,11 @@ void* cfapi_object_get_property(int* type, ...)
             rv = (op->contr ? op->contr->party : NULL);
             *type = CFAPI_PPARTY;
             break;
+        case CFAPI_OBJECT_PROP_NO_SAVE:
+            ri = op->no_save;
+            rv = &ri;
+            *type = CFAPI_INT;
+            break;
         default:
             *type = CFAPI_NONE;
             break;
@@ -2438,7 +2443,10 @@ void* cfapi_object_set_property(int* type, ...)
                 op->contr->party = partyarg;
             }
             break;
-
+        case CFAPI_OBJECT_PROP_NO_SAVE:
+            iarg = va_arg(args, int);
+            op->no_save = iarg;
+            break;
         default:
             *type = CFAPI_NONE;
             break;

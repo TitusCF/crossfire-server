@@ -249,6 +249,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_PROP_INVISIBLE         98
 #define CFAPI_OBJECT_PROP_FACE              99
 #define CFAPI_OBJECT_ANIMATION              100
+#define CFAPI_OBJECT_PROP_NO_SAVE           101
 #define CFAPI_PLAYER_PROP_IP                150
 #define CFAPI_PLAYER_PROP_MARKED_ITEM       151
 #define CFAPI_PLAYER_PROP_PARTY             152

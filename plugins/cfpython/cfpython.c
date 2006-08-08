@@ -1107,6 +1107,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     static int rv = 0;
     va_list args;
     char* buf;
+    char* script_tmp;
     CFPContext* context;
 
     rv = 0;
@@ -1125,11 +1126,18 @@ CF_PLUGIN void* eventListener(int* type, ...)
     if (buf != NULL)
         snprintf(context->message, sizeof(context->message), "%s", buf);
     context->fix         = va_arg(args, int);
-    snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory(va_arg(args, char*)));
+    script_tmp = va_arg(args, char*);
+    snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory(script_tmp));
     snprintf(context->options, sizeof(context->options), "%s", va_arg(args, char*));
     context->returnvalue = 0;
 
     va_end(args);
+    
+    if ((context->event_code == EVENT_DESTROY) && !strcmp(script_tmp, "cfpython_auto_hook")) {
+        Handle_Destroy_Hook(context->who);
+        freeContext(context);
+        return &rv;
+    }
 
     if (!do_script(context, 0)) {
         freeContext(context);

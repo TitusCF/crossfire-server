@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/loader.l, include/object.h, include/plugin.h, server/plugins.c: Add no_save attribute.
+    Prevents object from being saved to disk. Add plugin support for the attribute.
+plugins/cfpython/{cfpython.c, cfpython_object.c include/cfpython_object.h,
+    include/cfpython_object_private.h}: Add cfpython support for no_save, and have cfpython
+    "invalidate" object wrappers when the object is destroyed. Add "Exists" property to python
+    object wrappers.
+Alex Schultz 2006-08-08
+
 Feature request #1465397 (improved feedback in character creation for existing names).
 Made message more explicit.
  server/login.c

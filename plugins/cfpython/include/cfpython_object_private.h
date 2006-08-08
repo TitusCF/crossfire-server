@@ -127,6 +127,8 @@ static PyObject* Object_GetType(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetNoSave(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -196,6 +198,8 @@ static int Object_SetOnlyAttack(Crossfire_Object* whoptr, PyObject* value, void*
 static int Object_SetMakeInvisible(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetValue(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetFace(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetNoSave(Crossfire_Object* whoptr, PyObject* value, void* closure);
+
 
 static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args );
@@ -338,6 +342,8 @@ static PyGetSetDef Object_getseters[] = {
     { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue ,NULL, NULL },
     { "ArchName",       (getter)Object_GetArchName,     NULL ,NULL, NULL },
     { "Archetype",      (getter)Object_GetArchetype,    NULL ,NULL, NULL },
+    { "Exists",         (getter)Object_GetExists,       NULL ,NULL, NULL },
+    { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

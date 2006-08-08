@@ -240,7 +240,7 @@ typedef struct obj {
 
     MoveType   move_type;	/* Type of movement this object uses */
     MoveType   move_block;	/* What movement types this blocks */
-    MoveType   move_allow;	/* What movement types explicitly allowd */
+    MoveType   move_allow;	/* What movement types explicitly allowed */
     MoveType   move_on;		/* Move types affected moving on to this space */
     MoveType   move_off;	/* Move types affected moving off this space */
     MoveType   move_slow;	/* Movement types this slows down */
@@ -250,7 +250,10 @@ typedef struct obj {
 
     const char  *custom_name; /* Custom name assigned by player */
     key_value *key_values; /* Fields not explictly known by the loader. */
-
+    
+    uint8       no_save;       /* This field indicates that the object should never */
+                                /* be saved even for map swapout. Not handled by the */
+                                /* loading or saving code. */
 } object;
 
 typedef struct oblnk { /* Used to link together several objects */
