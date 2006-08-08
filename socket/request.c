@@ -589,6 +589,9 @@ void reply_cmd(char *buf, int len, player *pl)
 
 	case ST_GET_PASSWORD:
 	case ST_CONFIRM_PASSWORD:
+	case ST_CHANGE_PASSWORD_OLD:
+	case ST_CHANGE_PASSWORD_NEW:
+	case ST_CHANGE_PASSWORD_CONFIRM:
 	    receive_player_password(pl->ob,13);
 	    break;
 

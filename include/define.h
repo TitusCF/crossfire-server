@@ -811,6 +811,9 @@ typedef unsigned char	MoveType;
 #define ST_GET_PASSWORD 7
 #define ST_CONFIRM_PASSWORD     8
 #define ST_GET_PARTY_PASSWORD 10
+#define ST_CHANGE_PASSWORD_OLD      11  /* Player is entering old password to change password */
+#define ST_CHANGE_PASSWORD_NEW      12  /* Player is entering new password */
+#define ST_CHANGE_PASSWORD_CONFIRM  13  /* Player is confirming new password */
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"

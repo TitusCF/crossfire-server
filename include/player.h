@@ -187,6 +187,7 @@ typedef struct pl {
     char	write_buf[MAX_BUF]; /* Holds arbitrary input from client */
     char	input_buf[MAX_BUF]; /* Holds command to run */
     char	password[16];	    /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
+    char	new_password[16];   /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 
 #ifdef SAVE_INTERVAL
     time_t	last_save_time;

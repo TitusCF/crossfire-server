@@ -1461,39 +1461,74 @@ void receive_player_name(object *op,char k) {
 
 void receive_player_password(object *op,char k) {
 
-  unsigned int pwd_len=strlen(op->contr->write_buf);
-  if(pwd_len<=1||pwd_len>17) {
-    get_name(op);
-    return;
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
-
-  if (checkbanned(op->name, op->contr->socket.host)) {
-    LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
-    new_draw_info(NDI_UNIQUE|NDI_RED, 0, op, "You are not allowed to play.");
-    get_name(op);
-    return;
-  }
-
-  if(op->contr->state==ST_CONFIRM_PASSWORD) {
-    if(!check_password(op->contr->write_buf+1,op->contr->password)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
-      get_name(op);
-      return;
+    unsigned int pwd_len=strlen(op->contr->write_buf);
+    if(pwd_len<=1||pwd_len>17) {
+        if (op->contr->state == ST_CHANGE_PASSWORD_OLD || op->contr->state == ST_CHANGE_PASSWORD_NEW || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
+            new_draw_info(NDI_UNIQUE, 0, op, "Password changed cancelled.");
+            op->contr->state = ST_PLAYING;
+        }
+        else
+            get_name(op);
+        return;
     }
-    clear_win_info(op);
-    display_motd(op);
-    new_draw_info(NDI_UNIQUE, 0,op," ");
-    new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
-    new_draw_info(NDI_UNIQUE, 0,op," ");
-    roll_again(op);
+    new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
+
+    if (checkbanned(op->name, op->contr->socket.host)) {
+        LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
+        new_draw_info(NDI_UNIQUE|NDI_RED, 0, op, "You are not allowed to play.");
+        get_name(op);
+        return;
+    }
+
+    if(op->contr->state==ST_CONFIRM_PASSWORD) {
+        if(!check_password(op->contr->write_buf+1,op->contr->password)) {
+            new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
+            get_name(op);
+            return;
+        }
+        clear_win_info(op);
+        display_motd(op);
+        new_draw_info(NDI_UNIQUE, 0,op," ");
+        new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
+        new_draw_info(NDI_UNIQUE, 0,op," ");
+        roll_again(op);
+        op->contr->state=ST_ROLL_STAT;
+        return;
+    }
+
+    if (op->contr->state == ST_CHANGE_PASSWORD_OLD) {
+        if (!check_password(op->contr->write_buf + 1, op->contr->password)) {
+            new_draw_info(NDI_UNIQUE, 0, op, "You entered the wrong current password.");
+            op->contr->state = ST_PLAYING;
+        } else {
+            send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please enter your new password, or blank to cancel:");
+            op->contr->state = ST_CHANGE_PASSWORD_NEW;
+        }
+        return;
+    }
+
+    if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
+        strcpy(op->contr->new_password, crypt_string(op->contr->write_buf + 1, NULL));
+        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please confirm your new password, or blank to cancel:");
+        op->contr->state = ST_CHANGE_PASSWORD_CONFIRM;
+        return;
+    }
+
+    if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
+        if (strcmp(crypt_string(op->contr->write_buf + 1, op->contr->new_password), op->contr->new_password)) {
+            new_draw_info(NDI_UNIQUE, 0, op, "The new passwords don't match!");
+        } else {
+        	new_draw_info(NDI_UNIQUE, 0, op, "Password changed.");
+            strncpy(op->contr->password, op->contr->new_password, 13);
+        }
+        op->contr->state = ST_PLAYING;
+        return;
+    }
+
+    strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
     op->contr->state=ST_ROLL_STAT;
+    check_login(op);
     return;
-  }
-  strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
-  op->contr->state=ST_ROLL_STAT;
-  check_login(op);
-  return;
 }
 
 
@@ -1743,3 +1778,15 @@ int command_quests( object *pl, char *params )
         }
     return 1;
     }
+
+/**
+ * Player is asking to change password.
+ **/
+int command_passwd(object *pl, char *params)
+{
+    send_query(&pl->contr->socket,CS_QUERY_HIDEINPUT,
+        "Password change.\nPlease enter your current password, or empty string to cancel.");
+
+    pl->contr->state = ST_CHANGE_PASSWORD_OLD;
+    return 1;
+}
