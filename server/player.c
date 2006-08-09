@@ -265,7 +265,7 @@ static player* get_player(player *p) {
     p->shoottype=range_none;
     p->bowtype=bow_normal;
     p->petmode=pet_normal;
-    p->listening=9;
+    p->listening=10;
     p->last_weapon_sp= -1;
     p->peaceful=1;			/* default peaceful */
     p->do_los=1;

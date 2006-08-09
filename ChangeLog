@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Set default listen level to 10.
+Alex Schultz 2006-08-09
+
 common/loader.l, include/object.h, include/plugin.h, server/plugins.c: Add no_save attribute.
     Prevents object from being saved to disk. Add plugin support for the attribute.
 plugins/cfpython/{cfpython.c, cfpython_object.c include/cfpython_object.h,
