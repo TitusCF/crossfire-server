@@ -643,7 +643,8 @@ int command_create(object *op, char *params) {
                     bp2 = cp+strlen(spell_name)+1;
                 else
                     at_spell = NULL;
-            }
+            } else
+                at_spell = NULL;
         }
 
         /* OK - we didn't find a spell - presume the 'of'
@@ -1062,6 +1063,8 @@ int command_remove (object *op, char *params) {
         tmp->speed = 0;
         update_ob_speed(tmp);
     }
+    if (!tmp->invisible && tmp->env && tmp->env->type == PLAYER)
+        esrv_del_item(tmp->env->contr, tmp->count);
     remove_ob(tmp);
     return 1;
 }
