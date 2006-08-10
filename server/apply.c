@@ -162,8 +162,13 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	insert_ob_in_ob(pl, transport);
 	sum_weight(transport);
 	pl->map = transport->map;
-	pl->x = transport->x;
-	pl->y = transport->y;
+        if (pl->x != transport->x || pl->y != transport->y) {
+            esrv_map_scroll(&pl->contr->socket, (pl->x - transport->x), (pl->y - transport->y));
+	    pl->contr->socket.update_look=1;
+	    pl->contr->socket.look_position=0;
+            pl->x = transport->x;
+            pl->y = transport->y;
+        }
 
 	/* Might need to update face, animation info */
 	if (!pc) {

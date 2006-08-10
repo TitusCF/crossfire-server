@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Tell the client the map has scrolled when applying transports. Fixes bug #1528565.
+Alex Schultz 2006-08-10
+
 lib/regions, common/region.c: Move regions file to map files.
 server/player.c: Set default listen level to 10.
 Alex Schultz 2006-08-09
