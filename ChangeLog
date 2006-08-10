@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/regions, common/region.c: Move regions file to map files.
 server/player.c: Set default listen level to 10.
 Alex Schultz 2006-08-09
 
