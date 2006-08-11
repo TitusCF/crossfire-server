@@ -1106,7 +1106,7 @@ int command_addexp(object *op, char *params) {
 
     skill[0] = '\0';
     if ((params == NULL) || (strlen(params) > MAX_BUF) || ((q = sscanf(params, "%s %d %s", buf, &i, &skill)) < 2)) {
-        new_draw_info(NDI_UNIQUE, 0, op, "Usage: addexp [who] [how much].");
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: addexp player quantity [skill].");
         return 1;
     }
 

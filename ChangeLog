@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/addexp: update help text.
+server/c_wiz.c: update addexp's help text.
+Ryo 2006-08-11
+
 server/c_wiz.c: fix create command with some artifact fun. Update player inventory if removing
  an item.
 Ryo 2006-08-10
