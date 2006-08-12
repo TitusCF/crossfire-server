@@ -411,49 +411,60 @@ void pet_move(object * ob)
 static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) {
     archetype *atmp;
     object *tmp=NULL, *prev=NULL, *head=NULL; 
- 
+
     for(atmp = at; atmp!=NULL; atmp = atmp->more) {
-	tmp = arch_to_object(atmp);
-	if (atmp == at) {
-	    if(!is_golem) 
-		SET_FLAG(tmp, FLAG_MONSTER);
-	    set_owner(tmp, op);
-	    if (op->type == PLAYER) {
-		tmp->stats.exp = 0;
-		add_friendly_object(tmp);
-		SET_FLAG(tmp, FLAG_FRIENDLY);
-		if(is_golem) CLEAR_FLAG(tmp, FLAG_MONSTER);
-	    } else { 
-		if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
-		    object *owner = get_owner(op);
-		    if(owner != NULL) {/* For now, we transfer ownership */
-			set_owner(tmp,owner);
-			tmp->attack_movement = PETMOVE;
-			add_friendly_object(tmp);
-			SET_FLAG(tmp, FLAG_FRIENDLY);
-		    }
-		}
-	    }
-	    if(op->type!=PLAYER || !is_golem) { 
-		tmp->attack_movement = PETMOVE;
-		tmp->speed_left = -1;
-		tmp->type = 0;
-		tmp->enemy = op->enemy; 
-	    } else
-		tmp->type = GOLEM;
-       
-	}
-	if(head == NULL)
-	    head = tmp;
-	tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
-	tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
-	tmp->map = op->map;
-	if(tmp->invisible) tmp->invisible=0;
-	if(head != tmp)
-	    tmp->head = head, prev->more = tmp;
-	prev = tmp;
+        tmp = arch_to_object(atmp);
+        if (atmp == at) {
+            if(!is_golem)
+                SET_FLAG(tmp, FLAG_MONSTER);
+            set_owner(tmp, op);
+            if (op->type == PLAYER) {
+                tmp->stats.exp = 0;
+                add_friendly_object(tmp);
+                SET_FLAG(tmp, FLAG_FRIENDLY);
+                if(is_golem) CLEAR_FLAG(tmp, FLAG_MONSTER);
+            } else if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
+                object *owner = get_owner(op);
+                if(owner != NULL) {/* For now, we transfer ownership */
+                    set_owner(tmp,owner);
+                    tmp->attack_movement = PETMOVE;
+                    add_friendly_object(tmp);
+                    SET_FLAG(tmp, FLAG_FRIENDLY);
+                }
+            }
+            if(op->type!=PLAYER || !is_golem) {
+                tmp->attack_movement = PETMOVE;
+                tmp->speed_left = -1;
+                tmp->type = 0;
+                tmp->enemy = op->enemy;
+            } else
+                tmp->type = GOLEM;
+        }
+        if(head == NULL)
+            head = tmp;
+        tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
+        tmp->y = op->y + freearr_y[dir] + tmp->arch->clone.y;
+        tmp->map = op->map;
+        if(tmp->invisible) tmp->invisible=0;
+        if(head != tmp)
+            tmp->head = head, prev->more = tmp;
+        prev = tmp;
     }
     head->direction = dir;
+
+    if ((head->type != GOLEM)&&(op->type!= PLAYER)) {
+        /* It isn't a golem, and the caster wasn't a player; that's probably
+         * a monster generated from a trap, thus we should give it treasures
+         * and equipment - gros, 12th August 2006
+         */
+        if (head && head->randomitems) {
+            object *htmp;
+            create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
+                6, 0);
+            for (htmp=head->inv; htmp; htmp=htmp->below)
+                if (!htmp->nrof) SET_FLAG(htmp, FLAG_NO_DROP);
+        }
+    }
 
     /* need to change some monster attr to prevent problems/crashing */
     head->last_heal=0;
