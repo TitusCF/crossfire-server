@@ -733,61 +733,74 @@ void pick_up(object *op,object *alt)
 int command_take (object *op, char *params)
 {
     object *tmp, *next;
+    int ival;
+    int missed = 0;
 
     if (op->container) 
-	tmp=op->container->inv;
+        tmp=op->container->inv;
     else {
-	tmp=op->above;
-	if (tmp) while (tmp->above) {
-	    tmp=tmp->above;
-	}
-	if (!tmp)
-	    tmp=op->below;
+        tmp=op->above;
+        if (tmp) while (tmp->above) {
+            tmp=tmp->above;
+        }
+        if (!tmp)
+            tmp=op->below;
     }
 
     if (tmp==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Nothing to take!");
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Nothing to take!");
+        return 0;
     }
 
     /* Makes processing easier */
     if (params && *params=='\0') params=NULL;
 
     while (tmp) {
-	next=tmp->below;
+        next=tmp->below;
 
-	if (tmp->invisible) {
-	    tmp=next;
-	    continue;
-	}
-	/* This following two if and else if could be merged into line
-	 * but that probably will make it more difficult to read, and
-	 * not make it any more efficient
-	 */
-	if (params && item_matched_string(op, tmp, params)) {
-	    pick_up(op, tmp);
-	}
-	else if (can_pick(op, tmp) && !params) {
-	    pick_up(op,tmp);
-	    break;
-	}
-	tmp=next;
-	/* Might as well just skip over the player immediately -
-	 * we know it can't be picked up
-	 */
-	if (tmp == op) tmp=tmp->below;
+        if (tmp->invisible) {
+            tmp=next;
+            continue;
+        }
+        /* This following two if and else if could be merged into line
+         * but that probably will make it more difficult to read, and
+         * not make it any more efficient
+         */
+        if (params && (ival=item_matched_string(op, tmp, params))>0) {
+            if ((ival<=2)&&(!can_pick(op,tmp)))
+            {
+                if(!QUERY_FLAG(tmp, FLAG_IS_FLOOR))/* don't count floor tiles */
+                    missed++;
+            }
+            else
+                pick_up(op, tmp);
+        }
+        else if (can_pick(op, tmp) && !params) {
+            pick_up(op,tmp);
+            break;
+        }
+        tmp=next;
+        /* Might as well just skip over the player immediately -
+         * we know it can't be picked up
+         */
+        if (tmp == op) tmp=tmp->below;
     }
     if (!params && !tmp) {
-	for (tmp=op->below; tmp!=NULL; tmp=tmp->next)
-	    if (!tmp->invisible) {
-		char buf[MAX_BUF];
-		sprintf(buf,"You can't pick up a %s.",
-		    tmp->name? tmp->name:"null");
-		new_draw_info(NDI_UNIQUE, 0,op, buf);
-		break;
-	    }
-	if (!tmp) new_draw_info(NDI_UNIQUE, 0,op, "There is nothing to pick up.");
+        for (tmp=op->below; tmp!=NULL; tmp=tmp->next)
+            if (!tmp->invisible) {
+                char buf[MAX_BUF];
+                sprintf(buf,"You can't pick up a %s.",
+                    tmp->name? tmp->name:"null");
+                new_draw_info(NDI_UNIQUE, 0,op, buf);
+                break;
+            }
+        if (!tmp) new_draw_info(NDI_UNIQUE, 0,op, "There is nothing to pick up.");
     }
+    if (missed==1)
+        new_draw_info(NDI_UNIQUE, 0, op, "You were unable to take one of the items.");
+    else if (missed>1)
+        new_draw_info_format(NDI_UNIQUE, 0, op,
+            "You were unable to take %d of the items.",missed);
     return 0;
 }
 
