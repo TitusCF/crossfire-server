@@ -3347,41 +3347,45 @@ int apply_special (object *who, object *op, int aflags)
 	tmp = NULL;
 
     switch(op->type) {
-	case WEAPON:
-	    if (!check_weapon_power(who, op->last_eat)) {
-		new_draw_info(NDI_UNIQUE, 0,who,
-		    "That weapon is too powerful for you to use.");
-		new_draw_info(NDI_UNIQUE, 0, who,	"It would consume your soul!.");
-		if(tmp!=NULL)
-		    (void) insert_ob_in_ob(tmp,who);
-		return 1;
-	    }
-	    if( op->level &&  (strncmp(op->name,who->name,strlen(who->name)))) {
-		/* if the weapon does not have the name as the character, can't use it. */
-		/* (Ragnarok's sword attempted to be used by Foo: won't work) */
-		new_draw_info(NDI_UNIQUE, 0,who,"The weapon does not recognize you as its owner.");
-		if(tmp!=NULL)
-		    (void) insert_ob_in_ob(tmp,who);
-		return 1;
-	    }
-	    SET_FLAG(op, FLAG_APPLIED);
+        case WEAPON:
+        {
+            int ownerlen=0;
+            char* quotepos=NULL;
+            if (!check_weapon_power(who, op->last_eat)) {
+                new_draw_info(NDI_UNIQUE, 0,who,
+                    "That weapon is too powerful for you to use.");
+                new_draw_info(NDI_UNIQUE, 0, who,
+                    "It would consume your soul!.");
+                if(tmp!=NULL)
+                    (void) insert_ob_in_ob(tmp,who);
+                return 1;
+            }
+            if ((quotepos=strstr(op->name, "'"))!=NULL)
+            {
+                ownerlen = (strstr(op->name, "'")-op->name);
+                if( op->level &&  (strncmp(op->name,who->name,ownerlen))) {
+                    /* if the weapon does not have the name as the character,
+                     * can't use it. (Ragnarok's sword attempted to be used by
+                     * Foo: won't work) */
+                    new_draw_info(NDI_UNIQUE, 0,who,
+                        "The weapon does not recognize you as its owner.");
+                    if(tmp!=NULL)
+                        (void) insert_ob_in_ob(tmp,who);
+                    return 1;
+                }
+            }
+            SET_FLAG(op, FLAG_APPLIED);
 
-	    if (skop) change_skill(who, skop, 1);
-	    if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
-		SET_FLAG(who, FLAG_READY_WEAPON);
+            if (skop) change_skill(who, skop, 1);
+            if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
+                SET_FLAG(who, FLAG_READY_WEAPON);
 
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",
+                query_name(op));
 
-	    (void) change_abil (who,op);
-	    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
-        /*if ((evt = find_event(op, EVENT_ATTACK)) != NULL) {
-		LOG(llevDebug, "Scripting Weapon wielded\n");
-		if (who->current_weapon_script) free_string(who->current_weapon_script);
-		who->current_weapon_script=add_string(query_name(op));
-	    }
-     who->current_weapon = op;*/
-	    break;
-
+            (void) change_abil (who,op);
+            break;
+        }
 	case ARMOUR:
 	case HELMET:
 	case SHIELD:
