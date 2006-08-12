@@ -421,7 +421,8 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
  * create nonnmagic arrows, or even -1, etc...
  */
 
-int cast_create_missile(object *op, object *caster,object *spell, int dir, const char *stringarg)
+int cast_create_missile(object *op, object *caster,object *spell, int dir, 
+    const char *stringarg)
 {
     int missile_plus=0, bonus_plus=0;
     const char *missile_name;
@@ -431,59 +432,65 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
     missile_name = "arrow";
 
     for (tmp=op->inv; tmp != NULL; tmp=tmp->below)
-	if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED)) {
-	    missile_name=tmp->race;
-	}
+        if (tmp->type == BOW && QUERY_FLAG(tmp, FLAG_APPLIED))
+            missile_name=tmp->race;
 
     missile_plus = spell->stats.dam  + SP_level_dam_adjust(caster, spell);
 
+    if (!strcmp(missile_name, "arrows"))
+        missile_name = "arrow";
+    else if (!strcmp(missile_name, "crossbow bolts"))
+        missile_name = "bolt";
+
     if (find_archetype(missile_name)==NULL) {
-	LOG(llevDebug, "Cast create_missile: could not find archetype %s\n", 
-	    missile_name);
-	return 0;
+        LOG(llevDebug, "Cast create_missile: could not find archetype %s\n",
+            missile_name);
+        return 0;
     }
     missile = create_archetype(missile_name);
 
     if (stringarg) {
-	/* If it starts with a letter, presume it is a description */
-	if (isalpha(*stringarg)) {
-	    artifact *al = find_artifactlist(missile->type)->items;
+        /* If it starts with a letter, presume it is a description */
+        if (isalpha(*stringarg)) {
+            artifact *al = find_artifactlist(missile->type)->items;
 
-	    for ( ; al != NULL; al=al->next) 
-		if (!strcasecmp(al->item->name, stringarg)) break;
+            for ( ; al != NULL; al=al->next)
+                if (!strcasecmp(al->item->name, stringarg)) break;
 
-	    if (!al) {
-		free_object(missile);
-		new_draw_info_format(NDI_UNIQUE, 0, op ,"No such object %ss of %s", missile_name,
-				     stringarg);
-		return 0;
-	    }
-	    if (al->item->slaying) {
-		free_object(missile);
-		new_draw_info_format(NDI_UNIQUE, 0, op ,"You are not allowed to create %ss of %s", 
-				     missile_name, stringarg);
-		return 0;
-	    }
-	    give_artifact_abilities(missile, al->item);
-	    /* These special arrows cost something extra.  Don't have them also be magical -
-	     * otherwise, in most cases, not enough will be created.  I don't want to get into
-	     * the parsing of having to do both plus and type.
-	     */
-	    bonus_plus = 1 + (al->item->value / 5);
-	    missile_plus=0;
-	} else
-	    if (atoi(stringarg) < missile_plus)
-		missile_plus = atoi(stringarg);
+            if (!al) {
+                free_object(missile);
+                new_draw_info_format(NDI_UNIQUE, 0, op ,"No such object %ss of %s",
+                    missile_name, stringarg);
+                return 0;
+            }
+            if (al->item->slaying) {
+                free_object(missile);
+                new_draw_info_format(NDI_UNIQUE, 0, op ,
+                    "You are not allowed to create %ss of %s", missile_name,
+                    stringarg);
+                return 0;
+            }
+            give_artifact_abilities(missile, al->item);
+            /* These special arrows cost something extra.  Don't have them also be
+            * magical - otherwise, in most cases, not enough will be created.
+            * I don't want to get into the parsing of having to do both plus and
+            * type.
+            */
+            bonus_plus = 1 + (al->item->value / 5);
+            missile_plus=0;
+        }
+        else if (atoi(stringarg) < missile_plus)
+            missile_plus = atoi(stringarg);
     }
     if (missile_plus > 4)
-	missile_plus = 4;
+        missile_plus = 4;
     else if (missile_plus < -4)
-	missile_plus = -4;
+        missile_plus = -4;
 
     missile->nrof = spell->duration + SP_level_duration_adjust(caster, spell);
     missile->nrof -= 3 * (missile_plus + bonus_plus);
     if (missile->nrof < 1)
-	missile->nrof=1;
+        missile->nrof=1;
 
     missile->magic = missile_plus;
     /* Can't get any money for these objects */
@@ -493,9 +500,9 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
     tag = missile->count;
 
     if ( ! cast_create_obj (op, caster, missile, dir) && op->type == PLAYER
-      && ! was_destroyed (missile, tag)) 
+      && ! was_destroyed (missile, tag))
     {
-	pick_up(op, missile);
+        pick_up(op, missile);
     }
     return 1;
 }

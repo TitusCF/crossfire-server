@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: fixed incorrect behavior of the create missile spell,
+    that couldn't find a proper archetype when a bow or a crossbow was wielded.
+    Fix for bug #1532403
+Yann Chachkoff 2006-08-12
+
 server/apply.c: keep converters from accepting unpaid items
 Lalo 2006-08-12
 
