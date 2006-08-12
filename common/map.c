@@ -683,6 +683,7 @@ mapstruct *get_linked_map(void) {
 	/*set part to -1 indicating conversion to weather map not yet done*/
 	MAP_WORLDPARTX(map)=-1;
 	MAP_WORLDPARTY(map)=-1;
+    map->last_reset_time.tv_sec = 0;
     return map;
 }
 
@@ -979,6 +980,9 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	} else if (!strcmp(key, "nosmooth")) {
 	    m->nosmooth = atoi(value);
 	}
+    else if (!strcmp(key, "first_load")) {
+        m->last_reset_time.tv_sec = atoi(value);
+    }
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
 
@@ -1328,6 +1332,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
     if (m->sky) fprintf(fp, "sky %d\n", m->sky);
     if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
+    if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", m->last_reset_time.tv_sec);
 
     /* Save any tiling information, except on overlays */
     if (flag != 2)
@@ -1623,6 +1628,11 @@ mapstruct *ready_map_name(const char *name, int flags) {
 	    set_darkness_map(m);
     /* run the weather over this map */
     weather_effect(name);
+    if (!(flags & (MAP_FLUSH)))
+    {
+        if (m->last_reset_time.tv_sec==0)
+            gettimeofday(&(m->last_reset_time),NULL);
+    }
     return m;
 }
 

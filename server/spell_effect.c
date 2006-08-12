@@ -919,7 +919,8 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 
     /* Check to see if the player is on a transport */
     if (op->contr && op->contr->transport) {
-	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You need to exit the transport to cast that.\n");
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+            "You need to exit the transport to cast that.\n");
         return 0;
     }
 
@@ -928,25 +929,29 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      */
     dummy=arch_to_object(spell->other_arch);
     if(dummy == NULL){
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (force in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (force in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     force=check_inv_recursive (op,dummy);
 
     if (force==NULL) {
-	/* Here we know there is no destination marked up.
-	 * We have 2 things to do:
-	 * 1. Mark the destination in the player inventory.
-	 * 2. Let the player know it worked.
-	 */
-	free_string (dummy->name);
-	dummy->name = add_string (op->map->path);
-	EXIT_X(dummy)= op->x;
-	EXIT_Y(dummy)= op->y;
-	insert_ob_in_ob (dummy,op);
-	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You fix this place in your mind.\nYou feel you are able to come here from anywhere.");
-	return 1;
+        /* Here we know there is no destination marked up.
+         * We have 2 things to do:
+         * 1. Mark the destination in the player inventory.
+         * 2. Let the player know it worked.
+         */
+        free_string (dummy->name);
+        dummy->name = add_string (op->map->path);
+        EXIT_X(dummy)= op->x;
+        EXIT_Y(dummy)= op->y;
+        dummy->weapontype = op->map->last_reset_time.tv_sec;
+        insert_ob_in_ob (dummy,op);
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+            "You fix this place in your mind.\nYou feel you are able to come here from anywhere.");
+        return 1;
     }
     free_object (dummy);
 
@@ -969,9 +974,11 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     /* First step: killing existing town portals */
     dummy=create_archetype(spell->race);
     if(dummy == NULL){
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (force) in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     perm_portal = find_archetype (spell->slaying);
 
@@ -983,29 +990,30 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      *   -We destruct the force indicating that portal.
      */
     while ( (old_force=check_inv_recursive (op,dummy))) {
-	exitx=EXIT_X(old_force);
-	exity=EXIT_Y(old_force);
-	LOG (llevDebug,"Trying to kill a portal in %s (%d,%d)\n",old_force->race,exitx,exity);
+        exitx=EXIT_X(old_force);
+        exity=EXIT_Y(old_force);
+        LOG (llevDebug,"Trying to kill a portal in %s (%d,%d)\n",
+            old_force->race,exitx,exity);
 
-	if (!strncmp(old_force->race, settings.localdir, strlen(settings.localdir))) 
-	    exitmap = ready_map_name(old_force->race, MAP_PLAYER_UNIQUE);
-	else exitmap = ready_map_name(old_force->race, 0);
+        if (!strncmp(old_force->race, settings.localdir, strlen(settings.localdir)))
+            exitmap = ready_map_name(old_force->race, MAP_PLAYER_UNIQUE);
+        else exitmap = ready_map_name(old_force->race, 0);
 
-	if (exitmap) {
-	    tmp=present_arch (perm_portal,exitmap,exitx,exity);
-	    while (tmp) {
-		if (tmp->name == old_force->name) {
-		    remove_ob (tmp);
-		    free_object (tmp);
-		    break;
-		} else {
-		    tmp = tmp->above;
-		}
-	    }
-	}
-	remove_ob (old_force);
-	free_object (old_force);
-	LOG (llevDebug,"\n");
+        if (exitmap) {
+            tmp=present_arch (perm_portal,exitmap,exitx,exity);
+            while (tmp) {
+                if (tmp->name == old_force->name) {
+                    remove_ob (tmp);
+                    free_object (tmp);
+                    break;
+                } else {
+                    tmp = tmp->above;
+                }
+            }
+        }
+        remove_ob (old_force);
+        free_object (old_force);
+        LOG (llevDebug,"\n");
     }
     free_object (dummy);
 
@@ -1021,16 +1029,24 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 
     /* Ensure exit map is loaded*/
     if (!strncmp(force->name, settings.localdir, strlen(settings.localdir)))
-	exitmap = ready_map_name(force->name, MAP_PLAYER_UNIQUE);
+        exitmap = ready_map_name(force->name, MAP_PLAYER_UNIQUE);
     else
-	exitmap = ready_map_name(force->name, 0);
+        exitmap = ready_map_name(force->name, 0);
 
     /* If we were unable to load (ex. random map deleted), warn player*/
     if (exitmap==NULL) {
-	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"Something strange happens.\nYou can't remember where to go!?");
-	remove_ob(force);
-	free_object(force);
-	return 1;
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,
+            "Something strange happens.\nYou can't remember where to go!?");
+        remove_ob(force);
+        free_object(force);
+        return 1;
+    }
+    else if (exitmap->last_reset_time.tv_sec != force->weapontype)
+    {
+        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"The spell effect has expired.");
+        remove_ob(force);
+        free_object(force);
+        return 1;
     }
 
     op_level = caster_level(caster, spell);
@@ -1050,9 +1066,11 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     snprintf (portal_name,1024,"%s's portal to %s",op->name,force->name);
     dummy=create_archetype(spell->slaying); /*The portal*/
     if(dummy == NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     EXIT_PATH(dummy) = add_string (force->name);
     EXIT_X(dummy)=EXIT_X(force);
@@ -1069,9 +1087,11 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      */
     tmp=create_archetype(spell->race);
     if(tmp == NULL){
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (force) in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     tmp->race=add_string (op->map->path);
     FREE_AND_COPY(tmp->name, portal_name);
@@ -1088,9 +1108,11 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     snprintf (portal_name,1024,"%s's portal to %s",op->name,op->map->path);
     dummy=create_archetype (spell->slaying); /*The portal*/
     if(dummy == NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     EXIT_PATH(dummy) = add_string (op->map->path);
     EXIT_X(dummy)=op->x;
@@ -1108,9 +1130,11 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
      */
     tmp=create_archetype(spell->race);
     if(tmp == NULL){
-	new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
-	LOG(llevError,"get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
-	return 0;
+        new_draw_info(NDI_UNIQUE, 0,op,"Oops, program error!");
+        LOG(llevError,
+            "get_object failed (force) in cast_create_town_portal for %s!\n",
+            op->name);
+        return 0;
     }
     tmp->race=add_string(force->name);
     FREE_AND_COPY(tmp->name, portal_name);
