@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: keep converters from accepting unpaid items
+Lalo 2006-08-12
+
 lib/addexp: update help text.
 server/c_wiz.c: update addexp's help text.
 Ryo 2006-08-11

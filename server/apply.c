@@ -1045,6 +1045,17 @@ static int convert_item(object *item, object *converter) {
 	   (CONV_NEED(converter)&&CONV_NEED(converter)>item->nrof))
 	    return 0;
 
+        /* silently burn unpaid items (only if they match what we want) */
+        if(QUERY_FLAG(item, FLAG_UNPAID)) {
+	    remove_ob(item);
+	    free_object(item);
+            item = create_archetype("burnout");
+            if (item != NULL)
+                insert_ob_in_map_at(item, converter->map, converter,
+                                    0, converter->x, converter->y);
+            return 1;
+        }
+
 	if(CONV_NEED(converter)) {
 	    nr=item->nrof/CONV_NEED(converter);
 	    decrease_ob_nr(item,nr*CONV_NEED(converter));
