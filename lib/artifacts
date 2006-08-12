@@ -310,6 +310,9 @@ Object Ilrya
 type 15
 value 10
 weight 80
+msg
+  This weapon is made of lighter and more expensive material.
+endmsg
 end
 #
 Allowed all
@@ -378,6 +381,12 @@ type 15
 value 15
 weight 80
 wc 2
+resist_fear 5
+msg
+  Zormola was a great female orcish warrior
+  making efficient use of most weapons and
+  known for her courage on the battlefield.
+endmsg
 item_power 2
 end
 #
@@ -426,6 +435,12 @@ Str -2
 Dex -2
 Con -2
 damned 1
+msg
+  Morgul was a Dark Mage who built a tower in the hope
+  of creating a bridge with the skies so that demons
+  could attack heavens. Altough he was defeated, some
+  weapons are still influenced by his dark magic.
+endmsg
 end
 #
 Allowed all
@@ -514,6 +529,11 @@ value 40
 magic 3
 Str 1
 weight 110
+msg
+  This weapon shares with its owner a bit of
+  the strength of Crolmi, the Dwarven Spirit
+  of Rocks and Mountains.
+endmsg
 item_power 1
 end
 #
@@ -585,6 +605,10 @@ magic 4
 Str 1
 Dex 1
 weight 90
+msg
+  The Archmage Rhyz devised many items that increased
+  the strength and dexterity of their owners.
+endmsg
 item_power 2
 end
 #
@@ -598,6 +622,12 @@ resist_magic 30
 Int 1
 Pow 1
 weight 90
+msg
+  This weapon is dedicated to Glamdri the
+  Last Standing One, a lesser spirit of light
+  that represents original thinking used to
+  get out of difficult situations.
+endmsg
 item_power 5
 end
 #
@@ -768,6 +798,12 @@ gen_sp_armour -2
 path_attuned 1024
 sp 1
 magic 2
+msg
+  This valuable item created by the Archdaemonist Xebinon
+  enhances the mind of its wearer and channels the powers
+  of magic.  It has a small influence on its wearer's
+  ability to regenerate spell points.
+endmsg
 item_power 1
 end
 #
@@ -838,6 +874,9 @@ Object Ilrya
 type 34
 value 10
 weight 80
+msg
+  This helmet is made of lighter and more expensive material.
+endmsg
 end
 #
 Allowed !crown
@@ -986,6 +1025,9 @@ Object Ilrya
 type 33
 value 10
 weight 80 
+msg
+  This shield is made of lighter and more expensive material.
+endmsg
 end
 #
 Allowed all
