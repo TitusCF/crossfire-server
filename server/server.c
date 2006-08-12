@@ -274,7 +274,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (op->map!=NULL)
     {
         /* Lauwenmark : Here we handle the MAPLEAVE global event */
-        execute_global_event(EVENT_MAPLEAVE, op);
+        execute_global_event(EVENT_MAPLEAVE, op, op->map);
     }
     /* remove_ob clears these so they must be reset after the remove_ob call */
     op->x = x;
@@ -283,7 +283,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
 
     /* Lauwenmark : Here we handle the MAPENTER global event */
-    execute_global_event(EVENT_MAPENTER, op);
+    execute_global_event(EVENT_MAPENTER, op, op->map);
 
     if (!op->contr->hidden)
 	newmap->players++;

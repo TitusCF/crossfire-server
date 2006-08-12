@@ -1086,6 +1086,10 @@ mapstruct *load_original_map(const char *filename, int flags) {
     if (!MAP_DIFFICULTY(m)) 
 	MAP_DIFFICULTY(m)=calculate_difficulty(m);
     set_map_reset_time(m);
+    
+    /* Handle for map load event */
+    execute_global_event(EVENT_MAPLOAD, m);
+    
     return (m);
 }
 
@@ -1455,6 +1459,10 @@ void free_map(mapstruct *m,int flag) {
 	LOG(llevError,"Trying to free freed map.\n");
 	return;
     }
+    
+    /* Handle for plugin map unload event. */
+    execute_global_event(EVENT_MAPUNLOAD, m);
+    
     if (flag && m->spaces) free_all_objects(m);
     if (m->name) FREE_AND_CLEAR(m->name);
     if (m->spaces) FREE_AND_CLEAR(m->spaces);

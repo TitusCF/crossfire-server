@@ -85,8 +85,10 @@
 #define EVENT_TELL     26 /* A player 'tell' something.                      */
 #define EVENT_MUZZLE   27 /* A player was Muzzled (no_shout set).            */
 #define EVENT_KICK     28 /* A player was Kicked by a DM                     */
+#define EVENT_MAPUNLOAD     29 /* A map is freed (includes swapping out)     */
+#define EVENT_MAPLOAD       30 /* A map is loaded                            */
 
-#define NR_EVENTS 29
+#define NR_EVENTS 31
 
 #include <stdarg.h>
 

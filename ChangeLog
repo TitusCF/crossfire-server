@@ -17,9 +17,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
-lib/artifacts: Add artifact descriptions, courtesy of Raphaël Quinet.
-    Applies patch from tracker item #1538983
-Alex Schultz
+common/map.c, include/plugin.h, plugins/cfpython/{cfpython.c, include/cfpython_map.h,
+    include/cfpython_map_private.h}, server/plugins.c, server/server.c,
+    server/swap.c: Add EVENT_MAPLOAD and EVENT_MAPUNLOAD, add support to cfpython.
+        Modify EVENT_MAP* to send the map object (in place of the path for
+        MAPRESET). Impliment wrapper invalidation for cfpython map wrapper objects.
+crossedit/stubs.c, include/funcpoint.h, random_maps/standalone.c,
+    test/unit/common/stubs_common.c: Allow execute_global_event() to be called from
+    common.
+Alex Schultz 2006-08-12
+    
+lib/artifacts: Add artifact descriptions, courtesy of Raphaël Quinet. Applies patch
+    from tracker item #1538983
+Alex Schultz 2006-08-12
 
 server/c_object.c: Corrected a mistake in examine that would display the
     content of a message prefixed by @match to the player.

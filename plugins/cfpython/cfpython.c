@@ -807,6 +807,7 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     cf_log(llevDebug, "CFPython 2.0a init\n");
 
     init_object_assoc_table();
+    init_map_assoc_table();
 
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
@@ -953,6 +954,8 @@ CF_PLUGIN int postInitPlugin()
     registerGlobalEvent(NULL, EVENT_TELL, PLUGIN_NAME, globalEventListener);
     registerGlobalEvent(NULL, EVENT_MUZZLE, PLUGIN_NAME, globalEventListener);
     registerGlobalEvent(NULL, EVENT_KICK, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MAPUNLOAD, PLUGIN_NAME, globalEventListener);
+    registerGlobalEvent(NULL, EVENT_MAPLOAD, PLUGIN_NAME, globalEventListener);
 
     scriptfile = fopen(cf_get_maps_directory("python/events/python_init.py"), "r");
     if (scriptfile != NULL) {
@@ -1065,12 +1068,14 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
         case EVENT_MAPENTER:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
+            context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
             snprintf(context->options, sizeof(context->options), "mapenter");
             cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPLEAVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
+            context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
             snprintf(context->options, sizeof(context->options), "mapleave");
             cfob = (Crossfire_Object*)context->activator;
             break;
@@ -1078,13 +1083,19 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             snprintf(context->options, sizeof(context->options), "clock");
             break;
         case EVENT_MAPRESET:
-            buf = va_arg(args, char*);
-            if (buf != NULL)
-                snprintf(context->message, sizeof(context->message), "%s", buf);
+            context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
             snprintf(context->options, sizeof(context->options), "mapreset");
             break;
         case EVENT_TELL:
             snprintf(context->options, sizeof(context->options), "tell");
+            break;
+        case EVENT_MAPUNLOAD:
+            context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
+            snprintf(context->options, sizeof(context->options), "mapunload");
+            break;
+        case EVENT_MAPLOAD:
+            context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
+            snprintf(context->options, sizeof(context->options), "mapload");
             break;
     }
     va_end(args);
@@ -1097,8 +1108,13 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
     context = popContext();
     rv = context->returnvalue;
+    
+    /* Invalidate freed map wrapper. */
+    if (context->event_code == EVENT_MAPUNLOAD)
+        Handle_Map_Unload_Hook(context->who);
+    
     freeContext(context);
-
+    
     return &rv;
 }
 

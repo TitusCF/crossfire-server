@@ -266,6 +266,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
 int execute_global_event(int eventcode, ...)
 {
     va_list args;
+    mapstruct* map;
     object* op;
     object* op2;
     player* pl;
@@ -342,29 +343,31 @@ int execute_global_event(int eventcode, ...)
         break;
 
     case EVENT_MAPENTER:
-        /*MAPENTER: op*/
+        /*MAPENTER: op, map*/
         op = va_arg(args, object*);
+        map = va_arg(args, mapstruct*);
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
+                cp->gevent[eventcode](&rt, eventcode, op, map);
         }
         break;
 
     case EVENT_MAPLEAVE:
-        /*MAPLEAVE: op*/
+        /*MAPLEAVE: op, map*/
         op = va_arg(args, object*);
+        map = va_arg(args, mapstruct*);
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
+                cp->gevent[eventcode](&rt, eventcode, op, map);
         }
         break;
 
     case EVENT_MAPRESET:
-        /*MAPRESET: map->path*/
-        buf = va_arg(args, char*);
+        /*MAPRESET: map*/
+        map = va_arg(args, mapstruct*);
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, buf);
+                cp->gevent[eventcode](&rt, eventcode, map);
         }
         break;
 
@@ -412,6 +415,22 @@ int execute_global_event(int eventcode, ...)
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
                 cp->gevent[eventcode](&rt, eventcode, op, buf);
+        }
+        break;
+    case EVENT_MAPUNLOAD:
+        /*MAPUNLOAD: map*/
+        map = va_arg(args, mapstruct*);
+        for (cp = plugins_list; cp != NULL; cp = cp->next) {
+            if (cp->gevent[eventcode] != NULL)
+                cp->gevent[eventcode](&rt, eventcode, map);
+        }
+        break;
+    case EVENT_MAPLOAD:
+        /*MAPLOAD: map*/
+        map = va_arg(args, mapstruct*);
+        for (cp = plugins_list; cp != NULL; cp = cp->next) {
+            if (cp->gevent[eventcode] != NULL)
+                cp->gevent[eventcode](&rt, eventcode, map);
         }
         break;
     }

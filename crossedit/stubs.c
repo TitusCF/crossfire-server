@@ -91,3 +91,8 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
     {
     return 0;
     }
+
+int execute_global_event(int eventcode, ...)
+    {
+    return 0;
+    }

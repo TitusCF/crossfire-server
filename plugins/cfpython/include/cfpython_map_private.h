@@ -60,6 +60,7 @@ static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
 
 static PyObject* Crossfire_Map_Long( PyObject* obj );
 static PyObject* Crossfire_Map_Int( PyObject* obj );
+static void Crossfire_Map_dealloc(PyObject *obj);
 static PyObject *Crossfire_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
 /* Python binding */
@@ -131,7 +132,7 @@ PyTypeObject Crossfire_MapType = {
             "Crossfire.Map",           /* tp_name*/
             sizeof(Crossfire_Map),     /* tp_basicsize*/
             0,                         /* tp_itemsize*/
-            0,                         /* tp_dealloc*/
+            Crossfire_Map_dealloc,     /* tp_dealloc*/
             0,                         /* tp_print*/
             0,                         /* tp_getattr*/
             0,                         /* tp_setattr*/
