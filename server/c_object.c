@@ -1202,27 +1202,37 @@ int command_drop (object *op, char *params)
 {
     object  *tmp, *next;
     int did_one=0;
+    int ival=0;
+    int missed = 0;
 
     if (!params) {
-	new_draw_info(NDI_UNIQUE,0, op, "Drop what?");
-	return 0;
+        new_draw_info(NDI_UNIQUE,0, op, "Drop what?");
+        return 0;
     } else {
-	for (tmp=op->inv; tmp; tmp=next) {
-	    next=tmp->below;
-	    if (QUERY_FLAG(tmp,FLAG_NO_DROP) ||
-		tmp->invisible) continue;
-	    if (item_matched_string(op,tmp,params)) {
-		drop(op, tmp);
-		did_one=1;
-	    }
-	}
-	if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
+        for (tmp=op->inv; tmp; tmp=next) {
+            next=tmp->below;
+            if (QUERY_FLAG(tmp,FLAG_NO_DROP) || tmp->invisible) continue;
+            if ((ival = item_matched_string(op,tmp,params))>0) {
+                if ((QUERY_FLAG(tmp, FLAG_INV_LOCKED))&&((ival==1)||(ival==2)))
+                    missed++;
+                else
+                    drop(op, tmp);
+                did_one=1;
+            }
+        }
+        if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
+        if (missed==1)
+            new_draw_info(NDI_UNIQUE, 0,op,
+                "One item couldn't be dropped because it was locked.");
+        else if (missed>1)
+            new_draw_info_format(NDI_UNIQUE, 0, op,
+                "%d items couldn't be dropped because they were locked.",missed);
     }
     if (op->type==PLAYER)
     {
         op->contr->count=0;
         op->contr->socket.update_look=1;
-    };
+    }
 /*    draw_look(op);*/
     return 0;
 }
