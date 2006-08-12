@@ -1539,8 +1539,8 @@ void examine(object *op, object *tmp) {
      * types - especially if the first entry is a match
      */
     if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK && 
-       tmp->type != CORPSE && !tmp->move_on && 
-       strncasecmp(tmp->msg, "@match",7)) {
+       tmp->type != CORPSE && !tmp->move_on &&
+       strncasecmp(tmp->msg, "@match",6)) {
 
 	/* This is just a hack so when identifying hte items, we print
 	 * out the extra message

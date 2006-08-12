@@ -16,6 +16,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
+server/c_object.c: Corrected a mistake in examine that would display the
+    content of a message prefixed by @match to the player.
+    Fix for the bug mentioned in #1539227
 server/spell_effect.c, common/map.c, common/map.h: Added a field in the map
     structure to store the timestamp of the last original map loading, and
     modified the Town Portal spell so that it now cannot lead to a map that
