@@ -43,7 +43,7 @@
 #include <sproto.h>
 #endif
 
-#define NR_OF_HOOKS 76
+#define NR_OF_HOOKS 77
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -123,6 +123,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
     {cfapi_player_can_pay,          74, "cfapi_player_can_pay"},
     {cfapi_log,                     75, "cfapi_log"},
+     {cfapi_get_time,                 76, "cfapi_system_get_time"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -803,6 +804,20 @@ void* cfapi_system_directory(int* type, ...)
         break;
     }
 
+    *type = CFAPI_NONE;
+    return NULL;
+}
+
+void *cfapi_get_time(int *type, ...)
+{
+    va_list args;
+    timeofday_t *tod;
+
+    va_start(args,type);
+    tod = va_arg(args, timeofday_t*);
+    va_end(args);
+
+    get_tod(tod);
     *type = CFAPI_NONE;
     return NULL;
 }

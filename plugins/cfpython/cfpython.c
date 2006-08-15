@@ -123,6 +123,7 @@ static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
 static PyObject* CFPythonError;
+static PyObject* getTime(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
@@ -182,6 +183,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
+    {"GetTime",             getTime,                METH_VARARGS},
     {NULL, NULL, 0}
 };
 
@@ -631,6 +633,30 @@ static PyObject* registerCommand(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+
+static PyObject* getTime(PyObject* self, PyObject* args)
+{
+    PyObject* list;
+    partylist* party;
+    timeofday_t tod;
+
+    if (!PyArg_ParseTuple(args, "", NULL))
+        return NULL;
+
+    cf_get_time(&tod);
+
+    list = PyList_New(0);
+    PyList_Append(list, Py_BuildValue("i",tod.year));
+    PyList_Append(list, Py_BuildValue("i",tod.month));
+    PyList_Append(list, Py_BuildValue("i",tod.day));
+    PyList_Append(list, Py_BuildValue("i",tod.hour));
+    PyList_Append(list, Py_BuildValue("i",tod.minute));
+    PyList_Append(list, Py_BuildValue("i",tod.dayofweek));
+    PyList_Append(list, Py_BuildValue("i",tod.weekofmonth));
+    PyList_Append(list, Py_BuildValue("i",tod.season));
+
+    return list;
+    }
 
 void initContextStack()
 {

@@ -491,6 +491,7 @@ void *cfapi_archetype_get_first(int *type, ...);
 void *cfapi_archetype_get_property(int *type, ...);
 void *cfapi_party_get_property(int *type, ...);
 void *cfapi_region_get_property(int *type, ...);
+void *cfapi_get_time(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 /* resurrection.c */

@@ -49,6 +49,7 @@ extern char*        cf_strdup_local(char* txt);
 extern char*        cf_get_maps_directory( char* str );
 extern int          cf_find_animation(char* txt);
 extern void			cf_log( LogLevel logLevel, const char* format, ... );
+extern void         cf_get_time( timeofday_t* tod );
 
 /* Objects */
 extern void* cf_object_set_int_property(object* op, int propcode, int value);

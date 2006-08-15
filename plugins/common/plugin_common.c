@@ -42,6 +42,7 @@ static f_plug_api cfapiSystem_unregister_global_event = NULL;
 static f_plug_api cfapiSystem_strdup_local = NULL;
 static f_plug_api cfapiSystem_find_animation = NULL;
 static f_plug_api cfapiSystem_log = NULL;
+static f_plug_api cfapiSystem_get_time = NULL;
 
 static f_plug_api cfapiMap_create_path = NULL;
 
@@ -186,6 +187,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiRegion_get_property, "cfapi_region_get_property", z );
     GET_HOOK( cfapiPlayer_can_pay, "cfapi_player_can_pay", z );
     GET_HOOK( cfapiSystem_log, "cfapi_log", z );
+    GET_HOOK( cfapiSystem_get_time, "cfapi_system_get_time", z );
     return 1;
 }
 
@@ -752,6 +754,13 @@ void cf_log( LogLevel logLevel, const char* format, ... )
 
     va_end(ap);
 }
+
+void cf_get_time( timeofday_t* tod )
+{
+    int val;
+    cfapiSystem_get_time(&val, tod);
+}
+
 char* cf_object_get_key(object* op, char* keyname)
 {
     int val;

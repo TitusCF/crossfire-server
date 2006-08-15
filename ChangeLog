@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Added a plugin function to get time. Add Python wrapper.
+ include/plugin.h sproto.h
+ plugins/cfpython/cfpython.c
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/plugins.c
+Ryo 2006-08-15
+
 common/map.c, include/plugin.h, plugins/cfpython/{cfpython.c, include/cfpython_map.h,
     include/cfpython_map_private.h}, server/plugins.c, server/server.c,
     server/swap.c: Add EVENT_MAPLOAD and EVENT_MAPUNLOAD, add support to cfpython.
@@ -27,7 +35,7 @@ crossedit/stubs.c, include/funcpoint.h, random_maps/standalone.c,
     common.
 Alex Schultz 2006-08-12
     
-lib/artifacts: Add artifact descriptions, courtesy of Raphaël Quinet. Applies patch
+lib/artifacts: Add artifact descriptions, courtesy of Raphaï¿½ Quinet. Applies patch
     from tracker item #1538983
 Alex Schultz 2006-08-12
 

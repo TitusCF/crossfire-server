@@ -107,6 +107,7 @@
 #define CFAPI_PPARTY  12
 #define CFAPI_PREGION 13
 #define CFAPI_INT16   14
+#define CFAPI_TIME    15
 
 typedef void* (*f_plug_api) (int* type, ...);
 typedef int   (*f_plug_postinit) (void);
