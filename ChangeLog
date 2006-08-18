@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Recollected archetypes in order to integrate fix for bug #1530006:
+  lib/smooth, lib/faces, lib/bmaps.paths, lib/bmaps, lib/archetypes,
+  lib/animations, lib/crossfire.1, lib/crossfire.0, lib/treasures.bld
+Raphael Quinet 2006-08-18
+
 Added a plugin function to get time. Add Python wrapper.
  include/plugin.h sproto.h
  plugins/cfpython/cfpython.c
@@ -35,7 +40,7 @@ crossedit/stubs.c, include/funcpoint.h, random_maps/standalone.c,
     common.
 Alex Schultz 2006-08-12
     
-lib/artifacts: Add artifact descriptions, courtesy of Rapha� Quinet. Applies patch
+lib/artifacts: Add artifact descriptions, courtesy of Raphael Quinet. Applies patch
     from tracker item #1538983
 Alex Schultz 2006-08-12
 
@@ -9814,7 +9819,7 @@ current time, the logic probably isn't great, as all that is currently checked
 for is the head of monster being on a pit - in reality, probably all the
 monster parts need to be on a pit.
 
--m9 and -mt options added (Code from Raphakl Quinet).  Formulas have
+-m9 and -mt options added (Code from Raphael Quinet).  Formulas have
 been fixed such that all are now creatable (none missing archetypes).  However,
 the output still shows some formulas out of balance in terms of costs.
 
