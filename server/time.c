@@ -122,6 +122,7 @@ static void generate_monster_inv(object *gen) {
         generate_artifact(head, gen->map->difficulty);
     insert_ob_in_map_at(head,gen->map,gen,0,gen->x+freearr_x[i],gen->y+freearr_y[i]);
     if (QUERY_FLAG(head, FLAG_FREED)) return;
+    fix_multipart_object(head);
     if(HAS_RANDOM_ITEMS(head))
         create_treasure(head->randomitems,head,GT_APPLY,
                       gen->map->difficulty,0);

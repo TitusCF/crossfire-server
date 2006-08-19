@@ -487,7 +487,8 @@ void fix_container(object *container)
     sum_weight(container);
 }
 
-/* link_multipart_objects go through all the objects on the map looking
+/**
+ *link_multipart_objects go through all the objects on the map looking
  * for objects whose arch says they are multipart yet according to the
  * info we have, they only have the head (as would be expected when
  * they are saved).  We do have to look for the old maps that did save
@@ -497,8 +498,7 @@ void fix_container(object *container)
 static void link_multipart_objects(mapstruct *m)
 {
     int x,y;
-    object *tmp, *op, *last, *above;
-    archetype	*at;
+    object *tmp, *above;
 
     for(x=0;x<MAP_WIDTH(m);x++)
 	for(y=0;y<MAP_HEIGHT(m);y++)
@@ -508,33 +508,7 @@ static void link_multipart_objects(mapstruct *m)
 		/* already multipart - don't do anything more */
 		if (tmp->head || tmp->more) continue;
 
-		/* If there is nothing more to this object, this for loop
-		 * won't do anything.
-		 */
-		for (at = tmp->arch->more, last=tmp; at != NULL; at=at->more, last=op) {
-		    op = arch_to_object(at);
-
-		    /* update x,y coordinates */
-		    op->x += tmp->x;
-		    op->y += tmp->y;
-		    op->head = tmp;
-		    op->map = m;
-		    last->more = op;
-		    if (tmp->name != op->name) {
-			if (op->name) free_string(op->name);
-			op->name = add_string(tmp->name);
-		    }
-		    if (tmp->title != op->title) {
-			if (op->title) free_string(op->title);
-			op->title = add_string(tmp->title);
-		    }
-		    /* we could link all the parts onto tmp, and then just
-		     * call insert_ob_in_map once, but the effect is the same,
-		     * as insert_ob_in_map will call itself with each part, and
-		     * the coding is simpler to just to it here with each part.
-		     */
-		    insert_ob_in_map(op, op->map, tmp,INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
-		} /* for at = tmp->arch->more */
+        fix_multipart_object(tmp);
 	    } /* for objects on this space */
 }
 		    

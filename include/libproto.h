@@ -238,6 +238,7 @@ extern const char *get_ob_key_value(const object *op, const char *const key);
 extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
 extern object *find_best_weapon_used_match(object *pl, const char *params);
 extern int item_matched_string(object *pl, object *op, const char *name);
+extern void fix_multipart_object(object* tmp);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst);
 extern void path_normalize(char *path);
