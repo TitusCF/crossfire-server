@@ -1866,79 +1866,78 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
 	/* Only bother looking on this space if there is something living here */
 	if (mflags & P_IS_ALIVE) {
 	    /* search this square for a victim */
-	    for(walk=get_map_ob(m,x,y);walk;walk=walk->above)
-		if (QUERY_FLAG(walk,FLAG_MONSTER) || (walk->type==PLAYER)) {  /* found a victim */
-		    object *disease = arch_to_object(spell->other_arch);
-                    
-                    /* Handle multitile monsters */
-                    if (walk->head)
-                        target_head = walk->head;
-                    else
-                        target_head = walk;
+        for(walk=get_map_ob(m,x,y);walk;walk=walk->above) {
+            /* Flags for monster is set on head only, so get it now */
+            target_head = walk;
+            while (target_head->head)
+                target_head = target_head->head;
+            if (QUERY_FLAG(target_head,FLAG_MONSTER) || (target_head->type==PLAYER)) {  /* found a victim */
+                object *disease = arch_to_object(spell->other_arch);
 
-		    set_owner(disease,op);
-		    set_spell_skill(op, caster, spell, disease);
-		    disease->stats.exp = 0;
-		    disease->level = caster_level(caster, spell);
+                set_owner(disease,op);
+                set_spell_skill(op, caster, spell, disease);
+                disease->stats.exp = 0;
+                disease->level = caster_level(caster, spell);
 
-		    /* do level adjustments */
-		    if(disease->stats.wc)
-			disease->stats.wc +=  dur_mod/2;
+                /* do level adjustments */
+                if(disease->stats.wc)
+                disease->stats.wc +=  dur_mod/2;
 
-		    if(disease->magic> 0)
-			 disease->magic += dur_mod/4;
+                if(disease->magic> 0)
+                disease->magic += dur_mod/4;
 
-		    if(disease->stats.maxhp>0)
-			 disease->stats.maxhp += dur_mod;
+                if(disease->stats.maxhp>0)
+                disease->stats.maxhp += dur_mod;
 
-		    if(disease->stats.maxgrace>0)
-			 disease->stats.maxgrace += dur_mod;
+                if(disease->stats.maxgrace>0)
+                disease->stats.maxgrace += dur_mod;
 
-		    if(disease->stats.dam) {
-			 if(disease->stats.dam > 0)
-				disease->stats.dam += dam_mod;
-			 else disease->stats.dam -= dam_mod;
-		    }
+                if(disease->stats.dam) {
+                if(disease->stats.dam > 0)
+                    disease->stats.dam += dam_mod;
+                else disease->stats.dam -= dam_mod;
+                }
 
-		    if(disease->last_sp) {
-			 disease->last_sp -= 2*dam_mod;
-			 if(disease->last_sp <1) disease->last_sp = 1;
-		    }
+                if(disease->last_sp) {
+                disease->last_sp -= 2*dam_mod;
+                if(disease->last_sp <1) disease->last_sp = 1;
+                }
 
-		    if(disease->stats.maxsp) {
-			 if(disease->stats.maxsp > 0)
-				disease->stats.maxsp += dam_mod;
-			 else disease->stats.maxsp -= dam_mod;
-		    }
-		  
-		    if(disease->stats.ac) 
-			 disease->stats.ac += dam_mod;
+                if(disease->stats.maxsp) {
+                if(disease->stats.maxsp > 0)
+                    disease->stats.maxsp += dam_mod;
+                else disease->stats.maxsp -= dam_mod;
+                }
 
-		    if(disease->last_eat)
-			 disease->last_eat -= dam_mod;
+                if(disease->stats.ac) 
+                disease->stats.ac += dam_mod;
 
-		    if(disease->stats.hp)
-			 disease->stats.hp -= dam_mod;
+                if(disease->last_eat)
+                disease->last_eat -= dam_mod;
 
-		    if(disease->stats.sp)
-			 disease->stats.sp -= dam_mod;
-		  
-		    if(infect_object(target_head,disease,1)) {
-			 object *flash;  /* visual effect for inflicting disease */
+                if(disease->stats.hp)
+                disease->stats.hp -= dam_mod;
 
-			 new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,target_head->name);
+                if(disease->stats.sp)
+                disease->stats.sp -= dam_mod;
 
-			 free_object(disease); /* don't need this one anymore */
-			 flash=create_archetype(ARCH_DETECT_MAGIC);
-			 flash->x = x;
-			 flash->y = y;
-			 flash->map = walk->map;
-			 insert_ob_in_map(flash,walk->map,op,0);
-			 return 1;
-		  }
-		  free_object(disease);
-		}
-	} /* if living creature */
+                if(infect_object(target_head,disease,1)) {
+                object *flash;  /* visual effect for inflicting disease */
+
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,target_head->name);
+
+                free_object(disease); /* don't need this one anymore */
+                flash=create_archetype(ARCH_DETECT_MAGIC);
+                flash->x = x;
+                flash->y = y;
+                flash->map = walk->map;
+                insert_ob_in_map(flash,walk->map,op,0);
+                return 1;
+            	}
+            	free_object(disease);
+            } /* Found a victim */
+        } /* Search squares for living creature */
+	} /* if living creature on square */
     } /* for range of spaces */
     new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
     return 1;
