@@ -1954,7 +1954,7 @@ is_animated <1>         set if O is animated.
 
 flying <1>              set if O is flying (used in fly_on/fly_off).
 monster <1>             set if O is a monster.
-friendly                Not used yet.
+friendly <1>            set if O will help player instead of attacking.
 generator <1>           set if O is a generator.
 auto_apply <1>          O is applied when it is loaded (for instance, some
                         chests open automatically when the map is loaded)
