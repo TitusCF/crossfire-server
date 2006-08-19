@@ -1014,7 +1014,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     /* if caster is a spell casting object, this normally shouldn't be 
      * an issue, because they don't have any spellpaths set up.
      */
-    if (caster->path_denied & spell_ob->path_attuned) {
+    if ((caster->path_denied & spell_ob->path_attuned) && !QUERY_FLAG(caster,FLAG_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,op, "That spell path is denied to you.");
 	return 0;
     }
