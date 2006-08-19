@@ -1775,6 +1775,10 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
 	      maxdam = ndam;
 	      maxattacktype = 1<<attacknum;
 	    }
+        /* Special case: death attack always deals all damage, as it should kill the monster
+         * right away. */
+        if ( attacktype == AT_DEATH && ndam > 0 )
+            full_hit = 1;
 	}
     }
 	
