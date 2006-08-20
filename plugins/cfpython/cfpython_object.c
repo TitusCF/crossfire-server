@@ -1816,6 +1816,19 @@ static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* arg
     Py_INCREF(Py_None);
     return Py_None;
 }
+
+static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args)
+{
+    int mode;
+    long delay;
+
+    EXISTCHECK(who);
+    if (!PyArg_ParseTuple(args,"li",&delay,&mode))
+        return NULL;
+
+    return Py_BuildValue("i", cf_timer_create(who->obj,delay,mode));
+}
+
 static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObject* args )
 {
     char* whatstr;

@@ -492,6 +492,8 @@ void *cfapi_archetype_get_property(int *type, ...);
 void *cfapi_party_get_property(int *type, ...);
 void *cfapi_region_get_property(int *type, ...);
 void *cfapi_get_time(int *type, ...);
+void *cfapi_timer_create(int *type, ...);
+void *cfapi_timer_destroy(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 /* resurrection.c */
@@ -657,6 +659,7 @@ void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);
 int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
+void cftimer_init();
 /* weather.c */
 void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);

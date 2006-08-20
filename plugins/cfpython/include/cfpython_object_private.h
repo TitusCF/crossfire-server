@@ -231,6 +231,7 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
 static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
+static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
 
@@ -376,6 +377,7 @@ static PyMethodDef ObjectMethods[] = {
     { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_VARARGS},
     { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS},
     { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS},
+    { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS},
     {NULL, NULL, 0}
 };
 

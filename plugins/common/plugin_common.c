@@ -43,6 +43,8 @@ static f_plug_api cfapiSystem_strdup_local = NULL;
 static f_plug_api cfapiSystem_find_animation = NULL;
 static f_plug_api cfapiSystem_log = NULL;
 static f_plug_api cfapiSystem_get_time = NULL;
+static f_plug_api cfapiSystem_timer_create = NULL;
+static f_plug_api cfapiSystem_timer_destroy = NULL;
 
 static f_plug_api cfapiMap_create_path = NULL;
 
@@ -188,6 +190,8 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiPlayer_can_pay, "cfapi_player_can_pay", z );
     GET_HOOK( cfapiSystem_log, "cfapi_log", z );
     GET_HOOK( cfapiSystem_get_time, "cfapi_system_get_time", z );
+    GET_HOOK( cfapiSystem_timer_create, "cfapi_system_timer_create", z );
+    GET_HOOK( cfapiSystem_timer_destroy, "cfapi_system_timer_destroy", z );
     return 1;
 }
 
@@ -759,6 +763,18 @@ void cf_get_time( timeofday_t* tod )
 {
     int val;
     cfapiSystem_get_time(&val, tod);
+}
+
+int cf_timer_create(object* ob, long delay, int mode)
+{
+    int val;
+    return *( int* )cfapiSystem_timer_create(&val, ob, delay, mode);
+}
+
+int cf_timer_destroy(int id)
+{
+    int val;
+    return *( int* )cfapiSystem_timer_destroy(&val, id);
 }
 
 char* cf_object_get_key(object* op, char* keyname)

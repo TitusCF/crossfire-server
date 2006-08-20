@@ -50,6 +50,8 @@ extern char*        cf_get_maps_directory( char* str );
 extern int          cf_find_animation(char* txt);
 extern void			cf_log( LogLevel logLevel, const char* format, ... );
 extern void         cf_get_time( timeofday_t* tod );
+extern int          cf_timer_create(object* ob, long delay, int mode);
+extern int          cf_timer_destroy(int id);
 
 /* Objects */
 extern void* cf_object_set_int_property(object* op, int propcode, int value);

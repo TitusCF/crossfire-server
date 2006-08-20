@@ -124,6 +124,7 @@ static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
 static PyObject* CFPythonError;
 static PyObject* getTime(PyObject* self, PyObject* args);
+static PyObject* destroyTimer(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
@@ -184,6 +185,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
     {"GetTime",             getTime,                METH_VARARGS},
+    {"DestroyTimer",        destroyTimer,           METH_VARARGS},
     {NULL, NULL, 0}
 };
 
@@ -657,6 +659,14 @@ static PyObject* getTime(PyObject* self, PyObject* args)
 
     return list;
     }
+
+static PyObject* destroyTimer(PyObject* self, PyObject* args)
+{
+    int id;
+    if (!PyArg_ParseTuple(args, "i", &id))
+        return NULL;
+    return Py_BuildValue("i", cf_timer_destroy(id));
+}
 
 void initContextStack()
 {

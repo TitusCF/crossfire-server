@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix timers not working properly and potentially crashing.
+ include/timers.h: use tag instead of pointer to avoid crashes.
+ server/init.c: init timers.
+ server/timers.c: wrong check for EVENT_TIMER.
+-----
+Add timers to functions a plugin can call.
+ include/sproto.h: new functions.
+ server/plugins.c: callbacks to timers.
+-----
+Add Python wrappers to timer, Object.CreateTimer(delay,mode) and Crossfire.DestroyTimer(id) 
+ plugins/cfpython/cfpython.c
+ plugins/cfpython/cfpython_object.c
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/common/plugin_common.c
+ plugins/common/include/plugin_common.h
+Ryo 2006-08-20
+
 common/object.c: Scatter objects dropped from a multi-tile object being freed.
     Fixes bug #1542884
 server/c_wiz.c: Make DM 'free' command safe on multi-tile objects.

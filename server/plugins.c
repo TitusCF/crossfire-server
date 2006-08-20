@@ -41,9 +41,10 @@
 
 #ifndef __CEXTRACT__
 #include <sproto.h>
+#include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 77
+#define NR_OF_HOOKS 79
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -123,7 +124,9 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
     {cfapi_player_can_pay,          74, "cfapi_player_can_pay"},
     {cfapi_log,                     75, "cfapi_log"},
-     {cfapi_get_time,                 76, "cfapi_system_get_time"},
+    {cfapi_get_time,                76, "cfapi_system_get_time"},
+    {cfapi_timer_create,            77, "cfapi_system_timer_create"},
+    {cfapi_timer_destroy,           78, "cfapi_system_timer_destroy"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -820,6 +823,48 @@ void *cfapi_get_time(int *type, ...)
     get_tod(tod);
     *type = CFAPI_NONE;
     return NULL;
+}
+
+void *cfapi_timer_create(int *type, ...)
+{
+    va_list args;
+    int res;
+    static int rv;
+    object* ob;
+    long delay;
+    int mode;
+
+    va_start(args, type);
+    ob = va_arg(args, object*);
+    delay = va_arg(args, long);
+    mode = va_arg(args, int);
+    va_end(args);
+    *type = CFAPI_INT;
+
+    rv = cftimer_find_free_id();
+    if ( rv != TIMER_ERR_ID )
+    {
+        res = cftimer_create(rv, delay, ob, mode);
+        if ( res != TIMER_ERR_NONE )
+            rv = res;
+    }
+    return &rv;
+}
+
+void *cfapi_timer_destroy(int *type, ...)
+{
+    va_list args;
+    int id;
+    static int rv;
+
+    va_start(args, type);
+    id = va_arg(args, int);
+    va_end(args);
+    *type = CFAPI_INT;
+
+    rv = cftimer_destroy(id);
+
+    return &rv;
 }
 
 /* Logging hook */
