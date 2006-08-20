@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c: Scatter objects dropped from a multi-tile object being freed.
+    Fixes bug #1542884
 server/c_wiz.c: Make DM 'free' command safe on multi-tile objects.
 Alex Schultz 2006-08-19
 

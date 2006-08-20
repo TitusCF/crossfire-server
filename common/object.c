@@ -1151,10 +1151,6 @@ static void free_object2(object *ob, int free_inventory) {
     /* Handle for plugin destroy event */
     execute_event(ob, EVENT_DESTROY,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
 
-    if(ob->more!=NULL) {
-        free_object2(ob->more, free_inventory);
-        ob->more=NULL;
-    }
     if (ob->inv) {
         /* Only if the space blocks everything do we not process -
          * if some form of movemnt is allowed, let objects
@@ -1178,26 +1174,51 @@ static void free_object2(object *ob, int free_inventory) {
                    op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
                     free_object(op);
                 else {
+                    object *part;
+                    /* If it's a multi-tile object, scatter dropped items randomly */
+                    if (ob->more) {
+                        int partcount = 0;
+                        /* Get the number of non-head parts */
+                        for(part = ob; part; part = part->more) {
+                            partcount++;
+                        }
+                        /* Select a random part */
+                        partcount = RANDOM()%partcount;
+                        for(part = ob; partcount>0; partcount--) {
+                            part = part->more;
+                        }
+                    } else {
+                        part = ob;
+                    }
+
                     if ( QUERY_FLAG(op,FLAG_ALIVE) ) {
-                        int pos = find_free_spot(op,ob->map,ob->x, ob->y, 0, SIZEOFFREE);
+                        int pos;
+
+                        pos = find_free_spot(op,part->map,part->x, part->y, 0, SIZEOFFREE);
                         if ( pos == -1 )
                             free_object(op);
                         else {
-                            op->x=ob->x + freearr_x[ pos ];
-                            op->y=ob->y + freearr_y[ pos ];
-                            insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+                            op->x=part->x + freearr_x[ pos ];
+                            op->y=part->y + freearr_y[ pos ];
+                            insert_ob_in_map(op,part->map,NULL,0); /* Insert in same map as the envir */
                         }
                     }
                     else {
-                        op->x=ob->x;
-                        op->y=ob->y;
-                        insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+                        op->x=part->x;
+                        op->y=part->y;
+                        insert_ob_in_map(op,part->map,NULL,0); /* Insert in same map as the envir */
                     }
                 }
                 op=tmp;
             }
         }
     }
+    
+    if(ob->more!=NULL) {
+        free_object2(ob->more, free_inventory);
+        ob->more=NULL;
+    }
+    
     /* Remove object from the active list */
     ob->speed = 0;
     update_ob_speed(ob);
