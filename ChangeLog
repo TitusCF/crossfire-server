@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_wiz.c: Make DM 'free' command safe on multi-tile objects.
+Alex Schultz 2006-08-19
+
 Fix for bug #1540158 (Broken spells - Face of Death)
  server/attack.c: death attack always kills, no escape from it.
 -----
