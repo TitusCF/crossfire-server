@@ -3,7 +3,7 @@
 #include <sproto.h>
 #endif
 
-static void cftimer_process_event(object* ob);
+static void cftimer_process_event(tag_t ob_tag);
 
 /*****************************************************************************/
 /* Processes all timers.                                                     */
@@ -20,7 +20,7 @@ void cftimer_process_timers(void)
             {
             /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
-                cftimer_process_event(timers_table[i].ob);
+                cftimer_process_event(timers_table[i].ob_tag);
             }
         }
         else if (timers_table[i].mode == TIMER_MODE_SECONDS)
@@ -29,7 +29,7 @@ void cftimer_process_timers(void)
             {
             /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
-                cftimer_process_event(timers_table[i].ob);
+                cftimer_process_event(timers_table[i].ob_tag);
             }
         }
     }
@@ -38,9 +38,11 @@ void cftimer_process_timers(void)
 /*****************************************************************************/
 /* Triggers the EVENT_TIMER of the given object                              */
 /*****************************************************************************/
-static void cftimer_process_event(object* ob)
+static void cftimer_process_event(tag_t ob_tag)
 {
-    execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
+    object* ob = find_object(ob_tag);
+    if ( ob )
+        execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
 }
 
 /*****************************************************************************/
@@ -68,10 +70,10 @@ int cftimer_create(int id, long delay, object* ob, int mode)
         return TIMER_ERR_MODE;
     if (ob == NULL)
         return TIMER_ERR_OBJ;
-    if (find_event(ob, EVENT_TIMER) == NULL)
+    if (find_obj_by_type_subtype(ob, EVENT_CONNECTOR, EVENT_TIMER) == NULL)
         return TIMER_ERR_OBJ;
     timers_table[id].mode = mode;
-    timers_table[id].ob   = ob;
+    timers_table[id].ob_tag = ob->count;
     if (mode == TIMER_MODE_CYCLES)
         timers_table[id].delay = delay;
     else
@@ -115,3 +117,7 @@ int cftimer_find_free_id(void)
     return TIMER_ERR_ID;
 }
 
+void cftimer_init()
+{
+    memset(&timers_table[0], 0, sizeof(cftimer) * MAX_TIMERS);
+}
