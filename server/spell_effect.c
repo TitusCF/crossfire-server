@@ -2330,7 +2330,7 @@ void counterspell(object *op,int dir)
 		free_object(head);
 	} else switch(head->type) {
 	    case SPELL_EFFECT: 
-		if(op->level > head->level) {
+		if((op->level > head->level) && !op->food && !op->speed_left) {
 		    remove_ob(head);
 		    free_object(head);
 		}
