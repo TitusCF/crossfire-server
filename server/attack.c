@@ -1599,6 +1599,9 @@ static int kill_object(object *op,int dam, object *hitter, int type)
     }
     /* Player has been killed! */
     else {
+        /* Need to run kill_player (just in case, make sure is not wiz) */
+        if (!QUERY_FLAG(op,FLAG_WIZ))
+	    kill_player(op);
 	if(owner->type==PLAYER) {
 	    snprintf(op->contr->killer, BIG_NAME, "%s the %s",owner->name,owner->contr->title);
 	}

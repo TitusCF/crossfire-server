@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Call kill_player() from the kill_object() code. Fixes bug #1539192.
+Alex Schultz 2006-08-21
+
 server/spell_effect.c: Make counterspell not effect permenant spell effects.
     Fixes bug #1539220.
 lib/adm/getfaces.pl, lib/adm/README: Add 'getfaces' script that I had on the tracker and
