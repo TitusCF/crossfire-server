@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/adm/getfaces.pl, lib/adm/README: Add 'getfaces' script that I had on the tracker and
+    forgot about.
+Alex Schultz 2006-08-20
+
 Fix timers not working properly and potentially crashing.
  include/timers.h: use tag instead of pointer to avoid crashes.
  server/init.c: init timers.
