@@ -2046,6 +2046,13 @@ void draw_client_map2(object *pl)
 
 		    for (layer=0; layer < MAP_LAYERS; layer++) {
 			ob = GET_MAP_FACE_OBJ(m, nx, ny, layer);
+            
+            /* Special case: send player itself if invisible */
+            if ( !ob && x == pl->x && y == pl->y &&
+                  ( pl->invisible & (pl->invisible < 50 ? 4 : 1) ) &&
+                  ( layer == MAP_LAYER_LIVING1 || layer == MAP_LAYER_LIVING2 ) )
+                ob = pl;
+
 			if (ob)  {
 			    g1 = has_obj;
 			    got_one += map2_add_ob(ax, ay, layer, ob, &sl, &pl->contr->socket, &has_obj, 0);
