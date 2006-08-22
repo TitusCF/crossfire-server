@@ -17,6 +17,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix/improve login procedure such that if a player is trying to log in with
+the name & correct password of character already on server, terminate old 
+connection and let them log in.
+---
+server/login.c: Remove name check for players on server in check_name().
+    Make wrong_password() to handle error message handling for wrong password
+    In check_login(), iterate over players on system to see if there is a
+    match - if mismatched password, print error.  If correct password,
+    terminate old connection.  Move wrong password logic from check_login()
+    to wrong_password().
+MSW 2006-08-21
+
 server/attack.c: Call kill_player() from the kill_object() code. Fixes bug #1539192.
 Alex Schultz 2006-08-21
 

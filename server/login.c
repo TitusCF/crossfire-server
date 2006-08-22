@@ -162,13 +162,6 @@ int verify_player(const char *name, char *password)
  */
 
 int check_name(player *me,const char *name) {
-    player *pl;
-
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl!=me&&pl->ob->name!=NULL&&!strcmp(pl->ob->name,name)) {
-	    new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use.");
-	    return 0;
-	}
 
     if (*name=='\0') {
 	new_draw_info(NDI_UNIQUE, 0,me->ob,"Null names are not allowed.");
@@ -421,6 +414,31 @@ static void copy_file(const char *filename, FILE *fpout) {
   fclose(fp);
 }
 
+/* Simple function to print errors when password is
+ * not correct
+ */
+static void wrong_password(object *op)
+{
+    new_draw_info(NDI_UNIQUE, 0,op," ");
+    new_draw_info(NDI_UNIQUE, 0,op,"A character with this name already exists.");
+    new_draw_info(NDI_UNIQUE, 0,op,"Please choose another name, or make sure you entered your password correctly.");
+    new_draw_info(NDI_UNIQUE, 0,op," ");
+
+    FREE_AND_COPY(op->name, "noname");
+    FREE_AND_COPY(op->name_pl, "noname");
+
+    op->contr->socket.password_fails++;
+    if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
+	new_draw_info(NDI_UNIQUE, 0,op,
+	    "You gave an incorrect password too many times, you will now be dropped from the server.");
+
+	LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n", 
+	    op->contr->socket.host);
+
+	op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
+    }
+    else get_name(op);
+}
 
 void check_login(object *op) {
     FILE *fp;
@@ -428,7 +446,7 @@ void check_login(object *op) {
     char buf[MAX_BUF],bufall[MAX_BUF];
     int i,value,comp;
     long checksum = 0;
-    player *pl = op->contr;
+    player *pl = op->contr, *pltmp;
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
@@ -445,6 +463,38 @@ void check_login(object *op) {
 	if (access(filename, F_OK)==0) {
 	    sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
 	    make_path_to_file(buf);
+	}
+    }
+
+    for(pltmp=first_player; pltmp!=NULL; pltmp=pltmp->next) {
+	if(pltmp!=pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name,op->name)) {
+	    if (check_password(pl->write_buf+1, pltmp->password)) {
+
+		/* We could try and be more clever and re-assign the existing
+		 * object to the new player, etc.  However, I'm concerned that
+		 * there may be a lot of other state that still needs to be sent
+		 * in that case (we can't make any assumptions on what the
+		 * client knows, as maybe the client crashed), so treating it
+		 * as just a normal login is the safest and easiest thing to do.
+		 */
+
+		pltmp->socket.status=Ns_Dead;
+
+		save_player(pltmp->ob, 0);
+		if(!QUERY_FLAG(pltmp->ob,FLAG_REMOVED)) {
+		    /* Need to terminate the pets, since the new object
+		     * will be different
+		     */
+		    terminate_all_pets(pltmp->ob);
+		    remove_ob(pltmp->ob);
+		}
+		leave(pltmp,1);
+		final_free_player(pltmp);
+		break;
+	    } else {
+		wrong_password(op);
+		return;
+	    }
 	}
     }
 
@@ -482,22 +532,8 @@ void check_login(object *op) {
 	 */
     }
     if (!correct) {
-	new_draw_info(NDI_UNIQUE, 0,op," ");
-	new_draw_info(NDI_UNIQUE, 0,op,"A character with this name already exists.");
-    new_draw_info(NDI_UNIQUE, 0,op,"Please choose another name, or make sure you entered your password correctly.");
-    new_draw_info(NDI_UNIQUE, 0,op," ");
-	FREE_AND_COPY(op->name, "noname");
-	FREE_AND_COPY(op->name_pl, "noname");
-	op->contr->socket.password_fails++;
-	if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
-	    new_draw_info(NDI_UNIQUE, 0,op,
-		"You gave an incorrect password too many times, you will now be dropped from the server.");
-	    LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n", 
-		op->contr->socket.host);
-	    op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
-	}
-	else get_name(op);
-	return;	    /* Once again, rest of code just loads the char */
+	wrong_password(op);
+	return;
     }
 
 #ifdef SAVE_INTERVAL
