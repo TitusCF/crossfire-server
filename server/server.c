@@ -741,7 +741,11 @@ void enter_exit(object *op, object *exit_ob) {
         */
         mapstruct	*newmap;
         if (exit_ob->map) {
-            newmap = ready_map_name(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+            char tmp_path[HUGE_BUF];
+            tmp_path[0] = '\0';
+            strncpy(tmp_path, path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), HUGE_BUF);
+            tmp_path[HUGE_BUF - 1] = '\0';
+            newmap = ready_map_name(tmp_path, 0);
             /* Random map was previously generated, but is no longer about.  Lets generate a new
              * map.
              */

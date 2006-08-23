@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/server.c: fix a weird name change. Basically, function path_combine_and_normalize
+ was called twice while first result was still in use, resulting in weird names.
+Ryo 2006-08-23
+
 Fix for bug #1528636 (Invisible player disappears from map view).
  socket/request.c: special case for view's center.
 Ryo 2006-08-22
