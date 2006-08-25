@@ -34,8 +34,9 @@ AC_PROG_CPP
 AM_PROG_LEX
 AC_PROG_AWK
 
-AC_ARG_ENABLE(dmalloc, [ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working],
-	use_dmalloc=yes, use_dmalloc=no)
+AC_ARG_ENABLE(dmalloc,
+              [ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working],,
+              enable_dmalloc=no)
 
 AC_ARG_WITH(python, [  --with-python=dir       Directory to look for python headers/library (default=standard system location)	],
 			PYTHON_HOME="$withval")
@@ -123,7 +124,7 @@ AC_CHECK_LIB(z, compress)
 dnl Gros - Changed this to support some external programs that do not like dmalloc (like Python).
 dnl If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
 
-if eval "test x$use_dmalloc = xyes"; then
+if eval "test x$enable_dmalloc = xyes"; then
     AC_CHECK_LIB(dmalloc, main)
 else
     AC_CHECK_LIB(dmalloclp, main)
@@ -248,12 +249,15 @@ CF_CHECK_CROSSEDIT(["$X11LIBS"],
 ########################
 # Unit test configuration
 
+AC_ARG_ENABLE(check,
+              [ --disable-check       Disable the unit tests even if check is available],,
+              enable_check=yes)
 AM_PATH_CHECK(,[have_check="yes"],
   AC_MSG_WARN([Check not found; cannot run unit tests!])
   [have_check="no"])
-AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes" -a x"$enable_check" = "xyes")
 CF_CHECK_XSLT(xsltengine)
-AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$xsltengine" != x])
+AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$enable_check" = "xyes" -a x"$xsltengine" != x])
 AC_SUBST(XSLTENGINE,[$xsltengine])
 AC_OUTPUT([Makefile
 	crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile
@@ -277,7 +281,7 @@ AC_OUTPUT([Makefile
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([Configuration resume....])
+AC_MSG_NOTICE([Configuration summary....])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Paths])
 AC_MSG_NOTICE([    prefix default value                 ${prefix}])
@@ -296,18 +300,18 @@ if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
 			
 fi
-if test x"$xsltengine" != x ; then
+if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]
 fi
-AC_MSG_NOTICE([    Will process unit testing?           $have_check $check_complement])
-if test "x$have_check" = "xyes" ; then
+if test "x$have_check" = "xyes" -a x"$enable_check" = "xyes" ; then
+AC_MSG_NOTICE([    Will process unit testing?           yes $check_complement])
 AC_MSG_NOTICE([      (run make; make -k check)])
 else
+AC_MSG_NOTICE([    Will process unit testing?           no])
 AC_MSG_NOTICE([      If you are a developper, you MUST install the check framework])
-AC_MSG_NOTICE([      and write automated tests for all you add-ons!])
+AC_MSG_NOTICE([      and write automated tests for all your add-ons!])
 fi
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([  * this check is new and may be unaccurate. If you find it says])
-AC_MSG_NOTICE([  yes but compilation failed or you have good reason to think])
+AC_MSG_NOTICE([  * this check is new and may be inaccurate. If you find it says])
+AC_MSG_NOTICE([  yes but compilation failed or you have good reason to think this])
 AC_MSG_NOTICE([  script guessed wrong, please inform mailing list or sf tracker.])
-

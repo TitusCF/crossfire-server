@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+configure.ac: add option to disable unit tests, fix incorrect usage of
+  AC_ARG_ENABLE for dmalloc, fix some typos.
+Raphael Quinet 2006-08-25
+
 common/map.c: static buffers are evil. This resulted in name weirdness, and
  strange results with overlays.
 Ryo 2006-08-25
