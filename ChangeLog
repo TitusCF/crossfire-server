@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+check-fragment.am: Add some quotes to avoid problems with spaces appearing
+  in macro expansions.
+Raphael Quinet 2006-08-25
+	
 configure, aclocal.m4, utils/config.guess, utils/config.sub,
   utils/ltmain.sh, include/autoconf.h.in, */Makefile.in: regenerated using
   slightly newer versions of libtoolize, aclocal, automake and autoconf.
