@@ -1202,14 +1202,14 @@ automenu:
 	list='$(TESTS)'; \
 	dir='$(LOGDIR)'; \
 	srcdir='$(top_srcdir)'; \
-	output_menu=$${dir}/.automenu.xml; \
-	parentfoldername=$(CHECK_PARENT_NAME); \
+	output_menu="$${dir}/.automenu.xml"; \
+	parentfoldername='$(CHECK_PARENT_NAME)'; \
 	echo '<?xml version="1.0"?><menu>' > $$output_menu; \
 	echo '<parentMenu>$(CHECK_PARENT_NAME)</parentMenu>' >> $$output_menu;\
 	for tst in $$list; do \
-	  tst=$${tst/check_/} ; \
-	  tst=$${tst/-/_} ; \
-	  xml=$(LOGDIR)/$${tst}.xml ;\
+	  tst="$${tst/check_/}" ; \
+	  tst="$${tst/-/_}" ; \
+	  xml="$(LOGDIR)/$${tst}.xml" ;\
 	  if test -e "$$xml"; then \
 	      successCount=`grep -c 'result="success"' $$xml`;\
 	      errorCount=`grep -c 'result="error"' $$xml`;\
@@ -1218,7 +1218,7 @@ automenu:
 	  fi; \
 	done; \
 	for sub in $$subdirs; do \
-	    if test -e $${dir}/$${sub}/.automenu.xml; then \
+	    if test -e "$${dir}/$${sub}/.automenu.xml"; then \
 	       echo '<subDirectory name="'$${sub}'"/>' >> $$output_menu; \
 	    fi; \
 	done;\
@@ -1228,7 +1228,7 @@ logreport: automenu
 	@echo "processing logs to html..."
 	@list='$(TESTS)'; \
 	srcdir='$(top_srcdir)'; \
-	xsl=$${srcdir}/test/templates/logresult.xsl ; \
+	xsl="$${srcdir}/test/templates/logresult.xsl" ; \
 	xsltproc='$(XSLTENGINE)';\
 	xsltproc=$${xsltproc/\%2/$$xsl};\
 	xml_siteuri='$(CHECK_ROOT)' ;\
@@ -1236,17 +1236,17 @@ logreport: automenu
 	runxml='.autorun.xml';\
 	if test -n "$$list"; then \
 	  for tst in $$list; do \
-	    tst=$${tst/check_/} ; \
-	    tst=$${tst/-/_} ; \
-	    checkFile=$${tst}.xml ;\
+	    tst="$${tst/check_/}" ; \
+	    tst="$${tst/-/_}" ; \
+	    checkFile="$${tst}.xml" ;\
 	    echo '<?xml version="1.0"?><config>' > $$runxml;\
 	    echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
 	    echo "<checkFile>$$checkFile</checkFile>" >> $$runxml;\
 	    echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
 	    html=$(LOGDIR)/$${tst}.html ;\
 	    if test -e "$(LOGDIR)/$$xml"; then \
-	        torun=$${xsltproc/\%1/$$runxml};\
-	        torun=$${torun/\%3/$$html};\
+	        torun="$${xsltproc/\%1/$$runxml}";\
+	        torun="$${torun/\%3/$$html}";\
 	        echo "running $$torun";\
 	        $$torun; \
 	    fi; \
@@ -1255,31 +1255,31 @@ logreport: automenu
 	echo '<?xml version="1.0"?><config>' > $$runxml;\
 	echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
 	echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
-	html=$(LOGDIR)/.index.html ;\
-	torun=$${xsltproc/\%1/$$runxml};\
-	torun=$${torun/\%3/$$html};\
+	html='$(LOGDIR)/.index.html' ;\
+	torun="$${xsltproc/\%1/$$runxml}";\
+	torun="$${torun/\%3/$$html}";\
 	echo "running $$torun";\
 	$$torun;
 template-copy: $(LOGDIR)
 	@echo copying template
 	@if test -d "$(top_srcdir)/test/templates/$(CHECK_FOLDER)"; then \
-	    cp $(top_srcdir)/test/templates/$(CHECK_FOLDER)/[^C]* $(LOGDIR)/;\
+	    cp "$(top_srcdir)/test/templates/$(CHECK_FOLDER)/"[^C]* '$(LOGDIR)'/;\
 	fi
 textlog:
 	@echo "processing logs to text..."
 	@srcdir='$(top_srcdir)'; \
-	xsl=$${srcdir}/test/templates/checkTextResult.xsl ; \
+	xsl="$${srcdir}/test/templates/checkTextResult.xsl" ; \
 	xsltproc='$(XSLTENGINE)';\
-	xsltproc=$${xsltproc/\%2/$$xsl};\
+	xsltproc="$${xsltproc/\%2/$$xsl}";\
 	xml_siteuri='$(CHECK_ROOT)' ;\
 	xml_check_folder='../logs/$(CHECK_FOLDER)' ;\
 	runxml='.autorun.xml';\
 	echo '<?xml version="1.0"?><config>' > $$runxml;\
 	echo "<baseSiteUri>$$xml_siteuri</baseSiteUri>" >> $$runxml;\
 	echo "<checkFolder>$$xml_check_folder</checkFolder></config>" >> $$runxml;\
-	txt=$(LOGDIR)/testlog.txt ;\
-	torun=$${xsltproc/\%1/$$runxml};\
-	torun=$${torun/\%3/$$txt};\
+	txt='$(LOGDIR)/testlog.txt' ;\
+	torun="$${xsltproc/\%1/$$runxml}";\
+	torun="$${torun/\%3/$$txt}";\
 	echo "running $$torun";\
 	$$torun;
 check-html: $(CHECK_HTML)
