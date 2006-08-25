@@ -31,3 +31,4 @@ check_shstr
 check_time
 check_treasure
 check_utils
+.autorun.xml

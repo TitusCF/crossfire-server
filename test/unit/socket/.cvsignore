@@ -10,3 +10,4 @@ check_lowlevel
 check_metaserver
 check_request
 check_sounds
+.autorun.xml

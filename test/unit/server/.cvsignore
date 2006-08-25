@@ -42,3 +42,4 @@ check_time
 check_timers
 check_weather
 check_win32
+.autorun.xml

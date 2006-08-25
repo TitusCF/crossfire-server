@@ -21,3 +21,4 @@ check_style
 check_test
 check_treasure
 check_wall
+.autorun.xml
