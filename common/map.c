@@ -1933,7 +1933,10 @@ void set_map_reset_time(mapstruct *map) {
 static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % 4;
-    char *path = path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]);
+    char path[HUGE_BUF];
+    path[0] = '\0';
+    strncpy(path, path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]), HUGE_BUF - 1);
+    path[HUGE_BUF-1] = '\0';
 
     orig_map->tile_map[tile_num] = ready_map_name(path, 0);
 
