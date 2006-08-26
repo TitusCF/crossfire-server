@@ -2392,6 +2392,12 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
             nx = ix;
             ny = iy + sy  - (i - (sx + sy + sx));
         }
+        
+        /* Make sure it's within map. */
+        if (nx < 0 || nx >= MAP_WIDTH(gen->map) ||
+            ny < 0 || ny >= MAP_HEIGHT(gen->map))
+            continue;
+            
         /* Check if the spot is free.*/
         flag = ob_blocked(ob,gen->map,nx,ny);
         if (!flag) {
