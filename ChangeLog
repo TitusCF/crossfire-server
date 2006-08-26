@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Hopefully fix weather-related bug.
+common/object.c: tentatively fix insert_ob_in_map weird behaviour when
+ both INS_MAP_LOAD and INS_ABOVE_FLOOR_ONLY are set.
+Ryo 2006-08-26
+
 common/object.c, server/time.c: Make generators work properly with multi-tile objects.
     Fixes bugs #1543220 and #1546835 and also allows generators themself to be multi-tile.
 Alex Schultz 2006-08-25

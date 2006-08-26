@@ -1674,7 +1674,10 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	originator->below = op;
     } else {
 	/* If there are other objects, then */
-	if((! (flag & INS_MAP_LOAD)) && ((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
+        /* This test is incorrect i think, as ins_above_floor_only needs the floor variable
+        if((! (flag & INS_MAP_LOAD)) && ((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
+        */
+        if(((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
 	    object *last=NULL;
 	    /*
 	     * If there are multiple objects on this space, we do some trickier handling.
