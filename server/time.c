@@ -91,6 +91,7 @@ void remove_door2(object *op) {
  */
 static void generate_monster_inv(object *gen) {
     int i;
+    int nx, ny;
     object *op,*head=NULL;
 
     int qty=0;
@@ -112,7 +113,7 @@ static void generate_monster_inv(object *gen) {
     qty=rndm(0,qty-1);
     for (op=gen->inv;qty;qty--)
         op=op->below;
-    i=find_free_spot(op,gen->map,gen->x,gen->y,1,9);
+    i=find_multi_free_spot_around(op, gen, &nx, &ny);
     if (i==-1)
         return;
     head=object_create_clone(op);
@@ -120,7 +121,7 @@ static void generate_monster_inv(object *gen) {
     unflag_inv (head,FLAG_IS_A_TEMPLATE);
     if (rndm(0, 9))
         generate_artifact(head, gen->map->difficulty);
-    insert_ob_in_map_at(head,gen->map,gen,0,gen->x+freearr_x[i],gen->y+freearr_y[i]);
+    insert_ob_in_map_at(head,gen->map,gen,0,nx,ny);
     if (QUERY_FLAG(head, FLAG_FREED)) return;
     fix_multipart_object(head);
     if(HAS_RANDOM_ITEMS(head))
@@ -130,6 +131,7 @@ static void generate_monster_inv(object *gen) {
 
 static void generate_monster_arch(object *gen) {
     int i;
+    int nx, ny;
     object *op,*head=NULL,*prev=NULL;
     archetype *at=gen->other_arch;
 
@@ -145,12 +147,12 @@ static void generate_monster_arch(object *gen) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
 	return;
     }
-    i=find_free_spot(&at->clone,gen->map,gen->x,gen->y,1,9);
+    i=find_multi_free_spot_around(&at->clone, gen, &nx, &ny);
     if (i==-1) return;
     while(at!=NULL) {
 	op=arch_to_object(at);
-	op->x=gen->x+freearr_x[i]+at->clone.x;
-	op->y=gen->y+freearr_y[i]+at->clone.y;
+	op->x=nx+at->clone.x;
+	op->y=ny+at->clone.y;
 
 	if(head!=NULL)
 	    op->head=head,prev->more=op;

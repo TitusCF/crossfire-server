@@ -48,6 +48,7 @@ static void expand_objects(void);
 static void free_object2(object *, int);
 static void permute(int *, int, int);
 static int set_ob_key_value_s(object *, const char *, const char *, int);
+static void get_multi_size(object *, int *, int *, int *, int *);
 
 
 
@@ -2308,6 +2309,103 @@ void set_cheat(object *op) {
     flag_inv(op, FLAG_WAS_WIZ);
 }
 
+/*
+ * find_multi_free_spot_around() sets hx and hy to the coords to insert a possibly
+ * multi-tile ob at, around gen. Returns 0 for success and -1 for failure. This function
+ * assumes that multi-tile objects are rectangular.
+ */
+int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
+    int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
+    int freecount=0;
+    
+    if (ob->head)
+        ob = ob->head;
+    
+    get_multi_size(ob, &sx, &sy, &sx2, &sy2);
+    get_multi_size(gen, &genx, &geny, &genx2, &geny2);
+    /*
+     * sx and sy are now the coords of the bottom right corner of ob relative to the head.
+     * genx and geny are now the coords of the bottom right corner of gen relative to the head.
+     * sx2 and sy2 are now the coords of the head of ob relative to the top left corner.
+     * genx2 and geny2 are now the coords of the head of gen relative to the top left corner.
+     */
+
+    sx++;
+    sy++;
+    genx++;
+    geny++;
+    /*
+     * sx, sy, genx, and geny, are now the size of the object, excluding parts left and above
+     * the head.
+     */
+    
+    ix = gen->x - sx - genx2;
+    iy = gen->y - sy - geny2;
+    sx += genx + sx2;
+    sy += geny + sy2;
+    /*
+     * ix and iy are the map coords of the top left square where the head of ob could possibly
+     * be placed. sx and sy are now the size of the square to search for placement of the head
+     * relative to ix and iy.
+     */
+    
+    /*
+     * Loop around the square of possible potitions for the head of ob object:
+     */
+    for(i = 0; i < (sx+sx+sy+sy); i++) {
+        if (i <= sx) {
+            nx = i+ix;
+            ny = iy;
+        } else if (i <= (sx + sy)) {
+            nx = ix + sx;
+            ny = iy + i - sx;
+        } else if (i <= (sx + sy + sx)) {
+            nx = ix + sx - (i - (sx + sy));
+            ny = iy + sy;
+        } else {
+            nx = ix;
+            ny = iy + sy  - (i - (sx + sy + sx));
+        }
+        /* Check if the spot is free. */
+        flag = ob_blocked(ob,gen->map,nx,ny);
+        if (!flag) {
+            freecount++;
+        }
+    }
+    /* If no free spaces, return. */
+    if (!freecount)
+        return -1;
+        
+    /* Choose a random valid position */
+    freecount = RANDOM()%freecount;
+    for(i = 0; i < (sx+sx+sy+sy); i++) {
+        if (i <= sx) {
+            nx = i+ix;
+            ny = iy;
+        } else if (i <= (sx + sy)) {
+            nx = ix + sx;
+            ny = iy + i - sx;
+        } else if (i <= (sx + sy + sx)) {
+            nx = ix + sx - (i - (sx + sy));
+            ny = iy + sy;
+        } else {
+            nx = ix;
+            ny = iy + sy  - (i - (sx + sy + sx));
+        }
+        /* Check if the spot is free.*/
+        flag = ob_blocked(ob,gen->map,nx,ny);
+        if (!flag) {
+            freecount--;
+            if (freecount <= 0) {
+                *hx = nx;
+                *hy = ny;
+                 return 0;
+            }
+        }
+    }
+    return -1;
+}
+
 /**
  * find_free_spot(object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
@@ -3066,4 +3164,34 @@ void fix_multipart_object(object* tmp)
         */
         insert_ob_in_map(op, op->map, tmp,INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
     } /* for at = tmp->arch->more */
+}
+
+/*
+ * Fills sx and sy with the coords of the bottom right tail relative to the head and
+ * fills hx and hy with the coords of the head tile relative to the top left tile. If
+ * you don't want a value, it's safe to pass NULL in place of the pointer.
+ */
+static void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
+    archetype *part;
+    int maxx=0, maxy=0, minx=0, miny=0;
+    if (ob->head)
+        ob = ob->head;
+    *sx = 1;
+    *sy = 1;
+    if (ob->arch->more){
+        for(part = ob->arch; part; part = part->more) {
+            if (part->clone.x > maxx)
+                maxx = part->clone.x;
+            if (part->clone.y > maxy)
+                maxy = part->clone.y;
+            if (part->clone.x < minx)
+                minx = part->clone.x;
+            if (part->clone.y < miny)
+                miny = part->clone.y;
+        }  
+    }
+    if (sx) *sx = maxx;
+    if (sy) *sy = maxy;
+    if (hx) *hx = -minx;
+    if (hy) *hy = -miny;
 }

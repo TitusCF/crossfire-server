@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/object.c, server/time.c: Make generators work properly with multi-tile objects.
+    Fixes bugs #1543220 and #1546835 and also allows generators themself to be multi-tile.
+Alex Schultz 2006-08-25
+
 check-fragment.am: Add some quotes to avoid problems with spaces appearing
   in macro expansions.
 Raphael Quinet 2006-08-25
