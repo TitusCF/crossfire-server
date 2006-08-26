@@ -1356,7 +1356,7 @@ static void perform_weather(void)
     } else
 	wmperformstartx++;
     if (wmperformstarty == settings.worldmaptilesy)
-	wmperformstartx = wmperformstarty = 0;
+       wmperformstartx = wmperformstarty = 0;
     
     sprintf(filename, "world/world_%d_%d",
 	wmperformstartx+settings.worldmapstartx,
@@ -1446,50 +1446,53 @@ void weather_effect(const char *filename)
 static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 {
     int avoid, gotsnow, i, n;
-
-    object *tmp;
+ 
+    object *tmp, *snow;
     avoid = 0;
     gotsnow = 0;
     if (grow) {
-	for (tmp=GET_MAP_OB(m, x, y), n=0; tmp; tmp = tmp->above, n++) {
-	    /* look for things like walls, holes, etc */
-	    if (n)
-		if (!QUERY_FLAG (tmp, FLAG_IS_FLOOR) &&
-		    !(tmp->material & M_ICE || tmp->material & M_LIQUID))
-		    gotsnow++;
-	    for (i=0; growth_avoids[i].name != NULL; i++) {
-		/*if (!strcmp(tmp->arch->name, growth_avoids[i].name)) {*/
-		if (tmp->arch== growth_avoids[i].what) {
-		    avoid++;
-		    break;
-		}
-	    }
-		if (!strncmp(tmp->arch->name, "biglake_", 8)) {
-		    avoid++;
-		    break;
-		}
-	    if (avoid)
-		break;
-	}
+        for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+            /* look for things like walls, holes, etc */
+            if (!QUERY_FLAG (tmp, FLAG_IS_FLOOR) &&
+                 !(tmp->material & M_ICE || tmp->material & M_LIQUID)) {
+                gotsnow++;
+                snow = tmp;
+            }
+            for (i=0; growth_avoids[i].name != NULL; i++) {
+                if (tmp->arch== growth_avoids[i].what) {
+                    avoid++;
+                    break;
+                }
+            }
+            if (!strncmp(tmp->arch->name, "biglake_", 8)) {
+                avoid++;
+                break;
+            }
+            if (avoid && gotsnow)
+                break;
+        }
     } else {
-	for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
-	    for (i=0; weather_avoids[i].name != NULL; i++) {
-		/*if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {*/
-		if (tmp->arch == weather_avoids[i].what) {
-		    if (weather_avoids[i].snow == 1)
-			gotsnow++;
-		    else
-			avoid++;
-		    break;
-		}
-	    }
-	    if (avoid || gotsnow)
-		break;
-	}
+        for (tmp=GET_MAP_OB(m, x, y); tmp; tmp = tmp->above) {
+            for (i=0; weather_avoids[i].name != NULL; i++) {
+                /*if (!strcmp(tmp->arch->name, weather_avoids[i].name)) {*/
+                if (tmp->arch == weather_avoids[i].what) {
+                    if (weather_avoids[i].snow == 1) {
+                        gotsnow++;
+                        snow = tmp;
+                    } else {
+                        avoid++;
+                    }
+                    break;
+                }
+            }
+            if (avoid && gotsnow)
+                break;
+        }
     }
     *gs = gotsnow;
     *av = avoid;
-    return tmp;
+ 
+    return snow;
 }
 
 /* Temperature is used in a lot of weather function.

@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/weather.c: change spurious logic in weather_avoid function.
+Ryo 2006-08-26
+
 Hopefully fix weather-related bug.
 common/object.c: tentatively fix insert_ob_in_map weird behaviour when
  both INS_MAP_LOAD and INS_ABOVE_FLOOR_ONLY are set.
