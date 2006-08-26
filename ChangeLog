@@ -17,6 +17,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Removed obsolete 'event' field from object struct, and associated functions.
+ common/living.c
+ common/loader.[cl]
+ common/object.c
+ common/treasure.c
+ include/libproto.h
+ include/object.h
+ server/apply.c
+ test/unit/common/check_arch.c
+Ryo 2006-08-26
+
 server/weather.c: change spurious logic in weather_avoid function.
 Ryo 2006-08-26
 

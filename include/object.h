@@ -43,15 +43,6 @@ typedef struct body_locations_struct {
 
 extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
 
-typedef struct _event
-{
-    int type;
-    const char *hook;
-    const char *plugin;
-    const char *options;
-    struct _event *next;
-} event;
-
 /*
  * Each object (this also means archetypes!) could have a few of these
  * "dangling" from it; this could also end up containing 'parse errors'.
@@ -245,8 +236,6 @@ typedef struct obj {
     MoveType   move_off;	/* Move types affected moving off this space */
     MoveType   move_slow;	/* Movement types this slows down */
     float   move_slow_penalty;	/* How much this slows down the object */
-
-    event   *events;
 
     const char  *custom_name; /* Custom name assigned by player */
     key_value *key_values; /* Fields not explictly known by the loader. */

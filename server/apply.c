@@ -1801,32 +1801,7 @@ static void apply_book (object *op, object *tmp)
     /*printf("Book apply: %s\n", tmp->name);
     execute_event(tmp, EVENT_APPLY,op,NULL,SCRIPT_FIX_ALL);
     printf("Book applied: %s\n", tmp->name);*/
-    /*if ((evt = find_event(tmp, EVENT_APPLY)) != NULL)
     {
-        CFParm CFP;
-        int k, l, m;
-        uint32 n;
-        new_draw_info_format (NDI_UNIQUE, 0, op,
-                      "You open the %s and start reading.", tmp->name);
-        k = EVENT_APPLY;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        n = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = tmp;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &n;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (void*)evt->hook;
-        CFP.Value[10]= (void*)evt->options;
-        if (findPlugin(evt->plugin)>=0)
-            ((PlugList[findPlugin(evt->plugin)].eventfunc) (&CFP));
-    }
-    else*/{
     	readable_message_type* msgType = get_readable_message_type(tmp);
     	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
                 msgType->message_type, msgType->message_subtype,

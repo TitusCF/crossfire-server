@@ -1495,59 +1495,6 @@ void add_abilities(object *op, object *change) {
 	    free_string(op->msg);
 	op->msg = add_refcount(change->msg);
     }
-    /* GROS: Added support for event_... in artifact file */
-    for(j=0;j<NR_EVENTS;j++) {
-	event *evt;
-	event *evt2;
-	event *evtn;
-	event *evtp;
-
-	evt = find_event(change,j);
-	evt2= find_event(op,j);
-
-	if ((evt) && (evt->hook)) {
-	    if ((evt2)&&(evt2->hook)) {
-		free_string(evt2->hook);
-		free_string(evt2->plugin);
-		free_string(evt2->options);
-		evtp = NULL;
-		evtn = evt2->next;
-		if (evt2 == op->events) {
-		    free(evt2);
-		    op->events = evtn;
-		}
-		else {
-		    evtp = op->events;
-		    while (evtp->next != evt2)
-			evtp = evtp->next;
-		    free(evt2);
-		    evtp->next = evtn;
-		}
-	    }
-	    else if (evt2 == NULL) {
-		if (op->events == NULL) {
-		    evt2 = (event *)malloc(sizeof(event));
-		    op->events = evt2;
-		}
-		else {
-		    evtp = op->events;
-		    while (evtp->next != NULL)
-			evtp = evtp->next;
-		    evtp->next = (event *)malloc(sizeof(event));
-		    evt2 = evtp->next;
-		}
-	    }
-	    evt2->next = NULL;
-	    evt2->hook = add_refcount(evt->hook);
-	    evt2->plugin = add_refcount(evt->plugin);
-	    evt2->type = j;
-
-	    if (evt->options)
-		evt2->options = add_refcount(evt->options);
-	    else
-		evt2->options = NULL;
-	}
-    }
 }
 
 static int legal_artifact_combination(object *op, artifact *art) {

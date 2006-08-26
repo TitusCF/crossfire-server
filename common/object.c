@@ -644,26 +644,12 @@ static void free_key_values(object * op) {
 
 void clear_object(object *op) {
 
-    event *evt;
-    event *evt2;
-
     /*TODO this comment must be investigated*/
     /* redo this to be simpler/more efficient. Was also seeing
      * crashes in the old code.  Move this to the top - am
      * seeing periodic crashes in this code, and would like to have
      * as much info available as possible (eg, object name).
      */
-    for (evt = op->events; evt; evt=evt2) {
-	evt2 = evt->next;
-
-        if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
-        if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
-        if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
-
-        free(evt);
-    }
-    op->events = NULL;
-
     free_key_values(op);
 
     /* the memset will clear all these values for us, but we need
@@ -693,7 +679,6 @@ void clear_object(object *op) {
     op->below=NULL;
     op->above=NULL;
     op->inv=NULL;
-    op->events=NULL;
     op->container=NULL;
     op->env=NULL;
     op->more=NULL;
@@ -723,7 +708,6 @@ void clear_object(object *op) {
 
 void copy_object(object *op2, object *op) {
     int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED);
-    event *evt, *evt2, *evt_new;
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
     they'll be overwritten by memcpy. */
@@ -739,16 +723,6 @@ void copy_object(object *op2, object *op) {
     if(op->custom_name != NULL)		free_string(op->custom_name);
 
     /* Basically, same code as from clear_object() */
-    for (evt = op->events; evt; evt=evt2) {
-      evt2 = evt->next;
-
-      if (evt->hook != NULL) FREE_AND_CLEAR_STR(evt->hook);
-      if (evt->plugin != NULL) FREE_AND_CLEAR_STR(evt->plugin);
-      if (evt->options != NULL) FREE_AND_CLEAR_STR(evt->options);
-
-      free(evt);
-    }
-    op->events = NULL;
 
     free_key_values(op);
 
@@ -773,27 +747,6 @@ void copy_object(object *op2, object *op) {
     if((op2->speed<0) && !editor)
 	op->speed_left=op2->speed_left-RANDOM()%200/100.0;
 
-    /* Copy over event information */
-    evt2 = NULL;
-    for (evt = op2->events; evt; evt=evt->next) {
-	evt_new = malloc(sizeof(event));
-	memcpy(evt_new, evt, sizeof(event));
-	if (evt_new->hook)  add_refcount(evt_new->hook);
-	if (evt_new->plugin)  add_refcount(evt_new->plugin);
-	if (evt_new->options)  add_refcount(evt_new->options);
-	evt_new->next = NULL;
-
-	/* Try to be a little clever here, and store away the
-	 * last event we copied, so that its simpler to update the
-	 * pointer.
-	 */
-	if (evt2)
-	    evt2->next = evt_new;
-	else
-	    op->events = evt_new;
-
-	evt2 = evt_new;
-    }
     /* Copy over key_values, if any. */
     if (op2->key_values != NULL) {
 	key_value * tail = NULL;

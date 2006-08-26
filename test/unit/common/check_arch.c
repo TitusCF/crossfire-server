@@ -241,7 +241,6 @@ START_TEST(test_get_archetype_struct)
 	fail_unless(arch->clone.spellarg==NULL,"arch->clone.spellarg of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.arch==arch,"arch->clone.arch of get_archetype_struct should be inited to arch");
 	fail_unless(arch->clone.other_arch==NULL,"arch->clone.other_arch of get_archetype_struct should be inited to NULL");
-	fail_unless(arch->clone.events==NULL,"arch->clone.events of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.custom_name==NULL,"arch->clone.custom_name of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.key_values==NULL,"arch->clone.key_values of get_archetype_struct should be inited to NULL");
     

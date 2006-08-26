@@ -765,7 +765,6 @@ void add_statbonus(object *op) {
 
 void fix_player(object *op) {
     int i,j;
-    event *evt;
     float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
     int weapon_weight=0,weapon_speed=0;
     int best_wc=0, best_ac=0, wc=0, ac=0;
@@ -1082,12 +1081,6 @@ void fix_player(object *op) {
 		     * extra strength damage, this is where the code should
 		     * go.
 		     */
-		    evt = find_event(tmp,EVENT_ATTACK);
-		    if (evt != NULL) {
-			if (op->current_weapon_script)
-			    free_string(op->current_weapon_script);
-			op->current_weapon_script=add_string(query_name(tmp));
-		    }
 		    op->current_weapon = tmp;
 		    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
 			op->contr->encumbrance+=(int)3*tmp->weight/1000;
