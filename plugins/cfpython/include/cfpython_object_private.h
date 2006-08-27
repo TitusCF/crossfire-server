@@ -129,6 +129,14 @@ static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetNoSave(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetEnv(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveType(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveBlock(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveAllow(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveOn(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveOff(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveSlow(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -232,6 +240,7 @@ static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* ar
 static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args);
+static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
 
@@ -345,6 +354,14 @@ static PyGetSetDef Object_getseters[] = {
     { "Archetype",      (getter)Object_GetArchetype,    NULL ,NULL, NULL },
     { "Exists",         (getter)Object_GetExists,       NULL ,NULL, NULL },
     { "NoSave",         (getter)Object_GetNoSave,       (setter)Object_SetNoSave, NULL, NULL },
+    { "Env",            (getter)Object_GetEnv,          NULL, NULL, NULL },
+    { "MoveType",       (getter)Object_GetMoveType,     NULL, NULL, NULL },
+    { "MoveBlock",      (getter)Object_GetMoveBlock,    NULL, NULL, NULL },
+    { "MoveAllow",      (getter)Object_GetMoveAllow,    NULL, NULL, NULL },
+    { "MoveOn",         (getter)Object_GetMoveOn,       NULL, NULL, NULL },
+    { "MoveOff",        (getter)Object_GetMoveOff,      NULL, NULL, NULL },
+    { "MoveSlow",       (getter)Object_GetMoveSlow,     NULL, NULL, NULL },
+    { "MoveSlowPenalty",(getter)Object_GetMoveSlowPenalty,  NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
@@ -378,6 +395,7 @@ static PyMethodDef ObjectMethods[] = {
     { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS},
     { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS},
     { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS},
+    { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS},
     {NULL, NULL, 0}
 };
 

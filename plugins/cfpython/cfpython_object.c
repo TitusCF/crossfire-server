@@ -648,7 +648,7 @@ static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetNoSave(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE));
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE));
 }
 static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure)
 {
@@ -660,8 +660,48 @@ static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure)
         return Py_False;
     }
 }
+static PyObject* Object_GetEnv(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Crossfire_Object_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ENVIRONMENT));
+}
+static PyObject* Object_GetMoveType(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_TYPE));
+}
+static PyObject* Object_GetMoveBlock(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_BLOCK));
+}
+static PyObject* Object_GetMoveAllow(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ALLOW));
+}
+static PyObject* Object_GetMoveOn(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ON));
+}
+static PyObject* Object_GetMoveOff(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_OFF));
+}
+static PyObject* Object_GetMoveSlow(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW));
+}
+static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("f",*(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY));
+}
 
-
+/** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     char* val;
@@ -1917,6 +1957,20 @@ static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* ar
     myob = cf_object_insert_in_ob(who->obj, op->obj);
 
     return Crossfire_Object_wrap(myob);
+}
+
+static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args)
+{
+    sint64 exp;
+    const char* skill = NULL;
+    int arg = 0;
+    
+    if (!PyArg_ParseTuple(args,"L|si", &exp, &skill, &arg))
+        return NULL;
+    EXISTCHECK(who);
+    cf_object_set_experience(who->obj, exp, skill, arg);
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
