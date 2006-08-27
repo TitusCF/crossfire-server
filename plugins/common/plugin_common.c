@@ -236,6 +236,11 @@ void* cf_object_set_string_property(object* op, int propcode, char* value)
     int val;
     return cfapiObject_set_property(&val, op, propcode,value);
 }
+void* cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg)
+{
+    int val;
+    return cfapiObject_set_property(&val, op, CFAPI_OBJECT_PROP_EXP, exp, strlen(skill) > 0 ? skill : NULL, arg);
+}
 void cf_player_move(player* pl, int dir)
 {
     int val;

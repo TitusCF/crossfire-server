@@ -1442,6 +1442,7 @@ void* cfapi_object_get_property(int* type, ...)
     object* op;
     void* rv;
     static int ri;
+    static float rf;
 
     va_start(args, type);
 
@@ -1754,7 +1755,7 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_INT;
             break;
 
-        case CFAPI_OBJECT_PROP_MOVE_TYPE:
+        case CFAPI_OBJECT_PROP_ATTACK_MOVEMENT:
             rv = &op->attack_movement;
             *type = CFAPI_INT;
             break;
@@ -1822,7 +1823,7 @@ void* cfapi_object_get_property(int* type, ...)
 
         case CFAPI_OBJECT_PROP_EXP:
             rv = &op->stats.exp;
-            *type = CFAPI_LONG;
+            *type = CFAPI_SINT64;
             break;
 
         case CFAPI_OBJECT_PROP_OWNER:
@@ -2041,6 +2042,41 @@ void* cfapi_object_get_property(int* type, ...)
             rv = &ri;
             *type = CFAPI_INT;
             break;
+        case CFAPI_OBJECT_PROP_MOVE_TYPE:
+            ri = op->move_type;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_BLOCK:
+            ri = op->move_block;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_ALLOW:
+            ri = op->move_allow;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_ON:
+            ri = op->move_on;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_OFF:
+            ri = op->move_off;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_SLOW:
+            ri = op->move_type;
+            rv = &ri;
+            *type = CFAPI_CHAR;
+            break;
+        case CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY:
+            rf = op->move_slow_penalty;
+            rv = &rf;
+            *type = CFAPI_FLOAT;
+            break;
         default:
             *type = CFAPI_NONE;
             break;
@@ -2061,6 +2097,7 @@ void* cfapi_object_set_property(int* type, ...)
     object* op;
     int property;
     void* rv;
+    sint64 s64arg;
     partylist* partyarg;
     va_start(args, type);
 
@@ -2337,7 +2374,7 @@ void* cfapi_object_set_property(int* type, ...)
             op->move_status = iarg;
             break;
 
-        case CFAPI_OBJECT_PROP_MOVE_TYPE:
+        case CFAPI_OBJECT_PROP_ATTACK_MOVEMENT:
             iarg = va_arg(args, int);
             op->attack_movement = iarg;
             break;
@@ -2380,10 +2417,10 @@ void* cfapi_object_set_property(int* type, ...)
             {
                 char* skillname;
 
-                larg = va_arg(args, long);
+                s64arg = va_arg(args, sint64);
                 skillname = va_arg(args, char*);
                 iarg = va_arg(args, int);
-                change_exp(op, larg, skillname, iarg);
+                change_exp(op, s64arg, skillname, iarg);
             }
             break;
 

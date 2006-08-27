@@ -109,6 +109,7 @@ extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern void         cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* op);
 extern object*      cf_object_clone(object* op, int clonetype);
+extern void*        cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
 
 /* Maps */
 extern void*        cf_map_get_property(mapstruct* map, int propcode);

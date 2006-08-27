@@ -108,6 +108,7 @@
 #define CFAPI_PREGION 13
 #define CFAPI_INT16   14
 #define CFAPI_TIME    15
+#define CFAPI_SINT64  16
 
 typedef void* (*f_plug_api) (int* type, ...);
 typedef int   (*f_plug_postinit) (void);
@@ -211,7 +212,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_PROP_CHOSEN_SKILL      57
 #define CFAPI_OBJECT_PROP_HIDDEN            58
 #define CFAPI_OBJECT_PROP_MOVE_STATUS       59
-#define CFAPI_OBJECT_PROP_MOVE_TYPE         60
+#define CFAPI_OBJECT_PROP_ATTACK_MOVEMENT   60
 #define CFAPI_OBJECT_PROP_SPELL_ITEM        61
 #define CFAPI_OBJECT_PROP_EXP_MULTIPLIER    62
 #define CFAPI_OBJECT_PROP_ARCHETYPE         63
@@ -253,6 +254,14 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_PROP_FACE              99
 #define CFAPI_OBJECT_ANIMATION              100
 #define CFAPI_OBJECT_PROP_NO_SAVE           101
+#define CFAPI_OBJECT_PROP_MOVE_TYPE         102
+#define CFAPI_OBJECT_PROP_MOVE_BLOCK        103
+#define CFAPI_OBJECT_PROP_MOVE_ALLOW        104
+#define CFAPI_OBJECT_PROP_MOVE_ON           105
+#define CFAPI_OBJECT_PROP_MOVE_OFF          106
+#define CFAPI_OBJECT_PROP_MOVE_SLOW         107
+#define CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY 108
+
 #define CFAPI_PLAYER_PROP_IP                150
 #define CFAPI_PLAYER_PROP_MARKED_ITEM       151
 #define CFAPI_PLAYER_PROP_PARTY             152
