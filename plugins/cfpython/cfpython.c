@@ -834,6 +834,194 @@ static int do_script(CFPContext* context, int silent)
         return 0;
 }
 
+typedef struct
+{
+    char* name;
+    int value;
+} CFConstant;
+
+static void addConstants(PyObject* module, const char* name, CFConstant* constants)
+{
+    int i = 0;
+    char tmp[1024];
+    PyObject* new;
+    PyObject* dict;
+
+    strncpy(tmp, "Crossfire_", 1024);
+    strncat(tmp, name, 1024 - strlen(tmp));
+
+    new = Py_InitModule(tmp, NULL);
+    dict = PyDict_New();
+
+    while ( constants[i].name != NULL)
+    {
+        PyModule_AddIntConstant(new, constants[i].name, constants[i].value);
+        PyDict_SetItem(dict, PyInt_FromLong(constants[i].value), PyString_FromString(constants[i].name));
+        i++;
+    }
+    PyDict_SetItemString(PyModule_GetDict(module), name, new);
+    Py_DECREF(new);
+
+    strncpy(tmp, name, 1024);
+    strncat(tmp, "Name", 1024 - strlen(tmp));
+    PyDict_SetItemString(PyModule_GetDict(module), tmp, dict);
+    Py_DECREF(dict);
+}
+
+static void initConstants(PyObject* module)
+{
+    static CFConstant cstDirection[] = {
+        { "NORTH", 1 },
+        { "NORTHEAST", 2 },
+        { "EAST", 3 },
+        { "SOUTHEAST", 4 },
+        { "SOUTH", 5 },
+        { "SOUTHWEST", 6 },
+        { "WEST", 7 },
+        { "NORTHWEST", 8 },
+        { NULL, 0 } };
+
+    static CFConstant cstType[] = {
+        { "PLAYER", PLAYER },
+        { "TRANSPORT", TRANSPORT },
+        { "ROD", ROD },
+        { "TREASURE", TREASURE },
+        { "POTION", POTION },
+        { "FOOD", FOOD },
+        { "POISON", POISON },
+        { "BOOK", BOOK },
+        { "CLOCK", CLOCK },
+        { "LIGHTNING", LIGHTNING },
+        { "ARROW", ARROW },
+        { "BOW", BOW },
+        { "WEAPON", WEAPON },
+        { "ARMOUR", ARMOUR },
+        { "PEDESTAL", PEDESTAL },
+        { "ALTAR", ALTAR },
+        { "LOCKED_DOOR", LOCKED_DOOR },
+        { "SPECIAL_KEY", SPECIAL_KEY },
+        { "MAP", MAP },
+        { "DOOR", DOOR },
+        { "KEY", KEY },
+        { "TIMED_GATE", TIMED_GATE },
+        { "TRIGGER", TRIGGER },
+        { "GRIMREAPER", GRIMREAPER },
+        { "MAGIC_EAR", MAGIC_EAR },
+        { "TRIGGER_BUTTON", TRIGGER_BUTTON },
+        { "TRIGGER_ALTAR", TRIGGER_ALTAR },
+        { "TRIGGER_PEDESTAL", TRIGGER_PEDESTAL },
+        { "SHIELD", SHIELD },
+        { "HELMET", HELMET },
+        { "HORN", HORN },
+        { "MONEY", MONEY },
+        { "CLASS", CLASS },
+        { "GRAVESTONE", GRAVESTONE },
+        { "AMULET", AMULET },
+        { "PLAYERMOVER", PLAYERMOVER },
+        { "TELEPORTER", TELEPORTER },
+        { "CREATOR", CREATOR },
+        { "SKILL", SKILL },
+        { "EXPERIENCE", EXPERIENCE },
+        { "EARTHWALL", EARTHWALL },
+        { "GOLEM", GOLEM },
+        { "THROWN_OBJ", THROWN_OBJ },
+        { "BLINDNESS", BLINDNESS },
+        { "GOD", GOD },
+        { "DETECTOR", DETECTOR },
+        { "TRIGGER_MARKER", TRIGGER_MARKER },
+        { "DEAD_OBJECT", DEAD_OBJECT },
+        { "DRINK", DRINK },
+        { "MARKER", MARKER },
+        { "HOLY_ALTAR", HOLY_ALTAR },
+        { "PLAYER_CHANGER", PLAYER_CHANGER },
+        { "BATTLEGROUND", BATTLEGROUND },
+        { "PEACEMAKER", PEACEMAKER },
+        { "GEM", GEM },
+        { "FIREWALL", FIREWALL },
+        { "ANVIL", ANVIL },
+        { "CHECK_INV", CHECK_INV },
+        { "MOOD_FLOOR", MOOD_FLOOR },
+        { "EXIT", EXIT },
+        { "ENCOUNTER", ENCOUNTER },
+        { "SHOP_FLOOR", SHOP_FLOOR },
+        { "SHOP_MAT", SHOP_MAT },
+        { "RING", RING },
+        { "FLOOR", FLOOR },
+        { "FLESH", FLESH },
+        { "INORGANIC", INORGANIC },
+        { "SKILL_TOOL", SKILL_TOOL },
+        { "LIGHTER", LIGHTER },
+        { "TRAP_PART", TRAP_PART },
+        { "WALL", WALL },
+        { "LIGHT_SOURCE", LIGHT_SOURCE },
+        { "MISC_OBJECT", MISC_OBJECT },
+        { "MONSTER", MONSTER },
+        { "SPAWN_GENERATOR", SPAWN_GENERATOR },
+        { "LAMP", LAMP },
+        { "DUPLICATOR", DUPLICATOR },
+        { "TOOL", TOOL },
+        { "SPELLBOOK", SPELLBOOK },
+        { "BUILDFAC", BUILDFAC },
+        { "CLOAK", CLOAK },
+        { "SPINNER", SPINNER },
+        { "GATE", GATE },
+        { "BUTTON", BUTTON },
+        { "CF_HANDLE", CF_HANDLE },
+        { "HOLE", HOLE },
+        { "TRAPDOOR", TRAPDOOR },
+        { "SIGN", SIGN },
+        { "BOOTS", BOOTS },
+        { "GLOVES", GLOVES },
+        { "SPELL", SPELL },
+        { "SPELL_EFFECT", SPELL_EFFECT },
+        { "CONVERTER", CONVERTER },
+        { "BRACERS", BRACERS },
+        { "POISONING", POISONING },
+        { "SAVEBED", SAVEBED },
+        { "POISONCLOUD", POISONCLOUD },
+        { "FIREHOLES", FIREHOLES },
+        { "WAND", WAND },
+        { "SCROLL", SCROLL },
+        { "DIRECTOR", DIRECTOR },
+        { "GIRDLE", GIRDLE },
+        { "FORCE", FORCE },
+        { "POTION_EFFECT", POTION_EFFECT },
+        { "EVENT_CONNECTOR", EVENT_CONNECTOR },
+        { "CLOSE_CON", CLOSE_CON },
+        { "CONTAINER", CONTAINER },
+        { "ARMOUR_IMPROVER", ARMOUR_IMPROVER },
+        { "WEAPON_IMPROVER", WEAPON_IMPROVER },
+        { "SKILLSCROLL", SKILLSCROLL },
+        { "DEEP_SWAMP", DEEP_SWAMP },
+        { "IDENTIFY_ALTAR", IDENTIFY_ALTAR },
+        { "MENU", MENU },
+        { "RUNE", RUNE },
+        { "TRAP", TRAP },
+        { "POWER_CRYSTAL", POWER_CRYSTAL },
+        { "CORPSE", CORPSE },
+        { "DISEASE", DISEASE },
+        { "SYMPTOM", SYMPTOM },
+        { "BUILDER", BUILDER },
+        { "MATERIAL", MATERIAL },
+        { "ITEM_TRANSFORMER", ITEM_TRANSFORMER },
+        { "QUEST", QUEST },
+        { NULL, 0 } };
+
+    static CFConstant cstMove[] = {
+        { "WALK", MOVE_WALK },
+        { "FLY_LOW", MOVE_FLY_LOW },
+        { "FLY_HIGH", MOVE_FLY_HIGH },
+        { "FLYING", MOVE_FLYING },
+        { "SWIM", MOVE_SWIM },
+        { "BOAT", MOVE_BOAT },
+        { "ALL", MOVE_ALL },
+        { NULL, 0 } };
+
+    addConstants(module, "Direction", cstDirection);
+    addConstants(module, "Type", cstType);
+    addConstants(module, "Move", cstMove);
+}
+
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     PyObject *m, *d;
@@ -882,6 +1070,7 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
         CustomCommand[i].script = NULL;
         CustomCommand[i].speed  = 0.0;
     }
+    initConstants(m);
     private_data = PyDict_New();
     shared_data = PyDict_New();
     return 0;
