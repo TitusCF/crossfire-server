@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Fix logic error in fire_bow and avoid unnecessary messages.
+    Fixes bug #1547699.
+Alex Schultz 2006-08-28
+
 Add plugin access to move fields. Add sint64 type to plugin. 'AddExp' wrapper.
  include/plugin.h
  plugins/common/plugin_common.c

@@ -1638,8 +1638,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     if (mflags & P_OUT_OF_MAP) {
 	return 0;
     }
-    if (GET_MAP_MOVE_BLOCK(m, sx, sy) == MOVE_FLY_LOW) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+    if (GET_MAP_MOVE_BLOCK(m, sx, sy) & MOVE_FLY_LOW) {
 	return 0;
     }
 
