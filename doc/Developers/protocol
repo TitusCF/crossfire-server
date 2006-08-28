@@ -373,7 +373,7 @@ S->C: drawextinfo <color> <type> <subtype> message
 	Values for types and description:
 		0	reserved
 		1	books
-		       books contains media tags in their body (TODO: document media tags)
+		       books contains media tags in their body (see doc/mediaTags)
 		       message has the form <title>\n<body>
 		       subtype represent the style of book.
 		       MSG_TYPE_BOOK_CLASP_1    1
