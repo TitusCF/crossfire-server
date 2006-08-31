@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+
+server/attack.c:  Move kill_player() after we set up the pl->killer string.
+  Needed just so right message is on grave stone - also prevents crashes,
+  as if the hitter is poison or disease, kill_player() will remove those.
+MSW 2006-08-30
+
 lib/attackmess: Fix missing space in a 'type 17' attack message.
 Alex Schultz 2006-08-30
 

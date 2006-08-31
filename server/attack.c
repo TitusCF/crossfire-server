@@ -1599,9 +1599,6 @@ static int kill_object(object *op,int dam, object *hitter, int type)
     }
     /* Player has been killed! */
     else {
-        /* Need to run kill_player (just in case, make sure is not wiz) */
-        if (!QUERY_FLAG(op,FLAG_WIZ))
-	    kill_player(op);
 	if(owner->type==PLAYER) {
 	    snprintf(op->contr->killer, BIG_NAME, "%s the %s",owner->name,owner->contr->title);
 	}
@@ -1609,6 +1606,9 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 	    strncpy(op->contr->killer,hitter->name,BIG_NAME);
 	    op->contr->killer[BIG_NAME-1]='\0';
 	}
+        /* Need to run kill_player (just in case, make sure is not wiz) */
+        if (!QUERY_FLAG(op,FLAG_WIZ))
+	    kill_player(op);
     }
     /* This was return -1 - that doesn't seem correct - if we return -1, process
      * continues in the calling function.
