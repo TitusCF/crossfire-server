@@ -48,64 +48,49 @@ void move_deep_swamp (object *op)
 {
     object *above = op->above;
     object *nabove;
+    int got_player = 0;
 
     while(above) {
-	nabove = above->above;
-	if (above->type == PLAYER && !(above->move_type & MOVE_FLYING) && above->stats.hp >= 0 && !QUERY_FLAG(above,FLAG_WIZ)) {
-	    if (op->stats.food < 1) {
-		LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
-		     "%d\n", op->stats.food);
-		op->stats.food = 1;
-	    }
+        nabove = above->above;
+        if (above->type == PLAYER && !(above->move_type & MOVE_FLYING) && above->stats.hp >= 0 && !QUERY_FLAG(above,FLAG_WIZ)) {
+            object *woodsman = find_obj_by_type_subtype(above, SKILL, SK_WOODSMAN);
+            got_player = 1;
+            if (op->stats.food < 1) {
+                LOG (llevDebug, "move_deep_swamp(): player is here, but state is %d\n", op->stats.food);
+                op->stats.food = 1;
+            }
 
-	    switch(op->stats.food) {
-		case 1:
-		    if (rndm(0, 2) == 0) {
-			new_draw_info_format(NDI_UNIQUE, 0,above, 
-				      "You are down to your waist in the wet %s.", op->name);
-			op->stats.food = 2;
-			above->speed_left -= op->move_slow_penalty;
-		    }
-		    break;
-
-		case 2:
-		    if (rndm(0, 2) == 0) {
-			new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,above,
-			      "You are down to your NECK in the dangerous %s.", op->name);
-			op->stats.food = 3;
-			sprintf(above->contr->killer,"drowning in a %s", op->name);
-			above->stats.hp--;
-			above->speed_left -= op->move_slow_penalty;
-		    }
-		    break;
-
-		case 3:
-		    if (rndm(0, 4) == 0) {
-			object *woodsman = find_obj_by_type_subtype(above, SKILL, SK_WOODSMAN);
-
-			/* player is ready to drown - only woodsman skill can save him */
-			if (!woodsman) {
-			    op->stats.food = 0;
-			    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
-					 "%s disappeared into a %s.",above->name, op->name);
-			    sprintf(above->contr->killer,"drowning in a %s", op->name);
-	      
-			    above->stats.hp = -1;
-			    kill_player(above); /* player dies in the swamp */
-			}
-			else {
-			    op->stats.food = 2;
-			    new_draw_info_format(NDI_UNIQUE, 0,above, 
-				  "You almost drowned in the %s! You survived due to your woodsman skill.", op->name);
-			}
-		    }
-		    break;
-	    }
-	} else if (!QUERY_FLAG(above, FLAG_ALIVE) && !(above->move_type & MOVE_FLYING) && 
-		   !(QUERY_FLAG(above,FLAG_IS_FLOOR)) && !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR)) &&
-		   !(QUERY_FLAG(above, FLAG_NO_PICK))) {
-	    if (rndm(0, 2) == 0) decrease_ob(above);
-	}
-	above = nabove;
+            if ( op->stats.food < 10 ) {
+                if (rndm(0, 2) == 0) {
+                    new_draw_info_format(NDI_UNIQUE, 0,above, "You are down to your waist in the wet %s.", op->name);
+                    op->stats.food = woodsman ? op->stats.food + 1 : 10;
+                    above->speed_left -= op->move_slow_penalty;
+                }
+            }
+            else if ( op->stats.food < 20 ) {
+                if (rndm(0, 2) == 0) {
+                    new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,above, "You are down to your NECK in the dangerous %s.", op->name);
+                    op->stats.food = woodsman ? op->stats.food + 1 : 20;
+                    sprintf(above->contr->killer,"drowning in a %s", op->name);
+                    above->stats.hp--;
+                    above->speed_left -= op->move_slow_penalty;
+                }
+            }
+            else
+                if (rndm(0, 4) == 0) {
+                    op->stats.food = 0;
+                    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a %s.",above->name, op->name);
+                    sprintf(above->contr->killer,"drowning in a %s", op->name);
+                    above->stats.hp = -1;
+                    kill_player(above); /* player dies in the swamp */
+                }
+        } else if (!QUERY_FLAG(above, FLAG_ALIVE) && !(above->move_type & MOVE_FLYING) && 
+            !(QUERY_FLAG(above,FLAG_IS_FLOOR)) && !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR)) &&
+            !(QUERY_FLAG(above, FLAG_NO_PICK))) {
+            if (rndm(0, 2) == 0) decrease_ob(above);
+        }
+        above = nabove;
     }
+    if ( !got_player )
+        op->stats.food = 1;
 }
