@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+socket/lowlevel.c: apply patch #1550716 (Frequent crashes after client disconnects)
+ courtesy Mark Kidder
+Ryo 2006-09-02
 
 server/attack.c:  Move kill_player() after we set up the pl->killer string.
   Needed just so right message is on grave stone - also prevents crashes,

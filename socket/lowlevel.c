@@ -145,14 +145,18 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 			LOG(llevDebug,"Connection closed by client\n");
 		else
 		{
-			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
+			LOG(llevDebug,"ReadPacket got error %d, returning -1\n",WSAGetLastError());
 		}
 		return -1;	/* kick this user! */
 	    }
 #else
-	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
-		LOG(llevDebug, "ReadPacket got error %s, returning 0\n", strerror_local(errno));
-	    }
+            if (errno == ECONNRESET) {
+                    LOG(llevDebug, "ReadPacket got error %s, returning -1\n", strerror_local(errno));
+                    return -1;
+            }
+  	    if (errno != EAGAIN && errno !=EWOULDBLOCK) {
+		    LOG(llevDebug, "ReadPacket got error %s, returning 0\n", strerror_local(errno));
+            }
 #endif
 	    return 0;	/*Error */
 	}
@@ -200,7 +204,7 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 			LOG(llevDebug,"Connection closed by client\n");
 		else
 		{
-			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
+			LOG(llevDebug,"ReadPacket got error %d, returning -1\n",WSAGetLastError());
 		}
 		return -1;	/* kick this user! */
 	    }
