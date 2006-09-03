@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_effect.c: missing return value.
+----
 Fix for bug #1551371 (No-magic prevents monsters from casting spells)
  server/skill_util.c: ignore no_spell/no_magic for monsters.
 ----
