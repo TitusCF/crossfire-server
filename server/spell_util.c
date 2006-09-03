@@ -1102,7 +1102,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * doing.
      */
     if (spell_ob->type == SPELL && caster->type != POTION && !QUERY_FLAG(op, FLAG_WIZCAST) &&
-	(QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE)) &&
+        (QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE)) && !QUERY_FLAG(op,FLAG_MONSTER) &&
 	(((mflags & P_NO_MAGIC) && spell_ob->stats.sp) ||
 	   ((mflags & P_NO_CLERIC) && spell_ob->stats.grace))) {
 
