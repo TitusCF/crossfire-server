@@ -35,7 +35,7 @@
 #include <stdint.h>
 
 #ifdef WIN32
-#define uintptr_t long
+typedef UINT_PTR uintptr_t;
 #include <malloc.h>
 #else
 #include <autoconf.h>

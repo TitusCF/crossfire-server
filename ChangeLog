@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+plugins/common/hashtable.c: make Win32 define of uintptr_t more correct.
+Alex Schultz  2006-09-03
+
 plugins/common/hashtable.c: fix Win32 compilation.
 server/spell_effect.c: missing return value.
 ----
