@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/attack.c: Store away victim_map in hit_with_arrow() - what could
+  otherwise happen is that victim is a player, and killed and ends up
+  on new map, so that victim->map points at the wrong map.
+MSW 2006-09-02
+
 server/swamp.c: swamp will now kill players with woodsman, but slower than
  players without that skill. Feature request #1539125 by Andreas Kirschbaum.
 socket/lowlevel.c: apply patch #1550716 (Frequent crashes after client disconnects)
