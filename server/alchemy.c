@@ -76,6 +76,7 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp);
 static void remove_contents (object *first_ob, object *save_item);
 static void adjust_product(object *item, int lvl, int yield);
 static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
+static void attempt_do_alchemy(object *caster, object *cauldron);
 
 /** Returns a random selection from cauldron_effect[] */
 static const char *cauldron_sound(void) {
@@ -108,7 +109,7 @@ static const char *cauldron_sound(void) {
  * -b.t.
  */
  
-void attempt_do_alchemy(object *caster, object *cauldron) {
+static void attempt_do_alchemy(object *caster, object *cauldron) {
     recipelist *fl;
     recipe *rp=NULL;
     float success_chance;
@@ -861,4 +862,47 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
         LOG(llevDebug, "got formula: %s (nbatches:%d)\n", result->arch_name[0], formula/result->index);
 #endif
     return result;
+}
+
+/**
+ * Handle use_skill for alchemy-like items.
+ * Will return 1 if any recipe was attempted, 0 else.
+ * Will inform player if attempting to use unpaid cauldron or ingredient.
+ **/
+int use_alchemy(object* op)
+{
+    object* tmp, *item, *next;
+    object* unpaid_cauldron = NULL;
+    object* unpaid_item = NULL;
+    int did_alchemy = 0;
+
+    for (tmp=get_map_ob(op->map, op->x, op->y); tmp != NULL;tmp=next) {
+        next=tmp->above;
+        if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+            if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
+                unpaid_cauldron = tmp;
+                continue;
+            }
+            unpaid_item = NULL;
+            for (item = tmp->inv; item; item = item->below) {
+                if (QUERY_FLAG(item, FLAG_UNPAID)) {
+                    unpaid_item = item;
+                    break;
+                }
+            }
+            if ( unpaid_item != NULL )
+                continue;
+
+            attempt_do_alchemy(op, tmp);
+            if (QUERY_FLAG(tmp, FLAG_APPLIED))
+                esrv_send_inventory(op, tmp);
+            did_alchemy = 1;
+        }
+    }
+    if ( unpaid_cauldron )
+        new_draw_info_format(NDI_UNIQUE,0,op,"You must pay for your %s first!", query_base_name(unpaid_cauldron,0));
+    else if ( unpaid_item )
+        new_draw_info_format(NDI_UNIQUE,0,op,"You must pay for your %s first!", query_base_name(unpaid_item,0));
+
+    return did_alchemy;
 }

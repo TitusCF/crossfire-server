@@ -392,20 +392,8 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	case SK_THAUMATURGY:
 	case SK_LITERACY:
 	case SK_WOODSMAN:
-	    /* first, we try to find a cauldron, and do the alchemy thing.
-	     * failing that, we go and identify stuff. 
-	     */
-	    for (tmp=get_map_ob(op->map, op->x, op->y); tmp != NULL;tmp=next) {
-		next=tmp->above;
-		if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
-		    attempt_do_alchemy(op, tmp);
-		    if (QUERY_FLAG(tmp, FLAG_APPLIED))
-			esrv_send_inventory(op, tmp);
-		    did_alc=1;
-		}
-	    }
-	    if (did_alc == 0)
-		exp = success = skill_ident(op,skill);
+        if (use_alchemy(op) == 0)
+			exp = success = skill_ident(op,skill);
 	    break;
 
 	case SK_DET_MAGIC:

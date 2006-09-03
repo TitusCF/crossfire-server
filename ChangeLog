@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Fix for bug #1551386 (Alchemy with unpaid items).
+ include/sproto.h: new function declaration.
+ server/alchemy.c: check for unpaid items/cauldrons in new function.
+ server/skill_util.c: move alchemy code to other function.
+Ryo 2006-09-03
+
 server/attack.c: Store away victim_map in hit_with_arrow() - what could
   otherwise happen is that victim is a player, and killed and ends up
   on new map, so that victim->map points at the wrong map.

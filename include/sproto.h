@@ -1,5 +1,5 @@
 /* alchemy.c */
-void attempt_do_alchemy(object *caster, object *cauldron);
+int use_alchemy(object* op);
 /* apply.c */
 int transport_can_hold(const object *transport, const object *op, int nrof);
 int apply_transport(object *pl, object *transport, int aflag);
