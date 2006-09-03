@@ -2023,9 +2023,11 @@ static void Crossfire_Object_dealloc(PyObject *obj)
     if(self) {
         if (self->obj && self->valid) {
             free_object_assoc(self->obj);
-            cf_object_remove(self->del_event);
-            cf_free_object(self->del_event);
-        }            
+            if (self->del_event) {
+                cf_object_remove(self->del_event);
+                cf_free_object(self->del_event);
+            }
+        }
         self->ob_type->tp_free(obj);
     }
 }
@@ -2036,8 +2038,10 @@ static void Crossfire_Player_dealloc(PyObject *obj)
     if(self) {
         if (self->obj && self->valid) {
             free_object_assoc(self->obj);
-            cf_object_remove(self->del_event);
-            cf_free_object(self->del_event);
+            if (self->del_event) {
+                cf_object_remove(self->del_event);
+                cf_free_object(self->del_event);
+            }
         }            
         self->ob_type->tp_free(obj);
     }
@@ -2047,8 +2051,10 @@ void Handle_Destroy_Hook(Crossfire_Object *ob) {
     ob->valid = 0;
     free_object_assoc(ob->obj);
     /* Destruction of the object should remove the event, but just in case... */
-    cf_object_remove(ob->del_event);
-    cf_free_object(ob->del_event);
+    if (ob->del_event) {
+        cf_object_remove(ob->del_event);
+        cf_free_object(ob->del_event);
+    }
 }
 
 static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
@@ -2056,7 +2062,10 @@ static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
     ob = pyobj->obj;
     event = cf_create_object_by_name("event_destroy");
     if (!event)
+    {
+        pyobj->del_event = NULL;
         return;
+    }
     cf_object_set_string_property(event, CFAPI_OBJECT_PROP_TITLE, "Python");
     cf_object_set_string_property(event, CFAPI_OBJECT_PROP_SLAYING, "cfpython_auto_hook");
     cf_object_set_int_property(event, CFAPI_OBJECT_PROP_NO_SAVE, 1);

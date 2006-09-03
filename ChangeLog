@@ -19,6 +19,10 @@ Changes for CVS:
 
 server/spell_effect.c: missing return value.
 ----
+Potential fix for bug #1551307 (crash in python plugin). If event_destroy is
+ not found, set del_event to NULL. And don't dare you call remove_ob on it! :)
+ plugins/cfpython/cfpython_object.c
+----
 Fix for bug #1551371 (No-magic prevents monsters from casting spells)
  server/skill_util.c: ignore no_spell/no_magic for monsters.
 ----
