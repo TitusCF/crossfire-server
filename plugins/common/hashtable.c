@@ -34,7 +34,10 @@
 #include <string.h>
 #include <stdint.h>
 
-#ifndef WIN32
+#ifdef WIN32
+#define uintptr_t long
+#include <malloc.h>
+#else
 #include <autoconf.h>
 #endif
 #ifdef HAVE_LIBDMALLOC
