@@ -1,14 +1,14 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.9.0 snapshot 20060520"
+Name "Crossfire Server 1.9.1 (snapshot)"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
 VIAddVersionKey "FileDescription" "Crossfire server installer"
-VIAddVersionKey "FileVersion" "1.9.0"
+VIAddVersionKey "FileVersion" "1.9.1"
 VIAddVersionKey "LegalCopyright" "Crossfire is released under the GPL."
-VIProductVersion "1.9.0.0"
+VIProductVersion "1.9.1.0"
 
 ;Do A CRC Check
 CRCCheck On
@@ -73,7 +73,6 @@ Section "Crossfire Server (required)" cf
   File "..\lib\motd"
   File "..\lib\news"
   File "..\lib\races"
-  File "..\lib\regions"
   File "..\lib\rules"
   File "..\lib\settings"
   File "..\lib\smooth"
@@ -178,7 +177,6 @@ Section "un.Crossfire Server" un_cf
   Delete "$INSTDIR\Share\motd"
   Delete "$INSTDIR\Share\news"
   Delete "$INSTDIR\Share\races"
-  Delete "$INSTDIR\Share\regions"
   Delete "$INSTDIR\Share\rules"
   Delete "$INSTDIR\Share\settings"
   Delete "$INSTDIR\Share\smooth"

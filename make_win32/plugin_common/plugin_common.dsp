@@ -85,6 +85,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\plugins\common\hashtable.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\plugins\common\plugin_common.c
 
 !IF  "$(CFG)" == "plugin_common - Win32 FullDebug"
@@ -100,6 +104,10 @@ SOURCE=..\..\plugins\common\plugin_common.c
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\plugins\common\include\hashtable.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\plugins\common\include\plugin_common.h
