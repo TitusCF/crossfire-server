@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Apply patch #551467 (type mismatch in surround_flag3() can cause SIGSEGV)
+ courtesy Mark Kidder.
+ random_maps/rproto.h wall.c 
+Ryo 2006-09-04
+
 Bulk of this change is updating some files to use draw_ext_info() - all
    future code should use this, since there is no real reason not to and
    it provides additional features.  One notable change - reversed the
