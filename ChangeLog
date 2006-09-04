@@ -17,6 +17,38 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+Bulk of this change is updating some files to use draw_ext_info() - all
+   future code should use this, since there is no real reason not to and
+   it provides additional features.  One notable change - reversed the
+   order of the new and old formats in draw_ext_info_format() - the
+   order was different than that of draw_ext_info(), which leads to confusion.
+   draw_ext_info_format() wasn't used in many places, so easier to change
+   that than all the draw_ext_info() calls.  Only another 1200
+   new_draw_info calls left in the server.
+--
+doc/mediaTags: Fix some typos, clarify some behaviour (the way it works
+   now so that there will not be confusion in the future).
+include/define.h: Remove MSG_ tags - moved to newclient.h
+include/newclient.h: Synchronize with client version.  Add MSG_ defines
+include/newserver.h: Move some defines from here to newclient.h
+server/apply.c:  Reverse format parameters to draw_ext_info_format() calls.
+server/c_misc.c: Rewrite to use draw_ext_info{_format} - this allows nice
+   formatting of tables, etc.  Also general style cleanups, clarify some
+   messages.  in help_topics(), don't do linewrap - let the client
+   handle it.  remove bug_report() function - no longer used.  Remove
+   explore_mode() - wasn't used.  Move command_style_map_info() to
+   c_wiz.c since it is a wiz only command.
+server/c_wiz.c: As per above, move command_style_map_info() to this file
+   since it is a wiz command.
+server/player.c: Reverse format parameters to draw_ext_info_format() calls.
+server/shop.c: Update to use draw_ext_info{_format} instead of new_draw_info()
+socket/info.c: Reverse format parameters in draw_ext_info_format().
+   Update va_start() to use new last parameter.  Remove call to
+   strip_media() if the client supports the tag - that should only be
+   used if the client does not support the tag.
+socket/request.c: remove commented out MSG_TYPE values.
+MSW 2006-09-03
+
 plugins/common/hashtable.c: make Win32 define of uintptr_t more correct.
 Alex Schultz  2006-09-03
 

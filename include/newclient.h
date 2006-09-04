@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -38,15 +38,25 @@
  * (flag) is the flag name
  */
 
-/* It is trivial to keep a link of copy of this file in the client
- * or server area.  But keeping one common file should make things
- * more reliable, as both the client and server will definately be
- * talking about the same values.
+/* Ideally, this file should be the same between the server and
+ * the client.  However, this often drifts apart because of a value
+ * that is only useful on the client and server.  Generally, it isn't
+ * a problem to have a few extra #defines if this lets them stay
+ * in sync.
+ *
+ * Given this file contains the constants that dictate what is sent
+ * between the server and client, keeping them in sync makes doing changes
+ * easier - modify this file in one place, copy it over.
+ *
  */
 
 
 #ifndef NEWCLIENT_H
 #define NEWCLIENT_H
+
+/* MAXSOCKRECVBUF and MAXSOCKSENDBUF are used on the server
+ * MAXSOCKBUF is used by the client.
+ */
 
 /* Maximum size of any packet we expect. This number includes both the length
  * bytes (2 bytes) at the start of each packet and the trailing '\0' (1 byte)
@@ -59,6 +69,21 @@
  * input buffer of old clients (2006-05-21).
  */
 #define MAXSOCKSENDBUF 10239
+
+/* Maximum size of any packet we expect.  Using this makes it so we don't need to
+ * allocate and deallocate the same buffer over and over again and the price
+ * of using a bit of extra memory.  It also makes the code simpler.
+ * The size is big enough to receive any valid packet: 2 bytes for length,
+ * 65535 for max. packet size, 1 for appended trailing '\0'.
+ */
+#define MAXSOCKBUF (2+65535+1)
+
+
+/* How much the x,y coordinates in the map2 are off from
+ * actual upper left corner.  Necessary for light sources
+ * that may be off the edge of the visible map.
+ */
+#define MAP2_COORD_OFFSET   15
 
 
 #define CS_QUERY_YESNO	0x1	/* Yes/no question */
@@ -245,6 +270,158 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define FACE_IS_ANIM    1<<15
 #define ANIM_RANDOM	1<<13
 #define ANIM_SYNC	2<<13
+
+/* ANIM_FLAGS_MASK and ANIM_MASK are only used by the client */
+#define ANIM_FLAGS_MASK	0x6000
+
+/* AND'ing this with data from server gets us just the animation id */
+#define ANIM_MASK	0x1fff
+
+ 
+/* Constants in the form EMI_ is for extended map infos.
+ * Even if the client select the additionnal infos it wants
+ * on the map, there may exist cases where this whole info
+ * is not given in one buch but in separate bunches. This 
+ * is done performance reasons (imagine some info related to
+ * a visible object and another info related to a 4 square
+ * width and height area). At the begin of an extended info packet
+ * is a bit field. A bit is activated for each extended info
+ * present in the data 
+ */
+/* Meanings:
+ * EMI_NOREDRAW  Take extended infos into account but don't redraw,
+ *               some additionnal datas will follow in a new packet
+ * EMI_SMOOTH    Datas about smoothing  
+ */ 
+#define EMI_NOREDRAW        0x01  
+#define EMI_SMOOTH          0x02
+
+/* this last one says the bitfield continue un next byte
+ * There may be several on contiguous bytes. So there is 7
+ * actual bits used per byte, and the number of bytes
+ * is not fixed in protocol
+ */
+#define EMI_HASMOREBITS     0x80
+
+ 
+/*
+ * Note!
+ * If you add message types here, don't forget
+ * to keep the client up to date too!
+ */
+ 
+  
+/* message types */
+#define MSG_TYPE_BOOK		    1
+#define MSG_TYPE_CARD		    2
+#define MSG_TYPE_PAPER		    3
+#define MSG_TYPE_SIGN		    4
+#define MSG_TYPE_MONUMENT	    5
+#define MSG_TYPE_SCRIPTED_DIALOG    6
+#define MSG_TYPE_MOTD		    7
+#define MSG_TYPE_ADMIN		    8
+#define MSG_TYPE_SHOP		    9
+#define MSG_TYPE_COMMAND	    10	/* Responses to commands, eg, who */
+#define MSG_TYPE_LAST		    11
+
+#define MSG_SUBTYPE_NONE         0
+
+/* book messages subtypes */
+#define MSG_TYPE_BOOK_CLASP_1    1
+#define MSG_TYPE_BOOK_CLASP_2    2
+#define MSG_TYPE_BOOK_ELEGANT_1  3
+#define MSG_TYPE_BOOK_ELEGANT_2  4
+#define MSG_TYPE_BOOK_QUARTO_1   5
+#define MSG_TYPE_BOOK_QUARTO_2   6
+#define MSG_TYPE_BOOK_SPELL_EVOKER    7
+#define MSG_TYPE_BOOK_SPELL_PRAYER    8
+#define MSG_TYPE_BOOK_SPELL_PYRO      9
+#define MSG_TYPE_BOOK_SPELL_SORCERER  10
+#define MSG_TYPE_BOOK_SPELL_SUMMONER  11
+
+/* card messages subtypes*/
+#define MSG_TYPE_CARD_SIMPLE_1    1
+#define MSG_TYPE_CARD_SIMPLE_2    2
+#define MSG_TYPE_CARD_SIMPLE_3    3
+#define MSG_TYPE_CARD_ELEGANT_1   4
+#define MSG_TYPE_CARD_ELEGANT_2   5
+#define MSG_TYPE_CARD_ELEGANT_3   6
+#define MSG_TYPE_CARD_STRANGE_1   7
+#define MSG_TYPE_CARD_STRANGE_2   8
+#define MSG_TYPE_CARD_STRANGE_3   9
+#define MSG_TYPE_CARD_MONEY_1     10
+#define MSG_TYPE_CARD_MONEY_2     11
+#define MSG_TYPE_CARD_MONEY_3     12
+
+/* Paper messages subtypes */
+#define MSG_TYPE_PAPER_NOTE_1       1
+#define MSG_TYPE_PAPER_NOTE_2       2
+#define MSG_TYPE_PAPER_NOTE_3       3
+#define MSG_TYPE_PAPER_LETTER_OLD_1 4
+#define MSG_TYPE_PAPER_LETTER_OLD_2 5
+#define MSG_TYPE_PAPER_LETTER_NEW_1 6
+#define MSG_TYPE_PAPER_LETTER_NEW_2 7
+#define MSG_TYPE_PAPER_ENVELOPE_1   8
+#define MSG_TYPE_PAPER_ENVELOPE_2   9
+#define MSG_TYPE_PAPER_SCROLL_OLD_1 10
+#define MSG_TYPE_PAPER_SCROLL_OLD_2 11
+#define MSG_TYPE_PAPER_SCROLL_NEW_1 12
+#define MSG_TYPE_PAPER_SCROLL_NEW_2 13
+#define MSG_TYPE_PAPER_SCROLL_MAGIC 14
+
+/* road signs messages subtypes */
+#define MSG_TYPE_SIGN_BASIC         1
+#define MSG_TYPE_SIGN_DIR_LEFT      2
+#define MSG_TYPE_SIGN_DIR_RIGHT     3
+#define MSG_TYPE_SIGN_DIR_BOTH      4
+
+/* stones and monument messages */
+#define MSG_TYPE_MONUMENT_STONE_1      1
+#define MSG_TYPE_MONUMENT_STONE_2      2
+#define MSG_TYPE_MONUMENT_STONE_3      3
+#define MSG_TYPE_MONUMENT_STATUE_1     4
+#define MSG_TYPE_MONUMENT_STATUE_2     5
+#define MSG_TYPE_MONUMENT_STATUE_3     6
+#define MSG_TYPE_MONUMENT_GRAVESTONE_1 7
+#define MSG_TYPE_MONUMENT_GRAVESTONE_2 8
+#define MSG_TYPE_MONUMENT_GRAVESTONE_3 9
+#define MSG_TYPE_MONUMENT_WALL_1       10
+#define MSG_TYPE_MONUMENT_WALL_2       11
+#define MSG_TYPE_MONUMENT_WALL_3       12
+
+/* dialog messsage */
+#define MSG_TYPE_DIALOG_NPC            1 /*A message from the npc*/
+#define MSG_TYPE_DIALOG_ANSWER         2 /*One of possible answers*/
+#define MSG_TYPE_DIALOG_ANSWER_COUNT   3 /*Number of possible answers*/
+
+/* MOTD doesn't have any subtypes */
+
+/* admin messages */
+#define MSG_TYPE_ADMIN_RULES           1
+#define MSG_TYPE_ADMIN_NEWS            2
+
+/* I'm not actually expecting anything to make much use of the MSG_TYPE_SHOP values
+ * However, to use the media tags, need to use draw_ext_info, and need to have
+ * a type/subtype, so figured might as well put in real values here.
+ */
+#define MSG_TYPE_SHOP_LISTING		1   /* Shop listings - inventory, what it deals in */
+#define MSG_TYPE_SHOP_PAYMENT		2   /* Messages about payment, lack of funds */
+#define MSG_TYPE_SHOP_SELL		3   /* Messages about selling items */
+#define MSG_TYPE_SHOP_MISC		4   /* Random messages */
+
+/* Basically, 1 subtype/command.  Like shops, not expecting much
+ * to be done, but by having different subtypes, it makes it easier for
+ * client to store way information (eg, who output)
+ */
+#define MSG_TYPE_COMMAND_WHO	    1
+#define MSG_TYPE_COMMAND_MAPS	    2
+#define MSG_TYPE_COMMAND_BODY	    3
+#define MSG_TYPE_COMMAND_MALLOC	    4
+#define MSG_TYPE_COMMAND_WEATHER    5
+#define MSG_TYPE_COMMAND_STATISTICS 6
+#define MSG_TYPE_COMMAND_CONFIG	    7	/* bowmode, petmode, applymode */
+#define MSG_TYPE_COMMAND_INFO	    8	/* Generic info - reistances, etc */
+#define MSG_TYPE_COMMAND_QUESTS	    9	/* Quest info */
 
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList {

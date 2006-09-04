@@ -687,7 +687,7 @@ int can_pay(object *pl) {
             }
         }
         if (denominations > 1) make_list_like(buf);
-        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, buf, NULL);
         return 0;
     }
     else return 1;
@@ -725,9 +725,10 @@ int get_payment(object *pl, object *op) {
         if(!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
-            new_draw_info_format(NDI_UNIQUE, 0, pl,
-                    "You lack %s to buy %s.", cost_string_from_value(i),
-                    query_name(op));
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
+                    "You lack %s to buy %s.", 
+                    "You lack %s to buy %s.", 
+		    cost_string_from_value(i), query_name(op));
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
@@ -736,8 +737,10 @@ int get_payment(object *pl, object *op) {
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
-            new_draw_info_format(NDI_UNIQUE, 0, op,
-                    "You paid %s for %s.",buf,query_name(op));
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
+                    "You paid %s for %s.",
+                    "You paid %s for %s.",
+		    buf,query_name(op));
             tmp=merge_ob(op,NULL);
             if (pl->type == PLAYER) {
                 if (tmp) {      /* it was merged */
@@ -773,8 +776,10 @@ void sell_item(object *op, object *pl) {
     if(op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
 
     if(!i) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	     "We're not interested in %s.",query_name(op));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
+	     "We're not interested in %s.",
+	     "We're not interested in %s.",
+	     query_name(op));
 
 	/* Even if the character doesn't get anything for it, it may still be
 	 * worth something.  If so, make it unpaid
@@ -842,9 +847,11 @@ void sell_item(object *op, object *pl) {
 	LOG(llevError,"Warning - payment not zero: %I64u\n", i);
 #endif
 
-    new_draw_info_format(NDI_UNIQUE, 0, pl,
-	"You receive %s for %s.",query_cost_string(op,pl,F_SELL | F_SHOP),
-          query_name(op));
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
+	"You receive %s for %s.",
+	"You receive %s for %s.",
+	query_cost_string(op,pl,F_SELL | F_SHOP), query_name(op));
+
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);
 }
@@ -953,11 +960,15 @@ int describe_shop(const object *op) {
     int pos=0, i;
     double opinion=0;
     char tmp[MAX_BUF]="\0";
+
     if (op->type != PLAYER) return 0;
 
     /*check if there is a shop specified for this map */
     if (map->shopitems || map->shopgreed || map->shoprace || map->shopmin || map->shopmax) {
-	new_draw_info(NDI_UNIQUE,0,op,"From looking at the nearby shop you determine that it trades in:");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
+		      "From looking at the nearby shop you determine that it trades in:", 
+		      NULL);
+
 	if (map->shopitems) {
 	    for (i=0; i < map->shopitems[0].index; i++) {
 		if (map->shopitems[i].name && map->shopitems[i].strength > 10) {
@@ -966,39 +977,53 @@ int describe_shop(const object *op) {
 		}
 	    }
 	}
-	if (!pos) strcat(tmp, "a little of everything.");
+	if (!pos) strcpy(tmp, "a little of everything.");
 
 	/* format the string into a list */
 	make_list_like(tmp);
-	new_draw_info_format(NDI_UNIQUE, 0, op, "%s", tmp);
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp, NULL);
 	
 	if (map->shopmax)
-	    new_draw_info_format(NDI_UNIQUE,0,op,"It won't trade for items above %s.",
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+		"It won't trade for items above %s.",
+		"It won't trade for items above %s.",
 		cost_string_from_value(map->shopmax));
+
 	if (map->shopmin)
-	    new_draw_info_format(NDI_UNIQUE,0,op,"It won't trade in items worth less than %s.",
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+		"It won't trade in items worth less than %s.",
+		"It won't trade in items worth less than %s.",
 		cost_string_from_value(map->shopmin));
+
 	if (map->shopgreed) {
 	    if (map->shopgreed >2.0)
-		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge massively.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "It tends to overcharge massively.", NULL);
 	    else if (map->shopgreed >1.5)
-		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge substantially.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "It tends to overcharge substantially.", NULL);
 	    else if (map->shopgreed >1.1)
-		new_draw_info(NDI_UNIQUE,0,op,"It tends to overcharge slightly.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "It tends to overcharge slightly.", NULL);
 	    else if (map->shopgreed <0.9)
-		new_draw_info(NDI_UNIQUE,0,op,"It tends to undercharge.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "It tends to undercharge.", NULL);
 	}
 	if (map->shoprace) {
 	    opinion=shopkeeper_approval(map, op);
 	    if (opinion > 0.8) 
-		new_draw_info(NDI_UNIQUE,0,op,"You think the shopkeeper likes you.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "You think the shopkeeper likes you.", NULL);
 	    else if (opinion > 0.5)
-		new_draw_info(NDI_UNIQUE,0,op,"The shopkeeper seems unconcerned by you.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "The shopkeeper seems unconcerned by you.", NULL);
 	    else
-		new_draw_info(NDI_UNIQUE,0,op,"The shopkeeper seems to have taken a dislike to you.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+			      "The shopkeeper seems to have taken a dislike to you.", NULL);
 	}
     }
-    else new_draw_info(NDI_UNIQUE,0,op,"There is no shop nearby.");
+    else draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+		       "There is no shop nearby.", NULL);
 
     return 1;
 }
@@ -1079,7 +1104,8 @@ void shop_listing(object *op)
     /* Should never happen, but just in case a monster does apply a sign */
     if (op->type!=PLAYER) return;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "\nThe shop contains:");
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
+		  "\nThe shop contains:", NULL);
 
     magic_mapping_mark(op, map_mark, 3);
     items=malloc(40*sizeof(shopinv));
@@ -1114,7 +1140,8 @@ void shop_listing(object *op)
     }
     free(map_mark);
     if (numitems == 0) {
-	new_draw_info(NDI_UNIQUE, 0, op, "The shop is currently empty.\n");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
+		      "The shop is currently empty.\n", NULL);
 	free(items);
 	return;
     }
@@ -1127,9 +1154,10 @@ void shop_listing(object *op)
 	    free(items[i].item_sort);
 	    free(items[i].item_real);
 	} else {
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "%d %s", 
-				 items[i].nrof? items[i].nrof:1,
-			 items[i].nrof==1?items[i].item_sort: items[i].item_real);
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
+		"%d %s", "%d %s", 
+		 items[i].nrof? items[i].nrof:1,
+		 items[i].nrof==1?items[i].item_sort: items[i].item_real);
 	    free(items[i].item_sort);
 	    free(items[i].item_real);
 	}

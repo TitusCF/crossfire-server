@@ -327,13 +327,7 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns)
      }
      Write_String_To_Socket(ns, cmdback,strlen(cmdback));
 }
-/*
-#define MSG_TYPE_BOOK            1
-#define MSG_TYPE_CARD            2
-#define MSG_TYPE_PAPER           3
-#define MSG_TYPE_SIGN            4
-#define MSG_TYPE_MONUMENT        5
-#define MSG_TYPE_SCRIPTED_DIALOG 6*/
+
 /** Reply to ExtendedInfos command */
 void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns)
 {

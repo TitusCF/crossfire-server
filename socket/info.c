@@ -263,6 +263,7 @@ void draw_ext_info(
         return;
         
     if (pri>=pl->contr->listening) return;
+
     if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
         char *buf = (char*)malloc(strlen(oldmessage==NULL?message:oldmessage)+1);
         if (buf==NULL)
@@ -273,36 +274,48 @@ void draw_ext_info(
             new_draw_info(flags, pri, pl, buf);
             free(buf);
         }
-    }else{
+    } else {
         esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,message);
     }
 }
 
 void draw_ext_info_format(
-        int flags, int pri, const object *pl, uint8 type, 
-        uint8 subtype, const char* old_format, 
-        const char* new_format, ...){
+	int flags, int pri, const object *pl, uint8 type, 
+        uint8 subtype, 
+        const char* new_format, 
+	const char* old_format, 
+	...)
+{
             
     char buf[HUGE_BUF];
-	if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
-		return;
+
+    if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
+	return;
 		
     if (pri>=pl->contr->listening) return;
-	if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
-        va_list ap;
-        LOG(llevDebug,"Non supported extension text type for client.\n");
-        va_start(ap, new_format);
-        vsnprintf(buf, HUGE_BUF, old_format, ap);
-        va_end(ap);
-        new_draw_info(flags, pri, pl, buf);
-		return;
-	}else{
-        va_list ap;
-        va_start(ap, new_format);
-        vsnprintf(buf, HUGE_BUF, new_format, ap);
-        va_end(ap);
-        strip_media_tag(buf);
-        esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,buf);
+
+    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
+	va_list ap;
+
+	LOG(llevDebug,"Non supported extension text type for client.\n");
+	va_start(ap, old_format);
+	vsnprintf(buf, HUGE_BUF, old_format, ap);
+	va_end(ap);
+
+	/* Should this be here?  old_format must be set, so in theory, the caller
+	 * should not put tags in it.  But what about cases where it may be using
+	 * data external to the call itself (eg, op->msg, where the message
+	 * itself may contain tags?)
+	 */
+	strip_media_tag(buf);
+	new_draw_info(flags, pri, pl, buf);
+	return;
+    } else {
+	va_list ap;
+	va_start(ap, old_format);
+	vsnprintf(buf, HUGE_BUF, new_format, ap);
+	va_end(ap);
+	esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,buf);
     }
 }
 /**

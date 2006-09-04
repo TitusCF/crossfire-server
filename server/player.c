@@ -150,8 +150,8 @@ void send_news(const object *op) {
           if (size>0)
               draw_ext_info_format(NDI_UNIQUE | NDI_GREEN, 0, op, 
                   MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
-                  "!! informations: %s\n%s",
                   "%s\n%s",
+                  "!! informations: %s\n%s",
                   subject, news); /*send previously read news*/
           strcpy(subject,buf+1);
           strip_endline(subject);
@@ -171,8 +171,8 @@ void send_news(const object *op) {
     
     draw_ext_info_format(NDI_UNIQUE | NDI_GREEN, 0, op, 
         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_NEWS,
-        "!! informations: %s\n%s\n",
         "%s\n%s",
+        "!! informations: %s\n%s\n",
         subject, news);
     close_and_delete(fp, comp);
 }

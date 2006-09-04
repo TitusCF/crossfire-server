@@ -16,13 +16,13 @@ Quick example
 [hand]My dear friend,[/i]
 as you know, two years ago, i had to leave quickly.
 Words have come to me of powerful magic scrolls discovered in an old temple by
-my uncle. I have moved to study them. I have, however, not forgot your knowledges
+my uncle. I have moved to study them. I have, however, not forgot your knowledge
 in ancient languages. I need your help for
 [print][b]Some parts of document are to damaged to be readable[/b]
 [arcane]Arghis [color=Red]k'h [color=dark slate blue]ark
 [color=#004000]fido[/color]
 [hand]please come as fast as possible my friend.
-[print][b]The bottom of letter seems deliberatly shred.
+[print][b]The bottom of letter seems deliberatly shredded.
 
 What is it?
 ===========
@@ -34,24 +34,41 @@ notion of opening and closing tag. A client not able to understand a tag is
 supposed to ignore it. Also, when server discuss with old client not supporting
 a specific extended text, it will issue a classical message output, with all
 tags removed.
-Don't be abused by the name of some tags. The fact there exist a pair [b] [/b]
+
+Don't be confused by the name of some tags. The fact there exist a pair [b] [/b]
 does not mean there is an opening and a closing 'bold' tag. It simply mean there
 is a 'bold' and a 'no bold' tag. You might think it's the same, but no. Imagine
 the following text:
+
 Hello [b] all [b]crossfire[/b] members [/b]
+
 The word 'members' will not appear in bold, because there is no notion of
 closing tags and so no notion of tag inside a tag (in bbcode, it would probably
 appear in bold). This all was made to ensure all client can safetly ignore tags
 they don't understand and make the parsing process straight forward.
 
+Tags are reset on each drawextinfo call.  The two blocks of code are not
+equivalant:
+
+draw_ext_info(..., "[b]yadda yadda yadda");
+draw_ext_info(..., "yeah, whatever");
+
+vs
+
+draw_ext_info(..., "[b]yadda yadda yadda\nyeah, whatever")
+
+ In the first case, only yadda.. is in bold, because all tags get reset on
+the next draw_ext_info.  In the second case, since it is all in one draw_ext_info,
+everything is bold.
+
 How does it work?
 =================
 All tags start with character '[' and ends with character ']'. Between those is
-the tag itself, made of the name and optionnaly the arguments. There is no rule
-as how the arguments are to be handled. This all depend on the tag. The only
+the tag itself, made of the name and optionally the arguments. There is no rule
+as how the arguments are to be handled. This all depends on the tag. The only
 requirement is that the character ']' and '[' do not appear inside the tag (be
 it in tag name, parameter name or parameters value). The end of line are
-interpreted as is and multiple space are not removed. The only thing done is
+interpreted as is and multiple spaces are not removed. The only thing done is
 intepretation of tags.
 
 Format of a tag: [<tagname><arguments part>]

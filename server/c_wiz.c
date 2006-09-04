@@ -2036,3 +2036,43 @@ int command_insert_into(object* op, char *params)
     return 0;
 
 }
+
+int command_style_map_info(object *op, char *params)
+{
+    extern mapstruct *styles;
+    mapstruct	*mp;
+    int	    maps_used=0, mapmem=0, objects_used=0, x,y;
+    object  *tmp;
+
+    for (mp = styles; mp!=NULL; mp=mp->next) {
+	maps_used++;
+	mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace)) + sizeof(mapstruct);
+	for (x=0; x<MAP_WIDTH(mp); x++) {
+	    for (y=0; y<MAP_HEIGHT(mp); y++) {
+		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above) 
+		    objects_used++;
+	    }
+	}
+    }
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+		 "[fixed]Style maps loaded:    %d", 
+		 "Style maps loaded:    %d", 
+		 maps_used);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+		  "[fixed]Memory used, not", 
+		  "Memory used, not");
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+		 "[fixed]including objects:    %d", 
+		 "including objects:    %d", 
+		 mapmem);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+		 "Style objects:        %d", 
+		 "Style objects:        %d", 
+		 objects_used);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+		 "Mem for objects:      %d",
+		 "Mem for objects:      %d",
+		 objects_used * sizeof(object));
+    return 0;
+}
+
