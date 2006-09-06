@@ -802,7 +802,7 @@ void sell_item(object *op, object *pl) {
     if (extra_gain > 0)
 	change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
   
-    for (count=0; coins[count]!=NULL; count++) {
+    for (count=LARGEST_COIN_GIVEN; coins[count]!=NULL; count++) {
 	at = find_archetype(coins[count]);
 	if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[count]);
 	else if ((i/at->clone.value) > 0) {
