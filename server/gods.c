@@ -1080,7 +1080,7 @@ static const char *get_god_for_race(const char *race) {
 
     if (race == NULL) return NULL;
     while(gl) {
-	if (!strcasecmp(gl->arch->clone.race, race)) {
+	if (gl->arch->clone.race && !strcasecmp(gl->arch->clone.race, race)) {
 	    godname=gl->name;
 	    break;
 	}
