@@ -984,7 +984,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 	0x3: Light sources?
 	0x4 - 0xf: Unused
 
-	0x10-0x1a: Image information.  Layer 0x10 is the lowest, 0x1a is the
+	0x10-0x19: Image information.  Layer 0x10 is the lowest, 0x19 is the
 	    highest.  There are several forms of this data depending on the
 	    length:
 

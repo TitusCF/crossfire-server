@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Developers/protocol: Fix off by one on how many layers are currently
+   defined.
+server/swap.c: When loading up temp maps, make sure timeout is set to 0 -
+  fixes bug 1539203.
+MSW 2006-09-06
+
 lib/collect.pl.in: Explicitly ignore backup files (*~), just because they
    really annoy me.
 Lalo Martins 2006-09-06

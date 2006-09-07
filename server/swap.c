@@ -106,6 +106,7 @@ void read_map_log(void)
 
 	map->in_memory=MAP_SWAPPED;
 	map->darkness=darkness;
+	map->timeout=0;
 
 	/* When the reset time is saved out, it is adjusted so that
 	 * the current time is subtracted (thus, it is saved as number
