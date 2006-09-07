@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/collect.pl.in: Explicitly ignore backup files (*~), just because they
+   really annoy me.
+Lalo Martins 2006-09-06
+
 server/gods.c: Make get_god_for_race() safe for gods of no race.
 Alex Schultz 2006-09-06
 

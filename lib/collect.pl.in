@@ -132,6 +132,7 @@ sub traverse {
 
     foreach $tfile (sort @allfiles) {
 	next if $tfile =~ /^\./;
+	next if $tfile =~ /~$/;
 	$file = $dir."/".$tfile;
 	$name = &basename($file,""); # DIR
 
