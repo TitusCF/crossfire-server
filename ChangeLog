@@ -20,6 +20,9 @@ Changes for CVS:
 server/gods.c: Make get_god_for_race() safe for gods of no race.
 Alex Schultz 2006-09-06
 
+server/shop.c: Make (real) sure shops won't give amber/jade
+Lalo Martins 2006-09-06
+
 Apply patch #551467 (type mismatch in surround_flag3() can cause SIGSEGV)
  courtesy Mark Kidder.
  random_maps/rproto.h wall.c 
