@@ -337,6 +337,10 @@ but its formula is hardly ideal.  The difficulty of a map determines how
 magical the treasure will be (and some treasure types won't show up 
 unless the map has a certain difficulty level.)
 
+Remember that difficulty isn't only "good" for the player; traps (in
+doors and chests) are also generated as treasure, and as such, they
+will be more deadly the higher the difficulty.
+
 6) Don't be too intimidated about writing new code if there is something
 you would like to be able to do, but just isn't supported.  If you are not
 the code writing time, make a suggestion.  Worst case is it gets ignored.
