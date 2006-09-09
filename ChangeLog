@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c: add exp and other_arch to flesh; more info about
+   the original monster, to be used in spells or scripts.
+Lalo Martins 2006-09-10
+
 doc/Developers/protocol: Fix off by one on how many layers are currently
    defined.
 server/swap.c: When loading up temp maps, make sure timeout is set to 0 -
