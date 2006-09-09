@@ -520,6 +520,8 @@ void sell_item(object *op, object *pl);
 double shopkeeper_approval(const mapstruct *map, const object *player);
 int describe_shop(const object *op);
 void shop_listing(object *op);
+int is_in_shop(object *ob);
+int coords_in_shop(mapstruct *map, int x, int y);
 /* skills.c */
 int steal(object *op, int dir, object *skill);
 int pick_lock(object *pl, int dir, object *skill);

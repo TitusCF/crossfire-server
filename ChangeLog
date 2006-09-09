@@ -17,9 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/shop.c, include/sproto.h: Add is_in_shop() and coords_in_shop()
+   based on addition of is_in_shop() in cf+ by elmex.
 server/apply.c: When applying a transport which is in an inventory, drop
    the transport.
-server/c_object.c, include/sproto.c: Make drop_object return a pointer to
+server/c_object.c, include/sproto.h: Make drop_object return a pointer to
    the dropped object, NULL otherwise.
 Alex Schultz 2006-09-09
 

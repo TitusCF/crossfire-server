@@ -1164,3 +1164,19 @@ void shop_listing(object *op)
     }
     free(items);
 }
+
+/* Check if an object is in a shop. Returns 1 if so, 0 otherwise. */
+int is_in_shop(object *ob) {
+    if (!ob->map)
+        return 0;
+    return coords_in_shop(ob->map, ob->x, ob->y);
+}
+
+/* Check if given map coords are in a shop. Returns 1 if so, 0 otherwise. */
+int coords_in_shop(mapstruct *map, int x, int y) {
+    object *floor;
+    for (floor = get_map_ob (map, x, y); floor; floor = floor->above)
+        if (floor->type == SHOP_FLOOR)
+            return 1;
+    return 0;
+}
