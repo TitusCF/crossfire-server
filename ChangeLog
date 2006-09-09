@@ -1,6 +1,6 @@
 Changes in top level CVS tree.  A few notes when putting entries in this
 file:
-1) Please include a date in the form yyyy/mm/dd (yes, us americans are 
+1) Please include a date in the form yyyy-mm-dd (yes, us americans are 
 screwed up relative to most the world, but some consistent date format
 is needed for this file.)
 2) You don't need to go into exacting detail of the changes.  This file
