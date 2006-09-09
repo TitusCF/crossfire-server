@@ -917,7 +917,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
  *  nrof objects is tried to dropped.
  * This is used when dropping objects onto the floor.
  */
-void drop_object (object *op, object *tmp, uint32 nrof) 
+object *drop_object (object *op, object *tmp, uint32 nrof) 
 {
     char buf[MAX_BUF];
     object *floor;
@@ -927,12 +927,12 @@ void drop_object (object *op, object *tmp, uint32 nrof)
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
       new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
 #endif
-      return;
+      return NULL;
     }
 
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
       if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
-          return;		/* can't unapply it */
+          return NULL;		/* can't unapply it */
     }
 
     /* We are only dropping some of the items.  We split the current objec
@@ -944,7 +944,7 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
 	    new_draw_info(NDI_UNIQUE, 0,op, errmsg);
-	    return;
+	    return NULL;
 	}
 	/* Tell a client what happened rest of objects.  tmp2 is now the
 	 * original object
@@ -961,7 +961,7 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 
     /* Lauwenmark: Handle for plugin drop event */
     if (execute_event(tmp, EVENT_DROP,op,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
-        return;
+        return NULL;
 
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
       sprintf(buf,"You drop the %s.", query_name(tmp));
@@ -971,7 +971,7 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
       fix_player(op);
-      return;
+      return NULL;
     }
 
 /*  If SAVE_INTERVAL is commented out, we never want to save
@@ -1024,6 +1024,7 @@ void drop_object (object *op, object *tmp, uint32 nrof)
 	/* Need to update the weight for the player */
 	esrv_send_item (op, op);
     }
+    return tmp;
 }
 
 void drop(object *op, object *tmp)

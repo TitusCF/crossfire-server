@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/c_object.c, include/sproto.c: Make drop_object return a pointer to
+   the dropped object, NULL otherwise.
+Alex Schultz 2006-09-09
+
 common/treasure.c: add exp and other_arch to flesh; more info about
    the original monster, to be used in spells or scripts.
 Lalo Martins 2006-09-10
