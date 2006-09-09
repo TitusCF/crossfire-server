@@ -1630,6 +1630,10 @@ void fix_flesh_item(object *item, object *donor) {
 	sprintf(tmpbuf,"%s's %s",donor->name,item->name_pl);
 	FREE_AND_COPY(item->name_pl, tmpbuf);
 
+        /* store original arch in other_arch */
+        if(!item->other_arch)
+            item->other_arch = donor->arch;
+
 	/* weight is FLESH weight/100 * donor */
 	if((item->weight = (signed long) (((double)item->weight/(double)100.0) * (double)donor->weight))==0)
 		item->weight=1;
@@ -1646,8 +1650,9 @@ void fix_flesh_item(object *item, object *donor) {
 	for (i=0; i<NROFATTACKS; i++)
 	    item->resist[i] = donor->resist[i]/2;
 	
-	/* item inherits donor's level (important for quezals) */
+	/* item inherits donor's level and exp (important for dragons) */
 	item->level = donor->level;
+        item->stats.exp = donor->stats.exp;
 	
 	/* if donor has some attacktypes, the flesh is poisonous */
 	if(donor->attacktype&AT_POISON)
