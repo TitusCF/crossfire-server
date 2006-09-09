@@ -122,11 +122,11 @@ int apply_transport(object *pl, object *transport, int aflag) {
     else {
 	/* player is trying to board a transport */
 	int pc=0, p_limit;
-	object *inv;
+	object *inv, *old_transport;
 	const char *kv;
 
 	if (aflag & AP_UNAPPLY) return 1;
-
+        
 	/* Can this transport hold the weight of this player? */
 	if (!transport_can_hold(transport, pl, 1)) {
 	    new_draw_info_format(NDI_UNIQUE, 0, pl,
@@ -134,6 +134,19 @@ int apply_transport(object *pl, object *transport, int aflag) {
 			     query_name(transport));
 	    return 1;
 	}
+        
+        /* If the player is holding the transport, drop it. */
+        if (transport->env == pl) {
+            old_transport = transport;
+            transport = drop_object(pl, transport, 1);
+            /* Did it fail to drop? */
+            if(!transport) {
+                new_draw_info_format(NDI_UNIQUE, 0, pl,
+                    "You need to drop the %s to use it.",
+                    query_name(old_transport));
+                return 1;
+            }
+        }
 
 	/* Does this transport have space for more players? */
 	for (inv=transport->inv; inv; inv=inv->below) {
