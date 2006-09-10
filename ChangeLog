@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/apply.c: Add check to auto-dropping of applied transports to not
+   drop in shops.
 common/treasure.c: Make fix_flesh_item only run when the donor is a
    monster. Fixes bug #1555569.
 Alex Schultz 2006-09-10
