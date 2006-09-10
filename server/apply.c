@@ -138,7 +138,15 @@ int apply_transport(object *pl, object *transport, int aflag) {
         /* If the player is holding the transport, drop it. */
         if (transport->env == pl) {
             old_transport = transport;
-            transport = drop_object(pl, transport, 1);
+            /* Don't drop transports in shops. */
+            if (!is_in_shop(pl)) {
+                transport = drop_object(pl, transport, 1);
+            } else {
+                new_draw_info_format(NDI_UNIQUE, 0, pl,
+                    "You cannot drop the %s in a shop to use it.",
+                    query_name(old_transport));
+                return 1;
+            }
             /* Did it fail to drop? */
             if(!transport) {
                 new_draw_info_format(NDI_UNIQUE, 0, pl,
