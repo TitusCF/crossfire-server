@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/player.c: Comment cleanup. No code changes.
 server/apply.c: Add check to auto-dropping of applied transports to not
    drop in shops.
 common/treasure.c: Make fix_flesh_item only run when the donor is a

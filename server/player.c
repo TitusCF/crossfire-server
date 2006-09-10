@@ -187,8 +187,7 @@ int playername_ok(const char *cp) {
     return 1;
 }
 
-/**
- * This no longer sets the player map.  Also, it now updates
+/* This no longer sets the player map.  Also, it now updates
  * all the pointers so the caller doesn't need to do that.
  * Caller is responsible for setting the correct map.
  *
@@ -299,7 +298,7 @@ static player* get_player(player *p) {
 }
 
 
-/** This loads the first map an puts the player on it. */
+/* This loads the first map an puts the player on it. */
 static void set_first_map(object *op)
 {
     strcpy(op->contr->maplevel, first_map_path);
@@ -339,8 +338,7 @@ int add_player(socket_struct *ns) {
     return 0;
 }
 
-/**
- * get_player_archetype() return next player archetype from archetype
+/* get_player_archetype() return next player archetype from archetype
  * list. Not very efficient routine, but used only creating new players.
  * Note: there MUST be at least one player archetype!
  */
@@ -417,8 +415,7 @@ object *get_nearest_player(object *mon) {
     return op;
 }
 
-/**
- * I believe this can safely go to 2, 3 is questionable, 4 will likely
+/* I believe this can safely go to 2, 3 is questionable, 4 will likely
  * result in a monster paths backtracking.  It basically determines how large a 
  * detour a monster will take from the direction path when looking
  * for a path to the player.  The values are in the amount of direction
@@ -426,8 +423,7 @@ object *get_nearest_player(object *mon) {
  */
 #define DETOUR_AMOUNT	2
 
-/**
- * This is used to prevent infinite loops.  Consider a case where the
+/* This is used to prevent infinite loops.  Consider a case where the
  * player is in a chamber (with gate closed), and monsters are outside.
  * with DETOUR_AMOUNT==2, the function will turn each corner, trying to
  * find a path into the chamber.  This is a good thing, but since there
@@ -442,8 +438,7 @@ object *get_nearest_player(object *mon) {
 #define MAX_SPACES	50
 
 
-/**
- * Returns the direction to the player, if valid.  Returns 0 otherwise.
+/* Returns the direction to the player, if valid.  Returns 0 otherwise.
  * modified to verify there is a path to the player.  Does this by stepping towards
  * player and if path is blocked then see if blockage is close enough to player that
  * direction to player is changed (ie zig or zag).  Continue zig zag until either
@@ -745,7 +740,7 @@ void get_party_password(object *op, partylist *party) {
 }
 
 
-/** This rolls four 1-6 rolls and sums the best 3 of the 4. */
+/* This rolls four 1-6 rolls and sums the best 3 of the 4. */
 int roll_stat(void) {
     int a[4],i,j,k;
 
@@ -887,8 +882,7 @@ static void swap_stat(object *op,int Swap_Second)
 }
 
 
-/**
- * This code has been greatly reduced, because with set_attr_value
+/* This code has been greatly reduced, because with set_attr_value
  * and get_attr_value, the stats can be accessed just numeric
  * ids.  stat_trans is a table that translate the number entered
  * into the actual stat.  It is needed because the order the stats
@@ -1159,8 +1153,7 @@ static void flee_player(object *op) {
 }
 
 
-/**
- * check_pick sees if there is stuff to be picked up/picks up stuff.
+/* check_pick sees if there is stuff to be picked up/picks up stuff.
  * IT returns 1 if the player should keep on moving, 0 if he should
  * stop.
  */
@@ -1286,8 +1279,8 @@ int check_pick(object *op) {
 
       if(op->contr->mode & PU_NOTHING) return 1;
 
-      /* if mode is set to stop when encountering objects, return */
-      /* take STOP before INHIBIT since it doesn't actually pick
+      /* if mode is set to stop when encountering objects, return.
+       * Take STOP before INHIBIT since it doesn't actually pick
        * anything up */
 
       if(op->contr->mode & PU_STOP) return 0;
@@ -1407,9 +1400,9 @@ int check_pick(object *op) {
        * pickups */
       if(op->contr->mode & PU_RATIO)
       {
-	/* use value density to decide what else to grab */
-	/* >=7 was >= op->contr->mode */
-	/* >=7 is the old standard setting.  Now we take the last 4 bits
+	/* use value density to decide what else to grab.
+	 * >=7 was >= op->contr->mode
+	 * >=7 is the old standard setting.  Now we take the last 4 bits
 	 * and multiply them by 5, giving 0..15*5== 5..75 */
 	wvratio=(op->contr->mode & PU_RATIO) * 5;
 	if ((query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof, 1))) >= wvratio)
@@ -1432,8 +1425,7 @@ int check_pick(object *op) {
   return ! stop;
 }
 
-/**
- *  Find an arrow in the inventory and after that
+/*  Find an arrow in the inventory and after that
  *  in the right type container (quiver). Pointer to the 
  *  found object is returned.
  */
@@ -1450,8 +1442,7 @@ static object *find_arrow(object *op, const char *type)
     return tmp;
 }
 
-/**
- * Similar to find_arrow, but looks for (roughly) the best arrow to use
+/* Similar to find_arrow, but looks for (roughly) the best arrow to use
  * against the target.  A full test is not performed, simply a basic test
  * of resistances.  The archer is making a quick guess at what he sees down
  * the hall.  Failing that it does it's best to pick the highest plus arrow.
@@ -1512,8 +1503,7 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
     return tmp;
 }
 
-/**
- * looks in a given direction, finds the first valid target, and calls
+/* looks in a given direction, finds the first valid target, and calls
  * find_better_arrow to find a decent arrow to use.
  * op = the shooter
  * type = bow->race
@@ -1573,8 +1563,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir)
     return find_better_arrow(op, tmp, type, &i);
 }
 
-/**
- * Creature fires a bow - op can be monster or player.  Returns 
+/* Creature fires a bow - op can be monster or player.  Returns 
  * 1 if bow was actually fired, 0 otherwise.
  * op is the object firing the bow.
  * part is for multipart creatures - the part firing the bow.
@@ -1734,8 +1723,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     return 1;
 }
 
-/**
- * Special fire code for players - this takes into
+/* Special fire code for players - this takes into
  * account the special fire modes players can have
  * but monsters can't.  Putting that code here
  * makes the fire_bow code much cleaner.
@@ -1772,8 +1760,7 @@ static int player_fire_bow(object *op, int dir)
 }
 
 
-/**
- * Fires a misc (wand/rod/horn) object in 'dir'.
+/* Fires a misc (wand/rod/horn) object in 'dir'.
  * Broken apart from 'fire' to keep it more readable.
  */
 static void fire_misc_object(object *op, int dir)
@@ -1830,8 +1817,7 @@ static void fire_misc_object(object *op, int dir)
     }
 }
 
-/**
- * Received a fire command for the player - go and do it.
+/* Received a fire command for the player - go and do it.
  */
 void fire(object *op,int dir) {
     int spellcost=0;
@@ -1885,8 +1871,7 @@ void fire(object *op,int dir) {
 
 
 
-/**
- * We try to find a key for the door as passed.  If we find a key
+/* We try to find a key for the door as passed.  If we find a key
  * and successfully use it, we return the key, otherwise NULL
  * This function merges both normal and locked door, since the logic
  * for both is the same - just the specific key is different.
@@ -1959,8 +1944,7 @@ object * find_key(object *pl, object *container, object *door)
     return tmp;
 }
 
-/**
- * moved door processing out of move_player_attack.
+/* moved door processing out of move_player_attack.
  * returns 1 if player has opened the door with a key
  * such that the caller should not do anything more,
  * 0 otherwise
@@ -2003,8 +1987,7 @@ static int player_attack_door(object *op, object *door)
     return 0;
 }
 
-/**
- * This function is just part of a breakup from move_player.
+/* This function is just part of a breakup from move_player.
  * It should keep the code cleaner.
  * When this is called, the players direction has been updated
  * (taking into account confusion.)  The player is also actually
@@ -2201,7 +2184,6 @@ int move_player(object *op,int dir) {
 	}
 	/* Remove transport speed.  Give player just a little speed -
 	 * enough so that they will get an action again quickly.
-	 * 
 	 */
 	transport->speed_left -= 1.0;
 	if (op->speed_left < 0.0) op->speed_left = -0.01;
@@ -2232,8 +2214,7 @@ int move_player(object *op,int dir) {
     return 0;
 }
 
-/**
- * This is similar to handle_player, below, but is only used by the
+/* This is similar to handle_player, below, but is only used by the
  * new client/server stuff.
  * This is sort of special, in that the new client/server actually uses
  * the new speed values for commands.
@@ -2301,8 +2282,7 @@ int handle_newcs_player(object *op)
     return 0;
 }
 
-/**
- * Returns 1 if player had his life saved by an item.
+/* Returns 1 if player had his life saved by an item.
  * In this case, first item saving life is removed.
  */
 static int save_life(object *op) {
@@ -2333,8 +2313,7 @@ static int save_life(object *op) {
     return 0;
 }
 
-/**
- * This goes throws the inventory and removes unpaid objects, and puts them
+/* This goes throws the inventory and removes unpaid objects, and puts them
  * back in the map (location and map determined by values of env).  This
  * function will descend into containers.  op is the object to start the search
  * from.
@@ -2361,8 +2340,7 @@ static void remove_unpaid_objects(object *op, object *env)
 }
 
 
-/**
- * Returns pointer a static string containing gravestone text
+/* Returns pointer a static string containing gravestone text
  * Moved from apply.c to player.c - player.c is what
  * actually uses this function.  player.c may not be quite the
  * best, a misc file for object actions is probably better, 
@@ -2398,8 +2376,7 @@ static const char *gravestone_text (object *op)
     return buf2;
 }
 
-/**
- * Regenerate hp/sp/gr, decreases food. This only works for players.
+/* Regenerate hp/sp/gr, decreases food. This only works for players.
  * Will grab food if needed, or kill player.
  */
 void do_some_living(object *op) {
@@ -2599,8 +2576,7 @@ static void loot_object(object *op) { /* Grab and destroy some treasure */
 }
 
 
-/**
- * If the player should die (lack of hp, food, etc), we call this.
+/* If the player should die (lack of hp, food, etc), we call this.
  * op is the player in jeopardy.  If the player can not be saved (not
  * permadeath, no lifesave), this will take care of removing the player
  * file.
@@ -2837,16 +2813,10 @@ void kill_player(object *op)
 	tmp->x=op->x,tmp->y=op->y;
 	insert_ob_in_map (tmp, op->map, NULL,0);
 
-	/**************************************/
-	/*                                    */
-	/* Subtract the experience points,    */
-	/* if we died cause of food, give us  */
-	/* food, and reset HP's...            */
-	/*                                    */
-	/**************************************/
 
-	/* remove any poisoning and confusion the character may be suffering.*/
-	/* restore player */
+
+	/* restore player: remove any poisoning, disease and confusion the 
+         * character may be suffering.*/
 	at = find_archetype("poisoning");
         tmp=present_arch_in_ob(at,op);
 	if (tmp) {
@@ -2863,34 +2833,27 @@ void kill_player(object *op)
             new_draw_info(NDI_UNIQUE, 0,tmp, "Your mind feels clearer");
 	}
 	cure_disease(op,0);  /* remove any disease */
-	
-	/*add_exp(op, (op->stats.exp * -0.20)); */
+
+	/* Subtract the experience points, if we died cause of food, give
+         * us food, and reset HP's...
+         */	
 	apply_death_exp_penalty(op);
 	if(op->stats.food < 100) op->stats.food = 900;
 	op->stats.hp = op->stats.maxhp;
 	op->stats.sp = MAX(op->stats.sp,  op->stats.maxsp);
 	op->stats.grace = MAX(op->stats.grace, op->stats.maxgrace);
 
-	/*
-	 * Check to see if the player is in a shop. IF so, then check to see if
+	/* Check to see if the player is in a shop. IF so, then check to see if
 	 * the player has any unpaid items.  If so, remove them and put them back
 	 * in the map.
 	 */
         if (is_in_shop(op))
             remove_unpaid_objects(op->inv, op);
 
-	/****************************************/
-	/*                                      */
-	/* Move player to his current respawn-  */
-	/* position (usually last savebed)      */
-	/*                                      */
-	/****************************************/
-
+	/* Move player to his current respawn-position (usually last savebed) */
 	enter_player_savebed(op);
 
-	/* Save the player before inserting the force to reduce
-	 * chance of abuse.
-	 */
+	/* Save the player before inserting the force to reduce chance of abuse. */
 	op->contr->braced=0;
 	save_player(op,1);
 
@@ -2921,13 +2884,8 @@ void kill_player(object *op)
 	    fix_player(op);
 	    
 	}
-	/**************************************/
-	/*                                    */
-	/* Repaint the characters inv, and    */
-	/* stats, and show a nasty message ;) */
-	/*                                    */
-	/**************************************/
-
+        
+	/* Tell the player they have died */
 	new_draw_info(NDI_UNIQUE, 0,op,"YOU HAVE DIED.");
 	return;
     } /* NOT_PERMADETH */
@@ -2956,14 +2914,14 @@ void kill_player(object *op)
 	    delete_character(op->name,0);
 	    if (settings.resurrection == TRUE) {
 		/* save playerfile sans equipment when player dies
-		 ** then save it as player.pl.dead so that future resurrection
-		 ** type spells will work on them nicely
+		 * -then save it as player.pl.dead so that future resurrection
+		 * -type spells will work on them nicely
 		 */
 		delete_character(op->name,0);
 		op->stats.hp = op->stats.maxhp;
 		op->stats.food = 999;
 
-		/*  set the location of where the person will reappear when  */
+		/* set the location of where the person will reappear when  */
 		/* maybe resurrection code should fix map also */
 		strcpy(op->contr->maplevel, settings.emergency_mapname);
 		if(op->map!=NULL)
@@ -2995,8 +2953,7 @@ void kill_player(object *op)
     }
 }
 
-/**
- * fix_weight(): Check recursively the weight of all players, and fix
+/* fix_weight(): Check recursively the weight of all players, and fix
  * what needs to be fixed.  Refresh windows and fix speed if anything
  * was changed.
  */
@@ -3021,8 +2978,7 @@ void fix_luck(void) {
 }
 
 
-/**
- * Handles op throwing objects of type 'DUST'.
+/* Handles op throwing objects of type 'DUST'.
  * This is much simpler in the new spell code - we basically
  * just treat this as any other spell casting object.
  */
@@ -3070,8 +3026,7 @@ int is_true_undead(object *op) {
   return 0;
 }
 
-/**
- * Look at the surrounding terrain to determine
+/* Look at the surrounding terrain to determine
  * the hideability of this object. Positive levels
  * indicate greater hideability.
  */
@@ -3087,7 +3042,8 @@ int hideability(object *ob) {
 
     /* this also picks up whether the object is glowing.
      * If you carry a light on a non-dark map, its not
-     * as bad as carrying a light on a pitch dark map */
+     * as bad as carrying a light on a pitch dark map
+     */
     if(has_carried_lights(ob)) level =- (10 + (2*ob->map->darkness));
 
     /* scan through all nearby squares for terrain to hide in */
@@ -3106,13 +3062,11 @@ int hideability(object *ob) {
     return level;
 }
 
-/**
- * For Hidden creatures - a chance of becoming 'unhidden'
+/* For Hidden creatures - a chance of becoming 'unhidden'
  * every time they move - as we subtract off 'invisibility'
  * AND, for players, if they move into a ridiculously unhideable
  * spot (surrounded by clear terrain in broad daylight). -b.t.
  */
-
 void do_hidden_move (object *op) {
     int hide=0, num=random_roll(0, 19, op, PREFER_LOW);
     object *skop;
@@ -3142,8 +3096,7 @@ void do_hidden_move (object *op) {
     }
 }
 
-/** determine if who is standing near a hostile creature. */
-
+/* determine if who is standing near a hostile creature. */
 int stand_near_hostile( object *who ) {
     object *tmp=NULL;
     int i,friendly=0,player=0, mflags;
@@ -3182,8 +3135,7 @@ int stand_near_hostile( object *who ) {
     return 0;
 }
 
-/**
- * Check the player los field for viewability of the 
+/* Check the player los field for viewability of the 
  * object op. This function works fine for monsters,
  * but we dont worry if the object isnt the top one in 
  * a pile (say a coin under a table would return "viewable"
@@ -3196,7 +3148,6 @@ int stand_near_hostile( object *who ) {
  * -b.t. 
  * This function is now map tiling safe.
  */
-
 int player_can_view (object *pl,object *op) {
     rv_vector rv;
     int dx,dy;
@@ -3233,8 +3184,7 @@ int player_can_view (object *pl,object *op) {
     return 0;
 }
 
-/**
- * routine for both players and monsters. We call this when
+/* routine for both players and monsters. We call this when
  * there is a possibility for our action distrubing our hiding
  * place or invisiblity spell. Artefact invisiblity is not
  * effected by this. If we arent invisible to begin with, we 
@@ -3257,8 +3207,7 @@ static int action_makes_visible (object *op) {
     return 0;
 }
 
-/**
- * op_on_battleground - checks if the given object op (usually
+/* op_on_battleground - checks if the given object op (usually
  * a player) is standing on a valid battleground-tile,
  * function returns TRUE/FALSE. If true x, y returns the battleground
  * -exit-coord. (and if x, y not NULL)
@@ -3302,8 +3251,7 @@ int op_on_battleground (object *op, int *x, int *y) {
   return 0;
 }
 
-/**
- * When a dragon-player gains a new stage of evolution,
+/* When a dragon-player gains a new stage of evolution,
  * he gets some treasure
  *
  * attributes:
@@ -3446,8 +3394,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
     }
 }
 
-/**
- * Unready an object for a player. This function does nothing if the object was
+/* Unready an object for a player. This function does nothing if the object was
  * not readied.
  */
 void player_unready_range_ob(player *pl, object *ob) {
