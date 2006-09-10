@@ -1023,16 +1023,7 @@ static int improve_armour(object *op, object *improver, object *armour)
 static int convert_item(object *item, object *converter) {
     int nr=0;
     object *tmp;
-    int is_in_shop;
     uint32 price_in;
-
-    for(tmp = get_map_ob(converter->map, converter->x, converter->y);
-	tmp != NULL;
-	tmp = tmp->above) {
-	if(tmp->type == SHOP_FLOOR)
-	    break;
-    }
-    is_in_shop = (tmp != NULL);
 
     /* We make some assumptions - we assume if it takes money as it type,
      * it wants some amount.  We don't make change (ie, if something costs
@@ -1109,7 +1100,7 @@ static int convert_item(object *item, object *converter) {
 	item->nrof=CONV_NR(converter);
     if(nr)
 	item->nrof*=nr;
-    if(is_in_shop)
+    if(is_in_shop(converter))
 	SET_FLAG(item,FLAG_UNPAID);
     else if(price_in < item->nrof*item->value) {
 	LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n",
@@ -1451,8 +1442,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	 * but there is never a guarantee that the bottom space on the map is
 	 * actually the shop floor.
 	 */
-	else if ( ! rv && (tmp = get_map_ob (op->map, op->x, op->y)) != NULL
-		   && tmp->type != SHOP_FLOOR) {
+	else if ( !rv && is_in_shop(op)) {
 	    opinion = shopkeeper_approval(op->map, op);
 	    if ( opinion > 0.9)
 		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper gives you a friendly wave.");

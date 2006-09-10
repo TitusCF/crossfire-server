@@ -991,11 +991,8 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 #endif /* SAVE_INTERVAL */
 
 
-    if ( !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY ) {
-        floor = get_map_ob (op->map, op->x, op->y);
-        while ( floor && floor->type != SHOP_FLOOR )
-            floor = floor->above;
-        if ( floor )
+    if ( !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY) {
+        if (is_in_shop(op))
             sell_item(tmp,op);
     }
 
@@ -1427,6 +1424,7 @@ const char *long_desc(const object *tmp, const object *pl) {
 
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
+    int in_shop;
     int i;
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
@@ -1512,13 +1510,13 @@ void examine(object *op, object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
+    in_shop = is_in_shop(op);
+
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-    	object *floor;
     	sprintf(buf,"You reckon %s worth %s.",
 		    tmp->nrof>1?"they are":"it is",query_cost_string(tmp,op,F_SELL | F_APPROX));
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
-	floor = get_map_ob (op->map, op->x, op->y);
-	if (floor && floor->type == SHOP_FLOOR) {
+	if (in_shop) {
 	    if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	    	sprintf(buf,"%s would cost you %s.",
 		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY | F_SHOP));
