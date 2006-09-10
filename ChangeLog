@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c: Make fix_flesh_item only run when the donor is a
+   monster. Fixes bug #1555569.
+Alex Schultz 2006-09-10
+
 server/apply.c, server/c_object.c, server/player.c: Use is_in_shop() to
    check if it's in a a shop.
 server/shop.c, include/sproto.h: Add is_in_shop() and coords_in_shop()

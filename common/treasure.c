@@ -1623,7 +1623,7 @@ void fix_flesh_item(object *item, object *donor) {
     char tmpbuf[MAX_BUF];
     int i;
 
-    if(item->type==FLESH && donor) {
+    if(item->type==FLESH && donor && QUERY_FLAG(donor, FLAG_MONSTER)) {
 	/* change the name */
 	sprintf(tmpbuf,"%s's %s",donor->name,item->name);
 	FREE_AND_COPY(item->name, tmpbuf);
