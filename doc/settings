@@ -61,3 +61,4 @@ death_penalty_levels		The maximum number of levels a player could
 balanced_stat_loss	if set, death stat depletion is balanced by 
 			level. False
 no_player_stealing	if set, players cannot steal from other players. False
+create_home_portals	if set, town portal can be cast inside of player-unique maps. False.

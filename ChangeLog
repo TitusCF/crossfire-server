@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/settings: Document create_home_portals outside of comments in lib/settings.
 server/player.c: Comment cleanup. No code changes.
 server/apply.c: Add check to auto-dropping of applied transports to not
    drop in shops.
