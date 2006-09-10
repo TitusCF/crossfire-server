@@ -1442,7 +1442,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	 * but there is never a guarantee that the bottom space on the map is
 	 * actually the shop floor.
 	 */
-	else if ( !rv && is_in_shop(op)) {
+	else if ( !rv && !is_in_shop(op)) {
 	    opinion = shopkeeper_approval(op->map, op);
 	    if ( opinion > 0.9)
 		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper gives you a friendly wave.");
