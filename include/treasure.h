@@ -45,6 +45,8 @@
 
 #define DIFFLEVELS 31
 
+/* Highest level of rods/staves/scrolls to generate. */
+#define MAX_SPELLITEM_LEVEL 110
 
 /*
  * Flags to generate_treasures():

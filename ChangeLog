@@ -17,6 +17,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+common/treasure.c, include/treasure.h: Add MAX_SPELLITEM_LEVEL set to 110.
+include/living.h: Set MAXLEVEL to 115.
 doc/settings: Document create_home_portals outside of comments in lib/settings.
 server/player.c: Comment cleanup. No code changes.
 server/apply.c: Add check to auto-dropping of applied transports to not

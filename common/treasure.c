@@ -38,7 +38,7 @@
 
 /* TREASURE_VERBOSE enables copious output concerning artifact generation */
 /* #define TREASURE_VERBOSE */
- 
+
 #include <global.h>
 #include <treasure.h>
 #include <funcpoint.h>
@@ -513,7 +513,7 @@ int level_for_item(const object *op, int difficulty, int retmult)
 	return mult;
 
     olevel = mult * rndm(0, difficulty) + level;
-    if (olevel > MAXLEVEL) olevel = MAXLEVEL;
+    if (olevel > MAX_SPELLITEM_LEVEL) olevel = MAX_SPELLITEM_LEVEL;
 
     return olevel;
 }

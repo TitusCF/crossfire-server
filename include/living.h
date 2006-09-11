@@ -38,7 +38,7 @@
 #define POW 6
 #define NUM_STATS 7
 
-#define MAXLEVEL      110
+#define MAXLEVEL      115
 
 /* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on
  * AIX systems
