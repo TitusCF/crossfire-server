@@ -1104,7 +1104,7 @@ It is possible to use string names instead of the numeric bitmask in
 the move_fields below.  It is strongly encouraged that the string names be
 used for improved readability.  In addition, using string names, especially
 'all', will result in easier maintability in the future.  For example, if you
-specify 'move_block 15' right now, that is equivalant of all.  However, if new
+specify 'move_block 31' right now, that is equivalant of all.  However, if new
 move types are added, using a numeric option will not block the new movement
 types, where if 'move_block all' was used, it continue to block everything.
 
