@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+lib/README: Large update to the ancient readme file describing the files in lib.
+Alex Schultz 2006-09-12
+
 common/treasure.c, include/treasure.h: Add MAX_SPELLITEM_LEVEL set to 110.
 include/living.h: Set MAXLEVEL to 115.
 doc/settings: Document create_home_portals outside of comments in lib/settings.
