@@ -5,7 +5,7 @@ The "collect.pl" file is a script to generate the other files in this section.
 To run it, one inserts a symlink to the arch directory in the current directory,
 and then runs "make collect".
 
-These files are moved into $PREFIX/share/crossfire defaultly.
+These files are moved into $PREFIX/share/crossfire by default.
 
 The "archetypes" file contains lots of generalized objects which makes it
 easier for the program to use similar items over and over again.
@@ -33,7 +33,7 @@ is created the "treasures" file in addition to the archetypes.
 Non-generated game data files:
 ------------------------------
 
-These files are moved into $PREFIX/share/crossfire defaultly.
+These files are moved into $PREFIX/share/crossfire by default.
 
 The "treasures" file contains all kinds of randomized treasure, to be used when
 an archetype is generated from the "archetypes" file.
@@ -70,7 +70,7 @@ log-files.
 Settings files:
 ---------------
 
-These files are moved into $PREFIX/etc/crossfire
+These files are moved into $PREFIX/etc/crossfire by default.
 
 The "motd" file contains any messages to the players as they connect. In the
 motd you can also use mediaTags, as defined in ../doc/mediaTags.
