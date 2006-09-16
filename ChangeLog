@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/spell_util.c: Implement proposed alchemy changes from the mailing list.
+   Make value of nuggets given range from 5% to 40%. Depends on archetype
+   changes to the alchemy spell and nuggets. (Without archetype changes will
+   give obscenely low value.)
+Alex Schultz 2006-09-16
+
 server/alchemy.c: Make shadow alchemy and random alchemy failures ignore the
    'cauldron' type being used. Fixes bug #1551385.
 Alex Schultz 2006-09-15

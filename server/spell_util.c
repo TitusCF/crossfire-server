@@ -167,7 +167,7 @@ void spell_effect (object *spob, int x, int y, mapstruct *map,
  * spell is the spell object.
  * Returns modified level.
  */
-static int min_casting_level(object *caster, object *spell)
+int min_casting_level(object *caster, object *spell)
 {
     int new_level;
 
