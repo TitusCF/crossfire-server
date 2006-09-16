@@ -70,7 +70,7 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
 static int content_recipe_value (object *op);
 static int numb_ob_inside (object *op);
 static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger);
-static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches);
+static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron);
 static int calc_alch_danger(object *caster,object *cauldron, recipe *rp);
 static object * make_item_from_recipe(object *cauldron, recipe *rp);
 static void remove_contents (object *first_ob, object *save_item);
@@ -137,7 +137,8 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 		    LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n",
 			rp->arch_name[0], formula/rp->index);
 #endif
-		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index);
+		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, 
+                    !is_defined_recipe(rp, cauldron, caster));
 	    } else LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n"); 
 	    return;
 	} /* End of WIZ alchemy */
@@ -177,7 +178,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 	    attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
 
 	    /* create the object **FIRST**, then decide whether to keep it.	*/
-	    if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index)) != NULL) {
+	    if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
 		/*  compute base chance of recipe success */
 		success_chance = ((float)ability /
 				  (float)(rp->diff * (item->level+2)));
@@ -268,16 +269,18 @@ static int numb_ob_inside (object *op) {
  * gain some exp from (successfull) fabrication of the product. 
  * If nbatches==-1, don't give exp for this creation (random generation/
  * failed recipe)
+ * If ignore_cauldron, don't check if we are using the matching cauldron
+ * type (shadow alchemy)
  */ 
  
-static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches) { 
+static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron) { 
 
     object *item=NULL, *skop;
     /* this should be passed to this fctn, not effiecent cpu use this way */
     int batches=abs(nbatches);
 
     /* is the cauldron the right type? */
-    if (strcmp(rp->cauldron, cauldron->arch->name) != 0) {
+    if (!ignore_cauldron && (strcmp(rp->cauldron, cauldron->arch->name) != 0)) {
 	new_draw_info(NDI_UNIQUE, 0, caster, "You are not using the proper"
 	    " facilities for this formula.");
 	return 0;
@@ -497,7 +500,7 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	   if((rp=get_random_recipe((recipelist *) NULL))==NULL) 
 	      	return;
 
-	if((tmp=attempt_recipe(op,cauldron,1,rp,-1))) { 
+	if((tmp=attempt_recipe(op,cauldron,1,rp,-1,0))) { 
 	    if(!QUERY_FLAG(tmp,FLAG_CURSED)) /* curse it */
 	   	SET_FLAG(tmp,FLAG_CURSED);
 
@@ -522,7 +525,7 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	fl=get_formulalist(numb-1); /* take a lower recipe list */ 
 	if(fl &&(rp=get_random_recipe(fl)))
 	    /* even though random, don't grant user any EXP for it */
-	    (void) attempt_recipe(op,cauldron,1,rp,-1);
+	    (void) attempt_recipe(op,cauldron,1,rp,-1,0);
 	else 
 	    alchemy_failure_effect(op,cauldron,rp,level-1);
 	return;

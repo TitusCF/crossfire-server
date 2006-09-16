@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/alchemy.c: Make shadow alchemy and random alchemy failures ignore the
+   'cauldron' type being used. Fixes bug #1551385.
+Alex Schultz 2006-09-15
+
 lib/README: Large update to the ancient readme file describing the files in lib.
 Alex Schultz 2006-09-12
 
