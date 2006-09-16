@@ -610,6 +610,7 @@ void set_spell_skill(object *op, object *caster, object *spob, object *dest);
 void init_spells(void);
 void dump_spells(void);
 void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator);
+int min_casting_level(object *caster, object *spell);
 int caster_level(object *caster, object *spell);
 sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags);
 int SP_level_dam_adjust(object *caster, object *spob);

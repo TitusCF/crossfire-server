@@ -1736,9 +1736,9 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
  *
  * This code adds a new spell, called alchemy.  Alchemy will turn
  * objects to gold nuggets, the value of the gold nuggets being
- * about 90% of that of the item itself.  It uses the value of the
- * object before charisma adjustments, because the nuggets themselves
- * will be will be adjusted by charisma when sold.
+ * from 5% to 40% of that of the item itself depending on casting level.
+ * It uses the value of the object before charisma adjustments, because
+ * the nuggets themselves will be will be adjusted by charisma when sold.
  *
  * Large nuggets are worth 25 gp each (base).  You will always get
  * the maximum number of large nuggets you could get.
@@ -1761,25 +1761,26 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
 static object *small, *large;
 static uint64 small_value, large_value;
 
-static void alchemy_object(object *obj, int *small_nuggets,
+static void alchemy_object(float value_adj, object *obj, int *small_nuggets,
 	 int *large_nuggets, int *weight)
 {
     uint64 value=query_cost(obj, NULL, F_TRUE);
 
-    /* Give third price when we alchemy money (This should hopefully
-     * make it so that it isn't worth it to alchemy money, sell
-     * the nuggets, alchemy the gold from that, etc.
-     * Otherwise, give 9 silver on the gold for other objects,
-     * so that it would still be more affordable to haul
-     * the stuff back to town.
+    /* Multiply the value of the object by value_adj, which should range
+     * from 0.05 to 0.40. Set value to 0 instead if unpaid.
      */
-
     if (QUERY_FLAG(obj, FLAG_UNPAID))
 	value=0;
-    else if (obj->type==MONEY || obj->type==GEM)
-	value /=3;
     else
-	value = (value*9)/10;
+        value *= value_adj;
+
+    
+    /* Give half of what value_adj says when we alchemy money (This should
+     * hopefully make it so that it isn't worth it to alchemy money, sell
+     * the nuggets, alchemy the gold from that, etc.
+     */
+    if (value && (obj->type==MONEY || obj->type==GEM))
+	value /=2;
 
     if ((obj->value>0) && rndm(0, 29)) {
 	int count;
@@ -1806,7 +1807,7 @@ static void alchemy_object(object *obj, int *small_nuggets,
     free_object(obj);
 }
 
-static void update_map(object *op, mapstruct *m, int small_nuggets, int large_nuggets,
+static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, int large_nuggets,
 	int x, int y)
 {
     object *tmp;
@@ -1839,6 +1840,7 @@ int alchemy(object *op, object *caster, object *spell_ob)
 {
     int x,y,weight=0,weight_max,large_nuggets,small_nuggets, mflags;
     sint16 nx, ny;
+    float value_adj;
     object *next,*tmp;
     mapstruct *mp;
 
@@ -1855,6 +1857,15 @@ int alchemy(object *op, object *caster, object *spell_ob)
     large=create_archetype("largenugget");
     small_value = query_cost(small, NULL, F_TRUE);
     large_value = query_cost(large, NULL, F_TRUE);
+    
+    /* Set value_adj to be a multiplier for how much of the original value
+     * will be in the nuggets. Starts at 0.05, increasing by 0.01 per casting
+     * level, maxing out at 0.40.
+     */
+    value_adj = (SP_level_dam_adjust(caster, spell_ob) / 
+        100.00) + 0.05;
+        
+    if (value_adj > 0.40) value_adj = 0.40;
 
     for(y= op->y-1;y<=op->y+1;y++) {
 	for(x= op->x-1;x<=op->x+1;x++) {
@@ -1891,14 +1902,14 @@ int alchemy(object *op, object *caster, object *spell_ob)
 			    if (tmp1->weight>0 && !QUERY_FLAG(tmp1, FLAG_NO_PICK) &&
 				!QUERY_FLAG(tmp1, FLAG_ALIVE) &&
 				!QUERY_FLAG(tmp1, FLAG_IS_CAULDRON))
-				alchemy_object(tmp1, &small_nuggets, &large_nuggets,
+				alchemy_object(value_adj, tmp1, &small_nuggets, &large_nuggets,
 					   &weight);
 			}
 		    }
-		    alchemy_object(tmp, &small_nuggets, &large_nuggets, &weight);
+		    alchemy_object(value_adj, tmp, &small_nuggets, &large_nuggets, &weight);
 	    
 		    if (weight>weight_max) {
-			update_map(op, mp, small_nuggets, large_nuggets, nx, ny);
+			place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
 			free_object(large);
 			free_object(small);
 			return 1;
@@ -1910,7 +1921,7 @@ int alchemy(object *op, object *caster, object *spell_ob)
 	     * it also prevents us from alcheming nuggets that were just created
 	     * with this spell.
 	     */
-	    update_map(op, mp, small_nuggets, large_nuggets, nx, ny);
+	    place_alchemy_objects(op, mp, small_nuggets, large_nuggets, nx, ny);
 	}
     }
     free_object(large);
