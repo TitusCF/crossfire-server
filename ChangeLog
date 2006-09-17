@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/plugins.c: Change cfapi_object_say() to use either command_say() or
+   npc_say() depending on if the object is a player. Fixes bug #1534889.
+server/monster.c, include/sproto: Move code for NPCs to talk from the code that
+   handles NPC replies into npc_say().
 server/spell_effect.c: Implement proposed alchemy changes from the mailing list.
    Make value of nuggets given range from 5% to 40%. Depends on archetype
    changes to the alchemy spell and nuggets. (Without archetype changes will

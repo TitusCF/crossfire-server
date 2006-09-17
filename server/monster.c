@@ -1663,14 +1663,18 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 
     cp = find_matching_message(op, override->msg, txt);
     if (cp) {
-        sprintf(buf,"%s says:",query_name(npc));
-	    new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
-	    new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, cp);
+        npc_say(npc, cp);
         quest_apply_items(override,op->contr);
-	    free(cp);
+        free(cp);
         return 1;
     }
     return 0;
+}
+
+void npc_say(object *npc, char *cp) {
+    char buf[MAX_BUF];
+    sprintf(buf,"%s says: %s",query_name(npc),cp);
+    new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map,buf);
 }
 
 static int talk_to_npc(object *op, object *npc, const char *txt) {

@@ -3381,8 +3381,13 @@ void* cfapi_object_say(int* type, ...)
     op = va_arg(args, object*);
     msg = va_arg(args, char*);
     va_end(args);
-
-    rv = command_say(op, msg);
+    
+    if (op->type == PLAYER) {
+        rv = command_say(op, msg);
+    } else {
+        npc_say(op, msg);
+        rv = 0;
+    }
     *type = CFAPI_INT;
     return &rv;
 }
