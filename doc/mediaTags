@@ -79,6 +79,8 @@ Existing tags
 [/b]            deactivate the bold flag
 [i]             activate the italic flag
 [/i]            deactivate the italic flag
+[ul]		start underline of text
+[/ul]		end underline of text
 [fixed]         set the font to fixed width
 [arcane]        set the font to a magical one
 [hand]          set the font to hand writing
