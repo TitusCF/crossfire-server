@@ -1116,14 +1116,15 @@ which means to negate that type.  These are all equivalant:
 move_block 6
 move_block fly_low fly_low
 move_block flying			(special symbolic name)
-move_block all -swim -walk
+move_block all -swim -walk -boat
 
 Note the order when using the -(negation) is important - the string is parsed
 left to right.  This is not equivalant to the above:
 
-move_block -swim -walk all
+move_block -swim -walk -boat all
 
-Because it will clear the swim and walk flags, and then set the flags to all.
+Because it will clear the swim, walk and boat flags, and then set the flags to
+all.
 
 Also, using only negation is not allowed - you can not do:
 
