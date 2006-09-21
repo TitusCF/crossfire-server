@@ -62,7 +62,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = crossfire$(EXEEXT)
+bin_PROGRAMS = crossfire-server$(EXEEXT)
 subdir = server
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -95,10 +95,10 @@ libserver_a_OBJECTS = $(am_libserver_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_crossfire_OBJECTS = main.$(OBJEXT)
-crossfire_OBJECTS = $(am_crossfire_OBJECTS)
+am_crossfire_server_OBJECTS = main.$(OBJEXT)
+crossfire_server_OBJECTS = $(am_crossfire_server_OBJECTS)
 am__DEPENDENCIES_1 =
-crossfire_DEPENDENCIES = libserver.a ../common/libcross.a \
+crossfire_server_DEPENDENCIES = libserver.a ../common/libcross.a \
 	../random_maps/librandom_map.a ../socket/libsocket.a \
 	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
@@ -112,8 +112,8 @@ LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libserver_a_SOURCES) $(crossfire_SOURCES)
-DIST_SOURCES = $(libserver_a_SOURCES) $(crossfire_SOURCES)
+SOURCES = $(libserver_a_SOURCES) $(crossfire_server_SOURCES)
+DIST_SOURCES = $(libserver_a_SOURCES) $(crossfire_server_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -153,7 +153,6 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
-GREP = @GREP@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
 HAVE_CHECK_FALSE = @HAVE_CHECK_FALSE@
@@ -205,15 +204,17 @@ TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
 VERSION = @VERSION@
 X11LIBS = @X11LIBS@
-XMKMF = @XMKMF@
 XSLTENGINE = @XSLTENGINE@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
+ac_ct_RANLIB = @ac_ct_RANLIB@
+ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -233,33 +234,26 @@ check_xslt_forcedprogfound = @check_xslt_forcedprogfound@
 check_xslt_sablotronfound = @check_xslt_sablotronfound@
 check_xslt_xsltprocfound = @check_xslt_xsltprocfound@
 datadir = @datadir@
-datarootdir = @datarootdir@
-docdir = @docdir@
-dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
-htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
-localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 no_x = @no_x@
 oldincludedir = @oldincludedir@
-pdfdir = @pdfdir@
 pkgconfdir = @pkgconfdir@
 pkgstatedir = @pkgstatedir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
-psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -267,7 +261,7 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 noinst_LIBRARIES = libserver.a
-crossfire_SOURCES = main.c
+crossfire_server_SOURCES = main.c
 libserver_a_SOURCES = \
 	alchemy.c\
 	apply.c\
@@ -316,9 +310,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 
 @HAVE_LIBDL_FALSE@LIBDL = 
 @HAVE_LIBDL_TRUE@LIBDL = -ldl
-@HAVE_LIBDL_FALSE@crossfire_LDFLAGS = 
-@HAVE_LIBDL_TRUE@crossfire_LDFLAGS = -export-dynamic
-crossfire_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
+@HAVE_LIBDL_FALSE@crossfire_server_LDFLAGS = 
+@HAVE_LIBDL_TRUE@crossfire_server_LDFLAGS = -export-dynamic
+crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
 		../socket/libsocket.a $(LIBDL)
 
 all: all-am
@@ -389,9 +383,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-crossfire$(EXEEXT): $(crossfire_OBJECTS) $(crossfire_DEPENDENCIES) 
-	@rm -f crossfire$(EXEEXT)
-	$(LINK) $(crossfire_LDFLAGS) $(crossfire_OBJECTS) $(crossfire_LDADD) $(LIBS)
+crossfire-server$(EXEEXT): $(crossfire_server_OBJECTS) $(crossfire_server_DEPENDENCIES) 
+	@rm -f crossfire-server$(EXEEXT)
+	$(LINK) $(crossfire_server_LDFLAGS) $(crossfire_server_OBJECTS) $(crossfire_server_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -654,7 +648,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 # Check if everything is installed as it should
 installcheck-local:
-	$(bindir)/crossfire -o
+	$(bindir)/crossfire-server -o
 
 proto:
 	cproto -D__CEXTRACT__ -o ../include/sproto.h $(CPPFLAGS) $(AM_CPPFLAGS) \

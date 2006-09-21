@@ -4,7 +4,7 @@
 CrossFire \- a multiplayer adventure and arcade game server
 
 .SH SYNOPSIS
-crossfire [-<options>]
+crossfire-server [-<options>]
 
 .SH DESCRIPTION
 .B CrossFire

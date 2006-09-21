@@ -1,5 +1,5 @@
 #!@PERL@
-$crossname = "/madhatter/bin/crossfire";
+$crossname = "/madhatter/bin/crossfire-server";
 $playerdir = "/madhatter/lib/X11/crossfire/players";
 $logcount = 0;
 $logdir= "/tmp/crosslog";

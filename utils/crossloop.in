@@ -3,7 +3,7 @@
 # This is a replacement for the crosserv.pl perl script.,
 # No point in using perl for such a simple task.
 
-CMDNAME="BINDIR/crossfire"
+CMDNAME="BINDIR/crossfire-server"
 maxrestart=500
 logdir="/tmp/crosservlog"
 

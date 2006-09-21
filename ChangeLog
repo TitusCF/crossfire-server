@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+doc/Makefile.am, server/Makefile.am, utils/crossloop.in, utils/crossloop.pl.in,
+   utils/crossloop.tmpl.in, utils/crossloop.web.in, utils/crossloop.pl.tmpl.in,
+   doc/crossfire-server.man: Rename crossfire binary to crossfire-server. Make
+   changes to account for that in crossloop and the man page.
+Alex Schultz 2006-09-20
+
 server/plugins.c: Change cfapi_object_say() to use either command_say() or
    npc_say() depending on if the object is a player. Fixes bug #1534889.
 server/monster.c, include/sproto: Move code for NPCs to talk from the code that

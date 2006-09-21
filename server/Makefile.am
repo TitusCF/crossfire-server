@@ -24,10 +24,10 @@
 #   The author can be reached via e-mail to mwedel@scruz.net
 
 
-bin_PROGRAMS = crossfire
+bin_PROGRAMS = crossfire-server
 
 noinst_LIBRARIES = libserver.a
-crossfire_SOURCES = main.c
+crossfire_server_SOURCES = main.c
 libserver_a_SOURCES = \
 	alchemy.c\
 	apply.c\
@@ -76,12 +76,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 
 if HAVE_LIBDL
 LIBDL=-ldl
-crossfire_LDFLAGS=-export-dynamic
+crossfire_server_LDFLAGS=-export-dynamic
 else
 LIBDL=
-crossfire_LDFLAGS=
+crossfire_server_LDFLAGS=
 endif
-crossfire_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
+crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
 		../socket/libsocket.a $(LIBDL)
 
 ../common/libcross.a:
@@ -95,7 +95,7 @@ crossfire_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.
 
 # Check if everything is installed as it should
 installcheck-local:
-	$(bindir)/crossfire -o
+	$(bindir)/crossfire-server -o
 
 proto:
 	cproto -D__CEXTRACT__ -o ../include/sproto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
