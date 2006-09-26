@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for CVS:
 
+server/rune.c: Cleanup spring_trap() and clean some questionable logic.
+server/attack.c: Cause spell traps to be triggered when containers with traps
+   are destroyed by a spell effect.
+Alex Schultz 2006-09-25
+
 doc/Makefile.am, server/Makefile.am, utils/crossloop.in, utils/crossloop.pl.in,
    utils/crossloop.tmpl.in, utils/crossloop.web.in, utils/crossloop.pl.tmpl.in,
    doc/crossfire-server.man: Rename crossfire binary to crossfire-server. Make

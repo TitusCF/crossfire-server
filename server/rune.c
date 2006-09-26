@@ -222,7 +222,7 @@ void spring_trap(object *trap,object *victim)
     object *env;
     tag_t trap_tag = trap->count;
     rv_vector rv;
-    int i;
+    int i, has_spell;
 
     /* Prevent recursion */
     if (trap->stats.hp <= 0)
@@ -230,12 +230,22 @@ void spring_trap(object *trap,object *victim)
 
     if (QUERY_FLAG(trap,FLAG_IS_LINKED))
 	  use_trigger(trap);
+ 
+    /* Check if this trap casts a spell */
+    has_spell = ((trap->inv && trap->inv->type == SPELL) ||
+	(trap->other_arch && trap->other_arch->clone.type == SPELL));
 
+    /* If the victim is not next to this trap, and the trap doesn't cast
+     * a spell, don't set it off.
+     */
+    get_rangevector(env, victim, &rv, 0);
+    if (rv.distance > 1 && !has_spell) return;
+     
     /* Only living objects can trigger runes that don't cast spells, as
      * doing direct damage to a non-living object doesn't work anyway.
      * Typical example is an arrow attacking a door.
      */
-    if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && !trap->inv && !trap->other_arch)
+    if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && !has_spell)
 	return;
 
     trap->stats.hp--;  /*decrement detcount */
@@ -248,18 +258,10 @@ void spring_trap(object *trap,object *victim)
      */
     env = object_get_env_recursive(trap);
 
-    /* If the victim is not next to this trap, don't set it off.
-     * players shouldn't get hit by firing arrows at a door for example.
-     * At the same time, the trap will stick around until detonated
-     */
-    get_rangevector(env, victim, &rv, 0);
-    if (rv.distance > 1) return;
-
     trap_show(trap,env);  
 
     /* Only if it is a spell do we proceed here */
-    if ((trap->inv && trap->inv->type == SPELL) ||
-	(trap->other_arch && trap->other_arch->clone.type == SPELL)) {
+    if (has_spell) {
 	object *spell;
 
 	/* This is necessary if the trap is inside something else */

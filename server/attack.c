@@ -156,12 +156,21 @@ void save_throw_object (object *op, int type, object *originator)
     if ( ! did_make_save_item (op, type,originator))
     {
 	object *env=op->env;
+        object *inv;
 	int x=op->x,y=op->y;
 	mapstruct *m=op->map;
 
         op = stop_item (op);
         if (op == NULL)
             return;
+
+        /* Set off runes in the inventory of the object being destroyed. */
+        inv=op->inv;
+        while(inv!=NULL) {
+            if (inv->type == RUNE)
+                spring_trap(inv, originator);
+            inv=inv->below;
+        }
 
 	/* Hacked the following so that type LIGHTER will work. 
 	 * Also, objects which are potenital "lights" that are hit by 
