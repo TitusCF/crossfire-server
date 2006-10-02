@@ -1310,7 +1310,7 @@ int new_save_map(mapstruct *m, int flag) {
     if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
     if (m->sky) fprintf(fp, "sky %d\n", m->sky);
     if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
-    if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", m->last_reset_time.tv_sec);
+    if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
 
     /* Save any tiling information, except on overlays */
     if (flag != 2)
