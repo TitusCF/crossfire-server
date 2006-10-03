@@ -1066,12 +1066,12 @@ int command_statistics(object *pl, char *params)
     if (!pl->contr) return 1;
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 "[fixed]  Experience: " FMT64,
-			 "  Experience: " FMT64,
+			 "[fixed]  Experience: %" FMT64,
+			 "  Experience: %" FMT64,
 			 pl->stats.exp);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 "[fixed]  Next Level: " FMT64,
-			 "  Next Level: " FMT64,
+			 "[fixed]  Next Level: %" FMT64,
+			 "  Next Level: %" FMT64,
 			 level_exp(pl->level+1, pl->expmul));
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
