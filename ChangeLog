@@ -1,4 +1,4 @@
-Changes in top level CVS tree.  A few notes when putting entries in this
+Changes in top level SVN tree.  A few notes when putting entries in this
 file:
 1) Please include a date in the form yyyy-mm-dd (yes, us americans are 
 screwed up relative to most the world, but some consistent date format
@@ -15,7 +15,7 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
-Changes for CVS:
+Changes for SVN:
 
 server/monster.c: Revert message formatting of NPC responses back to the
    two-line format. Fix a possible buffer overflow when players talk to
