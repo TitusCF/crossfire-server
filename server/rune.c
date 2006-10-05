@@ -240,8 +240,6 @@ void spring_trap(object *trap,object *victim)
     /* If the victim is not next to this trap, and the trap doesn't cast
      * a spell, don't set it off.
      */
-    env = object_get_env_recursive(trap);
-
     get_rangevector(env, victim, &rv, 0);
     if (rv.distance > 1 && !has_spell) return;
      
