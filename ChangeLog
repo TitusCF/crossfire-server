@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/rune.c: Fix mistake in revision 4979, causing get_rangevector to be called
+    with an uninitialized env.
+Alex Schultz 2006-10-04
+
 server/c_misc.c: Fix incorrect use of FMT64 in commant_statistics().
 Alex Schultz 2006-10-02
 

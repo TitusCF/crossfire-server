@@ -235,6 +235,8 @@ void spring_trap(object *trap,object *victim)
     has_spell = ((trap->inv && trap->inv->type == SPELL) ||
 	(trap->other_arch && trap->other_arch->clone.type == SPELL));
 
+    env = object_get_env_recursive(trap);
+
     /* If the victim is not next to this trap, and the trap doesn't cast
      * a spell, don't set it off.
      */
