@@ -17,6 +17,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug where in players could unequip cursed weapons by switching to a hand
+to hand skill (punching, karate, etc).
+--
+include/define.h: Add AP_NOPRINT flag.
+server/apply.c: Modify the apply_special() code to take AP_NOPRINT option,
+   which as implies, causes messages not to be printed.  Used in change
+   to skill_util.c, since the code thre prints better message about uequipping
+   of weapon.
+server/skill_util.c: Do some cleanup of unused vars in do_skill().  Modify
+   attack_hth() to call apply_special() to unequip weapon (that takes care
+   of checking cursed status, etc).
+--
+MSW 2006-10-05
+
 server/rune.c: Fix mistake in revision 4979, causing get_rangevector to be called
     with an uninitialized env.
 Alex Schultz 2006-10-04

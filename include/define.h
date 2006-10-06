@@ -924,8 +924,10 @@ enum apply_flag {
   /* Optional flags, for bitwise or with a basic flag */
     AP_NO_MERGE			= 16,
     AP_IGNORE_CURSE		= 32,
-    AP_PRINT			= 64	/* Print what to do, don't actually do it */
+    AP_PRINT			= 64,	/* Print what to do, don't actually do it */
 					/* Note this is supported in all the functions */
+    AP_NOPRINT			= 128	/* Don't print messages - caller will do that */
+					/* may be some that still print */
 
 };
 

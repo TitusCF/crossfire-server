@@ -289,8 +289,7 @@ void clear_skill(object *who)
 
 int do_skill (object *op, object *part, object *skill, int dir, const char *string) {
     int success=0, exp=0;
-    int did_alc = 0;
-    object *tmp, *next;
+    object *tmp;
 
     if (!skill) return 0;
 
@@ -984,14 +983,15 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
     if(QUERY_FLAG(pl, FLAG_READY_WEAPON))
 	for(weapon=pl->inv;weapon;weapon=weapon->below) {
 	    if (weapon->type==WEAPON && QUERY_FLAG(weapon, FLAG_APPLIED)) {
-		CLEAR_FLAG(weapon,FLAG_APPLIED);
-		CLEAR_FLAG(pl,FLAG_READY_WEAPON);
-		fix_player(pl);
-		if(pl->type==PLAYER) {
+		if (apply_special(pl, weapon, AP_UNAPPLY | AP_NOPRINT)) {
+		    new_draw_info_format(NDI_UNIQUE, 0,pl,
+				  "You are unable to unwield %s in order to attack with %s.",
+				  query_name(weapon), skill->name);
+		    return 0;
+		} else {
 		    new_draw_info(NDI_UNIQUE, 0,pl,"You unwield your weapon in order to attack.");
-		    esrv_update_item(UPD_FLAGS, pl, weapon);
+		    break;
 		}
-		break;
 	    }
 	}
     return skill_attack(enemy,pl,dir,string, skill);

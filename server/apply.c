@@ -1030,7 +1030,6 @@ static int improve_armour(object *op, object *improver, object *armour)
  */
 static int convert_item(object *item, object *converter) {
     int nr=0;
-    object *tmp;
     uint32 price_in;
 
     /* We make some assumptions - we assume if it takes money as it type,
@@ -2853,7 +2852,8 @@ static int unapply_special (object *who, object *op, int aflags)
     CLEAR_FLAG(op, FLAG_APPLIED);
     switch(op->type) {
 	case WEAPON:
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwield %s.",query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You unwield %s.",query_name(op));
 
 	    (void) change_abil (who,op);
 	    if(QUERY_FLAG(who,FLAG_READY_WEAPON))
@@ -2873,10 +2873,12 @@ static int unapply_special (object *who, object *op, int aflags)
 		if (who->contr->shoottype == range_skill)
 		    who->contr->shoottype = range_none;
 		if ( ! op->invisible) {
-		    new_draw_info_format (NDI_UNIQUE, 0, who,
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format (NDI_UNIQUE, 0, who,
                                     "You stop using the %s.", query_name(op));
 		} else {
-		    new_draw_info_format (NDI_UNIQUE, 0, who,
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format (NDI_UNIQUE, 0, who,
                                     "You can no longer use the skill: %s.",
                                     op->skill);
 		}
@@ -2896,11 +2898,13 @@ static int unapply_special (object *who, object *op, int aflags)
 	case GIRDLE:
 	case BRACERS:
 	case CLOAK:
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unwear %s.",query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You unwear %s.",query_name(op));
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You turn off your %s.",
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You turn off your %s.",
 				 op->name);
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->x = op->x;
@@ -2920,7 +2924,8 @@ static int unapply_special (object *who, object *op, int aflags)
 	    fix_player(who);
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
-		    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
 		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
 		}
 	    }
@@ -2933,7 +2938,8 @@ static int unapply_special (object *who, object *op, int aflags)
 	case ROD:
 	case HORN:
 	    clear_skill(who);
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
 	    if(who->type==PLAYER) {
 		who->contr->shoottype = range_none;
 	    } else {
@@ -2945,13 +2951,15 @@ static int unapply_special (object *who, object *op, int aflags)
 	    break;
 
     case BUILDER:
+	if (!(aflags & AP_NOPRINT))
 	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
         who->contr->shoottype = range_none;
         who->contr->ranges[ range_builder ] = NULL;
         break;
 
 	default:
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unapply %s.",query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You unapply %s.",query_name(op));
 	    break;
     }
 
@@ -3036,7 +3044,8 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * While we know it won't work, we want unapply_special to
 		     * at least generate the message.
 		     */
-		    new_draw_info_format(NDI_UNIQUE, 0, who,
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format(NDI_UNIQUE, 0, who,
 				 "No matter how hard you try, you just can't\nremove %s.",
 				 query_name(tmp));
 		    return 1;
@@ -3080,7 +3089,8 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * so it may not be critical (eg, putting on a ring and you have
 		     * one cursed ring.)
 		     */
-		    new_draw_info_format(NDI_UNIQUE, 0, who, "The %s just won't come off", query_name(tmp));
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format(NDI_UNIQUE, 0, who, "The %s just won't come off", query_name(tmp));
 		}
 		last = tmp->below;
 	    }
@@ -3264,7 +3274,8 @@ int apply_special (object *who, object *op, int aflags)
 
 	if ( ! (aflags & AP_IGNORE_CURSE)
 	    && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who,
+		if (!(aflags & AP_NOPRINT))
+		    new_draw_info_format(NDI_UNIQUE, 0, who,
 				 "No matter how hard you try, you just can't\nremove %s.",
 				 query_name(op));
 	    return 1;
@@ -3279,10 +3290,12 @@ int apply_special (object *who, object *op, int aflags)
     /* Can't just apply this object.  Lets see what not and what to do */
     if (i) {
 	if (i & CAN_APPLY_NEVER) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You don't have the body to use a %s\n", query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You don't have the body to use a %s\n", query_name(op));
 	    return 1;
 	} else if (i & CAN_APPLY_RESTRICTION) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You have a prohibition against using a %s\n", query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You have a prohibition against using a %s\n", query_name(op));
 	    return 1;
 	}
 	if (who->type != PLAYER) {
@@ -3291,7 +3304,8 @@ int apply_special (object *who, object *op, int aflags)
 	} else {
 	    if (who->contr->unapply == unapply_never || 
 		(i & CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
-		new_draw_info(NDI_UNIQUE, 0, who, "You need to unapply some item(s):");
+		if (!(aflags & AP_NOPRINT))
+		    new_draw_info(NDI_UNIQUE, 0, who, "You need to unapply some item(s):");
 		unapply_for_ob(who, op, AP_PRINT);
 		return 1;
 	    }
@@ -3304,7 +3318,8 @@ int apply_special (object *who, object *op, int aflags)
     if (op->skill && op->type != SKILL && op->type != SKILL_TOOL) {
 	skop=find_skill_by_name(who, op->skill);
 	if (!skop) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You need the %s skill to use this item!", op->skill);
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You need the %s skill to use this item!", op->skill);
 	    return 1;
 	} else {
 	    /* While experience will be credited properly, we want to change the
@@ -3316,7 +3331,8 @@ int apply_special (object *who, object *op, int aflags)
 	
     if (who->type == PLAYER && op->item_power && 
 	(op->item_power + who->contr->item_power) > (settings.item_power_factor * who->level)) {
-	new_draw_info(NDI_UNIQUE, 0, who, "Equipping that combined with other items would consume your soul!");
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info(NDI_UNIQUE, 0, who, "Equipping that combined with other items would consume your soul!");
 	return 1;
     }
 	
@@ -3338,10 +3354,12 @@ int apply_special (object *who, object *op, int aflags)
             int ownerlen=0;
             char* quotepos=NULL;
             if (!check_weapon_power(who, op->last_eat)) {
-                new_draw_info(NDI_UNIQUE, 0,who,
-                    "That weapon is too powerful for you to use.");
-                new_draw_info(NDI_UNIQUE, 0, who,
-                    "It would consume your soul!.");
+		if (!(aflags & AP_NOPRINT)) {
+		    new_draw_info(NDI_UNIQUE, 0,who,
+				  "That weapon is too powerful for you to use.");
+		    new_draw_info(NDI_UNIQUE, 0, who,
+				  "It would consume your soul!.");
+		}
                 if(tmp!=NULL)
                     (void) insert_ob_in_ob(tmp,who);
                 return 1;
@@ -3353,8 +3371,9 @@ int apply_special (object *who, object *op, int aflags)
                     /* if the weapon does not have the name as the character,
                      * can't use it. (Ragnarok's sword attempted to be used by
                      * Foo: won't work) */
-                    new_draw_info(NDI_UNIQUE, 0,who,
-                        "The weapon does not recognize you as its owner.");
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info(NDI_UNIQUE, 0,who,
+			      "The weapon does not recognize you as its owner.");
                     if(tmp!=NULL)
                         (void) insert_ob_in_ob(tmp,who);
                     return 1;
@@ -3366,8 +3385,9 @@ int apply_special (object *who, object *op, int aflags)
             if(!QUERY_FLAG(who,FLAG_READY_WEAPON))
                 SET_FLAG(who, FLAG_READY_WEAPON);
 
-            new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",
-                query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",
+			     query_name(op));
 
             (void) change_abil (who,op);
             break;
@@ -3383,16 +3403,19 @@ int apply_special (object *who, object *op, int aflags)
 	case RING:
 	case AMULET:
 	    SET_FLAG(op, FLAG_APPLIED);
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You wear %s.",query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You wear %s.",query_name(op));
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
 	    if (op->stats.food < 1) {
-		new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s is out of"
+		if (!(aflags & AP_NOPRINT))
+		    new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s is out of"
 				     " fuel!", op->name);
 		return 1;
 	    }
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You turn on your %s.",
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format(NDI_UNIQUE, 0, who, "You turn on your %s.",
 				 op->name);
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->stats.food = op->stats.food;
@@ -3416,7 +3439,8 @@ int apply_special (object *who, object *op, int aflags)
 	    fix_player(who);
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
-		    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
 		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
 		}
 	    }
@@ -3436,13 +3460,16 @@ int apply_special (object *who, object *op, int aflags)
 		who->contr->shoottype = range_skill;
 		who->contr->ranges[range_skill] = op;
 		if ( ! op->invisible) {
-		    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
+		    if (!(aflags & AP_NOPRINT)) {
+			new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
                                   query_name (op));
-		    new_draw_info_format (NDI_UNIQUE, 0, who,
+			new_draw_info_format (NDI_UNIQUE, 0, who,
 			      "You can now use the skill: %s.",
 				op->skill);
+		    }
 		} else {
-		    new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
 				      op->skill? op->skill:op->name);
 		}
 	    }
@@ -3454,16 +3481,20 @@ int apply_special (object *who, object *op, int aflags)
 	
 	case BOW:
 	    if (!check_weapon_power(who, op->last_eat)) {
-		new_draw_info(NDI_UNIQUE, 0, who,
-		    "That item is too powerful for you to use.");
-		new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+		if (!(aflags & AP_NOPRINT)) {
+		    new_draw_info(NDI_UNIQUE, 0, who,
+			  "That item is too powerful for you to use.");
+		    new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+		}
 		if(tmp != NULL)
 		    (void)insert_ob_in_ob(tmp,who);
 		return 1;
 	    }
 	    if( op->level && (strncmp(op->name,who->name,strlen(who->name)))) {
-		new_draw_info(NDI_UNIQUE, 0, who,
-		    "The weapon does not recognize you as its owner.");
+		if (!(aflags & AP_NOPRINT)) {
+		    new_draw_info(NDI_UNIQUE, 0, who,
+				  "The weapon does not recognize you as its owner.");
+		}
 		if(tmp != NULL)
 		    (void)insert_ob_in_ob(tmp,who);
 		return 1;
@@ -3475,12 +3506,14 @@ int apply_special (object *who, object *op, int aflags)
 	    /* check for skill, alter player status */ 
 	    SET_FLAG(op, FLAG_APPLIED);
 	    if (skop) change_skill(who, skop, 0);
-	    new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
+	    if (!(aflags & AP_NOPRINT))
+		new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
 
 	    if(who->type==PLAYER) {
 		if (op->type == BOW) {
 		    (void)change_abil(who, op);
-		    new_draw_info_format (NDI_UNIQUE, 0, who,
+		    if (!(aflags & AP_NOPRINT))
+			new_draw_info_format (NDI_UNIQUE, 0, who,
                               "You will now fire %s with %s.",
 	                      op->race ? op->race : "nothing", query_name(op));
 		    who->contr->shoottype = range_bow;
@@ -3500,7 +3533,8 @@ int apply_special (object *who, object *op, int aflags)
             unapply_special( who, who->contr->ranges[ range_builder ], 0 );
         who->contr->shoottype = range_builder;
         who->contr->ranges[ range_builder ] = op;
-        new_draw_info_format( NDI_UNIQUE, 0, who, "You ready your %s.", query_name( op ) );
+	if (!(aflags & AP_NOPRINT))
+	    new_draw_info_format( NDI_UNIQUE, 0, who, "You ready your %s.", query_name( op ) );
         break;
 
 	default:
