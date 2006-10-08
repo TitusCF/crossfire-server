@@ -921,6 +921,7 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 {
     char buf[MAX_BUF];
     object *floor;
+    tag_t tmp_tag;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
@@ -991,17 +992,16 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 #endif /* SAVE_INTERVAL */
 
 
-    if ( !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY) {
-        if (is_in_shop(op))
-            sell_item(tmp,op);
-    }
-
     tmp->x = op->x;
     tmp->y = op->y;
 
     if (op->type == PLAYER)
         esrv_del_item (op->contr, tmp->count);
+    tmp_tag = tmp->count;
     insert_ob_in_map(tmp, op->map, op,0);
+    if (!was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
+        sell_item(tmp, op);
+    }
 
 
     SET_FLAG (op, FLAG_NO_APPLY);

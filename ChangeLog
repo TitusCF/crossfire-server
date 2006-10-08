@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Make converters inside shops work again.
+---
+server/c_object.c: Sell item after dropping because converters do not accept
+   unpaid items.
+Andreas Kirschbaum 2006-10-08
+
 Fix bug where in players could unequip cursed weapons by switching to a hand
 to hand skill (punching, karate, etc).
 --
