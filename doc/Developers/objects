@@ -509,8 +509,8 @@ Nice tune...
 Bah, humbug to you!
 
 Avoid using '*' except in the form '@match *'.  If the above conversation were
-amended to also contain a '@match *', neither the the 'key*' nor the '*bug'
-keys would work.
+amended to also contain a '@match *', neither the 'hum*' nor the '*bug' keys
+would work.
 
 In fact, '*' is not needed as used in the above examples since '@match sss'
 operates the same way as '@match *sss*' would be expected to operate in a
