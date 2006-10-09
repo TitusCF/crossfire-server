@@ -467,24 +467,79 @@ is typically not useful to set this in maps or in archetypes.
 I. NPC's Speak out
 ==================
 
-The message structure in a monster can contain:
+The message structure in a monster may contain:
 @match <key>|<key>[...]
   [text]
 [...]
 
-
-This identifies what the monster will say if talked to with a text
-which matches any keys.
-A key contaning '*' will match anything.
+This identifies what the monster will say if talked to with a text that matches
+any keys.  They keys are processed as primitive regular expressions, so some
+characters act as match operators or metacharacters.  The asterisk, caret,
+square braces, and dollar characters are useful to some degree.
 
 An example of usage:
+
 @match hello|hi
 Welcome, good friend!
 @match bye
 Goodbye!
+@match sss
+Whasssamatter?  You got a lisssp or sssomething?
+@match yes
+Sssorry, me too.
+@match ^no$
+You're lucky!
 @match *
-What did you say?
+What did you sssay?
 
+a. Wildcard Character
+
+A key containing only '*' will match anything, but it is not handled in the
+same way that regular expressions are normally handled.
+
+If a message does not contain an '@match *', then the first key that contains
+an asterisk will be treated as though the key was '*'.  In the example below,
+if the player says anything, the NPC will say 'Nice tune...' no matter what the
+player says, even if it does not end with 'bug'.  It will not be possible for
+the NPC to say 'Bah, humbug to you!'.
+
+@match hum*
+Nice tune...
+@match *bug
+Bah, humbug to you!
+
+Avoid using '*' except in the form '@match *'.  If the above conversation were
+amended to also contain a '@match *', neither the the 'key*' nor the '*bug'
+keys would work.
+
+In fact, '*' is not needed as used in the above examples since '@match sss'
+operates the same way as '@match *sss*' would be expected to operate in a
+regular expression.  Because of this, be especially careful with short word
+matches like yes/no answers to questions.  '@match yes' triggers when the
+player enters any word with 'yes' in it!  If a conversation contains the word
+'yesterday' or 'nobody', the player might type one of these words and the NPC
+might think they said 'yes' or 'no'.
+
+b. Word Boundaries
+
+If you want to prevent a match string from matching partial words, use the '^'
+and '$' metacharacters to bound the word.  In the first example, the NPC only
+responds when the player says 'no', and not when the player says any other
+word that contains 'no'.
+
+c. Case Insensitivity
+
+Keys need not contain case variations even though old maps often did.  For
+example, '@match hello' works just as well as the more verbose versions like
+'@match Hello|hello' and '@match "[Hh]ello'.  The matches are done after both
+the match list and the player text are converted to lowercase.
+
+d. Multiple Choice
+
+The square braces may be used to construct special matches.  For example, a
+key of '[jy]ello' would match 'jello' or even 'yellow'.
+
+e. Quest support
 
 As a special case, if the line just after match is 'quest xxx', then
 the NPC will only display the text (without the quote line) if the player
@@ -493,8 +548,10 @@ is currently doing indicated quest. See also 'quests' document.
 Obviously this feature can be expanded extensively, so expect it
 to evolve till the next version.
 
+f. Other Considerations
+
 You might not want to put messages into archetype creatures, this feature is
-more for making special npcs for maps.  However, certain generic messages in
+more for making special NPCs for maps.  However, certain generic messages in
 archetypes might add to the general game ambiance a bit (by default: dogs
 would say "arf arf" guards would say "move along"...) - tm
 
@@ -1011,7 +1068,7 @@ Using this information is quite easy - for objects, just add the approprate
 body_.. with a negative value.  For monsters, put those in with a positive
 value.  If a monster has a location to use an object, is is presumed in the
 code that the monster should pick up/equip objects into that location.
-Thus, setting these for monsters may not reall match what they have,
+Thus, setting these for monsters may not really match what they have,
 eg, kobolds have arms, but it is still set to 0 so that they won't equip
 things.  The above information largely replaces the CAN_USE information.
 

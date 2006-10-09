@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+doc/Developers/objects updated to better describe @match use in objects. Many
+objects contain useless case handling keys like @match Hello|hello because
+mapmakers do not know how @match works.  Also add mention of the limited
+regular expression support that applies to match keys.
+Kevin R. Bulgrien 2006-10-08
+
 Make converters inside shops work again.
 ---
 server/c_object.c: Sell item after dropping because converters do not accept
