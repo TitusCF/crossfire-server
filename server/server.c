@@ -1207,6 +1207,26 @@ void leave(player *pl, int draw_exit) {
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
 	    pl->socket.host);
 
+	/* If this player is the captain of the transport, need to do
+	 * some extra work.  By the time we get here, remove_ob()
+	 * should have already been called.
+	 */
+	if (pl->transport && pl->transport->contr == pl) {
+	    /* If inv is a non player, inv->contr will be NULL, but that
+	     * is OK.
+	     */
+	    if (pl->transport->inv)
+		pl->transport->contr = pl->transport->inv->contr;
+	    else
+		pl->transport->contr = NULL;
+
+	    if (pl->transport->contr) {
+		new_draw_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
+		     "%s has left.  You are now the captain of %s",
+				     pl->ob->name, query_name(pl->transport));
+	    }
+	}
+
 	(void) sprintf(buf,"%s left the game.",pl->ob->name);
 	if (pl->ob->map) {
 	    if (pl->ob->map->in_memory==MAP_IN_MEMORY)

@@ -116,6 +116,11 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	if (!inv) {
 	    old_transport->face = old_transport->arch->clone.face;
 	    old_transport->animation_id = old_transport->arch->clone.animation_id;
+	} else {
+	    old_transport->contr = inv->contr;
+	    new_draw_info_format(NDI_UNIQUE, 0, inv,
+				 "%s has disembarked.  You are now the captain of %s",
+				 pl->name, query_name(old_transport));
 	}
 	return 1;
     } 

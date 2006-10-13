@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/apply.c: If the captain of a transport exits the transport, make the
+   next player on the transport the captain.
+server/server.c: Like change to apply.c to make player another player captain
+   if one leaves the game.  But in addition, in all cases, we need to clean
+   up the transport->contr pointer, which will otherwise cause crashes.
+MSW 2006-10-12
+
 common/readable.c: Rewrite god_info_msg() - a buffer overflow crash was seen
   on metalforge, and the old code had lots of dangerous string operations
   (non safe strcats, sprintf with overlapping buffers).  No code is
