@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/readable.c: Rewrite god_info_msg() - a buffer overflow crash was seen
+  on metalforge, and the old code had lots of dangerous string operations
+  (non safe strcats, sprintf with overlapping buffers).  No code is
+  functionally equivalant, just uses safe string funtions.
+MSW 2006-10-12
+
 doc/Developers/objects updated to better describe @match use in objects. Many
 objects contain useless case handling keys like @match Hello|hello because
 mapmakers do not know how @match works.  Also add mention of the limited

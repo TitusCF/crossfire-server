@@ -1750,183 +1750,204 @@ god_info_msg (int level, int booksize)
     static char retbuf[BOOK_BUF];
     const char   *name = NULL;
     char buf[BOOK_BUF];
-    int     i;
+    int     i, retlen, buflen;
     size_t  introlen;
     object *god = pntr_to_god_obj (get_rand_god ());
+
+    if (booksize > BOOK_BUF) {
+	LOG(llevError,"common/readable.c:god_info_msg() - passed in booksize (%d) is larger than book buffer (%d)\n",
+	    booksize, BOOK_BUF);
+	booksize = BOOK_BUF;
+    }
 
     if (!god)
 	return (char *) NULL;	/* oops, problems... */
     name = god->name;
 
     /* preamble.. */
-    sprintf (retbuf, "This document contains knowledge concerning\n");
-    sprintf (retbuf, "%sthe diety %s", retbuf, name);
+    snprintf (retbuf, BOOK_BUF, 
+	      "This document contains knowledge concerning the diety %s", 
+	      name);
+
+    retlen = strlen(retbuf);
 
     /* Always have as default information the god's descriptive terms. */
-    if (nstrtok (god->msg, ",") > 0)
-      {
-	  strcat (retbuf, ", known as");
-	  strcat (retbuf, strtoktolin (god->msg, ","));
-      }
+    if (nstrtok (god->msg, ",") > 0) {
+	  safe_strcat(retbuf, ", known as", &retlen, BOOK_BUF);
+	  safe_strcat (retbuf, strtoktolin (god->msg, ","), &retlen, BOOK_BUF);
+    }
     else
-	strcat (retbuf, "...");
+	safe_strcat (retbuf, "...", &retlen, BOOK_BUF);
 
-    strcat (retbuf, "\n ---\n");
-    introlen = strlen (retbuf);	/* so we will know if no new info is added later */
+    safe_strcat (retbuf, "\n ---\n", &retlen, BOOK_BUF);
+
+    introlen = retlen;	/* so we will know if no new info is added later */
 
     /* Information about the god is random, and based on the level of the
-     * 'book'. Probably there is a more intellegent way to implement
-     * this ...
+     * 'book'. This goes through this loop 'level' times, reducing level by
+     * 1 each time.  If the info provided is filled up, we exit the loop.
+     * otherwise, buf is appended to the existing book buffer.
      */
 
-    while (level > 0)
-      {
-	  sprintf (buf, " ");
-	  if (level == 2 && RANDOM () % 2)
-	    {			/* enemy god */
-		const char   *enemy = god->title;
-		if (enemy)
-		    sprintf (buf, "The gods %s and %s are enemies.\n ---\n",
-			     name, enemy);
-	    }
-	  if (level == 3 && RANDOM () % 2)
-	    {			/* enemy race, what the god's holy word effects */
-		const char   *enemy = god->slaying;
-		if (enemy && !(god->path_denied & PATH_TURNING))
-		    if ((i = nstrtok (enemy, ",")) > 0)
-		      {
-			  char    tmpbuf[MAX_BUF];
-			  sprintf (buf, "The holy words of %s have the power to\n", name);
-			  strcat (buf, "slay creatures belonging to the ");
-			  if (i > 1)
-			      sprintf (tmpbuf, "following \n races:%s",
-				       strtoktolin (enemy, ","));
-			  else
-			      sprintf (tmpbuf, "race of%s", strtoktolin (enemy, ","));
-			  sprintf (buf, "%s%s\n ---\n", buf, tmpbuf);
-		      }
-	    }
-	  if (level == 4 && RANDOM () % 2) 
-	    {			/* Priest of god gets these protect,vulnerable... */
-		char    tmpbuf[MAX_BUF],*cp;
+    while (level > 0) {
+	sprintf (buf, " ");
+	if (level == 2 && RANDOM () % 2) {
+	    /* enemy god */
 
-		cp = describe_resistance(god, 1);
+	    if (god->title)
+		snprintf (buf, BOOK_BUF,
+		      "The gods %s and %s are enemies.\n ---\n",
+		      name, god->title);
+	}
+	if (level == 3 && RANDOM () % 2) {
+	    /* enemy race, what the god's holy word effects */
+	    const char   *enemy = god->slaying;
 
-		if (*cp) {  /* This god does have protections */
-		    sprintf (tmpbuf, "%s has a potent aura which is extended\n"
-			 ,name);
-		    strcat (tmpbuf, "faithful priests. The effects of this aura include:\n");
-		    strcat(tmpbuf, cp);
-		    strcat (buf, tmpbuf);
-		    strcat (buf, "\n ---\n");
+	    if (enemy && !(god->path_denied & PATH_TURNING) && 
+		(i = nstrtok (enemy, ",")) > 0) {
+		    char    tmpbuf[MAX_BUF];
+
+		    snprintf (buf, BOOK_BUF,
+			    "The holy words of %s have the power to "
+			    "slay creatures belonging to the ",
+			    name);
+		
+		    if (i > 1)
+			snprintf (tmpbuf, MAX_BUF, "following races:%s\n ---\n",
+				  strtoktolin (enemy, ","));
+		    else
+			snprintf (tmpbuf, MAX_BUF, "race of%s\n ---\n", 
+				  strtoktolin (enemy, ","));
+
+		    buflen = strlen(buf);
+		    safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
+	    }
+	}
+	if (level == 4 && RANDOM () % 2) {
+	    /* Priest of god gets these protect,vulnerable... */
+
+	    char *cp = describe_resistance(god, 1);
+
+	    if (*cp) {  /* This god does have protections */
+		snprintf (buf, BOOK_BUF,
+		      "%s has a potent aura which is extended to"
+		      "faithful priests. The effects of this aura include:\n"
+		      "%s\n ---\n",
+		      name, cp);
+	    }
+	}
+	if (level == 5 && RANDOM () % 2) {
+	    /* aligned race, summoning  */
+	    const char   *race = god->race;	/* aligned race */
+
+	    if (race && !(god->path_denied & PATH_SUMMON))
+		if ((i = nstrtok (race, ",")) > 0) {
+		    char    tmpbuf[MAX_BUF];
+
+		    snprintf (buf, BOOK_BUF,
+			    "Creatures sacred to %s include the \n",
+			    name);
+
+		    if (i > 1)
+			snprintf (tmpbuf, MAX_BUF,
+				  "following races:%s\n ---\n",
+				  strtoktolin (race, ","));
+		    else
+			snprintf (tmpbuf, MAX_BUF,
+				  "race of %s\n ---\n", 
+				  strtoktolin (race, ","));
+
+		    buflen = strlen(buf);
+		    safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
 		}
-		else
-		    sprintf (buf, " ");
-	    }
-	  if (level == 5 && RANDOM () % 2)
-	    {			/* aligned race, summoning  */
-		const char   *race = god->race;	/* aligned race */
-		if (race && !(god->path_denied & PATH_SUMMON))
-		    if ((i = nstrtok (race, ",")) > 0)
-		      {
-			  char    tmpbuf[MAX_BUF];
-			  sprintf (buf, "Creatures sacred to %s include the \n", name);
-			  if (i > 1)
-			      sprintf (tmpbuf, "following \n races:%s",
-				       strtoktolin (race, ","));
-			  else
-			      sprintf (tmpbuf, "race of%s", strtoktolin (race, ","));
-			  sprintf (buf, "%s%s\n ---\n", buf, tmpbuf);
-		      }
-	    }
-	  if (level == 6 && RANDOM () % 2)
-	    {			/* blessing,curse properties of the god */
-		char    tmpbuf[MAX_BUF],*cp;
+	}
+	if (level == 6 && RANDOM () % 2) {
+	    /* blessing,curse properties of the god */
 
-		cp = describe_resistance(god, 1);
+	    char *cp = describe_resistance(god, 1);
 
-		if (*cp) {  /* This god does have protections */
-		    sprintf (tmpbuf, "\nThe priests of %s are known to be able to \n"
-			 ,name);
-		    strcat (tmpbuf, "bestow a blessing which makes the recipient\n");
-		    strcat(tmpbuf, cp);
-		    strcat (buf, tmpbuf);
-		    strcat (buf, "\n ---\n");
-		}
-		else
-		    sprintf (buf, " ");
-
+	    if (*cp) {  /* This god does have protections */
+		snprintf (buf, MAX_BUF,
+			      "%s\nThe priests of %s are known to be able to "
+			      "bestow a blessing which makes the recipient "
+			      "%s\n ---\n",
+			      buf, name, cp);
 	    }
-	  if (level == 8 && RANDOM () % 2)
-	    {			/* immunity, holy possession */
-		int     has_effect = 0, tmpvar;
-		char    tmpbuf[MAX_BUF];
-		sprintf (tmpbuf, "\n");
-		sprintf (tmpbuf, "The priests of %s are known to make cast a mighty \n"
+	}
+	if (level == 8 && RANDOM () % 2) {
+	    /* immunity, holy possession */
+	    int     has_effect = 0, tmpvar;
+	    char    tmpbuf[MAX_BUF];
+
+	    snprintf (buf, MAX_BUF,
+			  "\nThe priests of %s are known to make cast a mighty "
+			  "prayer of possession which gives the recipient"
 			 ,name);
 
-		strcat (tmpbuf, "prayer of possession which gives the recipient\n");
-
-		for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
-		    if (god->resist[tmpvar]==100) {
-			has_effect = 1;
-			sprintf(tmpbuf + strlen(tmpbuf),"Immunity to %s", attacktype_desc[tmpvar]);
-		    }
+	    for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
+		if (god->resist[tmpvar]==100) {
+		    has_effect = 1;
+		    snprintf(tmpbuf, MAX_BUF,"Immunity to %s", 
+				 attacktype_desc[tmpvar]);
 		}
-		if (has_effect) {
-		      strcat (buf, tmpbuf);
-		      strcat (buf, "\n ---\n");
-		}
-		else
-		    sprintf (buf, " ");
 	    }
-	  if (level == 12 && RANDOM () % 2)
-	    {			/* spell paths */
-		int     has_effect = 0, tmpvar;
-		char    tmpbuf[MAX_BUF];
-		sprintf (tmpbuf, "\n");
-		sprintf (tmpbuf, "It is rarely known fact that the priests of %s\n"
-			 ,name);
-		strcat (tmpbuf, "are mystically transformed. Effects of this include:\n");
-		if ((tmpvar = god->path_attuned))
-		  {
-		      has_effect = 1;
-		      DESCRIBE_PATH (tmpbuf, tmpvar, "Attuned");
-		  }
-		if ((tmpvar = god->path_repelled))
-		  {
-		      has_effect = 1;
-		      DESCRIBE_PATH (tmpbuf, tmpvar, "Repelled");
-		  }
-		if ((tmpvar = god->path_denied))
-		  {
-		      has_effect = 1;
-		      DESCRIBE_PATH (tmpbuf, tmpvar, "Denied");
-		  }
-		if (has_effect)
-		  {
-		      strcat (buf, tmpbuf);
-		      strcat (buf, "\n ---\n");
-		  }
-		else
-		    sprintf (buf, " ");
+	    if (has_effect) {
+		buflen = strlen(buf);
+		safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
+		safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
 	    }
+	    else
+		sprintf (buf, " ");
+	}
+	if (level == 12 && RANDOM () % 2) {
+	    /* spell paths */
+	    int     has_effect = 0;
 
-	  /* check to be sure new buffer size dont exceed either
-	   * the maximum buffer size, or the 'natural' size of the
-	   * book...
-	   */
-	  if (book_overflow (retbuf, buf, booksize))
+	    snprintf (buf, MAX_BUF,
+		     "It is rarely known fact that the priests of %s "
+		     "are mystically transformed. Effects of this include:\n",
+		     name);
+	    buflen = strlen(buf);
+
+	    if (god->path_attuned) {
+		has_effect = 1;
+		DESCRIBE_PATH_SAFE (buf, god->path_attuned, "Attuned", 
+				    &buflen, BOOK_BUF);
+	    }
+	    if (god->path_repelled) {
+		has_effect = 1;
+		DESCRIBE_PATH_SAFE (buf, god->path_repelled, "Repelled",
+				    &buflen, BOOK_BUF);
+	    }
+	    if (god->path_denied) {
+		has_effect = 1;
+		DESCRIBE_PATH_SAFE (buf, god->path_denied, "Denied",
+				    &buflen, BOOK_BUF);
+	    }
+	    if (has_effect) {
+		safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
+	    }
+	    else
+		sprintf (buf, " ");
+	}
+
+	/* check to be sure new buffer size dont exceed either
+	 * the maximum buffer size, or the 'natural' size of the
+	 * book...
+	 */
+	if (book_overflow (retbuf, buf, booksize))
 	      break;
-	  else if (strlen (buf) > 1)
-	      strcat (retbuf, buf);
-	  level--;
-      }
-    if (strlen (retbuf) == introlen)
-      {				/* we got no information beyond the preamble! */
-	  strcat (retbuf, " [Unfortunately the rest of the information is\n");
-	  strcat (retbuf, "  hopelessly garbled!]\n ---\n");
-      }
+	else if (strlen (buf) > 1)
+	      safe_strcat (retbuf, buf, &retlen, BOOK_BUF);
+
+	level--;
+    }
+    if (retlen == introlen) {
+	/* we got no information beyond the preamble! */
+	safe_strcat (retbuf, 
+		     " Unfortunately the rest of the information is"
+		     "  hopelessly garbled!\n ---\n", &retlen, BOOK_BUF);
+    }
 #ifdef BOOK_MSG_DEBUG
     LOG (llevDebug, "\n god_info_msg() created strng: %d\n", strlen (retbuf));
     fprintf (logfile, " MADE THIS:\n%s", retbuf);
