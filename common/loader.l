@@ -43,6 +43,7 @@ static char *yval(void);
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
+int	msglen=0, total_msglen=0;
 static char lorebuf[HUGE_BUF];
 
 /* Maps the MOVE_* values to names */
@@ -616,17 +617,20 @@ A	.+
 
 %}
 
-^msg{WS}$	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; }
+^msg{WS}$	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msglen=0; total_msglen=0;}
 <MESSAGE>^endmsg{WS}$ {	BEGIN( INITIAL );
 			op->msg=add_string(msgbuf);
 			/* Just print a warning so we can be reasonably safe
 			 * about not overflowing the buffer.
 			 */
-			if (strlen(op->msg) > (HUGE_BUF/2))
+			if (total_msglen > (HUGE_BUF/2))
 			    LOG(llevDebug, "\n\tWarning message length > %d (max allowed=%d): %d\n>%.80s<\n",
-				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
+				HUGE_BUF/2, HUGE_BUF, total_msglen,op->msg);
 		    }
-<MESSAGE>.*	    {strcat(msgbuf, yytext); strcat(msgbuf,"\n"); }
+<MESSAGE>.*	    {	safe_strcat(msgbuf, yytext, &msglen, HUGE_BUF);
+			safe_strcat(msgbuf, "\n", &msglen, HUGE_BUF);
+			total_msglen += strlen(yytext) + 1;
+		    }
 
 ^lore{WS}$	    {	BEGIN( LORE ); lorebuf[0]='\0'; }
 <LORE>^endlore{WS}$ {	BEGIN( INITIAL );
@@ -694,6 +698,8 @@ A	.+
 			    }
 			    strcpy(msgbuf, "");
 			    strcpy(lorebuf, "");
+			    msglen=0;
+			    total_msglen=0;
 			    lex_load(tmp, map_flags);
 			    if (tmp->arch) {
 				insert_ob_in_ob(tmp,op);
@@ -1116,6 +1122,8 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     char inbuf[MAX_BUF];
 
     strcpy(msgbuf, "");
+    msglen=0;
+    total_msglen=0;
     strcpy(lorebuf, "");
     if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
 /*	LOG(llevDebug,"Switching lex buffers\n");*/
@@ -1158,6 +1166,8 @@ int set_variable(object *op,char *buf) {
     int retval;
 
     strcpy(msgbuf, "");
+    msglen=0;
+    total_msglen=0;
     strcpy(lorebuf, "");
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);

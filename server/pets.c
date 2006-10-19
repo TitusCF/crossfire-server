@@ -255,9 +255,11 @@ void remove_all_pets(mapstruct *map) {
     if(obl->ob->type != PLAYER && QUERY_FLAG(obl->ob,FLAG_FRIENDLY) &&
        (owner = get_owner(obl->ob)) != NULL && !on_same_map(owner, obl->ob))
     {
-	/* follow owner checks map status for us */
+	/* follow owner checks map status for us.  Note that pet can
+	 * die in follow_owner, so check for obl->ob existence
+	 */
 	follow_owner(obl->ob,owner);
-	if(QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
+	if(obl->ob && QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
 	    object *ob = obl->ob;
 	    LOG(llevMonster,"(pet failed to follow)\n");
 	    remove_friendly_object(ob);

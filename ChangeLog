@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/loader.l: Make it so that long msg/endmsg won't overflow temp buffer
+  by using safe_strcat.  Will result in long messages being truncated, but
+  better than crashes.
+server/pets.c: Check for existance of object existance after call to
+  follow_owner() in remove_all_pets().  Can be cases where put is killed
+  when moving to new map.
+MSW 2006-10-18
+
 server/apply.c: If the captain of a transport exits the transport, make the
    next player on the transport the captain.
 server/server.c: Like change to apply.c to make player another player captain
