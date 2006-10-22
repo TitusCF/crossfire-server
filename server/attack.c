@@ -2096,24 +2096,32 @@ void paralyze_player(object *op, object *hitter, int dam)
 
 
 /**
- * Attempts to kill 'op'.  hitter is the attack object, dam is
+ * Attempts to kill 'op'. hitter is the attack object, dam is
  * the computed damaged.
+ *
+ * The intention of a death attack is to kill outright things
+ * that are a lot weaker than the attacker, have a chance of killing
+ * things somewhat weaker than the caster, and no chance of
+ * killing something equal or stronger than the attacker.
+ *
+ * If a deathstrike attack has a slaying, only a monster
+ * whose name or race matches a comma-delimited list in the slaying
+ * field of the deathstriking object is affected (this includes undead).
+ * If no slaying set, only undead are unaffected.
  */
 static void deathstrike_player(object *op, object *hitter, int *dam) 
 {
-    /*  The intention of a death attack is to kill outright things
-    **  that are a lot weaker than the attacker, have a chance of killing
-    **  things somewhat weaker than the caster, and no chance of
-    **  killing something equal or stronger than the attacker.
-    **  Also, if a deathstrike attack has a slaying, any monster
-    **  whose name or race matches a comma-delimited list in the slaying
-    **  field of the deathstriking object  */
-
     int atk_lev, def_lev, kill_lev;
 
-    if(hitter->slaying) 
-	if(!( (QUERY_FLAG(op,FLAG_UNDEAD)&&strstr(hitter->slaying,undead_name)) ||
-		(op->race&&strstr(hitter->slaying,op->race))))	return;
+    if(hitter->slaying)
+    {
+        if(!( (QUERY_FLAG(op,FLAG_UNDEAD)&&strstr(hitter->slaying,undead_name)) ||
+            (op->race&&strstr(hitter->slaying,op->race))))
+            return;
+    }
+    else
+        if (QUERY_FLAG(op, FLAG_UNDEAD))
+            return;
 
     def_lev = op->level;
     if (def_lev < 1) {

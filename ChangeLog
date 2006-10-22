@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1573381 (death attacks does works on skull)
+server/attack.c: check for undead when no slaying set for hitter in deathstrike_player.
+Ryo 2006-10-22
+
 Fix for bug #1553636 (Crashbug: reset/swaped map after use of "overlay_save").
 Make command coherent with ingame command (command_overlay_save since overlay_save).
 Add 'overlay_reset' command to reset a saved overlay.
