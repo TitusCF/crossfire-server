@@ -1331,8 +1331,11 @@ int new_save_map(mapstruct *m, int flag) {
 	if ((fp2 = fopen (buf, "w")) == NULL) {
 	    LOG(llevError, "Can't open unique items file %s\n", buf);
 	}
-	if (flag == 2)
+    if (flag == 2) {
+        // 2 is non destructive save, so map is still valid.
 	    save_objects(m, fp, fp2, 2);
+        m->in_memory = MAP_IN_MEMORY;
+    }
 	else
 	    save_objects (m, fp, fp2, 0);
 	if (fp2 != NULL) {

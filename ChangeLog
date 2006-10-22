@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1553636 (Crashbug: reset/swaped map after use of "overlay_save").
+Make command coherent with ingame command (command_overlay_save since overlay_save).
+Add 'overlay_reset' command to reset a saved overlay.
+common/map.c: if flag is 2, map is still valid (non destructive save).
+include/sproto.h: rename function, new function.
+server/c_wiz.c: no need to save and reload the map for overlay. Rename function. New function.
+server/commands.c: rename function, new function.
+Ryo 2006-10-22
+
 common/loader.l: Make it so that long msg/endmsg won't overflow temp buffer
   by using safe_strcat.  Will result in long messages being truncated, but
   better than crashes.

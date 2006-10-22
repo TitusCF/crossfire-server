@@ -285,7 +285,7 @@ int command_kick(object *op, const char *params) {
     return 1;
 }
 
-int command_save_overlay(object *op, char *params) {
+int command_overlay_save(object *op, char *params) {
     if (!op)
         return 0;
 
@@ -296,12 +296,30 @@ int command_save_overlay(object *op, char *params) {
     }
 
     new_save_map(op->map, 2);
-    new_save_map(op->map, 0);
+    // No need to save again the map and reset it. OVerlay saving is non destructive.
+    // new_save_map(op->map, 0);
+    // This fixes bug #1553636 (Crashbug: reset/swaped map after use of "overlay_save")
+    // Ryo 2006-10-22
     new_draw_info(NDI_UNIQUE, 0, op, "Current map has been saved as an"
         " overlay.");
 
-    ready_map_name(op->map->path, 0);
+    //ready_map_name(op->map->path, 0);
 
+    return 1;
+}
+
+int command_overlay_reset(object *op, char* params) {
+    char filename[MAX_BUF];
+    struct stat stats;
+    strcpy(filename, create_overlay_pathname(op->map->path));
+    if (!stat(filename, &stats))
+        if (!unlink(filename))
+            new_draw_info(NDI_UNIQUE, 0, op, "Overlay successfully removed.");
+        else
+            new_draw_info(NDI_UNIQUE, 0, op, "Overlay couldn't be removed.");
+    else
+        new_draw_info(NDI_UNIQUE, 0, op, "No overlay for current map.");
+    
     return 1;
 }
 
