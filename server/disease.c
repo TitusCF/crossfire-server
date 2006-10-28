@@ -526,9 +526,9 @@ int move_symptom(object *symptom) {
     int sp_reduce;
 
     if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
-	remove_ob(symptom);
-	free_object(symptom);
-	return 0;
+        remove_ob(symptom);
+        free_object(symptom);
+        return 0;
     }
 
     if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype,1);
@@ -545,19 +545,30 @@ int move_symptom(object *symptom) {
 
     if(victim->map==NULL) return 0;
     if(symptom->other_arch) {
-	object *tmp;
-	tmp=victim;
-	if(tmp->head!=NULL) tmp=tmp->head;
-	for(/*tmp initialized above */;tmp!=NULL;tmp=tmp->more) {
-	    new_ob = arch_to_object(symptom->other_arch);
-	    new_ob->x = tmp->x;
-	    new_ob->y = tmp->y;
-	    new_ob->map = victim->map;
-	    insert_ob_in_map(new_ob,victim->map,victim,0);
-	}
+        object *tmp;
+        tmp=victim;
+        if(tmp->head!=NULL) tmp=tmp->head;
+        for(/*tmp initialized above */;tmp!=NULL;tmp=tmp->more) {
+            char name[MAX_BUF];
+            new_ob = arch_to_object(symptom->other_arch);
+            strcpy(name, victim->name);
+            strncat(name, "'s ", MAX_BUF);
+            strncat(name, new_ob->name, MAX_BUF);
+            FREE_AND_COPY(new_ob->name, name);
+            if (new_ob->name_pl != NULL) {
+                strcpy(name, victim->name);
+                strncat(name, "'s ", MAX_BUF);
+                strncat(name, new_ob->name_pl, MAX_BUF);
+                FREE_AND_COPY(new_ob->name_pl, name);
+            }
+            new_ob->x = tmp->x;
+            new_ob->y = tmp->y;
+            new_ob->map = victim->map;
+            insert_ob_in_map(new_ob,victim->map,victim,0);
+        }
     }
     new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
-  
+
     return 1;
 }
 

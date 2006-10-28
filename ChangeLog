@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1551406: Add player's name to disease symptoms
+ server/disease.c: add player's name.
+Ryo 2006-10-28
+
 /plugins/cfpython/{cfpython.c, cfpython_map.c, cfpython_object.c}: Remove
    redundent checks in values passed to Crossfire_Foobar_wrap() functions.
 Alex Schultz 2006-10-27
