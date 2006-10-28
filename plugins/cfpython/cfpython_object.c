@@ -1776,13 +1776,7 @@ static PyObject* Crossfire_Object_KnowSpell( Crossfire_Object* who, PyObject* ar
 
     op = cf_object_check_for_spell(who->obj, spellname);
 
-    if (op != NULL)
-        return Crossfire_Object_wrap(op);
-    else
-    {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
+    return Crossfire_Object_wrap(op);
 }
 
 static PyObject* Crossfire_Object_CastAbility( Crossfire_Object* who, PyObject* args )
@@ -1880,8 +1874,7 @@ static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObjec
 
     foundob = cf_object_present_archname_inside(who->obj, whatstr);
 
-    if (foundob != NULL)
-        return Crossfire_Object_wrap(foundob);
+    return Crossfire_Object_wrap(foundob);
 /*    for(tmp = WHO->inv; tmp; tmp = tmp->below)
     {
         if (!strncmp(PyQueryName(tmp),whatstr,strlen(whatstr)))
@@ -1895,9 +1888,6 @@ static PyObject* Crossfire_Object_CheckInventory( Crossfire_Object* who, PyObjec
     };
 
     return Py_BuildValue("l",(long)0);*/
-
-    Py_INCREF(Py_None);
-    return Py_None;
 }
 
 static PyObject* Crossfire_Object_CheckArchInventory( Crossfire_Object* who, PyObject* args )
@@ -1914,10 +1904,7 @@ static PyObject* Crossfire_Object_CheckArchInventory( Crossfire_Object* who, PyO
         if (!strcmp(tmp->arch->name,whatstr))
             break;
     }
-    if (tmp != NULL)
-        return Crossfire_Object_wrap(tmp);
-    Py_INCREF(Py_None);
-    return Py_None;
+    return Crossfire_Object_wrap(tmp);
 }
 static PyObject* Crossfire_Object_GetOutOfMap(Crossfire_Object* who, PyObject* args)
 {

@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+/plugins/cfpython/{cfpython.c, cfpython_map.c, cfpython_object.c}: Remove
+   redundent checks in values passed to Crossfire_Foobar_wrap() functions.
+Alex Schultz 2006-10-27
+
 Fix for bug #1573381 (death attacks does works on skull)
 server/attack.c: check for undead when no slaying set for hitter in deathstrike_player.
 Ryo 2006-10-22

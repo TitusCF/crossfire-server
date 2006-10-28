@@ -223,10 +223,6 @@ static PyObject* createCFObject(PyObject* self, PyObject* args)
     object* op;
     op = cf_create_object();
 
-    if (op == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
     return Crossfire_Object_wrap(op);
 }
 static PyObject* createCFObjectByName(PyObject* self, PyObject* args)
@@ -239,10 +235,6 @@ static PyObject* createCFObjectByName(PyObject* self, PyObject* args)
 
     op = cf_create_object_by_name(obname);
 
-    if (op == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
     return Crossfire_Object_wrap(op);
 }
 static PyObject* getCFPythonVersion(PyObject* self, PyObject* args)
@@ -309,10 +301,6 @@ static PyObject* readyMap(PyObject* self, PyObject* args)
 
     map = cf_map_get_map(mapname);
 
-    if (map == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
     return Crossfire_Map_wrap(map);
 }
 static PyObject* getCostFlagTrue(PyObject* self, PyObject* args)

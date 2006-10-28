@@ -202,12 +202,9 @@ static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args)
     MAPEXISTCHECK(map);
         
     op = cf_create_object_by_name(txt);
-    if (op == NULL)
-    {
-        Py_INCREF(Py_None);
-        return Py_None;
-    }
-    cf_map_insert_object(map->map,op,x,y);
+
+    if (op)
+        cf_map_insert_object(map->map,op,x,y);
     return Crossfire_Object_wrap(op);
 }
 static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
