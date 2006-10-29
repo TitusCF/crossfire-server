@@ -6,7 +6,7 @@
 /*****************************************************************************/
 /*  CrossFire, A Multiplayer game for X-windows                              */
 /*                                                                           */
-/*  Copyright (C) 2000 Mark Wedel                                            */
+/*  Copyright (C) 2000-2006 Mark Wedel & Crossfire Development Team          */
 /*  Copyright (C) 1992 Frank Tore Johansen                                   */
 /*                                                                           */
 /*  This program is free software; you can redistribute it and/or modify     */
@@ -23,6 +23,7 @@
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
 /*                                                                           */
+/*  The authors can be reached via e-mail to crossfire-devel@real-time.com   */
 /*****************************************************************************/
 /* This is the server-side plugin management part.                           */
 /*****************************************************************************/
@@ -623,14 +624,17 @@ void plugins_display_list(object *op)
 {
     crossfire_plugin* cp;
 
-    new_draw_info(NDI_UNIQUE, 0, op, "List of loaded plugins:");
-    new_draw_info(NDI_UNIQUE, 0, op, "-----------------------");
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+		  "List of loaded plugins:\n-----------------------", NULL);
 
     if (plugins_list == NULL)
         return;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s, %s", cp->id, cp->fullname);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+			     "%s, %s",
+			     "%s, %s",
+			     cp->id, cp->fullname);
     }
 }
 
@@ -1298,7 +1302,8 @@ void* cfapi_map_message(int* type, ...)
     color = va_arg(args, int);
     va_end(args);
 
-    new_info_map(color, map, string);
+    /* function should be extended to take message types probably */
+    ext_info_map(color, map, MSG_TYPE_MISC, MSG_SUBTYPE_NONE, string, string);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3408,7 +3413,10 @@ void* cfapi_object_speak(int* type, ...)
     sprintf(buf, "%s says: ", op->name);
     strncat(buf, msg, MAX_BUF-strlen(buf)-1);
     buf[MAX_BUF-1]=0;
-    new_info_map(NDI_WHITE, op->map, buf);
+
+    /* Maybe no always NPC? */
+    ext_info_map(NDI_WHITE, op->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC, buf, buf);
+
     communicate(op, msg);
     *type = CFAPI_NONE;
     return NULL;
@@ -3445,7 +3453,8 @@ void* cfapi_player_message(int* type, ...)
     buf   = va_arg(args, char*);
     va_end(args);
 
-    new_draw_info(flags, pri, pl, buf);
+    draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+		  buf, buf);
     *type = CFAPI_NONE;
     return NULL;
 }

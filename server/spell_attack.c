@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002-2003 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -775,8 +775,8 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_UNDEAD) && 
      op->attacktype & AT_TURN_UNDEAD) {
-	new_draw_info(NDI_UNIQUE, 0,op,
-	      "Your undead nature prevents you from turning undead!");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+	      "Your undead nature prevents you from turning undead!", NULL);
 	return 0;
     }
 
@@ -962,7 +962,8 @@ int create_bomb(object *op,object *caster,int dir, object *spell) {
 
     mflags = get_map_flags(op->map, &m, dx,dy, &dx,&dy);
     if ((mflags & P_OUT_OF_MAP) || (GET_MAP_MOVE_BLOCK(m, dx, dy) & MOVE_WALK)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+		      "There is something in the way.", NULL);
 	return 0;
     }
     tmp=arch_to_object(spell->other_arch);
@@ -1058,7 +1059,8 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
       ||(!god && spell->stats.grace) 
       ||(target->title && god && !strcmp(target->title,god->name))
       ||(target->race && god && strstr(target->race,god->race))) {
-        new_draw_info(NDI_UNIQUE,0,op,"Your request is unheeded.");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your request is unheeded.", NULL);
         return 0;
     }
 
@@ -1072,10 +1074,13 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
     effect->attacktype = spell->attacktype;
     if (effect->attacktype & (AT_HOLYWORD | AT_GODPOWER)) {
         if(tailor_god_spell(effect,op))
-           new_draw_info_format(NDI_UNIQUE,0,op,
-                "%s answers your call!",determine_god(op));
+           draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+			"%s answers your call!",
+			"%s answers your call!",
+			determine_god(op));
         else {
-           new_draw_info(NDI_UNIQUE,0,op,"Your request is ignored.");
+           draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			 "Your request is ignored.", NULL);
            return 0;
 	}
     }
@@ -1093,11 +1098,15 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
 	/* casting death spells at undead isn't a good thing */
 	if QUERY_FLAG(target, FLAG_UNDEAD) {
 	    if(random_roll(0, 2, op, PREFER_LOW)) {
-		new_draw_info(NDI_UNIQUE,0,op,"Idiot! Your spell boomerangs!");
+		draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			      "Idiot! Your spell boomerangs!", NULL);
 		effect->x=op->x;
 		effect->y=op->y;
 	    } else {
-		new_draw_info_format(NDI_UNIQUE,0,op,"The %s looks stronger!",
+		draw_ext_info_format(NDI_UNIQUE,0,op,
+				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+				     "The %s looks stronger!",
+				     "The %s looks stronger!",
 				     query_name(target));
 		target->stats.hp = target->stats.maxhp*2;
 		free_object(effect);
@@ -1313,8 +1322,8 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     tmp =  get_pointed_target(op, (dir==0)?op->direction:dir,
 		spell_ob->range, SPELL_GRACE);
     if (!tmp) {
-	new_draw_info(NDI_UNIQUE, 0, op, 
-	      "There is no one in that direction to curse.");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+	      "There is no one in that direction to curse.", NULL);
 	return 0;
     }
 
@@ -1325,9 +1334,11 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 		break;
 	    }
 	    else if (spell_ob->race && spell_ob->race == force->name) {
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		     "You can not cast %s while %s is in effect",
-                    spell_ob->name, force->name_pl);
+		draw_ext_info_format(NDI_UNIQUE, 0, op,
+			     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			     "You can not cast %s while %s is in effect",
+			     "You can not cast %s while %s is in effect",
+			     spell_ob->name, force->name_pl);
 		return 0;
 	    }
 	}
@@ -1350,9 +1361,11 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 	duration = spell_ob->duration + SP_level_duration_adjust(caster, spell_ob) * 50;
 	if (duration > force->duration) {
 	    force->duration = duration;
-	    new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
+	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+			  "You recast the spell while in effect.", NULL);
 	} else {
-	    new_draw_info(NDI_UNIQUE, 0, op, "Recasting the spell had no effect.");
+	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "Recasting the spell had no effect.", NULL);
 	}
 	return 1;
     }
@@ -1366,14 +1379,20 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 	    force->path_repelled=god->path_repelled;
 	if (spell_ob->last_grace)
 	    force->path_denied=god->path_denied;
-	new_draw_info_format(NDI_UNIQUE, 0,tmp,
-			     "You are a victim of %s's curse!",god->name);
+	draw_ext_info_format(NDI_UNIQUE, 0,tmp, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SPELL,
+			     "You are a victim of %s's curse!",
+			     "You are a victim of %s's curse!",
+			     god->name);
     } else 
-	new_draw_info(NDI_UNIQUE, 0,op,"Your curse seems empty.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your curse seems empty.", NULL);
 
 
     if(tmp!=op && op->type==PLAYER)
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You curse %s!",tmp->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+			     "You curse %s!",
+			     "You curse %s!",
+			     tmp->name);
 
     force->stats.ac = spell_ob->stats.ac;
     force->stats.wc = spell_ob->stats.wc;
@@ -1772,7 +1791,8 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
     dam = spell->stats.dam +  SP_level_dam_adjust(caster,spell);
 
     if(!dir) {
-	new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+		      "In what direction?", NULL);
 	return 0;
     }
 
@@ -1783,7 +1803,8 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
     mflags = get_map_flags(m, &m, x, y, &x, &y);
 
     if (mflags & P_OUT_OF_MAP) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Nothing is there.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Nothing is there.", NULL);
 	return 0;
     }
 
@@ -1799,7 +1820,8 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
 
     /* no live target, perhaps a wall is in the way? */
     if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y))) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+		      "Something is in the way.", NULL);
 	return 0;
     }
 
@@ -1924,7 +1946,10 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
                 if(infect_object(target_head,disease,1)) {
                 object *flash;  /* visual effect for inflicting disease */
 
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You inflict %s on %s!",disease->name,target_head->name);
+                draw_ext_info_format(NDI_UNIQUE, 0, op, 
+				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+				     "You inflict %s on %s!",
+				     disease->name,target_head->name);
 
                 free_object(disease); /* don't need this one anymore */
                 flash=create_archetype(ARCH_DETECT_MAGIC);
@@ -1939,6 +1964,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
         } /* Search squares for living creature */
 	} /* if living creature on square */
     } /* for range of spaces */
-    new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
+    draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		  "No one caught anything!", NULL);
     return 1;
 }

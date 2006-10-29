@@ -56,78 +56,33 @@ static char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
 void version(object *op) {
-  if(op!=NULL)
-    clear_win_info(op);
 
-  new_draw_info_format(NDI_UNIQUE, 0, op, "This is Crossfire v%s",VERSION);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
+		       "This is Crossfire v%s",
+		       "This is Crossfire v%s",
+		       VERSION);
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
+		"The authors can be reached at crossfire@metalforge.org", NULL);
 
-/* If in a socket, don't print out the list of authors.  It confuses the
- * crossclient program.
- */
-  if (op==NULL) return;
-  new_draw_info(NDI_UNIQUE, 0,op,"Authors and contributors to this program:");
-  new_draw_info(NDI_UNIQUE, 0,op,"mwedel@sonic.net (Mark Wedel)");
-  new_draw_info(NDI_UNIQUE, 0,op,"frankj@ifi.uio.no (Frank Tore Johansen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"kjetilho@ifi.uio.no (Kjetil Torgrim Homme)");
-  new_draw_info(NDI_UNIQUE, 0,op,"tvangod@ecst.csuchico.edu (Tyler Van Gorder)");
-  new_draw_info(NDI_UNIQUE, 0,op,"elmroth@cd.chalmers.se (Tony Elmroth)");
-  new_draw_info(NDI_UNIQUE, 0,op,"dougal.scott@fcit.monasu.edu.au (Dougal Scott)");
-  new_draw_info(NDI_UNIQUE, 0,op,"wchuang@athena.mit.edu (William)");
-  new_draw_info(NDI_UNIQUE, 0,op,"ftww@cs.su.oz.au (Geoff Bailey)");
-  new_draw_info(NDI_UNIQUE, 0,op,"jorgens@flipper.pvv.unit.no (Kjetil Wiekhorst Jxrgensen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"c.blackwood@rdt.monash.edu.au (Cameron Blackwood)");
-  new_draw_info(NDI_UNIQUE, 0,op,"jtraub+@cmu.edu (Joseph L. Traub)");
-  new_draw_info(NDI_UNIQUE, 0,op,"rgg@aaii.oz.au (Rupert G. Goldie)");
-  new_draw_info(NDI_UNIQUE, 0,op,"eanders+@cmu.edu (Eric A. Anderson)");
-  new_draw_info(NDI_UNIQUE, 0,op,"eneq@Prag.DoCS.UU.SE (Rickard Eneqvist)");
-  new_draw_info(NDI_UNIQUE, 0,op,"Jarkko.Sonninen@lut.fi (Jarkko Sonninen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"kholland@sunlab.cit.cornell.du (Karl Holland)");
-  new_draw_info(NDI_UNIQUE, 0,op,"vick@bern.docs.uu.se (Mikael Lundgren)");
-  new_draw_info(NDI_UNIQUE, 0,op,"mol@meryl.csd.uu.se (Mikael Olsson)");
-  new_draw_info(NDI_UNIQUE, 0,op,"Tero.Haatanen@lut.fi (Tero Haatanen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"ylitalo@student.docs.uu.se (Lasse Ylitalo)");
-  new_draw_info(NDI_UNIQUE, 0,op,"anipa@guru.magic.fi (Niilo Neuvo)");
-  new_draw_info(NDI_UNIQUE, 0,op,"mta@modeemi.cs.tut.fi (Markku J{rvinen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"meunier@inf.enst.fr (Sylvain Meunier)");
-  new_draw_info(NDI_UNIQUE, 0,op,"jfosback@darmok.uoregon.edu (Jason Fosback)");
-  new_draw_info(NDI_UNIQUE, 0,op,"cedman@capitalist.princeton.edu (Carl Edman)");
-  new_draw_info(NDI_UNIQUE, 0,op,"henrich@crh.cl.msu.edu (Charles Henrich)");
-  new_draw_info(NDI_UNIQUE, 0,op,"schmid@fb3-s7.math.tu-berlin.de (Gregor Schmid)");
-  new_draw_info(NDI_UNIQUE, 0,op,"quinet@montefiore.ulg.ac.be (Raphael Quinet)");
-  new_draw_info(NDI_UNIQUE, 0,op,"jam@modeemi.cs.tut.fi (Jari Vanhala)");
-  new_draw_info(NDI_UNIQUE, 0,op,"kivinen@joker.cs.hut.fi (Tero Kivinen)");
-  new_draw_info(NDI_UNIQUE, 0,op,"peterm@soda.berkeley.edu (Peter Mardahl)");
-  new_draw_info(NDI_UNIQUE, 0,op,"matt@cs.odu.edu (Matthew Zeher)");
-  new_draw_info(NDI_UNIQUE, 0,op,"srt@sun-dimas.aero.org (Scott R. Turner)");
-  new_draw_info(NDI_UNIQUE, 0,op,"huma@netcom.com (Ben Fennema)");
-  new_draw_info(NDI_UNIQUE, 0,op,"njw@cs.city.ac.uk (Nick Williams)");
-  new_draw_info(NDI_UNIQUE, 0,op,"Wacren@Gin.ObsPM.Fr (Laurent Wacrenier)");
-  new_draw_info(NDI_UNIQUE, 0,op,"thomas@astro.psu.edu (Brian Thomas)");
-  new_draw_info(NDI_UNIQUE, 0,op,"jsm@axon.ksc.nasa.gov (John Steven Moerk)");
-  new_draw_info(NDI_UNIQUE, 0,op,"Delbecq David       [david.delbecq@mailandnews.com]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Chachkoff Yann      [yann.chachkoff@mailandnews.com]\n");
-  new_draw_info(NDI_UNIQUE, 0,op,"Images and art:");
-  new_draw_info(NDI_UNIQUE, 0,op,"Peter Gardner");
-  new_draw_info(NDI_UNIQUE, 0,op,"David Gervais       [david_eg@mail.com]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
-  new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
-  new_draw_info(NDI_UNIQUE, 0,op,"M�ten Woxberg      [maxmc@telia.com]");
-  new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
 }
 
 void start_info(object *op) {
-  char buf[MAX_BUF];
 
-  sprintf(buf,"Welcome to Crossfire, v%s!",VERSION);
-  new_draw_info(NDI_UNIQUE, 0,op,buf);
-  new_draw_info(NDI_UNIQUE, 0,op,"Press `?' for help");
-  new_draw_info(NDI_UNIQUE, 0,op," ");
-  new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, op,
-	"%s entered the game.",op->name);
-  if(!op->contr->name_changed) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Note that you must set your name with the name");
-    new_draw_info(NDI_UNIQUE, 0,op,"command to enter the highscore list.");
-  }
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		       "Welcome to Crossfire, v%s!\nPress `?' for help\n",
+		       "Welcome to Crossfire, v%s!\nPress `?' for help\n",
+		       VERSION);
+
+    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, op,
+			 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+			 "%s entered the game.",
+			 "%s entered the game.",
+			 op->name);
+
+    if(!op->contr->name_changed) {
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+	      "Note that you must set your name with the name command to enter the highscore list.", NULL);
+    }
 }
 
 /**
@@ -236,7 +191,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
 	if (out_of_map(newmap, x, y)) {
 	    LOG(llevError,"enter_map: map %s provides invalid default enter location (%d, %d) > (%d, %d)\n",
 		newmap->path, x, y, MAP_WIDTH(newmap), MAP_HEIGHT(newmap));
-	    new_draw_info(NDI_UNIQUE, 0, op, "The exit is closed");
+	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			  "The exit is closed", NULL);
 	    return;
 	}
     }
@@ -491,7 +447,11 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
     snprintf(exitpath, sizeof(exitpath), "%s", EXIT_PATH(exit_ob)+2);
     sourcemap = strchr(exitpath, '!');
     if (!sourcemap) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, 
+			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "The %s is closed.", 
+			     "The %s is closed.", 
+			     exit_ob->name);
 	/* Should only occur when no source map is set.
 	 */
 	LOG(llevError,"enter_fixed_template_map: Exit %s (%d,%d) on map %s has no source template.\n",
@@ -546,7 +506,11 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
 	new_map->template = 1;
         enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is closed.", exit_ob->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl,
+			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "The %s is closed.",
+			     "The %s is closed.",
+			     exit_ob->name);
 	/* Should only occur when an invalid source map is set.
 	 */
 	LOG(llevDebug,"enter_fixed_template_map: Exit %s (%d,%d) on map %s leads no where.\n",
@@ -679,7 +643,11 @@ static void enter_unique_map(object *op, object *exit_ob)
 	newmap->unique = 1;
 	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
-	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, op,
+			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "The %s is closed.",
+			     "The %s is closed.",
+			     exit_ob->name);
 	/* Perhaps not critical, but I would think that the unique maps
 	 * should be new enough this does not happen.  This also creates
 	 * a strange situation where some players could perhaps have visited
@@ -757,7 +725,11 @@ void enter_exit(object *op, object *exit_ob) {
                 if (exit_ob->msg) {
                     enter_random_map(op, exit_ob);
                 } else {
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+                    draw_ext_info_format(NDI_UNIQUE, 0, op,
+					 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, 
+					 "The %s is closed.",
+					 "The %s is closed.",
+					 exit_ob->name);
                     return;
                 }
 
@@ -781,7 +753,11 @@ void enter_exit(object *op, object *exit_ob) {
         }
         if (!newmap) {
             if (exit_ob->name)
-                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+                draw_ext_info_format(NDI_UNIQUE, 0, op,
+				     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+				     "The %s is closed.",
+				     "The %s is closed.",
+				     exit_ob->name);
                 /* don't cry to momma if name is not set - as in tmp objects
                  * used by the savebed code and character creation */
             return;
@@ -1193,16 +1169,8 @@ void cleanup(void)
 }
 
 void leave(player *pl, int draw_exit) {
-    char buf[MAX_BUF];
 
     if (pl!=NULL) {
-	/* We do this so that the socket handling routine can do the final
-	 * cleanup.  We also leave that loop to actually handle the freeing
-	 * of the data.
-	 */
-        if (draw_exit==0)
-        {
-        }
 	pl->socket.status=Ns_Dead;
 	LOG(llevInfo,"LOGOUT: Player named %s from ip %s\n", pl->ob->name,
 	    pl->socket.host);
@@ -1221,13 +1189,14 @@ void leave(player *pl, int draw_exit) {
 		pl->transport->contr = NULL;
 
 	    if (pl->transport->contr) {
-		new_draw_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
+		draw_ext_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
+		     MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+		     "%s has left.  You are now the captain of %s",
 		     "%s has left.  You are now the captain of %s",
 				     pl->ob->name, query_name(pl->transport));
 	    }
 	}
 
-	(void) sprintf(buf,"%s left the game.",pl->ob->name);
 	if (pl->ob->map) {
 	    if (pl->ob->map->in_memory==MAP_IN_MEMORY)
 		pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
@@ -1242,7 +1211,12 @@ void leave(player *pl, int draw_exit) {
     if (!(QUERY_FLAG(pl->ob,FLAG_WIZ) && pl->ob->contr->hidden) && 
         (pl!=NULL && draw_exit) && 
 	   (pl->state != ST_GET_NAME && pl->state!=ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD)) 
-	    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL, buf);
+
+	    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+			  MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+			  "%s left the game.",
+			  "%s left the game.",
+			  pl->ob->name);
 }
 
 int forbid_play(void)

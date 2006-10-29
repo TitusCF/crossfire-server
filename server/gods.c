@@ -186,11 +186,15 @@ static void follower_remove_similar_item (object *op, object *item)
 	        
 	        /* message */
 		if (tmp->nrof > 1)
-		    new_draw_info_format(NDI_UNIQUE,0,op,
-		      "The %s crumble to dust!", query_short_name(tmp));
+		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+					 "The %s crumble to dust!",
+					 "The %s crumble to dust!",
+					 query_short_name(tmp));
 		else
-		    new_draw_info_format(NDI_UNIQUE,0,op,
-		      "The %s crumbles to dust!", query_short_name(tmp));
+		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+					 "The %s crumbles to dust!",
+					 "The %s crumbles to dust!",
+					 query_short_name(tmp));
 	        
 	        remove_ob(tmp);    /* remove obj from players inv. */
 		esrv_del_item(op->contr, tmp->count); /* notify client */
@@ -234,8 +238,10 @@ static int god_gives_present (object *op, object *god, treasure *tr)
         return 0;
 
     tmp = arch_to_object (tr->item);
-    new_draw_info_format (NDI_UNIQUE, 0, op,
-        "%s lets %s appear in your hands.", god->name, query_short_name (tmp));
+    draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
+			  "%s lets %s appear in your hands.",
+			  god->name, query_short_name (tmp),
+			  god->name, query_short_name (tmp));
     tmp = insert_ob_in_ob (tmp, op);
     if (op->type == PLAYER)
         esrv_send_item (op, tmp);
@@ -303,16 +309,25 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 
 		/* you really screwed up */
 		angry=3;
-		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                "Foul Priest! %s punishes you!",pl_god->name);
+		draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl, 
+				     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				     "Foul Priest! %s punishes you!",
+				     "Foul Priest! %s punishes you!",
+				     pl_god->name);
 		tmp=create_archetype(LOOSE_MANA);
 		cast_magic_storm(pl,tmp, pl_god->level+20);
 	    } else 
-		new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                "Foolish heretic! %s is livid!",pl_god->name);
+		draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+				     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				     "Foolish heretic! %s is livid!",
+				     "Foolish heretic! %s is livid!",
+				     pl_god->name);
 	} else 
-	    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                "Heretic! %s is angered!",pl_god->name);
+	    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
+				 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                                "Heretic! %s is angered!",
+                                "Heretic! %s is angered!",
+				 pl_god->name);
  
 	/* whether we will be successfull in defecting or not -
 	 * we lose experience from the clerical experience obj 
@@ -330,8 +345,10 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 	    become_follower(pl,&altar->other_arch->clone);
 	} else {
 	    /* toss this player off the altar.  He can try again. */
-	    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,pl,
-                               "A divine force pushes you off the altar.");
+	    draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,pl,
+			  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			  "A divine force pushes you off the altar.", NULL);
+
 	    move_player(pl,absdir(pl->facing + 4)); /* back him off the way he came. */
 	} 
     }
@@ -388,8 +405,11 @@ static void check_special_prayers (object *op, object *god)
 	    /* just do the work of removing the spell ourselves - we already
 	     * know that the player knows the spell
 	     */
-	    new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
-                          "You lose knowledge of %s.", tmp->name);
+	    draw_ext_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
+				  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				  "You lose knowledge of %s.",
+				  "You lose knowledge of %s.",
+				  tmp->name);
 	    player_unready_range_ob(op->contr, tmp);
 	    remove_ob(tmp);
 	    free_object(tmp);
@@ -424,8 +444,11 @@ void become_follower (object *op, object *new_god) {
 	   (item->type != FORCE)) {
 
 	    if (item->type == SPELL)
-		new_draw_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
-			"You lose knowledge of %s.", item->name);
+		draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
+				     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				     "You lose knowledge of %s.",
+				     "You lose knowledge of %s.",
+				     item->name);
 	    player_unready_range_ob(op->contr, item);
 	    remove_ob(item);
 	    free_object(item);
@@ -443,7 +466,10 @@ void become_follower (object *op, object *new_god) {
     if(!op||!new_god) return;
 
     if(op->race && new_god->slaying && strstr(op->race,new_god->slaying)) { 
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,"Fool! %s detests your kind!",
+	draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
+			     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			     "Fool! %s detests your kind!",
+			     "Fool! %s detests your kind!",
 			     new_god->name);
         if(random_roll(0, op->level-1, op, PREFER_LOW)-5>0) {
 	    object *tmp = create_archetype(LOOSE_MANA);
@@ -460,8 +486,11 @@ void become_follower (object *op, object *new_god) {
         god_gives_present(op,new_god,tr); }
 
 
-    new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
-	   "You become a follower of %s!",new_god->name);
+    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
+			 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			 "You become a follower of %s!",
+			 "You become a follower of %s!",
+			 new_god->name);
 
     for (skop = op->inv; skop != NULL; skop=skop->below)
 	if (skop->type == SKILL && skop->subtype == SK_PRAYING) break;
@@ -488,8 +517,12 @@ void become_follower (object *op, object *new_god) {
     }
 
     if(skop->title) { /* get rid of old god */ 
-	new_draw_info_format(NDI_UNIQUE,0,op,
-	       "%s's blessing is withdrawn from you.",skop->title);
+	draw_ext_info_format(NDI_UNIQUE,0,op, 
+			     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			     "%s's blessing is withdrawn from you.",
+			     "%s's blessing is withdrawn from you.",
+			     skop->title);
+
 	/* The point of this is to really show what abilities the player just lost */
 	if (sk_applied||undeadified) {
 	    CLEAR_FLAG(skop,FLAG_APPLIED); 
@@ -529,8 +562,11 @@ void become_follower (object *op, object *new_god) {
     update_priest_flag(new_god,skop,FLAG_BLIND);
     update_priest_flag(new_god,skop,FLAG_XRAYS); /* better have this if blind! */
 
-    new_draw_info_format(NDI_UNIQUE,0,op,
-	"You are bathed in %s's aura.",new_god->name);
+    draw_ext_info_format(NDI_UNIQUE,0,op,
+			 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			 "You are bathed in %s's aura.",
+			 "You are bathed in %s's aura.",
+			 new_god->name);
 
     /* Weapon/armour use are special...handle flag toggles here as this can
      * only happen when gods are worshipped and if the new priest could
@@ -573,17 +609,26 @@ void become_follower (object *op, object *new_god) {
 
 static int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *string) {
 
-  if(QUERY_FLAG(&op->arch->clone,flag))
-    if(QUERY_FLAG(op,flag)!=QUERY_FLAG(exp_obj,flag)) {
-      update_priest_flag(exp_obj,op,flag);
-      if(QUERY_FLAG(op,flag))
-        new_draw_info_format(NDI_UNIQUE,0,op,"You may use %s again.",string);
-      else {
-        new_draw_info_format(NDI_UNIQUE,0,op,"You are forbidden to use %s.",string);
-	return 1;
-      }
+    if(QUERY_FLAG(&op->arch->clone,flag)) {
+	if(QUERY_FLAG(op,flag)!=QUERY_FLAG(exp_obj,flag)) {
+	    update_priest_flag(exp_obj,op,flag);
+	    if(QUERY_FLAG(op,flag))
+		draw_ext_info_format(NDI_UNIQUE,0,op,
+				     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				     "You may use %s again.",
+				     "You may use %s again.",
+				     string);
+	    else {
+		draw_ext_info_format(NDI_UNIQUE,0,op,
+				     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+				     "You are forbidden to use %s.",
+				     "You are forbidden to use %s.",
+				     string);
+		return 1;
+	    }
+	}
     }
-  return 0;
+    return 0;
 }
 
 /**
@@ -674,8 +719,8 @@ static int god_removes_curse (object *op, int remove_damnation)
     }
 
     if (success)
-        new_draw_info (NDI_UNIQUE, 0, op,
-                "You feel like someone is helping you.");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+                "You feel like someone is helping you.", NULL);
     return success;
 }
 
@@ -720,13 +765,15 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
         weapon->title = add_string (buf);
         if (op->type == PLAYER) 
 	    esrv_update_item (UPD_NAME, op, weapon);
-        new_draw_info (NDI_UNIQUE, 0, op, "Your weapon quivers as if struck!");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+		       "Your weapon quivers as if struck!", NULL);
     }
 
     /* Allow the weapon to slay enemies */
     if ( ! weapon->slaying && god->slaying) {
         weapon->slaying = add_string (god->slaying);
-        new_draw_info_format (NDI_UNIQUE, 0, op,
+        draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+                "Your %s now hungers to slay enemies of your god!",
                 "Your %s now hungers to slay enemies of your god!",
                 weapon->name);
         return 1;
@@ -735,7 +782,8 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
     /* Add the gods attacktype */
     attacktype = (weapon->attacktype == 0) ? AT_PHYSICAL : weapon->attacktype;
     if ((attacktype & god->attacktype) != god->attacktype) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Your weapon suddenly glows!");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+		       "Your weapon suddenly glows!", NULL);
         weapon->attacktype = attacktype | god->attacktype;
         return 1;
     }
@@ -743,8 +791,8 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
     /* Higher magic value */
     tmp = follower_level_to_enchantments (skill->level, tr->level);
     if (weapon->magic < tmp) {
-        new_draw_info (NDI_UNIQUE, 0, op,
-                "A phosphorescent glow envelops your weapon!");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+                "A phosphorescent glow envelops your weapon!", NULL);
         weapon->magic++;
         if (op->type == PLAYER)
             esrv_update_item (UPD_NAME, op, weapon);
@@ -778,7 +826,8 @@ static void god_intervention (object *op, object *god, object *skill)
     if (god_examines_priest (op, god) < 0)
         return;
 
-    new_draw_info (NDI_UNIQUE, 0, op, "You feel a holy presence!");
+    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+		   "You feel a holy presence!", NULL);
 
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
         object *item;
@@ -792,8 +841,9 @@ static void god_intervention (object *op, object *god, object *skill)
             if (tl == NULL)
                 continue;
 
-            new_draw_info (NDI_UNIQUE, 0, op, "Something appears before your "
-                    "eyes.  You catch it before it falls to the ground.");
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
+		   "Something appears before your eyes.  You catch it before it falls to the ground.",
+		   NULL);
 
             create_treasure (tl, op, GT_STARTEQUIP | GT_ONLY_GOOD
                                       | GT_UPDATE_INV, skill->level, 0);
@@ -832,8 +882,8 @@ static void god_intervention (object *op, object *god, object *skill)
             if (op->stats.grace >= 0)
                 continue;
             op->stats.grace = random_roll(0, 9, op, PREFER_HIGH);
-            new_draw_info (NDI_UNIQUE, 0, op,
-                    "You are returned to a state of grace.");
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+                    "You are returned to a state of grace.", NULL);
             return;
         }
 
@@ -843,8 +893,8 @@ static void god_intervention (object *op, object *god, object *skill)
         {
             if (op->stats.hp >= op->stats.maxhp)
                 continue;
-            new_draw_info (NDI_UNIQUE, 0, op,
-                    "A white light surrounds and heals you!");
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+                    "A white light surrounds and heals you!", NULL);
             op->stats.hp = op->stats.maxhp;
             return;
         }
@@ -858,8 +908,8 @@ static void god_intervention (object *op, object *god, object *skill)
             int new_sp = random_roll(1000, 1999, op, PREFER_HIGH) / 2000.0 * max;
             if (op->stats.sp >= max / 2)
                 continue;
-            new_draw_info (NDI_UNIQUE, 0, op, "A blue lightning strikes "
-                    "your head but doesn't hurt you!");
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+			   "A blue lightning strikes your head but doesn't hurt you!", NULL);
             op->stats.sp = new_sp;
         }
 
@@ -913,11 +963,13 @@ static void god_intervention (object *op, object *god, object *skill)
             depl = present_arch_in_ob (at, op);
             if (depl == NULL)
                 continue;
-            new_draw_info (NDI_UNIQUE, 0, op,
-                    "Shimmering light surrounds and restores you!");
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+                    "Shimmering light surrounds and restores you!", NULL);
             for (i = 0; i < NUM_STATS; i++)
                 if (get_attr_value (&depl->stats, i))
-                    new_draw_info (NDI_UNIQUE, 0, op, restore_msg[i]);
+                    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE,
+				   MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+				   restore_msg[i], restore_msg[i]);
             remove_ob (depl);
             free_object (depl);
             fix_player (op);
@@ -928,10 +980,11 @@ static void god_intervention (object *op, object *god, object *skill)
         if (item->type == BOOK && item->invisible
             && strcmp (item->name, "voice_behind") == 0)
         {
-            new_draw_info (NDI_UNIQUE, 0, op,
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
                     "You hear a voice from behind you, but you don't dare to "
-                    "turn around:");
-            new_draw_info (NDI_WHITE, 0, op, item->msg);
+                    "turn around:", NULL);
+            draw_ext_info (NDI_WHITE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+			   item->msg, item->msg);
             return;
         }
 
@@ -939,7 +992,8 @@ static void god_intervention (object *op, object *god, object *skill)
         if (item->type == BOOK && item->invisible
             && strcmp (item->name, "message") == 0)
         {
-            new_draw_info (NDI_UNIQUE, 0, op, item->msg);
+            draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+			   item->msg, item->msg);
             return;
         }
 
@@ -961,8 +1015,10 @@ static void god_intervention (object *op, object *god, object *skill)
             if (item->level > skill->level)
                 continue;
 
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		 "%s grants you use of a special prayer!", god->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+				 "%s grants you use of a special prayer!",
+				 "%s grants you use of a special prayer!",
+				 god->name);
 	    do_learn_spell (op, item, 1);
 	    return;
 
@@ -978,7 +1034,8 @@ static void god_intervention (object *op, object *god, object *skill)
         /* else ignore it */
     }
 
-    new_draw_info (NDI_UNIQUE, 0, op, "You feel rapture.");
+    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
+		   "You feel rapture.", NULL);
 }
 
 /**
@@ -1012,8 +1069,10 @@ static int god_examines_priest (object *op, object *god) {
 	    object *tmp = create_archetype(LOOSE_MANA);
 	    cast_magic_storm(op,tmp,op->level+(angry*3));
 	}
-	new_draw_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
-			     "%s becomes angry and punishes you!",god->name);
+	draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			     "%s becomes angry and punishes you!",
+			     "%s becomes angry and punishes you!",
+			     god->name);
     }
     return reaction;
 }
@@ -1026,28 +1085,29 @@ static int god_examines_priest (object *op, object *god) {
  */
 
 static int god_examines_item(object *god, object *item) {
-  char buf[MAX_BUF];
+    char buf[MAX_BUF];
 
-  if(!god||!item) return 0;
+    if(!god||!item) return 0;
 
-  if(!item->title) return 1; /* unclaimed item are ok */
+    if(!item->title) return 1; /* unclaimed item are ok */
 
-  sprintf(buf,"of %s",god->name);
-  if(!strcmp(item->title,buf)) return 1; /* belongs to that God */ 
+    sprintf(buf,"of %s",god->name);
+    if(!strcmp(item->title,buf)) return 1; /* belongs to that God */ 
 
-  if(god->title) { /* check if we have any enemy blessed item*/ 
-    sprintf(buf,"of %s",god->title);
-    if(!strcmp(item->title,buf)) {
-      if(item->env) {
-        char buf[MAX_BUF];
-        sprintf(buf,"Heretic! You are using %s!",query_name(item));
-        new_draw_info(NDI_UNIQUE|NDI_NAVY,0,item->env,buf);
-      }
-      return -1;
+    if(god->title) { /* check if we have any enemy blessed item*/ 
+	sprintf(buf,"of %s",god->title);
+	if(!strcmp(item->title,buf)) {
+	    if(item->env) {
+		draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,item->env,
+			     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			     "Heretic! You are using %s!",
+			     "Heretic! You are using %s!",
+			     query_name(item));
+	    }
+	    return -1;
+	}
     }
-  }
-
-  return 0; /* item is sacred to a non-enemy god/or is otherwise magical */ 
+    return 0; /* item is sacred to a non-enemy god/or is otherwise magical */ 
 }
 
 
@@ -1108,8 +1168,8 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     if ( ! god || (spellop->attacktype & AT_HOLYWORD && !god->race)) {
         if ( ! caster_is_spell)
-            new_draw_info(NDI_UNIQUE, 0, caster,
-              "This prayer is useless unless you worship an appropriate god");
+            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+			  "This prayer is useless unless you worship an appropriate god", NULL);
         else
             LOG (llevError, "BUG: tailor_god_spell(): no god\n");
         free_object(spellop);

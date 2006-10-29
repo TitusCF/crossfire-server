@@ -17,6 +17,38 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Update code so everything uses draw_ext_info(), and remove new_draw_info().
+For the most part, everything is just a simple update of function name/
+parameters.  In some places, there was some other cleanup, like
+inconsistent whitespace being made consistent.  A few places were
+changed to use the varargs version, so no longer needed a local snprintf.
+Many places where used to remove the hard formatting (combine several
+calls into one so that the client can do the word wrap/formatting, since
+assuming the width of the client never was really accurate)
+Dead code was removed, rather than being updated.
+For old clients, it will continue to use the old protocol commands, so
+this doesn't break client compatibility in any way.
+--
+Files affected:
+common/arch.c, common/button.c, common/living.c, common/los.c. common/map.c,
+common/quest.cm common/time.c, common/treasure.c
+crossedit/stubs.c
+random_maps/standalone.c
+include/funcpoint.h, include/newclient.h, include/sockproto.h
+server/alchemy.c, server/apply.c, server/attack.c, server/build_map.c,
+server/c_chat.c, server/c_wiz.c, server/c_new.c, server/c_object.c,
+server/c_range.c, server/c_party.c, server/commands.c, server/disease.c,
+server/gods.c, server/hiscore.c, server/login.c, server/monster.c,
+server/move.c, server/pets.c, server/player.c, server/plugins.c
+server/resurrection.c, server/rune.c, server/server.c, server/skill_util.c,
+server/skills.c, server/spell_attack.c, server/spell_effect.c,
+server/spell_util.c, server/swamp.c, server/time.c
+socket/info.c, socket/item.c, socket/request.c
+test/unit/common/stubs_common.c
+test/unit/crossedit/stubs_crossedit.c, test/unit/random_maps/stubs_random.c
+--
+MSW 2006-10-28
+
 Implement feature request #1551406: Add player's name to disease symptoms
  server/disease.c: add player's name.
 Ryo 2006-10-28

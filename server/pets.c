@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -301,7 +301,8 @@ void follow_owner(object *ob, object *owner) {
     }
     insert_ob_in_map(ob, ob->map, NULL,0);
     if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-	new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
+	draw_ext_info(NDI_UNIQUE, 0,owner, MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+		      "Your pet magically appears next to you", NULL);
     return;
 }
 
@@ -386,7 +387,9 @@ void pet_move(object * ob)
 			new_ob->enemy = ob;
 			return;
 		} else if (new_ob->type == PLAYER) {
-		    new_draw_info(NDI_UNIQUE, 0,new_ob, "You stand in the way of someones pet.");
+		    draw_ext_info(NDI_UNIQUE, 0,new_ob, 
+				  MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+				  "You stand in the way of someones pet.", NULL);
 		    return;
 		}
 	    }
@@ -508,7 +511,8 @@ void move_golem(object *op) {
      */
     if(--op->stats.hp<0) {
 	if (op->msg)
-	    new_draw_info(NDI_UNIQUE, 0,op->owner,op->msg);
+	    draw_ext_info(NDI_UNIQUE, 0,op->owner,MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+			  op->msg, op->msg);
 	op->owner->contr->ranges[range_golem]=NULL;
 	op->owner->contr->golem_count = 0;
 	remove_friendly_object(op);
@@ -555,11 +559,17 @@ void move_golem(object *op) {
 	     */
 
 	    if(victim->race && op->race && strstr(op->race,victim->race)) {
-		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
-			"%s avoids damaging %s.",op->name,victim->name);
+		if(op->owner) draw_ext_info_format(NDI_UNIQUE, 0,op->owner,
+			   MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+			   "%s avoids damaging %s.",
+			   "%s avoids damaging %s.",
+			   op->name,victim->name);
 	    } else if (victim == op->owner) {
-		if(op->owner) new_draw_info_format(NDI_UNIQUE, 0,op->owner,
-				"%s avoids damaging you.",op->name);
+		if(op->owner) draw_ext_info_format(NDI_UNIQUE, 0,op->owner,
+			   MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+			   "%s avoids damaging you.",
+			   "%s avoids damaging you.",
+			   op->name);
 	    } else {
 		attack_ob(victim,op);
 		made_attack=1;
@@ -595,7 +605,9 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
     if(op->type==PLAYER && 
        op->contr->ranges[range_golem]!=NULL && 
        op->contr->golem_count == op->contr->ranges[range_golem]->count) {
-	    new_draw_info(NDI_UNIQUE, 0, op, "You dismiss your existing golem.");
+	    draw_ext_info(NDI_UNIQUE, 0, op, 
+			  MSG_TYPE_SPELL, MSG_TYPE_SPELL_PET,
+			  "You dismiss your existing golem.", NULL);
 	    remove_ob(op->contr->ranges[range_golem]);
 	    free_object(op->contr->ranges[range_golem]);
 	    op->contr->ranges[range_golem]=NULL;
@@ -608,13 +620,20 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
 	god = find_god(determine_god(caster));
 
 	if (!god) {
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"You must worship a god to cast %s.", spob->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,
+			 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			 "You must worship a god to cast %s.",
+			 "You must worship a god to cast %s.",
+			 spob->name);
 	    return 0;
 	}
 	at = determine_holy_arch (god, spob->race);
 	if (!at) {
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"%s has no %s for you to call.",
-		god->name,spob->race);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,
+			 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			 "%s has no %s for you to call.",
+			 "%s has no %s for you to call.",
+			 god->name,spob->race);
 	    return 0;
 	}
     } else {
@@ -626,13 +645,17 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
 	dir=find_free_spot(NULL,op->map,op->x,op->y,1,SIZEOFFREE1+1);
 
     if ((dir==-1) || ob_blocked(&at->clone, op->map, op->x + freearr_x[dir], op->y + freearr_y[dir])) {
-	new_draw_info(NDI_UNIQUE, 0,op,"There is something in the way.");
+	draw_ext_info(NDI_UNIQUE, 0,op,
+		      MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "There is something in the way.", NULL);
 	return 0;
     }
     /* basically want to get proper map/coordinates for this object */
 
     if(!(tmp=fix_summon_pet(at,op,dir,GOLEM))) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your spell fails.");
+	draw_ext_info(NDI_UNIQUE, 0,op,
+		      MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your spell fails.", NULL);
 	return 0;
     }
 
@@ -759,7 +782,9 @@ static object *choose_cult_monster(object *pl, object *god, int summon_level) {
      * race file
      */
     if((list=find_racelink(race))==NULL) { 
-	new_draw_info_format(NDI_UNIQUE, 0,pl,
+	draw_ext_info_format(NDI_UNIQUE, 0,pl,
+	     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+	    "The spell fails! %s's creatures are beyond the range of your summons",
 	    "The spell fails! %s's creatures are beyond the range of your summons",
 	     god->name);
 	LOG(llevDebug,"choose_cult_monster() requested non-existent aligned race!\n");
@@ -819,7 +844,9 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	if (!lasttr) {
 	    LOG(llevError,"Treasurelist %s did not generate a valid entry in summon_object\n",
 		spell_ob->randomitems->name);
-	    new_draw_info(NDI_UNIQUE, 0, op, "The spell fails to summon any monsters.");
+	    draw_ext_info(NDI_UNIQUE, 0, op,
+			  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "The spell fails to summon any monsters.", NULL);
 	    return 0;
 	}
 	summon_arch = lasttr->item;
@@ -836,8 +863,11 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	if (!god) return 0;
 
 	if (!god->race) {
-	    new_draw_info_format(NDI_UNIQUE, 0,op,
-		 "%s has no creatures that you may summon!",god->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,
+		 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		 "%s has no creatures that you may summon!",
+		 "%s has no creatures that you may summon!",
+		 god->name);
 	    return 0;
 	}
 	/* the summon level */
@@ -847,8 +877,11 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	do {
 	    mon = choose_cult_monster(op, god,summon_level);
 	    if (!mon) {
-		new_draw_info_format(NDI_UNIQUE, 0,op,
-		     "%s fails to send anything.",god->name);
+		draw_ext_info_format(NDI_UNIQUE, 0,op,
+		     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		     "%s fails to send anything.",
+		     "%s fails to send anything.",
+		     god->name);
 		return 0;
 	    }
 	    ndir = dir;
@@ -857,7 +890,9 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	    if (ndir == -1 || ob_blocked(mon,op->map, op->x + freearr_x[ndir], op->y+freearr_y[ndir])) {
 		ndir=-1;
 		if (++tries == 5) {
-		    new_draw_info(NDI_UNIQUE, 0,op, "There is something in the way.");
+		    draw_ext_info(NDI_UNIQUE, 0,op,
+				  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+				  "There is something in the way.", NULL);
 		    return 0;
 		}
 	    }
@@ -875,7 +910,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 	nrof += spell_ob->stats.dam + SP_level_dam_adjust(caster, spell_ob);
 
     if (!summon_arch) {
-	new_draw_info(NDI_UNIQUE, 0, op, "There is no monsters available for summoning.");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "There is no monsters available for summoning.", NULL);
 	return 0;
     }
 
@@ -895,9 +931,11 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         }
 
         if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y)){
-            new_draw_info(NDI_UNIQUE, 0, op, "There is something in the way.");
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "There is something in the way.", NULL);
             if (nrof > 1)
-		new_draw_info(NDI_UNIQUE, 0,op, "No more pets for this casting.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			      "No more pets for this casting.", NULL);
 
             return nrof > 1;
         }

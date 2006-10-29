@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -98,9 +98,11 @@ int execute_newserver_command(object *pl, char *command)
 	csp = find_command_element(command, WizCommands, WizCommandsSize);
 
     if (csp==NULL) {
-	    new_draw_info_format(NDI_UNIQUE, 0,pl,
-		"'%s' is not a valid command.", command);
-	    return 0;
+	    draw_ext_info_format(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		 "'%s' is not a valid command.",
+		 "'%s' is not a valid command.",
+		 command);
+	return 0;
     }
 
     pl->speed_left -= csp->time;
@@ -126,7 +128,8 @@ int command_run(object *op, char *params)
     int dir;
     dir = params?atoi(params):0;
     if ( dir<0 || dir>=9 ){
-        new_draw_info(NDI_UNIQUE, 0,op,"Can't run into a non adjacent square.");
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Can't run into a non adjacent square.", NULL);
         return 0;
     }
     op->contr->run_on=1;
@@ -144,7 +147,8 @@ int command_fire(object *op, char *params)
     int dir;
     dir = params?atoi(params):0;
     if ( dir<0 || dir>=9 ){
-        new_draw_info(NDI_UNIQUE, 0,op,"Can't fire to a non adjacent square.");
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Can't fire to a non adjacent square.", NULL);
         return 0;
     };
     op->contr->fire_on=1;
@@ -157,8 +161,3 @@ int command_fire_stop(object *op, char *params)
     return 1;
 }
 
-int bad_command(object *op, char *params)
-{
-    new_draw_info(NDI_UNIQUE, 0,op,"bind and unbind are no longer handled on the server");
-    return 1;
-}

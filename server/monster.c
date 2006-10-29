@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1656,7 +1656,6 @@ void communicate(object *op, const char *txt) {
 static int do_talk_npc(object* op, object* npc, object* override, const char* txt)
 {
     char* cp;
-    char buf[MAX_BUF];
 
     if(override->msg == NULL || *override->msg != '@')
 	return 0;
@@ -1674,8 +1673,10 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 void npc_say(object *npc, char *cp) {
     char buf[MAX_BUF];
     snprintf(buf, sizeof(buf), "%s says:", query_name(npc));
-    new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, buf);
-    new_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, cp);
+    ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
+		 buf, buf);
+    ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
+		 cp, cp);
 }
 
 static int talk_to_npc(object *op, object *npc, const char *txt) {
@@ -1711,7 +1712,9 @@ static int do_talk_wall(object* pl, object* npc, object* override, const char* t
     if (!cp)
 	return 0;
 
-    new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,cp);
+    ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, 
+		 MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH,
+		 cp, cp);
     use_trigger(npc);
     quest_apply_items(npc, pl->contr);
     free(cp);
@@ -1876,8 +1879,11 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	    make_visible(enemy);
 	    /* inform players of new status */
 	    if(enemy->type==PLAYER && player_can_view(enemy,op)) 
-		new_draw_info_format(NDI_UNIQUE,0, enemy,
-					"You are discovered by %s!",op->name);
+		draw_ext_info_format(NDI_UNIQUE,0, enemy,
+			     MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+			     "You are discovered by %s!",
+			     "You are discovered by %s!",
+			     op->name);
 		return 1; /* detected enemy */ 
 	}
 	else if (enemy->invisible) {
@@ -1890,8 +1896,11 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	     */
 	    if ((RANDOM() % 50) <= hide_discovery) {
 		if (enemy->type == PLAYER) {
-		    new_draw_info_format(NDI_UNIQUE,0, enemy, 
-			 "You see %s noticing your position.", query_name(op));
+		    draw_ext_info_format(NDI_UNIQUE,0, enemy,
+			 MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+			 "You see %s noticing your position.", 
+			 "You see %s noticing your position.", 
+			 query_name(op));
 		}
 		return 1;
 	    }
@@ -1971,8 +1980,10 @@ int can_see_enemy (object *op, object *enemy) {
 	if(has_carried_lights(enemy)) { 
 	    if(enemy->hide) { 
 		make_visible(enemy);
-		new_draw_info(NDI_UNIQUE,0, enemy,
-			      "Your light reveals your hiding spot!");
+		draw_ext_info(NDI_UNIQUE,0, enemy,
+		      MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		      "Your light reveals your hiding spot!",
+		      NULL);
 	    }
 	    return 1;
 	} else if (enemy->hide) return 0; 

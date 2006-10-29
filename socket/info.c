@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -117,8 +117,12 @@ void flush_output_element(const object *pl, Output_Buf *outputs)
     char tbuf[MAX_BUF];
 
     if (outputs->buf==NULL) return;
-    snprintf(tbuf,MAX_BUF, "%d times %s", outputs->count, outputs->buf);
-    print_message(NDI_BLACK, pl, tbuf);
+    if (outputs->count > 1) {
+	snprintf(tbuf,MAX_BUF, "%d times %s", outputs->count, outputs->buf);
+	print_message(NDI_BLACK, pl, tbuf);
+    } else {
+	print_message(NDI_BLACK, pl, outputs->buf);
+    }
     free_string(outputs->buf);
     outputs->buf=NULL;
     outputs->first_update=0;	/* This way, it will be reused */
@@ -191,94 +195,88 @@ static void check_output_buffers(const object *pl, const char *buf)
  * in the flags.
  *
  * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
+ * if the client supports the new readables, this is sent to the client
+ * without processing in the output buffers.
+ *
+ * type and subtype are the type MSG_TYPE for the type of message.
+ *
+ * message is the message to send for clients that support draw_ext_info
+ * oldmessage is for clients that do not support it.  oldmessage can be
+ * NULL, in which case this function will strip out the tags of message.
  *
  */
 
-void new_draw_info(int flags, int pri, const object *pl, const char *buf)
-{
+void draw_ext_info(
+        int flags, int pri, const object *pl, uint8 type, 
+        uint8 subtype, const char* message, const char* oldmessage){
+
 
     if (flags & NDI_ALL) {
 	player	*tmppl;
 	int i;
 
 	for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next)
-		new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
+		draw_ext_info((flags & ~NDI_ALL), pri, tmppl->ob, type, subtype,
+			      message, oldmessage);
 
 	for (i=1; i<socket_info.allocated_sockets; i++) {
 	    if (init_sockets[i].status == Ns_Old && init_sockets[i].old_mode != Old_Listen && pri< 10) {
-		cs_write_string(&init_sockets[i], buf, strlen(buf));
+		cs_write_string(&init_sockets[i], oldmessage, strlen(oldmessage));
 		/* Most messages don't have a newline, so add one */
 		cs_write_string(&init_sockets[i], "\n", 1);
 	    }
 	}
-
 	return;
     }
+
     if(!pl || (pl->type==PLAYER && pl->contr==NULL)) {
 	/* Write to the socket? */
-	print_message(0, NULL, buf);
+	print_message(0, NULL, oldmessage);
 	return;
     }
     if (pl->type!=PLAYER) return;
     if (pri>=pl->contr->listening) return;
 
-    if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
-	/* following prints stuff out, as appropriate */
-	check_output_buffers(pl, buf);
-    }
-    else {
-	print_message(flags&NDI_COLOR_MASK, pl, buf);
-    }
-}
-
-/**
- * Wrapper for new_draw_info printf-like.
- *
- * This is a pretty trivial function, but it allows us to use printf style
- * formatting, so instead of the calling function having to do it, we do
- * it here.  It may also have advantages in the future for reduction of
- * client/server bandwidth (client could keep track of various strings
- */
-
-void new_draw_info_format(int flags, int pri, const object *pl, const char *format, ...)
-{
-    char buf[HUGE_BUF];
-
-    va_list ap;
-    va_start(ap, format);
-
-    vsnprintf(buf, HUGE_BUF, format, ap);
-
-    va_end(ap);
-
-    new_draw_info(flags, pri, pl, buf);
-}
-
-
-void draw_ext_info(
-        int flags, int pri, const object *pl, uint8 type, 
-        uint8 subtype, const char* message, const char* oldmessage){
-            
-    if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
-        return;
-        
-    if (pri>=pl->contr->listening) return;
-
+    /* If the client doesn't support the readables, need to convert
+     * it to old format.  If oldmessage is specified, it is presumed
+     * that no conversion is needed (if the caller isn't sure, it
+     * should pass NULL for oldmessage).
+     */
     if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
-        char *buf = (char*)malloc(strlen(oldmessage==NULL?message:oldmessage)+1);
+        char *buf;
+
         if (buf==NULL)
             LOG(llevError,"info::draw_ext_info -> Out of memory!");
-        else{
-            strcpy(buf,oldmessage==NULL?message:oldmessage);
-            strip_media_tag(buf);
-            new_draw_info(flags, pri, pl, buf);
-            free(buf);
+        else {
+	    if (oldmessage) {
+		buf = (char*)oldmessage;
+	    } else {
+		buf = strdup_local(message);
+		strip_media_tag(buf);
+	    }
+	    if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
+		/* following prints stuff out, as appropriate */
+		check_output_buffers(pl, buf);
+	    } else {
+		print_message(flags & NDI_COLOR_MASK, pl, buf);
+	    }
+	    if (!oldmessage)
+		free(buf);
         }
     } else {
         esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,message);
     }
 }
 
+/**
+ *  draw_ext_info_format is basically same as draw_ext_info
+ * above, but takes varargs format.  Otherwise, the meaining of
+ * all the fields is the same.
+ * This is perhaps not the most efficient as we do vnsprintf on
+ * both the old and newbuf.  But it simplifies the code greatly since
+ * we can jsut call draw_ext_info.  Also, hopefully at some point, need for
+ * old_format will go away.
+ */
 void draw_ext_info_format(
 	int flags, int pri, const object *pl, uint8 type, 
         uint8 subtype, 
@@ -287,47 +285,43 @@ void draw_ext_info_format(
 	...)
 {
             
-    char buf[HUGE_BUF];
+    char newbuf[HUGE_BUF], oldbuf[HUGE_BUF];
+    va_list ap;
 
-    if(!pl || (pl->type!=PLAYER) || (pl->contr==NULL))
-	return;
-		
-    if (pri>=pl->contr->listening) return;
+    va_start(ap, old_format);
+    vsnprintf(oldbuf, HUGE_BUF, old_format, ap);
+    va_end(ap);
+    va_start(ap, old_format);
+    vsnprintf(newbuf, HUGE_BUF, new_format, ap);
+    va_end(ap);
 
-    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
-	va_list ap;
-
-	LOG(llevDebug,"Non supported extension text type for client.\n");
-	va_start(ap, old_format);
-	vsnprintf(buf, HUGE_BUF, old_format, ap);
-	va_end(ap);
-
-	/* Should this be here?  old_format must be set, so in theory, the caller
-	 * should not put tags in it.  But what about cases where it may be using
-	 * data external to the call itself (eg, op->msg, where the message
-	 * itself may contain tags?)
-	 */
-	strip_media_tag(buf);
-	new_draw_info(flags, pri, pl, buf);
-	return;
-    } else {
-	va_list ap;
-	va_start(ap, old_format);
-	vsnprintf(buf, HUGE_BUF, new_format, ap);
-	va_end(ap);
-	esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,buf);
-    }
+    draw_ext_info(flags, pri, pl, type, subtype, newbuf, oldbuf);
 }
+
+/**
+ * Writes to everyone on the specified map
+ */
+
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
+    player *pl;
+
+    for(pl = first_player; pl != NULL; pl = pl->next)
+	if(pl->ob != NULL && pl->ob->map == map) {
+	    draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
+	}
+}
+
 /**
  * Writes to everyone on the map *except* op.  This is useful for emotions.
  */
 
-void new_info_map_except(int color, const mapstruct *map, const object *op, const char *str) {
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, 
+			 uint8 subtype, const char *str1, const char *str2) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
 	if(pl->ob != NULL && pl->ob->map == map && pl->ob != op) {
-	    new_draw_info(color, 0, pl->ob, str);
+	    draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
 	}
 }
 
@@ -335,39 +329,18 @@ void new_info_map_except(int color, const mapstruct *map, const object *op, cons
  * Writes to everyone on the map except op1 and op2
  */
 
-void new_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2,
-			  const char *str) {
+void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2,
+			  int type, int subtype, const char *str1, const char *str2) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
 	if(pl->ob != NULL && pl->ob->map == map
 	   && pl->ob != op1 && pl->ob != op2) {
-	    new_draw_info(color, 0, pl->ob, str);
+	    draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
 	}
+
 }
 
-/**
- * Writes to everyone on the specified map
- */
-
-void new_info_map(int color, const mapstruct *map, const char *str) {
-    player *pl;
-
-    for(pl = first_player; pl != NULL; pl = pl->next)
-	if(pl->ob != NULL && pl->ob->map == map) {
-	    new_draw_info(color, 0, pl->ob, str);
-	}
-}
-
-
-/**
- * This does nothing now.  However, in theory, we should probably send
- * something to the client and let the client figure out how it might want
- * to handle this
- */
-void clear_win_info(object *op)
-{
-}
 
 /**
  * Get player's current range attack in obuf.

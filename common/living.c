@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -346,12 +346,12 @@ void check_stat_bounds(living *stats) {
 
 #define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
 
-/* Rather than having a whole bunch of if (flag) new_draw.. else new_draw,
+/* Rather than having a whole bunch of if (flag) draw.. else _draw,
  * make this macro to clean those up.  Not usuable outside change_abil
- * function since some of the values passed to new_draw_info are hardcoded.
+ * function since some of the values passed to draw_ext_info are hardcoded.
  */
-#define DIFF_MSG(flag, msg1, msg2) \
-    new_draw_info(NDI_UNIQUE, 0, op, (flag>0)?msg1:msg2);
+#define DIFF_MSG(flag, subtype1, subtype2, msg1, msg2) \
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, (flag>0)?subtype1:subtype2, (flag>0)?msg1:msg2, NULL);
 
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
 /* flag is set to 1 if we are applying the object, -1 if we are removing
@@ -368,7 +368,6 @@ void check_stat_bounds(living *stats) {
 int change_abil(object *op, object *tmp) {
     int flag=QUERY_FLAG(tmp,FLAG_APPLIED)?1:-1,i,j,success=0;
     object refop;
-    char message[MAX_BUF];
     int potion_max=0;
   
     /* remember what object was like before it was changed.  note that
@@ -442,22 +441,26 @@ int change_abil(object *op, object *tmp) {
      */
     if(tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
 	success=1;
-	DIFF_MSG(flag, "Your hands begin to glow red.",
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_ATTACKTYPE_GAIN, MSG_TYPE_ATTRIBUTE_ATTACKTYPE_LOSS,
+		 "Your hands begin to glow red.",
 		 "Your hands stop glowing red.");
     }
     if ( QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)){
 	success=1;
-	DIFF_MSG(flag, "You feel very protected.", 
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
+		 "You feel very protected.", 
 		 "You don't feel protected anymore.");
     }
     if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
 	success=1;
-	DIFF_MSG(flag, "A magic force shimmers around you.",
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
+		 "A magic force shimmers around you.",
 		 "The magic force fades away.");
     }
     if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
 	success=1;
-	DIFF_MSG(flag, "You feel more safe now, somehow.",
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
+		 "You feel more safe now, somehow.",
 		 "Suddenly you feel less safe, somehow.");
     }
     /* movement type has changed.  We don't care about cases where
@@ -473,19 +476,24 @@ int change_abil(object *op, object *tmp) {
 	 * status doesn't make a difference if you are flying high
 	 */
 	if (tmp->move_type & MOVE_FLY_LOW && !(op->move_type & MOVE_FLY_HIGH)) {
-	    DIFF_MSG(flag, "You start to float in the air!.", "You float down to the ground.");
+	    DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE, 
+		     "You start to float in the air!.", 
+		     "You float down to the ground.");
 	}
 
 	if (tmp->move_type & MOVE_FLY_HIGH) {
 	    /* double conditional - second case covers if you have move_fly_low -
 	     * in that case, you don't actually land
 	     */
-	    DIFF_MSG(flag, "You soar into the air air!.", 
+	    DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
+		     "You soar into the air air!.", 
 		     (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
 		      "You float down to the ground."));
 	}
 	if (tmp->move_type & MOVE_SWIM)
-	    DIFF_MSG(flag,"You feel ready for a swim", "You no longer feel like swimming");
+	    DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
+		     "You feel ready for a swim",
+		     "You no longer feel like swimming");
 
 	/* Changing move status may mean you are affected by things you weren't before */
 	check_move_on(op, op);
@@ -500,24 +508,30 @@ int change_abil(object *op, object *tmp) {
 	    if(flag>0) {
 		if(op->race) free_string(op->race); 
 		op->race=add_string("undead");
-		new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce drains away!");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+			      "Your lifeforce drains away!", NULL);
 	    } else {
 		if(op->race) free_string(op->race); 
 		if(op->arch->clone.race) 
 		    op->race=add_string(op->arch->clone.race);  
 		else
 		    op->race = NULL;
-		new_draw_info(NDI_UNIQUE, 0, op,"Your lifeforce returns!");
+		draw_ext_info(NDI_UNIQUE, 0, op,MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+			      "Your lifeforce returns!", NULL);
 	    }
 	}
 
     if ( QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)){
 	success=1;
-	DIFF_MSG(flag, "You walk more quietly.", "You walk more noisily.");
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+		 "You walk more quietly.", 
+		 "You walk more noisily.");
     }
     if ( QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)){
 	success=1;
-	DIFF_MSG(flag, "You become transparent.", "You can see yourself.");
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+		 "You become transparent.", 
+		 "You can see yourself.");
     }
     /* blinded you can tell if more blinded since blinded player has minimal
      * vision 
@@ -526,18 +540,22 @@ int change_abil(object *op, object *tmp) {
 	success=1;
 	if(flag>0) {
 	    if(QUERY_FLAG(op,FLAG_WIZ))
-		new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self is blinded.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+			      "Your mortal self is blinded.", NULL);
 	    else { 
-		new_draw_info(NDI_UNIQUE, 0, op,"You are blinded.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+			      "You are blinded.", NULL);
 		SET_FLAG(op,FLAG_BLIND);
 		if(op->type==PLAYER)
 		    op->contr->do_los=1;
 	    }
 	} else {
 	    if(QUERY_FLAG(op,FLAG_WIZ))
-		new_draw_info(NDI_UNIQUE, 0, op,"Your mortal self can now see again.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+			      "Your mortal self can now see again.", NULL);
 	    else {
-		new_draw_info(NDI_UNIQUE, 0, op,"Your vision returns.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+			      "Your vision returns.", NULL);
 		CLEAR_FLAG(op,FLAG_BLIND);
 		if(op->type==PLAYER)
 		    op->contr->do_los=1;
@@ -549,24 +567,30 @@ int change_abil(object *op, object *tmp) {
 	success=1;
         if(op->type==PLAYER)
 	    op->contr->do_los=1;
-	DIFF_MSG(flag, "Your vision is better in the dark.", "You see less well in the dark.");
+	DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+		 "Your vision is better in the dark.", 
+		 "You see less well in the dark.");
     }
 
     if ( QUERY_FLAG(op,FLAG_XRAYS) != QUERY_FLAG(&refop,FLAG_XRAYS)){
 	success=1;
 	if(flag>0) {
 	    if(QUERY_FLAG(op,FLAG_WIZ))
-		new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a little clearer.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START,
+			      "Your vision becomes a little clearer.", NULL);
 	    else {
-		new_draw_info(NDI_UNIQUE, 0, op,"Everything becomes transparent.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START,
+			      "Everything becomes transparent.", NULL);
 		if(op->type==PLAYER)
 		    op->contr->do_los=1;
 	    }
 	} else {
 	    if(QUERY_FLAG(op,FLAG_WIZ))
-		new_draw_info(NDI_UNIQUE, 0, op,"Your vision becomes a bit out of focus.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+			      "Your vision becomes a bit out of focus.", NULL);
 	    else {
-		new_draw_info(NDI_UNIQUE, 0, op,"Everything suddenly looks very solid.");
+		draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+			      "Everything suddenly looks very solid.", NULL);
 		if(op->type==PLAYER)
 		    op->contr->do_los=1;
 	    }
@@ -575,31 +599,37 @@ int change_abil(object *op, object *tmp) {
 
     if(tmp->stats.luck) {
 	success=1;
-	DIFF_MSG(flag*tmp->stats.luck, "You feel more lucky.", "You feel less lucky.");
+	DIFF_MSG(flag*tmp->stats.luck, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+		 "You feel more lucky.",
+		 "You feel less lucky.");
     }
 
     if(tmp->stats.hp && op->type==PLAYER) {
 	success=1;
-	DIFF_MSG(flag*tmp->stats.hp, "You feel much more healthy!",
+	DIFF_MSG(flag*tmp->stats.hp, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+		 "You feel much more healthy!",
 		 "You feel much less healthy!");
     }
 
     if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
 	success=1;
-	DIFF_MSG(flag*tmp->stats.sp, "You feel one with the powers of magic!",
+	DIFF_MSG(flag*tmp->stats.sp, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+		 "You feel one with the powers of magic!",
 		 "You suddenly feel very mundane.");
     }
 
     /* for the future when artifacts set this -b.t. */
     if(tmp->stats.grace && op->type==PLAYER) {
 	success=1;
-	DIFF_MSG(flag*tmp->stats.grace, "You feel closer to your god!", 
+	DIFF_MSG(flag*tmp->stats.grace, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+		 "You feel closer to your god!", 
 		 "You suddenly feel less holy.");
     }
 
     if(tmp->stats.food && op->type==PLAYER) {
 	success=1;
-	DIFF_MSG(flag*tmp->stats.food, "You feel your digestion slowing down.", 
+	DIFF_MSG(flag*tmp->stats.food, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
+		 "You feel your digestion slowing down.", 
 		 "You feel your digestion speeding up.");
     }
 
@@ -610,13 +640,15 @@ int change_abil(object *op, object *tmp) {
 	if (op->resist[i] != refop.resist[i]) {
 	    success=1;
 	    if (op->resist[i] > refop.resist[i])
-		sprintf(message, "Your resistance to %s rises to %d%%.",
+		draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
+			"Your resistance to %s rises to %d%%.",
+			"Your resistance to %s rises to %d%%.",
 			change_resist_msg[i], op->resist[i]);
 	    else
-		sprintf(message, "Your resistance to %s drops to %d%%.",
+		draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
+			"Your resistance to %s drops to %d%%.",
+			"Your resistance to %s drops to %d%%.",
 			change_resist_msg[i], op->resist[i]);
-      
-	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, op, message);
 	}
     }
 
@@ -624,7 +656,7 @@ int change_abil(object *op, object *tmp) {
 	for (j=0; j<NUM_STATS; j++) {
 	    if ((i=get_attr_value(&(tmp->stats),j))!=0) {
 		success=1;
-		DIFF_MSG(i * flag, gain_msg[j], lose_msg[j]);
+		DIFF_MSG(i * flag, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS, gain_msg[j], lose_msg[j]);
 	    }
 	}
     }
@@ -637,29 +669,29 @@ int change_abil(object *op, object *tmp) {
  */
 
 void drain_stat(object *op) {
-  drain_specific_stat(op, RANDOM()%NUM_STATS);
+    drain_specific_stat(op, RANDOM()%NUM_STATS);
 }
 
 void drain_specific_stat(object *op, int deplete_stats) {
-  object *tmp;
-  archetype *at;
+    object *tmp;
+    archetype *at;
 
-  at = find_archetype(ARCH_DEPLETION);
-  if (!at) {
-    LOG(llevError, "Couldn't find archetype depletion.\n");
-    return;
-  } else {
-    tmp = present_arch_in_ob(at, op);
-    if (!tmp) {
-      tmp = arch_to_object(at);
-      tmp = insert_ob_in_ob(tmp, op);
-      SET_FLAG(tmp,FLAG_APPLIED);
+    at = find_archetype(ARCH_DEPLETION);
+    if (!at) {
+	LOG(llevError, "Couldn't find archetype depletion.\n");
+	return;
+    } else {
+	tmp = present_arch_in_ob(at, op);
+	if (!tmp) {
+	    tmp = arch_to_object(at);
+	    tmp = insert_ob_in_ob(tmp, op);
+	    SET_FLAG(tmp,FLAG_APPLIED);
+	}
     }
-  }
 
-  new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
-  change_attr_value(&tmp->stats, deplete_stats, -1);
-  fix_player(op);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS, drain_msg[deplete_stats], NULL);
+    change_attr_value(&tmp->stats, deplete_stats, -1);
+    fix_player(op);
 }
 
 /*
@@ -1168,7 +1200,8 @@ void fix_player(object *op) {
 	/* following happen when skills system is not used */
 	if(!mana_obj) mana_obj = op;
 	if(!grace_obj) grace_obj = op;
-	 /* set maxsp */
+
+	/* set maxsp */
 	if(!mana_obj || !mana_obj->level || op->type!=PLAYER) mana_obj = op;
 
 	if (mana_obj == op && op->type == PLAYER) {
@@ -1441,7 +1474,6 @@ void dragon_level_gain(object *who) {
     object *abil = NULL;    /* pointer to dragon ability force*/
     object *skin = NULL;    /* pointer to dragon skin force*/
     object *tmp = NULL;     /* tmp. object */
-    char buf[MAX_BUF];      /* tmp. string buffer */
   
     /* now grab the 'dragon_ability'-forces from the player's inventory */
     for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
@@ -1461,7 +1493,6 @@ void dragon_level_gain(object *who) {
     if (who->level > abil->level) {
 	/* increase our focused ability */
 	abil->resist[abil->stats.exp]++;
-    
 
 	if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
 	    /* time to hand out a new ability-gift */
@@ -1471,9 +1502,10 @@ void dragon_level_gain(object *who) {
     
 	if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
 	    /* apply new ability focus */
-	    sprintf(buf, "Your metabolism now focuses on %s!",
-		    change_resist_msg[abil->last_eat]);
-	    new_draw_info(NDI_UNIQUE|NDI_BLUE, 0, who, buf);
+	    draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+		"Your metabolism now focuses on %s!",
+		"Your metabolism now focuses on %s!",
+		change_resist_msg[abil->last_eat]);
       
 	    abil->stats.exp = abil->last_eat;
 	    abil->last_eat = 0;
@@ -1554,15 +1586,19 @@ void player_lvl_adj(object *who, object *op) {
 		sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
 	    else
 		sprintf(buf,"You are now level %d.",op->level);
-	    if(who) new_draw_info(NDI_UNIQUE|NDI_RED, 0, who,buf);
+
+	    if(who) draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN,buf, buf);
 	}
 	player_lvl_adj(who,op); /* To increase more levels */
     } else if (op->level>1 && op->stats.exp<level_exp(op->level,who->expmul)) {
 	op->level--;
 	if(who) fix_player(who);
 	if(op->type!=PLAYER) {
-	    sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
-	    if(who) new_draw_info(NDI_UNIQUE|NDI_RED, 0, who,buf);
+	    if(who) 
+		draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS,
+			"You are now level %d in the %s skill.",
+			"You are now level %d in the %s skill.",
+			op->level,op->name);
 	}
 	player_lvl_adj(who,op); /* To decrease more levels */
     }

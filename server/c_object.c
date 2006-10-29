@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -116,13 +116,15 @@ int command_build (object *pl, char *params) {
  * pointer in a better fashion than it is currently doing.
  */
     if (!params) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "Usage:build [nr] [+magic] <object>");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Usage:build [nr] [+magic] <object>", NULL);
 	return 0;
     }
     marked = find_marked_object(pl);
     if (marked == NULL || !marked->material || marked->materialname == NULL ||
 	marked->type != INORGANIC) {
-        new_draw_info(NDI_UNIQUE, 0, pl, "You must mark some ingredients.");
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You must mark some ingredients.", NULL);
         return 0;
     }
     while (*params==' ')
@@ -133,16 +135,16 @@ int command_build (object *pl, char *params) {
 
     if (sscanf(bp, "%d ", &nrof)) {
 	if ((bp = strchr(params, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0, pl,
-		"Usage: build [nr] [+magic] <object>");
+	    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND. MSG_TYPE_COMMAND_ERROR,
+		"Usage: build [nr] [+magic] <object>", NULL);
 	    return 0;
 	}
 	bp++;
     }
     if (sscanf(bp, "+%d ", &magic)) {
         if ((bp = strchr(bp, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0, pl,
-		"Usage: build [nr] [+magic] <object>");
+	    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		"Usage: build [nr] [+magic] <object>", NULL);
 	    return 0;
 	}
 	bp++;
@@ -151,8 +153,10 @@ int command_build (object *pl, char *params) {
 	bp++;
     at=find_archetype_by_object_name(bp);
     if (at == NULL) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	    "You don't know how to make a %s.", bp);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	    "You don't know how to make a %s.", 
+	    "You don't know how to make a %s.", 
+	     bp);
 	return 0;
     }
     newobj = get_object();
@@ -171,13 +175,14 @@ int command_build (object *pl, char *params) {
 	skillnr = SK_BOWYER;
 
     if (skillnr == -1) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "You don't know how to create that.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You don't know how to create that.", NULL);
 	return 0;
     }
 
     if (!change_skill(pl, skillnr, 0)) {
-	new_draw_info(NDI_UNIQUE, 0, pl,
-	    "You lack the needed skill to make that item.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+	    "You lack the needed skill to make that item.", NULL);
 	return 0;
     }
     facility = NULL;
@@ -185,12 +190,13 @@ int command_build (object *pl, char *params) {
 	if (tmp->type == BUILDFAC && tmp->tooltype == newobj->type)
 	    facility=tmp;
     if (facility == NULL) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "You lack a suitable workspace.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You lack a suitable workspace.", NULL);
 	return 0;
     }
     if (magic && !(IS_ARMOR(newobj) || IS_WEAPON(newobj))) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "A magical bonus is only valid with "
-	    "armour and weapons.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "A magical bonus is only valid with armour and weapons.", NULL);
 	return 0;
     }
 
@@ -215,22 +221,25 @@ int command_build (object *pl, char *params) {
 	/* should split off bows arrows and probably bolts around here */
     }
     if (tool == NULL) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "You lack the required tools.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You lack the required tools.", NULL);
 	return 0;
     }
 
     mt = name_to_material(marked->materialname);
     if (mt == NULL) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "Your raw materials are garbage.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Your raw materials are garbage.", NULL);
 	return 0;
     }
     if (magic < 0) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "You cannot create cursed objects.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You cannot create cursed objects.", NULL);
 	return 0;
     }
     if (magic > 0 && SK_level(pl)/20 < magic) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "You are not powerful enough to "
-	    "create such a magical item.");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You are not powerful enough to create such a magical item.", NULL);
 	return 0;
     }
 
@@ -264,13 +273,14 @@ int command_build (object *pl, char *params) {
 		    tmp->nrof >= gemcost*nrof*mt->value/100)
 		    found++;
 	if (found < magic) {
-	    new_draw_info(NDI_UNIQUE, 0, pl, "You did not provide a suitable "
-	        "sacrifice of gems on the ground to add this much magic.");
+	    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "You did not provide a suitable sacrifice of gems "
+		  "on the ground to add this much magic.", NULL);
 	    return 0;
 	}
 	if (25*pow(3, magic)*mt->value/100 > pl->stats.sp) {
-	    new_draw_info(NDI_UNIQUE, 0, pl, "You do not have enough mana "
-		"to create this object.");
+	    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		"You do not have enough mana to create this object.", NULL);
 	    return 0;
 	}
     }
@@ -282,13 +292,17 @@ int command_build (object *pl, char *params) {
     mneed = nrof*((newobj->weight * mt->weight)/80);
     /* cost can be balanced out by cost to disassemble items for materials */
     if ((marked->weight * MAX(1, marked->nrof)) < mneed) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "You do not have enough %s.",
-	    marked->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		     "You do not have enough %s.",
+		     "You do not have enough %s.",
+		     marked->name);
 	return 0;
     }
     if (obpow > (tool->level+tool->magic)) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "Your %s is not capable of "
-	    "crafting such a complex item.", tool->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "Your %s is not capable of crafting such a complex item.",
+			     "Your %s is not capable of crafting such a complex item.",
+			     tool->name);
 	return 0;
     }
     set_abs_magic(newobj, magic);
@@ -299,6 +313,7 @@ int command_build (object *pl, char *params) {
 	LOG(llevDebug, "command_build: skill:%d obpow:%d rndm:%d tool:%s "
 	    "newobj:%s marked:%s magic:%d\n", SK_level(pl)+bonus, obpow,
 	    number, tool->name, newobj->name, marked->name, magic);
+
 	if (SK_level(pl)+bonus > number) {
 	    /* wow, we actually created something */
 	    newobj->x = pl->x;
@@ -314,8 +329,10 @@ int command_build (object *pl, char *params) {
 	} else {
 	    free_object(newobj);
 	    if (bonus < rndm(1, number-SK_level(pl)+bonus)) {
-		new_draw_info_format(NDI_UNIQUE, 0, pl,
-		    "You broke your %s!\n", tool->name);
+		draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+				     "You broke your %s!\n", 
+				     "You broke your %s!\n", 
+				     tool->name);
 		esrv_del_item(pl->contr, tool->count);
 		remove_ob(tool);
 		free_object(tool);
@@ -374,14 +391,20 @@ int command_build (object *pl, char *params) {
     pl->stats.sp -= 25*pow(3, magic)*mt->value/100;
     fix_player(pl);
     if (nummade > 1) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have created %d %s.",
-	    nummade, query_base_name(newobj, 1));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		     "You have created %d %s.",
+		     "You have created %d %s.",
+		     nummade, query_base_name(newobj, 1));
     } else if (nummade == 1) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have created a %s.",
-	    query_base_name(newobj, 0));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		     "You have created a %s.",
+		     "You have created a %s.",
+		     query_base_name(newobj, 0));
     } else {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	    "You have failed to craft a %s.", query_base_name(newobj, 0));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "You have failed to craft a %s.",
+			     "You have failed to craft a %s.",
+			     query_base_name(newobj, 0));
 	return 0;
     }
     if (skills[skillnr].category != EXP_NONE)
@@ -394,7 +417,8 @@ int command_build (object *pl, char *params) {
 
 int command_uskill ( object *pl, char *params) {
    if (!params) {
-        new_draw_info(NDI_UNIQUE, 0, pl, "Usage: use_skill <skill name>");
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Usage: use_skill <skill name>", NULL);
         return 0;
    }
    return use_skill(pl,params);
@@ -404,13 +428,17 @@ int command_rskill ( object *pl, char *params) {
     object *skill;
 
     if (!params) {
-	new_draw_info(NDI_UNIQUE, 0, pl, "Usage: ready_skill <skill name>");
+	draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Usage: ready_skill <skill name>", NULL);
 	return 0;
     }
     skill = find_skill_by_name(pl, params);
 
     if (!skill) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, "You have no knowledge of the skill %s", params);
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+			     "You have no knowledge of the skill %s",
+			     "You have no knowledge of the skill %s",
+			     params);
 	return 0;
     }
     return change_skill(pl,skill, 0);
@@ -440,7 +468,8 @@ int command_throw (object *op, char *params)
     skop = find_skill_by_name(op, skill_names[SK_THROWING]);
     if (skop) return do_skill(op, op, skop, op->facing,params);
     else {
-	new_draw_info(NDI_UNIQUE, 0, op, "You have no knowledge of the skill throwing.");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+		      "You have no knowledge of the skill throwing.", NULL);
     }
     return 0;
 }
@@ -448,33 +477,35 @@ int command_throw (object *op, char *params)
 
 int command_apply (object *op, char *params)
 {
-  if (!params) {
-    player_apply_below(op);
+    if (!params) {
+	player_apply_below(op);
+	return 0;
+    }
+    else {
+	enum apply_flag aflag = 0;
+	object *inv;
+
+	while (*params==' ') params++;
+	if (!strncmp(params,"-a ",3)) {
+	    aflag=AP_APPLY;
+	    params+=3;
+	}
+	if (!strncmp(params,"-u ",3)) {
+	    aflag=AP_UNAPPLY;
+	    params+=3;
+	}
+	while (*params==' ') params++;
+
+	inv=find_best_apply_object_match(op, params, aflag);
+	if (inv) {
+	    player_apply(op,inv,aflag,0);
+	} else
+	  draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			       "Could not find any match to the %s.",
+			       "Could not find any match to the %s.",
+			       params);
+    }
     return 0;
-  }
-  else {
-    enum apply_flag aflag = 0;
-    object *inv;
-
-    while (*params==' ') params++;
-    if (!strncmp(params,"-a ",3)) {
-	aflag=AP_APPLY;
-	params+=3;
-    }
-    if (!strncmp(params,"-u ",3)) {
-	aflag=AP_UNAPPLY;
-	params+=3;
-    }
-    while (*params==' ') params++;
-
-    inv=find_best_apply_object_match(op, params, aflag);
-    if (inv) {
-	player_apply(op,inv,aflag,0);
-    } else
-	  new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "Could not find any match to the %s.",params);
-  }
-  return 0;
 }
 
 /*
@@ -489,31 +520,42 @@ int command_apply (object *op, char *params)
 int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof) {
 
     if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl, 
-	     "The %s is not active.", query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "The %s is not active.", 
+			     "The %s is not active.", 
+			     query_name(sack));
 	return 0;
     }
     if (sack == op) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	    "You can't put the %s into itself.", query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "You can't put the %s into itself.", 
+			     "You can't put the %s into itself.", 
+			     query_name(sack));
 	return 0;
     }
     if (sack->race && (sack->race != op->race || op->type == CONTAINER
 		       || (sack->stats.food && sack->stats.food != op->type))) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	    "You can put only %s into the %s.", sack->race,  query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "You can put only %s into the %s.", 
+			     "You can put only %s into the %s.", 
+			     sack->race,  query_name(sack));
 	return 0;
     }
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	    "You can't want put the key into %s.", query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "You can't want put the key into %s.", 
+			     "You can't want put the key into %s.", 
+			     query_name(sack));
 	return 0;
     }
     if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
 	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
 	* (100 - sack->stats.Str) / 100  > sack->weight_limit) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
-	     "That won't fit in the %s!", query_name(sack));
+
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "That won't fit in the %s!", 
+			     "That won't fit in the %s!", 
+			     query_name(sack));
     return 0;
     }
     /* All other checks pass, must be OK */
@@ -542,15 +584,17 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
      * containers not allowed as of now)
      */
     if((pl->move_type & MOVE_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && 
-       get_player_container(tmp)!=pl) {
-	new_draw_info(NDI_UNIQUE, 0,pl, "You are levitating, you can't reach the ground!");
+	get_player_container(tmp)!=pl) {
+	draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You are levitating, you can't reach the ground!", NULL);
 	return;
     }
     if (QUERY_FLAG (tmp, FLAG_NO_DROP))
 	return;
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
-	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
+	draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+		      "The object disappears in a puff of smoke! It must have been an illusion.",
+		      NULL);
 	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
             remove_ob (tmp);
@@ -568,7 +612,8 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     else
         effective_weight_limit = weight_limit[MAX_STAT];
     if ((pl->weight + pl->carrying + weight) > effective_weight_limit) {
-	new_draw_info(0, 0,pl,"That item is too heavy for you to pick up.");
+	draw_ext_info(0, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+		      "That item is too heavy for you to pick up.", NULL);
 	return;
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
@@ -578,7 +623,8 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
         tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
-	    new_draw_info(NDI_UNIQUE, 0,pl, errmsg);
+	    draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  errmsg, NULL);
 	    return;
 	}
 	/* Tell a client what happened rest of objects */
@@ -604,7 +650,9 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 		query_cost_string(tmp,pl,F_BUY | F_SHOP));
     else
 	(void) sprintf(buf,"You pick up the %s.", query_name(tmp));
-    new_draw_info(NDI_UNIQUE, 0,pl,buf);
+
+    draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		  buf, NULL);
 
     tmp = insert_ob_in_ob(tmp, op);
 
@@ -640,7 +688,9 @@ void pick_up(object *op,object *alt)
     if (alt)
     {
         if ( ! can_pick (op, alt)) {
-            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up the %s.",
+            draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				  "You can't pick up the %s.",
+				  "You can't pick up the %s.",
                                   alt->name);
 	    goto leave;
         }
@@ -649,8 +699,8 @@ void pick_up(object *op,object *alt)
     else
     {
         if (op->below == NULL || ! can_pick (op, op->below)) {
-             new_draw_info (NDI_UNIQUE, 0, op,
-                            "There is nothing to pick up here.");
+             draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                            "There is nothing to pick up here.", NULL);
              goto leave;
         }
         tmp = op->below;
@@ -706,8 +756,8 @@ void pick_up(object *op,object *alt)
     if (op->type == PLAYER && alt->type == CONTAINER
 	&& QUERY_FLAG (tmp, FLAG_STARTEQUIP))
     {
-        new_draw_info (NDI_UNIQUE, 0, op,
-                       "This object cannot be put into containers!");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                       "This object cannot be put into containers!", NULL);
         goto leave;
     }
 
@@ -748,7 +798,8 @@ int command_take (object *op, char *params)
     }
 
     if (tmp==NULL) {
-        new_draw_info(NDI_UNIQUE, 0,op,"Nothing to take!");
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Nothing to take!", NULL);
         return 0;
     }
 
@@ -788,19 +839,24 @@ int command_take (object *op, char *params)
     if (!params && !tmp) {
         for (tmp=op->below; tmp!=NULL; tmp=tmp->next)
             if (!tmp->invisible) {
-                char buf[MAX_BUF];
-                sprintf(buf,"You can't pick up a %s.",
-                    tmp->name? tmp->name:"null");
-                new_draw_info(NDI_UNIQUE, 0,op, buf);
+                draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				     "You can't pick up a %s.",
+				     "You can't pick up a %s.",
+				     tmp->name? tmp->name:"null");
+
                 break;
             }
-        if (!tmp) new_draw_info(NDI_UNIQUE, 0,op, "There is nothing to pick up.");
+        if (!tmp) draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				"There is nothing to pick up.", NULL);
     }
     if (missed==1)
-        new_draw_info(NDI_UNIQUE, 0, op, "You were unable to take one of the items.");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You were unable to take one of the items.", NULL);
     else if (missed>1)
-        new_draw_info_format(NDI_UNIQUE, 0, op,
-            "You were unable to take %d of the items.",missed);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            "You were unable to take %d of the items.",
+            "You were unable to take %d of the items.",
+	     missed);
     return 0;
 }
 
@@ -816,18 +872,20 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 {
     tag_t tmp_tag, tmp2_tag;
     object *tmp2, *sack2;
-    char buf[MAX_BUF];
 
     if (sack==tmp) return;	/* Can't put an object in itself */
     if (sack->type != CONTAINER && sack->type != TRANSPORT) {
-	new_draw_info_format(NDI_UNIQUE, 0,op,
-		     "The %s is not a container.", query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		     "The %s is not a container.", 
+		     "The %s is not a container.", 
+		     query_name(sack));
 	return;
     }
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
-	new_draw_info_format(NDI_UNIQUE, 0,op,
-	     "You cannot put the %s in the %s.", query_name(tmp),
-			   query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	     "You cannot put the %s in the %s.", 
+	     "You cannot put the %s in the %s.", 
+	     query_name(tmp), query_name(sack));
 	return;
     }
     if (tmp->type == CONTAINER && tmp->inv) {
@@ -837,16 +895,21 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 	 * container, this is only done if the object has something in it.
 	 */
 	sack2 = tmp;
-	new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
-		    query_name(tmp), query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		     "You move the items from %s into %s.",
+		     "You move the items from %s into %s.",
+		     query_name(tmp), query_name(sack));
+
 	for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
 	    tmp = tmp2->below;
 	    if ((sack->type == CONTAINER && sack_can_hold(op, op->container, tmp2,tmp2->nrof)) ||
 		(sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
 		    put_object_in_sack (op, sack, tmp2, 0);
 	    } else {
-		sprintf(buf,"Your %s fills up.", query_name(sack));
-		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+				      "Your %s fills up.",
+				      "Your %s fills up.",
+				      query_name(sack));
 		break;
 	    }
 	}
@@ -872,7 +935,8 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 	tmp = get_split_ob (tmp, nrof);
 
 	if(!tmp) {
-	    new_draw_info(NDI_UNIQUE, 0,op, errmsg);
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  errmsg, NULL);
 	    return;
 	}
 	/* Tell a client what happened other objects */ 
@@ -883,8 +947,10 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     } else
 	remove_ob(tmp);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op, "You put the %s in %s.",
-		  query_name(tmp), query_name(sack));
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "You put the %s in %s.",
+			 "You put the %s in %s.",
+			 query_name(tmp), query_name(sack));
     tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
     fix_player(op); /* This is overkill, fix_player() is called somewhere */
@@ -919,14 +985,12 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
  */
 object *drop_object (object *op, object *tmp, uint32 nrof) 
 {
-    char buf[MAX_BUF];
-    object *floor;
     tag_t tmp_tag;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-      new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
+      draw_ext_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
 #endif
       return NULL;
     }
@@ -944,7 +1008,8 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
         tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
-	    new_draw_info(NDI_UNIQUE, 0,op, errmsg);
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  errmsg, NULL);
 	    return NULL;
 	}
 	/* Tell a client what happened rest of objects.  tmp2 is now the
@@ -965,9 +1030,10 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
         return NULL;
 
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
-      sprintf(buf,"You drop the %s.", query_name(tmp));
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-      new_draw_info(NDI_UNIQUE, 0,op,"The gods who lent it to you retrieves it.");
+      draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			   "You drop the %s. The gods who lent it to you retrieves it.",
+			   "You drop the %s. The gods who lent it to you retrieves it.",
+			   query_name(tmp));
       if (op->type==PLAYER)
 	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
@@ -1047,17 +1113,20 @@ void drop(object *op, object *tmp)
     }
 
     if (tmp==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You don't have anything to drop.");
+      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "You don't have anything to drop.", NULL);
       return;
     }
     if (QUERY_FLAG(tmp, FLAG_INV_LOCKED)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"This item is locked");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "This item is locked", NULL);
       return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
 #if 0
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-      new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
+      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "This item can't be dropped.", NULL);
 #endif
       return;
     }
@@ -1105,7 +1174,8 @@ int command_dropall (object *op, char *params) {
   object * curinv, *nextinv;
 
   if(op->inv == NULL) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop!");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "Nothing to drop!", NULL);
     return 0;
   }
   
@@ -1217,7 +1287,8 @@ int command_drop (object *op, char *params)
     int missed = 0;
 
     if (!params) {
-        new_draw_info(NDI_UNIQUE,0, op, "Drop what?");
+        draw_ext_info(NDI_UNIQUE,0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Drop what?", NULL);
         return 0;
     } else {
         for (tmp=op->inv; tmp; tmp=next) {
@@ -1231,38 +1302,43 @@ int command_drop (object *op, char *params)
                 did_one=1;
             }
         }
-        if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
+        if (!did_one) draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				    "Nothing to drop.", NULL);
         if (missed==1)
-            new_draw_info(NDI_UNIQUE, 0,op,
-                "One item couldn't be dropped because it was locked.");
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "One item couldn't be dropped because it was locked.", NULL);
         else if (missed>1)
-            new_draw_info_format(NDI_UNIQUE, 0, op,
-                "%d items couldn't be dropped because they were locked.",missed);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "%d items couldn't be dropped because they were locked.",
+                "%d items couldn't be dropped because they were locked.",
+		 missed);
     }
     if (op->type==PLAYER)
     {
         op->contr->count=0;
         op->contr->socket.update_look=1;
     }
-/*    draw_look(op);*/
     return 0;
 }
 
 int command_examine (object *op, char *params)
 {
-  if (!params) {
-    object *tmp=op->below;
-    while (tmp && !LOOK_OBJ(tmp)) tmp=tmp->below;
-    if (tmp) examine(op,tmp);
-  }
-  else {
-    object *tmp=find_best_object_match(op,params);
-    if (tmp)
-        examine(op,tmp);
-    else
-	    new_draw_info_format(NDI_UNIQUE,0,op,"Could not find an object that matches %s",params);
-  }
-  return 0;
+    if (!params) {
+	object *tmp=op->below;
+	while (tmp && !LOOK_OBJ(tmp)) tmp=tmp->below;
+	if (tmp) examine(op,tmp);
+    }
+    else {
+	object *tmp=find_best_object_match(op,params);
+	if (tmp)
+	    examine(op,tmp);
+	else
+	    draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				 "Could not find an object that matches %s",
+				 "Could not find an object that matches %s",
+				 params);
+    }
+    return 0;
 }
 
 /* op should be a player.
@@ -1275,11 +1351,8 @@ object *find_marked_object(object *op)
 {
     object *tmp;
 
-    if (!op || !op->contr) return NULL;
-    if (!op->contr->mark) {
-/*	new_draw_info(NDI_UNIQUE,0,op,"You have no marked object");*/
-	return NULL;
-    }
+    if (!op || !op->contr || !op->contr->mark) return NULL;
+
     /* This may seem like overkill, but we need to make sure that they
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
@@ -1292,7 +1365,6 @@ object *find_marked_object(object *op)
 	    else {
 		op->contr->mark=NULL;
 		op->contr->mark_count=0;
-/*		new_draw_info(NDI_UNIQUE,0,op,"You have no marked object");*/
 		return NULL;
 	    }
 	}
@@ -1310,19 +1382,29 @@ int command_mark(object *op, char *params)
     if (!op->contr) return 1;
     if (!params) {
 	object *mark=find_marked_object(op);
-	if (!mark) new_draw_info(NDI_UNIQUE,0,op,"You have no marked object.");
-	else new_draw_info_format(NDI_UNIQUE,0,op,"%s is marked.", query_name(mark));
+	if (!mark) draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				 "You have no marked object.", NULL);
+	else draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				  "%s is marked.",
+				  "%s is marked.",
+				  query_name(mark));
     }
     else {
 	object *mark1=find_best_object_match(op, params);
 	if (!mark1) {
-	    new_draw_info_format(NDI_UNIQUE,0,op,"Could not find an object that matches %s",params);
+	    draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+				 "Could not find an object that matches %s",
+				 "Could not find an object that matches %s",
+				 params);
 	    return 1;
 	}
 	else {
 	    op->contr->mark=mark1;
 	    op->contr->mark_count=mark1->count;
-	    new_draw_info_format(NDI_UNIQUE,0,op,"Marked item %s", query_name(mark1));
+	    draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				 "Marked item %s", 
+				 "Marked item %s", 
+				 query_name(mark1));
 	    return 0;
 	}
     }
@@ -1337,35 +1419,46 @@ void examine_monster(object *op,object *tmp) {
     object *mon=tmp->head?tmp->head:tmp;
 
     if(QUERY_FLAG(mon,FLAG_UNDEAD))
-	new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "It is an undead force.", NULL);
     if(mon->level>op->level)
-	new_draw_info(NDI_UNIQUE, 0,op,"It is likely more powerful than you.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "It is likely more powerful than you.", NULL);
     else if(mon->level<op->level)
-	new_draw_info(NDI_UNIQUE, 0,op,"It is likely less powerful than you.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "It is likely less powerful than you.", NULL);
     else
-	new_draw_info(NDI_UNIQUE, 0,op,"It is probably as powerful as you.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "It is probably as powerful as you.", NULL);
+
     if(mon->attacktype&AT_ACID)
-	new_draw_info(NDI_UNIQUE, 0,op,"You seem to smell an acrid odor.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "You smell an acrid odor.", NULL);
 
     /* Anyone know why this used to use the clone value instead of the
      * maxhp field?  This seems that it should give more accurate results.
      */
     switch((mon->stats.hp+1)*4/(mon->stats.maxhp+1)) { /* From 1-4 */
 	case 1:
-	    new_draw_info(NDI_UNIQUE, 0,op,"It is in a bad shape.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  "It is in a bad shape.", NULL);
 	    break;
 	case 2:
-	    new_draw_info(NDI_UNIQUE, 0,op,"It is hurt.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  "It is hurt.", NULL);
 	    break;
 	case 3:
-	    new_draw_info(NDI_UNIQUE, 0,op,"It is somewhat hurt.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  "It is somewhat hurt.", NULL);
 	    break;
 	case 4:
-	    new_draw_info(NDI_UNIQUE, 0,op,"It is in excellent shape.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  "It is in excellent shape.", NULL);
 	    break;
     }
     if(present_in_ob(POISONING,mon)!=NULL)
-	new_draw_info(NDI_UNIQUE, 0,op,"It looks very ill.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "It looks very ill.", NULL);
 }
 
 
@@ -1430,19 +1523,16 @@ void examine(object *op, object *tmp) {
     if (tmp == NULL || tmp->type == CLOSE_CON)
 	return;
 
-    strcpy(buf,"That is ");
-    strncat(buf, long_desc(tmp, op), VERY_BIG_BUF-strlen(buf)-1);
-    buf[VERY_BIG_BUF-1]=0;
-
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-    buf[0]='\0';
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			 "That is %s",
+			 "That is %s",
+			 long_desc(tmp, op));
 
     if(tmp->custom_name) {
-      strcpy(buf,"You name it ");
-      strncat(buf, tmp->custom_name, VERY_BIG_BUF-strlen(buf)-1);
-      buf[VERY_BIG_BUF-1]=0;
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-      buf[0]='\0';
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		     "You name it %s",
+		     "You name it %s",
+		     tmp->custom_name);
     }
 
     switch(tmp->type) {
@@ -1479,35 +1569,47 @@ void examine(object *op, object *tmp) {
     }
 
     if(buf[0]!='\0')
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      buf, NULL);
 
     if(tmp->materialname != NULL && !tmp->msg) {
-	sprintf(buf, "It is made of: %s.", tmp->materialname);
-	new_draw_info(NDI_UNIQUE, 0, op, buf);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			     "It is made of: %s.",
+			     "It is made of: %s.",
+			     tmp->materialname);
     }
     /* Where to wear this item */
     for (i=0; i < NUM_BODY_LOCATIONS; i++) {
 	if (tmp->body_info[i]<-1) {
 	    if (op->body_info[i])
-		new_draw_info_format(NDI_UNIQUE, 0,op, 
-			"It goes %s (%d)", body_locations[i].use_name, -tmp->body_info[i]);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			     "It goes %s (%d)",
+			     "It goes %s (%d)",
+			     body_locations[i].use_name, -tmp->body_info[i]);
 	    else
-		new_draw_info_format(NDI_UNIQUE, 0,op, 
-		        "It goes %s", body_locations[i].nonuse_name);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			     "It goes %s",
+			     "It goes %s",
+			     body_locations[i].nonuse_name);
 	} else if (tmp->body_info[i]) {
 	    if (op->body_info[i])
-		new_draw_info_format(NDI_UNIQUE, 0,op, 
-			"It goes %s", body_locations[i].use_name);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			     "It goes %s",
+			     "It goes %s",
+			     body_locations[i].use_name);
 	    else
-		new_draw_info_format(NDI_UNIQUE, 0,op, 
-			"It goes %s", body_locations[i].nonuse_name);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			     "It goes %s",
+			     "It goes %s",
+			     body_locations[i].nonuse_name);
 	}
     }
 
     if(tmp->weight) {
 	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
             tmp->weight*(tmp->nrof?tmp->nrof:1)/1000.0);
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      buf, NULL);
     }
 
     in_shop = is_in_shop(op);
@@ -1515,7 +1617,8 @@ void examine(object *op, object *tmp) {
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
     	sprintf(buf,"You reckon %s worth %s.",
 		    tmp->nrof>1?"they are":"it is",query_cost_string(tmp,op,F_SELL | F_APPROX));
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      buf, NULL);
 	if (in_shop) {
 	    if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	    	sprintf(buf,"%s would cost you %s.",
@@ -1523,7 +1626,8 @@ void examine(object *op, object *tmp) {
 	    else
 	    	sprintf(buf,"You are offered %s for %s.",
 		    query_cost_string(tmp,op,F_SELL+F_SHOP), tmp->nrof>1?"them":"it");
-	    new_draw_info(NDI_UNIQUE, 0,op,buf);
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  buf, NULL);
 	}
     }
 
@@ -1532,7 +1636,8 @@ void examine(object *op, object *tmp) {
    
     /* Is this item buildable? */
     if ( QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) )
-        new_draw_info( NDI_UNIQUE, 0, op, "This is a buildable item." );
+        draw_ext_info( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      "This is a buildable item.", NULL);
 
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match
@@ -1545,11 +1650,14 @@ void examine(object *op, object *tmp) {
 	 * out the extra message
 	 */
 	if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-	    new_draw_info(NDI_UNIQUE, 0,op, "The object has a story:");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			  "The object has a story:", NULL);
 
-	new_draw_info(NDI_UNIQUE, 0,op,tmp->msg);
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		      tmp->msg, NULL);
     }
-    new_draw_info(NDI_UNIQUE, 0,op," "); /* Blank line */
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+		  " ", " "); /* Blank line */
 }
 
 /*
@@ -1563,7 +1671,8 @@ void inventory(object *op,object *inv) {
   int items = 0, length;
 
   if (inv==NULL && op==NULL) {
-    new_draw_info(NDI_UNIQUE, 0,op,"Inventory of what object?");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "Inventory of what object?", NULL);
     return;
   }
   tmp = inv ? inv->inv : op->inv;
@@ -1577,14 +1686,14 @@ void inventory(object *op,object *inv) {
   }
   if (inv==NULL) { /* player's inventory */
     if (items==0) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You carry nothing.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "You carry nothing.", NULL);
       return;
     } else {
       length = 28;
       in = "";
-      if (op)
-        clear_win_info(op);
-      new_draw_info(NDI_UNIQUE, 0,op,"Inventory:");
+      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
+		    "Inventory:", NULL);
     }
   } else {
     if (items==0) 
@@ -1599,15 +1708,20 @@ void inventory(object *op,object *inv) {
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
-      new_draw_info_format(NDI_UNIQUE, 0,op ,"%s- %-*.*s (%5d) %-8s", in, length, length,
-		     query_name(tmp), tmp->count,query_weight(tmp));
+      draw_ext_info_format(NDI_UNIQUE, 0,op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
+		   "[fixed]%s- %-*.*s (%5d) %-8s", 
+		   "%s- %-*.*s (%5d) %-8s", 
+		   in, length, length, query_name(tmp), tmp->count,query_weight(tmp));
     else
-      new_draw_info_format(NDI_UNIQUE,0, op, "%s- %-*.*s %-8s", in, length+8, 
-		     length+8, query_name(tmp),
-                     query_weight(tmp));
+      draw_ext_info_format(NDI_UNIQUE,0, op,  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
+		   "[fixed]%s- %-*.*s %-8s", 
+		   "%s- %-*.*s %-8s", 
+		   in, length+8, length+8, query_name(tmp), query_weight(tmp));
   }
   if(!inv && op) {
-    new_draw_info_format(NDI_UNIQUE,0, op ,"%-*s %-8s",
+    draw_ext_info_format(NDI_UNIQUE,0, op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
+		 "[fixed]%-*s %-8s",
+		 "%-*s %-8s",
             41,"Total weight :",query_weight(op));
   }
 }
@@ -1618,44 +1732,126 @@ static void display_new_pickup(const object* op)
 
     if(!(i & PU_NEWMODE)) return;
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d NEWMODE",i & PU_NEWMODE?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d DEBUG",i & PU_DEBUG?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d INHIBIT",i & PU_INHIBIT?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d STOP",i & PU_STOP?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d NEWMODE",
+			 "%d NEWMODE",
+			 i & PU_NEWMODE?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d DEBUG",
+			 "%d DEBUG",
+			 i & PU_DEBUG?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d INHIBIT",
+			 "%d INHIBIT",
+			 i & PU_INHIBIT?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d STOP",
+			 "%d STOP",
+			 i & PU_STOP?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d <= x pickup weight/value RATIO (0==off)",(i & PU_RATIO)*5);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d <= x pickup weight/value RATIO (0==off)",
+			 "%d <= x pickup weight/value RATIO (0==off)",
+			 (i & PU_RATIO)*5);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d FOOD",i & PU_FOOD?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d DRINK",i & PU_DRINK?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d VALUABLES",i & PU_VALUABLES?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d FOOD",
+			 "%d FOOD",
+			 i & PU_FOOD?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d DRINK",
+			 "%d DRINK",
+			 i & PU_DRINK?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d VALUABLES",
+			 "%d VALUABLES",
+			 i & PU_VALUABLES?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d BOW",i & PU_BOW?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ARROW",i & PU_ARROW?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d BOW",
+			 "%d BOW",
+			 i & PU_BOW?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d ARROW",
+			 "%d ARROW",
+			 i & PU_ARROW?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d HELMET",i & PU_HELMET?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SHIELD",i & PU_SHIELD?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ARMOUR",i & PU_ARMOUR?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d HELMET",
+			 "%d HELMET",
+			 i & PU_HELMET?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d SHIELD",
+			 "%d SHIELD",
+			 i & PU_SHIELD?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d ARMOUR",
+			 "%d ARMOUR",
+			 i & PU_ARMOUR?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d BOOTS",i & PU_BOOTS?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d GLOVES",i & PU_GLOVES?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d CLOAK",i & PU_CLOAK?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d KEY",i & PU_KEY?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d BOOTS",
+			 "%d BOOTS",
+			 i & PU_BOOTS?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d GLOVES",
+			 "%d GLOVES",
+			 i & PU_GLOVES?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d CLOAK",
+			 "%d CLOAK",
+			 i & PU_CLOAK?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d KEY",
+			 "%d KEY",
+			 i & PU_KEY?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MISSILEWEAPON",i & PU_MISSILEWEAPON?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d ALLWEAPON",i & PU_ALLWEAPON?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MAGICAL",i & PU_MAGICAL?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d POTION",i & PU_POTION?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d MISSILEWEAPON",
+			 "%d MISSILEWEAPON",
+			 i & PU_MISSILEWEAPON?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d ALLWEAPON",
+			 "%d ALLWEAPON",
+			 i & PU_ALLWEAPON?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d MAGICAL",
+			 "%d MAGICAL",
+			 i & PU_MAGICAL?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d POTION",
+			 "%d POTION",
+			 i & PU_POTION?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SPELLBOOK",i & PU_SPELLBOOK?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d SKILLSCROLL",i & PU_SKILLSCROLL?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d READABLES",i & PU_READABLES?1:0);
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d MAGICDEVICE", i & PU_MAGIC_DEVICE?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d SPELLBOOK",
+			 "%d SPELLBOOK",
+			 i & PU_SPELLBOOK?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d SKILLSCROLL",
+			 "%d SKILLSCROLL",
+			 i & PU_SKILLSCROLL?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d READABLES",
+			 "%d READABLES",
+			 i & PU_READABLES?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d MAGICDEVICE", 
+			 "%d MAGICDEVICE", 
+			 i & PU_MAGIC_DEVICE?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d NOT CURSED", i & PU_NOT_CURSED?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d NOT CURSED",
+			 "%d NOT CURSED",
+			 i & PU_NOT_CURSED?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"%d JEWELS", i & PU_JEWELS?1:0);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+			 "%d JEWELS",
+			 "%d JEWELS",
+			 i & PU_JEWELS?1:0);
 
-    new_draw_info_format(NDI_UNIQUE, 0,op,"");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+		  "", "");
     }
 
 int command_pickup (object *op, char *params)
@@ -1704,13 +1900,17 @@ int command_pickup (object *op, char *params)
               return 1;
               }
           }
-      new_draw_info_format( NDI_UNIQUE, 0, op, "Pickup: invalid item %s\n", params );
+      draw_ext_info_format( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			   "Pickup: invalid item %s\n"
+,			   "Pickup: invalid item %s\n",
+			   params );
       return 1;
       }
 
   if(sscanf(params, "%u", &i) != 1) {
     if(1) LOG(llevDebug, "command_pickup: params==NULL\n");
-    new_draw_info(NDI_UNIQUE, 0,op,"Usage: pickup <0-7> or <value_density> .");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "Usage: pickup <0-7> or <value_density> .", NULL);
     return 1;
   }
   set_pickup_mode(op,i);
@@ -1722,60 +1922,73 @@ int command_pickup (object *op, char *params)
 static void set_pickup_mode(const object *op, int i) {
   switch(op->contr->mode=i) {
     case 0:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Don't pick up.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Don't pick up.", NULL);
       break;
     case 1:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up one item.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up one item.", NULL);
       break;
     case 2:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up one item and stop.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up one item and stop.", NULL);
       break;
     case 3:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Stop before picking up.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Stop before picking up.", NULL);
       break;
     case 4:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all items.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up all items.", NULL);
       break;
     case 5:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all items and stop.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up all items and stop.", NULL);
       break;
     case 6:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all magic items.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up all magic items.", NULL);
       break;
     case 7:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all coins and gems");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		    "Mode: Pick up all coins and gems", NULL);
       break;
     }
 }
 
 int command_search_items (object *op, char *params)
 {
-      char buf[MAX_BUF];
 
-      if (settings.search_items == FALSE)
-	  return 1;
+    if (settings.search_items == FALSE)
+	return 1;
 
-  if(params == NULL) {
+    if(params == NULL) {
 	if(op->contr->search_str[0]=='\0') {
-	  new_draw_info(NDI_UNIQUE, 0,op,"Example: search magic+1");
-	  new_draw_info(NDI_UNIQUE, 0,op,"Would automatically pick up all");
-	  new_draw_info(NDI_UNIQUE, 0,op,"items containing the word 'magic+1'.");
-	  return 1;
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			"Example: search magic+1 "
+			"Would automatically pick up all "
+			"items containing the word 'magic+1'.",
+			NULL);
+	    return 1;
 	}
 	op->contr->search_str[0]='\0';
-	new_draw_info(NDI_UNIQUE, 0,op,"Search mode turned off.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+		      "Search mode turned off.", NULL);
 	fix_player(op);
 	return 1;
-  }
-  if((int)strlen(params) >= MAX_BUF) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Search string too long.");
+    }
+    if((int)strlen(params) >= MAX_BUF) {
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Search string too long.", NULL);
 	return 1;
-      }
-  strcpy(op->contr->search_str, params);
-      sprintf(buf,"Searching for '%s'.",op->contr->search_str);
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-  fix_player(op);
-      return 1;
+    }
+    strcpy(op->contr->search_str, params);
+    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "Searching for '%s'.",
+			 "Searching for '%s'.",
+			 op->contr->search_str);
+    fix_player(op);
+    return 1;
 }
 
 /*
@@ -1806,7 +2019,8 @@ int command_rename_item(object *op, char *params)
     if ((itemnumber = atoi(params))!=0) {
 	for (item=op->inv; item && ((item->count != itemnumber) || item->invisible); item=item->below);
 	if (!item) {
-	    new_draw_info(NDI_UNIQUE,0,op,"Tried to rename an invalid item.");
+	    draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "Tried to rename an invalid item.", NULL);
 	    return 1;
 	}
 	while(isdigit(*params) || ' '==*params) params++;
@@ -1815,12 +2029,14 @@ int command_rename_item(object *op, char *params)
       /* Got old name, let's get it & find appropriate matching item */
       closebrace=strchr(params,'>');
       if(!closebrace) {
-        new_draw_info(NDI_UNIQUE,0,op,"Syntax error!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Syntax error!", NULL);
         return 1;
       }
       /* Sanity check for buffer overruns */
       if((closebrace-params)>127) {
-        new_draw_info(NDI_UNIQUE,0,op,"Old name too long (up to 127 characters allowed)!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Old name too long (up to 127 characters allowed)!", NULL);
         return 1;
       }
       /* Copy the old name */
@@ -1830,7 +2046,8 @@ int command_rename_item(object *op, char *params)
       /* Find best matching item */
       item=find_best_object_match(op,buf);
       if(!item) {
-        new_draw_info(NDI_UNIQUE,0,op,"Could not find a matching item to rename.");
+        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Could not find a matching item to rename.", NULL);
         return 1;
       }
 
@@ -1842,7 +2059,8 @@ int command_rename_item(object *op, char *params)
         /* Use marked item */
         item=find_marked_object(op);
         if(!item) {
-          new_draw_info(NDI_UNIQUE,0,op,"No marked item to rename.");
+          draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			"No marked item to rename.", NULL);
           return 1;
         }
     }
@@ -1852,18 +2070,21 @@ int command_rename_item(object *op, char *params)
       params+=3;
       while(' '==*params) params++;
       if('<'!=*params) {
-        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expecting < at start of new name!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Syntax error, expecting < at start of new name!", NULL);
         return 1;
       }
       closebrace=strchr(params+1,'>');
       if(!closebrace) {
-        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expecting > at end of new name!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Syntax error, expecting > at end of new name!", NULL);
         return 1;
       }
 
       /* Sanity check for buffer overruns */
       if((closebrace-params)>127) {
-        new_draw_info(NDI_UNIQUE,0,op,"New name too long (up to 127 characters allowed)!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "New name too long (up to 127 characters allowed)!", NULL);
         return 1;
       }
 
@@ -1882,14 +2103,16 @@ int command_rename_item(object *op, char *params)
 
         /* If we come here, then the name contains an invalid character...
         tell the player & exit */
-        new_draw_info(NDI_UNIQUE,0,op,"Invalid new name!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Invalid new name!", NULL);
         return 1;
       }
 
     } else {
       /* If param contains something, then syntax error... */
       if(strlen(params)) {
-        new_draw_info(NDI_UNIQUE,0,op,"Syntax error, expected 'to <' after old name!");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Syntax error, expected 'to <' after old name!", NULL);
         return 1;
       }
       /* New name is empty */
@@ -1899,7 +2122,8 @@ int command_rename_item(object *op, char *params)
     /* Last case: params==NULL */
     item=find_marked_object(op);
     if(!item) {
-      new_draw_info(NDI_UNIQUE,0,op,"No marked item to rename.");
+      draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "No marked item to rename.", NULL);
       return 1;
     }
     buf[0]='\0';
@@ -1909,23 +2133,33 @@ int command_rename_item(object *op, char *params)
   if(!strlen(buf)) {
     /* Clear custom name */
     if(item->custom_name == NULL) {
-      new_draw_info(NDI_UNIQUE,0,op,"This item has no custom name.");
+      draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		    "This item has no custom name.", NULL);
       return 1;
     }
 
     FREE_AND_CLEAR_STR(item->custom_name);
 
-    new_draw_info_format(NDI_UNIQUE, 0, op,"You stop calling your %s with weird names.",query_base_name(item,item->nrof>1?1:0));
+    draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "You stop calling your %s with weird names.",
+			 "You stop calling your %s with weird names.",
+			 query_base_name(item,item->nrof>1?1:0));
   } else {
     if(item->custom_name != NULL && strcmp(item->custom_name, buf) == 0) {
-      new_draw_info_format(NDI_UNIQUE, 0, op,"You keep calling your %s %s.",query_base_name(item,item->nrof>1?1:0),buf);
+      draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			   "You keep calling your %s %s.",
+			   "You keep calling your %s %s.",
+			   query_base_name(item,item->nrof>1?1:0),buf);
       return 1;
     }
 
     /* Set custom name */
     FREE_AND_COPY(item->custom_name,buf);
 
-    new_draw_info_format(NDI_UNIQUE, 0, op,"Your %s will now be called %s.",query_base_name(item,item->nrof>1?1:0),buf);
+    draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "Your %s will now be called %s.",
+			 "Your %s will now be called %s.",
+			 query_base_name(item,item->nrof>1?1:0),buf);
   }
 
   tag = item->count;

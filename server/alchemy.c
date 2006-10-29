@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -156,7 +156,8 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
 	    if (rp->skill != NULL) {
 		skop = find_skill_by_name(caster, rp->skill);
 		if (!skop) {
-		    new_draw_info(NDI_UNIQUE, 0, caster, "You do not have the proper skill for this recipe");
+		    draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+			  "You do not have the proper skill for this recipe", NULL);
 		} else {
 		    ability+=skop->level*((4.0 + cauldron->magic)/4.0);
 		}
@@ -281,8 +282,8 @@ static object * attempt_recipe(object *caster, object *cauldron, int ability, re
 
     /* is the cauldron the right type? */
     if (!ignore_cauldron && (strcmp(rp->cauldron, cauldron->arch->name) != 0)) {
-	new_draw_info(NDI_UNIQUE, 0, caster, "You are not using the proper"
-	    " facilities for this formula.");
+	draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+	      "You are not using the proper facilities for this formula.", NULL);
 	return 0;
     }
 
@@ -300,8 +301,9 @@ static object * attempt_recipe(object *caster, object *cauldron, int ability, re
 		break;
 	}
 	if(tmp==NULL) { /* failure--no code found */
-	    new_draw_info(NDI_UNIQUE, 0, caster, "You know the ingredients,"
-		" but not the technique.  Go learn how to do this recipe.");
+	   draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+		 "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
+		 NULL);
 	    return 0;  
 	}
     }
@@ -317,13 +319,14 @@ static object * attempt_recipe(object *caster, object *cauldron, int ability, re
         /* adj lvl, nrof on caster level */
 	adjust_product(item, ability, rp->yield?(rp->yield*batches):batches);
 	if(!item->env && (item=insert_ob_in_ob(item,cauldron)) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,caster,"Nothing happened.");
-	    /* new_draw_info_format(NDI_UNIQUE, 0,caster,
-	       "Your spell causes the %s to explode!",cauldron->name); */
-	    /* kaboom_cauldron(); */
+	    draw_ext_info(NDI_UNIQUE, 0,caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+			  "Nothing happened.", NULL);
 	} else {
-	    new_draw_info_format(NDI_UNIQUE, 0,caster,
-		"The %s %s.",cauldron->name,cauldron_sound());
+	    draw_ext_info_format(NDI_UNIQUE, 0,caster, 
+		 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+		"The %s %s.",
+		"The %s %s.",
+		 cauldron->name,cauldron_sound());
 	}
     }
     return item;
@@ -490,8 +493,10 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	    tmp->move_block = 0;
 	}
 	remove_contents(cauldron->inv,item);
-	new_draw_info_format(NDI_UNIQUE,0,op, 
-		     "The %s %s.",cauldron->name,cauldron_sound());
+	draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		     "The %s %s.",
+		     "The %s %s.",
+		     cauldron->name,cauldron_sound());
 	return;
     } else if (level< 40) {                	/* MAKE TAINTED ITEM */
 	object *tmp=NULL;
@@ -546,16 +551,20 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 		tmp=create_archetype("bomb");
 		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
 		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
-		new_draw_info_format(NDI_UNIQUE,0,op,"The %s creates a bomb!",
-				     cauldron->name);
+		draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		     "The %s creates a bomb!",
+		     "The %s creates a bomb!",
+		     cauldron->name);
 		break; 
 
 	    default:
 		tmp=create_archetype("fireball");
 		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
 		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
-		new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
-				     cauldron->name);
+		draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		     "The %s erupts in flame!",
+		     "The %s erupts in flame!",
+		     cauldron->name);
 		break;
 	}
 	tmp->x=cauldron->x,tmp->y=cauldron->y;
@@ -563,8 +572,8 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	return;
 
     } else if (level<60) {                	/* CREATE MONSTER */
-	new_draw_info_format(NDI_UNIQUE,0,op, 
-			     "The %s %s.",cauldron->name,cauldron_sound());
+	draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		     "The %s %s.",cauldron->name,cauldron_sound(), NULL);
 	remove_contents(cauldron->inv,NULL);
 	return;
     } else if (level<80) {                	/* MAJOR FIRE */
@@ -573,8 +582,10 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	fire_arch_from_position(cauldron, cauldron,cauldron->x, cauldron->y,
 	    0, fb);
 	free_object(fb);
-	new_draw_info_format(NDI_UNIQUE,0,op,"The %s erupts in flame!",
-			     cauldron->name);
+	draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		     "The %s erupts in flame!",
+		     "The %s erupts in flame!",
+		     cauldron->name);
 	return;
 
     } else if (level<100) {               	/* WHAMMY the CAULDRON */
@@ -584,12 +595,15 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
 	if(rndm(0, 1)) {
 	    remove_contents(cauldron->inv,NULL);
-	    new_draw_info_format(NDI_UNIQUE,0,op,
+	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		 "Your %s turns darker then makes a gulping sound!",
 		 "Your %s turns darker then makes a gulping sound!",
 		 cauldron->name);
 	} else
-	    new_draw_info_format(NDI_UNIQUE,0,op,
-		"Your %s becomes darker.",cauldron->name);
+	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		"Your %s becomes darker.",
+		"Your %s becomes darker.",
+		 cauldron->name);
 	return;
 
     } else if (level<110) {               	/* SUMMON EVIL MONSTERS */
@@ -599,7 +613,8 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	if(!tmp) 
 	    alchemy_failure_effect(op,cauldron,rp,level);
 	else if(summon_hostile_monsters(cauldron, random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
-	    new_draw_info_format(NDI_UNIQUE, 0,op,
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+		 "The %s %s and then pours forth monsters!",
 		 "The %s %s and then pours forth monsters!",
 		 cauldron->name,cauldron_sound());
 	return;
@@ -622,14 +637,18 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	    generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
 	    if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
 		remove_contents(cauldron->inv,tmp);
-		new_draw_info_format(NDI_UNIQUE, 0,op,
-				     "The %s %s.",cauldron->name,cauldron_sound());
+		draw_ext_info_format(NDI_UNIQUE, 0,op,
+		     MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+		     "The %s %s.",
+		     "The %s %s.",
+		     cauldron->name,cauldron_sound());
 	    }
 	}
 	return;
   } else {               	/* MANA STORM - watch out!! */
 	object *tmp = create_archetype(LOOSE_MANA);
-	new_draw_info(NDI_UNIQUE,0,op,"You unwisely release potent forces!");
+	draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+	      "You unwisely release potent forces!", NULL);
 	remove_contents (cauldron->inv,NULL);
 	cast_magic_storm(op,tmp, level);
 	return;
@@ -903,9 +922,15 @@ int use_alchemy(object* op)
         }
     }
     if ( unpaid_cauldron )
-        new_draw_info_format(NDI_UNIQUE,0,op,"You must pay for your %s first!", query_base_name(unpaid_cauldron,0));
+        draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+	     "You must pay for your %s first!",
+	     "You must pay for your %s first!",
+	     query_base_name(unpaid_cauldron,0));
     else if ( unpaid_item )
-        new_draw_info_format(NDI_UNIQUE,0,op,"You must pay for your %s first!", query_base_name(unpaid_item,0));
+        draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+	     "You must pay for your %s first!",
+	     "You must pay for your %s first!",
+	     query_base_name(unpaid_item,0));
 
     return did_alchemy;
 }

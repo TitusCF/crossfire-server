@@ -317,12 +317,22 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_PAPER		    3
 #define MSG_TYPE_SIGN		    4
 #define MSG_TYPE_MONUMENT	    5
-#define MSG_TYPE_SCRIPTED_DIALOG    6
+#define MSG_TYPE_DIALOG		    6
 #define MSG_TYPE_MOTD		    7
 #define MSG_TYPE_ADMIN		    8
 #define MSG_TYPE_SHOP		    9
 #define MSG_TYPE_COMMAND	    10	/* Responses to commands, eg, who */
-#define MSG_TYPE_LAST		    11
+#define MSG_TYPE_ATTRIBUTE	    11	/* Changes to attributes (stats, */
+					/* resistances, etc) */
+#define MSG_TYPE_SKILL		    12	/* Messages related to using skills */
+#define MSG_TYPE_APPLY		    13	/* Applying objects */
+#define MSG_TYPE_ATTACK		    14	/* Attack related messges */
+#define MSG_TYPE_COMMUNICATION	    15	/* Communication between players */
+#define MSG_TYPE_SPELL		    16	/* Spell related info */
+#define MSG_TYPE_ITEM		    17	/* Item related information */
+#define MSG_TYPE_MISC		    18	/* Messages that don't go anyplace else */
+#define MSG_TYPE_VICTIM		    19	/* Something bad is happening to the player */
+#define MSG_TYPE_LAST		    20
 
 #define MSG_SUBTYPE_NONE         0
 
@@ -390,22 +400,31 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_MONUMENT_WALL_3       12
 
 /* dialog messsage */
-#define MSG_TYPE_DIALOG_NPC            1 /*A message from the npc*/
-#define MSG_TYPE_DIALOG_ANSWER         2 /*One of possible answers*/
-#define MSG_TYPE_DIALOG_ANSWER_COUNT   3 /*Number of possible answers*/
+#define MSG_TYPE_DIALOG_NPC		1   /* A message from the npc */
+#define MSG_TYPE_DIALOG_ALTAR		2   /* A message from an altar */
+#define MSG_TYPE_DIALOG_MAGIC_MOUTH	3   /* Magic Mouth/Magic Ear */
 
 /* MOTD doesn't have any subtypes */
 
-/* admin messages */
-#define MSG_TYPE_ADMIN_RULES           1
-#define MSG_TYPE_ADMIN_NEWS            2
+/* admin/global messages */
+#define MSG_TYPE_ADMIN_RULES	    1
+#define MSG_TYPE_ADMIN_NEWS	    2
+#define MSG_TYPE_ADMIN_PLAYER	    3	    /* Player coming/going/death */
+#define MSG_TYPE_ADMIN_DM	    4	    /* DM related admin actions */
+#define MSG_TYPE_ADMIN_HISCORE	    5	    /* Hiscore list */
+#define MSG_TYPE_ADMIN_LOADSAVE	    6	    /* load/save operations */
+#define MSG_TYPE_ADMIN_LOGIN	    7	    /* login messages/errors */
+#define MSG_TYPE_ADMIN_VERSION	    8	    /* version info */
 
-/* I'm not actually expecting anything to make much use of the MSG_TYPE_SHOP values
- * However, to use the media tags, need to use draw_ext_info, and need to have
- * a type/subtype, so figured might as well put in real values here.
+
+/* I'm not actually expecting anything to make much use of the MSG_TYPE_SHOP
+ * values However, to use the media tags, need to use draw_ext_info, and need
+ * to have a type/subtype, so figured might as well put in real values here.
  */
-#define MSG_TYPE_SHOP_LISTING		1   /* Shop listings - inventory, what it deals in */
-#define MSG_TYPE_SHOP_PAYMENT		2   /* Messages about payment, lack of funds */
+#define MSG_TYPE_SHOP_LISTING		1   /* Shop listings - inventory, */
+					    /* what it deals in */
+#define MSG_TYPE_SHOP_PAYMENT		2   /* Messages about payment, lack */
+					    /* of funds */
 #define MSG_TYPE_SHOP_SELL		3   /* Messages about selling items */
 #define MSG_TYPE_SHOP_MISC		4   /* Random messages */
 
@@ -420,8 +439,131 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_COMMAND_WEATHER    5
 #define MSG_TYPE_COMMAND_STATISTICS 6
 #define MSG_TYPE_COMMAND_CONFIG	    7	/* bowmode, petmode, applymode */
-#define MSG_TYPE_COMMAND_INFO	    8	/* Generic info - reistances, etc */
+#define MSG_TYPE_COMMAND_INFO	    8	/* Generic info - resistances, etc */
 #define MSG_TYPE_COMMAND_QUESTS	    9	/* Quest info */
+#define MSG_TYPE_COMMAND_DEBUG	    10	/* Various debug type commands */
+#define MSG_TYPE_COMMAND_ERROR	    11	/* Bad syntax/can't use command */
+#define MSG_TYPE_COMMAND_SUCCESS    12	/* Successful result from command */
+#define MSG_TYPE_COMMAND_FAILURE    13	/* Failed result from command */
+#define MSG_TYPE_COMMAND_EXAMINE    14	/* Player examining something */
+#define MSG_TYPE_COMMAND_INVENTORY  15	/* Inventory listing */
+#define MSG_TYPE_COMMAND_HELP	    16	/* Help related information */
+#define MSG_TYPE_COMMAND_DM	    17	/* DM related commands */
+#define MSG_TYPE_COMMAND_NEWPLAYER  18	/* Create a new character - not */
+					/* really a command, but is responding */
+					/* to player input */
+
+/* This is somewhat verbose.  If the client ends up being able to
+ * choose various attributes based on message type, I think it is important
+ * for the client to know if this is a benefit or detriment to the player.
+ * In the case of losing a bonus, this typically indicates a spell has
+ * ended, which is probably more important (and should be displayed more
+ * prominently) than when you cast the spell
+ */
+
+#define MSG_TYPE_ATTRIBUTE_ATTACKTYPE_GAIN  1	/* Atacktypes here refer to */
+#define MSG_TYPE_ATTRIBUTE_ATTACKTYPE_LOSS  2	/* the player gaining or */
+						/* losing these attacktypes */
+						/* not being a victim of an */
+						/* attacktype. */
+#define MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN  3	/* Protections in this */
+#define MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS  4	/* context  are pretty */
+						/* generic - things like */
+						/* reflection or lifesave */
+						/* are also under the */
+						/* protection category. */
+#define MSG_TYPE_ATTRIBUTE_MOVE		    5	/* A change in the movement */
+						/* type of the player */
+#define MSG_TYPE_ATTRIBUTE_RACE		    6	/* Racial related changes */
+#define MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START 7	/* The start/end of bad */
+#define MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END   8	/* effects to the player */
+#define MSG_TYPE_ATTRIBUTE_STAT_GAIN	    9	/* Start/end of stat changes */
+#define MSG_TYPE_ATTRIBUTE_STAT_LOSS	    10
+#define MSG_TYPE_ATTRIBUTE_LEVEL_GAIN	    11	/* Gaining/losing of levels */
+#define MSG_TYPE_ATTRIBUTE_LEVEL_LOSS	    12
+#define MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START 13	/* Like bad effects, but for */
+#define MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END  14	/* good effects to the player */
+#define MSG_TYPE_ATTRIBUTE_GOD		    15	/* changing god info */
+
+
+/* I think one type/skill is overkill, so instead, use broader categories
+ * for these messages.
+ * The difference in ERROR vs FAILURE is basically this:  ERROR indicates
+ * something wasn't right to even attempt to use the skill (don't have
+ * needed object, or haven't marked objects, etc).
+ * FAILURE indicates that player attempted to use the skill, but it
+ * didn't work.
+ * PRAY is listed out because praying over altars can generate some
+ * messages not really related to the skill itself.
+ */
+#define MSG_TYPE_SKILL_MISSING	1	/* Don't have the skill */
+#define MSG_TYPE_SKILL_ERROR	2	/* Doing something wrong */
+#define MSG_TYPE_SKILL_SUCCESS	3	/* Successfully used skill */
+#define MSG_TYPE_SKILL_FAILURE	4	/* Failure in using skill */
+#define MSG_TYPE_SKILL_PRAY	5	/* Praying related messages */
+#define MSG_TYPE_SKILL_LIST	6	/* List of skills */
+
+
+/* Messages related to applying objects.  Note that applying many
+ * objects may generate MSG_TYPE_ATTRIBUTE messages - the APPLY here
+ * more directly related to the direct messages related to applying
+ * them (you put on your armor, you apply scroll, etc).
+ * The ERROR is like that for SKILLS - something prevent even trying
+ * to apply the object.  FAILURE indicates result wasn't successful.
+ */
+#define MSG_TYPE_APPLY_ERROR	1
+#define MSG_TYPE_APPLY_UNAPPLY	2   /* Unapply an object */
+#define MSG_TYPE_APPLY_SUCCESS	3   /* Was able to apply object */
+#define MSG_TYPE_APPLY_FAILURE	4   /* Apply OK, but no/bad result */
+#define MSG_TYPE_APPLY_CURSED	5   /* Applied a cursed object (BAD) */
+#define MSG_TYPE_APPLY_TRAP	6   /* Have activated a trap */
+#define MSG_TYPE_APPLY_BADBODY	7   /* Don't have body to use object */
+#define MSG_TYPE_APPLY_PROHIBITION 8   /* Class/god prohibiiton on obj */
+#define MSG_TYPE_APPLY_BUILD	9   /* Build related actions */
+
+/* attack related messages */
+#define MSG_TYPE_ATTACK_DID_HIT	    1   /* Player hit something else */
+#define MSG_TYPE_ATTACK_PET_HIT	    2   /* Players pet hit something else */
+#define MSG_TYPE_ATTACK_FUMBLE	    3   /* Player fumbled attack */
+#define MSG_TYPE_ATTACK_DID_KILL    4	/* Player killed something */
+#define MSG_TYPE_ATTACK_PET_DIED    5	/* Pet was killed */
+#define MSG_TYPE_ATTACK_NOKEY	    6	/* Keys are like attacks, so... */
+#define MSG_TYPE_ATTACK_NOATTACK    7	/* You avoid attacking */
+#define MSG_TYPE_ATTACK_PUSHED	    8	/* Pushed a friendly player */
+
+#define	MSG_TYPE_COMMUNICATION_RANDOM	1   /* Random event (coin toss) */
+#define	MSG_TYPE_COMMUNICATION_SAY	2   /* Player says something */
+#define	MSG_TYPE_COMMUNICATION_ME	3   /* Player me's a message */
+#define	MSG_TYPE_COMMUNICATION_TELL	4   /* Player tells something */
+#define	MSG_TYPE_COMMUNICATION_EMOTE	5   /* Player emotes */
+#define	MSG_TYPE_COMMUNICATION_PARTY	6   /* Party message */
+
+#define MSG_TYPE_SPELL_HEAL		1   /* Healing related spells */
+#define MSG_TYPE_SPELL_PET		2   /* Pet related messages */
+#define MSG_TYPE_SPELL_FAILURE		3   /* Spell failure messages */
+#define MSG_TYPE_SPELL_END		4   /* A spell ends */
+#define MSG_TYPE_SPELL_SUCCESS		5   /* Spell succeeded messages */
+#define MSG_TYPE_SPELL_ERROR		6   /* Spell failure messages */
+#define MSG_TYPE_SPELL_PERCEIVE_SELF	7   /* Perceive self messages */
+#define MSG_TYPE_SPELL_TARGET		8   /* Target of non attack spell */
+#define MSG_TYPE_SPELL_INFO		9   /* random info about spell, not */
+					    /* related to failure/success */
+
+#define MSG_TYPE_ITEM_REMOVE		1   /* Item removed from inv */
+#define MSG_TYPE_ITEM_ADD		2   /* Item added to inv */
+#define MSG_TYPE_ITEM_CHANGE		3   /* Item has changed in some way */
+#define MSG_TYPE_ITEM_INFO		3   /* Information related to an item */
+
+/* MSG_TYPE_MISC, by its very nature, doesn't really have subtypes.  It is
+ * used for messages that really don't belong anyplace else
+ */
+
+#define MSG_TYPE_VICTIM_SWAMP		1   /* Player is sinking in a swamp */
+#define MSG_TYPE_VICTIM_WAS_HIT		2   /* Player was hit by something */
+#define MSG_TYPE_VICTIM_STEAL		3   /* Someone tried to steal from the player */
+#define MSG_TYPE_VICTIM_SPELL		4   /* Someone cast a bad spell on the player */
+#define MSG_TYPE_VICTIM_DIED		5   /* Player died! */
+#define MSG_TYPE_VICTIM_WAS_PUSHED	6   /* Player was pushed or attempted pushed */
 
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList {

@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,8 @@ int command_say (object *op, char *params)
 
     if (!params) return 0;
     snprintf(buf, MAX_BUF-1, "%s says: %s",op->name, params);
-    new_info_map(NDI_WHITE,op->map, buf);
+    ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY,
+		 buf, NULL);
     communicate(op, params);
   
     return 0;
@@ -49,7 +50,8 @@ int command_me (object *op, char *params)
 
     if (!params) return 0;
     snprintf(buf, MAX_BUF-1, "%s %s",op->name, params);
-        new_info_map(NDI_UNIQUE|NDI_BLUE,op->map, buf);
+    ext_info_map(NDI_UNIQUE|NDI_BLUE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_ME,
+		 buf, NULL);
 
     return 0;
 }
@@ -69,8 +71,10 @@ int command_cointoss(object *op, char *params)
 	snprintf(buf, MAX_BUF-1, "%s flips a coin.... Tails!", op->name);
 	snprintf(buf2, MAX_BUF-1, "You flip a coin.... Tails!");
     }
-    new_draw_info(NDI_UNIQUE, 0, op, buf2);
-    new_info_map_except(NDI_WHITE, op->map, op, buf);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+		  buf2, NULL);
+    ext_info_map_except(NDI_WHITE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+			buf, NULL);
     return 0;
 }
 
@@ -92,23 +96,31 @@ int command_orcknuckle(object *op, char *params)
 	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
     snprintf(buf, MAX_BUF-1, "You roll %s, %s, %s, %s!",
 	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    new_info_map_except(NDI_UNIQUE, op->map, op, buf2);
+
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+		  buf, NULL);
+    ext_info_map_except(NDI_UNIQUE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+			buf2, NULL);
     return 0;
 }
 
 static int command_tell_all(object *op, char *params, int pri, int color, const char *desc)
 {
     if (op->contr->no_shout == 1){
-	new_draw_info(NDI_UNIQUE, 0,op,"You are no longer allowed to shout or chat.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You are no longer allowed to shout or chat.", NULL);
 	return 1;
     } else {
 	if (params == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"Shout/Chat what?");
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "Shout/Chat what?", NULL);
 	    return 1;
 	}
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
-		 "%s %s: %s", op->name, desc, params);
+	draw_ext_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
+		     MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+		     "%s %s: %s", 
+		     "%s %s: %s", 
+		     op->name, desc, params);
  
         /* Lauwenmark : Here we handle the SHOUT global event */
         execute_global_event(EVENT_SHOUT,op,params,pri);
@@ -144,10 +156,14 @@ int command_tell (object *op, char *params)
     }
 
     if( name == NULL ){
-	new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Tell whom what?", NULL);
 	return 1;
     } else if ( msg == NULL){
-	new_draw_info_format(NDI_UNIQUE, 0,op,"Tell %s what?", name);
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "Tell %s what?", 
+			     "Tell %s what?", 
+			     name);
 	return 1;
     }
 
@@ -157,16 +173,21 @@ int command_tell (object *op, char *params)
 
     if ( pl )
         {
-	    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
-	    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
-			     "You tell %s: %s", pl->ob->name, msg);
+	    draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+			  MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+			  buf, NULL);
+	    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
+			 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+			 "You tell %s: %s", 
+			 pl->ob->name, msg);
 
 	    /* Update last_tell value [mids 01/14/2002] */
 	    strcpy(pl->last_tell, op->name);
 	    return 1;
         }
 
-    new_draw_info(NDI_UNIQUE, 0,op,"No such player or ambiguous name.");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "No such player or ambiguous name.", NULL);
     return 1;
 }
 
@@ -175,12 +196,14 @@ int command_reply (object *op, char *params) {
     player *pl;
 
     if (params == NULL) {
-        new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Reply what?", NULL);
         return 1;
     }
 
     if (op->contr->last_tell[0] == '\0') {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You can't reply to nobody.", NULL);
         return 1;
     }
 
@@ -188,17 +211,25 @@ int command_reply (object *op, char *params) {
     pl = find_player(op->contr->last_tell);
 
     if (pl == NULL) {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "You can't reply, this player left.", NULL);
         return 1;
     }
 
     /* Update last_tell value */
     strcpy(pl->last_tell, op->name);
 
-    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
-	"%s tells you: %s", op->name, params);
-    new_draw_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
-		  "You tell to %s: %s", pl->ob->name, params);
+    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+		 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+		 "%s tells you: %s", 
+		 "%s tells you: %s", 
+		 op->name, params);
+
+    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
+		 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+		 "You tell to %s: %s", 
+		 "You tell to %s: %s", 
+		 pl->ob->name, params);
     return 1;
 }
 
@@ -424,8 +455,12 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "You are a nut.");
 	    break;
 	} /*case*/
-	new_info_map_except(NDI_WHITE, op->map, op, buf);
-	new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf2);
+	ext_info_map_except(NDI_WHITE, op->map, op, 
+		    MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+		    buf, NULL);
+	draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op,
+		      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+		      buf2, NULL);
 	return(0);
     } else {
         for(pl=first_player;pl!=NULL;pl=pl->next) {
@@ -619,9 +654,15 @@ static int basic_emote(object *op, char *params, int emotion)
 			  op->name);
 		  break;
 		} /*case*/
-		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf);
-		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, buf2);
-		new_info_map_except2(NDI_WHITE, op->map, op, pl->ob, buf3);
+		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, 
+			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+			      buf, NULL);
+		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, 
+			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+			      buf2, NULL);
+		ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob,
+			     MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+			     buf3, NULL);
 		return(0);
 	    }
 	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
@@ -733,12 +774,19 @@ static int basic_emote(object *op, char *params, int emotion)
 		    sprintf(buf2, "You look away from %s.", op->name);
 		    break;
 		}/*case*/
-		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, op, buf);
-		new_info_map_except(NDI_WHITE, op->map, op, buf2);
+		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op,
+			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+			      buf, NULL);
+		ext_info_map_except(NDI_WHITE, op->map, op, 
+			    MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
+			    buf2, NULL);
 		return(0);
 	    }/*if self*/
 	}/*for*/
-	new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not around.", params);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			     "%s is not around.", 
+			     "%s is not around.", 
+			     params);
 	return(1);
     } /*else*/
 

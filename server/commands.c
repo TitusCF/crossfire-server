@@ -457,7 +457,8 @@ static int parse_string(object *op, char *str)
 	    return f(op, NULL);
 
 	if(op) {
-	    new_draw_info(NDI_UNIQUE, 0,op, "Unknown command.  Try help.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "Unknown command.  Try help.", NULL);
 	}
 	return 0;
     }
@@ -479,7 +480,8 @@ static int parse_string(object *op, char *str)
 	return f(op, cp);
 
     if(op) {
-	new_draw_info(NDI_UNIQUE, 0,op, "Unknown command.  Try help.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Unknown command.  Try help.", NULL);
     }
     return 0;
 }

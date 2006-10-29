@@ -95,21 +95,27 @@ static int resurrect_player(object *op,char *playername,object *spell)
     strcat(oldname,".dead");
 
     if(! (deadplayer=fopen(oldname,"r"))) {
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-	     "The soul of %s cannot be reached.",playername);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		     "The soul of %s cannot be reached.",
+		     "The soul of %s cannot be reached.",
+		     playername);
 	return 0;
     }
 
     if(!access(newname,0)) {
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-	     "The soul of %s has already been reborn!",playername);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			     "The soul of %s has already been reborn!",
+			     "The soul of %s has already been reborn!",
+			     playername);
 	fclose(deadplayer);
 	return 0;
     }
 
     if(! (liveplayer=fopen(newname,"w"))) {
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"The soul of %s cannot be re-embodied at the moment.",playername);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		     "The soul of %s cannot be re-embodied at the moment.",
+		     "The soul of %s cannot be re-embodied at the moment.",
+		     playername);
 	LOG(llevError,"Cannot write player in resurrect_player!\n");
 	fclose(deadplayer);
 	return 0;
@@ -139,8 +145,10 @@ static int resurrect_player(object *op,char *playername,object *spell)
     fclose(liveplayer);
     fclose(deadplayer);
     unlink(oldname);
-    new_draw_info_format(NDI_UNIQUE, 0, op,
-	"%s lives again!",playername);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+			 "%s lives again!",
+			 "%s lives again!",
+			 playername);
 
     return 1;
 }
@@ -164,7 +172,10 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 
     if (spell->last_heal) {
 	if (!arg) {
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"Cast %s on who?", spell->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+				 "Cast %s on who?", 
+				 "Cast %s on who?", 
+				 spell->name);
 	    return 0;
 	}
 	strcpy(name_to_resurrect, arg);
@@ -186,7 +197,8 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 	}
 
 	if(temp == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,op, "You need a body for this spell.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "You need a body for this spell.", NULL-0);
 	    return 0;
 	}
 	strcpy(name_to_resurrect, temp->name );

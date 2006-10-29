@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2005 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2005-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,11 @@
 void walk_on_deep_swamp (object *op, object *victim)
 {
     if (victim->type == PLAYER && victim->stats.hp >= 0 && !(victim->move_type & MOVE_FLYING)) {
-	new_draw_info_format(NDI_UNIQUE, 0, victim, "You are down to your knees in the %s.", op->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, victim,
+			     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+			     "You are down to your knees in the %s.",
+			     "You are down to your knees in the %s.",
+			     op->name);
 	op->stats.food = 1;
 	victim->speed_left -= op->move_slow_penalty;
     }
@@ -62,14 +66,22 @@ void move_deep_swamp (object *op)
 
             if ( op->stats.food < 10 ) {
                 if (rndm(0, 2) == 0) {
-                    new_draw_info_format(NDI_UNIQUE, 0,above, "You are down to your waist in the wet %s.", op->name);
+                    draw_ext_info_format(NDI_UNIQUE, 0,above,
+				 MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+				 "You are down to your waist in the wet %s.",
+				 "You are down to your waist in the wet %s.",
+				 op->name);
                     op->stats.food = woodsman ? op->stats.food + 1 : 10;
                     above->speed_left -= op->move_slow_penalty;
                 }
             }
             else if ( op->stats.food < 20 ) {
                 if (rndm(0, 2) == 0) {
-                    new_draw_info_format(NDI_UNIQUE | NDI_RED, 0,above, "You are down to your NECK in the dangerous %s.", op->name);
+                    draw_ext_info_format(NDI_UNIQUE | NDI_RED, 0,above,
+				 MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+				 "You are down to your NECK in the dangerous %s.",
+				 "You are down to your NECK in the dangerous %s.",
+				 op->name);
                     op->stats.food = woodsman ? op->stats.food + 1 : 20;
                     sprintf(above->contr->killer,"drowning in a %s", op->name);
                     above->stats.hp--;
@@ -79,7 +91,11 @@ void move_deep_swamp (object *op)
             else
                 if (rndm(0, 4) == 0) {
                     op->stats.food = 0;
-                    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a %s.",above->name, op->name);
+                    draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
+				 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,	
+				 "%s disappeared into a %s.",
+				 "%s disappeared into a %s.",
+				 above->name, op->name);
                     sprintf(above->contr->killer,"drowning in a %s", op->name);
                     above->stats.hp = -1;
                     kill_player(above); /* player dies in the swamp */

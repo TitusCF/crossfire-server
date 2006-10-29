@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -188,7 +188,9 @@ static void remove_force(object *op) {
 	case FORCE_CONFUSION:
 	    if(op->env!=NULL) {
 		CLEAR_FLAG(op->env, FLAG_CONFUSED);
-		new_draw_info(NDI_UNIQUE, 0,op->env, "You regain your senses.\n");
+		draw_ext_info(NDI_UNIQUE, 0,op->env,
+			      MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+			      "You regain your senses.", NULL);
 	    }
 
 	default:
@@ -227,7 +229,9 @@ static void poison_more(object *op) {
     if(op->env->type==PLAYER) {
       CLEAR_FLAG(op, FLAG_APPLIED);
       fix_player(op->env);
-      new_draw_info(NDI_UNIQUE, 0,op->env,"You feel much better now.");
+      draw_ext_info(NDI_UNIQUE, 0,op->env, 
+		    MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+		    "You feel much better now.", NULL);
     }
     remove_ob(op);
     free_object(op);
@@ -235,7 +239,10 @@ static void poison_more(object *op) {
   }
   if(op->env->type==PLAYER) {
     op->env->stats.food--;
-    new_draw_info(NDI_UNIQUE, 0,op->env,"You feel very sick...");
+    /* Not really the start of a bad effect, more the continuing effect */
+    draw_ext_info(NDI_UNIQUE, 0,op->env, 
+		  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+		  "You feel very sick...", NULL);
   }
   (void)hit_player(op->env,
                    op->stats.dam,
@@ -326,8 +333,11 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
 		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL, 1);
 		    if(tmp->type==PLAYER) 
-			new_draw_info_format(NDI_UNIQUE, 0, tmp,
-					     "You are crushed by the %s!",op->name);
+			draw_ext_info_format(NDI_UNIQUE, 0, tmp,
+					     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
+					     "You are crushed by the %s!",
+					     "You are crushed by the %s!",
+					     op->name);
 		} else 
 		    /* If the object is not alive, and the object either can
 		     * be picked up or the object rolls, move the object
@@ -1155,7 +1165,8 @@ void move_creator(object *creator) {
  * At that time, it writes the contents of its own message
  * field to the player.  The marker will decrement hp to
  * 0 and then delete itself every time it grants a mark.
- * unless hp was zero to start with, in which case it is infinite.*/
+ * unless hp was zero to start with, in which case it is infinite.
+ */
 void move_marker(object *op) {
     object *tmp,*tmp2;
   
@@ -1200,7 +1211,9 @@ void move_marker(object *op) {
 
 		insert_ob_in_ob(force,tmp);
 		if(op->msg)
-		    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,tmp,op->msg);
+		    draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,tmp, 
+				  MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+				  op->msg, op->msg);
 
 		if(op->stats.hp > 0) { 
 		    op->stats.hp--;

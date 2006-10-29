@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -567,19 +567,19 @@ void print_los(object *op) {
     int x,y;
     char buf[50], buf2[10];
 
-    strcpy(buf,"   ");
+    strcpy(buf,"[fixed]   ");
     for(x=0;x<op->contr->socket.mapx;x++) {
 	sprintf(buf2,"%2d",x);
 	strcat(buf,buf2);
     }
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
     for(y=0;y<op->contr->socket.mapy;y++) {
-	sprintf(buf,"%2d:",y);
+	sprintf(buf,"[fixed]%2d:",y);
 	for(x=0;x<op->contr->socket.mapx;x++) {
 	    sprintf(buf2," %1d",op->contr->blocked_los[x][y]);
 	    strcat(buf,buf2);
 	}
-	new_draw_info(NDI_UNIQUE, 0, op, buf);
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
     }
 }
 

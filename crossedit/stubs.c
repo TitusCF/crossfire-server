@@ -9,15 +9,29 @@ void fix_auto_apply(mapstruct * m)
 {
 }
 
-void new_draw_info(int a, int b, const object *ob, const char *txt)
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2)
     {
     fprintf(logfile, "%s\n", txt);
     }
-void new_info_map(int color, const mapstruct *map, const char *str)
-    {
-    fprintf(logfile, "new_info_map: %s\n", str);
-    }
- 
+
+void draw_ext_info_format(
+        int flags, int pri, const object *pl, uint8 type, 
+        uint8 subtype, 
+        const char* new_format, 
+        const char* old_format, 
+        ...)
+{
+    va_list ap;
+    va_start(ap, old_format);
+    vfprintf(logfile, old_format, ap);
+    va_end(ap);
+}
+
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2)
+{
+    fprintf(logfile, "ext_info_map: %s\n", str2);
+}
+
 void move_teleporter( object* ob)
     {
     }

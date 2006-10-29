@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -187,8 +187,10 @@ void init_archetypes(void) { /* called from add_player() and edit() */
  */
 
 void arch_info(object *op) {
-  sprintf(errmsg,"%d searches and %d strcmp()'s",arch_search,arch_cmp);
-  new_draw_info(NDI_BLACK, 0, op,errmsg);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	"%d searches and %d strcmp()'s",
+	"%d searches and %d strcmp()'s",
+	 arch_search,arch_cmp);
 }
 
 /*

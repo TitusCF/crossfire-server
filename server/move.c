@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -297,15 +297,21 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {
-  if(!roll_ob(op,dir,pusher)) {
-    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-	"You fail to push the %s.",query_name(op));
+    if(!roll_ob(op,dir,pusher)) {
+	draw_ext_info_format(NDI_UNIQUE, 0, pusher,
+			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "You fail to push the %s.",
+			     "You fail to push the %s.",
+			     query_name(op));
+	return;
+    }
+    (void) move_ob(pusher,dir,pusher);
+    draw_ext_info_format(NDI_BLACK, 0, pusher,
+			  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "You move the %s.",
+			 "You move the %s.",
+			 query_name(op));
     return;
-  }
-  (void) move_ob(pusher,dir,pusher);
-  new_draw_info_format(NDI_BLACK, 0, pusher,
-	"You move the %s.",query_name(op));
-  return;
 }
 
 /**
@@ -457,24 +463,33 @@ int push_ob(object *who, int dir, object *pusher) {
     if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
       !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL)) {
 	if(pusher->contr->run_on) /* only when we run */ {
-	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-              "You start to attack %s !!",who->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0, pusher,
+				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+				 "You start to attack %s !!",
+				 "You start to attack %s !!",
+				 who->name);
 	    CLEAR_FLAG(who,FLAG_UNAGGRESSIVE); /* the sucker don't like you anymore */
 	    who->enemy = pusher;
 	    return 1;
 	}
 	else 
 	{
-	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-				 "You avoid attacking %s .",who->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0, pusher,
+				  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+				 "You avoid attacking %s .",
+				 "You avoid attacking %s .",
+				 who->name);
 	}
     }
 
     /* now, lets test stand still. we NEVER can push stand_still monsters. */
     if(QUERY_FLAG(who,FLAG_STAND_STILL))
     {
-	new_draw_info_format(NDI_UNIQUE, 0, pusher,
-          "You can't push %s.",who->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pusher,
+			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+			     "You can't push %s.",
+			     "You can't push %s.",
+			     who->name);
 	return 0;
     }
   
@@ -493,8 +508,11 @@ int push_ob(object *who, int dir, object *pusher) {
        !move_object(who,dir))
     {
 	if (who ->type == PLAYER) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who,
-		 "%s tried to push you.",pusher->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0, who,
+				 MSG_TYPE_VICTIM,MSG_TYPE_VICTIM_WAS_PUSHED,
+				 "%s tried to push you.",
+				 "%s tried to push you.",
+				 pusher->name);
 	}
 	return 0;
     }
@@ -503,12 +521,18 @@ int push_ob(object *who, int dir, object *pusher) {
      * Let everyone know the status.
      */
     if (who->type == PLAYER) {
-	new_draw_info_format(NDI_UNIQUE, 0, who,
-			     "%s pushed you.",pusher->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, who,
+			     MSG_TYPE_VICTIM,MSG_TYPE_VICTIM_WAS_PUSHED,
+			     "%s pushed you.",
+			     "%s pushed you.",
+			     pusher->name);
     }
     if (pusher->type == PLAYER) {
-	new_draw_info_format(NDI_UNIQUE, 0, pusher,
-		"You pushed %s back.", who->name);
+	draw_ext_info_format(NDI_UNIQUE, 0, pusher,
+			     MSG_TYPE_VICTIM,MSG_TYPE_VICTIM_WAS_PUSHED,
+			     "You pushed %s back.",
+			     "You pushed %s back.",
+			     who->name);
     }
   
     return 1;

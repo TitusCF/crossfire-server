@@ -419,8 +419,8 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
     if(dir &&
       ((get_map_flags(op->map, &m, op->x+freearr_x[dir],op->y+freearr_y[dir], &sx, &sy) & P_OUT_OF_MAP) ||
       OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Something is in the way.");
-	new_draw_info(NDI_UNIQUE, 0,op,"You cast it at your feet.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+			  "Something is in the way. You cast it at your feet.", NULL);
 	dir = 0;
     }
     new_op->x=op->x+freearr_x[dir];
@@ -522,7 +522,8 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, x, y))) {
         if ( caster->type == PLAYER )
             /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
-            new_draw_info(NDI_UNIQUE, 0, op, "You can't cast the spell on top of a wall!\n");
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+			  "You can't cast the spell on top of a wall!", NULL);
 	free_object(tmp);
 	return 0;
     }
@@ -847,7 +848,10 @@ static void prayer_failure(object *op, int failure, int power)
 
     if(failure<= -20 && failure > -40) /* wonder */
     {
-	new_draw_info_format(NDI_UNIQUE, 0,op,"%s gives a sign to renew your faith.",godname);
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			     "%s gives a sign to renew your faith.",
+			     "%s gives a sign to renew your faith.",
+			     godname);
 	tmp = create_archetype(SPELL_WONDER);
 	cast_cone(op,op,0,tmp);
 	free_object(tmp);
@@ -855,19 +859,26 @@ static void prayer_failure(object *op, int failure, int power)
 
     else if (failure <= -40 && failure > -60) /* confusion */
     {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your diety touches your mind!");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your diety touches your mind!", NULL);
 	confuse_player(op,op,99);
     }
     else if (failure <= -60 && failure> -150) /* paralysis */
     {
-	new_draw_info_format(NDI_UNIQUE, 0,op,"%s requires you to pray NOW.",godname);
-	new_draw_info(NDI_UNIQUE, 0,op,"You comply, ignoring all else.");
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		     "%s requires you to pray NOW. You comply, ignoring all else.",
+		     "%s requires you to pray NOW. You comply, ignoring all else.",
+		     godname);
+
 	paralyze_player(op,op,99);
     }
     else if (failure <= -150) /* blast the immediate area */
     { 
 	tmp = create_archetype(GOD_POWER);
-	new_draw_info_format(NDI_UNIQUE, 0,op,"%s smites you!",godname);
+	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			     "%s smites you!",
+			     "%s smites you!",
+			     godname);
 	cast_magic_storm(op,tmp, power);
     }
 }
@@ -890,7 +901,8 @@ void spell_failure(object *op, int failure,int power, object *skill)
 
     if (failure<=-20 && failure > -40) /* wonder */
     {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your spell causes an unexpected effect.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your spell causes an unexpected effect.", NULL);
 	tmp = create_archetype(SPELL_WONDER);
 	cast_cone(op,op,0,tmp);
 	free_object(tmp);
@@ -898,12 +910,14 @@ void spell_failure(object *op, int failure,int power, object *skill)
 
     else if (failure <= -40 && failure > -60) /* confusion */
     {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your magic recoils on you, making you confused!");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your magic recoils on you, making you confused!", NULL);
 	confuse_player(op,op,99);
     }
     else if (failure <= -60 && failure> -80) /* paralysis */
     {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your magic stuns you!");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+		      "Your magic stuns you!", NULL);
 	paralyze_player(op,op,99);
     }
     else if (failure <= -80) /* blast the immediate area */
@@ -911,11 +925,14 @@ void spell_failure(object *op, int failure,int power, object *skill)
 	object *tmp;
 	/* Safety check to make sure we don't get any mana storms in scorn */
 	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
-	    new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
+	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "The magic warps and you are turned inside out!", NULL);
 	    hit_player(op,9998,op,AT_INTERNAL,1);
 
 	} else {
-	    new_draw_info(NDI_UNIQUE, 0,op,"You lose control of the mana!  The uncontrolled magic blasts you!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "You lose control of the mana! The uncontrolled magic blasts you!",
+			  NULL);
 	    tmp=create_archetype(LOOSE_MANA);
 	    tmp->level=skill->level;
 	    tmp->x=op->x;
@@ -1015,7 +1032,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * an issue, because they don't have any spellpaths set up.
      */
     if ((caster->path_denied & spell_ob->path_attuned) && !QUERY_FLAG(caster,FLAG_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,op, "That spell path is denied to you.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+		      "That spell path is denied to you.", NULL);
 	return 0;
     }
 
@@ -1033,12 +1051,16 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	if (spell_ob->skill) {
 	    skill = find_skill_by_name(op, spell_ob->skill);
 	    if (!skill) {
-		new_draw_info_format(NDI_UNIQUE, 0,op,"You need the skill %s to cast %s.",
-			spell_ob->skill, spell_ob->name);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, 
+				     MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+				     "You need the skill %s to cast %s.",
+				     "You need the skill %s to cast %s.",
+				     spell_ob->skill, spell_ob->name);
 		return 0;
 	    }
 	    if (min_casting_level(op, spell_ob) > cast_level && !QUERY_FLAG(op, FLAG_WIZ)) {
-		new_draw_info(NDI_UNIQUE, 0,op, "You lack enough skill to cast that spell.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+			      "You lack enough skill to cast that spell.", NULL);
 		return 0;
 	    }
 	}
@@ -1048,20 +1070,28 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	if (!QUERY_FLAG(op, FLAG_WIZ)) {
 	    if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
 		SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
-		new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+			      "You don't have enough mana.", NULL);
 		return 0;
 	    }
 	    if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
 		SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
 		if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
 		   10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
-			new_draw_info_format(NDI_UNIQUE, 0,op, 
-				     "%s grants your prayer, though you are unworthy.",godname);
+			draw_ext_info_format(NDI_UNIQUE, 0,op,
+				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+				     "%s grants your prayer, though you are unworthy.",
+				     "%s grants your prayer, though you are unworthy.",
+				     godname);
 		}
 		else {
 		    prayer_failure(op,op->stats.grace,
 			   SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) - op->stats.grace);
-		    new_draw_info_format(NDI_UNIQUE, 0,op,"%s ignores your prayer.",godname);
+		    draw_ext_info_format(NDI_UNIQUE, 0,op,
+					 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+					 "%s ignores your prayer.",
+					 "%s ignores your prayer.",
+					 godname);
 		    return 0;
 		}
 	    }
@@ -1070,7 +1100,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    if (spell_ob->stats.grace && random_roll(0, 99, op, PREFER_HIGH) < 
 	      (spell_ob->level/(float)MAX(1,op->level) *cleric_chance[op->stats.Wis])) {
 		play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-		new_draw_info(NDI_UNIQUE, 0,op,"You fumble the spell.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			      "You fumble the spell.", NULL);
 		if (settings.casting_time == TRUE) {
 		    op->casting_time = -1;
 		}
@@ -1081,7 +1112,10 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 		    op->contr->encumbrance +op->level - spell_ob->level +35;
 
 		if( failure < 0) {
-		    new_draw_info(NDI_UNIQUE, 0,op,"You bungle the spell because you have too much heavy equipment in use.");
+		    draw_ext_info(NDI_UNIQUE, 0,op,
+			  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "You bungle the spell because you have too much heavy equipment in use.",
+			  NULL);
 		    if (settings.spell_failure_effects == TRUE)
 			spell_failure(op,failure,
 			  SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA),
@@ -1110,17 +1144,23 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    return 0;
 
 	if ((mflags & P_NO_CLERIC) && spell_ob->stats.grace) 
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"This ground is unholy!  %s ignores you.",godname);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+				 "This ground is unholy!  %s ignores you.",
+				 "This ground is unholy!  %s ignores you.",
+				 godname);
 	else
 	switch(op->contr->shoottype) {
 	    case range_magic:
-		new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your spellcasting.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+			      "Something blocks your spellcasting.", NULL);
 		break;
 	    case range_misc:
-		new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your item.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			      "Something blocks the magic of your item.", NULL);
 		break;
 	    case range_golem:
-		new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of your scroll.");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,	
+			      "Something blocks the magic of your scroll.", NULL);
 		break;
 	    default:
 		break;
@@ -1144,7 +1184,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	}
 	else if (op->casting_time != 0) {
 	    if (op->type == PLAYER )
-		new_draw_info(NDI_UNIQUE, 0,op,"You are casting!");
+		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+			      "You are casting!", NULL);
 	    return 0;
 	} else {    /* casting_time == 0 */
 	    op->casting_time = -1;
@@ -1187,8 +1228,11 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     if (op != caster && !skill && caster->skill) {
 	skill = find_skill_by_name(op, caster->skill);
 	if (!skill) {
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"You lack the skill %s to use the %s",
-			  caster->skill, query_name(caster));
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, 
+				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+				 "You lack the skill %s to use the %s",
+				 "You lack the skill %s to use the %s",
+				 caster->skill, query_name(caster));
 	    return 0;
 	}
 	change_skill(op, skill, 0);    /* needed for proper exp credit */
@@ -1322,7 +1366,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	     * polymorph (ie, find it as a preset item or left over from before
   	     * it was disabled), they get some feedback.
 	     */
-	    new_draw_info(NDI_UNIQUE, 0,op,"The spell fizzles");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "The spell fizzles", NULL);
 	    success = 0;
 #else
 	    success = cast_polymorph(op,caster,spell_ob, dir);
@@ -1352,8 +1397,11 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	case SP_MOVING_BALL:
 	    if (spell_ob->path_repelled && 
 		(spell_ob->path_repelled & caster->path_attuned) != spell_ob->path_repelled) {
-		new_draw_info_format(NDI_UNIQUE, 0, op, 
-			"You lack the proper attunement to cast %s", spell_ob->name);
+		draw_ext_info_format(NDI_UNIQUE, 0, op,
+				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+				     "You lack the proper attunement to cast %s",
+				     "You lack the proper attunement to cast %s",
+				     spell_ob->name);
 		success = 0;
 	    } else 
 		success = fire_arch_from_position(op,caster,

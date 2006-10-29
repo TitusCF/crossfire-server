@@ -245,82 +245,102 @@ get_tod(timeofday_t *tod)
 void
 print_tod(object *op)
 {
-  timeofday_t tod;
-  const char *suf;
-  int day;
+    timeofday_t tod;
+    const char *suf;
+    int day;
 
-  get_tod(&tod);
-  sprintf(errmsg, "It is %d minute%s past %d o'clock %s, on %s",
-    tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-    ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-    ((tod.hour >= 14) ? "pm" : "am"),
-    weekdays[tod.dayofweek]);
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    get_tod(&tod);
 
-  day = tod.day + 1;
-  if (day == 1 || ((day % 10) == 1 && day > 20))
-    suf = "st";
-  else if (day == 2 || ((day % 10) == 2 && day > 20))
-    suf = "nd";
-  else if (day == 3 || ((day % 10) == 3 && day > 20))
-    suf = "rd";
-  else
-    suf = "th";
-  sprintf(errmsg, "The %d%s Day of the %s, Year %d", day, suf,
-    month_name[tod.month], tod.year+1);
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+       "It is %d minute%s past %d o'clock %s, on %s",
+       "It is %d minute%s past %d o'clock %s, on %s",
+       tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
+       ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+       ((tod.hour >= 14) ? "pm" : "am"),
+       weekdays[tod.dayofweek]);
 
-  sprintf(errmsg, "Time of Year: %s", season_name[tod.season]);
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+    day = tod.day + 1;
+    if (day == 1 || ((day % 10) == 1 && day > 20))
+	suf = "st";
+    else if (day == 2 || ((day % 10) == 2 && day > 20))
+	suf = "nd";
+    else if (day == 3 || ((day % 10) == 3 && day > 20))
+	suf = "rd";
+    else
+	suf = "th";
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+	 "The %d%s Day of the %s, Year %d", 
+	 "The %d%s Day of the %s, Year %d", 
+	 day, suf, month_name[tod.month], tod.year+1);
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+	 "Time of Year: %s",
+	 "Time of Year: %s",
+	 season_name[tod.season]);
 }
 
 void
 time_info(object *op)
 {
-  int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
+    int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
 
-  print_tod(op);
-  if (!QUERY_FLAG(op,FLAG_WIZ))
-    return;
+    print_tod(op);
 
-  new_draw_info (NDI_UNIQUE, 0,op,"Total time:");
-  sprintf(errmsg,"ticks=%d  time=%d.%2d",
+    if (!QUERY_FLAG(op,FLAG_WIZ))
+	return;
+
+    draw_ext_info (NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, 
+	   "Total time:", NULL);
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "ticks=%d  time=%d.%2d",
+	 "ticks=%d  time=%d.%2d",
           pticks, process_tot_mtime/1000, process_tot_mtime%1000);
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"avg time=%dms  max time=%dms  min time=%dms",
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "avg time=%dms  max time=%dms  min time=%dms",
+	 "avg time=%dms  max time=%dms  min time=%dms",
           process_tot_mtime/pticks, process_max_utime/1000,
           process_min_utime/1000);
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"ticks longer than max time (%dms) = %d (%d%%)",
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "ticks longer than max time (%dms) = %d (%d%%)",
+	 "ticks longer than max time (%dms) = %d (%d%%)",
           max_time/1000,
           process_utime_long_count, 100*process_utime_long_count/pticks);
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
-  sprintf(errmsg,"Time last %d ticks:", pticks > PBUFLEN ? PBUFLEN : pticks);
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 
-  for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
-    tot += process_utime_save[i];
-    if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
-    if (process_utime_save[i] < mint) mint = process_utime_save[i];
-    if (process_utime_save[i] > max_time) long_count++;
-  }
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "Time last %d ticks:", 
+	 "Time last %d ticks:", 
+	 pticks > PBUFLEN ? PBUFLEN : pticks);
 
-  sprintf(errmsg,"avg time=%dms  max time=%dms  min time=%dms",
+    for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
+	tot += process_utime_save[i];
+	if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
+	if (process_utime_save[i] < mint) mint = process_utime_save[i];
+	if (process_utime_save[i] > max_time) long_count++;
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "avg time=%dms  max time=%dms  min time=%dms",
+	 "avg time=%dms  max time=%dms  min time=%dms",
           tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
           mint/1000);
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"ticks longer than max time (%dms) = %d (%d%%)",
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+	 "ticks longer than max time (%dms) = %d (%d%%)",
+	 "ticks longer than max time (%dms) = %d (%d%%)",
           max_time/1000, long_count,
           100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
-  new_draw_info (NDI_UNIQUE, 0,op,errmsg);
 }
 
 long
 seconds(void)
 {
-  struct timeval now;
+    struct timeval now;
 
-  (void) GETTIMEOFDAY(&now);
-  return now.tv_sec;
+    (void) GETTIMEOFDAY(&now);
+    return now.tv_sec;
 }

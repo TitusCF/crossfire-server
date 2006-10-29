@@ -76,7 +76,8 @@ int apply_transport(object *pl, object *transport, int aflag) {
      * allowed.
      */
     if (pl->contr->transport && pl->contr->transport != transport) {
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		"You must exit %s before you can board %s.",
 		"You must exit %s before you can board %s.",
 			     query_name(pl->contr->transport), 
 			     query_name(transport));
@@ -93,7 +94,8 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	 * apply?
 	 */
 	if (aflag & AP_APPLY) return 1;
-	new_draw_info_format(NDI_UNIQUE, 0, pl,
+	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+		"You disembark from %s.",
 		"You disembark from %s.",
 			     query_name(old_transport));
 	remove_ob(pl);
@@ -118,7 +120,9 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	    old_transport->animation_id = old_transport->arch->clone.animation_id;
 	} else {
 	    old_transport->contr = inv->contr;
-	    new_draw_info_format(NDI_UNIQUE, 0, inv,
+	    draw_ext_info_format(NDI_UNIQUE, 0, inv,
+				 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "%s has disembarked.  You are now the captain of %s",
 				 "%s has disembarked.  You are now the captain of %s",
 				 pl->name, query_name(old_transport));
 	}
@@ -134,7 +138,8 @@ int apply_transport(object *pl, object *transport, int aflag) {
         
 	/* Can this transport hold the weight of this player? */
 	if (!transport_can_hold(transport, pl, 1)) {
-	    new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		"The %s is unable to hold your weight!",
 		"The %s is unable to hold your weight!",
 			     query_name(transport));
 	    return 1;
@@ -147,14 +152,16 @@ int apply_transport(object *pl, object *transport, int aflag) {
             if (!is_in_shop(pl)) {
                 transport = drop_object(pl, transport, 1);
             } else {
-                new_draw_info_format(NDI_UNIQUE, 0, pl,
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You cannot drop the %s in a shop to use it.",
                     "You cannot drop the %s in a shop to use it.",
                     query_name(old_transport));
                 return 1;
             }
             /* Did it fail to drop? */
             if(!transport) {
-                new_draw_info_format(NDI_UNIQUE, 0, pl,
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You need to drop the %s to use it.",
                     "You need to drop the %s to use it.",
                     query_name(old_transport));
                 return 1;
@@ -169,7 +176,8 @@ int apply_transport(object *pl, object *transport, int aflag) {
 	if (!kv) p_limit=1;
 	else p_limit = atoi(kv);
 	if (pc >= p_limit) {
-	    new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		"The %s does not have space for any more people",
 		"The %s does not have space for any more people",
 			     query_name(transport));
 	    return 1;
@@ -177,13 +185,21 @@ int apply_transport(object *pl, object *transport, int aflag) {
 
 	/* Everything checks out OK - player can get on the transport */
 	pl->contr->transport = transport;
-    if (transport->contr) {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s's captain is currently %s", query_name(transport), transport->contr->ob->name);
-    }
-    else {
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You're the %s's captain", query_name(transport));
-        transport->contr = pl->contr;
-    }
+
+	if (transport->contr) {
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			     "The %s's captain is currently %s", 
+			     "The %s's captain is currently %s", 
+			     query_name(transport), transport->contr->ob->name);
+	}
+	else {
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "You're the %s's captain",
+				 "You're the %s's captain",
+				 query_name(transport));
+	    transport->contr = pl->contr;
+	}
+
 	remove_ob(pl);
 	insert_ob_in_ob(pl, transport);
 	sum_weight(transport);
@@ -309,11 +325,13 @@ static int apply_id_altar (object *money, object *altar, object *pl)
     {
 	if (operate_altar (altar, &money)) {
 	    identify (marked);
-	    new_draw_info_format(NDI_UNIQUE, 0, pl,
+	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		"You have %s.", long_desc(marked, pl));
+
             if (marked->msg) {
-	        new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
-	        new_draw_info(NDI_UNIQUE, 0,pl, marked->msg);
+	        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			      "The item has a story:", NULL);
+	        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, marked->msg, NULL);
 	    }
 	    return money == NULL;
 	} 
@@ -324,11 +342,15 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 	    need_identify(id)) {
 		if (operate_altar(altar,&money)) {
 		    identify(id);
-		    new_draw_info_format(NDI_UNIQUE, 0, pl,
-			"You have %s.", long_desc(id, pl));
+		    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "You have %s.",
+				 "You have %s.",
+				 long_desc(id, pl));
 	            if (id->msg) {
-		        new_draw_info(NDI_UNIQUE, 0,pl, "The item has a story:");
-		        new_draw_info(NDI_UNIQUE, 0,pl, id->msg);
+		        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				      "The item has a story:", NULL);
+		        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				      id->msg, NULL);
 		    }
 		    success=1;
 		    /* If no more money, might as well quit now */
@@ -341,7 +363,8 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 		}
 	}
     }
-    if (!success) new_draw_info(NDI_UNIQUE, 0,pl,"You have nothing that needs identifying");
+    if (!success) draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+				"You have nothing that needs identifying", NULL);
     return money == NULL;
 }
 
@@ -406,14 +429,16 @@ int apply_potion(object *op, object *tmp)
 	if (depl!=NULL) {
 	    for (i = 0; i < NUM_STATS; i++)
 		if (get_attr_value(&depl->stats, i)) {
-		    new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
+		    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_GAIN,
+				  restore_msg[i], NULL);
 		}
 	    remove_ob(depl);
 	    free_object(depl);
 	    fix_player(op);
 	}
 	else
-	    new_draw_info(NDI_UNIQUE,0,op, "You potion had no effect.");
+	    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "You potion had no effect.", NULL);
 
 	decrease_ob(tmp);
 	return 1;
@@ -457,20 +482,23 @@ int apply_potion(object *op, object *tmp)
 	if (!QUERY_FLAG(tmp,FLAG_CURSED) && !QUERY_FLAG(tmp,FLAG_DAMNED)) {
 	    if (got_one) {
 		fix_player(op);
-		new_draw_info(NDI_UNIQUE,0,op,"The Gods smile upon you and remake you");
-		new_draw_info(NDI_UNIQUE,0,op,"a little more in their image.");
-        	new_draw_info(NDI_UNIQUE,0,op,"You feel a little more perfect.");
+		draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		      "The Gods smile upon you and remake you a little more in their image."
+		      "You feel a little more perfect.", NULL);
 	    }
 	    else
-		new_draw_info(NDI_UNIQUE,0,op,"The potion had no effect - you are already perfect");
+		draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			      "The potion had no effect - you are already perfect", NULL);
 	}
 	else {	/* cursed potion */
 	    if (got_one) {
 		fix_player(op);
-		new_draw_info(NDI_UNIQUE,0,op,"The Gods are angry and punish you.");
+		draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			      "The Gods are angry and punish you.", NULL);
 	    }
 	    else 
-		new_draw_info(NDI_UNIQUE,0,op,"You are fortunate that you are so pathetic.");
+		draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			      "You are fortunate that you are so pathetic.", NULL);
 	}
 	decrease_ob(tmp);
 	return 1;
@@ -486,7 +514,8 @@ int apply_potion(object *op, object *tmp)
 	if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
 	    object *fball;
 
-	    new_draw_info(NDI_UNIQUE,0,op, "Yech!  Your lungs are on fire!");
+	    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			  "Yech!  Your lungs are on fire!", NULL);
             /* Explodes a fireball centered at player */
             fball = create_archetype(EXPLODING_FIREBALL);
             fball->dam_modifier=random_roll(1, op->level, op, PREFER_LOW)/5+1;
@@ -538,7 +567,8 @@ int apply_potion(object *op, object *tmp)
 	else
 	    SET_FLAG(tmp, FLAG_APPLIED);
 	if(!change_abil(op,tmp))
-	    new_draw_info(NDI_UNIQUE,0,op,"Nothing happened.");
+	    draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "Nothing happened.", NULL);
     }
 
     /* CLEAR_FLAG is so that if the character has other potions
@@ -668,9 +698,10 @@ static int check_sacrifice(object *op, const object *improver)
     if (improver->slaying!=NULL) {
 	count = check_item(op,improver->slaying);
 	if (count<1) {
-	    char buf[200];
-	    sprintf(buf,"The gods want more %ss",improver->slaying);
-	    new_draw_info(NDI_UNIQUE,0,op,buf);
+	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		"The gods want more %ss",
+		"The gods want more %ss",
+		 improver->slaying);
 	    return 0;
 	}
     }
@@ -687,16 +718,22 @@ static int improve_weapon_stat(object *op,object *improver,object *weapon,
 			signed char *stat,int sacrifice_count,const char *statname)
 {
 
-  new_draw_info(NDI_UNIQUE,0,op,"Your sacrifice was accepted.");
-  *stat += sacrifice_count;
-  weapon->last_eat++;
-  new_draw_info_format(NDI_UNIQUE,0,op,
-	"Weapon's bonus to %s improved by %d",statname,sacrifice_count);
-  decrease_ob(improver);
+    draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		"Your sacrifice was accepted.", NULL);
 
-  /* So it updates the players stats and the window */
-  fix_player(op);
-  return 1;
+    *stat += sacrifice_count;
+    weapon->last_eat++;
+
+    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+	"Weapon's bonus to %s improved by %d",
+	"Weapon's bonus to %s improved by %d",
+	 statname,sacrifice_count);
+
+    decrease_ob(improver);
+
+    /* So it updates the players stats and the window */
+    fix_player(op);
+    return 1;
 }
 
 /* Types of improvements, hidden in the sp field. */
@@ -724,7 +761,8 @@ static int prepare_weapon(object *op, object *improver, object *weapon)
     char buf[MAX_BUF];
 
     if (weapon->level!=0) {
-      new_draw_info(NDI_UNIQUE,0,op,"Weapon already prepared.");
+      draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "Weapon already prepared.", NULL);
       return 0;
     }
     for (i=0; i<NROFATTACKS; i++)
@@ -739,18 +777,22 @@ static int prepare_weapon(object *op, object *improver, object *weapon)
 	weapon->stats.exp ||	/* speed */
 	weapon->stats.ac)	/* AC - only taifu's I think */
     {
-      new_draw_info(NDI_UNIQUE,0,op,"Cannot prepare magic weapons.");
+      draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "Cannot prepare magic weapons.", NULL);
       return 0;
     }
     sacrifice_count=check_sacrifice(op,improver);
     if (sacrifice_count<=0)
       return 0;
     weapon->level=isqrt(sacrifice_count);
-    new_draw_info(NDI_UNIQUE,0,op,"Your sacrifice was accepted.");
+    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		  "Your sacrifice was accepted.", NULL);
     eat_item(op, improver->slaying, sacrifice_count);
 
-    new_draw_info_format(NDI_UNIQUE, 0, op,"Your *%s may be improved %d times.",
-	    weapon->name,weapon->level);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+	 "Your *%s may be improved %d times.",
+	 "Your *%s may be improved %d times.",
+	 weapon->name,weapon->level);
 
     sprintf(buf,"%s's %s",op->name,weapon->name);
     FREE_AND_COPY(weapon->name, buf);
@@ -782,18 +824,21 @@ static int improve_weapon(object *op,object *improver,object *weapon)
 	return prepare_weapon(op, improver, weapon);
   }
   if (weapon->level==0) {
-    new_draw_info(NDI_UNIQUE, 0,op,"This weapon has not been prepared.");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		  "This weapon has not been prepared.", NULL);
     return 0;
   }
   if (weapon->level==weapon->last_eat && weapon->item_power >=100) {
-    new_draw_info(NDI_UNIQUE, 0,op,"This weapon cannot be improved any more.");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		  "This weapon cannot be improved any more.", NULL);
     return 0;
   }
   if (QUERY_FLAG(weapon, FLAG_APPLIED) &&
       !check_weapon_power(op, weapon->last_eat+1)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Improving the weapon will make it too");
-	new_draw_info(NDI_UNIQUE, 0,op,"powerful for you to use.  Unready it if you");
-	new_draw_info(NDI_UNIQUE, 0,op,"really want to improve it.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+	      "Improving the weapon will make it too" 
+	      "powerful for you to use.  Unready it if you"
+	      "really want to improve it.", NULL);
 	return 0;
   }
   /* This just increases damage by 5 points, no matter what.  No sacrifice
@@ -804,8 +849,10 @@ static int improve_weapon(object *op,object *improver,object *weapon)
   if (improver->stats.sp==IMPROVE_DAMAGE) {
 	weapon->stats.dam += 5;
 	weapon->weight += 5000;		/* 5 KG's */
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "Damage has been increased by 5 to %d", weapon->stats.dam);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+	    "Damage has been increased by 5 to %d", 
+	    "Damage has been increased by 5 to %d", 
+	     weapon->stats.dam);
 	weapon->last_eat++;
 
 	weapon->item_power++;
@@ -816,7 +863,8 @@ static int improve_weapon(object *op,object *improver,object *weapon)
 	/* Reduce weight by 20% */
 	weapon->weight = (weapon->weight * 8)/10;
 	if (weapon->weight < 1) weapon->weight = 1;
-	new_draw_info_format(NDI_UNIQUE, 0, op,
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		"Weapon weight reduced to %6.1f kg",
 		"Weapon weight reduced to %6.1f kg",
 		(float)weapon->weight/1000.0);
 	weapon->last_eat++;
@@ -827,8 +875,10 @@ static int improve_weapon(object *op,object *improver,object *weapon)
   if (improver->stats.sp == IMPROVE_ENCHANT) {
 	weapon->magic++;
 	weapon->last_eat++;
-	new_draw_info_format(NDI_UNIQUE, 0, op
-		,"Weapon magic increased to %d",weapon->magic);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		     "Weapon magic increased to %d",
+		     "Weapon magic increased to %d",
+		     weapon->magic);
 	decrease_ob(improver);
 	weapon->item_power++;
 	return 1;
@@ -844,8 +894,10 @@ static int improve_weapon(object *op,object *improver,object *weapon)
 
   sacrifice_count = check_sacrifice(op,improver);
   if (sacrifice_count < sacrifice_needed) {
-	new_draw_info_format(NDI_UNIQUE, 0, op,
-	    "You need at least %d %s", sacrifice_needed, improver->slaying);
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+	    "You need at least %d %s", 
+	    "You need at least %d %s", 
+	     sacrifice_needed, improver->slaying);
 	return 0;
   }
   eat_item(op,improver->slaying, sacrifice_needed);
@@ -881,7 +933,8 @@ static int improve_weapon(object *op,object *improver,object *weapon)
                                (signed char *) &(weapon->stats.Pow),
                                1, "power");
    default:
-    new_draw_info(NDI_UNIQUE, 0,op,"Unknown improvement type.");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		  "Unknown improvement type.", NULL);
   }
   LOG(llevError,"improve_weapon: Got to end of function\n");
   return 0;
@@ -899,19 +952,23 @@ static int check_improve_weapon (object *op, object *tmp)
     if(op->type!=PLAYER)
       return 0;
     if (!QUERY_FLAG(op, FLAG_WIZCAST) && (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "Something blocks the magic of the scroll.", NULL);
 	return 0;
     }
     otmp=find_marked_object(op);
     if(!otmp) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You need to mark a weapon object.");
+      draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "You need to mark a weapon object.", NULL);
       return 0;
     }
     if (otmp->type != WEAPON && otmp->type != BOW) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Marked item is not a weapon or bow");
+      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "Marked item is not a weapon or bow", NULL);
       return 0;
     }
-    new_draw_info(NDI_UNIQUE, 0,op,"Applied weapon builder.");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		  "Applied weapon builder.", NULL);
     improve_weapon(op,tmp,otmp);
     esrv_send_item(op, otmp);
     return 1;
@@ -944,7 +1001,8 @@ static int improve_armour(object *op, object *improver, object *armour)
     object *tmp;
 
     if (armour->magic >= settings.armor_max_enchant) {
-        new_draw_info(NDI_UNIQUE, 0,op,"This armour can not be enchanted any further.");
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "This armour can not be enchanted any further.", NULL);
 	return 0;
     }
     /* Dealing with random artifact armor is a lot trickier (in terms of value, weight,
@@ -953,7 +1011,8 @@ static int improve_armour(object *op, object *improver, object *armour)
      * of gnarg and what not?)
      */
     if (armour->title) {
-	new_draw_info(NDI_UNIQUE, 0, op, "This armour will not accept further enchantment.");
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "This armour will not accept further enchantment.", NULL);
 	return 0;
     }
 	
@@ -1134,7 +1193,6 @@ static int convert_item(object *item, object *converter) {
 
 static int apply_container (object *op, object *sack)
 {
-    char buf[MAX_BUF];
     object *tmp;
 
     if(op->type!=PLAYER)
@@ -1149,7 +1207,8 @@ static int apply_container (object *op, object *sack)
 
     if (sack->env!=op) {
 	if (sack->other_arch == NULL || sack->env != NULL) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"You must get it first.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			  "You must get it first.", NULL);
 	    return 1;
 	}
 	/* It's on the ground, the problems begin */
@@ -1160,8 +1219,10 @@ static int apply_container (object *op, object *sack)
 		    tmp && tmp->container != sack; tmp=tmp->above);
 		if (tmp) {
 		    /* some other player have opened it */
-		    new_draw_info_format(NDI_UNIQUE, 0, op,
-			"%s is already occupied.", query_name(sack));
+		    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			 "%s is already occupied.", 
+			 "%s is already occupied.", 
+			 query_name(sack));
 		    return 1;
 		}
 	    }
@@ -1196,18 +1257,24 @@ static int apply_container (object *op, object *sack)
 	    if (op->container != sack) {
 		tmp = op->container;
 		apply_container (op, tmp);
-		sprintf (buf, "You close %s and open ", query_name(tmp));
+		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		      "You close %s and open %s.", 
+		      query_name(tmp), query_name(sack));
 		op->container = sack;
-		strcat (buf, query_name(sack));
-		strcat (buf, ".");
 	    } else {
 		CLEAR_FLAG (sack, FLAG_APPLIED);
 		op->container = NULL;
-		sprintf (buf, "You close %s.", query_name(sack));
+		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+		      "You close %s.", 
+		      "You close %s.", 
+		      query_name(sack));
 	    }
 	} else {
 	    CLEAR_FLAG (sack, FLAG_APPLIED);
-	    sprintf (buf, "You open %s.", query_name(sack));
+	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		  "You open %s.",
+		  "You open %s.",
+		  query_name(sack));
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    op->container = sack;
 	}
@@ -1215,28 +1282,33 @@ static int apply_container (object *op, object *sack)
 	if (sack->slaying) { /* it's locked */
 	  tmp = find_key(op, op, sack);
 	  if (tmp) {
-	    sprintf (buf, "You unlock %s with %s.", query_name(sack), query_name(tmp));
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    if (sack->env == NULL) { /* if it's on ground,open it also */
-	      new_draw_info (NDI_UNIQUE,0,op, buf);
-	      apply_container (op, sack);
-	      return 1;
+		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		      "You unlock %s with %s.", 
+		      "You unlock %s with %s.", 
+		      query_name(sack), query_name(tmp));
+		apply_container (op, sack);
+		return 1;
 	    }
 	  } else {
-	    sprintf (buf, "You don't have the key to unlock %s.",
-		     query_name(sack));
+	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		  "You don't have the key to unlock %s.",
+		  "You don't have the key to unlock %s.",
+		  query_name(sack));
 	  }
 	} else {
-	    sprintf (buf, "You readied %s.", query_name(sack));
+	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		  "You readied %s.", 
+		  "You readied %s.", 
+		  query_name(sack));
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    if (sack->env == NULL) {  /* if it's on ground,open it also */
-		new_draw_info (NDI_UNIQUE, 0, op, buf);
 		apply_container (op, sack);
 		return 1;
 	    }
 	}
     }
-    new_draw_info (NDI_UNIQUE, 0, op, buf);
     if (op->contr) op->contr->socket.update_look=1;
     return 1;
 }
@@ -1280,7 +1352,9 @@ int esrv_apply_container (object *op, object *sack)
         if (execute_event(tmp, EVENT_CLOSE,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
             return 1;
 
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.",
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+		     "You close %s.",
+		     "You close %s.",
 		      query_name(op->container));
 	CLEAR_FLAG(op->container, FLAG_APPLIED);
 	op->container=NULL;
@@ -1296,9 +1370,14 @@ int esrv_apply_container (object *op, object *sack)
     if (sack->slaying) { /* it's locked */
       tmp=find_key(op, op, sack);
       if (tmp) {
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You unlock %s with %s.", query_name(sack), query_name(tmp));
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			     "You unlock %s with %s.", 
+			     "You unlock %s with %s.", 
+			     query_name(sack), query_name(tmp));
       } else {
-	new_draw_info_format(NDI_UNIQUE, 0, op,  "You don't have the key to unlock %s.",
+	draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			     "You don't have the key to unlock %s.",
+			     "You don't have the key to unlock %s.",
 			     query_name(sack));
 	return 0;
       }
@@ -1320,7 +1399,9 @@ int esrv_apply_container (object *op, object *sack)
 	 * try to do it, so lets handle it gracefully.
 	 */
 	if (sack->env) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You can't open %s",
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				 "You can't open %s",
+				 "You can't open %s",
 				 query_name(sack));
 	    return 0;
 	}
@@ -1328,7 +1409,10 @@ int esrv_apply_container (object *op, object *sack)
 	sack->move_off = MOVE_ALL;	/* trying force closing it */
 
 	CLEAR_FLAG (sack, FLAG_APPLIED);
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		     "You open %s.",
+		     "You open %s.",
+		     query_name(sack));
 	SET_FLAG (sack, FLAG_APPLIED);
 	op->container = sack;
 	esrv_update_item (UPD_FLAGS, op, sack);
@@ -1337,7 +1421,10 @@ int esrv_apply_container (object *op, object *sack)
     } else { /* sack is in players inventory */
 	if (QUERY_FLAG (sack, FLAG_APPLIED)) { /* readied sack becoming open */
 	    CLEAR_FLAG (sack, FLAG_APPLIED);
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "You open %s.",
+			 "You open %s.",
+			 query_name(sack));
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    op->container = sack;
 	    esrv_update_item (UPD_FLAGS, op, sack);
@@ -1345,7 +1432,10 @@ int esrv_apply_container (object *op, object *sack)
 	}
 	else {
 	    CLEAR_FLAG (sack, FLAG_APPLIED);
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "You readied %s.",
+			 "You readied %s.",
+			 query_name(sack));
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    esrv_update_item (UPD_FLAGS, op, sack);
 	}
@@ -1370,7 +1460,9 @@ static int apply_altar (object *altar, object *sacrifice, object *originator)
 	 * is up to map designers to use them properly.
 	 */
 	if (altar->inv && altar->inv->type==SPELL) {
-	    new_draw_info_format (NDI_BLACK, 0, originator, "The altar casts %s.",
+	    draw_ext_info_format (NDI_BLACK, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				  "The altar casts %s.",
+				  "The altar casts %s.",
 				  altar->inv->name);
 	    cast_spell (originator, altar, 0, altar->inv, NULL);
 	    /* If it is connected, push the button.  Fixes some problems with
@@ -1448,7 +1540,8 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	get_payment (op, op->inv);
 	rv = teleport (shop_mat, SHOP_MAT, op);
 	if (shop_mat->msg) {
-	    new_draw_info (NDI_UNIQUE, 0, op, shop_mat->msg);
+	    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			   shop_mat->msg, NULL);
 	}
 	/* This check below is a bit simplistic - generally it should be correct,
 	 * but there is never a guarantee that the bottom space on the map is
@@ -1457,13 +1550,17 @@ static int apply_shop_mat (object *shop_mat, object *op)
 	else if ( !rv && !is_in_shop(op)) {
 	    opinion = shopkeeper_approval(op->map, op);
 	    if ( opinion > 0.9)
-		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper gives you a friendly wave.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+			       "The shopkeeper gives you a friendly wave.", NULL);
 	    else if ( opinion > 0.75)
-		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper waves to you.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+			       "The shopkeeper waves to you.", NULL);
 	    else if ( opinion > 0.5)
-		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper ignores you.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+			       "The shopkeeper ignores you.", NULL);
 	    else
-		new_draw_info (NDI_UNIQUE, 0, op, "The shopkeeper glares at you with contempt.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+			       "The shopkeeper glares at you with contempt.", NULL);
 	}
     }
     else {
@@ -1495,16 +1592,18 @@ static int apply_shop_mat (object *shop_mat, object *op)
 static void apply_sign (object *op, object *sign, int autoapply)
 {
     readable_message_type* msgType;
-    char newbuf[HUGE_BUF];
+
     if (sign->msg == NULL) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Nothing is written on it.");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		       "Nothing is written on it.", NULL);
         return;
     }
 
     if (sign->stats.food) {
 	if (sign->last_eat >= sign->stats.food) {
 	    if (!sign->move_on)
-		new_draw_info (NDI_UNIQUE, 0, op, "You cannot read it anymore.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			       "You cannot read it anymore.", NULL);
 	    return;
 	}
 
@@ -1518,13 +1617,14 @@ static void apply_sign (object *op, object *sign, int autoapply)
      * to us).  
      */
     if (QUERY_FLAG (op, FLAG_BLIND) && ! QUERY_FLAG (op, FLAG_WIZ) && !sign->move_on) {
-        new_draw_info (NDI_UNIQUE, 0, op,
-                       "You are unable to read while blind.");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                       "You are unable to read while blind.", NULL);
         return;
     }
     msgType=get_readable_message_type(sign);
-    snprintf(newbuf,sizeof(newbuf),"%hhu %s", autoapply?1:0,sign->msg);
-    draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, op, msgType->message_type, msgType->message_subtype, newbuf, sign->msg);
+    draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, op, 
+		  msgType->message_type, msgType->message_subtype, 
+		  sign->msg, sign->msg);
 }
 
 
@@ -1660,7 +1760,8 @@ void move_apply (object *trap, object *victim, object *originator)
 			play_sound_map(trap->map, trap->x, trap->y, SOUND_FALL_HOLE);
 			sound_was_played = 1;
 		    }
-		    new_draw_info(NDI_UNIQUE, 0,ab,"You fall into a trapdoor!");
+		    draw_ext_info(NDI_UNIQUE, 0,ab,MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
+				  "You fall into a trapdoor!", NULL);
 		    transfer_ob(ab,(int)EXIT_X(trap),(int)EXIT_Y(trap),0,ab);
 		}
 	    }
@@ -1672,7 +1773,10 @@ void move_apply (object *trap, object *victim, object *originator)
 	    if (convert_item (victim, trap) < 0) {
 		object *op;
 
-		new_draw_info_format(NDI_UNIQUE, 0, originator, "The %s seems to be broken!", query_name(trap));
+		draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+				     "The %s seems to be broken!",
+				     "The %s seems to be broken!",
+				     query_name(trap));
 
 		op = create_archetype("burnout");
 		if (op != NULL) {
@@ -1709,7 +1813,8 @@ void move_apply (object *trap, object *victim, object *originator)
 		goto leave;
 
 	    play_sound_map (victim->map, victim->x, victim->y, SOUND_FALL_HOLE);
-	    new_draw_info (NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
+	    draw_ext_info (NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
+			   "You fall through the hole!", NULL);
 	    transfer_ob (victim, EXIT_X (trap), EXIT_Y (trap), 1, victim);
 	    goto leave;
 
@@ -1719,7 +1824,8 @@ void move_apply (object *trap, object *victim, object *originator)
 		 * players output.
 		 */
 		if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
-		    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
+		    draw_ext_info (NDI_NAVY, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
+				   trap->msg, NULL);
 		enter_exit (victim, trap);
 	    }
 	    goto leave;
@@ -1778,36 +1884,45 @@ static void apply_book (object *op, object *tmp)
     object *skill_ob;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
+      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "You are unable to read while blind.", NULL);
       return;
     }
     if(tmp->msg==NULL) {
-      new_draw_info_format(NDI_UNIQUE, 0, op,
-	"You open the %s and find it empty.", tmp->name);
+      draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		   "You open the %s and find it empty.",
+		   "You open the %s and find it empty.",
+		   tmp->name);
       return;
     }
 
     /* need a literacy skill to read stuff! */
     skill_ob = find_skill_by_name(op, tmp->skill);
     if ( ! skill_ob) {
-	new_draw_info(NDI_UNIQUE, 0,op,
-		      "You are unable to decipher the strange symbols.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "You are unable to decipher the strange symbols.", NULL);
 	return;
     }
     lev_diff = tmp->level - (skill_ob->level + 5);
     if ( ! QUERY_FLAG (op, FLAG_WIZ) && lev_diff > 0) {
 	if (lev_diff < 2)
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is just barely beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is just barely beyond your comprehension.", NULL);
 	else if (lev_diff < 3)
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is slightly beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is slightly beyond your comprehension.", NULL);
 	else if (lev_diff < 5)
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is beyond your comprehension.", NULL);
 	else if (lev_diff < 8)
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is quite a bit beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is quite a bit beyond your comprehension.", NULL);
 	else if (lev_diff < 15)
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is way beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is way beyond your comprehension.", NULL);
 	else
-	    new_draw_info(NDI_UNIQUE, 0,op,"This book is totally beyond your comprehension.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "This book is totally beyond your comprehension.", NULL);
 	return;
     }
 
@@ -1820,7 +1935,7 @@ static void apply_book (object *op, object *tmp)
     	readable_message_type* msgType = get_readable_message_type(tmp);
     	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
                 msgType->message_type, msgType->message_subtype,
-                "%s\n%s",
+                "You open the %s and start reading.\n%s", 
                 "You open the %s and start reading.\n%s", 
                 long_desc(tmp,op), tmp->msg);
     }
@@ -1848,22 +1963,29 @@ static void apply_skillscroll (object *op, object *tmp)
 {
     switch ((int) learn_skill (op, tmp)) {
 	case 0:
-	    new_draw_info(NDI_UNIQUE, 0,op,"You already possess the knowledge ");
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"held within the %s.\n",query_name(tmp));
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			 "You already possess the knowledge held within the %s.",
+			 "You already possess the knowledge held within the %s.",
+			 query_name(tmp));
 	    return;
 
 	case 1:
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"You succeed in learning %s",
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "You succeed in learning %s",
+			 "You succeed in learning %s",
 			 tmp->skill);
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-			 "Type 'bind ready_skill %s",tmp->skill);
-	    new_draw_info(NDI_UNIQUE, 0,op,"to store the skill in a key.");
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "Type 'bind ready_skill %s to store the skill in a key.",
+			 "Type 'bind ready_skill %s to store the skill in a key.",
+			 tmp->skill);
 	    decrease_ob(tmp);
 	    return;
 
 	default:
-	    new_draw_info_format(NDI_UNIQUE,0,op,
-		    "You fail to learn the knowledge of the %s.\n",query_name(tmp));
+	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		 "You fail to learn the knowledge of the %s.\n",
+		 "You fail to learn the knowledge of the %s.\n",
+		 query_name(tmp));
 	    decrease_ob(tmp);
 	    return;
     }
@@ -1900,9 +2022,11 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
 	SET_FLAG(tmp, FLAG_STARTEQUIP);
     }
 
-    new_draw_info_format (NDI_UNIQUE, 0, op, 
-            "Type 'bind cast %s", spell->name);
-    new_draw_info (NDI_UNIQUE, 0, op, "to store the spell in a key.");
+    draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+	  "Type 'bind cast %s to store the spell in a key.",
+	  "Type 'bind cast %s to store the spell in a key.",
+	  spell->name);
+
     esrv_add_spells(op->contr, tmp);
 }
 
@@ -1922,8 +2046,10 @@ void do_forget_spell (object *op, const char *spell)
         return;
     }
     
-    new_draw_info_format (NDI_UNIQUE|NDI_NAVY, 0, op,
-			  "You lose knowledge of %s.", spell);
+    draw_ext_info_format (NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			  "You lose knowledge of %s.", 
+			  "You lose knowledge of %s.", 
+			  spell);
     player_unready_range_ob(op->contr, spob);
     esrv_remove_spell(op->contr, spob);
     remove_ob(spob);
@@ -1940,7 +2066,8 @@ static void apply_spellbook (object *op, object *tmp)
     object *skop, *spell, *spell_skill;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You are unable to read while blind.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "You are unable to read while blind.", NULL);
 	return;
     }
 
@@ -1952,8 +2079,10 @@ static void apply_spellbook (object *op, object *tmp)
     if(tmp->slaying != NULL) {
 	spell=arch_to_object(find_archetype_by_object_name(tmp->slaying));
 	if (!spell) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		"The book's formula for %s is incomplete", tmp->slaying);
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		 "The book's formula for %s is incomplete", 
+		 "The book's formula for %s is incomplete", 
+		 tmp->slaying);
 	    return;
 	}
 	else
@@ -1967,22 +2096,26 @@ static void apply_spellbook (object *op, object *tmp)
     /* need a literacy skill to learn spells. Also, having a literacy level
      * lower than the spell will make learning the spell more difficult */
     if ( !skop) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You can't read! Your attempt fails.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "You can't read! Your attempt fails.", NULL);
 	return;
     }
 
     spell = tmp->inv;
     if (!spell) {
 	LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n", tmp->name);
-	new_draw_info(NDI_UNIQUE, 0,op,"The spellbook symbols make no sense.");
-    return;
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "The spellbook symbols make no sense.", NULL);
+	return;
     }
     if (spell->level > (skop->level+10)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You are unable to decipher the strange symbols.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "You are unable to decipher the strange symbols.", NULL);
 	return;
     } 
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, 
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+	"The spellbook contains the %s level spell %s.",
 	"The spellbook contains the %s level spell %s.",
             get_levelnumber(spell->level), spell->name);
 
@@ -2000,20 +2133,23 @@ static void apply_spellbook (object *op, object *tmp)
      * they would have a special prayer mark.
      */
     if (check_spell_known (op, spell->name)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"You already know that spell.\n");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "You already know that spell.\n", NULL);
 	return;
     }
 
     if (spell->skill) {
 	spell_skill = find_skill_by_name(op, spell->skill);
 	if (!spell_skill) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op, 
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				 "You lack the skill %s to use this spell",
 				 "You lack the skill %s to use this spell",
 				 spell->skill);
 	    return;
 	}
 	if (spell_skill->level < spell->level) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op, 
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				 "You need to be level %d in %s to learn this spell.",
 				 "You need to be level %d in %s to learn this spell.",
 				 spell->level, spell->skill);
 	    return;
@@ -2033,13 +2169,15 @@ static void apply_spellbook (object *op, object *tmp)
      * literacy rate very useful!  -b.t. 
      */ 
     if(QUERY_FLAG(op,FLAG_CONFUSED)) { 
-	new_draw_info(NDI_UNIQUE,0,op,"In your confused state you flub the wording of the text!");
+	draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "In your confused state you flub the wording of the text!", NULL);
 	scroll_failure(op, 0 - random_roll(0, spell->level, op, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
     } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || 
 	(random_roll(0, 100, op, PREFER_LOW)-(5*skop->level)) <
 	      learn_spell[spell->stats.grace ? op->stats.Wis : op->stats.Int]) {
 
-	new_draw_info(NDI_UNIQUE, 0,op,"You succeed in learning the spell!");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		      "You succeed in learning the spell!", NULL);
 	do_learn_spell (op, spell, 0);
 
 	/* xp gain to literacy for spell learning */
@@ -2047,7 +2185,8 @@ static void apply_spellbook (object *op, object *tmp)
 	    change_exp(op,calc_skill_exp(op,tmp,skop), skop->skill, 0);
     } else {
 	play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-	new_draw_info(NDI_UNIQUE, 0,op,"You fail to learn the spell.\n");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "You fail to learn the spell.\n", NULL);
     }
     decrease_ob(tmp);
 }
@@ -2060,13 +2199,14 @@ void apply_scroll (object *op, object *tmp, int dir)
     object *skop;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,op, "You are unable to read while blind.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "You are unable to read while blind.", NULL);
 	return;
     }
 
     if (!tmp->inv || tmp->inv->type != SPELL) {
-        new_draw_info (NDI_UNIQUE, 0, op,
-                       "The scroll just doesn't make sense!");
+        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                       "The scroll just doesn't make sense!", NULL);
         return;
     }
 
@@ -2080,8 +2220,8 @@ void apply_scroll (object *op, object *tmp, int dir)
 	skop = find_skill_by_name(op, skill_names[SK_LITERACY]);
 
         if ( ! skop) {
-	    new_draw_info(NDI_UNIQUE, 0,op,
-		  "You are unable to decipher the strange symbols.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		  "You are unable to decipher the strange symbols.", NULL);
 	    return;
         } 
 
@@ -2092,8 +2232,10 @@ void apply_scroll (object *op, object *tmp, int dir)
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
 	identify(tmp);
 
-    new_draw_info_format(NDI_BLACK, 0, op,
-		     "The scroll of %s turns to dust.", tmp->inv->name);
+    draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		 "The scroll of %s turns to dust.", 
+		 "The scroll of %s turns to dust.", 
+		 tmp->inv->name);
 
 
     cast_spell(op,tmp,dir,tmp->inv, NULL);
@@ -2120,7 +2262,8 @@ static void apply_treasure (object *op, object *tmp)
 
     treas = tmp->inv;
     if(treas==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"The chest was empty.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "The chest was empty.", NULL);
 	decrease_ob(tmp);
 	return;
     }
@@ -2128,8 +2271,10 @@ static void apply_treasure (object *op, object *tmp)
 	treas = tmp->inv;
 
 	remove_ob(treas);
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You find %s in the chest.",
-			   query_name(treas));
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		     "You find %s in the chest.",
+		     "You find %s in the chest.",
+		     query_name(treas));
 
 	treas->x=op->x;
 	treas->y=op->y;
@@ -2170,9 +2315,11 @@ static void apply_food (object *op, object *tmp)
 	/* usual case - no dragon meal: */
 	if(op->stats.food+tmp->stats.food>999) {
 	  if(tmp->type==FOOD || tmp->type==FLESH)
-	    new_draw_info(NDI_UNIQUE, 0,op,"You feel full, but what a waste of food!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "You feel full, but what a waste of food!", NULL);
 	  else
-	    new_draw_info(NDI_UNIQUE, 0,op,"Most of the drink goes down your face not your throat!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "Most of the drink goes down your face not your throat!", NULL);
 	}
       
 	if(!QUERY_FLAG(tmp, FLAG_CURSED)) {
@@ -2191,7 +2338,7 @@ static void apply_food (object *op, object *tmp)
 	    sprintf(buf,"The %s tasted terrible!",tmp->name);
 	  }
 
-	  new_draw_info(NDI_UNIQUE, 0,op,buf);
+	  draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,buf,NULL);
 	  capacity_remaining = 999 - op->stats.food;
 	  op->stats.food+=tmp->stats.food;
 	  if(capacity_remaining < tmp->stats.food)
@@ -2326,7 +2473,7 @@ static int dragon_eat_flesh(object *op, object *meal) {
     sprintf(buf, "The %s tasted strange.", meal->name);
   else
     sprintf(buf, "The %s had no taste.", meal->name);
-  new_draw_info(NDI_UNIQUE, 0, op, buf);
+  draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,buf, NULL);
   
   /* now choose a winner if we have any */
   i = -1;
@@ -2338,8 +2485,11 @@ static int dragon_eat_flesh(object *op, object *meal) {
     skin->resist[i]++;
     fix_player(op);
     
-    sprintf(buf, "Your skin is now more resistant to %s!", change_resist_msg[i]);
-    new_draw_info(NDI_UNIQUE|NDI_RED, 0, op, buf);
+    draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op,  
+			 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
+			 "Your skin is now more resistant to %s!",
+			 "Your skin is now more resistant to %s!",
+			 change_resist_msg[i]);
   }
   
   /* if this flesh contains a new ability focus, we mark it
@@ -2349,16 +2499,20 @@ static int dragon_eat_flesh(object *op, object *meal) {
     abil->last_eat = meal->last_eat; /* write: last_eat <new attnr focus> */
     
     if (meal->last_eat != abil->stats.exp) {
-      sprintf(buf, "Your metabolism prepares to focus on %s!",
-	      change_resist_msg[meal->last_eat]);
-      new_draw_info(NDI_UNIQUE, 0, op, buf);
-      sprintf(buf, "The change will happen at level %d", abil->level + 1);
-      new_draw_info(NDI_UNIQUE, 0, op, buf);
+      draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+			   "Your metabolism prepares to focus on %s!",
+			   "Your metabolism prepares to focus on %s!",
+			   change_resist_msg[meal->last_eat]);
+      draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+			   "The change will happen at level %d",
+			   "The change will happen at level %d",
+			   abil->level + 1);
     }
     else {
-      sprintf(buf, "Your metabolism will continue to focus on %s.",
-	      change_resist_msg[meal->last_eat]);
-      new_draw_info(NDI_UNIQUE, 0, op, buf);
+      draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
+			   "Your metabolism will continue to focus on %s.",
+			   "Your metabolism will continue to focus on %s.",
+			   change_resist_msg[meal->last_eat]);
       abil->last_eat = 0;
     }
   }
@@ -2368,11 +2522,13 @@ static int dragon_eat_flesh(object *op, object *meal) {
 static void apply_savebed (object *pl)
 {
     if(!pl->contr->name_changed||!pl->stats.exp) {
-      new_draw_info(NDI_UNIQUE, 0,pl,"You don't deserve to save your character yet.");
+      draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "You don't deserve to save your character yet.", NULL);
       return;
     }
     if(QUERY_FLAG(pl,FLAG_WAS_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,pl,"Since you have cheated you can't save.");
+      draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "Since you have cheated you can't save.", NULL);
       return;
     }
 
@@ -2383,8 +2539,11 @@ static void apply_savebed (object *pl)
     terminate_all_pets(pl);
     remove_ob(pl);
     pl->direction=0;
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, pl,
-	"%s leaves the game.",pl->name);
+    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, pl, 
+			 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+			 "%s leaves the game.",
+			 "%s leaves the game.",
+			 pl->name);
     
     /* update respawn position */
     strcpy(pl->contr->savebed_map, pl->map->path);
@@ -2412,12 +2571,14 @@ static void apply_armour_improver (object *op, object *tmp)
     object *armor;
 
     if (!QUERY_FLAG(op, FLAG_WIZCAST) && (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC)) {
-        new_draw_info(NDI_UNIQUE, 0,op,"Something blocks the magic of the scroll.");
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "Something blocks the magic of the scroll.", NULL);
         return;
     }
     armor=find_marked_object(op);
     if ( ! armor) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You need to mark an armor object.");
+      draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		    "You need to mark an armor object.", NULL);
       return;
     }
     if (armor->type != ARMOUR
@@ -2426,11 +2587,13 @@ static void apply_armour_improver (object *op, object *tmp)
 	&& armor->type != BRACERS && armor->type != SHIELD
 	&& armor->type != HELMET)
     {
-        new_draw_info(NDI_UNIQUE, 0,op,"Your marked item is not armour!\n");
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "Your marked item is not armour!\n", NULL);
         return;
     }
 
-    new_draw_info(NDI_UNIQUE, 0,op,"Applying armour enchantment.");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		  "Applying armour enchantment.", NULL);
     improve_armour(op,tmp,armor);
 }
 
@@ -2438,14 +2601,15 @@ static void apply_armour_improver (object *op, object *tmp)
 extern void apply_poison (object *op, object *tmp)
 {
     if (op->type == PLAYER) {
-      play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
-      new_draw_info(NDI_UNIQUE, 0,op,"Yech!  That tasted poisonous!");
-      strcpy(op->contr->killer,"poisonous booze");
+	play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+		    "Yech!  That tasted poisonous!", NULL);
+	strcpy(op->contr->killer,"poisonous booze");
     }
     if (tmp->stats.hp > 0) {
-      LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
-          tmp->stats.hp);
-      hit_player(op, tmp->stats.hp, tmp, AT_POISON, 1);
+	LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
+	    tmp->stats.hp);
+	hit_player(op, tmp->stats.hp, tmp, AT_POISON, 1);
     }
     op->stats.food-=op->stats.food/4;
     handle_apply_yield(tmp);
@@ -2539,7 +2703,8 @@ int manual_apply (object *op, object *tmp, int aflag)
 
     if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
 	if (op->type == PLAYER) {
-	    new_draw_info (NDI_UNIQUE, 0, op, "You should pay for it first.");
+	    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			   "You should pay for it first.", NULL);
 	    return 1;
 	} else {
 	    return 0;   /* monsters just skip unpaid items */
@@ -2557,7 +2722,8 @@ int manual_apply (object *op, object *tmp, int aflag)
 	    return apply_transport(op, tmp, aflag);
 
 	case CF_HANDLE:
-	    new_draw_info(NDI_UNIQUE, 0,op,"You turn the handle.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			  "You turn the handle.", NULL);
 	    play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
 	    tmp->value=tmp->value?0:1;
 	    SET_ANIMATION(tmp, tmp->value);
@@ -2567,10 +2733,12 @@ int manual_apply (object *op, object *tmp, int aflag)
 
 	case TRIGGER:
 	    if (check_trigger (tmp, op)) {
-		new_draw_info (NDI_UNIQUE, 0, op, "You turn the handle.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			       "You turn the handle.", NULL);
 		play_sound_map (tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE);
 	    } else {
-		new_draw_info (NDI_UNIQUE, 0, op, "The handle doesn't move.");
+		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			       "The handle doesn't move.", NULL);
 	    }
 	    return 1;
 
@@ -2578,13 +2746,15 @@ int manual_apply (object *op, object *tmp, int aflag)
 	    if (op->type != PLAYER)
 		return 0;
 	    if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
-		new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.",
-                                 query_name(tmp));
+		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+				     "The %s is closed.",
+				     "The %s is closed.",
+				     query_name(tmp));
 	    } else {
 		/* Don't display messages for random maps. */
 		if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) &&
 		    strncmp(EXIT_PATH(tmp), "/random/", 8))
-		new_draw_info (NDI_NAVY, 0, op, tmp->msg);
+		draw_ext_info (NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, tmp->msg, NULL);
 		enter_exit(op,tmp);
 	    }
 	    return 1;
@@ -2702,16 +2872,16 @@ int manual_apply (object *op, object *tmp, int aflag)
 
 	case CLOCK:
 	    if (op->type == PLAYER) {
-		char buf[MAX_BUF];
 		timeofday_t tod;
 
 		get_tod(&tod);
-		sprintf(buf, "It is %d minute%s past %d o'clock %s",
-			tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-			((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-			((tod.hour >= 14) ? "pm" : "am"));
 		play_sound_player_only(op->contr, SOUND_CLOCK,0,0);
-		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		     "It is %d minute%s past %d o'clock %s",
+		     "It is %d minute%s past %d o'clock %s",
+		     tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
+		     ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+		     ((tod.hour >= 14) ? "pm" : "am"));
 		return 1;
 	    } else {
 		return 0;
@@ -2760,8 +2930,8 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
     if (op->env == NULL && (pl->move_type & MOVE_FLYING)) {
         /* player is flying and applying object not in inventory */
         if ( ! QUERY_FLAG (pl, FLAG_WIZ) && !(op->move_type & MOVE_FLYING)) {
-            new_draw_info (NDI_UNIQUE, 0, pl, "But you are floating high "
-                           "above the ground!");
+            draw_ext_info (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			   "But you are floating high above the ground!", NULL);
             return 0;
 	}
     }
@@ -2772,9 +2942,10 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
     if (op->type != PLAYER && QUERY_FLAG (op, FLAG_WAS_WIZ) && ! QUERY_FLAG (pl, FLAG_WAS_WIZ))
     {
         play_sound_map (pl->map, pl->x, pl->y, SOUND_OB_EVAPORATE);
-        new_draw_info (NDI_UNIQUE, 0, pl, "The object disappears in a puff "
-                       "of smoke!");
-        new_draw_info (NDI_UNIQUE, 0, pl, "It must have been an illusion.");
+        draw_ext_info (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		       "The object disappears in a puff of smoke!", NULL);
+        draw_ext_info (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		       "It must have been an illusion.", NULL);
         remove_ob (op);
         free_object (op);
         return 1;
@@ -2786,12 +2957,13 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
     tmp = manual_apply (pl, op, aflag);
     if ( ! quiet) {
         if (tmp == 0)
-            new_draw_info_format (NDI_UNIQUE, 0, pl,
+            draw_ext_info_format (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                                  "I don't know how to apply the %s.",
                                   "I don't know how to apply the %s.",
                                   query_name (op));
         else if (tmp == 2)
-            new_draw_info_format (NDI_UNIQUE, 0, pl,
-                                  "You must get it first!\n");
+            draw_ext_info_format (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                                  "You must get it first!\n", NULL);
     }
     return tmp;
 }
@@ -2858,8 +3030,10 @@ static int unapply_special (object *who, object *op, int aflags)
     switch(op->type) {
 	case WEAPON:
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You unwield %s.",query_name(op));
-
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "You unwield %s.",
+				 "You unwield %s.",
+				 query_name(op));
 	    (void) change_abil (who,op);
 	    if(QUERY_FLAG(who,FLAG_READY_WEAPON))
 		CLEAR_FLAG(who,FLAG_READY_WEAPON);
@@ -2879,11 +3053,14 @@ static int unapply_special (object *who, object *op, int aflags)
 		    who->contr->shoottype = range_none;
 		if ( ! op->invisible) {
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format (NDI_UNIQUE, 0, who,
-                                    "You stop using the %s.", query_name(op));
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				  "You stop using the %s.", 
+				  "You stop using the %s.", 
+				  query_name(op));
 		} else {
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format (NDI_UNIQUE, 0, who,
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                    "You can no longer use the skill: %s.",
                                     "You can no longer use the skill: %s.",
                                     op->skill);
 		}
@@ -2904,12 +3081,17 @@ static int unapply_special (object *who, object *op, int aflags)
 	case BRACERS:
 	case CLOAK:
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You unwear %s.",query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "You unwear %s.",
+				 "You unwear %s.",
+				 query_name(op));
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You turn off your %s.",
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "You turn off your %s.",
+				 "You turn off your %s.",
 				 op->name);
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->x = op->x;
@@ -2930,7 +3112,8 @@ static int unapply_special (object *who, object *op, int aflags)
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+			draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+				  "Oops, it feels deadly cold!", NULL);
 		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
 		}
 	    }
@@ -2944,7 +3127,10 @@ static int unapply_special (object *who, object *op, int aflags)
 	case HORN:
 	    clear_skill(who);
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "You unready %s.",
+				 "You unready %s.",
+				 query_name(op));
 	    if(who->type==PLAYER) {
 		who->contr->shoottype = range_none;
 	    } else {
@@ -2957,14 +3143,20 @@ static int unapply_special (object *who, object *op, int aflags)
 
     case BUILDER:
 	if (!(aflags & AP_NOPRINT))
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You unready %s.",query_name(op));
+	    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+			     "You unready %s.",
+			     "You unready %s.",
+			     query_name(op));
         who->contr->shoottype = range_none;
         who->contr->ranges[ range_builder ] = NULL;
         break;
 
 	default:
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You unapply %s.",query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "You unapply %s.",
+				 "You unapply %s.",
+				 query_name(op));
 	    break;
     }
 
@@ -3040,7 +3232,8 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
 		    (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))) {
 		    if (aflags & AP_PRINT) 
-			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
+			draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				      query_name(tmp), NULL);
 		    else
 			unapply_special(who, tmp, aflags);
 		}
@@ -3050,8 +3243,9 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * at least generate the message.
 		     */
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format(NDI_UNIQUE, 0, who,
-				 "No matter how hard you try, you just can't\nremove %s.",
+			draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "No matter how hard you try, you just can't remove %s.",
+				 "No matter how hard you try, you just can't remove %s.",
 				 query_name(tmp));
 		    return 1;
 		}
@@ -3084,7 +3278,8 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
 		    (!(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))) {
 		    if (aflags & AP_PRINT) 
-			new_draw_info(NDI_UNIQUE, 0, who, query_name(tmp));
+			draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				      query_name(tmp), NULL);
 		    else
 			unapply_special(who, tmp, aflags);
 		}
@@ -3095,7 +3290,10 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * one cursed ring.)
 		     */
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format(NDI_UNIQUE, 0, who, "The %s just won't come off", query_name(tmp));
+			draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+					 "The %s just won't come off",
+					 "The %s just won't come off",
+					 query_name(tmp));
 		}
 		last = tmp->below;
 	    }
@@ -3280,8 +3478,9 @@ int apply_special (object *who, object *op, int aflags)
 	if ( ! (aflags & AP_IGNORE_CURSE)
 	    && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
 		if (!(aflags & AP_NOPRINT))
-		    new_draw_info_format(NDI_UNIQUE, 0, who,
-				 "No matter how hard you try, you just can't\nremove %s.",
+		    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+				 "No matter how hard you try, you just can't remove %s.",
+				 "No matter how hard you try, you just can't remove %s.",
 				 query_name(op));
 	    return 1;
 	}
@@ -3296,11 +3495,17 @@ int apply_special (object *who, object *op, int aflags)
     if (i) {
 	if (i & CAN_APPLY_NEVER) {
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You don't have the body to use a %s\n", query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
+				 "You don't have the body to use a %s", 
+				 "You don't have the body to use a %s", 
+				 query_name(op));
 	    return 1;
 	} else if (i & CAN_APPLY_RESTRICTION) {
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You have a prohibition against using a %s\n", query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
+				 "You have a prohibition against using a %s", 
+				 "You have a prohibition against using a %s", 
+				 query_name(op));
 	    return 1;
 	}
 	if (who->type != PLAYER) {
@@ -3310,7 +3515,8 @@ int apply_special (object *who, object *op, int aflags)
 	    if (who->contr->unapply == unapply_never || 
 		(i & CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
 		if (!(aflags & AP_NOPRINT))
-		    new_draw_info(NDI_UNIQUE, 0, who, "You need to unapply some item(s):");
+		    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+			      "You need to unapply some item(s):", NULL);
 		unapply_for_ob(who, op, AP_PRINT);
 		return 1;
 	    }
@@ -3324,7 +3530,10 @@ int apply_special (object *who, object *op, int aflags)
 	skop=find_skill_by_name(who, op->skill);
 	if (!skop) {
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You need the %s skill to use this item!", op->skill);
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				 "You need the %s skill to use this item!", 
+				 "You need the %s skill to use this item!", 
+				 op->skill);
 	    return 1;
 	} else {
 	    /* While experience will be credited properly, we want to change the
@@ -3336,8 +3545,9 @@ int apply_special (object *who, object *op, int aflags)
 	
     if (who->type == PLAYER && op->item_power && 
 	(op->item_power + who->contr->item_power) > (settings.item_power_factor * who->level)) {
-	    if (!(aflags & AP_NOPRINT))
-		new_draw_info(NDI_UNIQUE, 0, who, "Equipping that combined with other items would consume your soul!");
+	if (!(aflags & AP_NOPRINT))
+	    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "Equipping that combined with other items would consume your soul!", NULL);
 	return 1;
     }
 	
@@ -3359,12 +3569,11 @@ int apply_special (object *who, object *op, int aflags)
             int ownerlen=0;
             char* quotepos=NULL;
             if (!check_weapon_power(who, op->last_eat)) {
-		if (!(aflags & AP_NOPRINT)) {
-		    new_draw_info(NDI_UNIQUE, 0,who,
-				  "That weapon is too powerful for you to use.");
-		    new_draw_info(NDI_UNIQUE, 0, who,
-				  "It would consume your soul!.");
-		}
+		if (!(aflags & AP_NOPRINT))
+			draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			"That weapon is too powerful for you to use.  It would consume your soul!", 
+			NULL);
+
                 if(tmp!=NULL)
                     (void) insert_ob_in_ob(tmp,who);
                 return 1;
@@ -3377,8 +3586,8 @@ int apply_special (object *who, object *op, int aflags)
                      * can't use it. (Ragnarok's sword attempted to be used by
                      * Foo: won't work) */
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info(NDI_UNIQUE, 0,who,
-			      "The weapon does not recognize you as its owner.");
+			draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			      "The weapon does not recognize you as its owner.", NULL);
                     if(tmp!=NULL)
                         (void) insert_ob_in_ob(tmp,who);
                     return 1;
@@ -3391,8 +3600,10 @@ int apply_special (object *who, object *op, int aflags)
                 SET_FLAG(who, FLAG_READY_WEAPON);
 
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You wield %s.",
-			     query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "You wield %s.", 
+			 "You wield %s.", 
+			 query_name(op));
 
             (void) change_abil (who,op);
             break;
@@ -3409,18 +3620,25 @@ int apply_special (object *who, object *op, int aflags)
 	case AMULET:
 	    SET_FLAG(op, FLAG_APPLIED);
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You wear %s.",query_name(op));
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "You wear %s.",
+				 "You wear %s.",
+				 query_name(op));
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
 	    if (op->stats.food < 1) {
 		if (!(aflags & AP_NOPRINT))
-		    new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s is out of"
-				     " fuel!", op->name);
+		    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+				     "Your %s is out of fuel!", 
+				     "Your %s is out of fuel!", 
+				     op->name);
 		return 1;
 	    }
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format(NDI_UNIQUE, 0, who, "You turn on your %s.",
+		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "You turn on your %s.",
+				 "You turn on your %s.",
 				 op->name);
 	    tmp2 = arch_to_object(op->other_arch);
 	    tmp2->stats.food = op->stats.food;
@@ -3445,7 +3663,8 @@ int apply_special (object *who, object *op, int aflags)
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+			draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+				  "Oops, it feels deadly cold!", NULL);
 		    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
 		}
 	    }
@@ -3466,16 +3685,21 @@ int apply_special (object *who, object *op, int aflags)
 		who->contr->ranges[range_skill] = op;
 		if ( ! op->invisible) {
 		    if (!(aflags & AP_NOPRINT)) {
-			new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",
-                                  query_name (op));
-			new_draw_info_format (NDI_UNIQUE, 0, who,
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+					  "You ready %s.",
+					  "You ready %s.",
+					  query_name (op));
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			      "You can now use the skill: %s.",
 			      "You can now use the skill: %s.",
 				op->skill);
 		    }
 		} else {
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format (NDI_UNIQUE, 0, who, "Readied skill: %s.",
-				      op->skill? op->skill:op->name);
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+					  "Readied skill: %s.",
+					  "Readied skill: %s.",
+					  op->skill? op->skill:op->name);
 		}
 	    }
 	    SET_FLAG (op, FLAG_APPLIED);
@@ -3487,9 +3711,10 @@ int apply_special (object *who, object *op, int aflags)
 	case BOW:
 	    if (!check_weapon_power(who, op->last_eat)) {
 		if (!(aflags & AP_NOPRINT)) {
-		    new_draw_info(NDI_UNIQUE, 0, who,
-			  "That item is too powerful for you to use.");
-		    new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+		    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				  "That item is too powerful for you to use.", NULL);
+		    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+				  "It would consume your soul!.", NULL);
 		}
 		if(tmp != NULL)
 		    (void)insert_ob_in_ob(tmp,who);
@@ -3497,8 +3722,8 @@ int apply_special (object *who, object *op, int aflags)
 	    }
 	    if( op->level && (strncmp(op->name,who->name,strlen(who->name)))) {
 		if (!(aflags & AP_NOPRINT)) {
-		    new_draw_info(NDI_UNIQUE, 0, who,
-				  "The weapon does not recognize you as its owner.");
+		    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			  "The weapon does not recognize you as its owner.", NULL);
 		}
 		if(tmp != NULL)
 		    (void)insert_ob_in_ob(tmp,who);
@@ -3512,13 +3737,16 @@ int apply_special (object *who, object *op, int aflags)
 	    SET_FLAG(op, FLAG_APPLIED);
 	    if (skop) change_skill(who, skop, 0);
 	    if (!(aflags & AP_NOPRINT))
-		new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
-
+		draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				  "You ready %s.",
+				  "You ready %s.",
+				  query_name(op));
 	    if(who->type==PLAYER) {
 		if (op->type == BOW) {
 		    (void)change_abil(who, op);
 		    if (!(aflags & AP_NOPRINT))
-			new_draw_info_format (NDI_UNIQUE, 0, who,
+			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                              "You will now fire %s with %s.",
                               "You will now fire %s with %s.",
 	                      op->race ? op->race : "nothing", query_name(op));
 		    who->contr->shoottype = range_bow;
@@ -3539,11 +3767,17 @@ int apply_special (object *who, object *op, int aflags)
         who->contr->shoottype = range_builder;
         who->contr->ranges[ range_builder ] = op;
 	if (!(aflags & AP_NOPRINT))
-	    new_draw_info_format( NDI_UNIQUE, 0, who, "You ready your %s.", query_name( op ) );
+		draw_ext_info_format( NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			     "You ready your %s.",
+			     "You ready your %s.",
+			     query_name( op ) );
         break;
 
 	default:
-	    new_draw_info_format(NDI_UNIQUE, 0, who, "You apply %s.",query_name(op));
+	    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+				 "You apply %s.",
+				 "You apply %s.",
+				 query_name(op));
     } /* end of switch op->type */
 
     SET_FLAG(op, FLAG_APPLIED);
@@ -3563,7 +3797,8 @@ int apply_special (object *who, object *op, int aflags)
 
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 	if (who->type == PLAYER) {
-	    new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
+	    draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			  "Oops, it feels deadly cold!", NULL);
 	    SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
     }
@@ -3795,22 +4030,27 @@ void eat_special_food(object *who, object *food) {
 	if(QUERY_FLAG(food, FLAG_CURSED)) { 
 	    strcpy(who->contr->killer,food->name);
 	    hit_player(who, food->stats.hp, food, AT_POISON, 1);
-	    new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
+	    draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			  "Eck!...that was poisonous!", NULL);
 	} else { 
 	    if(food->stats.hp>0) 
-		new_draw_info(NDI_UNIQUE, 0,who,"You begin to feel better.");
+		draw_ext_info(NDI_UNIQUE, 0,who,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			      "You begin to feel better.", NULL);
 	    else 
-		new_draw_info(NDI_UNIQUE, 0,who,"Eck!...that was poisonous!");
+		draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			      "Eck!...that was poisonous!", NULL);
 	    who->stats.hp += food->stats.hp;
 	}
     }
     if(food->stats.sp!=0) {
 	if(QUERY_FLAG(food, FLAG_CURSED)) { 
-	    new_draw_info(NDI_UNIQUE, 0,who,"You are drained of mana!");
+	    draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+			  "You are drained of mana!", NULL);
 	    who->stats.sp -= food->stats.sp; 
 	    if(who->stats.sp<0) who->stats.sp=0;
 	    } else { 
-		new_draw_info(NDI_UNIQUE, 0,who,"You feel a rush of magical energy!");
+		draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			      "You feel a rush of magical energy!", NULL);
 		who->stats.sp += food->stats.sp; 
 		/* place limit on max sp from food? */
 	    }
@@ -3851,8 +4091,9 @@ static void apply_lighter(object *who, object *lighter) {
 	  }
 
 	} else if(lighter->last_eat) { /* no charges left in lighter */
-	     new_draw_info_format(NDI_UNIQUE, 0,who,
-				  "You attempt to light the %s with a used up %s.",
+	     draw_ext_info_format(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+				  "You fail to light the %s with a used up %s.",
+				  "You fail to light the %s with a used up %s.",
 				  item->name, lighter->name);
 	     return;
         }
@@ -3874,19 +4115,25 @@ static void apply_lighter(object *who, object *lighter) {
 	 * may have gotten recycled
 	 */
 	if ((nrof != item->nrof ) || (count != item->count)) {
-	    new_draw_info_format(NDI_UNIQUE, 0,who,
-		 "You light the %s with the %s.",item_name,lighter->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+		 "You light the %s with the %s.",
+		 "You light the %s with the %s.",
+		 item_name,lighter->name);
+
 	    /* Need to update the player so that the players glow radius
 	     * gets changed.
 	     */
 	    if (is_player_env) fix_player(who);
 	} else {
-	    new_draw_info_format(NDI_UNIQUE, 0,who,
-		 "You attempt to light the %s with the %s and fail.",item->name,lighter->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		 "You attempt to light the %s with the %s and fail.",
+		 "You attempt to light the %s with the %s and fail.",
+		 item->name,lighter->name);
 	}
 
    } else /* nothing to light */
-	new_draw_info(NDI_UNIQUE, 0,who,"You need to mark a lightable object.");
+	draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+		      "You need to mark a lightable object.", NULL);
 
 }
 
@@ -3901,30 +4148,35 @@ static void scroll_failure(object *op, int failure, int power)
     if(failure<= -1&&failure > -15) {/* wonder */
 	object *tmp;
 
-	new_draw_info(NDI_UNIQUE, 0,op,"Your spell warps!.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "Your spell warps!", NULL);
 	tmp=create_archetype(SPELL_WONDER);
 	cast_wonder(op, op, 0, tmp);
 	free_object(tmp);
     } else if (failure <= -15&&failure > -35) {/* drain mana */
-	new_draw_info(NDI_UNIQUE, 0,op,"Your mana is drained!.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+		      "Your mana is drained!", NULL);
 	op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
 	if(op->stats.sp<0) op->stats.sp = 0;
     } else if (settings.spell_failure_effects == TRUE) {
 	if (failure <= -35&&failure > -60) { /* confusion */
-	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "The magic recoils on you!", NULL);
 	    confuse_player(op,op,power);
 	} else if (failure <= -60&&failure> -70) {/* paralysis */
-	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils and paralyzes "
-		"you!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "The magic recoils and paralyzes you!", NULL);
 	    paralyze_player(op,op,power);
 	} else if (failure <= -70&&failure> -80) {/* blind */
-	    new_draw_info(NDI_UNIQUE, 0,op,"The magic recoils on you!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "The magic recoils on you!", NULL);
 	    blind_player(op,op,power);
 	} else if (failure <= -80) {/* blast the immediate area */
 	    object *tmp;
 	    tmp=create_archetype(LOOSE_MANA);
 	    cast_magic_storm(op,tmp, power);
-	    new_draw_info(NDI_UNIQUE, 0,op,"You unlease uncontrolled mana!");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			  "You unlease uncontrolled mana!", NULL);
 	    free_object(tmp);
 	}
     }
@@ -4031,19 +4283,28 @@ static void apply_item_transformer( object* pl, object* transformer )
     marked = find_marked_object( pl );
     if ( !marked )
         {
-        new_draw_info_format( NDI_UNIQUE, 0, pl, "Use the %s with what item?", query_name( transformer ) );
+        draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			     "Use the %s with what item?", 
+			     "Use the %s with what item?", 
+			     query_name( transformer ) );
         return;
         }
     if ( !marked->slaying )
         {
-        new_draw_info_format( NDI_UNIQUE, 0, pl, "You can't use the %s with your %s!", query_name( transformer ), query_name( marked ) );
+        draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			     "You can't use the %s with your %s!",
+			     "You can't use the %s with your %s!",
+			     query_name( transformer ), query_name( marked ) );
         return;
         }
     /* check whether they are compatible or not */
     find = strstr( marked->slaying, transformer->arch->name );
     if ( !find || ( *( find + strlen( transformer->arch->name ) ) != ':' ) )
         {
-        new_draw_info_format( NDI_UNIQUE, 0, pl, "You can't use the %s with your %s!", query_name( transformer ), query_name( marked ) );
+        draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+			     "You can't use the %s with your %s!", 
+			     "You can't use the %s with your %s!", 
+			     query_name( transformer ), query_name( marked ) );
         return;
         }
     find += strlen( transformer->arch->name ) + 1;
@@ -4082,11 +4343,17 @@ static void apply_item_transformer( object* pl, object* transformer )
     new_item = create_archetype( got );
     if ( !new_item )
         {
-        new_draw_info_format( NDI_UNIQUE, 0, pl, "This %s is strange, better to not use it.", query_base_name( marked, 0 ) );
+        draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+			     "This %s is strange, better to not use it.", 
+			     "This %s is strange, better to not use it.", 
+			     query_base_name( marked, 0 ) );
         return;
         }
     new_item->nrof = yield;
-    new_draw_info_format( NDI_UNIQUE, 0, pl, "You %s the %s.", transformer->slaying, query_base_name( marked, 0 ) );
+    draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+			 "You %s the %s.", 
+			 "You %s the %s.", 
+			 transformer->slaying, query_base_name( marked, 0 ) );
     insert_ob_in_ob( new_item, pl );
     esrv_send_inventory( pl, pl );
     /* Eat up one item */

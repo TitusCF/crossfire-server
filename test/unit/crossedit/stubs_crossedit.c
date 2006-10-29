@@ -9,15 +9,11 @@ void fix_auto_apply(mapstruct * m)
 {
 }
 
-void new_draw_info(int a, int b, const object *ob, const char *txt)
+void draw_ext_info(int a, int b, const object *ob, const char *txt)
     {
     fprintf(logfile, "%s\n", txt);
     }
-void new_info_map(int color, mapstruct *map, const char *str)
-    {
-    fprintf(logfile, "new_info_map: %s\n", str);
-    }
- 
+
 void move_teleporter( object* ob)
     {
     }

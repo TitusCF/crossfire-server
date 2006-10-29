@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -346,7 +346,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 insert_ob_in_ob(qm, pl->ob);
                 break;
@@ -358,7 +358,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 quest_remove_marker(pl->ob, QUEST_NAME(item), NULL, QUEST_IN_PROGRESS);
                 insert_ob_in_ob(qm, pl->ob);
@@ -372,7 +372,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 insert_ob_in_ob(qm, pl->ob);
                 break;
@@ -385,7 +385,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-                    new_draw_info(NDI_UNIQUE, 0, pl->ob, item->lore);
+		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 quest_remove_marker(pl->ob, QUEST_NAME(item), TASK_NAME(item), QUEST_IN_PROGRESS);
                 insert_ob_in_ob(qm, pl->ob);

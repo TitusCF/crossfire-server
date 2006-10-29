@@ -55,7 +55,8 @@ void emergency_save(int flag) {
       continue;
     }
     LOG(llevError,"%s ",pl->ob->name);
-    new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save...");
+    draw_ext_info(NDI_UNIQUE, 0,pl->ob, MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
+		  "Emergency save...", NULL);
 
 /* If we are not exiting the game (ie, this is sort of a backup save), then
  * don't change the location back to the village.  Note that there are other
@@ -70,7 +71,8 @@ void emergency_save(int flag) {
     }
     if(!save_player(pl->ob,flag)) {
       LOG(llevError, "(failed) ");
-      new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save failed, checking score...");
+      draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
+		    "Emergency save failed, checking score...", NULL);
     }
     check_score(pl->ob);
   }
@@ -164,48 +166,24 @@ int verify_player(const char *name, char *password)
 int check_name(player *me,const char *name) {
 
     if (*name=='\0') {
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"Null names are not allowed.");
+	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		      "Null names are not allowed.", NULL);
 	return 0;
     }
 
     if(!playername_ok(name)) {
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
+	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		      "That name contains illegal characters.", NULL);
 	return 0;
     }
     if (strlen(name) >= MAX_NAME) {
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is too long.");
+	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		      "That name is too long.", NULL);
 	return 0;
     }
 
     return 1;
 }
-
-#if 0
-/*
- * create_savedir_if_needed no longer needed.  Should perhaps get removed.
- * MSW 2006-06-02
- */
-
-static int create_savedir_if_needed(char *savedir)
-{
-  struct stat *buf;
-
-  if ((buf = (struct stat *) malloc(sizeof(struct stat))) == NULL) {
-    LOG(llevError, "Unable to save playerfile... out of memory.\n");
-    return 0;
-  } else {
-    stat(savedir, buf);
-    if (!S_ISDIR(buf->st_mode))
-      if (mkdir(savedir, SAVE_DIR_MODE))
-	{
-	LOG(llevError, "Unable to create player savedir %s: %s\n", savedir, strerror_local(errno));
-	return 0;
-      }
-    free(buf);
-  }
- return 1;
-}
-#endif
 
 void destroy_object (object *op)
 {
@@ -242,8 +220,8 @@ int save_player(object *op, int flag) {
 
   if(!pl->name_changed||(!flag&&!op->stats.exp)) {
     if(!flag) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Your game is not valid,");
-      new_draw_info(NDI_UNIQUE, 0,op,"Game not saved.");
+      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+		    "Your game is not valid, game not saved.", NULL);
     }
     return 0;
   }
@@ -269,7 +247,8 @@ int save_player(object *op, int flag) {
   tmpfilename = tempnam_local(settings.tmpdir,NULL);
   fp=fopen(tmpfilename, "w");
   if(!fp) {
-    new_draw_info(NDI_UNIQUE, 0,op, "Can't open file for save.");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+		  "Can't open file for save.", NULL);
     LOG(llevDebug,"Can't open file for save (%s).\n",tmpfilename);
     free(tmpfilename);
     return 0;
@@ -365,7 +344,8 @@ int save_player(object *op, int flag) {
 	  destroy_object (tmp);
 
   if (fclose(fp) == EOF) {	/* make sure the write succeeded */
-	new_draw_info(NDI_UNIQUE, 0,op, "Can't save character.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+		      "Can't save character.", NULL);
 	unlink(tmpfilename);
 	free(tmpfilename);
 	return 0;
@@ -375,7 +355,8 @@ int save_player(object *op, int flag) {
   rename(filename, backupfile);
   fp = fopen(filename,"w");
   if(!fp) {
-    new_draw_info(NDI_UNIQUE, 0,op, "Can't open file for save.");
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+		  "Can't open file for save.", NULL);
     unlink(tmpfilename);
     free(tmpfilename);
     return 0;
@@ -385,7 +366,8 @@ int save_player(object *op, int flag) {
   unlink(tmpfilename);
   free(tmpfilename);
   if (fclose(fp) == EOF) {	/* got write error */
-	new_draw_info(NDI_UNIQUE, 0,op, "Can't close file for save.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+		      "Can't close file for save.", NULL);
 	rename(backupfile, filename); /* Restore the original */
 	return 0;
   }
@@ -419,18 +401,21 @@ static void copy_file(const char *filename, FILE *fpout) {
  */
 static void wrong_password(object *op)
 {
-    new_draw_info(NDI_UNIQUE, 0,op," ");
-    new_draw_info(NDI_UNIQUE, 0,op,"A character with this name already exists.");
-    new_draw_info(NDI_UNIQUE, 0,op,"Please choose another name, or make sure you entered your password correctly.");
-    new_draw_info(NDI_UNIQUE, 0,op," ");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+	  "\nA character with this name already exists. "
+	  "Please choose another name, or make sure you entered your "
+	  "password correctly.\n",
+	  NULL);
 
     FREE_AND_COPY(op->name, "noname");
     FREE_AND_COPY(op->name_pl, "noname");
 
     op->contr->socket.password_fails++;
     if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
-	new_draw_info(NDI_UNIQUE, 0,op,
-	    "You gave an incorrect password too many times, you will now be dropped from the server.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+	      "You gave an incorrect password too many times, "
+	      "you will now be dropped from the server.", 
+	      NULL);
 
 	LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n", 
 	    op->contr->socket.host);
@@ -740,9 +725,13 @@ void check_login(object *op) {
 	set_dragon_name(op, abil, skin);
     }
     
-    new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
-	     "%s has entered the game.",pl->ob->name);
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		  "Welcome Back!", NULL);
+    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
+		 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+		 "%s has entered the game.",
+		 "%s has entered the game.",
+		 pl->ob->name);
 
     /* Lauwenmark : Here we handle the LOGIN global event */
     execute_global_event(EVENT_LOGIN, pl, pl->socket.host);
@@ -754,7 +743,9 @@ void check_login(object *op) {
      * set the play_again flag, so return.
      */
     if (op->stats.hp<0) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Your character was dead last your played.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		      "Your character was dead last your played.",
+		      NULL);
 	kill_player(op);
 	if (pl->state != ST_PLAYING) return;
     }

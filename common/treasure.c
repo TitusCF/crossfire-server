@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -1335,7 +1335,7 @@ void init_artifacts(void) {
  */
 
 void add_abilities(object *op, object *change) {
-    int i,j, tmp;
+    int i, tmp;
 
     if (change->face != blank_face) {
 #ifdef TREASURE_VERBOSE

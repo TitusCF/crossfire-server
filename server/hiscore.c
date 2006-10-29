@@ -161,15 +161,15 @@ static char * draw_one_high_score(const score *sc) {
     static char retbuf[MAX_BUF];
 
     if(!strncmp(sc->killer,"quit",MAX_NAME))
-	sprintf(retbuf,"%3d %10" FMT64 " %s the %s quit the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s quit the game on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else if(!strncmp(sc->killer,"left",MAX_NAME))
-	sprintf(retbuf,"%3d %10" FMT64 " %s the %s left the game on map %s [%d][%d][%d].",
+	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s left the game on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
     else
-	sprintf(retbuf,"%3d %10" FMT64 " %s the %s was killed by %s on map %s [%d][%d][%d].",
+	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->killer,sc->maplevel,
             sc->maxhp,sc->maxsp,sc->maxgrace);
     return retbuf;
@@ -249,19 +249,22 @@ void check_score(object *op) {
 
     if(!op->contr->name_changed) {
 	if(op->stats.exp>0) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"As you haven't changed your name, you won't");
-	    new_draw_info(NDI_UNIQUE, 0,op,"get into the high-score list.");
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "As you haven't changed your name, you won't "
+			  "get into the high-score list.", NULL);
 	}
 	return;
     }
     if(QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Since you have been in wizard mode,");
-	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Since you have been in wizard mode, "
+		      "you can't enter the high-score list.", NULL);
 	return;
     }
     if (op->contr->explore) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Since you were in explore mode,");
-	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Since you were in explore mode, "
+		      "you can't enter the high-score list.", NULL);
 	return;
     }
     strncpy(new_score.name,op->name,BIG_NAME);
@@ -287,26 +290,37 @@ void check_score(object *op) {
     new_score.maxsp=(int) op->stats.maxsp;
     new_score.maxgrace=(int) op->stats.maxgrace;
     if((old_score=add_score(&new_score))==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Error in the highscore list.");
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Error in the highscore list.", NULL);
 	return;
     }
     if(new_score.position == -1) {
 	new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
 	if(!strcmp(old_score->name,new_score.name))
-	    new_draw_info(NDI_UNIQUE, 0,op,"You didn't beat your last highscore:");
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+			  "You didn't beat your last highscore:", NULL);
 	else
-	    new_draw_info(NDI_UNIQUE, 0,op,"You didn't enter the highscore list:");
-	new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(old_score));
-	new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(&new_score));
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+			  "You didn't enter the highscore list:", NULL);
+
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+			     draw_one_high_score(old_score), NULL);
+
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+			     draw_one_high_score(&new_score), NULL);
 	return;
     }
     if(old_score->exp>=new_score.exp)
-	new_draw_info(NDI_UNIQUE, 0,op,"You didn't beat your last score:");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+		      "You didn't beat your last score:", NULL);
     else
-	new_draw_info(NDI_UNIQUE, 0,op,"You beat your last score:");
+	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+		      "You beat your last score:", NULL);
 
-    new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(old_score));
-    new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(&new_score));
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+		     draw_one_high_score(old_score), NULL);
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+		     draw_one_high_score(&new_score), NULL);
 }
 
 
@@ -318,9 +332,8 @@ void check_score(object *op) {
  */
 
 void display_high_score(object *op,int max, const char *match) {
-    const size_t maxchar = 80;
     FILE *fp;
-    char buf[MAX_BUF],*scorebuf, *bp, *cp;
+    char buf[MAX_BUF],*scorebuf;
     int i=0,j=0,comp;
     score *sc;
 
@@ -328,12 +341,14 @@ void display_high_score(object *op,int max, const char *match) {
     if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
 	LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno));
 	if(op!=NULL)
-	    new_draw_info(NDI_UNIQUE, 0,op,"There is no highscore file.");
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "There is no highscore file.", NULL);
 	return;
     }
-    if(op != NULL)
-	    clear_win_info(op);
-    new_draw_info(NDI_UNIQUE, 0,op,"Nr    Score    Who [max hp][max sp][max grace]");
+
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+		  "[fixed]Nr    Score    Who [max hp][max sp][max grace]",
+		  "Nr    Score    Who [max hp][max sp][max grace]");
 
     while(fgets(buf,MAX_BUF,fp)!=NULL) {
 	if(j>=HIGHSCORE_LENGTH||i>=(max-1))
@@ -351,31 +366,12 @@ void display_high_score(object *op,int max, const char *match) {
 	    }
 	    else continue;
 	}
-	/* Replaced what seemed to an overly complicated word wrap method 
-	 * still word wraps, but assumes at most 2 lines of data.
-	 * mw - 2-12-97
-	 */
-	strncpy(buf,scorebuf,MAX_BUF);
-	buf[MAX_BUF-1] = '\0';
-	cp=buf;
-	while (strlen(cp)> maxchar) {
-	    bp = cp+maxchar-1;
-	    while (*bp != ' ' && bp>cp) bp--;
-	    *bp='\0';
-	    if (op == NULL) {
-		LOG(llevDebug, "%s\n", cp);
-	    }
-	    else {
-		new_draw_info(NDI_UNIQUE, 0,op,cp);
-	    }
-	    sprintf(buf, "            %s", bp+1);
-	    cp = buf;
-	    i++;
-	}
 	if(op == NULL) 
-		LOG(llevDebug, "%s\n", buf);
+		LOG(llevDebug, "%s\n", scorebuf);
 	else
-		new_draw_info(NDI_UNIQUE, 0,op,buf);
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+			     scorebuf, NULL);
+
     }
     close_and_delete(fp, comp);
 }

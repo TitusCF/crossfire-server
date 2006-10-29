@@ -1,12 +1,12 @@
 /*
- * static char *rcsid_init_c =
+ * static char *rcsid_request_c =
  *    "$Id$";
  */
 
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2001 Mark Wedel
+    Copyright (C) 2001-2006 Mark Wedel
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -431,8 +431,11 @@ void player_cmd(char *buf, int len, player *pl)
      * an idea of the problem, but they deserve what they get
      */
     if (pl->state!=ST_PLAYING) {
-	new_draw_info_format(NDI_UNIQUE, 0,pl->ob,
-	    "You can not issue commands - state is not ST_PLAYING (%s)", buf);
+	draw_ext_info_format(NDI_UNIQUE, 0,pl->ob,
+		     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		     "You can not issue commands - state is not ST_PLAYING (%s)",
+		     "You can not issue commands - state is not ST_PLAYING (%s)",
+		     buf);
 	return;
     }
     /* Check if there is a count.  In theory, a zero count could also be
@@ -501,8 +504,11 @@ void new_player_cmd(uint8 *buf, int len, player *pl)
      * an idea of the problem, but they deserve what they get
      */
     if (pl->state!=ST_PLAYING) {
-	new_draw_info_format(NDI_UNIQUE, 0,pl->ob,
-	    "You can not issue commands - state is not ST_PLAYING (%s)", buf);
+	draw_ext_info_format(NDI_UNIQUE, 0,pl->ob,
+		     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		     "You can not issue commands - state is not ST_PLAYING (%s)",
+		     "You can not issue commands - state is not ST_PLAYING (%s)",
+		     buf);
 	return;
     }
 

@@ -1717,9 +1717,11 @@ int change_map_light(mapstruct *m, int change) {
 
     /* inform all players on the map */
     if (change>0) 
-	    new_info_map(NDI_BLACK, m,"It becomes darker.");
+	    ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+			 "It becomes darker.", NULL);
     else
-	    new_info_map(NDI_BLACK, m,"It becomes brighter.");
+	    ext_info_map(NDI_BLACK, m, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+			 "It becomes brighter.", NULL);
 
     /* Do extra checking.  since m->darkness is a unsigned value,
      * we need to be extra careful about negative values.

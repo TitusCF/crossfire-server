@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006,2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -81,7 +81,9 @@ void push_button(object *op) {
 
 	    case SIGN:
 		if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
-		    new_info_map(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
+		    ext_info_map(NDI_UNIQUE | NDI_NAVY,tmp->map,
+				 MSG_TYPE_SIGN,MSG_SUBTYPE_NONE,
+				 tmp->msg, tmp->msg);
 		    if (tmp->stats.food) tmp->last_eat++;
 		}
 	    break;
@@ -338,7 +340,8 @@ int operate_altar (object *altar, object **sacrifice)
     *sacrifice = decrease_ob_nr (*sacrifice, NROF_SACRIFICE(altar));
  
   if (altar->msg)
-    new_info_map(NDI_BLACK, altar->map, altar->msg);
+    ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR,
+		 altar->msg, altar->msg);
   return 1;
 }
 

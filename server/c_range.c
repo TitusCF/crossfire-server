@@ -97,7 +97,8 @@ static void show_matching_spells(object *op, char *params)
 	if (params)
 	    show_matching_spells(op, NULL);
 	else
-	    new_draw_info(NDI_UNIQUE, 0, op, "You know no spells");
+	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "You know no spells", NULL);
     } else {
 	/* Note in the code below that we make some
 	 * presumptions that there will be a colon in the
@@ -112,11 +113,16 @@ static void show_matching_spells(object *op, char *params)
 		strcpy(tmp, spell_sort[i]);
 		cp = strchr(tmp, ':');
 		*cp = '\0';
-		new_draw_info(NDI_UNIQUE, 0, op, "");
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s spells %.*s [lvl] [sp]",
-			      tmp, 12-strlen(tmp), "              ");
+
+		draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				     "\n[fixed]%s spells %.*s [lvl] [sp]",
+				     "\n%s spells %.*s [lvl] [sp]",
+				     tmp, 12-strlen(tmp), "              ");
 	    }
-	    new_draw_info(NDI_UNIQUE, 0, op, strchr(spell_sort[i], ':') + 1);
+	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				 "[fixed]%s",
+				 "%s",
+				 strchr(spell_sort[i], ':') + 1);
 	}
     }
 }
@@ -175,7 +181,8 @@ int command_cast_spell (object *op, char *params, char command)
 		cp = NULL;
 
 	    if (spob->skill && !find_skill_by_name(op, spob->skill)) {
-		new_draw_info_format(NDI_UNIQUE, 0, op,
+		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+		    "You need the skill %s to cast %s!",
 		    "You need the skill %s to cast %s!",
 		    spob->skill, spob->name);
 		return 1;
@@ -192,8 +199,10 @@ int command_cast_spell (object *op, char *params, char command)
 		} else {
 		  op->contr->spellparam[0] = '\0';
 		}
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-			"You ready the spell %s", spob->name);
+		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				     "You ready the spell %s",
+				     "You ready the spell %s",
+				     spob->name);
 	    }
 	    return 0;
 	} /* else fall through to below and print spells */
@@ -202,7 +211,8 @@ int command_cast_spell (object *op, char *params, char command)
     /* We get here if cast was given without options or we could not find
      * the requested spell.  List all the spells the player knows.
      */
-    new_draw_info(NDI_UNIQUE, 0,op,"Cast what spell?  Choose one of:");
+    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		  "Cast what spell?  Choose one of:", NULL);
     show_matching_spells(op, params);
     return 1;
 }
@@ -260,30 +270,42 @@ void change_spell(object *op,char k) {
      */
     switch(op->contr->shoottype) {
 	case range_none:
-	    new_draw_info(NDI_UNIQUE, 0,op, "No ranged attack chosen.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+			  "No ranged attack chosen.", NULL);
 	    break;
 
 	case range_golem:
-	    new_draw_info(NDI_UNIQUE, 0,op, "You regain control of your golem.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			  "You regain control of your golem.", NULL);
 	    break;
 
 	case range_bow:
-	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to %s and %s.", query_name(op->contr->ranges[range_bow]),
-		     op->contr->ranges[range_bow]->race ? op->contr->ranges[range_bow]->race : "nothing");
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "Switched to %s and %s.",
+			 "Switched to %s and %s.",
+			 query_name(op->contr->ranges[range_bow]),
+			 op->contr->ranges[range_bow]->race ? op->contr->ranges[range_bow]->race : "nothing");
 	    break;
 
 	case range_magic:
-	    new_draw_info_format(NDI_UNIQUE, 0,op,"Switched to spells (%s).",
-			op->contr->ranges[range_magic]->name);
+	    draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				 "Switched to spells (%s).",
+				 "Switched to spells (%s).",
+				 op->contr->ranges[range_magic]->name);
 	    break;
 
 	case range_misc:
-	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to %s.", query_base_name(op->contr->ranges[range_misc], 0));
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				 "Switched to %s.",
+				 "Switched to %s.",
+				 query_base_name(op->contr->ranges[range_misc], 0));
 	    break;
 
 	case range_skill: 
-	    new_draw_info_format(NDI_UNIQUE, 0,op, "Switched to skill: %s", op->chosen_skill ?  
-		 op->chosen_skill->name : "none");
+	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+				 "Switched to skill: %s",
+				 "Switched to skill: %s",
+				 op->chosen_skill ? op->chosen_skill->name : "none");
 	    break;
 
 	default:

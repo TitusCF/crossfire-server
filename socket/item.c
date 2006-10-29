@@ -7,7 +7,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -621,7 +621,8 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
     op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
-	new_draw_info(NDI_UNIQUE, 0, pl->ob,"Could not find object to lock/unlock");
+	draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Could not find object to lock/unlock", NULL);
 	return;
     }
     if (!flag)
@@ -649,12 +650,17 @@ void mark_item_cmd(uint8 *data, int len,player *pl)
     tag = GetInt_String(data);
     op = esrv_get_ob_from_count(pl->ob, tag);
     if (!op) {
-	new_draw_info(NDI_UNIQUE, 0, pl->ob,"Could not find object to mark");
+	draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+		      "Could not find object to mark", NULL);
 	return;
     }
     pl->mark = op;
     pl->mark_count = op->count;
-    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Marked item %s", query_name(op));
+    draw_ext_info_format(NDI_UNIQUE, 0, pl->ob,
+			 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			 "Marked item %s",
+			 "Marked item %s",
+			 query_name(op));
 }
 
 
@@ -687,18 +693,29 @@ void look_at(object *op,int dx,int dy) {
 
 	 if(!flag) {
 	    if(dx||dy)
-		new_draw_info(NDI_UNIQUE, 0,op,"There you see:");
+		draw_ext_info(NDI_UNIQUE, 0,op, 
+			      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			      "There you see:", NULL);
 	    else {
-		clear_win_info(op);
-		new_draw_info(NDI_UNIQUE, 0,op,"You see:");
+		draw_ext_info(NDI_UNIQUE, 0,op,
+			      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			      "You see:", NULL);
 	    }
 	    flag=1;
 	 }
 
 	 if (QUERY_FLAG(op, FLAG_WIZ))
-	    new_draw_info_format(NDI_UNIQUE,0, op, "- %s (%d).",query_name(tmp),tmp->count);
+	    draw_ext_info_format(NDI_UNIQUE,0, op,
+				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+				 "- %s (%d).",
+				 "- %s (%d).",
+				 query_name(tmp),tmp->count);
 	 else
-	    new_draw_info_format(NDI_UNIQUE,0, op, "- %s.",query_name(tmp));
+	    draw_ext_info_format(NDI_UNIQUE,0, op,
+				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+				 "- %s.",
+				 "- %s.",
+				 query_name(tmp));
 
 	 if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
 	    (tmp->type != CONTAINER && tmp->type!=FLESH)) || QUERY_FLAG(op, FLAG_WIZ))
@@ -710,9 +727,11 @@ void look_at(object *op,int dx,int dy) {
 
     if(!flag) {
 	if(dx||dy)
-	    new_draw_info(NDI_UNIQUE, 0,op,"You see nothing there.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			  "You see nothing there.", NULL);
 	else
-	    new_draw_info(NDI_UNIQUE, 0,op,"You see nothing.");
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+			  "You see nothing.", NULL);
     }
 }
 
