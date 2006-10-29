@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1547517: DM issue with containers
+server/apply.c: move_apply shouldn't exit if opened container.
+Ryo 2006-10-29
+
 Update code so everything uses draw_ext_info(), and remove new_draw_info().
 For the most part, everything is just a simple update of function name/
 parameters.  In some places, there was some other cleanup, like

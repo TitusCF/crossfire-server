@@ -1641,8 +1641,11 @@ void move_apply (object *trap, object *victim, object *originator)
 {
   static int recursion_depth = 0;
 
-  /* Only exits affect DMs. */
-  if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT && trap->type != SIGN)
+  /* If player is DM, only 2 cases to consider:
+   * exits
+   * opened containers on the ground, which should be closed.
+   */
+  if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT && trap->type != SIGN && trap->type != CONTAINER && !QUERY_FLAG(trap, FLAG_APPLIED))
     return;
 
   /* move_apply() is the most likely candidate for causing unwanted and
