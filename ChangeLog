@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+socket/loop.c: Fix replyinfo, in that it was using incorrect length parameter
+  when replying to unsupported requests.
+MSW 2006-11-02
+
 Fix for bug #1547517: DM issue with containers
 server/apply.c: move_apply shouldn't exit if opened container.
 Ryo 2006-10-29
