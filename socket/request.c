@@ -2240,6 +2240,30 @@ void send_plugin_custom_message(object *pl, char *buf)
 }
 
 /**
+ * This sends the experience table the sever is using
+ */
+void send_exp_table(socket_struct *ns, char *params)
+{
+    SockList sl;
+    int i;
+    extern sint64 *levels;
+
+    sl.buf = malloc(MAXSOCKSENDBUF);
+    strcpy((char*)sl.buf,"replyinfo exp_table\n");
+    sl.len = strlen((char*)sl.buf);
+    SockList_AddShort(&sl, settings.max_level+1);
+    for (i=1; i<= settings.max_level; i++) {
+	if (sl.len+8 > MAXSOCKSENDBUF) {
+	    LOG(llevError, "Buffer overflow in send_exp_table, not sending all information\n");
+	    break;
+	}
+	SockList_AddInt64(&sl, levels[i]);
+    }
+    Send_With_Handling(ns, &sl);
+    free(sl.buf);
+}
+
+/**
  * This sends the skill number to name mapping.  We ignore
  * the params - we always send the same info no matter what.
  */

@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+doc/Developers/protocol: Add documentation about exp_table requestinfo
+    addition
+socket/loop.c: Add call to send_exp_table() in request_info_cmd()
+socket/request.c: Add send_exp_table() to use a replyinfo exp_table to
+   send data to client.
+MSW 2006-11-03
+
 socket/loop.c: Fix replyinfo, in that it was using incorrect length parameter
   when replying to unsupported requests.
 MSW 2006-11-02

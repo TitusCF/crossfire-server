@@ -166,6 +166,7 @@ void request_info_cmd(char *buf, int len, socket_struct *ns)
     else if (!strcmp(buf,"image_sums")) send_image_sums(ns, params);
     else if (!strcmp(buf,"skill_info")) send_skill_info(ns, params);
     else if (!strcmp(buf,"spell_paths")) send_spell_paths(ns, params);
+    else if (!strcmp(buf,"exp_table")) send_exp_table(ns, params);
     else Write_String_To_Socket(ns, bigbuf, slen);
 }
 

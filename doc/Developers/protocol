@@ -1477,6 +1477,19 @@ S->C: replyinfo <info_type>[options]<data>
 	request should always do the right thing with the
 	returned information.
 
+    exp_table (no parameters)
+	This requests the experience table (what exp is needed for each
+	level) from the server.  With this data, the client can easily
+	display how much experience is needed for the different skills
+	or total exp value for next level. Data format:
+
+	<num_levels>: uint16 - max level/how many exp values follow.
+	<level1> ... <level num_levels>: uint64 - amount of exp needed
+	for the level.
+
+	Note that num_levels and the actual exp values are transmitted
+	as binary values.
+
     skill_info (no parameters)
 	This returns the skill number to skill name mappings.  In this
 	way, new skills can be added in the server, and the client 
