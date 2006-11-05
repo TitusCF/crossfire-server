@@ -616,7 +616,7 @@ S->C: stats <stat1><val1><stat2><val2>...
 	-weight limit:
 		data is 32 bits.  
 	-speed, weapon_sp is converted to an int first by multiply by
-		FLOAT_MULTI (as defined innewclient.h) and then sent as 
+		FLOAT_MULTI (as defined in newclient.h) and then sent as 
 		32 bits.  
 	-range, title are sent as strings with their length preceded.  The
 		length is 1 byte.
