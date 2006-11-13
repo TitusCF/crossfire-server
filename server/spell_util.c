@@ -659,6 +659,7 @@ object *find_target_for_friendly_spell(object *op,int dir) {
  * It will not consider the object given as exclude (= caster) among possible
  * live objects. If the caster is a player, the spell will go after
  * monsters/generators only. If not, the spell will hunt players only.
+ * Exception is player on a battleground, who will be targeted unless excluded.
  * It returns the direction toward the first/closest live object if it finds
  * any, otherwise -1.
  * note that exclude can be NULL, in which case all bets are off.
@@ -685,10 +686,10 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
 
 	tmp=get_map_ob(mp,nx,ny);
 
-	while(tmp!=NULL && (((owner_type==PLAYER &&
-	    !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR)) ||
-            (owner_type!=PLAYER && tmp->type!=PLAYER)) ||
-	    (tmp == exclude || (tmp->head && tmp->head == exclude))))
+	while(tmp!=NULL && (
+             ((owner_type==PLAYER && !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR) && !(tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL)))
+              || (owner_type!=PLAYER && tmp->type!=PLAYER))
+             || (tmp == exclude || (tmp->head && tmp->head == exclude))))
 	    tmp=tmp->above;
 
 	if(tmp!=NULL && can_see_monsterP(m,x,y,i))
