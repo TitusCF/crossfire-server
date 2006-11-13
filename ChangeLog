@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1594696: Altar created with creator - consecration
+server/time.c: copy creator's level, as per behaviour before function rewrite.
+Ryo 2006-11-13
+
 doc/Developers/protocol: Add documentation about exp_table requestinfo
     addition
 socket/loop.c: Add call to send_exp_table() in request_info_cmd()

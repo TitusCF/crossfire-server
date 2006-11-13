@@ -1147,6 +1147,9 @@ void move_creator(object *creator) {
 	return;
     }
 
+    if (creator->level != 0)
+        new_ob->level = creator->level;
+
     insert_ob_in_map_at(new_ob, creator->map, creator, 0, creator->x, creator->y);
     if (QUERY_FLAG(new_ob, FLAG_FREED))
 	return;
