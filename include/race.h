@@ -1,3 +1,5 @@
+#ifndef RACE_H
+#define RACE_H
 
 typedef struct ralnk {  /* Used to link the race lists together */
   const char *name;		/* name of this race entry */ 
@@ -6,4 +8,4 @@ typedef struct ralnk {  /* Used to link the race lists together */
   struct ralnk *next;
 } racelink;
 
-
+#endif /* RACE_H */

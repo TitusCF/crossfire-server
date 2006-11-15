@@ -12,6 +12,7 @@
  */
 #ifndef BOOK_H
 #define BOOK_H
+
 #define BOOK_BUF        HUGE_BUF-10
  
 /* if little books arent getting enough text generated, enlarge this */
@@ -30,4 +31,5 @@ typedef struct {
 	uint8 message_type;
 	uint8 message_subtype;
 } readable_message_type;
-#endif
+
+#endif /* BOOK_H */

@@ -1,4 +1,4 @@
-#ifndef PLUGPROTO_H_
-#define PLUGPROTO_H_
+#ifndef PLUGPROTO_H
+#define PLUGPROTO_H
 
-#endif /*PLUGPROTO_H_*/
+#endif /* PLUGPROTO_H */

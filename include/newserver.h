@@ -176,6 +176,4 @@ extern Socket_Info socket_info;
 #define VERSION_SC 1027
 #define VERSION_INFO "Crossfire Server"
 
-
-
-#endif
+#endif /* NEWSERVER_H */

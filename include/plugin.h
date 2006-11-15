@@ -7,8 +7,8 @@
 /* Headers needed.                                                           */
 /*****************************************************************************/
 
-#ifndef PLUGIN_H_
-#define PLUGIN_H_
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 /*****************************************************************************/
 /* This one does not exist under Win32.                                      */
@@ -331,4 +331,4 @@ typedef struct _hook_entry
     char fname[256];
 } hook_entry;
 
-#endif /*PLUGIN_H_*/
+#endif /* PLUGIN_H */

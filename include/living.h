@@ -78,5 +78,4 @@ typedef struct liv { /* Mostly used by "alive" objects */
   sint8		luck;		/* Affects thaco and ac from time to time */
 } living;
 
-
-#endif
+#endif /* LIVING_H */

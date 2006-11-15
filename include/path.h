@@ -21,4 +21,4 @@ void path_normalize(char *path);
  */
 char *path_combine_and_normalize(const char *src, const char *dst);
 
-#endif
+#endif /* PATH_H */

@@ -26,6 +26,9 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #define NUM_OUTPUT_BUFS	5
 typedef struct {
     const char *buf;		/* Actual string pointer */
@@ -212,3 +215,5 @@ typedef struct pl {
     tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
     int     stack_position; /* Current stack position, 0 for no item */
 } player;
+
+#endif /* PLAYER_H */

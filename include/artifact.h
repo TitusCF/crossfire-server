@@ -1,3 +1,6 @@
+#ifndef ARTIFACT_H
+#define ARTIFACT_H
+
 typedef struct artifactstruct {
 	object	*item;
 	uint16	chance;
@@ -13,3 +16,4 @@ typedef struct artifactliststruct {
 	struct artifactstruct *items;
 } artifactlist;
 
+#endif /* ARTIFACT_H */

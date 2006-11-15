@@ -1,3 +1,6 @@
+#ifndef SHSTR_H
+#define SHSTR_H
+
 /* The size of the shared strings hashtable. This must be smaller than
  * 32767, but 947 ought to be plenty enough.
  */
@@ -68,3 +71,5 @@ typedef struct _shared_string {
      */
     char string[PADDING];
 } shared_string;
+
+#endif /* SHSTR_H */

@@ -26,6 +26,8 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+#ifndef LOADER_H
+#define LOADER_H
 
 #define LL_IGNORED  -1
 #define LL_EOF	    0
@@ -39,3 +41,5 @@
 #define	LO_NOREAD   3
 
 extern int nrofpixmaps;
+
+#endif /* LOADER_H */

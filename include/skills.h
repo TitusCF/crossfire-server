@@ -26,6 +26,8 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+#ifndef SKILLS_H
+#define SKILLS_H
 
 /* This list is just a subtype <-> skill (code wise) in the 
  * server translation.  In theory, the processing of the different
@@ -34,7 +36,6 @@
  * The order of this list has no special meaning.  0 is not used
  * to denote improperly set objects.
  */
-
 #define SK_LOCKPICKING		1
 #define SK_HIDING		2
 #define SK_SMITHERY		3
@@ -140,3 +141,5 @@ SK_PUNCHING,
 #undef WANT_UNARMED_SKILLS
 
 #endif
+
+#endif /* SKILLS_H */

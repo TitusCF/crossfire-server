@@ -26,6 +26,9 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
+#ifndef COMMANDS_H
+#define COMMANDS_H
+
 /*
  * Crossfire commands
  *	++Jam
@@ -42,9 +45,6 @@
  * the structures externally - they actual structures should resided/
  * be initialized in one of the source files.
  */
-
-#ifndef COMMANDS_H
-#define COMMANDS_H
 
 typedef int (*command_function)(object *op, char *params);
 
@@ -115,4 +115,5 @@ extern const int CommandsSize,NewServerCommandSize,
 #define EMOTE_BLEED	52
 #define EMOTE_CRINGE	53
 #define EMOTE_THINK	54
-#endif
+
+#endif /* COMMANDS_H */

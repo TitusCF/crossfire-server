@@ -119,4 +119,4 @@ typedef struct treasureliststruct {
 
 
 
-#endif
+#endif /* TREASURE_H */

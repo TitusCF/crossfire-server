@@ -26,6 +26,8 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
+#ifndef FACE_H
+#define FACE_H
 
 /* New face structure - this enforces the notion that data is face by
  * face only - you can not change the color of an item - you need to instead
@@ -47,4 +49,4 @@ typedef struct {
     uint16  num;            /* Where we are in the array */
 } Animations;
 
-
+#endif /* FACE_H */

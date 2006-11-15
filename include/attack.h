@@ -218,4 +218,4 @@ EXTERN int resist_table[] = {ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
 
 #define num_resist_table 19
 
-#endif
+#endif /* ATTACK_H */

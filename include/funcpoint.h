@@ -65,4 +65,4 @@ extern object *	find_skill_by_number(object *, int);
 extern int execute_event(object *, int, object *, object *, const char *, int);
 extern int execute_global_event(int , ...);
 
-#endif
+#endif /* FUNCPOINT_H */

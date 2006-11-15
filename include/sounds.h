@@ -51,4 +51,4 @@
 /* NROF_SOUNDS is defined in "defines.h".  Don't forget to change this number
  * if you add or remove any sound.
  */
-#endif
+#endif /* SOUNDS_H */

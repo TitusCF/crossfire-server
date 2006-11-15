@@ -27,8 +27,8 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-#ifndef _TOD_H_
-#define _TOD_H_
+#ifndef TOD_H
+#define TOD_H
 
 #define PTICKS_PER_CLOCK	1500
 
@@ -137,4 +137,4 @@ typedef struct _weather_grow {
 	int season; /* 0=any or 1-5 */
 } weather_grow_t;
 
-#endif /* _TOD_H_ */
+#endif /* TOD_H */

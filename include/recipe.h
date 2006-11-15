@@ -1,3 +1,6 @@
+#ifndef RECIPE_H
+#define RECIPE_H
+
 /* 'recipe' and 'recipelist' are used by the alchemy code */
 typedef struct recipestruct {
     const char *title; /* distinguishing name of product */
@@ -26,4 +29,4 @@ typedef struct recipeliststruct {
     struct recipeliststruct *next;  /* pointer to next recipe list */ 
 } recipelist;
 
-
+#endif /* RECIPE_H */

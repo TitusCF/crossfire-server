@@ -339,4 +339,4 @@ extern int nroffreeobjects;
 #define ARCH_DEPLETION          "depletion"
 #define ARCH_SYMPTOM            "symptom"
 
-#endif
+#endif /* OBJECT_H */

@@ -27,8 +27,8 @@
 */
 
 /* #defines are needed by living.h, so they must be loaded early */
-#ifndef MATERIAL_H_1
-#define MATERIAL_H_1
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #define NROFMATERIALS		13
 
@@ -68,5 +68,5 @@ typedef struct _materialtype {
 
 EXTERN materialtype_t *materialt;
 
-#endif	/* MATERIAL_H_1 */
+#endif	/* MATERIAL_H */
 

@@ -7,8 +7,8 @@
 /* Headers needed.                                                           */
 /*****************************************************************************/
 
-#ifndef TIMERS_H_
-#define TIMERS_H_
+#ifndef TIMERS_H
+#define TIMERS_H
 
 #include <global.h>
 #include <object.h>
@@ -64,5 +64,4 @@ cftimer timers_table[MAX_TIMERS];
 #define TIMER_ERR_OBJ      -2
 #define TIMER_ERR_MODE     -3
 
-#endif /* TIMERS_H_ */
-
+#endif /* TIMERS_H */

@@ -361,4 +361,4 @@ typedef struct rv_vector {
     object  *part;
 } rv_vector;
 
-#endif
+#endif /* MAP_H */

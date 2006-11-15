@@ -24,6 +24,8 @@
 
     The author can be reached via e-mail to mark@pyramid.com
 */
+#ifndef SPELLIST_H
+#define SPELLIST_H
 
 #include "spells.h"
 
@@ -714,3 +716,4 @@ const char *spellpathnames[NRSPELLPATHS] = {
  "Light"
 };
 
+#endif /* SPELLIST_H */

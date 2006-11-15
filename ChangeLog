@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+
+include\{treasure.h path.h face.h commands.h win32.h shstr.h timers.h
+  config.h funcpoint.h object.h loader.h attack.h race.h newserver.h
+  re-cmp.h living.h book.h plugproto.h player.h artifact.h material.h
+  plugin.h spellist.h skills.h spells.h recipe.h god.h sounds.h map.h
+  tod.h newclient.h}: Clean up anti-double-include mechanisms.
+----
 include/arch.h: Removing unused file.
 include/Makefile.am: Remove reference to arch.h
 common/arch.c: Remove reference to arch.h

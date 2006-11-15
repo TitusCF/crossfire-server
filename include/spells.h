@@ -162,4 +162,4 @@ extern const char* const spellpathnames[NRSPELLPATHS];
  */
 #define EXPLODING_FIREBALL  "exploding_fireball"
 
-#endif
+#endif /* SPELLS_H */

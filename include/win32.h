@@ -1,3 +1,6 @@
+#ifndef WIN32_H
+#define WIN32_H
+
 /*
  * Structures and types used to implement opendir/readdir/closedir
  * on Windows 95/NT and set the loe level defines
@@ -153,3 +156,5 @@ extern void service_handle( );
 
 /* For Win32 service */
 extern int bRunning;
+
+#endif /* WIN32_H */

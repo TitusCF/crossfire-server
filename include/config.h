@@ -26,6 +26,9 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+#ifndef CONFIG_H
+#define CONFIG_H
+
 /* This file contains various #defines that select various options.
  * Some may not be desirable, and some just may not work.
  *
@@ -712,3 +715,4 @@
 
 #define RESET_LOCATION_TIME	3600
 
+#endif /* CONFIG_H */

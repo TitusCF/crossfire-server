@@ -3,6 +3,9 @@
  *
  * Author: Kjetil T. Homme <kjetilho@ifi.uio.no> May 1993
  */
+ 
+#ifndef RE_CMP_H
+#define RE_CMP_H
 
 /*   C o n f i g u r a t i o n
  */
@@ -67,3 +70,5 @@ typedef struct {
     } u;
     repetetion_type repeat;
 } selection;
+
+#endif /* RE_CMP_H */
