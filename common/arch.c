@@ -27,7 +27,6 @@
 */
 
 #include <global.h>
-#include <arch.h>
 #include <funcpoint.h>
 #include <loader.h>
 

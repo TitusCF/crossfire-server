@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+include/arch.h: Removing unused file.
+include/Makefile.am: Remove reference to arch.h
+common/arch.c: Remove reference to arch.h
+Alex Schultz 2006-11-14
+
 Fix bug #1573296: arena : spells with "target" doesn't works
 server/spell_util.c: spell_find_dir should consider players when on battleground.
 ----
