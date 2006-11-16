@@ -636,8 +636,33 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     return(remain);
 }
 
+/**
+ * Helper function for can_pay. Checks all items from item and item->below, and recurse if inventory found.
+ * coincount is supposed to be of size NUM_COINS. Parameters can't be NULL.
+ */
+static void count_unpaid(object* pl, object* item, int* unpaid_count, uint64* unpaid_price, uint32* coincount)
+{
+    int i;
+    for (;item;item = item->below) {
+        if QUERY_FLAG(item, FLAG_UNPAID) {
+            (*unpaid_count)++;
+            (*unpaid_price) += query_cost(item, pl, F_BUY | F_SHOP);
+        }
+        /* merely converting the player's monetary wealth won't do, if we did that, 
+        * we could print the wrong numbers for the coins, so we count the money instead 
+        */
+        for (i=0; i< NUM_COINS; i++)
+            if (!strcmp(coins[i], item->arch->name)) {
+                coincount[i] += item->nrof;
+                break;
+            }
+        if (item->inv) 
+            count_unpaid(pl, item->inv, unpaid_count, unpaid_price, coincount);
+    }
+}
 
-/* Checks all unpaid items in op's inventory, adds up all the money they
+/**
+ * Checks all unpaid items in op's inventory, adds up all the money they
  * have, and checks that they can actually afford what they want to buy.
  * Returns 1 if they can, and 0 if they can't. also prints an appropriate message 
  * to the player
@@ -647,33 +672,18 @@ int can_pay(object *pl) {
     int unpaid_count = 0, i;
     uint64 unpaid_price = 0;
     uint64 player_wealth = query_money(pl);
-    object *item;
     uint32 coincount[NUM_COINS];
+
     if (!pl || pl->type != PLAYER) {
         LOG(llevError, "can_pay(): called against something that isn't a player\n");
         return 0;
     }
+
     for (i=0; i< NUM_COINS; i++)
         coincount[i] = 0;
-    for (item = pl->inv;item;) {
-        if QUERY_FLAG(item, FLAG_UNPAID) {
-            unpaid_count++;
-            unpaid_price += query_cost(item, pl, F_BUY | F_SHOP);
-        }
-        /* merely converting the player's monetary wealth won't do, if we did that, 
-         * we could print the wrong numbers for the coins, so we count the money instead 
-         */
-        for (i=0; i< NUM_COINS; i++)
-            if (!strcmp(coins[i], item->arch->name))
-                coincount[i] += item->nrof;
-        if (item->inv) 
-            item = item->inv; 
-        else if (item->below) 
-            item = item->below;
-        else if (item->env && item->env != pl && item->env->below) 
-            item = item->env->below;
-        else item = NULL; 
-    }
+
+    count_unpaid(pl, pl->inv, &unpaid_count, &unpaid_price, coincount);
+
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
