@@ -698,7 +698,7 @@ void check_login(object *op) {
     pl->last_save_tick = pticks;
 #endif
     op->carrying = sum_weight (op);
-    /* Need to call fix_player now - program modified so that it is not
+    /* Need to call fix_object now - program modified so that it is not
      * called during the load process (FLAG_NO_FIX_PLAYER set when
      * saved)
      * Moved ahead of the esrv functions, so proper weights will be
@@ -709,7 +709,7 @@ void check_login(object *op) {
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;
     
-    fix_player (op);
+    fix_object(op);
     
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {

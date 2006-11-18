@@ -223,7 +223,8 @@ static int remove_symptoms(object *disease) {
 	remove_ob(symptom);
 	free_object(symptom);
     }
-    if(victim) fix_player(victim);
+    if(victim)
+        fix_object(victim);
     return 0;
 }
 
@@ -495,7 +496,7 @@ static int do_symptoms(object *disease) {
 	symptom->other_arch = disease->other_arch;
     }
     SET_FLAG(symptom,FLAG_APPLIED);
-    fix_player(victim);
+    fix_object(victim);
     return 1;
 }
 

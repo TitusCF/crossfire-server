@@ -417,7 +417,7 @@ int apply_potion(object *op, object *tmp)
 
 	if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
 	    drain_stat(op);
-	    fix_player(op);
+        fix_object(op);
 	    decrease_ob(tmp);
 	    return 1;
 	}
@@ -434,7 +434,7 @@ int apply_potion(object *op, object *tmp)
 		}
 	    remove_ob(depl);
 	    free_object(depl);
-	    fix_player(op);
+        fix_object(op);
 	}
 	else
 	    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
@@ -481,7 +481,7 @@ int apply_potion(object *op, object *tmp)
 	if (i<MIN(11, op->level)) got_one=1;
 	if (!QUERY_FLAG(tmp,FLAG_CURSED) && !QUERY_FLAG(tmp,FLAG_DAMNED)) {
 	    if (got_one) {
-		fix_player(op);
+            fix_object(op);
 		draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		      "The Gods smile upon you and remake you a little more in their image."
 		      "You feel a little more perfect.", NULL);
@@ -492,7 +492,7 @@ int apply_potion(object *op, object *tmp)
 	}
 	else {	/* cursed potion */
 	    if (got_one) {
-		fix_player(op);
+            fix_object(op);
 		draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
 			      "The Gods are angry and punish you.", NULL);
 	    }
@@ -528,7 +528,8 @@ int apply_potion(object *op, object *tmp)
 
 	decrease_ob(tmp);
 	/* if youre dead, no point in doing this... */
-	if(!QUERY_FLAG(op,FLAG_REMOVED)) fix_player(op);
+	if(!QUERY_FLAG(op,FLAG_REMOVED))
+        fix_object(op);
 	return 1;
     }
 
@@ -573,11 +574,11 @@ int apply_potion(object *op, object *tmp)
 
     /* CLEAR_FLAG is so that if the character has other potions
      * that were grouped with the one consumed, his
-     * stat will not be raised by them.  fix_player just clears
+     * stat will not be raised by them.  fix_object just clears
      * up all the stats.
      */
     CLEAR_FLAG(tmp, FLAG_APPLIED);
-    fix_player(op);
+    fix_object(op);
     decrease_ob(tmp);
     return 1;
 }
@@ -662,7 +663,7 @@ static int check_weapon_power(const object *who, int improvs)
     int level=0;
 
     /* The skill system hands out wc and dam bonuses to fighters
-     * more generously than the old system (see fix_player). Thus
+     * more generously than the old system (see fix_object). Thus
      * we need to curtail the power of player enchanted weapons. 
      * I changed this to 1 improvement per "fighter" level/5 -b.t. 
      * Note:  Nothing should break by allowing this ratio to be different or
@@ -732,7 +733,7 @@ static int improve_weapon_stat(object *op,object *improver,object *weapon,
     decrease_ob(improver);
 
     /* So it updates the players stats and the window */
-    fix_player(op);
+    fix_object(op);
     return 1;
 }
 
@@ -1067,7 +1068,7 @@ static int improve_armour(object *op, object *improver, object *armour)
     if (op->type == PLAYER) {
         esrv_send_item(op, armour);
         if(QUERY_FLAG(armour, FLAG_APPLIED))
-            fix_player(op);
+            fix_object(op);
     }
     decrease_ob(improver);
     if (tmp) {
@@ -2486,7 +2487,7 @@ static int dragon_eat_flesh(object *op, object *meal) {
   if (i >= 0 && i < NROFATTACKS && skin->resist[i] < 95) {
     /* resistance increased! */
     skin->resist[i]++;
-    fix_player(op);
+    fix_object(op);
     
     draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op,  
 			 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
@@ -3111,7 +3112,7 @@ static int unapply_special (object *who, object *op, int aflags)
 	    remove_ob(op);
 	    free_object(op);
 	    insert_ob_in_ob(tmp2, who);
-	    fix_player(who);
+        fix_object(who);
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
 		    if (!(aflags & AP_NOPRINT))
@@ -3163,7 +3164,7 @@ static int unapply_special (object *who, object *op, int aflags)
 	    break;
     }
 
-    fix_player(who);
+    fix_object(who);
 
     if ( ! (aflags & AP_NO_MERGE)) {
 	object *tmp;
@@ -3662,7 +3663,7 @@ int apply_special (object *who, object *op, int aflags)
 		if(who->type==PLAYER)
 		    esrv_send_item(who, tmp);
 	    }
-	    fix_player(who);
+        fix_object(who);
 	    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
 		if (who->type == PLAYER) {
 		    if (!(aflags & AP_NOPRINT))
@@ -3788,7 +3789,7 @@ int apply_special (object *who, object *op, int aflags)
     if(tmp!=NULL)
 	tmp = insert_ob_in_ob(tmp,who);
 
-    fix_player(who);
+    fix_object(who);
 
     /* We exclude spell casting objects.  The fire code will set the
      * been applied flag when they are used - until that point,
@@ -4058,7 +4059,7 @@ void eat_special_food(object *who, object *food) {
 		/* place limit on max sp from food? */
 	    }
     }
-    fix_player(who);
+    fix_object(who);
 }
 
 
@@ -4126,7 +4127,8 @@ static void apply_lighter(object *who, object *lighter) {
 	    /* Need to update the player so that the players glow radius
 	     * gets changed.
 	     */
-	    if (is_player_env) fix_player(who);
+        if (is_player_env)
+            fix_object(who);
 	} else {
 	    draw_ext_info_format(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
 		 "You attempt to light the %s with the %s and fail.",

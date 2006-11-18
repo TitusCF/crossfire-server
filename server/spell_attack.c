@@ -1399,7 +1399,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 
     change_abil(tmp,force);     /* Mostly to display any messages */
     insert_ob_in_ob(force,tmp);
-    fix_player(tmp);
+    fix_object(tmp);
     return 1;
 
 }

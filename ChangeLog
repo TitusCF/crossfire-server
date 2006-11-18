@@ -17,6 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Rename fix_player to fix_object, since it works for other items.
+ common/item.c living.c object.c
+ include/define.h libproto.h skills.h
+ server/apply.c attack.c c_misc.c c_object.c c_wiz.c disease.c gods.c
+  login.c player.c plugins.c shop.c skills.c skill_util.c spell_attack.c
+  spell_effect.c time.c
+Ryo 2006-11-18
+
+
 Fix bug #598649: Building apartments use multiple materials per tile
 server/build_map.c: don't redo same floor.
 ----

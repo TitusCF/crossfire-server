@@ -197,7 +197,7 @@ static void remove_force(object *op) {
 	    if(op->env!=NULL) {
 		CLEAR_FLAG(op, FLAG_APPLIED);
 		change_abil(op->env,op);
-		fix_player(op->env);
+        fix_object(op->env);
 	    }
     }
     remove_ob(op);
@@ -210,7 +210,7 @@ static void remove_blindness(object *op) {
   CLEAR_FLAG(op, FLAG_APPLIED);
   if(op->env!=NULL) { 
      change_abil(op->env,op);
-     fix_player(op->env);
+     fix_object(op->env);
   }
   remove_ob(op);
   free_object(op);
@@ -223,12 +223,12 @@ static void poison_more(object *op) {
     return;
   }
   if(op->stats.food==1) {
-    /* need to remove the object before fix_player is called, else fix_player
+    /* need to remove the object before fix_player is called, else fix_object
      * will not do anything.
      */
     if(op->env->type==PLAYER) {
       CLEAR_FLAG(op, FLAG_APPLIED);
-      fix_player(op->env);
+      fix_object(op->env);
       draw_ext_info(NDI_UNIQUE, 0,op->env, 
 		    MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
 		    "You feel much better now.", NULL);
@@ -935,7 +935,7 @@ void move_player_changer(object *op) {
 	for(walk=op->inv;walk!=NULL;walk=walk->below)
 	    apply_changes_to_player(player,walk);
 
-	fix_player(player);
+    fix_object(player);
 	esrv_send_inventory(op->above,op->above);
 	esrv_update_item(UPD_FACE, op->above, op->above);
 	

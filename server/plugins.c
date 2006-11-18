@@ -2188,7 +2188,7 @@ void* cfapi_object_set_property(int* type, ...)
                     }
                     else {
                         sum_weight(tmp);
-                        fix_player(tmp);
+                        fix_object(tmp);
                     }
                     if (tmp)
                         esrv_send_item(tmp, op);
@@ -2323,7 +2323,7 @@ void* cfapi_object_set_property(int* type, ...)
                             tmp = NULL;
                     } else {
                         sum_weight(tmp);
-                        fix_player(tmp);
+                        fix_object(tmp);
                     }
                     if (tmp)
                         esrv_send_item(tmp, op);
@@ -2675,7 +2675,7 @@ void* cfapi_object_fix(int* type, ...)
 
     va_end(args);
 
-    fix_player(op);
+    fix_object(op);
 
     *type = CFAPI_NONE;
     return NULL;

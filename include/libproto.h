@@ -114,7 +114,7 @@ extern void drain_specific_stat(object *op, int deplete_stats);
 extern void change_luck(object *op, int value);
 extern void remove_statbonus(object *op);
 extern void add_statbonus(object *op);
-extern void fix_player(object *op);
+extern void fix_object(object *op);
 extern int allowed_class(const object *op);
 extern void set_dragon_name(object *pl, const object *abil, const object *skin);
 extern void dragon_level_gain(object *who);

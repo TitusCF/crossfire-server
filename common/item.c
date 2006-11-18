@@ -1167,7 +1167,7 @@ char *describe_item(const object *op, const object *owner) {
 		break;
 
 	    case WEAPON:
-		/* Calculate it the same way fix_player does so the results
+		/* Calculate it the same way fix_object does so the results
 		 * make sense.
 		 */
 		i = (WEAPON_SPEED(op)*2-op->magic)/2;

@@ -953,7 +953,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 			 query_name(tmp), query_name(sack));
     tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
-    fix_player(op); /* This is overkill, fix_player() is called somewhere */
+    fix_object(op); /* This is overkill, fix_player() is called somewhere */
 		  /* in object.c */
 
     /* If an object merged (and thus, different object), we need to
@@ -1037,7 +1037,7 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
       if (op->type==PLAYER)
 	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
-      fix_player(op);
+      fix_object(op);
       return NULL;
     }
 
@@ -1078,7 +1078,7 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
     /* Call this before we update the various windows/players.  At least
      * that we, we know the weight is correct.
      */
-    fix_player(op); /* This is overkill, fix_player() is called somewhere */
+    fix_object(op); /* This is overkill, fix_player() is called somewhere */
 		    /* in object.c */
 
     if (op->type == PLAYER)
@@ -1974,7 +1974,7 @@ int command_search_items (object *op, char *params)
 	op->contr->search_str[0]='\0';
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 		      "Search mode turned off.", NULL);
-	fix_player(op);
+    fix_object(op);
 	return 1;
     }
     if((int)strlen(params) >= MAX_BUF) {
@@ -1987,7 +1987,7 @@ int command_search_items (object *op, char *params)
 			 "Searching for '%s'.",
 			 "Searching for '%s'.",
 			 op->contr->search_str);
-    fix_player(op);
+    fix_object(op);
     return 1;
 }
 

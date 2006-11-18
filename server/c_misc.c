@@ -1118,7 +1118,7 @@ int command_statistics(object *pl, char *params)
 int command_fix_me(object *op, char *params)
 {
     sum_weight(op);
-    fix_player(op);
+    fix_object(op);
     return 1;
 }
 
@@ -1957,7 +1957,7 @@ int command_brace (object *op, char *params)
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "Not braced.", NULL);
 
-    fix_player(op);
+    fix_object(op);
 
     return 0;
 }

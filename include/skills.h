@@ -93,7 +93,7 @@
 
 #define USING_SKILL(op, skill)  ((op)->chosen_skill && (op)->chosen_skill->subtype == skill)
 
-/* This macro is used in fix_player() to define if this is a sill
+/* This macro is used in fix_object() to define if this is a sill
  * that should be used to calculate wc's and the like.
  */
 #define IS_COMBAT_SKILL(num) \

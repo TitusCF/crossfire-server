@@ -323,7 +323,7 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 		draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 			      "You rise into the air!.", NULL);
 	    }
-	    fix_player(op);
+        fix_object(op);
 	    success=1;
 	    break;
 

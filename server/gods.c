@@ -972,7 +972,7 @@ static void god_intervention (object *op, object *god, object *skill)
 				   restore_msg[i], restore_msg[i]);
             remove_ob (depl);
             free_object (depl);
-            fix_player (op);
+            fix_object(op);
             return;
         }
   

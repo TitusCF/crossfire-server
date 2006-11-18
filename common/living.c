@@ -359,7 +359,7 @@ void check_stat_bounds(living *stats) {
  * It is the calling functions responsibilty to check to see if the object
  * can be applied or not.
  * The main purpose of calling this function is the messages that are
- * displayed - fix_player should really always be called after this when
+ * displayed - fix_object should really always be called after this when
  * removing an object - that is because it is impossible to know if some object
  * is the only source of an attacktype or spell attunement, so this function
  * will clear the bits, but the player may still have some other object
@@ -372,7 +372,7 @@ int change_abil(object *op, object *tmp) {
   
     /* remember what object was like before it was changed.  note that
      * refop is a local copy of op only to be used for detecting changes
-     * found by fix_player.  refop is not a real object 
+    * found by fix_object.  refop is not a real object 
      */
     memcpy(&refop, op, sizeof(object));
 
@@ -407,7 +407,7 @@ int change_abil(object *op, object *tmp) {
 		}
 	    }
 	    /* This section of code ups the characters normal stats also.  I am not
-	     * sure if this is strictly necessary, being that fix_player probably
+         * sure if this is strictly necessary, being that fix_object probably
 	     * recalculates this anyway.
 	     */
 	    for(j=0;j<NUM_STATS;j++)
@@ -416,7 +416,7 @@ int change_abil(object *op, object *tmp) {
 	} /* end of potion handling code */
     }
 
-    /* reset attributes that fix_player doesn't reset since it doesn't search
+    /* reset attributes that fix_object doesn't reset since it doesn't search
      * everything to set 
      */
     if(flag == -1) {
@@ -430,11 +430,11 @@ int change_abil(object *op, object *tmp) {
 	op->move_type &= ~tmp->move_type;
     }
 
-    /* call fix_player since op object could have whatever attribute due
-     * to multiple items.  if fix_player always has to be called after
+    /* call fix_object since op object could have whatever attribute due
+     * to multiple items.  if fix_object always has to be called after
      * change_ability then might as well call it from here
      */
-    fix_player(op);
+    fix_object(op);
 
     /* Fix player won't add the bows ability to the player, so don't
      * print out message if this is a bow.
@@ -691,7 +691,7 @@ void drain_specific_stat(object *op, int deplete_stats) {
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS, drain_msg[deplete_stats], NULL);
     change_attr_value(&tmp->stats, deplete_stats, -1);
-    fix_player(op);
+    fix_object(op);
 }
 
 /*
@@ -795,7 +795,7 @@ void add_statbonus(object *op) {
    spell system split, grace points now added to system  --peterm
  */
 
-void fix_player(object *op) {
+void fix_object(object *op) {
     int i,j;
     float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
     int weapon_weight=0,weapon_speed=0;
@@ -1041,7 +1041,7 @@ void fix_player(object *op) {
 		    if (IS_COMBAT_SKILL(tmp->subtype)) wc_obj=tmp;
 
 		    if (op->chosen_skill) {
-			LOG(llevDebug, "fix_player, op %s has multiple skills applied\n", op->name);
+                LOG(llevDebug, "fix_object, op %s has multiple skills applied\n", op->name);
 		    }
 		    op->chosen_skill = tmp;
 		    if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */ 
@@ -1071,7 +1071,7 @@ void fix_player(object *op) {
 
 		case SKILL_TOOL:
 		    if (op->chosen_skill) {
-			LOG(llevDebug, "fix_player, op %s has multiple skills applied\n", op->name);
+                LOG(llevDebug, "fix_object, op %s has multiple skills applied\n", op->name);
 		    }
 		    op->chosen_skill = tmp;
 		    if (op->type == PLAYER)
@@ -1580,7 +1580,8 @@ void player_lvl_adj(object *who, object *op) {
 	    who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
 	}
 
-	if(who) fix_player(who);
+    if(who)
+        fix_object(who);
 	if(op->level>1) {
 	    if (op->type!=PLAYER)
 		sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
@@ -1592,7 +1593,8 @@ void player_lvl_adj(object *who, object *op) {
 	player_lvl_adj(who,op); /* To increase more levels */
     } else if (op->level>1 && op->stats.exp<level_exp(op->level,who->expmul)) {
 	op->level--;
-	if(who) fix_player(who);
+	if(who)
+        fix_object(who);
 	if(op->type!=PLAYER) {
 	    if(who) 
 		draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS,

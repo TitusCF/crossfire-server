@@ -1212,7 +1212,7 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 		}
 	    }
 	    if(flag)
-	      fix_player(op); /* Something was corroded */
+            fix_object(op); /* Something was corroded */
 	}
       }
       break;
@@ -1983,7 +1983,7 @@ static void poison_player(object *op, object *hitter, int dam)
 		tmp->stats.Dex= MAX(-(dam/6+1), -10);
 		tmp->stats.Int= MAX(-dam/7, -10);
 		SET_FLAG(tmp,FLAG_APPLIED);
-		fix_player(op);
+        fix_object(op);
 		draw_ext_info(NDI_UNIQUE, 0,op, 
 			      MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
 			      "You suddenly feel very ill.", NULL);
@@ -2022,7 +2022,7 @@ static void slow_player(object *op,object *hitter,int dam)
       tmp->stats.food++;
     SET_FLAG(tmp, FLAG_APPLIED);
     tmp->speed_left=0;
-    fix_player(op);
+    fix_object(op);
 }
 
 void confuse_player(object *op, object *hitter, int dam)
@@ -2073,7 +2073,7 @@ void blind_player(object *op, object *hitter, int dam)
 
       tmp = insert_ob_in_ob(tmp,op);
       change_abil(op,tmp);   /* Mostly to display any messages */
-      fix_player(op);        /* This takes care of some other stuff */
+      fix_object(op);        /* This takes care of some other stuff */
 
       if(hitter->owner) owner = get_owner(hitter);
       else owner = hitter;

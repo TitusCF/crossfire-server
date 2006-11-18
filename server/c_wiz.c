@@ -1112,7 +1112,7 @@ int command_possess(object *op, char *params) {
     esrv_new_player(pl, 80); /* just pick a weight, we don't care */
     esrv_send_inventory(victim, victim);
 
-    fix_player(victim);
+    fix_object(victim);
 
     do_some_living(victim);
     return 1;
@@ -1404,7 +1404,7 @@ int command_abil(object *op, char *params) {
 			 "%s has been altered.",
 			 "%s has been altered.",
 			 pl->ob->name);
-            fix_player(pl->ob);
+            fix_object(pl->ob);
             return 1;
         }
     }
@@ -1605,7 +1605,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
 		      "Ok, you are the Dungeon Master!", NULL);
         /*
          * Remove setting flying here - that won't work, because next
-         * fix_player() is called that will get cleared - proper solution
+        * fix_object() is called that will get cleared - proper solution
          * is probably something like a wiz_force which gives that and any
          * other desired abilities.
          */

@@ -1326,7 +1326,7 @@ void remove_ob(object *op) {
    */
     if ((otmp=get_player_container(op->env))!=NULL && otmp->contr && 
         !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-        fix_player(otmp);
+        fix_object(otmp);
 
     if(op->above!=NULL)
         op->above->below=op->below;
@@ -1995,7 +1995,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   otmp=get_player_container(where);
   if (otmp&&otmp->contr!=NULL) {
     if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-      fix_player(otmp);
+        fix_object(otmp);
   }
 
   op->map=NULL;

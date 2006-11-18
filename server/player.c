@@ -825,7 +825,7 @@ void roll_stats(object *op) {
     op->contr->levsp[1] = 6;
     op->contr->levgrace[1] = 3;
 
-    fix_player(op);
+    fix_object(op);
     op->stats.hp = op->stats.maxhp;
     op->stats.sp = op->stats.maxsp;
     op->stats.grace = op->stats.maxgrace;
@@ -876,7 +876,7 @@ static void swap_stat(object *op,int Swap_Second)
     op->contr->levsp[1] = 6;
     op->contr->levgrace[1] = 3;
 
-    fix_player(op);
+    fix_object(op);
     op->stats.hp = op->stats.maxhp;
     op->stats.sp = op->stats.maxsp;
     op->stats.grace = op->stats.maxgrace;
@@ -1005,7 +1005,7 @@ int key_change_class(object *op, char key)
 	give_initial_items(op,op->randomitems);
 	link_player_skills(op);
 	esrv_send_inventory(op, op);
-	fix_player(op);
+    fix_object(op);
 
         /* This moves the player to a different start map, if there
          * is one for this race
@@ -1059,7 +1059,7 @@ int key_change_class(object *op, char key)
     }
     update_object(op,UP_OBJ_FACE);
     esrv_update_item(UPD_FACE,op,op);
-    fix_player(op);
+    fix_object(op);
     op->stats.hp=op->stats.maxhp;
     op->stats.sp=op->stats.maxsp;
     op->stats.grace=0;
@@ -1676,7 +1676,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 
     if (op->type == PLAYER) {
 	op->speed_left = 0.01 - (float)FABS(op->speed) * 100 / bowspeed;
-	fix_player(op);
+    fix_object(op);
     }
 
     SET_ANIMATION(arrow, arrow->direction);
@@ -2351,7 +2351,7 @@ static int save_life(object *op) {
 		op->stats.hp = op->stats.maxhp;
 	    if(op->stats.food<0)
 		op->stats.food = 999;
-	    fix_player(op);
+        fix_object(op);
 	    return 1;
 	}
     LOG(llevError,"Error: LIFESAVE set without applied object.\n");
@@ -2838,7 +2838,7 @@ void kill_player(object *op)
 			draw_ext_info(NDI_UNIQUE, 0,op,
 				      MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
 				      lose_msg[i], lose_msg[i]);
-			fix_player(op);
+            fix_object(op);
 			lost_a_stat = 1;
 		    }
 		}
@@ -2952,7 +2952,7 @@ void kill_player(object *op)
 		    force->resist[at] = 100;
 	    }
 	    insert_ob_in_ob(force, op);
-	    fix_player(op);
+        fix_object(op);
 	    
 	}
         
@@ -3041,7 +3041,7 @@ void fix_weight(void) {
     int old = pl->ob->carrying, sum = sum_weight(pl->ob);
     if(old == sum)
       continue;
-    fix_player(pl->ob);
+    fix_object(pl->ob);
     LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",
 	pl->ob->name, old, sum);
   }

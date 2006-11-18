@@ -488,7 +488,7 @@ int pay_for_amount(uint64 to_pay,object *pl) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
     }
-    fix_player(pl);
+    fix_object(pl);
     return 1;
 }
 
@@ -525,7 +525,7 @@ int pay_for_item(object *op,object *pl) {
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
         SET_FLAG(op, FLAG_WAS_WIZ);
-    fix_player(pl);
+    fix_object(pl);
     return 1;
 }
 

@@ -508,7 +508,7 @@ extern typedata ItemTypes[];
 
 #define FLAG_REFL_SPELL		40 /* Spells (some) will reflect from object */
 #define FLAG_NO_MAGIC		41 /* Spells (some) can't pass this object */
-#define FLAG_NO_FIX_PLAYER	42 /* fix_player() won't be called */
+#define FLAG_NO_FIX_PLAYER	42 /* fix_object() won't be called */
 #define FLAG_IS_LIGHTABLE	43 /* object can be lit */
 #define FLAG_TEAR_DOWN		44 /* at->faces[hp*animations/maxhp] at hit */
 #define FLAG_RUN_AWAY		45 /* Object runs away from nearest player \

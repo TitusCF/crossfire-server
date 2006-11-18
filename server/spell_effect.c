@@ -1716,7 +1716,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
 
     insert_ob_in_ob(force,tmp);
     change_abil(tmp,force);	/* Mostly to display any messages */
-    fix_player(tmp);
+    fix_object(tmp);
     return 1;
 }
 
@@ -1823,7 +1823,7 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
 
     change_abil(tmp,force);	/* Mostly to display any messages */
     insert_ob_in_ob(force,tmp);
-    fix_player(tmp);
+    fix_object(tmp);
     return 1;
 }
 
@@ -2661,7 +2661,7 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
      */		   
     SET_FLAG (tmp, FLAG_USE_WEAPON);
     SET_FLAG(weapon, FLAG_APPLIED);
-    fix_player(tmp);
+    fix_object(tmp);
 
     /* There used to be 'odd' code that basically seemed to take the absolute
      * value of the weapon->magic an use that.  IMO, that doesn't make sense -
