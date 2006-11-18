@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation tweaks.
+ include/object.h: doxygen-like comments.
+ Doxyfile: created with some defaults.
+Ryo 2006-11-18
+
 Rename fix_player to fix_object, since it works for other items.
  common/item.c living.c object.c
  include/define.h libproto.h skills.h
