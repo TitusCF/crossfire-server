@@ -245,24 +245,22 @@ void draw_ext_info(
     if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)){
         char *buf;
 
-        if (buf==NULL)
+        if (oldmessage) {
+            buf = (char*)oldmessage;
+	    } else {
+            buf = strdup_local(message);
+            if (buf==NULL)
             LOG(llevError,"info::draw_ext_info -> Out of memory!");
-        else {
-	    if (oldmessage) {
-		buf = (char*)oldmessage;
-	    } else {
-		buf = strdup_local(message);
-		strip_media_tag(buf);
-	    }
-	    if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
-		/* following prints stuff out, as appropriate */
-		check_output_buffers(pl, buf);
-	    } else {
-		print_message(flags & NDI_COLOR_MASK, pl, buf);
-	    }
-	    if (!oldmessage)
-		free(buf);
+            strip_media_tag(buf);
         }
+        if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
+            /* following prints stuff out, as appropriate */
+            check_output_buffers(pl, buf);
+        } else {
+            print_message(flags & NDI_COLOR_MASK, pl, buf);
+        }
+        if (!oldmessage)
+            free(buf);
     } else {
         esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,message);
     }

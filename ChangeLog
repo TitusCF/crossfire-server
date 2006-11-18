@@ -17,9 +17,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #598649: Building apartments use multiple materials per tile
+server/build_map.c: don't redo same floor.
+----
+socket/info.c: fix spurious logic, fix indent.
+Ryo 2006-11-18
+
 Tentative fix for bug #1519089: item cannot afford in container can be taken from store.
 server/shop.c: do a real recursion in can_pay.
-Ryp 2006-11-16
+Ryo 2006-11-16
 
 include\{treasure.h path.h face.h commands.h win32.h shstr.h timers.h
   config.h funcpoint.h object.h loader.h attack.h race.h newserver.h

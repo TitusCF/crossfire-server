@@ -353,9 +353,10 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
     {
     object* tmp, *above;
     object* above_floor; /* Item above floor, if any */
+    object* floor;       /* Floor which would be removed if required */
     struct archt* new_floor;
     struct archt* new_wall;
-    int i, xt, yt, floor_removed;
+    int i, xt, yt, wall_removed;
     char message[ MAX_BUF ];
 
     sprintf( message, "You change the floor to better suit your tastes." );
@@ -365,38 +366,46 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
      * First, remove wall(s) and floor(s) at position x, y
      */
     above_floor = NULL;
+    floor = NULL;
     new_wall = NULL;
-    floor_removed = 0;
+    wall_removed = 0;
     tmp = GET_MAP_OB( pl->map, x, y );
-    if ( tmp )
+    while ( tmp )
         {
-        while ( tmp )
+        above = tmp->above;
+        if ( WALL == tmp->type )
             {
-            above = tmp->above;
-            if ( WALL == tmp->type )
-                {
-                /* There was a wall, remove it & keep its archetype to make new walls */
-                new_wall = tmp->arch;
-                remove_ob( tmp );
-                free_object( tmp );
-                sprintf( message, "You destroy the wall and redo the floor." );
-                }
-            else if ( ( FLOOR == tmp->type ) || ( QUERY_FLAG(tmp, FLAG_IS_FLOOR ) ) )
-                {
-                remove_ob( tmp );
-                free_object( tmp );
-                floor_removed = 1;
-                }
-            else
-                {
-                if ( floor_removed )
-                    above_floor = tmp;
-                }
-
-            tmp = above;
+            /* There was a wall, remove it & keep its archetype to make new walls */
+            new_wall = tmp->arch;
+            remove_ob( tmp );
+            free_object( tmp );
+            sprintf( message, "You destroy the wall and redo the floor." );
+            wall_removed = 1;
+            if ( floor != NULL ) {
+                remove_ob(floor);
+                free_object(floor);
             }
+            }
+        else if ( ( FLOOR == tmp->type ) || ( QUERY_FLAG(tmp, FLAG_IS_FLOOR ) ) ) 
+            {
+            floor = tmp;
+            }
+        else
+            {
+            if ( floor != NULL )
+                above_floor = tmp;
+            }
+
+        tmp = above;
         }
 
+    if ( wall_removed == 0 && floor != NULL ) {
+        if ( floor->arch->name == material->slaying ) {
+            draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same floor.", NULL);
+            return;
+        }
+    }
+        
     /* Now insert our floor */
     new_floor = find_archetype( material->slaying );
     if ( !new_floor )
