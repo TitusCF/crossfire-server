@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+socket/info.c: In draw_ext_info() do not crash for out of memory.
+Andreas Kirschbaum 2006-11-19
+
 server/rune.c: If skill is NULL in dispel_rune(), just return as server
   will otherwise crash in trap_disarm()
 server/spell_util.c: Fix bug in that runes that hold other spells (glyphs,
