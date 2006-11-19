@@ -733,7 +733,7 @@ void confirm_password(object *op) {
 
 void get_party_password(object *op, partylist *party) {
     if (party == NULL) {
-	LOG(llevError, "get_party_password(): tried to make player %s join a NULL party", op->name);
+	LOG(llevError, "get_party_password(): tried to make player %s join a NULL party\n", op->name);
 	return;
     }
     op->contr->write_buf[0]='\0';

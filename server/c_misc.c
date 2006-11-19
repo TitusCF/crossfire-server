@@ -370,7 +370,7 @@ int command_whereabouts(object *op, char *params) {
 		reg->counter=0;
 	    }
 	    else /*uh oh, we shouldn't be here. */
-		LOG(llevError,"command_whereabouts() Region %s with no longname has no parent", reg->name);
+		LOG(llevError,"command_whereabouts() Region %s with no longname has no parent\n", reg->name);
 	}
     }
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -480,7 +480,7 @@ void display_who_entry(object *op, player *pl, const char *format) {
     outbuf1[0] = '\0';
 
     if (pl==NULL) {
-    	LOG(llevError,"display_who_entry(): I was passed a null player");
+    	LOG(llevError,"display_who_entry(): I was passed a null player\n");
 	return;
     }
     for (i=0;i<=strlen(format);i++) {

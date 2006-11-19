@@ -75,7 +75,7 @@ static void esrv_print_ext_msg(socket_struct *ns,int color,uint8 type, uint8 sub
     char buf[HUGE_BUF];
     snprintf(buf,HUGE_BUF, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
 	Write_String_To_Socket(ns, buf, strlen(buf));
-/*    LOG(llevDebug,"sending %s to socket, len=%d", buf, strlen(buf));*/
+/*    LOG(llevDebug,"sending %s to socket, len=%d\n", buf, strlen(buf));*/
 
 }
 
@@ -250,7 +250,7 @@ void draw_ext_info(
         } else {
             buf = strdup_local(message);
             if (buf == NULL)
-                LOG(llevError, "info::draw_ext_info -> Out of memory!");
+                LOG(llevError, "info::draw_ext_info -> Out of memory!\n");
             strip_media_tag(buf);
         }
         if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {

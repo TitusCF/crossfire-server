@@ -4319,7 +4319,7 @@ static void apply_item_transformer( object* pl, object* transformer )
         yield = atoi( find );
         if ( yield < 1 )
             {
-            LOG( llevDebug, "apply_item_transformer: item %s has slaying-yield %d.", query_base_name( marked, 0 ), yield );
+            LOG( llevDebug, "apply_item_transformer: item %s has slaying-yield %d.\n", query_base_name( marked, 0 ), yield );
             yield = 1;
             }
         }

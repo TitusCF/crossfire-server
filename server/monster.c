@@ -1280,7 +1280,7 @@ void monster_check_apply(object *mon, object *item) {
     else if (item->type == FOOD && mon->will_apply & WILL_APPLY_FOOD) flag=1;
     else if (item->type == SCROLL && QUERY_FLAG(mon, FLAG_USE_SCROLL)) {
         if (!item->inv)
-            LOG(llevDebug,"Monster %d having scroll %d with empty inventory!", mon->count, item->count);
+            LOG(llevDebug,"Monster %d having scroll %d with empty inventory!\n", mon->count, item->count);
         else if (monster_should_cast_spell(mon, item->inv))
             SET_FLAG(mon, FLAG_READY_SCROLL);
         /* Don't use it right now */
@@ -1543,7 +1543,7 @@ static char *find_matching_message(object* pl, const char *msg, const char *matc
 
     while (1) {
 	if (strncmp(cp, "@match ", 7)) {
-	    LOG(llevDebug,"find_matching_message: Invalid message %s", msg);
+	    LOG(llevDebug,"find_matching_message: Invalid message %s\n", msg);
 	    return NULL;
 	}
 	else {

@@ -1035,7 +1035,7 @@ static void process_events (mapstruct *map)
         {
             LOG (llevError, "BUG: process_events(): Removed object on list\n");
             dump_object(op);
-            LOG(llevError, errmsg);
+            LOG(llevError, "%s\n", errmsg);
             free_object(op);
             continue;
         }
@@ -1163,7 +1163,7 @@ void cleanup(void)
     free_all_god();
     free_all_anim();
     /* See what the string data that is out there that hasn't been freed. */
-/*    LOG(llevDebug, ss_dump_table(0xff));*/
+/*    LOG(llevDebug, "%s", ss_dump_table(0xff));*/
 #endif
     exit(0);
 }

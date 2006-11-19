@@ -881,7 +881,7 @@ void* cfapi_log(int* type, ...)
     va_start(args, type);
     logLevel = va_arg(args, LogLevel);
     message = va_arg(args, const char*);
-    LOG(logLevel, message);
+    LOG(logLevel, "%s", message);
     va_end(args);
 
     return NULL;

@@ -71,7 +71,7 @@ void remove_party(partylist *target_party) {
     player *pl;
     
     if (firstparty==NULL) {
-	LOG(llevError, "remove_party(): I was asked to remove party %s, but no parties are defined",
+	LOG(llevError, "remove_party(): I was asked to remove party %s, but no parties are defined\n",
 	    target_party->partyname);
 	return;
     }

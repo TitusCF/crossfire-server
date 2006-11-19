@@ -2364,7 +2364,7 @@ void esrv_remove_spell(player *pl, object *spell) {
 
     if (!pl->socket.monitor_spells) return;
     if (!pl || !spell || spell->env != pl->ob) {
-	LOG(llevError, "Invalid call to esrv_remove_spell");
+	LOG(llevError, "Invalid call to esrv_remove_spell\n");
 	return;
     }
     sl.buf = malloc(MAXSOCKSENDBUF);
@@ -2431,7 +2431,7 @@ static void append_spell (player *pl, SockList *sl, object *spell) {
 void esrv_add_spells(player *pl, object *spell) {
     SockList sl;
     if (!pl) {
-	LOG(llevError, "esrv_add_spells, tried to add a spell to a NULL player");
+	LOG(llevError, "esrv_add_spells, tried to add a spell to a NULL player\n");
 	return;
     }
     if (!pl->socket.monitor_spells) return;
@@ -2459,7 +2459,7 @@ void esrv_add_spells(player *pl, object *spell) {
 	}
     }
     else if (spell->type != SPELL) {
-	LOG(llevError, "Asked to send a non-spell object as a spell");
+	LOG(llevError, "Asked to send a non-spell object as a spell\n");
 	return;
     }
     else append_spell(pl, &sl, spell);

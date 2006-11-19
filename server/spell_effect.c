@@ -2523,7 +2523,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op,
 					 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 					 "You fail to consecrate the altar.", NULL);
-                    LOG(llevError, "cast_consecrate: can't find altar %s for god %s", buf, god->name);
+                    LOG(llevError, "cast_consecrate: can't find altar %s for god %s\n", buf, god->name);
                     return 0;
                 }
                 new_altar = arch_to_object(altar_arch);

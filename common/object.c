@@ -556,7 +556,7 @@ void set_owner (object *op, object *owner)
      */
     if (owner->owner){
       LOG(llevError,"owner id %d could not be resolved to a parent owner sin set_owner(). This is bad!"
-          "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d ",
+          "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d\n",
           owner,owner->owner,owner->ownercount, owner->owner->count);
       return;
     }
@@ -3091,7 +3091,7 @@ void fix_multipart_object(object* tmp)
 
     if (!tmp->map)
     {
-        LOG(llevError, "fix_multipart_object: not on a map!");
+        LOG(llevError, "fix_multipart_object: not on a map!\n");
         return;
     }
     
