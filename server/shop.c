@@ -488,6 +488,10 @@ int pay_for_amount(uint64 to_pay,object *pl) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
     }
+    if (to_pay > 0) {
+        LOG(llevError, "pay_for_amount: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
+    }
+
     fix_object(pl);
     return 1;
 }
@@ -523,10 +527,109 @@ int pay_for_item(object *op,object *pl) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
     }
+    if (to_pay > 0) {
+        LOG(llevError, "pay_for_amount: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
+    }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
         SET_FLAG(op, FLAG_WAS_WIZ);
     fix_object(pl);
     return 1;
+}
+
+/**
+ * This function removes a given amount from a list of coins.
+ *
+ * @param coin_objs the list coins to remove from; the list must be ordered
+ * from least to most valuable coin
+ *
+ * @param remain the value (in silver coins) to remove
+ *
+ * @return the value remaining
+ */
+static sint64 remove_value(object *coin_objs[], sint64 remain) {
+    int i;
+
+    for (i = 0; i < NUM_COINS; i++) {
+        int count;
+        int num_coins;
+
+        if (coin_objs[i]->nrof*coin_objs[i]->value > remain) {
+            num_coins = remain/coin_objs[i]->value;
+            if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) {
+                num_coins++;
+            }
+        } else {
+            num_coins = coin_objs[i]->nrof;
+        }
+        remain -= (sint64)num_coins*(sint64)coin_objs[i]->value;
+        coin_objs[i]->nrof -= num_coins;
+        /* Now start making change.  Start at the coin value
+         * below the one we just did, and work down to
+         * the lowest value.
+         */
+        count = i-1;
+        while (remain < 0 && count >= 0) {
+            num_coins = -remain/coin_objs[count]->value;
+            coin_objs[count]->nrof += num_coins;
+            remain += num_coins*coin_objs[count]->value;
+            count--;
+        }
+    }
+
+    return remain;
+}
+
+/**
+ * This function adds a given amount to a list of coins.
+ *
+ * @param coin_objs the list coins to add to; the list must be ordered
+ * from least to most valuable coin
+ *
+ * @param amount the value (in silver coins) to add
+ */
+static void add_value(object *coin_objs[], sint64 value) {
+    int i;
+
+    for (i = NUM_COINS-LARGEST_COIN_GIVEN-1; i >= 0; i--) {
+        uint32 nrof;
+
+        nrof = (uint32)(value/coin_objs[i]->value);
+        value -= nrof*coin_objs[i]->value;
+        coin_objs[i]->nrof += nrof;
+    }
+}
+
+/**
+ * Insert a list of objects into a player object.
+ *
+ * @param pl the player to add to
+ *
+ * @param container the container (inside the player object) to add to
+ *
+ * @param objects the list of objects to add; the objects will be either
+ * inserted into the player object or freed
+ *
+ * @param objects_len the length of objects
+ */
+static void insert_objects(object *pl, object *container, object *objects[], int objects_len) {
+    int i;
+
+    for (i = 0; i < objects_len; i++) {
+        if (objects[i]->nrof > 0) {
+            object *tmp = insert_ob_in_ob(objects[i], container);
+
+            esrv_send_item(pl, tmp);
+            esrv_send_item(pl, container);
+            if (pl != container) {
+                esrv_update_item(UPD_WEIGHT, pl, container);
+            }
+            if (pl->type != PLAYER) {
+                esrv_send_item(pl, pl);
+            }
+        } else {
+            free_object(objects[i]);
+        }
+    }
 }
 
 /* This pays for the item, and takes the proper amount of money off
@@ -544,9 +647,11 @@ int pay_for_item(object *op,object *pl) {
  * returns the amount still missing after using "pouch".
  */
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
-    int count, i;
+    int i;
     sint64 remain;
     object *tmp, *coin_objs[NUM_COINS], *next;
+    object *other_money[16]; /* collects MONEY objects not matching coins[] */
+    size_t other_money_len; /* number of allocated entries in other_money[] */
     archetype *at;
 
     if (pouch->type != PLAYER && pouch->type != CONTAINER) return to_pay;
@@ -555,6 +660,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     for (i=0; i<NUM_COINS; i++) coin_objs[i] = NULL;
 
     /* This hunk should remove all the money objects from the player/container */
+    other_money_len = 0;
     for (tmp=pouch->inv; tmp; tmp=next) {
         next = tmp->below;
         if (tmp->type == MONEY) {
@@ -580,8 +686,17 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                     break;
                 }
             }
-            if (i==NUM_COINS)
-                LOG(llevError,"in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
+            if (i==NUM_COINS) {
+                if (other_money_len >= sizeof(other_money)/sizeof(*other_money)) {
+                    LOG(llevError, "pay_for_item: Cannot store non-standard money object %s\n", tmp->arch->name);
+                } else {
+                    remove_ob(tmp);
+                    if(pouch->type == PLAYER) {
+                        esrv_del_item(pl->contr, tmp->count);
+                    }
+                    other_money[other_money_len++] = tmp;
+                }
+            }
         }
     }
 
@@ -596,43 +711,33 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
             coin_objs[i]->nrof = 0;
         }
 
-    for (i=0; i<NUM_COINS; i++) {
-        int num_coins;
-        if (coin_objs[i]->nrof*coin_objs[i]->value> remain) {
-            num_coins = remain / coin_objs[i]->value;
-            if ((uint64)num_coins*(uint64)coin_objs[i]->value < remain) num_coins++;
-        } else {
-            num_coins = coin_objs[i]->nrof;
-        }
-        remain -= (sint64) num_coins * (sint64)coin_objs[i]->value;
-        coin_objs[i]->nrof -= num_coins;
-        /* Now start making change.  Start at the coin value
-         * below the one we just did, and work down to
-         * the lowest value.
-         */
-        count=i-1;
-        while (remain<0 && count>=0) {
-            num_coins = -remain/ coin_objs[count]->value;
-            coin_objs[count]->nrof += num_coins;
-            remain += num_coins * coin_objs[count]->value;
-            count--;
-        }
-    }
-    for (i=0; i<NUM_COINS; i++) {
-        if (coin_objs[i]->nrof) {
-            object *tmp = insert_ob_in_ob(coin_objs[i], pouch);
+    /* Try to pay from standard coins first. */
+    remain = remove_value(coin_objs, remain);
 
-            esrv_send_item(pl, tmp);
-            esrv_send_item (pl, pouch);
-            if (pl != pouch) 
-                esrv_update_item (UPD_WEIGHT, pl, pouch);
-            if (pl->type != PLAYER) {
-                esrv_send_item (pl, pl);
-            }
-        } else {
-            free_object(coin_objs[i]);
+    /* Now pay from non-standard coins until all is paid. */
+    for (i = 0; i < other_money_len && remain > 0; i++) {
+        uint32 nrof;
+        object *coin;
+
+        coin = other_money[i];
+
+        /* Find the minimal number of coins to use. This prevents converting
+	 * excess non-standard coins to standard money.
+	 */
+        nrof = (remain+coin->value-1)/coin->value;
+        if (nrof > coin->nrof) {
+            nrof = coin->nrof;
         }
+        coin->nrof -= nrof;
+        add_value(coin_objs, nrof*coin->value);
+
+        remain = remove_value(coin_objs, remain);
     }
+
+    /* re-insert remaining coins into player */
+    insert_objects(pl, pouch, coin_objs, NUM_COINS);
+    insert_objects(pl, pouch, other_money, other_money_len);
+
     return(remain);
 }
 

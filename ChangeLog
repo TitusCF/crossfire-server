@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1599307:
+server/shop.c: In pay_from_container() handle non-standard MONEY objects when
+   buying items.
+Andreas Kirschbaum 2006-11-19
+
 socket/info.c: In draw_ext_info() do not crash for out of memory.
 Andreas Kirschbaum 2006-11-19
 
