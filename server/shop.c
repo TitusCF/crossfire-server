@@ -581,7 +581,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                 }
             }
             if (i==NUM_COINS)
-            LOG(llevError,"in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
+                LOG(llevError,"in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
         }
     }
 

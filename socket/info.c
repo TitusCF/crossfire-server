@@ -247,10 +247,10 @@ void draw_ext_info(
 
         if (oldmessage) {
             buf = (char*)oldmessage;
-	    } else {
+        } else {
             buf = strdup_local(message);
-            if (buf==NULL)
-            LOG(llevError,"info::draw_ext_info -> Out of memory!");
+            if (buf == NULL)
+                LOG(llevError, "info::draw_ext_info -> Out of memory!");
             strip_media_tag(buf);
         }
         if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
