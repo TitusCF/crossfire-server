@@ -338,6 +338,13 @@ int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir
 	return 0;
     }
 
+    /* This can happen if a player does a 'magic rune of dispel'.  Without
+     * any skill, chance of success is zero, and we don't know who to tell
+     * (as otherwise we would have a skill pointer).  Plus, trap_disarm()
+     * presumes skill is not null and will crash if it is.
+     */
+    if (!skill) return 0;
+
     for(tmp=get_map_ob(m,x, y); tmp!=NULL;  tmp=tmp->above)  {
 	if(tmp->type==RUNE || tmp->type==TRAP) break;
 

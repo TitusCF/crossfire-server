@@ -1239,6 +1239,16 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	change_skill(op, skill, 0);    /* needed for proper exp credit */
     }
 
+    /* Need to get proper ownership for spells cast via runes - these are not
+     * the normal 'rune of fire', but rather the magic runes that let the player
+     * put some other spell into the rune (glyph, firetrap, magic rune, etc)
+     */
+    if (caster->type == RUNE) {
+	object *owner = get_owner(caster);
+
+	if (owner) skill = find_skill_by_name(owner, caster->skill);
+    }
+
     switch(spell_ob->subtype) {
 	/* The order of case statements is same as the order they show up
 	 * in in spells.h.

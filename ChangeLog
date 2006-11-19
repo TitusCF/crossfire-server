@@ -17,6 +17,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/rune.c: If skill is NULL in dispel_rune(), just return as server
+  will otherwise crash in trap_disarm()
+server/spell_util.c: Fix bug in that runes that hold other spells (glyphs,
+   firetraps, magic runes, etc) do not find a skill object, and thus
+   player doesn't get exp.  Instead, for runes, try to find owner, and
+   then the relevant skill object.
+MSW 2006-11-18
+
 Documentation tweaks.
  include/object.h: doxygen-like comments.
  Doxyfile: created with some defaults.
