@@ -31,13 +31,13 @@
 #include <sproto.h>
 #endif
 
-/* given that 'pet' is a friendly object, this function returns a
+/**
+ * Given that 'pet' is a friendly object, this function returns a
  * monster the pet should attack, NULL if nothing appropriate is
  * found.  it basically looks for nasty things around the owner
  * of the pet to attack.
- * this is now tilemap aware.
+ * This is now tilemap aware.
  */
-
 object *get_pet_enemy(object * pet, rv_vector *rv){
     object *owner, *tmp, *attacker, *tmp3;
     int i;
@@ -237,7 +237,7 @@ void terminate_all_pets(object *owner) {
   }
 }
 
-/*
+/**
  * Unfortunately, sometimes, the owner of a pet is in the
  * process of entering a new map when this is called.
  * Thus the map isn't loaded yet, and we have to remove
@@ -245,7 +245,6 @@ void terminate_all_pets(object *owner) {
  * Interesting enough, we don't use the passed map structure in
  * this function.
  */
-
 void remove_all_pets(mapstruct *map) {
   objectlink *obl, *next;
   object *owner;
@@ -407,7 +406,8 @@ void pet_move(object * ob)
  *
  ****************************************************************************/
 
-/* fix_summon_pet() - this makes multisquare/single square monsters
+/**
+ * This makes multisquare/single square monsters
  * proper for map insertion. 
  * at is the archetype, op is the caster of the spell, dir is the
  * direction the monster should be placed in.
@@ -487,9 +487,10 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
     return head;
 }
 
-/* updated this to allow more than the golem 'head' to attack */
-/* op is the golem to be moved. */
-
+/**
+ * Updated this to allow more than the golem 'head' to attack.
+ * op is the golem to be moved.
+ */
 void move_golem(object *op) {
     int made_attack=0;
     object *tmp;
@@ -579,7 +580,8 @@ void move_golem(object *op) {
     if(made_attack) update_object(op,UP_OBJ_FACE);
 }
 
-/* this is a really stupid function when you get down and
+/**
+ * This is a really stupid function when you get down and
  * look at it.  Keep it here for the time being - makes life
  * easier if we ever decide to do more interesting thing with
  * controlled golems.
@@ -588,7 +590,8 @@ void control_golem(object *op,int dir) {
     op->direction=dir;
 }
 
-/* summon golem: summons a monster for 'op'.  caster is the object
+/**
+ * Summons a monster for 'op'.  caster is the object
  * casting the spell, dir is the direction to place the monster,
  * at is the archetype of the monster, and spob is the spell
  * object.  At this stage, all spob is really used for is to
@@ -742,12 +745,12 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
  *
  ***************************************************************************/
 
-/* Returns a monster (chosen at random) that this particular player (and his
+/**
+ * Returns a monster (chosen at random) that this particular player (and his
  * god) find acceptable.  This checks level, races allowed by god, etc
  * to determine what is acceptable.
  * This returns NULL if no match was found.
  */
-
 static object *choose_cult_monster(object *pl, object *god, int summon_level) {
     char buf[MAX_BUF];
     const char *race;
@@ -817,8 +820,9 @@ static object *choose_cult_monster(object *pl, object *god, int summon_level) {
     return NULL;
 }
 
-
-
+/**
+ * General purpose sommuning function.
+ */
 int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg)
 {
     sint16 x,y, nrof=1, i;
@@ -826,98 +830,103 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
     int ndir;
 
     if (spell_ob->other_arch) {
-	summon_arch = spell_ob->other_arch;
+        summon_arch = spell_ob->other_arch;
     } else if (spell_ob->randomitems) {
-	int level = caster_level(caster, spell_ob);
-	treasure *tr, *lasttr=NULL;;
+        int level = caster_level(caster, spell_ob);
+        treasure *tr, *lasttr=NULL;;
 
-	/* In old code, this was a very convuluted for statement,   
-	 * with all the checks in the 'for' portion itself.  Much
-	 * more readable to break some of the conditions out.
-	 */
-	for (tr=spell_ob->randomitems->items; tr; tr=tr->next) {
-	    if (level < tr->magic) break;
-	    lasttr = tr;
-	    if(stringarg && !strcmp(tr->item->name,stringarg)) break;
-	    if (tr->next == NULL || tr->next->item == NULL) break;
-	}
-	if (!lasttr) {
-	    LOG(llevError,"Treasurelist %s did not generate a valid entry in summon_object\n",
-		spell_ob->randomitems->name);
-	    draw_ext_info(NDI_UNIQUE, 0, op,
-			  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "The spell fails to summon any monsters.", NULL);
-	    return 0;
-	}
-	summon_arch = lasttr->item;
-	nrof = lasttr->nrof;
+        /* In old code, this was a very convuluted for statement,   
+         * with all the checks in the 'for' portion itself.  Much
+         * more readable to break some of the conditions out.
+         */
+        for (tr=spell_ob->randomitems->items; tr; tr=tr->next) {
+            if (level < tr->magic)
+                break;
+            lasttr = tr;
+            if(stringarg && !strcmp(tr->item->name,stringarg))
+                break;
+            if (tr->next == NULL || tr->next->item == NULL)
+                break;
+        }
+        if (!lasttr) {
+            LOG(llevError,"Treasurelist %s did not generate a valid entry in summon_object\n",
+                spell_ob->randomitems->name);
+            draw_ext_info(NDI_UNIQUE, 0, op,
+                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "The spell fails to summon any monsters.", NULL);
+            return 0;
+        }
+        summon_arch = lasttr->item;
+        nrof = lasttr->nrof;
 
     } else if (spell_ob->race && !strcmp(spell_ob->race,"GODCULTMON")) {
-	object *god=find_god(determine_god(op)), *mon, *owner;
-	int summon_level, tries;
+        object *god=find_god(determine_god(op)), *mon, *owner;
+        int summon_level, tries;
 
-	if (!god && ((owner=get_owner(op))!=NULL)) {
-	    god = find_god(determine_god(owner));
-	}
-	/* If we can't find a god, can't get what monster to summon */
-	if (!god) return 0;
+        if (!god && ((owner=get_owner(op))!=NULL)) {
+            god = find_god(determine_god(owner));
+        }
+        /* If we can't find a god, can't get what monster to summon */
+        if (!god)
+            return 0;
 
-	if (!god->race) {
-	    draw_ext_info_format(NDI_UNIQUE, 0,op,
-		 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		 "%s has no creatures that you may summon!",
-		 "%s has no creatures that you may summon!",
-		 god->name);
-	    return 0;
-	}
-	/* the summon level */
-	summon_level=caster_level(caster, spell_ob);
-	if (summon_level==0) summon_level=1;
-	tries = 0;
-	do {
-	    mon = choose_cult_monster(op, god,summon_level);
-	    if (!mon) {
-		draw_ext_info_format(NDI_UNIQUE, 0,op,
-		     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		     "%s fails to send anything.",
-		     "%s fails to send anything.",
-		     god->name);
-		return 0;
-	    }
-	    ndir = dir;
-	    if (!ndir)
-		ndir = find_free_spot(mon, op->map, op->x, op->y, 1, SIZEOFFREE);
-	    if (ndir == -1 || ob_blocked(mon,op->map, op->x + freearr_x[ndir], op->y+freearr_y[ndir])) {
-		ndir=-1;
-		if (++tries == 5) {
-		    draw_ext_info(NDI_UNIQUE, 0,op,
-				  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-				  "There is something in the way.", NULL);
-		    return 0;
-		}
-	    }
-	} while (ndir == -1);
-	if (mon->level > (summon_level/2))
-	    nrof = random_roll(1, 2, op, PREFER_HIGH);
-	else
-	nrof =  die_roll(2, 2, op, PREFER_HIGH);
-	summon_arch = mon->arch;
+        if (!god->race) {
+            draw_ext_info_format(NDI_UNIQUE, 0,op,
+                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "%s has no creatures that you may summon!",
+                "%s has no creatures that you may summon!",
+                god->name);
+            return 0;
+        }
+        /* the summon level */
+        summon_level=caster_level(caster, spell_ob);
+        if (summon_level==0)
+            summon_level=1;
+        tries = 0;
+        do {
+            mon = choose_cult_monster(op, god,summon_level);
+            if (!mon) {
+                draw_ext_info_format(NDI_UNIQUE, 0,op,
+                    MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                    "%s fails to send anything.",
+                    "%s fails to send anything.",
+                    god->name);
+                return 0;
+            }
+            ndir = dir;
+            if (!ndir)
+                ndir = find_free_spot(mon, op->map, op->x, op->y, 1, SIZEOFFREE);
+            if (ndir == -1 || ob_blocked(mon,op->map, op->x + freearr_x[ndir], op->y+freearr_y[ndir])) {
+                ndir=-1;
+                if (++tries == 5) {
+                    draw_ext_info(NDI_UNIQUE, 0,op,
+                        MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                        "There is something in the way.", NULL);
+                    return 0;
+                }
+            }
+        } while (ndir == -1);
+        if (mon->level > (summon_level/2))
+            nrof = random_roll(1, 2, op, PREFER_HIGH);
+        else
+            nrof =  die_roll(2, 2, op, PREFER_HIGH);
+        summon_arch = mon->arch;
     } else {
-	summon_arch = NULL;
+        summon_arch = NULL;
     }
 
     if (spell_ob->stats.dam)
-	nrof += spell_ob->stats.dam + SP_level_dam_adjust(caster, spell_ob);
+        nrof += spell_ob->stats.dam + SP_level_dam_adjust(caster, spell_ob);
 
     if (!summon_arch) {
-	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		      "There is no monsters available for summoning.", NULL);
-	return 0;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "There is no monsters available for summoning.", NULL);
+        return 0;
     }
 
     for (i=1; i <= nrof; i++) {
-	archetype *atmp;
-	object *prev=NULL, *head=NULL, *tmp;
+        archetype *atmp;
+        object *prev=NULL, *head=NULL, *tmp;
 
         if (dir) {
             ndir = dir;
@@ -932,63 +941,66 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 
         if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y)){
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "There is something in the way.", NULL);
+                "There is something in the way.", NULL);
             if (nrof > 1)
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			      "No more pets for this casting.", NULL);
+                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                    "No more pets for this casting.", NULL);
 
             return nrof > 1;
         }
 
-	for (atmp = summon_arch; atmp!=NULL; atmp=atmp->more) {
-	    tmp = arch_to_object(atmp);
-	    if (atmp == summon_arch) {
-		if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
-		    set_owner(tmp, op);
-		    set_spell_skill(op, caster, spell_ob, tmp);
-		    tmp->enemy = op->enemy;
-		    tmp->type = 0;
-		    CLEAR_FLAG(tmp, FLAG_SLEEP);
-		    if (op->type == PLAYER || QUERY_FLAG(op, FLAG_FRIENDLY)) {
-			/* If this is not set, we make it friendly */
-			if (!QUERY_FLAG(spell_ob, FLAG_MONSTER)) {
-			    SET_FLAG(tmp, FLAG_FRIENDLY);
-			    add_friendly_object(tmp);
-			    tmp->stats.exp = 0;
-			    if (spell_ob->attack_movement) 
-				tmp->attack_movement = spell_ob->attack_movement;
-			    if (get_owner(op))
-				set_owner(tmp, get_owner(op));
-			}
-		    }
-		}
-		if (tmp->speed > MIN_ACTIVE_SPEED) tmp->speed_left = -1;
-	    }
-	    if (head == NULL) head = tmp;
-	    else {
-		tmp->head = head;
-		prev->more = tmp;
-	    }
-	    prev = tmp;
-	    tmp->x = op->x + x + tmp->arch->clone.x;
-	    tmp->y = op->y + y + tmp->arch->clone.y;
-	    tmp->map = op->map;
-	}
-	head->direction = freedir[ndir];
-	head->stats.exp = 0;
-	head = insert_ob_in_map(head, head->map, op, 0);
-	if (head && head->randomitems) {
-	    object *tmp;
-	    create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
-	    for (tmp=head->inv; tmp; tmp=tmp->below)
-		if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
-	}
+        for (atmp = summon_arch; atmp!=NULL; atmp=atmp->more) {
+            tmp = arch_to_object(atmp);
+            if (atmp == summon_arch) {
+                if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                    set_owner(tmp, op);
+                    set_spell_skill(op, caster, spell_ob, tmp);
+                    tmp->enemy = op->enemy;
+                    tmp->type = 0;
+                    CLEAR_FLAG(tmp, FLAG_SLEEP);
+                    if (op->type == PLAYER || QUERY_FLAG(op, FLAG_FRIENDLY)) {
+                        /* If this is not set, we make it friendly */
+                        if (!QUERY_FLAG(spell_ob, FLAG_MONSTER)) {
+                            SET_FLAG(tmp, FLAG_FRIENDLY);
+                            add_friendly_object(tmp);
+                            tmp->stats.exp = 0;
+                            if (spell_ob->attack_movement) 
+                                tmp->attack_movement = spell_ob->attack_movement;
+                            if (get_owner(op))
+                                set_owner(tmp, get_owner(op));
+                        }
+                    }
+                }
+                if (tmp->speed > MIN_ACTIVE_SPEED) tmp->speed_left = -1;
+            }
+            if (head == NULL)
+                head = tmp;
+            else {
+                tmp->head = head;
+                prev->more = tmp;
+            }
+            prev = tmp;
+            tmp->x = op->x + x + tmp->arch->clone.x;
+            tmp->y = op->y + y + tmp->arch->clone.y;
+            tmp->map = op->map;
+        }
+        head->direction = freedir[ndir];
+        head->stats.exp = 0;
+        head = insert_ob_in_map(head, head->map, op, 0);
+        if (head && head->randomitems) {
+            object *tmp;
+            create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
+            for (tmp=head->inv; tmp; tmp=tmp->below)
+                if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
+        }
     } /* for i < nrof */
     return 1;
 }
 
-/* recursively look through the owner property of objects until the real owner
-is found */
+/**
+ * Recursively look through the owner property of objects until the real owner
+ * is found
+ */
 static object *get_real_owner(object *ob) {
 	object *realowner = ob;
 	
@@ -1001,8 +1013,10 @@ static object *get_real_owner(object *ob) {
 	return realowner;
 }
 		    
-/* determines if checks so pets don't attack players or other pets should be
-overruled by the arena petmode */
+/**
+ * Determines if checks so pets don't attack players or other pets should be
+ * overruled by the arena petmode
+ */
 int should_arena_attack(object *pet,object *owner,object *target) {
 	object *rowner, *towner;
 	
