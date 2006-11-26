@@ -787,10 +787,12 @@ void add_statbonus(object *op) {
  * This functions starts from base values (archetype or player object)
  * and then adjusts them according to what the player/monster has equipped.
  *
+ * Note that a player always has stats reset to their initial value.
+ *
  * July 95 - inserted stuff to handle new skills/exp system - b.t.
  * spell system split, grace points now added to system  --peterm
  *
- * Note that a player always has stats reset to their initial value.
+ * November 2006: max armor speed is always taken into account, no exception.
  */
 void fix_object(object *op) {
     int i,j;
@@ -1339,21 +1341,22 @@ void fix_object(object *op) {
     else /* Something wrong here...: */
         op->speed /= (float)(1.0-added_speed);
 
+    op->speed+=bonus_speed/10.0; /* Not affected by limits */
+
+    if(op->type == PLAYER) {
+        /* f is a number the represents the number of kg above (positive num)
+         * or below (negative number) that the player is carrying.  If above
+         * weight limit, then player suffers a speed reduction based on how
+         * much above he is, and what is max carry is
+         */
+        f=(op->carrying/1000)-max_carry[op->stats.Str];
+        if(f>0)
+            op->speed=op->speed/(1.0+f/max_carry[op->stats.Str]);
+    }
+
     /* Max is determined by armour */
     if(op->speed>max)
         op->speed=max;
-
-    if(op->type == PLAYER) {
-	/* f is a number the represents the number of kg above (positive num)
-	 * or below (negative number) that the player is carrying.  If above
-	 * weight limit, then player suffers a speed reduction based on how
-	 * much above he is, and what is max carry is
-	 */
-	f=(op->carrying/1000)-max_carry[op->stats.Str];
-	if(f>0) op->speed=op->speed/(1.0+f/max_carry[op->stats.Str]);
-    }
-
-    op->speed+=bonus_speed/10.0; /* Not affected by limits */
 
     /* Put a lower limit on speed.  Note with this speed, you move once every
      * 100 ticks or so.  This amounts to once every 12 seconds of realtime.

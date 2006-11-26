@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1539207: "Max speed" attribute does not work
+ common/living.c: armor's max_speed should always be taken into account.
+Ryo 2006-11-26
 
 Fix indentation and comments, cosmetic changes only.
  common/living.c
