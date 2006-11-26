@@ -19,6 +19,7 @@ Changes for SVN:
 
 
 Fix indentation and comments, cosmetic changes only.
+ common/living.c
  server/pets.c:
 Ryo 2006-11-26
 
