@@ -17,11 +17,6 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Cosmetic/indentation/comments fixes only.
- common/living.c
- server/pets.c
-Ryo 2006-11-26
-
 Fix bug #1599307:
 server/shop.c: In pay_from_container() handle non-standard MONEY objects when
    buying items.
