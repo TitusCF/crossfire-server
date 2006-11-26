@@ -3593,6 +3593,8 @@ treasure thief_class_items
   more
   arch shortsword
   more
+  arch skill_bargaining
+  more
   arch skill_stealing
   more
   arch lockpicks
