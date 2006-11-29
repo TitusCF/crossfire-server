@@ -1314,6 +1314,10 @@ int check_pick(object *op) {
       if(op->contr->mode & PU_DRINK)
 	if (tmp->type == DRINK || (tmp->type == POISON && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)))
 	{ pick_up(op, tmp); if(0)fprintf(stderr,"DRINK\n"); continue; }
+      /* we don't forget dragon food */
+      if(op->contr->mode & PU_FLESH)
+	if (tmp->type == FLESH)
+	{ pick_up(op, tmp); if(0)fprintf(stderr,"FLESH\n"); continue; }
 
       if(op->contr->mode & PU_POTION)
 	if (tmp->type == POTION)

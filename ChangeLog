@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Merge patch #1558073: newpickup flesh courtesy bencha
+ include/define.h
+ server/c_object.c player.c
+Ryo 2006-11-29
+
 Implement feature request #1555887: Thief player - should have bargaining as default skill
  lib/treasures: add skill to class items.
 Ryo 2006-11-26
