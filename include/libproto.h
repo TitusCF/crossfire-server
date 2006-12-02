@@ -263,6 +263,7 @@ extern void make_path_to_file(char *filename);
 extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(const object *op);
+extern client_spell* get_client_spell_state(player* pl, object* spell);
 /* quest.c */
 extern int quest_is_quest_marker(const object *marker, int task);
 extern int quest_is_in_progress(const object *marker, int task);

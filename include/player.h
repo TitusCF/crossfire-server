@@ -92,6 +92,17 @@ typedef enum unapplymode {
 			    /* to control which of these will be unapplied. */
 } unapplymode;
 
+/**
+ * This stores, for a spell a player knows, the last sp/gr/dam information sent to client.
+ */
+typedef struct client_spell {
+    object *spell;
+    sint16 last_sp;
+    sint16 last_grace;
+    sint16 last_dam;
+    struct client_spell *next;
+} client_spell;
+
 /* not really the player, but tied pretty closely */  
 typedef struct party_struct {
     char * partyleader;
@@ -211,6 +222,7 @@ typedef struct pl {
     object	*mark;		    /* marked object */
     uint32	mark_count;	    /* count of mark object */
     object	*transport;	    /* transport the player is in */
+    client_spell* spell_state; /**< Spell information sent to client */
     /* Special DM fields */
     tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
     int     stack_position; /* Current stack position, 0 for no item */

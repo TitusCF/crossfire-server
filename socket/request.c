@@ -2326,21 +2326,23 @@ void esrv_update_spells(player *pl) {
     SockList sl;
     int flags=0;
     object *spell;
+    client_spell* spell_info;
     if (!pl->socket.monitor_spells) return;
     for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
 	if (spell->type == SPELL) {
+        spell_info = get_client_spell_state(pl, spell);
 	    /* check if we need to update it*/
-	    if (spell->last_sp != SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA)) {
-		spell->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
-		flags |= UPD_SP_MANA;
+	    if (spell_info->last_sp != SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA)) {
+            spell_info->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
+			flags |= UPD_SP_MANA;
 	    }
-	    if (spell->last_grace != SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE)) {
-		spell->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
-		flags |= UPD_SP_GRACE;
+        if (spell_info->last_grace != SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE)) {
+            spell_info->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
+			flags |= UPD_SP_GRACE;
 	    }
-	    if (spell->last_eat != spell->stats.dam+SP_level_dam_adjust(pl->ob, spell)) {
-		spell->last_eat = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
-		flags |= UPD_SP_DAMAGE;
+        if (spell_info->last_dam != spell->stats.dam+SP_level_dam_adjust(pl->ob, spell)) {
+            spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+			flags |= UPD_SP_DAMAGE;
 	    }
 	    if (flags !=0) {
 		sl.buf = malloc(MAXSOCKSENDBUF);
@@ -2348,9 +2350,9 @@ void esrv_update_spells(player *pl) {
 		sl.len=strlen((char*)sl.buf);
 		SockList_AddChar(&sl, flags);
 		SockList_AddInt(&sl, spell->count);
-		if (flags & UPD_SP_MANA) SockList_AddShort(&sl, spell->last_sp);
-		if (flags & UPD_SP_GRACE) SockList_AddShort(&sl, spell->last_grace);
-		if (flags & UPD_SP_DAMAGE) SockList_AddShort(&sl, spell->last_eat);
+        if (flags & UPD_SP_MANA) SockList_AddShort(&sl, spell_info->last_sp);
+        if (flags & UPD_SP_GRACE) SockList_AddShort(&sl, spell_info->last_grace);
+        if (flags & UPD_SP_DAMAGE) SockList_AddShort(&sl, spell_info->last_dam);
 		flags = 0;
 		Send_With_Handling(&pl->socket, &sl);
 		free(sl.buf);
@@ -2377,23 +2379,25 @@ void esrv_remove_spell(player *pl, object *spell) {
 
 /** appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell (player *pl, SockList *sl, object *spell) {
+    client_spell* spell_info;
     int len, i, skill=0; 
 
     if (!(spell->name)) {
         LOG(llevError, "item number %d is a spell with no name.\n", spell->count);
         return;
     }
+    spell_info = get_client_spell_state(pl, spell);
     SockList_AddInt(sl, spell->count);
     SockList_AddShort(sl, spell->level);
     SockList_AddShort(sl, spell->casting_time);
     /* store costs and damage in the object struct, to compare to later */
-    spell->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
-    spell->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
-    spell->last_eat = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+    spell_info->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
+    spell_info->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
+    spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
     /* send the current values */
-    SockList_AddShort(sl, spell->last_sp);
-    SockList_AddShort(sl, spell->last_grace);
-    SockList_AddShort(sl, spell->last_eat);
+    SockList_AddShort(sl, spell_info->last_sp);
+    SockList_AddShort(sl, spell_info->last_grace);
+    SockList_AddShort(sl, spell_info->last_dam);
 
     /* figure out which skill it uses, if it uses one */
     if (spell->skill) {

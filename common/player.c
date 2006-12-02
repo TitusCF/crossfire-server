@@ -29,25 +29,39 @@
 #include <global.h>
 #include <funcpoint.h>
 
+/**
+ * Clears player structure, including pointed object (through free_object).
+ */
 void free_player(player *pl) {
 
     if (first_player!=pl) {
-	player *prev=first_player;
-	while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
-	    prev=prev->next;
-	if(prev->next!=pl) {
-	    LOG(llevError,"Free_player: Can't find previous player.\n");
-	    exit(1);
-	}
-	prev->next=pl->next;
-    } else first_player=pl->next;
+        player *prev=first_player;
+        while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
+            prev=prev->next;
+        if(prev->next!=pl) {
+            LOG(llevError,"Free_player: Can't find previous player.\n");
+            exit(1);
+        }
+        prev->next=pl->next;
+    } else
+        first_player=pl->next;
 
     if(pl->ob != NULL) {
-	if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) remove_ob(pl->ob);
-	free_object(pl->ob);
+        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) remove_ob(pl->ob);
+        free_object(pl->ob);
     }
-    /* Clear item stack */
-    if (pl->stack_items) free( pl->stack_items );
+    /* Clear item stack (used by DMs only) */
+    if (pl->stack_items)
+        free( pl->stack_items );
+
+    client_spell *info = pl->spell_state;
+    client_spell* next;
+    while ( info )
+    {
+        next = info->next;
+        free( info );
+        info = next;
+    }
 
     free(pl->socket.faces_sent);
 
@@ -55,7 +69,8 @@ void free_player(player *pl) {
 }
 
 
-/* Determine if the attacktype represented by the
+/**
+ * Determine if the attacktype represented by the
  * specified attack-number is enabled for dragon players.
  * A dragon player (quetzal) can gain resistances for
  * all enabled attacktypes.
@@ -68,8 +83,8 @@ int atnr_is_dragon_enabled(int attacknr) {
   return 0;
 }
 
-/*
- * returns true if the adressed object 'ob' is a player
+/**
+ * Returns true if the adressed object 'ob' is a player
  * of the dragon race.
  */
 int is_dragon_pl(const object* op) {
@@ -78,4 +93,24 @@ int is_dragon_pl(const object* op) {
       strcmp(op->arch->clone.race, "dragon")==0)
     return 1;
   return 0;
+}
+
+/**
+ * Gets the (client-side) spell state for specified spell. Will be created to empty state if not found.
+ */
+client_spell* get_client_spell_state(player* pl, object* spell)
+{
+    client_spell* info = pl->spell_state;
+    while (info)
+    {
+        if (info->spell == spell)
+            return info;
+        info = info->next;
+    }
+    info = (client_spell*)malloc(sizeof(client_spell));
+    memset(info, 0, sizeof(client_spell));
+    info->next = pl->spell_state;
+    info->spell = spell;
+    pl->spell_state = info;
+    return info;
 }
