@@ -241,8 +241,8 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   if((treasureoptions & KEYREQUIRED)&&n_treasures>1) {
     char keybuf[256];
     sprintf(keybuf,"%d",(int)RANDOM());
-    the_chest->slaying = add_string(keybuf);
-    keyplace(map,x,y,keybuf,PASS_DOORS,1,RP);
+    if (keyplace(map,x,y,keybuf,PASS_DOORS,1,RP))
+        the_chest->slaying = add_string(keybuf);
   }
 
   /* actually place the chest. */
@@ -276,7 +276,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
 
 
 /**
- * places keys in the map, preferably in something alive.  
+ * Places keys in the map, preferably in something alive.  
  * keycode is the key's code,
  * door_flag is either PASS_DOORS or NO_PASS_DOORS.
  * NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
@@ -288,21 +288,12 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
  *
  * Returns 1 if key was successfully placed, 0 else.
  */
-	
 int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,RMParms *RP) {
     int i,j;
     int kx,ky;
     object *the_keymaster; /* the monster that gets the key. */
     object *the_key;
     char keybuf[256];
-
-    /* get a key and set its keycode */
-    the_key = create_archetype("key2");
-    the_key->slaying = add_string(keycode); 
-    free_string(the_key->name);
-    snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
-    the_key->name = add_string(keybuf);
-
 
     if (door_flag==PASS_DOORS) {
         int tries=0;
@@ -337,25 +328,41 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
                 return 0;
             the_keymaster=find_monster_in_room(map,x,y,RP);
             if(the_keymaster==NULL)  /* if fail, find a spot to drop the key. */
-                find_spot_in_room(map,x,y,&kx,&ky,RP);
+                if (!find_spot_in_room(map,x,y,&kx,&ky,RP))
+                    return 0;
         }
         else {
+            /* It can happen that spots around that point are all blocked, so try to look farther away if needed */
             int sum=0; /* count how many keys we actually place */
-            /* I'm lazy, so just try to place in all 4 directions. */
-            sum +=keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
-            sum +=keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
-            sum +=keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
-            sum +=keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
-            if(sum < 2) { /* we might have made a disconnected map-place more keys. */
-                /* diagnoally this time. */
-                keyplace(map,x+1,y+1,keycode,NO_PASS_DOORS,1,RP);
-                keyplace(map,x+1,y-1,keycode,NO_PASS_DOORS,1,RP);
-                keyplace(map,x-1,y+1,keycode,NO_PASS_DOORS,1,RP);
-                keyplace(map,x-1,y-1,keycode,NO_PASS_DOORS,1,RP);
+            int distance = 1;
+            while ( distance < 5 )
+            {
+                /* I'm lazy, so just try to place in all 4 directions. */
+                sum += keyplace(map, x + distance, y, keycode, NO_PASS_DOORS, 1, RP);
+                sum += keyplace(map, x, y + distance, keycode, NO_PASS_DOORS, 1, RP);
+                sum += keyplace(map, x - distance, y, keycode, NO_PASS_DOORS, 1, RP);
+                sum += keyplace(map, x, y - distance, keycode, NO_PASS_DOORS, 1, RP);
+                if( sum < 2 ) { /* we might have made a disconnected map-place more keys. */
+                    /* diagnoally this time. */
+                    keyplace(map, x + distance, y + distance, keycode, NO_PASS_DOORS, 1, RP);
+                    keyplace(map, x + distance, y - distance, keycode, NO_PASS_DOORS, 1, RP);
+                    keyplace(map, x - distance, y + distance, keycode, NO_PASS_DOORS, 1, RP);
+                    keyplace(map, x - distance, y - distance, keycode, NO_PASS_DOORS, 1, RP);
+                }
+                if ( sum > 0 )
+                    return 1;
+                distance++;
             }
-            return 1;
+            return 0;
         }
     }
+
+    /* get a key and set its keycode */
+    the_key = create_archetype("key2");
+    the_key->slaying = add_string(keycode); 
+    free_string(the_key->name);
+    snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
+    the_key->name = add_string(keybuf);
 
     if(the_keymaster==NULL) {
         the_key->x = kx;
@@ -471,8 +478,11 @@ void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
 
 }
 
-/* find a random non-blocked spot in this room to drop a key. */
-void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
+/**
+ * Find a random non-blocked spot in this room to drop a key.
+ * Returns 1 if success, 0 else.
+ */
+int find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
   char **layout2;
   int i,j;
   number_of_free_spots_in_room=0;
@@ -504,6 +514,10 @@ void find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
   free(layout2);
   free(room_free_spots_x);
   free(room_free_spots_y);
+  
+  if (number_of_free_spots_in_room > 0)
+      return 1;
+  return 0;
 }
 
 
@@ -719,8 +733,8 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
             doorlist[i]=new_door;
             insert_ob_in_map(new_door,map,NULL,0);
             snprintf(keybuf,256,"%d",(int)RANDOM());
-            new_door->slaying = add_string(keybuf);
-            keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
+            if (keyplace(map, new_door->x, new_door->y, keybuf, NO_PASS_DOORS, 2, RP) )
+                new_door->slaying = add_string(keybuf);
         }
     }
 
@@ -736,7 +750,8 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
                 retrofit_joined_wall(map,door->x,door->y-1,0,RP);
                 retrofit_joined_wall(map,door->x,door->y+1,0,RP);
                 door->face = wallface->face;
-                if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
+                if(!QUERY_FLAG(wallface,FLAG_REMOVED))
+                    remove_ob(wallface);
                 free_object(wallface);
             }
         }

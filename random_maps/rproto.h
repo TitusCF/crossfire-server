@@ -60,7 +60,7 @@ extern int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, 
 extern object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y, RMParms *RP);
 extern object *find_monster_in_room(mapstruct *map, int x, int y, RMParms *RP);
 extern void find_spot_in_room_recursive(char **layout, int x, int y, RMParms *RP);
-extern void find_spot_in_room(mapstruct *map, int x, int y, int *kx, int *ky, RMParms *RP);
+extern int find_spot_in_room(mapstruct *map, int x, int y, int *kx, int *ky, RMParms *RP);
 extern void find_enclosed_spot(mapstruct *map, int *cx, int *cy, RMParms *RP);
 extern void remove_monsters(int x, int y, mapstruct *map);
 extern void find_doors_in_room_recursive(char **layout, mapstruct *map, int x, int y, object **doorlist, int *ndoors, RMParms *RP);

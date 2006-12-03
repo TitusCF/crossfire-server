@@ -17,6 +17,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tentative fix for bugs
+ #1605033: Random map gets blocked
+ #1522796: Random map, locked door(s) and no key
+Random map generator will try harder to put keys, and not lock if no spot found
+(can happen if chest is surrounded by locked doors blocking the corridor).
+Modified files:
+ random_maps/rproto.h
+ random_maps/treasures.c
+Ryo 2006-12-03
+
 Cosmetic fixes only, before bugfix.
  random_maps/treasures.c: fix indentation.
 Ryo 2006-12-03
