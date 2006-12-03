@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1556723: Broken Show invisible - scrolls, wands, staves and rods
+ server/spell_effect.c: use the item's level, and not computed level, to see if should be shown.
+Ryo 2006-12-03
+
 Fix for bug #1569017: Healing gives grace cost to target.
 Information sent to client is now stored in a special structure, to not
  conflict with spell fields. Note that this doesn't fix player files.

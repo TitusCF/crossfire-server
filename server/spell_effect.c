@@ -2197,7 +2197,7 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
 		     tmp->type==TRIGGER_PEDESTAL || tmp->type==SPECIAL_KEY ||
 		     tmp->type==TREASURE || tmp->type==BOOK ||
 		     tmp->type==HOLY_ALTAR))) {
-			if(random_roll(0, skill->level-1, op, PREFER_HIGH) > level/4) {
+			if(random_roll(0, level-1, op, PREFER_HIGH) > tmp->level) {
 			    tmp->invisible=0;
 			    done_one = 1;
 			}
