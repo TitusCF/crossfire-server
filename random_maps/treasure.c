@@ -275,93 +275,97 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
   
 
 
-/* places keys in the map, preferably in something alive.  
-	keycode is the key's code,
-	door_flag is either PASS_DOORS or NO_PASS_DOORS.
-	  NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
-	if n_keys is 1, it will place 1 key.  if n_keys >1, it will place 2-4 keys:
-	it will place 2-4 keys regardless of what nkeys is provided nkeys > 1.
-
-	The idea is that you call keyplace on x,y where a door is, and it'll make
-	sure a key is placed on both sides of the door.
-*/
+/**
+ * places keys in the map, preferably in something alive.  
+ * keycode is the key's code,
+ * door_flag is either PASS_DOORS or NO_PASS_DOORS.
+ * NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
+ * If n_keys is 1, it will place 1 key.  if n_keys >1, it will place 2-4 keys:
+ * it will place 2-4 keys regardless of what nkeys is provided nkeys > 1.
+ *
+ * The idea is that you call keyplace on x,y where a door is, and it'll make
+ * sure a key is placed on both sides of the door.
+ *
+ * Returns 1 if key was successfully placed, 0 else.
+ */
 	
 int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,RMParms *RP) {
-  int i,j;
-  int kx,ky;
-  object *the_keymaster; /* the monster that gets the key. */
-  object *the_key;
-  char keybuf[256];
+    int i,j;
+    int kx,ky;
+    object *the_keymaster; /* the monster that gets the key. */
+    object *the_key;
+    char keybuf[256];
 
-  /* get a key and set its keycode */
-  the_key = create_archetype("key2");
-  the_key->slaying = add_string(keycode); 
-  free_string(the_key->name);
-  snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
-  the_key->name = add_string(keybuf);
+    /* get a key and set its keycode */
+    the_key = create_archetype("key2");
+    the_key->slaying = add_string(keycode); 
+    free_string(the_key->name);
+    snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
+    the_key->name = add_string(keybuf);
 
 
-  if(door_flag==PASS_DOORS) {
-    int tries=0;
-    the_keymaster=NULL;
-    while(tries<15&&the_keymaster==NULL) {
-      i = (RANDOM()%(RP->Xsize-2))+1;
-      j = (RANDOM()%(RP->Ysize-2))+1;
-      tries++;
-      the_keymaster=find_closest_monster(map,i,j,RP);
-    }
-    /* if we don't find a good keymaster, drop the key on the ground. */
-    if(the_keymaster==NULL) {
-      int freeindex;
-
-      freeindex = -1;
-      for(tries = 0; tries < 15 && freeindex == -1; tries++) {
-	kx = (RANDOM()%(RP->Xsize-2))+1;
-	ky = (RANDOM()%(RP->Ysize-2))+1;
-	freeindex = find_first_free_spot(the_key,map,kx,ky);
-      }
-      if(freeindex != -1) {
-	kx += freearr_x[freeindex];
-	ky += freearr_y[freeindex];
-      }
-    }
-  }
-  else {  /* NO_PASS_DOORS --we have to work harder.*/
-    /* don't try to keyplace if we're sitting on a blocked square and
-       NO_PASS_DOORS is set. */
-    if(n_keys==1) {
-      if(wall_blocked(map,x,y)) return 0;
-      the_keymaster=find_monster_in_room(map,x,y,RP);
-      if(the_keymaster==NULL)  /* if fail, find a spot to drop the key. */
-        find_spot_in_room(map,x,y,&kx,&ky,RP);
-    }
-    else {
-      int sum=0; /* count how many keys we actually place */
-      /* I'm lazy, so just try to place in all 4 directions. */
-      sum +=keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
-      sum +=keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
-      sum +=keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
-      sum +=keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
-      if(sum < 2) /* we might have made a disconnected map-place more keys. */
-        {  /* diagnoally this time. */
-          keyplace(map,x+1,y+1,keycode,NO_PASS_DOORS,1,RP);
-          keyplace(map,x+1,y-1,keycode,NO_PASS_DOORS,1,RP);
-          keyplace(map,x-1,y+1,keycode,NO_PASS_DOORS,1,RP);
-          keyplace(map,x-1,y-1,keycode,NO_PASS_DOORS,1,RP);
+    if (door_flag==PASS_DOORS) {
+        int tries=0;
+        the_keymaster=NULL;
+        while(tries<15&&the_keymaster==NULL) {
+            i = (RANDOM()%(RP->Xsize-2))+1;
+            j = (RANDOM()%(RP->Ysize-2))+1;
+            tries++;
+            the_keymaster=find_closest_monster(map,i,j,RP);
         }
-      return 1;
-    }    
-  }
+        /* if we don't find a good keymaster, drop the key on the ground. */
+        if(the_keymaster==NULL) {
+            int freeindex;
 
-  if(the_keymaster==NULL) {
-    the_key->x = kx;
-    the_key->y = ky; 
-    insert_ob_in_map(the_key,map,NULL,0);
+            freeindex = -1;
+            for(tries = 0; tries < 15 && freeindex == -1; tries++) {
+                kx = (RANDOM()%(RP->Xsize-2))+1;
+                ky = (RANDOM()%(RP->Ysize-2))+1;
+                freeindex = find_first_free_spot(the_key,map,kx,ky);
+            }
+            if(freeindex != -1) {
+                kx += freearr_x[freeindex];
+                ky += freearr_y[freeindex];
+            }
+        }
+    }
+    else {  /* NO_PASS_DOORS --we have to work harder.*/
+        /* don't try to keyplace if we're sitting on a blocked square and
+        NO_PASS_DOORS is set. */
+        if(n_keys==1) {
+            if(wall_blocked(map,x,y))
+                return 0;
+            the_keymaster=find_monster_in_room(map,x,y,RP);
+            if(the_keymaster==NULL)  /* if fail, find a spot to drop the key. */
+                find_spot_in_room(map,x,y,&kx,&ky,RP);
+        }
+        else {
+            int sum=0; /* count how many keys we actually place */
+            /* I'm lazy, so just try to place in all 4 directions. */
+            sum +=keyplace(map,x+1,y,keycode,NO_PASS_DOORS,1,RP);
+            sum +=keyplace(map,x,y+1,keycode,NO_PASS_DOORS,1,RP);
+            sum +=keyplace(map,x-1,y,keycode,NO_PASS_DOORS,1,RP);
+            sum +=keyplace(map,x,y-1,keycode,NO_PASS_DOORS,1,RP);
+            if(sum < 2) { /* we might have made a disconnected map-place more keys. */
+                /* diagnoally this time. */
+                keyplace(map,x+1,y+1,keycode,NO_PASS_DOORS,1,RP);
+                keyplace(map,x+1,y-1,keycode,NO_PASS_DOORS,1,RP);
+                keyplace(map,x-1,y+1,keycode,NO_PASS_DOORS,1,RP);
+                keyplace(map,x-1,y-1,keycode,NO_PASS_DOORS,1,RP);
+            }
+            return 1;
+        }
+    }
+
+    if(the_keymaster==NULL) {
+        the_key->x = kx;
+        the_key->y = ky; 
+        insert_ob_in_map(the_key,map,NULL,0);
+        return 1;
+    }
+
+    insert_ob_in_ob(the_key,the_keymaster);
     return 1;
-  }
-  
-  insert_ob_in_ob(the_key,the_keymaster);
-  return 1;
 } 
 
 
@@ -691,47 +695,50 @@ object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
 
 
 
-/* locks and/or hides all the doors in doorlist, or does nothing if
-	opts doesn't say to lock/hide doors. */
+/**
+ * Locks and/or hides all the doors in doorlist, or does nothing if
+ * opts doesn't say to lock/hide doors.
+ * Note that some doors can be not locked if no good spot to put a key was found.
+ */
 
 void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) {
-  object *door;
-  int i;
-  /* lock the doors and hide the keys. */
-  
-  if(opts & DOORED) {
-    for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
-      object *new_door=create_archetype("locked_door1");
-      char keybuf[256];
-      door=doorlist[i];
-      new_door->face = door->face;
-      new_door->x = door->x;
-      new_door->y = door->y;
-      remove_ob(door);
-      free_object(door);
-      doorlist[i]=new_door;
-      insert_ob_in_map(new_door,map,NULL,0);
-      snprintf(keybuf,256,"%d",(int)RANDOM());
-      new_door->slaying = add_string(keybuf);
-      keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
-    }
-  }
+    object *door;
+    int i;
 
-  /* change the faces of the doors and surrounding walls to hide them. */
-  if(opts & HIDDEN) {
-    for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
-      object *wallface;
-      door=doorlist[i];
-      wallface=retrofit_joined_wall(map,door->x,door->y,1,RP);
-      if(wallface!=NULL) {
-        retrofit_joined_wall(map,door->x-1,door->y,0,RP);
-        retrofit_joined_wall(map,door->x+1,door->y,0,RP);
-        retrofit_joined_wall(map,door->x,door->y-1,0,RP);
-        retrofit_joined_wall(map,door->x,door->y+1,0,RP);
-        door->face = wallface->face;
-        if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
-        free_object(wallface);
-      }
+    /* lock the doors and hide the keys. */
+    if(opts & DOORED) {
+        for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
+            object *new_door=create_archetype("locked_door1");
+            char keybuf[256];
+            door=doorlist[i];
+            new_door->face = door->face;
+            new_door->x = door->x;
+            new_door->y = door->y;
+            remove_ob(door);
+            free_object(door);
+            doorlist[i]=new_door;
+            insert_ob_in_map(new_door,map,NULL,0);
+            snprintf(keybuf,256,"%d",(int)RANDOM());
+            new_door->slaying = add_string(keybuf);
+            keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
+        }
     }
-  }
+
+    /* change the faces of the doors and surrounding walls to hide them. */
+    if(opts & HIDDEN) {
+        for(i=0,door=doorlist[0];doorlist[i]!=NULL;i++) {
+            object *wallface;
+            door=doorlist[i];
+            wallface=retrofit_joined_wall(map,door->x,door->y,1,RP);
+            if(wallface!=NULL) {
+                retrofit_joined_wall(map,door->x-1,door->y,0,RP);
+                retrofit_joined_wall(map,door->x+1,door->y,0,RP);
+                retrofit_joined_wall(map,door->x,door->y-1,0,RP);
+                retrofit_joined_wall(map,door->x,door->y+1,0,RP);
+                door->face = wallface->face;
+                if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
+                free_object(wallface);
+            }
+        }
+    }
 }
