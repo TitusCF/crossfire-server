@@ -17,6 +17,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tentative fix for bug #1551398: Curse spell breaks customized monsters.
+The server will now create a "temporary" archetype when loading a customized monster.
+This archetype will have the same name, but not be part of regular archetype list.
+It'll be removed when last object using it is removed.
+A new field "reference_count" is added to archetype structure, to store how many
+objects reference that temporary archetype (think of item duplication with customized archetype).
+This fix has been roughly tested, but could certainly use more tests.
+Modified files:
+ common/loader.l: handle customized monsters
+ common/object.c: increment reference_count if copying a temporary archetype. Decrement it when freeing an
+  object, and free archetype if needed
+ common/treasure.c: add "artifact_init" to signal start/end of artifact loading, required for temporary archetypes handling.
+ include/object.h: new "reference_count" field
+Ryo 2006-12-09
+
 Tentative fix for bugs
  #1605033: Random map gets blocked
  #1522796: Random map, locked door(s) and no key

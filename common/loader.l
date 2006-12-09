@@ -297,6 +297,7 @@ NULL
 #define IVAL	atoi(yval())
 #define FVAL	atof(yval())
 extern int arch_init;
+extern int artifact_init;
 
 /* Put this here since it is used below */
 static void set_protection(object *op, uint32 mask, uint16 pro_val)
@@ -475,6 +476,31 @@ static void check_loaded_object(object *op) {
 	}
     }
 
+    /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
+     * method, we'll create a new temporary archetype containing defined values.
+     * Of course this doesn't apply when loading archetypes or artifacts.
+     */
+    if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && !can_merge(op, &op->arch->clone)) {
+        archetype* temp = get_archetype_struct();
+        temp->reference_count++;
+        temp->name = add_string(op->arch->name);
+        temp->tail_x = op->arch->tail_x;
+        temp->tail_y = op->arch->tail_y;
+        copy_object(op, &temp->clone);
+        temp->clone.inv = NULL;
+        temp->clone.env = NULL;
+        temp->clone.x = 0;
+        temp->clone.y = 0;
+        temp->clone.map = NULL;
+        if (FABS(temp->clone.speed)>MIN_ACTIVE_SPEED) {
+            /* Clone has a speed, so need to clear that because it isn't on a map */
+            temp->clone.speed = 0;
+            update_ob_speed(&temp->clone);
+        }
+        temp->more = op->arch->more;
+        op->arch = temp;
+        /* LOG(llevDebug, "created temporary archetype for %s at %d,%d\n", op->name, op->x, op->y); */
+    }
 }
 
 /* This extracts the key/value from the yytext field -
@@ -1698,8 +1724,32 @@ void save_object(FILE *fp,object *op, int flag) {
     if((at=op->arch)==NULL) at=empty_archetype;
     fprintf(fp,"arch %s\n",at->name);
 
-    if((cp=get_ob_diff(op,&at->clone))!=NULL)
-	fputs(cp,fp);	/* We really should do some status checking on this */
+    if (op->arch->reference_count > 0) {
+        /* The object is a custom item/monster, so we handle its save differently.
+         * We compare the custom archetype to the "original" one, then only save hp/gr/sp
+         * which are the only values we can't recompute later - all others are modified by items in inventory.
+         * Note that hp/gr/sp will appear twice in save, but last value will take precedence.
+         */
+        archetype* original = find_archetype(op->arch->name);
+        if (!original) {
+            LOG(llevError, "could not find original archetype %s for custom monster!", op->arch->name);
+            abort();
+        }
+        cp = get_ob_diff(&op->arch->clone, &original->clone);
+        if (cp !=NULL) {
+            if(op->stats.hp != op->arch->clone.stats.hp)
+                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
+            if(op->stats.sp != op->arch->clone.stats.sp)
+                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "sp %d\n", op->stats.sp);
+            if(op->stats.grace != op->arch->clone.stats.grace)
+                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "grace %d\n", op->stats.grace);
+        }
+    }
+    else
+        cp = get_ob_diff(op,&at->clone);
+
+    if (cp!=NULL)
+        fputs(cp,fp);	/* We really should do some status checking on this */
 
     /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
 

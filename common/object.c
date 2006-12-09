@@ -743,6 +743,12 @@ void copy_object(object *op2, object *op) {
     if(op->msg!=NULL)	    add_refcount(op->msg);
     if(op->custom_name!=NULL)	    add_refcount(op->custom_name);
     if (op->materialname != NULL)   add_refcount(op->materialname);
+    
+    /* If archetype is a temporary one, we need to update reference count, because
+     * that archetype will be freed by free_object when the last object is removed.
+     */
+    if (op->arch->reference_count > 0)
+        op->arch->reference_count++;
 
     if((op2->speed<0) && !editor)
 	op->speed_left=op2->speed_left-RANDOM()%200/100.0;
@@ -1218,6 +1224,13 @@ static void free_object2(object *ob, int free_inventory) {
    */
       free(ob);
 #else
+
+    /* Test whether archetype is a temporary one, and if so look whether it should be trashed. */
+    if (ob->arch && ob->arch->reference_count > 0) {
+        if (--ob->arch->reference_count == 0) {
+            free(ob->arch);
+        }
+    }
 
     /* Now link it with the free_objects list: */
     ob->prev=NULL;

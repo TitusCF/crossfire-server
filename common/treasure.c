@@ -47,6 +47,7 @@
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
 extern char *spell_mapping[];
+int artifact_init;  /* 1 if doing archetypes initialization */
 
 /*
  * Initialize global archtype pointers:
@@ -1251,6 +1252,8 @@ void init_artifacts(void) {
     if (has_been_inited) return;
     else has_been_inited = 1;
 
+    artifact_init = 1;
+    
     sprintf(filename, "%s/artifacts", settings.datadir);
     LOG(llevDebug, "Reading artifacts from %s...",filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
@@ -1326,6 +1329,7 @@ void init_artifacts(void) {
     }
 
     LOG(llevDebug,"done.\n");
+    artifact_init = 0;
 }
 
 
