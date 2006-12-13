@@ -616,6 +616,10 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
     object *op;
     object *tmp;
 
+    if (len != 5) {
+        LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information", pl->ob->name);
+        return;
+    }
     flag = data[0];
     tag = GetInt_String(data+1);
     op = esrv_get_ob_from_count(pl->ob, tag);
