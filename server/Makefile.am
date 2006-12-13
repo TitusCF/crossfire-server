@@ -52,6 +52,8 @@ libserver_a_SOURCES = \
 	login.c\
 	monster.c\
 	move.c\
+        ob_methods.c\
+        ob_types.c\
 	pets.c\
 	player.c\
 	plugins.c\
@@ -82,7 +84,7 @@ LIBDL=
 crossfire_server_LDFLAGS=
 endif
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
-		../socket/libsocket.a $(LIBDL)
+		../socket/libsocket.a ../types/libtypes.a $(LIBDL)
 
 ../common/libcross.a:
 	( cd ../common ; make libcross.a )
@@ -92,6 +94,9 @@ crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librand
 
 ../socket/libsocket.a:
 	( cd ../socket ; make libsocket.a )
+        
+../types/libtypes.a:
+	( cd ../types ; make libtypes.a )
 
 # Check if everything is installed as it should
 installcheck-local:

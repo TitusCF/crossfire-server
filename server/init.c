@@ -750,6 +750,7 @@ void init(int argc, char **argv) {
     init_commands();	/* Sort command tables */
     read_map_log();	/* Load up the old temp map files */
     init_skills();
+    init_ob_methods();
     cftimer_init();
 
     parse_args(argc, argv, 3);

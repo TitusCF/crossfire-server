@@ -7,5 +7,5 @@ sproto.h       artifact.h     funcpoint.h    map.h          recipe.h \
 treasure.h     global.h       newclient.h    path.h         shstr.h \
 tod.h          god.h          newserver.h    quest.h	    xdir.h \
 book.h         includes.h     object.h       skills.h	    sockproto.h \
-plugin.h       timers.h
+plugin.h       timers.h       typesproto.h   ob_methods.h   ob_types.h
 

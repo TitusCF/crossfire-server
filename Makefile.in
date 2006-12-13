@@ -60,7 +60,7 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = common random_maps socket server include lib utils doc \
-	plugins devel test @CROSSEDIT@
+	plugins devel types test @CROSSEDIT@
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -222,7 +222,7 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 @HAVE_CHECK_TRUE@UNIT_TEST = test
-SUBDIRS = common random_maps socket server include lib utils doc plugins devel $(UNIT_TEST) $(CROSSEDIT)
+SUBDIRS = common random_maps socket server include lib utils doc plugins devel types $(UNIT_TEST) $(CROSSEDIT)
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 DISTCHECK_CONFIGURE_FLAGS = --localstatedir=$$dc_install_base/var --mandir=$$dc_install_base/man
 all: all-recursive
@@ -651,6 +651,7 @@ proto:
 	(cd common; make proto)
 	(cd server; make proto)
 	(cd plugins; make proto)
+	(cd types; make proto)
 	@if [ "X$(NO_X)" != "Xyes" ]; then \
 		(cd crossedit; make proto) \
 	fi

@@ -1,0 +1,20 @@
+Refactoring changes in the type-specific subsystem. A few notes when putting entries in this
+file:
+1) Please included your name and a date in the form yyyy-mm-dd, consistat with the top
+level ChangeLog file.
+2) Please follow the conventions set out by existing entries here
+3) You should still put entries in the top-level ChangeLog
+4) Only refactoring of functuality to and/or from the type-specific subsystem
+should be inlcluded here. Other changes should simply be in the top level
+ChangeLog.
+
+--
+
+--EXAMPLE--
+Ob types: ALL
+Events: APPLY
+Functunality moved from: ../server/apply.c:foobar()
+Functunality moved to: legacy/apply.c
+Comment: Move legacy apply code into a temporary location.
+Alex Schultz 2006-11-29
+--EXAMPLE--

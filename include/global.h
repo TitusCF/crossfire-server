@@ -142,6 +142,11 @@ typedef signed long long 	sint64;
 
 /* pull in book structures */
 #include "book.h"
+
+/* ob_methods and ob_types subsystem */
+#include "ob_methods.h"
+#include "ob_types.h"
+
 /*
  * So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).
@@ -265,6 +270,7 @@ extern socket_struct *init_sockets;
 #ifndef __CEXTRACT__
 #include "libproto.h"
 #include "sockproto.h"
+#include "typesproto.h"
 #endif
 
 

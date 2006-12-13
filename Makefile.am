@@ -5,7 +5,7 @@ if HAVE_CHECK
   UNIT_TEST = test
 endif
 
-SUBDIRS = common random_maps socket server include lib utils doc plugins devel $(UNIT_TEST) $(CROSSEDIT)
+SUBDIRS = common random_maps socket server include lib utils doc plugins devel types $(UNIT_TEST) $(CROSSEDIT)
 
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 
@@ -19,6 +19,7 @@ proto:
 	(cd common; make proto)
 	(cd server; make proto)
 	(cd plugins; make proto)
+	(cd types; make proto)
 	@if [ "X$(NO_X)" != "Xyes" ]; then \
 		(cd crossedit; make proto) \
 	fi

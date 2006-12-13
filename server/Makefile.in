@@ -85,9 +85,10 @@ am_libserver_a_OBJECTS = alchemy.$(OBJEXT) apply.$(OBJEXT) \
 	daemon.$(OBJEXT) disease.$(OBJEXT) egoitem.$(OBJEXT) \
 	hiscore.$(OBJEXT) gods.$(OBJEXT) init.$(OBJEXT) \
 	login.$(OBJEXT) monster.$(OBJEXT) move.$(OBJEXT) \
-	pets.$(OBJEXT) player.$(OBJEXT) plugins.$(OBJEXT) \
-	resurrection.$(OBJEXT) rune.$(OBJEXT) shop.$(OBJEXT) \
-	skills.$(OBJEXT) skill_util.$(OBJEXT) spell_attack.$(OBJEXT) \
+	ob_methods.$(OBJEXT) ob_types.$(OBJEXT) pets.$(OBJEXT) \
+	player.$(OBJEXT) plugins.$(OBJEXT) resurrection.$(OBJEXT) \
+	rune.$(OBJEXT) shop.$(OBJEXT) skills.$(OBJEXT) \
+	skill_util.$(OBJEXT) spell_attack.$(OBJEXT) \
 	spell_effect.$(OBJEXT) spell_util.$(OBJEXT) swamp.$(OBJEXT) \
 	swap.$(OBJEXT) time.$(OBJEXT) timers.$(OBJEXT) \
 	weather.$(OBJEXT) server.$(OBJEXT)
@@ -100,7 +101,7 @@ crossfire_server_OBJECTS = $(am_crossfire_server_OBJECTS)
 am__DEPENDENCIES_1 =
 crossfire_server_DEPENDENCIES = libserver.a ../common/libcross.a \
 	../random_maps/librandom_map.a ../socket/libsocket.a \
-	$(am__DEPENDENCIES_1)
+	../types/libtypes.a $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
@@ -153,6 +154,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
+GREP = @GREP@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
 HAVE_CHECK_FALSE = @HAVE_CHECK_FALSE@
@@ -204,17 +206,15 @@ TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
 VERSION = @VERSION@
 X11LIBS = @X11LIBS@
+XMKMF = @XMKMF@
 XSLTENGINE = @XSLTENGINE@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -234,26 +234,33 @@ check_xslt_forcedprogfound = @check_xslt_forcedprogfound@
 check_xslt_sablotronfound = @check_xslt_sablotronfound@
 check_xslt_xsltprocfound = @check_xslt_xsltprocfound@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 no_x = @no_x@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pkgconfdir = @pkgconfdir@
 pkgstatedir = @pkgstatedir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -286,6 +293,8 @@ libserver_a_SOURCES = \
 	login.c\
 	monster.c\
 	move.c\
+        ob_methods.c\
+        ob_types.c\
 	pets.c\
 	player.c\
 	plugins.c\
@@ -313,7 +322,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 @HAVE_LIBDL_FALSE@crossfire_server_LDFLAGS = 
 @HAVE_LIBDL_TRUE@crossfire_server_LDFLAGS = -export-dynamic
 crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librandom_map.a \
-		../socket/libsocket.a $(LIBDL)
+		../socket/libsocket.a ../types/libtypes.a $(LIBDL)
 
 all: all-am
 
@@ -417,6 +426,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/monster.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/move.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ob_methods.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ob_types.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pets.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/player.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugins.Po@am__quote@
@@ -645,6 +656,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 
 ../socket/libsocket.a:
 	( cd ../socket ; make libsocket.a )
+
+../types/libtypes.a:
+	( cd ../types ; make libtypes.a )
 
 # Check if everything is installed as it should
 installcheck-local:
