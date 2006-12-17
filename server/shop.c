@@ -1168,9 +1168,6 @@ static int shop_sort(const void *a1, const void *a2)
 
 static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
 {
-#if 0
-    char buf[MAX_BUF];
-#endif
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.
@@ -1185,20 +1182,6 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
     items[*numitems].type=tmp->type;
 
     switch (tmp->type) {
-#if 0
-	case BOOTS:
-	case GLOVES:
-	case RING:
-	case AMULET:
-	case BRACERS:
-	case GIRDLE:
-	    sprintf(buf,"%s %s",query_base_name(tmp,0),describe_item(tmp, NULL));
-	    items[*numitems].item_sort = strdup_local(buf);
-	    sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp, NULL));
-	    items[*numitems].item_real = strdup_local(buf);
-	    (*numitems)++;
-	    break;
-#endif
 
 	default:
 	    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));

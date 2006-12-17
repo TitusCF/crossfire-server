@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+No change, just remove unused code in #if 0
+ server/commands.c
+ server/shop.c
+Ryo 2006-12-17
+
 Fix a crash due to non-checking of parameters.
  socket/item.c
 Ryo 2006-12-13
