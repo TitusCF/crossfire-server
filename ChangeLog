@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/shop.c: Remove unused switch statement.
+Alex Schultz 2006-12-17
+
 No change, just remove unused code in #if 0
  server/commands.c
  server/shop.c

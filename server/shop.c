@@ -1180,15 +1180,10 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
      */
     if (tmp->nrof == 0) items[*numitems].nrof++;
     items[*numitems].type=tmp->type;
-
-    switch (tmp->type) {
-
-	default:
-	    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
-	    items[*numitems].item_real = strdup_local(query_base_name(tmp, 1));
-	    (*numitems)++;
-	    break;
-    }
+    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
+    items[*numitems].item_real = strdup_local(query_base_name(tmp, 1));
+    (*numitems)++;
+    
     SET_FLAG(tmp, FLAG_UNPAID);
 }
 
