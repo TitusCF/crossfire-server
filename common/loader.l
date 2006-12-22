@@ -494,9 +494,16 @@ static void check_loaded_object(object *op) {
         temp->clone.map = NULL;
         if (FABS(temp->clone.speed)>MIN_ACTIVE_SPEED) {
             /* Clone has a speed, so need to clear that because it isn't on a map */
+	    /* But we need to keep the value, because otherwise the customized object
+	     * will have no speed (fix_player() will use the 0 value).  So set it
+	     * to zero, call update_ob_speed() to remove it from active list, then
+	     * set its speed back to the original.
+	     */
             temp->clone.speed = 0;
             update_ob_speed(&temp->clone);
+	    temp->clone.speed = op->speed;
         }
+
         temp->more = op->arch->more;
         op->arch = temp;
         /* LOG(llevDebug, "created temporary archetype for %s at %d,%d\n", op->name, op->x, op->y); */
@@ -1703,7 +1710,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
 void save_object(FILE *fp,object *op, int flag) {
     archetype *at;
-    char *cp;
+    char *cp, alt_buf[HUGE_BUF];
     object *tmp,*old;
 
     /* Even if the object does have an owner, it would seem that we should
@@ -1736,14 +1743,20 @@ void save_object(FILE *fp,object *op, int flag) {
             abort();
         }
         cp = get_ob_diff(&op->arch->clone, &original->clone);
-        if (cp !=NULL) {
-            if(op->stats.hp != op->arch->clone.stats.hp)
-                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
-            if(op->stats.sp != op->arch->clone.stats.sp)
-                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "sp %d\n", op->stats.sp);
-            if(op->stats.grace != op->arch->clone.stats.grace)
-                snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "grace %d\n", op->stats.grace);
-        }
+	if (cp == NULL) {
+	    cp = alt_buf;
+	    cp[0] = 0;
+	}
+        if(op->stats.hp != op->arch->clone.stats.hp)
+	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
+	if(op->stats.sp != op->arch->clone.stats.sp)
+	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "sp %d\n", op->stats.sp);
+        if(op->stats.grace != op->arch->clone.stats.grace)
+	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "grace %d\n", op->stats.grace);
+        if(op->x != op->arch->clone.x)
+	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "x %d\n", op->x);
+        if(op->y != op->arch->clone.y)
+	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "y %d\n", op->y);
     }
     else
         cp = get_ob_diff(op,&at->clone);

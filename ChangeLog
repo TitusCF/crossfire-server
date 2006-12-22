@@ -17,6 +17,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/loader.l: Fix some problems related to curse spell monster
+  handling.  Specifically, coordinates of custom monsters was not
+  being saved (always set to 0,0), which caused crashes for multipart
+  monsters upon load.  Also, speed was being set to 0, resulting in
+  customized monsters not having any speed.
+MSW 2006-12-21
+
 server/shop.c: Remove unused switch statement.
 Alex Schultz 2006-12-17
 
