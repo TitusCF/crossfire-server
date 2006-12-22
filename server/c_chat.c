@@ -179,6 +179,7 @@ int command_tell (object *op, char *params)
 	    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
 			 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
 			 "You tell %s: %s", 
+			 "You tell %s: %s", 
 			 pl->ob->name, msg);
 
 	    /* Update last_tell value [mids 01/14/2002] */

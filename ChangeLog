@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_chat.c: In command_tell() do not crash when extendedTextInfos are
+    enabled.
+Andreas Kirschbaum 2006-12-22
+
 common/loader.l: Fix some problems related to curse spell monster
   handling.  Specifically, coordinates of custom monsters was not
   being saved (always set to 0,0), which caused crashes for multipart
