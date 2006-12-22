@@ -52,7 +52,7 @@ typedef char method_ret;
  * @struct ob_methods
  * This struct stores function pointers for actions that can be done to objects.
  * It is currently just used for type-specific object code. Add new function
- * pointers here when moving type specific code into the server/types/*.c area.
+ * pointers here when moving type specific code into the server/types/ *.c area.
  * When adding function pointers here, be sure to add to init_ob_methods() in
  * ob_types.c as necessary.
  */
