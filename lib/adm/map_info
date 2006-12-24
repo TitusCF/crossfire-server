@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # This program is meant to use check crossfire (version 0.90.?) maps.
-# Program wanderers through mapfiles and reports all objects that 
+# Program wanderers through mapfiles and reports all objects that
 # can't be found in the archetypes, all exit that doesn't lead to
 # anywhere and all corrupted mapfiles.
 #
@@ -28,7 +28,7 @@ if (! $ARGV[0]) {
 } else {
     $STARTING = $ARGV[0];
 }
-    
+
 
 # read filenames to @maps
 chdir ($STARTING);
@@ -78,7 +78,7 @@ while ($file = shift (@maps)) {
     &readmap;
 }
 
-# summary of missing archetypes 
+# summary of missing archetypes
 if (%missing) {
     print "=" x 70, "\n";
     print "Missing archetypes: ", join (", ", sort keys (%missing)), "\n";
@@ -116,7 +116,7 @@ sub readmap {
     my($parent);
     $last = "";
     $parent = "";
-    
+
     $/ = "\nend\n";
     if (! open (IN, $file)) {
 	print "Can't open map file $file\n";
@@ -132,7 +132,7 @@ sub readmap {
 	    print /^name (.+)$/ ? $1 : "No mapname";
 	    print ", size [", /^x (\d+)$/ ? $1 : 16;
 	    print ",", /^y (\d+)/ ? $1 : 16, "]";
-    
+
 	    if (! /^msg$/) {
 		print ", No message\n";
 	    } elsif (/(\w+@\S+)/) {
@@ -171,13 +171,13 @@ sub readmap {
 # another object
 #		    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n";
 		}
-	    } 
+	    }
 	    $parent="";
 	} elsif (/^More$/ || $m == 1) {
 	    &check_obj ($_);
 	} else {
 #	    if ($printmap) { print "$mapname"; $printmap=0;}
-#	    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n"; 
+#	    print "  Error: Corrupted map file $file.\nSegment:\n$_\nLine: $.\n";
 	}
     }
     close (IN);
@@ -193,7 +193,7 @@ sub check_obj {
     if (! $arches{$1} && $last ne $1) {
 	$last = $1;
 	if ($printmap) { print "$mapname"; $printmap=0;}
-	print "  Error: Object $last is not defined in archetypes file ($x,$y), arch=$arch\n"; 
+	print "  Error: Object $last is not defined in archetypes file ($x,$y), arch=$arch\n";
 	$missing{$last}++;
     } elsif ($ex{$1}) {
 	&examine_exit ($_);
@@ -224,7 +224,7 @@ sub check_obj {
     } elsif ($1 eq "ring" || $1 eq "amulet") {
 	$last = $1;
 #	print "  Warning: ring/amulet found ($x,$y:$parent), should be random_talisman?\n";
-    } 
+    }
     $objects{$1}++;
     if (/^color_fg (\S+)$/ || /^color_bg (\S+)$/) {
 	$last = $arch;
@@ -272,7 +272,7 @@ sub examine_exit {
     if (/^food (-?\d+)$/) {
 	# old style exits, doesn't work with crossfire 0.90-1
 	if ($printmap) { print "$mapname"; $printmap=0;}
-	print  " Error: ", &obj_name($_), " ($x1,$y1) -> ", 
+	print  " Error: ", &obj_name($_), " ($x1,$y1) -> ",
 	      "Old style level [$1] ($x,$y)\n";
     } elsif (! defined ($to)) {
 #	print "  Closed: ", &obj_name($_), " ($x1,$y1)\n";
@@ -312,7 +312,7 @@ sub maplist {
 
     opendir (DIR , $dir) || die "Can't open directory : $dir\n";
     while ($file = readdir (DIR)) {
-	next if ($file eq "." || $file eq ".." || $file eq "CVS" || $file eq "unlinked" || $file eq "editor");
+	next if ($file eq "." || $file eq ".." || $file eq ".svn" || $file eq "unlinked" || $file eq "editor");
 	$file = "$dir/$file";
 	next if (-l $file);
 	push (@dirs, $file) if (-d $file);
@@ -361,7 +361,7 @@ sub faces {
     close(IN);
 }
 
-			     
+
 sub animations {
     open(IN, $ANIM) || die ("Can't open animations file $ANIM\n");
     while (<IN>) {
@@ -372,4 +372,4 @@ sub animations {
     close(IN);
 }
 
-			     
+

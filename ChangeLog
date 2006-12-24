@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/{Makefile.in,adm/map_info,collect.pl.in,Makefile.am}: ignore .svn rather
+    than CVS.
+Andreas Kirschbaum 2006-12-24
+
 server/c_chat.c: In command_tell() do not crash when extendedTextInfos are
     enabled.
 Andreas Kirschbaum 2006-12-22

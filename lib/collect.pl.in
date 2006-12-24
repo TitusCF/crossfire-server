@@ -136,7 +136,7 @@ sub traverse {
 	$file = $dir."/".$tfile;
 	$name = &basename($file,""); # DIR
 
-	if( -d $file && $name ne "dev" && $name ne "trashbin" && $name ne "CVS" ) {
+	if( -d $file && $name ne "dev" && $name ne "trashbin" && $name ne ".svn" ) {
 	    &traverse($file);
 	} elsif ( -d $file && ( $name eq "dev" || $name eq "trashbin" ) ) {
 # Empty directive to prevent warnings below
@@ -155,14 +155,14 @@ sub traverse {
 	    push(@face_files, $file);
 	} elsif ( $file =~ /.*\.trs$/) {	# Treasure information file
 	    push(@treasure_files, $file);
-	} 
+	}
 	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /$faceExt$/) {
 	# we cover many files we probably shouldn't, but oh well.
 	# we just don't want complaints about all of these.
 	}
 	# ignore a couple of the more common 'junk' files that are not
 	# really junk.
-	elsif (($name ne "README") && ($name ne "CVS")) {
+	elsif (($name ne "README") && ($name ne ".svn")) {
 	    $trashNum++;
 	    print "Warning: $file might be a junk file\n";
 	}
