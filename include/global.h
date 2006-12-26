@@ -399,6 +399,7 @@ typedef struct Settings {
     uint8   armor_speed_linear;         /* If 1, speed improvement is linear, else exponantiel */
     uint8   no_player_stealing;     /* If 1, can not steal from other players */
     uint8   create_home_portals;     /* If 1, can create portals in unique maps (apartments) */
+    uint8   personalized_blessings; /* If 1, blessed weapons get an owner and a willpower value */
 } Settings;
 
 extern Settings settings;

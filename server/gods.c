@@ -759,6 +759,56 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
     if (weapon == NULL || god_examines_item (god, weapon) <= 0)
         return 0;
 
+    /* If personalized_blessings is activated, then the god's name is
+     * associated with the weapon, as well as the owner (the one who blesses it),
+     * and a "weapon willpower", which is equivalent to the owner's experience
+     * in praying when the weapon is blessed.
+     * Those values are used later, when another player attempts to wield the
+     * weapon - nasty things may happen to those who do not deserve to use it ! :)
+     */
+    if (settings.personalized_blessings)
+    {
+        char* divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
+        char* owner = get_ob_key_value(weapon, "item_owner");
+        object* skillop = NULL;
+
+        if (divine_owner != NULL)
+        {
+            if (!strcmp(divine_owner, god->name))
+            {
+                //It already belongs to this god - do not go further.
+                draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
+                    MSG_TYPE_ITEM_INFO,
+                    "Your %s is radiating a joyful warmth !",
+                    "Your %s is radiating a joyful warmth !",
+                    weapon->name);
+                return 0;
+            }
+            //Huho... Another god already blessed this one !
+            draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
+                MSG_TYPE_ITEM_INFO,
+                "Your %s already belongs to %s !",
+                "Your %s already belongs to %s !",
+                weapon->name, divine_owner);
+            return 0;
+        }
+        else if ((owner != NULL)&&(!strcmp(owner, op->name)))
+        {
+            //Maybe the weapon itself will not agree ?
+            draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
+                MSG_TYPE_ITEM_INFO,
+                "The %s is not yours, and is magically protected against such changes !",
+                "The %s is not yours, and is magically protected against such changes !",
+                weapon->name);
+            return 0;
+        }
+        skillop = find_skill_by_number(op, SK_PRAYING);
+        sprintf(buf,"%ld",skillop->stats.exp);
+        set_ob_key_value(weapon, "divine_blessing_name", god->name, TRUE);
+        set_ob_key_value(weapon, "item_owner", op->name, TRUE);
+        set_ob_key_value(weapon, "item_willpower", buf, TRUE);
+    }
+
     /* First give it a title, so other gods won't touch it */
     if ( ! weapon->title) {
         sprintf (buf, "of %s", god->name);

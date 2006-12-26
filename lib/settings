@@ -289,3 +289,8 @@ no_player_stealing       TRUE
 # the below with: create_home_portals TRUE
 create_home_portals      FALSE
 
+# If personalized blessings are activated, the weapon can bite the wielder
+# if he/she is not the one who initially blessed it.
+# Chances of being hurt depend on the experience amount ("willpower") the
+# object has, compared to the experience amount of the wielder.
+personalized_blessings      TRUE

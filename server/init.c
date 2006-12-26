@@ -709,6 +709,14 @@ static void load_settings(void)
 	    } else {
 		LOG(llevError, "load_settings: unknown value for create_home_portals: %s\n", cp);
         }
+    } else if ( !strcasecmp( buf, "personalized_blessings" ) ) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.personalized_blessings = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.personalized_blessings = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for personalized_blessings: %s\n", cp);
+        }
 
     } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
