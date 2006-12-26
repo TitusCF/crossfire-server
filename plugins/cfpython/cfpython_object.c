@@ -353,6 +353,11 @@ static PyObject* Object_GetLastGrace(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", *(sint16*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE));
 }
+static PyObject* Object_GetLastEat(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", *(sint16*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT));
+}
 static PyObject* Object_GetLevel(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
@@ -1141,6 +1146,17 @@ static int Object_SetLastGrace(Crossfire_Object* whoptr, PyObject* value, void* 
 
     cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE, val);
 /*    cf_fix_object(whoptr->obj);*/
+    return 0;
+}
+static int Object_SetLastEat(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT, val);
     return 0;
 }
 static int Object_SetFace(Crossfire_Object* whoptr, PyObject* value, void* closure)

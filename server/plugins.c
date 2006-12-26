@@ -1664,22 +1664,26 @@ void* cfapi_object_get_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_LAST_HEAL:
-            rv = &op->last_heal;
+            ri = op->last_heal;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_LAST_SP:
-            rv = &op->last_sp;
+            ri = op->last_sp;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_LAST_GRACE:
-            rv = &op->last_grace;
+            ri = op->last_grace;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_LAST_EAT:
-            rv = &op->last_eat;
+            ri = op->last_eat;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 

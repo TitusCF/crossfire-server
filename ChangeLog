@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add "Crossfire.Object.LastEat. More return fixes.
+ plugins/cfpython/include/cfpython_object_private.h: add "Subtype".
+ plugins/cfpython/cfpython_object.c: add "Subtype".
+ server/plugins.c: fix wrong return values.
+Ryo 2006-12-26
+
 Fix wrong return values for plugin calls. Add "Crossfire.Object.Subtype" property.
  plugins/cfpython/include/cfpython_object_private.h: add "Subtype".
  plugins/cfpython/cfpython_object.c: add "Subtype".

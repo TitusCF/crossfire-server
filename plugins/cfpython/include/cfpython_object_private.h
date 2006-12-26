@@ -69,6 +69,7 @@ static PyObject* Object_GetInvisible(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetSpeed(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLastSP(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLastGrace(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetLastEat(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLevel(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetFace(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAttackType(Crossfire_Object* whoptr, void* closure);
@@ -173,6 +174,7 @@ static int Object_SetSpeed(Crossfire_Object* whoptr, PyObject* value, void* clos
 static int Object_SetQuantity(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetLastSP(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetLastGrace(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetLastEat(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetAttackType(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetUnaggressive(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetPickable(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -295,6 +297,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Speed",      (getter)Object_GetSpeed,    (setter)Object_SetSpeed, NULL, NULL },
     { "LastSP",     (getter)Object_GetLastSP,   (setter)Object_SetLastSP, NULL, NULL },
     { "LastGrace",  (getter)Object_GetLastGrace,(setter)Object_SetLastGrace, NULL, NULL },
+    { "LastEat",    (getter)Object_GetLastEat,  (setter)Object_SetLastEat, NULL, NULL },
     { "Level",      (getter)Object_GetLevel,    NULL, NULL, NULL },
     { "Face",       (getter)Object_GetFace,     (setter)Object_SetFace, NULL, NULL },
     { "AttackType", (getter)Object_GetAttackType, (setter)Object_SetAttackType, NULL, NULL },
