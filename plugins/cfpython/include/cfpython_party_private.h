@@ -1,6 +1,6 @@
 static PyObject* Crossfire_Party_GetName( Crossfire_Party* whoptr, void* closure);
 static PyObject* Crossfire_Party_GetPassword( Crossfire_Party* whoptr, void* closure);
-static PyObject* Crossfire_Party_GetNext( Crossfire_Party* who, PyObject* args );
+static PyObject* Crossfire_Party_GetNext( Crossfire_Party* who, void* closure );
 static PyObject* Crossfire_Party_GetPlayers( Crossfire_Party* who, PyObject* args );
 
 static int Crossfire_Party_InternalCompare(Crossfire_Party* left, Crossfire_Party* right);
@@ -8,11 +8,11 @@ static int Crossfire_Party_InternalCompare(Crossfire_Party* left, Crossfire_Part
 static PyGetSetDef Party_getseters[] = {
     { "Name",       (getter)Crossfire_Party_GetName,     NULL, NULL, NULL },
     { "Password",   (getter)Crossfire_Party_GetPassword, NULL, NULL, NULL },
+    { "Next",       (getter)Crossfire_Party_GetNext,     NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
 static PyMethodDef PartyMethods[] = {
-    { "Next",		    (PyCFunction)Crossfire_Party_GetNext,           METH_VARARGS},
 	{ "GetPlayers",     (PyCFunction)Crossfire_Party_GetPlayers,        METH_VARARGS},
     {NULL, NULL, 0}
 };

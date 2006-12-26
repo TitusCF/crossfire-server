@@ -40,7 +40,7 @@ static PyObject* Crossfire_Party_GetPassword( Crossfire_Party* partyptr, void* c
     return Py_BuildValue("s",cf_party_get_password(partyptr->party));
 }
 
-static PyObject* Crossfire_Party_GetNext( Crossfire_Party* party, PyObject* args )
+static PyObject* Crossfire_Party_GetNext( Crossfire_Party* party, void* closure )
 {
     return Crossfire_Party_wrap(cf_party_get_next(party->party));
 }

@@ -1,23 +1,23 @@
 static PyObject* Crossfire_Archetype_GetName( Crossfire_Archetype* whoptr, void* closure);
+static PyObject* Crossfire_Archetype_GetNext( Crossfire_Archetype* who, void* closure );
+static PyObject* Crossfire_Archetype_GetMore( Crossfire_Archetype* who, void* closure );
+static PyObject* Crossfire_Archetype_GetHead( Crossfire_Archetype* who, void* closure );
+static PyObject* Crossfire_Archetype_GetClone( Crossfire_Archetype* who, void* closure );
 
-static PyObject* Crossfire_Archetype_GetNext( Crossfire_Archetype* who, PyObject* args );
-static PyObject* Crossfire_Archetype_GetMore( Crossfire_Archetype* who, PyObject* args );
-static PyObject* Crossfire_Archetype_GetHead( Crossfire_Archetype* who, PyObject* args );
-static PyObject* Crossfire_Archetype_GetClone( Crossfire_Archetype* who, PyObject* args );
 static PyObject* Crossfire_Archetype_GetNewObject( Crossfire_Archetype* who, PyObject* args );
 
 static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype* left, Crossfire_Archetype* right);
 
 static PyGetSetDef Archetype_getseters[] = {
     { "Name",       (getter)Crossfire_Archetype_GetName,     NULL, NULL, NULL },
+    { "Next",       (getter)Crossfire_Archetype_GetNext,     NULL, NULL, NULL },
+    { "More",       (getter)Crossfire_Archetype_GetMore,     NULL, NULL, NULL },
+    { "Head",       (getter)Crossfire_Archetype_GetHead,     NULL, NULL, NULL },
+    { "Clone",      (getter)Crossfire_Archetype_GetClone,    NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
 static PyMethodDef ArchetypeMethods[] = {
-    { "Next",         (PyCFunction)Crossfire_Archetype_GetNext,       METH_VARARGS},
-    { "More",         (PyCFunction)Crossfire_Archetype_GetMore,       METH_VARARGS},
-    { "Head",         (PyCFunction)Crossfire_Archetype_GetHead,       METH_VARARGS},
-    { "Clone",         (PyCFunction)Crossfire_Archetype_GetClone,       METH_VARARGS},
     { "NewObject",         (PyCFunction)Crossfire_Archetype_GetNewObject,       METH_VARARGS},
     {NULL, NULL, 0}
 };
