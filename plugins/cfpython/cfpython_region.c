@@ -45,7 +45,7 @@ static PyObject* Crossfire_Region_GetMessage(Crossfire_Region* regionptr, void* 
 	return Py_BuildValue("s",cf_region_get_message(regionptr->reg));
 }
 
-static PyObject* Crossfire_Region_GetNext( Crossfire_Region* party, PyObject* args )
+static PyObject* Crossfire_Region_GetNext( Crossfire_Region* party, void* closure )
 {
 	return Crossfire_Region_wrap(cf_region_get_next(party->reg));
 }

@@ -18,8 +18,8 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Make method/property coherent for Python objects.
- plugins/cfpython/cfpython_archetype.c cfpython_party.c
- plugins/cfpython/include/cfpython_archetype_private.h cfpython_party_private.h
+ plugins/cfpython/cfpython_archetype.c cfpython_party.c cfpython_region.c
+ plugins/cfpython/include/cfpython_archetype_private.h cfpython_party_private.h cfpython_region_private.h
 Ryo 2006-12-26
 
 Implemented FR #1539153: Blessed weapons should have an owner.
