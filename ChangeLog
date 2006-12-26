@@ -17,6 +17,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/example.c: Add quick example file.
+Alex Schultz 2006-12-26
+
 server/player.c: Added a supplementary check on attacked objects, so that an
     alive object that has its FLAG_MONSTER set is always a preferred target over
     an alive object without that flag.
