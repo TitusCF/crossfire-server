@@ -827,7 +827,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 {
     sint16 x,y, nrof=1, i;
     archetype *summon_arch;
-    int ndir;
+    int ndir, mult;
 
     if (spell_ob->other_arch) {
         summon_arch = spell_ob->other_arch;
@@ -924,13 +924,27 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         return 0;
     }
 
+    if (dir) {
+        // Only fail if caster specified a blocked direction.
+        x = freearr_x[dir];
+        y = freearr_y[dir];
+        if (ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y)) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                        "There is something in the way.", NULL);
+
+            return 0;
+        }
+    }
+
+    mult = (RANDOM()%2 ? -1 : 1);
+
     for (i=1; i <= nrof; i++) {
         archetype *atmp;
         object *prev=NULL, *head=NULL, *tmp;
 
         if (dir) {
-            ndir = dir;
-            dir = absdir (dir+1);
+            ndir = absdir (dir + (i / 2) * mult);
+            mult = - mult;
         } else
             ndir = find_free_spot(&summon_arch->clone, op->map, op->x, op->y, 1, SIZEOFFREE);
 
@@ -939,15 +953,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
             y = freearr_y[ndir];
         }
 
-        if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y)){
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                "There is something in the way.", NULL);
-            if (nrof > 1)
-                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                    "No more pets for this casting.", NULL);
-
-            return nrof > 1;
-        }
+        if (ndir == -1 || ob_blocked(&summon_arch->clone, op->map, op->x + x, op->y + y))
+            continue;
 
         for (atmp = summon_arch; atmp!=NULL; atmp=atmp->more) {
             tmp = arch_to_object(atmp);

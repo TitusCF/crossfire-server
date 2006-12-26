@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1527978: summon fog spell is somewhat broken.
+Summon now occurs either randomly around (when casting on oneself),
+or around, either clockwise or anticlockwise.
+ server/pets.c
+Ryo 2006-12-26
+
 Implement feature request #1617446 :add "glow radius" to perceive self
  server/spell_effect.c
 Ryo 2006-12-26
