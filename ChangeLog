@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/player.c: Added a supplementary check on attacked objects, so that an
+    alive object that has its FLAG_MONSTER set is always a preferred target over
+    an alive object without that flag.
+    Fix for the bug mentioned in #1551404
+
 server/skill_util.c: Corrected the flags passed to change_exp when failing
     to properly write a spell scroll, which resulted in loss of experience in
     the wrong skill.

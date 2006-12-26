@@ -2076,25 +2076,33 @@ void move_player_attack(object *op, int dir)
 	}
 
 	mon = NULL;
-	/* Go through all the objects, and find ones of interest. Only stop if
-	 * we find a monster - that is something we know we want to attack.
-	 * if its a door or barrel (can roll) see if there may be monsters
-	 * on the space
-	 */
-	while (tmp!=NULL) {
-	    if (tmp == op) {
-		tmp=tmp->above;
-		continue;
-	    }
-	    if (QUERY_FLAG(tmp,FLAG_ALIVE)) {
-		mon = tmp;
-		break;
-	    }
-	    if (tmp->type==LOCKED_DOOR || QUERY_FLAG(tmp,FLAG_CAN_ROLL))
-		mon = tmp;
-	    tmp=tmp->above;
-	}
-    
+        /* Go through all the objects, and find ones of interest. Only stop if
+         * we find a monster - that is something we know we want to attack.
+         * if its a door or barrel (can roll) see if there may be monsters
+         * on the space
+         */
+        while (tmp!=NULL)
+        {
+            if (tmp == op)
+            {
+                tmp=tmp->above;
+                continue;
+            }
+            if (QUERY_FLAG(tmp,FLAG_ALIVE))
+            {
+                mon = tmp;
+                /* Gros: Objects like (pass-through) doors are alive, but haven't
+                 * their monster flag set - so this is a good way attack real
+                 * monsters in priority.
+                 */
+                if (QUERY_FLAG(tmp, FLAG_MONSTER))
+                    break;
+            }
+            if (tmp->type==LOCKED_DOOR || QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+                mon = tmp;
+            tmp=tmp->above;
+        }
+
 	if (mon==NULL)		/* This happens anytime the player tries to move */
 	    return;		/* into a wall */
 
