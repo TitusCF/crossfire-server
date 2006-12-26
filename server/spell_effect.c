@@ -898,6 +898,9 @@ int perceive_self(object *op) {
 	    }
 	}
     }
+    if (op->glow_radius > 0)
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
+            "You glow in the dark.", NULL);
 
     if (is_dragon_pl(op)) {
        /* now grab the 'dragon_ability'-force from the player's inventory */
