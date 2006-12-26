@@ -276,15 +276,22 @@ void clear_skill(object *who)
     }
 }
 
-/* do_skill() - Main skills use function-similar in scope to cast_spell(). 
+/**
+ * Main skills use function-similar in scope to cast_spell().
  * We handle all requests for skill use outside of some combat here. 
  * We require a separate routine outside of fire() so as to allow monsters 
- * to utilize skills.  Returns 1 on use of skill, otherwise 0.
+ * to utilize skills.
  * This is changed (2002-11-30) from the old method that returned
  * exp - no caller needed that info, but it also prevented the callers
  * from know if a skill was actually used, as many skills don't
  * give any exp for their direct use (eg, throwing).
  * It returns 0 if no skill was used.
+ * @param op The object actually using the skill
+ * @param part An object taking part of the skill usage, used by throwing
+ * @param skill The skill used by op
+ * @param dir The direction in which the skill is used
+ * @param string A parameter string, necessary to use some skills
+ * @return 1 if the use of the skill was successful, 0 otherwise
  */
 
 int do_skill (object *op, object *part, object *skill, int dir, const char *string) {
@@ -458,7 +465,7 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
      * gain problems.
      */
  
-    if(success && exp) change_exp(op,exp, skill->skill, 0);
+    if(success && exp) change_exp(op,exp, skill->skill, SK_SUBTRACT_SKILL_EXP);
             
     return success;
 }

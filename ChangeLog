@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/skill_util.c: Corrected the flags passed to change_exp when failing
+    to properly write a spell scroll, which resulted in loss of experience in
+    the wrong skill.
+    Fix for the bug mentioned in #1530000
+Yann Chachkoff 2006-12-26
+
 lib/{Makefile.in,adm/map_info,collect.pl.in,Makefile.am}: ignore .svn rather
     than CVS.
 Andreas Kirschbaum 2006-12-24
