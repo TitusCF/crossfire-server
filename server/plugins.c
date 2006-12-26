@@ -1592,17 +1592,20 @@ void* cfapi_object_get_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_TYPE:
-            rv = &op->type;
+            ri = op->type;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_SUBTYPE:
-            rv = &op->subtype;
+            ri = op->subtype;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 
         case CFAPI_OBJECT_PROP_CLIENT_TYPE:
-            rv = &op->client_type;
+            ri = op->client_type;
+            rv = &ri;
             *type = CFAPI_INT;
             break;
 

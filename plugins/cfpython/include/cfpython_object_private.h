@@ -124,6 +124,7 @@ static PyObject* Object_GetOnlyAttack(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMakeInvisible(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMoney(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetType(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetSubtype(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure);
@@ -349,6 +350,7 @@ static PyGetSetDef Object_getseters[] = {
     { "MakeInvisible",  (getter)Object_GetMakeInvisible,(setter)Object_SetMakeInvisible,NULL, NULL },
     { "Money",          (getter)Object_GetMoney,        NULL ,NULL, NULL },
     { "Type",           (getter)Object_GetType,         NULL ,NULL, NULL },
+    { "Subtype",        (getter)Object_GetSubtype,         NULL ,NULL, NULL },
     { "Value",          (getter)Object_GetValue,        (setter)Object_SetValue ,NULL, NULL },
     { "ArchName",       (getter)Object_GetArchName,     NULL ,NULL, NULL },
     { "Archetype",      (getter)Object_GetArchetype,    NULL ,NULL, NULL },

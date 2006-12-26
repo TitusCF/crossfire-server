@@ -630,6 +630,11 @@ static PyObject* Object_GetType(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_TYPE));
 }
+static PyObject* Object_GetSubtype(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SUBTYPE));
+}
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
