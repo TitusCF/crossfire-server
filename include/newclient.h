@@ -537,6 +537,8 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define	MSG_TYPE_COMMUNICATION_TELL	4   /* Player tells something */
 #define	MSG_TYPE_COMMUNICATION_EMOTE	5   /* Player emotes */
 #define	MSG_TYPE_COMMUNICATION_PARTY	6   /* Party message */
+#define	MSG_TYPE_COMMUNICATION_SHOUT	7   /* Party message */
+#define	MSG_TYPE_COMMUNICATION_CHAT	8   /* Party message */
 
 #define MSG_TYPE_SPELL_HEAL		1   /* Healing related spells */
 #define MSG_TYPE_SPELL_PET		2   /* Pet related messages */

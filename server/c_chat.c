@@ -104,7 +104,7 @@ int command_orcknuckle(object *op, char *params)
     return 0;
 }
 
-static int command_tell_all(object *op, char *params, int pri, int color, const char *desc)
+static int command_tell_all(object *op, char *params, int pri, int color, int subtype, const char *desc)
 {
     if (op->contr->no_shout == 1){
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -117,7 +117,7 @@ static int command_tell_all(object *op, char *params, int pri, int color, const 
 	    return 1;
 	}
 	draw_ext_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
-		     MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+		     MSG_TYPE_COMMUNICATION, subtype,
 		     "%s %s: %s", 
 		     "%s %s: %s", 
 		     op->name, desc, params);
@@ -130,12 +130,12 @@ static int command_tell_all(object *op, char *params, int pri, int color, const 
 
 int command_shout (object *op, char *params)
 {
-    return command_tell_all(op, params, 1, NDI_RED, "shouts");
+    return command_tell_all(op, params, 1, NDI_RED, MSG_TYPE_COMMUNICATION_SHOUT, "shouts");
 }
 
 int command_chat (object *op, char *params)
 {
-    return command_tell_all(op, params, 9, NDI_BLUE, "chats");
+    return command_tell_all(op, params, 9, NDI_BLUE, MSG_TYPE_COMMUNICATION_CHAT, "chats");
 }
 
 
