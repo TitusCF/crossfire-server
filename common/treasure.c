@@ -1635,8 +1635,27 @@ void fix_flesh_item(object *item, object *donor) {
 	FREE_AND_COPY(item->name_pl, tmpbuf);
 
         /* store original arch in other_arch */
-        if(!item->other_arch)
-            item->other_arch = donor->arch;
+        if(!item->other_arch) {
+	    if (!donor->arch->reference_count) {
+		item->other_arch = donor->arch;
+	    }
+	    else {
+		/* If dealing with custom monsters, other_arch still needs to
+		 * point back to the original.  Otherwise what happens
+		 * is that other_arch points at the custom archetype, but
+		 * that can be freed.  Reference count doesn't work because
+		 * the loader will not be able to resolve the other_arch at
+		 * load time (server may has restarted, etc.)
+		 */
+		archetype* original = find_archetype(donor->arch->name);
+
+		if (original) item->other_arch = original;
+		else {
+		    LOG(llevError, "could not find original archetype %s for custom monster!", donor->arch->name);
+		    abort();
+		}
+	    }
+	}
 
 	/* weight is FLESH weight/100 * donor */
 	if((item->weight = (signed long) (((double)item->weight/(double)100.0) * (double)donor->weight))==0)

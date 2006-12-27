@@ -295,6 +295,13 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
     object *the_key;
     char keybuf[256];
 
+    /* get a key and set its keycode */
+    the_key = create_archetype("key2");
+    the_key->slaying = add_string(keycode); 
+    free_string(the_key->name);
+    snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
+    the_key->name = add_string(keybuf);
+
     if (door_flag==PASS_DOORS) {
         int tries=0;
         the_keymaster=NULL;
@@ -356,13 +363,6 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
             return 0;
         }
     }
-
-    /* get a key and set its keycode */
-    the_key = create_archetype("key2");
-    the_key->slaying = add_string(keycode); 
-    free_string(the_key->name);
-    snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
-    the_key->name = add_string(keybuf);
 
     if(the_keymaster==NULL) {
         the_key->x = kx;
