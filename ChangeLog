@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1622575: Range attack switches to punching on contact,
+ applied patch courtesy Aaron Baugher
+ server/skill_util.c: use good flag to not switch.
+Ryo 2006-12-27
+
 Fix some crashes observed on metalforge:
 common/treasure.c: When generating flesh items from custom monsters,
   update other_arch of the flesh item to point back to the original
