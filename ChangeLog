@@ -18,6 +18,10 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Massive doxygenation of code. Reformat indentation. No functional change.
+ common/friend.c glue.c holy.c
+Ryo 2006-12-28
+
+Massive doxygenation of code. Reformat indentation. No functional change.
  Doxyfile: extract also static and private stuff.
  common/anim.c arch.c button.c exp.c
 Ryo 2006-12-27

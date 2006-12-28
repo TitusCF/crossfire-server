@@ -28,7 +28,9 @@
 
 #include <global.h>
 
-/*
+/**
+ * @file glue.c
+ *
  * All this glue is currently needed to connect the game with the
  * server.  I'll try to make the library more able to "stand on it's
  * own legs" later; not done in 5 minutes to separate two parts of
@@ -38,6 +40,9 @@
  * Ryo 2005-07-15
  */
 
+/**
+ * Error messages to display.
+ */
 static const char* const fatalmsgs[80]={
   "Failed to allocate memory",
   "Failed repeatedly to load maps",
@@ -45,9 +50,12 @@ static const char* const fatalmsgs[80]={
   "Too many errors"
 };
 
-/*
+/**
  * fatal() is meant to be called whenever a fatal signal is intercepted.
  * It will call the emergency_save and the clean_tmp_files functions.
+ * 
+ * @note
+ * this function never returns, as it calls exit().
  */
 void fatal(int err) {
   fprintf(logfile,"Fatal: %s\n",fatalmsgs[err]);
