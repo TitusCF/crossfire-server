@@ -25,36 +25,54 @@
     The author can be reached via e-mail to frankj@ifi.uio.no.
 */
 
+/**
+ * @file links.c
+ * Utility functions for links between objects.
+ */
+
 #include <global.h>
 
-/*
+/**
  * Allocates a new objectlink structure, initialises it, and returns
  * a pointer to it.
+ *
+ * @return
+ * new link object, cleared.
+ *
+ * @todo
+ * check return of CALLOC.
  */
-
 objectlink *get_objectlink(void) {
-  objectlink *ol=(objectlink *)CALLOC(1,sizeof(objectlink));
-  ol->ob=NULL;
-  ol->next=NULL;
-  ol->id = 0;
-  return ol;
+    objectlink *ol=(objectlink *)CALLOC(1,sizeof(objectlink));
+    ol->ob=NULL;
+    ol->next=NULL;
+    ol->id = 0;
+    return ol;
 }
 
-/*
+/**
  * Allocates a new oblinkpt structure, initialises it, and returns
  * a pointer to it.
+ *
+ * @return
+ * new link pointer.
+ *
+ * @todo
+ * check return of malloc().
  */
-
 oblinkpt *get_objectlinkpt(void) {
-  oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
-  obp->link = NULL;
-  obp->next = NULL;
-  obp->value = 0;
-  return obp;
+    oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
+    obp->link = NULL;
+    obp->next = NULL;
+    obp->value = 0;
+    return obp;
 }
 
-/*
- * Recursively frees all objectlinks
+/**
+ * Recursively frees all objectlinks.
+ *
+ * @param ol
+ * object link to free.
  */
 
 void free_objectlink(objectlink *ol) {
@@ -63,14 +81,16 @@ void free_objectlink(objectlink *ol) {
   free(ol);
 }
 
-/*
+/**
  * Recursively frees all linked list of objectlink pointers
+ *
+ * @param obp
+ * pointer to free.
  */
-
 void free_objectlinkpt(oblinkpt *obp) {
-  if (obp->next)
-    free_objectlinkpt(obp->next);
-  if (obp->link)
-    free_objectlink(obp->link);
-  free(obp);
+    if (obp->next)
+        free_objectlinkpt(obp->next);
+    if (obp->link)
+        free_objectlink(obp->link);
+    free(obp);
 }
