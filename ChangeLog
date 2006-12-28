@@ -17,8 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix previous broken commit.
+ common/arch.c
 Massive doxygenation of code. Reformat indentation. No functional change.
- common/friend.c glue.c holy.c
+ common/friend.c glue.c holy.c image.c
 Ryo 2006-12-28
 
 Massive doxygenation of code. Reformat indentation. No functional change.
