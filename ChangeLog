@@ -21,6 +21,7 @@ Fix previous broken commit.
  common/arch.c
 Massive doxygenation of code. Reformat indentation. No functional change.
  common/friend.c glue.c holy.c image.c info.c init.c item.c links.c living.c loader.l
+  logger.c los.c
 Ryo 2006-12-28
 
 Massive doxygenation of code. Reformat indentation. No functional change.
