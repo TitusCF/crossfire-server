@@ -28,46 +28,45 @@
 
 #include <global.h>
 
-/*
+/**
+ * @file common/info.c
  * The functions in this file are purely mean to generate information
  * in differently formatted output, mainly about monsters.
  */
 
-/*
+/**
  * Dump to standard out the abilities of all monsters.
  */
-
 void dump_abilities(void) {
-  archetype *at;
-  for(at = first_archetype; at; at=at->next) {
-    char *ch;
-    const char *gen_name = "";
-    archetype *gen;
+    archetype *at;
+    for(at = first_archetype; at; at=at->next) {
+        char *ch;
+        const char *gen_name = "";
+        archetype *gen;
 
-    if(!QUERY_FLAG(&at->clone,FLAG_MONSTER))
-      continue;
+        if(!QUERY_FLAG(&at->clone,FLAG_MONSTER))
+            continue;
 
-    /* Get rid of e.g. multiple black puddings */
-    if (QUERY_FLAG(&at->clone,FLAG_CHANGING))
-      continue;
+        /* Get rid of e.g. multiple black puddings */
+        if (QUERY_FLAG(&at->clone,FLAG_CHANGING))
+            continue;
 
-    for (gen = first_archetype; gen; gen = gen->next) {
-      if (gen->clone.other_arch && gen->clone.other_arch == at) {
-        gen_name = gen->name;
-	break;
-      }
+        for (gen = first_archetype; gen; gen = gen->next) {
+            if (gen->clone.other_arch && gen->clone.other_arch == at) {
+                gen_name = gen->name;
+                break;
+            }
+        }
+
+        ch = describe_item(&at->clone, NULL);
+        printf("%-16s|%6" FMT64 "|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
+            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
     }
-
-    ch = describe_item(&at->clone, NULL);
-    printf("%-16s|%6" FMT64 "|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
-           at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
-  }
 }
 
-/*
+/**
  * As dump_abilities(), but with an alternative way of output.
  */
-
 void print_monsters(void) {
     archetype *at;
     object *op;
@@ -78,43 +77,53 @@ void print_monsters(void) {
     printf("monster        | hp  |dam| ac | wc |pmf ecw adw gpd ptf|phy mag fir ele cld cfs acd drn wmg ght poi slo par tud fer cnc dep dth chs csp gpw hwd bln int |  exp   | new exp |\n");
     printf("---------------------------------------------------------------------------------------------------------------------------------------------------\n");
     for(at=first_archetype;at!=NULL;at=at->next) {
-	op = arch_to_object(at);
-	if (QUERY_FLAG(op,FLAG_MONSTER)) {
-	    bitstostring((long)op->attacktype, NROFATTACKS, attbuf);
-	    printf("%-15s|%5d|%3d|%4d|%4d|%s|",
-		   op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
-		   op->stats.wc,attbuf);
-	    for (i=0; i<NROFATTACKS; i++)
-		printf("%4d", op->resist[i]);
-	    printf("|%8" FMT64 "|%9d|\n",op->stats.exp, new_exp(op));
+        op = arch_to_object(at);
+        if (QUERY_FLAG(op,FLAG_MONSTER)) {
+            bitstostring((long)op->attacktype, NROFATTACKS, attbuf);
+            printf("%-15s|%5d|%3d|%4d|%4d|%s|",
+                op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
+                op->stats.wc,attbuf);
+            for (i=0; i<NROFATTACKS; i++)
+                printf("%4d", op->resist[i]);
+            printf("|%8" FMT64 "|%9d|\n",op->stats.exp, new_exp(op));
+        }
+        free_object(op);
     }
-    free_object(op);
-  }
 }
 
-/*
- * Writes <num> ones and zeros to the given string based on the
- * <bits> variable.
+/**
+ * Writes num ones and zeros to the given string based on the
+ * bits variable.
+ *
+ * @param bits
+ * variable to convert to binary string
+ * @param num
+ * number of bits to dump. Values above 32 will be ignored.
+ * @param str
+ * string to write to. Must be long enough.
+ *
+ * @note
+ * no check is done whether str has enough space to write or not.
+ * Final \\0 is appended to str.
  */
-
 void bitstostring(long bits, int num, char *str)
 {
-  int   i,j=0;
+    int i,j=0;
 
-  if (num > 32)
+    if (num > 32)
     num = 32;
 
-  for (i=0;i<num;i++) {
-    if (i && (i%3)==0) {
-      str[i+j] = ' ';
-      j++;
+    for (i=0;i<num;i++) {
+        if (i && (i%3)==0) {
+            str[i+j] = ' ';
+            j++;
+        }
+        if (bits&1)
+            str[i+j] = '1';
+        else
+            str[i+j] = '0';
+        bits >>= 1;
     }
-    if (bits&1)
-      str[i+j] = '1';
-    else
-      str[i+j] = '0';
-    bits >>= 1;
-  }
-  str[i+j] = '\0';
-  return;
+    str[i+j] = '\0';
+    return;
 }
