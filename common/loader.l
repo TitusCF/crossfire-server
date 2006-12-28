@@ -46,11 +46,12 @@ static char msgbuf[HUGE_BUF];
 int	msglen=0, total_msglen=0;
 static char lorebuf[HUGE_BUF];
 
-/* Maps the MOVE_* values to names */
+/** Maps the MOVE_* values to names */
 static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "boat",
     NULL};
 
-/* This table is only necessary to convert objects that existed before the
+/**
+ * This table is only necessary to convert objects that existed before the
  * spell object conversion to the new object.  It was not practical
  * to go through every mapping looking for every potion, rod, wand, etc
  * that had a sp set and update to the new value.  So this maps the
@@ -59,221 +60,226 @@ static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "
  * new spell won't have been used, and thus won't have any legacy object.
  * NULL entries in this table are valid - to denote objects that should
  * not be updated for whatever reason.
+ *
+ * @todo 
+ * is this still required? it's used, but can it happen?
  */
 const char *const spell_mapping[] = {
-"spell_magic_bullet",		/* 0 */
-"spell_small_fireball",		/* 1 */
-"spell_medium_fireball",	/* 2 */
-"spell_large_fireball",		/* 3 */
-"spell_burning_hands",		/* 4 */
-"spell_sm_lightning",		/* 5 */
-"spell_large_lightning",	/* 6 */
-"spell_magic_missile",		/* 7 */
-"spell_create_bomb",		/* 8 */
-"spell_summon_golem",		/* 9 */
-"spell_summon_fire_elemental",	/* 10 */
-"spell_summon_earth_elemental",	/* 11 */
-"spell_summon_water_elemental",	/* 12 */
-"spell_summon_air_elemental",	/* 13 */
-"spell_dimension_door",		/* 14 */
-"spell_create_earth_wall",	/* 15 */
-"spell_paralyze",		/* 16 */
-"spell_icestorm",		/* 17 */
-"spell_magic_mapping",		/* 18 */
-"spell_turn_undead",		/* 19 */
-"spell_fear",			/* 20 */
-"spell_poison_cloud",		/* 21 */
-"spell_wonder",			/* 22 */
-"spell_destruction",		/* 23 */
-"spell_perceive_self",		/* 24 */
-"spell_word_of_recall",		/* 25 */
-"spell_invisible",		/* 26 */
-"spell_invisible_to_undead",	/* 27 */
-"spell_probe",			/* 28 */
-"spell_lg_magic_bullet",	/* 29 */
-"spell_improved_invisibility",	/* 30 */
-"spell_holy_word",		/* 31 */
-"spell_minor_healing",		/* 32 */
-"spell_medium_healing",		/* 33 */
-"spell_major_healing",		/* 34 */
-"spell_heal",			/* 35 */
-"spell_create_food",		/* 36 */
-"spell_earth_to_dust",		/* 37 */
-"spell_armour",			/* 38 */
-"spell_strength",		/* 39 */
-"spell_dexterity",		/* 40 */
-"spell_constitution",		/* 41 */
-"spell_charisma",		/* 42 */
-"spell_create_fire_wall",	/* 43 */
-"spell_create_frost_wall",	/* 44 */
-"spell_protection_from_cold",	/* 45 */
-"spell_protection_from_electricity",	/* 46 */
-"spell_protection_from_fire",	/* 47 */
-"spell_protection_from_poison",	/* 48 */
-"spell_protection_from_slow",	/* 49 */
-"spell_protection_from_paralysis",	/* 50 */
-"spell_protection_from_draining",	/* 51 */
-"spell_protection_from_magic",	/* 52 */
-"spell_protection_from_attack",	/* 53 */
-"spell_levitate",		/* 54 */
-"spell_small_speedball",	/* 55 */
-"spell_large_speedball",	/* 56 */
-"spell_hellfire",		/* 57 */
-"spell_dragonbreath",		/* 58 */
-"spell_large_icestorm",		/* 59 */
-"spell_charging",		/* 60 */
-"spell_polymorph",		/* 61 */
-"spell_cancellation",		/* 62 */
-"spell_confusion",		/* 63 */
-"spell_mass_confusion",		/* 64 */
-"spell_summon_pet_monster",	/* 65 */
-"spell_slow",			/* 66 */
-"spell_regenerate_spellpoints",	/* 67 */
-"spell_cure_poison",		/* 68 */
-"spell_protection_from_confusion",	/* 69 */
-"spell_protection_from_cancellation",	/* 70 */
-"spell_protection_from_depletion",	/* 71 */
-"spell_alchemy",		/* 72 */
-"spell_remove_curse",		/* 73 */
-"spell_remove_damnation",	/* 74 */
-"spell_identify",		/* 75*/
-"spell_detect_magic",		/* 76 */
-"spell_detect_monster",		/* 77 */
-"spell_detect_evil",		/* 78 */
-"spell_detect_curse",		/* 79 */
-"spell_heroism",		/* 80 */
-"spell_aggravation",		/* 81 */
-"spell_firebolt",		/* 82 */
-"spell_frostbolt",		/* 83 */
-"spell_shockwave",		/* 84 */
-"spell_color_spray",		/* 85 */
-"spell_haste",			/* 86 */
-"spell_face_of_death",		/* 87 */
-"spell_ball_lightning",		/* 88 */
-"spell_meteor_swarm",		/* 89 */
-"spell_comet",			/* 90 */
-"spell_mystic_fist",		/* 91 */
-"spell_raise_dead",		/* 92 */
-"spell_resurrection",		/* 93 */
-"spell_reincarnation",		/* 94 */
-"spell_immunity_to_cold",	/* 95 */
-"spell_immunity_to_electricity",/* 96 */
-"spell_immunity_to_fire",	/* 97 */
-"spell_immunity_to_poison",	/* 98 */
-"spell_immunity_to_slow",	/* 99 */
-"spell_immunity_to_paralysis",	/* 100 */
-"spell_immunity_to_draining",	/* 101 */
-"spell_immunity_to_magic",	/* 102 */
-"spell_immunity_to_attack",	/* 103 */
-"spell_invulnerability",	/* 104 */
-"spell_defense",		/* 105 */
-"spell_rune_of_fire",		/* 106 */
-"spell_rune_of_frost",		/* 107 */
-"spell_rune_of_shocking",	/* 108 */
-"spell_rune_of_blasting",	/* 109 */
-"spell_rune_of_death",		/* 110 */
-"spell_marking_rune",		/* 111 */
-"spell_build_director",		/* 112 */
-"spell_create_pool_of_chaos",	/* 113 */
-"spell_build_bullet_wall",	/* 114 */
-"spell_build_lightning_wall",	/* 115 */
-"spell_build_fireball_wall",	/* 116 */
-"spell_magic_rune",		/* 117 */
-"spell_rune_of_magic_drain",	/* 118 */
-"spell_antimagic_rune",		/* 119 */
-"spell_rune_of_transference",	/* 120 */
-"spell_transference",		/* 121 */
-"spell_magic_drain",		/* 122 */
-"spell_counterspell",		/* 123 */
-"spell_disarm",			/* 124 */
-"spell_cure_confusion",		/* 125 */
-"spell_restoration",		/* 126 */
-"was summon evil monster",	/* 127 */   /* Not implenented as nothing used it */
-"spell_counterwall",		/* 128 */
-"spell_cause_light_wounds",	/* 129 */
-"spell_cause_medium_wounds",	/* 130 */
-"spell_cause_heavy_wounds",	/* 131 */
-"spell_charm_monsters",		/* 132 */
-"spell_banishment",		/* 133 */
-"spell_create_missile",		/* 134 */
-"spell_show_invisible",		/* 135 */
-"spell_xray",			/* 136 */
-"spell_pacify",			/* 137 */
-"spell_summon_fog",		/* 138 */
-"spell_steambolt",		/* 139 */
-"spell_command_undead",		/* 140 */
-"spell_holy_orb",		/* 141 */
-"spell_summon_avatar",		/* 142 */
-"spell_holy_possession",	/* 143 */
-"spell_bless",			/* 144 */
-"spell_curse",			/* 145 */
-"spell_regeneration",		/* 146 */
-"spell_consecrate",		/* 147 */
-"spell_summon_cult_monsters",	/* 148 */
-"spell_cause_critical_wounds",	/* 149 */
-"spell_holy_wrath",		/* 150 */
-"spell_retributive_strike",	/* 151 */
-"spell_finger_of_death",	/* 152 */
-"spell_insect_plague",		/* 153 */
-"spell_call_holy_servant",	/* 154 */
-"spell_wall_of_thorns",		/* 155 */
-"spell_staff_to_snake",		/* 156 */
-"spell_light",			/* 157 */
-"spell_darkness",		/* 158 */
-"spell_nightfall",		/* 159 */
-"spell_daylight",		/* 160 */
-"spell_sunspear",		/* 161 */
-"spell_faery_fire",		/* 162 */
-"spell_cure_blindness",		/* 163 */
-"spell_dark_vision",		/* 164 */
-"spell_bullet_swarm",		/* 165 */
-"spell_bullet_storm",		/* 166 */
-"spell_cause_many_wounds",	/* 167 */
-"spell_small_snowstorm",	/* 168 */
-"spell_medium_snowstorm",	/* 169 */
-"spell_large_snowstorm",	/* 170 */
-"spell_cure_disease",		/* 171 */
-"spell_cause_red_death",	/* 172 */
-"spell_cause_flu",		/* 173 */
-"spell_cause_black_death",	/* 174 */
-"spell_cause_leprosy",		/* 175 */
-"spell_cause_smallpox",		/* 176 */
-"spell_cause_white_death",	/* 177 */
-"spell_cause_anthrax",		/* 178 */
-"spell_cause_typhoid",		/* 179 */
-"spell_mana_blast",		/* 180 */
-"spell_small_manaball",		/* 181 */
-"spell_medium_manaball",	/* 182 */
-"spell_large_manaball",		/* 183 */
-"spell_manabolt",		/* 184 */
-"spell_dancing_sword",		/* 185 */
-"spell_animate_weapon",		/* 186 */
-"spell_cause_cold",		/* 187 */
-"spell_divine_shock",		/* 188 */
-"spell_windstorm",		/* 189 */
-"spell_sanctuary",		/* 190 */
-"spell_peace",			/* 191 */
-"spell_spiderweb",		/* 192 */
-"spell_conflict",		/* 193 */
-"spell_rage",			/* 194 */
-"spell_forked_lightning",	/* 195 */
-"spell_poison_fog",		/* 196 */
-"spell_flaming_aura",		/* 197 */
-"spell_vitriol",		/* 198 */
-"spell_vitriol_splash",		/* 199 */
-"spell_iron_skin",		/* 200 */
-"spell_wrathful_eye",		/* 201 */
-"spell_town_portal",		/* 202 */
-"spell_missile_swarm",		/* 203 */
-"spell_cause_rabies",		/* 204 */
-"spell_glyph",			/* 205 */
-NULL
+    "spell_magic_bullet",		/* 0 */
+    "spell_small_fireball",		/* 1 */
+    "spell_medium_fireball",	/* 2 */
+    "spell_large_fireball",		/* 3 */
+    "spell_burning_hands",		/* 4 */
+    "spell_sm_lightning",		/* 5 */
+    "spell_large_lightning",	/* 6 */
+    "spell_magic_missile",		/* 7 */
+    "spell_create_bomb",		/* 8 */
+    "spell_summon_golem",		/* 9 */
+    "spell_summon_fire_elemental",	/* 10 */
+    "spell_summon_earth_elemental",	/* 11 */
+    "spell_summon_water_elemental",	/* 12 */
+    "spell_summon_air_elemental",	/* 13 */
+    "spell_dimension_door",		/* 14 */
+    "spell_create_earth_wall",	/* 15 */
+    "spell_paralyze",		/* 16 */
+    "spell_icestorm",		/* 17 */
+    "spell_magic_mapping",		/* 18 */
+    "spell_turn_undead",		/* 19 */
+    "spell_fear",			/* 20 */
+    "spell_poison_cloud",		/* 21 */
+    "spell_wonder",			/* 22 */
+    "spell_destruction",		/* 23 */
+    "spell_perceive_self",		/* 24 */
+    "spell_word_of_recall",		/* 25 */
+    "spell_invisible",		/* 26 */
+    "spell_invisible_to_undead",	/* 27 */
+    "spell_probe",			/* 28 */
+    "spell_lg_magic_bullet",	/* 29 */
+    "spell_improved_invisibility",	/* 30 */
+    "spell_holy_word",		/* 31 */
+    "spell_minor_healing",		/* 32 */
+    "spell_medium_healing",		/* 33 */
+    "spell_major_healing",		/* 34 */
+    "spell_heal",			/* 35 */
+    "spell_create_food",		/* 36 */
+    "spell_earth_to_dust",		/* 37 */
+    "spell_armour",			/* 38 */
+    "spell_strength",		/* 39 */
+    "spell_dexterity",		/* 40 */
+    "spell_constitution",		/* 41 */
+    "spell_charisma",		/* 42 */
+    "spell_create_fire_wall",	/* 43 */
+    "spell_create_frost_wall",	/* 44 */
+    "spell_protection_from_cold",	/* 45 */
+    "spell_protection_from_electricity",	/* 46 */
+    "spell_protection_from_fire",	/* 47 */
+    "spell_protection_from_poison",	/* 48 */
+    "spell_protection_from_slow",	/* 49 */
+    "spell_protection_from_paralysis",	/* 50 */
+    "spell_protection_from_draining",	/* 51 */
+    "spell_protection_from_magic",	/* 52 */
+    "spell_protection_from_attack",	/* 53 */
+    "spell_levitate",		/* 54 */
+    "spell_small_speedball",	/* 55 */
+    "spell_large_speedball",	/* 56 */
+    "spell_hellfire",		/* 57 */
+    "spell_dragonbreath",		/* 58 */
+    "spell_large_icestorm",		/* 59 */
+    "spell_charging",		/* 60 */
+    "spell_polymorph",		/* 61 */
+    "spell_cancellation",		/* 62 */
+    "spell_confusion",		/* 63 */
+    "spell_mass_confusion",		/* 64 */
+    "spell_summon_pet_monster",	/* 65 */
+    "spell_slow",			/* 66 */
+    "spell_regenerate_spellpoints",	/* 67 */
+    "spell_cure_poison",		/* 68 */
+    "spell_protection_from_confusion",	/* 69 */
+    "spell_protection_from_cancellation",	/* 70 */
+    "spell_protection_from_depletion",	/* 71 */
+    "spell_alchemy",		/* 72 */
+    "spell_remove_curse",		/* 73 */
+    "spell_remove_damnation",	/* 74 */
+    "spell_identify",		/* 75*/
+    "spell_detect_magic",		/* 76 */
+    "spell_detect_monster",		/* 77 */
+    "spell_detect_evil",		/* 78 */
+    "spell_detect_curse",		/* 79 */
+    "spell_heroism",		/* 80 */
+    "spell_aggravation",		/* 81 */
+    "spell_firebolt",		/* 82 */
+    "spell_frostbolt",		/* 83 */
+    "spell_shockwave",		/* 84 */
+    "spell_color_spray",		/* 85 */
+    "spell_haste",			/* 86 */
+    "spell_face_of_death",		/* 87 */
+    "spell_ball_lightning",		/* 88 */
+    "spell_meteor_swarm",		/* 89 */
+    "spell_comet",			/* 90 */
+    "spell_mystic_fist",		/* 91 */
+    "spell_raise_dead",		/* 92 */
+    "spell_resurrection",		/* 93 */
+    "spell_reincarnation",		/* 94 */
+    "spell_immunity_to_cold",	/* 95 */
+    "spell_immunity_to_electricity",/* 96 */
+    "spell_immunity_to_fire",	/* 97 */
+    "spell_immunity_to_poison",	/* 98 */
+    "spell_immunity_to_slow",	/* 99 */
+    "spell_immunity_to_paralysis",	/* 100 */
+    "spell_immunity_to_draining",	/* 101 */
+    "spell_immunity_to_magic",	/* 102 */
+    "spell_immunity_to_attack",	/* 103 */
+    "spell_invulnerability",	/* 104 */
+    "spell_defense",		/* 105 */
+    "spell_rune_of_fire",		/* 106 */
+    "spell_rune_of_frost",		/* 107 */
+    "spell_rune_of_shocking",	/* 108 */
+    "spell_rune_of_blasting",	/* 109 */
+    "spell_rune_of_death",		/* 110 */
+    "spell_marking_rune",		/* 111 */
+    "spell_build_director",		/* 112 */
+    "spell_create_pool_of_chaos",	/* 113 */
+    "spell_build_bullet_wall",	/* 114 */
+    "spell_build_lightning_wall",	/* 115 */
+    "spell_build_fireball_wall",	/* 116 */
+    "spell_magic_rune",		/* 117 */
+    "spell_rune_of_magic_drain",	/* 118 */
+    "spell_antimagic_rune",		/* 119 */
+    "spell_rune_of_transference",	/* 120 */
+    "spell_transference",		/* 121 */
+    "spell_magic_drain",		/* 122 */
+    "spell_counterspell",		/* 123 */
+    "spell_disarm",			/* 124 */
+    "spell_cure_confusion",		/* 125 */
+    "spell_restoration",		/* 126 */
+    "was summon evil monster",	/* 127 */   /* Not implenented as nothing used it */
+    "spell_counterwall",		/* 128 */
+    "spell_cause_light_wounds",	/* 129 */
+    "spell_cause_medium_wounds",	/* 130 */
+    "spell_cause_heavy_wounds",	/* 131 */
+    "spell_charm_monsters",		/* 132 */
+    "spell_banishment",		/* 133 */
+    "spell_create_missile",		/* 134 */
+    "spell_show_invisible",		/* 135 */
+    "spell_xray",			/* 136 */
+    "spell_pacify",			/* 137 */
+    "spell_summon_fog",		/* 138 */
+    "spell_steambolt",		/* 139 */
+    "spell_command_undead",		/* 140 */
+    "spell_holy_orb",		/* 141 */
+    "spell_summon_avatar",		/* 142 */
+    "spell_holy_possession",	/* 143 */
+    "spell_bless",			/* 144 */
+    "spell_curse",			/* 145 */
+    "spell_regeneration",		/* 146 */
+    "spell_consecrate",		/* 147 */
+    "spell_summon_cult_monsters",	/* 148 */
+    "spell_cause_critical_wounds",	/* 149 */
+    "spell_holy_wrath",		/* 150 */
+    "spell_retributive_strike",	/* 151 */
+    "spell_finger_of_death",	/* 152 */
+    "spell_insect_plague",		/* 153 */
+    "spell_call_holy_servant",	/* 154 */
+    "spell_wall_of_thorns",		/* 155 */
+    "spell_staff_to_snake",		/* 156 */
+    "spell_light",			/* 157 */
+    "spell_darkness",		/* 158 */
+    "spell_nightfall",		/* 159 */
+    "spell_daylight",		/* 160 */
+    "spell_sunspear",		/* 161 */
+    "spell_faery_fire",		/* 162 */
+    "spell_cure_blindness",		/* 163 */
+    "spell_dark_vision",		/* 164 */
+    "spell_bullet_swarm",		/* 165 */
+    "spell_bullet_storm",		/* 166 */
+    "spell_cause_many_wounds",	/* 167 */
+    "spell_small_snowstorm",	/* 168 */
+    "spell_medium_snowstorm",	/* 169 */
+    "spell_large_snowstorm",	/* 170 */
+    "spell_cure_disease",		/* 171 */
+    "spell_cause_red_death",	/* 172 */
+    "spell_cause_flu",		/* 173 */
+    "spell_cause_black_death",	/* 174 */
+    "spell_cause_leprosy",		/* 175 */
+    "spell_cause_smallpox",		/* 176 */
+    "spell_cause_white_death",	/* 177 */
+    "spell_cause_anthrax",		/* 178 */
+    "spell_cause_typhoid",		/* 179 */
+    "spell_mana_blast",		/* 180 */
+    "spell_small_manaball",		/* 181 */
+    "spell_medium_manaball",	/* 182 */
+    "spell_large_manaball",		/* 183 */
+    "spell_manabolt",		/* 184 */
+    "spell_dancing_sword",		/* 185 */
+    "spell_animate_weapon",		/* 186 */
+    "spell_cause_cold",		/* 187 */
+    "spell_divine_shock",		/* 188 */
+    "spell_windstorm",		/* 189 */
+    "spell_sanctuary",		/* 190 */
+    "spell_peace",			/* 191 */
+    "spell_spiderweb",		/* 192 */
+    "spell_conflict",		/* 193 */
+    "spell_rage",			/* 194 */
+    "spell_forked_lightning",	/* 195 */
+    "spell_poison_fog",		/* 196 */
+    "spell_flaming_aura",		/* 197 */
+    "spell_vitriol",		/* 198 */
+    "spell_vitriol_splash",		/* 199 */
+    "spell_iron_skin",		/* 200 */
+    "spell_wrathful_eye",		/* 201 */
+    "spell_town_portal",		/* 202 */
+    "spell_missile_swarm",		/* 203 */
+    "spell_cause_rabies",		/* 204 */
+    "spell_glyph",			/* 205 */
+    NULL
 };
 
+/** Utility macro to transform a bit into a flag. */
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
 	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
-/* SET_RESIST is really only really needed for transition code.  We normally
+/**
+ * SET_RESIST is really only really needed for transition code.  We normally
  * don't care about multiple values overwriting each other, but this is
  * to catch items that have multiple protection/immune/vulnerable.
  * This can be simplified later on to just do the set after all the archs
@@ -294,23 +300,38 @@ NULL
 #define SET_RESIST(op, type, val)  op->resist[type] = val;
 #endif
 
+/** Next value as integer. */
 #define IVAL	atoi(yval())
+/** Next value as float. */
 #define FVAL	atof(yval())
 extern int arch_init;
 extern int artifact_init;
 
-/* Put this here since it is used below */
+/**
+ *
+ * Put this here since it is used below.
+ *
+ * @todo
+ * This corresponds to old/obsolete code. Maps should be checked, and this removed.
+ */
 static void set_protection(object *op, uint32 mask, uint16 pro_val)
 {
     int i;
 
     if (!mask) return;	/* Unlikely, but might as well check */
     for (i=0; i<NROFATTACKS; i++) {
-	if (mask & (1<<i)) SET_RESIST(op, i, pro_val);
+        if (mask & (1<<i)) SET_RESIST(op, i, pro_val);
     }
 }
 
-
+/**
+ * Fills in the body information for one slot.
+ *
+ * @param op
+ * object
+ * @param params
+ * the body part, which should be in the ::body_locations structure.
+ */
 static void set_body_info(object *op, char *params) {
     int i;
     char *cp;
@@ -321,19 +342,23 @@ static void set_body_info(object *op, char *params) {
     *cp++ = 0;	/* null it out */
 
     for (i=0; i<NUM_BODY_LOCATIONS; i++) {
-	if (!strcmp(params, body_locations[i].save_name)) {
-	    op->body_info[i] = atoi(cp);
-	    return;	/* Only one line passed in params */
-	}
+        if (!strcmp(params, body_locations[i].save_name)) {
+            op->body_info[i] = atoi(cp);
+            return;	/* Only one line passed in params */
+        }
     }
     LOG(llevError,"set_body_info called with bogus params: %s\n", params);
 }
 
 
-/* This function checks the object after it has been loaded (when we
+/**
+ * This function checks the object after it has been loaded (when we
  * get the 'end' in the input stream).  This function can be used to 
  * deal with legacy objects where fields may have changed.  It can also be used
  * to check for objects to make sure there are no common errors.
+ *
+ * @param op
+ * object to check.
  */
 static void check_loaded_object(object *op) {
     int ip;
@@ -348,8 +373,8 @@ static void check_loaded_object(object *op) {
      * information (appear as just 'hearts' and not 'goblins heart') 
      */
     if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
-	if (op->name_pl) free_string(op->name_pl);
-	    op->name_pl = NULL;
+        if (op->name_pl) free_string(op->name_pl);
+            op->name_pl = NULL;
     }
     if (!op->name_pl) op->name_pl = add_string(op->name);
 
@@ -366,13 +391,13 @@ static void check_loaded_object(object *op) {
      * not in the ideal fashion.
      */
     if ((op->type == WEAPON || op->type==BOW) && arch_init) {
-	if (!op->skill) {
-	    LOG(llevError,"Weapon %s lacks a skill.\n", op->name);
-	} else if ((!strcmp(op->skill,"one handed weapons") && op->body_info[1] != -1) ||
-	    (!strcmp(op->skill,"two handed weapons") && op->body_info[1] != -2)) {
-	    LOG(llevError,"weapon %s arm usage does not match skill: %d, %s\n",
-		op->name, op->body_info[1], op->skill);
-	}
+        if (!op->skill) {
+            LOG(llevError,"Weapon %s lacks a skill.\n", op->name);
+        } else if ((!strcmp(op->skill,"one handed weapons") && op->body_info[1] != -1) ||
+            (!strcmp(op->skill,"two handed weapons") && op->body_info[1] != -2)) {
+            LOG(llevError,"weapon %s arm usage does not match skill: %d, %s\n",
+            op->name, op->body_info[1], op->skill);
+        }
     }
 
     /* We changed last_heal to gen_sp_armour, which is what it
@@ -385,72 +410,71 @@ static void check_loaded_object(object *op) {
         (op->type == BOOTS)    || (op->type == GLOVES) ||
         (op->type == AMULET )  || (op->type == GIRDLE) ||
         (op->type == BRACERS ) || (op->type == CLOAK)) {
-	if (op->last_heal) {
-	    LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
-		op->name?op->name:"NULL");
-	    op->gen_sp_armour = op->last_heal;
-	    op->last_heal = 0;
-	}
-	if (editor) ip =0;
-	else ip = calc_item_power(op, 0);
-	/* Legacy objects from before item power was in the game */
-	if (!op->item_power && ip) {
-	    if (ip > 3) {
-		LOG(llevDebug,"Object %s had no item power, using %d\n", 
-		    op->name?op->name:"NULL", ip);
-	    }
-	    op->item_power = ip;
-	}
-	/* Check for possibly bogus values.  Has to meet both these criteria -
-	 * something that has item_power 1 is probably just fine if our calculated
-	 * value is 1 or 2 - these values are small enough that hard to be precise.
-	 * similarly, it item_power is 0, the first check will always pass,
-	 * but not the second one.
-	 */
-	if (ip > 2 *op->item_power && ip > (op->item_power + 3)) {
-	    LOG(llevDebug,"Object %s seems to have too low item power? %d > %d\n",
-		op->name?op->name:"NULL", ip, op->item_power);
-	}
-
+        if (op->last_heal) {
+            LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
+            op->name?op->name:"NULL");
+            op->gen_sp_armour = op->last_heal;
+            op->last_heal = 0;
+        }
+        if (editor) ip =0;
+        else ip = calc_item_power(op, 0);
+        /* Legacy objects from before item power was in the game */
+        if (!op->item_power && ip) {
+            if (ip > 3) {
+            LOG(llevDebug,"Object %s had no item power, using %d\n", 
+                op->name?op->name:"NULL", ip);
+            }
+            op->item_power = ip;
+        }
+        /* Check for possibly bogus values.  Has to meet both these criteria -
+        * something that has item_power 1 is probably just fine if our calculated
+        * value is 1 or 2 - these values are small enough that hard to be precise.
+        * similarly, it item_power is 0, the first check will always pass,
+        * but not the second one.
+        */
+        if (ip > 2 *op->item_power && ip > (op->item_power + 3)) {
+            LOG(llevDebug,"Object %s seems to have too low item power? %d > %d\n",
+            op->name?op->name:"NULL", ip, op->item_power);
+        }
     }
     /* Old spellcasting object - need to load in the appropiate object */
     if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN
-	|| op->type == FIREWALL ||
-	  /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
-	  ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv && !arch_init)  {
-	object *tmp;
+        || op->type == FIREWALL ||
+        /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
+        ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv && !arch_init)  {
+        object *tmp;
 
-	/* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
-	 * in that spell was stored in sp.
-	 */
-	tmp = create_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
-	insert_ob_in_ob(tmp, op);
-	op->randomitems = NULL;	/* So another spell isn't created for this object */
+    /* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
+     * in that spell was stored in sp.
+     */
+        tmp = create_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
+        insert_ob_in_ob(tmp, op);
+        op->randomitems = NULL;	/* So another spell isn't created for this object */
     }
+
     /* spellbooks & runes use slaying.  But not to arch name, but to spell name */
-
     if ((op->type == SPELLBOOK || op->type == RUNE) && op->slaying && !op->inv && !arch_init) {
-	object *tmp;
+        object *tmp;
 
-	tmp = create_archetype_by_object_name(op->slaying);
-	insert_ob_in_ob(tmp, op);
-	op->randomitems = NULL;	/* So another spell isn't created for this object */
-	/* without this, value is all screwed up */
-	op->value = op->arch->clone.value * op->inv->value;
+        tmp = create_archetype_by_object_name(op->slaying);
+        insert_ob_in_ob(tmp, op);
+        op->randomitems = NULL;	/* So another spell isn't created for this object */
+        /* without this, value is all screwed up */
+        op->value = op->arch->clone.value * op->inv->value;
     }
 
     if (QUERY_FLAG(op, FLAG_MONSTER)) {
-	if (op->stats.hp > op->stats.maxhp)
-	    LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
-		op->name,
-		op->stats.hp, op->stats.maxhp);
+        if (op->stats.hp > op->stats.maxhp)
+            LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
+            op->name,
+            op->stats.hp, op->stats.maxhp);
 
-	/* The archs just need to be updated for this */
-	if (op->move_type ==0) op->move_type = MOVE_WALK;
-    }
+        /* The archs just need to be updated for this */
+        if (op->move_type ==0) op->move_type = MOVE_WALK;
+        }
     if ((QUERY_FLAG(op,FLAG_GENERATOR) && QUERY_FLAG(op,FLAG_CONTENT_ON_GEN))
-    || op->type == CREATOR
-    || op->type == CONVERTER) {
+        || op->type == CREATOR
+        || op->type == CONVERTER) {
         /* Object will duplicate it's content as part of the
          * generation process. To do this, we must flag inventory
          * so it remains unevaluated concerning the randomitems and
@@ -466,14 +490,14 @@ static void check_loaded_object(object *op) {
      * are doing, otherwise, set move_type based on maxhp value.
      */
     if (op->type == PLAYERMOVER) {
-	if (!op->move_type) {
-	    if (op->stats.maxhp) {
-		op->move_type = MOVE_ALL;
-		op->stats.maxhp=0;
-	    } else {
-		op->move_type = MOVE_WALK;
-	    }
-	}
+        if (!op->move_type) {
+            if (op->stats.maxhp) {
+                op->move_type = MOVE_ALL;
+                op->stats.maxhp=0;
+            } else {
+                op->move_type = MOVE_WALK;
+            }
+        }
     }
 
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
@@ -493,15 +517,15 @@ static void check_loaded_object(object *op) {
         temp->clone.y = 0;
         temp->clone.map = NULL;
         if (FABS(temp->clone.speed)>MIN_ACTIVE_SPEED) {
-            /* Clone has a speed, so need to clear that because it isn't on a map */
-	    /* But we need to keep the value, because otherwise the customized object
-	     * will have no speed (fix_player() will use the 0 value).  So set it
-	     * to zero, call update_ob_speed() to remove it from active list, then
-	     * set its speed back to the original.
-	     */
+            /* Clone has a speed, so need to clear that because it isn't on a map.
+             * But we need to keep the value, because otherwise the customized object
+             * will have no speed (fix_player() will use the 0 value).  So set it
+             * to zero, call update_ob_speed() to remove it from active list, then
+             * set its speed back to the original.
+             */
             temp->clone.speed = 0;
             update_ob_speed(&temp->clone);
-	    temp->clone.speed = op->speed;
+            temp->clone.speed = op->speed;
         }
 
         temp->more = op->arch->more;
@@ -510,21 +534,25 @@ static void check_loaded_object(object *op) {
     }
 }
 
-/* This extracts the key/value from the yytext field -
+/**
+ * This extracts the key/value from the yytext field -
  * calls set_ob_key_value() to actually set the value.
  * Function basically has to find spaces, strip out extra,
  * etc.  strchr doesn't work as good because could also
  * be tabs.
+ *
+ * @param op
+ * object in which to insert the value.
  */
 static void add_key_value(object * op) {
     char * key = NULL;
     char * value = NULL;
     char * cp;
     char * end;
-    
+
     /* First, skip over leading whitespace. */
     for (cp = yytext; isspace(*cp); cp++) { ; }
-    
+
     key = cp;
 
     /* Now look for the end of the key/field name. */
@@ -535,12 +563,12 @@ static void add_key_value(object * op) {
             return;
         }
     }
-    
+
     if (*cp == '\0') {
         set_ob_key_value(op, key, NULL, TRUE);
-        return;    
+        return;
     }
-    
+
     /* Chop off the key, and start at the next character. */
     *cp = '\0';
     cp++;
@@ -549,7 +577,7 @@ static void add_key_value(object * op) {
         set_ob_key_value(op, key, NULL, TRUE);
         return;    
     }
-    
+
     /* Now looking for the value. Skip over whitespace. */
     for (; isspace(*cp); cp++) {
         if (*cp == '\0') {
@@ -558,67 +586,75 @@ static void add_key_value(object * op) {
             return;
         }
     }
-    
+
     value = cp;
-    
+
     /* Got last character before null and strip
      * off tailing whitespace
      */
     for (end = value + (strlen(cp)-1); isspace(*end); end--) {
-	if (end == value) {
-	    /* *blink blink* Still no value? */
-	    set_ob_key_value(op, key, NULL, TRUE);
-	    return;
-	}
-	*end='\0';
+        if (end == value) {
+            /* *blink blink* Still no value? */
+            set_ob_key_value(op, key, NULL, TRUE);
+            return;
+        }
+        *end='\0';
     }
-    set_ob_key_value(op, key, value, TRUE);    
+    set_ob_key_value(op, key, value, TRUE);
 }
 
+/**
+ * Handles the different move types an object can have.
+ *
+ * @param mt
+ * field for which we are computing the value.
+ * @param params
+ * string containing the definition of the move type.
+ */
 static void set_move(MoveType *mt, char *params) {
     char *str;
     int i, negate;
 
     if (isdigit(*params)) {
-	*mt = atoi(params);
+        *mt = atoi(params);
     } else {
-	*mt=0;
-	for (str=strtok(params, " "); str; str=strtok(NULL, " ")) {
-	    negate=0;
-	    if (!strcasecmp(str, "all"))
-		*mt |= MOVE_ALL;
-	    else {
-		if (*str=='-') {
-		    negate = 1;
-		    str++;
-		}
-		for (i=0; move_name[i] != NULL; i++)  {
-		    if (!strcasecmp(move_name[i], str)) {
-			if (negate) {
-			    *mt &= ~(1<<i);
-			} else {
-			    *mt |= (1<<i);
-			}
-			break;
-		    }
-		}
-		if (move_name[i] == NULL) {
-		    /* fly is a special case - covers both fly_low and
-		     * fly_high - since it doesn't match to a specific
-		     * single bit, have to special case it.
-		     */
-		    if (!strcasecmp(str,"flying")) {
-			if (negate) {
-			    *mt &= ~MOVE_FLYING;
-			} else {
-			    *mt |= MOVE_FLYING;
-			}
-		    } else {
-			LOG(llevDebug, "common/loader.l: set_move - unknown move string '%s'\n", str);
-		    }
-		}
-	    } /* Else not all move types */
-	} /* for strtok */
+        *mt=0;
+        for (str=strtok(params, " "); str; str=strtok(NULL, " ")) {
+            negate=0;
+            if (!strcasecmp(str, "all"))
+                *mt |= MOVE_ALL;
+            else {
+                if (*str=='-') {
+                    negate = 1;
+                    str++;
+                }
+                for (i=0; move_name[i] != NULL; i++)  {
+                    if (!strcasecmp(move_name[i], str)) {
+                        if (negate) {
+                            *mt &= ~(1<<i);
+                        } else {
+                            *mt |= (1<<i);
+                        }
+                        break;
+                        }
+                }
+                if (move_name[i] == NULL) {
+                    /* fly is a special case - covers both fly_low and
+                    * fly_high - since it doesn't match to a specific
+                    * single bit, have to special case it.
+                    */
+                    if (!strcasecmp(str,"flying")) {
+                        if (negate) {
+                            *mt &= ~MOVE_FLYING;
+                        } else {
+                            *mt |= MOVE_FLYING;
+                        }
+                    } else {
+                        LOG(llevDebug, "common/loader.l: set_move - unknown move string '%s'\n", str);
+                    }
+                }
+            } /* Else not all move types */
+        } /* for strtok */
     } /* Else not a numeric value */
 }
 
@@ -1092,15 +1128,22 @@ A	.+
 .*			{ add_key_value(op); }
 %%
 
-
+/**
+ * Error handler.
+ *
+ * @param s
+ * lex-generated error message.
+ */
 int yyerror(char *s)
 {
-  LOG(llevError, "%s: %s\n", s, yytext);
-  return -1;
+    LOG(llevError, "%s: %s\n", s, yytext);
+    return -1;
 }
 
 
-/* Our save file syntax is very simple, so we can use a very simple
+/**
+ * Returns the next token for lex.
+ * Our save file syntax is very simple, so we can use a very simple
  * processing mechanism here instead using something like bison
  * This skips over the space and returns the value, or "" if no value
  * is found.  Modified 4/26/2000 to also strip spaces at end of
@@ -1112,44 +1155,55 @@ static char *yval()
     char *cp,*end;
 
     /* First skip over start of line, like animation or name */
-   for (cp=yytext; *cp!=' '; cp++) {
-	if (*cp=='\0') {
-	    return em;
-	}
-   }
+    for (cp=yytext; *cp!=' '; cp++) {
+        if (*cp=='\0') {
+            return em;
+        }
+    }
 
     /* Skip over whitespace */
     for (; *cp==' '; cp++) {
-	if (*cp=='\0') {
-	    return em;
-	}
+        if (*cp=='\0') {
+            return em;
+        }
     }
     /* Got last character before null and strip
      * off tailing whitespace
      */
     for (end=cp+strlen(cp)-1; *end==' '; end--) {
-	if (end==cp) return em;
-	*end='\0';
+        if (end==cp) return em;
+        *end='\0';
     }
     return cp;
 }
 
 
-/*
+/**
  * Loads an object from the given file-pointer.
  * Variables will be read and parsed and patched into the object
  * until the string "end" is reached, or the end of the file.
  *
- * bufstat is used to determine various file attributes:
- *  LO_REPATE (0): We are reading from the same buffer as the last call.
- *  LO_LINEMODE (1): file that is being read from is multi purpose (ie, other functions
- *	will also be reading from this (treasure file, artifacts.)
- *  LO_NEWFILE (2): This is the first read from a particular file, so the buffers should
- *	be reset.
- *  LO_NOREAD (3): Reset the buffers, but don't read from it. (op can be null)
+ * @param fp
+ * file pointer from which to read.
+ * @param op
+ * where to read the data.
+ * @param bufstate
+ * used to determine various file attributes:
+ * @li LO_REPATE (0): We are reading from the same buffer as the last call.
+ * @li LO_LINEMODE (1): file that is being read from is multi purpose (ie, other functions
+ *  will also be reading from this (treasure file, artifacts.)
+ * @li LO_NEWFILE (2): This is the first read from a particular file, so the buffers should be reset.
+ * @li LO_NOREAD (3): Reset the buffers, but don't read from it. (op can be null)
+ * @param map_flags
+ * ?
+ * @return
+ * @li LL_NORMAL if object was read.
+ * @li LL_EOF if an error occured.
+ * @li LL_MORE if this is a multipart object.
  *
+ * @todo
+ * document map_flags
  */
-
 int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
     char inbuf[MAX_BUF];
@@ -1159,21 +1213,21 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     total_msglen=0;
     strcpy(lorebuf, "");
     if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
-/*	LOG(llevDebug,"Switching lex buffers\n");*/
-	yy_delete_buffer(YY_CURRENT_BUFFER);
-	yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
-	if (bufstate==LO_NOREAD) return LL_NORMAL;
+    /*	LOG(llevDebug,"Switching lex buffers\n");*/
+        yy_delete_buffer(YY_CURRENT_BUFFER);
+        yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
+        if (bufstate==LO_NOREAD) return LL_NORMAL;
     }
     if (bufstate==LO_LINEMODE) {
-	YY_BUFFER_STATE  yybufstate;
-	while (fgets(inbuf, MAX_BUF-3, fp)) {
-	    yybufstate=yy_scan_string(inbuf);
-	    retval=lex_load(op, map_flags);
-	    yy_delete_buffer(yybufstate);
-	    if (retval==LL_NORMAL) return retval;
-	}
-	LOG(llevDebug,"Got eof while scanning strings\n");
-	return LL_EOF;
+        YY_BUFFER_STATE  yybufstate;
+        while (fgets(inbuf, MAX_BUF-3, fp)) {
+            yybufstate=yy_scan_string(inbuf);
+            retval=lex_load(op, map_flags);
+            yy_delete_buffer(yybufstate);
+            if (retval==LL_NORMAL) return retval;
+        }
+        LOG(llevDebug,"Got eof while scanning strings\n");
+        return LL_EOF;
     }
 
     retval=lex_load(op, map_flags);
@@ -1188,11 +1242,21 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
 }
 
 
-/* This takes a buffer, scans it for variables, and sets those variables
+/**
+ * This takes a buffer, scans it for variables, and sets those variables
  * as appropriate in op.
  *
  * This function appears to be used in only 2 places - in crossedit to
  * override values and in c_wiz to mutate values.
+ *
+ * @param op
+ * object to alter.
+ * @param buf
+ * modifications to apply.
+ * @return
+ * ?
+ * @todo
+ * document return value.
  */
 int set_variable(object *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
@@ -1217,60 +1281,73 @@ int set_variable(object *op,char *buf) {
  * put gaps in the array that should not be processed.
  * The order matches the order of the define values in 'define.h'.
  */
-/* This is a list of pointers that correspond to the FLAG_.. values.
+/**
+ * This is a list of pointers that correspond to the FLAG_.. values.
  * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
 static const char *const flag_names[NUM_FLAGS+1] = {
-"alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
-"can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
-"is_animated", NULL /* slow_move */, 
-NULL /* flying */, "monster", "friendly", "generator",
-"is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
-"see_invisible", "can_roll", "overlay_floor",
-"is_turnable", NULL /* walk_off */, NULL /* fly_on */,
-NULL /*fly_off*/, "is_used_up", "identified", "reflecting",	/* 30 */
-"changing", "splitting", "hitback", "startequip",
-"blocksview", "undead", "scared", "unaggressive",
-"reflect_missile", "reflect_spell",                             /* 40 */
-"no_magic", "no_fix_player", "is_lightable", "tear_down", 
-"run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
-"pick_up", "unique", "no_drop",					/* 50 */
-NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
-"can_use_bow",  "can_use_armour", "can_use_weapon",
-"can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
-"xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
-"stand_still", "random_move", "only_attack", "confused",        /* 70 */
- "stealth", NULL, NULL, "cursed", "damned",
-"see_anywhere", "known_magical", "known_cursed",
-"can_use_skill", "been_applied",                                /* 80 */
-"has_ready_scroll", "can_use_rod", NULL,
-"can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
-"is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
-"no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
-"is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
-"no_attack", "no_damage", NULL, NULL, "activate_on_push",
-"activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
-NULL
+    "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
+    "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
+    "is_animated", NULL /* slow_move */, 
+    NULL /* flying */, "monster", "friendly", "generator",
+    "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
+    "see_invisible", "can_roll", "overlay_floor",
+    "is_turnable", NULL /* walk_off */, NULL /* fly_on */,
+    NULL /*fly_off*/, "is_used_up", "identified", "reflecting",	/* 30 */
+    "changing", "splitting", "hitback", "startequip",
+    "blocksview", "undead", "scared", "unaggressive",
+    "reflect_missile", "reflect_spell",                             /* 40 */
+    "no_magic", "no_fix_player", "is_lightable", "tear_down", 
+    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
+    "pick_up", "unique", "no_drop",					/* 50 */
+    NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
+    "can_use_bow",  "can_use_armour", "can_use_weapon",
+    "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
+    "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
+    "stand_still", "random_move", "only_attack", "confused",        /* 70 */
+    "stealth", NULL, NULL, "cursed", "damned",
+    "see_anywhere", "known_magical", "known_cursed",
+    "can_use_skill", "been_applied",                                /* 80 */
+    "has_ready_scroll", "can_use_rod", NULL,
+    "can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
+    "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
+    "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
+    "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
+    "no_attack", "no_damage", NULL, NULL, "activate_on_push",
+    "activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
+    NULL
 };
 
 
-/*
+/**
  * Initialises the array of variable-names.  Needed before any
  * objects can be loaded.  Called by init_library().
+ * @todo
+ * remove as it is empty.
  */
 
 void init_vars() {
 }
 
-/*For get_ob_diff speed reason*/
+/** For get_ob_diff speed reason*/
 typedef struct {
     const char *name;
     int   length;
-}genericname;
+} genericname;
 
-/* This returns a string of the integer movement type */
+/**
+ * This returns a string of the integer movement type
+ *
+ * @param mt
+ * move to describe.
+ * @return
+ * static buffer containing the description.
+ *
+ * @todo
+ * remove static buffer.
+ */
 static char* get_string_move_type(MoveType mt)
 {
     static char	retbuf[MAX_BUF], retbuf_all[MAX_BUF];
@@ -1282,8 +1359,8 @@ static char* get_string_move_type(MoveType mt)
     /* Quick check, and probably fairly common */
     if (mt == MOVE_ALL) return retbuf_all+1;
     if (mt == 0) {
-	strcpy(retbuf,"0");
-	return retbuf;
+        strcpy(retbuf,"0");
+        return retbuf;
     }
 
     /* We basically slide the bits down.  Why look at MOVE_ALL?
@@ -1291,14 +1368,14 @@ static char* get_string_move_type(MoveType mt)
      * and if we just looked at mt, we couldn't get that.
      */
     for (i=MOVE_ALL, count=0; i!=0; i >>= 1, count++) {
-	if (mt & (1<<count)) {
-	    strcat(retbuf, " ");
-	    strcat(retbuf, move_name[count]);
-	} else {
-	    strcat(retbuf_all, " -");
-	    strcat(retbuf_all, move_name[count]);
-	    all_count++;
-	}
+        if (mt & (1<<count)) {
+            strcat(retbuf, " ");
+            strcat(retbuf, move_name[count]);
+        } else {
+            strcat(retbuf_all, " -");
+            strcat(retbuf_all, move_name[count]);
+            all_count++;
+        }
     }
     /* Basically, if there is a single negation, return it, eg
      * 'all -swim'.  But more than that, just return the
@@ -1308,33 +1385,45 @@ static char* get_string_move_type(MoveType mt)
     if (all_count <=1) return retbuf_all+1;
     else return retbuf+1;
 }
-    
-
-/*
- * Returns a pointer to a static string which contains all variables
- * which are different in the two given objects.  op is the what object
- * the different values will be taken from.  This function is
- * typically used to dump objects (op2=empty object), or to save objects
- * (op2 is the objects original archetype)
- * Note by MSW 2003-09-22:  It's a bug that we need to pass entrysize -
- * we should use strlen entryname instead.  Any smart compiler should
- * optimize that out.
- */
 
 
 /*static int eol_size=strlen("\n");*/
+/** Utility variable, to speed computation. */
 static int eol_size=sizeof("\n")-1; /*Substract 1 to suppress terminal 0*/
+
+/** Adds a line to the buffer. */
 #define ADD_STRINGLINE_ENTRY(buf__,entryname__,entryvalue__,entrysize__){\
     FAST_STRNCAT(buf__,entryname__,entrysize__);\
     FAST_STRCAT(buf__,entryvalue__);\
     FAST_STRNCAT(buf__,"\n",eol_size);}
+/** Adds a long to the buffer. */
 #define FAST_SAVE_LONG(buf__,entryname__,entryvalue__,entrysize__) \
     ADD_STRINGLINE_ENTRY(buf__,entryname__,ltostr10(entryvalue__),entrysize__)
+/** Adds a double to the buffer. */
 #define FAST_SAVE_DOUBLE(buf__,entryname__,entryvalue__,entrysize__) \
     ADD_STRINGLINE_ENTRY(buf__,entryname__,doubletostr10(entryvalue__),entrysize__)
 
-
-
+/**
+ * Returns a pointer to a static string which contains all variables
+ * which are different in the two given objects.
+ *
+ * This function is typically used to dump objects (op2=empty object), or to save objects
+ *
+ * @param op
+ * what object the different values will be taken from.
+ * @param op2
+ * object's original archetype.
+ * @return
+ * static buffer containing the difference.
+ *
+ * @note
+ * by MSW 2003-09-22:  It's a bug that we need to pass entrysize -
+ * we should use strlen entryname instead.  Any smart compiler should
+ * optimize that out.
+ *
+ * @todo
+ * remove static buffer.
+ */
 char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
 /* Too late, have done it already :P
@@ -1351,285 +1440,282 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
  * NEVER touch buf between PREPARE_FASTCAT(buf) and
  * FINISH_FASTCAT(buf)
  */
-  static int already_run = 0;
-  static int flag_lens[NUM_FLAGS];
-  static char buf2[HUGE_BUF];
-  static char buf[HUGE_BUF];
-  char* fastbuf;
-  int tmp;
-  int i;
+    static int already_run = 0;
+    static int flag_lens[NUM_FLAGS];
+    static char buf2[HUGE_BUF];
+    static char buf[HUGE_BUF];
+    char* fastbuf;
+    int tmp;
+    int i;
 #if 0
 /*Memory polluting code. Should help detect problems, very slow*/
   for (i=0;i<HUGE_BUF;i++){
     buf[i]='a'+(unsigned short)(i%25);
   }
 #endif
-  key_value * my_field;
-  key_value * arch_field;
+    key_value * my_field;
+    key_value * arch_field;
 
-  /*first init this function if first call*/
-  if (!already_run){
-      for (i=0;i<NUM_FLAGS;i++)
-          flag_lens[i]=flag_names[i]?strlen(flag_names[i]):0; /* some flags may be null? :/*/
-      already_run=1;
-  }
-  buf[0]='\0';
-  fastbuf=PREPARE_FASTCAT(buf);
-
-  /* This saves the key/value lists.  We do it first so that any
-   * keys that match field names will be overwritten by the loader.
-   */
-  for (my_field = op->key_values; my_field != NULL; my_field = my_field->next) {
-      /* Find the field in the opposing member. */
-      arch_field = get_ob_key_link(op2, my_field->key);
-      
-      /* If there's no partnering field, or it's got a different value, save our field. */
-      if (arch_field == NULL || my_field->value != arch_field->value) {
-          FAST_STRCAT(fastbuf, my_field->key);
-          FAST_STRNCAT(fastbuf, " ", 1);
-	  /* If this is null, then saving it as a space should
-	   * cause it to be null again.
-	   */
-	  if (my_field->value) FAST_STRCAT(fastbuf, my_field->value);
-          FAST_STRNCAT(fastbuf, "\n", eol_size);
-      }
-  }
-  /* We don't need to worry about the arch's extra fields - they
-   * will get taken care of the copy_object function.
-   */
-
-
-  if(op->name && op->name!=op2->name) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"name ",op->name,5);
-  }
-  if(op->name_pl && op->name_pl!=op2->name_pl) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"name_pl ",op->name_pl,8);
-  }
-  if(op->custom_name && op->custom_name!=op2->custom_name) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"custom_name ",op->custom_name,12);
-  }
-  if(op->title && op->title!=op2->title) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"title ",op->title,6);
-  }
-  if(op->race && op->race!=op2->race) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"race ",op->race,5);
-  }
-  if(op->slaying && op->slaying!=op2->slaying) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"slaying ",op->slaying,8);
-  }
-  if(op->skill && op->skill!=op2->skill) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"skill ",op->skill,6);
-  }
-  if(op->msg && op->msg!=op2->msg) {
-    FAST_STRNCAT(fastbuf,"msg\n",3+eol_size);
-    FAST_STRCAT(fastbuf,op->msg);
-    FAST_STRNCAT(fastbuf,"endmsg\n",6+eol_size);
-  }
-  if(op->lore && op->lore!=op2->lore) {
-    FAST_STRNCAT(fastbuf,"lore\n",4+eol_size);
-    FAST_STRCAT(fastbuf,op->lore);
-    FAST_STRNCAT(fastbuf,"endlore\n",7+eol_size);
-
-  }
-  if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
-     op->other_arch->name) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"other_arch ",op->other_arch->name,11);
-  }
-  if(op->face!=op2->face) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"face ",op->face->name,5);
-  }
-
-  if (op->animation_id != op2->animation_id) {
-    if (op->animation_id) {
-      ADD_STRINGLINE_ENTRY(fastbuf,"animation ",animations[GET_ANIM_ID(op)].name,10);
-      if ( ! QUERY_FLAG (op, FLAG_ANIMATE)) {
-        FAST_STRNCAT(fastbuf,"is_animated 0\n",13+eol_size);
-      }
-    } else {
-      FAST_STRNCAT(fastbuf,"animation NONE\n",14+eol_size);
+    /*first init this function if first call*/
+    if (!already_run){
+        for (i=0;i<NUM_FLAGS;i++)
+            flag_lens[i]=flag_names[i]?strlen(flag_names[i]):0; /* some flags may be null? :/*/
+        already_run=1;
     }
-  }
-  if(op->stats.Str!=op2->stats.Str)
-    FAST_SAVE_LONG(fastbuf,"Str ",op->stats.Str,4);
-  if(op->stats.Dex!=op2->stats.Dex)
-    FAST_SAVE_LONG(fastbuf,"Dex ",op->stats.Dex,4);
-  if(op->stats.Con!=op2->stats.Con)
-    FAST_SAVE_LONG(fastbuf,"Con ",op->stats.Con,4);
-  if(op->stats.Wis!=op2->stats.Wis)
-    FAST_SAVE_LONG(fastbuf,"Wis ",op->stats.Wis,4);
-  if(op->stats.Pow!=op2->stats.Pow)
-    FAST_SAVE_LONG(fastbuf,"Pow ",op->stats.Pow,4);
-  if(op->stats.Cha!=op2->stats.Cha)
-    FAST_SAVE_LONG(fastbuf,"Cha ",op->stats.Cha,4);
-  if(op->stats.Int!=op2->stats.Int)
-    FAST_SAVE_LONG(fastbuf,"Int ",op->stats.Int,4);
-  if(op->stats.hp!=op2->stats.hp)
-    FAST_SAVE_LONG(fastbuf,"hp ",op->stats.hp,3);
-  if(op->stats.maxhp!=op2->stats.maxhp)
-    FAST_SAVE_LONG(fastbuf,"maxhp ",op->stats.maxhp,6);
-  if(op->stats.sp!=op2->stats.sp)
-    FAST_SAVE_LONG(fastbuf,"sp ",op->stats.sp,3);
-  if(op->stats.maxsp!=op2->stats.maxsp)
-    FAST_SAVE_LONG(fastbuf,"maxsp ",op->stats.maxsp,6);
-  if(op->stats.grace!=op2->stats.grace)
-    FAST_SAVE_LONG(fastbuf,"grace ",op->stats.grace,6);
-  if(op->stats.maxgrace!=op2->stats.maxgrace)
-    FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
+    buf[0]='\0';
+    fastbuf=PREPARE_FASTCAT(buf);
 
-  if(op->stats.exp!=op2->stats.exp) {
-    sprintf(buf2,"%" FMT64 , op->stats.exp);
-    ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
-  }
+    /* This saves the key/value lists.  We do it first so that any
+    * keys that match field names will be overwritten by the loader.
+    */
+    for (my_field = op->key_values; my_field != NULL; my_field = my_field->next) {
+        /* Find the field in the opposing member. */
+        arch_field = get_ob_key_link(op2, my_field->key);
 
-  if(op->perm_exp!=op2->perm_exp) {
-    sprintf(buf2,"%" FMT64 , op->perm_exp);
-    ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
-  }
-
-  if(op->expmul!=op2->expmul)
-    FAST_SAVE_DOUBLE(fastbuf,"expmul ",op->expmul,7);
-  if(op->stats.food!=op2->stats.food)
-    FAST_SAVE_LONG(fastbuf,"food ",op->stats.food,5);
-  if(op->stats.dam!=op2->stats.dam)
-    FAST_SAVE_LONG(fastbuf,"dam ",op->stats.dam,4);
-  if(op->stats.luck!=op2->stats.luck)
-    FAST_SAVE_LONG(fastbuf,"luck ",op->stats.luck,5);
-  if(op->stats.wc!=op2->stats.wc)
-    FAST_SAVE_LONG(fastbuf,"wc ",op->stats.wc,3);
-  if(op->stats.ac!=op2->stats.ac)
-    FAST_SAVE_LONG(fastbuf,"ac ",op->stats.ac,3);
-  if(op->x!=op2->x)
-    FAST_SAVE_LONG(fastbuf,"x ",op->x,2);
-  if(op->y!=op2->y)
-    FAST_SAVE_LONG(fastbuf,"y ",op->y,2);
-  if(op->speed!=op2->speed) {
-    FAST_SAVE_DOUBLE(fastbuf,"speed ",op->speed,6);
-  }
-  if(op->speed > 0 && op->speed_left!=op2->speed_left) {
-    FAST_SAVE_DOUBLE(fastbuf,"speed_left ",op->speed_left,11);
-  }
-  if(op->move_status != op2->move_status)
-    FAST_SAVE_LONG(fastbuf,"move_state ",op->move_status,11);
-  if(op->attack_movement != op2->attack_movement)
-    FAST_SAVE_LONG(fastbuf,"attack_movement ",op->attack_movement,16);
-  if(op->nrof!=op2->nrof)
-    FAST_SAVE_LONG(fastbuf,"nrof ",op->nrof,5);
-  if(op->level!=op2->level)
-    FAST_SAVE_LONG(fastbuf,"level ",op->level,6);
-  if(op->direction!=op2->direction)
-    FAST_SAVE_LONG(fastbuf,"direction ",op->direction,10);
-  if(op->type!=op2->type)
-    FAST_SAVE_LONG(fastbuf,"type ",op->type,5);
-  if(op->subtype!=op2->subtype)
-    FAST_SAVE_LONG(fastbuf,"subtype ",op->subtype,8);
-  if(op->attacktype!=op2->attacktype)
-    FAST_SAVE_LONG(fastbuf,"attacktype ",op->attacktype,11);
-
-  for (tmp=0; tmp < NROFATTACKS; tmp++) {
-   if (op->resist[tmp] != op2->resist[tmp]) {
-	FAST_STRNCAT(fastbuf,"resist_",7);
-	FAST_SAVE_LONG(fastbuf,resist_save[tmp],op->resist[tmp],strlen(resist_save[tmp]));
+        /* If there's no partnering field, or it's got a different value, save our field. */
+        if (arch_field == NULL || my_field->value != arch_field->value) {
+            FAST_STRCAT(fastbuf, my_field->key);
+            FAST_STRNCAT(fastbuf, " ", 1);
+            /* If this is null, then saving it as a space should
+            * cause it to be null again.
+            */
+            if (my_field->value) FAST_STRCAT(fastbuf, my_field->value);
+                FAST_STRNCAT(fastbuf, "\n", eol_size);
+        }
     }
-  }
+    /* We don't need to worry about the arch's extra fields - they
+     * will get taken care of the copy_object function.
+     */
 
-  if(op->path_attuned!=op2->path_attuned)
-    FAST_SAVE_LONG(fastbuf,"path_attuned ",op->path_attuned,13);
-  if(op->path_repelled!=op2->path_repelled)
-    FAST_SAVE_LONG(fastbuf,"path_repelled ",op->path_repelled,14);
-  if(op->path_denied!=op2->path_denied)
-    FAST_SAVE_LONG(fastbuf,"path_denied ",op->path_denied,12);
-  if(op->material!=op2->material)
-    FAST_SAVE_LONG(fastbuf,"material ",op->material,9);
-  if(op->materialname && op->materialname!=op2->materialname) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"materialname ",op->materialname,13);
-  }
-  if(op->value!=op2->value)
-    FAST_SAVE_LONG(fastbuf,"value ",op->value,6);
-  if(op->carrying!=op2->carrying)
-    FAST_SAVE_LONG(fastbuf,"carrying ",op->carrying,9);
-  if(op->weight!=op2->weight)
-    FAST_SAVE_LONG(fastbuf,"weight ",op->weight,7);
-  if(op->invisible!=op2->invisible)
-    FAST_SAVE_LONG(fastbuf,"invisible ",op->invisible,10);
-  if(op->state!=op2->state)
-    FAST_SAVE_LONG(fastbuf,"state ",op->state,6);
-  if(op->magic!=op2->magic)
-    FAST_SAVE_LONG(fastbuf,"magic ",op->magic,6);
-  if(op->last_heal!=op2->last_heal)
-    FAST_SAVE_LONG(fastbuf,"last_heal ",op->last_heal,10);
-  if(op->last_sp!=op2->last_sp)
-    FAST_SAVE_LONG(fastbuf,"last_sp ",op->last_sp,8);
-  if(op->last_grace!=op2->last_grace)
-    FAST_SAVE_LONG(fastbuf,"last_grace ",op->last_grace,11);
-  if(op->last_eat!=op2->last_eat)
-    FAST_SAVE_LONG(fastbuf,"last_eat ",op->last_eat,9);
-  if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
-    FAST_SAVE_LONG(fastbuf,"connected ",tmp,10);
-  if(op->glow_radius!=op2->glow_radius)
-    FAST_SAVE_LONG(fastbuf,"glow_radius ",op->glow_radius,12);
-  if (op->randomitems!=op2->randomitems) {
-    ADD_STRINGLINE_ENTRY(fastbuf,"randomitems ",(op->randomitems?op->randomitems->name:"none"),12);
-  }
+    if(op->name && op->name!=op2->name) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"name ",op->name,5);
+    }
+    if(op->name_pl && op->name_pl!=op2->name_pl) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"name_pl ",op->name_pl,8);
+    }
+    if(op->custom_name && op->custom_name!=op2->custom_name) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"custom_name ",op->custom_name,12);
+    }
+    if(op->title && op->title!=op2->title) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"title ",op->title,6);
+    }
+    if(op->race && op->race!=op2->race) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"race ",op->race,5);
+    }
+    if(op->slaying && op->slaying!=op2->slaying) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"slaying ",op->slaying,8);
+    }
+    if(op->skill && op->skill!=op2->skill) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"skill ",op->skill,6);
+    }
+    if(op->msg && op->msg!=op2->msg) {
+        FAST_STRNCAT(fastbuf,"msg\n",3+eol_size);
+        FAST_STRCAT(fastbuf,op->msg);
+        FAST_STRNCAT(fastbuf,"endmsg\n",6+eol_size);
+    }
+    if(op->lore && op->lore!=op2->lore) {
+        FAST_STRNCAT(fastbuf,"lore\n",4+eol_size);
+        FAST_STRCAT(fastbuf,op->lore);
+        FAST_STRNCAT(fastbuf,"endlore\n",7+eol_size);
+    }
+    if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
+        op->other_arch->name) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"other_arch ",op->other_arch->name,11);
+    }
+    if(op->face!=op2->face) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"face ",op->face->name,5);
+    }
+
+    if (op->animation_id != op2->animation_id) {
+        if (op->animation_id) {
+            ADD_STRINGLINE_ENTRY(fastbuf,"animation ",animations[GET_ANIM_ID(op)].name,10);
+            if ( ! QUERY_FLAG (op, FLAG_ANIMATE)) {
+                FAST_STRNCAT(fastbuf,"is_animated 0\n",13+eol_size);
+            }
+        } else {
+            FAST_STRNCAT(fastbuf,"animation NONE\n",14+eol_size);
+        }
+    }
+    if(op->stats.Str!=op2->stats.Str)
+        FAST_SAVE_LONG(fastbuf,"Str ",op->stats.Str,4);
+    if(op->stats.Dex!=op2->stats.Dex)
+        FAST_SAVE_LONG(fastbuf,"Dex ",op->stats.Dex,4);
+    if(op->stats.Con!=op2->stats.Con)
+        FAST_SAVE_LONG(fastbuf,"Con ",op->stats.Con,4);
+    if(op->stats.Wis!=op2->stats.Wis)
+        FAST_SAVE_LONG(fastbuf,"Wis ",op->stats.Wis,4);
+    if(op->stats.Pow!=op2->stats.Pow)
+        FAST_SAVE_LONG(fastbuf,"Pow ",op->stats.Pow,4);
+    if(op->stats.Cha!=op2->stats.Cha)
+        FAST_SAVE_LONG(fastbuf,"Cha ",op->stats.Cha,4);
+    if(op->stats.Int!=op2->stats.Int)
+        FAST_SAVE_LONG(fastbuf,"Int ",op->stats.Int,4);
+    if(op->stats.hp!=op2->stats.hp)
+        FAST_SAVE_LONG(fastbuf,"hp ",op->stats.hp,3);
+    if(op->stats.maxhp!=op2->stats.maxhp)
+        FAST_SAVE_LONG(fastbuf,"maxhp ",op->stats.maxhp,6);
+    if(op->stats.sp!=op2->stats.sp)
+        FAST_SAVE_LONG(fastbuf,"sp ",op->stats.sp,3);
+    if(op->stats.maxsp!=op2->stats.maxsp)
+        FAST_SAVE_LONG(fastbuf,"maxsp ",op->stats.maxsp,6);
+    if(op->stats.grace!=op2->stats.grace)
+        FAST_SAVE_LONG(fastbuf,"grace ",op->stats.grace,6);
+    if(op->stats.maxgrace!=op2->stats.maxgrace)
+        FAST_SAVE_LONG(fastbuf,"maxgrace ",op->stats.maxgrace,9);
+
+    if(op->stats.exp!=op2->stats.exp) {
+        sprintf(buf2,"%" FMT64 , op->stats.exp);
+        ADD_STRINGLINE_ENTRY(fastbuf,"exp ", buf2, 4);
+    }
+
+    if(op->perm_exp!=op2->perm_exp) {
+        sprintf(buf2,"%" FMT64 , op->perm_exp);
+        ADD_STRINGLINE_ENTRY(fastbuf,"perm_exp ", buf2, 9);
+    }
+
+    if(op->expmul!=op2->expmul)
+        FAST_SAVE_DOUBLE(fastbuf,"expmul ",op->expmul,7);
+    if(op->stats.food!=op2->stats.food)
+        FAST_SAVE_LONG(fastbuf,"food ",op->stats.food,5);
+    if(op->stats.dam!=op2->stats.dam)
+        FAST_SAVE_LONG(fastbuf,"dam ",op->stats.dam,4);
+    if(op->stats.luck!=op2->stats.luck)
+        FAST_SAVE_LONG(fastbuf,"luck ",op->stats.luck,5);
+    if(op->stats.wc!=op2->stats.wc)
+        FAST_SAVE_LONG(fastbuf,"wc ",op->stats.wc,3);
+    if(op->stats.ac!=op2->stats.ac)
+        FAST_SAVE_LONG(fastbuf,"ac ",op->stats.ac,3);
+    if(op->x!=op2->x)
+        FAST_SAVE_LONG(fastbuf,"x ",op->x,2);
+    if(op->y!=op2->y)
+        FAST_SAVE_LONG(fastbuf,"y ",op->y,2);
+    if(op->speed!=op2->speed) {
+        FAST_SAVE_DOUBLE(fastbuf,"speed ",op->speed,6);
+    }
+    if(op->speed > 0 && op->speed_left!=op2->speed_left) {
+        FAST_SAVE_DOUBLE(fastbuf,"speed_left ",op->speed_left,11);
+    }
+    if(op->move_status != op2->move_status)
+        FAST_SAVE_LONG(fastbuf,"move_state ",op->move_status,11);
+    if(op->attack_movement != op2->attack_movement)
+        FAST_SAVE_LONG(fastbuf,"attack_movement ",op->attack_movement,16);
+    if(op->nrof!=op2->nrof)
+        FAST_SAVE_LONG(fastbuf,"nrof ",op->nrof,5);
+    if(op->level!=op2->level)
+        FAST_SAVE_LONG(fastbuf,"level ",op->level,6);
+    if(op->direction!=op2->direction)
+        FAST_SAVE_LONG(fastbuf,"direction ",op->direction,10);
+    if(op->type!=op2->type)
+        FAST_SAVE_LONG(fastbuf,"type ",op->type,5);
+    if(op->subtype!=op2->subtype)
+        FAST_SAVE_LONG(fastbuf,"subtype ",op->subtype,8);
+    if(op->attacktype!=op2->attacktype)
+        FAST_SAVE_LONG(fastbuf,"attacktype ",op->attacktype,11);
+
+    for (tmp=0; tmp < NROFATTACKS; tmp++) {
+        if (op->resist[tmp] != op2->resist[tmp]) {
+            FAST_STRNCAT(fastbuf,"resist_",7);
+            FAST_SAVE_LONG(fastbuf,resist_save[tmp],op->resist[tmp],strlen(resist_save[tmp]));
+        }
+    }
+
+    if(op->path_attuned!=op2->path_attuned)
+        FAST_SAVE_LONG(fastbuf,"path_attuned ",op->path_attuned,13);
+    if(op->path_repelled!=op2->path_repelled)
+        FAST_SAVE_LONG(fastbuf,"path_repelled ",op->path_repelled,14);
+    if(op->path_denied!=op2->path_denied)
+        FAST_SAVE_LONG(fastbuf,"path_denied ",op->path_denied,12);
+    if(op->material!=op2->material)
+        FAST_SAVE_LONG(fastbuf,"material ",op->material,9);
+    if(op->materialname && op->materialname!=op2->materialname) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"materialname ",op->materialname,13);
+    }
+    if(op->value!=op2->value)
+        FAST_SAVE_LONG(fastbuf,"value ",op->value,6);
+    if(op->carrying!=op2->carrying)
+        FAST_SAVE_LONG(fastbuf,"carrying ",op->carrying,9);
+    if(op->weight!=op2->weight)
+        FAST_SAVE_LONG(fastbuf,"weight ",op->weight,7);
+    if(op->invisible!=op2->invisible)
+        FAST_SAVE_LONG(fastbuf,"invisible ",op->invisible,10);
+    if(op->state!=op2->state)
+        FAST_SAVE_LONG(fastbuf,"state ",op->state,6);
+    if(op->magic!=op2->magic)
+        FAST_SAVE_LONG(fastbuf,"magic ",op->magic,6);
+    if(op->last_heal!=op2->last_heal)
+        FAST_SAVE_LONG(fastbuf,"last_heal ",op->last_heal,10);
+    if(op->last_sp!=op2->last_sp)
+        FAST_SAVE_LONG(fastbuf,"last_sp ",op->last_sp,8);
+    if(op->last_grace!=op2->last_grace)
+        FAST_SAVE_LONG(fastbuf,"last_grace ",op->last_grace,11);
+    if(op->last_eat!=op2->last_eat)
+        FAST_SAVE_LONG(fastbuf,"last_eat ",op->last_eat,9);
+    if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
+        FAST_SAVE_LONG(fastbuf,"connected ",tmp,10);
+    if(op->glow_radius!=op2->glow_radius)
+        FAST_SAVE_LONG(fastbuf,"glow_radius ",op->glow_radius,12);
+    if (op->randomitems!=op2->randomitems) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"randomitems ",(op->randomitems?op->randomitems->name:"none"),12);
+    }
 #ifdef NPC_PROG
-  if(op->npc_status!=op2->npc_status)
-    FAST_SAVE_LONG(fastbuf,"npc_status ",op->npc_status,11);
-  if(op->npc_program!=op2->npc_program)
-    FAST_SAVE_LONG(fastbuf,"npc_program ",op->npc_program,12);
+    if(op->npc_status!=op2->npc_status)
+        FAST_SAVE_LONG(fastbuf,"npc_status ",op->npc_status,11);
+    if(op->npc_program!=op2->npc_program)
+        FAST_SAVE_LONG(fastbuf,"npc_program ",op->npc_program,12);
 #endif
 
+    if(op->run_away!=op2->run_away)
+        FAST_SAVE_LONG(fastbuf,"run_away ",op->run_away,9);
+    if(op->pick_up!=op2->pick_up)
+        FAST_SAVE_LONG(fastbuf,"pick_up ",op->pick_up,8);
+    if(op->weight_limit!=op2->weight_limit)
+        FAST_SAVE_LONG(fastbuf,"container ",op->weight_limit,10);
+    if (op->will_apply!=op2->will_apply)
+        FAST_SAVE_LONG(fastbuf,"will_apply ",op->will_apply,11);
+    if(op->smoothlevel!=op2->smoothlevel)
+        FAST_SAVE_LONG(fastbuf,"smoothlevel ",op->smoothlevel,12);
 
-  if(op->run_away!=op2->run_away)
-    FAST_SAVE_LONG(fastbuf,"run_away ",op->run_away,9);
-  if(op->pick_up!=op2->pick_up)
-    FAST_SAVE_LONG(fastbuf,"pick_up ",op->pick_up,8);
-  if(op->weight_limit!=op2->weight_limit)
-    FAST_SAVE_LONG(fastbuf,"container ",op->weight_limit,10);
-  if (op->will_apply!=op2->will_apply)
-    FAST_SAVE_LONG(fastbuf,"will_apply ",op->will_apply,11);
-  if(op->smoothlevel!=op2->smoothlevel)
-    FAST_SAVE_LONG(fastbuf,"smoothlevel ",op->smoothlevel,12);
+    if(op->map_layer!=op2->map_layer)
+        ADD_STRINGLINE_ENTRY(fastbuf,"map_layer ",map_layer_name[op->map_layer],10);
 
-  if(op->map_layer!=op2->map_layer)
-    ADD_STRINGLINE_ENTRY(fastbuf,"map_layer ",map_layer_name[op->map_layer],10);
+    if (op->current_weapon_script!=op2->current_weapon_script){
+        ADD_STRINGLINE_ENTRY(fastbuf,"current_weapon_script ",op->current_weapon_script,22);
+    }
 
-  if (op->current_weapon_script!=op2->current_weapon_script){
-    ADD_STRINGLINE_ENTRY(fastbuf,"current_weapon_script ",op->current_weapon_script,22);
-  };
+    if(op->weapontype && op->weapontype!=op2->weapontype) {
+        FAST_SAVE_LONG(fastbuf,"weapontype ",op->weapontype,11);
+    }
+    if(op->tooltype && op->tooltype!=op2->tooltype) {
+        FAST_SAVE_LONG(fastbuf,"tooltype ",op->tooltype,9);
+    }
+    if (op->elevation && op->elevation != op2->elevation) {
+        FAST_SAVE_LONG(fastbuf,"elevation ",op->elevation,10);
+    }
+    if (op->client_type && op->client_type != op2->client_type) {
+        FAST_SAVE_LONG(fastbuf,"client_type ",op->client_type,12);
+    }
 
-  if(op->weapontype && op->weapontype!=op2->weapontype) {
-    FAST_SAVE_LONG(fastbuf,"weapontype ",op->weapontype,11);
-  }
-  if(op->tooltype && op->tooltype!=op2->tooltype) {
-    FAST_SAVE_LONG(fastbuf,"tooltype ",op->tooltype,9);
-  }
-  if (op->elevation && op->elevation != op2->elevation) {
-    FAST_SAVE_LONG(fastbuf,"elevation ",op->elevation,10);
-  }
-  if (op->client_type && op->client_type != op2->client_type) {
-    FAST_SAVE_LONG(fastbuf,"client_type ",op->client_type,12);
-  }
-
-  if (op->item_power != op2->item_power) {
-    FAST_SAVE_LONG(fastbuf,"item_power ",op->item_power,11);
-  }
+    if (op->item_power != op2->item_power) {
+        FAST_SAVE_LONG(fastbuf,"item_power ",op->item_power,11);
+    }
 
     if (op->duration != op2->duration) 
-	FAST_SAVE_LONG(fastbuf,"duration ",op->duration,9);
+        FAST_SAVE_LONG(fastbuf,"duration ",op->duration,9);
 
     if (op->range != op2->range) 
-	FAST_SAVE_LONG(fastbuf,"range ",op->range,6);
+        FAST_SAVE_LONG(fastbuf,"range ",op->range,6);
 
     if (op->range_modifier != op2->range_modifier)
-	FAST_SAVE_LONG(fastbuf,"range_modifier ",op->range_modifier,15);
+        FAST_SAVE_LONG(fastbuf,"range_modifier ",op->range_modifier,15);
 
     if (op->duration_modifier != op2->duration_modifier) 
-	FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,18);
+        FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,18);
 
     if (op->dam_modifier != op2->dam_modifier)
-	FAST_SAVE_LONG(fastbuf,"dam_modifier ", op->dam_modifier,13);
+        FAST_SAVE_LONG(fastbuf,"dam_modifier ", op->dam_modifier,13);
 
     if (op->gen_sp_armour != op2->gen_sp_armour) {
-	FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
+        FAST_SAVE_LONG(fastbuf,"gen_sp_armour ",op->gen_sp_armour,14);
     }
 
     /* I've kept the old int move type saving code commented out.
@@ -1638,76 +1724,84 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
      * or a slower save/dm dump, where printing out strings is handy.
      */
     if (op->move_type != op2->move_type) {
-	/*FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10)*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_type ",
-			     get_string_move_type(op->move_type),
-			     10);
+        /*FAST_SAVE_LONG(fastbuf,"move_type ",op->move_type,10)*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_type ",
+            get_string_move_type(op->move_type),
+            10);
     }
     if (op->move_block != op2->move_block) {
-	/*FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11)*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_block ",
-			     get_string_move_type(op->move_block),
-			     11);
+        /*FAST_SAVE_LONG(fastbuf,"move_block ",op->move_block,11)*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_block ",
+            get_string_move_type(op->move_block),
+            11);
     }
     if (op->move_allow != op2->move_allow) {
-	/*FAST_SAVE_LONG(fastbuf,"move_allow ",op->move_allow,11);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_allow ",
-			     get_string_move_type(op->move_allow),
-			     11);
+        /*FAST_SAVE_LONG(fastbuf,"move_allow ",op->move_allow,11);*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_allow ",
+            get_string_move_type(op->move_allow),
+            11);
     }
     if (op->move_on != op2->move_on) {
-	/*FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_on ",
-			     get_string_move_type(op->move_on),
-			     8);
+        /*FAST_SAVE_LONG(fastbuf,"move_on ",op->move_on,8);*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_on ",
+            get_string_move_type(op->move_on),
+            8);
     }
     if (op->move_off != op2->move_off) {
-	/*FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_off ",
-			     get_string_move_type(op->move_off),
-			     9);
+        /*FAST_SAVE_LONG(fastbuf,"move_off ",op->move_off,9);*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_off ",
+            get_string_move_type(op->move_off),
+            9);
     }
     if (op->move_slow != op2->move_slow) {
-	/*FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);*/
-	ADD_STRINGLINE_ENTRY(fastbuf,"move_slow ",
-			     get_string_move_type(op->move_slow),
-			     10);
+        /*FAST_SAVE_LONG(fastbuf,"move_slow ",op->move_slow,10);*/
+        ADD_STRINGLINE_ENTRY(fastbuf,"move_slow ",
+            get_string_move_type(op->move_slow),
+            10);
     }
 
     if (op->move_slow_penalty != op2->move_slow_penalty) {
-	FAST_SAVE_LONG(fastbuf,"move_slow_penalty ",op->move_slow_penalty,18);
+        FAST_SAVE_LONG(fastbuf,"move_slow_penalty ",op->move_slow_penalty,18);
     }
 
     if (!COMPARE_FLAGS(op,op2)) {
-	for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
-	    if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
-		ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",flag_lens[tmp]);
-	    }
-	}
+        for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
+            if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp))) {
+                ADD_STRINGLINE_ENTRY(fastbuf,flag_names[tmp],QUERY_FLAG(op, tmp)?" 1":" 0",flag_lens[tmp]);
+            }
+        }
     }
 
     /* Save body locations */
     for (i=0; i<NUM_BODY_LOCATIONS; i++) {
-	if (op->body_info[i] != op2->body_info[i]) {
-	    FAST_STRCAT(fastbuf,body_locations[i].save_name);
-	    FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
-	}
+        if (op->body_info[i] != op2->body_info[i]) {
+            FAST_STRCAT(fastbuf,body_locations[i].save_name);
+            FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
+        }
     }
     FINISH_FASTCAT(fastbuf);
     if(buf[0]=='\0') /*did not cat anything...*/
-	return NULL;
+        return NULL;
 
     return buf;
 }
 
-/*
+/**
  * Dumps all variables in an object to a file.
- * If bit 0 of flag is set, unpaid objects will be saved.  As of now,
+ *
+ * @param fp
+ * file to write to.
+ * @param op
+ * object to save.
+ * @param flag
+ * @li if bit 0 is set, unpaid objects will be saved.  As of now,
  * the only place this is not set is when saving the player.
- * If bit 1 of flag is set, don't remove the object after save.  As of now,
+ * @li if bit 1 is set, don't remove the object after save.  As of now,
  * all of the callers are setting this.
+ *
+ * @todo
+ * check comments for flag.
  */
-
 void save_object(FILE *fp,object *op, int flag) {
     archetype *at;
     char *cp, alt_buf[HUGE_BUF];
@@ -1717,11 +1811,11 @@ void save_object(FILE *fp,object *op, int flag) {
      * still save it.
      */
     if(op->owner!=NULL || fp == NULL)
-	return;
+        return;
 
     /* If it is unpaid and we don't want to save those, just return. */
     if(!(flag&1)&&(QUERY_FLAG(op, FLAG_UNPAID))) {
-	return;
+        return;
     }
 
     /* If the object has no_save set, just return */
@@ -1743,20 +1837,20 @@ void save_object(FILE *fp,object *op, int flag) {
             abort();
         }
         cp = get_ob_diff(&op->arch->clone, &original->clone);
-	if (cp == NULL) {
-	    cp = alt_buf;
-	    cp[0] = 0;
-	}
+        if (cp == NULL) {
+            cp = alt_buf;
+            cp[0] = 0;
+        }
         if(op->stats.hp != op->arch->clone.stats.hp)
-	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
-	if(op->stats.sp != op->arch->clone.stats.sp)
-	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "sp %d\n", op->stats.sp);
+            snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
+        if(op->stats.sp != op->arch->clone.stats.sp)
+            snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "sp %d\n", op->stats.sp);
         if(op->stats.grace != op->arch->clone.stats.grace)
-	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "grace %d\n", op->stats.grace);
+            snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "grace %d\n", op->stats.grace);
         if(op->x != op->arch->clone.x)
-	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "x %d\n", op->x);
+            snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "x %d\n", op->x);
         if(op->y != op->arch->clone.y)
-	    snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "y %d\n", op->y);
+            snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "y %d\n", op->y);
     }
     else
         cp = get_ob_diff(op,&at->clone);
@@ -1768,9 +1862,9 @@ void save_object(FILE *fp,object *op, int flag) {
 
     old=NULL;
 
-    if (flag & 2 )
-	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-	    save_object(fp,tmp,flag);
+    if (flag & 2)
+        for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+            save_object(fp,tmp,flag);
 
     /* Slightly different logic because tmp/op will be removed by
      * the save_object we call.  So we just keep looking at op->inv
@@ -1778,17 +1872,17 @@ void save_object(FILE *fp,object *op, int flag) {
      * should not be needed, as recursive loops shouldn't happen.
      */
     else while ((tmp=op->inv)!=NULL) {
-	if(old==tmp) {
-	    LOG(llevError," Recursive loop in inventory\n");
-	    break;
-	}
-	save_object(fp,tmp,flag); 
-	old=tmp;
+        if(old==tmp) {
+            LOG(llevError," Recursive loop in inventory\n");
+            break;
+        }
+        save_object(fp,tmp,flag); 
+        old=tmp;
     }
-   
+
     if (!(flag&2)) {
-	remove_ob(op);
-	free_object (op);
+        remove_ob(op);
+        free_object (op);
     }
 
     fprintf(fp,"end\n");
