@@ -40,8 +40,6 @@
  * make the functions use the same order for parameters (type first, then name, or the opposite).
  */
 
- */
-
 #include <global.h>
 #include <funcpoint.h>
 #include <loader.h>
@@ -329,9 +327,9 @@ static void first_arch_pass(FILE *fp) {
     op->arch=first_archetype=at=get_archetype_struct();
 
     while((i=load_object(fp,op,first,0))) {
-        load_archetypesfirst=0;
-        load_archetypescopy_object(op,&at->clone);
-        load_archetypesat->clone.speed_left= (float) (-0.1);
+        first=0;
+        copy_object(op,&at->clone);
+        at->clone.speed_left= (float) (-0.1);
         /* copy the body_info to the body_used - this is only really
          * need for monsters, but doesn't hurt to do it for everything.
          * by doing so, when a monster is created, it has good starting
