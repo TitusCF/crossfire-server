@@ -411,9 +411,9 @@ int command_who (object *op, char *params) {
      * new formats have been specified, and if not we will use the old defaults.
      */
     if (!strcmp(settings.who_format,"")) 
-    	strcpy(settings.who_format, "%N_%T%t%h%d%b%n[%m]");
+    	strcpy(settings.who_format, "%N_%T%t%h%d%b%n<%m>");
     if (!strcmp(settings.who_wiz_format,"")) 
-    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l [%m](@%i)(%c)");
+    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
     if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
     	format=settings.who_wiz_format;
     else
@@ -511,10 +511,10 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * T    the optional "the " sequence value (depend if player has own_title or not)
  * c	count
  * n	newline
- * h	[Hostile] if character is hostile, nothing otherwise
- * d	[WIZ] if character is a dm, nothing otherwise
- * a	[AFK] if character is afk, nothing otherwise
- * b	[BOT] if character is a bot, nothing otherwise
+ * h	<Hostile> if character is hostile, nothing otherwise
+ * d	<WIZ> if character is a dm, nothing otherwise
+ * a	<AFK> if character is afk, nothing otherwise
+ * b	<BOT> if character is a bot, nothing otherwise
  * l	the level of the character
  * m	the map path the character is currently on
  * M	the map name of the map the character is currently on
@@ -546,19 +546,19 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 	case 'n' :	strcpy(return_val, "\n"); 
 			break;
 
-	case 'h' :	strcpy(return_val,pl->peaceful?"":" [Hostile]");
+	case 'h' :	strcpy(return_val,pl->peaceful?"":" <Hostile>");
 			break;
 
 	case 'l' :	sprintf(return_val,"%d",pl->ob->level);
 			break;
 
-	case 'd' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":""));
+	case 'd' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
 			break;
 
-	case 'a' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_AFK)?" [AFK]":""));
+	case 'a' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
 			break;
 
-	case 'b' :	strcpy(return_val,(pl->socket.is_bot == 1)?" [BOT]":"");
+	case 'b' :	strcpy(return_val,(pl->socket.is_bot == 1)?" <BOT>":"");
 			break;
 
 	case 'm' :	strcpy(return_val,pl->ob->map->path);

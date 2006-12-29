@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/c_misc.c lib/settings
+Fix for bug #1622609: Specific flags no longer displayed with 'who command
+Replaced [] by <> in the who output command, as [] are reserved for the various
+formatting tags.
+Yann Chachkoff 2006-12-29
+
 Massive doxygenation of code. Reformat indentation. No functional change.
  common/object.c path.c player.c porting.c quest.c readable.c recipe.c region.c
 Ryo 2006-12-29
