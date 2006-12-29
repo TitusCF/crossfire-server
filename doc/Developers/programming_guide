@@ -109,7 +109,19 @@ the move to 4 space will make future readability easier.
   Its much easier to spot the block comments if they all start with *, 
   and these comments tend to be worth noticing.
 
-14) As discussed on irc, the preferred style for expressions is like this:
+14)
+ /**
+  * Functions should be commented like this.
+  *
+  * @param bla
+  * this is a parameter
+  * @return
+  * returns NULL
+  */
+
+ This lets doxygen generate nice documentation.
+
+15) As discussed on irc, the preferred style for expressions is like this:
 
 if (expression) {
   statement;
@@ -126,7 +138,7 @@ if (expression)
   statement;
 }
 
-15) The preferred style of formal parameters:
+16) The preferred style of formal parameters:
 
 void myFooFunction(param1, param2, param3) {
   statement;
@@ -137,7 +149,7 @@ No space after the left paren, no space before the right paren.
 Comma right after the formal param, space right after the comma.  
 
 
-16) Local variable names. Just a rules of thumb.
+17) Local variable names. Just a rules of thumb.
 
 This are ok:
 
