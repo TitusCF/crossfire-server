@@ -26,9 +26,13 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/*
- This file handles quest-related functions.
- Quests are stored in specific items of type QUEST.
+/**
+ * @file quest.c
+ * This file handles quest-related functions.
+ * Quests are stored in specific items of type QUEST.
+ *
+ * @todo
+ * Quest stuff should be totally rewritten :)
 */
 
 #include <global.h>
@@ -39,7 +43,9 @@
 #include <ctype.h>
 #include "quest.h"
 
+/** Quest name. */
 #define QUEST_NAME( op ) op->name_pl
+/** Task (aka subquest) name. */
 #define TASK_NAME( op ) op->custom_name
 
 #if 0
@@ -71,6 +77,16 @@ int quest_is_same_quest( const char* slaying1, const char* slaying2 )
     }
 #endif
 
+/**
+ * Checks if specified item is a quest marker for the task.
+ *
+ * @param marker
+ * object to check.
+ * @param task
+ * if set, marker should be a subtask, else a quest itself.
+ * @return
+ * 1 if it's a quest marker, 0 else.
+ */
 int quest_is_quest_marker( const object* marker, int task )
     {
     if ( marker->type != QUEST )
@@ -82,6 +98,15 @@ int quest_is_quest_marker( const object* marker, int task )
     return 1;
     }
 
+/**
+ * Checks if object is a marker for a quest in progress.
+ * @param marker
+ * object to check
+ * @param task
+ * (ignored)
+ * @return
+ * 1 if marker is in progress, 0 else.
+ */
 int quest_is_in_progress( const object* marker, int task )
     {
     if ( marker->subtype != QUEST_IN_PROGRESS )
@@ -89,6 +114,15 @@ int quest_is_in_progress( const object* marker, int task )
     return 1;
     }
 
+/**
+ * Checks if object is a marker for a completed quest.
+ * @param marker
+ * object to check
+ * @param task
+ * if set, marker must be for a task, else for a (main) task.
+ * @return
+ * 1 if marker is completed, 0 else.
+ */
 int quest_is_completed( const object* marker, int task )
     {
     if ( marker->type != QUEST )
@@ -249,6 +283,13 @@ const char* quest_message_check( const char* message, object* pl )
     }
 #endif
 
+/**
+ * Returns the name of the quest.
+ * @param marker
+ * quest we're searching the name of.
+ * @return
+ * name of task if marker is a task, else quest name. NULL if marker isn't a quest object.
+ */
 const char* quest_get_name( const object* marker )
     {
     if ( marker->type != QUEST )
@@ -258,6 +299,18 @@ const char* quest_get_name( const object* marker )
     return QUEST_NAME(marker);
     }
 
+/**
+ * Searches the player's inventory for a quest item.
+ *
+ * @param pl
+ * player to search into.
+ * @param name
+ * name of the quest to search. Must be NULL or a shared string.
+ * @param name_pl
+ * name of the task to search. Must be NULL or a shared string.
+ * @return
+ * matching quest object, NULL if no match found.
+ */
 object* quest_get_player_quest( const object* pl, const char* name, const char* name_pl )
 {
     object* quest;
@@ -269,6 +322,16 @@ object* quest_get_player_quest( const object* pl, const char* name, const char* 
     return NULL;
 }
 
+/**
+ * Finds an object in ob that can override behaviour of its owner, for a specific player.
+ *
+ * @param ob
+ * object we're searching into.
+ * @param pl
+ * player that we're considering.
+ * @return
+ * overriding object, NULL if none found.
+ */
 object* quest_get_override( const object* ob, const object* pl )
 {
     object *in_ob, *in_pl;
@@ -286,6 +349,15 @@ object* quest_get_override( const object* ob, const object* pl )
     return NULL;
 }
 
+/**
+ * Finds a slaying field specific to player for a quest.
+ * @param ob
+ * object we're considering.
+ * @param pl
+ * player we're considering.
+ * @return
+ * slaying to use for that player and object.
+ */
 const char* quest_get_override_slaying( const object* ob, const object* pl )
 {
     object* quest;
@@ -295,6 +367,15 @@ const char* quest_get_override_slaying( const object* ob, const object* pl )
     return ob->slaying;
 }
 
+/**
+ * Finds a message field specific to player for a quest.
+ * @param ob
+ * object we're considering.
+ * @param pl
+ * player we're considering.
+ * @return
+ * message to use for that player and object.
+ */
 const char* quest_get_override_msg( const object* ob, const object* pl )
 {
     object* quest;
@@ -315,6 +396,19 @@ static int quest_objects_match( object* first, object* second )
     return 1;
 }
 */
+
+/**
+ * Removes a quest marker from item.
+ *
+ * @param item
+ * item we're altering.
+ * @param name
+ * name of the quest. Must be a shared string.
+ * @param name_pl
+ * name of the task. Can be NULL. Must be a shared string.
+ * @param type
+ * a subtype of the QUEST item type.
+ */
 static void quest_remove_marker(object* item, const char* name, const char* name_pl, int type)
 {
     object* test;
@@ -328,6 +422,14 @@ static void quest_remove_marker(object* item, const char* name, const char* name
     }
 }
 
+/**
+ * Player applies an object that can contain quest information. Check what to do.
+ *
+ * @param wrapper
+ * object being applied.
+ * @param pl
+ * player applying the object.
+ */
 void quest_apply_items( object* wrapper, player* pl )
 {
     object* item;
@@ -346,7 +448,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
+                    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 insert_ob_in_ob(qm, pl->ob);
                 break;
@@ -358,7 +460,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
+                    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 quest_remove_marker(pl->ob, QUEST_NAME(item), NULL, QUEST_IN_PROGRESS);
                 insert_ob_in_ob(qm, pl->ob);
@@ -372,7 +474,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
+                    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 insert_ob_in_ob(qm, pl->ob);
                 break;
@@ -385,7 +487,7 @@ void quest_apply_items( object* wrapper, player* pl )
                 if ( item->lore )
                 {
                     FREE_AND_COPY(qm->lore, item->lore);
-		    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
+                    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS, item->lore, NULL);
                 }
                 quest_remove_marker(pl->ob, QUEST_NAME(item), TASK_NAME(item), QUEST_IN_PROGRESS);
                 insert_ob_in_ob(qm, pl->ob);
@@ -396,8 +498,15 @@ void quest_apply_items( object* wrapper, player* pl )
 }
 
 /**
- * Returns 0 if no matching quest, 1 if anything matched.
- **/
+ * Player is applying an object, check if special quest behaviour should be done.
+ *
+ * @param ob
+ * object being applied.
+ * @param pl
+ * player applying the object.
+ * @return
+ * 0 if no matching quest, 1 if anything matched.
+ */
 int quest_on_activate( object* ob, player*pl )
 {
     object* in_item;
@@ -421,15 +530,32 @@ int quest_on_activate( object* ob, player*pl )
  * Q  :quest
  * T  :task
  **/
+/** Quest not started. */
 #define QCT_QNS     1
+/** Quest started. */
 #define QCT_QS      2
+/** Quest started, task not started. */
 #define QCT_QS_TNS  3
+/** Quest started, task started. */
 #define QCT_QS_TS   4
+/** Quest started, task done. */
 #define QCT_QS_TD   5
+/** Quest started, task started or done. */
 #define QCT_QS_TSD  6
+/** Quest started or done. */
 #define QCT_QSD     7
+/** Quest done. */
 #define QCT_QD      8
 
+/**
+ * Checks if the marker can be applied to the player.
+ * @param marker
+ * marker we're trying to apply.
+ * @param pl
+ * player we're applying to.
+ * @return
+ * 1 if marker can be applied, 0 else.
+ */
 int quest_is_override_compatible(const object *marker, const object* pl)
 {
     object* test;

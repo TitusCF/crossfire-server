@@ -26,7 +26,9 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* This file contains various functions that are not really unique for
+/**
+ * @file porting.c
+ * This file contains various functions that are not really unique for
  * crossfire, but rather provides what should be standard functions 
  * for systems that do not have them.  In this way, most of the
  * nasty system dependent stuff is contained here, with the program
@@ -63,17 +65,27 @@
 /* Has to be after above includes so we don't redefine some values */
 #include "global.h"
 
+/** Used to generate temporary unique name. */
 static unsigned int curtmp = 0;
 
 /*****************************************************************************
  * File related functions
  ****************************************************************************/
 
-/*
+/**
  * A replacement for the tempnam() function since it's not defined
  * at some unix variants.
+ *
+ * @param dir
+ * directory where to create the file. Can be NULL, in which case NULL is returned.
+ * @param pfx
+ * prefix to create unique name. Can be NULL.
+ * @return
+ * path to temporary file, or NULL if failure. Must be freed by caller.
+ *
+ * @todo
+ * fix memory leak if dir is null (ok, not that useful to call function with that, but still).
  */
-
 char *tempnam_local(const char *dir, const char *pfx)
 {
     char *name;
@@ -85,10 +97,10 @@ char *tempnam_local(const char *dir, const char *pfx)
 #endif
 
     if (!(name = (char *) malloc(MAXPATHLEN)))
-	return(NULL);
+        return(NULL);
 
     if (!pfx)
-	pfx = "cftmp.";
+        pfx = "cftmp.";
 
     /* This is a pretty simple method - put the pid as a hex digit and
      * just keep incrementing the last digit.  Check to see if the file
@@ -96,22 +108,32 @@ char *tempnam_local(const char *dir, const char *pfx)
      * find one that is free.
      */
     if (dir!=NULL) {
-	do {
+        do {
 #ifdef HAVE_SNPRINTF
-	    (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
+            (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
 #else
-	    (void)sprintf(name,"%s/%s%hx%d", dir, pfx, pid, curtmp);
+            (void)sprintf(name,"%s/%s%hx%d", dir, pfx, pid, curtmp);
 #endif
-	    curtmp++;
-	} while (access(name, F_OK)!=-1);
-	return(name);
+            curtmp++;
+        } while (access(name, F_OK)!=-1);
+        return(name);
     }
   return(NULL);
 }
 
 
 
-/* This function removes everything in the directory. */
+/**
+ * This function removes everything in the directory, and the directory itself.
+ *
+ * Errors are LOG() to error level.
+ *
+ * @param path
+ * directory to remove.
+ *
+ * @note
+ * will fail if any file has a name starting by .
+ */
 void remove_directory(const char *path)
 {
     DIR *dirp;
@@ -120,33 +142,33 @@ void remove_directory(const char *path)
     int status;
 
     if ((dirp=opendir(path))!=NULL) {
-	struct dirent *de;
+        struct dirent *de;
 
-	for (de=readdir(dirp); de; de = readdir(dirp)) {
-	    /* Don't remove '.' or '..'  In  theory we should do a better 
-	     * check for .., but the directories we are removing are fairly
-	     * limited and should not have dot files in them.
-	     */
-	    if (de->d_name[0] == '.') continue;
+        for (de=readdir(dirp); de; de = readdir(dirp)) {
+            /* Don't remove '.' or '..'  In  theory we should do a better 
+             * check for .., but the directories we are removing are fairly
+             * limited and should not have dot files in them.
+             */
+            if (de->d_name[0] == '.') continue;
 
-	    /* Linux actually has a type field in the dirent structure,
-	     * but that is not portable - stat should be portable
-	     */
-	    status=stat(de->d_name, &statbuf);
-	    if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
-		sprintf(buf,"%s/%s", path, de->d_name);
-		remove_directory(buf);
-		continue;
-	    }
-	    sprintf(buf,"%s/%s", path, de->d_name);
-	    if (unlink(buf)) {
-		LOG(llevError,"Unable to remove %s\n", path);
-	    }
-	}
-	closedir(dirp);
+            /* Linux actually has a type field in the dirent structure,
+             * but that is not portable - stat should be portable
+             */
+            status=stat(de->d_name, &statbuf);
+            if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+                sprintf(buf,"%s/%s", path, de->d_name);
+                remove_directory(buf);
+                continue;
+            }
+            sprintf(buf,"%s/%s", path, de->d_name);
+            if (unlink(buf)) {
+                LOG(llevError,"Unable to remove %s\n", path);
+            }
+        }
+        closedir(dirp);
     }
     if (rmdir(path)) {
-	LOG(llevError,"Unable to remove directory %s\n", path);
+        LOG(llevError,"Unable to remove directory %s\n", path);
     }
 }
 
@@ -158,55 +180,70 @@ void remove_directory(const char *path)
 
 #define popen fixed_popen
 
+/**
+ * Executes a command in the background through a call to /bin/sh.
+ *
+ * @param command
+ * command which will be launched.
+ * @param type
+ * whether we want to read or write to that command. Must be "r" or "w".
+ * @return
+ * pointer to stream to command, NULL on failure.
+ * @note
+ * for SGI only.
+ *
+ * @todo
+ * is this actually used?
+ */
 FILE *popen_local(const char *command, const char *type)
 {
-	int		fd[2];
-	int		pd;
-	FILE	*ret;
-	if (!strcmp(type,"r"))
-	{
-		pd=STDOUT_FILENO;
-	}
-	else if (!strcmp(type,"w"))
-	{
-		pd=STDIN_FILENO;
-	}
-	else
-	{
-		return NULL;
-	}
-	if (pipe(fd)!=-1)
-	{
-		switch (fork())
-		{
-		case -1:
-			close(fd[0]);
-			close(fd[1]);
-			break;
-		case 0:
-			close(fd[0]);
-			if ((fd[1]==pd)||(dup2(fd[1],pd)==pd))
-			{
-				if (fd[1]!=pd)
-				{
-					close(fd[1]);
-				}
-				execl("/bin/sh","sh","-c",command,NULL);
-				close(pd);
-			}
-			exit(1);
-			break;
-		default:
-			close(fd[1]);
-			if (ret=fdopen(fd[0],type))
-			{
-				return ret;
-			}
-			close(fd[0]);
-			break;
-		}
-	}
-	return NULL;
+    int     fd[2];
+    int     pd;
+    FILE    *ret;
+    if (!strcmp(type,"r"))
+    {
+        pd=STDOUT_FILENO;
+    }
+    else if (!strcmp(type,"w"))
+    {
+        pd=STDIN_FILENO;
+    }
+    else
+    {
+        return NULL;
+    }
+    if (pipe(fd)!=-1)
+    {
+        switch (fork())
+        {
+        case -1:
+            close(fd[0]);
+            close(fd[1]);
+            break;
+        case 0:
+            close(fd[0]);
+            if ((fd[1]==pd)||(dup2(fd[1],pd)==pd))
+            {
+                if (fd[1]!=pd)
+                {
+                    close(fd[1]);
+                }
+                execl("/bin/sh","sh","-c",command,NULL);
+                close(pd);
+            }
+            exit(1);
+            break;
+        default:
+            close(fd[1]);
+            if (ret=fdopen(fd[0],type))
+            {
+                return ret;
+            }
+            close(fd[0]);
+            break;
+        }
+    }
+    return NULL;
 }
 
 #endif /* defined(sgi) */
@@ -218,125 +255,181 @@ FILE *popen_local(const char *command, const char *type)
 
 
 
-/*
+/**
  * A replacement of strdup(), since it's not defined at some
  * unix variants.
+ *
+ * @param str
+ * string to duplicate.
+ * @return
+ * copy, needs to be freed by caller. NULL on memory allocation error.
  */
 char *strdup_local(const char *str) {
-  char *c=(char *)malloc(strlen(str)+1);
-  if (c!=NULL)
-    strcpy(c,str);
-  return c;
+    char *c=(char *)malloc(strlen(str)+1);
+    if (c!=NULL)
+        strcpy(c,str);
+    return c;
 }
 
-
+/** Converts x to number */
 #define DIGIT(x)        (isdigit(x) ? (x) - '0' : \
 islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
 #define MBASE ('z' - 'a' + 1 + 10)
 
-/*
+/**
+ * Converts a string to long.
+ *
  * A replacement of strtol() since it's not defined at
  * many unix systems.
+ *
+ * @param str
+ * string to convert.
+ * @param ptr
+ * will point to first invalid character in str.
+ * @param base
+ * base to consider to convert to long.
+ *
+ * @todo
+ * check weird -+ handling (missing break?)
  */
-
 long strtol_local(str, ptr, base)
-     register char *str;
-     char **ptr;
-     register int base;
+        register char *str;
+        char **ptr;
+        register int base;
 {
-  register long val;
-  register int c;
-  int xx, neg = 0;
+    register long val;
+    register int c;
+    int xx, neg = 0;
 
-  if (ptr != (char **) 0)
-    *ptr = str;         /* in case no number is formed */
-  if (base < 0 || base > MBASE)
-    return (0);         /* base is invalid */
-  if (!isalnum (c = *str)) {
-    while (isspace (c))
-      c = *++str;
-    switch (c) {
-    case '-':
-      neg++;
-    case '+':
-      c = *++str;
+    if (ptr != (char **) 0)
+        *ptr = str;         /* in case no number is formed */
+    if (base < 0 || base > MBASE)
+        return (0);         /* base is invalid */
+    if (!isalnum (c = *str)) {
+        while (isspace (c))
+            c = *++str;
+        switch (c) {
+            case '-':
+                neg++;
+            case '+':
+                c = *++str;
+        }
     }
-  }
-  if (base == 0) {
-    if (c != '0')
-      base = 10;
-    else {
-      if (str[1] == 'x' || str[1] == 'X')
-        base = 16;
-      else
-        base = 8;
+    if (base == 0) {
+        if (c != '0')
+        base = 10;
+        else {
+        if (str[1] == 'x' || str[1] == 'X')
+            base = 16;
+        else
+            base = 8;
+        }
     }
-  }
-  /*
-   ** For any base > 10, the digits incrementally following
-   ** 9 are assumed to be "abc...z" or "ABC...Z"
-   */
-  if (!isalnum (c) || (xx = DIGIT (c)) >= base)
-    return 0;           /* no number formed */
-  if (base == 16 && c == '0' && isxdigit (str[2]) &&
+    /*
+    ** For any base > 10, the digits incrementally following
+    ** 9 are assumed to be "abc...z" or "ABC...Z"
+    */
+    if (!isalnum (c) || (xx = DIGIT (c)) >= base)
+        return 0;           /* no number formed */
+    if (base == 16 && c == '0' && isxdigit (str[2]) &&
       (str[1] == 'x' || str[1] == 'X'))
-    c = *(str += 2);    /* skip over leading "0x" or "0X" */
-  for (val = -DIGIT (c); isalnum (c = *++str) && (xx = DIGIT (c)) < base;)
-    /* accumulate neg avoids surprises near
-       MAXLONG */
-    val = base * val - xx;
-  if (ptr != (char **) 0)
-    *ptr = str;
-  return (neg ? val : -val);
+        c = *(str += 2);    /* skip over leading "0x" or "0X" */
+    for (val = -DIGIT (c); isalnum (c = *++str) && (xx = DIGIT (c)) < base;)
+        /* accumulate neg avoids surprises near
+        MAXLONG */
+        val = base * val - xx;
+    if (ptr != (char **) 0)
+        *ptr = str;
+    return (neg ? val : -val);
 }
 
-/* This seems to be lacking on some system */
+/**
+ * Case-insensitive comparaison of strings.
+ *
+ * This seems to be lacking on some system.
+ *
+ * @param s1
+ * @param s2
+ * strings to compare.
+ * @param n
+ * maximum number of chars to compare.
+ * @return
+ * @li -1 if s1 is less than s2
+ * @li 0 if s1 equals s2
+ * @li 1 if s1 is greater than s2
+ */
 #if !defined(HAVE_STRNCASECMP)
 int strncasecmp(const char *s1, const char *s2, int n)
 {
-  register int c1, c2;
+    register int c1, c2;
 
-  while (*s1 && *s2 && n) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-    n--;
-  }
-  if (!n)
-    return(0);
-  return (int) (*s1 - *s2);
+    while (*s1 && *s2 && n) {
+        c1 = tolower(*s1);
+        c2 = tolower(*s2);
+        if (c1 != c2)
+        return (c1 - c2);
+        s1++;
+        s2++;
+        n--;
+    }
+    if (!n)
+        return(0);
+    return (int) (*s1 - *s2);
 }
 #endif
 
 #if !defined(HAVE_STRCASECMP)
+/**
+ * Case-insensitive comparaison of strings.
+ *
+ * This seems to be lacking on some system.
+ *
+ * @param s1
+ * @param s2
+ * strings to compare.
+ * @return
+ * @li -1 if s1 is less than s2
+ * @li 0 if s1 equals s2
+ * @li 1 if s1 is greater than s2
+ */
 int strcasecmp(const char *s1, const char*s2)
 {
-  register int c1, c2;
+    register int c1, c2;
 
-  while (*s1 && *s2) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-  }
-  if (*s1=='\0' && *s2=='\0')
-	return 0;
-  return (int) (*s1 - *s2);
+    while (*s1 && *s2) {
+        c1 = tolower(*s1);
+        c2 = tolower(*s2);
+        if (c1 != c2)
+        return (c1 - c2);
+        s1++;
+        s2++;
+    }
+    if (*s1=='\0' && *s2=='\0')
+        return 0;
+    return (int) (*s1 - *s2);
 }
 #endif
 
+/**
+ * Finds a substring in a string, in a case-insensitive manner.
+ *
+ * @param s
+ * string we're searching into.
+ * @param find
+ * string we're searching for.
+ * @return
+ * pointer to first occurrence of find in s, NULL if not found.
+ *
+ * @todo
+ * should return a const char*.
+ */
 char *strcasestr_local(const char *s, const char *find)
 {
     char c, sc;
     size_t len;
 
     if ((c = *find++) != 0) {
-		c = tolower(c);
+        c = tolower(c);
         len = strlen(find);
         do {
             do {
@@ -350,7 +443,24 @@ char *strcasestr_local(const char *s, const char *find)
 }
 
 #if !defined(HAVE_SNPRINTF)
-
+/**
+ * Formats to a string, in a size-safe way.
+ *
+ * @param dest
+ * where to write.
+ * @param max
+ * max length of dest.
+ * @param format
+ * format specifier, and arguments.
+ * @return
+ * number of chars written to dest.
+ *
+ * @warning
+ * this function will abort() if there is an overflow.
+ *
+ * @todo
+ * try to do something better than abort()?
+ */
 int snprintf(char *dest, int max, const char *format, ...)
 {
     va_list var;
@@ -366,8 +476,20 @@ int snprintf(char *dest, int max, const char *format, ...)
 #endif
 
 
-/* This takes an err number and returns a string with a description of
+/**
+ * This takes an err number and returns a string with a description of
  * the error.
+ *
+ * @param errnum
+ * error we want the description of.
+ * @return
+ * pointer to description.
+ *
+ * @note
+ * this function will return a dummy string if strerror() doesn't exist on the current platform.
+ *
+ * @todo
+ * replace with strerror_r to be thread-safe?
  */
 char *strerror_local(int errnum)
 {
@@ -378,7 +500,8 @@ char *strerror_local(int errnum)
 #endif
 }
 
-/*
+/**
+ * Computes the square root.
  * Based on (n+1)^2 = n^2 + 2n + 1
  * given that	1^2 = 1, then
  *		2^2 = 1 + (2 + 1) = 1 + 3 = 4
@@ -387,41 +510,64 @@ char *strerror_local(int errnum)
  *		...
  * In other words, a square number can be express as the sum of the
  * series n^2 = 1 + 3 + ... + (2n-1)
+ *
+ * @param n
+ * number of which to compute the root.
+ * @return
+ * square root.
  */
-int
-isqrt(n)
-int n;
+int isqrt(int n)
 {
-	int result, sum, prev;
-	result = 0;
-	prev = sum = 1;
-	while (sum <= n) {
-		prev += 2;
-		sum += prev;
-		++result;
-	}
-	return result;
+    int result, sum, prev;
+    result = 0;
+    prev = sum = 1;
+    while (sum <= n) {
+        prev += 2;
+        sum += prev;
+        ++result;
+    }
+    return result;
 }
 
 
-/*
- * returns a char-pointer to a static array, in which a representation
+/**
+ * Converts a long to a string.
+ *
+ * @param n
+ * long to convert.
+ * @return
+ * char-pointer to a static array, in which a representation
  * of the decimal number given will be stored.
+ *
+ * @todo
+ * remove static buffer?
  */
-
 char *ltostr10(signed long n) {
-  static char buf[12]; /* maximum size is n=-2 billion, i.e. 11 characters+1
-			  character for the trailing nul character */
-  snprintf(buf, sizeof(buf), "%ld", n);
-  return buf;
-}
-char *doubletostr10(double v){
-  static char tbuf[200];
-  sprintf(tbuf,"%f",v);
-  return tbuf;
+    static char buf[12]; /* maximum size is n=-2 billion, i.e. 11 characters+1
+                            character for the trailing nul character */
+    snprintf(buf, sizeof(buf), "%ld", n);
+    return buf;
 }
 
-/*
+/**
+ * Converts a double to a string.
+ *
+ * @param v
+ * double to convert.
+ * @return
+ * char-pointer to a static array, in which a representation
+ * of the decimal number given will be stored.
+ *
+ * @todo
+ * remove static buffer?
+ */
+char *doubletostr10(double v){
+    static char tbuf[200];
+    sprintf(tbuf,"%f",v);
+    return tbuf;
+}
+
+/**
  * A fast routine which appends the name and decimal number specified
  * to the given buffer.
  * Could be faster, though, if the strcat()s at the end could be changed
@@ -432,8 +578,17 @@ char *doubletostr10(double v){
  * Completly redone prototype and made define in loader.l. See changes there.
  * Didn't touch those for speed reason (don't use them anymore) .
  *                                                             Tchize
+ *
+ * @param buf
+ * buffer we're appending to.
+ * @param name
+ * name of the long we're saving.
+ * @param n
+ * value to save.
+ *
+ * @todo
+ * use safe string functions?
  */
-
 void save_long(char *buf, const char *name, long n) {
     char buf2[MAX_BUF];
     strcpy(buf2,name);
@@ -443,8 +598,19 @@ void save_long(char *buf, const char *name, long n) {
     strcat(buf,buf2);
 }
 
-
-
+/**
+ * Appends the name and value of a long long.
+ *
+ * @param buf
+ * buffer we're appending to.
+ * @param name
+ * name of the long we're saving.
+ * @param n
+ * value to save.
+ *
+ * @todo
+ * use safe string functions?
+ */
 void save_long_long(char *buf, char *name, sint64 n) {
     char buf2[MAX_BUF];
 
@@ -452,7 +618,8 @@ void save_long_long(char *buf, char *name, sint64 n) {
     strcat(buf,buf2);
 }
 
-/* This is a list of the suffix, uncompress and compress functions.  Thus,
+/**
+ * This is a list of the suffix, uncompress and compress functions.  Thus,
  * if you have some other compress program you want to use, the only thing
  * that needs to be done is to extended this.
  * The first entry must be NULL - this is what is used for non
@@ -469,17 +636,23 @@ const char *uncomp[NROF_COMPRESS_METHODS][3] = {
 /**
  * Open and possibly uncompress a file.
  *
- * @param ext the extension if the file is compressed.
+ * @param ext
+ * the extension if the file is compressed.
+ * @param uncompressor
+ * the command to uncompress the file if the file is compressed.
+ * @param name
+ * the base file name without compression extension
+ * @param flag
+ * only used for compressed files:
+ * @li if set, uncompress and open the file
+ * @li if unset, uncompress the file via pipe
+ * @param[out] compressed
+ * set to zero if the file was uncompressed
+ * @return
+ * pointer to opened file, NULL on failure.
  *
- * @param uncompressor the command to uncompress the file if the file is
- * compressed.
- *
- * @param name the base file name without compression extension
- *
- * @param flag only used for compressed files: if set, uncompress and open the
- * file; if unset, uncompress the file via pipe
- *
- * @param *compressed set to zero if the file was uncompressed
+ * @note
+ * will set ::errno if an error occurs.
  */
 static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor, const char *name, int flag, int *compressed) {
     struct stat st;
@@ -571,6 +744,20 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
  *
  * The compressed pointer is set to nonzero if the file is compressed (and
  * thus, fp is actually a pipe.) It returns 0 if it is a normal file.
+ *
+ * @param name
+ * the base file name without compression extension
+ * @param flag
+ * only used for compressed files:
+ * @li if set, uncompress and open the file
+ * @li if unset, uncompress the file via pipe
+ * @param[out] compressed
+ * set to zero if the file was uncompressed
+ * @return
+ * pointer to opened file, NULL on failure.
+ *
+ * @note
+ * will set ::errno if an error occurs.
  */
 FILE *open_and_uncompress(const char *name, int flag, int *compressed) {
     size_t i;
@@ -588,50 +775,60 @@ FILE *open_and_uncompress(const char *name, int flag, int *compressed) {
     return NULL;
 }
 
-/*
- * See open_and_uncompress().
+/**
+ * Closes specified file.
+ *
+ * @param fp
+ * file to close.
+ * @param compressed
+ * whether the file was compressed or not. Set by open_and_uncompress().
  */
-
 void close_and_delete(FILE *fp, int compressed) {
-  if (compressed)
-    pclose(fp);
-  else
-    fclose(fp);
+    if (compressed)
+        pclose(fp);
+    else
+        fclose(fp);
 }
 
-/*
- * If any directories in the given path doesn't exist, they are created.
+/**
+ * Checks if any directories in the given path doesn't exist, and creates if necessary.
+ *
+ * @param filename
+ * file path we'll want to access. Can be NULL.
+ *
+ * @note
+ * will LOG() to debug and error.
+ * @todo
+ * filename should be const char*.
  */
-
 void make_path_to_file (char *filename)
 {
     char buf[MAX_BUF], *cp = buf;
     struct stat statbuf;
 
     if (!filename || !*filename)
-	return;
+        return;
     strcpy (buf, filename);
     LOG(llevDebug, "make_path_tofile %s...", filename);
     while ((cp = strchr (cp + 1, (int) '/'))) {
-	*cp = '\0';
+        *cp = '\0';
 #if 0
-	LOG(llevDebug, "\n Checking %s...", buf);
+        LOG(llevDebug, "\n Checking %s...", buf);
 #endif
-	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
-	    LOG(llevDebug, "Was not dir...");
-	    if (mkdir (buf, SAVE_DIR_MODE)) {
-		LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno));
-		return;
-	    }
+        if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
+            LOG(llevDebug, "Was not dir...");
+            if (mkdir (buf, SAVE_DIR_MODE)) {
+                LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno));
+                return;
+            }
 #if 0
-	    LOG(llevDebug, "Made dir.");
-	} else
-	    LOG(llevDebug, "Was dir");
+            LOG(llevDebug, "Made dir.");
+        } else
+            LOG(llevDebug, "Was dir");
 #else
-	}
+        }
 #endif
-	*cp = '/';
+        *cp = '/';
     }
     LOG(llevDebug,"\n");
 }
-

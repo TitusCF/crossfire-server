@@ -18,7 +18,7 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Massive doxygenation of code. Reformat indentation. No functional change.
- common/object.c path.c
+ common/object.c path.c player.c porting.c quest.c readable.c
 Ryo 2006-12-29
 
 Fix previous broken commit.
