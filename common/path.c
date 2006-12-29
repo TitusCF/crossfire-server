@@ -1,5 +1,33 @@
 /* $Id$ */
 
+/*
+    CrossFire, A Multiplayer game for X-windows
+
+    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
+*/
+
+/**
+ * @file path.c
+ * Contains file path manipulation functions.
+ */
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,7 +56,22 @@
 #define llevError stderr
 #endif
 
-
+/**
+ * Combines 2 paths, which can be relative.
+ *
+ * @param src
+ * path we're starting from.
+ * @param dst
+ * path we're doing to.
+ * @return
+ * static buffer containing the combined path.
+ *
+ * @note
+ * this doesn't handle the '..', check path_normalize().
+ *
+ * @todo
+ * remove static buffer, use safe string functions.
+ */
 char *path_combine(const char *src, const char *dst) {
     char *p;
     static char path[HUGE_BUF];
@@ -56,6 +99,12 @@ char *path_combine(const char *src, const char *dst) {
     return(path);
 }
 
+/**
+ * Cleans specified path. Removes .. and things like that.
+ *
+ * @param path
+ * path to clear. It will be modified in place.
+ */
 void path_normalize(char *path) {
     char *p; /* points to the beginning of the path not yet processed; this is
                 either a path component or a path separator character */
@@ -130,6 +179,19 @@ void path_normalize(char *path) {
 #endif
 }
 
+/**
+ * Combines the 2 paths.
+ *
+ * @param src
+ * path we're starting from.
+ * @param dst
+ * path we're getting to.
+ * @return
+ * static buffer containing normalized combined path.
+ *
+ * @todo
+ * don't use/return static buffer.
+ */
 char *path_combine_and_normalize(const char *src, const char *dst) {
     char *path;
 

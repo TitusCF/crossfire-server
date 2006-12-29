@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Massive doxygenation of code. Reformat indentation. No functional change.
+ common/object.c path.c
+Ryo 2006-12-29
+
 Fix previous broken commit.
  common/arch.c
 Massive doxygenation of code. Reformat indentation. No functional change.
