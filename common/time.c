@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file common/time.c
+ * Ingame time functions.
+ */
+
 #include <global.h>
 #include <funcpoint.h>
 #include <tod.h>
@@ -36,31 +41,34 @@
 #include <sys/time.h>
 #endif /* win32 */
 
-/*
+/**
  * Gloabal variables:
  */
 uint32 max_time = MAX_TIME;
 struct timeval last_time;
 
+/** Size of history buffer. */
 #define PBUFLEN 100
-uint32 process_utime_save[PBUFLEN];
-uint32 psaveind;
-uint32 process_max_utime = 0;
-uint32 process_min_utime = 999999999;
-uint32 process_tot_mtime;
-uint32 pticks;
-uint32 process_utime_long_count;
+uint32 process_utime_save[PBUFLEN];    /**< Historic data. */
+uint32 psaveind;                       /**< Index in ::process_utime_save. */
+uint32 process_max_utime = 0;          /**< Longest cycle time. */
+uint32 process_min_utime = 999999999;  /**< Shortest cycle time. */
+uint32 process_tot_mtime;              /**< ? */
+uint32 pticks;                         /**< ? */
+uint32 process_utime_long_count;       /**< ? */
 
+/** Ingame seasons. */
 const char *season_name[] =
 {
-        "The Season of New Year",
-        "The Season of Growth",
-        "The Season of Harvest",
-        "The Season of Decay",
-        "The Season of the Blizzard",
-        "\n"
+    "The Season of New Year",
+    "The Season of Growth",
+    "The Season of Harvest",
+    "The Season of Decay",
+    "The Season of the Blizzard",
+    "\n"
 };
 
+/** Days of the week. */
 const char *weekdays[DAYS_PER_WEEK] = {
    "the Day of the Moon",
    "the Day of the Bull",
@@ -71,6 +79,7 @@ const char *weekdays[DAYS_PER_WEEK] = {
    "the Day of the Sun"
 };
 
+/** Months. */
 const char *month_name[MONTHS_PER_YEAR] = {
    "Month of Winter",           /* 0 */
    "Month of the Ice Dragon",
@@ -91,159 +100,171 @@ const char *month_name[MONTHS_PER_YEAR] = {
    "Month of Gorokh"
 };
 
-/*
+/**
  * Initialise all variables used in the timing routines. 
  */
-
-void
-reset_sleep(void)
+void reset_sleep(void)
 {
-  int i;
-  for(i = 0; i < PBUFLEN; i++)
-    process_utime_save[i] = 0;
-  psaveind = 0;
-  process_max_utime = 0;
-  process_min_utime = 999999999;
-  process_tot_mtime = 0;
-  pticks = 0;
-
-  (void) GETTIMEOFDAY(&last_time);
-}
-
-void
-log_time(long process_utime)
-{
-  pticks++;
-  if (++psaveind >= PBUFLEN)
+    int i;
+    for(i = 0; i < PBUFLEN; i++)
+        process_utime_save[i] = 0;
     psaveind = 0;
-  process_utime_save[psaveind] = process_utime;
-  if (process_utime > process_max_utime)
-    process_max_utime = process_utime;
-  if (process_utime < process_min_utime)
-    process_min_utime = process_utime;
-  process_tot_mtime += process_utime/1000;
+    process_max_utime = 0;
+    process_min_utime = 999999999;
+    process_tot_mtime = 0;
+    pticks = 0;
+
+    (void) GETTIMEOFDAY(&last_time);
 }
 
-/*
- * enough_elapsed_time will return true if the time passed since
- * last tick is more than max-time.
+/**
+ * Adds time to our history list.
  */
-
-int
-enough_elapsed_time(void)
+void log_time(long process_utime)
 {
-  static struct timeval new_time;
-  long elapsed_utime;
-
-  (void) GETTIMEOFDAY(&new_time);
-
-  elapsed_utime = (new_time.tv_sec - last_time.tv_sec) * 1000000 +
-                  new_time.tv_usec - last_time.tv_usec;
-  if (elapsed_utime > max_time) {
-    log_time(elapsed_utime);
-    last_time.tv_sec = new_time.tv_sec;
-    last_time.tv_usec = new_time.tv_usec;
-    return 1;
-  }
-  return 0;
+    pticks++;
+    if (++psaveind >= PBUFLEN)
+        psaveind = 0;
+    process_utime_save[psaveind] = process_utime;
+    if (process_utime > process_max_utime)
+        process_max_utime = process_utime;
+    if (process_utime < process_min_utime)
+        process_min_utime = process_utime;
+    process_tot_mtime += process_utime/1000;
 }
 
-/*
+/**
+ * Checks elapsed time since last tick.
+ *
+ * @return true if the time passed since last tick is more than max-time.
+ */
+int enough_elapsed_time(void)
+{
+    static struct timeval new_time;
+    long elapsed_utime;
+
+    (void) GETTIMEOFDAY(&new_time);
+
+    elapsed_utime = (new_time.tv_sec - last_time.tv_sec) * 1000000 +
+        new_time.tv_usec - last_time.tv_usec;
+    if (elapsed_utime > max_time) {
+        log_time(elapsed_utime);
+        last_time.tv_sec = new_time.tv_sec;
+        last_time.tv_usec = new_time.tv_usec;
+        return 1;
+    }
+    return 0;
+}
+
+/**
  * sleep_delta checks how much time has elapsed since last tick.
  * If it is less than max_time, the remaining time is slept with select().
  */
-
-void
-sleep_delta(void)
+void sleep_delta(void)
 {
-  static struct timeval new_time;
-  long sleep_sec, sleep_usec;
+    static struct timeval new_time;
+    long sleep_sec, sleep_usec;
 
-  (void) GETTIMEOFDAY(&new_time);
+    (void) GETTIMEOFDAY(&new_time);
 
-  sleep_sec = last_time.tv_sec - new_time.tv_sec;
-  sleep_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
+    sleep_sec = last_time.tv_sec - new_time.tv_sec;
+    sleep_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
 
-  /* This is very ugly, but probably the fastest for our use: */
-  while (sleep_usec < 0) {
-    sleep_usec += 1000000;
-    sleep_sec -= 1;
-  }
-  while (sleep_usec > 1000000) {
-    sleep_usec -= 1000000;
-    sleep_sec +=1;
-  }
+    /* This is very ugly, but probably the fastest for our use: */
+    while (sleep_usec < 0) {
+        sleep_usec += 1000000;
+        sleep_sec -= 1;
+    }
+    while (sleep_usec > 1000000) {
+        sleep_usec -= 1000000;
+        sleep_sec +=1;
+    }
 
-  log_time((new_time.tv_sec - last_time.tv_sec)*1000000
-           + new_time.tv_usec - last_time.tv_usec);
+    log_time((new_time.tv_sec - last_time.tv_sec)*1000000
+        + new_time.tv_usec - last_time.tv_usec);
 
-  if (sleep_sec >= 0 && sleep_usec > 0) {
-    static struct timeval sleep_time;
-    sleep_time.tv_sec = sleep_sec;
-    sleep_time.tv_usec = sleep_usec;
+    if (sleep_sec >= 0 && sleep_usec > 0) {
+        static struct timeval sleep_time;
+        sleep_time.tv_sec = sleep_sec;
+        sleep_time.tv_usec = sleep_usec;
 
 #ifndef WIN32 /* 'select' doesn't work on Windows, 'Sleep' is used instead */
-    select(0, NULL, NULL, NULL, &sleep_time);
+        select(0, NULL, NULL, NULL, &sleep_time);
 #else
-    if (sleep_time.tv_sec) Sleep(sleep_time.tv_sec*1000);
-    Sleep((int)(sleep_time.tv_usec/1000.));
+        if (sleep_time.tv_sec) Sleep(sleep_time.tv_sec*1000);
+        Sleep((int)(sleep_time.tv_usec/1000.));
 #endif
-  }
-  else
-    process_utime_long_count++;
+    }
+    else
+        process_utime_long_count++;
   /*
    * Set last_time to when we're expected to wake up:
    */
-  last_time.tv_usec += max_time;
-  while (last_time.tv_usec > 1000000) {
-    last_time.tv_usec -= 1000000;
-    last_time.tv_sec++;
-  }
+    last_time.tv_usec += max_time;
+    while (last_time.tv_usec > 1000000) {
+        last_time.tv_usec -= 1000000;
+        last_time.tv_sec++;
+    }
   /*
    * Don't do too much catching up:
    * (Things can still get jerky on a slow/loaded computer)
    */
-  if (last_time.tv_sec * 1000000 + last_time.tv_usec <
-      new_time.tv_sec * 1000000 + new_time.tv_usec)
-  {
-    last_time.tv_sec = new_time.tv_sec;
-    last_time.tv_usec = new_time.tv_usec;
-  }
+    if (last_time.tv_sec * 1000000 + last_time.tv_usec <
+        new_time.tv_sec * 1000000 + new_time.tv_usec)
+    {
+        last_time.tv_sec = new_time.tv_sec;
+        last_time.tv_usec = new_time.tv_usec;
+    }
 }
 
-void
-set_max_time(long t) {
+/**
+ * Sets the max speed. Can be called by a DM through the speed command.
+ *
+ * @param t
+ * new speed.
+ */
+void set_max_time(long t) {
   max_time = t;
 }
 
 extern unsigned long todtick;
 
-void
-get_tod(timeofday_t *tod)
+/**
+ * Computes the ingame time of the day.
+ *
+ * @param[out] tod
+ * where to store information. Must not be NULL.
+ */
+void get_tod(timeofday_t *tod)
 {
-  tod->year = todtick/HOURS_PER_YEAR;
-  tod->month = (todtick/HOURS_PER_MONTH)%MONTHS_PER_YEAR;
-  tod->day = (todtick%HOURS_PER_MONTH)/DAYS_PER_MONTH;
-  tod->dayofweek = tod->day%DAYS_PER_WEEK;
-  tod->hour = todtick%HOURS_PER_DAY;
-  tod->minute = (pticks%PTICKS_PER_CLOCK)/(PTICKS_PER_CLOCK/58);
-  if (tod->minute > 58)
-     tod->minute = 58; /* it's imprecise at best anyhow */
-  tod->weekofmonth = tod->day/WEEKS_PER_MONTH;
-  if (tod->month < 3)
-    tod->season = 0;
-  else if (tod->month < 6)
-    tod->season = 1;
-  else if (tod->month < 9)
-    tod->season = 2;
-  else if (tod->month < 12)
-    tod->season = 3;
-  else
-    tod->season = 4;
+    tod->year = todtick/HOURS_PER_YEAR;
+    tod->month = (todtick/HOURS_PER_MONTH)%MONTHS_PER_YEAR;
+    tod->day = (todtick%HOURS_PER_MONTH)/DAYS_PER_MONTH;
+    tod->dayofweek = tod->day%DAYS_PER_WEEK;
+    tod->hour = todtick%HOURS_PER_DAY;
+    tod->minute = (pticks%PTICKS_PER_CLOCK)/(PTICKS_PER_CLOCK/58);
+    if (tod->minute > 58)
+        tod->minute = 58; /* it's imprecise at best anyhow */
+    tod->weekofmonth = tod->day/WEEKS_PER_MONTH;
+    if (tod->month < 3)
+        tod->season = 0;
+    else if (tod->month < 6)
+        tod->season = 1;
+    else if (tod->month < 9)
+        tod->season = 2;
+    else if (tod->month < 12)
+        tod->season = 3;
+    else
+        tod->season = 4;
 }
 
-void
-print_tod(object *op)
+/**
+ * Prints the time.
+ *
+ * @param op
+ * player who requested time.
+ */
+void print_tod(object *op)
 {
     timeofday_t tod;
     const char *suf;
@@ -261,83 +282,93 @@ print_tod(object *op)
 
     day = tod.day + 1;
     if (day == 1 || ((day % 10) == 1 && day > 20))
-	suf = "st";
+        suf = "st";
     else if (day == 2 || ((day % 10) == 2 && day > 20))
-	suf = "nd";
+        suf = "nd";
     else if (day == 3 || ((day % 10) == 3 && day > 20))
-	suf = "rd";
+        suf = "rd";
     else
-	suf = "th";
+        suf = "th";
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-	 "The %d%s Day of the %s, Year %d", 
-	 "The %d%s Day of the %s, Year %d", 
-	 day, suf, month_name[tod.month], tod.year+1);
+        "The %d%s Day of the %s, Year %d", 
+        "The %d%s Day of the %s, Year %d", 
+        day, suf, month_name[tod.month], tod.year+1);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-	 "Time of Year: %s",
-	 "Time of Year: %s",
-	 season_name[tod.season]);
+        "Time of Year: %s",
+        "Time of Year: %s",
+        season_name[tod.season]);
 }
 
-void
-time_info(object *op)
+/**
+ * Players wants to know the time. Called through the 'time' command.
+ *
+ * @param op
+ * player who requested time.
+ */
+void time_info(object *op)
 {
     int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
 
     print_tod(op);
 
     if (!QUERY_FLAG(op,FLAG_WIZ))
-	return;
+        return;
 
     draw_ext_info (NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, 
-	   "Total time:", NULL);
+        "Total time:", NULL);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "ticks=%d  time=%d.%2d",
-	 "ticks=%d  time=%d.%2d",
-          pticks, process_tot_mtime/1000, process_tot_mtime%1000);
+        "ticks=%d  time=%d.%2d",
+        "ticks=%d  time=%d.%2d",
+        pticks, process_tot_mtime/1000, process_tot_mtime%1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "avg time=%dms  max time=%dms  min time=%dms",
-	 "avg time=%dms  max time=%dms  min time=%dms",
-          process_tot_mtime/pticks, process_max_utime/1000,
-          process_min_utime/1000);
+        "avg time=%dms  max time=%dms  min time=%dms",
+        "avg time=%dms  max time=%dms  min time=%dms",
+        process_tot_mtime/pticks, process_max_utime/1000,
+        process_min_utime/1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "ticks longer than max time (%dms) = %d (%d%%)",
-	 "ticks longer than max time (%dms) = %d (%d%%)",
-          max_time/1000,
-          process_utime_long_count, 100*process_utime_long_count/pticks);
+        "ticks longer than max time (%dms) = %d (%d%%)",
+        "ticks longer than max time (%dms) = %d (%d%%)",
+        max_time/1000,
+        process_utime_long_count, 100*process_utime_long_count/pticks);
 
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "Time last %d ticks:", 
-	 "Time last %d ticks:", 
-	 pticks > PBUFLEN ? PBUFLEN : pticks);
+        "Time last %d ticks:", 
+        "Time last %d ticks:", 
+        pticks > PBUFLEN ? PBUFLEN : pticks);
 
     for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
-	tot += process_utime_save[i];
-	if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
-	if (process_utime_save[i] < mint) mint = process_utime_save[i];
-	if (process_utime_save[i] > max_time) long_count++;
+        tot += process_utime_save[i];
+        if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
+        if (process_utime_save[i] < mint) mint = process_utime_save[i];
+        if (process_utime_save[i] > max_time) long_count++;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "avg time=%dms  max time=%dms  min time=%dms",
-	 "avg time=%dms  max time=%dms  min time=%dms",
-          tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
-          mint/1000);
+        "avg time=%dms  max time=%dms  min time=%dms",
+        "avg time=%dms  max time=%dms  min time=%dms",
+        tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
+        mint/1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-	 "ticks longer than max time (%dms) = %d (%d%%)",
-	 "ticks longer than max time (%dms) = %d (%d%%)",
-          max_time/1000, long_count,
-          100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
+        "ticks longer than max time (%dms) = %d (%d%%)",
+        "ticks longer than max time (%dms) = %d (%d%%)",
+        max_time/1000, long_count,
+        100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
 }
 
-long
-seconds(void)
+/**
+ * Gets the seconds.
+ *
+ * @return
+ * seconds.
+ */
+long seconds(void)
 {
     struct timeval now;
 
