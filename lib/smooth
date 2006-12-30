@@ -68,6 +68,8 @@ cyangrass.111 cyangrass_S.111
 cyangrasspond.111 cyangrass_S.111
 cyanmarble.111 empty_S.111
 darkforest.111 darkforest_S.111
+dcross-red.111 empty_S.111
+dcross-white.111 empty_S.111
 deep_sea.111 deep_sea_S.111
 deep_sea.112 deep_sea_S.112
 deep_sea.113 deep_sea_S.113
@@ -82,6 +84,8 @@ earth.111 empty_S.111
 evergreens.111 evergreens_S.111
 evergreens_1.111 empty_S.111
 farmland.111 empty_S.111
+fcross-blue.111 empty_S.111
+fcross-white.111 empty_S.111
 flagstone.111 flagstone_S.111
 footpath_0.111 grass_S.111
 footpath_1.111 grass_S.111
@@ -238,6 +242,7 @@ white-red-c-marble.113 empty_S.111
 white-red-c-marble.114 empty_S.111
 woodfloor.111 empty_S.111
 woodfloor2.111 empty_S.111
+woodlarge.111 empty_S.111
 woods_1.111 sgrass_S.111
 woods_2.111 woods_2_S.111
 woods_3.111 sgrass_S.111
