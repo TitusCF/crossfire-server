@@ -403,7 +403,7 @@ end
 #
 Allowed axe,axe_2,axe_3,axe_4,axe_5,battle_axe,stoneaxe,poleaxe,morningstar,large_morningstar,nunchacu_1,nunchacu_2,hammer,mace,mace_2,lspear,spear,club,quarterstaff,big_club,stonehammer,stake,bonecrusher,mjoellnir,skullcleaver
 chance 20
-Object Gaea
+Object Vitality
 type 15
 value 50
 hp 1
@@ -1325,7 +1325,7 @@ end
 #
 Allowed plate_mail,scale_mail,dragon_mail
 chance 6
-Object Ruggilli
+Object Blazing Fires
 type 16
 value 55
 ac 1

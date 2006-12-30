@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implemented proposal #1497089: fix for some random items.
+lib/artifacts, lib/formulae
+Changed the title of several treasures from Gaea to Vitality, and from
+Ruggilli to Blazing Fires, to match better the personality of those gods.
+Yann Chachkoff 2006-12-30
+
 Some memory fixes.
  common/arch.c: arch should free after object, since free_object2() checks the archetype.
  common/loader.l: when doing line mode (from artifact loading), we should clear the buffer,
