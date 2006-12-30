@@ -41,6 +41,8 @@
  * player to clear. Pointer is invalid after this call.
  */
 void free_player(player *pl) {
+    client_spell *info;
+    client_spell* next;
 
     if (first_player!=pl) {
         player *prev=first_player;
@@ -62,8 +64,7 @@ void free_player(player *pl) {
     if (pl->stack_items)
         free( pl->stack_items );
 
-    client_spell *info = pl->spell_state;
-    client_spell* next;
+    info = pl->spell_state;
     while ( info )
     {
         next = info->next;
