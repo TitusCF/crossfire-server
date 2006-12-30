@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Partial fix for bug #1612838: Problem with item_power code
+server/apply.c
+Now armours get +3*magic increase to their item_power field.
+Corrected stupid mistakes made when fixing bug #1528525
+Yann Chachkoff 2006-12-30
+
 Another Win32 compilation fix.
  common/player.c: variable definition is a function start.
 Ryo 2006-12-30

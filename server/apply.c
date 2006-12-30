@@ -1000,80 +1000,88 @@ static int check_improve_weapon (object *op, object *tmp)
 static int improve_armour(object *op, object *improver, object *armour)
 {
     object *tmp;
+    int oldmagic = armour->magic;
 
-    if (armour->magic >= settings.armor_max_enchant) {
+    if (armour->magic >= settings.armor_max_enchant)
+    {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		      "This armour can not be enchanted any further.", NULL);
-	return 0;
+            "This armour can not be enchanted any further.", NULL);
+        return 0;
     }
     /* Dealing with random artifact armor is a lot trickier (in terms of value, weight,
      * etc), so take the easy way out and don't worry about it.
      * Note - maybe add scrolls which make the random artifact versions (eg, armour
      * of gnarg and what not?)
      */
-    if (armour->title) {
-	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		      "This armour will not accept further enchantment.", NULL);
-	return 0;
+    if (armour->title)
+    {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "This armour will not accept further enchantment.", NULL);
+        return 0;
     }
-	
+
     /* Split objects if needed.  Can't insert tmp until the
      * end of this function - otherwise it will just re-merge.
      */
     if(armour->nrof > 1)
-	tmp = get_split_ob(armour,armour->nrof - 1);
+        tmp = get_split_ob(armour,armour->nrof - 1);
     else
-	tmp = NULL;
+        tmp = NULL;
 
     armour->magic++;
 
     if ( !settings.armor_speed_linear )
-        {
+    {
         int base = 100;
         int pow = 0;
         while ( pow < armour->magic )
-            {
+        {
             base = base - ( base * settings.armor_speed_improvement ) / 100;
             pow++;
-            }
+        }
 
         ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone ) * base ) / 100;
-        }
+    }
     else
-        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone ) * ( 100 + armour->magic * settings.armor_speed_improvement ) )/100;
+        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone )
+            * ( 100 + armour->magic * settings.armor_speed_improvement ) )/100;
 
     if ( !settings.armor_weight_linear )
-        {
+    {
         int base = 100;
         int pow = 0;
         while ( pow < armour->magic )
-            {
+        {
             base = base - ( base * settings.armor_weight_reduction ) / 100;
             pow++;
-            }
+        }
 
         armour->weight = ( armour->arch->clone.weight * base ) / 100;
-        }
+    }
     else
-        armour->weight = ( armour->arch->clone.weight * ( 100 - armour->magic * settings.armor_weight_reduction ) ) / 100;
+        armour->weight = ( armour->arch->clone.weight *
+            ( 100 - armour->magic * settings.armor_weight_reduction ) ) / 100;
 
     if ( armour->weight <= 0 )
-        {
+    {
         LOG( llevInfo, "Warning: enchanted armours can have negative weight\n." );
         armour->weight = 1;
-        }
+    }
 
-    armour->item_power = get_power_from_ench(armour->arch->clone.item_power + armour->magic);
+    armour->item_power += (armour->magic-oldmagic)*3;
+    if (armour->item_power < 0) armour->item_power = 0;
 
-    if (op->type == PLAYER) {
+    if (op->type == PLAYER)
+    {
         esrv_send_item(op, armour);
         if(QUERY_FLAG(armour, FLAG_APPLIED))
             fix_object(op);
     }
     decrease_ob(improver);
-    if (tmp) {
-	insert_ob_in_ob(tmp, op);
-	esrv_send_item(op, tmp);
+    if (tmp)
+    {
+        insert_ob_in_ob(tmp, op);
+        esrv_send_item(op, tmp);
     }
     return 1;
 }

@@ -256,7 +256,7 @@ static int enc_to_item_power[21] = {
 
 int get_power_from_ench(int ench)
 {
-    if (ench < 0) ench = 0;
+    if (ench < 0)  ench = 0;
     if (ench > 20) ench = 20;
     return enc_to_item_power[ench];
 }
