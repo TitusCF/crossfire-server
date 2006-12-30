@@ -1179,11 +1179,16 @@ char *describe_item(const object *op, const object *owner) {
             }
         }
 
-        if(op->stats.exp) {
-            sprintf(buf,"(speed %+" FMT64 ")",op->stats.exp);
-            strcat(retbuf,buf);
+        switch (op->type) {
+            case FLESH:
+                break;
+            default:
+                if(op->stats.exp) {
+                    sprintf(buf,"(speed %+" FMT64 ")",op->stats.exp);
+                    strcat(retbuf,buf);
+                }
+                break;
         }
-
         switch(op->type) {
             case BOW:
             case ARROW:

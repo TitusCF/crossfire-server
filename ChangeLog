@@ -17,6 +17,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1573294: Flesh displays speed +x and gives lot identification exp.
+common/item.c
+Patch initially submitted by Aaron Baugher
+Yann Chachkoff 2006-12-30
+
 Fix for bug #1528525: Sometimes "bad" initial items are created.
 common/treasure.c
 Changed the behavior of create_one_treasure, that will now not generate a
