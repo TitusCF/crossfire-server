@@ -1220,6 +1220,7 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     }
     if (bufstate==LO_LINEMODE) {
         YY_BUFFER_STATE  yybufstate;
+        yy_delete_buffer(YY_CURRENT_BUFFER);
         while (fgets(inbuf, MAX_BUF-3, fp)) {
             yybufstate=yy_scan_string(inbuf);
             retval=lex_load(op, map_flags);

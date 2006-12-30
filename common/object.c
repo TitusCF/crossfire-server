@@ -1258,6 +1258,9 @@ void free_object(object *ob) {
  * merge with free_object2 and rename.
  * Archetype's name (?) isn't freed (free_string()), so memory leak. Ideally there should
  * be a function to free an archetype.
+ *
+ * @warning
+ * the object's archetype should be a valid pointer, or NULL.
  */
 static void free_object2(object *ob, int free_inventory) {
     object *tmp,*op;
