@@ -461,7 +461,14 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
             create_one_treasure(tl, op, flag, difficulty, tries);
         return;
     }
-    if((t->item && t->item->clone.invisible != 0) || flag != GT_INVISIBLE) {
+    if((t->item)&&(flags & GT_ONLY_GOOD)) { /* Generate only good items, damnit !*/
+        if (QUERY_FLAG(t->item->clone,FLAG_CURSED)||
+            QUERY_FLAG(t->item->clone, FLAG_DAMNED))
+        {
+            create_one_treasure(tl, op, flag, difficulty, tries+1);
+        }
+    }
+    else if((t->item && t->item->clone.invisible != 0) || flag != GT_INVISIBLE) {
         object *tmp=arch_to_object(t->item);
         if (!tmp) return;
         if(t->nrof && tmp->nrof<=1)

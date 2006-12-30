@@ -17,6 +17,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1528525: Sometimes "bad" initial items are created.
+common/treasure.c
+Changed the behavior of create_one_treasure, that will now not generate a
+treasure whose base object is cursed or damned when the GT_ONLY_GOOD flag is set.
+Yann Chachkoff 2006-12-30
+
 Fix for Win32 compilation.
 plugins/common/hashtable.c: missing #include for Windows.
 Ryo 2009-12-29
