@@ -172,18 +172,18 @@ static int same_string (const char *s1, const char *s2)
 static void follower_remove_similar_item (object *op, object *item)
 {
     object *tmp, *next;
-    
+
     if (op && op->type == PLAYER && op->contr) {
         /* search the inventory */
         for (tmp = op->inv; tmp != NULL; tmp = next) {
-	    next = tmp->below;   /* backup in case we remove tmp */
-        
-	    if (tmp->type == item->type
-		&& same_string (tmp->name, item->name)
-		&& same_string (tmp->title, item->title)
-		&& same_string (tmp->msg, item->msg)
-		&& same_string (tmp->slaying, item->slaying)) {
-	        
+            next = tmp->below;   /* backup in case we remove tmp */
+
+            if (tmp->type == item->type
+                && same_string (tmp->name, item->name)
+                && same_string (tmp->title, item->title)
+                && same_string (tmp->msg, item->msg)
+                && same_string (tmp->slaying, item->slaying)) {
+
 	        /* message */
 		if (tmp->nrof > 1)
 		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,

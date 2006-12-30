@@ -3560,7 +3560,7 @@ end
 Allowed talisman
 chance 20
 difficulty 10
-Object Evocation
+Object Creation
 type 74
 material 256
 value 9

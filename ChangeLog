@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1539120: talisman of Evocation grants wrong skill.
+Changed the name of the "Talisman of Evocation" artifact to "Talisman of Creation",
+so there is no confusion with the skill name.
+
 Last part of the fix for bug #1612838
 common/treasure.c: Changed the formula used to compute the item_power of a
 generated artifact treasure.
