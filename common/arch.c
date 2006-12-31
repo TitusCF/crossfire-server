@@ -255,29 +255,41 @@ void dump_all_archetypes(void) {
 }
 
 /**
+ * Frees archetype.
+ *
+ * @param at
+ * archetype to free. Pointer becomes invalid after the call.
+ */
+void free_arch(archetype* at)
+{
+    if (at->name) free_string(at->name);
+    if (at->clone.name) free_string(at->clone.name);
+    if (at->clone.name_pl) free_string(at->clone.name_pl);
+    if (at->clone.title) free_string(at->clone.title);
+    if (at->clone.race) free_string(at->clone.race);
+    if (at->clone.slaying) free_string(at->clone.slaying);
+    if (at->clone.msg) free_string(at->clone.msg);
+    free_key_values(&at->clone);
+    free(at);
+}
+
+/**
  * Frees all memory allocated to archetypes.
  * After calling this, it's possible to call again init_archetypes() to reload data.
  */
 void free_all_archs(void)
 {
     archetype *at, *next;
-    int i=0,f=0;
+    int i=0;
 
     for (at=first_archetype; at!=NULL; at=next) {
         if (at->more) next=at->more;
         else next=at->next;
-        if (at->name) free_string(at->name);
-        if (at->clone.name) free_string(at->clone.name);
-        if (at->clone.name_pl) free_string(at->clone.name_pl);
-        if (at->clone.title) free_string(at->clone.title);
-        if (at->clone.race) free_string(at->clone.race);
-        if (at->clone.slaying) free_string(at->clone.slaying);
-        if (at->clone.msg) free_string(at->clone.msg);
-        free(at);
+        free_arch(at);
         i++;
     }
     first_archetype = NULL;
-    LOG(llevDebug,"Freed %d archetypes, %d faces\n", i, f);
+    LOG(llevDebug,"Freed %d archetypes\n", i);
 }
 
 /**

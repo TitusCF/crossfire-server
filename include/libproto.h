@@ -25,6 +25,7 @@ extern unsigned long hasharch(const char *str, int tablesize);
 extern archetype *find_archetype(const char *name);
 extern archetype *type_to_archetype(int type);
 extern object *object_create_arch(archetype *at);
+extern void free_arch(archetype* at);
 /* button.c */
 extern void push_button(object *op);
 extern void update_button(object *op);
@@ -48,6 +49,7 @@ extern int new_exp(const object *ob);
 extern int has_ability(const object *ob);
 extern void init_experience(void);
 extern void dump_experience(void);
+extern void free_experience(void);
 /* friend.c */
 extern void add_friendly_object(object *op);
 extern void remove_friendly_object(object *op);
@@ -77,11 +79,13 @@ extern void init_library(void);
 extern void init_environ(void);
 extern void init_globals(void);
 extern void init_objects(void);
+extern void free_globals(void);
 extern void init_defaults(void);
 extern void init_dynamic(void);
 extern void write_todclock(void);
 extern void init_clocks(void);
 extern void init_attackmess(void);
+extern void free_attackmess(void);
 /* item.c */
 extern int get_power_from_ench(int ench);
 extern int calc_item_power(const object *op, int flag);
@@ -237,6 +241,7 @@ extern object *find_obj_by_type_subtype(const object *who, int type, int subtype
 extern key_value *get_ob_key_link(const object *ob, const char *key);
 extern const char *get_ob_key_value(const object *op, const char *const key);
 extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
+extern void free_key_values(object *op);
 extern object *find_best_weapon_used_match(object *pl, const char *params);
 extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object* tmp);
@@ -397,3 +402,4 @@ extern int set_variable(object *op, char *buf);
 extern void init_vars(void);
 extern char *get_ob_diff(object *op, object *op2);
 extern void save_object(FILE *fp, object *op, int flag);
+extern void free_loader(void);

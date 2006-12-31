@@ -17,6 +17,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Some memory fixes.
+ common/arch.c: split code to make free_arch().
+ common/exp.c: free levels memory.
+ common/init.c: add free_globals().
+ common/loader.l: add free_loader() to clean allocated memory.
+ common/object.c: call free_arch() instead of free() to free temporary archetype.
+ common/treasure.c: clear correctly the artifacts.
+ include/libproto.h: new functions.
+ include/sproto.h: new functions.
+ server/init.c: call cleanup() instead of exit() when doing dumps. Free some memory.
+ server/server.c: call some free_xxx() stuff.
+ server/weather.c: add free_weather().
+----
+Use const char* instead of char*
+ common/apply.c gods.c
+Ryo 2006-12-31
+
 Implemented proposal #1497089: fix for some random items.
 lib/artifacts, lib/formulae
 Changed the title of several treasures from Gaea to Vitality, and from

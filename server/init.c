@@ -74,6 +74,8 @@ static void set_uniquedir(char *path) { settings.uniquedir=path; }
 static void set_templatedir(char *path) { settings.templatedir=path; }
 static void set_playerdir(char *path) { settings.playerdir=path; }
 static void set_tmpdir(char *path) { settings.tmpdir=path; }
+static void free_races(void);
+static void free_materials(void);
 
 static void showscoresparm(char *data) { 
     display_high_score(NULL,9999,data); 
@@ -335,6 +337,20 @@ static void load_materials(void)
     }
     LOG(llevDebug, "Done.\n");
     fclose(fp);
+
+}
+
+/**
+ * Frees all memory allocated to materials.
+ */
+static void free_materials(void) {
+    materialtype_t* next;
+    while (materialt) {
+        next = materialt->next;
+        free(materialt);
+        materialt = next;
+    }
+    materialt = NULL;
 }
 
 /**
@@ -775,6 +791,16 @@ void init(int argc, char **argv) {
     init_done=1;
 }
 
+/**
+ * Frees all memory allocated around here:
+ *  * materials
+ * * races
+ */
+void free_server(void) {
+    free_materials();
+    free_races();
+}
+
 static void usage(void) {
   (void) fprintf(logfile,
 	"Usage: crossfire [-h] [-<flags>]...\n");
@@ -835,33 +861,33 @@ static void init_beforeplay(void) {
   switch(settings.dumpvalues) {
   case 1:
     print_monsters();
-    exit(0);
+    cleanup();
   case 2:
     dump_abilities();
-    exit(0);
+    cleanup();
   case 3:
     dump_artifacts();
-    exit(0);
+    cleanup();
   case 4:
     dump_spells();
-    exit(0);
+    cleanup();
   case 5:
-    exit(0);
+    cleanup();
   case 6:
     dump_races();
-    exit(0);
+    cleanup();
   case 7:
     dump_alchemy();
-    exit(0);
+    cleanup();
   case 8:
     dump_gods();
-    exit(0);
+    cleanup();
   case 9:
     dump_alchemy_costs();
-    exit(0);
+    cleanup();
   case 10:
     dump_monster_treasure(settings.dumparg);
-    exit(0);
+    cleanup();
   }
 }
 
@@ -1118,6 +1144,26 @@ static void dump_races(void)
         fprintf(stderr,"%s(%d), ",tmp->ob->arch->name,tmp->ob->level);
     }
     fprintf(stderr,"\n");
+}
+
+/**
+ * Frees all race-related information.
+ */
+static void free_races(void) {
+    racelink* race;
+    objectlink* link;
+    LOG(llevDebug, "Freeing race information.\n");
+    while (first_race) {
+        race = first_race->next;
+        while (first_race->member) {
+            link = first_race->member->next;
+            free(first_race->member);
+            first_race->member = link;
+        }
+        free_string(first_race->name);
+        free(first_race);
+        first_race = race;
+    }
 }
 
 static void add_to_racelist(const char *race_name, object *op) {

@@ -1331,6 +1331,18 @@ void init_weather(void)
 	wmperformstarty = 0;
 }
 
+/**
+ * Frees all memory allocated by the weather system.
+ */
+void free_weather()
+{
+    int y;
+    for (y=0; y < WEATHERMAPTILESY; y++) {
+        FREE_AND_CLEAR(weathermap[y]);
+    }
+    FREE_AND_CLEAR(weathermap);
+}
+
 /*
  * This routine slowly loads the world, patches it up due to the weather,
  * and saves it back to disk.  In this way, the world constantly feels the

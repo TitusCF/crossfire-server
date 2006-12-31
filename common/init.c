@@ -275,6 +275,53 @@ void init_globals(void) {
 }
 
 /**
+ * Cleans all memory allocated for global variables.
+ *
+ * Will clear:
+ *  * attack messages
+ *  * emergency map settings
+ *  * friendly list
+ *  * experience
+ *  * regions
+ */
+void free_globals()
+{
+    int msg, attack;
+    objectlink* friend;
+    region* reg;
+
+    FREE_AND_CLEAR_STR(undead_name);
+    attack_mess[NROFATTACKMESS][MAXATTACKMESS];
+    for (msg = 0; msg < NROFATTACKMESS; msg++)
+        for (attack = 0; attack < MAXATTACKMESS; attack++) {
+            free(attack_mess[msg][attack].buf1);
+            free(attack_mess[msg][attack].buf2);
+            free(attack_mess[msg][attack].buf3);
+        }
+
+    free(settings.emergency_mapname);
+
+    while (first_friendly_object) {
+        friend = first_friendly_object->next;
+        FREE_AND_CLEAR(first_friendly_object);
+        first_friendly_object = friend;
+    }
+
+    free_experience();
+
+    while (first_region) {
+        reg = first_region->next;
+        FREE_AND_CLEAR(first_region->name);
+        FREE_AND_CLEAR(first_region->parent_name);
+        FREE_AND_CLEAR(first_region->jailmap);
+        FREE_AND_CLEAR(first_region->msg);
+        FREE_AND_CLEAR(first_region->longname);
+        FREE_AND_CLEAR(first_region);
+        first_region = reg;
+    }
+}
+
+/**
  * Sets up and initialises the linked list of free and used objects.
  * Allocates a certain chunk of objects and puts them on the free list.
  * Called by init_library();
@@ -397,6 +444,8 @@ attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 /**
  * Initializes the attack messages.
  * Called by init_library().
+ *
+ * Memory will be cleared by free_globals().
  */
 void init_attackmess(void){
     char buf[MAX_BUF];

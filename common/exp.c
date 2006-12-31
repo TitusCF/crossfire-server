@@ -256,3 +256,10 @@ void dump_experience(void)
     }
     exit(0);
 }
+
+/**
+ * Frees experience-related memory.
+ */
+void free_experience(void) {
+    FREE_AND_CLEAR(levels);
+}

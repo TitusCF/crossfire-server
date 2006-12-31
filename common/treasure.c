@@ -1885,17 +1885,27 @@ void free_charlinks(linked_char *lc)
  *
  * @param at
  * artifact to free. Pointer is free()d too, so becomes invalid.
+ *
+ * @note
+ * Objects at->item are malloc()ed by init_artifacts(), so can simply be free()d.
+ *
+ * But artifact inventory is a 'real' object, that may be created for 'old' objects. So should be
+ * destroyed through free_object(). Note that it isn't on the usual item list, so some tweaking is required.
  */
 void free_artifact(artifact *at)
 {
+    object* next, *inv;
     if (at->next) free_artifact(at->next);
     if (at->allowed) free_charlinks(at->allowed);
-    if (at->item) {
+    while (at->item) {
+        next = at->item->next;
         if (at->item->name) free_string(at->item->name);
         if (at->item->name_pl) free_string(at->item->name_pl);
         if (at->item->msg) free_string(at->item->msg);
         if (at->item->title) free_string(at->item->title);
+        free_key_values(at->item);
         free(at->item);
+        at->item = next;
     }
     free(at);
 }

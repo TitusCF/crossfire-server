@@ -363,6 +363,10 @@ static void set_body_info(object *op, char *params) {
 static void check_loaded_object(object *op) {
     int ip;
 
+    if (artifact_init)
+        /* Artifacts are special beasts, let's not check them. */
+        return;
+    
     /* We do some specialized handling to handle legacy cases of name_pl.
      * If the object doesn't have a name_pl, we just use the object name -
      * this isn't perfect (things won't be properly pluralized), but works to
@@ -1330,6 +1334,14 @@ static const char *const flag_names[NUM_FLAGS+1] = {
  */
 
 void init_vars() {
+}
+
+/**
+ * Frees all memory allocated by the loader.
+ */
+void free_loader() {
+    yy_delete_buffer(YY_CURRENT_BUFFER);
+    yylex_destroy();
 }
 
 /** For get_ob_diff speed reason*/

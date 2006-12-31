@@ -48,7 +48,6 @@
 static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
 static void dump_object2(object *);
-static void free_key_values(object *);
 static void expand_objects(void);
 static void free_object2(object *, int);
 static void permute(int *, int, int);
@@ -555,8 +554,11 @@ object *find_object_name(const char *str) {
 /**
  * Destroys all allocated objects.
  *
- * @todo
- * is it all right it merely free() objects, what about their reference to shared strings?
+ * @note
+ * free() is called instead of free_object() as the object's memory has already by cleaned.
+ *
+ * @warning
+ * this should be the last method called.
  */
 void free_all_object_data(void) {
 #ifdef MEMORY_DEBUG
@@ -569,7 +571,16 @@ void free_all_object_data(void) {
         nroffreeobjects--;
         op=next;
     }
+
+    for (op=objects; op!= NULL;) {
+        next=op->next;
+        if (!QUERY_FLAG(op, FLAG_FREED)) {
+            LOG(llevDebug, "non freed object: %s", op->name);
+        }
+        op=next;
+    }
 #endif
+
     LOG(llevDebug,"%d allocated objects, %d free objects, STARMAX=%d\n", 
         nrofallocobjects, nroffreeobjects,STARTMAX);
 }
@@ -733,7 +744,7 @@ void reset_object(object *op) {
  * @param op
  * object to clear.
  */
-static void free_key_values(object * op) {
+void free_key_values(object * op) {
     key_value * i;
     key_value * next = NULL;
 
@@ -1256,8 +1267,6 @@ void free_object(object *ob) {
  *
  * @todo
  * merge with free_object2 and rename.
- * Archetype's name (?) isn't freed (free_string()), so memory leak. Ideally there should
- * be a function to free an archetype.
  *
  * @warning
  * the object's archetype should be a valid pointer, or NULL.
@@ -1385,24 +1394,10 @@ static void free_object2(object *ob, int free_inventory) {
     /* Why aren't events freed? */
     free_key_values(ob);
 
-#if 0 /* MEMORY_DEBUG*/
-  /* This is a nice idea.  Unfortunately, a lot of the code in crossfire
-   * presumes the freed_object will stick around for at least a little
-   * bit
-   */ 
-  /* this is necessary so that memory debugging programs will
-   * be able to accurately report source of malloc.  If we recycle
-   * objects, then some other area may be doing the get_object
-   * and not freeing it, but the original one that malloc'd the
-   * object will get the blame.
-   */
-      free(ob);
-#else
-
     /* Test whether archetype is a temporary one, and if so look whether it should be trashed. */
     if (ob->arch && ob->arch->reference_count > 0) {
         if (--ob->arch->reference_count == 0) {
-            free(ob->arch);
+            free_arch(ob->arch);
         }
     }
 
@@ -1410,10 +1405,9 @@ static void free_object2(object *ob, int free_inventory) {
     ob->prev=NULL;
     ob->next=free_objects;
     if(free_objects!=NULL)
-    free_objects->prev=ob;
+        free_objects->prev=ob;
     free_objects=ob;
     nroffreeobjects++;
-#endif
 }
 
 /**
