@@ -3570,8 +3570,8 @@ int apply_special (object *who, object *op, int aflags)
      */
     if (settings.personalized_blessings)
     {
-        char* owner = get_ob_key_value(op, "item_owner");
-        char* will  = get_ob_key_value(op, "item_willpower");
+        const char* owner = get_ob_key_value(op, "item_owner");
+        const char* will  = get_ob_key_value(op, "item_willpower");
         if ((owner!=NULL)&&(strcmp(owner, who->name)))
         {
             long item_will = 0;

@@ -768,8 +768,8 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
      */
     if (settings.personalized_blessings)
     {
-        char* divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
-        char* owner = get_ob_key_value(weapon, "item_owner");
+        const char* divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
+        const char* owner = get_ob_key_value(weapon, "item_owner");
         object* skillop = NULL;
 
         if (divine_owner != NULL)
