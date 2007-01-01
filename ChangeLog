@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Removed unused defines, documentation fixes, no functional change.
+ common/treasure.c: add some links for GT_xxx.
+ include/treasure.h: add anchor 'GT_xxx'.
+Ryo 2007-01-01
+
 server/player.c: fix wrong message displayed. Make sp test coherent with draining for rod/horn.
 Ryo 2007-01-01
 

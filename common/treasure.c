@@ -307,10 +307,7 @@ treasurelist *find_treasurelist(const char *name) {
  * @param creator
  * for which object the treasure is being generated.
  * @param flags
- * combination of GT_xxx values.
- *
- * @todo
- * insert link to GT_xxx values in documentation.
+ * combination of @ref GT_xxx values.
  */
 static void put_treasure (object *op, object *creator, int flags)
 {
@@ -377,14 +374,11 @@ static void change_treasure(treasure *t, object *op)
  * @param op
  * for who to generate the treasure.
  * @param flag
- * combination of GT_xxx values.
+ * combination of @ref GT_xxx values.
  * @param difficulty
  * map difficulty.
  * @param tries
  * to avoid infinite recursion.
- *
- * @todo
- * insert link to GT_xxx values in documentation.
  */
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
     object *tmp;
@@ -422,14 +416,11 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
  * @param op
  * for who to generate the treasure.
  * @param flag
- * combination of GT_xxx values.
+ * combination of @ref GT_xxx values.
  * @param difficulty
  * map difficulty.
  * @param tries
  * to avoid infinite recursion.
- *
- * @todo
- * insert link to GT_xxx values in documentation.
  *
  * @note
  * can abort() if treasure has errors.
@@ -487,14 +478,11 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
  * @param op
  * for who to generate the treasure.
  * @param flag
- * combination of GT_xxx values.
+ * combination of @ref GT_xxx values.
  * @param difficulty
  * map difficulty.
  * @param tries
  * to avoid infinite recursion.
- *
- * @todo
- * insert link to GT_xxx values in documentation.
  */
 void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int tries)
 {
@@ -703,8 +691,14 @@ void set_abs_magic(object *op, int magic) {
  *
  * Item will be cursed if magic is megative.
  *
- * @todo
- * insert link to GT_xxx values in documentation.
+ * @param difficulty
+ * difficulty we want the item to be.
+ * @param op
+ * the object.
+ * @param max_magic
+ * what should be the maximum magic of the item.
+ * @param flags
+ * combination of @ref GT_xxx flags.
  */
 static void set_magic (int difficulty, object *op, int max_magic, int flags)
 {
