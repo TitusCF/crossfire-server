@@ -830,6 +830,9 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
 /**
  * wonder is really just a spell that will likely cast another
  * spell.
+ *
+ * @todo
+ * doesn't it decrease sp without checking?
  */
 int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
     object *newspell;

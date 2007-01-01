@@ -15,6 +15,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #656191: Add blessings and curses to scrolls.
+----
+New flags: 'blessed', 'known_blessed'.
+ common/item.c
+ common/loader.l: new flag, and fix mistake on array size.
+ include/define.h
+----
+Randomly set blessed/cursed on scrolls and spellbooks.
+ common/treasure.c
+----
+Blessed/cursed/damned effect for scrolls and books.
+ server/apply.c: effects, and also there should be a failure even if settings is no.
+----
+ server/spell_effect.c: add a check to be done.
+Ryo 2007-01-01
+
 Implement feature request #1536177: "Orc Knuckle" requires no dice.
 If there is an "dice" archetype in server arches, this command will
 require the player to have at least 4 dice to play. There is a 5%

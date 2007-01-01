@@ -2072,71 +2072,108 @@ void do_forget_spell (object *op, const char *spell)
  * Handles player applying a spellbook.
  * Checks whether player has knowledge of required skill, doesn't already know the spell,
  * stuff like that. Random learning failure too.
+ *
+ * @param op
+ * player reading.
+ * @param tmp
+ * book being read.
+ *
+ * @todo
+ * handle failure differently for praying/magic.
  */
 static void apply_spellbook (object *op, object *tmp)
 {
     object *skop, *spell, *spell_skill;
+    int read_level;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		      "You are unable to read while blind.", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You are unable to read while blind.", NULL);
+        return;
     }
 
     /* artifact_spellbooks have 'slaying' field point to a spell name,
      * instead of having their spell stored in stats.sp.  These are
      * legacy spellbooks
      */
- 
     if(tmp->slaying != NULL) {
-	spell=arch_to_object(find_archetype_by_object_name(tmp->slaying));
-	if (!spell) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		 "The book's formula for %s is incomplete", 
-		 "The book's formula for %s is incomplete", 
-		 tmp->slaying);
-	    return;
-	}
-	else
-	    insert_ob_in_ob(spell, tmp);
-	free_string(tmp->slaying);
-	tmp->slaying=NULL;
-    } 
+        spell=arch_to_object(find_archetype_by_object_name(tmp->slaying));
+        if (!spell) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "The book's formula for %s is incomplete", 
+            "The book's formula for %s is incomplete", 
+            tmp->slaying);
+            return;
+        }
+        insert_ob_in_ob(spell, tmp);
+        free_string(tmp->slaying);
+        tmp->slaying=NULL;
+    }
 
     skop = find_skill_by_name(op, tmp->skill);
 
     /* need a literacy skill to learn spells. Also, having a literacy level
      * lower than the spell will make learning the spell more difficult */
-    if ( !skop) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		      "You can't read! Your attempt fails.", NULL);
-	return;
+    if (!skop) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You can't read! Your attempt fails.", NULL);
+        return;
     }
+    read_level = skop->level;
 
     spell = tmp->inv;
     if (!spell) {
-	LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n", tmp->name);
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "The spellbook symbols make no sense.", NULL);
-	return;
+        LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n", tmp->name);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The spellbook symbols make no sense.", NULL);
+        return;
     }
-    if (spell->level > (skop->level+10)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "You are unable to decipher the strange symbols.", NULL);
-	return;
-    } 
+
+    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+        /* Player made a mistake, let's shake her/him :) */
+        int failure = -35;
+        if (settings.spell_failure_effects == TRUE)
+            failure = -rndm(35, 100);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "The %s was %s!",
+            "The %s was %s!",
+            query_name(tmp), QUERY_FLAG(tmp,FLAG_DAMNED)?"damned":"cursed");
+        scroll_failure(op, failure, (spell->level + 4) * 7);
+        if (QUERY_FLAG(tmp, FLAG_DAMNED) && check_spell_known (op, spell->name) && die_roll(1, 10, op, 1) < 2)
+            /* Really unlucky player, better luck next time */
+            do_forget_spell(op, spell->name);
+        tmp = decrease_ob(tmp);
+        if (tmp && (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))) {
+            /* Well, not everything is lost, player now knows the book is cursed/damned. */
+            identify(tmp);
+            if (tmp->env)
+                esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
+            else
+                op->contr->socket.update_look=1;
+        }
+        return;
+    }
+
+    if (QUERY_FLAG(tmp, FLAG_BLESSED))
+        read_level += 5;
+    
+    if (spell->level > (read_level+10)) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "You are unable to decipher the strange symbols.", NULL);
+        return;
+    }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-	"The spellbook contains the %s level spell %s.",
-	"The spellbook contains the %s level spell %s.",
-            get_levelnumber(spell->level), spell->name);
+        "The spellbook contains the %s level spell %s.",
+        "The spellbook contains the %s level spell %s.",
+        get_levelnumber(spell->level), spell->name);
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
-	identify(tmp);
-	if (tmp->env)
-	    esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
-	else
-	    op->contr->socket.update_look=1;
+        identify(tmp);
+        if (tmp->env)
+            esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
+        else
+            op->contr->socket.update_look=1;
     }
 
     /* I removed the check for special_prayer_mark here - it didn't make
@@ -2145,27 +2182,27 @@ static void apply_spellbook (object *op, object *tmp)
      * they would have a special prayer mark.
      */
     if (check_spell_known (op, spell->name)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "You already know that spell.\n", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "You already know that spell.\n", NULL);
+        return;
     }
 
     if (spell->skill) {
-	spell_skill = find_skill_by_name(op, spell->skill);
-	if (!spell_skill) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-				 "You lack the skill %s to use this spell",
-				 "You lack the skill %s to use this spell",
-				 spell->skill);
-	    return;
-	}
-	if (spell_skill->level < spell->level) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-				 "You need to be level %d in %s to learn this spell.",
-				 "You need to be level %d in %s to learn this spell.",
-				 spell->level, spell->skill);
-	    return;
-	}
+        spell_skill = find_skill_by_name(op, spell->skill);
+        if (!spell_skill) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You lack the skill %s to use this spell",
+                "You lack the skill %s to use this spell",
+                spell->skill);
+            return;
+        }
+        if (spell_skill->level < spell->level) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You need to be level %d in %s to learn this spell.",
+                "You need to be level %d in %s to learn this spell.",
+                spell->level, spell->skill);
+            return;
+        }
     }
 
     /* Logic as follows
@@ -2180,78 +2217,111 @@ static void apply_spellbook (object *op, object *tmp)
      * Overall, chances are the same but a player will find having a high 
      * literacy rate very useful!  -b.t. 
      */ 
-    if(QUERY_FLAG(op,FLAG_CONFUSED)) { 
-	draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "In your confused state you flub the wording of the text!", NULL);
-	scroll_failure(op, 0 - random_roll(0, spell->level, op, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
+    if(QUERY_FLAG(op,FLAG_CONFUSED)) {
+        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "In your confused state you flub the wording of the text!", NULL);
+        scroll_failure(op, 0 - random_roll(0, spell->level, op, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
     } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) || 
-	(random_roll(0, 100, op, PREFER_LOW)-(5*skop->level)) <
-	      learn_spell[spell->stats.grace ? op->stats.Wis : op->stats.Int]) {
+      (random_roll(0, 100, op, PREFER_LOW)-(5*read_level)) <
+      learn_spell[spell->stats.grace ? op->stats.Wis : op->stats.Int]) {
 
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-		      "You succeed in learning the spell!", NULL);
-	do_learn_spell (op, spell, 0);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "You succeed in learning the spell!", NULL);
+        do_learn_spell (op, spell, 0);
 
-	/* xp gain to literacy for spell learning */
-	if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
-	    change_exp(op,calc_skill_exp(op,tmp,skop), skop->skill, 0);
+        /* xp gain to literacy for spell learning */
+        if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
+            change_exp(op,calc_skill_exp(op,tmp,skop), skop->skill, 0);
     } else {
-	play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "You fail to learn the spell.\n", NULL);
+        play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "You fail to learn the spell.\n", NULL);
     }
     decrease_ob(tmp);
 }
 
 /**
  * Handles applying a spell scroll.
+ *
+ * @param op
+ * who is applying the scroll. Can be player or monster.
+ * @param tmp
+ * scroll being applied.
+ * @param dir
+ * casting direction.
+ *
+ * @todo
+ * should handle scroll failure differently if god-like scroll. Tweak failure parameters.
  */
 void apply_scroll (object *op, object *tmp, int dir)
 {
     object *skop;
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		      "You are unable to read while blind.", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "You are unable to read while blind.", NULL);
+        return;
     }
 
     if (!tmp->inv || tmp->inv->type != SPELL) {
         draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                       "The scroll just doesn't make sense!", NULL);
+            "The scroll just doesn't make sense!", NULL);
         return;
     }
 
     if(op->type==PLAYER) {
-	/* players need a literacy skill to read stuff! */
-	int exp_gain=0;
+        /* players need a literacy skill to read stuff! */
+        int exp_gain=0;
 
-	/* hard code literacy - tmp->skill points to where the exp
-	 * should go for anything killed by the spell.
-	 */
-	skop = find_skill_by_name(op, skill_names[SK_LITERACY]);
+        /* hard code literacy - tmp->skill points to where the exp
+         * should go for anything killed by the spell.
+         */
+        skop = find_skill_by_name(op, skill_names[SK_LITERACY]);
 
-        if ( ! skop) {
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		  "You are unable to decipher the strange symbols.", NULL);
-	    return;
-        } 
+        if (!skop) {
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You are unable to decipher the strange symbols.", NULL);
+            return;
+        }
 
-	if((exp_gain = calc_skill_exp(op,tmp, skop)))
-	    change_exp(op,exp_gain, skop->skill, 0);
+        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
+            identify(tmp);
+
+        if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+            /* Player made a mistake, let's shake her/him :)
+             * a failure of -35 means merely mana drain, -80 means mana blast. But if server
+             * settings say 'no failure effect', we still want to drain mana.
+             * as for power, hey, better take care what you apply :)
+             */
+            int failure = -35;
+            if (settings.spell_failure_effects == TRUE)
+                failure = -rndm(35, 100);
+            scroll_failure(op, failure, MAX(20, (tmp->level - skop->level) * 5));
+            decrease_ob(tmp);
+            return;
+        }
+
+        if((exp_gain = calc_skill_exp(op,tmp, skop)))
+            change_exp(op,exp_gain, skop->skill, 0);
     }
 
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
-	identify(tmp);
-
-    draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-		 "The scroll of %s turns to dust.", 
-		 "The scroll of %s turns to dust.", 
-		 tmp->inv->name);
-
-
     cast_spell(op,tmp,dir,tmp->inv, NULL);
-    decrease_ob(tmp);
+
+    if (QUERY_FLAG(tmp, FLAG_BLESSED) && die_roll(1,100,op,1) < 10) {
+        draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "Your scroll of %s glows for a second!", 
+            "Your scroll of %s glows for a second!", 
+            tmp->inv->name);
+    }
+    else
+    {
+        draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "The scroll of %s turns to dust.", 
+            "The scroll of %s turns to dust.", 
+            tmp->inv->name);
+
+        decrease_ob(tmp);
+    }
 }
 
 /**
@@ -4227,46 +4297,72 @@ static void apply_lighter(object *who, object *lighter) {
 /**
  * op made some mistake with a scroll, this takes care of punishment.
  * scroll_failure()- hacked directly from spell_failure
+ *
+ * If settings.spell_failure_effects is FALSE, the only nasty things
+ * that can happen are weird spell cast, or mana drain.
+ *
+ * @param op
+ * who failed.
+ * @param failure
+ * what kind of nasty things happen.
+ * @param power
+ * the higher the value, the worse the thing that happens.
  */
 static void scroll_failure(object *op, int failure, int power)
 {
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
 
     if(failure<= -1&&failure > -15) {/* wonder */
-	object *tmp;
+        object *tmp;
 
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "Your spell warps!", NULL);
-	tmp=create_archetype(SPELL_WONDER);
-	cast_wonder(op, op, 0, tmp);
-	free_object(tmp);
-    } else if (failure <= -15&&failure > -35) {/* drain mana */
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "Your mana is drained!", NULL);
-	op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
-	if(op->stats.sp<0) op->stats.sp = 0;
-    } else if (settings.spell_failure_effects == TRUE) {
-	if (failure <= -35&&failure > -60) { /* confusion */
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "The magic recoils on you!", NULL);
-	    confuse_player(op,op,power);
-	} else if (failure <= -60&&failure> -70) {/* paralysis */
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "The magic recoils and paralyzes you!", NULL);
-	    paralyze_player(op,op,power);
-	} else if (failure <= -70&&failure> -80) {/* blind */
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "The magic recoils on you!", NULL);
-	    blind_player(op,op,power);
-	} else if (failure <= -80) {/* blast the immediate area */
-	    object *tmp;
-	    tmp=create_archetype(LOOSE_MANA);
-	    cast_magic_storm(op,tmp, power);
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "You unlease uncontrolled mana!", NULL);
-	    free_object(tmp);
-	}
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "Your spell warps!", NULL);
+        tmp=create_archetype(SPELL_WONDER);
+        cast_wonder(op, op, 0, tmp);
+        if (op->stats.sp < 0)
+            /* For some reason the sp can become negative here. */
+            op->stats.sp = 0;
+        free_object(tmp);
+        return;
     }
+
+    if (settings.spell_failure_effects == TRUE) {
+        if (failure <= -35&&failure > -60) { /* confusion */
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The magic recoils on you!", NULL);
+            confuse_player(op,op,power);
+            return;
+        }
+
+        if (failure <= -60&&failure> -70) {/* paralysis */
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The magic recoils and paralyzes you!", NULL);
+            paralyze_player(op,op,power);
+            return;
+        }
+
+        if (failure <= -70&&failure> -80) {/* blind */
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The magic recoils on you!", NULL);
+            blind_player(op,op,power);
+            return;
+        }
+
+        if (failure <= -80) {/* blast the immediate area */
+            object *tmp;
+            tmp=create_archetype(LOOSE_MANA);
+            cast_magic_storm(op,tmp, power);
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You unlease uncontrolled mana!", NULL);
+            free_object(tmp);
+            return;
+        }
+    }
+    /* Either no spell failure on this server, or wrong values, in any case let's punish. */
+    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        "Your mana is drained!", NULL);
+    op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
+    if(op->stats.sp<0) op->stats.sp = 0;
 }
 
 /**

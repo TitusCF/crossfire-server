@@ -1133,6 +1133,16 @@ void fix_generated_item (object *op, object *creator, int difficulty, int max_ma
                 /* add exp so learning gives xp */
                 op->level = op->inv->level;
                 op->stats.exp = op->value;
+                /* some more fun */
+                if (!(flags & GT_ONLY_GOOD) && rndm(1,100) <= 5) {
+                    if (rndm(1,6) <= 1)
+                        SET_FLAG(op, FLAG_DAMNED);
+                    else
+                        SET_FLAG(op, FLAG_CURSED);
+                } else if (rndm(1,100) <= 1) {
+                    SET_FLAG(op, FLAG_BLESSED);
+                }
+
                 break;
 
             case WAND:
@@ -1188,6 +1198,15 @@ void fix_generated_item (object *op, object *creator, int difficulty, int max_ma
                 /* add exp so reading them properly gives xp */
                 op->stats.exp = op->value/5;
                 op->nrof = op->inv->nrof;
+                /* some more fun */
+                if (!(flags & GT_ONLY_GOOD) && rndm(1,100) <= 20) {
+                    if (rndm(1,6) <= 1)
+                        SET_FLAG(op, FLAG_DAMNED);
+                    else
+                        SET_FLAG(op, FLAG_CURSED);
+                } else if (rndm(1,100) <= 2) {
+                    SET_FLAG(op, FLAG_BLESSED);
+                }
                 break;
 
             case RUNE:

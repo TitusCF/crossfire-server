@@ -699,6 +699,9 @@ char *query_name(const object *op) {
         else if(QUERY_FLAG(op,FLAG_CURSED))
             safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
     }
+    if(QUERY_FLAG(op,FLAG_BLESSED) && QUERY_FLAG(op,FLAG_KNOWN_BLESSED))
+            safe_strcat(buf[use_buf], " (blessed)", &len, HUGE_BUF);
+
     /* Basically, if the object is known magical (detect magic spell on it),
      * and it isn't identified,  print out the fact that
      * it is magical.  Assume that the detect magical spell will only set
@@ -1505,6 +1508,9 @@ void identify(object *op) {
      */
     if (QUERY_FLAG(op,FLAG_CURSED) || QUERY_FLAG(op,FLAG_DAMNED))
         SET_FLAG(op,FLAG_KNOWN_CURSED);
+
+    if (QUERY_FLAG(op,FLAG_BLESSED))
+        SET_FLAG(op,FLAG_KNOWN_BLESSED);
 
     if (op->type == POTION) {
         if (op->inv && op->randomitems) {

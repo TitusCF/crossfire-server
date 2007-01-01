@@ -1053,9 +1053,11 @@ A	.+
 ^connected{S}	    add_button_link(op, op->map, IVAL);
 ^cursed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CURSED, IVAL);
 ^damned{S}	    SET_OR_CLEAR_FLAG(op, FLAG_DAMNED, IVAL);
+^blessed{S}         SET_OR_CLEAR_FLAG(op, FLAG_BLESSED, IVAL);
 ^see_anywhere{S}    SET_OR_CLEAR_FLAG(op, FLAG_SEE_ANYWHERE, IVAL);
 ^known_magical{S}   SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL, IVAL);
 ^known_cursed{S}    SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_CURSED, IVAL);
+^known_blessed{S}   SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_BLESSED, IVAL);
 ^can_use_skill{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_SKILL, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^has_ready_scroll{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_SCROLL, IVAL);
@@ -1322,7 +1324,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
     "no_attack", "no_damage", NULL, NULL, "activate_on_push",
     "activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
-    NULL
+    NULL, "blessed", "known_blessed"
 };
 
 
@@ -1454,7 +1456,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
  * FINISH_FASTCAT(buf)
  */
     static int already_run = 0;
-    static int flag_lens[NUM_FLAGS];
+    static int flag_lens[NUM_FLAGS+1];
     static char buf2[HUGE_BUF];
     static char buf[HUGE_BUF];
     char* fastbuf;
@@ -1471,8 +1473,9 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
     /*first init this function if first call*/
     if (!already_run){
-        for (i=0;i<NUM_FLAGS;i++)
+        for (i=0;i<=NUM_FLAGS;i++) {
             flag_lens[i]=flag_names[i]?strlen(flag_names[i]):0; /* some flags may be null? :/*/
+        }
         already_run=1;
     }
     buf[0]='\0';
