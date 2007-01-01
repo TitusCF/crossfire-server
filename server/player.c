@@ -1785,70 +1785,80 @@ static int player_fire_bow(object *op, int dir)
 }
 
 
-/* Fires a misc (wand/rod/horn) object in 'dir'.
+/**
+ * Fires a misc (wand/rod/horn) object in 'dir'.
  * Broken apart from 'fire' to keep it more readable.
+ *
+ * @param op
+ * player firing.
+ * @param dir
+ * firing direction.
+ *
+ * @warning
+ * op must be a player (contr != NULL).
  */
 static void fire_misc_object(object *op, int dir)
 {
     object  *item;
 
     if (!op->contr->ranges[range_misc]) {
-	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "You have no range item readied.", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "You have no range item readied.", NULL);
+        return;
     }
 
     item = op->contr->ranges[range_misc];
     if (!item->inv) {
-	LOG(llevError,"Object %s lacks a spell\n", item->name);
-	return;
+        LOG(llevError,"Object %s lacks a spell\n", item->name);
+        return;
     }
     if (item->type == WAND) {
-	if(item->stats.food<=0) {
-	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
-	    draw_ext_info_format(NDI_UNIQUE, 0,op,
-				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-				 "The %s goes poof.",
-				 "The %s goes poof.",
-				 query_base_name(item, 0));
-	    return;
-	}
+        if(item->stats.food<=0) {
+            play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            draw_ext_info_format(NDI_UNIQUE, 0,op,
+                MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                "The %s goes poof.",
+                "The %s goes poof.",
+                query_base_name(item, 0));
+            return;
+        }
     } else if (item->type == ROD || item->type==HORN) {
-	if(item->stats.hp<MAX(item->inv->stats.sp, item->inv->stats.grace)) {
-	    play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
-	    if (item->type== ROD)
-		draw_ext_info_format(NDI_UNIQUE, 0,op, 
-			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-			     "The %s whines for a while, but nothing happens.",
-			     "The %s whines for a while, but nothing happens.",
-			     query_base_name(item,0));
-	    else
-		draw_ext_info_format(NDI_UNIQUE, 0,op,
-			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-			     "The %s needs more time to charge.",
-			     query_base_name(item,0));
-	    return;
-	}
+        if(item->stats.hp<SP_level_spellpoint_cost(item, item->inv, SPELL_HIGHEST)) {
+            play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            if (item->type== ROD)
+                draw_ext_info_format(NDI_UNIQUE, 0,op, 
+                    MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                    "The %s whines for a while, but nothing happens.",
+                    "The %s whines for a while, but nothing happens.",
+                    query_base_name(item,0));
+            else
+                draw_ext_info_format(NDI_UNIQUE, 0,op,
+                    MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                    "The %s needs more time to charge.",
+                    "The %s needs more time to charge.",
+                    query_base_name(item,0));
+            return;
+        }
     }
 
     if(cast_spell(op,item,dir,item->inv,NULL)) {
-	SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
-	if (item->type == WAND) {
-	    if (!(--item->stats.food)) {
-		object *tmp;
-		if (item->arch) {
-		    CLEAR_FLAG(item, FLAG_ANIMATE);
-		    item->face = item->arch->clone.face;
-		    item->speed = 0;
-		    update_ob_speed(item);
-		}
-		if ((tmp=get_player_container(item)))
-		    esrv_update_item(UPD_ANIM, tmp, item);
-	    }
-	}
-	else if (item->type == ROD || item->type==HORN) {
-	    drain_rod_charge(item);
-	}
+        SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
+        if (item->type == WAND) {
+            if (!(--item->stats.food)) {
+                object *tmp;
+                if (item->arch) {
+                    CLEAR_FLAG(item, FLAG_ANIMATE);
+                    item->face = item->arch->clone.face;
+                    item->speed = 0;
+                    update_ob_speed(item);
+                }
+                if ((tmp=get_player_container(item)))
+                    esrv_update_item(UPD_ANIM, tmp, item);
+            }
+        }
+        else if (item->type == ROD || item->type==HORN) {
+            drain_rod_charge(item);
+        }
     }
 }
 
