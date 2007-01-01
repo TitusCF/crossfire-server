@@ -78,14 +78,58 @@ int command_cointoss(object *op, char *params)
     return 0;
 }
 
+/** Results for the "orcknucle" game. */
 static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
-		       "princess", "dragon", "orc"};
+    "princess", "dragon", "orc"};
 
+/**
+ * Plays the "orcknucke" game.
+ *
+ * If there is an "dice" archetype in server arches, this command will
+ * require the player to have at least 4 dice to play. There is a 5%
+ * chance to lose one dice at each play. Dice can be made through alchemy
+ * (finding the recipe is left as an exercice to the player).
+ * Note that the check is on the name 'dice', so you can have multiple
+ * archetypes for that name, they'll be all taken into account.
+ *
+ * @param op
+ * player who plays.
+ * @param params
+ * string sent by the player. Ignored.
+ * @return
+ * always 0.
+ */
 int command_orcknuckle(object *op, char *params)
 {
+#define DICE    4
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
-    int i, j, k, l;
+    object* dice[DICE];
+    object* ob;
+    int i, j, k, l, dice_count, number_dice;
+    const char* name;
+
+    /* We only use dice if the archetype is present ingame. */
+    name = find_string("dice");
+    if (name) {
+        for (dice_count = 0; dice_count < DICE; dice_count++)
+            dice[dice_count] = NULL;
+        dice_count = 0;
+        number_dice = 0;
+
+        for (ob = op->inv; ob && dice_count < DICE && number_dice < DICE; ob = ob->below) {
+            if (ob->name == name) {
+                number_dice += ob->nrof;
+                dice[dice_count++] = ob;
+            }
+        }
+
+        if (number_dice < DICE) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+                "You need at least %d dice to play orcknuckle!" , "You need at least %d dice to play orcknuckle!", DICE);
+            return 0;
+        }
+    }
 
     i = rndm(1, 5);
     j = rndm(1, 5);
@@ -93,15 +137,27 @@ int command_orcknuckle(object *op, char *params)
     l = rndm(1, 6);
 
     snprintf(buf2, MAX_BUF-1, "%s rolls %s, %s, %s, %s!", op->name,
-	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+        orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
     snprintf(buf, MAX_BUF-1, "You roll %s, %s, %s, %s!",
-	orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+        orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-		  buf, NULL);
+        buf, NULL);
     ext_info_map_except(NDI_UNIQUE, op->map, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
-			buf2, NULL);
+        buf2, NULL);
+
+    if (name) {
+        /* Randomly lose dice */
+        if (die_roll(1, 100, op, 1) < 5) {
+            /* Lose one randomly. */
+            decrease_ob(dice[rndm(1,dice_count)-1]);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
+                "Oops, you lost a die!", "Oops, you lost a die!");
+        }
+    }
+
     return 0;
+#undef DICE
 }
 
 static int command_tell_all(object *op, char *params, int pri, int color, int subtype, const char *desc)

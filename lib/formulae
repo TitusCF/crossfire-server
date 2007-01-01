@@ -3153,3 +3153,14 @@ yield 7
 skill woodsman
 cauldron stove
 ingred 7 mushroom of Gourmet,potion of resist draining
+#
+# Misc items that don't fit anywhere else
+Object NONE
+arch dice
+diff 5
+chance 10
+exp 1000
+yield 2
+skill jeweler
+cauldron jeweler_bench
+ingred 6 diamond,rock

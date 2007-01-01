@@ -1,8 +1,6 @@
 Changes in top level SVN tree.  A few notes when putting entries in this
 file:
-1) Please include a date in the form yyyy-mm-dd (yes, us americans are 
-screwed up relative to most the world, but some consistent date format
-is needed for this file.)
+1) Please include a date in the form yyyy-mm-dd (ISO standard)
 2) You don't need to go into exacting detail of the changes.  This file
 is mostly meant to give an idea to others what has changed - you don't
 need to recreate the code here.  If you change fixes a reported bug
@@ -16,6 +14,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
+
+Implement feature request #1536177: "Orc Knuckle" requires no dice.
+If there is an "dice" archetype in server arches, this command will
+require the player to have at least 4 dice to play. There is a 5%
+chance to lose one dice at each play. Dice can be made through alchemy
+(finding the recipe is left as an exercise to the player).
+Note that the check is on the name 'dice', so you can have multiple
+archetypes for that name, they'll be all taken into account.
+ server/c_chat.c: change command.
+ lib/formulae: add recipe.
+----
+ ChangeLog: fix date info (it's not american, but ISO)
+Ryo 2007-01-01
 
 server/{player.c, gods.c, apply.c, monster.c}: Fix bug #1543130 and make
   handling of can_use_armour and can_use_shield consistant.
