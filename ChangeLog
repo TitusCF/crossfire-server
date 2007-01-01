@@ -17,6 +17,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/{player.c, gods.c, apply.c, monster.c}: Fix bug #1543130 and make
+  handling of can_use_armour and can_use_shield consistant.
+Alex Schultz 2006-12-31
+
 Some memory fixes.
  common/arch.c: split code to make free_arch().
  common/exp.c: free levels memory.

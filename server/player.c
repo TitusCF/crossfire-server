@@ -592,9 +592,10 @@ void give_initial_items(object *pl,treasurelist *items) {
 	  if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) &&
 	      (op->type == ARMOUR || op->type == BOOTS ||
 	       op->type == CLOAK || op->type == HELMET ||
-	       op->type == SHIELD || op->type == GLOVES ||
-	       op->type == BRACERS || op->type == GIRDLE)) ||
-	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON)) {
+	       op->type == GLOVES || op->type == BRACERS ||
+               op->type == GIRDLE)) ||
+	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON) ||
+              (!QUERY_FLAG(pl, FLAG_USE_SHIELD) && op->type == SHIELD)) {
 	    remove_ob (op);
 	    free_object (op);
 	    continue;

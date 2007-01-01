@@ -3417,16 +3417,16 @@ int can_apply_object(object *who, object *op)
 	} /* if this object uses location i */
     } /* for i -> num_body_locations loop */
 
-    /* Note that we don't check for FLAG_USE_ARMOUR - that should
-     * really be controlled by use of body locations.  We do have
-     * the weapon/shield checks, and the range checks for monsters,
-     * because you can't control those just by body location - bows, shields,
-     * and weapons all use the same slot.  Similar for horn/rod/wand - they
-     * all use the same location.
-     */
+    /* Do checks for can_use_weapon/shield/armour. */
     if (op->type == WEAPON && !QUERY_FLAG(who,FLAG_USE_WEAPON))
 	retval |= CAN_APPLY_RESTRICTION;
     if (op->type == SHIELD && !QUERY_FLAG(who,FLAG_USE_SHIELD))
+	retval |= CAN_APPLY_RESTRICTION;
+    if (!QUERY_FLAG(who,FLAG_USE_ARMOUR) &&
+        (op->type == ARMOUR || op->type == BOOTS ||
+         op->type == CLOAK || op->type == HELMET ||
+         op->type == GLOVES || op->type == BRACERS ||
+         op->type == GIRDLE)) 
 	retval |= CAN_APPLY_RESTRICTION;
 
 

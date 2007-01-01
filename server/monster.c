@@ -1154,12 +1154,15 @@ static int monster_can_pick(object *monster, object *item) {
 	    break;
 
 	case ARMOUR:
-	case SHIELD:
 	case HELMET:
 	case BOOTS:
 	case GLOVES:
 	case GIRDLE:
 	    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_ARMOUR);
+	    break;
+            
+	case SHIELD:
+	    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_SHIELD);
 	    break;
 
 	case SKILL:
