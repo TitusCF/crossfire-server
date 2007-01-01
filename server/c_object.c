@@ -1519,6 +1519,7 @@ void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
     int i;
+    buf[0]='\0';
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
 	return;
