@@ -80,6 +80,7 @@ command_array_struct Commands[] = {
   {"invoke", command_invoke,	1.0},
   {"killpets", command_kill_pets,0.0},
   {"listen", command_listen,	0.0},
+  {"lock", command_lock_item,	0.0},
   {"logs", command_logs,	0.0},
   {"malloc", command_malloc,	0.0},
   {"maps", command_maps,	0.0},

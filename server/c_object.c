@@ -2183,3 +2183,51 @@ int command_rename_item(object *op, char *params)
 
   return 1;
 }
+
+/**
+ * Alternate way to lock/unlock items (command line).
+ *
+ * @param op
+ * player
+ * @param params
+ * sent command line.
+ */
+int command_lock_item(object *op, char *params) {
+    object* item;
+    object* tmp;
+    tag_t tag;
+
+    if (!params || strlen(params) == 0) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            "Lock what item?", "Lock what item?");
+        return;
+    }
+
+    item = find_best_object_match(op, params);
+    if (!item) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            "Can't find any matching item.", "Can't find any matching item.");
+        return;
+    }
+
+    if (QUERY_FLAG(item, FLAG_INV_LOCKED)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            "Unlocked %s.", "Unlocked %s.", query_short_name(item));
+        CLEAR_FLAG(item,FLAG_INV_LOCKED);
+    } else {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            "Locked %s.", "Locked %s.", query_short_name(item));
+        SET_FLAG(item,FLAG_INV_LOCKED);
+    }
+
+    tag = item->count;
+    tmp = merge_ob(item, NULL);
+    if (tmp == NULL) {
+        /* object was not merged */
+        esrv_update_item(UPD_FLAGS, op, item);
+    } else {
+        /* object was merged into tmp */
+        esrv_del_item(op->contr, tag);
+        esrv_send_item(op, tmp);
+    }
+}
