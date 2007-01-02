@@ -572,7 +572,14 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count)
 /** Client wants to examine some object.  So lets do so. */
 void examine_cmd(char *buf, int len,player *pl)
 {
-    long tag = atoi(buf);
+    long tag;
+
+    if (len <= 0 || !buf) {
+        LOG(llevDebug, "Player '%s' sent bogus examine_cmd information", pl->ob->name);
+        return;
+    }
+
+    tag = atoi(buf);
     object *op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
@@ -586,8 +593,16 @@ void examine_cmd(char *buf, int len,player *pl)
 /** Client wants to apply some object.  Lets do so. */
 void apply_cmd(char *buf, int len,player *pl)
 {
-    uint32 tag = atoi(buf);
-    object *op = esrv_get_ob_from_count(pl->ob, tag);
+    uint32 tag;
+    object *op;
+
+    if (!buf || len <= 0) {
+        LOG(llevDebug, "Player '%s' sent bogus apply_cmd information", pl->ob->name);
+        return;
+    }
+
+    tag = atoi(buf);
+    op = esrv_get_ob_from_count(pl->ob, tag);
 
     /* sort of a hack, but if the player saves and the player then manually
      * applies a savebed (or otherwise tries to do stuff), we run into trouble.
@@ -645,26 +660,40 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
     }
 }
 
-/** Client wants to apply some object.  Lets do so. */
+/**
+ * Client wants to mark some object.  Lets do so.
+ *
+ * @param data
+ * object tag (4 chars).
+ * @param len
+ * data size.
+ * @param pl
+ * player.
+ */
 void mark_item_cmd(uint8 *data, int len,player *pl)
 {
     int tag;
     object *op;
 
+    if (len != 4) {
+        LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information", pl->ob->name);
+        return;
+    }
+
     tag = GetInt_String(data);
     op = esrv_get_ob_from_count(pl->ob, tag);
     if (!op) {
-	draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Could not find object to mark", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Could not find object to mark", NULL);
+        return;
     }
     pl->mark = op;
     pl->mark_count = op->count;
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob,
-			 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			 "Marked item %s",
-			 "Marked item %s",
-			 query_name(op));
+        MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        "Marked item %s",
+        "Marked item %s",
+        query_name(op));
 }
 
 

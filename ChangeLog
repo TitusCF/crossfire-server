@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Check len of client-sent commands.
+ socket/item.c: a few checks.
+Ryo 2007-01-02
+
 Implement feature request #1443844: Lock in 1.9.0 is ethernal.
  Added new 'lock' command, locking/unlocking specified item.
  include/sproto.h
