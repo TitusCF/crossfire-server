@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Massive doxygenation of code. Reformat indentation. No functional change.
+ include/artifact.h
+Ryo 2007-01-02
+
 Implement feature request #1555532: Disallow enchanting armour/weapons while wearing/wielding it.
 Weapon/armour will be unequipped (unless cursed) if that would mean the player can't wear it anymore.
  server/apply.c
