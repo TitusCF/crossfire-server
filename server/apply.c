@@ -819,126 +819,138 @@ static int prepare_weapon(object *op, object *improver, object *weapon)
  */
 static int improve_weapon(object *op,object *improver,object *weapon)
 {
-  int sacrifice_count, sacrifice_needed=0;
+    int sacrifice_count, sacrifice_needed=0;
 
-  if(improver->stats.sp==IMPROVE_PREPARE) {
-	return prepare_weapon(op, improver, weapon);
-  }
-  if (weapon->level==0) {
-    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		  "This weapon has not been prepared.", NULL);
+    if(improver->stats.sp==IMPROVE_PREPARE) {
+        return prepare_weapon(op, improver, weapon);
+    }
+    if (weapon->level==0) {
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "This weapon has not been prepared.", NULL);
+        return 0;
+    }
+    if (weapon->level==weapon->last_eat && weapon->item_power >=100) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "This weapon cannot be improved any more.", NULL);
     return 0;
-  }
-  if (weapon->level==weapon->last_eat && weapon->item_power >=100) {
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		  "This weapon cannot be improved any more.", NULL);
-    return 0;
-  }
-  if (QUERY_FLAG(weapon, FLAG_APPLIED) &&
+    }
+    if (QUERY_FLAG(weapon, FLAG_APPLIED) &&
       !check_weapon_power(op, weapon->last_eat+1)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-	      "Improving the weapon will make it too" 
-	      "powerful for you to use.  Unready it if you"
-	      "really want to improve it.", NULL);
-	return 0;
-  }
-  /* This just increases damage by 5 points, no matter what.  No sacrifice
-   * is needed.  Since stats.dam is now a 16 bit value and not 8 bit,
-   * don't put any maximum value on damage - the limit is how much the
-   * weapon  can be improved.
-   */
-  if (improver->stats.sp==IMPROVE_DAMAGE) {
-	weapon->stats.dam += 5;
-	weapon->weight += 5000;		/* 5 KG's */
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-	    "Damage has been increased by 5 to %d", 
-	    "Damage has been increased by 5 to %d", 
-	     weapon->stats.dam);
-	weapon->last_eat++;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "Improving the weapon will make it too" 
+            "powerful for you to use.  Unready it if you"
+            "really want to improve it.", NULL);
+        return 0;
+    }
 
-	weapon->item_power++;
-	decrease_ob(improver);
-	return 1;
-  }
-  if (improver->stats.sp == IMPROVE_WEIGHT) {
-	/* Reduce weight by 20% */
-	weapon->weight = (weapon->weight * 8)/10;
-	if (weapon->weight < 1) weapon->weight = 1;
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-		"Weapon weight reduced to %6.1f kg",
-		"Weapon weight reduced to %6.1f kg",
-		(float)weapon->weight/1000.0);
-	weapon->last_eat++;
-	weapon->item_power++;
-	decrease_ob(improver);
-	return 1;
-  }
-  if (improver->stats.sp == IMPROVE_ENCHANT) {
-	weapon->magic++;
-	weapon->last_eat++;
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-		     "Weapon magic increased to %d",
-		     "Weapon magic increased to %d",
-		     weapon->magic);
-	decrease_ob(improver);
-	weapon->item_power++;
-	return 1;
-  }
+    /* All improvements add to item power, so check if player can still wear the weapon after improvement. */
+    if (QUERY_FLAG(weapon, FLAG_APPLIED) && op->type == PLAYER && (op->contr->item_power+1) > (settings.item_power_factor * op->level)) {
+        apply_special(op, weapon, AP_UNAPPLY);
+        if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
+            /* Weapon is cursed, too bad */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You can't enchant this weapon without unapplying it because it would consume your soul!", NULL);
+            return;
+        }
+    }
 
-  sacrifice_needed = weapon->stats.Str + weapon->stats.Int + weapon->stats.Dex+
-	weapon->stats.Pow + weapon->stats.Con + weapon->stats.Cha +
-	weapon->stats.Wis;
+    /* This just increases damage by 5 points, no matter what.  No sacrifice
+     * is needed.  Since stats.dam is now a 16 bit value and not 8 bit,
+     * don't put any maximum value on damage - the limit is how much the
+     * weapon  can be improved.
+     */
+    if (improver->stats.sp==IMPROVE_DAMAGE) {
+        weapon->stats.dam += 5;
+        weapon->weight += 5000;		/* 5 KG's */
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "Damage has been increased by 5 to %d", 
+            "Damage has been increased by 5 to %d", 
+            weapon->stats.dam);
+        weapon->last_eat++;
 
-  if (sacrifice_needed<1)
-	sacrifice_needed =1;
-  sacrifice_needed *=2;
+        weapon->item_power++;
+        decrease_ob(improver);
+        return 1;
+    }
+    if (improver->stats.sp == IMPROVE_WEIGHT) {
+        /* Reduce weight by 20% */
+        weapon->weight = (weapon->weight * 8)/10;
+        if (weapon->weight < 1) weapon->weight = 1;
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "Weapon weight reduced to %6.1f kg",
+            "Weapon weight reduced to %6.1f kg",
+            (float)weapon->weight/1000.0);
+        weapon->last_eat++;
+        weapon->item_power++;
+        decrease_ob(improver);
+        return 1;
+    }
+    if (improver->stats.sp == IMPROVE_ENCHANT) {
+        weapon->magic++;
+        weapon->last_eat++;
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "Weapon magic increased to %d",
+            "Weapon magic increased to %d",
+            weapon->magic);
+        decrease_ob(improver);
+        weapon->item_power++;
+        return 1;
+    }
 
-  sacrifice_count = check_sacrifice(op,improver);
-  if (sacrifice_count < sacrifice_needed) {
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-	    "You need at least %d %s", 
-	    "You need at least %d %s", 
-	     sacrifice_needed, improver->slaying);
-	return 0;
-  }
-  eat_item(op,improver->slaying, sacrifice_needed);
-  weapon->item_power++;
+    sacrifice_needed = weapon->stats.Str + weapon->stats.Int + weapon->stats.Dex+
+        weapon->stats.Pow + weapon->stats.Con + weapon->stats.Cha +
+        weapon->stats.Wis;
 
-  switch (improver->stats.sp) {
-   case IMPROVE_STR:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Str),
-			       1, "strength");
-   case IMPROVE_DEX:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Dex),
-			       1, "dexterity");
-   case IMPROVE_CON:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Con),
-			       1, "constitution");
-   case IMPROVE_WIS:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Wis),
-			       1, "wisdom");
-   case IMPROVE_CHA:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Cha),
-			       1, "charisma");
-   case IMPROVE_INT:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Int),
-			       1, "intelligence");
-   case IMPROVE_POW:
-    return improve_weapon_stat(op,improver,weapon,
-                               (signed char *) &(weapon->stats.Pow),
-                               1, "power");
-   default:
-    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		  "Unknown improvement type.", NULL);
-  }
-  LOG(llevError,"improve_weapon: Got to end of function\n");
-  return 0;
+    if (sacrifice_needed<1)
+        sacrifice_needed =1;
+    sacrifice_needed *=2;
+
+    sacrifice_count = check_sacrifice(op,improver);
+    if (sacrifice_count < sacrifice_needed) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "You need at least %d %s", 
+            "You need at least %d %s", 
+            sacrifice_needed, improver->slaying);
+        return 0;
+    }
+    eat_item(op,improver->slaying, sacrifice_needed);
+    weapon->item_power++;
+
+    switch (improver->stats.sp) {
+        case IMPROVE_STR:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Str),
+                1, "strength");
+        case IMPROVE_DEX:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Dex),
+                1, "dexterity");
+        case IMPROVE_CON:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Con),
+                1, "constitution");
+        case IMPROVE_WIS:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Wis),
+                1, "wisdom");
+        case IMPROVE_CHA:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Cha),
+                1, "charisma");
+        case IMPROVE_INT:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Int),
+                1, "intelligence");
+        case IMPROVE_POW:
+            return improve_weapon_stat(op,improver,weapon,
+                (signed char *) &(weapon->stats.Pow),
+                1, "power");
+        default:
+            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "Unknown improvement type.", NULL);
+    }
+    LOG(llevError,"improve_weapon: Got to end of function\n");
+    return 0;
 }
 
 /**
@@ -1018,6 +1030,17 @@ static int improve_armour(object *op, object *improver, object *armour)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "This armour will not accept further enchantment.", NULL);
         return 0;
+    }
+
+    /* Check item power: if player has it equipped, unequip if armor would become unwearable. */
+    if (QUERY_FLAG(armour, FLAG_APPLIED) && op->type == PLAYER && (op->contr->item_power+1) > (settings.item_power_factor * op->level)) {
+        apply_special(op, armour, AP_UNAPPLY);
+        if (QUERY_FLAG(armour, FLAG_APPLIED)) {
+            /* Armour is cursed, too bad */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You can't enchant this armour without unapplying it because it would consume your soul!", NULL);
+            return;
+        }
     }
 
     /* Split objects if needed.  Can't insert tmp until the
