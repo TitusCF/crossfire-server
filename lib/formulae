@@ -1507,7 +1507,7 @@ skill woodsman
 cauldron tanbench
 ingred cloak,Dread's eye,holy symbol,2 potion of power
 #
-Object Vitality
+Object Gaea
 arch cloak
 chance 1
 yield 1
@@ -1621,7 +1621,7 @@ skill smithery
 cauldron forge
 ingred jack boots,goblin's head,lead
 #
-Object of steel
+Object steel
 arch high_boots,high_boots_b,high_boots_w
 chance 5
 diff 15
@@ -1632,7 +1632,7 @@ skill smithery
 cauldron forge
 ingred jack boots,3 mithril crystal
 #
-Object of steel
+Object steel
 arch low_boots
 chance 5
 diff 15
@@ -1757,7 +1757,7 @@ skill smithery
 cauldron forge
 ingred scale mail,wyvern's steak,dragon scale,fire para-elemental's residue
 #
-Object Vitality
+Object Gaea
 arch leather_armour
 chance 3
 diff 15
@@ -1768,7 +1768,7 @@ skill smithery
 cauldron forge
 ingred armour,potion of resist draining,potion of recuperation
 #
-Object Vitality
+Object Gaea
 arch ring_mail
 chance 3
 diff 12
@@ -2966,7 +2966,7 @@ skill thaumaturgy
 cauldron thaumaturg_desk
 ingred talisman of sorcery,potion of intelligence,helmet of Xebinon
 #
-Object Evocation
+Object Creation
 arch talisman_evocation
 chance 3
 diff 25

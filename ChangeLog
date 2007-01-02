@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fixed some mistakes in the alchemical formulae
+ lib/formulae
+Yann Chachkoff 2007-01-02
+
 Removed unused defines, documentation fixes, no functional change.
  common/treasure.c: add some links for GT_xxx.
  include/treasure.h: add anchor 'GT_xxx'.
@@ -51,6 +55,10 @@ archetypes for that name, they'll be all taken into account.
 ----
  ChangeLog: fix date info (it's not american, but ISO)
 Ryo 2007-01-01
+
+Corrected garbage being displayed when examining an object, caused by an uninitialized buffer.
+ server/c_object.c
+Yann Chachkoff 2007-01-01
 
 server/{player.c, gods.c, apply.c, monster.c}: Fix bug #1543130 and make
   handling of can_use_armour and can_use_shield consistant.
