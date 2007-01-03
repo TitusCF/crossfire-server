@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+include/book.h: Doxygenify header file and add licence. No functional changes.
+Alex Schultz 2007-01-03
+
 Check len of client-sent commands.
  socket/item.c: a few checks.
 Ryo 2007-01-02
@@ -46,6 +49,7 @@ Ryo 2007-01-01
 server/player.c: fix wrong message displayed. Make sp test coherent with draining for rod/horn.
 Ryo 2007-01-01
 
+>>>>>>> .r5290
 Implement feature request #656191: Add blessings and curses to scrolls.
 ----
 New flags: 'blessed', 'known_blessed'.
