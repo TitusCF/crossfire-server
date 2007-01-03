@@ -49,7 +49,6 @@ Ryo 2007-01-01
 server/player.c: fix wrong message displayed. Make sp test coherent with draining for rod/horn.
 Ryo 2007-01-01
 
->>>>>>> .r5290
 Implement feature request #656191: Add blessings and curses to scrolls.
 ----
 New flags: 'blessed', 'known_blessed'.
