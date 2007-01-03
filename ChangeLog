@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix a logic mistake: code should be called unless cursed and good only, not if good
+ only set (since t->item is never NULL). This would make empty spellbooks and crash.
+ common/treasure.c
+Ryo 2007-01-03
+
 include/book.h: Doxygenify header file and add licence. No functional changes.
 Alex Schultz 2007-01-03
 
