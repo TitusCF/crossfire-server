@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/loader.l: Remove call to yylex_destroy() - at least on my linux
+   box, I get an unresolved symbol during link time (maybe different
+   versions of flex?)
+MSW 2007-01-04
+
 Make some commands DM only, and not visible to players.
  server/commands.c
 Ryo 2007-01-04

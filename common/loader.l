@@ -1343,7 +1343,11 @@ void init_vars() {
  */
 void free_loader() {
     yy_delete_buffer(YY_CURRENT_BUFFER);
-    yylex_destroy();
+
+    /* Comment out this yylex_destroy(), as it results in link errors
+     * on linux
+     */
+/*    yylex_destroy();*/
 }
 
 /** For get_ob_diff speed reason*/
