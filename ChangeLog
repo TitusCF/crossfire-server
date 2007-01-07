@@ -15,6 +15,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New plugin: 'cflogger', which logs things to a sqlite3 database.
+Warning: the database size may grow a lot, you'll have to check manually.
+Logged events:
+ * players join/leave/creation/quit
+ * map load/unload/reset/enter/leave
+ * kills, whenever a player is concerned
+ * ingame/real time links
+Note that the plugin is not yet part of the autobuild process.
+
+Added files:
+ cflogger/include/cflogger.h cflogger_proto.h Makefile.[am|in]
+ cflogger/cflogger.c Makefile.[am|in]
+Ryo 2007-01-07
+
 common/loader.l: Remove call to yylex_destroy() - at least on my linux
    box, I get an unresolved symbol during link time (maybe different
    versions of flex?)
