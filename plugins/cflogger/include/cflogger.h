@@ -27,7 +27,9 @@
 #ifndef PLUGIN_TEMPLATE_H
 #define PLUGIN_TEMPLATE_H
 
+/** Name of the plugin as known by the server. */
 #define PLUGIN_NAME    "SqliteLogger"
+/** Full name. */
 #define PLUGIN_VERSION "Sqlite Logger Plugin 1.0 alpha"
 
 #ifndef __CEXTRACT__

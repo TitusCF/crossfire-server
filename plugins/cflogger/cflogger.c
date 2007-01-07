@@ -25,28 +25,75 @@
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
 /*                                                                           */ /*****************************************************************************/
 
-/* First let's include the header file needed                                */
+/**
+ * @file cflogger.c
+ * This plugin will log events to an sqlite3 database named cflogger.db in the
+ * var directory.
+ *
+ * Log includes:
+ * @li players join/leave/creation/quit
+ * @li map load/unload/reset/enter/leave
+ * @li kills, whenever a player is concerned
+ * @li ingame/real time links
+ *
+ * @warning
+ * The plugin will not check the database size, which can grow a lot.
+ *
+ * @note
+ * Thanks to sqlite's locking, it's possible to access the database through the command
+ * line even while the server is running.
+ */
 
 #include <cflogger.h>
 //#include <stdarg.h>
 
 #include <sqlite3.h>
 
+/** Function to get the hooks. */
 f_plug_api gethook;
+/** Register with server. */
 f_plug_api registerGlobalEvent;
+/** Unregister with server. */
 f_plug_api unregisterGlobalEvent;
+/** Get directories (maps, players, ...). */
 f_plug_api systemDirectory;
+/** Regular expression comparison. */
 f_plug_api reCmp;
 
+/** Pointer to the logging database. */
 sqlite3* database;
+/** To keep track of stored ingame/real time matching. */
 int last_stored_day = -1;
 
+/**
+ * Simple callback to get an integer from a query.
+ *
+ * @param param
+ * user-supplied data.
+ * @param argc
+ * number of items.
+ * @param argv
+ * values.
+ * @param azColName
+ * column names.
+ *
+ * @return
+ * always returns 0 to continue the execution.
+ */
 static int check_tables_callback(void *param, int argc, char **argv, char **azColName) {
     int* format = (int*)param;
     *format = atoi( argv[0] );
     return 0;
 }
 
+/**
+ * Helper function to run a SQL query.
+ *
+ * Will LOG() an error if the query fails.
+ *
+ * @param sql
+ * query to run.
+ */
 void do_sql(const char* sql) {
     int err;
     char* msg;
@@ -61,6 +108,9 @@ void do_sql(const char* sql) {
     }
 }
 
+/**
+ * Checks the database format, and applies changes if old version.
+ */
 void check_tables() {
     int format;
     int err;
@@ -82,6 +132,21 @@ void check_tables() {
     }
 }
 
+/**
+ * Returns a unique identifier for specified object.
+ *
+ * Will insert an item in the table if required.
+ *
+ * If the object is a player, only name is taken into account to generate an id.
+ *
+ * Else, the object's level is taken into account, to distinguish monsters with
+ * the same name and different levels (special monsters, and such).
+ *
+ * @param living
+ * object to get identifier for.
+ * @return
+ * unique identifier in the 'living' table.
+ */
 int get_living_id(object* living) {
     char** line;
     char* sql;
@@ -106,6 +171,16 @@ int get_living_id(object* living) {
     return id;
 }
 
+/**
+ * Gets the unique identifier for a region.
+ *
+ * Will generate one if required.
+ *
+ * @param reg
+ * region for which an id is wanted
+ * @return
+ * unique region identifier, or 0 if reg is NULL.
+ */
 int get_region_id(region* reg) {
     char** line;
     char* sql;
@@ -130,6 +205,18 @@ int get_region_id(region* reg) {
     return id;
 }
 
+/**
+ * Gets the unique identifier for a map.
+ *
+ * Will generate one if required.
+ *
+ * Maps starting with '/random/' will all share the same identifier for the same region.
+ *
+ * @param map
+ * map for which an id is wanted. Must not be NULL.
+ * @return
+ * unique map identifier.
+ */
 int get_map_id(mapstruct* map) {
     char** line;
     char* sql;
@@ -157,6 +244,12 @@ int get_map_id(mapstruct* map) {
     return id;
 }
 
+/**
+ * Stores a line to match current ingame and real time.
+ *
+ * @return
+ * 1 if a line was inserted, 0 if the current ingame time was already logged.
+ */
 int store_time() {
     char** line;
     char* sql;
@@ -185,6 +278,14 @@ int store_time() {
     return 1;
 }
 
+/**
+ * Logs an event for a living object.
+ *
+ * @param pl
+ * object for which to log an event.
+ * @param event_code
+ * arbitrary event code.
+ */
 void add_player_event(object* pl, int event_code) {
     int id = get_living_id(pl);
     int map_id = 0;
@@ -198,6 +299,16 @@ void add_player_event(object* pl, int event_code) {
     sqlite3_free(sql);
 }
 
+/**
+ * Logs an event for a map.
+ *
+ * @param map
+ * map for which to log an event.
+ * @param event_code
+ * arbitrary event code.
+ * @param pl
+ * object causing the event. Can be NULL.
+ */
 void add_map_event(mapstruct* map, int event_code, object* pl) {
     int mapid;
     int playerid = 0;
@@ -212,6 +323,16 @@ void add_map_event(mapstruct* map, int event_code, object* pl) {
     sqlite3_free(sql);
 }
 
+/**
+ * Logs a death.
+ *
+ * If either of the parameters is NULL, or if neither is a PLAYER, nothing is logged.
+ *
+ * @param victim
+ * who died.
+ * @param killer
+ * who killed.
+ */
 void add_death(object* victim, object* killer) {
     int vid, kid, map_id;
     char* sql;
@@ -228,6 +349,16 @@ void add_death(object* victim, object* killer) {
     sqlite3_free(sql);
 }
 
+/**
+ * Main plugin entry point.
+ *
+ * @param iversion
+ * server version.
+ * @param gethooksptr
+ * function to get hooks from.
+ * @return
+ * always 0.
+ */
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     int rtype = 0;
@@ -246,6 +377,16 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     return 0;
 }
 
+/**
+ * Gets a plugin property.
+ *
+ * @param type
+ * ignored.
+ * @return
+ * @li the name, if asked for 'Identification'.
+ * @li the version, if asked for 'FullName'.
+ * @li NULL else.
+ */
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
@@ -267,17 +408,43 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
     return NULL;
 }
 
+/**
+ * Runs a plugin command. Doesn't do anything.
+ *
+ * @param op
+ * ignored.
+ * @param params
+ * ignored.
+ * @return
+ * -1.
+ */
 CF_PLUGIN int runPluginCommand(object* op, char* params)
 {
     return -1;
 }
 
+/**
+ * Handles an object-related event. Doesn't do anything.
+ *
+ * @param type
+ * ignored.
+ * @return
+ * pointer to an int containing 0.
+ */
 void* eventListener(int* type, ...)
 {
     static int rv=0;
     return &rv;
 }
 
+/**
+ * Handles a global event.
+ *
+ * @param type
+ * ignored.
+ * @return
+ * pointer to an int containing 0.
+ */
 CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
@@ -339,6 +506,14 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     return &rv;
 }
 
+/**
+ * Plugin was initialized, now to finish.
+ *
+ * Registers events, initializes the database.
+ *
+ * @return
+ * 0.
+ */
 CF_PLUGIN int postInitPlugin()
 {
     int rtype = 0;
@@ -384,6 +559,14 @@ CF_PLUGIN int postInitPlugin()
     return 0;
 }
 
+/**
+ * Close the plugin.
+ *
+ * Closes the sqlite database.
+ *
+ * @return
+ * 0.
+ */
 int closePlugin()
 {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
