@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Win32 compilation fixes: variables should be declared at function start.
+ socket/item.c
+ server/gods.c resurrection.c
+Ryo 2007-01-09
+
 New plugin: 'cflogger', which logs things to a sqlite3 database.
 Warning: the database size may grow a lot, you'll have to check manually.
 Logged events:

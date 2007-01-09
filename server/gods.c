@@ -228,13 +228,14 @@ static void follower_remove_similar_item (object *op, object *item)
 static void follower_remove_given_items (object *pl, object *op, object *god)
 {
     object *tmp, *next;
+	const char* given_by;
 
     if (pl && op) { /* make sure things exist */
         /* search the inventory */
         for (tmp = op->inv; tmp != NULL; tmp = next) {
             next = tmp->below;   /* backup in case we remove tmp */
 
-            const char* given_by = get_ob_key_value(tmp, "divine_giver_name");
+            given_by = get_ob_key_value(tmp, "divine_giver_name");
             if(given_by == god->name){
                 /* message */
                 if (tmp->nrof > 1)

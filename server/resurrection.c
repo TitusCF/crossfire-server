@@ -198,7 +198,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 
 	if(temp == NULL) {
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "You need a body for this spell.", NULL-0);
+			  "You need a body for this spell.", NULL);
 	    return 0;
 	}
 	strcpy(name_to_resurrect, temp->name );
