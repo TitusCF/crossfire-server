@@ -207,12 +207,10 @@ static void follower_remove_similar_item (object *op, object *item)
 }
 
 /**
- * follower_remove_given_items()
- *
- *    Removes from a player's inventory all items bestowed by
- *    a particular god.  Intended mainly for use in punishing
- *    characters for switching gods.  Should make the buggy
- *    follower_remove_similar_item obsolete.
+ * Removes from a player's inventory all items bestowed by
+ * a particular god.  Intended mainly for use in punishing
+ * characters for switching gods.  Should make the buggy
+ * follower_remove_similar_item obsolete.
  *
  * @param pl
  *     the player object
@@ -228,33 +226,31 @@ static void follower_remove_similar_item (object *op, object *item)
 static void follower_remove_given_items (object *pl, object *op, object *god)
 {
     object *tmp, *next;
-	const char* given_by;
+    const char* given_by;
 
-    if (pl && op) { /* make sure things exist */
-        /* search the inventory */
-        for (tmp = op->inv; tmp != NULL; tmp = next) {
-            next = tmp->below;   /* backup in case we remove tmp */
+    /* search the inventory */
+    for (tmp = op->inv; tmp != NULL; tmp = next) {
+        next = tmp->below;   /* backup in case we remove tmp */
 
-            given_by = get_ob_key_value(tmp, "divine_giver_name");
-            if(given_by == god->name){
-                /* message */
-                if (tmp->nrof > 1)
-                    draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                                         "The %s crumble to dust!",
-                                         "The %s crumble to dust!",
-                                         query_short_name(tmp));
-                else
-                    draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-                                         "The %s crumbles to dust!",
-                                         "The %s crumbles to dust!",
-                                         query_short_name(tmp));
+        given_by = get_ob_key_value(tmp, "divine_giver_name");
+        if(given_by == god->name){
+            /* Send the client a message. */
+            if (tmp->nrof > 1)
+                draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                                     "The %s crumble to dust!",
+                                     "The %s crumble to dust!",
+                                     query_short_name(tmp));
+            else
+                draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                                     "The %s crumbles to dust!",
+                                     "The %s crumbles to dust!",
+                                     query_short_name(tmp));
                 
-                remove_ob(tmp);    /* remove obj from players inv. */
-                esrv_del_item(pl->contr, tmp->count); /* notify client */
-                free_object(tmp);  /* free object */
-            } else if (tmp->inv)
-                follower_remove_given_items(pl, tmp, god);
-        }
+            remove_ob(tmp);    /* remove obj from players inv. */
+            esrv_del_item(pl->contr, tmp->count); /* notify client */
+            free_object(tmp);
+        } else if (tmp->inv)
+            follower_remove_given_items(pl, tmp, god);
     }
 }
 
