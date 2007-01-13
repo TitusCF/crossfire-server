@@ -67,6 +67,7 @@ $attacktype{ 'disease' } = ( 1 << 25 );
 
 &info("writing ...$archetypes");
 open(ARCH,">".$archetypes) || &die("cannot open ".$archetypes);
+binmode(ARCH);
 &archsOut($root);
 close(ARCH);
 
@@ -74,20 +75,24 @@ close(ARCH);
 if (!$archonly) {
     &info("$bmaps");
     open(BMAPS,">".$bmaps) || &die("cannot open ".$bmaps);
+	binmode(BMAPS);
     &bmapsOut;
     close(BMAPS);
 
     open(BMAPS,">".$paths) || &die("cannot open ".$paths);
+	binmode(BMAPS);
     &pathsOut;
     close(BMAPS);
 
     &info("$faces");
     open(FACES,">".$faces) || &die("cannot open ".$faces);
+	binmode(FACES);
     &facesOut;
     close(FACES);
 
     &info("$smooths");
     open(SMOOTHS,">".$smooths) || &die("cannot open ".$smooths);
+	binmode(SMOOTHS);
     &smoothOut;
     close(SMOOTHS);
 
@@ -95,6 +100,7 @@ if (!$archonly) {
     # We still support the old consolidated treasure information
     # so copy it over.
     open(TREASURES,">".$treasures) || &die("cannot open ".$treasures);
+	binmode(TREASURES);
     print TREASURES "#
 # Do not modify this file - any changes will get overwritten.
 # instead, modify the treasures file or the .trs file in the
@@ -102,6 +108,7 @@ if (!$archonly) {
 ";
 
     open(TR, "<treasures");
+	binmode(TR);
     while (<TR>) {
 	print TREASURES $_;
     }
@@ -113,6 +120,7 @@ if (!$archonly) {
 
     &info("$animations");
     open(ANIM,">".$animations) || &die("cannot open ".$animations);
+	binmode(ANIM);
     &animOut;
     close(ANIM);
 }

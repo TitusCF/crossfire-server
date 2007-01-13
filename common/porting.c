@@ -682,7 +682,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
     if (uncompressor == NULL) {
         /* open without uncompression */
 
-        return fopen(buf, "r");
+        return fopen(buf, "rb");
     }
 
     /* The file name buf (and its substring name) is passed as an argument to a
@@ -730,7 +730,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
     *compressed = 0;            /* Change to "uncompressed file" */
     chmod(name, st.st_mode);    /* Copy access mode from compressed file */
 
-    return fopen(name, "r");
+    return fopen(name, "rb");
 }
 
 /**

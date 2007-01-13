@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Some Win32 fixes: binmode for Perl, binary mode for opened files.
+ common/porting.c
+ lib/adm/collect_images.pl
+ lib/collect.pl.in
+Ryo 2007-01-13
+
 server/gods.c: Clean up follower_remove_given_items()
 Alex Schultz 2007-01-10
 

@@ -32,6 +32,7 @@ if ($ARGV[0] eq "-archive") {
 }
 
 open(IMAGEINFO,"image_info") || die("Can't open image_info file: $!\n");
+binmode(IMAGEINFO);
 while (<IMAGEINFO>) {
     # Ignore lines that start with comments or just empty lines
     next if /^#/;
@@ -59,6 +60,7 @@ for ($count=0; $count<=$#extension; $count++) {
 }
 
 open(BMAPS,"bmaps.paths") || die("Can't open bmaps.paths: $!\n");
+binmode(BMAPS);
 $_ = <BMAPS>;
 while(<BMAPS>) {
     chop;
@@ -126,6 +128,7 @@ close(BMAPS);
 
 if ($archive) {
     open(OUT,">$DESTDIR/bmaps.client") || die("Can not open $DESTDIR/bmaps.paths\n");
+	binmode(OUT);
     print OUT sort @csums;
     close(OUT);
     open(OUT,">$DESTDIR/README") || die("Can not open $DESTDIR/README\n");
