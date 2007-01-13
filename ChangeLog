@@ -19,6 +19,7 @@ Some Win32 fixes: binmode for Perl, binary mode for opened files.
  common/porting.c
  lib/adm/collect_images.pl
  lib/collect.pl.in
+ socket/item.c: variables should be declared at function start.
 Ryo 2007-01-13
 
 server/gods.c: Clean up follower_remove_given_items()

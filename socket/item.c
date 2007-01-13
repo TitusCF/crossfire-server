@@ -573,6 +573,7 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count)
 void examine_cmd(char *buf, int len,player *pl)
 {
     long tag;
+	object *op;
 
     if (len <= 0 || !buf) {
         LOG(llevDebug, "Player '%s' sent bogus examine_cmd information", pl->ob->name);
@@ -580,7 +581,7 @@ void examine_cmd(char *buf, int len,player *pl)
     }
 
     tag = atoi(buf);
-    object *op = esrv_get_ob_from_count(pl->ob, tag);
+    op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
 	LOG(llevDebug, "Player '%s' tried to examine the unknown object (%ld)\n",
