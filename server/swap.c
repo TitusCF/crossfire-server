@@ -159,7 +159,7 @@ void swap_map(mapstruct *map) {
 	return;
     }
 
-    if (new_save_map (map, 0) == -1) {
+    if (save_map (map, 0) == -1) {
 	LOG(llevError, "Failed to swap map %s.\n", map->path);
 	/* need to reset the in_memory flag so that delete map will also
 	 * free the objects with it.

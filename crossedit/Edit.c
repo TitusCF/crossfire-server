@@ -1442,7 +1442,7 @@ static Boolean EdSaveMap (Edit self, char *name)
 
     /*** updating map name here ***/
     EditSetPath(self,name);
-    if(new_save_map (m, 1)) {
+    if(save_map (m, 1)) {
 	sprintf(buf,"Error in saving map %s",EditGetPath(self));
 	CnvNotify ("Error in saving map !","OK",NULL);
 	return False;

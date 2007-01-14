@@ -161,7 +161,7 @@ extern void allocate_map(mapstruct *m);
 extern mapstruct *get_empty_map(int sizex, int sizey);
 extern mapstruct *load_original_map(const char *filename, int flags);
 extern mapstruct *load_overlay_map(const char *filename, mapstruct *m);
-extern int new_save_map(mapstruct *m, int flag);
+extern int save_map(mapstruct *m, int flag);
 extern void clean_object(object *op);
 extern void free_all_objects(mapstruct *m);
 extern void free_map(mapstruct *m, int flag);

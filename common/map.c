@@ -1398,7 +1398,7 @@ static void load_unique_objects(mapstruct *m) {
  * document flag, replace with nice enum/define.
  */
 
-int new_save_map(mapstruct *m, int flag) {
+int save_map(mapstruct *m, int flag) {
     FILE *fp, *fp2;
     char filename[MAX_BUF],buf[MAX_BUF], shop[MAX_BUF];
     int i;
