@@ -376,6 +376,10 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	    (void) attack_hth(op,dir,"clawed", skill);
 	    break;
 
+	case SK_WRAITH_FEED:
+	    (void) attack_hth(op,dir,"fed upon", skill);
+	    break;
+
 	case SK_ONE_HANDED_WEAPON:
 	case SK_TWO_HANDED_WEAPON:
 	    (void) attack_melee_weapon(op,dir,NULL, skill);

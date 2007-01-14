@@ -2545,8 +2545,8 @@ void do_some_living(object *op) {
       /* wearing stuff doesn't detract from grace generation. */
     }
 
-    /* Regenerate Hit Points */
-    if(--op->last_heal<0) {
+    /* Regenerate Hit Points (unless you are a wraith player) */
+    if(--op->last_heal<0 && !is_wraith_pl(op)) {
       if(op->stats.hp<op->stats.maxhp) {
 	op->stats.hp++;
  	/* dms do not consume food */
@@ -2559,7 +2559,7 @@ void do_some_living(object *op) {
  	     op->stats.food=last_food;
          }
       }
-      if(max_hp>1) {
+      if(max_hp>1 && !is_wraith_pl(op)) {
 	over_hp = (gen_hp<20 ? 30 : gen_hp+10)/rate_hp;
 	if (over_hp > 0) {
 	  op->stats.sp += over_hp 
@@ -2587,6 +2587,9 @@ void do_some_living(object *op) {
   }
 
     if(op->contr->state==ST_PLAYING&&op->stats.food<0&&op->stats.hp>=0) {
+         if (is_wraith_pl(op))
+            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,"You feel a hunger for living flesh.", NULL);
+         else {
 	object *tmp, *flesh=NULL;
 
 	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
@@ -2610,6 +2613,7 @@ void do_some_living(object *op) {
 			  "You blindly grab for a bite of food.", NULL);
 	    manual_apply(op,flesh,0);
 	}
+         } /* end not wraith */
     } /* end if player is starving */
 
     while(op->stats.food<0&&op->stats.hp>0)

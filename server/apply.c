@@ -2144,10 +2144,35 @@ static void apply_food (object *op, object *tmp)
       op->stats.hp=op->stats.maxhp;
     else {
       /* check if this is a dragon (player), eating some flesh */
-      if (tmp->type==FLESH && is_dragon_pl(op) && dragon_eat_flesh(op, tmp))
-	;
+      if (tmp->type==FLESH && is_dragon_pl(op))
+        dragon_eat_flesh(op, tmp);
+
+      /* Check for old wraith player, give them the feeding skill */
+      else if (is_old_wraith_pl(op)) {
+        object *skill = give_skill_by_name(op, "wraith feed");
+        if (skill) {
+          SET_FLAG(skill, FLAG_CAN_USE_SKILL);
+          link_player_skills(op);
+
+          char buf[MAX_BUF];
+          sprintf(buf,"You have been dead for too long to taste %s, ", tmp->name);
+          draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,buf, NULL);
+          draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,"and seem to have obtained a taste for living flesh.", NULL);
+        }
+        else
+          LOG(llevError,"wraith feed skill not found\n");
+      }
+
+      /* Wraith player gets no food from eating. */
+      else if (is_wraith_pl(op)) {
+        char buf[MAX_BUF];
+        sprintf(buf,"You can no longer taste %s, and do not feel less hungry after %s it.",
+          tmp->name, tmp->type==DRINK ? "drinking" : "eating");
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,buf,NULL);
+      }
+
+      /* usual case - not a wraith or a dgaron: */
       else {
-	/* usual case - no dragon meal: */
 	if(op->stats.food+tmp->stats.food>999) {
 	  if(tmp->type==FOOD || tmp->type==FLESH)
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
@@ -3740,7 +3765,7 @@ void eat_special_food(object *who, object *food) {
     }
 
     /* check for hp, sp change */
-    if(food->stats.hp!=0) {
+    if(food->stats.hp!=0 && !is_wraith_pl(who)) {
 	if(QUERY_FLAG(food, FLAG_CURSED)) { 
 	    strcpy(who->contr->killer,food->name);
 	    hit_player(who, food->stats.hp, food, AT_POISON, 1);

@@ -475,6 +475,17 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
 		  break;
 	      }
 	}
+	else if (USING_SKILL(hitter, SK_WRAITH_FEED)) {
+          for (i=0; i < MAXATTACKMESS && attack_mess[ATM_WRAITH_FEED][i].level != -1;
+	       i++)
+	      if (dam < attack_mess[ATM_WRAITH_FEED][i].level) {
+	          sprintf(buf1, "%s %s%s", attack_mess[ATM_WRAITH_FEED][i].buf1,
+			  op->name, attack_mess[ATM_WRAITH_FEED][i].buf2);
+		  sprintf(buf2, "%s", attack_mess[ATM_WRAITH_FEED][i].buf3);
+		  found++;
+		  break;
+	      }
+	}
     }
     if (found) {
 	/* done */
@@ -1337,20 +1348,33 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 	 *
 	 * life stealing doesn't do a lot of damage, but it gives the
 	 * damage it does do to the player.  Given that,
-	 * it only does 1/10'th normal damage (hence the divide by
-	 * 1000).
+	 * it only does 1/30'th normal damage (hence the divide by
+	 * 3000). Wraith get 1/2 of the damage, and therefore divide
+	 * by 200. This number may need tweaking for game balance.
 	 */
-	/* You can't steal life from something undead */
-	if ((op->type == GOLEM) || (QUERY_FLAG(op, FLAG_UNDEAD))) return 0;
+
+	int dam_modifier = is_wraith_pl(hitter) ? 200 : 3000;
+	 
+	/* You can't steal life from something undead or not alive. */
+	if (op->type == GOLEM || (QUERY_FLAG(op, FLAG_UNDEAD)) ||
+	  !(QUERY_FLAG(op, FLAG_ALIVE)) || (op->type == DOOR))
+	  return 0;
 	/* If drain protection is higher than life stealing, use that */
 	if (op->resist[ATNR_DRAIN] >= op->resist[ATNR_LIFE_STEALING])
-	  dam = (dam*(100 - op->resist[ATNR_DRAIN])) / 3000;
-	else dam = (dam*(100 - op->resist[ATNR_LIFE_STEALING])) / 3000;
+	  dam = (dam*(100 - op->resist[ATNR_DRAIN])) / dam_modifier;
+	else dam = (dam*(100 - op->resist[ATNR_LIFE_STEALING])) / dam_modifier;
 	/* You die at -1 hp, not zero. */
 	if (dam > (op->stats.hp+1)) dam = op->stats.hp+1;
 	new_hp = hitter->stats.hp + dam;
 	if (new_hp > hitter->stats.maxhp) new_hp = hitter->stats.maxhp;
 	if (new_hp > hitter->stats.hp) hitter->stats.hp = new_hp;
+
+	/* Wraith also get food through life stealing */
+	if (is_wraith_pl(hitter)) {
+	  if (hitter->stats.food+dam >= 999) hitter->stats.food = 999;
+	  else hitter->stats.food += dam;
+	  fix_object(hitter);
+	}
       }
     }
     return dam;

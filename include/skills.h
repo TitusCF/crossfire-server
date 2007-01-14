@@ -73,13 +73,14 @@
 #define SK_EVOCATION		35
 #define SK_SORCERY		36
 #define SK_TWO_HANDED_WEAPON	37
+#define SK_WRAITH_FEED		38
 
 /* This is the highest number skill in the table +1
  * This is used to store pointers to the actual skills -
  * to make life easier, we use the value above as index,
  * eg, SK_EVOCATION (35) will be in last_skills[35].
  */
-#define NUM_SKILLS		38
+#define NUM_SKILLS		39
 
 
 /* This is used in the exp functions - basically what to do if
@@ -99,7 +100,8 @@
 #define IS_COMBAT_SKILL(num) \
     ((num==SK_PUNCHING) || (num==SK_FLAME_TOUCH) || (num==SK_KARATE) || \
      (num==SK_ONE_HANDED_WEAPON) || (num==SK_MISSILE_WEAPON) || \
-     (num==SK_THROWING) || (num==SK_CLAWING) || (num==SK_TWO_HANDED_WEAPON))
+     (num==SK_THROWING) || (num==SK_CLAWING) || (num==SK_TWO_HANDED_WEAPON) || \
+     (num==SK_WRAITH_FEED))
 
 /* Like IS_COMBAT_SKILL above, but instead this is used to determine
  * how many mana points the player has.
@@ -134,6 +136,7 @@ SK_KARATE,
 SK_CLAWING,
 SK_FLAME_TOUCH,
 SK_PUNCHING,
+SK_WRAITH_FEED,
 -1
 };
 

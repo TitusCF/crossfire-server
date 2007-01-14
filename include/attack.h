@@ -44,8 +44,8 @@
  */
 
 #define NROFATTACKS		26
-#define NROFATTACKMESS		20
-#define MAXATTACKMESS		20
+#define NROFATTACKMESS		21
+#define MAXATTACKMESS		21
 
 /* attack message numbers must be less than NROFATTACKMESS */
 
@@ -68,6 +68,7 @@
 #define ATM_BLUD	16
 #define ATM_DOOR	17
 #define ATM_SUFFER	18
+#define ATM_WRAITH_FEED	19
 
 /* Note that the last ATNR_ should be one less than NROFATTACKS above
  * since the ATNR starts counting at zero.

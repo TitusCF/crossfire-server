@@ -142,3 +142,37 @@ client_spell* get_client_spell_state(player* pl, object* spell)
     pl->spell_state = info;
     return info;
 }
+
+/**
+ * Tests if a player is a wraith.
+ *
+ * @param op
+ * player to check.
+ * @return
+ * true if the adressed object 'ob' is a wraith player, false else.
+ */
+int is_wraith_pl(object* op) {
+    object *item = NULL;
+    if (op != NULL && op->type == PLAYER && op->arch != NULL)
+        for (item = op->inv; item!=NULL && strcmp(item->name, "wraith feed"); item=item->below);
+    if (item)
+        return 1;
+    return 0;
+}
+
+/**
+ * Checks if player is a wraith without the 'wraith feed' skill.
+ *
+ * @param op
+ * player to check.
+ * @return
+ * true if the adressed object 'ob' is an old wraith player, false else.
+ */
+int is_old_wraith_pl(object* op) {
+    object *item = NULL;
+    if (op != NULL && op->type == PLAYER && op->arch != NULL)
+        for (item = op->inv; item!=NULL && strcmp(item->name, "Wraith_Force"); item=item->below);
+    if (item)
+        return !is_wraith_pl(op);
+    return 0;
+}
