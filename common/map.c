@@ -1007,8 +1007,11 @@ static int load_map_header(FILE *fp, mapstruct *m)
              * keep the empty message.  Also, msgbuf contains garbage data
              * when msgpos is zero, so copying it results in crashes
              */
-            if (msgpos != 0)
+            if (msgpos != 0) {
+                /* When loading eg an overlay, message is already set, so free() current one. */
+                free(m->msg);
                 m->msg = strdup_local(msgbuf);
+            }
         }
         else if (!strcmp(key,"maplore")) {
             while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
@@ -1035,6 +1038,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
         }
         else if (!strcmp(key,"name")) {
             *end=0;
+            /* When loading eg an overlay, the name is already set, so free() current one. */
+            free(m->name);
             m->name = strdup_local(value);
         }
         /* first strcmp value on these are old names supported
