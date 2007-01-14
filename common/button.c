@@ -283,6 +283,33 @@ void animate_turning(object *op)
 #define NROF_SACRIFICE(xyz) ((uint32)(xyz)->stats.food)
 
 /**
+ * Helper function to check if the item matches altar's requested sacrifice.
+ * The number of objects is not taken into account.
+ *
+ * @param altar
+ * altar we're checking for. Can't be NULL.
+ * @param sacrifice
+ * what object to check for. Can't be NULL.
+ * @return
+ * 1 if object is suitable for the altar (number not taken into account), 0 else.
+ */
+static int matches_sacrifice(const object* altar, const object* sacrifice) {
+    if (QUERY_FLAG(sacrifice, FLAG_ALIVE) || QUERY_FLAG(sacrifice, FLAG_IS_LINKED) || sacrifice->type == PLAYER)
+        return 0;
+
+    if (ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
+      ARCH_SACRIFICE(altar) == sacrifice->name ||
+      ARCH_SACRIFICE(altar) == sacrifice->slaying ||
+      (!strcmp(ARCH_SACRIFICE(altar),query_base_name(sacrifice,0))))
+            return 1;
+    if (strcmp (ARCH_SACRIFICE(altar), "money") == 0 && sacrifice->type == MONEY)
+        return 1;
+
+    return 0;
+}
+
+
+/**
  * Checks whether the altar has enough to sacrifice.
  *
  * Function put in (0.92.1) so that identify altars won't grab money
@@ -293,31 +320,118 @@ void animate_turning(object *op)
  * sacrificed.  This fixes a bug of trying to put multiple altars/related
  * objects on the same space that take the same sacrifice.
  *
+ * The function will now check for all items sitting on the altar, so that the player
+ * can put various matching but non merging items on the altar.
+ *
+ * This function can potentially remove other items, if remove_others is set.
+ *
  * @param altar
  * item to which there is a sacrifice
  * @param sacrifice
  * object that may be sacrifed
+ * @param remove_others
+ * if 1, will remove enough items apart sacrifice to compensate for not having enough in sacrifice itself.
+ * @param[out] toremove
+ * will contain the nrof of sacrifice to really remove to finish operating. Will be set if not NULL only
+ * if the function returns 1.
  * @return
  * 1 if the sacrifice meets the needs of the altar, 0 else
  */
-int check_altar_sacrifice (const object *altar, const object *sacrifice)
+int check_altar_sacrifice (const object *altar, const object *sacrifice, int remove_others, int* toremove)
 {
-    if ( ! QUERY_FLAG (sacrifice, FLAG_ALIVE)
-        && ! QUERY_FLAG (sacrifice, FLAG_IS_LINKED)
-        && sacrifice->type != PLAYER)
-    {
-        if ((ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
-            ARCH_SACRIFICE(altar) == sacrifice->name ||
-            ARCH_SACRIFICE(altar) == sacrifice->slaying ||
-             (!strcmp(ARCH_SACRIFICE(altar),query_base_name(sacrifice,0))))
-             && NROF_SACRIFICE(altar) <= (sacrifice->nrof?sacrifice->nrof:1))
-            return 1;
-        if (strcmp (ARCH_SACRIFICE(altar), "money") == 0
-            && sacrifice->type == MONEY
-            && sacrifice->nrof * sacrifice->value >= NROF_SACRIFICE(altar))
-            return 1;
+    int money;
+    object* tmp;
+    int wanted, rest;
+    object* above;
+
+    if (!matches_sacrifice(altar, sacrifice))
+        /* New dropped object doesn't match the altar, other objects already on top are not enough to
+         * activate altar, else they would have disappeared. */
+        return 0;
+
+    money = (strcmp (ARCH_SACRIFICE(altar), "money") == 0) ? 1 : 0;
+
+    /* Easy checks: newly dropped object is enough for sacrifice. */
+    if (money && sacrifice->nrof * sacrifice->value >= NROF_SACRIFICE(altar)) {
+        if (toremove) {
+            *toremove = NROF_SACRIFICE(altar) / sacrifice->value;
+            /* Round up any sacrifices.  Altars don't make change either */
+            if (NROF_SACRIFICE(altar) % sacrifice->value)
+                (*toremove)++;
+        }
+        return 1;
     }
-    return 0;
+
+    if (!money && NROF_SACRIFICE(altar) <= (sacrifice->nrof?sacrifice->nrof:1)) {
+        if (toremove)
+            *toremove = NROF_SACRIFICE(altar);
+        return 1;
+    }
+
+    if (money) {
+        wanted = NROF_SACRIFICE(altar) - sacrifice->nrof * sacrifice->value;
+    }
+    else {
+        wanted = NROF_SACRIFICE(altar) - (sacrifice->nrof?sacrifice->nrof:1);
+    }
+    rest = wanted;
+
+    /* Ok, now we check if we got enough with other items.
+     * We only check items above altar, and not checking again sacrifice.
+     */
+    for (tmp = altar->above; tmp != NULL && wanted > 0; tmp = tmp->above) {
+        if (tmp == sacrifice || !matches_sacrifice(altar, tmp))
+            continue;
+        if (money)
+            wanted -= tmp->nrof * tmp->value;
+        else
+            wanted -= (tmp->nrof?tmp->nrof:1);
+    }
+
+    if (wanted > 0)
+        /* Not enough value, let's bail out. */
+         return 0;
+
+    /* From there on, we do have enough objects for the altar. */
+
+    /* Last dropped object will be totally eaten in any case. */
+    if (toremove)
+        *toremove = sacrifice->nrof ? sacrifice->nrof : 1;
+
+    if (!remove_others)
+        return 1;
+
+    /* We loop again, this time to remove what we need. */
+    for (tmp = altar->above; tmp != NULL && rest > 0; tmp = above) {
+        above = tmp->above;
+        if (tmp == sacrifice || !matches_sacrifice(altar, tmp))
+            continue;
+        if (money) {
+            wanted = tmp->nrof * tmp->value;
+            if (rest > wanted) {
+                remove_ob(tmp);
+                rest -= wanted;
+            } else {
+                wanted = rest / tmp->value;
+                if (rest % tmp->value)
+                    wanted++;
+                decrease_ob_nr(tmp, wanted);
+                return 1;
+            }
+        }
+        else
+            if (rest > (tmp->nrof?tmp->nrof:1)) {
+                rest -= (tmp->nrof?tmp->nrof:1);
+                remove_ob(tmp);
+            } else {
+                decrease_ob_nr(tmp, rest);
+                return 1;
+            }
+    }
+
+    /* Something went wrong, we'll be nice and accept the sacrifice anyway. */
+    LOG(llevError, "check_altar_sacrifice on %s: found objects to sacrifice, but couldn't remove them??\n", altar->map->path);
+    return 1;
 }
 
 
@@ -339,6 +453,7 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice)
  */
 int operate_altar (object *altar, object **sacrifice)
 {
+    int number;
     if ( ! altar->map) {
         LOG (llevError, "BUG: operate_altar(): altar has no map\n");
         return 0;
@@ -347,21 +462,11 @@ int operate_altar (object *altar, object **sacrifice)
     if (!altar->slaying || altar->value)
         return 0;
 
-    if ( ! check_altar_sacrifice (altar, *sacrifice))
+    if ( ! check_altar_sacrifice (altar, *sacrifice, 1, &number))
         return 0;
 
-    /* check_altar_sacrifice should have already verified that enough money
-     * has been dropped.
-     */
-    if (!strcmp(ARCH_SACRIFICE(altar), "money")) {
-        int number=NROF_SACRIFICE(altar) / (*sacrifice)->value;
-
-        /* Round up any sacrifices.  Altars don't make change either */
-        if (NROF_SACRIFICE(altar) % (*sacrifice)->value) number++;
-        *sacrifice = decrease_ob_nr (*sacrifice, number);
-    }
-    else
-        *sacrifice = decrease_ob_nr (*sacrifice, NROF_SACRIFICE(altar));
+    /* check_altar_sacrifice fills in number for us. */
+    *sacrifice = decrease_ob_nr (*sacrifice, number);
 
     if (altar->msg)
         ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR,

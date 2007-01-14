@@ -25,6 +25,10 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file server/apply.c
+ */
+
 #include <global.h>
 #include <living.h>
 #include <spells.h>
@@ -123,7 +127,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
     /* Check for MONEY type is a special hack - it prevents 'nothing needs
      * identifying' from being printed out more than it needs to be.
      */
-    if ( ! check_altar_sacrifice (altar, money) || money->type != MONEY)
+    if (money->type != MONEY || !check_altar_sacrifice(altar, money, 0, NULL))
       return 0;
 
     marked = find_marked_object (pl);
@@ -164,7 +168,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 		    }
 		    success=1;
 		    /* If no more money, might as well quit now */
-		    if (money == NULL || ! check_altar_sacrifice (altar,money))
+		    if (money == NULL || ! check_altar_sacrifice (altar,money, 0, NULL))
 			 break;
 		}
 		else {
