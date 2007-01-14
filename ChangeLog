@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/skill_util.c: give a dummy name if skill doesn't have it. Avoids crashing later on :)
+Ryo 2007-01-14
+
 Apply long standing patch #1382884: change to player wraith race courtesy Anton Oussik.
  lib/attackmess: new attack messages for feeding.
  lib/treasures: give feeding skill to wraith.

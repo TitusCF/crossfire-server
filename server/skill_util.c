@@ -57,8 +57,8 @@ static int attack_melee_weapon(object *op, int dir, const char *string, object *
 
 const char *skill_names[NUM_SKILLS];
 
-/* init_skills basically just sets up the skill_names table
- * above.  The index into the array is set up by the
+/**
+ * This just sets up the ::skill_names table above. The index into the array is set up by the
  * subtypes.
  */
 void init_skills(void) {
@@ -66,63 +66,80 @@ void init_skills(void) {
     archetype *at;
 
     for (i=0; i<NUM_SKILLS; i++)
-	skill_names[i] = NULL;
+        skill_names[i] = NULL;
 
     for(at = first_archetype;at!=NULL;at=at->next) {
-	if (at->clone.type == SKILL) {
-	    if (skill_names[at->clone.subtype] != NULL) {
-		LOG(llevError, "init_skills: multiple skill using same subtype %d, %s, %s\n",
-		    at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
-	    } else {
-		skill_names[at->clone.subtype] = add_refcount(at->clone.skill);
-	    }
-	}
+        if (at->clone.type == SKILL) {
+            if (skill_names[at->clone.subtype] != NULL) {
+                LOG(llevError, "init_skills: multiple skill using same subtype %d, %s, %s\n",
+                    at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
+            } else {
+                skill_names[at->clone.subtype] = add_refcount(at->clone.skill);
+            }
+        }
     }
 
     /* This isn't really an error if there is no skill subtype set, but
      * checking for this may catch some user errors.
+     * On the other hand, it'll crash later on, which is not nice. Thus giving a dummy name.
      */
     for (i=1; i<NUM_SKILLS; i++) {
-	if (!skill_names[i])
-	    LOG(llevError, "init_skills: skill subtype %d doesn't have a name?\n",
-		i);
+        if (!skill_names[i]) {
+            LOG(llevError, "init_skills: skill subtype %d doesn't have a name?\n", i);
+            skills_names[i] = add_string("dummy skill");
+        }
     }
 }
 
 
-/* This function goes through the player inventory and sets
+/**
+ * This function goes through the player inventory and sets
  * up the last_skills[] array in the player object.
- * the last_skills[] is used to more quickly lookup skills - 
+ * The last_skills[] is used to more quickly lookup skills - 
  * mostly used for sending exp.
+ *
+ * @param op
+ * player to link skills for. Must be a player.
  */
 void link_player_skills(object *op)
 {
     object *tmp;
 
     for (tmp=op->inv; tmp; tmp=tmp->below) {
-	if (tmp->type == SKILL) {
-	    /* This is really a warning, hence no else below */
-	    if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
-		LOG(llevError,"Multiple skills with the same subtype? %s, %s\n",
-		    op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
-	    }
-	    if (tmp->subtype >= NUM_SKILLS) {
-		LOG(llevError,"Invalid subtype number %d (range 0-%d)\n",
-		    tmp->subtype, NUM_SKILLS);
-	    } else {
-		op->contr->last_skill_ob[tmp->subtype] = tmp;
-		op->contr->last_skill_exp[tmp->subtype] = -1;
-	    }
-	}
+        if (tmp->type == SKILL) {
+            /* This is really a warning, hence no else below */
+            if (op->contr->last_skill_ob[tmp->subtype] && op->contr->last_skill_ob[tmp->subtype] != tmp) {
+                LOG(llevError,"Multiple skills with the same subtype? %s, %s\n",
+                    op->contr->last_skill_ob[tmp->subtype]->skill, tmp->skill);
+            }
+            if (tmp->subtype >= NUM_SKILLS) {
+                LOG(llevError,"Invalid subtype number %d (range 0-%d)\n",
+                    tmp->subtype, NUM_SKILLS);
+            } else {
+                op->contr->last_skill_ob[tmp->subtype] = tmp;
+                op->contr->last_skill_exp[tmp->subtype] = -1;
+            }
+        }
     }
 }
 
-/* This returns the skill pointer of the given name (the
+/**
+ * This returns the skill pointer of the given name (the
  * one that accumlates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
  * use the skill, so thus if use of the skill requires a skill
  * tool, this code will equip it.
+ *
+ * @param who
+ * Player to get skill.
+ * @param name
+ * skill to find. Needs not to be a shared string.
+ * @return
+ * pointer to skill object, or NULL if player doesn't have it.
+ *
+ * @todo
+ * check if name shouldn't be made a shared string.
  */
 object *find_skill_by_name(object *who, const char *name)
 {
@@ -135,35 +152,38 @@ object *find_skill_by_name(object *who, const char *name)
      * 'hi', we don't want to match if the user passed 'high'
      */
     for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
-	if (tmp->type == SKILL && !strncasecmp(name, tmp->skill, strlen(name)) &&
-	    strlen(tmp->skill) >= strlen(name)) skill = tmp;
+        if (tmp->type == SKILL && !strncasecmp(name, tmp->skill, strlen(name)) &&
+          strlen(tmp->skill) >= strlen(name))
+            skill = tmp;
 
-	/* Try to find appropriate skilltool.  If the player has one already
-	 * applied, we try to keep using that one.
-	 */
-	else if (tmp->type == SKILL_TOOL && !strncasecmp(name, tmp->skill, strlen(name)) &&
-	    strlen(tmp->skill) >= strlen(name)) {
-	    if (QUERY_FLAG(tmp, FLAG_APPLIED)) skill_tool = tmp;
-	    else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
-		skill_tool = tmp;
-	}
+        /* Try to find appropriate skilltool.  If the player has one already
+        * applied, we try to keep using that one.
+        */
+        else if (tmp->type == SKILL_TOOL && !strncasecmp(name, tmp->skill, strlen(name)) &&
+          strlen(tmp->skill) >= strlen(name)) {
+            if (QUERY_FLAG(tmp, FLAG_APPLIED))
+                skill_tool = tmp;
+            else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
+                skill_tool = tmp;
+        }
     }
     /* If this is a skill that can be used without a tool, return it */
-    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL)) return skill;
+    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL))
+        return skill;
 
     /* Player has a tool to use the skill.  IF not applied, apply it -
      * if not successful, return null.  If they do have the skill tool
      * but not the skill itself, give it to them.
      */
     if (skill_tool) {
-	if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
-	    if (apply_special(who, skill_tool, 0)) return NULL;
-	}
-	if (!skill) {
-	    skill = give_skill_by_name(who, skill_tool->skill);
-	    link_player_skills(who);
-	}
-	return skill;
+        if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
+            if (apply_special(who, skill_tool, 0)) return NULL;
+        }
+        if (!skill) {
+            skill = give_skill_by_name(who, skill_tool->skill);
+            link_player_skills(who);
+        }
+        return skill;
     }
     return NULL;
 }
