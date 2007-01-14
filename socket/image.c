@@ -43,6 +43,7 @@
 #include <newclient.h>
 #include <newserver.h>
 #include <loader.h>
+#include <image.h>
 
 face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
