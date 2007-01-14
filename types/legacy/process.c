@@ -30,15 +30,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
 {
     switch(op->type)
     {
-        case TRANSPORT:
-            /* Transports are directed by players - thus, there
-             * speed is reduced when the player moves them about.
-             * So give them back there speed here, since process_objects()
-             * has decremented it.
-             */
-            if (op->speed_left < 0.0) op->speed_left += 1.0;
-            return 1;
-
         case SPELL_EFFECT:
             move_spell_effect(op);
             return 1;
@@ -117,7 +108,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             legacy_move_timed_gate(op);
             return 0;
 
-        case TRIGGER:
         case TRIGGER_BUTTON:
         case TRIGGER_PEDESTAL:
         case TRIGGER_ALTAR:

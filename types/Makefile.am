@@ -1,8 +1,10 @@
 noinst_LIBRARIES = libtypes.a
-libtypes_a_SOURCES = dummy.c transport/transport.c \
-power_crystal/power_crystal.c \
-item_transformer/item_transformer.c \
+libtypes_a_SOURCES = dummy.c \
 book/book.c \
+item_transformer/item_transformer.c \
+power_crystal/power_crystal.c \
+transport/transport.c \
+trigger/trigger.c \
 common/describe.c \
 legacy/apply.c \
 legacy/legacy_describe.c \

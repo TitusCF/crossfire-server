@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Object types refactoring: TRIGGER.
+    See types ChangeLog for details.
+----
 Object types refactoring: TRANSPORT, BOOK, POWER_CRYSTAL, BOOK.
     See types ChangeLog for details.
 Modified files:

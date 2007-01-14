@@ -51,10 +51,10 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libtypes_a_AR = $(AR) $(ARFLAGS)
 libtypes_a_LIBADD =
-am_libtypes_a_OBJECTS = dummy.$(OBJEXT) transport.$(OBJEXT) \
-	power_crystal.$(OBJEXT) item_transformer.$(OBJEXT) \
-	book.$(OBJEXT) describe.$(OBJEXT) apply.$(OBJEXT) \
-	legacy_describe.$(OBJEXT) process.$(OBJEXT)
+am_libtypes_a_OBJECTS = dummy.$(OBJEXT) book.$(OBJEXT) \
+	item_transformer.$(OBJEXT) power_crystal.$(OBJEXT) \
+	transport.$(OBJEXT) trigger.$(OBJEXT) describe.$(OBJEXT) \
+	apply.$(OBJEXT) legacy_describe.$(OBJEXT) process.$(OBJEXT)
 libtypes_a_OBJECTS = $(am_libtypes_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
@@ -222,10 +222,12 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 noinst_LIBRARIES = libtypes.a
-libtypes_a_SOURCES = dummy.c transport/transport.c \
-power_crystal/power_crystal.c \
-item_transformer/item_transformer.c \
+libtypes_a_SOURCES = dummy.c \
 book/book.c \
+item_transformer/item_transformer.c \
+power_crystal/power_crystal.c \
+transport/transport.c \
+trigger/trigger.c \
 common/describe.c \
 legacy/apply.c \
 legacy/legacy_describe.c \
@@ -291,6 +293,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power_crystal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transport.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trigger.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -313,33 +316,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-transport.o: transport/transport.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT transport.o -MD -MP -MF "$(DEPDIR)/transport.Tpo" -c -o transport.o `test -f 'transport/transport.c' || echo '$(srcdir)/'`transport/transport.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/transport.Tpo" "$(DEPDIR)/transport.Po"; else rm -f "$(DEPDIR)/transport.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport/transport.c' object='transport.o' libtool=no @AMDEPBACKSLASH@
+book.o: book/book.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT book.o -MD -MP -MF "$(DEPDIR)/book.Tpo" -c -o book.o `test -f 'book/book.c' || echo '$(srcdir)/'`book/book.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/book.Tpo" "$(DEPDIR)/book.Po"; else rm -f "$(DEPDIR)/book.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='book/book.c' object='book.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o transport.o `test -f 'transport/transport.c' || echo '$(srcdir)/'`transport/transport.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o book.o `test -f 'book/book.c' || echo '$(srcdir)/'`book/book.c
 
-transport.obj: transport/transport.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT transport.obj -MD -MP -MF "$(DEPDIR)/transport.Tpo" -c -o transport.obj `if test -f 'transport/transport.c'; then $(CYGPATH_W) 'transport/transport.c'; else $(CYGPATH_W) '$(srcdir)/transport/transport.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/transport.Tpo" "$(DEPDIR)/transport.Po"; else rm -f "$(DEPDIR)/transport.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport/transport.c' object='transport.obj' libtool=no @AMDEPBACKSLASH@
+book.obj: book/book.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT book.obj -MD -MP -MF "$(DEPDIR)/book.Tpo" -c -o book.obj `if test -f 'book/book.c'; then $(CYGPATH_W) 'book/book.c'; else $(CYGPATH_W) '$(srcdir)/book/book.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/book.Tpo" "$(DEPDIR)/book.Po"; else rm -f "$(DEPDIR)/book.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='book/book.c' object='book.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o transport.obj `if test -f 'transport/transport.c'; then $(CYGPATH_W) 'transport/transport.c'; else $(CYGPATH_W) '$(srcdir)/transport/transport.c'; fi`
-
-power_crystal.o: power_crystal/power_crystal.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT power_crystal.o -MD -MP -MF "$(DEPDIR)/power_crystal.Tpo" -c -o power_crystal.o `test -f 'power_crystal/power_crystal.c' || echo '$(srcdir)/'`power_crystal/power_crystal.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/power_crystal.Tpo" "$(DEPDIR)/power_crystal.Po"; else rm -f "$(DEPDIR)/power_crystal.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='power_crystal/power_crystal.c' object='power_crystal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o power_crystal.o `test -f 'power_crystal/power_crystal.c' || echo '$(srcdir)/'`power_crystal/power_crystal.c
-
-power_crystal.obj: power_crystal/power_crystal.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT power_crystal.obj -MD -MP -MF "$(DEPDIR)/power_crystal.Tpo" -c -o power_crystal.obj `if test -f 'power_crystal/power_crystal.c'; then $(CYGPATH_W) 'power_crystal/power_crystal.c'; else $(CYGPATH_W) '$(srcdir)/power_crystal/power_crystal.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/power_crystal.Tpo" "$(DEPDIR)/power_crystal.Po"; else rm -f "$(DEPDIR)/power_crystal.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='power_crystal/power_crystal.c' object='power_crystal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o power_crystal.obj `if test -f 'power_crystal/power_crystal.c'; then $(CYGPATH_W) 'power_crystal/power_crystal.c'; else $(CYGPATH_W) '$(srcdir)/power_crystal/power_crystal.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o book.obj `if test -f 'book/book.c'; then $(CYGPATH_W) 'book/book.c'; else $(CYGPATH_W) '$(srcdir)/book/book.c'; fi`
 
 item_transformer.o: item_transformer/item_transformer.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT item_transformer.o -MD -MP -MF "$(DEPDIR)/item_transformer.Tpo" -c -o item_transformer.o `test -f 'item_transformer/item_transformer.c' || echo '$(srcdir)/'`item_transformer/item_transformer.c; \
@@ -355,19 +344,47 @@ item_transformer.obj: item_transformer/item_transformer.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o item_transformer.obj `if test -f 'item_transformer/item_transformer.c'; then $(CYGPATH_W) 'item_transformer/item_transformer.c'; else $(CYGPATH_W) '$(srcdir)/item_transformer/item_transformer.c'; fi`
 
-book.o: book/book.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT book.o -MD -MP -MF "$(DEPDIR)/book.Tpo" -c -o book.o `test -f 'book/book.c' || echo '$(srcdir)/'`book/book.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/book.Tpo" "$(DEPDIR)/book.Po"; else rm -f "$(DEPDIR)/book.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='book/book.c' object='book.o' libtool=no @AMDEPBACKSLASH@
+power_crystal.o: power_crystal/power_crystal.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT power_crystal.o -MD -MP -MF "$(DEPDIR)/power_crystal.Tpo" -c -o power_crystal.o `test -f 'power_crystal/power_crystal.c' || echo '$(srcdir)/'`power_crystal/power_crystal.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/power_crystal.Tpo" "$(DEPDIR)/power_crystal.Po"; else rm -f "$(DEPDIR)/power_crystal.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='power_crystal/power_crystal.c' object='power_crystal.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o book.o `test -f 'book/book.c' || echo '$(srcdir)/'`book/book.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o power_crystal.o `test -f 'power_crystal/power_crystal.c' || echo '$(srcdir)/'`power_crystal/power_crystal.c
 
-book.obj: book/book.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT book.obj -MD -MP -MF "$(DEPDIR)/book.Tpo" -c -o book.obj `if test -f 'book/book.c'; then $(CYGPATH_W) 'book/book.c'; else $(CYGPATH_W) '$(srcdir)/book/book.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/book.Tpo" "$(DEPDIR)/book.Po"; else rm -f "$(DEPDIR)/book.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='book/book.c' object='book.obj' libtool=no @AMDEPBACKSLASH@
+power_crystal.obj: power_crystal/power_crystal.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT power_crystal.obj -MD -MP -MF "$(DEPDIR)/power_crystal.Tpo" -c -o power_crystal.obj `if test -f 'power_crystal/power_crystal.c'; then $(CYGPATH_W) 'power_crystal/power_crystal.c'; else $(CYGPATH_W) '$(srcdir)/power_crystal/power_crystal.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/power_crystal.Tpo" "$(DEPDIR)/power_crystal.Po"; else rm -f "$(DEPDIR)/power_crystal.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='power_crystal/power_crystal.c' object='power_crystal.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o book.obj `if test -f 'book/book.c'; then $(CYGPATH_W) 'book/book.c'; else $(CYGPATH_W) '$(srcdir)/book/book.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o power_crystal.obj `if test -f 'power_crystal/power_crystal.c'; then $(CYGPATH_W) 'power_crystal/power_crystal.c'; else $(CYGPATH_W) '$(srcdir)/power_crystal/power_crystal.c'; fi`
+
+transport.o: transport/transport.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT transport.o -MD -MP -MF "$(DEPDIR)/transport.Tpo" -c -o transport.o `test -f 'transport/transport.c' || echo '$(srcdir)/'`transport/transport.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/transport.Tpo" "$(DEPDIR)/transport.Po"; else rm -f "$(DEPDIR)/transport.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport/transport.c' object='transport.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o transport.o `test -f 'transport/transport.c' || echo '$(srcdir)/'`transport/transport.c
+
+transport.obj: transport/transport.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT transport.obj -MD -MP -MF "$(DEPDIR)/transport.Tpo" -c -o transport.obj `if test -f 'transport/transport.c'; then $(CYGPATH_W) 'transport/transport.c'; else $(CYGPATH_W) '$(srcdir)/transport/transport.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/transport.Tpo" "$(DEPDIR)/transport.Po"; else rm -f "$(DEPDIR)/transport.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport/transport.c' object='transport.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o transport.obj `if test -f 'transport/transport.c'; then $(CYGPATH_W) 'transport/transport.c'; else $(CYGPATH_W) '$(srcdir)/transport/transport.c'; fi`
+
+trigger.o: trigger/trigger.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT trigger.o -MD -MP -MF "$(DEPDIR)/trigger.Tpo" -c -o trigger.o `test -f 'trigger/trigger.c' || echo '$(srcdir)/'`trigger/trigger.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/trigger.Tpo" "$(DEPDIR)/trigger.Po"; else rm -f "$(DEPDIR)/trigger.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='trigger/trigger.c' object='trigger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o trigger.o `test -f 'trigger/trigger.c' || echo '$(srcdir)/'`trigger/trigger.c
+
+trigger.obj: trigger/trigger.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT trigger.obj -MD -MP -MF "$(DEPDIR)/trigger.Tpo" -c -o trigger.obj `if test -f 'trigger/trigger.c'; then $(CYGPATH_W) 'trigger/trigger.c'; else $(CYGPATH_W) '$(srcdir)/trigger/trigger.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/trigger.Tpo" "$(DEPDIR)/trigger.Po"; else rm -f "$(DEPDIR)/trigger.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='trigger/trigger.c' object='trigger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o trigger.obj `if test -f 'trigger/trigger.c'; then $(CYGPATH_W) 'trigger/trigger.c'; else $(CYGPATH_W) '$(srcdir)/trigger/trigger.c'; fi`
 
 describe.o: common/describe.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT describe.o -MD -MP -MF "$(DEPDIR)/describe.Tpo" -c -o describe.o `test -f 'common/describe.c' || echo '$(srcdir)/'`common/describe.c; \

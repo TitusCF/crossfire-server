@@ -10,6 +10,13 @@ ChangeLog.
 
 --
 
+Ob types   : TRIGGER
+Events     : apply, process
+Moved from : ../server/apply.c, ../server/time.c
+Moved to   : trigger/trigger.c
+Comment    : Implemented apply and process methods for the given object type.
+2007-01-14 - Yann Chachkoff
+-------------------------------------------------------------------------------
 Ob types   : TRANSPORT, POWER_CRYSTAL, ITEM_TRANSFORMER, BOOK
 Events     : apply, process, describe
 Moved from : ../server/apply.c, ../server/time.c, ../server/c_object.c

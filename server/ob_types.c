@@ -48,6 +48,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_item_transformer();
     init_type_power_crystal();
     init_type_transport();
+    init_type_trigger();
 }
 
 /* Functions for registering methods for types */

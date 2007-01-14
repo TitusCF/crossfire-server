@@ -61,20 +61,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             push_button(op);
             return 1;
 
-        case TRIGGER:
-            if (check_trigger (op, applier))
-            {
-                draw_ext_info (NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You turn the handle.", NULL);
-                play_sound_map (op->map, op->x, op->y, SOUND_TURN_HANDLE);
-            } else {
-                draw_ext_info (NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    "The handle doesn't move.", NULL);
-            }
-            return 1;
-
         case EXIT:
             if (applier->type != PLAYER)
                 return 0;
