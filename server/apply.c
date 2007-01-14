@@ -4136,3 +4136,15 @@ int legacy_is_legal_2ways_exit(object* op, object* exit)
 {
     return is_legal_2ways_exit(op, exit);
 }
+void legacy_apply_treasure(object* op, object* tmp)
+{
+    apply_treasure(op, tmp);
+}
+void legacy_apply_savebed (object *pl)
+{
+    apply_savebed(pl);
+}
+void legacy_apply_skillscroll (object *op, object *tmp)
+{
+    apply_skillscroll(op, tmp);
+}
