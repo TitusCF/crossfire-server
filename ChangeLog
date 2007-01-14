@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Apply patch #1631685: Monster flag set on all monster parts courtesy Aaron Baugher.
+ common/arch.c
+Ryo 2007-01-14
+
 Object types refactoring: TRIGGER.
     See types ChangeLog for details.
 ----

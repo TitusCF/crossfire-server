@@ -375,6 +375,11 @@ static void first_arch_pass(FILE *fp) {
                 }
                 last_more=at;
 
+                /* Set FLAG_MONSTER throughout parts if head has it */
+                if(QUERY_FLAG(&head->clone, FLAG_MONSTER)){
+                    SET_FLAG(&at->clone, FLAG_MONSTER);
+                }
+
                 /* If this multipart image is still composed of individual small
                  * images, don't set the tail_.. values.  We can't use them anyways,
                  * and setting these to zero makes the map sending to the client much
