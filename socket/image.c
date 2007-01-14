@@ -44,27 +44,7 @@
 #include <newserver.h>
 #include <loader.h>
 
-#define MAX_FACE_SETS	20  /**< Maximum number of image sets the program will handle */
-
-/** Information about one image */
-typedef struct face_info {
-  uint8 *data;		    /**< image data */
-  uint16 datalen;	    /**< length of the xpm data */
-  uint32 checksum;	    /**< Checksum of face data */
-} face_info;
-
-/** Information about one face set */
-typedef struct {
-    char    *prefix;    /**< */
-    char    *fullname;
-    uint8   fallback;   /**< faceset to use when an image is not found in this faceset */
-    char    *size;
-    char    *extension;
-    char    *comment;
-    face_info	*faces; /**< images in this faceset */
-} face_sets;
-
-static face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
+face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
 /**
  * Checks specified faceset is valid

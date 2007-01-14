@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>#MAPNAME#</title>
+</head>
+<body>
+Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>.
+<br />
+<br />
+Map view:
+<br />
+<a href="#MAPPIC#"><img src="#MAPSMALLPIC#"></a>
+<br />
+(click for larger view)
+<br />
+#MAPEXIT#
+<br />
+<a href="#REGIONPATH#">Back to #REGIONNAME#'s map index</a> | <a href="#INDEXPATH#">Back to global map index</a>
+</body>
+</html>

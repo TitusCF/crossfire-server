@@ -15,6 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New util: mapper.c, which generates HTML pages to browse maps.
+See the file itself for information and such.
+----
+ Moved structures outside a .c so other programs can access it.
+ include/image.h: new file, client-side image structures.
+ socket/image.c: moved data to include.
+----
+ utils/mapper.c: new program, map browser generator.
+ utils/templates/*.template: template files for mapper.
+Ryo 2007-01-13
+
 Some Win32 fixes: binmode for Perl, binary mode for opened files.
  common/porting.c
  lib/adm/collect_images.pl
