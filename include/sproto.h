@@ -1,8 +1,7 @@
 /* alchemy.c */
-int use_alchemy(object* op);
+int use_alchemy(object *op);
 /* apply.c */
 int transport_can_hold(const object *transport, const object *op, int nrof);
-int apply_transport(object *pl, object *transport, int aflag);
 int should_director_abort(object *op, object *victim);
 int apply_potion(object *op, object *tmp);
 int esrv_apply_container(object *op, object *sack);
@@ -20,6 +19,14 @@ int auto_apply(object *op);
 void fix_auto_apply(mapstruct *m);
 void eat_special_food(object *who, object *food);
 void apply_changes_to_player(object *pl, object *change);
+void legacy_apply_lighter(object *who, object *lighter);
+void legacy_apply_armour_improver(object *op, object *tmp);
+void legacy_apply_food(object *op, object *tmp);
+void legacy_apply_sign(object *op, object *sign, int autoapply);
+void legacy_apply_spellbook(object *op, object *tmp);
+void legacy_check_improve_weapon(object *op, object *tmp);
+void legacy_apply_container(object *op, object *sack);
+int legacy_is_legal_2ways_exit(object *op, object *exit);
 /* attack.c */
 void save_throw_object(object *op, int type, object *originator);
 int hit_map(object *op, int dir, int type, int full_hit);
@@ -116,7 +123,6 @@ int command_body(object *op, char *params);
 int command_motd(object *op, char *params);
 int command_rules(object *op, char *params);
 int command_news(object *op, char *params);
-int command_bug(object *op, char *params);
 void malloc_info(object *op);
 void current_region_info(object *op);
 void current_map_info(object *op);
@@ -147,7 +153,6 @@ int command_dumpmap(object *op, char *params);
 int command_dumpallmaps(object *op, char *params);
 int command_printlos(object *op, char *params);
 int command_version(object *op, char *params);
-void bug_report(const char *reportstring);
 int command_output_sync(object *op, char *params);
 int command_output_count(object *op, char *params);
 int command_listen(object *op, char *params);
@@ -168,13 +173,11 @@ int command_explore(object *op, char *params);
 int command_sound(object *op, char *params);
 void receive_player_name(object *op, char k);
 void receive_player_password(object *op, char k);
-int explore_mode(void);
 int command_title(object *op, char *params);
 int command_save(object *op, char *params);
 int command_peaceful(object *op, char *params);
 int command_wimpy(object *op, char *params);
 int command_brace(object *op, char *params);
-int command_style_map_info(object *op, char *params);
 int command_kill_pets(object *op, char *params);
 int command_quests(object *pl, char *params);
 int command_passwd(object *pl, char *params);
@@ -194,7 +197,6 @@ int command_run(object *op, char *params);
 int command_run_stop(object *op, char *params);
 int command_fire(object *op, char *params);
 int command_fire_stop(object *op, char *params);
-int bad_command(object *op, char *params);
 /* c_object.c */
 int command_build(object *pl, char *params);
 int command_uskill(object *pl, char *params);
@@ -291,6 +293,7 @@ int command_stack_list(object *op, char *params);
 int command_stack_clear(object *op, char *params);
 int command_diff(object *op, char *params);
 int command_insert_into(object *op, char *params);
+int command_style_map_info(object *op, char *params);
 /* commands.c */
 void init_commands(void);
 command_function find_oldsocket_command(char *cmd);
@@ -303,8 +306,6 @@ int infect_object(object *victim, object *disease, int force);
 int move_symptom(object *symptom);
 int check_physically_infect(object *victim, object *hitter);
 int cure_disease(object *sufferer, object *caster);
-/* egoitem.c */
-int apply_power_crystal(object *op, object *crystal);
 /* hiscore.c */
 void check_score(object *op);
 void display_high_score(object *op, int max, const char *match);
@@ -317,6 +318,7 @@ archetype *determine_holy_arch(object *god, const char *type);
 int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void init(int argc, char **argv);
+void free_server(void);
 void rec_sigsegv(int i);
 void rec_sigint(int i);
 void rec_sighup(int i);
@@ -355,6 +357,17 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator);
 int teleport(object *teleporter, uint8 tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
+/* ob_methods.c */
+void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
+void init_ob_methods(void);
+int ob_apply(object *op, object *applier, int aflags);
+int ob_process(object *op);
+const char *ob_describe(object *op, object *observer);
+/* ob_types.c */
+void init_ob_types(ob_methods *base_type);
+void register_apply(int ob_type, apply_func method);
+void register_process(int ob_type, process_func method);
+void register_describe(int ob_type, describe_func method);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
@@ -427,6 +440,9 @@ void *cfapi_system_remove_string(int *type, ...);
 void *cfapi_system_check_path(int *type, ...);
 void *cfapi_system_re_cmp(int *type, ...);
 void *cfapi_system_directory(int *type, ...);
+void *cfapi_get_time(int *type, ...);
+void *cfapi_timer_create(int *type, ...);
+void *cfapi_timer_destroy(int *type, ...);
 void *cfapi_log(int *type, ...);
 void *cfapi_map_get_map(int *type, ...);
 void *cfapi_map_has_been_loaded(int *type, ...);
@@ -494,9 +510,6 @@ void *cfapi_archetype_get_first(int *type, ...);
 void *cfapi_archetype_get_property(int *type, ...);
 void *cfapi_party_get_property(int *type, ...);
 void *cfapi_region_get_property(int *type, ...);
-void *cfapi_get_time(int *type, ...);
-void *cfapi_timer_create(int *type, ...);
-void *cfapi_timer_destroy(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 /* resurrection.c */
@@ -660,12 +673,20 @@ void move_duplicator(object *op);
 void move_creator(object *creator);
 void move_marker(object *op);
 int process_object(object *op);
+void legacy_move_detector(object *op);
+void legacy_remove_force(object *op);
+void legacy_move_timed_gate(object *op);
+void legacy_animate_trigger(object *op);
+void legacy_remove_blindness(object *op);
+void legacy_poison_more(object *op);
+void legacy_move_gate(object *op);
+void legacy_move_hole(object *op);
 /* timers.c */
 void cftimer_process_timers(void);
 int cftimer_create(int id, long delay, object *ob, int mode);
 int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
-void cftimer_init();
+void cftimer_init(void);
 /* weather.c */
 void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
@@ -690,4 +711,3 @@ void leave(player *pl, int draw_exit);
 int forbid_play(void);
 int server_main(int argc, char **argv);
 /* main.c */
-int main(int argc, char **argv);

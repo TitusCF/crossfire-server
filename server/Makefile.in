@@ -82,16 +82,16 @@ am_libserver_a_OBJECTS = alchemy.$(OBJEXT) apply.$(OBJEXT) \
 	c_chat.$(OBJEXT) c_misc.$(OBJEXT) c_move.$(OBJEXT) \
 	c_new.$(OBJEXT) c_object.$(OBJEXT) c_party.$(OBJEXT) \
 	c_range.$(OBJEXT) c_wiz.$(OBJEXT) commands.$(OBJEXT) \
-	daemon.$(OBJEXT) disease.$(OBJEXT) egoitem.$(OBJEXT) \
-	hiscore.$(OBJEXT) gods.$(OBJEXT) init.$(OBJEXT) \
-	login.$(OBJEXT) monster.$(OBJEXT) move.$(OBJEXT) \
-	ob_methods.$(OBJEXT) ob_types.$(OBJEXT) pets.$(OBJEXT) \
-	player.$(OBJEXT) plugins.$(OBJEXT) resurrection.$(OBJEXT) \
-	rune.$(OBJEXT) shop.$(OBJEXT) skills.$(OBJEXT) \
-	skill_util.$(OBJEXT) spell_attack.$(OBJEXT) \
-	spell_effect.$(OBJEXT) spell_util.$(OBJEXT) swamp.$(OBJEXT) \
-	swap.$(OBJEXT) time.$(OBJEXT) timers.$(OBJEXT) \
-	weather.$(OBJEXT) server.$(OBJEXT)
+	daemon.$(OBJEXT) disease.$(OBJEXT) hiscore.$(OBJEXT) \
+	gods.$(OBJEXT) init.$(OBJEXT) login.$(OBJEXT) \
+	monster.$(OBJEXT) move.$(OBJEXT) ob_methods.$(OBJEXT) \
+	ob_types.$(OBJEXT) pets.$(OBJEXT) player.$(OBJEXT) \
+	plugins.$(OBJEXT) resurrection.$(OBJEXT) rune.$(OBJEXT) \
+	shop.$(OBJEXT) skills.$(OBJEXT) skill_util.$(OBJEXT) \
+	spell_attack.$(OBJEXT) spell_effect.$(OBJEXT) \
+	spell_util.$(OBJEXT) swamp.$(OBJEXT) swap.$(OBJEXT) \
+	time.$(OBJEXT) timers.$(OBJEXT) weather.$(OBJEXT) \
+	server.$(OBJEXT)
 libserver_a_OBJECTS = $(am_libserver_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -286,7 +286,6 @@ libserver_a_SOURCES = \
 	commands.c\
 	daemon.c\
 	disease.c\
-	egoitem.c \
 	hiscore.c\
 	gods.c\
 	init.c\
@@ -418,7 +417,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commands.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/daemon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disease.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/egoitem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gods.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hiscore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init.Po@am__quote@

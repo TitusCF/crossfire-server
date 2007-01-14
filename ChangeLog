@@ -15,6 +15,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Object types refactoring: TRANSPORT, BOOK, POWER_CRYSTAL, BOOK.
+    See types ChangeLog for details.
+Modified files:
+    include/ob_methods.h include/ob_types.h
+    server/ob_methods.c server/ob_types.c
+    server/apply.c server/c_object.c server/time.c
+Added files:
+    types/transport/transport.c types/power_crystal/power_crystal.c
+    types/book/book.c types/item_transformer/item_transformer.c
+    types/legacy/apply.c types/legacy/legacy_describe.c types/legacy/process.c
+    types/common/describe.c
+Removed files:
+    server/egoitem.c
+Yann Chachkoff 2007-01-14
+
 New util: mapper.c, which generates HTML pages to browse maps.
 See the file itself for information and such.
 ----

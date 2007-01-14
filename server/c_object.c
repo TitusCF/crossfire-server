@@ -1171,108 +1171,114 @@ void drop(object *op, object *tmp)
 /* Command will drop all items that have not been locked */
 int command_dropall (object *op, char *params) {
 
-  object * curinv, *nextinv;
+    object * curinv, *nextinv;
 
-  if(op->inv == NULL) {
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		  "Nothing to drop!", NULL);
-    return 0;
-  }
-  
-  curinv = op->inv;
-
-  /* 
-    This is the default.  Drops everything not locked or considered
-    not something that should be dropped.
-  */
-  /*
-    Care must be taken that the next item pointer is not to money as
-    the drop() routine will do unknown things to it when dropping
-    in a shop. --Tero.Pelander@utu.fi
-  */
-
-  if(params==NULL) {
-    while(curinv != NULL) {
-      nextinv = curinv->below;
-      while (nextinv && nextinv->type==MONEY)
-	nextinv = nextinv->below;
-      if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && curinv->type != MONEY &&
-	 curinv->type != FOOD && curinv->type != KEY && 
-	 curinv->type != SPECIAL_KEY && curinv->type != GEM &&
-	 !curinv->invisible &&
-	 (curinv->type!=CONTAINER || op->container!=curinv))
-	{
-	 drop(op,curinv);
-       }
-      curinv = nextinv;
+    if(op->inv == NULL)
+    {
+        draw_ext_info(NDI_UNIQUE, 0,op,
+            MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Nothing to drop!", NULL);
+        return 0;
     }
-  }
 
-  else if(strcmp(params, "weapons") == 0) {
-    while(curinv != NULL) {
-      nextinv = curinv->below;
-      while (nextinv && nextinv->type==MONEY)
-	nextinv = nextinv->below;
-      if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && ((curinv->type == WEAPON) ||
-	 (curinv->type == BOW) || (curinv->type == ARROW)))
-	{
-	  drop(op,curinv);
-	}
-      curinv = nextinv;
-    }
-  }
-  
-  else if(strcmp(params, "armor") == 0 || strcmp(params, "armour") == 0) {
-    while(curinv != NULL) {
-      nextinv = curinv->below;
-      while (nextinv && nextinv->type==MONEY)
-	nextinv = nextinv->below;
-      if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && ((curinv->type == ARMOUR) ||
-	 curinv->type == SHIELD || curinv->type==HELMET))
-	{
-	  drop(op,curinv);
-	}
-      curinv = nextinv;
-    }
-  }
+    curinv = op->inv;
 
-  else if(strcmp(params, "misc") == 0) {
-    while(curinv != NULL) {
-      nextinv = curinv->below;
-      while (nextinv && nextinv->type==MONEY)
-	nextinv = nextinv->below;
-      if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && ! QUERY_FLAG(curinv,FLAG_APPLIED)) {
-	switch(curinv->type) {
-	case HORN:
-	case BOOK:
-	case SPELLBOOK:
-	case GIRDLE:
-	case AMULET:
-	case RING:
-	case CLOAK:
-	case BOOTS:
-	case GLOVES:
-	case BRACERS:
-	case SCROLL:
-	case ARMOUR_IMPROVER:
-	case WEAPON_IMPROVER:
-	case WAND:
-	case ROD:
-	case POTION:
-	  drop(op,curinv);
-	  curinv = nextinv;
-	  break;
-	default:
-	  curinv = nextinv;
-	  break;
-	}
-      }
-      curinv = nextinv;
+    /* 
+     * This is the default.  Drops everything not locked or considered
+     * not something that should be dropped.
+     * Care must be taken that the next item pointer is not to money as
+     * the drop() routine will do unknown things to it when dropping
+     * in a shop. --Tero.Pelander@utu.fi
+     */
+    if(params==NULL) {
+        while(curinv != NULL) {
+            nextinv = curinv->below;
+            while (nextinv && nextinv->type==MONEY)
+                nextinv = nextinv->below;
+            if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && curinv->type != MONEY
+                && curinv->type != FOOD && curinv->type != KEY
+                && curinv->type != SPECIAL_KEY && curinv->type != GEM
+                && !curinv->invisible
+                && (curinv->type!=CONTAINER || op->container!=curinv))
+            {
+                drop(op,curinv);
+            }
+            curinv = nextinv;
+        }
     }
-  }
-  op->contr->socket.update_look=1;
+
+    else if(strcmp(params, "weapons") == 0) {
+        while(curinv != NULL) {
+            nextinv = curinv->below;
+            while (nextinv && nextinv->type==MONEY)
+                nextinv = nextinv->below;
+            if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED)
+                && ((curinv->type == WEAPON)
+                || (curinv->type == BOW) || (curinv->type == ARROW)))
+            {
+                drop(op,curinv);
+            }
+            curinv = nextinv;
+        }
+    }
+
+    else if(strcmp(params, "armor") == 0 || strcmp(params, "armour") == 0)
+    {
+        while(curinv != NULL)
+        {
+            nextinv = curinv->below;
+            while (nextinv && nextinv->type==MONEY)
+                nextinv = nextinv->below;
+            if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED)
+                && ((curinv->type == ARMOUR)
+                || curinv->type == SHIELD || curinv->type==HELMET))
+            {
+                drop(op,curinv);
+            }
+            curinv = nextinv;
+        }
+    }
+
+    else if(strcmp(params, "misc") == 0)
+    {
+        while(curinv != NULL) {
+            nextinv = curinv->below;
+            while (nextinv && nextinv->type==MONEY)
+                nextinv = nextinv->below;
+            if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED)
+                && ! QUERY_FLAG(curinv,FLAG_APPLIED))
+            {
+                switch(curinv->type) {
+                    case HORN:
+                    case BOOK:
+                    case SPELLBOOK:
+                    case GIRDLE:
+                    case AMULET:
+                    case RING:
+                    case CLOAK:
+                    case BOOTS:
+                    case GLOVES:
+                    case BRACERS:
+                    case SCROLL:
+                    case ARMOUR_IMPROVER:
+                    case WEAPON_IMPROVER:
+                    case WAND:
+                    case ROD:
+                    case POTION:
+                        drop(op,curinv);
+                        curinv = nextinv;
+                        break;
+                    default:
+                        curinv = nextinv;
+                        break;
+                }
+            }
+            curinv = nextinv;
+        }
+    }
+    op->contr->socket.update_look=1;
 /*  draw_look(op);*/
-  return 0;
+    return 0;
 }
 
 /* Object op wants to drop object(s) params.  params can be a
@@ -1463,56 +1469,9 @@ void examine_monster(object *op,object *tmp) {
 
 
 /* tmp is the object being described, pl is who is examing it. */
-const char *long_desc(const object *tmp, const object *pl) {
-    static char buf[VERY_BIG_BUF];
-    char *cp;
-
-    if(tmp==NULL)
-	return "";
-
-    buf[0]='\0';
-    switch(tmp->type) {
-	case RING:
-	case SKILL:
-	case WEAPON:
-	case ARMOUR:
-	case BRACERS:
-	case HELMET:
-	case SHIELD:
-	case BOOTS:
-	case GLOVES:
-	case AMULET:
-	case GIRDLE:
-	case BOW:
-	case ARROW:
-	case CLOAK:
-	case FOOD:
-	case DRINK:
-	case FLESH:
-	case SKILL_TOOL:
-	case POWER_CRYSTAL:
-	    if(*(cp=describe_item(tmp, pl))!='\0') {
-		int len;
-
-		strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
-		buf[VERY_BIG_BUF-1]=0;
-		len=strlen(buf);
-		if (len<VERY_BIG_BUF-5) {
-		    /* Since we know the length, we save a few cpu cycles by using
-		     * it instead of calling strcat */
-		    strcpy(buf+len," ");
-		    len++;
-		    strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
-		    buf[VERY_BIG_BUF-1]=0;
-		}
-	    }
-    }
-    if(buf[0]=='\0') {
-	strncpy(buf,query_name(tmp), VERY_BIG_BUF-1);
-	buf[VERY_BIG_BUF-1]=0;
-    }
-
-    return buf;
+const char *long_desc(const object *tmp, const object *pl)
+{
+    return ob_describe(tmp,pl);
 }
 
 void examine(object *op, object *tmp) {

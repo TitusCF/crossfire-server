@@ -40,16 +40,42 @@ void init_ob_types(ob_methods *base_type) {
     int tmp;
     for (tmp=0; tmp < OBJECT_TYPE_MAX; tmp++)
         init_ob_method_struct(&type_methods[tmp], base_type);
-    
+
     /* init_type_foobar() here, where foobar is for a type. In other words,
      * from here, call functions that register object methods for types.
      */
+    init_type_book();
+    init_type_item_transformer();
+    init_type_power_crystal();
+    init_type_transport();
 }
 
 /* Functions for registering methods for types */
-/*
- * Example:
- * void register_apply(int ob_type, apply_func *methodptr) {
- *    type_methods[ob_type]->apply = methodptr;
- * }
+/**
+ * Registers the apply method for the given type.
+ * @param ob_type The type of object to register this method to
+ * @param method The method to link
  */
+void register_apply(int ob_type, apply_func method)
+{
+    type_methods[ob_type].apply = method;
+}
+/**
+ * Registers the process method for the given type.
+ * @param ob_type The type of object to register this method to
+ * @param method The method to link
+ */
+void register_process(int ob_type, process_func method)
+{
+    type_methods[ob_type].process = method;
+}
+/**
+ * Registers the describe method for the given type.
+ * @param ob_type The type of object to register this method to
+ * @param method The method to link
+ */
+void register_describe(int ob_type, describe_func method)
+{
+    type_methods[ob_type].describe = method;
+}
+

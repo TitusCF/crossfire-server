@@ -1273,141 +1273,37 @@ int process_object(object *op) {
     }
     /* Lauwenmark: Handle for plugin time event */
     execute_event(op, EVENT_TIME,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
-    switch(op->type) {
-	case TRANSPORT:
-	    /* Transports are directed by players - thus, there
-	     * speed is reduced when the player moves them about.
-	     * So give them back there speed here, since process_objects()
-	     * has decremented it.
-	     */
-	    if (op->speed_left < 0.0) op->speed_left += 1.0;
-	    return 1;
-
-	case SPELL_EFFECT:
-	    move_spell_effect(op);
-	    return 1;
-
-	case ROD:
-	case HORN:
-	    regenerate_rod(op);
-	    return 1;
-
-	case FORCE:
-	case POTION_EFFECT:
-	    remove_force(op);
-	    return 1;
-
-	case BLINDNESS:
-	    remove_blindness(op);
-	    return 0;
-
-	case POISONING:
-	    poison_more(op);
-	    return 0;
-
-	case DISEASE:
-	    move_disease(op);
-	    return 0;
-
-	case SYMPTOM:
-	    move_symptom(op);
-	    return 0;
-
-	case THROWN_OBJ:
-	case ARROW:
-	    move_arrow(op);
-	    return 0;
-
-	case LIGHTNING: /* It now moves twice as fast */
-	    move_bolt(op);
-	    return 0;
-
-	case DOOR:
-	    remove_door(op);
-	    return 0;
-
-	case LOCKED_DOOR:
-	    remove_door2(op);
-	    return 0;
-
-	case TELEPORTER:
-	    move_teleporter(op);
-	    return 0;
-
-	case GOLEM:
-	    move_golem(op);
-	    return 0;
-
-	case EARTHWALL:
-	    hit_player(op, 2, op, AT_PHYSICAL, 1);
-	    return 0;
-
-	case FIREWALL:
-	    move_firewall(op);
-	    if (op->stats.maxsp)
-		animate_turning(op);
-	    return 0;
-
-	case MOOD_FLOOR:
-	    do_mood_floor(op, op);
-	    return 0;
-
-	case GATE:
-	    move_gate(op);
-	    return 0;
-
-	case TIMED_GATE:
-	    move_timed_gate(op);
-	    return 0;
-
-	case TRIGGER:
-	case TRIGGER_BUTTON:
-	case TRIGGER_PEDESTAL:
-	case TRIGGER_ALTAR:
-	    animate_trigger(op);
-	    return 0;
-
-	case DETECTOR:
-	    move_detector(op);
-
-	case DIRECTOR:
-	    if (op->stats.maxsp)
-		animate_turning(op);
-	    return 0;
-
-	case HOLE:
-	    move_hole(op);
-	    return 0;
-
-	case DEEP_SWAMP:
-	    move_deep_swamp(op);
-	    return 0;
-
-	case RUNE:
-	case TRAP:
-	    move_rune(op);
-	    return 0;
-
-	case PLAYERMOVER:
-	    move_player_mover(op);
-	    return 0;
-
-	case CREATOR:
-	    move_creator(op);
-	    return 0;
-
-	case MARKER:
-	    move_marker(op);
-	    return 0;
-
-	case PLAYER_CHANGER:
-	    move_player_changer(op);
-	    return 0;
-
-	case PEACEMAKER:
-	    move_peacemaker(op);
-	    return 0;
-    }
-
-    return 0;
+    return ob_process(op);
+}
+void legacy_move_detector(object *op)
+{
+    move_detector(op);
+}
+void legacy_remove_force(object *op)
+{
+    remove_force(op);
+}
+void legacy_move_timed_gate(object *op)
+{
+    move_timed_gate(op);
+}
+void legacy_animate_trigger(object *op)
+{
+    animate_trigger(op);
+}
+void legacy_remove_blindness(object *op)
+{
+    remove_blindness(op);
+}
+void legacy_poison_more(object* op)
+{
+    poison_more(op);
+}
+void legacy_move_gate(object *op)
+{
+    move_gate(op);
+}
+void legacy_move_hole(object *op)
+{
+    move_hole(op);
 }

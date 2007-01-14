@@ -39,9 +39,9 @@ static ob_methods legacy_type;
  */
 void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
     methods->fallback = fallback;
-    /* Example:
-     * methods->apply = NULL;
-     */
+    methods->apply    = NULL;
+    methods->process  = NULL;
+    methods->describe = NULL;
 }
 
 /**
@@ -54,8 +54,10 @@ void init_ob_methods() {
      * ob_methods struct should be removed.
      */
     init_ob_method_struct(&legacy_type, NULL);
-    /* legacy_type->foobar = legacy_ob_foobar; */
-    
+    legacy_type.apply    = legacy_ob_apply;
+    legacy_type.process  = legacy_ob_process;
+    legacy_type.describe = legacy_ob_describe;
+
     /* Init base_type, inheriting from legacy_type. The base_type is susposed to
      * be a base class of object that all other object types inherit methods
      * they don't handle individually. Things such as generic drop/pickup code
@@ -63,8 +65,8 @@ void init_ob_methods() {
      * to apply that." messages should be handled from here.
      */
     init_ob_method_struct(&base_type, &legacy_type);
-    /* base_type->foobar = common_ob_foobar; */
-    
+    /* base_type.foobar = common_ob_foobar; */
+
     /* Init object types methods, inheriting from base_type. */
     init_ob_types(&base_type);
 }
@@ -78,13 +80,60 @@ void init_ob_methods() {
  * belongs in the common/ directory also, referenced to by base_type.
  */
 
-/*
- * Example:
- * int ob_apply(object *ob) {
- *     ob_methods *methods;
- *     for (methods = type_methods[ob->type]; methods; methods = methods->fallback)
- *         if (methods->apply)
- *             return methods->apply(methods, ob);
- *     return METHOD_UNHANDLED;
- * }
+/**
+ * Applies an object.
+ * @param op The object to apply
+ * @param applier The object that executes the apply action
+ * @param aflags Special (always apply/unapply) flags
+ * @retval 0 A player or monster can't apply objects of that type
+ * @retval 1 has been applied, or there was an error applying the object
+ * @retval 2 objects of that type can't be applied if not in inventory
  */
+int ob_apply(object* op, object* applier, int aflags)
+{
+    ob_methods* methods;
+    for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
+    {
+        if (methods->apply)
+        {
+            return methods->apply(methods, op, applier, aflags);
+        }
+    }
+    return METHOD_UNHANDLED;
+}
+/**
+ * Processes an object, giving it the opportunity to move or react.
+ * Note: The return value of ob_process doesn't seem to be used anymore.
+ * @param op The object to process
+ * @retval METHOD_UNHANDLED if the process method does not exist for that objec,
+ */
+int ob_process(object* op)
+{
+    ob_methods* methods;
+    for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
+    {
+        if (methods->process)
+        {
+            return methods->process(methods, op);
+        }
+    }
+    return METHOD_UNHANDLED;
+}
+/**
+ * Returns the description of an object, as seen by the given observer.
+ * @param op The object to describe
+ * @param observer The object to which the description is made
+ * @return A string containing the description made
+ */
+const char* ob_describe(object* op, object* observer)
+{
+    ob_methods* methods;
+    for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
+    {
+        if (methods->describe)
+        {
+            return methods->describe(methods, op, observer);
+        }
+    }
+    return NULL;
+}

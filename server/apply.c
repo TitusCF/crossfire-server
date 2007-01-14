@@ -59,196 +59,6 @@ int transport_can_hold(const object *transport, const object *op, int nrof)
 	return 1;
 }
 
-
-/**
- * Player is trying to use a transport.  This returns same values as
- * manual_apply() does.  This function basically checks to see if
- * the player can use the transport, and if so, sets up the appropriate
- * pointers.
- */
-int apply_transport(object *pl, object *transport, int aflag) {
-
-    /* Only players can use transports right now */
-    if (pl->type != PLAYER) return 0;
-
-    /* If player is currently on a transport but not this transport, they need
-     * to exit first.  Perhaps transport to transport transfers should be
-     * allowed.
-     */
-    if (pl->contr->transport && pl->contr->transport != transport) {
-	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		"You must exit %s before you can board %s.",
-		"You must exit %s before you can board %s.",
-			     query_name(pl->contr->transport), 
-			     query_name(transport));
-	return 1;
-    }
-
-    /* player is currently on a transport.  This must mean he
-     * wants to exit.
-     */
-    if (pl->contr->transport) {
-	object *old_transport = pl->contr->transport, *inv;
-
-	/* Should we print a message if the player only wants to
-	 * apply?
-	 */
-	if (aflag & AP_APPLY) return 1;
-	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-		"You disembark from %s.",
-		"You disembark from %s.",
-			     query_name(old_transport));
-	remove_ob(pl);
-	pl->map = old_transport->map;
-	pl->x = old_transport->x;
-	pl->y = old_transport->y;
-	if (pl->contr == old_transport->contr)
-	    old_transport->contr = NULL;
-
-	pl->contr->transport = NULL;
-	insert_ob_in_map(pl, pl->map, pl, 0);
-	sum_weight(old_transport);
-
-	/* Possible for more than one player to be using a transport.
-	 * if that is the case, we don't want to reset the face, as the
-	 * transport is still occupied.
-	 */
-	for (inv=old_transport->inv; inv; inv=inv->below)
-	    if (inv->type == PLAYER) break;
-	if (!inv) {
-	    old_transport->face = old_transport->arch->clone.face;
-	    old_transport->animation_id = old_transport->arch->clone.animation_id;
-	} else {
-	    old_transport->contr = inv->contr;
-	    draw_ext_info_format(NDI_UNIQUE, 0, inv,
-				 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-				 "%s has disembarked.  You are now the captain of %s",
-				 "%s has disembarked.  You are now the captain of %s",
-				 pl->name, query_name(old_transport));
-	}
-	return 1;
-    } 
-    else {
-	/* player is trying to board a transport */
-	int pc=0, p_limit;
-	object *inv, *old_transport;
-	const char *kv;
-
-	if (aflag & AP_UNAPPLY) return 1;
-        
-	/* Can this transport hold the weight of this player? */
-	if (!transport_can_hold(transport, pl, 1)) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		"The %s is unable to hold your weight!",
-		"The %s is unable to hold your weight!",
-			     query_name(transport));
-	    return 1;
-	}
-        
-        /* If the player is holding the transport, drop it. */
-        if (transport->env == pl) {
-            old_transport = transport;
-            /* Don't drop transports in shops. */
-            if (!is_in_shop(pl)) {
-                transport = drop_object(pl, transport, 1);
-            } else {
-                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You cannot drop the %s in a shop to use it.",
-                    "You cannot drop the %s in a shop to use it.",
-                    query_name(old_transport));
-                return 1;
-            }
-            /* Did it fail to drop? */
-            if(!transport) {
-                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                    "You need to drop the %s to use it.",
-                    "You need to drop the %s to use it.",
-                    query_name(old_transport));
-                return 1;
-            }
-        }
-
-	/* Does this transport have space for more players? */
-	for (inv=transport->inv; inv; inv=inv->below) {
-	    if (inv->type == PLAYER) pc++;
-	}
-	kv = get_ob_key_value(transport, "passenger_limit");
-	if (!kv) p_limit=1;
-	else p_limit = atoi(kv);
-	if (pc >= p_limit) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		"The %s does not have space for any more people",
-		"The %s does not have space for any more people",
-			     query_name(transport));
-	    return 1;
-	}
-
-	/* Everything checks out OK - player can get on the transport */
-	pl->contr->transport = transport;
-
-	if (transport->contr) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-			     "The %s's captain is currently %s", 
-			     "The %s's captain is currently %s", 
-			     query_name(transport), transport->contr->ob->name);
-	}
-	else {
-	    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-				 "You're the %s's captain",
-				 "You're the %s's captain",
-				 query_name(transport));
-	    transport->contr = pl->contr;
-	}
-
-	remove_ob(pl);
-	insert_ob_in_ob(pl, transport);
-	sum_weight(transport);
-	pl->map = transport->map;
-        if (pl->x != transport->x || pl->y != transport->y) {
-            esrv_map_scroll(&pl->contr->socket, (pl->x - transport->x), (pl->y - transport->y));
-	    pl->contr->socket.update_look=1;
-	    pl->contr->socket.look_position=0;
-            pl->x = transport->x;
-            pl->y = transport->y;
-        }
-
-	/* Might need to update face, animation info */
-	if (!pc) {
-	    const char *str;
-
-	    str = get_ob_key_value(transport, "face_full");
-	    if (str)
-		transport->face = &new_faces[find_face(str, 
-					      transport->face->number)];
-	    str = get_ob_key_value(transport, "anim_full");
-	    if (str)
-		transport->animation_id = find_animation(str);
-	}
-
-	/* Does speed of this object change based on weight? */
-	kv = get_ob_key_value(transport, "weight_speed_ratio");
-	if (kv) {
-	    int wsr = atoi(kv);
-	    float base_speed;
-
-	    kv = get_ob_key_value(transport, "base_speed");
-	    if (kv) base_speed = atof(kv);
-	    else base_speed = transport->arch->clone.speed;
-
-	    transport->speed = base_speed - (base_speed * transport->carrying * 
-			     wsr) / (transport->weight_limit * 100);
-
-	    /* Put some limits on min/max speeds */
-	    if (transport->speed < 0.10) transport->speed = 0.10;
-	    if (transport->speed > 1.0) transport->speed = 1.0;
-	}
-    } /* else if player is boarding the transport */
-
-    return 1;
-}
-
-	
-
 /**
  * Check if op should abort moving victim because of it's race or slaying.
  * Returns 1 if it should abort, returns 0 if it should continue.
@@ -1215,7 +1025,7 @@ static int convert_item(object *item, object *converter) {
     insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
     return 1;
 }
-  
+
 /**
  * Handle apply on containers. 
  * By Eneq(@csd.uu.se).
@@ -1908,86 +1718,6 @@ void move_apply (object *trap, object *victim, object *originator)
 
     leave:
 	recursion_depth--;
-}
-
-/**
- * Handles reading a regular (ie not containing a spell) book.
- */
-static void apply_book (object *op, object *tmp)
-{
-    int lev_diff;
-    object *skill_ob;
-
-    if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-		    "You are unable to read while blind.", NULL);
-      return;
-    }
-    if(tmp->msg==NULL) {
-      draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		   "You open the %s and find it empty.",
-		   "You open the %s and find it empty.",
-		   tmp->name);
-      return;
-    }
-
-    /* need a literacy skill to read stuff! */
-    skill_ob = find_skill_by_name(op, tmp->skill);
-    if ( ! skill_ob) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-		      "You are unable to decipher the strange symbols.", NULL);
-	return;
-    }
-    lev_diff = tmp->level - (skill_ob->level + 5);
-    if ( ! QUERY_FLAG (op, FLAG_WIZ) && lev_diff > 0) {
-	if (lev_diff < 2)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is just barely beyond your comprehension.", NULL);
-	else if (lev_diff < 3)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is slightly beyond your comprehension.", NULL);
-	else if (lev_diff < 5)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is beyond your comprehension.", NULL);
-	else if (lev_diff < 8)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is quite a bit beyond your comprehension.", NULL);
-	else if (lev_diff < 15)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is way beyond your comprehension.", NULL);
-	else
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			  "This book is totally beyond your comprehension.", NULL);
-	return;
-    }
-
-
-    /* Lauwenmark: Handle for plugin book event */
-    /*printf("Book apply: %s\n", tmp->name);
-    execute_event(tmp, EVENT_APPLY,op,NULL,SCRIPT_FIX_ALL);
-    printf("Book applied: %s\n", tmp->name);*/
-    {
-    	readable_message_type* msgType = get_readable_message_type(tmp);
-    	draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, op,
-                msgType->message_type, msgType->message_subtype,
-                "You open the %s and start reading.\n%s", 
-                "You open the %s and start reading.\n%s", 
-                long_desc(tmp,op), tmp->msg);
-    }
-
-    /* gain xp from reading */
-    if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
-	int exp_gain=calc_skill_exp(op,tmp, skill_ob);
-      if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED)) {
-        /*exp_gain *= 2; because they just identified it too */
-        SET_FLAG(tmp,FLAG_IDENTIFIED);
-        /* If in a container, update how it looks */
-        if(tmp->env) esrv_update_item(UPD_FLAGS|UPD_NAME, op,tmp);
-        else op->contr->socket.update_look=1;
-      }
-      change_exp(op,exp_gain, skill_ob->skill, 0);
-      SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
-    }
 }
 
 /**
@@ -2806,219 +2536,23 @@ int manual_apply (object *op, object *tmp, int aflag)
 {
     if (tmp->head) tmp=tmp->head;
 
-    if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED)) {
-	if (op->type == PLAYER) {
-	    draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-			   "You should pay for it first.", NULL);
-	    return 1;
-	} else {
-	    return 0;   /* monsters just skip unpaid items */
-	}
+    if (QUERY_FLAG (tmp, FLAG_UNPAID) && ! QUERY_FLAG (tmp, FLAG_APPLIED))
+    {
+        if (op->type == PLAYER)
+        {
+            draw_ext_info (NDI_UNIQUE, 0, op,
+                MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You should pay for it first.", NULL);
+            return 1;
+        }
+        return 0;   /* monsters just skip unpaid items */
     }
-
 
     /* Lauwenmark: Handle for plugin apply event */
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
         return 1;
 
-    switch (tmp->type) {
-
-	case TRANSPORT:
-	    return apply_transport(op, tmp, aflag);
-
-	case CF_HANDLE:
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-			  "You turn the handle.", NULL);
-	    play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE);
-	    tmp->value=tmp->value?0:1;
-	    SET_ANIMATION(tmp, tmp->value);
-	    update_object(tmp,UP_OBJ_FACE);
-	    push_button(tmp);
-	    return 1;
-
-	case TRIGGER:
-	    if (check_trigger (tmp, op)) {
-		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-			       "You turn the handle.", NULL);
-		play_sound_map (tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE);
-	    } else {
-		draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-			       "The handle doesn't move.", NULL);
-	    }
-	    return 1;
-
-	case EXIT:
-	    if (op->type != PLAYER)
-		return 0;
-	    if( ! EXIT_PATH (tmp) || !is_legal_2ways_exit(op,tmp)) {
-		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-				     "The %s is closed.",
-				     "The %s is closed.",
-				     query_name(tmp));
-	    } else {
-		/* Don't display messages for random maps. */
-		if (tmp->msg && strncmp(EXIT_PATH(tmp),"/!",2) &&
-		    strncmp(EXIT_PATH(tmp), "/random/", 8))
-		draw_ext_info (NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, tmp->msg, NULL);
-		enter_exit(op,tmp);
-	    }
-	    return 1;
-
-	case SIGN:
-	    apply_sign (op, tmp, 0);
-	    return 1;
-
-	case BOOK:
-	    if (op->type == PLAYER) {
-		apply_book (op, tmp);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case SKILLSCROLL:
-	    if (op->type == PLAYER) {
-		apply_skillscroll (op, tmp);
-		return 1;
-	    }
-	    return 0;
-
-	case SPELLBOOK:
-	    if (op->type == PLAYER) {
-		apply_spellbook (op, tmp);
-		return 1;
-	    }
-	    return 0;
-
-	case SCROLL:
-	    apply_scroll (op, tmp, 0);
-	    return 1;
-
-	case POTION:
-	    (void) apply_potion(op, tmp);
-	    return 1;
-
-	/* Eneq(@csd.uu.se): Handle apply on containers. */
-	case CLOSE_CON:
-	    if (op->type==PLAYER)
-		(void) esrv_apply_container (op, tmp->env);
-	    else
-		(void) apply_container (op, tmp->env);
-	    return 1;
-
-	case CONTAINER:
-	    if (op->type==PLAYER)
-		(void) esrv_apply_container (op, tmp);
-	    else
-		(void) apply_container (op, tmp);
-	    return 1;
-
-	case TREASURE:
-	    if (op->type == PLAYER) {
-		apply_treasure (op, tmp);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case WEAPON:
-	case ARMOUR:
-	case BOOTS:
-	case GLOVES:
-	case AMULET:
-	case GIRDLE:
-	case BRACERS:
-	case SHIELD:
-	case HELMET:
-	case RING:
-	case CLOAK:
-	case WAND:
-	case ROD:
-	case HORN:
-	case SKILL:
-	case BOW:
-	case LAMP:
-	case BUILDER:
-	case SKILL_TOOL:
-	    if (tmp->env != op)
-		return 2;   /* not in inventory */
-	    (void) apply_special (op, tmp, aflag);
-	    return 1;
-
-	case DRINK:
-	case FOOD:
-	case FLESH:
-	    apply_food (op, tmp);
-	    return 1;
-
-	case POISON:
-	    apply_poison (op, tmp);
-	    return 1;
-
-	case SAVEBED:
-	    if (op->type == PLAYER) {
-		apply_savebed (op);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case ARMOUR_IMPROVER:
-	    if (op->type == PLAYER) {
-		apply_armour_improver (op, tmp);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case WEAPON_IMPROVER:
-	    (void) check_improve_weapon(op, tmp);
-	    return 1;
-
-	case CLOCK:
-	    if (op->type == PLAYER) {
-		timeofday_t tod;
-
-		get_tod(&tod);
-		play_sound_player_only(op->contr, SOUND_CLOCK,0,0);
-		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-		     "It is %d minute%s past %d o'clock %s",
-		     "It is %d minute%s past %d o'clock %s",
-		     tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-		     ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-		     ((tod.hour >= 14) ? "pm" : "am"));
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case MENU: 
-	    if (op->type == PLAYER) {
-		shop_listing (op);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case POWER_CRYSTAL:
-	    apply_power_crystal(op,tmp);  /*  see egoitem.c */
-	    return 1;
-
-	case LIGHTER:		/* for lighting torches/lanterns/etc */ 
-	    if (op->type == PLAYER) {
-		apply_lighter(op,tmp);
-		return 1;
-	    } else {
-		return 0;
-	    }
-
-	case ITEM_TRANSFORMER:
-	    apply_item_transformer( op, tmp );
-	    return 1;
-
-	default:
-	    return 0;
-    }
+    return ob_apply(tmp,op,aflag);
 }
 
 
@@ -3084,9 +2618,10 @@ void player_apply_below (object *pl)
     object *tmp, *next;
     int floors;
 
-    if (pl->contr->transport && pl->contr->transport->type == TRANSPORT) {
-	apply_transport(pl, pl->contr->transport, 0);
-	return;
+    if (pl->contr->transport && pl->contr->transport->type == TRANSPORT)
+    {
+        ob_apply(pl->contr->transport,pl,0);
+        return;
     }
 
     /* If using a container, set the starting item to be the top
@@ -4237,7 +3772,6 @@ void eat_special_food(object *who, object *food) {
     fix_object(who);
 }
 
-
 /**
  * Designed primarily to light torches/lanterns/etc.
  * Also burns up burnable material too. First object in the inventory is
@@ -4569,3 +4103,36 @@ static void apply_item_transformer( object* pl, object* transformer )
         if ( --transformer->stats.food == 0 )
             decrease_ob_nr( transformer, 1 );
     }
+
+void legacy_apply_lighter(object* who, object* lighter)
+{
+    apply_lighter(who, lighter);
+}
+void legacy_apply_armour_improver(object* op, object* tmp)
+{
+    apply_armour_improver(op, tmp);
+}
+void legacy_apply_food(object* op, object* tmp)
+{
+    apply_food(op,tmp);
+}
+void legacy_apply_sign(object* op, object* sign, int autoapply)
+{
+    apply_sign(op, sign, autoapply);
+}
+void legacy_apply_spellbook(object* op, object* tmp)
+{
+    apply_spellbook(op, tmp);
+}
+void legacy_check_improve_weapon(object* op, object* tmp)
+{
+    check_improve_weapon(op, tmp);
+}
+void legacy_apply_container(object* op, object* sack)
+{
+    apply_container(op, sack);
+}
+int legacy_is_legal_2ways_exit(object* op, object* exit)
+{
+    return is_legal_2ways_exit(op, exit);
+}

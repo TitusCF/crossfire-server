@@ -45,7 +45,6 @@ libserver_a_SOURCES = \
 	commands.c\
 	daemon.c\
 	disease.c\
-	egoitem.c \
 	hiscore.c\
 	gods.c\
 	init.c\
