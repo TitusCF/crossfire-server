@@ -86,7 +86,7 @@ void init_skills(void) {
     for (i=1; i<NUM_SKILLS; i++) {
         if (!skill_names[i]) {
             LOG(llevError, "init_skills: skill subtype %d doesn't have a name?\n", i);
-            skills_names[i] = add_string("dummy skill");
+            skill_names[i] = add_string("dummy skill");
         }
     }
 }
