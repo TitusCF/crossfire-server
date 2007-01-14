@@ -726,10 +726,25 @@ static void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
 }
 
 
-
+/**
+ * Determines the archetype for holy servant and god avatar.
+ *
+ * Possible monsters are stored as invisible books in god's inventory,
+ * one having the right name is selected randomly.
+ *
+ * @param god
+ * god for which we want something.
+ * @param type
+ * what the summon type is. Must be a shared string.
+ * @return
+ * random archetype matching the type, NULL if none found.
+ */
 archetype *determine_holy_arch (object *god, const char *type)
 {
     treasure *tr;
+    int count;
+    archetype* last;
+    object* item;
 
     if ( ! god || ! god->randomitems) {
         LOG (llevError, "BUG: determine_holy_arch(): no god or god without "
@@ -737,17 +752,32 @@ archetype *determine_holy_arch (object *god, const char *type)
         return NULL;
     }
 
+    count = 0;
+    last = 0;
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
-        object *item;
-
-        if ( ! tr->item)
+        if (!tr->item)
             continue;
         item = &tr->item->clone;
-
-        if (item->type == BOOK && item->invisible
-            && strcmp (item->name, type) == 0)
-            return item->other_arch;
+        if (item->type == BOOK && item->invisible && item->name == type)
+            count++;
     }
+    if (count == 0) {
+        return NULL;
+    }
+
+    count = rndm(1, count);
+
+    for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
+        if (!tr->item)
+            continue;
+        item = &tr->item->clone;
+        if (item->type == BOOK && item->invisible && item->name == type) {
+            count--;
+            if (count == 0)
+                return item->other_arch;
+        }
+    }
+
     return NULL;
 }
 

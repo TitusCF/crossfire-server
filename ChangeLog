@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #778211: allow avatars and holy servants to be random.
+Changed determine_holy_arch to return one random item instead of first matching one.
+ server/gods.c
+----
 Rename 'new_save_map' to 'save_map'.
  common/map.c
  crossedit/Edit.c
