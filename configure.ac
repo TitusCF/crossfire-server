@@ -246,6 +246,16 @@ CF_CHECK_CROSSEDIT(["$X11LIBS"],
 	[cf_will_build_crossedit="yes"]
 	AC_SUBST(CROSSEDIT, 'crossedit'), 
 	[cf_will_build_crossedit="no"] )
+
+########################
+# CFLogger configuration
+
+AC_ARG_ENABLE(logger,
+		[ --disable-logger	Disable the logger compilation],,
+		enable_logger=yes)
+AC_CHECK_LIB(sqlite3, main,[ cf_have_libsqlite=yes ])
+AM_CONDITIONAL(HAVE_CFLOGGER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes"])
+
 ########################
 # Unit test configuration
 
@@ -274,6 +284,7 @@ AC_OUTPUT([Makefile
 	plugins/cfpython/include/Makefile plugins/cfanim/Makefile 
 	plugins/cfanim/include/Makefile
 	plugins/common/Makefile plugins/common/include/Makefile
+	plugins/cflogger/Makefile
 	devel/Makefile
 	test/Makefile test/unit/Makefile test/toolkit/Makefile
 	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile
@@ -296,7 +307,13 @@ AC_MSG_NOTICE([  Build options])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([    Will build crossedit? (*)            $cf_will_build_crossedit ])
 AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
-		
+
+if test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes" ; then
+AC_MSG_NOTICE([    Will build cflogger?                 yes])
+else
+AC_MSG_NOTICE([    Will build cflogger?                 no])
+fi
+
 if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
 			
