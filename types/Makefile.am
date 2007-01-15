@@ -1,6 +1,5 @@
 noinst_LIBRARIES = libtypes.a
-libtypes_a_SOURCES = dummy.c \
-book/book.c \
+libtypes_a_SOURCES = book/book.c \
 item_transformer/item_transformer.c \
 power_crystal/power_crystal.c \
 transport/transport.c \

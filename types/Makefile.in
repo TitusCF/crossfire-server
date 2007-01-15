@@ -51,10 +51,10 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libtypes_a_AR = $(AR) $(ARFLAGS)
 libtypes_a_LIBADD =
-am_libtypes_a_OBJECTS = dummy.$(OBJEXT) book.$(OBJEXT) \
-	item_transformer.$(OBJEXT) power_crystal.$(OBJEXT) \
-	transport.$(OBJEXT) trigger.$(OBJEXT) describe.$(OBJEXT) \
-	apply.$(OBJEXT) legacy_describe.$(OBJEXT) process.$(OBJEXT)
+am_libtypes_a_OBJECTS = book.$(OBJEXT) item_transformer.$(OBJEXT) \
+	power_crystal.$(OBJEXT) transport.$(OBJEXT) trigger.$(OBJEXT) \
+	describe.$(OBJEXT) apply.$(OBJEXT) legacy_describe.$(OBJEXT) \
+	process.$(OBJEXT)
 libtypes_a_OBJECTS = $(am_libtypes_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
@@ -222,8 +222,7 @@ target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
 noinst_LIBRARIES = libtypes.a
-libtypes_a_SOURCES = dummy.c \
-book/book.c \
+libtypes_a_SOURCES = book/book.c \
 item_transformer/item_transformer.c \
 power_crystal/power_crystal.c \
 transport/transport.c \
@@ -287,7 +286,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apply.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/book.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/describe.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/item_transformer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/legacy_describe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power_crystal.Po@am__quote@

@@ -1,4 +1,3 @@
-/* dummy.c */
 /* book/book.c */
 void init_type_book(void);
 method_ret book_type_apply(ob_methods *context, object *op, object *applier, int aflags);
