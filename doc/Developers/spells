@@ -1016,6 +1016,19 @@ hp: duration
 exp: range
 maxhp: set to a ->count variable, so spells can be uniquely identified.
 
+SP_PARTY_SPELL (48):
+ document, or clean totally broken spell :)
+
+SP_ITEM_CURSE_BLESS (49):
+    This will curse or bless player’s marked item. Curse will not change
+    weight, just set the cursed flag. Bless will make the item god-given.
+
+    cursed: if set, item gets cursed.
+    blessed: if set, item gets blessed.
+
+    Note that if both cursed and blessed are set, cursed only applies.
+    Also, no check is made to not have an item both cursed and blessed.
+
 ------------------------------------------------------------------------------
 5. Spell Casting Objects
 
