@@ -3082,8 +3082,7 @@ int can_apply_object(object *who, object *op)
     if (!QUERY_FLAG(who,FLAG_USE_ARMOUR) &&
         (op->type == ARMOUR || op->type == BOOTS ||
          op->type == CLOAK || op->type == HELMET ||
-         op->type == GLOVES || op->type == BRACERS ||
-         op->type == GIRDLE)) 
+         op->type == GLOVES || op->type == BRACERS)) 
 	retval |= CAN_APPLY_RESTRICTION;
 
 

@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Partially revert patch from 2006-31-12: girdles are not armours for wearing restrictions.
+ server/apply.c player.c
+Ryo 2007-01-20
+
 configure.ac: add --disable-logger flag to not build cflogger plugin, courtesy gros.
 ----
 Implement partially feature request #656194: It should be possible to curse and bless.
