@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+configure.ac: add --disable-logger flag to not build cflogger plugin, courtesy gros.
+----
+Implement partially feature request #656194: It should be possible to curse and bless.
+Added 2 new spells, 'curse item' and 'bless item', that work on marked item.
+Also changed the spell name matching logic, to always return if a perfect match is found.
+ include/spells.h sproto.h
+ server/spell_effect.c spell_util.c
+Ryo 2007-01-15
+
 types/{dummy.c, Makefile.in, Makefile.am}, include/typesproto.h: Remove dummy
    file now that it's no longer necessary
 Alex Schultz 2007-01-14

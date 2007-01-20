@@ -340,18 +340,21 @@ object *check_spell_known (object *op, const char *name)
 }
 
 
-/*  
+/**
  * Look at object 'op' and see if they know the spell
  * spname. This is pretty close to check_spell_known
  * above, but it uses a looser matching mechanism.
- * returns the matching spell object, or NULL.
- * If we match multiple spells but don't get an
- * exact match, we also return NULL.
+ *
+ * @param op
+ * object we're searching the inventory.
+ * @param spname
+ * partial spell name.
+ * @returns 
+ * matching spell object, or NULL. If we match multiple spells but don't get an exact match, we also return NULL.
  */
 
 object *lookup_spell_by_name(object *op,const char *spname) {
-    object *spob1=NULL, *spob2=NULL, *spob;
-    int nummatch=0;
+    object *spob1=NULL, *spob;
 
     if(spname==NULL) return NULL;
 
@@ -360,29 +363,18 @@ object *lookup_spell_by_name(object *op,const char *spname) {
      * the past spname, spob2 uses the length of the spell name.
      */
     for (spob = op->inv; spob; spob=spob->below) {
-	if (spob->type == SPELL) {
-	    if (!strncmp(spob->name, spname, strlen(spname))) {
-		nummatch++;
-		spob1 = spob;
-	    } else if (!strncmp(spob->name, spname, strlen(spob->name))) {
-		/* if spells have ambiguous names, it makes matching
-		 * really difficult.  (eg, fire and fireball would
-		 * fall into this category).  It shouldn't be hard to
-		 * make sure spell names don't overlap in that fashion.
-		 */
-		if (spob2)
-		    LOG(llevError,"Found multiple spells with overlapping base names: %s, %s\n",
-			spob2->name, spob->name);
-		spob2 = spob;
-	    }
-	}
+        if (spob->type == SPELL) {
+            if (!strncmp(spob->name, spname, strlen(spname))) {
+                if (strlen(spname) == strlen(spob->name))
+                    /* Perfect match, return it. */
+                    return spob;
+            if (spob1)
+                return NULL;
+            spob1 = spob;
+            }
+        }
     }
-    /* if we have best match, return it.  Otherwise, if we have one match
-     * on the loser match, return that, otehrwise null
-     */
-    if (spob2) return spob2;
-    if (spob1 && nummatch == 1) return spob1;
-    return NULL;
+    return spob1;
 }
 
 /* reflwall - decides weither the (spell-)object sp_op will
@@ -1472,6 +1464,11 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 
     case SP_PARTY_SPELL:
         success = cast_party_spell( op, caster, dir, spell_ob, stringarg );
+        break;
+
+    case SP_ITEM_CURSE_BLESS:
+        success = cast_item_curse_or_curse(op, caster, spell_ob);
+        break;
 
 	default:
 	    LOG(llevError,"cast_spell: Unhandled spell subtype %d\n",

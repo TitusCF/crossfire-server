@@ -2080,6 +2080,53 @@ int remove_curse(object *op, object *caster, object *spell) {
     return success;
 }
 
+/**
+ * This alters player's marked item's cursed or blessed status, based on the spell_ob's fields.
+ *
+ * @param op
+ * player casting the spell.
+ * @param caster
+ * what object was used to cast the spell.
+ * @param spell_ob
+ * spell itself.
+ * @return
+ * 1 if item was changed, 0 else.
+ */
+int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
+    object* marked = find_marked_object(op);
+    if (!marked) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "You need to mark an item first!", NULL);
+        return 0;
+    }
+
+    if ((QUERY_FLAG(marked, FLAG_CURSED) && QUERY_FLAG(spell_ob, FLAG_CURSED))
+      || (QUERY_FLAG(marked, FLAG_BLESSED) && QUERY_FLAG(spell_ob, FLAG_BLESSED))) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "The spell has no effect", NULL);
+        return 0;
+        }
+
+    if (QUERY_FLAG(spell_ob, FLAG_CURSED)) {
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+            "Your %s emits a dark light for a few seconds.", "Your %s emits a dark light for a few seconds.", query_short_name(marked));
+        SET_FLAG(marked, FLAG_CURSED);
+        CLEAR_FLAG(marked, FLAG_KNOWN_CURSED);
+        CLEAR_FLAG(marked, FLAG_IDENTIFIED);
+        esrv_update_item(UPD_FLAGS, op, marked);
+        return 1;
+
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+        "Your %s glows blue for a few seconds.", "Your %s glows blue for a few seconds.", query_short_name(marked));
+    SET_FLAG(marked, FLAG_BLESSED);
+    SET_FLAG(marked, FLAG_KNOWN_BLESSED);
+    SET_FLAG(marked, FLAG_STARTEQUIP);
+    esrv_update_item(UPD_FLAGS, op, marked);
+    return 1;
+}
+
 /** Identifies objects in the players inventory/on the ground */
 int cast_identify(object *op, object *caster, object *spell) {
     object *tmp;

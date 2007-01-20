@@ -612,6 +612,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
 int cast_bless(object *op, object *caster, object *spell_ob, int dir);
 int alchemy(object *op, object *caster, object *spell_ob);
 int remove_curse(object *op, object *caster, object *spell);
+int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob);
 int cast_identify(object *op, object *caster, object *spell);
 int cast_detection(object *op, object *caster, object *spell, object *skill);
 int cast_transfer(object *op, object *caster, object *spell, int dir);
