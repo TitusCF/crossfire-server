@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #656195: More effects of confusion.
+Three effects can happen:
+ * one item is transformed temporarily to flowers
+ * 2 random statistics are temporarily swapped
+ * a random spell is cast.
+A new force type is introduced, FORCE_TRANSFORMED_ITEM, which does some
+magic when it expires.
+Modified files:
+ include/spells.h
+ server/spell_util.c time.c
+Ryo 2007-01-20
+
 Partially revert patch from 2006-31-12: girdles are not armours for wearing restrictions.
  server/apply.c player.c
 Ryo 2007-01-20

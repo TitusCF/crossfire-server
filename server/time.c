@@ -192,13 +192,49 @@ static void remove_force(object *op) {
 			      MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
 			      "You regain your senses.", NULL);
 	    }
+        break;
+
+    case FORCE_TRANSFORMED_ITEM:
+            /* The force is into the item that was created */
+            if (op->env != NULL && op->inv != NULL) {
+                object* inv = op->inv;
+                object* pl = get_player_container(op);
+                remove_ob(inv);
+                inv->weight = (inv->nrof ? (sint32)(op->env->weight / inv->nrof) : op->env->weight);
+                if (op->env->env) {
+                    insert_ob_in_ob(inv, op->env->env);
+                    if (pl) {
+                        esrv_send_item(pl, inv);
+                        draw_ext_info_format(NDI_UNIQUE, 0,pl,
+                            MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+                            "Your %s recovers its original form.",
+                            "Your %s recovers its original form.",
+                            query_short_name(inv));
+                    }
+                }
+                else {
+                    /* Object on map */
+                    inv->x = op->env->x;
+                    inv->y = op->env->y;
+                    insert_ob_in_map(inv, op->env->map, NULL, 0);
+                }
+                inv = op->env;
+                remove_ob(op);
+                free_object(op);
+                if (inv->env && inv->env->type == PLAYER)
+                    esrv_del_item(inv->env->contr, inv->count);
+                remove_ob(inv);
+            }
+            return;
 
 	default:
-	    if(op->env!=NULL) {
-		CLEAR_FLAG(op, FLAG_APPLIED);
-		change_abil(op->env,op);
+        break;
+    }
+
+    if(op->env!=NULL) {
+        CLEAR_FLAG(op, FLAG_APPLIED);
+        change_abil(op->env,op);
         fix_object(op->env);
-	    }
     }
     remove_ob(op);
     free_object(op);

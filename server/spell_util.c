@@ -973,6 +973,130 @@ static int cast_party_spell(object *op, object *caster,int dir,object *spell_ob,
     return success;
     }
 
+/**
+ * This transforms one random item of op to a flower.
+ *
+ * Only some items are considered, mostly magical ones.
+ *
+ * Transformed item is put in a force in a flower, weights are adjusted.
+ *
+ * See remove_force() in server/time.c to see object removal.
+ *
+ * @param op
+ * player who is the victim.
+ */
+static void transmute_item_to_flower(object* op) {
+    object* force;
+    object* item;
+    object* flower;
+    object* first = NULL;
+    int count = 0;
+
+    for (item = op->inv; item; item = item->below) {
+        if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
+            if (!first)
+                first = item;
+            count++;
+        }
+    }
+
+    if (count == 0)
+        return;
+
+    count = rndm(0, count-1);
+    for (item = first; item && count>0; item = item->below) {
+        if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
+        count--;
+        }
+    }
+
+    if (!item)
+        return;
+
+    force = create_archetype(FORCE_NAME);
+    force->duration = 100 + rndm(0,10)*100;
+    force->subtype = FORCE_TRANSFORMED_ITEM;
+    force->speed = 1;
+    update_ob_speed(force);
+
+    flower = create_archetype("flowers_permanent");
+
+    if (QUERY_FLAG(item, FLAG_APPLIED))
+        manual_apply(op, item, AP_NOPRINT | AP_IGNORE_CURSE | AP_UNAPPLY);
+    remove_ob(item);
+    flower->weight = item->nrof ? item->nrof * item->weight : item->weight;
+    item->weight = 0;
+    esrv_del_item(op->contr, item->count);
+    insert_ob_in_ob(item, force);
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op,
+        MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+        "Your %s turns to a flower!",
+        "Your %s turns to a flower!",
+        query_short_name(item));
+
+    insert_ob_in_ob(force, flower);
+    flower = insert_ob_in_ob(flower, op);
+    esrv_send_item(op, flower);
+}
+
+/**
+ * Randomly swaps 2 stats of op.
+ *
+ * Swapping is merely a FORCE inserted into op's inventory.
+ *
+ * Used for spell casting when confused.
+ *
+ * @param op
+ * player who is the victim.
+ */
+static void swap_random_stats(object* op) {
+    object* force;
+    int first, second;
+
+    first = RANDOM()%NUM_STATS;
+    second = RANDOM()%(NUM_STATS-1);
+    if (second==first)
+        second++;
+
+    draw_ext_info_format(NDI_UNIQUE, 0,op,
+        MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SPELL,
+        "You suddenly feel really weird!",
+        "You suddenly feel really weird!");
+
+    force = create_archetype(FORCE_NAME);
+    force->duration = 100 + rndm(0,10)*100;
+    force->speed = 1;
+    SET_FLAG(force, FLAG_APPLIED);
+    set_attr_value(&force->stats, second, get_attr_value(&op->stats, first) - get_attr_value(&op->stats, second));
+    set_attr_value(&force->stats, first, get_attr_value(&op->stats, second) - get_attr_value(&op->stats, first));
+    update_ob_speed(force);
+    insert_ob_in_ob(force, op);
+    change_abil(op,force);
+    fix_object(op);
+}
+
+/**
+ * This does a random effect for op, which tried to cast a spell in a confused state.
+ *
+ * Note that random spell casting is handled in cast_spell itself.
+ *
+ * Used for spell casting when confused.
+ *
+ * @param op
+ * player for which to produce a random effect.
+ */
+static void handle_spell_confusion(object* op) {
+    switch (RANDOM()%2) {
+        case 0:
+            transmute_item_to_flower(op);
+            break;
+        case 1:
+            swap_random_stats(op);
+            break;
+    }
+}
+
 /* This is where the main dispatch when someone casts a spell.
  *
  * op is the creature that is owner of the object that is casting the spell -
@@ -1006,6 +1130,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     const char *godname;
     int success=0,mflags, cast_level=0, old_shoottype;
     object *skill=NULL;
+    int confusion_effect = 0;
 
     old_shoottype = op->contr ? op->contr->shoottype : 0;
 
@@ -1019,6 +1144,20 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     if (!caster) {
 	LOG(llevError,"cast_spell: null caster object passed\n");
 	return 0;
+    }
+
+    /* Handle some random effect if confused. */
+    if (QUERY_FLAG(op, FLAG_CONFUSED) && caster == op && op->type == PLAYER) {
+        if (rndm(0, 5) < 4) {
+            spell_ob = find_random_spell_in_ob(op, NULL);
+            draw_ext_info_format(NDI_UNIQUE, 0,op,
+                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "In your confused state, you're not sure of what you cast!",
+                "In your confused state, you're not sure of what you cast!");
+        }
+        else
+            /* We fall through to deplate sp/gr, and do some checks. */
+            confusion_effect = 1;
     }
 
     /* if caster is a spell casting object, this normally shouldn't be 
@@ -1239,6 +1378,16 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	object *owner = get_owner(caster);
 
 	if (owner) skill = find_skill_by_name(owner, caster->skill);
+    }
+
+    if (confusion_effect) {
+        /* If we get here, the confusion effect was 'random effect', so do it and bail out. */
+        draw_ext_info_format(NDI_UNIQUE, 0,op,
+            MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "In your confused state, you can't control the magic!",
+            "In your confused state, you can't control the magic!");
+        handle_spell_confusion(op);
+        return;
     }
 
     switch(spell_ob->subtype) {
