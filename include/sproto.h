@@ -5,7 +5,6 @@ int transport_can_hold(const object *transport, const object *op, int nrof);
 int should_director_abort(object *op, object *victim);
 int apply_potion(object *op, object *tmp);
 int esrv_apply_container(object *op, object *sack);
-void move_apply(object *trap, object *victim, object *originator);
 void do_learn_spell(object *op, object *spell, int special_prayer);
 void do_forget_spell(object *op, const char *spell);
 void apply_scroll(object *op, object *tmp, int dir);
@@ -22,10 +21,10 @@ void apply_changes_to_player(object *pl, object *change);
 void legacy_apply_lighter(object *who, object *lighter);
 void legacy_apply_armour_improver(object *op, object *tmp);
 void legacy_apply_food(object *op, object *tmp);
-void legacy_apply_sign(object *op, object *sign, int autoapply);
 void legacy_apply_spellbook(object *op, object *tmp);
 void legacy_check_improve_weapon(object *op, object *tmp);
 void legacy_apply_container(object *op, object *sack);
+void legacy_esrv_apply_container(object *op, object *sack);
 int legacy_is_legal_2ways_exit(object *op, object *exit);
 void legacy_apply_treasure(object *op, object *tmp);
 void legacy_apply_savebed(object *pl);
@@ -366,11 +365,13 @@ void init_ob_methods(void);
 int ob_apply(object *op, object *applier, int aflags);
 int ob_process(object *op);
 const char *ob_describe(object *op, object *observer);
+int ob_move_on(object *op, object *victim, object *originator);
 /* ob_types.c */
 void init_ob_types(ob_methods *base_type);
 void register_apply(int ob_type, apply_func method);
 void register_process(int ob_type, process_func method);
 void register_describe(int ob_type, describe_func method);
+void register_move_on(int ob_type, move_on_func method);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
@@ -612,7 +613,7 @@ int cast_change_ability(object *op, object *caster, object *spell_ob, int dir, i
 int cast_bless(object *op, object *caster, object *spell_ob, int dir);
 int alchemy(object *op, object *caster, object *spell_ob);
 int remove_curse(object *op, object *caster, object *spell);
-int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob);
+int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob);
 int cast_identify(object *op, object *caster, object *spell);
 int cast_detection(object *op, object *caster, object *spell, object *skill);
 int cast_transfer(object *op, object *caster, object *spell, int dir);
@@ -651,10 +652,6 @@ void shuffle_attack(object *op, int change_face);
 void spell_failure(object *op, int failure, int power, object *skill);
 int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg);
 void move_spell_effect(object *op);
-void apply_spell_effect(object *spell, object *victim);
-/* swamp.c */
-void walk_on_deep_swamp(object *op, object *victim);
-void move_deep_swamp(object *op);
 /* swap.c */
 void read_map_log(void);
 void swap_map(mapstruct *map);

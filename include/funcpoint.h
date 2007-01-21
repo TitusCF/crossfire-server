@@ -64,5 +64,5 @@ extern void	weather_effect(const char *);
 extern object *	find_skill_by_number(object *, int);
 extern int execute_event(object *, int, object *, object *, const char *, int);
 extern int execute_global_event(int , ...);
-
+extern int ob_move_on(object* op, object* victim, object* originator);
 #endif /* FUNCPOINT_H */

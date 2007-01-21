@@ -1433,7 +1433,7 @@ void set_darkness_map( mapstruct* m)
 {
 }
  
-void move_apply( object* ob, object* obt, object* obx )
+int ob_move_on(object* op, object* victim, object* originator)
 {
 }
  

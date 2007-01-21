@@ -79,10 +79,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             }
             return 1;
 
-        case SIGN:
-            legacy_apply_sign (applier, op, 0);
-            return 1;
-
         case SKILLSCROLL:
             if (applier->type == PLAYER)
             {

@@ -1715,37 +1715,3 @@ static void check_spell_effect(object *op) {
 
 }
 #endif
-
-
-/* This is called by move_apply.  Basically, if someone
- * moves onto a spell effect and the walk_on or fly_on flags
- * are set, this is called.  This should only be called for
- * objects of the appropraite type.
- */
-void apply_spell_effect(object *spell, object *victim)
-{
-    switch (spell->subtype) {
-	case SP_CONE:
-	    if (QUERY_FLAG(victim, FLAG_ALIVE) && spell->speed && spell->attacktype)
-		hit_player(victim, spell->stats.dam, spell, spell->attacktype, 0);
-	    break;
-
-	case SP_MAGIC_MISSILE:
-	    if (QUERY_FLAG (victim, FLAG_ALIVE)) {
-		tag_t spell_tag = spell->count;
-		hit_player (victim, spell->stats.dam, spell, spell->attacktype, 1);
-		if ( ! was_destroyed (spell, spell_tag)) {
-		    remove_ob (spell);
-		    free_object (spell);
-		}
-	    }
-	    break;
-
-	case SP_MOVING_BALL:
-	    if (QUERY_FLAG (victim, FLAG_ALIVE))
-		hit_player (victim, spell->stats.dam, spell, spell->attacktype, 1);
-	    else if (victim->material || victim->materialname)
-		save_throw_object (victim, spell->attacktype, spell);
-	    break;
-    }
-}

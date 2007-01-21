@@ -44,11 +44,35 @@ void init_ob_types(ob_methods *base_type) {
     /* init_type_foobar() here, where foobar is for a type. In other words,
      * from here, call functions that register object methods for types.
      */
+    init_type_altar();
+    init_type_arrow();
     init_type_book();
+    init_type_button();
+    init_type_check_inv();
+    init_type_container();
+    init_type_converter();
+    init_type_deep_swamp();
+    init_type_director();
+    init_type_exit();
+    init_type_hole();
+    init_type_identify_altar();
     init_type_item_transformer();
+    init_type_pedestal();
+    init_type_player_mover();
     init_type_power_crystal();
+    init_type_rune();
+    init_type_shop_mat();
+    init_type_sign();
+    init_type_spell_effect();
+    init_type_spinner();
+    init_type_thrown_object();
     init_type_transport();
+    init_type_trap();
+    init_type_trapdoor();
     init_type_trigger();
+    init_type_trigger_altar();
+    init_type_trigger_button();
+    init_type_trigger_pedestal();
 }
 
 /* Functions for registering methods for types */
@@ -78,5 +102,14 @@ void register_process(int ob_type, process_func method)
 void register_describe(int ob_type, describe_func method)
 {
     type_methods[ob_type].describe = method;
+}
+/**
+ * Registers the move_on method for the given type.
+ * @param ob_type The type of object to register this method to
+ * @param method The method to link
+ */
+void register_move_on(int ob_type, move_on_func method)
+{
+    type_methods[ob_type].move_on = method;
 }
 

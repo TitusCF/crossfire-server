@@ -60,11 +60,13 @@ typedef struct ob_methods ob_methods;
 typedef method_ret  (*apply_func)(ob_methods*, object*, object*, int);
 typedef method_ret  (*process_func)(ob_methods*, object*);
 typedef const char* (*describe_func)(ob_methods*, object*, object*);
+typedef method_ret  (*move_on_func)(ob_methods*, object*, object*, object*);
 struct ob_methods
 {
     apply_func      apply;          /**< The apply method */
     process_func    process;        /**< The process method */
     describe_func   describe;       /**< The describe method */
+    move_on_func    move_on;        /**< The move_on method */
     struct ob_methods *fallback;    /**< ob_method structure to fallback to */
 /* Example:
  * apply_func *apply;

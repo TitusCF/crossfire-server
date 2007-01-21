@@ -32,7 +32,7 @@ extern void update_button(object *op);
 extern void update_buttons(mapstruct *m);
 extern void use_trigger(object *op);
 extern void animate_turning(object *op);
-extern int check_altar_sacrifice (const object *altar, const object *sacrifice, int remove_others, int* toremove);
+extern int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove);
 extern int operate_altar(object *altar, object **sacrifice);
 extern void trigger_move(object *op, int state);
 extern int check_trigger(object *op, object *cause);

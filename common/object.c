@@ -1620,7 +1620,7 @@ void remove_ob(object *op) {
         if (check_walk_off && ((op->move_type & tmp->move_off) &&
             (op->move_type & ~tmp->move_off & ~tmp->move_block)==0)) {
 
-            move_apply(tmp, op, NULL);
+            ob_move_on(tmp, op, NULL);
             if (was_destroyed (op, tag)) {
                 LOG (llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
                     "leaving object\n", tmp->name, tmp->arch->name);
@@ -2378,7 +2378,7 @@ int check_move_on (object *op, object *originator)
           ((op->move_type & tmp->move_on) &&
           (op->move_type & ~tmp->move_on & ~tmp->move_block)==0)) {
 
-            move_apply(tmp, op, originator);
+            ob_move_on(tmp, op, originator);
             if (was_destroyed (op, tag))
                 return 1;
 

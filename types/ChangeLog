@@ -10,6 +10,25 @@ ChangeLog.
 
 --
 
+-------------------------------------------------------------------------------
+Ob types   : ALTAR, ARROW, BUTTON, CHECK_INV, CONTAINER, CONVERTER, DEEPSWAMP,
+             DIRECTOR, EXIT, HOLE, IDENTIFY_ALTAR, PEDESTAL, PLAYERMOVER,
+             RUNE, SHOP_MAT, SIGN, SPELL_EFFECT, SPINNER, THROWN_OBJ, TRAP,
+             TRAPDOOR, TRIGGER_ALTAR, TRIGGER_BUTTON, TRIGGER_PEDESTAL
+Events     : move_on
+Moved from : ../server/apply.c, ../server/time.c
+Moved to   : common/common_apply.c, altar/altar.c, arrow/arrow.c, button/button.c,
+             check_inv/check_inv.c, container/container.c, converter/converter.c,
+             deep_swamp/deep_swamp.c, director/director.c, exit/exit.c,
+             hole/hole.c, identify_altar/identify_altar.c, pedestal/pedestal.c,
+             player_mover/player_mover.c, rune/rune.c, shop_mat/shop_mat.c,
+             sign/sign.c, spell_effect/spell_effect.c, spinner/spinner.c,
+             thrown_object/thrown_object.c, trap/trap.c, trapdoor/trapdoor.c,
+             trigger_altar/trigger_altar.c, trigger_button/trigger_button.c,
+             trigger_pedestal/trigger_pedestal.c
+Comment    : Implemented the move_on method for the given object types.
+2007-01-21 - Yann Chachkoff
+-------------------------------------------------------------------------------
 Ob types   : TRIGGER
 Events     : apply, process
 Moved from : ../server/apply.c, ../server/time.c

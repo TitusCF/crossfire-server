@@ -64,7 +64,6 @@ libserver_a_SOURCES = \
 	spell_attack.c\
 	spell_effect.c\
 	spell_util.c\
-	swamp.c\
 	swap.c\
 	time.c\
 	timers.c\

@@ -126,10 +126,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             legacy_move_hole(op);
             return 0;
 
-        case DEEP_SWAMP:
-            move_deep_swamp(op);
-            return 0;
-
         case RUNE:
         case TRAP:
             move_rune(op);

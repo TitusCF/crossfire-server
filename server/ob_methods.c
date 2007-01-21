@@ -42,6 +42,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
     methods->apply    = NULL;
     methods->process  = NULL;
     methods->describe = NULL;
+    methods->move_on  = NULL;
 }
 
 /**
@@ -57,6 +58,7 @@ void init_ob_methods() {
     legacy_type.apply    = legacy_ob_apply;
     legacy_type.process  = legacy_ob_process;
     legacy_type.describe = legacy_ob_describe;
+    legacy_type.move_on  = NULL;
 
     /* Init base_type, inheriting from legacy_type. The base_type is susposed to
      * be a base class of object that all other object types inherit methods
@@ -136,4 +138,23 @@ const char* ob_describe(object* op, object* observer)
         }
     }
     return NULL;
+}
+/**
+ * Makes an object move on top of another one.
+ * @param op The object over which to move
+ * @param victim The object moving over op
+ * @param originator The object that is the cause of the move
+ * @retval METHOD_UNHANDLED if the process method does not exist for that object
+ */
+int ob_move_on(object* op, object* victim, object* originator)
+{
+    ob_methods* methods;
+    for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
+    {
+        if (methods->move_on)
+        {
+            return methods->move_on(methods, op, victim, originator);
+        }
+    }
+    return METHOD_UNHANDLED;
 }

@@ -516,7 +516,7 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
 	    op->move_on = MOVE_WALK;
 	    for (tmp=op->above; tmp!=NULL; tmp=next) {
 		next=tmp->above;
-		move_apply(op,tmp,tmp);
+        ob_move_on(op,tmp,tmp);
 	    }
 	}
 	SET_ANIMATION(op, op->stats.wc);
