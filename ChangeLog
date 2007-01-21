@@ -50,7 +50,7 @@ This is mainly done by changing check_altar_sacrifice().
  common/button.c: improve check_altar_sacrifice().
  include/libproto.h: update prototype for check_altar_sacrifice().
  server/apply.c: don't remove items, we don't care what we should remove.
- 
+
 ----
 Implement feature request #778211: allow avatars and holy servants to be random.
 Changed determine_holy_arch to return one random item instead of first matching one.
@@ -724,7 +724,7 @@ Lalo Martins 2006-09-06
 
 Apply patch #551467 (type mismatch in surround_flag3() can cause SIGSEGV)
  courtesy Mark Kidder.
- random_maps/rproto.h wall.c 
+ random_maps/rproto.h wall.c
 Ryo 2006-09-04
 
 Bulk of this change is updating some files to use draw_ext_info() - all
@@ -842,7 +842,7 @@ Alex Schultz 2006-08-25
 check-fragment.am: Add some quotes to avoid problems with spaces appearing
   in macro expansions.
 Raphael Quinet 2006-08-25
-	
+
 configure, aclocal.m4, utils/config.guess, utils/config.sub,
   utils/ltmain.sh, include/autoconf.h.in, */Makefile.in: regenerated using
   slightly newer versions of libtoolize, aclocal, automake and autoconf.
@@ -865,7 +865,7 @@ Fix for bug #1528636 (Invisible player disappears from map view).
 Ryo 2006-08-22
 
 Fix/improve login procedure such that if a player is trying to log in with
-the name & correct password of character already on server, terminate old 
+the name & correct password of character already on server, terminate old
 connection and let them log in.
 ---
 server/login.c: Remove name check for players on server in check_name().
@@ -894,7 +894,7 @@ Add timers to functions a plugin can call.
  include/sproto.h: new functions.
  server/plugins.c: callbacks to timers.
 -----
-Add Python wrappers to timer, Object.CreateTimer(delay,mode) and Crossfire.DestroyTimer(id) 
+Add Python wrappers to timer, Object.CreateTimer(delay,mode) and Crossfire.DestroyTimer(id)
  plugins/cfpython/cfpython.c
  plugins/cfpython/cfpython_object.c
  plugins/cfpython/include/cfpython_object_private.h
@@ -947,7 +947,7 @@ crossedit/stubs.c, include/funcpoint.h, random_maps/standalone.c,
     test/unit/common/stubs_common.c: Allow execute_global_event() to be called from
     common.
 Alex Schultz 2006-08-12
-    
+
 lib/artifacts: Add artifact descriptions, courtesy of Raphael Quinet. Applies patch
     from tracker item #1538983
 Alex Schultz 2006-08-12
@@ -1059,7 +1059,7 @@ server/c_wiz.c: fix addexp not working on skills.
 server/time.c: don't crash if duplicator doesn't have other_arch set.
 Ryo 2006-07-28
 
-plugins/common/hashtable.c, plugins/common/include/hashtable.h, 
+plugins/common/hashtable.c, plugins/common/include/hashtable.h,
     plugins/common/Makefile.am, plugins/common/include/Makefile.am,
     plugins/cfpython/Makefile.am: Add hashtable.c, to add ptr-to-ptr hash tables
     for plugins to use. (Useful to use a cf object as a key for the table)
@@ -1119,7 +1119,7 @@ socket/metaserver.c: In metaserver_update() use the same conditions as for the
    who command.
 Andreas Kirschbaum 2006-07-16
 
-server/spell_effect.c, include/global.h, common/init.c, server/init.c: Add 
+server/spell_effect.c, include/global.h, common/init.c, server/init.c: Add
     setting "create_home_portals" which allows server admins to allow town
     portals to be created in apartments. Based on a patch by pippijn in the
     cf-ext project.
@@ -1205,7 +1205,7 @@ MSW 2006-06-04
 
 Clean up some compiler warnings.  Most of the changes are related to replaced
  %lld with FMT64 defines so that the format will be correct, no matter if
- the 64 bit type is a long, long long, or if this is windows.  #if 0 out a 
+ the 64 bit type is a long, long long, or if this is windows.  #if 0 out a
  bunch of code that isn't used.
 --
 common/exp.c: Replaced lld with FMT64
@@ -1223,7 +1223,7 @@ server/c_range.c: Add != 0 in assignment if statement - same meaning, clearer
 server/c_wiz.c: Update command_kick() to take const char.  Update command_speed()
    to operate properly based on max_time being a uint32.  Update various lld
    to FMT64.  Clarify ambiguous if/if/else statement in command_insert_into()
-server/commands.c: Add cast to command_kick for new function prototype.  #if 
+server/commands.c: Add cast to command_kick for new function prototype.  #if
    0 out find_command(), parse_string(), parse_command()
 server/disease.c: #if 0 out find_disease(), reduce_symptoms()
 server/egoitem.c: #if 0 out create_artifact().  Add copyright at top of file.
@@ -1428,7 +1428,7 @@ socket/lowlevel.c: Do not abort if output buffer is completely filled. (Was
 socket/request.c: Update comments.
 Andreas Kirschbaum 2006-05-13
 
-server/spell_effect.c: Disallow town portal while in transports (caused 
+server/spell_effect.c: Disallow town portal while in transports (caused
   map corruption, crashes and other nasty things)
 Alex Schultz 2006-05-12
 
@@ -1454,7 +1454,7 @@ Modified files for second patch:
 Modified files for third and last patch:
  common/item.c
  include/libproto.h sproto.h
- server/c_chat.c c_object.c c_wiz.c daemon.c hiscore.c main.c shop.c 
+ server/c_chat.c c_object.c c_wiz.c daemon.c hiscore.c main.c shop.c
 
 Ryo 2006-05-05
 
@@ -1774,7 +1774,7 @@ Andreas Kirschbaum 2006-02-09
 Added a "insert_into" command for DMs, to easily put items in other items.
 Modified filse:
  include/sproto.h
- server/c_wiz.c 
+ server/c_wiz.c
  server/commands.c
 Ryo 2006-02-08
 
@@ -1841,7 +1841,7 @@ of numeric values to specify the MOVE_ values.  Add code so when saving
 data out, use string names instead of numeric value.
 ---
 common/loader.l: Remove save_double(), as it isn't used by any code.
-   Add set_move() to set movement types from strings.  
+   Add set_move() to set movement types from strings.
    Add get_string_move_type, which takes integer movement type and
    returns a string.  Update load and save code to use these functions
    respectively.
@@ -1988,7 +1988,7 @@ In Python's Object, Archetype is now a property and not a method. Affected files
  cfpython/include/cfpython_object_private.h
  cfpython/cfpython_object.c
 --
-Cleaned obsolete include/plugproto.h. 
+Cleaned obsolete include/plugproto.h.
 Ryo 2006-01-07
 
 Make teleporters hidden below the floor work again.
@@ -2280,7 +2280,7 @@ common/map.c: Replace code with OB_TYPE_MOVE_BLOCK - effectively same as what
 include/define.h: Update OB_TYPE_MOVE_BLOCK so that spaces that don't block
   any type of movement doesn't block objects that also don't have movement.
   This fixes cases of gates not pushing objects off them.
-server/c_party.c: Remove double use of ->next pointer/loop in 
+server/c_party.c: Remove double use of ->next pointer/loop in
     confirm_party_password() - fixes crash and likely makes setting party
     password work more reliably.
 MSW 2005-11-29
@@ -2605,7 +2605,7 @@ common/commands.c: Sort all command arrays in init_commands().
 Andreas Kirschbaum 2005-10-23
 
 common/item.c - fix spelling mistake
-common/utils.c include/libproto.h - new function make_list_like that takes a 
+common/utils.c include/libproto.h - new function make_list_like that takes a
    string of comma deliminated words, and puts an and in the right place.
 include/sproto.h server/apply.c server/shop.c -new function can_pay - checks
    that a player can pay for every unpaid item that they are holding before
@@ -2631,8 +2631,8 @@ Ryo 2005-10-19
 plugin/*, plugin_logger/*, plugin_anim/*, plugins/*,
 server/{apply.c, attack.c, c_chat.c, c_object.c, c_wiz.c, gods.c, main.c,
 monster.c, player.c, skills.c, swap.c, time.c, timers.c}, include/{plugin.h,
-sproto.h}: Replaced the old plugin interface by the 2.0 one. 
-   Upgraded the Python and Animator ones to the new interface. 
+sproto.h}: Replaced the old plugin interface by the 2.0 one.
+   Upgraded the Python and Animator ones to the new interface.
    Removed obsolete Logger plugin.
 Gros 2005-10-19
 
@@ -2640,7 +2640,7 @@ server/main.c: Template Maps: Allow %x, %y, and %n in the path to respectively b
    replaced with, the x coord, the y coord, and the parent map name.
 Alex Schultz 2005-10-18
 
-server/{main.c, swap.c}, common/map.c, include/{libproto.h, map.h}: Add support 
+server/{main.c, swap.c}, common/map.c, include/{libproto.h, map.h}: Add support
    for random template maps (still need to document, and still need to add support
    for template maps created from non-random templates)
 Alex Schultz 2005-10-16
@@ -2654,7 +2654,7 @@ server/spell_util.c: fix cast_change_ability call.
 Ryo 2005-10-16
 
 include/{global.h, sproto.h, config.h}, server/init.c, common/init.c, lib/Makefile.in:
-   Add directory in preparation for template (where the template can optionally be 
+   Add directory in preparation for template (where the template can optionally be
    from the random map generator) maps.
 Alex Schultz 2005-10-15
 
@@ -2750,8 +2750,8 @@ include/map.h - define new shop headers
 include/sproto.h - define new functions in shop.c
 server/apply.c - Change shop mat usage message
 server/c_object.c - Change display of price estimates
-server/shop.c - new functions describe_shop, value_limit, shopkeeper_approval, 
-shop_greed, shop_specialisation_ratio, substantially alter query_cost_string 
+server/shop.c - new functions describe_shop, value_limit, shopkeeper_approval,
+shop_greed, shop_specialisation_ratio, substantially alter query_cost_string
 and query_cost to make use of these
 server/skill_util.c - make bargaining a directly usable skill
 doc/Developers/shops - document the above
@@ -2832,7 +2832,7 @@ Fix several bugs in patch #1194964, including one that caused segfaults
 one that corrupted the party list, and one that broke party password recognition
 remove partyid from the party struct - use party pointers instead
 remove functions find_party() and find_party_struct() - no longer needed or used.
-make form_party a local function - it is only used by the party form command, 
+make form_party a local function - it is only used by the party form command,
 and can't easy be used safely elsewhere.
 Brendan Lally 2005-09-25
 
@@ -2918,7 +2918,7 @@ server/monster.c: Add missing "break" statement in monster_can_pick(). It did
 Andreas Kirschbaum 2005-09-08
 
 common/{anim.c, image.c, los.c, map.c, porting.c, treasure.c},
-include/define.h, random_maps/treasure.c, 
+include/define.h, random_maps/treasure.c,
 server/{apply.c, c_misc.c, c_object.c, c_wiz.c, commands.c, daemon.c,
 hiscore.c, init.c, login.c, player.c, plugins.c, resurrection.c, weather.c},
 socket/{init.c, item.c, loop.c, lowlevel.c}: Use LOG() for error messages and
@@ -2980,7 +2980,7 @@ Andreas Kirschbaum 2005-08-29
 Fix player weapon speed/speed.  There are a few bugs this fixes:
 1) when player hit something, a has_hit field was set to true, to denote
    they hit something and to use weapon speed. However, this was only
-   cleared when player issued a command.  Thus, if you are running 
+   cleared when player issued a command.  Thus, if you are running
    and hit something, you'd continue at weapon_speed pace until you
    needed to change direction.
 2) Because has_hit was used, this basically put in a 1 tick lag - you'd hit
@@ -3073,7 +3073,7 @@ server/gods.c: Fix crash for monsters without appropriate god.
 server/gods.c: Add missing braces around body of if statement.
 Andreas Kirschbaum 2005-08-14
 
-NPCs instead of being given a random god are for preference given the god that 
+NPCs instead of being given a random god are for preference given the god that
 likes their race. If one can't be found, then we fall back to a random god.
 Affected files:
 server/gods.c include/sproto.h
@@ -3222,7 +3222,7 @@ Affected files:
  crossedit/stubs.c
  include/funcpoint.h libproto.h sproto.h
  random_maps/standalone.c
- server/weather.c 
+ server/weather.c
 Ryo 2005-07-17
 
 server/apply.c: Make converters that increase value non-functional.
@@ -3232,10 +3232,10 @@ server/{monster.c, pets.c}: Fixed bug in previous commit of arena petmode
    that cause pets that should be friendly to eachother to fight.
 Alex Schultz 2005-07-16
 
-common/{map.c, readable.c, treasure.c}, 
-crossedit/{Attr.c, png.c, Cnv/{CnvFiles.c, CnvPath.c}}, 
-plugin_animator/plugin_animator.c, 
-plugin_logger/maps.c, 
+common/{map.c, readable.c, treasure.c},
+crossedit/{Attr.c, png.c, Cnv/{CnvFiles.c, CnvPath.c}},
+plugin_animator/plugin_animator.c,
+plugin_logger/maps.c,
 server/{alchemy.c, c_misc.c, c_wiz.c, init.c, main.c, monster.c, pets.c,
 player.c, resurrection.c, rune.c, skills.c, spell_effect.c, time.c,
 weather.c}:
@@ -3416,7 +3416,7 @@ socket/info.c: removed unused variable.
 Ryo 2005/05/07
 
 Corrected code to compile under -ansi gcc flag:
- * correction of some non posix compatible calls around scandir 
+ * correction of some non posix compatible calls around scandir
  * changing configure to detect the absence of 'alphasort' prototype
  * converted some '//' comment to /**/ one
  * reran automake1.8/autoconf2.50/autheader2.50
@@ -3538,7 +3538,7 @@ MSW 2005-04-13
 
 socket/image.c: Change esrv_send_face to check for <=0 instead of <0 on face
   number.
-socket/request.c: Change if statement that acted improperly to determine when 
+socket/request.c: Change if statement that acted improperly to determine when
   to send faces.
 MSW 2005-03-27
 
@@ -3580,7 +3580,7 @@ include/global.h: Add smooth_face extern declaration.
 include/newserver.h: Update comment on what faces_sent is used for,
    add NS_FACESENT_* values which determines what info for the face was
    sent.
-socket/image.c, socket/init.c, socket/item.c: Update faces_sent checks/set 
+socket/image.c, socket/init.c, socket/item.c: Update faces_sent checks/set
     to check against NS_FACESENT bitmask.
 socket/request.c: Update faces_sent as mentioned above.  And SendSmooth(),
    rewrite AskSmooth() to use SendSmooth().  Modify update_smooth()
@@ -3777,7 +3777,7 @@ common/regexp.c: Fixed couple flaws in regexp handling.  First, there was an
    In the eureca case above, if the passed in string was 'where is eureca',
    after matching the first e (in where), it then fails to match the
    next letter and would give up.  It now tries comparing the rest of
-   the passed in string with the regex (so after that failure, it 
+   the passed in string with the regex (so after that failure, it
    will try to match 're is eureca'.
 server/apply.c: Add missing 'return 0' to shop_mat code that is needed
    to prevent unpaid objects from teleporting out of the shop.  Also
@@ -3936,12 +3936,12 @@ common/map.c: Add better logging about discarded archetypes.  Since the
    loader now deals with objects without archs in inventories, that
    code doesn't need to be in the server.
 common/object.c: copy_object() was not properly nulling out the
-   next field in the event object, pointer to event list was also 
+   next field in the event object, pointer to event list was also
    incorrect, causing events to not be copied properly.
 doc/spoiler-html/spoiler.html: Rebuilt.
 server/apply.c: Apply patch by MT that fixes problem of entire inventory
    not being copied properly.  Fix problem that objects in creatures
-   were not having any sub treasure created (eg, put a pyro_book in 
+   were not having any sub treasure created (eg, put a pyro_book in
    a monster on the map, and the pyro_book wouldn't have a spell in
    it) - now we make sure we process inventory objects as well as map
    objects, creating treasure as needed.
@@ -4034,7 +4034,7 @@ common/loader.l, loader.c: in check_loaded_object() - don't give spell
    name to the arch name so that it is more meaningful than 'singularity'.
 common/map.c: If object has inventory, check to make sure the inventory
    objects have an archetype set - if not, remove and free the object -
-   objects without archetypes causes crashes. 
+   objects without archetypes causes crashes.
 MSW 2004-08-17
 
 server/apply.c: fix_auto_apply() - add some debugging statements, as I've
@@ -4082,13 +4082,13 @@ random_maps/reader.l
 random_maps/rproto.h
 random_maps/special.c
 random_maps/wall.c
-	added fix for random maps with single arch walls, 
+	added fix for random maps with single arch walls,
 	added level indicator on random map signs
 	added new parameter 'exit_on_final_map'-  see documentation
 TM 2004-08-07
 
-include/plugin.h 
-plugin/plugin_python.c 
+include/plugin.h
+plugin/plugin_python.c
 server/c_wiz.c
 server/plugins.c
 	add event hooks for Kick and Muzzle(toggle_shout) commands.
@@ -4223,7 +4223,7 @@ server/main.c: freeing removed objects appeared to have more of a
   consequence than expected - only remove the object if it was on a map
   (op->map).  It turns out that the artifact code uses objects that
   are removed to store what the new object is.
-server/spell_effect.c: Fix cast_create_food() to call 
+server/spell_effect.c: Fix cast_create_food() to call
     find_archetype_by_object_name() instead of find_archetype().  In this
     way, players can use invoke without having to know the archetype name.
 server/c_wiz.c: Modify command_banish() to record dm name, player name,
@@ -4325,7 +4325,7 @@ Changes for 1.6.0:
 
 configure, Makefiles: Rebuilt for 1.6.0 release
 doc/*/Makefile.am: Modified to use one makeps.pl utility in scripts directory.
-doc/scripts/makeps.pl: Make this the definitive copy - fix problem with it 
+doc/scripts/makeps.pl: Make this the definitive copy - fix problem with it
    trying to combine big images when it doesn't need to.  Remove other copies.
 doc/playbook/chap1.tex, doc/playbook/chap5.tex: Fix some obvious errors,
    but overall, the playbook is still quite out of date.
@@ -4365,7 +4365,7 @@ server/apply.c: fix check_weapon_power() so it operates on overall character
   displays.
 MSW 2004-04-20
 
-common/button.c: Patch by Bernd Edler to have proper speed set for items 
+common/button.c: Patch by Bernd Edler to have proper speed set for items
   activated by buttons.
 server/apply.c: Apply the 'special prayer' marker stuff, since it wasn't
   used anymore.
@@ -4611,7 +4611,7 @@ common/object.c: Clean up formatting of copy_object.  Only real code change
   when another object of that event was freed, it freed the event data
   for all objects derived from it.
 common/treasure.c: Fix fix_generated_item() so that books generated by
-   monsters with no_pick set don't inherit that for the book itself. 
+   monsters with no_pick set don't inherit that for the book itself.
    Still do it for other objects of the creator type.
 MSW 2004-02-08
 
@@ -4671,16 +4671,16 @@ server/spell_effect.c: cast_detection(): Pass in skill to use.  If no
     as op->chosen_skill wasn't always set.
 server/spell_util.c: modify caster_level() to always return at least 1.
     Fixes pointer potential divide by zero problems - also guarantees
-    that players will be able to cast first level spells even if 
+    that players will be able to cast first level spells even if
     repelled to that spellpath.  ok_to_put_more() - Fix to use correct
     map pointer variable.  find_target_for_friendly_spell() - make it
     so it handles tiled maps OK.
 MSW 2004-01-15
 
-common/object.c: fix the monsters on tiled maps bug that I may have 
-    mentioned a while ago.  Seems that the server assumed that all 
-    parts of a multi part monster are on the same map as the head 
-    while moving.  
+common/object.c: fix the monsters on tiled maps bug that I may have
+    mentioned a while ago.  Seems that the server assumed that all
+    parts of a multi part monster are on the same map as the head
+    while moving.
 DVS 2004-01-12
 
 common/living.c: fix fix_player() so that character gets benefits/penalties
@@ -4841,9 +4841,9 @@ MSW 2003-10-26
 TRIGGER_MARKER:
 common/glue.c, common/button.c, include/define.h, funcpoint.h, libproto.h
     server/init.c:   Add trigger_marker (type #52) which is a Marker that can be
-    triggered. Useful for placing forces in player when connected trigger is tripped.  
+    triggered. Useful for placing forces in player when connected trigger is tripped.
 TM 2003-10-26
- 
+
 common/glue.c, common/object.c, common/player.c, include/funcpoint.h,
     server/init.c, server/monster.c, server/shop.c, server/skill_util.c:  add
     find_skill_by_number() function - this replaces find_skill.  Locate new
@@ -4879,7 +4879,7 @@ socket/request.c: Clean up some compile warnings.  Improve big face
   it should have, and vice versa.  Basically, do better checking
   to see if we should send a big face for a particular layer, and
   also better checking to make sure we don't send the same face more
-  than once for the same layer.  Also, change esrv_map_scroll() 
+  than once for the same layer.  Also, change esrv_map_scroll()
   to clear out spaces that appear into view - adds a little extra bandwdith,
   but necessary because otherwise the fact there is a big face on the edge
   doesn't always get sent.
@@ -4966,8 +4966,8 @@ server/skill_util.c: Call esrv_send_inventory on the cauldron if we
 
 
 TRAPS:
-    include/define.h 
-	common/object.c, treasure.c 
+    include/define.h
+	common/object.c, treasure.c
 	server/attack.c, skill_util.c, skills.c, rune.c, time.c, player.c,
 	apply.c Established new type traps distinguished from runes.  Traps
 	are more mechanical in nature, not impacted by detect magic or
@@ -4976,8 +4976,8 @@ TRAPS:
 	can now trigger connected objects if they are detonated.  Migrated
 	traps to new type and made new generic trap archetype for more complex
 	trapping (ye olde red shaded tile...)  TM -2003-09-04
-	
-	
+
+
 friendly_fire:
 	Added friendly_fire to attack.c, called from hit_player.
 	Will put a cap on maxdam that is a percentage (1-100%) of damage (min
@@ -4985,17 +4985,17 @@ friendly_fire:
 	mode.  Changed who, statistics to show this setting better and added
 	help file for peaceful.  It would be nice to have a indicator in the
 	client for this as well.  TM - 2003-08-25
-	
+
 protocol/doc/code:
-	Changed the way smoothing is done. Switched the smooth 
-	command to binary mode, rebuild archetype files, added doc 
-	on smoothing, updated protocol file. 
+	Changed the way smoothing is done. Switched the smooth
+	command to binary mode, rebuild archetype files, added doc
+	on smoothing, updated protocol file.
 	Changed a the "togglemapextended smoothing" to "togglemapextended
 	smooth" to prevent problem of compatibilities with previous cvs
 	smoothing releases.
 Tchize 2003-07-08
 
-protocol: 
+protocol:
 	Added new command to send extended map informations to the
 	client. Mainly used for now to send smoothing informations.
 	Also commented the modifications in the protocol file ind doc/
@@ -5060,7 +5060,7 @@ server/c_range.c: Add check to make sure we are actually removing a
    player not updated.  Fixes crashes.
 MSW 2003-04-13
 
-acinclude.m4: Update path to find python includes, since aclocal.m4 gets 
+acinclude.m4: Update path to find python includes, since aclocal.m4 gets
    derived from this file.
 configure.ac, configure: Add utils/scores.pl to list of files to substitute on.
 common/loader.l, loader.c: Add subtype for objects - will be used in future work.
@@ -5158,7 +5158,7 @@ MSW 2003-03-18
 
 Patch for 64 bit experience total, as well as flexible number of levels.
 Basically, max level is now dynamic, set in exp_table file.  Experience
-is now a 64 bit value, so much higher totals now allowed.  To 
+is now a 64 bit value, so much higher totals now allowed.  To
 allow for flexible levels, add new function - did_make_save() which is used
 for players/monsters to see if they make their saving throw - this is
 necessary because the savethrow[] array may not be as large as max level -
@@ -5185,7 +5185,7 @@ common/living.c: change MAX_EXP define, update MAX_EXP_IN_OBJ define,
    table is.  Change MAXLEVEL to settings.max_level.  Change level_exp()
    to return 64 bit value, other updates in functions to use 64 bit
    values.  Add did_make_save() function.
-common/loader.l, common/loader.c: Update load/save routins of exp to 
+common/loader.l, common/loader.c: Update load/save routins of exp to
    deal with 64 bit values.
 common/map.c: Update calculate_difficulty to use 64 bit values when
    storing exp - unlikely to make a difference, since unlikely any map
@@ -5292,7 +5292,7 @@ server/c_wiz.c: Fix reset command - while it deleted the maps, it made things
    flush_old_maps do most of the work.
 server/main.c: If player tries to enter a random map that has been reset
    and that we have no informatino about (eg, going up in a dungeon),
-   just say the exit is closed instead of making a completely random map 
+   just say the exit is closed instead of making a completely random map
    that usually isn't in keeping with the dungeon (and still won't lead
    outdoors)
 server/move.c: In move_teleporter(), change it so that if a player uses
@@ -5359,7 +5359,7 @@ server/monster.c: store return value from get_map_flags - seen some
     crashes traced back to this area, want to see what it returned.
     Allow objects with no msg to still use scripts that listen.
 server/player.c: Fix potentional issue of freeing/adding players name
-    when they enter play again - seen some crashes attributed to 
+    when they enter play again - seen some crashes attributed to
     odd names.
 MSW 2003-02-08
 
@@ -5464,8 +5464,8 @@ now - rather than display based on the map, it gives the player a
 Change fire_bow - move special player fire modes into own function -
 makes code much cleaner.
 Hopefully this fixes more bugs than it introduces.
-common/los.c, common/map.c, common/object.c, crossedit/Edit.c, 
-include/libproto.h, include/sockproto.h, include/map.h, 
+common/los.c, common/map.c, common/object.c, crossedit/Edit.c,
+include/libproto.h, include/sockproto.h, include/map.h,
 include/spellist.h, include/sproto.h, random_maps/treasure.c,
 random_maps/wall.c, server/attack.c, server/c_misc.c,
 server/c_wiz.c, server/disease.c, server/main.c, server/monster.c,
@@ -5564,11 +5564,11 @@ server/weather.c:
 More weather routines:
 
 Now the game will attempt to completely reformat the world, and modify it
-with the weather and elevation.  When dynamiclevel is set to 5 or above,    
+with the weather and elevation.  When dynamiclevel is set to 5 or above,
 the game looks at each tile, and the weather conditions present in that
 tile.  It then consults a table of different terrain types, and what
-conditions they prefer to grow under.  If the conditions match the spot,    
-and there is nothing special about the spot (like a house, or a road),   
+conditions they prefer to grow under.  If the conditions match the spot,
+and there is nothing special about the spot (like a house, or a road),
 then we drop the new tile type on the overlay map on that location.
 
 Tuning of this can be done at the top of weather.c, by changing the
@@ -5578,7 +5578,7 @@ Also.. add a feather_map() routine which tries to break up the blockiness
 of some of the weather effects by spreading the tiles around.
 
 This code works.. but needs tuning, and probably a little more testing.
-Some of the conditions for the various tiles really need to be looked at,    
+Some of the conditions for the various tiles really need to be looked at,
 and fiddled with.
 garbled 2002-12-08
 +++
@@ -5593,7 +5593,7 @@ server/player.c: Change move_player_attack() so that we look for monsters
 MSW 2002-12-03
 
 TODO: Move more items from my mailbox to the TODO list.
-common/living.c: Init item_power in player to zero in fix_player() - 
+common/living.c: Init item_power in player to zero in fix_player() -
     bogus results were getting generated as it just kept getting incremented.
 common/porting.c: fix remove_directory so it works properly - checking
     for . and .. entries too late, calling unlink instead of rmdir.
@@ -5618,7 +5618,7 @@ server/player.c: Cal delete_player() when player quits - this properly
     any such maps currently in memory, and delete those so that unique
     maps don't get 'gifted' to the next character of the same name.
     Update calls to do_skill as described above.
-server/shop.c: Combine items of the same name together in the output 
+server/shop.c: Combine items of the same name together in the output
     of the shop listings.  Include the number of items, remove special
     casing of some objects so that query_base_name is used for all item
     types.
@@ -5634,9 +5634,9 @@ server/skills.c: Clean up skill_throw function to return meaningfull
     to target.  Modify do_throw to return value, use closest
     part of body as origin point for thwon object.
 server/spell_effect.c: Use isqrt function instead of definining
-    ISQRT that used float version.  Cleans up compile warning - most 
+    ISQRT that used float version.  Cleans up compile warning - most
     likely not seen before as spell was #ifdef SPELL_ENCUMBERANCE out.
-server/time.c: Put sanity checking for players speed_left in 
+server/time.c: Put sanity checking for players speed_left in
     move_player_mover() - got some reports of infinite negative speed
     on metalforge, and this is the only place in the code where I could
     see that happening given the description of the events.
@@ -5655,7 +5655,7 @@ server/apply.c: Tell player what level they need to be if they are not
     of sufficient level to improve armor.  Modify apply_treasure to
     use INS_BELOW_ORIGINATOR flag, clean up some of the other logic
     in apply_treasure.
-server/c_object.c: Modify command_take to use the container inventory 
+server/c_object.c: Modify command_take to use the container inventory
     when doing a pickup, and not the container itself.
 MSW 2002-11-30
 
@@ -5669,7 +5669,7 @@ include/player.h, server/apply.c, server/player.c, socket/info.c: Remove
     saved and rejoined.  Some additional cleanup done in rangetostring() -
     mostly formatting changes, but minor code changes.
 MSW 2002-11-29
-    
+
 
 include/shstr.h: Update REFCOUNT_TYPE to be an int - seems to at least fix
    the bug of server crashing when running around the bigworld - given the
@@ -5696,20 +5696,20 @@ garbled 2002-11-12
 
 New alchemy code, as discussed on the developer list.  Now recipies include
 two new tags: skill and cauldron.  With skill, you can set which skill
-activates this recipie, and the cauldron, corresponds to the arch name of    
+activates this recipie, and the cauldron, corresponds to the arch name of
 the facility you will use when creating the item.  In this way, item
-creation is now more generalized than just alchemy, and specific formulae    
+creation is now more generalized than just alchemy, and specific formulae
 can be written to utilize different skills, or perhaps special formulae
 would require a hard-to-find cauldron.
 
-Functionally, the alchemy, or alchemy-like-skills are now activated by    
+Functionally, the alchemy, or alchemy-like-skills are now activated by
 the use_skill command.  The secondary use of the alchemy spell has been
 withdrawn, so now it functions in the way it was originally intended again.
 garbled 2002-11-11
 
 socket/loop.c: add a setting fastclock.  This makes the server's clock run
 *really* fast.  For now, it's good for debugging purposes, but in the
-future it will allow a dm to ravage a world with weather quickly. 
+future it will allow a dm to ravage a world with weather quickly.
 include/define.h: add FLAG_IS_WATER
 include/global.h: add fastclock to settings
 include/map.h: add water to weathermap structure
@@ -5717,18 +5717,18 @@ include/sproto.h: add tons of new functions in weather.c
 common/init.c: update for FLAG_IS_WATER
 common/loader.l: update for FLAG_IS_WATER
 server/init.c: add code to read fastclock setting
-server/weather.c: Complete update, largely rewritten.  Now the world is 
-cut into a 100x100 matrix of weathermaps.  Each one of these maps is 
-computed at initial boot, and written to disk, following which, they are 
-simply read from disk at boot.  For each of the main weather types 
-(pressure, humitidy, base temperature, wind direction, wind speed) the 
-game recomputes the entire weathermap, applying smoothing algorithims, or 
-derriving each map from it's predecessor.  Weathermaps are only used if 
-you have set your dynamiclevel to 1 or greater, and, are using the bigmap 
-set.  At this time, there is still no functional change to the game, 
+server/weather.c: Complete update, largely rewritten.  Now the world is
+cut into a 100x100 matrix of weathermaps.  Each one of these maps is
+computed at initial boot, and written to disk, following which, they are
+simply read from disk at boot.  For each of the main weather types
+(pressure, humitidy, base temperature, wind direction, wind speed) the
+game recomputes the entire weathermap, applying smoothing algorithims, or
+derriving each map from it's predecessor.  Weathermaps are only used if
+you have set your dynamiclevel to 1 or greater, and, are using the bigmap
+set.  At this time, there is still no functional change to the game,
 bigmap, or not.
 utils/maps.c: This program will generate ppm files from each of the
-weathermaps. Mostly for debugging, but curious DM's might find it useful 
+weathermaps. Mostly for debugging, but curious DM's might find it useful
 to see the weather.
 garbled 2002-10-27
 
@@ -5747,7 +5747,7 @@ common/map.c: Fix on_same_map so check to see if either object has null
 MSW 2002-10-13
 
 
-Experience cleanup - the main functional change is that no upper limit of 
+Experience cleanup - the main functional change is that no upper limit of
    exp in an individual skill, save for the limit that there is an upper
    limit of total exp a player can have.  Thus, if a player concentrates
    complete in one skill, he could get to level 110 in it.  A lot of
@@ -5781,7 +5781,7 @@ Bugfixes:  Add golem_count element to player structure so we can properly
 include/player.h: Add golem_count element to player structure.
 server/player.c: Add code in handle_newscs_player() that checks status of
     golem, clears op->contr->golem is value is bogus
-server/spell_effect.c, server/spell_util.c: Initialize golem_count 
+server/spell_effect.c, server/spell_util.c: Initialize golem_count
     value when golem is created.
 socket/request.c: Check for null map value.
 MSW 2002-10-02
@@ -5805,7 +5805,7 @@ server/commands.c: Add hide command to dispatch table.
 server/main.c: Add code to not update players on map for hidden dm.
 server/player.c: Give hidden dm perpetual invisiblity.
 server/skills.c: Only get exp if you actually stole an item - fixes abuse
-   whereby players who couldn't carry item could continually 'steal' it from 
+   whereby players who couldn't carry item could continually 'steal' it from
    monster and just gain exp.
 server/swap.c: modify players_on_map() to take addition arg to determine if
    real players on map should be shown, or if we shouldn't count hidden dms.
@@ -5814,7 +5814,7 @@ socket/info.c: Modify code so that oldsockets don't get reports on high verbose
 socket/metaserver.c: Modify metaserver update to not include hidden dms.
 utils/Makefile.in: update datestmp.
 MSW 2002-09-27
-   
+
 
 server/pet.c:  Add check to pet_move() to make sure the space we are
    checking is within the map, and handle map tiling.
@@ -5905,7 +5905,7 @@ common/porting.c: Comment out debug message if open_and_uncompress()
    and it really isn't much of an error in any case.
 include/libproto.h: rebuilt.
 random_maps/special.c: Modify place_special_exit() - this should fix
-   bug of very large treasure maps - problem was if the generated map 
+   bug of very large treasure maps - problem was if the generated map
    size was too small, when generate_random_map was called, it would
    generate a newly sized map that was much larger.  Code was also
    re-arranged some to make it a little more readable.
@@ -5965,7 +5965,7 @@ server/attack.c: Have drain attacks return 1 damage so that it is clear
 server/monster.c: Update hnadling of enemies for pet monsters. It should
    more intelligently choose the monsters and not switch/clear the
    enemy field for no reason anymore.  Change find_nearest_living_creature to
-   use the get_search_arr() to more randomly choose direction of target - 
+   use the get_search_arr() to more randomly choose direction of target -
    before, there was a proclivity to always look in the north direction.
    Modify can_hit() to look for closes part of enemy - otherwise, monsters
    may not attack opponents even if they were right next to them because
@@ -6029,7 +6029,7 @@ server/move.c: Fix dereferencing NULL problem - was looking at op->above,
    above - just process in normal order.
 MSW 2002-08-21
 
-server/time.c: Possible fix for bug seen on metalforge - 
+server/time.c: Possible fix for bug seen on metalforge -
    in move_player_mover, make sure we are working with the head of the
    monster.
 MSW 2002-08-13
@@ -6048,7 +6048,7 @@ next.  Add a new docs/scripts directory to hold the common scripts,
 instead of spoiler, spoiler-html, playbook, and playbook-html each having
 their own copies.
 configure, configure.in: Add doc/scripts directory.
-doc/spoiler-html/Makefile.in: Update build directions to use 
+doc/spoiler-html/Makefile.in: Update build directions to use
     ../scripts/items-extract.pl
 doc/spoiler-html/spoiler.html: Rebuilt with updated information.
 doc/scripts/Makefile.in: Makefile for directory.
@@ -6091,7 +6091,7 @@ server/weather.c: Fix off by one on comparision when intializing maps
    further processing if the light hasn't changed.
 MSW 2002-07-29
 
- 
+
 
 Various bug fixes, add glyph spell:
 TODO: Updated
@@ -6127,7 +6127,7 @@ amount of time.
 include/sproto.h: rebuilt.
 lib/Makefile.in: Add freeze to wizhelp files.
 lib/wizhelp/freeze: New file.
-server/c_wiz.c: Add command_freeze().  Also, break out 
+server/c_wiz.c: Add command_freeze().  Also, break out
    get_other_player_from_name() - several functions need the same logic
    of getting a player named X that is not us - making it a function
    reduces the duplicate code.  Fix some formatting for some functions.
@@ -6164,11 +6164,11 @@ common/arch.c: Initialize body_used to be same as body_info for
     start equipping items right away.
 common/exp.c: update new_exp() - some flags it checked for before no longer
     exist or have new names.
-common/info.c: describe_item() now takes second parameter - update 
+common/info.c: describe_item() now takes second parameter - update
     dump_abilities to use new calling convention.
 common/item.c: Add table that describes the body_info locations and
     their names.  Add functions that calculate item power for objects
-    that don't have it set.  Update display functions to show 
+    that don't have it set.  Update display functions to show
     item_power in items.  Update describe_monster() - use_horn/wand/rod
     merged into just use_range.  Modify describe_item() to take second
     paramater - who the item is being described for.  Show item_power
@@ -6227,14 +6227,14 @@ include/loader.h: remove the V_.. info and  xbm_.. externs that were not
     used.
 include/newserver.h: Remove ext_tile information.
 include/object.h:  Add Body_Locations structure, NUM_BODY_LOCATIONS define.
-    Add definitions for WILL_APPLY values.  Clean up object structure - 
+    Add definitions for WILL_APPLY values.  Clean up object structure -
     formatting is now consistent, ordering of values groups values
     together more logically.  Update all types to use the int8/int16/int32
     types.  Several unused fields removed.
 include/player.h: Update rangetype enum.  Add unapplymode enum.
-    Clean up player structure - type updates, unused fields removed, 
+    Clean up player structure - type updates, unused fields removed,
     formatting fixed up.
-include/spells.h: remove range_name extern.  Update SpellTypeFrom 
+include/spells.h: remove range_name extern.  Update SpellTypeFrom
     field to combine wand/rod/horn into spellMisc - none of the
     spell casting code was differentiating these.
 include/sproto.h: rebuilt.
@@ -6245,7 +6245,7 @@ lib/artifacts: updated for item_poer and gen_sp_armour changes.
 lib/treasures: remove unused _force for player treasure.
 plugin/plugin_python.c: Change FLAG_USE_WAND to FLAG_USE_RANGE.
 server/apply.c: Move stftime, mktime to include/includes.h.  Remove
-    draw_find() - one line function can just as easly be in the 
+    draw_find() - one line function can just as easly be in the
     code itself.  Update calls to long_desc to pass second parameter.
     move gravestone_text() to player.c file.  Add direction parameter to
     apply_scroll() - in this way monsters can use it properly.
@@ -6256,7 +6256,7 @@ server/attack.c:  Remove SET_FLAG(op, FLAG_PARALYZED) line - no code
     was ever checking status of FLAG_PARALYZED.
 server/c_misc.c:  add command_body() which dumps body information for
     player.  Update who as idle element in player structure removed -
-    was not being used by anything.  Add command_applymode() to 
+    was not being used by anything.  Add command_applymode() to
     set players prefered unapply method.  Remove calls to unlock_player()
     in various functions - unlock_player() has not done anything
     meaningful for a while.
@@ -6329,7 +6329,7 @@ MSW 2002-07-14
 -- End body commit notes --
 
 common/anim.c, common/button.c, common/friend.c, common/glue.c,
-    common/init.c,common/logger.c, common/los.c, common/porting.c, 
+    common/init.c,common/logger.c, common/los.c, common/porting.c,
     common/time.c, common/utils.c, crossedit/png.c, crossedit/xutil.c,
     include/attack.h, include/config.h, include/map.h, include/material.h,
     include/newclient.h, include/skills.h, include/treasure.h,
@@ -6338,7 +6338,7 @@ common/anim.c, common/button.c, common/friend.c, common/glue.c,
     random_maps/style.c, random_maps/wall.c, server/alchemy.c,
     server/c_chat.c, server/c_party.c, server/gods.c, server/hiscore.c,
     server/init.c, server/pets.c, server/resurrection.c, server/rune.c,
-    server/time.c, socket/metaserver.c: Update banner copyright 
+    server/time.c, socket/metaserver.c: Update banner copyright
     with proper contact information.
 MSW 2002-07-14
 
@@ -6447,7 +6447,7 @@ server/login.c, server/main.c, server/player.c: Update references from
 MSW 2002-06-15
 
 lib/Makefile.in: modified so that it doesn't overwrite commonly customized
-   files (eg, motd, dm_file, ban_file).  These files will get installed 
+   files (eg, motd, dm_file, ban_file).  These files will get installed
    on new installations.
 MSW 2002-06-14
 
@@ -6471,7 +6471,7 @@ configure.in, configure, plugin/Makefile, plugin/Makefile.in,
    appropriate options for this change to take effect.
 MSW 2002-06-13
 
-server/main.c:  If on freebsd system, don't crypt the password. 
+server/main.c:  If on freebsd system, don't crypt the password.
 Crypt on freebsd behaves diferently, and since there is little reason
 to encrypt passwords, easier to just leave them decrypted.
 Fix for sourceforge bug 469017
@@ -6495,7 +6495,7 @@ server/skills.c: don't let players steal from players with FLAG_WIZ set.
 MSW 2002-06-09
 
 Mostly bugfixes.  I'm not sure if this will fix the disappearing arch problem-
-none of the changes made in the original multiple name would seem to 
+none of the changes made in the original multiple name would seem to
 cause it, so hard to say if any of these changes may fix it.
 --
 common/arch.c:  Change get_archetype_by_name to be more efficient and
@@ -6533,7 +6533,7 @@ socket/request.c: Modify esrv_map_scroll so that it properly clears cells
    map1a updating these spaces with empty faces.  This was causing
    fog of war wackiness with the client.
 MSW 2002-06-06
-  
+
 
 common/button.c: Fix mood floor code - before, it was changing the moods
    of all sorts of objects (luggage, itself, etc).  Now, it only
@@ -6549,7 +6549,7 @@ attribute, so can be modified in maps to hide the real type.
 --
 common/arch.c: item_matched_string() modified to use the name_pl field
    when trying to match names, and not to try to make the name plural
-   itself. 
+   itself.
 common/item.c: query_short_name(),query_base_name() modified to
     use name_pl instead of trying to make the name plural.
 common/loader.c, common/loader.l:  Add code to load and save the name_pl
@@ -6600,7 +6600,7 @@ server/main.c: Add code to set the coordinates to the EMERGENCY_X/Y
   values if using the EMERGENCY_MAP.
 socket/request.c: Fix code that was causing darkness to get repeatedly
   sent for some spaces.
-MSW 2002-05-19 
+MSW 2002-05-19
 
 The bulk of this commit is to modify the server to only send the lower
 rightmost part of multipart archetypes that use the same head.  This allows
@@ -6623,7 +6623,7 @@ include/newserver.h:  Change the MapCell to use MAP_LAYERS - saves
 include/object.h: remove quick_pos, update_tag from object structure.
   Add tail_x, tail_y values to archetype structure.
 include/player.h: Remove some now unused values from the player structure
-  (drawn, floor, floor2, darkmask).  These have been superseded by the 
+  (drawn, floor, floor2, darkmask).  These have been superseded by the
    map cells in the socket structure for quite a while.
 include/sockproto.h: rebuilt
 server/player.c: Remove code that initialized the drawn values in the player
@@ -6683,7 +6683,7 @@ supress those:
 make_win32/installwin32.bat: Update for new image files.
 server/c_object.c: Fix SAVE_INTERVAL #ifdef block.  It failed to compile
     as it was written.  Simplify code, but it should have the same effect.
-server/move.c: Modify push_object so that if a player swaps position 
+server/move.c: Modify push_object so that if a player swaps position
     with his pet, we send a esrv_map_scroll.  This should save bandwidth,
     and also prevents display corruption when fog of war on the client
     is in use.  Add some new comments, adjust some formatting.
@@ -6822,7 +6822,7 @@ configure.in, configure: Remove lib/xpmtopix.pl file form those to be
 common/object.c: Fix bug in check_walk_on which would result in spell
   objects not being properly processed - the intention is not to process
   spell objects - we should stop going up (in previous loop) when we
-  get such an object, not on the way down.  This fixes directors not 
+  get such an object, not on the way down.  This fixes directors not
   working really well.
 MSW 2001-01-13
 
@@ -6901,8 +6901,8 @@ garbled 2001-12-18
 
 common/map.c: Fix some bugs relating to map tiling.  MSW 2001-12-16
 
-common/object.c random_maps/Makefile.in 
-  server/c_wiz.c server/player.c server/plugins.c server/timers.c 
+common/object.c random_maps/Makefile.in
+  server/c_wiz.c server/player.c server/plugins.c server/timers.c
   socket/request.c: Most of the changes are to just fix compiling warnings
   or errors so that it compiles on sparc solaris with the workshop
   compiler (things like }; should just be }).  Declaration for alphasort
@@ -6922,10 +6922,10 @@ Include mapstats cmd for extended clients (sdl iso). Cmd is needed for automaps
     for "fire & forget" animation tags inside the map2 cmd (next patch).
 server/main.c: include a automatic mapstats cmd every time the player enters a new map.
     Its the "default" mapenter cmd. The script event should used for special cases.
-include/sockproto.h and socket/request.c: include the mapstats cmd function.               
+include/sockproto.h and socket/request.c: include the mapstats cmd function.
 MT 2001-12-03
 
-This checkin for the most part removes support for xpm and xbm graphics - 
+This checkin for the most part removes support for xpm and xbm graphics -
     now the only image supported is the png.
 common/arch.c: comment out printing on warning of object having no type -
     getting 300 meaningless messages at startup is annoying.
@@ -6934,7 +6934,7 @@ common/image.c: Remove X11 color information from colorname array.  Remove
     use color_fg if no magicmap information is available - foreground
     and background infoformation was only needed for bitmap graphics.
 common/loader.c, loader.l: Add elevation element, comment out some logging
-    messages that are excessive and only really relevant for people 
+    messages that are excessive and only really relevant for people
     who want to fix them (really should be in the collect script
     anyways).  Remove some unused code.
 common/map.c: add outdoor field to map structure - add support for loading
@@ -6963,7 +6963,7 @@ server/spell_util.c: Remove color information from attack information that
 socket/init.c, socket/request.c: Remove support for non png images.
 MSW 2001-12-02
 
-Various minor bugfixes - 
+Various minor bugfixes -
 common/loader.c: rebuilt
 include/map.h: Change width,height,enter_x,enter_y to be 16 bit instead
    of 8 bits.
@@ -7028,21 +7028,21 @@ server/main.c: Modify enter_exit code such that a random map has
    resets before the map that leads to them resets.
 MSW 2001-10-06
 
-Add a new command category called communications commands.  Place tell, 
-shout and say in here.  Also create emotion functions.  These functions 
-have no real effect on the game, but make communications between players 
-more colorful and fun.  They are mostly fluff.  Included with this patch 
-are two new convenience functions, new_info_map_except, and 
-new_info_map_except2, which allow the programmer to write to an entire 
+Add a new command category called communications commands.  Place tell,
+shout and say in here.  Also create emotion functions.  These functions
+have no real effect on the game, but make communications between players
+more colorful and fun.  They are mostly fluff.  Included with this patch
+are two new convenience functions, new_info_map_except, and
+new_info_map_except2, which allow the programmer to write to an entire
 map, except for certain individuals.
 
 garbled 2001-09-27
 
-Add complete processing code for luck.  This new code removes all 
-previous instances of luck, and adds a few new convenience utilities.  
-Now, every die roll in the game is affected by luck in some small way.  
-This causes luck to be an intangible benefit to the player, without 
-totally unbalancing the game.  The new functions are random_roll, 
+Add complete processing code for luck.  This new code removes all
+previous instances of luck, and adds a few new convenience utilities.
+Now, every die roll in the game is affected by luck in some small way.
+This causes luck to be an intangible benefit to the player, without
+totally unbalancing the game.  The new functions are random_roll,
 die_roll, and rndm, which should be used in place of RANDOM() whenever
 possible.
 
@@ -7055,7 +7055,7 @@ server/apply.c: apply_shop_mat rewritten to be more 'presentable'.
     a a second object to teleport.
 server/c_object.c: change the sscanf to be unsigned when getting value
     for new pickup mode.  At least on my system, if the value in the
-    string was larger than the max signed value, sscanf set it to the 
+    string was larger than the max signed value, sscanf set it to the
     max value.
 server/move.c: teleport function largely re-written.  Instead of the
     third arg being the 'originator', it is now the object to teleport.
@@ -7109,7 +7109,7 @@ server/monster.c: Many functions modified to properly handle tiled
    maps properly.
 server/pets.c: get_pet_enemy modified to know about tiled maps.
 server/player.c: get_nearest_player modified to know about tiled maps.
-   path_to_player rewritten to know about tiled maps - I think some other 
+   path_to_player rewritten to know about tiled maps - I think some other
    bugs were also fixed in return values.  Split player_attack_door
    from move_player attack to keep functions a more reasonable size.
    move_player_attack, player_can_view modified to know about tiled
@@ -7164,7 +7164,7 @@ socket/init.c: InitConnection - modified to set faces_sent[0] to one
 MSW 2001-07-30
 
 Added support for the newmap cmd needed for the fog_of_war code
-in the gtk client. 
+in the gtk client.
 include/newserver.h: added newmapcmd:1 to NewSocket struct
 server/main.c: added call to MapNewmapCmd in enter_map()
 socket/init.c: init code for new newmapcmd value in NewSocket
@@ -7261,7 +7261,7 @@ common/object.c: Have update_object take another parameter which tells
     using appropriate flag to this changed version of insert_ob_in_map.
     Clean up remove_ob - seemed to have done things in a more complicated
     fashion that is no longer necessary.  Modify check_walk_on to look
-    at all objects on space, not those below the object - with changes to 
+    at all objects on space, not those below the object - with changes to
     insert_ob_in_map, new object won't always be on top.
 common/porting.c: functions from ltostr.c, sqrt.c, as open_and_uncompress
     close_and_delete, make_path_to_file from map.c
@@ -7283,18 +7283,18 @@ include/config.h: remove RANDOM_ENCOUNTERS (no longer available) and
 include/define.h: move P_... values to map.h
 include/global.h: add definition for compression externals, as they
     are used in a few files.  remove map macro functions - moved to map.h
-    as appropriate.  Add FREE_AND_CLEAR macro that frees data and then 
+    as appropriate.  Add FREE_AND_CLEAR macro that frees data and then
     sets the pointer to NULL.
 include/map.h: Largely redone - many new macros, new map structure.
 include/object.h: remove lights object link pointer from objects.
     At some #defines that are the flags for update_object and
     insert_ob_in_map
 include/player.h: Add a few comments.
-random_maps/decor.c,random_maps/door.c, random_maps/exit.c, 
+random_maps/decor.c,random_maps/door.c, random_maps/exit.c,
     random_maps/floor.c,random_maps/monster.c,random_maps/special.c,
     random_maps/standalone.c, random_maps/style.c,random_maps/treasure.c,
     random_maps/wall.c:
-	modified to use modified insert_ob_in_map function, 
+	modified to use modified insert_ob_in_map function,
 	use new macros to access map structure related data
 server/Makefile.in: Remove encounter.c file.  Use cproto instead of
     cextract to create proto file.
@@ -7303,7 +7303,7 @@ server/alchemy.c,server/attack.c,server/c_object.c,server/c_wiz.c,
     server/move.c, server/pets.c, server/player.c, server/resurrection.c,
     server/rune.c, server/shop.c,server/skill_util.c, server/skills.c,
     server/spell_effect.c, server/spell_util.c, server/swap.c, server/time.c
-	modified to use modified insert_ob_in_map function, 
+	modified to use modified insert_ob_in_map function,
 	use new macros to access map structure related data.
 	change calls to update_all_los, remove lighting related code.
 server/apply.c: modified to use new insert_ob_in_map function.  Update
@@ -7311,8 +7311,8 @@ server/apply.c: modified to use new insert_ob_in_map function.  Update
     for exits, modified to use the head for valid coordinates since the
     other parts may not have valid values since they are not saved out to
     disk anymore.
-server/c_misc.c,server/hiscore.c: modified to use new map 
-    structure/information. 
+server/c_misc.c,server/hiscore.c: modified to use new map
+    structure/information.
 server/commands.c: remove dumplights command.
 server/encounter.c: removed - code no longer used
 server/init.c: remove RANDOM_ENCOUNTERS code.
@@ -7386,7 +7386,7 @@ common/los.c: update los code since it only handled 11x11 maps.  Now
     does result in a few more spaces getting blocked around corners,
     but it doesn't seem that bad - certainly not compared to the ability
     to have larger viewable maps.
-common/map.c, crossedit/CrEdit.c, crossedit/Edit.c, include/global.h, 
+common/map.c, crossedit/CrEdit.c, crossedit/Edit.c, include/global.h,
     include/map.h,random_maps/monster.c,random_maps/special.c,
     random_maps/standalone.c, server/apply.c,server/c_misc.c,
     server/spell_effect.c,socket/info.c:
@@ -7432,7 +7432,7 @@ Files affected: common/readable.c include/spellist.h include/config.h
     server/attack.c server/gods.c server/skills.c server/spell_effect.c
     server/spell_util.c
 doc/Makefile.in, doc/Protocol: Add protocol description file here instead
-   of in the client distribution. 
+   of in the client distribution.
 include/global.h: Move declaration of MAX_EXP_CAT near top of file
    so it is set before player.h is included.
 include/newclient.h: Add CS_STAT_SKILL* values for sending skill
@@ -7477,7 +7477,7 @@ MSW 2001-05-24
 server/player.c
 common/living.c
 include/libproto.h:  New experience loss on death policy implemented.
-(As per consensus.)  3 levels or 20%, whichever is less.  
+(As per consensus.)  3 levels or 20%, whichever is less.
   --PeterM 5/24/2001
 
 server/spell_util.c: Fix typo in polymorph code (when enabled in config.h)
@@ -7493,7 +7493,7 @@ server/pets.c: pet_move - fix formatting to be 4 space indentation.
    cause.
 server/monster.c: move_monster: let pet_move free the pet if necessary.
 server/spell_effect.c: Clear sleeping flag of monsters when casting
-   summon pet monster (or other creatures).  Some archs have this 
+   summon pet monster (or other creatures).  Some archs have this
    value on by default, so the monsters don't follow the player until
    an enemy is found.
 MSW 2001-05-22
@@ -7613,18 +7613,18 @@ MSW 2001-04-16
 
 common/re-cmp.c: Modify re_cmp functiion so that it properly matches
   strings not at the start 'ie, dude chain will now match against
-  the chain value'. 
+  the chain value'.
 server/monster.c: Properly alter direction monster moves if they are
   feared or confused.  It was properly altering direction when monsters
   were using range attacks, but not if they were just wanting to move.
 MSW 2001-04-12
 
-common/living.c: Don't use the last_heal object in experience objects as 
+common/living.c: Don't use the last_heal object in experience objects as
    sp regen penalty.  This should fix the problem of inconsistent sp regen
    rates - last_heal is used in experience objects if the permanent experience
    option is turned on.  MSW 2001-04-11
 
-PeterM:  
+PeterM:
 server/spell_util.c:  fix peace so it gives experience
 common/button.c:  change the "error" to a "debug" message
    to reduce server crashing.
@@ -7644,7 +7644,7 @@ server/player.c:  Don't let players shoot arrows at themself.  Also,
 server/swap.c: If recycle temp maps, don't save out random maps to
    get recycled.  MSW 2001/04/07
 
-PeterM  2001/04/06:  
+PeterM  2001/04/06:
 include/libproto.h common/object.c server/apply.c server/spell_util.c
 Added a new function:  instead of stacking many burnout or firetrail
 objects, only 1 per square is added.  Real reduction in server overhead.
@@ -7695,12 +7695,12 @@ socket/item.c: esrv_move_object - have it check to see if the object is
    to see if it is already in players inventory before we try to pick
    it up.
 common/object.c: Don't send face updates to the client or make
-   the space as needing to be redrawn.  Client now deals with animation 
-   of the look window on its own. 
-utils/(metaserver.pl crossloop add_throw.perl crossloop.pl) 
+   the space as needing to be redrawn.  Client now deals with animation
+   of the look window on its own.
+utils/(metaserver.pl crossloop add_throw.perl crossloop.pl)
 lib/(Makefie.in, checkarch.pl collect.pl xpmtopix.pl) - - deleted
    from CVS - '.in' versions of these files now exist and the real
-   versions are created as part of the configure process.  Update 
+   versions are created as part of the configure process.  Update
    Makefile.in to reflect this change.
 MSW 2001/03/28
 
@@ -7749,7 +7749,7 @@ Changes for 0.97.0:
 
 MSW 2001/03/18:
 common/init.c: add RESET_LOCATION_TIME initializer to settings structure.
-include/config.h: Add RESET_LOCATION_TIME value.  If nonzero and the save was longer than 
+include/config.h: Add RESET_LOCATION_TIME value.  If nonzero and the save was longer than
     the specified time in seconds, player will be returned home upon login from
     save.
 include/global.h: Add reset_loc_time field to settings structure.
@@ -7949,7 +7949,7 @@ socket/request.c: If client is at least version_Sc 1026, use face1 protocol
     command that includes the checksum.
 
 MSW 2001/01/31:
-common/object.c: Fix that that spells cast on spaces with no floors get 
+common/object.c: Fix that that spells cast on spaces with no floors get
     set properly after the spell expires.
 common/player.c: Use skill tools first (lockpicks, talismans, etc) before
     using native skills.  In this way, an object with bonus automatically
@@ -7965,7 +7965,7 @@ should also work better in many other areas.  Main enhancements is a 3x3
 area for pets to follow player to new map, as well as golems now following
 players to the new maps.
 include/sproto.h, random_maps/rproto.h - rebuilt.
-random_maps/random_map.c: Change generate_random_map to take a structure 
+random_maps/random_map.c: Change generate_random_map to take a structure
     with the random map paremeters.
 random_maps/reader.l, reader.c: Add set_random_map_variable function that
     reads the map parameters from a char buffer.  Also, remove some leftover
@@ -8001,7 +8001,7 @@ common/object.c: find_free functions were not checking to see if the
 	spaces they were examining were out of the map.  Added checks
 	to do so.
 server/apply.c: buf was being used uninitialized in the function.
-socket/init.c: input buffer needs to be initialized as we do a 
+socket/init.c: input buffer needs to be initialized as we do a
 	strncasecmp against the buffer which may not have any data in it.
 
 
@@ -8064,7 +8064,7 @@ include/treasure.h: GT_... flags added.  Addition flags added from
     what was in define.h before.
 lib/archetypes, lib/crossfire.png, lib/treasures: Updated with new
     archetypes and treasures.
-random_maps/standalone.c,server/rune.c,server/time.c: Calls to 
+random_maps/standalone.c,server/rune.c,server/time.c: Calls to
     create_treasure updated
 server/apply.c:  New functions for god intervention added, update calls
      to create_treasure, other god related changes.
@@ -8116,7 +8116,7 @@ server/c_chat.c: remove command_last, add command_shout and command_tell
 server/c_misc.c,server/c_object.c: Relocate many functions
 	 from input.c into these files.
 server/c_move.c, server/c_new.c: Add standard crossfire banner comment.
-server/c_range.c: New file - contains range related commands, 
+server/c_range.c: New file - contains range related commands,
 	including spell casting (relocated from input.c)
 server/c_wiz.c: move command_invisible from input.c into this file.
 server/commands.c: Remove unused commands (bell, last, strength)
@@ -8138,7 +8138,7 @@ random_maps/*.c:  endless loop removed,
 exit leading to blocked area of spiral fixed.
 
 
-PeterM:  2000/12/17: Stat max bug fixed.  
+PeterM:  2000/12/17: Stat max bug fixed.
 server/apply.c
 
 
@@ -8187,13 +8187,13 @@ common/player.c: When trying to find a skill to use, use a native skill
 first before going off and returning a skill object like a talisman.
 
 MSW 2000/12/4:
-common/treasure.c: Make it so resistances from artifact files are absolute 
+common/treasure.c: Make it so resistances from artifact files are absolute
 	adjustments.
 Makefile.in configure configure.in: Fix check for libdes to see if des_crypt
 	exists in libdes before setting HAVE_LIBDES
 crossedit/Makefile.in:  Add Cnv/libCnv.a before LIBS - should fix
 	linking error on irix systems.
-utils/metaserver.pl: modified so it ignores entries from hosts that 
+utils/metaserver.pl: modified so it ignores entries from hosts that
 	report their name as put.your.hostname.here
 
 MSW 2000/12/3:
@@ -8205,7 +8205,7 @@ TODO: Remove outdated things to do (like partial resistance code)
 configure, configure.in, include/autoconf.h.in: Add check for libpng.
 include/global.h: Remove displaymodes - moved to crossedit/Defines.h
 crossedit/App.c, crossedit/App.h crossedit/CrEdit.c crossedit/CrFace.c
-  crossedit/CrList.c crossedit/CrUtil.c crossedit/Edit.c crossedit/crossedit.c 
+  crossedit/CrList.c crossedit/CrUtil.c crossedit/Edit.c crossedit/crossedit.c
   crossedit/xutil.c, crossedit/png.c (new file): Add support for png display
   in crossedit.
 crossedit/Makefile.in:  Add png.c file.
@@ -8296,7 +8296,7 @@ attack.c:  saving throw behavior modified.  Items take a bit
 of DAM to destroy now instead of being destroyed with 1hp attacks.
 
 MSW: 2000/11/16:
-socket/metaserver.c: Add #ifdef MSG_DONTWAIT into metaserver.c for systems 
+socket/metaserver.c: Add #ifdef MSG_DONTWAIT into metaserver.c for systems
 	that lack that definition.
 random_maps/style.c: alphasort was not properly de-referencing pointers
 	when doing name comparisons, and thus returned garbage results,
@@ -8530,16 +8530,16 @@ Major race/class change by PeterM:
 BEGIN:
 *****************
 apply.c:  new function, apply changes to player.  If the change is a CLASS,
-player receives certain attributes from the class. 
+player receives certain attributes from the class.
 
 login.c:  make sure people using the old race/class archetypes in their
 player files can still use them.
 
-player.c:  
+player.c:
 1) give_initial_items modified for greater flexibility:  you
-can pass in a treasurelist.  
+can pass in a treasurelist.
 2) Also, initial forces are applied to the player.
-3) Comment added on the stat roll function.  
+3) Comment added on the stat roll function.
 4) Word of recall into the new class-choice map (unfortunately hard-wired.) for newly-rolled players.
 5) gen_sp and gen_hp and gen_grace now allowed to go negative to slow down player
 regen.
@@ -8568,7 +8568,7 @@ spellist.h: fixed up summoning spells a little
 sproto.h:  new prototypes
 
 config.h:  hate RECYCLE_TMP_MAPS, turned it off
-  
+
 maps/HallOfSelection:  new map for class choice.
 
 lib/treasures:  classs/race stuff heavily modified
@@ -8727,7 +8727,7 @@ alive object has level < 1.  - Jan Echternach 6/21/2000
 
 Makefile.in: Update version to 0.95.6
 include/patchlevel.h: Update to .6 for 0.95.6 release
-common/porting.c, include/config.h, include/loader.h, include/skills.h, 
+common/porting.c, include/config.h, include/loader.h, include/skills.h,
 include/spells.h, include/treasure.h, include/version.h, random_maps/style.c:
     Update my mail address and copyright date.  Mostly committed to sync
     up my data with the CVS repository - MSW 6/20/2000
@@ -8822,7 +8822,7 @@ apply_special().  Don't call esrv_send_item() when caster is not a player
 (fixes server crash if monster casts this spell).
 - Jan Echternach 6/9/2000
 
-random_map/<various>  Fixes in the map code for various things, including:  
+random_map/<various>  Fixes in the map code for various things, including:
 1) crash bug on
 multi-square monsters. 2)  no treasures in final_map, 3) new feature of doing
 walls only, ....  --PeterM 6/9/2000:
@@ -8907,10 +8907,10 @@ destroyed next object.  Use llevError for error messages.  Skip all
 objects that are (no longer) at the specified map position.
 - Jan Echternach 6/8/2000
 
-server/map.h server/main.c Increased buffer sizes for map paths. 
+server/map.h server/main.c Increased buffer sizes for map paths.
 Needed for random map code.  --PeterM 6/6/2000
 
-6/4/2000:  Fix done to disease.c which causes diseases to 
+6/4/2000:  Fix done to disease.c which causes diseases to
 put experience into the appropriate category.    --PeterM
 
 6/4/2000:  Added race fields to a lot of monsters.  Modified
@@ -9202,7 +9202,7 @@ with FLAG_STARTEQUIP.
 
 server/input.c:  modify examine_monster to use the maxhp field instead of
 the arch hp field to determine healthiness of the monster.  Also, give
-this information for all creatures, not just monsters or players.  
+this information for all creatures, not just monsters or players.
 MSW 5/23/200
 
 socket/item.c:  Add MAXITEMLEN define at top of file and use that to determine
@@ -9267,7 +9267,7 @@ that list can be removed from it by process_object().  One of the things
 this fixes is bogus "Free object on list" errors.
 - Jan Echternach 21/5/2000
 
-crossedite/Makefile.in:  Modify to use $(MAKE) instead of make when 
+crossedite/Makefile.in:  Modify to use $(MAKE) instead of make when
 descending into subdirectories - fixes compilation on FreeBSD - MSW 5/17/2000
 
 socket/init.c:  Fix incorrect check on return value from fread when
@@ -9313,7 +9313,7 @@ in the client nor will the server send them - that is the next step
 in the work, but that will require just a few minor changes to the
 server - most of those change will be in the client.
 
-crossedit/xutil.c: Merge bitmap & pixmap load routine into one called	
+crossedit/xutil.c: Merge bitmap & pixmap load routine into one called
     ReadImages, function modified to use above format.
 crossedit/App.c: Call ReadImages to load images.
 include/newserver.h: Change FaceInfo structure to have arrays of data
@@ -9409,7 +9409,7 @@ help/usekeys: Added describing options
 lib/Makefile.in: Addition of help/usekeys above.
 include/player.h: Add new enumeration and entry into player structure
 include/sproto.h: New function prototype
-server/apply.c: change of Find_Key to new function with slightly 
+server/apply.c: change of Find_Key to new function with slightly
 	different options
 server/c_misc.c: add function to support 'usekeys command.
 server/commands.c: addition of usekeys command
@@ -9458,32 +9458,32 @@ objects.
 
 Missing level meant AT_DEATH didn't work, missing call to
 path_level_mod()/casting_level() meant path_attuned/path_repelled was
-ignored.  - Jan Echternach 4/17/2000 
+ignored.  - Jan Echternach 4/17/2000
 
 server/player.c: fire_bow():  Set level of fired arrow.  Arrows with
-AT_DEATH are now working.  - Jan Echternach 4/17/2000 
+AT_DEATH are now working.  - Jan Echternach 4/17/2000
 
 server/player.c: fire():  Call check_skill_to_fire() even for wizards
 because this function has the important side effect of setting the current
-skill and experience objects.  - Jan Echternach 4/17/2000 
+skill and experience objects.  - Jan Echternach 4/17/2000
 
 server/skills.c: do_throw(), server/time.c: stop_arrow(), server/player.c:
 fire_bow():  Flying arrows and thrown objects have FLAG_NO_PICK set because
 picking these objects is currently broken (and maybe it shouldn't be
-possible anyway - picking up a _flying_ arrow?).  - Jan Echternach 4/17/2000 
+possible anyway - picking up a _flying_ arrow?).  - Jan Echternach 4/17/2000
 
 server/c_wiz.c: set_god():  Didn't work at all because it was trying to
-set the current player as his own god.  - Jan Echternach 4/17/2000 
+set the current player as his own god.  - Jan Echternach 4/17/2000
 
 server/map.c: check_path():  Return value was wrong if the name did not
 refer to a regular file.  A symptom of this bug was that the server crashed
 if a wizard tried to enter a directory with the 'goto' command.
-- Jan Echternach 4/17/2000 
+- Jan Echternach 4/17/2000
 
 server/map.c: open_and_uncompress():  Check that the file we have opened
 is (still) a regular file, fail if it's not.  This is the right place
 for such checks if we want to avoid race conditions (e.g. file replaced by
-directory while trying to open it).  - Jan Echternach 4/17/2000 
+directory while trying to open it).  - Jan Echternach 4/17/2000
 
 c_party.c commands.c daemon.c disease.c gods.c spell_effect.c spell_util.c:
 Cosmetic fixes - updates to rcsid string to include right file name as well as
@@ -9587,7 +9587,7 @@ that is what the identify function does.  Standard top of
 file banner also added to skills.c file.  Fixes problem of
 objects in inventory being displayed with two numbers in from
 (ie, two two bows +1).
-Bug and initial fix of item updates by Kurt Fitzner, 
+Bug and initial fix of item updates by Kurt Fitzner,
 implemented in a bit different way by Mark Wedel.  3/26/2000
 
 Makefile.in, doc/Makefile.in: Modified so that making the docarchive
@@ -9667,7 +9667,7 @@ Both changes commited by Mark Wedel, 2/7/2000
 
 ---SMALL BUGFIX--- John Cater 5/11/1999
 server/attack.c:
-- changed the logic in hit_player to attack enemy races with holy word 
+- changed the logic in hit_player to attack enemy races with holy word
 playtested
 
 
@@ -9896,7 +9896,7 @@ be setting a trap (in this particular bug, reported by Klaus Elsbernd,
 the victim was a thrown object) - msw
 
 Change by dragonm@absolut.tegris.org - improve crossedit so that if you
-try to load a map you alreay have in memory, it will raise the window - 
+try to load a map you alreay have in memory, it will raise the window -
 it will also give you the option to forget, save changes, or just raise
 the window if the in memory version of that map has been modified.  Checked
 in by msw. (crossedit, App.c, Edit.c, Edit.h)
@@ -9967,7 +9967,7 @@ server/gods.c  --  changing gods now costs players their special
 			prayers. --PeterM
 server/alchemy.c  --  levels less than ten no longer produce
 		cursed items, but only slag or nothing.  --PeterM
-server/shop.c  --  unidentified stuff is worth at most 60gp or so. 
+server/shop.c  --  unidentified stuff is worth at most 60gp or so.
   ---PeterM
 
 random_maps/style.c - fix type in the scandir function which cause
@@ -10108,7 +10108,7 @@ Update the README file - the list of public servers was grossly out of date
 and mostly removed.  The instructions for running/playing were out of date,
 containing information for servers with the old X11 code.
 
-Change CAN_MERGE so that identified items with different been_applied 
+Change CAN_MERGE so that identified items with different been_applied
 will merge (this is currently done by just setting the been_applied flags
 for the object in CAN_MERGE if they have been identified)
 
@@ -10201,7 +10201,7 @@ when creating the archive.
 Add 'race *' to maps/styles/misc/fountains - this fixes a crash when
 entering random maps.
 
-If use presses an incorrect key at the play again prompt, reprint the 
+If use presses an incorrect key at the play again prompt, reprint the
 play again question.
 
 Change find_free_spot to return -1 if no spot available, update calls so
@@ -10234,7 +10234,7 @@ as they propogate.
 Remove server side referances to INFOLINES and INFOCHARS, since that is now
 controlled by the client.
 
-Code cleanup to random map generator to prevent compiler warnings.  
+Code cleanup to random map generator to prevent compiler warnings.
 Also, change comparision of val == 0x1 to val-1 = null, since the
 later is more portable.
 
@@ -10270,7 +10270,7 @@ spells.
 Fix by Seikoh Nishita so that magic walsl can not be placed on top of
 other walls/monsters.
 
-Fix by Seikoh Nishita so that we don't clear the NO_STEAL flag on 
+Fix by Seikoh Nishita so that we don't clear the NO_STEAL flag on
 insert_ob_in_map - this makes singing/stealting from the same monster
 multiple times impossible.
 
@@ -10352,7 +10352,7 @@ ground.
 Improve pickup code mode 6 (pickup magic item) - call is_magical to
 determine if an item is magical instead of relying on known_magical flag.
 
-If the player has a marked item in need of identifying, identify that 
+If the player has a marked item in need of identifying, identify that
 specific item first when an apply altar is used.  This allows a player
 to selective choose what to identify.
 
@@ -10377,7 +10377,7 @@ give it physical attacktype in addition to what the god gives it.
 By default, make new players peaceful.
 
 Fix up the fire cancellation function - it seems some of the code wasn't
-quite right (inserting in map vs setting the owner.)  The fix should 
+quite right (inserting in map vs setting the owner.)  The fix should
 prevent some core dumps this could have caused.
 
 Fix for main loop in socket.c that should prevent infinite loops when
@@ -10387,7 +10387,7 @@ properly and continue with processing.
 Autoconf fixes - check for canonical system, specail check for
 alpha-dec-osf to add -std1 to cflags, add check for latex, add check
 for BOURNE_SHELL (this is used in hte makefiles, as some os's will use
-the users shell, but some constructs we use require bourne type shell), 
+the users shell, but some constructs we use require bourne type shell),
 add check for number of args gettimeofday uses, change order when
 we create the makefiles to be proper.
 
@@ -10436,7 +10436,7 @@ Change load code so that player handling on unique maps should work better
 per player unique map and that map was or was not in memory, it might not
 load the per player unique map)
 
-Removed player file lockin during login.  Extra lock files get left 
+Removed player file lockin during login.  Extra lock files get left
 laying around in aborted login attempts.  And in retrospect, I don't
 think it is ever really needed.
 
@@ -10444,14 +10444,14 @@ Some excessive/annoying debugging messages removed.
 
 Some general cleanup in some functions that were previous setting
 automatic variables.  If the variables are none changing, we now declare
-them static, otherwise we don't set the value as the initialization 
+them static, otherwise we don't set the value as the initialization
 area - this prevents warnings with some compilers.  Some casts added for
 some functions to also prevent warning messages.
 
 Remove HAVE_SAVE_UID in config.h - no longer any code using it.
 
 In free_player, only call remove_ob on pl->ob if it is not already removed.
-This fixes crashes when a player kills there login session before 
+This fixes crashes when a player kills there login session before
 it is completed.
 
 Instead of calling draw_look (which causes all data on that space being
@@ -10473,7 +10473,7 @@ Fixes in configure script to autodetect X11 libraries better.  Fixes
 also in Makefiles so all rules should work and all needed variables should
 now be expanded.  Add checks for a few more header files.  Makefile fixes
 also include changes so that archive is packed in proper order that it should
-not try to rebuild pregenerated files.  Master makefile now set to 
+not try to rebuild pregenerated files.  Master makefile now set to
 make bzip2 archives in addition to gzip archives.
 
 Added watchdog code from Christian Stieber - periodically sends out UDP
@@ -10596,7 +10596,7 @@ player.
 
 Added per player unique maps (new apartments).  Maps from Christian
 Stieber, however the implementation is a bit different - if an exit is
-marked as unique, it will lead to a unique maps.  The unique maps are 
+marked as unique, it will lead to a unique maps.  The unique maps are
 stored in the new player save file directories as above.
 
 Removed all X11 support from the server code.  Change crossedit so that
@@ -10676,7 +10676,7 @@ to reliably reproduce this, so am not sure.)  Basically, I believe the
 problem was that set_owner was only being set for the wrapper in the
 thrown object, but it is the actual internal object that gets used at
 some point in the attack sequence.  As such, I believe that the knife,
-spear, whatever was getting the exp for the kill (exp = speed in 
+spear, whatever was getting the exp for the kill (exp = speed in
 weapons).  To hopefully fix this, I have also added a set_owner call
 on the real object so when it goes to grant exp, it should find a
 valid place for it and credit the player and not the weapon.
@@ -10713,7 +10713,7 @@ braces are properly in place (From Klaus Elsbernd)
 Hopeful bug for disappear objects when emptying bags.  I believe the
 problem was that invisible objects ended up showing up in the containers
 somehow - this by itself is not a problem.  However, the empty bag
-function calls drop with the object to drop and keeps the next value - 
+function calls drop with the object to drop and keeps the next value -
 however, drop would forward past the invisible object so the calling functions
 next value is no longer accurate.  Drop function now does not skip over
 invisible objects in containers (will skip over them in player inventory) -
@@ -10800,8 +10800,8 @@ Add AT_INTERNAL attacktype used only for internal calculations (ie,
 does that amount of damage).  Actual damage section of poison now
 uses this.
 
-Fix spoiler generation - don't convert monster archetype names to 
-lowercase - images generated properly for them now.  Also, fixed problem 
+Fix spoiler generation - don't convert monster archetype names to
+lowercase - images generated properly for them now.  Also, fixed problem
 with some images (dragon) being rotated when they shouldn't.
 
 Clear INV_LOCKED flag when stealing objects.
@@ -10818,7 +10818,7 @@ look for unique files starting at v00 and will write new ones with the .v00
 extensions.  If you have .v01 files, these will be read in the first time
 through (provided you also don't have a .v00), but all new files will be
 written with the .v00 extension.  Referances to ITEMS_DIR changed to
-be UNIQUE_DIR - I think that is more descriptive.  This includes 
+be UNIQUE_DIR - I think that is more descriptive.  This includes
 the environmental variable.
 
 Change ok_to_put_more to do more complete checking and also not to stop
@@ -11010,7 +11010,7 @@ Map fixes:
      Lake_Country/ebony/masterlev altar should now accept fragment
 	of chaos.
     Put no magic areas in apartment so it should no longer be able
-	to dimension door and get keys.  
+	to dimension door and get keys.
     /city/houses/wizz.entry should now be entered at the correct position.
     /city/misc/library - library cards are now identified, so it should
 	no longer be able to buy then sell at a profit.
@@ -11057,10 +11057,10 @@ Added yield to water of diamond, fixed typo for dust of frost recipe.
 If a recipe doesn't have a yield, recipe should still be properly
 generated.
 
-Hiscore savefile now stores maxgrace and seperates player title from 
+Hiscore savefile now stores maxgrace and seperates player title from
 player name.
 
-Option added to only swap out maps when MAX_OBJECTS is exceeded 
+Option added to only swap out maps when MAX_OBJECTS is exceeded
 (MAX_OBJECTS_LWM)
 
 Changed internal definition from SOUND_EFFECTS to RPLAY_SOUND to properly
@@ -11103,12 +11103,12 @@ Fix get command so it takes from a container if appropriate.
 
 shutdown and kick wizard commands added.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Client/Server changes for 0.94.0
 
 Updated protocol version to 1010
 
-Server debugging statements in ericserver can be enabled/disabled by 
+Server debugging statements in ericserver can be enabled/disabled by
 define at top.
 
 Client can lock/unlock items on the server.
@@ -11146,7 +11146,7 @@ are locked.
 
 Added item1 command which superceded item command - sends more informatin.
 
-Added update command to protocol, and function in server - only sends 
+Added update command to protocol, and function in server - only sends
 portions of an object that need to be updated.
 
 Server now properly handles repeat fire on.
@@ -11173,7 +11173,7 @@ change put_a_monster function so it properly handles multi-square monsters
 
 Changed alchemy so you no longer get exp for failed/random mixtures
 
-If a container on the ground that the player is using (ie opened) is 
+If a container on the ground that the player is using (ie opened) is
 somehow removed, update the players view to now be the ground and not
 the container.
 
@@ -11406,7 +11406,7 @@ moves onto a space (previously, they were being activated twice.)
 Fix for connected objects so that they will not be sacrificed on altars.
 This fixes a case where you might want to put a check_inv and altar with
 the same sacrifice on the same space.  Before, the inventory checker would
-be sacrificed on the altar, causing the linked button list for 
+be sacrificed on the altar, causing the linked button list for
 inventory checker to be corrupt.
 
 Many maps updated to look better in xpm mode or just better in general.
@@ -11532,7 +11532,7 @@ altered if there is no map reset time.
 Changes from Crossfire 0.93.1 to 0.93.2:
 
 New argument parsing routine - we now parse arguments in phases.  With this,
-I have moved many of the global settings into a settings structure, and 
+I have moved many of the global settings into a settings structure, and
 allowed highscores to be displayed by class/name.  The man page and -h
 option have also been updated.  Also, all the files that could
 previously be specified via environmental variables can now be specified
@@ -11553,7 +11553,7 @@ Fixed inscription - now properly writes scroll when passed no string instead
 of crashing.
 
 Artifact monsters now possible (monsters whose abilities are changed based
-on the artifacts file.)  Top of the artifacts file has more information on 
+on the artifacts file.)  Top of the artifacts file has more information on
 this.  For now, I have only set up the orc, ogre, and goblin to get
 special leaders.
 
@@ -11621,7 +11621,7 @@ If an object is cursed, set its vulnerable values to its protected and
 immune fields, adn clear those fields.  Fixes 'problems' with finding
 cursed rings which are not really cursed (pro fire/vuln cold rings.)
 
-If trying to switch to private colormap in XPM mode, check to see if 
+If trying to switch to private colormap in XPM mode, check to see if
 we are successful.
 
 Fix crossedit so that if you have a map loaded and you then try to load
@@ -11752,7 +11752,7 @@ Increase buffer size for examine command - some object could overflow the old
 buffer.
 
 remove no_magic from all monsters - immunity values should be used instead.
-am not sure 
+am not sure
 
 Made changes for strcasecmp detect - was checking as defined(sun), now is
 defined(__sun__) - this is proper and what the rest of the code uses.
@@ -11864,7 +11864,7 @@ on varying factors, monsters wake up & call for help if it, can't remain
 hidden if you attack, changes for monster detection of hidden/dark/invisible
 players, players no longer remain invisible if attacking, adjustment in
 exp for stealing, stealing and hiding chances changed based on terrain
-and other modifiers, when generating flesh items, set no_steal, give 
+and other modifiers, when generating flesh items, set no_steal, give
 chinese dragons some treasure, giants a little more gold.
 
 ------------------------------------------------------------------------------
@@ -12084,7 +12084,7 @@ overflows.
 ------------------------------------------------------------------------------
 Changes from Crossfire 0.92.5 to 0.92.6:
 
-If player deletes window and we can't save, delete player objects instead of 
+If player deletes window and we can't save, delete player objects instead of
 dumping them on the map.
 
 Make NEW_PROCESS_EVENTS standard - remove old proces code and ifdefs.
@@ -12149,7 +12149,7 @@ we cycle through them one by one, and take the one that does the best
 damage and use it.  Some attacktypes no longer do damage - they are effects
 (ie, paralyzation, slow.)  In the case of of these, the effect will always
 be applied if appropriate.  Code looks to behave pretty much the same,
-but is easier to follow.  IF new code is buggy, or you don't want it, 
+but is easier to follow.  IF new code is buggy, or you don't want it,
 there is a define at the top of attack.c you can change.
 
 If god blesses you, lets actually remove the depletion object from the
@@ -12187,7 +12187,7 @@ Library patch by Brian Thomas.
 Various skill fixes by Brian Thomas.
 
 Alchemy patch by Brian Thomas.  Here is a copy of his README:
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
         The amount of work I put into this was substantial; other than
         new code -- I created new archetypes, revised archetypes, altered the
         treasures file and created 2 new object types and a flag.
@@ -12195,23 +12195,23 @@ Alchemy patch by Brian Thomas.  Here is a copy of his README:
         It therefore may be enjoyable to install this patch (incl code)
         and *not* define ALCHEMY in define.h. In particular, this patch
         does the following things:
- 
+
          1) more varieties of potions are available in shops.
- 
+
          2) new gems and types of food.
- 
+
          3) monsters will now leave behind body parts when you kill them.
- 
+
          4) if ALCHEMY is defined players may make potions/artifacts.
- 
+
         I have included instructions for installation in INSTALL.PATCH,
-        and a brief document for using the code (Alchemy.doc). 
- 
+        and a brief document for using the code (Alchemy.doc).
+
         Finally, as always, feedback is appreciated.
- 
+
                                                 b.t.
                                                 thomas@astro.psu.edu
-+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
++ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
 
 
 
@@ -12292,7 +12292,7 @@ Allow individual players to set the inventory icon, now longer a compile time
 option.
 
 If we get a non critical error and do an emergency save just in case,
-then don't remove any information/objects.  This probably fixes the 
+then don't remove any information/objects.  This probably fixes the
 disappearing inventory bug.
 
 ------------------------------------------------------------------------------
@@ -12353,7 +12353,7 @@ otherwise, a proper check for spellpoints is not done, and it then becomes
 possible to go negative.
 
 Modified crossloop so that it renames and compresses any core files created
-while it is running - very handy for debugging (note that you could easily 
+while it is running - very handy for debugging (note that you could easily
 modify it to remove the core files instead.)
 
 ------------------------------------------------------------------------------
@@ -12714,7 +12714,7 @@ should make compiles on SVR4 work properly.
 New artifacts (in lib/artifacts file) added.
 
 Configurable option:  cone attacks no longer propogate through monster - it
-will only hit the first row.  
+will only hit the first row.
 
 Remove curse/damnation changed so that it will not remove curses which
 are a higher level than the spell caster.
@@ -13260,7 +13260,7 @@ Patches that modified 'create food' spell.  Better food (ie, waybread)
 will be created at higher levels, and the caster can also specify what
 type of food to be created.  From Peter Mardahl.
 
-Spell paths added by Rupert G. Goldie <rgg@aaii.oz.au>.  Simply put, 
+Spell paths added by Rupert G. Goldie <rgg@aaii.oz.au>.  Simply put,
 each 'spell path' contains a certain category of spells.  Objects and
 races can be attuned, repelled, or denied certain paths (objects would
 apply the the person wearing them).  Attuned allows casting of spells in
@@ -13275,7 +13275,7 @@ doc directory for a little more information.
 
 Pickup mode 6 (pick up magical items) will not pick up known cursed items.
 
- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Object structure and process_events changed.  Now, a separate list
 us used to keep track of active objects (objects whose speed is nonzero).
 All objects on the active list are still on the normal list, but
@@ -13300,14 +13300,14 @@ a couple warehouses in Navar without any errors.
 Then, I switched to using the active_list, and printing out errors if
 it found objects on that list with zero speed.  I cleared out the
 mages tower in Navar city without any errors.
- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 Selling items now works properly (it only failed to work if
 AUTO_SAVE was not set previously, and the value of the item was
 beyond a certain amount.)
 
-Look window code changed so that it does not erase the unused area 
+Look window code changed so that it does not erase the unused area
 unless necessary.  Also, when a player moves, freeze_look is set.
 This was changed because the functions that move_ob calls update the look
 window, and the window was being updated 3 times each time the player moved.
@@ -13474,7 +13474,7 @@ should not need to run 'make proto'
 New XPM loading method.  Creates montage of the xpm files,
 so that not as many calls to XPM are needed.  This has reduced loading
 time to about 30% of what it was before.  Note: This done mean it takes
-some more memory at start up, as the montage has to be stored 
+some more memory at start up, as the montage has to be stored
 temporarily.
 
 Changed charisma bonuses.  At 30 charisma, it will no longer be possible to
