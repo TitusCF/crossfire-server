@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Refactoring of move_apply -> move_on for several object classes.
+Removed obsolete server/swamp.c file.
+See types/ChangeLog for details.
+    server/apply.c
+    server/swamp.c
+    server/time.c
+Yann Chachkoff 2007-01-21
+
 Some changes to the mapper.
  utils/mapper.c: some code cleaning. New tags.
  utils/templates/map.template map_with_exit.template: use new tags, legend.
