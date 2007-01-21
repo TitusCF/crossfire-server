@@ -14,6 +14,6 @@ Map view:
 <br />
 #MAPEXIT#
 <br />
-<a href="#REGIONPATH#">Back to #REGIONNAME#'s map index</a> | <a href="#INDEXPATH#">Back to global map index</a>
+<a href="#REGIONPATH#">#REGIONNAME#'s map index</a> | <a href="#REGIONINDEXPATH#">Region index</a> | <a href="#INDEXPATH#">Global map index</a> | <a href="#WORLDMAPPATH#">World map</a>
 </body>
 </html>

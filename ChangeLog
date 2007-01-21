@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Some changes to the mapper.
+ utils/mapper.c: some code cleaning. New tags.
+ utils/templates/map.template map_with_exit.template: use new tags, legend.
+Ryo 2007-01-21
+
 server/spell_util.c: Consider all stats when swapping random stats due to
    a failed spell.
 Andreas Kirschbaum 2007-01-21

@@ -74,6 +74,8 @@
  *  - INDEXPATH: path to index.html file.
  *  - REGIONPATH: path to region's file.
  *  - REGIONNAME: name of map's region.
+ *  - REGIONINDEXPATH: path to region index file.
+ *  - WORLDMAPPATH: path to world map file.
  * - map_no_exit:
  *  - tags for map, except MAPEXIT.
  * - map_with_exit:
@@ -513,6 +515,20 @@ void add_map_to_region(const char* map, const char* region) {
     }
 }
 
+/**
+ * Saves a map to a file, based on jpg/png settings.
+ *
+ * @param file
+ * opened file to which to save.
+ * @param pic
+ * picture to save.
+ */
+static void save_picture(FILE* file, gdImagePtr pic) {
+    if (output_format == OF_PNG)
+        gdImagePng(pic, file);
+    else
+        gdImageJpeg(pic, file, jpeg_quality);
+}
 
 /**
  * Processes a map.
@@ -550,10 +566,12 @@ void domap(const char* name)
     char indexpath[500];        /* Relative path of full index. */
     char regionpath[500];       /* Path to region's filename. */
     char regionname[500];       /* Name of map's region. */
+    char regionindexpath[500];  /* Path to region index file. */
+    char worldmappath[500];     /* Path to world map. */
     int needpic = 0;
 
-    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", NULL, NULL, NULL };
-    const char* values[] = { name, htmlpath, mapname, mappic, mapsmallpic, "", indexpath, regionpath, regionname, NULL, NULL, NULL };
+    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", NULL, NULL, NULL };
+    const char* values[] = { name, htmlpath, mapname, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL };
     int vars_count = 0;
     while (vars[vars_count])
         vars_count++;
@@ -571,6 +589,8 @@ void domap(const char* name)
     add_map_to_region(m->path, get_name_of_region_for_map(m));
 
     relative_path(name, "/maps.html", indexpath);
+    relative_path(name, "/world.html", worldmappath);
+    relative_path(name, "/regions.html", regionindexpath);
 
     strcpy(regionname, get_name_of_region_for_map(m));
     strcpy(exit_path, "/");
@@ -747,19 +767,13 @@ void domap(const char* name)
 
     if (needpic) {
         out = fopen(mappicpath, "wb+");
-        if (output_format == OF_PNG)
-            gdImagePng(pic, out);
-        else
-            gdImageJpeg(pic, out, jpeg_quality);
+        save_picture(out, pic);
         fclose(out);
 
         small = gdImageCreateTrueColor( MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small );
         gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small, MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32 );
         out = fopen(mapsmallpicpath, "wb+");
-        if (output_format == OF_PNG)
-            gdImagePng(small, out);
-        else
-            gdImageJpeg(small, out, jpeg_quality);
+        save_picture(out, small);
         fclose(out);
         gdImageDestroy(small);
 
@@ -1114,10 +1128,7 @@ void do_world_map() {
 
     sprintf(mappath, "%s/world_raw%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
-    if (output_format == OF_PNG)
-        gdImagePng(pic, out);
-    else
-        gdImageJpeg(pic, out, jpeg_quality);
+    save_picture(out, pic);
     fclose(out);
 
     /* Write region names. */
@@ -1136,19 +1147,13 @@ void do_world_map() {
 
     sprintf(mappath, "%s/world_regions%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
-    if (output_format == OF_PNG)
-        gdImagePng(small, out);
-    else
-        gdImageJpeg(small, out, jpeg_quality);
+    save_picture(out, small);
     fclose(out);
     gdImageDestroy(small);
 
     sprintf(mappath, "%s/world%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
-    if (output_format == OF_PNG)
-        gdImagePng(pic, out);
-    else
-        gdImageJpeg(pic, out, jpeg_quality);
+    save_picture(out, pic);
     fclose(out);
     gdImageDestroy(pic);
 
