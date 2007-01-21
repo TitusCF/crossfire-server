@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/spell_util.c: Consider all stats when swapping random stats due to
+   a failed spell.
+Andreas Kirschbaum 2007-01-21
+
 Implement feature request #656195: More effects of confusion.
 Three effects can happen:
  * one item is transformed temporarily to flowers

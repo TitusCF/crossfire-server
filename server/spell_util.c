@@ -1056,7 +1056,7 @@ static void swap_random_stats(object* op) {
 
     first = RANDOM()%NUM_STATS;
     second = RANDOM()%(NUM_STATS-1);
-    if (second==first)
+    if (second>=first)
         second++;
 
     draw_ext_info_format(NDI_UNIQUE, 0,op,
