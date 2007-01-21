@@ -9,6 +9,8 @@ will apply/unapply that object (toggle)
 Extra options to apply:
 -a: Always applies the object
 -u: Always unapplies the object.
+-b: Applies an item on the ground
+ or in active container.
 
- These two options disable the
+-a and -u disable the
 toggling feature.

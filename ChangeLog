@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #822087: Apply below.
+'apply' now has a new flag, '-b', that specified an item on the ground.
+ lib/help/apply: updated.
+ server/c_object.c: look for item on ground/in container.
+Ryo 2007-01-21
+
 Refactoring of move_apply -> move_on for several object classes.
 Removed obsolete server/swamp.c file.
 See types/ChangeLog for details.

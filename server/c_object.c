@@ -46,18 +46,18 @@ static void set_pickup_mode(const object *op, int i);
                           fatal(OUT_OF_MEMORY);
 
 /**
- * Search the inventory of 'pl' for what matches best with params.
+ * Search from start and through below for what matches best with params.
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
  * aflag is used with apply -u , and apply -a to
  * only unapply applied, or apply unapplied objects
  **/
-static object *find_best_apply_object_match(object *pl, const char *params, enum apply_flag aflag)
+static object *find_best_apply_object_match(object *start, object* pl, const char *params, enum apply_flag aflag)
 {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;
 
-    for (tmp=pl->inv; tmp; tmp=tmp->below) {
+    for (tmp=start; tmp; tmp=tmp->below) {
         if (tmp->invisible) continue;
         if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
             if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
@@ -74,7 +74,7 @@ static object *find_best_apply_object_match(object *pl, const char *params, enum
  **/
 static object *find_best_object_match(object *pl, const char *params)
 {
-    return find_best_apply_object_match(pl, params, AP_NULL);
+    return find_best_apply_object_match(pl->inv, pl, params, AP_NULL);
 }
 
 /*
@@ -483,7 +483,7 @@ int command_apply (object *op, char *params)
     }
     else {
 	enum apply_flag aflag = 0;
-	object *inv;
+	object *inv = op->inv;
 
 	while (*params==' ') params++;
 	if (!strncmp(params,"-a ",3)) {
@@ -494,9 +494,19 @@ int command_apply (object *op, char *params)
 	    aflag=AP_UNAPPLY;
 	    params+=3;
 	}
+	if (!strncmp(params,"-b ",3)) {
+	    params+=3;
+        if (op->container)
+            inv = op->container->inv;
+        else {
+            inv = op;
+            while (inv->above)
+                inv = inv->above;
+        }
+	}
 	while (*params==' ') params++;
 
-	inv=find_best_apply_object_match(op, params, aflag);
+	inv=find_best_apply_object_match(inv, op, params, aflag);
 	if (inv) {
 	    player_apply(op,inv,aflag,0);
 	} else
