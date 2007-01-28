@@ -54,7 +54,6 @@ char* monster_lore_row;        /* Lore table row                 */
 
 typedef struct string_array {
     sint16 count;
-    sint16 longest;
     char** item;
 } String_Array;
 
@@ -273,13 +272,7 @@ static void free_if_used(char *p){
  *
  */
 static int sortbyname(const void *a, const void *b){
-    const char aa[MAX_BUF];
-    const char bb[MAX_BUF];
-
-    strcpy(aa, (const char *)a);
-    strcpy(bb, (const char *)b);
-
-    return( strcasecmp(aa, bb));
+    return (strcasecmp(*(const char**)a, *(const char**)b));
 }
 
 /**
@@ -298,43 +291,17 @@ static int sortbyname(const void *a, const void *b){
 static int sort_archetypes(const void *a, const void *b){
     archetype *aa;
     archetype *bb;
-    
-    aa = (archetype *)a;
-    bb = (archetype *)b;
-    
-    return( strcasecmp(aa->name, bb->name));
-}
 
-/**
- * Sort an array of strings
- *
- * @param array
- * pointer to array to sort
- *
- * @param length
- * length of array to sort
- * 
- */
-static void sort_string_array(char** array, int length){
-    int i, j;
-    char* tmp;
+    aa = *(archetype **)a;
+    bb = *(archetype **)b;
 
-    for(i = length-1; i > 0; i--){
-        for( j=0; j < i; j++ ){
-            if( strcasecmp(array[j],array[j+1]) > 0 ){
-                tmp = array[j];
-                array[j] = array[j+1];
-                array[j+1] = tmp;
-            }
-        }
-    }
+    return (strcasecmp(aa->clone.name, bb->clone.name));
 }
 
 /**
  * Add a string to a String_Array struct
  *
- * Adds the new string to the struct's 'item' array, and updates the 'count' and
- * 'longest' values.  (THIS ROUTINE IS NOT RIGHT YET.)
+ * Adds the new string to the struct's 'item' array, and updates the 'count'value.
  *
  * @param array
  * The array to be appended
@@ -347,10 +314,23 @@ void push(String_Array* array, const char* string){
     sint16 i = array->count;
 
     array->item[i] = strdup_local(string);
-    if( strlen(array->item[i]) > array->longest ){
-        array->longest = strlen(array->item[i]);
-    }
     array->count++;
+}
+
+/**
+ * Frees the item's data of specified String_Array.
+ *
+ * Will free array->item and its fields.
+ *
+ * @param array
+ * element we want to clean.
+ */
+void free_data(String_Array* array) {
+    int item;
+    for (item = 0; item < array->count; item++)
+        free(array->item[item]);
+    free(array->item);
+    array->item = NULL;
 }
 
 /**
@@ -368,8 +348,7 @@ const char* join_with_comma(String_Array* array){
     int i;
 
     newtext = calloc(1,1);
-    sort_string_array( array->item, array->count );
-/*    qsort(array->item, array->count, sizeof(char *), sortbyname); */
+    qsort(array->item, array->count, sizeof(char *), sortbyname);
     for(i=0;i<array->count;i++ ){
         if(i){
             newtext = realloc( newtext, strlen(newtext) + strlen(", ") +1 );
@@ -380,8 +359,8 @@ const char* join_with_comma(String_Array* array){
     }
     return newtext;
 }
-        
-    
+
+
 int main(int argc, char *argv[]) {
 
     archetype *at;
@@ -392,12 +371,13 @@ int main(int argc, char *argv[]) {
     char last_letter;
     char *wiki_page=NULL;
     char *monster_entries=NULL;
-    
+
     FILE *fp = NULL;
     FILE *image_list;
     char image_list_path[128];
     char wikifile[128];
-    
+    char* template;
+
     const char *wikidir = "/tmp";  /* Should change this to come from command line? */
 
     init_globals();
@@ -450,8 +430,10 @@ int main(int argc, char *argv[]) {
     }
     printf("Sorting...");
         /* Calling qsort on monster, which is archetype**     */
-    qsort(monster[0], archnum, sizeof(archetype *), sort_archetypes); 
+    qsort(&monster[0], archnum, sizeof(archetype *), sort_archetypes); 
     printf("done.  %i items found\n", archnum);
+    
+    last_letter = '\0';
     
     for(i=0; i<archnum; i++) {
         at=monster[i];
@@ -461,22 +443,24 @@ int main(int argc, char *argv[]) {
             char buf[16][MAX_BUF];
             int keycount     = 0;
             int res;
-            letter = tolower(at->name[0]);
+            letter = tolower(at->clone.name[0]);
 
             LOG(llevInfo, "Doing archetype %s\n", at->name);
-            
+
             if(letter != last_letter) {  /* New letter, new file */
                 if(fp){
                     keycount = 0;
                     key[keycount] = NULL;
-                    res = fprintf(fp, "%s", do_template(monster_page_foot,
-                                                        key, val));
+                    template = do_template(monster_page_foot, key, val);
+                    res = fprintf(fp, "%s", template);
+                    free(template);
+                    template = NULL;
                     if( res < 0 ){
                         LOG(llevError, "Unable to write to file!\n");
                     }
                     fclose(fp);
                 }
-                
+
                 snprintf(wikifile, sizeof(wikifile),
                          "%s/%c", wikidir, letter);
                 fp = fopen(wikifile, "w");            
@@ -487,6 +471,7 @@ int main(int argc, char *argv[]) {
                 char letterindex[256] = "";
                 char letterindexnext[7];
                 char li;
+                letterindexnext[0] = '\0';
                 for(li='a';li<='z';li++){
                     if(li == letter){
                         sprintf(letterindexnext, "%c ", toupper(li));
@@ -495,7 +480,7 @@ int main(int argc, char *argv[]) {
                     }
                     strncat(letterindex, letterindexnext, 256);
                 }
-                        
+
                 keycount = 0;
                 key[keycount]   = "LETTER";
                 sprintf(buf[keycount], "%c", toupper(letter));
@@ -503,8 +488,9 @@ int main(int argc, char *argv[]) {
                 key[keycount]   = "LETTERINDEX";
                 val[keycount++] = letterindex;
                 key[keycount]   = NULL;
-                res = fprintf(fp, "%s",
-                              do_template(monster_page_head, key, val));
+                template = do_template(monster_page_head, key, val);
+                res = fprintf(fp, template);
+                free(template);
                 if( res < 0 ){
                     LOG(llevError, "Unable to write to file!");
                 }
@@ -512,12 +498,12 @@ int main(int argc, char *argv[]) {
             }
 
                 /* add a monster entry */
-            char *canuse_row     = strdup_local("");
-            char *protected_row  = strdup_local("");
-            char *vulnerable_row = strdup_local("");
-            char *special_row    = strdup_local("");
-            char *attack_row     = strdup_local("");
-            char *lore_row       = strdup_local("");
+            char *canuse_row;
+            char *protected_row;
+            char *vulnerable_row;
+            char *special_row;
+            char *attack_row;
+            char *lore_row;
             const int CANUSE_LENGTH = 16;
             String_Array canuse;
             String_Array resist;
@@ -540,7 +526,7 @@ int main(int argc, char *argv[]) {
             vulner.item = calloc(1,sizeof(const char*)*(NROFATTACKS+1));
             attack.item = calloc(1,sizeof(const char*)*(NROFATTACKS+1));
             special.item = calloc(1,sizeof(const char*)*(NROFATTACKS+1));
-                
+
                 /* Do lore row */
             if( at->clone.lore ) {
                 key[keycount] = "LORE";
@@ -549,6 +535,8 @@ int main(int argc, char *argv[]) {
                 keycount++;
                 lore_row = do_template(monster_lore_row, key, val);
             }
+            else
+                lore_row = strdup("");
 
                 /* Do canuse row */
             canuse.count = 0;
@@ -565,15 +553,18 @@ int main(int argc, char *argv[]) {
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&canuse);
                 canuse_row = do_template(monster_canuse_row, key, val);
+                free(val[keycount]);
             }
-                
+            else
+                canuse_row = strdup("");
+
                 /* Do protected/vulnerable rows */
             resist.count = 0;
             vulner.count = 0;
             for( j=0; j<=NROFATTACKS; j++ ) {
                 if( at->clone.resist[j] && attacktype_desc[j] ){
                     char rowtext[32];
-                        
+
                     if( at->clone.resist[j] < 0 ){
                         sprintf(rowtext, "%s %i",
                                 attacktype_desc[j], at->clone.resist[j]);
@@ -591,7 +582,10 @@ int main(int argc, char *argv[]) {
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&resist);
                 protected_row = do_template(monster_protected_row, key, val);
+                free(val[keycount]);
             }
+            else
+                protected_row = strdup("");
 
             keycount = 0;
             if( vulner.count ){
@@ -599,8 +593,11 @@ int main(int argc, char *argv[]) {
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&vulner);
                 vulnerable_row = do_template(monster_vulnerable_row, key, val);
+                free(val[keycount]);
             }
-                
+            else
+                vulnerable_row = strdup("");
+
                 /* Do attacktype row */
             attack.count = 0;
             keycount = 0;
@@ -615,7 +612,10 @@ int main(int argc, char *argv[]) {
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&attack);
                 attack_row = do_template(monster_attack_row, key, val);
+                free(val[keycount]);
             }
+            else
+                attack_row = strdup("");
 
                 /* Do special row */
             special.count = 0;
@@ -631,7 +631,11 @@ int main(int argc, char *argv[]) {
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&special);
                 special_row = do_template(monster_special_row, key, val);
+                free(val[keycount]);
             }
+            else
+                special_row = strdup("");
+
             keycount = 0;
             key[keycount]   = "CANUSEROW";
             val[keycount++] = canuse_row;
@@ -675,13 +679,16 @@ int main(int argc, char *argv[]) {
             val[keycount++] = "";
             key[keycount]   = NULL;
 
-            fprintf(fp, "%s", do_template(monster_entry, key, val));
+            template = do_template(monster_entry, key, val);
+            fprintf(fp, template );
+            free(template);
+            template = NULL;
 
-            free(canuse.item);
-            free(resist.item);
-            free(vulner.item);
-            free(attack.item);
-            free(special.item);
+            free_data(&canuse);
+            free_data(&resist);
+            free_data(&vulner);
+            free_data(&attack);
+            free_data(&special);
             free(canuse_row);
             free(protected_row);
             free(vulnerable_row);

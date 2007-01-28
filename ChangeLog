@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+utils/bwp.c: fix sort (sort by object's name). Fix memory leaks.
+Ryo 2007-01-28
+
 Implement feature request #822087: Apply below.
 'apply' now has a new flag, '-b', that specified an item on the ground.
  lib/help/apply: updated.
