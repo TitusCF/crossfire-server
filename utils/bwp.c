@@ -7,7 +7,7 @@
  * Please direct all suggestions or corrections to aaron@baugher.biz (or
  * Mhoram on #crossfire).
  *
- * Compile command: gcc -g -pg -O0 bwp.c -I../include ../common/libcross.a ../socket/libsocket.a -o bwp -lz -lcrypt -lm
+ * Compile command: gcc -g -O0 bwp.c -I../include ../common/libcross.a ../socket/libsocket.a -o bwp -lz -lcrypt -lm
  */
 
 /*
@@ -53,7 +53,7 @@ char* monster_attack_row;      /* Attack types table row         */
 char* monster_lore_row;        /* Lore table row                 */
 
 typedef struct string_array {
-    sint16  count;
+    sint16 count;
     sint16 longest;
     char** item;
 } String_Array;
@@ -283,6 +283,54 @@ static int sortbyname(const void *a, const void *b){
 }
 
 /**
+ * Sort archetypes alphabetically
+ *
+ * Used by qsort to sort archetypes alphabetically
+ * without regard to case
+ *
+ * @param a
+ * First value
+ *
+ * @param b
+ * Second value
+ *
+ */
+static int sort_archetypes(const void *a, const void *b){
+    archetype *aa;
+    archetype *bb;
+    
+    aa = (archetype *)a;
+    bb = (archetype *)b;
+    
+    return( strcasecmp(aa->name, bb->name));
+}
+
+/**
+ * Sort an array of strings
+ *
+ * @param array
+ * pointer to array to sort
+ *
+ * @param length
+ * length of array to sort
+ * 
+ */
+static void sort_string_array(char** array, int length){
+    int i, j;
+    char* tmp;
+
+    for(i = length-1; i > 0; i--){
+        for( j=0; j < i; j++ ){
+            if( strcasecmp(array[j],array[j+1]) > 0 ){
+                tmp = array[j];
+                array[j] = array[j+1];
+                array[j+1] = tmp;
+            }
+        }
+    }
+}
+
+/**
  * Add a string to a String_Array struct
  *
  * Adds the new string to the struct's 'item' array, and updates the 'count' and
@@ -320,7 +368,8 @@ const char* join_with_comma(String_Array* array){
     int i;
 
     newtext = calloc(1,1);
-    qsort(array->item, array->count, sizeof(char *), sortbyname);
+    sort_string_array( array->item, array->count );
+/*    qsort(array->item, array->count, sizeof(char *), sortbyname); */
     for(i=0;i<array->count;i++ ){
         if(i){
             newtext = realloc( newtext, strlen(newtext) + strlen(", ") +1 );
@@ -337,8 +386,7 @@ int main(int argc, char *argv[]) {
 
     archetype *at;
     int archnum=0;
-    int archmem=0;
-    char archnames[4000][MAX_SIZE];
+    archetype *monster[4000];
     int i;
     char letter;
     char last_letter;
@@ -392,30 +440,30 @@ int main(int argc, char *argv[]) {
         LOG(llevError, "Unable to open image list file!\n");
         exit(1);
     }
-    
-    
+
         /* Pick out the monster archetypes and sort them into an array */
     for(at=first_archetype; at!=NULL; at=at->next){
         if(QUERY_FLAG(&at->clone, FLAG_MONSTER) &&
            QUERY_FLAG(&at->clone,FLAG_ALIVE)){
-            strcpy(archnames[archnum++], at->name);
+            monster[archnum++] = at;
         }
     }
     printf("Sorting...");
-    qsort(archnames, archnum, MAX_SIZE, sortbyname);
-    printf("done.\n");
+        /* Calling qsort on monster, which is archetype**     */
+    qsort(monster[0], archnum, sizeof(archetype *), sort_archetypes); 
+    printf("done.  %i items found\n", archnum);
     
     for(i=0; i<archnum; i++) {
-        at=find_archetype(archnames[i]);
+        at=monster[i];
         if(at){
             const char *key[16] = {NULL,};
             const char *val[16] = {NULL,};
             char buf[16][MAX_BUF];
             int keycount     = 0;
             int res;
-            letter = tolower(archnames[i][0]);
+            letter = tolower(at->name[0]);
 
-            LOG(llevInfo, "Doing archetype %s\n", archnames[i]);
+            LOG(llevInfo, "Doing archetype %s\n", at->name);
             
             if(letter != last_letter) {  /* New letter, new file */
                 if(fp){
@@ -641,7 +689,7 @@ int main(int argc, char *argv[]) {
             free(special_row);
             free(lore_row);
         } else {
-            LOG(llevError, "Archetype %s not found!!!\n", archnames[i]);
+            LOG(llevError, "Something is very wrong.\n");
         }
     }
     fclose(image_list);
