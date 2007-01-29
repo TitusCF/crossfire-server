@@ -392,7 +392,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
     char* propname;
-    int i;
+
     va_start(args, type);
     propname = va_arg(args, char *);
 
@@ -451,7 +451,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
-    char* buf;
     player* pl;
     object* op;
     int event_code;
@@ -518,7 +517,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
  */
 CF_PLUGIN int postInitPlugin()
 {
-    int rtype = 0;
     char path[500];
     const char* dir;
     int i;
