@@ -261,7 +261,7 @@ int store_time() {
     cf_get_time(&tod);
 
     if (tod.day == last_stored_day)
-        return;
+        return 0;
     last_stored_day = tod.day;
 
     snprintf(date, 50, "%10d-%2d-%2d %2d:%2d", tod.year, tod.month, tod.day, tod.hour, tod.minute);
