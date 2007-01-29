@@ -406,6 +406,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
         va_end(args);
         return PLUGIN_VERSION;
     }
+    va_end(args);
     return NULL;
 }
 

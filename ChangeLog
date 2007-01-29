@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cflogger/cflogger.c: Add missing call to va_end().
+Andreas Kirschbaum 2007-01-29
+
 utils/bwp.c: fix sort (sort by object's name). Fix memory leaks.
 Ryo 2007-01-28
 
