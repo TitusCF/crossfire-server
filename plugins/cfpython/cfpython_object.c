@@ -2098,19 +2098,21 @@ PyObject *Crossfire_Object_wrap(object *what)
         if (what->type == PLAYER)
         {
             plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
-            if(plwrap != NULL)
+            if(plwrap != NULL) {
                 plwrap->obj = what;
                 plwrap->valid = 1;
                 Insert_Destroy_Hook((Crossfire_Object *)plwrap);
+            }
             pyobj = (PyObject *)plwrap;
         }
         else
         {
             wrapper = PyObject_NEW(Crossfire_Object, &Crossfire_ObjectType);
-            if(wrapper != NULL)
+            if(wrapper != NULL) {
                 wrapper->obj = what;
                 wrapper->valid = 1;
                 Insert_Destroy_Hook(wrapper);
+            }
             pyobj = (PyObject *)wrapper;
         }
         add_object_assoc(what, pyobj);

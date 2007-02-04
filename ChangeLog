@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cfpython/cfpython_object.c: Fix missing braces.
+Alex Schultz 2007-02-03
+
 plugins/cflogger/cflogger.c: Add missing return value in store_time().
 plugins/cflogger/cflogger.c: Add missing call to va_end().
 Andreas Kirschbaum 2007-01-29
