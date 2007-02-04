@@ -1178,6 +1178,7 @@ void do_help(const char* program) {
     printf("  -showmaps           outputs the name of maps as they are processed.\n");
     printf("  -jpg[=quality]      generate jpg pictures, instead of default png. Quality should be 0-95, -1 for automatic.\n");
     printf("  -forcepics          force to regenerate pics, even if pics's date is after map's.\n");
+    printf("  -addmap=<map>       adds a map to process. Path is relative to map's directory root.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1192,6 +1193,7 @@ void do_help(const char* program) {
  */
 void do_parameters(int argc, char** argv) {
     int arg = 1;
+    char path[500];
 
     root[0] = '\0';
 
@@ -1216,6 +1218,13 @@ void do_parameters(int argc, char** argv) {
         }
         else if (strncmp(argv[arg], "-forcepics", 10) == 0)
             force_pics = 1;
+        else if (strncmp(argv[arg], "-addmap=", 8) == 0) {
+            if (*(argv[arg] + 8) == '/')
+                strncpy(path, argv[arg] + 8, 500);
+            else
+                snprintf(path, 500, "/%s", argv[arg] + 8);
+            add_map(path, &maps_list, &maps_count, &count_allocated);
+        }
         else
             do_help(argv[0]);
         arg++;
@@ -1255,6 +1264,11 @@ int main(int argc, char** argv)
     int current_map = 0;
     char max[50];
 
+    maps_list = NULL;
+    count_allocated = 0;
+    pics_allocated = 0;
+    maps_count = 0;
+
     do_parameters(argc, argv);
 
     printf("Initializing Crossfire data...\n");
@@ -1276,10 +1290,6 @@ int main(int argc, char** argv)
 
     create_destination();
     gdfaces = calloc(1, sizeof(gdImagePtr) * nrofpixmaps);
-    maps_count = 0;
-    maps_list = NULL;
-    count_allocated = 0;
-    pics_allocated = 0;
 
     if (read_template("templates/map.template", &map_template))
         return;
