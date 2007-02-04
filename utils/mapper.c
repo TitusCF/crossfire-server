@@ -204,6 +204,9 @@ enum output_format_type output_format = OF_PNG;
 /** Quality for jpg pictures. */
 int jpeg_quality = -1;
 
+/** Whether to generate raw pics or instancied ones. */
+int rawmaps = 0;
+
 typedef struct maps_in_region {
     const char* name;
     /** Maps in the region. */
@@ -221,6 +224,8 @@ typedef struct maps_in_region {
 struct maps_in_region** regions = NULL;
 int region_count = 0;
 int region_allocated = 0;
+
+void do_auto_apply(mapstruct * m);
 
 /**
  * Concatenates a string, and free concatenated string.
@@ -586,6 +591,9 @@ void domap(const char* name)
         return;
     }
 
+    if (!rawmaps)
+        do_auto_apply(m);
+
     add_map_to_region(m->path, get_name_of_region_for_map(m));
 
     relative_path(name, "/maps.html", indexpath);
@@ -665,7 +673,7 @@ void domap(const char* name)
                 floor = GET_MAP_OB(m, x, y);
 
             for ( item = floor; item; item = item->above ) {
-                if ((item->type == EXIT || item->type == TELEPORTER) && item->slaying) {
+                if ((item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) && item->slaying) {
                     char ep[500];
                     const char* start;
                     memset(ep, 0, 500);
@@ -1179,6 +1187,7 @@ void do_help(const char* program) {
     printf("  -jpg[=quality]      generate jpg pictures, instead of default png. Quality should be 0-95, -1 for automatic.\n");
     printf("  -forcepics          force to regenerate pics, even if pics's date is after map's.\n");
     printf("  -addmap=<map>       adds a map to process. Path is relative to map's directory root.\n");
+    printf("  -rawmaps            generates maps pics without items on random (shop, treasure) tiles.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1225,6 +1234,8 @@ void do_parameters(int argc, char** argv) {
                 snprintf(path, 500, "/%s", argv[arg] + 8);
             add_map(path, &maps_list, &maps_count, &count_allocated);
         }
+        else if (strncmp(argv[arg], "-rawmaps", 8) == 0)
+            rawmaps = 1;
         else
             do_help(argv[0]);
         arg++;
@@ -1342,6 +1353,7 @@ int main(int argc, char** argv)
         printf("  JPEG quality:                        %d\n", jpeg_quality);
     printf("  will generate map index:             %s\n", yesno(generate_index));
     printf("  show map being processed:            %s\n", yesno(show_maps));
+    printf("  generate raw maps:                   %s\n", yesno(rawmaps));
     printf("\nbrowsing maps...\n");
 
     add_map(first_map_path, &maps_list, &maps_count, &count_allocated);
@@ -1478,6 +1490,7 @@ int execute_global_event(int eventcode, ...)
     return 0;
 }
 
+
 int auto_apply (object *op) {
     object *tmp = NULL, *tmp2;
     int i;
@@ -1531,6 +1544,10 @@ int auto_apply (object *op) {
 }
 
 void fix_auto_apply(mapstruct * m)
+{
+}
+
+void do_auto_apply(mapstruct * m)
 {
     object *tmp,*above=NULL;
     int x,y;
