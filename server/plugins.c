@@ -2089,6 +2089,21 @@ void* cfapi_object_get_property(int* type, ...)
             rv = &rf;
             *type = CFAPI_FLOAT;
             break;
+        case CFAPI_PLAYER_PROP_BED_MAP:
+            ri = op->no_save;
+            rv = op->contr->savebed_map;
+            *type = CFAPI_STRING;
+            break;
+        case CFAPI_PLAYER_PROP_BED_X:
+            ri = op->contr->bed_x;
+            rv = &ri;
+            *type = CFAPI_INT;
+            break;
+        case CFAPI_PLAYER_PROP_BED_Y:
+            ri = op->contr->bed_y;
+            rv = &ri;
+            *type = CFAPI_INT;
+            break;
         default:
             *type = CFAPI_NONE;
             break;
@@ -2574,6 +2589,18 @@ void* cfapi_object_set_property(int* type, ...)
         case CFAPI_OBJECT_PROP_NO_SAVE:
             iarg = va_arg(args, int);
             op->no_save = iarg;
+            break;
+        case CFAPI_PLAYER_PROP_BED_MAP:
+            sarg = va_arg(args, char*);
+            strncpy(op->contr->savebed_map, sarg, MAX_BUF);
+            break;
+        case CFAPI_PLAYER_PROP_BED_X:
+            iarg = va_arg(args, int);
+            op->contr->bed_x = iarg;
+            break;
+        case CFAPI_PLAYER_PROP_BED_Y:
+            iarg = va_arg(args, int);
+            op->contr->bed_y = iarg;
             break;
         default:
             *type = CFAPI_NONE;

@@ -100,6 +100,52 @@ static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args 
     return Py_BuildValue("i", cf_player_can_pay(who->obj));
 }
 
+static PyObject* Player_GetBedMap(Crossfire_Player* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", (const char*)cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP));
+}
+
+static int Player_SetBedMap(Crossfire_Player* whoptr, PyObject* value, void* closure)
+{
+    char* location;
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "s", &location))
+        return -1;
+    cf_object_set_string_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP, location);
+    return 0;
+}
+
+static PyObject* Player_GetBedX(Crossfire_Player* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", *( int* )cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_X));
+}
+static int Player_SetBedX(Crossfire_Player* whoptr, PyObject* value, void* closure)
+{
+    int x;
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &x))
+        return -1;
+    cf_object_set_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_X, x);
+    return 0;
+}
+
+static PyObject* Player_GetBedY(Crossfire_Player* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", *( int* )cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_Y));
+}
+static int Player_SetBedY(Crossfire_Player* whoptr, PyObject* value, void* closure)
+{
+    int y;
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &y))
+        return -1;
+    cf_object_set_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_Y, y);
+    return 0;
+}
+
 /* Object properties. Get and maybe set. */
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
 {

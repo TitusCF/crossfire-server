@@ -485,11 +485,20 @@ static PyObject* Crossfire_Player_Message( Crossfire_Player* who, PyObject* args
 static PyObject* Player_GetParty(Crossfire_Player* whoptr, void* closure);
 static int Player_SetParty(Crossfire_Player* whoptr, PyObject* value, void* closure);
 static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args );
+static PyObject* Player_GetBedMap(Crossfire_Player* whoptr, void* closure);
+static PyObject* Player_GetBedX(Crossfire_Player* whoptr, void* closure);
+static PyObject* Player_GetBedY(Crossfire_Player* whoptr, void* closure);
+static int Player_SetBedMap(Crossfire_Player* whoptr, PyObject* value, void* closure);
+static int Player_SetBedX(Crossfire_Player* whoptr, PyObject* value, void* closure);
+static int Player_SetBedY(Crossfire_Player* whoptr, PyObject* value, void* closure);
 
 static PyGetSetDef Player_getseters[] = {
     { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
 	{ "MarkedItem",    (getter)Player_GetMarkedItem,    (setter)Player_SetMarkedItem, NULL, NULL },
 	{ "Party",         (getter)Player_GetParty,         (setter)Player_SetParty,      NULL, NULL },
+    { "BedMap",        (getter)Player_GetBedMap,        (setter)Player_SetBedMap, NULL, NULL },
+    { "BedX",          (getter)Player_GetBedX,          (setter)Player_SetBedX, NULL, NULL },
+    { "BedY",          (getter)Player_GetBedY,          (setter)Player_SetBedY, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
