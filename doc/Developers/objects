@@ -13,10 +13,10 @@ Sections:
 	D. Picking up other items (pick_up)
 	E. Using other objects (will_apply)
 	F. Treasure lists (randomitems)
-	G. Usage of certain flags for monsters 
+	G. Usage of certain flags for monsters
 	H. NPC's and their life - behaviours
 	I. NPC's Speak out - messages
-	
+
 3. Objects in general
 	A. Names (name, name_pl)
 	B. Types (type) & Subtypes (subtype)
@@ -96,10 +96,10 @@ Sections:
 
     See the section later in this document about animations.
 
- 6) If your archetype is a creature or NPC you might want to give it 
-    abilities such as firebreathing or magical attacks.  You put these 
-    abilities into the treasures file in the appropriate entry as invisible 
-    objects.  This is also how you can give inventory like bows or swords 
+ 6) If your archetype is a creature or NPC you might want to give it
+    abilities such as firebreathing or magical attacks.  You put these
+    abilities into the treasures file in the appropriate entry as invisible
+    objects.  This is also how you can give inventory like bows or swords
     as well.  Look at the other entries in the treasures file for the format.
     Note that if an existing entry in the treasures file does what you
     want, use it for your new archetype.  There is no requirement that
@@ -177,7 +177,7 @@ to that attacktype.  The amount of resistance directly reduces
 damage.  A creature that has 25% resistance to fire only takes 75%
 of the damage.  A creature 99% resistant only takes 1% of the damage.
 
-A few notes:  If a creature/object is immune to magic, then it will be 
+A few notes:  If a creature/object is immune to magic, then it will be
 immune to all damage from that attack, even if that attack type contains
 more than just magic.
 
@@ -304,7 +304,7 @@ Treasure lists are also used to give spell and skill abilities to creatures.
 
 
 
-G. Usage of certain flags for monsters 
+G. Usage of certain flags for monsters
 ======================================
 
 Damage (dam)
@@ -429,12 +429,12 @@ H. Generators and creature spawning (generate) (other_arch) (use_content_on_gen)
 ===================================
 
 There are 2 types of generators in crossfire since september 2003.
-both are identified as generators by setting the flag "generate" to 1. 
-For the first type (the classical one) use "other_arch" to specify 
+both are identified as generators by setting the flag "generate" to 1.
+For the first type (the classical one) use "other_arch" to specify
 archetype of object to be spawned.
 The second type allow more fine tuning on what to generate. To activate
 second type, set the flag "use_content_on_gen" to 1. Then each
-time something must be generated, it will be a copy of a randomly 
+time something must be generated, it will be a copy of a randomly
 choosen item in the generator's inventory.
 
 
@@ -660,7 +660,7 @@ Client type differes from the type in several ways:
    may or may not do based on this.  At current time, the server does not
    even look at the client_type for any information.
 4) The client_type can be used to hide the real type of an item.  Eg,
-   items of client_type poison should never be sent - client_type should 
+   items of client_type poison should never be sent - client_type should
    instead by booze so difficult for the client to know what the item
    really is.  similarly, special objects used in quests which appear
    as something else (eg, a key appearing as a shovel) can use the
@@ -803,18 +803,18 @@ Client Type	Notes
 1001		mage Spellbook (85)
 1002		cleric spellbooks (85)
 1011		Armor improver (123)
-1016		weapon improver (124)	
+1016		weapon improver (124)
 1021		Skill scroll (130)
 1041		Books & scrolls - information type objects (8)
 
 1100-1149	Light emitting objects & lightables
 1101		lighter (75)
-1102		torch 
+1102		torch
 1103		colored torches
 
 2000-2049	Valuables - only real value is monetay
 2001		money (36)
-2005		gold nuggets 
+2005		gold nuggets
 2011		gems (60) - this could be divided into more subtypes - probably better
 		for artifact gems to have a different type than worry about sorting
 		ruby, diamond, emerald, etc.
@@ -845,7 +845,7 @@ Client Type	Notes
 25041		Slot machines
 25042		Trigger (27), levers (93)
 25091		Bed to reality (106)
- 
+
 D. editable field (editable)
 =============================
 
@@ -927,7 +927,7 @@ fred.171
 fred.172
 mina
 
-The facings go clockwise (1 north (up), 3 east (right), 5 south (down), 
+The facings go clockwise (1 north (up), 3 east (right), 5 south (down),
 etc).
 
 If there are fewer than 8 facings (which is typical), the same rotational
@@ -1020,7 +1020,7 @@ item power.
 
 While the item_power field in the object structure is signed, in general,
 there should not be objects with a negative item power.  However, negative
-effects an item has may reduce the item power.  Eg, a 
+effects an item has may reduce the item power.  Eg, a
 'sword +4 (str +2)(wis -3)' would really be 3 enchantments.
 
 Note: The enforcement of item power is currently not in use as of this
@@ -1134,7 +1134,7 @@ lore
 endlore
 
 while msg's meaning is dependent on the object, lore is consistent - it
-should contain background information on the object, or other somewhat general 
+should contain background information on the object, or other somewhat general
 details about the object.  It will be put into books, possibly used by npc's
 and other places where general knowledge should be presented.
 
@@ -1225,7 +1225,7 @@ move_on/move_off: Take bitmasks - represents for what movement types
   this object is activated on.  Replaces the walk/fly_on/off values
 
 move_slow: Like move_block, but represents what movement types are slowed
-  on this space.  Note that it is not possible to specifiy different 
+  on this space.  Note that it is not possible to specifiy different
   penalties for different movement types in the same object.  However,
   multiple objects with different move_slow values (and penalties) can
   be put on the same space.  This replaced FLAG_SLOW_MOVE, which is
@@ -1262,7 +1262,7 @@ msg/endmsg:  If an object has move_block of move_slow and that affects
 
 move_status: Not related to this code - noted here since it has the move_
    prefix.   This is used to track monsters state of the attack_movement
-   variable.  It is worth noting that move_type was changed to 
+   variable.  It is worth noting that move_type was changed to
    attack_movement - this matches the name in the archetype, but is
    a name change in the object field.
 
@@ -1326,29 +1326,29 @@ Stat            Property        Definition
 attacktype      Attack effects  Attacktype of the disease. usu. AT_GODPOWER.
 other_arch      Creation        object created and dropped when symptom moved.
 wc+             Infectiousness  How well the plague spreads person-to-person
-magic+          Range           range of infection 
+magic+          Range           range of infection
 Stats*          Disability      What stats are reduced by the disease (str con...)
-maxhp+          Persistence     How long the disease can last OUTSIDE the host. 
-value           TimeLeft        Counter for persistence 
-dam^            Damage          How much damage it does (%?). 
-maxgrace+       Duration        How long before the disease is naturally cured. 
-food            DurCount        Counter for Duration 
+maxhp+          Persistence     How long the disease can last OUTSIDE the host.
+value           TimeLeft        Counter for persistence
+dam^            Damage          How much damage it does (%?).
+maxgrace+       Duration        How long before the disease is naturally cured.
+food            DurCount        Counter for Duration
 
-speed           Speed           How often the disease moves. 
-last_sp^        Lethargy        Percentage of max speed--10 = 10% speed. 
+speed           Speed           How often the disease moves.
+last_sp^        Lethargy        Percentage of max speed--10 = 10% speed.
 
-maxsp^          Mana deplete    Saps mana. 
+maxsp^          Mana deplete    Saps mana.
 ac^             Progressiveness How the diseases increases in severity.
-last_eat*^      Deplete food    saps food if negative 
+last_eat*^      Deplete food    saps food if negative
 
-exp             experience      experience awarded when plague cured 
-hp*^            ReduceRegen     reduces regeneration of disease-bearer 
-sp*^            ReduceSpRegen   reduces spellpoint regeneration 
+exp             experience      experience awarded when plague cured
+hp*^            ReduceRegen     reduces regeneration of disease-bearer
+sp*^            ReduceSpRegen   reduces spellpoint regeneration
 
-name            Name            Name of the plague 
+name            Name            Name of the plague
 msg             message         What the plague says when it strikes.
-race            those affected  races the plague strikes (* means everything) 
-level           Plague Level    General description of the plague's deadliness 
+race            those affected  races the plague strikes (* means everything)
+level           Plague Level    General description of the plague's deadliness
 
 last_grace	Attenuation     reduction in wc per generation of disease.
                                 This builds in a self-limiting factor.
@@ -1369,7 +1369,7 @@ Stats are stat modifications.  These should typically be negative.
 
 maxhp is how long the disease will persist if the host dies and "drops" it,
       in "disease moves", i.e., moves of the disease.  If negative, permanent.
-      
+
 
 value is the counter for maxhp, it starts at maxhp and drops...
 
@@ -1447,10 +1447,10 @@ And these two are for bows.
 sp		the shooting speed (% of normal speed, 1-100)
 no_strength	player's strength or monster's level doesn't affect
 		the damage done by bow.
- 
+
 The other variables has their normal meanings.
 
-  
+
 
 F. object creating objects
 ==========================
@@ -1513,7 +1513,7 @@ if lifesave is set.  default is not set.
 hp:  if lifesave is set, the number of times (-1) it will move a player
   (i.e., it will move someone hp+1 times before it vanishes.). default
   0
-  
+
 subtype: a bitmask that specifies which of arch, name, and race affect the
          race and slaying flags. If unspecified (or zero), all will be searched.
 	 The LSB is arch, the next bit is name, and the third bit is for race.
@@ -1608,7 +1608,7 @@ level           The level the spell will cast spells at.  Level 1
                 walls will cast spells at minimal strength.  Level 100
                 walls will cast deadly spells.
 
-connected	either rotate the wall or trigger it.  If triggering, 
+connected	either rotate the wall or trigger it.  If triggering,
 		set speed to 0 for best results.
 
 
@@ -1763,7 +1763,7 @@ MARKER:
 -------
 This object inserts a force into a player who stands on it.
 This force does nothing except contain a string in its slaying field
-which can be discovered by a detector.  
+which can be discovered by a detector.
 
 slaying	  the code
 speed	  how quickly it will mark something standing on it
@@ -1815,7 +1815,7 @@ O. Duplicators:
 Duplicators copy or remove objects.  Duplicators are triggered objects.
 
 connected: Connected value for the duplicator.
-other_arch: Archetype that this copies - if the archetype on top of the 
+other_arch: Archetype that this copies - if the archetype on top of the
   duplicator doesn't match this, it isn't copied.  Note that it only
   matches the archetype - the object can then be further duplicated.  For
   example, if other_arch is sword, it will duplicate sword +4, different
@@ -1882,7 +1882,7 @@ base_speed(KV)	This is only needed if weight_speed_ratio is set - it is used
 		weight_speed_ratio is set, the archetypes speed will be used.
 
 passenger_limit(KV)
-		How many players this transport can hold.  Thus, boats can 
+		How many players this transport can hold.  Thus, boats can
 		transport a party (this being set to 6) while horses could
 		only transport a single person.  If this is not set, a default
 		of 1 will be used.
@@ -1972,9 +1972,9 @@ exp <no>                Xp gained for killing O.
 food <no>               nutrition value for O. *DANGEROUS* as it's also
                         used to contain internal values for non-edible
                         objects. This should be changed in future.
-dam,wc,ac <no>          default damage, weaponclass, armorclass. 
+dam,wc,ac <no>          default damage, weaponclass, armorclass.
                         dam 0 gives a 'friendly' monster ;)
-wc                      main.c:move_gate(). Is used by gates to indicate in 
+wc                      main.c:move_gate(). Is used by gates to indicate in
                         which position they are.
 x,y <no>                relative coords for bmap when using large objects.
                         x=y=0 is default, x=1 is second bmap in first row etc.
@@ -2023,7 +2023,7 @@ see_invisible <1>       set if O can see invisible player.
 can_roll <1>            set if O can be rolled.
 is_turnable <1>         set if O can be turned 'automagically'
 
-is_lightable <1>	set if O is something like a lantern that can be lit 
+is_lightable <1>	set if O is something like a lantern that can be lit
 is_used_up <1>          bizarre. O is used up after created, eg an explosion.
 identified <1>          true if the item has been identified.
 reflecting <1>          set if O is reflective.
@@ -2283,7 +2283,7 @@ LIGHTING CODE (by Brian Thomas):
 		check_wakeup routine is used to see if they will
 		follow/attack players.  Monsters with can_see_in_dark act
 		normally in dark areas.
-                
+
                 - New attacktype -AT_BLIND. This is a pretty severe penalty
 		for monsters and players alike. Players cant see any square
 		but thier own, monsters can only attack/follow players who
@@ -2298,13 +2298,13 @@ LIGHTING CODE (by Brian Thomas):
 		may need to be adjusted for playbalance. Normal spells
 		available include: "light", "darkness", "sunspear", "faery
 		fire" and "dark vision". All spells (but darkvision) work
-		(do something) whether the lighting code is used or not. 
+		(do something) whether the lighting code is used or not.
 
                 - Modified archetypes and artifacts list to encompass changes
 		to the code from lighting. Also, some new archs instroduced,
 		namely "flint and steel" for lighting stuff on fire and
 		"torch" a source of light.
-                
+
 
 
 ***************************************************************************************
@@ -2325,7 +2325,7 @@ For flags:
 3) Decide the name of your flag as loaded/saved in objects.  The default syntax is
    the name you assigned in step 2 above, minus the leading flag_ part.
 
-4) In the common/loader.l, update the load section (where the code is mostly ^value  
+4) In the common/loader.l, update the load section (where the code is mostly ^value
    SET_OR_CLEAR(...)) add  your entries in.
 
 5) update the flag_names in common/loader.l.  The location of your names _must_ be
