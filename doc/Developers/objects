@@ -1171,7 +1171,7 @@ listed, seperated by a space.  In addition, a - (minus) can precede the name,
 which means to negate that type.  These are all equivalant:
 
 move_block 6
-move_block fly_low fly_low
+move_block fly_low fly_high
 move_block flying			(special symbolic name)
 move_block all -swim -walk -boat
 
