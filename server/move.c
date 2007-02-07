@@ -52,7 +52,7 @@ int move_object(object *op, int dir) {
  * can be different if originator is causing op to
  * move (originator is pushing op)
  * returns 0 if the object is not able to move to the
- * desired space, 1 otherwise (in which case we also 
+ * desired space, 1 otherwise (in which case we also
  * move the object accordingly.  This function is
  * very similiar to move_object.
   */
@@ -265,7 +265,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     if (k==-1) {
 	if (tele_type == SHOP_MAT && user->type == PLAYER) {
 	    for (k=1; k<9; k++) {
-		if (get_map_flags(other_teleporter->map, &m, 
+		if (get_map_flags(other_teleporter->map, &m,
 			other_teleporter->x + freearr_x[k],
 			other_teleporter->y + freearr_y[k], &sx,&sy) &
 			P_OUT_OF_MAP) continue;
@@ -323,14 +323,14 @@ void recursive_roll(object *op,int dir,object *pusher) {
  * Returns 1 if object does not fit, 0 if it does.
  */
 
-static int try_fit (object *op, mapstruct *m, int x, int y) 
+static int try_fit (object *op, mapstruct *m, int x, int y)
 {
     object *tmp, *more;
     sint16 tx, ty;
     int mflags;
     mapstruct *m2;
 
-    if (op->head) 
+    if (op->head)
 	op = op->head;
 
     for (more = op; more ; more = more->more) {
@@ -357,7 +357,7 @@ static int try_fit (object *op, mapstruct *m, int x, int y)
 }
 
 /**
- * this is not perfect yet. 
+ * this is not perfect yet.
  * it does not roll objects behind multipart objects properly.
  * Support for rolling multipart objects is questionable.
  */
@@ -369,13 +369,13 @@ static int roll_ob(object *op,int dir, object *pusher) {
     mapstruct *m;
     MoveType	move_block;
 
-    if (op->head) 
+    if (op->head)
 	op = op->head;
 
     x=op->x+freearr_x[dir];
     y=op->y+freearr_y[dir];
 
-    if(!QUERY_FLAG(op,FLAG_CAN_ROLL) || 
+    if(!QUERY_FLAG(op,FLAG_CAN_ROLL) ||
        (op->weight &&
        random_roll(0, op->weight/50000-1, pusher, PREFER_LOW) > pusher->stats.Str))
 	return 0;
@@ -418,7 +418,7 @@ int push_ob(object *who, int dir, object *pusher) {
 
     /* Wake up sleeping monsters that may be pushed */
     CLEAR_FLAG(who,FLAG_SLEEP);
-  
+
     /* player change place with his pets or summoned creature */
     /* TODO: allow multi arch pushing. Can't be very difficult */
     if (who->more == NULL && owner == pusher) {
@@ -472,7 +472,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	    who->enemy = pusher;
 	    return 1;
 	}
-	else 
+	else
 	{
 	    draw_ext_info_format(NDI_UNIQUE, 0, pusher,
 				  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
@@ -492,7 +492,7 @@ int push_ob(object *who, int dir, object *pusher) {
 			     who->name);
 	return 0;
     }
-  
+
     /* This block is basically if you are pushing friendly but
      * non pet creaturs.
      * It basically does a random strength comparision to
@@ -503,7 +503,7 @@ int push_ob(object *who, int dir, object *pusher) {
     str1 = (who->stats.Str>0?who->stats.Str:who->level);
     str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
     if(QUERY_FLAG(who,FLAG_WIZ) ||
-       random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
+       random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >=
        random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
        !move_object(who,dir))
     {
@@ -534,6 +534,6 @@ int push_ob(object *who, int dir, object *pusher) {
 			     "You pushed %s back.",
 			     who->name);
     }
-  
+
     return 1;
 }
