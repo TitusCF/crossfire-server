@@ -354,7 +354,7 @@ static PyObject* Object_GetDirection(Crossfire_Object* whoptr, void* closure)
     return Py_BuildValue("i", *(char*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_DIRECTION));
 }
 static PyObject* Object_GetFacing(Crossfire_Object* whoptr, void* closure)
-{   
+{
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", *(char*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_FACING));
 }
@@ -761,7 +761,7 @@ static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closu
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     char* val;
-    EXISTCHECK_INT(whoptr);    
+    EXISTCHECK_INT(whoptr);
     if (value==NULL)
     {
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Message attribute");
@@ -842,7 +842,7 @@ static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* clos
 static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     Crossfire_Map* val;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value,"O",&val))
         return -1;
@@ -853,7 +853,7 @@ static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closur
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     char* val;
-    
+
     EXISTCHECK_INT(whoptr);
     if (value==NULL)
     {
@@ -944,7 +944,7 @@ static int Object_SetInt(Crossfire_Object* whoptr, PyObject* value, void* closur
 static int Object_SetPow(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     int val;
-    
+
     EXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value,"i",&val))
         return -1;
@@ -1602,7 +1602,7 @@ static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args 
 
     if (((Crossfire_Object*)current_context->who)->obj == who->obj)
         current_context->who = NULL;
-        
+
     if (!cf_object_get_flag(who->obj,FLAG_REMOVED)) {
         cf_object_remove(who->obj);
 
@@ -2018,7 +2018,7 @@ static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args)
     sint64 exp;
     const char* skill = NULL;
     int arg = 0;
-    
+
     if (!PyArg_ParseTuple(args,"L|si", &exp, &skill, &arg))
         return NULL;
     EXISTCHECK(who);
@@ -2096,7 +2096,7 @@ static void Crossfire_Player_dealloc(PyObject *obj)
                 cf_object_remove(self->del_event);
                 cf_free_object(self->del_event);
             }
-        }            
+        }
         self->ob_type->tp_free(obj);
     }
 }
