@@ -2134,7 +2134,9 @@ void move_player_attack(object *op, int dir)
 	 * peaceful.  Our assumption is the creature is a pet if the
 	 * player owns it and it is either friendly or unagressive.
 	 */
-	if ((op->type==PLAYER) && get_owner(mon)==op &&
+	object *mon_owner = get_owner(mon);
+	if ((op->type==PLAYER) &&
+	    (mon_owner == op || (mon_owner != NULL && mon_owner->type == PLAYER && mon_owner->contr->party != NULL && mon_owner->contr->party == op->contr->party)) &&
 	    (QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(mon, FLAG_FRIENDLY)))
 	{
 	    /* If we're braced, we don't want to switch places with it */

@@ -421,7 +421,7 @@ int push_ob(object *who, int dir, object *pusher) {
 
     /* player change place with his pets or summoned creature */
     /* TODO: allow multi arch pushing. Can't be very difficult */
-    if (who->more == NULL && owner == pusher) {
+    if (who->more == NULL && (owner == pusher || (owner != NULL && owner->type == PLAYER && owner->contr->party != NULL && owner->contr->party == pusher->contr->party))) {
 	int temp;
 	mapstruct *m;
 
