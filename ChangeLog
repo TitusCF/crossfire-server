@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Makefile.am, Makefile.in (and Makefiles in subdirs): Put types in list of
+   SUBDIRS before server so that compilation happens in correct order -
+   server area requires types to be up to date.
+MSW 2007-02-07
+
 Make players change place with pets from party members instead of pushing
 them away.
 ---

@@ -5,7 +5,7 @@ if HAVE_CHECK
   UNIT_TEST = test
 endif
 
-SUBDIRS = common random_maps socket server include lib utils doc plugins devel types $(UNIT_TEST) $(CROSSEDIT)
+SUBDIRS = common random_maps socket types server include lib utils doc plugins devel $(UNIT_TEST) $(CROSSEDIT)
 
 EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 
