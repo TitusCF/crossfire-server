@@ -647,11 +647,9 @@ int check_trigger (object *op, object *cause)
  * @param button
  * object to link. Must not be NULL.
  * @param map
- * map we are on. Must not be NULL.
+ * map we are on. Should not be NULL.
  * @param connected
  * connection value for the item.
- * @todo
- * memory leak if map is null (should never be the case, but still)
  */
 void add_button_link(object *button, mapstruct *map, int connected) {
     oblinkpt *obp;
@@ -659,6 +657,7 @@ void add_button_link(object *button, mapstruct *map, int connected) {
 
     if (!map) {
         LOG(llevError, "Tried to add button-link without map.\n");
+        free_objectlink(ol);
         return;
     }
     if (!editor) button->path_attuned = connected;  /* peterm:  I need this so I can rebuild 
