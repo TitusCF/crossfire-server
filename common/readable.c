@@ -1816,12 +1816,17 @@ void make_formula_book(object *book, int level) {
         {
             linked_char *next;
             archetype *at;
+            char name[MAX_BUF];
 
             at = find_archetype(formula->cauldron);
+            if (at)
+                query_name(&at->clone, name, MAX_BUF);
+            else
+                name[0] = '\0';
 
             sprintf(retbuf + strlen(retbuf),
                 " may be made at %s using the following ingredients:\n",
-                at?query_name(&at->clone):"an unknown place");
+                at?name:"an unknown place");
 
             for (next = formula->ingred; next != NULL; next = next->next)
             {

@@ -297,12 +297,14 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 }
 
 void recursive_roll(object *op,int dir,object *pusher) {
+    char name[MAX_BUF];
+    query_name(op, name, MAX_BUF);
     if(!roll_ob(op,dir,pusher)) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pusher,
 			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
 			     "You fail to push the %s.",
 			     "You fail to push the %s.",
-			     query_name(op));
+			     name);
 	return;
     }
     (void) move_ob(pusher,dir,pusher);
@@ -310,7 +312,7 @@ void recursive_roll(object *op,int dir,object *pusher) {
 			  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "You move the %s.",
 			 "You move the %s.",
-			 query_name(op));
+			 name);
     return;
 }
 

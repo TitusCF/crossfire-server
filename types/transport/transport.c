@@ -57,10 +57,13 @@ method_ret transport_type_apply(ob_methods *context, object *op,
 {
     object* old_transport = applier->contr->transport;
     object* inv;
+    char name_op[MAX_BUF], name_old[MAX_BUF];
 
     /* Only players can use transports right now */
     if (applier->type != PLAYER)
         return 0;
+
+    query_name(op, name_op, MAX_BUF);
 
     /* If player is currently on a transport but not this transport, they need
      * to exit first.  Perhaps transport to transport transfers should be
@@ -68,11 +71,12 @@ method_ret transport_type_apply(ob_methods *context, object *op,
      */
     if (old_transport && old_transport != op)
     {
+        query_name(old_transport, name_old, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You must exit %s before you can board %s.",
             "You must exit %s before you can board %s.",
-            query_name(old_transport), query_name(op));
+            name_old, name_op);
         return 1;
     }
 
@@ -87,10 +91,11 @@ method_ret transport_type_apply(ob_methods *context, object *op,
         if (aflags & AP_APPLY)
             return 1;
 
+        query_name(old_transport, name_old, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
             "You disembark from %s.", "You disembark from %s.",
-            query_name(old_transport));
+            name_old);
         remove_ob(applier);
         applier->map = old_transport->map;
         applier->x = old_transport->x;
@@ -120,7 +125,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "%s has disembarked.  You are now the captain of %s",
                 "%s has disembarked.  You are now the captain of %s",
-                applier->name, query_name(old_transport));
+                applier->name, name_old);
         }
         return 1;
     }
@@ -140,7 +145,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s is unable to hold your weight!",
                 "The %s is unable to hold your weight!",
-                query_name(op));
+                name_op);
             return 1;
         }
 
@@ -159,7 +164,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "You cannot drop the %s in a shop to use it.",
                     "You cannot drop the %s in a shop to use it.",
-                    query_name(old_transport));
+                    name_old);
                 return 1;
             }
             /* Did it fail to drop? */
@@ -169,7 +174,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                     "You need to drop the %s to use it.",
                     "You need to drop the %s to use it.",
-                    query_name(old_transport));
+                    name_old);
                 return 1;
             }
         }
@@ -187,7 +192,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "The %s does not have space for any more people",
                 "The %s does not have space for any more people",
-                query_name(op));
+                name_op);
             return 1;
         }
 
@@ -200,7 +205,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "The %s's captain is currently %s",
                 "The %s's captain is currently %s",
-                query_name(op), op->contr->ob->name);
+                name_op, op->contr->ob->name);
         }
         else
         {
@@ -208,7 +213,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "You're the %s's captain",
                 "You're the %s's captain",
-                query_name(op));
+                name_op);
             op->contr = applier->contr;
         }
 

@@ -557,6 +557,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     object* floor;
     object* con_rune;
     int connected;
+    char name[MAX_BUF];
 
     /* Find floor */
     floor = GET_MAP_OB( pl->map, x, y );
@@ -641,10 +642,11 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     if ( connected != 0 )
         add_button_link( tmp, pl->map, connected );
 
+    query_name( tmp, name, MAX_BUF );
     draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
 			 "You build the %s", 
 			 "You build the %s", 
-			 query_name( tmp ));
+			 name);
     decrease_ob_nr( item, 1 );
     }
 
@@ -657,6 +659,7 @@ void apply_builder_remove( object* pl, int dir )
     {
     object* item;
     short x, y;
+    char name[MAX_BUF];
 
     x = pl->x + freearr_x[ dir ];
     y = pl->y + freearr_y[ dir ];
@@ -707,10 +710,11 @@ void apply_builder_remove( object* pl, int dir )
 
         default:
             /* Remove generic item */
+            query_name( item, name, MAX_BUF );
             draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
 				 "You remove the %s", 
 				 "You remove the %s", 
-				 query_name( item ) );
+				 name );
             remove_ob( item );
             free_object( item );
         }

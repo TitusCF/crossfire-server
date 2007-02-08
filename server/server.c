@@ -1195,11 +1195,13 @@ void leave(player *pl, int draw_exit) {
 		pl->transport->contr = NULL;
 
 	    if (pl->transport->contr) {
+            char name[MAX_BUF];
+            query_name(pl->transport, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE, 0, pl->transport->contr->ob,
 		     MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
 		     "%s has left.  You are now the captain of %s",
 		     "%s has left.  You are now the captain of %s",
-				     pl->ob->name, query_name(pl->transport));
+				     pl->ob->name, name);
 	    }
 	}
 

@@ -1172,10 +1172,12 @@ int command_remove (object *op, char *params) {
     }
 
     if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
+        char name[MAX_BUF];
+        query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "%s is already removed!",
 			     "%s is already removed!",
-			     query_name(tmp));
+			     name);
         return 1;
     }
 
@@ -2229,6 +2231,7 @@ int command_insert_into(object* op, char *params)
 {
     object *left, *right, *inserted;
     int left_from, right_from;
+    char what[MAX_BUF], where[MAX_BUF];
 
     left = get_dm_object(op->contr, &params, &left_from);
     if (!left) {
@@ -2290,10 +2293,12 @@ int command_insert_into(object* op, char *params)
         else
             esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF,left,inserted);
     }
+    query_name(inserted, what, MAX_BUF);
+    query_name(left, where, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
 			 "Inserted %s in %s",
 			 "Inserted %s in %s",
-			 query_name(inserted),query_name(left));
+			 what,where);
     return 0;
 
 }

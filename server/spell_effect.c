@@ -66,6 +66,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
 int recharge(object *op, object *caster, object *spell_ob) {
     object *wand, *tmp;
     int ncharges;
+    char name[MAX_BUF];
 
     wand = find_marked_object(op);
     if(wand == NULL || wand->type != WAND) {
@@ -74,10 +75,11 @@ int recharge(object *op, object *caster, object *spell_ob) {
 	return 0;
     }
     if(!(random_roll(0, 3, op, PREFER_HIGH))) {
+        query_name(wand, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 			     "The %s vibrates violently, then explodes!",
 			     "The %s vibrates violently, then explodes!",
-			     query_name(wand));
+			     name);
 	play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE);
 	esrv_del_item(op->contr, wand->count);
 	remove_ob(wand);
@@ -97,19 +99,21 @@ int recharge(object *op, object *caster, object *spell_ob) {
     if (wand->inv && wand->inv->level)
 	ncharges /= wand->inv->level;
     else {
+        query_name(wand, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 			     "Your %s is broken.",
 			     "Your %s is broken.",
-			     query_name(wand));
+			     name);
 	return 0;
     }
     if (!ncharges) ncharges = 1;
 
     wand->stats.food += ncharges;
+    query_name(wand, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
 			 "The %s glows with power.",
 			 "The %s glows with power.",
-			 query_name(wand));
+			 name);
 
     if(wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE)) {
 	SET_FLAG(wand, FLAG_ANIMATE);
@@ -232,10 +236,12 @@ static void polymorph_living(object *op) {
 static void polymorph_melt(object *who, object *op)
 {
     /* Not unique */
+    char name[MAX_BUF];
+    query_name(op, name, MAX_BUF);
     draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 			 "%s%s glows red, melts and evaporates!",
 			 "%s%s glows red, melts and evaporates!",
-			 op->nrof?"":"The ",query_name(op));
+			 op->nrof?"":"The ",name);
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
     remove_ob(op);
     free_object(op);
@@ -2672,10 +2678,12 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
 	return 0;
     }
     if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
+        char wn[MAX_BUF];
+        query_name(weapon, wn, MAX_BUF);
 	draw_ext_info_format(NDI_BLACK, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
 			     "You need to unequip %s before using it in this spell",
 			     "You need to unequip %s before using it in this spell",
-			     query_name(weapon));
+			     wn);
 	return 0;
     }
 

@@ -94,7 +94,7 @@ extern void describe_resistance(const object *op, int newline, char* buf, int si
 extern void query_weight(const object *op, char* buf, int size);
 extern void get_levelnumber(int i, char* buf, int size);
 extern const char *query_short_name(const object *op);
-extern char *query_name(const object *op);
+extern void query_name(const object *op, char* buf, int size);
 extern const char *query_base_name(const object *op, int plural);
 extern char *describe_item(const object *op, const object *owner);
 extern int is_magical(const object *op);

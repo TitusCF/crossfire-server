@@ -1674,8 +1674,9 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 }
 
 void npc_say(object *npc, char *cp) {
-    char buf[MAX_BUF];
-    snprintf(buf, sizeof(buf), "%s says:", query_name(npc));
+    char buf[MAX_BUF], name[MAX_BUF];
+    query_name(npc, name, MAX_BUF);
+    snprintf(buf, sizeof(buf), "%s says:", name);
     ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
 		 buf, buf);
     ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
@@ -1765,8 +1766,12 @@ object *find_mon_throw_ob(object *op) {
     }
 
 #ifdef DEBUG_THROW
+    {
+        char what[MAX_BUF];
+        query_name(tmp, what, MAX_BUF);
     LOG(llevDebug,"%s chooses to throw: %s (%d)\n",op->name,
-	!(tmp)?"(nothing)":query_name(tmp),tmp?tmp->count:-1);
+	!(tmp)?"(nothing)":what,tmp?tmp->count:-1);
+    }
 #endif
 
     return tmp;
@@ -1899,11 +1904,13 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	     */
 	    if ((RANDOM() % 50) <= hide_discovery) {
 		if (enemy->type == PLAYER) {
+            char name[MAX_BUF];
+            query_name(op, name, MAX_BUF);
 		    draw_ext_info_format(NDI_UNIQUE,0, enemy,
 			 MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			 "You see %s noticing your position.", 
 			 "You see %s noticing your position.", 
-			 query_name(op));
+			 name);
 		}
 		return 1;
 	    }

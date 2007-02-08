@@ -1103,11 +1103,13 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
 		effect->x=op->x;
 		effect->y=op->y;
 	    } else {
+            char target_name[HUGE_BUF];
+            query_name(target, target_name, HUGE_BUF);
 		draw_ext_info_format(NDI_UNIQUE,0,op,
 				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 				     "The %s looks stronger!",
 				     "The %s looks stronger!",
-				     query_name(target));
+				     target_name);
 		target->stats.hp = target->stats.maxhp*2;
 		free_object(effect);
 		return 0;

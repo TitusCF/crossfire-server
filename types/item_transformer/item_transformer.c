@@ -62,25 +62,28 @@ method_ret item_transformer_type_apply(ob_methods *context, object *op,
     int yield;
     char got[ MAX_BUF ];
     int len;
+    char name_o[MAX_BUF], name_m[MAX_BUF];
 
     if (!op||!applier)
         return 1;
+    query_name(op, name_o, MAX_BUF);
     marked = find_marked_object(applier);
     if (!marked)
     {
         draw_ext_info_format(NDI_UNIQUE, 0, applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "Use the %s with what item?", "Use the %s with what item?",
-            query_name(op));
+            name_o);
         return 1;
     }
+    query_name(marked, name_m, MAX_BUF);
     if (!marked->slaying)
     {
         draw_ext_info_format(NDI_UNIQUE, 0, applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You can't use the %s with your %s!",
             "You can't use the %s with your %s!",
-            query_name(op), query_name(marked));
+            name_o, name_m);
         return 1;
     }
     /* check whether they are compatible or not */
@@ -91,7 +94,7 @@ method_ret item_transformer_type_apply(ob_methods *context, object *op,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You can't use the %s with your %s!",
             "You can't use the %s with your %s!",
-            query_name(op), query_name(marked));
+            name_o, name_m);
         return 1;
     }
     find += strlen(op->arch->name) + 1;

@@ -179,11 +179,13 @@ method_ret converter_type_move_on(ob_methods* context, object* trap,
     if (convert_item (victim, trap) < 0)
     {
         object *op;
+        char name[MAX_BUF];
 
+        query_name(trap, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, originator,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "The %s seems to be broken!", "The %s seems to be broken!",
-            query_name(trap));
+            name);
 
         op = create_archetype("burnout");
         if (op != NULL)

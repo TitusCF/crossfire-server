@@ -470,9 +470,13 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	    break;
 
 	default:
-	    LOG(llevDebug,"%s attempted to use unknown skill: %d\n"
-                ,query_name(op), op->chosen_skill->stats.sp);
-	    break;
+        {
+            char name[MAX_BUF];
+            query_name(op, name, MAX_BUF);
+            LOG(llevDebug,"%s attempted to use unknown skill: %d\n"
+                ,name, op->chosen_skill->stats.sp);
+            break;
+        }
     }
 
     /* For players we now update the speed_left from using the skill. 
@@ -927,8 +931,10 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
 		    op->current_weapon=NULL;
 		    return 0;
 		} else {
+            char weapon[MAX_BUF];
+            query_name(tmp, weapon, MAX_BUF);
 		    op->current_weapon = tmp;
-		    op->current_weapon_script=add_string(query_name(tmp));
+		    op->current_weapon_script=add_string(weapon);
 		}
 	    }
 
@@ -953,18 +959,23 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
     /* print appropriate  messages to the player */
  
     if(success && string!=NULL && tmp && !QUERY_FLAG(tmp,FLAG_FREED)) {
-	if(op->type==PLAYER)
+        char op_name[MAX_BUF];
+	if(op->type==PLAYER) {
+        query_name(tmp, op_name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op,
 			 MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
 			 "You %s %s!",
 			 "You %s %s!",
-			 string,query_name(tmp));
-	else if(tmp->type==PLAYER)
+			 string,op_name);
+    }
+	else if(tmp->type==PLAYER) {
+        query_name(op, op_name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,tmp,
 			 MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
 			 "%s %s you!",
 			 "%s %s you!",
-			 query_name(op),string);
+			 op_name,string);
+    }
     }
     return success;
 }                         
@@ -1044,11 +1055,13 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
 	for(weapon=pl->inv;weapon;weapon=weapon->below) {
 	    if (weapon->type==WEAPON && QUERY_FLAG(weapon, FLAG_APPLIED)) {
 		if (apply_special(pl, weapon, AP_UNAPPLY | AP_NOPRINT)) {
+            char weaponname[MAX_BUF];
+            query_name(weapon, weaponname, MAX_BUF);
 		    draw_ext_info_format(NDI_UNIQUE, 0,pl,
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 				  "You are unable to unwield %s in order to attack with %s.",
 				  "You are unable to unwield %s in order to attack with %s.",
-				  query_name(weapon), skill->name);
+				  weaponname, skill->name);
 		    return 0;
 		} else {
 		    draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,

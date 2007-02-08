@@ -1360,11 +1360,13 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     if (op != caster && !skill && caster->skill) {
 	skill = find_skill_by_name(op, caster->skill);
 	if (!skill) {
+        char name[MAX_BUF];
+        query_name(caster, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op,
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
 				 "You lack the skill %s to use the %s",
 				 "You lack the skill %s to use the %s",
-				 caster->skill, query_name(caster));
+				 caster->skill, name);
 	    return 0;
 	}
 	change_skill(op, skill, 0);    /* needed for proper exp credit */

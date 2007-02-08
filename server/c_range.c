@@ -256,6 +256,8 @@ int legal_range(object *op,int r) {
 
 void change_spell(object *op,char k) {
 
+    char name[MAX_BUF];
+    
     do {
 	op->contr->shoottype += ((k == '+') ? 1 : -1);
 	if(op->contr->shoottype >= range_size)
@@ -280,10 +282,11 @@ void change_spell(object *op,char k) {
 	    break;
 
 	case range_bow:
+        query_name(op->contr->ranges[range_bow], name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "Switched to %s and %s.",
 			 "Switched to %s and %s.",
-			 query_name(op->contr->ranges[range_bow]),
+			 name,
 			 op->contr->ranges[range_bow]->race ? op->contr->ranges[range_bow]->race : "nothing");
 	    break;
 

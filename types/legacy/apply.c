@@ -24,7 +24,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
-/** @file apply.c
+/** @file legacy/apply.c
  * Legacy implementation of apply-related methods.
  */
 /**
@@ -66,9 +66,11 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
                 return 0;
             if( ! EXIT_PATH (op) || !legacy_is_legal_2ways_exit(applier,op))
             {
+                char name[MAX_BUF];
+                query_name(op, name, MAX_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, applier,
                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    "The %s is closed.", "The %s is closed.", query_name(op));
+                    "The %s is closed.", "The %s is closed.", name);
             } else {
                 /* Don't display messages for random maps. */
                 if (op->msg && strncmp(EXIT_PATH(op),"/!",2) &&

@@ -2043,10 +2043,12 @@ static void subtract_player_exp(object *op, sint64 exp, const char *skill, int f
 void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
 
 #ifdef EXP_DEBUG
+    char name[MAX_BUF];
+    query_name(op, name, MAX_BUF);
 #ifndef WIN32
-    LOG(llevDebug,"change_exp() called for %s, exp = %lld\n",query_name(op),exp); 
+    LOG(llevDebug,"change_exp() called for %s, exp = %lld\n",name,exp); 
 #else
-    LOG(llevDebug,"change_exp() called for %s, exp = %I64d\n",query_name(op),exp); 
+    LOG(llevDebug,"change_exp() called for %s, exp = %I64d\n",name,exp); 
 #endif
 #endif
 

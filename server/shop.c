@@ -837,7 +837,7 @@ int can_pay(object *pl) {
  * below op, we descend down.
  */
 int get_payment(object *pl, object *op) {
-    char buf[MAX_BUF];
+    char buf[MAX_BUF], name_op[MAX_BUF];
     int ret=1;
 
     if (op!=NULL&&op->inv)
@@ -858,11 +858,12 @@ int get_payment(object *pl, object *op) {
         if(!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
+            query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
                                  "You lack %s to buy %s.", 
                                  "You lack %s to buy %s.", 
-                                 cost_string_from_value(i), query_name(op));
+                                 cost_string_from_value(i), name_op);
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
@@ -871,11 +872,12 @@ int get_payment(object *pl, object *op) {
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
+            query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
                                  "You paid %s for %s.",
                                  "You paid %s for %s.",
-                                 buf,query_name(op));
+                                 buf,name_op);
             tmp=merge_ob(op,NULL);
             if (pl->type == PLAYER) {
                 if (tmp) {      /* it was merged */
@@ -902,6 +904,7 @@ void sell_item(object *op, object *pl) {
     int count;
     object *tmp, *pouch;
     archetype *at;
+    char name_op[MAX_BUF];
 
     if(pl==NULL||pl->type!=PLAYER) {
         LOG(llevDebug,"Object other than player tried to sell something.\n");
@@ -911,11 +914,12 @@ void sell_item(object *op, object *pl) {
     if(op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
 
     if(!i) {
+        query_name(op, name_op, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
                              "We're not interested in %s.",
                              "We're not interested in %s.",
-                             query_name(op));
+                             name_op);
 
         /* Even if the character doesn't get anything for it, it may still be
          * worth something.  If so, make it unpaid
@@ -986,11 +990,12 @@ void sell_item(object *op, object *pl) {
     LOG(llevError,"Warning - payment not zero: %I64u\n", i);
 #endif
 
+    query_name(op, name_op, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
                          "You receive %s for %s.",
                          "You receive %s for %s.",
                          query_cost_string(op,pl,F_SELL | F_SHOP),
-                         query_name(op));
+                         name_op);
 
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);

@@ -3561,7 +3561,7 @@ object *find_best_weapon_used_match(object *pl, const char *params)
  */
 int item_matched_string(object *pl, object *op, const char *name)
 {
-    char *cp, local_name[MAX_BUF];
+    char *cp, local_name[MAX_BUF], name_op[MAX_BUF];
     int count,retval=0;
     strcpy(local_name, name);   /* strtok is destructive to name */
 
@@ -3602,7 +3602,8 @@ int item_matched_string(object *pl, object *op, const char *name)
          * later.  So keep it in descending order here, so we try for the best
          * match first, and work downward.
          */
-        if (!strcasecmp(cp,query_name(op))) retval=20;
+        query_name(op, name_op, MAX_BUF);
+        if (!strcasecmp(cp,name_op)) retval=20;
         else if (!strcasecmp(cp,query_short_name(op))) retval=18;
         else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
         else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;

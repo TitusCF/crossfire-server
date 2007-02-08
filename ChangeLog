@@ -15,6 +15,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer for query_name().
+ common/item.c
+ include/libproto.h
+ server/apply.c attack.c build_map.c c_object.c c_range.c c_wiz.c gods.c monster.c move.c player.c plugins.c
+  server.c shop.c skill_util.c spell_attack.c spell_util.c
+ common/living.c object.c readable.c
+ socket/item.c
+ types/common/describe.c
+ types/converter/converter.c
+ types/example.c
+ types/item_transformer/item_transformer.c
+ types/legacy/apply.c legacy_describe.c
+ types/transport/transport.c
+Ryo 2007-02-08
+
 More generator enhancements:
 
 Added a generator_max field to generators.  If this field is set, the
@@ -26,7 +41,6 @@ generator_name field if it exists, or the "name" field otherwise.
     and setting the code to child objects in the generate_monster_*
     routines.
 Aaron Baugher 2007-02-08
-	
 
 common/button.c: fix memory leak if map is NULL.
 ---

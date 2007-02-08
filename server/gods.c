@@ -1234,11 +1234,13 @@ static int god_examines_item(object *god, object *item) {
 	sprintf(buf,"of %s",god->title);
 	if(!strcmp(item->title,buf)) {
 	    if(item->env) {
+            char name[MAX_BUF];
+            query_name(item, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,item->env,
 			     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
 			     "Heretic! You are using %s!",
 			     "Heretic! You are using %s!",
-			     query_name(item));
+			     name);
 	    }
 	    return -1;
 	}

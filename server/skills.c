@@ -99,6 +99,7 @@ static int attempt_steal(object* op, object* who, object *skill)
     object *success=NULL, *tmp=NULL, *next;
     int roll=0, chance=0, stats_value;
     rv_vector	rv;
+    char name[MAX_BUF];
 
     stats_value = ((who->stats.Dex + who->stats.Int) * 3) / 2;
 
@@ -184,10 +185,11 @@ static int attempt_steal(object* op, object* who, object *skill)
     } /* for loop looking for an item */
 
     if (!tmp) {
+        query_name(op, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			     "%s%s has nothing you can steal!",
 			     "%s%s has nothing you can steal!",
-			     op->type == PLAYER ? "" : "The ", query_name(op));
+			     op->type == PLAYER ? "" : "The ", name);
 	return 0;
     }
 
@@ -206,11 +208,12 @@ static int attempt_steal(object* op, object* who, object *skill)
 	    /* The unaggressives look after themselves 8) */
 	    if(who->type==PLAYER) {
 		npc_call_help(op);
+        query_name(op, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE, 0,who,
 			     MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			     "%s notices your attempted pilfering!",
 			     "%s notices your attempted pilfering!",
-			     query_name(op));
+			     name);
 	    }
 	    CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	    /* all remaining npc items are guarded now. Set flag NO_STEAL
@@ -221,7 +224,8 @@ static int attempt_steal(object* op, object* who, object *skill)
 	    char buf[MAX_BUF];
 	    /* Notify the other player */
 	    if (success && who->stats.Int > random_roll(0, 19, op, PREFER_LOW)) {
-		sprintf(buf, "Your %s is missing!", query_name(success));
+            query_name(success, name, MAX_BUF);
+		sprintf(buf, "Your %s is missing!", name);
 	    } else {
 		sprintf(buf, "Your pack feels strangely lighter.");
 	    }
@@ -231,7 +235,8 @@ static int attempt_steal(object* op, object* who, object *skill)
 		if (who->invisible) {
 		    sprintf(buf, "you feel itchy fingers getting at your pack.");
 		} else {
-		    sprintf(buf, "%s looks very shifty.", query_name(who));
+            query_name(who, name, MAX_BUF);
+		    sprintf(buf, "%s looks very shifty.", name);
 		}
 		draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_STEAL,
 			      buf, buf);
@@ -770,10 +775,14 @@ int skill_ident(object *pl, object *skill) {
 }
 
 
-/* players using this skill can 'charm' a monster --
+/**
+ * players using this skill can 'charm' a monster --
  * into working for them. It can only be used on
  * non-special (see below) 'neutral' creatures.
  * -b.t. (thomas@astro.psu.edu)
+ *
+ * @todo
+ * check if can't be simplified, code looks duplicated.
  */
 
 int use_oratory(object *pl, int dir, object *skill) {
@@ -781,6 +790,7 @@ int use_oratory(object *pl, int dir, object *skill) {
     int mflags,chance;
     object *tmp;
     mapstruct *m;
+    char name[MAX_BUF];
 
     if(pl->type!=PLAYER) return 0;	/* only players use this skill */
     m = pl->map;
@@ -815,19 +825,21 @@ int use_oratory(object *pl, int dir, object *skill) {
 	return 0;
     }
 
+    query_name(tmp, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 			 "You orate to the %s.",
 			 "You orate to the %s.",
-			 query_name(tmp));
+			 name);
 
     /* the following conditions limit who may be 'charmed' */
 
     /* it's hostile! */
     if(!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) && !QUERY_FLAG(tmp, FLAG_FRIENDLY)) {
+        query_name(tmp, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			     "Too bad the %s isn't listening!",
 			     "Too bad the %s isn't listening!",
-			     query_name(tmp));
+			     name);
 	return 0;
     }
 
@@ -842,11 +854,12 @@ int use_oratory(object *pl, int dir, object *skill) {
 	     * level of the owner above?
 	     */
 	    set_owner(tmp,pl);
+        query_name(tmp, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,pl, 
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 				 "You convince the %s to follow you instead!",
 				 "You convince the %s to follow you instead!",
-				 query_name(tmp));
+				 name);
 
 	    /* Abuse fix - don't give exp since this can otherwise
 	     * be used by a couple players to gets lots of exp.
@@ -862,10 +875,11 @@ int use_oratory(object *pl, int dir, object *skill) {
 
     /* Ok, got a 'sucker' lets try to make them a follower */
     if(chance>0 && tmp->level<(random_roll(0, chance-1, pl, PREFER_HIGH)-1)) {
+        query_name(tmp, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 	     "You convince the %s to become your follower.",
 	     "You convince the %s to become your follower.",
-	     query_name(tmp));
+	     name);
 
 	set_owner(tmp,pl);
 	tmp->stats.exp = 0;
@@ -876,10 +890,11 @@ int use_oratory(object *pl, int dir, object *skill) {
     }
     /* Charm failed.  Creature may be angry now */
     else if((skill->level+((pl->stats.Cha-10)/2)) < random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
+        query_name(tmp, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 		     "Your speech angers the %s!",
 		     "Your speech angers the %s!",
-		     query_name(tmp));
+		     name);
 
 	if(QUERY_FLAG(tmp,FLAG_FRIENDLY)) {
 	    CLEAR_FLAG(tmp,FLAG_FRIENDLY);
@@ -906,6 +921,7 @@ int singing(object *pl, int dir, object *skill) {
     object *tmp;
     mapstruct *m;
     sint16  x, y;
+    char name[MAX_BUF];
 
     if(pl->type!=PLAYER) return 0;    /* only players use this skill */
 
@@ -946,22 +962,24 @@ int singing(object *pl, int dir, object *skill) {
 	    chance=skill->level*2+(pl->stats.Cha-5-tmp->stats.Int)/2;
 	    if(chance && tmp->level*2<random_roll(0, chance-1, pl, PREFER_HIGH)) {
 		SET_FLAG(tmp,FLAG_UNAGGRESSIVE);
+        query_name(tmp, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE, 0,pl,
 				     MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 				     "You calm down the %s",
 				     "You calm down the %s",
-				     query_name(tmp));
+				     name);
 
 		/* Give exp only if they are not aware */
 		if(!QUERY_FLAG(tmp,FLAG_NO_STEAL))
 		    exp += calc_skill_exp(pl,tmp, skill);
 		SET_FLAG(tmp,FLAG_NO_STEAL);
 	    } else {
+            query_name(tmp, name, MAX_BUF);
                  draw_ext_info_format(NDI_UNIQUE, 0,pl,
 				      MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 				      "Too bad the %s isn't listening!",
 				      "Too bad the %s isn't listening!",
-				      query_name(tmp));
+				      name);
 		SET_FLAG(tmp,FLAG_NO_STEAL);
 	    }
 	}
@@ -1282,10 +1300,12 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
      */
     if (chosen_spell->path_attuned & pl->path_denied)
     {
+        char name[MAX_BUF];
+        query_name(chosen_spell, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
             "The simple idea of writing a scroll of %s makes you sick !",
             "The simple idea of writing a scroll of %s makes you sick !",
-            query_name(chosen_spell));
+            name);
         return 0;
     }
 
@@ -1453,6 +1473,7 @@ int write_on_item (object *pl,const char *params, object *skill) {
 
 static object *find_throw_ob( object *op, const char *request ) {
     object *tmp;
+    char name[MAX_BUF];
 
     if(!op) { /* safety */
 	LOG(llevError,"find_throw_ob(): confused! have a NULL thrower!\n");
@@ -1474,8 +1495,9 @@ static object *find_throw_ob( object *op, const char *request ) {
             /* can't toss invisible or inv-locked items */
             if (tmp->invisible || QUERY_FLAG(tmp, FLAG_INV_LOCKED))
                 continue;
+            query_name(tmp, name, MAX_BUF);
             if (!request
-            || !strcmp(query_name(tmp), request)
+            || !strcmp(name, request)
             || !strcmp(tmp->name, request))
                 break;
         }
@@ -1489,17 +1511,19 @@ static object *find_throw_ob( object *op, const char *request ) {
 
     if (QUERY_FLAG(tmp,FLAG_APPLIED)) {
 	if(tmp->type!=WEAPON) {
+        query_name(tmp, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 				 "You can't throw %s.",
 				 "You can't throw %s.",
-				 query_name(tmp));
+				 name);
 	    tmp = NULL;
 	} else if (QUERY_FLAG(tmp,FLAG_CURSED)||QUERY_FLAG(tmp,FLAG_DAMNED)) {
+        query_name(tmp, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op,
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 				 "The %s sticks to your hand!",
 				 "The %s sticks to your hand!",
-				 query_name(tmp));
+				 name);
 	    tmp = NULL;
 	} else {
 	    if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE)) {
@@ -1508,10 +1532,11 @@ static object *find_throw_ob( object *op, const char *request ) {
 	    }
 	}
     } else if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
+        query_name(tmp, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 			     "You should pay for the %s first.",
 			     "You should pay for the %s first.",
-			     query_name(tmp));
+			     name);
 	tmp = NULL;
     }
 
@@ -1561,6 +1586,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     mapstruct *m;
     sint16  sx, sy;
     tag_t tag;
+    char name[MAX_BUF];
 
     if(throw_ob==NULL) {
 	if(op->type==PLAYER) {
@@ -1596,10 +1622,11 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     if(throw_ob->weight>0)
 	item_factor = (float) maxc/(float) (3.0 * throw_ob->weight);
     else { /* 0 or negative weight?!? Odd object, can't throw it */
+        query_name(throw_ob, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 			     "You can't throw %s.",
 			     "You can't throw %s.",
-			     query_name(throw_ob));
+			     name);
 	return 0;
     }
 
@@ -1633,18 +1660,20 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 	insert_ob_in_map(throw_ob,part->map,op,0);
 	if(op->type==PLAYER) {
 	    if(eff_str<=1) {
+            query_name(throw_ob, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE, 0,op,
 			     MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			     "Your load is so heavy you drop %s to the ground.",
 			     "Your load is so heavy you drop %s to the ground.",
-			     query_name(throw_ob));
+			     name);
 	    }
 	    else if(!dir) {
+            query_name(throw_ob, name, MAX_BUF);
 		draw_ext_info_format(NDI_UNIQUE, 0,op,
 				     MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 				     "You throw %s at the ground.",
 				     "You throw %s at the ground.",
-				     query_name(throw_ob));
+				     name);
 	    }
 	    else
 		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,

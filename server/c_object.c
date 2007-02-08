@@ -529,18 +529,21 @@ int command_apply (object *op, char *params)
  */
 int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof) {
 
+    char name[MAX_BUF];
+    query_name(sack, name, MAX_BUF);
+
     if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "The %s is not active.", 
 			     "The %s is not active.", 
-			     query_name(sack));
+			     name);
 	return 0;
     }
     if (sack == op) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "You can't put the %s into itself.", 
 			     "You can't put the %s into itself.", 
-			     query_name(sack));
+			     name);
 	return 0;
     }
     if (sack->race && (sack->race != op->race || op->type == CONTAINER
@@ -548,14 +551,14 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "You can put only %s into the %s.", 
 			     "You can put only %s into the %s.", 
-			     sack->race,  query_name(sack));
+			     sack->race,  name);
 	return 0;
     }
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "You can't want put the key into %s.", 
 			     "You can't want put the key into %s.", 
-			     query_name(sack));
+			     name);
 	return 0;
     }
     if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
@@ -565,7 +568,7 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			     "That won't fit in the %s!", 
 			     "That won't fit in the %s!", 
-			     query_name(sack));
+			     name);
     return 0;
     }
     /* All other checks pass, must be OK */
@@ -583,7 +586,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     /* buf needs to be big (more than 256 chars) because you can get
      * very long item names.
      */
-    char buf[HUGE_BUF];
+    char buf[HUGE_BUF], name[MAX_BUF];
     object *env=tmp->env;
     uint32 weight, effective_weight_limit;
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
@@ -655,11 +658,12 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	    remove_ob(tmp); /* Unlink it */
 	}
     }
+    query_name(tmp, name, MAX_BUF);
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	(void) sprintf(buf,"%s will cost you %s.", query_name(tmp),
+	(void) sprintf(buf,"%s will cost you %s.", name,
 		query_cost_string(tmp,pl,F_BUY | F_SHOP));
     else
-	(void) sprintf(buf,"You pick up the %s.", query_name(tmp));
+	(void) sprintf(buf,"You pick up the %s.", name);
 
     draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 		  buf, NULL);
@@ -882,20 +886,23 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 {
     tag_t tmp_tag, tmp2_tag;
     object *tmp2, *sack2;
+    char name_sack[MAX_BUF], name_tmp[MAX_BUF];
 
     if (sack==tmp) return;	/* Can't put an object in itself */
+    query_name(sack, name_sack, MAX_BUF);
     if (sack->type != CONTAINER && sack->type != TRANSPORT) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		     "The %s is not a container.", 
 		     "The %s is not a container.", 
-		     query_name(sack));
+		     name_sack);
 	return;
     }
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
+        query_name(tmp, name_tmp, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 	     "You cannot put the %s in the %s.", 
 	     "You cannot put the %s in the %s.", 
-	     query_name(tmp), query_name(sack));
+	     name_tmp, name_sack);
 	return;
     }
     if (tmp->type == CONTAINER && tmp->inv) {
@@ -905,10 +912,11 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 	 * container, this is only done if the object has something in it.
 	 */
 	sack2 = tmp;
+    query_name(tmp, name_tmp, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 		     "You move the items from %s into %s.",
 		     "You move the items from %s into %s.",
-		     query_name(tmp), query_name(sack));
+		     name_tmp, name_sack);
 
 	for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
 	    tmp = tmp2->below;
@@ -919,7 +927,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
 				      "Your %s fills up.",
 				      "Your %s fills up.",
-				      query_name(sack));
+				      name_sack);
 		break;
 	    }
 	}
@@ -960,7 +968,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "You put the %s in %s.",
 			 "You put the %s in %s.",
-			 query_name(tmp), query_name(sack));
+			 name_tmp, name_sack);
     tmp_tag = tmp->count;
     tmp2 = insert_ob_in_ob(tmp, sack);
     fix_object(op); /* This is overkill, fix_player() is called somewhere */
@@ -1040,10 +1048,12 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
         return NULL;
 
     if (QUERY_FLAG (tmp, FLAG_STARTEQUIP)) {
+        char name[MAX_BUF];
+        query_name(tmp, name, MAX_BUF);
       draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			   "You drop the %s. The gods who lent it to you retrieves it.",
 			   "You drop the %s. The gods who lent it to you retrieves it.",
-			   query_name(tmp));
+			   name);
       if (op->type==PLAYER)
 	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
@@ -1395,15 +1405,20 @@ object *find_marked_object(object *op)
  */
 int command_mark(object *op, char *params)
 {
+    char name[MAX_BUF];
+
     if (!op->contr) return 1;
     if (!params) {
 	object *mark=find_marked_object(op);
 	if (!mark) draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 				 "You have no marked object.", NULL);
-	else draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+	else {
+        query_name(mark, name, MAX_BUF);
+        draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 				  "%s is marked.",
 				  "%s is marked.",
-				  query_name(mark));
+				  name);
+    }
     }
     else {
 	object *mark1=find_best_object_match(op, params);
@@ -1417,10 +1432,11 @@ int command_mark(object *op, char *params)
 	else {
 	    op->contr->mark=mark1;
 	    op->contr->mark_count=mark1->count;
+        query_name(mark1, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 				 "Marked item %s", 
 				 "Marked item %s", 
-				 query_name(mark1));
+				 name);
 	    return 0;
 	}
     }
@@ -1641,7 +1657,7 @@ void inventory(object *op,object *inv) {
   object *tmp;
   const char *in;
   int items = 0, length;
-  char weight[MAX_BUF];
+  char weight[MAX_BUF], name[MAX_BUF];
 
   if (inv==NULL && op==NULL) {
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1681,16 +1697,17 @@ void inventory(object *op,object *inv) {
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
     query_weight(tmp, weight, MAX_BUF);
+    query_name(tmp, name, MAX_BUF);
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
       draw_ext_info_format(NDI_UNIQUE, 0,op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
 		   "[fixed]%s- %-*.*s (%5d) %-8s", 
 		   "%s- %-*.*s (%5d) %-8s", 
-		   in, length, length, query_name(tmp), tmp->count,weight);
+		   in, length, length, name, tmp->count,weight);
     else
       draw_ext_info_format(NDI_UNIQUE,0, op,  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
 		   "[fixed]%s- %-*.*s %-8s", 
 		   "%s- %-*.*s %-8s", 
-		   in, length+8, length+8, query_name(tmp), weight);
+		   in, length+8, length+8, name, weight);
   }
   if(!inv && op) {
       query_weight(op, weight, MAX_BUF);

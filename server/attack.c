@@ -1077,6 +1077,7 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 	uint32 attacknum, int magic) {
   
     int doesnt_slay = 1;
+    char name_hitter[MAX_BUF], name_op[MAX_BUF];
 
     /* Catch anyone that may be trying to send us a bitmask instead of the number */
     if (attacknum >= NROFATTACKS) {
@@ -1209,13 +1210,16 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
                    objects */
 		if(rndm(0, dam+4) >
 		    random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
-		    if(op->type == PLAYER)
+		    if(op->type == PLAYER) {
 			/* Make this more visible */
+                query_name(hitter, name_hitter, MAX_BUF);
+                query_name(tmp, name_op, MAX_BUF);
 			draw_ext_info_format(NDI_UNIQUE|NDI_RED,0, op, 
 			     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
 			     "The %s's acid corrodes your %s!",
 			     "The %s's acid corrodes your %s!",
-			     query_name(hitter), query_name(tmp));
+			     name_hitter, name_op);
+            }
 		    flag = 1;
 		    tmp->magic--;
 		    if(op->type == PLAYER)
@@ -1310,17 +1314,21 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 	deathstrike_player(op, hitter, &dam);
 	break;
     case ATNR_CHAOS:
+        query_name(op, name_op, MAX_BUF);
+        query_name(hitter, name_hitter, MAX_BUF);
 	LOG(llevError,
 	    "%s was hit by %s with non-specific chaos.\n",
-	    query_name(op),
-	    query_name(hitter));
+	    name_op,
+	    name_hitter);
 	dam = 0;
 	break;
     case ATNR_COUNTERSPELL: 
+        query_name(op, name_op, MAX_BUF);
+        query_name(hitter, name_hitter, MAX_BUF);
 	LOG(llevError,
 	    "%s was hit by %s with counterspell attack.\n",
-	    query_name(op),
-	    query_name(hitter));
+	    name_op,
+	    name_hitter);
 	dam = 0;
 	/* This should never happen.  Counterspell is handled
 	 * seperately and filtered out.  If this does happen,
@@ -1460,9 +1468,15 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 
     /* Player killed something */
     if(owner->type==PLAYER) {
+        char name_op[MAX_BUF], name_hitter[MAX_BUF];
+        query_name(op, name_op, MAX_BUF);
+        if (hitter)
+            query_name(hitter, name_hitter, MAX_BUF);
+        else
+            name_hitter[0] = '\0';
 	log_kill(owner->name,
-		 query_name(op),op->type,
-                (owner!=hitter) ? query_name(hitter) : NULL,
+		 name_op,op->type,
+                (owner!=hitter) ? name_hitter : NULL,
                 (owner!=hitter) ? hitter->type : 0);
 
 	/* Log players killing other players - makes it easier to detect
@@ -1473,12 +1487,14 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 	    time_t t=time(NULL);
 	    struct tm *tmv;
 	    char buf[256];
+        char name[MAX_BUF];
 
 	    tmv = localtime(&t);
 	    strftime(buf, 256,"%a %b %d %H:%M:%S %Y", tmv);
+        query_name(op, name, MAX_BUF);
 
 	    LOG(llevInfo,"%s PLAYER_KILL_PLAYER: %s (%s) killed %s\n",
-		buf, owner->name, owner->contr->socket.host, query_name(op));
+		buf, owner->name, owner->contr->socket.host, name);
 	}
 
 	/* try to filter some things out - basically, if you are
@@ -1487,16 +1503,21 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 	 */
 	if ( owner->level < op->level * 2|| op->stats.exp>1000) {
 	    if(owner!=hitter) {
+            char killed[MAX_BUF], with[MAX_BUF];
+            query_name(op, killed, MAX_BUF);
+            query_name(hitter, with, MAX_BUF);
 		draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
 		     "You killed %s with %s.",
 		     "You killed %s with %s.",
-		     query_name(op), query_name(hitter));
+		     killed, with);
 	    }
 	    else {
+            char killed[MAX_BUF];
+            query_name(op, killed, MAX_BUF);
 		draw_ext_info_format(NDI_BLACK, 0, owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
 		     "You killed %s.",
 		     "You killed %s.",
-		     query_name(op));
+		     killed);
 	    }
 	    /* Only play sounds for melee kills */
 	    if (hitter->type == PLAYER)
@@ -1548,8 +1569,11 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 
     /* Pet (or spell) killed something. */
     if(owner != hitter ) {
+        char name_op[MAX_BUF], name_hitter[MAX_BUF];
+        query_name(op, name_op, MAX_BUF);
+        query_name(hitter, name_hitter, MAX_BUF);
 	(void) sprintf(buf,"%s killed %s with %s%s%s.",owner->name,
-	       query_name(op),query_name(hitter), battleg? " (duel)":"", pk? " (pk)":"");
+	       name_op,name_hitter, battleg? " (duel)":"", pk? " (pk)":"");
     }
     else {
 	(void) sprintf(buf,"%s killed %s%s%s%s.",hitter->name,op->name,
@@ -1602,7 +1626,11 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 
 	    partylist *party=owner->contr->party;
 #ifdef PARTY_KILL_LOG
-	    add_kill_to_party(party, query_name(owner), query_name(op), exp);
+        {
+            char name[MAX_BUF];
+            query_name(owner, name, MAX_BUF);
+            add_kill_to_party(party, name, query_name(op), exp);
+        }
 #endif
 	    for(pl=first_player;pl!=NULL;pl=pl->next) {
 		if(party && pl->ob->contr->party==party && on_same_map(pl->ob, owner)) {
@@ -2081,6 +2109,7 @@ void confuse_player(object *op, object *hitter, int dam)
 void blind_player(object *op, object *hitter, int dam)
 {
     object *tmp,*owner;
+    char victim[MAX_BUF];
 
     /* Save some work if we know it isn't going to affect the player */
     if (op->resist[ATNR_BLIND]==100) return;
@@ -2102,10 +2131,11 @@ void blind_player(object *op, object *hitter, int dam)
       if(hitter->owner) owner = get_owner(hitter);
       else owner = hitter;
 
+      query_name(op, victim, MAX_BUF);
       draw_ext_info_format(NDI_UNIQUE,0,owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
 	  "Your attack blinds %s!",
 	  "Your attack blinds %s!",
-	   query_name(op));
+	   victim);
     } 
     tmp->stats.food += dam;
     if(tmp->stats.food > 10) tmp->stats.food = 10;

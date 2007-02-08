@@ -630,43 +630,40 @@ const char *query_short_name(const object *op)
  * @todo
  * remove static buffer use.
  */
-char *query_name(const object *op) {
-    static char buf[5][HUGE_BUF];
-    static int use_buf=0;
+void query_name(const object *op, char* buf, int size) {
     int len=0;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
 #endif
 
-    use_buf++;
-    use_buf %=5;
+    buf[0] = '\0';
 
 #ifdef NEW_MATERIAL_CODE
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname) {
         mt = name_to_material(op->materialname);
         if (mt) {
-            safe_strcat(buf[use_buf], mt->description, &len, HUGE_BUF);
-            safe_strcat(buf[use_buf], " ", &len, HUGE_BUF);
+            safe_strcat(buf, mt->description, &len, size);
+            safe_strcat(buf, " ", &len, size);
         }
     }
 #endif
 
-    safe_strcat(buf[use_buf], query_short_name(op), &len, HUGE_BUF);
+    safe_strcat(buf, query_short_name(op), &len, size);
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
-        safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
+        safe_strcat(buf, " *", &len, size);
     if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
         (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
-        safe_strcat(buf[use_buf]," (open)", &len, HUGE_BUF);
+        safe_strcat(buf," (open)", &len, size);
 
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
         if(QUERY_FLAG(op,FLAG_DAMNED))
-            safe_strcat(buf[use_buf], " (damned)", &len, HUGE_BUF);
+            safe_strcat(buf, " (damned)", &len, size);
         else if(QUERY_FLAG(op,FLAG_CURSED))
-            safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
+            safe_strcat(buf, " (cursed)", &len, size);
     }
     if(QUERY_FLAG(op,FLAG_BLESSED) && QUERY_FLAG(op,FLAG_KNOWN_BLESSED))
-            safe_strcat(buf[use_buf], " (blessed)", &len, HUGE_BUF);
+            safe_strcat(buf, " (blessed)", &len, size);
 
     /* Basically, if the object is known magical (detect magic spell on it),
      * and it isn't identified,  print out the fact that
@@ -678,14 +675,14 @@ char *query_name(const object *op) {
      * abilities, especially for artifact items.
      */
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
-        safe_strcat(buf[use_buf], " (magic)", &len, HUGE_BUF);
+        safe_strcat(buf, " (magic)", &len, size);
 
 #if 0
     /* item_power will be returned in desribe_item - it shouldn't really
      * be returned in the name.
      */
     if(op->item_power)
-        sprintf(buf[use_buf]+strlen(buf[use_buf]), "(item_power %+d)",
+        sprintf(buf+strlen(buf), "(item_power %+d)",
             op->item_power);
 
 #endif
@@ -696,10 +693,10 @@ char *query_name(const object *op) {
             case WAND:
             case ROD:
             case HORN:
-                safe_strcat(buf[use_buf]," (readied)", &len, HUGE_BUF);
+                safe_strcat(buf," (readied)", &len, size);
                 break;
             case WEAPON:
-                safe_strcat(buf[use_buf]," (wielded)", &len, HUGE_BUF);
+                safe_strcat(buf," (wielded)", &len, size);
                 break;
             case ARMOUR:
             case HELMET:
@@ -711,20 +708,18 @@ char *query_name(const object *op) {
             case GIRDLE:
             case BRACERS:
             case CLOAK:
-                safe_strcat(buf[use_buf]," (worn)", &len, HUGE_BUF);
+                safe_strcat(buf," (worn)", &len, size);
                 break;
             case CONTAINER:
-                safe_strcat(buf[use_buf]," (active)", &len, HUGE_BUF);
+                safe_strcat(buf," (active)", &len, size);
                 break;
             case SKILL:
             default:
-                safe_strcat(buf[use_buf]," (applied)", &len, HUGE_BUF);
+                safe_strcat(buf," (applied)", &len, size);
         }
     }
     if(QUERY_FLAG(op, FLAG_UNPAID))
-        safe_strcat(buf[use_buf]," (unpaid)", &len, HUGE_BUF);
-
-    return buf[use_buf];
+        safe_strcat(buf," (unpaid)", &len, size);
 }
 
 /**

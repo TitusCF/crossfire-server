@@ -45,13 +45,17 @@ static int action_makes_visible (object *op);
 
 player *find_player(const char *plname)
 {
-  player *pl;
-  for(pl=first_player;pl!=NULL;pl=pl->next)
-  {
-    if(pl->ob != NULL && !strcmp(query_name(pl->ob),plname))
-        return pl;
-  };
-  return NULL;
+    player *pl;
+    char name[MAX_BUF];
+    for(pl=first_player;pl!=NULL;pl=pl->next)
+    {
+        if(pl->ob != NULL) {
+            query_name(pl->ob, name, MAX_BUF);
+            if (!strcmp(name,plname))
+                return pl;
+        }
+    };
+    return NULL;
 }
 
 player* find_player_partial_name( const char* plname )
@@ -1984,11 +1988,14 @@ object * find_key(object *pl, object *container, object *door)
 	    (pl->contr->usekeys == keyrings &&
 	     (!container->race || strcmp(container->race, "keys")))
 	      ) {
+        char name_tmp[MAX_BUF], name_cont[MAX_BUF];
+        query_name(tmp, name_tmp, MAX_BUF);
+        query_name(container, name_cont, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE|NDI_BROWN, 0, pl,
 			 MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
 			 "The %s in your %s vibrates as you approach the door",
 			 "The %s in your %s vibrates as you approach the door",
-			 query_name(tmp), query_name(container));
+			 name_tmp, name_cont);
 	    return NULL;
 	}
     }
@@ -2361,11 +2368,13 @@ static int save_life(object *op) {
 
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
 	if(QUERY_FLAG(tmp, FLAG_APPLIED)&&QUERY_FLAG(tmp,FLAG_LIFESAVE)) {
+        char name[MAX_BUF];
+        query_name(tmp, name, MAX_BUF);
 	    play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 				 "Your %s vibrates violently, then evaporates.",
 				 "Your %s vibrates violently, then evaporates.",
-				 query_name(tmp));
+				 name);
 	    if (op->contr)
 			esrv_del_item(op->contr, tmp->count);
 	    remove_ob(tmp);

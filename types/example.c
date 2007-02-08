@@ -31,13 +31,15 @@ method_ret food_type_apply(ob_methods *context, object *ob, object *pl) {
      */
     can_apply = ob_can_apply(pl, ob);
     if (can_apply == METHOD_OK) {
+        char name[MAX_BUF];
+        query_name(ob, name, MAX_BUF);
 	pl->stats.food += ob->stats.food;
         if (pl->stats.food > 999)
             pl->stats.food = 999;
         draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		     "You eat the %s!",
 		     "You eat the %s!",
-		     query_name(ob));
+		     );
         decrease_ob(ob);
     }
     return METHOD_OK;

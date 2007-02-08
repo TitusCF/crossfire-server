@@ -48,7 +48,7 @@ const char* common_ob_describe(ob_methods* context, object* op, object* observer
     {
         int len;
 
-        strncpy(buf,query_name(op), VERY_BIG_BUF-1);
+        query_name(op, buf, VERY_BIG_BUF-1);
         buf[VERY_BIG_BUF-1]=0;
         len=strlen(buf);
         if (len<VERY_BIG_BUF-5)
@@ -63,7 +63,7 @@ const char* common_ob_describe(ob_methods* context, object* op, object* observer
     }
     if(buf[0]=='\0')
     {
-        strncpy(buf,query_name(op), VERY_BIG_BUF-1);
+        query_name(op, buf, VERY_BIG_BUF-1);
         buf[VERY_BIG_BUF-1]=0;
     }
 

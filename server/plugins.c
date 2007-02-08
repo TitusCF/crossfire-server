@@ -1448,6 +1448,7 @@ void* cfapi_object_get_property(int* type, ...)
     void* rv;
     static int ri;
     static float rf;
+    static char name[MAX_BUF];
 
     va_start(args, type);
 
@@ -1513,7 +1514,8 @@ void* cfapi_object_get_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_NAME:
-            rv = query_name(op);
+            query_name(op, name, MAX_BUF);
+            rv = name;
             *type = CFAPI_STRING;
             break;
 
@@ -2872,14 +2874,17 @@ void* cfapi_object_create(int* type, ...)
             char* sval;
             object* op;
             sval = va_arg(args, char*);
+            char name[MAX_BUF];
 
             op = create_archetype_by_object_name(sval);
 
-            if (strncmp(query_name(op), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
+            query_name(op, name, MAX_BUF);
+            if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                 free_object(op);
                 /* Try with archetype names... */
                 op = create_archetype(sval);
-                if (strncmp(query_name(op), ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
+                query_name(op, name, MAX_BUF);
+                if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                     free_object(op);
                     *type = CFAPI_NONE;
                     va_end(args);
@@ -3211,12 +3216,14 @@ void* cfapi_object_forget_spell(int* type, ...)
     object* op;
     object* sp;
     va_list args;
+    char name[MAX_BUF];
 
     va_start(args, type);
     op = va_arg(args, object*);
     sp = va_arg(args, object*);
     va_end(args);
-    do_forget_spell(op, query_name(sp));
+    query_name(sp, name, MAX_BUF);
+    do_forget_spell(op, name);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -3345,9 +3352,11 @@ void* cfapi_object_find_archetype_inside(int* type, ...)
         rv = present_arch_in_ob(find_archetype(str), op);
         if (rv == NULL) {
             object* tmp;
+            char name[MAX_BUF];
             /* Search by query_name instead */
             for (tmp = op->inv; tmp; tmp = tmp->below) {
-                if (!strncmp(query_name(tmp), str, strlen(str)))
+                query_name(tmp, name, MAX_BUF);
+                if (!strncmp(name, str, strlen(str)))
                     rv = tmp;
                 if (!strncmp(tmp->name, str, strlen(str)))
                     rv = tmp;

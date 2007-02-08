@@ -675,6 +675,7 @@ void mark_item_cmd(uint8 *data, int len,player *pl)
 {
     int tag;
     object *op;
+    char name[MAX_BUF];
 
     if (len != 4) {
         LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information", pl->ob->name);
@@ -690,11 +691,12 @@ void mark_item_cmd(uint8 *data, int len,player *pl)
     }
     pl->mark = op;
     pl->mark_count = op->count;
+    query_name(op, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob,
         MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
         "Marked item %s",
         "Marked item %s",
-        query_name(op));
+        name);
 }
 
 
@@ -709,7 +711,7 @@ void look_at(object *op,int dx,int dy) {
     int flag=0;
     sint16 x,y;
     mapstruct *m;
-
+    char name[MAX_BUF];
 
     if (out_of_map(op->map, op->x+dx, op->y+dy)) return;
 
@@ -738,18 +740,19 @@ void look_at(object *op,int dx,int dy) {
 	    flag=1;
 	 }
 
+     query_name(tmp, name, MAX_BUF);
 	 if (QUERY_FLAG(op, FLAG_WIZ))
 	    draw_ext_info_format(NDI_UNIQUE,0, op,
 				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 				 "- %s (%d).",
 				 "- %s (%d).",
-				 query_name(tmp),tmp->count);
+				 name,tmp->count);
 	 else
 	    draw_ext_info_format(NDI_UNIQUE,0, op,
 				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 				 "- %s.",
 				 "- %s.",
-				 query_name(tmp));
+				 name);
 
 	 if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
 	    (tmp->type != CONTAINER && tmp->type!=FLESH)) || QUERY_FLAG(op, FLAG_WIZ))

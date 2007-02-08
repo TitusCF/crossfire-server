@@ -864,6 +864,7 @@ static int improve_armour(object *op, object *improver, object *armour)
 static int apply_container (object *op, object *sack)
 {
     object *tmp;
+    char name_sack[MAX_BUF], name_tmp[MAX_BUF];
 
     if(op->type!=PLAYER)
 	return 0; /* This might change */
@@ -881,6 +882,7 @@ static int apply_container (object *op, object *sack)
 			  "You must get it first.", NULL);
 	    return 1;
 	}
+    query_name(sack, name_sack, MAX_BUF);
 	/* It's on the ground, the problems begin */
 	if (op->container != sack) {
 	    /* it's closed OR some player has opened it */
@@ -892,7 +894,7 @@ static int apply_container (object *op, object *sack)
 		    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			 "%s is already occupied.", 
 			 "%s is already occupied.", 
-			 query_name(sack));
+			 name_sack);
 		    return 1;
 		}
 	    }
@@ -927,9 +929,10 @@ static int apply_container (object *op, object *sack)
 	    if (op->container != sack) {
 		tmp = op->container;
 		apply_container (op, tmp);
+        query_name(sack, name_tmp, MAX_BUF);
 		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		      "You close %s and open %s.", 
-		      query_name(tmp), query_name(sack));
+		      name_sack, name_tmp);
 		op->container = sack;
 	    } else {
 		CLEAR_FLAG (sack, FLAG_APPLIED);
@@ -937,14 +940,14 @@ static int apply_container (object *op, object *sack)
 		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 		      "You close %s.", 
 		      "You close %s.", 
-		      query_name(sack));
+		      name_sack);
 	    }
 	} else {
 	    CLEAR_FLAG (sack, FLAG_APPLIED);
 	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		  "You open %s.",
 		  "You open %s.",
-		  query_name(sack));
+		  name_sack);
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    op->container = sack;
 	}
@@ -954,10 +957,11 @@ static int apply_container (object *op, object *sack)
 	  if (tmp) {
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    if (sack->env == NULL) { /* if it's on ground,open it also */
+            query_name(tmp, name_tmp, MAX_BUF);
 		draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		      "You unlock %s with %s.", 
 		      "You unlock %s with %s.", 
-		      query_name(sack), query_name(tmp));
+		      name_sack, name_tmp);
 		apply_container (op, sack);
 		return 1;
 	    }
@@ -965,13 +969,13 @@ static int apply_container (object *op, object *sack)
 	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 		  "You don't have the key to unlock %s.",
 		  "You don't have the key to unlock %s.",
-		  query_name(sack));
+		  name_sack);
 	  }
 	} else {
 	    draw_ext_info_format (NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		  "You readied %s.", 
 		  "You readied %s.", 
-		  query_name(sack));
+		  name_sack);
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    if (sack->env == NULL) {  /* if it's on ground,open it also */
 		apply_container (op, sack);
@@ -999,6 +1003,7 @@ static int apply_container (object *op, object *sack)
 
 int esrv_apply_container (object *op, object *sack)
 {
+    char name_sack[MAX_BUF], name_tmp[MAX_BUF];
     object *tmp=op->container;
     if(op->type!=PLAYER)
 	return 0; /* This might change */
@@ -1022,16 +1027,18 @@ int esrv_apply_container (object *op, object *sack)
         if (execute_event(tmp, EVENT_CLOSE,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
             return 1;
 
+        query_name(op->container, name_tmp, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 		     "You close %s.",
 		     "You close %s.",
-		      query_name(op->container));
+		      name_tmp);
 	CLEAR_FLAG(op->container, FLAG_APPLIED);
 	op->container=NULL;
 	esrv_update_item (UPD_FLAGS, op, tmp);
 	if (tmp == sack) return 1;
     }
 
+    query_name(sack, name_sack, MAX_BUF);
 
     /* If the player is trying to open it (which he must be doing if we got here),
      * and it is locked, check to see if player has the equipment to open it.
@@ -1040,15 +1047,16 @@ int esrv_apply_container (object *op, object *sack)
     if (sack->slaying) { /* it's locked */
       tmp=find_key(op, op, sack);
       if (tmp) {
+          query_name(tmp, name_tmp, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			     "You unlock %s with %s.", 
 			     "You unlock %s with %s.", 
-			     query_name(sack), query_name(tmp));
+			     name_sack, name_tmp);
       } else {
 	draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			     "You don't have the key to unlock %s.",
 			     "You don't have the key to unlock %s.",
-			     query_name(sack));
+			     name_sack);
 	return 0;
       }
     }
@@ -1072,7 +1080,7 @@ int esrv_apply_container (object *op, object *sack)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 				 "You can't open %s",
 				 "You can't open %s",
-				 query_name(sack));
+				 name_sack);
 	    return 0;
 	}
 	/* set these so when the player walks off, we can unapply the sack */
@@ -1082,7 +1090,7 @@ int esrv_apply_container (object *op, object *sack)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		     "You open %s.",
 		     "You open %s.",
-		     query_name(sack));
+		     name_sack);
 	SET_FLAG (sack, FLAG_APPLIED);
 	op->container = sack;
 	esrv_update_item (UPD_FLAGS, op, sack);
@@ -1094,7 +1102,7 @@ int esrv_apply_container (object *op, object *sack)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			 "You open %s.",
 			 "You open %s.",
-			 query_name(sack));
+			 name_sack);
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    op->container = sack;
 	    esrv_update_item (UPD_FLAGS, op, sack);
@@ -1105,7 +1113,7 @@ int esrv_apply_container (object *op, object *sack)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			 "You readied %s.",
 			 "You readied %s.",
-			 query_name(sack));
+			 name_sack);
 	    SET_FLAG (sack, FLAG_APPLIED);
 	    esrv_update_item (UPD_FLAGS, op, sack);
 	}
@@ -1119,12 +1127,14 @@ int esrv_apply_container (object *op, object *sack)
  */
 static void apply_skillscroll (object *op, object *tmp)
 {
+    char name[MAX_BUF];
     switch ((int) learn_skill (op, tmp)) {
 	case 0:
+        query_name(tmp, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			 "You already possess the knowledge held within the %s.",
 			 "You already possess the knowledge held within the %s.",
-			 query_name(tmp));
+			 name);
 	    return;
 
 	case 1:
@@ -1140,10 +1150,11 @@ static void apply_skillscroll (object *op, object *tmp)
 	    return;
 
 	default:
+        query_name(tmp, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
 		 "You fail to learn the knowledge of the %s.\n",
 		 "You fail to learn the knowledge of the %s.\n",
-		 query_name(tmp));
+		 name);
 	    decrease_ob(tmp);
 	    return;
     }
@@ -1277,14 +1288,16 @@ static void apply_spellbook (object *op, object *tmp)
     }
 
     if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+        char name[MAX_BUF];
         /* Player made a mistake, let's shake her/him :) */
         int failure = -35;
         if (settings.spell_failure_effects == TRUE)
             failure = -rndm(35, 100);
+        query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "The %s was %s!",
             "The %s was %s!",
-            query_name(tmp), QUERY_FLAG(tmp,FLAG_DAMNED)?"damned":"cursed");
+            name, QUERY_FLAG(tmp,FLAG_DAMNED)?"damned":"cursed");
         scroll_failure(op, failure, (spell->level + 4) * 7);
         if (QUERY_FLAG(tmp, FLAG_DAMNED) && check_spell_known (op, spell->name) && die_roll(1, 10, op, 1) < 2)
             /* Really unlucky player, better luck next time */
@@ -1481,6 +1494,7 @@ static void apply_treasure (object *op, object *tmp)
 {
     object *treas;
     tag_t tmp_tag = tmp->count, op_tag = op->count;
+    char name[MAX_BUF];
 
 
     /* Nice side effect of new treasure creation method is that the treasure
@@ -1501,10 +1515,11 @@ static void apply_treasure (object *op, object *tmp)
 	treas = tmp->inv;
 
 	remove_ob(treas);
+    query_name(treas, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 		     "You find %s in the chest.",
 		     "You find %s in the chest.",
-		     query_name(treas));
+		     name);
 
 	treas->x=op->x;
 	treas->y=op->y;
@@ -2015,11 +2030,14 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
 
     tmp = manual_apply (pl, op, aflag);
     if ( ! quiet) {
-        if (tmp == 0)
+        if (tmp == 0) {
+            char name[MAX_BUF];
+            query_name(op, name, MAX_BUF);
             draw_ext_info_format (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                   "I don't know how to apply the %s.",
                                   "I don't know how to apply the %s.",
-                                  query_name (op));
+                                  name);
+        }
         else if (tmp == 2)
             draw_ext_info_format (NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                   "You must get it first!\n", NULL);
@@ -2085,15 +2103,17 @@ void player_apply_below (object *pl)
 static int unapply_special (object *who, object *op, int aflags)
 {
     object *tmp2;
+    char name[MAX_BUF];
 
     CLEAR_FLAG(op, FLAG_APPLIED);
+    query_name(op, name, MAX_BUF);
     switch(op->type) {
 	case WEAPON:
 	    if (!(aflags & AP_NOPRINT))
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "You unwield %s.",
 				 "You unwield %s.",
-				 query_name(op));
+				 name);
 	    (void) change_abil (who,op);
 	    if(QUERY_FLAG(who,FLAG_READY_WEAPON))
 		CLEAR_FLAG(who,FLAG_READY_WEAPON);
@@ -2116,7 +2136,7 @@ static int unapply_special (object *who, object *op, int aflags)
 			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				  "You stop using the %s.", 
 				  "You stop using the %s.", 
-				  query_name(op));
+				  name);
 		} else {
 		    if (!(aflags & AP_NOPRINT))
 			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
@@ -2144,7 +2164,7 @@ static int unapply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "You unwear %s.",
 				 "You unwear %s.",
-				 query_name(op));
+				 name);
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
@@ -2190,7 +2210,7 @@ static int unapply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "You unready %s.",
 				 "You unready %s.",
-				 query_name(op));
+				 name);
 	    if(who->type==PLAYER) {
 		who->contr->shoottype = range_none;
 	    } else {
@@ -2206,7 +2226,7 @@ static int unapply_special (object *who, object *op, int aflags)
 	    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 			     "You unready %s.",
 			     "You unready %s.",
-			     query_name(op));
+			     name);
         who->contr->shoottype = range_none;
         who->contr->ranges[ range_builder ] = NULL;
         break;
@@ -2216,7 +2236,7 @@ static int unapply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "You unapply %s.",
 				 "You unapply %s.",
-				 query_name(op));
+				 name);
 	    break;
     }
 
@@ -2282,6 +2302,7 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 {
     int i;
     object *tmp=NULL, *last;
+    char name[MAX_BUF];
 
     /* If we are applying a shield or weapon, unapply any equipped shield
      * or weapons first - only allowed to use one weapon/shield at a time.
@@ -2291,9 +2312,11 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 	    if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
 		    (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))) {
-		    if (aflags & AP_PRINT) 
+		    if (aflags & AP_PRINT) {
+                query_name(tmp, name, MAX_BUF);
 			draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-				      query_name(tmp), NULL);
+				      name, NULL);
+            }
 		    else
 			unapply_special(who, tmp, aflags);
 		}
@@ -2302,11 +2325,13 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * While we know it won't work, we want unapply_special to
 		     * at least generate the message.
 		     */
-		    if (!(aflags & AP_NOPRINT))
+		    if (!(aflags & AP_NOPRINT)) {
+                query_name(tmp, name, MAX_BUF);
 			draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "No matter how hard you try, you just can't remove %s.",
 				 "No matter how hard you try, you just can't remove %s.",
-				 query_name(tmp));
+				 name);
+            }
 		    return 1;
 		}
 
@@ -2337,9 +2362,11 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		/* If we are just printing, we don't care about cursed status */
 		if ((aflags & AP_IGNORE_CURSE) ||  (aflags & AP_PRINT) ||
 		    (!(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))) {
-		    if (aflags & AP_PRINT) 
+		    if (aflags & AP_PRINT) {
+                query_name(tmp, name, MAX_BUF);
 			draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-				      query_name(tmp), NULL);
+				      name, NULL);
+            }
 		    else
 			unapply_special(who, tmp, aflags);
 		}
@@ -2349,11 +2376,13 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 		     * so it may not be critical (eg, putting on a ring and you have
 		     * one cursed ring.)
 		     */
-		    if (!(aflags & AP_NOPRINT))
+		    if (!(aflags & AP_NOPRINT)) {
+                query_name(tmp, name, MAX_BUF);
 			draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 					 "The %s just won't come off",
 					 "The %s just won't come off",
-					 query_name(tmp));
+					 name);
+            }
 		}
 		last = tmp->below;
 	    }
@@ -2520,11 +2549,14 @@ int apply_special (object *who, object *op, int aflags)
     int basic_flag = aflags & AP_BASIC_FLAGS;
     object *tmp, *tmp2, *skop=NULL;
     int i;
+    char name_op[MAX_BUF];
 
     if(who==NULL) {
 	LOG(llevError,"apply_special() from object without environment.\n");
 	return 1;
     }
+
+    query_name(op, name_op, MAX_BUF);
 
     if(op->env!=who)
 	return 1;   /* op is not in inventory */
@@ -2540,7 +2572,7 @@ int apply_special (object *who, object *op, int aflags)
 		    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
 				 "No matter how hard you try, you just can't remove %s.",
 				 "No matter how hard you try, you just can't remove %s.",
-				 query_name(op));
+				 name_op);
 	    return 1;
 	}
 	return unapply_special(who, op, aflags);
@@ -2557,14 +2589,14 @@ int apply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
 				 "You don't have the body to use a %s", 
 				 "You don't have the body to use a %s", 
-				 query_name(op));
+				 name_op);
 	    return 1;
 	} else if (i & CAN_APPLY_RESTRICTION) {
 	    if (!(aflags & AP_NOPRINT))
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
 				 "You have a prohibition against using a %s", 
 				 "You have a prohibition against using a %s", 
-				 query_name(op));
+				 name_op);
 	    return 1;
 	}
 	if (who->type != PLAYER) {
@@ -2736,7 +2768,7 @@ int apply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			 "You wield %s.", 
 			 "You wield %s.", 
-			 query_name(op));
+			 name_op);
 
             (void) change_abil (who,op);
             break;
@@ -2756,7 +2788,7 @@ int apply_special (object *who, object *op, int aflags)
 		draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 				 "You wear %s.",
 				 "You wear %s.",
-				 query_name(op));
+				 name_op);
 	    (void) change_abil (who,op);
 	    break;
         case LAMP:
@@ -2821,7 +2853,7 @@ int apply_special (object *who, object *op, int aflags)
 			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 					  "You ready %s.",
 					  "You ready %s.",
-					  query_name (op));
+					  name_op);
 			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			      "You can now use the skill: %s.",
 			      "You can now use the skill: %s.",
@@ -2873,7 +2905,7 @@ int apply_special (object *who, object *op, int aflags)
 		draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 				  "You ready %s.",
 				  "You ready %s.",
-				  query_name(op));
+				  name_op);
 	    if(who->type==PLAYER) {
 		if (op->type == BOW) {
 		    (void)change_abil(who, op);
@@ -2881,7 +2913,7 @@ int apply_special (object *who, object *op, int aflags)
 			draw_ext_info_format (NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                               "You will now fire %s with %s.",
                               "You will now fire %s with %s.",
-	                      op->race ? op->race : "nothing", query_name(op));
+	                      op->race ? op->race : "nothing", name_op);
 		    who->contr->shoottype = range_bow;
 		} else {
 		    who->contr->shoottype = range_misc;
@@ -2903,14 +2935,14 @@ int apply_special (object *who, object *op, int aflags)
 		draw_ext_info_format( NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			     "You ready your %s.",
 			     "You ready your %s.",
-			     query_name( op ) );
+			     name_op );
         break;
 
 	default:
 	    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 				 "You apply %s.",
 				 "You apply %s.",
-				 query_name(op));
+				 name_op);
     } /* end of switch op->type */
 
     SET_FLAG(op, FLAG_APPLIED);
@@ -3436,24 +3468,28 @@ static void apply_item_transformer( object* pl, object* transformer )
     int yield;
     char got[ MAX_BUF ];
     int len;
+    char name_t[MAX_BUF], name_m[MAX_BUF];
 
     if ( !pl || !transformer )
         return;
     marked = find_marked_object( pl );
+    query_name( transformer, name_t, MAX_BUF );
     if ( !marked )
         {
         draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			     "Use the %s with what item?", 
 			     "Use the %s with what item?", 
-			     query_name( transformer ) );
+			     name_t );
         return;
         }
+        
+        query_name( marked, name_m, MAX_BUF );
     if ( !marked->slaying )
         {
         draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			     "You can't use the %s with your %s!",
 			     "You can't use the %s with your %s!",
-			     query_name( transformer ), query_name( marked ) );
+			     name_t, name_m );
         return;
         }
     /* check whether they are compatible or not */
@@ -3463,7 +3499,7 @@ static void apply_item_transformer( object* pl, object* transformer )
         draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
 			     "You can't use the %s with your %s!", 
 			     "You can't use the %s with your %s!", 
-			     query_name( transformer ), query_name( marked ) );
+			     name_t, name_m );
         return;
         }
     find += strlen( transformer->arch->name ) + 1;

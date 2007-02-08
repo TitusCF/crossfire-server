@@ -59,7 +59,7 @@ const char* legacy_ob_describe(ob_methods* context, object* op, object* observer
         default:
             if(buf[0]=='\0')
             {
-                strncpy(buf,query_name(op), VERY_BIG_BUF-1);
+                query_name(op, buf, VERY_BIG_BUF-1);
                 buf[VERY_BIG_BUF-1]=0;
             }
             return buf;
