@@ -113,7 +113,7 @@ static void generate_monster_inv(object *gen) {
     qty=rndm(0,qty-1);
     for (op=gen->inv;qty;qty--)
         op=op->below;
-    i=find_multi_free_spot_around(op, gen, &nx, &ny);
+    i=find_multi_free_spot_within_radius(op, gen, &nx, &ny);
     if (i==-1)
         return;
     head=object_create_clone(op);
@@ -147,7 +147,7 @@ static void generate_monster_arch(object *gen) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
 	return;
     }
-    i=find_multi_free_spot_around(&at->clone, gen, &nx, &ny);
+    i=find_multi_free_spot_within_radius(&at->clone, gen, &nx, &ny);
     if (i==-1) return;
     while(at!=NULL) {
 	op=arch_to_object(at);

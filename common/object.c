@@ -2680,6 +2680,132 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
 }
 
 /**
+ * Sets hx and hy to the coords to insert a possibly
+ * multi-tile ob at, within radius of generator, which
+ * is stored in key_value "generator_radius".  Radius
+ * defaults to 1.
+ *
+ * @param ob
+ * object to insert. Must not be NULL.
+ * @param gen
+ * where to insert. Must not be NULL.
+ * @param[out] hx
+ * @param[out] hy
+ * coordinates at which insertion is possible.
+ * @return
+ * 0 for success and -1 for failure.
+ *
+ * @note
+ * This function assumes that multi-tile objects are rectangular.
+ */
+int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy) {
+    int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
+    sint8 x, y, radius;
+    int freecount=0, freecountstop=0;
+    const char *value;
+    
+        /* If radius is not set, default to 1 */
+    value = get_ob_key_value(gen, "generator_radius");
+    if( value ){
+        radius = (sint8)strtol_local((char *)value, NULL, 10);
+        if( radius < 1 ){
+            radius = 1;
+        }
+    } else {
+        radius = 1;
+    }
+    
+    if (ob->head)
+        ob = ob->head;
+
+    get_multi_size(ob, &sx, &sy, &sx2, &sy2);
+    get_multi_size(gen, &genx, &geny, &genx2, &geny2);
+    /*
+     * sx and sy are now the coords of the bottom right corner
+     * of ob relative to the head.
+     * genx and geny are now the coords of the bottom right corner
+     * of gen relative to the head.
+     * sx2 and sy2 are now the coords of the head of ob relative
+     * to the top left corner.
+     * genx2 and geny2 are now the coords of the head of gen relative
+     * to the top left corner.
+     */
+
+    sx++;
+    sy++;
+    genx++;
+    geny++;
+    /*
+     * sx, sy, genx, and geny, are now the size of the object,
+     * excluding parts left and above the head.
+     */
+
+    ix = gen->x - sx - genx2 - radius + 1;
+    iy = gen->y - sy - geny2 - radius + 1;
+    sx += genx + sx2 + radius * 2 - 1;
+    sy += geny + sy2 + radius * 2 - 1;
+    
+    /*
+     * ix and iy are the map coords of the top left square where
+     * the head of ob could possibly be placed. sx and sy are now
+     * the size of the square to search for placement of the head
+     * relative to ix and iy.
+     */
+
+    /* Create arrays large enough to hold free space coordinates */
+    sint8 x_array[sx*sy];
+    sint8 y_array[sx*sy];
+    
+    /*
+     * Loop through the area of possible positions for the head of ob object:
+     */
+    for(x = 0; x < sx; x++){
+        for(y = 0; y < sy; y++){
+            nx = ix + x;
+            ny = iy + y;
+            
+
+                /* Make sure it's within map. */
+            if( get_map_flags(gen->map, NULL, nx, ny, NULL, NULL)
+                & P_OUT_OF_MAP ){
+                continue;
+            }
+
+                /* Check if the spot is free. */
+            flag = ob_blocked(ob,gen->map,nx,ny);
+            if (!flag) {
+                x_array[freecount] = nx;
+                y_array[freecount] = ny;
+                freecount++;
+            }
+        }
+    }
+    /* If no free spaces, return. */
+    if (!freecount){
+        return -1;
+    }
+    
+    /* Choose a random valid position */
+    freecountstop = RANDOM()%freecount;
+    for(i = 0; i < freecount; i++){
+        nx = x_array[i];
+        ny = y_array[i];
+
+            /* Check if the spot is free.*/
+        flag = ob_blocked(ob,gen->map,nx,ny);
+        if (!flag) {
+            freecountstop--;
+            if (freecountstop <= 0) {
+                *hx = nx;
+                *hy = ny;
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
+
+/**
  * find_free_spot(object, map, x, y, start, stop) will search for
  * a spot at the given map and coordinates which will be able to contain
  * the given object.

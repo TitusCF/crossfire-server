@@ -13,6 +13,16 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Enhancing generator ability:
+
+Add a "generator_radius" field to generators; objects are created randomly
+within this radius of the generator.
+ server/time.c: changed calls to find free spot
+ common/object.c: added function find_multi_free_spot_within_radius,
+    which is called from server/time.c
+Aaron Baugher 2007-02-08
+	
+	
 Changes for SVN:
 
 Makefile.am, Makefile.in (and Makefiles in subdirs): Put types in list of
