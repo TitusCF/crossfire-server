@@ -79,20 +79,20 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
 };
 
 /** To write nice count instead of just the number. */
-static char numbers[21][20] = {
+static const char numbers[21][20] = {
     "no","","two","three","four","five","six","seven","eight","nine","ten",
     "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen",
     "eighteen","nineteen","twenty"
 };
 
 /** Tens */
-static char numbers_10[10][20] = {
+static const char numbers_10[10][20] = {
     "zero","ten","twenty","thirty","fourty","fifty","sixty","seventy",
     "eighty","ninety"
 };
 
 /** Levels as a full name and not a number. */
-static char levelnumbers[21][20] = {
+static const char levelnumbers[21][20] = {
     "zeroth","first", "second", "third", "fourth", "fifth", "sixth", "seventh",
     "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
     "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteen",
@@ -100,7 +100,7 @@ static char levelnumbers[21][20] = {
 };
 
 /** Tens for levels */
-static char levelnumbers_10[11][20] = {
+static const char levelnumbers_10[11][20] = {
   "zeroth","tenth","twentieth","thirtieth","fortieth","fiftieth","sixtieth",
   "seventieth","eightieth","ninetieth"
 };
@@ -385,15 +385,13 @@ const typedata *get_typedata_by_name(const char *name) {
  * @param newline
  * If TRUE, we don't put parens around the description
  * but do put a newline at the end.  Useful when dumping to files
- * @return
- * Static array of the description.  This can return a big buffer.
- *
- * @todo
- * remove static buffer use. Use safe string functions.
+ * @param[out] buf
+ * buffer that will receive the description.
+ * @param size
+ * buffer size.
  */
-char *describe_resistance(const object *op, int newline)
+void describe_resistance(const object *op, int newline, char* buf, int size)
 {
-    static char buf[VERY_BIG_BUF];
     char    buf1[VERY_BIG_BUF];
     int tmpvar;
 
@@ -401,92 +399,60 @@ char *describe_resistance(const object *op, int newline)
     for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
         if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar)==1)) {
             if (!newline)
-                sprintf(buf1,"(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
+                snprintf(buf1,VERY_BIG_BUF,"(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
             else
-                sprintf(buf1,"%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
+                snprintf(buf1,VERY_BIG_BUF,"%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
 
-            strcat(buf, buf1);
+            strncat(buf, buf1, size);
         }
     }
-    return buf;
 }
 
 /**
  * Formats the item's weight.
  * @param op
  * object we want the weight of.
- * @return
- * pointer to a static buffer containing the text-representation of the weight of the given object.
- *
- * @note
- * The buffer will be overwritten by the next call to query_weight().
- *
- * @todo
- * remove static buffer.
+ * @param[out] buf
+ * buffer to write to.
+ * @param size
+ * buffer size.
  */
-const char *query_weight(const object *op) {
-    static char buf[10];
+void query_weight(const object *op, char* buf, int size) {
     sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
     if(op->weight<0)
-        return "      ";
-    if(i%1000)
-        sprintf(buf,"%6.1f",i/1000.0);
+        strncpy(buf, "      ", size);
+    else if(i%1000)
+        snprintf(buf, size, "%6.1f",i/1000.0);
     else
-        sprintf(buf,"%4d  ",i/1000);
-    return buf;
+        snprintf(buf, size, "%4d  ",i/1000);
 }
 
 /**
  * Formats a level.
  * @param i
  * level to format.
- * @return
- * static buffer containing the number requested (of the form first, second, third...)
- *
- * @warning
- * i must not be negative.
- * @todo
- * check invalid i value.
+ * @param[out] buf
+ * buffer which will contain the level.
+ * @param size
+ * size of the buffer.
  */
-char *get_levelnumber(int i) {
-    static char buf[MAX_BUF];
-    if (i > 99) {
-        sprintf(buf, "%d.", i);
-        return buf;
+void get_levelnumber(int i, char* buf, int size) {
+    if (i > 99 || i < 0) {
+        snprintf(buf, size, "%d.", i);
+        return;
     }
-    if(i < 21)
-        return levelnumbers[i];
-    if(!(i%10))
-        return levelnumbers_10[i/10];
-    strcpy(buf, numbers_10[i/10]);
-    strcat(buf, levelnumbers[i%10]);
-    return buf;
-}
-
-
-/**
- * Formats a number.
- * @param i
- * number to format
- * @return
- * text-representation of the given number in a static buffer.
- * @note
- * The buffer might be overwritten at the next call to get_number().
- * 
- * It is currently only used by the query_name() function.
- *
- * @todo
- * check whether it is really used, and remove it not. Check value of i.
- */
-char *get_number(int i) {
-    if(i<=20)
-        return numbers[i];
-    else {
-        static char buf[MAX_BUF];
-        sprintf(buf,"%d",i);
-        return buf;
+    if(i < 21) {
+        strncpy(buf, levelnumbers[i], size);
+        return;
     }
+    if(!(i%10)) {
+        strncpy(buf, levelnumbers_10[i/10], size);
+        return;
+    }
+    strncpy(buf, numbers_10[i/10], size);
+    strncat(buf, levelnumbers[i%10], size);
+    return;
 }
 
 /**
@@ -507,17 +473,17 @@ char *get_number(int i) {
  * from stats.sp - b.t.
  *
  * @todo
- * remove static buffer use. Use safe string functions. Check if really ring/amulet?
+ Use safe string functions. Check if really ring/amulet?
  */
-static const char *ring_desc (const object *op) 
+static void ring_desc (const object *op, char* buf, int size) 
 {
-    static char buf[VERY_BIG_BUF];
+    char resist[MAX_BUF];
     int attr, val,len;
 
     buf[0] = 0;
 
     if (! QUERY_FLAG(op, FLAG_IDENTIFIED))
-        return buf;
+        return;
 
     for (attr=0; attr<NUM_STATS; attr++) {
         if ((val=get_attr_value(&(op->stats),attr))!=0) {
@@ -533,7 +499,8 @@ static const char *ring_desc (const object *op)
     if(op->stats.ac)
         sprintf(buf+strlen(buf), "(ac%+d)", op->stats.ac);
 
-    strcat(buf,describe_resistance(op, 0));
+    describe_resistance(op, 0, resist, MAX_BUF);
+    strcat(buf,resist);
 
     if (op->stats.food != 0)
         sprintf(buf+strlen(buf), "(sustenance%+d)", op->stats.food);
@@ -566,8 +533,6 @@ static const char *ring_desc (const object *op)
     */
     if(buf[0] == 0 && op->type!=SKILL)
         strcpy(buf,"of adornment");
-
-    return buf;
 }
 
 /**
@@ -627,10 +592,11 @@ const char *query_short_name(const object *op)
         case RING:
             if (!op->title) {
                 /* If ring has a title, full description isn't so useful */ 
-                const char *s = ring_desc(op);
-                if (s[0]) {
+                char desc[VERY_BIG_BUF];
+                ring_desc(op, desc, VERY_BIG_BUF);
+                if (desc[0]) {
                     safe_strcat (buf, " ", &len, HUGE_BUF);
-                    safe_strcat(buf, s, &len, HUGE_BUF);
+                    safe_strcat(buf, desc, &len, HUGE_BUF);
                 }
             }
             break;
@@ -850,7 +816,8 @@ const char *query_base_name(const object *op, int plural) {
         case RING:
             if (!op->title) {
             /* If ring has a title, full description isn't so useful */ 
-                const char *s = ring_desc(op);
+                char s[MAX_BUF];
+                ring_desc(op, s, MAX_BUF);
                 if (s[0]) {
                     safe_strcat (buf, " ", &len, MAX_BUF);
                     safe_strcat (buf, s, &len, MAX_BUF);
@@ -1068,6 +1035,7 @@ static char *describe_monster(const object *op) {
 char *describe_item(const object *op, const object *owner) {
     char buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF];
+    char* tmp;
     int identified,i;
 
     retbuf[0]='\0';
@@ -1161,8 +1129,11 @@ char *describe_item(const object *op, const object *owner) {
                 sprintf(buf,"(item_power %+d)",op->item_power);
                 strcat(retbuf,buf);
             }
-            if (op->title)
-                strcat (retbuf, ring_desc(op));
+            if (op->title) {
+                char desc[MAX_BUF];
+                ring_desc(op, desc, MAX_BUF);
+                strcat (retbuf, desc);
+            }
             return retbuf;
 
         default:
@@ -1343,8 +1314,11 @@ char *describe_item(const object *op, const object *owner) {
         /* resistance on flesh is only visible for dragons.  If
          * non flesh, everyone can see its resistances
          */
-        if (op->type != FLESH || (owner && is_dragon_pl(owner)))
-            strcat(retbuf,describe_resistance(op, 0));
+        if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
+            char resist[VERY_BIG_BUF];
+            describe_resistance(op, 0, resist, VERY_BIG_BUF);
+            strcat(retbuf,resist);
+        }
         DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");

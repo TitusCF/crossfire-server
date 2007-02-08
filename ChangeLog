@@ -13,17 +13,25 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
-Enhancing generator ability:
+Changes for SVN:
 
+common/button.c: fix memory leak if map is NULL.
+---
+Some static buffer removal, replaced by buffer + size parameters.
+ common/item.c: use const char* for constants. Remove some static buffers.
+  Remove unused function.
+ common/holy.c readable.c: adjust to functions.
+ include/libproto.h: new function prototypes.
+ server/apply.c c_object.c: changes to function calls.
+Ryo 2007-02-08
+
+Enhancing generator ability:
 Add a "generator_radius" field to generators; objects are created randomly
 within this radius of the generator.
  server/time.c: changed calls to find free spot
  common/object.c: added function find_multi_free_spot_within_radius,
     which is called from server/time.c
 Aaron Baugher 2007-02-08
-	
-	
-Changes for SVN:
 
 Makefile.am, Makefile.in (and Makefiles in subdirs): Put types in list of
    SUBDIRS before server so that compilation happens in correct order -

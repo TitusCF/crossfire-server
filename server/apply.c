@@ -1231,6 +1231,7 @@ static void apply_spellbook (object *op, object *tmp)
 {
     object *skop, *spell, *spell_skill;
     int read_level;
+    char level[100];
 
     if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
@@ -1309,10 +1310,11 @@ static void apply_spellbook (object *op, object *tmp)
         return;
     }
 
+    get_levelnumber(spell->level, level, 100);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "The spellbook contains the %s level spell %s.",
         "The spellbook contains the %s level spell %s.",
-        get_levelnumber(spell->level), spell->name);
+        level, spell->name);
 
     if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
         identify(tmp);

@@ -228,7 +228,8 @@ void dump_gods(void) {
             fprintf(stderr," servant: NONE\n");
         fprintf(stderr," aligned_race(s): %s\n",god->race);
         fprintf(stderr," enemy_race(s): %s\n",(god->slaying?god->slaying:"none"));
-        fprintf(stderr,"%s", describe_resistance(god, 1));
+        describe_resistance(god, 1, tmpbuf, HUGE_BUF);
+        fprintf(stderr,"%s", tmpbuf);
         sprintf(tmpbuf," attacktype:");
         if((tmpvar=god->attacktype)) { 
             strcat(tmpbuf,"\n  ");

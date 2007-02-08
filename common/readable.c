@@ -1974,7 +1974,8 @@ god_info_msg (int level, int booksize)
         if (level == 4 && RANDOM () % 2) {
             /* Priest of god gets these protect,vulnerable... */
 
-            char *cp = describe_resistance(god, 1);
+            char cp[BOOK_BUF];
+            describe_resistance(god, 1, cp, BOOK_BUF);
 
             if (*cp) {  /* This god does have protections */
                 snprintf (buf, BOOK_BUF,
@@ -2012,7 +2013,8 @@ god_info_msg (int level, int booksize)
         if (level == 6 && RANDOM () % 2) {
             /* blessing,curse properties of the god */
 
-            char *cp = describe_resistance(god, 1);
+            char cp[MAX_BUF];
+            describe_resistance(god, 1, cp, MAX_BUF);
 
             if (*cp) {  /* This god does have protections */
                 snprintf (buf, MAX_BUF,

@@ -1508,9 +1508,11 @@ void examine(object *op, object *tmp) {
     switch(tmp->type) {
 	case SPELLBOOK:
 	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->inv ) {
- 		sprintf(buf,"%s is a %s level %s spell",
- 			tmp->inv->name, get_levelnumber(tmp->inv->level),
-			tmp->inv->skill);
+            char level[100];
+            get_levelnumber(tmp->inv->level, level, 100);
+            sprintf(buf,"%s is a %s level %s spell",
+                tmp->inv->name, level,
+                tmp->inv->skill);
 	    }
 	    break;
 
@@ -1639,6 +1641,7 @@ void inventory(object *op,object *inv) {
   object *tmp;
   const char *in;
   int items = 0, length;
+  char weight[MAX_BUF];
 
   if (inv==NULL && op==NULL) {
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1677,22 +1680,24 @@ void inventory(object *op,object *inv) {
     if((!op||!QUERY_FLAG(op, FLAG_WIZ)) && (tmp->invisible || 
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
+    query_weight(tmp, weight, MAX_BUF);
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
       draw_ext_info_format(NDI_UNIQUE, 0,op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
 		   "[fixed]%s- %-*.*s (%5d) %-8s", 
 		   "%s- %-*.*s (%5d) %-8s", 
-		   in, length, length, query_name(tmp), tmp->count,query_weight(tmp));
+		   in, length, length, query_name(tmp), tmp->count,weight);
     else
       draw_ext_info_format(NDI_UNIQUE,0, op,  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
 		   "[fixed]%s- %-*.*s %-8s", 
 		   "%s- %-*.*s %-8s", 
-		   in, length+8, length+8, query_name(tmp), query_weight(tmp));
+		   in, length+8, length+8, query_name(tmp), weight);
   }
   if(!inv && op) {
+      query_weight(op, weight, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE,0, op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
 		 "[fixed]%-*s %-8s",
 		 "%-*s %-8s",
-            41,"Total weight :",query_weight(op));
+            41,"Total weight :",weight);
   }
 }
 
