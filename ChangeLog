@@ -15,6 +15,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+More generator enhancements:
+
+Added a generator_max field to generators.  If this field is set, the
+generator will only create this many objects on the map at one time.
+It sets a generator_code key/value in itself and any objects it creates,
+so it can identify them when counting.  This code is taken from the new
+generator_name field if it exists, or the "name" field otherwise.
+ server/time.c: added the scan for child objects to generate_monster,
+    and setting the code to child objects in the generate_monster_*
+    routines.
+Aaron Baugher 2007-02-08
+	
+
 common/button.c: fix memory leak if map is NULL.
 ---
 Some static buffer removal, replaced by buffer + size parameters.
@@ -25,6 +38,7 @@ Some static buffer removal, replaced by buffer + size parameters.
  server/apply.c c_object.c: changes to function calls.
 Ryo 2007-02-08
 
+
 Enhancing generator ability:
 Add a "generator_radius" field to generators; objects are created randomly
 within this radius of the generator.
@@ -32,6 +46,7 @@ within this radius of the generator.
  common/object.c: added function find_multi_free_spot_within_radius,
     which is called from server/time.c
 Aaron Baugher 2007-02-08
+
 
 Makefile.am, Makefile.in (and Makefiles in subdirs): Put types in list of
    SUBDIRS before server so that compilation happens in correct order -

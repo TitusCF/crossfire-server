@@ -93,7 +93,8 @@ static void generate_monster_inv(object *gen) {
     int i;
     int nx, ny;
     object *op,*head=NULL;
-
+    const char *code;
+    
     int qty=0;
     /* Code below assumes the generator is on a map, as it tries
      * to place the monster on the map.  So if the generator
@@ -121,6 +122,10 @@ static void generate_monster_inv(object *gen) {
     unflag_inv (head,FLAG_IS_A_TEMPLATE);
     if (rndm(0, 9))
         generate_artifact(head, gen->map->difficulty);
+    code = get_ob_key_value(gen, "generator_code");
+    if(code){
+        set_ob_key_value(head, "generator_code", code, 1);
+    }
     insert_ob_in_map_at(head,gen->map,gen,0,nx,ny);
     if (QUERY_FLAG(head, FLAG_FREED)) return;
     fix_multipart_object(head);
@@ -134,6 +139,7 @@ static void generate_monster_arch(object *gen) {
     int nx, ny;
     object *op,*head=NULL,*prev=NULL;
     archetype *at=gen->other_arch;
+    const char *code;
 
     if(gen->other_arch==NULL) {
 	LOG(llevError,"Generator without other_arch: %s\n",gen->name);
@@ -158,6 +164,10 @@ static void generate_monster_arch(object *gen) {
 	    op->head=head,prev->more=op;
 
 	if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
+    code = get_ob_key_value(gen, "generator_code");
+    if(code){
+        set_ob_key_value(head, "generator_code", code, 1);
+    }
 	insert_ob_in_map(op,gen->map,gen,0);
 	if (QUERY_FLAG(op, FLAG_FREED)) return;
 	if(HAS_RANDOM_ITEMS(op))
@@ -171,14 +181,60 @@ static void generate_monster_arch(object *gen) {
 }
 
 static void generate_monster(object *gen) {
-
+    sint8 children;
+    sint8 max_children;
+    sint8 x, y;
+    object *tmp;
+    const char *code;
+    const char *value;
+    char buf[MAX_BUF];
+    
     if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
+        /* See if generator has a generator_max limit set */
+    value = get_ob_key_value(gen, "generator_max");
+    if(value){
+        max_children = (sint8)strtol_local((char *)value, NULL, 10);
+        if( max_children < 1 )
+            return;
+        code = get_ob_key_value(gen, "generator_code");
+        if( code ){
+                /* Generator has a limit and has created some,
+                 * so count how many already exist
+                 */
+            children = 0;
+            for(x = 0; x < MAP_WIDTH(gen->map); x++){
+                for(y = 0; y < MAP_HEIGHT(gen->map); y++){
+                    for(tmp = get_map_ob(gen->map,x,y);
+                        tmp!=NULL; tmp=tmp->above){
+                        value = get_ob_key_value(tmp, "generator_code");
+                        if(value && value == code){
+                            children++;
+                        }
+                    }
+                }
+            }
+                /* and return without generating if there are already enough */
+            if( children >= max_children+1 )
+                return;
+        } else {
+                /* Generator has a limit, but hasn't created anything yet,
+                 * so no need to count, just set code and go
+                 */
+            value = get_ob_key_value(gen, "generator_name");
+            if( value ){
+                set_ob_key_value( gen, "generator_code", value, 1 );
+            } else if(gen->name) {
+                set_ob_key_value( gen, "generator_code", gen->name, 1 );
+            } else {
+                set_ob_key_value( gen, "generator_code", "generator", 1 );
+            }
+        }
+    }
     if (QUERY_FLAG(gen,FLAG_CONTENT_ON_GEN))
         generate_monster_inv(gen);
     else
         generate_monster_arch(gen);
-
 }
 
 static void remove_force(object *op) {
