@@ -2671,6 +2671,7 @@ void* cfapi_object_describe(int* type, ...)
     va_list args;
     object* op;
     object* owner;
+    static char desc[VERY_BIG_BUF];
 
     va_start(args, type);
 
@@ -2679,7 +2680,8 @@ void* cfapi_object_describe(int* type, ...)
     va_end(args);
 
     *type = CFAPI_STRING;
-    return describe_item(op, owner);
+    describe_item(op, owner, desc, VERY_BIG_BUF);
+    return desc;
 }
 void* cfapi_object_drain(int* type, ...)
 {

@@ -1410,9 +1410,11 @@ object* get_random_mon (int level)
 char* mon_desc (const object *mon)
 {
     static char retbuf[HUGE_BUF];
+    char buf[VERY_BIG_BUF];
 
     sprintf (retbuf, " *** %s ***\n", mon->name);
-    strcat (retbuf, describe_item(mon, NULL));
+    describe_item(mon, NULL, buf, VERY_BIG_BUF);
+    strcat (retbuf, buf);
 
     return retbuf;
 }
@@ -1525,7 +1527,7 @@ static const char *artifact_msg (int level, int booksize)
     artifact *art;
     int     chance, i, type, index;
     int     book_entries = level > 5 ? RANDOM () % 3 + RANDOM () % 3 + 2 : RANDOM () % level + 1;
-    char   *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
+    char    name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
     static char retbuf[BOOK_BUF];
     object *tmp = NULL;
 
@@ -1620,9 +1622,10 @@ static const char *artifact_msg (int level, int booksize)
         add_abilities (tmp, art->item);
         tmp->type = type;
         SET_FLAG (tmp, FLAG_IDENTIFIED);
-        if ((ch = describe_item (tmp, NULL)) != NULL && strlen (ch) > 1)
+        describe_item (tmp, NULL, name, BOOK_BUF);
+        if (strlen (name) > 1)
             sprintf (buf, "%s Properties of this artifact include: \n %s \n",
-                buf, ch);
+                buf, name);
         free_object(tmp);
         /* add the buf if it will fit */
         if (!book_overflow (retbuf, buf, booksize))

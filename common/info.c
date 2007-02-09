@@ -39,8 +39,8 @@
  */
 void dump_abilities(void) {
     archetype *at;
+    char name[VERY_BIG_BUF];
     for(at = first_archetype; at; at=at->next) {
-        char *ch;
         const char *gen_name = "";
         archetype *gen;
 
@@ -58,9 +58,9 @@ void dump_abilities(void) {
             }
         }
 
-        ch = describe_item(&at->clone, NULL);
+        describe_item(&at->clone, NULL, name, VERY_BIG_BUF);
         printf("%-16s|%6" FMT64 "|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
-            at->clone.stats.hp,at->clone.stats.ac,ch,at->name,gen_name);
+            at->clone.stats.hp,at->clone.stats.ac,name,at->name,gen_name);
     }
 }
 

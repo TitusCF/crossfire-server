@@ -96,7 +96,7 @@ extern void get_levelnumber(int i, char* buf, int size);
 extern const char *query_short_name(const object *op);
 extern void query_name(const object *op, char* buf, int size);
 extern const char *query_base_name(const object *op, int plural);
-extern char *describe_item(const object *op, const object *owner);
+extern void describe_item(const object *op, const object *owner, char* retbuf, int size);
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);
 extern void identify(object *op);

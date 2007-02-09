@@ -869,10 +869,11 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
 
 
 int perceive_self(object *op) {
-    char *cp=describe_item(op, op), buf[MAX_BUF];
+    char cp[VERY_BIG_BUF], buf[MAX_BUF];
     archetype *at=find_archetype(ARCH_DEPLETION);
     object *tmp;
     int i;
+    describe_item(op, op, cp, VERY_BIG_BUF);
 
     tmp=find_god(determine_god(op));
     if (tmp) 

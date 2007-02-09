@@ -459,8 +459,10 @@ void get_levelnumber(int i, char* buf, int size) {
  * Describes a ring or amulet.
  * @param op
  * item to describe.
- * @returns
- * pointer to static buffer containing ring's or amulet's abilities
+ * @param buf
+ * buffer that will contain the description.
+ * @param size
+ * size of buffer.
  *
  * @note
  * These are taken from old query_name(), but it would work better
@@ -616,19 +618,10 @@ const char *query_short_name(const object *op)
  *
  * @param op
  * item to describe. Must not be NULL.
- * @return
- * character pointer pointing to a static buffer which contains a verbose textual representation of
- * the name of the given object.
- *
- * @note
- * There are 5 buffers that it will cycle through.  In this way,
- * you can make several calls to query_name before the bufs start getting
- * overwritten.  This may be a bad thing (it may be easier to assume the value
- * returned is good forever.)  However, it makes printing statements that
- * use several names much easier (don't need to store them to temp variables.)
- *
- * @todo
- * remove static buffer use.
+ * @param buf
+ * buffer that will contain the description.
+ * @param size
+ * size of buffer.
  */
 void query_name(const object *op, char* buf, int size) {
     int len=0;
@@ -834,23 +827,23 @@ const char *query_base_name(const object *op, int plural) {
  *
  * @param op
  * monster to describe. Must not be NULL.
- * @return
- * static buffer containing description.
+ * @param retbuf
+ * buffer that will contain the description. Must not be NULL.
+ * @param size
+ * buffer size.
  *
  * @note
  * Break this off from describe_item - that function was way
  * too long, making it difficult to read.  This function deals
  * with describing the monsters & players abilities.  It should only
- * be called with monster & player objects.  Returns a description
- * in a static buffer.
+ * be called with monster & player objects.
  *
  * @todo
- * remove static buffer use. Rename to describe_living (or equivalent) since called for player too.
+ * Rename to describe_living (or equivalent) since called for player too.
  * Use safe string functions. Fix weird sustenance logic.
  */
-static char *describe_monster(const object *op) {
+void describe_monster(const object *op, char* retbuf, int size) {
     char buf[MAX_BUF];
-    static char retbuf[VERY_BIG_BUF];
     int i;
 
     retbuf[0]='\0';
@@ -984,7 +977,6 @@ static char *describe_monster(const object *op) {
             strcat(retbuf, buf);
         }
     }
-    return retbuf;
 }
 
 
@@ -1014,8 +1006,10 @@ static char *describe_monster(const object *op) {
  * object to describe. Must not be NULL.
  * @param owner
  * player examining the object.
- * @return
- * static buffer which contains a description of the given object.
+ * @param retbuf
+ * buffer that will contain the description. Must not be NULL.
+ * @param size
+ * size of buffer.
  *
  * @note
  * This function is really much more complicated than it should
@@ -1024,18 +1018,18 @@ static char *describe_monster(const object *op) {
  * means these special cases need to be worked out.
  *
  * @todo
- * remove static buffer use. Check whether owner is really needed. Use safe string functions.
+ * Check whether owner is really needed. Use safe string functions.
  * Check spurious food logic.
  */
-char *describe_item(const object *op, const object *owner) {
+void describe_item(const object *op, const object *owner, char* retbuf, int size) {
     char buf[MAX_BUF];
-    static char retbuf[VERY_BIG_BUF];
     char* tmp;
     int identified,i;
 
     retbuf[0]='\0';
     if(QUERY_FLAG(op,FLAG_MONSTER) || op->type==PLAYER) {
-        return describe_monster(op);
+        describe_monster(op, retbuf, size);
+        return;
     }
     /* figure this out once, instead of making multiple calls to need_identify.
      * also makes the code easier to read.
@@ -1129,10 +1123,10 @@ char *describe_item(const object *op, const object *owner) {
                 ring_desc(op, desc, MAX_BUF);
                 strcat (retbuf, desc);
             }
-            return retbuf;
+            return;
 
         default:
-            return retbuf;
+            return;
     }
 
     /* Down here, we more further describe equipment type items.
@@ -1318,8 +1312,6 @@ char *describe_item(const object *op, const object *owner) {
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
     }
-
-    return retbuf;
 }
 
 /**

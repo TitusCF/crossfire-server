@@ -38,13 +38,14 @@
 const char* common_ob_describe(ob_methods* context, object* op, object* observer)
 {
     static char buf[VERY_BIG_BUF];
-    char *cp;
+    char name[VERY_BIG_BUF];
 
     if(op==NULL)
         return "";
 
     buf[0]='\0';
-    if(*(cp=describe_item(op, observer))!='\0')
+    describe_item(op, observer, name, VERY_BIG_BUF);
+    if(name[0] != '\0')
     {
         int len;
 
@@ -57,7 +58,7 @@ const char* common_ob_describe(ob_methods* context, object* op, object* observer
              * it instead of calling strcat */
             strcpy(buf+len," ");
             len++;
-            strncpy(buf+len, cp, VERY_BIG_BUF-len-1);
+            strncpy(buf+len, name, VERY_BIG_BUF-len-1);
             buf[VERY_BIG_BUF-1]=0;
         }
     }
