@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Doxyfile: Adjust Doxyfile options to create more information in the
+  documentation.
+Alex Schultz 2007-02-09
+
 Remove static buffer from query_short_name().
  common/item.c object.c
  include/libproto.h
