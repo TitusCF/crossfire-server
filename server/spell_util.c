@@ -991,6 +991,7 @@ static void transmute_item_to_flower(object* op) {
     object* flower;
     object* first = NULL;
     int count = 0;
+    char name[HUGE_BUF];
 
     for (item = op->inv; item; item = item->below) {
         if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
@@ -1029,11 +1030,12 @@ static void transmute_item_to_flower(object* op) {
     esrv_del_item(op->contr, item->count);
     insert_ob_in_ob(item, force);
 
+    query_short_name(item, name, HUGE_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0,op,
         MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
         "Your %s turns to a flower!",
         "Your %s turns to a flower!",
-        query_short_name(item));
+        name);
 
     insert_ob_in_ob(force, flower);
     flower = insert_ob_in_ob(flower, op);

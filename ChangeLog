@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer from query_short_name().
+ common/item.c object.c
+ include/libproto.h
+ server/gods.c player.c plugins.c skills.c spell_effect.c
+Ryo 2007-02-09
+
 common/item.c: fix documentation.
 --
 Remove some more static buffers.

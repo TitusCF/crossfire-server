@@ -1243,17 +1243,20 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
              */
             /*	    esrv_send_item(pl, item);*/
 	}
+    query_short_name(item, buf, BOOK_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 			     "You write in the %s.",
 			     "You write in the %s.",
-                             query_short_name(item));
+                 buf );
 	return strlen(msg);
     } else
+    {
+        query_short_name(item, buf, BOOK_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                              "Your message won't fit in the %s!",
                              "Your message won't fit in the %s!",
-                             query_short_name(item));
-
+                             buf);
+    }
     return 0;
 }
 

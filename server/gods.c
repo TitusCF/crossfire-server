@@ -172,6 +172,7 @@ static int same_string (const char *s1, const char *s2)
 static void follower_remove_similar_item (object *op, object *item)
 {
     object *tmp, *next;
+    char name[HUGE_BUF];
 
     if (op && op->type == PLAYER && op->contr) {
         /* search the inventory */
@@ -185,16 +186,17 @@ static void follower_remove_similar_item (object *op, object *item)
                 && same_string (tmp->slaying, item->slaying)) {
 
 	        /* message */
+            query_short_name(tmp, name, HUGE_BUF);
 		if (tmp->nrof > 1)
 		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 					 "The %s crumble to dust!",
 					 "The %s crumble to dust!",
-					 query_short_name(tmp));
+					 name);
 		else
 		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 					 "The %s crumbles to dust!",
 					 "The %s crumbles to dust!",
-					 query_short_name(tmp));
+					 name);
 	        
 	        remove_ob(tmp);    /* remove obj from players inv. */
 		esrv_del_item(op->contr, tmp->count); /* notify client */
@@ -234,17 +236,19 @@ static void follower_remove_given_items (object *pl, object *op, object *god)
 
         given_by = get_ob_key_value(tmp, "divine_giver_name");
         if(given_by == god->name){
+            char name[HUGE_BUF];
+            query_short_name(tmp, name, HUGE_BUF);
             /* Send the client a message. */
             if (tmp->nrof > 1)
                 draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                      "The %s crumble to dust!",
                                      "The %s crumble to dust!",
-                                     query_short_name(tmp));
+                                     name);
             else
                 draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                      "The %s crumbles to dust!",
                                      "The %s crumbles to dust!",
-                                     query_short_name(tmp));
+                                     name);
                 
             remove_ob(tmp);    /* remove obj from players inv. */
             esrv_del_item(pl->contr, tmp->count); /* notify client */
@@ -281,15 +285,17 @@ static int follower_has_similar_item (object *op, object *item)
 static int god_gives_present (object *op, object *god, treasure *tr)
 {
     object *tmp;
+    char name[HUGE_BUF];
 
     if (follower_has_similar_item (op, &tr->item->clone))
         return 0;
 
+    query_short_name(tmp, name, HUGE_BUF);
     tmp = arch_to_object (tr->item);
     draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
 			  "%s lets %s appear in your hands.",
-			  god->name, query_short_name (tmp),
-			  god->name, query_short_name (tmp));
+			  NULL,
+			  god->name, name);
     /**
      * Mark what god gave it, so it can be taken vengefully later!
      */

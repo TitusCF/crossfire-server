@@ -1811,7 +1811,8 @@ void* cfapi_object_get_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_SHORT_NAME:
-            rv = (char*)query_short_name(op);
+            query_short_name(op, name, MAX_BUF);
+            rv = name;
             *type = CFAPI_STRING;
             break;
 

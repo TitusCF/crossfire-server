@@ -2027,11 +2027,13 @@ static int player_attack_door(object *op, object *door)
 	    hit_player(door,9998,op,AT_PHYSICAL,1); /* Break through the door */
 	}
 	else if(door->type==LOCKED_DOOR) {
+        char name[HUGE_BUF];
+        query_short_name(key, name, HUGE_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, NDI_BROWN, op,
 				 MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 				 "You open the door with the %s",
 				 "You open the door with the %s",
-				 query_short_name(key));
+				 name);
 	    remove_door2(door); /* remove door without violence ;-) */
 	}
 	/* Do this after we print the message */
@@ -3522,12 +3524,14 @@ void dragon_ability_gain(object *who, int atnr, int level) {
     }
     else {
 	/* generate misc. treasure */
+        char name[HUGE_BUF];
+        query_short_name(tmp, name, HUGE_BUF);
 	tmp = arch_to_object (tr->item);
 	draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who,
 			     MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
 			     "You gained %s",
 			     "You gained %s",
-			     query_short_name(tmp));
+			     name);
 	tmp = insert_ob_in_ob (tmp, who);
 	if (who->type == PLAYER)
 	    esrv_send_item(who, tmp);

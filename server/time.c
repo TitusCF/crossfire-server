@@ -260,12 +260,14 @@ static void remove_force(object *op) {
                 if (op->env->env) {
                     insert_ob_in_ob(inv, op->env->env);
                     if (pl) {
+                        char name[HUGE_BUF];
+                        query_short_name(inv, name, HUGE_BUF);
                         esrv_send_item(pl, inv);
                         draw_ext_info_format(NDI_UNIQUE, 0,pl,
                             MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
                             "Your %s recovers its original form.",
                             "Your %s recovers its original form.",
-                            query_short_name(inv));
+                            name);
                     }
                 }
                 else {

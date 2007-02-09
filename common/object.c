@@ -3557,11 +3557,11 @@ object *find_best_weapon_used_match(object *pl, const char *params)
  * matching weight. The higher, the more the object matches.
  *
  * @todo
- * is the player->contr->count hack used??
+ * is the player->contr->count hack used?? Try to reduce buffers/calls to query_ functions.
  */
 int item_matched_string(object *pl, object *op, const char *name)
 {
-    char *cp, local_name[MAX_BUF], name_op[MAX_BUF];
+    char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF];
     int count,retval=0;
     strcpy(local_name, name);   /* strtok is destructive to name */
 
@@ -3603,8 +3603,10 @@ int item_matched_string(object *pl, object *op, const char *name)
          * match first, and work downward.
          */
         query_name(op, name_op, MAX_BUF);
+        query_short_name(op, name_short, HUGE_BUF);
+
         if (!strcasecmp(cp,name_op)) retval=20;
-        else if (!strcasecmp(cp,query_short_name(op))) retval=18;
+        else if (!strcasecmp(cp,name_short)) retval=18;
         else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
         else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
         else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
@@ -3620,7 +3622,7 @@ int item_matched_string(object *pl, object *op, const char *name)
          */
         else if (strstr(query_base_name(op,1), cp)) retval = 12;
         else if (strstr(query_base_name(op,0), cp)) retval = 12;
-        else if (strstr(query_short_name(op), cp)) retval = 12;
+        else if (strstr(name_short, cp)) retval = 12;
 
         /* Check against plural/non plural based on count. */
         else if (count>1 && !strcasecmp(cp,op->name_pl)) {

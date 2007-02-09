@@ -2187,6 +2187,7 @@ int command_lock_item(object *op, char *params) {
     object* item;
     object* tmp;
     tag_t tag;
+    char name[HUGE_BUF];
 
     if (!params || strlen(params) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
@@ -2201,13 +2202,14 @@ int command_lock_item(object *op, char *params) {
         return 1;
     }
 
+    query_short_name(item, name, HUGE_BUF);
     if (QUERY_FLAG(item, FLAG_INV_LOCKED)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-            "Unlocked %s.", "Unlocked %s.", query_short_name(item));
+            "Unlocked %s.", "Unlocked %s.", name);
         CLEAR_FLAG(item,FLAG_INV_LOCKED);
     } else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-            "Locked %s.", "Locked %s.", query_short_name(item));
+            "Locked %s.", "Locked %s.", name);
         SET_FLAG(item,FLAG_INV_LOCKED);
     }
 

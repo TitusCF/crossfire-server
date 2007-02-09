@@ -2101,6 +2101,8 @@ int remove_curse(object *op, object *caster, object *spell) {
  */
 int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
     object* marked = find_marked_object(op);
+    char name[HUGE_BUF];
+
     if (!marked) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
             "You need to mark an item first!", NULL);
@@ -2114,9 +2116,10 @@ int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
         return 0;
         }
 
+    query_short_name(marked, name, HUGE_BUF);
     if (QUERY_FLAG(spell_ob, FLAG_CURSED)) {
         draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-            "Your %s emits a dark light for a few seconds.", "Your %s emits a dark light for a few seconds.", query_short_name(marked));
+            "Your %s emits a dark light for a few seconds.", "Your %s emits a dark light for a few seconds.", name);
         SET_FLAG(marked, FLAG_CURSED);
         CLEAR_FLAG(marked, FLAG_KNOWN_CURSED);
         CLEAR_FLAG(marked, FLAG_IDENTIFIED);
@@ -2126,7 +2129,7 @@ int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-        "Your %s glows blue for a few seconds.", "Your %s glows blue for a few seconds.", query_short_name(marked));
+        "Your %s glows blue for a few seconds.", "Your %s glows blue for a few seconds.", name);
     SET_FLAG(marked, FLAG_BLESSED);
     SET_FLAG(marked, FLAG_KNOWN_BLESSED);
     SET_FLAG(marked, FLAG_STARTEQUIP);

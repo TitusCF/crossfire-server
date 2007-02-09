@@ -543,21 +543,25 @@ static void ring_desc (const object *op, char* buf, int size)
  *
  * @param op
  * object to describe.
- * @return
- * static buffer containing the description.
- * @todo
- * remove statis buffer use.
+ * @param buf
+ * buffer which will contain the name. Must not be NULL.
+ * @param size
+ * buffer length.
  */
-const char *query_short_name(const object *op) 
+void query_short_name(const object *op, char* buf, int size)
 {
-    static char buf[HUGE_BUF];
     char buf2[HUGE_BUF];
     int len=0;
 
-    if(op->name == NULL)
-        return "(null)";
-    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
-        return op->name; /* To speed things up (or make things slower?) */
+    if(op->name == NULL) {
+        strncpy(buf, "(null)", size);
+        return;
+    }
+    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) {
+        strncpy(buf, op->name, size); /* To speed things up (or make things slower?) */
+        return;
+    }
+    buf[0] = '\0';
 
     if (op->nrof <= 1)
         safe_strcat(buf,op->name, &len, HUGE_BUF);
@@ -610,7 +614,6 @@ const char *query_short_name(const object *op)
                 safe_strcat(buf, buf2, &len, HUGE_BUF);
             }
     }
-    return buf;
 }
 
 /**
@@ -625,6 +628,7 @@ const char *query_short_name(const object *op)
  */
 void query_name(const object *op, char* buf, int size) {
     int len=0;
+    char sname[HUGE_BUF];
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
 #endif
@@ -641,7 +645,8 @@ void query_name(const object *op, char* buf, int size) {
     }
 #endif
 
-    safe_strcat(buf, query_short_name(op), &len, size);
+    query_short_name(op, sname, HUGE_BUF);
+    safe_strcat(buf, sname, &len, size);
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
