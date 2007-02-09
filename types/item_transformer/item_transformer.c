@@ -35,6 +35,7 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
+#include <sproto.h>
 
 /**
  * Initializer for the ITEM_TRANSFORMER object type.

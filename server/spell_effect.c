@@ -27,6 +27,10 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file server/spell_effect.c
+ */
+
 #include <global.h>
 #include <object.h>
 #include <living.h>

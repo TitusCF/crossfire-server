@@ -105,7 +105,7 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             (void) apply_potion(applier, op);
             return 1;
 
-        /* Eneq(@csd.uu.se): Handle apply on containers. */
+        /* Eneq(at)(csd.uu.se): Handle apply on containers. */
         case CLOSE_CON:
             if (applier->type==PLAYER)
                 (void) esrv_apply_container (applier, op->env);

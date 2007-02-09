@@ -20,7 +20,7 @@
 
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
-/** @file apply.c
+/** @file common_apply.c
  * This file contains apply-related methods that are common to many
  * classes of objects.
  */

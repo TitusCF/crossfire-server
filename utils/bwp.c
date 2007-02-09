@@ -339,7 +339,7 @@ void free_data(String_Array* array) {
  * Takes an array of strings and joins them togther with a comma and a space
  * between each of them.
  * 
- * @param String_Array
+ * @param array
  * Pointer to struct of type String_Array, containing strings to join
  *
  */

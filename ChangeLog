@@ -15,6 +15,29 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+No functional changes, just compilation warnings / Doxygen stuff.
+---
+Add missing includes.
+ types/book/book.c
+ types/identify_altar/identify_altar.c (also fix missing argument)
+ types/item_transformer/item_transformer.c
+ types/transport/transport.c
+---
+Add newline at end.
+ types/common/common_apply.c
+ types/trigger/trigger.c
+---
+Add Doxygen path info to distinguish files.
+ common/button.c
+ random_maps/exit.c
+ server/alchemy.c apply.c rune.c spell_effect.c
+ types/button/button.c
+ types/exit/exit.c
+ types/rune/rune.c
+ types/spell_effect/spell_effect.c
+ utils/bwp.c
+Ryo 2007-02-09
+
 Remove static buffer from ob_describe(). Make op some parameter const.
  include/ob_methods.h sproto.h typesproto.h
  server/c_object.c ob_methods.c

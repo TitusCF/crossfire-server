@@ -856,7 +856,7 @@ static int improve_armour(object *op, object *improver, object *armour)
 
 /**
  * Handle apply on containers. 
- * By Eneq(@csd.uu.se).
+ * By Eneq(at)(csd.uu.se).
  * Moved to own function and added many features [Tero.Haatanen@lut.fi]
  * added the alchemical cauldron to the code -b.t.
  */
@@ -988,10 +988,10 @@ static int apply_container (object *op, object *sack)
 }
 
 /**
- * Eneq(@csd.uu.se): Handle apply on containers.  This is for containers
+ * Eneq(at)(csd.uu.se): Handle apply on containers.  This is for containers
  * the player has in their inventory, eg, sacks, luggages, etc.
  *
- * Moved to own function and added many features [Tero.Haatanen@lut.fi]
+ * Moved to own function and added many features [Tero.Haatanen(at)lut.fi]
  * This version is for client/server mode.
  * op is the player, sack is the container the player is opening or closing.
  * return 1 if an object is apllied somehow or another, 0 if error/no apply

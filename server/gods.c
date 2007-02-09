@@ -68,7 +68,7 @@ static int lookup_god_by_name(const char *name) {
 }
 
 /**
- * Returns pointer to specified god's object through pntr_to_god_obj..
+ * Returns pointer to specified god's object through pntr_to_god_obj.
  */
 object *find_god(const char *name) {
     object *god=NULL;

@@ -402,8 +402,13 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp) {
  * suitable object in it - we will use that to make the requested artifact.
  * Otherwise the code returns a 'generic' item if create_item is set. -b.t.
  *
+ * @param first_ingred pointer to first item to check
+ * @param rp recipe the player is trying
  * @param rp_arch_index pointer to return value; set to arch index for recipe;
  * set to zero if not using a transmution formula
+ * @param create_item if set, will create a generic item if no suitable item is found.
+ * @return
+ * NULL if no suitable item was found and create_item is 0, existing or new item else.
  */
  
 static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {

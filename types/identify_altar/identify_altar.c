@@ -28,6 +28,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 /**
  * Initializer for the IDENTIFY_ALTAR object type.
@@ -40,8 +41,8 @@ void init_type_identify_altar()
 /**
  * Move on this Altar Identifier object.
  * @param context The method context
- * @param trap The Altar Identifier we're moving on
- * @param victim The object moving over this one
+ * @param altar The Altar Identifier we're moving on
+ * @param money The object moving over this one
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
@@ -80,6 +81,7 @@ method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
             identify(marked);
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY,
                 MSG_TYPE_APPLY_SUCCESS, "You have %s.",
+                NULL,
                 long_desc(marked, originator));
 
             if (marked->msg)

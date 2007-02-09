@@ -599,7 +599,7 @@ static sint64 remove_value(object *coin_objs[], sint64 remain) {
  * @param coin_objs the list coins to add to; the list must be ordered
  * from least to most valuable coin
  *
- * @param amount the value (in silver coins) to add
+ * @param value the value (in silver coins) to add
  */
 static void add_value(object *coin_objs[], sint64 value) {
     int i;

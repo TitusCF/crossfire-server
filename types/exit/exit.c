@@ -21,7 +21,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file exit.c
+/** @file exit/exit.c
  * The implementation of the Exit class of objects.
  */
 #include <global.h>

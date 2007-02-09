@@ -26,6 +26,10 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file server/rune.c
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>

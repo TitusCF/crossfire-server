@@ -31,6 +31,9 @@
 #include <sproto.h>
 #include <rproto.h>
 
+/**
+ * @file random_maps/exit.c
+ */
 
 /*  find a character in the layout.  fx and fy are pointers to
     where to find the char.  fx,fy = -1 if not found. */
