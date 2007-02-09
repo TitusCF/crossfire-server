@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006,2007 Mark Wedel & Crossfire Development Team
     Copyright (C) 2002 Tim Rightnour
     Copyright (C) 1992 Frank Tore Johansen
 
@@ -1457,7 +1457,7 @@ void weather_effect(const char *filename)
 
 static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 {
-    int avoid, gotsnow, i, n;
+    int avoid, gotsnow, i;
  
     object *tmp, *snow;
     avoid = 0;

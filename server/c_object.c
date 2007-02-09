@@ -5,7 +5,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002-2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2002-2007 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -2191,14 +2191,14 @@ int command_lock_item(object *op, char *params) {
     if (!params || strlen(params) == 0) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
             "Lock what item?", "Lock what item?");
-        return;
+        return 1;
     }
 
     item = find_best_object_match(op, params);
     if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
             "Can't find any matching item.", "Can't find any matching item.");
-        return;
+        return 1;
     }
 
     if (QUERY_FLAG(item, FLAG_INV_LOCKED)) {
@@ -2221,4 +2221,5 @@ int command_lock_item(object *op, char *params) {
         esrv_del_item(op->contr, tag);
         esrv_send_item(op, tmp);
     }
+    return 1;
 }
