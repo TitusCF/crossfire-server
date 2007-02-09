@@ -94,10 +94,10 @@ method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, 
 method_ret common_pre_ob_move_on(object *trap, object *victim, object *originator);
 void common_post_ob_move_on(object *trap, object *victim, object *originator);
 /* common/describe.c */
-const char *common_ob_describe(ob_methods *context, object *op, object *observer);
+void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char* buf, int size);
 /* legacy/apply.c */
 method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags);
 /* legacy/legacy_describe.c */
-const char *legacy_ob_describe(ob_methods *context, object *op, object *observer);
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char* buf, int size);
 /* legacy/process.c */
 method_ret legacy_ob_process(ob_methods *context, object *op);

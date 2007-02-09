@@ -33,40 +33,39 @@
  * @param context The method context
  * @param op The object to describe
  * @param observer The object to make the description to
- * @return The description as a string
+ * @param buf Buffer that will contain the description
+ * @param size buf's size.
  */
-const char* common_ob_describe(ob_methods* context, object* op, object* observer)
+void common_ob_describe(const ob_methods* context, const object* op, const object* observer, char* buf, int size)
 {
-    static char buf[VERY_BIG_BUF];
     char name[VERY_BIG_BUF];
 
-    if(op==NULL)
-        return "";
-
     buf[0]='\0';
+
+    if(op==NULL)
+        return;
+
     describe_item(op, observer, name, VERY_BIG_BUF);
     if(name[0] != '\0')
     {
         int len;
 
-        query_name(op, buf, VERY_BIG_BUF-1);
-        buf[VERY_BIG_BUF-1]=0;
+        query_name(op, buf, size-1);
+        buf[size-1]=0;
         len=strlen(buf);
-        if (len<VERY_BIG_BUF-5)
+        if (len<size-5)
         {
             /* Since we know the length, we save a few cpu cycles by using
              * it instead of calling strcat */
             strcpy(buf+len," ");
             len++;
-            strncpy(buf+len, name, VERY_BIG_BUF-len-1);
-            buf[VERY_BIG_BUF-1]=0;
+            strncpy(buf+len, name, size-len-1);
+            buf[size-1]=0;
         }
     }
     if(buf[0]=='\0')
     {
-        query_name(op, buf, VERY_BIG_BUF-1);
-        buf[VERY_BIG_BUF-1]=0;
+        query_name(op, buf, size-1);
+        buf[size-1]=0;
     }
-
-    return buf;
 }

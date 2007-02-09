@@ -1494,10 +1494,17 @@ void examine_monster(object *op,object *tmp) {
 }
 
 
-/* tmp is the object being described, pl is who is examing it. */
+/**
+ * tmp is the object being described, pl is who is examing it.
+ *
+ * @todo
+ * fix static buffer, fix comment :)
+ */
 const char *long_desc(const object *tmp, const object *pl)
 {
-    return ob_describe(tmp,pl);
+    static char buf[HUGE_BUF];
+    ob_describe(tmp,pl, buf, HUGE_BUF);
+    return buf;
 }
 
 void examine(object *op, object *tmp) {

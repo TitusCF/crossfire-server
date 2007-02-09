@@ -27,14 +27,21 @@
  * Legacy implementation of description-related methods.
  */
 
-const char* legacy_ob_describe(ob_methods* context, object* op, object* observer)
+/**
+ * Describes an object, seen by a given observer.
+ * @param context The method context
+ * @param op The object to describe
+ * @param observer The object to make the description to
+ * @param buf Buffer that will contain the description
+ * @param size buf's size.
+ */
+void legacy_ob_describe(const ob_methods* context, const object* op, const object* observer, char* buf, int size)
 {
-    static char buf[VERY_BIG_BUF];
     char *cp;
-    if(op==NULL)
-        return "";
-
     buf[0]='\0';
+    if(op==NULL)
+        return;
+
     switch(op->type)
     {
         case RING:
@@ -55,13 +62,14 @@ const char* legacy_ob_describe(ob_methods* context, object* op, object* observer
         case DRINK:
         case FLESH:
         case SKILL_TOOL:
-            return common_ob_describe(context, op, observer);
+            common_ob_describe(context, op, observer, buf, size);
+            return;
         default:
             if(buf[0]=='\0')
             {
-                query_name(op, buf, VERY_BIG_BUF-1);
-                buf[VERY_BIG_BUF-1]=0;
+                query_name(op, buf, size-1);
+                buf[size-1]=0;
             }
-            return buf;
+            return;
     }
 }

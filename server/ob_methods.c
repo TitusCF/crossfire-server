@@ -125,19 +125,21 @@ int ob_process(object* op)
  * Returns the description of an object, as seen by the given observer.
  * @param op The object to describe
  * @param observer The object to which the description is made
- * @return A string containing the description made
+ * @param buf Buffer that will contain the description
+ * @param size Size of buf
  */
-const char* ob_describe(object* op, object* observer)
+void ob_describe(const object* op, const object* observer, char* buf, int size)
 {
     ob_methods* methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
     {
         if (methods->describe)
         {
-            return methods->describe(methods, op, observer);
+            methods->describe(methods, op, observer, buf, size);
+            return;
         }
     }
-    return NULL;
+    buf[0] = '\0';
 }
 /**
  * Makes an object move on top of another one.

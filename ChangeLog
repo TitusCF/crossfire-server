@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer from ob_describe(). Make op some parameter const.
+ include/ob_methods.h sproto.h typesproto.h
+ server/c_object.c ob_methods.c
+ types/common/describe.c
+ types/legacy/megacy_describe.c
+Ryo 2007-02-09
+
 Doxyfile: Adjust Doxyfile options to create more information in the
   documentation.
 Alex Schultz 2007-02-09
