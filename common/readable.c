@@ -1824,11 +1824,11 @@ void make_formula_book(object *book, int level) {
             if (at)
                 query_name(&at->clone, name, MAX_BUF);
             else
-                name[0] = '\0';
+                snprintf(name, sizeof(name), "an unknown place");
 
             sprintf(retbuf + strlen(retbuf),
                 " may be made at %s using the following ingredients:\n",
-                at?name:"an unknown place");
+                name);
 
             for (next = formula->ingred; next != NULL; next = next->next)
             {
