@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer from create_items_path(), and play it safe with length.
+ common/map.c
+---
 Remove static buffer for query_base_name().
  common/button.c item.c object.c
  include/libproto.h

@@ -174,28 +174,26 @@ const char *create_template_pathname (const char *name) {
  * 
  * @param s
  * path of the map for the item.
- * @return
- * static buffer containing the full path.
- *
- * @todo
- * remove static buffer use.
+ * @param buf
+ * buffer that will contain path. Must not be NULL.
+ * @param size
+ * buffer's length.
  */
-static const char *create_items_path (const char *s) {
-    static char buf[MAX_BUF];
+static void create_items_path (const char *s, char* buf, int size) {
     char *t;
 
     if (*s == '/')
         s++;
 
-    sprintf (buf, "%s/%s/", settings.localdir, settings.uniquedir);
+    snprintf(buf, size, "%s/%s/", settings.localdir, settings.uniquedir);
+    t = buf + strlen(buf);
+    strncat(buf, s, size);
 
-    for (t=buf+strlen(buf); *s; s++,t++)
-        if (*s == '/')
+    while (*t != '\0') {
+        if (*t == '/')
             *t = '@';
-        else
-            *t = *s;
-    *t = 0;
-    return (buf);  
+        t++;
+    }
 }
 
 
@@ -1354,10 +1352,11 @@ static void delete_unique_items(mapstruct *m)
 static void load_unique_objects(mapstruct *m) {
     FILE *fp;
     int comp,count;
-    char firstname[MAX_BUF];
+    char firstname[MAX_BUF], name[MAX_BUF];
 
+    create_items_path(m->path, name, MAX_BUF);
     for (count=0; count<10; count++) {
-        sprintf(firstname, "%s.v%02d", create_items_path(m->path), count);
+        sprintf(firstname, "%s.v%02d", name, count);
         if (!access(firstname, R_OK)) break;
     }
     /* If we get here, we did not find any map */
@@ -1367,7 +1366,7 @@ static void load_unique_objects(mapstruct *m) {
         /* There is no expectation that every map will have unique items, but this
         * is debug output, so leave it in.
         */
-        LOG(llevDebug, "Can't open unique items file for %s\n", create_items_path(m->path));
+        LOG(llevDebug, "Can't open unique items file for %s\n", name);
         return;
     }
 
@@ -1502,7 +1501,9 @@ int save_map(mapstruct *m, int flag) {
      */
     fp2 = fp; /* save unique items into fp2 */
     if ((flag == 0 || flag == 2) && !m->unique && !m->template) {
-        sprintf (buf,"%s.v00",create_items_path (m->path));
+        char name[MAX_BUF];
+        create_items_path (m->path, name, MAX_BUF);
+        sprintf (buf,"%s.v00",name);
         if ((fp2 = fopen (buf, "w")) == NULL) {
             LOG(llevError, "Can't open unique items file %s\n", buf);
         }
