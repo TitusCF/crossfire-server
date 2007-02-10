@@ -1432,8 +1432,10 @@ static int eol_size=sizeof("\n")-1; /*Substract 1 to suppress terminal 0*/
  * what object the different values will be taken from.
  * @param op2
  * object's original archetype.
- * @return
- * static buffer containing the difference.
+ * @param buf
+ * buffer that will contain the difference.
+ * @param size
+ * buf's length.
  *
  * @note
  * by MSW 2003-09-22:  It's a bug that we need to pass entrysize -
