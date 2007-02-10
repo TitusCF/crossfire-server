@@ -1409,12 +1409,9 @@ object* get_random_mon (int level)
 char* mon_desc (const object *mon)
 {
     static char retbuf[HUGE_BUF];
-    char buf[VERY_BIG_BUF];
 
     sprintf (retbuf, " *** %s ***\n", mon->name);
-    describe_item(mon, NULL, buf, VERY_BIG_BUF);
-    strcat (retbuf, buf);
-
+    describe_item(mon, NULL, retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf));
     return retbuf;
 }
 
