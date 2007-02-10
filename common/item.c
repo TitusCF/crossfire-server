@@ -1031,7 +1031,6 @@ void describe_monster(const object *op, char* retbuf, int size) {
  */
 void describe_item(const object *op, const object *owner, char* retbuf, int size) {
     char buf[MAX_BUF];
-    char* tmp;
     int identified,i;
 
     retbuf[0]='\0';
