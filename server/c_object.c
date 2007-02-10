@@ -154,8 +154,8 @@ int command_build (object *pl, char *params) {
     at=find_archetype_by_object_name(bp);
     if (at == NULL) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-	    "You don't know how to make a %s.", 
-	    "You don't know how to make a %s.", 
+	    "You don't know how to make a %s.",
+	    "You don't know how to make a %s.",
 	     bp);
 	return 0;
     }
@@ -170,7 +170,7 @@ int command_build (object *pl, char *params) {
 
     if (IS_ARMOR(newobj) && newobj->material == M_LEATHER)
 	skillnr = SK_WOODSMAN;
-    
+
     if (newobj->type == BOW || newobj->type == ARROW)
 	skillnr = SK_BOWYER;
 
@@ -330,8 +330,8 @@ int command_build (object *pl, char *params) {
 	    free_object(newobj);
 	    if (bonus < rndm(1, number-SK_level(pl)+bonus)) {
 		draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-				     "You broke your %s!\n", 
-				     "You broke your %s!\n", 
+				     "You broke your %s!\n",
+				     "You broke your %s!\n",
 				     tool->name);
 		esrv_del_item(pl->contr, tool->count);
 		remove_ob(tool);
@@ -460,7 +460,7 @@ int command_disarm (object *op, char *params) {
 
 /* A little special because we do want to pass the full params along
  * as it includes the object to throw.
- */  
+ */
 int command_throw (object *op, char *params)
 {
     object *skop;
@@ -534,40 +534,40 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
 
     if (! QUERY_FLAG (sack, FLAG_APPLIED)) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "The %s is not active.", 
-			     "The %s is not active.", 
+			     "The %s is not active.",
+			     "The %s is not active.",
 			     name);
 	return 0;
     }
     if (sack == op) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "You can't put the %s into itself.", 
-			     "You can't put the %s into itself.", 
+			     "You can't put the %s into itself.",
+			     "You can't put the %s into itself.",
 			     name);
 	return 0;
     }
     if (sack->race && (sack->race != op->race || op->type == CONTAINER
 		       || (sack->stats.food && sack->stats.food != op->type))) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "You can put only %s into the %s.", 
-			     "You can put only %s into the %s.", 
+			     "You can put only %s into the %s.",
+			     "You can put only %s into the %s.",
 			     sack->race,  name);
 	return 0;
     }
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying) {
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "You can't want put the key into %s.", 
-			     "You can't want put the key into %s.", 
+			     "You can't want put the key into %s.",
+			     "You can't want put the key into %s.",
 			     name);
 	return 0;
     }
-    if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
+    if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) *
 	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
 	* (100 - sack->stats.Str) / 100  > sack->weight_limit) {
 
 	draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "That won't fit in the %s!", 
-			     "That won't fit in the %s!", 
+			     "That won't fit in the %s!",
+			     "That won't fit in the %s!",
 			     name);
     return 0;
     }
@@ -577,7 +577,7 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
 
 /* Pick up commands follow */
 /* pl = player (not always - monsters can use this now)
- * op is the object to put tmp into, 
+ * op is the object to put tmp into,
  * tmp is the object to pick up, nrof is the number to
  * pick up (0 means all of them)
  */
@@ -591,12 +591,12 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     uint32 weight, effective_weight_limit;
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
 
-    /* IF the player is flying & trying to take the item out of a container 
-     * that is in his inventory, let him.  tmp->env points to the container 
-     * (sack, luggage, etc), tmp->env->env then points to the player (nested 
+    /* IF the player is flying & trying to take the item out of a container
+     * that is in his inventory, let him.  tmp->env points to the container
+     * (sack, luggage, etc), tmp->env->env then points to the player (nested
      * containers not allowed as of now)
      */
-    if((pl->move_type & MOVE_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && 
+    if((pl->move_type & MOVE_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) &&
 	get_player_container(tmp)!=pl) {
 	draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "You are levitating, you can't reach the ground!", NULL);
@@ -614,7 +614,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	free_object(tmp);
 	return;
     }
-    
+
     if (nrof > tmp_nrof || nrof == 0)
 	nrof = tmp_nrof;
     /* Figure out how much weight this object will add to the player */
@@ -653,7 +653,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	 * so it needs to be deleted.
 	 */
         if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
-	    if (tmp->env && pl->type==PLAYER) 
+	    if (tmp->env && pl->type==PLAYER)
 	        esrv_del_item (pl->contr, tmp->count);
 	    remove_ob(tmp); /* Unlink it */
 	}
@@ -689,7 +689,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 }
 
 
-void pick_up(object *op,object *alt) 
+void pick_up(object *op,object *alt)
 /* modified slightly to allow monsters use this -b.t. 5-31-95 */
 {
     int need_fix_tmp = 0;
@@ -747,7 +747,7 @@ void pick_up(object *op,object *alt)
 		alt->race && alt->race==tmp->race &&
 		sack_can_hold (NULL, alt, tmp,count))
 		break;  /* perfect match */
-	
+
 	if (!alt)
 	    for (alt=op->inv; alt; alt=alt->below)
 		if (alt->type==CONTAINER && QUERY_FLAG(alt, FLAG_APPLIED) &&
@@ -800,7 +800,7 @@ int command_take (object *op, char *params)
     int ival;
     int missed = 0;
 
-    if (op->container) 
+    if (op->container)
         tmp=op->container->inv;
     else {
         tmp=op->above;
@@ -876,13 +876,13 @@ int command_take (object *op, char *params)
 
 
 /*
- *  This function was part of drop, now is own function. 
- *  Player 'op' tries to put object 'tmp' into sack 'sack', 
- *  if nrof is non zero, then nrof objects is tried to put into sack. 
+ *  This function was part of drop, now is own function.
+ *  Player 'op' tries to put object 'tmp' into sack 'sack',
+ *  if nrof is non zero, then nrof objects is tried to put into sack.
  * Note that the 'sack' in question can now be a transport,
  * so this function isn't named very good anymore.
  */
-void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof) 
+void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 {
     tag_t tmp_tag, tmp2_tag;
     object *tmp2, *sack2;
@@ -892,16 +892,16 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     query_name(sack, name_sack, MAX_BUF);
     if (sack->type != CONTAINER && sack->type != TRANSPORT) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		     "The %s is not a container.", 
-		     "The %s is not a container.", 
+		     "The %s is not a container.",
+		     "The %s is not a container.",
 		     name_sack);
 	return;
     }
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
         query_name(tmp, name_tmp, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-	     "You cannot put the %s in the %s.", 
-	     "You cannot put the %s in the %s.", 
+	     "You cannot put the %s in the %s.",
+	     "You cannot put the %s in the %s.",
 	     name_tmp, name_sack);
 	return;
     }
@@ -957,7 +957,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 			  errmsg, NULL);
 	    return;
 	}
-	/* Tell a client what happened other objects */ 
+	/* Tell a client what happened other objects */
 	if (was_destroyed (tmp2, tmp2_tag))
 	      esrv_del_item (op->contr, tmp2_tag);
 	else	/* this can proably be replaced with an update */
@@ -1001,7 +1001,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
  *  nrof objects is tried to dropped.
  * This is used when dropping objects onto the floor.
  */
-object *drop_object (object *op, object *tmp, uint32 nrof) 
+object *drop_object (object *op, object *tmp, uint32 nrof)
 {
     tag_t tmp_tag;
 
@@ -1203,7 +1203,7 @@ int command_dropall (object *op, char *params) {
 
     curinv = op->inv;
 
-    /* 
+    /*
      * This is the default.  Drops everything not locked or considered
      * not something that should be dropped.
      * Care must be taken that the next item pointer is not to money as
@@ -1397,7 +1397,7 @@ object *find_marked_object(object *op)
     }
     return NULL;
 }
-    
+
 
 /* op should be a player, params is any params.
  * If no params given, we print out the currently marked object.
@@ -1434,8 +1434,8 @@ int command_mark(object *op, char *params)
 	    op->contr->mark_count=mark1->count;
         query_name(mark1, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-				 "Marked item %s", 
-				 "Marked item %s", 
+				 "Marked item %s",
+				 "Marked item %s",
 				 name);
 	    return 0;
 	}
@@ -1547,13 +1547,13 @@ void examine(object *op, object *tmp) {
 	case CONTAINER:
 	    if(tmp->race!=NULL) {
 		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
+		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.",
 			 tmp->race, tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
 		else
 		    sprintf (buf,"It can hold only %s.", tmp->race);
 	    } else
 		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"Its weight limit is %.1f kg.", 
+		    sprintf (buf,"Its weight limit is %.1f kg.",
 			     tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
 	    break;
 
@@ -1628,7 +1628,7 @@ void examine(object *op, object *tmp) {
 
     if(QUERY_FLAG(tmp, FLAG_MONSTER))
 	examine_monster(op,tmp);
-   
+
     /* Is this item buildable? */
     if ( QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) )
         draw_ext_info( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
@@ -1637,7 +1637,7 @@ void examine(object *op, object *tmp) {
     /* Does the object have a message?  Don't show message for all object
      * types - especially if the first entry is a match
      */
-    if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK && 
+    if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK &&
        tmp->type != CORPSE && !tmp->move_on &&
        strncasecmp(tmp->msg, "@match",6)) {
 
@@ -1657,7 +1657,7 @@ void examine(object *op, object *tmp) {
 
 /*
  * inventory prints object's inventory. If inv==NULL then print player's
- * inventory. 
+ * inventory.
  * [ Only items which are applied are showed. Tero.Haatanen@lut.fi ]
  */
 void inventory(object *op,object *inv) {
@@ -1674,7 +1674,7 @@ void inventory(object *op,object *inv) {
   tmp = inv ? inv->inv : op->inv;
 
   while (tmp) {
-    if ((!tmp->invisible && 
+    if ((!tmp->invisible &&
         (inv==NULL || inv->type == CONTAINER || QUERY_FLAG(tmp, FLAG_APPLIED)))
          || (!op || QUERY_FLAG(op, FLAG_WIZ)))
       items++;
@@ -1692,28 +1692,28 @@ void inventory(object *op,object *inv) {
 		    "Inventory:", NULL);
     }
   } else {
-    if (items==0) 
+    if (items==0)
       return;
-    else { 
+    else {
       length = 28;
       in = "  ";
     }
   }
   for (tmp=inv?inv->inv:op->inv; tmp; tmp=tmp->below) {
-    if((!op||!QUERY_FLAG(op, FLAG_WIZ)) && (tmp->invisible || 
+    if((!op||!QUERY_FLAG(op, FLAG_WIZ)) && (tmp->invisible ||
        (inv && inv->type != CONTAINER && !QUERY_FLAG(tmp, FLAG_APPLIED))))
       continue;
     query_weight(tmp, weight, MAX_BUF);
     query_name(tmp, name, MAX_BUF);
     if((!op || QUERY_FLAG(op, FLAG_WIZ)))
       draw_ext_info_format(NDI_UNIQUE, 0,op , MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
-		   "[fixed]%s- %-*.*s (%5d) %-8s", 
-		   "%s- %-*.*s (%5d) %-8s", 
+		   "[fixed]%s- %-*.*s (%5d) %-8s",
+		   "%s- %-*.*s (%5d) %-8s",
 		   in, length, length, name, tmp->count,weight);
     else
       draw_ext_info_format(NDI_UNIQUE,0, op,  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INVENTORY,
-		   "[fixed]%s- %-*.*s %-8s", 
-		   "%s- %-*.*s %-8s", 
+		   "[fixed]%s- %-*.*s %-8s",
+		   "%s- %-*.*s %-8s",
 		   in, length+8, length+8, name, weight);
   }
   if(!inv && op) {
@@ -1835,8 +1835,8 @@ static void display_new_pickup(const object* op)
 			 "%d READABLES",
 			 i & PU_READABLES?1:0);
     draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			 "%d MAGICDEVICE", 
-			 "%d MAGICDEVICE", 
+			 "%d MAGICDEVICE",
+			 "%d MAGICDEVICE",
 			 i & PU_MAGIC_DEVICE?1:0);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
@@ -1848,7 +1848,7 @@ static void display_new_pickup(const object* op)
 			 "%d JEWELS",
 			 "%d JEWELS",
 			 i & PU_JEWELS?1:0);
-    
+
     draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
              "%d FLESH",
              "%d FLESH",
@@ -1874,7 +1874,7 @@ int command_pickup (object *op, char *params)
 
   if(!params) {
     /* if the new mode is used, just print the settings */
-    if(op->contr->mode & PU_NEWMODE) 
+    if(op->contr->mode & PU_NEWMODE)
     {
         display_new_pickup( op );
         return 1;
@@ -1999,7 +1999,7 @@ int command_search_items (object *op, char *params)
 
 /*
  * Changing the custom name of an item
- * 
+ *
  * Syntax is: rename <what object> to <new name>
  *  if '<what object>' is omitted, marked object is used
  *  if 'to <new name>' is omitted, custom name is cleared
@@ -2097,7 +2097,7 @@ int command_rename_item(object *op, char *params)
       /* Copy the new name */
       strncpy(buf,params+1,closebrace-params-1);
       buf[closebrace-params-1]='\0';
-      
+
       /* Let's check it for weird characters */
       for(counter=0;counter<strlen(buf);counter++) {
         if(isalnum(buf[counter])) continue;
