@@ -466,7 +466,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         if(t->nrof && tmp->nrof<=1)
             tmp->nrof = RANDOM()%((int) t->nrof) + 1;
         fix_generated_item (tmp, op, difficulty, t->magic, flag);
-        change_treasure(t, tmp);        
+        change_treasure(t, tmp);
         put_treasure (tmp, op, flag);
     }
 }
@@ -492,7 +492,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
         LOG(llevDebug,"createtreasure: tries exceeded 100, returning without making treasure\n");
         return;
     }
-    if (t->total_chance) 
+    if (t->total_chance)
         create_one_treasure(t, op, flag,difficulty, tries);
     else
         create_all_treasures(t->items, op, flag, difficulty, tries);
@@ -581,7 +581,7 @@ static int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
  * @param difficulty
  * map difficulty.
  * @param retmult
- * if 1, return the multiplier, not the level, for computing value 
+ * if 1, return the multiplier, not the level, for computing value
  * @return
  * generated level, 0 if invalid item.
  */
@@ -785,7 +785,7 @@ void set_ring_bonus(object *op,int bonus) {
         case 16:
         case 17:
         case 18:
-        case 19: 
+        case 19:
             {
             int b=5+FABS(bonus),val,resist=RANDOM() % num_resist_table;
 
@@ -867,8 +867,8 @@ int get_magic(int diff) {
  * into scrolls/books/wands, makes it unidentified, hides the value, etc.
  *
  * 4/28/96 added creator object from which op may now inherit properties based on
- * op->type. Right now, which stuff the creator passes on is object type 
- * dependant. I know this is a spagetti manuever, but is there a cleaner 
+ * op->type. Right now, which stuff the creator passes on is object type
+ * dependant. I know this is a spagetti manuever, but is there a cleaner
  * way to do this? b.t.
  *
  * @param op
@@ -1378,7 +1378,7 @@ void dump_monster_treasure (const char *name)
 
     found = 0;
     fprintf (logfile, "\n");
-    for (at = first_archetype; at != NULL; at = at->next) 
+    for (at = first_archetype; at != NULL; at = at->next)
         if (! strcasecmp (at->clone.name, name) && at->clone.title == NULL)
         {
             fprintf (logfile, "treasures for %s (arch: %s)\n", at->clone.name,
@@ -1396,7 +1396,7 @@ void dump_monster_treasure (const char *name)
 }
 
 /**
- * Builds up the lists of artifacts from the file in the libdir. 
+ * Builds up the lists of artifacts from the file in the libdir.
  * Can be called multiple times without ill effects.
  *
  * @todo
@@ -1759,7 +1759,7 @@ void generate_artifact(object *op, int difficulty) {
 #endif
             return;
         }
-        if (!strcmp(art->item->name,"NONE")) 
+        if (!strcmp(art->item->name,"NONE"))
             return;
         if (FABS(op->magic) < art->item->magic)
             continue; /* Not magic enough to be this item */
