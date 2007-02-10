@@ -109,8 +109,8 @@ static const char levelnumbers_10[11][20] = {
  * The following is a large table of item types, the fields are:
  * item number, item name, item name (plural), and two numbers that are the skills
  * used to identify them. Anytime a new item type is added or removed, this list
- * should be altered to reflect that. The defines for the numerical values are in 
- * define.h 
+ * should be altered to reflect that. The defines for the numerical values are in
+ * define.h
  */
 static const typedata item_types[] = {
     {PLAYER, "player", "players", 0, 0},
@@ -288,7 +288,7 @@ int calc_item_power(const object *op, int flag)
     /* This protection logic is pretty flawed.  20% fire resistance
      * is much more valuable than 20% confusion, or 20% slow, or
      * several others.  Start at 1 - ignore physical - all that normal
-     * armour shouldn't be counted against 
+     * armour shouldn't be counted against
      */
     tmp = 0;
     for (i=1; i<NROFATTACKS; i++)
@@ -344,7 +344,7 @@ int calc_item_power(const object *op, int flag)
  * @param itemtype
  * item type for which to return typedata.
  * @return
- * typedata that has a number equal to itemtype, if there 
+ * typedata that has a number equal to itemtype, if there
  * isn't one, returns NULL */
 const typedata *get_typedata(int itemtype) {
     int i;
@@ -357,7 +357,7 @@ const typedata *get_typedata(int itemtype) {
  * @param name
  * item name for which to return typedata. Singular form is preferred.
  * @return
- * typedata that has a name equal to itemtype, if there 
+ * typedata that has a name equal to itemtype, if there
  * isn't one, return the plural name that matches, if there still isn't
  * one return NULL
  *
@@ -366,11 +366,11 @@ const typedata *get_typedata(int itemtype) {
  */
 const typedata *get_typedata_by_name(const char *name) {
     int i;
-    for (i=0;i<item_types_size;i++) 
+    for (i=0;i<item_types_size;i++)
         if (!strcmp(item_types[i].name, name)) return &item_types[i];
-    for (i=0;i<item_types_size;i++) 
+    for (i=0;i<item_types_size;i++)
         if (!strcmp(item_types[i].name_pl, name)) {
-            LOG(llevInfo, 
+            LOG(llevInfo,
                 "get_typedata_by_name: I have been sent the plural %s, the singular form %s is preffered\n",
                 name, item_types[i].name);
             return &item_types[i];
@@ -477,7 +477,7 @@ void get_levelnumber(int i, char* buf, int size) {
  * @todo
  Use safe string functions. Check if really ring/amulet?
  */
-static void ring_desc (const object *op, char* buf, int size) 
+static void ring_desc (const object *op, char* buf, int size)
 {
     char resist[MAX_BUF];
     int attr, val,len;
@@ -538,7 +538,7 @@ static void ring_desc (const object *op, char* buf, int size)
 }
 
 /**
- * query_short_name(object) is similar to query_name(), but doesn't 
+ * query_short_name(object) is similar to query_name(), but doesn't
  * contain any information about object status (worn/cursed/etc.)
  *
  * @param op
@@ -597,7 +597,7 @@ void query_short_name(const object *op, char* buf, int size)
         case AMULET:
         case RING:
             if (!op->title) {
-                /* If ring has a title, full description isn't so useful */ 
+                /* If ring has a title, full description isn't so useful */
                 char desc[VERY_BIG_BUF];
                 ring_desc(op, desc, VERY_BIG_BUF);
                 if (desc[0]) {
@@ -608,7 +608,7 @@ void query_short_name(const object *op, char* buf, int size)
             break;
 
         default:
-            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
+            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
                 need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
                 sprintf(buf2, " %+d", op->magic);
                 safe_strcat(buf, buf2, &len, HUGE_BUF);
@@ -650,7 +650,7 @@ void query_name(const object *op, char* buf, int size) {
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
-    if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
+    if (op->type == CONTAINER && ((op->env && op->env->container == op) ||
         (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
         safe_strcat(buf," (open)", &len, size);
 
@@ -812,7 +812,7 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
         case AMULET:
         case RING:
             if (!op->title) {
-            /* If ring has a title, full description isn't so useful */ 
+            /* If ring has a title, full description isn't so useful */
                 char s[MAX_BUF];
                 ring_desc(op, s, MAX_BUF);
                 if (s[0]) {
@@ -823,7 +823,7 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
             break;
 
         default:
-            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
+            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
                 need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
                 sprintf(buf + strlen(buf), " %+d", op->magic);
             }
@@ -1346,19 +1346,19 @@ int is_magical(const object *op) {
     /* Handle rings and amulets specially.  If they change any of these
      * values, it means they are magical.
      */
-    if ((op->type==AMULET || op->type==RING) && 
+    if ((op->type==AMULET || op->type==RING) &&
         (op->stats.ac || op->stats.food || op->stats.exp || op->stats.dam ||
         op->stats.wc || op->stats.sp || op->stats.hp || op->stats.luck))
         return 1;
 
     /* Check for stealty, speed, flying, or just plain magic in the boots */
     /* Presume any boots that have a move_type are special. */
-    if (op->type== BOOTS && 
+    if (op->type== BOOTS &&
         ((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type ||  op->stats.exp)))
         return 1;
 
     /* Take care of amulet/shield that reflects spells/missiles */
-    if ((op->type==AMULET || op->type==SHIELD) && 
+    if ((op->type==AMULET || op->type==SHIELD) &&
         (QUERY_FLAG(op, FLAG_REFL_SPELL) || QUERY_FLAG(op, FLAG_REFL_MISSILE)))
         return 1;
 
@@ -1387,12 +1387,12 @@ int is_magical(const object *op) {
         return 1;
 
    /* power crystal, spellbooks, and scrolls are always magical.  */
-   if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK || 
+   if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK ||
         op->type==SCROLL || op->type==GIRDLE)
         return 1;
 
     /* Check to see if it increases/decreases any stats */
-    for (i=0; i<NUM_STATS; i++) 
+    for (i=0; i<NUM_STATS; i++)
         if (get_attr_value(&(op->stats),i)!=0) return 1;
 
     /* If it doesn't fall into any of the above categories, must
