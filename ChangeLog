@@ -128,7 +128,7 @@ Ryo 2007-02-09
 
 Fix a few compiler warnings.  Most were just unused variables, but
 some in server/c_object.c had returns without values.
-Files: server/c_object.c server/monster.c server/player.c server/weather.c 
+Files: server/c_object.c server/monster.c server/player.c server/weather.c
 MSW 2007-02-08
 
 Remove static buffer for query_name().
