@@ -77,11 +77,11 @@ static void show_matching_spells(object *op, char *params)
 	if (spell->type == SPELL &&
 	    (!params || !strncmp(params, spell->name, strlen(params)))) {
 	    if (spell->path_attuned & op->path_denied) {
-		sprintf(spell_sort[num_found++],
+		snprintf(spell_sort[num_found++], sizeof(spell_sort[0]),
 			"%s:%-22s %3s %3s", spell->skill?spell->skill:"generic",
 			spell->name, "den", "den");
 	    } else {
-		sprintf(spell_sort[num_found++],
+		snprintf(spell_sort[num_found++], sizeof(spell_sort[0]),
 			"%s:%-22s %3d %3d", spell->skill?spell->skill:"generic",
 			spell->name, spell->level,
 			SP_level_spellpoint_cost(op,spell, SPELL_HIGHEST));
