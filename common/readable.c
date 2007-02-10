@@ -1903,7 +1903,7 @@ god_info_msg (int level, int booksize)
     const char   *name = NULL;
     char buf[BOOK_BUF];
     int     i, retlen, buflen;
-    size_t  introlen;
+    int introlen;
     object *god = pntr_to_god_obj (get_rand_god ());
 
     if (booksize > BOOK_BUF) {
