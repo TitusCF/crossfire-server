@@ -1011,7 +1011,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 }
             }
             if (maplorepos != 0)
-            m->maplore = strdup_local(maplorebuf);
+                m->maplore = strdup_local(maplorebuf);
         }
         else if (!strcmp(key,"end")) {
             break;
@@ -1736,7 +1736,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
 
         /* first visit or time to reset */
         if (m) {
-            clean_tmp_map(m);	/* Doesn't make much difference */
+            clean_tmp_map(m); /* Doesn't make much difference */
             delete_map(m);
         }
 
@@ -2044,7 +2044,7 @@ void update_position(mapstruct *m, int x, int y) {
     uint8 flags = 0, oldflags, light=0;
     object *layers[MAP_LAYERS];
 
-    MoveType	move_block=0, move_slow=0, move_on=0, move_off=0, move_allow=0;
+    MoveType move_block=0, move_slow=0, move_on=0, move_off=0, move_allow=0;
 
     oldflags = GET_MAP_FLAGS(m,x,y);
     if (!(oldflags & P_NEED_UPDATE)) {
