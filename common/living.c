@@ -196,11 +196,7 @@ const int fear_bonus[MAX_STAT + 1]={
  */
 #define MAX_EXP_IN_OBJ levels[settings.max_level]/(MAX_EXP_CAT - 1)
 
-#ifndef WIN32
-extern uint64 *levels;
-#else
 extern sint64 *levels;
-#endif
 
 #define MAX_SAVE_LEVEL 110
 /**
