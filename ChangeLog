@@ -15,6 +15,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1653770: Sockpuppeting fix (no exp when perm exp is hit).
+Implement feature request #1560385: Players killing other players should get no exp.
+Two new settings are added, pk_max_experience and pk_max_experience_percent. Check
+ settings file to see how they work.
+Also, experience gained for killing a player never exceed experience that player can lose
+ considering permanent experience.
+Modified files:
+ common/init.c
+ include/global.h
+ lib/settings
+ server/attack.c init.c
+---
+ common/porting.c: add missing variable type.
+Ryo 2007-02-10
+
 Use const char* instead of char*, use thread-safe strerror_r, fix potential memory leak.
  common/porting.c
  include/libproto.h

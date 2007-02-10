@@ -1600,8 +1600,13 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 		draw_ext_info(NDI_UNIQUE, 0,owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_KILL,
 			      "Your foe has fallen!\nVICTORY!!!", NULL);
 	    }
-	    else
-		exp = MIN(5000000, MAX(0, exp/10));
+	    else {
+            exp = settings.pk_max_experience_percent * exp / 100;
+            if (settings.pk_max_experience >= 0)
+                exp = MIN(settings.pk_max_experience, exp);
+            /* Never exceed what victim can lose considering permanent exp. */
+            exp = check_exp_loss(op, exp);
+        }
 	}
 
 	/* Don't know why this is set this way - doesn't make

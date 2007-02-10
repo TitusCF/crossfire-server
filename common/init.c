@@ -101,6 +101,9 @@ struct Settings settings = {
     ARMOR_SPEED_LINEAR,
     1, /* no_player_stealing */
     0, /* create_home_portals */
+    5000000, /* pk_max_experience */
+    10, /* pk_max_experience_percent */
+
 };
 
 /**

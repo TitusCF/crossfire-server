@@ -485,7 +485,7 @@ int snprintf(char *dest, int max, const char *format, ...)
  */
 char *strerror_local(int errnum)
 {
-    static error[MAX_BUF];
+    static char error[MAX_BUF];
 #if defined(HAVE_STRERROR)
     strerror_r(errnum, error, MAX_BUF);
 #else

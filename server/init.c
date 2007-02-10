@@ -733,7 +733,17 @@ static void load_settings(void)
             } else {
                 LOG(llevError, "load_settings: unknown value for personalized_blessings: %s\n", cp);
         }
-
+    } else if ( !strcasecmp( buf, "pk_max_experience" ) ) {
+        sint64 pkme = atoll(cp);
+        if (pkme < 0)
+            pkme = -1;
+        settings.pk_max_experience = pkme;
+    } else if ( !strcasecmp( buf, "pk_max_experience_percent" ) ) {
+        int pkmep = atoi(cp);
+        if (pkmep < 0) {
+            LOG(llevError, "load_settings: pk_max_experience_percent should be positive or zero\n", cp);
+        } else
+            settings.pk_max_experience_percent = pkmep;
     } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}
