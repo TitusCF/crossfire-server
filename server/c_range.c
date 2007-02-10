@@ -155,7 +155,7 @@ int command_cast_spell (object *op, char *params, char command)
     }
 
     if(params!=NULL) {
-	int spellnumber = 0;
+	tag_t spellnumber = 0;
 	if ((spellnumber = atoi(params))!=0)
 	    for (spob = op->inv; spob && spob->count != spellnumber; spob=spob->below);
 	else spob = lookup_spell_by_name(op, params);
