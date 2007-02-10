@@ -957,6 +957,7 @@ void* cfapi_map_create_path(int* type, ...)
     int ctype;
     const char* str;
     char* rv;
+    static char name[MAX_BUF];
     va_start(args, type);
 
     ctype = va_arg(args, int);
@@ -970,7 +971,8 @@ void* cfapi_map_create_path(int* type, ...)
         break;
 
     case 1:
-        rv = (char*)create_overlay_pathname(str);
+        create_overlay_pathname(str, name, MAX_BUF);
+        rv = name;
         break;
 
     /*case 2:

@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer from create_overlay_pathname().
+ common/map.c
+ include/libproto.h
+ server/c_wiz.c plugins.c
+---
 Remove static buffer from create_items_path(), and play it safe with length.
  common/map.c
 ---

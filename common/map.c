@@ -123,23 +123,20 @@ const char *create_pathname (const char *name) {
  /
  * @param name
  * path of the overlay map.
- * @return
- * static buffer containing the full path.
- *
- * @todo
- * remove static buffer use.
+ * @param buf
+ * buffer that will contain the full path.
+ * @param size
+ * buffer's length.
  */
-const char *create_overlay_pathname (const char *name) {
-    static char buf[MAX_BUF];
+void create_overlay_pathname (const char *name, char* buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
      */
     if (*name == '/')
-        sprintf (buf, "%s/%s%s", settings.localdir, settings.mapdir, name);
+        snprintf (buf, size, "%s/%s%s", settings.localdir, settings.mapdir, name);
     else
-        sprintf (buf, "%s/%s/%s", settings.localdir, settings.mapdir, name);
-    return (buf);
+        snprintf (buf, size, "%s/%s/%s", settings.localdir, settings.mapdir, name);
 }
 
 /**
@@ -1179,7 +1176,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     if (flags & MAP_PLAYER_UNIQUE) 
         strcpy(pathname, filename);
     else if (flags & MAP_OVERLAY)
-        strcpy(pathname, create_overlay_pathname(filename));
+        create_overlay_pathname(filename, pathname, MAX_BUF);
     else
         strcpy(pathname, create_pathname(filename));
 
@@ -1286,7 +1283,7 @@ mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
     int comp;
     char pathname[MAX_BUF];
 
-    strcpy(pathname, create_overlay_pathname(filename));
+    create_overlay_pathname(filename, pathname, MAX_BUF);
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
         /* LOG(llevDebug,"Can't open overlay %s\n", pathname);*/
@@ -1410,7 +1407,7 @@ int save_map(mapstruct *m, int flag) {
     if (flag || (m->unique) || (m->template)) {
         if (!m->unique && !m->template) { /* flag is set */
             if (flag == 2)
-                strcpy(filename, create_overlay_pathname(m->path));
+                create_overlay_pathname(m->path, filename, MAX_BUF);
             else
                 strcpy (filename, create_pathname (m->path));
         } else

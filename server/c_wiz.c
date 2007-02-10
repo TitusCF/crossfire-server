@@ -353,7 +353,7 @@ int command_overlay_save(object *op, char *params) {
 int command_overlay_reset(object *op, char* params) {
     char filename[MAX_BUF];
     struct stat stats;
-    strcpy(filename, create_overlay_pathname(op->map->path));
+    create_overlay_pathname(op->map->path, filename, MAX_BUF);
     if (!stat(filename, &stats))
         if (!unlink(filename))
             draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND,  MSG_TYPE_COMMAND_DM,
