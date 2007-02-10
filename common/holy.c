@@ -63,7 +63,7 @@ static godlink *init_godslist(void) {
 void init_gods (void) {
     archetype *at=NULL;
 
-    LOG(llevDebug, "Initializing gods...");
+    LOG(llevDebug, "Initializing gods...\n");
     for(at=first_archetype;at!=NULL;at=at->next)
         if(at->clone.type==GOD) add_god_to_list(at);
 

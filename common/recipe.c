@@ -168,7 +168,7 @@ void init_formulae(void) {
     else has_been_done = 1;
 
     sprintf(filename, "%s/formulae", settings.datadir);
-    LOG(llevDebug, "Reading alchemical formulae from %s...",filename);
+    LOG(llevDebug, "Reading alchemical formulae from %s...\n",filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
@@ -258,20 +258,20 @@ void check_formulae( void ) {
     recipe *check, *formula;
     int numb = 1;
 
-    LOG(llevDebug,"Checking formulae lists...");
+    LOG(llevDebug,"Checking formulae lists...\n");
 
     for(fl=formulalist; fl!=NULL; fl = fl->next) {
         for (formula=fl->items; formula!=NULL; formula=formula->next)
             for (check=formula->next; check!=NULL; check=check->next)
                 if(check->index==formula->index) {
-                    LOG(llevError," ERROR: On %d ingred list: ", numb);
+                    LOG(llevError," ERROR: On %d ingred list:\n", numb);
                     LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n",
                         formula->arch_name[0],formula->title,check->arch_name[0],check->title,formula->index);
                 }
         numb++;
     }
 
-    LOG(llevDebug,"done.\n");
+    LOG(llevDebug,"done checking.\n");
 }
 
 /**

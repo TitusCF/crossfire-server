@@ -228,7 +228,7 @@ void clear_archetable(void) {
 
 void init_archetable(void) {
     archetype *at;
-    LOG(llevDebug," Setting up archetable...");
+    LOG(llevDebug," Setting up archetable...\n");
     for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more)
         add_arch(at);
     LOG(llevDebug,"done\n");
@@ -511,7 +511,8 @@ static void load_archetypes(void) {
 
     LOG(llevDebug," loading treasure...\n");
     load_treasures();
-    LOG(llevDebug," done\n arch-pass 2...\n");
+    LOG(llevDebug," done\n");
+    LOG(llevDebug, "arch-pass 2...\n");
     second_arch_pass(fp);
     LOG(llevDebug," done\n");
 #ifdef DEBUG

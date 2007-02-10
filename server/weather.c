@@ -495,10 +495,10 @@ static void read_pressuremap(void)
     int x, y;
 
     sprintf(filename, "%s/pressuremap", settings.localdir);
-    LOG(llevDebug, "Reading pressure data from %s...", filename);
+    LOG(llevDebug, "Reading pressure data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
-	LOG(llevDebug, "Initializing pressure maps...");
+	LOG(llevDebug, "Initializing pressure maps...\n");
 	init_pressure();
 	write_pressuremap();
 	LOG(llevDebug, "Done\n");
@@ -579,10 +579,10 @@ static void read_winddirmap(void)
     int x, y, d;
 
     sprintf(filename, "%s/winddirmap", settings.localdir);
-    LOG(llevDebug, "Reading wind direction data from %s...", filename);
+    LOG(llevDebug, "Reading wind direction data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
-	LOG(llevDebug, "Initializing wind maps...");
+	LOG(llevDebug, "Initializing wind maps...\n");
 	init_wind();
 	write_winddirmap();
 	LOG(llevDebug, "Done\n");
@@ -630,10 +630,10 @@ static void read_windspeedmap(void)
     int x, y, d;
 
     sprintf(filename, "%s/windspeedmap", settings.localdir);
-    LOG(llevDebug, "Reading wind speed data from %s...", filename);
+    LOG(llevDebug, "Reading wind speed data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
-	LOG(llevDebug, "Initializing wind maps...");
+	LOG(llevDebug, "Initializing wind maps...\n");
 	init_wind();
 	write_windspeedmap();
 	LOG(llevDebug, "Done\n");
@@ -699,10 +699,10 @@ static void read_gulfstreammap(void)
     int x, y;
 
     sprintf(filename, "%s/gulfstreammap", settings.localdir);
-    LOG(llevDebug, "Reading gulf stream data from %s...", filename);
+    LOG(llevDebug, "Reading gulf stream data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
-	LOG(llevDebug, "Initializing gulf stream maps...");
+	LOG(llevDebug, "Initializing gulf stream maps...\n");
 	init_gulfstreammap();
 	write_gulfstreammap();
 	LOG(llevDebug, "Done\n");
@@ -856,10 +856,10 @@ static void read_humidmap(void)
     int x, y, d;
 
     sprintf(filename, "%s/humidmap", settings.localdir);
-    LOG(llevDebug, "Reading humidity data from %s...", filename);
+    LOG(llevDebug, "Reading humidity data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
-	LOG(llevDebug, "Initializing humidity and elevation maps...");
+	LOG(llevDebug, "Initializing humidity and elevation maps...\n");
 	init_humid_elev();
 	write_elevmap();
 	write_humidmap();
@@ -909,7 +909,7 @@ static void read_elevmap(void)
     int x, y;
 
     sprintf(filename, "%s/elevmap", settings.localdir);
-    LOG(llevDebug, "Reading elevation data from %s...", filename);
+    LOG(llevDebug, "Reading elevation data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
 	/* initializing these is expensive, and should have been done
@@ -957,7 +957,7 @@ static void read_watermap(void)
     int x, y, d;
 
     sprintf(filename, "%s/watermap", settings.localdir);
-    LOG(llevDebug, "Reading water data from %s...", filename);
+    LOG(llevDebug, "Reading water data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
 	/* initializing these is expensive, and should have been done
@@ -1131,7 +1131,7 @@ static void read_temperaturemap(void)
     int x, y;
 
     sprintf(filename, "%s/temperaturemap", settings.localdir);
-    LOG(llevDebug, "Reading temperature data from %s...", filename);
+    LOG(llevDebug, "Reading temperature data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
 	init_temperature();
@@ -1190,7 +1190,7 @@ static void read_rainfallmap(void)
     int x, y;
 
     sprintf(filename, "%s/rainfallmap", settings.localdir);
-    LOG(llevDebug, "Reading rainfall data from %s...", filename);
+    LOG(llevDebug, "Reading rainfall data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Cannot open %s for reading\n", filename);
 	init_rainfall();
@@ -1316,7 +1316,7 @@ void init_weather(void)
 
     LOG(llevDebug, "Done reading weathermaps\n");
     sprintf(filename, "%s/wmapcurpos", settings.localdir);
-    LOG(llevDebug, "Reading current weather position from %s...", filename);
+    LOG(llevDebug, "Reading current weather position from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
 	LOG(llevError, "Can't open %s.\n", filename);
 	wmperformstartx = -1;

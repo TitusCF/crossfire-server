@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Misc LOG fixes (mostly add missing newline), no functional change.
+ common/anim.c arch.c holy.c image.c init.c [also fix missing init value] porting.c readable.c
+  recipe.c region.c treasure.c
+ server/init.c weather.c
+Ryo 2007-02-10
+
 Implement feature request #1653770: Sockpuppeting fix (no exp when perm exp is hit).
 Implement feature request #1560385: Players killing other players should get no exp.
 Two new settings are added, pk_max_experience and pk_max_experience_percent. Check

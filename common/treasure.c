@@ -1417,7 +1417,7 @@ void init_artifacts(void) {
     artifact_init = 1;
 
     sprintf(filename, "%s/artifacts", settings.datadir);
-    LOG(llevDebug, "Reading artifacts from %s...",filename);
+    LOG(llevDebug, "Reading artifacts from %s...\n",filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;
@@ -1490,7 +1490,7 @@ void init_artifacts(void) {
 #endif
     }
 
-    LOG(llevDebug,"done.\n");
+    LOG(llevDebug,"done artifacts.\n");
     artifact_init = 0;
 }
 

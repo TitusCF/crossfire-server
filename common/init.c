@@ -101,6 +101,7 @@ struct Settings settings = {
     ARMOR_SPEED_LINEAR,
     1, /* no_player_stealing */
     0, /* create_home_portals */
+    1, /* personalized_blessings */
     5000000, /* pk_max_experience */
     10, /* pk_max_experience_percent */
 
@@ -429,7 +430,7 @@ void init_clocks(void)
         has_been_done = 1;
 
     sprintf(filename, "%s/clockdata", settings.localdir);
-    LOG(llevDebug, "Reading clockdata from %s...", filename);
+    LOG(llevDebug, "Reading clockdata from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         todtick = 0;
@@ -465,7 +466,7 @@ void init_attackmess(void){
         has_been_done = 1;
 
     sprintf(filename, "%s/attackmess", settings.datadir);
-    LOG(llevDebug, "Reading attack messages from %s...", filename);
+    LOG(llevDebug, "Reading attack messages from %s...\n", filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
         return;

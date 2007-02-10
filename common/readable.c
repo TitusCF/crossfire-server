@@ -743,7 +743,7 @@ static void init_msgfile (void)
     did_init_msgfile = 1;
 
     sprintf (fname, "%s/messages", settings.datadir);
-    LOG (llevDebug, "Reading messages from %s...", fname);
+    LOG (llevDebug, "Reading messages from %s...\n", fname);
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
     {
@@ -788,7 +788,7 @@ static void init_msgfile (void)
 #ifdef BOOK_MSG_DEBUG
     LOG (llevDebug, "\ninit_info_listfile() got %d messages.\n", nrofmsg);
 #endif
-    LOG (llevDebug, "done.\n");
+    LOG (llevDebug, "done messages.\n");
 }
 
 
@@ -871,12 +871,11 @@ static void init_book_archive (void)
                 bl->number++;
             }
         }
-        LOG (llevDebug, " book archives(used/avail): ");
+        LOG (llevDebug, " book archives(used/avail):\n");
         for (bl = booklist, i = 0; bl != NULL && i < sizeof(max_titles)/sizeof(*max_titles); bl = bl->next, i++)
         {
-            LOG (llevDebug, "(%d/%d)", bl->number, max_titles[i]);
+            LOG (llevDebug, "(%d/%d)\n", bl->number, max_titles[i]);
         }
-        LOG (llevDebug, "\n");
         close_and_delete (fp, comp);
     }
 
@@ -935,11 +934,11 @@ void init_readable (void)
     if (did_this) return;
     did_this = 1;
 
-    LOG (llevDebug, "Initializing reading data...");
+    LOG (llevDebug, "Initializing reading data...\n");
     init_msgfile ();
     init_book_archive ();
     init_mon_info ();
-    LOG (llevDebug, " Done\n");
+    LOG (llevDebug, " done reading data\n");
 }
 
 /*****************************************************************************

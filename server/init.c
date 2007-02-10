@@ -253,7 +253,7 @@ static void load_materials(void)
     int i, value;
 
     sprintf(filename, "%s/materials", settings.datadir);
-    LOG(llevDebug, "Reading material type data from %s...", filename);
+    LOG(llevDebug, "Reading material type data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Cannot open %s for reading\n", filename);
         mt = get_empty_mat();
@@ -1092,7 +1092,7 @@ static void init_races(void) {
   first_race=NULL;
 
   sprintf(fname,"%s/races",settings.datadir);
-  LOG(llevDebug, "Reading races from %s...",fname);
+  LOG(llevDebug, "Reading races from %s...\n",fname);
   if(! (file=fopen(fname,"r"))) {
     LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno));
     return;
@@ -1124,11 +1124,11 @@ static void init_races(void) {
 	if (cp[strlen(cp)-1]=='\n') cp[strlen(cp)-1]='\0';
         /* set creature race to race value */
         if((mon=find_archetype(cp))==NULL)
-           LOG(llevError,"\nCreature %s in race file lacks archetype",cp);
+           LOG(llevError,"Creature %s in race file lacks archetype\n",cp);
         else {
            if(set_race&&(!mon->clone.race||strcmp(mon->clone.race,race))) {
                 if(mon->clone.race) {
-                   LOG(llevDebug,"\n Resetting race to %s from %s for archetype %s",
+                   LOG(llevDebug," Resetting race to %s from %s for archetype %s\n",
                         race,mon->clone.race,mon->name);
                   free_string(mon->clone.race);
                 }
@@ -1141,7 +1141,7 @@ static void init_races(void) {
     }
   }
   fclose(file);
-    LOG(llevDebug,"done.\n");
+    LOG(llevDebug,"done races.\n");
 }
 
 static void dump_races(void)
