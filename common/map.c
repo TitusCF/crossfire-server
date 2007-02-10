@@ -60,7 +60,7 @@ typedef struct Map_Layer_Info {
 
 /**
  * the ob->map_layer holds the low layer.  For the update_position()
- * logic, we also need to know the higher layer and whether 
+ * logic, we also need to know the higher layer and whether
  * visibility should be honored.  This table has that information,
  * so that it doesn't need to be hardcoded.
  */
@@ -83,7 +83,7 @@ static Map_Layer_Info map_layer_info[MAP_LAYERS] = {
 mapstruct *has_been_loaded (const char *name) {
     mapstruct *map;
 
-    if (!name || !*name) 
+    if (!name || !*name)
         return 0;
     for (map = first_map; map; map = map->next)
         if (!strcmp (name, map->path))
@@ -160,9 +160,9 @@ void create_template_pathname (const char *name, char* buf, int size) {
 /**
  * This makes absolute path to the itemfile where unique objects
  * will be saved. Converts '/' to '@'. I think it's essier maintain
- * files than full directory structure, but if this is problem it can 
+ * files than full directory structure, but if this is problem it can
  * be changed.
- * 
+ *
  * @param s
  * path of the map for the item.
  * @param buf
@@ -284,8 +284,8 @@ void dump_map(const mapstruct *m) {
     if(m->tmpname!=NULL)
         LOG(llevError,"Tmpname: %s\n",m->tmpname);
 
-    LOG(llevError,"Difficulty: %d\n",m->difficulty); 
-    LOG(llevError,"Darkness: %d\n",m->darkness); 
+    LOG(llevError,"Difficulty: %d\n",m->difficulty);
+    LOG(llevError,"Darkness: %d\n",m->darkness);
 }
 
 /**
@@ -348,7 +348,7 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
 
 /**
  * Returns true if the given coordinate is blocked except by the
- * object passed is not blocking.  This is used with 
+ * object passed is not blocking.  This is used with
  * multipart monsters - if we want to see if a 2x2 monster
  * can move 1 space to the left, we don't want its own area
  * to block it from moving there.
@@ -443,11 +443,11 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
             /* Broke apart a big nasty if into several here to make
             * this more readable.  first check - if the space blocks
             * movement, can't move here.
-            * second - if a monster, can't move there, unless it is a 
+            * second - if a monster, can't move there, unless it is a
             * hidden dm
             */
             if (OB_MOVE_BLOCK(ob, tmp)) return 1;
-            if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->head != ob && tmp != ob && 
+            if (QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->head != ob && tmp != ob &&
             tmp->type != DOOR && !(QUERY_FLAG(tmp,FLAG_WIZ) && tmp->contr->hidden))
                 return 1;
         }
@@ -523,7 +523,7 @@ int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
         /* Note it is intentional that we check ob - the movement type of the
          * head of the object should correspond for the entire object.
          */
-        if (OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m1, sx, sy))) 
+        if (OB_TYPE_MOVE_BLOCK(ob, GET_MAP_MOVE_BLOCK(m1, sx, sy)))
             return AB_NO_PASS;
 
     }
@@ -802,8 +802,8 @@ mapstruct *get_empty_map(int sizex, int sizey) {
 }
 
 /**
- * Takes a string from a map definition and outputs a pointer to the array of shopitems 
- * corresponding to that string. Memory is allocated for this, it must be freed 
+ * Takes a string from a map definition and outputs a pointer to the array of shopitems
+ * corresponding to that string. Memory is allocated for this, it must be freed
  * at a later date.
  * Called by parse_map_headers() below.
  *
@@ -812,14 +812,14 @@ mapstruct *get_empty_map(int sizex, int sizey) {
  * @return
  * new array that should be freed by the caller.
  */
-static shopitems *parse_shop_string (const char *input_string) { 
-    char *shop_string, *p, *q, *next_semicolon, *next_colon; 
+static shopitems *parse_shop_string (const char *input_string) {
+    char *shop_string, *p, *q, *next_semicolon, *next_colon;
     shopitems *items=NULL;
     int i=0, number_of_entries=0;
-    const typedata *current_type; 
+    const typedata *current_type;
 
-    shop_string=strdup_local(input_string); 
-    p=shop_string; 
+    shop_string=strdup_local(input_string);
+    p=shop_string;
     LOG(llevDebug, "parsing %s\n", input_string);
     /* first we'll count the entries, we'll need that for allocating the array shortly */
     while (p) {
@@ -834,12 +834,12 @@ static shopitems *parse_shop_string (const char *input_string) {
     for (i=0; i<number_of_entries; i++) {
         if (!p) {
             LOG(llevError, "parse_shop_string: I seem to have run out of string, that shouldn't happen.\n");
-            break; 
+            break;
         }
         next_semicolon=strchr(p, ';');
         next_colon=strchr(p, ':');
         /* if there is a stregth specified, figure out what it is, we'll need it soon. */
-        if (next_colon &&( !next_semicolon || next_colon<next_semicolon)) 
+        if (next_colon &&( !next_semicolon || next_colon<next_semicolon))
             items[i].strength=atoi(strchr(p,':')+1);
 
         if (isdigit(*p) || *p=='*') {
@@ -848,9 +848,9 @@ static shopitems *parse_shop_string (const char *input_string) {
             if (current_type) {
                 items[i].name=current_type->name;
                 items[i].name_pl=current_type->name_pl;
-            } 
+            }
         }
-        else { /*we have a named type, let's figure out what it is */ 
+        else { /*we have a named type, let's figure out what it is */
             q=strpbrk(p,";:");
             if (q) *q='\0';
 
@@ -861,7 +861,7 @@ static shopitems *parse_shop_string (const char *input_string) {
                 items[i].name_pl=current_type->name_pl;
             }
             else { /* oh uh, something's wrong, let's free up this one, and try
-                    * the next entry while we're at it, better print a warning 
+                    * the next entry while we're at it, better print a warning
                     */
             LOG(llevError, "invalid type %s defined in shopitems in string %s\n",
                 p, input_string);
@@ -871,8 +871,8 @@ static shopitems *parse_shop_string (const char *input_string) {
         if (next_semicolon) p=++next_semicolon;
         else p=NULL;
     }
-    free(shop_string); 
-    return items; 
+    free(shop_string);
+    return items;
 }
 
 /**
@@ -971,7 +971,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
          * to.  We've already done the work to null terminate key,
          * and strip off any leading spaces for both of these.
          * We have not touched the newline at the end of the line -
-         * these are needed for some values.  the end pointer 
+         * these are needed for some values.  the end pointer
          * points to the first of the newlines.
          * value could be NULL!  It would be easy enough to just point
          * this to "" to prevent cores, but that would let more errors slide
@@ -981,7 +981,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
          * validate that value is given and check for the remaining entries
          * that use the parameter.
          */
- 
+
         if (!strcmp(key,"msg")) {
             while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
                 if (!strcmp(buf,"endmsg\n")) break;
@@ -1167,7 +1167,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     char pathname[MAX_BUF];
 
     LOG(llevDebug, "load_original_map: %s (%x)\n", filename,flags);
-    if (flags & MAP_PLAYER_UNIQUE) 
+    if (flags & MAP_PLAYER_UNIQUE)
         strcpy(pathname, filename);
     else if (flags & MAP_OVERLAY)
         create_overlay_pathname(filename, pathname, MAX_BUF);
@@ -1196,7 +1196,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;
-    if (!MAP_DIFFICULTY(m)) 
+    if (!MAP_DIFFICULTY(m))
         MAP_DIFFICULTY(m)=calculate_difficulty(m);
     set_map_reset_time(m);
 
@@ -1760,7 +1760,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
         /* If a player unique map, no extra unique object file to load.
          * if from the editor, likewise.
          */
-        if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE))) 
+        if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE)))
             load_unique_objects(m);
 
         if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
@@ -1891,7 +1891,7 @@ void free_all_maps(void)
     int real_maps=0;
 
     while (first_map) {
-        /* I think some of the callers above before it gets here set this to be 
+        /* I think some of the callers above before it gets here set this to be
          * saving, but we still want to free this data
          */
         if (first_map->in_memory == MAP_SAVING) first_map->in_memory = MAP_IN_MEMORY;
@@ -1979,7 +1979,7 @@ static void inline add_face_layer(int low_layer, int high_layer, object *ob, obj
     for (l=low_layer; l<=high_layer; l++) {
         if (!layers[l]) {
             /* found an empty spot.  now, we want to make sure
-             * highest visibility at top, etc. 
+             * highest visibility at top, etc.
              */
             layers[l] = ob;
             if (!honor_visibility) return;
@@ -2008,7 +2008,7 @@ static void inline add_face_layer(int low_layer, int high_layer, object *ob, obj
         for (l=low_layer; l<high_layer; l++)
             layers[l] = layers[l+1];
         layers[high_layer] = ob;
-    } 
+    }
     /* If this object doesn't have higher visibility than
      * the lowest object, no reason to go further.
      */
@@ -2197,7 +2197,7 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
  * tiling considerations, loading adjacant maps as needed.
  * This is the function should always be used when it
  * necessary to check for valid coordinates.
- * This function will recursively call itself for the 
+ * This function will recursively call itself for the
  * tiled maps.
  *
  * @param m
@@ -2257,7 +2257,7 @@ int out_of_map(mapstruct *m, int x, int y)
  * This is basically the same as out_of_map above(), but
  * instead we return NULL if no map is valid (coordinates
  * out of bounds and no tiled map), otherwise it returns
- * the map as that the coordinates are really on, and 
+ * the map as that the coordinates are really on, and
  * updates x and y to be the localized coordinates.
  * Using this is more efficient of calling out_of_map
  * and then figuring out what the real map is
@@ -2390,7 +2390,7 @@ static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, i
  * can be negativbe.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
- * 
+ *
  * get_rangevector looks at op1 and op2, and fills in the
  * structure for op1 to get to op2.
  * We already trust that the caller has verified that the
@@ -2455,9 +2455,9 @@ void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flag
 }
 
 /**
- * This is basically the same as get_rangevector() above, but instead of 
+ * This is basically the same as get_rangevector() above, but instead of
  * the first parameter being an object, it instead is the map
- * and x,y coordinates - this is used for path to player - 
+ * and x,y coordinates - this is used for path to player -
  * since the object is not infact moving but we are trying to traverse
  * the path, we need this.
  * flags has no meaning for this function at this time - I kept it in to
