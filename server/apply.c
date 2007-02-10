@@ -3509,7 +3509,8 @@ static void apply_item_transformer( object* pl, object* transformer )
         yield = atoi( find );
         if ( yield < 1 )
             {
-            LOG( llevDebug, "apply_item_transformer: item %s has slaying-yield %d.\n", query_base_name( marked, 0 ), yield );
+            query_base_name( marked, 0, name_m, MAX_BUF );
+            LOG( llevDebug, "apply_item_transformer: item %s has slaying-yield %d.\n", name_m, yield );
             yield = 1;
             }
         }
@@ -3538,17 +3539,19 @@ static void apply_item_transformer( object* pl, object* transformer )
     new_item = create_archetype( got );
     if ( !new_item )
         {
+            query_base_name( marked, 0, name_m, MAX_BUF );
         draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
 			     "This %s is strange, better to not use it.", 
 			     "This %s is strange, better to not use it.", 
-			     query_base_name( marked, 0 ) );
+			     name_m );
         return;
         }
     new_item->nrof = yield;
+    query_base_name( marked, 0, name_m, MAX_BUF );
     draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
 			 "You %s the %s.", 
 			 "You %s the %s.", 
-			 transformer->slaying, query_base_name( marked, 0 ) );
+			 transformer->slaying, name_m );
     insert_ob_in_ob( new_item, pl );
     esrv_send_inventory( pl, pl );
     /* Eat up one item */

@@ -294,13 +294,15 @@ void animate_turning(object *op)
  * 1 if object is suitable for the altar (number not taken into account), 0 else.
  */
 static int matches_sacrifice(const object* altar, const object* sacrifice) {
+    char name[MAX_BUF];
     if (QUERY_FLAG(sacrifice, FLAG_ALIVE) || QUERY_FLAG(sacrifice, FLAG_IS_LINKED) || sacrifice->type == PLAYER)
         return 0;
 
+    query_base_name(sacrifice,0, name, MAX_BUF);
     if (ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
       ARCH_SACRIFICE(altar) == sacrifice->name ||
       ARCH_SACRIFICE(altar) == sacrifice->slaying ||
-      (!strcmp(ARCH_SACRIFICE(altar),query_base_name(sacrifice,0))))
+      (!strcmp(ARCH_SACRIFICE(altar),name)))
             return 1;
     if (strcmp (ARCH_SACRIFICE(altar), "money") == 0 && sacrifice->type == MONEY)
         return 1;

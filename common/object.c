@@ -3562,7 +3562,7 @@ object *find_best_weapon_used_match(object *pl, const char *params)
  */
 int item_matched_string(object *pl, object *op, const char *name)
 {
-    char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF];
+    char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
     int count,retval=0;
     strcpy(local_name, name);   /* strtok is destructive to name */
 
@@ -3605,15 +3605,17 @@ int item_matched_string(object *pl, object *op, const char *name)
          */
         query_name(op, name_op, MAX_BUF);
         query_short_name(op, name_short, HUGE_BUF);
+        query_base_name(op,0, bname_s, MAX_BUF);
+        query_base_name(op,1, bname_p, MAX_BUF);
 
         if (!strcasecmp(cp,name_op)) retval=20;
         else if (!strcasecmp(cp,name_short)) retval=18;
-        else if (!strcasecmp(cp,query_base_name(op,0))) retval=16;
-        else if (!strcasecmp(cp,query_base_name(op,1))) retval=16;
+        else if (!strcasecmp(cp,bname_s)) retval=16;
+        else if (!strcasecmp(cp,bname_p)) retval=16;
         else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
-        else if (!strncasecmp(cp,query_base_name(op,0),
+        else if (!strncasecmp(cp,bname_s,
                     strlen(cp))) retval=14;
-        else if (!strncasecmp(cp,query_base_name(op,1),
+        else if (!strncasecmp(cp,bname_p,
                     strlen(cp))) retval=14;
 
         /* Do substring checks, so things like 'Str+1' will match.
@@ -3621,8 +3623,8 @@ int item_matched_string(object *pl, object *op, const char *name)
          * then the specific strcasecmp aboves, but still higher than
          * some other match criteria.
          */
-        else if (strstr(query_base_name(op,1), cp)) retval = 12;
-        else if (strstr(query_base_name(op,0), cp)) retval = 12;
+        else if (strstr(bname_p, cp)) retval = 12;
+        else if (strstr(bname_s, cp)) retval = 12;
         else if (strstr(name_short, cp)) retval = 12;
 
         /* Check against plural/non plural based on count. */

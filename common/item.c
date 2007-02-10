@@ -723,34 +723,38 @@ void query_name(const object *op, char* buf, int size) {
 /**
  * Query a short name for the item.
  *
- * @param op
- * item we want the name of.
- * @param plural
- * whether to get the singular or plural name
- * @return
- * character pointer pointing to a static
- * buffer which contains a verbose textual representation of the name
- * of the given object.  The buffer will be overwritten at the next
- * call to query_base_name().   This is a lot like query_name(), but we
+ * This is a lot like query_name(), but we
  * don't include the item count or item status.  Used for inventory sorting
  * and sending to client.
  * If plural is set, we generate the plural name of this.
  *
- * @todo
- * remove static buffer use.
+ * @param op
+ * item we want the name of.
+ * @param plural
+ * whether to get the singular or plural name
+ * @param buf
+ * buffer that will contain the object's name. Must not be NULL.
+ * @param size
+ * buffer's length
  */
-const char *query_base_name(const object *op, int plural) {
-    static char buf[MAX_BUF], buf2[MAX_BUF];
+void query_base_name(const object *op, int plural, char* buf, int size) {
+    static char buf2[MAX_BUF];
     int len;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
 #endif
 
-    if((!plural && !op->name) || (plural && !op->name_pl))
-        return "(null)";
+    if((!plural && !op->name) || (plural && !op->name_pl)) {
+        strncpy(buf, "(null)", size);
+        return;
+    }
 
-    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
-        return op->name; /* To speed things up (or make things slower?) */
+    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) {
+        strncpy(buf, op->name, size); /* To speed things up (or make things slower?) */
+        return;
+    }
+
+    buf[0] = '\0';
 
 #ifdef NEW_MATERIAL_CODE
     if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname)
@@ -763,11 +767,11 @@ const char *query_base_name(const object *op, int plural) {
         !(op->material & M_SPECIAL)) {
         strcpy(buf, mt->description);
         len=strlen(buf);
-        safe_strcat(buf, " ", &len, MAX_BUF);
+        safe_strcat(buf, " ", &len, size);
         if (!plural)
-            safe_strcat(buf, op->name, &len, MAX_BUF);
+            safe_strcat(buf, op->name, &len, size);
         else
-            safe_strcat(buf, op->name_pl, &len, MAX_BUF);
+            safe_strcat(buf, op->name_pl, &len, size);
     } else {
 #endif
     if (!plural)
@@ -780,8 +784,8 @@ const char *query_base_name(const object *op, int plural) {
 #endif
 
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-        safe_strcat(buf, " ", &len, MAX_BUF);
-        safe_strcat(buf, op->title, &len, MAX_BUF);
+        safe_strcat(buf, " ", &len, size);
+        safe_strcat(buf, op->title, &len, size);
     }
 
     switch(op->type) {
@@ -791,15 +795,15 @@ const char *query_base_name(const object *op, int plural) {
         case ROD:
             if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
                 if(!op->title) {
-                    safe_strcat(buf," of ", &len, MAX_BUF);
+                    safe_strcat(buf," of ", &len, size);
                     if (op->inv)
-                        safe_strcat(buf,op->inv->name, &len, MAX_BUF);
+                        safe_strcat(buf,op->inv->name, &len, size);
                     else
                         LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
                 }
                 if(op->type != SPELLBOOK) {
                     sprintf(buf2, " (lvl %d)", op->level);
-                    safe_strcat(buf, buf2, &len, MAX_BUF);
+                    safe_strcat(buf, buf2, &len, size);
                 }
             }
             break;
@@ -812,8 +816,8 @@ const char *query_base_name(const object *op, int plural) {
                 char s[MAX_BUF];
                 ring_desc(op, s, MAX_BUF);
                 if (s[0]) {
-                    safe_strcat (buf, " ", &len, MAX_BUF);
-                    safe_strcat (buf, s, &len, MAX_BUF);
+                    safe_strcat (buf, " ", &len, size);
+                    safe_strcat (buf, s, &len, size);
                 }
             }
             break;
@@ -824,7 +828,6 @@ const char *query_base_name(const object *op, int plural) {
                 sprintf(buf + strlen(buf), " %+d", op->magic);
             }
     }
-    return buf;
 }
 
 /**

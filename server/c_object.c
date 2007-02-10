@@ -2009,7 +2009,7 @@ int command_search_items (object *op, char *params)
 
 int command_rename_item(object *op, char *params)
 {
-  char buf[VERY_BIG_BUF];
+  char buf[VERY_BIG_BUF], name[MAX_BUF];
   int itemnumber;
   object *item=NULL;
   object *tmp;
@@ -2145,27 +2145,29 @@ int command_rename_item(object *op, char *params)
     }
 
     FREE_AND_CLEAR_STR(item->custom_name);
-
+    query_base_name(item,item->nrof>1?1:0, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "You stop calling your %s with weird names.",
 			 "You stop calling your %s with weird names.",
-			 query_base_name(item,item->nrof>1?1:0));
+			 name);
   } else {
     if(item->custom_name != NULL && strcmp(item->custom_name, buf) == 0) {
+        query_base_name(item,item->nrof>1?1:0, name, MAX_BUF);
       draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			   "You keep calling your %s %s.",
 			   "You keep calling your %s %s.",
-			   query_base_name(item,item->nrof>1?1:0),buf);
+			   name,buf);
       return 1;
     }
 
     /* Set custom name */
     FREE_AND_COPY(item->custom_name,buf);
 
+    query_base_name(item,item->nrof>1?1:0, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "Your %s will now be called %s.",
 			 "Your %s will now be called %s.",
-			 query_base_name(item,item->nrof>1?1:0),buf);
+			 name,buf);
   }
 
   tag = item->count;

@@ -1803,6 +1803,7 @@ static int player_fire_bow(object *op, int dir)
 static void fire_misc_object(object *op, int dir)
 {
     object  *item;
+    char name[MAX_BUF];
 
     if (!op->contr->ranges[range_misc]) {
         draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1818,28 +1819,30 @@ static void fire_misc_object(object *op, int dir)
     if (item->type == WAND) {
         if(item->stats.food<=0) {
             play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            query_base_name(item, 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0,op,
                 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                 "The %s goes poof.",
                 "The %s goes poof.",
-                query_base_name(item, 0));
+                name);
             return;
         }
     } else if (item->type == ROD || item->type==HORN) {
         if(item->stats.hp<SP_level_spellpoint_cost(item, item->inv, SPELL_HIGHEST)) {
             play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            query_base_name(item,0, name, MAX_BUF);
             if (item->type== ROD)
                 draw_ext_info_format(NDI_UNIQUE, 0,op,
                     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                     "The %s whines for a while, but nothing happens.",
                     "The %s whines for a while, but nothing happens.",
-                    query_base_name(item,0));
+                    name);
             else
                 draw_ext_info_format(NDI_UNIQUE, 0,op,
                     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
                     "The %s needs more time to charge.",
                     "The %s needs more time to charge.",
-                    query_base_name(item,0));
+                    name);
             return;
         }
     }

@@ -1820,7 +1820,8 @@ void* cfapi_object_get_property(int* type, ...)
             {
                 int i;
                 i = va_arg(args, int);
-                rv = (char*)query_base_name(op, i);
+                query_base_name(op, i, name, MAX_BUF);
+                rv = name;
                 *type = CFAPI_STRING;
             }
             break;

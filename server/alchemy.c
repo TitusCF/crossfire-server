@@ -902,6 +902,7 @@ int use_alchemy(object* op)
     object* unpaid_cauldron = NULL;
     object* unpaid_item = NULL;
     int did_alchemy = 0;
+    char name[MAX_BUF];
 
     for (tmp=get_map_ob(op->map, op->x, op->y); tmp != NULL;tmp=next) {
         next=tmp->above;
@@ -926,16 +927,19 @@ int use_alchemy(object* op)
             did_alchemy = 1;
         }
     }
-    if ( unpaid_cauldron )
+    if ( unpaid_cauldron ) {
+        query_base_name(unpaid_cauldron,0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 	     "You must pay for your %s first!",
 	     "You must pay for your %s first!",
-	     query_base_name(unpaid_cauldron,0));
-    else if ( unpaid_item )
+	     name);
+    } else if ( unpaid_item ) {
+        query_base_name(unpaid_item,0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 	     "You must pay for your %s first!",
 	     "You must pay for your %s first!",
-	     query_base_name(unpaid_item,0));
+	     name);
+    }
 
     return did_alchemy;
 }

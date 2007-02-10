@@ -1217,6 +1217,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
      * string.  We clear nrof so that we can better sort
      * the object names.
      */
+    char name[MAX_BUF];
 
     CLEAR_FLAG(tmp, FLAG_UNPAID);
     items[*numitems].nrof=tmp->nrof;
@@ -1225,10 +1226,12 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
      */
     if (tmp->nrof == 0) items[*numitems].nrof++;
     items[*numitems].type=tmp->type;
-    items[*numitems].item_sort = strdup_local(query_base_name(tmp, 0));
-    items[*numitems].item_real = strdup_local(query_base_name(tmp, 1));
+    query_base_name(tmp, 0, name, MAX_BUF);
+    items[*numitems].item_sort = strdup_local(name);
+    query_base_name(tmp, 1, name, MAX_BUF);
+    items[*numitems].item_real = strdup_local(name);
     (*numitems)++;
-    
+
     SET_FLAG(tmp, FLAG_UNPAID);
 }
 

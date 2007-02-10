@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer for query_base_name().
+ common/button.c item.c object.c
+ include/libproto.h
+ server/alchemy.c apply.c c_objects.c c_range.c player.c plugins.c shop.c
+ socket/info.c item.c
+ types/item_transformer/item_transformer.c
+---
 Remove static buffer for get_ob_diff().
  common/object.c loader.l
  include/libproto.h

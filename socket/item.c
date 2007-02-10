@@ -141,8 +141,7 @@ static unsigned int query_flags(const object *op)
 static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head)
 {
     int flags, len, anim_speed;
-    char item_n[MAX_BUF];
-    const char *item_p;
+    char item_n[MAX_BUF], item_p[MAX_BUF];
 
     flags = query_flags (head);
     if (QUERY_FLAG(head, FLAG_NO_PICK))
@@ -160,15 +159,15 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     SockList_AddInt(sl, head->face->number);
 
     if (!head->custom_name) {
-	strncpy(item_n,query_base_name(head, 0),127);
+        query_base_name(head, 0, item_n, 126);
 	item_n[127]=0;
 	len=strlen(item_n);
-	item_p=query_base_name(head, 1);
+	query_base_name(head, 1, item_p, MAX_BUF);
     } else {
 	strncpy(item_n,head->custom_name,127);
 	item_n[127]=0;
 	len=strlen(item_n);
-	item_p=head->custom_name;
+	strncpy(item_p, head->custom_name, MAX_BUF);
     }
     strncpy(item_n+len+1, item_p, 127);
     item_n[254]=0;
@@ -421,20 +420,20 @@ void esrv_update_item(int flags, object *pl, object *op)
     }
     if (flags & UPD_NAME) {
 	int len;
-	const char *item_p;
+	char item_p[MAX_BUF];
     char item_n[MAX_BUF];
 
 	if (!op->custom_name) {
-	    strncpy(item_n,query_base_name(op, 0),127);
-	    item_n[127]=0;
+        query_base_name(op, 0, item_n, MAX_BUF);
 	    len=strlen(item_n);
-	    item_p=query_base_name(op, 1);
+	    query_base_name(op, 1, item_p, MAX_BUF);
 	}
 	else {
-	    strncpy(item_n,op->custom_name,127);
-	    item_n[127]=0;
+	    strncpy(item_n,op->custom_name,MAX_BUF-1);
+	    item_n[MAX_BUF-1]=0;
 	    len=strlen(item_n);
-	    item_p=op->custom_name;
+	    strncpy(item_p, op->custom_name, MAX_BUF-1);
+        item_p[MAX_BUF-1]=0;
 	}
 
 	strncpy(item_n+len+1, item_p, 127);

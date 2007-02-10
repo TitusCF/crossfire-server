@@ -347,6 +347,7 @@ void ext_info_map_except2(int color, const mapstruct *map, const object *op1, co
  */
 void rangetostring(const object *pl,char *obuf)
 {
+    char name[MAX_BUF];
     switch(pl->contr->shoottype) {
 	case range_none:
 	    strcpy(obuf,"Range: nothing");
@@ -361,7 +362,8 @@ void rangetostring(const object *pl,char *obuf)
 		    break;
 	    if(op==NULL) break;
 
-	    sprintf (obuf, "Range: %s (%s)", query_base_name(op, 0), 
+        query_base_name(op, 0, name, MAX_BUF);
+	    sprintf (obuf, "Range: %s (%s)", name, 
 		     op->race ? op->race : "nothing");
 	    }
 	    break;
@@ -384,9 +386,11 @@ void rangetostring(const object *pl,char *obuf)
 	    break;
 
 	case range_misc:
-	    sprintf(obuf,"Range: %s", 
-		    pl->contr->ranges[range_misc]?
-		    query_base_name(pl->contr->ranges[range_misc],0): "none");
+        if (pl->contr->ranges[range_misc])
+            query_base_name(pl->contr->ranges[range_misc],0, name, MAX_BUF);
+        else
+            strncpy(name, "none", MAX_BUF);
+	    sprintf(obuf,"Range: %s", name);
 	    break;
 
 	/* range_scroll is only used for controlling golems.  If the
@@ -407,7 +411,8 @@ void rangetostring(const object *pl,char *obuf)
 	    break;
 
     case range_builder:
-        sprintf( obuf, "Builder: %s", query_base_name( pl->contr->ranges[ range_builder ], 0 ) );
+        query_base_name( pl->contr->ranges[ range_builder ], 0, name, MAX_BUF );
+        sprintf( obuf, "Builder: %s", name );
         break;
 
 	default:

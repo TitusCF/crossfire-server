@@ -298,10 +298,11 @@ void change_spell(object *op,char k) {
 	    break;
 
 	case range_misc:
+        query_base_name(op->contr->ranges[range_misc], 0, name, MAX_BUF);
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 				 "Switched to %s.",
 				 "Switched to %s.",
-				 query_base_name(op->contr->ranges[range_misc], 0));
+				 name);
 	    break;
 
 	case range_skill: 

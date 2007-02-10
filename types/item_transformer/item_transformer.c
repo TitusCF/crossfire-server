@@ -105,9 +105,10 @@ method_ret item_transformer_type_apply(ob_methods *context, object *op,
         yield = atoi(find);
         if ( yield < 1 )
         {
+            query_base_name(marked,0, name_m, MAX_BUF);
             LOG(llevDebug,
                 "apply_item_transformer: item %s has slaying-yield %d.\n",
-                query_base_name(marked,0), yield);
+                name_m, yield);
             yield = 1;
         }
     }
@@ -132,18 +133,20 @@ method_ret item_transformer_type_apply(ob_methods *context, object *op,
     new_item = create_archetype(got);
     if (!new_item)
     {
+        query_base_name(marked, 0, name_m, MAX_BUF);
         draw_ext_info_format( NDI_UNIQUE, 0, applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "This %s is strange, better to not use it.",
             "This %s is strange, better to not use it.",
-            query_base_name(marked, 0));
+            name_m);
             return 1;
     }
     new_item->nrof = yield;
+    query_base_name(marked,0, name_m, MAX_BUF);
     draw_ext_info_format( NDI_UNIQUE, 0, applier,
         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "You %s the %s.", "You %s the %s.",
-        op->slaying, query_base_name(marked,0));
+        op->slaying, name_m);
     insert_ob_in_ob(new_item, applier);
     esrv_send_inventory(applier, applier);
     /* Eat up one item */
