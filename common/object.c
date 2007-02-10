@@ -2018,8 +2018,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * get_split_ob(ob,nr) splits up ob into two parts.  The part which
  * is returned contains nr objects, and the remaining parts contains
  * the rest (or is removed and freed if that number is 0).
- * On failure, NULL is returned, and the reason put into the
- * global static errmsg array.
+ * On failure, NULL is returned, and the reason LOG()ed.
  *
  * @param orig_ob
  * object from which to split.
@@ -2027,9 +2026,6 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * number of elements to split.
  * @return
  * split object, or NULL on failure.
- *
- * @todo
- * thou shall not use global buffers for weird things.
  */
 
 object *get_split_ob(object *orig_ob, uint32 nr) {
@@ -2037,8 +2033,7 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
     int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 
     if(orig_ob->nrof<nr) {
-        sprintf(errmsg,"There are only %d %ss.",
-            orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+        LOG(llevDebug,"There are only %d %ss.", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
         return NULL;
     }
     newob = object_create_clone(orig_ob);
@@ -2051,7 +2046,6 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
         if(orig_ob->env!=NULL)
             sub_weight (orig_ob->env,orig_ob->weight*nr);
         if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
-            strcpy(errmsg, "Tried to split object whose map is not in memory.");
             LOG(llevDebug,
                 "Error, Tried to split object whose map is not in memory.\n");
             return NULL;
