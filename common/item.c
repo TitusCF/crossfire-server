@@ -392,18 +392,17 @@ const typedata *get_typedata_by_name(const char *name) {
  */
 void describe_resistance(const object *op, int newline, char* buf, int size)
 {
-    char    buf1[VERY_BIG_BUF];
+    char *p;
     int tmpvar;
 
-    buf[0]=0;
+    p = buf;
     for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
         if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar)==1)) {
             if (!newline)
-                snprintf(buf1,VERY_BIG_BUF,"(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
+                snprintf(p, buf+size-p, "(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
             else
-                snprintf(buf1,VERY_BIG_BUF,"%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
-
-            strncat(buf, buf1, size);
+                snprintf(p, buf+size-p, "%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
+            p = strchr(p, '\0');
         }
     }
 }
@@ -421,7 +420,7 @@ void query_weight(const object *op, char* buf, int size) {
     sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
     if(op->weight<0)
-        strncpy(buf, "      ", size);
+        snprintf(buf, size, "      ");
     else if(i%1000)
         snprintf(buf, size, "%6.1f",i/1000.0);
     else
@@ -443,15 +442,14 @@ void get_levelnumber(int i, char* buf, int size) {
         return;
     }
     if(i < 21) {
-        strncpy(buf, levelnumbers[i], size);
+        snprintf(buf, size, "%s", levelnumbers[i]);
         return;
     }
     if(!(i%10)) {
-        strncpy(buf, levelnumbers_10[i/10], size);
+        snprintf(buf, size, "%s", levelnumbers_10[i/10]);
         return;
     }
-    strncpy(buf, numbers_10[i/10], size);
-    strncat(buf, levelnumbers[i%10], size);
+    snprintf(buf, size, "%s%s", numbers_10[i/10], levelnumbers[i%10]);
     return;
 }
 
@@ -479,7 +477,6 @@ void get_levelnumber(int i, char* buf, int size) {
  */
 static void ring_desc (const object *op, char* buf, int size)
 {
-    char resist[MAX_BUF];
     int attr, val,len;
 
     buf[0] = 0;
@@ -489,52 +486,51 @@ static void ring_desc (const object *op, char* buf, int size)
 
     for (attr=0; attr<NUM_STATS; attr++) {
         if ((val=get_attr_value(&(op->stats),attr))!=0) {
-            sprintf (buf+strlen(buf), "(%s%+d)", short_stat_name[attr], val);
+            snprintf(buf+strlen(buf), size-strlen(buf), "(%s%+d)", short_stat_name[attr], val);
         }
     }
     if(op->stats.exp)
-        sprintf(buf+strlen(buf), "(speed %+" FMT64 ")", op->stats.exp);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+" FMT64 ")", op->stats.exp);
     if(op->stats.wc)
-        sprintf(buf+strlen(buf), "(wc%+d)", op->stats.wc);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(wc%+d)", op->stats.wc);
     if(op->stats.dam)
-        sprintf(buf+strlen(buf), "(dam%+d)", op->stats.dam);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(dam%+d)", op->stats.dam);
     if(op->stats.ac)
-        sprintf(buf+strlen(buf), "(ac%+d)", op->stats.ac);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(ac%+d)", op->stats.ac);
 
-    describe_resistance(op, 0, resist, MAX_BUF);
-    strcat(buf,resist);
+    describe_resistance(op, 0, buf+strlen(buf), size-strlen(buf));
 
     if (op->stats.food != 0)
-        sprintf(buf+strlen(buf), "(sustenance%+d)", op->stats.food);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);
     /* else if (op->stats.food < 0)
-        sprintf(buf+strlen(buf), "(hunger%+d)", op->stats.food); */
+        snprintf(buf+strlen(buf), size-strlen(buf), "(hunger%+d)", op->stats.food); */
     if(op->stats.grace)
-        sprintf(buf+strlen(buf), "(grace%+d)", op->stats.grace);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(grace%+d)", op->stats.grace);
     if(op->stats.sp && op->type!=SKILL)
-        sprintf(buf+strlen(buf), "(magic%+d)", op->stats.sp);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(magic%+d)", op->stats.sp);
     if(op->stats.hp)
-        sprintf(buf+strlen(buf), "(regeneration%+d)", op->stats.hp);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(regeneration%+d)", op->stats.hp);
     if(op->stats.luck)
-        sprintf(buf+strlen(buf), "(luck%+d)", op->stats.luck);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(luck%+d)", op->stats.luck);
     if(QUERY_FLAG(op,FLAG_LIFESAVE))
-        strcat(buf,"(lifesaving)");
+        snprintf(buf+strlen(buf), size-strlen(buf), "(lifesaving)");
     if(QUERY_FLAG(op,FLAG_REFL_SPELL))
-        strcat(buf,"(reflect spells)");
+        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect spells)");
     if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
-        strcat(buf,"(reflect missiles)");
+        snprintf(buf+strlen(buf), size-strlen(buf), "(reflect missiles)");
     if(QUERY_FLAG(op,FLAG_STEALTH))
-        strcat(buf,"(stealth)");
+        snprintf(buf+strlen(buf), size-strlen(buf), "(stealth)");
     /* Shorten some of the names, so they appear better in the windows */
     len=strlen(buf);
-    DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, VERY_BIG_BUF);
-    DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, VERY_BIG_BUF);
-    DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, VERY_BIG_BUF);
+    DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, size);
+    DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, size);
+    DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
 
     /*    if(op->item_power)
-	sprintf(buf+strlen(buf), "(item_power %+d)",op->item_power);
+	sprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
     */
     if(buf[0] == 0 && op->type!=SKILL)
-        strcpy(buf,"of adornment");
+        snprintf(buf, size, "of adornment");
 }
 
 /**
@@ -550,27 +546,26 @@ static void ring_desc (const object *op, char* buf, int size)
  */
 void query_short_name(const object *op, char* buf, int size)
 {
-    char buf2[HUGE_BUF];
     int len=0;
 
     if(op->name == NULL) {
-        strncpy(buf, "(null)", size);
+        snprintf(buf, size, "(null)");
         return;
     }
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) {
-        strncpy(buf, op->name, size); /* To speed things up (or make things slower?) */
+        snprintf(buf, size, "%s", op->name); /* To speed things up (or make things slower?) */
         return;
     }
     buf[0] = '\0';
 
     if (op->nrof <= 1)
-        safe_strcat(buf,op->name, &len, HUGE_BUF);
+        safe_strcat(buf, op->name, &len, size);
     else
-        safe_strcat(buf,op->name_pl, &len, HUGE_BUF);
+        safe_strcat(buf, op->name_pl, &len, size);
 
     if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-        safe_strcat(buf, " ", &len, HUGE_BUF);
-        safe_strcat(buf, op->title, &len, HUGE_BUF);
+        safe_strcat(buf, " ", &len, size);
+        safe_strcat(buf, op->title, &len, size);
     }
 
     switch(op->type) {
@@ -580,15 +575,15 @@ void query_short_name(const object *op, char* buf, int size)
         case ROD:
             if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
                 if(!op->title) {
-                    safe_strcat(buf," of ", &len, HUGE_BUF);
+                    safe_strcat(buf," of ", &len, size);
                     if (op->inv)
-                        safe_strcat(buf,op->inv->name, &len, HUGE_BUF);
+                        safe_strcat(buf,op->inv->name, &len, size);
                     else
                         LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
                 }
                 if(op->type != SPELLBOOK) {
-                    sprintf(buf2, " (lvl %d)", op->level);
-                    safe_strcat(buf, buf2, &len, HUGE_BUF);
+                    snprintf(buf+len, size-len, " (lvl %d)", op->level);
+                    len += strlen(buf+len);
                 }
             }
             break;
@@ -601,8 +596,8 @@ void query_short_name(const object *op, char* buf, int size)
                 char desc[VERY_BIG_BUF];
                 ring_desc(op, desc, VERY_BIG_BUF);
                 if (desc[0]) {
-                    safe_strcat (buf, " ", &len, HUGE_BUF);
-                    safe_strcat(buf, desc, &len, HUGE_BUF);
+                    safe_strcat(buf, " ", &len, size);
+                    safe_strcat(buf, desc, &len, size);
                 }
             }
             break;
@@ -610,8 +605,8 @@ void query_short_name(const object *op, char* buf, int size)
         default:
             if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
                 need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
-                sprintf(buf2, " %+d", op->magic);
-                safe_strcat(buf, buf2, &len, HUGE_BUF);
+                snprintf(buf+len, size-len, " %+d", op->magic);
+                len += strlen(buf+len);
             }
     }
 }
@@ -628,7 +623,6 @@ void query_short_name(const object *op, char* buf, int size)
  */
 void query_name(const object *op, char* buf, int size) {
     int len=0;
-    char sname[HUGE_BUF];
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
 #endif
@@ -645,8 +639,8 @@ void query_name(const object *op, char* buf, int size) {
     }
 #endif
 
-    query_short_name(op, sname, HUGE_BUF);
-    safe_strcat(buf, sname, &len, size);
+    query_short_name(op, buf+len, size-len);
+    len += strlen(buf+len);
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
@@ -680,7 +674,7 @@ void query_name(const object *op, char* buf, int size) {
      * be returned in the name.
      */
     if(op->item_power)
-        sprintf(buf+strlen(buf), "(item_power %+d)",
+        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)",
             op->item_power);
 
 #endif
@@ -738,7 +732,6 @@ void query_name(const object *op, char* buf, int size) {
  * buffer's length
  */
 void query_base_name(const object *op, int plural, char* buf, int size) {
-    static char buf2[MAX_BUF];
     int len;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
@@ -765,19 +758,13 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
     if (mt &&
         op->arch->clone.materialname != mt->name &&
         !(op->material & M_SPECIAL)) {
-        strcpy(buf, mt->description);
+        snprintf(buf, size, "%s", mt->description);
         len=strlen(buf);
         safe_strcat(buf, " ", &len, size);
-        if (!plural)
-            safe_strcat(buf, op->name, &len, size);
-        else
-            safe_strcat(buf, op->name_pl, &len, size);
+        safe_strcat(buf, plural ? op->name_pl : op->name, &len, size);
     } else {
 #endif
-    if (!plural)
-        strcpy(buf, op->name);
-    else
-        strcpy(buf, op->name_pl);
+    snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
     len=strlen(buf);
 #ifdef NEW_MATERIAL_CODE
     }
@@ -802,8 +789,8 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
                         LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
                 }
                 if(op->type != SPELLBOOK) {
-                    sprintf(buf2, " (lvl %d)", op->level);
-                    safe_strcat(buf, buf2, &len, size);
+                    snprintf(buf+len, size-len, " (lvl %d)", op->level);
+                    len += strlen(buf+len);
                 }
             }
             break;
@@ -825,7 +812,7 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
         default:
             if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
                 need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
-                sprintf(buf + strlen(buf), " %+d", op->magic);
+                snprintf(buf+strlen(buf), size-strlen(buf), " %+d", op->magic);
             }
     }
 }
@@ -851,8 +838,8 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
  * Use safe string functions. Fix weird sustenance logic.
  */
 void describe_monster(const object *op, char* retbuf, int size) {
-    char buf[MAX_BUF];
     int i;
+    int len;
 
     retbuf[0]='\0';
 
@@ -863,61 +850,61 @@ void describe_monster(const object *op, char* retbuf, int size) {
     if(FABS(op->speed)>MIN_ACTIVE_SPEED) {
         switch((int)((FABS(op->speed))*15)) {
             case 0:
-                strcat(retbuf,"(very slow movement)");
+                snprintf(retbuf, size,"(very slow movement)");
                 break;
             case 1:
-                strcat(retbuf,"(slow movement)");
+                snprintf(retbuf, size, "(slow movement)");
                 break;
             case 2:
-                strcat(retbuf,"(normal movement)");
+                snprintf(retbuf, size, "(normal movement)");
                 break;
             case 3:
             case 4:
-                strcat(retbuf,"(fast movement)");
+                snprintf(retbuf, size, "(fast movement)");
                 break;
             case 5:
             case 6:
-                strcat(retbuf,"(very fast movement)");
+                snprintf(retbuf, size, "(very fast movement)");
                 break;
             case 7:
             case 8:
             case 9:
             case 10:
-                strcat(retbuf,"(extremely fast movement)");
+                snprintf(retbuf, size, "(extremely fast movement)");
                 break;
             default:
-                strcat(retbuf,"(lightning fast movement)");
+                snprintf(retbuf, size, "(lightning fast movement)");
             break;
         }
     }
     if(QUERY_FLAG(op,FLAG_UNDEAD))
-        strcat(retbuf,"(undead)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(undead)");
     if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
-        strcat(retbuf,"(see invisible)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(see invisible)");
     if(QUERY_FLAG(op,FLAG_USE_WEAPON))
-        strcat(retbuf,"(wield weapon)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wield weapon)");
     if(QUERY_FLAG(op,FLAG_USE_BOW))
-        strcat(retbuf,"(archer)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(archer)");
     if(QUERY_FLAG(op,FLAG_USE_ARMOUR))
-        strcat(retbuf,"(wear armour)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear armour)");
     if(QUERY_FLAG(op,FLAG_USE_RING))
-        strcat(retbuf,"(wear ring)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear ring)");
     if(QUERY_FLAG(op,FLAG_USE_SCROLL))
-        strcat(retbuf,"(read scroll)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(read scroll)");
     if(QUERY_FLAG(op,FLAG_USE_RANGE))
-        strcat(retbuf,"(fires wand/rod/horn)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fires wand/rod/horn)");
     if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
-        strcat(retbuf,"(skill user)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(skill user)");
     if(QUERY_FLAG(op,FLAG_CAST_SPELL))
-        strcat(retbuf,"(spellcaster)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellcaster)");
     if(QUERY_FLAG(op,FLAG_FRIENDLY))
-        strcat(retbuf,"(friendly)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(friendly)");
     if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
-        strcat(retbuf,"(unaggressive)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(unaggressive)");
     if(QUERY_FLAG(op,FLAG_HITBACK))
-        strcat(retbuf,"(hitback)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(hitback)");
     if(QUERY_FLAG(op,FLAG_STEALTH))
-        strcat(retbuf,"(stealthy)");
+        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealthy)");
     if(op->randomitems != NULL) {
         treasure *t;
         int first = 1;
@@ -925,38 +912,32 @@ void describe_monster(const object *op, char* retbuf, int size) {
             if(t->item && (t->item->clone.type == SPELL)) {
                 if(first) {
                     first = 0;
-                    strcat(retbuf,"(Spell abilities:)");
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell abilities:)");
                 }
-                strcat(retbuf,"(");
-                strcat(retbuf,t->item->clone.name);
-                strcat(retbuf,")");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s)",  t->item->clone.name);
             }
     }
     if (op->type == PLAYER) {
         if(op->contr->digestion) {
             if(op->contr->digestion!=0)
-                sprintf(buf,"(sustenance%+d)",op->contr->digestion);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->contr->digestion);
         }
         if(op->contr->gen_grace) {
-            sprintf(buf,"(grace%+d)",op->contr->gen_grace);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->contr->gen_grace);
         }
         if(op->contr->gen_sp) {
-            sprintf(buf,"(magic%+d)",op->contr->gen_sp);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->contr->gen_sp);
         }
         if(op->contr->gen_hp) {
-            sprintf(buf,"(regeneration%+d)",op->contr->gen_hp);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->contr->gen_hp);
         }
         if(op->stats.luck) {
-            sprintf(buf,"(luck%+d)",op->stats.luck);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)",op->stats.luck);
         }
     }
 
     /* describe attacktypes */
+    len = strlen(retbuf);
     if (is_dragon_pl(op)) {
         /* for dragon players display the attacktypes from clawing skill
          * Break apart the for loop - move the comparison checking down -
@@ -968,21 +949,20 @@ void describe_monster(const object *op, char* retbuf, int size) {
             if (tmp->type == SKILL && !strcmp(tmp->name, "clawing")) break;
 
         if (tmp && tmp->attacktype!=0) {
-            DESCRIBE_ABILITY(retbuf, tmp->attacktype, "Claws");
+            DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
         }
         else {
-            DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
+            DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
         }
     } else {
-        DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
+        DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
     }
-    DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
-    DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
-    DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+    DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
+    DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
+    DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
     for (i=0; i < NROFATTACKS; i++) {
         if (op->resist[i]) {
-            sprintf(buf, "(%s %+d)", resist_plus[i], op->resist[i]);
-            strcat(retbuf, buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s %+d)", resist_plus[i], op->resist[i]);
         }
     }
 }
@@ -1030,7 +1010,6 @@ void describe_monster(const object *op, char* retbuf, int size) {
  * Check spurious food logic.
  */
 void describe_item(const object *op, const object *owner, char* retbuf, int size) {
-    char buf[MAX_BUF];
     int identified,i;
 
     retbuf[0]='\0';
@@ -1043,7 +1022,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
      */
     if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED)) identified = 1;
     else {
-        strcpy(retbuf,"(unidentified)");
+        snprintf(retbuf, size, "(unidentified)");
         identified = 0;
     }
     switch(op->type) {
@@ -1068,52 +1047,49 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             if (op->stats.maxsp>1000){ /*higher capacity crystals*/
                 i = (op->stats.maxsp%1000)/100;
                 if (i)
-                    snprintf(buf,MAX_BUF,"(capacity %d.%dk). It is ",op->stats.maxsp/1000,i);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000,i);
                 else
-                    snprintf(buf,MAX_BUF,"(capacity %dk). It is ",op->stats.maxsp/1000);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
             } else
-                snprintf(buf,MAX_BUF,"(capacity %d). It is ",op->stats.maxsp);
-            strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
             i = (op->stats.sp*10)/op->stats.maxsp;
             if (op->stats.sp==0)
-                strcat(retbuf,"empty.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
             else if (i==0)
-                strcat(retbuf,"almost empty.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
             else if (i<3)
-                strcat(retbuf,"partially filled.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
             else if (i<6)
-                strcat(retbuf,"half full.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
             else if (i<9)
-                strcat(retbuf,"well charged.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
             else if (op->stats.sp == op->stats.maxsp)
-                strcat(retbuf,"fully charged.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
             else
-                strcat(retbuf,"almost full.");
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
             break;
 
         case FOOD:
         case FLESH:
         case DRINK:
             if(identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                sprintf(buf,"(food+%d)", op->stats.food);
-                strcat(retbuf, buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
 
                 if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
-                    sprintf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
-                    strcat(retbuf, buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s metabolism)", change_resist_msg[op->last_eat]);
                 }
 
                 if (!QUERY_FLAG(op,FLAG_CURSED)) {
                     if (op->stats.hp)
-                        strcat(retbuf,"(heals)");
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(heals)");
                     if (op->stats.sp)
-                        strcat(retbuf,"(spellpoint regen)");
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint regen)");
                 }
                 else {
                     if (op->stats.hp)
-                        strcat(retbuf,"(damages)");
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(damages)");
                     if (op->stats.sp)
-                        strcat(retbuf,"(spellpoint depletion)");
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint depletion)");
                 }
             }
             break;
@@ -1122,13 +1098,10 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
         case RING:
         case AMULET:
             if(op->item_power) {
-                sprintf(buf,"(item_power %+d)",op->item_power);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
             }
             if (op->title) {
-                char desc[MAX_BUF];
-                ring_desc(op, desc, MAX_BUF);
-                strcat (retbuf, desc);
+                ring_desc(op, retbuf+strlen(retbuf), size-strlen(retbuf));
             }
             return;
 
@@ -1144,8 +1117,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
 
         for (attr=0; attr<NUM_STATS; attr++) {
             if ((val=get_attr_value(&(op->stats),attr))!=0) {
-                sprintf(buf, "(%s%+d)", short_stat_name[attr], val);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s%+d)", short_stat_name[attr], val);
             }
         }
 
@@ -1154,8 +1126,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                 break;
             default:
                 if(op->stats.exp) {
-                    sprintf(buf,"(speed %+" FMT64 ")",op->stats.exp);
-                    strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(speed %+" FMT64 ")", op->stats.exp);
                 }
                 break;
         }
@@ -1176,20 +1147,16 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             case FORCE:
             case CLOAK:
                 if(op->stats.wc) {
-                    sprintf(buf,"(wc%+d)",op->stats.wc);
-                    strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wc%+d)", op->stats.wc);
                 }
                 if(op->stats.dam) {
-                    sprintf(buf,"(dam%+d)",op->stats.dam);
-                    strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(dam%+d)", op->stats.dam);
                 }
                 if(op->stats.ac) {
-                    sprintf(buf,"(ac%+d)",op->stats.ac);
-                    strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(ac%+d)", op->stats.ac);
                 }
                 if ((op->type==WEAPON || op->type == BOW) && op->level>0) {
-                    sprintf(buf,"(improved %d/%d)",op->last_eat,op->level);
-                    strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(improved %d/%d)", op->last_eat, op->level);
                 }
                 break;
 
@@ -1197,25 +1164,24 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                 break;
         }
         if(QUERY_FLAG(op,FLAG_XRAYS))
-            strcat(retbuf,"(xray-vision)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(xray-vision)");
         if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
-            strcat(retbuf,"(infravision)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(infravision)");
 
         /* levitate was what is was before, so we'll keep it */
         if (op->move_type & MOVE_FLY_LOW)
-            strcat(retbuf,"(levitate)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(levitate)");
 
         if (op->move_type & MOVE_FLY_HIGH)
-            strcat(retbuf,"(fly)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fly)");
 
         if (op->move_type & MOVE_SWIM)
-            strcat(retbuf,"(swim)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(swim)");
 
         /* walking is presumed as 'normal', so doesn't need mentioning */
 
         if(op->item_power) {
-            sprintf(buf,"(item_power %+d)",op->item_power);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
         }
     } /* End if identified or applied */
 
@@ -1225,6 +1191,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
       */
     if(identified) {
         int more_info = 0;
+        int len;
 
         switch(op->type) {
             case ROD:  /* These use stats.sp for spell selection and stats.food */
@@ -1248,12 +1215,10 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             case BRACERS:
             case CLOAK:
                 if (ARMOUR_SPEED(op)) {
-                    sprintf(buf,"(Max speed %1.2f)", ARMOUR_SPEED(op) / 10.0);
-                    strcat(retbuf, buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Max speed %1.2f)", ARMOUR_SPEED(op)/10.0);
                 }
                 if (ARMOUR_SPELLS(op)) {
-                    sprintf(buf,"(Spell regen penalty %d)", ARMOUR_SPELLS(op));
-                    strcat(retbuf, buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell regen penalty %d)", ARMOUR_SPELLS(op));
                 }
                 more_info=1;
                 break;
@@ -1265,59 +1230,52 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                 i = (WEAPON_SPEED(op)*2-op->magic)/2;
                 if (i<0) i=0;
 
-                sprintf(buf,"(weapon speed %d)", i);
-                strcat(retbuf, buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(weapon speed %d)", i);
                 more_info=1;
                 break;
         }
         if (more_info) {
             if(op->stats.food) {
                 if(op->stats.food!=0)
-                    sprintf(buf,"(sustenance%+d)",op->stats.food);
-                strcat(retbuf,buf);
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->stats.food);
             }
             if(op->stats.grace) {
-                sprintf(buf,"(grace%+d)",op->stats.grace);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->stats.grace);
             }
             if(op->stats.sp) {
-                sprintf(buf,"(magic%+d)",op->stats.sp);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->stats.sp);
             }
             if(op->stats.hp) {
-                sprintf(buf,"(regeneration%+d)",op->stats.hp);
-                strcat(retbuf,buf);
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->stats.hp);
             }
         }
 
         if(op->stats.luck) {
-            sprintf(buf,"(luck%+d)",op->stats.luck);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
         }
         if(QUERY_FLAG(op,FLAG_LIFESAVE))
-            strcat(retbuf,"(lifesaving)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(lifesaving)");
         if(QUERY_FLAG(op,FLAG_REFL_SPELL))
-            strcat(retbuf,"(reflect spells)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect spells)");
         if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
-            strcat(retbuf,"(reflect missiles)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect missiles)");
         if(QUERY_FLAG(op,FLAG_STEALTH))
-            strcat(retbuf,"(stealth)");
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealth)");
         if(op->slaying!=NULL && op->type != FOOD) {
-            sprintf(buf,"(slay %s)",op->slaying);
-            strcat(retbuf,buf);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(slay %s)", op->slaying);
         }
-        DESCRIBE_ABILITY(retbuf, op->attacktype, "Attacks");
+        len = strlen(retbuf);
+        DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
         /* resistance on flesh is only visible for dragons.  If
          * non flesh, everyone can see its resistances
          */
         if (op->type != FLESH || (owner && is_dragon_pl(owner))) {
-            char resist[VERY_BIG_BUF];
-            describe_resistance(op, 0, resist, VERY_BIG_BUF);
-            strcat(retbuf,resist);
+            describe_resistance(op, 0, retbuf+strlen(retbuf), size-strlen(retbuf));
         }
-        DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
-        DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
-        DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+        len = strlen(retbuf);
+        DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
+        DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
+        DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
     }
 }
 
