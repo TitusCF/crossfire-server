@@ -178,7 +178,7 @@ static void create_items_path (const char *s, char* buf, int size) {
 
     snprintf(buf, size, "%s/%s/", settings.localdir, settings.uniquedir);
     t = buf + strlen(buf);
-    strncat(buf, s, size);
+    snprintf(t, buf+size-t, "%s", s);
 
     while (*t != '\0') {
         if (*t == '/')
@@ -221,7 +221,7 @@ int check_path (const char *name, int prepend_dir)
     if (prepend_dir)
         create_pathname(name, buf, MAX_BUF);
     else
-        strcpy(buf, name);
+        snprintf(buf, sizeof(buf), "%s", name);
 #ifdef WIN32 /* ***win32: check this sucker in windows style. */
     return(_access(buf,0));
 #else
@@ -235,7 +235,7 @@ int check_path (const char *name, int prepend_dir)
 
     for (i = 0; i < NROF_COMPRESS_METHODS; i++) {
         if (uncomp[i][0])
-            strcpy(endbuf, uncomp[i][0]);
+            snprintf(endbuf, buf+sizeof(buf)-endbuf, "%s", uncomp[i][0]);
         else
             *endbuf = '\0';
         if (!stat (buf, &statbuf))
@@ -897,15 +897,15 @@ static void print_shop_string(mapstruct *m, char *output_string) {
     for (i=0; i< m->shopitems[0].index; i++) {
         if (m->shopitems[i].typenum) {
             if (m->shopitems[i].strength) {
-                sprintf(tmp, "%s:%d;", m->shopitems[i].name, m->shopitems[i].strength);
+                snprintf(tmp, sizeof(tmp), "%s:%d;", m->shopitems[i].name, m->shopitems[i].strength);
             }
-            else sprintf(tmp, "%s;", m->shopitems[i].name);
+            else snprintf(tmp, sizeof(tmp), "%s;", m->shopitems[i].name);
         }
         else {
             if (m->shopitems[i].strength) {
-                sprintf(tmp, "*:%d;", m->shopitems[i].strength);
+                snprintf(tmp, sizeof(tmp), "*:%d;", m->shopitems[i].strength);
             }
-            else sprintf(tmp, "*");
+            else snprintf(tmp, sizeof(tmp), "*");
         }
         strcat(output_string, tmp);
     }
@@ -936,8 +936,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
     int msgpos=0;
     int maplorepos=0;
 
-    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
-        buf[HUGE_BUF-1] = 0;
+    while (fgets(buf, sizeof(buf), fp)!=NULL) {
         key = buf;
         while (isspace(*key)) key++;
         if (*key == 0) continue;    /* empty line */
@@ -983,11 +982,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
          */
 
         if (!strcmp(key,"msg")) {
-            while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
+            while (fgets(buf, sizeof(buf), fp)!=NULL) {
                 if (!strcmp(buf,"endmsg\n")) break;
                 else {
-                    /* slightly more efficient than strcat */
-                    strcpy(msgbuf+msgpos, buf);
+                    snprintf(msgbuf+msgpos, sizeof(msgbuf)-msgpos, "%s", buf);
                     msgpos += strlen(buf);
                 }
             }
@@ -1006,8 +1004,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
             while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
                 if (!strcmp(buf,"endmaplore\n")) break;
                 else {
-                    /* slightly more efficient than strcat */
-                    strcpy(maplorebuf+maplorepos, buf);
+                    snprintf(maplorebuf+maplorepos, sizeof(maplorebuf)-maplorepos, "%s", buf);
                     maplorepos += strlen(buf);
                 }
             }
@@ -1168,7 +1165,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
 
     LOG(llevDebug, "load_original_map: %s (%x)\n", filename,flags);
     if (flags & MAP_PLAYER_UNIQUE)
-        strcpy(pathname, filename);
+        snprintf(pathname, sizeof(pathname), "%s", filename);
     else if (flags & MAP_OVERLAY)
         create_overlay_pathname(filename, pathname, MAX_BUF);
     else
@@ -1225,7 +1222,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 
     if (!m->tmpname) {
         LOG(llevError, "No temporary filename for map %s\n", m->path);
-        strcpy(buf, m->path);
+        snprintf(buf, sizeof(buf), "%s", m->path);
         delete_map(m);
         m = load_original_map(buf, 0);
         if(m==NULL) return NULL;
@@ -1235,7 +1232,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 
     if((fp=open_and_uncompress(m->tmpname,0, &comp))==NULL) {
         LOG(llevError, "Cannot open %s: %s\n",m->tmpname, strerror_local(errno));
-        strcpy(buf, m->path);
+        snprintf(buf, sizeof(buf), "%s", m->path);
         delete_map(m);
         m = load_original_map(buf, 0);
         if(m==NULL) return NULL;
@@ -1347,7 +1344,7 @@ static void load_unique_objects(mapstruct *m) {
 
     create_items_path(m->path, name, MAX_BUF);
     for (count=0; count<10; count++) {
-        sprintf(firstname, "%s.v%02d", name, count);
+        snprintf(firstname, sizeof(firstname), "%s.v%02d", name, count);
         if (!access(firstname, R_OK)) break;
     }
     /* If we get here, we did not find any map */
@@ -1405,7 +1402,7 @@ int save_map(mapstruct *m, int flag) {
             else
                 create_pathname (m->path, filename, MAX_BUF);
         } else
-            strcpy (filename, m->path);
+            snprintf(filename, sizeof(filename), "%s", m->path);
 
         /* If the compression suffix already exists on the filename, don't
          * put it on again.  This nasty looking strcmp checks to see if the
@@ -1419,7 +1416,7 @@ int save_map(mapstruct *m, int flag) {
     } else {
         if (!m->tmpname)
             m->tmpname = tempnam_local(settings.tmpdir,NULL);
-        strcpy(filename, m->tmpname);
+        snprintf(filename, sizeof(filename), "%s", m->tmpname);
     }
     LOG(llevDebug,"Saving map %s\n",m->path);
     m->in_memory = MAP_SAVING;
@@ -1427,9 +1424,7 @@ int save_map(mapstruct *m, int flag) {
     /* Compress if it isn't a temporary save.  Do compress if unique */
     if (m->compressed && (m->unique || m->template || flag)) {
         char buf[MAX_BUF];
-        strcpy(buf, uncomp[m->compressed][2]);
-        strcat(buf, " > ");
-        strcat(buf, filename);
+        snprintf(buf, sizeof(buf), "%s > %s", uncomp[m->compressed][2], filename);
         fp = popen(buf, "w");
     } else
         fp = fopen(filename, "w");
@@ -1494,7 +1489,7 @@ int save_map(mapstruct *m, int flag) {
     if ((flag == 0 || flag == 2) && !m->unique && !m->template) {
         char name[MAX_BUF];
         create_items_path (m->path, name, MAX_BUF);
-        sprintf (buf,"%s.v00",name);
+        snprintf(buf, sizeof(buf), "%s.v00", name);
         if ((fp2 = fopen (buf, "w")) == NULL) {
             LOG(llevError, "Can't open unique items file %s\n", buf);
         }
@@ -2177,9 +2172,7 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % 4;
     char path[HUGE_BUF];
-    path[0] = '\0';
-    strncpy(path, path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]), HUGE_BUF - 1);
-    path[HUGE_BUF-1] = '\0';
+    snprintf(path, sizeof(path), "%s", path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]));
 
     orig_map->tile_map[tile_num] = ready_map_name(path, 0);
 
