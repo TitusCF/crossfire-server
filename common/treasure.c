@@ -1908,7 +1908,7 @@ void free_charlinks(linked_char *lc)
  */
 void free_artifact(artifact *at)
 {
-    object* next, *inv;
+    object* next;
     if (at->next) free_artifact(at->next);
     if (at->allowed) free_charlinks(at->allowed);
     while (at->item) {
