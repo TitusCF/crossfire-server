@@ -660,10 +660,10 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
     query_name(tmp, name, MAX_BUF);
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	(void) sprintf(buf,"%s will cost you %s.", name,
+	snprintf(buf, sizeof(buf), "%s will cost you %s.", name,
 		query_cost_string(tmp,pl,F_BUY | F_SHOP));
     else
-	(void) sprintf(buf,"You pick up the %s.", name);
+	snprintf(buf, sizeof(buf), "You pick up the %s.", name);
 
     draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 		  buf, NULL);
@@ -1533,7 +1533,7 @@ void examine(object *op, object *tmp) {
 	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED) && tmp->inv ) {
             char level[100];
             get_levelnumber(tmp->inv->level, level, 100);
-            sprintf(buf,"%s is a %s level %s spell",
+            snprintf(buf, sizeof(buf), "%s is a %s level %s spell",
                 tmp->inv->name, level,
                 tmp->inv->skill);
 	    }
@@ -1541,25 +1541,25 @@ void examine(object *op, object *tmp) {
 
 	case BOOK:
 	    if(tmp->msg!=NULL)
-		strcpy(buf,"Something is written in it.");
+		snprintf(buf, sizeof(buf), "Something is written in it.");
 	    break;
 
 	case CONTAINER:
 	    if(tmp->race!=NULL) {
 		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.",
+		    snprintf(buf, sizeof(buf), "It can hold only %s and its weight limit is %.1f kg.",
 			 tmp->race, tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
 		else
-		    sprintf (buf,"It can hold only %s.", tmp->race);
+		    snprintf(buf, sizeof(buf), "It can hold only %s.", tmp->race);
 	    } else
 		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"Its weight limit is %.1f kg.",
+		    snprintf(buf, sizeof(buf), "Its weight limit is %.1f kg.",
 			     tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
 	    break;
 
 	case WAND:
 	    if(QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-		sprintf(buf,"It has %d charges left.",tmp->stats.food);
+		snprintf(buf, sizeof(buf), "It has %d charges left.", tmp->stats.food);
 	    break;
     }
 
@@ -1601,7 +1601,7 @@ void examine(object *op, object *tmp) {
     }
 
     if(tmp->weight) {
-	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
+	snprintf(buf, sizeof(buf), tmp->nrof > 1 ? "They weigh %3.3f kg." : "It weighs %3.3f kg.",
             tmp->weight*(tmp->nrof?tmp->nrof:1)/1000.0);
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 		      buf, NULL);
@@ -1610,16 +1610,16 @@ void examine(object *op, object *tmp) {
     in_shop = is_in_shop(op);
 
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-    	sprintf(buf,"You reckon %s worth %s.",
+    	snprintf(buf, sizeof(buf), "You reckon %s worth %s.",
 		    tmp->nrof>1?"they are":"it is",query_cost_string(tmp,op,F_SELL | F_APPROX));
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 		      buf, NULL);
 	if (in_shop) {
 	    if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	    	sprintf(buf,"%s would cost you %s.",
+	    	snprintf(buf, sizeof(buf), "%s would cost you %s.",
 		    tmp->nrof>1?"They":"It",query_cost_string(tmp,op,F_BUY | F_SHOP));
 	    else
-	    	sprintf(buf,"You are offered %s for %s.",
+	    	snprintf(buf, sizeof(buf), "You are offered %s for %s.",
 		    query_cost_string(tmp,op,F_SELL+F_SHOP), tmp->nrof>1?"them":"it");
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 			  buf, NULL);
@@ -2046,8 +2046,7 @@ int command_rename_item(object *op, char *params)
         return 1;
       }
       /* Copy the old name */
-      strncpy(buf,params+1,closebrace-params-1);
-      buf[closebrace-params-1]='\0';
+      snprintf(buf, sizeof(buf), "%.*s", closebrace-(params+1), params+1);
 
       /* Find best matching item */
       item=find_best_object_match(op,buf);
@@ -2095,8 +2094,7 @@ int command_rename_item(object *op, char *params)
       }
 
       /* Copy the new name */
-      strncpy(buf,params+1,closebrace-params-1);
-      buf[closebrace-params-1]='\0';
+      snprintf(buf, sizeof(buf), "%.*s", closebrace-(params+1), params+1);
 
       /* Let's check it for weird characters */
       for(counter=0;counter<strlen(buf);counter++) {
