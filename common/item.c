@@ -527,7 +527,7 @@ static void ring_desc (const object *op, char* buf, int size)
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
 
     /*    if(op->item_power)
-	sprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
+	snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
     */
     if(buf[0] == 0 && op->type!=SKILL)
         snprintf(buf, size, "of adornment");
