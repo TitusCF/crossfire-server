@@ -295,7 +295,6 @@ void free_globals()
     region* reg;
 
     FREE_AND_CLEAR_STR(undead_name);
-    attack_mess[NROFATTACKMESS][MAXATTACKMESS];
     for (msg = 0; msg < NROFATTACKMESS; msg++)
         for (attack = 0; attack < MAXATTACKMESS; attack++) {
             free(attack_mess[msg][attack].buf1);
