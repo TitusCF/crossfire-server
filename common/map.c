@@ -932,9 +932,7 @@ static void print_shop_string(mapstruct *m, char *output_string) {
  */
 static int load_map_header(FILE *fp, mapstruct *m)
 {
-    char buf[HUGE_BUF], msgbuf[HUGE_BUF], maplorebuf[HUGE_BUF], *key=NULL, *value, *end;
-    int msgpos=0;
-    int maplorepos=0;
+    char buf[HUGE_BUF], *key=NULL, *value, *end;
 
     while (fgets(buf, sizeof(buf), fp)!=NULL) {
         key = buf;
@@ -982,6 +980,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
          */
 
         if (!strcmp(key,"msg")) {
+            char msgbuf[HUGE_BUF];
+            int msgpos=0;
             while (fgets(buf, sizeof(buf), fp)!=NULL) {
                 if (!strcmp(buf,"endmsg\n")) break;
                 else {
@@ -1001,6 +1001,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
             }
         }
         else if (!strcmp(key,"maplore")) {
+            char maplorebuf[HUGE_BUF];
+            int maplorepos=0;
             while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
                 if (!strcmp(buf,"endmaplore\n")) break;
                 else {

@@ -15,7 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-common/map.c: Fix possible buffer overflows.
+common/map.c: Fix possible buffer overflows; Reduce memory used by
+   load_map_header().
 common/readable: Improve performance by minimizing string copies.
 server/c_object.c: Fix possible buffer overflows.
 common/item.c: Fix possible buffer overflows; improve performance by
