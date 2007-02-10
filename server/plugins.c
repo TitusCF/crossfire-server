@@ -967,7 +967,8 @@ void* cfapi_map_create_path(int* type, ...)
     switch (ctype)
     {
     case 0:
-        rv = (char*)create_pathname(str);
+        create_pathname(str, name, MAX_BUF);
+        rv = name;
         break;
 
     case 1:

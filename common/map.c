@@ -99,23 +99,20 @@ mapstruct *has_been_loaded (const char *name) {
  *
  * @param name
  * path of the map.
- * @return
- * static buffer containing the full path.
- *
- * @todo
- * remove static buffer use.
+ * @param buf
+ * buffer that will contain the full path.
+ * @param size
+ * buffer's length.
  */
-const char *create_pathname (const char *name) {
-    static char buf[MAX_BUF];
+void create_pathname (const char *name, char* buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
      */
     if (*name == '/')
-        sprintf (buf, "%s/%s%s", settings.datadir, settings.mapdir, name);
+        snprintf (buf, size, "%s/%s%s", settings.datadir, settings.mapdir, name);
     else
-        sprintf (buf, "%s/%s/%s", settings.datadir, settings.mapdir, name);
-    return (buf);
+        snprintf (buf, size, "%s/%s/%s", settings.datadir, settings.mapdir, name);
 }
 
 /**
@@ -225,7 +222,7 @@ int check_path (const char *name, int prepend_dir)
 #endif
 
     if (prepend_dir)
-        strcpy (buf, create_pathname(name));
+        create_pathname(name, buf, MAX_BUF);
     else
         strcpy(buf, name);
 #ifdef WIN32 /* ***win32: check this sucker in windows style. */
@@ -1178,7 +1175,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     else if (flags & MAP_OVERLAY)
         create_overlay_pathname(filename, pathname, MAX_BUF);
     else
-        strcpy(pathname, create_pathname(filename));
+        create_pathname(filename, pathname, MAX_BUF);
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
         LOG(llevError, "Can't open %s: %s\n", pathname, strerror_local(errno));
@@ -1409,7 +1406,7 @@ int save_map(mapstruct *m, int flag) {
             if (flag == 2)
                 create_overlay_pathname(m->path, filename, MAX_BUF);
             else
-                strcpy (filename, create_pathname (m->path));
+                create_pathname (m->path, filename, MAX_BUF);
         } else
             strcpy (filename, m->path);
 
@@ -1752,8 +1749,11 @@ mapstruct *ready_map_name(const char *name, int flags) {
         /* create and load a map */
         if (flags & MAP_PLAYER_UNIQUE)
             LOG(llevDebug, "Trying to load map %s.\n", name);
-        else
-            LOG(llevDebug, "Trying to load map %s.\n", create_pathname(name));
+        else {
+            char fullpath[MAX_BUF];
+            create_pathname(name, fullpath, MAX_BUF);
+            LOG(llevDebug, "Trying to load map %s.\n", fullpath);
+        }
 
         if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
             return (NULL);

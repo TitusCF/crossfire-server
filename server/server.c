@@ -494,7 +494,9 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
      */
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
     if (!new_map) {
-        new_map = load_original_map(create_pathname(sourcemap), MAP_PLAYER_UNIQUE);
+        char path[MAX_BUF];
+        create_pathname(sourcemap, path, MAX_BUF);
+        new_map = load_original_map(path, MAP_PLAYER_UNIQUE);
         if (new_map) fix_auto_apply(new_map);
     }
     
@@ -590,7 +592,7 @@ static void enter_random_template_map(object *pl, object *exit_ob)
  */
 static void enter_unique_map(object *op, object *exit_ob)
 {
-    char apartment[HUGE_BUF];
+    char apartment[HUGE_BUF], path[MAX_BUF];
     mapstruct	*newmap;
 
     if (EXIT_PATH(exit_ob)[0]=='/') {
@@ -598,7 +600,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
 	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	if (!newmap) {
-	    newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
+        create_pathname(EXIT_PATH(exit_ob), path, MAX_BUF);
+	    newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
 	    if (newmap) fix_auto_apply(newmap);
 	}
     } else { /* relative directory */
@@ -619,7 +622,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-		newmap = load_original_map(create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
+            create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob)), path, MAX_BUF);
+		newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
 		if (newmap) fix_auto_apply(newmap);
 	    }
 	}
