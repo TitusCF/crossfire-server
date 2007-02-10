@@ -101,7 +101,7 @@ const char *month_name[MONTHS_PER_YEAR] = {
 };
 
 /**
- * Initialise all variables used in the timing routines. 
+ * Initialise all variables used in the timing routines.
  */
 void reset_sleep(void)
 {
@@ -291,8 +291,8 @@ void print_tod(object *op)
         suf = "th";
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-        "The %d%s Day of the %s, Year %d", 
-        "The %d%s Day of the %s, Year %d", 
+        "The %d%s Day of the %s, Year %d",
+        "The %d%s Day of the %s, Year %d",
         day, suf, month_name[tod.month], tod.year+1);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
@@ -316,7 +316,7 @@ void time_info(object *op)
     if (!QUERY_FLAG(op,FLAG_WIZ))
         return;
 
-    draw_ext_info (NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, 
+    draw_ext_info (NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
         "Total time:", NULL);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
@@ -338,8 +338,8 @@ void time_info(object *op)
 
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-        "Time last %d ticks:", 
-        "Time last %d ticks:", 
+        "Time last %d ticks:",
+        "Time last %d ticks:",
         pticks > PBUFLEN ? PBUFLEN : pticks);
 
     for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
