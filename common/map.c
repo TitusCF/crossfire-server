@@ -141,23 +141,20 @@ void create_overlay_pathname (const char *name, char* buf, int size) {
  *
  * @param name
  * path of the template map.
- * @return
- * static buffer containing the full path.
- *
- * @todo
- * remove static buffer use.
+ * @param buf
+ * buffer that will contain the full path.
+ * @param size
+ * buf's length
  */
-const char *create_template_pathname (const char *name) {
-    static char buf[MAX_BUF];
+void create_template_pathname (const char *name, char* buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
      */
     if (*name == '/')
-        sprintf (buf, "%s/%s%s", settings.localdir, settings.templatedir, name);
+        snprintf (buf, size, "%s/%s%s", settings.localdir, settings.templatedir, name);
     else
-        sprintf (buf, "%s/%s/%s", settings.localdir, settings.templatedir, name);
-    return (buf);
+        snprintf (buf, size, "%s/%s/%s", settings.localdir, settings.templatedir, name);
 }
 
 /**

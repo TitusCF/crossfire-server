@@ -438,7 +438,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
     char tmpnum[32], exitpath[HUGE_BUF], resultname[HUGE_BUF], tmpstring[HUGE_BUF], *sourcemap;
-    const char *new_map_name;
+    char new_map_name[MAX_BUF];
     
     /* Split the exit path string into two parts, one
      * for where to store the map, and one for were
@@ -484,9 +484,9 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
      * indicated otherwise.
      */
     if (exit_ob->map->template && (resultname[0] != '/')) {
-        new_map_name = path_combine_and_normalize(exit_ob->map->path, resultname);
+        strncpy(new_map_name, path_combine_and_normalize(exit_ob->map->path, resultname), MAX_BUF);
     } else {
-        new_map_name = create_template_pathname(resultname);
+        create_template_pathname(resultname, new_map_name, MAX_BUF);
     }
     
     /* Attempt to load the map, if unable to, then
@@ -530,7 +530,7 @@ static void enter_random_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
     char tmpnum[32], resultname[HUGE_BUF], tmpstring[HUGE_BUF];
-    const char *new_map_name;
+    char new_map_name[MAX_BUF];
     RMParms rp;
     
     /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
@@ -550,9 +550,9 @@ static void enter_random_template_map(object *pl, object *exit_ob)
      * indicated otherwise.
      */
     if (exit_ob->map->template && (resultname[0] != '/')) {
-        new_map_name = path_combine_and_normalize(exit_ob->map->path, resultname);
+        strncpy(new_map_name, path_combine_and_normalize(exit_ob->map->path, resultname), MAX_BUF);
     } else {
-        new_map_name = create_template_pathname(resultname);
+        create_template_pathname(resultname, new_map_name, MAX_BUF);
     }
 
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);

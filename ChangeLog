@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer from create_template_pathname().
+ common/map.c
+ include/libproto.h
+ server/server.c
+---
 Remove static buffer from create_pathname().
  common/map.c
  include/libproto.h
