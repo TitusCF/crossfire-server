@@ -2169,7 +2169,7 @@ int command_stack_clear(object *op, char *params) {
  */
 int command_diff(object *op, char *params) {
     object *left, *right, *top;
-    const char *diff;
+    char diff[HUGE_BUF];
     int left_from, right_from;
 
     top = NULL;
@@ -2214,9 +2214,9 @@ int command_diff(object *op, char *params) {
         }
     }
 
-    diff = get_ob_diff(left, right);
+    get_ob_diff(left, right, diff, HUGE_BUF);
 
-    if (!diff) {
+    if (diff[0]=='\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
 		      "Objects are the same.", NULL);
         return 0;

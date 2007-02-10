@@ -365,14 +365,15 @@ object *get_player_container(object *op) {
  * don't use the global ::errmsg variable.
  */
 static void dump_object2(object *op) {
-    char *cp;
+    char cp[HUGE_BUF];
     /*  object *tmp;*/
 
     if(op->arch!=NULL) {
         strcat(errmsg,"arch ");
         strcat(errmsg,op->arch->name?op->arch->name:"(null)");
         strcat(errmsg,"\n");
-        if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
+        get_ob_diff(op,&empty_archetype->clone, cp, HUGE_BUF);
+        if(cp[0]!='\0')
             strcat(errmsg,cp);
 #if 0
       /* Don't dump player diffs - they are too long, mostly meaningless, and

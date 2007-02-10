@@ -1441,13 +1441,9 @@ static int eol_size=sizeof("\n")-1; /*Substract 1 to suppress terminal 0*/
  * optimize that out.
  *
  * @todo
- * remove static buffer.
+ * use string safe functions everywhere
  */
-char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
-
-/* Too late, have done it already :P
- *                            Tchize
- */
+void get_ob_diff(object *op,object *op2, char* buf, int size) {
 
 /*
  * A bit of explantion on strings handling in this function:
@@ -1462,7 +1458,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     static int already_run = 0;
     static int flag_lens[NUM_FLAGS+1];
     static char buf2[HUGE_BUF];
-    static char buf[HUGE_BUF];
     char* fastbuf;
     int tmp;
     int i;
@@ -1800,10 +1795,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
         }
     }
     FINISH_FASTCAT(fastbuf);
-    if(buf[0]=='\0') /*did not cat anything...*/
-        return NULL;
-
-    return buf;
 }
 
 /**
@@ -1824,7 +1815,7 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
  */
 void save_object(FILE *fp,object *op, int flag) {
     archetype *at;
-    char *cp, alt_buf[HUGE_BUF];
+    char cp[HUGE_BUF];
     object *tmp,*old;
 
     /* Even if the object does have an owner, it would seem that we should
@@ -1856,11 +1847,7 @@ void save_object(FILE *fp,object *op, int flag) {
             LOG(llevError, "could not find original archetype %s for custom monster!", op->arch->name);
             abort();
         }
-        cp = get_ob_diff(&op->arch->clone, &original->clone);
-        if (cp == NULL) {
-            cp = alt_buf;
-            cp[0] = 0;
-        }
+        get_ob_diff(&op->arch->clone, &original->clone, cp, HUGE_BUF);
         if(op->stats.hp != op->arch->clone.stats.hp)
             snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "hp %d\n", op->stats.hp);
         if(op->stats.sp != op->arch->clone.stats.sp)
@@ -1873,7 +1860,7 @@ void save_object(FILE *fp,object *op, int flag) {
             snprintf(cp + strlen(cp), HUGE_BUF - strlen(cp) - 1, "y %d\n", op->y);
     }
     else
-        cp = get_ob_diff(op,&at->clone);
+        get_ob_diff(op,&at->clone, cp, HUGE_BUF);
 
     if (cp!=NULL)
         fputs(cp,fp);	/* We really should do some status checking on this */
