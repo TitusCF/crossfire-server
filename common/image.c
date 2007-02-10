@@ -185,12 +185,12 @@ static void read_face_data(void)
             on_face = NULL;
         }
         else if (!strncmp(buf,"face",4)) {
-            int tmp;
+            unsigned tmp;
 
             cp = buf + 5;
             cp[strlen(cp)-1] = '\0';	/* remove newline */
 
-            if ((tmp=find_face(cp,-1))==-1) {
+            if ((tmp = find_face(cp, (unsigned)-1)) == (unsigned)-1) {
                 LOG(llevError,"Could not find face %s\n", cp);
                 continue;
             }
@@ -360,7 +360,7 @@ void read_bmap_names(void) {
  * (needed in client, so that it will know to request that image
  * from the server)
  */
-int find_face(const char *name, int error) {
+unsigned find_face(const char *name, unsigned error) {
     struct bmappair *bp, tmp;
     char *p;
 

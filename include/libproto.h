@@ -70,7 +70,7 @@ extern void print_monsters(void);
 extern void bitstostring(long bits, int num, char *str);
 /* image.c */
 extern void read_bmap_names(void);
-extern int find_face(const char *name, int error);
+extern unsigned find_face(const char *name, unsigned error);
 extern int read_smooth(void);
 extern int find_smooth(uint16 face, uint16 *smoothed);
 extern void free_all_images(void);
