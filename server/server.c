@@ -332,8 +332,7 @@ static char *clean_path(const char *file)
 {
     static char newpath[MAX_BUF],*cp;
 
-    strncpy(newpath, file, MAX_BUF-1);
-    newpath[MAX_BUF-1]='\0';
+    snprintf(newpath, sizeof(newpath), "%s", file);
     for (cp=newpath; *cp!='\0'; cp++) {
 	if (*cp=='/') *cp='_';
     }
@@ -355,10 +354,9 @@ static char *unclean_path(const char *src)
 
     cp=strrchr(src, '/');
     if (cp)
-	strncpy(newpath, cp+1, MAX_BUF-1);
+	snprintf(newpath, sizeof(newpath), "%s", cp+1);
     else
-	strncpy(newpath, src, MAX_BUF-1);
-    newpath[MAX_BUF-1]='\0';
+	snprintf(newpath, sizeof(newpath), "%s", src);
 
     for (cp=newpath; *cp!='\0'; cp++) {
 	if (*cp=='_') *cp='/';
@@ -402,13 +400,13 @@ static void enter_random_map(object *pl, object *exit_ob)
 	cp = strrchr(rp.origin_map, '/');
 	if (!cp) cp = rp.origin_map;
 	/* Need to strip of any trailing digits, if it has them */
-	strcpy(buf, cp);
+	snprintf(buf, sizeof(buf), "%s", cp);
 	while (isdigit(buf[strlen(buf) - 1]))
 	    buf[strlen(buf) - 1] = 0;
 	cp = buf;
     }
 
-    sprintf(newmap_name,"/random/%s%04d",cp+1, reference_number++);
+    snprintf(newmap_name, sizeof(newmap_name), "/random/%s%04d", cp+1, reference_number++);
 
     /* now to generate the actual map. */
     new_map=generate_random_map(newmap_name,&rp);
@@ -424,7 +422,7 @@ static void enter_random_map(object *pl, object *exit_ob)
 	x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
 	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
 	EXIT_PATH(exit_ob) = add_string(newmap_name);
-	strcpy(new_map->path, newmap_name);
+	snprintf(new_map->path, sizeof(new_map->path), "%s", newmap_name);
 	enter_map(pl, new_map, 	x, y);
     }
 }
@@ -470,23 +468,23 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
     /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
      * of the exit, and the name of the map the exit is on, respectively.
      */
-    sprintf(tmpnum ,"%d", exit_ob->x);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->x);
     replace(exitpath, "%x", tmpnum, resultname,  sizeof(resultname));
 
-    sprintf(tmpnum ,"%d", exit_ob->y);
-    sprintf(tmpstring, "%s", resultname);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->y);
+    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
     replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
 
-    sprintf(tmpstring, "%s", resultname);
+    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
 
     /* If we are coming from another template map, use reletive paths unless
      * indicated otherwise.
      */
     if (exit_ob->map->template && (resultname[0] != '/')) {
-        strncpy(new_map_name, path_combine_and_normalize(exit_ob->map->path, resultname), MAX_BUF);
+        snprintf(new_map_name, sizeof(new_map_name), "%s", path_combine_and_normalize(exit_ob->map->path, resultname));
     } else {
-        create_template_pathname(resultname, new_map_name, MAX_BUF);
+        create_template_pathname(resultname, new_map_name, sizeof(new_map_name));
     }
 
     /* Attempt to load the map, if unable to, then
@@ -504,7 +502,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
         /* set the path of the map to where it should be
          * so we don't just save over the source map.
          */
-        strcpy(new_map->path, new_map_name);
+        snprintf(new_map->path, sizeof(new_map->path), "%s", new_map_name);
 	new_map->template = 1;
         enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
@@ -536,23 +534,23 @@ static void enter_random_template_map(object *pl, object *exit_ob)
     /* Do replacement of %x, %y, and %n to the x coord of the exit, the y coord
      * of the exit, and the name of the map the exit is on, respectively.
      */
-    sprintf(tmpnum ,"%d", exit_ob->x);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->x);
     replace(EXIT_PATH(exit_ob)+3, "%x", tmpnum, resultname,  sizeof(resultname));
 
-    sprintf(tmpnum ,"%d", exit_ob->y);
-    sprintf(tmpstring, "%s", resultname);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", exit_ob->y);
+    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
     replace(tmpstring, "%y", tmpnum, resultname,  sizeof(resultname));
 
-    sprintf(tmpstring, "%s", resultname);
+    snprintf(tmpstring, sizeof(tmpstring), "%s", resultname);
     replace(tmpstring, "%n", exit_ob->map->name, resultname,  sizeof(resultname));
 
     /* If we are coming from another template map, use reletive paths unless
      * indicated otherwise.
      */
     if (exit_ob->map->template && (resultname[0] != '/')) {
-        strncpy(new_map_name, path_combine_and_normalize(exit_ob->map->path, resultname), MAX_BUF);
+        snprintf(new_map_name, sizeof(new_map_name), "%s", path_combine_and_normalize(exit_ob->map->path, resultname));
     } else {
-        create_template_pathname(resultname, new_map_name, MAX_BUF);
+        create_template_pathname(resultname, new_map_name, sizeof(new_map_name));
     }
 
     new_map = ready_map_name(new_map_name, MAP_PLAYER_UNIQUE);
@@ -596,11 +594,11 @@ static void enter_unique_map(object *op, object *exit_ob)
     mapstruct	*newmap;
 
     if (EXIT_PATH(exit_ob)[0]=='/') {
-	sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+	snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s", settings.localdir,
 	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
 	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	if (!newmap) {
-        create_pathname(EXIT_PATH(exit_ob), path, MAX_BUF);
+        create_pathname(EXIT_PATH(exit_ob), path, sizeof(path));
 	    newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
 	    if (newmap) fix_auto_apply(newmap);
 	}
@@ -609,20 +607,20 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 	if (exit_ob->map->unique) {
 
-	    strcpy(reldir, unclean_path(exit_ob->map->path));
+	    snprintf(reldir, sizeof(reldir), "%s", unclean_path(exit_ob->map->path));
 
 	    /* Need to copy this over, as clean_path only has one static return buffer */
-	    strcpy(tmpc, clean_path(reldir));
+	    snprintf(tmpc, sizeof(tmpc), "%s", clean_path(reldir));
 	    /* Remove final component, if any */
 	    if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
 
-	    sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir,
+	    snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s_%s", settings.localdir,
 		    settings.playerdir, op->name, tmpc,
 		    clean_path(EXIT_PATH(exit_ob)));
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-            create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob)), path, MAX_BUF);
+            create_pathname(path_combine_and_normalize(reldir, EXIT_PATH(exit_ob)), path, sizeof(path));
 		newmap = load_original_map(path, MAP_PLAYER_UNIQUE);
 		if (newmap) fix_auto_apply(newmap);
 	    }
@@ -631,7 +629,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 	    /* The exit is unique, but the map we are coming from is not unique.  So
 	     * use the basic logic - don't need to demangle the path name
 	     */
-	    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
+	    snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s", settings.localdir,
 		    settings.playerdir, op->name,
 		    clean_path(path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob))));
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
@@ -643,7 +641,7 @@ static void enter_unique_map(object *op, object *exit_ob)
     }
 
     if (newmap) {
-	strcpy(newmap->path, apartment);
+	snprintf(newmap->path, sizeof(newmap->path), "%s", apartment);
 	newmap->unique = 1;
 	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
@@ -715,9 +713,8 @@ void enter_exit(object *op, object *exit_ob) {
         mapstruct	*newmap;
         if (exit_ob->map) {
             char tmp_path[HUGE_BUF];
-            tmp_path[0] = '\0';
-            strncpy(tmp_path, path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)), HUGE_BUF);
-            tmp_path[HUGE_BUF - 1] = '\0';
+
+            snprintf(tmp_path, sizeof(tmp_path), "%s", path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob)));
             newmap = ready_map_name(tmp_path, 0);
             /* Random map was previously generated, but is no longer about.  Lets generate a new
              * map.
@@ -1243,15 +1240,15 @@ int forbid_play(void)
     clock = time (NULL);
     tm = (struct tm *) localtime (&clock);
 
-    sprintf (buf, "%s/%s", settings.confdir, PERM_FILE);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, PERM_FILE);
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
 	return 0;
 
-    while (fgets (buf, MAX_BUF, fp)) {
+    while (fgets (buf, sizeof(buf), fp)) {
 	if (buf[0]=='#') continue;
 	if (!strncmp (buf, "msg", 3)) {
 	    if (forbit)
-		while (fgets (buf, MAX_BUF, fp))  /* print message */
+		while (fgets (buf, sizeof(buf), fp))  /* print message */
 		    fputs (buf, logfile);
 	    break;
 
