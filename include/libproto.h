@@ -341,7 +341,7 @@ extern const char *ss_dump_table(int what);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
 /* time.c */
 extern void reset_sleep(void);
-extern void log_time(long process_utime);
+extern void log_time(uint32 process_utime);
 extern int enough_elapsed_time(void);
 extern void sleep_delta(void);
 extern void set_max_time(long t);

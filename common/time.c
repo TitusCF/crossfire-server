@@ -120,7 +120,7 @@ void reset_sleep(void)
 /**
  * Adds time to our history list.
  */
-void log_time(long process_utime)
+void log_time(uint32 process_utime)
 {
     pticks++;
     if (++psaveind >= PBUFLEN)
@@ -141,7 +141,7 @@ void log_time(long process_utime)
 int enough_elapsed_time(void)
 {
     static struct timeval new_time;
-    long elapsed_utime;
+    uint32 elapsed_utime;
 
     (void) GETTIMEOFDAY(&new_time);
 
@@ -309,7 +309,8 @@ void print_tod(object *op)
  */
 void time_info(object *op)
 {
-    int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
+    int tot = 0, long_count = 0;
+    uint32 maxt = 0, mint = 99999999, i;
 
     print_tod(op);
 
