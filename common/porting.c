@@ -82,9 +82,6 @@ static unsigned int curtmp = 0;
  * prefix to create unique name. Can be NULL.
  * @return
  * path to temporary file, or NULL if failure. Must be freed by caller.
- *
- * @todo
- * fix memory leak if dir is null (ok, not that useful to call function with that, but still).
  */
 char *tempnam_local(const char *dir, const char *pfx)
 {
@@ -96,9 +93,6 @@ char *tempnam_local(const char *dir, const char *pfx)
 #define MAXPATHLEN 4096
 #endif
 
-    if (!(name = (char *) malloc(MAXPATHLEN)))
-        return(NULL);
-
     if (!pfx)
         pfx = "cftmp.";
 
@@ -108,6 +102,8 @@ char *tempnam_local(const char *dir, const char *pfx)
      * find one that is free.
      */
     if (dir!=NULL) {
+    if (!(name = (char *) malloc(MAXPATHLEN)))
+        return(NULL);
         do {
 #ifdef HAVE_SNPRINTF
             (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
@@ -419,11 +415,8 @@ int strcasecmp(const char *s1, const char*s2)
  * string we're searching for.
  * @return
  * pointer to first occurrence of find in s, NULL if not found.
- *
- * @todo
- * should return a const char*.
  */
-char *strcasestr_local(const char *s, const char *find)
+const char *strcasestr_local(const char *s, const char *find)
 {
     char c, sc;
     size_t len;
@@ -487,17 +480,18 @@ int snprintf(char *dest, int max, const char *format, ...)
  *
  * @note
  * this function will return a dummy string if strerror() doesn't exist on the current platform.
- *
  * @todo
- * replace with strerror_r to be thread-safe?
+ * find a way to remove static buffer but keep easy logging stuff.
  */
 char *strerror_local(int errnum)
 {
+    static error[MAX_BUF];
 #if defined(HAVE_STRERROR)
-    return(strerror(errnum));
+    strerror_r(errnum, error, MAX_BUF);
 #else
-    return("strerror_local not implemented");
+    strncpy(error, "strerror_local not implemented", MAX_BUF);
 #endif
+    return error;
 }
 
 /**
@@ -798,10 +792,8 @@ void close_and_delete(FILE *fp, int compressed) {
  *
  * @note
  * will LOG() to debug and error.
- * @todo
- * filename should be const char*.
  */
-void make_path_to_file (char *filename)
+void make_path_to_file (const char *filename)
 {
     char buf[MAX_BUF], *cp = buf;
     struct stat statbuf;

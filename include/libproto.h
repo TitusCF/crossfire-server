@@ -252,7 +252,7 @@ extern char *tempnam_local(const char *dir, const char *pfx);
 extern void remove_directory(const char *path);
 extern char *strdup_local(const char *str);
 extern long strtol_local(register char *str, char **ptr, register int base);
-extern char *strcasestr_local(const char *s, const char *find);
+extern const char *strcasestr_local(const char *s, const char *find);
 extern char *strerror_local(int errnum);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);
@@ -261,7 +261,7 @@ extern void save_long(char *buf, const char *name, long n);
 extern void save_long_long(char *buf, char *name, sint64 n);
 extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
-extern void make_path_to_file(char *filename);
+extern void make_path_to_file(const char *filename);
 /* player.c */
 extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);

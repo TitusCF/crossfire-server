@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Use const char* instead of char*, use thread-safe strerror_r, fix potential memory leak.
+ common/porting.c
+ include/libproto.h
+---
 Remove static buffer from get_string_move_type().
  common/loader.l
 ---
