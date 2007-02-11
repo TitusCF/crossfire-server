@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove last static buffers, use safe string functions.
+ common/readable.c
+ include/libproto.h
+---
 Remove obsolete long_desc(), replaced by ob_describe(), get rid of static buffer.
  include/sproto.h
  server/c_object.c ob_methods.c skills.c spell_effect.c

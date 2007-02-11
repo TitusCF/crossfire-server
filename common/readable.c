@@ -636,9 +636,6 @@ static titlelist* get_titlelist (int i)
  * what to split by. Must not have a lenght greater than 11.
  * @return
  * number of elements.
- *
- * @todo
- * check lengths and such.
  */
 int nstrtok (const char *buf1, const char *buf2)
 {
@@ -647,8 +644,8 @@ int nstrtok (const char *buf1, const char *buf2)
 
     if (!buf1 || !buf2)
         return 0;
-    sprintf (buf, "%s", buf1);
-    sprintf (sbuf, "%s", buf2);
+    snprintf(buf, sizeof(buf), buf1);
+    snprintf (sbuf, sizeof(sbuf), buf2);
     tbuf = strtok (buf, sbuf);
     while (tbuf)
     {
@@ -667,36 +664,36 @@ int nstrtok (const char *buf1, const char *buf2)
  * buffer to split.
  * @param buf2
  * what to split buf1 by.
+ * @param retbuf
+ * where to write the resulting string.
+ * @param size
+ * length of retbuf.
  * @return
- * static buffer containing a comma separated string of values.
- *
- * @todo
- * don't use static buffer. Use safe string functions.
+ * retbuf.
  */
-char* strtoktolin (const char *buf1, const char *buf2)
+char* strtoktolin (const char *buf1, const char *buf2, char* retbuf, int size)
 {
     int     maxi, i = nstrtok (buf1, buf2);
     char   *tbuf, buf[MAX_BUF], sbuf[12];
-    static char rbuf[BOOK_BUF];
 
     maxi = i;
     strcpy(buf, buf1);
     strcpy(sbuf, buf2);
-    strcpy(rbuf, " ");
+    snprintf(retbuf, size, " ");
     tbuf = strtok (buf, sbuf);
     while (tbuf && i > 0)
     {
-        strcat (rbuf, tbuf);
+        snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), tbuf);
         i--;
         if (i == 1 && maxi > 1)
-            strcat (rbuf, " and ");
+            snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), " and ");
         else if (i > 0 && maxi > 1)
-            strcat (rbuf, ", ");
+            snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), ", ");
         else
-            strcat (rbuf, ".");
+            snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), ".");
         tbuf = strtok (NULL, sbuf);
     }
-    return (char *) rbuf;
+    return retbuf;
 }
 
 /**
@@ -761,8 +758,8 @@ static void init_msgfile (void)
             {
                 if (strlen (msgbuf) > BOOK_BUF)
                 {
-                    LOG (llevDebug, "Warning: this string exceeded max book buf size:");
-                    LOG (llevDebug, "  %s", msgbuf);
+                    LOG (llevDebug, "Warning: this string exceeded max book buf size:\n");
+                    LOG (llevDebug, "  %s\n", msgbuf);
                 }
                 tmp->name = add_string (msgbuf);
                 tmp->next = first_msg;
@@ -786,7 +783,7 @@ static void init_msgfile (void)
     }
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\ninit_info_listfile() got %d messages.\n", nrofmsg);
+    LOG (llevDebug, "init_info_listfile() got %d messages.\n", nrofmsg);
 #endif
     LOG (llevDebug, "done messages.\n");
 }
@@ -888,9 +885,6 @@ static void init_book_archive (void)
 /**
  * Creates the linked list of pointers to
  * monster archetype objects if not called previously.
- *
- * @todo
- * check malloc return.
  */
 static void init_mon_info (void)
 {
@@ -910,6 +904,10 @@ static void init_mon_info (void)
           )
         {
             objectlink *mon = (objectlink *) malloc (sizeof (objectlink));
+            if (!mon) {
+                LOG(llevError, "init_mon_info: malloc failed!\n");
+                abort();
+            }
             mon->ob = &at->clone;
             mon->id = nrofmon;
             mon->next = first_mon_info;
@@ -1400,19 +1398,18 @@ object* get_random_mon (int level)
  *
  * @param mon
  * monster to describe.
+ * @param buf
+ * buffer that will contain the description.
+ * @param size
+ * buf's length.
  * @return
- * static buffer containing the description.
- *
- * @todo
- * remove static buffer use.
+ * buf
  */
-char* mon_desc (const object *mon)
+char* mon_desc (const object *mon, char* buf, int size)
 {
-    static char retbuf[HUGE_BUF];
-
-    sprintf (retbuf, " *** %s ***\n", mon->name);
-    describe_item(mon, NULL, retbuf+strlen(retbuf), sizeof(retbuf)-strlen(retbuf));
-    return retbuf;
+    snprintf(buf, size, " *** %s ***\n", mon->name);
+    describe_item(mon, NULL, buf+strlen(buf), size-strlen(buf));
+    return buf;
 }
 
 
@@ -1448,26 +1445,24 @@ object* get_next_mon (object *tmp)
 
 /**
  * Generate a message detailing the properties
- * of a randomly selected monster.
+ * of randomly monster(s).
  *
  * @param level
  * book level.
+ * @param buf
+ * buffer that will contain the message. Must be at least of length booksize
  * @param booksize
  * size (in characters) of the book we want.
  * @return
- * static buffer containing the description.
- *
- * @todo
- * remove static buffer. Use safe string functions. Is it all right to ignore level for next monsters?
+ * buf.
  */
-char* mon_info_msg (int level, int booksize)
+char* mon_info_msg (int level, char* buf, int booksize)
 {
-    static char retbuf[BOOK_BUF];
-    char    tmpbuf[HUGE_BUF];
+    char    tmpbuf[HUGE_BUF], desc[MAX_BUF];
     object *tmp;
 
     /*preamble */
-    strcpy (retbuf, "This beastiary contains:");
+    snprintf(buf, booksize, "This beastiary contains:");
 
     /* lets print info on as many monsters as will fit in our
      * document.
@@ -1479,10 +1474,10 @@ char* mon_info_msg (int level, int booksize)
     tmp = get_random_mon (level * 3);
     while (tmp) {
         /* monster description */
-        sprintf (tmpbuf, "\n---\n%s", mon_desc (tmp));
+        snprintf(tmpbuf, sizeof(tmpbuf), "\n---\n%s", mon_desc (tmp, desc, sizeof(desc)));
 
-        if (!book_overflow (retbuf, tmpbuf, booksize))
-            strcat (retbuf, tmpbuf);
+        if (!book_overflow (buf, tmpbuf, booksize))
+            snprintf(buf + strlen(buf), booksize - strlen(buf), tmpbuf);
         else
             break;
 
@@ -1495,7 +1490,7 @@ char* mon_info_msg (int level, int booksize)
     fprintf (logfile, " MADE THIS:\n%s\n", retbuf);
 #endif
 
-    return retbuf;
+    return buf;
 }
 
 
@@ -1509,22 +1504,20 @@ char* mon_info_msg (int level, int booksize)
  *
  * @param level
  * level of the book.
+ * @param retbuf
+ * buffer to contain the description. Must be at least booksize chars.
  * @param booksize
  * length of the book.
  * @return
- * static buffer containing the description.
- *
- * @todo
- * remove static buffer. Use safe string functions.
+ * retbuf.
  */
-static const char *artifact_msg (int level, int booksize)
+static char *artifact_msg (int level, char* retbuf, int booksize)
 {
     artifactlist *al = NULL;
     artifact *art;
     int     chance, i, type, index;
     int     book_entries = level > 5 ? RANDOM () % 3 + RANDOM () % 3 + 2 : RANDOM () % level + 1;
-    char    name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
-    static char retbuf[BOOK_BUF];
+    char    buf[BOOK_BUF], sbuf[MAX_BUF];
     object *tmp = NULL;
 
     /* values greater than 5 create msg buffers that are too big! */
@@ -1544,8 +1537,10 @@ static const char *artifact_msg (int level, int booksize)
         i++;
     } while ((al == NULL) && (i<10));
 
-    if (i==10) /* Unable to find a message */
-        return("None");
+    if (i==10) { /* Unable to find a message */
+        snprintf(retbuf, booksize, "None");
+        return retbuf;
+    }
 
     /* There is no reason to start on the artifact list at the begining. Lets
      * take our starting position randomly... */
@@ -1557,11 +1552,8 @@ static const char *artifact_msg (int level, int booksize)
         art = art->next;
     }
 
-    /* the base 'generic' name for our artifact */
-    strcpy(name, art_name_array[index].name);
-
     /* Ok, lets print out the contents */
-    sprintf (retbuf, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is",
+    snprintf(retbuf, booksize, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is",
         book_entries > 1 ? "some artifacts" : "an artifact");
 
     /* artifact msg attributes loop. Lets keep adding entries to the 'book'
@@ -1574,7 +1566,7 @@ static const char *artifact_msg (int level, int booksize)
             art = al->items;
 
         /* separator of items */
-        strcpy (buf, "--- \n");
+        snprintf(buf, sizeof(buf), "--- \n");
 
         /* Name */
         if (art->allowed != NULL && strcmp (art->allowed->name, "All"))
@@ -1586,46 +1578,48 @@ static const char *artifact_msg (int level, int booksize)
                 next = next->next;
             }
             while ((next != (linked_char *) NULL) && !RANDOM () % 2);
-            sprintf (buf, "%s A %s of %s", buf, temp->name, art->item->name);
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " A %s of %s", temp->name, art->item->name);
         }
-        else			/* default name is used */
-            sprintf (buf, "%s The %s of %s", buf, name, art->item->name);
+        else {			/* default name is used */
+            /* use the base 'generic' name for our artifact */
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " The %s of %s", art_name_array[index].name, art->item->name);
+        }
 
         /* chance of finding */
         chance = 100 * ((float) art->chance / al->total_chance);
         if (chance >= 20)
-            sprintf (sbuf, "an uncommon");
+            snprintf (sbuf, sizeof(sbuf), "an uncommon");
         else if (chance >= 10)
-            sprintf (sbuf, "an unusual");
+            snprintf (sbuf, sizeof(sbuf), "an unusual");
         else if (chance >= 5)
-            sprintf (sbuf, "a rare");
+            snprintf (sbuf, sizeof(sbuf), "a rare");
         else
-            sprintf (sbuf, "a very rare");
-        sprintf (buf, "%s is %s\n", buf, sbuf);
+            snprintf (sbuf, sizeof(sbuf), "a very rare");
+        snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " is %s\n", sbuf);
 
         /* value of artifact */
-        sprintf (buf, "%s item with a value that is %d times normal.\n",
-            buf, art->item->value);
+        snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " item with a value that is %d times normal.\n",
+            art->item->value);
 
         /* include the message about the artifact, if exists, and book
         * level is kinda high */
         if (art->item->msg && (RANDOM () % 4 + 1) < level &&
             !((strlen (art->item->msg) + strlen (buf)) > BOOK_BUF))
-            strcat(buf, art->item->msg);
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), art->item->msg);
 
         /* properties of the artifact */
         tmp = get_object ();
         add_abilities (tmp, art->item);
         tmp->type = type;
         SET_FLAG (tmp, FLAG_IDENTIFIED);
-        describe_item (tmp, NULL, name, BOOK_BUF);
-        if (strlen (name) > 1)
-            sprintf (buf, "%s Properties of this artifact include: \n %s \n",
-                buf, name);
+        describe_item (tmp, NULL, sbuf, sizeof(sbuf));
+        if (strlen (sbuf) > 1)
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " Properties of this artifact include: \n %s \n",
+                sbuf);
         free_object(tmp);
         /* add the buf if it will fit */
         if (!book_overflow (retbuf, buf, booksize))
-            strcat (retbuf, buf);
+            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), buf);
         else
             break;
 
@@ -1650,32 +1644,28 @@ static const char *artifact_msg (int level, int booksize)
  *
  * @param level
  * level of the book.
+ * @param retbuf
+ * buffer to write the description into.
  * @param booksize
  * length of the book.
  * @return
- * static buffer containing the description.
- *
- * @todo
- * remove static buffer. Use safe string functions.
+ * retbuf
  */
-char* spellpath_msg (int level, int booksize)
+char* spellpath_msg (int level, char* retbuf, int booksize)
 {
-    static char retbuf[BOOK_BUF];
-    char    tmpbuf[BOOK_BUF];
     int     path = RANDOM () % NRSPELLPATHS, prayers = RANDOM () % 2;
     int     did_first_sp = 0;
     uint32  pnum = (path == -1) ? PATH_NULL : spellpathdef[path];
     archetype *at;
 
     /* Preamble */
-    sprintf (retbuf, "Herein are detailed the names of %s\n",
+    snprintf(retbuf, booksize, "Herein are detailed the names of %s\n",
         prayers ? "prayers": "incantations");
 
     if (path == -1)
-        strcat (retbuf, "having no known spell path.\n");
+        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "having no known spell path.\n");
     else
-        sprintf (retbuf, "%sbelonging to the path of %s:\n", retbuf,
-            spellpathnames[path]);
+        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "belonging to the path of %s:\n",  spellpathnames[path]);
 
     for (at=first_archetype; at != NULL; at=at->next) {
         /* Determine if this is an appropriate spell.  Must
@@ -1685,27 +1675,24 @@ char* spellpath_msg (int level, int booksize)
         if (at->clone.type == SPELL && at->clone.path_attuned & pnum &&
           ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers)) &&
           (at->clone.level < (level * 8))) {
-            strcpy (tmpbuf, at->clone.name);
-
-            if (book_overflow (retbuf, tmpbuf, booksize))
+            if (book_overflow (retbuf, at->clone.name, booksize))
                 break;
-            else {
-                if (did_first_sp)
-                    strcat (retbuf, ",\n");
-                did_first_sp = 1;
-                strcat (retbuf, tmpbuf);
-            }
+
+            if (did_first_sp)
+                snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), ",\n");
+            did_first_sp = 1;
+            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), at->clone.name);
         }
     }
     /* Geez, no spells were generated. */
     if (!did_first_sp) {
         if (RANDOM () % 4)	/* usually, lets make a recursive call... */
-            spellpath_msg (level, booksize);
+            return spellpath_msg(level, retbuf, booksize);
         else	/* give up, cause knowing no spells exist for path is info too. */
-            strcat (retbuf, "\n - no known spells exist -\n");
+            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "\n - no known spells exist -\n");
     }
     else {
-        strcat (retbuf, "\n");
+        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "\n");
     }
     return retbuf;
 }
@@ -1719,9 +1706,6 @@ char* spellpath_msg (int level, int booksize)
  * book we write to.
  * @param level
  * level for formulaes and such.
- *
- * @todo
- * use safe string functions.
  */
 void make_formula_book(object *book, int level) {
     char retbuf[BOOK_BUF], title[MAX_BUF];
@@ -1767,7 +1751,7 @@ void make_formula_book(object *book, int level) {
         archetype *at;
 
         /* preamble */
-        sprintf(retbuf, "Herein is described a project using %s: \n",
+        snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s: \n",
             formula->skill?formula->skill:"an unknown skill");
 
         if ((at = find_archetype (op_name)) != (archetype *) NULL)
@@ -1778,28 +1762,28 @@ void make_formula_book(object *book, int level) {
 
         /* item name */
         if (strcmp (formula->title, "NONE")) {
-            sprintf (retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s of %s", op_name, formula->title);
             /* This results in things like pile of philo. sulfur.
             * while philo. sulfur may look better, without this,
             * you get things like 'the wise' because its missing the
             * water of section.
             */
-            sprintf(title,"%s: %s of %s",
+            snprintf(title, sizeof(title), "%s: %s of %s",
                 formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
                 op_name, formula->title);
         }
         else
         {
-            sprintf (retbuf, "%sThe %s", retbuf, op_name);
-            sprintf(title,"%s: %s",
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s", op_name);
+            snprintf(title, sizeof(title), "%s: %s",
                 formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
                 op_name);
             if (at->clone.title)
             {
-                strcat (retbuf, " ");
-                strcat (retbuf, at->clone.title);
-                strcat(title, " ");
-                strcat(title, at->clone.title);
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " ");
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), at->clone.title);
+                snprintf(title + strlen(title), sizeof(title) - strlen(title), " ");
+                snprintf(title + strlen(title), sizeof(title) - strlen(title), at->clone.title);
             }
         }
         /* Lets name the book something meaningful ! */
@@ -1823,20 +1807,21 @@ void make_formula_book(object *book, int level) {
             else
                 snprintf(name, sizeof(name), "an unknown place");
 
-            sprintf(retbuf + strlen(retbuf),
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf),
                 " may be made at %s using the following ingredients:\n",
                 name);
 
             for (next = formula->ingred; next != NULL; next = next->next)
             {
-                strcat (retbuf, next->name);
-                strcat (retbuf, "\n");
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), next->name);
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
             }
         }
         else
             LOG (llevError, "formula_msg() no ingredient list for object %s of %s\n",
             op_name, formula->title);
-        if (retbuf[strlen(retbuf)-1]!= '\n') strcat(retbuf, "\n");
+        if (retbuf[strlen(retbuf)-1]!= '\n')
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
         if (book->msg) free_string(book->msg);
         book->msg = add_string(retbuf);
     }
@@ -1888,23 +1873,21 @@ char* msgfile_msg (int level, int booksize)
  *
  * @param level
  * number of elements to give.
+ * @param retbuf
+ * buffer that will contain the description. Must be at least length chars.
  * @param booksize
  * desired length of the book.
  * @return
- * static buffer containing the description, or NULL if no god was found.
- *
- * @todo
- * remove static buffer.
+ * retbuf.
  */
-const char   *
-god_info_msg (int level, int booksize)
+char* god_info_msg (int level, char* retbuf, int booksize)
 {
-    static char retbuf[BOOK_BUF];
     const char   *name = NULL;
     char buf[BOOK_BUF];
     int     i, retlen, buflen;
     int introlen;
     object *god = pntr_to_god_obj (get_rand_god ());
+    char en[BOOK_BUF];
 
     if (booksize > BOOK_BUF) {
         LOG(llevError,"common/readable.c:god_info_msg() - passed in booksize (%d) is larger than book buffer (%d)\n",
@@ -1926,7 +1909,7 @@ god_info_msg (int level, int booksize)
     /* Always have as default information the god's descriptive terms. */
     if (nstrtok (god->msg, ",") > 0) {
         safe_strcat(retbuf, ", known as", &retlen, BOOK_BUF);
-        safe_strcat (retbuf, strtoktolin (god->msg, ","), &retlen, BOOK_BUF);
+        safe_strcat (retbuf, strtoktolin (god->msg, ",", buf, sizeof(buf)), &retlen, BOOK_BUF);
     }
     else
         safe_strcat (retbuf, "...", &retlen, BOOK_BUF);
@@ -1966,10 +1949,10 @@ god_info_msg (int level, int booksize)
 
                 if (i > 1)
                     snprintf (tmpbuf, MAX_BUF, "following races:%s\n ---\n",
-                      strtoktolin (enemy, ","));
+                      strtoktolin (enemy, ",", en, sizeof(en)));
                 else
                     snprintf (tmpbuf, MAX_BUF, "race of%s\n ---\n",
-                      strtoktolin (enemy, ","));
+                      strtoktolin (enemy, ",", en, sizeof(en)));
 
                 buflen = strlen(buf);
                 safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
@@ -2004,11 +1987,11 @@ god_info_msg (int level, int booksize)
                     if (i > 1)
                         snprintf (tmpbuf, MAX_BUF,
                             "following races:%s\n ---\n",
-                            strtoktolin (race, ","));
+                            strtoktolin (race, ",", en, sizeof(en)));
                     else
                         snprintf (tmpbuf, MAX_BUF,
                             "race of %s\n ---\n",
-                            strtoktolin (race, ","));
+                            strtoktolin (race, ",", en, sizeof(en)));
 
                     buflen = strlen(buf);
                     safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
@@ -2159,13 +2142,13 @@ void tailor_readable_ob (object *book, int msg_type)
     switch (msg_type)
     {
         case 1:			/* monster attrib */
-            strcpy (msgbuf, mon_info_msg (level, book_buf_size));
+            mon_info_msg(level, msgbuf, book_buf_size);
             break;
         case 2:			/* artifact attrib */
-        strcpy (msgbuf, artifact_msg (level, book_buf_size));
-        break;
+            artifact_msg (level, msgbuf, book_buf_size);
+            break;
         case 3:			/* grouping incantations/prayers by path */
-            strcpy (msgbuf, spellpath_msg (level, book_buf_size));
+            spellpath_msg (level, msgbuf, book_buf_size);
             break;
         case 4:			/* describe an alchemy formula */
             make_formula_book(book, level);
@@ -2173,7 +2156,7 @@ void tailor_readable_ob (object *book, int msg_type)
             return;
             break;
         case 5:			/* bits of information about a god */
-            strcpy (msgbuf, god_info_msg (level, book_buf_size));
+            god_info_msg(level, msgbuf, book_buf_size);
             break;
         case 0:			/* use info list in lib/ */
         default:
@@ -2248,9 +2231,6 @@ void free_all_readable (void)
 
 /**
  * Write out the updated book archive to bookarch file.
- *
- * @todo
- * reset the need_to_write_bookarchive flag only if success. Check write succeeds.
  */
 void write_book_archive (void)
 {
@@ -2262,9 +2242,8 @@ void write_book_archive (void)
 
     /* If nothing changed, don't write anything */
     if (!need_to_write_bookarchive) return;
-    need_to_write_bookarchive=0;
 
-    sprintf (fname, "%s/bookarch", settings.localdir);
+    snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG (llevDebug, "Updating book archive: %s...\n", fname);
 
     if ((fp = fopen (fname, "w")) == NULL)
@@ -2290,6 +2269,10 @@ void write_book_archive (void)
             bl = bl->next;
             index++;
         }
+        if (!ferror(fp))
+            need_to_write_bookarchive=0;
+        else
+            LOG(llevError, "Error during book archive save.");
         fclose (fp);
         chmod (fname, SAVE_MODE);
     }
