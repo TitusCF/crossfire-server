@@ -636,7 +636,7 @@ int command_strings (object *op, char *params)
 		  stats);
 
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
-		  ss_dump_table(SS_DUMP_TABLE, stats, sizeof(stats)), NULL);
+		  ss_dump_table(SS_DUMP_TOTALS, stats, sizeof(stats)), NULL);
     return 1;
 }
 
