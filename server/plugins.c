@@ -640,18 +640,27 @@ void plugins_display_list(object *op)
 
 /* SYSTEM-RELATED HOOKS */
 
+/**
+ * Finds an animation.
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_find_animation(int *type, ...)
 {
     va_list args;
-    static int rv;
-    char* anim;
+    const char* anim;
+    int* num;
+
     va_start(args, type);
-    anim = va_arg(args, char*);
+    anim = va_arg(args, const char*);
+    num = va_arg(args, int*);
     va_end(args);
 
-    rv = find_animation(anim);
+    *num = find_animation(anim);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 
 void* cfapi_system_strdup_local(int *type, ...)
@@ -730,23 +739,31 @@ void* cfapi_system_remove_string(int *type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+/**
+ * Checks if a file exists.
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_check_path(int* type, ...)
 {
     va_list args;
-    static int rv;
-    char* name;
+    const char* name;
     int prepend_dir;
+    int* ret;
 
     va_start(args, type);
 
     name = va_arg(args, char*);
     prepend_dir = va_arg(args, int);
+    ret = va_arg(args, int*);
 
-    rv = check_path(name, prepend_dir);
+    *ret = check_path(name, prepend_dir);
 
     va_end(args);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 
 void* cfapi_system_re_cmp(int* type, ...)
@@ -2669,6 +2686,14 @@ void* cfapi_object_set_property(int* type, ...)
     return NULL;
 }
 
+/**
+ * Applies an object below.
+ *
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * always NULL.
+ */
 void* cfapi_object_apply_below(int* type, ...)
 {
     va_list args;
@@ -2685,25 +2710,34 @@ void* cfapi_object_apply_below(int* type, ...)
     return NULL;
 }
 
+/**
+ * Applies an object.
+ *
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * always NULL.
+ */
 void* cfapi_object_apply(int* type, ...)
 {
     va_list args;
     object* applied;
     object* applier;
     int aflags;
-    static int rv;
+    int* ret;
 
     va_start(args, type);
 
     applied = va_arg(args, object*);
     applier = va_arg(args, object*);
     aflags  = va_arg(args, int);
+    ret = va_arg(args, int*);
 
     va_end(args);
 
     *type = CFAPI_INT;
-    rv = manual_apply(applier, applied, aflags);
-    return &rv;
+    *ret = manual_apply(applier, applied, aflags);
+    return NULL;
 }
 void* cfapi_object_identify(int* type, ...)
 {

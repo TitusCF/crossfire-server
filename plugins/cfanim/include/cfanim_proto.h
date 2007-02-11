@@ -60,7 +60,7 @@ void *cf_object_set_experience(object *op, sint64 exp, const char *skill, int ar
 void cf_player_move(player *pl, int dir);
 void cf_object_move(object *op, int dir, object *originator);
 object *cf_player_send_inventory(object *op);
-void cf_object_apply(object *op, object *author, int flags);
+int cf_object_apply(object *op, object *author, int flags);
 void cf_object_apply_below(object *op);
 void cf_object_remove(object *op);
 void cf_object_free(object *op);
@@ -144,7 +144,7 @@ void cf_object_update(object *op, int flags);
 void cf_object_pickup(object *op, object *what);
 char *cf_strdup_local(char *txt);
 int cf_map_get_flags(mapstruct *map, mapstruct **nmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny);
-int cf_find_animation(char *txt);
+int cf_find_animation(const char *txt);
 void cf_log(LogLevel logLevel, const char *format, ...);
 void cf_get_time(timeofday_t *tod);
 int cf_timer_create(object *ob, long delay, int mode);

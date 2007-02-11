@@ -1627,10 +1627,7 @@ static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args )
     EXISTCHECK(who);
     EXISTCHECK(whoptr);
 
-    cf_object_apply(whoptr->obj, who->obj, flags);
-
-    Py_INCREF(Py_None);
-    return Py_None;
+    return Py_BuildValue("i",cf_object_apply(whoptr->obj, who->obj, flags));
 }
 static PyObject* Crossfire_Object_Drop( Crossfire_Object* who, PyObject* args )
 {

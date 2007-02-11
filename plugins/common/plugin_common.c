@@ -256,11 +256,38 @@ object* cf_player_send_inventory(object* op)
     int val;
     return cfapiPlayer_send_inventory(&val, op);
 }
-void cf_object_apply(object* op, object* author, int flags)
+
+/**
+ * Wrapper for manual_apply().
+ *
+ * Checks for unpaid items before applying.
+ *
+ * @param op
+ * ::object object being applied.
+ * @param author
+ * ::object causing op to be applied.
+ * @param flags
+ * special (always apply/unapply) flags.  Nothing is done with
+ * them in this function - they are passed to apply_special().
+ * @return
+ * - 0: player or monster can't apply objects of that type
+ * - 1: has been applied, or there was an error applying the object
+ * - 2: objects of that type can't be applied if not in inventory
+ *
+ */
+int cf_object_apply(object* op, object* author, int flags)
 {
-    int val;
-    cfapiObject_apply(&val,op,author,flags);
+    int val, ret;
+    cfapiObject_apply(&val,op,author,flags, &ret);
+    return ret;
 }
+
+/**
+ * Wrapper for player_apply_below().
+ *
+ * @param op
+ * player applying below.
+ */
 void cf_object_apply_below(object* op)
 {
     int val;
@@ -742,10 +769,19 @@ int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint
     int val;
     return *( int* )cfapiMap_get_flags(&val, map, nmap, x, y, nx, ny);
 }
-int cf_find_animation(char* txt)
+
+/**
+ * Wrapper for find_animation().
+ * @param txt
+ * the animation's name
+ * @return
+ * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face
+ */
+int cf_find_animation(const char* txt)
 {
-    int val;
-    return *(int*)cfapiSystem_find_animation(&val, txt);
+    int val, anim;
+    cfapiSystem_find_animation(&val, txt, &anim);
+    return anim;
 }
 void cf_log( LogLevel logLevel, const char* format, ... )
 {

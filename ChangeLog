@@ -15,13 +15,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Update cf_object_[gs]et key to use parameter instead of void* return.
- include/plugin.h
- server/plugins.c
- plugins/common/include/plugin_common.h
- plugins/common/plugin_common.c
+Remove some static variables. Return values from server.
  plugins/cfpython/cfpython_object.c
  plugins/cfanim/include/cfanim_proto.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/plugins.c
+---
+Update cf_object_[gs]et key to use parameter instead of void* return.
+ include/plugin.h
+ plugins/cfpython/cfpython_object.c
+ plugins/cfanim/include/cfanim_proto.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/plugins.c
 ---
 Remove static variables from plugin API, use parameters instead.
  plugins/common/plugin_common.c
