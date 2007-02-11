@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/apply.c: Fix return statements with no value in non-void function.
 common/living.c: Fix incorrect "extern" definition for "levels".
 server/c_range.c: Fix possible buffer overflows.
 server/server.c: Fix possible buffer overflows.

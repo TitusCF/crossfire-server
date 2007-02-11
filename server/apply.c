@@ -593,7 +593,7 @@ static int improve_weapon(object *op,object *improver,object *weapon)
             /* Weapon is cursed, too bad */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "You can't enchant this weapon without unapplying it because it would consume your soul!", NULL);
-            return;
+            return 0;
         }
     }
 
@@ -782,7 +782,7 @@ static int improve_armour(object *op, object *improver, object *armour)
             /* Armour is cursed, too bad */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                 "You can't enchant this armour without unapplying it because it would consume your soul!", NULL);
-            return;
+            return 0;
         }
     }
 
