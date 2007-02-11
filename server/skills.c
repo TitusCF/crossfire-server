@@ -658,11 +658,12 @@ static int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill)
 		if(skill_value >= chance) {
 		  identify(tmp);
      		  if (pl->type==PLAYER) {
+                  char desc[MAX_BUF];
         	    draw_ext_info_format(NDI_UNIQUE, 0, pl,
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 				 "You identify %s.",
 				 "You identify %s.",
-				 long_desc(tmp, pl));
+				 ob_describe(tmp, pl, desc, sizeof(desc)));
         	    if (tmp->msg) {
           		draw_ext_info_format(NDI_UNIQUE, 0,pl,
 				     MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,

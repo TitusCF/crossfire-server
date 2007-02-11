@@ -117,12 +117,13 @@ method_ret book_type_apply(ob_methods *context, object *op,
     execute_event(tmp, EVENT_APPLY,op,NULL,SCRIPT_FIX_ALL);
     printf("Book applied: %s\n", tmp->name);*/
     {
+        char desc[MAX_BUF];
         readable_message_type* msgType = get_readable_message_type(op);
         draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, applier,
             msgType->message_type, msgType->message_subtype,
             "You open the %s and start reading.\n%s",
             "You open the %s and start reading.\n%s",
-            long_desc(op,applier), op->msg);
+            ob_describe(op,applier, desc, sizeof(desc)), op->msg);
     }
 
     /* gain xp from reading */

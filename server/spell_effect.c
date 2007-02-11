@@ -2145,6 +2145,7 @@ int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
 int cast_identify(object *op, object *caster, object *spell) {
     object *tmp;
     int success = 0, num_ident;
+    char desc[MAX_BUF];
 
     num_ident = spell->stats.dam + SP_level_dam_adjust(caster, spell);
 
@@ -2159,7 +2160,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 			     MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
 			     "You have %s.",
 			     "You have %s.",
-			     long_desc(tmp, op));
+			     ob_describe(tmp, op, desc, sizeof(desc)));
 		if (tmp->msg) {
 		    draw_ext_info_format(NDI_UNIQUE, 0,op,
 					 MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
@@ -2187,7 +2188,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
 				     "On the ground is %s.",
 				     "On the ground is %s.",
-				     long_desc(tmp, op));
+				     ob_describe(tmp, op, desc, sizeof(desc)));
 		if (tmp->msg) {
 		    draw_ext_info_format(NDI_UNIQUE, 0,op,
 					 MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,

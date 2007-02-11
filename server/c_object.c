@@ -1497,19 +1497,6 @@ void examine_monster(object *op,object *tmp) {
 }
 
 
-/**
- * tmp is the object being described, pl is who is examing it.
- *
- * @todo
- * fix static buffer, fix comment :)
- */
-const char *long_desc(const object *tmp, const object *pl)
-{
-    static char buf[HUGE_BUF];
-    ob_describe(tmp,pl, buf, HUGE_BUF);
-    return buf;
-}
-
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
@@ -1522,7 +1509,7 @@ void examine(object *op, object *tmp) {
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 			 "That is %s",
 			 "That is %s",
-			 long_desc(tmp, op));
+			 ob_describe(tmp, op, buf, sizeof(buf)));
 
     if(tmp->custom_name) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,

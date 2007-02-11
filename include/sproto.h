@@ -218,7 +218,6 @@ int command_examine(object *op, char *params);
 object *find_marked_object(object *op);
 int command_mark(object *op, char *params);
 void examine_monster(object *op, object *tmp);
-const char *long_desc(const object *tmp, const object *pl);
 void examine(object *op, object *tmp);
 void inventory(object *op, object *inv);
 int command_pickup(object *op, char *params);
@@ -363,7 +362,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 void init_ob_methods(void);
 int ob_apply(object *op, object *applier, int aflags);
 int ob_process(object *op);
-void ob_describe(const object *op, const object *observer, char* buf, int size);
+char* ob_describe(const object *op, const object *observer, char* buf, int size);
 int ob_move_on(object *op, object *victim, object *originator);
 /* ob_types.c */
 void init_ob_types(ob_methods *base_type);

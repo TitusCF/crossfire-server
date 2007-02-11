@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete long_desc(), replaced by ob_describe(), get rid of static buffer.
+ include/sproto.h
+ server/c_object.c ob_methods.c skills.c spell_effect.c
+ types/book/book.c
+ types/identify_altar/identify_altar.c
+---
 Fix compilation warnings.
  include/global.h: remove duplicate DELETE_STRING (FREE_AND_CLEAR_STR), cast to void*.
  plugins/cfpython/include/cfpython.h: Python defines HAVE_GETTIMEOFDAY, but we do too.

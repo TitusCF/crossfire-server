@@ -52,6 +52,7 @@ method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
     object* id;
     object* marked;
     int success=0;
+    char desc[MAX_BUF];
 
     if (common_pre_ob_move_on(altar, money, originator)==METHOD_ERROR)
         return METHOD_OK;
@@ -82,7 +83,7 @@ method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
             draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY,
                 MSG_TYPE_APPLY_SUCCESS, "You have %s.",
                 NULL,
-                long_desc(marked, originator));
+                ob_describe(marked, originator, desc, sizeof(desc)));
 
             if (marked->msg)
             {
@@ -107,7 +108,7 @@ method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
                 identify(id);
                 draw_ext_info_format(NDI_UNIQUE, 0, originator,
                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You have %s.", "You have %s.", long_desc(id, originator));
+                    "You have %s.", "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
                 if (id->msg)
                 {
                     draw_ext_info(NDI_UNIQUE, 0,originator,
