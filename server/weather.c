@@ -96,7 +96,7 @@ static const int season_timechange[5][HOURS_PER_DAY] = {
 /* 0  1   2  3  4  5  6  7  8  9  10 11 12 13 14 1  2  3  4  5   6   7
 	8    9  10  11  12  13 */
   {0, 0,  0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1,
-	1, 1, 1, 1, 1, 1}, 
+	1, 1, 1, 1, 1, 1},
   {0, 0,  0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
 	1, 1, 1, 1, 1, 0},
   {0, 0,  0, 0, 0, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -144,7 +144,7 @@ static weather_avoids_t weather_avoids[] = {
     {"lava", 0, NULL},
     {"permanent_lava", 0, NULL},
     {NULL, 0, NULL}
-}; 
+};
 
 /*
  * this table is identical to the one above, except these are tiles to avoid
@@ -281,7 +281,7 @@ static const weather_grow_t weather_tile[] = {
     {"palms", "pstone_1", 1, 0.01, 0.1, 0, 30, 5, 99, 0, 4000, 0},
     {"large_stones", NULL, 1, 0.0, 9.9, 0, 100, -50, 50, 6000, 8000, 0},
     {"earth", NULL, 1, 0.0, 1.0, 0, 70, -30, 15, 0, 6000, 0},
-    {"medium_stones", NULL, 1, 1.0, 3.0, 70, 100, -30, 10,  0, 4000, 0}, /*unsure*/ 
+    {"medium_stones", NULL, 1, 1.0, 3.0, 70, 100, -30, 10,  0, 4000, 0}, /*unsure*/
     {"earth", NULL, 1, 0.1, 0.9, 20, 80, -30, 30, 0, 4999, 0}, /* tundra */
     {"swamp", NULL, 1, 1.0, 9.9, 50, 100, -30, 10, 0, 4000, 0},/* cold marsh */
     {"earth", NULL, 1, 0.0, 99.9, 0, 100, -99, 99, 0, 99999, 0}, /* debug */
@@ -768,7 +768,7 @@ static void init_gulfstreammap(void)
 		break;
 	    case 4:
 	    case 5:
-	    case 6:		
+	    case 6:
 		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
 		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
 			GULF_STREAM_BASE_SPEED+10);
@@ -810,7 +810,7 @@ static void init_gulfstreammap(void)
 		break;
 	    case 4:
 	    case 5:
-	    case 6:		
+	    case 6:
 		for (tx=0; tx < GULF_STREAM_WIDTH; tx++) {
 		    gulf_stream_speed[tx][y] = rndm(GULF_STREAM_BASE_SPEED,
 			GULF_STREAM_BASE_SPEED+10);
@@ -1360,7 +1360,7 @@ static void perform_weather(void)
 
     if (!settings.dynamiclevel)
 	return;
-    
+
     /* move right to left, top to bottom */
     if (wmperformstartx+1 == settings.worldmaptilesx) {
 	wmperformstartx = 0;
@@ -1369,7 +1369,7 @@ static void perform_weather(void)
 	wmperformstartx++;
     if (wmperformstarty == settings.worldmaptilesy)
        wmperformstartx = wmperformstarty = 0;
-    
+
     sprintf(filename, "world/world_%d_%d",
 	wmperformstartx+settings.worldmapstartx,
 	wmperformstarty+settings.worldmapstarty);
@@ -1377,7 +1377,7 @@ static void perform_weather(void)
     m = ready_map_name(filename, 0);
     if (m == NULL)
 	return; /* hrmm */
-    
+
     /* for now, all we do is decay stuff.  more to come */
     decay_objects(m);
     weather_effect(filename);
@@ -1451,14 +1451,14 @@ void weather_effect(const char *filename)
  * x and y are the coordinates inside the current map m. If grow is
  * 1, we use the growth table, rather than the avoidance table.
  *
- * Returns the object pointer for any snow item it found, so you can 
+ * Returns the object pointer for any snow item it found, so you can
  * destroy/melt it.
  */
 
 static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow)
 {
     int avoid, gotsnow, i;
- 
+
     object *tmp, *snow;
     avoid = 0;
     gotsnow = 0;
@@ -1503,7 +1503,7 @@ static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int g
     }
     *gs = gotsnow;
     *av = avoid;
- 
+
     return snow;
 }
 
@@ -1795,7 +1795,7 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy)
 			at = find_archetype("mountain2_rivlets"); break;}
 		else if (tmp && (!strcmp(tmp->arch->name, "mountain4"))){
 			at = find_archetype("mountain2_rivlets"); break;}
-		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {		
+		if (sky == SKY_LIGHT_RAIN || sky == SKY_RAIN) {
 			switch (rndm(0, SKY_HAIL-sky)) {
 		    case 0: at = find_archetype("rain1"); break;
 		    case 1: at = find_archetype("rain2"); break;
@@ -2353,7 +2353,7 @@ static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y,
     int spwtx, spwty;
     int tx, ty, nx, ny;
 	static char mapname[ MAX_BUF ];
-    
+
     spwtx = (settings.worldmaptilesx * settings.worldmaptilesizex) / WEATHERMAPTILESX;
     spwty = (settings.worldmaptilesy * settings.worldmaptilesizey) / WEATHERMAPTILESY;
     switch (dir) {
@@ -2370,7 +2370,7 @@ static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y,
 	ty = (wy*spwty)-1;
     else
 	ty = wy;
-    
+
     nx = (tx / settings.worldmaptilesizex) + settings.worldmapstartx;
     ny = (ty / settings.worldmaptilesizey) + settings.worldmapstarty;
     snprintf(mapname, MAX_BUF, "world/world_%d_%d", nx, ny);
@@ -2446,7 +2446,7 @@ static int humid_tile(int x, int y)
     }
     humid = (weathermap[x][y].humid * 2 +
 	weathermap[ox][oy].humid * weathermap[ox][oy].windspeed +
-	weathermap[x][y].water + rndm(0, 10)) / 
+	weathermap[x][y].water + rndm(0, 10)) /
 	(weathermap[ox][oy].windspeed+3) + rndm(0, 5);
     if (humid < 0)
 	humid = 1;
