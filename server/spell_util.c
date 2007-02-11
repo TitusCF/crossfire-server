@@ -1391,7 +1391,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
             "In your confused state, you can't control the magic!",
             "In your confused state, you can't control the magic!");
         handle_spell_confusion(op);
-        return;
+        return 0;
     }
 
     switch(spell_ob->subtype) {
