@@ -790,7 +790,7 @@ static int improve_armour(object *op, object *improver, object *armour)
      * end of this function - otherwise it will just re-merge.
      */
     if(armour->nrof > 1)
-        tmp = get_split_ob(armour,armour->nrof - 1);
+        tmp = get_split_ob(armour,armour->nrof - 1, NULL, 0);
     else
         tmp = NULL;
 
@@ -2724,7 +2724,7 @@ int apply_special (object *who, object *op, int aflags)
 
 
     if(op->nrof > 1)
-	tmp = get_split_ob(op,op->nrof - 1);
+	tmp = get_split_ob(op,op->nrof - 1, NULL, 0);
     else
 	tmp = NULL;
 

@@ -210,7 +210,7 @@ extern object *merge_ob(object *op, object *top);
 extern object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y);
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(const char *arch_string, object *op);
-extern object *get_split_ob(object *orig_ob, uint32 nr);
+extern object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size);
 extern object *decrease_ob_nr(object *op, uint32 i);
 extern void add_weight(object *op, signed long weight);
 extern object *insert_ob_in_ob(object *op, object *where);

@@ -1393,7 +1393,7 @@ void remove_ob(object *op) {
     if(QUERY_FLAG(op,FLAG_REMOVED)) {
         char buf[HUGE_BUF];
         dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
+        LOG(llevError,"Trying to remove removed object.\n%s\n",buf);
         abort();
     }
     if(op->more!=NULL)
@@ -1918,16 +1918,25 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * object from which to split.
  * @param nr
  * number of elements to split.
+ * @param err
+ * buffer that will contain failure reason if NULL is returned. Can be NULL.
+ * @param size
+ * err's size
  * @return
  * split object, or NULL on failure.
+ * @todo
+ * handle case orig_ob->nrof == 0 (meaning 1).
  */
-
-object *get_split_ob(object *orig_ob, uint32 nr) {
+object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
     object *newob;
     int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 
     if(orig_ob->nrof<nr) {
-        LOG(llevDebug,"There are only %d %ss.", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+        /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
+        if (err)
+            snprintf(err, size, "There are only %d %ss.", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+        else
+            LOG(llevDebug,"There are only %d %ss.\n", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
         return NULL;
     }
     newob = object_create_clone(orig_ob);
@@ -1940,8 +1949,11 @@ object *get_split_ob(object *orig_ob, uint32 nr) {
         if(orig_ob->env!=NULL)
             sub_weight (orig_ob->env,orig_ob->weight*nr);
         if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
+            /* This is a failure, so always log it. */
             LOG(llevDebug,
-                "Error, Tried to split object whose map is not in memory.\n");
+                "Error, tried to split object whose map is not in memory.\n");
+            if (err)
+                snprintf(err, size, "Error, tried to split object whose map is not in memory.\n");
             return NULL;
         }
     }

@@ -15,11 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix get_split_ob not returning failure message (was through errmsg).
+ common/object.c
+ include/libproto.h
+ server/apply.c c_object.c player.c plugins.c skills.c spell_effect.c
+Ryo 2007-02-11
+
 Remove errmsg use for dump_object and dump_arch. Merge dump_object and dump_object2.
  common/anim.c arch.c object.c
  crossedit/Attr.c
  include/libproto.h
  server/c_misc.c c_wiz.c server.c time.c
+ test/unit/common/check_object.c
 Ryo 2007-02-11
 
 server/weather.c: Fix possible buffer overflows.

@@ -1665,7 +1665,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 
     left = arrow; /* these are arrows left to the player */
     left_tag = left->count;
-    arrow = get_split_ob(arrow, 1);
+    arrow = get_split_ob(arrow, 1, NULL, 0);
     if (arrow == NULL) {
 	draw_ext_info_format(NDI_UNIQUE, 0, op,
 			     MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -2657,7 +2657,7 @@ static void loot_object(object *op) { /* Grab and destroy some treasure */
         if(!QUERY_FLAG(tmp, FLAG_UNIQUE) && (QUERY_FLAG(tmp, FLAG_STARTEQUIP)
             || QUERY_FLAG(tmp,FLAG_NO_DROP) || !(RANDOM()%3))) {
                 if(tmp->nrof>1) {
-                    tmp2=get_split_ob(tmp,1+RANDOM()%(tmp->nrof-1));
+                    tmp2=get_split_ob(tmp,1+RANDOM()%(tmp->nrof-1), NULL, 0);
                     free_object(tmp2);
                     insert_ob_in_map(tmp,op->map,NULL,0);
                 } else

@@ -2696,7 +2696,7 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
     }
 
     if (weapon->nrof > 1) {
-	tmp = get_split_ob(weapon, 1);
+	tmp = get_split_ob(weapon, 1, NULL, 0);
 	esrv_send_item(op, weapon);
 	weapon = tmp;
     }

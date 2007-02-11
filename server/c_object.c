@@ -632,12 +632,13 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
     if (nrof != tmp_nrof) {
+        char failure[MAX_BUF];
 	object *tmp2 = tmp;
         tag_t tmp2_tag = tmp2->count;
-	tmp = get_split_ob (tmp, nrof);
+	tmp = get_split_ob (tmp, nrof, failure, sizeof(failure));
 	if(!tmp) {
 	    draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			  errmsg, NULL);
+			  failure, NULL);
 	    return;
 	}
 	/* Tell a client what happened rest of objects */
@@ -948,13 +949,14 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 
     /* we want to put some portion of the item into the container */
     if (nrof && tmp->nrof != nrof) {
+        char failure[MAX_BUF];
 	object *tmp2 = tmp;
         tmp2_tag = tmp2->count;
-	tmp = get_split_ob (tmp, nrof);
+	tmp = get_split_ob (tmp, nrof, failure, sizeof(failure));
 
 	if(!tmp) {
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			  errmsg, NULL);
+			  failure, NULL);
 	    return;
 	}
 	/* Tell a client what happened other objects */
@@ -1022,12 +1024,13 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
      * off
      */
     if(nrof && tmp->nrof != nrof) {
+        char failure[MAX_BUF];
 	object *tmp2 = tmp;
         tag_t tmp2_tag = tmp2->count;
-	tmp = get_split_ob (tmp, nrof);
+	tmp = get_split_ob (tmp, nrof, failure, sizeof(failure));
 	if(!tmp) {
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			  errmsg, NULL);
+			  failure, NULL);
 	    return NULL;
 	}
 	/* Tell a client what happened rest of objects.  tmp2 is now the

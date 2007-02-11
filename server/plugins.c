@@ -2978,7 +2978,7 @@ void* cfapi_object_split(int* type, ...)
 
     va_end(args);
     *type = CFAPI_POBJECT;
-    return get_split_ob(op, nr);
+    return get_split_ob(op, nr, NULL, 0);
 }
 void* cfapi_object_merge(int* type, ...)
 {

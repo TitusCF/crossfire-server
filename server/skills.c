@@ -1692,7 +1692,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
      * and returns NULL. We must use 'left' then
      */
 
-    if((throw_ob = get_split_ob(throw_ob, 1))==NULL) {
+    if((throw_ob = get_split_ob(throw_ob, 1, NULL, 0))==NULL) {
 	throw_ob = left;
 	remove_ob(left);
 	if (op->type==PLAYER)
