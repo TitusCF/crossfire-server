@@ -475,23 +475,24 @@ int snprintf(char *dest, int max, const char *format, ...)
  *
  * @param errnum
  * error we want the description of.
+ * @param buf
+ * buffer to contain the description.
+ * @param size
+ * buf's length.
  * @return
- * pointer to description.
+ * buf.
  *
  * @note
  * this function will return a dummy string if strerror() doesn't exist on the current platform.
- * @todo
- * find a way to remove static buffer but keep easy logging stuff.
  */
-char *strerror_local(int errnum)
+char *strerror_local(int errnum, char* buf, int size)
 {
-    static char error[MAX_BUF];
 #if defined(HAVE_STRERROR)
-    strerror_r(errnum, error, MAX_BUF);
+    strerror_r(errnum, buf, size);
 #else
-    strncpy(error, "strerror_local not implemented", MAX_BUF);
+    snprintf(buf, size, "strerror_local not implemented");
 #endif
-    return error;
+    return buf;
 }
 
 /**
@@ -810,7 +811,8 @@ void make_path_to_file (const char *filename)
         if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
             LOG(llevDebug, "Was not dir...\n");
             if (mkdir (buf, SAVE_DIR_MODE)) {
-                LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno));
+                char err[MAX_BUF];
+                LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
                 return;
             }
 #if 0

@@ -266,7 +266,7 @@ void dead_player(object *op)
     strcat(newname,".dead");
 
     if(rename(filename,newname) != 0) {
-	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno));
+	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
     }
 }
 

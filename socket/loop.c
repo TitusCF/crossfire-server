@@ -202,7 +202,7 @@ void handle_oldsocket(socket_struct *ns)
 
 	if (stat<0 && errno != EAGAIN && errno !=EWOULDBLOCK) {
 #endif	
-	    LOG(llevError, "Cannot read from socket: %s\n", strerror_local(errno));
+	    LOG(llevError, "Cannot read from socket: %s\n", strerror_local(errno, buf, sizeof(buf)));
 	    ns->status = Ns_Dead;
 	    return;
 	}
@@ -522,6 +522,7 @@ void doeric_server(void)
     struct sockaddr_in addr;
     socklen_t addrlen=sizeof(struct sockaddr);
     player *pl, *next;
+    char err[MAX_BUF];
 
 #ifdef CS_LOGSTATS
     if ((time(NULL)-cst_lst.time_start)>=CS_LOGTIME)
@@ -581,7 +582,7 @@ void doeric_server(void)
 		    &tmp_exceptions, &socket_info.timeout);
 
     if (pollret==-1) {
-	LOG(llevError, "select failed: %s\n", strerror_local(errno));
+	LOG(llevError, "select failed: %s\n", strerror_local(errno, err, sizeof(err)));
 	return;
     }
 
@@ -617,7 +618,7 @@ void doeric_server(void)
 	}
 	init_sockets[newsocknum].fd=accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
 	if (init_sockets[newsocknum].fd==-1) {
-	    LOG(llevError, "accept failed: %s\n", strerror_local(errno));
+	    LOG(llevError, "accept failed: %s\n", strerror_local(errno, err, sizeof(err)));
 	}
 	else {
 	    char buf[MAX_BUF];

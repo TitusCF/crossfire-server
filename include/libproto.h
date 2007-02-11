@@ -253,7 +253,7 @@ extern void remove_directory(const char *path);
 extern char *strdup_local(const char *str);
 extern long strtol_local(register char *str, char **ptr, register int base);
 extern const char *strcasestr_local(const char *s, const char *find);
-extern char *strerror_local(int errnum);
+extern char *strerror_local(int errnum, char* buf, int size);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);
 extern char *doubletostr10(double v);

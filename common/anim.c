@@ -78,7 +78,7 @@ void init_anim(void) {
     sprintf(buf,"%s/animations", settings.datadir);
     LOG(llevDebug,"Reading animations from %s...\n", buf);
     if ((fp=fopen(buf,"r")) ==NULL) {
-        LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror_local(errno));
+        LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
     while (fgets(buf, MAX_BUF-1, fp)!=NULL) {

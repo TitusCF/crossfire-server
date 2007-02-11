@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer for strerror_local().
+ common/anim.c image.c map.c porting.c
+ include/libproto.h
+ server/c_misc.c deamon.c hiscore.c init.c login.c resurrection.c
+ socket/init.c loop.c lowlevel.c
+---
 Remove some static variables. Return values from server.
  plugins/cfpython/cfpython_object.c
  plugins/cfanim/include/cfanim_proto.h

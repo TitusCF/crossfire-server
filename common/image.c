@@ -176,7 +176,7 @@ static void read_face_data(void)
     sprintf(buf,"%s/faces", settings.datadir);
     LOG(llevDebug,"Reading faces from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
-        LOG(llevError, "Cannot open faces file %s: %s\n", buf, strerror_local(errno));
+        LOG(llevError, "Cannot open faces file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
     while (fgets(buf, MAX_BUF, fp)!=NULL) {
@@ -248,7 +248,7 @@ void read_bmap_names(void) {
     sprintf (buf,"%s/bmaps", settings.datadir);
     LOG(llevDebug,"Reading bmaps from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
-        LOG(llevError, "Cannot open bmaps file %s: %s\n", buf, strerror_local(errno));
+        LOG(llevError, "Cannot open bmaps file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 
@@ -394,7 +394,7 @@ int read_smooth(void) {
     sprintf (buf,"%s/smooth", settings.datadir);
     LOG(llevDebug,"Reading smooth from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
-        LOG(llevError, "Cannot open smooth file %s: %s\n", strerror_local(errno));
+        LOG(llevError, "Cannot open smooth file %s: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 

@@ -72,7 +72,8 @@ FILE *become_daemon (const char *filename)
   int forkresult;
  
   if((logfile=fopen(filename,"a"))==NULL){
-    fprintf(stderr, "Couldn't create logfile %s: %s\n", filename, strerror_local(errno));
+      char err[MAX_BUF];
+    fprintf(stderr, "Couldn't create logfile %s: %s\n", filename, strerror_local(errno, err, sizeof(err)));
     exit(0);
   } 
   fputs("\n========================\n",logfile);    

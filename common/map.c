@@ -1174,7 +1174,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
         create_pathname(filename, pathname, MAX_BUF);
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
-        LOG(llevError, "Can't open %s: %s\n", pathname, strerror_local(errno));
+        char err[MAX_BUF];
+        LOG(llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
         return (NULL);
     }
 
@@ -1233,7 +1234,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     }
 
     if((fp=open_and_uncompress(m->tmpname,0, &comp))==NULL) {
-        LOG(llevError, "Cannot open %s: %s\n",m->tmpname, strerror_local(errno));
+        LOG(llevError, "Cannot open %s: %s\n",m->tmpname, strerror_local(errno, buf, sizeof(buf)));
         snprintf(buf, sizeof(buf), "%s", m->path);
         delete_map(m);
         m = load_original_map(buf, 0);
@@ -1432,7 +1433,7 @@ int save_map(mapstruct *m, int flag) {
         fp = fopen(filename, "w");
 
     if(fp == NULL) {
-        LOG(llevError, "Cannot write %s: %s\n", filename, strerror_local(errno));
+        LOG(llevError, "Cannot write %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
         return -1;
     }
 

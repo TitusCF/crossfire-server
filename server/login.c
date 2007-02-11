@@ -94,11 +94,11 @@ void emergency_save(int flag) {
  * (needed for transition)
  */
 void delete_character(const char *name, int new) {
-    char buf[MAX_BUF];
+    char buf[MAX_BUF], err[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
     if(unlink(buf)== -1)
-	LOG(llevDebug, "Cannot delete character file %s: %s\n", buf, strerror_local(errno));
+	LOG(llevDebug, "Cannot delete character file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
     if (new) {
 	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,name);
 	/* this effectively does an rm -rf on the directory */

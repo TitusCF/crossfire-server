@@ -177,6 +177,7 @@ void init_ericserver(void)
     struct sockaddr_in	insock;
     struct protoent  *protox;
     struct linger linger_opt;
+    char err[MAX_BUF];
 
 #ifdef WIN32 /* ***win32  -  we init a windows socket */
 	WSADATA w;
@@ -222,7 +223,7 @@ void init_ericserver(void)
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (init_sockets[0].fd == -1) {
-	LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno));
+	LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
 	exit(-1);
     }
     insock.sin_family = AF_INET;
@@ -233,7 +234,7 @@ void init_ericserver(void)
     linger_opt.l_linger = 0;
     if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
        sizeof(struct linger))) {
-	LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno));
+	LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
  * these functions are both using the same calling syntax, just one
@@ -252,17 +253,17 @@ void init_ericserver(void)
 #endif
 
 	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
-	    LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno));
+	    LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
 	}
     }
 #else
     if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
-	LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno));
+	LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 #endif
 
     if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
-	LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno));
+	LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);
@@ -272,7 +273,7 @@ void init_ericserver(void)
 	exit(-1);
     }
     if (listen(init_sockets[0].fd,5) == (-1))  {
-	LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno));
+	LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
 	shutdown(init_sockets[0].fd,SD_BOTH);
 	closesocket(init_sockets[0].fd);

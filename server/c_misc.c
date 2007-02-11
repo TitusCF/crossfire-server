@@ -1562,7 +1562,7 @@ int command_help (object *op, char *params)
     if (!params) {
 	sprintf(filename, "%s/def_help", settings.datadir);
 	if ((fp=fopen(filename, "r")) == NULL) {
-	    LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno));
+	    LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
 	    return 0;
 	}
 	while (fgets(line, MAX_BUF, fp)) {
@@ -1631,7 +1631,7 @@ int command_help (object *op, char *params)
      * Found that. Just cat it to screen.
      */
     if ((fp=fopen(filename, "r")) == NULL) {
-	LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno));
+	LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
 	return 0;
     }
 

@@ -930,6 +930,7 @@ static void init_startup(void) {
 
 static void compile_info(void) {
   int i=0;
+  char err[MAX_BUF];
   printf("Non-standard include files:\n");
 #if !defined (__STRICT_ANSI__) || defined (__sun__)
 #if !defined (Mips)
@@ -985,7 +986,7 @@ static void compile_info(void) {
   exit(0);
 #else
   execl("/bin/uname", "uname", "-a", NULL);
-  LOG(llevError, "Oops, shouldn't have gotten here: execl(/bin/uname) failed: %s\n", strerror_local(errno));
+  LOG(llevError, "Oops, shouldn't have gotten here: execl(/bin/uname) failed: %s\n", strerror_local(errno, err, sizeof(err)));
   exit(-1);
 #endif
 }
@@ -1094,7 +1095,7 @@ static void init_races(void) {
   sprintf(fname,"%s/races",settings.datadir);
   LOG(llevDebug, "Reading races from %s...\n",fname);
   if(! (file=fopen(fname,"r"))) {
-    LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno));
+    LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
     return;
   }
 
