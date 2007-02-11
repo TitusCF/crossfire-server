@@ -1894,7 +1894,7 @@ static PyObject* Crossfire_Object_Pay( Crossfire_Object* who, PyObject* args )
 }
 static PyObject* Crossfire_Object_ReadKey( Crossfire_Object* who, PyObject* args )
 {
-    char* val;
+    const char* val;
     char* keyname;
 
     EXISTCHECK(who);
@@ -1915,9 +1915,7 @@ static PyObject* Crossfire_Object_WriteKey( Crossfire_Object* who, PyObject* arg
     if (!PyArg_ParseTuple(args,"ss|i",&keyname,&value,&add_key))
         return NULL;
 
-    cf_object_set_key(who->obj, keyname, value, add_key);
-    Py_INCREF(Py_None);
-    return Py_None;
+    return Py_BuildValue("i", cf_object_set_key(who->obj, keyname, value, add_key));
 }
 
 static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args)

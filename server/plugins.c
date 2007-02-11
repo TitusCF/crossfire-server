@@ -1436,27 +1436,47 @@ void* cfapi_object_move(int* type, ...)
     return &rv;
 }
 
+/**
+ * Gets a key/value value for an object.
+ *
+ * @param type
+ * will contain CFAPI_SSTRING.
+ * @return
+ * NULL.
+ * @see get_ob_key_value().
+ */
 void* cfapi_object_get_key(int* type, ...)
 {
     va_list args;
-    char* rv;
-    char* keyname;
+    const char* keyname;
+    const char** value;
     object* op;
 
     va_start(args, type);
     op = va_arg(args, object*);
-    keyname = va_arg(args, char*);
+    keyname = va_arg(args, const char*);
+    value = va_arg(args, const char**);
     va_end(args);
 
-    rv = (char*)get_ob_key_value(op, keyname);
-    *type = CFAPI_STRING;
-    return rv;
+    *value = get_ob_key_value(op, keyname);
+    *type = CFAPI_SSTRING;
+    return NULL;
 }
+
+/**
+ * Write a key/value for an object.
+ * @param type
+ * will contain CFAPI_SSTRING.
+ * @return
+ * NULL.
+ * @see set_ob_key_value().
+ */
 void* cfapi_object_set_key(int* type, ...)
 {
     va_list args;
-    char* keyname;
-    char* value;
+    const char* keyname;
+    const char* value;
+    int* ret;
     object* op;
     int add_key;
 
@@ -1465,10 +1485,11 @@ void* cfapi_object_set_key(int* type, ...)
     keyname = va_arg(args, char*);
     value = va_arg(args, char*);
     add_key = va_arg(args, int);
+    ret = va_arg(args, int*);
     va_end(args);
 
-    set_ob_key_value(op, keyname, value, add_key);
-    *type = CFAPI_NONE;
+    *ret = set_ob_key_value(op, keyname, value, add_key);
+    *type = CFAPI_SSTRING;
     return NULL;
 }
 void* cfapi_object_get_property(int* type, ...)

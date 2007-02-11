@@ -804,15 +804,41 @@ int cf_timer_destroy(int id)
     return code;
 }
 
-char* cf_object_get_key(object* op, char* keyname)
+/**
+ * Gets value for specified key, equivalent of get_ob_key_value().
+ * @param op
+ * ::object for which we search a key.
+ * @param keyname
+ * key to look for. Not required to be a shared string.
+ * @return
+ * value (shared string), or NULL if not found.
+ */
+const char* cf_object_get_key(object* op, const char* keyname)
 {
     int val;
-    return (char*)cfapiObject_get_key(&val, op, keyname);
+    const char* value;
+    cfapiObject_get_key(&val, op, keyname, &value);
+    return value;
 }
-void cf_object_set_key(object* op, char* keyname, char* value, int add_key)
+
+/**
+ * Sets a value for specified key, equivalent to set_ob_key_value().
+ * @param op
+ * ::object which will contain the key/value
+ * @param keyname
+ * key
+ * @param value
+ * value
+ * @param add_key
+ * if 0, key is only updated if it exists, else it's updated or added.
+ * @return
+ * TRUE or FALSE.
+ */
+int cf_object_set_key(object* op, const char* keyname, const char* value, int add_key)
 {
-    int val;
-    cfapiObject_set_key(&val, op, keyname, value, add_key);
+    int val, ret;
+    cfapiObject_set_key(&val, op, keyname, value, add_key, &ret);
+    return ret;
 }
 
 /* Archetype-related functions */
