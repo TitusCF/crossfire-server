@@ -120,7 +120,7 @@ void reset_sleep(void)
 /**
  * Adds time to our history list.
  */
-void log_time(uint32 process_utime)
+static void log_time(uint32 process_utime)
 {
     pticks++;
     if (++psaveind >= PBUFLEN)
