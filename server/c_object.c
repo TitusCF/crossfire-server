@@ -967,6 +967,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     } else
 	remove_ob(tmp);
 
+    query_name(tmp, name_tmp, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 			 "You put the %s in %s.",
 			 "You put the %s in %s.",
