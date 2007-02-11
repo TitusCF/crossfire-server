@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix compilation warnings.
+ include/global.h: remove duplicate DELETE_STRING (FREE_AND_CLEAR_STR), cast to void*.
+ plugins/cfpython/include/cfpython.h: Python defines HAVE_GETTIMEOFDAY, but we do too.
+ plugins/cfpython/cfpython.c: explicit cast to wanted type.
+ plugins/common/hashtable.c: add missing include for malloc().
+---
 Remove static buffer for strerror_local().
  common/anim.c image.c map.c porting.c
  include/libproto.h

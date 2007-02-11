@@ -33,6 +33,7 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #ifdef WIN32
 #include <global.h>

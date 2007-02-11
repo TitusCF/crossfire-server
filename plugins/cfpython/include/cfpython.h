@@ -31,6 +31,11 @@
 /* First the required header files - only the CF module interface and Python */
 #include <Python.h>
 
+/* Python can define HAVE_GETTIMEOFDAY, but we have our own later on. */
+#ifdef HAVE_GETTIMEOFDAY
+#undef HAVE_GETTIMEOFDAY
+#endif
+
 /* include compile.h from python. Python.h doesn't pull it in with versions
  * 2.3 and older, and it does have protection from double-imports.
  */
