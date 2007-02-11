@@ -1139,7 +1139,14 @@ static int monster_can_pick(object *monster, object *item) {
     if (monster->pick_up&64)           /* All */
 	flag=1;
 
-    else switch(item->type) {
+    else {
+        if (IS_WEAPON(item))
+            flag=(monster->pick_up&8)||QUERY_FLAG(monster,FLAG_USE_WEAPON);
+        else if (IS_ARMOR(item))
+            flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_ARMOUR);
+        else if (IS_SHIELD(item))
+            flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_SHIELD);
+        else switch(item->type) {
 	case MONEY:
 	case GEM:
 	    flag=monster->pick_up&2;
@@ -1147,22 +1154,6 @@ static int monster_can_pick(object *monster, object *item) {
 
 	case FOOD:
 	    flag=monster->pick_up&4;
-	    break;
-
-	case WEAPON:
-	    flag=(monster->pick_up&8)||QUERY_FLAG(monster,FLAG_USE_WEAPON);
-	    break;
-
-	case ARMOUR:
-	case HELMET:
-	case BOOTS:
-	case GLOVES:
-	case GIRDLE:
-	    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_ARMOUR);
-	    break;
-            
-	case SHIELD:
-	    flag=(monster->pick_up&16)||QUERY_FLAG(monster,FLAG_USE_SHIELD);
 	    break;
 
 	case SKILL:
@@ -1201,6 +1192,7 @@ static int monster_can_pick(object *monster, object *item) {
 	    flag=1;
 	    break;
 	}
+    }
     }
 
     if (((!(monster->pick_up&32))&&flag) || ((monster->pick_up&32)&&(!flag)))
@@ -1290,7 +1282,7 @@ void monster_check_apply(object *mon, object *item) {
         return;
     }
     else if (item->type == WEAPON) flag = check_good_weapon(mon,item);
-    else if (IS_ARMOR(item)) flag = check_good_armour(mon,item);
+    else if (IS_ARMOR(item) || IS_SHIELD(item)) flag = check_good_armour(mon,item);
     /* Should do something more, like make sure this is a better item */
     else if (item->type == RING)
         flag=1;

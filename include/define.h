@@ -442,9 +442,11 @@ extern typedata ItemTypes[];
 	(op->type == ARROW || op->type == BOW || op->type == WEAPON)
 
 #define IS_ARMOR(op) \
-	(op->type == ARMOUR || op->type == SHIELD || op->type == HELMET || \
-	 op->type == CLOAK || op->type == BOOTS || op->type == GLOVES || \
-	 op->type == BRACERS || op->type == GIRDLE)
+	(op->type == ARMOUR || op->type == HELMET || \
+	 op->type == BOOTS || op->type == GLOVES)
+
+#define IS_SHIELD(op) \
+	(op->type == SHIELD)
 
 #define IS_LIVE(op) \
 	((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \

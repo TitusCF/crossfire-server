@@ -593,12 +593,9 @@ void give_initial_items(object *pl,treasurelist *items) {
          * by this player due to race restrictions
 	 */
 	if (pl->type == PLAYER) {
-	  if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) &&
-	      (op->type == ARMOUR || op->type == BOOTS ||
-	       op->type == CLOAK || op->type == HELMET ||
-	       op->type == GLOVES || op->type == BRACERS)) ||
-	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON) ||
-              (!QUERY_FLAG(pl, FLAG_USE_SHIELD) && op->type == SHIELD)) {
+        if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR) && IS_ARMOR(op)) ||
+            (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && IS_WEAPON(op)) ||
+            (!QUERY_FLAG(pl, FLAG_USE_SHIELD) && IS_SHIELD(op))) {
 	    remove_ob (op);
 	    free_object (op);
 	    continue;

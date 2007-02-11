@@ -212,7 +212,7 @@ void decay_objects(mapstruct *m)
                     op->stats.dam--;
                     if (op->stats.dam < 0)
                     destroy = 1;
-                } else if (IS_ARMOR(op)) {
+                } else if (IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
                     op->stats.ac--;
                     if (op->stats.ac < 0)
                     destroy = 1;
@@ -284,7 +284,7 @@ void transmute_materialname(object *op, const object *change)
       strcmp(op->materialname, change->materialname))
         return;
 
-    if (!IS_ARMOR(op))
+    if (!(IS_ARMOR(op)  || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK))
         return;
 
     mt = name_to_material(op->materialname);
@@ -331,7 +331,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
               difficulty >= mt->difficulty &&
               (op->magic >= mt->magic || mt->magic == 0)) {
                 lmt = mt;
-                if (!(IS_WEAPON(op) || IS_ARMOR(op)))
+                if (!(IS_WEAPON(op) || IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK))
                     break;
             }
         }
@@ -355,7 +355,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
             op->stats.sp += lmt->sp;
         if (op->stats.wc && IS_WEAPON(op))
             op->stats.wc += lmt->wc;
-        if (IS_ARMOR(op)) {
+        if (IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
             int j;
             if (op->stats.ac)
                 op->stats.ac += lmt->ac;
@@ -370,7 +370,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
         }
         op->materialname = add_string(lmt->name);
         /* dont make it unstackable if it doesn't need to be */
-        if (IS_WEAPON(op) || IS_ARMOR(op)) {
+        if (IS_WEAPON(op) || IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
             op->weight = (op->weight * lmt->weight)/100;
             op->value = (op->value * lmt->value)/100;
         }

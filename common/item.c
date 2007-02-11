@@ -630,7 +630,7 @@ void query_name(const object *op, char* buf, int size) {
     buf[0] = '\0';
 
 #ifdef NEW_MATERIAL_CODE
-    if ((IS_ARMOR(op) || IS_WEAPON(op)) && op->materialname) {
+    if ((IS_ARMOR(op) || IS_WEAPON(op) || IS_SHIELD(op)) && op->materialname) {
         mt = name_to_material(op->materialname);
         if (mt) {
             safe_strcat(buf, mt->description, &len, size);
