@@ -164,7 +164,6 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_PROP_CONTAINER         8
 #define CFAPI_OBJECT_PROP_MAP               9
 #define CFAPI_OBJECT_PROP_COUNT             10
-#define CFAPI_OBJECT_PROP_REFCOUNT          11
 #define CFAPI_OBJECT_PROP_NAME              12
 #define CFAPI_OBJECT_PROP_NAME_PLURAL       13
 #define CFAPI_OBJECT_PROP_TITLE             14

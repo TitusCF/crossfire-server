@@ -1577,11 +1577,6 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_INT;
             break;
 
-        case CFAPI_OBJECT_PROP_REFCOUNT:
-            rv = &op->refcount;
-            *type = CFAPI_INT;
-            break;
-
         case CFAPI_OBJECT_PROP_NAME:
             query_name(op, name, MAX_BUF);
             rv = name;

@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused field object::refcount.
+ common/object.c
+ include/object.c plugins.h
+ server/plugins.c
 Fix speed logic, implementing feature request #1624544: Armour speed limit
  common/living.c
 Fix missing call, resulting in corrupted output.

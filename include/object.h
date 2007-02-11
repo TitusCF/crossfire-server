@@ -115,7 +115,6 @@ typedef struct obj {
     struct mapdef *map;		/**< Pointer to the map in which this object is present */
 
     tag_t	count;		/**< Unique object number for this object */
-    uint16	refcount;	/**< How many objects points to this object */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If

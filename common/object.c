@@ -523,9 +523,6 @@ void clear_owner(object *op)
 {
     if (!op) return;
 
-    if (op->owner && op->ownercount == op->owner->count)
-        op->owner->refcount--;
-
     op->owner = NULL;
     op->ownercount = 0;
 }
@@ -572,8 +569,6 @@ void set_owner (object *op, object *owner)
     op->owner=owner;
 
     op->ownercount=owner->count;
-    owner->refcount++;
-
 }
 
 /**
@@ -707,7 +702,6 @@ void clear_object(object *op) {
     op->more=NULL;
     op->head=NULL;
     op->map=NULL;
-    op->refcount=0;
     op->active_next = NULL;
     op->active_prev = NULL;
     /* What is not cleared is next, prev, and count */
