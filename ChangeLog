@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+include/global.h: errmsg isn't used anymore.
+---
+Remove errmsg use for ss_dump_statistics.
+ include/libproto.h
+ common/shstr.c
+ server/c_misc.c
+---
 Fix get_split_ob not returning failure message (was through errmsg).
  common/object.c
  include/libproto.h

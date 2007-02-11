@@ -627,11 +627,12 @@ int command_whereami (object *op, char *params)
 
 int command_strings (object *op, char *params)
 {
-    ss_dump_statistics();
+    char stats[HUGE_BUF];
+    ss_dump_statistics(stats, sizeof(stats));
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
 		"[fixed]%s\n",
 		"%s",
-		  errmsg);
+		  stats);
 
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
 		  ss_dump_table(2), NULL);

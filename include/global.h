@@ -227,7 +227,6 @@ EXTERN archetype *map_archeytpe;
 EXTERN char first_map_path[MAX_BUF];	/* The start-level */
 EXTERN char first_map_ext_path[MAX_BUF]; /* Path used for per-race start maps */
 
-EXTERN char errmsg[HUGE_BUF];
 EXTERN long ob_count;
 /*
  * Used in treasure.c

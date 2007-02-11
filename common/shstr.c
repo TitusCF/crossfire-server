@@ -293,39 +293,39 @@ void free_string(const char *str) {
 
 #ifdef SS_STATISTICS
 
-extern char errmsg[];
-
 /**
  * A call to this function will cause the statistics to be dumped
- *  into an external string errmsg, which must be large enough to get the values.
+ *  into specified buffer.
  *
  * The routines will gather statistics if SS_STATISTICS is defined.
  *
- * @todo
- * don't use a global variable. Use safe string functions.
+ * @param buf
+ * buffer which will contain dumped information.
+ * @param size
+ * buf's size.
  */
-void ss_dump_statistics(void) {
+void ss_dump_statistics(char* buf, int size) {
     static char line[80];
 
-    sprintf(errmsg, "%-13s %6s %6s %6s %6s %6s\n", 
+    snprintf(buf, size, "%-13s %6s %6s %6s %6s %6s\n", 
         "", "calls", "hashed", "strcmp", "search", "linked");
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
         "add_string:", add_stats.calls, add_stats.hashed, 
         add_stats.strcmps, add_stats.search, add_stats.linked);
-    strcat(errmsg, line);
+    snprintf(buf + strlen(buf), size - strlen(buf), line);
     sprintf(line, "%-13s %6d\n",
         "add_refcount:", add_ref_stats.calls);
-    strcat(errmsg, line);
+    snprintf(buf + strlen(buf), size - strlen(buf), line);
     sprintf(line, "%-13s %6d\n",
         "free_string:", free_stats.calls);
-    strcat(errmsg, line);
+    snprintf(buf + strlen(buf), size - strlen(buf), line);
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
         "find_string:", find_stats.calls, find_stats.hashed, 
         find_stats.strcmps, find_stats.search, find_stats.linked);
-    strcat(errmsg, line);
+    snprintf(buf + strlen(buf), size - strlen(buf), line);
     sprintf(line, "%-13s %6d\n",
         "hashstr:", hash_stats.calls);
-    strcat(errmsg, line);
+    snprintf(buf + strlen(buf), size - strlen(buf), line);
 }
 #endif /* SS_STATISTICS */
 
