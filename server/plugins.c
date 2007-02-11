@@ -829,46 +829,74 @@ void *cfapi_get_time(int *type, ...)
     return NULL;
 }
 
+/**
+ * @param type
+ * unused
+ * @return
+ * always 0
+ *
+ * Additional parameters:
+ * - ob : ::object* for which to create a timer
+ * - delay : long, ticks or seconds
+ * - mode : int, either ::TIMER_MODE_SECONDS or ::TIMER_MODE_CYCLES
+ * - timer : int* that will contain timer's id
+ *
+ * @see cftimer_create().
+ */
 void *cfapi_timer_create(int *type, ...)
 {
     va_list args;
     int res;
-    static int rv;
     object* ob;
     long delay;
     int mode;
+    int* timer;
 
     va_start(args, type);
     ob = va_arg(args, object*);
     delay = va_arg(args, long);
     mode = va_arg(args, int);
+    timer = va_arg(args, int*);
     va_end(args);
     *type = CFAPI_INT;
 
-    rv = cftimer_find_free_id();
-    if ( rv != TIMER_ERR_ID )
+    *timer = cftimer_find_free_id();
+    if ( *timer != TIMER_ERR_ID )
     {
-        res = cftimer_create(rv, delay, ob, mode);
+        res = cftimer_create(*timer, delay, ob, mode);
         if ( res != TIMER_ERR_NONE )
-            rv = res;
+            *timer = res;
     }
-    return &rv;
+    return 0;
 }
 
+/**
+ * @param type
+ * unused
+ * @return
+ * always 0
+ *
+ * Additional parameters:
+ * - timer: int that should be destroyed
+ * - err: int* which will contain the return code of cftimer_destroy().
+ *
+ * @see cftimer_destroy().
+ */
 void *cfapi_timer_destroy(int *type, ...)
 {
     va_list args;
     int id;
-    static int rv;
+    int* err;
 
     va_start(args, type);
     id = va_arg(args, int);
+    err = va_arg(args, int*);
     va_end(args);
     *type = CFAPI_INT;
 
-    rv = cftimer_destroy(id);
+    *err = cftimer_destroy(id);
 
-    return &rv;
+    return 0;
 }
 
 /* Logging hook */

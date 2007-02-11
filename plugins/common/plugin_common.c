@@ -770,16 +770,38 @@ void cf_get_time( timeofday_t* tod )
     cfapiSystem_get_time(&val, tod);
 }
 
+/**
+ * Creates a timer, equivalent of calling cftimer_create().
+ *
+ * @param ob
+ * ::object that will get called. Should handle ::EVENT_TIMER.
+ * @param delay
+ * delay, seconds or ticks.
+ * @param mode
+ * timer mode, ::TIMER_MODE_SECONDS or ::TIMER_MODE_CYCLES
+ * @return
+ * timer identifier, or one of ::TIMER_ERR_ID, ::TIMER_ERR_OBJ or ::TIMER_ERR_MODE
+ */
 int cf_timer_create(object* ob, long delay, int mode)
 {
-    int val;
-    return *( int* )cfapiSystem_timer_create(&val, ob, delay, mode);
+    int val, timer;
+    cfapiSystem_timer_create(&val, ob, delay, mode, &timer);
+    return timer;
 }
 
+/**
+ * Destroys specified timer, equivalent of calling cftimer_destroy().
+ *
+ * @param id
+ * timer to destroy
+ * @return
+ * ::TIMER_ERR_ID if invalid id, ::TIMER_ERR_NONE else.
+ */
 int cf_timer_destroy(int id)
 {
-    int val;
-    return *( int* )cfapiSystem_timer_destroy(&val, id);
+    int val, code;
+    cfapiSystem_timer_destroy(&val, id, &code);
+    return code;
 }
 
 char* cf_object_get_key(object* op, char* keyname)

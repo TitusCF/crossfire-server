@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static variables from plugin API, use parameters instead.
+ plugins/common/plugin_common.c
+ server/plugins.c
+Ryo 2007-10-11
+
 Remove "sstable" command for players, which is called "ssdumptable" for DMs.
  include/sproto.h
  server/commands.c c_mist.c
