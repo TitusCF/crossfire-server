@@ -214,9 +214,8 @@ START_TEST (test_dump_object)
   ob3 = cctk_create_game_object(NULL);
   insert_ob_in_ob(ob2,ob1);
   insert_ob_in_ob(ob3,ob2);
-  strcpy(errmsg,"----");
   dump_object(ob1, buf, sizeof(buf));
-  fail_unless(strstr(errmsg,"arch")!=NULL,"The object dump should contain 'arch' but was %s",buf);
+  fail_unless(strstr(buf,"arch")!=NULL,"The object dump should contain 'arch' but was %s",buf);
 }
 END_TEST
 
