@@ -290,8 +290,8 @@ static int god_gives_present (object *op, object *god, treasure *tr)
     if (follower_has_similar_item (op, &tr->item->clone))
         return 0;
 
-    query_short_name(tmp, name, HUGE_BUF);
     tmp = arch_to_object (tr->item);
+    query_short_name(tmp, name, HUGE_BUF);
     draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
 			  "%s lets %s appear in your hands.",
 			  NULL,
@@ -621,6 +621,9 @@ void become_follower (object *op, object *new_god) {
     update_priest_flag(new_god,skop,FLAG_UNDEAD);
     update_priest_flag(new_god,skop,FLAG_BLIND);
     update_priest_flag(new_god,skop,FLAG_XRAYS); /* better have this if blind! */
+    update_priest_flag(new_god,skop,FLAG_USE_WEAPON);
+    update_priest_flag(new_god,skop,FLAG_USE_ARMOUR);
+    update_priest_flag(new_god,skop,FLAG_USE_SHIELD);
 
     draw_ext_info_format(NDI_UNIQUE,0,op,
 			 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
