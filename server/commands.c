@@ -51,10 +51,6 @@ command_array_struct Commands[] = {
   {"sound", command_sound,	0.0},
   {"party", command_party,	0.0},
   {"gsay", command_gsay,	1.0},
-
-#ifdef DEBUG
-  {"sstable", command_sstable,	0.0},
-#endif
 #ifdef DEBUG_MALLOC_LEVEL
   {"verify", command_malloc_verify,0.0},
 #endif

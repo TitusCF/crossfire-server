@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove "sstable" command for players, which is called "ssdumptable" for DMs.
+ include/sproto.h
+ server/commands.c c_mist.c
+---
 Remove static buffer fur ss_dump_table. Use SS_ flags. Use LOG instead of direct fprintf.
  common/shstr.c
  include/libproto.h

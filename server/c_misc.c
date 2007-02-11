@@ -640,14 +640,6 @@ int command_strings (object *op, char *params)
     return 1;
 }
 
-#ifdef DEBUG
-int command_sstable (object *op, char *params)
-{
-    ss_dump_table(SS_DUMP_TABLE, NULL, 0);
-    return 1;
-}
-#endif
-
 int command_time (object *op, char *params)
 {
     time_info(op);
