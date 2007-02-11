@@ -20,6 +20,7 @@
 #include "sunos.h"
 #endif
 
+#include <logger.h>
 #include "shstr.h"
 
 #ifndef WIN32
@@ -336,13 +337,14 @@ void ss_dump_statistics(char* buf, int size) {
  * combination of flags:
  * @li ::SS_DUMP_TABLE: dump the contents of the hash table to stderr.
  * @li ::SS_DUMP_TOTALS: return a string which says how many entries etc. there are in the table.
+ * @param buf
+ * buffer that will contain total information if (what & SS_DUMP_TABLE). Left untouched else.
+ * @param size
+ * buffer's size
  * @return
- * a string if (what & SS_DUMP_TOTALS) or NULL.
- *
- * @todo
- * don't use static variable. Remove those pesky if 1.
+ * buf if (what & SS_DUMP_TOTALS) or NULL.
  */
-const char* ss_dump_table(int what) {
+char* ss_dump_table(int what, char* buf, int size) {
     static char totals[80];
     int entries = 0, refs = 0, links = 0;
     int i;
@@ -353,31 +355,31 @@ const char* ss_dump_table(int what) {
         if ((ss = hash_table[i])!=NULL) {
             ++entries;
             refs += (ss->refcount & ~TOPBIT);
-#if 1       /* Can't use stderr any longer, need to include global.h and
+           /* Can't use stderr any longer, need to include global.h and
              if (what & SS_DUMP_TABLE)
              * use logfile. */
-            fprintf(stderr, "%4d -- %4d refs '%s' %c\n",
+            LOG(llevDebug, "%4d -- %4d refs '%s' %c\n",
                 i, (ss->refcount & ~TOPBIT), ss->string,
                 (ss->refcount & TOPBIT ? ' ' : '#'));
-#endif
+
             while (ss->next) {
                 ss = ss->next;
                 ++links;
                 refs += (ss->refcount & ~TOPBIT);
-#if 1
+
                 if (what & SS_DUMP_TABLE)
-                    fprintf(stderr, "     -- %4d refs '%s' %c\n",
+                    LOG(llevDebug, "     -- %4d refs '%s' %c\n",
                         (ss->refcount & ~TOPBIT), ss->string,
                         (ss->refcount & TOPBIT ? '*' : ' '));
-#endif
+
             }
         }
     }
 
     if (what & SS_DUMP_TOTALS) {
-        sprintf(totals, "\n%d entries, %d refs, %d links.",
+        snprintf(buf, size, "\n%d entries, %d refs, %d links.",
             entries, refs, links);
-        return totals;
+        return buf;
     }
     return NULL;
 }

@@ -15,11 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove static buffer fur ss_dump_table. Use SS_ flags. Use LOG instead of direct fprintf.
+ common/shstr.c
+ include/libproto.h
+ server/c_misc.c
+---
 include/global.h: errmsg isn't used anymore.
 ---
 Remove errmsg use for ss_dump_statistics.
- include/libproto.h
  common/shstr.c
+ include/libproto.h
  server/c_misc.c
 ---
 Fix get_split_ob not returning failure message (was through errmsg).

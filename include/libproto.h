@@ -337,7 +337,7 @@ extern int query_refcount(const char *str);
 extern const char *find_string(const char *str);
 extern void free_string(const char *str);
 extern void ss_dump_statistics(char* buf, int size);
-extern const char *ss_dump_table(int what);
+extern char *ss_dump_table(int what, char* buf, int size);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
 /* time.c */
 extern void reset_sleep(void);

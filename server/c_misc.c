@@ -28,6 +28,7 @@
 
 #include <global.h>
 #include <loader.h>
+#include <shstr.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -635,14 +636,14 @@ int command_strings (object *op, char *params)
 		  stats);
 
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
-		  ss_dump_table(2), NULL);
+		  ss_dump_table(SS_DUMP_TABLE, stats, sizeof(stats)), NULL);
     return 1;
 }
 
 #ifdef DEBUG
 int command_sstable (object *op, char *params)
 {
-    ss_dump_table(1);
+    ss_dump_table(SS_DUMP_TABLE, NULL, 0);
     return 1;
 }
 #endif
@@ -954,7 +955,7 @@ int command_dumpallarchetypes (object *op, char *params)
 
 int command_ssdumptable (object *op, char *params)
 {
-    ss_dump_table(1);
+    ss_dump_table(SS_DUMP_TABLE, NULL, 0);
     return 0;
 }
 
