@@ -1449,6 +1449,10 @@ void fix_object(object *op) {
 
     } /* End if player */
 
+    /* Max is determined by armour */
+    if(op->speed>max)
+        op->speed=max;
+
     if(added_speed>=0)
         op->speed+=added_speed/10.0;
     else /* Something wrong here...: */
@@ -1466,10 +1470,6 @@ void fix_object(object *op) {
         if(f>0)
             op->speed=op->speed/(1.0+f/max_carry[op->stats.Str]);
     }
-
-    /* Max is determined by armour */
-    if(op->speed>max)
-        op->speed=max;
 
     /* Put a lower limit on speed.  Note with this speed, you move once every
      * 100 ticks or so.  This amounts to once every 12 seconds of realtime.
