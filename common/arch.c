@@ -235,10 +235,17 @@ void init_archetable(void) {
 }
 
 /**
- * Dumps an archetype to debug-level output.
+ * Dumps an archetype to buffer.
+ *
+ * @param at
+ * archetype to dump. Must not be NULL.
+ * @param buf
+ * buffer that will contain dumped information.
+ * @param size
+ * buf's size.
  */
-void dump_arch(archetype *at) {
-    dump_object(&at->clone);
+void dump_arch(archetype *at, char* buf, int size) {
+    dump_object(&at->clone, buf, size);
 }
 
 /**
@@ -248,9 +255,10 @@ void dump_arch(archetype *at) {
  */
 void dump_all_archetypes(void) {
     archetype *at;
+    char buf[HUGE_BUF];
     for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
-        dump_arch(at);
-        fprintf(logfile, "%s\n", errmsg);
+        dump_arch(at, buf, sizeof(buf));
+        LOG(llevDebug, "%s\n", buf);
     }
 }
 

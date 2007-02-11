@@ -875,8 +875,9 @@ int command_debug (object *op, char *params)
 int command_dumpbelow (object *op, char *params)
 {
     if (op && op->below) {
-	dump_object(op->below);
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, errmsg, NULL);
+        char buf[HUGE_BUF];
+	dump_object(op->below, buf, sizeof(buf));
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, buf, NULL);
 
 	/* Let's push that item on the dm's stack */
 	dm_stack_push( op->contr, op->below->count );

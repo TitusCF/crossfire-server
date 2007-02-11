@@ -172,8 +172,10 @@ void animate_object(object *op, int dir) {
     int base_state; /* starting index # to draw from */
 
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
+        char buf[HUGE_BUF];
         LOG(llevError,"Object lacks animation.\n");
-        dump_object(op);
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError, buf);
         return;
     }
     if (op->head) {

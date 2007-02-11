@@ -47,7 +47,6 @@
 
 static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
-static void dump_object2(object *);
 static void expand_objects(void);
 static void free_object2(object *, int);
 static void permute(int *, int, int);
@@ -352,126 +351,45 @@ object *get_player_container(object *op) {
 }
 
 /**
- * Dumps an object to the global variable ::errmsg.
- *
- * Used by:
- * @li Crossedit: dump.
- * @li Server DM commands: dumpbelow, dump.
+ * Dumps an object.
  *
  * @param op
- * the object we want to dump. Shouldn't be NULL.
- *
- * @todo
- * don't use the global ::errmsg variable.
+ * object to dump. Can be NULL.
+ * @param buf
+ * buffer that will contain object information. Must not be NULL.
+ * @param size
+ * buf's size.
  */
-static void dump_object2(object *op) {
+void dump_object(object *op, char* buf, int size) {
     char cp[HUGE_BUF];
+
+    if(op==NULL) {
+        snprintf(buf, size, "[NULL pointer]");
+        return;
+    }
+
     /*  object *tmp;*/
 
     if(op->arch!=NULL) {
-        strcat(errmsg,"arch ");
-        strcat(errmsg,op->arch->name?op->arch->name:"(null)");
-        strcat(errmsg,"\n");
+        snprintf(buf, size, "arch %s\n", op->arch->name?op->arch->name:"(null)");
+
         get_ob_diff(op,&empty_archetype->clone, cp, HUGE_BUF);
         if(cp[0]!='\0')
-            strcat(errmsg,cp);
-#if 0
-      /* Don't dump player diffs - they are too long, mostly meaningless, and
-       * will overflow the buffer.
-       * Changed so that we don't dump inventory either.  This may
-       * also overflow the buffer.
-       */
-      if(op->type!=PLAYER && (cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
-        strcat(errmsg,cp);
-      for (tmp=op->inv; tmp; tmp=tmp->below)
-        dump_object2(tmp);
-#endif
+            snprintf(buf + strlen(buf) , size - strlen(buf), cp);
         if (op->more) {
-            strcat(errmsg, "more ");
-            strcat(errmsg, ltostr10(op->more->count));
-            strcat(errmsg, "\n");
+            snprintf(buf + strlen(buf), size - strlen(buf), "more %s\n", ltostr10(op->more->count));
         }
         if (op->head) {
-            strcat(errmsg, "head ");
-            strcat(errmsg, ltostr10(op->head->count));
-            strcat(errmsg, "\n");
+            snprintf(buf + strlen(buf), size - strlen(buf), "head %s\n", ltostr10(op->head->count));
         }
         if (op->env) {
-            strcat(errmsg, "env ");
-            strcat(errmsg, ltostr10(op->env->count));
-            strcat(errmsg, "\n");
+            snprintf(buf + strlen(buf), size - strlen(buf), "env %s\n", ltostr10(op->env->count));
         }
-        strcat(errmsg,"end\n");
+        snprintf(buf + strlen(buf), size - strlen(buf), "end\n");
     } else {
-        strcat(errmsg,"Object ");
-        if (op->name==NULL) strcat(errmsg, "(null)");
-        else strcat(errmsg,op->name);
-        strcat(errmsg,"\n");
-#if 0
-      if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
-        strcat(errmsg,cp);
-      for (tmp=op->inv; tmp; tmp=tmp->below)
-        dump_object2(tmp);
-#endif
-        strcat(errmsg,"end\n");
+        snprintf(buf + strlen(buf), size - strlen(buf), "Object %s\nend\n", op->name==NULL ? "(null)" : op->name);
     }
 }
-
-/**
- * Dumps an object. Returns output in the static global errmsg array.
- *
- * @todo
- * merge with dump_object2(). Don't use global variable.
- */
-void dump_object(object *op) {
-  if(op==NULL) {
-    strcpy(errmsg,"[NULL pointer]");
-    return;
-  }
-  errmsg[0]='\0';
-  dump_object2(op);
-}
-
-#if 0
-/* dump_me() is not currently used - perhaps should be removed?
- * MSW 2006-06-05
- */
-
-/** GROS - Dumps an object. Return the result into a string                   */
-/* Note that no checking is done for the validity of the target string, so   */
-/* you need to be sure that you allocated enough space for it.               */
-static void dump_me(object *op, char *outstr)
-{
-    char *cp;
-
-    if(op==NULL)
-    {
-        strcpy(outstr,"[NULL pointer]");
-        return;
-    }
-    outstr[0]='\0';
-
-    if(op->arch!=NULL)
-    {
-        strcat(outstr,"arch ");
-        strcat(outstr,op->arch->name?op->arch->name:"(null)");
-        strcat(outstr,"\n");
-        if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
-            strcat(outstr,cp);
-        strcat(outstr,"end\n");
-    }
-    else
-    {
-        strcat(outstr,"Object ");
-        if (op->name==NULL)
-            strcat(outstr, "(null)");
-        else
-            strcat(outstr,op->name);
-        strcat(outstr,"\n");
-        strcat(outstr,"end\n");
-    }
-}
-#endif
 
 /**
  * Dumps all objects to console.
@@ -479,41 +397,16 @@ static void dump_me(object *op, char *outstr)
  * This is really verbose...Can be triggered by the dumpallobjects command while in DM mode.
  *
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
- *
- * @todo
- * use LOG() instead of direct fprintf.
  */
 void dump_all_objects(void) {
     object *op;
+    char buf[HUGE_BUF];
     for(op=objects;op!=NULL;op=op->next) {
-        dump_object(op);
-        fprintf(logfile, "Object %d\n:%s\n", op->count, errmsg);
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevDebug, "Object %d\n:%s\n", op->count, buf);
     }
 }
 
-
-#if 0
-/* get_nearest_part is not used, and should perhaps be removed?
- * MSW 2006-06-04
- */
-
-/**
- * get_nearest_part(multi-object, object 2) returns the part of the
- * multi-object 1 which is closest to the second object.
- * If it's not a multi-object, it is returned.
- */
-
-static object *get_nearest_part(object *op, const object *pl) {
-  object *tmp,*closest;
-  int last_dist,i;
-  if(op->more==NULL)
-    return op;
-  for(last_dist=distance(op,pl),closest=op,tmp=op->more;tmp!=NULL;tmp=tmp->more)
-    if((i=distance(tmp,pl))<last_dist)
-      closest=tmp,last_dist=i;
-  return closest;
-}
-#endif
 
 /**
  * Returns the object which has the count-variable equal to the argument.
@@ -1240,14 +1133,10 @@ void update_object(object *op, int action) {
  * The object must have been removed by remove_ob() first for
  * this function to succeed.
  *
- * If free_inventory is set, free inventory as well. Else drop items in
- * inventory to the ground.
+ * Inventory will be dropped on the ground if in a map, else freed too.
  *
  * @param ob
  * object to free. Will become invalid when function returns.
- *
- * @todo
- * merge with free_object2 and rename.
  */
 void free_object(object *ob) {
   free_object2(ob, 0);
@@ -1266,9 +1155,6 @@ void free_object(object *ob) {
  * @param free_inventory
  * if set, free inventory as well. Else drop items in inventory to the ground.
  *
- * @todo
- * merge with free_object2 and rename.
- *
  * @warning
  * the object's archetype should be a valid pointer, or NULL.
  */
@@ -1276,8 +1162,10 @@ static void free_object2(object *ob, int free_inventory) {
     object *tmp,*op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
+        char buf[HUGE_BUF];
         LOG(llevDebug,"Free object called with non removed object\n");
-        dump_object(ob);
+        dump_object(ob, buf, sizeof(buf));
+        LOG(llevError, buf);
 #ifdef MANY_CORES
         abort();
 #endif
@@ -1287,8 +1175,9 @@ static void free_object2(object *ob, int free_inventory) {
         remove_friendly_object(ob);
     }
     if(QUERY_FLAG(ob,FLAG_FREED)) {
-        dump_object(ob);
-        LOG(llevError,"Trying to free freed object.\n%s\n",errmsg);
+        char buf[HUGE_BUF];
+        dump_object(ob, buf, sizeof(buf));
+        LOG(llevError,"Trying to free freed object.\n%s\n",buf);
         return;
     }
 
@@ -1502,7 +1391,8 @@ void remove_ob(object *op) {
     sint16 x,y;
 
     if(QUERY_FLAG(op,FLAG_REMOVED)) {
-        dump_object(op);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
         LOG(llevError,"Trying to remove removed object.\n%s\n",errmsg);
         abort();
     }
@@ -1586,10 +1476,11 @@ void remove_ob(object *op) {
          */
         /*TODO is this check really needed?*/
         if(GET_MAP_OB(m,x,y)!=op) {
-            dump_object(op);
-            LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", errmsg);
-            dump_object(GET_MAP_OB(m,x,y));
-            LOG(llevError,"%s\n",errmsg);
+            char buf[HUGE_BUF];
+            dump_object(op, buf, sizeof(buf));
+            LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", buf);
+            dump_object(GET_MAP_OB(m,x,y), buf, sizeof(buf));
+            LOG(llevError,"%s\n",buf);
         }
         SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
     }
@@ -1741,13 +1632,15 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
         return NULL;
     }
     if(m==NULL) {
-        dump_object(op);
-        LOG(llevError,"Trying to insert in null-map!\n%s\n",errmsg);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError,"Trying to insert in null-map!\n%s\n",buf);
         return op;
     }
     if(out_of_map(m,op->x,op->y)) {
-        dump_object(op);
-        LOG(llevError,"Trying to insert object outside the map.\n%s\n", errmsg);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError,"Trying to insert object outside the map.\n%s\n", buf);
 #ifdef MANY_CORES
         /* Better to catch this here, as otherwise the next use of this object
          * is likely to cause a crash.  Better to find out where it is getting
@@ -1758,8 +1651,9 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
         return op;
     }
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-        dump_object(op);
-        LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", errmsg);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", buf);
         return op;
     }
     if(op->more!=NULL) {
@@ -2189,13 +2083,15 @@ object *insert_ob_in_ob(object *op,object *where) {
   object *tmp, *otmp;
 
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-        dump_object(op);
-        LOG(llevError,"Trying to insert (ob) inserted object.\n%s\n", errmsg);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError,"Trying to insert (ob) inserted object.\n%s\n", buf);
         return op;
     }
     if(where==NULL) {
-        dump_object(op);
-        LOG(llevError,"Trying to put object in NULL.\n%s\n", errmsg);
+        char buf[HUGE_BUF];
+        dump_object(op, buf, sizeof(buf));
+        LOG(llevError,"Trying to put object in NULL.\n%s\n", buf);
         return op;
     }
     if (where->head) {

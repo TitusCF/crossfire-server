@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove errmsg use for dump_object and dump_arch. Merge dump_object and dump_object2.
+ common/anim.c arch.c object.c
+ crossedit/Attr.c
+ include/libproto.h
+ server/c_misc.c c_wiz.c server.c time.c
+Ryo 2007-02-11
+
 server/weather.c: Fix possible buffer overflows.
 server/gods.c: Use correct format specifier in sprintf().
 server/spell_util.c: Fix return statements with no value in non-void

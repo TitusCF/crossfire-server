@@ -348,10 +348,11 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     object *tmp;
 
     if(op->stats.wc < 0 || (int)op->stats.wc  >= NUM_ANIMATIONS(op)) {
+        char buf[HUGE_BUF];
 	LOG(llevError,"Gate error: animation was %d, max=%d\n",op->stats.wc,
 	    NUM_ANIMATIONS(op));
-	dump_object(op);
-	LOG(llevError,"%s\n",errmsg);
+	dump_object(op, buf, sizeof(buf));
+	LOG(llevError,"%s\n",buf);
 	op->stats.wc=0;
     }
 

@@ -1035,9 +1035,10 @@ static void process_events (mapstruct *map)
         if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER &&
             op->map && op->map->in_memory != MAP_IN_MEMORY)
         {
+            char buf[HUGE_BUF];
             LOG (llevError, "BUG: process_events(): Removed object on list\n");
-            dump_object(op);
-            LOG(llevError, "%s\n", errmsg);
+            dump_object(op, buf, sizeof(buf));
+            LOG(llevError, "%s\n", buf);
             free_object(op);
             continue;
         }

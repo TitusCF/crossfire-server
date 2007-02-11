@@ -1010,13 +1010,14 @@ int command_skills (object *op, char *params) {
 
 int command_dump (object *op, char *params) {
     object *tmp;
+    char buf[HUGE_BUF];
 
     tmp = get_dm_object(op->contr, &params, NULL);
     if (!tmp)
         return 1;
 
-    dump_object(tmp);
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, errmsg, errmsg);
+    dump_object(tmp, buf, sizeof(buf));
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, buf, buf);
     if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
 		      "Object is marked original", NULL);
