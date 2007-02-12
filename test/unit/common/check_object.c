@@ -305,15 +305,12 @@ START_TEST (test_clear_owner)
 {
   object *ob1;
   object *ob2;
-  int refcount;
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
   set_owner(ob2,ob1);
-  refcount = ob1->refcount;
   fail_unless(ob2->owner!=NULL,"Prior to testing clear_owner, owner of ob2 was wrongly initialized");
   clear_owner(ob2);
   fail_unless(ob2->owner==NULL,"After clear_owner ob2 still had an owner");
-  fail_unless(ob1->refcount<refcount,"After clear_owner of ob2, ob1 refcont should be decreased. Before clear_ower:%d , after %d",refcount,ob1->refcount);
 }
 END_TEST
 
@@ -325,10 +322,8 @@ START_TEST (test_set_owner)
 {
   object *ob1;
   object *ob2;
-  int refcount;
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
-  refcount = ob1->refcount;
   set_owner(ob2,ob1);
   fail_unless(ob2->owner==ob1,"After set_owner ob2(%p) owner should be ob1(%p) but was (%p)",ob2,ob1,ob2->owner);
 }
