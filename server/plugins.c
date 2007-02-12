@@ -2247,7 +2247,10 @@ void* cfapi_object_set_property(int* type, ...)
 
         case CFAPI_OBJECT_PROP_SPEED:
             darg = va_arg(args, double);
-            op->speed = darg;
+            if (darg != op->speed) {
+                op->speed = darg;
+                update_ob_speed(op);
+            }
             break;
 
         case CFAPI_OBJECT_PROP_SPEED_LEFT:
@@ -3637,6 +3640,8 @@ void* cfapi_object_teleport(int *type, ...)
             tmp->y = y+freearr_y[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
 
         insert_ob_in_map(who, map, NULL, 0);
+        if (who->type == PLAYER)
+            map_newmap_cmd(who->contr);
         result = 0;
     }
 
