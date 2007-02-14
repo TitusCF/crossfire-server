@@ -244,9 +244,9 @@ extern object *find_best_weapon_used_match(object *pl, const char *params);
 extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object *tmp);
 /* path.c */
-extern char *path_combine(const char *src, const char *dst);
+extern char *path_combine(const char *src, const char *dst, char* buf, int size);
 extern void path_normalize(char *path);
-extern char *path_combine_and_normalize(const char *src, const char *dst);
+extern char *path_combine_and_normalize(const char *src, const char *dst, char* path, int size);
 /* porting.c */
 extern char *tempnam_local(const char *dir, const char *pfx);
 extern void remove_directory(const char *path);

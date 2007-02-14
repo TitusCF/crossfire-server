@@ -649,8 +649,7 @@ void domap(const char* name)
 
     for ( x = 0; x < 4; x++ )
         if ( m->tile_path[x] != NULL ) {
-            memset(exit_path, 0, 500);
-            strncpy(exit_path, path_combine_and_normalize(m->path, m->tile_path[x]), 500);
+            path_combine_and_normalize(m->path, m->tile_path[x], exit_path, sizeof(exit_path));
             create_pathname(exit_path, tmppath, MAX_BUF);
             if (stat(tmppath, &stats)) {
                 printf("  map %s doesn't exist in map %s, for tile %d.\n", exit_path, name, x);
@@ -703,7 +702,7 @@ void domap(const char* name)
                     }
 
                     if (strlen(ep)) {
-                        strncpy(exit_path, path_combine_and_normalize(m->path, ep), 500);
+                        path_combine_and_normalize(m->path, ep, exit_path, 500);
                         create_pathname(exit_path, tmppath, MAX_BUF);
                         if (stat(tmppath, &stats)) {
                             printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, name, item->x, item->y);

@@ -63,25 +63,25 @@
  * path we're starting from.
  * @param dst
  * path we're doing to.
+ * @param path
+ * buffer containing the combined path.
+ * @param size
+ * size of path.
  * @return
- * static buffer containing the combined path.
+ * path.
  *
  * @note
  * this doesn't handle the '..', check path_normalize().
- *
- * @todo
- * remove static buffer, use safe string functions.
  */
-char *path_combine(const char *src, const char *dst) {
+char *path_combine(const char *src, const char *dst, char* path, int size) {
     char *p;
-    static char path[HUGE_BUF];
 
     if (*dst == '/') {
         /* absolute destination path => ignore source path */
-        strcpy(path, dst);
+        snprintf(path, size, dst);
     } else {
         /* relative destination path => add after last '/' of source */
-        strcpy(path, src);
+        snprintf(path, size, src);
         p = strrchr(path, '/');
         if (p != NULL) {
             p++;
@@ -90,7 +90,7 @@ char *path_combine(const char *src, const char *dst) {
             if (*src == '/')
                 *p++ = '/';
         }
-        strcpy(p, dst);
+        snprintf(p, size - (p - path), dst);
     }
 
 #if defined(DEBUG_PATH)
@@ -104,6 +104,8 @@ char *path_combine(const char *src, const char *dst) {
  *
  * @param path
  * path to clear. It will be modified in place.
+ * @note
+ * there shouldn't be any buffer overflow, as we just remove stuff.
  */
 void path_normalize(char *path) {
     char *p; /* points to the beginning of the path not yet processed; this is
@@ -186,16 +188,16 @@ void path_normalize(char *path) {
  * path we're starting from.
  * @param dst
  * path we're getting to.
+ * @param path
+ * buffer that will contain combined paths.
+ * @param size
+ * length of path.
  * @return
- * static buffer containing normalized combined path.
- *
- * @todo
- * don't use/return static buffer.
+ * path
  */
-char *path_combine_and_normalize(const char *src, const char *dst) {
-    char *path;
+char *path_combine_and_normalize(const char *src, const char *dst, char* path, int size) {
 
-    path = path_combine(src, dst);
+    path_combine(src, dst, path, size);
     path_normalize(path);
     return(path);
 }
@@ -232,10 +234,10 @@ static void check_normalize(const char *path, const char *exp0) {
 }
 
 static void check_combine_and_normalize(const char *src, const char *dst, const char *exp) {
-    const char *res;
+    char res[HUE_BUF];
 
     fprintf(stderr, "path_combine_and_normalize(%s, %s) = ", src, dst);
-    res = path_combine_and_normalize(src, dst);
+    path_combine_and_normalize(src, dst, res, sizeof(res));
     fprintf(stderr, "%s", res);
     if (strcmp(res, exp) != 0) {
         fprintf(stderr, ", should be %s\n", exp);

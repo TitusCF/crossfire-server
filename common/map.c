@@ -883,17 +883,13 @@ static shopitems *parse_shop_string (const char *input_string) {
  * map we're considering.
  * @param output_string
  * string to write to.
- *
- * @warning
- * no check is done to make sure output_string has enough space available.
- *
- * @todo
- * give the size so we can check no overflow happens.
+ * @param size
+ * output_string's length.
  */
-static void print_shop_string(mapstruct *m, char *output_string) {
+static void print_shop_string(mapstruct *m, char *output_string, int size) {
     int i;
     char tmp[MAX_BUF];
-    strcpy(output_string, "");
+    output_string[0] = '\0';
     for (i=0; i< m->shopitems[0].index; i++) {
         if (m->shopitems[i].typenum) {
             if (m->shopitems[i].strength) {
@@ -907,7 +903,7 @@ static void print_shop_string(mapstruct *m, char *output_string) {
             }
             else snprintf(tmp, sizeof(tmp), "*");
         }
-        strcat(output_string, tmp);
+        snprintf(output_string + strlen(output_string), size - strlen(output_string), tmp);
     }
 }
 
@@ -1097,7 +1093,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 LOG(llevError,"load_map_header: tile location %d out of bounds (%s)\n",
                     tile, m->path);
             } else {
-                char *path;
+                char path[HUGE_BUF];
 
                 *end = 0;
 
@@ -1110,21 +1106,21 @@ static int load_map_header(FILE *fp, mapstruct *m)
 
                 if (check_path(value, 1) != -1) {
                     /* The unadorned path works. */
-                    path = value;
+                    snprintf(path, sizeof(path), value);
                 } else {
                     /* Try again; it could be a relative exit. */
-                    path = path_combine_and_normalize(m->path, value);
+                    path_combine_and_normalize(m->path, value, path, sizeof(path));
 
                     if (check_path(path, 1) == -1) {
                         LOG(llevError, "get_map_header: Bad tile path %s %s\n", m->path, value);
-                        path = NULL;
+                        path[0] = '\0';
                     }
                 }
 
                 if (editor) {
                     /* Use the value as in the file. */
                     m->tile_path[tile-1] = strdup_local(value);
-                } else if (path != NULL) {
+                } else if (*path != '\0') {
                     /* Use the normalized value. */
                     m->tile_path[tile-1] = strdup_local(path);
                 }
@@ -1449,7 +1445,7 @@ int save_map(mapstruct *m, int flag) {
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
     if (m->region) fprintf(fp,"region %s\n", m->region->name);
     if (m->shopitems) {
-        print_shop_string(m, shop);
+        print_shop_string(m, shop, sizeof(shop));
         fprintf(fp,"shopitems %s\n", shop);
     }
     if (m->shopgreed) fprintf(fp,"shopgreed %f\n", m->shopgreed);
@@ -2175,7 +2171,7 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % 4;
     char path[HUGE_BUF];
-    snprintf(path, sizeof(path), "%s", path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num]));
+    path_combine_and_normalize(orig_map->path, orig_map->tile_path[tile_num], path, sizeof(path));
 
     orig_map->tile_map[tile_num] = ready_map_name(path, 0);
 
