@@ -1302,7 +1302,7 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
     /* Prevent an abuse: write a spell you're denied with, then cast it from the
      * written scroll - gros, 28th July 2006 
      */
-    if (chosen_spell->path_attuned & pl->path_denied)
+    if (chosen_spell->path_attuned & pl->path_denied && settings.allow_denied_spells_writing == 0)
     {
         char name[MAX_BUF];
         query_name(chosen_spell, name, MAX_BUF);

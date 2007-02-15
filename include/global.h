@@ -399,6 +399,7 @@ typedef struct Settings {
     uint8   personalized_blessings; /* If 1, blessed weapons get an owner and a willpower value */
     sint64  pk_max_experience; /* Maximum experience one can get for PKing. Ignore if negative. */
     int     pk_max_experience_percent; /* Percentage of experience of victim the killer gets. */
+    int     allow_denied_spells_writing; /* If set, players can write spells they can't cast. */
 } Settings;
 
 extern Settings settings;

@@ -744,6 +744,14 @@ static void load_settings(void)
             LOG(llevError, "load_settings: pk_max_experience_percent should be positive or zero\n", cp);
         } else
             settings.pk_max_experience_percent = pkmep;
+    } else if ( !strcasecmp( buf, "allow_denied_spells_writing" ) ) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.allow_denied_spells_writing = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.allow_denied_spells_writing = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for allow_denied_spells_writing: %s\n", cp);
+        }
     } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}

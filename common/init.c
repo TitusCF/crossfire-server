@@ -104,7 +104,7 @@ struct Settings settings = {
     1, /* personalized_blessings */
     5000000, /* pk_max_experience */
     10, /* pk_max_experience_percent */
-
+    0, /* allow_denied_spells_writing */
 };
 
 /**
