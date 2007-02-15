@@ -808,17 +808,22 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
-        sprintf(buf, "You have %d unpaid items that would cost you %s, but you only have", 
+        snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ", 
                 unpaid_count, cost_string_from_value(unpaid_price));
         for (i=0; i< NUM_COINS; i++) {
             if (coincount[i] > 0 && coins[i]) {
+                if (denominations == 0)
+                    snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "but you only have");
                 denominations++;
-                sprintf(coinbuf, " %d %s,", coincount[i],
+                snprintf(coinbuf, sizeof(coinbuf), " %d %s,", coincount[i],
                         find_archetype(coins[i])->clone.name_pl);
-                strcat (buf, coinbuf);
+                snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), coinbuf);
             }
         }
-        if (denominations > 1) make_list_like(buf);
+        if (denominations == 0)
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "but you don't have any money.");
+        else if (denominations > 1)
+            make_list_like(buf);
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP,
                       MSG_TYPE_SHOP_PAYMENT, buf, NULL);
         return 0;
