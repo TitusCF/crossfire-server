@@ -1,30 +1,29 @@
-
 /*
  * static char *rcsid_item_c =
  *    "$Id$";
  */
 
 /*
-    CrossFire, A Multiplayer game for X-windows
+  CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
+  Copyright (C) 2002,2006 Mark Wedel & Crossfire Development Team
+  Copyright (C) 1992 Frank Tore Johansen
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to crossfire-devel@real-time.com
+  The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
 /**
@@ -40,7 +39,7 @@
 
 
 #include <global.h>
-#include <object.h>	/* LOOK_OBJ */
+#include <object.h> /* LOOK_OBJ */
 #include <newclient.h>
 #include <newserver.h>
 #include <sproto.h>
@@ -48,11 +47,12 @@
 /** This is the maximum number of bytes we expect any one item to take up */
 #define MAXITEMLEN  300
 
-/*******************************************************************************
+/*************************************************************************
  *
  * Functions related to sending object data to the client.
  *
- ******************************************************************************/
+ *************************************************************************
+ */
 
 /**
  * Adds string to socklist.
@@ -82,53 +82,53 @@ static unsigned int query_flags(const object *op)
     unsigned int flags = 0;
 
     if(QUERY_FLAG(op,FLAG_APPLIED)) {
-	switch(op->type) {
-	  case BOW:
-	  case WAND:
-	  case ROD:
-	  case HORN:
-	    flags = a_readied;
-	    break;
-	  case WEAPON:
-	    flags = a_wielded;
-	    break;
-	  case SKILL:
-	  case ARMOUR:
-	  case HELMET:
-	  case SHIELD:
-	  case RING:
-	  case BOOTS:
-	  case GLOVES:
-	  case AMULET:
-	  case GIRDLE:
-	  case BRACERS:
-	  case CLOAK:
-	    flags = a_worn;
-	    break;
-	  case CONTAINER:
-	    flags = a_active;
-	    break;
-	  default:
-	    flags = a_applied;
-	    break;
-	}
+        switch(op->type) {
+            case BOW:
+            case WAND:
+            case ROD:
+            case HORN:
+                flags = a_readied;
+                break;
+            case WEAPON:
+                flags = a_wielded;
+                break;
+            case SKILL:
+            case ARMOUR:
+            case HELMET:
+            case SHIELD:
+            case RING:
+            case BOOTS:
+            case GLOVES:
+            case AMULET:
+            case GIRDLE:
+            case BRACERS:
+            case CLOAK:
+                flags = a_worn;
+                break;
+            case CONTAINER:
+                flags = a_active;
+                break;
+            default:
+                flags = a_applied;
+                break;
+        }
     }
     if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
-	(!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
-	flags |= F_OPEN;
+                                  (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
+        flags |= F_OPEN;
     
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
-	if(QUERY_FLAG(op,FLAG_DAMNED))
-	    flags |= F_DAMNED;
-	else if(QUERY_FLAG(op,FLAG_CURSED))
-	    flags |= F_CURSED;
+        if(QUERY_FLAG(op,FLAG_DAMNED))
+            flags |= F_DAMNED;
+        else if(QUERY_FLAG(op,FLAG_CURSED))
+            flags |= F_CURSED;
     }
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
-	flags |= F_MAGIC;
+        flags |= F_MAGIC;
     if (QUERY_FLAG(op,FLAG_UNPAID))
-	flags |= F_UNPAID;
+        flags |= F_UNPAID;
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
-	flags |= F_LOCKED;
+        flags |= F_LOCKED;
 
     return flags;
 }
@@ -145,13 +145,13 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
 
     flags = query_flags (head);
     if (QUERY_FLAG(head, FLAG_NO_PICK))
-	flags |=  F_NOPICK;
+        flags |=  F_NOPICK;
 
     if (!(ns->faces_sent[head->face->number] & NS_FACESENT_FACE))
-	esrv_send_face(ns, head->face->number,0);
+        esrv_send_face(ns, head->face->number,0);
 
     if (QUERY_FLAG(head,FLAG_ANIMATE) && !ns->anims_sent[head->animation_id])
-	esrv_send_animation(ns, head->animation_id);
+        esrv_send_animation(ns, head->animation_id);
 
     SockList_AddInt(sl, head->count);
     SockList_AddInt(sl, flags);
@@ -160,14 +160,14 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
 
     if (!head->custom_name) {
         query_base_name(head, 0, item_n, 126);
-	item_n[127]=0;
-	len=strlen(item_n);
-	query_base_name(head, 1, item_p, MAX_BUF);
+        item_n[127]=0;
+        len=strlen(item_n);
+        query_base_name(head, 1, item_p, MAX_BUF);
     } else {
-	strncpy(item_n,head->custom_name,127);
-	item_n[127]=0;
-	len=strlen(item_n);
-	strncpy(item_p, head->custom_name, MAX_BUF);
+        strncpy(item_n,head->custom_name,127);
+        item_n[127]=0;
+        len=strlen(item_n);
+        strncpy(item_p, head->custom_name, MAX_BUF);
     }
     strncpy(item_n+len+1, item_p, 127);
     item_n[254]=0;
@@ -179,19 +179,19 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     SockList_AddShort(sl,head->animation_id);
     anim_speed=0;
     if (QUERY_FLAG(head,FLAG_ANIMATE)) {
-	if (head->anim_speed) anim_speed=head->anim_speed;
-	else {
-	    if (FABS(head->speed)<0.001) anim_speed=255;
-	    else if (FABS(head->speed)>=1.0) anim_speed=1;
-	    else anim_speed = (int) (1.0/FABS(head->speed));
-	}
-	if (anim_speed>255) anim_speed=255;
+        if (head->anim_speed) anim_speed=head->anim_speed;
+        else {
+            if (FABS(head->speed)<0.001) anim_speed=255;
+            else if (FABS(head->speed)>=1.0) anim_speed=1;
+            else anim_speed = (int) (1.0/FABS(head->speed));
+        }
+        if (anim_speed>255) anim_speed=255;
     }
     SockList_AddChar(sl, (char) anim_speed);
     SockList_AddInt(sl, head->nrof);
 
     if (ns->itemcmd == 2)
-	SockList_AddShort(sl, head->client_type);
+        SockList_AddShort(sl, head->client_type);
 
     SET_FLAG(head, FLAG_CLIENT_SENT);
 }
@@ -211,20 +211,21 @@ void esrv_draw_look(object *pl)
     char buf[MAX_BUF];
 
     if (!pl->contr->socket.update_look) {
-	LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
-	return;
+        LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
+        return;
     } else {
-	pl->contr->socket.update_look=0;
+        pl->contr->socket.update_look=0;
     }
 
     if(QUERY_FLAG(pl, FLAG_REMOVED) || pl->map == NULL ||
        pl->map->in_memory != MAP_IN_MEMORY || out_of_map(pl->map,pl->x,pl->y))
-	    return;
+        return;
 
     if (pl->contr->transport)
-	for (tmp=pl->contr->transport->inv; tmp && tmp->above;tmp=tmp->above) ;
+        for (tmp=pl->contr->transport->inv; tmp && tmp->above;tmp=tmp->above) ;
     else
-	for (tmp=get_map_ob(pl->map,pl->x,pl->y); tmp && tmp->above;tmp=tmp->above) ;
+        for (tmp=get_map_ob(pl->map,pl->x,pl->y);
+             tmp && tmp->above;tmp=tmp->above) ;
 
     sl.buf=malloc(MAXSOCKSENDBUF);
 
@@ -235,72 +236,76 @@ void esrv_draw_look(object *pl)
     SockList_AddInt(&sl, 0);
 
     if (!(pl->contr->socket.faces_sent[empty_face->number]&NS_FACESENT_FACE))
-	esrv_send_face(&pl->contr->socket, empty_face->number,0);
+        esrv_send_face(&pl->contr->socket, empty_face->number,0);
 
     if (pl->contr->socket.look_position) {
-	SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
-	SockList_AddInt(&sl, 0);
-	SockList_AddInt(&sl, -1);
-	SockList_AddInt(&sl, empty_face->number);
-	sprintf(buf,"Click here to see %d previous items", NUM_LOOK_OBJECTS);
-	add_stringlen_to_sockbuf(buf, &sl);
-	SockList_AddShort(&sl,0);
-	SockList_AddChar(&sl, 0);
-	SockList_AddInt(&sl, 0);
-	if (pl->contr->socket.itemcmd == 2)
-	    SockList_AddShort(&sl, 0);
+        SockList_AddInt(&sl, 0x80000000 |
+                        (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
+        SockList_AddInt(&sl, 0);
+        SockList_AddInt(&sl, -1);
+        SockList_AddInt(&sl, empty_face->number);
+        sprintf(buf,"Click here to see %d previous items", NUM_LOOK_OBJECTS);
+        add_stringlen_to_sockbuf(buf, &sl);
+        SockList_AddShort(&sl,0);
+        SockList_AddChar(&sl, 0);
+        SockList_AddInt(&sl, 0);
+        if (pl->contr->socket.itemcmd == 2)
+            SockList_AddShort(&sl, 0);
     }
 
     if (pl->contr->transport) {
-	add_object_to_socklist(&pl->contr->socket, &sl, pl->contr->transport);
-	got_one++;
+        add_object_to_socklist(&pl->contr->socket, &sl, pl->contr->transport);
+        got_one++;
     }
 
     for (last=NULL; tmp!=last; tmp=tmp->below) {
-	object *head;
+        object *head;
 
-	if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
-	    last = tmp->below;  /* assumes double floor mode */
-	    if (last && QUERY_FLAG(last, FLAG_IS_FLOOR))
-		last = last->below;
-	}
-	if (LOOK_OBJ(tmp)) {
-	    if (++start_look < pl->contr->socket.look_position) continue;
-	    end_look++;
-	    if (end_look > NUM_LOOK_OBJECTS) {
-		/* What we basically do is make a 'fake' object - when the user applies it,
-		 * we notice the special tag the object has, and act accordingly.
-		 */
-		SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position+ NUM_LOOK_OBJECTS));
-		SockList_AddInt(&sl, 0);
-		SockList_AddInt(&sl, -1);
-		SockList_AddInt(&sl, empty_face->number);
-		sprintf(buf,"Click here to see next group of items");
-		add_stringlen_to_sockbuf(buf, &sl);
-		SockList_AddShort(&sl,0);
-		SockList_AddChar(&sl, 0);
-		SockList_AddInt(&sl, 0);
-		if (pl->contr->socket.itemcmd == 2)
-		    SockList_AddShort(&sl, 0);
-		break;
-	    }
-	    if (tmp->head) head = tmp->head;
-	    else head = tmp;
+        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !last) {
+            last = tmp->below;  /* assumes double floor mode */
+            if (last && QUERY_FLAG(last, FLAG_IS_FLOOR))
+                last = last->below;
+        }
+        if (LOOK_OBJ(tmp)) {
+            if (++start_look < pl->contr->socket.look_position) continue;
+            end_look++;
+            if (end_look > NUM_LOOK_OBJECTS) {
+                    /* What we basically do is make a 'fake' object -
+                     * when the user applies it, we notice the special
+                     * tag the object has, and act accordingly.
+                     */
+                SockList_AddInt(&sl, 0x80000000 |
+                                (pl->contr->socket.look_position +
+                                 NUM_LOOK_OBJECTS));
+                SockList_AddInt(&sl, 0);
+                SockList_AddInt(&sl, -1);
+                SockList_AddInt(&sl, empty_face->number);
+                sprintf(buf,"Click here to see next group of items");
+                add_stringlen_to_sockbuf(buf, &sl);
+                SockList_AddShort(&sl,0);
+                SockList_AddChar(&sl, 0);
+                SockList_AddInt(&sl, 0);
+                if (pl->contr->socket.itemcmd == 2)
+                    SockList_AddShort(&sl, 0);
+                break;
+            }
+            if (tmp->head) head = tmp->head;
+            else head = tmp;
 
-	    add_object_to_socklist(&pl->contr->socket, &sl, head);
-	    got_one++;
+            add_object_to_socklist(&pl->contr->socket, &sl, head);
+            got_one++;
 
-	    if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
-		Send_With_Handling(&pl->contr->socket, &sl);
-		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
-		sl.len=strlen((char*)sl.buf);
-		SockList_AddInt(&sl, 0);
-		got_one=0;
-	    }
-	} /* If LOOK_OBJ() */
+            if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
+                Send_With_Handling(&pl->contr->socket, &sl);
+                sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+                sl.len=strlen((char*)sl.buf);
+                SockList_AddInt(&sl, 0);
+                got_one=0;
+            }
+        } /* If LOOK_OBJ() */
     }
     if (got_one)
-	Send_With_Handling(&pl->contr->socket, &sl);
+        Send_With_Handling(&pl->contr->socket, &sl);
 
     free(sl.buf);
 }
@@ -326,31 +331,31 @@ void esrv_send_inventory(object *pl, object *op)
     SockList_AddInt(&sl, op->count);
     
     for (tmp=op->inv; tmp; tmp=tmp->below) {
-	object *head;
+        object *head;
 
-	if (tmp->head) head = tmp->head;
-	else head = tmp;
+        if (tmp->head) head = tmp->head;
+        else head = tmp;
 
-	if (LOOK_OBJ(head)) {
-	    add_object_to_socklist(&pl->contr->socket, &sl, head);
+        if (LOOK_OBJ(head)) {
+            add_object_to_socklist(&pl->contr->socket, &sl, head);
         
-	    got_one++;
+            got_one++;
 
-	    /* IT is possible for players to accumulate a huge amount of
-	     * items (especially with some of the bags out there) to
-	     * overflow the buffer.  IF so, send multiple item commands.
-	     */
-	    if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
-		Send_With_Handling(&pl->contr->socket, &sl);
-		sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
-		sl.len=strlen((char*)sl.buf);
-		SockList_AddInt(&sl, op->count);
-		got_one=0;
-	    }
-	} /* If LOOK_OBJ() */
+                /* It is possible for players to accumulate a huge amount of
+                 * items (especially with some of the bags out there) to
+                 * overflow the buffer.  IF so, send multiple item commands.
+                 */
+            if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
+                Send_With_Handling(&pl->contr->socket, &sl);
+                sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+                sl.len=strlen((char*)sl.buf);
+                SockList_AddInt(&sl, op->count);
+                got_one=0;
+            }
+        } /* If LOOK_OBJ() */
     }
     if (got_one)
-	Send_With_Handling(&pl->contr->socket, &sl);
+        Send_With_Handling(&pl->contr->socket, &sl);
     free(sl.buf);
 }
 
@@ -366,21 +371,21 @@ void esrv_update_item(int flags, object *pl, object *op)
 {
     SockList sl;
 
-    /* If we have a request to send the player item, skip a few checks. */
+        /* If we have a request to send the player item, skip a few checks. */
     if (op!=pl) {
-	if (! LOOK_OBJ(op)) 
-	    return;
-	/* we remove the check for op->env, because in theory, the object
-	 * is hopefully in the same place, so the client should preserve
-	 * order.
-	 */
+        if (! LOOK_OBJ(op)) 
+            return;
+            /* we remove the check for op->env, because in theory, the object
+             * is hopefully in the same place, so the client should preserve
+             * order.
+             */
     }
     if (!QUERY_FLAG(op, FLAG_CLIENT_SENT)) {
-	/* FLAG_CLIENT_SENT is debug only.  We are using it to see where
-	 * this is happening - we can set a breakpoint here in the debugger
-	 * and track back the call.
-	 */
-	LOG(llevDebug,"We have not sent item %s (%d)\n", op->name, op->count);
+            /* FLAG_CLIENT_SENT is debug only.  We are using it to see where
+             * this is happening - we can set a breakpoint here in the debugger
+             * and track back the call.
+             */
+        LOG(llevDebug,"We have not sent item %s (%d)\n", op->name, op->count);
     }
     sl.buf=malloc(MAXSOCKSENDBUF);
 
@@ -394,73 +399,74 @@ void esrv_update_item(int flags, object *pl, object *op)
     SockList_AddInt(&sl, op->count);
 
     if (flags & UPD_LOCATION)
-	SockList_AddInt(&sl, op->env? op->env->count:0);
+        SockList_AddInt(&sl, op->env? op->env->count:0);
 
     if (flags & UPD_FLAGS)
-	SockList_AddInt(&sl, query_flags(op));
+        SockList_AddInt(&sl, query_flags(op));
 
     if (flags & UPD_WEIGHT) {
-	sint32 weight = WEIGHT(op);
+        sint32 weight = WEIGHT(op);
 
-	/* TRANSPORTS are odd - they sort of look like containers, yet can't be
-	 * picked up.  So we don't to send the weight, as it is odd that you see
-	 * weight sometimes and not other (the draw_look won't send it
-	 * for example.
-	 */
-	SockList_AddInt(&sl,  QUERY_FLAG(op, FLAG_NO_PICK) ? -1 : weight);
-	if (pl == op) {
-	    op->contr->last_weight = weight;
-	}
+            /* TRANSPORTS are odd - they sort of look like containers,
+             * yet can't be picked up.  So we don't to send the weight,
+             * as it is odd that you see weight sometimes and not other
+             * (the draw_look won't send it for example.
+             */
+        SockList_AddInt(&sl,  QUERY_FLAG(op, FLAG_NO_PICK) ? -1 : weight);
+        if (pl == op) {
+            op->contr->last_weight = weight;
+        }
     }
 
     if (flags & UPD_FACE) {
-	if (!(pl->contr->socket.faces_sent[op->face->number] & NS_FACESENT_FACE))
-	    esrv_send_face(&pl->contr->socket, op->face->number,0);
-	SockList_AddInt(&sl, op->face->number);
+        if (!(pl->contr->socket.faces_sent[op->face->number] &
+              NS_FACESENT_FACE))
+            esrv_send_face(&pl->contr->socket, op->face->number,0);
+        SockList_AddInt(&sl, op->face->number);
     }
     if (flags & UPD_NAME) {
-	int len;
-	char item_p[MAX_BUF];
-    char item_n[MAX_BUF];
+        int len;
+        char item_p[MAX_BUF];
+        char item_n[MAX_BUF];
 
-	if (!op->custom_name) {
-        query_base_name(op, 0, item_n, MAX_BUF);
-	    len=strlen(item_n);
-	    query_base_name(op, 1, item_p, MAX_BUF);
-	}
-	else {
-	    strncpy(item_n,op->custom_name,MAX_BUF-1);
-	    item_n[MAX_BUF-1]=0;
-	    len=strlen(item_n);
-	    strncpy(item_p, op->custom_name, MAX_BUF-1);
-        item_p[MAX_BUF-1]=0;
-	}
+        if (!op->custom_name) {
+            query_base_name(op, 0, item_n, MAX_BUF);
+            len=strlen(item_n);
+            query_base_name(op, 1, item_p, MAX_BUF);
+        }
+        else {
+            strncpy(item_n,op->custom_name,MAX_BUF-1);
+            item_n[MAX_BUF-1]=0;
+            len=strlen(item_n);
+            strncpy(item_p, op->custom_name, MAX_BUF-1);
+            item_p[MAX_BUF-1]=0;
+        }
 
-	strncpy(item_n+len+1, item_p, 127);
-	item_n[254]=0;
-	len += strlen(item_n+1+len) + 1;
-	SockList_AddChar(&sl, (char)len);
-	memcpy(sl.buf+sl.len, item_n, len);
-	sl.len += len;
+        strncpy(item_n+len+1, item_p, 127);
+        item_n[254]=0;
+        len += strlen(item_n+1+len) + 1;
+        SockList_AddChar(&sl, (char)len);
+        memcpy(sl.buf+sl.len, item_n, len);
+        sl.len += len;
     }
     if (flags & UPD_ANIM) 
-	    SockList_AddShort(&sl,op->animation_id);
+        SockList_AddShort(&sl,op->animation_id);
 
     if (flags & UPD_ANIMSPEED) {
-	int anim_speed=0;
-	if (QUERY_FLAG(op,FLAG_ANIMATE)) {
-	    if (op->anim_speed) anim_speed=op->anim_speed;
-	    else {
-		if (FABS(op->speed)<0.001) anim_speed=255;
-		else if (FABS(op->speed)>=1.0) anim_speed=1;
-		else anim_speed = (int) (1.0/FABS(op->speed));
-	    }
-	    if (anim_speed>255) anim_speed=255;
-	}
-	SockList_AddChar(&sl, (char)anim_speed);
+        int anim_speed=0;
+        if (QUERY_FLAG(op,FLAG_ANIMATE)) {
+            if (op->anim_speed) anim_speed=op->anim_speed;
+            else {
+                if (FABS(op->speed)<0.001) anim_speed=255;
+                else if (FABS(op->speed)>=1.0) anim_speed=1;
+                else anim_speed = (int) (1.0/FABS(op->speed));
+            }
+            if (anim_speed>255) anim_speed=255;
+        }
+        SockList_AddChar(&sl, (char)anim_speed);
     }
     if (flags & UPD_NROF)
-	    SockList_AddInt(&sl, op->nrof);
+        SockList_AddInt(&sl, op->nrof);
 
     Send_With_Handling(&pl->contr->socket, &sl);
     free(sl.buf);
@@ -473,18 +479,18 @@ void esrv_send_item(object *pl, object*op)
 {
     SockList sl;
     
-    /* If this is not the player object, do some more checks */
+        /* If this is not the player object, do some more checks */
     if (op!=pl) {
-	/* We only send 'visibile' objects to the client */
-	if (! LOOK_OBJ(op)) 
-	    return;
-	/* if the item is on the ground, mark that the look needs to
-	 * be updated.
-	 */
-	if (!op->env) {
-	    pl->contr->socket.update_look=1;
-	    return;
-	}
+            /* We only send 'visibile' objects to the client */
+        if (! LOOK_OBJ(op)) 
+            return;
+            /* if the item is on the ground, mark that the look needs to
+             * be updated.
+             */
+        if (!op->env) {
+            pl->contr->socket.update_look=1;
+            return;
+        }
     }
 
     sl.buf=malloc(MAXSOCKSENDBUF);
@@ -523,11 +529,12 @@ void esrv_del_item(player *pl, int tag)
 }
 
 
-/*******************************************************************************
+/**************************************************************************
  *
  * Client has requested us to do something with an object.
  *
- ******************************************************************************/
+ **************************************************************************
+ */
 
 /**
  * Takes a player and object count (tag) and returns the actual object
@@ -539,30 +546,30 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count)
     object *op, *tmp;
 
     if (pl->count == count)
-	return pl;
+        return pl;
 
     for(op = pl->inv; op; op = op->below)
-	if (op->count == count)
-	    return op;
-	else if (op->type == CONTAINER && pl->container == op)
-	    for(tmp = op->inv; tmp; tmp = tmp->below)
-		if (tmp->count == count)
-		    return tmp;
+        if (op->count == count)
+            return op;
+        else if (op->type == CONTAINER && pl->container == op)
+            for(tmp = op->inv; tmp; tmp = tmp->below)
+                if (tmp->count == count)
+                    return tmp;
 
     for(op = get_map_ob (pl->map, pl->x, pl->y); op; op = op->above)
-	if (op->head != NULL && op->head->count == count)
-	    return op;
-	else if (op->count == count)
-	    return op;
-	else if (op->type == CONTAINER && pl->container == op)
-	    for(tmp = op->inv; tmp; tmp = tmp->below)
-		if (tmp->count == count)
-		    return tmp;
+        if (op->head != NULL && op->head->count == count)
+            return op;
+        else if (op->count == count)
+            return op;
+        else if (op->type == CONTAINER && pl->container == op)
+            for(tmp = op->inv; tmp; tmp = tmp->below)
+                if (tmp->count == count)
+                    return tmp;
 
     if (pl->contr->transport) {
-	for(tmp = pl->contr->transport->inv; tmp; tmp = tmp->below)
-	    if (tmp->count == count)
-		return tmp;
+        for(tmp = pl->contr->transport->inv; tmp; tmp = tmp->below)
+            if (tmp->count == count)
+                return tmp;
     }
     return NULL;
 }
@@ -572,10 +579,11 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count)
 void examine_cmd(char *buf, int len,player *pl)
 {
     long tag;
-	object *op;
+    object *op;
 
     if (len <= 0 || !buf) {
-        LOG(llevDebug, "Player '%s' sent bogus examine_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus examine_cmd information",
+            pl->ob->name);
         return;
     }
 
@@ -583,9 +591,10 @@ void examine_cmd(char *buf, int len,player *pl)
     op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried to examine the unknown object (%ld)\n",
-	    pl->ob->name, tag);
-	return;
+        LOG(llevDebug,
+            "Player '%s' tried to examine the unknown object (%ld)\n",
+            pl->ob->name, tag);
+        return;
     }
     examine (pl->ob, op);
 }
@@ -597,29 +606,31 @@ void apply_cmd(char *buf, int len,player *pl)
     object *op;
 
     if (!buf || len <= 0) {
-        LOG(llevDebug, "Player '%s' sent bogus apply_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus apply_cmd information",
+            pl->ob->name);
         return;
     }
 
     tag = atoi(buf);
     op = esrv_get_ob_from_count(pl->ob, tag);
 
-    /* sort of a hack, but if the player saves and the player then manually
-     * applies a savebed (or otherwise tries to do stuff), we run into trouble.
-     */
+        /* sort of a hack, but if the player saves and the player then
+         * manually applies a savebed (or otherwise tries to do stuff),
+         * we run into trouble.
+         */
     if (QUERY_FLAG(pl->ob, FLAG_REMOVED)) return;
 
-    /* If the high bit is set, player applied a pseudo object. */
+        /* If the high bit is set, player applied a pseudo object. */
     if (tag & 0x80000000) {
-	pl->socket.look_position = tag & 0x7fffffff;
-	pl->socket.update_look = 1;
-	return;
+        pl->socket.look_position = tag & 0x7fffffff;
+        pl->socket.update_look = 1;
+        return;
     }
 
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried to apply the unknown object (%d)\n",
-	  pl->ob->name, tag);
-	return;
+        LOG(llevDebug, "Player '%s' tried to apply the unknown object (%d)\n",
+            pl->ob->name, tag);
+        return;
     }
     player_apply (pl->ob, op, 0, 0);
 }
@@ -632,7 +643,8 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
     object *tmp;
 
     if (len != 5) {
-        LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information",
+            pl->ob->name);
         return;
     }
     flag = data[0];
@@ -640,23 +652,24 @@ void lock_item_cmd(uint8 *data, int len,player *pl)
     op = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op) {
-	draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Could not find object to lock/unlock", NULL);
-	return;
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob,
+                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Could not find object to lock/unlock", NULL);
+        return;
     }
     if (!flag)
-	CLEAR_FLAG(op,FLAG_INV_LOCKED);
+        CLEAR_FLAG(op,FLAG_INV_LOCKED);
     else
-	SET_FLAG(op,FLAG_INV_LOCKED);
+        SET_FLAG(op,FLAG_INV_LOCKED);
 
     tmp = merge_ob(op, NULL);
     if (tmp == NULL) {
-	/* object was not merged */
-	esrv_update_item(UPD_FLAGS, pl->ob, op);
+            /* object was not merged */
+        esrv_update_item(UPD_FLAGS, pl->ob, op);
     } else {
-	/* object was merged into tmp */
-	esrv_del_item(pl, tag);
-	esrv_send_item(pl->ob, tmp);
+            /* object was merged into tmp */
+        esrv_del_item(pl, tag);
+        esrv_send_item(pl->ob, tmp);
     }
 }
 
@@ -677,25 +690,27 @@ void mark_item_cmd(uint8 *data, int len,player *pl)
     char name[MAX_BUF];
 
     if (len != 4) {
-        LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information",
+            pl->ob->name);
         return;
     }
 
     tag = GetInt_String(data);
     op = esrv_get_ob_from_count(pl->ob, tag);
     if (!op) {
-        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-            "Could not find object to mark", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob,
+                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                      "Could not find object to mark", NULL);
         return;
     }
     pl->mark = op;
     pl->mark_count = op->count;
     query_name(op, name, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob,
-        MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-        "Marked item %s",
-        "Marked item %s",
-        name);
+                         MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                         "Marked item %s",
+                         "Marked item %s",
+                         name);
 }
 
 
@@ -721,53 +736,57 @@ void look_at(object *op,int dx,int dy) {
     if (!m) return;
 
     for(tmp=get_map_ob(m, x ,y);tmp!=NULL&&tmp->above!=NULL;
-	    tmp=tmp->above);
+        tmp=tmp->above);
 
     for ( ; tmp != NULL; tmp=tmp->below ) {
-	 if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ)) continue;
+        if (tmp->invisible && !QUERY_FLAG(op, FLAG_WIZ)) continue;
 
-	 if(!flag) {
-	    if(dx||dy)
-		draw_ext_info(NDI_UNIQUE, 0,op, 
-			      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			      "There you see:", NULL);
-	    else {
-		draw_ext_info(NDI_UNIQUE, 0,op,
-			      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			      "You see:", NULL);
-	    }
-	    flag=1;
-	 }
+        if(!flag) {
+            if(dx||dy)
+                draw_ext_info(NDI_UNIQUE, 0,op, 
+                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                              "There you see:", NULL);
+            else {
+                draw_ext_info(NDI_UNIQUE, 0,op,
+                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                              "You see:", NULL);
+            }
+            flag=1;
+        }
 
-     query_name(tmp, name, MAX_BUF);
-	 if (QUERY_FLAG(op, FLAG_WIZ))
-	    draw_ext_info_format(NDI_UNIQUE,0, op,
-				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-				 "- %s (%d).",
-				 "- %s (%d).",
-				 name,tmp->count);
-	 else
-	    draw_ext_info_format(NDI_UNIQUE,0, op,
-				 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
-				 "- %s.",
-				 "- %s.",
-				 name);
+        query_name(tmp, name, MAX_BUF);
+        if (QUERY_FLAG(op, FLAG_WIZ))
+            draw_ext_info_format(NDI_UNIQUE,0, op,
+                                 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                                 "- %s (%d).",
+                                 "- %s (%d).",
+                                 name,tmp->count);
+        else
+            draw_ext_info_format(NDI_UNIQUE,0, op,
+                                 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+                                 "- %s.",
+                                 "- %s.",
+                                 name);
 
-	 if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
-	    (tmp->type != CONTAINER && tmp->type!=FLESH)) || QUERY_FLAG(op, FLAG_WIZ))
-	    inventory(op,tmp->head==NULL?tmp:tmp->head);
+        if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
+             (tmp->type != CONTAINER && tmp->type!=FLESH)) ||
+            QUERY_FLAG(op, FLAG_WIZ))
+            inventory(op,tmp->head==NULL?tmp:tmp->head);
 
-	 if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))	/* don't continue under the floor */
-	    break;
+            /* don't continue under the floor */
+        if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))   
+            break;
     }
 
     if(!flag) {
-	if(dx||dy)
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			  "You see nothing there.", NULL);
-	else
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			  "You see nothing.", NULL);
+        if(dx||dy)
+            draw_ext_info(NDI_UNIQUE, 0,op,
+                          MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                          "You see nothing there.", NULL);
+        else
+            draw_ext_info(NDI_UNIQUE, 0,op,
+                          MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                          "You see nothing.", NULL);
     }
 }
 
@@ -781,15 +800,15 @@ void look_at_cmd(char *buf, int len,player *pl)
 
     dx=atoi(buf);
     if (!(cp=strchr(buf,' '))) {
-	return;
+        return;
     }
     dy=atoi(cp);
 
     if (FABS(dx)>MAP_CLIENT_X/2 || FABS(dy)>MAP_CLIENT_Y/2)
-          return;
+        return;
 
     if(pl->blocked_los[dx+(pl->socket.mapx/2)][dy+(pl->socket.mapy/2)])
-          return;
+        return;
     look_at(pl->ob, dx, dy);
 }
 
@@ -800,66 +819,67 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 
     op = esrv_get_ob_from_count(pl, tag);
     if (!op) {
-	LOG(llevDebug, "Player '%s' tried to move an unknown object (%ld)\n",
-	    pl->name, tag);
-	return;
+        LOG(llevDebug, "Player '%s' tried to move an unknown object (%ld)\n",
+            pl->name, tag);
+        return;
     }
 
-    /* If on a transport, you don't drop to the ground - you drop to the
-     * transport.
-     */
-    if (!to && !pl->contr->transport) {	/* drop it to the ground */
-/*	LOG(llevDebug, "Drop it on the ground.\n");*/
+        /* If on a transport, you don't drop to the ground - you drop to the
+         * transport.
+         */
+    if (!to && !pl->contr->transport) { /* drop it to the ground */
+/*  LOG(llevDebug, "Drop it on the ground.\n");*/
 
-	if (op->map && !op->env) {
-/*	    LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/
-	    return;
-	}
-	/* If it is an active container, then we should drop all objects
-	 * in the container and not the container itself.
-	 */
-	if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
-	    object *current, *next;
-	    for (current=op->inv; current!=NULL; current=next) {
-		next=current->below;
-		drop_object(pl, current, 0);
-	    }
-	    esrv_update_item(UPD_WEIGHT, pl, op);
-	}
-	else {
-	    drop_object (pl, op, nrof);
-	}
-	return;
+        if (op->map && !op->env) {
+/*      LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/
+            return;
+        }
+            /* If it is an active container, then we should drop all objects
+             * in the container and not the container itself.
+             */
+        if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
+            object *current, *next;
+            for (current=op->inv; current!=NULL; current=next) {
+                next=current->below;
+                drop_object(pl, current, 0);
+            }
+            esrv_update_item(UPD_WEIGHT, pl, op);
+        }
+        else {
+            drop_object (pl, op, nrof);
+        }
+        return;
     } else if (to == pl->count) {     /* pick it up to the inventory */
-	/* return if player has already picked it up */
-	if (op->env == pl) return;
+            /* return if player has already picked it up */
+        if (op->env == pl) return;
 
-	pl->contr->count = nrof;
-	pick_up(pl, op);
-	return ;
+        pl->contr->count = nrof;
+        pick_up(pl, op);
+        return ;
     }
-    /* If not dropped or picked up, we are putting it into a sack */
+        /* If not dropped or picked up, we are putting it into a sack */
     if (pl->contr->transport) {
-	if (can_pick(pl, op) && transport_can_hold(pl->contr->transport, op, nrof)) {
-	    put_object_in_sack (pl, pl->contr->transport, op, nrof);
-	}
+        if (can_pick(pl, op) &&
+            transport_can_hold(pl->contr->transport, op, nrof)) {
+            put_object_in_sack (pl, pl->contr->transport, op, nrof);
+        }
     } else {
-	env = esrv_get_ob_from_count(pl, to);
-	if (!env) {
-	    LOG(llevDebug, 
-		"Player '%s' tried to move object to the unknown location (%d)\n",
-		pl->name, to);
-	    return;
-	}
-	/* put_object_in_sack presumes that necessary sanity checking
-	 * has already been done (eg, it can be picked up and fits in
-	 * in a sack, so check for those things.  We should also check
-	 * an make sure env is in fact a container for that matter.
-	 */
-	if (env->type == CONTAINER
-	    && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
-	    put_object_in_sack (pl, env, op, nrof);
-	}
+        env = esrv_get_ob_from_count(pl, to);
+        if (!env) {
+            LOG(llevDebug, 
+                "Player '%s' tried to move object to the unknown location (%d)\n",
+                pl->name, to);
+            return;
+        }
+            /* put_object_in_sack presumes that necessary sanity checking
+             * has already been done (eg, it can be picked up and fits in
+             * in a sack, so check for those things.  We should also check
+             * an make sure env is in fact a container for that matter.
+             */
+        if (env->type == CONTAINER
+            && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
+            put_object_in_sack (pl, env, op, nrof);
+        }
     }
 }
 

@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Whitespace and long-line cleanup
+ socket/item.c
+Aaron Baugher 2007-02-15
+
 server/shop.c: handle "no money" case when player tries to exit shop.
 ---
 Fix a crash with object handling by plugins.
