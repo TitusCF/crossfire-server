@@ -17,6 +17,7 @@ Changes for SVN:
 
 Whitespace and long-line cleanup
  socket/item.c
+ socket/image.c
 Aaron Baugher 2007-02-15
 
 server/shop.c: handle "no money" case when player tries to exit shop.
