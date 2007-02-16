@@ -305,3 +305,7 @@ create_home_portals      FALSE
 # Chances of being hurt depend on the experience amount ("willpower") the
 # object has, compared to the experience amount of the wielder.
 personalized_blessings      TRUE
+
+# If set to TRUE, players can inscribe scrolls of spells they can't cast (denied path, ...)
+allow_denied_spells_writing FALSE
+
