@@ -886,8 +886,48 @@ static int improve_armour(object *op, object *improver, object *armour)
     return 1;
 }
 
+/**
+ * Makes an object's face the main one
+ *
+ * Sets an object's face to the 'face' in the archetype.
+ * Meant for showing containers opening and closing.
+ *
+ * @param op
+ * Object to set face on
+ *
+ * @return TRUE if face changed
+ */
+static int set_object_face_main(object *op){
 
+    if( op->face && op->arch->clone.face &&
+        op->face != op->arch->clone.face ){
+        op->face =  op->arch->clone.face;
+        return TRUE;
+    }
+    return FALSE;
+}
+    
+/**
+ * Makes an object's face the other_arch face
+ *
+ * Sets an object's face to the other_arch 'face'.
+ * Meant for showing containers opening and closing.
+ *
+ * @param op
+ * Object to set face on
+ *
+ * @return TRUE if face changed
+ */
+static int set_object_face_other(object *op){
 
+    if( op->face && op->other_arch && op->other_arch->clone.face &&
+        op->face != op->other_arch->clone.face ){
+        op->face =  op->other_arch->clone.face;
+        return TRUE;
+    }
+    return FALSE;
+}
+    
 /**
  * Handle apply on containers.
  * By Eneq(at)(csd.uu.se).
@@ -1032,8 +1072,9 @@ static int apply_container (object *op, object *sack)
 }
 
 /**
- * Eneq(at)(csd.uu.se): Handle apply on containers.  This is for containers
- * the player has in their inventory, eg, sacks, luggages, etc.
+ * Eneq(at)(csd.uu.se): Handle apply on containers.  This is for
+ * containers that are applied by a player, whether in inventory or
+ * on the ground: eg, sacks, luggages, etc.
  *
  * Moved to own function and added many features [Tero.Haatanen(at)lut.fi]
  * This version is for client/server mode.
@@ -1081,7 +1122,11 @@ int esrv_apply_container (object *op, object *sack)
                              name_tmp);
         CLEAR_FLAG(op->container, FLAG_APPLIED);
         op->container=NULL;
-        esrv_update_item (UPD_FLAGS, op, tmp);
+        if( set_object_face_main(tmp) ){
+            esrv_update_item (UPD_FLAGS|UPD_FACE, op, tmp);
+        } else {
+            esrv_update_item (UPD_FLAGS, op, tmp);
+        }
         if (tmp == sack) return 1;
     }
 
@@ -1148,7 +1193,11 @@ int esrv_apply_container (object *op, object *sack)
                              name_sack);
         SET_FLAG (sack, FLAG_APPLIED);
         op->container = sack;
-        esrv_update_item (UPD_FLAGS, op, sack);
+        if( set_object_face_other(sack) ){
+            esrv_update_item (UPD_FLAGS|UPD_FACE, op, sack);
+        } else {
+            esrv_update_item (UPD_FLAGS, op, sack);
+        }
         esrv_send_inventory (op, sack);
 
     } else { /* sack is in players inventory */
@@ -1161,7 +1210,11 @@ int esrv_apply_container (object *op, object *sack)
                                  name_sack);
             SET_FLAG (sack, FLAG_APPLIED);
             op->container = sack;
-            esrv_update_item (UPD_FLAGS, op, sack);
+            if( set_object_face_other(sack) ){
+                esrv_update_item (UPD_FLAGS|UPD_FACE, op, sack);
+            } else {
+                esrv_update_item (UPD_FLAGS, op, sack);
+            }
             esrv_send_inventory (op, sack);
         }
         else {
