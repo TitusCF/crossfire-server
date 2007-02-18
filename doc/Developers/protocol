@@ -1228,6 +1228,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 	(please keep this alphabetized to make it easier to see different
 	options)
 
+	bot (0/1 value):
+	    If set to 1, the client will not be considered a player when
+	    updating information to the metaserver. This is to avoid having
+	    a server with many bots appear more crowded than others.
+
 	darkness (0/1 value):
 	    If set to 1 (default), the server will send darkness information
 	    in the map protocol commands.  If 0, the server will not
@@ -1286,7 +1291,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	   send back a 'setup map1cmd 1' because it will still end up
 	   using the map1cmd due to the map size.
 
-	map1acmd:  Specifies that the server uses the map1a protocol format -
+	map1acmd:  Specifies that the client uses the map1a protocol format -
 	    this is largely the same as the map1 command, but adds support
 	    for big images.
 
@@ -1342,11 +1347,6 @@ S->C: setup <option1> <value1> <option2> <value2>
 	spellmon (0/1)
 	    If set to 1 the client has indicated that it wishes to be
 	    sent the spell list and updated when it changes.
-
-	sexp (send skill experience):
-	    Obsolete - was used to denote that client wanted skill exp
-	    sent.  Under revised skill system, this info just doesn't
-	    exist anymore in the same form.
 
 	tick (0/1)
 	    If set, the client want tick commands so it knows animation
