@@ -92,7 +92,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
 #ifdef ESRV_DEBUG
 	LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
-	if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(&bufsize))) {
+	if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
 	    LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
 	}
     }
@@ -126,6 +126,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->monitor_spells = 0;
     ns->tick=0;
     ns->is_bot = 0;
+    ns->want_pickup = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start

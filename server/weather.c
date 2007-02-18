@@ -1514,6 +1514,7 @@ static void calculate_temperature(mapstruct *m, int wx, int wy){
 	int x,y;
     for (x=0; x < settings.worldmaptilesizex; x++) {
 	for (y=0; y < settings.worldmaptilesizey; y++) {
+        worldmap_to_weathermap(x, y, &wx, &wy, m);
 		weathermap[wx][wy].realtemp=real_world_temperature(x, y, m);
 	}
 	}
