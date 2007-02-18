@@ -1841,7 +1841,7 @@ int calculate_difficulty(mapstruct *m) {
                     total_exp+=op->stats.exp;
                 if(QUERY_FLAG(op,FLAG_GENERATOR)) {
                     total_exp+=op->stats.exp;
-                    at=type_to_archetype(GENERATE_TYPE(op));
+                    at=get_archetype_by_type_subtype(GENERATE_TYPE(op), -1);
                     if(at!=NULL)
                     total_exp+=at->clone.stats.exp*8;
                 }

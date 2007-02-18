@@ -287,16 +287,6 @@ START_TEST (test_find_archetype)
 }
 END_TEST
 
-START_TEST (test_type_to_archetype)
-{
-    archetype* arch;
-    arch = type_to_archetype(PLAYER);
-    fail_unless(arch!=NULL,"Should be able to locate an archetype of type PLAYER");
-    arch = type_to_archetype(OBJECT_TYPE_MAX+1);
-    fail_unless(arch==NULL,"Should not be able to locate and archetype of inexistant type");
-}
-END_TEST
-
 START_TEST (test_object_create_arch)
 {
     archetype* arch;
@@ -330,7 +320,6 @@ Suite *arch_suite(void)
   tcase_add_test(tc_core, test_create_singularity);
   tcase_add_test(tc_core, test_create_archetype);
   tcase_add_test(tc_core, test_find_archetype);
-  tcase_add_test(tc_core, test_type_to_archetype);
   tcase_add_test(tc_core, test_object_create_arch);
 
   return s;

@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Replace "type_to_archetype" by "get_archetype_by_type_subtype".
+ common/arch.c map.c
+ include/libproto.h
+ test/unit/common/check_arch.c
+Ryo 2007-02-18
+
 Whitespace formatting (indents and tab removal) and long-line cleanup
  server/c_new.c
  socket/request.c
