@@ -673,50 +673,6 @@ static void add_arch(archetype *at) {
 }
 
 /**
- * Search an archetype by type.
- * @param type
- * object type to search for.
- * @return
- * first archetype using the given type.
- * @note
- * Used in treasure-generation.
- * @todo
- * merge with get_archetype_by_type_subtype()
- */
-archetype *type_to_archetype(int type) {
-    archetype *at;
-
-    for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more)
-        if(at->clone.type==type)
-            return at;
-    return NULL;
-}
-
-/*
- * Returns a new object copied from the first archetype matching
- * the given type.
- * Used in treasure-generation.
- */
- 
-/*
- * Commented as it does not seems used in code. If you uncomment
- * this function, make sure you write appropriate unit test!!!!!!!
- * 
-object *clone_arch(int type) {
-  archetype *at;
-  object *op=get_object();
-
-  if((at=type_to_archetype(type))==NULL) {
-    LOG(llevError,"Can't clone archetype %d\n",type);
-    free_object(op);
-    return NULL;
-  }
-  copy_object(&at->clone,op);
-  return op;
-}
-*/
-
-/**
  * Create a full object using the given archetype. 
  * This instanciate not only the archetype but also
  * all linked archetypes in case of multisquare archetype.
