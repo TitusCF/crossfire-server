@@ -246,6 +246,9 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
 	} else if (!strcmp(cmd,"bot")) {
 		ns->is_bot = ( atoi(param) != 0 ? 1 : 0 );
 		safe_strcat(cmdback, ns->is_bot ? "1" : "0", &slen, HUGE_BUF);
+	} else if (!strcmp(cmd,"want_pickup")) {
+		ns->want_pickup = ( atoi(param) != 0 ? 1 : 0 );
+		safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
 	} else {
 	    /* Didn't get a setup command we understood -
 	     * report a failure to the client.
@@ -2502,5 +2505,23 @@ void send_tick(player *pl)
     tmp = 0;
     if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp))) 
 	LOG(llevError,"send_tick: Unable to turn off TCP_NODELAY\n");
+    free(sl.buf);
+}
+
+/**
+ * Sends the "pickup" state to pl if client wants it requested.
+ *
+ * @param pl
+ * player that just logged in.
+ */
+void esrv_send_pickup(player* pl) {
+    SockList sl;
+    if (!pl->socket.want_pickup)
+        return;
+    sl.buf = malloc(MAXSOCKSENDBUF);
+    strcpy((char*)sl.buf,"pickup ");
+    sl.len=strlen((char*)sl.buf);
+    SockList_AddInt(&sl, pl->mode);
+    Send_With_Handling(&pl->socket, &sl);
     free(sl.buf);
 }

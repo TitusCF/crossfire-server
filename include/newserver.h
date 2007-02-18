@@ -141,7 +141,8 @@ typedef struct socket_struct {
     uint32	is_bot:1;		/* Client shouldn't be reported to metaserver */
     /* Below are flags for extedend infos to pass to client 
      * with S->C mapextended command */
-    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/    
+    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/
+    uint32  want_pickup:1;  /**< Client wants pickup information when logging in. */
 
     /* Below here is information only relevant for old sockets */
     char    *comment;	    /* name or listen comment */

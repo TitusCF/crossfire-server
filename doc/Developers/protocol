@@ -1352,6 +1352,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    If set, the client want tick commands so it knows animation
 	    timing.
 
+	want_pickup (0/1)
+	    If set, the client wants pickup mode to be sent when player
+	    correctly logs in (to synchronise interface).
+	    Note that this flag only sends at login, not when mode changes.
+
 	All data in the setup command is in ascii text form.  options and
 	values can not have whitepace - the client and server use whitspace
 	to split the options and values.
