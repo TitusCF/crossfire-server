@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Whitespace formatting (indents and tab removal) and long-line cleanup
+ server/c_new.c
+ socket/request.c
+Aaron Baugher 2007-02-18
+
 Implement feature request 1025952: GTK Client - Save Pickup options.
 New setup command, 'want_pickup', which makes server send 'pickup xxx' when
  player joins.
