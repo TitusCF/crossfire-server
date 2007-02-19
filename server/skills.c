@@ -1838,7 +1838,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     tag = throw_ob->count;
     insert_ob_in_map(throw_ob,part->map,op,0);
     if (!was_destroyed (throw_ob, tag))
-        move_arrow(throw_ob);
+        ob_process(throw_ob);
     return 1;
 }
 

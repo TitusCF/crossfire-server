@@ -9,7 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
-
+Ob types   : THROWN_OBJ, ARROW
+Events     : process
+Moved from : ../server/time.c
+Moved to   : common/projectile.c, arrow/arrow.c, thrown_object/thrown_object.c
+Comment    : Implimented process method for the given object types taking code
+             from move_arrow() and stop_arrow().
+2007-02-19 - Alex Schultz
 -------------------------------------------------------------------------------
 Ob types   : ALTAR, ARROW, BUTTON, CHECK_INV, CONTAINER, CONVERTER, DEEPSWAMP,
              DIRECTOR, EXIT, HOLE, IDENTIFY_ALTAR, PEDESTAL, PLAYERMOVER,

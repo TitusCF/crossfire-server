@@ -62,8 +62,8 @@ am_libtypes_a_OBJECTS = altar.$(OBJEXT) arrow.$(OBJEXT) book.$(OBJEXT) \
 	trap.$(OBJEXT) trapdoor.$(OBJEXT) trigger.$(OBJEXT) \
 	trigger_altar.$(OBJEXT) trigger_button.$(OBJEXT) \
 	trigger_pedestal.$(OBJEXT) common_apply.$(OBJEXT) \
-	describe.$(OBJEXT) apply.$(OBJEXT) legacy_describe.$(OBJEXT) \
-	process.$(OBJEXT)
+	describe.$(OBJEXT) projectile.$(OBJEXT) apply.$(OBJEXT) \
+	legacy_describe.$(OBJEXT) process.$(OBJEXT)
 libtypes_a_OBJECTS = $(am_libtypes_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
@@ -117,6 +117,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FFLAGS = @FFLAGS@
+GREP = @GREP@
 GUNZIP = @GUNZIP@
 GZIP = @GZIP@
 HAVE_CFLOGGER_FALSE = @HAVE_CFLOGGER_FALSE@
@@ -170,17 +171,15 @@ TAR = @TAR@
 UNCOMPRESS = @UNCOMPRESS@
 VERSION = @VERSION@
 X11LIBS = @X11LIBS@
+XMKMF = @XMKMF@
 XSLTENGINE = @XSLTENGINE@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -200,26 +199,33 @@ check_xslt_forcedprogfound = @check_xslt_forcedprogfound@
 check_xslt_sablotronfound = @check_xslt_sablotronfound@
 check_xslt_xsltprocfound = @check_xslt_xsltprocfound@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 no_x = @no_x@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pkgconfdir = @pkgconfdir@
 pkgstatedir = @pkgstatedir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -258,6 +264,7 @@ trigger_button/trigger_button.c \
 trigger_pedestal/trigger_pedestal.c \
 common/common_apply.c \
 common/describe.c \
+common/projectile.c \
 legacy/apply.c \
 legacy/legacy_describe.c \
 legacy/process.c
@@ -334,6 +341,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/player_mover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/power_crystal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/process.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/projectile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rune.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shop_mat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sign.Po@am__quote@
@@ -802,6 +810,20 @@ describe.obj: common/describe.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='common/describe.c' object='describe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o describe.obj `if test -f 'common/describe.c'; then $(CYGPATH_W) 'common/describe.c'; else $(CYGPATH_W) '$(srcdir)/common/describe.c'; fi`
+
+projectile.o: common/projectile.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT projectile.o -MD -MP -MF "$(DEPDIR)/projectile.Tpo" -c -o projectile.o `test -f 'common/projectile.c' || echo '$(srcdir)/'`common/projectile.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/projectile.Tpo" "$(DEPDIR)/projectile.Po"; else rm -f "$(DEPDIR)/projectile.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='common/projectile.c' object='projectile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o projectile.o `test -f 'common/projectile.c' || echo '$(srcdir)/'`common/projectile.c
+
+projectile.obj: common/projectile.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT projectile.obj -MD -MP -MF "$(DEPDIR)/projectile.Tpo" -c -o projectile.obj `if test -f 'common/projectile.c'; then $(CYGPATH_W) 'common/projectile.c'; else $(CYGPATH_W) '$(srcdir)/common/projectile.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/projectile.Tpo" "$(DEPDIR)/projectile.Po"; else rm -f "$(DEPDIR)/projectile.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='common/projectile.c' object='projectile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o projectile.obj `if test -f 'common/projectile.c'; then $(CYGPATH_W) 'common/projectile.c'; else $(CYGPATH_W) '$(srcdir)/common/projectile.c'; fi`
 
 apply.o: legacy/apply.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT apply.o -MD -MP -MF "$(DEPDIR)/apply.Tpo" -c -o apply.o `test -f 'legacy/apply.c' || echo '$(srcdir)/'`legacy/apply.c; \

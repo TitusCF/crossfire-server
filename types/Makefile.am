@@ -30,6 +30,7 @@ trigger_button/trigger_button.c \
 trigger_pedestal/trigger_pedestal.c \
 common/common_apply.c \
 common/describe.c \
+common/projectile.c \
 legacy/apply.c \
 legacy/legacy_describe.c \
 legacy/process.c

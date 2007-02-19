@@ -61,11 +61,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             move_symptom(op);
             return 0;
 
-        case THROWN_OBJ:
-        case ARROW:
-            move_arrow(op);
-            return 0;
-
         case LIGHTNING: /* It now moves twice as fast */
             move_bolt(op);
             return 0;

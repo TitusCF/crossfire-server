@@ -34,31 +34,30 @@
  */
 void init_type_arrow()
 {
-    register_move_on(ARROW, arrow_type_move_on);
+    register_move_on(ARROW, common_projectile_move_on);
+    register_process(ARROW, arrow_type_process);
 }
 
 /**
- * Move on this Arrow object.
+ * Move an arrow along its course. Uses common_process_projectile.
  * @param context The method context
- * @param trap The Arrow we're moving on
- * @param victim The object moving over this one
- * @param originator The object that caused the move_on event
- * @return METHOD_OK
+ * @param op The arrow being moved.
+ * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-method_ret arrow_type_move_on(ob_methods* context, object* trap, object* victim,
-    object* originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
-        return METHOD_OK;
-    /* bad bug: monster throw a object, make a step forwards, step on object ,
-     * trigger this here and get hit by own missile - and will be own enemy.
-     * Victim then is his own enemy and will start to kill herself (this is
-     * removed) but we have not synced victim and his missile. To avoid senseless
-     * action, we avoid hits here
-     */
-    if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) &&
-        trap->owner != victim)
-        hit_with_arrow(trap, victim);
-    common_post_ob_move_on(trap, victim, originator);
-    return METHOD_OK;
+method_ret arrow_type_process(ob_methods *context, object *op) {
+    if(op->map==NULL) {
+	LOG (llevError, "BUG: Arrow had no map.\n");
+	remove_ob(op);
+	free_object(op);
+	return METHOD_ERROR;
+    }
+
+    /* if the arrow is moving too slow.. stop it.  0.5 was chosen as lower
+       values look rediculous. */
+    if (op->speed < 0.5 && op->type==ARROW) {
+	stop_projectile(op);
+	return METHOD_OK;
+    }
+    
+    return common_process_projectile(context, op);
 }

@@ -34,35 +34,44 @@
  */
 void init_type_thrown_object()
 {
-    register_move_on(THROWN_OBJ, thrown_object_type_move_on);
+    register_move_on(THROWN_OBJ, common_projectile_move_on);
+    register_process(THROWN_OBJ, thrown_object_type_process);
 }
+
 /**
- * Move on this Thrown Object object.
+ * Move a thrown object along its course. Uses common_process_projectile.
  * @param context The method context
- * @param trap The Thrown Object we're moving on
- * @param victim The object moving over this one
- * @param originator The object that caused the move_on event
- * @return METHOD_OK
+ * @param op The thrown object being moved.
+ * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-method_ret thrown_object_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
-        return METHOD_OK;
-    if (trap->inv == NULL)
-    {
-        common_post_ob_move_on(trap, victim, originator);
-        return METHOD_OK;
+method_ret thrown_object_type_process(ob_methods *context, object *op) {
+    if(op->map==NULL) {
+	LOG (llevError, "BUG: Thrown object had no map.\n");
+	remove_ob(op);
+	free_object(op);
+	return METHOD_ERROR;
     }
-    /* bad bug: monster throw a object, make a step forwards, step on object ,
-     * trigger this here and get hit by own missile - and will be own enemy.
-     * Victim then is his own enemy and will start to kill herself (this is
-     * removed) but we have not synced victim and his missile. To avoid senseless
-     * action, we avoid hits here
-     */
-    if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) &&
-        trap->owner != victim)
-        hit_with_arrow(trap, victim);
-    common_post_ob_move_on(trap, victim, originator);
-    return METHOD_OK;
+
+    /* we need to stop thrown objects at some point. Like here. */ 
+    if(op->type==THROWN_OBJ) {
+	/* If the object that the THROWN_OBJ encapsulates disappears,
+	 * we need to have this object go away also - otherwise, you get
+	 * left over remnants on the map.  Where this currently happens
+	 * is if the player throws a bomb - the bomb explodes on its own,
+	 * but this object sticks around.  We could handle the cleanup in the
+	 * bomb code, but there are potential other cases where that could happen,
+	 * and it is easy enough to clean it up here.
+	 */
+        if (op->inv == NULL) {
+	    remove_ob(op);
+	    free_object(op);
+            return METHOD_OK;
+	}
+	if(op->last_sp-- < 0) { 
+	    stop_projectile (op);
+	    return METHOD_OK;
+	}
+    }
+    
+    return common_process_projectile(context, op);
 }

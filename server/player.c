@@ -1737,7 +1737,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     insert_ob_in_map(arrow, m, op, 0);
 
     if (!was_destroyed(arrow, tag))
-	move_arrow(arrow);
+	ob_process(arrow);
 
     if (op->type == PLAYER) {
 	if (was_destroyed (left, left_tag))

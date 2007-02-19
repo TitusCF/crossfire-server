@@ -3,7 +3,7 @@ void init_type_altar(void);
 method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 /* arrow/arrow.c */
 void init_type_arrow(void);
-method_ret arrow_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+method_ret arrow_type_process(ob_methods *context, object *op);
 /* book/book.c */
 void init_type_book(void);
 method_ret book_type_apply(ob_methods *context, object *op, object *applier, int aflags);
@@ -65,7 +65,7 @@ void init_type_spinner(void);
 method_ret spinner_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 /* thrown_object/thrown_object.c */
 void init_type_thrown_object(void);
-method_ret thrown_object_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+method_ret thrown_object_type_process(ob_methods *context, object *op);
 /* transport/transport.c */
 void init_type_transport(void);
 method_ret transport_type_apply(ob_methods *context, object *op, object *applier, int aflags);
@@ -94,10 +94,14 @@ method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, 
 method_ret common_pre_ob_move_on(object *trap, object *victim, object *originator);
 void common_post_ob_move_on(object *trap, object *victim, object *originator);
 /* common/describe.c */
-void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char* buf, int size);
+void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
+/* common/projectile.c */
+void stop_projectile(object *op);
+method_ret common_process_projectile(ob_methods *context, object *op);
+method_ret common_projectile_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 /* legacy/apply.c */
 method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags);
 /* legacy/legacy_describe.c */
-void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char* buf, int size);
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
 /* legacy/process.c */
 method_ret legacy_ob_process(ob_methods *context, object *op);

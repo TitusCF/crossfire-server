@@ -362,7 +362,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 void init_ob_methods(void);
 int ob_apply(object *op, object *applier, int aflags);
 int ob_process(object *op);
-char* ob_describe(const object *op, const object *observer, char* buf, int size);
+char *ob_describe(const object *op, const object *observer, char *buf, int size);
 int ob_move_on(object *op, object *victim, object *originator);
 /* ob_types.c */
 void init_ob_types(ob_methods *base_type);
@@ -663,7 +663,6 @@ void remove_door2(object *op);
 object *stop_item(object *op);
 void fix_stopped_item(object *op, mapstruct *map, object *originator);
 object *fix_stopped_arrow(object *op);
-void move_arrow(object *op);
 void move_teleporter(object *op);
 void move_player_changer(object *op);
 void move_firewall(object *op);
@@ -710,3 +709,4 @@ void leave(player *pl, int draw_exit);
 int forbid_play(void);
 int server_main(int argc, char **argv);
 /* main.c */
+int main(int argc, char **argv);
