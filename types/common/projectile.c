@@ -25,6 +25,7 @@
  * to arrows and thrown objects.
  */
 #include <global.h>
+#include <sproto.h>
 #include <ob_methods.h>
 #include <ob_types.h>
 
