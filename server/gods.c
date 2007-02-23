@@ -871,7 +871,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
         {
             if (!strcmp(divine_owner, god->name))
             {
-                //It already belongs to this god - do not go further.
+                /* It already belongs to this god - do not go further. */
                 draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
                     MSG_TYPE_ITEM_INFO,
                     "Your %s is radiating a joyful warmth !",
@@ -879,7 +879,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
                     weapon->name);
                 return 0;
             }
-            //Huho... Another god already blessed this one !
+            /* Huho... Another god already blessed this one ! */
             draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
                 MSG_TYPE_ITEM_INFO,
                 "Your %s already belongs to %s !",
@@ -889,7 +889,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
         }
         else if ((owner != NULL)&&(!strcmp(owner, op->name)))
         {
-            //Maybe the weapon itself will not agree ?
+            /* Maybe the weapon itself will not agree ? */
             draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
                 MSG_TYPE_ITEM_INFO,
                 "The %s is not yours, and is magically protected against such changes !",

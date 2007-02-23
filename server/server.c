@@ -464,7 +464,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
      * for the map to generate from.
      */
     if (!exit_ob->map->template) {
-        // We can't use exitpath directly, as sourcemap points there.
+        /* We can't use exitpath directly, as sourcemap points there. */
         path_combine_and_normalize(exit_ob->map->path, sourcemap, tmpstring, sizeof(tmpstring));
         snprintf(exitpath, sizeof(exitpath), tmpstring);
         sourcemap = exitpath;
