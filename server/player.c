@@ -2061,7 +2061,7 @@ static int player_attack_door(object *op, object *door)
 
 void move_player_attack(object *op, int dir)
 {
-    object *tmp, *mon, *tpl;
+    object *tmp, *mon, *tpl, *mon_owner;
     sint16 nx, ny;
     int on_battleground;
     mapstruct *m;
@@ -2143,7 +2143,7 @@ void move_player_attack(object *op, int dir)
 	 * peaceful.  Our assumption is the creature is a pet if the
 	 * player owns it and it is either friendly or unagressive.
 	 */
-	object *mon_owner = get_owner(mon);
+	mon_owner = get_owner(mon);
 	if ((op->type==PLAYER) &&
 	    (mon_owner == op || (mon_owner != NULL && mon_owner->type == PLAYER && mon_owner->contr->party != NULL && mon_owner->contr->party == op->contr->party)) &&
 	    (QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(mon, FLAG_FRIENDLY)))

@@ -1694,10 +1694,10 @@ static void apply_food (object *op, object *tmp)
         else if (is_old_wraith_pl(op)) {
             object *skill = give_skill_by_name(op, "wraith feed");
             if (skill) {
+                char buf[MAX_BUF];
                 SET_FLAG(skill, FLAG_CAN_USE_SKILL);
                 link_player_skills(op);
 
-                char buf[MAX_BUF];
                 sprintf(buf,"You have been dead for too long to taste %s, ",
                         tmp->name);
                 draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY,

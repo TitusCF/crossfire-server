@@ -2961,8 +2961,9 @@ void* cfapi_object_create(int* type, ...)
         {
             char* sval;
             object* op;
-            sval = va_arg(args, char*);
             char name[MAX_BUF];
+
+            sval = va_arg(args, char*);
 
             op = create_archetype_by_object_name(sval);
 
