@@ -695,21 +695,21 @@ void freeContext(CFPContext* context)
 
 /* Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
-    FILE*   scriptfile;
+    PyObject*   scriptfile;
     char  *sh_path;
     struct  stat stat_buf;
     struct _node *n;
     int i;
     pycode_cache_entry *replace = NULL, *run = NULL;
 
-    if (!(scriptfile = fopen(filename, "r"))) {
+    if (!(scriptfile = PyFile_FromString(filename, "r"))) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
         return NULL;
     }
-    if(fstat(fileno(scriptfile), &stat_buf)) {
+    if(stat(filename, &stat_buf)) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be stat:ed\n", filename);
         if(scriptfile)
-            fclose(scriptfile);
+            Py_DECREF(scriptfile);
         return NULL;
     }
 
@@ -755,12 +755,12 @@ static PyCodeObject *compilePython(char *filename) {
         }
 
         /* Load, parse and compile */
-        if (!scriptfile && !(scriptfile = fopen(filename, "r"))) {
+        if (!scriptfile && !(scriptfile = PyFile_FromString(filename, "r"))) {
             cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
             replace->code = NULL;
             return NULL;
         } else {
-            if((n = PyParser_SimpleParseFile (scriptfile, filename, Py_file_input))) {
+            if((n = PyParser_SimpleParseFile (PyFile_AsFile(scriptfile), filename, Py_file_input))) {
                 replace->code = PyNode_Compile(n, filename);
                 PyNode_Free (n);
             }
@@ -776,7 +776,7 @@ static PyCodeObject *compilePython(char *filename) {
     cf_free_string(sh_path);
 
     if(scriptfile)
-        fclose(scriptfile);
+        Py_DECREF(scriptfile);
 
     if (run)
         return run->code;
@@ -1144,7 +1144,7 @@ CF_PLUGIN int postInitPlugin()
 {
     int hooktype = 1;
     int rtype = 0;
-    FILE*   scriptfile;
+    PyObject*   scriptfile;
 
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype, hooktype, "cfapi_system_register_global_event");
@@ -1170,10 +1170,10 @@ CF_PLUGIN int postInitPlugin()
     registerGlobalEvent(NULL, EVENT_MAPUNLOAD, PLUGIN_NAME, globalEventListener);
     registerGlobalEvent(NULL, EVENT_MAPLOAD, PLUGIN_NAME, globalEventListener);
 
-    scriptfile = fopen(cf_get_maps_directory("python/events/python_init.py"), "r");
+    scriptfile = PyFile_FromString(cf_get_maps_directory("python/events/python_init.py"), "r");
     if (scriptfile != NULL) {
-        PyRun_SimpleFile(scriptfile, cf_get_maps_directory("python/events/python_init.py"));
-        fclose(scriptfile);
+        PyRun_SimpleFile(PyFile_AsFile(scriptfile), cf_get_maps_directory("python/events/python_init.py"));
+        Py_DECREF(scriptfile);
     }
 
     return 0;

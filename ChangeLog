@@ -15,6 +15,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/player.c: wrong call order.
+plugins/cfpython/cfpython.c: fix crash when Python and server are compiled.
+ with different versions of MS's DLLs.
+Ryo 2007-02-24
+
+Fix some comments from // to /* */
+ common/map.c
+ include/ob_types.h
+ server/c_wiz.c gods.c pets.c server.c
+----
+Some Win32 compilation fixes.
+ server/apply.c player.c plugins.c
+Ryo 2007-02-23
+
 Rebuild prototypes.
   include/{sproto.h, typesproto.h}
 ---
