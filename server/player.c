@@ -3523,10 +3523,10 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 			  item->msg, item->msg);
     }
     else {
-	/* generate misc. treasure */
+        /* generate misc. treasure */
         char name[HUGE_BUF];
+        tmp = arch_to_object (tr->item);
         query_short_name(tmp, name, HUGE_BUF);
-	tmp = arch_to_object (tr->item);
 	draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who,
 			     MSG_TYPE_ITEM, MSG_TYPE_ITEM_ADD,
 			     "You gained %s",
