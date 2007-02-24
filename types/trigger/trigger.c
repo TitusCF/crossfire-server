@@ -30,6 +30,10 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret trigger_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+static method_ret trigger_type_process(ob_methods *context, object *op);
+
 /**
  * Initializer for the TRIGGER object type.
  */
@@ -47,7 +51,7 @@ void init_type_trigger()
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always 1
  */
-method_ret trigger_type_apply(ob_methods *context, object *op,
+static method_ret trigger_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     if (check_trigger (op, applier))
@@ -72,7 +76,7 @@ method_ret trigger_type_apply(ob_methods *context, object *op,
  * @param op The Trigger to process
  * @return Always METHOD_OK
  */
-method_ret trigger_type_process(ob_methods *context, object *op)
+static method_ret trigger_type_process(ob_methods *context, object *op)
 {
     if((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op))
     {

@@ -28,6 +28,9 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 
+static method_ret power_crystal_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+
 /**
  * Initializer for the POWER_CRYSTAL object type.
  */
@@ -48,7 +51,7 @@ void init_type_power_crystal()
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always 1
  */
-method_ret power_crystal_type_apply(ob_methods *context, object *op,
+static method_ret power_crystal_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     int available_power;

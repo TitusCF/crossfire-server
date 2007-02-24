@@ -29,6 +29,8 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret arrow_type_process(ob_methods *context, object *op);
+
 /**
  * Initializer for the ARROW object type.
  */
@@ -44,7 +46,7 @@ void init_type_arrow()
  * @param op The arrow being moved.
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-method_ret arrow_type_process(ob_methods *context, object *op) {
+static method_ret arrow_type_process(ob_methods *context, object *op) {
     if(op->map==NULL) {
 	LOG (llevError, "BUG: Arrow had no map.\n");
 	remove_ob(op);

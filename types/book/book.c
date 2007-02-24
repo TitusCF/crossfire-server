@@ -29,6 +29,9 @@
 #include <sounds.h>
 #include <sproto.h>
 
+static method_ret book_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+
 /**
  * Initializer for the BOOK object type.
  */
@@ -46,7 +49,7 @@ void init_type_book()
  * @retval 0 If the Book wasn't read by a player
  * @retval 1 If applier was a player
  */
-method_ret book_type_apply(ob_methods *context, object *op,
+static method_ret book_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     int lev_diff;

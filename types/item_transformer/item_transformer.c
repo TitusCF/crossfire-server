@@ -37,6 +37,9 @@
 #include <ob_types.h>
 #include <sproto.h>
 
+static method_ret item_transformer_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+
 /**
  * Initializer for the ITEM_TRANSFORMER object type.
  */
@@ -53,7 +56,7 @@ void init_type_item_transformer()
  * @param aflags Special flags (always apply/unapply)
  * @return This method always returns 1
 */
-method_ret item_transformer_type_apply(ob_methods *context, object *op,
+static method_ret item_transformer_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     object* marked;

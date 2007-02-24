@@ -29,6 +29,10 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret deep_swamp_type_process(ob_methods *context, object *op);
+static method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
+    object* victim, object* originator);
+
 /**
  * Initializer for the DEEP_SWAMP object type.
  */
@@ -44,7 +48,7 @@ void init_type_deep_swamp()
  * @param op The swamp to process
  * @return Always METHOD_OK
  */
-method_ret deep_swamp_type_process(ob_methods *context, object *op)
+static method_ret deep_swamp_type_process(ob_methods *context, object *op)
 {
     object *above = op->above;
     object *nabove;
@@ -128,7 +132,7 @@ method_ret deep_swamp_type_process(ob_methods *context, object *op)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
+static method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)

@@ -32,6 +32,10 @@
 #include <sounds.h>
 #include <sproto.h>
 
+static method_ret transport_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+static method_ret transport_type_process(ob_methods *context, object *op);
+
 /**
  * Initializer for the TRANSPORT object type.
  */
@@ -53,7 +57,7 @@ void init_type_transport()
  * @retval 0 If the applier was not a player
  * @retval 1 If the applier was a player
  */
-method_ret transport_type_apply(ob_methods *context, object *op,
+static method_ret transport_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     object* old_transport = applier->contr->transport;
@@ -273,7 +277,7 @@ method_ret transport_type_apply(ob_methods *context, object *op,
  * @retval 0 If the remaining speed of the transport was > 0.0
  * @retval 1 If the remaining speed of the transport was < 0.0
  */
-method_ret transport_type_process(ob_methods *context, object *op)
+static method_ret transport_type_process(ob_methods *context, object *op)
 {
     /* Transports are directed by players - thus, there
      * speed is reduced when the player moves them about.

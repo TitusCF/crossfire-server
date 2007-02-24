@@ -29,6 +29,8 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret thrown_object_type_process(ob_methods *context, object *op);
+
 /**
  * Initializer for the THROWN_OBJ object type.
  */
@@ -44,7 +46,7 @@ void init_type_thrown_object()
  * @param op The thrown object being moved.
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
-method_ret thrown_object_type_process(ob_methods *context, object *op) {
+static method_ret thrown_object_type_process(ob_methods *context, object *op) {
     if(op->map==NULL) {
 	LOG (llevError, "BUG: Thrown object had no map.\n");
 	remove_ob(op);

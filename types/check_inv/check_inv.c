@@ -29,6 +29,9 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret check_inv_type_move_on(ob_methods* context, object* trap,
+    object* victim, object* originator);
+
 /**
  * Initializer for the CHECK_INV object type.
  */
@@ -44,7 +47,7 @@ void init_type_check_inv()
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret check_inv_type_move_on(ob_methods* context, object* trap,
+static method_ret check_inv_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)

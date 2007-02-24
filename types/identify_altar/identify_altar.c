@@ -30,6 +30,9 @@
 #include <sounds.h>
 #include <sproto.h>
 
+static method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
+    object* money, object* originator);
+
 /**
  * Initializer for the IDENTIFY_ALTAR object type.
  */
@@ -46,7 +49,7 @@ void init_type_identify_altar()
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
+static method_ret identify_altar_type_move_on(ob_methods* context, object* altar,
     object* money, object* originator)
 {
     object* id;

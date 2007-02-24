@@ -38,6 +38,10 @@
 #define CONV_NR(xyz)    (unsigned char) xyz->stats.sp
 #define CONV_NEED(xyz)  (unsigned long) xyz->stats.food
 
+static int convert_item(object *item, object *converter);
+static method_ret converter_type_move_on(ob_methods* context, object* trap,
+    object* victim, object* originator);
+
 /**
  * Initializer for the CONVERTER object type.
  */
@@ -171,7 +175,7 @@ static int convert_item(object *item, object *converter)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret converter_type_move_on(ob_methods* context, object* trap,
+static method_ret converter_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)

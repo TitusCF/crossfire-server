@@ -29,6 +29,12 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static void apply_sign(object *sign, object *op, int autoapply);
+static method_ret sign_type_apply(ob_methods *context, object *op,
+    object* applier, int aflags);
+static method_ret sign_type_move_on(ob_methods* context, object* trap,
+    object* victim, object* originator);
+
 /**
  * Initializer for the SIGN object type.
  */
@@ -95,7 +101,7 @@ static void apply_sign(object *sign, object *op, int autoapply)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always 1
  */
-method_ret sign_type_apply(ob_methods *context, object *op,
+static method_ret sign_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     apply_sign(op, applier, 0);
@@ -110,7 +116,7 @@ method_ret sign_type_apply(ob_methods *context, object *op,
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret sign_type_move_on(ob_methods* context, object* trap,
+static method_ret sign_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)

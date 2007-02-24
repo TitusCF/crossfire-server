@@ -29,6 +29,9 @@
 #include <ob_types.h>
 #include <sounds.h>
 
+static method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
+    object* victim, object* originator);
+
 /**
  * Initializer for the TRAPDOOR object type.
  */
@@ -44,7 +47,7 @@ void init_type_trapdoor()
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
+static method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator)
 {
     int max, sound_was_played;
