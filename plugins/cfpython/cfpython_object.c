@@ -389,7 +389,12 @@ static PyObject* Object_GetInvisible(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetSpeed(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("d", cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED));
+    return Py_BuildValue("f", *(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED));
+}
+static PyObject* Object_GetSpeedLeft(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("f", *(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT));
 }
 static PyObject* Object_GetLastSP(Crossfire_Object* whoptr, void* closure)
 {
@@ -1146,13 +1151,25 @@ static int Object_SetGod(Crossfire_Object* whoptr, PyObject* value, void* closur
 }
 static int Object_SetSpeed(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
-    int val;
+    float val;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value,"d",&val))
+    if (!PyArg_Parse(value,"f",&val))
         return -1;
 
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED, val);
+    cf_object_set_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED, val);
+/*    cf_fix_object(whoptr->obj);*/
+    return 0;
+}
+static int Object_SetSpeedLeft(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    float val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"f",&val))
+        return -1;
+
+    cf_object_set_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT, val);
 /*    cf_fix_object(whoptr->obj);*/
     return 0;
 }

@@ -15,13 +15,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add cf_object_set_float_property.
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+---
+Add SpeedLeft to Python plugin. Fix wrong type for speed.
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/cfpython/cfpython_object.c
+---
+Fix wrong type for speed.
+ server/plugins.c
+Ryo 2007-02-28
+
 include/typesproto.h, types/*/*.c: Make functions static where possible and
    reasonable.
 Alex Schultz 2007-02-24
 
 server/player.c: wrong call order.
-plugins/cfpython/cfpython.c: fix crash when Python and server are compiled.
- with different versions of MS's DLLs.
+plugins/cfpython/cfpython.c: fix crash when Python and server are compiled with
+ different versions of MS's DLLs.
 Ryo 2007-02-24
 
 Fix some comments from // to /* */
