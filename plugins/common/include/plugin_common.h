@@ -55,6 +55,7 @@ extern int          cf_timer_destroy(int id);
 
 /* Objects */
 extern void* cf_object_set_int_property(object* op, int propcode, int value);
+extern void* cf_object_set_float_property(object* op, int propcode, float value);
 extern void* cf_object_get_property(object* op, int propcode);
 extern void         cf_free_object( object* ob );
 extern void         cf_fix_object( object* pl );

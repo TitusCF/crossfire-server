@@ -230,6 +230,11 @@ void* cf_object_set_long_property(object* op, int propcode, long value)
     int val;
     return cfapiObject_set_property(&val, op, propcode,value);
 }
+void* cf_object_set_float_property(object* op, int propcode, float value)
+{
+    int val;
+    return cfapiObject_set_property(&val, op, propcode, value);
+}
 /* Should get replaced by tons of more explicit wrappers */
 void* cf_object_set_string_property(object* op, int propcode, char* value)
 {
