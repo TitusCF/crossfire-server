@@ -1634,12 +1634,12 @@ void* cfapi_object_get_property(int* type, ...)
 
         case CFAPI_OBJECT_PROP_SPEED:
             rv = &op->speed;
-            *type = CFAPI_DOUBLE;
+            *type = CFAPI_FLOAT;
             break;
 
         case CFAPI_OBJECT_PROP_SPEED_LEFT:
             rv = &op->speed_left;
-            *type = CFAPI_DOUBLE;
+            *type = CFAPI_FLOAT;
             break;
 
         case CFAPI_OBJECT_PROP_NROF:
