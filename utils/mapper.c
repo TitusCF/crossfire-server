@@ -545,7 +545,7 @@ static void save_picture(FILE* file, gdImagePtr pic) {
  */
 void domap(const char* name)
 {
-    mapstruct* m = ready_map_name(name ,0);
+    mapstruct* m;
     int x, y;
     object* item;
     gdImagePtr pic;
@@ -587,6 +587,7 @@ void domap(const char* name)
     if (show_maps)
         printf(" processing map %s\n", name);
 
+    m = ready_map_name(name ,0);
     if (!m) {
         printf("couldn't load map %s\n", name);
         return;
