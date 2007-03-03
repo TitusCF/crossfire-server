@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix some potential / real crashes under Windows.
+ common/readable.c: wrong field cleared. Set to NULL after clear. Wrong buffer size.
+---
  socket/info.c: old_format is sometimes NULL, use new_format.
 ---
 Fix a potential crash related to map swapping: swap_map can delete map.
