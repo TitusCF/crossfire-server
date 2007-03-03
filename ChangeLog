@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ socket/info.c: old_format is sometimes NULL, use new_format.
+---
+Fix a potential crash related to map swapping: swap_map can delete map.
+ include/sproto.h
+ server/c_wiz.c swap.c
+Ryo 2007-03-03
+
 utils/mapper.c: display map name before loading it, makes it easier to debug maps :)
 Ryo 2007-03-02
 

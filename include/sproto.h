@@ -652,7 +652,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 void move_spell_effect(object *op);
 /* swap.c */
 void read_map_log(void);
-void swap_map(mapstruct *map);
+mapstruct* swap_map(mapstruct *map);
 void check_active_maps(void);
 void swap_below_max(char *except_level);
 int players_on_map(mapstruct *m, int show_all);

@@ -1480,25 +1480,11 @@ int command_reset (object *op, char *params) {
             op->map = NULL;
             tmp = op;
         }
-        swap_map(m);
+        /* swap_map can totally remove the map in some cases. */
+        m = swap_map(m);
     }
 
-    if (m->in_memory == MAP_SWAPPED) {
-        LOG(llevDebug, "Resetting map %s.\n", m->path);
-
-        /* setting this effectively causes an immediate reload */
-        m->reset_time = 1;
-        flush_old_maps();
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			     "Resetting map %s.",
-			     "Resetting map %s.",
-			     m->path);
-        if (tmp) {
-            enter_exit(tmp, dummy);
-            free_object(dummy);
-        }
-        return 1;
-    } else {
+    if (m && m->in_memory != MAP_SWAPPED) {
         player *pl;
         int playercount = 0;
 
@@ -1510,20 +1496,42 @@ int command_reset (object *op, char *params) {
 
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
             "Reset failed, couldn't swap map, the following players are on it:",
-		      NULL);
+                NULL);
         for (pl = first_player; pl != NULL; pl = pl->next) {
             if (pl->ob->map == m && pl->ob != op) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			      pl->ob->name, NULL);
+                    pl->ob->name, NULL);
                 playercount++;
             }
         }
         if (!playercount)
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		  "hmm, I don't see any other players on this map, something else is the problem.",
-		  NULL);
+            "hmm, I don't see any other players on this map, something else is the problem.",
+            NULL);
         return 1;
     }
+
+    /* Here, map reset succeeded. */
+
+    if (m && m->in_memory == MAP_SWAPPED) {
+        LOG(llevDebug, "DM %s Resetting map %s.\n", op->name, m->path);
+
+        /* setting this effectively causes an immediate reload */
+        m->reset_time = 1;
+        flush_old_maps();
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "Resetting map %s.",
+        "Resetting map %s.",
+        params);
+
+    if (tmp) {
+        enter_exit(tmp, dummy);
+        free_object(dummy);
+    }
+
+    return 1;
 }
 
 int command_nowiz(object *op, char *params) { /* 'noadm' is alias */

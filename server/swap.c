@@ -124,12 +124,21 @@ void read_map_log(void)
     fclose(fp);
 }
 
-void swap_map(mapstruct *map) {
+/**
+ * After calling this function, the map will be either swapped to disk, or
+ * totally removed.
+ *
+ * @param map
+ * map to swap.
+ * @return
+ * map if swap failed or map was written to disk, NULL if map was totally deleted.
+ */
+mapstruct* swap_map(mapstruct *map) {
     player *pl;
 
     if(map->in_memory != MAP_IN_MEMORY) {
 	LOG(llevError,"Tried to swap out map which was not in memory.\n");
-	return;
+	return map;
     }
     for(pl=first_player;pl!=NULL;pl=pl->next)
 	if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
@@ -137,7 +146,7 @@ void swap_map(mapstruct *map) {
 
     if(pl != NULL) {
 	LOG(llevDebug,"Wanted to swap out map with player.\n");
-	return;
+	return map;
     }
     remove_all_pets(map); /* Give them a chance to follow */
 
@@ -156,7 +165,7 @@ void swap_map(mapstruct *map) {
         execute_global_event(EVENT_MAPRESET, map);
 	map = map->next;
 	delete_map(oldmap);
-	return;
+	return NULL;
     }
 
     if (save_map (map, 0) == -1) {
@@ -166,12 +175,15 @@ void swap_map(mapstruct *map) {
 	 */
 	map->in_memory = MAP_IN_MEMORY;
 	delete_map(map);
+    map = NULL;
     } else {
 	free_map(map,1);
     }
 
     if (settings.recycle_tmp_maps == TRUE)
-	write_map_log();
+        write_map_log();
+
+    return map;
 }
 
 void check_active_maps(void) {
