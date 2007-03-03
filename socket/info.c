@@ -284,9 +284,12 @@ void draw_ext_info_format(
 	const char* old_format, 
 	...)
 {
-            
+
     char newbuf[HUGE_BUF], oldbuf[HUGE_BUF];
     va_list ap;
+
+    if (!old_format)
+        old_format = new_format;
 
     va_start(ap, old_format);
     vsnprintf(oldbuf, HUGE_BUF, old_format, ap);
