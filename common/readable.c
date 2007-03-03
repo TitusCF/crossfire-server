@@ -1204,7 +1204,7 @@ void change_book (object *book, int msgtype)
                 if ((tmpbook = create_archetype (t->archname)) != NULL)
                 {
                     if (tmpbook->msg)
-                        free_string (book->msg);
+                        free_string (tmpbook->msg);
                     tmpbook->msg = add_string (book->msg);
                     copy_object (tmpbook, book);
                     free_object (tmpbook);
@@ -1277,6 +1277,7 @@ void change_book (object *book, int msgtype)
                     /* restore old book properties here */
                     free_string (book->name);
                     free_string (book->title);
+                    book->title = NULL;
                     if (old_title!=NULL)
                         book->title = add_string (old_title);
 
@@ -2125,6 +2126,7 @@ void tailor_readable_ob (object *book, int msg_type)
 
     /* Max text length this book can have. */
     book_buf_size = BOOKSIZE (book);
+    book_buf_size -= strlen("\n"); /* Keep enough for final \n. */
 
     /* &&& The message switch &&& */
     /* Below all of the possible types of messages in the "book"s.
@@ -2165,7 +2167,7 @@ void tailor_readable_ob (object *book, int msg_type)
     }
 
     strcat (msgbuf, "\n");	/* safety -- we get ugly map saves/crashes w/o this */
-    if (strlen (msgbuf) > 1)
+    if (strlen (msgbuf) > strlen("\n"))
     {
         if (book->msg)
             free_string (book->msg);
