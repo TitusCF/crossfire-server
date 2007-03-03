@@ -1420,6 +1420,7 @@ int command_abil(object *op, char *params) {
 int command_reset (object *op, char *params) {
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
+	char path[HUGE_BUF];
 
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1445,6 +1446,8 @@ int command_reset (object *op, char *params) {
 		      "You need to disembark first.", NULL);
         return 1;
     }
+
+	snprintf(path, sizeof(path), m->path);
 
     if (m->in_memory != MAP_SWAPPED) {
         if (m->in_memory != MAP_IN_MEMORY) {
@@ -1524,7 +1527,7 @@ int command_reset (object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
         "Resetting map %s.",
         "Resetting map %s.",
-        params);
+        path);
 
     if (tmp) {
         enter_exit(tmp, dummy);
