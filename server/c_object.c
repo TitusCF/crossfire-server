@@ -666,10 +666,15 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     else
 	snprintf(buf, sizeof(buf), "You pick up the %s.", name);
 
+    /* Now item is about to be picked. */
+    if (execute_event(tmp, EVENT_PICKUP, pl, op, NULL, SCRIPT_FIX_ALL) != 0)
+        return;
+
     draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
 		  buf, NULL);
 
     tmp = insert_ob_in_ob(tmp, op);
+
 
     /* All the stuff below deals with client/server code, and is only
      * usable by players
