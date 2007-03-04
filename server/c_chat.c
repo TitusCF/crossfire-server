@@ -194,8 +194,16 @@ int command_chat (object *op, char *params)
     return command_tell_all(op, params, 9, NDI_BLUE, MSG_TYPE_COMMUNICATION_CHAT, "chats");
 }
 
-
-
+/**
+ * Private communication.
+ *
+ * @param op
+ * player trying to tell something to someone.
+ * @param params
+ * who to tell, and message.
+ * @return
+ * 1.
+ */
 int command_tell (object *op, char *params)
 {
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
@@ -204,23 +212,23 @@ int command_tell (object *op, char *params)
     if ( params != NULL){
         name = params;
         msg = strchr(name, ' ');
-        if(msg){
-	     *(msg++)=0;
-	     if(*msg == 0)
-		msg = NULL;
+        if(msg) {
+            *(msg++)=0;
+            if (*msg == 0)
+                msg = NULL;
         }
     }
 
     if( name == NULL ){
-	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Tell whom what?", NULL);
-	return 1;
-    } else if ( msg == NULL){
-	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "Tell %s what?", 
-			     "Tell %s what?", 
-			     name);
-	return 1;
+        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Tell whom what?", NULL);
+        return 1;
+    } else if ( msg == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Tell %s what?", 
+            "Tell %s what?", 
+            name);
+        return 1;
     }
 
     snprintf(buf,MAX_BUF-1, "%s tells you: %s",op->name, msg);
@@ -229,38 +237,54 @@ int command_tell (object *op, char *params)
 
     if ( pl )
         {
-	    draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
-			  MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-			  buf, NULL);
-	    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
-			 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-			 "You tell %s: %s", 
-			 "You tell %s: %s", 
-			 pl->ob->name, msg);
+        draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+            MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+            buf, NULL);
 
-	    /* Update last_tell value [mids 01/14/2002] */
-	    strcpy(pl->last_tell, op->name);
-	    return 1;
+        /* Update last_tell value [mids 01/14/2002] */
+        snprintf(pl->last_tell, sizeof(pl->last_tell), op->name);
+
+        /* Hidden DMs get the message, but player should think DM isn't online. */
+        if (!pl->hidden || QUERY_FLAG(op, FLAG_WIZ)) {
+            draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
+                MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+                "You tell %s: %s", 
+                "You tell %s: %s", 
+                pl->ob->name, msg);
+
+            return 1;
+            }
         }
 
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		  "No such player or ambiguous name.", NULL);
+        "No such player or ambiguous name.", NULL);
     return 1;
 }
 
-/* Reply to last person who told you something [mids 01/14/2002] */
+/**
+ * Reply to last person who told you something [mids 01/14/2002]
+ *
+ * Must have been told something by someone first.
+ *
+ * @param op
+ * who is telling.
+ * @param params
+ * message to say.
+ * @return
+ * 1.
+ */
 int command_reply (object *op, char *params) {
     player *pl;
 
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Reply what?", NULL);
+            "Reply what?", NULL);
         return 1;
     }
 
     if (op->contr->last_tell[0] == '\0') {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "You can't reply to nobody.", NULL);
+            "You can't reply to nobody.", NULL);
         return 1;
     }
 
@@ -269,7 +293,7 @@ int command_reply (object *op, char *params) {
 
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "You can't reply, this player left.", NULL);
+            "You can't reply, this player left.", NULL);
         return 1;
     }
 
@@ -277,16 +301,22 @@ int command_reply (object *op, char *params) {
     strcpy(pl->last_tell, op->name);
 
     draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
-		 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-		 "%s tells you: %s", 
-		 "%s tells you: %s", 
-		 op->name, params);
+        MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+        "%s tells you: %s", 
+        "%s tells you: %s", 
+        op->name, params);
+
+    if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "You can't reply, this player left.", NULL);
+        return 1;
+    }
 
     draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
-		 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-		 "You tell to %s: %s", 
-		 "You tell to %s: %s", 
-		 pl->ob->name, params);
+        MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
+        "You tell to %s: %s", 
+        "You tell to %s: %s", 
+        pl->ob->name, params);
     return 1;
 }
 
