@@ -45,7 +45,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 79
+#define NR_OF_HOOKS 80
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -128,6 +128,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_get_time,                76, "cfapi_system_get_time"},
     {cfapi_timer_create,            77, "cfapi_system_timer_create"},
     {cfapi_timer_destroy,           78, "cfapi_system_timer_destroy"},
+    {cfapi_friendlylist_get_next,   79, "cfapi_friendlylist_get_next"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -3828,6 +3829,47 @@ void* cfapi_region_get_property(int* type, ...)
     }
     va_end(args);
     return rv;
+}
+
+/**
+ * Friend list access, to get objects on it.
+ *
+ * Expects one parameter, ob.
+ *
+ * @param type
+ * unused
+ * @return
+ * - if ob is NULL, gets the first object on the friendlylist.
+ * - if not NULL, get next object on the friendlylist after ob. NULL if none or ob not on list.
+ */
+void *cfapi_friendlylist_get_next(int *type, ...)
+{
+    object* ob;
+    object* next;
+    va_list args;
+    objectlink* link;
+
+    va_start(args, type);
+    ob = va_arg(args, object*);
+    va_end(args);
+
+    if (ob) {
+        for (link = first_friendly_object; link; link = link->next) {
+            if (ob == link->ob) {
+                if (link->next)
+                    return link->next->ob;
+                else
+                    return NULL;
+            }
+        }
+        return NULL;
+    }
+
+    if (first_friendly_object)
+        return first_friendly_object->ob;
+
+    return NULL;
+
 }
 
 /*****************************************************************************/
