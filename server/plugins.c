@@ -2848,6 +2848,13 @@ void* cfapi_object_remove(int* type, ...)
 
     op = va_arg(args, object*);
 
+    if (QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        LOG(llevError, "Plugin trying to remove removed object %s\n", op->name);
+        *type = CFAPI_NONE;
+        return NULL;
+    }
+
     va_end(args);
 
     send_removed_object(op);
@@ -2863,6 +2870,13 @@ void* cfapi_object_delete(int* type, ...)
     va_start(args, type);
 
     op = va_arg(args, object*);
+
+    if (QUERY_FLAG(op, FLAG_FREED) || !QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        LOG(llevError, "Plugin trying to free freed/non removed object %s\n", op->name);
+        *type = CFAPI_NONE;
+        return NULL;
+    }
 
     va_end(args);
 
