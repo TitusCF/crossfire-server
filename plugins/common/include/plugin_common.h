@@ -55,6 +55,7 @@ extern int          cf_timer_destroy(int id);
 
 /* Objects */
 extern void* cf_object_set_int_property(object* op, int propcode, int value);
+extern void* cf_object_set_object_property(object* op, int propcode, object* value);
 extern void* cf_object_set_float_property(object* op, int propcode, float value);
 extern void* cf_object_get_property(object* op, int propcode);
 extern void         cf_free_object( object* ob );
@@ -176,6 +177,10 @@ extern region*      cf_region_get_next(region* reg);
 extern region*      cf_region_get_parent(region* reg);
 extern const char*  cf_region_get_longname(region* reg);
 extern const char*  cf_region_get_message(region* reg);
+
+/* Friendly list */
+extern object*      cf_friendlylist_get_first(void);
+extern object*      cf_friendlylist_get_next(object* ob);
 
 /* temp */
 extern f_plug_api cfapi_object_get_property;

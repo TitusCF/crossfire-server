@@ -764,6 +764,22 @@ static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closu
     return Py_BuildValue("f",*(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY));
 }
 
+static PyObject* Object_GetOwner(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Crossfire_Object_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_OWNER));
+}
+
+static int Object_SetOwner(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    Crossfire_Object* ob;
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"O!",&Crossfire_ObjectType,&ob))
+        return -1;
+    cf_object_set_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OWNER, ob->obj);
+    return 0;
+}
+
 /** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {

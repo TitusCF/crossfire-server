@@ -15,6 +15,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add Object.Owner (read/write) and Crossfire.GetFriendlyList.
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/cfpython/cfpython.c
+ plugins/cfpython/cfpython_object.c
+---
+Add cf_friendlylist_get_first / cf_friendlylist_get_next to browser friendlylist.
+Add cf_object_set_object_property.
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+---
+Give access to friendlylist to plugins, through cfapi_friendlylist_get_next().
+ include/sproto.h
+ server/plugins.c
+---
+common/object.c: let set_owner accept owner NULL (-> clear_owner()).
+---
 Implement request feature #1669443: dmhide - players can still send 'tell.
 server/c_chat.c: DM are now shown as not logger with regard to tell/reply.
 ---

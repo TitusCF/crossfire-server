@@ -108,6 +108,7 @@ static f_plug_api cfapiArchetype_get_property = NULL;
 static f_plug_api cfapiParty_get_property = NULL;
 static f_plug_api cfapiRegion_get_property = NULL;
 static f_plug_api cfapiPlayer_can_pay = NULL;
+static f_plug_api cfapiFriendlylist_get_next = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -192,6 +193,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_get_time, "cfapi_system_get_time", z );
     GET_HOOK( cfapiSystem_timer_create, "cfapi_system_timer_create", z );
     GET_HOOK( cfapiSystem_timer_destroy, "cfapi_system_timer_destroy", z );
+    GET_HOOK( cfapiFriendlylist_get_next, "cfapi_friendlylist_get_next", z );
     return 1;
 }
 
@@ -237,6 +239,11 @@ void* cf_object_set_float_property(object* op, int propcode, float value)
 }
 /* Should get replaced by tons of more explicit wrappers */
 void* cf_object_set_string_property(object* op, int propcode, char* value)
+{
+    int val;
+    return cfapiObject_set_property(&val, op, propcode,value);
+}
+void* cf_object_set_object_property(object* op, int propcode, object* value)
 {
     int val;
     return cfapiObject_set_property(&val, op, propcode,value);
@@ -991,6 +998,19 @@ const char* cf_region_get_message(region* reg)
 	int val;
 	return cfapiRegion_get_property(&val, reg, CFAPI_REGION_PROP_MESSAGE);
 }
+
+/* Friendlylist functions. */
+object* cf_friendlylist_get_first(void)
+{
+    int val;
+    return cfapiFriendlylist_get_next(&val, NULL);
+}
+object* cf_friendlylist_get_next(object* ob)
+{
+    int val;
+    return cfapiFriendlylist_get_next(&val, ob);
+}
+
 
 #ifdef WIN32
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)

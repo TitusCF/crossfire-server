@@ -119,6 +119,7 @@ static PyObject* getArchetypes(PyObject* self, PyObject* args);
 static PyObject* getMaps(PyObject* self, PyObject* args);
 static PyObject* getParties(PyObject* self, PyObject* args);
 static PyObject* getRegions(PyObject* self, PyObject* args);
+static PyObject* getFriendlyList(PyObject* self, PyObject* args);
 static PyObject* registerCommand(PyObject* self, PyObject* args);
 static PyObject* registerGEvent(PyObject* self, PyObject* args);
 static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
@@ -181,6 +182,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"GetMaps",             getMaps,                METH_VARARGS},
     {"GetParties",          getParties,             METH_VARARGS},
     {"GetRegions",          getRegions,             METH_VARARGS},
+    {"GetFriendlyList",     getFriendlyList,        METH_VARARGS},
     {"RegisterCommand",     registerCommand,        METH_VARARGS},
     {"RegisterGlobalEvent", registerGEvent,         METH_VARARGS},
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
@@ -584,6 +586,20 @@ static PyObject* getRegions(PyObject* self, PyObject* args)
     while (reg) {
         PyList_Append(list, Crossfire_Region_wrap(reg));
         reg = cf_region_get_next(reg);
+   }
+   return list;
+}
+
+static PyObject* getFriendlyList(PyObject* self, PyObject* args)
+{
+    PyObject *list;
+    object *ob;
+
+    list = PyList_New(0);
+    ob = cf_friendlylist_get_first();
+    while (ob) {
+        PyList_Append(list, Crossfire_Object_wrap(ob));
+        ob = cf_friendlylist_get_next(ob);
    }
    return list;
 }
