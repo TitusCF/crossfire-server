@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1560396: flag to set fixed buying/selling prices.
+Three keys are used, "price_adjustment", "price_adjustment_sell" and "price_adjustment_buy".
+price_adjustment overrides the 2 other keys. Value should be numeric/decimal, anything that
+atof() will recognize as a float.
+ server/shop.c
+Ryo 2007-03-05
+
 Add Object.Owner (read/write) and Crossfire.GetFriendlyList.
  plugins/cfpython/include/cfpython_object_private.h
  plugins/cfpython/cfpython.c
@@ -31,7 +38,7 @@ Give access to friendlylist to plugins, through cfapi_friendlylist_get_next().
 ---
 common/object.c: let set_owner accept owner NULL (-> clear_owner()).
 ---
-Implement request feature #1669443: dmhide - players can still send 'tell.
+Implement feature request #1669443: dmhide - players can still send 'tell.
 server/c_chat.c: DM are now shown as not logger with regard to tell/reply.
 ---
 server/c_object.c: call EVENT_PICKUP which was forgotten somewhere along the way.

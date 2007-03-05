@@ -96,6 +96,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     int shop;
     float diff;
     float ratio;
+    const char* key;
 
     no_bargain = flag & F_NO_BARGAIN;
     identified = flag & F_IDENTIFIED;
@@ -103,17 +104,35 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     approximate = flag & F_APPROX;
     shop = flag & F_SHOP;
     flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED|F_APPROX|F_SHOP);
- 
+
+    number = tmp->nrof;
+    if (number==0)
+        number=1;
+
+    if ((key = get_ob_key_value(tmp, "price_adjustment")) != NULL)
+    {
+        ratio = atof(key);
+        return tmp->value * number * ratio;
+    }
+    if ((flag == F_BUY) && ((key = get_ob_key_value(tmp, "price_adjustment_buy")) != NULL))
+    {
+        ratio = atof(key);
+        return tmp->value * number * ratio;
+    }
+    if ((flag == F_SELL) && ((key = get_ob_key_value(tmp, "price_adjustment_sell")) != NULL))
+    {
+        ratio = atof(key);
+        return tmp->value * number * ratio;
+    }
+
     if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
     if (tmp->type==GEM) {
-        if (flag==F_TRUE) return (tmp->nrof * tmp->value);
+        if (flag==F_TRUE) return number * tmp->value;
         if (flag==F_BUY) return (1.03 * tmp->nrof * tmp->value);
         if (flag==F_SELL) return (0.97 * tmp->nrof * tmp->value);
         LOG(llevError,"Query_cost: Gem type with unknown flag : %d\n", flag);
         return 0;
     }
-    number = tmp->nrof;
-    if (number==0) number=1;
     if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) ||
         !need_identify(tmp) || identified) {
         if (!not_cursed &&
