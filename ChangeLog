@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Some documentation, no functional change.
+ include/define.h face.h gods.h living.h
+Ryo 2007-03-05
+
 Implement feature request #1560396: flag to set fixed buying/selling prices.
 Three keys are used, "price_adjustment", "price_adjustment_sell" and "price_adjustment_buy".
 price_adjustment overrides the 2 other keys. Value should be numeric/decimal, anything that

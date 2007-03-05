@@ -63,19 +63,24 @@ extern const uint32 weight_limit[MAX_STAT + 1];
 extern const int cleric_chance[MAX_STAT + 1];
 extern const int fear_bonus[MAX_STAT + 1];
 
-typedef struct liv { /* Mostly used by "alive" objects */
+/**
+ * Mostly used by "alive" objects
+ * @todo fix comment, living is used for many things :)
+ * also fix comments for fields (should probably be in a separate file).
+ */
+typedef struct liv {
   sint8		Str,Dex,Con,Wis,Cha,Int,Pow;
-  sint8		wc,ac;		/* Weapon Class and Armour Class */
-  sint16	hp;		/* Hit Points. */
-  sint16	maxhp;
-  sint16	sp;		/* Spell points.  Used to cast mage spells. */
-  sint16	maxsp;		/* Max spell points. */
-  sint16	grace;		/* Grace.  Used to invoke clerical prayers. */
-  sint16	maxgrace;	/* Grace.  Used to invoke clerical prayers. */
-  sint64	exp;		/* Experience.  Killers gain 1/10. */
-  sint16	food;		/* How much food in stomach.  0 = starved. */
-  sint16	dam;		/* How much damage this object does when hitting */
-  sint8		luck;		/* Affects thaco and ac from time to time */
+  sint8		wc,ac;      /**< Weapon Class and Armour Class */
+  sint16	hp;         /**< Hit Points. */
+  sint16	maxhp;      /**< Max hit points. */
+  sint16	sp;         /** Spell points.  Used to cast mage spells. */
+  sint16	maxsp;      /**< Max spell points. */
+  sint16	grace;      /**< Grace.  Used to invoke clerical prayers. */
+  sint16	maxgrace;   /**< Grace.  Used to invoke clerical prayers. */
+  sint64	exp;        /**< Experience.  Killers gain 1/10. */
+  sint16	food;       /**< How much food in stomach.  0 = starved. */
+  sint16	dam;        /**< How much damage this object does when hitting */
+  sint8		luck;       /**< Affects thaco and ac from time to time */
 } living;
 
 #endif /* LIVING_H */

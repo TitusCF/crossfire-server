@@ -56,7 +56,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FONTDIR ""
 #define FONTNAME ""
 
-/* Decstations have trouble with fabs()... */
+/** Decstations have trouble with fabs()... */
 #define FABS(x) ((x)<0?-(x):(x))
 
 #ifdef __NetBSD__
@@ -69,12 +69,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
 
-/*NAME_MAX used by random maps may not be defined on pure ansi systems*/
+/** NAME_MAX used by random maps may not be defined on pure ansi systems */
 #ifndef NAME_MAX
 #define NAME_MAX 255
 #endif
 
-/* MAX3 is basically like MAX, but instead does 3 values. */
+/** MAX3 is basically like MAX, but instead does 3 values. */
 #ifndef MAX3
 #define MAX3(x,y, z) (MAX(x, MAX(y,z)))
 #endif
@@ -84,15 +84,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MIN3(x,y, z) (MIN(x, MIN(y,z)))
 #endif
 
-#define MAX_STAT		30	/* The maximum legal value of any stat */
-#define MIN_STAT		1	/* The minimum legal value of any stat */
+#define MAX_STAT		30	/**< The maximum legal value of any stat */
+#define MIN_STAT		1	/**< The minimum legal value of any stat */
 
-#define MAX_BUF			256	/* Used for all kinds of things */
+#define MAX_BUF			256	/**< Used for all kinds of things */
 #define VERY_BIG_BUF		1024
-#define HUGE_BUF		4096 /* Used for messages - some can be quite long */
-#define SOCKET_BUFLEN		4096	/* Max length a packet could be */
+#define HUGE_BUF		4096 /**< Used for messages - some can be quite long */
+#define SOCKET_BUFLEN		4096	/**< Max length a packet could be */
 
-#define FONTSIZE		3000	/* Max chars in font */
+#define FONTSIZE		3000	/**< Max chars in font */
 
 #define MAX_ANIMATIONS		256
 
@@ -706,23 +706,29 @@ typedef unsigned char	MoveType;
 #define EXIT_ALT_X(xyz)		(xyz)->stats.maxhp
 #define EXIT_ALT_Y(xyz)		(xyz)->stats.maxsp
 
-/* for use by the lighting code */
-#define MAX_LIGHT_RADII		4	/* max radii for 'light' object, really
-					 * large values allow objects that can
-					 * slow down the game */
-#define MAX_DARKNESS		5	/* maximum map darkness, there is no
-					 * practical reason to exceed this */ 
+/**
+ * Max radii for 'light' object, really large values allow objects that can
+ * slow down the game
+ */
+#define MAX_LIGHT_RADII		4
+/**
+ * Maximum map darkness, there is no practical reason to exceed this
+ **/
+#define MAX_DARKNESS		5
+/**
+ * Convenience macro to ensure glow_radius doesn't exceed MAX_LIGHT_RADII.
+ */
 #define BRIGHTNESS(xyz)		(xyz)->glow_radius>MAX_LIGHT_RADII? \
 				  MAX_LIGHT_RADII:(xyz)->glow_radius;
 
-#define F_BUY		0
-#define F_SELL		1
-#define F_TRUE		2   /* True value of item, unadjusted */
-#define F_NO_BARGAIN	4   /* combine with F_BUY or F_SELL to disable bargaining calc */
-#define F_IDENTIFIED	8   /* flag to calculate value of identified item */
-#define F_NOT_CURSED	16  /* flag to calculate value of uncursed item */
-#define F_APPROX	32  /* flag to give a guess of item value */
-#define F_SHOP		64  /* consider the effect that the shop that the player is in has */
+#define F_BUY           0   /**< Item is being bought by player. */
+#define F_SELL          1   /**< Item is being sold by player. */
+#define F_TRUE          2   /**< True value of item, unadjusted. */
+#define F_NO_BARGAIN    4   /**< Combine with ::F_BUY or ::F_SELL to disable bargaining calc. */
+#define F_IDENTIFIED    8   /**< Flag to calculate value of identified item. */
+#define F_NOT_CURSED    16  /**< Flag to calculate value of uncursed item. */
+#define F_APPROX        32  /**< Flag to give a guess of item value. */
+#define F_SHOP          64  /**< Consider the effect that the shop that the player is in has. */
 
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]
@@ -761,65 +767,65 @@ typedef unsigned char	MoveType;
 /*                                      -------------------                   */
 /*                      attack_movement = 33                                  */
 /******************************************************************************/
-#define DISTATT  1 /* move toward a player if far, but mantain some space,  */
-                   /* attack from a distance - good for missile users only  */
-#define RUNATT   2 /* run but attack if player catches up to object         */
-#define HITRUN   3 /* run to then hit player then run away cyclicly         */
-#define WAITATT  4 /* wait for player to approach then hit, move if hit     */
-#define RUSH     5 /* Rush toward player blindly, similiar to dumb monster  */
-#define ALLRUN   6 /* always run never attack good for sim. of weak player  */
-#define DISTHIT  7 /* attack from a distance if hit as recommended by Frank */
-#define WAIT2    8 /* monster does not try to move towards player if far    */
-                   /* maintains comfortable distance                        */
-#define PETMOVE 16 /* if the upper four bits of attack_movement             */
-                   /* are set to this number, the monster follows a player  */
-                   /* until the owner calls it back or off                  */
-                   /* player followed denoted by 0b->owner                  */
-                   /* the monster will try to attack whatever the player is */
-                   /* attacking, and will continue to do so until the owner */
-                   /* calls off the monster - a key command will be         */
-                   /* inserted to do so                                     */
-#define CIRCLE1 32 /* if the upper four bits of move_type / attack_movement */
-                   /* are set to this number, the monster will move in a    */
-                   /* circle until it is attacked, or the enemy field is    */
-                   /* set, this is good for non-aggressive monsters and NPC */ 
-#define CIRCLE2 48 /* same as above but a larger circle is used             */
-#define PACEH   64 /* The Monster will pace back and forth until attacked   */
-                   /* this is HORIZONTAL movement                           */
-#define PACEH2  80 /* the monster will pace as above but the length of the  */
-                   /* pace area is longer and the monster stops before      */
-                   /* changing directions                                   */
-                   /* this is HORIZONTAL movement                           */
-#define RANDO   96 /* the monster will go in a random direction until       */
-                   /* it is stopped by an obstacle, then it chooses another */
-                   /* direction.                                            */
-#define RANDO2 112 /* constantly move in a different random direction       */
-#define PACEV  128 /* The Monster will pace back and forth until attacked   */
-                   /* this is VERTICAL movement                             */
-#define PACEV2 144 /* the monster will pace as above but the length of the  */
-                   /* pace area is longer and the monster stops before      */
-                   /* changing directions                                   */
-                   /* this is VERTICAL movement                             */
-#define LO4     15 /* bitmasks for upper and lower 4 bits from 8 bit fields */
+#define DISTATT  1 /**< Move toward a player if far, but mantain some space,
+                    * attack from a distance - good for missile users only    */
+#define RUNATT   2 /**< Tun but attack if player catches up to object.        */
+#define HITRUN   3 /**< Run to then hit player then run away cyclicly.        */
+#define WAITATT  4 /**< Wait for player to approach then hit, move if hit     */
+#define RUSH     5 /**< Rush toward player blindly, similiar to dumb monster  */
+#define ALLRUN   6 /**< Always run never attack good for sim. of weak player  */
+#define DISTHIT  7 /**< Attack from a distance if hit as recommended by Frank */
+#define WAIT2    8 /**< Monster does not try to move towards player if far
+                    * maintains comfortable distance                          */
+#define PETMOVE 16 /**< if the upper four bits of attack_movement
+                    * are set to this number, the monster follows a player
+                    * until the owner calls it back or off
+                    * player followed denoted by 0b->owner
+                    * the monster will try to attack whatever the player is
+                    * attacking, and will continue to do so until the 
+                    * calls off the monster - a key command will be
+                    * inserted to do so                                       */
+#define CIRCLE1 32 /**< If the upper four bits of move_type / attack_movement
+                    * are set to this number, the monster will move in a
+                    * circle until it is attacked, or the enemy field is
+                    * set, this is good for non-aggressive monsters and NPC   */
+#define CIRCLE2 48 /**< Same as ::CIRCLE1 but a larger circle is used         */
+#define PACEH   64 /**< The monster will pace back and forth until attacked
+                    * this is HORIZONTAL movement                             */
+#define PACEH2  80 /**< The monster will pace as above but the length of the 
+                    * pace area is longer and the monster stops before 
+                    * changing directions 
+                    * this is HORIZONTAL movement                             */
+#define RANDO   96 /**< The monster will go in a random direction until 
+                    * it is stopped by an obstacle, then it chooses another 
+                    * direction.                                              */
+#define RANDO2 112 /**< Constantly move in a different random direction       */
+#define PACEV  128 /**< The monster will pace back and forth until attacked
+                    * this is VERTICAL movement                               */
+#define PACEV2 144 /**< The monster will pace as above but the length of the
+                    * pace area is longer and the monster stops before
+                    * changing directions   
+                    * this is VERTICAL movement                               */
+#define LO4     15 /**< bitmasks for upper and lower 4 bits from 8 bit fields */
 #define HI4    240
 
 /*
  * Use of the state-variable in player objects:
  */
 
-#define ST_PLAYING      0
-#define ST_PLAY_AGAIN   1
-#define ST_ROLL_STAT    2
-#define ST_CHANGE_CLASS 3
-#define ST_CONFIRM_QUIT 4
-#define ST_CONFIGURE    5
-#define ST_GET_NAME     6
-#define ST_GET_PASSWORD 7
-#define ST_CONFIRM_PASSWORD     8
-#define ST_GET_PARTY_PASSWORD 10
-#define ST_CHANGE_PASSWORD_OLD      11  /* Player is entering old password to change password */
-#define ST_CHANGE_PASSWORD_NEW      12  /* Player is entering new password */
-#define ST_CHANGE_PASSWORD_CONFIRM  13  /* Player is confirming new password */
+#define ST_PLAYING                  0   /**< Usual state. */
+#define ST_PLAY_AGAIN               1   /**< Player left through a bed of reality, and can login again. */
+#define ST_ROLL_STAT                2   /**< New character, rolling stats. */
+#define ST_CHANGE_CLASS             3   /**< New character, choosing class. */
+#define ST_CONFIRM_QUIT             4   /**< Player used the 'quit' command, make sure that's ok. */
+#define ST_CONFIGURE                5   /**< Unused. @todo remove */
+#define ST_GET_NAME                 6   /**< Player just connected. */
+#define ST_GET_PASSWORD             7   /**< Name entered, now for password. */
+#define ST_CONFIRM_PASSWORD         8   /**< New character, confirm password. */
+#define ST_GET_PARTY_PASSWORD       10  /**< Player tried to join a password-protected party. */
+#define ST_CHANGE_PASSWORD_OLD      11  /**< Player is entering old password to change password */
+#define ST_CHANGE_PASSWORD_NEW      12  /**< Player is entering new password */
+#define ST_CHANGE_PASSWORD_CONFIRM  13  /**< Player is confirming new password */
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"
@@ -835,8 +841,18 @@ typedef unsigned char	MoveType;
 #define PREFER_HIGH	1
 #define PREFER_LOW	0
 
-/* Simple function we use below to keep adding to the same string
+/**
+ * Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.
+ *
+ * @param dest
+ * string to append to.
+ * @param orig
+ * string to append.
+ * @param[out] curlen
+ * current length of dest. Will be updated by this function.
+ * @param maxlen
+ * maximum length of dest buffer.
  */
 static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen)
 {
@@ -918,22 +934,22 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
       safe_strcat(retbuf,")", len, maxlen); \
     }
 
-/* Flags for apply_special() */
+/** Flags for apply_special() */
 enum apply_flag {
     /* Basic flags, always use one of these */
-    AP_NULL			= 0,
-    AP_APPLY			= 1,
-    AP_UNAPPLY			= 2,
+    AP_NULL             = 0,
+    AP_APPLY            = 1,    /**< Item is to be applied. */
+    AP_UNAPPLY          = 2,    /**< Item is to be remvoed. */
 
-    AP_BASIC_FLAGS		= 15,
+    AP_BASIC_FLAGS      = 15,
 
   /* Optional flags, for bitwise or with a basic flag */
-    AP_NO_MERGE			= 16,
-    AP_IGNORE_CURSE		= 32,
-    AP_PRINT			= 64,	/* Print what to do, don't actually do it */
-					/* Note this is supported in all the functions */
-    AP_NOPRINT			= 128	/* Don't print messages - caller will do that */
-					/* may be some that still print */
+    AP_NO_MERGE         = 16,   /**< Don't try to merge object after (un)applying it. */
+    AP_IGNORE_CURSE     = 32,   /**< Apply/unapply regardless of cursed/damned status. */
+    AP_PRINT            = 64,   /**< Print what to do, don't actually do it
+                                 * Note this is supported in all the functions */
+    AP_NOPRINT          = 128   /**< Don't print messages - caller will do that
+                                 * may be some that still print */
 
 };
 
@@ -1002,7 +1018,8 @@ enum apply_flag {
 #  endif
 #endif
 
-/* Returns the weight of the given object. Note: it does not take the number of
+/**
+ * Returns the weight of the given object. Note: it does not take the number of
  * items (nrof) into account.
  */
 #define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
