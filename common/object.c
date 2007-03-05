@@ -536,15 +536,19 @@ void clear_owner(object *op)
  * @param op
  * object of which to set the owner
  * @param owner
- * owner for object.
+ * new owner for object. Can be NULL, in which case it's equivalent of calling clear_owner(op)
  *
  * @todo
  * replace owner serching loop with a call to get_owner()?
  */
 void set_owner (object *op, object *owner)
 {
-    if(owner==NULL||op==NULL)
+    if(op==NULL)
         return;
+    if (owner == NULL) {
+        clear_owner(op);
+        return;
+    }
 
     /* next line added to allow objects which own objects */ 
     /* Add a check for ownercounts in here, as I got into an endless loop
