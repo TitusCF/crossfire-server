@@ -722,7 +722,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
         goto error;
 
     /* Lauwenmark: Handle for plugin attack event */
-    execute_event(op, EVENT_ATTACK,hitter,hitter,NULL,SCRIPT_FIX_ALL);
+    execute_event(op, EVENT_ATTACK,hitter,hitter->current_weapon ? hitter->current_weapon : hitter,NULL,SCRIPT_FIX_ALL);
 
     /* Lauwenmark: This is used to handle script_weapons with weapons.
      * Only used for players.
@@ -732,8 +732,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
         if (hitter->current_weapon != NULL)
         {
             /* Lauwenmark: Handle for plugin attack event */
-            execute_event(hitter, EVENT_ATTACK,hitter->current_weapon,
-                          op,NULL,SCRIPT_FIX_ALL);
+            execute_event(hitter->current_weapon, EVENT_ATTACK,
+                          hitter,op,NULL,SCRIPT_FIX_ALL);
         }
             }
     op_tag = op->count;
@@ -920,16 +920,20 @@ object *hit_with_arrow (object *op, object *victim)
     mapstruct	*victim_map;
 
     /* Disassemble missile */
-    if (op->inv) {
+    for (hitter = op->inv; hitter; hitter = hitter->below) {
+        if (hitter->type == EVENT_CONNECTOR)
+            continue;
         container = op;
         hitter = op->inv;
         remove_ob (hitter);
         insert_ob_in_map(hitter, container->map,hitter,INS_NO_MERGE | INS_NO_WALK_ON);
+        break;
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
          * THROWN_OBJs. */
-    } else {
+    }
+    if (!hitter) {
         container = NULL;
         hitter = op;
     }
