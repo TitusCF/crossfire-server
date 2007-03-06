@@ -38,6 +38,7 @@
 
 /* laid down initial file - dec 1995. -b.t. thomas@astro.psu.edu */
 
+#include <stdio.h>
 #include <global.h>
 #include <book.h>
 #include <living.h>

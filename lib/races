@@ -245,7 +245,7 @@ RACE chaos
 RACE dwarf
   gnome
   dwarf
-  @dwarf_p
+  @dwarf_player
   dwarf_priest
   dwarf_wiz
   lesser_dwarven_guard

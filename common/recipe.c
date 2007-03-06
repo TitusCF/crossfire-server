@@ -41,6 +41,7 @@
  * An ingredient is a name, which can contain an initial number for how many are needed.
  */
 
+#include <stdlib.h>
 #include <global.h>
 #include <object.h>
 #include <ctype.h>

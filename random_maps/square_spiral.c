@@ -38,7 +38,7 @@ a wall.
 
 */
 
-
+#include <stdlib.h>
 #include <stdio.h>
 #include <global.h>
 #include <time.h>

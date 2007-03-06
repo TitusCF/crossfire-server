@@ -187,8 +187,7 @@ static void generate_monster(object *gen) {
     object *tmp;
     const char *code;
     const char *value;
-    char buf[MAX_BUF];
-    
+
     if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
         /* See if generator has a generator_max limit set */

@@ -3845,7 +3845,6 @@ void* cfapi_region_get_property(int* type, ...)
 void *cfapi_friendlylist_get_next(int *type, ...)
 {
     object* ob;
-    object* next;
     va_list args;
     objectlink* link;
 

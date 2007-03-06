@@ -27,6 +27,7 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
+#include <sproto.h>
 
 static method_ret power_crystal_type_apply(ob_methods *context, object *op,
     object* applier, int aflags);

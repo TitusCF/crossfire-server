@@ -26,6 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+#include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 #include <global.h>

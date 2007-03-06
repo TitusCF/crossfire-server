@@ -28,6 +28,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 static method_ret rune_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator);

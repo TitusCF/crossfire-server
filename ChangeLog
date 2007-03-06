@@ -15,6 +15,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix compilation warnings, mostly missing #include.
+ common/exp.c holy.c item.c living.c map.c porting.c readable.c recipe.c shstr.c
+  treasure.c utils.c: missing #includes.
+ common/object.c: don't declare variables in the middle of code. Missing #include.
+ include/libproto.h: missing find_multi_free_spot_within_radius.
+ include/sockproto.h: missing send_exp_table.
+ lib/races: fix dwarf player archetype (was using old one).
+ plugins/cfpython/cfpython.c: unused variable.
+ random_maps/maze_gen.c random_map.c room_gen_onion.c square_spiral.c: missing #include.
+ server/plugins.c: unused variable.
+ server/ob_methods.c: missing include.
+ server/ob_types.c: missing include.
+ server/time.c: unused variable.
+ socket/image.c: use right type for faceset.
+ types/*.c: add missing #include <sproto.h>.
+ types/legacy/legacy_describe.c: unused variable.
+---
 Implement feature request #1560416: give warning when spell is about to expire.
 Player will be warned when left duration is one fifth, then one twenty-fifth.
 Two new functions are introduced, check_spell_expiry() and store_spell_expiry().

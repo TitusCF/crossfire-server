@@ -34,6 +34,9 @@
 /* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
    sub/add_weight will transcend the environment updating the carrying
    variable. */
+
+#include <stdlib.h>
+#include <string.h>
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude headers */
 #include <stdio.h>
@@ -2604,7 +2607,10 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     sint8 x, y, radius;
     int freecount=0, freecountstop=0;
     const char *value;
-    
+    sint8* x_array;
+    sint8* y_array;
+
+
         /* If radius is not set, default to 1 */
     value = get_ob_key_value(gen, "generator_radius");
     if( value ){
@@ -2654,9 +2660,9 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
      */
 
     /* Create arrays large enough to hold free space coordinates */
-    sint8 x_array[sx*sy];
-    sint8 y_array[sx*sy];
-    
+    x_array = malloc(sx*sy * sizeof(sint8));
+    y_array = malloc(sx*sy * sizeof(sint8));
+
     /*
      * Loop through the area of possible positions for the head of ob object:
      */
@@ -2664,7 +2670,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
         for(y = 0; y < sy; y++){
             nx = ix + x;
             ny = iy + y;
-            
+
 
                 /* Make sure it's within map. */
             if( get_map_flags(gen->map, NULL, nx, ny, NULL, NULL)
@@ -2683,6 +2689,8 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     }
     /* If no free spaces, return. */
     if (!freecount){
+        free(x_array);
+        free(y_array);
         return -1;
     }
     
@@ -2699,10 +2707,14 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
             if (freecountstop <= 0) {
                 *hx = nx;
                 *hy = ny;
+                free(x_array);
+                free(y_array);
                 return 0;
             }
         }
     }
+    free(x_array);
+    free(y_array);
     return -1;
 }
 

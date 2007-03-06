@@ -24,6 +24,8 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
+
 /** @file legacy/apply.c
  * Legacy implementation of apply-related methods.
  */

@@ -97,6 +97,7 @@ void esrv_remove_spell(player *pl, object *spell);
 void esrv_add_spells(player *pl, object *spell);
 void esrv_send_pickup(player* pl);
 void send_tick(player *pl);
+void send_exp_table(socket_struct *ns, char *params);
 /* sounds.c */
 void play_sound_player_only(player *pl, short soundnum, sint8 x, sint8 y);
 void play_sound_map(const mapstruct *map, int x, int y, short sound_num);

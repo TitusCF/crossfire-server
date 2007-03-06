@@ -34,6 +34,7 @@
  * put const char* instead of char* when possible.
  */
 
+#include <stdio.h>
 #include <global.h>
 #include <funcpoint.h>
 #include <living.h>

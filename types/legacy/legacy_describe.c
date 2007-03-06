@@ -37,7 +37,6 @@
  */
 void legacy_ob_describe(const ob_methods* context, const object* op, const object* observer, char* buf, int size)
 {
-    char *cp;
     buf[0]='\0';
     if(op==NULL)
         return;

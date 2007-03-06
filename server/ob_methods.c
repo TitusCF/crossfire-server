@@ -28,6 +28,7 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
+#include <sproto.h>
 
 static ob_methods base_type;
 static ob_methods legacy_type;

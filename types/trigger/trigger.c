@@ -29,6 +29,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 static method_ret trigger_type_apply(ob_methods *context, object *op,
     object* applier, int aflags);

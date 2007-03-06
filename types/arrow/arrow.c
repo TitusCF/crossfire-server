@@ -28,6 +28,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 static method_ret arrow_type_process(ob_methods *context, object *op);
 

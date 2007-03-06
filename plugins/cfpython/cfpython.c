@@ -643,7 +643,6 @@ static PyObject* registerCommand(PyObject* self, PyObject* args)
 static PyObject* getTime(PyObject* self, PyObject* args)
 {
     PyObject* list;
-    partylist* party;
     timeofday_t tod;
 
     if (!PyArg_ParseTuple(args, "", NULL))

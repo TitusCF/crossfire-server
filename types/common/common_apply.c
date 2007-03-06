@@ -89,6 +89,7 @@ method_ret common_pre_ob_move_on(object* trap, object* victim,
         ob_move_on_recursion_depth--;
         return METHOD_ERROR;
     }
+    return METHOD_OK;
 }
 void common_post_ob_move_on(object* trap, object* victim,
     object* originator)

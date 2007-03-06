@@ -28,6 +28,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 /*
  * convert_item() returns 1 if anything was converted, 0 if the item was not

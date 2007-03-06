@@ -32,6 +32,8 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <global.h>
 
 sint64 *levels; /**< Number of levels for which we have experience. */

@@ -28,6 +28,7 @@
 #include <global.h>
 #include <ob_types.h>
 #include <ob_methods.h>
+#include <sproto.h>
 
 ob_methods type_methods[OBJECT_TYPE_MAX];
 

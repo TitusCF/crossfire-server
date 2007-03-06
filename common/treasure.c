@@ -45,6 +45,7 @@
 /* TREASURE_VERBOSE enables copious output concerning artifact generation */
 /* #define TREASURE_VERBOSE */
 
+#include <stdlib.h>
 #include <global.h>
 #include <treasure.h>
 #include <funcpoint.h>

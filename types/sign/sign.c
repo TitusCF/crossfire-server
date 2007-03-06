@@ -28,6 +28,7 @@
 #include <ob_methods.h>
 #include <ob_types.h>
 #include <sounds.h>
+#include <sproto.h>
 
 static void apply_sign(object *sign, object *op, int autoapply);
 static method_ret sign_type_apply(ob_methods *context, object *op,

@@ -16,6 +16,7 @@ a wall.
    reasonable mazes:  a straightforward recursive random walk maze
    generator would generate a map with a trivial circle-the-outer-wall solution */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <global.h>
 /*#include <random_map.h>*/

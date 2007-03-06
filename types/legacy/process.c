@@ -23,6 +23,8 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
+#include <sproto.h>
+
 /** @file process.c
  * Legacy implementation of the process method.
  */

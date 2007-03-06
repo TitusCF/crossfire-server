@@ -31,6 +31,7 @@
  * Map-related functions.
  */
 
+#include <stdio.h>
 #include <global.h>
 #include <funcpoint.h>
 
