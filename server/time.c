@@ -238,7 +238,10 @@ static void generate_monster(object *gen) {
 }
 
 static void remove_force(object *op) {
-    if (--op->duration > 0) return;
+    if (--op->duration > 0) {
+        check_spell_expiry(op);
+        return;
+    }
 
     switch (op->subtype) {
 	case FORCE_CONFUSION:

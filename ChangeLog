@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1560416: give warning when spell is about to expire.
+Player will be warned when left duration is one fifth, then one twenty-fifth.
+Two new functions are introduced, check_spell_expiry() and store_spell_expiry().
+ include/sproto.h
+ server/spell_effect.c spell_util.c time.c
+---
 Implement feature request #1675158: dmhide - "detect monster" will reveal DM.
  spell_effect.c: detection doesn't concern DMs.
 Ryo 2007-03-06

@@ -1622,7 +1622,7 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
     object *tmp, *tmp2=NULL;
     object *force=NULL;
     int i;
-  
+
     /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
     if(dir!=0) {
 	tmp=find_target_for_friendly_spell(op,dir);
@@ -1676,6 +1676,8 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
 	return 1;
     }
     force->duration = spell_ob->duration + SP_level_duration_adjust(caster, spell_ob) * 50;
+    if (op->type == PLAYER)
+        store_spell_expiry(force);
     force->speed = 1.0;
     force->speed_left = -1.0;
     SET_FLAG(force, FLAG_APPLIED);
@@ -2865,6 +2867,8 @@ int create_aura(object *op, object *caster, object *spell)
 
     new_aura->duration  = spell->duration + 
                   10* SP_level_duration_adjust(caster,spell);
+    if (op->type == PLAYER)
+        store_spell_expiry(new_aura);
 
     new_aura->stats.dam = spell->stats.dam
                   +SP_level_dam_adjust(caster,spell);
@@ -2951,6 +2955,7 @@ void move_aura(object *aura) {
     /* put the aura back in the player's inventory */
     remove_ob(aura);
     insert_ob_in_ob(aura, env);
+    check_spell_expiry(aura);
 }
 
 /**

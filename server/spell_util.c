@@ -1719,3 +1719,53 @@ static void check_spell_effect(object *op) {
 
 }
 #endif
+
+/**
+ * Stores in the spell when to warn player of expiration.
+ *
+ * @param spell
+ * spell we're considering.
+ */
+void store_spell_expiry(object* spell) {
+    /* Keep when to warn the player of expiration */
+    char dur[10];
+    int i = spell->duration / 5;
+    if (!i)
+        i = 1;
+    snprintf(dur, sizeof(dur), "%d", i);
+    set_ob_key_value(spell, "spell_expiry_warn_1", dur, 1);
+    i = i / 5;
+    if (i > 0) {
+        snprintf(dur, sizeof(dur), "%d", i);
+        set_ob_key_value(spell, "spell_expiry_warn_2", dur, 1);
+    }
+}
+
+/**
+ * Checks if player should be warned of soon expiring spell.
+ *
+ * Should be called at each move of the spell. Will use key stored by store_spell_expiry().
+ * If the spell effect/force isn't in a player's inventory, won't do anything.
+ *
+ * @param spell
+ * force or spell whose effects will expire.
+ */
+void check_spell_expiry(object* spell) {
+    const char* key;
+
+    if (!spell->env || !spell->env->type == PLAYER)
+        return;
+
+    if ((key = get_ob_key_value(spell, "spell_expiry_warn_1")) != NULL) {
+        if (spell->duration == atoi(key)) {
+            draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, "The effects of your %s are draining out.", NULL, spell->name);
+            return;
+        }
+    }
+    if ((key = get_ob_key_value(spell, "spell_expiry_warn_2")) != NULL) {
+        if (spell->duration == atoi(key)) {
+            draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, spell->env, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO, "The effects of your %s are about to expire.", NULL, spell->name);
+            return;
+        }
+    }
+}
