@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Win32 compilation fixes.
+ common/shstr.c: missing Windows include.
+ plugins/cfanim/include/cfanim_proto.h: missing CF_PLUGIN export.
+ plugins/cfpython/include/cfpython_proto.h
+ plugins/cfpython/include/cfpython.h: DEBUG fix (Python doesn't provide the
+  good debug library).
+plugins/common/hashtable.c: missing Windows include.
+---
 utils/mapper.c: new "warnnnopath" option to display exits without slaying field.
 Ryo 2007-03-08
 

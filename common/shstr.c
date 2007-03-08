@@ -25,7 +25,9 @@
 #include <logger.h>
 #include "shstr.h"
 
-#ifndef WIN32
+#ifdef WIN32
+#include <win32.h>
+#else
 #include <autoconf.h>
 #endif
 #ifdef HAVE_LIBDMALLOC
