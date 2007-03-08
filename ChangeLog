@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+utils/mapper.c: new "warnnnopath" option to display exits without slaying field.
+Ryo 2007-03-08
+
 Fix bug #1673713: event_attack in (sword etc) weapon doesn't work.
  server/attack.c: fix EVENT_ATTACK weirdness.
 ---

@@ -207,6 +207,9 @@ int jpeg_quality = -1;
 /** Whether to generate raw pics or instancied ones. */
 int rawmaps = 0;
 
+/** Whether to warn of exits without a path */
+int warn_no_path = 0;
+
 typedef struct maps_in_region {
     const char* name;
     /** Maps in the region. */
@@ -676,9 +679,16 @@ void domap(const char* name)
                 floor = GET_MAP_OB(m, x, y);
 
             for ( item = floor; item; item = item->above ) {
-                if ((item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) && item->slaying) {
+                if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
                     const char* start;
+
+                    if (!item->slaying) {
+                        if (warn_no_path)
+                            printf(" exit without any path at %d, %d on %s\n", item->x, item->y, name);
+                        continue;
+                    }
+
                     memset(ep, 0, 500);
                     if (strcmp(item->slaying, "/!"))
                         strcpy(ep, EXIT_PATH(item));
@@ -1192,6 +1202,7 @@ void do_help(const char* program) {
     printf("  -forcepics          force to regenerate pics, even if pics's date is after map's.\n");
     printf("  -addmap=<map>       adds a map to process. Path is relative to map's directory root.\n");
     printf("  -rawmaps            generates maps pics without items on random (shop, treasure) tiles.\n");
+    printf("  -warnnopath         inform when an exit has no path set.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1240,6 +1251,8 @@ void do_parameters(int argc, char** argv) {
         }
         else if (strncmp(argv[arg], "-rawmaps", 8) == 0)
             rawmaps = 1;
+        else if (strncmp(argv[arg], "-warnnopath", 11) == 0)
+            warn_no_path = 1;
         else
             do_help(argv[0]);
         arg++;
@@ -1358,6 +1371,7 @@ int main(int argc, char** argv)
     printf("  will generate map index:             %s\n", yesno(generate_index));
     printf("  show map being processed:            %s\n", yesno(show_maps));
     printf("  generate raw maps:                   %s\n", yesno(rawmaps));
+    printf("  warn of exit without path:           %s\n", yesno(warn_no_path));
     printf("\nbrowsing maps...\n");
 
     add_map(first_map_path, &maps_list, &maps_count, &count_allocated);
