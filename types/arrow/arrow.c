@@ -35,7 +35,7 @@ static method_ret arrow_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the ARROW object type.
  */
-void init_type_arrow()
+void init_type_arrow(void)
 {
     register_move_on(ARROW, common_projectile_move_on);
     register_process(ARROW, arrow_type_process);

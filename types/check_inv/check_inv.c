@@ -36,7 +36,7 @@ static method_ret check_inv_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the CHECK_INV object type.
  */
-void init_type_check_inv()
+void init_type_check_inv(void)
 {
     register_move_on(CHECK_INV, check_inv_type_move_on);
 }

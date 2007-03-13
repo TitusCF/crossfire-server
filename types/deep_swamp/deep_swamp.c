@@ -37,7 +37,7 @@ static method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the DEEP_SWAMP object type.
  */
-void init_type_deep_swamp()
+void init_type_deep_swamp(void)
 {
     register_move_on(DEEP_SWAMP, deep_swamp_type_move_on);
     register_process(DEEP_SWAMP, deep_swamp_type_process);

@@ -36,7 +36,7 @@ static method_ret player_mover_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the PLAYERMOVER object type.
  */
-void init_type_player_mover()
+void init_type_player_mover(void)
 {
     register_move_on(PLAYERMOVER, player_mover_type_move_on);
 }

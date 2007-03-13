@@ -36,7 +36,7 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the EXIT object type.
  */
-void init_type_exit()
+void init_type_exit(void)
 {
     register_move_on(EXIT, exit_type_move_on);
 }

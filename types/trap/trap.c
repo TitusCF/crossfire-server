@@ -36,7 +36,7 @@ static method_ret trap_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the TRAP object type.
  */
-void init_type_trap()
+void init_type_trap(void)
 {
     register_move_on(TRAP, trap_type_move_on);
 }

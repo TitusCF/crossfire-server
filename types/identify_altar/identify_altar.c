@@ -36,7 +36,7 @@ static method_ret identify_altar_type_move_on(ob_methods* context, object* altar
 /**
  * Initializer for the IDENTIFY_ALTAR object type.
  */
-void init_type_identify_altar()
+void init_type_identify_altar(void)
 {
     register_move_on(IDENTIFY_ALTAR, identify_altar_type_move_on);
 }

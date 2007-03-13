@@ -38,7 +38,7 @@ static method_ret trigger_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the TRIGGER object type.
  */
-void init_type_trigger()
+void init_type_trigger(void)
 {
     register_apply(TRIGGER, trigger_type_apply);
     register_process(TRIGGER, trigger_type_process);

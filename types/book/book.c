@@ -35,7 +35,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
 /**
  * Initializer for the BOOK object type.
  */
-void init_type_book()
+void init_type_book(void)
 {
     register_apply(BOOK, book_type_apply);
 }

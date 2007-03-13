@@ -50,7 +50,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
  * Initializes a the ob_method system. This means initializing legacy_type,
  * base_type, and also calling init_ob_types() from ob_types.c
  */
-void init_ob_methods() {
+void init_ob_methods(void) {
     /* Init legacy_type. Note, this is just used as a transitionary fallback
      * until refactoring of type-specific code is complete, and when it is this
      * ob_methods struct should be removed.

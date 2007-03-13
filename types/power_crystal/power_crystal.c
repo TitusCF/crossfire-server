@@ -35,7 +35,7 @@ static method_ret power_crystal_type_apply(ob_methods *context, object *op,
 /**
  * Initializer for the POWER_CRYSTAL object type.
  */
-void init_type_power_crystal()
+void init_type_power_crystal(void)
 {
     register_apply(POWER_CRYSTAL, power_crystal_type_apply);
     register_describe(POWER_CRYSTAL, common_ob_describe);

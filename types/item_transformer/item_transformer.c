@@ -43,7 +43,7 @@ static method_ret item_transformer_type_apply(ob_methods *context, object *op,
 /**
  * Initializer for the ITEM_TRANSFORMER object type.
  */
-void init_type_item_transformer()
+void init_type_item_transformer(void)
 {
     register_apply(ITEM_TRANSFORMER, item_transformer_type_apply);
 }

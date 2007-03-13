@@ -36,7 +36,7 @@ static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the SPELL_EFFECT object type.
  */
-void init_type_spell_effect()
+void init_type_spell_effect(void)
 {
     register_move_on(SPELL_EFFECT, spell_effect_type_move_on);
 }

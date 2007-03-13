@@ -36,7 +36,7 @@ static method_ret container_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the CONTAINER object type.
  */
-void init_type_container()
+void init_type_container(void)
 {
     register_move_on(CONTAINER, container_type_move_on);
 }

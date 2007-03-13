@@ -36,7 +36,7 @@ static method_ret shop_mat_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the SHOP_MAT object type.
  */
-void init_type_shop_mat()
+void init_type_shop_mat(void)
 {
     register_move_on(SHOP_MAT, shop_mat_type_move_on);
 }

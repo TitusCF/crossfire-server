@@ -36,7 +36,7 @@ static method_ret button_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the BUTTON object type.
  */
-void init_type_button()
+void init_type_button(void)
 {
     register_move_on(BUTTON, button_type_move_on);
 }

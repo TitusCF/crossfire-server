@@ -39,7 +39,7 @@ static method_ret transport_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the TRANSPORT object type.
  */
-void init_type_transport()
+void init_type_transport(void)
 {
     register_apply(TRANSPORT, transport_type_apply);
     register_process(TRANSPORT, transport_type_process);

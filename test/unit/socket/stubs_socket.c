@@ -33,7 +33,7 @@ void emergency_save( int x )
     {
     }
  
-void clean_tmp_files( )
+void clean_tmp_files( void )
     {
     }
  

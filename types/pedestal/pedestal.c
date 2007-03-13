@@ -36,7 +36,7 @@ static method_ret pedestal_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the PEDESTAL object type.
  */
-void init_type_pedestal()
+void init_type_pedestal(void)
 {
     register_move_on(PEDESTAL, pedestal_type_move_on);
 }

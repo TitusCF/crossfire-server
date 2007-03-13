@@ -36,7 +36,7 @@ static method_ret trigger_altar_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the TRIGGER_ALTAR object type.
  */
-void init_type_trigger_altar()
+void init_type_trigger_altar(void)
 {
     register_move_on(TRIGGER_ALTAR, trigger_altar_type_move_on);
 }

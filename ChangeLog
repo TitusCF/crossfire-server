@@ -15,6 +15,46 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Apply patch #1660388: Code-cleanup: () -> (void) courtesy Stefan Huehner.
+ server/timers.c weather.c ob_methods.c
+ test/unit/common/stubs_common.c
+ test/unit/crossedit/stubs_crossedit.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
+ test/toolkit/toolkit_common.c
+ common/init.c treasure.c
+ crossedit/stubs.c
+ types/altar/altar.c
+ types/arrow/arrow.c
+ types/book/book.c
+ types/button/button.c
+ types/check_inv/check_inv.c
+ types/container/container.c
+ types/converter/converter.c
+ types/deep_swamp/deep_swamp.c
+ types/director/director.c
+ types/exit/exit.c
+ types/hole/hole.c
+ types/identify_altar/identify_altar.c
+ types/item_transformer/item_transformer.c
+ types/pedestal/pedestal.c
+ types/player_mover/player_mover.c
+ types/power_crystal/power_crystal.c
+ types/rune/rune.c
+ types/shop_mat/shop_mat.c
+ types/sign/sign.c
+ types/spell_effect/spell_effect.c
+ types/spinner/spinner.c
+ types/thrown_object/thrown_object.c
+ types/transport/transport.c
+ types/trap/trap.c
+ types/trapdoor/trapdoor.c
+ types/trigger/trigger.c
+ types/trigger_altar/trigger_altar.c
+ types/trigger_button/trigger_button.c
+ types/trigger_pedestal/trigger_pedestal.c
+Ryo 2007-03-13
+
 Win32 compilation fixes.
  common/shstr.c: missing Windows include.
  plugins/cfanim/include/cfanim_proto.h: missing CF_PLUGIN export.

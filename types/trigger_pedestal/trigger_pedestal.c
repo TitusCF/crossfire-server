@@ -36,7 +36,7 @@ static method_ret trigger_pedestal_type_move_on(ob_methods* context, object* tra
 /**
  * Initializer for the TRIGGER_PEDESTAL object type.
  */
-void init_type_trigger_pedestal()
+void init_type_trigger_pedestal(void)
 {
     register_move_on(TRIGGER_PEDESTAL, trigger_pedestal_type_move_on);
 }

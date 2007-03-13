@@ -39,7 +39,7 @@ static method_ret sign_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the SIGN object type.
  */
-void init_type_sign()
+void init_type_sign(void)
 {
     register_move_on(SIGN, sign_type_move_on);
     register_apply(SIGN, sign_type_apply);

@@ -36,7 +36,7 @@ static method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the TRAPDOOR object type.
  */
-void init_type_trapdoor()
+void init_type_trapdoor(void)
 {
     register_move_on(TRAPDOOR, trapdoor_type_move_on);
 }

@@ -36,7 +36,7 @@ static method_ret rune_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the RUNE object type.
  */
-void init_type_rune()
+void init_type_rune(void)
 {
     register_move_on(RUNE, rune_type_move_on);
 }

@@ -36,7 +36,7 @@ static method_ret spinner_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the SPINNER object type.
  */
-void init_type_spinner()
+void init_type_spinner(void)
 {
     register_move_on(SPINNER, spinner_type_move_on);
 }

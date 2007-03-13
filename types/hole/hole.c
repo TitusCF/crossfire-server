@@ -36,7 +36,7 @@ static method_ret hole_type_move_on(ob_methods* context, object* trap, object* v
 /**
  * Initializer for the HOLE object type.
  */
-void init_type_hole()
+void init_type_hole(void)
 {
     register_move_on(HOLE, hole_type_move_on);
 }

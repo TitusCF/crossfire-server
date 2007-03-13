@@ -117,7 +117,7 @@ int cftimer_find_free_id(void)
     return TIMER_ERR_ID;
 }
 
-void cftimer_init()
+void cftimer_init(void)
 {
     memset(&timers_table[0], 0, sizeof(cftimer) * MAX_TIMERS);
 }

@@ -35,7 +35,7 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the THROWN_OBJ object type.
  */
-void init_type_thrown_object()
+void init_type_thrown_object(void)
 {
     register_move_on(THROWN_OBJ, common_projectile_move_on);
     register_process(THROWN_OBJ, thrown_object_type_process);

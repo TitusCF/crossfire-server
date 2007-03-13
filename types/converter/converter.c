@@ -46,7 +46,7 @@ static method_ret converter_type_move_on(ob_methods* context, object* trap,
 /**
  * Initializer for the CONVERTER object type.
  */
-void init_type_converter()
+void init_type_converter(void)
 {
     register_move_on(CONVERTER, converter_type_move_on);
 }

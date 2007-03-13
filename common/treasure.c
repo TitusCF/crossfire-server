@@ -59,7 +59,7 @@ int artifact_init;  /**< 1 if doing archetypes initialization */
 /**
  * Initialize global archtype pointers:
  */
-void init_archetype_pointers() {
+void init_archetype_pointers(void) {
     int prev_warn = warn_archetypes;
     warn_archetypes = 1;
     if (ring_arch == NULL)

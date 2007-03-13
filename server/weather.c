@@ -1334,7 +1334,7 @@ void init_weather(void)
 /**
  * Frees all memory allocated by the weather system.
  */
-void free_weather()
+void free_weather(void)
 {
     int y;
     for (y=0; y < WEATHERMAPTILESY; y++) {

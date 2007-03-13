@@ -288,7 +288,7 @@ void init_globals(void) {
  *  * experience
  *  * regions
  */
-void free_globals()
+void free_globals(void)
 {
     int msg, attack;
     objectlink* friend;
