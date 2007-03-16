@@ -1512,10 +1512,22 @@ void examine(object *op, object *tmp) {
     if (tmp == NULL || tmp->type == CLOSE_CON)
 	return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+    /* Put the description in buf. */
+    ob_describe(tmp, op, buf, sizeof(buf))
+
+    /* Send the player the description, prepending "That is" if singular
+     * and "Those are" if plural.
+     */
+    if (tmp->nrof <= 1)
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 			 "That is %s",
 			 "That is %s",
-			 ob_describe(tmp, op, buf, sizeof(buf)));
+			 buf);
+    else
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
+			 "Those are %s",
+			 "Those are %s",
+			 buf);
 
     if(tmp->custom_name) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
