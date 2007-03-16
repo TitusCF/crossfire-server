@@ -167,18 +167,18 @@ int check_name(player *me,const char *name) {
 
     if (*name=='\0') {
 	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "Null names are not allowed.", NULL);
+		      "Your username cannot be blank.", NULL);
 	return 0;
     }
 
     if(!playername_ok(name)) {
 	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "That name contains illegal characters.", NULL);
+		      "That name contains illegal characters. Use letters, hyphens and underscores only. Hyphens and underscores are not allowed as the first character.", NULL);
 	return 0;
     }
     if (strlen(name) >= MAX_NAME) {
 	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "That name is too long.", NULL);
+		      "That name is too long. (Max length: %d characters)", MAX_NAME);
 	return 0;
     }
 
