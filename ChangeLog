@@ -15,6 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/Makefile.am: Build object files in their own directories instead of in types/
+---
 server/login.c: Make error messages for invalid usernames more useful.
 ---
 server/c_object.c: Change examine to use "Those are" instead of "That is" for
