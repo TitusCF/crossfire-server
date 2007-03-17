@@ -2990,13 +2990,14 @@ void* cfapi_object_create(int* type, ...)
 
             sval = va_arg(args, char*);
 
-            op = create_archetype_by_object_name(sval);
+            op = create_archetype(sval);
 
             query_name(op, name, MAX_BUF);
             if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                 free_object(op);
                 /* Try with archetype names... */
-                op = create_archetype(sval);
+                op = create_archetype_by_object_name(sval);
+
                 query_name(op, name, MAX_BUF);
                 if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                     free_object(op);
@@ -3658,8 +3659,10 @@ void* cfapi_object_teleport(int *type, ...)
             return &result;
         }
 
-        send_removed_object(who);
-        remove_ob(who);
+        if (!QUERY_FLAG(who, FLAG_REMOVED)) {
+            send_removed_object(who);
+            remove_ob(who);
+        }
 
         for (tmp = who; tmp != NULL; tmp = tmp->more)
             tmp->x = x+freearr_x[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x),

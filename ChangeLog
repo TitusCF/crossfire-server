@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1668283: Crossfire.CreateObjectByName is faulty, by applying
+ patch (feature request) #1682802: CreateObjectByName fix/change.
+ Code by Yann Chackhoff.
+Also fix a crash when teleporting a newly created object.
+ server/plugins.c
+---
 Fix bug #1671102: Generic destroy can remove permanent buttons. The code was
  doing a wrong check related to marked item/destroyer.
 Fix bug #1657675: multi-tile buildable object bug (note: one .x11 image though).
