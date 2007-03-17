@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_object.c: missing ;
+server/login.c: wrong function call.
+---
 lib/races: remove obsolete player races.
 lib/treasures: remove lists put into individual .trs files.
 Nicolas Weeger 2007-03-17

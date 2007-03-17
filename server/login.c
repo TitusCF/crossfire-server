@@ -177,8 +177,8 @@ int check_name(player *me,const char *name) {
 	return 0;
     }
     if (strlen(name) >= MAX_NAME) {
-	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "That name is too long. (Max length: %d characters)", MAX_NAME);
+	draw_ext_info_format(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+		      "That name is too long. (Max length: %d characters)", NULL, MAX_NAME);
 	return 0;
     }
 

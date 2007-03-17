@@ -1513,7 +1513,7 @@ void examine(object *op, object *tmp) {
 	return;
 
     /* Put the description in buf. */
-    ob_describe(tmp, op, buf, sizeof(buf))
+    ob_describe(tmp, op, buf, sizeof(buf));
 
     /* Send the player the description, prepending "That is" if singular
      * and "Those are" if plural.
