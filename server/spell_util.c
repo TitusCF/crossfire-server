@@ -1303,56 +1303,58 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     }
 
     if (caster == op && settings.casting_time == TRUE && spell_ob->type == SPELL) {
-	if (op->casting_time==-1) { /* begin the casting */
-	    op->casting_time = spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob);
-	    op->spell = spell_ob;
-	    /* put the stringarg into the object struct so that when the
-	     * spell is actually cast, it knows about the stringarg.
-	     * necessary for the invoke command spells.
-	     */
-	    if(stringarg) {
-		op->spellarg = strdup_local(stringarg);
-	    }
-	    else op->spellarg=NULL;
-	    return 0;
-	}
-	else if (op->casting_time != 0) {
-	    if (op->type == PLAYER )
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
-			      "You are casting!", NULL);
-	    return 0;
-	} else {    /* casting_time == 0 */
-	    op->casting_time = -1;
-	    spell_ob = op->spell;
-	    stringarg = op->spellarg;
-	}
+        if (op->casting_time==-1) { /* begin the casting */
+            op->casting_time = spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob);
+            op->spell = spell_ob;
+            /* put the stringarg into the object struct so that when the
+            * spell is actually cast, it knows about the stringarg.
+            * necessary for the invoke command spells.
+            */
+            if(stringarg) {
+                op->spellarg = strdup_local(stringarg);
+            }
+                else op->spellarg=NULL;
+            return 0;
+        }
+        else if (op->casting_time != 0) {
+            if (op->type == PLAYER )
+                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+                    "You are casting!", NULL);
+            return 0;
+        } else {    /* casting_time == 0 */
+            op->casting_time = -1;
+            spell_ob = op->spell;
+            stringarg = op->spellarg;
+        }
     } else {
-	/* Take into account how long it takes to cast the spell.
-	 * if the player is casting it, then we use the time in
-	 * the spell object.  If it is a spell object, have it
-	 * take two ticks.  Things that cast spells on the players
-	 * behalf (eg, altars, and whatever else) shouldn't cost
-	 * the player any time.
-	 * Ignore casting time for firewalls
-	 */
-	if (caster == op && caster->type != FIREWALL) {
-	    op->speed_left -= spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
-	    /* Other portions of the code may also decrement the speed of the player, so
-	     * put a lower limit so that the player isn't stuck here too long
-	     */
-	    if ((spell_ob->casting_time > 0) &&
-		op->speed_left < -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed))
-		op->speed_left = -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
-	} else if (caster->type == WAND || caster->type == HORN ||
-		   caster->type == ROD || caster->type == POTION ||
-		   caster->type == SCROLL) {
-	    op->speed_left -= 2 * FABS(op->speed);
-	}
+        if (!QUERY_FLAG(caster, FLAG_WIZ)) {
+            /* Take into account how long it takes to cast the spell.
+             * if the player is casting it, then we use the time in
+             * the spell object.  If it is a spell object, have it
+             * take two ticks.  Things that cast spells on the players
+             * behalf (eg, altars, and whatever else) shouldn't cost
+             * the player any time.
+             * Ignore casting time for firewalls
+             */
+            if (caster == op && caster->type != FIREWALL) {
+                op->speed_left -= spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
+                /* Other portions of the code may also decrement the speed of the player, so
+                 * put a lower limit so that the player isn't stuck here too long
+                 */
+                if ((spell_ob->casting_time > 0) &&
+                  op->speed_left < -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed))
+                    op->speed_left = -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
+            } else if (caster->type == WAND || caster->type == HORN ||
+              caster->type == ROD || caster->type == POTION ||
+              caster->type == SCROLL) {
+                op->speed_left -= 2 * FABS(op->speed);
+            }
+        }
     }
 
-    if (op->type == PLAYER && op == caster) {
-	op->stats.grace -= SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE);
-	op->stats.sp -= SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA);
+    if (op->type == PLAYER && op == caster && !QUERY_FLAG(caster, FLAG_WIZ)) {
+        op->stats.grace -= SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE);
+        op->stats.sp -= SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA);
     }
 
     /* We want to try to find the skill to properly credit exp.
