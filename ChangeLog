@@ -16,7 +16,8 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 lib/races: remove obsolete player races.
-Ryo 2007-03-17
+lib/treasures: remove lists put into individual .trs files.
+Nicolas Weeger 2007-03-17
 
 types/Makefile.am: Build object files in their own directories instead of in types/
 ---

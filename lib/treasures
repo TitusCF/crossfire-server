@@ -40,203 +40,6 @@ end
 #
 # BODY PARTS - 
 #
-treasureone beholder_parts
-  arch beholdereye
-    chance 70
-  more
-#  arch tentacle
-#    nrof 2
-#    chance 10
-#  more
-  arch tongue
-    chance 10
-   more
-  arch brain
-    chance 3
-  end
-treasureone skull_parts
-  arch tooth
-    chance 95
-more
-  arch tongue
-    chance 5
-  end
-treasureone demon_parts
-  arch icor
-    chance 70
-  more
-  arch heart
-    chance 15
-  more
-  arch demon_head
-    chance 15
-  end
-treasureone troll_parts
-  arch head
-    chance 80
-  more
-  arch heart
-    chance 5
-  more
-  arch liver
-    chance 15
-  more
-  arch brain
-    chance 3
-  end
-treasureone behemoth_parts
-  arch heart
-    chance 5
-  more
-  arch hide_black
-    chance 10
-  end
-treasureone wolf_parts
-  arch hide_grey
-    chance 50
-  more
-  arch liver
-    chance 15
-  more
-  arch heart
-   chance 15
-  end
-treasureone bear_parts
-  arch hide_brown
-    chance 50
-  more
-  arch liver
-    chance 15
-  more
-  arch heart
-    chance 10
-  end
-treasureone polarbear_parts
-  arch hide_white
-     chance 25
-  more
-  arch liver
-     chance 15
-  more
-  arch heart
-     chance 10
-  end
-treasureone giantrat_parts
- arch liver
-    chance 20
- more
- arch heart
-    chance 10
- more
- arch hide_brown
-    chance 10
- end
-treasureone ape_parts
- arch liver
-    chance 30
- more
- arch heart
-    chance 20
- more
- arch tooth
-   chance 10
- more
- arch hand
-    chance 10
-  more
-  arch hide_brown
-    chance 10
- more
- arch brain
-    chance 5
- end
-# gnoll/giant parts
-treasureone giant_parts
-  arch fl_corpse
-    chance 15
-  more
-  arch head
-    chance 20
-  more
-  arch foot
-    chance 8
-  more
-  arch hand
-    chance 8
-  more
-  arch heart
-    chance 5
-  more
-  arch liver
-    chance 8
-  more
-  arch brain
-    chance 3
-  end
-# orc/goblin parts
-treasureone goblin_parts
-  arch fl_corpse
-    chance 30
-  more
-  arch goblin_head
-    chance 30
-  more
-  arch foot
-    chance 10
-  more
-  arch hand
-    chance 10
-  more
-  arch liver
-    chance 10
-  more
-  arch heart
-    chance 10
-  end
-# Big dragon body parts
-treasureone big_dragon_parts
-  arch dragon_steak
-    nrof 3
-    chance 90
-  more
-  arch dragon_scale
-    chance 80
-    nrof 2
-  more
-  arch dragonclaw
-    chance 30
-    nrof 12
-  more
-  arch dragon_wing
-    chance 30
-    nrof 2
-  more
-  arch dragon_eye
-    chance 30
-  more
-  arch heart
-    chance 10
-  more
-  arch brain
-    chance 1
-  end
-# more appropriate for wyvern/baby dragon
-treasureone dragon_parts
-  arch dragon_steak
-    chance 30
-  more
-  arch dragonclaw
-    chance 10
-  more
-  arch dragon_wing
-    chance 25
-  more
-  arch dragon_scale 
-    chance 5
-  more
-  arch brain
-    chance 1
-  end
 # human/man-sized body parts
 treasureone human_parts
   arch fl_corpse
@@ -2145,31 +1948,6 @@ treasure wight
   arch fl_corpse
     chance 50
   end
-treasure zombie
-  arch fl_corpse
-    chance 20
-  end
-treasure skeleton
-  list standard_old
-# more
-# list human_bones
-  end
-treasure bear
-  list bear_parts
-    chance 40
-  end
-treasure ape
-  list ape_parts
-    chance 30
-  end
-treasure polarbear
-  list polarbear_parts
-    chance 40
-  end
-treasure wolf
-  list wolf_parts
-    chance 40
-  end
 treasure gnoll
   list giant_parts
     chance 30
@@ -2465,153 +2243,12 @@ treasure throw_rich
   more
   list rich
   end
-treasure troll
-  list giant_old
-  more
-  arch skill_throwing
-    chance 40
-    yes
-    arch t_boulder
-      nrof 5
-    end
-  more
-  list troll_parts
-  end
-treasure giant
-  list giant_old
-  more
-  arch skill_throwing
-  more
-  arch t_boulder
-  nrof 8
-  more
-  list giant_parts
-    chance 10
-  end
 treasure giant_old
   arch big_club
   more
   arch goldcoin
   chance 6
   nrof 80
-  end
-treasure beholder_big
-  arch big_eye
-    chance 85
-  more
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch abil_poison_cloud
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch spell_burning_hands
-  more
-  arch spell_medium_fireball
-  more
-  arch spell_magic_missile
-  more
-  arch spell_magic_bullet
-  more
-  arch spell_small_speedball
-  more
-  arch spell_mass_confusion
-  more
-  arch abil_slow
-  more
-  arch spell_cancellation
-#  more
-#  arch beholdereye
-  end
-treasure beholder
-  list beholder_parts
-    chance 20
-  more
-  arch spell_paralyze
-  chance 50
-  more
-  arch abil_fear
-  chance 75
-  more
-  arch abil_poison_cloud
-  chance 50
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-  chance 25
-  more
-  arch abil_icestorm
-  chance 25
-  more
-  arch spell_burning_hands
-  more
-  arch spell_medium_fireball
-  more
-  arch spell_magic_missile
-  more
-  arch spell_magic_bullet
-  more
-  arch spell_small_speedball
-  more
-  arch spell_mass_confusion
-  more
-  arch abil_slow
-  more
-  arch gem
-  nrof 1
-  chance 10
-  end
-treasure skull 
-  list skull_parts
-    chance 20
-  more
-  arch spell_paralyze
-  chance 50
-  more
-  arch abil_fear
-  chance 75
-  more
-  arch abil_poison_cloud
-  chance 50
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_large_icestorm
-  chance 25
-  more
-  arch abil_icestorm
-  chance 25
-  more
-  arch spell_burning_hands
-  more
-  arch spell_medium_fireball
-  more
-  arch spell_magic_missile
-  more
-  arch spell_magic_bullet
-  more
-  arch spell_small_speedball
-  more
-  arch spell_mass_confusion
-  more
-  arch abil_slow
-  more
-  arch gem
-  nrof 1
-  chance 10
   end
 treasure para_elemental
   arch residue
@@ -2626,24 +2263,6 @@ treasure grave
   end
 treasure pyromaniac
   arch spell_create_bomb
-  end
-treasure demilich
-  arch insanity
-  more
-  arch spell_paralyze
-  more
-  arch abil_fear
-  more
-  arch abil_poison_cloud
-  more
-  arch abil_large_icestorm
-  more
-  arch abil_icestorm
-  more
-  arch spell_mass_confusion
-  more
-  arch gem  
-  nrof 1
   end
 ##############################################################################
 # start of starting equipment for players.
@@ -2693,29 +2312,6 @@ treasure prayer_skills
   arch skill_praying
   end
 #
-treasure monk_class_items
-  list basic_skills
-  more
-  arch skill_missile_weapon
-  more
-  arch skill_meditation
-  more
-  arch skill_karate
-  more
-  arch skill_sense_magic
-  more
-  arch robe
-  more
-  arch r_sack
-  more
-  arch sandals
-  more
-  arch skill_praying
-  more
-  arch skill_sense_curse
-  more
-  arch monk_no_use_weapon
-  end
 treasure monk
   list basic_skills
   more
@@ -2733,15 +2329,6 @@ treasure monk
   more
   arch sandals
   end
-treasure troll_player_items
-  arch troll_player_force
-  end
-treasure gnome_player_items
-  arch skill_praying
-  end
-treasure dwarf_player_items
-  arch skill_smithery
-  end
 treasure dwarf
   list fighter_skills
   more
@@ -2754,9 +2341,6 @@ treasure dwarf
   arch helmet
   more
   arch skill_smithery
-  end
-treasure half_orc_player_items
-  arch skill_stealing
   end
 treasure pl_half_orc
   list fighter_skills
@@ -2800,24 +2384,6 @@ treasure pl_troll
   more
   arch sack
   end
-treasure elf_player_items
-  arch elf_player_force
-  more
-  arch bow
-    magic 2
-  more
-  arch arrow
-    magic 3
-    nrof 100
-  more
-  arch quiver
-  more
-  arch skill_bowyer
-  more
-  arch skill_woodsman
-  more
-  arch skill_missile_weapon
-  end
 treasure elf
   list fighter_skills
   more
@@ -2835,9 +2401,6 @@ treasure elf
   arch arrow
   nrof 50
   end
-treasure human_player
-  list random_knowledge
-  end
 treasure human
   list fighter_skills
   more
@@ -2852,25 +2415,6 @@ treasure human
   arch sack
   more
   arch cloak
-  end
-treasure ninja_class_items
-  list fighter_skills
-  more
-  arch skill_jumping
-  more
-  arch skill_hide
-  more
-  arch guide_melee
-  more
-  arch nunchacu_1
-  more
-  arch leather_armour
-  more
-  arch bag
-  more
-  arch cloak
-  more
-  arch skill_karate
   end
 treasure ninja
   list fighter_skills
@@ -2887,40 +2431,6 @@ treasure ninja
   more
   arch cloak
   end
-treasure warrior_class_items
-  list fighter_skills
-  more
-  arch guide_melee
-  more
-  arch b_sword_2
-  more
-  arch chain_mail
-  more
-  arch b_shield
-  more
-  arch sack
-  end
-treasure paladin_class_items
-  list fighter_skills
-  more
-  arch guide_melee
-  more
-  arch b_bsword_1
-  more
-  arch b_plate_mail
-  more
-  arch b_shield
-  more
-  arch b_full_helmet
-  more
-  arch cleric_book_l1
-  more
-  arch paladin_holy_symbol
-  more
-  arch skill_oratory
-  more
-  arch sack
-  end
 treasure warrior
   list fighter_skills
   more
@@ -2934,189 +2444,12 @@ treasure warrior
   more
   arch sack
   end
-treasure sorcerer_class_items
-  list basic_skills
-  more
-  arch skill_sorcery
-  more
-  arch guide_wizard
-  more
-  arch sorcerer_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch skill_sense_magic
-  more
-  arch skill_thaumaturgy
-  more
-  arch sorcerer_hat
-  more
-  arch robe
-  end
-treasure evoker_class_items
-  list basic_skills
-  more
-  arch skill_one_handed_weapon
-  more
-  arch talisman_evoker
-  more
-  arch robe
-  more
-  arch evoker_book_l1
-  more
-  arch evoker_book_l1
-  more
-  arch b_ssword_1
-  more
-  arch staff
-  end
-treasure alchemist_class_items
-  list basic_skills
-  more
-  arch skill_one_handed_weapon
-  more
-  arch talisman_alchemist
-  more
-  arch skill_alchemy
-  more
-  arch skill_thaumaturgy
-  more
-  arch spell_alchemy
-  more
-  arch guide_alchemy
-  more
-  arch cauldron
-  more
-  arch robe
-  more
-  arch evoker_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch b_dagger
-  end
-treasure summoner_class_items
-  list basic_skills
-  more
-  arch skill_one_handed_weapon
-  more
-  arch skill_praying
-  more
-  arch guide_summon
-  more
-  arch talisman_summoner
-  more
-  arch robe
-  more
-  arch summoner_book_l1
-  more
-  arch summoner_book_l1
-  more
-  arch b_ssword_1
-  end
-treasure wizard_class_items
-  list wizard_skills
-  more
-  arch skill_sorcery
-  more
-  arch guide_wizard
-  more
-  arch robe
-  more
-  arch sorcerer_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch b_dagger
-  end
-treasure devotee_class_items
-  list wizard_skills
-  more
-  arch skill_evocation
-  more
-  arch guide_priest
-  more
-  arch robe
-  more
-  arch cleric_book_l1
-  more
-  arch evoker_book_l1
-  more
-  arch evoker_book_l1
-  more
-  arch b_dagger
-  end
-treasure wizard
-  list wizard_skills
-  more
-  arch skill_sorcery
-  more
-  arch robe
-  more
-  arch sorcerer_book_l1
-  more
-  arch sorcerer_book_l1
-  more
-  arch b_dagger
-  end
 treasure wraith_player_items
   arch wraith_player_force
   more
   arch skill_wraith_feed
   more
   arch no_class_face_change
-  end
-treasure cleric
-  list fighter_skills
-  more
-  arch morningstar
-  more
-  arch ring_mail
-  more
-  arch holy_symbol
-  more
-  arch skill_oratory
-  more
-  arch cleric_book_l1
-  more
-  arch b_small_shield
-  end
-treasure barbarian_class_items
-  arch skill_one_handed_weapon
-  more
-  arch skill_two_handed_weapon
-  more
-  arch skill_missile_weapon
-  more
-  arch skill_throwing
-  more
-  arch skill_find_traps
-  more
-  arch skill_remove_trap
-  more
-  arch skill_use_magic_item
-  more
-  arch guide_melee
-  more
-  arch leather_armour
-  more
-  arch mace
-  more
-  arch skill_climbing
-  more
-  arch skill_woodsman
-  more
-  arch b_horned_helmet
-  more
-  arch sack
-  more
-  arch round_shield
-  more
-  arch high_boots
   end
 treasure barbarian
   list fighter_skills
@@ -3133,29 +2466,6 @@ treasure barbarian
   more
   arch sack
   end
-treasure priest_class_items
-  list basic_skills
-  more
-  arch skill_praying
-  more
-  arch skill_one_handed_weapon
-  more
-  arch skill_two_handed_weapon
-  more
-  arch guide_priest
-  more
-  arch robe
-  more
-  arch quarterstaff
-  more
-  arch cleric_book_l1
-  more
-  arch cleric_book_l1
-  more
-  arch skill_sense_curse
-  more
-  arch amulet
-  end
 treasure priest
   list wizard_skills
   more
@@ -3171,19 +2481,6 @@ treasure priest
   more
   arch amulet
   end
-treasure warlock_class_items
-  list fighter_skills
-  more
-  arch talisman_evocation
-  more
-  arch b_lsword
-  more
-  arch leather_armour
-  more
-  arch evoker_book_l1
-  more
-  arch evoker_book_l1
-  end
 treasure mage
   list fighter_skills
   more
@@ -3196,28 +2493,6 @@ treasure mage
   arch sorcerer_book_l1
   more
   arch evoker_book_l1
-  end
-treasure northman_player_items
-  arch bighorned_helmet
-end
-treasure dragon_player_items
-  arch dragon_skin_force
-  more
-  arch dragon_ability_force
-  more
-  arch skill_levitate
-  more
-  arch skill_clawing
-  more
-  arch skill_woodsman
-  more
-  arch abil_burning_hands
-  more
-  arch abil_medium_fireball
-  more
-  arch no_class_face_change
-  more
-  arch skill_evocation
   end
 treasure acdc
   arch abil_fear
@@ -3329,47 +2604,6 @@ treasure spark
   more
   arch spell_large_lightning
     nrof 6
-  end
-treasure cold_dragon
-  arch abil_icestorm
-    nrof 2
-  more
-  arch abil_large_icestorm
-   nrof 2
-  end
-treasure Cwyvern
-  list dragon_parts
-    chance 70
-  more
-  arch abil_fear
-  more
-  arch ability_dragonbreath
-    nrof 5
-  more
-  arch abil_icestorm
-  more
-  arch abil_large_icestorm
-  more
-  arch spell_sm_lightning
-  more
-  arch spell_large_lightning
-  more
-  arch abil_poison_cloud
-  more
-  arch spell_create_pool_of_chaos
-  more
-  arch gem
-    nrof 40
-  more
-  arch gem
-    nrof 15
-    chance 60
-  more
-  arch ring
-    chance 30
-  more
-  arch ring
-    chance 30
   end
 treasure fire_serpent
   arch abil_burning_hands
