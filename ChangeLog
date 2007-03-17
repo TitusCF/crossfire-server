@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/template/create_plugin.sh: plugin generation script.
+plugins/template/include/plugin_template.h: remove unused file, fix comment.
+---
 Give access to random map generation to plugins.
  include/sproto.h
  server/plugins.c
