@@ -29,7 +29,7 @@ Allow one to give a prebuilt layout (.#<> and such) for random map generation.
 plugins/template/plugin_template.c: use cf_log instead of printf, fix missing
  CF_PLUGIN (Win32 specific).
 ---
-server/c_object.c: missing ;
+server/c_object.c: missing ;, missing buffer reinitialisation.
 server/login.c: wrong function call.
 ---
 lib/races: remove obsolete player races.

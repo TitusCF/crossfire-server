@@ -1528,6 +1528,7 @@ void examine(object *op, object *tmp) {
 			 "Those are %s",
 			 "Those are %s",
 			 buf);
+    buf[0] = '\0';
 
     if(tmp->custom_name) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
