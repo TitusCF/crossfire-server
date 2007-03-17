@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/template/plugin_template.c: use cf_log instead of printf, fix missing
+ CF_PLUGIN (Win32 specific).
+---
 server/c_object.c: missing ;
 server/login.c: wrong function call.
 ---

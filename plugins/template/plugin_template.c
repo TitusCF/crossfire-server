@@ -23,7 +23,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 
 /* First let's include the header file needed                                */
 
@@ -74,24 +75,25 @@ CFPContext* popContext()
         return NULL;
 }
 
-int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     gethook = gethooksptr;
-    int i;
-    printf("Template 2.0a init\n");
+    cf_init_plugin( gethook );
+
+    cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
     /* Place your initialization code here */
     return 0;
 }
 
-void* getPluginProperty(int* type, ...)
+CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
     char* propname;
     int i;
     va_start(args, type);
     propname = va_arg(args, char *);
-    printf("Property name: %s\n", propname);
+    cf_log(llevDebug, "Property name: %s\n", propname);
 
     if (!strcmp(propname, "Identification"))
     {
@@ -106,17 +108,17 @@ void* getPluginProperty(int* type, ...)
     return NULL;
 }
 
-int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object* op, char* params)
 {
     return -1;
 }
 
-int postInitPlugin()
+CF_PLUGIN int postInitPlugin()
 {
     int hooktype = 1;
     int rtype = 0;
 
-    printf("Template 2.0a post init\n");
+    cf_log(llevDebug, PLUGIN_VERSION " post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
     systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
@@ -142,7 +144,7 @@ int postInitPlugin()
     return 0;
 }
 
-void* globalEventListener(int* type, ...)
+CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
@@ -237,12 +239,12 @@ void* globalEventListener(int* type, ...)
     context = popContext();
     rv = context->returnvalue;
     free(context);
-    printf("*********** Execution complete ****************\n");
+    cf_log(llevDebug, "*********** Execution complete ****************\n");
 
     return &rv;
 }
 
-void* eventListener(int* type, ...)
+CF_PLUGIN void* eventListener(int* type, ...)
 {
     static int rv=0;
     va_list args;
@@ -272,13 +274,13 @@ void* eventListener(int* type, ...)
     context = popContext();
     rv = context->returnvalue;
     free(context);
-    printf("Execution complete");
+    cf_log(llevDebug, "Execution complete");
     return &rv;
 }
 
-int   closePlugin()
+CF_PLUGIN int   closePlugin()
 {
-    printf("Template 2.0a closing\n");
+    cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }
 
