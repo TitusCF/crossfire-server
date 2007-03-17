@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Give access to random map generation to plugins.
+ include/sproto.h
+ server/plugins.c
+---
+Allow one to give a prebuilt layout (.#<> and such) for random map generation.
+ random_maps/random_map.c rproto.h standalone.c
+ server/server.c
+---
 plugins/template/plugin_template.c: use cf_log instead of printf, fix missing
  CF_PLUGIN (Win32 specific).
 ---

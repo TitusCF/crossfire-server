@@ -34,6 +34,14 @@
 /* Philip Currlin                  (?);                                      */
 /*****************************************************************************/
 
+/**
+ * @file
+ * Plugin API.
+ *
+ * @todo
+ * describe "wrappers" for functions, conventions used (parameters + return value).
+ */
+
 /*****************************************************************************/
 /* First, the headers. We only include plugin.h, because all other includes  */
 /* are done into it, and plugproto.h (which is used only by this file).      */
@@ -45,7 +53,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 80
+#define NR_OF_HOOKS 82
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -129,6 +137,8 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_timer_create,            77, "cfapi_system_timer_create"},
     {cfapi_timer_destroy,           78, "cfapi_system_timer_destroy"},
     {cfapi_friendlylist_get_next,   79, "cfapi_friendlylist_get_next"},
+    {cfapi_set_random_map_variable, 80, "cfapi_set_random_map_variable"},
+    {cfapi_generate_random_map,     81, "cfapi_generate_random_map"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -3870,6 +3880,64 @@ void *cfapi_friendlylist_get_next(int *type, ...)
     return NULL;
 
 }
+
+/*
+ * Random-map related stuff.
+ */
+
+/**
+ * Wrapper for set_random_map_variable().
+ *
+ * @param type
+ * unused.
+ * @return
+ * NULL.
+ */
+void* cfapi_set_random_map_variable(int *type, ...) {
+
+    va_list args;
+    RMParms* rp;
+    const char* buf;
+    int* ret;
+
+    va_start(args, type);
+    rp = va_arg(args, RMParms*);
+    buf = va_arg(args, const char*);
+    ret = va_arg(args, int*);
+    va_end(args);
+
+    *ret = set_random_map_variable(rp, buf);
+
+    return NULL;
+}
+
+/**
+ * Wrapper for generate_random_map().
+ *
+ * @param type
+ * unused.
+ * @return
+ * NULL.
+ */
+void* cfapi_generate_random_map(int *type, ...) {
+    va_list args;
+    const char* name;
+    RMParms* rp;
+    char** use_layout;
+    mapstruct** ret;
+
+    va_start(args, type);
+    name = va_arg(args, const char*);
+    rp = va_arg(args, RMParms*);
+    use_layout = va_arg(args, char**);
+    ret = va_arg(args, mapstruct**);
+    va_end(args);
+
+    *ret = generate_random_map(name, rp, use_layout);
+
+    return NULL;
+}
+
 
 /*****************************************************************************/
 /* NEW PLUGIN STUFF ENDS HERE                                                */
