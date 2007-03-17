@@ -219,6 +219,7 @@ command_array_struct WizCommands [] = {
   {"create", command_create,0.0},
   {"debug", command_debug,0.0},
   {"diff", command_diff, 0.0 },
+  {"dmtell", command_dmtell,0.0},
   {"dump", command_dump,0.0},
   {"dumpbelow", command_dumpbelow,0.0},
   {"dumpfriendlyobjects", command_dumpfriendlyobjects,0.0},

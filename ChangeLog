@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature requet #1669464: Need new command - dmtell.
+ include/sproto.h
+ server/c_chat.c commands.c
+---
+server/c_wiz.c: enable 'teleport' to use a partial name.
+server/c_misc: 'listen' should be positive.
+---
 Fix bug #1668283: Crossfire.CreateObjectByName is faulty, by applying
  patch (feature request) #1682802: CreateObjectByName fix/change.
  Code by Yann Chackhoff.
@@ -30,6 +37,10 @@ Fix bug #1657675: multi-tile buildable object bug (note: one .x11 image though).
 ---
 plugins/template/create_plugin.sh: plugin generation script.
 plugins/template/include/plugin_template.h: remove unused file, fix comment.
+---
+Random map functions for plugins.
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
 ---
 Give access to random map generation to plugins.
  include/sproto.h

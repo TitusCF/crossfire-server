@@ -64,6 +64,7 @@ int command_orcknuckle(object *op, char *params);
 int command_shout(object *op, char *params);
 int command_chat(object *op, char *params);
 int command_tell(object *op, char *params);
+int command_dmtell(object *op, char *params);
 int command_reply(object *op, char *params);
 int command_nod(object *op, char *params);
 int command_dance(object *op, char *params);
