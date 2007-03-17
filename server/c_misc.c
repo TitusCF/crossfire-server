@@ -1042,6 +1042,11 @@ int command_listen (object *op, char *params)
 	     op->contr->listening);
 	return 1;
     }
+    if (i < 0) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+            "Verbose level should be positive.", NULL);
+        return;
+    }
     op->contr->listening=(char) i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
 	 "Your verbose level is now %d.",
