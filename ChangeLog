@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/races: remove obsolete player races.
+Ryo 2007-03-17
+
 types/Makefile.am: Build object files in their own directories instead of in types/
 ---
 server/login.c: Make error messages for invalid usernames more useful.

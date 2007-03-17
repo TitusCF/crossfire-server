@@ -32,7 +32,6 @@ RACE undead
   skeleton
   grimreaper 
   wight
-  @Wraith
   wraith 
   ghast 
   nightmare
@@ -83,7 +82,6 @@ RACE faerie
   generate_pixie
   generate_stalker
   pixie
-  @elf
   elf_1
   sandy
   stalker
@@ -128,7 +126,6 @@ RACE reptile
   cobra
   serp_priest
   fire_serpent
-  @quetzalcoatl
 RACE slime
   blob
   slime
@@ -165,7 +162,6 @@ RACE fire_elemental
   para_lava
   fire_elemental
   fire_witch
-  @fireborn
 RACE air_elemental
   para_air
   para_lightning
@@ -196,19 +192,6 @@ RACE human
   sage
   woman
   man
-  @barbarian
-  @cleric
-  @halfling_p
-  @human
-  @mage
-  @monk
-  @ninja
-  @priest
-  @swashbuckler
-  @thief
-  @viking
-  @warrior
-  @wizard
   c_sage
   c_woman
   c_man
