@@ -109,6 +109,8 @@ static f_plug_api cfapiParty_get_property = NULL;
 static f_plug_api cfapiRegion_get_property = NULL;
 static f_plug_api cfapiPlayer_can_pay = NULL;
 static f_plug_api cfapiFriendlylist_get_next = NULL;
+static f_plug_api cfapiSet_random_map_variable = NULL;
+static f_plug_api cfapiGenerate_random_map = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -194,6 +196,9 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_timer_create, "cfapi_system_timer_create", z );
     GET_HOOK( cfapiSystem_timer_destroy, "cfapi_system_timer_destroy", z );
     GET_HOOK( cfapiFriendlylist_get_next, "cfapi_friendlylist_get_next", z );
+    GET_HOOK( cfapiSet_random_map_variable, "cfapi_set_random_map_variable", z );
+    GET_HOOK( cfapiGenerate_random_map, "cfapi_generate_random_map", z );
+
     return 1;
 }
 
@@ -781,6 +786,22 @@ int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint
     int val;
     return *( int* )cfapiMap_get_flags(&val, map, nmap, x, y, nx, ny);
 }
+
+int cf_random_map_set_variable(RMParms* rp, const char* buf)
+{
+    int val, ret;
+    cfapiSet_random_map_variable(&val, rp, buf, &ret);
+    return ret;
+}
+
+mapstruct* cf_random_map_generate(const char *filename, RMParms *RP, char** use_layout)
+{
+    int val;
+    mapstruct* map;
+    cfapiGenerate_random_map(&val, filename, RP, use_layout, &map);
+    return map;
+}
+
 
 /**
  * Wrapper for find_animation().
