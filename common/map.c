@@ -2055,6 +2055,10 @@ void update_position(mapstruct *m, int x, int y) {
 
     for (tmp = get_map_ob (m, x, y); tmp; tmp = tmp->above) {
 
+        /* DMs just don't do anything when hidden, including no light. */
+        if (QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden)
+            continue;
+
         /* This could be made additive I guess (two lights better than
          * one).  But if so, it shouldn't be a simple additive - 2
          * light bulbs do not illuminate twice as far as once since

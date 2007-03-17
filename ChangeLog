@@ -15,7 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Implement feature requet #1669464: Need new command - dmtell.
+ common/object.c: when inserting an object, need to fix 'map' too, if not
+ set later, will crash.
+---
+Implement feature request #1680229: dmhide - glowing things.
+ common/map.c: totally ignore hidden DMs for map update.
+---
+Implement feature request #1669464: Need new command - dmtell.
  include/sproto.h
  server/c_chat.c commands.c
 ---
