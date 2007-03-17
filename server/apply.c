@@ -2366,6 +2366,11 @@ static int unapply_special (object *who, object *op, int aflags)
             }
             if(who->type==PLAYER)
                 esrv_send_item(who, tmp2);
+            if (who->map) {
+                SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
+                update_position(who->map, who->x, who->y);
+                update_all_los(who->map, who->x, who->y);
+            }
             return 1; /* otherwise, an attempt to drop causes problems */
             break;
         case BOW:
@@ -3024,6 +3029,11 @@ int apply_special (object *who, object *op, int aflags)
             }
             if(who->type==PLAYER)
                 esrv_send_item(who, tmp2);
+            if (who->map) {
+                SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
+                update_position(who->map, who->x, who->y);
+                update_all_los(who->map, who->x, who->y);
+            }
             return 0;
             break;
 
