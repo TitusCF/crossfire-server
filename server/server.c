@@ -411,7 +411,7 @@ static void enter_random_map(object *pl, object *exit_ob)
     snprintf(newmap_name, sizeof(newmap_name), "/random/%s%04d", cp+1, reference_number++);
 
     /* now to generate the actual map. */
-    new_map=generate_random_map(newmap_name,&rp);
+    new_map=generate_random_map(newmap_name,&rp, NULL);
 
     /* Update the exit_ob so it now points directly at the newly created
      * random maps.  Not that it is likely to happen, but it does mean that a
@@ -570,7 +570,7 @@ static void enter_random_template_map(object *pl, object *exit_ob)
 	strcpy(rp.origin_map, pl->map->path);
 
 	/* now to generate the actual map. */
-	new_map=generate_random_map(new_map_name,&rp);
+	new_map=generate_random_map(new_map_name,&rp, NULL);
     }
 
 

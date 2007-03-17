@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
   }
   load_parameters(fp, LO_NEWFILE, &rp);
   fclose(fp);
-  newMap = generate_random_map(OutFileName, &rp);
+  newMap = generate_random_map(OutFileName, &rp, NULL);
   save_map(newMap,1); 
   exit(0);
 }

@@ -1,6 +1,6 @@
 /* random_map.c */
 extern void dump_layout(char **layout, RMParms *RP);
-extern mapstruct *generate_random_map(const char *OutFileName, RMParms *RP);
+extern mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_layout);
 extern char **layoutgen(RMParms *RP);
 extern char **symmetrize_layout(char **maze, int sym, RMParms *RP);
 extern char **rotate_layout(char **maze, int rotation, RMParms *RP);

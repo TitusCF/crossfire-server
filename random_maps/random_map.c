@@ -49,7 +49,7 @@ void dump_layout(char **layout,RMParms *RP) {
     printf("\n");
 }
 EXTERN FILE *logfile;
-mapstruct *generate_random_map(const char *OutFileName, RMParms *RP) {
+mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_layout) {
     char **layout, buf[HUGE_BUF];
     mapstruct *theMap;
     int i;
@@ -72,30 +72,32 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP) {
     else
 	RP->difficulty_given=1;
 
-    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
-    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+    if (!use_layout) {
+        if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+        if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
 
-    if(RP->expand2x > 0) {
-	RP->Xsize /=2;
-	RP->Ysize /=2;
-    }
+        if(RP->expand2x > 0) {
+            RP->Xsize /=2;
+            RP->Ysize /=2;
+        }
 
-    layout = layoutgen(RP);
+        layout = layoutgen(RP);
 
 #ifdef RMAP_DEBUG
-    dump_layout(layout,RP);
+        dump_layout(layout,RP);
 #endif
+
+        /*  rotate the layout randomly */
+        layout=rotate_layout(layout,RANDOM()%4,RP);
+#ifdef RMAP_DEBUG
+        dump_layout(layout,RP);
+#endif
+    }
+    else
+        layout = use_layout;
 
     /* increment these for the current map */
     RP->dungeon_level+=1;
-    /* allow constant-difficulty maps. */
-    /*  difficulty+=1; */
-
-    /*  rotate the layout randomly */
-    layout=rotate_layout(layout,RANDOM()%4,RP);
-#ifdef RMAP_DEBUG
-    dump_layout(layout,RP);
-#endif
 
     /* allocate the map and set the floor */
     theMap = make_map_floor(layout,RP->floorstyle,RP); 
@@ -143,9 +145,11 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP) {
     unblock_exits(theMap,layout,RP);
 
     /* free the layout */
-    for(i=0;i<RP->Xsize;i++)
-	free(layout[i]);
-    free(layout);
+    if (!use_layout) {
+        for(i=0;i<RP->Xsize;i++)
+            free(layout[i]);
+        free(layout);
+    }
 
     theMap->msg = strdup_local(buf);
   
