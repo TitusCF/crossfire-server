@@ -38,12 +38,16 @@
 int can_build_over( struct mapdef* map, object* tmp, short x, short y)
     {
     object* ob;
-    
+
     ob = GET_MAP_OB( map, x, y );
     while ( ob )
         {
+            if ((ob->head && !QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && !QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
+                // Check for the flag is required, as this function can be called recursively
+                // on different spots.
+                return 0;
 	/* if ob is not a marking rune or floor, then check special cases */
-	if ( strcmp( ob->arch->name, "rune_mark" ) && ob->type != FLOOR )
+	if ( strcmp( ob->arch->name, "rune_mark" ) && ob->type != FLOOR && !QUERY_FLAG(ob, FLAG_IS_FLOOR ))
 	    {
             switch ( tmp->type )
                 {
@@ -67,6 +71,11 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
             }
         ob = ob->above;
 	}
+
+    /* If item is multi-tile, need to check other parts too. */
+    if (tmp->more)
+        return can_build_over(map, tmp->more, x + tmp->more->arch->clone.x - tmp->arch->clone.x, y + tmp->more->arch->clone.y - tmp->arch->clone.y);
+
     return 1;
     }
 
@@ -581,16 +590,15 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     if ( !arch )
         return;
 
-    tmp = arch_to_object( arch );
-    
-    if ( ( floor->above ) && ( !can_build_over(pl->map, tmp, x, y) ) )
-        /* Floor has something on top that interferes with building */
+    tmp = object_create_arch(arch);
+
+    if ( !can_build_over(pl->map, tmp, x, y) )
         {
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		      "You can't build here.", NULL);
+            "You can't build here.", NULL);
         return;
         }
-    
+
     SET_FLAG( tmp, FLAG_IS_BUILDABLE );
     SET_FLAG( tmp, FLAG_NO_PICK );
 
@@ -730,7 +738,6 @@ void apply_map_builder( object* pl, int dir )
     {
     object* builder;
     object* tmp;
-    object* tmp2;
     short x, y;
 
     if ( !pl->type == PLAYER )
@@ -776,27 +783,22 @@ void apply_map_builder( object* pl, int dir )
 		      "You'd better not build here, it looks weird.", NULL);
         return;
         }
-    tmp2 = find_marked_object( pl );
-    while ( tmp )
-        {
-        if ( !QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) && ( ( tmp->type != SIGN )
-	|| ( strcmp( tmp->arch->name, "rune_mark" ) ) ) )
-            {
-	        /* The item building function already has it's own special
-		 * checks for this
-		 */
-	        if ((!tmp2) || (tmp2->subtype != ST_MAT_ITEM ))
-		    {
-	            draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-				  "You can't build here.", NULL);
-	            return;
-		    }
+
+    builder = pl->contr->ranges[ range_builder ];
+
+    if (builder->subtype != ST_BD_BUILD) {
+        while ( tmp ) {
+            if ( !QUERY_FLAG( tmp, FLAG_IS_BUILDABLE ) && ( ( tmp->type != SIGN )
+                || ( strcmp( tmp->arch->name, "rune_mark" ) ) ) ) {
+                draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                    "You can't build here.", NULL);
+                return;
             }
-        tmp = tmp->above;
+            tmp = tmp->above;
         }
+    }
 
     /* Now we know the square is ok */
-    builder = pl->contr->ranges[ range_builder ];
 
     if ( builder->subtype == ST_BD_REMOVE )
         /* Remover -> call specific function and bail out */
@@ -811,7 +813,7 @@ void apply_map_builder( object* pl, int dir )
          * Find marked item to build, call specific function
          */
         {
-        tmp = tmp2;
+        tmp = find_marked_object(pl);
         if ( !tmp )
             {
 	        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,

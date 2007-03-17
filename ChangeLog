@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1671102: Generic destroy can remove permanent buttons. The code was
+ doing a wrong check related to marked item/destroyer.
+Fix bug #1657675: multi-tile buildable object bug (note: one .x11 image though).
+ code now uses multi-tile aware function to generate object, and correctly
+ checks all relevant spots for building.
+ server/build_map.c
+---
 plugins/template/create_plugin.sh: plugin generation script.
 plugins/template/include/plugin_template.h: remove unused file, fix comment.
 ---
