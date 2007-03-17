@@ -598,6 +598,13 @@ int command_summon(object *op, char *params) {
 
 /**
  * Teleport next to target player.
+ *
+ * @param op
+ * DM teleporting.
+ * @param params
+ * options sent by player.
+ * @return
+ * 0 if couldn't teleport, 1 if teleport successful.
  */
 /* mids 01/16/2002 */
 int command_teleport(object *op, char *params) {
@@ -611,18 +618,21 @@ int command_teleport(object *op, char *params) {
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "Usage: teleport <player>.", NULL);
-        return 1;
+        return 0;
     }
 
-    pl = get_other_player_from_name(op, params);
-    if (!pl)
-        return 1;
+    pl = find_player_partial_name(params);
+    if (!pl) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "No such player or ambiguous name.", NULL);
+        return 0;
+    }
 
    i = find_free_spot(pl->ob, pl->ob->map, pl->ob->x, pl->ob->y, 1, 9);
    if (i == -1) {
       draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		    "Can not find a free spot to teleport to.", NULL);
-      return 1;
+      return 0;
    }
 
    dummy = get_object();
