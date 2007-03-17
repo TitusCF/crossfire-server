@@ -1556,18 +1556,21 @@ int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
     if (op->contr->hidden) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-		      "You are no longer hidden from other players", NULL);
+            "You are no longer hidden from other players", NULL);
         op->map->players++;
         draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
-			     MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-			     "%s has entered the game.",
-			     "%s has entered the game.",
-			     op->name);
+            MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+            "%s has entered the game.",
+            "%s has entered the game.",
+            op->name);
         op->contr->hidden = 0;
         op->invisible = 1;
     } else
         draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
-		      "The Dungeon Master is gone..", NULL);
+            "The Dungeon Master is gone..", NULL);
+
+    update_los(op);
+
     return 1;
 }
 
