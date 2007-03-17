@@ -82,70 +82,11 @@ treasureone human_parts
     chance 1
   end
 #
-treasureone neko_parts
-  arch dead_neko
-    chance 99
-  end
-#
 treasure door
   list traps
   chance 30
 end
 #
-treasure chest
-  list chest_items
-    chance 80
-   no
-     list traps
-     more
-     list chest_items
-     more
-     list chest_items
-     more
-     list chest_items
-     chance 50
-  end
-end
-treasureone chest_items
-  arch goldcoin
-    chance 5
-    nrof 1
-  more
-  arch silvercoin
-    chance 5
-    nrof 9
-  more
-  list random_weapon
-    chance 30
-  more
-  list random_armour
-     chance 30
-  more
-  list random_food
-    chance 10
-  more
-  list random_special
-    chance 5
-    magic 6
-  more
-  list random_wealth
-    chance 5
-    magic 5
-  more
-  list random_wealth
-     chance 5
-     magic 10
-  more
-  list random_potion
-    chance 5
-    magic 5
-  more
-  list containers
-    chance 3
-  more
-  list random_scroll
-    chance 5
-  end
 # skill scrolls
 # better scrolls are harder to find 
 # ordered by skill names
@@ -750,31 +691,6 @@ treasureone starting_wealth
     nrof 40
     chance 5
   end
-treasureone shop_alchemy
-  list random_minerals
-    chance 30
-  more
-  arch water
-    chance 10
-  more
-  list shop_potions
-    chance 20
-  more
-  list containers
-    chance 2
-  more
-  list random_amulet
-    chance 3
-  more
-  list random_food
-    chance 1
-  more
-  list random_plant
-    chance 15
-  more
-  list random_alchemy
-    chance 25
-  end
 treasureone random_plant
   arch rose_pink
     nrof 5
@@ -1030,13 +946,6 @@ treasureone containers
   more
   arch scrollcase
     chance 5
-  end
-treasureone shop_general
-  list containers
-    chance 70
-  more
-  arch key
-    chance 30
   end
 treasureone missile_weapons
   arch bow
@@ -1601,22 +1510,6 @@ treasureone random_wands
   arch rod_heavy
     chance 1
   end
-treasure shop_rings
-  arch ring
-  end
-treasureone shop_light
-  arch flint_and_steel
-    chance 40
-  more
-  arch torch_unlit
-    chance 40
-  more
-  arch lantern_unlit
-    chance 15
-  more
-  arch lantern2_unlit
-    chance 5
-  end
 # for shop
 treasureone random_books
   arch cleric_book
@@ -1650,82 +1543,6 @@ treasureone random_read
   more
   arch scroll_2
     chance 35
-  end
-treasureone shop_gems
-  arch gem
-    chance 5
-    nrof 1
-  more
-  arch gem
-    chance 5
-    nrof 2
-  more
-  arch gem
-    chance 5
-    nrof 4
-  more
-  arch pearl
-    chance 5
-    nrof 6
-  more
-  arch pearl
-    chance 5
-    nrof 12
-  more
-  arch pearl
-    chance 5
-    nrof 24
-  more
-  arch ruby
-    chance 5
-    nrof 2
-  more
-  arch ruby
-    chance 5
-    nrof 4
-  more
-  arch ruby
-    chance 5
-    nrof 8
-  more
-  arch sapphire
-    chance 5
-    nrof 3
-  more
-  arch sapphire
-    chance 5
-    nrof 5
-  more
-  arch sapphire
-    chance 5
-    nrof 9
-  more
-  arch emerald
-    chance 5
-    nrof 3
-  more
-  arch emerald
-    chance 5
-    nrof 6
-  more
-  arch emerald
-    chance 5
-    nrof 10
-    more
-  arch amethyst
-    chance 1
-    nrof 8
-  more
-  arch amethyst
-    chance 1
-    nrof 3
-  end
-treasureone shop_minerals
-  list random_minerals
-     chance 80
-  more
-  list random_stone
-     chance 20
   end
 treasureone random_stone
   arch mountain_stone
@@ -1790,58 +1607,6 @@ treasureone random_minerals
   arch sulphur
     chance 10
     nrof 4
-  end
-treasureone shop_potions
-  arch potion_generic
-    chance 20
-  more
-  arch dust_generic
-    chance 15
-  more
-  arch balm_generic
-    chance 10
-  more
-  arch figurine_generic
-    chance 3
-  more
-  arch potion_heal
-    chance 5
-  more
-  arch potion_magic
-    chance 5
-  more
-  arch potion_fire
-    chance 5
-  more
-  arch potion_fire2
-    chance 1
-  more
-  arch potion_cold
-    chance 5
-  more
-  arch potion_cold2
-    chance 1
-  more
-  arch potion_invulnerability
-    chance 5
-  more
-  arch potion_aethereality
-    chance 1
-  more
-  arch potion_improve
-    chance 5
-  more
-  arch potion_restoration
-    chance 10
-  more
-  arch potion_heroism
-    chance 10
-  more
-  arch vial_poison
-    chance 1
-  more
-  list list14
-    chance 10
   end
 treasureone random_spells
   arch scroll_new
@@ -1934,28 +1699,6 @@ treasure poor_old
   arch silvercoin
   nrof 8
   chance 10
-  end
-treasure raas
-  arch icor
-    chance 20
-  end
-treasure sphinx
-  list standard_old
-  more
-  arch head
-  end
-treasure wight
-  arch fl_corpse
-    chance 50
-  end
-treasure gnoll
-  list giant_parts
-    chance 30
-  more
-  arch skill_throwing
-    chance 30
-  more
-  list poor_old
   end
 treasure rich
   list rich_old
@@ -2179,35 +1922,6 @@ treasure rich_old
   arch cloak
   chance 10
   end
-treasure snake
-  arch serp_skin
-    chance 3
-  end
-treasure sage
-  list random_books
-  more
-  arch skill_literacy
-  more
-  arch skill_alchemy
-    chance 50
-    no
-    arch skill_jeweler
-    end
-  more
-  list human_parts
-  end
-treasure scorpion
-  arch insect_stinger
-    chance 10
-  end
-treasure xan
-  arch insect_wing
-    chance 10
-  end
-treasure giant_bat
-  arch bat_wing
-    chance 10
-  end
 treasure rod
   arch rod_light
   chance 2
@@ -2242,27 +1956,6 @@ treasure throw_rich
     chance 35
   more
   list rich
-  end
-treasure giant_old
-  arch big_club
-  more
-  arch goldcoin
-  chance 6
-  nrof 80
-  end
-treasure para_elemental
-  arch residue
-    chance 20
-  end
-treasure ghost
-  arch ectoplasm
-    chance 5
-  end
-treasure grave
-  arch gravedirt
-  end
-treasure pyromaniac
-  arch spell_create_bomb
   end
 ##############################################################################
 # start of starting equipment for players.
@@ -2355,11 +2048,6 @@ treasure pl_half_orc
   more
   arch skill_stealing
   end
-treasure halfling_player
-  arch skill_stealing
-  more
-  arch skill_hide
-  end
 treasure halfling
   list fighter_skills
   more
@@ -2444,13 +2132,6 @@ treasure warrior
   more
   arch sack
   end
-treasure wraith_player_items
-  arch wraith_player_force
-  more
-  arch skill_wraith_feed
-  more
-  arch no_class_face_change
-  end
 treasure barbarian
   list fighter_skills
   more
@@ -2493,71 +2174,6 @@ treasure mage
   arch sorcerer_book_l1
   more
   arch evoker_book_l1
-  end
-treasure acdc
-  arch abil_fear
-  more
-  arch spell_sm_lightning
-    nrof 3
-  more
-  arch spell_large_lightning
-    nrof 3
-  more
-  arch dragon_steak
-  nrof 2
-  chance 90
-  more
-  arch dragon_scale
-  more
-  arch wand
-  more
-  arch staff
-  chance 50
-  more
-  arch wand
-  chance 50
-  more
-  arch ring
-  more
-  arch ring
-  chance 50
-  more
-  arch gem
-  chance 80
-  nrof 2
-  more
-  arch ruby
-  nrof 3
-  more
-  arch sapphire
-  nrof 3
-  more
-  arch emerald
-  nrof 4
-  more
-  arch pearl
-  nrof 6
-  more
-  arch platinacoin
-  nrof 5
-  more
-  arch goldcoin
-  nrof 30
-  more
-  arch silvercoin
-  nrof 500
-  more
-  arch scroll_new
-  more
-  arch scroll_new
-  chance 50
-  more
-  arch scroll_new
-  chance 50
-  more
-  arch sword_2
-  chance 10
-  magic 3
   end
 treasure avatar
   arch spell_summon_pet_monster
@@ -2605,76 +2221,7 @@ treasure spark
   arch spell_large_lightning
     nrof 6
   end
-treasure fire_serpent
-  arch abil_burning_hands
-  chance 50
-  more
-  arch abil_medium_fireball
-  chance 50
-  end
-treasure serpent
-  arch poisoning
-  chance 50
-  more
-  arch serp_skin
-  chance 20
-  end
-treasure imp
-  arch abil_burning_hands
-  more
-  arch abil_medium_fireball
-  end
-treasure liv_chaos
-  arch spell_create_pool_of_chaos
-  end
-treasure lokanth
-  list standard
-  more
-  arch skill_clawing
-  end
 treasure queen_ant
   arch gem
   end
-treasure spit_ant
-  arch ability_spit_acid
-  more
-  arch acid_spit
-  nrof 30
-  end
-treasure guard_l
-  arch scale_mail
-  more
-  arch spear
-  end
-treasure guard_m
-  arch chain_mail
-  more
-  arch lspear
-  end
-treasure guard_h
-  arch chain_mail
-  more
-  arch poleaxe
-  end
-treasure slave
-  list human_parts
-    chance 20
-  more
-  arch turban
-  more
-  arch sandals
-  end
-treasure byakie
-  arch abil_fear
-  end
-treasure shadow
-  arch spell_negaball
-  more
-  arch spell_cancellation
- end
-treasure s_wyvern
-  arch spell_negabolt
-  more
-  arch spell_cancellation
- end
 #
