@@ -651,8 +651,19 @@ void give_initial_items(object *pl,treasurelist *items) {
 	else SET_FLAG(op, FLAG_INV_LOCKED);
     } /* for loop of objects in player inv */
 
+
     /* Need to set up the skill pointers */
     link_player_skills(pl);
+
+    /**
+     * Now we do a second loop, to apply weapons/armors/...
+     * This is because weapons require the skill, which can be given after the first loop.
+     */
+    for (op=pl->inv; op; op=next) {
+        next = op->below;
+        if ((IS_ARMOR(op) || IS_WEAPON(op) || IS_SHIELD(op)) && !QUERY_FLAG(op, FLAG_APPLIED))
+            manual_apply(pl, op, AP_NOPRINT);
+    }
 }
 
 void get_name(object *op) {
