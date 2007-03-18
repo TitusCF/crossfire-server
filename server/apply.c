@@ -2826,7 +2826,7 @@ int apply_special (object *who, object *op, int aflags)
                 /* While experience will be credited properly, we want to
                  * change the skill so that the dam and wc get updated
                  */
-            change_skill(who, skop, 0);
+            change_skill(who, skop, (aflags & AP_NOPRINT));
         }
     }
 
