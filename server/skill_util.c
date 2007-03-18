@@ -268,12 +268,12 @@ int change_skill (object *who, object *new_skill, int flag)
     }
 
     if (!new_skill || who->chosen_skill) 
-	if (who->chosen_skill) apply_special(who, who->chosen_skill, AP_UNAPPLY);
+	if (who->chosen_skill) apply_special(who, who->chosen_skill, AP_UNAPPLY | (flag & AP_NOPRINT));
 
     /* Only goal in this case was to unapply a skill */
     if (!new_skill) return 0;
 
-    if (apply_special (who, new_skill, AP_APPLY)) {
+    if (apply_special (who, new_skill, AP_APPLY | (flag & AP_NOPRINT))) {
 	return 0;
     }
     if (flag & 0x1)
