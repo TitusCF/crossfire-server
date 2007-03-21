@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Changes to plugin API: start to use a (type)* parameter instead of returning a value
+ cast to void*. This removes static variables.
+ Also add Object.PermExp and Object.ExpMul to Python.
+ include/plugin.h: add CFAPI_MOVETYPE type.
+ plugins/common/include/plugin_common.h: add many wrappers.
+ plugins/common/plugin_common.c: wrappers, new calling syntax.
+ plugins/cfpython/cfpython_object.c: clean calls to common plugin.
+ plugins/cfpython/include/cfpython_object_private.h: some more properties.
+ server/plugins.c: change cfapi_object_get_property.
+---
+include/global.h: new type, 'sstring', to be used for shared strings.
+---
 common/loader.l: fix crash when object is missing archetype.
 Nicolas Weeger 2007-03-21
 

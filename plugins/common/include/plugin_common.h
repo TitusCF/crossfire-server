@@ -54,15 +54,26 @@ extern int          cf_timer_create(object* ob, long delay, int mode);
 extern int          cf_timer_destroy(int id);
 
 /* Objects */
-extern void* cf_object_set_int_property(object* op, int propcode, int value);
-extern void* cf_object_set_object_property(object* op, int propcode, object* value);
-extern void* cf_object_set_float_property(object* op, int propcode, float value);
-extern void* cf_object_get_property(object* op, int propcode);
+extern void*        cf_object_set_int_property(object* op, int propcode, int value);
+extern int          cf_object_get_int_property(object* op, int propcode);
+extern void*        cf_object_set_movetype_property(object* op, int propcode, MoveType value);
+extern MoveType     cf_object_get_movetype_property(object* op, int propcode);
+extern object*      cf_object_get_object_property(object* op, int propcode);
+extern void*        cf_object_set_object_property(object* op, int propcode, object* value);
+extern float        cf_object_get_float_property(object* op, int propcode);
+extern void*        cf_object_set_float_property(object* op, int propcode, float value);
+extern mapstruct*   cf_object_get_map_property(object* op, int propcode);
+extern archetype*   cf_object_get_archetype_property(object* op, int propcode);
+extern partylist*   cf_object_get_partylist_property(object* op, int propcode);
+extern sint64       cf_object_get_int64_property(object* op, int propcode);
+extern double       cf_object_get_double_property(object* op, int propcode);
+extern sstring      cf_object_get_sstring_property(object* op, int propcode);
+extern char*        cf_object_get_string_property(object* op, int propcode, char* buf, int size);
 extern void         cf_free_object( object* ob );
 extern void         cf_fix_object( object* pl );
-extern char*        cf_query_name( object* ob );
-extern char*        cf_query_name_pl( object* ob );
-extern char*        cf_query_base_name( object* ob, int plural );
+extern char*        cf_query_name(object* ob, char* name, int size);
+extern sstring      cf_query_name_pl( object* ob );
+extern char*        cf_query_base_name(object* ob, int plural, char* name, int size);
 extern object*      cf_insert_ob_in_ob( object* ob, object* where );
 extern const char*  cf_object_get_msg( object* );
 extern void         cf_object_set_weight( object* ob, int weight );
@@ -147,7 +158,7 @@ extern int           cf_random_map_set_variable(RMParms* rp, const char* buf);
 extern mapstruct*    cf_random_map_generate(const char *filename, RMParms *RP, char** use_layout);
 
 /* Players */
-extern char*        cf_player_get_ip(object* op);
+extern sstring        cf_player_get_ip(object* op);
 extern object*      cf_player_get_marked_item(object* op);
 extern void         cf_player_set_marked_item(object* op, object* ob);
 extern player*      cf_player_find(char* txt);
@@ -185,12 +196,6 @@ extern const char*  cf_region_get_message(region* reg);
 /* Friendly list */
 extern object*      cf_friendlylist_get_first(void);
 extern object*      cf_friendlylist_get_next(object* ob);
-
-/* temp */
-extern f_plug_api cfapi_object_get_property;
-extern f_plug_api cfapi_object_set_property;
-extern f_plug_api cfapi_object_apply;
-extern f_plug_api cfapi_object_remove;
 
 #ifdef WIN32
 

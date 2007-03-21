@@ -49,6 +49,8 @@ static PyObject* Object_GetDam(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLuck(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMessage(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetExp(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetPermExp(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetExpMul(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetSlaying(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCursed(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetDamned(Crossfire_Object* whoptr, void* closure);
@@ -280,6 +282,8 @@ static PyGetSetDef Object_getseters[] = {
     { "Dam",        (getter)Object_GetDam,      (setter)Object_SetDam, NULL, NULL },
     { "Luck",       (getter)Object_GetLuck,     NULL, NULL, NULL },
     { "Exp",        (getter)Object_GetExp,      NULL, NULL, NULL },
+    { "ExpMul",     (getter)Object_GetExpMul,   NULL, NULL, NULL },
+    { "PermExp",    (getter)Object_GetPermExp,  NULL, NULL, NULL },
     { "Message",    (getter)Object_GetMessage,  (setter)Object_SetMessage, NULL, NULL },
     { "Slaying",    (getter)Object_GetSlaying,  (setter)Object_SetSlaying, NULL, NULL },
     { "Cursed",     (getter)Object_GetCursed,   (setter)Object_SetCursed, NULL, NULL },

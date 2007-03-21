@@ -110,6 +110,7 @@
 #define CFAPI_TIME    15
 #define CFAPI_SINT64  16
 #define CFAPI_SSTRING 17 /* Shared string that shouldn't be changed - const char* */
+#define CFAPI_MOVETYPE 18 /* MoveType */
 
 typedef void* (*f_plug_api) (int* type, ...);
 typedef int   (*f_plug_postinit) (void);

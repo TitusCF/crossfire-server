@@ -52,7 +52,7 @@ static void free_object_assoc(object *key) {
 static PyObject* Player_GetIP(Crossfire_Player* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",( char* )cf_player_get_ip(whoptr->obj));
+    return Py_BuildValue("s", cf_player_get_ip(whoptr->obj));
 }
 static PyObject* Player_GetMarkedItem(Crossfire_Player* whoptr, void* closure)
 {
@@ -105,7 +105,8 @@ static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args 
 static PyObject* Player_GetBedMap(Crossfire_Player* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s", (const char*)cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP));
+    char bed[200];
+    return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP, bed, sizeof(bed)));
 }
 
 static int Player_SetBedMap(Crossfire_Player* whoptr, PyObject* value, void* closure)
@@ -121,7 +122,7 @@ static int Player_SetBedMap(Crossfire_Player* whoptr, PyObject* value, void* clo
 static PyObject* Player_GetBedX(Crossfire_Player* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *( int* )cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_X));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_X));
 }
 static int Player_SetBedX(Crossfire_Player* whoptr, PyObject* value, void* closure)
 {
@@ -136,7 +137,7 @@ static int Player_SetBedX(Crossfire_Player* whoptr, PyObject* value, void* closu
 static PyObject* Player_GetBedY(Crossfire_Player* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *( int* )cf_object_get_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_Y));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_Y));
 }
 static int Player_SetBedY(Crossfire_Player* whoptr, PyObject* value, void* closure)
 {
@@ -152,7 +153,8 @@ static int Player_SetBedY(Crossfire_Player* whoptr, PyObject* value, void* closu
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",( char* )cf_query_name(whoptr->obj));
+    char name[200];
+    return Py_BuildValue("s", cf_query_name(whoptr->obj, name, sizeof(name)));
 }
 
 static PyObject* Object_GetNamePl(Crossfire_Object* whoptr, void* closure)
@@ -164,140 +166,150 @@ static PyObject* Object_GetNamePl(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_TITLE ));
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE));
 }
 
 static PyObject* Object_GetMap(Crossfire_Object* whoptr, void* closure)
 {
     mapstruct* m;
     EXISTCHECK(whoptr);
-    m = cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAP );
+    m = cf_object_get_map_property(whoptr->obj, CFAPI_OBJECT_PROP_MAP);
     return Crossfire_Map_wrap(m);
 }
 
 static PyObject* Object_GetCha(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_CHA));
+    return Py_BuildValue("i", cf_object_get_int_property( whoptr->obj, CFAPI_OBJECT_PROP_CHA));
 }
 
 static PyObject* Object_GetCon(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_CON));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_CON));
 }
 
 static PyObject* Object_GetDex(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_DEX));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DEX));
 }
 
 static PyObject* Object_GetInt(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_INT));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INT));
 }
 
 static PyObject* Object_GetPow(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_POW));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_POW));
 }
 
 static PyObject* Object_GetStr(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_STR));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_STR));
 }
 
 static PyObject* Object_GetWis(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_WIS));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WIS));
 }
 
 static PyObject* Object_GetHP(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_HP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_HP));
 }
 
 static PyObject* Object_GetMaxHP(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXHP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXHP));
 }
 
 static PyObject* Object_GetSP(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_SP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SP));
 }
 
 static PyObject* Object_GetMaxSP(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXSP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXSP));
 }
 
 static PyObject* Object_GetGrace(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_GP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GP));
 }
 
 static PyObject* Object_GetMaxGrace(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MAXGP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_MAXGP));
 }
 
 static PyObject* Object_GetFood(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_FP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FP));
 }
 
 static PyObject* Object_GetAC(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_AC));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_AC));
 }
 
 static PyObject* Object_GetWC(Crossfire_Object* whoptr, void* closure)
 {
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_WC));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WC));
 }
 
 static PyObject* Object_GetDam(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_DAM));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DAM));
 }
 
 static PyObject* Object_GetLuck(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*( int* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_LUCK));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LUCK));
 }
 
 static PyObject* Object_GetMessage(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE));
+    return Py_BuildValue("s", cf_object_get_sstring_property( whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE));
 }
 
 static PyObject* Object_GetExp(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("L",*( sint64* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_EXP));
+    return Py_BuildValue("L", cf_object_get_int64_property( whoptr->obj, CFAPI_OBJECT_PROP_EXP));
+}
+static PyObject* Object_GetPermExp(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("L", cf_object_get_int64_property( whoptr->obj, CFAPI_OBJECT_PROP_PERM_EXP));
+}
+static PyObject* Object_GetExpMul(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("d", cf_object_get_double_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP_MULTIPLIER));
 }
 
 static PyObject* Object_GetSlaying(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",( char* )cf_object_get_property( whoptr->obj, CFAPI_OBJECT_PROP_SLAYING));
+    return Py_BuildValue("s", cf_object_get_sstring_property( whoptr->obj, CFAPI_OBJECT_PROP_SLAYING));
 }
 static PyObject* Object_GetCursed(Crossfire_Object* whoptr, void* closure)
 {
@@ -312,53 +324,53 @@ static PyObject* Object_GetDamned(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetWeight(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT));
 }
 static PyObject* Object_GetWeightLimit(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_WEIGHT_LIMIT));
 }
 static PyObject* Object_GetAbove(Crossfire_Object* whoptr, void* closure)
 {
     object* op;
     EXISTCHECK(whoptr);
-    op = cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_ABOVE);
+    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_ABOVE);
     return Crossfire_Object_wrap(op);
 }
 static PyObject* Object_GetBelow(Crossfire_Object* whoptr, void* closure)
 {
     object* op;
     EXISTCHECK(whoptr);
-    op = cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_BELOW);
+    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OB_BELOW);
     return Crossfire_Object_wrap(op);
 }
 static PyObject* Object_GetInventory(Crossfire_Object* whoptr, void* closure)
 {
     object* op;
     EXISTCHECK(whoptr);
-    op = cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_INVENTORY);
+    op = cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_INVENTORY);
     return Crossfire_Object_wrap(op);
 }
 static PyObject* Object_GetX(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_X));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_X));
 }
 static PyObject* Object_GetY(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_Y));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_Y));
 }
 static PyObject* Object_GetDirection(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(char*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_DIRECTION));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DIRECTION));
 }
 static PyObject* Object_GetFacing(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(char*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_FACING));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACING));
 }
 static PyObject* Object_GetUnaggressive(Crossfire_Object* whoptr, void* closure)
 {
@@ -368,7 +380,7 @@ static PyObject* Object_GetUnaggressive(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetGod(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_GOD));
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_GOD));
 }
 static PyObject* Object_GetPickable(Crossfire_Object* whoptr, void* closure)
 {
@@ -378,53 +390,52 @@ static PyObject* Object_GetPickable(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetQuantity(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_NROF));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_NROF));
 }
 static PyObject* Object_GetInvisible(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj,
-                         CFAPI_OBJECT_PROP_INVISIBLE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_INVISIBLE));
 }
 static PyObject* Object_GetSpeed(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("f", *(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED));
+    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED));
 }
 static PyObject* Object_GetSpeedLeft(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("f", *(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT));
+    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_SPEED_LEFT));
 }
 static PyObject* Object_GetLastSP(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(sint16*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_SP));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_SP));
 }
 static PyObject* Object_GetLastGrace(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(sint16*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_GRACE));
 }
 static PyObject* Object_GetLastEat(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(sint16*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LAST_EAT));
 }
 static PyObject* Object_GetLevel(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_LEVEL));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_LEVEL));
 }
 static PyObject* Object_GetFace(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", *(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE));
 }
 static PyObject* Object_GetAttackType(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_TYPE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_TYPE));
 }
 static PyObject* Object_GetBeenApplied(Crossfire_Object* whoptr, void* closure)
 {
@@ -686,32 +697,32 @@ static PyObject* Object_GetMoney(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetType(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_TYPE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_TYPE));
 }
 static PyObject* Object_GetSubtype(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_SUBTYPE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_SUBTYPE));
 }
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("l",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
 }
 static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("s",cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCH_NAME));
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCH_NAME));
 }
 static PyObject* Object_GetArchetype(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Crossfire_Archetype_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
+    return Crossfire_Archetype_wrap(cf_object_get_archetype_property(whoptr->obj, CFAPI_OBJECT_PROP_ARCHETYPE));
 }
 static PyObject* Object_GetNoSave(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE));
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_NO_SAVE));
 }
 static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure)
 {
@@ -726,48 +737,48 @@ static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetEnv(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_ENVIRONMENT));
+    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_ENVIRONMENT));
 }
 static PyObject* Object_GetMoveType(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_TYPE));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_TYPE));
 }
 static PyObject* Object_GetMoveBlock(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_BLOCK));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_BLOCK));
 }
 static PyObject* Object_GetMoveAllow(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ALLOW));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ALLOW));
 }
 static PyObject* Object_GetMoveOn(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ON));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_ON));
 }
 static PyObject* Object_GetMoveOff(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_OFF));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_OFF));
 }
 static PyObject* Object_GetMoveSlow(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i",*(int*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW));
+    return Py_BuildValue("i", cf_object_get_movetype_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW));
 }
 static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("f",*(float*)cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY));
+    return Py_BuildValue("f", cf_object_get_float_property(whoptr->obj, CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY));
 }
 
 static PyObject* Object_GetOwner(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Crossfire_Object_wrap(cf_object_get_property(whoptr->obj, CFAPI_OBJECT_PROP_OWNER));
+    return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_OWNER));
 }
 
 static int Object_SetOwner(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1794,7 +1805,8 @@ static PyObject* Crossfire_Object_Reposition( Crossfire_Object* who, PyObject* a
 static PyObject* Crossfire_Object_QueryName( Crossfire_Object* who, PyObject* args )
 {
     EXISTCHECK(who);
-    return Py_BuildValue("s",cf_query_name(who->obj));
+    char name[200];
+    return Py_BuildValue("s",cf_query_name(who->obj, name, sizeof(name)));
 }
 
 static PyObject* Crossfire_Object_GetResist( Crossfire_Object* who, PyObject* args )
