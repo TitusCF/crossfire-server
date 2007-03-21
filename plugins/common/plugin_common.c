@@ -1021,37 +1021,55 @@ int cf_object_set_key(object* op, const char* keyname, const char* value, int ad
 archetype*cf_archetype_get_first()
 {
     int type;
-    return cfapiArchetype_get_first(&type);
+    archetype* value;
+    cfapiArchetype_get_first(&type, &value);
+    assert(type == CFAPI_PARCH);
+    return value;
 }
 
-const char*  cf_archetype_get_name(archetype* arch)
+sstring  cf_archetype_get_name(archetype* arch)
 {
     int type;
-    return cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NAME);
+    sstring name;
+    cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NAME, &name);
+    assert(type == CFAPI_SSTRING);
+    return name;
 }
 
 archetype* cf_archetype_get_next(archetype* arch)
 {
     int type;
-    return cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NEXT);
+    archetype* value;
+    cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NEXT, &value);
+    assert(type == CFAPI_PARCH);
+    return value;
 }
 
 archetype* cf_archetype_get_more(archetype* arch)
 {
     int type;
-    return cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_MORE);
+    archetype* value;
+    cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_MORE, &value);
+    assert(type == CFAPI_PARCH);
+    return value;
 }
 
 archetype* cf_archetype_get_head(archetype* arch)
 {
     int type;
-    return cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_HEAD);
+    archetype* value;
+    cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_HEAD, &value);
+    assert(type == CFAPI_PARCH);
+    return value;
 }
 
 object* cf_archetype_get_clone(archetype* arch)
 {
     int type;
-    return cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_CLONE);
+    object* value;
+    cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_CLONE, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 
 /* Party-related functions */

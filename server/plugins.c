@@ -3790,55 +3790,66 @@ void* cfapi_object_pickup(int *type, ...)
 void* cfapi_archetype_get_first(int* type, ...)
 {
     va_list args;
+    archetype** rarch;
+
     va_start(args, type);
+    rarch = va_arg(args, archetype**);
     va_end(args);
+
+    *rarch = first_archetype;
     *type = CFAPI_PARCH;
-    return first_archetype;
+    return NULL;
 }
 
 void* cfapi_archetype_get_property(int* type, ...)
 {
-    archetype* arch;
     int prop;
+    archetype* arch;
     va_list args;
-    void* rv;
+    sstring* rsstring;
+    archetype** rarch;
+    object** robject;
 
     va_start(args, type);
     arch = va_arg(args, archetype*);
     prop = va_arg(args, int);
     switch (prop) {
     case CFAPI_ARCH_PROP_NAME:
-        *type = CFAPI_STRING;
-        rv = (void*)arch->name;
+        *type = CFAPI_SSTRING;
+        rsstring = va_arg(args, sstring*);
+        *rsstring = arch->name;
         break;
 
     case CFAPI_ARCH_PROP_NEXT:
         *type = CFAPI_PARCH;
-        rv = arch->next;
+        rarch = va_arg(args, archetype**);
+        *rarch = arch->next;
         break;
 
     case CFAPI_ARCH_PROP_HEAD:
         *type = CFAPI_PARCH;
-        rv = arch->head;
+        rarch = va_arg(args, archetype**);
+        *rarch = arch->head;
         break;
 
     case CFAPI_ARCH_PROP_MORE:
         *type = CFAPI_PARCH;
-        rv = arch->more;
+        rarch = va_arg(args, archetype**);
+        *rarch = arch->more;
         break;
 
     case CFAPI_ARCH_PROP_CLONE:
         *type = CFAPI_POBJECT;
-        rv = &arch->clone;
+        robject = va_arg(args, object**);
+        *robject = &arch->clone;
         break;
 
     default:
         *type = CFAPI_NONE;
-        rv = NULL;
         break;
     }
     va_end(args);
-    return rv;
+    return NULL;
 }
 
 /* Party-related functions */

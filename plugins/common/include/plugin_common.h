@@ -171,7 +171,7 @@ extern int          cf_player_can_pay(object* op);
 
 /* Archetypes */
 extern archetype*	cf_archetype_get_first(void);
-extern const char*  cf_archetype_get_name(archetype* arch);
+extern sstring      cf_archetype_get_name(archetype* arch);
 extern archetype*   cf_archetype_get_next(archetype* arch);
 extern archetype*   cf_archetype_get_more(archetype* arch);
 extern archetype*   cf_archetype_get_head(archetype* arch);

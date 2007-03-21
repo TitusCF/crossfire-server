@@ -167,7 +167,7 @@ int cf_timer_destroy(int id);
 const char *cf_object_get_key(object *op, const char *keyname);
 int cf_object_set_key(object *op, const char *keyname, const char *value, int add_key);
 archetype *cf_archetype_get_first(void);
-const char *cf_archetype_get_name(archetype *arch);
+sstring cf_archetype_get_name(archetype *arch);
 archetype *cf_archetype_get_next(archetype *arch);
 archetype *cf_archetype_get_more(archetype *arch);
 archetype *cf_archetype_get_head(archetype *arch);
