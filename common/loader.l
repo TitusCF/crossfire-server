@@ -380,7 +380,8 @@ static void check_loaded_object(object *op) {
         if (op->name_pl) free_string(op->name_pl);
             op->name_pl = NULL;
     }
-    if (!op->name_pl) op->name_pl = add_string(op->name);
+    if (!op->name_pl && op->name)
+        op->name_pl = add_string(op->name);
 
     /* objects now have a materialname.  try to patch it in */
     if (!(IS_WEAPON(op) && op->level > 0)) {
@@ -508,7 +509,7 @@ static void check_loaded_object(object *op) {
      * method, we'll create a new temporary archetype containing defined values.
      * Of course this doesn't apply when loading archetypes or artifacts.
      */
-    if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && !can_merge(op, &op->arch->clone)) {
+    if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && op->arch && !can_merge(op, &op->arch->clone)) {
         archetype* temp = get_archetype_struct();
         temp->reference_count++;
         temp->name = add_string(op->arch->name);

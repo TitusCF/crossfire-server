@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/loader.l: fix crash when object is missing archetype.
+Nicolas Weeger 2007-03-21
+
 server/monster.c: documentation and indent, no functional change.
 Nicolas Weeger 2007-03-18
 
