@@ -77,6 +77,8 @@ typedef unsigned char	uint8;
 typedef signed char	sint8;
 #define SINT8_MAX	127
 
+/** Strings that should be manipulated through add_string() and free_string(). */
+typedef const char* sstring;
 
 typedef unsigned short Fontindex;
 
