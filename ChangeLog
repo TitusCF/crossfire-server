@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/egoitem.c: Removed blank file.
+Alex Schultz 2007-03-21
+
 Changes to plugin API: start to use a (type)* parameter instead of returning a value
  cast to void*. This removes static variables.
  Also add Object.PermExp and Object.ExpMul to Python.
