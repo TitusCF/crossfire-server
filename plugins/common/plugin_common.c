@@ -104,7 +104,6 @@ static f_plug_api cfapiObject_get_key = NULL;
 static f_plug_api cfapiObject_set_key = NULL;
 static f_plug_api cfapiObject_move = NULL;
 static f_plug_api cfapiObject_apply_below = NULL;
-static f_plug_api cfapiArchetype_get_first = NULL;
 static f_plug_api cfapiArchetype_get_property = NULL;
 static f_plug_api cfapiParty_get_property = NULL;
 static f_plug_api cfapiRegion_get_property = NULL;
@@ -187,7 +186,6 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_set_key, "cfapi_object_set_key", z );
     GET_HOOK( cfapiObject_move, "cfapi_object_move", z );
     GET_HOOK( cfapiObject_apply_below, "cfapi_object_apply_below", z );
-    GET_HOOK( cfapiArchetype_get_first, "cfapi_archetype_get_first", z );
     GET_HOOK( cfapiArchetype_get_property, "cfapi_archetype_get_property", z );
     GET_HOOK( cfapiParty_get_property, "cfapi_party_get_property", z );
     GET_HOOK( cfapiRegion_get_property, "cfapi_region_get_property", z );
@@ -1018,16 +1016,29 @@ int cf_object_set_key(object* op, const char* keyname, const char* value, int ad
 }
 
 /* Archetype-related functions */
-archetype*cf_archetype_get_first()
+
+/**
+ * Get first archetype.
+ * @return
+ * first archetype in the archetype list.
+ */
+archetype* cf_archetype_get_first()
 {
     int type;
     archetype* value;
-    cfapiArchetype_get_first(&type, &value);
+    cfapiArchetype_get_property(&type, NULL, CFAPI_ARCH_PROP_NEXT, &value);
     assert(type == CFAPI_PARCH);
     return value;
 }
 
-sstring  cf_archetype_get_name(archetype* arch)
+/**
+ * Get archetype's name.
+ * @param arch
+ * archetype, mustn't be NULL.
+ * @return
+ * archetype's name.
+ */
+sstring cf_archetype_get_name(archetype* arch)
 {
     int type;
     sstring name;
@@ -1036,6 +1047,14 @@ sstring  cf_archetype_get_name(archetype* arch)
     return name;
 }
 
+/**
+ * Get next archetype in linked list.
+ * @param arch
+ * archetype for which we want the next. Can be NULL, in which case it is equivalent
+ * to calling cf_archetype_get_first().
+ * @return
+ * next archetype.
+ */
 archetype* cf_archetype_get_next(archetype* arch)
 {
     int type;
@@ -1045,6 +1064,13 @@ archetype* cf_archetype_get_next(archetype* arch)
     return value;
 }
 
+/**
+ * Get next part of archetype.
+ * @param arch
+ * archetype, mustn't be NULL.
+ * @return
+ * archetype's more field.
+ */
 archetype* cf_archetype_get_more(archetype* arch)
 {
     int type;
@@ -1054,6 +1080,13 @@ archetype* cf_archetype_get_more(archetype* arch)
     return value;
 }
 
+/**
+ * Get head of archetype.
+ * @param arch
+ * archetype, mustn't be NULL.
+ * @return
+ * archetype's head field.
+ */
 archetype* cf_archetype_get_head(archetype* arch)
 {
     int type;
@@ -1063,6 +1096,13 @@ archetype* cf_archetype_get_head(archetype* arch)
     return value;
 }
 
+/**
+ * Get clone of archetype.
+ * @param arch
+ * archetype, mustn't be NULL.
+ * @return
+ * archetype's clone. Will never be NULL.
+ */
 object* cf_archetype_get_clone(archetype* arch)
 {
     int type;
@@ -1073,88 +1113,226 @@ object* cf_archetype_get_clone(archetype* arch)
 }
 
 /* Party-related functions */
+
+/**
+ * Get first party.
+ * @return
+ * first party in partylist.
+ */
 partylist* cf_party_get_first(void)
 {
-	int type;
-	return cfapiParty_get_property(&type, NULL, CFAPI_PARTY_PROP_NEXT);
+    int type;
+    partylist* value;
+    cfapiParty_get_property(&type, NULL, CFAPI_PARTY_PROP_NEXT, &value);
+    assert(type == CFAPI_PPARTY);
+    return value;
 }
 
+/**
+ * @param party
+ * party, mustn't be NULL.
+ * @return
+ * party's name.
+ */
 const char* cf_party_get_name(partylist* party)
 {
-	int type;
-	return cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NAME);
+    int type;
+    sstring value;
+    cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NAME, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
 }
 
+/**
+ * Get next party in party list.
+ * @param party
+ * party, can be NULL in which case behaves like cf_party_get_first().
+ * @return
+ * party's next field.
+ */
 partylist* cf_party_get_next(partylist* party)
 {
-	int type;
-	return cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NEXT);
+    int type;
+    partylist* value;
+    cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NEXT, &value);
+    assert(type == CFAPI_PPARTY);
+    return value;
 }
 
+/**
+ * Get party's password.
+ * @param party
+ * party, mustn't be NULL.
+ * @return
+ * party's password field.
+ */
 const char* cf_party_get_password(partylist* party)
 {
-	int type;
-	return cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PASSWORD);
+    int type;
+    sstring value;
+    cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PASSWORD, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
 }
 
+/**
+ * Get first player in party.
+ * @param party
+ * party, mustn't be NULL.
+ * @return
+ * party's first player.
+ */
 player* cf_party_get_first_player(partylist* party)
 {
-	int type;
-	return cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, NULL);
+    int type;
+    player* value;
+    cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, NULL, &value);
+    assert(type == CFAPI_PPLAYER);
+    return value;
 }
 
+/**
+ * Get next player in party.
+ * @param party
+ * party, mustn't be NULL.
+ * @param op
+ * player we want the next of. Can be NULL, in this case behaves like cf_party_get_first_player().
+ * @return
+ * party's name.
+ */
 player* cf_party_get_next_player(partylist* party, player* op)
 {
-	int type;
-	return cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, op);
+    int type;
+    player* value;
+    cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, op, &value);
+    assert(type == CFAPI_PPLAYER);
+    return value;
 }
 
+/**
+ * Get first region in region list.
+ * @return
+ * first region.
+ */
 region* cf_region_get_first(void)
 {
-	int type;
-	return cfapiRegion_get_property(&type, NULL, CFAPI_REGION_PROP_NEXT);
+    int type;
+    region* value;
+    cfapiRegion_get_property(&type, NULL, CFAPI_REGION_PROP_NEXT, &value);
+    assert(type == CFAPI_PREGION);
+    return value;
 }
 
+/**
+ * Get name of region.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's name.
+ */
 const char* cf_region_get_name(region* reg)
 {
-	int type;
-	return cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NAME);
+    int type;
+    sstring value;
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NAME, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
 }
 
+/**
+ * Get next region in region list.
+ * @param reg
+ * region. Can be NULL in which case equivalent of cf_region_get_first().
+ * @return
+ * next region.
+ */
 region* cf_region_get_next(region* reg)
 {
-	int type;
-	return cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NEXT);
+    int type;
+    region* value;
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NEXT, &value);
+    assert(type == CFAPI_PREGION);
+    return value;
 }
 
+/**
+ * Get parent of region.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's parent.
+ */
 region* cf_region_get_parent(region* reg)
 {
-	int type;
-	return cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_PARENT);
+    int type;
+    region* value;
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_PARENT, &value);
+    assert(type == CFAPI_PREGION);
+    return value;
 }
 
+/**
+ * Get longname of region.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's longname.
+ */
 const char* cf_region_get_longname(region* reg)
 {
-	int type;
-	return cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_LONGNAME);
+    int type;
+    sstring value;
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_LONGNAME, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
 }
 
+/**
+ * Get message of region.
+ * @param reg
+ * region. Mustn't be NULL.
+ * @return
+ * region's message.
+ */
 const char* cf_region_get_message(region* reg)
 {
-	int type;
-	return cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_MESSAGE);
+    int type;
+    sstring value;
+    cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_MESSAGE, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
 }
 
 /* Friendlylist functions. */
+
+/**
+ * Get first object on friendly list.
+ * @return
+ * first object on friendly list.
+ */
 object* cf_friendlylist_get_first(void)
 {
     int type;
-    return cfapiFriendlylist_get_next(&type, NULL);
+    object* value;
+    cfapiFriendlylist_get_next(&type, NULL, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
+
+/**
+ * Get next object on friendly list.
+ * @param ob
+ * object we want the next of. If NULL then equivalent of cf_friendlylist_get_first().
+ * @return
+ * next object.
+ */
 object* cf_friendlylist_get_next(object* ob)
 {
     int type;
-    return cfapiFriendlylist_get_next(&type, ob);
+    object* value;
+    cfapiFriendlylist_get_next(&type, ob, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 
 

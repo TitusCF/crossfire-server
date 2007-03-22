@@ -509,7 +509,6 @@ void *cfapi_player_send_inventory(int *type, ...);
 void *cfapi_player_can_pay(int *type, ...);
 void *cfapi_object_teleport(int *type, ...);
 void *cfapi_object_pickup(int *type, ...);
-void *cfapi_archetype_get_first(int *type, ...);
 void *cfapi_archetype_get_property(int *type, ...);
 void *cfapi_party_get_property(int *type, ...);
 void *cfapi_region_get_property(int *type, ...);

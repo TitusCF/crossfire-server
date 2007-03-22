@@ -53,7 +53,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 82
+#define NR_OF_HOOKS 81
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -127,7 +127,6 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
     {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
-    {cfapi_archetype_get_first,     70, "cfapi_archetype_get_first"},
     {cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
     {cfapi_party_get_property,      72, "cfapi_party_get_property"},
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
@@ -138,7 +137,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_timer_destroy,           78, "cfapi_system_timer_destroy"},
     {cfapi_friendlylist_get_next,   79, "cfapi_friendlylist_get_next"},
     {cfapi_set_random_map_variable, 80, "cfapi_set_random_map_variable"},
-    {cfapi_generate_random_map,     81, "cfapi_generate_random_map"},
+    {cfapi_generate_random_map,     70, "cfapi_generate_random_map"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -3787,20 +3786,6 @@ void* cfapi_object_pickup(int *type, ...)
 }
 
 /* Archetype-related functions */
-void* cfapi_archetype_get_first(int* type, ...)
-{
-    va_list args;
-    archetype** rarch;
-
-    va_start(args, type);
-    rarch = va_arg(args, archetype**);
-    va_end(args);
-
-    *rarch = first_archetype;
-    *type = CFAPI_PARCH;
-    return NULL;
-}
-
 void* cfapi_archetype_get_property(int* type, ...)
 {
     int prop;
@@ -3823,7 +3808,7 @@ void* cfapi_archetype_get_property(int* type, ...)
     case CFAPI_ARCH_PROP_NEXT:
         *type = CFAPI_PARCH;
         rarch = va_arg(args, archetype**);
-        *rarch = arch->next;
+        *rarch = arch ? arch->next : first_archetype;
         break;
 
     case CFAPI_ARCH_PROP_HEAD:
@@ -3852,101 +3837,124 @@ void* cfapi_archetype_get_property(int* type, ...)
     return NULL;
 }
 
-/* Party-related functions */
+/**
+ * Party-related functions.
+ *
+ * @param type
+ * data type returned.
+ * @return
+ * NULL.
+ */
 void* cfapi_party_get_property(int* type, ...)
 {
     partylist* party;
     int prop;
     va_list args;
-    void* rv;
     object* obarg;
     player* pl;
+    sstring* rsstring;
+    player** rplayer;
+    partylist** rparty;
 
     va_start(args, type);
     party = va_arg(args, partylist*);
     prop = va_arg(args, int);
     switch (prop)
     {
-    case CFAPI_PARTY_PROP_NAME:
-        *type = CFAPI_STRING;
-        rv = (void*)party->partyname;
-        break;
+        case CFAPI_PARTY_PROP_NAME:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = party->partyname;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_PARTY_PROP_NEXT:
-        *type = CFAPI_PPARTY;
-        rv = (party ? party->next : get_firstparty());
-        break;
+        case CFAPI_PARTY_PROP_NEXT:
+            rparty = va_arg(args, partylist**);
+            *rparty = (party ? party->next : get_firstparty());
+            *type = CFAPI_PPARTY;
+            break;
 
-    case CFAPI_PARTY_PROP_PASSWORD:
-        *type = CFAPI_STRING;
-        rv = (void*)party->passwd;
-        break;
+        case CFAPI_PARTY_PROP_PASSWORD:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = party->passwd;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_PARTY_PROP_PLAYER:
-        *type = CFAPI_PPLAYER;
-        obarg = va_arg(args, object*);
-        pl = (obarg ? obarg->contr : first_player);
-        rv = NULL;
-        for (; pl != NULL; pl = pl->next)
-            if (pl->ob->contr->party == party) {
-                rv = (void*)pl;
-                break;
-            }
-        break;
+        case CFAPI_PARTY_PROP_PLAYER:
+            *type = CFAPI_PPLAYER;
+            obarg = va_arg(args, object*);
+            rplayer = va_arg(args, player**);
+            *rplayer = (obarg ? obarg->contr : first_player);
+            for (; *rplayer != NULL; (*rplayer) = (*rplayer)->next)
+                if ((*rplayer)->ob->contr->party == party) {
+                    break;
+                }
+            break;
 
-    default:
-        *type = CFAPI_NONE;
-        rv = NULL;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
-    return rv;
+    return NULL;
 }
 
-/* Regions-related functions */
+/**
+ * Regions-related functions.
+ *
+ * @param type
+ * data type returned.
+ * @return
+ * NULL.
+ */
 void* cfapi_region_get_property(int* type, ...)
 {
     region* reg;
     int prop;
     va_list args;
-    void* rv;
+    /** Return values. */
+    sstring* rsstring;
+    region** rregion;
 
     va_start(args, type);
     reg = va_arg(args, region*);
     prop = va_arg(args, int);
     switch (prop) {
-    case CFAPI_REGION_PROP_NAME:
-        *type = CFAPI_STRING;
-        rv = (void*)reg->name;
-        break;
+        case CFAPI_REGION_PROP_NAME:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = reg->name;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_REGION_PROP_NEXT:
-        *type = CFAPI_PREGION;
-        rv = (reg?reg->next:first_region);
-        break;
+        case CFAPI_REGION_PROP_NEXT:
+            rregion = va_arg(args, region**);
+            *rregion = (reg?reg->next:first_region);
+            *type = CFAPI_PREGION;
+            break;
 
-    case CFAPI_REGION_PROP_PARENT:
-        *type = CFAPI_PREGION;
-        rv = (void*)reg->parent;
-        break;
+        case CFAPI_REGION_PROP_PARENT:
+            rregion = va_arg(args, region**);
+            *rregion = reg->parent;
+            *type = CFAPI_PREGION;
+            break;
 
-    case CFAPI_REGION_PROP_LONGNAME:
-        *type = CFAPI_STRING;
-        rv = (void*)reg->longname;
-        break;
+        case CFAPI_REGION_PROP_LONGNAME:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = reg->longname;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_REGION_PROP_MESSAGE:
-        *type = CFAPI_STRING;
-        rv = (void*)reg->msg;
-        break;
+        case CFAPI_REGION_PROP_MESSAGE:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = reg->msg;
+            *type = CFAPI_SSTRING;
+            break;
 
-    default:
-        *type = CFAPI_NONE;
-        rv = NULL;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
-    return rv;
+    return NULL;
 }
 
 /**
@@ -3965,25 +3973,33 @@ void *cfapi_friendlylist_get_next(int *type, ...)
     object* ob;
     va_list args;
     objectlink* link;
+    object** robject;
 
     va_start(args, type);
     ob = va_arg(args, object*);
+    robject = va_arg(args, object**);
     va_end(args);
+
+    *type = CFAPI_POBJECT;
+    *robject = NULL;
 
     if (ob) {
         for (link = first_friendly_object; link; link = link->next) {
             if (ob == link->ob) {
-                if (link->next)
-                    return link->next->ob;
-                else
+                if (link->next) {
+                    *robject = link->next->ob;
                     return NULL;
+                }
+                else {
+                    return NULL;
+                }
             }
         }
         return NULL;
     }
 
     if (first_friendly_object)
-        return first_friendly_object->ob;
+        *robject = first_friendly_object->ob;
 
     return NULL;
 
