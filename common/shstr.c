@@ -110,7 +110,7 @@ static shared_string* new_shared_string(const char *str) {
  * @return
  * pointer to string identical to str, but shared.
  */
-const char* add_string(const char *str) {
+sstring add_string(const char *str) {
     shared_string *ss;
     int ind;
 
@@ -196,7 +196,7 @@ const char* add_string(const char *str) {
  * @return
  * str
  */
-const char* add_refcount(const char *str) {
+sstring add_refcount(sstring str) {
     GATHER(add_ref_stats.calls);
     ++(SS(str)->refcount);
     return str;
@@ -210,7 +210,7 @@ const char* add_refcount(const char *str) {
  * @return
  * refcount of the string.
  */
-int query_refcount(const char *str) {
+int query_refcount(sstring str) {
     return (SS(str)->refcount) & ~TOPBIT;
 }
 
@@ -222,7 +222,7 @@ int query_refcount(const char *str) {
  * @return
  * pointer to identical string or NULL
  */
-const char* find_string(const char *str) {
+sstring find_string(const char *str) {
     shared_string *ss;
     int ind;
 
@@ -266,7 +266,7 @@ const char* find_string(const char *str) {
  * @note
  * the memory pointed to by str can be freed after this call, so don't use str anymore.
  */
-void free_string(const char *str) {
+void free_string(sstring str) {
     shared_string *ss;
 
     GATHER(free_stats.calls);

@@ -331,11 +331,11 @@ extern void parse_regions(FILE *fp);
 extern void assign_region_parents(void);
 /* shstr.c */
 extern void init_hash_table(void);
-extern const char *add_string(const char *str);
-extern const char *add_refcount(const char *str);
-extern int query_refcount(const char *str);
-extern const char *find_string(const char *str);
-extern void free_string(const char *str);
+extern sstring add_string(const char *str);
+extern sstring add_refcount(sstring str);
+extern int query_refcount(sstring str);
+extern sstring find_string(const char *str);
+extern void free_string(sstring str);
 extern void ss_dump_statistics(char* buf, int size);
 extern char *ss_dump_table(int what, char* buf, int size);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
