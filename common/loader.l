@@ -1309,7 +1309,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "reflect_missile", "reflect_spell",                             /* 40 */
     "no_magic", "no_fix_player", "is_lightable", "tear_down", 
     "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
-    "pick_up", "unique", "no_drop",					/* 50 */
+    NULL /*"pick_up"*/, "unique", "no_drop",                        /* 50 */
     NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
     "can_use_bow",  "can_use_armour", "can_use_weapon",
     "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */

@@ -124,7 +124,6 @@ int new_exp(const object *ob) {
         (0.1*(QUERY_FLAG(ob,FLAG_REFL_MISSILE)!= FALSE)) +
         (0.3*(QUERY_FLAG(ob,FLAG_REFL_SPELL)!= FALSE)) +
         (1.0*(QUERY_FLAG(ob,FLAG_NO_MAGIC)!= FALSE)) +
-        (0.1*(QUERY_FLAG(ob,FLAG_PICK_UP)!= FALSE)) + 
         (0.1*(QUERY_FLAG(ob,FLAG_USE_SCROLL)!= FALSE)) +
         (0.2*(QUERY_FLAG(ob,FLAG_USE_RANGE)!= FALSE)) +
         (0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));

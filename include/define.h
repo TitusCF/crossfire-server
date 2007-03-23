@@ -521,7 +521,7 @@ extern typedata ItemTypes[];
 				      thru this object as if it wasn't there */
 /*#define FLAG_CAN_PASS_THRU	47*/ /* Can pass thru... */
 
-#define FLAG_PICK_UP		48 /* Can pick up */
+/*#define FLAG_PICK_UP		48*/ /* Can pick up */
 #define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
 #define FLAG_NO_DROP		50 /* Object can't be dropped */
 #define FLAG_WIZCAST		51 /* The wizard can cast spells in no-magic area */

@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cfpython/cfpython_object.c,
+plugins/cfpython/include/cfpython_object_private.h, include/define.h,
+common/exp.c, common/loader.l: Remove FLAG_PICK_UP since it was not actually
+ used, and since it was saved under "pick_up" which clashes with another
+ attribute.
+Andreas Kirschbaum 2007-03-23
+
 common/shstr.c, include/libproto.h: Use the new sstring typedef in shstr.c
 Alex Schultz 2007-03-22
 

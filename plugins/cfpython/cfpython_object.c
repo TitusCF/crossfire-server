@@ -638,11 +638,6 @@ static PyObject* Object_GetUnique(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_UNIQUE));
 }
-static PyObject* Object_GetCanPickUp(Crossfire_Object* whoptr, void* closure)
-{
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_PICK_UP));
-}
 static PyObject* Object_GetCanPassThru(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);

@@ -116,7 +116,6 @@ static PyObject* Object_GetCanCastSpell(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetReflectSpells(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetReflectMissiles(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetUnique(Crossfire_Object* whoptr, void* closure);
-static PyObject* Object_GetCanPickUp(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCanPassThru(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetRunAway(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetScared(Crossfire_Object* whoptr, void* closure);
@@ -350,7 +349,6 @@ static PyGetSetDef Object_getseters[] = {
     { "ReflectSpells",  (getter)Object_GetReflectSpells,(setter)Object_SetReflectSpells, NULL, NULL },
     { "ReflectMissiles",(getter)Object_GetReflectMissiles,(setter)Object_SetReflectMissiles, NULL, NULL },
     { "Unique",         (getter)Object_GetUnique,       (setter)Object_SetUnique, NULL, NULL },
-    { "CanPickUp",      (getter)Object_GetCanPickUp,    NULL, NULL, NULL },
     { "CanPassThru",    (getter)Object_GetCanPassThru,  (setter)Object_SetCanPassThru, NULL, NULL },
     { "RunAway",        (getter)Object_GetRunAway,      (setter)Object_SetRunAway, NULL, NULL },
     { "Scared",         (getter)Object_GetScared,       (setter)Object_SetScared, NULL, NULL },
