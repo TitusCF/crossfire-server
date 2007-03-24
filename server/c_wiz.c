@@ -895,6 +895,10 @@ int command_create(object *op, char *params) {
             tmp->nrof = nrof;
         tmp->map = op->map;
 
+        if (at->clone.randomitems != NULL && !at_spell)
+            create_treasure(at->clone.randomitems, tmp, GT_APPLY,
+                op->map->difficulty, 0);
+
         tmp = insert_ob_in_ob(tmp, op);
         esrv_send_item(op, tmp);
 

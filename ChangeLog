@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_wiz.c: fix missing treasure generation for create command in some cases.
+Nicolas Weeger 2007-03-24
+
 plugins/cfpython/cfpython_object.c,
 plugins/cfpython/include/cfpython_object_private.h, include/define.h,
 common/exp.c, common/loader.l: Remove FLAG_PICK_UP since it was not actually
