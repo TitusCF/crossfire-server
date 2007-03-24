@@ -59,15 +59,15 @@ static void check_spell_knockback(object *op) {
 	   weight_move = op->weight +(op->weight * op->level) / 3;
 	   /*LOG (llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight,weight_move,op->name,op->level);*/
 	}
-	
+
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-    { 
+    {
 	int num_sections = 1;
 
 	/* don't move DM */
 	if(QUERY_FLAG(tmp, FLAG_WIZ))
 		return;
-		
+
 	/* don't move parts of objects */
 	if(tmp->head) continue;
 
@@ -81,14 +81,14 @@ static void check_spell_knockback(object *op) {
 	 * objects should be harder to move, and we are moving the entire
 	 * object, not just the head, so the total weight should be relevant.
 	 */
-	
+
 	 /* surface area? -tm */
-	
+
 	if (tmp->move_type & MOVE_FLYING)
 		frictionmod = 1 ; /* flying objects loose the friction modifier */
-	
+
 	if(rndm(0, weight_move-1) > ((tmp->weight / num_sections) * frictionmod)) {  /* move it. */
-	    /* move_object is really for monsters, but looking at 
+	    /* move_object is really for monsters, but looking at
 	     * the move_object function, it appears that it should
 	     * also be safe for objects.
 	     * This does return if successful or not, but
@@ -123,10 +123,10 @@ static void forklightning(object *op, object *tmp) {
      * Should start out at 50, down to 25 for one already going left
      * down to 0 for one going 90 degrees left off original path
      */
-		  
+
     if(rndm(0, 99) < tmp->stats.Con)  /* fork left */
 	new_dir = -1;
-		  
+
     /* check the new dir for a wall and in the map*/
     t_dir = absdir(tmp->direction + new_dir);
 
@@ -143,7 +143,7 @@ static void forklightning(object *op, object *tmp) {
     copy_object(tmp,new_bolt);
 
     /* reduce chances of subsequent forking */
-    new_bolt->stats.Dex -= 10;  
+    new_bolt->stats.Dex -= 10;
     tmp->stats.Dex -= 10;  /* less forks from main bolt too */
     new_bolt->stats.Con += 25 * new_dir; /* adjust the left bias */
     new_bolt->speed_left = -0.1;
@@ -175,7 +175,7 @@ void move_bolt(object *op) {
 	return;
     }
     hit_map(op,0,op->attacktype,1);
-	
+
     if(!op->direction)
 	return;
 
@@ -194,7 +194,7 @@ void move_bolt(object *op) {
 	 * on the space.  So only call reflwall if we think the data it returns
 	 * will be useful.
 	 */
-	if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y)) || 
+	if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y)) ||
 	  ((mflags & P_IS_ALIVE) && reflwall(m, x, y, op))) {
 
 	    if(!QUERY_FLAG(op, FLAG_REFLECTING))
@@ -248,7 +248,7 @@ void move_bolt(object *op) {
 	    tmp->duration++;
 
 	    /* New forking code.  Possibly create forks of this object
-	     * going off in other directions. 
+	     * going off in other directions.
 	     */
 
 	    if(rndm(0, 99)< tmp->stats.Dex) {  /* stats.Dex % of forking */
@@ -352,7 +352,7 @@ void explosion(object *op) {
 
 	    dx=op->x+freearr_x[i];
 	    dy=op->y+freearr_y[i];
-	    /* ok_to_put_more already does things like checks for walls, 
+	    /* ok_to_put_more already does things like checks for walls,
 	     * out of map, etc.
 	     */
 	    if(ok_to_put_more(op->map,dx,dy,op,op->attacktype)) {
@@ -450,7 +450,7 @@ static void explode_bullet(object *op)
     }
 
     /* Set direction of cone explosion */
-    if (tmp->type == SPELL_EFFECT && tmp->subtype == SP_CONE) 
+    if (tmp->type == SPELL_EFFECT && tmp->subtype == SP_CONE)
 	tmp->stats.sp = op->direction;
 
     /* Prevent recursion */
@@ -500,7 +500,7 @@ void check_bullet(object *op)
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
                 || (op->stats.dam -= dam) < 0)
             {
-		if(!QUERY_FLAG(op,FLAG_REMOVED)) { 
+		if(!QUERY_FLAG(op,FLAG_REMOVED)) {
 		    remove_ob (op);
 		    free_object(op);
 		    return;
@@ -526,7 +526,7 @@ void move_bullet(object *op)
 #if 0
     /* We need a better general purpose way to do this */
 
-    /* peterm:  added to make comet leave a trail of burnouts 
+    /* peterm:  added to make comet leave a trail of burnouts
 	it's an unadulterated hack, but the effect is cool.	*/
     if(op->stats.sp == SP_METEOR) {
       replace_insert_ob_in_map("fire_trail",op);
@@ -610,7 +610,7 @@ int fire_bullet(object *op,object *caster,int dir,object *spob) {
     if (spob->slaying) tmp->slaying = add_refcount(spob->slaying);
 
     tmp->range = 50;
-    
+
     /* Need to store duration/range for the ball to use */
     tmp->stats.hp = spob->duration + SP_level_duration_adjust(caster,spob);
     tmp->stats.maxhp = spob->range + SP_level_range_adjust(caster,spob);
@@ -673,7 +673,7 @@ static void cone_drop(object *op) {
 	new_ob->skill = add_refcount(op->skill);
     }
     insert_ob_in_map(new_ob,op->map,op,0);
-  
+
 }
 
 /* move_cone: causes cone object 'op' to move a space/hit creatures */
@@ -714,7 +714,7 @@ void move_cone(object *op) {
 
     /* Check to see if we should push anything.
      * Spell objects with weight push whatever they encounter to some
-     * degree.  
+     * degree.
      */
     if(op->weight) check_spell_knockback(op);
 
@@ -773,7 +773,7 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 
     if (!spell->other_arch) return 0;
 
-    if (op->type == PLAYER && QUERY_FLAG(op, FLAG_UNDEAD) && 
+    if (op->type == PLAYER && QUERY_FLAG(op, FLAG_UNDEAD) &&
      op->attacktype & AT_TURN_UNDEAD) {
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
 	      "Your undead nature prevents you from turning undead!", NULL);
@@ -833,11 +833,11 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 	tmp->y = sy;
 	tmp->attacktype=spell->attacktype;
 
-	/* holy word stuff */                
+	/* holy word stuff */
 	if((tmp->attacktype & AT_HOLYWORD) || (tmp->attacktype & AT_GODPOWER)) {
-            if(!tailor_god_spell(tmp,op)) return 0;  
+            if(!tailor_god_spell(tmp,op)) return 0;
 	}
-	    
+
 	if(dir)
 	    tmp->stats.sp=dir;
 	else
@@ -871,8 +871,8 @@ int cast_cone(object *op, object *caster,int dir, object *spell)
 		 spell->other_arch->name);
 
 	if (!tmp->move_on && tmp->stats.dam) {
-	    LOG (llevDebug, 
-		 "cast_cone(): arch %s doesn't have move_on set\n", 
+	    LOG (llevDebug,
+		 "cast_cone(): arch %s doesn't have move_on set\n",
 		 spell->other_arch->name);
 	}
 	insert_ob_in_map(tmp,m,op,0);
@@ -997,7 +997,7 @@ int create_bomb(object *op,object *caster,int dir, object *spell) {
  * type is the type of spell - either SPELL_MANA or SPELL_GRACE.
  * this info is used for blocked magic/unholy spaces.
  */
- 
+
 static object *get_pointed_target(object *op, int dir, int range, int type) {
     object *target;
     sint16 x,y;
@@ -1030,7 +1030,7 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
 
 
 /* cast_smite_arch() - the priest points to a creature and causes
- * a 'godly curse' to decend. 
+ * a 'godly curse' to decend.
  * usual params -
  * op = player
  * caster = object casting the spell.
@@ -1046,7 +1046,7 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
     range = spell->range + SP_level_range_adjust(caster,spell);
     target = get_pointed_target(op,dir, 50, spell->stats.grace?SPELL_GRACE:SPELL_MANA);
 
-    /* Bunch of conditions for casting this spell.  Note that only 
+    /* Bunch of conditions for casting this spell.  Note that only
      * require a god if this is a cleric spell (requires grace).
      * This makes this spell much more general purpose - it can be used
      * by wizards also, which is good, because I think this is a very
@@ -1056,7 +1056,7 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
      */
 
     if(!target || QUERY_FLAG(target,FLAG_REFL_SPELL)
-      ||(!god && spell->stats.grace) 
+      ||(!god && spell->stats.grace)
       ||(target->title && god && !strcmp(target->title,god->name))
       ||(target->race && god && strstr(target->race,god->race))) {
         draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
@@ -1084,15 +1084,15 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
            return 0;
 	}
     }
- 
+
     /* size of the area of destruction */
-    effect->range=spell->range + 
+    effect->range=spell->range +
                 SP_level_range_adjust(caster,spell);
-    effect->duration=spell->duration + 
+    effect->duration=spell->duration +
                 SP_level_range_adjust(caster,spell);
 
     if (effect->attacktype & AT_DEATH) {
-	effect->level=spell->stats.dam + 
+	effect->level=spell->stats.dam +
                 SP_level_dam_adjust(caster,spell);
 
 	/* casting death spells at undead isn't a good thing */
@@ -1117,18 +1117,18 @@ int cast_smite_spell (object *op, object *caster,int dir, object *spell) {
 	}
     } else {
 	/* how much woe to inflict :) */
-	effect->stats.dam=spell->stats.dam + 
+	effect->stats.dam=spell->stats.dam +
                 SP_level_dam_adjust(caster,spell);
     }
 
     set_owner(effect,op);
     set_spell_skill(op, caster, spell, effect);
- 
+
     /* ok, tell it where to be, and insert! */
     effect->x=target->x;
     effect->y=target->y;
     insert_ob_in_map(effect,target->map,op,0);
- 
+
     return 1;
 }
 
@@ -1204,9 +1204,9 @@ void move_missile(object *op) {
  * Destruction
  ****************************************************************************/
 /* make_object_glow() - currently only makes living objects glow.
- * we do this by creating a force and inserting it in the 
+ * we do this by creating a force and inserting it in the
  * object. if time is 0, the object glows permanently. To truely
- * make this work for non-living objects, we would have to 
+ * make this work for non-living objects, we would have to
  * give them the capability to have an inventory. b.t.
  */
 
@@ -1214,7 +1214,7 @@ static int make_object_glow(object *op, int radius, int time) {
     object *tmp;
 
     /* some things are unaffected... */
-    if(op->path_denied&PATH_LIGHT) 
+    if(op->path_denied&PATH_LIGHT)
 	return 0;
 
     tmp=create_archetype(FORCE_NAME);
@@ -1232,16 +1232,16 @@ static int make_object_glow(object *op, int radius, int time) {
     if (tmp->glow_radius > op->glow_radius)
 	op->glow_radius = tmp->glow_radius;
 
-    if(!tmp->env||op!=tmp->env) { 
-	LOG(llevError,"make_object_glow() failed to insert glowing force in %s\n", 
-		op->name); 
-	return 0; 
+    if(!tmp->env||op!=tmp->env) {
+	LOG(llevError,"make_object_glow() failed to insert glowing force in %s\n",
+		op->name);
+	return 0;
    }
    return 1;
 }
 
 
- 
+
 
 int cast_destruction(object *op, object *caster, object *spell_ob) {
     int i,j, range, mflags, friendly=0, dam, dur;
@@ -1350,7 +1350,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 	force=create_archetype(FORCE_NAME);
 	force->subtype = FORCE_CHANGE_ABILITY;
 	free_string(force->name);
-	if (spell_ob->race) 
+	if (spell_ob->race)
 	    force->name = add_refcount(spell_ob->race);
 	else
 	    force->name = add_refcount(spell_ob->name);
@@ -1385,7 +1385,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 			     "You are a victim of %s's curse!",
 			     "You are a victim of %s's curse!",
 			     god->name);
-    } else 
+    } else
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 		      "Your curse seems empty.", NULL);
 
@@ -1438,7 +1438,7 @@ int mood_change(object *op, object *caster, object *spell) {
     else if (god && !strcmp(spell->race, "GOD_SLAYING")) race = god->slaying;
     else if (god && !strcmp(spell->race, "GOD_FRIEND")) race = god->race;
     else race = spell->race;
-    
+
 
     for (x = op->x - range; x <= op->x + range; x++)
 	for (y = op->y - range; y <= op->y + range; y++) {
@@ -1608,8 +1608,8 @@ void move_ball_spell(object *op) {
     op->y=ny;
     op->x=nx;
     insert_ob_in_map(op,m,op,0);
-	 
-    dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
+
+    dam_save = op->stats.dam;  /* save the original dam: we do halfdam on
                                 surrounding squares */
 
     /* loop over current square and neighbors to hit.
@@ -1662,12 +1662,12 @@ void move_ball_spell(object *op) {
 }
 
 
-/* move_swarm_spell:  peterm 
+/* move_swarm_spell:  peterm
  * This is an implementation of the swarm spell.  It was written for
  * meteor swarm, but it could be used for any swarm.  A swarm spell
  * is a special type of object that casts swarms of other types
  * of spells.  Which spell it casts is flexible.  It fires the spells
- * from a set of squares surrounding the caster, in a given direction. 
+ * from a set of squares surrounding the caster, in a given direction.
  */
 
 void move_swarm_spell(object *op)
@@ -1694,10 +1694,10 @@ void move_swarm_spell(object *op)
     }
 
     /* new offset calculation to make swarm element distribution
-     * more uniform 
+     * more uniform
      */
     if(op->duration) {
-        if(basedir & 1) { 
+        if(basedir & 1) {
             adjustdir = cardinal_adjust[rndm(0, 8)];
         } else {
             adjustdir = diagonal_adjust[rndm(0, 9)];
@@ -1710,7 +1710,7 @@ void move_swarm_spell(object *op)
     target_y = op->y + freearr_y[absdir(basedir + adjustdir)];
 
     /* back up one space so we can hit point-blank targets, but this
-     * necessitates extra out_of_map check below 
+     * necessitates extra out_of_map check below
      */
     origin_x = target_x - freearr_x[basedir];
     origin_y = target_y - freearr_y[basedir];
@@ -1721,8 +1721,8 @@ void move_swarm_spell(object *op)
      * it is unlikely to disappear by the time we need it.  However,
      * do some sanity checking anyways.
      */
-    
-    if (op->spell && op->spell->type == SPELL && 
+
+    if (op->spell && op->spell->type == SPELL &&
 	!(get_map_flags(op->map, &m, target_x, target_y, &target_x, &target_y) & P_OUT_OF_MAP)) {
 
 	/* Bullet spells have a bunch more customization that needs to be done */
@@ -1739,7 +1739,7 @@ void move_swarm_spell(object *op)
 /*  fire_swarm:
  *  The following routine creates a swarm of objects.  It actually
  *  sets up a specific swarm object, which then fires off all
- *  the parts of the swarm.  
+ *  the parts of the swarm.
  *
  *  op:  the owner
  *  caster: the caster (owner, wand, rod, scroll)
@@ -1757,7 +1757,7 @@ int fire_swarm (object *op, object *caster, object *spell, int dir)
 
     tmp=create_archetype(SWARM_SPELL);
     tmp->x=op->x;
-    tmp->y=op->y;	    
+    tmp->y=op->y;
     set_owner(tmp,op);       /* needed so that if swarm elements kill, caster gets xp.*/
     set_spell_skill(op, caster, spell, tmp);
 
@@ -1771,10 +1771,10 @@ int fire_swarm (object *op, object *caster, object *spell, int dir)
 	    return 1;
     }
     tmp->duration = SP_level_duration_adjust(caster, spell);
-    for (i=0; i< spell->duration; i++) 
+    for (i=0; i< spell->duration; i++)
 	tmp->duration += die_roll(1, 3, op, PREFER_HIGH);
 
-    tmp->direction=dir; 
+    tmp->direction=dir;
     tmp->invisible=1;
     insert_ob_in_map(tmp,op->map,op,0);
     return 1;
@@ -1829,7 +1829,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
 
     /* ok, looks groovy to just insert a new light on the map */
     tmp=arch_to_object(spell->other_arch);
-    if(!tmp) { 
+    if(!tmp) {
 	LOG(llevError,"Error: spell arch for cast_light() missing.\n");
 	return 0;
     }
@@ -1848,7 +1848,7 @@ int cast_light(object *op,object *caster,object *spell, int dir) {
 
 
 /* cast_cause_disease:  this spell looks along <dir> from the
- * player and infects someone. 
+ * player and infects someone.
  * op is the player/monster, caster is the object, dir is the direction
  * to cast, disease_arch is the specific disease, and type is the spell number
  * perhaps this should actually be in disease.c?
@@ -1863,7 +1863,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
     x = op->x;
     y = op->y;
 
-    /* If casting from a scroll, no direction will be available, so refer to the 
+    /* If casting from a scroll, no direction will be available, so refer to the
      * direction the player is pointing.
      */
     if (!dir) dir=op->facing;
@@ -1933,7 +1933,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
                 else disease->stats.maxsp -= dam_mod;
                 }
 
-                if(disease->stats.ac) 
+                if(disease->stats.ac)
                 disease->stats.ac += dam_mod;
 
                 if(disease->last_eat)
@@ -1948,7 +1948,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
                 if(infect_object(target_head,disease,1)) {
                 object *flash;  /* visual effect for inflicting disease */
 
-                draw_ext_info_format(NDI_UNIQUE, 0, op, 
+                draw_ext_info_format(NDI_UNIQUE, 0, op,
 				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
 				     "You inflict %s on %s!",
 				     disease->name,target_head->name);
