@@ -473,9 +473,6 @@ static void check_loaded_object(object *op) {
             LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
             op->name,
             op->stats.hp, op->stats.maxhp);
-
-        /* The archs just need to be updated for this */
-        if (op->move_type ==0) op->move_type = MOVE_WALK;
         }
     if ((QUERY_FLAG(op,FLAG_GENERATOR) && QUERY_FLAG(op,FLAG_CONTENT_ON_GEN))
         || op->type == CREATOR
