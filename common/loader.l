@@ -61,7 +61,7 @@ static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "
  * NULL entries in this table are valid - to denote objects that should
  * not be updated for whatever reason.
  *
- * @todo 
+ * @todo
  * is this still required? it's used, but can it happen?
  */
 const char *const spell_mapping[] = {
@@ -353,7 +353,7 @@ static void set_body_info(object *op, char *params) {
 
 /**
  * This function checks the object after it has been loaded (when we
- * get the 'end' in the input stream).  This function can be used to 
+ * get the 'end' in the input stream).  This function can be used to
  * deal with legacy objects where fields may have changed.  It can also be used
  * to check for objects to make sure there are no common errors.
  *
@@ -366,7 +366,7 @@ static void check_loaded_object(object *op) {
     if (artifact_init)
         /* Artifacts are special beasts, let's not check them. */
         return;
-    
+
     /* We do some specialized handling to handle legacy cases of name_pl.
      * If the object doesn't have a name_pl, we just use the object name -
      * this isn't perfect (things won't be properly pluralized), but works to
@@ -374,7 +374,7 @@ static void check_loaded_object(object *op) {
      * also have to catch is if this object is not using the normal name for
      * the object.  In that case, we also want to use the loaded name.
      * Otherwise, what happens is that the the plural name will lose
-     * information (appear as just 'hearts' and not 'goblins heart') 
+     * information (appear as just 'hearts' and not 'goblins heart')
      */
     if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
         if (op->name_pl) free_string(op->name_pl);
@@ -426,7 +426,7 @@ static void check_loaded_object(object *op) {
         /* Legacy objects from before item power was in the game */
         if (!op->item_power && ip) {
             if (ip > 3) {
-            LOG(llevDebug,"Object %s had no item power, using %d\n", 
+            LOG(llevDebug,"Object %s had no item power, using %d\n",
                 op->name?op->name:"NULL", ip);
             }
             op->item_power = ip;
@@ -580,7 +580,7 @@ static void add_key_value(object * op) {
     if (*cp == '\0') {
         /* Was followed by one space? */
         set_ob_key_value(op, key, NULL, TRUE);
-        return;    
+        return;
     }
 
     /* Now looking for the value. Skip over whitespace. */
@@ -815,7 +815,7 @@ A	.+
 		    }
 
 ^end{WS}$	    {	check_loaded_object(op);
-			if (ismore) return LL_MORE; 
+			if (ismore) return LL_MORE;
 			else return LL_NORMAL;
 		    }
 ^last_heal{S}	    op->last_heal = IVAL;
@@ -892,7 +892,7 @@ A	.+
 ^client_anim_sync{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC, IVAL);
 ^client_anim_random{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM, IVAL);
 
-%{ /* These are all legacy - any new objects should use the move_ .. values */ 
+%{ /* These are all legacy - any new objects should use the move_ .. values */
 %}
 ^no_pass{S}	    { if (IVAL) op->move_block = MOVE_ALL; else op->move_block=0; }
 ^walk_on{S}	    { if (IVAL) op->move_on |= MOVE_WALK; else op->move_on &= ~MOVE_WALK; }
@@ -901,7 +901,7 @@ A	.+
 ^fly_off{S}	    { if (IVAL) op->move_off |= MOVE_FLY_LOW; else op->move_off &= ~MOVE_FLY_LOW; }
 ^flying{S}	    { if (IVAL) op->move_type |= MOVE_FLY_LOW; else op->move_type &= ~MOVE_FLY_LOW; }
 
-%{ /* These are the new values */ 
+%{ /* These are the new values */
 %}
 ^move_block{S}	    set_move(&op->move_block, yval());
 ^move_allow{S}	    set_move(&op->move_allow, yval());
@@ -1298,7 +1298,7 @@ int set_variable(object *op,char *buf) {
 static const char *const flag_names[NUM_FLAGS+1] = {
     "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
     "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
-    "is_animated", NULL /* slow_move */, 
+    "is_animated", NULL /* slow_move */,
     NULL /* flying */, "monster", "friendly", "generator",
     "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
     "see_invisible", "can_roll", "overlay_floor",
@@ -1307,8 +1307,8 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "changing", "splitting", "hitback", "startequip",
     "blocksview", "undead", "scared", "unaggressive",
     "reflect_missile", "reflect_spell",                             /* 40 */
-    "no_magic", "no_fix_player", "is_lightable", "tear_down", 
-    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
+    "no_magic", "no_fix_player", "is_lightable", "tear_down",
+    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/,
     NULL /*"pick_up"*/, "unique", "no_drop",                        /* 50 */
     NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
     "can_use_bow",  "can_use_armour", "can_use_weapon",
@@ -1721,16 +1721,16 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
         FAST_SAVE_LONG(fastbuf,"item_power ",op->item_power,11);
     }
 
-    if (op->duration != op2->duration) 
+    if (op->duration != op2->duration)
         FAST_SAVE_LONG(fastbuf,"duration ",op->duration,9);
 
-    if (op->range != op2->range) 
+    if (op->range != op2->range)
         FAST_SAVE_LONG(fastbuf,"range ",op->range,6);
 
     if (op->range_modifier != op2->range_modifier)
         FAST_SAVE_LONG(fastbuf,"range_modifier ",op->range_modifier,15);
 
-    if (op->duration_modifier != op2->duration_modifier) 
+    if (op->duration_modifier != op2->duration_modifier)
         FAST_SAVE_LONG(fastbuf,"duration_modifier ", op->duration_modifier,18);
 
     if (op->dam_modifier != op2->dam_modifier)
@@ -1896,7 +1896,7 @@ void save_object(FILE *fp,object *op, int flag) {
             LOG(llevError," Recursive loop in inventory\n");
             break;
         }
-        save_object(fp,tmp,flag); 
+        save_object(fp,tmp,flag);
         old=tmp;
     }
 
