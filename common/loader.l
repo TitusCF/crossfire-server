@@ -641,7 +641,7 @@ static void set_move(MoveType *mt, char *params) {
                             *mt |= (1<<i);
                         }
                         break;
-                        }
+                    }
                 }
                 if (move_name[i] == NULL) {
                     /* fly is a special case - covers both fly_low and
