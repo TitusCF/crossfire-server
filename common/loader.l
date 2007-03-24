@@ -1404,7 +1404,7 @@ static void get_string_move_type(MoveType mt, char* buf, int size)
      * enumerated values.  It doesn't make sense to return
      * 'all -walk -fly_low' - it is shorter to return 'fly_high swim'
      */
-    if (all_count <=1)
+    if (all_count <= 1)
         strncpy(buf, retbuf_all+1, size);
     else
         strncpy(buf, retbuf+1, size);
