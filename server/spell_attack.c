@@ -87,7 +87,7 @@ static void check_spell_knockback(object *op) {
          /* surface area? -tm */
 
         if (tmp->move_type&MOVE_FLYING)
-                frictionmod = 1 ; /* flying objects loose the friction modifier */
+            frictionmod = 1; /* flying objects loose the friction modifier */
 
         if (rndm(0, weight_move-1) > ((tmp->weight/num_sections)*frictionmod)) {  /* move it. */
             /* move_object is really for monsters, but looking at
@@ -1263,7 +1263,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
     change_skill(op, find_skill_by_name(op, op->skill), 1);
 
     for (i = -range; i < range; i++) {
-        for (j = -range; j < range ; j++) {
+        for (j = -range; j < range; j++) {
             m = op->map;
             sx = op->x+i;
             sy = op->y+j;
