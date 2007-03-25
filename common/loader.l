@@ -485,23 +485,6 @@ static void check_loaded_object(object *op) {
         flag_inv(op,FLAG_IS_A_TEMPLATE);
     }
 
-    /* Handle player movers.  We use move_type for player movers
-     * because they operate on their own time (move_on
-     * would potentially cause them to be triggered when someone steps
-     * on them).  If move_type is set, presume person knows what they
-     * are doing, otherwise, set move_type based on maxhp value.
-     */
-    if (op->type == PLAYERMOVER) {
-        if (!op->move_type) {
-            if (op->stats.maxhp) {
-                op->move_type = MOVE_ALL;
-                op->stats.maxhp=0;
-            } else {
-                op->move_type = MOVE_WALK;
-            }
-        }
-    }
-
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
      * method, we'll create a new temporary archetype containing defined values.
      * Of course this doesn't apply when loading archetypes or artifacts.
