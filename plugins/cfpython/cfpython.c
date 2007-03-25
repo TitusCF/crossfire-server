@@ -64,7 +64,7 @@
 #define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */
 
 typedef struct {
-    char *file;
+    sstring file;
     PyCodeObject *code;
     time_t cached_time, used_time;
 } pycode_cache_entry;
@@ -74,8 +74,6 @@ static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
 f_plug_api gethook;
 f_plug_api registerGlobalEvent;
 f_plug_api unregisterGlobalEvent;
-f_plug_api systemDirectory;
-f_plug_api reCmp;
 
 static void set_exception(const char *fmt, ...);
 static PyObject* createCFObject(PyObject* self, PyObject* args);
@@ -265,12 +263,12 @@ static PyObject* matchString(PyObject* self, PyObject* args)
 {
     char *premiere;
     char *seconde;
-    char *result;
+    const char *result;
     int val;
     if (!PyArg_ParseTuple(args, "ss", &premiere, &seconde))
         return NULL;
 
-    result = reCmp( &val, premiere, seconde );
+    result = cf_re_cmp(premiere, seconde);
     if (result != NULL)
         return Py_BuildValue("i", 1);
     else
@@ -405,52 +403,45 @@ static PyObject* getDirectionNorth(PyObject* self, PyObject* args)
 }
 static PyObject* getMapDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 0));
+    return Py_BuildValue("s", cf_get_directory(0));
 }
 static PyObject* getUniqueDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 1));
+    return Py_BuildValue("s", cf_get_directory(1));
 }
 static PyObject* getTempDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 2));
+    return Py_BuildValue("s", cf_get_directory(2));
 }
 static PyObject* getConfigDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 3));
+    return Py_BuildValue("s", cf_get_directory(3));
 }
 static PyObject* getLocalDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 4));
+    return Py_BuildValue("s", cf_get_directory(4));
 }
 static PyObject* getPlayerDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 5));
+    return Py_BuildValue("s", cf_get_directory(5));
 }
 static PyObject* getDataDirectory(PyObject* self, PyObject* args)
 {
-    int rv;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
-    return Py_BuildValue("s", systemDirectory(&rv, 6));
+    return Py_BuildValue("s", cf_get_directory(6));
 }
 static PyObject* getWhoAmI(PyObject* self, PyObject* args)
 {
@@ -711,7 +702,7 @@ void freeContext(CFPContext* context)
 /* Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
     PyObject*   scriptfile;
-    char  *sh_path;
+    sstring sh_path;
     struct  stat stat_buf;
     struct _node *n;
     int i;
@@ -1118,7 +1109,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 
 CF_PLUGIN int runPluginCommand(object* op, char* params)
 {
-    char         buf[1024];
+    char         buf[1024], path[1024];
     CFPContext*  context;
     static int rv = 0;
 
@@ -1128,7 +1119,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
         cf_log(llevError, "Illegal call of runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
-    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script));
+    snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script, path, sizeof(path)));
 
     context = malloc(sizeof(CFPContext));
     context->message[0] = 0;
@@ -1160,12 +1151,11 @@ CF_PLUGIN int postInitPlugin()
     int hooktype = 1;
     int rtype = 0;
     PyObject*   scriptfile;
+    char path[1024];
 
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype, hooktype, "cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype, hooktype, "cfapi_system_unregister_global_event");
-    systemDirectory       = gethook(&rtype, hooktype, "cfapi_system_directory");
-    reCmp                 = gethook(&rtype, hooktype, "cfapi_system_re_cmp");
     initContextStack();
     registerGlobalEvent(NULL, EVENT_BORN, PLUGIN_NAME, globalEventListener);
     /*registerGlobalEvent(NULL, EVENT_CLOCK, PLUGIN_NAME, globalEventListener);*/
@@ -1185,9 +1175,9 @@ CF_PLUGIN int postInitPlugin()
     registerGlobalEvent(NULL, EVENT_MAPUNLOAD, PLUGIN_NAME, globalEventListener);
     registerGlobalEvent(NULL, EVENT_MAPLOAD, PLUGIN_NAME, globalEventListener);
 
-    scriptfile = PyFile_FromString(cf_get_maps_directory("python/events/python_init.py"), "r");
+    scriptfile = PyFile_FromString(cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)), "r");
     if (scriptfile != NULL) {
-        PyRun_SimpleFile(PyFile_AsFile(scriptfile), cf_get_maps_directory("python/events/python_init.py"));
+        PyRun_SimpleFile(PyFile_AsFile(scriptfile), cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
         Py_DECREF(scriptfile);
     }
 
@@ -1217,7 +1207,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     context->activator   = NULL;
     context->third       = NULL;
     rv = context->returnvalue = 0;
-    snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory("python/events/python_event.py"));
+    cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
     strcpy(context->options, "");
     switch(context->event_code) {
         case EVENT_CRASH:
@@ -1371,7 +1361,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
         snprintf(context->message, sizeof(context->message), "%s", buf);
     context->fix         = va_arg(args, int);
     script_tmp = va_arg(args, char*);
-    snprintf(context->script, sizeof(context->script), "%s", cf_get_maps_directory(script_tmp));
+    cf_get_maps_directory(script_tmp, context->script, sizeof(context->script));
     snprintf(context->options, sizeof(context->options), "%s", va_arg(args, char*));
     context->returnvalue = 0;
 

@@ -651,7 +651,7 @@ void plugins_display_list(object *op)
 /* SYSTEM-RELATED HOOKS */
 
 /**
- * Finds an animation.
+ * Wrapper for find_animation().
  * @param type
  * will be CFAPI_INT.
  * @return
@@ -673,15 +673,27 @@ void* cfapi_system_find_animation(int *type, ...)
     return NULL;
 }
 
+/**
+ * Wrapper for strdup_local().
+ * @param type
+ * will be CFAPI_STRING.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_strdup_local(int *type, ...)
 {
     va_list args;
-    char* txt;
+    const char* txt;
+    char** ret;
+
     va_start(args, type);
-    txt = va_arg(args, char*);
+    txt = va_arg(args, const char*);
+    ret = va_arg(args, char**);
     va_end(args);
+
+    *ret = strdup_local(txt);
     *type = CFAPI_STRING;
-    return strdup_local(txt);
+    return NULL;
 }
 
 void* cfapi_system_register_global_event(int *type, ...)
@@ -721,28 +733,45 @@ void* cfapi_system_unregister_global_event(int *type, ...)
     return NULL;
 }
 
+/**
+ * Wrapper for add_string().
+ *
+ * @param type
+ * will be CFAPI_SSTRING.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_add_string(int *type, ...)
 {
     va_list args;
     const char* str;
-    char* rv;
+    sstring* rv;
 
     va_start(args, type);
-    str = va_arg(args, char*);
+    str = va_arg(args, const char*);
+    rv = va_arg(args, sstring*);
     va_end(args);
 
-    rv = (char*)add_string(str);
-    *type = CFAPI_STRING;
-    return rv;
+    *rv = add_string(str);
+    *type = CFAPI_SSTRING;
+    return NULL;
 }
 
+/**
+ * Wrapper for free_string().
+ *
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_remove_string(int *type, ...)
 {
     va_list args;
-    char* str;
+    sstring str;
 
     va_start(args, type);
-    str = va_arg(args, char*);
+    str = va_arg(args, sstring);
     va_end(args);
 
     free_string(str);
@@ -750,7 +779,7 @@ void* cfapi_system_remove_string(int *type, ...)
     return NULL;
 }
 /**
- * Checks if a file exists.
+ * Wrapper for check_path().
  * @param type
  * will be CFAPI_INT.
  * @return
@@ -776,19 +805,27 @@ void* cfapi_system_check_path(int* type, ...)
     return NULL;
 }
 
+/**
+ * Wrapper for re_cmp().
+ * @param type
+ * will be CFAPI_STRING.
+ * @return
+ * NULL.
+ */
 void* cfapi_system_re_cmp(int* type, ...)
 {
     va_list args;
-    char* rv;
     const char* str;
     const char* regexp;
+    const char** rv;
 
     va_start(args, type);
 
     str = va_arg(args, char*);
     regexp = va_arg(args, char*);
+    rv = va_arg(args, const char**);
 
-    rv = (char*)re_cmp(str, regexp);
+    *rv = re_cmp(str, regexp);
 
     va_end(args);
     *type = CFAPI_STRING;
@@ -799,10 +836,12 @@ void* cfapi_system_directory(int* type, ...)
 {
     va_list args;
     int dirtype;
+    const char** str;
 
     va_start(args, type);
 
     dirtype = va_arg(args, int);
+    str = va_arg(args, const char**);
     va_end(args);
 
     *type = CFAPI_STRING;
@@ -810,38 +849,48 @@ void* cfapi_system_directory(int* type, ...)
     switch (dirtype)
     {
     case 0:
-        return settings.mapdir;
+        *str = settings.mapdir;
         break;
 
     case 1:
-        return settings.uniquedir;
+        *str = settings.uniquedir;
         break;
 
     case 2:
-        return settings.tmpdir;
+        *str = settings.tmpdir;
         break;
 
     case 3:
-        return settings.confdir;
+        *str = settings.confdir;
         break;
 
     case 4:
-        return settings.localdir;
+        *str = settings.localdir;
         break;
 
     case 5:
-        return settings.playerdir;
+        *str = settings.playerdir;
         break;
 
     case 6:
-        return settings.datadir;
+        *str = settings.datadir;
         break;
+
+    default:
+        *str = NULL;
     }
 
-    *type = CFAPI_NONE;
     return NULL;
 }
 
+/**
+ * Wrapper for get_tod().
+ *
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void *cfapi_get_time(int *type, ...)
 {
     va_list args;
@@ -857,6 +906,7 @@ void *cfapi_get_time(int *type, ...)
 }
 
 /**
+ * Wrapper for cfapi_timer_create().
  * @param type
  * unused
  * @return
@@ -867,8 +917,6 @@ void *cfapi_get_time(int *type, ...)
  * - delay : long, ticks or seconds
  * - mode : int, either ::TIMER_MODE_SECONDS or ::TIMER_MODE_CYCLES
  * - timer : int* that will contain timer's id
- *
- * @see cftimer_create().
  */
 void *cfapi_timer_create(int *type, ...)
 {
@@ -898,16 +946,15 @@ void *cfapi_timer_create(int *type, ...)
 }
 
 /**
+ * Wrapper for cftimer_destroy().
  * @param type
- * unused
+ * will be CFAPI_INT.
  * @return
  * always 0
  *
  * Additional parameters:
  * - timer: int that should be destroyed
  * - err: int* which will contain the return code of cftimer_destroy().
- *
- * @see cftimer_destroy().
  */
 void *cfapi_timer_destroy(int *type, ...)
 {
@@ -926,7 +973,13 @@ void *cfapi_timer_destroy(int *type, ...)
     return 0;
 }
 
-/* Logging hook */
+/**
+ * Wrapper for LOG().
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_log(int* type, ...)
 {
     va_list args;
@@ -938,6 +991,8 @@ void* cfapi_log(int* type, ...)
     message = va_arg(args, const char*);
     LOG(logLevel, "%s", message);
     va_end(args);
+
+    *type = CFAPI_NONE;
 
     return NULL;
 }
@@ -1006,29 +1061,37 @@ void* cfapi_map_has_been_loaded(int* type, ...)
     *type = CFAPI_PMAP;
     return map;
 }
+
+/**
+ * Wrapper for create_pathname() and create_overlay_pathname().
+ * @param type
+ * will be CFAPI_STRING.
+ * @return
+ * NULL.
+ */
 void* cfapi_map_create_path(int* type, ...)
 {
     va_list args;
-    int ctype;
+    int ctype, size;
     const char* str;
-    char* rv;
-    static char name[MAX_BUF];
+    char* name;
+
     va_start(args, type);
 
     ctype = va_arg(args, int);
-    str = va_arg(args, char*);
+    str = va_arg(args, const char*);
+    name = va_arg(args, char*);
+    size = va_arg(args, int);
     *type = CFAPI_STRING;
 
     switch (ctype)
     {
     case 0:
-        create_pathname(str, name, MAX_BUF);
-        rv = name;
+        create_pathname(str, name, size);
         break;
 
     case 1:
         create_overlay_pathname(str, name, MAX_BUF);
-        rv = name;
         break;
 
     /*case 2:
@@ -1036,12 +1099,11 @@ void* cfapi_map_create_path(int* type, ...)
         break;*/
 
     default:
-        rv = NULL;
         *type = CFAPI_NONE;
         break;
     }
     va_end(args);
-    return rv;
+    return NULL;
 }
 void* cfapi_map_get_map_property(int* type, ...)
 {

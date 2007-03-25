@@ -43,15 +43,17 @@ extern int cf_init_plugin( f_plug_api getHooks );
 extern void cf_system_register_global_event( int event, const char* name, f_plug_api hook );
 
 /* General functions */
-extern char*        cf_add_string( char* str );
-extern void         cf_free_string( char* str );
-extern char*        cf_strdup_local(char* txt);
-extern char*        cf_get_maps_directory( char* str );
+extern sstring      cf_add_string(const char* str);
+extern void         cf_free_string(sstring str);
+extern char*        cf_strdup_local(const char* str);
+extern char*        cf_get_maps_directory(char* str, char* path, int size);
 extern int          cf_find_animation(const char* txt);
 extern void			cf_log( LogLevel logLevel, const char* format, ... );
 extern void         cf_get_time( timeofday_t* tod );
 extern int          cf_timer_create(object* ob, long delay, int mode);
 extern int          cf_timer_destroy(int id);
+extern const char*  cf_get_directory(int id);
+extern const char*  cf_re_cmp(const char *str, const char *regexp);
 
 /* Objects */
 extern void*        cf_object_set_int_property(object* op, int propcode, int value);
@@ -69,8 +71,7 @@ extern sint64       cf_object_get_int64_property(object* op, int propcode);
 extern double       cf_object_get_double_property(object* op, int propcode);
 extern sstring      cf_object_get_sstring_property(object* op, int propcode);
 extern char*        cf_object_get_string_property(object* op, int propcode, char* buf, int size);
-extern void         cf_free_object( object* ob );
-extern void         cf_fix_object( object* pl );
+extern void         cf_fix_object(object* op);
 extern char*        cf_query_name(object* ob, char* name, int size);
 extern sstring      cf_query_name_pl( object* ob );
 extern char*        cf_query_base_name(object* ob, int plural, char* name, int size);
@@ -109,7 +110,7 @@ extern object*      cf_object_insert_object(object* op, object* container);
 extern object*      cf_object_present_archname_inside(object* op, char* whatstr);
 extern int          cf_object_apply(object* op, object* author, int flags);
 extern void         cf_object_remove(object* op);
-extern void         cf_object_free(object* op);
+extern void         cf_object_free(object* ob);
 extern object*      cf_create_object(void);
 extern object*      cf_create_object_by_name( const char* name );
 extern int          cf_object_change_map(object* op, int x, int y, mapstruct* map);
@@ -120,7 +121,7 @@ extern const char*  cf_object_get_key(object* op, const char* keyname);
 extern int          cf_object_set_key(object* op, const char* keyname, const char* value, int add_key);
 extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern void         cf_object_move(object* op, int dir, object*originator);
-extern void         cf_object_apply_below(object* op);
+extern void         cf_object_apply_below(object* pl);
 extern object*      cf_object_clone(object* op, int clonetype);
 extern void*        cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
 

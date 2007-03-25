@@ -34,8 +34,6 @@
 f_plug_api gethook;
 f_plug_api registerGlobalEvent;
 f_plug_api unregisterGlobalEvent;
-f_plug_api systemDirectory;
-f_plug_api reCmp;
 
 CFPContext* context_stack;
 CFPContext* current_context;
@@ -121,8 +119,6 @@ CF_PLUGIN int postInitPlugin()
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
-    reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
     cf_init_plugin( gethook );
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */

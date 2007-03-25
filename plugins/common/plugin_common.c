@@ -46,6 +46,8 @@ static f_plug_api cfapiSystem_log = NULL;
 static f_plug_api cfapiSystem_get_time = NULL;
 static f_plug_api cfapiSystem_timer_create = NULL;
 static f_plug_api cfapiSystem_timer_destroy = NULL;
+static f_plug_api cfapiSystem_directory = NULL;
+static f_plug_api cfapiSystem_re_cmp = NULL;
 
 static f_plug_api cfapiMap_create_path = NULL;
 
@@ -126,8 +128,10 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_add_string, "cfapi_system_add_string", z );
     GET_HOOK( cfapiSystem_register_global_event, "cfapi_system_register_global_event", z );
     GET_HOOK( cfapiSystem_remove_string, "cfapi_system_remove_string", z );
+    GET_HOOK( cfapiSystem_directory, "cfapi_system_directory", z );
     GET_HOOK( cfapiSystem_unregister_global_event, "cfapi_system_unregister_global_event", z );
     GET_HOOK( cfapiSystem_find_animation, "cfapi_system_find_animation", z );
+    GET_HOOK( cfapiSystem_re_cmp, "cfapi_system_re_cmp", z );
     GET_HOOK( cfapiObject_get_property, "cfapi_object_get_property", z );
     GET_HOOK( cfapiObject_set_property, "cfapi_object_set_property", z );
     GET_HOOK( cfapiObject_apply, "cfapi_object_apply", z );
@@ -364,49 +368,41 @@ object* cf_player_send_inventory(object* op)
 
 /**
  * Wrapper for manual_apply().
- *
- * Checks for unpaid items before applying.
- *
- * @param op
- * ::object object being applied.
- * @param author
- * ::object causing op to be applied.
- * @param flags
- * special (always apply/unapply) flags.  Nothing is done with
- * them in this function - they are passed to apply_special().
- * @return
- * - 0: player or monster can't apply objects of that type
- * - 1: has been applied, or there was an error applying the object
- * - 2: objects of that type can't be applied if not in inventory
- *
+ * @copydoc manual_apply()
  */
-int cf_object_apply(object* op, object* author, int flags)
+int cf_object_apply(object* op, object* tmp, int aflag)
 {
     int type, ret;
-    cfapiObject_apply(&type,op,author,flags, &ret);
+    cfapiObject_apply(&type, op, tmp, aflag, &ret);
     return ret;
 }
 
 /**
  * Wrapper for player_apply_below().
- *
- * @param op
- * player applying below.
+ * @copydoc player_apply_below()
  */
-void cf_object_apply_below(object* op)
+void cf_object_apply_below(object* pl)
 {
     int type;
-    cfapiObject_apply_below(&type,op);
+    cfapiObject_apply_below(&type, pl);
 }
+/**
+ * Wrapper for remove_ob().
+ * @copydoc remove_ob()
+ */
 void cf_object_remove(object* op)
 {
     int type;
     cfapiObject_remove(&type, op);
 }
-void cf_object_free(object* op)
+/**
+ * Wrapper for free_object().
+ * @copydoc free_object()
+ */
+void cf_object_free(object* ob)
 {
     int type;
-    cfapiObject_delete(&type, op);
+    cfapiObject_delete(&type, ob);
 }
 object* cf_object_present_archname_inside(object* op, char* whatstr)
 {
@@ -586,13 +582,12 @@ object* cf_object_insert_object(object* op, object* container)
     int type;
     return cfapiObject_insert(&type, op, 3, container);
 }
-char* cf_get_maps_directory(char* str)
+char* cf_get_maps_directory(char* str, char* path, int size)
 {
     int type;
-
-    /*printf("Calling with %s, type 0\n",str);
-    printf("Value of the pointer: %p\n", cfapiMap_create_path);*/
-    return cfapiMap_create_path(&type, 0, str);
+    cfapiMap_create_path(&type, 0, str, path, size);
+    assert( type== CFAPI_STRING);
+    return path;
 }
 object* cf_create_object()
 {
@@ -604,12 +599,6 @@ object* cf_create_object_by_name( const char* name )
     int type;
     return cfapiObject_create(&type, 1, name);
 }
-void cf_free_object( object* ob )
-{
-    int type;
-    if ( ob )
-        cfapiObject_delete( &type, ob );
-}
 
 void cf_system_register_global_event( int event, const char* name, f_plug_api hook )
 {
@@ -617,22 +606,73 @@ void cf_system_register_global_event( int event, const char* name, f_plug_api ho
     cfapiSystem_register_global_event( &type, event, name, hook );
 }
 
-void cf_fix_object( object* pl )
+/**
+ * Gets a directory Crossfire uses.
+ * @param id
+ * what directory to return:
+ * -# @copydoc Settings::mapdir
+ * -# @copydoc Settings::uniquedir
+ * -# @copydoc Settings::tmpdir
+ * -# @copydoc Settings::confdir
+ * -# @copydoc Settings::localdir
+ * -# @copydoc Settings::playerdir
+ * -# @copydoc Settings::datadir
+ * @return
+ * directory. Must not be altered. NULL if invalid value.
+ */
+const char* cf_get_directory(int id)
 {
     int type;
-    if ( pl )
-        cfapiObject_fix( &type, pl );
+    const char* ret;
+    cfapiSystem_directory(&type, id, &ret);
+    assert(type == CFAPI_STRING);
+    return ret;
 }
 
-char* cf_add_string( char* str )
+/**
+ * Wrapper for re_cmp().
+ * @copydoc re_cmp()
+ */
+const char* cf_re_cmp(const char *str, const char *regexp)
 {
     int type;
+    const char* result;
+    cfapiSystem_re_cmp(&type, str, regexp, &result);
+    assert(type == CFAPI_STRING);
+    return result;
+}
+
+/**
+ * Wrapper for fix_object().
+ * @copydoc fix_object()
+ */
+void cf_fix_object(object* op)
+{
+    int type;
+    if (op)
+        cfapiObject_fix(&type, op);
+}
+
+/**
+ * Wrapper for add_string().
+ * @copydoc add_string()
+ */
+sstring cf_add_string(const char* str)
+{
+    int type;
+    sstring ret;
     if ( !str )
         return NULL;
-    return cfapiSystem_add_string( &type, str );
+    cfapiSystem_add_string(&type, str, &ret);
+    assert(type == CFAPI_SSTRING);
+    return ret;
 }
 
-void cf_free_string( char* str )
+/**
+ * Wrapper for free_string().
+ * @copydoc free_string()
+ */
+void cf_free_string(sstring str)
 {
     int type;
     if ( str )
@@ -881,10 +921,21 @@ void cf_object_pickup( object* op, object* what)
     int type;
     cfapiObject_pickup(&type, op, what);
 }
-char* cf_strdup_local(char* txt)
+
+/**
+ * Wrapper for strdup_local().
+ *
+ * @copydoc strdup_local().
+ */
+char* cf_strdup_local(const char* str)
 {
     int type;
-    return (char*)cfapiSystem_strdup_local(&type, txt);
+    char* dup;
+    if (str == NULL)
+        return NULL;
+    cfapiSystem_strdup_local(&type, str, &dup);
+    assert(type == CFAPI_STRING);
+    return NULL;
 }
 int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint16* nx, sint16* ny )
 {
@@ -910,17 +961,20 @@ mapstruct* cf_random_map_generate(const char *filename, RMParms *RP, char** use_
 
 /**
  * Wrapper for find_animation().
- * @param txt
- * the animation's name
- * @return
- * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face
+ * @copydoc find_animation().
  */
-int cf_find_animation(const char* txt)
+int cf_find_animation(const char* name)
 {
     int type, anim;
-    cfapiSystem_find_animation(&type, txt, &anim);
+    cfapiSystem_find_animation(&type, name, &anim);
+    assert(type == CFAPI_INT);
     return anim;
 }
+
+/**
+ * Wrapper for LOG().
+ * @copydoc LOG().
+ */
 void cf_log( LogLevel logLevel, const char* format, ... )
 {
     int type;
@@ -932,10 +986,9 @@ void cf_log( LogLevel logLevel, const char* format, ... )
     va_start(ap, format);
     buf[0] = '\0';
     vsprintf(buf, format, ap);
+    va_end(ap);
 
     cfapiSystem_log(&type, logLevel, buf);
-
-    va_end(ap);
 }
 
 void cf_get_time( timeofday_t* tod )

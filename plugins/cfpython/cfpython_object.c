@@ -2116,7 +2116,7 @@ static void Crossfire_Object_dealloc(PyObject *obj)
             free_object_assoc(self->obj);
             if (self->del_event) {
                 cf_object_remove(self->del_event);
-                cf_free_object(self->del_event);
+                cf_object_free(self->del_event);
             }
         }
         self->ob_type->tp_free(obj);
@@ -2131,7 +2131,7 @@ static void Crossfire_Player_dealloc(PyObject *obj)
             free_object_assoc(self->obj);
             if (self->del_event) {
                 cf_object_remove(self->del_event);
-                cf_free_object(self->del_event);
+                cf_object_free(self->del_event);
             }
         }
         self->ob_type->tp_free(obj);
@@ -2144,7 +2144,7 @@ void Handle_Destroy_Hook(Crossfire_Object *ob) {
     /* Destruction of the object should remove the event, but just in case... */
     if (ob->del_event) {
         cf_object_remove(ob->del_event);
-        cf_free_object(ob->del_event);
+        cf_object_free(ob->del_event);
     }
 }
 

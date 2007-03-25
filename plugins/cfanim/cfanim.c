@@ -35,7 +35,6 @@
 f_plug_api gethook;
 f_plug_api registerGlobalEvent;
 f_plug_api unregisterGlobalEvent;
-f_plug_api systemDirectory;
 f_plug_api reCmp;
 
 CFPContext* context_stack;
@@ -655,11 +654,12 @@ int start_animation (object* who,object* activator,char* file, char* options)
     char*   value;
     int     errors_found=0;
     CFanimation* current_anim;
+    char    path[1024];
 
-    fichier = fopen(cf_get_maps_directory(file),"r");
+    fichier = fopen(cf_get_maps_directory(file, path, sizeof(path)),"r");
     if (fichier == NULL)
     {
-        cf_log(llevDebug, "CFAnim: Unable to open %s\n", cf_get_maps_directory(file));
+        cf_log(llevDebug, "CFAnim: Unable to open %s\n", path);
         return 0;
     }
     while (fgets(buffer,HUGE_BUF,fichier))
@@ -780,7 +780,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     }
     if (buffer[0]=='\0')
     {
-        cf_log(llevDebug, "CFAnim: Errors occurred during the parsing of %s\n", cf_get_maps_directory(file));
+        cf_log(llevDebug, "CFAnim: Errors occurred during the parsing of %s\n", path);
         return 0;
     }
     if (!(current_anim=create_animation()))
@@ -996,7 +996,6 @@ CF_PLUGIN int postInitPlugin(void)
     cf_log(llevDebug, "CFAnim 2.0a post init\n");
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
     reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */
@@ -1122,7 +1121,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     if (buf !=0)
         strcpy(context->message,buf);
     context->fix         = va_arg(args, int);
-    strcpy(context->script,cf_get_maps_directory(va_arg(args, char*)));
+    cf_get_maps_directory(va_arg(args, char*), context->script, sizeof(context->script));
     strcpy(context->options,va_arg(args, char*));
     context->returnvalue = 0;
     va_end(args);
