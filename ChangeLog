@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix broken banish command: loop logic was weird (skipping one file?).
+ server/ban.c
+Nicolas Weeger 2007-03-25
+
 New plugin: cfnewspaper.
 As its name implies, it will (in the future) generate an ingame newspaper.
 Currently, it will only list player and monster deaths for last ingame day.

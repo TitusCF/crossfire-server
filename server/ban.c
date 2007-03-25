@@ -59,7 +59,7 @@ int checkbanned(const char *login, const char *host)
             bannedfile = fopen(buf, "r");
             if (bannedfile == NULL) {
                 LOG(llevDebug, "Could not find file Banned file\n");
-                loop++;
+                continue;
             }
         }
 
@@ -143,14 +143,14 @@ int checkbanned(const char *login, const char *host)
                     break;
                 }
             }
-        }
+        } /* loop for one file */
+
         fclose(bannedfile);
 
         if (hits >= 2) {
             return(!inverse_ban);
         }
 
-        loop++;
     }
 
     return(0);
