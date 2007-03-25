@@ -56,10 +56,6 @@ f_plug_api gethook;
 f_plug_api registerGlobalEvent;
 /** Unregister with server. */
 f_plug_api unregisterGlobalEvent;
-/** Get directories (maps, players, ...). */
-f_plug_api systemDirectory;
-/** Regular expression comparison. */
-f_plug_api reCmp;
 
 /** Pointer to the logging database. */
 sqlite3* database;
@@ -372,8 +368,6 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 
     registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
     unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    systemDirectory       = gethook(&rtype,hooktype,"cfapi_system_directory");
-    reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
 
     return 0;
 }
@@ -523,8 +517,9 @@ CF_PLUGIN int postInitPlugin()
 
     cf_log(llevInfo, "%s post init\n", PLUGIN_VERSION);
 
-    dir = systemDirectory(&i, 4);
-    snprintf(path, 500, "%s/cflogger.db", dir);
+    dir = cf_get_directory(4);
+    snprintf(path, sizeof(path), "%s/cflogger.db", dir);
+    cf_log(llevDebug, " [%s] database file: %s\n", PLUGIN_NAME, path);
 
     if (sqlite3_open(path, &database) != SQLITE_OK) {
         cf_log(llevError, " [%s] database error!\n", PLUGIN_NAME);
