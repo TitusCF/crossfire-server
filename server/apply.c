@@ -2110,18 +2110,18 @@ static int is_legal_2ways_exit (object* op, object *exit)
  *
  * Checks for unpaid items before applying.
  *
- * Return value:
- *   0: player or monster can't apply objects of that type
- *   1: has been applied, or there was an error applying the object
- *   2: objects of that type can't be applied if not in inventory
- *
- * op is the object that is causing object to be applied, tmp is the object
- * being applied.
- *
- * aflag is special (always apply/unapply) flags.  Nothing is done with
- * them in this function - they are passed to apply_special
+ * @param op
+ * ::object object being applied.
+ * @param tmp
+ * ::object causing op to be applied.
+ * @param aflag
+ * special (always apply/unapply) flags.  Nothing is done with
+ * them in this function - they are passed to apply_special().
+ * @return
+ * - 0: player or monster can't apply objects of that type
+ * - 1: has been applied, or there was an error applying the object
+ * - 2: objects of that type can't be applied if not in inventory
  */
-
 int manual_apply (object *op, object *tmp, int aflag)
 {
     if (tmp->head) tmp=tmp->head;
