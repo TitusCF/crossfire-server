@@ -388,6 +388,9 @@ void dump_object(object *op, char* buf, int size) {
         if (op->env) {
             snprintf(buf + strlen(buf), size - strlen(buf), "env %s\n", ltostr10(op->env->count));
         }
+        if (op->inv) {
+            snprintf(buf + strlen(buf), size - strlen(buf), "inv %s\n", ltostr10(op->inv->count));
+        }
         snprintf(buf + strlen(buf), size - strlen(buf), "end\n");
     } else {
         snprintf(buf + strlen(buf), size - strlen(buf), "Object %s\nend\n", op->name==NULL ? "(null)" : op->name);
