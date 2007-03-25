@@ -1,4 +1,4 @@
-SUBDIRS = cfpython cfanim common
+SUBDIRS = cfpython cfanim common cflogger
 
 DISTCHECK_CONFIGURE_FLAGS = --localstatedir=$$dc_install_base/var --mandir=$$dc_install_base/man
 
