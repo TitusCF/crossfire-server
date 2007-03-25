@@ -912,6 +912,8 @@ PLUGIN_PYTHON
 CROSSEDIT
 HAVE_CFLOGGER_TRUE
 HAVE_CFLOGGER_FALSE
+HAVE_CFNEWSPAPER_TRUE
+HAVE_CFNEWSPAPER_FALSE
 CHECK_CFLAGS
 CHECK_LIBS
 HAVE_CHECK_TRUE
@@ -1534,6 +1536,7 @@ Optional Features:
   --disable-libtool-lock  avoid locking (might break parallel builds)
  --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working
  --disable-logger	Disable the logger compilation
+ --disable-newspaper   Disable the newspaper plugin compilation
  --disable-check       Disable the unit tests even if check is available
 
 Optional Packages:
@@ -4379,7 +4382,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4382 "configure"' > conftest.$ac_ext
+  echo '#line 4385 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7111,11 +7114,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7114: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7117: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7118: \$? = $ac_status" >&5
+   echo "$as_me:7121: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7379,11 +7382,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7382: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7385: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7386: \$? = $ac_status" >&5
+   echo "$as_me:7389: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7483,11 +7486,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7486: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7489: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7490: \$? = $ac_status" >&5
+   echo "$as_me:7493: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9780,7 +9783,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 9783 "configure"
+#line 9786 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9880,7 +9883,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 9883 "configure"
+#line 9886 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12216,11 +12219,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12219: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12222: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12223: \$? = $ac_status" >&5
+   echo "$as_me:12226: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -12320,11 +12323,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12323: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12326: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12327: \$? = $ac_status" >&5
+   echo "$as_me:12330: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13881,11 +13884,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13884: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13887: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13888: \$? = $ac_status" >&5
+   echo "$as_me:13891: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -13985,11 +13988,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13988: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13991: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13992: \$? = $ac_status" >&5
+   echo "$as_me:13995: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16172,11 +16175,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16175: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16178: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16179: \$? = $ac_status" >&5
+   echo "$as_me:16182: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16440,11 +16443,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16443: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16446: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16447: \$? = $ac_status" >&5
+   echo "$as_me:16450: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16544,11 +16547,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16547: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16550: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16551: \$? = $ac_status" >&5
+   echo "$as_me:16554: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -27315,13 +27318,20 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 
 
 ########################
-# CFLogger configuration
+# CFLogger and CFNewsPaper configuration
 
 # Check whether --enable-logger was given.
 if test "${enable_logger+set}" = set; then
   enableval=$enable_logger;
 else
   enable_logger=yes
+fi
+
+# Check whether --enable-newspaper was given.
+if test "${enable_newspaper+set}" = set; then
+  enableval=$enable_newspaper;
+else
+  enable_newspaper=yes
 fi
 
 { echo "$as_me:$LINENO: checking for main in -lsqlite3" >&5
@@ -27391,6 +27401,16 @@ if test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes"; then
 else
   HAVE_CFLOGGER_TRUE='#'
   HAVE_CFLOGGER_FALSE=
+fi
+
+
+
+if test x"$cf_have_libsqlite" = "xyes" -a x"$enable_newspaper" = "xyes"; then
+  HAVE_CFNEWSPAPER_TRUE=
+  HAVE_CFNEWSPAPER_FALSE='#'
+else
+  HAVE_CFNEWSPAPER_TRUE='#'
+  HAVE_CFNEWSPAPER_FALSE=
 fi
 
 
@@ -28022,7 +28042,7 @@ fi
 
 XSLTENGINE=$xsltengine
 
-ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl common/Makefile plugins/Makefile plugins/cfpython/Makefile plugins/cfpython/include/Makefile plugins/cfanim/Makefile plugins/cfanim/include/Makefile plugins/common/Makefile plugins/common/include/Makefile plugins/cflogger/Makefile devel/Makefile test/Makefile test/unit/Makefile test/toolkit/Makefile test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile types/Makefile"
+ac_config_files="$ac_config_files Makefile crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile crossedit/Cnv/Makefile crossedit/bitmaps/Makefile doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile doc/spoiler/Makefile doc/spoiler-html/Makefile doc/playbook/Makefile doc/playbook-html/Makefile doc/scripts/Makefile lib/Makefile random_maps/Makefile socket/Makefile server/Makefile include/Makefile utils/Makefile lib/checkarch.pl lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl common/Makefile plugins/Makefile plugins/cfpython/Makefile plugins/cfpython/include/Makefile plugins/cfanim/Makefile plugins/cfanim/include/Makefile plugins/common/Makefile plugins/common/include/Makefile plugins/cflogger/Makefile plugins/cfnewspaper/Makefile devel/Makefile test/Makefile test/unit/Makefile test/toolkit/Makefile test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile types/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -28180,6 +28200,13 @@ if test -z "${HAVE_CFLOGGER_TRUE}" && test -z "${HAVE_CFLOGGER_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"HAVE_CFLOGGER\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"HAVE_CFLOGGER\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${HAVE_CFNEWSPAPER_TRUE}" && test -z "${HAVE_CFNEWSPAPER_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"HAVE_CFNEWSPAPER\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"HAVE_CFNEWSPAPER\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -28703,6 +28730,7 @@ do
     "plugins/common/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/common/Makefile" ;;
     "plugins/common/include/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/common/include/Makefile" ;;
     "plugins/cflogger/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/cflogger/Makefile" ;;
+    "plugins/cfnewspaper/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/cfnewspaper/Makefile" ;;
     "devel/Makefile") CONFIG_FILES="$CONFIG_FILES devel/Makefile" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
     "test/unit/Makefile") CONFIG_FILES="$CONFIG_FILES test/unit/Makefile" ;;
@@ -28957,6 +28985,8 @@ PLUGIN_PYTHON!$PLUGIN_PYTHON$ac_delim
 CROSSEDIT!$CROSSEDIT$ac_delim
 HAVE_CFLOGGER_TRUE!$HAVE_CFLOGGER_TRUE$ac_delim
 HAVE_CFLOGGER_FALSE!$HAVE_CFLOGGER_FALSE$ac_delim
+HAVE_CFNEWSPAPER_TRUE!$HAVE_CFNEWSPAPER_TRUE$ac_delim
+HAVE_CFNEWSPAPER_FALSE!$HAVE_CFNEWSPAPER_FALSE$ac_delim
 CHECK_CFLAGS!$CHECK_CFLAGS$ac_delim
 CHECK_LIBS!$CHECK_LIBS$ac_delim
 HAVE_CHECK_TRUE!$HAVE_CHECK_TRUE$ac_delim
@@ -28970,7 +29000,7 @@ XSLTENGINE!$XSLTENGINE$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 55; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 57; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -29596,12 +29626,11 @@ echo "$as_me:     Will build crossedit? (*)            $cf_will_build_crossedit 
 { echo "$as_me:$LINENO:     Will build plugins?                  $cf_have_libdl" >&5
 echo "$as_me:     Will build plugins?                  $cf_have_libdl" >&6;}
 
-if test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes" ; then
-{ echo "$as_me:$LINENO:     Will build cflogger?                 yes" >&5
-echo "$as_me:     Will build cflogger?                 yes" >&6;}
-else
-{ echo "$as_me:$LINENO:     Will build cflogger?                 no" >&5
-echo "$as_me:     Will build cflogger?                 no" >&6;}
+if test x"$cf_have_libsqlite" = "xyes" ; then
+{ echo "$as_me:$LINENO:     Will build cflogger?                 $enable_logger" >&5
+echo "$as_me:     Will build cflogger?                 $enable_logger" >&6;}
+{ echo "$as_me:$LINENO:     Will build cfnewspaper?              $enable_newspaper" >&5
+echo "$as_me:     Will build cfnewspaper?              $enable_newspaper" >&6;}
 fi
 
 if test "x$cf_have_libdl" = "xyes" ; then
