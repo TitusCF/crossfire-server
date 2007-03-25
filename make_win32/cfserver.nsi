@@ -1,14 +1,14 @@
 !include "MUI.nsh"
 
 ;Title Of Your Application
-Name "Crossfire Server 1.9.1 (snapshot)"
+Name "Crossfire Server 1.10.0"
 
 VIAddVersionKey "ProductName" "Crossfire server installer"
 VIAddVersionKey "Comments" "Website: http://crossfire.real-time.com"
 VIAddVersionKey "FileDescription" "Crossfire server installer"
-VIAddVersionKey "FileVersion" "1.9.1"
+VIAddVersionKey "FileVersion" "1.10.0"
 VIAddVersionKey "LegalCopyright" "Crossfire is released under the GPL."
-VIProductVersion "1.9.1.0"
+VIProductVersion "1.10.0.0"
 
 ;Do A CRC Check
 CRCCheck On
@@ -108,8 +108,8 @@ Section "Crossfire Server (required)" cf
 SectionEnd
 
 Section "Python plugin" py
-  DetailPrint "Checking for Python24.dll..."
-  GetDllVersion "Python24.dll" $R0 $R1
+  DetailPrint "Checking for Python25.dll..."
+  GetDllVersion "Python25.dll" $R0 $R1
   IntOp $R2 $R0 / 0x00010000
   IntOp $R3 $R0 & 0x0000FFFF
   IntCmp $R2 2 0 wrong
@@ -117,7 +117,7 @@ Section "Python plugin" py
   DetailPrint "   found"
   Goto ok
 wrong:
-  MessageBox MB_YESNO|MB_ICONQUESTION "Couldn't find Python24.dll. Make sure Python is installed, and that Python24.dll is in your PATH.$\rServer may fail to start if this DLL is not found.$\rInstall plugin anyway?" /SD IDNO IDNO end
+  MessageBox MB_YESNO|MB_ICONQUESTION "Couldn't find Python25.dll. Make sure Python is installed, and that Python24.dll is in your PATH.$\rServer may fail to start if this DLL is not found.$\rInstall plugin anyway?" /SD IDNO IDNO end
   DetailPrint "  install anyway."
 ok:
   SetOutPath $INSTDIR\share\plugins
@@ -193,9 +193,11 @@ Section "un.Crossfire Server" un_cf
   rmdir /r "$INSTDIR\tmp"
   
   ;Remove some data files
+  Delete "$INSTDIR\Var\bookarch"
   Delete "$INSTDIR\Var\clockdata"
   Delete "$INSTDIR\Var\crossfire.log"
   Delete "$INSTDIR\Var\crossfiremail"
+  Delete "$INSTDIR\Var\highscore"
 
   ;Delete Start Menu Shortcuts
   RmDir /r "$SMPROGRAMS\Crossfire Server"
@@ -230,6 +232,8 @@ maps:
     ;Remove maps, let's call the uninstaller in silent mode, and no copying itself somewhere else
     ;(else ExecWait can't wait!)
     ExecWait '"$INSTDIR\UninstMaps.exe" /S _?=$INSTDIR'
+	;Remove map directory
+	RmDir "$INSTDIR\share\maps"
     ;Need to remove installer, as it couldn't remove itself
     Delete "$INSTDIR\UninstMaps.exe"
 

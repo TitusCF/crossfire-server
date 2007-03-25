@@ -15,11 +15,11 @@
 # The install script will have the following features:
 # * its name is 'CrossfireServer<map set name without spaces>.nsi'
 # * generated .exe name 'CrossfireServer<map set name without spaces>.exe'
-# * all files except CVS\* are grabbed
+# * all files except .svn\* are grabbed
 # * default install path %program files%\Crossfire Server\share\maps
 # * uninstall entry 'Crossfire Server - <map set name>' in control panel
 # * uninstaller called 'UnistMaps.exe' in %program files%\Crossfire Server (to avoid
-#    conflits with Crossfire Server's uninstaller)
+#    conflicts with Crossfire Server's uninstaller)
 
 # Notes:
 # * the licence the .nsi will use is supposed to be ..\COPYING
@@ -91,6 +91,8 @@ my $outdir = "\$INSTDIR\\share\\maps";
 my $data = "";
 my $remove = "";
 my $mode = 0;
+my $found_files = 0;
+my $found_dirs = 0;
 
 print "Startdir: $startdir\n";
 
@@ -134,6 +136,7 @@ print NSI "
 ";
 
 print "Done.\n";
+print "$found_files maps found in $found_dirs directories.\n";
 
 exit;
 
@@ -142,11 +145,11 @@ sub handleFind
   my $base = $_;
   my $foundFile = $File::Find::name;
   my $dir = $File::Find::dir;
-  if ($dir =~ m/\/CVS$/) { return 1; }
+  if ($dir =~ m/\/\.svn$/) { return 1; }
   if (($mode != 1) && ($dir =~ m/$startdir\/unlinked/ )) { return 1; }
   if (($mode != 2) && ($dir =~ m/$startdir\/test/ )) { return 1; }
   if (($mode != 3) && ($dir =~ m/$startdir\/python/ )) { return 1; }
-  if ($foundFile =~ m/\/CVS$/) { return 1; }
+  if ($foundFile =~ m/\.svn/) { return 1; }
   if ($foundFile =~ m/\.pyc$/) { return 1; }
 
   # Temp
@@ -166,6 +169,8 @@ sub handleFind
       
       # Remove statement
       $remove = "  RmDir \"$currentinstdir\"\n" . $remove;
+
+      $found_dirs++;
       }
 
   if (!(-d $foundFile))
@@ -178,6 +183,7 @@ sub handleFind
       {
       $remove = "  Delete \"$currentinstdir\\" . $base . "c\"\n" . $remove;
       }
+	$found_files++;
     }
   }
 
