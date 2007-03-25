@@ -321,87 +321,87 @@ extern socket_struct *init_sockets;
 #endif
 
 typedef struct Settings {
-    char    *logfilename;   /* logfile to use */
-    uint16  csport;	    /* port for new client/server */
-    LogLevel debug;	    /* Default debugging level */
-    uint8   dumpvalues;	    /* Set to dump various values/tables */
-    char    *dumparg;       /* additional argument for some dump functions */
-    uint8   daemonmode;     /* If true, detach and become daemon */
-    int	    argc;	    /* parameters that were passed to the program */
-    char    **argv;	    /* Only used by xio.c, so will go away at some time */
-    char    *confdir;	    /* configuration files */
-    char    *datadir;	    /* read only data files */
-    char    *localdir;	    /* read/write data files */
-    char    *playerdir;	    /* Where the player files are */
-    char    *mapdir;	    /* Where the map files are */
-    char    *archetypes;    /* name of the archetypes file - libdir is prepended */
-    char    *regions;       /* name of the regions file - libdir is prepended */
-    char    *treasures;	    /* location of the treasures file. */
-    char    *uniquedir;	    /* directory for the unique items */
-    char    *templatedir;   /* directory for the template map */
-    char    *tmpdir;	    /* Directory to use for temporary files */
-    uint8   stat_loss_on_death;	/* If true, chars lose a random stat when they die */
-    sint16  pk_luck_penalty;    /* Amount by which player luck is reduced if they PK */
-    uint8   permanent_exp_ratio; /* how much exp should be 'permenant' and unable to be lost*/
-    uint8   death_penalty_ratio; /* how much exp should be lost at death */
-    uint8   death_penalty_level; /* how many levels worth of exp may be lost on one death */
-    uint8   balanced_stat_loss; /* If true, Death stat depletion based on level etc */
-    uint8   not_permadeth;  /* if true, death is non-permament */
-    uint8   simple_exp;	    /* If true, use the simple experience system */
-    int	    reset_loc_time; /* Number of seconds to put player back at home */
-    uint8   set_title;	    /* players can set thier title */
-    uint8   resurrection;   /* ressurection possible w/ permadeth on */
-    uint8   search_items;   /* search_items command */
-    uint8   spell_encumbrance; /* encumbrance effects spells */
-    uint8   spell_failure_effects; /* nasty backlash to spell failures */
-    uint16  set_friendly_fire;	/* Percent of damage done by peaceful player vs player damage */
-    uint8   casting_time;   /* it takes awhile to cast a spell */
-    uint8   real_wiz;       /* use mud-like wizards */
-    uint8   recycle_tmp_maps; /* re-use tmp maps. */
-    uint8   explore_mode;     /* explore mode allowed? */
-    uint8   spellpoint_level_depend; /* spell costs go up with level */
-    char    who_format[MAX_BUF]; /* The format that the who command should use */
-    char    who_wiz_format[MAX_BUF]; /* The format that the who command should use when called by a dm*/
-    char    motd[MAX_BUF];    /* name of the motd file */
-    char    *rules;           /* name of rules file*/
-    char    *news;            /* name of news file*/
-    char    dm_mail[MAX_BUF]; /* DM's Email address */
+    char    *logfilename;   /**< Logfile to use */
+    uint16  csport;	    /**< Port for new client/server */
+    LogLevel debug;	    /**< Default debugging level */
+    uint8   dumpvalues;	    /**< Set to dump various values/tables */
+    char    *dumparg;       /**< Additional argument for some dump functions */
+    uint8   daemonmode;     /**< If true, detach and become daemon */
+    int	    argc;	    /**< Parameters that were passed to the program */
+    char    **argv;	    /**< Only used by xio.c, so will go away at some time */
+    char    *confdir;	    /**< Configuration files */
+    char    *datadir;	    /**< Read only data files */
+    char    *localdir;	    /**< Read/write data files */
+    char    *playerdir;	    /**< Where the player files are */
+    char    *mapdir;	    /**< Where the map files are */
+    char    *archetypes;    /**< Name of the archetypes file - libdir is prepended */
+    char    *regions;       /**< Name of the regions file - libdir is prepended */
+    char    *treasures;	    /**< Location of the treasures file. */
+    char    *uniquedir;	    /**< Directory for the unique items */
+    char    *templatedir;   /**< Directory for the template map */
+    char    *tmpdir;	    /**< Directory to use for temporary files */
+    uint8   stat_loss_on_death;	/**< If true, chars lose a random stat when they die */
+    sint16  pk_luck_penalty;    /**< Amount by which player luck is reduced if they PK */
+    uint8   permanent_exp_ratio; /**< How much exp should be 'permenant' and unable to be lost*/
+    uint8   death_penalty_ratio; /**< Hhow much exp should be lost at death */
+    uint8   death_penalty_level; /**< How many levels worth of exp may be lost on one death */
+    uint8   balanced_stat_loss; /**< If true, Death stat depletion based on level etc */
+    uint8   not_permadeth;  /**< If true, death is non-permament */
+    uint8   simple_exp;	    /**< If true, use the simple experience system */
+    int	    reset_loc_time; /**< Number of seconds to put player back at home */
+    uint8   set_title;	    /**< Players can set thier title */
+    uint8   resurrection;   /**< Ressurection possible w/ permadeth on */
+    uint8   search_items;   /**< Search_items command */
+    uint8   spell_encumbrance; /**< Encumbrance effects spells */
+    uint8   spell_failure_effects; /**< Nasty backlash to spell failures */
+    uint16  set_friendly_fire;	/**< Percent of damage done by peaceful player vs player damage */
+    uint8   casting_time;   /**< It takes awhile to cast a spell */
+    uint8   real_wiz;       /**< Use mud-like wizards */
+    uint8   recycle_tmp_maps; /**< Re-use tmp maps. */
+    uint8   explore_mode;     /**< Explore mode allowed? */
+    uint8   spellpoint_level_depend; /**< Spell costs go up with level */
+    char    who_format[MAX_BUF]; /**< The format that the who command should use */
+    char    who_wiz_format[MAX_BUF]; /**< The format that the who command should use when called by a dm*/
+    char    motd[MAX_BUF];    /**< Name of the motd file */
+    char    *rules;           /**< Name of rules file*/
+    char    *news;            /**< Name of news file*/
+    char    dm_mail[MAX_BUF]; /**< DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in 
      * the lib/settings file.
      */
-    uint8   meta_on:1;		    /* True if we should send updates */
-    char    meta_server[MAX_BUF];   /* Hostname/ip addr of the metaserver */
-    char    meta_host[MAX_BUF];	    /* Hostname of this host */
-    uint16  meta_port;		    /* Port number to use for updates */
-    char    meta_comment[MAX_BUF];  /* Comment we send to the metaserver */
+    uint8   meta_on:1;		    /**< True if we should send updates */
+    char    meta_server[MAX_BUF];   /**< Hostname/ip addr of the metaserver */
+    char    meta_host[MAX_BUF];	    /**< Hostname of this host */
+    uint16  meta_port;		    /**< Port number to use for updates */
+    char    meta_comment[MAX_BUF];  /**< Comment we send to the metaserver */
 
-    uint32  worldmapstartx;	    /* starting x tile for the worldmap */
-    uint32  worldmapstarty;	    /* starting y tile for the worldmap */
-    uint32  worldmaptilesx;	    /* number of tiles wide the worldmap is */
-    uint32  worldmaptilesy;	    /* number of tiles high the worldmap is */
-    uint32  worldmaptilesizex;	    /* number of squares wide in a wm tile */
-    uint32  worldmaptilesizey;	    /* number of squares high in a wm tile */
-    uint16  dynamiclevel;	    /* how dynamic is the world? */
-    uint8   fastclock;		    /* if true, clock goes warp 9 */
+    uint32  worldmapstartx;	    /**< Starting x tile for the worldmap */
+    uint32  worldmapstarty;	    /**< Starting y tile for the worldmap */
+    uint32  worldmaptilesx;	    /**< Number of tiles wide the worldmap is */
+    uint32  worldmaptilesy;	    /**< Number of tiles high the worldmap is */
+    uint32  worldmaptilesizex;	    /**< Number of squares wide in a wm tile */
+    uint32  worldmaptilesizey;	    /**< Number of squares high in a wm tile */
+    uint16  dynamiclevel;	    /**< How dynamic is the world? */
+    uint8   fastclock;		    /**< If true, clock goes warp 9 */
 
-    char    *emergency_mapname;	    /* map to return players to in emergency */
-    uint16  emergency_x, emergency_y;	/* coordinates to use on that map */
+    char    *emergency_mapname;	    /**< Map to return players to in emergency */
+    uint16  emergency_x, emergency_y;	/**< Coordinates to use on that map */
 
-    sint16  max_level;		    /* This is read out of exp_table */
-    float   item_power_factor;	    /* See note in setings file */
+    sint16  max_level;		    /**< This is read out of exp_table */
+    float   item_power_factor;	    /**< See note in setings file */
 
-    int     armor_max_enchant;  /* Maximum number of times an armor can be enchanted */
-    int     armor_weight_reduction; /* Weight reduction per enchantment */
-    uint8   armor_weight_linear;  /* If 1, weight reduction is linear, else exponantiel */
-    int     armor_speed_improvement;    /* Speed improvement */
-    uint8   armor_speed_linear;         /* If 1, speed improvement is linear, else exponantiel */
-    uint8   no_player_stealing;     /* If 1, can not steal from other players */
-    uint8   create_home_portals;     /* If 1, can create portals in unique maps (apartments) */
-    uint8   personalized_blessings; /* If 1, blessed weapons get an owner and a willpower value */
-    sint64  pk_max_experience; /* Maximum experience one can get for PKing. Ignore if negative. */
-    int     pk_max_experience_percent; /* Percentage of experience of victim the killer gets. */
-    int     allow_denied_spells_writing; /* If set, players can write spells they can't cast. */
+    int     armor_max_enchant;  /**< Maximum number of times an armor can be enchanted */
+    int     armor_weight_reduction; /**< Weight reduction per enchantment */
+    uint8   armor_weight_linear;  /**< If 1, weight reduction is linear, else exponantiel */
+    int     armor_speed_improvement;    /**< Speed improvement */
+    uint8   armor_speed_linear;         /**< If 1, speed improvement is linear, else exponantiel */
+    uint8   no_player_stealing;     /**< If 1, can not steal from other players */
+    uint8   create_home_portals;     /**< If 1, can create portals in unique maps (apartments) */
+    uint8   personalized_blessings; /**< If 1, blessed weapons get an owner and a willpower value */
+    sint64  pk_max_experience; /**< Maximum experience one can get for PKing. Ignore if negative. */
+    int     pk_max_experience_percent; /**< Percentage of experience of victim the killer gets. */
+    int     allow_denied_spells_writing; /**< If set, players can write spells they can't cast. */
 } Settings;
 
 extern Settings settings;
