@@ -14,7 +14,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-	
+
 	The authors can be reached via e-mail to Jarkko.Sonninen@lut.fi
 	or Petri.Heinila@lut.fi .
 */
@@ -128,7 +128,7 @@ int GetType (object *tmp)
 	return T_Map;
     case DIRECTOR:
     case FIREWALL:
-	return (NUM_ANIMATIONS(tmp) > 0) 
+	return (NUM_ANIMATIONS(tmp) > 0)
 	    ? T_Director : T_Connected;
     case CONTAINER:
 	return T_Container;
@@ -175,7 +175,7 @@ static void getHp (object *ob, char *str, XtPointer c) {
 #define NotUsed "(not-used)"
 
 static void getTrigger (object *ob, char *str, XtPointer c) {
-    if(!ob->slaying || !*ob->slaying) 
+    if(!ob->slaying || !*ob->slaying)
 	sprintf(str,NotUsed);
     else
 	strcpy (str, ob->slaying);
@@ -238,7 +238,7 @@ static void getBrand (object *ob, char *str, XtPointer c) {
 
 /*** brand ***/
 static void getMakes (object *ob, char *str, XtPointer c) {
-    if(!ob->other_arch) 
+    if(!ob->other_arch)
 	sprintf(str,NotUsed);
     else
 	sprintf(str,"%s",ob->other_arch->name);
@@ -394,7 +394,7 @@ static char *allowed_variables[] = {
     "attacktype", "vulnerable", "path_attuned", "path_repelled",
     "path_denied", "invisible", "magic", "state", "alive", "applied",
     "unpaid", "need_an", "need_ie", "no_pick", "no_pass", "walk_on",
-    "walk_off", "fly_on", "fly_off", "flying", "monster", 
+    "walk_off", "fly_on", "fly_off", "flying", "monster",
     "neutral", "no_attack", "no_damage", "friendly",
     "generator", "is_thrown", "auto_apply", "treasure", "apply_once",
     "see_invisible", "can_roll", "is_turning", "is_turnable", "is_used_up",
@@ -426,7 +426,7 @@ static char *allowed_variables[] = {
     "end_script_attack","end_script_drop","end_script_throw","end_script_stop", "end_script_death",
 
 #ifdef NPC_PROG
-    "npc_status", "npc_program", 
+    "npc_status", "npc_program",
 #endif
 
     /* Resistances */ "resist_physical", "resist_magic", "resist_fire",
@@ -455,7 +455,7 @@ static void AttrTagsCreate(Attr self,Widget parent)
     self->attrnumber = 0;
     while (self->desc[self->attrnumber].label)
 	self->attrnumber++;
-    
+
     self->tags = (AttrTags*)XtCalloc(self->attrnumber,sizeof(AttrTags));
     for(i=0; i < self->attrnumber; i++) {
 	if (self->desc[i].type == TypeString) {
@@ -473,7 +473,7 @@ static void AttrTagsCreate(Attr self,Widget parent)
 		 XtNeditType,XawtextEdit,
 		 NULL);
 	}
-    } 
+    }
     for(i=0; i < self->attrnumber; i++) {
 	if (self->desc[i].type == TypeToggle) {
 	    self->tags[i].cont = XtVaCreateWidget
@@ -510,7 +510,7 @@ static void AttrApplyCb(Widget w,XtPointer client,XtPointer call)
   AttrApply(self);
 }
 
-/* 
+/*
  * receive cancel
  */
 static void AttrCancelCb(Widget w,XtPointer client,XtPointer call)
@@ -520,7 +520,7 @@ static void AttrCancelCb(Widget w,XtPointer client,XtPointer call)
   AttrDestroy(self);
 }
 
-/* 
+/*
  * receive dump
  */
 static void AttrDumpCb(Widget w,XtPointer client,XtPointer call)
@@ -529,7 +529,7 @@ static void AttrDumpCb(Widget w,XtPointer client,XtPointer call)
   Attr self = (Attr)client;
 
   dump_object(self->op, buf, sizeof(buf));
-  CnvBrowseShowString(self->dump,buf); 
+  CnvBrowseShowString(self->dump,buf);
 }
 
 /**********************************************************************
@@ -553,8 +553,8 @@ static CrListNode AttrInventoryNext(XtPointer client,XtPointer call)
 	op = self->op->inv;
     }
 
-    if(op) { 
-	node.face = op->face; 
+    if(op) {
+	node.face = op->face;
 	node.name = op->name;
 	node.ptr = (XtPointer)op;
 	return &node;
@@ -563,7 +563,7 @@ static CrListNode AttrInventoryNext(XtPointer client,XtPointer call)
 }
 
 /*
- * callback: insert object 
+ * callback: insert object
  */
 static void InsertCb(Widget w,XtPointer client,XtPointer call)
 {
@@ -577,7 +577,7 @@ static void InsertCb(Widget w,XtPointer client,XtPointer call)
     }
 }
 
-/* 
+/*
  * create recursively attributes from inventory
  */
 static void AttrInventorySelectCb(Widget w,XtPointer client,XtPointer call)
@@ -590,7 +590,7 @@ static void AttrInventorySelectCb(Widget w,XtPointer client,XtPointer call)
 	AttrDestroy (self->attr);
     }
 
-    self->attr = AttrCreate("attr",self->app, ob, 
+    self->attr = AttrCreate("attr",self->app, ob,
 			    AttrDescription, GetType(ob), self->client);
 }
 
@@ -602,7 +602,7 @@ static void DeleteCb(Widget w,XtPointer client,XtPointer call)
     Attr self = (Attr)client;
     CrListCall ret = (CrListCall)call;
     object *obj = ret->node;
-    
+
     debug1("Attr-DeleteCb() %s\n",obj->name);
     if (self->attr && self->attr->op == obj)
 	AttrDestroy (self->attr);
@@ -733,7 +733,7 @@ static void AppLayout(Attr self,Widget parent, char *name)
 	 XtNfromVert,self->iw.name,
 	 XtNfromHoriz,self->iw.face,
 	 NULL);
-    
+
     self->iw.inv = XtVaCreateManagedWidget
 	("list",crListWidgetClass,view,
 	 XtNpackage, self,
@@ -745,7 +745,7 @@ static void AppLayout(Attr self,Widget parent, char *name)
 		  (XtPointer)self);
     XtAddCallback(self->iw.inv,XtNdeleteCallback,DeleteCb,
 		  (XtPointer)self);
-    
+
     /*** multi ***/
     view1 = XtVaCreateManagedWidget
 	("view",viewportWidgetClass,form,
@@ -812,11 +812,11 @@ static void AppLayout(Attr self,Widget parent, char *name)
  *   allocated anyway.
  * - create widgets & popup window
  */
-Attr AttrCreate(char *name, App app, object *ob, 
+Attr AttrCreate(char *name, App app, object *ob,
 		AttrDef *desc, unsigned long flags, Edit edit)
 {
   Attr self = (Attr) XtMalloc (sizeof(struct _Attr));
- 
+
   if (ob->head)
     ob = ob->head;
   self->op = ob;
@@ -885,15 +885,15 @@ void AttrChange(Attr self,object *ob, unsigned long flags, Edit edit)
   /* get attribute value */
   for (i = 0; self->desc[i].label; i++, mask <<= 1)
       if(self->flags & mask) {
-	  self->desc[i].getValue (ob, buf, (XtPointer) self->client);	
+	  self->desc[i].getValue (ob, buf, (XtPointer) self->client);
 	  if (self->desc[i].type == TypeString) {
 	      XtVaSetValues(self->tags[i].value,
 			    XtNstring, buf,
-			    NULL);	
+			    NULL);
 	  } else if (self->desc[i].type == TypeToggle) {
 	      XtVaSetValues(self->tags[i].value,
 			    XtNstate, *buf ? TRUE : FALSE,
-			    NULL);	
+			    NULL);
 	  }
       }
 
@@ -954,14 +954,14 @@ void AttrDestroy(Attr self)
     self->isup = False;
     CnvBrowseDestroy(self->dump);
 
-    /* 
+    /*
      * dirty part:
      * here we find out to what part this window belongs to.
      * it may be:
      *  - Attr of Look in App
      *  - Attr of other Attr (inventory)
      */
-    
+
     if (self == self->app->attr)
 	self->app->attr = NULL;
     else {
@@ -979,7 +979,7 @@ void AttrDestroy(Attr self)
 }
 
 /*
- * member: store information from edited widget structure 
+ * member: store information from edited widget structure
  * to object structure
  */
 void AttrApply(Attr self)
@@ -1009,9 +1009,9 @@ void AttrApply(Attr self)
 	     */
 	    if (!strncmp(var, "randomitems", 11)) set_all=0;
 	    for (i = 0; i < ALLOWED_VARIABLES; i++)
-		if (!strncmp (allowed_variables[i], var, 
+		if (!strncmp (allowed_variables[i], var,
 			      strlen(allowed_variables[i]))) {
-		    if (set_variable(ob,var) == -1) {		    
+		    if (set_variable(ob,var) == -1) {
 			sprintf(buf,"%s: no such variable",var);
 			CnvNotify(buf,"Continue",NULL);
 		    }
@@ -1028,12 +1028,12 @@ void AttrApply(Attr self)
 		      NULL);
 	if(ob->name) free_string(ob->name);
 	ob->name = add_string(str);
-	
+
 	/*** message ***/
 	XtVaGetValues(self->iw.msg,
 		      XtNstring,&str,
 		      NULL);
-	
+
 	if(self->op->msg) free_string(self->op->msg);
 	if((len = strlen(str))) {
 	    if(str[len-1] != '\n') str[len-1] = '\n'; /*** kludge ***/
@@ -1063,7 +1063,7 @@ void AttrApply(Attr self)
 
     /*** update ***/
     AppUpdate (self->app);
-	
+
     self->modified = True;
     /*self->client->modified = True;*/
     EditModified(self->client);
