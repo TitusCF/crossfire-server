@@ -355,7 +355,7 @@ void do_region_kills(region* reg, char* buffer, int size, time_t start, time_t e
     char where[ 50 ];
     int region_id;
     f.no_player_death = "No player died.";
-    f.one_player_death = "Only one player died, may Fido(tm) have mercy.";
+    f.one_player_death = "Only one player died, May Fido(tm) Have Mercy.";
     f.many_player_death ="Monsters were busy, %d players died.";
     f.no_monster_death = "No monster was killed, players were lazy around here.";
     f.one_monster_death = "One poor monster was killed.";
@@ -376,7 +376,7 @@ void do_region(region* reg, char* buffer, int size, time_t start, time_t end) {
 void do_world_kills(char* buffer, int size, time_t start, time_t end) {
     kill_format f;
     f.no_player_death = "No player died at all.";
-    f.one_player_death = "Only one player died in the whole world, may Fido(tm) have mercy.";
+    f.one_player_death = "Only one player died in the whole world, May Fido(tm) Have Mercy.";
     f.many_player_death ="Monsters all around the world were busy, %d players died.";
     f.no_monster_death = "No monster was killed at all, players must be tired!";
     f.one_monster_death = "One poor monster was killed in the whole, too bad for it.";
