@@ -1555,6 +1555,8 @@ int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
     CLEAR_FLAG(op, FLAG_WIZCAST);
+    if (op->contr->followed_player)
+        FREE_AND_CLEAR_STR(op->contr->followed_player);
 
     if (settings.real_wiz == TRUE)
         CLEAR_FLAG(op, FLAG_WAS_WIZ);
@@ -2371,3 +2373,32 @@ int command_style_map_info(object *op, char *params)
     return 0;
 }
 
+/**
+ * DM wants to follow a player, or stop following a player.
+ */
+int command_follow(object* op, char* params) {
+    player* other;
+    if (!params) {
+        if (op->contr->followed_player != NULL) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);
+            FREE_AND_CLEAR_STR(op->contr->followed_player);
+        }
+        return;
+    }
+
+    other = find_player_partial_name(params);
+    if (!other) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "No such player or ambiguous name.", NULL);
+        return;
+    }
+    if (other == op->contr) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You can't follow yourself.", NULL);
+        return;
+    }
+
+    if (op->contr->followed_player)
+        FREE_AND_CLEAR_STR(op->contr->followed_player);
+
+    op->contr->followed_player = add_string(other->ob->name);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", NULL, op->contr->followed_player);
+}

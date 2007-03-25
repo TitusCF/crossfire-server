@@ -241,8 +241,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* Lauwenmark : Here we handle the MAPENTER global event */
     execute_global_event(EVENT_MAPENTER, op, op->map);
 
+    /** Hidden DMs don't appear on map. */
     if (!op->contr->hidden)
-	newmap->players++;
+        newmap->players++;
 
     newmap->timeout=0;
     op->enemy = NULL;
@@ -290,7 +291,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     if (oldmap != newmap) {
         if (oldmap) /* adjust old map */
         {
-            oldmap->players--;
+            if (!op->contr->hidden)
+                /** Hidden DMs don't appear on map. */
+                oldmap->players--;
 
             if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
 	        set_map_timeout(oldmap);
@@ -896,6 +899,28 @@ static void process_players1(mapstruct *map)
 	    if (pl->ob == NULL) continue;
 
 	    if (map!=NULL && pl->ob->map!=map) continue;
+
+        /** Handle DM follow command */
+        if (pl->followed_player) {
+            player* followed = find_player_partial_name(pl->followed_player);
+            if (followed && followed->ob && followed->ob->map) {
+                rv_vector rv;
+                get_rangevector(pl->ob, followed->ob, &rv, 0);
+                if (rv.distance > 4) {
+                    int space = find_free_spot(pl->ob, followed->ob->map, followed->ob->x, followed->ob->y, 1, 25);
+                    if (space == -1)
+                        /** This is a DM, just teleport on the top of player. */
+                        space = 0;
+                    remove_ob(pl->ob);
+                    insert_ob_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x + freearr_x[space], followed->ob->y + freearr_y[space]);
+                    map_newmap_cmd(pl);
+                }
+            }
+            else {
+                draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", NULL, pl->followed_player);
+                FREE_AND_CLEAR_STR(pl->followed_player);
+            }
+        } /** End of follow */
 
             if(pl->ob->speed_left>0) {
 		if (handle_newcs_player(pl->ob))

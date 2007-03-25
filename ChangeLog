@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1560387: DM follow command.
+ include/player.h sproto.h
+ server/c_wiz.c commands.c
+ server/server.c: also fix wrong player count with hidden DMs.
+Nicolas Weeger 2007-03-25
+
 Fix broken banish command: loop logic was weird (skipping one file?).
  server/ban.c
 Nicolas Weeger 2007-03-25

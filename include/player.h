@@ -226,6 +226,7 @@ typedef struct pl {
     /* Special DM fields */
     tag_t*  stack_items;    /* Item stack for patch/dump/... commands */
     int     stack_position; /* Current stack position, 0 for no item */
+    sstring followed_player; /**< Player the DM is following. */
 } player;
 
 #endif /* PLAYER_H */

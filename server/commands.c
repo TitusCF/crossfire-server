@@ -227,6 +227,7 @@ command_array_struct WizCommands [] = {
   {"dumpallmaps", command_dumpallmaps,0.0},
   {"dumpallobjects", command_dumpallobjects,0.0},
   {"dumpmap", command_dumpmap,0.0},
+  {"follow", command_follow,0.0},
   {"forget_spell", command_forget_spell, 0.0},
   {"free", command_free,0.0},
   {"freeze", command_freeze,0.0},
