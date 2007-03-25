@@ -879,7 +879,6 @@ A	.+
 ^walk_off{S}	    { if (IVAL) op->move_off |= MOVE_WALK; else op->move_off &= ~MOVE_WALK; }
 ^fly_on{S}	    { if (IVAL) op->move_on |= MOVE_FLY_LOW; else op->move_on &= ~MOVE_FLY_LOW; }
 ^fly_off{S}	    { if (IVAL) op->move_off |= MOVE_FLY_LOW; else op->move_off &= ~MOVE_FLY_LOW; }
-^flying{S}	    { if (IVAL) op->move_type |= MOVE_FLY_LOW; else op->move_type &= ~MOVE_FLY_LOW; }
 
 %{ /* These are the new values */
 %}

@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+doc/Developers/objects: Mark 'flying' attribute as obsolete.
+common/loader.l: In check_loaded_object() remove code to support legacy
+ attribute 'flying'.
+Andreas Kirschbaum 2007-03-25
+
 common/loader.l: In check_loaded_object() remove code to update legacy
  playermover objects after map loading.
 Andreas Kirschbaum 2007-03-25

@@ -2010,7 +2010,8 @@ fly_on <1>              O is applied by anything flying onto it
 fly_off <1>             O is applied by anything flying off it.
 is_animated <1>         set if O is animated.
 
-flying <1>              set if O is flying (used in fly_on/fly_off).
+flying <1>              set if O is flying (used in fly_on/fly_off). (obsolete
+                        -- use move_type fly_low instead)
 monster <1>             set if O is a monster.
 friendly <1>            set if O will help player instead of attacking.
 generator <1>           set if O is a generator.
