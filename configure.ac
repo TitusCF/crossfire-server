@@ -288,9 +288,11 @@ AC_OUTPUT([Makefile
 	plugins/cfpython/include/Makefile plugins/cfanim/Makefile 
 	plugins/cfanim/include/Makefile
 	plugins/common/Makefile plugins/common/include/Makefile
-	plugins/cflogger/Makefile plugins/cfnewspaper/Makefile
+	plugins/cflogger/Makefile plugins/cflogger/include/Makefile
+	plugins/cfnewspaper/Makefile
 	devel/Makefile
-	test/Makefile test/unit/Makefile test/toolkit/Makefile
+	test/Makefile test/include/Makefile test/unit/Makefile 
+	test/templates/Makefile test/toolkit/Makefile
 	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile
         types/Makefile
 	 ])
