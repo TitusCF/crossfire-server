@@ -296,6 +296,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -365,10 +366,10 @@ LDADD = ../../../common/libcross.a libstubs.a ../../../socket/libsocket.a ../../
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/random_maps
 CHECK_PARENT_NAME = Unit
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
 INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
 BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
 @PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
 @PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 TESTS = check_decor check_door check_exit check_expand2x check_floor check_maze_gen check_monster check_random_map check_reader check_rogue_layout check_room_gen_onion check_room_gen_spiral check_snake check_special check_square_spiral check_standalone check_style check_test check_treasure check_wall
@@ -889,6 +890,9 @@ clean-unit:
 
 check-local: check-html
 clean-local: clean-unit
+
+clean-local:
+	$(RM) .autorun.xml
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

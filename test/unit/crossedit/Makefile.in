@@ -58,87 +58,87 @@ PROGRAMS = $(noinst_PROGRAMS)
 check_App_SOURCES = check_App.c
 check_App_OBJECTS = check_App.$(OBJEXT)
 check_App_LDADD = $(LDADD)
-check_App_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_App_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_Attr_SOURCES = check_Attr.c
 check_Attr_OBJECTS = check_Attr.$(OBJEXT)
 check_Attr_LDADD = $(LDADD)
-check_Attr_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_Attr_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_Bitmaps_SOURCES = check_Bitmaps.c
 check_Bitmaps_OBJECTS = check_Bitmaps.$(OBJEXT)
 check_Bitmaps_LDADD = $(LDADD)
-check_Bitmaps_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_Bitmaps_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_CrEdit_SOURCES = check_CrEdit.c
 check_CrEdit_OBJECTS = check_CrEdit.$(OBJEXT)
 check_CrEdit_LDADD = $(LDADD)
-check_CrEdit_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_CrEdit_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_CrFace_SOURCES = check_CrFace.c
 check_CrFace_OBJECTS = check_CrFace.$(OBJEXT)
 check_CrFace_LDADD = $(LDADD)
-check_CrFace_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_CrFace_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_CrList_SOURCES = check_CrList.c
 check_CrList_OBJECTS = check_CrList.$(OBJEXT)
 check_CrList_LDADD = $(LDADD)
-check_CrList_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_CrList_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_CrUtil_SOURCES = check_CrUtil.c
 check_CrUtil_OBJECTS = check_CrUtil.$(OBJEXT)
 check_CrUtil_LDADD = $(LDADD)
-check_CrUtil_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_CrUtil_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_Edit_SOURCES = check_Edit.c
 check_Edit_OBJECTS = check_Edit.$(OBJEXT)
 check_Edit_LDADD = $(LDADD)
-check_Edit_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_Edit_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_MapAttr_SOURCES = check_MapAttr.c
 check_MapAttr_OBJECTS = check_MapAttr.$(OBJEXT)
 check_MapAttr_LDADD = $(LDADD)
-check_MapAttr_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_MapAttr_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_Str_SOURCES = check_Str.c
 check_Str_OBJECTS = check_Str.$(OBJEXT)
 check_Str_LDADD = $(LDADD)
-check_Str_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_Str_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_crossedit_SOURCES = check_crossedit.c
 check_crossedit_OBJECTS = check_crossedit.$(OBJEXT)
 check_crossedit_LDADD = $(LDADD)
-check_crossedit_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_crossedit_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_png_SOURCES = check_png.c
 check_png_OBJECTS = check_png.$(OBJEXT)
 check_png_LDADD = $(LDADD)
-check_png_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_png_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_stubs_SOURCES = check_stubs.c
 check_stubs_OBJECTS = check_stubs.$(OBJEXT)
 check_stubs_LDADD = $(LDADD)
-check_stubs_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_stubs_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 check_xutil_SOURCES = check_xutil.c
 check_xutil_OBJECTS = check_xutil.$(OBJEXT)
 check_xutil_LDADD = $(LDADD)
-check_xutil_DEPENDENCIES = ../../../common/libcross.a \
-	../../../crossedit/Cnv/libCnv.a \
-	../../../crossedit/libcrossedit.a
+check_xutil_DEPENDENCIES = $(top_builddir)/common/libcross.a \
+	$(top_builddir)/crossedit/Cnv/libCnv.a \
+	$(top_builddir)/crossedit/libcrossedit.a
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
@@ -243,6 +243,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -306,16 +307,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
+INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
+BUILT_SOURCES = $(LOGDIR)
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+@PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
+@PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/crossedit
 CHECK_PARENT_NAME = Unit
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
-INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
-BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
-@PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
-@PROCESS_XSLT_TRUE@CHECK_TXT = textlog
-LDADD = ../../../common/libcross.a  ../../../crossedit/Cnv/libCnv.a ../../../crossedit/libcrossedit.a $(LIBDL) @CHECK_LIBS@
+LDADD = $(top_builddir)/common/libcross.a  $(top_builddir)/crossedit/Cnv/libCnv.a $(top_builddir)/crossedit/libcrossedit.a $(LIBDL) @CHECK_LIBS@
 TESTS = check_App check_Attr check_Bitmaps check_CrEdit check_CrFace check_CrList check_crossedit check_CrUtil check_Edit check_MapAttr check_png check_Str check_stubs check_xutil
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -792,12 +793,18 @@ clean-unit:
 
 ../../logs/unit/crossedit:
 	(mkdir ../../logs; mkdir ../../logs/unit; mkdir ../../logs/unit/crossedit)
-../../../common/libcross.a:
-	( cd ../../../common ; make libcross.a )
-../../../crossedit/libcrossedit.a:
-	( cd ../../../crossedit ; make libcrossedit.a )
-../../../crossedit/Cnv/libCnv.a:
-	( cd ../../../crossedit/Cnv ; make libCnv.a )
+
+$(top_builddir)/common/libcross.a:
+	( cd $(top_builddir)/common ; make libcross.a )
+
+$(top_builddir)/crossedit/libcrossedit.a:
+	( cd $(top_builddir)/crossedit ; make libcrossedit.a )
+
+$(top_builddir)/crossedit/Cnv/libCnv.a:
+	( cd $(top_builddir)/crossedit/Cnv ; make libCnv.a )
+
+clean-local:
+	$(RM) -f .autorun.xml
 
 check-local: check-html
 clean-local: clean-unit

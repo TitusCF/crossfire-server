@@ -1,6 +1,6 @@
-INCLUDES = -I../../include -I../include
+INCLUDES = -I$(top_srcdir)/include -I../include
 
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../\"
 noinst_LIBRARIES = libtoolkit_common.a libtoolkit_random_maps.a libtoolkit_socket.a libtoolkit_server.a libtoolkit_crossedit.a
 
 libtoolkit_common_a_SOURCES = toolkit_common.c

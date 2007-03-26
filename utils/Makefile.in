@@ -147,6 +147,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = sed
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -217,7 +218,6 @@ dist_pkglib_SCRIPTS = mktable.script add_throw.perl metaserver.pl
 dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html cfmeta-rrd
 EXTRA_DIST = 
 CLEANFILES = crossloop.pl crossloop
-SED = sed
 all: all-am
 
 .SUFFIXES:

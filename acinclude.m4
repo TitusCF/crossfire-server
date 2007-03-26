@@ -284,6 +284,8 @@ int main ()
 dnl CF_CHECK_CROSSEDIT(X11LIBS, ACTION-IF-FOUND , ACTION-IF-NOT-FOUND)
 dnl check if a sample X test code can compile
 dnl
+dnl The distcheck builds the source in a different area, so
+dnl need to make sure srcdir is set.
 
 AC_DEFUN([CF_CHECK_CROSSEDIT],[
 
@@ -291,7 +293,7 @@ AC_DEFUN([CF_CHECK_CROSSEDIT],[
 
     LIBS="$1 $LIBS" 
     OCFLAGS=$CFLAGS
-    CFLAGS="-Iinclude -Icrossedit/include"
+    CFLAGS="-I./${srcdir}/include -I./${srcdir}/crossedit/include"
     AC_MSG_CHECKING(for crossedit required headers)
     AC_TRY_LINK([
 #include <Posix.h>

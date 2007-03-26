@@ -21,3 +21,6 @@ TESTS= check_decor check_door check_exit check_expand2x check_floor check_maze_g
 
 check-local: check-html
 clean-local: clean-unit
+
+clean-local:
+	$(RM) .autorun.xml

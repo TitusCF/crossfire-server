@@ -23,3 +23,6 @@ proto:
 	@if [ "X$(NO_X)" != "Xyes" ]; then \
 		(cd crossedit; make proto) \
 	fi
+
+clean-local:
+	$(RM) configtest.out configtest.xml configtest.xsl

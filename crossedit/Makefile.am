@@ -39,7 +39,7 @@ libcrossedit_a_SOURCES = \
 	Bitmaps.c \
 	Str.c \
 	xutil.c \
-    stubs.c \
+	stubs.c \
 	CrFace.h \
 	CrFaceP.h \
 	CrEdit.h \

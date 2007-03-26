@@ -207,6 +207,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -277,10 +278,10 @@ TESTS = check_image check_info check_init check_item check_loop check_lowlevel c
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/socket
 CHECK_PARENT_NAME = Unit
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
 INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
 BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
 @PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
 @PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 all: $(BUILT_SOURCES)
@@ -751,6 +752,9 @@ check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
 	rm -f autorun.xml
+
+clean-local:
+	$(RM) .autorun.xml
 
 check-local: check-html
 clean-local: clean-unit

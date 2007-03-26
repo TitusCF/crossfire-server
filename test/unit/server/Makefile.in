@@ -567,8 +567,6 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LATEX = @LATEX@
-@HAVE_LIBDL_FALSE@LDFLAGS = 
-@HAVE_LIBDL_TRUE@LDFLAGS = -export-dynamic
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
@@ -600,6 +598,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -665,6 +664,8 @@ x_includes = @x_includes@
 x_libraries = @x_libraries@
 @HAVE_LIBDL_FALSE@LIBDL = 
 @HAVE_LIBDL_TRUE@LIBDL = -ldl
+@HAVE_LIBDL_FALSE@AM_LDFLAGS = 
+@HAVE_LIBDL_TRUE@AM_LDFLAGS = -export-dynamic
 #note all .a are here twice for compilation problems
 AM_LIBTOOLFLAGS = --preserve-dup-deps
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -685,10 +686,10 @@ TESTS = check_alchemy check_apply check_attack check_ban check_build_map check_c
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/server
 CHECK_PARENT_NAME = Unit
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
 INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
 BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
 @PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
 @PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 all: $(BUILT_SOURCES)
@@ -1282,6 +1283,9 @@ check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
 	rm -f autorun.xml
+
+clean-local:
+	$(RM) .autorun.xml
 
 check-local: check-html
 clean-local: clean-unit

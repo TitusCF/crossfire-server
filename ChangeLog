@@ -123,6 +123,28 @@ Nicolas Weeger 2007-03-21
 server/monster.c: documentation and indent, no functional change.
 Nicolas Weeger 2007-03-18
 
+Fix 'make distclean':
+acinclude.m4: Use -I./${srcdir} for crossedit check - otherwise, when
+   building in alternate directory, doesn't fine files correctly.
+configure.*: Add new makefiles.
+check-fragment.am, test/unit/crossedit/Makefile.am,
+  test/unit/common/Makefile.am,test/toolkit/Makefile.am: Add support for building in alternate directory, which
+   make distclean does - using relative directories to find files
+   does not work.  Some files should also be in the buildir, not srcdir.
+   Have Makefiels remove .autrun.xml with distclean
+Makefile.am: Remove to config files on make distclean
+test/include/Makefile.*, test/templates/Makefile.*: Add missing Makefiles
+test/unit/random_maps/Makefile.am,test/unit/socket/Makefile.am,
+  test/unit/Makefile.am: remove .autorun.xml file as part of distclean
+test/unit/server/Makefile.am: Remove LDFLAGS from Makefile.am - automake
+  says don't mess with those - use AM_LDFLAGS instead.  Remove
+  .autrun.xml file with distclean
+test/Makefile.am: Add include, templates to subdir list.  Have
+   make clean remove log files, .autorun.xml file.
+crossedit/Makefile.am: Fix indentation of stubs.c (use tab, not spaces)
+other files: Rebuilt as part of running autogen.sh
+MSW 2007-03-25
+
 Implement feature request #1528522: Initial items should be applied/worn.
  server/player.c
 ---

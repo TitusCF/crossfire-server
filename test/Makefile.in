@@ -143,6 +143,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -206,16 +207,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
-SUBDIRS = toolkit unit
 CHECK_ROOT = ./
 CHECK_FOLDER = .
 CHECK_PARENT_NAME = Site index
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
 INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
 BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
 @PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
 @PROCESS_XSLT_TRUE@CHECK_TXT = textlog
+SUBDIRS = include templates toolkit unit
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -539,9 +540,6 @@ uninstall-info: uninstall-info-recursive
 	mostlyclean-recursive pdf pdf-am ps ps-am tags tags-recursive \
 	uninstall uninstall-am uninstall-info-am
 
-
-clean-local:
-	rm -rf logs
 $(LOGDIR):
 	mkdir -p $(LOGDIR)
 automenu:
@@ -634,6 +632,11 @@ check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:
 	rm -f autorun.xml
+
+clean-local:
+	$(RM) -rf logs
+	$(RM) .autorun.xml
+
 check-local: check-html check-text
 clean-local: clean-unit
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

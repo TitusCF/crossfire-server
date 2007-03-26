@@ -72,182 +72,182 @@ check_anim_SOURCES = check_anim.c
 check_anim_OBJECTS = check_anim.$(OBJEXT)
 check_anim_LDADD = $(LDADD)
 check_anim_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_arch_SOURCES = check_arch.c
 check_arch_OBJECTS = check_arch.$(OBJEXT)
 check_arch_LDADD = $(LDADD)
 check_arch_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_button_SOURCES = check_button.c
 check_button_OBJECTS = check_button.$(OBJEXT)
 check_button_LDADD = $(LDADD)
 check_button_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_exp_SOURCES = check_exp.c
 check_exp_OBJECTS = check_exp.$(OBJEXT)
 check_exp_LDADD = $(LDADD)
 check_exp_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_friend_SOURCES = check_friend.c
 check_friend_OBJECTS = check_friend.$(OBJEXT)
 check_friend_LDADD = $(LDADD)
 check_friend_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_glue_SOURCES = check_glue.c
 check_glue_OBJECTS = check_glue.$(OBJEXT)
 check_glue_LDADD = $(LDADD)
 check_glue_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_holy_SOURCES = check_holy.c
 check_holy_OBJECTS = check_holy.$(OBJEXT)
 check_holy_LDADD = $(LDADD)
 check_holy_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_image_SOURCES = check_image.c
 check_image_OBJECTS = check_image.$(OBJEXT)
 check_image_LDADD = $(LDADD)
 check_image_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_info_SOURCES = check_info.c
 check_info_OBJECTS = check_info.$(OBJEXT)
 check_info_LDADD = $(LDADD)
 check_info_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_init_SOURCES = check_init.c
 check_init_OBJECTS = check_init.$(OBJEXT)
 check_init_LDADD = $(LDADD)
 check_init_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_item_SOURCES = check_item.c
 check_item_OBJECTS = check_item.$(OBJEXT)
 check_item_LDADD = $(LDADD)
 check_item_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_links_SOURCES = check_links.c
 check_links_OBJECTS = check_links.$(OBJEXT)
 check_links_LDADD = $(LDADD)
 check_links_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_living_SOURCES = check_living.c
 check_living_OBJECTS = check_living.$(OBJEXT)
 check_living_LDADD = $(LDADD)
 check_living_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_loader_SOURCES = check_loader.c
 check_loader_OBJECTS = check_loader.$(OBJEXT)
 check_loader_LDADD = $(LDADD)
 check_loader_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_logger_SOURCES = check_logger.c
 check_logger_OBJECTS = check_logger.$(OBJEXT)
 check_logger_LDADD = $(LDADD)
 check_logger_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_los_SOURCES = check_los.c
 check_los_OBJECTS = check_los.$(OBJEXT)
 check_los_LDADD = $(LDADD)
 check_los_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_map_SOURCES = check_map.c
 check_map_OBJECTS = check_map.$(OBJEXT)
 check_map_LDADD = $(LDADD)
 check_map_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_object_SOURCES = check_object.c
 check_object_OBJECTS = check_object.$(OBJEXT)
 check_object_LDADD = $(LDADD)
 check_object_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_path_SOURCES = check_path.c
 check_path_OBJECTS = check_path.$(OBJEXT)
 check_path_LDADD = $(LDADD)
 check_path_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_player_SOURCES = check_player.c
 check_player_OBJECTS = check_player.$(OBJEXT)
 check_player_LDADD = $(LDADD)
 check_player_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_porting_SOURCES = check_porting.c
 check_porting_OBJECTS = check_porting.$(OBJEXT)
 check_porting_LDADD = $(LDADD)
 check_porting_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_quest_SOURCES = check_quest.c
 check_quest_OBJECTS = check_quest.$(OBJEXT)
 check_quest_LDADD = $(LDADD)
 check_quest_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_re_cmp_SOURCES = check_re-cmp.c
 check_re_cmp_OBJECTS = check_re-cmp.$(OBJEXT)
 check_re_cmp_LDADD = $(LDADD)
 check_re_cmp_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_readable_SOURCES = check_readable.c
 check_readable_OBJECTS = check_readable.$(OBJEXT)
 check_readable_LDADD = $(LDADD)
 check_readable_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_recipe_SOURCES = check_recipe.c
 check_recipe_OBJECTS = check_recipe.$(OBJEXT)
 check_recipe_LDADD = $(LDADD)
 check_recipe_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_region_SOURCES = check_region.c
 check_region_OBJECTS = check_region.$(OBJEXT)
 check_region_LDADD = $(LDADD)
 check_region_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_shstr_SOURCES = check_shstr.c
 check_shstr_OBJECTS = check_shstr.$(OBJEXT)
 check_shstr_LDADD = $(LDADD)
 check_shstr_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_time_SOURCES = check_time.c
 check_time_OBJECTS = check_time.$(OBJEXT)
 check_time_LDADD = $(LDADD)
 check_time_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_treasure_SOURCES = check_treasure.c
 check_treasure_OBJECTS = check_treasure.$(OBJEXT)
 check_treasure_LDADD = $(LDADD)
 check_treasure_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 check_utils_SOURCES = check_utils.c
 check_utils_OBJECTS = check_utils.$(OBJEXT)
 check_utils_LDADD = $(LDADD)
 check_utils_DEPENDENCIES =  \
-	$(top_srcdir)/test/toolkit/libtoolkit_common.a \
-	$(top_srcdir)/common/libcross.a libstubs.a
+	$(top_builddir)/test/toolkit/libtoolkit_common.a \
+	$(top_builddir)/common/libcross.a libstubs.a
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/utils/depcomp
 am__depfiles_maybe = depfiles
@@ -360,6 +360,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -423,18 +424,18 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 x_includes = @x_includes@
 x_libraries = @x_libraries@
+LOGDIR = $(top_builddir)/test/logs/$(CHECK_FOLDER)
+INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
+BUILT_SOURCES = $(LOGDIR)
+AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+@PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
+@PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 CHECK_ROOT = ../../
 CHECK_FOLDER = unit/common
 CHECK_PARENT_NAME = Unit
-LOGDIR = $(top_srcdir)/test/logs/$(CHECK_FOLDER)
-INCLUDES = -I${top_srcdir}/include -I${top_srcdir}/test/include
-BUILT_SOURCES = $(LOGDIR)
-AM_CPPFLAGS = -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_srcdir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
-@PROCESS_XSLT_TRUE@CHECK_HTML = logreport template-copy
-@PROCESS_XSLT_TRUE@CHECK_TXT = textlog
 noinst_LIBRARIES = libstubs.a
 libstubs_a_SOURCES = stubs_common.c
-LDADD = $(top_srcdir)/test/toolkit/libtoolkit_common.a $(top_srcdir)/common/libcross.a libstubs.a $(LIBDL) @CHECK_LIBS@
+LDADD = $(top_builddir)/test/toolkit/libtoolkit_common.a $(top_builddir)/common/libcross.a libstubs.a $(LIBDL) @CHECK_LIBS@
 TESTS = check_anim check_arch check_button check_exp check_friend check_glue check_holy check_image check_info check_init check_item check_links check_living check_loader check_logger check_los check_map check_object check_path check_player check_porting check_quest check_readable check_recipe check_re-cmp check_region check_shstr check_time check_treasure check_utils
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -982,11 +983,14 @@ check-text: $(CHECK_TXT)
 clean-unit:
 	rm -f autorun.xml
 
-$(top_srcdir)/common/libcross.a:
-	( cd $(top_srcdir)/common ; make libcross.a )
+$(top_builddir)/common/libcross.a:
+	( cd $(top_builddir)/common ; make libcross.a )
 
-$(top_srcdir)/test/toolkit/libtoolkit_common.a:
-	( cd $(top_srcdir)/test/toolkit/; make libtoolkit_common.a)
+$(top_builddir)/test/toolkit/libtoolkit_common.a:
+	( cd $(top_builddir)/test/toolkit/; make libtoolkit_common.a)
+
+clean-local:
+	$(RM) .autorun.xml
 
 check-local: check-html
 clean-local: clean-unit

@@ -199,6 +199,7 @@ PYTHON_PLUGIN_TRUE = @PYTHON_PLUGIN_TRUE@
 PY_INCLUDES = @PY_INCLUDES@
 PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -278,7 +279,7 @@ libcrossedit_a_SOURCES = \
 	Bitmaps.c \
 	Str.c \
 	xutil.c \
-    stubs.c \
+	stubs.c \
 	CrFace.h \
 	CrFaceP.h \
 	CrEdit.h \

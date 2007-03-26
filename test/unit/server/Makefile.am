@@ -1,9 +1,9 @@
 if HAVE_LIBDL
 LIBDL=-ldl
-LDFLAGS=-export-dynamic
+AM_LDFLAGS=-export-dynamic
 else
 LIBDL=
-LDFLAGS=
+AM_LDFLAGS=
 endif
 #note all .a are here twice for compilation problems
 AM_LIBTOOLFLAGS= --preserve-dup-deps
@@ -39,6 +39,9 @@ CHECK_ROOT=../../
 CHECK_FOLDER=unit/server
 CHECK_PARENT_NAME=Unit
 include $(top_srcdir)/check-fragment.am
+
+clean-local:
+	$(RM) .autorun.xml
 
 check-local: check-html
 clean-local: clean-unit
