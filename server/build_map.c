@@ -43,8 +43,9 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
     while ( ob )
         {
             if ((ob->head && !QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && !QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
-                // Check for the flag is required, as this function can be called recursively
-                // on different spots.
+                    /* Check for the flag is required, as this function
+                     * can be called recursively on different spots.
+                     */
                 return 0;
 	/* if ob is not a marking rune or floor, then check special cases */
 	if ( strcmp( ob->arch->name, "rune_mark" ) && ob->type != FLOOR && !QUERY_FLAG(ob, FLAG_IS_FLOOR ))
