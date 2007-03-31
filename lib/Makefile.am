@@ -41,7 +41,7 @@ dist_help_DATA = help/apply help/applymode \
 	help/cast help/drop help/dropall \
 	help/golem help/invoke \
 	help/keys help/killpets \
-	help/listen \
+	help/listen help/maps \
 	help/mark help/melee help/mode \
 	help/motd help/mouse help/move \
 	help/news help/output \
