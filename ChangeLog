@@ -15,6 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove generated files:
+ Makefile.in in all directories
+ aclocal.m4
+ configure
+ utils/config.guess
+ utils/config.sub
+ utils/get_release
+ utils/ltmain.sh
+Nicolas Weeger 2007-03-31
+
 crossedit/Attr.c: Remove obsolete 'flying' attribute.
 Andreas Kirschbaum 2007-03-26
 
