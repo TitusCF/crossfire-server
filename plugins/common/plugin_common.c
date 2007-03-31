@@ -49,8 +49,6 @@ static f_plug_api cfapiSystem_timer_destroy = NULL;
 static f_plug_api cfapiSystem_directory = NULL;
 static f_plug_api cfapiSystem_re_cmp = NULL;
 
-static f_plug_api cfapiMap_create_path = NULL;
-
 static f_plug_api cfapiObject_get_property = NULL;
 static f_plug_api cfapiObject_set_property = NULL;
 static f_plug_api cfapiObject_apply = NULL;
@@ -97,6 +95,8 @@ static f_plug_api cfapiMap_message = NULL;
 static f_plug_api cfapiMap_get_object_at = NULL;
 static f_plug_api cfapiMap_present_arch_by_name = NULL;
 static f_plug_api cfapiMap_get_flags = NULL;
+static f_plug_api cfapiMap_create_path = NULL;
+static f_plug_api cfapiMap_has_been_loaded = NULL;
 static f_plug_api cfapiPlayer_find = NULL;
 static f_plug_api cfapiPlayer_message = NULL;
 static f_plug_api cfapiPlayer_send_inventory = NULL;
@@ -181,6 +181,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiMap_get_object_at, "cfapi_map_get_object_at", z );
     GET_HOOK( cfapiMap_present_arch_by_name, "cfapi_map_present_arch_by_name", z );
     GET_HOOK( cfapiMap_get_flags, "cfapi_map_get_flags", z );
+    GET_HOOK( cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z );
     GET_HOOK( cfapiPlayer_find, "cfapi_player_find", z );
     GET_HOOK( cfapiPlayer_message, "cfapi_player_message", z );
     GET_HOOK( cfapiPlayer_send_inventory, "cfapi_player_send_inventory", z );
@@ -521,15 +522,44 @@ int cf_player_can_pay(object* pl)
     return *(int*)cfapiPlayer_can_pay(&type, pl);
 }
 
-mapstruct* cf_map_get_map( char* name )
+/**
+ * Wrapper for ready_map_name().
+ * @copydoc ready_map_name()
+ */
+mapstruct* cf_map_get_map(const char* name, int flags)
 {
     int type;
-    return cfapiMap_get_map( &type, 1, name, 0);
+    mapstruct* ret;
+    cfapiMap_get_map(&type, 1, name, flags, &ret);
+    assert(type == CFAPI_PMAP);
+    return ret;
 }
-mapstruct*   cf_map_get_first(void)
+
+/**
+ * Wrapper for has_been_loaded().
+ * @copydoc has_been_loaded()
+ */
+mapstruct* cf_map_has_been_loaded(const char* name)
 {
     int type;
-    return cfapiMap_get_map( &type, 3);
+    mapstruct* ret;
+    cfapiMap_has_been_loaded(&type, name, &ret);
+    assert(type == CFAPI_PMAP);
+    return ret;
+}
+
+/**
+ * Gives access to ::first_map.
+ * @return
+ * ::first_map.
+ */
+mapstruct* cf_map_get_first(void)
+{
+    int type;
+    mapstruct* ret;
+    cfapiMap_get_map(&type, 3, &ret);
+    assert(type == CFAPI_PMAP);
+    return ret;
 }
 int cf_object_query_money( object* op)
 {

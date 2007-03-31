@@ -357,7 +357,7 @@ int runteleport(struct CFanimation_struct* animation, long int id, void* paramet
     teleport_params* teleport=(teleport_params*)parameters;
     if (!parameters)
         return 0;
-    cf_object_teleport(animation->victim, cf_map_get_map(teleport->mapname),
+    cf_object_teleport(animation->victim, cf_map_get_map(teleport->mapname, 0),
                        teleport->mapx, teleport->mapy);
     free(parameters);
     return 1;

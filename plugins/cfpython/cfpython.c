@@ -124,6 +124,7 @@ static PyObject* unregisterGEvent(PyObject* self, PyObject* args);
 static PyObject* CFPythonError;
 static PyObject* getTime(PyObject* self, PyObject* args);
 static PyObject* destroyTimer(PyObject* self, PyObject* args);
+static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
@@ -186,6 +187,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"UnregisterGlobalEvent",unregisterGEvent,      METH_VARARGS},
     {"GetTime",             getTime,                METH_VARARGS},
     {"DestroyTimer",        destroyTimer,           METH_VARARGS},
+    {"MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS},
     {NULL, NULL, 0}
 };
 
@@ -295,11 +297,12 @@ static PyObject* readyMap(PyObject* self, PyObject* args)
 {
     char* mapname;
     mapstruct* map;
+    int flags = 0;
 
-    if (!PyArg_ParseTuple(args, "s", &mapname))
+    if (!PyArg_ParseTuple(args, "s|i", &mapname, &flags))
         return NULL;
 
-    map = cf_map_get_map(mapname);
+    map = cf_map_get_map(mapname, flags);
 
     return Crossfire_Map_wrap(map);
 }
@@ -660,6 +663,14 @@ static PyObject* destroyTimer(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "i", &id))
         return NULL;
     return Py_BuildValue("i", cf_timer_destroy(id));
+}
+
+static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args)
+{
+    char* name;
+    if (!PyArg_ParseTuple(args, "s", &name))
+        return NULL;
+    return Crossfire_Map_wrap(cf_map_has_been_loaded(name));
 }
 
 void initContextStack()

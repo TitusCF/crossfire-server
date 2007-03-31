@@ -999,14 +999,23 @@ void* cfapi_log(int* type, ...)
 
 /* MAP RELATED HOOKS */
 
+/**
+ * Gets map information.
+ *
+ * First parameter is a integer, which should be:
+ * - 0 with 2 int and a mapstruct**: new map of specified size.
+ * - 1 with char*, int, mapstruct**: call ready_map_name().
+ * - 2 with mapstruct*, 2 int and mapstruct**: call to get_map_from_coord().
+ * - 3 with mapstruct**, return ::first_map.
+ */
 void* cfapi_map_get_map(int* type, ...)
 {
     va_list args;
-    mapstruct* rv;
+    mapstruct** ret;
     int ctype;
     int x, y;
     sint16 nx, ny;
-    char* name;
+    const char* name;
     mapstruct* m;
 
     va_start(args, type);
@@ -1018,24 +1027,28 @@ void* cfapi_map_get_map(int* type, ...)
     case 0:
         x = va_arg(args, int);
         y = va_arg(args, int);
-        rv = get_empty_map(x, y);
+        ret = va_arg(args, mapstruct**);
+        *ret = get_empty_map(x, y);
         break;
 
     case 1:
-        name = va_arg(args, char*);
+        name = va_arg(args, const char*);
         x = va_arg(args, int);
-        rv = ready_map_name(name, x);
+        ret = va_arg(args, mapstruct**);
+        *ret = ready_map_name(name, x);
         break;
 
     case 2:
         m = va_arg(args, mapstruct*);
         nx = va_arg(args, int);
         ny = va_arg(args, int);
-        rv = get_map_from_coord(m, &nx, &ny);
+        ret = va_arg(args, mapstruct**);
+        *ret = get_map_from_coord(m, &nx, &ny);
         break;
 
     case 3:
-        rv = first_map;
+        ret = va_arg(args, mapstruct**);
+        *ret = first_map;
         break;
 
     default:
@@ -1046,20 +1059,29 @@ void* cfapi_map_get_map(int* type, ...)
     }
     va_end(args);
     *type = CFAPI_PMAP;
-    return rv;
+    return NULL;
 }
+
+/**
+ * Wrapper for has_been_loaded().
+ * @param type
+ * will be CFAPI_PMAP.
+ * @return
+ * NULL.
+ */
 void* cfapi_map_has_been_loaded(int* type, ...)
 {
     va_list args;
-    mapstruct* map;
+    mapstruct** map;
     char* string;
 
     va_start(args, type);
     string = va_arg(args, char*);
-    map = has_been_loaded(string);
+    map = va_arg(args, mapstruct**);
+    *map = has_been_loaded(string);
     va_end(args);
     *type = CFAPI_PMAP;
-    return map;
+    return NULL;
 }
 
 /**
