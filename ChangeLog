@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1672117: elves etc don't fire over move_allow flying tiles.
+Logic for monster_use_bow() was changed to make monsters fire only
+ horizontally/vertically/in diagonals, and also fire over terrain
+ they can't cross but which lets an arrow go over.
+ server/monster.c
+ server/player.c: note about move_type
+Nicolas 2007-03-31
+
 Fix wrong type/missing value. Fix some comments.
  plugins/common/plugin_common.c
  server/plugins.c

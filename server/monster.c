@@ -1131,7 +1131,7 @@ static int monster_use_range(object *head,object *part,object *pl,int dir)
 /**
  * Tries to make a (part of a) monster fire a bow.
  *
- * Handles sp/gr limits, and confusion.
+ * Handles confusion effect.
  *
  * @param head
  * head of the monster.
@@ -1146,17 +1146,47 @@ static int monster_use_range(object *head,object *part,object *pl,int dir)
  */
 static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     object *owner;
+    rv_vector rv;
+    sint16 x, y;
+    mapstruct* map;
 
-    if(!(dir=path_to_player(part,pl,0)))
-	return 0;
-    if(QUERY_FLAG(head,FLAG_CONFUSED))
-	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+    get_rangevector(part, pl, &rv, 1);
+    if (rv.distance > 100)
+        /* Too far */
+        return 0;
+    if (rv.distance_x != 0 && rv.distance_y != 0 && abs(rv.distance_x) != abs(rv.distance_y))
+        /* Player must be on same horizontal, vertical or diagonal line. */
+        return 0;
+    dir = absdir(find_dir_2(rv.distance_x, rv.distance_y) + 4);
 
-    if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
-	int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
-	if(dirdiff(dir,dir2) < 1)
-	    return 0; /* Might hit owner with arrow */
+    if (QUERY_FLAG(head,FLAG_FRIENDLY))
+        owner = get_owner(head);
+    else
+        owner = NULL;
+
+    /* The monster can possibly fire, let's see if the path is ok for an arrow. */
+    x = part->x;
+    y = part->y;
+    map = part->map;
+    while (x != pl->x || y != pl->y || map != pl->map) {
+        x += freearr_x[dir];
+        y += freearr_y[dir];
+        map = get_map_from_coord(map, &x, &y);
+        if (!map) {
+            LOG(llevError, "monster_use_bow: no map but still path exists??\n");
+            return 0;
+        }
+        if ((GET_MAP_MOVE_BLOCK(map, x, y) & MOVE_FLY_LOW) == MOVE_FLY_LOW)
+            return 0;
+        if (owner && owner->x == x && owner->y == y && owner->map == map)
+            /* Don't hit owner! */
+            return 0;
     }
+
+    /* Finally, path is clear, can fire. */
+
+    if(QUERY_FLAG(head,FLAG_CONFUSED))
+        dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     /* in server/player.c */
     return fire_bow(head, part, NULL, dir, 0, part->x, part->y);

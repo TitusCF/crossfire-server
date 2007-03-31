@@ -1740,6 +1740,7 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
 	arrow->slaying = add_string(bow->slaying);
 
     arrow->map = m;
+    /* If move_type is ever changed, monster.c:monster_use_bow() needs to be changed too. */
     arrow->move_type = MOVE_FLY_LOW;
     arrow->move_on = MOVE_FLY_LOW | MOVE_WALK;
 
