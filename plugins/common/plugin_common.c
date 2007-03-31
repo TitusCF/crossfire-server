@@ -950,6 +950,7 @@ void cf_object_pickup( object* op, object* what)
 {
     int type;
     cfapiObject_pickup(&type, op, what);
+    assert(type == CFAPI_NONE);
 }
 
 /**
@@ -965,7 +966,7 @@ char* cf_strdup_local(const char* str)
         return NULL;
     cfapiSystem_strdup_local(&type, str, &dup);
     assert(type == CFAPI_STRING);
-    return NULL;
+    return dup;
 }
 int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint16* nx, sint16* ny )
 {
@@ -973,18 +974,28 @@ int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint
     return *( int* )cfapiMap_get_flags(&type, map, nmap, x, y, nx, ny);
 }
 
+/**
+ * Wrapper for set_random_map_variable().
+ * @copydoc set_random_map_variable()
+ */
 int cf_random_map_set_variable(RMParms* rp, const char* buf)
 {
     int type, ret;
     cfapiSet_random_map_variable(&type, rp, buf, &ret);
+    assert(type == CFAPI_INT);
     return ret;
 }
 
+/**
+ * Wrapper for generate_random_map().
+ * @copydoc generate_random_map()
+ */
 mapstruct* cf_random_map_generate(const char *filename, RMParms *RP, char** use_layout)
 {
     int type;
     mapstruct* map;
     cfapiGenerate_random_map(&type, filename, RP, use_layout, &map);
+    assert(type == CFAPI_PMAP);
     return map;
 }
 
@@ -1019,12 +1030,14 @@ void cf_log( LogLevel logLevel, const char* format, ... )
     va_end(ap);
 
     cfapiSystem_log(&type, logLevel, buf);
+    assert(type == CFAPI_NONE);
 }
 
 void cf_get_time( timeofday_t* tod )
 {
     int type;
     cfapiSystem_get_time(&type, tod);
+    assert(type == CFAPI_NONE);
 }
 
 /**
@@ -1043,6 +1056,7 @@ int cf_timer_create(object* ob, long delay, int mode)
 {
     int type, timer;
     cfapiSystem_timer_create(&type, ob, delay, mode, &timer);
+    assert(type == CFAPI_INT);
     return timer;
 }
 
@@ -1058,6 +1072,7 @@ int cf_timer_destroy(int id)
 {
     int type, code;
     cfapiSystem_timer_destroy(&type, id, &code);
+    assert(type == CFAPI_INT);
     return code;
 }
 
@@ -1075,6 +1090,7 @@ const char* cf_object_get_key(object* op, const char* keyname)
     int type;
     const char* value;
     cfapiObject_get_key(&type, op, keyname, &value);
+    assert(type == CFAPI_INT);
     return value;
 }
 
@@ -1095,6 +1111,7 @@ int cf_object_set_key(object* op, const char* keyname, const char* value, int ad
 {
     int type, ret;
     cfapiObject_set_key(&type, op, keyname, value, add_key, &ret);
+    assert(type == CFAPI_INT);
     return ret;
 }
 

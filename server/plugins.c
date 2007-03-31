@@ -4115,6 +4115,7 @@ void* cfapi_set_random_map_variable(int *type, ...) {
     va_end(args);
 
     *ret = set_random_map_variable(rp, buf);
+    *type = CFAPI_INT;
 
     return NULL;
 }

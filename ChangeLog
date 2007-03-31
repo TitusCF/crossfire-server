@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix wrong type/missing value. Fix some comments.
+ plugins/common/plugin_common.c
+ server/plugins.c
+Nicolas 2007-03-31
+
 Change partially map plugin API. Add cf_map_has_been_loaded() to plugins.
  plugins/cfanim/cfanim.c
  plugins/cfpython/cfpython.c
