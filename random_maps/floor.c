@@ -26,38 +26,53 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Floor handling.
+ */
 
 #include <global.h>
 #include <random_map.h>
 #include <rproto.h>
 
-/*  make a map and layout the floor.  */
-
+/**
+ * Creates the Crossfire mapstruct object from the layout, and adds the floor.
+ * @param layout
+ * generated layout.
+ * @param floorstyle
+ * floor style. Can be NULL, in which case a random one is chosen.
+ * @param RP
+ * parameters of the random map.
+ * @return
+ * Crossfire map.
+ * @todo
+ * use safe string functions.
+ */
 mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
-  char styledirname[256];
-  char stylefilepath[256];
-  mapstruct *style_map=0;
-  object *the_floor;
-  mapstruct *newMap =0; /* (mapstruct *) calloc(sizeof(mapstruct),1); */
-  
-  /* allocate the map */
-  newMap = get_empty_map(RP->Xsize,RP->Ysize);
+    char styledirname[256];
+    char stylefilepath[256];
+    mapstruct *style_map=0;
+    object *the_floor;
+    mapstruct *newMap =0;
 
-  /* get the style map */
-  sprintf(styledirname,"%s","/styles/floorstyles");
-  sprintf(stylefilepath,"%s/%s",styledirname,floorstyle);
-  style_map = find_style(styledirname,floorstyle,-1);
-  if(style_map == 0) return newMap;
+    /* allocate the map */
+    newMap = get_empty_map(RP->Xsize, RP->Ysize);
 
-  /* fill up the map with the given floor style */
-  if((the_floor=pick_random_object(style_map))!=NULL) {
-	 int i,j;
-	 for(i=0;i<RP->Xsize;i++)
-		for(j=0;j<RP->Ysize;j++) {
-		  object *thisfloor=arch_to_object(the_floor->arch);
-		  thisfloor->x = i; thisfloor->y = j;
-		  insert_ob_in_map(thisfloor,newMap,thisfloor,INS_NO_MERGE | INS_NO_WALK_ON);
-		}
-  }
-  return newMap;
+    /* get the style map */
+    sprintf(styledirname,"%s","/styles/floorstyles");
+    sprintf(stylefilepath,"%s/%s",styledirname,floorstyle);
+    style_map = find_style(styledirname,floorstyle,-1);
+    if(style_map == 0) return newMap;
+
+    /* fill up the map with the given floor style */
+    if((the_floor=pick_random_object(style_map))!=NULL) {
+        int i,j;
+        for(i=0;i<RP->Xsize;i++)
+            for(j=0;j<RP->Ysize;j++) {
+                object *thisfloor = arch_to_object(the_floor->arch);
+                thisfloor->x = i; thisfloor->y = j;
+                insert_ob_in_map(thisfloor,newMap,thisfloor,INS_NO_MERGE | INS_NO_WALK_ON);
+            }
+    }
+    return newMap;
 }

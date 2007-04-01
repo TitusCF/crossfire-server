@@ -15,18 +15,25 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Document random map files (except test.c and some .h).
+ plugins/common/include/plugin_common.h: fix parameter name.
+ plugins/common/plugin_common.c: fix parameter name.
+ random_maps/*.c
+ random_maps/random_maps.h: replace #define by enum to be linkable for Doxygen.
+Nicolas Weeger 2007-04-01
+
 Fix bug #1672117: elves etc don't fire over move_allow flying tiles.
 Logic for monster_use_bow() was changed to make monsters fire only
  horizontally/vertically/in diagonals, and also fire over terrain
  they can't cross but which lets an arrow go over.
  server/monster.c
  server/player.c: note about move_type
-Nicolas 2007-03-31
+Nicolas Weeger 2007-03-31
 
 Fix wrong type/missing value. Fix some comments.
  plugins/common/plugin_common.c
  server/plugins.c
-Nicolas 2007-03-31
+Nicolas Weeger 2007-03-31
 
 Change partially map plugin API. Add cf_map_has_been_loaded() to plugins.
  plugins/cfanim/cfanim.c
@@ -35,7 +42,7 @@ Change partially map plugin API. Add cf_map_has_been_loaded() to plugins.
  plugins/common/include/plugin_common.h
  plugins/common/plugin_common.c
  server/plugins.c
-Nicolas 2007-03-31
+Nicolas Weeger 2007-03-31
 
 crossedit/Attr.c: Remove obsolete 'flying' attribute.
 Andreas Kirschbaum 2007-03-26

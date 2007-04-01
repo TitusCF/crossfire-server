@@ -157,7 +157,7 @@ extern int          cf_map_get_wparty(mapstruct* map);
 
 /* Random maps */
 extern int           cf_random_map_set_variable(RMParms* rp, const char* buf);
-extern mapstruct*    cf_random_map_generate(const char *filename, RMParms *RP, char** use_layout);
+extern mapstruct*    cf_random_map_generate(const char *OutFileName, RMParms *RP, char** use_layout);
 
 /* Players */
 extern sstring        cf_player_get_ip(object* op);
