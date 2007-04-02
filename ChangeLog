@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete "Directionxxx" and "CostFlagxxx", replaced by constants.
+ plugins/cfpython/cfpython.c
+Nicolas Weeger 2007-04-02
+
 Add 'MessageFlag' constant, holding the NDI_xxx values, to Python.
  plugins/cfpython/cfpython.c
 Nicolas Weeger 2007-04-02

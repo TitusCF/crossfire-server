@@ -84,20 +84,6 @@ static PyObject* setReturnValue(PyObject* self, PyObject* args);
 static PyObject* matchString(PyObject* self, PyObject* args);
 static PyObject* findPlayer(PyObject* self, PyObject* args);
 static PyObject* readyMap(PyObject* self, PyObject* args);
-static PyObject* getCostFlagTrue(PyObject* self, PyObject* args);
-static PyObject* getCostFlagBuy(PyObject* self, PyObject* args);
-static PyObject* getCostFlagSell(PyObject* self, PyObject* args);
-static PyObject* getCostFlagNoBargain(PyObject* self, PyObject* args);
-static PyObject* getCostFlagIdentified(PyObject* self, PyObject* args);
-static PyObject* getCostFlagNotCursed(PyObject* self, PyObject* args);
-static PyObject* getDirectionNorthEast(PyObject* self, PyObject* args);
-static PyObject* getDirectionEast(PyObject* self, PyObject* args);
-static PyObject* getDirectionSouthEast(PyObject* self, PyObject* args);
-static PyObject* getDirectionSouth(PyObject* self, PyObject* args);
-static PyObject* getDirectionSouthWest(PyObject* self, PyObject* args);
-static PyObject* getDirectionWest(PyObject* self, PyObject* args);
-static PyObject* getDirectionNorthWest(PyObject* self, PyObject* args);
-static PyObject* getDirectionNorth(PyObject* self, PyObject* args);
 static PyObject* getMapDirectory(PyObject* self, PyObject* args);
 static PyObject* getUniqueDirectory(PyObject* self, PyObject* args);
 static PyObject* getTempDirectory(PyObject* self, PyObject* args);
@@ -153,20 +139,6 @@ static PyMethodDef CFPythonMethods[] = {
     {"LocalDirectory",      getLocalDirectory,      METH_VARARGS},
     {"PlayerDirectory",     getPlayerDirectory,     METH_VARARGS},
     {"DataDirectory",       getDataDirectory,       METH_VARARGS},
-    {"DirectionNorth",      getDirectionNorth,      METH_VARARGS},
-    {"DirectionNorthEast",  getDirectionNorthEast,  METH_VARARGS},
-    {"DirectionEast",       getDirectionEast,       METH_VARARGS},
-    {"DirectionSouthEast",  getDirectionSouthEast,  METH_VARARGS},
-    {"DirectionSouth",      getDirectionSouth,      METH_VARARGS},
-    {"DirectionSouthWest",  getDirectionSouthWest,  METH_VARARGS},
-    {"DirectionWest",       getDirectionWest,       METH_VARARGS},
-    {"DirectionNorthWest",  getDirectionNorthWest,  METH_VARARGS},
-    {"CostFlagTrue",        getCostFlagTrue,        METH_VARARGS},
-    {"CostFlagBuy",         getCostFlagBuy,         METH_VARARGS},
-    {"CostFlagSell",        getCostFlagSell,        METH_VARARGS},
-    {"CostFlagNoBargain",   getCostFlagNoBargain,   METH_VARARGS},
-    {"CostFlagIdentified",  getCostFlagIdentified,  METH_VARARGS},
-    {"CostFlagNotCursed",   getCostFlagNotCursed,   METH_VARARGS},
     {"ReadyMap",            readyMap,               METH_VARARGS},
     {"FindPlayer",          findPlayer,             METH_VARARGS},
     {"MatchString",         matchString,            METH_VARARGS},
@@ -344,62 +316,6 @@ static PyObject* getCostFlagIdentified(PyObject* self, PyObject* args)
 static PyObject* getCostFlagNotCursed(PyObject* self, PyObject* args)
 {
     int i = F_NOT_CURSED;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionNorthEast(PyObject* self, PyObject* args)
-{
-    int i = 2;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionEast(PyObject* self, PyObject* args)
-{
-    int i = 3;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionSouthEast(PyObject* self, PyObject* args)
-{
-    int i = 4;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionSouth(PyObject* self, PyObject* args)
-{
-    int i = 5;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionSouthWest(PyObject* self, PyObject* args)
-{
-    int i = 6;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionWest(PyObject* self, PyObject* args)
-{
-    int i = 7;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionNorthWest(PyObject* self, PyObject* args)
-{
-    int i = 8;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getDirectionNorth(PyObject* self, PyObject* args)
-{
-    int i = 1;
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
     return Py_BuildValue("i", i);
@@ -1040,10 +956,20 @@ static void initConstants(PyObject* module)
         { "NDI_ALL", NDI_ALL },
         { NULL, 0 } };
 
+    static CFConstant cstCostFlag[] = {
+        { "TRUE", F_TRUE },
+        { "BUY", F_BUY },
+        { "SELL", F_SELL },
+        { "NOBARGAIN", F_NO_BARGAIN },
+        { "IDENTIFIED", F_IDENTIFIED },
+        { "NOTCURSED", F_NOT_CURSED },
+        { NULL, 0 } };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
     addConstants(module, "MessageFlag", cstMessageFlag);
+    addConstants(module, "CostFlag", cstCostFlag);
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
