@@ -1022,9 +1022,28 @@ static void initConstants(PyObject* module)
         { "ALL", MOVE_ALL },
         { NULL, 0 } };
 
+    static CFConstant cstMessageFlag[] = {
+        { "NDI_BLACK", NDI_BLACK },
+        { "NDI_WHITE", NDI_WHITE },
+        { "NDI_NAVY", NDI_NAVY },
+        { "NDI_RED", NDI_RED },
+        { "NDI_ORANGE", NDI_ORANGE },
+        { "NDI_BLUE", NDI_BLUE },
+        { "NDI_DK_ORANGE", NDI_DK_ORANGE },
+        { "NDI_GREEN", NDI_GREEN },
+        { "NDI_LT_GREEN", NDI_LT_GREEN },
+        { "NDI_GREY", NDI_GREY },
+        { "NDI_BROWN", NDI_BROWN },
+        { "NDI_GOLD", NDI_GOLD },
+        { "NDI_TAN", NDI_TAN },
+        { "NDI_UNIQUE", NDI_UNIQUE },
+        { "NDI_ALL", NDI_ALL },
+        { NULL, 0 } };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
+    addConstants(module, "MessageFlag", cstMessageFlag);
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
