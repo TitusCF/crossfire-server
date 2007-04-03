@@ -847,35 +847,6 @@ void enter_exit(object *op, object *exit_ob) {
     }
 }
 
-#if 0
-/* process_active_maps no longer used - should perhaps be removed.
- * MSW 2006-06-02
- */
-
-/**
- * process_active_maps(): Works like process_events(), but it only
- * processes maps which a player is on.
- * It will check that it isn't called too often, and abort
- * if time since last call is less than MAX_TIME.
- */
-
-static void process_active_maps(void) {
-  mapstruct *map;
-
-    /*
-     * If enough time has elapsed, do some work.
-     */
-    if(enough_elapsed_time()) {
-	for(map=first_map;map!=NULL;map=map->next) {
-	    if(map->in_memory == MAP_IN_MEMORY) {
-		if(players_on_map(map,TRUE))
-		    process_events(map);
-	    }
-	}
-    }
-}
-#endif
-
 /**
  * process_players1 and process_players2 do all the player related stuff.
  * I moved it out of process events and process_map.  This was to some
@@ -1114,20 +1085,6 @@ static void process_events (mapstruct *map)
 
         if (op->speed_left > 0)
         {
-#if 0
-	    /* I've seen occasional crashes in move_symptom() with it
-	     * crashing because op is removed - add some debugging to
-	     * track if it is removed at this point.
-	     * This unfortunately is a bit too verbose it seems - not sure
-	     * why - I think what happens is a map is freed or something and
-	     * some objects get 'lost' - removed never to be reclaimed.
-	     * removed objects generally shouldn't exist.
-	     */
-	    if (QUERY_FLAG(op, FLAG_REMOVED)) {
-		LOG(llevDebug,"process_events: calling process_object with removed object %s\n",
-		    op->name?op->name:"null");
-	    }
-#endif
             --op->speed_left;
             process_object (op);
             if (was_destroyed (op, tag))

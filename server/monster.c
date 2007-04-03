@@ -1836,12 +1836,7 @@ void communicate(object *op, const char *txt) {
 		}
 	    }
 	    else if (flag)  {
-#if 0
-		if (talk_to_npc(op, npc,txt))
-		flag=0; /* Can be crowded */
-#else
 		talk_to_npc(op, npc,txt);
-#endif
 		if (orig_map != op->map) {
 		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
 		    return;

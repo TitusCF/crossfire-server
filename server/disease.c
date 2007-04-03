@@ -592,21 +592,6 @@ int check_physically_infect(object *victim, object *hitter) {
   return 1;
 }
 
-#if 0
-/*
- * find_disease no longer used - perhaps should be removed.
- * MSW 2006-06-02
- */
-
-/*  find a disease in someone*/
-static object *find_disease(object *victim) {
-  object *walk;
-  for(walk=victim->inv;walk;walk=walk->below)
-	 if(walk->type==DISEASE) return walk;
-  return NULL;
-}
-#endif
-	
 /* do the cure disease stuff, from the spell "cure disease" */
 
 int cure_disease(object *sufferer,object *caster) {

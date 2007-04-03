@@ -319,10 +319,6 @@ void read_bmap_names(void) {
 
     for (i = 0; i < nrofpixmaps; i++) {
         if (new_faces[i].magicmap==255) {
-#if 0	/* Useful for initial debugging, not needed now */
-            LOG(llevDebug,"Face %s still had default magicmap, resetting to black\n",
-                new_faces[i].name);
-#endif
             new_faces[i].magicmap=0;
         }
     }

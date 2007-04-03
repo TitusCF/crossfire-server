@@ -805,9 +805,6 @@ void make_path_to_file (const char *filename)
     LOG(llevDebug, "make_path_tofile %s...\n", filename);
     while ((cp = strchr (cp + 1, (int) '/'))) {
         *cp = '\0';
-#if 0
-        LOG(llevDebug, "\n Checking %s...", buf);
-#endif
         if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
             LOG(llevDebug, "Was not dir...\n");
             if (mkdir (buf, SAVE_DIR_MODE)) {
@@ -815,13 +812,7 @@ void make_path_to_file (const char *filename)
                 LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
                 return;
             }
-#if 0
-            LOG(llevDebug, "Made dir.");
-        } else
-            LOG(llevDebug, "Was dir");
-#else
         }
-#endif
         *cp = '/';
     }
 }

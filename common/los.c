@@ -193,10 +193,6 @@ static void set_wall(object *op,int x,int y) {
 
         if (ax < 0 || ax>=op->contr->socket.mapx ||
             ay < 0 || ay>=op->contr->socket.mapy) continue;
-#if 0
-        LOG(llevDebug, "blocked %d %d -> %d %d\n",
-            dx, dy, ax, ay);
-#endif
         /* we need to adjust to the fact that the socket
          * code wants the los to start from the 0,0
          * and not be relative to middle of los array.
@@ -232,11 +228,6 @@ static void check_wall(object *op,int x,int y) {
      */
     if (ax < 0 || ay < 0 || ax >= op->contr->socket.mapx || ay >= op->contr->socket.mapy)
         return;
-
-#if 0
-    LOG(llevDebug, "check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
-        ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
-#endif
 
     /* If this space is already blocked, prune the processing - presumably
      * whatever has set this space to be blocked has done the work and already
@@ -397,10 +388,6 @@ static void expand_lighted_sight(object *op)
             */
             light = GET_MAP_LIGHT(m, nx, ny);
             if (light != 0) {
-#if 0
-                LOG(llevDebug, "expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
-                    x, y, basex, basey);
-#endif
                 for (ax=basex - light; ax<=basex+light; ax++) {
                     if (ax<0 || ax>=op->contr->socket.mapx) continue;
                     for (ay=basey - light; ay<=basey+light; ay++) {

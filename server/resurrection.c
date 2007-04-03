@@ -269,34 +269,3 @@ void dead_player(object *op)
 	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
     }
 }
-
-
-
-#if 0
-/* dead_character & dead_player_exists are no longer used - should perhaps be
- * removed.  MSW 2006-06-02
- */
-
-static void dead_character(const char *name) {
-    char buf[MAX_BUF];
-    char buf2[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,name, name);
-    /*  peterm:  create a .dead filename....  ***.pl.dead  */
-    strcpy(buf2,buf);
-    strcat(buf,".dead");
-    if(rename(buf2,buf)== -1){
-	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", buf2, buf, strerror_local(errno));
-    }
-}
-
-
-static int dead_player_exists(const char *name) {
-    char buf[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s/%s",settings.localdir,settings.playerdir,name, name);
-    strcat(buf,".pl.dead");
-    return !(access(buf,0));
-}
-
-#endif 

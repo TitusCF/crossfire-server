@@ -175,11 +175,7 @@ int min_casting_level(object *caster, object *spell)
 	/* This case is not a bug, just the fact that this function is
 	 * usually called BEFORE checking for path_deny. -AV
 	 */
-#if 0
-	LOG (llevError, "BUG: path_level_mod (arch %s, name %s): casting denied "
-	     "spell\n", caster->arch->name, caster->name);
-#endif
-	return 1;
+        return 1;
     }
     new_level = spell->level
              + ((caster->path_repelled & spell->path_attuned) ? +2 : 0)
@@ -1698,29 +1694,6 @@ void move_spell_effect(object *op) {
 
     }
 }
-
-#if 0
-/* check_spell_effect is no longer used - should perhaps be removed.
- * MSW 2006-06-02
- */
-
-/* this checks to see if something special should happen if
- * something runs into the object.
- */
-static void check_spell_effect(object *op) {
-
-    switch (op->subtype) {
-	case SP_BOLT:
-	    move_bolt(op);
-	    return;
-
-	case SP_BULLET:
-	    check_bullet(op);
-	    return;
-    }
-
-}
-#endif
 
 /**
  * Stores in the spell when to warn player of expiration.

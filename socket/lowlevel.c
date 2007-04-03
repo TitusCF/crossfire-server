@@ -274,10 +274,6 @@ static void add_to_buffer(socket_struct *ns, const unsigned char *buf, int len)
 	memcpy(ns->outputbuffer.data, buf+avail, len-avail);
     }
     ns->outputbuffer.len += len;
-#if 0
-    LOG(llevDebug,"Added %d to output buffer, total length now %d, start=%d\n", len,
-	ns->outputbuffer.len, ns->outputbuffer.start);
-#endif
 }
 
 /**

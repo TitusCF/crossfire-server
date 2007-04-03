@@ -516,18 +516,6 @@ void move_bullet(object *op) {
     int mflags;
     mapstruct *m;
 
-#if 0
-    /* We need a better general purpose way to do this */
-
-    /* peterm:  added to make comet leave a trail of burnouts
-        it's an unadulterated hack, but the effect is cool.     */
-    if (op->stats.sp == SP_METEOR) {
-        replace_insert_ob_in_map("fire_trail", op);
-        if (was_destroyed(op, op_tag))
-            return;
-    } /* end addition.  */
-#endif
-
     /* Reached the end of its life - remove it */
     if (--op->range <= 0) {
         if (op->other_arch) {
@@ -684,18 +672,6 @@ void move_cone(object *op) {
         hit_map(op, 0, op->attacktype, 0);
         return;
     }
-
-#if 0
-    /* Disable this - enabling it makes monsters easier, as
-     * when their cone dies when they die.
-     */
-    /* If no owner left, the spell dies out. */
-    if (get_owner(op) == NULL) {
-        remove_ob(op);
-        free_object(op);
-        return;
-    }
-#endif
 
     tag = op->count;
     hit_map(op, 0, op->attacktype, 0);
@@ -1148,16 +1124,6 @@ void move_missile(object *op) {
     }
 
     owner = get_owner(op);
-#if 0
-    /* It'd make things nastier if this wasn't here - spells cast by
-     * monster that are then killed would continue to survive
-     */
-    if (owner == NULL) {
-        remove_ob(op);
-        free_object(op);
-        return;
-    }
-#endif
 
     new_x = op->x+DIRX(op);
     new_y = op->y+DIRY(op);

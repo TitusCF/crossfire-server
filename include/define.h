@@ -620,14 +620,6 @@ extern typedata ItemTypes[];
 
 #define NROFNEWOBJS(xyz)	((xyz)->stats.food)
 
-#if 0
-/* These should no longer be needed - access move_slow_penalty
- * directly.
- */
-#define SLOW_PENALTY(xyz)   ((xyz)->stats.exp)/1000.0
-#define SET_SLOW_PENALTY(xyz,fl)	(xyz)->stats.exp=(fl)*1000
-#endif
-
 /* If you add new movement types, you may need to update
  * describe_item() so properly describe those types.
  * change_abil() probably should be updated also.

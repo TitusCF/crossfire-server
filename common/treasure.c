@@ -1708,16 +1708,6 @@ void give_artifact_abilities(object *op, object *artifact) {
     op->title = add_string(new_name);
     add_abilities(op, artifact); /* Give out the bonuses */
 
-#if 0 /* Bit verbose, but keep it here until next time I need it... */
-  {
-    char identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
-    SET_FLAG(op, FLAG_IDENTIFIED);
-    LOG(llevDebug, "Generated artifact %s %s [%s]\n",
-      op->name, op->title, describe_item(op, NULL));
-    if (!identified)
-	  CLEAR_FLAG(op, FLAG_IDENTIFIED);
-  }
-#endif
     return;
 }
 
@@ -1739,9 +1729,6 @@ void generate_artifact(object *op, int difficulty) {
     al = find_artifactlist(op->type);
 
     if (al==NULL) {
-#if 0 /* This is too verbose, usually */
-    LOG(llevDebug, "Couldn't change %s into artifact - no table.\n", op->name);
-#endif
         return;
     }
 
@@ -1754,10 +1741,8 @@ void generate_artifact(object *op, int difficulty) {
         }
 
         if (art == NULL || roll>=0) {
-#if 1
             LOG(llevError, "Got null entry and non zero roll in generate_artifact, type %d\n",
                 op->type);
-#endif
             return;
         }
         if (!strcmp(art->item->name,"NONE"))

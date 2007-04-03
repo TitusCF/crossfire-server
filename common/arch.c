@@ -365,10 +365,6 @@ static void first_arch_pass(FILE *fp) {
                 if(head!=NULL)
                     head->next=at;
                 head=last_more=at;
-#if 0
-                if(!op->type)
-                    LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);
-#endif
                 at->tail_x = 0;
                 at->tail_y = 0;
                 break;

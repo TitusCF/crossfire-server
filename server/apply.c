@@ -2530,13 +2530,6 @@ static int unapply_for_ob(object *who, object *op, int aflags)
             while ((who->body_used[i] + op->body_info[i]) < 0) {
                 tmp = get_item_from_body_location(last, i);
                 if (!tmp) {
-#if 0
-                        /* Not a bug - we'll get this if the player has cursed
-                         * items equipped.
-                         */
-                    LOG(llevError,"Can't find object using location %d (%s) on %s\n",
-                        i, body_locations[i].save_name, who->name);
-#endif
                     return 1;
                 }
                     /* If just printing, we don't care about cursed status */
@@ -2644,15 +2637,6 @@ int can_apply_object(object *who, object *op)
 
                 tmp1 = get_item_from_body_location(who->inv, i);
                 if (!tmp1) {
-#if 0
-                        /* This is sort of an error, but happens a lot when old
-                         * players join in with more stuff equipped than they
-                         * are now allowed.
-                         */
-                    LOG(llevError,
-                        "Can't find object using location %d on %s\n",
-                        i, who->name);
-#endif
                     retval |= CAN_APPLY_NEVER;
                 } else {
                         /* need to unapply something.  However, if this
@@ -3192,19 +3176,6 @@ int apply_special (object *who, object *op, int aflags)
     return 0;
 }
 
-
-#if 0
-/* monster_apply_special is no longer used - should probably be
- * removed if in fact it won't be used by anything.
- * MSW 2006-06-02
- */
-static int monster_apply_special (object *who, object *op, int aflags)
-{
-    if (QUERY_FLAG (op, FLAG_UNPAID) && ! QUERY_FLAG (op, FLAG_APPLIED))
-        return 1;
-    return apply_special (who, op, aflags);
-}
-#endif
 
 /**
  * Map was just loaded, handle op's initialisation.

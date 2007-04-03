@@ -2328,21 +2328,6 @@ static int adj_attackroll (object *hitter, object *target) {
   if((attacker->move_type & target->move_type)==0)
     adjust -= 2;
 
-#if 0
-  /* slower attacks are less likely to succeed. We should use a
-   * comparison between attacker/target speeds BUT, players have
-   * a generally faster speed, so this will wind up being a HUGE
-   * disadantage for the monsters! Too bad, because missiles which
-   * fly fast should have a better chance of hitting a slower target.
-   */
-  if(hitter->speed<target->speed) 
-    adjust += ((float) hitter->speed-target->speed);
-#endif
-
-#if 0
-  LOG(llevDebug,"adj_attackroll() returns %d (%d)\n",adjust,attacker->count);
-#endif
-
   return adjust;
 } 
 

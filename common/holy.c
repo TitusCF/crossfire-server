@@ -102,41 +102,6 @@ static void add_god_to_list (archetype *god_arch) {
 #endif
 }
 
-#if 0
-/* This is no longer used - disabling it from compilation to
- * see if it breaks anything.  If it doesn't, it should get
- * removed in the near future.
- * MSW 2006-06-02
- */
-
-/* baptize_altar() - (cosmetically) change the name to that of the
- * god in question, then set the title for later use. -b.t.
- */
- 
-static int baptize_altar(object *op) {
-   char buf[MAX_BUF];
-   
-   /* if the title field is pre-set, then that altar is
-    * already dedicated. */
-   if(!op->title) {
-     godlink *god=get_rand_god();
-     if(!god||!god->name) {
-        LOG(llevError,"baptise_altar(): bizarre nameless god!\n");
-        return 0;
-     }   
-     /* if the object name hasnt' been changed, we tack on the gods name */
-     if(!strcmp(op->name,op->arch->clone.name)) {
-        if(op->name!=NULL) free_string(op->name);
-        sprintf(buf,"%s of %s",op->name,god->name);
-        op->name = add_string(buf);
-     }
-     op->title=add_string(god->name);
-     return 1;
-   }
-   return 0;
-}
-#endif
-
 /**
  * Returns a random god.
  *

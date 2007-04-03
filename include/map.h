@@ -192,14 +192,6 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define P_OUT_OF_MAP	0x100	/* This space is outside the map */
 #define	P_NEW_MAP	0x200	/* Coordinates passed result in a new tiled map  */
 
-#if 0
-/* These go away with new movement code - can't do such simplistic
- * checks anymore
- */
-#define P_BLOCKED	(P_NO_PASS | P_IS_ALIVE)    /* convenience macro */
-#define P_WALL		P_NO_PASS   /* Just to match naming of wall function */
-#endif
-
 /* Can't use map_cell_struct as that is used in newserver.h
  * Instead of having numerous arrays that have information on a
  * particular space (was map, floor, floor2, map_ob),

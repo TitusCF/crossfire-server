@@ -163,56 +163,10 @@ static int same_string (const char *s1, const char *s2)
             return strcmp (s1, s2) == 0;
 }
 
-
-/**
- * Checks for any occurrence of the given 'item' in the inventory of 'op' (recursively).
- * Any matching items in the inventory are deleted, and a
- * message is displayed to the player.
- */
-static void follower_remove_similar_item (object *op, object *item)
-{
-    object *tmp, *next;
-    char name[HUGE_BUF];
-
-    if (op && op->type == PLAYER && op->contr) {
-        /* search the inventory */
-        for (tmp = op->inv; tmp != NULL; tmp = next) {
-            next = tmp->below;   /* backup in case we remove tmp */
-
-            if (tmp->type == item->type
-                && same_string (tmp->name, item->name)
-                && same_string (tmp->title, item->title)
-                && same_string (tmp->msg, item->msg)
-                && same_string (tmp->slaying, item->slaying)) {
-
-	        /* message */
-            query_short_name(tmp, name, HUGE_BUF);
-		if (tmp->nrof > 1)
-		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-					 "The %s crumble to dust!",
-					 "The %s crumble to dust!",
-					 name);
-		else
-		    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
-					 "The %s crumbles to dust!",
-					 "The %s crumbles to dust!",
-					 name);
-
-	        remove_ob(tmp);    /* remove obj from players inv. */
-		esrv_del_item(op->contr, tmp->count); /* notify client */
-		free_object(tmp);  /* free object */
-	    }
-	    if (tmp->inv)
-	      follower_remove_similar_item(tmp, item);
-	}
-    }
-}
-
 /**
  * Removes from a player's inventory all items bestowed by
  * a particular god.  Intended mainly for use in punishing
- * characters for switching gods.  Should make the buggy
- * follower_remove_similar_item obsolete.
+ * characters for switching gods.
  *
  * @param pl
  *     the player object
@@ -1257,24 +1211,6 @@ static int god_examines_item(object *god, object *item) {
     return 0; /* item is sacred to a non-enemy god/or is otherwise magical */
 }
 
-
-#if 0
-/*
- * get_god no longer used - should perhaps be removed.
- * MSW 2006-06-02
- */
-
-/**
- * Returns priest's god's id.
- * Straight calls lookup_god_by_name
- */
-
-static int get_god(object *priest) {
-  int godnr=lookup_god_by_name(determine_god(priest));
-
-  return godnr;
-}
-#endif
 
 /**
  * Returns a string that is the name of the god that should be natively worshipped by a

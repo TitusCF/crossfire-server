@@ -687,7 +687,9 @@ void set_sound_cmd(char *buf, int len, socket_struct *ns)
     ns->sound = atoi(buf);
 }
 
-/** client wants the map resent */
+/** client wants the map resent 
+ * @todo remove
+*/
 
 void map_redraw_cmd(char *buf, int len, player *pl)
 {
@@ -697,13 +699,6 @@ void map_redraw_cmd(char *buf, int len, player *pl)
  * solution does not work because some client versions send
  * a mapredraw command after receiving a newmap command.
  */
-#if 0
-        /* Okay, this is MAJOR UGLY. but the only way I know how to
-         * clear the "cache"
-         */
-    memset(&pl->socket.lastmap, 0, sizeof(struct Map));
-    draw_client_map(pl->ob);
-#endif
 }
 
 /** Newmap command */
@@ -1511,28 +1506,11 @@ void draw_client_map1(object *pl)
                      */
 
                 oldlen = sl.len;
-#if 0
-                    /* First thing we do is blank out this space (clear it)
-                     * if not already done.  If the client is using darkness,
-                     * and this space is at the edge, we also include the
-                     * darkness.
-                     */
-                if (d==4) {
-                    if (pl->contr->socket.darkness &&
-                        pl->contr->socket.lastmap.cells[ax][ay].darkness !=d) {
-                        mask |= 8;
-                        SockList_AddShort(&sl, mask);
-                        SockList_AddChar(&sl, 0);
-                    }
-                    count = d;
-                } else
-#endif
-                {
-                    SockList_AddShort(&sl, mask);
-                    if (pl->contr->socket.lastmap.cells[ax][ay].darkness != -1)
-                        need_send=1;
-                    count = -1;
-                }
+
+                SockList_AddShort(&sl, mask);
+                if (pl->contr->socket.lastmap.cells[ax][ay].darkness != -1)
+                    need_send=1;
+                count = -1;
 
                 if (pl->contr->socket.mapmode == Map1aCmd &&
                     have_head(ax, ay)) {

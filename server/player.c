@@ -415,9 +415,6 @@ object *get_nearest_player(object *mon) {
 	    }
 	}
     }
-#if 0
-    LOG(llevDebug,"get_nearest_player() finds player: %s\n",op?op->name:"(null)");
-#endif
     return op;
 }
 
@@ -933,12 +930,6 @@ int key_roll_stat(object *op, char key)
 		break;
 	    }
 
-#if 0
-	    /* So that enter_exit will put us at startx/starty */
-	    op->x= -1;
-
-	    enter_exit(op,NULL);
-#endif
 	    SET_ANIMATION(op, 2);     /* So player faces south */
 	    /* Enter exit adds a player otherwise */
 	    add_statbonus(op);
@@ -1434,15 +1425,6 @@ int check_pick(object *op) {
 	if ((query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof, 1))) >= wvratio)
 	{
 	  pick_up(op, tmp);
-#if 0
-	  fprintf(stderr,"HIGH WEIGHT/VALUE [");
-	  if(tmp->name!=NULL) {
-	    fprintf(stderr,"%s", tmp->name);
-	  }
-	  else fprintf(stderr,"%s",tmp->arch->name);
-	  fprintf(stderr,",%d] = ", tmp->type);
-	  fprintf(stderr,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
-#endif
 	  continue;
 	}
       }
@@ -3187,9 +3169,6 @@ int hideability(object *ob) {
 	    level -= 1;
     }
 
-#if 0
-    LOG(llevDebug,"hideability of %s is %d\n",ob->name,level);
-#endif
     return level;
 }
 

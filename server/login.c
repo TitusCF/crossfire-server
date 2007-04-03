@@ -238,10 +238,6 @@ int save_player(object *op, int flag) {
   if (flag == 0)
     terminate_all_pets(op);
 
-  /* Delete old style file */
-  sprintf(filename,"%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name);
-  unlink(filename);
-
   sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
   make_path_to_file(filename);
   tmpfilename = tempnam_local(settings.tmpdir,NULL);
@@ -626,28 +622,6 @@ void check_login(object *op) {
 		fscanf(fp,"%d\n",&j);
 		pl->levgrace[i]=j;
 	    }
-	/* spell_array code removed - don't know when that was last used.
-	 * Even the load code below will someday be replaced by spells being
-	 * objects.
-	 */
-     /*TODO remove block inside #if 0*/
-	} else if (!strcmp(buf,"known_spell")) {
-#if 0
-	    /* Logic is left here in case someone wants to try
-	     * and write code to update to spell objects.
-	     */
-	    char *cp=strchr(bufall,'\n');
-	    *cp='\0';
-	    cp=strchr(bufall,' ');
-	    cp++;
-	    for(i=0;i<NROFREALSPELLS;i++)
-		if(!strcmp(spells[i].name,cp)) {
-		    pl->known_spells[pl->nrofknownspells++]=i;
-		    break;
-		}
-	    if(i==NROFREALSPELLS)
-		LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
-#endif
 	}
     } /* End of loop loading the character file */
     leave_map(op);

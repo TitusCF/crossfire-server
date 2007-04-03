@@ -2983,15 +2983,6 @@ void move_peacemaker(object *op) {
 
 	    change_exp(get_owner(op),victim->stats.exp, op->skill, 0);
 	    victim->stats.exp=0;
-#if 0
-	    /* No idea why these were all set to zero - if something
-	     * makes this creature agressive, he should still do damage.
-	     */
-	    victim->stats.dam = 0;
-	    victim->stats.sp = 0;
-	    victim->stats.grace = 0;
-	    victim->stats.Pow = 0;
-#endif
 	    victim->attack_movement = RANDO2;
 	    SET_FLAG(victim,FLAG_UNAGGRESSIVE);
 	    SET_FLAG(victim,FLAG_RUN_AWAY);

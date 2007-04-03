@@ -1014,10 +1014,6 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
     tag_t tmp_tag;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
-#if 0
-      /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-      draw_ext_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");
-#endif
       return NULL;
     }
 
@@ -1152,12 +1148,7 @@ void drop(object *op, object *tmp)
       return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
-#if 0
-      /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
-      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		    "This item can't be dropped.", NULL);
-#endif
-      return;
+        return;
     }
 
     if (op->type == PLAYER)

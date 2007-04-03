@@ -1822,11 +1822,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->move_type = MOVE_FLY_LOW;
     throw_ob->move_on = MOVE_FLY_LOW | MOVE_WALK;
 
-#if 0
-    /* need to put in a good sound for this */
-    play_sound_map(op->map, op->x, op->y, SOUND_THROW_OBJ);
-#endif
-/* Lauwenmark - Now we can call the associated script_throw event (if any) */
+    /* Lauwenmark - Now we can call the associated script_throw event (if any) */
     execute_event(throw_ob, EVENT_THROW,op,NULL,NULL,SCRIPT_FIX_ACTIVATOR);
 #ifdef DEBUG_THROW
     LOG(llevDebug," pause_f=%d \n",pause_f);

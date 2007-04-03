@@ -289,16 +289,7 @@ const char *const spell_mapping[] = {
  * Unfortunately, we will report warnings here simply because an object has
  * been modified from the arch.
  */
-#if 0	/* #if's don't work in #define macros */
-#define SET_RESIST(op, type, val) \
-	{if (op->resist[type]!=0) { \
-	    LOG(llevInfo, "object %s having multiple resistances set, type=%s, old=%d, new=%d\n", \
-		       op->name?op->name:(op->arch?op->arch->name:"unknown"), \
-					resist_plus[type], op->resist[type], val); \
-	}  op->resist[type] = val;  }
-#else
 #define SET_RESIST(op, type, val)  op->resist[type] = val;
-#endif
 
 /** Next value as integer. */
 #define IVAL	atoi(yval())
@@ -865,8 +856,6 @@ A	.+
 ^alive{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ALIVE, IVAL);
 ^applied{S}	    SET_OR_CLEAR_FLAG(op, FLAG_APPLIED, IVAL);
 ^unpaid{S}	    SET_OR_CLEAR_FLAG(op, FLAG_UNPAID, IVAL);
-^need_an{S}	    { /* not used - just ignore */ }
-^need_ie{S}	    { /* not used - jsut ignore */ }
 ^is_animated{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
 ^no_pick{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_PICK, IVAL);
 ^client_anim_sync{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC, IVAL);
@@ -927,7 +916,7 @@ A	.+
 ^startequip{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STARTEQUIP, IVAL);
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^editable{S}	    op->arch->editable = IVAL;
-^editor_folder{S}   { }
+^editor_folder{S}   { /* This field is used by Crossedit and Gridarta, so it's not an error. */ }
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);
@@ -1062,11 +1051,11 @@ A	.+
 ^one_hit{S}		SET_OR_CLEAR_FLAG(op, FLAG_ONE_HIT, IVAL);
 ^berserk{S}		SET_OR_CLEAR_FLAG(op, FLAG_BERSERK, IVAL);
 
-^can_knockback{S}	{ /* Some archetypes have these values in them */ }
-^can_parry{S}		{ /* Probably the pupland archetypes - I imagined */ }
-^can_impale{S}		{ /* That these are for the new combat code */ }
-^can_cut{S}		{ /* just ignore for now */ }
-^can_dam_armour{S}	{ }
+^can_knockback{S}      { /* Some archetypes have these values in them */ }
+^can_parry{S}          { /* Probably the pupland archetypes - I imagined */ }
+^can_impale{S}         { /* That these are for the new combat code */ }
+^can_cut{S}            { /* just ignore for now */ }
+^can_dam_armour{S}     { }
 ^weapontype{S}		op->weapontype = IVAL;
 ^tooltype{S}            op->tooltype = IVAL;
 ^casting_time{S}	op->casting_time = FVAL;
@@ -1447,12 +1436,7 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
     char* fastbuf;
     int tmp;
     int i;
-#if 0
-/*Memory polluting code. Should help detect problems, very slow*/
-  for (i=0;i<HUGE_BUF;i++){
-    buf[i]='a'+(unsigned short)(i%25);
-  }
-#endif
+
     key_value * my_field;
     key_value * arch_field;
 

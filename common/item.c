@@ -670,16 +670,6 @@ void query_name(const object *op, char* buf, int size) {
     if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
         safe_strcat(buf, " (magic)", &len, size);
 
-#if 0
-    /* item_power will be returned in desribe_item - it shouldn't really
-     * be returned in the name.
-     */
-    if(op->item_power)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)",
-            op->item_power);
-
-#endif
-
     if (QUERY_FLAG(op,FLAG_APPLIED)) {
         switch(op->type) {
             case BOW:
@@ -1406,12 +1396,6 @@ int need_identify(const object *op) {
         case SKILL_TOOL:
             return 1;
     }
-    /* Try to track down some stuff that may show up here.  Thus, the
-     * archetype file can be updated, and this function removed.
-     */
-#if 0
-    LOG(llevDebug,"need_identify: %s does not need to be id'd\n", op->name);
-#endif
     return 0;
 }
 

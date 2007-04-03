@@ -667,9 +667,6 @@ void doeric_server(void)
 
 	if (FD_ISSET(pl->socket.fd,&tmp_write)) {
 	    if (!pl->socket.can_write)  {
-#if 0
-		LOG(llevDebug,"Player %s socket now write enabled\n", pl->ob->name);
-#endif
 		pl->socket.can_write=1;
 		write_socket_buffer(&pl->socket);
 	    }
