@@ -83,7 +83,6 @@ static PyObject* Object_GetDM(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetWasDM(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetApplied(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetUnpaid(Crossfire_Object* whoptr, void* closure);
-static PyObject* Object_GetFlying(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMonster(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetFriendly(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetGenerator(Crossfire_Object* whoptr, void* closure);
@@ -116,7 +115,6 @@ static PyObject* Object_GetCanCastSpell(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetReflectSpells(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetReflectMissiles(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetUnique(Crossfire_Object* whoptr, void* closure);
-static PyObject* Object_GetCanPassThru(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetRunAway(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetScared(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetUndead(Crossfire_Object* whoptr, void* closure);
@@ -183,7 +181,6 @@ static int Object_SetAttackType(Crossfire_Object* whoptr, PyObject* value, void*
 static int Object_SetUnaggressive(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetPickable(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetInvisible(Crossfire_Object* whoptr, PyObject* value, void* closure);
-static int Object_SetFlying(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetUnpaid(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetFriendly(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetCanSeeInvisible(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -202,7 +199,6 @@ static int Object_SetKnownMagical(Crossfire_Object* whoptr, PyObject* value, voi
 static int Object_SetReflectSpells(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetReflectMissiles(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetUnique(Crossfire_Object* whoptr, PyObject* value, void* closure);
-static int Object_SetCanPassThru(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetRunAway(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetScared(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetUndead(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -316,7 +312,6 @@ static PyGetSetDef Object_getseters[] = {
     { "WasDungeonMaster",(getter)Object_GetWasDM, NULL, NULL, NULL },
     { "Applied",    (getter)Object_GetApplied,  NULL, NULL, NULL },
     { "Unpaid",     (getter)Object_GetUnpaid,   (setter)Object_SetUnpaid, NULL, NULL },
-    { "Flying",     (getter)Object_GetFlying,   (setter)Object_SetFlying, NULL, NULL },
     { "Monster",    (getter)Object_GetMonster,  NULL, NULL, NULL },
     { "Friendly",   (getter)Object_GetFriendly, (setter)Object_SetFriendly, NULL, NULL },
     { "Generator",  (getter)Object_GetGenerator,NULL, NULL, NULL },
@@ -349,7 +344,6 @@ static PyGetSetDef Object_getseters[] = {
     { "ReflectSpells",  (getter)Object_GetReflectSpells,(setter)Object_SetReflectSpells, NULL, NULL },
     { "ReflectMissiles",(getter)Object_GetReflectMissiles,(setter)Object_SetReflectMissiles, NULL, NULL },
     { "Unique",         (getter)Object_GetUnique,       (setter)Object_SetUnique, NULL, NULL },
-    { "CanPassThru",    (getter)Object_GetCanPassThru,  (setter)Object_SetCanPassThru, NULL, NULL },
     { "RunAway",        (getter)Object_GetRunAway,      (setter)Object_SetRunAway, NULL, NULL },
     { "Scared",         (getter)Object_GetScared,       (setter)Object_SetScared, NULL, NULL },
     { "Undead",         (getter)Object_GetUndead,       (setter)Object_SetUndead, NULL, NULL },

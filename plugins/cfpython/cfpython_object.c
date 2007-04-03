@@ -472,12 +472,6 @@ static PyObject* Object_GetUnpaid(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_UNPAID));
 }
-static PyObject* Object_GetFlying(Crossfire_Object* whoptr, void* closure)
-{
-    EXISTCHECK(whoptr);
-    /* FIXME */
-    /*return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_FLYING));*/
-}
 static PyObject* Object_GetMonster(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
@@ -637,12 +631,6 @@ static PyObject* Object_GetUnique(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_UNIQUE));
-}
-static PyObject* Object_GetCanPassThru(Crossfire_Object* whoptr, void* closure)
-{
-    EXISTCHECK(whoptr);
-    /* FIXME */
-    /*return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_CAN_PASS_THRU));*/
 }
 static PyObject* Object_GetRunAway(Crossfire_Object* whoptr, void* closure)
 {

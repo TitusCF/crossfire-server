@@ -15,6 +15,44 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete Flying/CanPassThru properties.
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/cfpython/cfpython_object.c
+Nicolas Weeger 2007-04-03
+
+Clean some old stuff, unused functions, ...
+ common/arch.c
+ common/holy.c
+ common/image.c
+ common/item.c
+ common/loader.l: remove "empty" fields. Those are legacy, and should be removed in maps/archs.
+ common/los.c
+ common/porting.c
+ common/quest.c
+ common/treasure.c
+ include/define.h
+ include/map.h
+ include/spelllist.h
+ server/apply.c
+ server/attack.c
+ server/c_object.c
+ server/disease.c
+ server/gods.c: remove unused follower_remove_similar_item() and misc functions.
+ server/login.c: remove "old player file removing" code, shouldn't be needed anymore.
+ server/monster.c
+ server/player.c
+ server/resurrection.c
+ server/server.c
+ server/skills.c
+ server/spell_attack.c
+ server/spell_effect.c
+ server/spell_util.c
+ server/weather.c
+ socket/loop.c
+ socket/lowlevel.c
+ socket/request.c
+Nicolas Weeger 2007-04-03
+
 New skill: "harvesting", get something from some place - example: fishing.
  include/skills.h sproto.h
  server/c_misc.c skill_util.c
