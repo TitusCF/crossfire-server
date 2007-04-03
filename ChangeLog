@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New skill: "harvesting", get something from some place - example: fishing.
+ include/skills.h sproto.h
+ server/c_misc.c skill_util.c
+Nicolas Weeger 2007-04-03
+
 types/{example.c, README}: Merge example.c into README.
 Alex Schultz 2007-04-03
 

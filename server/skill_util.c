@@ -468,6 +468,10 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
 			  "This skill is already in effect.", NULL);
 	    break;
+        
+    case SK_HARVESTING:
+        success = do_harvest(op, dir, skill);
+        break;
 
 	default:
         {

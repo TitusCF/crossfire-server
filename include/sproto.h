@@ -183,6 +183,7 @@ int command_brace(object *op, char *params);
 int command_kill_pets(object *op, char *params);
 int command_quests(object *pl, char *params);
 int command_passwd(object *pl, char *params);
+int do_harvest(object* pl, int dir, object* skill);
 /* c_move.c */
 int command_east(object *op, char *params);
 int command_north(object *op, char *params);

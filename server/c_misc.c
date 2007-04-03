@@ -32,6 +32,7 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
+#include <assert.h>
 
 extern weathermap_t **weathermap;
 
@@ -2069,4 +2070,121 @@ int command_passwd(object *pl, char *params)
 
     pl->contr->state = ST_CHANGE_PASSWORD_OLD;
     return 1;
+}
+
+/**
+ * Player is trying to harvest something.
+ * @param pl
+ * player trying to harvest.
+ * @param dir
+ * direction.
+ * @param skill
+ * skill being used.
+ * @return
+ * 0
+ */
+int do_harvest(object* pl, int dir, object* skill) {
+    sint16 x, y;
+    int count = 0, proba; /* Probability to get the item, 100 based. */
+    int level, exp;
+    object* found[10]; /* Found items that can be harvested. */
+    mapstruct* map;
+    object* item, *inv;
+    sstring trace, ttool, tspeed, race, tool, slevel, sexp;
+    float speed;
+
+    x = pl->x + freearr_x[dir];
+    y = pl->y + freearr_y[dir];
+    map = pl->map;
+
+    if (!pl->type == PLAYER)
+        return 0;
+
+    if (!map)
+        return 0;
+
+    if (get_map_flags(map, &map, x, y, &x, &y) & P_OUT_OF_MAP) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
+        return 0;
+    }
+
+    if (!pl->chosen_skill || pl->chosen_skill->skill != skill->skill)
+        return 0;
+
+    trace = get_ob_key_value(pl->chosen_skill, "harvest_race");
+    ttool = get_ob_key_value(pl->chosen_skill, "harvest_tool");
+    tspeed = get_ob_key_value(pl->chosen_skill, "harvest_speed");
+    if (!trace || strcmp(trace, "") == 0 || !ttool || strcmp(ttool, "") == 0 || !tspeed || strcmp(tspeed, "") == 0) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
+        LOG(llevError, "do_harvest: tool %s without harvest_[race|tool|speed]\n", pl->chosen_skill->name);
+        return 0;
+    }
+
+    item = GET_MAP_OB(map, x, y);
+    while (item && count < 10) {
+        for (inv = item->inv; inv; inv = inv->below) {
+            race = get_ob_key_value(inv, "harvest_race");
+            tool = get_ob_key_value(inv, "harvest_tool");
+            if (race == trace && (!tool || tool == ttool))
+                found[count++] = inv;
+        }
+        item = item->above;
+    }
+    if (count == 0) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
+        return 0;
+    }
+
+    inv = found[rndm(0, count - 1)];
+    assert(inv);
+
+    slevel = get_ob_key_value(inv, "harvest_level");
+    if (!slevel || (level = atoi(slevel)) == 0) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
+        LOG(llevError, "do_harvest: item %s without harvest_level\n", inv->name);
+        return 0;
+    }
+
+    sexp = get_ob_key_value(inv, "harvest_exp");
+    if (!sexp || (exp = atoi(sexp)) == 0) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
+        LOG(llevError, "do_harvest: item %s without harvest_exp\n", inv->name);
+        return 0;
+    }
+
+    speed = atof(tspeed);
+    if (speed < 0)
+        speed = - speed * pl->speed;
+    pl->speed_left -= speed;
+
+
+    /* Now we found something to harvest, randomly try to get it. */
+    if (level > skill->level + 10) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
+        return 0;
+    }
+
+    if (level >= skill->level)
+        /* Up to 10 more levels, 1 to 11 percent probability. */
+        proba = 10 + skill->level - level;
+    else if (skill->level <= level + 10)
+        proba = 10 + (skill->level - level) * 2;
+    else
+        proba = 30;
+
+    if (proba <= random_roll(0, 100, pl, 1)) {
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
+        return 0;
+    }
+
+    /* Ok, got it. */
+    item = get_object();
+    copy_object_with_inv(inv, item);
+    item = insert_ob_in_ob(item, pl);
+    draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", NULL, skill->slaying, item->name);
+
+    /* Get exp */
+    change_exp(pl, exp, skill->name, SK_EXP_ADD_SKILL);
+
+    return 0;
 }
