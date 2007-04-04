@@ -812,7 +812,6 @@ static void initConstants(PyObject* module)
         { "POISON", POISON },
         { "BOOK", BOOK },
         { "CLOCK", CLOCK },
-        { "LIGHTNING", LIGHTNING },
         { "ARROW", ARROW },
         { "BOW", BOW },
         { "WEAPON", WEAPON },
