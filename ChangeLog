@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/legacy/process.c, common/item.c, include/define.h, server/spell_util.c:
+  Remove old LIGHTNING(12) type.
+Alex Schultz 2007-04-03
+
 Remove obsolete Flying/CanPassThru properties.
  plugins/cfpython/include/cfpython_object_private.h
  plugins/cfpython/cfpython_object.c

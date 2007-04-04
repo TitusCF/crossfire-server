@@ -130,7 +130,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CLOCK		            9
 /*#define FBULLET		    10 */
 /*#define FBALL		            11 */
-#define LIGHTNING	            12
+/*#define LIGHTNING	            12 */
 #define ARROW		            13
 #define BOW		            14
 #define WEAPON		            15

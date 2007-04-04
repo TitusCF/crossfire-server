@@ -122,7 +122,6 @@ static const typedata item_types[] = {
     {POISON, "poison", "poisons", SK_ALCHEMY, 0},
     {BOOK, "book", "books", SK_LITERACY, 0},
     {CLOCK, "clock", "clocks", 0, 0},
-    {LIGHTNING, "lightning", "lightning", 0, 0},
     {ARROW, "arrow", "arrows", SK_BOWYER, 0},
     {BOW, "bow", "bows", SK_BOWYER, 0},
     {WEAPON, "weapon", "weapons", SK_SMITHERY, 0},

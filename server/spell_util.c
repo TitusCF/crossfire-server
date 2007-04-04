@@ -386,7 +386,7 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
     if(OUT_OF_REAL_MAP(m,x,y)) return 0;
     for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
 	if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
-			       sp_op->type==LIGHTNING || (rndm(0, 99)) < 90-(sp_op->level/10)))
+			       (rndm(0, 99)) < 90-(sp_op->level/10)))
 	return 1;
 
     return 0;

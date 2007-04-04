@@ -63,10 +63,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             move_symptom(op);
             return 0;
 
-        case LIGHTNING: /* It now moves twice as fast */
-            move_bolt(op);
-            return 0;
-
         case DOOR:
             remove_door(op);
             return 0;
