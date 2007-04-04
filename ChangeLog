@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tweak harvesting skill per Lalo's suggestions. If a living object is harvested,
+ goes to map instead of in the inventory. Also make the key/value checks more meaningful.
+ server/c_misc.c
+Nicolas Weeger 2007-04-04
+
 server/{spell_attack.c, spell_util.c, spell_effect.c}, include/{libproto.h,
   sproto.h}, types/{spell_effect/spell_effect.c, legacy/process.c}: Move
   ob_process logic for SPELL_EFFECT objects to the ob_method system.

@@ -2125,6 +2125,12 @@ int do_harvest(object* pl, int dir, object* skill) {
         for (inv = item->inv; inv; inv = inv->below) {
             race = get_ob_key_value(inv, "harvest_race");
             tool = get_ob_key_value(inv, "harvest_tool");
+            slevel = get_ob_key_value(inv, "harvest_level");
+            sexp = get_ob_key_value(inv, "harvest_exp");
+            if (race && (!slevel || !sexp)) {
+                LOG(llevError, "do_harvest: item %s without harvest_[level|exp]\n", inv->name);
+                continue;
+            }
             if (race == trace && (!tool || tool == ttool))
                 found[count++] = inv;
         }
@@ -2139,18 +2145,7 @@ int do_harvest(object* pl, int dir, object* skill) {
     assert(inv);
 
     slevel = get_ob_key_value(inv, "harvest_level");
-    if (!slevel || (level = atoi(slevel)) == 0) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
-        LOG(llevError, "do_harvest: item %s without harvest_level\n", inv->name);
-        return 0;
-    }
-
     sexp = get_ob_key_value(inv, "harvest_exp");
-    if (!sexp || (exp = atoi(sexp)) == 0) {
-        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
-        LOG(llevError, "do_harvest: item %s without harvest_exp\n", inv->name);
-        return 0;
-    }
 
     speed = atof(tspeed);
     if (speed < 0)
@@ -2180,8 +2175,23 @@ int do_harvest(object* pl, int dir, object* skill) {
     /* Ok, got it. */
     item = get_object();
     copy_object_with_inv(inv, item);
-    item = insert_ob_in_ob(item, pl);
-    draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", NULL, skill->slaying, item->name);
+    if (QUERY_FLAG(item, FLAG_MONSTER)) {
+        int spot = find_free_spot(item, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
+        if (spot == -1) {
+            /* Better luck next time...*/
+            remove_ob(item);
+            draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
+        return 0;
+        }
+        item->x = pl->x + freearr_x[spot];
+        item->y = pl->y + freearr_y[spot];
+        insert_ob_in_map(item, pl->map, NULL, 0);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", NULL, skill->slaying, item->name);
+    }
+    else {
+        item = insert_ob_in_ob(item, pl);
+        draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s some %s", NULL, skill->slaying, item->name);
+    }
 
     /* Get exp */
     change_exp(pl, exp, skill->name, SK_EXP_ADD_SKILL);
