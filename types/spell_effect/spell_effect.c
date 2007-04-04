@@ -23,6 +23,7 @@
 
 /** @file spell_effect/spell_effect.c
  * The implementation of the Spell Effect class of objects.
+ * @todo Split the subtype functions into their own file each, and split large functions.
  */
 #include <global.h>
 #include <ob_methods.h>
@@ -32,6 +33,21 @@
 
 static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator);
+static method_ret spell_effect_type_process(ob_methods *context, object *op);
+
+static void move_bolt(object *op);
+static void move_bullet(object *op);
+static void explosion(object *op);
+static void move_cone(object *op);
+static void animate_bomb(object *op);
+static void move_missile(object *op);
+static void execute_word_of_recall(object *op);
+static void move_ball_spell(object *op);
+static void move_swarm_spell(object *op);
+static void move_aura(object *aura);
+
+static void forklightning(object *op, object *tmp);
+static void check_spell_knockback(object *op);
 
 /**
  * Initializer for the SPELL_EFFECT object type.
@@ -39,6 +55,7 @@ static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
 void init_type_spell_effect(void)
 {
     register_move_on(SPELL_EFFECT, spell_effect_type_move_on);
+    register_process(SPELL_EFFECT, spell_effect_type_process);
 }
 /**
  * Move on this Spell Effect object.
@@ -84,4 +101,819 @@ static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
     }
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
+}
+
+/**
+ * Handle ob_process for all SPELL_EFFECT objects.
+ * @param context The method context
+ * @param op The spell effect that's being processed.
+ * @return METHOD_OK
+ */
+static method_ret spell_effect_type_process(ob_methods *context, object *op) {
+    switch (op->subtype) {
+	case SP_BOLT:
+	    move_bolt(op);
+	    break;
+
+	case SP_BULLET:
+	    move_bullet(op);
+	    break;
+
+	case SP_EXPLOSION:
+	    explosion(op);
+	    break;
+
+	case SP_CONE:
+	    move_cone(op);
+	    break;
+
+	case SP_BOMB:
+	    animate_bomb(op);
+	    break;
+
+	case SP_MAGIC_MISSILE:
+	    move_missile(op);
+	    break;
+
+	case SP_WORD_OF_RECALL:
+	    execute_word_of_recall(op);
+	    break;
+
+	case SP_MOVING_BALL:
+	    move_ball_spell(op);
+	    break;
+
+	case SP_SWARM:
+	    move_swarm_spell(op);
+	    break;
+
+	case SP_AURA:
+	    move_aura(op);
+	    break;
+    }
+    return METHOD_OK;
+}
+
+/**
+ * Moves bolt 'op'. Basically, it just advances a space, and checks for various
+ * things that may stop it.
+ * @param op The bolt object moving.
+ */
+static void move_bolt(object *op) {
+    object *tmp;
+    int mflags;
+    sint16 x, y;
+    mapstruct *m;
+
+    if (--(op->duration) < 0) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+    hit_map(op, 0, op->attacktype, 1);
+
+    if (!op->direction)
+        return;
+
+    if (--op->range < 0) {
+        op->range = 0;
+    } else {
+        x = op->x+DIRX(op);
+        y = op->y+DIRY(op);
+        m = op->map;
+        mflags = get_map_flags(m, &m, x, y, &x, &y);
+
+        if (mflags&P_OUT_OF_MAP)
+            return;
+
+        /* We are about to run into something - we may bounce */
+        /* Calling reflwall is pretty costly, as it has to look at all the objects
+         * on the space.  So only call reflwall if we think the data it returns
+         * will be useful.
+         */
+        if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y))
+        || ((mflags&P_IS_ALIVE) && reflwall(m, x, y, op))) {
+
+            if(!QUERY_FLAG(op, FLAG_REFLECTING))
+                return;
+
+            /* Since walls don't run diagonal, if the bolt is in
+             * one of 4 main directions, it just reflects back in the
+             * opposite direction.  However, if the bolt is travelling
+             * on the diagonal, it is trickier - eg, a bolt travelling
+             * northwest bounces different if it hits a north/south
+             * wall (bounces to northeast) vs an east/west (bounces
+             * to the southwest.
+             */
+            if (op->direction&1) {
+                op->direction = absdir(op->direction+4);
+            } else {
+                int left, right;
+                int mflags;
+
+                /* Need to check for P_OUT_OF_MAP: if the bolt is tavelling
+                 * over a corner in a tiled map, it is possible that
+                 * op->direction is within an adjacent map but either
+                 * op->direction-1 or op->direction+1 does not exist.
+                 */
+                mflags = get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction-1)], op->y+freearr_y[absdir(op->direction-1)], &x, &y);
+
+                left = (mflags&P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
+
+                mflags = get_map_flags(op->map, &m, op->x+freearr_x[absdir(op->direction+1)], op->y+freearr_y[absdir(op->direction+1)], &x, &y);
+                right = (mflags&P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y));
+
+                if (left == right)
+                    op->direction = absdir(op->direction+4);
+                else if(left)
+                    op->direction = absdir(op->direction+2);
+                else if(right)
+                    op->direction = absdir(op->direction-2);
+            }
+            update_turn_face(op); /* A bolt *must* be IS_TURNABLE */
+            return;
+        } else { /* Create a copy of this object and put it ahead */
+            tmp = get_object();
+            copy_object(op, tmp);
+            tmp->speed_left = -0.1;
+            tmp->x += DIRX(tmp), tmp->y += DIRY(tmp);
+            tmp = insert_ob_in_map(tmp, op->map, op, 0);
+            /* To make up for the decrease at the top of the function */
+            tmp->duration++;
+
+            /* New forking code.  Possibly create forks of this object
+             * going off in other directions.
+             */
+
+            if (rndm(0, 99)< tmp->stats.Dex) {  /* stats.Dex % of forking */
+                forklightning(op, tmp);
+            }
+            /* In this way, the object left behind sticks on the space, but
+             * doesn't create any bolts that continue to move onward.
+             */
+            op->range = 0;
+        } /* copy object and move it along */
+    } /* if move bolt along */
+}
+
+/**
+ * Moves bullet 'op'. Basically, we move 'op' one square, and if it hits
+ * something, call check_bullet. This function is only applicable to bullets,
+ * but not to all fired arches (eg, bolts).
+ * @param op The bullet being moved.
+ */
+static void move_bullet(object *op) {
+    sint16 new_x, new_y;
+    int mflags;
+    mapstruct *m;
+
+    /* Reached the end of its life - remove it */
+    if (--op->range <= 0) {
+        if (op->other_arch) {
+            explode_bullet(op);
+        } else {
+            remove_ob(op);
+            free_object(op);
+        }
+        return;
+    }
+
+    new_x = op->x+DIRX(op);
+    new_y = op->y+DIRY(op);
+    m = op->map;
+    mflags = get_map_flags(m, &m, new_x, new_y, &new_x, &new_y);
+
+    if (mflags&P_OUT_OF_MAP) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+
+    if (!op->direction || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
+        if (op->other_arch) {
+            explode_bullet(op);
+        } else {
+            remove_ob(op);
+            free_object(op);
+        }
+        return;
+    }
+
+    remove_ob(op);
+    op->x = new_x;
+    op->y = new_y;
+    if ((op = insert_ob_in_map(op, m, op, 0)) == NULL)
+        return;
+
+    if (reflwall(op->map, op->x, op->y, op)) {
+        op->direction = absdir(op->direction+4);
+        update_turn_face(op);
+    } else {
+        check_bullet(op);
+    }
+}
+
+/**
+ * Expands an explosion. op is a piece of the explosion - this expans it in the
+ * different directions. At least that is what I think this does.
+ * @param The piece of explosion expanding.
+ */
+static void explosion(object *op) {
+    object *tmp;
+    mapstruct *m = op->map;
+    int i;
+
+    if (--(op->duration) < 0) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+    hit_map(op, 0, op->attacktype, 0);
+
+    if (op->range > 0) {
+        for (i = 1; i < 9; i++) {
+            sint16 dx, dy;
+
+            dx = op->x+freearr_x[i];
+            dy = op->y+freearr_y[i];
+            /* ok_to_put_more already does things like checks for walls,
+             * out of map, etc.
+             */
+            if (ok_to_put_more(op->map, dx, dy, op, op->attacktype)) {
+                tmp=get_object();
+                copy_object(op, tmp);
+                tmp->state = 0;
+                tmp->speed_left = -0.21;
+                tmp->range--;
+                tmp->value = 0;
+                tmp->x = dx;
+                tmp->y = dy;
+                insert_ob_in_map(tmp, m, op, 0);
+            }
+        }
+    }
+}
+
+/**
+ * Causes cone object 'op' to move a space/hit creatures.
+ * @param op The cone object moving.
+ */
+static void move_cone(object *op) {
+    int i;
+    tag_t tag;
+
+    /* if no map then hit_map will crash so just ignore object */
+    if (!op->map) {
+        LOG(llevError, "Tried to move_cone object %s without a map.\n", op->name ? op->name : "unknown");
+        op->speed = 0;
+        update_ob_speed(op);
+        return;
+    }
+
+    /* lava saves it's life, but not yours  :) */
+    if (QUERY_FLAG(op, FLAG_LIFESAVE)) {
+        hit_map(op, 0, op->attacktype, 0);
+        return;
+    }
+
+    tag = op->count;
+    hit_map(op, 0, op->attacktype, 0);
+
+    /* Check to see if we should push anything.
+     * Spell objects with weight push whatever they encounter to some
+     * degree.
+     */
+    if (op->weight)
+        check_spell_knockback(op);
+
+    if (was_destroyed(op, tag))
+        return;
+
+    if ((op->duration--) < 0) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+    /* Object has hit maximum range, so don't have it move
+     * any further.  When the duration above expires,
+     * then the object will get removed.
+     */
+    if (--op->range < 0) {
+        op->range = 0;    /* just so it doesn't wrap */
+        return;
+    }
+
+    for (i = -1; i < 2; i++) {
+        sint16 x = op->x+freearr_x[absdir(op->stats.sp+i)];
+        sint16 y = op->y+freearr_y[absdir(op->stats.sp+i)];
+
+        if (ok_to_put_more(op->map, x, y, op, op->attacktype)) {
+            object *tmp = get_object();
+            copy_object(op, tmp);
+            tmp->x = x;
+            tmp->y = y;
+
+            tmp->duration = op->duration+1;
+
+            /* Use for spell tracking - see ok_to_put_more() */
+            tmp->stats.maxhp = op->stats.maxhp;
+            insert_ob_in_map(tmp, op->map, op, 0);
+            if (tmp->other_arch)
+                cone_drop(tmp);
+        }
+    }
+}
+
+/**
+ * This handles an exploding bomb.
+ * @param The original bomb object.
+ */
+static void animate_bomb(object *op) {
+    int i;
+    object *env, *tmp;
+    archetype *at;
+
+    if (op->state != NUM_ANIMATIONS(op)-1)
+        return;
+
+    env = object_get_env_recursive(op);
+
+    if (op->env) {
+        if (env->map == NULL)
+            return;
+
+        if (env->type == PLAYER)
+            esrv_del_item(env->contr, op->count);
+
+        remove_ob(op);
+        op->x = env->x;
+        op->y = env->y;
+        if ((op = insert_ob_in_map(op, env->map, op, 0)) == NULL)
+            return;
+    }
+
+    /* This copies a lot of the code from the fire bullet,
+     * but using the cast_bullet isn't really feasible,
+     * so just set up the appropriate values.
+     */
+    at = find_archetype(SPLINT);
+    if (at) {
+        for (i = 1; i < 9; i++) {
+            if (out_of_map(op->map, op->x+freearr_x[i], op->y+freearr_x[i]))
+                continue;
+            tmp = arch_to_object(at);
+            tmp->direction = i;
+            tmp->range = op->range;
+            tmp->stats.dam = op->stats.dam;
+            tmp->duration = op->duration;
+            tmp->attacktype = op->attacktype;
+            copy_owner(tmp, op);
+            if (op->skill && op->skill != tmp->skill) {
+                if (tmp->skill)
+                    free_string(tmp->skill);
+                tmp->skill = add_refcount(op->skill);
+            }
+            if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+                SET_ANIMATION(tmp, i);
+            tmp->x = op->x+freearr_x[i];
+            tmp->y = op->y+freearr_x[i];
+            insert_ob_in_map(tmp, op->map, op, 0);
+            ob_process(tmp);
+        }
+    }
+
+    explode_bullet(op);
+}
+
+/**
+ * Move a missle object.
+ * @param op The missile that needs to be moved.
+ */
+static void move_missile(object *op) {
+    int i, mflags;
+    object *owner;
+    sint16 new_x, new_y;
+    mapstruct *m;
+
+    if (op->range-- <= 0) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+
+    owner = get_owner(op);
+
+    new_x = op->x+DIRX(op);
+    new_y = op->y+DIRY(op);
+
+    mflags = get_map_flags(op->map, &m, new_x, new_y, &new_x, &new_y);
+
+    if (!(mflags&P_OUT_OF_MAP)
+    && ((mflags&P_IS_ALIVE) || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y)))) {
+        tag_t tag = op->count;
+        hit_map (op, op->direction, AT_MAGIC, 1);
+        /* Basically, missile only hits one thing then goes away.
+         * we need to remove it if someone hasn't already done so.
+         */
+        if (!was_destroyed(op, tag)) {
+            remove_ob(op);
+            free_object(op);
+        }
+        return;
+    }
+
+    remove_ob(op);
+    if (!op->direction || (mflags&P_OUT_OF_MAP)) {
+        free_object(op);
+        return;
+    }
+    op->x = new_x;
+    op->y = new_y;
+    op->map = m;
+    i=spell_find_dir(op->map, op->x, op->y, get_owner(op));
+    if (i > 0 && i != op->direction){
+        op->direction = i;
+        SET_ANIMATION(op, op->direction);
+    }
+    insert_ob_in_map(op, op->map, op, 0);
+}
+
+/**
+ * Handles the actual word of recalling. Called when force in player inventory expires.
+ * @param op The word of recall effect activating.
+ */
+static void execute_word_of_recall(object *op) {
+    object *wor=op;
+    while(op!=NULL && op->type!=PLAYER)
+	op=op->env;
+
+    if(op!=NULL && op->map) {
+	if ((get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) && (!QUERY_FLAG(op,FLAG_WIZCAST)))
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+			  "You feel something fizzle inside you.", NULL);
+	else
+	    enter_exit(op,wor);
+    }
+    remove_ob(wor);
+    free_object(wor);
+}
+
+/** 
+ * This handles ball type spells that just sort of wander about.
+ * Note that duration is handled by process_object() in time.c
+ * @param op The spell effect.
+ */
+static void move_ball_spell(object *op) {
+    int i, j, dam_save, dir, mflags;
+    sint16 nx, ny, hx, hy;
+    object *owner;
+    mapstruct *m;
+
+    owner = get_owner(op);
+
+    /* the following logic makes sure that the ball doesn't move into a wall,
+     * and makes sure that it will move along a wall to try and get at it's
+     * victim.  The block immediately below more or less chooses a random
+     * offset to move the ball, eg, keep it mostly on course, with some
+     * deviations.
+     */
+
+    dir = 0;
+    if (!(rndm(0, 3)))
+        j = rndm(0, 1);
+    else
+        j = 0;
+
+    for (i = 1; i < 9; i++) {
+        /* i bit 0: alters sign of offset
+         * other bits (i/2): absolute value of offset
+         */
+
+        int offset = ((i^j)&1) ? (i/2) : -(i/2);
+        int tmpdir = absdir(op->direction+offset);
+
+        nx = op->x+freearr_x[tmpdir];
+        ny = op->y+freearr_y[tmpdir];
+        if (!(get_map_flags(op->map, &m, nx, ny, &nx, &ny)&P_OUT_OF_MAP)
+        && !(OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
+            dir = tmpdir;
+            break;
+        }
+    }
+    if (dir == 0) {
+        nx = op->x;
+        ny = op->y;
+        m = op->map;
+    }
+
+    remove_ob(op);
+    op->y = ny;
+    op->x = nx;
+    insert_ob_in_map(op, m, op, 0);
+
+    dam_save = op->stats.dam;  /* save the original dam: we do halfdam on
+                                surrounding squares */
+
+    /* loop over current square and neighbors to hit.
+     * if this has an other_arch field, we insert that in
+     * the surround spaces.
+     */
+    for (j = 0; j < 9; j++) {
+        object *new_ob;
+
+        hx = nx+freearr_x[j];
+        hy = ny+freearr_y[j];
+
+        m = op->map;
+        mflags = get_map_flags(m, &m, hx, hy, &hx, &hy);
+
+        if (mflags&P_OUT_OF_MAP)
+            continue;
+
+        /* first, don't ever, ever hit the owner.  Don't hit out
+         * of the map either.
+         */
+
+        if ((mflags&P_IS_ALIVE) && (!owner || owner->x!=hx || owner->y != hy || !on_same_map(owner, op))) {
+            if (j)
+                op->stats.dam = dam_save/2;
+            hit_map(op, j, op->attacktype, 1);
+
+        }
+
+        /* insert the other arch */
+        if (op->other_arch && !(OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy)))) {
+            new_ob = arch_to_object(op->other_arch);
+            new_ob->x = hx;
+            new_ob->y = hy;
+            insert_ob_in_map(new_ob, m, op, 0);
+        }
+    }
+
+    /* restore to the center location and damage*/
+    op->stats.dam = dam_save;
+
+    i = spell_find_dir(op->map, op->x, op->y, get_owner(op));
+
+    if (i >= 0) { /* we have a preferred direction!  */
+        /* pick another direction if the preferred dir is blocked. */
+        if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP ||
+           OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy))) {
+            i = absdir(i+rndm(0, 2)-1);  /* -1, 0, +1 */
+        }
+        op->direction = i;
+    }
+}
+
+/*
+ * This is an implementation of the swarm spell. It was written for meteor
+ * swarm, but it could be used for any swarm. A swarm spell is a special type
+ * of object that casts swarms of other types of spells. Which spell it casts
+ * is flexible. It fires the spells from a set of squares surrounding the
+ * caster, in a given direction.
+ * @param op The spell effect.
+ */
+static void move_swarm_spell(object *op) {
+    static int cardinal_adjust[9] = { -3, -2, -1, 0, 0, 0, 1, 2, 3 };
+    static int diagonal_adjust[10] = { -3, -2, -2, -1, 0, 0, 1, 2, 2, 3 };
+    sint16 target_x, target_y, origin_x, origin_y;
+    int basedir, adjustdir;
+    mapstruct *m;
+    object *owner;
+
+    owner = get_owner(op);
+    if (op->duration == 0 || owner == NULL || owner->x != op->x || owner->y != op->y) {
+        remove_ob(op);
+        free_object(op);
+        return;
+    }
+    op->duration--;
+
+    basedir = op->direction;
+    if (basedir == 0) {
+        /* spray in all directions! 8) */
+        basedir = rndm(1, 8);
+    }
+
+    /* new offset calculation to make swarm element distribution
+     * more uniform
+     */
+    if (op->duration) {
+        if (basedir&1) {
+            adjustdir = cardinal_adjust[rndm(0, 8)];
+        } else {
+            adjustdir = diagonal_adjust[rndm(0, 9)];
+        }
+    } else {
+        adjustdir = 0;  /* fire the last one from forward. */
+    }
+
+    target_x = op->x+freearr_x[absdir(basedir+adjustdir)];
+    target_y = op->y+freearr_y[absdir(basedir+adjustdir)];
+
+    /* back up one space so we can hit point-blank targets, but this
+     * necessitates extra out_of_map check below
+     */
+    origin_x = target_x-freearr_x[basedir];
+    origin_y = target_y-freearr_y[basedir];
+
+
+    /* spell pointer is set up for the spell this casts.  Since this
+     * should just be a pointer to the spell in some inventory,
+     * it is unlikely to disappear by the time we need it.  However,
+     * do some sanity checking anyways.
+     */
+
+    if (op->spell && op->spell->type == SPELL && !(get_map_flags(op->map, &m, target_x, target_y, &target_x, &target_y)&P_OUT_OF_MAP)) {
+        /* Bullet spells have a bunch more customization that needs to be done */
+        if (op->spell->subtype == SP_BULLET)
+            fire_bullet(owner, op, basedir, op->spell);
+        else if (op->spell->subtype == SP_MAGIC_MISSILE)
+            fire_arch_from_position(owner, op, origin_x, origin_y, basedir, op->spell);
+    }
+}
+
+/**
+ * Process an aura. An aura is a part of someone's inventory,
+ * which he carries with him, but which acts on the map immediately
+ * around him.
+ * Aura parameters:
+ * duration:  duration counter.   
+ * attacktype:  aura's attacktype 
+ * other_arch:  archetype to drop where we attack
+ * @param aura The spell effect.
+ */
+static void move_aura(object *aura) {
+    int i, mflags;
+    object *env;
+    mapstruct *m;
+
+    /* auras belong in inventories */
+    env = aura->env;
+
+    /* no matter what we've gotta remove the aura...
+     * we'll put it back if its time isn't up.  
+     */
+    remove_ob(aura);
+
+    /* exit if we're out of gas */
+    if(aura->duration--< 0) {
+	free_object(aura);
+	return;
+    }
+
+    /* auras only exist in inventories */
+    if(env == NULL || env->map==NULL) {
+	free_object(aura);
+	return;
+    }
+    aura->x = env->x;
+    aura->y = env->y;
+
+    /* we need to jump out of the inventory for a bit
+     * in order to hit the map conveniently. 
+     */
+    insert_ob_in_map(aura,env->map,aura,0);
+
+    for(i=1;i<9;i++) { 
+	sint16 nx, ny;
+	nx = aura->x + freearr_x[i];
+	ny = aura->y + freearr_y[i];
+	mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
+
+	/* Consider the movement tyep of the person with the aura as
+	 * movement type of the aura.  Eg, if the player is flying, the aura
+	 * is flying also, if player is walking, it is on the ground, etc.
+	 */
+	if (!(mflags & P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
+	    hit_map(aura,i,aura->attacktype,0);
+
+	    if(aura->other_arch) {
+		object *new_ob;
+
+		new_ob = arch_to_object(aura->other_arch);
+		new_ob->x = nx;
+		new_ob->y = ny;
+		insert_ob_in_map(new_ob,m,aura,0);
+	    }
+	}
+    }
+    /* put the aura back in the player's inventory */
+    remove_ob(aura);
+    insert_ob_in_ob(aura, env);
+    check_spell_expiry(aura);
+}
+
+/**
+ * Causes op to fork. op is the original bolt, tmp is the first piece of the
+ * fork.
+ * @param op The original bolt.
+ */
+static void forklightning(object *op, object *tmp) {
+    int new_dir = 1;  /* direction or -1 for left, +1 for right 0 if no new bolt */
+    int t_dir; /* stores temporary dir calculation */
+    mapstruct *m;
+    sint16 sx, sy;
+    object *new_bolt;
+
+    /* pick a fork direction.  tmp->stats.Con is the left bias
+     * i.e., the chance in 100 of forking LEFT
+     * Should start out at 50, down to 25 for one already going left
+     * down to 0 for one going 90 degrees left off original path
+     */
+
+    if (rndm(0, 99) < tmp->stats.Con)  /* fork left */
+        new_dir = -1;
+
+    /* check the new dir for a wall and in the map*/
+    t_dir = absdir(tmp->direction+new_dir);
+
+    if (get_map_flags(tmp->map, &m, tmp->x+freearr_x[t_dir], tmp->y+freearr_y[t_dir], &sx, &sy)&P_OUT_OF_MAP)
+        return;
+
+    if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, sx, sy)))
+        return;
+
+    /* OK, we made a fork */
+    new_bolt = get_object();
+
+    copy_object(tmp, new_bolt);
+
+    /* reduce chances of subsequent forking */
+    new_bolt->stats.Dex -= 10;
+    tmp->stats.Dex -= 10;  /* less forks from main bolt too */
+    new_bolt->stats.Con += 25*new_dir; /* adjust the left bias */
+    new_bolt->speed_left = -0.1;
+    new_bolt->direction = t_dir;
+    new_bolt->duration++;
+    new_bolt->x = sx;
+    new_bolt->y = sy;
+    new_bolt->stats.dam /= 2;  /* reduce daughter bolt damage */
+    new_bolt->stats.dam++;
+    tmp->stats.dam /= 2;  /* reduce father bolt damage */
+    tmp->stats.dam++;
+    new_bolt = insert_ob_in_map(new_bolt, m, op, 0);
+    update_turn_face(new_bolt);
+}
+
+/**
+ * Checks to see if a spell pushes objects as well as flies
+ * over and damages them (only used for cones for now)
+ * but moved here so it could be applied to bolts too
+ * @param op The spell object.
+ */
+static void check_spell_knockback(object *op) {
+    object *tmp, *tmp2; /* object on the map */
+    int weight_move;
+    int frictionmod = 2; /*poor man's physics - multipy targets weight by this amount */
+
+    if (!op->weight) { /*shouldn't happen but if cone object has no weight drop out*/
+        /*LOG(llevDebug, "DEBUG: arch weighs nothing\n");*/
+        return;
+    } else {
+        weight_move = op->weight+(op->weight*op->level)/3;
+        /*LOG(llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight, weight_move, op->name, op->level);*/
+    }
+
+    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+        int num_sections = 1;
+
+        /* don't move DM */
+        if (QUERY_FLAG(tmp, FLAG_WIZ))
+            return;
+
+        /* don't move parts of objects */
+        if (tmp->head)
+            continue;
+
+        /* don't move floors or immobile objects */
+        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) || (!QUERY_FLAG(tmp, FLAG_ALIVE) && QUERY_FLAG(tmp, FLAG_NO_PICK)))
+            continue;
+
+        /* count the object's sections */
+        for (tmp2 = tmp; tmp2 != NULL; tmp2 = tmp2->more)
+            num_sections++;
+
+        /* I'm not sure if it makes sense to divide by num_sections - bigger
+         * objects should be harder to move, and we are moving the entire
+         * object, not just the head, so the total weight should be relevant.
+         */
+
+         /* surface area? -tm */
+
+        if (tmp->move_type&MOVE_FLYING)
+            frictionmod = 1; /* flying objects loose the friction modifier */
+
+        if (rndm(0, weight_move-1) > ((tmp->weight/num_sections)*frictionmod)) {  /* move it. */
+            /* move_object is really for monsters, but looking at
+             * the move_object function, it appears that it should
+             * also be safe for objects.
+             * This does return if successful or not, but
+             * I don't see us doing anything useful with that information
+             * right now.
+             */
+            move_object(tmp, absdir(op->stats.sp));
+        }
+
+    }
 }

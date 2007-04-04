@@ -767,25 +767,6 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
 }
 
 /**
- * Handles the actual word of recalling. Called when force in player inventory expires.
- */
-void execute_word_of_recall(object *op) {
-    object *wor=op;
-    while(op!=NULL && op->type!=PLAYER)
-	op=op->env;
-
-    if(op!=NULL && op->map) {
-	if ((get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) && (!QUERY_FLAG(op,FLAG_WIZCAST)))
-	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "You feel something fizzle inside you.", NULL);
-	else
-	    enter_exit(op,wor);
-    }
-    remove_ob(wor);
-    free_object(wor);
-}
-
-/**
  * Word of recall causes the player to return 'home'.
  * we put a force into the player object, so that there is a 
  * time delay effect.
@@ -2886,77 +2867,6 @@ int create_aura(object *op, object *caster, object *spell)
     return 1;
 }
 
-
-/**
- * An aura is a part of someone's inventory,
- * which he carries with him, but which acts on the map immediately
- * around him.
- * Aura parameters:
- * duration:  duration counter.   
- * attacktype:  aura's attacktype 
- * other_arch:  archetype to drop where we attack
- */
-
-void move_aura(object *aura) {
-    int i, mflags;
-    object *env;
-    mapstruct *m;
-
-    /* auras belong in inventories */
-    env = aura->env;
-
-    /* no matter what we've gotta remove the aura...
-     * we'll put it back if its time isn't up.  
-     */
-    remove_ob(aura);
-
-    /* exit if we're out of gas */
-    if(aura->duration--< 0) {
-	free_object(aura);
-	return;
-    }
-
-    /* auras only exist in inventories */
-    if(env == NULL || env->map==NULL) {
-	free_object(aura);
-	return;
-    }
-    aura->x = env->x;
-    aura->y = env->y;
-
-    /* we need to jump out of the inventory for a bit
-     * in order to hit the map conveniently. 
-     */
-    insert_ob_in_map(aura,env->map,aura,0);
-
-    for(i=1;i<9;i++) { 
-	sint16 nx, ny;
-	nx = aura->x + freearr_x[i];
-	ny = aura->y + freearr_y[i];
-	mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
-
-	/* Consider the movement tyep of the person with the aura as
-	 * movement type of the aura.  Eg, if the player is flying, the aura
-	 * is flying also, if player is walking, it is on the ground, etc.
-	 */
-	if (!(mflags & P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
-	    hit_map(aura,i,aura->attacktype,0);
-
-	    if(aura->other_arch) {
-		object *new_ob;
-
-		new_ob = arch_to_object(aura->other_arch);
-		new_ob->x = nx;
-		new_ob->y = ny;
-		insert_ob_in_map(new_ob,m,aura,0);
-	    }
-	}
-    }
-    /* put the aura back in the player's inventory */
-    remove_ob(aura);
-    insert_ob_in_ob(aura, env);
-    check_spell_expiry(aura);
-}
 
 /**
  * moves the peacemaker spell.

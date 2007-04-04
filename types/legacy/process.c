@@ -32,10 +32,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
 {
     switch(op->type)
     {
-        case SPELL_EFFECT:
-            move_spell_effect(op);
-            return 1;
-
         case ROD:
         case HORN:
             regenerate_rod(op);
@@ -59,7 +55,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             return 0;
 
         case SYMPTOM:
-
             move_symptom(op);
             return 0;
 

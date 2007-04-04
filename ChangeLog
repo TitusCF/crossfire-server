@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/{spell_attack.c, spell_util.c, spell_effect.c}, include/{libproto.h,
+  sproto.h}, types/{spell_effect/spell_effect.c, legacy/process.c}: Move
+  ob_process logic for SPELL_EFFECT objects to the ob_method system.
+--
 plugins/cfpython/cfpython.c: Remove LIGHTNING from cfpython type constants.
 --
 types/legacy/process.c, common/item.c, include/define.h, server/spell_util.c:

@@ -9,6 +9,14 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : SPELL_EFFECT
+Events     : process
+Moved from : ../server/{spell_attack.c, spell_util.c, spell_effect.c}
+Moved to   : spell_effect/spell_effect.c
+Comment    : Moved ob_process logic into the ob_method system. Should probably
+             split spell_effect.c into multiple files by subtype.
+2007-04-03 - Alex Schultz
+-------------------------------------------------------------------------------
 Ob types   : THROWN_OBJ, ARROW
 Events     : process
 Moved from : ../server/time.c

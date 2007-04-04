@@ -544,8 +544,8 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     if ((tmp = insert_ob_in_map (tmp, m, op,0)) == NULL)
 	return 1;
 
-    move_spell_effect(tmp);
-
+    ob_process(tmp);
+    
     return 1;
 }
 
@@ -1642,57 +1642,6 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     if (op->contr) op->contr->shoottype = old_shoottype;
 
     return success;
-}
-
-
-/* This is called from time.c/process_object().  That function
- * calls this for any SPELL_EFFECT type objects.  This function
- * then dispatches them to the appropriate specific routines.
- */
-void move_spell_effect(object *op) {
-
-    switch (op->subtype) {
-	case SP_BOLT:
-	    move_bolt(op);
-	    break;
-
-	case SP_BULLET:
-	    move_bullet(op);
-	    break;
-
-	case SP_EXPLOSION:
-	    explosion(op);
-	    break;
-
-	case SP_CONE:
-	    move_cone(op);
-	    break;
-
-	case SP_BOMB:
-	    animate_bomb(op);
-	    break;
-
-	case SP_MAGIC_MISSILE:
-	    move_missile(op);
-	    break;
-
-	case SP_WORD_OF_RECALL:
-	    execute_word_of_recall(op);
-	    break;
-
-	case SP_MOVING_BALL:
-	    move_ball_spell(op);
-	    break;
-
-	case SP_SWARM:
-	    move_swarm_spell(op);
-	    break;
-
-	case SP_AURA:
-	    move_aura(op);
-	    break;
-
-    }
 }
 
 /**
