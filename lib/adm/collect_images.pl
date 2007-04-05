@@ -21,7 +21,7 @@ $TMPDIR="/tmp";
 $ARCHNAME="crossfire-images";
 $DESTDIR="$TMPDIR/$ARCHNAME";
 
-# Maximum expected file 
+# Maximum expected file
 $MAXFILESIZE=100000;
 
 if ($ARGV[0] eq "-archive") {
@@ -74,7 +74,7 @@ while(<BMAPS>) {
     $file1 = $3;
 
     print "$num $file\n" if ($num % 500) == 0 ;
-    # This probably isn't the most efficient way to do this if a 
+    # This probably isn't the most efficient way to do this if a
     # large number of images are added, as we try to open each
     # instance.
     # OTOH, we are doing one directory
@@ -118,7 +118,7 @@ while(<BMAPS>) {
 	    # set 0 should have all the sets
 	    print "Error: Image $filename not found for set 0!\n";
 	}
-	
+
     }
 }
 for ($count=0; $count<=$#extension; $count++) {
@@ -147,3 +147,4 @@ if ($archive) {
     system("mv $TMPDIR/$ARCHNAME.tar ../");
     system("rm -rf $TMPDIR/$ARCHNAME");
 }
+

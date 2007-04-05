@@ -15,7 +15,7 @@ $HEIGHT=$ARGV[4];
 #$SPLITMAP=$ARGV[5];
 
 if ($MAPNAME eq "") {
-    die "Usage: connect.pl <basename> <x maps> <y maps> <width> <height>"; 
+    die "Usage: connect.pl <basename> <x maps> <y maps> <width> <height>";
 }
 if ($WIDTH==0) {
     $WIDTH=42;
@@ -47,7 +47,7 @@ while ($xc<=$XM) {
 	}
 	if ($yc>1 || $xc>1) {
 	    $NORTHWEST=$MAPNAME."_".($xc-1)."_".($yc-1);
-	} 
+	}
 	if ($xc>1) {
 	    $WEST=$MAPNAME."_".($xc-1)."_".$yc;
 	}
@@ -130,9 +130,9 @@ while ($xc<=$XM) {
 	    print MAP "sp ".($HEIGHT-$DELTA-1)."\n";
 	    print MAP "end\n";
 	}
-	
+
 # Now lets do the edges.
-	
+
 	if ($NORTH ne "") {
 	    $x=$DELTA;
 	    while ($x < ($WIDTH-$DELTA)) {
@@ -146,7 +146,7 @@ while ($xc<=$XM) {
 		$x=$x+1;
 	    }
 	}
-	
+
 	if ($SOUTH ne "") {
 	    $x=$DELTA;
 	    while ($x < ($WIDTH-$DELTA)) {
@@ -160,8 +160,8 @@ while ($xc<=$XM) {
 		$x=$x+1;
 	    }
 	}
-	
-	
+
+
 	if ($WEST ne "") {
 	    $y=$DELTA;
 	    while ($y < ($HEIGHT-$DELTA)) {
@@ -175,8 +175,8 @@ while ($xc<=$XM) {
 		$y=$y+1;
 	    }
 	}
-	
-	
+
+
 	if ($EAST ne "") {
 	    $y=$DELTA;
 	    while ($y < ($HEIGHT-$DELTA)) {
@@ -244,32 +244,21 @@ while ($xc<=$XM) {
 #		print STDOUT "In map: ".$THISMAP."\n";
 		print MAP $buf;
 #		print STDOUT ".";
-		
+
 	    }
 # else {
 #		print STDOUT "-";
 #	    }
 	    $px=0;
-	    $py=0;		
+	    $py=0;
 	    $buf="";
 	    $currentline=<IMPMAP>;
 	}
 	close MAP;
 	close CONMAP;
-	close IMPMAP;	    
+	close IMPMAP;
 	$yc=$yc+1;
 #	print STDOUT "\n";
     }
     $xc=$xc+1;
 }
-
-
-
-
-
-
-
-
-
-
-

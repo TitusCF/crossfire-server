@@ -59,16 +59,16 @@ while ($i<=$#mapdata) {
   local(@datum) = split (' ',$mapdata[$i]);
   if($datum[0] eq "arch") { $name[$objnum] = $datum[1]; }
   elsif($datum[0] eq "end") { $objnum++; }
-  elsif($datum[0] eq "x") { $x[$objnum] = $datum[1]; } 
-  elsif($datum[0] eq "y") { $y[$objnum] = $datum[1]; } 
+  elsif($datum[0] eq "x") { $x[$objnum] = $datum[1]; }
+  elsif($datum[0] eq "y") { $y[$objnum] = $datum[1]; }
   else {
-    push(@otherline,$mapdata[$i]); $olines_in_obj[$objnum]++; 
+    push(@otherline,$mapdata[$i]); $olines_in_obj[$objnum]++;
   }
-  $i++; 
+  $i++;
 }
 
 
-#Expand the map objects 1 to $objnum 
+#Expand the map objects 1 to $objnum
 for ($j=0; $j<$objnum; $j++) {
   &expand_obj("$j $expand $bufline");
   $bufline += $olines_in_obj[$j];
@@ -88,16 +88,16 @@ sub expand_obj {
   local($end_y) = $start_y + $factor;
 
   while($start_x<$end_x) {
-    while($start_y<$end_y) { 
+    while($start_y<$end_y) {
         local($start_buf) = $temp[2];
-        if($name[$obj]) { printf("arch %s\n",$name[$obj]); } 
+        if($name[$obj]) { printf("arch %s\n",$name[$obj]); }
         else { return; }
 
 	printf("x %d\n",$start_x);
 	printf("y %d\n",$start_y);
 
         while ($start_buf<$end_buf) {
-          print "$otherline[$start_buf]"; 
+          print "$otherline[$start_buf]";
           $start_buf++;
         }
         print"end\n";
@@ -107,3 +107,4 @@ sub expand_obj {
     $start_y = $y[$obj] * $factor;
   }
 }
+

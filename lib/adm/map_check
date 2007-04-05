@@ -304,7 +304,7 @@ sub check_map {
 #		}
 
 		next if !$EXITS{$arch};	# continue if not an exit
-		
+
 
 		#
 		# CHECK 3: exit-type arch, but no path given
@@ -335,7 +335,7 @@ sub check_map {
 		# E.g.:
 		# current map: /village/somewhere
 		#	EXIT PATH		YIELDS
-		#	/village/building	/village/building	
+		#	/village/building	/village/building
 		#	townhouse		/village/townhouse
 		#	../island		/island
 		#
@@ -346,7 +346,7 @@ sub check_map {
 		s@^(/.*/)([^/]*)\s(\.\./.*)$@\1\2 \1\3@;
 		#	/dir/../		--> /	(all occurances)
 		s@/[^/]*/\.\./@/@g;
-		
+
 		($junk,$exit) = split;
 #print STDERR "DBG: exit $map $exit\n" if $debug > 5;
 #print "exit $map $exit\n";
@@ -380,3 +380,4 @@ print "ERROR: map $map, arch $arch, line $lines, no such exit $exit ($rx, $ry, t
 		print "ERROR: map $map, mismatched arch/end, $depth\n";
 	}
 }
+

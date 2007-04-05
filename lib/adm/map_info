@@ -371,5 +371,3 @@ sub animations {
     }
     close(IN);
 }
-
-
