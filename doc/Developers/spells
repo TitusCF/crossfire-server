@@ -146,7 +146,7 @@ cleric, onself.
 
 The defensive, and onself can largely be derived from the
 subtype above.  if subtype is protection or healing, it'd be
-self. 
+self.
 
 cleric is basically redundant now - the skill says what skill to use
 for this spell.  Note that a spell could in theory cost both mana
@@ -172,7 +172,7 @@ may be big treasure lists, but that shouldn't post any problem.  More
 likely, these lists would be broken up into smaller pieces (eg,
 scroll_low_level, scroll_medium_level, scroll_high_level).
 
- This provides finer resolution than is currently allowed in the spell 
+ This provides finer resolution than is currently allowed in the spell
 structure - you could make some spell available only in rods, but not
 wands.  you can better adjust things to better spells show up in
 tougher dungeons, etc,
@@ -202,13 +202,13 @@ repelled, or denied access to the different spell Paths. An object that
 is attuned to a Path cast spells from that Path at 80% of the spell point
 cost and receives duration/damage bonuses as if the caster were five levels
 higher. An object that is repelled from a Path casts spells from that Path
-at 125% of the spell point cost and receives duration/damage bonuses as if 
+at 125% of the spell point cost and receives duration/damage bonuses as if
 the caster were five levels lower (minimum of first level). An object that
-is denied access to a Path cannot cast any spells from it. The casting 
+is denied access to a Path cannot cast any spells from it. The casting
 time is also modified by 80% and 125% respectively. These values are
 defined in PATH_SP_MULT (from spells.h), PATH_TIME_MULT (from spells.h), and
 path_level_mod (from spells.c)
- 
+
 The Paths themselves are the following:
   "Nothing",
   "Protection",
@@ -230,7 +230,7 @@ The Paths themselves are the following:
 
 See define.h for the number values corresponding to the Path.
 
-Some more will be added in the near future. Some spells do not currently 
+Some more will be added in the near future. Some spells do not currently
 belong to a Path, this is probably appropriate for some spells.
 Paths are inherited just like protection/immunity/vulnerability, ie if a
 ring contains "path_attuned 1", the wearer becomes attuned to the Path of
@@ -238,7 +238,7 @@ Protection.
 
 Paths are quite powerful and shouldn't be given away cheaply. Ideally, most
 objects with path_attuned attributes should have path_repelled and path_denied
-attributes as well, to balance out (eg attuned to Fire, repelled from 
+attributes as well, to balance out (eg attuned to Fire, repelled from
 Protection, and denied from Restoration)
 
 ------------------------------------------------------------------------------
@@ -300,7 +300,7 @@ SP_MAKE_MARK (3): This makes a 'mark' that contains a message.  In the old
     system, this used to be part of the rune code, but it really doesn't
     have anything in common with runes (except in name).
 
-    other_arch: Object used to store the message.  
+    other_arch: Object used to store the message.
 
 SP_BOLT (4):
    This fires a bolt (other_arch) of the spell object.  All of the
@@ -355,7 +355,7 @@ SP_EXPLOSION (6):
 
     attacktype: from other_arch, but add magic if bullet has it.
     damage: this is copied over the the bullet dam_modifier.  The
-      bullet dam_modifier is based on the 'food' value 
+      bullet dam_modifier is based on the 'food' value
     range: Copied over from stats.maxhp.  This determines the radius of the
 	explosion.
     duration: copied over from stats.hp.  This determines how long the
@@ -450,7 +450,7 @@ SP_MAGIC_MISSILE(11):
     but will adjust course to hit a monster.  Thus, if something isn't
     perfectly lined up, magic missile will still hit it.
     range, attacktype, etc, all have normal meanings.
-   
+
 
 SP_SUMMON_GOLEM(12):
     This spell summons a friendly creature/object that helps out the
@@ -531,7 +531,7 @@ SP_MAGIC_WALL(15):
     is_used_up (either in spell, or created object): duration put
     into objects food value.
 
-    tear_down (in spell only): Spells damage value is copied into 
+    tear_down (in spell only): Spells damage value is copied into
 	objects hp/maxhp
 
     The level of the created object is always set to half that of
@@ -615,7 +615,7 @@ SP_CREATE_FOOD(22): This creats food for the player.  The food is
     duration_modifier: Creates an addition 50 food/increase of this value.
 
     The formula for how much food value is created is:
-    food_value=spell_ob->stats.food + 
+    food_value=spell_ob->stats.food +
               + 50 * SP_level_duration_adjust(caster,spell_ob);
 
 SP_EARTH_TO_DUST(23): This destroys earthwalls near the player.
@@ -756,7 +756,7 @@ SP_SUMMON_MONSTER (27):
     The reason not all summoned monsters are friendly is because there are
     some spells that create monsters specifically meant to be agressive
     to the player.
-    If flag_monster is set, the monster/created object is not changed. 
+    If flag_monster is set, the monster/created object is not changed.
     Only if it is not set, do we set a value (flag_friendly).
 
 SP_RECHARGE (28):
@@ -765,7 +765,7 @@ SP_RECHARGE (28):
     dam (& modifier): Number of 'spell levels' to recharge.  Basically,
     the number of charges increase in the wand by dam / wand spell level.
     Thus, very low level wands are easier to recharge than high
-    level wands.    
+    level wands.
 
 SP_POLYMORPH (29):
     This spell by default is disabled because of variosu abuses within
@@ -1209,7 +1209,7 @@ archetypes.
 In the old code, abilities had some special meaning in terms of what
 spells the monster would cast.
 
-In the new system, abilities are no different than spells, and use the 
+In the new system, abilities are no different than spells, and use the
 same type/subtype.
 
 Abilities may still be seperate for a few reasons: 1) monsters are not

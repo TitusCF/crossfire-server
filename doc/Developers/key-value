@@ -66,7 +66,7 @@ The following should be considered:
    For example, if the only time the key/value would need to be used is by
    player activating the object, that doesn't happen all that often, so good
    option.
-  
+
    If however the key/value would be examined for map updates (say
    glow_radius) probably not a good option.
 
@@ -99,14 +99,14 @@ The following should be considered:
    key/value lists.
 
 3) Key/value fields shouldn't be used if they are related to an existing
-   field.  For example, if there is a 'foo' field, add you want a 
-   maxfoo value, it should be done as another field and not as a 
+   field.  For example, if there is a 'foo' field, add you want a
+   maxfoo value, it should be done as another field and not as a
    get_ob_key_value(op, "maxfoo") - trying to main that is difficult.
 
 Caveats:
 =========
 
-- key/values don't guard against real fields being used: 
+- key/values don't guard against real fields being used:
   set_ob_key_value(ob, "hp", "acidic")
   will not have the desired effect.
 

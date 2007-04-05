@@ -7,7 +7,7 @@ Making Crossfire Images
 
  Rules for image sets:
 
-  1. Image format for all images should 
+  1. Image format for all images should
 be png.
 
   2. There must be an active maintainer of each of the image sets.  If a set
@@ -19,23 +19,23 @@ required.  It is up to the maintainers of the different sets to make an image
 if the default one is not appropriate.
 
   4. There must be a reason for adding a new set.  This generally equates
-to enough people expressing interest in the set, or the number of new images 
+to enough people expressing interest in the set, or the number of new images
 is substantial enough to warrant the addition.  The use of image sets
 is not for making a set with 10 images because you prefer those over
 some in another set.
 
   5. Naming works like this: If the image name is Bk.272, then the
 actual file name would be Bk.*set*.272.png where *set* is a four letter
-abbreviation that has some relevance to the set name.  An example would be 
-Bk.*clsc*.272.png, where *clsc* is the classic image set.  The arch of course 
+abbreviation that has some relevance to the set name.  An example would be
+Bk.*clsc*.272.png, where *clsc* is the classic image set.  The arch of course
 would only refer to BK.272
 
-  6. Whenever adding a new image set, update the 
+  6. Whenever adding a new image set, update the
 lib/image_info file
 
-  7. Image sets only provide alternate images - 
+  7. Image sets only provide alternate images -
 the .arc files are remained unchanged by the addition of image sets.
-An arch must have a graphic from the *base* set, graphic from additional 
+An arch must have a graphic from the *base* set, graphic from additional
 image sets are optional, but if an arch has one image version -it has to be called base.
 
 
@@ -84,7 +84,6 @@ they will just use the image in the base set.
 
    4. the .arc file needs to be modified so that the face for all the different
 parts of an image are the same.  The server makes this check based on name to
-know if it should handle this object as a combined image or not. 
+know if it should handle this object as a combined image or not.
 
    5. Rebuild the archetypes, collect the images, and install.
-

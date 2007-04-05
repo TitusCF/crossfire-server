@@ -3,16 +3,16 @@ SKILLS/EXPERIENCE DOCUMENTATION for DEVELOPERS
 
 - Summary -
 
-0. Introduction 
+0. Introduction
 
 1. Sketch of system
-   a. Initialization - how skills and experience are linked 
+   a. Initialization - how skills and experience are linked
 
 2. How to add new skills
    a. creation of new skill: outline of needed steps
 
 3. Detail of skill archetype values.
-   
+
 4. Skill Tools
 
 5. Skill Scrolls
@@ -75,7 +75,7 @@ than adding new archetypes and a spell to the game.
 
 a. creation of new skill: outline of needed steps
 
-A number of steps are required to create a new skill. 
+A number of steps are required to create a new skill.
 
 1) Edit a new skills archetype. See below for appropriate parameters.  If
    you desire the skill to be a skill tool, edit a "face" for the new skill.
@@ -184,7 +184,7 @@ what skill is needed to use this object.  Thus, for examples, readable
 objects have 'skill literacy' to denote that the literacy skill is
 needed to read them.  Weapons have 'skill' values to denote what
 skill is needed to use the weapon.  Same for spells.
- 
+
 
 -------------------------------
 7. Workings of the Skill System
@@ -258,7 +258,7 @@ skills.  For example, the identification portion of some skills should
 probably use int, but the creation portion should perhaps be dex and strength.
 
 There is no more SK_level function - while this could still be useful
-to replace code like 
+to replace code like
 
 level= op->chosen_skill?op->chosen_skill->level:op->level;
 
@@ -267,4 +267,3 @@ suggested - the new skill system is much more lenient on passing the
 appropriate skill object to functions that need it, so calls to
 SK_level in most cases may not really be the right approach - in many
 cases, the chosen_skill may not be what the code is really expecting.
-

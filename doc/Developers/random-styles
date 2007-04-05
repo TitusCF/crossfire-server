@@ -41,7 +41,7 @@ RandomMaps.doc
    Styles of floors.  Right now, one floor is chosen from one style, and
 that is the floor for the whole map.  If you want to specify a specific
 floor, make a style with only that floor in it and tell the random map
-generator 
+generator
 floorstyle <your_style>
 
   misc/fountains
@@ -53,7 +53,7 @@ traps.  Some potions are good, others bad:  they're mostly beneficial
 at this instant.
 
   monsterstyles
- 
+
    Only subdirectories are allowed in this directory.  Each subdirectory
 must contain one or more files of the form filename_#
 where # is a non-negative integer.  The number indicates dungeon level.
@@ -63,7 +63,7 @@ for choosing the monsters.
   specialmaps
 
    These are special maps.  They are NOT styles:  they are small maps
-which are included  verbatim into larger maps.  
+which are included  verbatim into larger maps.
 SPECIAL MAPS MUST HAVE A 1-square PASSABLE
 BORDER AROUND THEM:  otherwise, they may break the map they're placed in.
 

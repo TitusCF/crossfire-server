@@ -9,7 +9,7 @@ generally have a physical attack.
 Runes hit any monster or person who steps on them for dam damage
 in 'attacktype' attacktype.  In addition, there is a generalized
 rune which can contain any spell at all, and will cast this spell
-when it detonates.  
+when it detonates.
 
 Many traps and runes are already defined in the archetypes.
 
@@ -37,7 +37,7 @@ other_arch	--	spell archetype of the spell in the rune, if any.
 
 hp		--	How many times the rune detonates before disappearing
 
-attacktype	--	If there isn't any spell, what attacktype to use 
+attacktype	--	If there isn't any spell, what attacktype to use
 			when the rune detonates
 
 face		--	face the rune has
@@ -52,7 +52,7 @@ face1			face2 is the face of a rune detonation.
 face2			A detonating rune inserts a dummy object
 mina			with face2 on the square.
 
-direction	--	Direction to cast the spell the rune contains 
+direction	--	Direction to cast the spell the rune contains
 
 maxhp		--	Number of spells to cast
 

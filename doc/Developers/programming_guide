@@ -1,5 +1,5 @@
 I've redone this file to hopefully make it a little easier to read through
-and quickly get some idea what to do.  There are 3 sections - 
+and quickly get some idea what to do.  There are 3 sections -
 section 1 is current programming style/hints for developers to make
 things easier.  Section 2 is programming guide for new addition.
 Section 3 is notes for making patches.
@@ -106,7 +106,7 @@ the move to 4 space will make future readability easier.
 
   /* if you are doing a single line comment, this method is fine */
 
-  Its much easier to spot the block comments if they all start with *, 
+  Its much easier to spot the block comments if they all start with *,
   and these comments tend to be worth noticing.
 
 14)
@@ -146,7 +146,7 @@ void myFooFunction(param1, param2, param3) {
 }
 
 No space after the left paren, no space before the right paren.
-Comma right after the formal param, space right after the comma.  
+Comma right after the formal param, space right after the comma.
 
 
 17) Local variable names. Just a rules of thumb.
@@ -176,7 +176,7 @@ Please also state what version of crossfire the diff is for.
 If posting a patch on the mailing list (either source or ftp location),
 please explicity state whether or not you want that patch incorporated
 into the master source.  Many times, a patch may be made available on
-an expiremental basis which is not ready for widespread distribution.  
+an expiremental basis which is not ready for widespread distribution.
 
 4) When making patches, please make context diffs.  Please also include
 the directory that the file is in (run the diff in the top level
@@ -213,5 +213,3 @@ a diff doesn't make since, a uuencoded tar file will work just fine.
 Submit all patches to the Sourceforge patch tracker on
 http://sourceforge.net/projects/crossfire., and mail an announcement to
 crossfire-devel@lists.real-time.com.
-
-

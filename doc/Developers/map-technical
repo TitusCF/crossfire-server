@@ -40,7 +40,7 @@ name in the map structure.
     get loaded back into memory if someone re-visits it before it is due to
     reset.
 
-'difficulty', was 'level' stores the map difficulty.  If not set to 
+'difficulty', was 'level' stores the map difficulty.  If not set to
     anything, the server code will try to come up with some difficulty value.
 
 'fixed_resettime', was 'stand_still': If nonzero, the map reset time will not
@@ -50,7 +50,7 @@ name in the map structure.
 	accessed, but should be reset periodically.
 
 'darkness', was 'invisible'.  Light/darnkess of map (overall).  If 0,
-	all of map is fully bright.  
+	all of map is fully bright.
 
 'unique' - if set, this entire map is unique.  Exactly unique to what
 	will depend on how it was created (it could be a per player
@@ -68,7 +68,7 @@ tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	in that direction.  See the section below for more information about
 	map tiling.
 
-'shopitems', 'shopgreed', 'shoprace', 'shopmin', 'shopmax' - the type of thing 
+'shopitems', 'shopgreed', 'shoprace', 'shopmin', 'shopmax' - the type of thing
 	the shop trades in, see doc/Developers/shops for more details
 
 'temp'  - The base temperature in farenhiet for this map.  The temperature
@@ -160,7 +160,7 @@ one) are not very efficient.
 
 The transfer of objects from one map to another tiled map are automatic.
 Presuming the proper macros are used (out_of_map, get_map_..), minimal extra
-work is necessary for everything to work right 
+work is necessary for everything to work right
 
 Notes:
 Tiled maps must be the same width/height along the side they are tiled with.
@@ -190,7 +190,7 @@ The value is derived as being half the maximum viewable area.  The reason
 for this is that the line of sight code (and likely some other code) will only
 look one map away from a source coordinate.  While the values can be less
 than 12, they should be at least 12 if the map tiles with another one in
-that direction.  If the map is an 'end' map (ie, no further tiling in a 
+that direction.  If the map is an 'end' map (ie, no further tiling in a
 specific direction), then having a value less than 12 should work just fine.
 
 Note that tiles maps do not have to be symmetric - several maps
@@ -200,4 +200,4 @@ a multi floor house - that courtyard should be visible (and be the same)
 from all the levels, but you can only go from the courtyard to first floor
 rooms off the courtyard.  This may not be ideal (ie, if flying, you should
 be able to go to any floor), but this tiling for elevation is just an
-example that can be used. 
+example that can be used.

@@ -44,7 +44,7 @@ CVS checkin process:
    been done (for example, if it is a new spell, have you tried casting
    the spell?)  This basic testing implies the code at least compiles
    also.  I realize it is very difficult to do 100% testing of code, but
-   at least a basic test should be done.  
+   at least a basic test should be done.
 
    All source code should also be ANSI & POSIX compliant.  Don't use // for
    comments.  Be careful of new library calls that are not being used
@@ -72,12 +72,12 @@ CVS checkin process:
 
 4) Before starting a big project, send a note to the mailing list asking
    for opinions.  While it is not possible to prevent someone working on
-   whatever they may want, if the general consensus is that it is a bad idea, 
+   whatever they may want, if the general consensus is that it is a bad idea,
    you may want to find that out before spending a lot of work on it only
    to find out that your idea will not get added to the game.
 
 5) Take responsibility for your code.  If you check in something and a bug
-   is reported in it, go an fix it. 
+   is reported in it, go an fix it.
 
 6) Look at the testplans, and if your code may benefit from them, use them.
    Likewise, if you develope a testplan for your code, record it in the

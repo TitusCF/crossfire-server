@@ -74,7 +74,7 @@ order.  In some cases, we handle ints as strings, in others, they are
 sent as binary information.  How any command handles it is detailed
 below in the command description.
 
-The S and C represent the direction of the data (S->C represents something 
+The S and C represent the direction of the data (S->C represents something
 the server sends to the client, C->S represents something the client sends
 to the server.)
 
@@ -160,7 +160,7 @@ map commands, image commands, etc.)
 COMMANDS RELATING TO ESTABLISHING THE INITIAL CONNECTION AND CLOSING THE
 CONNECTION
 
-C->S: version <csval> [scval [vinfo]] 
+C->S: version <csval> [scval [vinfo]]
 S->C: version <csval> [scval [vinfo]]
 	Through the version command, the client and server exchange what
 	version of the protocol they understand.  Neither send this
@@ -193,7 +193,7 @@ S->C: version <csval> [scval [vinfo]]
 	scval and vinfo was added starting in 1020.  Before that version,
 	there was only one version sent in the version command.
 
-	The version are currently integers, in the form ABCD.  
+	The version are currently integers, in the form ABCD.
 	A = 1, and will	likely for quite a while.  This will only really change
 	if needed from rollover of B.
 
@@ -201,7 +201,7 @@ S->C: version <csval> [scval [vinfo]]
 	will be totally unusable.  Such an example would be change of map or
 	item sending commands (either new commands or new format.)
 
-	C represents more minor but still significant changes - clients might 
+	C represents more minor but still significant changes - clients might
 	still work together, but some features that used to work may now fail
 	due to the mismatch.  An example may be a change in the meaning
 	of some field in some command - providing the field is the same size,
@@ -234,11 +234,11 @@ S->C: version <csval> [scval [vinfo]]
 	the server will never send back.
 
 C->S: addme
-    Tells the server that it should add me (the client) to the game.  
+    Tells the server that it should add me (the client) to the game.
     Generally, the client will always send this command, but I suppose there
     can be actions the client wants to do before being added.
 
-S->C: addme_failed 
+S->C: addme_failed
 S->C: addme_success
 
 	This are responses to the last addme command.  I really think these
@@ -254,7 +254,7 @@ S->C: goodbye (Added in SC protocol version 1022)
 	a read error.  In theory, a C->S of the same type could be done,
 	but I don't think it would make a big difference for the server (is
 	going to do the same thing regardless of a clean conection drop
-	or a bad one).  
+	or a bad one).
 
 Also see the setfacemode command below.
 
@@ -275,7 +275,7 @@ C->S: command [count] <txt>
     (ie, 'invoke create food of booze', 'cast medium fireball').  There are a
     few special commands that can also be sent.
 
-    'fire' command is a special case.  The server will handle repeat firing. 
+    'fire' command is a special case.  The server will handle repeat firing.
 
     'fire_stop' will be sent to inform the server to stop firing.  A
     different command name has been chosen to make things easier on the
@@ -287,7 +287,7 @@ C->S: command [count] <txt>
 C->S: ncom <packet> <repeat> <command>
      (ncom = new command)
      This is a replacement for the 'command' above.  packet is a 16
-     bit value which represents what command this is (used is 
+     bit value which represents what command this is (used is
      command below). At current time, only the lowest 8 bits should
      be used (255 should be a plenty large window) - the other 8 bits
      are reserved for future flags
@@ -314,7 +314,7 @@ S->C: drawinfo <color> <text>
 	in newclient.h, and is sent as a string.  The client is free to do
 	whatever it wants with the color information (which may very well
 	mean ignore it.)
-	
+
 S->C: query <flags> [text]
 	Asks the client program for input.  This is only used in a few places -
 	mostly in creating a character and login, but in fact anyplace in the
@@ -351,25 +351,25 @@ S->C: drawextinfo <color> <type> <subtype> message
 	Tell the client to draw specific text.  Color are specified
 	in newclient.h, and is sent as a string.  The client is free to do
 	whatever it wants with the color information (it may very well ignore it.)
-	
+
 	color   same as color infor from S->C drawinfo
 	type    is an int in decimal representation, giving the type of message
-	subtype is an int in decimal representation, giving subtype 
-	        (flavor) of message.  
+	subtype is an int in decimal representation, giving subtype
+	        (flavor) of message.
 	message is a string representation of textual message. content of message may
 	        very well vary depending on the type.
-	
+
 	The server will never send a message to a client with a message type not
-	requested at setup by a toggleextendedinfo. Client is however encouraged to handle 
+	requested at setup by a toggleextendedinfo. Client is however encouraged to handle
 	those case to catch bugs in protocols which may arise in future.
-	
+
 	It is possible a client handles a given message type but not a given subtype.
 	The server does not care about the client subtype (flavors) and, so, client
 	should have a 'generic representation' for each supported type, which will be
-	used when a given subtype is not supported. The type are made a way subtypes 
+	used when a given subtype is not supported. The type are made a way subtypes
 	can be considered as just visual variations (eg a scroll,a card, a letter
 	and a book will share the same type)
-	
+
 	Values for types and description:
 		0	reserved
 		1	books
@@ -403,7 +403,7 @@ ITEM MANIPULATION RELATED COMMANDS
 C->S: move <to> <tag> <nrof>
     All parameters are integers sent in string format.  <to> is where to move
     the object to, tag is the object tag, nrof is how many to move.  This
-    command is used to pickup/drop objects.  If <to> or <tag> is zero, the 
+    command is used to pickup/drop objects.  If <to> or <tag> is zero, the
     object is being moved from/to the ground.  This command is used to move
     items from a container into inventory and vice versa.  if nrof
     is zero, all objects will be moved.
@@ -443,7 +443,7 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 	<animspeed1><nrof1><type1><object2....>
 
 	Sends item information to the client.  All parameters are sent as 4
-	byte ints, except for name, anim, animspeed and (in the case of the 
+	byte ints, except for name, anim, animspeed and (in the case of the
 	item2 command) type.
 
 	The item1 command is an extension of the item command.  It includes
@@ -452,7 +452,7 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 
 	location is where the object is located (0=ground, any other value
 	means is the tag of the object (either player or container)).  This
-	value is sent as 4 bytes. 
+	value is sent as 4 bytes.
 
 	tag is the item tag - unique for each item (however, a tag might
 	be resend, to tell the client to update some object.)
@@ -524,16 +524,16 @@ S->C delinv <tag>
 
 S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 	<path1> <name1> <display name1> <message1> <spell2 ....>
-	Tells the client to add the spell(s) listed to the list of spells 
+	Tells the client to add the spell(s) listed to the list of spells
 	the client knows about. This will be sent at login, and again whenever
 	new spells are sent.
 
 	The fields are;
-	<tag> - (4 bytes - int) The ID number for the spell item. This is 
-		going to be unique, for each spell and will be used to refer 
+	<tag> - (4 bytes - int) The ID number for the spell item. This is
+		going to be unique, for each spell and will be used to refer
 		to it henceforth. The string form of this should also be
 		appended to the cast/invoke commands in order to cast the spell.
-	
+
 	<level> (2 bytes, signed int)
 		The level of the spell.
 
@@ -558,36 +558,36 @@ S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 
 	<path>  (4 bytes, unsigned integer)
 		The path that the spell belongs to.
-		The client should determine the effect of this by comparing 
+		The client should determine the effect of this by comparing
 		these values to both the spell_paths request_info data and the
 		stats info concerning attunement/repulsion, etc.
 
-	<face>  (4 bytes, signed int) 
+	<face>  (4 bytes, signed int)
 		The number of the face that corresponds to the spell, the client
 		can request this facenumber if they want to show a graphical spell
 		representation.
 
 	<name> (1 (non-zero) length byte, followed by that many bytes of ascii text)
 		This is a name to identify the spell, which the client can use
-		for display purposes, it should /NOT/ be used with the 'cast' 
+		for display purposes, it should /NOT/ be used with the 'cast'
 		command, whilst it might work, no such guarentee is made by the
 		server. - Use tag instead.
-	
-	<message> (2 length bytes (which may be zero) followed by that many 
+
+	<message> (2 length bytes (which may be zero) followed by that many
 		bytes of ascii text)
 		The description of the spell. Note that this has an extra length
-		byte because the messages may well be longer than 256 bytes in 
+		byte because the messages may well be longer than 256 bytes in
 		length.
-	
+
 S->C updspell <flags><tag><vals>+
 
 	This updates some spell (of tag) with new values. The flags are 1 byte
-	and determine which values have been updated, and should be re-read. 
+	and determine which values have been updated, and should be re-read.
 	Not all fields may be updated by this command, only those that can be
 	changed.
 
 	If new fields are added in future, they will extend the flags bitmask
-	and the order will remain the LSB order of the flags - that is, the 
+	and the order will remain the LSB order of the flags - that is, the
 	value associated with bit 1 set is sent first, then bit 2, etc.
 
 	The format of the values is same as the addspell command above.
@@ -597,7 +597,7 @@ S->C updspell <flags><tag><vals>+
 	command is set.
 
 S->C delspell <tag>
-	Tells the client to remove its information about the spell Tag is a 4 
+	Tells the client to remove its information about the spell Tag is a 4
 	byte value, the same as the one sent when the spell was added.
 
 ******************************************************************************
@@ -608,16 +608,16 @@ S->C: player <tag><weight><face><name>
 	difference is that player tells the client that this is the central
 	object it needs to care about.
 
-S->C: stats <stat1><val1><stat2><val2>...  
+S->C: stats <stat1><val1><stat2><val2>...
 	The is a server message that tells the client values of the various
 	stats.  All values are binary.  that <stat> values are listed in the
 	newclient.h file.  All the values sent are 16 bits with these
-	exceptions:  
+	exceptions:
 	-weight limit:
-		data is 32 bits.  
+		data is 32 bits.
 	-speed, weapon_sp is converted to an int first by multiply by
-		FLOAT_MULTI (as defined in newclient.h) and then sent as 
-		32 bits.  
+		FLOAT_MULTI (as defined in newclient.h) and then sent as
+		32 bits.
 	-range, title are sent as strings with their length preceded.  The
 		length is 1 byte.
 	-experience: If the client uses the 'exp64' setup flag, this is sent
@@ -629,10 +629,10 @@ S->C: stats <stat1><val1><stat2><val2>...
 	 get used, never both.
 
 	-skill experience:  this is only set if exp64 is set.  This is sent
-	 as the skill level, followed by the skill exp (thus, 9 bytes + 
+	 as the skill level, followed by the skill exp (thus, 9 bytes +
 	 the stat type byte)
 
-	-spell paths: if spellmon is set in setup, the bitmask of attuned, 
+	-spell paths: if spellmon is set in setup, the bitmask of attuned,
 	 repelled and denied paths is sent. These are all 32bits
 
 ******************************************************************************
@@ -748,7 +748,7 @@ C->S: asksmooth <facenbr>
 MAP UPDATE COMMANDS
 
 S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
-	Sends a map to the client.  All cell type values are stored as 
+	Sends a map to the client.  All cell type values are stored as
 	x*mapy+y. Thus, we can fit the map coordinates into 1 byte up to
 	a mapsize of 11x11. (this size is limited by needing to set
 	the high bit)
@@ -902,7 +902,7 @@ S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2
 	OTOH, if the object was a living object and was partially off the
 	map when killed, an update removing that face for the object it was
 	standing on will be sent by the server.
-		
+
 	Various notes about the map1 command:
 
 	this implementation is much simpler than the map command
@@ -970,7 +970,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 	on what the type is.  List of various types:
 
 	0x0: Denotes this space should be cleared.  Length in this case should
-	    also be zero, as there is no data that follows.  Clear in this 
+	    also be zero, as there is no data that follows.  Clear in this
 	    context means that all data associated with the space should
 	    be purged, eg, images, sound, darkness, whatever.
 
@@ -1005,7 +1005,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 
 	    For animations:
 		face will have the high bit set to denote it is not a
-		face but an animation id. 
+		face but an animation id.
 
 		MSB-1, MSB-2: These are used to denote type of animation:
 		0: Normal animation - start at first phase, etc.
@@ -1024,7 +1024,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 		be animated every tick.
 
 	Some notes:
-	
+
 	Coordinates outside the viewable map may be sent.  In these cases, it
 	means that a big image that extends onto the viewable map is on that
 	space.  For big images, only the bottom right coordinate is sent -
@@ -1114,7 +1114,7 @@ S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 	be related to the map and send through mapextended command.
 	Each string represent an info which is enabled. Look
 	at toggleextendedinfos and mapextended for details.
-	
+
 S->C: mapextended <what><length><coord1>[data1a][data1b][data1c]<coord2>...
 	This command is send from server when there is at least
 	1 ExtendedInfo activated using toggleextendedinfos and
@@ -1190,7 +1190,7 @@ C->S: setsound <val>
 	sound information.  By default, the server does not send sound
 	information.
 	Note that the player can use the 'sound' command once the game
-	is started to control future sound transmissions.  However, if 
+	is started to control future sound transmissions.  However, if
 	the client was not started with sound support, the necessary
 	initialization of the sound device might not have happened.
 	However, if the client started with sounds enabled, the user can
@@ -1275,7 +1275,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    Defines the revision of the item command that will be used to send
 	    information about objects. If set to 1 (the default) item1 commands
 	    will be sent. If set to 2, item2 commands will be sent. This may in
-	    future accept extra values beyond these two. 
+	    future accept extra values beyond these two.
 
 	map1cmd: parameter is an integer in string form like above.
 	   this requests the server to use/not use the map1 protocol
@@ -1301,7 +1301,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    have no effect, either as being redundant or not applicable:
 	    darkness: always on
 	    extendedMapInfos: Data is included in map2
- 	
+
 	mapsize x X y
 	    Sets the map size to x X y.  Note the spaces here are only for
 	    clarity - there should be no spaces when actually sent (it
@@ -1497,7 +1497,7 @@ S->C: replyinfo <info_type>[options]<data>
 
     skill_info (no parameters)
 	This returns the skill number to skill name mappings.  In this
-	way, new skills can be added in the server, and the client 
+	way, new skills can be added in the server, and the client
 	can use this new skill information with no changes to the code.
 
 	All data below is in text format.  Format is:
@@ -1513,15 +1513,15 @@ S->C: replyinfo <info_type>[options]<data>
     spell_paths (no parameters)
 	This returns a list of all spell paths in the game, along with the
 	number associated with them. This should be used to parse spell_path
-	data in the stats command. The number is a bitmask but is sent as a 
+	data in the stats command. The number is a bitmask but is sent as a
 	decimal value.
 
 	All data is sent in text format. Format is:
-	
+
 	number:name
-	
+
 	eg
-	
+
 	16:missiles
 
 ------------------------------------------------------------------------------
@@ -1534,7 +1534,7 @@ S->C: version 1001
 C->S: version 1001
 
  The client/server are exchanging version information, to verify that
-they can both properly communicate with each other.  If there is 
+they can both properly communicate with each other.  If there is
 a mismatch, one or both of the sides might close the connection.
 
 
@@ -1565,7 +1565,7 @@ S->C: query (request password)
 C->S: reply (return player password.)
 
  At this point, things could deviate two ways - player could be
-starting a new character, in which case, numerous draw infos, query's 
+starting a new character, in which case, numerous draw infos, query's
 (stat rolling), replys, stats (change stats that were just
 rolled), map updates (player changing clasS) could be sent.  However,
 we will assume that the player actually entered the proper password
@@ -1625,7 +1625,7 @@ not removed.
 client and server distribution, but except for the SockList data type,
 it could probably be used by itself.  The newsocket.c file contains
 some routines to pack ints, shorts, and single chars into SockList
-structs, as well as functions for the reverse.  IT also contains a 
+structs, as well as functions for the reverse.  IT also contains a
 function to send socklists, as well as read them.  The Add??? functions
 increase the len field of the socklist, the Get??? functions do not
 change the pointer in anyways.  Thus, to get and int and move the buffer,
@@ -1685,7 +1685,7 @@ data is sent.
 is up to the client to apply any extensions based on display type (ie,
 add .xpm or .gif or whatever.)  The current client stores images in
 ~/.crossfire/images, and then splits them into sub directories based on
-the first 2 letters - in the above example, the file would be 
+the first 2 letters - in the above example, the file would be
 ~/.crossfire/images/CS/CSword.115
 
  If the client does not have the image or otherwise needs a copy from the
@@ -1694,7 +1694,7 @@ server, it then requests it:
 C->S: askface 65
 
  The server will then send the image via the normal bitmap/pixmap
-routines. 
+routines.
 
 S->C: pixmap <data>
 
@@ -1745,7 +1745,7 @@ can check this to know if it should expect a replyinfo to its requestinfo.
 Todo:
 
  It probably makes more sense to do a more preemptive handling of socket
-events.  That is, instead of sleeping 120 ms, then checking all the 
+events.  That is, instead of sleeping 120 ms, then checking all the
 sockets, we do a select on all the file descriptors with an appropriate
 sleep time.
 

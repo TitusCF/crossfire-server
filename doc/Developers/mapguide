@@ -10,7 +10,7 @@ One way exits/entrances should only be used on objects in which it is
 obvious it is one way.  A house is not an obvious one way entrance.  Remember,
 players may not have the three hours of time it takes to find the exit
 after being trapped in a map (a work around for this can be have the trap
-lead to a safe place with no exit which contains a savebed.  Thus, the 
+lead to a safe place with no exit which contains a savebed.  Thus, the
 player could save and come back at a later time to find the exit.)
 
 2.1) Try to make sure the maps are multi player accessible.  In towns, this
@@ -199,9 +199,9 @@ becomes so short that it's impossible to notice.  In this context, small
 means about 32x32, though it's actually the number of objects in the map
 which count.
 
-What is potentially more critical than the size of the map is the number 
+What is potentially more critical than the size of the map is the number
 of objects (memory usage), and live objects (cpu usage, as each would need
-to be processed.)  
+to be processed.)
 
 Also, remember that if you make very large maps, all generators will be
 cranking out monsters whenever anyone is on it.  This could mean that a lot
@@ -229,7 +229,7 @@ you at a time.  This just makes an easy (and relatively safe) way for
 a character to gain experience and treasure, and is not especially
 interesting or challenging.
 
-2.1) A good idea for the rewards at the end of quests are specific 
+2.1) A good idea for the rewards at the end of quests are specific
 items (luggage, spellbook of some otherwise not available spell,
 special weapon, spellcrystal, etc.)  It is much more interesting to
 put a specific item instead of something like a random artifact.  Feel
@@ -281,7 +281,7 @@ that is easily overwhelmed with these creatures quickly becomes useless.
 
 8) Give your maps a meaningfull name (like John's tower, level 1).
 This way, these can be used instead of the map paths in the highscore
-file.  Also, in terms of the actual file name, try to use numeric 
+file.  Also, in terms of the actual file name, try to use numeric
 level identifiers (ie, maze.1, maze.2, ... instead of maze.first, maze.second,
 etc.)  The former maps the levels sorted a little bit nicer in the
 directory.
@@ -332,9 +332,9 @@ to enter, you will need to change the face of exit for this to work.  If
 you do this, you should also accompany it with a magic mouth.)
 
 5) Make sure you set the difficulty field in the map attributes to
-somethign meaningful.  Crossfire will calculate a default dificulty, 
+somethign meaningful.  Crossfire will calculate a default dificulty,
 but its formula is hardly ideal.  The difficulty of a map determines how
-magical the treasure will be (and some treasure types won't show up 
+magical the treasure will be (and some treasure types won't show up
 unless the map has a certain difficulty level.)
 
 Remember that difficulty isn't only "good" for the player; traps (in
@@ -347,4 +347,3 @@ the code writing time, make a suggestion.  Worst case is it gets ignored.
 But many times, I have written code because I had some idea which just
 was not possible at the time (ie, the apartment in the starting town
 required an expansion/change of the unique item code.)
-

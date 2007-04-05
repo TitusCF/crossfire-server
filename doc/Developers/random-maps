@@ -31,9 +31,9 @@ you may use crossedit to modify the style maps, or create new ones.
 
  Style Parameters::
 
-  layoutstyle <style>	(special!) Pick the layout style for the map.  Currently, 
+  layoutstyle <style>	(special!) Pick the layout style for the map.  Currently,
 			"rogue", "spiral", "maze", "snake", "onion",
-                        and "squarespiral"  are allowed. 
+                        and "squarespiral"  are allowed.
                         See below for more detail.
 
   foorstyle <style>	Load /styles/floorstyles/<style> and pick a random
@@ -44,7 +44,7 @@ you may use crossedit to modify the style maps, or create new ones.
 			walltype from that style for the random map.  All
 			the walls in the map will be of this type.  The walls
 			are modified on insertion so that players cannot go
-			through them:  this is expected for walls, but 
+			through them:  this is expected for walls, but
 			the random map generator makes sure of it. A <style>
                         of "none" causes no walls or doors to be generated.
 
@@ -69,16 +69,16 @@ you may use crossedit to modify the style maps, or create new ones.
 			If it doesn't exist, then it will look for a directory
 			of that name.  If it finds a directory, it will choose
 			a style based on dungeon_level.  It will pick the style
-			with the name <name>_# with the # closest to the 
+			with the name <name>_# with the # closest to the
 			dungeon_level.  Monster objects are copied from the
-			style map, so you may form style maps with modified 
-			monsters which are weaker or stronger than the default 
+			style map, so you may form style maps with modified
+			monsters which are weaker or stronger than the default
 			archetype.A style of "none" causes no monsters to be
                         generated.
 
   treasurestyle <style> (Special) If the style name chosen is contained in
 			the lib/treasures file, it will use that for making
-			treasures.  If it is NOT in the lib/treasures file, 
+			treasures.  If it is NOT in the lib/treasures file,
 			it will look up /styles/treasurestyle/<style>, and
 			pick random treasures from there.  If <style> matches
 			neither of these, it will generate treasures
@@ -112,7 +112,7 @@ you may use crossedit to modify the style maps, or create new ones.
 
   Layout Style:	Parameter:			Effect:
 
-			
+
   maze		layoutoptions1 0 (default)	Sparse maze:  a maze with
 						"rooms" will be made
 
@@ -136,9 +136,9 @@ will be placed at random in the maze.
  Map generation parameters:
 
 
-  'difficulty'		Set the map difficulty.  Has no relation to the 
+  'difficulty'		Set the map difficulty.  Has no relation to the
 			"difficulty" defined in common/*.c.
-			If nonzero, this map and its descendants will 
+			If nonzero, this map and its descendants will
 			have the same difficulty.  If zero, it'll be set
 			to the value of dungeon_level and incremeneted with
 			each recursive map.
@@ -157,17 +157,17 @@ will be placed at random in the maze.
   'dungeon_level'	Another way of setting the map difficulty.  This
 			has no relation to the "difficulty" defined in
 			the common/*.c source code.  The effect is to pick
-			which monsters to use:  for example, if the 
+			which monsters to use:  for example, if the
 			monsterstyle
 			is "humanoid" and the dungeonlevel is 9, the style
 			map /styles/monsterstyles/humanoid/humanoid_9 will be
 			the style from which monsters are chosen.  After the
-			monsters are placed, the map 
+			monsters are placed, the map
 			difficulty is set according
 			to the server's rule, for treasure purposes.
 
   'dungeon_depth'	The map generated will have an exit to another
-			random map of the same style if 
+			random map of the same style if
 			dungeon_level < dungeon_depth.  The next random map
 			will have dungeon_level incremented.  If dungeon_level
 			>= dungeon_depth, no exit to a more difficult map
@@ -197,10 +197,10 @@ will be placed at random in the maze.
 			isn't usually made.  However, if final_map is set
 			to a map's name, then an exit to this map will
 			be made.
-			
+
   'exit_on_final_map'	The default action is to place an exit on
-            the final map.  When explicitly set to 'no' this will 
-			not place a return exit on the final_map.  
+            the final map.  When explicitly set to 'no' this will
+			not place a return exit on the final_map.
 			If you use this setting YOU MUST PROVIDE A WAY BACK IN THE FINAL MAP!
 
 
@@ -234,7 +234,7 @@ will be placed at random in the maze.
 		If option 1 is not set, options 2-16 are ignored.  Options
 		may be added together:  treasureoptions 3 means treasure
 		optons 1 and 2 are set.
-			
+
  Map Layout styles:
 
 
@@ -259,7 +259,7 @@ will be placed at random in the maze.
     # #                  #  #     #       #  #    #       #
     # ####################  #     #   #   #  #            #
     #                       #     #   #   #  #    #       #
-    #########################     ######################### 
+    #########################     #########################
 
     options:
     0	Pick random options below
@@ -473,7 +473,7 @@ will be placed at random in the maze.
     #   #   #   #       #   #     #
     #   #   #   D       #   #     #
     #   #   #   #####D###   #     #
-    #   #   #   # > #   #   #     # 
+    #   #   #   # > #   #   #     #
     #   #   #   D   #   #   #     #
     #   #   #########   #   #     #
     #   #   #       D   #   #     #
@@ -512,7 +512,7 @@ will be placed at random in the maze.
     #  #    #     ####D####     #    #  #
     ##D##########D#       #D##########D##
     #             #   <   #             #
-    ##################################### 
+    #####################################
 
 
  An example input file::
@@ -561,8 +561,8 @@ decor, and monsters.
 a random map, but WITH a sign saying "this is a random map".
 
   Identifiability:  (configurable)
- 
-   Random maps includes a sign 
+
+   Random maps includes a sign
 which states that the map is random.
 
   Recursion:
@@ -590,8 +590,8 @@ map designers could use it easily as well as the server could at exits.
    Random maps should be sized.  A big, multi-square exit should have a bigger
 random map to it, while a small house should have a small interior.
 
-  Inheritance: 
- 
+  Inheritance:
+
    The type and location of the exit should imply something about its random
 interior.  A shop exit should have a shop interior, a house should have a
 home interior, etc, a difficult map should have difficult sub-maps.
