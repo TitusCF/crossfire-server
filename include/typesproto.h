@@ -8,6 +8,8 @@ void init_type_book(void);
 void init_type_button(void);
 /* check_inv/check_inv.c */
 void init_type_check_inv(void);
+/* clock/clock.c */
+void init_type_clock(void);
 /* container/container.c */
 void init_type_container(void);
 /* converter/converter.c */

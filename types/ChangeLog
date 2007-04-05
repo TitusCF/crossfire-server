@@ -9,11 +9,11 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
-Ob types   : EXIT
+Ob types   : EXIT, CLOCK
 Events     : apply
 Moved from : legacy/apply.c
-Moved to   : exit/exit.c
-Comment    : Moved apply handling for exits.
+Moved to   : exit/exit.c, clock/clock.c
+Comment    : Moved apply handling for exits and clocks.
 2007-04-05 - Alex Schultz
 -------------------------------------------------------------------------------
 Ob types   : SPELL_EFFECT

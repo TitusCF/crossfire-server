@@ -164,24 +164,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             (void) legacy_check_improve_weapon(applier, op);
             return 1;
 
-        case CLOCK:
-            if (applier->type == PLAYER)
-            {
-                timeofday_t tod;
-
-                get_tod(&tod);
-                play_sound_player_only(applier->contr, SOUND_CLOCK,0,0);
-                draw_ext_info_format(NDI_UNIQUE, 0,applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                     "It is %d minute%s past %d o'clock %s",
-                     "It is %d minute%s past %d o'clock %s",
-                     tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-                     ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-                     ((tod.hour >= 14) ? "pm" : "am"));
-                return 1;
-            }
-            return 0;
-
         case MENU: 
             if (applier->type == PLAYER)
             {

@@ -50,6 +50,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_book();
     init_type_button();
     init_type_check_inv();
+    init_type_clock();
     init_type_container();
     init_type_converter();
     init_type_deep_swamp();

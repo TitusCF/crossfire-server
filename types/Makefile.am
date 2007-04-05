@@ -6,6 +6,7 @@ arrow/arrow.c \
 book/book.c \
 button/button.c \
 check_inv/check_inv.c \
+clock/clock.c \
 container/container.c \
 converter/converter.c \
 deep_swamp/deep_swamp.c \
