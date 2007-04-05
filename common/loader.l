@@ -863,7 +863,6 @@ A	.+
 
 %{ /* These are all legacy - any new objects should use the move_ .. values */
 %}
-^no_pass{S}	    { if (IVAL) op->move_block = MOVE_ALL; else op->move_block=0; }
 ^walk_on{S}	    { if (IVAL) op->move_on |= MOVE_WALK; else op->move_on &= ~MOVE_WALK; }
 ^walk_off{S}	    { if (IVAL) op->move_off |= MOVE_WALK; else op->move_off &= ~MOVE_WALK; }
 ^fly_on{S}	    { if (IVAL) op->move_on |= MOVE_FLY_LOW; else op->move_on &= ~MOVE_FLY_LOW; }

@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove support for obsolete 'no_pass' attribute.
+--
+doc/Developers/{objects,spells,map-technical}: Update documentation about
+   no_pass attribute.
+lib/adm/getfaces.pl: Scan for move_blocked instead of no_pass.
+common/loader.l: Remove support for no_pass attribute.
+crossedit/Attr.c: Remove no_pass from the list of valid attribute names.
+Andreas Kirschbaum 2007-04-05
+
 types/exit/exit.c: Fix bad definition of exit_type_apply.
 --
 types/{legacy/apply.c, clock/clock.c}, server/ob_types.c: Move apply logic for

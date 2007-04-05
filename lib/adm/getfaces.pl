@@ -123,7 +123,7 @@ Graphical Display:
                            *long* time.
 
 Criteria:
-  --nopass                 Only list faces for objects with no_pass 1
+  --nopass                 Only list faces for objects with move_block set
   --floor                  Only list faces for objects with is_floor 1
   --alive                  Only list faces for objects with alive 1 (note that
                            this is not an accurate way to detect monsters or
@@ -200,7 +200,7 @@ if (/^.*\.arc\z/s) {
 		if ($_ =~ /^name /) { chomp($pname=$words[1]); }
 		if ($_ =~ /^end$/) { $newob=1; $obstatus=0; $countframes=0; $doneobject=1; }
 		if ($_ =~ /^anim$/) { $countframes=1; $hasobject=1 }
-		if ($_ =~ /^no_pass 1/) {$inopass=1;}
+		if ($_ =~ /^move_block [^0]/) {$inopass=1;}
 		if ($_ =~ /^alive 1/) {$ialive=1;}
 		if ($_ =~ /^is_floor 1/) {$ifloor=1;}
 		if ($_ =~ /^monster 1/) {$imonster=1;}

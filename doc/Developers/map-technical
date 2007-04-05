@@ -146,7 +146,7 @@ The effect of saving only the head does have the effect of not being
 able to customize the non head parts of the object.  This generally should not
 be a problem (in the case of shops/building, the exit code now knows to look
 only at the head for valid information).  The case where this may not work as
-well as expected is for buildings where setting the no_pass to non
+well as expected is for buildings where setting the move_block to non
 archetype defaults will get lost.
 
 ------------------------------------------------------------------------------

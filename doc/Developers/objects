@@ -1154,8 +1154,8 @@ types of movement the space blocks.  From define.h:
 #define MOVE_ALL        0x1f    /* Mask of all movement types */
 
 MOVE_ALL may change in the future - it is mask for all movement types -
-used for 'no_pass' - it sets move_block to MOVE_ALL, other places that
-check for all movement types may also use this value.
+it sets move_block to MOVE_ALL, other places that check for all movement types
+may also use this value.
 
 It is possible to use string names instead of the numeric bitmask in
 the move_fields below.  It is strongly encouraged that the string names be
@@ -1723,15 +1723,15 @@ last_heal: Remove object if found.
 last_sp: If set, than having that object is a match.  If 0, then not having
   that object is a match.
 connected:  Value to to push.
-no_pass: If set, you can only pass through that space if you be allowed to
+move_block: If set, you can only pass through that space if you be allowed to
   (depending on last_sp determines if having/not having is the match
-  criteria.)  if no_pass is 0 (default), then the inventory only acts as
+  criteria.)  if move_block is 0 (default), then the inventory only acts as
   a trigger/button.
 
 General usage notes:  Putting a check_inventory space in front of a gate with
 another on the other side works reasonably well as a control mechanism.  Note,
 however, that other people may still be able to slip by.  To get around this,
-use the no_pass to 1, and put it in the space you want to control (probably
+use the move_block to all, and put it in the space you want to control (probably
 makes sense to put a fake door or other object there to make it a little more
 obvious what is going on.)
 
@@ -2003,7 +2003,8 @@ applied                 set if object is readied/worn/etc.
 unpaid                  set if object is unpaid (internal)
 
 no_pick <1>             set if O can't be taken.
-no_pass <1>             set if O can't be passed. (eg, a closed door)
+no_pass <1>             set if O can't be passed. (eg, a closed door) (obsolete
+                        -- use move_block all instead)
 walk_on <1>             O is applied by anything walking onto it.
 walk_off <1>            O is applied by anything walking off it.
 fly_on <1>              O is applied by anything flying onto it

@@ -393,7 +393,7 @@ static char *allowed_variables[] = {
     "material", "value", "weight", "carrying", "immune", "protected",
     "attacktype", "vulnerable", "path_attuned", "path_repelled",
     "path_denied", "invisible", "magic", "state", "alive", "applied",
-    "unpaid", "need_an", "need_ie", "no_pick", "no_pass", "walk_on",
+    "unpaid", "need_an", "need_ie", "no_pick", "walk_on",
     "walk_off", "fly_on", "fly_off", "monster",
     "neutral", "no_attack", "no_damage", "friendly",
     "generator", "is_thrown", "auto_apply", "treasure", "apply_once",

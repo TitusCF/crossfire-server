@@ -502,7 +502,7 @@ SP_MAGIC_WALL(15):
     just don't include the %d in the race.  Note that if both other_arch
     and race is set, then other_arch takes precedence
 
-    no_pass: If set, then the object can not be created on the space the
+    move_block: If set, then the object can not be created on the space the
 	player is standing on.  In all cases, the object can not be
 	created on a space that is blocked by an object.
 
