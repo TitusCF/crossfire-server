@@ -15,6 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/exit/exit.c: Fix bad definition of exit_type_apply.
+--
 types/{legacy/apply.c, clock/clock.c}, server/ob_types.c: Move apply logic for
   clocks out of legacy area in the ob_method system.
 --
