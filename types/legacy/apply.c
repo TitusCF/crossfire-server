@@ -63,26 +63,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             push_button(op);
             return 1;
 
-        case EXIT:
-            if (applier->type != PLAYER)
-                return 0;
-            if( ! EXIT_PATH (op) || !legacy_is_legal_2ways_exit(applier,op))
-            {
-                char name[MAX_BUF];
-                query_name(op, name, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                    "The %s is closed.", "The %s is closed.", name);
-            } else {
-                /* Don't display messages for random maps. */
-                if (op->msg && strncmp(EXIT_PATH(op),"/!",2) &&
-                    strncmp(EXIT_PATH(op), "/random/", 8))
-                    draw_ext_info (NDI_NAVY, 0, applier,
-                        MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, op->msg, NULL);
-                enter_exit(applier,op);
-            }
-            return 1;
-
         case SKILLSCROLL:
             if (applier->type == PLAYER)
             {

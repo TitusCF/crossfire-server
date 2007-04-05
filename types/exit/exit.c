@@ -32,6 +32,7 @@
 
 static method_ret exit_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator);
+static void exit_type_apply(object *exit, object *op, int autoapply);
 
 /**
  * Initializer for the EXIT object type.
@@ -39,6 +40,7 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
 void init_type_exit(void)
 {
     register_move_on(EXIT, exit_type_move_on);
+    register_apply(EXIT, exit_type_apply);
 }
 
 /**
@@ -66,5 +68,33 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
         enter_exit(victim, trap);
     }
     common_post_ob_move_on(trap, victim, originator);
+    return METHOD_OK;
+}
+
+/**
+ * Handles applying an exit.
+ * @param sign The exit applied
+ * @param op The object applying the exit
+ * @param autoapply Set this to 1 to automatically apply the sign
+ */
+static void exit_type_apply(object *exit, object *op, int autoapply)
+{
+    if (op->type != PLAYER)
+        return METHOD_ERROR;
+    if( ! EXIT_PATH (exit) || !legacy_is_legal_2ways_exit(op,exit))
+    {
+        char name[MAX_BUF];
+        query_name(exit, name, MAX_BUF);
+        draw_ext_info_format(NDI_UNIQUE, 0, op,
+                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                             "The %s is closed.", "The %s is closed.", name);
+    } else {
+        /* Don't display messages for random maps. */
+        if (exit->msg && strncmp(EXIT_PATH(exit),"/!",2) &&
+            strncmp(EXIT_PATH(exit), "/random/", 8))
+            draw_ext_info (NDI_NAVY, 0, op,
+                MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, exit->msg, NULL);
+        enter_exit(op,exit);
+    }
     return METHOD_OK;
 }

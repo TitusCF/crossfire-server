@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : EXIT
+Events     : apply
+Moved from : legacy/apply.c
+Moved to   : exit/exit.c
+Comment    : Moved apply handling for exits.
+2007-04-05 - Alex Schultz
+-------------------------------------------------------------------------------
 Ob types   : SPELL_EFFECT
 Events     : process
 Moved from : ../server/{spell_attack.c, spell_util.c, spell_effect.c}
