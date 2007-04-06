@@ -307,7 +307,7 @@ void flush_old_maps(void) {
 	else {
 	    LOG(llevDebug,"Resetting map %s.\n",m->path);
             /* Lauwenmark : Here we handle the MAPRESET global event */
-            execute_global_event(EVENT_MAPRESET, m->path);
+            execute_global_event(EVENT_MAPRESET, m);
 	clean_tmp_map(m);
 	oldmap = m;
 	m = m->next;

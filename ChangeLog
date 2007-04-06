@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ server/swap.c: fix crash with map reset (parameter is map, not path).
+Nicolas Weeger 2007-04-06
+
 Add 'Object.Count' property (read-only).
  plugins/cfpython/cfpython_object.c
  plugins/cfpython/include/cfpython_object_private.h
