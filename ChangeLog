@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/legacy/apply.c: fix scrolls not taking direction into account.
+Nicolas Weeger 2007-04-06
+
 Remove support for obsolete 'no_pass' attribute.
 --
 doc/Developers/{objects,spells,map-technical}: Update documentation about

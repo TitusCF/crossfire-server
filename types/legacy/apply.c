@@ -80,7 +80,7 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             return 0;
 
         case SCROLL:
-            apply_scroll (applier, op, 0);
+            apply_scroll (applier, op, applier->facing);
             return 1;
 
         case POTION:
