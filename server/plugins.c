@@ -1616,7 +1616,7 @@ void* cfapi_object_set_key(int* type, ...)
     va_end(args);
 
     *ret = set_ob_key_value(op, keyname, value, add_key);
-    *type = CFAPI_SSTRING;
+    *type = CFAPI_INT;
     return NULL;
 }
 

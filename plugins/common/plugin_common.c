@@ -1090,7 +1090,7 @@ const char* cf_object_get_key(object* op, const char* keyname)
     int type;
     const char* value;
     cfapiObject_get_key(&type, op, keyname, &value);
-    assert(type == CFAPI_INT);
+    assert(type == CFAPI_SSTRING);
     return value;
 }
 
