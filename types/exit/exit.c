@@ -32,7 +32,7 @@
 
 static method_ret exit_type_move_on(ob_methods* context, object* trap,
     object* victim, object* originator);
-static void exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply);
+static method_ret exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply);
 
 /**
  * Initializer for the EXIT object type.
@@ -77,8 +77,9 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
  * @param sign The exit applied
  * @param op The object applying the exit
  * @param autoapply Set this to 1 to automatically apply the sign
+ * @return METHOD_OK unless op is not a player, in which case METHOD_ERROR
  */
-static void exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply)
+static method_ret exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply)
 {
     if (op->type != PLAYER)
         return METHOD_ERROR;
