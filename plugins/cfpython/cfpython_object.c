@@ -770,6 +770,12 @@ static PyObject* Object_GetEnemy(Crossfire_Object* whoptr, void* closure)
     return Crossfire_Object_wrap(cf_object_get_object_property(whoptr->obj, CFAPI_OBJECT_PROP_ENEMY));
 }
 
+static PyObject* Object_GetCount(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_COUNT));
+}
+
 /** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
