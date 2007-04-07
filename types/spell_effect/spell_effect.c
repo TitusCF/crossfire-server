@@ -316,7 +316,7 @@ static void move_bullet(object *op) {
 /**
  * Expands an explosion. op is a piece of the explosion - this expans it in the
  * different directions. At least that is what I think this does.
- * @param The piece of explosion expanding.
+ * @param op piece of explosion expanding.
  */
 static void explosion(object *op) {
     object *tmp;
@@ -356,7 +356,7 @@ static void explosion(object *op) {
 
 /**
  * Causes cone object 'op' to move a space/hit creatures.
- * @param op The cone object moving.
+ * @param op cone object moving.
  */
 static void move_cone(object *op) {
     int i;
@@ -426,7 +426,7 @@ static void move_cone(object *op) {
 
 /**
  * This handles an exploding bomb.
- * @param The original bomb object.
+ * @param op The original bomb object.
  */
 static void animate_bomb(object *op) {
     int i;
@@ -805,9 +805,9 @@ static void move_aura(object *aura) {
 }
 
 /**
- * Causes op to fork. op is the original bolt, tmp is the first piece of the
- * fork.
- * @param op The original bolt.
+ * Causes op to fork.
+ * @param op original bolt.
+ * @param tmp first piece of the fork.
  */
 static void forklightning(object *op, object *tmp) {
     int new_dir = 1;  /* direction or -1 for left, +1 for right 0 if no new bolt */

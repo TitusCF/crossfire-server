@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix Doxygen stuff, no functional changes.
+ types/clock/clock.c
+ types/spell_effect/spell_effect.c
+ types/exit/exit.c
+Nicolas Weeger 2007-04-07
+
 Enable polymorph spell. Will need tweaking, quite certainly.
  include/sproto.h
  server/spell_util.c

@@ -20,7 +20,7 @@
 
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
-/** @file book.c
+/** @file clock.c
  * The implementation of the Clock class of objects.
  */
 #include <global.h>

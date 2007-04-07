@@ -74,7 +74,7 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
 /**
  * Handles applying an exit.
  * @param context The method context
- * @param sign The exit applied
+ * @param exit The exit applied
  * @param op The object applying the exit
  * @param autoapply Set this to 1 to automatically apply the sign
  * @return METHOD_OK unless op is not a player, in which case METHOD_ERROR
