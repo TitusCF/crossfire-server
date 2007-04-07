@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add 'Crossfire.WhatIsEvent()' to get event object.
+ plugins/cfpython/cfpython_object.c: don't put a destroy hook in a destroy hook :)
+ plugins/cfpython/cfpython.c: WhatIsEvent()
+Nicolas Weeger 2007-04-07
+
 Change plugin object event interface to send the event object itself, instead of
 its slaying/name values.
  plugins/cfanim/include/cfanim.h

@@ -97,6 +97,7 @@ static PyObject* getWhoIsThird(PyObject* self, PyObject* args);
 static PyObject* getWhatIsMessage(PyObject* self, PyObject* args);
 static PyObject* getScriptName(PyObject* self, PyObject* args);
 static PyObject* getScriptParameters(PyObject* self, PyObject* args);
+static PyObject* getEvent(PyObject* self, PyObject* args);
 static PyObject* getPrivateDictionary(PyObject* self, PyObject* args);
 static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
 static PyObject* getArchetypes(PyObject* self, PyObject* args);
@@ -132,6 +133,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"WhatIsMessage",       getWhatIsMessage,       METH_VARARGS},
     {"ScriptName",          getScriptName,          METH_VARARGS},
     {"ScriptParameters",    getScriptParameters,    METH_VARARGS},
+    {"WhatIsEvent",         getEvent,               METH_VARARGS},
     {"MapDirectory",        getMapDirectory,        METH_VARARGS},
     {"UniqueDirectory",     getUniqueDirectory,     METH_VARARGS},
     {"TempDirectory",       getTempDirectory,       METH_VARARGS},
@@ -418,6 +420,18 @@ static PyObject* getScriptParameters(PyObject* self, PyObject* args)
     return Py_BuildValue("s", current_context->options);
 }
 
+static PyObject* getEvent(PyObject* self, PyObject* args)
+{
+    if (!PyArg_ParseTuple(args, "", NULL))
+        return NULL;
+    if (!current_context->event) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    Py_INCREF(current_context->event);
+    return current_context->event;
+}
+
 static PyObject* getPrivateDictionary(PyObject* self, PyObject* args)
 {
     PyObject* data;
@@ -620,9 +634,10 @@ CFPContext* popContext()
 
 void freeContext(CFPContext* context)
 {
+    Py_XDECREF(context->event);
+    Py_XDECREF(context->third);
     Py_XDECREF(context->who);
     Py_XDECREF(context->activator);
-    Py_XDECREF(context->third);
     free(context);
 }
 

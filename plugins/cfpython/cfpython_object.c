@@ -2131,6 +2131,7 @@ static void Crossfire_Player_dealloc(PyObject *obj)
             if (self->del_event) {
                 cf_object_remove(self->del_event);
                 cf_object_free(self->del_event);
+                self->del_event = NULL;
             }
         }
         self->ob_type->tp_free(obj);
@@ -2144,12 +2145,17 @@ void Handle_Destroy_Hook(Crossfire_Object *ob) {
     if (ob->del_event) {
         cf_object_remove(ob->del_event);
         cf_object_free(ob->del_event);
+        ob->del_event = NULL;
     }
 }
 
 static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
     object *event, *ob;
     ob = pyobj->obj;
+    if (ob->subtype == EVENT_DESTROY && !strcmp(ob->slaying, "cfpython_auto_hook")) {
+        pyobj->del_event = NULL;
+        return;
+    }
     event = cf_create_object_by_name("event_destroy");
     if (!event)
     {
