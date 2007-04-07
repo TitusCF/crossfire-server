@@ -160,6 +160,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     context->who         = NULL;
     context->activator   = NULL;
     context->third       = NULL;
+    context->event       = NULL;
     rv = context->returnvalue = 0;
     switch(context->event_code)
     {
@@ -254,14 +255,15 @@ CF_PLUGIN void* eventListener(int* type, ...)
     va_start(args,type);
 
     context->who         = va_arg(args, object*);
-    context->event_code  = va_arg(args,int);
     context->activator   = va_arg(args, object*);
     context->third       = va_arg(args, object*);
     buf                  = va_arg(args, char*);
     if (buf !=0)
         strcpy(context->message,buf);
     context->fix         = va_arg(args, int);
-    strcpy(context->options,va_arg(args, char*));
+    context->event       = va_arg(args, object*);
+    context->event_code  = context->event->subtype;
+    strncpy(context->options, sizeof(context->options), context->event->name);
     context->returnvalue = 0;
     va_end(args);
 

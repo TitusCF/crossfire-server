@@ -438,6 +438,7 @@ void* eventListener(int* type, ...)
     int event_code;
     object* activator;
     object* third;
+    object* event;
     char* buf;
     int fix;
     object* newspaper;
@@ -446,19 +447,21 @@ void* eventListener(int* type, ...)
 
     va_start(args, type);
     who = va_arg(args, object*);
-    event_code = va_arg(args,int);
+    /*event_code = va_arg(args,int);*/
     activator = va_arg(args, object*);
     third = va_arg(args, object*);
     buf = va_arg(args, char*);
     fix = va_arg(args, int);
-    buf = va_arg(args, char*);
+    /*buf = va_arg(args, char*);*/
+    event = va_arg(args, object*);
+    event_code = event->subtype;
 
     va_end(args);
 
     if (event_code != EVENT_APPLY)
         return &rv;
 
-    paper = get_newspaper(buf);
+    paper = get_newspaper(event->slaying);
 
     newspaper = cf_create_object_by_name("scroll");
 

@@ -85,6 +85,7 @@ typedef struct _cfpcontext
     object*     who;
     object*     activator;
     object*     third;
+    object*     event;
     char        message[1024];
     int         fix;
     int         event_code;

@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Change plugin object event interface to send the event object itself, instead of
+its slaying/name values.
+ plugins/cfanim/include/cfanim.h
+ plugins/cfanim/cfanim.c
+ plugins/cfnewspaper/cfnewspaper.c
+ plugins/cfpython/include/cfpython.h
+ plugins/cfpython/cfpython.c
+ plugins/template/include/plugin_template.h
+ plugins/template/plugin_template.c
+ server/plugins.c
+Nicolas Weeger 2007-04-07
+
  server/swap.c: fix crash with map reset (parameter is map, not path).
 Nicolas Weeger 2007-04-06
 

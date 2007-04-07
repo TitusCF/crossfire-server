@@ -80,6 +80,7 @@ typedef struct _cfpcontext
     PyObject*   who;
     PyObject*   activator;
     PyObject*   third;
+    PyObject*   event;
     char        message[1024];
     int         fix;
     int         event_code;

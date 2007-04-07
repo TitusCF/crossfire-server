@@ -1161,6 +1161,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     context->who         = NULL;
     context->activator   = NULL;
     context->third       = NULL;
+    context->event       = NULL;
     rv = context->returnvalue = 0;
     cf_get_maps_directory("python/events/python_event.py", context->script, sizeof(context->script));
     strcpy(context->options, "");
@@ -1281,13 +1282,13 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
     context = popContext();
     rv = context->returnvalue;
-    
+
     /* Invalidate freed map wrapper. */
     if (context->event_code == EVENT_MAPUNLOAD)
         Handle_Map_Unload_Hook((Crossfire_Map*)context->who);
-    
+
     freeContext(context);
-    
+
     return &rv;
 }
 
@@ -1296,8 +1297,8 @@ CF_PLUGIN void* eventListener(int* type, ...)
     static int rv = 0;
     va_list args;
     char* buf;
-    char* script_tmp;
     CFPContext* context;
+    object* event;
 
     rv = 0;
 
@@ -1308,21 +1309,22 @@ CF_PLUGIN void* eventListener(int* type, ...)
     va_start(args, type);
 
     context->who         = Crossfire_Object_wrap(va_arg(args, object*));
-    context->event_code  = va_arg(args, int);
     context->activator   = Crossfire_Object_wrap(va_arg(args, object*));
     context->third       = Crossfire_Object_wrap(va_arg(args, object*));
     buf = va_arg(args, char*);
     if (buf != NULL)
         snprintf(context->message, sizeof(context->message), "%s", buf);
     context->fix         = va_arg(args, int);
-    script_tmp = va_arg(args, char*);
-    cf_get_maps_directory(script_tmp, context->script, sizeof(context->script));
-    snprintf(context->options, sizeof(context->options), "%s", va_arg(args, char*));
+    event = va_arg(args, object*);
+    context->event_code  = event->subtype;
+    context->event       = Crossfire_Object_wrap(event);
+    cf_get_maps_directory(event->slaying, context->script, sizeof(context->script));
+    snprintf(context->options, sizeof(context->options), "%s", event->name);
     context->returnvalue = 0;
 
     va_end(args);
-    
-    if ((context->event_code == EVENT_DESTROY) && !strcmp(script_tmp, "cfpython_auto_hook")) {
+
+    if ((context->event_code == EVENT_DESTROY) && !strcmp(event->slaying, "cfpython_auto_hook")) {
         Handle_Destroy_Hook((Crossfire_Object*)context->who);
         freeContext(context);
         return &rv;

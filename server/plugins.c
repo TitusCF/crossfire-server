@@ -269,7 +269,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                     int rvt = 0;
                     int *rv;
 
-                    rv = plugin->eventfunc(&rvt, op, eventcode, activator, third, message, fix, tmp->slaying, tmp->name);
+                    rv = plugin->eventfunc(&rvt, op, /*eventcode, */activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp);
                     return *rv;
                 }
             }
