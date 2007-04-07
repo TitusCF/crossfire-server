@@ -127,6 +127,7 @@ extern void calc_perm_exp(object *op);
 extern sint64 check_exp_loss(const object *op, sint64 exp);
 extern sint64 check_exp_adjust(const object *op, sint64 exp);
 extern void change_exp(object *op, sint64 exp, const char *skill_name, int flag);
+extern void share_exp(object *op, sint64 exp, const char *skill_name, int flag);
 extern void apply_death_exp_penalty(object *op);
 extern int did_make_save(const object *op, int level, int bonus);
 /* logger.c */

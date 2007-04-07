@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1695764: Charm monsters - shared experience broken.
+Add new share_exp() function, working like change_exp() but party-aware.
+ common/living.c
+ include/libproto.h
+ server/attack.c
+ server/spell_attack.c
+Nicolas Weeger 2007-04-07
+
 Fix Doxygen stuff, no functional changes.
  types/clock/clock.c
  types/spell_effect/spell_effect.c
