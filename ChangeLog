@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Enable polymorph spell. Will need tweaking, quite certainly.
+ include/sproto.h
+ server/spell_util.c
+ server/spell_effect.c
+Nicolas Weeger 2007-04-07
+
 Add 'Crossfire.WhatIsEvent()' to get event object.
  plugins/cfpython/cfpython_object.c: don't put a destroy hook in a destroy hook :)
  plugins/cfpython/cfpython.c: WhatIsEvent()

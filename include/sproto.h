@@ -590,7 +590,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir);
 /* spell_effect.c */
 void cast_magic_storm(object *op, object *tmp, int lvl);
 int recharge(object *op, object *caster, object *spell_ob);
-void polymorph(object *op, object *who);
+void polymorph(object *op, object *who, int level);
 int cast_polymorph(object *op, object *caster, object *spell_ob, int dir);
 int cast_create_missile(object *op, object *caster, object *spell, int dir, const char *stringarg);
 int cast_create_food(object *op, object *caster, object *spell_ob, int dir, const char *stringarg);

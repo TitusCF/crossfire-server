@@ -1515,7 +1515,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    break;
 
 	case SP_POLYMORPH:
-#ifdef NO_POLYMORPH
+#if 0
 	    /* Not great, but at least provide feedback so if players do have
 	     * polymorph (ie, find it as a preset item or left over from before
   	     * it was disabled), they get some feedback.

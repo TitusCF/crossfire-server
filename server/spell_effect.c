@@ -141,75 +141,80 @@ int recharge(object *op, object *caster, object *spell_ob) {
  */
 
 /**
- * Takes a living object (op) and turns it into 
- * another monster of some sort.  Currently, we only deal with single
- * space monsters.
+ * Takes a living object (op) and turns it into
+ * another monster of some sort.
+ * @param op
+ * object to try to polymorph. Should be monster.
+ * @param level
+ * level of the polymorph spell.
  */
-
-static void polymorph_living(object *op) {
+static void polymorph_living(object *op, int level) {
     archetype *at;
     int nr = 0, x = op->x, y = op->y, numat=0, choice,friendly;
     mapstruct *map = op->map;
     object *tmp, *next, *owner;
 
-    if(op->head != NULL || op->more != NULL)
-	return;
+    if (op->head)
+        op = op->head;
 
     /* High level creatures are immune, as are creatures immune to magic.  Otherwise,
      * give the creature a saving throw.
      */
-    if (op->level>=20 || did_make_save(op, op->level, op->resist[ATNR_MAGIC]/10) ||
-	(op->resist[ATNR_MAGIC]==100))
-	return;
+    if (op->level>=level*2 || did_make_save(op, op->level, op->resist[ATNR_MAGIC]/10) ||
+      (op->resist[ATNR_MAGIC]==100))
+        return;
+
+    remove_ob(op);
 
     /* First, count up the number of legal matches */
     for(at = first_archetype ; at != NULL; at = at->next)
-	if(QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER) &&
-	   at->more == NULL && EDITABLE((&at->clone)))
-    {
-	numat++;
+        if ((QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
+            numat++;
+        }
+    if (!numat) {
+        insert_ob_in_map(op, map, NULL, 0);
+        return;	/* no valid matches? if so, return */
     }
-    if (!numat) return;	/* no valid matches? if so, return */
 
     /* Next make a choice, and loop through until we get to it */
     choice = rndm(0, numat-1);
     for(at = first_archetype ; at != NULL; at = at->next)
-	if(QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER) &&
-	   at->more == NULL && EDITABLE((&at->clone)))
-    {
-	if (!choice) break;
-	else choice--;
-    }
+        if ((QUERY_FLAG((&at->clone),FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1))
+        {
+            if (!choice) break;
+            else choice--;
+        }
 
     /* Look through the monster.  Unapply anything they have applied, 
      * and remove any spells.  Note that if this is extended
      * to players, that would need to get fixed somehow.
      */
     for(tmp = op->inv; tmp != NULL; tmp = next) {
-	next = tmp->below;
-	if(QUERY_FLAG(tmp, FLAG_APPLIED))
-	    manual_apply(op,tmp,0);
-	if(tmp->type == SPELL) {
-	    remove_ob(tmp);
-	    free_object(tmp);
-	}
+        next = tmp->below;
+        if(QUERY_FLAG(tmp, FLAG_APPLIED))
+            manual_apply(op,tmp,0);
+        if(tmp->type == SPELL) {
+            remove_ob(tmp);
+            free_object(tmp);
+        }
     }
 
-    /* Remove the object, preserve some values for the new object */
-    remove_ob(op);
+    /* Preserve some values for the new object */
     owner = get_owner(op);
     friendly = QUERY_FLAG(op, FLAG_FRIENDLY);
     if (friendly)
-	remove_friendly_object(op);
+        remove_friendly_object(op);
 
     copy_object(&(at->clone),op);
     if (owner != NULL)
-	set_owner(op,owner);
+        set_owner(op,owner);
     if (friendly) {
-	SET_FLAG(op, FLAG_FRIENDLY);
-	op->attack_movement = PETMOVE;
-	add_friendly_object(op);
+        SET_FLAG(op, FLAG_FRIENDLY);
+        op->attack_movement = PETMOVE;
+        add_friendly_object(op);
     }
+    else
+        CLEAR_FLAG(op, FLAG_FRIENDLY);
 
     /* Put the new creature on the map */
     op->x = x; op->y = y;
@@ -218,34 +223,42 @@ static void polymorph_living(object *op) {
 
     if (HAS_RANDOM_ITEMS(op))
         /* No GT_APPLY here because we'll do it manually. */
-	    create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
+        create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,0);
 
-    /* Apply any objects.  This limits it to the first 20 items, which
-     * I guess is reasonable.
-     */
-    for(tmp = op->inv, nr = 0; tmp != NULL && ++nr < 20; tmp = next) {
-	next = tmp->below;
-	(void) monster_check_apply(op,tmp);
+    /* Apply any objects. */
+    for(tmp = op->inv; tmp != NULL ; tmp = next) {
+        next = tmp->below;
+        monster_check_apply(op,tmp);
     }
 }
 
 
 /**
  * Destroys item from polymorph failure 
- * who is the caster of the polymorph, op is the
- * object destroyed.  We should probably do something
+ * @note
+ * We should probably do something
  * more clever ala nethack - create an iron golem or
  * something.
+ * @param who
+ * who cast the spell.
+ * @param op
+ * spell victim.
  */
 static void polymorph_melt(object *who, object *op)
 {
     /* Not unique */
     char name[MAX_BUF];
     query_name(op, name, MAX_BUF);
-    draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			 "%s%s glows red, melts and evaporates!",
-			 "%s%s glows red, melts and evaporates!",
-			 op->nrof?"":"The ",name);
+    if (op->nrof > 1)
+        draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "The %s glow red, melt and evaporate!",
+            "The %s glow red, melt and evaporate!",
+            name);
+    else
+        draw_ext_info_format(NDI_GREY, 0, who, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            "The %s glows red, melts and evaporates!",
+            "The %s glows red, melts and evaporates!",
+            name);
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
     remove_ob(op);
     free_object(op);
@@ -254,74 +267,80 @@ static void polymorph_melt(object *who, object *op)
 
 /**
  * Changes an item to another item of similar type.
- * who is the caster of spell, op is the object to be changed.
+ * @param who
+ * spell caster.
+ * @param op
+ * object being polymorphed. Should be a non living thing.
+ * @param level
+ * spell level, required for monster resistance.
  */
-static void polymorph_item(object *who, object *op) {
+static void polymorph_item(object *who, object *op, int level) {
     archetype *at;
     int max_value, difficulty, tries=0,choice, charges=op->stats.food,numat=0;
     object *new_ob;
 
-    /* We try and limit the maximum value of the changd object. */
+    /* We try and limit the maximum value of the changed object. */
     max_value = op->value * 2;
-    if(max_value > 20000)
-	max_value = 20000 + (max_value - 20000) / 3;
+    if(max_value > 2000 * (level/10) )
+        max_value = 2000 * (level/10) + (max_value - 2000 * (level/10)) / 3;
 
     /* Look through and try to find matching items.  Can't turn into something
      * invisible.  Also, if the value is too high now, it would almost
      * certainly be too high below.
      */
     for(at = first_archetype ; at != NULL; at = at->next) {
-	if(at->clone.type == op->type && !at->clone.invisible && 
-	   at->clone.value > 0 && at->clone.value < max_value &&
-	   !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
-	   !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP))
-	  numat++;
+        if(at->clone.type == op->type && !at->clone.invisible && 
+          at->clone.value > 0 && at->clone.value < max_value &&
+          !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
+          !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP))
+            numat++;
     }
 
     if(!numat)
-	return;
+        return;
 
     difficulty = op->magic * 5;
     if (difficulty<0) difficulty=0;
     new_ob = get_object();
     do {
-	choice = rndm(0, numat-1);
-	for(at = first_archetype ; at != NULL; at = at->next) {
-	    if(at->clone.type == op->type && !at->clone.invisible && 
-	       at->clone.value > 0 && at->clone.value < max_value && 
-	       !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
-	       !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP)) {
-	      if (!choice) break;
-	      else choice--;
-	    }
-	}
-	copy_object(&(at->clone),new_ob);
-	fix_generated_item(new_ob,op,difficulty,FABS(op->magic),GT_ENVIRONMENT);
-	++tries;
+        choice = rndm(0, numat-1);
+        for(at = first_archetype ; at != NULL; at = at->next) {
+            if(at->clone.type == op->type && !at->clone.invisible && 
+              at->clone.value > 0 && at->clone.value < max_value && 
+              !QUERY_FLAG(&at->clone, FLAG_NO_DROP) &&
+              !QUERY_FLAG(&at->clone, FLAG_STARTEQUIP)) {
+                if (!choice) break;
+                else choice--;
+            }
+        }
+        copy_object(&(at->clone),new_ob);
+        fix_generated_item(new_ob,op,difficulty,FABS(op->magic),GT_ENVIRONMENT);
+        ++tries;
     } while (new_ob->value > max_value && tries<10);
     if (new_ob->invisible) {
-	LOG(llevError,"polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
-	free_object(new_ob);
+        LOG(llevError,"polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
+        free_object(new_ob);
     }
 
     /* Unable to generate an acceptable item?  Melt it */
     if (tries==10) {
-	polymorph_melt(who, op);
-	free_object(new_ob);
-	return;
+        polymorph_melt(who, op);
+        free_object(new_ob);
+        return;
     }
 
     if(op->nrof && new_ob->nrof) {
-	new_ob->nrof = op->nrof;
-	/* decrease the number of items */
-	if (new_ob->nrof>2) new_ob->nrof -= rndm(0, op->nrof/2-1);
+        new_ob->nrof = op->nrof;
+        /* decrease the number of items */
+        if (new_ob->nrof>2)
+            new_ob->nrof -= rndm(0, op->nrof/2-1);
     }
 
     /* We don't want rings to keep sustenance/hungry status. There are propably
      *  other cases too that should be checked. 
      */
     if(charges && op->type != RING && op->type != FOOD)
-	op->stats.food = charges;
+        op->stats.food = charges;
 
     new_ob->x = op->x;
     new_ob->y = op->y;
@@ -334,29 +353,37 @@ static void polymorph_item(object *who, object *op) {
     insert_ob_in_map(new_ob,who->map,new_ob,INS_NO_MERGE | INS_NO_WALK_ON);
 }
 
-/** Caster who has hit object op. */
-void polymorph(object *op, object *who) {
-
+/**
+ * Handles polymorphing an object, living or not.
+ * Will avoid some specific items (flying arrows and such).
+ * @param op
+ * object being polymorphed.
+ * @param who
+ * spell caster.
+ * @param level
+ * spell level.
+ */
+void polymorph(object *op, object *who, int level) {
     int tmp;
 
     /* Can't polymorph players right now */
     /* polymorphing generators opens up all sorts of abuses */
     if(op->type == PLAYER || QUERY_FLAG(op, FLAG_GENERATOR))
-	return;
+        return;
 
     if(QUERY_FLAG(op, FLAG_MONSTER)) {
-	polymorph_living(op);
-	return;
+        polymorph_living(op, level);
+        return;
     }
     /* If it is a living object of some other type, don't handle
      * it now.
      */
     if(QUERY_FLAG(op, FLAG_ALIVE))
-	return;
+        return;
 
     /* Don't want to morph flying arrows, etc... */
     if(FABS(op->speed) > 0.001 && !QUERY_FLAG(op, FLAG_ANIMATE))
-	return;
+        return;
 
     /* Do some sanity checking here.  type=0 is unknown, objects
      * without archetypes are not good.  As are a few other
@@ -365,63 +392,68 @@ void polymorph(object *op, object *who) {
     if(op->type == 0 || op->arch == NULL || 
        QUERY_FLAG(op,FLAG_NO_PICK) 
        || op->move_block || op->type == TREASURE)
-	return;
+        return;
 
     tmp = rndm(0, 7);
-    if (tmp) polymorph_item(who, op);
+    if (tmp) polymorph_item(who, op, level);
     else polymorph_melt(who, op);
 }
 
 
 /**
- * cast_polymorph -
- * object *op is the player/monster
- * caster is object that cast it.
- * spell_ob is the actually spell object.
- * dir is the direction.
+ * Polymorph spell casting.
+ * @param op
+ * who is casting the spell.
+ * @param caster
+ * object used to cast spell.
+ * @param spell_ob
+ * spell itself.
+ * @param dir
+ * casting direction. 0 won't have any effect.
+ * @return 
  * Returns 0 on illegal cast, otherwise 1.
  */
-
 int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
     object *tmp, *next;
-    int range, mflags, maxrange;
+    int range, mflags, maxrange, level;
     mapstruct *m;
 
     if(dir == 0)
-	return 0;
+        return 0;
 
     maxrange = spell_ob->range + SP_level_range_adjust(caster, spell_ob);
+    level = caster_level(caster, spell_ob);
     for(range = 1;range < maxrange; range++) {
-	sint16 x=op->x+freearr_x[dir]*range,y=op->y+freearr_y[dir]*range;
-	object *image;
+        sint16 x=op->x+freearr_x[dir]*range,y=op->y+freearr_y[dir]*range;
+        object *image;
 
-	m = op->map;
-	mflags = get_map_flags(m, &m, x, y, &x, &y);
+        m = op->map;
+        mflags = get_map_flags(m, &m, x, y, &x, &y);
 
-	if (mflags & (P_NO_MAGIC | P_OUT_OF_MAP))
-	    break;
+        if (mflags & (P_NO_MAGIC | P_OUT_OF_MAP))
+            break;
 
-	if (GET_MAP_MOVE_BLOCK(m, x, y) & MOVE_FLY_LOW)
-	    break;
+        if (GET_MAP_MOVE_BLOCK(m, x, y) & MOVE_FLY_LOW)
+            break;
 
-	/* Get the top most object */
-	for(tmp = get_map_ob(m,x,y); tmp != NULL && tmp->above != NULL;
-	    tmp = tmp->above);
+        /* Get the top most object */
+        for(tmp = get_map_ob(m,x,y); tmp != NULL && tmp->above != NULL;
+            tmp = tmp->above);
 
-	/* Now start polymorphing the objects, top down */
-	while (tmp!=NULL) {
-	    /* Once we find the floor, no need to go further */
-	    if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
-	    next = tmp->below;
-	    polymorph(tmp, op);
-	    tmp = next;
-	}
-	image = arch_to_object(spell_ob->other_arch);
-	image->x = x;
-	image->y = y;
-	image->stats.food = 5;
-	image->speed_left = 0.1;
-	insert_ob_in_map(image,m,op,0);
+        /* Now start polymorphing the objects, top down */
+        while (tmp!=NULL) {
+            /* Once we find the floor, no need to go further */
+            if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
+            next = tmp->below;
+            polymorph(tmp, op, level);
+            tmp = next;
+        }
+        image = arch_to_object(spell_ob->other_arch);
+        image->x = x;
+        image->y = y;
+        image->stats.food = 5;
+        image->speed_left = 0.1;
+        insert_ob_in_map(image,m,op,0);
     }
     return 1;
 }
