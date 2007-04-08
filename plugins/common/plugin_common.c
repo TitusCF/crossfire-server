@@ -182,7 +182,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z );
     GET_HOOK( cfapiPlayer_find, "cfapi_player_find", z );
     GET_HOOK( cfapiPlayer_message, "cfapi_player_message", z );
-    GET_HOOK( cfapiPlayer_send_inventory, "cfapi_player_send_inventory", z );
+/*    GET_HOOK( cfapiPlayer_send_inventory, "cfapi_player_send_inventory", z );*/
     GET_HOOK( cfapiObject_teleport, "cfapi_object_teleport", z );
     GET_HOOK( cfapiObject_pickup, "cfapi_object_pickup", z );
     GET_HOOK( cfapiObject_get_key, "cfapi_object_get_key", z );

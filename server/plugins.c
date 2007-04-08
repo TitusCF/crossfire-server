@@ -121,7 +121,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_map_present_arch_by_name,61, "cfapi_map_present_arch_by_name"},
     {cfapi_player_find,             62, "cfapi_player_find"},
     {cfapi_player_message,          63, "cfapi_player_message"},
-    {cfapi_player_send_inventory,   64, "cfapi_player_send_inventory"},
+/*    {cfapi_player_send_inventory,   64, "cfapi_player_send_inventory"},*/
     {cfapi_object_teleport,         65, "cfapi_object_teleport"},
     {cfapi_object_speak,            66, "cfapi_object_speak"},
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
