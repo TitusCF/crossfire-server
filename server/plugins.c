@@ -117,7 +117,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_map_delete_map,          57, "cfapi_map_delete_map"},
     {cfapi_map_message,             58, "cfapi_map_message"},
     {cfapi_map_get_object_at,       59, "cfapi_map_get_object_at"},
-    {cfapi_map_get_flags,           60, "cfapi_map_get_flags"},
+/*    {cfapi_map_get_flags,           60, "cfapi_map_get_flags"},*/
     {cfapi_map_present_arch_by_name,61, "cfapi_map_present_arch_by_name"},
     {cfapi_player_find,             62, "cfapi_player_find"},
     {cfapi_player_message,          63, "cfapi_player_message"},
@@ -1006,7 +1006,6 @@ void* cfapi_log(int* type, ...)
  * - 0 with 2 int and a mapstruct**: new map of specified size.
  * - 1 with char*, int, mapstruct**: call ready_map_name().
  * - 2 with mapstruct*, 2 int and mapstruct**: call to get_map_from_coord().
- * - 3 with mapstruct**, return ::first_map.
  */
 void* cfapi_map_get_map(int* type, ...)
 {
@@ -1044,11 +1043,6 @@ void* cfapi_map_get_map(int* type, ...)
         ny = va_arg(args, int);
         ret = va_arg(args, mapstruct**);
         *ret = get_map_from_coord(m, &nx, &ny);
-        break;
-
-    case 3:
-        ret = va_arg(args, mapstruct**);
-        *ret = first_map;
         break;
 
     default:
@@ -1127,223 +1121,183 @@ void* cfapi_map_create_path(int* type, ...)
     va_end(args);
     return NULL;
 }
+
+
 void* cfapi_map_get_map_property(int* type, ...)
 {
     va_list args;
-    int x, y;
-    sint16 nx, ny;
     mapstruct* map;
-    mapstruct* newmap;
-    static int rv;
     int property;
-    char* buf;
+
+    int* rint;
+    mapstruct** rmap;
+    sstring* rstr;
+    region** rreg;
+    sint16* nx, *ny;
+    int x, y;
 
     va_start(args, type);
 
+    map = va_arg(args, mapstruct*);
     property = va_arg(args, int);
+
     switch (property)
     {
     case CFAPI_MAP_PROP_FLAGS:
-        map = va_arg(args, mapstruct*);
-        newmap = va_arg(args, mapstruct*);
+        rmap = va_arg(args, mapstruct**);
         x = va_arg(args, int);
         y = va_arg(args, int);
-        nx = va_arg(args, int);
-        ny = va_arg(args, int);
-        rv = get_map_flags(map, &newmap, x, y, &nx, &ny);
-        va_end(args);
+        nx = va_arg(args, sint16*);
+        ny = va_arg(args, sint16*);
+        rint = va_arg(args, int*);
+        *rint = get_map_flags(map, rmap, x, y, nx, ny);
         *type = CFAPI_INT;
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_DIFFICULTY:
-        map = va_arg(args, mapstruct*);
-        rv = calculate_difficulty(map);
-        va_end(args);
+        rint = va_arg(args, int*);
+        *rint = calculate_difficulty(map);
         *type = CFAPI_INT;
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_PATH:
-        map = va_arg(args, mapstruct*);
-        buf = map->path;
-        *type = CFAPI_STRING;
-        va_end(args);
-        return buf;
+        rstr = va_arg(args, sstring*);
+        *rstr = map->path;
+        *type = CFAPI_SSTRING;
         break;
 
     case CFAPI_MAP_PROP_TMPNAME:
-        map = va_arg(args, mapstruct*);
-        buf = map->tmpname;
-        *type = CFAPI_STRING;
-        va_end(args);
-        return buf;
+        rstr = va_arg(args, sstring*);
+        *rstr = map->tmpname;
+        *type = CFAPI_SSTRING;
         break;
 
     case CFAPI_MAP_PROP_NAME:
-        map = va_arg(args, mapstruct*);
-        buf = map->name;
-        *type = CFAPI_STRING;
-        va_end(args);
-        return buf;
+        rstr = va_arg(args, sstring*);
+        *rstr = map->name;
+        *type = CFAPI_SSTRING;
         break;
 
     case CFAPI_MAP_PROP_RESET_TIME:
-        map = va_arg(args, mapstruct*);
-        rv = map->reset_time;
+        rint = va_arg(args, int*);
+        *rint = map->reset_time;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_RESET_TIMEOUT:
-        map = va_arg(args, mapstruct*);
-        rv = map->reset_timeout;
+        rint = va_arg(args, int*);
+        *rint = map->reset_timeout;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_PLAYERS:
-        map = va_arg(args, mapstruct*);
-        rv = map->players;
+        rint = va_arg(args, int*);
+        *rint = map->players;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_DARKNESS:
-        map = va_arg(args, mapstruct*);
-        rv = map->darkness;
+        rint = va_arg(args, int*);
+        *rint = map->darkness;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_WIDTH:
-        map = va_arg(args, mapstruct*);
-        rv = map->width;
+        rint = va_arg(args, int*);
+        *rint = map->width;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_HEIGHT:
-        map = va_arg(args, mapstruct*);
-        rv = map->height;
+        rint = va_arg(args, int*);
+        *rint = map->height;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_ENTER_X:
-        map = va_arg(args, mapstruct*);
-        rv = map->enter_x;
+        rint = va_arg(args, int*);
+        *rint = map->enter_x;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_ENTER_Y:
-        map = va_arg(args, mapstruct*);
-        rv = map->enter_y;
+        rint = va_arg(args, int*);
+        *rint = map->enter_y;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_TEMPERATURE:
-        map = va_arg(args, mapstruct*);
-        rv = map->temp;
+        rint = va_arg(args, int*);
+        *rint = map->temp;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_PRESSURE:
-        map = va_arg(args, mapstruct*);
-        rv = map->pressure;
+        rint = va_arg(args, int*);
+        *rint = map->pressure;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_HUMIDITY:
-        map = va_arg(args, mapstruct*);
-        rv = map->humid;
+        rint = va_arg(args, int*);
+        *rint = map->humid;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_WINDSPEED:
-        map = va_arg(args, mapstruct*);
-        rv = map->windspeed;
+        rint = va_arg(args, int*);
+        *rint = map->windspeed;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_WINDDIR:
-        map = va_arg(args, mapstruct*);
-        rv = map->winddir;
+        rint = va_arg(args, int*);
+        *rint = map->winddir;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_SKY:
-        map = va_arg(args, mapstruct*);
-        rv = map->sky;
+        rint = va_arg(args, int*);
+        *rint = map->sky;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_WPARTX:
-        map = va_arg(args, mapstruct*);
-        rv = map->wpartx;
+        rint = va_arg(args, int*);
+        *rint = map->wpartx;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_WPARTY:
-        map = va_arg(args, mapstruct*);
-        rv = map->wparty;
+        rint = va_arg(args, int*);
+        *rint = map->wparty;
         *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
         break;
 
     case CFAPI_MAP_PROP_MESSAGE:
-        map = va_arg(args, mapstruct*);
-        buf = map->msg;
+        rstr = va_arg(args, sstring*);
+        *rstr = map->msg;
         *type = CFAPI_STRING;
-        va_end(args);
-        return buf;
         break;
 
     case CFAPI_MAP_PROP_NEXT:
-        map = va_arg(args, mapstruct*);
+        rmap = va_arg(args, mapstruct**);
+        *rmap = map ? map->next : first_map;
         *type = CFAPI_PMAP;
-        va_end(args);
-        return map->next;
         break;
 
     case CFAPI_MAP_PROP_REGION:
-        map = va_arg(args, mapstruct*);
+        rreg = va_arg(args, region**);
+        *rreg = get_region_by_map(map);
         *type = CFAPI_PREGION;
-        va_end(args);
-        return get_region_by_map(map);
         break;
 
     default:
         *type = CFAPI_NONE;
-        va_end(args);
-        return NULL;
         break;
     }
+    va_end(args);
+    return NULL;
 }
 
 void* cfapi_map_set_map_property(int* type, ...)
@@ -1465,30 +1419,6 @@ void* cfapi_map_get_object_at(int* type, ...)
     rv = get_map_ob(map, x, y);
     *type = CFAPI_POBJECT;
     return rv;
-}
-void* cfapi_map_get_flags(int* type, ...)
-{
-    va_list args;
-    sint16 x, y;
-    sint16 *nx, *ny;
-    static mapstruct* map;
-    mapstruct** newmap;
-    static int rv;
-
-    va_start(args, type);
-
-    map = va_arg(args, mapstruct*);
-    newmap = va_arg(args, mapstruct**);
-    x = va_arg(args, int);
-    y = va_arg(args, int);
-    nx = va_arg(args, sint16*);
-    ny = va_arg(args, sint16*);
-    va_end(args);
-
-    rv = get_map_flags(map, newmap, x, y, nx, ny);
-
-    *type = CFAPI_INT;
-    return &rv;
 }
 void* cfapi_map_present_arch_by_name(int* type, ...)
 {

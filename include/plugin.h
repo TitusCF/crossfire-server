@@ -96,7 +96,7 @@
 #define CFAPI_INT     1
 #define CFAPI_LONG    2
 #define CFAPI_CHAR    3
-#define CFAPI_STRING  4
+#define CFAPI_STRING  4 /* String with a length that must be given too. */
 #define CFAPI_POBJECT 5
 #define CFAPI_PMAP    6
 #define CFAPI_FLOAT   7
@@ -109,7 +109,7 @@
 #define CFAPI_INT16   14
 #define CFAPI_TIME    15
 #define CFAPI_SINT64  16
-#define CFAPI_SSTRING 17 /* Shared string that shouldn't be changed - const char* */
+#define CFAPI_SSTRING 17 /* Shared string that shouldn't be changed, or const char* */
 #define CFAPI_MOVETYPE 18 /* MoveType */
 
 typedef void* (*f_plug_api) (int* type, ...);

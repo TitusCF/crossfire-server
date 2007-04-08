@@ -46,7 +46,7 @@ extern void cf_system_register_global_event( int event, const char* name, f_plug
 extern sstring      cf_add_string(const char* str);
 extern void         cf_free_string(sstring str);
 extern char*        cf_strdup_local(const char* str);
-extern char*        cf_get_maps_directory(char* str, char* path, int size);
+extern char*        cf_get_maps_directory(const char* str, char* path, int size);
 extern int          cf_find_animation(const char* txt);
 extern void			cf_log( LogLevel logLevel, const char* format, ... );
 extern void         cf_get_time( timeofday_t* tod );
@@ -86,12 +86,11 @@ extern int          cf_object_get_nrof( object* );
 extern int          cf_object_get_flag( object* ob, int flag );
 extern void         cf_object_set_flag( object* ob, int flag, int value );
 extern object*      cf_object_insert_in_ob( object* ob, object* where );
-extern void*        cf_object_set_string_property(object* op, int propcode, char* value);
+extern void*        cf_object_set_string_property(object* op, int propcode, const char* value);
 extern void         cf_object_activate_rune( object* op , object* victim);
 extern int          cf_object_check_trigger( object* op, object* cause );
 extern int          cf_object_query_money( object* op);
 extern int          cf_object_query_cost( object* op, object* who, int flags);
-extern void*        cf_object_set_string_property(object* op, int propcode, char* value);
 extern int          cf_object_cast_spell(object* caster, object* ctoo, int dir, object* sp, char* flags);
 extern void         cf_object_learn_spell(object* op, object* sp);
 extern void         cf_object_forget_spell(object* op, object* sp);
@@ -126,7 +125,12 @@ extern object*      cf_object_clone(object* op, int clonetype);
 extern void*        cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
 
 /* Maps */
-extern void*        cf_map_get_property(mapstruct* map, int propcode);
+/*extern void*        cf_map_get_property(mapstruct* map, int propcode);*/
+extern sstring cf_map_get_sstring_property(mapstruct* map, int propcode);
+extern mapstruct* cf_map_get_map_property(mapstruct* map, int propcode);
+extern region* cf_map_get_region_property(mapstruct* map, int propcode);
+extern int cf_map_get_int_property(mapstruct* map, int property);
+
 extern void*        cf_map_set_int_property(mapstruct* map, int propcode, int value);
 extern mapstruct*   cf_map_get_map(const char* name, int flags);
 extern mapstruct*   cf_map_get_first(void);
@@ -135,13 +139,14 @@ extern void         cf_map_message(mapstruct* m, char* msg, int color);
 extern object*      cf_map_get_object_at(mapstruct* m, int x, int y);
 extern object*      cf_map_insert_object(mapstruct* where, object* op, int x, int y);
 extern object*      cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int ny);
-extern int          cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint16* nx, sint16* ny );
+extern int          cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny);
 extern object*      cf_map_insert_object_there(mapstruct* where, object* op, object* originator, int flags);
 extern int          cf_map_get_difficulty(mapstruct* map);
 extern int          cf_map_get_reset_time(mapstruct* map);
 extern int          cf_map_get_reset_timeout(mapstruct* map);
 extern int          cf_map_get_players(mapstruct* map);
 extern int          cf_map_get_darkness(mapstruct* map);
+extern int          cf_map_get_light(mapstruct* map);
 extern int          cf_map_get_width(mapstruct* map);
 extern int          cf_map_get_height(mapstruct* map);
 extern int          cf_map_get_enter_x(mapstruct* map);

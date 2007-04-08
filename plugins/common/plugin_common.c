@@ -94,7 +94,6 @@ static f_plug_api cfapiMap_get_map = NULL;
 static f_plug_api cfapiMap_message = NULL;
 static f_plug_api cfapiMap_get_object_at = NULL;
 static f_plug_api cfapiMap_present_arch_by_name = NULL;
-static f_plug_api cfapiMap_get_flags = NULL;
 static f_plug_api cfapiMap_create_path = NULL;
 static f_plug_api cfapiMap_has_been_loaded = NULL;
 static f_plug_api cfapiPlayer_find = NULL;
@@ -180,7 +179,6 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiMap_message, "cfapi_map_message", z );
     GET_HOOK( cfapiMap_get_object_at, "cfapi_map_get_object_at", z );
     GET_HOOK( cfapiMap_present_arch_by_name, "cfapi_map_present_arch_by_name", z );
-    GET_HOOK( cfapiMap_get_flags, "cfapi_map_get_flags", z );
     GET_HOOK( cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z );
     GET_HOOK( cfapiPlayer_find, "cfapi_player_find", z );
     GET_HOOK( cfapiPlayer_message, "cfapi_player_message", z );
@@ -207,11 +205,47 @@ int cf_init_plugin( f_plug_api getHooks )
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_map_get_property(mapstruct* map, int propcode)
+/*void* cf_map_get_property(mapstruct* map, int propcode)
 {
     int type;
     return cfapiMap_get_property(&type, propcode, map);
+}*/
+
+int cf_map_get_int_property(mapstruct* map, int property)
+{
+    int type, value;
+    cfapiMap_get_property(&type, map, property, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
+
+sstring cf_map_get_sstring_property(mapstruct* map, int propcode)
+{
+    int type;
+    sstring value;
+    cfapiMap_get_property(&type, map, propcode, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
+}
+
+mapstruct* cf_map_get_map_property(mapstruct* map, int propcode)
+{
+    int type;
+    mapstruct* value;
+    cfapiMap_get_property(&type, map, propcode, &value);
+    assert(type == CFAPI_PMAP);
+    return value;
+}
+
+region* cf_map_get_region_property(mapstruct* map, int propcode)
+{
+    int type;
+    region* value;
+    cfapiMap_get_property(&type, map, propcode, &value);
+    assert(type == CFAPI_PREGION);
+    return value;
+}
+
 /* Should get replaced by tons of more explicit wrappers */
 void* cf_map_set_int_property(mapstruct* map, int propcode, int value)
 {
@@ -336,7 +370,7 @@ char* cf_object_get_string_property(object* op, int propcode, char* buf, int siz
     return buf;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_object_set_string_property(object* op, int propcode, char* value)
+void* cf_object_set_string_property(object* op, int propcode, const char* value)
 {
     int type;
     return cfapiObject_set_property(&type, op, propcode,value);
@@ -555,11 +589,7 @@ mapstruct* cf_map_has_been_loaded(const char* name)
  */
 mapstruct* cf_map_get_first(void)
 {
-    int type;
-    mapstruct* ret;
-    cfapiMap_get_map(&type, 3, &ret);
-    assert(type == CFAPI_PMAP);
-    return ret;
+    return cf_map_get_map_property(NULL, CFAPI_MAP_PROP_NEXT);
 }
 int cf_object_query_money( object* op)
 {
@@ -612,11 +642,11 @@ object* cf_object_insert_object(object* op, object* container)
     int type;
     return cfapiObject_insert(&type, op, 3, container);
 }
-char* cf_get_maps_directory(char* str, char* path, int size)
+char* cf_get_maps_directory(const char* str, char* path, int size)
 {
     int type;
     cfapiMap_create_path(&type, 0, str, path, size);
-    assert( type== CFAPI_STRING);
+    assert(type== CFAPI_STRING);
     return path;
 }
 object* cf_create_object()
@@ -846,99 +876,89 @@ object* cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int
     return (object*)cfapiMap_present_arch_by_name(&type, str,map,nx,ny);
 }
 
-static int cf_get_map_int_property(mapstruct* map, int property)
-{
-	int type;
-	void* rv;
-	rv = cfapiMap_get_property(&type, property, map);
-	if ( !rv || type != CFAPI_INT )
-		return PLUGIN_ERROR_INT;
-	return *(int*)rv;
-}
-
 int cf_map_get_difficulty(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_DIFFICULTY);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_DIFFICULTY);
 }
 
 int cf_map_get_reset_time(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_RESET_TIME);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_RESET_TIME);
 }
 
 int cf_map_get_reset_timeout(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_RESET_TIMEOUT);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_RESET_TIMEOUT);
 }
 
 int cf_map_get_players(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_PLAYERS);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_PLAYERS);
 }
 
 int cf_map_get_darkness(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_DARKNESS);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_DARKNESS);
 }
 
 int cf_map_get_width(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WIDTH);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_WIDTH);
 }
 
 int cf_map_get_height(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_HEIGHT);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_HEIGHT);
 }
 
 int cf_map_get_enter_x(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_ENTER_X);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_ENTER_X);
 }
 
 int cf_map_get_enter_y(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_ENTER_Y);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_ENTER_Y);
 }
 
 int cf_map_get_temperature(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_TEMPERATURE);
+    return cf_map_get_int_property(map,CFAPI_MAP_PROP_TEMPERATURE);
 }
 
 int cf_map_get_pressure(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_PRESSURE);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_PRESSURE);
 }
 
 int cf_map_get_humidity(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_HUMIDITY);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_HUMIDITY);
 }
 
 int cf_map_get_windspeed(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WINDSPEED);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WINDSPEED);
 }
 
 int cf_map_get_winddir(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WINDDIR);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WINDDIR);
 }
 
 int cf_map_get_sky(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_SKY);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_SKY);
 }
 
 int cf_map_get_wpartx(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WPARTX);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WPARTX);
 }
 
 int cf_map_get_wparty(mapstruct* map)
 {
-	return cf_get_map_int_property(map,CFAPI_MAP_PROP_WPARTY);
+	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WPARTY);
 }
 
 void cf_object_update( object* op, int flags)
@@ -968,10 +988,17 @@ char* cf_strdup_local(const char* str)
     assert(type == CFAPI_STRING);
     return dup;
 }
-int cf_map_get_flags( mapstruct* map, mapstruct** nmap, sint16 x, sint16 y, sint16* nx, sint16* ny )
+
+/**
+ * Wrapper for get_map_flags().
+ * @copydoc get_map_flags()
+ */
+int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny)
 {
-    int type;
-    return *( int* )cfapiMap_get_flags(&type, map, nmap, x, y, nx, ny);
+    int type, value;
+    cfapiMap_get_property(&type, oldmap, CFAPI_MAP_PROP_FLAGS, newmap, x, y, nx, ny, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 
 /**

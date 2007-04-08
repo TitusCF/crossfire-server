@@ -469,7 +469,7 @@ void* eventListener(int* type, ...)
     cf_object_set_string_property(newspaper, CFAPI_OBJECT_PROP_NAME_PLURAL, paper->name);
 
     if (activator->map)
-        reg = (region*)cf_map_get_property(activator->map,CFAPI_MAP_PROP_REGION);
+        reg = cf_map_get_region_property(activator->map,CFAPI_MAP_PROP_REGION);
     else
         reg = NULL;
 

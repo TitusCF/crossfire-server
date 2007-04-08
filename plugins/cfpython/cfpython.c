@@ -481,7 +481,7 @@ static PyObject* getMaps(PyObject* self, PyObject* args)
     map = cf_map_get_first();
     while (map) {
         PyList_Append(list, Crossfire_Map_wrap(map));
-        map = cf_map_get_property(map, CFAPI_MAP_PROP_NEXT);
+        map = cf_map_get_map_property(map, CFAPI_MAP_PROP_NEXT);
     }
     return list;
 }
