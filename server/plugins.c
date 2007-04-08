@@ -1337,23 +1337,40 @@ void* cfapi_map_set_map_property(int* type, ...)
         break;
     }
 }
+
+/**
+ * Wrapper for out_of_map().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_map_out_of_map(int* type, ...)
 {
     va_list args;
-    static int rv;
     mapstruct* map;
     int x, y;
+    int* rint;
 
     va_start(args, type);
     map = va_arg(args, mapstruct*);
     x = va_arg(args, int);
     y = va_arg(args, int);
+    rint = va_arg(args, int*);
 
-    rv = out_of_map(map, x, y);
+    *rint = out_of_map(map, x, y);
     va_end(args);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
+
+/**
+ * Wrapper for update_position().
+ * @param type
+ * CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_map_update_position(int* type, ...)
 {
     va_list args;
@@ -1403,30 +1420,48 @@ void* cfapi_map_message(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for get_map_ob().
+ * @param type
+ * will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ */
 void* cfapi_map_get_object_at(int* type, ...)
 {
     va_list args;
     mapstruct* map;
     int x, y;
-    object* rv;
+    object** robj;
 
     va_start(args, type);
     map = va_arg(args, mapstruct*);
     x = va_arg(args, int);
     y = va_arg(args, int);
+    robj = va_arg(args, object**);
     va_end(args);
 
-    rv = get_map_ob(map, x, y);
+    *robj = get_map_ob(map, x, y);
     *type = CFAPI_POBJECT;
-    return rv;
+    return NULL;
 }
+
+/**
+ * Kinda wrapper for present_arch() (but uses a string, not an archetype*).
+ * @param type
+ * will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ * @todo fix archetype instead of string.
+ */
 void* cfapi_map_present_arch_by_name(int* type, ...)
 {
     va_list args;
-    object* rv;
     int x, y;
     mapstruct* map;
     char* msg;
+    object** robj;
 
     va_start(args, type);
 
@@ -1434,12 +1469,13 @@ void* cfapi_map_present_arch_by_name(int* type, ...)
     map = va_arg(args, mapstruct*);
     x = va_arg(args, int);
     y = va_arg(args, int);
+    robj = va_arg(args, object**);
 
     va_end(args);
 
-    rv = present_arch(find_archetype(msg), map, x, y);
+    *robj = present_arch(find_archetype(msg), map, x, y);
     *type = CFAPI_POBJECT;
-    return rv;
+    return NULL;
 }
 
 /* OBJECT-RELATED HOOKS */
@@ -2937,6 +2973,14 @@ void* cfapi_object_apply(int* type, ...)
     *ret = manual_apply(applier, applied, aflags);
     return NULL;
 }
+
+/**
+ * Wrapper for identify().
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_identify(int* type, ...)
 {
     va_list args;
@@ -2952,22 +2996,33 @@ void* cfapi_object_identify(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for describe_item().
+ * @param type
+ * will be CFAPI_STRING.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_describe(int* type, ...)
 {
     va_list args;
     object* op;
     object* owner;
-    static char desc[VERY_BIG_BUF];
+    char* desc;
+    int size;
 
     va_start(args, type);
 
     op = va_arg(args, object*);
     owner = va_arg(args, object*);
+    desc = va_arg(args, char*);
+    size = va_arg(args, int);
     va_end(args);
 
     *type = CFAPI_STRING;
-    describe_item(op, owner, desc, VERY_BIG_BUF);
-    return desc;
+    describe_item(op, owner, desc, size);
+    return NULL;
 }
 void* cfapi_object_drain(int* type, ...)
 {
@@ -3085,30 +3140,41 @@ void* cfapi_object_delete(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+/**
+ * Clone an object, either through object_create_clone() or copy_object().
+ * @param type
+ * will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_clone(int* type, ...)
 {
     va_list args;
     object* op;
     int kind;
+    object** robj;
 
     va_start(args, type);
 
     op = va_arg(args, object*);
     kind = va_arg(args, int);
+    robj = va_arg(args, object**);
 
     va_end(args);
 
     if (kind == 0) {
         *type = CFAPI_POBJECT;
-        return object_create_clone(op);
+        *robj = object_create_clone(op);
     } else {
         object* tmp;
         tmp = get_object();
         copy_object(op, tmp);
         *type = CFAPI_POBJECT;
-        return tmp;
+        *robj = tmp;
     }
+    return NULL;
 }
+
 void* cfapi_object_find(int* type, ...)
 {
     va_list args;
@@ -3562,31 +3628,49 @@ void* cfapi_object_pay_amount(int* type, ...)
     *type = CFAPI_INT;
     return &rv;
 }
+/**
+ * Wrapper for pay_for_item().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_pay_item(int* type, ...)
 {
     object* op;
     object* tobuy;
+    int* rint;
 
     va_list args;
-    static int rv;
 
     va_start(args, type);
     tobuy = va_arg(args, object*);
     op = va_arg(args, object*);
+    rint = va_arg(args, int*);
     va_end(args);
 
-    rv = pay_for_item(tobuy, op);
+    *rint = pay_for_item(tobuy, op);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
+
+/**
+ * Object transfer.
+ * Parameters are object*, int meaning:
+ * 0: call to transfer_ob()
+ * 1: call to insert_ob_in_map_at()
+ * @return
+ * NULL.
+ */
 void* cfapi_object_transfer(int* type, ...)
 {
     object* op;
     object* originator;
-    int x, y, randompos, ttype;
+    int x, y, randompos, ttype, flag;
     va_list args;
-    static int rv=0;
     mapstruct* map;
+    int* rint;
+    object** robj;
 
     va_start(args, type);
     op = va_arg(args, object*);
@@ -3598,35 +3682,29 @@ void* cfapi_object_transfer(int* type, ...)
         y = va_arg(args, int);
         randompos = va_arg(args, int);
         originator = va_arg(args, object*);
+        rint = va_arg(args, int*);
         va_end(args);
 
-        rv = transfer_ob(op, x, y, randompos, originator);
+        *rint = transfer_ob(op, x, y, randompos, originator);
         *type = CFAPI_INT;
-        return &rv;
+        return NULL;
         break;
 
     case 1:
+        map = va_arg(args, mapstruct*);
+        originator = va_arg(args, object*);
+        flag = va_arg(args, int);
         x = va_arg(args, int);
         y = va_arg(args, int);
-        map = va_arg(args, mapstruct*);
+        robj = va_arg(args, object**);
         va_end(args);
         if (x < 0 || y < 0) {
             x = map->enter_x;
             y = map->enter_y;
         }
-/*
-        originator = get_object();
-        EXIT_PATH(originator) = add_string(map->path);
-        EXIT_X(originator) = x;
-        EXIT_Y(originator) = y;
-        printf("B Transfer: X=%d, Y=%d, OP=%s\n", x, y, op->name);*/
-        /*enter_exit(op, originator);*/
-        insert_ob_in_map_at(op, map, NULL, 0, x, y);
-        /*printf("A Transfer: X=%d, Y=%d, MAP=%s\n", x, y, op->map->name);
-        free_object(originator);
-*/
-        *type = CFAPI_INT;
-        return &rv;
+        *robj = insert_ob_in_map_at(op, map, originator, flag, x, y);
+        *type = CFAPI_POBJECT;
+        return NULL;
         break;
 
     default:
@@ -3636,52 +3714,60 @@ void* cfapi_object_transfer(int* type, ...)
     }
 }
 
+/**
+ * Kinda wrapper for present_arch_in_ob().
+ */
 void* cfapi_object_find_archetype_inside(int* type, ...)
 {
     object* op;
     int     critera;
     char*   str;
     va_list args;
-    object* rv;
+    object** robj;
 
     *type = CFAPI_POBJECT;
     va_start(args, type);
     op = va_arg(args, object*);
     critera = va_arg(args, int);
+    robj = va_arg(args, object**);
 
     switch(critera)
     {
     case 0: /* By name, either exact or from query_name */
         str = va_arg(args, char*);
-        rv = present_arch_in_ob(find_archetype(str), op);
-        if (rv == NULL) {
+        *robj = present_arch_in_ob(find_archetype(str), op);
+        if (*robj == NULL) {
             object* tmp;
             char name[MAX_BUF];
             /* Search by query_name instead */
             for (tmp = op->inv; tmp; tmp = tmp->below) {
                 query_name(tmp, name, MAX_BUF);
                 if (!strncmp(name, str, strlen(str)))
-                    rv = tmp;
+                    *robj = tmp;
                 if (!strncmp(tmp->name, str, strlen(str)))
-                    rv = tmp;
-                if (rv != NULL)
+                    *robj = tmp;
+                if (*robj != NULL)
                     break;
             }
         }
         break;
 
     default:
-        rv = NULL;
+        *robj = NULL;
         break;
     }
     va_end(args);
 
-    if (rv == NULL) {
-        *type = CFAPI_NONE;
-    }
-    return rv;
+    return NULL;
 }
 
+/**
+ * Wrapper for drop().
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_drop(int* type, ...)
 {
     object* op;
@@ -3692,6 +3778,7 @@ void* cfapi_object_drop(int* type, ...)
     op = va_arg(args, object*);
     author = va_arg(args, object*);
     va_end(args);
+    *type = CFAPI_NONE;
 
     if (QUERY_FLAG(op, FLAG_NO_DROP))
         return NULL;
@@ -3702,7 +3789,6 @@ void* cfapi_object_drop(int* type, ...)
         author->contr->socket.update_look = 1;
     }
 
-    *type = CFAPI_NONE;
     return NULL;
 }
 
@@ -3769,20 +3855,29 @@ void* cfapi_object_speak(int* type, ...)
     return NULL;
 }
 /* PLAYER SUBCLASS */
+
+/**
+ * Wrapper for find_player_partial_name().
+ * @param type
+ * will be CFAPI_PPLAYER.
+ * @return
+ * NULL.
+ */
 void* cfapi_player_find(int* type, ...)
 {
     va_list args;
-    void* rv;
     char* sval;
+    player** rpl;
     va_start(args, type);
 
     sval = va_arg(args, char*);
+    rpl = va_arg(args, player**);
     va_end(args);
 
-    rv = find_player(sval);
+    *rpl = find_player_partial_name(sval);
 
     *type = CFAPI_PPLAYER;
-    return rv;
+    return NULL;
 }
 void* cfapi_player_message(int* type, ...)
 {
@@ -3805,17 +3900,28 @@ void* cfapi_player_message(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for can_pay().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void *cfapi_player_can_pay(int *type, ...)
 {
     va_list args;
-    static int rv;
     object* pl;
-    
+    int* rint;
+
     va_start(args, type);
     pl = va_arg(args, object*);
-    rv = can_pay(pl);
+    rint = va_arg(args, int*);
+    va_end(args);
+
+    *rint = can_pay(pl);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 
 void* cfapi_object_teleport(int *type, ...)

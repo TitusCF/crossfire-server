@@ -441,43 +441,94 @@ void cf_object_free(object* ob)
     int type;
     cfapiObject_delete(&type, ob);
 }
+/**
+ * Kinda wrapper for present_arch_in_ob().
+ */
 object* cf_object_present_archname_inside(object* op, char* whatstr)
 {
     int type;
-    return cfapiObject_find_archetype_inside(&type, op, 0, whatstr);
+    object* value;
+    cfapiObject_find_archetype_inside(&type, op, 0, whatstr, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
-int cf_object_transfer(object* op,int x,int y,int r,object* orig)
+
+/**
+ * Wrapper for transfer_ob().
+ * @copydoc transfer_ob()
+ */
+int cf_object_transfer(object *op, int x, int y, int randomly, object *originator)
+{
+    int type, value;
+    cfapiObject_transfer(&type,op,0,x,y,randomly,originator, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
+ * Wrapper for insert_ob_in_map_at().
+ * @copydoc insert_ob_in_map_at().
+ */
+object* cf_object_change_map(object* op, mapstruct* m, object* originator, int flag, int x, int y)
 {
     int type;
-    /*    return *(int*)cfapiObject_transfer(&type,op,1,x,y,op->map);*/
-    return *(int*)cfapiObject_transfer(&type,op,0,x,y,r,orig);
+    object* value;
+    cfapiObject_transfer(&type, op, 1, m, originator, flag, x, y, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
-int cf_object_change_map(object* op, int x, int y, mapstruct* map)
-{
-    int type;
-    return *(int*)cfapiObject_transfer(&type,op,1,x,y,map);
-    /*cfapiObject_transfer(&type,op,1,x,y,map);
-    return 0;*/
-}
+
+/**
+ * Wrapper for get_map_ob().
+ * @copydoc GET_MAP_OB()
+ */
 object* cf_map_get_object_at(mapstruct* m, int x, int y)
 {
     int type;
-    return cfapiMap_get_object_at(&type, m, x, y);
+    object* value;
+    cfapiMap_get_object_at(&type, m, x, y, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
+/**
+ * Partial wrapper for ext_info_map().
+ * @todo add missing parameters.
+ */
 void cf_map_message(mapstruct* m, char* msg, int color)
 {
     int type;
     cfapiMap_message(&type, m, msg, color);
 }
+
+/**
+ * Clone an object.
+ * @param op
+ * what to clone.
+ * @param clonetype
+ * - 0 means to clone through object_create_clone().
+ * - 1 means to clone through copy_object().
+ * @return
+ * clone.
+ */
 object* cf_object_clone(object* op, int clonetype)
 {
     int type;
-    return (object*)cfapiObject_clone(&type, op, clonetype);
+    object* value;
+    cfapiObject_clone(&type, op, clonetype, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
-int cf_object_pay_item(object* op, object* buyer)
+
+/**
+ * Wrapper for pay_for_item().
+ * @copydoc pay_for_item().
+ */
+int cf_object_pay_item(object *op,object *pl)
 {
-    int type;
-    return *(int*)cfapiObject_pay_item(&type, op, buyer);
+    int type, value;
+    cfapiObject_pay_item(&type, op, pl, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 int cf_object_pay_amount(object* op, uint64 amount)
 {
@@ -516,10 +567,17 @@ void cf_player_message(object* op, char* txt, int flags)
     cfapiPlayer_message(&type, flags, 0, op, txt);
 }
 
-player* cf_player_find(char* txt)
+/**
+ * Wrapper for find_player_partial_name().
+ * @copydoc find_player_partial_name().
+ */
+player* cf_player_find(const char* plname)
 {
     int type;
-    return cfapiPlayer_find(&type, txt);
+    player* value;
+    cfapiPlayer_find(&type, plname, &value);
+    assert(type == CFAPI_PPLAYER);
+    return value;
 }
 sstring cf_player_get_ip(object* op)
 {
@@ -552,10 +610,17 @@ void cf_player_set_party(object* op, partylist* party)
 	int type;
 	cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_PARTY, party);
 }
+
+/**
+ * Wrapper for can_pay().
+ * @copydoc can_pay().
+ */
 int cf_player_can_pay(object* pl)
 {
-    int type;
-    return *(int*)cfapiPlayer_can_pay(&type, pl);
+    int type, value;
+    cfapiPlayer_can_pay(&type, pl, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 
 /**
@@ -616,8 +681,10 @@ int cf_object_check_trigger( object* op, object* cause )
 }
 int cf_object_out_of_map( object* op, int x, int y)
 {
-    int type;
-    return *(int*)cfapiObject_out_of_map(&type,op->map,x,y);
+    int type, value;
+    cfapiObject_out_of_map(&type,op->map,x,y, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 void cf_object_drop( object* op, object* author)
 {
@@ -644,12 +711,16 @@ object* cf_object_insert_object(object* op, object* container)
     int type;
     return cfapiObject_insert(&type, op, 3, container);
 }
-char* cf_get_maps_directory(const char* str, char* path, int size)
+/**
+ * Wrapper for create_pathname().
+ * @copydoc create_pathname()
+ */
+char* cf_get_maps_directory(const char *name, char* buf, int size)
 {
     int type;
-    cfapiMap_create_path(&type, 0, str, path, size);
+    cfapiMap_create_path(&type, 0, name, buf, size);
     assert(type== CFAPI_STRING);
-    return path;
+    return buf;
 }
 object* cf_create_object()
 {
@@ -872,10 +943,16 @@ int cf_object_teleport( object* op, mapstruct* map, int x, int y )
     int type;
     return *( int* )cfapiObject_teleport( &type, op, map, x, y );
 }
+/**
+ * Kinda wrapper for arch_present().
+ */
 object* cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int ny)
 {
     int type;
-    return (object*)cfapiMap_present_arch_by_name(&type, str,map,nx,ny);
+    object* value;
+    cfapiMap_present_arch_by_name(&type, str,map,nx,ny, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 
 int cf_map_get_difficulty(mapstruct* map)

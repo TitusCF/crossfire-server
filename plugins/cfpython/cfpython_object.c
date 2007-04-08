@@ -866,7 +866,7 @@ static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closur
     if (!PyArg_Parse(value,"O",&val))
         return -1;
 
-    cf_object_change_map(whoptr->obj, -1, -1, val->map);
+    cf_object_change_map(whoptr->obj, val->map, NULL, 0, -1, -1);
     return 0;
 }
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure)
