@@ -144,7 +144,7 @@ extern void make_sure_seen(const object *op);
 extern void make_sure_not_seen(const object *op);
 /* map.c */
 extern mapstruct *has_been_loaded(const char *name);
-extern void create_pathname(const char *name, char *buf, int size);
+extern char* create_pathname(const char *name, char *buf, int size);
 extern void create_overlay_pathname(const char *name, char *buf, int size);
 extern void create_template_pathname(const char *name, char *buf, int size);
 extern int check_path(const char *name, int prepend_dir);

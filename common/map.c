@@ -104,8 +104,10 @@ mapstruct *has_been_loaded (const char *name) {
  * buffer that will contain the full path.
  * @param size
  * buffer's length.
+ * @return
+ * buf.
  */
-void create_pathname (const char *name, char* buf, int size) {
+char* create_pathname (const char *name, char* buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
@@ -114,6 +116,7 @@ void create_pathname (const char *name, char* buf, int size) {
         snprintf (buf, size, "%s/%s%s", settings.datadir, settings.mapdir, name);
     else
         snprintf (buf, size, "%s/%s/%s", settings.datadir, settings.mapdir, name);
+    return buf;
 }
 
 /**
