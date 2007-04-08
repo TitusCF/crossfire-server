@@ -48,7 +48,7 @@ extern void         cf_free_string(sstring str);
 extern char*        cf_strdup_local(const char* str);
 extern char*        cf_get_maps_directory(const char* str, char* path, int size);
 extern int          cf_find_animation(const char* txt);
-extern void			cf_log( LogLevel logLevel, const char* format, ... );
+extern void         cf_log( LogLevel logLevel, const char* format, ... );
 extern void         cf_get_time( timeofday_t* tod );
 extern int          cf_timer_create(object* ob, long delay, int mode);
 extern int          cf_timer_destroy(int id);
@@ -56,14 +56,14 @@ extern const char*  cf_get_directory(int id);
 extern const char*  cf_re_cmp(const char *str, const char *regexp);
 
 /* Objects */
-extern void*        cf_object_set_int_property(object* op, int propcode, int value);
+extern void         cf_object_set_int_property(object* op, int propcode, int value);
 extern int          cf_object_get_int_property(object* op, int propcode);
-extern void*        cf_object_set_movetype_property(object* op, int propcode, MoveType value);
+extern void         cf_object_set_movetype_property(object* op, int propcode, MoveType value);
 extern MoveType     cf_object_get_movetype_property(object* op, int propcode);
 extern object*      cf_object_get_object_property(object* op, int propcode);
-extern void*        cf_object_set_object_property(object* op, int propcode, object* value);
+extern void         cf_object_set_object_property(object* op, int propcode, object* value);
 extern float        cf_object_get_float_property(object* op, int propcode);
-extern void*        cf_object_set_float_property(object* op, int propcode, float value);
+extern void         cf_object_set_float_property(object* op, int propcode, float value);
 extern mapstruct*   cf_object_get_map_property(object* op, int propcode);
 extern archetype*   cf_object_get_archetype_property(object* op, int propcode);
 extern partylist*   cf_object_get_partylist_property(object* op, int propcode);
@@ -86,7 +86,7 @@ extern int          cf_object_get_nrof( object* );
 extern int          cf_object_get_flag( object* ob, int flag );
 extern void         cf_object_set_flag( object* ob, int flag, int value );
 extern object*      cf_object_insert_in_ob( object* ob, object* where );
-extern void*        cf_object_set_string_property(object* op, int propcode, const char* value);
+extern void         cf_object_set_string_property(object* op, int propcode, const char* value);
 extern void         cf_object_activate_rune( object* op , object* victim);
 extern int          cf_object_check_trigger( object* op, object* cause );
 extern int          cf_object_query_money( object* op);
@@ -98,7 +98,7 @@ extern object*      cf_object_check_for_spell(object* op, char* spellname);
 extern int          cf_object_cast_ability(object* caster, object* ctoo, int dir, object* sp, char* flags);
 extern int          cf_object_pay_amount(object* op, uint64 amount);
 extern int          cf_object_pay_item(object* op, object* buyer);
-extern void*        cf_object_set_long_property(object* op, int propcode, long value);
+extern void         cf_object_set_long_property(object* op, int propcode, long value);
 extern int          cf_object_transfer(object* op,int x,int y,int r,object* orig);
 extern int          cf_object_out_of_map( object* op, int x, int y);
 extern void         cf_object_drop( object* op, object* author);
@@ -122,7 +122,7 @@ extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern void         cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* pl);
 extern object*      cf_object_clone(object* op, int clonetype);
-extern void*        cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
+extern void         cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
 
 /* Maps */
 /*extern void*        cf_map_get_property(mapstruct* map, int propcode);*/
@@ -131,7 +131,7 @@ extern mapstruct* cf_map_get_map_property(mapstruct* map, int propcode);
 extern region* cf_map_get_region_property(mapstruct* map, int propcode);
 extern int cf_map_get_int_property(mapstruct* map, int property);
 
-extern void*        cf_map_set_int_property(mapstruct* map, int propcode, int value);
+extern void         cf_map_set_int_property(mapstruct* map, int propcode, int value);
 extern mapstruct*   cf_map_get_map(const char* name, int flags);
 extern mapstruct*   cf_map_get_first(void);
 extern mapstruct*   cf_map_has_been_loaded(const char* name);

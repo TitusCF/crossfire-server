@@ -247,10 +247,11 @@ region* cf_map_get_region_property(mapstruct* map, int propcode)
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_map_set_int_property(mapstruct* map, int propcode, int value)
+void cf_map_set_int_property(mapstruct* map, int propcode, int value)
 {
     int type;
-    return cfapiMap_set_property(&type, map, propcode,value);
+    cfapiMap_set_property(&type, map, propcode,value);
+    assert(type == CFAPI_INT);
 }
 /* Should get replaced by tons of more explicit wrappers */
 sint16 cf_object_get_resistance(object* op, int rtype)
@@ -262,10 +263,11 @@ sint16 cf_object_get_resistance(object* op, int rtype)
     return resist;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_object_set_int_property(object* op, int propcode, int value)
+void cf_object_set_int_property(object* op, int propcode, int value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode,value);
+    cfapiObject_set_property(&type, op, propcode,value);
+    assert(type == CFAPI_INT);
 }
 int cf_object_get_int_property(object* op, int propcode)
 {
@@ -274,10 +276,11 @@ int cf_object_get_int_property(object* op, int propcode)
     assert(type == CFAPI_INT);
     return value;
 }
-void* cf_object_set_movetype_property(object* op, int propcode, MoveType value)
+void cf_object_set_movetype_property(object* op, int propcode, MoveType value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode, value);
+    cfapiObject_set_property(&type, op, propcode, value);
+    assert(type == CFAPI_MOVETYPE);
 }
 MoveType cf_object_get_movetype_property(object* op, int propcode)
 {
@@ -312,15 +315,17 @@ sint64 cf_object_get_int64_property(object* op, int propcode)
     return value;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_object_set_long_property(object* op, int propcode, long value)
+void cf_object_set_long_property(object* op, int propcode, long value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode,value);
+    cfapiObject_set_property(&type, op, propcode,value);
+    assert(type == CFAPI_LONG);
 }
-void* cf_object_set_float_property(object* op, int propcode, float value)
+void cf_object_set_float_property(object* op, int propcode, float value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode, value);
+    cfapiObject_set_property(&type, op, propcode, value);
+    assert(type == CFAPI_FLOAT);
 }
 float cf_object_get_float_property(object* op, int propcode)
 {
@@ -370,20 +375,23 @@ char* cf_object_get_string_property(object* op, int propcode, char* buf, int siz
     return buf;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void* cf_object_set_string_property(object* op, int propcode, const char* value)
+void cf_object_set_string_property(object* op, int propcode, const char* value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode,value);
+    cfapiObject_set_property(&type, op, propcode,value);
+    assert(type == CFAPI_STRING);
 }
-void* cf_object_set_object_property(object* op, int propcode, object* value)
+void cf_object_set_object_property(object* op, int propcode, object* value)
 {
     int type;
-    return cfapiObject_set_property(&type, op, propcode,value);
+    cfapiObject_set_property(&type, op, propcode,value);
+    assert(type == CFAPI_POBJECT);
 }
-void* cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg)
+void cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg)
 {
     int type;
-    return cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_EXP, exp, strlen(skill) > 0 ? skill : NULL, arg);
+    cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_EXP, exp, strlen(skill) > 0 ? skill : NULL, arg);
+    assert(type == CFAPI_SINT64);
 }
 void cf_player_move(player* pl, int dir)
 {
