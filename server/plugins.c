@@ -3805,13 +3805,6 @@ void* cfapi_player_message(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void *cfapi_player_send_inventory(int *type, ...)
-{
-    /* Currently a stub. Do we really need this anymore ? */
-    *type = CFAPI_NONE;
-    return NULL;
-}
-
 void *cfapi_player_can_pay(int *type, ...)
 {
     va_list args;

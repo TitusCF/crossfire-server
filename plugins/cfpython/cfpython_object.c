@@ -1645,10 +1645,6 @@ static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args 
 
     if (!cf_object_get_flag(who->obj,FLAG_REMOVED)) {
         cf_object_remove(who->obj);
-
-        if (current_context->activator != NULL &&
-            ((Crossfire_Object*)current_context->activator)->obj->type == PLAYER)
-            cf_player_send_inventory(((Crossfire_Object*)current_context->activator)->obj);
     }
 
     cf_object_free(who->obj);

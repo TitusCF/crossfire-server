@@ -165,12 +165,11 @@ extern int           cf_random_map_set_variable(RMParms* rp, const char* buf);
 extern mapstruct*    cf_random_map_generate(const char *OutFileName, RMParms *RP, char** use_layout);
 
 /* Players */
-extern sstring        cf_player_get_ip(object* op);
+extern sstring      cf_player_get_ip(object* op);
 extern object*      cf_player_get_marked_item(object* op);
 extern void         cf_player_set_marked_item(object* op, object* ob);
 extern player*      cf_player_find(char* txt);
 extern void         cf_player_message(object* op, char* txt, int flags);
-extern object*      cf_player_send_inventory(object* op);
 extern void         cf_player_move(player* pl, int dir);
 extern partylist*   cf_player_get_party(object* op);
 extern void         cf_player_set_party(object* op, partylist* party);

@@ -403,12 +403,6 @@ void cf_object_move(object* op, int dir, object*originator)
     int type, ret;
     cfapiObject_move(&type,0,op,dir,originator, &ret);
 }
-object* cf_player_send_inventory(object* op)
-{
-    int type;
-    return cfapiPlayer_send_inventory(&type, op);
-}
-
 /**
  * Wrapper for manual_apply().
  * @copydoc manual_apply()
