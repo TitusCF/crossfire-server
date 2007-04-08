@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ common/init.c: abort() if first map doesn't exist. Better than crashing later on.
+Nicolas Weeger 2007-04-08
+
 Fix bug #1695764: Charm monsters - shared experience broken.
 Add new share_exp() function, working like change_exp() but party-aware.
  common/living.c

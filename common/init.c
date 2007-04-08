@@ -200,11 +200,11 @@ void init_library(void) {
     read_smooth();
     init_anim();    /* Must be after we read in the bitmaps */
     init_archetypes();	/* Reads all archetypes from file */
-    init_dynamic ();
     init_attackmess();
     init_clocks();
     init_emergency_mappath();
     init_experience();
+    init_dynamic ();
 }
 
 
@@ -382,13 +382,21 @@ void init_dynamic (void) {
                 strcpy (first_map_ext_path, at->clone.race);
             }
             if (EXIT_PATH (&at->clone)) {
-                strcpy (first_map_path, EXIT_PATH (&at->clone));
+                mapstruct* first;
+                snprintf(first_map_path, sizeof(first_map_path), EXIT_PATH (&at->clone));
+                first = ready_map_name(first_map_path, 0);
+                if (!first) {
+                    LOG(llevError, "Initial map %s can't be found! Please ensure maps are correctly installed.\n", first_map_path);
+                    LOG(llevError, "Unable to continue without initial map.\n");
+                    abort();
+                }
+                delete_map(first);
                 return;
             }
         }
         at = at->next;
     }
-    LOG(llevDebug,"You Need a archetype called 'map' and it have to contain start map\n");
+    LOG(llevError,"You need a archetype called 'map' and it have to contain start map\n");
     exit (-1);
 }
 
