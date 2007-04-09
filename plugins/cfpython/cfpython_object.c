@@ -1848,7 +1848,7 @@ static PyObject* Crossfire_Object_LearnSpell( Crossfire_Object* who, PyObject* a
     EXISTCHECK(who);
     EXISTCHECK(pspell);
 
-    cf_object_learn_spell(who->obj, pspell->obj);
+    cf_object_learn_spell(who->obj, pspell->obj, 0);
 
     Py_INCREF(Py_None);
     return Py_None;

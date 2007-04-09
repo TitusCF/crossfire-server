@@ -530,27 +530,59 @@ int cf_object_pay_item(object *op,object *pl)
     assert(type == CFAPI_INT);
     return value;
 }
+
+/**
+ * Wrapper for pay_for_amount().
+ * @copydoc pay_for_item().
+ */
 int cf_object_pay_amount(object* op, uint64 amount)
 {
-    int type;
-    return *(int*)cfapiObject_pay_amount(&type, op, amount);
+    int type, value;
+    cfapiObject_pay_amount(&type, op, amount, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
-int cf_object_cast_spell(object* caster, object* ctoo, int dir, object* sp, char* flags)
+
+/**
+ * Wrapper for cast_spell().
+ * @copydoc cast_spell().
+ */
+int cf_object_cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
 {
-    int type;
-    return *(int*)cfapiObject_cast(&type, caster, ctoo, dir, sp, flags);
+    int type, value;
+    cfapiObject_cast(&type, op, caster, dir, spell_ob, stringarg, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
-/* Should there be a difference nowadays between that and cast_spell ? */
+/**
+ * Should there be a difference nowadays between that and cast_spell ?
+ * @todo
+ * either totally remove or replace by cf_object_cast_spell().
+ */
 int cf_object_cast_ability(object* caster, object* ctoo, int dir, object* sp, char* flags)
 {
-    int type;
-    return *(int*)cfapiObject_cast(&type, caster, ctoo, dir, sp, flags);
+    int type, value;
+    cfapiObject_cast(&type, caster, ctoo, dir, sp, flags, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
-void cf_object_learn_spell(object* op, object* sp)
+
+/**
+ * Wrapper for do_learn_spell().
+ * @copydoc do_learn_spell().
+ */
+void cf_object_learn_spell(object *op, object *spell, int special_prayer)
 {
     int type;
-    cfapiObject_learn_spell(&type, op, sp, 0);
+    cfapiObject_learn_spell(&type, op, spell, special_prayer);
+    assert(type == CFAPI_NONE);
 }
+
+/**
+ * Wrapper for do_forget_spell(), except takes an object, not a string.
+ * @todo
+ * make coherent with do_forget_spell() (string instead of ob).
+ */
 void cf_object_forget_spell(object* op, object* sp)
 {
     int type;
@@ -573,6 +605,7 @@ void cf_player_message(object* op, char* txt, int flags)
 {
     int type;
     cfapiPlayer_message(&type, flags, 0, op, txt);
+    assert(type == CFAPI_NONE);
 }
 
 /**

@@ -3604,17 +3604,18 @@ void* cfapi_object_query_cost(int* type, ...)
     object* who;
     int flags;
     va_list args;
-    static int rv;
+    int* rint;
 
     va_start(args, type);
     op = va_arg(args, object*);
     who = va_arg(args, object*);
     flags = va_arg(args, int);
+    rint = va_arg(args, int*);
     va_end(args);
 
-    rv = query_cost(op, who, flags);
+    *rint = query_cost(op, who, flags);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 
 /**
@@ -3639,6 +3640,14 @@ void* cfapi_object_query_money(int* type, ...)
     *type = CFAPI_INT;
     return NULL;
 }
+
+/**
+ * Wrapper for query_money().
+ * @param type
+ * Will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_cast(int* type, ...)
 {
     object* op;
@@ -3647,17 +3656,20 @@ void* cfapi_object_cast(int* type, ...)
     char* str;
     object* caster;
     va_list args;
-    static int rv;
+    int* rint;
+
     va_start(args, type);
     op = va_arg(args, object*);
     caster = va_arg(args, object*);
     dir = va_arg(args, int);
     sp = va_arg(args, object*);
     str = va_arg(args, char*);
+    rint = va_arg(args, int*);
     va_end(args);
-    rv = cast_spell(op, caster, dir, sp, str);
+
+    *rint = cast_spell(op, caster, dir, sp, str);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 void* cfapi_object_learn_spell(int* type, ...)
 {
@@ -3715,21 +3727,29 @@ void* cfapi_object_check_spell(int* type, ...)
     *type = CFAPI_POBJECT;
     return NULL;
 }
+/**
+ * Wrapper for pay_for_amount().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_pay_amount(int* type, ...)
 {
     object* op;
     uint64 amount;
     va_list args;
-    static int rv;
+    int* rint;
 
     va_start(args, type);
     op = va_arg(args, object*);
     amount = va_arg(args, uint64);
+    rint = va_arg(args, int*);
     va_end(args);
 
-    rv = pay_for_amount(amount, op);
+    *rint = pay_for_amount(amount, op);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 /**
  * Wrapper for pay_for_item().
@@ -3932,6 +3952,11 @@ void* cfapi_object_say(int* type, ...)
     *type = CFAPI_INT;
     return &rv;
 }
+
+/**
+ * @todo
+ * remove static buffer
+ */
 void* cfapi_object_speak(int* type, ...)
 {
     object* op;
