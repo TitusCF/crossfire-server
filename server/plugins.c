@@ -829,7 +829,7 @@ void* cfapi_system_re_cmp(int* type, ...)
 
     va_end(args);
     *type = CFAPI_STRING;
-    return rv;
+    return NULL;
 }
 
 void* cfapi_system_directory(int* type, ...)
@@ -3222,10 +3222,19 @@ void* cfapi_object_find(int* type, ...)
 
     return rv;
 }
+
+/**
+ * Wrapper for get_object(), create_archetype() and create_archetype_by_object_name().
+ * @param type
+ * will be CFAPI_POBJECT, or CFAPI_NONE if invalid value asked for.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_create(int* type, ...)
 {
     va_list args;
     int ival;
+    object** robj;
     va_start(args, type);
     ival = va_arg(args, int);
 
@@ -3233,17 +3242,21 @@ void* cfapi_object_create(int* type, ...)
     switch (ival)
     {
     case 0:
+        robj = va_arg(args, object**);
         va_end(args);
-        return get_object();
+        *robj = get_object();
+        return;
         break;
 
     case 1: /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
         {
-            char* sval;
+            const char* sval;
             object* op;
             char name[MAX_BUF];
 
-            sval = va_arg(args, char*);
+            sval = va_arg(args, const char*);
+            robj = va_arg(args, object**);
+            va_end(args);
 
             op = create_archetype(sval);
 
@@ -3256,13 +3269,12 @@ void* cfapi_object_create(int* type, ...)
                 query_name(op, name, MAX_BUF);
                 if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
                     free_object(op);
-                    *type = CFAPI_NONE;
-                    va_end(args);
+                    *robj = NULL;
                     return NULL;
                 }
             }
-            va_end(args);
-            return op;
+            *robj = op;
+            return NULL;
         }
         break;
 
@@ -3282,7 +3294,7 @@ void* cfapi_object_insert(int* type, ...)
     int flag, x, y;
     int itype;
     char* arch_string;
-    void* rv = NULL;
+    object** robj;
 
     va_start(args, type);
 
@@ -3296,7 +3308,8 @@ void* cfapi_object_insert(int* type, ...)
         flag = va_arg(args, int);
         x = va_arg(args, int);
         y = va_arg(args, int);
-        rv = insert_ob_in_map_at(op, map, orig, flag, x, y);
+        robj = va_arg(args, object**);
+        *robj = insert_ob_in_map_at(op, map, orig, flag, x, y);
         *type = CFAPI_POBJECT;
         break;
 
@@ -3304,7 +3317,8 @@ void* cfapi_object_insert(int* type, ...)
         map = va_arg(args, mapstruct*);
         orig = va_arg(args, object*);
         flag = va_arg(args, int);
-        rv = insert_ob_in_map(op, map, orig, flag);
+        robj = va_arg(args, object**);
+        *robj = insert_ob_in_map(op, map, orig, flag);
         *type = CFAPI_POBJECT;
         break;
 
@@ -3316,7 +3330,8 @@ void* cfapi_object_insert(int* type, ...)
 
     case 3:
         orig = va_arg(args, object*);
-        rv = insert_ob_in_ob(op, orig);
+        robj = va_arg(args, object**);
+        *robj = insert_ob_in_ob(op, orig);
         if (orig->type == PLAYER) {
             esrv_send_item(orig, op);
         }
@@ -3326,57 +3341,98 @@ void* cfapi_object_insert(int* type, ...)
 
     va_end(args);
 
-    return rv;
+    return NULL;
 }
+/**
+ * Wrapper for get_split_ob().
+ * @param type
+ * will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_split(int* type, ...)
 {
     va_list args;
 
-    int nr;
+    int nr, size;
     object* op;
+    char* buf;
+    object** split;
+
     va_start(args, type);
 
     op = va_arg(args, object*);
     nr = va_arg(args, int);
-
+    buf = va_arg(args, char*);
+    size = va_arg(args, int);
+    split = va_arg(args, object**);
     va_end(args);
+
     *type = CFAPI_POBJECT;
-    return get_split_ob(op, nr, NULL, 0);
+    *split = get_split_ob(op, nr, buf, size);
+    return NULL;
 }
+
+/**
+ * Wrapper for merge_ob().
+ * @param type
+ * Will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_merge(int* type, ...)
 {
     va_list args;
     object* op;
     object* op2;
+    object** merge;
 
     va_start(args, type);
 
     op = va_arg(args, object*);
     op2 = va_arg(args, object*);
+    merge = va_arg(args, object**);
 
     va_end(args);
 
 
     *type = CFAPI_POBJECT;
-    return merge_ob(op, op2);
+    *merge = merge_ob(op, op2);
+    return NULL;
 }
+
+/**
+ * Wrapper for distance().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_distance(int* type, ...)
 {
     va_list args;
-    static int rv;
     object* op;
     object* op2;
+    int* rint;
     va_start(args, type);
 
     op = va_arg(args, object*);
     op2 = va_arg(args, object*);
+    rint = va_arg(args, int*);
 
     va_end(args);
 
     *type = CFAPI_INT;
-    rv = distance(op, op2);
-    return &rv;
+    *rint = distance(op, op2);
+    return NULL;
 }
+/**
+ * Wrapper for update_object().
+ * @param type
+ * Will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_update(int* type, ...)
 {
     va_list args;
@@ -3393,6 +3449,13 @@ void* cfapi_object_update(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+/**
+ * Wrapper for clear_object().
+ * @param type
+ * Will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_clear(int* type, ...)
 {
     va_list args;
@@ -3407,6 +3470,14 @@ void* cfapi_object_clear(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for clear_reset().
+ * @param type
+ * Will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_reset(int* type, ...)
 {
     va_list args;
@@ -3495,23 +3566,38 @@ void* cfapi_object_spring_trap(int* type, ...)
     return NULL;
 }
 
+/**
+ * Wrapper for check_trigger().
+ * @param type
+ * Will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_check_trigger(int* type, ...)
 {
     object* op;
     object* cause;
     va_list args;
-    static int rv;
+    int* rint;
 
     va_start(args, type);
     op = va_arg(args, object*);
     cause = va_arg(args, object*);
+    rint = va_arg(args, int*);
     va_end(args);
 
-    rv = check_trigger(op, cause);
+    *rint = check_trigger(op, cause);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 
+/**
+ * Wrapper for query_cost().
+ * @param type
+ * Will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_query_cost(int* type, ...)
 {
     object* op;
@@ -3531,19 +3617,27 @@ void* cfapi_object_query_cost(int* type, ...)
     return &rv;
 }
 
+/**
+ * Wrapper for query_money().
+ * @param type
+ * Will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_query_money(int* type, ...)
 {
     object* op;
     va_list args;
-    static int rv;
+    int* rint;
 
     va_start(args, type);
     op = va_arg(args, object*);
+    rint = va_arg(args, int*);
     va_end(args);
 
-    rv = query_money(op);
+    *rint = query_money(op);
     *type = CFAPI_INT;
-    return &rv;
+    return NULL;
 }
 void* cfapi_object_cast(int* type, ...)
 {
@@ -3597,20 +3691,29 @@ void* cfapi_object_forget_spell(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for check_spell_known().
+ * @param type
+ * Will be CFAPI_POBJECT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_check_spell(int* type, ...)
 {
     object* op;
     char* spellname;
     va_list args;
-    object* rv;
+    object** robj;
 
     va_start(args, type);
     op = va_arg(args, object*);
     spellname = va_arg(args, char*);
+    robj = va_arg(args, object**);
     va_end(args);
-    rv = check_spell_known(op, spellname);
+    *robj = check_spell_known(op, spellname);
     *type = CFAPI_POBJECT;
-    return rv;
+    return NULL;
 }
 void* cfapi_object_pay_amount(int* type, ...)
 {
@@ -3924,12 +4027,19 @@ void *cfapi_player_can_pay(int *type, ...)
     return NULL;
 }
 
+/**
+ * Teleports an object at a specified destination if possible.
+ * @param type
+ * Will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
 void* cfapi_object_teleport(int *type, ...)
 {
     mapstruct* map;
     int x, y;
     object* who;
-    static int result;
+    int* res;
     va_list args;
 
     va_start(args, type);
@@ -3937,14 +4047,16 @@ void* cfapi_object_teleport(int *type, ...)
     map = va_arg(args, mapstruct*);
     x = va_arg(args, int);
     y = va_arg(args, int);
+    res = va_arg(args, int*);
+    *type = CFAPI_INT;
 
     if (!out_of_map(map, x, y)) {
         int k;
         object *tmp;
         k = find_first_free_spot(who, map, x, y);
         if (k == -1) {
-            result = 1;
-            return &result;
+            *res = 1;
+            return NULL;
         }
 
         if (!QUERY_FLAG(who, FLAG_REMOVED)) {
@@ -3959,10 +4071,10 @@ void* cfapi_object_teleport(int *type, ...)
         insert_ob_in_map(who, map, NULL, 0);
         if (who->type == PLAYER)
             map_newmap_cmd(who->contr);
-        result = 0;
+        *res = 0;
     }
 
-    return &result;
+    return NULL;
 }
 void* cfapi_object_pickup(int *type, ...)
 {

@@ -556,10 +556,18 @@ void cf_object_forget_spell(object* op, object* sp)
     int type;
     cfapiObject_forget_spell(&type, op, sp);
 }
-object* cf_object_check_for_spell(object* op, char* spellname)
+
+/**
+ * Wrapper for check_spell_known().
+ * @copydoc check_spell_known()
+ */
+object* cf_object_check_for_spell(object *op, const char *name)
 {
     int type;
-    return cfapiObject_check_spell(&type, op, spellname);
+    object* value;
+    cfapiObject_check_spell(&type, op, name, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 void cf_player_message(object* op, char* txt, int flags)
 {
@@ -597,18 +605,17 @@ object* cf_player_get_marked_item(object* op)
 }
 void cf_player_set_marked_item(object* op, object* ob)
 {
-	int type;
-	cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_MARKED_ITEM, ob);
+    int type;
+    cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_MARKED_ITEM, ob);
 }
 partylist* cf_player_get_party(object* op)
 {
-	int type;
-	return cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_PARTY);
+    return cf_object_get_partylist_property(op, CFAPI_PLAYER_PROP_PARTY);
 }
 void cf_player_set_party(object* op, partylist* party)
 {
-	int type;
-	cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_PARTY, party);
+    int type;
+    cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_PARTY, party);
 }
 
 /**
@@ -658,26 +665,50 @@ mapstruct* cf_map_get_first(void)
 {
     return cf_map_get_map_property(NULL, CFAPI_MAP_PROP_NEXT);
 }
-int cf_object_query_money( object* op)
+
+/**
+ * Wrapper for query_money().
+ * @copydoc query_money().
+ */
+int cf_object_query_money(const object* op)
 {
-    int type;
-    return *(int*)cfapiObject_query_money( &type, op);
+    int type, value;
+    cfapiObject_query_money(&type, op, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
-int cf_object_query_cost( object* op, object* who, int flags)
+
+/**
+ * Wrapper for query_cost().
+ * @copydoc query_cost().
+ */
+int cf_object_query_cost(const object *tmp, object *who, int flag)
 {
-    int type;
-    return *(int*)cfapiObject_query_cost(&type,op,who,flags);
+    int type, value;
+    cfapiObject_query_cost(&type, tmp, who, flag, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
-void cf_object_activate_rune( object* op , object* victim)
+/**
+ * Wrapper for spring_trap().
+ * @copydoc spring_trap().
+ */
+void cf_spring_trap( object* op , object* victim)
 {
     int type;
     if ( op )
         cfapiObject_activate_rune( &type, op, victim );
 }
-int cf_object_check_trigger( object* op, object* cause )
+/**
+ * Wrapper for check_trigger().
+ * @copydoc check_trigger().
+ */
+int cf_object_check_trigger(object* op, object* cause)
 {
-    int type;
-    return *(int*)cfapiObject_check_trigger( &type, op, cause );
+    int type, value;
+    cfapiObject_check_trigger(&type, op, cause, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 int cf_object_out_of_map( object* op, int x, int y)
 {
@@ -709,7 +740,10 @@ void cf_object_speak( object* op, char* msg)
 object* cf_object_insert_object(object* op, object* container)
 {
     int type;
-    return cfapiObject_insert(&type, op, 3, container);
+    object* value;
+    cfapiObject_insert(&type, op, 3, container, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 /**
  * Wrapper for create_pathname().
@@ -722,15 +756,30 @@ char* cf_get_maps_directory(const char *name, char* buf, int size)
     assert(type== CFAPI_STRING);
     return buf;
 }
+
+/**
+ * Wrapper for get_object().
+ * @copydoc get_object().
+ */
 object* cf_create_object()
 {
     int type;
-    return cfapiObject_create(&type, 0);
+    object* value;
+    cfapiObject_create(&type, 0, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
-object* cf_create_object_by_name( const char* name )
+
+/**
+ * Wrapper for create_archetype() and create_archetype_by_object_name().
+ */
+object* cf_create_object_by_name(const char* name)
 {
     int type;
-    return cfapiObject_create(&type, 1, name);
+    object* value;
+    cfapiObject_create(&type, 1, name, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 
 void cf_system_register_global_event( int event, const char* name, f_plug_api hook )
@@ -837,12 +886,6 @@ char* cf_query_base_name(object* ob, int plural, char* name, int size)
     return name;
 }
 
-object* cf_insert_ob_in_ob( object* ob, object* where )
-{
-    int type;
-    return cfapiObject_insert( &type, ob, 3, where );
-}
-
 sstring cf_object_get_msg( object* ob )
 {
     int type;
@@ -856,18 +899,21 @@ void cf_object_set_weight( object* ob, int weight )
 {
     int type;
     cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT, weight );
+    assert(type == CFAPI_INT);
 }
 
 void cf_object_set_weight_limit( object* ob, int weight_limit )
 {
     int type;
     cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, weight_limit );
+    assert(type == CFAPI_INT);
 }
 
 int cf_object_get_weight( object* ob )
 {
     int type, weight;
     cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT, &weight );
+    assert(type == CFAPI_INT);
     return weight;
 }
 
@@ -875,6 +921,7 @@ int cf_object_get_weight_limit( object* ob )
 {
     int type, limit;
     cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, &limit );
+    assert(type == CFAPI_INT);
     return limit;
 }
 
@@ -916,23 +963,43 @@ void cf_object_set_flag( object* ob, int flag, int value )
     cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_FLAGS, flag, value ? 1 : 0 );
 }
 
-object* cf_object_insert_in_ob( object* ob, object* where )
+/**
+ * Wrapper for insert_ob_in_ob().
+ * @copydoc insert_ob_in_ob().
+ */
+object* cf_object_insert_in_ob(object* ob, object* where)
 {
     int type;
+    object* value;
 
     if (!cf_object_get_flag(ob,FLAG_REMOVED))
     {
         cfapiObject_remove( &type, ob );
     }
 
-    return cfapiObject_insert( &type, ob, 3, where );
+    cfapiObject_insert(&type, ob, 3, where, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 
-object* cf_map_insert_object_there(mapstruct* where, object* op, object* originator, int flags)
+/**
+ * Wrapper for insert_ob_in_map().
+ * @copydoc insert_ob_in_map().
+ */
+object* cf_map_insert_object_there(object *op, mapstruct *m, object *originator, int flag)
 {
     int type;
-    return (object*)cfapiObject_insert(&type, op, 1, where, originator, flags);
+    object* value;
+    cfapiObject_insert(&type, op, 1, m, originator, flag, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
+
+/**
+ * Wrapper for insert_ob_in_map_at().
+ * @todo
+ * merge/replace with cf_object_change_map
+ */
 object* cf_map_insert_object(mapstruct* where , object* op, int x, int y)
 {
     int type;
@@ -940,8 +1007,10 @@ object* cf_map_insert_object(mapstruct* where , object* op, int x, int y)
 }
 int cf_object_teleport( object* op, mapstruct* map, int x, int y )
 {
-    int type;
-    return *( int* )cfapiObject_teleport( &type, op, map, x, y );
+    int type, value;
+    cfapiObject_teleport( &type, op, map, x, y, &value );
+    assert(type == CFAPI_INT);
+    return value;
 }
 /**
  * Kinda wrapper for arch_present().

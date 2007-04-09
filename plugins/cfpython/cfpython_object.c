@@ -1734,7 +1734,7 @@ static PyObject* Crossfire_Object_ActivateRune( Crossfire_Object* who, PyObject*
     EXISTCHECK(pcause);
     trap = who->obj;
     victim = pcause->obj;
-    cf_object_activate_rune(trap, victim);
+    cf_spring_trap(trap, victim);
     Py_INCREF(Py_None);
     return Py_None;
 }

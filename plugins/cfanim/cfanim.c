@@ -284,7 +284,7 @@ int runghosted(struct CFanimation_struct* animation, long int id, void* paramete
         corpse->y=animation->victim->y;
         corpse->type=0;
         corpse->contr=NULL;
-        cf_map_insert_object_there(animation->victim->map, corpse, NULL, 0);
+        cf_map_insert_object_there(corpse, animation->victim->map, NULL, 0);
         animation->wizard=1;
         animation->invisible=1;
         animation->corpse=corpse;

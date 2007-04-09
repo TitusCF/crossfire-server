@@ -17,6 +17,14 @@ Changes for SVN:
 
 More API changes.
  server/plugins.c
+ plugins/cfanim/cfanim.c
+ plugins/cfpython/cfpython_object.c
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+Nicolas Weeger 2007-04-09
+
+More API changes.
+ server/plugins.c
  plugins/cflogger/include/cflogger_proto.h: remove plugin_common functions.
  plugins/cfpython/cfpython_object.c
  plugins/common/include/plugin_common.h
