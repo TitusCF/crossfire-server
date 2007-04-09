@@ -1000,17 +1000,17 @@ void cf_object_set_flag( object* ob, int flag, int value )
  * Wrapper for insert_ob_in_ob().
  * @copydoc insert_ob_in_ob().
  */
-object* cf_object_insert_in_ob(object* ob, object* where)
+object* cf_object_insert_in_ob(object* op, object* where)
 {
     int type;
     object* value;
 
-    if (!cf_object_get_flag(ob,FLAG_REMOVED))
+    if (!cf_object_get_flag(op,FLAG_REMOVED))
     {
-        cfapiObject_remove( &type, ob );
+        cfapiObject_remove( &type, op );
     }
 
-    cfapiObject_insert(&type, ob, 3, where, &value);
+    cfapiObject_insert(&type, op, 3, where, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }

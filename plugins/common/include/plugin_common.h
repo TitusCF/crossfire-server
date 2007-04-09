@@ -84,7 +84,7 @@ extern int          cf_object_set_nrof( object*, int nrof );
 extern int          cf_object_get_nrof( object* );
 extern int          cf_object_get_flag( object* ob, int flag );
 extern void         cf_object_set_flag( object* ob, int flag, int value );
-extern object*      cf_object_insert_in_ob( object* ob, object* where );
+extern object*      cf_object_insert_in_ob( object* op, object* where );
 extern void         cf_object_set_string_property(object* op, int propcode, const char* value);
 extern void         cf_spring_trap( object* op , object* victim);
 extern int          cf_object_check_trigger( object* op, object* cause );
