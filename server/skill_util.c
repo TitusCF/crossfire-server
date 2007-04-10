@@ -124,12 +124,71 @@ void link_player_skills(object *op)
 }
 
 /**
+ * This returns specified skill if it can be used, potentially using tool to help.
+ *
+ * Skill and tool can't be NULL at the same time.
+ *
+ * Factored from find_skill_by_name() and find_skill_by_number().
+ *
+ * The skill tool will be applied if not NULL, so the player can benefit from its bonuses.
+ *
+ * @param who
+ * player trying to ready a skill.
+ * @param skill
+ * skill to ready. Can be NULL.
+ * @param skill_tool
+ * skill tool. Can be NULL.
+ * @return
+ * skill object if it can be used, NULL else.
+ * @note
+ * clawing skill is special, as claws are declared as SKILLTOOL but shouldn't be applied.
+ * @todo
+ * rewrite some.
+ */
+static object* adjust_skill_tool(object* who, object* skill, object* skill_tool) {
+
+    if (!skill && !skill_tool)
+        return NULL;
+
+    /* If this is a skill that can be used without a tool and no tool found, return it */
+    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL) && (!skill_tool || QUERY_FLAG(skill_tool, FLAG_APPLIED) || strcmp(skill->skill, "clawing")  == 0))
+        return skill;
+
+    /* Player has a tool to use the skill.  If not applied, apply it -
+     * if not successful, return skill if can be used.  If they do have the skill tool
+     * but not the skill itself, give it to them.
+     */
+    if (skill_tool) {
+        if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
+            if (apply_special(who, skill_tool, 0))
+                if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL))
+                    return skill;
+                else
+                    return NULL;
+
+        }
+        if (!skill) {
+            skill = give_skill_by_name(who, skill_tool->skill);
+            link_player_skills(who);
+        }
+        return skill;
+    }
+    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL))
+        return skill;
+    else
+        return NULL;
+}
+
+/**
  * This returns the skill pointer of the given name (the
  * one that accumlates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
- * use the skill, so thus if use of the skill requires a skill
- * tool, this code will equip it.
+ * use the skill, so a skill tool will be equipped if one if found
+ * to benefit from its bonuses.
+ *
+ * This code is basically the same as find_skill_by_number() below,
+ * but instead of a skill number, we search by the name.
  *
  * @param who
  * Player to get skill.
@@ -144,6 +203,7 @@ void link_player_skills(object *op)
 object *find_skill_by_name(object *who, const char *name)
 {
     object *skill=NULL, *skill_tool=NULL, *tmp;
+    int bonuses = 0;
 
     if (!name) return NULL;
 
@@ -157,8 +217,8 @@ object *find_skill_by_name(object *who, const char *name)
             skill = tmp;
 
         /* Try to find appropriate skilltool.  If the player has one already
-        * applied, we try to keep using that one.
-        */
+         * applied, we try to keep using that one.
+         */
         else if (tmp->type == SKILL_TOOL && !strncasecmp(name, tmp->skill, strlen(name)) &&
           strlen(tmp->skill) >= strlen(name)) {
             if (QUERY_FLAG(tmp, FLAG_APPLIED))
@@ -167,38 +227,28 @@ object *find_skill_by_name(object *who, const char *name)
                 skill_tool = tmp;
         }
     }
-    /* If this is a skill that can be used without a tool, return it */
-    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL))
-        return skill;
 
-    /* Player has a tool to use the skill.  IF not applied, apply it -
-     * if not successful, return null.  If they do have the skill tool
-     * but not the skill itself, give it to them.
-     */
-    if (skill_tool) {
-        if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
-            if (apply_special(who, skill_tool, 0)) return NULL;
-        }
-        if (!skill) {
-            skill = give_skill_by_name(who, skill_tool->skill);
-            link_player_skills(who);
-        }
-        return skill;
-    }
-    return NULL;
+    return adjust_skill_tool(who, skill, skill_tool);
 }
 
 
-/* This returns the skill pointer of the given name (the
+/**
+ * This returns the skill pointer of the given name (the
  * one that accumlates exp, has the level, etc).
  *
  * It is presumed that the player will be needing to actually
- * use the skill, so thus if use of the skill requires a skill
- * tool, this code will equip it.
- * 
+ * use the skill, so a skill tool will be equipped if one if found
+ * to benefit from its bonuses.
+ *
  * This code is basically the same as find_skill_by_name() above,
- * but instead a skill name, we search by matching number.
- * this replaces find_skill.
+ * but instead of a skill name, we search by matching number.
+ *
+ * @param who
+ * player applying a skill.
+ * @param skillno
+ * skill subtype.
+ * @return
+ * skill object if player can use it, NULL else.
  */
 object *find_skill_by_number(object *who, int skillno)
 {
@@ -207,35 +257,19 @@ object *find_skill_by_number(object *who, int skillno)
     if (skillno < 1 || skillno >= NUM_SKILLS) return NULL;
 
     for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
-	if (tmp->type == SKILL && tmp->subtype == skillno) skill = tmp;
+        if (tmp->type == SKILL && tmp->subtype == skillno) skill = tmp;
 
-	/* Try to find appropriate skilltool.  If the player has one already
-	 * applied, we try to keep using that one.
-	 */
-	else if (tmp->type == SKILL_TOOL && tmp->subtype == skillno) {
-	    if (QUERY_FLAG(tmp, FLAG_APPLIED)) skill_tool = tmp;
-	    else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
-		skill_tool = tmp;
-	}
+        /* Try to find appropriate skilltool.  If the player has one already
+         * applied, we try to keep using that one.
+         */
+        else if (tmp->type == SKILL_TOOL && tmp->subtype == skillno) {
+            if (QUERY_FLAG(tmp, FLAG_APPLIED)) skill_tool = tmp;
+            else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
+                skill_tool = tmp;
+        }
     }
-    /* If this is a skill that can be used without a tool, return it */
-    if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL)) return skill;
 
-    /* Player has a tool to use the skill.  IF not applied, apply it -
-     * if not successful, return null.  If they do have the skill tool
-     * but not the skill itself, give it to them.
-     */
-    if (skill_tool) {
-	if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
-	    if (apply_special(who, skill_tool, 0)) return NULL;
-	}
-	if (!skill) {
-	    skill = give_skill_by_name(who, skill_tool->skill);
-	    link_player_skills(who);
-	}
-	return skill;
-    }
-    return NULL;
+    return adjust_skill_tool(who, skill, skill_tool);
 }
 
 /* This changes the objects skill to new_skill.
@@ -256,7 +290,7 @@ int change_skill (object *who, object *new_skill, int flag)
 
     if ( who->type != PLAYER )
         return 0;
-    
+
     old_range = who->contr->shoottype;
 
     if (who->chosen_skill && who->chosen_skill == new_skill)
