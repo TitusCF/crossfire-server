@@ -70,7 +70,9 @@ void init_skills(void) {
 
     for(at = first_archetype;at!=NULL;at=at->next) {
         if (at->clone.type == SKILL) {
-            if (skill_names[at->clone.subtype] != NULL) {
+            if (at->clone.subtype >= sizeof(skill_names)/sizeof(*skill_names)) {
+                LOG(llevError, "init_skills: invalid skill subtype %d for skill %s\n", at->clone.subtype, at->clone.skill);
+            } else if (skill_names[at->clone.subtype] != NULL) {
                 LOG(llevError, "init_skills: multiple skill using same subtype %d, %s, %s\n",
                     at->clone.subtype, skill_names[at->clone.subtype], at->clone.skill);
             } else {

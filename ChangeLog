@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/skill_util.c: In init_skill() do not crash for SKILL objects having
+   incorrect subtype.
+Andreas Kirschbaum 2007-04-11
+
 Fix bug #1696810: skill items autoapply. Now skilltool will be used even if
 skill can be used without, to benefit from its bonuses.
  server/skill_util.c
