@@ -1866,11 +1866,9 @@ static int do_talk_npc(object* op, object* npc, object* override, const char* tx
 void npc_say(object *npc, char *cp) {
     char buf[MAX_BUF], name[MAX_BUF];
     query_name(npc, name, MAX_BUF);
-    snprintf(buf, sizeof(buf), "%s says:", name);
+    snprintf(buf, sizeof(buf), "%s says: %s", name, cp);
     ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
-		 buf, buf);
-    ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC,
-		 cp, cp);
+        buf, buf);
 }
 
 static int talk_to_npc(object *op, object *npc, const char *txt) {
