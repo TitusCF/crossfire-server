@@ -50,13 +50,6 @@
 
 #include <sqlite3.h>
 
-/** Function to get the hooks. */
-f_plug_api gethook;
-/** Register with server. */
-f_plug_api registerGlobalEvent;
-/** Unregister with server. */
-f_plug_api unregisterGlobalEvent;
-
 /** Pointer to the logging database. */
 sqlite3* database;
 /** To keep track of stored ingame/real time matching. */
@@ -358,16 +351,9 @@ void add_death(object* victim, object* killer) {
  */
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
-    int rtype = 0;
-    int hooktype = 1;
-
-    gethook = gethooksptr;
-    cf_init_plugin( gethook );
+    cf_init_plugin( gethooksptr );
 
     cf_log(llevInfo, "%s init\n", PLUGIN_VERSION);
-
-    registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
-    unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
 
     return 0;
 }
@@ -385,20 +371,28 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
-    char* propname;
+    const char* propname;
+    char* buf;
+    int size;
 
     va_start(args, type);
-    propname = va_arg(args, char *);
+    propname = va_arg(args, const char*);
 
     if (!strcmp(propname, "Identification"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_NAME;
+        snprintf(buf, size, PLUGIN_NAME);
+        return NULL;
     }
     else if (!strcmp(propname, "FullName"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_VERSION;
+        snprintf(buf, size, PLUGIN_VERSION);
+        return NULL;
     }
     va_end(args);
     return NULL;
@@ -532,24 +526,24 @@ CF_PLUGIN int postInitPlugin()
 
     store_time();
 
-    registerGlobalEvent(NULL,EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
 
-    registerGlobalEvent(NULL,EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
 
-    registerGlobalEvent(NULL,EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPLOAD,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPUNLOAD,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPUNLOAD,PLUGIN_NAME,globalEventListener);
 
-    registerGlobalEvent(NULL,EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_KICK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,globalEventListener);
 
-    registerGlobalEvent(NULL,EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
 
     return 0;
 }

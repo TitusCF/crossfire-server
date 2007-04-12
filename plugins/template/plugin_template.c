@@ -31,10 +31,6 @@
 #include <plugin_template.h>
 #include <stdarg.h>
 
-f_plug_api gethook;
-f_plug_api registerGlobalEvent;
-f_plug_api unregisterGlobalEvent;
-
 CFPContext* context_stack;
 CFPContext* current_context;
 static int current_command = -999;
@@ -75,8 +71,7 @@ CFPContext* popContext()
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
-    gethook = gethooksptr;
-    cf_init_plugin( gethook );
+    cf_init_plugin( gethooksptr );
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
@@ -87,22 +82,38 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
-    char* propname;
-    int i;
-    va_start(args, type);
-    propname = va_arg(args, char *);
-    cf_log(llevDebug, "Property name: %s\n", propname);
+    const char* propname;
+    int i, size;
+    command_array_struct* rtn_cmd;
+    char* buf;
 
-    if (!strcmp(propname, "Identification"))
-    {
+    va_start(args, type);
+    propname = va_arg(args, const char *);
+
+    if (!strcmp(propname, "command?")) {
+        const char* cmdname;
+        cmdname = va_arg(args, const char *);
+        rtn_cmd = va_arg(args, command_array_struct*);
         va_end(args);
-        return PLUGIN_NAME;
-    }
-    else if (!strcmp(propname, "FullName"))
-    {
+
+        /** Check if plugin handles custom command */
+        return NULL;
+        }
+        return NULL;
+    } else if (!strcmp(propname, "Identification")) {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_VERSION;
+        snprintf(buf, size, PLUGIN_NAME);
+        return NULL;
+    } else if (!strcmp(propname, "FullName")) {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
+        va_end(args);
+        snprintf(buf, size, PLUGIN_VERSION);
+        return NULL;
     }
+    va_end(args);
     return NULL;
 }
 
@@ -113,30 +124,26 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
 CF_PLUGIN int postInitPlugin()
 {
-    int hooktype = 1;
-    int rtype = 0;
-
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
-    registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
-    unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    cf_init_plugin( gethook );
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */
-    /*registerGlobalEvent(NULL,EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_CRASH,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_SHOUT,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_TELL,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    registerGlobalEvent(NULL,EVENT_KICK,PLUGIN_NAME,globalEventListener);*/
+    /*
+    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CRASH,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_SHOUT,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_TELL,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,globalEventListener);
+    */
     return 0;
 }
 

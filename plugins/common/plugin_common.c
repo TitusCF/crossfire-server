@@ -115,7 +115,7 @@ static f_plug_api cfapiGenerate_random_map = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
-    x = ( f_plug_api )getHooks( &z, 1, y ); \
+    getHooks( &z, 1, y, &x ); \
     if ( z != CFAPI_FUNC ) {\
         printf( "unable to find hook %s!\n", y ); return 0; \
     } }
@@ -819,6 +819,14 @@ void cf_system_register_global_event( int event, const char* name, f_plug_api ho
 {
     int type;
     cfapiSystem_register_global_event( &type, event, name, hook );
+    assert(type == CFAPI_NONE);
+}
+
+void cf_system_unregister_global_event( int event, const char* name )
+{
+    int type;
+    cfapiSystem_unregister_global_event( &type, event, name );
+    assert(type == CFAPI_NONE);
 }
 
 /**
@@ -1036,7 +1044,10 @@ object* cf_map_insert_object_there(object *op, mapstruct *m, object *originator,
 object* cf_map_insert_object(mapstruct* where , object* op, int x, int y)
 {
     int type;
-    return cfapiObject_insert( &type, op, 0, where, NULL, 0 , x, y);
+    object* value;
+    cfapiObject_insert( &type, op, 0, where, NULL, 0 , x, y, &value);
+    assert(type == CFAPI_POBJECT);
+    return value;
 }
 int cf_object_teleport( object* op, mapstruct* map, int x, int y )
 {

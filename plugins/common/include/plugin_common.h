@@ -41,6 +41,7 @@
 
 extern int cf_init_plugin( f_plug_api getHooks );
 extern void cf_system_register_global_event( int event, const char* name, f_plug_api hook );
+extern void cf_system_unregister_global_event( int event, const char* name );
 
 /* General functions */
 extern sstring      cf_add_string(const char* str);

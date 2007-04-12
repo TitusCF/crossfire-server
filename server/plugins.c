@@ -520,8 +520,8 @@ int plugins_init_plugin(const char* libfile)
     cp->propfunc = propfunc;
     cp->closefunc = closefunc;
     cp->libptr = ptr;
-    strcpy(cp->id, propfunc(&i, "Identification"));
-    strcpy(cp->fullname, propfunc(&i, "FullName"));
+    propfunc(&i, "Identification", cp->id, sizeof(cp->id));
+    propfunc(&i, "FullName", cp->fullname, sizeof(cp->fullname));
     cp->next = NULL;
     cp->prev = NULL;
     if (plugins_list == NULL) {
@@ -543,36 +543,38 @@ void* cfapi_get_hooks(int* type, ...)
     int request_type;
     char* buf;
     int fid;
-    f_plug_api rv;
+    f_plug_api* rapi;
     int i;
+
+    *type = CFAPI_NONE;
 
     va_start(args, type);
     request_type = va_arg(args, int);
     if (request_type == 0) { /* By nr */
         fid = va_arg(args, int);
+        rapi = va_arg(args, f_plug_api*);
         if (fid < 0 || fid >= NR_OF_HOOKS) {
-            rv = NULL;
+            *rapi = NULL;
             *type = CFAPI_NONE;
         } else {
-            rv = plug_hooks[fid].func;
+            *rapi = plug_hooks[fid].func;
             *type = CFAPI_FUNC;
         }
     } else { /* by name */
         buf = va_arg(args, char*);
-        rv = NULL;
+        rapi = va_arg(args, f_plug_api*);
+        *rapi = NULL;
+        *type = CFAPI_NONE;
         for (i = 0; i < NR_OF_HOOKS; i++) {
             if (!strcmp(buf, plug_hooks[i].fname)) {
-                rv = plug_hooks[i].func;
+                *rapi = plug_hooks[i].func;
                 *type = CFAPI_FUNC;
                 break;
             }
         }
-        if (rv == NULL) {
-            *type = CFAPI_NONE;
-        }
     }
     va_end(args);
-    return rv;
+    return NULL;
 }
 
 int plugins_remove_plugin(const char* id)
@@ -708,8 +710,10 @@ void* cfapi_system_register_global_event(int *type, ...)
     eventcode = va_arg(args, int);
     pname     = va_arg(args, char*);
     hook      = va_arg(args, f_plug_api);
-
     va_end(args);
+
+    *type = CFAPI_NONE;
+
     cp = plugins_find_plugin(pname);
     cp->gevent[eventcode] = hook;
     return NULL;
@@ -725,11 +729,13 @@ void* cfapi_system_unregister_global_event(int *type, ...)
     va_start(args, type);
     eventcode = va_arg(args, int);
     pname = va_arg(args, char*);
+    va_end(args);
+
+    *type = CFAPI_NONE;
 
     cp = plugins_find_plugin(pname);
     cp->gevent[eventcode] = NULL;
 
-    va_end(args);
     return NULL;
 }
 
@@ -4406,19 +4412,22 @@ void* cfapi_generate_random_map(int *type, ...) {
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
+/**
+ * @todo
+ * remove static buffer.
+ */
 command_array_struct *find_plugin_command(char *cmd, object *op)
 {
     int i;
     crossfire_plugin* cp;
-    command_array_struct* rtn_cmd;
+    static command_array_struct rtn_cmd;
 
     if (plugins_list == NULL)
         return NULL;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
-        rtn_cmd = cp->propfunc(&i, "command?", cmd);
-        if (rtn_cmd)
-            return rtn_cmd;
+        if (cp->propfunc(&i, "command?", cmd, &rtn_cmd) != NULL)
+            return &rtn_cmd;
     }
     return NULL;
 }

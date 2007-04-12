@@ -161,17 +161,9 @@ void read_parameters() {
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
-    int rtype = 0;
-    int hooktype = 1;
-
-    gethook = gethooksptr;
-    cf_init_plugin( gethook );
+    cf_init_plugin( gethooksptr );
 
     cf_log(llevInfo, "%s init\n", PLUGIN_VERSION);
-
-    registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
-    unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
 
     return 0;
 }
@@ -179,32 +171,32 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
-    char* propname;
-    int i;
+    const char* propname;
+    int i, size;
+    char* buf;
+
     va_start(args, type);
-    propname = va_arg(args, char *);
+    propname = va_arg(args, const char*);
 
     if (!strcmp(propname, "Identification"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_NAME;
+        snprintf(buf, size, PLUGIN_NAME);
+        return NULL;
     }
 
     if (!strcmp(propname, "FullName"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_VERSION;
-    }
-
-    if (!strcmp(propname, "command?"))
-    {
-        const char* cmdname;
-        cmdname = va_arg(args, const char *);
-
-        va_end(args);
+        snprintf(buf, size, PLUGIN_VERSION);
         return NULL;
     }
 
+    va_end(args);
     return NULL;
 }
 

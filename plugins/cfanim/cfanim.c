@@ -32,11 +32,6 @@
 #include <cfanim.h>
 #include <stdarg.h>
 
-f_plug_api gethook;
-f_plug_api registerGlobalEvent;
-f_plug_api unregisterGlobalEvent;
-f_plug_api reCmp;
-
 CFPContext* context_stack;
 CFPContext* current_context;
 CFanimation *first_animation=NULL;
@@ -953,9 +948,7 @@ CFPContext* popContext()
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
-    gethook = gethooksptr;
-
-    cf_init_plugin( gethook );
+    cf_init_plugin( gethooksptr );
     cf_log(llevDebug, "CFAnim 2.0a init\n");
 
     /* Place your initialization code here */
@@ -965,21 +958,30 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
-    char* propname;
+    const char* propname;
+    char* buf;
+    int size;
 
     va_start(args, type);
-    propname = va_arg(args, char *);
+    propname = va_arg(args, const char *);
 
     if (!strcmp(propname, "Identification"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_NAME;
+        snprintf(buf, size, PLUGIN_NAME);
+        return NULL;
     }
     else if (!strcmp(propname, "FullName"))
     {
+        buf = va_arg(args, char*);
+        size = va_arg(args, int);
         va_end(args);
-        return PLUGIN_VERSION;
+        snprintf(buf, size, PLUGIN_VERSION);
+        return NULL;
     }
+    va_end(args);
     return NULL;
 }
 
@@ -994,12 +996,9 @@ CF_PLUGIN int postInitPlugin(void)
     int rtype = 0;
 
     cf_log(llevDebug, "CFAnim 2.0a post init\n");
-    registerGlobalEvent =   gethook(&rtype,hooktype,"cfapi_system_register_global_event");
-    unregisterGlobalEvent = gethook(&rtype,hooktype,"cfapi_system_unregister_global_event");
-    reCmp                 = gethook(&rtype,hooktype,"cfapi_system_re_cmp");
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */
-    registerGlobalEvent(NULL,EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
     return 0;
 }
 
