@@ -842,6 +842,7 @@ static void help(void) {
     printf(" -s          Display the high-score list.\n");
     printf(" -score <name or class> Displays all high scores with matching name/class.\n");
     printf(" -v          Print version and contributors.\n");
+    printf(" -conf       Sets the configuration dir (settings, motd, etc.)\n");
     printf(" -data       Sets the lib dir (archetypes, treasures, etc.)\n");
     printf(" -local      Read/write local data (hiscore, unique items, etc.)\n");
     printf(" -maps       Sets the directory for maps.\n");
