@@ -123,7 +123,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_player_message,          63, "cfapi_player_message"},
 /*    {cfapi_player_send_inventory,   64, "cfapi_player_send_inventory"},*/
     {cfapi_object_teleport,         65, "cfapi_object_teleport"},
-    {cfapi_object_speak,            66, "cfapi_object_speak"},
+/*    {cfapi_object_speak,            66, "cfapi_object_speak"},*/
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
     {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
@@ -3939,55 +3939,27 @@ void* cfapi_object_take(int* type, ...)
 
 void* cfapi_object_say(int* type, ...)
 {
-    static int rv;
     object* op;
     char* msg;
     va_list args;
+    int* rint;
 
     va_start(args, type);
     op = va_arg(args, object*);
     msg = va_arg(args, char*);
+    rint = va_arg(args, int*);
     va_end(args);
-    
+
     if (op->type == PLAYER) {
-        rv = command_say(op, msg);
+        *rint = command_say(op, msg);
     } else {
         npc_say(op, msg);
-        rv = 0;
+        *rint = 0;
     }
     *type = CFAPI_INT;
-    return &rv;
-}
-
-/**
- * @todo
- * remove static buffer
- */
-void* cfapi_object_speak(int* type, ...)
-{
-    object* op;
-    char* msg;
-    va_list args;
-    static char buf[MAX_BUF];
-
-    va_start(args, type);
-    op = va_arg(args, object*);
-    msg = va_arg(args, char*);
-    va_end(args);
-
-    if (!op || !msg)
-        return NULL;
-    sprintf(buf, "%s says: ", op->name);
-    strncat(buf, msg, MAX_BUF-strlen(buf)-1);
-    buf[MAX_BUF-1]=0;
-
-    /* Maybe no always NPC? */
-    ext_info_map(NDI_WHITE, op->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_NPC, buf, buf);
-
-    communicate(op, msg);
-    *type = CFAPI_NONE;
     return NULL;
 }
+
 /* PLAYER SUBCLASS */
 
 /**

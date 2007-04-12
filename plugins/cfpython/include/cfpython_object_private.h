@@ -220,7 +220,6 @@ static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args )
 static PyObject* Crossfire_Object_Drop( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Fix( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Say( Crossfire_Object* who, PyObject* args );
-static PyObject* Crossfire_Object_Speak( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Pickup( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Take( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Teleport( Crossfire_Object* who, PyObject* args );

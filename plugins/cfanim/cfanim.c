@@ -162,7 +162,7 @@ int runsay(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (parameters)
     {
-        cf_object_speak(animation->victim, parameters);
+        cf_object_say(animation->victim, parameters);
         free (parameters);
     }
     else

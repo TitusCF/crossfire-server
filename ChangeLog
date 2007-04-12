@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove '_speak' hook and related functions. '_say' exists, and is the same.
+ plugins/cfanim/cfanim.c
+ plugins/cfpython/cfpython_object.c
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/plugins.c
+Nicolas Weeger 2007-04-12
+
 Plugin API changes. More void* conversion removing.
  plugins/cfanim/cfanim.c
  plugins/cflogger/cflogger.c

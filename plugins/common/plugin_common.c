@@ -87,7 +87,6 @@ static f_plug_api cfapiObject_out_of_map = NULL;
 static f_plug_api cfapiObject_drop = NULL;
 static f_plug_api cfapiObject_take = NULL;
 static f_plug_api cfapiObject_say = NULL;
-static f_plug_api cfapiObject_speak = NULL;
 static f_plug_api cfapiMap_get_property = NULL;
 static f_plug_api cfapiMap_set_property = NULL;
 static f_plug_api cfapiMap_get_map = NULL;
@@ -170,7 +169,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_drop, "cfapi_object_drop", z );
     GET_HOOK( cfapiObject_take, "cfapi_object_take", z );
     GET_HOOK( cfapiObject_say, "cfapi_object_say", z );
-    GET_HOOK( cfapiObject_speak, "cfapi_object_speak", z );
+    /*GET_HOOK( cfapiObject_speak, "cfapi_object_speak", z );*/
     /*GET_HOOK( cfapiCheck_inventory, "cfapi_check_inventory", z );*/
     GET_HOOK( cfapiMap_create_path, "cfapi_map_create_path", z );
     GET_HOOK( cfapiMap_get_property,"cfapi_map_get_property", z );
@@ -762,13 +761,9 @@ void cf_object_take( object* op, object* author)
 }
 void cf_object_say( object* op, char* msg)
 {
-    int type;
-    cfapiObject_say( &type, op, msg );
-}
-void cf_object_speak( object* op, char* msg)
-{
-    int type;
-    cfapiObject_speak( &type, op, msg );
+    int type, value;
+    cfapiObject_say( &type, op, msg, &value );
+    assert(type == CFAPI_INT);
 }
 object* cf_object_insert_object(object* op, object* container)
 {

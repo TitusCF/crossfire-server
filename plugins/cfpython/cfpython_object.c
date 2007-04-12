@@ -1768,17 +1768,6 @@ static PyObject* Crossfire_Object_Say( Crossfire_Object* who, PyObject* args )
     return Py_None;
 }
 
-static PyObject* Crossfire_Object_Speak( Crossfire_Object* who, PyObject* args )
-{
-    char* message;
-    EXISTCHECK(who);
-    if ( !PyArg_ParseTuple( args, "s", &message ) )
-        return NULL;
-    cf_object_speak(who->obj, message);
-    Py_INCREF(Py_None);
-    return Py_None;
-}
-
 static PyObject* Crossfire_Object_Reposition( Crossfire_Object* who, PyObject* args )
 {
     int x, y;
