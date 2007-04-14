@@ -59,7 +59,6 @@ command_array_struct Commands[] = {
   {"archs", command_archs,	0.0},
   {"body", command_body,	0.0},
   {"brace", command_brace,	0.0},
-  {"build", command_build,  0.0},
   {"cast", command_cast,	0.2},	/* Is this right? */
   {"disarm", command_disarm,	1.0},
   {"dm", command_dm,		0.0},

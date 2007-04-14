@@ -201,7 +201,6 @@ int command_run_stop(object *op, char *params);
 int command_fire(object *op, char *params);
 int command_fire_stop(object *op, char *params);
 /* c_object.c */
-int command_build(object *pl, char *params);
 int command_uskill(object *pl, char *params);
 int command_rskill(object *pl, char *params);
 int command_search(object *op, char *params);
