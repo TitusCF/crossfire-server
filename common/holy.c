@@ -51,7 +51,6 @@ static godlink *init_godslist(void) {
     gl->name=NULL;        /* how to describe the god to the player */
     gl->arch=NULL;   	/* pointer to the archetype of this god */
     gl->id=0;             /* id of the god */
-    gl->pantheon=NULL;    /* the group to which the god belongs (not implemented) */
     gl->next=NULL;        /* next god in this linked list */
 
     return gl;
