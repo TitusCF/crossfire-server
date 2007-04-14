@@ -15,6 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Replace plugin light change with call to map_change_light() for coherence checking.
+Remove obsolete properties.
+ include/sproto.h
+ plugins/cfpython/cfpython_map.c
+ plugins/cfpython/include/cfpython_map_private.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/plugins.c
+Nicolas Weeger 2007-04-14
+
 server/monster.c: make monsters use the same 'say' format than players.
 Nicolas Weeger 2007-04-12
 

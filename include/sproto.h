@@ -459,6 +459,7 @@ void *cfapi_map_update_position(int *type, ...);
 void *cfapi_map_delete_map(int *type, ...);
 void *cfapi_map_message(int *type, ...);
 void *cfapi_map_get_object_at(int *type, ...);
+void *cfapi_map_change_light(int *type, ...);
 void *cfapi_map_present_arch_by_name(int *type, ...);
 void *cfapi_object_move(int *type, ...);
 void *cfapi_object_get_key(int *type, ...);

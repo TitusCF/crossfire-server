@@ -95,6 +95,7 @@ static f_plug_api cfapiMap_get_object_at = NULL;
 static f_plug_api cfapiMap_present_arch_by_name = NULL;
 static f_plug_api cfapiMap_create_path = NULL;
 static f_plug_api cfapiMap_has_been_loaded = NULL;
+static f_plug_api cfapiMap_change_light = NULL;
 static f_plug_api cfapiPlayer_find = NULL;
 static f_plug_api cfapiPlayer_message = NULL;
 static f_plug_api cfapiPlayer_send_inventory = NULL;
@@ -169,8 +170,6 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_drop, "cfapi_object_drop", z );
     GET_HOOK( cfapiObject_take, "cfapi_object_take", z );
     GET_HOOK( cfapiObject_say, "cfapi_object_say", z );
-    /*GET_HOOK( cfapiObject_speak, "cfapi_object_speak", z );*/
-    /*GET_HOOK( cfapiCheck_inventory, "cfapi_check_inventory", z );*/
     GET_HOOK( cfapiMap_create_path, "cfapi_map_create_path", z );
     GET_HOOK( cfapiMap_get_property,"cfapi_map_get_property", z );
     GET_HOOK( cfapiMap_set_property,"cfapi_map_set_property", z );
@@ -178,10 +177,10 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiMap_message, "cfapi_map_message", z );
     GET_HOOK( cfapiMap_get_object_at, "cfapi_map_get_object_at", z );
     GET_HOOK( cfapiMap_present_arch_by_name, "cfapi_map_present_arch_by_name", z );
+    GET_HOOK( cfapiMap_change_light, "cfapi_map_change_light", z );
     GET_HOOK( cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z );
     GET_HOOK( cfapiPlayer_find, "cfapi_player_find", z );
     GET_HOOK( cfapiPlayer_message, "cfapi_player_message", z );
-/*    GET_HOOK( cfapiPlayer_send_inventory, "cfapi_player_send_inventory", z );*/
     GET_HOOK( cfapiObject_teleport, "cfapi_object_teleport", z );
     GET_HOOK( cfapiObject_pickup, "cfapi_object_pickup", z );
     GET_HOOK( cfapiObject_get_key, "cfapi_object_get_key", z );
@@ -1146,6 +1145,18 @@ int cf_map_get_wpartx(mapstruct* map)
 int cf_map_get_wparty(mapstruct* map)
 {
 	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WPARTY);
+}
+
+/**
+ * Wrapper for change_map_light().
+ * @copydoc change_map_light().
+ */
+int cf_map_change_light(mapstruct *m, int change)
+{
+    int type, value;
+    cfapiMap_change_light(&type, m, change, &value);
+    assert(type == CFAPI_INT);
+    return value;
 }
 
 void cf_object_update( object* op, int flags)

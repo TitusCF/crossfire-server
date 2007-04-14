@@ -117,13 +117,11 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_map_delete_map,          57, "cfapi_map_delete_map"},
     {cfapi_map_message,             58, "cfapi_map_message"},
     {cfapi_map_get_object_at,       59, "cfapi_map_get_object_at"},
-/*    {cfapi_map_get_flags,           60, "cfapi_map_get_flags"},*/
+    {cfapi_map_change_light,        60, "cfapi_map_change_light"},
     {cfapi_map_present_arch_by_name,61, "cfapi_map_present_arch_by_name"},
     {cfapi_player_find,             62, "cfapi_player_find"},
     {cfapi_player_message,          63, "cfapi_player_message"},
-/*    {cfapi_player_send_inventory,   64, "cfapi_player_send_inventory"},*/
     {cfapi_object_teleport,         65, "cfapi_object_teleport"},
-/*    {cfapi_object_speak,            66, "cfapi_object_speak"},*/
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
     {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
@@ -1320,27 +1318,11 @@ void* cfapi_map_set_map_property(int* type, ...)
 
     switch (property)
     {
-    case CFAPI_MAP_PROP_LIGHT:
-        map = va_arg(args, mapstruct*);
-        val = va_arg(args, int);
-        rv = change_map_light(map, val);
-        *type = CFAPI_INT;
-        va_end(args);
-        return &rv;
-        break;
-
-    case CFAPI_MAP_PROP_RESET_TIME:
-        map = va_arg(args, mapstruct*);
-        *type = CFAPI_NONE;
-        va_end(args);
-        return NULL;
-        break;
-
-    default:
-        *type = CFAPI_NONE;
-        va_end(args);
-        return NULL;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            va_end(args);
+            return NULL;
+            break;
     }
 }
 
@@ -1481,6 +1463,32 @@ void* cfapi_map_present_arch_by_name(int* type, ...)
 
     *robj = present_arch(find_archetype(msg), map, x, y);
     *type = CFAPI_POBJECT;
+    return NULL;
+}
+
+/**
+ * Wrapper for change_map_light().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
+void* cfapi_map_change_light(int* type, ...)
+{
+    va_list args;
+    int change;
+    mapstruct* map;
+    int* rint;
+
+    va_start(args, type);
+    map = va_arg(args, mapstruct*);
+    change = va_arg(args, int);
+    rint = va_arg(args, int*);
+    va_end(args);
+
+    *type = CFAPI_INT;
+    *rint = change_map_light(map, change);
+
     return NULL;
 }
 
@@ -3541,19 +3549,20 @@ void* cfapi_object_clean_object(int* type, ...)
 void* cfapi_object_on_same_map(int* type, ...)
 {
     va_list args;
-    static int rv;
     object* op1;
     object* op2;
+    int* rint;
 
     va_start(args, type);
     op1 = va_arg(args, object*);
     op2 = va_arg(args, object*);
-
-    rv = on_same_map(op1, op2);
+    rint = va_arg(args, int*);
     va_end(args);
 
     *type = CFAPI_INT;
-    return &rv;
+    *rint = on_same_map(op1, op2);
+
+    return NULL;
 }
 
 void* cfapi_object_spring_trap(int* type, ...)

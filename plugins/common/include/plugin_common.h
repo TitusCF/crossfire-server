@@ -158,6 +158,7 @@ extern int          cf_map_get_winddir(mapstruct* map);
 extern int          cf_map_get_sky(mapstruct* map);
 extern int          cf_map_get_wpartx(mapstruct* map);
 extern int          cf_map_get_wparty(mapstruct* map);
+extern int          cf_map_change_light(mapstruct *m, int change);
 
 /* Random maps */
 extern int           cf_random_map_set_variable(RMParms* rp, const char* buf);

@@ -81,11 +81,6 @@ static PyObject* Map_GetPlayers(Crossfire_Map* whoptr, void* closure)
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_players(whoptr->map));
 }
-static PyObject* Map_GetLight(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_darkness(whoptr->map));
-}
 static PyObject* Map_GetDarkness(Crossfire_Map* whoptr, void* closure)
 {
     MAPEXISTCHECK(whoptr);
@@ -252,6 +247,17 @@ static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args)
     MAPEXISTCHECK(map);
     
     return Crossfire_Object_wrap(cf_map_insert_object(map->map, what->obj, x, y));
+}
+
+static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args)
+{
+    int change;
+    if (!PyArg_ParseTuple(args,"i", &change))
+        return NULL;
+
+    MAPEXISTCHECK(map);
+
+    return Py_BuildValue("i", cf_map_change_light(map->map, change));
 }
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)

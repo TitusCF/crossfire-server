@@ -32,7 +32,6 @@ static PyObject* Map_GetName(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetResetTime(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetResetTimeout(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetPlayers(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetLight(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetDarkness(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetWidth(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetHeight(Crossfire_Map* whoptr, void* closure);
@@ -55,6 +54,7 @@ static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Check(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Next(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args);
+static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args);
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
 
@@ -72,7 +72,7 @@ static PyGetSetDef Map_getseters[] = {
     {"ResetTime",       (getter)Map_GetResetTime,   NULL, NULL, NULL },
     {"ResetTimeout",    (getter)Map_GetResetTimeout,NULL, NULL, NULL },
     {"Players",         (getter)Map_GetPlayers,     NULL, NULL, NULL },
-    {"Light",           (getter)Map_GetLight,       NULL, NULL, NULL },
+    {"Light",           (getter)Map_GetDarkness,    NULL, NULL, NULL },
     {"Darkness",        (getter)Map_GetDarkness,    NULL, NULL, NULL },
     {"Width",           (getter)Map_GetWidth,       NULL, NULL, NULL },
     {"Height",          (getter)Map_GetHeight,      NULL, NULL, NULL },
@@ -98,6 +98,7 @@ static PyMethodDef MapMethods[] = {
     { "Check",    (PyCFunction)Map_Check, METH_VARARGS},
     { "Next",    (PyCFunction)Map_Next, METH_VARARGS},
     { "Insert",  (PyCFunction)Map_Insert, METH_VARARGS},
+    { "ChangeLight", (PyCFunction)Map_ChangeLight, METH_VARARGS},
     {NULL, NULL, 0}
 };
 
