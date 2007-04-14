@@ -675,6 +675,19 @@ mapstruct* cf_map_get_map(const char* name, int flags)
 }
 
 /**
+ * Wrapper for get_empty_map().
+ * @copydoc get_empty_map().
+ */
+mapstruct* cf_get_empty_map(int sizex, int sizey)
+{
+    int type;
+    mapstruct* ret;
+    cfapiMap_get_map(&type, 0, sizex, sizey, &ret);
+    assert(type == CFAPI_PMAP);
+    return ret;
+}
+
+/**
  * Wrapper for has_been_loaded().
  * @copydoc has_been_loaded()
  */

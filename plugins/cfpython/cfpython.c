@@ -80,6 +80,7 @@ static PyObject* setReturnValue(PyObject* self, PyObject* args);
 static PyObject* matchString(PyObject* self, PyObject* args);
 static PyObject* findPlayer(PyObject* self, PyObject* args);
 static PyObject* readyMap(PyObject* self, PyObject* args);
+static PyObject* createMap(PyObject* self, PyObject* args);
 static PyObject* getMapDirectory(PyObject* self, PyObject* args);
 static PyObject* getUniqueDirectory(PyObject* self, PyObject* args);
 static PyObject* getTempDirectory(PyObject* self, PyObject* args);
@@ -138,6 +139,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"PlayerDirectory",     getPlayerDirectory,     METH_VARARGS},
     {"DataDirectory",       getDataDirectory,       METH_VARARGS},
     {"ReadyMap",            readyMap,               METH_VARARGS},
+    {"CreateMap",           createMap,              METH_VARARGS},
     {"FindPlayer",          findPlayer,             METH_VARARGS},
     {"MatchString",         matchString,            METH_VARARGS},
     {"GetReturnValue",      getReturnValue,         METH_VARARGS},
@@ -276,6 +278,20 @@ static PyObject* readyMap(PyObject* self, PyObject* args)
 
     return Crossfire_Map_wrap(map);
 }
+
+static PyObject* createMap(PyObject* self, PyObject* args)
+{
+    int sizex, sizey;
+    mapstruct* map;
+
+    if (!PyArg_ParseTuple(args, "ii", &sizex, &sizey))
+        return NULL;
+
+    map = cf_get_empty_map(sizex, sizey);
+
+    return Crossfire_Map_wrap(map);
+}
+
 static PyObject* getCostFlagTrue(PyObject* self, PyObject* args)
 {
     int i = F_TRUE;

@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add plugin wrapper for cf_get_empty_map(). Add 'Object.GodGiven' and 'Crossfire.CreateMap'.
+ plugins/cfpython/cfpython.c
+ plugins/cfpython/cfpython_object.c
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+Nicolas Weeger 2007-04-14
+
 Remove obsolete command_build function.
  include/sproto.h
  server/c_object.c commands.c

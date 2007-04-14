@@ -142,6 +142,7 @@ static PyObject* Object_GetMoveSlowPenalty(Crossfire_Object* whoptr, void* closu
 static PyObject* Object_GetOwner(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetEnemy(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCount(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetGodGiven(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -214,6 +215,7 @@ static int Object_SetFace(Crossfire_Object* whoptr, PyObject* value, void* closu
 static int Object_SetNoSave(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetOwner(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetEnemy(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetGodGiven(Crossfire_Object* whoptr, PyObject* value, void* closure);
 
 static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args );
@@ -372,6 +374,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Owner",          (getter)Object_GetOwner,        (setter)Object_SetOwner, NULL, NULL },
     { "Enemy",          (getter)Object_GetEnemy,        (setter)Object_SetEnemy, NULL, NULL },
     { "Count",          (getter)Object_GetCount,        NULL, NULL, NULL },
+    { "GodGiven",       (getter)Object_GetGodGiven,     (setter)Object_SetGodGiven, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

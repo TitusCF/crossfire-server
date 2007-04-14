@@ -132,6 +132,7 @@ extern int cf_map_get_int_property(mapstruct* map, int property);
 
 extern void         cf_map_set_int_property(mapstruct* map, int propcode, int value);
 extern mapstruct*   cf_map_get_map(const char* name, int flags);
+extern mapstruct*   cf_get_empty_map(int sizex, int sizey);
 extern mapstruct*   cf_map_get_first(void);
 extern mapstruct*   cf_map_has_been_loaded(const char* name);
 extern void         cf_map_message(mapstruct* m, char* msg, int color);
