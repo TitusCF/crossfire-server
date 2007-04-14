@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Correctly clear god information.
+ common/holy.c
+Nicolas Weeger 2007-04-14
+
 Remove unused godlink::pantheon field.
  common/holy.c
  include/god.h

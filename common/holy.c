@@ -136,12 +136,6 @@ object *pntr_to_god_obj(godlink *godlnk) {
 
 /**
  * Frees all god information.
- *
- * @note
- * this doesn't clear the ::first_god pointer, so you shouldn't call
- * any god-related function after calling that.
- *
- * @todo clear ::first_god.
  */
 void free_all_god(void) {
     godlink *god, *godnext;
@@ -149,9 +143,11 @@ void free_all_god(void) {
     LOG(llevDebug,"Freeing god information\n");
     for (god=first_god; god; god=godnext) {
         godnext=god->next;
-        if (god->name) free_string(god->name);
+        if (god->name)
+            free_string(god->name);
         free(god);
     }
+    first_god = NULL;
 }
 
 /**
