@@ -632,7 +632,6 @@ void reset_object(object *op) {
     op->msg = NULL;
     op->materialname = NULL;
     op->lore = NULL;
-    op->current_weapon_script = NULL;
     clear_object(op);
 }
 
@@ -3392,39 +3391,6 @@ int set_ob_key_value(object * op, const char * key, const char * value, int add_
 
     return ret;
 }
-
-
-/**
- * Finds the best weapon a player has by name.
- *
- * Gros has put find_best_weapon_used_match in arch.c but it manipulates 
- * only objects so i moved it here.    -tchize
- *
- * @param pl
- * object we search the inventory of
- * @param params
- * name of weapon. Can be partial, or such.
- * @return
- * matching weapon, or NULL if none matches.
- */
-object *find_best_weapon_used_match(object *pl, const char *params)
- {
-    object *tmp, *best=NULL;
-    int match_val=0,tmpmatch;
-
-    for (tmp=pl->inv; tmp; tmp=tmp->below) {
-        if (tmp->invisible) continue;
-        if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val)
-        {
-            if ((QUERY_FLAG(tmp, FLAG_APPLIED))&&(tmp->type==WEAPON))
-            {
-                match_val=tmpmatch;
-                best=tmp;
-            };
-        }
-    }
-    return best;
- }
 
 /** This is a subset of the parse_id command.  Basically, name can be
  * a string seperated lists of things to match, with certain keywords.

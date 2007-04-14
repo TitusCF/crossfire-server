@@ -963,8 +963,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
 		for (tmp=op->inv; tmp; tmp=tmp->below)
 		    if (tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_APPLIED)) break;
 
-		if (op->current_weapon_script)
-		    FREE_AND_CLEAR_STR(op->current_weapon_script);
 		if (!tmp) {
 		    LOG(llevError,"Could not find applied weapon on %s\n",
 			op->name);
@@ -974,7 +972,6 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
             char weapon[MAX_BUF];
             query_name(tmp, weapon, MAX_BUF);
 		    op->current_weapon = tmp;
-		    op->current_weapon_script=add_string(weapon);
 		}
 	    }
 

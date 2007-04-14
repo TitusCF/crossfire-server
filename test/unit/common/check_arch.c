@@ -230,7 +230,6 @@ START_TEST(test_get_archetype_struct)
 	fail_unless(arch->clone.lore==NULL,"arch->clone.lore of get_archetype_struct should be inited to NULL");
 	
 	
-	fail_unless(arch->clone.current_weapon_script==NULL,"arch->clone.current_weapon_script of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.current_weapon==NULL,"arch->clone.current_weapon of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.enemy==NULL,"arch->clone.enemy of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.attacked_by==NULL,"arch->clone.attacked_by of get_archetype_struct should be inited to NULL");

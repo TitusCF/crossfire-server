@@ -175,8 +175,6 @@ typedef struct obj {
     sint8	glow_radius;	/**< indicates the glow radius of the object */
     living	stats;		/**< Str, Con, Dex, etc */
     sint64	perm_exp;	/**< Permanent exp */
-    const char	*current_weapon_script;  /**< The script of the currently used weapon. Executed
-                                          * each time the object attacks something */
     struct obj	*current_weapon;   /**< Pointer to the weapon currently used */
     uint32	weapontype;	/**< Type of weapon */
     uint32	tooltype;	/**< Type of tool or build facility */

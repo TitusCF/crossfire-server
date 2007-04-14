@@ -419,7 +419,7 @@ static char *allowed_variables[] = {
     "save_on_overlay",
 /* GROS - These are hooks for script events */
     "script_load","script_apply","script_say","script_trigger", "script_time",
-    "script_attack","script_drop", "script_throw", "script_stop", "script_death", "current_weapon_script",
+    "script_attack","script_drop", "script_throw", "script_stop", "script_death",
     "start_script_load", "start_script_apply","start_script_say","start_script_trigger","start_script_time",
     "start_script_attack","start_script_drop","start_script_throw","start_script_stop", "start_script_death",
     "end_script_load", "end_script_apply","end_script_say","end_script_trigger","end_script_time",

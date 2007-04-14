@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused (and obsolete) current_weapon_script field.
+Remove now unused find_best_weapon_used_match().
+ common/loader.l object.c
+ crossedit/Attr.c
+ include/libproto.h object.h
+ server/apply.c skill_util.c
+ test/unit/common/check_arch.c check_object.c
+Nicolas Weeger 2007-04-14
+
 Replace plugin light change with call to map_change_light() for coherence checking.
 Remove obsolete properties.
  include/sproto.h

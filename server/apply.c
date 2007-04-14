@@ -2276,9 +2276,6 @@ static int unapply_special (object *who, object *op, int aflags)
             (void) change_abil (who,op);
             if(QUERY_FLAG(who,FLAG_READY_WEAPON))
                 CLEAR_FLAG(who,FLAG_READY_WEAPON);
-                /* GROS: update the current_weapon_script field
-                 * (used with script_attack for weapons) */
-            who->current_weapon_script = NULL;
             who->current_weapon = NULL;
             clear_skill(who);
             break;

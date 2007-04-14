@@ -1085,15 +1085,6 @@ A	.+
 ^dam_modifier{S}	op->dam_modifier = IVAL;
 ^duration_modifier{S}	op->duration_modifier = IVAL;
 ^is_buildable{S}	SET_OR_CLEAR_FLAG( op, FLAG_IS_BUILDABLE, IVAL );
-^current_weapon_script{S} {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Script (current weapon) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->current_weapon_script, yv);
-                                                };
-		    }
-
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
 
@@ -1206,11 +1197,6 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     }
 
     retval=lex_load(op, map_flags);
-    if (op->current_weapon_script != NULL)
-    {
-        op->current_weapon = find_best_weapon_used_match(op, op->current_weapon_script);
-        LOG(llevDebug, "CurrentWeapon Loaded !\n");
-    };
 
 /*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
     return retval;
@@ -1661,10 +1647,6 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
 
     if(op->map_layer!=op2->map_layer)
         ADD_STRINGLINE_ENTRY(fastbuf,"map_layer ",map_layer_name[op->map_layer],10);
-
-    if (op->current_weapon_script!=op2->current_weapon_script){
-        ADD_STRINGLINE_ENTRY(fastbuf,"current_weapon_script ",op->current_weapon_script,22);
-    }
 
     if(op->weapontype && op->weapontype!=op2->weapontype) {
         FAST_SAVE_LONG(fastbuf,"weapontype ",op->weapontype,11);
