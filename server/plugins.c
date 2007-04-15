@@ -2777,13 +2777,6 @@ void* cfapi_object_set_property(int* type, ...)
                 iargbis = va_arg(args, int);
                 *type = CFAPI_INT;
 
-                if (iarg == FLAG_FRIENDLY) {
-                    if (iargbis && !QUERY_FLAG(op, FLAG_FRIENDLY))
-                        add_friendly_object(op);
-                    else if (!iargbis && QUERY_FLAG(op, FLAG_FRIENDLY))
-                        remove_friendly_object(op);
-                }
-
                 if (iargbis == 1)
                     SET_FLAG(op, iarg);
                 else
