@@ -16,6 +16,7 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Wrap change_exp() function. Make 'exp' property the same as others.
+Also fix a crash: don't insert destroy hooks in archetype clones.
  include/sproto.h
  plugins/cfpython/cfpython_object.c
  plugins/cfpython/include/Makefile.in
