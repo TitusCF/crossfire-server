@@ -47,8 +47,6 @@
 
 /**
  * Constitution bonus
- * @todo
- * check if still useful (not used apparently).
  */
 static const int con_bonus[MAX_STAT + 1]={
   -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
@@ -60,8 +58,6 @@ static const int con_bonus[MAX_STAT + 1]={
  * Changed the name of this to "sp_bonus" from "int_bonus"
  * because Pow can now be the stat that controls spellpoint
  * advancement. -b.t.
- * @todo
- * check if still useful (not used apparently).
  */
 static const int sp_bonus[MAX_STAT + 1]={
   -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
@@ -70,8 +66,6 @@ static const int sp_bonus[MAX_STAT + 1]={
 
 /**
  * Grace bonus
- * @todo
- * check if still useful (not used apparently).
  */
 static const int grace_bonus[MAX_STAT +1] = {
     -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
