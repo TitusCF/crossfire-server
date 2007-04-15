@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/region.c: don't crash if no regions file found.
+Nicolas Weeger 2007-04-15
+
 Wrap change_exp() function. Make 'exp' property the same as others.
 Also fix a crash: don't insert destroy hooks in archetype clones.
  include/sproto.h

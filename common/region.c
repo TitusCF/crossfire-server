@@ -128,6 +128,10 @@ region *get_region_from_string(const char *name) {
     char *substr;
     char *p;
 
+    if (first_region == NULL) {
+        return NULL;
+    }
+
     if (name==NULL) {
         for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
         return reg;
