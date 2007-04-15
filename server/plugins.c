@@ -1428,6 +1428,7 @@ void* cfapi_map_get_object_at(int* type, ...)
     va_list args;
     mapstruct* map;
     int x, y;
+    sint16 sx, sy;
     object** robj;
 
     va_start(args, type);
@@ -1437,7 +1438,12 @@ void* cfapi_map_get_object_at(int* type, ...)
     robj = va_arg(args, object**);
     va_end(args);
 
-    *robj = get_map_ob(map, x, y);
+    sx = x;
+    sy = y;
+    if (get_map_flags(map, &map, x, y, &sx, &sy) & P_OUT_OF_MAP)
+        *robj = NULL;
+    else
+        *robj = get_map_ob(map, sx, sy);
     *type = CFAPI_POBJECT;
     return NULL;
 }
@@ -2770,6 +2776,14 @@ void* cfapi_object_set_property(int* type, ...)
                 iarg = va_arg(args, int);
                 iargbis = va_arg(args, int);
                 *type = CFAPI_INT;
+
+                if (iarg == FLAG_FRIENDLY) {
+                    if (iargbis && !QUERY_FLAG(op, FLAG_FRIENDLY))
+                        add_friendly_object(op);
+                    else if (!iargbis && QUERY_FLAG(op, FLAG_FRIENDLY))
+                        remove_friendly_object(op);
+                }
+
                 if (iargbis == 1)
                     SET_FLAG(op, iarg);
                 else
