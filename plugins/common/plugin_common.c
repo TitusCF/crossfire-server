@@ -251,6 +251,14 @@ void cf_map_set_int_property(mapstruct* map, int propcode, int value)
     cfapiMap_set_property(&type, map, propcode,value);
     assert(type == CFAPI_INT);
 }
+
+void cf_map_set_string_property(mapstruct* map, int propcode, const char* value)
+{
+    int type;
+    cfapiMap_set_property(&type, map, propcode,value);
+    assert(type == CFAPI_STRING);
+}
+
 /* Should get replaced by tons of more explicit wrappers */
 sint16 cf_object_get_resistance(object* op, int rtype)
 {

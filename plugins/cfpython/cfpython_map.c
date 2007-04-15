@@ -158,6 +158,19 @@ static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure)
     return Crossfire_Region_wrap(cf_map_get_region_property(whoptr->map,CFAPI_MAP_PROP_REGION));
 }
 
+static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure)
+{
+    const char* val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"s",&val))
+        return -1;
+
+    cf_map_set_string_property(whoptr->map, CFAPI_MAP_PROP_PATH, val);
+    return 0;
+
+}
+
 static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;

@@ -48,6 +48,8 @@ static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure);
 
+static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure);
+
 static PyObject* Map_Message(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args);
@@ -66,7 +68,7 @@ static PyObject *Crossfire_Map_new(PyTypeObject *type, PyObject *args, PyObject 
 /* Python binding */
 static PyGetSetDef Map_getseters[] = {
     {"Difficulty",      (getter)Map_GetDifficulty,  NULL, NULL, NULL },
-    {"Path",            (getter)Map_GetPath,        NULL, NULL, NULL },
+    {"Path",            (getter)Map_GetPath,        (setter)Map_SetPath, NULL, NULL },
     {"TempName",        (getter)Map_GetTempName,    NULL, NULL, NULL },
     {"Name",            (getter)Map_GetName,        NULL, NULL, NULL },
     {"ResetTime",       (getter)Map_GetResetTime,   NULL, NULL, NULL },

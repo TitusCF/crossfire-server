@@ -131,6 +131,7 @@ extern region* cf_map_get_region_property(mapstruct* map, int propcode);
 extern int cf_map_get_int_property(mapstruct* map, int property);
 
 extern void         cf_map_set_int_property(mapstruct* map, int propcode, int value);
+extern void         cf_map_set_string_property(mapstruct* map, int propcode, const char* value);
 extern mapstruct*   cf_map_get_map(const char* name, int flags);
 extern mapstruct*   cf_get_empty_map(int sizex, int sizey);
 extern mapstruct*   cf_map_get_first(void);

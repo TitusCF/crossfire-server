@@ -1307,23 +1307,30 @@ void* cfapi_map_get_map_property(int* type, ...)
 void* cfapi_map_set_map_property(int* type, ...)
 {
     va_list args;
-    static int rv;
     mapstruct* map;
     int val;
     int property;
+    const char* buf;
 
     va_start(args, type);
 
+    map = va_arg(args, mapstruct*);
     property = va_arg(args, int);
 
     switch (property)
     {
+        case CFAPI_MAP_PROP_PATH:
+            buf = va_arg(args, const char*);
+            snprintf(map->path, sizeof(map->path), buf);
+            *type = CFAPI_STRING;
+            break;
+
         default:
             *type = CFAPI_NONE;
-            va_end(args);
-            return NULL;
             break;
     }
+    va_end(args);
+    return NULL;
 }
 
 /**

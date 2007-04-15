@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Enable plugins to change the 'path' property of a map.
+ plugins/cfpython/cfpython_map.c
+ plugins/cfpython/include/cfpython_map_private.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+Nicolas Weeger 2007-04-15
+
 Add plugin wrapper for cf_get_empty_map(). Add 'Object.GodGiven' and 'Crossfire.CreateMap'.
  plugins/cfpython/cfpython.c
  plugins/cfpython/cfpython_object.c
