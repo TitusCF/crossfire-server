@@ -506,6 +506,7 @@ void *cfapi_object_say(int *type, ...);
 void *cfapi_object_speak(int *type, ...);
 void *cfapi_player_find(int *type, ...);
 void *cfapi_player_message(int *type, ...);
+void *cfapi_object_change_exp(int *type, ...);
 /*void *cfapi_player_send_inventory(int *type, ...);*/
 void *cfapi_player_can_pay(int *type, ...);
 void *cfapi_object_teleport(int *type, ...);

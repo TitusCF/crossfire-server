@@ -147,6 +147,7 @@ static PyObject* Object_GetIsPet(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAttackMovement(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetNamePl(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -283,7 +284,7 @@ static PyGetSetDef Object_getseters[] = {
     { "WC",         (getter)Object_GetWC,       (setter)Object_SetWC, NULL, NULL },
     { "Dam",        (getter)Object_GetDam,      (setter)Object_SetDam, NULL, NULL },
     { "Luck",       (getter)Object_GetLuck,     NULL, NULL, NULL },
-    { "Exp",        (getter)Object_GetExp,      NULL, NULL, NULL },
+    { "Exp",        (getter)Object_GetExp,      (setter)Object_SetExp, NULL, NULL },
     { "ExpMul",     (getter)Object_GetExpMul,   NULL, NULL, NULL },
     { "PermExp",    (getter)Object_GetPermExp,  NULL, NULL, NULL },
     { "Message",    (getter)Object_GetMessage,  (setter)Object_SetMessage, NULL, NULL },

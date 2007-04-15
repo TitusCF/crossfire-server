@@ -69,6 +69,7 @@ extern mapstruct*   cf_object_get_map_property(object* op, int propcode);
 extern archetype*   cf_object_get_archetype_property(object* op, int propcode);
 extern partylist*   cf_object_get_partylist_property(object* op, int propcode);
 extern sint64       cf_object_get_int64_property(object* op, int propcode);
+extern void         cf_object_set_int64_property(object* op, int propcode, sint64 value);
 extern double       cf_object_get_double_property(object* op, int propcode);
 extern sstring      cf_object_get_sstring_property(object* op, int propcode);
 extern char*        cf_object_get_string_property(object* op, int propcode, char* buf, int size);
@@ -121,7 +122,7 @@ extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern void         cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* pl);
 extern object*      cf_object_clone(object* op, int clonetype);
-extern void         cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg);
+extern void         cf_object_change_experience(object *op, sint64 exp, const char *skill_name, int flag);
 
 /* Maps */
 /*extern void*        cf_map_get_property(mapstruct* map, int propcode);*/

@@ -112,6 +112,7 @@ static f_plug_api cfapiPlayer_can_pay = NULL;
 static f_plug_api cfapiFriendlylist_get_next = NULL;
 static f_plug_api cfapiSet_random_map_variable = NULL;
 static f_plug_api cfapiGenerate_random_map = NULL;
+static f_plug_api cfapiObject_change_exp = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -198,6 +199,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiFriendlylist_get_next, "cfapi_friendlylist_get_next", z );
     GET_HOOK( cfapiSet_random_map_variable, "cfapi_set_random_map_variable", z );
     GET_HOOK( cfapiGenerate_random_map, "cfapi_generate_random_map", z );
+    GET_HOOK( cfapiObject_change_exp, "cfapi_object_change_exp", z );
 
     return 1;
 }
@@ -333,6 +335,12 @@ void cf_object_set_float_property(object* op, int propcode, float value)
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_FLOAT);
 }
+void cf_object_set_int64_property(object* op, int propcode, sint64 value)
+{
+    int type;
+    cfapiObject_set_property(&type, op, propcode, value);
+    assert(type == CFAPI_SINT64);
+}
 float cf_object_get_float_property(object* op, int propcode)
 {
     int type;
@@ -393,11 +401,16 @@ void cf_object_set_object_property(object* op, int propcode, object* value)
     cfapiObject_set_property(&type, op, propcode,value);
     assert(type == CFAPI_POBJECT);
 }
-void cf_object_set_experience(object* op, sint64 exp, const char* skill, int arg)
+
+/**
+ * Wrapper for change_exp().
+ * @copydoc change_exp().
+ */
+void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag)
 {
     int type;
-    cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_EXP, exp, strlen(skill) > 0 ? skill : NULL, arg);
-    assert(type == CFAPI_SINT64);
+    cfapiObject_change_exp(&type, op, exp, strlen(skill_name) > 0 ? skill_name : NULL, flag);
+    assert(type == CFAPI_NONE);
 }
 void cf_player_move(player* pl, int dir)
 {

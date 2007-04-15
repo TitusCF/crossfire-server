@@ -121,6 +121,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_map_present_arch_by_name,61, "cfapi_map_present_arch_by_name"},
     {cfapi_player_find,             62, "cfapi_player_find"},
     {cfapi_player_message,          63, "cfapi_player_message"},
+    {cfapi_object_change_exp       ,64, "cfapi_object_change_exp"},
     {cfapi_object_teleport,         65, "cfapi_object_teleport"},
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
@@ -2748,15 +2749,9 @@ void* cfapi_object_set_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_EXP:
-            {
-                char* skillname;
-
-                s64arg = va_arg(args, sint64);
-                skillname = va_arg(args, char*);
-                iarg = va_arg(args, int);
-                change_exp(op, s64arg, skillname, iarg);
-                *type = CFAPI_SINT64;
-            }
+            s64arg = va_arg(args, sint64);
+            *type = CFAPI_SINT64;
+            op->stats.exp = s64arg;
             break;
 
         case CFAPI_OBJECT_PROP_OWNER:
@@ -4027,6 +4022,33 @@ void* cfapi_player_message(int* type, ...)
     draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
 		  buf, buf);
     *type = CFAPI_NONE;
+    return NULL;
+}
+
+/**
+ * Wrapper for change_exp().
+ * @param type
+ * will be CFAPI_NONE.
+ * @return
+ * NULL.
+ */
+void *cfapi_object_change_exp(int *type, ...)
+{
+    va_list(args);
+    int flag;
+    object* ob;
+    const char* skill;
+    sint64 exp;
+
+    va_start(args, type);
+    ob = va_arg(args, object*);
+    exp = va_arg(args, sint64);
+    skill = va_arg(args, const char*);
+    flag = va_arg(args, int);
+    va_end(args);
+
+    *type = CFAPI_NONE;
+    change_exp(ob, exp, skill, flag);
     return NULL;
 }
 

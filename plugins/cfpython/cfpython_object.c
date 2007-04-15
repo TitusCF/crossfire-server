@@ -1684,6 +1684,18 @@ static int Object_SetAttackMovement(Crossfire_Object* whoptr, PyObject* value, v
     return 0;
 }
 
+static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    sint64 val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"L",&val))
+        return -1;
+
+    cf_object_set_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP, val);
+    return 0;
+}
+
 /* Methods. */
 
 static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args )
@@ -2095,7 +2107,7 @@ static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args)
     if (!PyArg_ParseTuple(args,"L|si", &exp, &skill, &arg))
         return NULL;
     EXISTCHECK(who);
-    cf_object_set_experience(who->obj, exp, skill, arg);
+    cf_object_change_exp(who->obj, exp, skill, arg);
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -2190,6 +2202,11 @@ static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
     object *event, *ob;
     ob = pyobj->obj;
     if (ob->subtype == EVENT_DESTROY && !strcmp(ob->slaying, "cfpython_auto_hook")) {
+        pyobj->del_event = NULL;
+        return;
+    }
+    if (&ob->arch->clone == ob) {
+        /* Don't insert that in an archetype, leads to weird issues. */
         pyobj->del_event = NULL;
         return;
     }
