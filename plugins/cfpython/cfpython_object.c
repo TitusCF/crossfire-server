@@ -780,6 +780,17 @@ static PyObject* Object_GetGodGiven(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_STARTEQUIP));
 }
+static PyObject* Object_GetIsPet(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FRIENDLY));
+}
+
+static PyObject* Object_GetAttackMovement(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_MOVEMENT));
+}
 
 /** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1646,6 +1657,30 @@ static int Object_SetGodGiven(Crossfire_Object* whoptr, PyObject* value, void* c
         return -1;
 
     cf_object_set_flag(whoptr->obj, FLAG_STARTEQUIP, val);
+    return 0;
+}
+
+static int Object_SetIsPet(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FRIENDLY, val);
+    return 0;
+}
+
+static int Object_SetAttackMovement(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_MOVEMENT, val);
     return 0;
 }
 

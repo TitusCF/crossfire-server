@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ server/plugins.c: wrong case - FLAG_FRIENDLY is not the same as friendlylist :)
+ plugins/cfpython/cfpython_object.c: add 'IsPet' and 'AttackMovement'
+ plugins/cfpython/include/cfpython_object_private.h
+Nicolas Weeger 2007-04-15
+
 server/skills.c: EVENT_TRIGGER for magical scroll writing.
 Nicolas Weeger 2007-04-15
 
