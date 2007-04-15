@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/cfpython.c: add AttackType, AttackTypeNumber, EventType constants.
+Nicolas Weeger 2007-04-15
+
 common/living.c: fix comments.
 common/object.c: dump owner too.
 server/plugins.c: check values for cfapi_map_get_object_at(). Handle FLAG_FRIENDLY

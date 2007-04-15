@@ -991,11 +991,105 @@ static void initConstants(PyObject* module)
         { "NOTCURSED", F_NOT_CURSED },
         { NULL, 0 } };
 
+    static CFConstant cstAttackType[] = {
+        { "PHYSICAL", AT_PHYSICAL },
+        { "MAGIC", AT_MAGIC },
+        { "FIRE", AT_FIRE },
+        { "ELECTRICITY", AT_ELECTRICITY },
+        { "COLD", AT_COLD },
+        { "CONFUSION", AT_CONFUSION },
+        { "ACID", AT_ACID },
+        { "DRAIN", AT_DRAIN },
+        { "WEAPONMAGIC", AT_WEAPONMAGIC },
+        { "GHOSTHIT", AT_GHOSTHIT },
+        { "POISON", AT_POISON },
+        { "SLOW", AT_SLOW },
+        { "PARALYZE", AT_PARALYZE },
+        { "TURN_UNDEAD", AT_TURN_UNDEAD },
+        { "FEAR", AT_FEAR },
+        { "CANCELLATION", AT_CANCELLATION },
+        { "DEPLETE", AT_DEPLETE },
+        { "DEATH", AT_DEATH },
+        { "CHAOS", AT_CHAOS },
+        { "COUNTERSPELL", AT_COUNTERSPELL },
+        { "GODPOWER", AT_GODPOWER },
+        { "HOLYWORD", AT_HOLYWORD },
+        { "BLIND", AT_BLIND },
+        { "INTERNAL", AT_INTERNAL },
+        { "LIFE_STEALING", AT_LIFE_STEALING },
+        { "DISEASE", AT_DISEASE },
+        { NULL, 0 } };
+
+    static CFConstant cstAttackTypeNumber[] = {
+        { "PHYSICAL", ATNR_PHYSICAL },
+        { "MAGIC", ATNR_MAGIC },
+        { "FIRE", ATNR_FIRE },
+        { "ELECTRICITY", ATNR_ELECTRICITY },
+        { "COLD", ATNR_COLD },
+        { "CONFUSION", ATNR_CONFUSION },
+        { "ACID", ATNR_ACID },
+        { "DRAIN", ATNR_DRAIN },
+        { "WEAPONMAGIC", ATNR_WEAPONMAGIC },
+        { "GHOSTHIT", ATNR_GHOSTHIT },
+        { "POISON", ATNR_POISON },
+        { "SLOW", ATNR_SLOW },
+        { "PARALYZE", ATNR_PARALYZE },
+        { "TURN_UNDEAD", ATNR_TURN_UNDEAD },
+        { "FEAR", ATNR_FEAR },
+        { "CANCELLATION", ATNR_CANCELLATION },
+        { "DEPLETE", ATNR_DEPLETE },
+        { "DEATH", ATNR_DEATH },
+        { "CHAOS", ATNR_CHAOS },
+        { "COUNTERSPELL", ATNR_COUNTERSPELL },
+        { "GODPOWER", ATNR_GODPOWER },
+        { "HOLYWORD", ATNR_HOLYWORD },
+        { "BLIND", ATNR_BLIND },
+        { "INTERNAL", ATNR_INTERNAL },
+        { "LIFE_STEALING", ATNR_LIFE_STEALING },
+        { "DISEASE", ATNR_DISEASE },
+        { NULL, 0 } };
+
+    static CFConstant cstEventType[] = {
+        { "EVENT_APPLY", EVENT_APPLY },
+        { "EVENT_ATTACK", EVENT_ATTACK },
+        { "EVENT_DEATH", EVENT_DEATH },
+        { "EVENT_DROP", EVENT_DROP },
+        { "EVENT_PICKUP", EVENT_PICKUP },
+        { "EVENT_SAY", EVENT_SAY },
+        { "EVENT_STOP", EVENT_STOP },
+        { "EVENT_TIME", EVENT_TIME },
+        { "EVENT_THROW", EVENT_THROW },
+        { "EVENT_TRIGGER", EVENT_TRIGGER },
+        { "EVENT_CLOSE", EVENT_CLOSE },
+        { "EVENT_TIMER", EVENT_TIMER },
+        { "EVENT_DESTROY", EVENT_DESTROY },
+        { "EVENT_BORN", EVENT_BORN },
+        { "EVENT_CLOCK", EVENT_CLOCK },
+        { "EVENT_CRASH", EVENT_CRASH },
+        { "EVENT_PLAYER_DEATH", EVENT_PLAYER_DEATH },
+        { "EVENT_GKILL", EVENT_GKILL },
+        { "EVENT_LOGIN", EVENT_LOGIN },
+        { "EVENT_LOGOUT", EVENT_LOGOUT },
+        { "EVENT_MAPENTER", EVENT_MAPENTER },
+        { "EVENT_MAPLEAVE", EVENT_MAPLEAVE },
+        { "EVENT_MAPRESET", EVENT_MAPRESET },
+        { "EVENT_REMOVE", EVENT_REMOVE },
+        { "EVENT_SHOUT", EVENT_SHOUT },
+        { "EVENT_TELL", EVENT_TELL },
+        { "EVENT_MUZZLE", EVENT_MUZZLE },
+        { "EVENT_KICK", EVENT_KICK },
+        { "EVENT_MAPUNLOAD", EVENT_MAPUNLOAD },
+        { "EVENT_MAPLOAD", EVENT_MAPLOAD },
+        { NULL, 0 } };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
     addConstants(module, "MessageFlag", cstMessageFlag);
     addConstants(module, "CostFlag", cstCostFlag);
+    addConstants(module, "AttackType", cstAttackType);
+    addConstants(module, "AttackTypeNumber", cstAttackTypeNumber);
+    addConstants(module, "EventType", cstEventType);
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
