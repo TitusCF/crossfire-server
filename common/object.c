@@ -391,6 +391,9 @@ void dump_object(object *op, char* buf, int size) {
         if (op->inv) {
             snprintf(buf + strlen(buf), size - strlen(buf), "inv %s\n", ltostr10(op->inv->count));
         }
+        if (op->owner) {
+            snprintf(buf + strlen(buf), size - strlen(buf), "owner %s\n", ltostr10(op->owner->count));
+        }
         snprintf(buf + strlen(buf), size - strlen(buf), "end\n");
     } else {
         snprintf(buf + strlen(buf), size - strlen(buf), "Object %s\nend\n", op->name==NULL ? "(null)" : op->name);
