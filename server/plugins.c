@@ -1639,8 +1639,7 @@ void* cfapi_object_get_property(int* type, ...)
 
     op = va_arg(args, object*);
     property = va_arg(args, int);
-    if (op != NULL) {
-        switch (property)
+    switch (property)
         {
         case CFAPI_OBJECT_PROP_OB_ABOVE:
             robject = va_arg(args, object**);
@@ -2298,6 +2297,15 @@ void* cfapi_object_get_property(int* type, ...)
             *rparty = (op->contr ? op->contr->party : NULL);
             *type = CFAPI_PPARTY;
             break;
+        case CFAPI_PLAYER_PROP_NEXT:
+            robject = va_arg(args, object**);
+            if (op)
+                *robject = op->contr->next ? op->contr->next->ob : NULL;
+            else
+                /* This can be called when there is no player. */
+                *robject = first_player ? first_player->ob : NULL;
+            *type = CFAPI_POBJECT;
+            break;
         case CFAPI_OBJECT_PROP_NO_SAVE:
             rint = va_arg(args, int*);
             *rint = op->no_save;
@@ -2357,7 +2365,6 @@ void* cfapi_object_get_property(int* type, ...)
         default:
             *type = CFAPI_NONE;
             break;
-        }
     }
     va_end(args);
     return NULL;
@@ -3276,28 +3283,20 @@ void* cfapi_object_create(int* type, ...)
             const char* sval;
             object* op;
             char name[MAX_BUF];
+            archetype* at;
 
             sval = va_arg(args, const char*);
             robj = va_arg(args, object**);
             va_end(args);
 
-            op = create_archetype(sval);
-
-            query_name(op, name, MAX_BUF);
-            if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
-                free_object(op);
-                /* Try with archetype names... */
-                op = create_archetype_by_object_name(sval);
-
-                query_name(op, name, MAX_BUF);
-                if (strncmp(name, ARCH_SINGULARITY, ARCH_SINGULARITY_LEN) == 0) {
-                    free_object(op);
-                    *robj = NULL;
-                    return NULL;
-                }
+            at = find_archetype(sval);
+            if (!at)
+                at = find_archetype_by_object_name(sval);
+            if (at) {
+                *robj = object_create_arch(at);
             }
-            *robj = op;
-            return NULL;
+            else
+                *robj = NULL;
         }
         break;
 
@@ -4112,11 +4111,7 @@ void* cfapi_object_teleport(int *type, ...)
             remove_ob(who);
         }
 
-        for (tmp = who; tmp != NULL; tmp = tmp->more)
-            tmp->x = x+freearr_x[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.x),
-            tmp->y = y+freearr_y[k]+(tmp->arch == NULL ? 0 : tmp->arch->clone.y);
-
-        insert_ob_in_map(who, map, NULL, 0);
+        insert_ob_in_map_at(who, map, NULL, 0, x, y);
         if (who->type == PLAYER)
             map_newmap_cmd(who->contr);
         *res = 0;
