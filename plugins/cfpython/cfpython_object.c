@@ -1704,7 +1704,7 @@ static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args 
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
 
-    if (((Crossfire_Object*)current_context->who)->obj == who->obj)
+    if ((current_context->who != NULL) && (((Crossfire_Object*)current_context->who)->obj == who->obj))
         current_context->who = NULL;
 
     if (!cf_object_get_flag(who->obj,FLAG_REMOVED)) {
@@ -2201,15 +2201,17 @@ void Handle_Destroy_Hook(Crossfire_Object *ob) {
 static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
     object *event, *ob;
     ob = pyobj->obj;
-    if (ob->subtype == EVENT_DESTROY && !strcmp(ob->slaying, "cfpython_auto_hook")) {
-        pyobj->del_event = NULL;
+    pyobj->del_event = NULL;
+    if (ob->type == EVENT_CONNECTOR && ob->subtype == EVENT_DESTROY && ob->slaying && !strcmp(ob->slaying, "cfpython_auto_hook"))
         return;
-    }
-    if (&ob->arch->clone == ob) {
+    if (&ob->arch->clone == ob)
         /* Don't insert that in an archetype, leads to weird issues. */
-        pyobj->del_event = NULL;
         return;
-    }
+
+    if (ob->head)
+        /* Don't insert in an object's other part, head has it, enough. */
+        return;
+
     event = cf_create_object_by_name("event_destroy");
     if (!event)
     {

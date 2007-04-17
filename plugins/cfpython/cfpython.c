@@ -98,6 +98,7 @@ static PyObject* getEvent(PyObject* self, PyObject* args);
 static PyObject* getPrivateDictionary(PyObject* self, PyObject* args);
 static PyObject* getSharedDictionary(PyObject* self, PyObject* args);
 static PyObject* getArchetypes(PyObject* self, PyObject* args);
+static PyObject* getPlayers(PyObject* self, PyObject* args);
 static PyObject* getMaps(PyObject* self, PyObject* args);
 static PyObject* getParties(PyObject* self, PyObject* args);
 static PyObject* getRegions(PyObject* self, PyObject* args);
@@ -147,8 +148,9 @@ static PyMethodDef CFPythonMethods[] = {
     {"PluginVersion",       getCFPythonVersion,     METH_VARARGS},
     {"CreateObject",        createCFObject,         METH_VARARGS},
     {"CreateObjectByName",  createCFObjectByName,   METH_VARARGS},
-    {"GetPrivateDictionary", getPrivateDictionary,  METH_VARARGS},
-    {"GetSharedDictionary",  getSharedDictionary,   METH_VARARGS},
+    {"GetPrivateDictionary",getPrivateDictionary,   METH_VARARGS},
+    {"GetSharedDictionary", getSharedDictionary,    METH_VARARGS},
+    {"GetPlayers",          getPlayers,             METH_VARARGS},
     {"GetArchetypes",       getArchetypes,          METH_VARARGS},
     {"GetMaps",             getMaps,                METH_VARARGS},
     {"GetParties",          getParties,             METH_VARARGS},
@@ -480,6 +482,20 @@ static PyObject* getArchetypes(PyObject* self, PyObject* args)
     while (arch) {
         PyList_Append(list, Crossfire_Archetype_wrap(arch));
         arch = cf_archetype_get_next(arch);
+    }
+    return list;
+}
+
+static PyObject* getPlayers(PyObject* self, PyObject* args)
+{
+    PyObject* list;
+    object* pl;
+
+    list = PyList_New(0);
+    pl = cf_object_get_object_property(NULL, CFAPI_PLAYER_PROP_NEXT);
+    while (pl) {
+        PyList_Append(list, Crossfire_Object_wrap(pl));
+        pl = cf_object_get_object_property(pl, CFAPI_PLAYER_PROP_NEXT);
     }
     return list;
 }
@@ -1240,7 +1256,7 @@ CF_PLUGIN int postInitPlugin()
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     initContextStack();
     cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, globalEventListener);
-    /*registerGlobalEvent(NULL, EVENT_CLOCK, PLUGIN_NAME, globalEventListener);*/
+    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, globalEventListener);
     /*registerGlobalEvent(NULL, EVENT_CRASH, PLUGIN_NAME, globalEventListener);*/
     cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, globalEventListener);
     cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, globalEventListener);

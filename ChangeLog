@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cfpython/cfpython_object.c: don't insert hooks in 'more' parts of items.
+plugins/cfpython/cfpython.c: player list (GetPlayers()), activate 'clock' event.
+---
+Give access to player list to plugins. Fix mishandling of multipart objects.
+ include/plugin.h
+ server/plugins.c
+Nicolas Weeger 2007-04-17
+
 common/region.c: don't crash if no regions file found.
 Nicolas Weeger 2007-04-15
 
