@@ -269,6 +269,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_PLAYER_PROP_BED_MAP           153
 #define CFAPI_PLAYER_PROP_BED_X             154
 #define CFAPI_PLAYER_PROP_BED_Y             155
+#define CFAPI_PLAYER_PROP_NEXT              156
 
 #define CFAPI_MAP_PROP_FLAGS                0
 #define CFAPI_MAP_PROP_DIFFICULTY           1
