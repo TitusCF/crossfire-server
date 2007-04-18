@@ -1282,7 +1282,7 @@ void* cfapi_map_get_map_property(int* type, ...)
     case CFAPI_MAP_PROP_MESSAGE:
         rstr = va_arg(args, sstring*);
         *rstr = map->msg;
-        *type = CFAPI_STRING;
+        *type = CFAPI_SSTRING;
         break;
 
     case CFAPI_MAP_PROP_NEXT:
