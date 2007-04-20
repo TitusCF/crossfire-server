@@ -169,7 +169,7 @@ int apply_potion(object *op, object *tmp)
             return 0;
         }
         depl = present_arch_in_ob(at, op);
-        if (depl!=NULL) {
+        if (depl!=NULL && (tmp->level != 0 && tmp->level >= op->level)) {
             for (i = 0; i < NUM_STATS; i++)
                 if (get_attr_value(&depl->stats, i)) {
                     draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_ATTRIBUTE,
