@@ -755,6 +755,7 @@ void copy_object(object *op2, object *op) {
     if(op->lore!=NULL)			free_string(op->lore);
     if(op->materialname != NULL)	free_string(op->materialname);
     if(op->custom_name != NULL)		free_string(op->custom_name);
+    if(op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
 
     /* Basically, same code as from clear_object() */
 
@@ -777,6 +778,10 @@ void copy_object(object *op2, object *op) {
     if(op->msg!=NULL)	    add_refcount(op->msg);
     if(op->custom_name!=NULL)	    add_refcount(op->custom_name);
     if (op->materialname != NULL)   add_refcount(op->materialname);
+    if (op->discrete_damage != NULL) {
+        op->discrete_damage = calloc(1, sizeof(sint16) * NROFATTACKS);
+        memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16) * NROFATTACKS);
+    }
 
     /* If archetype is a temporary one, we need to update reference count, because
      * that archetype will be freed by free_object when the last object is removed.
@@ -1285,7 +1290,7 @@ static void free_object2(object *ob, int free_inventory) {
     if(ob->lore!=NULL)	    FREE_AND_CLEAR_STR(ob->lore);
     if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
     if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
-
+    if(ob->discrete_damage != NULL) FREE_AND_CLEAR(ob->discrete_damage);
 
     /* Why aren't events freed? */
     free_key_values(ob);

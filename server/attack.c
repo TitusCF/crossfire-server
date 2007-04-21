@@ -1090,12 +1090,17 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %u\n", attacknum);
 	return 0;
     }
-    
+
     if (dam < 0) {
 	LOG(llevError,"hit_player_attacktype called with negative damage: %d\n", dam);
 	return 0;
     }
-    
+
+    if (hitter->current_weapon && hitter->current_weapon->discrete_damage != NULL)
+        dam = hitter->current_weapon->discrete_damage[attacknum];
+    else if (hitter->discrete_damage != NULL)
+        dam = hitter->discrete_damage[attacknum];
+
     /* AT_INTERNAL is supposed to do exactly dam.  Put a case here so
      * people can't mess with that or it otherwise get confused.  */
     if (attacknum == ATNR_INTERNAL) return dam;

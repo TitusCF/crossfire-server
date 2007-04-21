@@ -291,6 +291,17 @@ const char *const spell_mapping[] = {
  */
 #define SET_RESIST(op, type, val)  op->resist[type] = val;
 
+
+/**
+ * Insert discrete damage.
+ */
+static void set_damage(object* op, int type, int val) {
+    if (!op->discrete_damage) {
+        op->discrete_damage = calloc(1, sizeof(sint16) * NROFATTACKS);
+    }
+    op->discrete_damage[type] = val;
+}
+
 /** Next value as integer. */
 #define IVAL	atoi(yval())
 /** Next value as float. */
@@ -1085,6 +1096,36 @@ A	.+
 ^dam_modifier{S}	op->dam_modifier = IVAL;
 ^duration_modifier{S}	op->duration_modifier = IVAL;
 ^is_buildable{S}	SET_OR_CLEAR_FLAG( op, FLAG_IS_BUILDABLE, IVAL );
+
+  /* Discrete damage */
+^damage_physical{S}	set_damage(op, ATNR_PHYSICAL, IVAL);
+^damage_magic{S}	set_damage(op, ATNR_MAGIC, IVAL);
+^damage_fire{S}		set_damage(op, ATNR_FIRE, IVAL);
+^damage_electricity{S}	set_damage(op, ATNR_ELECTRICITY, IVAL);
+^damage_cold{S}		set_damage(op, ATNR_COLD, IVAL);
+^damage_confusion{S}	set_damage(op, ATNR_CONFUSION, IVAL);
+^damage_acid{S}		set_damage(op, ATNR_ACID, IVAL);
+^damage_drain{S}	set_damage(op, ATNR_DRAIN, IVAL);
+^damage_weaponmagic{S}	set_damage(op, ATNR_WEAPONMAGIC, IVAL);
+^damage_ghosthit{S}	set_damage(op, ATNR_GHOSTHIT, IVAL);
+^damage_poison{S}	set_damage(op, ATNR_POISON, IVAL);
+^damage_slow{S}		set_damage(op, ATNR_SLOW, IVAL);
+^damage_paralyze{S}	set_damage(op, ATNR_PARALYZE, IVAL);
+^damage_turn_undead{S}	set_damage(op, ATNR_TURN_UNDEAD, IVAL);
+^damage_fear{S}		set_damage(op, ATNR_FEAR, IVAL);
+^damage_cancellation{S}	set_damage(op, ATNR_CANCELLATION, IVAL);
+^damage_deplete{S}	set_damage(op, ATNR_DEPLETE, IVAL);
+^damage_death{S}	set_damage(op, ATNR_DEATH, IVAL);
+^damage_chaos{S}	set_damage(op, ATNR_CHAOS, IVAL);
+^damage_counterspell{S}	set_damage(op, ATNR_COUNTERSPELL, IVAL);
+^damage_godpower{S}	set_damage(op, ATNR_GODPOWER, IVAL);
+^damage_holyword{S}	set_damage(op, ATNR_HOLYWORD, IVAL);
+^damage_blind{S}	set_damage(op, ATNR_BLIND, IVAL);
+^damage_internal{S}	set_damage(op, ATNR_INTERNAL, IVAL);
+^damage_life_stealing{S}	set_damage(op, ATNR_LIFE_STEALING, IVAL);
+^damage_disease{S}	set_damage(op, ATNR_DISEASE, IVAL);
+
+
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
 
@@ -1749,6 +1790,19 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
         if (op->body_info[i] != op2->body_info[i]) {
             FAST_STRCAT(fastbuf,body_locations[i].save_name);
             FAST_SAVE_LONG(fastbuf," ",op->body_info[i],1);
+        }
+    }
+
+    /* Save discrete damage if applicable
+     * Note that given how the discrete_damage allocation is done, there can't be any case where
+     * op->discrete_damage == NULL && op2->discrete_damage != NULL.
+     */
+    if (op->discrete_damage) {
+        for (i=0; i<NROFATTACKS; i++) {
+            if (op2->discrete_damage == NULL || op2->discrete_damage[i] != op->discrete_damage[i]) {
+                FAST_STRNCAT(fastbuf,"damage_",7);
+                FAST_SAVE_LONG(fastbuf,resist_save[i],op->discrete_damage[i],strlen(resist_save[i]));
+            }
         }
     }
     FINISH_FASTCAT(fastbuf);

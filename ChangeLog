@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add discrete damage type for weapons, and probably also spells and such.
+ common/loader.l object.c
+ include/object.h
+ server/attack.c
+Nicolas Weeger 2007-04-21
+
 server/spell_attack.c: wrong argument to ob_process, leading to infinite recursion.
 Nicolas Weeger 2007-04-21
 

@@ -243,6 +243,7 @@ typedef struct obj {
     uint8       no_save;       /**< This field indicates that the object should never
                                 * be saved even for map swapout. Not handled by the
                                 * loading or saving code. */
+    sint16* discrete_damage; /**< damage values, based on each attacktype. */
 } object;
 
 /**
