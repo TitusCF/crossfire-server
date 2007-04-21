@@ -695,8 +695,10 @@ msg
   The Ancient School of Occidental Mages created that weapon during
   the Empire Wars, charging it with their Chaotic Powers.
 endmsg
-event_attack_plugin Python
-event_attack /python/items/weapon_occidental_mages.py
+arch event_attack
+title Python
+slaying /python/items/weapon_occidental_mages.py
+end
 end
 #
 #
@@ -2174,8 +2176,10 @@ msg
   The Ancient School of Occidental Mages created that ring during
   the Empire Wars, charging it with their Chaotic Powers.
 endmsg
-event_apply_plugin Python
-event_apply /python/items/ring_occidental_mages.py
+arch event_apply
+title Python
+slaying /python/items/ring_occidental_mages.py
+end
 end
 #
 # Horns:
