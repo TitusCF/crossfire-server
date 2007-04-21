@@ -545,7 +545,7 @@ object *arch_to_object(archetype *at) {
         return NULL;
     }
     op=get_object();
-    copy_object(&at->clone,op);
+    copy_object_with_inv(&at->clone,op);
     op->arch=at;
     return op;
 }

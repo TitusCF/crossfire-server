@@ -1411,6 +1411,7 @@ void init_artifacts(void) {
     linked_char *tmp;
     int value, comp;
     artifactlist *al;
+    archetype dummy_archetype;
 
     if (has_been_inited) return;
     else has_been_inited = 1;
@@ -1458,8 +1459,10 @@ void init_artifacts(void) {
         else if (!strncmp(cp, "Object",6)) {
             art->item = (object *) calloc(1, sizeof(object));
             reset_object(art->item);
+            art->item->arch = &dummy_archetype;
             if (!load_object(fp, art->item,LO_LINEMODE,0))
                 LOG(llevError,"Init_Artifacts: Could not load object.\n");
+            art->item->arch = NULL;
             art->item->name = add_string((strchr(cp, ' ')+1));
             al=find_artifactlist(art->item->type);
             if (al==NULL) {
@@ -1660,6 +1663,17 @@ void add_abilities(object *op, object *change) {
         if (op->msg)
             free_string(op->msg);
         op->msg = add_refcount(change->msg);
+    }
+
+    if (change->inv) {
+        object* inv = change->inv;
+        object* copy;
+        while (inv) {
+            copy = get_object();
+            copy_object(inv, copy);
+            insert_ob_in_ob(copy, op);
+            inv = inv->below;
+        }
     }
 }
 

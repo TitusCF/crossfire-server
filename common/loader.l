@@ -37,7 +37,7 @@
 #include <newserver.h>
 #include <sproto.h>
 
-#define YY_DECL int lex_load(object *op, int map_flags)
+#define YY_DECL int lex_load(int* depth, object** items, int maxdepth, int map_flags, int linemode)
 
 static char *yval(void);
 
@@ -670,6 +670,7 @@ A	.+
     int ismore=0;
 
     lex_error=0;
+    object* op = items[*depth];
 
 %}
 
@@ -756,14 +757,19 @@ A	.+
 			    strcpy(lorebuf, "");
 			    msglen=0;
 			    total_msglen=0;
-			    lex_load(tmp, map_flags);
-			    if (tmp->arch) {
-				insert_ob_in_ob(tmp,op);
-			    }
-			    else {
-				LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
-				free_object(tmp);
-			    }
+                (*depth)++;
+                items[*depth] = tmp;
+                if (linemode == 0) {
+                    lex_load(depth, items, maxdepth, map_flags, linemode);
+                    (*depth)--;
+                    if (tmp->arch) {
+                        insert_ob_in_ob(tmp,op);
+                    }
+                    else {
+                        LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
+                        free_object(tmp);
+                    }
+                }
 			}
 			/* This is the actual archetype definition then */
 			else {
@@ -797,6 +803,12 @@ A	.+
 		    }
 
 ^end{WS}$	    {	check_loaded_object(op);
+            if (linemode) {
+                if ((*depth) > 0) {
+                    insert_ob_in_ob(items[*depth], items[(*depth)-1]);
+                }
+                return LL_NORMAL;
+            }
 			if (ismore) return LL_MORE;
 			else return LL_NORMAL;
 		    }
@@ -1213,7 +1225,11 @@ static char *yval()
 int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
     int retval;
     char inbuf[MAX_BUF];
+#define MAXDEPTH 10
+    object* items[MAXDEPTH];
+    int depth = 0;
 
+    items[0] = op,
     strcpy(msgbuf, "");
     msglen=0;
     total_msglen=0;
@@ -1229,15 +1245,18 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
         yy_delete_buffer(YY_CURRENT_BUFFER);
         while (fgets(inbuf, MAX_BUF-3, fp)) {
             yybufstate=yy_scan_string(inbuf);
-            retval=lex_load(op, map_flags);
+            retval=lex_load(&depth, items, MAXDEPTH, map_flags, 1);
             yy_delete_buffer(yybufstate);
-            if (retval==LL_NORMAL) return retval;
+            if (retval==LL_NORMAL) {
+                if (depth == 0) return retval;
+                else depth--;
+            }
         }
         LOG(llevDebug,"Got eof while scanning strings\n");
         return LL_EOF;
     }
 
-    retval=lex_load(op, map_flags);
+    retval=lex_load(&depth, items, MAXDEPTH, map_flags, 0);
 
 /*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
     return retval;
@@ -1262,15 +1281,18 @@ int load_object(FILE *fp, object *op, int bufstate, int map_flags) {
  */
 int set_variable(object *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
-    int retval;
+    int retval, depth;
+    object* items[MAXDEPTH];
 
     strcpy(msgbuf, "");
     msglen=0;
     total_msglen=0;
     strcpy(lorebuf, "");
+    items[0] = op;
+    depth = 0;
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
-    retval=lex_load(op,0);
+    retval=lex_load(&depth, items, MAXDEPTH,0, 0);
     yy_switch_to_buffer(yycurbuf);
     yy_delete_buffer(yybufstate);
     yy_pop_state();

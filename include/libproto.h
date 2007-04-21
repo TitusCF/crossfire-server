@@ -244,6 +244,7 @@ extern const char *get_ob_key_value(const object *op, const char *const key);
 extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
 extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object *tmp);
+extern void copy_object_with_inv(object *src_ob, object *dest_ob);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst, char *path, int size);
 extern void path_normalize(char *path);
@@ -393,7 +394,7 @@ extern void strip_endline(char *buf);
 extern void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize);
 extern void make_list_like(char *input);
 /* loader.c */
-extern int lex_load(object *op, int map_flags);
+extern int lex_load(int* depth, object** items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);
 extern void yypop_buffer_state(void);
 extern int yyget_lineno(void);

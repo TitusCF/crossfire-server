@@ -824,6 +824,27 @@ void copy_object(object *op2, object *op) {
 }
 
 /**
+ * copy an object with an inventory...  i.e., duplicate the inv too.
+ * @param src_ob
+ * object to copy.
+ * @param dest_ob
+ * where to copy.
+ * @todo
+ * replace with a function in common library (there is certainly one).
+ */
+void copy_object_with_inv(object *src_ob, object *dest_ob) {
+    object *walk,*tmp;
+
+    copy_object(src_ob,dest_ob);
+
+    for(walk=src_ob->inv;walk!=NULL;walk=walk->below) {
+        tmp=get_object();
+        copy_object(walk,tmp);
+        insert_ob_in_ob(tmp,dest_ob);
+    }
+}
+
+/**
  * Allocates more objects for the list of unused objects.
  *
  * It is called from get_object() if the unused list is empty.

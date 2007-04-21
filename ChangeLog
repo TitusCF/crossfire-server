@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Partially implement feature request #1543553: Inventories in artifacts/archetypes.
+It's now possible to have items in artifacts, they'll be inserted in object.
+Doesn't yet work with archetypes, since you could possibly reference an archetype
+defined *after* the current archetype.
+ common/arch.c: do a deep object copy instead of a partial one
+ common/loader.l: handle inventories during artifact load
+ common/object.c: put copy_object_with_inv
+ common/treasure.c: add inventory from artifact
+ include/libproto.h: updated prototypes
+ random_maps/random_map.c rproto.h: moved copy_object_with_inv to common lib
+Nicolas Weeger 2007-04-21
+
 Implement EVENT_TELL.
  plugins/cfpython/cfpython.c
  plugins/template/plugin_template.c
