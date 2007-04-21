@@ -103,7 +103,7 @@ int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill) 
         tmp->map = op->map;
     }
     if ((tmp = insert_ob_in_map(tmp, tmp->map, op, 0)) != NULL)
-        ob_process(op);
+        ob_process(tmp);
     return 1;
 }
 

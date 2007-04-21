@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/spell_attack.c: wrong argument to ob_process, leading to infinite recursion.
+Nicolas Weeger 2007-04-21
+
 server/apply.c: potions of life now won't affect player if their level is too low.
 Nicolas Weeger 2007-04-20
 
