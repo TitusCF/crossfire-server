@@ -1404,6 +1404,13 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             snprintf(context->options, sizeof(context->options), "mapreset");
             break;
         case EVENT_TELL:
+            op = va_arg(args, object*);
+            buf = va_arg(args, char*);
+            context->activator = Crossfire_Object_wrap(op);
+            if (buf != NULL)
+                snprintf(context->message, sizeof(context->message), "%s", buf);
+            op = va_arg(args, object*);
+            context->third = Crossfire_Object_wrap(op);
             snprintf(context->options, sizeof(context->options), "tell");
             break;
         case EVENT_MAPUNLOAD:

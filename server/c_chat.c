@@ -244,6 +244,8 @@ static int do_tell(object* op, char* params, int adjust_listen) {
             pl->listening = 10;
         }
 
+        execute_global_event(EVENT_TELL, op, msg, pl->ob);
+
         draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
             MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
             buf, NULL);

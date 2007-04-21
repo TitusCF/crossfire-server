@@ -406,9 +406,13 @@ int execute_global_event(int eventcode, ...)
         break;
 
     case EVENT_TELL:
+        /* Tell: who, what, to who */
+        op = va_arg(args, object*);
+        buf = va_arg(args, const char*);
+        op2 = va_arg(args, object*);
         for (cp = plugins_list; cp != NULL; cp = cp->next) {
             if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode);
+                cp->gevent[eventcode](&rt, eventcode, op, buf, op2);
         }
         break;
 

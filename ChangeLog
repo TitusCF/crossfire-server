@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement EVENT_TELL.
+ plugins/cfpython/cfpython.c
+ plugins/template/plugin_template.c
+ server/c_chat.c plugins.c
+Nicolas Weeger 2007-04-21
+
 Add discrete damage type for weapons, and probably also spells and such.
  common/loader.l object.c
  include/object.h
