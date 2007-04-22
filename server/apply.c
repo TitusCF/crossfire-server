@@ -1366,25 +1366,6 @@ static void apply_spellbook (object *op, object *tmp)
         return;
     }
 
-        /* artifact_spellbooks have 'slaying' field point to a spell name,
-         * instead of having their spell stored in stats.sp.  These are
-         * legacy spellbooks
-         */
-    if(tmp->slaying != NULL) {
-        spell=arch_to_object(find_archetype_by_object_name(tmp->slaying));
-        if (!spell) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                                 "The book's formula for %s is incomplete",
-                                 "The book's formula for %s is incomplete",
-                                 tmp->slaying);
-            return;
-        }
-        insert_ob_in_ob(spell, tmp);
-        free_string(tmp->slaying);
-        tmp->slaying=NULL;
-    }
-
     skop = find_skill_by_name(op, tmp->skill);
 
         /* need a literacy skill to learn spells. Also, having a literacy level
@@ -1446,7 +1427,7 @@ static void apply_spellbook (object *op, object *tmp)
         return;
     }
 
-    get_levelnumber(spell->level, level, 100);
+    get_levelnumber(spell->level, level, sizeof(level));
     draw_ext_info_format(NDI_UNIQUE, 0, op,
                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                          "The spellbook contains the %s level spell %s.",

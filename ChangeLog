@@ -15,6 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add background music support to maps, change 'socket.sound' field signification.
+Add SockList_AddString helper function.
+ common/map.c
+ include/map.h newserver.h sockproto.h sounds.h
+ server/c_misc.c server.c
+ socket/lowlevel.c sounds.c
+Nicolas Weeger 2007-04-22
+
+server/apply.c: remove legacy spellbook handling.
+Nicolas Weeger 2007-04-22
+
 Second and last part of feature request #1543553: Inventories in artifacts/archetypes.
 It's now possible to put "arch" in archetypes, they'll be correctly handled.
 Like any other object, you can customize it.
