@@ -762,12 +762,11 @@ A	.+
                 if (linemode == 0) {
                     lex_load(depth, items, maxdepth, map_flags, linemode);
                     (*depth)--;
-                    if (tmp->arch && (arch_init == 0)) {
+                    if (tmp->arch) {
                         insert_ob_in_ob(tmp,op);
                     }
                     else {
-                        if (init_archetypes == 0)
-                            LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
+                        LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
                         free_object(tmp);
                     }
                 }

@@ -22,7 +22,8 @@ socket/loop.c: Hopeful fix for old bug - can be rare cases where
   and crashes.
 MSW 2007-04-21
 
-lib/artifacts: fix bug #1673804: Items "of Occidental Mages" use obsolete event_xxx fields.
+lib/artifacts: fix bug #1673804: Items "of Occidental Mages" use obsolete
+event_xxx fields.
 Nicolas Weeger 2007-04-21
 
 Partially implement feature request #1543553: Inventories in artifacts/archetypes.

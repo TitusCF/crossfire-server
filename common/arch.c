@@ -415,7 +415,6 @@ static void first_arch_pass(FILE *fp) {
 static void second_arch_pass(FILE *fp) {
     char buf[MAX_BUF],*variable=buf,*argument,*cp;
     archetype *at=NULL,*other;
-    object* inv;
 
     while(fgets(buf,MAX_BUF,fp)!=NULL) {
         if(*buf=='#')
@@ -445,17 +444,6 @@ static void second_arch_pass(FILE *fp) {
                     LOG(llevError,"Failed to link treasure to arch (%s): %s\n",at->name, argument);
                 else
                     at->clone.randomitems=tl;
-            }
-        } else if (!strcmp("arch", variable)) {
-            inv = create_archetype(argument);
-            load_object(fp, inv, LO_LINEMODE, 0);
-            if (at) {
-                insert_ob_in_ob(inv, &at->clone);
-                /*LOG(llevDebug, "Put %s in %s\n", inv->name, at->clone.name);*/
-            }
-            else {
-                LOG(llevError, "Got an arch %s not inside an Object.\n", argument);
-                free_object(inv);
             }
         }
     }
