@@ -241,6 +241,10 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     /* Lauwenmark : Here we handle the MAPENTER global event */
     execute_global_event(EVENT_MAPENTER, op, op->map);
 
+    if (op->contr) {
+        send_background_music(op->contr, newmap->background_music);
+    }
+
     /** Hidden DMs don't appear on map. */
     if (!op->contr->hidden)
         newmap->players++;

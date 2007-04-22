@@ -33,6 +33,7 @@
 #include <sproto.h>
 #endif
 #include <assert.h>
+#include <sounds.h>
 
 extern weathermap_t **weathermap;
 
@@ -1735,13 +1736,13 @@ int command_explore (object *op, char *params)
 
 int command_sound (object *op, char *params)
 {
-    if (op->contr->socket.sound) {
-        op->contr->socket.sound=0;
+    if (!(op->contr->socket.sound & SND_MUTE)) {
+        op->contr->socket.sound=op->contr->socket.sound | SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "Sounds are turned off", NULL);
     }
     else {
-        op->contr->socket.sound=1;
+        op->contr->socket.sound=op->contr->socket.sound & ~SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "The sounds are enabled.", NULL);
     }

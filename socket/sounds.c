@@ -31,7 +31,7 @@ void play_sound_player_only(player *pl, short soundnum,  sint8 x, sint8 y)
     char soundtype;
     SockList sl;
 
-    if (!pl->socket.sound) return;
+    if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_EFFECTS)) return;
     /* Do some quick conversion to the sound type we want. */
     if (soundnum>=SOUND_CAST_SPELL_0) {
 	soundtype=SOUND_SPELL;
@@ -71,4 +71,30 @@ void play_sound_map(const mapstruct *map, int x, int y, short sound_num)
 	    }
 	}
     }
+}
+
+/**
+ * Sends background music to client.
+ *
+ * @param pl
+ * player
+ * @param music
+ * background music name. Can be NULL.
+ */
+void send_background_music(player* pl, const char* music) {
+    char soundtype;
+    SockList sl;
+
+    if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_MUSIC)) return;
+
+    sl.buf=malloc(MAXSOCKSENDBUF);
+    strcpy((char*)sl.buf, "music ");
+    sl.len=strlen((char*)sl.buf);
+    if (music)
+        SockList_AddString(&sl, music);
+    else
+        SockList_AddString(&sl, "NONE");
+
+    Send_With_Handling(&pl->socket, &sl);
+    free(sl.buf);
 }

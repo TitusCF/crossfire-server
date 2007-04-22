@@ -51,4 +51,12 @@
 /* NROF_SOUNDS is defined in "defines.h".  Don't forget to change this number
  * if you add or remove any sound.
  */
+
+/**
+ * Those flags are for the 'socket.sound' field.
+ */
+#define SND_EFFECTS     1       /**< Client wands regular sounds. */
+#define SND_MUSIC       2       /**< Client wants background music info. */
+#define SND_MUTE        64      /**< Don't sent anything for now. */
+
 #endif /* SOUNDS_H */

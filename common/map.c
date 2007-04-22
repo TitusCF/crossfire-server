@@ -1129,8 +1129,9 @@ static int load_map_header(FILE *fp, mapstruct *m)
                     m->tile_path[tile-1] = strdup_local(path);
                 }
             } /* end if tile direction (in)valid */
-        }
-        else {
+        } else  if (!strcmp(key,"background_music")) {
+            m->background_music = strdup_local(value);
+        } else {
             LOG(llevError,"Got unknown value in map header: %s %s\n", key, value);
         }
     }
@@ -1625,6 +1626,7 @@ void free_map(mapstruct *m,int flag) {
     if (m->maplore) FREE_AND_CLEAR(m->maplore);
     if (m->shopitems) FREE_AND_CLEAR(m->shopitems);
     if (m->shoprace) FREE_AND_CLEAR(m->shoprace);
+    if (m->background_music) FREE_AND_CLEAR(m->background_music);
     if (m->buttons)
         free_objectlinkpt(m->buttons);
     m->buttons = NULL;

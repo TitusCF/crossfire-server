@@ -334,6 +334,7 @@ typedef struct mapdef {
     struct mapdef *tile_map[4];	/* Next map, linked list */
     char path[HUGE_BUF];	/* Filename of the map */
     struct timeval last_reset_time; /* A timestamp of the last original map loading */
+    char* background_music;
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other
