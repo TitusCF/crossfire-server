@@ -335,6 +335,9 @@ archetype *get_archetype_struct(void) {
  * Reads/parses the archetype-file, and copies into a linked list
  * of archetype-structures.
  * Called through load_archetypes()
+ *
+ * Will discard object in archetypes, those are handled by second_arch_pass().
+ *
  * @param fp
  * opened file descriptor which will be used to read the archetypes.
  */
@@ -411,10 +414,16 @@ static void first_arch_pass(FILE *fp) {
 /**
  * Reads the archetype file once more, and links all pointers between
  * archetypes and treasure lists. Must be called after first_arch_pass().
+ *
+ * This also handles putting items in inventory when defined in archetype.
+ *
+ * @param fp
+ * file fron which to read. Won't be rewinded.
  */
 static void second_arch_pass(FILE *fp) {
     char buf[MAX_BUF],*variable=buf,*argument,*cp;
     archetype *at=NULL,*other;
+    object* inv;
 
     while(fgets(buf,MAX_BUF,fp)!=NULL) {
         if(*buf=='#')
@@ -444,6 +453,17 @@ static void second_arch_pass(FILE *fp) {
                     LOG(llevError,"Failed to link treasure to arch (%s): %s\n",at->name, argument);
                 else
                     at->clone.randomitems=tl;
+            }
+        } else if (!strcmp("arch", variable)) {
+            inv = create_archetype(argument);
+            load_object(fp, inv, LO_LINEMODE, 0);
+            if (at) {
+                insert_ob_in_ob(inv, &at->clone);
+                /*LOG(llevDebug, "Put %s in %s\n", inv->name, at->clone.name);*/
+            }
+            else {
+                LOG(llevError, "Got an arch %s not inside an Object.\n", argument);
+                free_object(inv);
             }
         }
     }

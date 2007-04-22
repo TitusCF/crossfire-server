@@ -741,6 +741,13 @@ A	.+
 			 * appropriately.
 			 */
 			if (op->arch) {
+                /* The logic is a follow:
+                 - in linemode, we are loading artifacts, so just increase depth, next calls with work
+                  on object in inventory, and linking done in the "end" part
+                 - when not in linemode, we are loading an archetype, or a map
+                 - if archetype loading, discard the object, it'll be handled by second_arch_pass()
+                 - else put object like usual
+                */
 			    object *tmp;
 			    char *yv=yval();
 
@@ -762,11 +769,12 @@ A	.+
                 if (linemode == 0) {
                     lex_load(depth, items, maxdepth, map_flags, linemode);
                     (*depth)--;
-                    if (tmp->arch) {
+                    if (tmp->arch && (arch_init == 0)) {
                         insert_ob_in_ob(tmp,op);
                     }
                     else {
-                        LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
+                        if (init_archetypes == 0)
+                            LOG(llevDebug,"Discarding object without arch: %s\n", tmp->name?tmp->name:"(null)");
                         free_object(tmp);
                     }
                 }
@@ -804,6 +812,7 @@ A	.+
 
 ^end{WS}$	    {	check_loaded_object(op);
             if (linemode) {
+                /* Linemode is only set for artifact loading. */
                 if ((*depth) > 0) {
                     insert_ob_in_ob(items[*depth], items[(*depth)-1]);
                 }

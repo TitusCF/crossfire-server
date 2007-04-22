@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Second and last part of feature request #1543553: Inventories in artifacts/archetypes.
+It's now possible to put "arch" in archetypes, they'll be correctly handled.
+Like any other object, you can customize it.
+ common/arch.c loader.l
+Nicolas Weeger 2007-04-22
+
 server/server.c:  Add some debug to see if objects are on swapped out
   maps in process_objects()
 socket/loop.c: Hopeful fix for old bug - can be rare cases where
