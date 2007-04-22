@@ -1067,6 +1067,19 @@ static void process_events (mapstruct *map)
         if (map != NULL && op->map != map)
             continue;
 
+	/* Seen some cases where process_object() is crashing because
+	 * the object is on a swapped out map.  But can't be sure if
+	 * something in the chain of events caused the object to
+	 * change maps or was just never removed - this will
+	 * give some clue as to its state before call to
+	 * process_object
+	 */
+	if (op->map && op->map->in_memory != MAP_IN_MEMORY) {
+            LOG (llevError, "BUG: process_events(): Processing object "
+                "on swapped out map: %s (%d), map=%s\n", op->name, op->count, op->map->path);
+
+	}
+
         /* Animate the object.  Bug of feature that andim_speed
          * is based on ticks, and not the creatures speed?
          */

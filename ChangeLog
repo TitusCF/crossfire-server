@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/server.c:  Add some debug to see if objects are on swapped out
+  maps in process_objects()
+socket/loop.c: Hopeful fix for old bug - can be rare cases where
+  next player gets freed, so code tries to process garbage player
+  and crashes.
+MSW 2007-04-21
+
 Partially implement feature request #1543553: Inventories in artifacts/archetypes.
 It's now possible to have items in artifacts, they'll be inserted in object.
 Doesn't yet work with archetypes, since you could possibly reference an archetype

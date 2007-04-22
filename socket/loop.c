@@ -688,6 +688,18 @@ void doeric_server(void)
 	}
 	else {
 	    handle_client(&pl->socket, pl);
+
+	    /* There seems to be rare cases where next points to a removed/freed player.
+	     * My belief is that this player does something (shout, move, whatever)
+	     * that causes data to be sent to the next player on the list, but
+	     * that player is defunct, so the socket codes removes that player.
+	     * End result is that next now points at the removed player, and
+	     * that has garbage data so we crash.  So update the next pointer
+	     * while pl is still valid.  MSW 2007-04-21
+	     */
+	    next = pl->next;
+
+
 	    /* If the player has left the game, then the socket status
 	     * will be set to this be the leave function.  We don't
 	     * need to call leave again, as it has already been called
@@ -718,6 +730,7 @@ void doeric_server(void)
 		draw_client_map(pl->ob);
 		if (pl->socket.update_look) esrv_draw_look(pl->ob);
 		if (pl->socket.tick) send_tick(pl);
+
 	    }
 	}
     }
