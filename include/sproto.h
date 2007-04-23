@@ -332,7 +332,7 @@ void fatal_signal(int make_core, int close_sockets);
 racelink *find_racelink(const char *name);
 /* login.c */
 void emergency_save(int flag);
-void delete_character(const char *name, int new);
+void delete_character(const char *name);
 int verify_player(const char *name, char *password);
 int check_name(player *me, const char *name);
 void destroy_object(object *op);

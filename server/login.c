@@ -89,21 +89,19 @@ void emergency_save(int flag) {
   }
 }
 
-/* Delete character with name.  if new is set, also delete the new
- * style directory, otherwise, just delete the old style playfile
- * (needed for transition)
+/**
+ * Totally deletes a character. The contents of its directory are effectively totally removed.
+ * Used when a player 'quits' the game, or dies on a server with permadeath and no resurrect.
+ *
+ * @param name
+ * player to delete.
  */
-void delete_character(const char *name, int new) {
-    char buf[MAX_BUF], err[MAX_BUF];
+void delete_character(const char *name) {
+    char buf[MAX_BUF];
 
-    sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
-    if(unlink(buf)== -1)
-	LOG(llevDebug, "Cannot delete character file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
-    if (new) {
-	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,name);
-	/* this effectively does an rm -rf on the directory */
-	remove_directory(buf);
-    }
+    snprintf(buf, sizeof(buf), "%s/%s/%s",settings.localdir,settings.playerdir,name);
+    /* this effectively does an rm -rf on the directory */
+    remove_directory(buf);
 }
 
 /* This verify that a character of name exits, and that it matches

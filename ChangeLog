@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Clean old code related to single player directory.
+ include/sproto.h
+ server/login.c player.c
+Nicolas Weeger 2007-04-23
+
 Implement feature request #1560389: improve inscription logic.
 New server command, "inscribe", that makes it easy to send spell and scroll information.
 'setup inscribe 1' will return 'inscribe 1', so client know they can use this command.
