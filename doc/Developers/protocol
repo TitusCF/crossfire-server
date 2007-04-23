@@ -434,6 +434,11 @@ C->S: mark <tag>
 	easy way for the client to know what the marked item is (although,
 	client knowing this is not strictly needed)
 
+C->S: inscribe 0 <tag1> <tag2>
+    Player wants to write spell 'tag1' on scroll 'tag2'. This is rougly equivalent
+    of manually marking an item, readying the spell, and using the inscription skill.
+    '0' should be one byte, tags should be 4 byte integers.
+
 Server updates to client:
 
 S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
@@ -1270,6 +1275,10 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    Faceset the client wishes to use.  If the faceset is not
 	    valid, the server returns the faceset the client will be
 	    using (default 0).
+
+    inscribe (0/1):
+        Client will probably always send 1. Server will reply with 1 if it
+        supports the 'inscribe' command, 0 else.
 
 	itemcmd (1/2):
 	    Defines the revision of the item command that will be used to send

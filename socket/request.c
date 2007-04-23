@@ -258,6 +258,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
         } else if (!strcmp(cmd,"want_pickup")) {
             ns->want_pickup = ( atoi(param) != 0 ? 1 : 0 );
             safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
+        } else if (!strcmp(cmd,"inscribe")) {
+            safe_strcat(cmdback, atoi(param) != 0 ? "1" : "0", &slen, HUGE_BUF);
         } else {
                 /* Didn't get a setup command we understood -
                  * report a failure to the client.

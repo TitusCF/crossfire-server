@@ -883,4 +883,57 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
     }
 }
 
+void inscribe_scroll_cmd(char* buf, int len, player* pl) {
+    object *scroll, *spell, *marked, *inscription, *currentspell;
+    tag_t tscroll, tspell, tmarked;
+    char type;
 
+    if (len < 1) {
+        LOG(llevDebug, "Player %s sent an invalid inscribe command.\n", pl->ob->name);
+        return;
+    }
+
+    type = buf[0];
+
+    inscription = find_skill_by_name(pl->ob, "inscription");
+    if (!inscription) {
+        draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You don't know how to write!", NULL);
+        return;
+    }
+
+    if (type == 0) {
+        if (len != 9) {
+            LOG(llevDebug, "Player %s sent an invalid inscribe command.\n", pl->ob->name);
+            return;
+        }
+        tscroll = GetInt_String(buf+1);
+        tspell = GetInt_String(buf+5);
+
+        scroll = esrv_get_ob_from_count(pl->ob, tscroll);
+        if (!scroll) {
+            LOG(llevDebug, "Player %s sent an invalid scroll for inscribe command.\n", pl->ob->name);
+            return;
+        }
+
+        spell = esrv_get_ob_from_count(pl->ob, tspell);
+        if (!spell) {
+            LOG(llevDebug, "Player %s sent an invalid spell for inscribe command.\n", pl->ob->name);
+            return;
+        }
+
+        tmarked = pl->mark_count;
+        marked = pl->mark;
+        currentspell = pl->ranges[range_magic];
+
+        pl->mark_count = tscroll;
+        pl->mark = scroll;
+        pl->ranges[range_magic] = spell;
+
+        write_on_item(pl->ob, "", inscription);
+
+        pl->mark_count = tmarked;
+        pl->mark = marked;
+        pl->ranges[range_magic] = currentspell;
+    } else {
+    }
+}

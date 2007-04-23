@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1560389: improve inscription logic.
+New server command, "inscribe", that makes it easy to send spell and scroll information.
+'setup inscribe 1' will return 'inscribe 1', so client know they can use this command.
+ doc/Developers/protocol
+ include/sockproto.h
+ socket/item.c loop.c request.c
+Nicolas Weeger 2007-04-23
+
 Add background music support to maps, change 'socket.sound' field signification.
 Add SockList_AddString helper function.
  common/map.c

@@ -116,6 +116,7 @@ static struct player_cmd_mapping player_commands[] = {
     { "lock",		(func_uint8_int_pl)lock_item_cmd,	1},
     { "mark",		(func_uint8_int_pl)mark_item_cmd,	1},
     { "mapredraw",	map_redraw_cmd,	0},	/* Added: phil */
+    { "inscribe",   inscribe_scroll_cmd,    0},
     { NULL, NULL, 0}	/* terminator */
 };
 

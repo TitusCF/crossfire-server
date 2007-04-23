@@ -44,6 +44,7 @@ void mark_item_cmd(uint8 *data, int len, player *pl);
 void look_at(object *op, int dx, int dy);
 void look_at_cmd(char *buf, int len, player *pl);
 void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
+void inscribe_scroll_cmd(char* buf, int len, player* pl);
 /* loop.c */
 void request_info_cmd(char *buf, int len, socket_struct *ns);
 void handle_oldsocket(socket_struct *ns);
