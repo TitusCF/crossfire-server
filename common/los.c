@@ -474,8 +474,8 @@ void update_los(object *op) {
      * be blocked by different spaces in front, this mean that a lot of spaces
      * could be examined multile times, as each path would be looked at.
      */
-    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2 - 1; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2 + 1; x++)
-        for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2 - 1; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2 + 1; y++)
+    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2 + 1; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2 - 1; x++)
+        for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2 + 1; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2 - 1; y++)
             check_wall(op, x, y);
 
 
