@@ -172,7 +172,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
     const char* propname;
-    int i, size;
+    int size;
     char* buf;
 
     va_start(args, type);
@@ -209,11 +209,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
-    char* buf;
-    player* pl;
-    object* op;
     int event_code;
-    mapstruct* map;
 
     va_start(args, type);
     event_code = va_arg(args, int);
@@ -228,10 +224,8 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
 CF_PLUGIN int postInitPlugin()
 {
-    int rtype = 0;
     char path[500];
     const char* dir;
-    int i;
 
     cf_log(llevInfo, "%s post init\n", PLUGIN_VERSION);
 

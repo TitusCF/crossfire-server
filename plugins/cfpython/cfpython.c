@@ -240,7 +240,6 @@ static PyObject* matchString(PyObject* self, PyObject* args)
     char *premiere;
     char *seconde;
     const char *result;
-    int val;
     if (!PyArg_ParseTuple(args, "ss", &premiere, &seconde))
         return NULL;
 
@@ -1248,8 +1247,6 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
 CF_PLUGIN int postInitPlugin()
 {
-    int hooktype = 1;
-    int rtype = 0;
     PyObject*   scriptfile;
     char path[1024];
 

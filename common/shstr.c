@@ -349,7 +349,6 @@ void ss_dump_statistics(char* buf, int size) {
  * buf if (what & SS_DUMP_TOTALS) or NULL.
  */
 char* ss_dump_table(int what, char* buf, int size) {
-    static char totals[80];
     int entries = 0, refs = 0, links = 0;
     int i;
 

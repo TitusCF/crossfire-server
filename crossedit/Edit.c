@@ -53,7 +53,9 @@
  */
 
 static void copy_map(mapstruct *m1, mapstruct *m2) {
+#if 0
     int x,y;
+#endif
 
     memcpy(m2, m1, sizeof(mapstruct));
 

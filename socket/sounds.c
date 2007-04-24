@@ -82,7 +82,6 @@ void play_sound_map(const mapstruct *map, int x, int y, short sound_num)
  * background music name. Can be NULL.
  */
 void send_background_music(player* pl, const char* music) {
-    char soundtype;
     SockList sl;
 
     if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_MUSIC)) return;

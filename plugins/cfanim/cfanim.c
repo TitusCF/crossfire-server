@@ -992,9 +992,6 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
 
 CF_PLUGIN int postInitPlugin(void)
 {
-    int hooktype = 1;
-    int rtype = 0;
-
     cf_log(llevDebug, "CFAnim 2.0a post init\n");
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */

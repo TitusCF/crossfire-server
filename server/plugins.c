@@ -1313,7 +1313,6 @@ void* cfapi_map_set_map_property(int* type, ...)
 {
     va_list args;
     mapstruct* map;
-    int val;
     int property;
     const char* buf;
 
@@ -3285,8 +3284,6 @@ void* cfapi_object_create(int* type, ...)
     case 1: /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
         {
             const char* sval;
-            object* op;
-            char name[MAX_BUF];
             archetype* at;
 
             sval = va_arg(args, const char*);
@@ -4103,7 +4100,6 @@ void* cfapi_object_teleport(int *type, ...)
 
     if (!out_of_map(map, x, y)) {
         int k;
-        object *tmp;
         k = find_first_free_spot(who, map, x, y);
         if (k == -1) {
             *res = 1;
@@ -4205,7 +4201,6 @@ void* cfapi_party_get_property(int* type, ...)
     int prop;
     va_list args;
     object* obarg;
-    player* pl;
     sstring* rsstring;
     player** rplayer;
     partylist** rparty;

@@ -205,7 +205,6 @@ static object* adjust_skill_tool(object* who, object* skill, object* skill_tool)
 object *find_skill_by_name(object *who, const char *name)
 {
     object *skill=NULL, *skill_tool=NULL, *tmp;
-    int bonuses = 0;
 
     if (!name) return NULL;
 

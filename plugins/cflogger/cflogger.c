@@ -507,7 +507,6 @@ CF_PLUGIN int postInitPlugin()
 {
     char path[500];
     const char* dir;
-    int i;
 
     cf_log(llevInfo, "%s post init\n", PLUGIN_VERSION);
 

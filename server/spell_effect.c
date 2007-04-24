@@ -150,7 +150,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
  */
 static void polymorph_living(object *op, int level) {
     archetype *at;
-    int nr = 0, x = op->x, y = op->y, numat=0, choice,friendly;
+    int x = op->x, y = op->y, numat=0, choice,friendly;
     mapstruct *map = op->map;
     object *tmp, *next, *owner;
 
