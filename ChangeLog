@@ -15,6 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/spell_effect.c: In polymorph_item() fix possible access to freed
+   object.
 common/los.c: In update_los() fix array out-of-bounds access for clients using
    25x25 map size.
 Andreas Kirschbaum 2007-04-24

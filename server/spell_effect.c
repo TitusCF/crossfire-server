@@ -320,6 +320,7 @@ static void polymorph_item(object *who, object *op, int level) {
     if (new_ob->invisible) {
         LOG(llevError,"polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
         free_object(new_ob);
+        return;
     }
 
     /* Unable to generate an acceptable item?  Melt it */
