@@ -557,14 +557,10 @@ int move_symptom(object *symptom) {
         for(/*tmp initialized above */;tmp!=NULL;tmp=tmp->more) {
             char name[MAX_BUF];
             new_ob = arch_to_object(symptom->other_arch);
-            strcpy(name, victim->name);
-            strncat(name, "'s ", MAX_BUF);
-            strncat(name, new_ob->name, MAX_BUF);
+            snprintf(name, sizeof(name), "%s's %s", victim->name, new_ob->name);
             FREE_AND_COPY(new_ob->name, name);
             if (new_ob->name_pl != NULL) {
-                strcpy(name, victim->name);
-                strncat(name, "'s ", MAX_BUF);
-                strncat(name, new_ob->name_pl, MAX_BUF);
+                snprintf(name, sizeof(name), "%s's %s", victim->name, new_ob->name_pl);
                 FREE_AND_COPY(new_ob->name_pl, name);
             }
             new_ob->x = tmp->x;

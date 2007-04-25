@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/disease.c: In move_symptom() fix possible buffer overflow when creating
+   symptom names.
+Andreas Kirschbaum 2007-04-25
+
 server/spell_effect.c: In polymorph_item() fix possible access to freed
    object.
 common/los.c: In update_los() fix array out-of-bounds access for clients using
