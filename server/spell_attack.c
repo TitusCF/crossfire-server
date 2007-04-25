@@ -1232,7 +1232,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
                     if (infect_object(target_head, disease, 1)) {
                         object *flash;  /* visual effect for inflicting disease */
 
-                        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS, "You inflict %s on %s!", disease->name, target_head->name);
+                        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS, "You inflict %s on %s!", NULL, disease->name, target_head->name);
 
                         free_object(disease); /* don't need this one anymore */
                         flash = create_archetype(ARCH_DETECT_MAGIC);
