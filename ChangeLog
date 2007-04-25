@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/gods.c: In tailor_god_spell() do not pass NULL value to add_string().
 server/spell_effect.c, server/alchemy.c: Fix format arguments of calls to
    draw_ext_info_format().
 server/disease.c: In move_symptom() fix possible buffer overflow when creating
