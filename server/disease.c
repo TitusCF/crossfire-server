@@ -539,6 +539,11 @@ int move_symptom(object *symptom) {
 
     if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype,1);
     else hit_player(victim,MAX(1,-victim->stats.maxhp * symptom->stats.dam / 100.0),symptom,symptom->attacktype,1);
+    if(QUERY_FLAG(victim, FLAG_FREED)) {
+        remove_ob(symptom);
+        free_object(symptom);
+        return 0;
+    }
 
     if(symptom->stats.maxsp>0) sp_reduce = symptom->stats.maxsp;
     else sp_reduce = MAX(1,victim->stats.maxsp * symptom->stats.maxsp/100.0);
