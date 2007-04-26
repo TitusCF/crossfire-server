@@ -58,6 +58,7 @@
 #include <arpa/inet.h>
 #endif
 #include <newserver.h>
+#include <loader.h>
 
 Socket_Info socket_info;
 socket_struct* init_sockets;
@@ -141,7 +142,11 @@ void init_connection(socket_struct *ns, const char *from_ip)
      */
     memset(ns->inbuf.buf, 0, MAXSOCKRECVBUF);
     memset(&ns->lastmap,0,sizeof(struct Map));
-    memset(ns->faces_sent, 0, ns->faces_sent_len*sizeof(*ns->faces_sent));
+    if (!ns->faces_sent)
+	ns->faces_sent =  calloc(sizeof(*ns->faces_sent),
+			     nrofpixmaps);
+    ns->faces_sent_len = nrofpixmaps;
+
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
     memset(&ns->stats,0,sizeof(struct statsinfo));
     ns->map_scroll_x=0;
@@ -323,13 +328,15 @@ void free_newsocket(socket_struct *ns)
 #endif
     }
     if (ns->stats.range)
-	free(ns->stats.range);
+	FREE_AND_CLEAR(ns->stats.range);
     if (ns->stats.title)
-        free(ns->stats.title);
+        FREE_AND_CLEAR(ns->stats.title);
     if (ns->comment)
-	free(ns->comment);
-    free(ns->host);
-    free(ns->inbuf.buf);
+	FREE_AND_CLEAR(ns->comment);
+    if (ns->host)
+	FREE_AND_CLEAR(ns->host);
+    if (ns->inbuf.buf)
+	FREE_AND_CLEAR(ns->inbuf.buf);
 }
 
 /** Sends the 'goodbye' command to the player, and closes connection. */

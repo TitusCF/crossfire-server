@@ -15,7 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-servver/disease.c: In move symptom() stop processing if victim dies. This
+server/player.c:  No need to copy faces_sent - just use the data already
+   there, and set ns->faces_sent to NULL so we know there is no data there.
+socket/init.c: Allocate ns->faces_sent if not there.
+MSW 2007-04-25
+
+socket/init.c: Change free calls with FREE_AND_CLEAR - were getting double
+   frees - since pointer wasn't reset, was no way for program to know not
+   to have the data cleared again.
+MSW 2007-04-24
+
+server/disease.c: In move symptom() stop processing if victim dies. This
    prevents access to freed objects.
 server/gods.c: In tailor_god_spell() do not pass NULL value to add_string().
 server/spell_effect.c, server/alchemy.c: Fix format arguments of calls to

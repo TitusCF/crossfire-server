@@ -324,10 +324,15 @@ int add_player(socket_struct *ns) {
 
     p=get_player(NULL);
     memcpy(&p->socket, ns, sizeof(socket_struct));
-    p->socket.faces_sent = malloc(p->socket.faces_sent_len*sizeof(*p->socket.faces_sent));
+
+    /* The memcpy above copies the reference to faces sent.  So we need to clear
+     * that pointer in ns, otherwise we get a double free.
+     */
+    ns->faces_sent=NULL;
+
     if(p->socket.faces_sent == NULL)
 	fatal(OUT_OF_MEMORY);
-    memcpy(p->socket.faces_sent, ns->faces_sent, p->socket.faces_sent_len*sizeof(*p->socket.faces_sent));
+
     /* Needed because the socket we just copied over needs to be cleared.
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
