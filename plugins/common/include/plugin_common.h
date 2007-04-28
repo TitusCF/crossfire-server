@@ -59,6 +59,7 @@ extern const char*  cf_re_cmp(const char *str, const char *regexp);
 /* Objects */
 extern void         cf_object_set_int_property(object* op, int propcode, int value);
 extern int          cf_object_get_int_property(object* op, int propcode);
+extern long         cf_object_get_long_property(object* op, long propcode);
 extern void         cf_object_set_movetype_property(object* op, int propcode, MoveType value);
 extern MoveType     cf_object_get_movetype_property(object* op, int propcode);
 extern object*      cf_object_get_object_property(object* op, int propcode);

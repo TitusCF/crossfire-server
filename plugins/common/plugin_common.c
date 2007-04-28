@@ -284,6 +284,14 @@ int cf_object_get_int_property(object* op, int propcode)
     assert(type == CFAPI_INT);
     return value;
 }
+long cf_object_get_long_property(object* op, long propcode)
+{
+    int type;
+    long value;
+    cfapiObject_get_property(&type, op, propcode, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
 void cf_object_set_movetype_property(object* op, int propcode, MoveType value)
 {
     int type;
