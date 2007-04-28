@@ -157,7 +157,8 @@ these are their own object. */
 /* check if victim is susceptible to disease. */
 static int is_susceptible_to_disease(object *victim, object *disease)
 {
-    if(!QUERY_FLAG(victim,FLAG_ALIVE)) return 0;
+    /* Non living and DMs are immune. */
+    if(!QUERY_FLAG(victim,FLAG_ALIVE) || QUERY_FLAG(victim, FLAG_WIZ)) return 0;
 
     if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
 	return 1;
@@ -176,6 +177,10 @@ int move_disease(object *disease) {
     /*  first task is to determine if the disease is inside or outside of someone.
      * If outside, we decrement 'value' until we're gone.
      */
+
+    /* DMs don't infect, and don't suffer either. */
+    if (disease->env && QUERY_FLAG(disease->env, FLAG_WIZ))
+        return 0;
 
     if(disease->env==NULL) { /* we're outside of someone */
 	if ( disease->stats.maxhp > 0 ) disease->value--;
@@ -395,6 +400,10 @@ static int do_symptoms(object *disease) {
 
     if(victim == NULL || victim==disease)
 	return 0;/* no-one to inflict symptoms on */
+
+    /* DMs don't suffer from diseases. */
+    if (QUERY_FLAG(victim, FLAG_WIZ))
+        return 0;
 
     symptom = find_symptom(disease);
     if(symptom==NULL) {
