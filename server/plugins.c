@@ -1637,6 +1637,7 @@ void* cfapi_object_get_property(int* type, ...)
     sint64* rint64;
     partylist** rparty;
     double* rdouble;
+    long* rlong;
 
     va_start(args, type);
 
@@ -1867,9 +1868,9 @@ void* cfapi_object_get_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_VALUE:
-            rint = va_arg(args, int*);
-            *rint = op->value;
-            *type = CFAPI_INT;
+            rlong = va_arg(args, long*);
+            *rlong = op->value;
+            *type = CFAPI_LONG;
             break;
 
         case CFAPI_OBJECT_PROP_LEVEL:
@@ -2570,9 +2571,9 @@ void* cfapi_object_set_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_VALUE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->value = iarg;
+            larg = va_arg(args, long);
+            *type = CFAPI_LONG;
+            op->value = larg;
             break;
 
         case CFAPI_OBJECT_PROP_LEVEL:
@@ -2677,8 +2678,8 @@ void* cfapi_object_set_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_PERM_EXP:
-            larg = va_arg(args, long);
-            *type = CFAPI_LONG;
+            s64arg = va_arg(args, sint64);
+            *type = CFAPI_SINT64;
             op->perm_exp = larg;
             break;
 

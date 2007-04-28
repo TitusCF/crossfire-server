@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/plugins.c, plugins/cfpython/cfpython_object.c: Fix type mismatch in
+   varargs function parameters.
+Andreas Kirschbaum 2007-04-28
+
 server/disease.c: fix bug #1706986: Rabies can infect a DM. DMs are now immune
  and non contagious.
 Nicolas Weeger 2007-04-28

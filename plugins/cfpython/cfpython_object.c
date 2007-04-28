@@ -690,7 +690,7 @@ static PyObject* Object_GetSubtype(Crossfire_Object* whoptr, void* closure)
 static PyObject* Object_GetValue(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
+    return Py_BuildValue("l", cf_object_get_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE));
 }
 static PyObject* Object_GetArchName(Crossfire_Object* whoptr, void* closure)
 {
@@ -1613,7 +1613,7 @@ static int Object_SetValue(Crossfire_Object* whoptr, PyObject* value, void* clos
     if (!PyArg_Parse(value,"l",&val))
         return -1;
 
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE, val);
+    cf_object_set_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE, val);
     return 0;
 }
 static int Object_SetNoSave(Crossfire_Object* whoptr, PyObject* value, void* closure)
