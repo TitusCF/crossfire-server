@@ -604,7 +604,7 @@ void doeric_server(void)
 	    newsocknum = socket_info.allocated_sockets;
 	    socket_info.allocated_sockets++;
 	    init_sockets[newsocknum].faces_sent_len = nrofpixmaps;
-	    init_sockets[newsocknum].faces_sent = malloc(nrofpixmaps*sizeof(*init_sockets[newsocknum].faces_sent));
+	    init_sockets[newsocknum].faces_sent = calloc(1, nrofpixmaps*sizeof(*init_sockets[newsocknum].faces_sent));
 	    if (!init_sockets[newsocknum].faces_sent) fatal(OUT_OF_MEMORY);
 	    init_sockets[newsocknum].status = Ns_Avail;
 	}

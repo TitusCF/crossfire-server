@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+socket/loop.c: fix unitialized variable.
+Nicolas Weeger 2007-04-28
+
 plugins/cfpython/cfpython_object.c: fix wrong property set (value is int).
 Nicolas Weeger 2007-04-28
 
