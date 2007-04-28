@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_REVISION($Id$)
-AC_INIT([crossfire], [1.9.1], [crossfire-devel@listserv.real-time.com])
+AC_INIT([crossfire], [2.0-dev], [crossfire-devel@listserv.real-time.com])
 AC_CONFIG_AUX_DIR(utils)
 AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
