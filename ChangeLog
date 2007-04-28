@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cfpython/cfpython_object.c: fix wrong property set (value is int).
+Nicolas Weeger 2007-04-28
+
 server/player.c:  No need to copy faces_sent - just use the data already
    there, and set ns->faces_sent to NULL so we know there is no data there.
 socket/init.c: Allocate ns->faces_sent if not there.

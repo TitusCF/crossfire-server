@@ -1613,7 +1613,7 @@ static int Object_SetValue(Crossfire_Object* whoptr, PyObject* value, void* clos
     if (!PyArg_Parse(value,"l",&val))
         return -1;
 
-    cf_object_set_long_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE, val);
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_VALUE, val);
     return 0;
 }
 static int Object_SetNoSave(Crossfire_Object* whoptr, PyObject* value, void* closure)
