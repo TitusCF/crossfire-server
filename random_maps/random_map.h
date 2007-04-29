@@ -79,6 +79,7 @@ typedef struct {
     int treasureoptions;
     int symmetry_used;
     region *region;
+    int multiple_floors;
 } RMParms;
 
 int load_parameters(FILE *fp, int bufstate,RMParms *RP);

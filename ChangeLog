@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Partially implement feature request #1668158: Better nethack implementation.
+Random maps now have a new 'multiple_floors' parameter that, if set, will
+make the different rooms of the map have different floors.
+All floors are still taken from the same floor style, for coherence.
+ random_maps/floor.c reader.l random_map.c random_map.h
+Nicolas Weeger 2007-04-29
+
 random_maps/wall.c: walls should always block, even if they sometimes allow
  some movement.
 Nicolas Weeger 2007-04-29

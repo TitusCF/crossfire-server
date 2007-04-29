@@ -36,6 +36,37 @@
 #include <rproto.h>
 
 /**
+ * Checks if the tile 'propagates' the floor.
+ * @param item
+ * tile to check.
+ * @return
+ * 1 if this tile should propagate, 0 else.
+ */
+static int can_propagate(char item) {
+    return (item == '\0' || item == '<' || item == '>') ? 1 : 0;
+}
+
+/**
+ *
+ */
+static void put_floor(mapstruct* map, char** layout, int x, int y, object* floor_arch) {
+    int dx, dy;
+    object* floor;
+
+    floor = arch_to_object(floor_arch->arch);
+    floor->x = x;
+    floor->y = y;
+    insert_ob_in_map(floor,map,floor,INS_NO_MERGE | INS_NO_WALK_ON);
+
+    for (dx = -1; dx < 2; dx++) {
+        for (dy = -1; dy < 2; dy++) {
+            if (GET_MAP_OB(map, x + dx, y + dy) == NULL && can_propagate(layout[x + dx][y + dy]))
+                put_floor(map, layout, x + dx, y + dy, floor_arch);
+        }
+    }
+}
+
+/**
  * Creates the Crossfire mapstruct object from the layout, and adds the floor.
  * @param layout
  * generated layout.
@@ -54,6 +85,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     mapstruct *style_map=0;
     object *the_floor;
     mapstruct *newMap =0;
+    int x, y;
 
     /* allocate the map */
     newMap = get_empty_map(RP->Xsize, RP->Ysize);
@@ -64,13 +96,23 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     style_map = find_style(styledirname,floorstyle,-1);
     if(style_map == 0) return newMap;
 
+    if (RP->multiple_floors) {
+        for (x = 0; x < RP->Xsize; x++) {
+            for (y = 0; y < RP->Ysize; y++) {
+                if (GET_MAP_OB(newMap, x, y) == NULL && layout[x][y] == '\0')
+                    put_floor(newMap, layout, x, y, pick_random_object(style_map));
+            }
+        }
+    }
+
     /* fill up the map with the given floor style */
-    if((the_floor=pick_random_object(style_map))!=NULL) {
-        int i,j;
-        for(i=0;i<RP->Xsize;i++)
-            for(j=0;j<RP->Ysize;j++) {
+    if ((the_floor=pick_random_object(style_map))!=NULL) {
+        for(x=0;x<RP->Xsize;x++)
+            for(y=0;y<RP->Ysize;y++) {
+                if (GET_MAP_OB(newMap, x, y) != NULL)
+                    continue;
                 object *thisfloor = arch_to_object(the_floor->arch);
-                thisfloor->x = i; thisfloor->y = j;
+                thisfloor->x = x; thisfloor->y = y;
                 insert_ob_in_map(thisfloor,newMap,thisfloor,INS_NO_MERGE | INS_NO_WALK_ON);
             }
     }

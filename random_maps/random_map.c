@@ -782,6 +782,11 @@ void write_map_parameters_to_string(char *buf,RMParms *RP) {
         sprintf(small_buf,"treasureoptions %d\n",RP->treasureoptions);
         strcat(buf,small_buf);
     }
+
+    if (RP->multiple_floors) {
+        sprintf(small_buf,"multiple_floors %d\n",RP->multiple_floors);
+        strcat(buf,small_buf);
+    }
 }
 
 /**

@@ -101,6 +101,7 @@ WS	[ \t]*
 ^random_seed{S}        RP->random_seed = IVAL;
 ^treasureoptions{S}    RP->treasureoptions = IVAL;
 ^exit_on_final_map{S} strncpy(RP->exit_on_final_map,rmap_yval(),RM_SIZE);
+^multiple_floors{S} RP->multiple_floors = IVAL;
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
