@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+random_maps/wall.c: walls should always block, even if they sometimes allow
+ some movement.
+Nicolas Weeger 2007-04-29
+
 server/rune.c: trap's message can be NULL (random maps for instance).
 Nicolas Weeger 2007-04-29
 

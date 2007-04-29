@@ -203,6 +203,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
                     thiswall->x = i;
                     thiswall->y = j;
                     thiswall->move_block = MOVE_ALL;
+                    thiswall->move_allow = 0;
                     insert_ob_in_map(thiswall,map,thiswall,INS_NO_MERGE | INS_NO_WALK_ON);
                 }
             }
