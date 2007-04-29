@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
+
+plugins/common/plugin_common.c: wrong param type.
+Nicolas Weeger 2007-04-29
+
 plugins/cfanim/cfanim.c: fixed a crash occuring when ghosting a DM. Made the
    Animator work by making it listening to the time event. Fixed the bug that
    left the player invisible after having been ghosted.
