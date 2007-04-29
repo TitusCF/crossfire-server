@@ -853,6 +853,9 @@ static void animate_one(CFanimation *animation, long int milliseconds)
             cf_log(llevDebug, "CFAnim: Setting wizard flags done\n");
 
     }
+    if (animation->paralyze)
+        animation->victim->speed_left= -99999;
+
     cf_object_update(animation->victim,UP_OBJ_CHANGE);
 
     if (animation->nextmovement)
@@ -897,6 +900,8 @@ void animate(void)
     {
         if (!current->nextmovement)
         {
+            if (current->paralyze)
+                current->victim->speed_left=current->victim->speed;
             next=current->nextanimation;
             if (first_animation==current)
                 first_animation=next;
