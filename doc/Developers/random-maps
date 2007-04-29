@@ -40,6 +40,11 @@ you may use crossedit to modify the style maps, or create new ones.
 			floortype from that style map for the random map.
 			The entire map will be tiled with the floortype.
 
+ multiple_floors <0/1>  If set to 1, different rooms of the map will have
+                        different floors (from the same map style though).
+			This only works if there are doors, as the filling
+			uses them to find rooms.
+
   wallstyle <style>	Load /styles/wallstyles/<style> and pick a random
 			walltype from that style for the random map.  All
 			the walls in the map will be of this type.  The walls
