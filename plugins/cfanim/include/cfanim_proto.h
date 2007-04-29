@@ -30,6 +30,8 @@ long int initteleport(char *name, char *parameters, struct CFmovement_struct *mo
 int runteleport(struct CFanimation_struct *animation, long int id, void *parameters);
 long int initnotice(char *name, char *parameters, struct CFmovement_struct *move_entity);
 int runnotice(struct CFanimation_struct *animation, long int id, void *parameters);
+long int initstop(char *name, char *parameters, struct CFmovement_struct *move_entity);
+int runstop(struct CFanimation_struct *animation, long int id, void *parameters);
 void prepare_commands(void);
 int equality_split(char *buffer, char **variable, char **value);
 int get_boolean(char *string, int *bool);

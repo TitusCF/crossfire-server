@@ -375,6 +375,15 @@ int runnotice(struct CFanimation_struct* animation, long int id, void* parameter
     return 1;
 }
 
+long int initstop(char *name, char *parameters, struct CFmovement_struct *move_entity)
+{
+    return 1;
+}
+int runstop(struct CFanimation_struct *animation, long int id, void *parameters)
+{
+    cf_log(llevDebug, "CFAnim: stop encountered\n");
+}
+
 
 CFanimationHook animationbox[]=
 {
@@ -420,7 +429,8 @@ CFanimationHook animationbox[]=
     {"pickup_object",initpickupobject,runpickupobject},
     {"ghosted",initghosted,runghosted},
     {"teleport",initteleport,runteleport},
-    {"notice",initnotice,runnotice}
+    {"notice",initnotice,runnotice},
+    {"stop", initstop, runstop}
 };
 int animationcount=sizeof (animationbox) / sizeof (CFanimationHook);
 int ordered_commands=0;
@@ -879,6 +889,7 @@ void animate(void)
 {
     CFanimation* current;
     CFanimation* next;
+    CFanimation* previous_anim=NULL;
     struct timeval now;
     static struct timeval yesterday;
     static int already_passed=0;
@@ -905,13 +916,21 @@ void animate(void)
             next=current->nextanimation;
             if (first_animation==current)
                 first_animation=next;
+            else
+            {
+                cf_log(llevDebug, "CFAnim: Not the first anim, binding to %p.\n", previous_anim);
+                previous_anim->nextanimation = next;
+            }
             if (current->name)
                 free (current->name);
             free (current);
             current=next;
         }
         else
+        {
+            previous_anim = current;
             current=current->nextanimation;
+        }
     }
 }
 
@@ -1125,6 +1144,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     context->activator   = va_arg(args, object*);
     context->third       = va_arg(args, object*);
     buf                  = va_arg(args, char*);
+
     if (buf !=0)
         strcpy(context->message,buf);
     context->fix         = va_arg(args, int);
@@ -1137,11 +1157,21 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     pushContext(context);
     /* Put your plugin action(s) here */
-    cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
+    if (context->activator != NULL)
+    {
+        cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
            context->activator->name,
            context->script,
            context->options);
-
+    }
+    else if (context->who != NULL)
+    {
+        context->activator = context->who;
+        cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
+           context->who->name,
+           context->script,
+           context->options);
+    }
     context->returnvalue = start_animation(context->who, context->activator,
                                            context->script, context->options);
 

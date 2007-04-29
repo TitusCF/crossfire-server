@@ -269,6 +269,12 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                     int *rv;
 
                     rv = plugin->eventfunc(&rvt, op, /*eventcode, */activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp);
+                    if (QUERY_FLAG(tmp, FLAG_UNIQUE))
+                    {
+                        LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
+                        remove_ob(tmp);
+                        free_object(tmp);
+                    }
                     return *rv;
                 }
             }

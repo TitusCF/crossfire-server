@@ -22,6 +22,7 @@ plugins/cfanim/cfanim.c: fixed a crash occuring when ghosting a DM. Made the
    Animator work by making it listening to the time event. Fixed the bug that
    left the player invisible after having been ghosted.
    Made the paralyze option of animation files to work.
+   Fixed crashes when more than an animator was running simultaneously.
 Yann Chachkoff 2007-04-29
 
 server/plugins.c, plugins/cfpython/cfpython_object.c: Fix type mismatch in
