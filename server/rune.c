@@ -271,9 +271,9 @@ void spring_trap(object *trap,object *victim)
 
     trap->stats.hp--;  /*decrement detcount */
 
-    if(victim && victim->type==PLAYER) 
-	draw_ext_info(NDI_UNIQUE, 0,victim,MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
-		      trap->msg, trap->msg);
+    if(victim && victim->type==PLAYER && trap->msg != NULL)
+        draw_ext_info(NDI_UNIQUE, 0,victim,MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
+            trap->msg, trap->msg);
 
     /*  Flash an image of the trap on the map so the poor sod
      *   knows what hit him.  
