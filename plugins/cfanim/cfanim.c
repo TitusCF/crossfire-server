@@ -278,6 +278,7 @@ int runghosted(struct CFanimation_struct* animation, long int id, void* paramete
         corpse->x=animation->victim->x;
         corpse->y=animation->victim->y;
         corpse->type=0;
+        CLEAR_FLAG(corpse, FLAG_WIZ);
         corpse->contr=NULL;
         cf_map_insert_object_there(corpse, animation->victim->map, NULL, 0);
         animation->wizard=1;
@@ -292,6 +293,7 @@ int runghosted(struct CFanimation_struct* animation, long int id, void* paramete
         cf_object_free(animation->corpse);
         animation->corpse=NULL;
         animation->victim->invisible=0;
+        cf_player_move(animation->victim->contr, 0);
     }
     animation->ghosted=id;
     return 1;
@@ -651,7 +653,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     CFanimation* current_anim;
     char    path[1024];
 
-    fichier = fopen(cf_get_maps_directory(file, path, sizeof(path)),"r");
+    fichier = fopen(file,"r");
     if (fichier == NULL)
     {
         cf_log(llevDebug, "CFAnim: Unable to open %s\n", path);
@@ -847,6 +849,8 @@ static void animate_one(CFanimation *animation, long int milliseconds)
         cf_object_set_flag(animation->victim, FLAG_WIZPASS,1);
         cf_object_set_flag(animation->victim, FLAG_WIZCAST,1);
         cf_object_set_flag(animation->victim, FLAG_WIZ,1);
+        if (animation->verbose)
+            cf_log(llevDebug, "CFAnim: Setting wizard flags done\n");
 
     }
     cf_object_update(animation->victim,UP_OBJ_CHANGE);
@@ -1075,6 +1079,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             context->activator = va_arg(args, object*);
             break;
         case EVENT_CLOCK:
+            animate();
             break;
         case EVENT_MAPRESET:
             buf = va_arg(args, char*);
