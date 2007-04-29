@@ -47,7 +47,16 @@ static int can_propagate(char item) {
 }
 
 /**
- *
+ * Put a floor at specified location, and then to adjacent tiles if applicable.
+ * @param map
+ * where to put the floor.
+ * @param layout
+ * layout that was used to generate the map.
+ * @param x
+ * @param y
+ * coordinates.
+ * @param floor_arch
+ * what floor to use.
  */
 static void put_floor(mapstruct* map, char** layout, int x, int y, object* floor_arch) {
     int dx, dy;
