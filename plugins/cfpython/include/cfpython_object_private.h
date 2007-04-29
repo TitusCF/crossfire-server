@@ -253,6 +253,7 @@ static PyObject* Crossfire_Object_ReadKey(Crossfire_Object* who, PyObject* args)
 static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args);
+static PyObject* Crossfire_Object_Move(Crossfire_Object* who, PyObject* args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
 
@@ -416,6 +417,7 @@ static PyMethodDef ObjectMethods[] = {
     { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS},
     { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS},
     { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS},
+    { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS},
     {NULL, NULL, 0}
 };
 

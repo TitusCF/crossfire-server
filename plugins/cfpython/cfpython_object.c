@@ -2112,6 +2112,14 @@ static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args)
     return Py_None;
 }
 
+static PyObject* Crossfire_Object_Move(Crossfire_Object* who, PyObject* args) {
+    int dir;
+    if (!PyArg_ParseTuple(args,"i", &dir))
+        return NULL;
+    EXISTCHECK(who);
+    return Py_BuildValue("i", cf_object_move(who->obj,dir, who->obj));
+}
+
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
 {
     EXISTCHECK_INT(left);

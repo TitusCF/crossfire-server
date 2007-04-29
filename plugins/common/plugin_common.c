@@ -420,15 +420,19 @@ void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int fl
     cfapiObject_change_exp(&type, op, exp, strlen(skill_name) > 0 ? skill_name : NULL, flag);
     assert(type == CFAPI_NONE);
 }
-void cf_player_move(player* pl, int dir)
+int cf_player_move(player* pl, int dir)
 {
     int type, ret;
     cfapiObject_move(&type,1,pl,dir, &ret);
+    assert(type == CFAPI_INT);
+    return ret;
 }
-void cf_object_move(object* op, int dir, object*originator)
+int cf_object_move(object* op, int dir, object*originator)
 {
     int type, ret;
     cfapiObject_move(&type,0,op,dir,originator, &ret);
+    assert(type == CFAPI_INT);
+    return ret;
 }
 /**
  * Wrapper for manual_apply().
