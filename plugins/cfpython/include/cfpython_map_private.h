@@ -47,6 +47,7 @@ static PyObject* Map_GetWPartX(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure);
+static PyObject* Map_GetUnique(Crossfire_Map* whoptr, void* closure);
 
 static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure);
 
@@ -90,6 +91,7 @@ static PyGetSetDef Map_getseters[] = {
     {"WPartY",          (getter)Map_GetWPartY,      NULL, NULL, NULL },
     {"Message",         (getter)Map_GetMessage,     NULL, NULL, NULL },
     {"Region",          (getter)Map_GetRegion,     NULL, NULL, NULL },
+    {"Unique",          (getter)Map_GetUnique,     NULL, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

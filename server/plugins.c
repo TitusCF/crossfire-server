@@ -1307,6 +1307,12 @@ void* cfapi_map_get_map_property(int* type, ...)
         *type = CFAPI_PREGION;
         break;
 
+    case CFAPI_MAP_PROP_UNIQUE:
+        rint = va_arg(args, int*);
+        *rint = map->unique;
+        *type = CFAPI_INT;
+        break;
+
     default:
         *type = CFAPI_NONE;
         break;

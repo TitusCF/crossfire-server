@@ -296,6 +296,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_MAP_PROP_MESSAGE              22
 #define CFAPI_MAP_PROP_NEXT                 23
 #define CFAPI_MAP_PROP_REGION               24
+#define CFAPI_MAP_PROP_UNIQUE               25
 
 #define CFAPI_ARCH_PROP_NAME				0
 #define CFAPI_ARCH_PROP_NEXT				1

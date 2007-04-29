@@ -171,6 +171,11 @@ static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure)
 
 }
 
+static PyObject* Map_GetUnique(Crossfire_Map* whoptr, void* closure) {
+    MAPEXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_map_get_int_property(whoptr->map, CFAPI_MAP_PROP_UNIQUE));
+}
+
 static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;
