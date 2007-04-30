@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/monster.c: fix bug #1709618: Text message is too long/truncated.
+Nicolas Weeger 2007-04-30
+
 Partially implement feature request #1668158: Better nethack implementation.
 Random maps now have a new 'multiple_floors' parameter that, if set, will
 make the different rooms of the map have different floors.
