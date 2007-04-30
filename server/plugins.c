@@ -290,7 +290,7 @@ int execute_global_event(int eventcode, ...)
     object* op;
     object* op2;
     player* pl;
-    char* buf;
+    const char* buf;
     int i, rt;
     crossfire_plugin* cp;
     if (plugins_list == NULL)
@@ -2692,7 +2692,7 @@ void* cfapi_object_set_property(int* type, ...)
         case CFAPI_OBJECT_PROP_PERM_EXP:
             s64arg = va_arg(args, sint64);
             *type = CFAPI_SINT64;
-            op->perm_exp = larg;
+            op->perm_exp = s64arg;
             break;
 
         case CFAPI_OBJECT_PROP_ENEMY:
@@ -3289,9 +3289,7 @@ void* cfapi_object_create(int* type, ...)
     {
     case 0:
         robj = va_arg(args, object**);
-        va_end(args);
         *robj = get_object();
-        return;
         break;
 
     case 1: /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
@@ -3316,10 +3314,10 @@ void* cfapi_object_create(int* type, ...)
 
     default:
         *type = CFAPI_NONE;
-        va_end(args);
-        return NULL;
         break;
     }
+    va_end(args);
+    return NULL;
 }
 void* cfapi_object_insert(int* type, ...)
 {

@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/plugins.c: fix misc compilation warnings.
+Nicolas Weeger 2007-04-30
+
 server/c_misc.c: ensure you can't harvest items already harvested, or skills and such.
 Nicolas Weeger 2007-04-30
 
