@@ -293,48 +293,6 @@ static PyObject* createMap(PyObject* self, PyObject* args)
     return Crossfire_Map_wrap(map);
 }
 
-static PyObject* getCostFlagTrue(PyObject* self, PyObject* args)
-{
-    int i = F_TRUE;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getCostFlagBuy(PyObject* self, PyObject* args)
-{
-    int i = F_BUY;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getCostFlagSell(PyObject* self, PyObject* args)
-{
-    int i = F_SELL;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getCostFlagNoBargain(PyObject* self, PyObject* args)
-{
-    int i = F_NO_BARGAIN;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getCostFlagIdentified(PyObject* self, PyObject* args)
-{
-    int i = F_IDENTIFIED;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
-static PyObject* getCostFlagNotCursed(PyObject* self, PyObject* args)
-{
-    int i = F_NOT_CURSED;
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-    return Py_BuildValue("i", i);
-}
 static PyObject* getMapDirectory(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args, "", NULL))

@@ -85,7 +85,6 @@ static f_plug_api cfapiObject_transfer = NULL;
 static f_plug_api cfapiObject_find_archetype_inside = NULL;
 static f_plug_api cfapiObject_out_of_map = NULL;
 static f_plug_api cfapiObject_drop = NULL;
-static f_plug_api cfapiObject_take = NULL;
 static f_plug_api cfapiObject_say = NULL;
 static f_plug_api cfapiMap_get_property = NULL;
 static f_plug_api cfapiMap_set_property = NULL;
@@ -169,7 +168,6 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_delete, "cfapi_object_delete", z );
     GET_HOOK( cfapiObject_out_of_map, "cfapi_map_out_of_map", z );
     GET_HOOK( cfapiObject_drop, "cfapi_object_drop", z );
-    GET_HOOK( cfapiObject_take, "cfapi_object_take", z );
     GET_HOOK( cfapiObject_say, "cfapi_object_say", z );
     GET_HOOK( cfapiMap_create_path, "cfapi_map_create_path", z );
     GET_HOOK( cfapiMap_get_property,"cfapi_map_get_property", z );
@@ -798,11 +796,6 @@ void cf_object_drop( object* op, object* author)
 {
     int type;
     cfapiObject_drop( &type, op, author );
-}
-void cf_object_take( object* op, object* author)
-{
-    int type;
-    cfapiObject_take( &type, op, author );
 }
 void cf_object_say( object* op, char* msg)
 {

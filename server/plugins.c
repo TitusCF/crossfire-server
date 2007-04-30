@@ -104,7 +104,6 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_pay_item,         44, "cfapi_object_pay_item"},
     {cfapi_object_transfer,         45, "cfapi_object_transfer"},
     {cfapi_object_drop,             46, "cfapi_object_drop"},
-    {cfapi_object_take,             47, "cfapi_object_take"},
     {cfapi_object_find_archetype_inside, 48, "cfapi_object_find_archetype_inside"},
     {cfapi_object_say,              49, "cfapi_object_say"},
     {cfapi_map_get_map,             50, "cfapi_map_get_map"},
@@ -3947,22 +3946,6 @@ void* cfapi_object_drop(int* type, ...)
         author->contr->socket.update_look = 1;
     }
 
-    return NULL;
-}
-
-void* cfapi_object_take(int* type, ...)
-{
-    object *op;
-    object *author;
-    va_list args;
-
-    va_start(args, type);
-    op = va_arg(args, object*);
-    author = va_arg(args, object*);
-    va_end(args);
-    pick_up(author, op);
-
-    *type = CFAPI_NONE;
     return NULL;
 }
 

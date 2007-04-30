@@ -1746,19 +1746,6 @@ static PyObject* Crossfire_Object_Fix( Crossfire_Object* who, PyObject* args )
     Py_INCREF(Py_None);
     return Py_None;
 }
-static PyObject* Crossfire_Object_Pickup( Crossfire_Object* who, PyObject* args )
-{
-    Crossfire_Object* what;
-
-    if (!PyArg_ParseTuple(args,"O",&what))
-        return NULL;
-    EXISTCHECK(who);
-    EXISTCHECK(what);
-
-    cf_object_pickup(who->obj, what->obj);
-    Py_INCREF(Py_None);
-    return Py_None;
-}
 static PyObject* Crossfire_Object_Take( Crossfire_Object* who, PyObject* args )
 {
     Crossfire_Object* whoptr;
@@ -1768,7 +1755,7 @@ static PyObject* Crossfire_Object_Take( Crossfire_Object* who, PyObject* args )
     EXISTCHECK(who);
     EXISTCHECK(whoptr);
 
-    cf_object_take(whoptr->obj, who->obj);
+    cf_object_pickup(whoptr->obj, who->obj);
     Py_INCREF(Py_None);
     return Py_None;
 }

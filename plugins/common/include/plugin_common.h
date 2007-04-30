@@ -104,7 +104,6 @@ extern void         cf_object_set_long_property(object* op, int propcode, long v
 extern int          cf_object_transfer(object *op, int x, int y, int randomly, object *originator);
 extern int          cf_object_out_of_map( object* op, int x, int y);
 extern void         cf_object_drop( object* op, object* author);
-extern void         cf_object_take( object* op, object* author);
 extern void         cf_object_say( object* op, char* msg);
 extern object*      cf_object_insert_object(object* op, object* container);
 extern object*      cf_object_present_archname_inside(object* op, char* whatstr);
@@ -123,7 +122,7 @@ extern sint16       cf_object_get_resistance(object* op, int rtype);
 extern int          cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* pl);
 extern object*      cf_object_clone(object* op, int clonetype);
-extern void         cf_object_change_experience(object *op, sint64 exp, const char *skill_name, int flag);
+extern void         cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag);
 
 /* Maps */
 /*extern void*        cf_map_get_property(mapstruct* map, int propcode);*/
