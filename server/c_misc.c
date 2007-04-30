@@ -2124,6 +2124,8 @@ int do_harvest(object* pl, int dir, object* skill) {
     item = GET_MAP_OB(map, x, y);
     while (item && count < 10) {
         for (inv = item->inv; inv; inv = inv->below) {
+            if (get_ob_key_value(inv, "harvestable") == NULL)
+                continue;
             race = get_ob_key_value(inv, "harvest_race");
             tool = get_ob_key_value(inv, "harvest_tool");
             slevel = get_ob_key_value(inv, "harvest_level");
@@ -2147,6 +2149,8 @@ int do_harvest(object* pl, int dir, object* skill) {
 
     slevel = get_ob_key_value(inv, "harvest_level");
     sexp = get_ob_key_value(inv, "harvest_exp");
+    level = atoi(slevel);
+    exp = atoi(sexp);
 
     speed = atof(tspeed);
     if (speed < 0)
@@ -2176,6 +2180,7 @@ int do_harvest(object* pl, int dir, object* skill) {
     /* Ok, got it. */
     item = get_object();
     copy_object_with_inv(inv, item);
+    set_ob_key_value(item, "harvestable", NULL, 0);
     if (QUERY_FLAG(item, FLAG_MONSTER)) {
         int spot = find_free_spot(item, pl->map, pl->x, pl->y, 0, SIZEOFFREE);
         if (spot == -1) {
