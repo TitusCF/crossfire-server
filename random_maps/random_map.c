@@ -178,6 +178,9 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
 
     theMap->msg = strdup_local(buf);
 
+    /* We set the reset time at this, so town portal works on the map. */
+    gettimeofday(&(theMap->last_reset_time),NULL);
+
     return theMap;
 }
 

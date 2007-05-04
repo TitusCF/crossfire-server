@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+random_maps/random_map.c: initialize random map's reset time, so town portal works
+ correctly there too.
+Nicolas Weeger 2007-05-04
+
 Fix misc compilation warnings. Remove duplicate function.
  include/sproto.h
  plugins/common/include/plugin_common.h
