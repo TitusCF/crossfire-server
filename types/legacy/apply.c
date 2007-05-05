@@ -173,7 +173,7 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             return 0;
 
         case LIGHTER:           /* for lighting torches/lanterns/etc */ 
-            if (op->type == PLAYER)
+            if (applier->type == PLAYER)
             {
                 legacy_apply_lighter(applier,op);
                 return 1;

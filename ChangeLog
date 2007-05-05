@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/legacy/apply.c: fix broken LIGHTER.
+Nicolas Weeger 2007-05-05
+
 Fix some type issues in plugin. Wrap change_abil(). Add set_resist(). Add duration property.
  include/plugin.h sproto.h
  plugins/common/include/plugin_common.h
