@@ -3,6 +3,8 @@
  *   "$Id$ ";
  */
 
+int reopen_logfile = 0; /* May be set in SIGHUP handler */
+
 /*
     CrossFire, A Multiplayer game for X-windows
 
@@ -80,8 +82,27 @@ void LOG (LogLevel logLevel, const char *format, ...)
             fputs(buf, stderr); 
         }
 #else /* not WIN32 */
-        fputs(loglevel_names[logLevel], logfile);
-        fputs(buf, logfile);
+    if (reopen_logfile) {
+        reopen_logfile = 0;
+        if (fclose(logfile) != 0) {
+            /* stderr has been closed if -detach was used, but it's better
+             * to try to report about this anyway. */
+            perror("tried to close log file after SIGHUP in logger.c:LOG()");
+        }
+        if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
+            /* There's likely to be something very wrong with the OS anyway
+             * if reopening fails. */
+            perror("tried to open log file after SIGHUP in logger.c:LOG()");
+            emergency_save(0);
+            clean_tmp_files();
+            exit(1);
+        }
+        setvbuf(logfile, NULL, _IOLBF, 0);
+        LOG(llevInfo,"logfile reopened\n");
+    }
+
+    fputs(loglevel_names[logLevel], logfile);
+    fputs(buf, logfile);
 #endif
     }
     if (!exiting && !trying_emergency_save &&

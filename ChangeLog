@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Apply patch #1713563: Reopen log file on SIGHUP, courtesy Kari Pahula.
+ common/logger.c
+ include/global.h
+ server/init.c
+Nicolas Weeger 2007-05-05
+
 Apply patch #1713564, Open log file only once with -detach, courtesy Kari Pahula.
  include/sproto.h
  server/daemon.c init.c

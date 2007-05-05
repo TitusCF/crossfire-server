@@ -219,6 +219,7 @@ extern uint32 pticks;		/* used by various function to determine */
  * Misc global variables:
  */
 EXTERN FILE *logfile;			/* Used by server/daemon.c */
+EXTERN int reopen_logfile;
 EXTERN int exiting;			/* True if the game is about to exit */
 EXTERN long nroftreasures;		/* Only used in malloc_info() */
 EXTERN long nrofartifacts;		/* Only used in malloc_info() */

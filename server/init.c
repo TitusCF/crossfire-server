@@ -1022,13 +1022,19 @@ void rec_sigint(int i) {
   fatal_signal(0, 1);
 }
 
+/* SIGHUP handlers on daemons typically make them reread the config
+ * files and reinitialize itself.  This behaviour is better left for
+ * an explicit shutdown and restart with Crossfire, as there is just
+ * too much persistent runtime state.  However, another function of
+ * SIGHUP handlers is to reopen the log file for logrotate's benefit.
+ * We can do that here.
+ */
 void rec_sighup(int i) {
-  LOG(llevInfo,"\nSIGHUP received\n");
-  if(init_done) {
-    emergency_save(0);
-    cleanup();
+  /* Don't call LOG().  It calls non-reentrant functions.  The other
+   * signal handlers shouldn't really call LOG() either. */
+  if(logfile != stderr) {
+    reopen_logfile = 1;
   }
-  exit(0);
 }
 
 void rec_sigquit(int i) {
@@ -1079,7 +1085,12 @@ void fatal_signal(int make_core, int close_sockets) {
 
 static void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
-  signal(SIGHUP,rec_sighup);
+  struct sigaction sa;
+  sa.sa_sigaction=NULL;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags=0;
+  sa.sa_handler = rec_sighup;
+  sigaction(SIGHUP, &sa, NULL);
   signal(SIGINT,rec_sigint);
 #ifndef DEBUG
   signal(SIGQUIT,rec_sigquit);
