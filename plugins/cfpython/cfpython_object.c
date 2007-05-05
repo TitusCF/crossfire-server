@@ -791,6 +791,11 @@ static PyObject* Object_GetAttackMovement(Crossfire_Object* whoptr, void* closur
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ATTACK_MOVEMENT));
 }
+static PyObject* Object_GetDuration(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION));
+}
 
 /** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -926,6 +931,17 @@ static int Object_SetDamned(Crossfire_Object* whoptr, PyObject* value, void* clo
         return -1;
 
     cf_object_set_flag(whoptr->obj, FLAG_DAMNED, val);
+    return 0;
+}
+static int Object_SetApplied(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_APPLIED, val);
     return 0;
 }
 static int Object_SetStr(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1695,6 +1711,17 @@ static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closur
     cf_object_set_int64_property(whoptr->obj, CFAPI_OBJECT_PROP_EXP, val);
     return 0;
 }
+static int Object_SetDuration(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION, val);
+    return 0;
+}
 
 /* Methods. */
 
@@ -1843,13 +1870,24 @@ static PyObject* Crossfire_Object_GetResist( Crossfire_Object* who, PyObject* ar
 {
     int resist;
     EXISTCHECK(who);
-    if ( !PyArg_ParseTuple( args, "l", &resist ) )
+    if ( !PyArg_ParseTuple( args, "i", &resist ) )
         return NULL;
     if ( ( resist < 0 ) || ( resist >= NROFATTACKS ) )
     {
         return Py_BuildValue("l",0);
     }
     return Py_BuildValue("i",cf_object_get_resistance( who->obj, resist));
+}
+static PyObject* Crossfire_Object_SetResist( Crossfire_Object* who, PyObject* args )
+{
+    int resist, value;
+    EXISTCHECK(who);
+    if ( !PyArg_ParseTuple( args, "ii", &resist, &value ) )
+        return NULL;
+    if ( ( resist >= 0 ) && ( resist < NROFATTACKS ) )
+        cf_object_set_resistance(who->obj, resist, value);
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 static PyObject* Crossfire_Object_QueryCost( Crossfire_Object* who, PyObject* args )
 {
@@ -2083,6 +2121,18 @@ static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* ar
     myob = cf_object_insert_in_ob(who->obj, op->obj);
 
     return Crossfire_Object_wrap(myob);
+}
+
+static PyObject* Crossfire_Object_ChangeAbil(Crossfire_Object* who, PyObject* args)
+{
+    Crossfire_Object* op;
+
+    if (!PyArg_ParseTuple(args,"O",&op))
+        return NULL;
+    EXISTCHECK(who);
+    EXISTCHECK(op);
+
+    return Py_BuildValue("i", cf_object_change_abil(who->obj, op->obj));
 }
 
 static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args)

@@ -501,6 +501,7 @@ void *cfapi_object_pay_item(int *type, ...);
 void *cfapi_object_transfer(int *type, ...);
 void *cfapi_object_find_archetype_inside(int *type, ...);
 void *cfapi_object_drop(int *type, ...);
+void* cfapi_object_change_abil(int* type, ...);
 void *cfapi_object_say(int *type, ...);
 void *cfapi_object_speak(int *type, ...);
 void *cfapi_player_find(int *type, ...);

@@ -119,10 +119,12 @@ extern void         cf_object_pickup( object* op, object* what);
 extern const char*  cf_object_get_key(object* op, const char* keyname);
 extern int          cf_object_set_key(object* op, const char* keyname, const char* value, int add_key);
 extern sint16       cf_object_get_resistance(object* op, int rtype);
+extern void         cf_object_set_resistance(object* op, int rtype, sint16 value);
 extern int          cf_object_move(object* op, int dir, object*originator);
 extern void         cf_object_apply_below(object* pl);
 extern object*      cf_object_clone(object* op, int clonetype);
 extern void         cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag);
+extern int          cf_object_change_abil(object* op, object* tmp);
 
 /* Maps */
 /*extern void*        cf_map_get_property(mapstruct* map, int propcode);*/

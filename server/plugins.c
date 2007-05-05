@@ -104,6 +104,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_pay_item,         44, "cfapi_object_pay_item"},
     {cfapi_object_transfer,         45, "cfapi_object_transfer"},
     {cfapi_object_drop,             46, "cfapi_object_drop"},
+    {cfapi_object_change_abil,      47, "cfapi_object_change_abil"},
     {cfapi_object_find_archetype_inside, 48, "cfapi_object_find_archetype_inside"},
     {cfapi_object_say,              49, "cfapi_object_say"},
     {cfapi_map_get_map,             50, "cfapi_map_get_map"},
@@ -2377,6 +2378,11 @@ void* cfapi_object_get_property(int* type, ...)
             *rint = op->contr->bed_y;
             *type = CFAPI_INT;
             break;
+        case CFAPI_OBJECT_PROP_DURATION:
+            rint = va_arg(args, int*);
+            *rint = op->duration;
+            *type = CFAPI_INT;
+            break;
         default:
             *type = CFAPI_NONE;
             break;
@@ -2407,6 +2413,7 @@ void* cfapi_object_set_property(int* type, ...)
     int property;
     sint64 s64arg;
     partylist* partyarg;
+    float farg;
 
     va_start(args, type);
     op = va_arg(args, object*);
@@ -2467,18 +2474,18 @@ void* cfapi_object_set_property(int* type, ...)
             break;
 
         case CFAPI_OBJECT_PROP_SPEED:
-            darg = va_arg(args, double);
-            *type = CFAPI_DOUBLE;
-            if (darg != op->speed) {
-                op->speed = darg;
+            farg = va_arg(args, double);
+            *type = CFAPI_FLOAT;
+            if (farg != op->speed) {
+                op->speed = farg;
                 update_ob_speed(op);
             }
             break;
 
         case CFAPI_OBJECT_PROP_SPEED_LEFT:
-            darg = va_arg(args, double);
-            *type = CFAPI_DOUBLE;
-            op->speed_left = darg;
+            farg = va_arg(args, double);
+            *type = CFAPI_FLOAT;
+            op->speed_left = farg;
             break;
 
         case CFAPI_OBJECT_PROP_NROF:
@@ -2536,7 +2543,7 @@ void* cfapi_object_set_property(int* type, ...)
         case CFAPI_OBJECT_PROP_RESIST:
             {
                 int iargbis = va_arg(args, int);
-                *type = CFAPI_INT;
+                *type = CFAPI_INT16;
                 iarg = va_arg(args, int);
                 op->resist[iargbis] = iarg;
             }
@@ -2917,6 +2924,11 @@ void* cfapi_object_set_property(int* type, ...)
                 SET_ANIMATION(op, iarg);
             }
             update_object(op, UP_OBJ_FACE);
+            break;
+        case CFAPI_OBJECT_PROP_DURATION:
+            iarg = va_arg(args, int);
+            *type = CFAPI_INT;
+            op->duration = iarg;
             break;
 
         case CFAPI_PLAYER_PROP_MARKED_ITEM:
@@ -3701,8 +3713,14 @@ void* cfapi_object_cast(int* type, ...)
     rint = va_arg(args, int*);
     va_end(args);
 
-    *rint = cast_spell(op, caster, dir, sp, str);
     *type = CFAPI_INT;
+
+    if (!op->map) {
+        *rint = -1;
+        return NULL;
+    }
+
+    *rint = cast_spell(op, caster, dir, sp, str);
     return NULL;
 }
 void* cfapi_object_learn_spell(int* type, ...)
@@ -3945,6 +3963,27 @@ void* cfapi_object_drop(int* type, ...)
         author->contr->count = 0;
         author->contr->socket.update_look = 1;
     }
+
+    return NULL;
+}
+
+/**
+ * Wrapper for change_abil().
+ */
+void* cfapi_object_change_abil(int* type, ...)
+{
+    object* op, *tmp;
+    int* rint;
+    va_list args;
+
+    va_start(args, type);
+    op = va_arg(args, object*);
+    tmp = va_arg(args, object*);
+    rint = va_arg(args, int*);
+    va_end(args);
+
+    *type = CFAPI_INT;
+    *rint = change_abil(op, tmp);
 
     return NULL;
 }

@@ -85,6 +85,7 @@ static f_plug_api cfapiObject_transfer = NULL;
 static f_plug_api cfapiObject_find_archetype_inside = NULL;
 static f_plug_api cfapiObject_out_of_map = NULL;
 static f_plug_api cfapiObject_drop = NULL;
+static f_plug_api cfapiObject_change_abil = NULL;
 static f_plug_api cfapiObject_say = NULL;
 static f_plug_api cfapiMap_get_property = NULL;
 static f_plug_api cfapiMap_set_property = NULL;
@@ -168,6 +169,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiObject_delete, "cfapi_object_delete", z );
     GET_HOOK( cfapiObject_out_of_map, "cfapi_map_out_of_map", z );
     GET_HOOK( cfapiObject_drop, "cfapi_object_drop", z );
+    GET_HOOK( cfapiObject_change_abil, "cfapi_object_change_abil", z );
     GET_HOOK( cfapiObject_say, "cfapi_object_say", z );
     GET_HOOK( cfapiMap_create_path, "cfapi_map_create_path", z );
     GET_HOOK( cfapiMap_get_property,"cfapi_map_get_property", z );
@@ -268,6 +270,13 @@ sint16 cf_object_get_resistance(object* op, int rtype)
     assert(type == CFAPI_INT16);
     return resist;
 }
+void cf_object_set_resistance(object* op, int rtype, sint16 value)
+{
+    int type;
+    cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_RESIST, rtype, value);
+    assert(type == CFAPI_INT16);
+}
+
 /* Should get replaced by tons of more explicit wrappers */
 void cf_object_set_int_property(object* op, int propcode, int value)
 {
@@ -1375,6 +1384,17 @@ int cf_object_set_key(object* op, const char* keyname, const char* value, int ad
 {
     int type, ret;
     cfapiObject_set_key(&type, op, keyname, value, add_key, &ret);
+    assert(type == CFAPI_INT);
+    return ret;
+}
+
+/**
+ * Wrapper for change_abil().
+ * @copydoc change_abil().
+ */
+int cf_object_change_abil(object* op, object* tmp) {
+    int type, ret;
+    cfapiObject_change_abil(&type, op, tmp, &ret);
     assert(type == CFAPI_INT);
     return ret;
 }

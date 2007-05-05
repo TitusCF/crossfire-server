@@ -262,6 +262,7 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_OBJECT_PROP_MOVE_OFF          106
 #define CFAPI_OBJECT_PROP_MOVE_SLOW         107
 #define CFAPI_OBJECT_PROP_MOVE_SLOW_PENALTY 108
+#define CFAPI_OBJECT_PROP_DURATION          109
 
 #define CFAPI_PLAYER_PROP_IP                150
 #define CFAPI_PLAYER_PROP_MARKED_ITEM       151

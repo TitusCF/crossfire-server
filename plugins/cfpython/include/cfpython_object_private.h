@@ -145,6 +145,7 @@ static PyObject* Object_GetCount(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetGodGiven(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetIsPet(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAttackMovement(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetDuration(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -155,6 +156,7 @@ static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closur
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetCursed(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetDamned(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetApplied(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetStr(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetDex(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetCon(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -221,6 +223,7 @@ static int Object_SetEnemy(Crossfire_Object* whoptr, PyObject* value, void* clos
 static int Object_SetGodGiven(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetIsPet(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetAttackMovement(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetDuration(Crossfire_Object* whoptr, PyObject* value, void* closure);
 
 static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args );
@@ -234,6 +237,7 @@ static PyObject* Crossfire_Object_Reposition( Crossfire_Object* who, PyObject* a
 
 static PyObject* Crossfire_Object_QueryName( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_GetResist( Crossfire_Object* who, PyObject* args );
+static PyObject* Crossfire_Object_SetResist( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_ActivateRune( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_CheckTrigger( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_QueryCost( Crossfire_Object* who, PyObject* args );
@@ -254,6 +258,7 @@ static PyObject* Crossfire_Object_WriteKey(Crossfire_Object* who, PyObject* args
 static PyObject* Crossfire_Object_CreateTimer(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_AddExp(Crossfire_Object* who, PyObject* args);
 static PyObject* Crossfire_Object_Move(Crossfire_Object* who, PyObject* args);
+static PyObject* Crossfire_Object_ChangeAbil(Crossfire_Object* who, PyObject* args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right);
 
@@ -319,7 +324,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Alive",      (getter)Object_GetAlive,    NULL, NULL, NULL },
     { "DungeonMaster",(getter)Object_GetDM,     NULL, NULL, NULL },
     { "WasDungeonMaster",(getter)Object_GetWasDM, NULL, NULL, NULL },
-    { "Applied",    (getter)Object_GetApplied,  NULL, NULL, NULL },
+    { "Applied",    (getter)Object_GetApplied,  (setter)Object_SetApplied, NULL, NULL },
     { "Unpaid",     (getter)Object_GetUnpaid,   (setter)Object_SetUnpaid, NULL, NULL },
     { "Monster",    (getter)Object_GetMonster,  NULL, NULL, NULL },
     { "Friendly",   (getter)Object_GetFriendly, (setter)Object_SetFriendly, NULL, NULL },
@@ -383,6 +388,7 @@ static PyGetSetDef Object_getseters[] = {
     { "GodGiven",       (getter)Object_GetGodGiven,     (setter)Object_SetGodGiven, NULL, NULL },
     { "IsPet",          (getter)Object_GetIsPet,     (setter)Object_SetIsPet, NULL, NULL },
     { "AttackMovement", (getter)Object_GetAttackMovement, (setter)Object_SetAttackMovement, NULL, NULL },
+    { "Duration",       (getter)Object_GetDuration,     (setter)Object_SetDuration, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 
@@ -398,6 +404,7 @@ static PyMethodDef ObjectMethods[] = {
     { "Reposition",     (PyCFunction)Crossfire_Object_Reposition,   METH_VARARGS},
     { "QueryName",      (PyCFunction)Crossfire_Object_QueryName,    METH_VARARGS},
     { "GetResist",      (PyCFunction)Crossfire_Object_GetResist,    METH_VARARGS},
+    { "SetResist",      (PyCFunction)Crossfire_Object_SetResist,    METH_VARARGS},
     { "ActivateRune",   (PyCFunction)Crossfire_Object_ActivateRune, METH_VARARGS},
     { "CheckTrigger",   (PyCFunction)Crossfire_Object_CheckTrigger, METH_VARARGS},
     { "QueryCost",      (PyCFunction)Crossfire_Object_QueryCost,    METH_VARARGS},
@@ -418,6 +425,7 @@ static PyMethodDef ObjectMethods[] = {
     { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS},
     { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS},
     { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS},
+    { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_VARARGS},
     {NULL, NULL, 0}
 };
 

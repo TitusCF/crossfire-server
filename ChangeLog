@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix some type issues in plugin. Wrap change_abil(). Add set_resist(). Add duration property.
+ include/plugin.h sproto.h
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ plugins/cfpython/include/cfpython_object_private.h
+ plugins/cfpython/cfpython_object.c
+ server/plugins.c
+Nicolas Weeger 2007-05-05
+
 random_maps/random_map.c: initialize random map's reset time, so town portal works
  correctly there too.
 Nicolas Weeger 2007-05-04
