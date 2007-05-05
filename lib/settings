@@ -309,3 +309,6 @@ personalized_blessings      TRUE
 # If set to TRUE, players can inscribe scrolls of spells they can't cast (denied path, ...)
 allow_denied_spells_writing FALSE
 
+# If set to TRUE or ON, converters will work even if the price of generated item is higher
+# than the price of converted items
+allow_broken_converters TRUE

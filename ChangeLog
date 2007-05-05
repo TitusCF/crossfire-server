@@ -15,9 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1657735: Server setting for handling 'incorrect' converters.
+New server setting, 'allow_broken_converters', that controls what to do.
  common/init.c
  include/global.h
+ lib/settings
  server/init.c
+ types/converter/converter.c
+Nicolas Weeger 2007-05-05
 
 types/legacy/apply.c: fix broken LIGHTER.
 Nicolas Weeger 2007-05-05
