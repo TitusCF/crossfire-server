@@ -46,6 +46,8 @@ static racelink *get_racelist(void);
 /** global weathermap */
 weathermap_t **weathermap;
 
+static char default_daemon_log[] = "logfile";
+
 static void set_logfile(char *val) { settings.logfilename=val; }
 static void call_version(void) { version(NULL); exit(0); }
 static void showscores(void) { display_high_score(NULL,9999,NULL); exit(0); }
@@ -62,7 +64,7 @@ static void set_dumpmon7(void) {settings.dumpvalues=7; }
 static void set_dumpmon8(void) {settings.dumpvalues=8; }
 static void set_dumpmon9(void) {settings.dumpvalues=9; }
 static void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
-static void set_daemon(void) {settings.daemonmode=1; }
+static void set_daemon(void) {settings.daemonmode=1; if(settings.logfilename[0] == '\0') {settings.logfilename=default_daemon_log;}}
 static void set_datadir(char *path) { settings.datadir=path; }
 static void set_confdir(char *path) { settings.confdir=path; }
 static void set_localdir(char *path) { settings.localdir=path; }
@@ -137,6 +139,7 @@ struct Command_Line_Options options[] = {
 {"-templatedir", 1, 1, set_templatedir},
 {"-tmpdir", 1, 1, set_tmpdir},
 {"-log", 1, 1, set_logfile},
+{"-detach", 0, 1, set_daemon},
 
 #ifdef WIN32
 /* Windows service stuff */
@@ -149,7 +152,6 @@ struct Command_Line_Options options[] = {
  * as they don't require much of anything to bet set up.
  */
 {"-csport", 1, 2, set_csport},
-{"-detach", 0, 2, set_daemon},
 
 /** Start of pass 3 information. In theory, by pass 3, all data paths
  * and defaults should have been set up. 
@@ -807,7 +809,7 @@ void init(int argc, char **argv) {
 
 #ifndef WIN32 /* ***win32: no become_daemon in windows */
     if (settings.daemonmode)
-	logfile = become_daemon(settings.logfilename[0]=='\0'?"logfile":settings.logfilename);
+	become_daemon();
 #endif
 
     init_beforeplay();

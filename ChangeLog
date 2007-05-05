@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Apply patch #1713564, Open log file only once with -detach, courtesy Kari Pahula.
+ include/sproto.h
+ server/daemon.c init.c
+Nicolas Weeger 2007-05-05
+
 Implement feature request #1657735: Server setting for handling 'incorrect' converters.
 New server setting, 'allow_broken_converters', that controls what to do.
  common/init.c

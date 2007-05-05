@@ -301,7 +301,7 @@ void init_commands(void);
 command_function find_oldsocket_command(char *cmd);
 command_function find_oldsocket_command2(char *cmd);
 /* daemon.c */
-FILE *become_daemon(const char *filename);
+void become_daemon();
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);

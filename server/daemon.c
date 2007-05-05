@@ -65,21 +65,14 @@
 #include <stdio.h>
 #include <sys/file.h>
 
-FILE *become_daemon (const char *filename)
+void become_daemon (const char *filename)
 {
-  FILE *logfile;
-  register int i;
-  int forkresult;
- 
-  if((logfile=fopen(filename,"a"))==NULL){
-      char err[MAX_BUF];
-    fprintf(stderr, "Couldn't create logfile %s: %s\n", filename, strerror_local(errno, err, sizeof(err)));
-    exit(0);
-  } 
-  fputs("\n========================\n",logfile);    
-  fputs("Begin New Server Session\n",logfile);    
-  fputs("========================\n\n",logfile);    
-  fflush(logfile);
+    register int i;
+    int forkresult;
+
+    fputs("\n========================\n",logfile);    
+    fputs("Begin New Server Session\n",logfile);    
+    fputs("========================\n\n",logfile);    
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by
@@ -137,5 +130,4 @@ FILE *become_daemon (const char *filename)
       setpgrp (0, getpid());
 #  endif
 #endif
-  return(logfile);
 }
