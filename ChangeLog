@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ common/init.c
+ include/global.h
+ server/init.c
+
 types/legacy/apply.c: fix broken LIGHTER.
 Nicolas Weeger 2007-05-05
 

@@ -402,6 +402,8 @@ typedef struct Settings {
     sint64  pk_max_experience; /**< Maximum experience one can get for PKing. Ignore if negative. */
     int     pk_max_experience_percent; /**< Percentage of experience of victim the killer gets. */
     int     allow_denied_spells_writing; /**< If set, players can write spells they can't cast. */
+    int     allow_broken_converters; /**< If set, converters will work even if price of generated item is higher
+                                       * than the price of converted items. */
 } Settings;
 
 extern Settings settings;

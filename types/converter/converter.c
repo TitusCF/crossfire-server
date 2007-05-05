@@ -154,7 +154,7 @@ static int convert_item(object *item, object *converter)
         item->nrof*=nr;
     if(is_in_shop(converter))
         SET_FLAG(item,FLAG_UNPAID);
-    else if(price_in < item->nrof*item->value)
+    else if(price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE)
     {
         LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n",
             converter->name, converter->map->path,

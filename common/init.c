@@ -105,6 +105,7 @@ struct Settings settings = {
     5000000, /* pk_max_experience */
     10, /* pk_max_experience_percent */
     0, /* allow_denied_spells_writing */
+    0, /* allow_broken_converters */
 };
 
 /**
