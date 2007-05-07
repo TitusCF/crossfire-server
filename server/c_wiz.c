@@ -1869,13 +1869,20 @@ int command_listplugins(object *op, char *params)
  * Loads the given plugin. The DM specifies the name of the library to load (no
  * pathname is needed). Do not ever attempt to load the same plugin more than
  * once at a time, or bad things could happen.
+ *
+ * @param op
+ * DM loading a plugin.
+ * @param params
+ * should be the plugin's name, eg cfpython.so
+ * @return
+ * 1
  */
 int command_loadplugin(object *op, char *params) {
     char buf[MAX_BUF];
 
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Load which plugin?", NULL);
+            "Load which plugin?", NULL);
         return 1;
     }
 
@@ -1883,16 +1890,18 @@ int command_loadplugin(object *op, char *params) {
     strcat(buf, "/plugins/");
     strcat(buf, params);
     LOG(llevDebug, "Requested plugin file is %s\n", buf);
-    if (plugins_init_plugin(buf) == 0)
+    if (plugins_init_plugin(buf) == 0) {
+        LOG(llevInfo, "DM %s loaded plugin %s\n", op->name, params);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			     "Plugin %s successfully loaded.",
-			     "Plugin %s successfully loaded.",
-			     params);
+            "Plugin %s successfully loaded.",
+            "Plugin %s successfully loaded.",
+            params);
+    }
     else
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-				 "Could not load plugin %s.",
-				 "Could not load plugin %s.",
-				 params);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Could not load plugin %s.",
+            "Could not load plugin %s.",
+            params);
     return 1;
 }
 
@@ -1900,25 +1909,34 @@ int command_loadplugin(object *op, char *params) {
  * Unloads the given plugin. The DM specified the ID of the library to unload.
  * Note that some things may behave strangely if the correct plugins are not
  * loaded.
+ *
+ * @param op
+ * DM unloading a plugin.
+ * @param params
+ * should be the plugin's internal name, eg Python
+ * @return
+ * 1
  */
 int command_unloadplugin(object *op, char *params)
 {
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Remove which plugin?", NULL);
+            "Remove which plugin?", NULL);
         return 1;
     }
 
-    if (plugins_remove_plugin(params) == 0)
+    if (plugins_remove_plugin(params) == 0) {
+        LOG(llevInfo, "DM %s unloaded plugin %s\n", op->name, params);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			     "Plugin %s successfully removed.",
-			     "Plugin %s successfully removed.",
-			     params);
+            "Plugin %s successfully removed.",
+            "Plugin %s successfully removed.",
+            params);
+    }
     else
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Could not remove plugin %s.",
-		      "Could not remove plugin %s.",
-		      params);
+            "Could not remove plugin %s.",
+            "Could not remove plugin %s.",
+            params);
     return 1;
 }
 

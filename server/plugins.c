@@ -599,6 +599,8 @@ int plugins_remove_plugin(const char* id)
             crossfire_plugin* p;
             n = cp->next;
             p = cp->prev;
+            if (cp->closefunc)
+                cp->closefunc();
             plugins_dlclose(cp->libptr);
             if (n != NULL) {
                 if (p != NULL) {

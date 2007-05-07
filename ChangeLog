@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/plugins.c: fix plugin unloading which didn't call the closePlugin function.
+server/c_wiz.c: document.
+Nicolas Weeger 2007-05-07
+
 Apply patch #1713563: Reopen log file on SIGHUP, courtesy Kari Pahula.
  common/logger.c
  include/global.h
