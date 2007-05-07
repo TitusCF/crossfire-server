@@ -228,7 +228,26 @@ struct maps_in_region** regions = NULL;
 int region_count = 0;
 int region_allocated = 0;
 
+int list_unused_maps = 0;
+char** found_maps = NULL;
+int found_maps_count = 0;
+int found_maps_allocated = 0;
+
 void do_auto_apply(mapstruct * m);
+
+/**
+ * Sort values alphabetically
+ * Used by qsort to sort values alphabetically.
+ * @param a
+ * First value
+ * @param b
+ * Second value
+ * @return
+ * -1 if a is less than b, 0 if a equals b, 1 else.
+ */
+static int sortbyname(const void *a, const void *b){
+    return (strcmp(*(const char**)a, *(const char**)b));
+}
 
 /**
  * Concatenates a string, and free concatenated string.
@@ -488,6 +507,18 @@ void add_map(const char* name, const char*** maps, int* count, int* allocated)
     (*count)++;
 }
 
+void list_map(const char* path) {
+    int index;
+    for (index = 0; index < found_maps_count; index++) {
+        if (found_maps[index] && strcmp(path, found_maps[index]) == 0) {
+            free(found_maps[index]);
+            found_maps[index] = NULL;
+            return;
+        }
+    }
+    printf("Map processed but not found in directory reading? %s\n", path);
+}
+
 /**
  * Links a map to a region.
  *
@@ -585,6 +616,8 @@ void domap(const char* name)
     while (vars[vars_count])
         vars_count++;
 
+    if (list_unused_maps)
+        list_map(name);
     add_map(name, &maps_list, &maps_count, &count_allocated);
 
     if (show_maps)
@@ -1183,6 +1216,90 @@ void do_world_map() {
 #undef SIZE
 }
 
+const char* ignore_path[] = {
+    "/Info",
+    "/editor",
+    "/python",
+    "/styles",
+    "/templates",
+    "/test",
+    "/unlinked",
+    NULL };
+
+const char* ignore_name[] = {
+    ".",
+    "..",
+    ".svn",
+    "README",
+    NULL };
+
+void find_maps(const char* from) {
+    struct dirent* file;
+    struct stat statbuf;
+    int status, ignore;
+    char path[1024], full[1024];
+    DIR* dir;
+
+    for (ignore = 0; ignore_path[ignore] != NULL; ignore++) {
+        if (strcmp(from, ignore_path[ignore]) == 0)
+            return;
+    }
+
+    snprintf(path, sizeof(path), "%s/%s%s", settings.datadir, settings.mapdir, from);
+//    printf("looking in %s\n", path);
+    dir = opendir(path);
+
+    if (dir) {
+        for (file = readdir(dir); file; file = readdir(dir)) {
+
+            for (ignore = 0; ignore_name[ignore] != NULL; ignore++) {
+                if (strcmp(file->d_name, ignore_name[ignore]) == 0)
+                    break;
+            }
+            if (ignore_name[ignore] != NULL)
+                continue;
+
+            snprintf(full, sizeof(full), "%s/%s", path, file->d_name);
+
+            status = stat(full, &statbuf);
+            if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+                snprintf(full, sizeof(full), "%s/%s", from, file->d_name);
+                find_maps(full);
+                continue;
+            }
+            if (found_maps_count == found_maps_allocated) {
+                found_maps_allocated += 50;
+                found_maps = realloc(found_maps, found_maps_allocated * sizeof(char*));
+            }
+            snprintf(full, sizeof(full), "%s/%s", from, file->d_name);
+            found_maps[found_maps_count++] = strdup(full);
+        }
+        closedir(dir);
+    }
+}
+
+void dump_unused_maps() {
+    FILE* dump;
+    char path[1024];
+    int index, found = 0;
+
+    snprintf(path, sizeof(path), "%s/%s", root, "maps.unused");
+    dump = fopen(path, "w+");
+    if (dump == NULL) {
+        printf("Unable to open file maps.unused!\n");
+        return;
+    }
+    for (index = 0; index < found_maps_count; index++) {
+        if (found_maps[index] != NULL) {
+            fprintf(dump, "%s\n", found_maps[index]);
+            free(found_maps[index]);
+            found++;
+        }
+    }
+    fclose(dump);
+    printf("%d unused maps.\n", found);
+}
+
 /**
  * Prints usage information, and exit.
  *
@@ -1203,6 +1320,7 @@ void do_help(const char* program) {
     printf("  -addmap=<map>       adds a map to process. Path is relative to map's directory root.\n");
     printf("  -rawmaps            generates maps pics without items on random (shop, treasure) tiles.\n");
     printf("  -warnnopath         inform when an exit has no path set.\n");
+    printf("  -listunusedmaps     finds all unused maps in the maps directory.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1253,6 +1371,8 @@ void do_parameters(int argc, char** argv) {
             rawmaps = 1;
         else if (strncmp(argv[arg], "-warnnopath", 11) == 0)
             warn_no_path = 1;
+        else if (strncmp(argv[arg], "-listunusedmaps", 15) == 0)
+            list_unused_maps = 1;
         else
             do_help(argv[0]);
         arg++;
@@ -1372,7 +1492,17 @@ int main(int argc, char** argv)
     printf("  show map being processed:            %s\n", yesno(show_maps));
     printf("  generate raw maps:                   %s\n", yesno(rawmaps));
     printf("  warn of exit without path:           %s\n", yesno(warn_no_path));
-    printf("\nbrowsing maps...\n");
+    printf("  list unused maps:                    %s\n", yesno(list_unused_maps));
+    printf("\n");
+
+    if (list_unused_maps) {
+        printf("listing all maps...");
+        find_maps("");
+        printf("done, %d maps found.\n", found_maps_count);
+        qsort(found_maps, found_maps_count, sizeof(char*), sortbyname);
+    }
+
+    printf("browsing maps...\n");
 
     add_map(first_map_path, &maps_list, &maps_count, &count_allocated);
 
@@ -1391,6 +1521,9 @@ int main(int argc, char** argv)
     }
 
     printf(" finished map parsing, %d maps processed, %d map pictures created, %d map pictures were uptodate. Total %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
+
+    if (list_unused_maps)
+        dump_unused_maps();
 
     do_maps_index_by_region();
     do_region_index();
