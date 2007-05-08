@@ -169,6 +169,12 @@ static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure)
     return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE));
 }
 
+static PyObject* Object_GetRace(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_object_get_sstring_property(whoptr->obj, CFAPI_OBJECT_PROP_RACE));
+}
+
 static PyObject* Object_GetMap(Crossfire_Object* whoptr, void* closure)
 {
     mapstruct* m;
@@ -879,6 +885,28 @@ static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* clos
     cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_TITLE, val);
     return 0;
 }
+
+static int Object_SetRace(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    char* val;
+    EXISTCHECK_INT(whoptr);
+    if (value==NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the Race attribute");
+        return -1;
+    }
+    if (!PyString_Check(value))
+    {
+        PyErr_SetString(PyExc_TypeError, "The Race attribute must be a string");
+        return -1;
+    }
+    if (!PyArg_Parse(value,"s",&val))
+        return -1;
+
+    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_RACE, val);
+    return 0;
+}
+
 static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     Crossfire_Map* val;

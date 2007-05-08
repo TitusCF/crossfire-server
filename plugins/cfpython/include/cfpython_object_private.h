@@ -28,6 +28,7 @@
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetNamePl(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetTitle(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetRace(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMap(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCha(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetCon(Crossfire_Object* whoptr, void* closure);
@@ -152,6 +153,7 @@ static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closur
 static int Object_SetName(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetNamePl(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetRace(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetCursed(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -271,6 +273,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Name",       (getter)Object_GetName,     (setter)Object_SetName, NULL, NULL },
     { "NamePl",     (getter)Object_GetNamePl,   (setter)Object_SetNamePl, NULL, NULL },
     { "Title",      (getter)Object_GetTitle,    (setter)Object_SetTitle, NULL, NULL },
+    { "Race",       (getter)Object_GetRace,     (setter)Object_SetRace, NULL, NULL },
     { "Map",        (getter)Object_GetMap,      (setter)Object_SetMap, NULL, NULL },
     { "Cha",        (getter)Object_GetCha,      (setter)Object_SetCha, NULL, NULL },
     { "Con",        (getter)Object_GetCon,      (setter)Object_SetCon, NULL, NULL },
