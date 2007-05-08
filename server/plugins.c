@@ -3906,12 +3906,12 @@ void* cfapi_object_find_archetype_inside(int* type, ...)
     va_start(args, type);
     op = va_arg(args, object*);
     critera = va_arg(args, int);
-    robj = va_arg(args, object**);
 
     switch(critera)
     {
     case 0: /* By name, either exact or from query_name */
         str = va_arg(args, char*);
+        robj = va_arg(args, object**);
         *robj = present_arch_in_ob(find_archetype(str), op);
         if (*robj == NULL) {
             object* tmp;
