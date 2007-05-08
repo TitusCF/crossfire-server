@@ -103,6 +103,7 @@ command_array_struct Commands[] = {
   {"take", command_take,	1.0},
   {"throw", command_throw,	1.0},
   {"time", command_time,	0.0},
+  {"use", command_use, 1.0},
   {"weather", command_weather,	0.0},
   {"whereabouts", command_whereabouts, 0.0},
   {"whereami", command_whereami, 0.0},

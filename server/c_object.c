@@ -1894,3 +1894,116 @@ int command_lock_item(object *op, char *params) {
     }
     return 1;
 }
+
+/**
+ * Try to use an item on another. Items are checked for key/values matching.
+ * @param op
+ * player.
+ * @param params
+ * sent string, with all parameters.
+ * @return
+ * 1.
+ */
+int command_use(object* op, char* params) {
+    char* with, copy[MAX_BUF];
+    object *first, *second, *add, *added;
+    archetype* arch;
+    int count;
+    sstring data;
+
+    if (!op->type == PLAYER)
+        return 1;
+
+    snprintf(copy, sizeof(copy), params);
+    with = strstr(copy, " with ");
+    if (!with) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Syntax is use <item> with <item>.", NULL);
+        return 1;
+    }
+
+    with[0] = '\0';
+    with = with + strlen(" with ");
+
+    first = find_best_object_match(op, copy);
+    if (!first) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", NULL, copy);
+        return 1;
+    }
+    second = find_best_object_match(op, with);
+    if (!second) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "No match for %s.", NULL, with);
+        return 1;
+    }
+
+    snprintf(copy, sizeof(copy), "on_use_with_%s", first->arch->name);
+    data = get_ob_key_value(second, copy);
+    if (!data) {
+        snprintf(copy, sizeof(copy), "on_use_with_%d_%d", first->type, first->subtype);
+        data = get_ob_key_value(second, copy);
+        if (!data) {
+            snprintf(copy, sizeof(copy), "on_use_with_%d", first->type);
+            data = get_ob_key_value(second, copy);
+            if (!data) {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE, "Nothing happens.", NULL);
+                return 1;
+            }
+        }
+    }
+
+    while (data != NULL) {
+        if (strncmp(data, "add ", 4) == 0) {
+            data += 4;
+            if (isdigit(*data)) {
+                count = atol(data);
+                data = strchr(data, ' ') + 1;
+            }
+            else
+                count = 1;
+            with = strchr(data, ' ');
+            if (!with) {
+                strncpy(copy, data, sizeof(copy));
+                data = NULL;
+            }
+            else {
+                *with = '\0';
+                strncpy(copy, data, sizeof(copy));
+                data += strlen(copy) + 1;
+            }
+            arch = find_archetype(copy);
+            if (!arch) {
+                LOG(llevError, "Use: invalid archetype %s in %s.\n", copy, second->name);
+                return 1;
+            }
+            add = object_create_arch(arch);
+            add->nrof = count;
+            added = insert_ob_in_ob(add, op);
+            if (add == added)
+                esrv_send_item(op, add);
+            else
+                esrv_update_item(UPD_NROF | UPD_WEIGHT, op, added);
+        }
+        else if (strncmp(data, "remove $", 8) == 0) {
+            data += 8;
+            if (*data == '1') {
+                if (first)
+                    first = decrease_ob(first);
+                data += 2;
+            }
+            else if (*data == '2') {
+                if (second)
+                    second = decrease_ob(second);
+                data += 2;
+            }
+            else {
+                LOG(llevError, "Use: invalid use string %s in %s\n", data, second->name);
+                return 1;
+            }
+        }
+        else {
+            LOG(llevError, "Use: invalid use string %s in %s\n", data, second->name);
+            return 1;
+        }
+    }
+
+    return 1;
+}

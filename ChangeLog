@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New command: 'use <item> with <item>', which enables complex item transformation.
+ doc/Developers/item_transformation
+ include/sproto.h
+ lib/help/use
+ server/c_object.c commands.c
+Nicolas Weeger 2007-05-08
+
 Remove obsolete object types.
  common/item.c
  include/define.h

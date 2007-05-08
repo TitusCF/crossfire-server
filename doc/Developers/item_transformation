@@ -1,4 +1,27 @@
-This file explains the 'ITEM_TRANSFORMER' (163) item type.
+Through the 'use' command, it is possible to define complex item transformations.
+
+'use' will work on 2 items, which will be called 'item1' and 'item2'.
+
+Syntax for command is 'use item1 with item2'.
+
+item2 is searched for a key/value of the form, in this order:
+* on_use_with_<item1's archetype name>
+* on_use_with_<item1's type>_<item1's subtype>
+* on_use_with_<item1's type>
+
+If no key is found, use will simply not do anything.
+
+If a key is found, it's processed to know what to do.
+
+Syntax of the value is pretty simple:
+* add [number] archetype: will give the player [number] items of archetype specified
+* remove $1: will remove one item1
+* remove $2: will remove one item2
+
+Note that remove can appear multiple times, but you can't specify a precise number to remove.
+
+----------------------------------------------------------
+There is also an 'ITEM_TRANSFORMER' (163) item type.
 
 Last update: 2005-07-19.
 
