@@ -28,6 +28,11 @@
 
 /* March 96 - Laid down original code. -b.t. thomas@astro.psu.edu */
 
+/**
+ * @file
+ * This contains all alchemy-related functions.
+ */
+
 #include <global.h>
 #include <object.h>
 #ifndef __CEXTRACT__
@@ -107,8 +112,12 @@ static const char *cauldron_sound(void) {
  * unique -- such a 'feature' is one reason why players might want to experiment
  * around. :)
  * -b.t.
+ *
+ * @param caster
+ * who is doing alchemy.
+ * @param cauldron
+ * the cauldron in which alchemy should take place.
  */
-
 static void attempt_do_alchemy(object *caster, object *cauldron) {
     recipelist *fl;
     recipe *rp=NULL;
@@ -218,8 +227,14 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
  * Recipe value of the entire contents of a container.
  * This appears to just generate a hash value, which I guess for now works
  * ok, but the possibility of duplicate hashes is certainly possible - msw
-  */
-
+ *
+ * @param op
+ * contained for which to generate a hash.
+ * @return
+ * hash value.
+ * @todo
+ * use safe string functions.
+ */
 static int content_recipe_value (object *op) {
   char name[MAX_BUF];
   object *tmp=op->inv;
@@ -245,9 +260,14 @@ static int content_recipe_value (object *op) {
 }
 
 /**
- * Returns total number of items in op
+ * Returns the total number of items in op.
+ * @param op
+ * container.
+ * @return
+ * total item count.
+ * @todo
+ * what is number used for??
  */
-
 static int numb_ob_inside (object *op) {
   object *tmp=op->inv;
   int number=0,o_number=0;
@@ -266,14 +286,29 @@ static int numb_ob_inside (object *op) {
 
 /**
  * Essentially a wrapper for make_item_from_recipe() and
- * insert_ob_in_ob. If the caster has some alchemy skill, then they might
+ * insert_ob_in_ob(). If the caster has some alchemy skill, then they might
  * gain some exp from (successfull) fabrication of the product.
  * If nbatches==-1, don't give exp for this creation (random generation/
  * failed recipe)
  * If ignore_cauldron, don't check if we are using the matching cauldron
  * type (shadow alchemy)
+ *
+ * @param caster
+ * who is trying to do alchemy.
+ * @param cauldron
+ * container used for alchemy.
+ * @param ability
+ * ?
+ * @param rp
+ * recipe attempted.
+ * @param nbatches
+ * ?
+ * @param ignore_cauldron
+ * if 0, checks the recipe uses the right cauldron type, else no check is done.
+ * @return
+ * generated item, can be NULL if contents were destroyed.
+ * @todo check meaning of ability/nbatches.
  */
-
 static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron) {
 
     object *item=NULL, *skop;
@@ -335,10 +370,15 @@ static object * attempt_recipe(object *caster, object *cauldron, int ability, re
 
 
 /**
- * We adjust the nrof, exp and level of the final product, based
+ * We adjust the nrof of the final product, based
  * on the item's default parameters, and the relevant caster skill level.
+ * @param item
+ * item to adjust.
+ * @param lvl
+ * alchemy skill level.
+ * @param yield
+ * how many products the recipe returns at maximum.
  */
-
 static void adjust_product(object *item, int lvl, int yield) {
     int nrof=1;
 
@@ -455,8 +495,16 @@ static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *
  * increases. If SPELL_FAILURE_EFFECTS is defined some really evil things
  * can happen to the would be alchemist. This table probably needs some
  * adjustment for playbalance. -b.t.
+ *
+ * @param op
+ * who tried to do alchemy.
+ * @param cauldron
+ * container that was used.
+ * @param rp
+ * recipe that failed.
+ * @param danger
+ * danger value, the higher the more evil the effect.
  */
-
 static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
     int level=0;
 
@@ -665,8 +713,11 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
  * All but object "save_item" are elimentated from
  * the container list. Note we have to becareful to remove the inventories
  * of objects in the cauldron inventory (ex icecube has stuff in it).
+ * @param first_ob
+ * container from which to remove.
+ * @param save_item
+ * what item to not remove. Can be NULL.
  */
-
 static void remove_contents (object *first_ob, object *save_item) {
   object *next,*tmp=first_ob;
 
@@ -692,8 +743,16 @@ static void remove_contents (object *first_ob, object *save_item) {
  * danger. Note that we assume that we have had the caster ready the alchemy
  * skill *before* this routine is called. (no longer auto-readies that skill)
  * -b.t.
+ *
+ * @param caster
+ * who is trying alchemy.
+ * @param cauldron
+ * container used.
+ * @param rp
+ * recipe attempted.
+ * @return
+ * danger value.
  */
-
 static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
    object *item;
    char name[MAX_BUF];
@@ -738,15 +797,20 @@ static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
  * Determines if ingredients in a container match the
  * proper ingredients for a recipe.
  *
- * rp is the recipe to check
- * cauldron is the container that holds the ingredients
- * returns 1 if the ingredients match the recipe, 0 if not
- *
  * This functions tries to find each defined ingredient in the container. It is
  * the defined recipe iff
  *  - the number of ingredients of the recipe and in the container is equal
  *  - all ingredients of the recipe are found in the container
  *  - the number of batches is the same for all ingredients
+ *
+ * @param rp
+ * recipe to check.
+ * @param cauldron
+ * container that holds the ingredients.
+ * @param caster
+ * who is trying to cast.
+ * @return
+ * 1 if the ingredients match the recipe, 0 if not.
  */
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster)
 {
@@ -822,7 +886,16 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
  * is more than one matching recipe, it selects a random one. If at least one
  * transmuting recipe matches, it only considers matching transmuting recipes.
  *
- * @return one matching recipe, or NULL if no recipe matches
+ * @param fl
+ * ?
+ * @param formula
+ * ?
+ * @param ingredients
+ * ?
+ * @return
+ * one matching recipe, or NULL if no recipe matches
+ * @todo
+ * document parameters.
  */
 static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
 {
@@ -893,8 +966,14 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
 
 /**
  * Handle use_skill for alchemy-like items.
- * Will return 1 if any recipe was attempted, 0 else.
+ * @param op
+ * player trying to do alchemy.
+ * @return
+ * 1 if any recipe was attempted, 0 else.
+ * @note
  * Will inform player if attempting to use unpaid cauldron or ingredient.
+ * @todo
+ * check if no superflous message when 2 cauldrons on same spot, one unpaid? (shouldn't happen, but well).
  **/
 int use_alchemy(object* op)
 {
