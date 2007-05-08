@@ -191,7 +191,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GEM		            60
 /*#define FIRECHEST	            61*/    /* FIRECHEST folded into FIREWALL */
 #define FIREWALL	            62
-#define ANVIL			    63
+/*#define ANVIL			    63*/
 #define CHECK_INV	            64	/* by b.t. thomas@nomad.astro.psu.edu */
 #define MOOD_FLOOR	            65	/* by b.t. thomas@nomad.astro.psu.edu
 				                     * values of last_sp set how to change:
@@ -214,22 +214,22 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
  * types are not used in any archetypes, and should perhaps be removed.
  */
-#define TRAP_PART	            76	/* Needed by set traps skill -b.t. */ 
+/*#define TRAP_PART	            76	Needed by set traps skill -b.t. */ 
 
 #define WALL			    77 /* this is a wall. put it always in layer 1 if not set is_floor */
-#define LIGHT_SOURCE		    78 /* torches, lamps, etc. */
+/*#define LIGHT_SOURCE		    78 torches, lamps, etc. */
 #define MISC_OBJECT		    79 /* misc. objects are for objects without a function
                                       in the engine. Like statues, clocks, chairs,...
                                       If perhaps we create a function where we can sit
                                       on chairs, we create a new type and remove all
                                       chairs from here. */
 #define MONSTER			    80 /* yes, thats a real, living creature */
-#define SPAWN_GENERATOR		    81 /* a spawn point or monster generator object */
+/*#define SPAWN_GENERATOR		    81 a spawn point or monster generator object */
 #define LAMP			    82 /* a lamp */
 #define DUPLICATOR		    83 /* duplicator/multiplier object */
 #define TOOL			    84 /* a tool for building objects */
 #define SPELLBOOK	            85
-#define BUILDFAC		    86 /* facilities for building objects */
+/*#define BUILDFAC		    86 facilities for building objects */
 #define CLOAK		            87
 /*#define CONE		            88 */
 /*#define AURA			    89  *//* aura spell object */
@@ -251,8 +251,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BRACERS		            104
 #define POISONING	            105
 #define SAVEBED		            106
-#define POISONCLOUD	            107
-#define FIREHOLES	            108
+/*#define POISONCLOUD	            107*/
+/*#define FIREHOLES	            108*/
 #define WAND		            109
 /*#define ABILITY		    110*/
 #define SCROLL		            111
