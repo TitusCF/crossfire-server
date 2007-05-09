@@ -800,7 +800,7 @@ int command_create(object *op, char *params) {
      * just create one object, do all the processing, and then determine
      * if that one object should be inserted or if we need to make copies.
      */
-    tmp = arch_to_object(at);
+    tmp = object_create_arch(at);
     if (settings.real_wiz == FALSE)
         SET_FLAG(tmp, FLAG_WAS_WIZ);
     if (set_magic)
@@ -899,8 +899,14 @@ int command_create(object *op, char *params) {
             create_treasure(at->clone.randomitems, tmp, GT_APPLY,
                 op->map->difficulty, 0);
 
-        tmp = insert_ob_in_ob(tmp, op);
-        esrv_send_item(op, tmp);
+        /* Multipart objects can't be in inventory, put'em on floor. */
+        if (!tmp->more) {
+            tmp = insert_ob_in_ob(tmp, op);
+            esrv_send_item(op, tmp);
+        }
+        else {
+            insert_ob_in_map_at(tmp, op->map, op, 0, op->x, op->y);
+        }
 
         /* Let's put this created item on stack so dm can access it easily. */
         dm_stack_push(op->contr, tmp->count);

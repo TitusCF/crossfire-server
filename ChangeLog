@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_wiz.c: fix multipart object creation.
+Nicolas Weeger 2007-05-09
+
 server/plugins.c: fix wrong parameter order.
 Nicolas Weeger 2007-05-08
 
