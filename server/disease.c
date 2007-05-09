@@ -295,6 +295,12 @@ int infect_object(object *victim, object *disease, int force) {
      */
     if(!is_susceptible_to_disease(victim, disease)) return 0;
 
+    /* If disease is on battleground, only infect other victims on battleground.
+       Not checking results in spectators being infected, which could lead to PK. */
+    if ((disease->map && op_on_battleground(disease, NULL, NULL)) || (disease->env && op_on_battleground(disease->env, NULL, NULL)))
+        if (!op_on_battleground(victim, NULL, NULL))
+            return 0;
+
     /* roll the dice on infection before doing the inventory check!  */
     if(!force && (random_roll(0, 126, victim, PREFER_HIGH) >= disease->stats.wc))
 	return 0;
