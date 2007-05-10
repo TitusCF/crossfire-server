@@ -775,6 +775,8 @@ void show_skills(object *op, const char* search) {
 	 op->level/5+5);
 
     cp = determine_god(op);
+    if (strcmp(cp, "none") == 0)
+        cp = NULL;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_LIST,
 			 "You worship %s.",
 			 "You worship %s.",

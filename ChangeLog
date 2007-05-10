@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/skill_util.c: fix wrong 'skills' display when no god is whoreshipped.
+Nicolas Weeger 2007-05-10
+
 server/disease.c: fix bug #1713112: rabies infects audience of the arena.
 Nicolas Weeger 2007-05-09
 
