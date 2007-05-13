@@ -92,6 +92,7 @@ void cctk_init_std_archetypes(void){
  * by setting appropriate flags (so it is part of game, not just a storage)
  * Requires arch and object initialized in status flag
  * @param archname the archetype name to use (NULL= default one)
+ * @return created object, including its more parts, or NULL if archetype doesn't exist.
  */
 object* cctk_create_game_object(char* archname){
   archetype *arch;
@@ -101,7 +102,7 @@ object* cctk_create_game_object(char* archname){
     archname="empty_archetype";
   arch = find_archetype(archname);
   if (arch==NULL) return NULL;
-  obj = arch_to_object(arch);
+  obj = object_create_arch(arch);
   if (obj==NULL) return NULL;
   CLEAR_FLAG(obj,FLAG_FREED);
   return obj;

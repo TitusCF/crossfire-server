@@ -57,7 +57,9 @@ START_TEST (test_add_string)
     const char * str2;
     const char * str3;
     char * temp;
+#ifndef MANY_CORES
     fail_unless (add_string(NULL) == NULL, "add_string should null when receiving a null as parameter.");
+#endif
     str1 = add_string("Hello world");
     fail_unless (str1 != NULL, "add_string should not return null when receiving content.");
     temp = malloc (strlen(str1)+1);

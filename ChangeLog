@@ -15,6 +15,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix unit test pics (those are dummy ones, to be replaced someday). Add more tests to objects.
+ test/templates/checkTextResult.xsl: put dummy stuff so it works (copied from logresult.xsl)
+ test/templates/crossfire-logo-unit.png
+ test/templates/crossfire-logo-unit-failed.png
+ test/templates/crossfire-logo-unit-success.png
+ test/templates/error.png
+ test/templates/failure.png
+ test/templates/success.png
+ test/templates/txtlog.png
+ test/toolkit/toolkit_common.c: use multipart-aware function
+ test/unit/common/check_object.c: implement more tests
+ test/unit/common/check_shstr.c: don't try to add_string(NULL) if MANY_CORES is set, abort().
+ test/unit/server/Makefile.am: add libtypes.a to server.
+Nicolas Weeger 2007-05-13
+
 Remove obsolete fields.
  common/loader.l
  include/attack.h
