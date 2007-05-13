@@ -30,13 +30,6 @@
 #ifndef ATTACK_H
 #define ATTACK_H
 
-/* These are default values for converting from simple protected/immune/vuln
- * to thre partial resistances
- */
-#define RESIST_IMMUNE	100
-#define RESIST_PROT	30
-#define RESIST_VULN	-100
-
 /*
  * Attacktypes:
  * ATNR_... is the attack number that is indexed into the

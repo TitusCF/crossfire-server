@@ -310,23 +310,6 @@ extern int arch_init;
 extern int artifact_init;
 
 /**
- *
- * Put this here since it is used below.
- *
- * @todo
- * This corresponds to old/obsolete code. Maps should be checked, and this removed.
- */
-static void set_protection(object *op, uint32 mask, uint16 pro_val)
-{
-    int i;
-
-    if (!mask) return;	/* Unlikely, but might as well check */
-    for (i=0; i<NROFATTACKS; i++) {
-        if (mask & (1<<i)) SET_RESIST(op, i, pro_val);
-    }
-}
-
-/**
  * Fills in the body information for one slot.
  *
  * @param op
@@ -980,7 +963,6 @@ A	.+
 ^no_drop{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL);
 ^will_apply{S}	    op->will_apply = IVAL;
 ^random_movement{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
-^can_apply{S}		    { }
 ^can_use_shield{S}  SET_OR_CLEAR_FLAG(op, FLAG_USE_SHIELD, IVAL);
 ^can_cast_spell{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAST_SPELL, IVAL);
 ^can_use_scroll{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_SCROLL, IVAL);
@@ -994,10 +976,7 @@ A	.+
 ^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
 ^lifesave{S}	    SET_OR_CLEAR_FLAG(op, FLAG_LIFESAVE, IVAL);
 ^no_strength{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_STRENGTH, IVAL);
-^sleep{S}	    {
-			SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
-			/*(LOG(llevDebug," Warning: Object %s has sleep set in arch.\n",op->name);*/
-		    }
+^sleep{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
 ^stand_still{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STAND_STILL, IVAL);
 ^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
@@ -1005,8 +984,6 @@ A	.+
 ^activate_on_push{S}	SET_OR_CLEAR_FLAG(op, FLAG_ACTIVATE_ON_PUSH, IVAL);
 ^activate_on_release{S}	SET_OR_CLEAR_FLAG(op, FLAG_ACTIVATE_ON_RELEASE, IVAL);
 
-    /* armour is loaded for compatiblity reasons */
-^armour{S}		SET_RESIST(op, ATNR_PHYSICAL, IVAL);
     /* Start of various attacktypes */
 ^resist_physical{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
 ^resist_magic{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
@@ -1034,18 +1011,6 @@ A	.+
 ^resist_internal{S}	SET_RESIST(op, ATNR_INTERNAL, IVAL);
 ^resist_life_stealing{S}	SET_RESIST(op, ATNR_LIFE_STEALING, IVAL);
 ^resist_disease{S}	SET_RESIST(op, ATNR_DISEASE, IVAL);
-
-    /* Old style resistances */
-^immune{S}		set_protection(op, IVAL, RESIST_IMMUNE);
-^protected{S}		set_protection(op, IVAL, RESIST_PROT);
-^vulnerable{S}		set_protection(op, IVAL, RESIST_VULN);
-
-    /* old values - keep them around for now, but they should be removed at some point */
-^has_ready_rod{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
-^has_ready_horn{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
-^has_ready_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
-^can_use_wand{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_RANGE, IVAL);
-
 ^attack_movement{S} op->attack_movement = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
