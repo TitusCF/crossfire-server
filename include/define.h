@@ -288,7 +288,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BUILDER            160 /* Generic item builder, see subtypes */
 #define MATERIAL            161 /* Material for building */
 /* #define GPS                 162 Ground positionning system, moved to Python plugin */
-#define ITEM_TRANSFORMER    163 /* Transforming one item with another */
+/* #define ITEM_TRANSFORMER    163 /* Transforming one item with another - replaced by 'use' command. */
 #define QUEST               164 /* See below for subtypes */
 
 #define OBJECT_TYPE_MAX		    164 /* update if you add new types */

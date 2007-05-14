@@ -37,15 +37,17 @@
 #include <ob_types.h>
 #include <sproto.h>
 
+/*
 static method_ret item_transformer_type_apply(ob_methods *context, object *op,
     object* applier, int aflags);
+*/
 
 /**
  * Initializer for the ITEM_TRANSFORMER object type.
  */
 void init_type_item_transformer(void)
 {
-    register_apply(ITEM_TRANSFORMER, item_transformer_type_apply);
+/*    register_apply(ITEM_TRANSFORMER, item_transformer_type_apply);*/
 }
 
 /**

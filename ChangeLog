@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove now obsolete 'item_transformer' type, replaced by 'use' command.
+ common/item.c
+ include/define.h
+ plugins/cfpython/cfpython.c
+ server/apply.c
+ types/item_transformer/item_transformer.c
+Nicolas Weeger 2007-05-13
+
 Remove (legacy_)apply_container that wasn't used - called only for non players,
  but starts by returning if applier is not a player.
 Rename (legacy_)esrv_apply_container to (legacy_)apply_container.

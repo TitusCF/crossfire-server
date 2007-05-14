@@ -225,7 +225,6 @@ static const typedata item_types[] = {
     {SYMPTOM, "symptom", "symptoms", 0, 0},
     {BUILDER, "item builder", "item builders", 0, 0},
     {MATERIAL, "building material", "building materials", 0, 0},
-    {ITEM_TRANSFORMER, "item_transformer", "item_transformers", 0, 0},
 };
 
 /** Number of items in ::item_types array. */

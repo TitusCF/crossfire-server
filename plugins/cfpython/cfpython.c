@@ -916,7 +916,6 @@ static void initConstants(PyObject* module)
         { "SYMPTOM", SYMPTOM },
         { "BUILDER", BUILDER },
         { "MATERIAL", MATERIAL },
-        { "ITEM_TRANSFORMER", ITEM_TRANSFORMER },
         { "QUEST", QUEST },
         { NULL, 0 } };
 
