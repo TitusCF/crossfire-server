@@ -2639,7 +2639,7 @@ static void loot_object(object *op) { /* Grab and destroy some treasure */
     object *tmp,*tmp2,*next;
 
     if (op->container) { /* close open sack first */
-        esrv_apply_container (op, op->container);
+        apply_container (op, op->container);
     }
 
     for(tmp=op->inv;tmp!=NULL;tmp=next) {

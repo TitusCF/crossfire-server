@@ -54,8 +54,6 @@ static method_ret container_type_move_on(ob_methods* context, object* trap,
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;
     if (victim->type==PLAYER)
-        (void) legacy_esrv_apply_container (victim, trap);
-    else
         (void) legacy_apply_container (victim, trap);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

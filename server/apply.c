@@ -927,166 +927,29 @@ static int set_object_face_other(object *op){
     }
     return FALSE;
 }
-    
-/**
- * Handle apply on containers.
- * By Eneq(at)(csd.uu.se).
- * Moved to own function and added many features [Tero.Haatanen@lut.fi]
- * added the alchemical cauldron to the code -b.t.
- */
-
-static int apply_container (object *op, object *sack)
-{
-    object *tmp;
-    char name_sack[MAX_BUF], name_tmp[MAX_BUF];
-
-    if(op->type!=PLAYER)
-        return 0; /* This might change */
-
-    if (sack==NULL || sack->type != CONTAINER) {
-        LOG (llevError, "apply_container: %s is not container!\n",
-             sack?sack->name:"NULL");
-        return 0;
-    }
-    op->contr->last_used = NULL;
-    op->contr->last_used_id = 0;
-
-    if (sack->env!=op) {
-        if (sack->other_arch == NULL || sack->env != NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You must get it first.", NULL);
-            return 1;
-        }
-        query_name(sack, name_sack, MAX_BUF);
-            /* It's on the ground, the problems begin */
-        if (op->container != sack) {
-                /* it's closed OR some player has opened it */
-            if (QUERY_FLAG(sack, FLAG_APPLIED)) {
-                for(tmp=get_map_ob(sack->map, sack->x, sack->y);
-                    tmp && tmp->container != sack; tmp=tmp->above);
-                if (tmp) {
-                        /* some other player have opened it */
-                    draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                         "%s is already occupied.",
-                                         "%s is already occupied.",
-                                         name_sack);
-                    return 1;
-                }
-            }
-        }
-        if ( QUERY_FLAG(sack, FLAG_APPLIED)) {
-            if (op->container == NULL) {
-                tmp = arch_to_object (sack->other_arch);
-                    /* not good, but insert_ob_in_ob() is too smart */
-                CLEAR_FLAG (tmp, FLAG_REMOVED);
-                tmp->x= tmp->y = tmp->ox = tmp->oy = 0;
-                tmp->map = NULL;
-                tmp->env = sack;
-                if (sack->inv)
-                    sack->inv->above = tmp;
-                tmp->below = sack->inv;
-                tmp->above = NULL;
-                sack->inv = tmp;
-                sack->move_off = MOVE_ALL; /* trying force closing it */
-            } else {
-                sack->move_off = 0;
-                tmp = sack->inv;
-                if (tmp && tmp->type ==  CLOSE_CON) {
-                    remove_ob(tmp);
-                    free_object (tmp);
-                }
-            }
-        }
-    }
-
-    if (QUERY_FLAG (sack, FLAG_APPLIED)) {
-        if (op->container) {
-            if (op->container != sack) {
-                tmp = op->container;
-                apply_container (op, tmp);
-                query_name(sack, name_tmp, MAX_BUF);
-                draw_ext_info_format (NDI_UNIQUE,0,op,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                      "You close %s and open %s.",
-                                      name_sack, name_tmp);
-                op->container = sack;
-            } else {
-                CLEAR_FLAG (sack, FLAG_APPLIED);
-                op->container = NULL;
-                draw_ext_info_format (NDI_UNIQUE,0,op,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                      "You close %s.",
-                                      "You close %s.",
-                                      name_sack);
-            }
-        } else {
-            CLEAR_FLAG (sack, FLAG_APPLIED);
-            draw_ext_info_format (NDI_UNIQUE,0,op,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                  "You open %s.",
-                                  "You open %s.",
-                                  name_sack);
-            SET_FLAG (sack, FLAG_APPLIED);
-            op->container = sack;
-        }
-    } else { /* not applied */
-        if (sack->slaying) { /* it's locked */
-            tmp = find_key(op, op, sack);
-            if (tmp) {
-                SET_FLAG (sack, FLAG_APPLIED);
-                if (sack->env == NULL) { /* if it's on ground,open it also */
-                    query_name(tmp, name_tmp, MAX_BUF);
-                    draw_ext_info_format (NDI_UNIQUE,0,op,
-                                          MSG_TYPE_APPLY,
-                                          MSG_TYPE_APPLY_SUCCESS,
-                                          "You unlock %s with %s.",
-                                          "You unlock %s with %s.",
-                                          name_sack, name_tmp);
-                    apply_container (op, sack);
-                    return 1;
-                }
-            } else {
-                draw_ext_info_format (NDI_UNIQUE,0,op,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                      "You don't have the key to unlock %s.",
-                                      "You don't have the key to unlock %s.",
-                                      name_sack);
-            }
-        } else {
-            draw_ext_info_format (NDI_UNIQUE,0,op,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                  "You readied %s.",
-                                  "You readied %s.",
-                                  name_sack);
-            SET_FLAG (sack, FLAG_APPLIED);
-            if (sack->env == NULL) {  /* if it's on ground,open it also */
-                apply_container (op, sack);
-                return 1;
-            }
-        }
-    }
-    if (op->contr) op->contr->socket.update_look=1;
-    return 1;
-}
 
 /**
- * Eneq(at)(csd.uu.se): Handle apply on containers.  This is for
+ * Handle apply on containers.  This is for
  * containers that are applied by a player, whether in inventory or
  * on the ground: eg, sacks, luggages, etc.
  *
  * Moved to own function and added many features [Tero.Haatanen(at)lut.fi]
  * This version is for client/server mode.
- * op is the player, sack is the container the player is opening or closing.
- * return 1 if an object is apllied somehow or another, 0 if error/no apply
  *
  * Reminder - there are three states for any container - closed (non applied),
  * applied (not open, but objects that match get tossed into it), and open
  * (applied flag set, and op->container points to the open container)
+ *
+ * @param op
+ * player.
+ * @param sack
+ * container the player is opening or closing.
+ * @return
+ * 1 if an object is apllied somehow or another, 0 if error/no apply
+ *
+ * @author Eneq(at)(csd.uu.se)
  */
-
-int esrv_apply_container (object *op, object *sack)
+int apply_container (object *op, object *sack)
 {
     char name_sack[MAX_BUF], name_tmp[MAX_BUF];
     object *tmp=op->container;
@@ -1095,17 +958,16 @@ int esrv_apply_container (object *op, object *sack)
 
     if (sack==NULL || sack->type != CONTAINER) {
         LOG (llevError,
-             "esrv_apply_container: %s is not container!\n",
+             "apply_container: %s is not container!\n",
              sack?sack->name:"NULL");
         return 0;
     }
 
-        /* If we have a currently open container, then it needs
-         * to be closed in all cases if we are opening this one up.
-         * We then fall through if appropriate for openening the new
-         * container.
-         */
-
+    /* If we have a currently open container, then it needs
+     * to be closed in all cases if we are opening this one up.
+     * We then fall through if appropriate for openening the new
+     * container.
+     */
     if (op->container && QUERY_FLAG(sack, FLAG_APPLIED)) {
         if (op->container->env != op) { /* if container is on the ground */
             op->container->move_off = 0;
@@ -1156,16 +1018,16 @@ int esrv_apply_container (object *op, object *sack)
         }
     }
 
-        /* By the time we get here, we have made sure any other container
-         * has been closed and if this is a locked container, the player
-         * has the key to open it.
-         */
+    /* By the time we get here, we have made sure any other container
+     * has been closed and if this is a locked container, the player
+     * has the key to open it.
+     */
 
-        /* There are really two cases - the sack is either on the ground,
-         * or the sack is part of the player's inventory.  If on the ground,
-         * we assume that the player is opening it, since if it was being
-         * closed, that would have been taken care of above.
-         */
+    /* There are really two cases - the sack is either on the ground,
+     * or the sack is part of the player's inventory.  If on the ground,
+     * we assume that the player is opening it, since if it was being
+     * closed, that would have been taken care of above.
+     */
 
 
     if (sack->env != op) {
@@ -3779,10 +3641,6 @@ void legacy_check_improve_weapon(object* op, object* tmp)
 void legacy_apply_container(object* op, object* sack)
 {
     apply_container(op, sack);
-}
-void legacy_esrv_apply_container(object* op, object* sack)
-{
-    esrv_apply_container(op, sack);
 }
 int legacy_is_legal_2ways_exit(object* op, object* exit)
 {

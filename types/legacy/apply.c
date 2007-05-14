@@ -90,16 +90,12 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
         case CLOSE_CON:
             if (applier->type==PLAYER)
-                (void) esrv_apply_container (applier, op->env);
-            else
-                (void) legacy_apply_container (applier, op->env);
+                legacy_apply_container (applier, op->env);
             return 1;
 
         case CONTAINER:
             if (applier->type==PLAYER)
-                (void) esrv_apply_container (applier, op);
-            else
-                (void) legacy_apply_container (applier, op);
+                legacy_apply_container (applier, op);
             return 1;
 
         case TREASURE:

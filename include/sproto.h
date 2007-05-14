@@ -24,7 +24,6 @@ void legacy_apply_food(object *op, object *tmp);
 void legacy_apply_spellbook(object *op, object *tmp);
 void legacy_check_improve_weapon(object *op, object *tmp);
 void legacy_apply_container(object *op, object *sack);
-void legacy_esrv_apply_container(object *op, object *sack);
 int legacy_is_legal_2ways_exit(object *op, object *exit);
 void legacy_apply_treasure(object *op, object *tmp);
 void legacy_apply_savebed(object *pl);
