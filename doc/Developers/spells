@@ -10,6 +10,7 @@ Index:
 6. Arch Directory Layout
 7. Programming Notes
 8. Abilities
+9. Spell Merging
 
 ------------------------------------------------------------------------------
 1. BACKGROUND
@@ -1231,3 +1232,164 @@ is created.
 
 hp/sp: Index for the spell that is used.  One was 'short' range vs
    long range.
+
+------------------------------------------------------------------------------
+9. SPELL MERGING
+
+In May 2007, I (Mark Wedel) added code added causes spells to merge.  This
+section briefly defines what was done, performance impact, and other random
+thoughts.
+
+Before this merge logic, each spell, no matter how similar, was its own object
+on a space.  This meant that for some spells, there would be hundreds of
+objects on a space.  This doesn't seem that large until one looks closely at
+the code - for each object inserted, all the other objects on the space had to
+be examined, making this on O(n^2) operation.
+
+Even reducing the number of objects on the space makes a significant
+difference - the difference between 20 and 10 objects isn't a factor of 2, it
+is a factor of 4.
+
+The first step in the process was to write a test program
+(test/unit/server/comet_perf.c) to provide consistent test runs - this not
+only let me get performance numbers with a known environment, it also let me
+generate a test case to make sure that the amount of damage comes out the
+same (or close enough - in the revised code, the results were +/- 3%)
+
+In the end, through the various changes, the code ran 70% faster than before.
+
+Breakdown of gains:
+Setting op->range in explosion() after propogating spell:	32%
+Making was_destroyed() a macro:					 9%
+was_destroyed() + op->range changes				48%
+Allowing spells to merge:					21%
+
+As is noted, many of these changes have interactions - the range +
+was_destroyed() makes a bigger change together than separately.  And
+the spell merging requires op->range=0 change, as described below.
+
+Notes on the changes:
+
+op->range=0 in explosion:
+-------------------------
+Each time the explosion object got an action, if op->range>0, it would try
+to propogate to all neighboring squares.  In almost all cases this is a
+futile excercise, because if that neighboring square has an instance of this
+spell, it won't put another one there (one thing that ok_to_put_more()
+checks on).  By setting the range to 0, we prevent this attempt.  It also
+has the side benefit of allowing more spells to merge (we can not merge
+spells with different ranges).  The one visible change this has is that if a
+door/gate is closed but in the explosion area, in the old code, the
+explosion would go through the space if that door is open - in the revised
+code it won't do that, since it has already attempted to do so and was
+unsuccessful.
+
+The op->range check in explosion is actually a very important change -
+important enough that we will only merge spells if the range is zero.
+
+This can be illustrated with a small example.  Use this diagram of spaces:
+
+12
+34
+
+If a spell (A) is cast from the top, it will hit spaces 1&2 at the same time.
+If there is another spell (B) cast from the right, it will hit spaces 2 and 4.
+
+When the spells merge, there is now a single spell object on space 2 that
+includes the tags of spells A & B.  Spell AB@2 will not move to space 1 -
+space 1 already has spell A, so ok_to_put_more() says no.  Now spell B@4 could
+move to 1, but if A@1 moves first, it merges with B@4, so now there is AB@4,
+and like AB@2, it will not move to space 1 (spell is already there).
+
+But enforcing the range==0 check, this works fine - if the spells are still
+propogating to different spaces, we don't merge.  So in the above example,
+spells A & B @ 2 do not merge, but instead remain individual spell object - B
+can move to 1, A can move to 4, and after doing so, the range to each spell is
+set to zero, and they can then merge at that point
+
+Making was_destroyed() a macro:
+-------------------------------
+This is pretty clear cut - by making it a macro, it reduces the function
+call overhead.  This was also a trivial 1 line function, so making it
+a macro was not particularly messy.
+
+Allowing spells to merge:
+-------------------------
+The simplest aspect of this is to have like spells be merged in
+insert_ob_in_map().  However, as noted above, we won't propogate a spell to a
+space if there is already an instance of that spell from the same casting.  So
+to do this, we needed to record the tags of the parent spell that we merge in,
+so the spell_tags array (dynamically allocated) is created.  For speed, a
+simple hash is used to access the data in that array.
+
+When merging spells, we make sure the spells are similar in many respects -
+must be same type of spell, same owner, same level, etc.  We then adjust the
+damage and duration of the merged spell.  We can not merge spells of different
+ranges - one can not really associate what effect that should have on damage
+
+There are some player noticable effects to this - players will not see as many
+spell objects on a space they are on, as some could have been merged together.
+
+Also, the test case makes it so that damage for objects not moving within the
+spell are the same.  With different duration spells, if a character ducks out
+quickly from the effect, they will take slightly less damage than before the
+changes.  Example: two spells with dam 50 each and duration 10 & 20.  In the
+first case, for the first 10 ticks, you would take 100 damage/tick, and for
+the last 10, you would take 50.  Under the merging, you would take 75 damage
+for all 20 ticks.  In most cases, the differences in duration will not be as
+extreme, so the actual difference in damage will no be so much.
+
+There is a single tunable to this right now - the SPELL_TAG_SIZE in object.h -
+this determines the size of the hash table.  In my testing, a size of 16
+worked out pretty good.  Note that the hashing method is very basic - if we
+get a conflict in the hash table between 2 objects, we just say they can not
+be merged - we do not use backoff methods, etc, which would complicate other
+aspects of the code, notable merging the tables together.  So a too small hash
+table would result in not enough objects getting merged.
+
+In the test case above, following results on my system with the 16 slot table:
+Got 201640 supressions, 8421 spell merges, 289 full tables
+3.623u 0.060s 0:03.90 94.3%     0+0k 0+0io 0pf+0w
+
+With a 32 slot table:
+3.462u 0.031s 0:03.98 87.6%     0+0k 0+0io 0pf+0w
+Got 201641 supressions, 8748 spell merges, 249 full tables
+
+Doubling the size of the table makes a minor improvement in full tables as
+well as performance (.16 seconds is about 4%).  And there is definitely a
+trade off - if the tables are very large, it will take longer to merge the
+tables when the objects are merged.
+
+One note with the merge code - while the other changes give some definite
+benefits, merging should show better results with the new objects - my tests
+were done with castings of 30 comets - a reason for this was that with larger
+number of comets, the old code would just never finish (it had run for several
+minutes before I gave).  Running the new code with it casting 100 comets now
+actually still had it finish relatively quickly - under 10 seconds.  The more
+spells around, the more that could be merged to give a benefit - in
+comparison, the op->range=0, while reducing the load quite a bit, still would
+not reduce the number of objects on the different spaces.
+
+Other Thoughts Related on Merging:
+----------------------------------
+After the changes above, this is the top cpu users when run in the test
+program:
+
+ 63.42      1.82     1.82   687168     0.00     0.00  hit_map
+ 17.07      2.31     0.49     1500     0.33     1.86  process_events
+  2.79      2.39     0.08    37118     0.00     0.00  remove_ob
+  2.44      2.46     0.07   784262     0.00     0.00  update_object
+  2.44      2.53     0.07   713910     0.00     0.00  animate_object
+
+ok_to_put_more() could be optimized - store the necessary information (spell
+tags, attacktypes) in the MapCell itself, but it is far enough down the
+performance chart there isn't a big win there.  hit_map() has the same problem
+as other routines - it needs to examine every object on the space.  And in
+most cases, the only things on the space are other spell objects, so it is
+wasting time.  It could be useful to store more useful information in the
+MapCell about what is on the map space so that hit_map() could quickly decide
+that there is nothing interesting and just not do anything.  In particular,
+hit map really only cares about 3 object types right now - living objects,
+transports (which may contain living objects) and items that can be destroyed
+by spells.
+

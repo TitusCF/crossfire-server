@@ -428,7 +428,6 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
  * does not have AT_MAGIC, then counterwalls do not effect the spell.
  *
  */
-
 int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
     object *tmp;
     int mflags;
@@ -458,15 +457,38 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 	    (immune_stop & AT_MAGIC)) return 0;
 
 	/* This is to prevent 'out of control' spells.  Basically, this
-	 * limits one spell effect per space per spell.  This is definately
+	 * limits one spell effect per space per spell.  This is definitely
 	 * needed for performance reasons, and just for playability I believe.
 	 * there are no such things as multispaced spells right now, so
 	 * we don't need to worry about the head.
+	 * We only need to go down this path is maxhp is set on both objects -
+	 * otherwise, no reason to check.  But if we do check, we need to
+	 * do some extra work, looking in the spell_tags[] of each object,
+	 * if they have it set.
 	 */
-	if ((tmp->stats.maxhp == op->stats.maxhp) && (tmp->type == op->type) &&
-	    (tmp->subtype == op->subtype))
-	    return 0;
+	if (tmp->type == op->type && tmp->subtype == op->subtype &&
+          tmp->stats.maxhp && op->stats.maxhp) { 
+	    if ((tmp->stats.maxhp == op->stats.maxhp) ||
+	        (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)) ||
+	        (op->spell_tags && OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp))) {
+		statistics.spell_suppressions++;
+		return 0;
+	    }
 
+	    /* if both objects have spell tags, then if the two tags entries
+	     * from either match, that also counts.  Need to check
+	     * the spell_tags, because 0 values are allowed to match
+	     */
+	    if (op->spell_tags && tmp->spell_tags) {
+		int i;
+
+		for (i=0; i<SPELL_TAG_SIZE; i++) {
+		    if (op->spell_tags[i] && op->spell_tags[i] == tmp->spell_tags[i])
+			statistics.spell_suppressions++;
+			return 0;
+		}
+	    }
+	}
 	/* Perhaps we should also put checks in for no magic and unholy
 	 * ground to prevent it from moving along?
 	 */

@@ -351,6 +351,12 @@ static void explosion(object *op) {
                 insert_ob_in_map(tmp, m, op, 0);
             }
         }
+	/* Reset range so we don't try to propogate anymore.
+	 * Call merge_spell to see if we can merge with another
+	 * spell on the space.
+         */
+	op->range = 0;
+	merge_spell(op, op->x, op->y);
     }
 }
 

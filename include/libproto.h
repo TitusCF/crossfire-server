@@ -237,7 +237,6 @@ extern int dirdiff(int dir1, int dir2);
 extern int can_see_monsterP(mapstruct *m, int x, int y, int dir);
 extern int can_pick(const object *who, const object *item);
 extern object *object_create_clone(object *asrc);
-extern int was_destroyed(const object *op, tag_t old_tag);
 extern object *find_obj_by_type_subtype(const object *who, int type, int subtype);
 extern key_value *get_ob_key_link(const object *ob, const char *key);
 extern const char *get_ob_key_value(const object *op, const char *const key);

@@ -108,6 +108,8 @@ struct Settings settings = {
     0, /* allow_broken_converters */
 };
 
+struct Statistics statistics;
+
 /**
  * Perhaps not the best place for this, but needs to be
  * in some file in the common area so that standalone
@@ -245,6 +247,8 @@ void init_environ(void) {
  * Setups logfile, and such variables.
  */
 void init_globals(void) {
+
+    memset(&statistics, 0, sizeof(struct Statistics));
     if (settings.logfilename[0] == 0) {
         logfile = stderr;
     }

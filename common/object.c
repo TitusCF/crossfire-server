@@ -755,7 +755,8 @@ void copy_object(object *op2, object *op) {
     if(op->lore!=NULL)			free_string(op->lore);
     if(op->materialname != NULL)	free_string(op->materialname);
     if(op->custom_name != NULL)		free_string(op->custom_name);
-    if(op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
+    if(op->discrete_damage != NULL)	FREE_AND_CLEAR(op->discrete_damage);
+    if(op->spell_tags != NULL)		FREE_AND_CLEAR(op->spell_tags);
 
     /* Basically, same code as from clear_object() */
 
@@ -779,8 +780,13 @@ void copy_object(object *op2, object *op) {
     if(op->custom_name!=NULL)	    add_refcount(op->custom_name);
     if (op->materialname != NULL)   add_refcount(op->materialname);
     if (op->discrete_damage != NULL) {
-        op->discrete_damage = calloc(1, sizeof(sint16) * NROFATTACKS);
+        op->discrete_damage = malloc(sizeof(sint16) * NROFATTACKS);
         memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16) * NROFATTACKS);
+    }
+
+    if (op->spell_tags != NULL) {
+        op->spell_tags = malloc(sizeof(tag_t) * SPELL_TAG_SIZE);
+        memcpy(op->spell_tags, op2->spell_tags, sizeof(tag_t) * SPELL_TAG_SIZE);
     }
 
     /* If archetype is a temporary one, we need to update reference count, because
@@ -928,6 +934,8 @@ object *get_object(void) {
     op->prev=NULL;
     op->active_next = NULL;
     op->active_prev = NULL;
+    op->discrete_damage = NULL;
+    op->spell_tags=NULL;
     if(objects!=NULL)
         objects->prev=op;
     objects=op;
@@ -1312,6 +1320,7 @@ static void free_object2(object *ob, int free_inventory) {
     if(ob->msg!=NULL)	    FREE_AND_CLEAR_STR(ob->msg);
     if(ob->materialname!=NULL) FREE_AND_CLEAR_STR(ob->materialname);
     if(ob->discrete_damage != NULL) FREE_AND_CLEAR(ob->discrete_damage);
+    if (ob->spell_tags)	    FREE_AND_CLEAR(ob->spell_tags);
 
     /* Why aren't events freed? */
     free_key_values(ob);
@@ -1632,6 +1641,188 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
     return insert_ob_in_map (op, m, originator, flag);
 }
 
+
+/**
+ * This sees if there are any objects on the space that can
+ * merge with op.  Note that op does not need to actually
+ * be inserted on the map (when called from insert_ob_in_map,
+ * it won't be), but op->map should be set correctly.
+ *
+ * Note that even if we find a match on the space, we keep progressing
+ * looking for more.  This is because op->range is set to 0 in
+ * explosion, so what may not have been mergable now is.
+ *
+ * @param op
+ * object to try to merge into.
+ *
+ * @param x
+ * @param y
+ * coordinates to look at for merging.
+ */
+void merge_spell(object *op, sint16 x, sint16 y)
+{
+    object *tmp, *above;
+    int i;
+
+    /* We try to do some merging of spell objects - if something has same owner,
+     * is same type of spell, and going in the same direction, it is somewhat
+     * mergable.
+     *
+     * If the spell object has an other_arch, don't merge - when the spell
+     * does something, like explodes, it will use this other_arch, and
+     * if we merge, there is no easy way to make the correct values be
+     * set on this new object (values should be doubled, tripled, etc.)
+     *
+     * We also care about speed - only process objects that will not be
+     * active this tick.  Without this, the results are incorrect - think
+     * of a case where tmp would normally get processed this tick, but
+     * get merges with op, which does not get processed.
+     */
+    for (tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=above) {
+	above = tmp->above;
+
+	if (op->type == tmp->type && 
+	    op->subtype == tmp->subtype &&
+	    op->direction == tmp->direction && 
+	    op->owner == tmp->owner && op->ownercount == tmp->ownercount &&
+	    op->range == tmp->range &&
+	    op->stats.wc == tmp->stats.wc && op->level == tmp->level && 
+	    op->attacktype == tmp->attacktype && op->speed == tmp->speed &&
+	    !tmp->other_arch && (tmp->speed_left +tmp->speed) < 0.0 &&
+	    op!=tmp) {
+
+
+	    /* Quick test - if one or the other objects already have hash tables
+	     * set up, and that hash bucket contains a value that doesn't
+	     * match what we want to set it up, we won't be able to merge.
+	     * Note that these two if statements are the same, except
+	     * for which object they are checking against.  They could
+	     * be merged, but the line wrapping would be large enough
+	     * that IMO it would become difficult to read the different clauses
+	     * so its cleaner just to do 2 statements - MSW
+	     */
+	    if (op->spell_tags && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp) && 
+		OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0) continue;
+
+	    if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp) && 
+		OB_SPELL_TAG_HASH(tmp, op->stats.maxhp) != 0) continue;
+
+	    /* If we merge, the data from tmp->spell_tags gets copied into op.
+	     * so we need to make sure that slot isn't filled up.
+	     */
+	    if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, tmp->stats.maxhp) &&
+		OB_SPELL_TAG_HASH(tmp, tmp->stats.maxhp) != 0) continue;
+
+	    /* If both objects have spell_tags, we need to see if there are conflicting
+	     * values - if there are, we won't be able to merge then.
+	     */
+	    if (tmp->spell_tags && op->spell_tags) {
+		int need_copy=0;
+
+		for (i=0; i< SPELL_TAG_SIZE; i++) {
+		    /* If the two tag values in the hash are set, but are
+		     * not set to the same value, then these objects
+		     * can not be merged.
+		     */
+		    if (op->spell_tags[i] && tmp->spell_tags[i] && 
+			op->spell_tags[i] != tmp->spell_tags[i]) {
+			    statistics.spell_hash_full++;
+			    break;
+			}
+			/* If one tag is set and the other is not, that is
+			 * fine, but we have to note that we need to copy
+			 * the data in that case.
+			 */
+			if ((!op->spell_tags[i] && tmp->spell_tags[i]) ||
+			    (op->spell_tags[i] && !tmp->spell_tags[i])) {
+			    need_copy=1;
+			}
+		}
+		/* If we did not get through entire array, it means
+		 * we got a conflicting hash, and so we won't be
+		 * able to merge these - just continue processing
+		 * object on this space.
+		 */
+		if (i <= SPELL_TAG_SIZE) continue;
+
+		/* Ok - everything checked out - we should be able to
+		 * merge tmp in op.  So lets copy the tag data if
+		 * needed.  Note that this is a selective copy, as
+		 * we don't want to clear values that may be set in op.
+		 */
+		if (need_copy) {
+		    for (i=0; i< SPELL_TAG_SIZE; i++)
+			if (!op->spell_tags[i] && tmp->spell_tags[i] && tmp->spell_tags[i]!=op->stats.maxhp)
+			    op->spell_tags[i] = tmp->spell_tags[i];
+		}
+		FREE_AND_CLEAR(tmp->spell_tags);
+	    }
+
+	    /* if tmp has a spell_tags table, copy it to op and free tmps */
+	    if (tmp->spell_tags && !op->spell_tags) {
+		op->spell_tags = tmp->spell_tags;
+		tmp->spell_tags = NULL;
+
+		/* We don't need to keep a copy of our maxhp value
+		 * in the copied over value
+		*/
+		if (OB_SPELL_TAG_MATCH(op, op->stats.maxhp))
+		    OB_SPELL_TAG_HASH(op, op->stats.maxhp) = 0;
+	    }
+
+	    /* For spells to work correctly, we need to record what spell
+	     * tags we've merged in with this effect.  This is used
+	     * in ok_to_put_more() to see if a spell effect is already on
+	     * the space.
+	     */
+	    if (op->stats.maxhp != tmp->stats.maxhp) {
+#ifdef OBJECT_DEBUG
+		/* This if statement should never happen - the logic above should
+		 * have prevented it.  It is a problem, because by now its possible
+		 * we've destroyed the spell_tags in tmp, so we can't really
+		 * just bail out.
+		 */
+		 
+		if (op->spell_tags && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0 &&
+		    !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)) {
+		    LOG(llevError,"insert_ob_in_map: Got non matching spell tags: %d != %d\n",
+			OB_SPELL_TAG_HASH(op, tmp->stats.maxhp),  tmp->stats.maxhp);
+		}
+#endif
+		if (!op->spell_tags)
+		    op->spell_tags = calloc(1, SPELL_TAG_SIZE * sizeof(tag_t));
+
+		OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) = tmp->stats.maxhp;
+	    }
+
+	    statistics.spell_merges++;
+	    op->speed_left = MAX(op->speed_left, tmp->speed_left);
+
+	    if (tmp->duration != op->duration) {
+		/* We need to use tmp_dam here because otherwise the
+		 * calculations can overflow the size of stats.dam.
+		 */
+		int tmp_dam = tmp->stats.dam * (tmp->duration + 1)+
+			op->stats.dam * (op->duration + 1);
+
+		op->duration = MAX(op->duration, tmp->duration);
+		tmp_dam /= (op->duration + 1);
+		op->stats.dam = tmp_dam + 1;
+	    }
+	    else {
+		/* in this case, duration is the same, so simply adding
+		 * up damage works.
+		 */
+		op->stats.dam += tmp->stats.dam;
+	    }
+
+	    remove_ob(tmp);
+	    free_object(tmp);
+	}
+    }
+}
+
+
 /**
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
@@ -1656,6 +1847,7 @@ object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int fl
  * @todo
  * this function is a mess, and should be cleaned.
  */
+
 object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag)
 {
     object *tmp, *top, *floor=NULL;
@@ -1728,13 +1920,17 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     op->map=get_map_from_coord(m, &x, &y);
 
     /* this has to be done after we translate the coordinates. */
-    if(op->nrof && !(flag & INS_NO_MERGE)) {
-        for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above)
+    if (op->nrof && !(flag & INS_NO_MERGE) && op->type != SPELL_EFFECT) {
+        for(tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above) {
             if (can_merge(op,tmp)) {
                 op->nrof+=tmp->nrof;
                 remove_ob(tmp);
                 free_object(tmp);
-            }
+	    }
+	}
+    }
+    else if (op->type == SPELL_EFFECT && !op->range && !op->other_arch  && (op->speed_left + op->speed) < 0.0) {
+	merge_spell(op, x, y);
     }
 
     /* Ideally, the caller figures this out.  However, it complicates a lot
@@ -3200,22 +3396,6 @@ object *object_create_clone (object *asrc) {
     }
 
     return dst;
-}
-
-/**
- * Checks if an object still exists.
- * @param op
- * object to check
- * @param old_tag
- * old tag of the object.
- * @return
- * true if the object was destroyed, 0 otherwise
- */
-int was_destroyed (const object *op, tag_t old_tag)
-{
-    /* checking for FLAG_FREED isn't necessary, but makes this function more
-     * robust */
-    return op->count != old_tag || QUERY_FLAG (op, FLAG_FREED);
 }
 
 /**

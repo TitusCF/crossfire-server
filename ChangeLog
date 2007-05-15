@@ -15,6 +15,34 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add spell merging code - this makes the server run much faster when many
+spell objects are in use.  For more details, see doc/Developers/spells
+---
+common/init.c: And declaration/initialization of statistics values.
+common/object.c: Add handling of spell_tags in object structure (free,
+  copy. Add merge_spell() function.  Add call to function from
+  insert_ob_in_map().  Remove was_destroyed() function - now macro.
+doc/Developers/spells: Add notes on performance numbers and how spell
+   merging works.
+include/global.h: Add statistics structure used to hold various
+  statistic related variables - added since I added a few points to collect
+  data for my testing.
+include/libproto.h: remove was_destroyed() declaration.
+include/object.h: Make was_destroyed() a macro, moving it here.  Also add
+  information related to spell tags in object structure.
+server/server.c: change process_events() to be a non static function,
+  so that test programs can call it/use it.
+server/spell_util.c: Change ok_to_put_more() to look at the spell_tags
+  in the object for match spell instances.
+test/unit/server/Makefile.am: Remove double dependency of libraries - not
+  needed.  Add dependency for libtypes.a.  Add comet_perf test case.
+test/unit/server/comet_perf.c: New file/test, used to test both performance
+  improvments as well as consistency of results.
+types/spell_effect/spell_effect.c: Modify explosion() to set op->range=0
+  after spell has propogated to neighboring spaces.  Call merge_spell()
+  after setting range to zero.
+MSW 2007-05-14
+
 Remove now obsolete 'item_transformer' type, replaced by 'use' command.
  common/item.c
  include/define.h

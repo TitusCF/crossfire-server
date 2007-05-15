@@ -50,7 +50,7 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
-static void process_events (mapstruct *map);
+void process_events (mapstruct *map);
 
 static char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
@@ -983,7 +983,7 @@ static void process_players2(mapstruct *map)
 #define SPEED_DEBUG
 
 
-static void process_events (mapstruct *map)
+void process_events (mapstruct *map)
 {
     object *op;
     object marker;

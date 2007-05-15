@@ -73,6 +73,31 @@ typedef struct _key_value {
 
 
 /**
+ * Checks if an object still exists.
+ * @param op
+ * object to check
+ * @param old_tag
+ * old tag of the object.
+ * @return
+ * true if the object was destroyed, 0 otherwise
+ */
+#define was_destroyed(op, old_tag) \
+    (op->count != old_tag || QUERY_FLAG (op, FLAG_FREED))
+
+
+/* Defines default size of the *spell_tags pointer.
+ * The OB_SPELL_TAG_HASH is a simple mechanism to get/set the
+ * spell tags based on a simple hash - it should change if the tag size
+ * also changes.  Note that since count is used for this, this value
+ * is effectively random or at least fairly evenly distributed, at
+ * least in the low bits.  And a size of 16 lets us do a very
+ * fast operation.
+ */
+#define SPELL_TAG_SIZE	16
+#define OB_SPELL_TAG_HASH(op, count)	(op->spell_tags[count & 0xf])
+#define OB_SPELL_TAG_MATCH(op, count)	(op->spell_tags[count & 0xf] == count)
+
+/**
  * Note that the ordering of this structure is sort of relevent -
  * copy_object copies everything over beyond 'name' using memcpy.
  * Thus, values that need to be copied need to be located beyond that
@@ -244,6 +269,7 @@ typedef struct obj {
                                 * be saved even for map swapout. Not handled by the
                                 * loading or saving code. */
     sint16* discrete_damage; /**< damage values, based on each attacktype. */
+    tag_t   *spell_tags;
 } object;
 
 /**

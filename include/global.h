@@ -409,6 +409,23 @@ typedef struct Settings {
 
 extern Settings settings;
 
+/* This is used for various performance tracking statistics,
+ * or just how often certain events are done.  It is much better
+ * to use a common structure then variables about.
+ * Note that since these are often counters, I'm using uint64s -
+ * this may be overkill, but it is just a couple extra bytes.
+ * This is initialized/declared in common/init.c.  Note that if
+ * it only contains integer values, very easy to initialize/clear it -
+ * just a memset.
+ */
+typedef struct Statistics {
+    uint64  spell_merges;	/**< Number of spell merges done */
+    uint64  spell_hash_full;	/**< Number of times spell hash was full*/
+    uint64  spell_suppressions;	/**< Number of times ok_to_put_more() returned FALSE*/
+} Statistics;
+
+extern Statistics statistics;
+
 /* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
  * rather than have complex #ifdefs throughout the file, lets just figure
  * it out once, here at the top.
