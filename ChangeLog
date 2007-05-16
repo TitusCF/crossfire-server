@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/ob_types.c, types/Makefile.am, types/item_transformer/item_transformer.c:
+  Remove code for the obsolete item_transformer type.
+Alex Schultz 2007-05-16
+
 Add spell merging code - this makes the server run much faster when many
 spell objects are in use.  For more details, see doc/Developers/spells
 ---

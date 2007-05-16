@@ -14,7 +14,6 @@ director/director.c \
 exit/exit.c \
 hole/hole.c \
 identify_altar/identify_altar.c \
-item_transformer/item_transformer.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \
 power_crystal/power_crystal.c \
