@@ -30,12 +30,13 @@
  * This is the unit tests file for server/attack.c
  */
 
+#include <global.h>
 #include <stdlib.h>
 #include <check.h>
-
+#include <loader.h>
+#include <toolkit_common.h>
 
 void setup(void) {
-    /* put any initialisation steps here, they will be run before each testcase */
 }
 
 void teardown(void)
@@ -43,9 +44,58 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_empty)
+START_TEST (test_hit_player)
 {
-    /*TESTME test not yet developped*/
+    object* victim = NULL;
+    object* hitter = NULL;
+    object* weapon = NULL;
+    object* floor = NULL;
+    mapstruct* map = NULL;
+    archetype* deplete = NULL;
+    int test;
+
+    map = get_empty_map(5, 5);
+    floor = create_archetype("battleground");
+    fail_unless(floor != NULL, "can't find archetype battleground");
+    insert_ob_in_map_at(floor, map, NULL, 0, 0, 0);
+    floor = create_archetype("battleground");
+    fail_unless(floor != NULL, "can't find archetype battleground");
+    insert_ob_in_map_at(floor, map, NULL, 0, 1, 0);
+
+    deplete = find_archetype(ARCH_DEPLETION);
+    fail_unless(deplete != NULL, "can't find archetype %s", ARCH_DEPLETION);
+
+    victim = create_archetype("kobold");
+    fail_unless(victim != NULL, "couldn't create kobold");
+    fail_unless(victim->inv == NULL, "kobold shouldn't have an inventory");
+    victim->stats.hp = 5000;
+    victim->stats.maxhp = 5000;
+    victim->resist[ATNR_DEPLETE] = 100;
+    victim->resist[ATNR_FIRE] = 100;
+    insert_ob_in_map_at(victim, map, NULL, 0, 0, 0);
+    hitter = create_archetype("sword");
+    fail_unless(hitter != NULL, "couldn't create sword");
+    hitter->attacktype = AT_DEPLETE | AT_FIRE;
+    hitter->stats.dam = 100;
+    hitter->map = map;
+    insert_ob_in_map_at(hitter, map, NULL, 0, 1, 0);
+
+    fail_unless(present_arch_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted before being attacked");
+
+    for (test = 0; test < 100; test++) {
+        hit_player(victim, hitter->stats.dam, hitter, hitter->attacktype, 0);
+        fail_unless(victim->stats.hp == victim->stats.maxhp, "victim should have %d hp and not %d.", victim->stats.maxhp, victim->stats.hp);
+    }
+    fail_unless(victim->inv == NULL, "kobold shouldn't have an inventory after attacked");
+    fail_unless(present_arch_in_ob(deplete, victim) == NULL, "victim shouldn't be depleted when slaying not set");
+
+    hitter->slaying = add_string(victim->race);
+    victim->resist[ATNR_FIRE] = 95;
+    for (test = 0; test < 100 && present_arch_in_ob(deplete, victim) == NULL; test++) {
+        hit_player(victim, hitter->stats.dam, hitter, hitter->attacktype, 0);
+    }
+    fail_unless(present_arch_in_ob(deplete, victim) != NULL, "victim should be depleted when slaying is set");
+    fail_unless(victim->stats.hp != victim->stats.maxhp, "victim shouldn't have %d hp", victim->stats.hp);
 }
 END_TEST
 
@@ -57,7 +107,7 @@ Suite *attack_suite(void)
   tcase_add_checked_fixture(tc_core,setup,teardown); 
 
   suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_empty);
+  tcase_add_test(tc_core, test_hit_player);
 
   return s;
 }
@@ -67,6 +117,13 @@ int main(void)
   int nf;
   Suite *s = attack_suite();
   SRunner *sr = srunner_create(s);
+
+  /* If you wish to debug the program, uncomment this line. */
+  /*srunner_set_fork_status (sr, CK_NOFORK); */
+
+  settings.debug = 0;
+  init(0, NULL);
+
   srunner_set_xml(sr,LOGDIR "/unit/server/attack.xml");
   srunner_set_log(sr,LOGDIR "/unit/server/attack.out");
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
