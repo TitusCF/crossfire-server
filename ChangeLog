@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/weather.c: fix mountain cave being covered and rendered invisible.
+Nicolas Weeger 2007-05-17
+
 test/unit/server/check_attack.c: some tests for hit_player.
 Nicolas Weeger 2007-05-17
 

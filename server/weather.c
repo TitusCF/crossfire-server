@@ -134,6 +134,9 @@ static weather_avoids_t weather_avoids[] = {
     {"shallow_sea", 0, NULL},
     {"lava", 0, NULL},
     {"permanent_lava", 0, NULL},
+    /* Mountain cave are weird archetypes: floor, but exit. So we shouldn't cover them. */
+    {"mountain_cave", 0, NULL},
+    {"mountain_cave2", 0, NULL},
     {NULL, 0, NULL}
 };
 
@@ -158,6 +161,9 @@ static weather_avoids_t growth_avoids[] = {
     {"dungeon_floor", 0, NULL},
     {"lake", 0, NULL},
     {"grasspond", 0, NULL},
+    /* Mountain cave are weird archetypes: floor, but exit. So we shouldn't cover them. */
+    {"mountain_cave", 0, NULL},
+    {"mountain_cave2", 0, NULL},
     {NULL, 0, NULL}
 };
 
