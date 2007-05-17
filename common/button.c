@@ -32,7 +32,6 @@
  */
 
 #include <global.h>
-#include <funcpoint.h>
 
 
 /**

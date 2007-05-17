@@ -35,7 +35,6 @@ int reopen_logfile = 0; /* May be set in SIGHUP handler */
 
 #include <stdarg.h>
 #include <global.h>
-#include <funcpoint.h>
 
 /**
  * Human-readable name of log levels.

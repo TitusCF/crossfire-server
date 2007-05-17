@@ -39,7 +39,6 @@
 #endif
 
 #include <Defines.h>
-#include <funcpoint.h>
 #include <loader.h>
 
 #define IMAGE_BUF 65536

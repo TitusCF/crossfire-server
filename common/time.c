@@ -32,7 +32,6 @@
  */
 
 #include <global.h>
-#include <funcpoint.h>
 #include <tod.h>
 
 #ifndef WIN32 /* ---win32 exclude header */

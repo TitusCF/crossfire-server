@@ -44,7 +44,6 @@
 #include <sys/uio.h>
 #endif /* win32 */
 #include <object.h>
-#include <funcpoint.h>
 #include <skills.h>
 #include <loader.h>
 

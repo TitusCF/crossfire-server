@@ -36,7 +36,6 @@
 
 #include <stdio.h>
 #include <global.h>
-#include <funcpoint.h>
 #include <living.h>
 #include <spells.h>
 

@@ -32,7 +32,6 @@
  */
 
 #include <global.h>
-#include <funcpoint.h>
 
 /**
  * Clears player structure, including pointed object (through free_object()).

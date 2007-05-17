@@ -40,7 +40,6 @@
 
 #include <stdlib.h>
 #include <global.h>
-#include <funcpoint.h>
 
 /**
  * Roll a random number between min and max.  Uses op to determine luck,

@@ -48,7 +48,6 @@
 #include <stdlib.h>
 #include <global.h>
 #include <treasure.h>
-#include <funcpoint.h>
 #include <loader.h>
 
 

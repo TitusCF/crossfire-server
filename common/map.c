@@ -33,7 +33,6 @@
 
 #include <stdio.h>
 #include <global.h>
-#include <funcpoint.h>
 
 #include <loader.h>
 #ifndef WIN32 /* ---win32 exclude header */

@@ -34,7 +34,6 @@
 /* Nov 95 - inserted USE_LIGHTING code stuff in here - b.t. */
 
 #include <global.h>
-#include <funcpoint.h>
 #include <math.h>
 
 

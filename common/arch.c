@@ -41,7 +41,6 @@
  */
 
 #include <global.h>
-#include <funcpoint.h>
 #include <loader.h>
 
 /** If set, does a little timing on the archetype load. */
