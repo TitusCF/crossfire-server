@@ -245,10 +245,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
         send_background_music(op->contr, newmap->background_music);
     }
 
-    /** Hidden DMs don't appear on map. */
-    if (!op->contr->hidden)
-        newmap->players++;
-
     newmap->timeout=0;
     op->enemy = NULL;
 
@@ -293,6 +289,10 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * old map does not work.
      */
     if (oldmap != newmap) {
+        /** Hidden DMs don't appear on map. */
+        if (!op->contr->hidden)
+            newmap->players++;
+
         if (oldmap) /* adjust old map */
         {
             if (!op->contr->hidden)
@@ -300,7 +300,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
                 oldmap->players--;
 
             if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
-	        set_map_timeout(oldmap);
+                set_map_timeout(oldmap);
         }
     }
     swap_below_max (newmap->path);

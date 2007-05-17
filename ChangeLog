@@ -15,6 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/server.c: player count tracking will get false if moving from a map to the same.
+Nicolas Weeger 2007-05-17
+
+Remove obsolete funcpoint.h file.
+ include/funcpoint.h: removed
+ include/global.h Makefile.am
+ crossedit/xutil.c
+ common/arch.c button.c item.c living.c logger.c los.c map.c object.c player.c time.c treasure.c utils.c
+Nicolas Weeger 2007-05-17
+
 Don't pass variables that aren't needed, remove prototype confusion. Document.
  server/weather.c
 Nicolas Weeger 2007-05-17
