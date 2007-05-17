@@ -687,7 +687,7 @@ void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
 void init_weather(void);
 void free_weather(void);
-void weather_effect(const char *filename);
+void weather_effect(mapstruct *m);
 int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct *m);
 int real_world_temperature(int x, int y, mapstruct *m);
 int similar_direction(int a, int b);

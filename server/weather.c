@@ -1401,7 +1401,7 @@ static void perform_weather(void) {
 
     /* for now, all we do is decay stuff.  more to come */
     decay_objects(m);
-    weather_effect(filename);
+    weather_effect(m);
 
     /* done */
     save_map(m, 2); /* write the overlay */
@@ -1421,15 +1421,18 @@ static void perform_weather(void) {
 }
 
 /**
- * perform actual effect of weather.  Should be called from perform_weather,
- * or when a map is loaded. (player enter map).  Filename is the name of
- * the map.  The map *must allready be loaded*.
+ * Perform actual effect of weather.  Should be called from perform_weather,
+ * or when a map is loaded. (player enter map).
  *
  * This is where things like snow, herbs, earthly rototilling, etc should
  * occur.
+ *
+ * Nothing will happen if the map isn't a world map.
+ *
+ * @param m
+ * map to alter.
  */
-void weather_effect(const char *filename) {
-    mapstruct *m;
+void weather_effect(mapstruct *m) {
     int wx, wy, x, y;
 
     /* if the dm shut off weather, go home */
@@ -1437,7 +1440,6 @@ void weather_effect(const char *filename) {
         return;
     }
 
-    m = ready_map_name(filename, 0);
     if (!m->outdoor) {
         return;
     }

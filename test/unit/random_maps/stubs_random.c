@@ -50,7 +50,7 @@ void dragon_ability_gain( object* ob, int x, int y )
     {
     }
  
-void weather_effect( const char* c )
+void weather_effect(mapstruct *m)
     {
     }
  

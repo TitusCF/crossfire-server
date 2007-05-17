@@ -15,6 +15,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Change weather_effect() to use mapstruct* instead of filename.
+ common/map.c
+ crossedit/stubs.c
+ include/funcpoint.h sproto.h
+ random_maps/standalone.c
+ server/weather.c
+ test/unit/common/stubs_common.c
+ test/unit/crossedit/stubs_crossedit.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
+ utils/bwp.c mapper.c
+Nicolas Weeger 2007-05-17
+
 server/weather.c: fix mountain cave being covered and rendered invisible.
 Nicolas Weeger 2007-05-17
 
