@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+ server/weather.c: remove static buffer.
+Nicolas Weeger 2007-05-17
+
 server/server.c: player count tracking will get false if moving from a map to the same.
 Nicolas Weeger 2007-05-17
 

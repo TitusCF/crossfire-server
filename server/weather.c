@@ -73,7 +73,7 @@ static void let_it_snow(mapstruct *m);
 static void singing_in_the_rain(mapstruct *m);
 static void plant_a_garden(mapstruct *m);
 static void change_the_world(mapstruct *m);
-static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
+static char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir, char* buffer, int bufsize);
 static int polar_distance(int x, int y, int equator);
 static void update_humid(void);
 static int humid_tile(int x, int y);
@@ -1040,7 +1040,7 @@ static void read_watermap(void) {
 static void init_humid_elev(void) {
     int x, y, tx, ty, nx, ny, ax, ay, j;
     int spwtx, spwty;
-    const char *mapname;
+    char mapname[MAX_BUF];
     long int elev;
     int water, space;
     mapstruct *m;
@@ -1062,7 +1062,7 @@ static void init_humid_elev(void) {
             space = 0;
 
             /* top left */
-            mapname = weathermap_to_worldmap_corner(x, y, &tx, &ty, 8);
+            weathermap_to_worldmap_corner(x, y, &tx, &ty, 8, mapname, sizeof(mapname));
             m = load_original_map(mapname, 0);
             if (m == NULL) {
                 continue;
@@ -1086,7 +1086,7 @@ static void init_humid_elev(void) {
             delete_map(m);
 
             /* bottom left */
-            mapname = weathermap_to_worldmap_corner(x, y, &tx, &ty, 6);
+            weathermap_to_worldmap_corner(x, y, &tx, &ty, 6, mapname, sizeof(mapname));
             m = load_original_map(mapname, 0);
             if (m == NULL) {
                 continue;
@@ -1111,7 +1111,7 @@ static void init_humid_elev(void) {
             delete_map(m);
 
             /* top right */
-            mapname = weathermap_to_worldmap_corner(x, y, &tx, &ty, 2);
+            weathermap_to_worldmap_corner(x, y, &tx, &ty, 2, mapname, sizeof(mapname));
             m = load_original_map(mapname, 0);
             if (m == NULL) {
                 continue;
@@ -1135,7 +1135,7 @@ static void init_humid_elev(void) {
             delete_map(m);
 
             /* bottom left */
-            mapname = weathermap_to_worldmap_corner(x, y, &tx, &ty, 4);
+            weathermap_to_worldmap_corner(x, y, &tx, &ty, 4, mapname, sizeof(mapname));
             m = load_original_map(mapname, 0);
             if (m == NULL) {
                 continue;
@@ -2414,15 +2414,16 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m) {
  * will contain coordinates in the new map. Mustn't be NULL.
  * @param dir
  * direction to find map for. Valid values are 2 4 6 8 for the corners.
+ * @param buffer
+ * buffer that will contain the path of map in specified direction.
+ * @param bufsize
+ * length of buffer
  * @return
- * path of map in specified direction.
- * @todo
- * remove static buffer.
+ * buffer.
  */
-static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir) {
+static char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir, char* buffer, int bufsize) {
     int spwtx, spwty;
     int tx, ty, nx, ny;
-    static char mapname[MAX_BUF];
 
     spwtx = (settings.worldmaptilesx*settings.worldmaptilesizex)/WEATHERMAPTILESX;
     spwty = (settings.worldmaptilesy*settings.worldmaptilesizey)/WEATHERMAPTILESY;
@@ -2445,11 +2446,11 @@ static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y,
 
     nx = (tx/settings.worldmaptilesizex)+settings.worldmapstartx;
     ny = (ty/settings.worldmaptilesizey)+settings.worldmapstarty;
-    snprintf(mapname, MAX_BUF, "world/world_%d_%d", nx, ny);
+    snprintf(buffer, bufsize, "world/world_%d_%d", nx, ny);
 
     *x = tx%settings.worldmaptilesizex;
     *y = ty%settings.worldmaptilesizey;
-    return mapname;
+    return buffer;
 }
 
 /**
