@@ -34,6 +34,7 @@
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
+#include <assert.h>
 
 extern unsigned long todtick;
 extern weathermap_t **weathermap;
@@ -67,11 +68,11 @@ static void init_rainfall(void);
 static void init_weatheravoid (weather_avoids_t wa[]);
 static void perform_weather(void);
 static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow);
-static void calculate_temperature(mapstruct *m, int wx, int wy);
-static void let_it_snow(mapstruct *m, int wx, int wy);
-static void singing_in_the_rain(mapstruct *m, int wx, int wy);
-static void plant_a_garden(mapstruct *m, int wx, int wy);
-static void change_the_world(mapstruct *m, int wx, int wy);
+static void calculate_temperature(mapstruct *m);
+static void let_it_snow(mapstruct *m);
+static void singing_in_the_rain(mapstruct *m);
+static void plant_a_garden(mapstruct *m);
+static void change_the_world(mapstruct *m);
 static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir);
 static int polar_distance(int x, int y, int equator);
 static void update_humid(void);
@@ -87,11 +88,14 @@ static void process_rain(void);
 static void spin_globe(void);
 static void write_weather_images(void);
 
+/** Speed of the gulf stream. */
 static int gulf_stream_speed[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
+/** Direction of the gulf stream. */
 static int gulf_stream_dir[GULF_STREAM_WIDTH][WEATHERMAPTILESY];
 static int gulf_stream_start;
 static int gulf_stream_direction;
 
+/** How to alter darkness, based on time of day and season. */
 static const int season_timechange[5][HOURS_PER_DAY] = {
 /*    0  1  2  3  4  5  6  7  8  9 10 11 12 13 14  1  2  3  4  5  6  7  8  9 10 11 12 13 */
     { 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -101,6 +105,7 @@ static const int season_timechange[5][HOURS_PER_DAY] = {
     { 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0}
 };
 
+/** How to alter the temperature, based on the hour of the day. */
 static const int season_tempchange[HOURS_PER_DAY] = {
 /*  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14  1  2  3  4  5  6  7  8  9 10 11 12 13 */
     0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -141,8 +146,8 @@ static weather_avoids_t weather_avoids[] = {
 };
 
 /**
- * this table is identical to the one above, except these are tiles to avoid
- * when processing growth.  IE, don't grow herbs in the ocean.  The second
+ * This table is identical to ::weather_avoids, except these are tiles to avoid
+ * when processing growth. IE, don't grow herbs in the ocean.  The second
  * field is unused.
  */
 static weather_avoids_t growth_avoids[] = {
@@ -333,7 +338,10 @@ static const uint32 skies[] = {
 
 
 /**
- * Set the darkness level for a map.  Requires the map pointer.
+ * Set the darkness level for a map, based on the time of the day.
+ *
+ * @param m
+ * map to alter.
  */
 void set_darkness_map(mapstruct *m) {
     int i;
@@ -354,8 +362,10 @@ void set_darkness_map(mapstruct *m) {
 }
 
 /**
- * Compute the darkness level for all maps in the game.  Requires the
- * time of day as an argument.
+ * Compute the darkness level for all loaded maps in the game.
+ *
+ * @param tod
+ * time of day to compute darkness for.
  */
 static void dawn_to_dusk(const timeofday_t *tod) {
     mapstruct *m;
@@ -454,7 +464,9 @@ void tick_the_clock(void) {
  * calls the init function, to initialize that map.
  */
 
-/* sky. We never read this map, only write it for debugging purposes */
+/**
+ * Write the sky map. We never read this map, only write it for debugging purposes
+ */
 static void write_skymap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -474,7 +486,9 @@ static void write_skymap(void) {
     fclose(fp);
 }
 
-/* pressure */
+/**
+ * Save pressure information.
+ */
 static void write_pressuremap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -494,6 +508,9 @@ static void write_pressuremap(void) {
     fclose(fp);
 }
 
+/**
+ * Read the pressure information from disk. If it doesn't exist, initialize pressure.
+ */
 static void read_pressuremap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -523,6 +540,9 @@ static void read_pressuremap(void) {
     fclose(fp);
 }
 
+/**
+ * Reset pressure map.
+ */
 static void init_pressure(void) {
     int x, y;
     int l, n, k, r;
@@ -558,7 +578,9 @@ static void init_pressure(void) {
     smooth_pressure();
 }
 
-/* winddir */
+/**
+ * Save wind direction.
+ */
 static void write_winddirmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -578,6 +600,9 @@ static void write_winddirmap(void) {
     fclose(fp);
 }
 
+/**
+ * Read the wind direction. Will initialize the direction if file doesn't exist.
+ */
 static void read_winddirmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -608,7 +633,9 @@ static void read_winddirmap(void) {
     fclose(fp);
 }
 
-/* windspeed */
+/**
+ * Save the wind speed.
+ */
 static void write_windspeedmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -628,6 +655,9 @@ static void write_windspeedmap(void) {
     fclose(fp);
 }
 
+/**
+ * Read the wind speed, or init it if save file doesnt exist.
+ */
 static void read_windspeedmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -658,7 +688,9 @@ static void read_windspeedmap(void) {
     fclose(fp);
 }
 
-/* initialize the wind randomly. Does both direction and speed in one pass */
+/**
+ * Initialize the wind randomly. Does both direction and speed in one pass
+ */
 static void init_wind(void) {
     int x, y;
 
@@ -670,7 +702,9 @@ static void init_wind(void) {
     }
 }
 
-/* gulf stream */
+/**
+ * Save the gulf stream
+ */
 static void write_gulfstreammap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -696,6 +730,9 @@ static void write_gulfstreammap(void) {
     fclose(fp);
 }
 
+/**
+ * Read the gulf stream, or initialize it if no saved information.
+ */
 static void read_gulfstreammap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -735,6 +772,9 @@ static void read_gulfstreammap(void) {
     fclose(fp);
 }
 
+/**
+ * Initialize the gulf stream.
+ */
 static void init_gulfstreammap(void) {
     int x, y, tx;
 
@@ -833,7 +873,9 @@ static void init_gulfstreammap(void) {
     } /* done */
 }
 
-/* humidity */
+/**
+ * Save humidity information.
+ */
 static void write_humidmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -853,6 +895,9 @@ static void write_humidmap(void) {
     fclose(fp);
 }
 
+/**
+ * Read humidity information, or initialize it randomly if no saved information available.
+ */
 static void read_humidmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -885,7 +930,9 @@ static void read_humidmap(void) {
     fclose(fp);
 }
 
-/* average elevation */
+/**
+ * Save the average elevation information.
+ */
 static void write_elevmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -905,6 +952,9 @@ static void write_elevmap(void) {
     fclose(fp);
 }
 
+/**
+ * Load or initialize the elevation information.
+ */
 static void read_elevmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -932,7 +982,9 @@ static void read_elevmap(void) {
     fclose(fp);
 }
 
-/* water % */
+/**
+ * Save water percent information.
+ */
 static void write_watermap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -952,6 +1004,9 @@ static void write_watermap(void) {
     fclose(fp);
 }
 
+/**
+ * Load or initialize water information.
+ */
 static void read_watermap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -980,7 +1035,7 @@ static void read_watermap(void) {
 }
 
 /**
- * initialize both humidity and elevation
+ * Initialize both humidity and elevation.
  */
 static void init_humid_elev(void) {
     int x, y, tx, ty, nx, ny, ax, ay, j;
@@ -1118,7 +1173,9 @@ static void init_humid_elev(void) {
     }
 }
 
-/* temperature */
+/**
+ * Save temperature information.
+ */
 static void write_temperaturemap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -1138,6 +1195,9 @@ static void write_temperaturemap(void) {
     fclose(fp);
 }
 
+/**
+ * Load or initialize temperature information.
+ */
 static void read_temperaturemap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -1165,6 +1225,9 @@ static void read_temperaturemap(void) {
     fclose(fp);
 }
 
+/**
+ * Initialize the temperature based on the time.
+ */
 static void init_temperature(void) {
     int x, y;
     timeofday_t tod;
@@ -1177,7 +1240,9 @@ static void init_temperature(void) {
     }
 }
 
-/* rainfall */
+/**
+ * Save rainfall information.
+ */
 static void write_rainfallmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -1197,6 +1262,9 @@ static void write_rainfallmap(void) {
     fclose(fp);
 }
 
+/**
+ * Read or initialize rainfall information.
+ */
 static void read_rainfallmap(void) {
     char filename[MAX_BUF];
     FILE *fp;
@@ -1220,6 +1288,9 @@ static void read_rainfallmap(void) {
     fclose(fp);
 }
 
+/**
+ * Initialize rainfall.
+ */
 static void init_rainfall(void)
 {
     int x, y;
@@ -1251,6 +1322,12 @@ static void init_rainfall(void)
 
 /* END of read/write/init */
 
+/**
+ * Link fields to their archetypes.
+ *
+ * @param wa
+ * structure to link archetypes of.
+ */
 static void init_weatheravoid(weather_avoids_t wa[]) {
     int i;
     for (i = 0; wa[i].name != NULL; i++) {
@@ -1258,7 +1335,9 @@ static void init_weatheravoid(weather_avoids_t wa[]) {
     }
 }
 
+/** Current weather tile position. */
 static int wmperformstartx;
+/** Current weather tile position. */
 static int wmperformstarty;
 
 /**
@@ -1421,7 +1500,7 @@ static void perform_weather(void) {
 }
 
 /**
- * Perform actual effect of weather.  Should be called from perform_weather,
+ * Perform actual effect of weather.  Should be called from perform_weather(),
  * or when a map is loaded. (player enter map).
  *
  * This is where things like snow, herbs, earthly rototilling, etc should
@@ -1452,33 +1531,40 @@ void weather_effect(mapstruct *m) {
     }
 
     /*First, calculate temperature*/
-    calculate_temperature(m, wx, wy);
+    calculate_temperature(m);
     /* we change the world first, if needed */
     if (settings.dynamiclevel >= 5) {
-        change_the_world(m, wx, wy);
+        change_the_world(m);
     }
     if (settings.dynamiclevel >= 2) {
-        let_it_snow(m, wx, wy);
-        singing_in_the_rain(m, wx, wy);
+        let_it_snow(m);
+        singing_in_the_rain(m);
     }
     /*if (settings.dynamiclevel >= 4) {
         feather_map(m, wx, wy, filename);
     }*/
     if (settings.dynamiclevel >= 3) {
-        plant_a_garden(m, wx, wy);
+        plant_a_garden(m);
     }
 }
 
 /**
  * Check the current square to see if we should avoid this one for
- * weather processing.  Must pass av and gs, which will be filled in
- * with 1 or 0.  gs will be 1 if we found snow/rain here.  av will be
- * 1 if we should avoid processing this tile. (don't rain on lakes)
- * x and y are the coordinates inside the current map m. If grow is
- * 1, we use the growth table, rather than the avoidance table.
+ * weather processing.
  *
- * Returns the object pointer for any snow item it found, so you can
- * destroy/melt it.
+ * @param[out] av
+ * will contain how many tiles should be avoided. Mustn't be NULL.
+ * @param m
+ * map to process.
+ * @param x
+ * @param y
+ * coordinates to process.
+ * @param[out] gs
+ * will contain how many snow/rain tiles are here. Mustn't be NULL.
+ * @param grow
+ * if 1, use the growth table, rather than the avoidance table.
+ * @return
+ * object pointer for any snow item it found, so you can destroy/melt it.
  */
 static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int grow) {
     int avoid, gotsnow, i;
@@ -1535,9 +1621,13 @@ static object *avoid_weather(int *av, mapstruct *m, int x, int y, int *gs, int g
 /**
  * Temperature is used in a lot of weather function.
  * This need to be precalculated before used.
+ *
+ * @param m
+ * map for which to calculate the temperature. Must be a world map.
  */
-static void calculate_temperature(mapstruct *m, int wx, int wy) {
-    int x,y;
+static void calculate_temperature(mapstruct *m) {
+    int x,y, wx, wy;
+    assert(worldmap_to_weathermap(0, 0, &wx, &wy, m) == 0);
     for (x = 0; x < settings.worldmaptilesizex; x++) {
         for (y = 0; y < settings.worldmaptilesizey; y++) {
             worldmap_to_weathermap(x, y, &wx, &wy, m);
@@ -1547,13 +1637,13 @@ static void calculate_temperature(mapstruct *m, int wx, int wy) {
 }
 
 /**
- * Process snow.  m is the map we are currently processing.  wx and wy are
- * the weathermap coordinates for the weathermap square we want to work on.
- * filename is the pathname for the current map.  This should be called from
- * weather_effect()
+ * Put or remove snow. This should be called from weather_effect().
+ *
+ * @param m
+ * map we are currently processing. Must be a world map.
  */
-static void let_it_snow(mapstruct *m, int wx, int wy) {
-    int x, y, i;
+static void let_it_snow(mapstruct *m) {
+    int x, y, i, wx, wy;
     int nx, ny, j, d;
     int avoid, two, temp, sky, gotsnow, found, nodstk;
     const char *doublestack, *doublestack2;
@@ -1778,13 +1868,13 @@ static void let_it_snow(mapstruct *m, int wx, int wy) {
 }
 
 /**
- * Process rain.  m is the map we are currently processing.  wx and wy are
- * the weathermap coordinates for the weathermap square we want to work on.
- * filename is the pathname for the current map.  This should be called from
- * weather_effect()
+ * Process rain. This should be called from weather_effect().
+ *
+ * @param m
+ * map we are currently processing. 
  */
-static void singing_in_the_rain(mapstruct *m, int wx, int wy) {
-    int x, y, i;
+static void singing_in_the_rain(mapstruct *m) {
+    int x, y, i, wx, wy;
     int nx, ny, d, j;
     int avoid, two, temp, sky, gotsnow, found, nodstk;
     object *ob, *tmp, *oldsnow, *topfloor;
@@ -2012,13 +2102,13 @@ static void singing_in_the_rain(mapstruct *m, int wx, int wy) {
 }
 
 /**
- * Process growth.  m is the map we are currently processing.  wx and wy are
- * the weathermap coordinates for the weathermap square we want to work on.
- * filename is the pathname for the current map.  This should be called from
- * weather_effect()
+ * Process growth of various plants. This should be called from weather_effect().
+ *
+ * @param m
+ * map we are currently processing.
  */
-static void plant_a_garden(mapstruct *m, int wx, int wy) {
-    int x, y, i;
+static void plant_a_garden(mapstruct *m) {
+    int x, y, i, wx, wy;
     int avoid, two, temp, sky, gotsnow, found, days;
     object *ob, *tmp;
     archetype *at;
@@ -2116,13 +2206,13 @@ static void plant_a_garden(mapstruct *m, int wx, int wy) {
 }
 
 /**
- * Process worldmap regrowth.  m is the map we are currently processing.
- * wx and wy are
- * the weathermap coordinates for the weathermap square we want to work on.
- * This should be called from weather_effect()
+ * Process worldmap regrowth. This should be called from weather_effect().
+ *
+ * @param m
+ * map we are currently processing.
  */
-static void change_the_world(mapstruct *m, int wx, int wy) {
-    int x, y, i;
+static void change_the_world(mapstruct *m) {
+    int x, y, i, wx, wy;
     int nx, ny, j, d;
     int avoid, two, temp, sky, gotsnow, found, days;
     object *ob, *tmp, *doublestack;
@@ -2256,10 +2346,19 @@ static void change_the_world(mapstruct *m, int wx, int wy) {
 }
 
 /**
- * Provide wx and wy. Will fill in with weathermap coordinates.  Requires
- * the current mapname (must be a worldmap), and your coordinates on the
- * map.  returns -1 if you give it something it can't figure out. 0 normally.
-*/
+ * Convert coordinates from world map to weather tiles.
+ *
+ * @param x
+ * @param y
+ * coordinates to convert.
+ * @param[out] wx
+ * @param[out] wy
+ * weather map coordinates.
+ * @param m
+ * map. Should be a world map.
+ * @return
+ * -1 if you give it something it can't figure out. 0 normally.
+ */
 int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m) {
     int spwtx, spwty;
     int fx, fy;
@@ -2305,10 +2404,20 @@ int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct* m) {
 }
 
 /**
- * Provide x and y.  Will fill in with the requested corner of the real
- * world map, given the current weathermap section.  dir selects which
- * corner to return.  Valid values are 2 4 6 8 for the corners.  return
- * value is the name of the map that corner resides in.
+ * Return the path of the map in specified direction.
+ *
+ * @param wx
+ * @param wy
+ * weather map coordinates.
+ * @param[out] x
+ * @param[out] y
+ * will contain coordinates in the new map. Mustn't be NULL.
+ * @param dir
+ * direction to find map for. Valid values are 2 4 6 8 for the corners.
+ * @return
+ * path of map in specified direction.
+ * @todo
+ * remove static buffer.
  */
 static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y, int dir) {
     int spwtx, spwty;
@@ -2344,8 +2453,13 @@ static const char *weathermap_to_worldmap_corner(int wx, int wy, int *x, int *y,
 }
 
 /**
- * Calculates the distance to the nearest pole. x,y are the weathermap
- * coordinates, equator is the current location of the equator.  returns
+ * Calculates the distance to the nearest pole.
+ * @param x
+ * @param y
+ * weathermap coordinates.
+ * @param equator
+ * current location of the equator.
+ * @return
  * distance as an int.
  */
 static int polar_distance(int x, int y, int equator) {
@@ -2361,7 +2475,7 @@ static int polar_distance(int x, int y, int equator) {
 }
 
 /**
- * update the humidity for all weathermap tiles.
+ * Update the humidity for all weathermap tiles.
  */
 static void update_humid(void) {
     int x, y;
@@ -2374,9 +2488,13 @@ static void update_humid(void) {
 }
 
 /**
- * calculate the humidity of this tile.  x and y are the weathermap coordinates
- * we wish to calculate humidity for. Returns the humidity of the weathermap
- * square.
+ * Calculate the humidity of this tile.
+ *
+ * @param x
+ * @param y
+ * weathermap coordinates we wish to calculate humidity for.
+ * @return
+ * the humidity of the weathermap square.
  */
 static int humid_tile(int x, int y) {
     int ox, oy, humid;
@@ -2420,8 +2538,13 @@ static int humid_tile(int x, int y) {
 }
 
 /**
- * calculate temperature of the weathermap square x,y.  Requires the current
- * time of day in *tod.
+ * Calculate temperature of a spot.
+ *
+ * @param x
+ * @param y
+ * weathermap coordinates.
+ * @param tod
+ * time of day.
  */
 static void temperature_calc(int x, int y, const timeofday_t *tod) {
     int dist, equator, elev, n;
@@ -2458,7 +2581,11 @@ static void temperature_calc(int x, int y, const timeofday_t *tod) {
  * things.  Seasons are automatically handled by moving the equator.
  * Elevation is partially considered in the base temp. x and y are the
  * weathermap coordinates.
-*/
+ *
+ * @param x
+ * @param y
+ * weathermap coordinates.
+ */
 static int real_temperature(int x, int y) {
     int i, temp;
     timeofday_t tod;
@@ -2489,8 +2616,15 @@ static int real_temperature(int x, int y) {
 }
 
 /**
- * Given a worldmap name, and x and y on that map, compute the temperature
- * for a specific square.  Used to normalize elevation.
+ * Compute the temperature for a specific square.  Used to normalize elevation.
+ *
+ * @param x
+ * @param y
+ * map coordinates.
+ * @param m
+ * map we're on.
+ * @return
+ * temperature.
  */
 int real_world_temperature(int x, int y, mapstruct *m) {
     int wx, wy, temp, eleva, elevb;
@@ -2525,7 +2659,7 @@ int real_world_temperature(int x, int y, mapstruct *m) {
 }
 
 /**
- * this code simply smooths the pressure map
+ * This code simply smooths the pressure map
  */
 static void smooth_pressure(void) {
     int x, y;
@@ -2563,7 +2697,7 @@ static void smooth_pressure(void) {
 }
 
 /**
- * perform small randomizations in the pressure map.  Then, apply the
+ * Perform small randomizations in the pressure map.  Then, apply the
  * smoothing algorithim.. This causes the pressure to change very slowly
  */
 static void perform_pressure(void) {
@@ -2599,8 +2733,14 @@ static void perform_pressure(void) {
 
 
 /**
- * is direction a similar to direction b? Find out in this exciting function
- * below. Returns 1 if true, 0 for false.
+ * Is direction a similar to direction b? Find out in this exciting function
+ * below.
+ *
+ * @param a
+ * @param b
+ * directions to compare.
+ * @return
+ * 1 if similar, 0 if not.
  */
 int similar_direction(int a, int b) {
     /* shortcut the obvious */
@@ -2785,7 +2925,7 @@ static void plot_gulfstream(void) {
 }
 
 /**
- * let the madness, begin.
+ * Let the madness, begin.
  *
  * This function is the one that ties everything together.  Here we loop
  * over all the weathermaps, and compare the various conditions we have

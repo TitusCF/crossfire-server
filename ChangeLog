@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Don't pass variables that aren't needed, remove prototype confusion. Document.
+ server/weather.c
+Nicolas Weeger 2007-05-17
+
 Change weather_effect() to use mapstruct* instead of filename.
  common/map.c
  crossedit/stubs.c
