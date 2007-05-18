@@ -80,8 +80,6 @@ static int pointer_strcmp(const void *p1, const void *p2)
  * if non 0, don't list directories.
  * @return
  * -1 if dir is invalid, number of files else.
- * @todo
- * shouldn't the sprintf be in the skip_dirs test?
  */
 int load_dir (const char *dir, char ***namelist, int skip_dirs)
 {
@@ -96,8 +94,8 @@ int load_dir (const char *dir, char ***namelist, int skip_dirs)
         return -1;
 
     while ((d = readdir (dp)) != NULL) {
-        sprintf(name, "%s/%s", dir, d->d_name);
         if (skip_dirs) {
+            snprintf(name, sizeof(name), "%s/%s", dir, d->d_name);
             stat(name, &sb);
             if (S_ISDIR(sb.st_mode)) {
                 continue;
@@ -175,7 +173,7 @@ mapstruct *load_style_map(char *style_name)
  * @return
  * style, or NULL if none suitable.
  * @todo
- * better document, use safe string functions.
+ * better document.
  */
 mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) {
     char style_file_path[256];
@@ -186,12 +184,12 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
 
     /* if stylename exists, set style_file_path to that file.*/
     if(stylename && strlen(stylename)>0)
-        sprintf(style_file_path,"%s/%s",dirname,stylename);
+        snprintf(style_file_path, sizeof(style_file_path), "%s/%s",dirname,stylename);
     else /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
-        sprintf(style_file_path,"%s",dirname);
+        snprintf(style_file_path, sizeof(style_file_path), "%s",dirname);
 
     /* is what we were given a directory, or a file? */
-    sprintf(style_file_full_path,"%s/maps%s",settings.datadir,style_file_path);
+    snprintf(style_file_full_path, sizeof(style_file_full_path), "%s/maps%s",settings.datadir,style_file_path);
     if (stat(style_file_full_path, &file_stat) == 0
       && !S_ISDIR(file_stat.st_mode)) {
         style_map=load_style_map(style_file_path);
@@ -203,7 +201,7 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
         char style_dir_full_path[256];
 
         /* get the names of all the files in that directory */
-        sprintf(style_dir_full_path,"%s/maps%s",settings.datadir,style_file_path);
+        snprintf(style_dir_full_path, sizeof(style_dir_full_path), "%s/maps%s",settings.datadir,style_file_path);
 
         /* First, skip subdirectories.  If we don't find anything, then try again
          * without skipping subdirs.
@@ -226,8 +224,8 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
             if (only_subdirs)
                 style_map=NULL;
             else {
-                strcat(style_file_path,"/");
-                strcat(style_file_path,namelist[RANDOM()%n]);
+                strncat(style_file_path,"/", sizeof(style_file_path));
+                strncat(style_file_path,namelist[RANDOM()%n], sizeof(style_file_path));
                 style_map = load_style_map(style_file_path);
             }
         }
@@ -257,8 +255,8 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
             }
             /* presumably now we've found the "best" match for the
                difficulty. */
-            strcat(style_file_path,"/");
-            strcat(style_file_path,namelist[min_index]);
+            strncat(style_file_path,"/", sizeof(style_file_path));
+            strncat(style_file_path,namelist[min_index],  sizeof(style_file_path));
             style_map = load_style_map(style_file_path);
         }
         for (i=0; i<n; i++)

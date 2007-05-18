@@ -140,8 +140,6 @@ void find_in_layout(int mode, char target,int *fx,int *fy,char **layout,RMParms 
  * to avoid putting other objects on them.
  * @todo
  * add orientations 3-6 or fix previous comment.
- * @todo
- * use safe string functions.
  */
 void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMParms *RP) {
     char styledirname[256];
@@ -167,23 +165,23 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     switch(orientation) {
         case 1:
         {
-            sprintf(styledirname,"/styles/exitstyles/up");
+            snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/up");
             style_map_up = find_style(styledirname,exitstyle,-1);
-            sprintf(styledirname,"/styles/exitstyles/down");
+            snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/down");
             style_map_down = find_style(styledirname,exitstyle,-1);
             break;
         }
         case 2:
         {
-            sprintf(styledirname,"/styles/exitstyles/down");
+            snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/down");
             style_map_up = find_style(styledirname,exitstyle,-1);
-            sprintf(styledirname,"/styles/exitstyles/up");
+            snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/up");
             style_map_down = find_style(styledirname,exitstyle,-1);
             break;
         }
         default:
         {
-            sprintf(styledirname,"/styles/exitstyles/generic");
+            snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/generic");
             style_map_up = find_style(styledirname,exitstyle,-1);
             style_map_down = style_map_up;
             break;
@@ -251,7 +249,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
             random_sign->x = the_exit_up->x+freearr_x[j];
             random_sign->y = the_exit_up->y+freearr_y[j];
 
-            sprintf(buf,"This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
+            snprintf(buf, sizeof(buf), "This is a random map.\nLevel: %d\n", (RP->dungeon_level)-1);
 
             random_sign->msg = add_string(buf);
             insert_ob_in_map(random_sign,map,NULL,0);
@@ -303,7 +301,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_down->y = downy + freearr_y[i];
         RP->origin_x = the_exit_down->x;
         RP->origin_y = the_exit_down->y;
-        write_map_parameters_to_string(buf,RP);
+        write_map_parameters_to_string(RP, buf, sizeof(buf));
         the_exit_down->msg = add_string(buf);
         /* the identifier for making a random map. */
         if(RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
@@ -316,7 +314,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
                 return;
 
             the_exit_down->slaying = add_string(RP->final_map);
-            strcpy(new_map->path,RP->final_map);
+            strncpy(new_map->path,RP->final_map, sizeof(new_map->path));
 
             for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
             /* Remove exit back to previous random map.  There should only be one

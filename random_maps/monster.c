@@ -83,7 +83,6 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
  * how difficult the monsters should be, and how many there should be.
  * @param RP
  * random map parameters.
- * @todo use safe string functions.
  */
 void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *RP) {
     char styledirname[256];
@@ -93,7 +92,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
     int number_monsters=0;
     archetype *at;
 
-    sprintf(styledirname,"%s","/styles/monsterstyles");
+    snprintf(styledirname, sizeof(styledirname), "%s","/styles/monsterstyles");
     style_map = find_style(styledirname,monsterstyle,difficulty);
     if(style_map == 0) return;
 

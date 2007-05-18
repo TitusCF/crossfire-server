@@ -85,7 +85,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
 
     SRANDOM(RP->random_seed);
 
-    write_map_parameters_to_string(buf, RP);
+    write_map_parameters_to_string(RP, buf, sizeof(buf));
 
     if(RP->difficulty==0) {
         RP->difficulty = RP->dungeon_level; /* use this instead of a map difficulty  */
@@ -128,7 +128,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
     theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
     /* set the name of the map. */
-    strcpy(theMap->path,OutFileName);
+    strncpy(theMap->path,OutFileName, sizeof(theMap->path));
 
     /* set region */
     theMap->region=RP->region;
@@ -641,154 +641,158 @@ void doorify_layout(char **maze,RMParms *RP) {
 
 /**
  * Creates a suitable message for exit from RP.
- * @param buf
- * buffer that will contain RP's values.
  * @param RP
  * parameters to convert to message.
- * @todo
- * use safe string functions.
+ * @param buf
+ * buffer that will contain RP's values.
+ * @param bufsize
+ * length of buf.
  */
-void write_map_parameters_to_string(char *buf,RMParms *RP) {
+void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
 
     char small_buf[256];
-    sprintf(buf,"xsize %d\nysize %d\n",RP->Xsize,RP->Ysize);
+    snprintf(buf, bufsize, "xsize %d\nysize %d\n",RP->Xsize,RP->Ysize);
+
+    /* Since we'll be using strncat, just plya it safe and keep space for final 0. */
+    bufsize--;
+    buf[bufsize] = '\0';
 
     if(RP->wallstyle[0]) {
-        sprintf(small_buf,"wallstyle %s\n",RP->wallstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "wallstyle %s\n",RP->wallstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->floorstyle[0]) {
-        sprintf(small_buf,"floorstyle %s\n",RP->floorstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "floorstyle %s\n",RP->floorstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->monsterstyle[0]) {
-        sprintf(small_buf,"monsterstyle %s\n",RP->monsterstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "monsterstyle %s\n",RP->monsterstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->treasurestyle[0]) {
-        sprintf(small_buf,"treasurestyle %s\n",RP->treasurestyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "treasurestyle %s\n",RP->treasurestyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->layoutstyle[0]) {
-        sprintf(small_buf,"layoutstyle %s\n",RP->layoutstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "layoutstyle %s\n",RP->layoutstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->decorstyle[0]) {
-        sprintf(small_buf,"decorstyle %s\n",RP->decorstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "decorstyle %s\n",RP->decorstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->doorstyle[0]) {
-        sprintf(small_buf,"doorstyle %s\n",RP->doorstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "doorstyle %s\n",RP->doorstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->exitstyle[0]) {
-        sprintf(small_buf,"exitstyle %s\n",RP->exitstyle);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "exitstyle %s\n",RP->exitstyle);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->final_map[0]) {
-        sprintf(small_buf,"final_map %s\n",RP->final_map);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "final_map %s\n",RP->final_map);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->exit_on_final_map[0]) { 
-        sprintf(small_buf,"exit_on_final_map %s\n",RP->exit_on_final_map);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",RP->exit_on_final_map);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->this_map[0]) {
-        sprintf(small_buf,"origin_map %s\n",RP->this_map);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "origin_map %s\n",RP->this_map);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->expand2x) {
-        sprintf(small_buf,"expand2x %d\n",RP->expand2x);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "expand2x %d\n",RP->expand2x);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->layoutoptions1) {
-        sprintf(small_buf,"layoutoptions1 %d\n",RP->layoutoptions1);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions1 %d\n",RP->layoutoptions1);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->layoutoptions2) {
-        sprintf(small_buf,"layoutoptions2 %d\n",RP->layoutoptions2);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions2 %d\n",RP->layoutoptions2);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->layoutoptions3) {
-        sprintf(small_buf,"layoutoptions3 %d\n",RP->layoutoptions3);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions3 %d\n",RP->layoutoptions3);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->symmetry) {
-        sprintf(small_buf,"symmetry %d\n",RP->symmetry);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "symmetry %d\n",RP->symmetry);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->difficulty && RP->difficulty_given ) {
-        sprintf(small_buf,"difficulty %d\n",RP->difficulty);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "difficulty %d\n",RP->difficulty);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->difficulty_increase != 1.0 ) {
-        sprintf(small_buf,"difficulty_increase %f\n",RP->difficulty_increase);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "difficulty_increase %f\n",RP->difficulty_increase);
+        strncat(buf,small_buf, bufsize);
     }
 
-    sprintf(small_buf,"dungeon_level %d\n",RP->dungeon_level);
-    strcat(buf,small_buf);
+    snprintf(small_buf, sizeof(small_buf), "dungeon_level %d\n",RP->dungeon_level);
+    strncat(buf,small_buf, bufsize);
 
     if(RP->dungeon_depth) {
-        sprintf(small_buf,"dungeon_depth %d\n",RP->dungeon_depth);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "dungeon_depth %d\n",RP->dungeon_depth);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->dungeon_name[0]) {
-        sprintf(small_buf,"dungeon_name %s\n",RP->dungeon_name);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "dungeon_name %s\n",RP->dungeon_name);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->decoroptions) {
-        sprintf(small_buf,"decoroptions %d\n",RP->decoroptions);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "decoroptions %d\n",RP->decoroptions);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->orientation) {
-        sprintf(small_buf,"orientation %d\n",RP->orientation);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "orientation %d\n",RP->orientation);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->origin_x) {
-        sprintf(small_buf,"origin_x %d\n",RP->origin_x);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "origin_x %d\n",RP->origin_x);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->origin_y) {
-        sprintf(small_buf,"origin_y %d\n",RP->origin_y);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "origin_y %d\n",RP->origin_y);
+        strncat(buf,small_buf, bufsize);
     }
     if(RP->random_seed) {
         /* Add one so that the next map is a bit different */
-        sprintf(small_buf,"random_seed %d\n",RP->random_seed + 1);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "random_seed %d\n",RP->random_seed + 1);
+        strncat(buf,small_buf, bufsize);
     }
 
     if(RP->treasureoptions) {
-        sprintf(small_buf,"treasureoptions %d\n",RP->treasureoptions);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "treasureoptions %d\n",RP->treasureoptions);
+        strncat(buf,small_buf, bufsize);
     }
 
     if (RP->multiple_floors) {
-        sprintf(small_buf,"multiple_floors %d\n",RP->multiple_floors);
-        strcat(buf,small_buf);
+        snprintf(small_buf, sizeof(small_buf), "multiple_floors %d\n",RP->multiple_floors);
+        strncat(buf,small_buf, bufsize);
     }
 }
 

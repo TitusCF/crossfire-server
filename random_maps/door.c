@@ -71,8 +71,6 @@ int surround_check2(char **layout,int i,int j,int Xsize, int Ysize){
  * door style to be. If "none", won't do anything. If NULL, will choose one randomly.
  * @param RP
  * random map parameters.
- * @todo
- * use safe string functions.
  */
 void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *RP) {
     int i,j;
@@ -87,7 +85,7 @@ void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *
     else {
         vdoors = find_style("/styles/doorstyles/vdoors", doorstyle, -1);
         if(!vdoors) return;
-        sprintf(doorpath,"/styles/doorstyles/hdoors%s", strrchr(vdoors->path, '/'));
+        snprintf(doorpath, sizeof(doorpath), "/styles/doorstyles/hdoors%s", strrchr(vdoors->path, '/'));
         hdoors = find_style(doorpath, 0, -1);
     }
     for(i=0; i<RP->Xsize; i++)

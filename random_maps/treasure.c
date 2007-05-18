@@ -123,8 +123,8 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
     if(num_treasures <= 0 ) return;
 
     /* get the style map */
-    sprintf(styledirname,"%s","/styles/treasurestyles");
-    sprintf(stylefilepath,"%s/%s",styledirname,treasure_style);
+    snprintf(styledirname, sizeof(styledirname), "%s","/styles/treasurestyles");
+    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s",styledirname,treasure_style);
     style_map = find_style(styledirname,treasure_style,-1);
 
     /* all the treasure at one spot in the map. */
@@ -265,7 +265,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
      there's only 1 treasure....*/
     if((treasureoptions & KEYREQUIRED)&&n_treasures>1) {
         char keybuf[256];
-        sprintf(keybuf,"%d",(int)RANDOM());
+        snprintf(keybuf, sizeof(keybuf), "%d",(int)RANDOM());
         if (keyplace(map,x,y,keybuf,PASS_DOORS,1,RP))
             the_chest->slaying = add_string(keybuf);
     }

@@ -85,8 +85,6 @@ static void put_floor(mapstruct* map, char** layout, int x, int y, object* floor
  * parameters of the random map.
  * @return
  * Crossfire map.
- * @todo
- * use safe string functions.
  */
 mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     char styledirname[256];
@@ -100,8 +98,8 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     newMap = get_empty_map(RP->Xsize, RP->Ysize);
 
     /* get the style map */
-    sprintf(styledirname,"%s","/styles/floorstyles");
-    sprintf(stylefilepath,"%s/%s",styledirname,floorstyle);
+    snprintf(styledirname, sizeof(styledirname), "%s","/styles/floorstyles");
+    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s",styledirname,floorstyle);
     style_map = find_style(styledirname,floorstyle,-1);
     if(style_map == 0) return newMap;
 

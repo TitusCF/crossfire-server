@@ -164,8 +164,6 @@ int surround_flag4(mapstruct *map,int i,int j,RMParms *RP){
  * wall style. Must not be NULL, can be "none".
  * @param RP
  * map parameters.
- * @todo
- * use safe string functions.
  */
 void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
     char styledirname[256];
@@ -175,8 +173,8 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
 
     /* get the style map */
     if(!strcmp(w_style,"none")) return;
-    sprintf(styledirname,"%s","/styles/wallstyles");
-    sprintf(stylefilepath,"%s/%s",styledirname,w_style);
+    snprintf(styledirname, sizeof(styledirname), "%s","/styles/wallstyles");
+    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s",styledirname,w_style);
     style_map = find_style(styledirname,w_style,-1);
     if(style_map == 0) return;
 
@@ -187,7 +185,7 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
         int joinedwalls=0;
         object *thiswall;
 
-        sprintf(RP->wall_name,"%s",the_wall->arch->name);
+        snprintf(RP->wall_name, sizeof(RP->wall_name), "%s",the_wall->arch->name);
         if ((cp=strchr(RP->wall_name,'_'))!=NULL) {
             *cp=0;
             joinedwalls=1;
@@ -238,7 +236,7 @@ object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP)
     char wall_name[64];
     archetype *wall_arch=0;
 
-    strcpy(wall_name,the_wall->arch->name);
+    strncpy(wall_name,the_wall->arch->name, sizeof(wall_name));
 
     /* conventionally, walls are named like this:
      wallname_wallcode, where wallcode indicates

@@ -332,43 +332,61 @@ void set_map_timeout(mapstruct *oldmap)
 
 
 /**
- * clean_path takes a path and replaces all / with _
+ * Takes a path and replaces all / with _
  * We do a strcpy so that we do not change the original string.
- * @todo remove static buffer.
+ *
+ * @param file
+ * path to clean.
+ * @param newpath
+ * buffer that will contain the cleaned path. Should be at least as long as file.
+ * @param size
+ * length of newpath.
+ * @return
+ * newpath.
  */
-static char *clean_path(const char *file)
+static char *clean_path(const char *file, char* newpath, int size)
 {
-    static char newpath[MAX_BUF],*cp;
+    char *cp;
 
-    snprintf(newpath, sizeof(newpath), "%s", file);
+    snprintf(newpath, size, "%s", file);
     for (cp=newpath; *cp!='\0'; cp++) {
-	if (*cp=='/') *cp='_';
+        if (*cp=='/')
+            *cp='_';
     }
     return newpath;
 }
 
 
 /**
- * unclean_path takes a path and replaces all _ with /
- * This basically undoes clean path.
+ * Takes a path and replaces all _ with /
+ * This basically undoes clean_path().
  * We do a strcpy so that we do not change the original string.
  * We are smart enough to start after the last / in case we
  * are getting passed a string that points to a unique map
  * path.
- * @todo remove static buffer
+ *
+ * @param src
+ * path to unclean.
+ * @param newpath
+ * buffer that will contain the uncleaned path. Should be at least as long as file.
+ * @param size
+ * length of newpath.
+ * @return
+ * newpath.
  */
-static char *unclean_path(const char *src)
+static char *unclean_path(const char *src, char* newpath, int size)
 {
-    static char newpath[MAX_BUF],*cp;
+    char *cp;
 
     cp=strrchr(src, '/');
     if (cp)
-	snprintf(newpath, sizeof(newpath), "%s", cp+1);
+        snprintf(newpath, size, "%s", cp+1);
     else
-	snprintf(newpath, sizeof(newpath), "%s", src);
+        snprintf(newpath, size, "%s", src);
 
     for (cp=newpath; *cp!='\0'; cp++) {
-	if (*cp=='_') *cp='/';
+        if (*cp=='_')
+            *cp='/';
     }
     return newpath;
 }
@@ -378,7 +396,6 @@ static char *unclean_path(const char *src)
  * The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
  */
-
 static void enter_random_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
@@ -607,7 +624,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
     if (EXIT_PATH(exit_ob)[0]=='/') {
 	snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s", settings.localdir,
-	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
+	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob), path, sizeof(path)));
 	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	if (!newmap) {
         create_pathname(EXIT_PATH(exit_ob), path, sizeof(path));
@@ -619,16 +636,16 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 	if (exit_ob->map->unique) {
 
-	    snprintf(reldir, sizeof(reldir), "%s", unclean_path(exit_ob->map->path));
+	    unclean_path(exit_ob->map->path, reldir, sizeof(reldir));
 
 	    /* Need to copy this over, as clean_path only has one static return buffer */
-	    snprintf(tmpc, sizeof(tmpc), "%s", clean_path(reldir));
+	    clean_path(reldir, tmpc, sizeof(tmpc));
 	    /* Remove final component, if any */
 	    if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
 
 	    snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s_%s", settings.localdir,
 		    settings.playerdir, op->name, tmpc,
-		    clean_path(EXIT_PATH(exit_ob)));
+		    clean_path(EXIT_PATH(exit_ob), path, sizeof(path)));
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
@@ -644,7 +661,7 @@ static void enter_unique_map(object *op, object *exit_ob)
         path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), reldir, sizeof(reldir));
 	    snprintf(apartment, sizeof(apartment), "%s/%s/%s/%s", settings.localdir,
 		    settings.playerdir, op->name,
-		    clean_path(reldir));
+		    clean_path(reldir, path, sizeof(path)));
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
             path_combine_and_normalize(exit_ob->map->path, EXIT_PATH(exit_ob), reldir, sizeof(reldir));

@@ -70,14 +70,12 @@ int obj_count_in_map(mapstruct *map,int x,int y) {
  * - other means to fill the map with decor.
  * @param RP
  * parameters of the random map.
- * @todo
- * use safe string functions.
  */
 void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMParms *RP) {
     mapstruct *decor_map;
     char style_name[256];
 
-    sprintf(style_name,"/styles/decorstyles");
+    snprintf(style_name, sizeof(style_name), "/styles/decorstyles");
 
     decor_map = find_style(style_name,decorstyle,-1);
     if(decor_map == NULL) return;

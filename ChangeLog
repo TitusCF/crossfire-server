@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Static buffer removal, remove unused parameters, use safe string functions.
+ random_maps/decor.c door.c exit.c expand2x.c floor.c monster.c random_map.c
+  rproto.h style.c treasure.c wall.c
+ server/server.c
+Nicolas Weeger 2007-05-18
+
  server/weather.c: remove static buffer.
 Nicolas Weeger 2007-05-17
 
