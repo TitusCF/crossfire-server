@@ -676,10 +676,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
  * @param fp2
  * file to save unique objects.
  * @param flag
- * ?
- *
- * @todo
- * document flag, replace with a nice enum/define.
+ * Combination of @ref SAVE_FLAG_xxx flags.
  */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int i, j = 0,unique=0;
@@ -703,12 +700,12 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
                     continue;
 
                 if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
-                    save_object( fp2 , op, 3);
+                    save_object( fp2 , op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE);
                 else
                     if (flag == 0 ||
-                    (flag == 2 && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) &&
+                    (flag == SAVE_FLAG_NO_REMOVE && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) &&
                     !QUERY_FLAG(op, FLAG_UNPAID))))
-                        save_object(fp, op, 3);
+                        save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE);
 
             } /* for this space */
         } /* for this j */
@@ -1372,7 +1369,7 @@ static void load_unique_objects(mapstruct *m) {
 
 
 /**
- * Saves a map to file.  If flag is set, it is saved into the same
+ * Saves a map to file.  If flag is SAVE_MODE_INPLACE, it is saved into the same
  * file it was (originally) loaded from.  Otherwise a temporary
  * filename will be genarated, and the file will be stored there.
  * The temporary filename will be stored in the mapstructure.
@@ -1382,10 +1379,7 @@ static void load_unique_objects(mapstruct *m) {
  * @param m
  * map to save.
  * @param flag
- * ?
- *
- * @todo
- * document flag, replace with nice enum/define.
+ * One of @ref SAVE_MODE_xxx values.
  */
 
 int save_map(mapstruct *m, int flag) {
@@ -1398,9 +1392,9 @@ int save_map(mapstruct *m, int flag) {
         return -1;
     }
 
-    if (flag || (m->unique) || (m->template)) {
+    if (flag != SAVE_MODE_NORMAL || (m->unique) || (m->template)) {
         if (!m->unique && !m->template) { /* flag is set */
-            if (flag == 2)
+            if (flag == SAVE_MODE_OVERLAY)
                 create_overlay_pathname(m->path, filename, MAX_BUF);
             else
                 create_pathname (m->path, filename, MAX_BUF);
@@ -1425,7 +1419,7 @@ int save_map(mapstruct *m, int flag) {
     m->in_memory = MAP_SAVING;
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (m->unique || m->template || flag)) {
+    if (m->compressed && (m->unique || m->template || flag != SAVE_MODE_NORMAL)) {
         char buf[MAX_BUF];
         snprintf(buf, sizeof(buf), "%s > %s", uncomp[m->compressed][2], filename);
         fp = popen(buf, "w");
@@ -1476,7 +1470,7 @@ int save_map(mapstruct *m, int flag) {
     if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
 
     /* Save any tiling information, except on overlays */
-    if (flag != 2)
+    if (flag != SAVE_MODE_OVERLAY)
         for (i=0; i<4; i++)
             if (m->tile_path[i])
                 fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
@@ -1489,16 +1483,16 @@ int save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if ((flag == 0 || flag == 2) && !m->unique && !m->template) {
+    if ((flag == SAVE_MODE_NORMAL || flag == SAVE_MODE_OVERLAY) && !m->unique && !m->template) {
         char name[MAX_BUF];
         create_items_path (m->path, name, MAX_BUF);
         snprintf(buf, sizeof(buf), "%s.v00", name);
         if ((fp2 = fopen (buf, "w")) == NULL) {
             LOG(llevError, "Can't open unique items file %s\n", buf);
         }
-        if (flag == 2) {
-            /* 2 is non destructive save, so map is still valid. */
-            save_objects(m, fp, fp2, 2);
+        if (flag == SAVE_MODE_OVERLAY) {
+            /* SO_FLAG_NO_REMOVE is non destructive save, so map is still valid. */
+            save_objects(m, fp, fp2, SAVE_FLAG_NO_REMOVE);
             m->in_memory = MAP_IN_MEMORY;
         }
         else
@@ -1516,7 +1510,7 @@ int save_map(mapstruct *m, int flag) {
         save_objects(m, fp, fp, 0);
     }
 
-    if (m->compressed && (m->unique || m->template || flag))
+    if (m->compressed && (m->unique || m->template || flag != SAVE_MODE_NORMAL))
         pclose(fp);
     else
         fclose(fp);

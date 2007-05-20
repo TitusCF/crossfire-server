@@ -111,6 +111,28 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define MAP_STYLE	    0x8
 #define MAP_OVERLAY	    0x10
 
+/**
+ * Flags for save_object() and save_objects().
+ * Can be combined for various effects.
+ *
+ * @anchor SAVE_FLAG_xxx
+ */
+enum {
+    SAVE_FLAG_SAVE_UNPAID = 1,  /**< If set, unpaid items will be saved. */
+    SAVE_FLAG_NO_REMOVE = 2,    /**< If set, objects are not removed while saving. */
+};
+
+/**
+ * How save_map() should save the map. Can't be combined.
+ *
+ * @anchor SAVE_MODE_xxx
+ */
+enum {
+    SAVE_MODE_NORMAL = 0,   /**< No special handling. */
+    SAVE_MODE_INPLACE = 1,  /**< Map is saved from where it was loaded.*/
+    SAVE_MODE_OVERLAY = 2,  /**< Map is persisted as an overlay. */
+};
+
 /* Values for in_memory below.  Should probably be an enumerations */
 #define MAP_IN_MEMORY 1
 #define MAP_SWAPPED 2

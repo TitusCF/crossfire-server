@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Document save_object(s) and save_map() options, add enum for doc linking.
+ common/loader.l map.c
+ crossedit/Edit.c
+ include/map.h
+ random_maps/standalone.c
+ server/c_wiz.c server.c swap.c weather.c
+Nicolas Weeger 2007-05-20
+
 Fix bug #1713140: sustenance overflow.
 include/player.h: change digestion from sint8 to sint16. Change other fields
  the same to avoid potential overflows.

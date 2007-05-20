@@ -1162,7 +1162,7 @@ void clean_tmp_files(void) {
 	  if (settings.recycle_tmp_maps == TRUE)
 	      swap_map(m);
 	  else {
-	      save_map(m, 0); /* note we save here into a overlay map */
+	      save_map(m, SAVE_MODE_NORMAL); /* note we save here into a overlay map */
 	      clean_tmp_map(m);
 	  }
       }

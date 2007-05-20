@@ -1812,13 +1812,7 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
  * @param op
  * object to save.
  * @param flag
- * @li if bit 0 is set, unpaid objects will be saved.  As of now,
- * the only place this is not set is when saving the player.
- * @li if bit 1 is set, don't remove the object after save.  As of now,
- * all of the callers are setting this.
- *
- * @todo
- * check comments for flag.
+ * Combination of @ref SAVE_FLAG_xxx flags.
  */
 void save_object(FILE *fp,object *op, int flag) {
     archetype *at;
@@ -1832,7 +1826,7 @@ void save_object(FILE *fp,object *op, int flag) {
         return;
 
     /* If it is unpaid and we don't want to save those, just return. */
-    if(!(flag&1)&&(QUERY_FLAG(op, FLAG_UNPAID))) {
+    if(!(flag & SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
         return;
     }
 
@@ -1876,7 +1870,7 @@ void save_object(FILE *fp,object *op, int flag) {
 
     old=NULL;
 
-    if (flag & 2)
+    if (flag & SAVE_FLAG_NO_REMOVE)
         for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
             save_object(fp,tmp,flag);
 
@@ -1894,7 +1888,7 @@ void save_object(FILE *fp,object *op, int flag) {
         old=tmp;
     }
 
-    if (!(flag&2)) {
+    if (!(flag & SAVE_FLAG_NO_REMOVE)) {
         remove_ob(op);
         free_object (op);
     }

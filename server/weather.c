@@ -1483,7 +1483,7 @@ static void perform_weather(void) {
     weather_effect(m);
 
     /* done */
-    save_map(m, 2); /* write the overlay */
+    save_map(m, SAVE_MODE_OVERLAY); /* write the overlay */
     m->in_memory = MAP_IN_MEMORY; /*reset this*/
     snprintf(filename, sizeof(filename), "%s/wmapcurpos", settings.localdir);
     if ((fp = fopen(filename, "w")) == NULL) {

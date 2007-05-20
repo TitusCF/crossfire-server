@@ -337,7 +337,7 @@ int command_overlay_save(object *op, char *params) {
         return 1;
     }
 
-    save_map(op->map, 2);
+    save_map(op->map, SAVE_MODE_OVERLAY);
     /* No need to save again the map and reset it. Overlay saving is non destructive.
      * save_map(op->map, 0);
      * This fixes bug #1553636 (Crashbug: reset/swaped map after use of "overlay_save")
