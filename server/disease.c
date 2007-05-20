@@ -545,6 +545,7 @@ int move_symptom(object *symptom) {
     object *victim = symptom->env;
     object *new_ob;
     int sp_reduce;
+    tag_t tag = symptom->count;
 
     if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
         remove_ob(symptom);
@@ -554,7 +555,11 @@ int move_symptom(object *symptom) {
 
     if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype,1);
     else hit_player(victim,MAX(1,-victim->stats.maxhp * symptom->stats.dam / 100.0),symptom,symptom->attacktype,1);
-    if(QUERY_FLAG(victim, FLAG_FREED)) {
+
+    /* In most cases, if the victim has been freed, the logic that
+     * does that will also free the symptom, so check for that.
+     */
+    if(QUERY_FLAG(victim, FLAG_FREED) && !was_destroyed(symptom,tag)) {
         remove_ob(symptom);
         free_object(symptom);
         return 0;
