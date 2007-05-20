@@ -559,9 +559,11 @@ int move_symptom(object *symptom) {
     /* In most cases, if the victim has been freed, the logic that
      * does that will also free the symptom, so check for that.
      */
-    if(QUERY_FLAG(victim, FLAG_FREED) && !was_destroyed(symptom,tag)) {
-        remove_ob(symptom);
-        free_object(symptom);
+    if(QUERY_FLAG(victim, FLAG_FREED)) {
+	if (!was_destroyed(symptom,tag)) {
+	    remove_ob(symptom);
+	    free_object(symptom);
+	}
         return 0;
     }
 
