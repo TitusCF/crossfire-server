@@ -140,11 +140,11 @@ typedef struct pl {
     uint32	count;		    /* Any numbers typed before a command */
     uint32	mode;		    /* Mode of player for pickup. */
 
-    sint8	digestion;	    /* Any bonuses/penalties to digestion */
-    sint8	gen_hp;		    /* Bonuses to regeneration speed of hp */
-    sint8	gen_sp;		    /* Bonuses to regeneration speed of sp */
-    sint8	gen_sp_armour;	    /* Penalty to sp regen from armour */
-    sint8	gen_grace;	    /* Bonuses to regeneration speed of grace */
+    sint16	digestion;	    /* Any bonuses/penalties to digestion */
+    sint16	gen_hp;		    /* Bonuses to regeneration speed of hp */
+    sint16	gen_sp;		    /* Bonuses to regeneration speed of sp */
+    sint16	gen_sp_armour;	    /* Penalty to sp regen from armour */
+    sint16	gen_grace;	    /* Bonuses to regeneration speed of grace */
     sint16	item_power;	    /* Total item power of objects equipped */
     uint8	state;		    /* Input state of the player (name, password, etc */
     uint8	listening;	    /* Which priority will be used in info_all */

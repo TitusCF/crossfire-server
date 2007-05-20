@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1713140: sustenance overflow.
+include/player.h: change digestion from sint8 to sint16. Change other fields
+ the same to avoid potential overflows.
+Nicolas Weeger 2007-05-20
+
 server/disease.c: Add check to make sure symptom was not destroyed
   when victim dies - otherwise we get double remove/free.
 MSW 2007-05-19
