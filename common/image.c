@@ -233,10 +233,7 @@ static void read_face_data(void)
  * difference.)
  *
  * @note
- * will call exit() if file doesn't exist.
- *
- * @todo
- * check malloc() return.
+ * will call exit() if file doesn't exist, and abort() in case of memory error.
  */
 void read_bmap_names(void) {
     char buf[MAX_BUF], *p, *q;
@@ -259,6 +256,10 @@ void read_bmap_names(void) {
     rewind(fp);
 
     xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * nrofbmaps);
+    if (xbm == NULL) {
+        LOG(llevError, "read_bmap_names: xbm memory allocation failure.");
+        abort();
+    }
     memset (xbm, 0, sizeof (struct bmappair) * nrofbmaps);
 
     while(nroffiles < nrofbmaps && fgets (buf, MAX_BUF, fp) != NULL) {
@@ -303,6 +304,10 @@ void read_bmap_names(void) {
     LOG(llevDebug,"done (got %d/%d/%d)\n",nrofpixmaps,nrofbmaps,nroffiles);
 
     new_faces = (New_Face *)malloc(sizeof(New_Face) * nrofpixmaps);
+    if (new_faces == NULL) {
+        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.");
+        abort();
+    }
     for (i = 0; i < nrofpixmaps; i++) {
         new_faces[i].name = "";
         new_faces[i].number = i;

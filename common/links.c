@@ -36,14 +36,16 @@
  * Allocates a new objectlink structure, initialises it, and returns
  * a pointer to it.
  *
+ * @note
+ * will call fatal() if memory allocation failure, thus never return NULL.
+ *
  * @return
  * new link object, cleared.
- *
- * @todo
- * check return of CALLOC.
  */
 objectlink *get_objectlink(void) {
     objectlink *ol=(objectlink *)CALLOC(1,sizeof(objectlink));
+    if (!ol)
+        fatal(OUT_OF_MEMORY);
     ol->ob=NULL;
     ol->next=NULL;
     ol->id = 0;
@@ -54,14 +56,16 @@ objectlink *get_objectlink(void) {
  * Allocates a new oblinkpt structure, initialises it, and returns
  * a pointer to it.
  *
+ * @note
+ * will call fatal() if memory allocation failure, thus never return NULL.
+ *
  * @return
  * new link pointer.
- *
- * @todo
- * check return of malloc().
  */
 oblinkpt *get_objectlinkpt(void) {
     oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
+    if (!obp)
+        fatal(OUT_OF_MEMORY);
     obp->link = NULL;
     obp->next = NULL;
     obp->value = 0;

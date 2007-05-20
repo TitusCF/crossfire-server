@@ -76,13 +76,12 @@ static int hashstr(const char *str) {
  * Allocates and initialises a new shared_string structure, containing
  * the string str.
  *
+ * @note
+ * will fatal() in case of memory allocation failure.
  * @param str
  * string to store.
  * @return
  * sharing structure.
- *
- * @todo
- * check return of malloc.
  */
 static shared_string* new_shared_string(const char *str) {
     shared_string *ss;
@@ -93,6 +92,8 @@ static shared_string* new_shared_string(const char *str) {
      */
     ss = (shared_string *) malloc(sizeof(shared_string) - PADDING +
         strlen(str) + 1);
+    if (ss == NULL)
+        fatal(OUT_OF_MEMORY);
     ss->u.previous = NULL;
     ss->next = NULL;
     ss->refcount = 1;

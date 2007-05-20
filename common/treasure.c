@@ -1398,9 +1398,6 @@ void dump_monster_treasure (const char *name)
 /**
  * Builds up the lists of artifacts from the file in the libdir.
  * Can be called multiple times without ill effects.
- *
- * @todo
- * check return of calloc().
  */
 void init_artifacts(void) {
     static int has_been_inited=0;
@@ -1457,6 +1454,10 @@ void init_artifacts(void) {
             art->difficulty = (uint8) value;
         else if (!strncmp(cp, "Object",6)) {
             art->item = (object *) calloc(1, sizeof(object));
+            if (art->item == NULL) {
+                LOG(llevError,"init_artifacts: memory allocation failure.\n");
+                abort();
+            }
             reset_object(art->item);
             art->item->arch = &dummy_archetype;
             if (!load_object(fp, art->item,LO_LINEMODE,0))
@@ -1932,7 +1933,7 @@ void free_artifact(artifact *at)
 void free_artifactlist(artifactlist *al)
 {
     artifactlist *nextal;
-    for (al=first_artifactlist; al!=NULL; al=nextal) {
+    for (; al!=NULL; al=nextal) {
         nextal=al->next;
         if (al->items) {
             free_artifact(al->items);
@@ -1943,9 +1944,6 @@ void free_artifactlist(artifactlist *al)
 
 /**
  * Free all treasure-related memory.
- *
- * @todo
- * reinitialize pointers?
  */
 void free_all_treasures(void) {
     treasurelist *tl, *next;
@@ -1957,4 +1955,5 @@ void free_all_treasures(void) {
         free(tl);
     }
     free_artifactlist(first_artifactlist);
+    first_artifactlist = NULL;
 }

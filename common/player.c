@@ -115,15 +115,14 @@ int is_dragon_pl(const object* op) {
 /**
  * Gets the (client-side) spell state for specified spell. Will be created to empty state if not found.
  *
+ * @note
+ * will fatal() in case of memory allocation failure.
  * @param pl
  * player we're handling.
  * @param spell
  * spell for which to search data.
  * @return
  * state information for that spell.
- *
- * @todo
- * check malloc's return value for NULL.
  */
 client_spell* get_client_spell_state(player* pl, object* spell)
 {
@@ -135,6 +134,8 @@ client_spell* get_client_spell_state(player* pl, object* spell)
         info = info->next;
     }
     info = (client_spell*)malloc(sizeof(client_spell));
+    if (info == NULL)
+        fatal(OUT_OF_MEMORY);
     memset(info, 0, sizeof(client_spell));
     info->next = pl->spell_state;
     info->spell = spell;

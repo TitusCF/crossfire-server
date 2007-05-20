@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <re-cmp.h>
 #include <ctype.h>
+#include <define.h> /* Needed for OUT_OF_MEMORY. */
 
 /* Get prototype functions to prevent warnings. */
 #if defined (__sun__) && defined(StupidSunHeaders)
@@ -256,13 +257,15 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
 /**
  * Init the regular expression structures.
  *
- * @todo
- * check return value of malloc().
+ * @note
+ * will fatal() in case of memory error.
  */
 static void re_init(void) {
     int i;
 
     re_token[0] = (selection *) malloc(sizeof(selection));
+    if (re_token[0] == NULL)
+        fatal(OUT_OF_MEMORY);
     for (i = 1; i < RE_TOKEN_MAX; i++)
         re_token[i] = NULL;
 

@@ -716,9 +716,6 @@ A	.+
 		    }
 ^race{S}	    FREE_AND_COPY(op->race,yval());
 ^slaying{S}	    FREE_AND_COPY(op->slaying, yval());
-^inventory.*$	    LOG(llevError,"Got depreciated Inventory command?\n");
-
-
 ^arch{S}         {	/* If op->arch has been set, then this new object
 			 * must be part of the inventory.  So process
 			 * appropriately.
