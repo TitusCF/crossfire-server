@@ -120,6 +120,15 @@ typedef struct party_struct {
     uint32  kills;
 } partylist;
 
+/**
+ * Whether to rejoin party at login or not.
+ */
+typedef enum party_rejoin_mode {
+    party_rejoin_no = 0,        /**< Don't rejoin. */
+    party_rejoin_if_exists = 1, /**< Rejoin if party exists. */
+    party_rejoin_always = 2,    /**< If party doesn't exist, form it. */
+} party_rejoin_mode;
+
 typedef struct pl {
     struct pl	*next;		    /* Pointer to next player, NULL if this is last */
     socket_struct	socket;		    /* Socket information for this player */
@@ -214,6 +223,7 @@ typedef struct pl {
 				    /* but we will have to get password first */
 				    /* so we have to remember which party to */
 				    /* join */
+    party_rejoin_mode rejoin_party; /**< Whether to rejoin or not party at login. */
     char    search_str[MAX_BUF];    /* Item we are looking for */
     sint16  encumbrance;	    /* How much our player is encumbered  */
     Output_Buf	outputs[NUM_OUTPUT_BUFS];   /* holds output strings to client */

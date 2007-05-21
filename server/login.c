@@ -308,6 +308,11 @@ int save_player(object *op, int flag) {
     fprintf(fp,"%d\n",pl->levsp[i]);
 	 fprintf(fp,"%d\n",pl->levgrace[i]);
   }
+  fprintf(fp, "party_rejoin_mode %d\n", pl->rejoin_party);
+  if (pl->party != NULL) {
+      fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
+      fprintf(fp, "party_rejoin_password %s\n", pl->party->passwd);
+  }
   fprintf(fp,"endplst\n");
 
   SET_FLAG(op, FLAG_NO_FIX_PLAYER);
@@ -429,8 +434,10 @@ void check_login(object *op) {
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
+    char *party_name = NULL, party_password[9];
 
     strcpy (pl->maplevel,first_map_path);
+    party_password[0] = 0;
 
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
@@ -621,6 +628,19 @@ void check_login(object *op) {
 		pl->levgrace[i]=j;
 	    }
 	}
+        else if (!strcmp(buf, "party_rejoin_mode")) {
+            pl->rejoin_party = value;
+        }
+        else if (!strcmp(buf, "party_rejoin_name")) {
+            party_name = strdup_local(bufall + strlen("party_rejoin_name") + 1);
+            if (party_name && strlen(party_name) > 0)
+                party_name[strlen(party_name) - 1] = '\0';
+        }
+        else if (!strcmp(buf, "party_rejoin_password")) {
+            snprintf(party_password, sizeof(party_password), bufall + strlen("party_rejoin_password") + 1);
+            if (strlen(party_password) > 0)
+                party_password[strlen(party_password) - 1] = '\0';
+        }
     } /* End of loop loading the character file */
     leave_map(op);
     op->speed=0;
@@ -742,5 +762,33 @@ void check_login(object *op) {
      * should be able to use a shield.  However, old Q's won't get that advantage.
      */
     if (QUERY_FLAG(op, FLAG_USE_ARMOUR)) SET_FLAG(op, FLAG_USE_SHIELD);
+
+    /* Rejoin party if needed. */
+    if (pl->rejoin_party != party_rejoin_no && party_name != NULL) {
+        partylist* party;
+        for (party = get_firstparty(); party; party = party->next) {
+            if (strcmp(party_name, party->partyname) == 0)
+                break;
+        }
+        if (!party && pl->rejoin_party == party_rejoin_always) {
+            party = form_party(op, party_name);
+            snprintf(party->passwd, sizeof(party->passwd), party_password);
+        }
+        if (party && strcmp(party->passwd, party_password) == 0) {
+            pl->party = party;
+            snprintf(buf, MAX_BUF, "%s joins party %s", op->name, party->partyname);
+            send_party_message(op, buf);
+        }
+
+        if (pl->party)
+            snprintf(buf, MAX_BUF, "Rejoined party %s.", party->partyname);
+        else
+            snprintf(buf, MAX_BUF, "Couldn't rejoined party %s: %s.", party->partyname, party ? "invalid password." : "no such party.");
+        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+            buf, NULL);
+    }
+    if (party_name)
+        free(party_name);
+
     return;
 }

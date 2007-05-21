@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add party rejoin at login. New command 'party_rejoin' to control the behaviour.
+ include/player.h sproto.h
+ server/c_party.c commands.c login.c player.c
+ lib/help/party_rejoin
+ lib/Makefile.am
+Nicolas Weeger 2007-05-21
+
 Misc memory fixes. Remove obsolete "inventory" line.
  common/image.c links.c loader.l player.c re-cmp.c shstr.c treasure.c
 Nicolas Weeger 2007-05-20

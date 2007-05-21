@@ -42,10 +42,18 @@ partylist* get_firstparty(void)
 
 void remove_party(partylist *target_party);
 
-/* Forms the party struct for a party called 'params'. it is the responsibility
- * of the caller to ensure that the name is unique, and that it is placed in the 
- * main party list correctly */
-static partylist *form_party(object *op, const char *params) {
+/**
+ * Forms the party struct for a party called 'params'. it is the responsibility
+ * of the caller to ensure that the name is unique.
+ * New item is placed on the party list.
+ * @param op
+ * party creator.
+ * @param params
+ * party name.
+ * @return
+ * new party.
+ */
+partylist *form_party(object *op, const char *params) {
 
     partylist * newparty;
 
@@ -61,6 +69,16 @@ static partylist *form_party(object *op, const char *params) {
 			 "You have formed party: %s",
 			 newparty->partyname);	
     op->contr->party=newparty;
+
+    if (lastparty) {
+        lastparty->next=newparty;
+        lastparty = lastparty->next;
+    }
+    else {
+        firstparty=newparty;
+        lastparty=firstparty;
+    }
+
     return newparty;
 }
 
@@ -354,12 +372,10 @@ int command_party (object *op, char *params)
         	return 1;
 	    }
 	}
-    lastparty->next=form_party(op, params);
-    lastparty = lastparty->next;
+        form_party(op, params);
     }
     else {
-	firstparty=form_party(op, params);
-	lastparty=firstparty;
+        form_party(op, params);
     }
     /* 
      * The player might have previously been a member of a party, if so, he will be leaving
@@ -572,4 +588,42 @@ int command_party (object *op, char *params)
 
   party_help(op);
   return 1;
+}
+
+static const char* rejoin_modes[] = {
+    "no",
+    "if_exists",
+    "always",
+    NULL
+};
+
+/**
+ * Handles the 'party_rejoin' command.
+ * @param op
+ * player.
+ * @param params
+ * optional parameters.
+ * @return
+ * 1.
+ */
+int command_party_rejoin(object *op, char *params) {
+    int mode;
+    if (!params) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+            "party rejoin: %s", NULL, rejoin_modes[op->contr->rejoin_party]);
+        return 1;
+    }
+    for (mode = 0; rejoin_modes[mode] != NULL; mode++) {
+        if (strcmp(rejoin_modes[mode], params) == 0) {
+            op->contr->rejoin_party = mode;
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                "party rejoin is now: %s", NULL, rejoin_modes[op->contr->rejoin_party]);
+            return 1;
+        }
+    }
+    if (strlen(params) > 50)
+        params[50] = '\0';
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        "invalid mode: %s", NULL, params);
+    return 1;
 }

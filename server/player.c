@@ -241,6 +241,7 @@ static player* get_player(player *p) {
      * we deal with that below this point.
      */
     p->party=NULL;
+    p->rejoin_party = party_rejoin_if_exists;
     p->outputs_sync=16;		/* Every 2 seconds */
     p->outputs_count=1;		/* Keeps present behaviour */
     p->unapply = unapply_nochoice;
