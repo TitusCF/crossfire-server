@@ -1124,6 +1124,10 @@ int process_object(object *op) {
     if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
 	return 0;
 
+    /* Lauwenmark: Handle for plugin time event */
+    if (execute_event(op, EVENT_TIME,NULL,NULL,NULL,SCRIPT_FIX_NOTHING) != 0)
+        return 0;
+
     if(QUERY_FLAG(op, FLAG_MONSTER))
 	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
 	    return 1;
@@ -1159,8 +1163,6 @@ int process_object(object *op) {
 	}
 	return 1;
     }
-    /* Lauwenmark: Handle for plugin time event */
-    execute_event(op, EVENT_TIME,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
     return ob_process(op);
 }
 void legacy_move_detector(object *op)
