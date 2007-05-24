@@ -74,6 +74,7 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
     {"body_hand",	"on your hands",	"on a human's hands"},
     {"body_wrist",	"around your wrists",	"around a human's wrist"},
     {"body_waist",	"around your waist",	"around a human's waist"},
+    {"body_leg",	"around your legs",	"around a human's legs"},
 
     /*{"body_dragon_torso", "your body", "a dragon's body"} */
 };

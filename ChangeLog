@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Implement feature request #1653768: Pants/legs
+ common/item.c
+ include/object.h
+Nicolas Weeger 2007-05-24
+
 server/time.c: allow plugins to override the usual move process.
 Nicolas Weeger 2007-05-24
 

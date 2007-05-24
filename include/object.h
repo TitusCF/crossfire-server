@@ -30,7 +30,7 @@
 #define OBJECT_H
 
 typedef uint32 tag_t;
-#define NUM_BODY_LOCATIONS	12
+#define NUM_BODY_LOCATIONS	13
 #define BODY_ARMS		1
 
 /* See common/item.c */
