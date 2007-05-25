@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Document code, no functional change.
+ common/arch.c
+ include/define.h
+ server/apply.c
+Nicolas Weeger 2007-05-25
+
 Implement feature request #1653768: Pants/legs
  common/item.c
  include/object.h

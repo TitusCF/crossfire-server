@@ -600,6 +600,8 @@ object *create_singularity(const char *name) {
  * archetype name
  * @return
  * object of specified archetype, or a singularity. Will never be NULL.
+ * @todo
+ * replace with object_create_arch() which is multi-part aware.
  */
 object *create_archetype(const char *name) {
     archetype *at;

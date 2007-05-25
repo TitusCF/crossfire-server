@@ -926,8 +926,11 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
       safe_strcat(retbuf,")", len, maxlen); \
     }
 
-/** Flags for apply_special() */
-enum apply_flag {
+/**
+ * Flags for apply_special().
+ * @anchor AP_xxx
+ */
+typedef enum apply_flag {
     /* Basic flags, always use one of these */
     AP_NULL             = 0,
     AP_APPLY            = 1,    /**< Item is to be applied. */
@@ -943,7 +946,7 @@ enum apply_flag {
     AP_NOPRINT          = 128   /**< Don't print messages - caller will do that
                                  * may be some that still print */
 
-};
+} apply_flag;
 
 /* Bitmask values for 'can_apply_object()' return values.
  * the CAN_APPLY_ prefix is to just note what function the

@@ -49,10 +49,20 @@ static int dragon_eat_flesh(object *op, object *meal);
 static void apply_lighter(object *who, object *lighter);
 static void scroll_failure(object *op, int failure, int power);
 
-/** Can transport hold object op?
+/**
+ * Can transport hold object op?
  * This is a pretty trivial function,
  * but in the future, possible transport may have more restrictions
  * or weight reduction like containers
+ *
+ * @param transport
+ * transport to check.
+ * @param op
+ * object we're trying to insert.
+ * @param nrof
+ * number of op.
+ * @return
+ * 1 if can hold, 0 else.
  */
 int transport_can_hold(const object *transport, const object *op, int nrof)
 {
@@ -64,7 +74,13 @@ int transport_can_hold(const object *transport, const object *op, int nrof)
 
 /**
  * Check if op should abort moving victim because of it's race or slaying.
- * Returns 1 if it should abort, returns 0 if it should continue.
+ *
+ * @param op
+ * detector or equivalent we're testing. Note that its type is not checked.
+ * @param victim
+ * object trying to move on op.
+ * @return
+ * 1 if it should abort, 0 if it should continue.
  */
 int should_director_abort(object *op, object *victim)
 {
@@ -117,7 +133,10 @@ int should_director_abort(object *op, object *victim)
 /**
  * This checks whether the object has a "on_use_yield" field,
  * and if so generated and drops matching item.
- **/
+ *
+ * @param tmp
+ * item that was applied.
+ */
 static void handle_apply_yield(object* tmp)
 {
     const char* yield;
@@ -139,6 +158,13 @@ static void handle_apply_yield(object* tmp)
 
 /**
  * Handles applying a potion.
+ *
+ * @param op
+ * living trying to apply the potion.
+ * @param tmp
+ * potion applied.
+ * @return
+ * 1 if tmp was applied, 0 if failure for some reason.
  */
 int apply_potion(object *op, object *tmp)
 {
@@ -340,7 +366,16 @@ int apply_potion(object *op, object *tmp)
  ****************************************************************************/
 
 /**
- * This returns the sum of nrof of item (arch name).
+ * Counts suitable items with specified archetype name. Will not consider unpaid/cursed items.
+ * @param op
+ * object just before the bottom of the pile, others will be checked through object->below.
+ * @param item
+ * what archetype to check for.
+ * @return
+ * count of matching items.
+ * @todo
+ * couldn't item be a shared string, and == be used instead of strcmp?
+ * The op = op->below is weird - what is it's NULL?
  */
 static int check_item(object *op, const char *item)
 {
@@ -366,10 +401,20 @@ static int check_item(object *op, const char *item)
 }
 
 /**
- * This removes 'nrof' of what item->slaying says to remove.
+ * This removes 'nrof' items with specified archetype.
  * op is typically the player, which is only
  * really used to determine what space to look at.
  * Modified to only eat 'nrof' of objects.
+ *
+ * @param op
+ * item at the bottom to check.
+ * @param item
+ * archetype to look for.
+ * @param nrof
+ * count to remove.
+ * @todo
+ * couldn't item be a shared string, and use == instead of strcmp?
+ * also, the remove logic is wrong - op->nrof will be 0 after decreat_ob_nr in the 2nd case.
  */
 static void eat_item(object *op,const char *item, uint32 nrof)
 {
@@ -400,6 +445,15 @@ static void eat_item(object *op,const char *item, uint32 nrof)
  * instead of the object so that the improvement code can pass along the
  * increased value to see if the object is usuable.
  * we return 1 (true) if the player can use the weapon.
+ *
+ * @param who
+ * living to check
+ * @param improvs
+ * improvement level.
+ * @return
+ * 1 if who can use the item, 0 else.
+ * @todo
+ * remove obsolete code.
  */
 static int check_weapon_power(const object *who, int improvs)
 {
@@ -447,6 +501,15 @@ static int check_weapon_power(const object *who, int improvs)
 /**
  * Returns how many items of type improver->slaying there are under op.
  * Will display a message if none found, and 1 if improver->slaying is NULL.
+ *
+ * @param op
+ * item just below the bottom of the pile.
+ * @param improver
+ * sacrifice object.
+ * @return
+ * count of matching items.
+ * @todo
+ * weird logic? use shared string directly, improver isn't really useful.
  */
 static int check_sacrifice(object *op, const object *improver)
 {
@@ -470,7 +533,22 @@ static int check_sacrifice(object *op, const object *improver)
 }
 
 /**
- * Actually improves the weapon, and tells user.
+ * Actually improves the weapon, and tells user. Won't test anything.
+ *
+ * @param op
+ * player improving.
+ * @param improver
+ * scroll used to improve.
+ * @param weapon
+ * improved weapon.
+ * @param stat
+ * what statistic to improve.
+ * @param sacrifice_count
+ * how much to improve stat by.
+ * @param statname
+ * name of stat to display to player.
+ * @return
+ * 1.
  */
 static int improve_weapon_stat(object *op,object *improver,object *weapon,
                                signed char *stat,int sacrifice_count,
@@ -512,9 +590,18 @@ static int improve_weapon_stat(object *op,object *improver,object *weapon,
 
 /**
  * This does the prepare weapon scroll.
- * Checks for sacrifice, and so on.
+ *
+ * Checks for sacrifice, and so on. Will inform the player of failures or success.
+ *
+ * @param op
+ * player using the scroll.
+ * @param improver
+ * improvement scroll.
+ * @param weapon
+ * weapon to improve.
+ * @return
+ * 1 if weapon was prepared, 0 else.
  */
-
 static int prepare_weapon(object *op, object *improver, object *weapon)
 {
     int sacrifice_count,i;
@@ -570,13 +657,21 @@ static int prepare_weapon(object *op, object *improver, object *weapon)
 /**
  * Does the dirty job for 'improve weapon' scroll, prepare or add something.
  * This is the new improve weapon code.
- * Returns 0 if it was not able to work for some reason.
  *
  * Checks if weapon was prepared, if enough potions on the floor, ...
  *
  * We are hiding extra information about the weapon in the level and
  * last_eat numbers for an object.  Hopefully this won't break anything ??
  * level == max improve last_eat == current improve
+ *
+ * @param op
+ * player improving.
+ * @param improver
+ * the scroll that was read.
+ * @param weapon
+ * wepaon to improve.
+ * @return
+ * 1 if weapon was improved, 0 if not enough sacrifice, weapon not prepared, ...
  */
 static int improve_weapon(object *op,object *improver,object *weapon)
 {
@@ -725,8 +820,18 @@ static int improve_weapon(object *op,object *improver,object *weapon)
 
 /**
  * Handles the applying of improve/prepare/enchant weapon scroll.
+ *
  * Checks a few things (not on a non-magic square, marked weapon, ...),
- * then calls improve_weapon to do the dirty work.
+ * then calls improve_weapon() to do the dirty work.
+ *
+ * Will inform the player of failure/success.
+ *
+ * @param op
+ * player applying the scroll.
+ * @param tmp
+ * improve scroll.
+ * @return
+ * 0 if failure for some reason, 1 if success.
  */
 static int check_improve_weapon (object *op, object *tmp)
 {
@@ -779,6 +884,15 @@ static int check_improve_weapon (object *op, object *tmp)
  * the users level or 90)
  * Modified by MSW for partial resistance.  Only support
  * changing of physical area right now.
+ *
+ * @param op
+ * player improving the armor.
+ * @param improver
+ * improvement scroll.
+ * @param armour
+ * armour to improve.
+ * @return
+ 0 if failure, 1 for success.
  */
 static int improve_armour(object *op, object *improver, object *armour)
 {
@@ -905,7 +1019,7 @@ static int set_object_face_main(object *op){
     }
     return FALSE;
 }
-    
+
 /**
  * Makes an object's face the other_arch face
  *
@@ -1093,8 +1207,14 @@ int apply_container (object *op, object *sack)
 }
 
 /**
- * Handles the applying of a skill scroll, calling learn_skill straight.
- * op is the person learning the skill, tmp is the skill scroll object
+ * Handles the applying of a skill scroll, calling learn_skill() straight.
+ *
+ * Will inform the player of success/failure.
+ *
+ * @param op
+ * person learning the skill.
+ * @param tmp
+ * skill scroll object.
  */
 static void apply_skillscroll (object *op, object *tmp)
 {
@@ -1137,7 +1257,14 @@ static void apply_skillscroll (object *op, object *tmp)
 
 /**
  * Actually makes op learn spell.
- * Informs player of what happens.
+ * Informs player of new spell and binding.
+ *
+ * @param op
+ * player who'll learn the spell.
+ * @param spell
+ * spell to learn.
+ * @param special_prayer
+ * 1 for god-given prayer, 0 else.
  */
 void do_learn_spell (object *op, object *spell, int special_prayer)
 {
@@ -1176,7 +1303,12 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
 }
 
 /**
- * Erases spell from player's inventory.
+ * Erases spell from player's inventory. Will inform player of loss.
+ *
+ * @param op
+ * player.
+ * @param spell
+ * spell name to forget.
  */
 void do_forget_spell (object *op, const char *spell)
 {
@@ -1461,9 +1593,14 @@ void apply_scroll (object *op, object *tmp, int dir)
 }
 
 /**
- * Applies a treasure object - by default, chest.  op
- * is the person doing the applying, tmp is the treasure
- * chest.
+ * Applies a treasure object - usually, chest.
+ *
+ * Inform op of contents.
+ *
+ * @param op
+ * person doing the applying.
+ * @param tmp
+ * tmp is the treasure chest.
  */
 static void apply_treasure (object *op, object *tmp)
 {
@@ -1518,8 +1655,12 @@ static void apply_treasure (object *op, object *tmp)
 }
 
 /**
- * op eats food.
- * If player, takes care of messages and dragon special food.
+ * Eat food. If player, takes care of messages and dragon special food.
+ *
+ * @param op
+ * living eating.
+ * @param tmp
+ * food.
  */
 static void apply_food (object *op, object *tmp)
 {
@@ -1618,11 +1759,14 @@ static void apply_food (object *op, object *tmp)
  * A dragon is eating some flesh. If the flesh contains resistances,
  * there is a chance for the dragon's skin to get improved.
  *
- * attributes:
- *     object *op        the object (dragon player) eating the flesh
- *     object *meal      the flesh item, getting chewed in dragon's mouth
- * return:
- *     int               1 if eating successful, 0 if it doesn't work
+ * @param op
+ * object (dragon player) eating the flesh.
+ * @param meal
+ * flesh item, getting chewed in dragon's mouth.
+ * @return
+ * 1 if meal was eaten, 0 else.
+ * @note
+ * meal's nrof isn't decreased, caller is responsible for that.
  */
 static int dragon_eat_flesh(object *op, object *meal) {
     object *skin = NULL;    /* pointer to dragon skin force*/
@@ -1779,6 +1923,12 @@ static int dragon_eat_flesh(object *op, object *meal) {
     return 1;
 }
 
+/**
+ * Handle savebed.
+ *
+ * @param pl
+ * player who is applying the bed.
+ */
 static void apply_savebed (object *pl)
 {
     if(!pl->contr->name_changed||!pl->stats.exp) {
@@ -1824,7 +1974,12 @@ static void apply_savebed (object *pl)
 
 /**
  * Handles applying an improve armor scroll.
- * Does some sanity checks, then calls improve_armour.
+ * Does some sanity checks, then calls improve_armour().
+ *
+ * @param op
+ * player applying the scroll.
+ * @param tmp
+ * improvement scroll.
  */
 static void apply_armour_improver (object *op, object *tmp)
 {
@@ -1861,7 +2016,15 @@ static void apply_armour_improver (object *op, object *tmp)
 }
 
 
-extern void apply_poison (object *op, object *tmp)
+/**
+ * Someone ate some poison.
+ *
+ * @param op
+ * living eating.
+ * @param tmp
+ * poisoned object.
+ */
+void apply_poison (object *op, object *tmp)
 {
     if (op->type == PLAYER) {
         play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
@@ -1883,14 +2046,22 @@ extern void apply_poison (object *op, object *tmp)
  * This fonction return true if the exit is not a 2 ways one
  * or it is 2 ways, valid exit.
  * A valid 2 way exit means:
- *   -You can come back (there is another exit at the other side)
- *   -You are
- *          the owner of the exit
- *          or in the same party as the owner
+ *  - You can come back (there is another exit at the other side)
+ *  - You are
+ *     - the owner of the exit
+ *     - or in the same party as the owner
  *
- * Note: a owner in a 2 way exit is saved as the owner's name
+ * @note
+ * a owner in a 2 way exit is saved as the owner's name
  * in the field exit->name cause the field exit->owner doesn't
  * survive in the swapping (in fact the whole exit doesn't survive).
+ *
+ * @param op
+ * player to check for.
+ * @param exit
+ * exit object.
+ * @return
+ * 1 if exit is not 2 way, 0 else.
  */
 static int is_legal_2ways_exit (object* op, object *exit)
 {
@@ -1953,9 +2124,9 @@ static int is_legal_2ways_exit (object* op, object *exit)
  * Checks for unpaid items before applying.
  *
  * @param op
- * ::object object being applied.
+ * ::object causing tmp to be applied.
  * @param tmp
- * ::object causing op to be applied.
+ * ::object being applied.
  * @param aflag
  * special (always apply/unapply) flags.  Nothing is done with
  * them in this function - they are passed to apply_special().
@@ -1986,11 +2157,24 @@ int manual_apply (object *op, object *tmp, int aflag)
 }
 
 
-/** quiet suppresses the "don't know how to apply" and "you must get it first"
- * messages as needed by player_apply_below().  But there can still be
- * "but you are floating high above the ground" messages.
+/**
+ * Living thing is applying an object.
  *
- * Same return value as apply() function.
+ * @param pl
+ * ::object causing op to be applied.
+ * @param op
+ * ::object being applied.
+ * @param aflag
+ * special (always apply/unapply) flags.  Nothing is done with
+ * them in this function - they are passed to apply_special().
+ * @param quiet
+ * if 1, suppresses the "don't know how to apply" and "you must get it first"
+ * messages as needed by player_apply_below().  There can still be
+ * "but you are floating high above the ground" messages.
+ * @return
+ * - 0: player or monster can't apply objects of that type
+ * - 1: has been applied, or there was an error applying the object
+ * - 2: objects of that type can't be applied if not in inventory
  */
 int player_apply (object *pl, object *op, int aflag, int quiet)
 {
@@ -2046,11 +2230,13 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
 }
 
 /**
- * player_apply_below attempts to apply the object 'below' the player.
+ * Attempt to apply the object 'below' the player.
  * If the player has an open container, we use that for below, otherwise
  * we use the ground.
+ *
+ * @param pl
+ * player.
  */
-
 void player_apply_below (object *pl)
 {
     object *tmp, *next;
@@ -2097,8 +2283,19 @@ void player_apply_below (object *pl)
 /**
  * Unapplies specified item.
  * No check done on cursed/damned.
- * Break this out of apply_special - this is just done
- * to keep the size of apply_special to a more managable size.
+ * Break this out of apply_special() - this is just done
+ * to keep the size of apply_special() to a more managable size.
+ *
+ * @param who
+ * living that has op removed.
+ * @param op
+ * ::object.
+ * @param aflags
+ * combination of @ref AP_xxx flags.
+ * @return
+ * 0 except if op is a LAMP.
+ * @todo
+ * check why LAMP returns 1.
  */
 static int unapply_special (object *who, object *op, int aflags)
 {
@@ -2273,18 +2470,23 @@ static int unapply_special (object *who, object *op, int aflags)
 }
 
 /**
- * Returns the object that is using location 'loc'.
+ * Returns the object that is using body location 'loc'.
  * Note that 'start' is the first object to start examing - we
  * then go through the below of this.  In this way, you can do
  * something like:
  * tmp = get_item_from_body_location(who->inv, 1);
  * if (tmp) tmp1 = get_item_from_body_location(tmp->below, 1);
  * to find the second object that may use this location, etc.
- * Returns NULL if no match is found.
- * loc is the index into the array we are looking for a match.
- * don't return invisible objects unless they are skill objects
- * invisible other objects that use
- * up body locations can be used as restrictions.
+ *
+ * Don't return invisible objects unless they are skill objects.
+ * Invisible other objects that use up body locations can be used as restrictions.
+ *
+ * @param start
+ * object to start from.
+ * @param loc
+ * body position to search. Must be between 0 and NUM_BODY_LOCATIONS-1.
+ * @return
+ * object at position, NULL if none.
  */
 static object *get_item_from_body_location(object *start, int loc)
 {
@@ -2302,15 +2504,25 @@ static object *get_item_from_body_location(object *start, int loc)
 
 
 /**
- * 'op' wants to apply an object, but can't because of other equipment.
+ * Remove equipment so an object can be applied.
+ *
  * This should only be called when it is known
  * that there are objects to unapply.  This makes pretty heavy
- * use of get_item_from_body_location.  It makes no intelligent choice
- * on objects - rather, the first that is matched is used.
- * Returns 0 on success, returns 1 if there is some problem.
- * if aflags is AP_PRINT, we instead print out waht to unapply
+ * use of get_item_from_body_location().  It makes no intelligent choice
+ * on objects - rather, the first that matched is used.
+ *
+ * if aflags has AP_PRINT set, we instead print out waht to unapply
  * instead of doing it.  This is a lot less code than having
  * another function that does just that.
+ *
+ * @param who
+ * living trying to apply op.
+ * @param op
+ * ::object being applied.
+ * @param aflags
+ * combination of @ref AP_xxx flags.
+ * @return
+ * 0 on success, 1 if there is some problem.
  */
 static int unapply_for_ob(object *who, object *op, int aflags)
 {
@@ -2413,14 +2625,21 @@ static int unapply_for_ob(object *who, object *op, int aflags)
 
 /**
  * Checks to see if 'who' can apply object 'op'.
- * Returns 0 if apply can be done without anything special.
+ *
+ * @param who
+ * living thing trying to apply op.
+ * @param op
+ * object applied.
+ * @return
+ * 0 if apply can be done without anything special.
  * Otherwise returns a bitmask - potentially several of these may be
  * set, but largely depends on circumstance - in the future, processing
  * may be  pruned once we know some status (eg, once CAN_APPLY_NEVER
  * is set, do we really are what the other flags may be?)
- *
  * See include/define.h for detailed description of the meaning of
  * these return values.
+ * @todo
+ * do a nice enum for can_apply_xxx, and link to this doc.
  */
 int can_apply_object(object *who, object *op)
 {
@@ -2535,26 +2754,25 @@ int can_apply_object(object *who, object *op)
 
 
 /**
- * who is the object using the object.  It can be a monster
- * op is the object they are using.  op is an equipment type item,
- * eg, one which you put on and keep on for a while, and not something
- * like a potion or scroll.
+ * Apply an object.
  *
- * function returns 1 if the action could not be completed, 0 on
- * success.  However, success is a matter of meaning - if the
- * user passes the 'apply' flag to an object already applied,
- * nothing is done, and 0 is returned.
- *
- * aflags is special flags (0 - normal/toggle, AP_APPLY=always apply,
- * AP_UNAPPLY=always unapply).
- *
- * Optional flags:
- *   AP_NO_MERGE: don't merge an unapplied object with other objects
- *   AP_IGNORE_CURSE: unapply cursed items
+ * This function doesn't check for unpaid items, but check other restrictions.
  *
  * Usage example:  apply_special (who, op, AP_UNAPPLY | AP_IGNORE_CURSE)
  *
- * apply_special() doesn't check for unpaid items.
+ * @param who
+ * object using op. It can be a monster.
+ * @param op
+ * object being used. Should be an equipment type item,
+ * eg, one which you put on and keep on for a while, and not something
+ * like a potion or scroll.
+ * @param aflags
+ * combination of @ref AP_xxx flags.
+ * @return
+ * 1 if the action could not be completed, 0 on success.
+ * However, success is a matter of meaning - if the
+ * user passes the 'apply' flag to an object already applied,
+ * nothing is done, and 0 is returned.
  */
 int apply_special (object *who, object *op, int aflags)
 {
@@ -2678,7 +2896,7 @@ int apply_special (object *who, object *op, int aflags)
             const char* msg = NULL;
             int random_effect = 0;
             int damage_percentile = 0;
-            
+
             if (will!=NULL)
                 item_will = atol(get_ob_key_value(op, "item_willpower"));
             if (item_will != 0)
@@ -3020,6 +3238,11 @@ int apply_special (object *who, object *op, int aflags)
  * Map was just loaded, handle op's initialisation.
  *
  * Generates shop floor's item, and treasures.
+ *
+ * @param op
+ * object to initialize.
+ * @return
+ * 1 if object was initialized, 0 else.
  */
 int auto_apply (object *op) {
     object *tmp = NULL, *tmp2;
@@ -3077,10 +3300,13 @@ int auto_apply (object *op) {
 }
 
 /**
- * fix_auto_apply goes through the entire map (only the first time
+ * Go through the entire map (only the first time
  * when an original map is loaded) and performs special actions for
  * certain objects (most initialization of chests and creation of
- * treasures and stuff).  Calls auto_apply if appropriate.
+ * treasures and stuff).  Calls auto_apply() if appropriate.
+ *
+ * @param m
+* map to fix.
  */
 
 void fix_auto_apply(mapstruct *m) {
@@ -3191,8 +3417,12 @@ void fix_auto_apply(mapstruct *m) {
  * This used to call cast_change_attr(), but
  * that doesn't work with the new spell code.  Since we know what
  * the food changes, just grab a force and use that instead.
+ *
+ * @param who
+ * living eating food.
+ * @param food
+ * eaten food.
  */
-
 void eat_special_food(object *who, object *food) {
     object *force;
     int i, did_one=0;
@@ -3270,8 +3500,12 @@ void eat_special_food(object *who, object *food) {
  * Designed primarily to light torches/lanterns/etc.
  * Also burns up burnable material too. First object in the inventory is
  * the selected object to "burn". -b.t.
+ *
+ * @param who
+ * living thing applying the lighter.
+ * @param lighter
+ * object that lights.
  */
-
 static void apply_lighter(object *who, object *lighter) {
     object *item;
     int is_player_env=0;
@@ -3429,6 +3663,10 @@ static void scroll_failure(object *op, int failure, int power)
 
 /**
  * Applies (race) changes to a player.
+ * @param pl
+ * object to change.
+ * @param change
+ * what kind of changes to apply. Should be of type CLASS.
  */
 void apply_changes_to_player(object *pl, object *change) {
     int excess_stat=0;  /* if the stat goes over the maximum
