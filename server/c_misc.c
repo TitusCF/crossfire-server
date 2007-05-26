@@ -316,7 +316,7 @@ void current_map_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 	"%s (%s) in %s", 
 	"%s (%s) in %s", 
-	 m->name, m->path, get_name_of_region_for_map(m));
+	 m->name, m->path, get_region_longname(get_region_by_map(m)));
 
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
