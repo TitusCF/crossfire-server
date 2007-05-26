@@ -24,6 +24,14 @@
 
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
+
+/**
+ * @file
+ * This handles all attacks, magical or not.
+ * @todo
+ * clean functions. Are all parameters required? Seems quite a mess to send damage/wc etc in attack_ob_simple().
+ */
+
 #include <assert.h>
 #include <global.h>
 #include <living.h>
@@ -35,11 +43,6 @@
 #endif
 
 #include <sounds.h>
-
-typedef struct att_msg_str {
-  char *msg1;
-  char *msg2;
-} att_msg;
 
 /*#define ATTACK_DEBUG*/
 
@@ -53,6 +56,9 @@ static void poison_player(object *op, object *hitter, int dam);
 /**
  * Cancels object *op.  Cancellation basically means an object loses
  * its magical benefits.
+ *
+ * @param op
+ * item to cancel. Its inventory will also be cancelled.
  */
 static void cancellation(object *op)
 {
@@ -84,11 +90,20 @@ static void cancellation(object *op)
 
 
 /**
- * did_make_save_item just checks to make sure the item actually
+ * Checks to make sure the item actually
  * made its saving throw based on the tables.  It does not take
  * any further action (like destroying the item).
+ * @param op
+ * object to check.
+ * @param type
+ * attack type.
+ * @param originator
+ * what it attacking?
+ * @return
+ * TRUE if item saved, FALSE else.
+ * @todo
+ * check meaning of originator.
  */
-
 static int did_make_save_item(object *op, int type, object *originator) {
     int i, roll, saves=0, attacks=0, number;
     materialtype_t *mt;
@@ -146,9 +161,16 @@ static int did_make_save_item(object *op, int type, object *originator) {
 }
 
 /**
- * This function calls did_make_save_item.  It then performs the
+ * Object is attacked with some attacktype (fire, ice, ...).
+ * Calls did_make_save_item().  It then performs the
  * appropriate actions to the item (such as burning the item up,
- * calling cancellation, etc.)
+ * calling cancellation(), etc.)
+ * @param op
+ * victim of the attack.
+ * @param type
+ * attacktype.
+ * @param originator
+ * what is attacking.
  */
 
 void save_throw_object (object *op, int type, object *originator)
@@ -261,13 +283,20 @@ void save_throw_object (object *op, int type, object *originator)
 }
 
 /**
- * Object op is hitting the map.
- * op is going in direction 'dir'
- * type is the attacktype of the object.
- * full_hit is set if monster area does not matter.
- * returns 1 if it hits something, 0 otherwise.
+ * Attack a spot on the map.
+ *
+ * @param op
+ * object hitting the map.
+ * @param dir
+ * direction op is hitting/going.
+ * @param type
+ * attacktype.
+ * @param full_hit
+ * if set then monster area does not matter, it gets all damage. Else damage is proportional to
+ * affected area vs full monster area.
+ * @return
+ * 1 if it hits something, 0 otherwise.
  */
-
 int hit_map(object *op, int dir, int type, int full_hit) {
     object *tmp, *next;
     mapstruct *map;
@@ -392,6 +421,21 @@ int hit_map(object *op, int dir, int type, int full_hit) {
     return 0;
 }
 
+/**
+ * Send an attack message to someone.
+ *
+ * @param dam
+ * amount of damage done.
+ * @param type
+ * attack type.
+ * @param op
+ * victim of the attack.
+ * @param hitter
+ * who is hitting.
+ * @todo
+ * move check for player at function start? this function seems called for everyone.
+ * use string safe functions.
+ */
 static void attack_message(int dam, int type, object *op, object *hitter) {
   char buf[MAX_BUF], buf1[MAX_BUF], buf2[MAX_BUF];
   int i, found=0;
@@ -662,7 +706,17 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     }
 }
 
-
+/**
+ * Find correct parameters for attack, do some sanity checks.
+ * @param target
+ * will point to victim's head.
+ * @param hitter
+ * will point to hitter's head.
+ * @param simple_attack
+ * will be 1 if one of victim or target isn't on a map, 0 else.
+ * @return
+ * 0 if hitter can attack target, 1 else.
+ */
 static int get_attack_mode (object **target, object **hitter,
 	int *simple_attack)
 {
@@ -690,11 +744,21 @@ static int get_attack_mode (object **target, object **hitter,
     return 0;
 }
 
+/**
+ * Check if target and hitter are still in a relation similar to the one
+ * determined by get_attack_mode().
+ *
+ * @param target
+ * who is attacked.
+ * @param hitter
+ * who is attacking.
+ * @param simple_attack
+ * previous mode as returned by get_attack_mode().
+ * @return
+ * 1 if the relation has changed, 0 else.
+ */
 static int abort_attack (object *target, object *hitter, int simple_attack)
 {
-/* Check if target and hitter are still in a relation similar to the one
- * determined by get_attack_mode().  Returns true if the relation has changed.
- */
     int new_mode;
 
     if (hitter->env == target || target->env == hitter)
@@ -710,6 +774,21 @@ static int abort_attack (object *target, object *hitter, int simple_attack)
 
 static void thrown_item_effect (object *, object *);
 
+/**
+ * Handles simple attack cases.
+ * @param op
+ * victim. Should be the head part.
+ * @param hitter
+ * attacked. Should be the head part.
+ * @param base_dam
+ * damage to do.
+ * @param base_wc
+ * wc to hit with.
+ * @return
+ * dealt damage.
+ * @todo
+ * fix void return values. Try to remove gotos. Better document when it's called.
+ */
 static int attack_ob_simple (object *op, object *hitter, int base_dam,
 	int base_wc)
 {
@@ -873,6 +952,15 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     return dam;
 }
 
+/**
+ * Simple wrapper for attack_ob_simple(), will use hitter's values.
+ * @param op
+ * victim.
+ * @param hitter
+ * attacker.
+ * @return
+ * dealt damage.
+ */
 int attack_ob (object *op, object *hitter)
 {
 
@@ -882,9 +970,14 @@ int attack_ob (object *op, object *hitter)
 }
 
 /**
- * op is the arrow, tmp is what is stopping the arrow.
+ * Try to put an arrow in inventory.
  *
- * Returns 1 if op was inserted into tmp's inventory, 0 otherwise.
+ * @param op
+ * arrow to try to insert.
+ * @param tmp
+ * what is stopping the arrow.
+ * @return
+ * 1 if op was inserted into tmp's inventory, 0 otherwise.
  */
 static int stick_arrow (object *op, object *tmp)
 {
@@ -910,7 +1003,12 @@ static int stick_arrow (object *op, object *tmp)
  * hit_with_arrow() disassembles the missile, attacks the victim and
  * reassembles the missile.
  *
- * It returns a pointer to the reassembled missile, or NULL if the missile
+ * @param op
+ * missile hitting.
+ * @param victim
+ * who is hit by op.
+ * @return
+ * pointer to the reassembled missile, or NULL if the missile
  * isn't available anymore.
  */
 object *hit_with_arrow (object *op, object *victim)
@@ -1015,8 +1113,13 @@ object *hit_with_arrow (object *op, object *victim)
     }
     return op;
 }
-
-
+/**
+ * Handles wall tearing animation. Will change the face according to the hp/maxhp ration.
+ *
+ * If the wall reaches its last animation, either free it or set it non living so it doesn't block anymore.
+ * @param op
+ * wall to update.
+ */
 static void tear_down_wall(object *op)
 {
     int perc=0;
@@ -1060,6 +1163,13 @@ static void tear_down_wall(object *op)
     }
 }
 
+/**
+ * Creature is scared, update its values.
+ * @param target
+ * scared creature.
+ * @param hitter
+ * who scared target.
+ */
 static void scare_creature(object *target, object *hitter)
 {
     object *owner = get_owner(hitter);
@@ -1070,15 +1180,25 @@ static void scare_creature(object *target, object *hitter)
     if (!target->enemy) target->enemy=owner;
 }
 
-
 /**
- * This returns the amount of damage hitter does to op with the
- * appropriate attacktype.  Only 1 attacktype should be set at a time.
- * This doesn't damage the player, but returns how much it should
- * take.  However, it will do other effects (paralyzation, slow, etc.)
- * Note - changed for PR code - we now pass the attack number and not
- * the attacktype.  Makes it easier for the PR code.  */
-
+ * Handles one attacktype's damage.
+ * This doesn't damage the creature, but returns how much it should
+ * take. However, it will do other effects (paralyzation, slow, etc.).
+ * @param op
+ * victim of the attack.
+ * @param hitter
+ * attacker.
+ * @param dam
+ * maximum dealt damage.
+ * @param attacknum
+ * number of the attacktype of the attack. Must be a single value and not a combination.
+ * @param magic
+ * unused
+ * @return
+ * damage to actually do.
+ * @todo
+ * removed unused magic. Link to ATNR_ values when they got an anchor. Rename since it's called for monsters too.
+ */
 static int hit_player_attacktype(object *op, object *hitter, int dam, 
 	uint32 attacknum, int magic) {
   
@@ -1401,20 +1521,33 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 
 
 /**
+ * An object was killed, handle various things (logging, messages, ...).
+ *
  * GROS: This code comes from hit_player. It has been made external to
  * allow script procedures to "kill" objects in a combat-like fashion.
  * It was initially used by (kill-object) developed for the Collector's
  * Sword. Note that nothing has been changed from the original version
  * of the following code.
- * op is what is being killed.
- * dam is the damage done to it.
- * hitter is what is hitting it.
- * type is the attacktype.
+ *
+ * Will LOG pk, handles battleground, and so on.
  *
  * This function was a bit of a mess with hitter getting changed,
  * values being stored away but not used, etc.  I've cleaned it up
  * a bit - I think it should be functionally equivalant.
  * MSW 2002-07-17
+ *
+ * @param op
+ * what is being killed.
+ * @param dam
+ * damage done to it.
+ * @param hitter
+ * what is hitting it.
+ * @param type
+ * the attacktype.
+ * @return
+ * dealt damage.
+ * @todo
+ * finish commenting what it does exactly.
  */
 static int kill_object(object *op,int dam, object *hitter, int type)
 {
@@ -1682,9 +1815,14 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 
 /**
  * Find out if this is friendly fire (PVP and attacker is peaceful) or not 
- *  Returns 0 this is not friendly fire
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * attacker.
+ * @return
+ * 0 this is not friendly fire, 1 if hitter is a peaceful player, 2 if hitter is a pet of a peaceful player.
  */
-
 int friendly_fire(object *op, object *hitter){
     object *owner;
     int friendlyfire;
@@ -1712,17 +1850,28 @@ int friendly_fire(object *op, object *hitter){
 
 
 /**
+ * Object is attacked by something.
+ *
  * This isn't used just for players, but in fact most objects.
- * op is the object to be hit, dam is the amount of damage, hitter
- * is what is hitting the object, type is the attacktype, and
- * full_hit is set if monster area does not matter.
- * dam is base damage - protections/vulnerabilities/slaying matches can
- * modify it.
  *
  * Oct 95 - altered the following slightly for MULTIPLE_GODS hack
  * which needs new attacktype AT_HOLYWORD to work . b.t.
+ *
+ * @param op 
+ * object to be hit
+ * @param dam
+ * base damage - protections/vulnerabilities/slaying matches can modify it.
+ * @param hitter
+ * what is hitting the object
+ * @param type
+ * attacktype
+ * @param full_hit
+ * set if monster area does not matter.
+ * @return
+ * dealt damage.
+ * @todo
+ * rename to something more meaningful.
  */
-
 int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
     int maxdam=0, ndam=0, attacktype=1, magic=(type & AT_MAGIC);
     int maxattacktype, attacknum;
@@ -1983,7 +2132,18 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
     return maxdam;
 }
 
-
+/**
+ * Poison a living thing.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * who is attacking.
+ * @param dam
+ * damage to deal.
+ * @todo
+ * rename to poison_living?
+ */
 static void poison_player(object *op, object *hitter, int dam)
 {
     archetype *at = find_archetype("poisoning");
@@ -2046,6 +2206,18 @@ static void poison_player(object *op, object *hitter, int dam)
 	tmp->stats.food++;
 }
 
+/**
+ * Slow a living thing.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * who is attacking.
+ * @param dam
+ * damage to deal.
+ * @todo
+ * rename to slow_living?
+ */
 static void slow_player(object *op,object *hitter,int dam)
 {    archetype *at = find_archetype("slowness");
     object *tmp;
@@ -2064,6 +2236,18 @@ static void slow_player(object *op,object *hitter,int dam)
     fix_object(op);
 }
 
+/**
+ * Confuse a living thing.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * who is attacking.
+ * @param dam
+ * damage to deal.
+ * @todo
+ * rename to confuse_living?
+ */
 void confuse_player(object *op, object *hitter, int dam)
 {
     object *tmp;
@@ -2093,6 +2277,18 @@ void confuse_player(object *op, object *hitter, int dam)
     SET_FLAG(op, FLAG_CONFUSED);
 }
 
+/**
+ * Blind a living thing.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * who is attacking.
+ * @param dam
+ * damage to deal.
+ * @todo
+ * rename to blind_living?
+ */
 void blind_player(object *op, object *hitter, int dam)
 {
     object *tmp,*owner;
@@ -2128,6 +2324,18 @@ void blind_player(object *op, object *hitter, int dam)
     if(tmp->stats.food > 10) tmp->stats.food = 10;
 }
 
+/**
+ * Paralyze a living thing.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * who is attacking.
+ * @param dam
+ * damage to deal.
+ * @todo
+ * rename to paralyze_living?
+ */
 void paralyze_player(object *op, object *hitter, int dam) 
 {
     float effect,max;
@@ -2163,8 +2371,7 @@ void paralyze_player(object *op, object *hitter, int dam)
 
 
 /**
- * Attempts to kill 'op'. hitter is the attack object, dam is
- * the computed damaged.
+ * Attempts to kill 'op'.
  *
  * The intention of a death attack is to kill outright things
  * that are a lot weaker than the attacker, have a chance of killing
@@ -2175,6 +2382,13 @@ void paralyze_player(object *op, object *hitter, int dam)
  * whose name or race matches a comma-delimited list in the slaying
  * field of the deathstriking object is affected (this includes undead).
  * If no slaying set, only undead are unaffected.
+ *
+ * @param op
+ * victim.
+ * @param hitter
+ * attacker.
+ * @param[out] dam
+ * damage to deal, will contain computed damage or 0 if strike failed.
  */
 static void deathstrike_player(object *op, object *hitter, int *dam) 
 {
@@ -2222,9 +2436,16 @@ static void deathstrike_player(object *op, object *hitter, int *dam)
 }
 
 /**
- * handles any special effects of thrown
+ * Handles any special effects of thrown
  * items (like attacking living creatures--a potion thrown at a
  * monster).
+ *
+ * @param hitter
+ * thrown item.
+ * @param victim
+ * object that is hit by hitter.
+ * @todo
+ * invert parameters for coherence with other functions?
  */
 static void thrown_item_effect (object *hitter, object *victim)
 {
@@ -2254,8 +2475,15 @@ static void thrown_item_effect (object *hitter, object *victim)
     }
 }
 
-/** adj_attackroll() - adjustments to attacks by various conditions */
-
+/**
+ * Adjustments to attack rolls by various conditions
+ * @param hitter
+ * who is hitting.
+ * @param target
+ * victim of the attack.
+ * @return
+ * adjustment to attack roll.
+ */
 static int adj_attackroll (object *hitter, object *target) {
   object *attacker = hitter;
   int adjust=0;
@@ -2310,7 +2538,14 @@ static int adj_attackroll (object *hitter, object *target) {
 } 
 
 
-/** determine if the object is an 'aimed' missile */
+/**
+ * Determine if the object is an 'aimed' missile.
+ *
+ * @param op
+ * object to check.
+ * @return
+ * 1 if aimed missile, 0 else.
+ */
 static int is_aimed_missile ( object *op) {
 
     /* I broke what used to be one big if into a few nested
@@ -2324,5 +2559,4 @@ static int is_aimed_missile ( object *op) {
 	    return 1;
     }
     return 0;
-} 
-
+}
