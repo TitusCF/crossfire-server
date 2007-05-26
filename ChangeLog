@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/messages: some more stories.
+Nicolas Weeger 2007-05-26
+
 Document code, no functional change.
  common/arch.c
  include/define.h
