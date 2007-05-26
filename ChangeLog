@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/apply.c: food/drink can't be eaten if no_pick is set.
+Nicolas Weeger 2007-05-26
+
 server/c_misc.c: use region's longname for 'mapinfo', neater than name.
 Nicolas Weeger 2007-05-26
 

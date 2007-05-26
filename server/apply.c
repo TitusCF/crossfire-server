@@ -1666,6 +1666,11 @@ static void apply_food (object *op, object *tmp)
 {
     int capacity_remaining;
 
+    if (QUERY_FLAG(tmp, FLAG_NO_PICK)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE, "You can't %s that!", NULL, tmp->type == DRINK ? "drink" : "eat");
+        return;
+    }
+
     if(op->type!=PLAYER)
         op->stats.hp=op->stats.maxhp;
     else {
