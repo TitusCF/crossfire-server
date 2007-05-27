@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_move.c: remove extra space.
+Nicolas Weeger 2007-05-27
+
 server/attack.c: document code, no functional change.
 Nicolas Weeger 2007-05-26
 

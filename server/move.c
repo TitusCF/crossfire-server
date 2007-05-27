@@ -478,8 +478,8 @@ int push_ob(object *who, int dir, object *pusher) {
 	{
 	    draw_ext_info_format(NDI_UNIQUE, 0, pusher,
 				  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-				 "You avoid attacking %s .",
-				 "You avoid attacking %s .",
+				 "You avoid attacking %s.",
+				 "You avoid attacking %s.",
 				 who->name);
 	}
     }
