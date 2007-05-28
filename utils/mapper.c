@@ -31,6 +31,7 @@
  * - a page per region
  * - a global map index
  * - the world map, including regions information
+ * - the world map, with exits and blocking zones.
  *
  * Since this program browses maps from the first map, only maps linked from there will be processed.
  *
@@ -232,6 +233,105 @@ int list_unused_maps = 0;
 char** found_maps = NULL;
 int found_maps_count = 0;
 int found_maps_allocated = 0;
+
+/* Path/exit info */
+gdImagePtr infomap;         /**< World map with exits / roads / blocking / ... */
+int color_unlinked_exit;    /**< Color for exits without a path set. */
+int color_linked_exit;      /**< Exit leading to another map. */
+int color_road;             /**< Road or equivalent. */
+int color_blocking;         /**< Block all movement. */
+int color_slowing;          /**< Slows movement. */
+
+/**
+ * Checks if ::object is considered a road or not.
+ * @param item
+ * ::object to check.
+ * @return
+ * 1 if object is a road, 0 else.
+ */
+static int is_road(object* item) {
+    int test;
+    /* Archetypes used as roads. */
+    const char* roads[] = {
+        "cobblestones",
+        "flagstone",
+        "ice_stone",
+        "snow",
+        NULL };
+    const char* partial[] = {
+        "dirtroad_",
+        NULL };
+
+    for (test = 0; partial[test] != NULL; test++) {
+        if (strstr(item->arch->name, partial[test]) != NULL)
+            return 1;
+    }
+
+    if (!QUERY_FLAG(item, FLAG_IS_FLOOR))
+        return 0;
+
+    for (test = 0; roads[test] != NULL; test++) {
+        if (strcmp(item->arch->name, roads[test]) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
+/**
+ * Checks if item blocks movement or not.
+ * @param item
+ * ::object to test.
+ * @return
+ * 1 if item blocks all movement, 0 else.
+ */
+static int is_blocking(object* item) {
+    return item->move_block == MOVE_ALL ? 1 : 0;
+}
+
+/**
+ * Writes exit / road / blocking information for specified map.
+ *
+ * If map isn't a world map, won't do anything.
+ *
+ * @param map
+ * map to write info for.
+ */
+void do_exit_map(mapstruct* map) {
+    int tx, ty, x, y;
+    object* item, *test;
+
+    if (sscanf(map->path, "/world/world_%d_%d",&x,&y) != 2)
+        return;
+
+    x -= 100;
+    y -= 100;
+
+    for (tx = 0; tx < MAP_WIDTH(map); tx++) {
+        for (ty = 0; ty < MAP_HEIGHT(map); ty++) {
+            item = GET_MAP_OB(map, tx, ty);
+            while (item) {
+                test = item->head ? item->head : item;
+
+                if (test->type == EXIT || test->type == TELEPORTER) {
+                    if (!test->slaying)
+                        gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_unlinked_exit);
+                    else
+                        gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_linked_exit);
+                } else if (is_road(test))
+                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_road);
+                else if (is_blocking(test)) {
+                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_blocking);
+                    /* can't get on the spot, so no need to go on. */
+                    break;
+                } else if (test->move_slow != 0)
+                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_slowing);
+
+                item = item->above;
+            }
+        }
+    }
+}
 
 void do_auto_apply(mapstruct * m);
 
@@ -628,6 +728,8 @@ void domap(const char* name)
         printf("couldn't load map %s\n", name);
         return;
     }
+
+    do_exit_map(m);
 
     if (!rawmaps)
         do_auto_apply(m);
@@ -1198,6 +1300,11 @@ void do_world_map() {
         y = regions[region]->sum_y * SIZE / regions[region]->sum + SIZE / 2 - font->h / 2;
         gdImageString(small, font, x, y, regions[region]->name, color);
         gdImageString(pic, font, x, y, regions[region]->name, color);
+
+        /* For exit/road map, size isn't the same. */
+        x = regions[region]->sum_x * 50 / regions[region]->sum + 50 / 2 - strlen(regions[region]->name) * font->w / 2;
+        y = regions[region]->sum_y * 50 / regions[region]->sum + 50 / 2 - font->h / 2;
+        gdImageString(infomap, font, x, y, regions[region]->name, color);
     }
 
     sprintf(mappath, "%s/world_regions%s", root, output_extensions[output_format]);
@@ -1298,6 +1405,22 @@ void dump_unused_maps() {
     }
     fclose(dump);
     printf("%d unused maps.\n", found);
+}
+
+void write_world_info() {
+    FILE* file;
+    char path[MAX_BUF];
+
+    printf("Saving exit/blocking/road information...");
+    snprintf(path, sizeof(path), "%s/%s%s", root, "world_info", output_extensions[output_format]);
+    file = fopen(path, "wb+");
+    /*gdImageJpeg(infomap, file, 50);*/
+    //gdImagePng(infomap, file);
+    save_picture(file, infomap);
+    fclose(file);
+    printf("done.\n");
+    gdImageDestroy(infomap);
+    infomap = NULL;
 }
 
 /**
@@ -1502,6 +1625,14 @@ int main(int argc, char** argv)
         qsort(found_maps, found_maps_count, sizeof(char*), sortbyname);
     }
 
+    /* exit/blocking information. */
+    infomap = gdImageCreateTrueColor(30 * 50, 30 * 50);
+    color_unlinked_exit = gdImageColorResolve(infomap, 255, 0, 0);
+    color_linked_exit = gdImageColorResolve(infomap, 255, 255, 255);
+    color_road = gdImageColorResolve(infomap, 0, 255, 0);
+    color_blocking = gdImageColorResolve(infomap, 0, 0, 255);
+    color_slowing = gdImageColorResolve(infomap, 0, 0, 127);
+
     printf("browsing maps...\n");
 
     add_map(first_map_path, &maps_list, &maps_count, &count_allocated);
@@ -1515,7 +1646,7 @@ int main(int argc, char** argv)
         }
         if ((map_limit != -1) && (current_map == map_limit))
         {
-            printf(" --- map limit reached, stopping --- ");
+            printf(" --- map limit reached, stopping ---\n");
             break;
         }
     }
@@ -1529,6 +1660,7 @@ int main(int argc, char** argv)
     do_region_index();
     do_maps_index();
     do_world_map();
+    write_world_info();
 
     return 0;
 }
