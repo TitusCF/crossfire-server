@@ -983,7 +983,7 @@ exp 13000
 yield 4
 skill alchemy
 cauldron cauldron
-ingred potion of life,mushroom of Healing,red rose
+ingred supreme potion of life,mushroom of Healing,red rose
 #
 # -- healing recipe #2
 Object NONE
