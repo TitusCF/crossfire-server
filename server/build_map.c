@@ -25,6 +25,15 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * This file handles all ingame construction functions: builders, destroyers, building materials.
+ *
+ * Basically, those enable a player to alter in real-time a map.
+ *
+ * @todo document building, forces used to store connection values, ... Make functions static.
+ */
+
 #include <global.h>
 #include <living.h>
 #include <spells.h>
@@ -34,6 +43,16 @@
 
 /**
  *  Check if objects on a square interfere with building
+ *
+ * @param map
+ * map we're building on.
+ * @param tmp
+ * item the player is trying to build.
+ * @param x
+ * @param y
+ * coordinates where to build.
+ * @return
+ * 0 if tmp can't be built on the spot, 1 if it can be built.
  */
 int can_build_over( struct mapdef* map, object* tmp, short x, short y)
     {
@@ -81,7 +100,12 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
     }
 
 /**
- *  Erases marking runes at specified location
+ *  Erases all marking runes at specified location
+ *
+ * @param map
+ * @param x
+ * @param y
+ * coordinates to erase runes at.
  */
 void remove_marking_runes( struct mapdef* map, short x, short y )
     {
@@ -103,10 +127,13 @@ void remove_marking_runes( struct mapdef* map, short x, short y )
 
 /**
  * Returns an unused value for 'connected'.
- * \param map: map for which to find a value
- * \return 'connected' value with no item, or -1 if failure.
  *
  * Tries 1000 random values, then returns -1.
+ *
+ * @param map
+ * map for which to find a value
+ * @return
+ * 'connected' value with no item, or -1 if failure.
  */
 int find_unused_connected_value( struct mapdef* map )
     {
@@ -136,6 +163,16 @@ int find_unused_connected_value( struct mapdef* map )
  * and the rune's text.
  * If found, returns the connection value associated
  * else searches a new connection value, and adds the force to the player.
+ *
+ * @param pl
+ * player building.
+ * @param x
+ * @param y
+ * coordinates where to build.
+ * @param rune
+ * rune used to indicate the connection value. If NULL, building is searched for one.
+ * @return
+ * -1 for failure, else connection value.
  */
 int find_or_create_connection_for_map( object* pl, short x, short y, object* rune )
     {
@@ -165,7 +202,7 @@ int find_or_create_connection_for_map( object* pl, short x, short y, object* run
         if ( connected == -1 )
             {
             draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			  "Could not create more groups.", NULL);
+                "Could not create more groups.", NULL);
             return -1;
             }
 
@@ -183,27 +220,43 @@ int find_or_create_connection_for_map( object* pl, short x, short y, object* run
     /* Found the force, everything's easy. */
     return force->path_attuned;
     }
-    
+
 /**
- * Returns the marking rune on the square, for purposes of building connections
+ * Returns the marking rune on the square, for purposes of building connections.
+ *
+ * @param pl
+ * player trying to build.
+ * @param x
+ * @param y
+ * coordinates to search.
+ * @return
+ * marking rune, NULL if none found.
  */
 object* get_connection_rune( object* pl, short x, short y )
     {
     object* rune;
-    
+
     rune = GET_MAP_OB( pl->map, x, y );
     while ( rune && ( ( rune->type != SIGN ) || ( strcmp( rune->arch->name, "rune_mark" ) ) ) )
         rune = rune->above;
     return rune;
     }
-    
+
 /**
  * Returns the book/scroll on the current square, for purposes of building
+ *
+ * @param pl
+ * player trying to build.
+ * @param x
+ * @param y
+ * coordinates to search.
+ * @return
+ * book, NULL if none found.
  */
 object* get_msg_book( object* pl, short x, short y )
     {
     object* book;
-    
+
     book = GET_MAP_OB( pl->map, x, y );
     while ( book && ( book->type != BOOK ) )
         book = book->above;
@@ -212,6 +265,14 @@ object* get_msg_book( object* pl, short x, short y )
 
 /**
  * Returns first item of type WALL.
+ *
+ * @param map
+ * @param x
+ * @param y
+ * where to search.
+ * @return
+ * wall, or NULL if none found.
+ * @todo isn't there a similar function somewhere? put this in a common library?
  */
 object* get_wall( struct mapdef* map, int x, int y )
     {
@@ -225,15 +286,18 @@ object* get_wall( struct mapdef* map, int x, int y )
     }
 
 /**
- *   Fixes walls around specified spot
+ * Fixes walls around specified spot
  *
- *   \param map is the map
- *   \param x
- *   \param y are the position to fix
+ * Basically it ensures the correct wall is put where needed.
  *
- *   Basically it ensures the correct wall is put where needed.
+ * @note
+ * x & y must be valid map coordinates.
  *
- *   Note: x & y must be valid map coordinates.
+ * @param map
+ * @param x
+ * @param y
+ * position to fix.
+ * @todo use safe string functions.
  */
 void fix_walls( struct mapdef* map, int x, int y )
     {
@@ -350,14 +414,24 @@ void fix_walls( struct mapdef* map, int x, int y )
     }
 
 /**
- *   \brief Floor building function
+ * Floor building function.
  *
- *   Floors can be build:
- *    - on existing floors, with or without a detector/button
- *    - on an existing wall, with or without a floor under it
+ * Floors can be build:
+ *  - on existing floors, with or without a detector/button
+ *  - on an existing wall, with or without a floor under it
  *
- *   Note: this function will inconditionally change squares around (x, y)
- *    so don't call it with x == 0 for instance!
+ * @note
+ * this function will inconditionally change squares around (x, y)
+ * so don't call it with x == 0 for instance!
+ *
+ * @param pl
+ * player building.
+ * @param material
+ * floor being built.
+ * @param x
+ * @param y
+ * where to build.
+ * @todo use safe string functions
  */
 void apply_builder_floor(object* pl, object* material, short x, short y )
     {
@@ -415,20 +489,20 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
             return;
         }
     }
-        
+
     /* Now insert our floor */
     new_floor = find_archetype( material->slaying );
     if ( !new_floor )
         {
         /* Not found, log & bail out */
-	    LOG( llevError, "apply_builder_floor: unable to find archetype %s.\n", material->slaying );
+        LOG( llevError, "apply_builder_floor: unable to find archetype %s.\n", material->slaying );
         return;
         }
 
     tmp = arch_to_object( new_floor );
     SET_FLAG( tmp, FLAG_IS_BUILDABLE );
     SET_FLAG( tmp, FLAG_UNIQUE );
-	SET_FLAG( tmp, FLAG_IS_FLOOR );
+    SET_FLAG( tmp, FLAG_IS_FLOOR );
     tmp->type = FLOOR;
     insert_ob_in_map_at( tmp, pl->map, above_floor, above_floor ? INS_BELOW_ORIGINATOR : INS_ON_TOP, x, y );
 
@@ -485,6 +559,15 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
  * Walls can be build:
  *  - on a floor without anything else
  *  - on an existing wall, with or without a floor
+ *
+ * @param pl
+ * player building.
+ * @param material
+ * wall being built.
+ * @param x
+ * @param y
+ * where to build.
+ * @todo use safe string functions
  */
 void apply_builder_wall( object* pl, object* material, short x, short y )
     {
@@ -558,6 +641,14 @@ void apply_builder_wall( object* pl, object* material, short x, short y )
  * Archetype of created object is item->slaying (raw material).
  * Type of inserted item is tested for specific cases (doors & such).
  * Item is inserted above the floor, unless Str == 1 (only for detectors i guess)
+ *
+ * @param pl
+ * player building.
+ * @param item
+ * item being built.
+ * @param x
+ * @param y
+ * where to build.
  */
 void apply_builder_item( object* pl, object* item, short x, short y )
     {
@@ -583,7 +674,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
     if ( !floor )
         {
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, 
-		      "This square has no floor, you can't build here.", NULL);
+            "This square has no floor, you can't build here.", NULL);
         return;
         }
     /* Create item, set flag, insert in map */
@@ -619,13 +710,13 @@ void apply_builder_item( object* pl, object* item, short x, short y )
         case TIMED_GATE:
         case PEDESTAL:
         case CF_HANDLE:
-	case MAGIC_EAR:
-	case SIGN:
-	    /* Signs don't need a connection, but but magic mouths do. */
-	    if (tmp->type == SIGN && strcmp( tmp->arch->name, "magic_mouth" ))
-	        break;
-	    con_rune = get_connection_rune( pl, x, y );
-	    connected = find_or_create_connection_for_map( pl, x, y, con_rune );
+        case MAGIC_EAR:
+        case SIGN:
+            /* Signs don't need a connection, but but magic mouths do. */
+            if (tmp->type == SIGN && strcmp( tmp->arch->name, "magic_mouth" ))
+                break;
+            con_rune = get_connection_rune( pl, x, y );
+            connected = find_or_create_connection_for_map( pl, x, y, con_rune );
             if ( connected == -1 )
                 {
                 /* Player already informed of failure by the previous function */
@@ -636,16 +727,14 @@ void apply_builder_item( object* pl, object* item, short x, short y )
             remove_ob( con_rune );
             free_object( con_rune );
         }
-	
+
     /* For magic mouths/ears, and signs, take the msg from a book of scroll */	
-    if ((tmp->type == SIGN) || (tmp->type == MAGIC_EAR))
-        {
-	if (adjust_sign_msg( pl, x, y, tmp ) == -1)
-	    {
+    if ((tmp->type == SIGN) || (tmp->type == MAGIC_EAR)) {
+        if (adjust_sign_msg( pl, x, y, tmp ) == -1) {
             free_object( tmp );
             return;
-	    }
-	}
+        }
+    }
 
     insert_ob_in_map_at( tmp, pl->map, floor, insert_flag, x, y );
     if ( connected != 0 )
@@ -653,9 +742,9 @@ void apply_builder_item( object* pl, object* item, short x, short y )
 
     query_name( tmp, name, MAX_BUF );
     draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			 "You build the %s", 
-			 "You build the %s", 
-			 name);
+        "You build the %s", 
+        "You build the %s", 
+        name);
     decrease_ob_nr( item, 1 );
     }
 
@@ -663,6 +752,11 @@ void apply_builder_item( object* pl, object* item, short x, short y )
  * Item remover.
  *
  * Removes first buildable item, either under or above the floor
+ *
+ * @param pl
+ * player removing an item.
+ * @param dir
+ * direction the player is trying to remove.
  */
 void apply_builder_remove( object* pl, int dir )
     {
@@ -675,31 +769,29 @@ void apply_builder_remove( object* pl, int dir )
 
     /* Check square */
     item = GET_MAP_OB( pl->map, x, y );
-    if ( !item )
-        {
-	    /* Should not happen with previous tests, but we never know */
-	    draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, 
-			  "Invalid square.", NULL);
-	    LOG( llevError, "apply_builder_remove: (null) square at (%d, %d, %s)\n", x, y, pl->map->path );
-	    return;
-        }
+    if ( !item ) {
+        /* Should not happen with previous tests, but we never know */
+        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, 
+            "Invalid square.", NULL);
+        LOG( llevError, "apply_builder_remove: (null) square at (%d, %d, %s)\n", x, y, pl->map->path );
+        return;
+    }
 
     if ( item->type == FLOOR || QUERY_FLAG(item,FLAG_IS_FLOOR) )
         item = item->above;
 
-    if ( !item )
-        {
+    if ( !item ) {
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		      "Nothing to remove.", NULL);
+            "Nothing to remove.", NULL);
         return;
-        }
+    }
 
     /* Now remove object, with special cases (buttons & such) */
     switch ( item->type )
         {
         case WALL:
             draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			  "Can't remove a wall with that, build a floor.", NULL);
+                "Can't remove a wall with that, build a floor.", NULL);
             return;
 
         case DOOR:
@@ -721,9 +813,9 @@ void apply_builder_remove( object* pl, int dir )
             /* Remove generic item */
             query_name( item, name, MAX_BUF );
             draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-				 "You remove the %s", 
-				 "You remove the %s", 
-				 name );
+                "You remove the %s", 
+                "You remove the %s", 
+                name );
             remove_ob( item );
             free_object( item );
         }
@@ -734,9 +826,13 @@ void apply_builder_remove( object* pl, int dir )
  *
  * This is the general map building function. Called when the player 'fires' a builder
  * or remover object.
+ *
+ * @param pl
+ * player building or removing.
+ * @param dir
+ * building direction.
  */
-void apply_map_builder( object* pl, int dir )
-    {
+void apply_map_builder( object* pl, int dir ) {
     object* builder;
     object* tmp;
     short x, y;
@@ -751,12 +847,11 @@ void apply_map_builder( object* pl, int dir )
 	    return;
         }*/
 
-    if ( dir == 0 )
-        {
-	    draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			  "You can't build or destroy under yourself.", NULL);
-	    return;
-        }
+    if ( dir == 0 ) {
+        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+            "You can't build or destroy under yourself.", NULL);
+        return;
+    }
 
     x = pl->x + freearr_x[ dir ];
     y = pl->y + freearr_y[ dir ];
@@ -764,7 +859,7 @@ void apply_map_builder( object* pl, int dir )
     if ( ( 1 > x ) || ( 1 > y ) || ( ( MAP_WIDTH( pl->map ) - 2 ) < x ) || ( ( MAP_HEIGHT( pl->map ) - 2 ) < y ) )
         {
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		      "Can't build on map edge.", NULL);
+            "Can't build on map edge.", NULL);
         return;
         }
 
@@ -779,9 +874,9 @@ void apply_map_builder( object* pl, int dir )
     if ( !tmp )
         {
         /* Nothing, meaning player is standing next to an undefined square... */
-	    LOG( llevError, "apply_map_builder: undefined square at (%d, %d, %s)\n", x, y, pl->map->path );
+        LOG( llevError, "apply_map_builder: undefined square at (%d, %d, %s)\n", x, y, pl->map->path );
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		      "You'd better not build here, it looks weird.", NULL);
+            "You'd better not build here, it looks weird.", NULL);
         return;
         }
 
@@ -815,26 +910,24 @@ void apply_map_builder( object* pl, int dir )
          */
         {
         tmp = find_marked_object(pl);
-        if ( !tmp )
-            {
-	        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			      "You need to mark raw materials to use.", NULL);
-	        return;
-            }
+        if ( !tmp ) {
+            draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                "You need to mark raw materials to use.", NULL);
+            return;
+        }
 
-        if ( tmp->type != MATERIAL )
-            {
-	        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			      "You can't use the marked item to build.", NULL);
+        if ( tmp->type != MATERIAL ) {
+            draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                "You can't use the marked item to build.", NULL);
 	        return;
-            }
-	    
+        }
+
         switch( tmp->subtype )
             {
             case ST_MAT_FLOOR:
                 apply_builder_floor( pl, tmp, x, y );
                 return;
-        
+
             case ST_MAT_WALL:
                 apply_builder_wall( pl, tmp, x, y );
                 return;
@@ -845,22 +938,34 @@ void apply_map_builder( object* pl, int dir )
 
             default:
                 draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-			      "Don't know how to apply this material, sorry.", NULL);
-		LOG( llevError, "apply_map_builder: invalid material subtype %d\n", tmp->subtype );
+                    "Don't know how to apply this material, sorry.", NULL);
+                LOG( llevError, "apply_map_builder: invalid material subtype %d\n", tmp->subtype );
                 return;
             }
         }
 
     /* Here, it means the builder has an invalid type */
     draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		  "Don't know how to apply this tool, sorry.", NULL);
+        "Don't know how to apply this tool, sorry.", NULL);
     LOG( llevError, "apply_map_builder: invalid builder subtype %d\n", builder->subtype );
     }
-    
+
 /**
  * Make the built object inherit the msg of books that are used with it.
  * For objects already invisible (i.e. magic mouths & ears), also make it
  * it inherit the face and the name with "talking " prepended.
+ *
+ * The book is removed during the operation.
+ *
+ * @param pl
+ * player building.
+ * @param x
+ * @param y
+ * building coordinates.
+ * @param tmp
+ * object that is being built.
+ * @return
+ * -1 if no text found, 0 if ok to build.
  */
 int adjust_sign_msg( object* pl, short x, short y, object* tmp )
     {
@@ -869,40 +974,36 @@ int adjust_sign_msg( object* pl, short x, short y, object* tmp )
     char buf2[MAX_BUF];
 
     book = get_msg_book( pl, x, y );
-    if ( !book )
-        {
-	draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-		      "You need to put a book or scroll with the message.", NULL);
-	return -1;
-	}
-	
+    if ( !book ) {
+        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+            "You need to put a book or scroll with the message.", NULL);
+        return -1;
+    }
+
     tmp->msg = book->msg;
     add_refcount( tmp->msg );
-    
-    if (tmp->invisible)
-        {
-	if(book->custom_name != NULL)
-	    {
-	    snprintf(buf, sizeof(buf), "talking %s", book->custom_name);
-	    } else {
-	    snprintf(buf, sizeof(buf), "talking %s", book->name);
-	    }
-	if ( tmp->name )
-	    free_string( tmp->name );
-	tmp->name = add_string( buf );
-	
-	if(book->name_pl != NULL)
-	    {
-	    snprintf(buf2, sizeof(buf2), "talking %s", book->name_pl);
-	    if ( tmp->name_pl )
+
+    if (tmp->invisible) {
+        if(book->custom_name != NULL) {
+            snprintf(buf, sizeof(buf), "talking %s", book->custom_name);
+        } else {
+            snprintf(buf, sizeof(buf), "talking %s", book->name);
+        }
+        if ( tmp->name )
+            free_string( tmp->name );
+        tmp->name = add_string( buf );
+
+        if(book->name_pl != NULL) {
+            snprintf(buf2, sizeof(buf2), "talking %s", book->name_pl);
+            if ( tmp->name_pl )
                 free_string( tmp->name_pl );
             tmp->name_pl = add_string( buf2 );
-	    }
-	
-	tmp->face = book->face;
-	tmp->invisible = 0;
         }
+
+        tmp->face = book->face;
+        tmp->invisible = 0;
+    }
     remove_ob( book );
     free_object( book );
     return 0;
-    }
+}
