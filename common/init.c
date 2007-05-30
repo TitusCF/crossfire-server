@@ -106,6 +106,8 @@ struct Settings settings = {
     10, /* pk_max_experience_percent */
     0, /* allow_denied_spells_writing */
     0, /* allow_broken_converters */
+    0, /* log_timestamp */
+    NULL, /* log_timestamp_format */
 };
 
 struct Statistics statistics;

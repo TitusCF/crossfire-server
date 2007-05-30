@@ -1800,6 +1800,7 @@ void receive_player_password(object *op,char k) {
             get_name(op);
             return;
         }
+        LOG(llevInfo,"LOGIN: New player named %s from ip %s\n", op->name, op->contr->socket.host);
         display_motd(op);
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "\nWelcome, Brave New Warrior!\n", NULL);

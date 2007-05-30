@@ -403,6 +403,8 @@ typedef struct Settings {
     int     allow_denied_spells_writing; /**< If set, players can write spells they can't cast. */
     int     allow_broken_converters; /**< If set, converters will work even if price of generated item is higher
                                        * than the price of converted items. */
+    int     log_timestamp; /**< If set, log will comport a timestamp. */
+    char*   log_timestamp_format; /**< Format for timestap, if log_timestamp is set. */
 } Settings;
 
 extern Settings settings;

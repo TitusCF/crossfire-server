@@ -312,3 +312,7 @@ allow_denied_spells_writing FALSE
 # If set to TRUE or ON, converters will work even if the price of generated item is higher
 # than the price of converted items
 allow_broken_converters TRUE
+
+# If set, log will comport a timestamp, in the specified format.
+log_timestamp TRUE
+log_timestamp_format %y/%m/%d %H:%M:%S

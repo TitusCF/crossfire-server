@@ -64,13 +64,32 @@ void LOG (LogLevel logLevel, const char *format, ...)
                        * need to be put in this one.
                        */
 
+    char time_buf[2048];
+
     va_list ap;
     va_start(ap, format);
 
     buf[0] = '\0';
     if (logLevel <= settings.debug) {
+        time_buf[0] = '\0';
+        if (settings.log_timestamp == TRUE) {
+            struct tm *time_tmp;
+            time_t now = time((time_t *)NULL);
+
+            time_tmp = localtime(&now);
+            if (time_tmp != NULL) {
+                if (strftime(time_buf, sizeof(time_buf), settings.log_timestamp_format, time_tmp) == 0) {
+                    time_buf[0] = '\0';
+                }
+            }
+        }
+
         vsprintf(buf, format, ap);
 #ifdef WIN32 /* ---win32 change log handling for win32 */
+        if (time_buf[0] != 0) {
+            fputs(time_buf, logfile);
+            fputs(" ", logfile);
+        }
         fputs(loglevel_names[logLevel], logfile);    /* wrote to file or stdout */
         fputs(buf, logfile);    /* wrote to file or stdout */
 #ifdef DEBUG				/* if we have a debug version, we want see ALL output */
@@ -79,6 +98,10 @@ void LOG (LogLevel logLevel, const char *format, ...)
         if(logfile != stderr) {   /* if was it a logfile wrote it to screen too */ 
             fputs(loglevel_names[logLevel], stderr); 
             fputs(buf, stderr); 
+            if (time_buf[0] != 0) {
+                fputs(time_buf, strerr);
+                fputs(" ", strerr);
+            }
         }
 #else /* not WIN32 */
     if (reopen_logfile) {
@@ -100,6 +123,10 @@ void LOG (LogLevel logLevel, const char *format, ...)
         LOG(llevInfo,"logfile reopened\n");
     }
 
+    if (time_buf[0] != 0) {
+        fputs(time_buf, logfile);
+        fputs(" ", logfile);
+    }
     fputs(loglevel_names[logLevel], logfile);
     fputs(buf, logfile);
 #endif

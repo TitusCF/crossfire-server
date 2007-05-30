@@ -762,11 +762,24 @@ static void load_settings(void)
             } else {
                 LOG(llevError, "load_settings: unknown value for allow_broken_converters: %s\n", cp);
         }
+    } else if ( !strcasecmp( buf, "log_timestamp" ) ) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.log_timestamp = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.log_timestamp = FALSE;
+            } else {
+                LOG(llevError, "load_settings: unknown value for log_timestamp: %s\n", cp);
+        }
+    } else if ( !strcasecmp( buf, "log_timestamp_format" ) ) {
+        free(settings.log_timestamp_format);
+        settings.log_timestamp_format = strdup_local(cp);
     } else {
 	    LOG(llevError,"Unknown value in settings file: %s\n", buf);
 	}
     }
     close_and_delete(fp, comp);
+    if (settings.log_timestamp_format == NULL)
+        settings.log_timestamp_format = strdup_local("%y/%m/%d %H:%M:%S");
 }
 
 
