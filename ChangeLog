@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1726632: After useing a # of times on the forge..
+server/alchemy.c: item may change, so its weight too. This leads to invalid carrying.
+Nicolas Weeger 2007-05-30
+
 Documentation, fix indentation. No functional change.
 server/ban.c build_map.c
 Nicolas Weeger 2007-05-29

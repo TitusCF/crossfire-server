@@ -419,16 +419,23 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp) {
         return (object *) NULL;
     }
 
+    /* If item is already in container, we need to remove its weight, since it can change later on. */
+    if (item->env != NULL)
+        sub_weight(cauldron, item->weight * (item->nrof != 0 ? item->nrof : 1));
+
     /* Find the appropriate artifact template...*/
     if(strcmp(rp->title,"NONE")) {
         if((art=locate_recipe_artifact(rp, rp_arch_index))==NULL) {
             LOG(llevError,"make_alchemy_item(): failed to locate recipe artifact.\n");
             LOG(llevDebug,"  --requested recipe: %s of %s.\n",rp->arch_name[0],rp->title);
             return (object *) NULL;
-	}
-	transmute_materialname(item, art->item);
+        }
+        transmute_materialname(item, art->item);
         give_artifact_abilities(item, art->item);
     }
+    if (item->env != NULL)
+        add_weight(cauldron, item->weight * (item->nrof != 0 ? item->nrof : 1));
+
 
     if(QUERY_FLAG(cauldron,FLAG_CURSED)) SET_FLAG(item,FLAG_CURSED);
     if(QUERY_FLAG(cauldron,FLAG_DAMNED)) SET_FLAG(item,FLAG_DAMNED);
