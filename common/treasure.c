@@ -1409,6 +1409,8 @@ void init_artifacts(void) {
     artifactlist *al;
     archetype dummy_archetype;
 
+    memset(&dummy_archetype, 0, sizeof(archetype));
+
     if (has_been_inited) return;
     else has_been_inited = 1;
 

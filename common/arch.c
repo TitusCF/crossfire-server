@@ -407,6 +407,7 @@ static void first_arch_pass(FILE *fp) {
         op->arch=at;
     }
     free_object(op);
+    op->arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
     free(at);
 }
 

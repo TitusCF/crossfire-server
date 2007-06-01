@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix uninitialized memory / invalid memory access.
+ common/arch.c treasure.c
+Nicolas Weeger 2007-06-01
+
 Fix bug #1729192: Writing any spellscroll requires positive grace.
  server/skills.c
 Nicolas Weeger 2007-06-01
