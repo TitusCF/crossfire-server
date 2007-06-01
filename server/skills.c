@@ -1268,7 +1268,7 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
  */
 
 static int write_scroll (object *pl, object *scroll, object *skill) {
-    int success=0,confused=0;
+    int success=0,confused=0, grace_cost = 0;
     object *newscroll, *chosen_spell, *tmp;
 
     /* this is a sanity check */
@@ -1285,7 +1285,9 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
             "You need a spell readied in order to inscribe!", NULL);
         return 0;
     }
-    if(SP_level_spellpoint_cost(pl,chosen_spell,SPELL_GRACE) > pl->stats.grace) {
+    /* grace can become negative, we don't want a sp spell to block writing. */
+    grace_cost = SP_level_spellpoint_cost(pl,chosen_spell,SPELL_GRACE);
+    if(grace_cost > 0 && grace_cost > pl->stats.grace) {
         draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
             "You don't have enough grace to write a scroll of %s.",
             "You don't have enough grace to write a scroll of %s.",
