@@ -59,6 +59,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_exit();
     init_type_hole();
     init_type_identify_altar();
+    init_type_lamp();
     init_type_lighter();
     init_type_pedestal();
     init_type_player_mover();

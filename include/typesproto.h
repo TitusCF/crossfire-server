@@ -26,6 +26,8 @@ void init_type_exit(void);
 void init_type_hole(void);
 /* identify_altar/identify_altar.c */
 void init_type_identify_altar(void);
+/* lamp/lamp.c */
+void init_type_lamp(void);
 /* lighter/lighter.c */
 void init_type_lighter(void);
 /* pedestal/pedestal.c */

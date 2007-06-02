@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : LAMP
+Events     : apply
+Moved from : legacy/apply.c, server/apply.c
+Moved to   : lamp/lamp.c
+Comment    : Moved apply handling for lamps.
+2007-06-02 - Nicolas Weeger
+-------------------------------------------------------------------------------
 Ob types   : ARMOUR_IMPROVER
 Events     : apply
 Moved from : legacy/apply.c

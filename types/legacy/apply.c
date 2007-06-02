@@ -122,7 +122,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
         case HORN:
         case SKILL:
         case BOW:
-        case LAMP:
         case BUILDER:
         case SKILL_TOOL:
             if (op->env != applier)

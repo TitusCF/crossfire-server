@@ -15,6 +15,7 @@ director/director.c \
 exit/exit.c \
 hole/hole.c \
 identify_altar/identify_altar.c \
+lamp/lamp.c \
 lighter/lighter.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \

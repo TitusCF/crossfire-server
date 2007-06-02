@@ -2118,9 +2118,7 @@ void player_apply_below (object *pl)
  * @param aflags
  * combination of @ref AP_xxx flags.
  * @return
- * 0 except if op is a LAMP.
- * @todo
- * check why LAMP returns 1.
+ * 0.
  */
 static int unapply_special (object *who, object *op, int aflags)
 {
@@ -2192,47 +2190,6 @@ static int unapply_special (object *who, object *op, int aflags)
                                      "You unwear %s.",
                                      name);
             (void) change_abil (who,op);
-            break;
-        case LAMP:
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You turn off your %s.",
-                                     "You turn off your %s.",
-                                     op->name);
-            tmp2 = arch_to_object(op->other_arch);
-            tmp2->x = op->x;
-            tmp2->y = op->y;
-            tmp2->map = op->map;
-            tmp2->below = op->below;
-            tmp2->above = op->above;
-            tmp2->stats.food = op->stats.food;
-            CLEAR_FLAG(tmp2, FLAG_APPLIED);
-            if (QUERY_FLAG(op, FLAG_INV_LOCKED))
-                SET_FLAG(tmp2, FLAG_INV_LOCKED);
-            if (who->type == PLAYER)
-                esrv_del_item(who->contr, (tag_t)op->count);
-            remove_ob(op);
-            free_object(op);
-            insert_ob_in_ob(tmp2, who);
-            fix_object(who);
-            if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
-                if (who->type == PLAYER) {
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info(NDI_UNIQUE, 0,who,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                                      "Oops, it feels deadly cold!", NULL);
-                    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
-                }
-            }
-            if(who->type==PLAYER)
-                esrv_send_item(who, tmp2);
-            if (who->map) {
-                SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
-                update_position(who->map, who->x, who->y);
-                update_all_los(who->map, who->x, who->y);
-            }
-            return 1; /* otherwise, an attempt to drop causes problems */
             break;
         case BOW:
         case WAND:
@@ -2846,61 +2803,6 @@ int apply_special (object *who, object *op, int aflags)
                                      "You wear %s.",
                                      name_op);
             (void) change_abil (who,op);
-            break;
-        case LAMP:
-            if (op->stats.food < 1) {
-                if (!(aflags & AP_NOPRINT))
-                    draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                         MSG_TYPE_APPLY,
-                                         MSG_TYPE_APPLY_FAILURE,
-                                         "Your %s is out of fuel!",
-                                         "Your %s is out of fuel!",
-                                         op->name);
-                return 1;
-            }
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You turn on your %s.",
-                                     "You turn on your %s.",
-                                     op->name);
-            tmp2 = arch_to_object(op->other_arch);
-            tmp2->stats.food = op->stats.food;
-            SET_FLAG(tmp2, FLAG_APPLIED);
-            if (QUERY_FLAG(op, FLAG_INV_LOCKED))
-                SET_FLAG(tmp2, FLAG_INV_LOCKED);
-            insert_ob_in_ob(tmp2, who);
-
-                /* Remove the old lantern */
-            if (who->type == PLAYER)
-                esrv_del_item(who->contr, (tag_t)op->count);
-            remove_ob(op);
-            free_object(op);
-
-                /* insert the portion that was split off */
-            if(tmp!=NULL) {
-                (void) insert_ob_in_ob(tmp,who);
-                if(who->type==PLAYER)
-                    esrv_send_item(who, tmp);
-            }
-            fix_object(who);
-            if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
-                if (who->type == PLAYER) {
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info(NDI_UNIQUE, 0,who,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                                      "Oops, it feels deadly cold!", NULL);
-                    SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
-                }
-            }
-            if(who->type==PLAYER)
-                esrv_send_item(who, tmp2);
-            if (who->map) {
-                SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
-                update_position(who->map, who->x, who->y);
-                update_all_los(who->map, who->x, who->y);
-            }
-            return 0;
             break;
 
                 /* this part is needed for skill-tools */
