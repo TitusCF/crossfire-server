@@ -160,14 +160,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             (void) legacy_check_improve_weapon(applier, op);
             return METHOD_OK;
 
-        case MENU: 
-            if (applier->type == PLAYER)
-            {
-                shop_listing(applier);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
         default:
             return METHOD_UNHANDLED;
     }

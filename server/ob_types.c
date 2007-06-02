@@ -63,6 +63,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_player_mover();
     init_type_power_crystal();
     init_type_rune();
+    init_type_shop_inventory();
     init_type_shop_mat();
     init_type_sign();
     init_type_spell_effect();

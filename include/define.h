@@ -273,7 +273,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DEEP_SWAMP	            138
 #define IDENTIFY_ALTAR		    139
 /*#define CANCELLATION		    141*/ /* not used with new spell code */
-#define MENU		            150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
+#define SHOP_INVENTORY          150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 /*#define BALL_LIGHTNING		    151 */ /* peterm:  ball lightning and color spray */
 /*#define SWARM_SPELL		    153*/
 #define RUNE			    154

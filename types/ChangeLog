@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : SHOP_INVENTORY (former MENU)
+Events     : apply
+Moved from : legacy/apply.c
+Moved to   : shop_inventory/shop_inventory.c
+Comment    : Moved apply handling for shop inventory.
+2007-06-02 - Nicolas Weeger
+-------------------------------------------------------------------------------
 Ob types   : LIGHTER
 Events     : apply
 Moved from : legacy/apply.c

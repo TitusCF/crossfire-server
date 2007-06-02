@@ -19,6 +19,7 @@ pedestal/pedestal.c \
 player_mover/player_mover.c \
 power_crystal/power_crystal.c \
 rune/rune.c \
+shop_inventory/shop_inventory.c \
 shop_mat/shop_mat.c \
 sign/sign.c \
 spell_effect/spell_effect.c \

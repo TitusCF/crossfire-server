@@ -34,6 +34,8 @@ void init_type_player_mover(void);
 void init_type_power_crystal(void);
 /* rune/rune.c */
 void init_type_rune(void);
+/* shop_inventory/shop_inventory.c */
+void init_type_shop_inventory(void);
 /* shop_mat/shop_mat.c */
 void init_type_shop_mat(void);
 /* sign/sign.c */

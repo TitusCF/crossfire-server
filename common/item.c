@@ -216,7 +216,7 @@ static const typedata item_types[] = {
     {SKILLSCROLL, "skillscroll", "skillscrolls", 0, 0},
     {DEEP_SWAMP, "deep swamp", "deep swamps", 0, 0},
     {IDENTIFY_ALTAR, "identify altar", "identify altars", 0, 0},
-    {MENU, "inventory list", "inventory lists", 0, 0},
+    {SHOP_INVENTORY, "inventory list", "inventory lists", 0, 0},
     {RUNE, "rune", "runes", 0, 0},
     {TRAP, "trap", "traps", 0, 0},
     {POWER_CRYSTAL, "power_crystal", "power_crystals", 0, 0},

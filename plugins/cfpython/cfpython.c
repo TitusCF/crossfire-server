@@ -907,7 +907,7 @@ static void initConstants(PyObject* module)
         { "SKILLSCROLL", SKILLSCROLL },
         { "DEEP_SWAMP", DEEP_SWAMP },
         { "IDENTIFY_ALTAR", IDENTIFY_ALTAR },
-        { "MENU", MENU },
+        { "SHOP_INVENTORY", SHOP_INVENTORY },
         { "RUNE", RUNE },
         { "TRAP", TRAP },
         { "POWER_CRYSTAL", POWER_CRYSTAL },

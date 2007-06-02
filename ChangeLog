@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Rename MENU to SHOP_INVENTORY, better match.
+Move ob_apply logic for SHOP_INVENTORY objects to the ob_method system.
+ common/item.c
+ include/define.h typesproto.h
+ plugins/cfpython/cfpython.c
+ server/shop.c ob_types.c
+ types/legacy/apply.c
+ types/shop_inventory/shop_inventory.c
+ types/ChangeLog
+ types/Makefile.am
+Nicolas Weeger 2007-06-02
+
 Fix wrong check for object applying.
 Move ob_apply logic for LIGHTER objects to the ob_method system.
  include/sproto.h typesproto.h
