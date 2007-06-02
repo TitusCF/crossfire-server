@@ -4,7 +4,7 @@ CHECK_PARENT_NAME=Site index
 
 include $(top_srcdir)/check-fragment.am
 
-SUBDIRS = include templates toolkit unit
+SUBDIRS = include templates toolkit unit bugs
 
 clean-local:
 	$(RM) -rf logs
