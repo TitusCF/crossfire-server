@@ -61,50 +61,50 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             SET_ANIMATION(op, op->value);
             update_object(op,UP_OBJ_FACE);
             push_button(op);
-            return 1;
+            return METHOD_OK;
 
         case SKILLSCROLL:
             if (applier->type == PLAYER)
             {
                 legacy_apply_skillscroll (applier, op);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
+            return METHOD_UNHANDLED;
 
         case SPELLBOOK:
             if (applier->type == PLAYER)
             {
                 legacy_apply_spellbook (applier, op);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
+            return METHOD_UNHANDLED;
 
         case SCROLL:
             apply_scroll (applier, op, applier->facing);
-            return 1;
+            return METHOD_OK;
 
         case POTION:
             (void) apply_potion(applier, op);
-            return 1;
+            return METHOD_OK;
 
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
         case CLOSE_CON:
             if (applier->type==PLAYER)
                 legacy_apply_container (applier, op->env);
-            return 1;
+            return METHOD_OK;
 
         case CONTAINER:
             if (applier->type==PLAYER)
                 legacy_apply_container (applier, op);
-            return 1;
+            return METHOD_OK;
 
         case TREASURE:
             if (applier->type == PLAYER)
             {
                 legacy_apply_treasure (applier, op);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
+            return METHOD_UNHANDLED;
 
         case WEAPON:
         case ARMOUR:
@@ -126,57 +126,49 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
         case BUILDER:
         case SKILL_TOOL:
             if (op->env != applier)
-                return 2;   /* not in inventory */
+                return METHOD_ERROR;   /* not in inventory */
             (void) apply_special (applier, op, aflags);
-            return 1;
+            return METHOD_OK;
 
         case DRINK:
         case FOOD:
         case FLESH:
             legacy_apply_food(applier, op);
-            return 1;
+            return METHOD_OK;
 
         case POISON:
             apply_poison(applier, op);
-            return 1;
+            return METHOD_OK;
 
         case SAVEBED:
             if (applier->type == PLAYER)
             {
                 legacy_apply_savebed(applier);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
+            return METHOD_UNHANDLED;
 
         case ARMOUR_IMPROVER:
             if (applier->type == PLAYER)
             {
                 legacy_apply_armour_improver(applier, op);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
+            return METHOD_UNHANDLED;
 
         case WEAPON_IMPROVER:
             (void) legacy_check_improve_weapon(applier, op);
-            return 1;
+            return METHOD_OK;
 
         case MENU: 
             if (applier->type == PLAYER)
             {
                 shop_listing(applier);
-                return 1;
+                return METHOD_OK;
             }
-            return 0;
-
-        case LIGHTER:           /* for lighting torches/lanterns/etc */ 
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_lighter(applier,op);
-                return 1;
-            }
-            return 0;
+            return METHOD_UNHANDLED;
 
         default:
-            return 0;
+            return METHOD_UNHANDLED;
     }
 }

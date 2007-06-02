@@ -24,8 +24,8 @@ void init_type_exit(void);
 void init_type_hole(void);
 /* identify_altar/identify_altar.c */
 void init_type_identify_altar(void);
-/* item_transformer/item_transformer.c */
-void init_type_item_transformer(void);
+/* lighter/lighter.c */
+void init_type_lighter(void);
 /* pedestal/pedestal.c */
 void init_type_pedestal(void);
 /* player_mover/player_mover.c */

@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : LIGHTER
+Events     : apply
+Moved from : legacy/apply.c
+Moved to   : lighter/lighter.c
+Comment    : Moved apply handling for lighter.
+2007-06-02 - Nicolas Weeger
+-------------------------------------------------------------------------------
 Ob types   : EXIT, CLOCK
 Events     : apply
 Moved from : legacy/apply.c

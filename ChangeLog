@@ -15,6 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix wrong check for object applying.
+Move ob_apply logic for LIGHTER objects to the ob_method system.
+ include/sproto.h typesproto.h
+ server/ob_types.c
+ server/apply.c: use METHOD_xxx for test values.
+ types/ChangeLog
+ types/legacy/apply.c
+ types/lighter/lighter.c: added.
+Nicolas Weeger 2007-06-02
+
 Remove obsolete oldsocket stuff.
  include/newserver.h sockproto.h sproto.h
  server/commands.c

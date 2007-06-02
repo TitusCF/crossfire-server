@@ -2217,7 +2217,7 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
 
     tmp = manual_apply (pl, op, aflag);
     if ( ! quiet) {
-        if (tmp == 0) {
+        if (tmp == METHOD_UNHANDLED) {
             char name[MAX_BUF];
             query_name(op, name, MAX_BUF);
             draw_ext_info_format (NDI_UNIQUE, 0, pl,
@@ -2226,7 +2226,7 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
                                   "I don't know how to apply the %s.",
                                   name);
         }
-        else if (tmp == 2)
+        else if (tmp == METHOD_ERROR)
             draw_ext_info_format (NDI_UNIQUE, 0, pl,
                                   MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                   "You must get it first!\n", NULL);
@@ -3502,94 +3502,6 @@ void eat_special_food(object *who, object *food) {
 }
 
 /**
- * Designed primarily to light torches/lanterns/etc.
- * Also burns up burnable material too. First object in the inventory is
- * the selected object to "burn". -b.t.
- *
- * @param who
- * living thing applying the lighter.
- * @param lighter
- * object that lights.
- */
-static void apply_lighter(object *who, object *lighter) {
-    object *item;
-    int is_player_env=0;
-    uint32 nrof;
-    tag_t count;
-    char item_name[MAX_BUF];
-
-    item=find_marked_object(who);
-    if(item) {
-        if(lighter->last_eat && lighter->stats.food) {
-                /* lighter gets used up */
-                /* Split multiple lighters if they're being used up.  Otherwise
-                 * one charge from each would be used up.  --DAMN
-                 */
-            if(lighter->nrof > 1) {
-                object *oneLighter = get_object();
-                copy_object(lighter, oneLighter);
-                lighter->nrof -= 1;
-                oneLighter->nrof = 1;
-                oneLighter->stats.food--;
-                esrv_send_item(who, lighter);
-                oneLighter=insert_ob_in_ob(oneLighter, who);
-                esrv_send_item(who, oneLighter);
-            } else {
-                lighter->stats.food--;
-            }
-
-        } else if(lighter->last_eat) { /* no charges left in lighter */
-            draw_ext_info_format(NDI_UNIQUE, 0,who,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                                 "You fail to light the %s with a used up %s.",
-                                 "You fail to light the %s with a used up %s.",
-                                 item->name, lighter->name);
-            return;
-        }
-            /* Perhaps we should split what we are trying to light on fire?
-             * I can't see many times when you would want to light multiple
-             * objects at once.
-             */
-        nrof=item->nrof;
-        count=item->count;
-            /* If the item is destroyed, we don't have a valid pointer to the
-             * name object, so make a copy so the message we print out makes
-             * some sense.
-             */
-        strcpy(item_name, item->name);
-        if (who == get_player_container(item)) is_player_env=1;
-
-        save_throw_object(item,AT_FIRE,who);
-            /* Change to check count and not freed, since the object pointer
-             * may have gotten recycled
-             */
-        if ((nrof != item->nrof ) || (count != item->count)) {
-            draw_ext_info_format(NDI_UNIQUE, 0,who,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You light the %s with the %s.",
-                                 "You light the %s with the %s.",
-                                 item_name,lighter->name);
-
-                /* Need to update the player so that the players glow radius
-                 * gets changed.
-                 */
-            if (is_player_env)
-                fix_object(who);
-        } else {
-            draw_ext_info_format(NDI_UNIQUE, 0,who,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                                 "You attempt to light the %s with the %s and fail.",
-                                 "You attempt to light the %s with the %s and fail.",
-                                 item->name,lighter->name);
-        }
-
-    } else /* nothing to light */
-        draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You need to mark a lightable object.", NULL);
-
-}
-
-/**
  * op made some mistake with a scroll, this takes care of punishment.
  * scroll_failure()- hacked directly from spell_failure
  *
@@ -3749,10 +3661,6 @@ void apply_changes_to_player(object *pl, object *change) {
     }
 }
 
-void legacy_apply_lighter(object* who, object* lighter)
-{
-    apply_lighter(who, lighter);
-}
 void legacy_apply_armour_improver(object* op, object* tmp)
 {
     apply_armour_improver(op, tmp);
