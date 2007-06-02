@@ -1942,7 +1942,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
         op->y = y;
     }
 
-    CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
+    if (op->type != LAMP)
+        CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
     CLEAR_FLAG(op, FLAG_INV_LOCKED);
     if (!QUERY_FLAG(op, FLAG_ALIVE))
         CLEAR_FLAG(op, FLAG_NO_STEAL);

@@ -111,10 +111,17 @@ static void do_turn(object* op, object* who, int aflags, const char* onoff) {
  * @param aflags
  * special flags (always apply/unapply).
  * @return
- * METHOD_OK.
+ * METHOD_ERROR if lamp can't be applied, METHOD_OK else.
  */
 static method_ret lamp_type_apply(ob_methods *context, object *lamp, object* applier, int aflags) {
     object* tmp;
+
+    if (get_player_container(lamp) != applier) {
+        draw_ext_info_format (NDI_UNIQUE, 0, applier,
+            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "You must get it first!\n", NULL);
+        return METHOD_ERROR;
+    }
 
     if (lamp->nrof > 1)
         tmp = get_split_ob(lamp,lamp->nrof - 1, NULL, 0);

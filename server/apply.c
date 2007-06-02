@@ -2125,7 +2125,8 @@ static int unapply_special (object *who, object *op, int aflags)
     object *tmp2;
     char name[MAX_BUF];
 
-    CLEAR_FLAG(op, FLAG_APPLIED);
+    if (op->type != LAMP)
+        CLEAR_FLAG(op, FLAG_APPLIED);
     query_name(op, name, MAX_BUF);
     switch(op->type) {
         case WEAPON:
