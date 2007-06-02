@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/object.c: simplify insert_ob_in_ob when merging. Correctly update the light.
+Nicolas Weeger 2007-06-02
+
 Move ob_apply logic for LAMP objects to the ob_method system.
  include/typesproto.h
  server/apply.c ob_types.c

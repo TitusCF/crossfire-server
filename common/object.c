@@ -2307,21 +2307,16 @@ void add_weight (object *op, signed long weight) {
  * This function inserts the object op in the linked list
  * inside the object environment.
  *
- * Eneq(at csd.uu.se): Altered insert_ob_in_ob to make things picked up enter 
- * the inventory at the last position or next to other objects of the same
- * type.
- * Frank: Now sorted by type, archetype and magic!
- * @todo check previous stuff, seems weird ;)
- *
  * @param op
  * object to insert. Must be removed and not NULL. Must not be multipart.
+ * May become invalid after return, so use return value of the function.
  * @param where
  * object to insert into. Must not be NULL. Should be the head part.
  * @return
  * pointer to inserted item, which will be different than op if object was merged.
  */
 object *insert_ob_in_ob(object *op,object *where) {
-  object *tmp, *otmp;
+    object *tmp, *otmp;
 
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
         char buf[HUGE_BUF];
@@ -2359,27 +2354,13 @@ object *insert_ob_in_ob(object *op,object *where) {
                 add_weight (where, op->weight*op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
                 free_object(op); /* free the inserted object */
-                op = tmp;
-                remove_ob (op); /* and fix old object's links */
-                CLEAR_FLAG(op, FLAG_REMOVED);
-                break;
+                return tmp;
             }
 
-        /* I assume combined objects have no inventory
-         * We add the weight - this object could have just been removed
-         * (if it was possible to merge).  calling remove_ob will subtract
-         * the weight, so we need to add it in again, since we actually do
-         * the linking below
-         */
+        /* the item couldn't merge. */
         add_weight (where, op->weight*op->nrof);
     } else
         add_weight (where, (op->weight+op->carrying));
-
-    otmp=get_player_container(where);
-    if (otmp&&otmp->contr!=NULL) {
-        if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-            fix_object(otmp);
-    }
 
     op->map=NULL;
     op->env=where;
@@ -2387,16 +2368,6 @@ object *insert_ob_in_ob(object *op,object *where) {
     op->below=NULL;
     op->x=0,op->y=0;
     op->ox=0,op->oy=0;
-
-    /* reset the light list and los of the players on the map */
-    if((op->glow_radius!=0)&&where->map)
-    {
-#ifdef DEBUG_LIGHTS
-        LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
-        op->name);
-#endif /* DEBUG_LIGHTS */ 
-        if (MAP_DARKNESS(where->map)) update_all_los(where->map, where->x, where->y);
-    }
 
     /* Client has no idea of ordering so lets not bother ordering it here.
      * It sure simplifies this function...
@@ -2408,6 +2379,27 @@ object *insert_ob_in_ob(object *op,object *where) {
         op->below->above = op;
         where->inv = op;
     }
+
+    otmp=get_player_container(where);
+    if (otmp&&otmp->contr!=NULL) {
+        if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+            fix_object(otmp);
+    }
+
+    /* reset the light list and los of the players on the map */
+    if((op->glow_radius!=0)&&where->map)
+    {
+#ifdef DEBUG_LIGHTS
+        LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
+        op->name);
+#endif /* DEBUG_LIGHTS */ 
+        if (MAP_DARKNESS(where->map)) {
+            SET_MAP_FLAGS(where->map, where->x, where->y,  P_NEED_UPDATE);
+            update_position(where->map, where->x, where->y);
+            update_all_los(where->map, where->x, where->y);
+        }
+    }
+
     return op;
 }
 
