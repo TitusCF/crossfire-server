@@ -46,6 +46,7 @@ void init_ob_types(ob_methods *base_type) {
      * from here, call functions that register object methods for types.
      */
     init_type_altar();
+    init_type_armour_improver();
     init_type_arrow();
     init_type_book();
     init_type_button();

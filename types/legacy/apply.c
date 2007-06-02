@@ -148,14 +148,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             }
             return METHOD_UNHANDLED;
 
-        case ARMOUR_IMPROVER:
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_armour_improver(applier, op);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
         case WEAPON_IMPROVER:
             (void) legacy_check_improve_weapon(applier, op);
             return METHOD_OK;

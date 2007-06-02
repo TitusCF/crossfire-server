@@ -17,7 +17,6 @@ int auto_apply(object *op);
 void fix_auto_apply(mapstruct *m);
 void eat_special_food(object *who, object *food);
 void apply_changes_to_player(object *pl, object *change);
-void legacy_apply_armour_improver(object *op, object *tmp);
 void legacy_apply_food(object *op, object *tmp);
 void legacy_apply_spellbook(object *op, object *tmp);
 void legacy_check_improve_weapon(object *op, object *tmp);

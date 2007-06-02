@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Move ob_apply logic for ARMOUR_IMPROVER objects to the ob_method system.
+ include/sproto.h typesproto.h
+ server/apply.c ob_types.c
+ types/armour_improver
+ types/armour_improver/armour_improver.c
+ types/legacy/apply.c
+ types/Changelog Makefile.am
+Nicolas Weeger 2007-06-02
+
 Rename MENU to SHOP_INVENTORY, better match.
 Move ob_apply logic for SHOP_INVENTORY objects to the ob_method system.
  common/item.c

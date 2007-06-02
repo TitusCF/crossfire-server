@@ -2,6 +2,7 @@ AUTOMAKE_OPTIONS := subdir-objects
 
 noinst_LIBRARIES = libtypes.a
 libtypes_a_SOURCES = altar/altar.c \
+armour_improver/armour_improver.c \
 arrow/arrow.c \
 book/book.c \
 button/button.c \

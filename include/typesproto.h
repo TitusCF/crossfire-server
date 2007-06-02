@@ -1,5 +1,7 @@
 /* altar/altar.c */
 void init_type_altar(void);
+/* armour_improver/armour_improver.c */
+void init_type_armour_improver(void);
 /* arrow/arrow.c */
 void init_type_arrow(void);
 /* book/book.c */

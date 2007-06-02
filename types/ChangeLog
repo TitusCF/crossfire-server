@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : ARMOUR_IMPROVER
+Events     : apply
+Moved from : legacy/apply.c
+Moved to   : armour_improver/armour_improver.c
+Comment    : Moved apply handling for Enchant armor.
+2007-06-02 - Nicolas Weeger
+-------------------------------------------------------------------------------
 Ob types   : SHOP_INVENTORY (former MENU)
 Events     : apply
 Moved from : legacy/apply.c
