@@ -52,11 +52,7 @@ static void esrv_print_msg(socket_struct *ns,int color, const char *str)
 {
     char buf[HUGE_BUF];
 
-    if (ns->status == Ns_Old) {
-	snprintf(buf,HUGE_BUF,"%s\n", str);
-    } else {
 	snprintf(buf,HUGE_BUF, "drawinfo %d %s", color, str);
-    }
 /*    LOG(llevDebug,"sending %s to socket, len=%d\n", buf, strlen(buf));*/
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
@@ -219,13 +215,6 @@ void draw_ext_info(
 		draw_ext_info((flags & ~NDI_ALL), pri, tmppl->ob, type, subtype,
 			      message, oldmessage);
 
-	for (i=1; i<socket_info.allocated_sockets; i++) {
-	    if (init_sockets[i].status == Ns_Old && init_sockets[i].old_mode != Old_Listen && pri< 10) {
-		cs_write_string(&init_sockets[i], oldmessage, strlen(oldmessage));
-		/* Most messages don't have a newline, so add one */
-		cs_write_string(&init_sockets[i], "\n", 1);
-	    }
-	}
 	return;
     }
 

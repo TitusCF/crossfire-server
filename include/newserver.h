@@ -77,7 +77,7 @@ struct statsinfo {
  * are using.
  */
 
-enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead, Ns_Old};
+enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
 
 /* Reserver 0 for neither of these being set */
 enum Old_Mode {Old_Listen=1, Old_Player=2};

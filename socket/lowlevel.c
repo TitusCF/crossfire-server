@@ -448,8 +448,7 @@ void Send_With_Handling(socket_struct *ns, const SockList *msg)
     }
     sbuf[0] = ((uint32)(msg->len) >> 8) & 0xFF;
     sbuf[1] = ((uint32)(msg->len)) & 0xFF;
-    if (ns->status != Ns_Old) 
-	Write_To_Socket(ns, sbuf, 2);
+    Write_To_Socket(ns, sbuf, 2);
     Write_To_Socket(ns, msg->buf, msg->len);
 }
 

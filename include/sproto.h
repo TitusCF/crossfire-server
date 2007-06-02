@@ -299,8 +299,6 @@ int command_style_map_info(object *op, char *params);
 int command_follow(object *op, char *params);
 /* commands.c */
 void init_commands(void);
-command_function find_oldsocket_command(char *cmd);
-command_function find_oldsocket_command2(char *cmd);
 /* daemon.c */
 void become_daemon();
 /* disease.c */

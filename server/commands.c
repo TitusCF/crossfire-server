@@ -274,37 +274,6 @@ command_array_struct WizCommands [] = {
 };
 const int WizCommandsSize =sizeof(WizCommands) / sizeof(command_array_struct);
 
-/* Socket commands - these should really do nothing more than output things
- * to the various players/sockets.
- */
-command_array_struct Socket_Commands[] = {
-  {"hiscore", command_hiscore,	0.0},
-  {"logs", command_logs,	0.0},
-  {"maps", command_maps,	0.0},
-  {"motd", command_motd,	0.0},
-  {"rules", command_rules,	0.0},
-  {"news", command_news,	0.0},
-  {"players", command_players,	0.0},
-  {"version", command_version,	0.0},
-  {"who", command_who,		0.0},
-};
-
-const int Socket_CommandsSize =sizeof(Socket_Commands) / sizeof(command_array_struct);
-
-
-/* Socket commands - these should really do nothing more than output things
- * to the various players/sockets.
- */
-command_array_struct Socket2_Commands[] = {
-  {"shout", command_shout,	0.1},
-  {"chat", command_chat,	0.1},
-  {"tell", command_tell,	0.1},
-};
-
-const int Socket2_CommandsSize =sizeof(Socket2_Commands) / sizeof(command_array_struct);
-
-
-
 static int compare_A(const void *a, const void *b)
 {
     return strcmp(((const command_array_struct *)a)->name, ((const command_array_struct *)b)->name);
@@ -316,47 +285,4 @@ void init_commands(void)
     qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
     qsort(NewServerCommands, NewServerCommandSize, sizeof(command_array_struct), compare_A);
     qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
-    qsort(Socket_Commands, Socket_CommandsSize, sizeof(command_array_struct), compare_A);
-    qsort(Socket2_Commands, Socket2_CommandsSize, sizeof(command_array_struct), compare_A);
-}
-
-#ifndef tolower
-#define tolower(C)	(((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
-#endif
-
-
-command_function find_oldsocket_command(char *cmd)
-{
-  command_array_struct *asp, dummy;
-  char *cp;
-
-  for (cp=cmd; *cp; cp++) {
-    *cp =tolower(*cp);
-  }
-
-  dummy.name =cmd;
-  asp =(command_array_struct *)bsearch((void *)&dummy,
-			      (void *)Socket_Commands, Socket_CommandsSize,
-			      sizeof(command_array_struct), compare_A);
-  if (asp)
-    return asp->func;
-  return NULL;
-}
-
-command_function find_oldsocket_command2(char *cmd)
-{
-  command_array_struct *asp, dummy;
-  char *cp;
-
-  for (cp=cmd; *cp; cp++) {
-    *cp =tolower(*cp);
-  }
-
-  dummy.name =cmd;
-  asp =(command_array_struct *)bsearch((void *)&dummy,
-			      (void *)Socket2_Commands, Socket2_CommandsSize,
-			      sizeof(command_array_struct), compare_A);
-  if (asp)
-    return asp->func;
-  return NULL;
 }
