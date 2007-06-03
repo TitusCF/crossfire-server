@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix wrong return values.
+ types/book/book.c
+ types/clock/clock.c
+ types/power_crystal/power_crystal.c
+ types/sign/sign.c
+Nicolas Weeger 2007-06-03
+
 types/shop_inventory/shop_inventory.c: fix documentation.
 Nicolas Weeger 2007-06-03
 

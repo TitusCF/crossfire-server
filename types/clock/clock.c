@@ -46,8 +46,8 @@ void init_type_clock(void)
  * @param op The clock to apply
  * @param applier The object attempting to view the clock
  * @param aflags Special flags (always apply/unapply)
- * @retval 0 If the clock wasn't viewed by a player
- * @retval 1 If applier was a player
+ * @retval METHOD_UNHANDLED If the clock wasn't viewed by a player
+ * @retval METHOD_OK If applier was a player
  */
 static method_ret clock_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
@@ -65,7 +65,7 @@ static method_ret clock_type_apply(ob_methods *context, object *op,
              tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
              ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
              ((tod.hour >= 14) ? "pm" : "am"));
-        return 1;
+        return METHOD_OK;
     }
-    return 0;
+    return METHOD_UNHANDLED;
 }

@@ -100,13 +100,13 @@ static void apply_sign(object *sign, object *op, int autoapply)
  * @param op The Sign to apply
  * @param applier The object attempting to apply the Sign
  * @param aflags Special flags (always apply/unapply)
- * @return The return value is always 1
+ * @return The return value is always METHOD_OK
  */
 static method_ret sign_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
 {
     apply_sign(op, applier, 0);
-    return 1;
+    return METHOD_OK;
 }
 
 /**

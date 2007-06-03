@@ -46,8 +46,8 @@ void init_type_book(void)
  * @param op The Book to apply
  * @param applier The object attempting to apply the Book
  * @param aflags Special flags (always apply/unapply)
- * @retval 0 If the Book wasn't read by a player
- * @retval 1 If applier was a player
+ * @retval METHOD_UNHANDLED If the Book wasn't read by a player
+ * @retval METHOD_OK If applier was a player
  */
 static method_ret book_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
@@ -56,14 +56,14 @@ static method_ret book_type_apply(ob_methods *context, object *op,
     object *skill_ob;
 
     if (applier->type != PLAYER)
-        return 0;
+        return METHOD_UNHANDLED;
 
     if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ))
     {
         draw_ext_info(NDI_UNIQUE, 0,applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You are unable to read while blind.", NULL);
-        return 1;
+        return METHOD_OK;
     }
     if(op->msg==NULL)
     {
@@ -72,7 +72,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
             "You open the %s and find it empty.",
             "You open the %s and find it empty.",
             op->name);
-        return 1;
+        return METHOD_OK;
     }
 
     /* need a literacy skill to read stuff! */
@@ -82,7 +82,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
         draw_ext_info(NDI_UNIQUE, 0,applier,
             MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You are unable to decipher the strange symbols.", NULL);
-        return 1;
+        return METHOD_OK;
     }
     lev_diff = op->level - (skill_ob->level + 5);
     if (!QUERY_FLAG(applier, FLAG_WIZ) && lev_diff > 0)
@@ -111,7 +111,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
             draw_ext_info(NDI_UNIQUE, 0,applier,
                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is totally beyond your comprehension.", NULL);
-        return 1;
+        return METHOD_OK;
     }
 
 
@@ -147,5 +147,5 @@ static method_ret book_type_apply(ob_methods *context, object *op,
         /* so no more xp gained from this book */
         SET_FLAG(op,FLAG_NO_SKILL_IDENT);
     }
-    return 1;
+    return METHOD_OK;
 }

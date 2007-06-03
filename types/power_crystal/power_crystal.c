@@ -50,7 +50,7 @@ void init_type_power_crystal(void)
  * @param op The power crystal to apply
  * @param applier The object applying the crystal
  * @param aflags Special flags (always apply/unapply)
- * @return The return value is always 1
+ * @return The return value is always METHOD_OK
  */
 static method_ret power_crystal_type_apply(ob_methods *context, object *op,
     object* applier, int aflags)
@@ -73,5 +73,5 @@ static method_ret power_crystal_type_apply(ob_methods *context, object *op,
     update_ob_speed(op);
     if (applier->type == PLAYER)
         esrv_update_item(UPD_ANIMSPEED, applier, op);
-    return 1;
+    return METHOD_OK;
 }
