@@ -21,8 +21,8 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file lighter.c
- * Implementation of the Lighter class of objects.
+/** @file shop_inventory.c
+ * Implementation of the shop inventory class of objects.
  */
 #include <global.h>
 #include <ob_methods.h>
@@ -39,17 +39,28 @@ void init_type_shop_inventory(void) {
     register_apply(SHOP_INVENTORY, shop_inventory_type_apply);
 }
 
+/**
+ * One item to list on the sign.
+ */
 typedef struct shopinv {
-    char        *item_sort;
-    char        *item_real;
-    uint16      type;
-    uint32      nrof;
+    char        *item_sort;     /**< Singular name. */
+    char        *item_real;     /**< Plural name. */
+    uint16      type;           /**< Item type. */
+    uint32      nrof;           /**< Count of this items. */
 } shopinv;
 
-/* There are a lot of extra casts in here just to suppress warnings - it
+/**
+ * Sort routine for shopinv.
+ * There are a lot of extra casts in here just to suppress warnings - it
  * makes it look uglier than it really it.
  * The format of the strings we get is type:name.  So we first want to
  * sort by type (numerical) - if the same type, then sort by name.
+ *
+ * @param a1
+ * @param a2
+ * items to compare.
+ * @return
+ * -1 is a1 is less than a2, 1 if the opposite, 0 if equals.
  */
 static int shop_sort(const void *a1, const void *a2)
 {
@@ -69,7 +80,7 @@ static int shop_sort(const void *a1, const void *a2)
  * object to insert. Must have FLAG_UNPAID set.
  * @param items
  * array of items, should have (*numitems)+1 items allocated.
- * @param[in][out] numitems
+ * @param numitems
  * how many items items contains.
  */
 static void add_shop_item(object *tmp, shopinv *items, int *numitems)

@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/shop_inventory/shop_inventory.c: fix documentation.
+Nicolas Weeger 2007-06-03
+
 Fix multipart altars not working correctly.
  types/altar/altar.c
  types/trigger_altar/trigger_altar.c
