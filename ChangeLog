@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix multipart altars not working correctly.
+ types/altar/altar.c
+ types/trigger_altar/trigger_altar.c
+ types/trigger_pedestal/trigger_pedestal.c
+Nicolas Weeger 2007-06-03
+
 Apply patch #1638868: Ident skills cover larger area with exp courtesy Aaron Baugher.
  server/skills.c
 Nicolas Weeger 2007-06-03
