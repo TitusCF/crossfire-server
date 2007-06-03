@@ -1976,7 +1976,7 @@ int manual_apply (object *op, object *tmp, int aflag)
 
         /* Lauwenmark: Handle for plugin apply event */
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
-        return 1;
+        return METHOD_OK;
 
     return ob_apply(tmp,op,aflag);
 }
