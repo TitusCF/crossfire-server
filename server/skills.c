@@ -686,19 +686,59 @@ static int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill)
 	return success;
 }
 
-/* do_skill_ident() - workhorse for skill_ident() -b.t.
+/**
+ * Workhorse for skill_ident() -b.t.
+ *
+ * @param pl
+ * player identifying.
+ * @param obj_class
+ * type of objects to identify.
+ * @param skill
+ * skill to give experience to.
+ * @return
+ * experience gained by identifying items.
  */
 static int do_skill_ident(object *pl, int obj_class, object *skill) {
     object *tmp;
-    int success=0;
+    int success=0, area, i;
 
+        /* check the player */
     for(tmp=pl->inv;tmp;tmp=tmp->below)
-	success+=do_skill_ident2(tmp,pl,obj_class, skill);
-	 /*  check the ground */
+        success+=do_skill_ident2(tmp,pl,obj_class, skill);
 
-    for(tmp=get_map_ob(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
-	success+=do_skill_ident2(tmp,pl,obj_class, skill);
+        /*  check the ground */
+        /* Altered to allow ident skills to increase in area with
+         * experience. -- Aaron Baugher
+         */
 
+    if( skill->level > 64 ){   /* Adjust these levels? */
+        area = 49;
+    }
+    else if( skill->level > 16 ){
+        area = 25;
+    }
+    else if( skill->level > 4 ){
+        area = 9;
+    }
+    else {
+        area = 1;
+    }
+
+    for(i=0; i<area; i++) {
+        sint16 x = pl->x+freearr_x[i];
+        sint16 y = pl->y+freearr_y[i];
+        mapstruct *m = pl->map;
+        int mflags;
+
+        mflags =get_map_flags(m, &m, x,y, &x, &y);
+        if (mflags & P_OUT_OF_MAP) continue;
+
+        if( can_see_monsterP(m,pl->x,pl->y,i) ){
+            for(tmp=get_map_ob(pl->map,x,y);tmp;tmp=tmp->above){
+                success+=do_skill_ident2(tmp,pl,obj_class, skill);
+            }
+        }
+    }
     return success;
 }
 

@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Apply patch #1638868: Ident skills cover larger area with exp courtesy Aaron Baugher.
+ server/skills.c
+Nicolas Weeger 2007-06-03
+
 server/apply.c: wrong return value when handled by a plugin.
 Nicolas Weeger 2007-06-03
 
