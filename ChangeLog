@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Create the 'bugs/bugtrack' directories for the unit test framework. Add test for a bug.
+ configure.ac: add new directories
+ doc/Developers/testplans: update
+ test/Makefile.am: add directory
+New files:
+ test/bugs/bugtrack/check_1727944.c Makefile.am
+ test/bugs/Makefile.am
+Nicolas Weeger 2007-06-04
+
 common/utils.c: don't try to decay a non head object, this leads to abort() from remove_ob().
 Nicolas Weeger 2007-06-04
 

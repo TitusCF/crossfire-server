@@ -295,6 +295,7 @@ AC_OUTPUT([Makefile
 	test/Makefile test/include/Makefile test/unit/Makefile 
 	test/templates/Makefile test/toolkit/Makefile
 	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile
+	test/bugs/Makefile test/bugs/bugtrack/Makefile
         types/Makefile
 	 ])
 AC_MSG_NOTICE([])
