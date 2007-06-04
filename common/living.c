@@ -1881,7 +1881,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
             if (!skill_obj) {
                 if (flag == SK_EXP_NONE) return;
                 else if (flag == SK_EXP_ADD_SKILL)
-                    give_skill_by_name(op, skill_name);
+                    skill_obj = give_skill_by_name(op, skill_name);
             }
         }
     }

@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/living.c: don't ignore exp gained in a skill you don't know yet.
+Nicolas Weeger 2007-06-04
+
 Fix wrong return values.
  types/book/book.c
  types/clock/clock.c
