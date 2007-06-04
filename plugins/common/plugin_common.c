@@ -424,7 +424,7 @@ void cf_object_set_object_property(object* op, int propcode, object* value)
 void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag)
 {
     int type;
-    cfapiObject_change_exp(&type, op, exp, strlen(skill_name) > 0 ? skill_name : NULL, flag);
+    cfapiObject_change_exp(&type, op, exp, skill_name && strlen(skill_name) > 0 ? skill_name : NULL, flag);
     assert(type == CFAPI_NONE);
 }
 int cf_player_move(player* pl, int dir)

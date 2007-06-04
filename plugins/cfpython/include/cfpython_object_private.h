@@ -49,6 +49,7 @@ static PyObject* Object_GetWC(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetDam(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLuck(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetMessage(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetSkill(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetExp(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetPermExp(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetExpMul(Crossfire_Object* whoptr, void* closure);
@@ -156,6 +157,7 @@ static int Object_SetTitle(Crossfire_Object* whoptr, PyObject* value, void* clos
 static int Object_SetRace(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetMap(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetSkill(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetCursed(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetDamned(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetApplied(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -274,6 +276,7 @@ static PyGetSetDef Object_getseters[] = {
     { "NamePl",     (getter)Object_GetNamePl,   (setter)Object_SetNamePl, NULL, NULL },
     { "Title",      (getter)Object_GetTitle,    (setter)Object_SetTitle, NULL, NULL },
     { "Race",       (getter)Object_GetRace,     (setter)Object_SetRace, NULL, NULL },
+    { "Skill",      (getter)Object_GetSkill,    (setter)Object_SetSkill, NULL, NULL },
     { "Map",        (getter)Object_GetMap,      (setter)Object_SetMap, NULL, NULL },
     { "Cha",        (getter)Object_GetCha,      (setter)Object_SetCha, NULL, NULL },
     { "Con",        (getter)Object_GetCon,      (setter)Object_SetCon, NULL, NULL },

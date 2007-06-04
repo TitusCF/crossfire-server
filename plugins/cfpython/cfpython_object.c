@@ -296,6 +296,12 @@ static PyObject* Object_GetMessage(Crossfire_Object* whoptr, void* closure)
     return Py_BuildValue("s", cf_object_get_sstring_property( whoptr->obj, CFAPI_OBJECT_PROP_MESSAGE));
 }
 
+static PyObject* Object_GetSkill(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_object_get_sstring_property( whoptr->obj, CFAPI_OBJECT_PROP_SKILL));
+}
+
 static PyObject* Object_GetExp(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
@@ -937,6 +943,27 @@ static int Object_SetSlaying(Crossfire_Object* whoptr, PyObject* value, void* cl
         return -1;
 
     cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_SLAYING, val);
+    return 0;
+}
+static int Object_SetSkill(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    char* val;
+
+    EXISTCHECK_INT(whoptr);
+    if (value==NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the Skill attribute");
+        return -1;
+    }
+    if (!PyString_Check(value))
+    {
+        PyErr_SetString(PyExc_TypeError, "The Skill attribute must be a string");
+        return -1;
+    }
+    if (!PyArg_Parse(value,"s",&val))
+        return -1;
+
+    cf_object_set_string_property(whoptr->obj, CFAPI_OBJECT_PROP_SKILL, val);
     return 0;
 }
 static int Object_SetCursed(Crossfire_Object* whoptr, PyObject* value, void* closure)
