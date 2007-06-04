@@ -207,6 +207,9 @@ void decay_objects(mapstruct *m)
                   QUERY_FLAG(op, FLAG_OVERLAY_FLOOR) ||
                   QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))
                     continue;
+                if (op->head)
+                    /* Don't try to remove a non head part of a multipart object, remove_ob() would abort(). */
+                    continue;
                 /* otherwise, we decay and destroy */
                 if (IS_WEAPON(op)) {
                     op->stats.dam--;
