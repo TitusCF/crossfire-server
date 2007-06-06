@@ -21,8 +21,8 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file trap.c
- * The implementation of the Trap class of objects.
+/** @file rune/rune.c
+ * The implementation of the Rune class of objects.
  */
 #include <global.h>
 #include <ob_methods.h>
@@ -31,10 +31,10 @@
 #include <sproto.h>
 
 /**
- * Initializer for the TRAP object type.
+ * Initializer for the RUNE object type.
  */
-void init_type_trap(void)
+void init_type_rune(void)
 {
-    register_move_on(TRAP, common_trap_type_move_on);
-    register_process(TRAP, common_trap_type_process);
+    register_move_on(RUNE, common_trap_type_move_on);
+    register_process(RUNE, common_trap_type_process);
 }

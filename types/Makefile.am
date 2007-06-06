@@ -20,7 +20,6 @@ lighter/lighter.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \
 power_crystal/power_crystal.c \
-rune/rune.c \
 shop_inventory/shop_inventory.c \
 shop_mat/shop_mat.c \
 sign/sign.c \
@@ -28,7 +27,9 @@ spell_effect/spell_effect.c \
 spinner/spinner.c \
 thrown_object/thrown_object.c \
 transport/transport.c \
+trap/common_trap.c \
 trap/trap.c \
+trap/rune.c \
 trapdoor/trapdoor.c \
 trigger/trigger.c \
 trigger_altar/trigger_altar.c \

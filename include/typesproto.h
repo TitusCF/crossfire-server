@@ -36,8 +36,6 @@ void init_type_pedestal(void);
 void init_type_player_mover(void);
 /* power_crystal/power_crystal.c */
 void init_type_power_crystal(void);
-/* rune/rune.c */
-void init_type_rune(void);
 /* shop_inventory/shop_inventory.c */
 void init_type_shop_inventory(void);
 /* shop_mat/shop_mat.c */
@@ -52,8 +50,13 @@ void init_type_spinner(void);
 void init_type_thrown_object(void);
 /* transport/transport.c */
 void init_type_transport(void);
+/* trap/common_trap.c */
+method_ret common_trap_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
+method_ret common_trap_type_process(ob_methods *context, object *op);
 /* trap/trap.c */
 void init_type_trap(void);
+/* trap/rune.c */
+void init_type_rune(void);
 /* trapdoor/trapdoor.c */
 void init_type_trapdoor(void);
 /* trigger/trigger.c */

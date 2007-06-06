@@ -9,6 +9,20 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : TRAP, RUNE
+Events     : process
+Moved from : ../server/rune.c, legacy/process.c
+Moved to   : trap/common_trap.c
+Comment    : Move process code for traps and runes.
+2007-06-06 - Alex Schultz
+--
+Ob types   : TRAP, RUNE
+Events     : move_on
+Moved from : trap/trap.c, rune/rune.c
+Moved to   : trap/common_trap.c, trap/rune.c
+Comment    : Merged rune and trap directories
+2007-06-06 - Alex Schultz
+--
 Ob types   : LAMP
 Events     : apply
 Moved from : legacy/apply.c, server/apply.c

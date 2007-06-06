@@ -114,11 +114,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             legacy_move_hole(op);
             return 0;
 
-        case RUNE:
-        case TRAP:
-            move_rune(op);
-            return 0;
-
         case PLAYERMOVER:
             move_player_mover(op);
             return 0;

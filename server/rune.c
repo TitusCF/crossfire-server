@@ -177,41 +177,9 @@ int write_rune(object *op,object *caster, object *spell, int dir, const char *ru
 
 }
 
-
-
-/*  move_rune:  peterm
-  comments on runes:
-    rune->level	    :	    level at which rune will cast its spell.
-    rune->hp	    :	    number of detonations before rune goes away
-    rune->msg	    :	    message the rune displays when it goes off
-    rune->direction :	    direction it will cast a spell in
-    rune->dam	    :	    damage the rune will do if it doesn't cast spells
-    rune->attacktype:	    type of damage it does, if not casting spells
-    rune->other_arch:       spell in the rune
-    rune->Cha       :       how hidden the rune is
-    rune->maxhp     :       number of spells the rune casts
-*/
-
-void move_rune(object *op) {
-    int det=0;
-    if(!op->level) {return;}  /* runes of level zero cannot detonate. */
-    det=op->invisible;
-    if(!(rndm(0, MAX(1,(op->stats.Cha))-1))) {
-	op->invisible=0;
-	op->speed_left-=1;
-    }
-    else
-	op->invisible=1;
-    if(op->invisible!=det)
-	update_object(op,UP_OBJ_FACE);
-}
-
-
 /*  peterm: rune_attack
  * function handles those runes which detonate but do not cast spells.  
  */
-
-
 static void rune_attack(object *op,object *victim)
 {
     if(victim) {
