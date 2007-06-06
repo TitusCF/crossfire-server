@@ -768,8 +768,9 @@ int get_button_value(const object *button) {
  * @param op
  * floor that activates
  * @param op2
- * ??
- * @todo document op2
+ * object that caused op to activate. Should be either op (for floors with speed), or
+ * a connected button a player pushed. Must not be NULL. Will be used for charming floors
+ * to locate the player the monster will become a pet of.
  */
 void do_mood_floor(object *op, object *op2) {
     object *tmp;
