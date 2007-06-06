@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/button.c: document, no functional change.
+Nicolas Weeger 2007-06-06
+
 Create the 'bugs/bugtrack' directories for the unit test framework. Add test for a bug.
  configure.ac: add new directories
  doc/Developers/testplans: update
