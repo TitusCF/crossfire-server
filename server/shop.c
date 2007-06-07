@@ -26,6 +26,13 @@
   The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions deal with shop handling, bargaining, things like that.
+ * @todo
+ * isn't there redundance with pay_for_item(), get_payment(), pay_for_amount()?
+ */
+
 #include <global.h>
 #include <spells.h>
 #include <skills.h>
@@ -36,7 +43,8 @@
 #endif
 #include <math.h>
 
-/* this is a measure of how effective store specialisation is. A general store
+/**
+ * This is a measure of how effective store specialisation is. A general store
  * will offer this proportion of the 'maximum' price, a specialised store will
  * offer a range of prices around it such that the maximum price is always one
  * therefore making this number higher, makes specialisation less effective. 
@@ -45,10 +53,10 @@
  */
 #define SPECIALISATION_EFFECT 0.5
 
-/* price a shopkeeper will give to someone they disapprove of.*/
+/** Price a shopkeeper will give to someone they disapprove of.*/
 #define DISAPPROVAL_RATIO 0.2 
 
-/* price a shopkeeper will give someone they neither like nor dislike */
+/** Price a shopkeeper will give someone they neither like nor dislike */
 #define NEUTRAL_RATIO 0.8
 
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay);
@@ -56,12 +64,19 @@ static uint64 value_limit(uint64 val, int quantity, const object *who, int issho
 static double shop_specialisation_ratio(const object *item, const mapstruct *map);
 static double shop_greed(const mapstruct *map);
 
-#define NUM_COINS 5     /* number of coin types */
-#define LARGEST_COIN_GIVEN 2 /* never give amber or jade, but accept them */
+#define NUM_COINS 5     /**< Number of coin types */
+#define LARGEST_COIN_GIVEN 2 /**< Never give amber or jade, but accept them */
+/** Coins to use for shopping. */
 static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin",
                                     "goldcoin", "silvercoin", NULL};
 
-/* Added F_TRUE flag to define.h to mean that the price should not
+/**
+ * Return the price of an item for a character.
+ *
+ * Price will vary based on the shop's specialization ration, the player's
+ * approval rate, ...
+ *
+ * Added F_TRUE flag to define.h to mean that the price should not
  * be adjusted by players charisma. With F_TRUE, it returns the amount
  * that the item is worth, if it was sold, but unadjusted by charisma.
  * This is needed for alchemy, to to determine what value of gold nuggets
@@ -85,6 +100,16 @@ static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin",
  * int), and thus remained 0.
  *
  * Mark Wedel (mwedel@pyramid.com)
+ *
+ * @param tmp
+ * object we're querying the price of.
+ * @param who
+ * who is inquiring. Can be NULL, only meaningful if player.
+ * @param flag
+ * combination of F_xxx flags.
+ * @return
+ * price of the item.
+ * @todo link to F_xxx when enum created. Simplify documentation.
  */
 uint64 query_cost(const object *tmp, object *who, int flag) {
     uint64 val;
@@ -339,10 +364,17 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     return val;
 }
 
-/* Find the coin type that is worth more than 'c'.  Starts at the
+/**
+ * Find the coin type that is worth more than 'c'.  Starts at the
  * cointype placement.
+ *
+ * @param c
+ * value we're searching.
+ * @param cointype
+ * first coin type to search.
+ * @return
+ * coin archetype, NULL if none found.
  */
-
 static archetype *find_next_coin(uint64 c, int *cointype) {
     archetype *coin;
 
@@ -357,15 +389,21 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
     return coin;
 }
 
-/* This returns a string of how much something is worth based on
- * an integer being passed.
- * cost is the cost we need to represent.
+/**
+ * Converts a price to number of coins.
+ *
  * While cost is 64 bit, the number of any coin is still really
  * limited to 32 bit (size of nrof field).  If it turns out players
  * have so much money that they have more than 2 billion platinum
  * coins, there are certainly issues - the easiest fix at that
  * time is to add a higher denomination (mithril piece with
  * 10,000 silver or something)
+ *
+ * @param cost
+ * value to transform to currency.
+ * @return
+ * buffer containing the price.
+ * @todo remove static buffer.
  */
 static const char *cost_string_from_value(uint64 cost)
 {
@@ -428,6 +466,20 @@ static const char *cost_string_from_value(uint64 cost)
     return buf;
 }
 
+/**
+ * Finds the price of an item.
+ *
+ * Price will be either an approximate value or the real value.
+ * @param tmp
+ * object to get the price of.
+ * @param who
+ * who is getting the price.
+ * @param flag
+ * combination of F_xxx values.
+ * @return
+ * buffer containing the price.
+ * @todo remove static buffer, link to F_xxx when exists.
+ */
 const char *query_cost_string(const object *tmp,object *who,int flag) {
     uint64 real_value = query_cost(tmp,who,flag);
     int idskill1=0;
@@ -479,8 +531,14 @@ const char *query_cost_string(const object *tmp,object *who,int flag) {
     return cost_string_from_value(real_value);
 }
 
-/* This function finds out how much money the player is carrying,
+/**
+ * Finds out how much money the player is carrying,
  * including what is in containers.
+ *
+ * @param op
+ * item to get money for. Must be a player or a container.
+ * @return
+ * total money the player is carrying.
  */
 uint64 query_money(const object *op) {
     object *tmp;
@@ -501,10 +559,17 @@ uint64 query_money(const object *op) {
     }
     return total;
 }
-/* TCHIZE: This function takes the amount of money from the
- * the player inventory and from it's various pouches using the
- * pay_from_container function.
- * returns 0 if not possible. 1 if success
+/**
+ * Takes the amount of money from the the player inventory and from it's various
+ * pouches using the pay_from_container() function.
+ *
+ * @param to_pay
+ * amount to pay.
+ * @param pl
+ * player paying.
+ * @return
+ * 0 if not enough money, in which case nothing is removed, 1 if money was removed.
+ * @todo check if pl is a player, as query_money() expects that. Check if fix_object() call is required.
  */
 int pay_for_amount(uint64 to_pay,object *pl) {
     object *pouch;
@@ -529,10 +594,19 @@ int pay_for_amount(uint64 to_pay,object *pl) {
     return 1;
 }
 
-/* DAMN: This is now a wrapper for pay_from_container, which is
+/**
+ * DAMN: This is now a wrapper for pay_from_container, which is
  * called for the player, then for each active container that can hold
  * money until op is paid for.  Change will be left wherever the last
  * of the price was paid from.
+ *
+ * @param op
+ * object to buy.
+ * @param pl
+ * player buying.
+ * @return
+ * 1 if object was bought, 0 else.
+ * @todo check if pl is a player, as query_money() expects a player.
  */
 int pay_for_item(object *op,object *pl) {
     uint64 to_pay = query_cost(op,pl,F_BUY | F_SHOP);
@@ -572,12 +646,13 @@ int pay_for_item(object *op,object *pl) {
 /**
  * This function removes a given amount from a list of coins.
  *
- * @param coin_objs the list coins to remove from; the list must be ordered
- * from least to most valuable coin
- *
- * @param remain the value (in silver coins) to remove
- *
- * @return the value remaining
+ * @param coin_objs
+ * the list coins to remove from; the list must be ordered
+ * from least to most valuable coin.
+ * @param remain
+ * the value (in silver coins) to remove
+ * @return
+ * the value remaining
  */
 static sint64 remove_value(object *coin_objs[], sint64 remain) {
     int i;
@@ -665,19 +740,21 @@ static void insert_objects(object *pl, object *container, object *objects[], int
     }
 }
 
-/* This pays for the item, and takes the proper amount of money off
+/**
+ * This pays for the item, and takes the proper amount of money off
  * the player.
- * CF 0.91.4 - this function is mostly redone in order to fix a bug
- * with weight not be subtracted properly.  We now remove and
- * insert the coin objects -  this should update the weight
- * appropriately
  *
  * DAMN: This function is used for the player, then for any active
  * containers that can hold money.
  *
- * pouch is the container (pouch or player) to remove the coins from.
- * to_pay is the required amount.
- * returns the amount still missing after using "pouch".
+ * @param pl
+ * player paying.
+ * @param pouch
+ * container (pouch or player) to remove the coins from.
+ * @param to_pay
+ * required amount.
+ * @return
+ * amount still not paid after using "pouch".
  */
 static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     int i;
@@ -775,9 +852,20 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 }
 
 /**
- * Helper function for can_pay. Checks all items from item and
+ * Helper function for can_pay(). Checks all items from item and
  * item->below, and recurse if inventory found.
  * coincount is supposed to be of size NUM_COINS. Parameters can't be NULL.
+ *
+ * @param pl
+ * player.
+ * @param item
+ * item to check for.
+ * @param[out] unpaid_count
+ * how many unpaid items are left.
+ * @param[out] unpaid_price
+ * total price unpaid.
+ * @param coincount
+ * array of NUM_COINS size, will contain how many coins of the type the player has.
  */
 static void count_unpaid(object* pl, object* item, int* unpaid_count, uint64* unpaid_price, uint32* coincount)
 {
@@ -804,10 +892,15 @@ static void count_unpaid(object* pl, object* item, int* unpaid_count, uint64* un
 /**
  * Checks all unpaid items in op's inventory, adds up all the money they
  * have, and checks that they can actually afford what they want to buy.
- * Returns 1 if they can, and 0 if they can't. also prints an appropriate
- * message to the player.
+ * Prints appropriate messages to the player.
+ *
+ * @param pl
+ * player trying to bug.
+ * @retval 1
+ * player could buy the items.
+ * @retval 0
+ * some items can't be bought.
  */
-
 int can_pay(object *pl) {
     int unpaid_count = 0, i;
     uint64 unpaid_price = 0;
@@ -851,14 +944,16 @@ int can_pay(object *pl) {
 }
 
 
-/* Better get_payment, descends containers looking for
- * unpaid items, and pays for them.
- * returns 0 if the player still has unpaid items.
- * returns 1 if the player has paid for everything.
- * pl is the player buying the stuff.
- * op is the object we are examining.  If op has
- * and inventory, we examine that.  IF there are objects
+/**
+ * Descends containers looking for unpaid items, and pays for them.
+ *
+ * @param pl
+ * player buying the stuff.
+ * @param op
+ * object we are examining.  If op has and inventory, we examine that.  IF there are objects
  * below op, we descend down.
+ * @retval 0 player still has unpaid items.
+ * @retval 1 player has paid for everything.
  */
 int get_payment(object *pl, object *op) {
     char buf[MAX_BUF], name_op[MAX_BUF];
@@ -915,13 +1010,18 @@ int get_payment(object *pl, object *op) {
     return 1;
 }
 
-
-/* Modified function to give out platinum coins.  This function uses
- * the coins[] array to know what coins are available, just like
- * buy item.
+/**
+ * Player is selling an item. Give money, print appropriate messages.
+ *
+ * This function uses the coins[] array to know what coins are available.
  *
  * Modified to fill available race: gold containers before dumping
  * remaining coins in character's inventory.
+ *
+ * @param op
+ * object to sell.
+ * @param pl
+ * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
     uint64 i=query_cost(op,pl,F_SELL | F_SHOP), extra_gain;
@@ -1025,10 +1125,18 @@ void sell_item(object *op, object *pl) {
     identify(op);
 }
 
-/* returns a double that is the ratio of the price that a shop will offer for
+/**
+ * returns a double that is the ratio of the price that a shop will offer for
  * item based on the shops specialisation. Does not take account of greed, 
  * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any 
  * event is never less than 0.1 (calling functions divide by it)
+ *
+ * @param item
+ * item to get ratio of.
+ * @param map
+ * shop map.
+ * @return
+ * ratio specialisation for the item.
  */
 static double shop_specialisation_ratio(const object *item, const mapstruct *map) {
     shopitems *items=map->shopitems;
@@ -1068,7 +1176,14 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
     return ratio;
 }
 
-/*returns the greed of the shop on map, or 1 if it isn't specified. */
+/**
+ * Gets shop's greed.
+ *
+ * @param map
+ * map to get greed.
+ * @return
+ * greed of the shop on map, or 1 if it isn't specified.
+ */
 static double shop_greed(const mapstruct *map) {
     double greed=1.0;
     if (map->shopgreed)
@@ -1076,8 +1191,16 @@ static double shop_greed(const mapstruct *map) {
     return greed;
 }
 
-/* Returns a double based on how much the shopkeeper approves of the player.
+/**
+ * Returns a double based on how much the shopkeeper approves of the player.
  * this is based on the race of the shopkeeper and that of the player.
+ *
+ * @param map
+ * shop to get ratio for.
+ * @param player
+ * player to get ratio of.
+ * @return
+ * approval ratio.
  */
 double shopkeeper_approval(const mapstruct *map, const object *player) {
     double approval=1.0;
@@ -1089,13 +1212,24 @@ double shopkeeper_approval(const mapstruct *map, const object *player) {
     return approval;
 }
 
-/* limit the value of items based on the wealth of the shop.
+/**
+ * Limit the value of items based on the wealth of the shop.
  * If the item is close to the maximum value a shop will offer,
  * we start to reduce it, if the item is below the minimum value
  * the shop is prepared to trade in, then we don't want it and
  * offer nothing. If it isn't a shop, check whether we should do
  * generic value reduction.
- * 
+ *
+ * @param val
+ * current price.
+ * @param quantity
+ * number of items.
+ * @param who
+ * player selling.
+ * @param isshop
+ * 0 if not a shop, 1 if a shop.
+ * @return
+ * maximum global value.
  */
 static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop) {
     uint64 newval, unit_price;
@@ -1125,7 +1259,15 @@ static uint64 value_limit(uint64 val, int quantity, const object *who, int issho
     return newval;
 }
 
-/* gives a desciption of the shop on their current map to the player op. */
+/**
+ * Gives a desciption of the shop on their current map to the player op.
+ *
+ * @param op
+ * player to describe the shop for. Mustn't be NULL.
+ * @return
+ * 0 if op is not a player, 1 else.
+ * @todo is return value meaningful?
+ */
 int describe_shop(const object *op) {
     mapstruct *map = op->map;
     /*shopitems *items=map->shopitems;*/
@@ -1212,14 +1354,29 @@ int describe_shop(const object *op) {
     return 1;
 }
 
-/* Check if an object is in a shop. Returns 1 if so, 0 otherwise. */
+/**
+ * Check if an object is in a shop.
+ *
+ * @param ob
+ * object to check for.
+ * @return
+ * 1 if in a shop so, 0 otherwise.
+ */
 int is_in_shop(object *ob) {
     if (!ob->map)
         return 0;
     return coords_in_shop(ob->map, ob->x, ob->y);
 }
 
-/* Check if given map coords are in a shop. Returns 1 if so, 0 otherwise. */
+/**
+ * Check if given map coords are in a shop.
+ * @param map
+ * @param x
+ * @param y
+ * coordinates to check.
+ * @return
+ * 1 if coordinates are a shop, 0 otherwise.
+ */
 int coords_in_shop(mapstruct *map, int x, int y) {
     object *floor;
     for (floor = get_map_ob (map, x, y); floor; floor = floor->above)

@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+ server/shop.c
+ types/trap/rune.c
+Nicolas Weeger 2007-06-07
+
 server/rune.c, include/typesproto.h, types/trap/{trap.c, rune.c, common_trap.c},
   types/rune/rune.c, types/legacy/process.c, types/Makefile.am: Refactor some
   rune and trap code.
