@@ -4,6 +4,7 @@ int use_alchemy(object *op);
 int transport_can_hold(const object *transport, const object *op, int nrof);
 int should_director_abort(object *op, object *victim);
 int apply_potion(object *op, object *tmp);
+int apply_container(object *op, object *sack);
 void do_learn_spell(object *op, object *spell, int special_prayer);
 void do_forget_spell(object *op, const char *spell);
 void apply_scroll(object *op, object *tmp, int dir);
@@ -18,13 +19,11 @@ void fix_auto_apply(mapstruct *m);
 void eat_special_food(object *who, object *food);
 void apply_changes_to_player(object *pl, object *change);
 void legacy_apply_food(object *op, object *tmp);
-void legacy_apply_spellbook(object *op, object *tmp);
 void legacy_check_improve_weapon(object *op, object *tmp);
 void legacy_apply_container(object *op, object *sack);
 int legacy_is_legal_2ways_exit(object *op, object *exit);
 void legacy_apply_treasure(object *op, object *tmp);
 void legacy_apply_savebed(object *pl);
-void legacy_apply_skillscroll(object *op, object *tmp);
 /* attack.c */
 void save_throw_object(object *op, int type, object *originator);
 int hit_map(object *op, int dir, int type, int full_hit);
@@ -221,9 +220,10 @@ int command_pickup(object *op, char *params);
 int command_search_items(object *op, char *params);
 int command_rename_item(object *op, char *params);
 int command_lock_item(object *op, char *params);
-int command_use(object* op, char* params);
+int command_use(object *op, char *params);
 /* c_party.c */
 partylist *get_firstparty(void);
+partylist *form_party(object *op, const char *params);
 void remove_party(partylist *target_party);
 void obsolete_parties(void);
 int confirm_party_password(object *op);
@@ -231,7 +231,6 @@ void receive_party_password(object *op, char k);
 void send_party_message(object *op, char *msg);
 int command_gsay(object *op, char *params);
 int command_party(object *op, char *params);
-partylist* form_party(object *op, const char *params);
 int command_party_rejoin(object *op, char *params);
 /* c_range.c */
 int command_invoke(object *op, char *params);
@@ -298,7 +297,7 @@ int command_follow(object *op, char *params);
 /* commands.c */
 void init_commands(void);
 /* daemon.c */
-void become_daemon();
+void become_daemon(const char *filename);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
@@ -455,8 +454,8 @@ void *cfapi_map_update_position(int *type, ...);
 void *cfapi_map_delete_map(int *type, ...);
 void *cfapi_map_message(int *type, ...);
 void *cfapi_map_get_object_at(int *type, ...);
-void *cfapi_map_change_light(int *type, ...);
 void *cfapi_map_present_arch_by_name(int *type, ...);
+void *cfapi_map_change_light(int *type, ...);
 void *cfapi_object_move(int *type, ...);
 void *cfapi_object_get_key(int *type, ...);
 void *cfapi_object_set_key(int *type, ...);
@@ -498,13 +497,11 @@ void *cfapi_object_pay_item(int *type, ...);
 void *cfapi_object_transfer(int *type, ...);
 void *cfapi_object_find_archetype_inside(int *type, ...);
 void *cfapi_object_drop(int *type, ...);
-void* cfapi_object_change_abil(int* type, ...);
+void *cfapi_object_change_abil(int *type, ...);
 void *cfapi_object_say(int *type, ...);
-void *cfapi_object_speak(int *type, ...);
 void *cfapi_player_find(int *type, ...);
 void *cfapi_player_message(int *type, ...);
 void *cfapi_object_change_exp(int *type, ...);
-/*void *cfapi_player_send_inventory(int *type, ...);*/
 void *cfapi_player_can_pay(int *type, ...);
 void *cfapi_object_teleport(int *type, ...);
 void *cfapi_object_pickup(int *type, ...);
@@ -521,7 +518,6 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 void dead_player(object *op);
 /* rune.c */
 int write_rune(object *op, object *caster, object *spell, int dir, const char *runename);
-void move_rune(object *op);
 void spring_trap(object *trap, object *victim);
 int dispel_rune(object *op, object *caster, object *spell, object *skill, int dir);
 int trap_see(object *op, object *trap);
@@ -539,7 +535,6 @@ int get_payment(object *pl, object *op);
 void sell_item(object *op, object *pl);
 double shopkeeper_approval(const mapstruct *map, const object *player);
 int describe_shop(const object *op);
-void shop_listing(object *op);
 int is_in_shop(object *ob);
 int coords_in_shop(mapstruct *map, int x, int y);
 /* skills.c */
@@ -698,10 +693,10 @@ void enter_player_savebed(object *op);
 void leave_map(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);
+void process_events(mapstruct *map);
 void clean_tmp_files(void);
 void cleanup(void);
 void leave(player *pl, int draw_exit);
 int forbid_play(void);
 int server_main(int argc, char **argv);
 /* main.c */
-int main(int argc, char **argv);
