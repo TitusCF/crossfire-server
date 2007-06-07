@@ -68,7 +68,9 @@ void init_ob_types(ob_methods *base_type) {
     init_type_shop_inventory();
     init_type_shop_mat();
     init_type_sign();
+    init_type_skillscroll();
     init_type_spell_effect();
+    init_type_spellbook();
     init_type_spinner();
     init_type_thrown_object();
     init_type_transport();

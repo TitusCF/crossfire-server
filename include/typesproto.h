@@ -42,8 +42,12 @@ void init_type_shop_inventory(void);
 void init_type_shop_mat(void);
 /* sign/sign.c */
 void init_type_sign(void);
+/* skillscroll/skillscroll.c */
+void init_type_skillscroll(void);
 /* spell_effect/spell_effect.c */
 void init_type_spell_effect(void);
+/* spellbook/spellbook.c */
+void init_type_spellbook(void);
 /* spinner/spinner.c */
 void init_type_spinner(void);
 /* thrown_object/thrown_object.c */

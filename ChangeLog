@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/ob_types.c, server/apply.c, types/spellbook/spellbook.c,
+  types/skillscroll/skillscroll.c. types/legacy/apply.c, types/Makefile.am,
+  include/typesproto.h, include/sproto.h:
+  Refactor apply for skillscrolls and spellbooks.
 server/daemon.c: Remove extraenous parameter for become_daemon.
 include/sproto.h: Update sproto.h
 Alex Schultz 2007-06-07

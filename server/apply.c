@@ -47,7 +47,6 @@
 
 static int dragon_eat_flesh(object *op, object *meal);
 static void apply_lighter(object *who, object *lighter);
-static void scroll_failure(object *op, int failure, int power);
 
 /**
  * Can transport hold object op?
@@ -1071,55 +1070,6 @@ int apply_container (object *op, object *sack)
 }
 
 /**
- * Handles the applying of a skill scroll, calling learn_skill() straight.
- *
- * Will inform the player of success/failure.
- *
- * @param op
- * person learning the skill.
- * @param tmp
- * skill scroll object.
- */
-static void apply_skillscroll (object *op, object *tmp)
-{
-    char name[MAX_BUF];
-    switch ((int) learn_skill (op, tmp)) {
-        case 0:
-            query_name(tmp, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0,op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "You already possess the knowledge held within the %s.",
-                                 "You already possess the knowledge held within the %s.",
-                                 name);
-            return;
-
-        case 1:
-            draw_ext_info_format(NDI_UNIQUE, 0,op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You succeed in learning %s",
-                                 "You succeed in learning %s",
-                                 tmp->skill);
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "Type 'bind ready_skill %s to store the skill in a key.",
-                                 "Type 'bind ready_skill %s to store the skill in a key.",
-                                 tmp->skill);
-            decrease_ob(tmp);
-            return;
-
-        default:
-            query_name(tmp, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE,0,op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                                 "You fail to learn the knowledge of the %s.\n",
-                                 "You fail to learn the knowledge of the %s.\n",
-                                 name);
-            decrease_ob(tmp);
-            return;
-    }
-}
-
-/**
  * Actually makes op learn spell.
  * Informs player of new spell and binding.
  *
@@ -1196,174 +1146,6 @@ void do_forget_spell (object *op, const char *spell)
     esrv_remove_spell(op->contr, spob);
     remove_ob(spob);
     free_object(spob);
-}
-
-/**
- * Handles player applying a spellbook.
- * Checks whether player has knowledge of required skill, doesn't
- * already know the spell, stuff like that. Random learning failure too.
- *
- * @param op
- * player reading.
- * @param tmp
- * book being read.
- *
- * @todo
- * handle failure differently for praying/magic.
- */
-static void apply_spellbook (object *op, object *tmp)
-{
-    object *skop, *spell, *spell_skill;
-    int read_level;
-    char level[100];
-
-    if(QUERY_FLAG(op, FLAG_BLIND)&&!QUERY_FLAG(op,FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You are unable to read while blind.", NULL);
-        return;
-    }
-
-    skop = find_skill_by_name(op, tmp->skill);
-
-        /* need a literacy skill to learn spells. Also, having a literacy level
-         * lower than the spell will make learning the spell more difficult */
-    if (!skop) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You can't read! Your attempt fails.", NULL);
-        return;
-    }
-    read_level = skop->level;
-
-    spell = tmp->inv;
-    if (!spell) {
-        LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n",
-            tmp->name);
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "The spellbook symbols make no sense.", NULL);
-        return;
-    }
-
-    if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-        char name[MAX_BUF];
-            /* Player made a mistake, let's shake her/him :) */
-        int failure = -35;
-        if (settings.spell_failure_effects == TRUE)
-            failure = -rndm(35, 100);
-        query_name(tmp, name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                             "The %s was %s!",
-                             "The %s was %s!",
-                             name,
-                             QUERY_FLAG(tmp,FLAG_DAMNED)?"damned":"cursed");
-        scroll_failure(op, failure, (spell->level + 4) * 7);
-        if (QUERY_FLAG(tmp, FLAG_DAMNED) &&
-            check_spell_known (op, spell->name) &&
-            die_roll(1, 10, op, 1) < 2)
-                /* Really unlucky player, better luck next time */
-            do_forget_spell(op, spell->name);
-        tmp = decrease_ob(tmp);
-        if (tmp && (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))) {
-                /* Well, not everything is lost, player now knows the
-                 * book is cursed/damned. */
-            identify(tmp);
-            if (tmp->env)
-                esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
-            else
-                op->contr->socket.update_look=1;
-        }
-        return;
-    }
-
-    if (QUERY_FLAG(tmp, FLAG_BLESSED))
-        read_level += 5;
-
-    if (spell->level > (read_level+10)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "You are unable to decipher the strange symbols.", NULL);
-        return;
-    }
-
-    get_levelnumber(spell->level, level, sizeof(level));
-    draw_ext_info_format(NDI_UNIQUE, 0, op,
-                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                         "The spellbook contains the %s level spell %s.",
-                         "The spellbook contains the %s level spell %s.",
-                         level, spell->name);
-
-    if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)) {
-        identify(tmp);
-        if (tmp->env)
-            esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
-        else
-            op->contr->socket.update_look=1;
-    }
-
-        /* I removed the check for special_prayer_mark here - it didn't make
-         * a lot of sense - special prayers are not found in spellbooks, and
-         * if the player doesn't know the spell, doesn't make a lot of sense
-         * that they would have a special prayer mark.
-         */
-    if (check_spell_known (op, spell->name)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "You already know that spell.\n", NULL);
-        return;
-    }
-
-    if (spell->skill) {
-        spell_skill = find_skill_by_name(op, spell->skill);
-        if (!spell_skill) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "You lack the skill %s to use this spell",
-                                 "You lack the skill %s to use this spell",
-                                 spell->skill);
-            return;
-        }
-        if (spell_skill->level < spell->level) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "You need to be level %d in %s to learn this spell.",
-                                 "You need to be level %d in %s to learn this spell.",
-                                 spell->level, spell->skill);
-            return;
-        }
-    }
-
-        /* Logic as follows
-         *
-         *  1- MU spells use Int to learn, Cleric spells use Wisdom
-         *
-         *  2- The learner's skill level in literacy adjusts the chance
-         *        to learn a spell.
-         *
-         *  3 -Automatically fail to learn if you read while confused
-         *
-         * Overall, chances are the same but a player will find having a high
-         * literacy rate very useful!  -b.t.
-         */
-    if(QUERY_FLAG(op,FLAG_CONFUSED)) {
-        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "In your confused state you flub the wording of the text!", NULL);
-        scroll_failure(op, 0 - random_roll(0, spell->level, op, PREFER_LOW),
-                       MAX(spell->stats.sp, spell->stats.grace));
-    } else if(QUERY_FLAG(tmp,FLAG_STARTEQUIP) ||
-              (random_roll(0, 100, op, PREFER_LOW)-(5*read_level)) <
-              learn_spell[spell->stats.grace ? op->stats.Wis:op->stats.Int]) {
-
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                      "You succeed in learning the spell!", NULL);
-        do_learn_spell (op, spell, 0);
-
-            /* xp gain to literacy for spell learning */
-        if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
-            change_exp(op,calc_skill_exp(op,tmp,skop), skop->skill, 0);
-    } else {
-        play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,0,0);
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "You fail to learn the spell.\n", NULL);
-    }
-    decrease_ob(tmp);
 }
 
 /**
@@ -3238,7 +3020,7 @@ void eat_special_food(object *who, object *food) {
  * @param power
  * the higher the value, the worse the thing that happens.
  */
-static void scroll_failure(object *op, int failure, int power)
+void scroll_failure(object *op, int failure, int power)
 {
     if(abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
 
@@ -3388,10 +3170,6 @@ void legacy_apply_food(object* op, object* tmp)
 {
     apply_food(op,tmp);
 }
-void legacy_apply_spellbook(object* op, object* tmp)
-{
-    apply_spellbook(op, tmp);
-}
 void legacy_check_improve_weapon(object* op, object* tmp)
 {
     check_improve_weapon(op, tmp);
@@ -3411,8 +3189,4 @@ void legacy_apply_treasure(object* op, object* tmp)
 void legacy_apply_savebed (object *pl)
 {
     apply_savebed(pl);
-}
-void legacy_apply_skillscroll (object *op, object *tmp)
-{
-    apply_skillscroll(op, tmp);
 }

@@ -63,22 +63,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             push_button(op);
             return METHOD_OK;
 
-        case SKILLSCROLL:
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_skillscroll (applier, op);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
-        case SPELLBOOK:
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_spellbook (applier, op);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
         case SCROLL:
             apply_scroll (applier, op, applier->facing);
             return METHOD_OK;

@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : SKILLSCROLL, SPELLBOOK
+Events     : apply
+Moved from : ../server/apply.c, legacy/apply.c
+Moved to   : skillscroll/skillscroll.c, spellbook/spellbook.c
+Comment    : Move apply code for skillscrolls and spellbooks.
+2007-06-07 - Alex Schultz
+--
 Ob types   : TRAP, RUNE
 Events     : process
 Moved from : ../server/rune.c, legacy/process.c

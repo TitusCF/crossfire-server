@@ -23,7 +23,9 @@ power_crystal/power_crystal.c \
 shop_inventory/shop_inventory.c \
 shop_mat/shop_mat.c \
 sign/sign.c \
+skillscroll/skillscroll.c \
 spell_effect/spell_effect.c \
+spellbook/spellbook.c \
 spinner/spinner.c \
 thrown_object/thrown_object.c \
 transport/transport.c \
