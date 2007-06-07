@@ -65,7 +65,7 @@
 #include <stdio.h>
 #include <sys/file.h>
 
-void become_daemon (const char *filename)
+void become_daemon ()
 {
     register int i;
     int forkresult;

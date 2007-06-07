@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/daemon.c: Remove extraenous parameter for become_daemon.
 include/sproto.h: Update sproto.h
 Alex Schultz 2007-06-07
 

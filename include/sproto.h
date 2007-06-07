@@ -297,7 +297,7 @@ int command_follow(object *op, char *params);
 /* commands.c */
 void init_commands(void);
 /* daemon.c */
-void become_daemon(const char *filename);
+void become_daemon(void);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
