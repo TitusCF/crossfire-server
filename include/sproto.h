@@ -359,10 +359,10 @@ int push_ob(object *who, int dir, object *pusher);
 /* ob_methods.c */
 void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 void init_ob_methods(void);
-int ob_apply(object *op, object *applier, int aflags);
-int ob_process(object *op);
+method_ret ob_apply(object *op, object *applier, int aflags);
+method_ret ob_process(object *op);
 char *ob_describe(const object *op, const object *observer, char *buf, int size);
-int ob_move_on(object *op, object *victim, object *originator);
+method_ret ob_move_on(object *op, object *victim, object *originator);
 /* ob_types.c */
 void init_ob_types(ob_methods *base_type);
 void register_apply(int ob_type, apply_func method);

@@ -92,14 +92,17 @@ void init_ob_methods(void) {
  * @retval 1 has been applied, or there was an error applying the object
  * @retval 2 objects of that type can't be applied if not in inventory
  */
-int ob_apply(object* op, object* applier, int aflags)
+method_ret ob_apply(object* op, object* applier, int aflags)
 {
+    method_ret ret;
     ob_methods* methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
     {
         if (methods->apply)
         {
-            return methods->apply(methods, op, applier, aflags);
+            ret = methods->apply(methods, op, applier, aflags);
+            if (ret != METHOD_UNHANDLED)
+                return ret;
         }
     }
     return METHOD_UNHANDLED;
@@ -110,14 +113,17 @@ int ob_apply(object* op, object* applier, int aflags)
  * @param op The object to process
  * @retval METHOD_UNHANDLED if the process method does not exist for that objec,
  */
-int ob_process(object* op)
+method_ret ob_process(object* op)
 {
+    method_ret ret;
     ob_methods* methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
     {
         if (methods->process)
         {
-            return methods->process(methods, op);
+            ret = methods->process(methods, op);
+            if (ret != METHOD_UNHANDLED)
+                return ret;
         }
     }
     return METHOD_UNHANDLED;
@@ -152,14 +158,17 @@ char* ob_describe(const object* op, const object* observer, char* buf, int size)
  * @param originator The object that is the cause of the move
  * @retval METHOD_UNHANDLED if the process method does not exist for that object
  */
-int ob_move_on(object* op, object* victim, object* originator)
+method_ret ob_move_on(object* op, object* victim, object* originator)
 {
+    method_ret ret;
     ob_methods* methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
     {
         if (methods->move_on)
         {
-            return methods->move_on(methods, op, victim, originator);
+            ret = methods->move_on(methods, op, victim, originator);
+            if (ret != METHOD_UNHANDLED)
+                return ret;
         }
     }
     return METHOD_UNHANDLED;
