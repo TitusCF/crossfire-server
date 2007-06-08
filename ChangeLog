@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/skillscroll/skillscroll.c, types/spellbook/spellbook.c: Use METHOD_OK
+  instead of METHOD_ERROR when the applier is not a player.
+Alex Schulzt 2007-06-08
+
 server/ob_types.c, server/apply.c, types/spellbook/spellbook.c,
   types/skillscroll/skillscroll.c. types/legacy/apply.c, types/Makefile.am,
   include/typesproto.h, include/sproto.h:

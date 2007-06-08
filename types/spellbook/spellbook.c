@@ -54,7 +54,7 @@ void init_type_spellbook(void) {
  * @param aflags
  * special flags (always apply/unapply).
  * @return
- * METHOD_ERROR if spellbook can't be applied, METHOD_OK else.
+ * METHOD_OK always.
  *
  * @todo
  * handle failure differently for praying/magic.
@@ -216,5 +216,5 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         }
         decrease_ob(book);
     }
-    return METHOD_ERROR;
+    return METHOD_OK;
 }

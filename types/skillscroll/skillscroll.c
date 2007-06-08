@@ -52,7 +52,7 @@ void init_type_skillscroll(void) {
  * @param aflags
  * special flags (always apply/unapply).
  * @return
- * METHOD_ERROR if skillscroll can't be applied, METHOD_OK else.
+ * METHOD_OK always.
  */
 static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, object* applier, int aflags) {
     char name[MAX_BUF];
@@ -94,5 +94,5 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                 return;
         }
     }
-    return METHOD_ERROR;
+    return METHOD_OK;
 }
