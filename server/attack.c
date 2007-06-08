@@ -2457,7 +2457,7 @@ static void thrown_item_effect (object *hitter, object *victim)
 	    case POTION:
 		/* should player get a save throw instead of checking magic protection? */
 		if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-		   &&(victim->resist[ATNR_MAGIC]<60)) (void) apply_potion(victim,hitter);
+		   &&(victim->resist[ATNR_MAGIC]<60)) (void) ob_apply(hitter,victim, 0);
 		break;
 
 	    case POISON: /* poison drinks */

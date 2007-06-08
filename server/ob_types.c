@@ -63,8 +63,10 @@ void init_ob_types(ob_methods *base_type) {
     init_type_lighter();
     init_type_pedestal();
     init_type_player_mover();
+    init_type_potion();
     init_type_power_crystal();
     init_type_rune();
+    init_type_scroll();
     init_type_shop_inventory();
     init_type_shop_mat();
     init_type_sign();

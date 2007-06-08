@@ -19,7 +19,9 @@ lamp/lamp.c \
 lighter/lighter.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \
+potion/potion.c \
 power_crystal/power_crystal.c \
+scroll/scroll.c \
 shop_inventory/shop_inventory.c \
 shop_mat/shop_mat.c \
 sign/sign.c \

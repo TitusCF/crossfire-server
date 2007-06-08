@@ -15,11 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/{attack.c, ob_types.c, apply.c, monster.c}, include/{sproto.h,
+  typesproto.h}, types/{scroll/scroll.c, legacy/apply.c, potion/potion.c,
+  Makefile.am: Refactor SCROLL and POTION applying.
 server/ob_methods.c, include/sproto.h: Make METHOD_UNHANDLED cause fallback to
   other callbacks.
 types/skillscroll/skillscroll.c, types/spellbook/spellbook.c: Use METHOD_OK
   instead of METHOD_ERROR when the applier is not a player.
-Alex Schulzt 2007-06-08
+Alex Schultz 2007-06-08
 
 server/ob_types.c, server/apply.c, types/spellbook/spellbook.c,
   types/skillscroll/skillscroll.c. types/legacy/apply.c, types/Makefile.am,

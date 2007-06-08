@@ -34,8 +34,12 @@ void init_type_lighter(void);
 void init_type_pedestal(void);
 /* player_mover/player_mover.c */
 void init_type_player_mover(void);
+/* potion/potion.c */
+void init_type_potion(void);
 /* power_crystal/power_crystal.c */
 void init_type_power_crystal(void);
+/* scroll/scroll.c */
+void init_type_scroll(void);
 /* shop_inventory/shop_inventory.c */
 void init_type_shop_inventory(void);
 /* shop_mat/shop_mat.c */

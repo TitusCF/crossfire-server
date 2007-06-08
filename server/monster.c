@@ -978,9 +978,15 @@ static int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_
 
     /* Spell should be cast on caster (ie, heal, strength) */
     if (scroll->inv->range==0)
-	dir = 0;
+        dir = 0;
 
-    apply_scroll(part, scroll, dir);
+    /* Face the direction that we want to cast. */
+    head->direction = dir;
+    head->facing = head->direction;
+    if (head->animation_id)
+        animate_object(head, head->direction);
+
+    ob_apply(scroll, part, 0);
     return 1;
 }
 

@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : SCROLL, POTION
+Events     : apply
+Moved from : ../server/apply.c, legacy/apply.c
+Moved to   : scroll/scroll.c, potion/potion.c
+Comment    : Move apply code for scrolls and potions.
+2007-06-08 - Alex Schultz
+--
 Ob types   : SKILLSCROLL, SPELLBOOK
 Events     : apply
 Moved from : ../server/apply.c, legacy/apply.c
