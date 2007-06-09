@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove party spell support. Not really tested, badly implemented.
+ include/spells.h
+ server/spell_util.c
+Nicolas Weeger 2007-06-09
+
 server/{attack.c, ob_types.c, apply.c, monster.c}, include/{sproto.h,
   typesproto.h}, types/{scroll/scroll.c, legacy/apply.c, potion/potion.c,
   Makefile.am: Refactor SCROLL and POTION applying.

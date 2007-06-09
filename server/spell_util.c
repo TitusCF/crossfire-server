@@ -961,36 +961,6 @@ void spell_failure(object *op, int failure,int power, object *skill)
     }
 }
 
-static int cast_party_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
-    {
-    int success;
-    player *pl;
-    object *spell;
-
-    if ( !spell_ob->other_arch )
-        {
-        LOG( llevError, "cast_party_spell: empty other arch\n" );
-        return 0;
-        }
-    spell = arch_to_object( spell_ob->other_arch );
-
-    /* Always cast spell on caster */
-    success = cast_spell( op, caster, dir, spell, stringarg );
-
-    if ( caster->contr->party == NULL )
-        {
-        remove_ob( spell );
-        return success;
-        }
-    for( pl=first_player; pl!=NULL; pl=pl->next )
-        if( ( pl->ob->contr->party == caster->contr->party ) && ( on_same_map( pl->ob, caster ) ) )
-            {
-            cast_spell( pl->ob, caster, pl->ob->facing, spell, stringarg );
-            }
-    remove_ob( spell );
-    return success;
-    }
-
 /**
  * This transforms one random item of op to a flower.
  *
@@ -1634,10 +1604,6 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	case SP_TOWN_PORTAL:
 	    success= cast_create_town_portal (op,caster,spell_ob, dir);
 	    break;
-
-    case SP_PARTY_SPELL:
-        success = cast_party_spell( op, caster, dir, spell_ob, stringarg );
-        break;
 
     case SP_ITEM_CURSE_BLESS:
         success = cast_item_curse_or_curse(op, caster, spell_ob);

@@ -128,7 +128,7 @@ extern const char* const spellpathnames[NRSPELLPATHS];
 #define SP_CAUSE_DISEASE    45
 #define SP_AURA		    46
 #define SP_TOWN_PORTAL	    47
-#define SP_PARTY_SPELL      48
+/*#define SP_PARTY_SPELL      48*/
 #define SP_ITEM_CURSE_BLESS 49
 
 /* Potion subtypes */
