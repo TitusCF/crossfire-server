@@ -186,10 +186,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
                 ns->faceset=q;
             sprintf(tmpbuf,"%d", ns->faceset);
             safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
-                /* if the client is using faceset, it knows about
-                 * image2 command
-                 */
-            ns->image2=1;
         } else if (!strcmp(cmd,"itemcmd")) {
                 /* Version of the item protocol command to use.  Currently,
                  * only supported versions are 1 and 2.  Using a numeric

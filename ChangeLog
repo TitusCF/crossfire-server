@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete image2/face/face1 support.
+ doc/Developers/protocol
+ include/newserver.h
+ socket/image.c init.c request.c
+Nicolas Weeger 2007-06-09
+
 server/{ob_types.c, apply.c}, include/{sproto.h, typesproto.h},
   types/{food/food.c, legacy/apply.c, Makefile.am}: Refactor food applying.
 include/libproto.h: Update prototypes.

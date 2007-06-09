@@ -331,32 +331,21 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
     }
 
     if (ns->facecache && !nocache) {
-        if (ns->image2)
-            strcpy((char*)sl.buf, "face2 ");
-        else if (ns->sc_version >= 1026)
-            strcpy((char*)sl.buf, "face1 ");
-        else
-            strcpy((char*)sl.buf, "face ");
+        strcpy((char*)sl.buf, "face2 ");
 
         sl.len=strlen((char*)sl.buf);
         SockList_AddShort(&sl, face_num);
-        if (ns->image2)
-            SockList_AddChar(&sl, fallback);
-        if (ns->sc_version >= 1026)
-            SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
+        SockList_AddChar(&sl, fallback);
+        SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
         strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
         sl.len += strlen(new_faces[face_num].name);
         Send_With_Handling(ns, &sl);
     }
     else {
-        if (ns->image2)
-            strcpy((char*)sl.buf, "image2 ");
-        else
-            strcpy((char*)sl.buf, "image ");
+        strcpy((char*)sl.buf, "image2 ");
         sl.len=strlen((char*)sl.buf);
         SockList_AddInt(&sl, face_num);
-        if (ns->image2)
-            SockList_AddChar(&sl, fallback);
+        SockList_AddChar(&sl, fallback);
         SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
         memcpy(sl.buf+sl.len, facesets[fallback].faces[face_num].data, 
                facesets[fallback].faces[face_num].datalen);

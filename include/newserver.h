@@ -123,7 +123,6 @@ typedef struct socket_struct {
     uint32  exp64:1;	    /* Client wants 64 bit exp data, as well as skill data */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
-    uint32  image2:1;	    /* Client wants image2/face2 commands */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
     uint32  has_readable_type:1; /* If true client accept additional text information
@@ -174,7 +173,7 @@ typedef struct Socket_Info {
 extern Socket_Info socket_info;
 
 #define VERSION_CS 1023    /* version >= 1023 understand setup cmd */
-#define VERSION_SC 1027
+#define VERSION_SC 1028
 #define VERSION_INFO "Crossfire Server"
 
 #endif /* NEWSERVER_H */

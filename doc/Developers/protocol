@@ -666,40 +666,18 @@ S->C: anim <num><flags><face1><face2>...
 	Note that how fast the object is animated is contained in the
 	item commands.
 
-S->C: pixmap <face><len><data>
-	Sends xpm version of an image to the client.  All data is in binary
-	form (4 byte for face & len).  <face> is the face number.  <len> is
-	the length of data, and <data> is the xpm data itself.
-
-S->C: bitmap <face><fg><bg><data>
-	Sends a bitmap version of an image to the client.  <face> is the face
-	number (4 bytes), <fg> and <bg> are 1 byte, and determine the
-	foreground and background colors.  <data> is 72 bytes of data.
-	(Images are 24x24, but you get 8 bits/byte, so 24*24/8 = 72)
-
-S->C: image <face><len><data>
 S->C: image2 <face><set><len><data>
-	Command added in SC version 1023.
-	This command is much the same as the pixmap command above. face
-	and len are 4 binary bytes.  Data is the png data used to
+	Sends a png version of an image to the client.  <face> is the face
+	number (4 bytes), <set> the faceset the image is part of,
+	<len> the length of data (4 bytes), data is the png data used to
 	the image.
 
-	If the client has requested a specific faceset, then the
-	image2 command will be used.  This includes the faceset the
-	image belongs to (8 bit data).
-
-	There is no image1 command.  Image2 was used to keep the version
-	in sync with the face2 command below.  It is also more intuitive
-	as in the server, the image2 flag is used to determine if we are
-	using these new commands.
-
-S->C: face <num><name>
-S->C: face1 <num><checksum><name>
 S->C: face2 <num><setnum><checksum><name>
-	Informs the client that <num> (binary short) is associated with
-	<name>.  This is used when the client is caching images.  In normal
+	Informs the client that image <num> (binary short) of faceset <setnum>
+	(A byte) is associated with <name>.  This is used when the client is
+	caching images.  In normal
 	operation, when the server runs accross a face that it hasn't sent
-	the client, it sends a pixmap or bitmap for that face.  If the face
+	the client, it sends a png for that face.  If the face
 	mode is none, the server then sends this command.  The client can
 	then check to see if it might have cached this face, and if not,
 	should then request it from the server.  Note that the num to name
@@ -707,18 +685,6 @@ S->C: face2 <num><setnum><checksum><name>
 	server.  For this reason, this data needs to be sent each
 	time run.  The client should be able to load/determine what face
 	to load via the name.
-
-	In sc version 1026 and later, the server will use the face1 command
-	which include a checksum that is a 32 bit value.  This can be used by
-	the client to know if its face is up to date.  The checksum is a 32
-	bit unsigned value.  If the client reports a sc_version of 1025
-	or earlier, the server will use the face command not not face1.
-
-	The face2 command is used if the client has sent used the
-	faceset setup command.  This is the same as the face1 command,
-	except we also include what faceset the image belongs to.  This
-	lets the client has multiple image sets installed and still
-	be able to cache properly.  setnum is 8 bit binary data.
 
 C->S: setfacemode <val>
 	This tells the server what type of display mode the client is using.
@@ -1749,6 +1715,9 @@ checksum.
 
 SC version 1026 -> 1027: Add requestinfo/replyinfo commands - client
 can check this to know if it should expect a replyinfo to its requestinfo.
+
+SC version 1027 -> 1028: mostly remove obsolete commands:
+ image, face, face1
 
 ------------------------------------------------------------------------------
 Todo:
