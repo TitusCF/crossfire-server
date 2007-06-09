@@ -117,7 +117,6 @@ typedef struct socket_struct {
     uint32  facecache:1;    /* If true, client is caching images */
     uint32  sent_scroll:1;
     uint32  sound;	    /* Client sound mode */
-    uint32  exp64:1;	    /* Client wants 64 bit exp data, as well as skill data */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  update_look:1;  /* If true, we need to send the look window */

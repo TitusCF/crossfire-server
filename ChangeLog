@@ -15,13 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Assume clients always use 64b experience mode (commit for that support: MSW 2003-05-17).
+ include/newserver.h
+ socket/init.c request.c
+Nicolas Weeger 2007-06-09
+
 Remove obsolete old_mode support. Remove unused log_kill stuff.
  include/newserver.h sockproto.h sproto.h
  socket/init.c info.c
  server/attack.c c_misc.c commands.c
 Nicolas Weeger 2007-06-09
 
-Remove obsolete image/face/face1 support.
+Remove obsolete image/face/face1 support. Increment protocol version to 1028.
  doc/Developers/protocol
  include/newserver.h
  socket/image.c init.c request.c

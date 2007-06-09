@@ -150,8 +150,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
         }
         else if (!strcmp(cmd,"exp64")) {
-            ns->exp64 = atoi(param);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+            /* for compatibility, return 1 since older clients can be confused else. */
+            safe_strcat(cmdback, "1", &slen, HUGE_BUF);
         } else if (!strcmp(cmd, "spellmon")) {
             ns->monitor_spells = atoi(param);
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
@@ -810,6 +810,7 @@ void esrv_update_stats(player *pl)
     SockList sl;
     char buf[MAX_BUF];
     uint16 flags;
+    uint8 s;
 
     sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"stats ");
@@ -832,27 +833,21 @@ void esrv_update_stats(player *pl)
         AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
         AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
     }
-    if(pl->socket.exp64) {
-        uint8 s;
-        for(s=0;s<NUM_SKILLS;s++) {
-            if (pl->last_skill_ob[s] && 
-                pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
 
-                    /* Always send along the level if exp changes.  This
-                     * is only 1 extra byte, but keeps processing simpler.
-                     */
-                SockList_AddChar(&sl, ( char )( s + CS_STAT_SKILLINFO ));
-                SockList_AddChar(&sl, ( char )pl->last_skill_ob[s]->level);
-                SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
-                pl->last_skill_exp[s] =  pl->last_skill_ob[s]->stats.exp;
-            }
+    for(s=0;s<NUM_SKILLS;s++) {
+        if (pl->last_skill_ob[s] && 
+            pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
+
+                /* Always send along the level if exp changes.  This
+                    * is only 1 extra byte, but keeps processing simpler.
+                    */
+            SockList_AddChar(&sl, ( char )( s + CS_STAT_SKILLINFO ));
+            SockList_AddChar(&sl, ( char )pl->last_skill_ob[s]->level);
+            SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
+            pl->last_skill_exp[s] =  pl->last_skill_ob[s]->stats.exp;
         }
     }
-    if (pl->socket.exp64) {
-        AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
-    } else {
-        AddIfInt(pl->last_stats.exp, ( int )pl->ob->stats.exp, CS_STAT_EXP);
-    }
+    AddIfInt64(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP64);
     AddIfShort(pl->last_level, ( char )pl->ob->level, CS_STAT_LEVEL);
     AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
     AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
