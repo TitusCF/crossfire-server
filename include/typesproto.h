@@ -22,6 +22,8 @@ void init_type_deep_swamp(void);
 void init_type_director(void);
 /* exit/exit.c */
 void init_type_exit(void);
+/* food/food.c */
+void init_type_food(void);
 /* hole/hole.c */
 void init_type_hole(void);
 /* identify_altar/identify_altar.c */

@@ -105,12 +105,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             (void) apply_special (applier, op, aflags);
             return METHOD_OK;
 
-        case DRINK:
-        case FOOD:
-        case FLESH:
-            legacy_apply_food(applier, op);
-            return METHOD_OK;
-
         case POISON:
             apply_poison(applier, op);
             return METHOD_OK;

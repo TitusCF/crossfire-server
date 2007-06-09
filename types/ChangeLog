@@ -9,6 +9,13 @@ should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
 --
+Ob types   : FOOD, DRINK, FLESH
+Events     : apply
+Moved from : ../server/apply.c, legacy/apply.c
+Moved to   : food/food.c
+Comment    : Move apply code for food.
+2007-06-09 - Alex Schultz
+--
 Ob types   : SCROLL, POTION
 Events     : apply
 Moved from : ../server/apply.c, legacy/apply.c
