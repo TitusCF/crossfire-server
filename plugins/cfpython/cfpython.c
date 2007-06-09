@@ -916,7 +916,6 @@ static void initConstants(PyObject* module)
         { "SYMPTOM", SYMPTOM },
         { "BUILDER", BUILDER },
         { "MATERIAL", MATERIAL },
-        { "QUEST", QUEST },
         { NULL, 0 } };
 
     static CFConstant cstMove[] = {

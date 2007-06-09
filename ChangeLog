@@ -15,6 +15,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove badly implemented quest support.
+Removed files:
+ common/quest.c
+ doc/Developers/quests
+ include/quest.h
+ lib/help/quests
+Modified files:
+ common/Makefile.am
+ include/define.h libproto.h Makefile.am sproto.h
+ lib/Makefile.am
+ plugins/cfpython/cfpython.c
+ server/c_misc.c commands.c monster.c time.c
+Nicolas Weeger 2007-06-09
+
+doc/Developers/testplans: update.
+Nicolas Weeger 2007-06-09
+
 Remove party spell support. Not really tested, badly implemented.
  include/spells.h
  server/spell_util.c

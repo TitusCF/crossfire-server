@@ -2001,68 +2001,6 @@ int command_kill_pets(object *op, char *params)
 }
 
 /**
- * Displays all non start/end tags for specified quest.
- **/
-static void display_quest_details( object* pl, object* quest )
-{
-
-    draw_ext_info_format( NDI_WHITE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-		 "Quest: %s\n%s\n",
-		 "Quest: %s\n%s\n",
-		 quest_get_name( quest ), quest->lore ? quest->lore : "(no description available)" );
-}
-
-/**
- * Displays quest informations to player.
- * Acceptable parameters:
- *  * finished => finished quests only
- *  * <name> => only this particular quest, finished or not, with details
- *  * nothing => all current quests
- *
- * For current quests, will display either the lore of the non start tags,
- *  or the lore of start tag if no other tag.
- **/
-int command_quests( object *pl, char *params )
-{
-    object* item;
-
-    if ( params && !strcmp( params, "finished" ) ) {
-        draw_ext_info( NDI_WHITE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-		      "Completed quests:\n", NULL);
-
-        for ( item = pl->inv; item; item = item->below ) {
-            if ( quest_is_quest_marker( item, 0 ) ) {
-                draw_ext_info( NDI_WHITE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-			      quest_get_name( item ), NULL );
-	    }
-	}
-	return 1;
-    }
-
-    if ( params ) {
-        for ( item = pl->inv; item; item = item->below ) {
-            if ( quest_is_quest_marker( item, 0 )
-                && !strcmp( quest_get_name( item ), params ) ) {
-		    display_quest_details( pl, item );
-	    }
-	}
-	return 1;
-    }
-
-    /*Display current quests */
-    draw_ext_info( NDI_WHITE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-		  "Current quests:\n",NULL );
-
-    for ( item = pl->inv; item; item = item->below ) {
-        if ( quest_is_quest_marker( item, 0 ) && quest_is_in_progress( item, 0 ) ) {
-            draw_ext_info( NDI_WHITE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_QUESTS,
-			  quest_get_name( item ), NULL );
-	}
-    }
-    return 1;
-}
-
-/**
  * Player is asking to change password.
  **/
 int command_passwd(object *pl, char *params)

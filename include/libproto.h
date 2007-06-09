@@ -270,18 +270,6 @@ extern int is_dragon_pl(const object *op);
 extern client_spell *get_client_spell_state(player *pl, object *spell);
 extern int is_wraith_pl(object *op);
 extern int is_old_wraith_pl(object *op);
-/* quest.c */
-extern int quest_is_quest_marker(const object *marker, int task);
-extern int quest_is_in_progress(const object *marker, int task);
-extern int quest_is_completed(const object *marker, int task);
-extern const char *quest_get_name(const object *marker);
-extern object *quest_get_player_quest(const object *pl, const char *name, const char *name_pl);
-extern object *quest_get_override(const object *ob, const object *pl);
-extern const char *quest_get_override_slaying(const object *ob, const object *pl);
-extern const char *quest_get_override_msg(const object *ob, const object *pl);
-extern void quest_apply_items(object *wrapper, player *pl);
-extern int quest_on_activate(object *ob, player *pl);
-extern int quest_is_override_compatible(const object *marker, const object *pl);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */

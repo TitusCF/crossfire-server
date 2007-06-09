@@ -95,7 +95,6 @@ command_array_struct Commands[] = {
   {"rotateshoottype", command_rotateshoottype,	0.0},
   {"skills", command_skills,	0.0},	/* shows player list of skills */
   {"use_skill", command_uskill, 1.0},
-  {"quests", command_quests, 0.0},
   {"ready_skill", command_rskill, 1.0},
   {"search",command_search,	1.0},
   {"search-items", command_search_items,	0.0},

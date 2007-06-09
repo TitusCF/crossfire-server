@@ -61,8 +61,8 @@ static void pace_moveh(object *ob);
 static void pace2_movev(object *ob);
 static void pace2_moveh(object *ob);
 static void rand_move(object *ob);
-static int talk_to_npc(object *op, object *npc, const char *txt);
-static int talk_to_wall(object *pl, object *npc, const char *txt);
+static int talk_to_npc(object* op, object *npc, const char *txt);
+static int talk_to_wall(object *npc, const char *txt);
 
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
@@ -1738,9 +1738,8 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * match in 'match', and returns the portion of the message.  This
  * returned portion is in a malloc'd buf that should be freed.
  * Returns NULL if no match is found.
- * The player is passed too, so that quest-related messages can be checked too.
  */
-static char *find_matching_message(object* pl, const char *msg, const char *match)
+static char *find_matching_message(const char *msg, const char *match)
 {
     const char *cp=msg, *cp1, *cp2;
     char *cp3, regex[MAX_BUF], gotmatch=0;
@@ -1835,7 +1834,7 @@ void communicate(object *op, const char *txt) {
 
 	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
 	    if (npc->type == MAGIC_EAR) {
-		(void) talk_to_wall(op, npc, txt); /* Maybe exit after 1. success? */
+		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
 		if (orig_map != op->map) {
 		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
 		    return;
@@ -1852,17 +1851,16 @@ void communicate(object *op, const char *txt) {
     }
 }
 
-static int do_talk_npc(object* op, object* npc, object* override, const char* txt)
+static int do_talk_npc(object* npc, const char* txt)
 {
     char* cp;
 
-    if(override->msg == NULL || *override->msg != '@')
+    if(npc->msg == NULL || *npc->msg != '@')
 	return 0;
 
-    cp = find_matching_message(op, override->msg, txt);
+    cp = find_matching_message(npc->msg, txt);
     if (cp) {
         npc_say(npc, cp);
-        quest_apply_items(override,op->contr);
         free(cp);
         return 1;
     }
@@ -1893,20 +1891,16 @@ static int talk_to_npc(object *op, object *npc, const char *txt) {
         if (execute_event(cobj, EVENT_SAY,npc,NULL,txt,SCRIPT_FIX_ALL)!=0)
                 return 0;
             }
-    for ( cobj = npc->inv; cobj; cobj = cobj->below )
-        if ( quest_is_override_compatible( cobj, op ) )
-            if ( do_talk_npc( op, npc, cobj, txt ) )
-                return 1;
-    return do_talk_npc( op, npc, npc, txt );
+    return do_talk_npc(npc, txt);
 }
 
-static int do_talk_wall(object* pl, object* npc, object* override, const char* txt)
+static int talk_to_wall(object* npc, const char* txt)
 {
     char* cp;
-    if(override->msg == NULL || *override->msg != '@')
+    if(npc->msg == NULL || *npc->msg != '@')
 	return 0;
 
-    cp = find_matching_message(pl, override->msg, txt);
+    cp = find_matching_message(npc->msg, txt);
     if (!cp)
 	return 0;
 
@@ -1914,22 +1908,9 @@ static int do_talk_wall(object* pl, object* npc, object* override, const char* t
 		 MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH,
 		 cp, cp);
     use_trigger(npc);
-    quest_apply_items(npc, pl->contr);
     free(cp);
 
     return 1;
-}
-
-static int talk_to_wall(object* pl, object *npc, const char *txt) {
-
-    object* inv;
-
-    for ( inv = npc->inv; inv; inv = inv->below)
-        if ( quest_is_override_compatible(inv, pl ) )
-            if ( do_talk_wall( pl, npc, inv, txt ) )
-                return 1;
-
-    return do_talk_wall( pl, npc, npc, txt );;
 }
 
 /* find_mon_throw_ob() - modeled on find_throw_ob

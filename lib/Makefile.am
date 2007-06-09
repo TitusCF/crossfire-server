@@ -47,7 +47,7 @@ dist_help_DATA = help/apply help/applymode \
 	help/news help/output \
 	help/output-count help/output-sync \
 	help/party help/party_rejoin help/peaceful \
-	help/petmode help/pickup help/quests \
+	help/petmode help/pickup \
 	help/quit help/range help/rename \
 	help/rules \
 	help/save help/shout help/showpets \

@@ -47,7 +47,6 @@ libcross_a_SOURCES = \
 	path.c\
 	porting.c\
 	player.c\
-	quest.c\
 	re-cmp.c\
 	readable.c\
 	recipe.c\
