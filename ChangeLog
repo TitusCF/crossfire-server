@@ -15,7 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Remove obsolete image2/face/face1 support.
+Remove obsolete image/face/face1 support.
  doc/Developers/protocol
  include/newserver.h
  socket/image.c init.c request.c
