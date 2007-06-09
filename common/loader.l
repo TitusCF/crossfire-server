@@ -390,44 +390,13 @@ static void check_loaded_object(object *op) {
         }
     }
 
-    /* We changed last_heal to gen_sp_armour, which is what it
-     * really does for many objects.  Need to catch any in maps
-     * that may have an old value.
+    /* Old spellcasting object - need to load in the appropiate object
+     * This is actually required as of 2007-06-09, since Gridarta doesn't yet support spells in
+     * inventory. See
+     * http://sourceforge.net/tracker/index.php?func=detail&aid=1555828&group_id=166996&atid=841182
+     *
+     * This can be removed when Gridarta is updated, and archetypes, maps and artifacts too.
      */
-    if ((op->type == WEAPON) ||
-        (op->type == ARMOUR)   || (op->type == HELMET) ||
-        (op->type == SHIELD)   || (op->type == RING) ||
-        (op->type == BOOTS)    || (op->type == GLOVES) ||
-        (op->type == AMULET )  || (op->type == GIRDLE) ||
-        (op->type == BRACERS ) || (op->type == CLOAK)) {
-        if (op->last_heal) {
-            LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
-            op->name?op->name:"NULL");
-            op->gen_sp_armour = op->last_heal;
-            op->last_heal = 0;
-        }
-        if (editor) ip =0;
-        else ip = calc_item_power(op, 0);
-        /* Legacy objects from before item power was in the game */
-        if (!op->item_power && ip) {
-            if (ip > 3) {
-            LOG(llevDebug,"Object %s had no item power, using %d\n",
-                op->name?op->name:"NULL", ip);
-            }
-            op->item_power = ip;
-        }
-        /* Check for possibly bogus values.  Has to meet both these criteria -
-        * something that has item_power 1 is probably just fine if our calculated
-        * value is 1 or 2 - these values are small enough that hard to be precise.
-        * similarly, it item_power is 0, the first check will always pass,
-        * but not the second one.
-        */
-        if (ip > 2 *op->item_power && ip > (op->item_power + 3)) {
-            LOG(llevDebug,"Object %s seems to have too low item power? %d > %d\n",
-            op->name?op->name:"NULL", ip, op->item_power);
-        }
-    }
-    /* Old spellcasting object - need to load in the appropiate object */
     if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN
         || op->type == FIREWALL ||
         /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
