@@ -439,19 +439,7 @@ void check_login(object *op) {
     strcpy (pl->maplevel,first_map_path);
     party_password[0] = 0;
 
-    /* First, lets check for newest form of save */
-    sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-    if (access(filename, F_OK)==-1) {
-	/* not there,  Try the old style */
-
-	sprintf(filename,"%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name);
-	/* Ok - old style exists.  Lets make the new style directory */
-	if (access(filename, F_OK)==0) {
-	    sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
-	    make_path_to_file(buf);
-	}
-    }
-
+    /* Check if this matches a connected player, and if yes disconnect old / connect new. */
     for(pltmp=first_player; pltmp!=NULL; pltmp=pltmp->next) {
 	if(pltmp!=pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name,op->name)) {
 	    if (check_password(pl->write_buf+1, pltmp->password)) {
@@ -483,6 +471,8 @@ void check_login(object *op) {
 	    }
 	}
     }
+
+    sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
 
     /* If no file, must be a new player, so lets get confirmation of
      * the password.  Return control to the higher level dispatch,

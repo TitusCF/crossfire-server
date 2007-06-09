@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1729829: Server using access to check for file existance.
+Also remove obsolete old player directory mode support.
+ server/login.c
+Nicolas Weeger 2007-06-09
+
 Fix bug #1730874: +dam on bracers not working.
  common/living.c: bracers can give damage too.
 Nicolas Weeger 2007-06-09
