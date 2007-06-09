@@ -10,8 +10,9 @@
 #	object is cursed, the present magic value will become
 #	negative (ie, a +1 sword will become -1 cursed.)  
 # 
-#	immune, protected, vulnerable, path_attuned, path_denied, 
-#	path_repelled values are OR'd to existing values.  
+#	path_attuned, path_denied and path_repelled values are OR'd to existing values.
+#
+#	resistances are modifiers to the previous value.
 # 
 #	luck,exp, wc and ac  increase the value by that amount (which means 
 #	a negative value will decrease the value)
@@ -50,11 +51,10 @@
 #
 #	magic is the mininum magic for an item to become that artifact.
 #
-#	item_power is the additional number of enchantments to count for
-#	this item.  This can be negative.  Note that this information is
-#	only relevant for equipment that is applied for long periods of time.
-#	I've made a quick pass through this file and put in item_power
-#	values, but these almost certainly need to be refined.
+#	item_power replaces the item's value.
+#
+#	items in inventory (through an "arch xxx", like in maps)
+#	will be copied into the item's inventory.
 #
 #	If the value is not described above, changing it probably is
 #	not supported.
