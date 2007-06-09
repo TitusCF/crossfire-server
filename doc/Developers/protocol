@@ -709,181 +709,9 @@ C->S: asksmooth <facenbr>
 ******************************************************************************
 MAP UPDATE COMMANDS
 
-S->C: map <ecell1><ecell2>...<255>[<face1><cell1...><face2><cell2...>]
-	Sends a map to the client.  All cell type values are stored as
-	x*mapy+y. Thus, we can fit the map coordinates into 1 byte up to
-	a mapsize of 11x11. (this size is limited by needing to set
-	the high bit)
-
-	<ecell1><ecell2>... is a list of cells that are empty.  This list
-	could be empty.  255 is used to mark the end of this list, whether
-	anything is included or not.  Note that the max xy hash value is
-	121, so we never need to worry about this value appearing as a map
-	cell.
-
-	the face values are 16 bit values representing the face for that
-	space.  Like other data, they are stored MSB first.  The MSB of
-	the last face in a layer has the high bit set.  this makes the max
-	theoretical face number that is supported to 32767 (old code says
-	16383, but that certainly does not seem right).  It would seem that
-	a marker of 0xff could be put at the end of a layer, and only cost
-	a byte, but at present, that doesn't seem really important.
-
-	<cell1...> is a list of cells that use this face.  The last face in
-	this list has the high bit set.  Being the max cell value is 121,
-	this does does not pose a problem.  This cell list is only for the
-	current layer.
-
-	The section in brackets ([]) represent data that is sent for each
-	layer.  At present time, only 3 layers are supported, but in theory,
-	any number could be.  It is up to the client to detect the end of
-	one layer, and know to put the next information a layer down.
-
-	Note:  The server does try to do some intelligence in only sending data
-	that has changed and packing repetative data.  Thus, the server doesn't
-	send a full map each tick, only a portion of the map.  Worst case
-	data scenario right now is roughly 1100 bytes of data sent (a very
-	unlikely scenario - it assumes 3 images per space and no redundant
-	images.
-
-	Note: The map command may get depreciated and instead replaced by
-	the map1 command below.  While the map1 command needs 2 bytes for
-	coordinates, it is smarter for other updates, so may not in
-	face use more bandwidth.
-
-S->C: map1 <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
-S->C: map1a <coord1>[darkness1][face1a][face1b][face1c]<coord2>[darkness2][face2a]...
-
-	This is an update of the map command to support large map sizes.
-	The old map command supported a maximum map size of 15x15 -
-	anything larger than that required a new command.
-
-	Given that this larger map now needs 2 bytes for the coordinates -
-	the same as for the images, trying to optimize one vs the other
-	does not makes much sense.
-
-	The map1a is an enhancement to the map1 command.
-
-	All data is in standard binary form.
-
-	the coord values are flags + x + y values.  The value itself, but
-	the data represented looks like this:
-	first 6 bits: The x coordinate
-	next 6 bits: the y coordinate
-	last 4 bits: MSB - true if we send darkness
-		     MSB-1 - will send floor face
-		     MSB-2 - will send intermediate face
-		     MSB-3 (aka LSB) - will send top face
-
-	6 bits is enough for 63x63 maps.  For the time being, it should
-	be a safe assumption that we won't be sending anything larger
-	than that.
-
-	Through the use of this bitmasks, any and all of the following values
-	may be optional.  This allows the update of one face on the space
-	without needing to send the others (in the old map command, this is
-	not possible, so as an arrow flies over a space, the floor + arrow
-	needs to get resent - this allows just the arrow to get sent).
-	This should conserve bandwidth when spells are cast (we have an
-	extra byte for the coordinate, but save 2 bytes for the image
-	itself, plus another 2 potential bytes if there is something on the
-	space.)
-
-	If all the flag values are 0, this then means the space is considered
-	blocked from view, and should be drawn as black.  This conserves
-	bandwidth for sending blocked spaces, which occur pretty frequently.
-	Once a space is marked as block, if it re-appears within view, the 3
-	layers should be marked is blank.
-
-	For spaces that are empty, one or more of the faces will be sent as
-	blank faces (exactly how many will depend on what was on the floor
-	before - for example, if a floor disappears, then only the floor needs
-	to get updated, but if there was stuff on the floor, then that face
-	will also need to get cleared).  There may be cases where
-	transitioning from the blocked to empty space occurs, in which case
-	the server will send the floor as an empty space.
-
-	The darkness value is a single byte - 0 is pitch black, while 255 is
-	fully illuminated.  It is up to the client to figure out what it wants
-	to do with this (use masking to reduce visibility, or actually do a
-	real light reduction on the image).
-
-	The face values are 16 bit values, as before.  They will be sent
-	in MSB order of the flag (ie, floor, then intermediate, then
-	top, presuming the bit in the flag is set that says that layer
-	is being sent).  Blank faces may get sent if an object disappears -
-	in the example of the flying arrow, for the space the arrow
-	leaves, a blank face will be sent in place of the arrow.  Blank faces
-	will be sent as face 0.
-
-	Map1a refinements:
-
-	The main addition to the map1a command is handling of big images.  Big
-	images are those images that do not fit in one space, eg, if a store
-	is combined into 1 64x64 image, this falls into a big image.  The
-	archetype/object of a big image has the same face for all the spaces.
-
-	When the server detects such an object, it only sends the face for the
-	lower right corner.  The client then needs to extrapolate where this
-	should be drawn.  By only sending the lower right, the client can much
-	more easily handle tall objects.  The sending of a big image face is
-	no different in either the map1 or map1a command.
-
-	The main difference in the map1a command is what to do when the lower
-	right corner would not normally be visible to the client (blocked,
-	darkness, or off the edge of the map).  The map1 command will just not
-	send any data - thus, even if some part is visible, it won't be sent.
-	The map1a command will send this big face for such squares even if
-	that square is not visible.  It only sends this information if some
-	other part of the object is visible (eg, top portion).  Also, for such
-	spaces, it only sends the big face number, and not any other faces
-	that may be on that space.  The map1a command will also send
-	coordinates outside the normal map size.  For example, the player
-	selected a 25x25 map size.  There is a big image (3x3) whose left side
-	is just at the edge of the players map (upper corner of it at 25,18).
-	The server will send this face at 27,20 - the lower right space of
-	this big image.
-
-	The server tries to keep the same layer for the head as what appears
-	on the map.  Thus, a 2x2 store would normally be on layer 2 (with
-	layer 1 being the grass, stone, whatever).  In such a case, even if
-	the lower right corner was not visible, it will send the big face at
-	layer 2 on that space.  There can be spaces in which a big image is on
-	different layers on different spaces - in that case, if the lower
-	right is visible, the layer it appears on there will be used.
-	Otherwise, the layer of the first visible space it appears on
-	(starting from upper left) will be used.
-
-	The server does remember the heads for out of normal map bounds.
-	However, these values are not shifted but cleared when the map scrolls.
-	Taking the example of an image at 27,20 above, if the player moves to
-	the east, the server will send the map scroll command, send the face at
-	26,20, and send neither a clear nor update for 27,20.  When the player
-	moves east again, the image is now on the normal map at 25,20, and
-	will once again get sent, no delete for 26,20 will be sent.
-	OTOH, if the object was a living object and was partially off the
-	map when killed, an update removing that face for the object it was
-	standing on will be sent by the server.
-
-	Various notes about the map1 command:
-
-	this implementation is much simpler than the map command
-	because it now works on spaces rather than layers, and most all the
-	code also works on spaces.
-
-	The downside of this is that this will need to get redone
-	if we want to put more than 3 faces on a space (as we are then
-	out of bits).  It would be trivial to do something different, like
-	send as many faces as desired and just have a marking tag at the
-	end - the problem with this is that if something changes,
-	then once again, you need to send the entire space as there is
-	no way to say 'face xyz has disappeared'.  And in any case, to
-	support more faces will require more work on the server.
-
-
 S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 
-	This is an update of the map1 commands above.  It is meant to be
+	This is an update of the map1 commands above [removed].  It is meant to be
 	extensible.  It is also meant to incorporate the ideas of the
 	extended map info command.
 
@@ -1077,72 +905,6 @@ S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 	Each string represent an info which is enabled. Look
 	at toggleextendedinfos and mapextended for details.
 
-S->C: mapextended <what><length><coord1>[data1a][data1b][data1c]<coord2>...
-	This command is send from server when there is at least
-	1 ExtendedInfo activated using toggleextendedinfos and
-	the client called setup extendedMapInfos 1 (see setup command).
-	Basically this command is made of a block telling what infos comes
-	with this command, a block telling what length this info is and then
-	the infos themselfes. Here is described more in details those blocks.
-	<what> (uses N bytes)
-		How to know N?
-		In each byte, if the highest bit (bit 7) is set, this mean
-		another byte will follow. This would allow easy extension of protocol
-		without breaking client and needing a new command.
-		Here is described, for each byte, the signifiance of the bits:
-		Byte 0:
-			bit 0 EMI_NOREDRAW
-					Tells the client it's useless to redraw screen immediatly,
-					another map command will follow.
-			bit 1 EMI_SMOOTH
-					Tells the client there is datas in the [datas] blocks about
-					smoothing.
-			bit 7 EMI_HASMOREBITS
-					Tells the client to read the next byte as part of the <what>
-					block too. See above signifiance of higher bit.
-	<length> (uses 1 byte)
-		A one byte info describing the size (in bytes) of each data block. So
-		each data block may have a size of 0 to 255 bytes. Note that all data blocks
-		send in one mapextended command have the same size but different
-		mapextended commands may have different blocksize, even with same datas
-		present.
-	Following is a set of blocks made of a <coord> and 0 to 3 <data>
-	<coord> (uses 2 bytes)
-		This is the same as for the map1 and map1a commands, except the darkness bit
-		is reserved for future use. If it is set to 1, the next byte will be part
-		of the coords too (for larger visible map, but not used yet).
-	<data> (uses <length> bytes)
-		the coord block tells the client which square is concerned and which layers
-		in this square are concerned. According to this there may be up to 3 <data>
-		blocks following the <coord> block (same as for map1 and map1a). Ok, now
-		what stand in those <data>?
-		First each <data> block has a length determined by the <length> block. So
-		if ther are parts of the data the client may not understand, it's ok, he will
-		skip to the end of the <data> block, jumoing to the next. Should help add
-		additionnal informations. Since the protocol evolved as on timeline basis.
-		If a client can't understand a data type cause it is too old, he won't
-		understand the next one too, etc, until the next <data> block is reached.
-		So to prevent problem, the server take care to put informations in the data
-		block following the order of protocol evolution. If server need to
-		say to the client A BB C, assuming that A was defined in the
-		protocol before BB was defined which was before C was defined, it would say
-		ABBC and never ACBB. Now let's say later a developper want to extend BB to BBB,
-		the server should put the datas in the following order: ABBCB  cause the last B
-		is more recent in protocol than the 2 first BB and the C. All this make sure
-		there will be no mistakes or conflict between different protocol versions.
-		Ok, following is the informations which may be present in a <data> block if
-		the corresponding flags are put.
-
-		if EMI_SMOOTH is present in <WHAT>
-			1 byte telling the smoothlevel of the object at <coord>
-				see developper notes on smoothing to know what this means. (TODO)
-
-		<data> stops here for now. Later there will be datas for sending text from
-		a specific location, telling client to play special effects, etc.
-		gime some time
-									Tchize.
-
-
 ******************************************************************************
 SOUND RELATED COMMANDS:
 
@@ -1203,8 +965,6 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    this does not allow the client to cheat.  In the case of the
 	    old 'map' protocol command, turning darkness off will result
 	    in the masking faces not getting sent to the client.
-	    Note: This is ignored if the map2 protocol command is being
-	    used, as darkness is always set then.
 
 	exp64: If true, client can handle the 64 bit exp values that
 	    are now used.  Otherwise, values are sent as 32 bit.  Setting
@@ -1215,7 +975,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	extendedMapInfos (0/1)
 	    Toggle sending from server of extended map informations.
-  	    What lies in this extended info depended on what extended
+	    What lies in this extended info depended on what extended
 	    infos the client asked. See ToggleExtendedInfos command for
 	    details.
 
@@ -1238,30 +998,10 @@ S->C: setup <option1> <value1> <option2> <value2>
         Client will probably always send 1. Server will reply with 1 if it
         supports the 'inscribe' command, 0 else.
 
-	map1cmd: parameter is an integer in string form like above.
-	   this requests the server to use/not use the map1 protocol
-	   command.  Note that if the map size is greater than 11 in either
-	   direction, the server will use the map1 protocol command no
-	   matter what.  This parameter can be useful if the client wants
-	   the map1 protocol command for smaller maps because of the
-	   the additional information provided.
-	   Note that the server will return the mode it will be using
-	   when it sends back the setup command, and not necessarily
-	   what the client requests.  Thus, if the mapsize is 15x15,
-	   and the client does a 'setup map1cmd 0', the server will
-	   send back a 'setup map1cmd 1' because it will still end up
-	   using the map1cmd due to the map size.
-
-	map1acmd:  Specifies that the client uses the map1a protocol format -
-	    this is largely the same as the map1 command, but adds support
-	    for big images.
-
 	map2cmd: This indicates client support for the map2 protocol command.
 	    See the map2 protocol details above for the main differences.
 	    Note that if map2 protocol is used, the following setup commands
 	    have no effect, either as being redundant or not applicable:
-	    darkness: always on
-	    extendedMapInfos: Data is included in map2
 
 	mapsize x X y
 	    Sets the map size to x X y.  Note the spaces here are only for
@@ -1703,7 +1443,7 @@ SC version 1026 -> 1027: Add requestinfo/replyinfo commands - client
 can check this to know if it should expect a replyinfo to its requestinfo.
 
 SC version 1027 -> 1028: mostly remove obsolete commands:
- image, face, face1
+ image, face, face1, map, map1, map1a
 
 ------------------------------------------------------------------------------
 Todo:

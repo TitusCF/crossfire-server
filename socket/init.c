@@ -107,14 +107,12 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->facecache = 0;
     ns->sound = 0;
     ns->monitor_spells = 0;
-    ns->mapmode = Map0Cmd;
+    ns->mapmode = Map2Cmd;
     ns->darkness = 1;
     ns->status = Ns_Add;
     ns->mapx = 11;
     ns->mapy = 11;
     ns->newmapcmd= 0;
-    ns->ext_mapinfos=0; /*extendedmapinfo datas*/
-    ns->EMI_smooth=0; 
     ns->look_position = 0;
     ns->update_look = 0;
     ns->has_readable_type = 0;

@@ -79,13 +79,14 @@ struct statsinfo {
 
 enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
 
-/* Only one map mode can actually be used, so lets make it a switch
+/**
+ * Only one map mode can actually be used, so lets make it a switch
  * instead of having a bunch of different fields that needed to
  * get toggled.  Note ordering here is important - 
- * Map2Cmd > Map1aCmd > Map1Cmd.  This way, when a new feature is
+ * This way, when a new feature is
  * added, a simple > compare can be done instead a bunch of ==
  */
-enum MapMode {Map0Cmd = 0, Map1Cmd = 1, Map1aCmd=2, Map2Cmd = 3 };
+enum MapMode { Map2Cmd = 0 };
 
 /* The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
@@ -131,11 +132,9 @@ typedef struct socket_struct {
     uint16  look_position;  /* start of drawing of look window */
     uint8   mapx, mapy;	    /* How large a map the client wants */
     uint8   faceset;	    /* Set the client is using, default 0 */
-    uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
     uint32	is_bot:1;		/* Client shouldn't be reported to metaserver */
     /* Below are flags for extedend infos to pass to client 
      * with S->C mapextended command */
-    uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/
     uint32  want_pickup:1;  /**< Client wants pickup information when logging in. */
 } socket_struct;
 

@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete 'map1' and 'map1a' modes.
+ doc/Developers/protocol
+ include/newserver.h
+ socket/init.c request.c
+Nicolas Weeger 2007-06-09
+
 Remove obsolete 'item' command, always assume 'item2'.
  doc/Developers/protocol
  include/newserver.h
