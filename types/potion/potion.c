@@ -29,7 +29,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret potion_type_apply(ob_methods *context, object *op,
+static method_ret potion_type_apply(ob_methods *context, object *potion,
     object* applier, int aflags);
 
 /**
@@ -43,7 +43,7 @@ void init_type_potion(void)
 /**
  * Handles applying a potion.
  * @param context The method context
- * @param op The potion to apply
+ * @param potion The potion to apply
  * @param applier The object attempting to apply the potion
  * @param aflags Special flags (always apply/unapply)
  * @return METHOD_OK unless failure for some reason.
