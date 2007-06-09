@@ -441,19 +441,12 @@ C->S: inscribe 0 <tag1> <tag2>
 
 Server updates to client:
 
-S->C: item1 <location><tag1><flags1><weight1><face1><name1><anim1>
-	<animspeed1><nrof1><object2....>
-
 S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 	<animspeed1><nrof1><type1><object2....>
 
 	Sends item information to the client.  All parameters are sent as 4
 	byte ints, except for name, anim, animspeed and (in the case of the
 	item2 command) type.
-
-	The item1 command is an extension of the item command.  It includes
-	additional fields.  It has replaced the item command, which is no
-	longer detailed here.
 
 	location is where the object is located (0=ground, any other value
 	means is the tag of the object (either player or container)).  This
@@ -493,8 +486,6 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 
 	nrof:  How many objects comprise this item.  This is used for
 	the name field and calculating total weight.  It is 4 bytes.
-
-	item2 is an extension, and adds the following information:
 
 	type: A numeric type id for the item.  The only meaining of this
 	value is really for sorting - all armors will have type values
@@ -1220,6 +1211,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    this flag also means that skill exp will be sent, and it will
 	    be sent in revised method as described in the stats command.
 	    Value is an integer in string format.
+	    This is always the default on servers with protocol version >=1028.
 
 	extendedMapInfos (0/1)
 	    Toggle sending from server of extended map informations.
@@ -1245,12 +1237,6 @@ S->C: setup <option1> <value1> <option2> <value2>
     inscribe (0/1):
         Client will probably always send 1. Server will reply with 1 if it
         supports the 'inscribe' command, 0 else.
-
-	itemcmd (1/2):
-	    Defines the revision of the item command that will be used to send
-	    information about objects. If set to 1 (the default) item1 commands
-	    will be sent. If set to 2, item2 commands will be sent. This may in
-	    future accept extra values beyond these two.
 
 	map1cmd: parameter is an integer in string form like above.
 	   this requests the server to use/not use the map1 protocol

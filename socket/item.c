@@ -190,8 +190,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     SockList_AddChar(sl, (char) anim_speed);
     SockList_AddInt(sl, head->nrof);
 
-    if (ns->itemcmd == 2)
-        SockList_AddShort(sl, head->client_type);
+    SockList_AddShort(sl, head->client_type);
 
     SET_FLAG(head, FLAG_CLIENT_SENT);
 }
@@ -230,7 +229,7 @@ void esrv_draw_look(object *pl)
     sl.buf=malloc(MAXSOCKSENDBUF);
 
     Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
-    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+    sprintf((char*)sl.buf,"item2 ");
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, 0);
@@ -249,8 +248,7 @@ void esrv_draw_look(object *pl)
         SockList_AddShort(&sl,0);
         SockList_AddChar(&sl, 0);
         SockList_AddInt(&sl, 0);
-        if (pl->contr->socket.itemcmd == 2)
-            SockList_AddShort(&sl, 0);
+        SockList_AddShort(&sl, 0);
     }
 
     if (pl->contr->transport) {
@@ -285,8 +283,7 @@ void esrv_draw_look(object *pl)
                 SockList_AddShort(&sl,0);
                 SockList_AddChar(&sl, 0);
                 SockList_AddInt(&sl, 0);
-                if (pl->contr->socket.itemcmd == 2)
-                    SockList_AddShort(&sl, 0);
+                SockList_AddShort(&sl, 0);
                 break;
             }
             if (tmp->head) head = tmp->head;
@@ -297,7 +294,7 @@ void esrv_draw_look(object *pl)
 
             if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+                sprintf((char*)sl.buf,"item2 ");
                 sl.len=strlen((char*)sl.buf);
                 SockList_AddInt(&sl, 0);
                 got_one=0;
@@ -325,7 +322,7 @@ void esrv_send_inventory(object *pl, object *op)
     sl.len=strlen((char*)sl.buf);
     Send_With_Handling(&pl->contr->socket, &sl);
 
-    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+    sprintf((char*)sl.buf,"item2 ");
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, op->count);
@@ -347,7 +344,7 @@ void esrv_send_inventory(object *pl, object *op)
                  */
             if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+                sprintf((char*)sl.buf,"item2 ");
                 sl.len=strlen((char*)sl.buf);
                 SockList_AddInt(&sl, op->count);
                 got_one=0;
@@ -495,7 +492,7 @@ void esrv_send_item(object *pl, object*op)
 
     sl.buf=malloc(MAXSOCKSENDBUF);
 
-    sprintf((char*)sl.buf,"item%d ", pl->contr->socket.itemcmd);
+    sprintf((char*)sl.buf,"item2 ");
     sl.len=strlen((char*)sl.buf);
 
     if (op->head) op=op->head;

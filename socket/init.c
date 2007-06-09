@@ -113,7 +113,6 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->mapx = 11;
     ns->mapy = 11;
     ns->newmapcmd= 0;
-    ns->itemcmd = 1;	/* Default is version item1 command*/
     ns->ext_mapinfos=0; /*extendedmapinfo datas*/
     ns->EMI_smooth=0; 
     ns->look_position = 0;

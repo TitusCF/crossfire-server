@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete 'item' command, always assume 'item2'.
+ doc/Developers/protocol
+ include/newserver.h
+ socket/init.c item.c request.c
+Nicolas Weeger 2007-06-09
+
 Assume clients always use 64b experience mode (commit for that support: MSW 2003-05-17).
  include/newserver.h
  socket/init.c request.c

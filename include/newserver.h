@@ -130,7 +130,6 @@ typedef struct socket_struct {
     enum MapMode mapmode;   /* Type of map commands the client wants. */
     uint16  look_position;  /* start of drawing of look window */
     uint8   mapx, mapy;	    /* How large a map the client wants */
-    uint8   itemcmd;	    /* What version of the 'item' protocol command to use */
     uint8   faceset;	    /* Set the client is using, default 0 */
     uint32  ext_mapinfos:1;  /* If true client accept additionnal info on maps*/
     uint32	is_bot:1;		/* Client shouldn't be reported to metaserver */

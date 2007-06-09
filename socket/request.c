@@ -187,19 +187,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
             sprintf(tmpbuf,"%d", ns->faceset);
             safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"itemcmd")) {
-                /* Version of the item protocol command to use.  Currently,
-                 * only supported versions are 1 and 2.  Using a numeric
-                 * value will make it very easy to extend this in the future.
-                 */
-            char tmpbuf[20];
-            int q = atoi(param);
-            if (q<1 || q>2) {
-                strcpy(tmpbuf,"FALSE");
-            } else  {
-                ns->itemcmd = q;
-                sprintf(tmpbuf,"%d", ns->itemcmd);
-            }
-            safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            /* client ignore the value anyway. */
+            safe_strcat(cmdback, "2", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"mapsize")) {
             int x, y=0;
             char tmpbuf[MAX_BUF], *cp;
