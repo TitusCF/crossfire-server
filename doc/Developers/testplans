@@ -108,47 +108,23 @@ Testcases will share some include files not present in crossfire core. Those
 test specific headers will be put in includes
 
 
+How to add a subdirectory to test/
+==================================
+Directory to create is assumed to be "bugs/bugtrack"
 
+Steps:
+* edit test/Makefile.am, add in the SUBDIR line "bugs"
+* copy eg unit/Makefile.am to bugs/Makefile.am
+* edit this file:
+ * change the values for CHECK_FOLDER to bugs (will then read "CHECK_FOLDER=bugs")
+ * change the SUBDIRS line to "bugtrack"
+* copy eg unit/server/Makefile.am to bugs/bugtrack/Makefile.am
+* edit this file:
+ * change the TESTS line to add your files
+ * change CHECK_FOLDER to bugs/bugtrack
+ * change CHECK_PARENT_NAME to Bugs
+* in server root, edit configure.ac to add to Makefile output test/bugs/Makefile and
+ test/bugs/bugtrack/Makefile
+* in server root, run "sh autogen.sh" to regenerate the Makefiles
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-*** old test plan file ***
-This is kept below for history reason and as a guide to automated map testing.
-Don't rely on this if you develop new features
-
-*** old test plan file ***
-*** old test plan file ***
-
-This file contains various test plans when making changes to the code.
-These steps are intended to give people an idea of possible things to
-try out when changing the code.
-
- Please add to this file as you find bugs and develope some testing
-plan to verify the bugs.  This is useful for future developers.
-
-Try to organize the tests into groups that exercise that specific
-area, eg, don't mix something that tests spell functionality in the
-same area that deals with map loading.
-
-------------------------------------------------------------------------------
-Map Loading/Saving and Exit code.
-
-1) Enter map not loaded before.  Does it load correctly.  Leave an item there
-for future reference.
-2) Exit map and re-enter quickly.  Is it loaded correctly?  Is that item you
-left there?
-3) Exit map, and wait for it to swap out.  Then re-enter.  Is that item there.
-4) Repeat steps 1-3 with a per player unique map.
-5) Repeat steps 1-3 with a map that has the outdoor flag set
-6) Kill server, and re-run tests.
+Your new test should be ready to run.
