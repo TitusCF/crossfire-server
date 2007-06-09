@@ -1618,10 +1618,6 @@ static int kill_object(object *op,int dam, object *hitter, int type)
             query_name(hitter, name_hitter, MAX_BUF);
         else
             name_hitter[0] = '\0';
-	log_kill(owner->name,
-		 name_op,op->type,
-                (owner!=hitter) ? name_hitter : NULL,
-                (owner!=hitter) ? hitter->type : 0);
 
 	/* Log players killing other players - makes it easier to detect
 	 * and filter out malicious player killers - that is why the

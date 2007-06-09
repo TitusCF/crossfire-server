@@ -593,30 +593,3 @@ void draw_magic_map(object *pl)
     free(sl.buf);
     free(map_mark);
 }
-
-
-/**
- * Send a kill log record to sockets
- */
-
-void log_kill(const char *Who,
-            const char *What, int WhatType,
-            const char *With, int WithType)
-{
-    int i;
-    size_t len;
-    char buf[MAX_BUF];
-
-    if (With!=NULL) {
-	snprintf(buf, MAX_BUF, "%s\t%s\t%d\t%s\t%d\n",Who,What,WhatType,With,WithType);
-    }
-    else {
-	snprintf(buf,MAX_BUF, "%s\t%s\t%d\n",Who,What,WhatType);
-    }
-    len=strlen(buf);
-    for(i=1; i<socket_info.allocated_sockets; i++) {
-	if (init_sockets[i].old_mode == Old_Listen) {
-	    cs_write_string(&init_sockets[i], buf, len);
-	}
-    }
-}

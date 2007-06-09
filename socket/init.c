@@ -111,8 +111,6 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->mapmode = Map0Cmd;
     ns->darkness = 1;
     ns->status = Ns_Add;
-    ns->comment = NULL;
-    ns->old_mode = 0;
     ns->mapx = 11;
     ns->mapy = 11;
     ns->newmapcmd= 0;
@@ -330,8 +328,6 @@ void free_newsocket(socket_struct *ns)
 	FREE_AND_CLEAR(ns->stats.range);
     if (ns->stats.title)
         FREE_AND_CLEAR(ns->stats.title);
-    if (ns->comment)
-	FREE_AND_CLEAR(ns->comment);
     if (ns->host)
 	FREE_AND_CLEAR(ns->host);
     if (ns->inbuf.buf)

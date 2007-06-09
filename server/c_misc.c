@@ -1169,34 +1169,6 @@ int command_players(object *op, char *paramss)
     return 0;
 }
 
-
-
-int command_logs (object *op, char *params)
-{
-    int i;
-    int first;
-
-    first=1;
-    for(i=2; i<socket_info.allocated_sockets; i++) {
-	if (init_sockets[i].old_mode == Old_Listen) {
-	    if (first) {
-		draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			      "Kill-logs are sent to:", NULL);
-		first=0;
-	    }
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				 "%s: %s",
-				 "%s: %s",
-				 init_sockets[i].host,init_sockets[i].comment);
-	}
-    }
-    if (first) {
-	draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "Nobody is currently logging kills.", NULL);
-    }
-    return 1;
-}
-
 int command_applymode(object *op, char *params)
 {
     unapplymode unapply = op->contr->unapply;

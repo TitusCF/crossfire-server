@@ -24,7 +24,6 @@ void rangetostring(const object *pl, char *obuf);
 void set_title(const object *pl, char *buf);
 void magic_mapping_mark(object *pl, char *map_mark, int strength);
 void draw_magic_map(object *pl);
-void log_kill(const char *Who, const char *What, int WhatType, const char *With, int WithType);
 /* init.c */
 void init_connection(socket_struct *ns, const char *from_ip);
 void init_ericserver(void);

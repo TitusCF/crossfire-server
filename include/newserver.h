@@ -79,9 +79,6 @@ struct statsinfo {
 
 enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
 
-/* Reserver 0 for neither of these being set */
-enum Old_Mode {Old_Listen=1, Old_Player=2};
-
 /* Only one map mode can actually be used, so lets make it a switch
  * instead of having a bunch of different fields that needed to
  * get toggled.  Note ordering here is important - 
@@ -142,10 +139,6 @@ typedef struct socket_struct {
      * with S->C mapextended command */
     uint32  EMI_smooth:1;   /* Send smooth in extendmapinfos*/
     uint32  want_pickup:1;  /**< Client wants pickup information when logging in. */
-
-    /* Below here is information only relevant for old sockets */
-    char    *comment;	    /* name or listen comment */
-    enum Old_Mode old_mode;
 } socket_struct;
 
 

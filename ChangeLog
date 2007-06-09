@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete old_mode support. Remove unused log_kill stuff.
+ include/newserver.h sockproto.h sproto.h
+ socket/init.c info.c
+ server/attack.c c_misc.c commands.c
+Nicolas Weeger 2007-06-09
+
 Remove obsolete image/face/face1 support.
  doc/Developers/protocol
  include/newserver.h

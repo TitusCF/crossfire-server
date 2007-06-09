@@ -238,7 +238,6 @@ command_array_struct WizCommands [] = {
   {"kick", (command_function)command_kick, 0.0},
   {"learn_special_prayer", command_learn_special_prayer, 0.0},
   {"learn_spell", command_learn_spell, 0.0},
-  {"logs", command_logs,	0.0},
   {"malloc", command_malloc,	0.0},
   {"nodm", command_nowiz,0.0},
   {"nowiz", command_nowiz,0.0},
