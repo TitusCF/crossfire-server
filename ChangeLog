@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+include/libproto.h: Update prototypes.
+Alex Schultz 2007-06-09
+
 Remove badly implemented quest support.
 Removed files:
  common/quest.c

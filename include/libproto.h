@@ -127,9 +127,9 @@ extern void calc_perm_exp(object *op);
 extern sint64 check_exp_loss(const object *op, sint64 exp);
 extern sint64 check_exp_adjust(const object *op, sint64 exp);
 extern void change_exp(object *op, sint64 exp, const char *skill_name, int flag);
-extern void share_exp(object *op, sint64 exp, const char *skill_name, int flag);
 extern void apply_death_exp_penalty(object *op);
 extern int did_make_save(const object *op, int level, int bonus);
+extern void share_exp(object *op, sint64 exp, const char *skill, int flag);
 /* logger.c */
 extern void LOG(LogLevel logLevel, const char *format, ...);
 /* los.c */
@@ -144,7 +144,7 @@ extern void make_sure_seen(const object *op);
 extern void make_sure_not_seen(const object *op);
 /* map.c */
 extern mapstruct *has_been_loaded(const char *name);
-extern char* create_pathname(const char *name, char *buf, int size);
+extern char *create_pathname(const char *name, char *buf, int size);
 extern void create_overlay_pathname(const char *name, char *buf, int size);
 extern void create_template_pathname(const char *name, char *buf, int size);
 extern int check_path(const char *name, int prepend_dir);
@@ -196,6 +196,7 @@ extern void reset_object(object *op);
 extern void free_key_values(object *op);
 extern void clear_object(object *op);
 extern void copy_object(object *op2, object *op);
+extern void copy_object_with_inv(object *src_ob, object *dest_ob);
 extern object *get_object(void);
 extern void update_turn_face(object *op);
 extern void update_ob_speed(object *op);
@@ -209,6 +210,7 @@ extern void sub_weight(object *op, signed long weight);
 extern void remove_ob(object *op);
 extern object *merge_ob(object *op, object *top);
 extern object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y);
+extern void merge_spell(object *op, sint16 x, sint16 y);
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(const char *arch_string, object *op);
 extern object *get_split_ob(object *orig_ob, uint32 nr, char *err, int size);
@@ -243,7 +245,6 @@ extern const char *get_ob_key_value(const object *op, const char *const key);
 extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
 extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object *tmp);
-extern void copy_object_with_inv(object *src_ob, object *dest_ob);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst, char *path, int size);
 extern void path_normalize(char *path);
@@ -381,7 +382,7 @@ extern void strip_endline(char *buf);
 extern void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize);
 extern void make_list_like(char *input);
 /* loader.c */
-extern int lex_load(int* depth, object** items, int maxdepth, int map_flags, int linemode);
+extern int lex_load(int *depth, object **items, int maxdepth, int map_flags, int linemode);
 extern void yyrestart(FILE *input_file);
 extern void yypop_buffer_state(void);
 extern int yyget_lineno(void);
