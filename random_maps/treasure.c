@@ -220,6 +220,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct *style_map,int n_treasures,RMParms *RP) {
     object *the_chest;
     int i,xl,yl;
+	treasurelist *tlist;
 
     the_chest = create_archetype("chest");  /* was "chest_2" */
 
@@ -237,7 +238,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
         return 0;
     }
 
-    treasurelist *tlist=find_treasurelist("chest");
+    tlist=find_treasurelist("chest");
     the_chest->randomitems=tlist;
     the_chest->stats.hp = n_treasures;
 

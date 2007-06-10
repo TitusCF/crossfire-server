@@ -114,11 +114,12 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
 
     /* fill up the map with the given floor style */
     if ((the_floor=pick_random_object(style_map))!=NULL) {
+		object *thisfloor;
         for(x=0;x<RP->Xsize;x++)
             for(y=0;y<RP->Ysize;y++) {
                 if (GET_MAP_OB(newMap, x, y) != NULL)
                     continue;
-                object *thisfloor = arch_to_object(the_floor->arch);
+                thisfloor = arch_to_object(the_floor->arch);
                 thisfloor->x = x; thisfloor->y = y;
                 insert_ob_in_map(thisfloor,newMap,thisfloor,INS_NO_MERGE | INS_NO_WALK_ON);
             }

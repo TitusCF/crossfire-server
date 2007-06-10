@@ -104,8 +104,8 @@ static PyObject* Crossfire_Player_CanPay( Crossfire_Player* who, PyObject* args 
 
 static PyObject* Player_GetBedMap(Crossfire_Player* whoptr, void* closure)
 {
-    EXISTCHECK(whoptr);
     char bed[200];
+    EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_object_get_string_property(whoptr->obj, CFAPI_PLAYER_PROP_BED_MAP, bed, sizeof(bed)));
 }
 
@@ -152,8 +152,8 @@ static int Player_SetBedY(Crossfire_Player* whoptr, PyObject* value, void* closu
 /* Object properties. Get and maybe set. */
 static PyObject* Object_GetName(Crossfire_Object* whoptr, void* closure)
 {
-    EXISTCHECK(whoptr);
     char name[200];
+    EXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_query_name(whoptr->obj, name, sizeof(name)));
 }
 
@@ -1916,8 +1916,8 @@ static PyObject* Crossfire_Object_Reposition( Crossfire_Object* who, PyObject* a
 
 static PyObject* Crossfire_Object_QueryName( Crossfire_Object* who, PyObject* args )
 {
-    EXISTCHECK(who);
     char name[200];
+    EXISTCHECK(who);
     return Py_BuildValue("s",cf_query_name(who->obj, name, sizeof(name)));
 }
 

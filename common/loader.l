@@ -621,8 +621,8 @@ A	.+
 /* Declare some local variables */
     int ismore=0;
 
-    lex_error=0;
     object* op = items[*depth];
+    lex_error=0;
 
 %}
 

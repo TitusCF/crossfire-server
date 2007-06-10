@@ -652,29 +652,6 @@ SOURCE=..\server\disease.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\server\egoitem.c
-
-!IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
-
-# PROP Intermediate_Dir "FullDebug\server"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
-
-# PROP BASE Intermediate_Dir "Win32_Release\server"
-# PROP Intermediate_Dir "ReleaseQuit\server"
-
-!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
-
-# PROP BASE Intermediate_Dir "Win32_ReleaseNormal\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-# ADD BASE CPP /YX"crossfire32.pch"
-# ADD CPP /YX"crossfire32.pch"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=..\server\gods.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -1970,10 +1947,6 @@ SOURCE=..\common\porting.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\common\quest.c
-# End Source File
-# Begin Source File
-
 SOURCE="..\common\re-cmp.c"
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2127,6 +2100,10 @@ SOURCE=..\types\legacy\apply.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\armour_improver\armour_improver.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\arrow\arrow.c
 # End Source File
 # Begin Source File
@@ -2143,7 +2120,15 @@ SOURCE=..\types\check_inv\check_inv.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\clock\clock.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\common\common_apply.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\trap\common_trap.c
 # End Source File
 # Begin Source File
 
@@ -2171,6 +2156,10 @@ SOURCE=..\types\exit\exit.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\food\food.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\hole\hole.c
 # End Source File
 # Begin Source File
@@ -2179,11 +2168,15 @@ SOURCE=..\types\identify_altar\identify_altar.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\types\item_transformer\item_transformer.c
+SOURCE=..\types\lamp\lamp.c
 # End Source File
 # Begin Source File
 
 SOURCE=..\types\legacy\legacy_describe.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\lighter\lighter.c
 # End Source File
 # Begin Source File
 
@@ -2192,6 +2185,10 @@ SOURCE=..\types\pedestal\pedestal.c
 # Begin Source File
 
 SOURCE=..\types\player_mover\player_mover.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\potion\potion.c
 # End Source File
 # Begin Source File
 
@@ -2207,7 +2204,15 @@ SOURCE=..\types\common\projectile.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\types\rune\rune.c
+SOURCE=..\types\trap\rune.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\scroll\scroll.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\shop_inventory\shop_inventory.c
 # End Source File
 # Begin Source File
 
@@ -2219,7 +2224,15 @@ SOURCE=..\types\sign\sign.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\skillscroll\skillscroll.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\spell_effect\spell_effect.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\spellbook\spellbook.c
 # End Source File
 # Begin Source File
 

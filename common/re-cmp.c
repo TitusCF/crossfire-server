@@ -26,6 +26,7 @@
 #include <limits.h>
 #include <re-cmp.h>
 #include <ctype.h>
+#include <global.h>
 #include <define.h> /* Needed for OUT_OF_MEMORY. */
 
 /* Get prototype functions to prevent warnings. */

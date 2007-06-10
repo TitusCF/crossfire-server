@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix Win32 compilation.
+ common/loader.l logger.c re-cmp.c
+ make_win32/crossfire32.dsp installwin32.bat
+ plugins/cfanim/include/cfanim_proto.h
+ plugins/cfpython/cfpython_object.c
+ random_maps/floor.c treasure.c
+Nicolas Weeger 2007-06-10
+
 utils/mapper.c: fix compilation. Fix exit without path not displayed.
 Nicolas Weeger 2007-06-10
 

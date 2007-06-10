@@ -99,8 +99,8 @@ void LOG (LogLevel logLevel, const char *format, ...)
             fputs(loglevel_names[logLevel], stderr); 
             fputs(buf, stderr); 
             if (time_buf[0] != 0) {
-                fputs(time_buf, strerr);
-                fputs(" ", strerr);
+                fputs(time_buf, stderr);
+                fputs(" ", stderr);
             }
         }
 #else /* not WIN32 */

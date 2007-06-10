@@ -10,6 +10,7 @@ md var
 md var\players
 md var\unique-items
 md var\template-maps
+md var\datafiles
 md share
 md share\help
 md share\plugins
@@ -18,6 +19,7 @@ copy lib\*.path share\*.path
 copy lib\crossfire.0 share\*.*
 copy lib\crossfire.1 share\*.*
 copy lib\help\*.* share\help\*.*
+copy lib\treasures.bld share\treasures
 
 echo off
 echo .
