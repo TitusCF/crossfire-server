@@ -819,44 +819,45 @@ void domap(const char* name)
                     const char* start;
 
                     if (!item->slaying) {
+                        ep[0] = '\0';
                         if (warn_no_path)
                             printf(" exit without any path at %d, %d on %s\n", item->x, item->y, name);
-                        continue;
-                    }
+                    } else {
 
-                    memset(ep, 0, 500);
-                    if (strcmp(item->slaying, "/!"))
-                        strcpy(ep, EXIT_PATH(item));
-                    else
-                    {
-                        if (!item->msg)
-                        {
-                            printf("  random map without message in %s at %d, %d\n", name, item->x, item->y);
-                            continue;
-                        }
-                        /* Some maps have a 'exit_on_final_map' flag, ignore it. */
-                        start = strstr(item->msg, "\nfinal_map ");
-                        if (!start && strncmp(item->msg, "final_map", strlen("final_map")) == 0)
-                            /* Message start is final_map, nice */
-                            start = item->msg;
-                        if (start)
-                        {
-                            char* end = strchr(start + 1, '\n');
-                            start += strlen("final_map") + 2;
-                            strncpy(ep, start, end - start);
-                        }
-                    }
-
-                    if (strlen(ep)) {
-                        path_combine_and_normalize(m->path, ep, exit_path, 500);
-                        create_pathname(exit_path, tmppath, MAX_BUF);
-                        if (stat(tmppath, &stats)) {
-                            printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, name, item->x, item->y);
-                        }
+                        memset(ep, 0, 500);
+                        if (strcmp(item->slaying, "/!"))
+                            strcpy(ep, EXIT_PATH(item));
                         else
                         {
-                            add_map(exit_path, &exits, &exits_count, &exits_allocated);
-                            add_map(exit_path, &maps_list, &maps_count, &count_allocated);
+                            if (!item->msg)
+                            {
+                                printf("  random map without message in %s at %d, %d\n", name, item->x, item->y);
+                            } else {
+                                /* Some maps have a 'exit_on_final_map' flag, ignore it. */
+                                start = strstr(item->msg, "\nfinal_map ");
+                                if (!start && strncmp(item->msg, "final_map", strlen("final_map")) == 0)
+                                    /* Message start is final_map, nice */
+                                    start = item->msg;
+                                if (start)
+                                {
+                                    char* end = strchr(start + 1, '\n');
+                                    start += strlen("final_map") + 2;
+                                    strncpy(ep, start, end - start);
+                                }
+                            }
+                        }
+
+                        if (strlen(ep)) {
+                            path_combine_and_normalize(m->path, ep, exit_path, 500);
+                            create_pathname(exit_path, tmppath, MAX_BUF);
+                            if (stat(tmppath, &stats)) {
+                                printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, name, item->x, item->y);
+                            }
+                            else
+                            {
+                                add_map(exit_path, &exits, &exits_count, &exits_allocated);
+                                add_map(exit_path, &maps_list, &maps_count, &count_allocated);
+                            }
                         }
                     }
                 }
@@ -1738,8 +1739,9 @@ void set_darkness_map( mapstruct* m)
 {
 }
  
-int ob_move_on(object* op, object* victim, object* originator)
+method_ret ob_move_on(object* op, object* victim, object* originator)
 {
+    return METHOD_OK;
 }
  
 object* find_skill_by_number( object* ob, int x )
