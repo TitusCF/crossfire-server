@@ -73,7 +73,6 @@ void add_me_cmd(char *buf, int len, socket_struct *ns);
 void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns);
 void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns);
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns);
-void player_cmd(char *buf, int len, player *pl);
 void new_player_cmd(uint8 *buf, int len, player *pl);
 void reply_cmd(char *buf, int len, player *pl);
 void version_cmd(char *buf, int len, socket_struct *ns);

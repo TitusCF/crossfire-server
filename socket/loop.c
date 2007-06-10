@@ -110,7 +110,6 @@ static struct player_cmd_mapping player_commands[] = {
     { "apply",		apply_cmd,	1},
     { "move",		move_cmd,	1},
     { "reply",		reply_cmd,	0},
-    { "command",	player_cmd,	1},
     { "ncom",		(func_uint8_int_pl)new_player_cmd, 1},
     { "lookat",		look_at_cmd,		1},
     { "lock",		(func_uint8_int_pl)lock_item_cmd,	1},

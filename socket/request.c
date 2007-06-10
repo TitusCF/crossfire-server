@@ -400,66 +400,10 @@ void ask_smooth_cmd(char *buf, int len, socket_struct *ns){
     send_smooth(ns, facenbr);
 }
 
-
-
-
-
 /**
  * This handles the general commands from the client (ie, north, fire, cast,
- * etc.)
- */
-void player_cmd(char *buf, int len, player *pl)
-{
-
-        /* The following should never happen with a proper or honest client.
-         * Therefore, the error message doesn't have to be too clear - if 
-         * someone is playing with a hacked/non working client, this gives them
-         * an idea of the problem, but they deserve what they get
-         */
-    if (pl->state!=ST_PLAYING) {
-        draw_ext_info_format(NDI_UNIQUE, 0,pl->ob,
-                             MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                             "You can not issue commands - state is not ST_PLAYING (%s)",
-                             "You can not issue commands - state is not ST_PLAYING (%s)",
-                             buf);
-        return;
-    }
-        /* Check if there is a count.  In theory, a zero count could also be
-         * sent, so check for that also.
-         */
-    if (atoi(buf) || buf[0]=='0') {
-        pl->count=atoi((char*)buf);
-        buf=strchr(buf,' ');    /* advance beyond the numbers */
-        if (!buf) {
-#ifdef ESRV_DEBUG
-            LOG(llevDebug,"player_cmd: Got count but no command.\n");
-#endif
-            return;
-        }
-        buf++;
-    }
-        /* This should not happen anymore.    */
-    if (pl->ob->speed_left<-1.0) {
-        LOG(llevError,"Player has negative time - shouldn't do command.\n");
-    }
-        /* In c_new.c */
-    execute_newserver_command(pl->ob, (char*)buf);
-        /* Perhaps something better should be done with a left over count.
-         * Cleaning up the input should probably be done first - all actions
-         * for the command that issued the count should be done before
-         * any other commands.
-         */
-
-    pl->count=0;
-
-}
-
-
-/**
- * This handles the general commands from the client (ie, north, fire, cast,
- * etc.).  It is a lot like player_cmd above, but is called with the
- * 'ncom' method which gives more information back to the client so it
- * can throttle.
+ * etc.).  This is called with the 'ncom' method which gives more information back
+ * to the client so it can throttle.
  */
 void new_player_cmd(uint8 *buf, int len, player *pl)
 {

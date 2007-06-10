@@ -261,19 +261,20 @@ Also see the setfacemode command below.
 ******************************************************************************
 COMMANDS RELATING TO PLAYER INPUT AND OUTPUT IN THE INFO WINDOW
 
-C->S: command [count] <txt>
-    command is the protocol command.  It is the <txt> segment which actually
-    includes the command (ie, north, fire, etc.)  There should not be any
-    binary data in the <txt> segment.
+C->S: ncom <packet> <repeat> <command>
+     (ncom = new command)
+     Client sends a command to the server.  Ordinary commands (ie, north,
+     west, apply, maps, etc), might be sent, commands with options may be sent
+     (ie, 'invoke create food of booze', 'cast medium fireball').  There are a
+     few special commands that can also be sent.
 
-    count is an optional value for the number of objects/repeat count
-    (ie, typically used for dropping, but count can be used in other
-    cases)
+     Packet is a 16 bit arbitrary value the server will send back through comc
+     to inform the client of execution end.
 
-    Client sends a command to the server.  Ordinary commands (ie, north,
-    west, apply, maps, etc), might be sent, commands with options may be sent
-    (ie, 'invoke create food of booze', 'cast medium fireball').  There are a
-    few special commands that can also be sent.
+     repeat is a 32 bit value and is the repeat value, or a count value used
+     for instance for dropping.
+
+     command is the actual command data (north, whatever).
 
     'fire' command is a special case.  The server will handle repeat firing.
 
@@ -283,19 +284,6 @@ C->S: command [count] <txt>
     fire commands actually taking some time.)  In some cases, 'fire_stop'
     may be sent almost immediately after the first fire (in cases where the
     player only wants to fire once).
-
-C->S: ncom <packet> <repeat> <command>
-     (ncom = new command)
-     This is a replacement for the 'command' above.  packet is a 16
-     bit value which represents what command this is (used is
-     command below). At current time, only the lowest 8 bits should
-     be used (255 should be a plenty large window) - the other 8 bits
-     are reserved for future flags
-
-     repeat is a 32 bit value and is the repeat value.
-
-     command is the actual command data (north, whatever).  Notes
-     under command above also apply here.
 
 S->C: comc <packet> <time>
      (comc = completed command)
@@ -1443,7 +1431,7 @@ SC version 1026 -> 1027: Add requestinfo/replyinfo commands - client
 can check this to know if it should expect a replyinfo to its requestinfo.
 
 SC version 1027 -> 1028: mostly remove obsolete commands:
- image, face, face1, map, map1, map1a
+ image, face, face1, map, map1, map1a, command
 
 ------------------------------------------------------------------------------
 Todo:
