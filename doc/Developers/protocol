@@ -323,9 +323,9 @@ S->C: query <flags> [text]
 	be multi line, delimited by newlines.  Client should handle this
 	appropriately.
 
-C->S: toggleextendedtext <type>
+C->S: toggleextendedtext <type>...
 	Ask the server to send extended text information for a given type.
-	type is the decimal representation of an int.
+	type is a list of decimal integers.
 	Currently supported/reserved values for types are described in drawextinfo
 
 S->C: ExtendedTextSet <type1> <type2> .... <typen>
