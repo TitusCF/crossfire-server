@@ -15,8 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Partial fix for #1735275: Server sends incorrect spell info data.
+ server/login.c: send spell before calling fix_object() which updates spells.
+Nicolas Weeger 2007-06-10
+
 Tentative fix for #1735272: Server sends invalid item tags
-server/plugins.c: don't send invisible objects, they're never sent to the client.
+ server/plugins.c: don't send invisible objects, they're never sent to the client.
 Nicolas Weeger 2007-06-10
 
 test/bugs/bugtrack/check_1727944.c: fix ininitialized variable, reduce # of tests
