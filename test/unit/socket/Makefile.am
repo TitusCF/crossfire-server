@@ -10,7 +10,9 @@ LDADD = ../../../common/libcross.a  ../../../socket/libsocket.a libstubs.a $(LIB
 	( cd ../../../socket ; make libsocket.a )
 
 
-TESTS= check_image check_info check_init check_item check_loop check_lowlevel check_metaserver check_request check_sounds
+#test unimplemented for now
+#TESTS= check_image check_info check_init check_item check_loop check_lowlevel check_metaserver check_request check_sounds
+TESTS=
 
 
 CHECK_ROOT=../../

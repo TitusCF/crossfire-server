@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Disable unimplemented tests, remove quests tests.
+ test/unit/common/Makefile.am
+ test/unit/common/check_quest.c: removed
+ test/unit/random_maps/Makefile.am
+ test/unit/server/Makefile.am
+ test/unit/socket/Makefile.am
+Nicolas Weeger 2007-06-10
+
 Fix accidentally broken unit test.
  test/unit/common/check_arch.c: use correct type/subtype.
 Nicolas Weeger 2007-06-10
