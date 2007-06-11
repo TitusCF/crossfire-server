@@ -119,23 +119,23 @@ END_TEST
 START_TEST (test_get_archetype_by_type_subtype)
 {
     archetype* arch;
-    arch = get_archetype_by_type_subtype(QUEST,QUEST_IN_PROGRESS);
-    fail_unless(arch!=NULL,"Should be able to find an arch of type quest, subtype quest in progress");
-    fail_unless(arch->clone.type==QUEST,"Arch of type quest, subtype quest in progress shoud have type %d but has type %d",
-            QUEST,arch->clone.type);
-    fail_unless(arch->clone.type==QUEST,"Arch of type quest, subtype quest in progress shoud have subtype %d but has subtype %d",
-            QUEST_IN_PROGRESS,arch->clone.subtype);
-    fail_unless(arch!=NULL,"Should be able to find an arch of type quest, subtype quest in progress");
-    arch = get_archetype_by_type_subtype(QUEST,-1);
-    fail_unless(arch!=NULL,"Should be able to find an arch of type quest, no subtype");
-    fail_unless(arch->clone.type==QUEST,"arch of type quest, no subtype should have type %d but has %d",
-            QUEST,arch->clone.type);
-    arch = get_archetype_by_type_subtype(-1,QUEST_IN_PROGRESS);
-    fail_unless(arch!=NULL,"Should be able to find an arch of type unknown, subtype quest in progress");
-    fail_unless(arch->clone.subtype==QUEST_IN_PROGRESS,"arch of type unknown, subtype quest in progress shoud have subtype %d but has subtype %d",
-                QUEST_IN_PROGRESS,arch->clone.subtype);
+    arch = get_archetype_by_type_subtype(SKILL,SK_LITERACY);
+    fail_unless(arch!=NULL,"Should be able to find an arch of type SKILL, subtype SK_LITERACY");
+    fail_unless(arch->clone.type==SKILL,"Arch of type SKILL, subtype SK_LITERACY shoud have type %d but has type %d",
+            SKILL,arch->clone.type);
+    fail_unless(arch->clone.subtype==SK_LITERACY,"Arch of type SKILL, subtype SK_LITERACY shoud have subtype %d but has subtype %d",
+            SK_LITERACY,arch->clone.subtype);
+    fail_unless(arch!=NULL,"Should be able to find an arch of type quest, subtype SK_LITERACY");
+    arch = get_archetype_by_type_subtype(SKILL,-1);
+    fail_unless(arch!=NULL,"Should be able to find an arch of type SKILL, no subtype");
+    fail_unless(arch->clone.type==SKILL,"arch of type SKILL, no subtype should have type %d but has %d",
+            SKILL,arch->clone.type);
+    arch = get_archetype_by_type_subtype(-1,SK_LITERACY);
+    fail_unless(arch!=NULL,"Should be able to find an arch of type unknown, SK_LITERACY");
+    fail_unless(arch->clone.subtype==SK_LITERACY,"arch of type unknown, subtype quest in progress shoud have subtype %d but has subtype %d",
+                SK_LITERACY,arch->clone.subtype);
     arch = get_archetype_by_type_subtype(-1,-1);
-    fail_unless(arch!=NULL, "Should be able to find arch of type unknow , subtype unknown, despite this being useless");
+    fail_unless(arch!=NULL, "Should be able to find arch of type unknown, subtype unknown, despite this being useless");
     arch = get_archetype_by_type_subtype(OBJECT_TYPE_MAX+1,-1);
     if (arch!=NULL)
         fail("Should be not able to find arch of inexistant type but got %p (%s)",arch, arch->name);
