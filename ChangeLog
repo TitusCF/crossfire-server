@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+test/bugs/bugtrack/check_1727944.c: fix ininitialized variable, reduce # of tests
+ as the test isn't that meaningful.
+Nicolas Weeger 2007-06-10
+
 Disable unimplemented tests, remove quests tests.
  test/unit/common/Makefile.am
  test/unit/common/check_quest.c: removed

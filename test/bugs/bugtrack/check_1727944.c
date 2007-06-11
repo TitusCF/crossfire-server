@@ -382,13 +382,13 @@ START_TEST (test_randommaps)
     }
 #endif
 
-    int test, level, found;
+    int test, level, found = 0;
     object* the_chest, *check;
     mapstruct* map;
     treasurelist *tlist=find_treasurelist("uncommon_items");
     fail_unless(tlist != NULL, "couldn't find treasure list uncommon_items");
 
-    for (test = 0; test < 100; test++) {
+    for (test = 0; test < 10; test++) {
         for (level = 1; level < 120; level++) {
             map = get_empty_map(1, 1);
             fail_unless(map != NULL, "failed to get empty map");
