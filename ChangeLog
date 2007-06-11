@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tentative fix for #1735272: Server sends invalid item tags
+server/plugins.c: don't send invisible objects, they're never sent to the client.
+Nicolas Weeger 2007-06-10
+
 test/bugs/bugtrack/check_1727944.c: fix ininitialized variable, reduce # of tests
  as the test isn't that meaningful.
 Nicolas Weeger 2007-06-10

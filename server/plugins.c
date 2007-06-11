@@ -207,6 +207,9 @@ static void send_removed_object(object *op)
         /* no action necessary: remove_ob() notifies the client */
         return;
     }
+    if (op->invisible)
+        /* invisible items aren't sent to client anyway. */
+        return;
 
     tmp = get_player_container(op->env);
     if (!tmp) {
