@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tentative optimizations, shouldn't cause issues but need testing.
+ common/object.c: fix_object() doesn't need to be called all the time.
+ server/c_object.c: why is player/monster removed then inserted? if special case,
+  please document why
+Nicolas Weeger 2007-06-10
+
 Partial fix for #1735275: Server sends incorrect spell info data.
  server/login.c: send spell before calling fix_object() which updates spells.
 Nicolas Weeger 2007-06-10

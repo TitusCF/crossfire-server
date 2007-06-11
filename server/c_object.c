@@ -756,12 +756,12 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
         sell_item(tmp, op);
     }
 
-
+/*
     SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
     insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     CLEAR_FLAG (op, FLAG_NO_APPLY);
-
+*/
     /* Call this before we update the various windows/players.  At least
      * that we, we know the weight is correct.
      */

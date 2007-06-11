@@ -2383,7 +2383,9 @@ object *insert_ob_in_ob(object *op,object *where) {
 
     otmp=get_player_container(where);
     if (otmp&&otmp->contr!=NULL) {
-        if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+        if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER) && (QUERY_FLAG(op, FLAG_APPLIED) || (op->type == SKILL) || (op->glow_radius != 0)))
+            /* fix_object will only consider applied items, or skills, or items with a glow radius.
+               thus no need to call it if our object hasn't that. */
             fix_object(otmp);
     }
 
