@@ -195,11 +195,6 @@ EXTERN racelink *first_race;
 
 #define NROF_COMPRESS_METHODS 4
 EXTERN const char *uncomp[NROF_COMPRESS_METHODS][3];
-/*
- * The editor uses these (will get them out of here later):
- */
-
-EXTERN long editor;     /* if true, edit maps instead of playing (almost obsolete) */
 
 /*
  * Variables set by different flags (see init.c):

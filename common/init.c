@@ -369,7 +369,6 @@ void init_objects(void) {
  */
 
 void init_defaults(void) {
-  editor=0;
   nroferrors=0;
 }
 

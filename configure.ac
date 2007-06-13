@@ -86,27 +86,6 @@ AC_PATH_XTRA
 dnl Some of these checks are probably excessive.  Unfortunately, on
 dnl some systems, to link in Xaw, Xt you need SM, which needs ICE.
 dnl the order of the checks below is important
-OLD_LD_FLAGS="$LDFLAGS"
-LDFLAGS="$X_PRE_LIBS $X_LIBS $X_EXTRA_LIBS"
-
-AC_CHECK_LIB(X11, main, AC_DEFINE(HAVE_LIBX11,[],[Define if libX11 is available]) X11LIBS="$X11LIBS -lX11")
-
-AC_CHECK_LIB(ICE, main, AC_DEFINE(HAVE_LIBICE,[],[Define if libICE is available]) X11LIBS="$X11LIBS -lICE")
-
-AC_CHECK_LIB(SM, main, AC_DEFINE(HAVE_LIBSM,[],[Define if libSM is available]) X11LIBS="$X11LIBS -lSM", , $X11LIBS)
-
-AC_CHECK_LIB(Xext, main,  AC_DEFINE(HAVE_LIBXEXT,[],[Define if libEXT is available]) X11LIBS="$X11LIBS -lXext", , -lX11)
-
-AC_CHECK_LIB(Xt, main,  AC_DEFINE(HAVE_LIBXT,[],[Define if libXT is available]) X11LIBS="$X11LIBS -lXt", , $X11LIBS)
-
-AC_CHECK_LIB(Xmu, main,  AC_DEFINE(HAVE_LIBXMU,[],[Define if libXMU is available]) X11LIBS="$X11LIBS -lXmu", ,$X11LIBS)
-
-AC_CHECK_LIB(Xaw, main, AC_DEFINE(HAVE_LIBXAW,[],[Define if libXAW is available]) X11LIBS="-lXaw $X11LIBS", , $X11LIBS)
-
-LDFLAGS="$OLD_LD_FLAGS"
-X11LIBS="$X_LIBS $X11LIBS"
-
-AC_CHECK_LIB(Xpm, main,  AC_DEFINE(HAVE_LIBXPM,[],[Define if libXpm is available]) X11LIBS="$X11LIBS -lXpm", , $X11LIBS )
 
 AC_CHECK_LIB(m, main)
 
@@ -242,13 +221,6 @@ AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
 
 ########################
-# crossedit compilability check
-CF_CHECK_CROSSEDIT(["$X11LIBS"],
-	[cf_will_build_crossedit="yes"]
-	AC_SUBST(CROSSEDIT, 'crossedit'), 
-	[cf_will_build_crossedit="no"] )
-
-########################
 # CFLogger and CFNewsPaper configuration
 
 AC_ARG_ENABLE(logger,
@@ -275,8 +247,6 @@ CF_CHECK_XSLT(xsltengine)
 AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$enable_check" = "xyes" -a x"$xsltengine" != x])
 AC_SUBST(XSLTENGINE,[$xsltengine])
 AC_OUTPUT([Makefile
-	crossedit/Makefile crossedit/doc/Makefile crossedit/include/Makefile
-	crossedit/Cnv/Makefile crossedit/bitmaps/Makefile
 	doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
@@ -294,7 +264,7 @@ AC_OUTPUT([Makefile
 	devel/Makefile
 	test/Makefile test/include/Makefile test/unit/Makefile 
 	test/templates/Makefile test/toolkit/Makefile
-	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile test/unit/crossedit/Makefile
+	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile
 	test/bugs/Makefile test/bugs/bugtrack/Makefile
         types/Makefile
 	 ])
@@ -313,7 +283,6 @@ AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Build options])
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([    Will build crossedit? (*)            $cf_will_build_crossedit ])
 AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
 
 if test x"$cf_have_libsqlite" = "xyes" ; then
@@ -336,7 +305,3 @@ AC_MSG_NOTICE([    Will process unit testing?           no])
 AC_MSG_NOTICE([      If you are a developer, you MUST install the check framework])
 AC_MSG_NOTICE([      and write automated tests for all your add-ons!])
 fi
-AC_MSG_NOTICE([])
-AC_MSG_NOTICE([  * this check is new and may be inaccurate. If you find it says])
-AC_MSG_NOTICE([  yes but compilation failed or you have good reason to think this])
-AC_MSG_NOTICE([  script guessed wrong, please inform mailing list or sf tracker.])

@@ -245,8 +245,7 @@ static void local_check_loaded_object(object *op) {
             op->gen_sp_armour = op->last_heal;
             op->last_heal = 0;
         }
-        if (editor) ip =0;
-        else ip = calc_item_power(op, 0);
+        ip = calc_item_power(op, 0);
         /* Legacy objects from before item power was in the game */
         if (!op->item_power && ip) {
             if (ip > 3) {

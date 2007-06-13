@@ -15,6 +15,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove Crossedit, replaced by Gridarta. See http://sourceforge.net/projects/gridarta
+for more information.
+Removed paths:
+ crossedit
+ test/unit/crossedit
+Modified paths:
+ acinclude.m4 configure.ac Makefile.am
+ include/autoconf.h.in define.h global.h object.h
+ common/button.c init.c loader.l map.c object.c
+ server/init.c login.c
+ test/bugs/bugtrack/check_1727944.c
+ test/unit/Makefile.am
+Nicolas Weeger 2007-06-13
+
 Add some unit tests.
  test/unit/server/check_c_object.c Makefile.am
  test/unit/common/check_object.c

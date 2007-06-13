@@ -281,38 +281,6 @@ int main ()
 ])
 
 
-dnl CF_CHECK_CROSSEDIT(X11LIBS, ACTION-IF-FOUND , ACTION-IF-NOT-FOUND)
-dnl check if a sample X test code can compile
-dnl
-dnl The distcheck builds the source in a different area, so
-dnl need to make sure srcdir is set.
-
-AC_DEFUN([CF_CHECK_CROSSEDIT],[
-
-    ac_save_LIBS="$LIBS"
-
-    LIBS="$1 $LIBS" 
-    OCFLAGS=$CFLAGS
-    CFLAGS="-I./${srcdir}/include -I./${srcdir}/crossedit/include"
-    AC_MSG_CHECKING(for crossedit required headers)
-    AC_TRY_LINK([
-#include <Posix.h>
-#include <Xaw.h>
-#include <Ansi.h>
-#include <config.h>
-/*include <includes.h>*/
-#include <debug.h>
-#include <assert.h>
-
-    ], ,
-	AC_MSG_RESULT(yes)
-	[$2],
-	AC_MSG_RESULT(no)
-	[$3])
-    LIBS="$ac_save_LIBS"
-    CFLAGS=$OCFLAGS
-])
-
 dnl CF_IS_XSLT_COMPLIANT(progpath,ACTION-IF-FOUND, ACTION_IF_NOT_FOUND)
 dnl check for xslt compliance of a given prog, prog must be a full executable 
 dnl execution command, in this command, this substitution will be donne:

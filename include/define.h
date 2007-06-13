@@ -661,8 +661,6 @@ typedef unsigned char	MoveType;
 #define MAX_INV_SIZE		40	/* For initializing arrays */
 #define MAX_LOOK_SIZE		40	/* ditto for the look-window */
 
-#define EDITABLE(xyz)		((xyz)->arch->editable)
-
 #define E_MONSTER		0x00000001
 #define E_EXIT			0x00000002
 #define E_TREASURE		0x00000004

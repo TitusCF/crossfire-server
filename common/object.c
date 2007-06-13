@@ -794,7 +794,7 @@ void copy_object(object *op2, object *op) {
     if (op->arch->reference_count > 0)
         op->arch->reference_count++;
 
-    if((op2->speed<0) && !editor)
+    if (op2->speed<0)
         op->speed_left=op2->speed_left-RANDOM()%200/100.0;
 
     /* Copy over key_values, if any. */
@@ -1412,8 +1412,6 @@ void sub_weight (object *op, signed long weight) {
  * object will have no environment.  If the object previously had an
  * environment, the x and y coordinates will be updated to
  * the previous environment.
- *
- * Beware: This function is called from the editor as well!
  *
  * @param op
  * object to remove. Must not be removed yet, else abort() is called.

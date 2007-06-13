@@ -305,7 +305,6 @@ typedef struct archt {
     struct archt *head;	    /**< The main part of a linked object */
     struct archt *more;	    /**< Next part of a linked object */
     object clone;	    /**< An object from which to do copy_object() */
-    uint32 editable;	    /**< Editable flags (mainly for editor) */
     sint8   tail_x, tail_y; /**< Where the lower right most portion of the object is
                              * in comparison to the head. */
     int reference_count; /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */

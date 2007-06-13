@@ -46,8 +46,6 @@ void emergency_save(int flag) {
   player *pl;
 #ifndef NO_EMERGENCY_SAVE
   trying_emergency_save = 1;
-  if(editor)
-    return;
   LOG(llevError,"Emergency save:  ");
   for(pl=first_player;pl!=NULL;pl=pl->next) {
     if(!pl->ob) {

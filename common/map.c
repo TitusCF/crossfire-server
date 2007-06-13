@@ -1117,10 +1117,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                     }
                 }
 
-                if (editor) {
-                    /* Use the value as in the file. */
-                    m->tile_path[tile-1] = strdup_local(value);
-                } else if (*path != '\0') {
+                if (*path != '\0') {
                     /* Use the normalized value. */
                     m->tile_path[tile-1] = strdup_local(path);
                 }

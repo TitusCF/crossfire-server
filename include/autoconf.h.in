@@ -64,9 +64,6 @@
 /* Define to 1 if you have the `dmalloclp' library (-ldmalloclp). */
 #undef HAVE_LIBDMALLOCLP
 
-/* Define if libICE is available */
-#undef HAVE_LIBICE
-
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
@@ -76,29 +73,8 @@
 /* Define if libpng is available */
 #undef HAVE_LIBPNG
 
-/* Define if libSM is available */
-#undef HAVE_LIBSM
-
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
-
-/* Define if libX11 is available */
-#undef HAVE_LIBX11
-
-/* Define if libXAW is available */
-#undef HAVE_LIBXAW
-
-/* Define if libEXT is available */
-#undef HAVE_LIBXEXT
-
-/* Define if libXMU is available */
-#undef HAVE_LIBXMU
-
-/* Define if libXpm is available */
-#undef HAVE_LIBXPM
-
-/* Define if libXT is available */
-#undef HAVE_LIBXT
 
 /* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ

@@ -661,9 +661,6 @@ void add_button_link(object *button, mapstruct *map, int connected) {
         free_objectlink(ol);
         return;
     }
-    if (!editor) button->path_attuned = connected;  /* peterm:  I need this so I can rebuild 
-        a connected map from a template map. */
-/*  LOG(llevDebug,"adding button %s (%d)\n", button->name, connected);*/
 
     SET_FLAG(button,FLAG_IS_LINKED);
 

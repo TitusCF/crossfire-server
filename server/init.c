@@ -1007,10 +1007,6 @@ static void compile_info(void) {
   printf("Use_calloc:\t<false>\n");
 #endif
 
-#ifdef X_EDITOR
-  printf("Editor:\t\t%s\n",X_EDITOR);
-#endif
-
   printf("Max_time:\t%d\n",MAX_TIME);
 
 #ifdef WIN32 /* ***win32 compile_info(): remove execl... */
