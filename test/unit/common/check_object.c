@@ -1198,7 +1198,39 @@ END_TEST
  */
 START_TEST (test_item_matched_string)
 {
-    /*TESTME*/
+    object *pl;
+    object *o1, *o2, *o3, *o4;
+    int val;
+
+    pl = cctk_create_game_object("kobold");
+    fail_unless(pl != NULL, "couldn't create kobold");
+    pl->contr = (player*)calloc(1, sizeof(player));
+    fail_unless(pl->contr != NULL, "couldn't alloc contr");
+
+    o1 = cctk_create_game_object("cloak");
+    fail_unless(o1 != NULL, "couldn't find cloak archetype");
+    o1->title = add_string("of Gorokh");
+    CLEAR_FLAG(o1, FLAG_IDENTIFIED);
+
+    val = item_matched_string(pl, o1, "all");
+    fail_unless(val == 1, "all didn't match cloak");
+    val = item_matched_string(pl, o1, "Gorokh");
+    fail_unless(val == 0, "unidentified cloak matched title with value %d", val);
+    val = item_matched_string(pl, o1, "random");
+    fail_unless(val == 0, "unidentified cloak matched random value with value %d", val);
+
+    SET_FLAG(o1, FLAG_IDENTIFIED);
+    val = item_matched_string(pl, o1, "Gorokh");
+    fail_unless(val != 0, "identified cloak didn't match title with value %d", val);
+
+    o2 = cctk_create_game_object("cloak");
+    SET_FLAG(o2, FLAG_UNPAID);
+    val = item_matched_string(pl, o2, "unpaid");
+    fail_unless(val == 2, "unpaid cloak didn't match unpaid");
+    val = item_matched_string(pl, o2, "cloak");
+    fail_unless(val != 0, "unpaid cloak didn't match cloak with %d", val);
+    val = item_matched_string(pl, o2, "wrong");
+    fail_unless(val == 0, "unpaid cloak matched wrong name %d", val);
 }
 END_TEST
 

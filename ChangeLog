@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add some unit tests.
+ test/unit/server/check_c_object.c Makefile.am
+ test/unit/common/check_object.c
+Nicolas Weeger 2007-06-13
+
 Tentative optimizations, shouldn't cause issues but need testing.
  common/object.c: fix_object() doesn't need to be called all the time.
  server/c_object.c: why is player/monster removed then inserted? if special case,
