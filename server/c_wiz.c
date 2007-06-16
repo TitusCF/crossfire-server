@@ -1449,8 +1449,10 @@ int command_reset (object *op, char *params) {
     }
 
     if (strcmp(params, ".") == 0)
-        params = op->map->path;
-    m = has_been_loaded(params);
+        snprintf(path, sizeof(path), op->map->path);
+    else
+        path_combine_and_normalize(op->map->path, params, path, sizeof(path));
+    m = has_been_loaded(path);
     if (m == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "No such map.", NULL);
