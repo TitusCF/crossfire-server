@@ -25,11 +25,11 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/*  This file contains all the code implementing diseases,
-    except for odds and ends in attack.c and in
-	 living.c*/
-
-
+/**
+ * @file
+ * This file contains all the code implementing diseases,
+ * except for odds and ends in attack.c and in living.c
+ */
 
 /*
 
@@ -154,7 +154,18 @@ inventory.  They themselves do nothing, except modify Symptoms, or
 spread to other live objects.  Symptoms are what actually damage the player:
 these are their own object. */
 
-/* check if victim is susceptible to disease. */
+/**
+ * Check if victim is susceptible to disease. Does not check for immunity.
+ *
+ * @param victim
+ * potential victim.
+ * @param disease
+ * disease to check.
+ * @retval 1
+ * victim can be infected
+ * @retval 0
+ * victim doesn't care for the disease.
+ */
 static int is_susceptible_to_disease(object *victim, object *disease)
 {
     /* Non living and DMs are immune. */
@@ -173,6 +184,15 @@ static int is_susceptible_to_disease(object *victim, object *disease)
     return 0;
 }
 
+/**
+ * Ticks the clock for disease: infect, aggravate symptoms, ...
+ * @param disease
+ * disease to move. Can be removed during processing.
+ * @retval 1
+ * if disease was removed.
+ * @retval 0
+ * disease just moved.
+ */
 int move_disease(object *disease) {
     /*  first task is to determine if the disease is inside or outside of someone.
      * If outside, we decrement 'value' until we're gone.
@@ -213,13 +233,20 @@ int move_disease(object *disease) {
     return 0;
 }
 
-/* remove any symptoms of disease
+/**
+ * Remove any symptoms of disease.
+ *
  * Modified by MSW 2003-03-28 do try to find all the symptom the
  * player may have - I think through some odd interactoins with
  * disease level and player level and whatnot, a player could get
  * more than one symtpom to a disease.
+ *
+ * @param disease
+ * disease to remove. Must be in a living object.
+ * @return
+ * 0
+ * @todo assert() for disease, don't return anything.
  */
-
 static int remove_symptoms(object *disease) {
     object *symptom, *victim=NULL;
 
@@ -233,7 +260,15 @@ static int remove_symptoms(object *disease) {
     return 0;
 }
 
-/* argument is a disease */
+/**
+ * Find a symptom for a disease in disease's env.
+ *
+ * @param disease
+ * disease to search symptom of. Must be in another object.
+ * @return
+ * matching symptom object, NULL if none found.
+ * @todo assert() for env.
+ */
 static object * find_symptom(object *disease) {
   object *walk;
 
@@ -243,7 +278,17 @@ static object * find_symptom(object *disease) {
   return NULL;
 }
 
-/*  searches around for more victims to infect */
+/**
+ * Searches around for more victims to infect.
+ *
+ * @param disease
+ * disease infecting. Can be either on a map or inside another object.
+ * @retval 0
+ * disease not on a map
+ * @retval 1
+ * disease is on a map.
+ * @todo remove dummy return value.
+ */
 static int check_infection(object *disease) {
     int x,y,range, mflags;
     mapstruct *map, *map2;
@@ -277,12 +322,25 @@ static int check_infection(object *disease) {
 }
 
 
-/*  check to see if an object is infectable:
- *	 objects with immunity aren't infectable.
- *	 objects already infected aren't infectable.
- *	 dead objects aren't infectable.
- *	 undead objects are infectible only if specifically named.
-*/
+/**
+ * Try to infect something with a disease. Rules:
+ * - objects with immunity aren't infectable.
+ * - objects already infected aren't infectable.
+ * - dead objects aren't infectable.
+ * - undead objects are infectible only if specifically named.
+ *
+ * @param victim
+ * potential victim to infect.
+ * @param disease
+ * what could infect.
+ * @param force
+ * don't do a random check for infection. Other checks (susceptible to disease,
+ * not immune, and so on) are still done.
+ * @retval 0
+ * victim wasn't infected.
+ * @retval 1
+ * victim was infected.
+ */
 int infect_object(object *victim, object *disease, int force) {
     object *tmp;
     object *new_disease;
@@ -389,10 +447,19 @@ int infect_object(object *victim, object *disease, int force) {
 
 
 
-/*  this function monitors the symptoms caused by the disease (if any),
-causes symptoms, and modifies existing symptoms in the case of
-existing diseases.  */
-
+/**
+ * This function monitors the symptoms caused by the disease (if any),
+ * causes symptoms, and modifies existing symptoms in the case of
+ * existing diseases.
+ *
+ * @param disease
+ * disease acting. Should be in a living object.
+ * @retval 0
+ * nothing changed.
+ * @retval 1
+ * symptoms aggravated.
+ * @todo remove unused return value.
+ */
 static int do_symptoms(object *disease) {
     object *symptom;
     object *victim;
@@ -516,7 +583,17 @@ static int do_symptoms(object *disease) {
 }
 
 
-/*  grants immunity to plagues we've seen before.  */
+/**
+ * Grants immunity to a disease.
+ *
+ * @param disease
+ * disease to grant immunity to. Must be in another object.
+ * @retval 1
+ * immunity was given.
+ * @retval 0
+ * no immunity given.
+ * @todo removed unused return value. assert() for env. Replace 98 hardcoded type.
+ */
 static int grant_immunity(object *disease) {
   object * immunity;
   object *walk;
@@ -539,8 +616,17 @@ static int grant_immunity(object *disease) {
 }
 
 
-/*  make the symptom do the nasty things it does  */
-
+/**
+ * Make the symptom do the nasty things it does.
+ *
+ * @param symptom
+ * symptom to move.
+ * @retval 0
+ * symptom was removed.
+ * @retval 1
+ * symptom striked.
+ * @todo removed unused return value. Check if the victim->map == NULL check isn't badly placed.
+ */
 int move_symptom(object *symptom) {
     object *victim = symptom->env;
     object *new_ob;
@@ -604,8 +690,17 @@ int move_symptom(object *symptom) {
 }
 
 
-/*  possibly infect due to direct physical contact
-  i.e., AT_PHYSICAL-- called from "hit_player_attacktype" */
+/**
+ * Possibly infect due to direct physical contact i.e., AT_PHYSICAL.
+ *
+ * @param victim
+ * potential victim.
+ * @param hitter
+ * who is hitting.
+ * @return
+ * 1
+ * @todo remove dummy return value.
+ */
 
 int check_physically_infect(object *victim, object *hitter) {
   object *walk;
@@ -615,8 +710,16 @@ int check_physically_infect(object *victim, object *hitter) {
   return 1;
 }
 
-/* do the cure disease stuff, from the spell "cure disease" */
-
+/**
+ * Do the cure disease stuff, from the spell "cure disease".
+ * @param sufferer
+ * who is getting cured.
+ * @param caster
+ * spell object used for curing. If NULL all diseases are removed, else only those of lower level than
+ * caster or randomly chosen.
+ * @return
+ * 1.
+ */
 int cure_disease(object *sufferer,object *caster) {
     object *disease, *next;
     int casting_level;

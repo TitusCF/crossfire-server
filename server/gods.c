@@ -26,12 +26,15 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-
-/* Oct 3, 1995 - Code laid down for initial gods, priest alignment, and
+/**
+ * @file
+ * All this functions handle gods: give presents, punish, and so on.
+ *
+ * Oct 3, 1995 - Code laid down for initial gods, priest alignment, and
  * monster race initialization. b.t.
+ *
+ * Sept 1996 - moved code over to object -oriented gods -b.t.
  */
-
-/* Sept 1996 - moved code over to object -oriented gods -b.t. */
 
 #include <global.h>
 #include <living.h>
@@ -52,6 +55,13 @@ static const char *get_god_for_race(const char *race);
 
 /**
  * Returns the id of specified god.
+ *
+ * @param name
+ * god to search for.
+ * @return
+ * identifier of god, -1 if not found.
+ * @todo
+ * couldn't == be used for comparison, if name is a shared string?
  */
 static int lookup_god_by_name(const char *name) {
     int godnr=-1;
@@ -68,7 +78,16 @@ static int lookup_god_by_name(const char *name) {
 }
 
 /**
- * Returns pointer to specified god's object through pntr_to_god_obj.
+ * Returns pointer to specified god's object through pntr_to_god_obj().
+ *
+ * @note
+ * returned object shouldn't be modified.
+ *
+ * @param name
+ * god's name.
+ * @return
+ * pointer to god's object, NULL if doesn't match any god.
+* @todo use const for return value.
  */
 object *find_god(const char *name) {
     object *god=NULL;
@@ -89,8 +108,12 @@ object *find_god(const char *name) {
  * In the case of an NPC, if they have no god, we try and guess
  * who they should worship based on their race. If that fails we
  * give them a random one.
+ *
+ * @param op
+ * object to get name of.
+ * @return
+ * god name, "none" if nothing suitable.
  */
-
 const char *determine_god(object *op) {
     int godnr = -1;
     const char *godname;
@@ -147,7 +170,12 @@ const char *determine_god(object *op) {
 }
 
 /**
- * Returns 1 if s1 and s2 are the same - either both NULL, or strcmp( ) == 0
+ * Compares 2 strings.
+ * @param s1
+ * @param s2
+ * strings to compare.
+ * @return
+ * 1 if s1 and s2 are the same - either both NULL, or strcmp( ) == 0.
  */
 static int same_string (const char *s1, const char *s2)
 {
@@ -214,7 +242,12 @@ static void follower_remove_given_items (object *pl, object *op, object *god)
 
 /**
  * Checks for any occurrence of the given 'item' in the inventory of 'op' (recursively).
- * Returns 1 if found, else 0.
+ * @param op
+ * object to check.
+ * @param item
+ * object to check for.
+ * @return
+ * 1 if found, else 0.
  */
 static int follower_has_similar_item (object *op, object *item)
 {
@@ -234,7 +267,16 @@ static int follower_has_similar_item (object *op, object *item)
 }
 
 /**
- * God gives an item to the player.
+ * God gives an item to the player. Inform player of the present.
+ *
+ * @param op
+ * who is getting the treasure.
+ * @param god
+ * god giving the present.
+ * @param tr
+ * object to give. Should be a single object on list.
+ * @return
+ * 0 if nothing was given, 1 else.
  */
 static int god_gives_present (object *op, object *god, treasure *tr)
 {
@@ -263,11 +305,18 @@ static int god_gives_present (object *op, object *god, treasure *tr)
 /**
  * Player prays at altar.
  * Checks for god changing, divine intervention, and so on.
+ *
+ * @param pl
+ * player praying.
+ * @param altar
+ * altar player's praying on. Doesn't need to be consecrated.
+ * @param skill
+ * praying skill.
  */
 void pray_at_altar(object *pl, object *altar, object *skill) {
     object *pl_god=find_god(determine_god(pl));
 
-    /* Lauwenmark: Handle for plugin altar-parying (apply) event */
+    /* Lauwenmark: Handle for plugin altar-praying (apply) event */
     if (execute_event(altar, EVENT_APPLY,pl,NULL,NULL,SCRIPT_FIX_ALL)!=0)
         return;
 
@@ -368,8 +417,13 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
 
 /**
  * Removes special prayers given by a god.
+ *
+ * @param op
+ * player to remove prayers from.
+ * @param god
+ * god we're removing the prayers.
  */
-static void check_special_prayers (object *op, object *god)
+static void check_special_prayers(object *op, object *god)
 {
     /* Ensure that 'op' doesn't know any special prayers that are not granted
      * by 'god'.
@@ -435,6 +489,12 @@ static void check_special_prayers (object *op, object *god)
  * switched to a new god. It handles basically all the stat changes
  * that happen to the player, including the removal of godgiven
  * items (from the former cult).
+ *
+ * @param op
+ * player switching cults.
+ * @param new_god
+ * new god to worship.
+ * @todo isn't there duplication with check_special_prayers() for spell removing?
  */
 void become_follower (object *op, object *new_god) {
     object *old_god = NULL;                      /* old god */
@@ -620,12 +680,17 @@ void become_follower (object *op, object *new_god) {
 
 /**
  * Forbids or let player use something item type.
- * op is the player.
- * exp_obj is the widsom experience.
- * flag is the flag to check against.
- * string is the string to print out.
+ * @param op
+ * player.
+ * @param exp_obj
+ * praying skill.
+ * @param flag
+ * FLAG_xxx to check against.
+ * @param string
+ * what flag corresponds to ("weapons", "shield", ...).
+ * @return
+ * 1 if player was changed, 0 if no change.
  */
-
 static int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const char *string) {
 
     if(QUERY_FLAG(&op->arch->clone,flag)) {
@@ -651,7 +716,15 @@ static int worship_forbids_use (object *op, object *exp_obj, uint32 flag, const 
 }
 
 /**
- * Unapplies up to number worth of items of type
+ * Unapplies up to number worth of items of type type, ignoring curse status.
+ * This is used when the player gets forbidden to use eg weapons.
+ *
+ * @param op
+ * player we're considering.
+ * @param type
+ * item type to remove.
+ * @param number
+ * maximum number of items to unapply.
  */
 static void stop_using_item ( object *op, int type, int number ) {
   object *tmp;
@@ -666,9 +739,15 @@ static void stop_using_item ( object *op, int type, int number ) {
 /**
  * If the god does/doesnt have this flag, we
  * give/remove it from the experience object if it doesnt/does
- * already exist. For players only!
+ * already exist.
+ *
+ * @param god
+ * god object.
+ * @param exp_ob
+ * player's praying skill object.
+ * @param flag
+ * flag to consider.
  */
-
 static void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
       if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
           SET_FLAG(exp_ob,flag);
@@ -746,6 +825,13 @@ archetype *determine_holy_arch (object *god, const char *type)
 
 /**
  * God helps player by removing curse and/or damnation.
+ *
+ * @param op
+ * player to help.
+ * @param remove_damnation
+ * if set, also removes damned items.
+ * @return
+ * 1 if at least one item was uncursed, 0 else.
  */
 static int god_removes_curse (object *op, int remove_damnation)
 {
@@ -773,6 +859,15 @@ static int god_removes_curse (object *op, int remove_damnation)
     return success;
 }
 
+/**
+ * Converts a level and difficulty to a magic/enchantment value for eg weapons.
+ * @param level
+ * level
+ * @param difficulty
+ * difficulty. Must be 1 or more.
+ * @return
+ * number of enchantments for level and difficulty.
+ */
 static int follower_level_to_enchantments (int level, int difficulty)
 {
     if (difficulty < 1) {
@@ -793,6 +888,17 @@ static int follower_level_to_enchantments (int level, int difficulty)
  * Affected weapon is the applied one (weapon or bow). It's checked to make sure
  * it isn't a weapon for another god. If all is all right, update weapon with
  * attacktype, slaying and such.
+ *
+ * @param op
+ * player
+ * @param god
+ * god enchanting weapon.
+ * @param tr
+ * treasure list item for enchanting weapon, contains the enchantment level.
+ * @param skill
+ * praying skill of op.
+ * @return
+ * 0 if weapon wasn't changed, 1 if changed.
  */
 static int god_enchants_weapon (object *op, object *god, object *tr, object *skill)
 {
@@ -907,8 +1013,14 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
  * Later, this fctn can be used to supply quests, etc for the
  * priest. -b.t.
  * called from pray_at_altar() currently.
+ *
+ * @param op
+ * player praying.
+ * @param god
+ * god player is praying to.
+ * @param skill
+ * player's praying skill.
  */
-
 static void god_intervention (object *op, object *god, object *skill)
 {
     treasure *tr;
@@ -1141,6 +1253,13 @@ static void god_intervention (object *op, object *god, object *skill)
  * Checks and maybe punishes someone praying.
  * All applied items are examined, if player is using more items of other gods,
  * s/he loses experience in praying or general experience if no praying.
+ *
+ * @param op
+ * player the god examines.
+ * @param god
+ * god examining the player.
+ * @return
+ * negative value is god is not pleased, else positive value, the higher the better.
  */
 static int god_examines_priest (object *op, object *god) {
     int reaction=1;
@@ -1178,11 +1297,20 @@ static int god_examines_priest (object *op, object *god) {
 
 /**
  * God checks item the player is using.
- * Return either -1 (bad), 0 (neutral) or
- * 1 (item is ok). If you are using the item of an enemy
+ * If you are using the item of an enemy
  * god, it can be bad...-b.t.
+ *
+ * @param god
+ * god checking.
+ * @param item
+ * item to check.
+ * @retval -1
+ * item is bad.
+ * @retval 0
+ * item is neutral.
+ * @retval 1
+ * item is good.
  */
-
 static int god_examines_item(object *god, object *item) {
     char buf[MAX_BUF];
 
@@ -1216,6 +1344,11 @@ static int god_examines_item(object *god, object *item) {
  * Returns a string that is the name of the god that should be natively worshipped by a
  * creature of who has race *race
  * if we can't find a god that is appropriate, we return NULL
+ *
+ * @param race
+ * race we're getting the god of.
+ * @return
+ * NULL if no matching race, else god's name.
  */
 static const char *get_god_for_race(const char *race) {
     godlink *gl=first_god;
@@ -1231,12 +1364,18 @@ static const char *get_god_for_race(const char *race) {
     }
     return godname;
 }
+
 /**
  * Changes the attributes of cone, smite, and ball spells as needed by the code.
- * Returns false if there was no race to assign to the slaying field of the spell, but
- * the spell attacktype contains AT_HOLYWORD.  -b.t.
+ *
+ * @param spellop
+ * spell object to change.
+ * @param caster
+ * what is casting spellop (player, spell, ...).
+ * @return
+ * 0 if there was no race to assign to the slaying field of the spell, but
+ * the spell attacktype contains AT_HOLYWORD, 1 else.
  */
-
 int tailor_god_spell(object *spellop, object *caster) {
     object *god=find_god(determine_god(caster));
     int caster_is_spell=0;

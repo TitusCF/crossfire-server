@@ -1506,6 +1506,7 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
  * op is the caster.
  * dir is the direction he is casting it in.
  * spell is the spell object.
+ * @todo check spurious cure_disease call (shouldn't the spell's level be sent?) and return check value (always 1).
  */
 int cast_heal(object *op,object *caster, object *spell, int dir) {
     object *tmp;

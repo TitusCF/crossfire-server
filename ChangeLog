@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+  server/disease.c gods.c spell_effect.c
+Nicolas Weeger 2007-06-17
+
 Fix bug #1735464: Reset command does not accept relative names.
  server/c_wiz.c
 Nicolas Weeger 2007-06-16
