@@ -25,14 +25,18 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* Created July 95 to separate skill utilities from actual skills -b.t. */
-
-/* Reconfigured skills code to allow linking of skills to experience
+/**
+ * @file
+ * Various skill-related functions.
+ *
+ * Created July 95 to separate skill utilities from actual skills -b.t.
+ *
+ * Reconfigured skills code to allow linking of skills to experience
  * categories. This is done solely through the init_new_exp_system() fctn.
  * June/July 1995 -b.t. thomas@astro.psu.edu
- */
-
-/* July 1995 - Initial associated skills coding. Experience gains
+ *
+ *
+ * July 1995 - Initial associated skills coding. Experience gains
  * come solely from the use of skills. Overcoming an opponent (in combat,
  * finding/disarming a trap, stealing from somebeing, etc) gains
  * experience. Calc_skill_exp() handles the gained experience using
@@ -273,16 +277,25 @@ object *find_skill_by_number(object *who, int skillno)
     return adjust_skill_tool(who, skill, skill_tool);
 }
 
-/* This changes the objects skill to new_skill.
- * note that this function doesn't always need to get used -
+/**
+ * This changes the objects skill to new_skill.
+ * Note that this function doesn't always need to get used -
  * you can now add skill exp to the player without the chosen_skill being
  * set.  This function is of most interest to players to update
  * the various range information.
- * if new_skill is null, this just unapplies the skill.
- * flag has the current meaning:
- * 0x1: If set, don't update the range pointer.  This is useful when we
+ *
+ * @param who
+ * living to change skill for.
+ * @param new_skill
+ * skill to use. If NULL, this just unapplies the current skill.
+ * @param flag
+ * has the current meaning:
+ * - 0x1: If set, don't update the range pointer.  This is useful when we
  *   need to ready a new skill, but don't want to clobber range.
- * return 1 on success, 0 on error
+ * @retval 0
+ * change failure.
+ * @retval 1
+ * success
  */
 
 int change_skill (object *who, object *new_skill, int flag)
@@ -317,8 +330,12 @@ int change_skill (object *who, object *new_skill, int flag)
     return 1;
 }
 
-/* This function just clears the chosen_skill and range_skill values
- * inthe player.
+/**
+ * This function just clears the chosen_skill and range_skill values
+ * in the player.
+ *
+ * @param who
+ * living to clear.
  */
 void clear_skill(object *who)
 {
@@ -336,19 +353,24 @@ void clear_skill(object *who)
  * We handle all requests for skill use outside of some combat here.
  * We require a separate routine outside of fire() so as to allow monsters
  * to utilize skills.
+ *
  * This is changed (2002-11-30) from the old method that returned
  * exp - no caller needed that info, but it also prevented the callers
  * from know if a skill was actually used, as many skills don't
  * give any exp for their direct use (eg, throwing).
- * It returns 0 if no skill was used.
+ *
+ * Gives experience if appropriate.
+ * 
  * @param op The object actually using the skill
- * @param part An object taking part of the skill usage, used by throwing
+ * @param part actual part using the skill, used by throwing for monsters
  * @param skill The skill used by op
  * @param dir The direction in which the skill is used
  * @param string A parameter string, necessary to use some skills
- * @return 1 if the use of the skill was successful, 0 otherwise
+ * @retval 0
+ * skill failure.
+ * @retval 1
+ * use of the skill was successful.
  */
-
 int do_skill (object *op, object *part, object *skill, int dir, const char *string) {
     int success=0, exp=0;
     object *tmp;
@@ -537,11 +559,14 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
     return success;
 }
 
-/* calc_skill_exp() - calculates amount of experience can be gained for
- * successfull use of a skill.  Returns value of experience gain.
+/**
+ * Calculates amount of experience can be gained for
+ * successfull use of a skill.
+ *
  * Here we take the view that a player must 'overcome an opponent'
  * in order to gain experience. Examples include foes killed combat,
  * finding/disarming a trap, stealing from somebeing, etc.
+ *
  * The gained experience is based primarily on the difference in levels,
  * exp point value of vanquished foe, the relevent stats of the skill being
  * used and modifications in the skills[] table.
@@ -550,19 +575,22 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
  * the algorithm for *PLAYER* experience gain. Monster exp gain is simpler.
  * Monsters just get 10% of the exp of the opponent.
  *
- * players get a ratio, eg, opponent lvl / player level.  This is then
+ * Players get a ratio, eg, opponent lvl / player level.  This is then
  * multiplied by various things.  If simple exp is true, then
  * this multiplier, include the level difference, is always 1.
  * This revised method prevents some cases where there are big gaps
  * in the amount you get just because you are now equal level vs lower
  * level
- * who is player/creature that used the skill.
- * op is the object that was 'defeated'.
- * skill is the skill used.  If no skill is used, it should just
- * point back to who.
  *
+ * @param who
+ * player/creature that used the skill.
+ * @param op
+ * object that was 'defeated'.
+ * @param skill
+ * used skill.  If none, it should just point back to who.
+ * @return
+ * experience for the skill use.
  */
-
 int calc_skill_exp(object *who, object *op, object *skill) {
     int op_exp=0,op_lvl= 0;
     float base,value,lvl_mult=0.0;
@@ -635,17 +663,24 @@ int calc_skill_exp(object *who, object *op, object *skill) {
     return ( (int) value);
 }
 
-/* Learn skill. This inserts the requested skill in the player's
+/**
+ * Player is trying to learn a skill. Success is based on Int.
+ *
+ * This inserts the requested skill in the player's
  * inventory. The skill field of the scroll should have the
  * exact name of the requested skill.
+ *
  * This one actually teaches the player the skill as something
  * they can equip.
- * Return 0 if the player knows the skill, 1 if the
- * player learns the skill, 2 otherwise.
+ *
+ * @retval 0
+ * player already knows the skill.
+ * @retval 1
+ * the player learns the skill.
+ * @retval 2
+ * some failure.
  */
-
-int
-learn_skill (object *pl, object *scroll) {
+int learn_skill (object *pl, object *scroll) {
     object *tmp;
 
     if (!scroll->skill) {
@@ -685,8 +720,17 @@ learn_skill (object *pl, object *scroll) {
     return 1;
 }
 
-/* Gives a percentage clipped to 0% -> 100% of a/b. */
-/* Probably belongs in some global utils-type file? */
+/**
+ * Gives a percentage clipped to 0% -> 100% of a/b.
+ *
+ * @param a
+ * current value
+ * @param b
+ * max value
+ * @return
+ * value between 0 and 100.
+ * @todo Probably belongs in some global utils-type file?
+ */
 static int clipped_percent(sint64 a, sint64 b)
 {
   int rv;
@@ -704,17 +748,23 @@ static int clipped_percent(sint64 a, sint64 b)
   return rv;
 }
 
-/* show_skills() - Meant to allow players to examine
- * their current skill list.
- * This shows the amount of exp they have in the skills.
- * we also include some other non skill related info (god,
+/**
+ * Displays a player's skill list, and some other non skill related info (god,
  * max weapon improvments, item power).
- * Note this function is a bit more complicated becauase we
+ *
+ * This shows the amount of exp they have in the skills.
+ *
+ * Note this function is a bit more complicated because we
  * we want ot sort the skills before printing them.  If we
  * just dumped this as we found it, this would be a bit
  * simpler.
+ *
+ * @param op
+ * player wanting to examine skills.
+ * @param search
+ * optional string to restrict skills to show.
+ * @todo use safe string functions.
  */
-
 void show_skills(object *op, const char* search) {
     object *tmp=NULL;
     char buf[MAX_BUF];
@@ -788,13 +838,22 @@ void show_skills(object *op, const char* search) {
 			 op->contr->item_power, op->level);
 }
 
-/* use_skill() - similar to invoke command, it executes the skill in the
- * direction that the user is facing. Returns false if we are unable to
- * change to the requested skill, or were unable to use the skill properly.
+/**
+ * Similar to invoke command, it executes the skill in the
+ * direction that the user is facing.
+ *
  * This is tricky because skills can have spaces.  We basically roll
  * our own find_skill_by_name so we can try to do better string matching.
+ *
+ * @param op
+ * player trying to use a skill.
+ * @param string
+ * parameter for the skill to use.
+ * @retval 0
+ * unable to change to the requested skill, or unable to use the skill properly.
+ * @retval 1
+ * skill correctly used.
  */
-
 int use_skill(object *op, const char *string) {
     object *skop;
     size_t len;
@@ -844,19 +903,27 @@ int use_skill(object *op, const char *string) {
 
 
 
-/* This finds the best unarmed skill the player has, and returns
+/**
+ * Finds the best unarmed skill the player has, and returns
  * it.  Best can vary a little - we consider clawing to always
  * be the best for dragons.
+ *
  * This could be more intelligent, eg, look at the skill level
  * of the skill and go from there (eg, a level 40 puncher is
  * is probably better than level 1 karate).  OTOH, if you
  * don't bother to set up your skill properly, that is the players
  * problem (although, it might be nice to have a preferred skill
  * field the player can set.
+ *
  * Unlike the old code, we don't give out any skills - it is
  * possible you just don't have any ability to get into unarmed
  * combat.  If everyone race/class should have one, this should
  * be handled in the starting treasurelists, not in the code.
+ *
+ * @param op
+ * player to get skill for.
+ * @return
+ * attack skill, NULL if no suitable found.
  */
 static object *find_best_player_hth_skill(object *op)
 {
@@ -894,14 +961,20 @@ static object *find_best_player_hth_skill(object *op)
     return best_skill;
 }
 
-/* do_skill_attack() - We have got an appropriate opponent from either
+/**
+ * We have got an appropriate opponent from either
  * move_player_attack() or skill_attack(). In this part we get on with
  * attacking, take care of messages from the attack and changes in invisible.
- * Returns true if the attack damaged the opponent.
- * tmp is the targetted monster.
- * op is what is attacking
- * string is passed along to describe what messages to describe
- * the damage.
+ * @param tmp
+ * targetted monster.
+ * @param op
+ * what is attacking.
+ * @param string
+ * describes the damage ("claw", "punch", ...).
+ * @param skill
+ * skill used to damage.
+ * @return
+ * true if the attack damaged the opponent.
  */
 
 static int do_skill_attack(object *tmp, object *op, const char *string, object *skill) {
@@ -1019,8 +1092,9 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
 }
 
 
-/* skill_attack() - Core routine for use when we attack using a skills
- * system. In essence, this code handles
+/**
+ * Core routine for use when we attack using a skills system.
+ * In essence, this code handles
  * all skill-based attacks, ie hth, missile and melee weapons should be
  * treated here. If an opponent is already supplied by move_player(),
  * we move right onto do_skill_attack(), otherwise we find if an
@@ -1029,8 +1103,20 @@ static int do_skill_attack(object *tmp, object *op, const char *string, object *
  * This is called by move_player() and attack_hth()
  *
  * Initial implementation by -bt thomas@astro.psu.edu
+ *
+ * @param tmp
+ * victim. Can be NULL.
+ * @param pl
+ * who is attacking.
+ * @param dir
+ * direction to attack.
+ * @param string
+ * describes the damage ("claw", "punch", ...).
+ * @param skill
+ * attack skill.
+ * @return
+ * 0 if no attack, non zero if an attack was done.
  */
-
 int skill_attack (object *tmp, object *pl, int dir, const char *string, object *skill) {
     sint16 tx,ty;
     mapstruct *m;
@@ -1080,12 +1166,26 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
 }
 
 
-/* attack_hth() - this handles all hand-to-hand attacks -b.t. */
-/* July 5, 1995 - I broke up attack_hth() into 2 parts. In the first
+/**
+ * This handles all hand-to-hand attacks.
+ *
+ * Will unapply equipped weapons if needed.
+ *
+ * July 5, 1995 - I broke up attack_hth() into 2 parts. In the first
  * (attack_hth) we check for weapon use, etc in the second (the new
  * function skill_attack() we actually attack.
+ *
+ * @param pl
+ * object attacking.
+ * @param dir
+ * attack direction.
+ * @param string
+ * describes the attack ("claw", "punch", ...).
+ * @param skill
+ * attack skill used.
+ * @return
+ * 0 if no attack was done, non zero else.
  */
-
 static int attack_hth(object *pl, int dir, const char *string, object *skill) {
     object *enemy=NULL,*weapon;
 
@@ -1112,7 +1212,9 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
 }
 
 
-/* attack_melee_weapon() - this handles melee weapon attacks -b.t.
+/**
+ * This handles melee weapon attacks -b.t.
+ *
  * For now we are just checking to see if we have a ready weapon here.
  * But there is a real neato possible feature of this scheme which
  * bears mentioning:
@@ -1120,8 +1222,18 @@ static int attack_hth(object *pl, int dir, const char *string, object *skill) {
  * we may make this routine handle 'special' melee weapons attacks
  * (like disarming manuever with sai) based on player SK_level and
  * weapon type.
+ *
+ * @param op
+ * living thing attacking.
+ * @param dir
+ * attack direction.
+ * @param string
+ * describes the attack ("claw", "punch", ...).
+ * @param skill
+ * attack skill used.
+ * @return
+ * 0 if no attack was done, non zero else.
  */
-
 static int attack_melee_weapon(object *op, int dir, const char *string, object *skill) {
 
     if(!QUERY_FLAG(op, FLAG_READY_WEAPON)) {

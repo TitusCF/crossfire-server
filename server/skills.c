@@ -25,6 +25,11 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * This file contains core skill handling.
+ */
+
 #include <global.h>
 #include <object.h>
 #ifndef __CEXTRACT__
@@ -35,7 +40,20 @@
 #include <spells.h>
 #include <book.h>
 
-/* adj_stealchance() - increased values indicate better attempts */
+/**
+ * Computes stealing chance.
+ * Increased values indicate better attempts.
+ *
+ * @param op
+ * who is stealing.
+ * @param victim
+ * who to steal from.
+ * @param roll
+ * dice roll.
+ * @return
+ * -1 if op can't steal, else adjusted roll value.
+ * @todo rename roll to something more meaningful (check attempt_steal()).
+ */
 static int adj_stealchance (object *op, object *victim, int roll) {
     object *equip;
 
@@ -84,16 +102,24 @@ static int adj_stealchance (object *op, object *victim, int roll) {
     return roll;
 }
 
-/*
+/**
+ * Steal objects.
  * When stealing: dependent on the intelligence/wisdom of whom you're
  * stealing from (op in attempt_steal), offset by your dexterity and
  * skill at stealing. They may notice your attempt, whether successful
  * or not.
- * op is the target (person being pilfered)
- * who is the person doing the stealing.
- * skill is the skill object (stealing).
+ *
+ * @param op
+ * target (person being pilfered).
+ * @param who
+ * person doing the stealing.
+ * @param skill
+ * stealing skill object.
+ * @retval 0
+ * nothing was stolen.
+ * @retval 1
+ * something was stolen.
  */
-
 static int attempt_steal(object* op, object* who, object *skill)
 {
     object *success=NULL, *tmp=NULL, *next;
@@ -248,6 +274,18 @@ static int attempt_steal(object* op, object* who, object *skill)
 }
 
 
+/**
+ * Main stealing function.
+ *
+ * @param op
+ * thief.
+ * @param dir
+ * direction to steal from.
+ * @param skill
+ * stealing skill.
+ * @return
+ * experience gained for stealing, 0 if nothing was stolen.
+ */
 int steal(object* op, int dir, object *skill)
 {
     object *tmp, *next;
@@ -309,6 +347,20 @@ int steal(object* op, int dir, object *skill)
     return 0;
 }
 
+/**
+ * Attempt to pick a lock. Handles traps.
+ *
+ * @param door
+ * lock to pick.
+ * @param pl
+ * player picking.
+ * @param skill
+ * locking skill.
+ * @retval 0
+ * no lock was picked.
+ * @retval 1
+ * door was locked.
+ */
 static int attempt_pick_lock (object *door, object *pl, object *skill)
 {
     int difficulty= pl->map->difficulty ? pl->map->difficulty : 0;
@@ -330,10 +382,21 @@ static int attempt_pick_lock (object *door, object *pl, object *skill)
 }
 
 
-/* Implementation by bt. (thomas@astro.psu.edu)
+/**
+ * Lock pick handling.
+ *
+ * Implementation by bt. (thomas@astro.psu.edu)
  * monster implementation 7-7-95 by bt.
+ *
+ * @param pl
+ * player picking the lock.
+ * @param dir
+ * direction to pick.
+ * @param skill
+ * lock picking skill.
+ * @return
+ * experience for picking a lock, 0 if nothing was picked.
  */
-
 int pick_lock(object *pl, int dir, object *skill)
 {
     object *tmp;
@@ -381,15 +444,25 @@ int pick_lock(object *pl, int dir, object *skill)
 }
 
 
-/* HIDE CODE. The user becomes undetectable (not just 'invisible') for
+/**
+ * Someone is trying to hide.
+ * The user becomes undetectable (not just 'invisible') for
  * a short while (success and duration dependant on player SK_level,
  * dexterity, charisma, and map difficulty).
  * Players have a good chance of becoming 'unhidden' if they move
  * and like invisiblity will be come visible if they attack
  * Implemented by b.t. (thomas@astro.psu.edu)
  * July 7, 1995 - made hiding possible for monsters. -b.t.
+ *
+ * @param op
+ * living trying to hide.
+ * @param skill
+ * hiding skill.
+ * @retval 0
+ * op couldn't hide.
+ * @retval 1
+ * op successfully hide.
  */
-
 static int attempt_hide(object *op, object *skill) {
     int number,difficulty=op->map->difficulty;
     int terrain = hideability(op);
@@ -412,8 +485,15 @@ static int attempt_hide(object *op, object *skill) {
     return 0;
 }
 
-/* patched this to take terrain into consideration */
-
+/**
+ * Main hide handling.
+ * @param op
+ * living trying to hide.
+ * @param skill
+ * hiding skill.
+ * @return
+ * experience gained for the skill use (can be 0).
+ */
 int hide(object *op, object *skill) {
 
     /* the preliminaries -- Can we really hide now? */
@@ -448,16 +528,34 @@ int hide(object *op, object *skill) {
 }
 
 
-/* stop_jump() - End of jump. Clear flags, restore the map, and
- * freeze the jumper a while to simulate the exhaustion
- * of jumping.
+/**
+ * End of jump. Restore the map.
+ * @param pl
+ * player.
+ * @param dist
+ * ignored.
+ * @param spaces
+ * ignored.
+ * @todo remove dumb parameters. Is fix_object() required?
  */
 static void stop_jump(object *pl, int dist, int spaces) {
     fix_object(pl);
     insert_ob_in_map(pl,pl->map,pl,0);
 }
 
-
+/**
+ * Someone is trying to jump.
+ * @param pl
+ * living trying to jump.
+ * @param dir
+ * direction to jump in.
+ * @param spaces
+ * distance to jump.
+ * @param skill
+ * jumping skill.
+ * @return
+ * experience gained when jumping into another living thing.
+ */
 static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
     object *tmp;
     int i,exp=0,dx=freearr_x[dir],dy=freearr_y[dir], mflags;
@@ -541,12 +639,22 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
     return calc_skill_exp(pl,NULL, skill);
 }
 
-/* jump() - this is both a new type of movement for player/monsters and
+/**
+ * Jump skill handling.
+ * This is both a new type of movement for player/monsters and
  * an attack as well.
  * Perhaps we should allow more spaces based on level, eg, level 50
  * jumper can jump several spaces?
+ *
+ * @param pl
+ * object jumping.
+ * @param dir
+ * direction to jump to.
+ * @param skill
+ * jumping skill.
+ * @return
+ * experience gained for jumping.
  */
-
 int jump(object *pl, int dir, object *skill)
 {
     int spaces=0,stats;
@@ -574,16 +682,16 @@ int jump(object *pl, int dir, object *skill)
 }
 
 
-/* skill_ident() - this code is supposed to allow players to identify
- * classes of objects with the various "auto-ident" skills. Player must
- * have unidentified objects of the right type in order for the skill
- * to work. While multiple classes of objects may be identified,
- * this code is kind of yucky -- it would be nice to make it a bit
- * more generalized. Right now, skill indices are embedded in this routine.
- * Returns amount of experience gained (on successful ident).
- * - b.t. (thomas@astro.psu.edu)
+/**
+ * Check for cursed object with the 'detect curse' skill.
+ *
+ * @param pl
+ * player detecting.
+ * @param skill
+ * detect skill object.
+ * @return
+ * amount of experience gained (on successful detecting).
  */
-
 static int do_skill_detect_curse(object *pl, object *skill) {
     object *tmp;
     int success=0;
@@ -613,6 +721,16 @@ static int do_skill_detect_curse(object *pl, object *skill) {
     return success;
 }
 
+/**
+ * Check for magic object with the 'detect magic' skill.
+ *
+ * @param pl
+ * player detecting.
+ * @param skill
+ * detect skill object.
+ * @return
+ * amount of experience gained (on successful detecting).
+ */
 static int do_skill_detect_magic(object *pl, object *skill) {
     object *tmp;
     int success=0;
@@ -640,8 +758,20 @@ static int do_skill_detect_magic(object *pl, object *skill) {
     return success;
 }
 
-/* Helper function for do_skill_ident, so that we can loop
+/**
+ * Helper function for do_skill_ident, so that we can loop
  * over inventory AND objects on the ground conveniently.
+ *
+ * @param tmp
+ * object to try to identify.
+ * @param pl
+ * object identifying.
+ * @param obj_class
+ * object type to identify.
+ * @param skill
+ * identification skill.
+ * @return
+ * experience for successful identification.
  */
 static int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill)
 {
@@ -742,6 +872,15 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
     return success;
 }
 
+/**
+ * Main identification skill handling.
+ * @param pl
+ * player identifying.
+ * @param skill
+ * identification skill.
+ * @return
+ * experience gained for identification.
+ */
 int skill_ident(object *pl, object *skill) {
     int success=0;
 
@@ -817,15 +956,23 @@ int skill_ident(object *pl, object *skill) {
 
 
 /**
- * players using this skill can 'charm' a monster --
+ * Oratory skill handling.
+ * Players using this skill can 'charm' a monster --
  * into working for them. It can only be used on
  * non-special (see below) 'neutral' creatures.
  * -b.t. (thomas@astro.psu.edu)
  *
+ * @param pl
+ * player trying to convince a monster.
+ * @param dir
+ * direction to orate in.
+ * @param skill
+ * oratory skill object.
+ * @return
+ * experience gained for oratoring.
  * @todo
  * check if can't be simplified, code looks duplicated.
  */
-
 int use_oratory(object *pl, int dir, object *skill) {
     sint16 x=pl->x+freearr_x[dir],y=pl->y+freearr_y[dir];
     int mflags,chance;
@@ -947,7 +1094,9 @@ int use_oratory(object *pl, int dir, object *skill) {
     return 0;	/* Fall through - if we get here, we didn't charm anything */
 }
 
-/* Singing() -this skill allows the player to pacify nearby creatures.
+/**
+ * Singing skill handling.
+ * This skill allows the player to pacify nearby creatures.
  * There are few limitations on who/what kind of
  * non-player creatures that may be pacified. Right now, a player
  * may pacify creatures which have Int == 0. In this routine, once
@@ -955,8 +1104,16 @@ int use_oratory(object *pl, int dir, object *skill) {
  * may only pacify a creature once.
  * BTW, I appologize for the naming of the skill, I couldnt think
  * of anything better! -b.t.
+ *
+ * @param pl
+ * player singing.
+ * @param dir
+ * direction to sing in.
+ * @param skill
+ * singing skill object.
+ * @return
+ * experience gained for singing.
  */
-
 int singing(object *pl, int dir, object *skill) {
     int i,exp = 0,chance, mflags;
     object *tmp;
@@ -1028,10 +1185,16 @@ int singing(object *pl, int dir, object *skill) {
     return exp;
 }
 
-/* The find_traps skill (aka, search).  Checks for traps
- * on the spaces or in certain objects
+/**
+ * Checks for traps on the spaces around the player or in certain objects.
+ *
+ * @param pl
+ * player searching.
+ * @param skill
+ * find trap skill object.
+ * @return
+ * experience gained for finding traps.
  */
-
 int find_traps (object *pl, object *skill) {
     object *tmp,*tmp2;
     int i,expsum=0, mflags;
@@ -1086,10 +1249,20 @@ int find_traps (object *pl, object *skill) {
     return expsum;
 }
 
-/* remove_trap() - This skill will disarm any previously discovered trap
+/**
+ * This skill will disarm any previously discovered trap.
  * the algorithm is based (almost totally) on the old command_disarm() - b.t.
+ *
+ * @param op
+ * player disarming. Must be on a map.
+ * @param dir
+ * unused.
+ * @param skill
+ * disarming skill.
+ * @return
+ * experience gained to disarm.
+ * @todo removed unused dir.
  */
-
 int remove_trap (object *op, int dir, object *skill) {
     object *tmp,*tmp2;
     int i,success=0,mflags;
@@ -1140,14 +1313,25 @@ int remove_trap (object *op, int dir, object *skill) {
 }
 
 
-/* pray() - when this skill is called from do_skill(), it allows
+/**
+ * Praying skill handling.
+ *
+ * When this skill is called from do_skill(), it allows
  * the player to regain lost grace points at a faster rate. -b.t.
+ *
  * This always returns 0 - return value is used by calling function
  * such that if it returns true, player gets exp in that skill.  This
  * the effect here can be done on demand, we probably don't want to
  * give infinite exp by returning true in any cases.
+ *
+ * @param pl
+ * object praying, should be a player.
+ * @param skill
+ * praying skill.
+ * @return
+ * 0.
+ * @todo use safe string buffers.
  */
-
 int pray (object *pl, object *skill) {
     char buf[MAX_BUF];
     object *tmp;
@@ -1180,13 +1364,22 @@ int pray (object *pl, object *skill) {
     return 0;
 }
 
-/* This skill allows the player to regain a few sp or hp for a
- * brief period of concentration. No armour or weapons may be
- * wielded/applied for this to work. The amount of time needed
- * to concentrate and the # of points regained is dependant on
- * the level of the user. - b.t. thomas@astro.psu.edu
+/**
+ * Meditation skill handling.
+ *
+ * This skill allows the player to regain a few sp or hp for a
+ * brief period of concentration.
+ * The amount of time needed to concentrate and the # of points regained is dependant on
+ * the level of the user.
+ *
+ * Depending on the level, the player can wear armour or not.
+ * @author b.t. thomas@astro.psu.edu
+ *
+ * @param pl
+ * livng meditating, should be a player.
+ * @param skill
+ * meditation skill.
  */
-
 void meditate (object *pl, object *skill) {
     object *tmp;
 
@@ -1231,10 +1424,22 @@ void meditate (object *pl, object *skill) {
     }
 }
 
-/* write_note() - this routine allows players to inscribe messages in
+/**
+ * This routine allows players to inscribe messages in
  * ordinary 'books' (anything that is type BOOK). b.t.
+ *
+ * @param pl
+ * player writing.
+ * @param item
+ * book to write into.
+ * @param msg
+ * message to write.
+ * @param skill
+ * writing skill object.
+ * @return
+ * experience gained for writing.
+ * @todo use safe string functions. assert() instead of simple check.
  */
-
 static int write_note(object *pl, object *item, const char *msg, object *skill) {
     char buf[BOOK_BUF];
     object *newBook = NULL;
@@ -1301,12 +1506,21 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
     return 0;
 }
 
-/* write_scroll() - this routine allows players to inscribe spell scrolls
+/**
+ * This routine allows players to inscribe spell scrolls
  * of spells which they know. Backfire effects are possible with the
  * severity of the backlash correlated with the difficulty of the scroll
  * that is attempted. -b.t. thomas@astro.psu.edu
+ *
+ * @param pl
+ * player writing a scroll.
+ * @param scroll
+ * object to write into.
+ * @param skill
+ * writing skill.
+ * @return
+ * experience gained.
  */
-
 static int write_scroll (object *pl, object *scroll, object *skill) {
     int success=0,confused=0, grace_cost = 0;
     object *newscroll, *chosen_spell, *tmp;
@@ -1454,7 +1668,20 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
     return 0;
 }
 
-/* write_on_item() - wrapper for write_note and write_scroll */
+/**
+ * Writing skill handling.
+ *
+ * Wrapper for write_note() and write_scroll().
+ *
+ * @param pl
+ * player writing.
+ * @param params
+ * message to inscribe.
+ * @param skill
+ * writing skill.
+ * @return
+ * experience gained for using the skill.
+ */
 int write_on_item (object *pl,const char *params, object *skill) {
     object *item;
     const char *string=params;
@@ -1511,15 +1738,23 @@ int write_on_item (object *pl,const char *params, object *skill) {
 
 
 
-/* find_throw_ob() - if we request an object, then
+/**
+ * Find an object to throw.
+ * If we request an object, then
  * we search for it in the inventory of the owner (you've
  * got to be carrying something in order to throw it!).
  * If we didnt request an object, then the top object in inventory
  * (that is "throwable", ie no throwing your skills away!)
  * is the object of choice. Also check to see if object is
  * 'throwable' (ie not applied cursed obj, worn, etc).
+ *
+ * @param op
+ * object wishing to throw.
+ * @param request
+ * requested item to throw.
+ * @return
+ * throwable object, NULL if none suitable found.
  */
-
 static object *find_throw_ob( object *op, const char *request ) {
     object *tmp;
     char name[MAX_BUF];
@@ -1596,9 +1831,15 @@ static object *find_throw_ob( object *op, const char *request ) {
     return tmp;
 }
 
-/* make_throw_ob() We construct the 'carrier' object in
+/**
+ * We construct the 'carrier' object in
  * which we will insert the object that is being thrown.
  * This combination  becomes the 'thrown object'. -b.t.
+ *
+ * @param orig
+ * object to wrap.
+ * @return
+ * object to throw.
  */
 
 static object *make_throw_ob (object *orig) {
@@ -1621,11 +1862,26 @@ static object *make_throw_ob (object *orig) {
 }
 
 
-/* do_throw() - op throws any object toss_item. This code
+/**
+ * Op throws any object toss_item. This code
  * was borrowed from fire_bow.
- * Returns 1 if skill was successfully used, 0 if not
+ *
+ * @param op
+ * living thing throwing something.
+ * @param part
+ * part of op throwing.
+ * @param toss_item
+ * item thrown.
+ * @param dir
+ * direction to throw.
+ * @param skill
+ * throwing skill.
+ * @retval 0
+ * skill use failed.
+ * @retval 1
+ * skill was successfully used.
+ * @todo this messy function should probably be simplified.
  */
-
 static int do_throw(object *op, object *part, object *toss_item, int dir, object *skill) {
     object *throw_ob=toss_item, *left=NULL;
     tag_t left_tag;
@@ -1883,6 +2139,23 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     return 1;
 }
 
+/**
+ * Throwing skill handling.
+ * @param op
+ * object throwing.
+ * @param part
+ * actual part of op throwing.
+ * @param dir
+ * direction to throw into.
+ * @param params
+ * optional message, used to find object to throw.
+ * @param skill
+ * throwing skill.
+ * @retval 0
+ * skill use failed.
+ * @retval 1
+ * skill was successfully used.
+ */
 int skill_throw (object *op, object *part, int dir, const char *params, object *skill) {
     object *throw_ob;
 

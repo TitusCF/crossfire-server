@@ -860,7 +860,7 @@ void set_darkness_map( mapstruct* m){
 int ob_move_on(object* op, object* victim, object* originator){
 }
  
-object* find_skill_by_number( object* ob, int x ){
+object* find_skill_by_number(object *who, int skillno){
     return NULL;
 }
  

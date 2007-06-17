@@ -16,6 +16,16 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Documentation, no functional change.
+ server/skill_util.c skills.c
+Fix variable name confusion Doxygen.
+ random_maps/standalone.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/common/stubs_common.c
+ test/unit/socket/stubs_socket.c
+ utils/bwp.c mapper.c
+Nicolas Weeger 2007-06-17
+
+Documentation, no functional change.
   server/disease.c gods.c spell_effect.c
 Nicolas Weeger 2007-06-17
 
