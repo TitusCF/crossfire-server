@@ -42,6 +42,11 @@
  * describe "wrappers" for functions, conventions used (parameters + return value).
  */
 
+#if 0
+/** If set, will log much info about plugin activity. */
+#define PLUGIN_DEBUG
+#endif
+
 /*****************************************************************************/
 /* First, the headers. We only include plugin.h, because all other includes  */
 /* are done into it, and plugproto.h (which is used only by this file).      */
@@ -233,6 +238,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
     for (tmp = op->inv; tmp != NULL; tmp = next) {
         next = tmp->below;
         if (tmp->type == EVENT_CONNECTOR && tmp->subtype == eventcode) {
+#ifdef PLUGIN_DEBUG
             LOG(llevDebug, "********** EVENT HANDLER **********\n");
             LOG(llevDebug, " - Who am I      :%s\n", op->name);
             if (activator != NULL)
@@ -246,6 +252,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                 LOG(llevDebug, " - Event hook    :%s\n", tmp->slaying);
             if (tmp->name != NULL)
                 LOG(llevDebug, " - Event options :%s\n", tmp->name);
+#endif
 
             if (tmp->title == NULL) {
                 object *env = object_get_env_recursive(tmp);
@@ -274,7 +281,9 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                     rv = plugin->eventfunc(&rvt, op, /*eventcode, */activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp);
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE))
                     {
+#ifdef PLUGIN_DEBUG
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
+#endif
                         remove_ob(tmp);
                         free_object(tmp);
                     }
