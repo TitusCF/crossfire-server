@@ -771,7 +771,7 @@ void check_login(object *op) {
         if (pl->party)
             snprintf(buf, MAX_BUF, "Rejoined party %s.", party->partyname);
         else
-            snprintf(buf, MAX_BUF, "Couldn't rejoined party %s: %s.", party->partyname, party ? "invalid password." : "no such party.");
+            snprintf(buf, MAX_BUF, "Couldn't rejoined party %s: %s.", party_name, party ? "invalid password." : "no such party.");
         draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
             buf, NULL);
     }
