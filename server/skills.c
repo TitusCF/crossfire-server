@@ -1624,6 +1624,9 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	tmp = get_object();
 	copy_object(chosen_spell, tmp);
 	insert_ob_in_ob(tmp, newscroll);
+    /* This is needed so casting from the scroll correctly works with moving_ball types, which
+       check attunements. */
+    newscroll->path_attuned = tmp->path_repelled;
 
 	/* Same code as from treasure.c - so they can better merge.
 	 * if players want to sell them, so be it.

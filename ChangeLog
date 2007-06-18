@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/skills.c: correctly copy spell's path_repelled field when inscribing a
+ scroll, so casting from said scroll works with MOVING_BALL.
+Nicolas Weeger 2007-06-18
+
 server/login.c: Fix crash at login if player is set to rejoin party, and that
 party does not exist - shouldn't try to use partyname from null structure.
 MSW 2007-06-17
