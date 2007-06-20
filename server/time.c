@@ -509,24 +509,48 @@ static void move_timed_gate(object *op)
  */
 static void move_detector(object *op) 
 {
-    object *tmp;
+    object *tmp, *tmp2;
     int last = op->value;
     int detected;
     detected = 0;
 
-    for(tmp = get_map_ob(op->map,op->x,op->y);tmp!=NULL&&!detected;tmp=tmp->above) {
-		object *tmp2;
-		if(op->stats.hp) {
-		  for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
-			 if(op->slaying && !strcmp(op->slaying,tmp->name)) detected=1;
-			 if(tmp2->type==FORCE &&tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) detected=1;
-		  }
-		}
-	if (op->slaying && !strcmp(op->slaying,tmp->name)) {
-	  detected = 1;
-	}
-	else if (tmp->type==SPECIAL_KEY && tmp->slaying==op->slaying)
-	    detected=1;
+    if (!op->slaying) {
+        if (op->map)
+            LOG(llevError, "Detector with no slaying set at %s (%d,%d)\n", op->map->path, op->x, op->y);
+        else if (op->env)
+            LOG(llevError, "Detector with no slaying in %s\n", op->env->name);
+        else
+            LOG(llevError, "Detector with no slaying nowhere?\n");
+        op->speed = 0;
+        update_ob_speed(op);
+        return;
+    }
+
+    for(tmp = get_map_ob(op->map, op->x, op->y); tmp!=NULL ;tmp = tmp->above) {
+        if (op->stats.hp) {
+            for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
+                if (op->slaying == tmp2->name) {
+                    detected=1;
+                    break;
+                }
+                if (tmp2->type==FORCE && tmp2->slaying == op->slaying) {
+                    detected=1;
+                    break;
+                }
+            }
+        }
+        if (op->slaying == tmp->name) {
+            detected = 1;
+            break;
+        }
+        if (tmp->type == PLAYER && !strcmp(op->slaying, "player")) {
+            detected = 1;
+            break;
+        }
+        if (tmp->type==SPECIAL_KEY && tmp->slaying==op->slaying) {
+            detected=1;
+            break;
+        }
     }
 
     /* the detector sets the button if detection is found */

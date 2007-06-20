@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/time.c: make detectors able to find players (slaying set to 'player').
+Nicolas Weeger 2007-06-20
+
 server/plugins.c: add PLUGIN_DEBUG to log plugin activity, off by default
  (log gets filled with debug info which is not usually relevant).
 Nicolas Weeger 2007-06-18
