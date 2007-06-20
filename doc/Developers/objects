@@ -1750,13 +1750,14 @@ but a pedestal won't notice it.)
 
 slaying   name of the thing the detector is to look for
 	  * note:  FORCEs with slaying fields == slaying field of detector
-	   will be detected.
+	   will be detected if hp is 1.
+	  * if 'player', will match players
 speed     time between samples
 connected connected value of detector
 sp        1 if detection sets buttons,
           -1 if detection unsets buttons
 hp	  1 if it is to search through an inventory of an object
-	  sitting over it
+	  sitting over it. Won't search in inventories of inventory, though
 
 
 MARKER:
