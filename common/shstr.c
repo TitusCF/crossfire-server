@@ -15,7 +15,7 @@
 #include <limits.h>
 #include <string.h>
 #include <global.h>
-#include <libproto.h> // For LOG
+#include <libproto.h> /* For LOG */
 
 #if defined (__sun__) && defined (StupidSunHeaders)
 #include <sys/time.h>
