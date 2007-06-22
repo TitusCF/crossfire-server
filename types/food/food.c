@@ -28,6 +28,7 @@
 #include <ob_types.h>
 #include <sounds.h>
 #include <sproto.h>
+#include <math.h>
 
 static method_ret food_type_apply(ob_methods *context, object *food,
     object* applier, int aflags);

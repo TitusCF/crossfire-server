@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+types/food/food.c: Fix missing math.h include. (Harmless but caused a warning)
+Alex Schultz 2007-06-21
+
 server/time.c: make detectors able to find players (slaying set to 'player').
 Nicolas Weeger 2007-06-20
 
