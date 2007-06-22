@@ -98,6 +98,8 @@ void remove_party(partylist *target_party) {
     
     /* special case-ism for parties at the beginning and end of the list */
     if (target_party==firstparty) {
+        if (lastparty == target_party)
+            lastparty = NULL;
 	firstparty=firstparty->next;
 	if (target_party->partyleader) free(target_party->partyleader);
 	if (target_party->partyname) free(target_party->partyname);

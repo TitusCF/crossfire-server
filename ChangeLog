@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_party.c: fix mistake in party removal.
+Nicolas Weeger 2007-06-22
+
 common/shstr.c: Remove C++ style comment.
 include/map.h, include/player.h: Fix 'comma at end of enumerator list' warnings.
 types/food/food.c: Fix missing math.h include. (Harmless but caused a warning)
