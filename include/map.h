@@ -119,7 +119,7 @@ extern const char *map_layer_name[MAP_LAYERS];
  */
 enum {
     SAVE_FLAG_SAVE_UNPAID = 1,  /**< If set, unpaid items will be saved. */
-    SAVE_FLAG_NO_REMOVE = 2,    /**< If set, objects are not removed while saving. */
+    SAVE_FLAG_NO_REMOVE = 2    /**< If set, objects are not removed while saving. */
 };
 
 /**
@@ -130,7 +130,7 @@ enum {
 enum {
     SAVE_MODE_NORMAL = 0,   /**< No special handling. */
     SAVE_MODE_INPLACE = 1,  /**< Map is saved from where it was loaded.*/
-    SAVE_MODE_OVERLAY = 2,  /**< Map is persisted as an overlay. */
+    SAVE_MODE_OVERLAY = 2  /**< Map is persisted as an overlay. */
 };
 
 /* Values for in_memory below.  Should probably be an enumerations */

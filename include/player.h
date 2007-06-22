@@ -126,7 +126,7 @@ typedef struct party_struct {
 typedef enum party_rejoin_mode {
     party_rejoin_no = 0,        /**< Don't rejoin. */
     party_rejoin_if_exists = 1, /**< Rejoin if party exists. */
-    party_rejoin_always = 2,    /**< If party doesn't exist, form it. */
+    party_rejoin_always = 2    /**< If party doesn't exist, form it. */
 } party_rejoin_mode;
 
 typedef struct pl {
