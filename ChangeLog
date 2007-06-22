@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/attack.c: don't say '(pk)' if duel, makes it easier to check for real pk.
+Nicolas Weeger 2007-06-22
+
 Party unit tests (partial).
  test/unit/server/check_c_party.c Makefile.am
 Nicolas Weeger 2007-06-22
