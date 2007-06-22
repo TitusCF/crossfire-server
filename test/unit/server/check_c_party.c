@@ -32,7 +32,8 @@
 
 #include <stdlib.h>
 #include <check.h>
-
+#include <global.h>
+#include <sproto.h>
 
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
@@ -43,9 +44,42 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_empty)
+START_TEST (test_party)
 {
-    /*TESTME test not yet developped*/
+    partylist* p1, *p2, *p3, *p4, *p5;
+    object* pl;
+
+    fail_unless(get_firstparty() == NULL, "firstparty should be NULL!");
+
+    pl = calloc(1, sizeof(object));
+    pl->name = "player";
+    fail_unless(pl != NULL, "memory allocation failure");
+    pl->contr = calloc(1, sizeof(player));
+    fail_unless(pl->contr != NULL, "memory allocation failure");
+    first_player = pl->contr; /* needed because obsolete parties uses this. */
+
+    p1 = form_party(pl, "test1");
+    fail_unless(p1 != NULL, "form_party failed.");
+    fail_unless(get_firstparty() == p1, "firstparty wasn't updated");
+    fail_unless(strcmp(p1->partyname, "test1") == 0, "wrong party name");
+    fail_unless(p1 == pl->contr->party, "player wasn't added to party");
+    fail_unless(strcmp(p1->partyleader, "player") == 0, "wrong party leader");
+
+    p2 = form_party(pl, "test2");
+    fail_unless(p2 != NULL, "form_party failed.");
+    fail_unless(get_firstparty()->next == p2, "party incorrectly linked");
+
+    remove_party(p1);
+
+    fail_unless(get_firstparty() == p2, "party incorrectly removed");
+
+    p3 = form_party(pl, "test3");
+    fail_unless(p3 != NULL, "form_party failed");
+    fail_unless(get_firstparty()->next == p3, "party p3 incorrectly linked");
+    fail_unless(pl->contr->party == p3, "p3 incorrectly assigned to pl");
+
+    obsolete_parties();
+    fail_unless(get_firstparty() == p3, "party p2 wasn't removed by obsolete_parties(), party %s still there", get_firstparty() ? get_firstparty()->partyname : "NULL party?");
 }
 END_TEST
 
@@ -57,7 +91,7 @@ Suite *c_party_suite(void)
   tcase_add_checked_fixture(tc_core,setup,teardown); 
 
   suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_empty);
+  tcase_add_test(tc_core, test_party);
 
   return s;
 }

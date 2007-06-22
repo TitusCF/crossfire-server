@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Party unit tests (partial).
+ test/unit/server/check_c_party.c Makefile.am
+Nicolas Weeger 2007-06-22
+
 server/c_party.c: fix mistake in party removal.
 Nicolas Weeger 2007-06-22
 
