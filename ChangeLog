@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Change behavior of shop mats: do not fail if the destination shop mat is
+blocked. This prevents players from being trapped inside shops if the outside
+shop mat has been blocked with earthwalls.
+---
+server/move.c: In teleport() place player on destination shop mat even if
+ it is blocked.
+Andreas Kirschbaum 2007-06-27
+
 server/attack.c: don't say '(pk)' if duel, makes it easier to check for real pk.
 Nicolas Weeger 2007-06-22
 
