@@ -52,4 +52,3 @@ if [ "$1" == "graph" ]; then
 else
 	rrdtool update ${rrdfile} N:$(cat ${statsfile})
 fi
-

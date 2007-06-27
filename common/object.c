@@ -108,7 +108,7 @@ static int compare_ob_value_lists_one(const object * wants, const object * has) 
 
     /* n-squared behaviour (see get_ob_key_link()), but I'm hoping both
      * objects with lists are rare, and lists stay short. If not, use a
-     * different structure or at least keep the lists sorted... 
+     * different structure or at least keep the lists sorted...
      */
 
     /* For each field in wants, */
@@ -231,9 +231,9 @@ int can_merge(object *ob1, object *ob2) {
         (ob1->flags[1] != ob2->flags[1]) ||
         (ob1->flags[2] != ob2->flags[2]) ||
         ((ob1->flags[3] & ~0x4) != (ob2->flags[3] & ~0x4)) || /* ignore CLIENT_SENT */
-        (ob1->name != ob2->name) || 
+        (ob1->name != ob2->name) ||
         (ob1->title != ob2->title) ||
-        (ob1->msg != ob2->msg) || 
+        (ob1->msg != ob2->msg) ||
         (ob1->weight != ob2->weight) ||
         (memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
         (memcmp(&ob1->stats, &ob2->stats, sizeof(ob1->stats))!=0) ||
@@ -344,7 +344,7 @@ object *object_get_env_recursive (object *op) {
  * @todo
  * this function is badly named. Fix patching on the fly.
  */
-object *get_player_container(object *op) { 
+object *get_player_container(object *op) {
     for (;op!=NULL&&op->type!=PLAYER; op=op->env)
       /*TODO this is patching the structure on the flight as side effect. Shoudln't be needed in clean code */
       if (op->env==op)
@@ -483,7 +483,7 @@ void free_all_object_data(void) {
     }
 #endif
 
-    LOG(llevDebug,"%d allocated objects, %d free objects, STARMAX=%d\n", 
+    LOG(llevDebug,"%d allocated objects, %d free objects, STARMAX=%d\n",
         nrofallocobjects, nroffreeobjects,STARTMAX);
 }
 
@@ -558,14 +558,14 @@ void set_owner (object *op, object *owner)
         return;
     }
 
-    /* next line added to allow objects which own objects */ 
+    /* next line added to allow objects which own objects */
     /* Add a check for ownercounts in here, as I got into an endless loop
      * with the fireball owning a poison cloud which then owned the
      * fireball.  I believe that was caused by one of the objects getting
      * freed and then another object replacing it.  Since the ownercounts
      * didn't match, this check is valid and I believe that cause is valid.
      */
-    while (owner->owner && owner!=owner->owner && 
+    while (owner->owner && owner!=owner->owner &&
         owner->ownercount==owner->owner->count) owner=owner->owner;
 
     /* IF the owner still has an owner, we did not resolve to a final owner.
@@ -652,7 +652,7 @@ void free_key_values(object * op) {
 
     for (i = op->key_values; i != NULL; i = next) {
         /* Store next *first*. */
-        next = i->next; 
+        next = i->next;
 
         if (i->key) FREE_AND_CLEAR_STR(i->key);
         if (i->value) FREE_AND_CLEAR_STR(i->value);
@@ -809,7 +809,7 @@ void copy_object(object *op2, object *op) {
 
             new_link->next = NULL;
             new_link->key = add_refcount(i->key);
-            if (i->value) 
+            if (i->value)
                 new_link->value = add_refcount(i->value);
             else
                 new_link->value = NULL;
@@ -1023,7 +1023,7 @@ void update_ob_speed(object *op) {
 /**
  * This function removes object 'op' from the list of active
  * objects.
- * This should only be used for style maps or other such 
+ * This should only be used for style maps or other such
  * reference maps where you don't want an object that isn't
  * in play chewing up cpu time getting processed.
  * The reverse of this is to call update_ob_speed, which
@@ -1136,9 +1136,9 @@ void update_object(object *op, int action) {
         if ((move_on | op->move_on) != move_on) update_now=1;
         if ((move_off | op->move_off) != move_off) update_now=1;
         /* This isn't perfect, but I don't expect a lot of objects to
-         * to have move_allow right now.    
+         * to have move_allow right now.
          */
-        if (((move_block | op->move_block) & ~op->move_allow) != move_block) 
+        if (((move_block | op->move_block) & ~op->move_allow) != move_block)
             update_now=1;
         if ((move_slow | op->move_slow) != move_slow) update_now=1;
     }
@@ -1454,7 +1454,7 @@ void remove_ob(object *op) {
          * made to players inventory.  If set, avoiding the call
          * to save cpu time.
          */
-        if ((otmp=get_player_container(op->env))!=NULL && otmp->contr && 
+        if ((otmp=get_player_container(op->env))!=NULL && otmp->contr &&
             !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
             fix_object(otmp);
 
@@ -1508,7 +1508,7 @@ void remove_ob(object *op) {
     if(op->below) {
         op->below->above=op->above;
     } else {
-        /* Nothing below, which means we need to relink map object for this space 
+        /* Nothing below, which means we need to relink map object for this space
          * use translated coordinates in case some oddness with map tiling is
          * evident
          */
@@ -1678,12 +1678,12 @@ void merge_spell(object *op, sint16 x, sint16 y)
     for (tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=above) {
 	above = tmp->above;
 
-	if (op->type == tmp->type && 
+	if (op->type == tmp->type &&
 	    op->subtype == tmp->subtype &&
-	    op->direction == tmp->direction && 
+	    op->direction == tmp->direction &&
 	    op->owner == tmp->owner && op->ownercount == tmp->ownercount &&
 	    op->range == tmp->range &&
-	    op->stats.wc == tmp->stats.wc && op->level == tmp->level && 
+	    op->stats.wc == tmp->stats.wc && op->level == tmp->level &&
 	    op->attacktype == tmp->attacktype && op->speed == tmp->speed &&
 	    !tmp->other_arch && (tmp->speed_left +tmp->speed) < 0.0 &&
 	    op!=tmp) {
@@ -1698,10 +1698,10 @@ void merge_spell(object *op, sint16 x, sint16 y)
 	     * that IMO it would become difficult to read the different clauses
 	     * so its cleaner just to do 2 statements - MSW
 	     */
-	    if (op->spell_tags && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp) && 
+	    if (op->spell_tags && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp) &&
 		OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0) continue;
 
-	    if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp) && 
+	    if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp) &&
 		OB_SPELL_TAG_HASH(tmp, op->stats.maxhp) != 0) continue;
 
 	    /* If we merge, the data from tmp->spell_tags gets copied into op.
@@ -1721,7 +1721,7 @@ void merge_spell(object *op, sint16 x, sint16 y)
 		     * not set to the same value, then these objects
 		     * can not be merged.
 		     */
-		    if (op->spell_tags[i] && tmp->spell_tags[i] && 
+		    if (op->spell_tags[i] && tmp->spell_tags[i] &&
 			op->spell_tags[i] != tmp->spell_tags[i]) {
 			    statistics.spell_hash_full++;
 			    break;
@@ -1779,7 +1779,7 @@ void merge_spell(object *op, sint16 x, sint16 y)
 		 * we've destroyed the spell_tags in tmp, so we can't really
 		 * just bail out.
 		 */
-		 
+
 		if (op->spell_tags && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0 &&
 		    !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)) {
 		    LOG(llevError,"insert_ob_in_map: Got non matching spell tags: %d != %d\n",
@@ -1836,7 +1836,7 @@ void merge_spell(object *op, sint16 x, sint16 y)
  * function is called. See the object.h file for the INS_ values.
  * Passing 0 for flag gives proper default values, so flag really only needs
  * to be set if special handling is needed.
- * @return 
+ * @return
  * @li new object if 'op' was merged with other object.
  * @li NULL if 'op' was destroyed
  * @li just 'op' otherwise
@@ -1951,7 +1951,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
      * actually on the map, so we can't use them for the linked pointers,
      * nor should the walk on function below use them either.
      */
-    if (originator && originator->contr && originator->contr->transport) 
+    if (originator && originator->contr && originator->contr->transport)
         originator=originator->contr->transport;
 
     if (flag & INS_BELOW_ORIGINATOR) {
@@ -1980,7 +1980,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
              * flag contains INS_ABOVE_FLOOR_ONLY, once we find the last
              * floor, we want to insert above that and no further.
              * Also, if there are spell objects on this space, we stop processing
-             * once we get to them.  This reduces the need to traverse over all of 
+             * once we get to them.  This reduces the need to traverse over all of
              * them when adding another one - this saves quite a bit of cpu time
              * when lots of spells are cast in one area.  Currently, it is presumed
              * that flying non pickable objects are spell objects.
@@ -1990,7 +1990,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
                 if (QUERY_FLAG(top, FLAG_IS_FLOOR) ||
                     QUERY_FLAG(top, FLAG_OVERLAY_FLOOR)) floor = top;
 
-                if (QUERY_FLAG(top, FLAG_NO_PICK) && 
+                if (QUERY_FLAG(top, FLAG_NO_PICK) &&
                   (top->move_type & (MOVE_FLY_LOW |MOVE_FLY_HIGH)) &&
                   !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
                     /* We insert above top, so we want this object below this */
@@ -2015,7 +2015,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
              * stacking is a bit odd.
              */
             if (!(flag & INS_ON_TOP) &&
-              (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_BLOCKSVIEW) && 
+              (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_BLOCKSVIEW) &&
               (op->face && !op->face->visibility)) {
                 for (last=top; last != floor; last=last->below)
                     if (QUERY_FLAG(last, FLAG_BLOCKSVIEW)&&(last->type != EXIT)) break;
@@ -2070,7 +2070,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
      * or just updating the P_NEED_UPDATE for spaces within this area
      * of effect may be sufficient.
      */
-    if(MAP_DARKNESS(op->map) && (op->glow_radius != 0)) 
+    if(MAP_DARKNESS(op->map) && (op->glow_radius != 0))
         update_all_los(op->map, op->x, op->y);
 
 
@@ -2105,7 +2105,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
 /**
  * This function inserts an object of a specified archetype in the map, but if it
- * finds an object of its own type, it'll remove that one first. 
+ * finds an object of its own type, it'll remove that one first.
  *
  * @param arch_string
  * object's archetype to insert
@@ -2330,7 +2330,7 @@ object *insert_ob_in_ob(object *op,object *where) {
         return op;
     }
     if (where->head) {
-        LOG(llevDebug, 
+        LOG(llevDebug,
         "Warning: Tried to insert object wrong part of multipart object.\n");
         where = where->head;
     }
@@ -2393,7 +2393,7 @@ object *insert_ob_in_ob(object *op,object *where) {
 #ifdef DEBUG_LIGHTS
         LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
         op->name);
-#endif /* DEBUG_LIGHTS */ 
+#endif /* DEBUG_LIGHTS */
         if (MAP_DARKNESS(where->map)) {
             SET_MAP_FLAGS(where->map, where->x, where->y,  P_NEED_UPDATE);
             update_position(where->map, where->x, where->y);
@@ -2460,12 +2460,12 @@ int check_move_on (object *op, object *originator)
         (op->move_type & ~move_slow & ~move_block) != 0) return 0;
 
     /* The objects have to be checked from top to bottom.
-     * Hence, we first go to the top: 
+     * Hence, we first go to the top:
      */
 
     for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL &&
         tmp->above!=NULL; tmp=tmp->above) {
-        /* Trim the search when we find the first other spell effect 
+        /* Trim the search when we find the first other spell effect
          * this helps performance so that if a space has 50 spell objects,
          * we don't need to check all of them.
          */
@@ -2842,7 +2842,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     } else {
         radius = 1;
     }
-    
+
     if (ob->head)
         ob = ob->head;
 
@@ -2872,7 +2872,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     iy = gen->y - sy - geny2 - radius + 1;
     sx += genx + sx2 + radius * 2 - 1;
     sy += geny + sy2 + radius * 2 - 1;
-    
+
     /*
      * ix and iy are the map coords of the top left square where
      * the head of ob could possibly be placed. sx and sy are now
@@ -2914,7 +2914,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
         free(y_array);
         return -1;
     }
-    
+
     /* Choose a random valid position */
     freecountstop = RANDOM()%freecount;
     for(i = 0; i < freecount; i++){
@@ -2970,7 +2970,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
  * Updated to take an object instead of archetype - this is necessary
  * because arch_blocked (now ob_blocked) needs to know the movement type
  * to know if the space in question will block the object.  We can't use
- * the archetype because that isn't correct if the monster has been 
+ * the archetype because that isn't correct if the monster has been
  * customized, changed states, etc.
  */
 
@@ -2985,7 +2985,7 @@ int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop
 
         /* Basically, if we find a wall on a space, we cut down the search size.
          * In this way, we won't return spaces that are on another side of a wall.
-         * This mostly work, but it cuts down the search size in all directions - 
+         * This mostly work, but it cuts down the search size in all directions -
          * if the space being examined only has a wall to the north and empty
          * spaces in all the other directions, this will reduce the search space
          * to only the spaces immediately surrounding the target area, and
@@ -3047,7 +3047,7 @@ static void permute(int *arr, int begin, int end)
 }
 
 /**
- * New function to make monster searching more efficient, and effective! 
+ * New function to make monster searching more efficient, and effective!
  * This basically returns a randomized array (in the passed pointer) of
  * the spaces to find monsters.  In this way, it won't always look for
  * monsters to the north first.  However, the size of the array passed
@@ -3226,7 +3226,7 @@ int dirdiff(int dir1, int dir2) {
  * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
  */
 int reduction_dir[SIZEOFFREE][3] = {
-    {0,0,0}, /* 0 */ 
+    {0,0,0}, /* 0 */
     {0,0,0}, /* 1 */
     {0,0,0}, /* 2 */
     {0,0,0}, /* 3 */
@@ -3320,9 +3320,9 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
         can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
         can_see_monsterP(m,x,y, reduction_dir[dir][2]);
 }
-  
-  
-	
+
+
+
 /**
  * Finds out if an object can be picked up.
  *
@@ -3398,7 +3398,7 @@ object *object_create_clone (object *asrc) {
  * @param type
  * @param subtype
  * what to search.
- * @return 
+ * @return
  * first object in who's inventory that has the same type and subtype match. NULL if no match.
  *
  * @note
@@ -3422,7 +3422,7 @@ object *find_obj_by_type_subtype(const object *who, int type, int subtype)
  * @param key
  * key to search. Must be a passed in shared string - otherwise, this won't do the desired thing.
  * @return
- * the link from the list if ob has a field named key, otherwise NULL. 
+ * the link from the list if ob has a field named key, otherwise NULL.
  */
 key_value * get_ob_key_link(const object * ob, const char * key) {
     key_value * link;
@@ -3575,7 +3575,7 @@ int set_ob_key_value(object * op, const char * key, const char * value, int add_
     int ret;
 
     /* HACK This mess is to make sure set_ob_value() passes a shared string
-     * to get_ob_key_link(), without leaving a leaked refcount. 
+     * to get_ob_key_link(), without leaving a leaked refcount.
      */
 
     canonical_key = find_string(key);
@@ -3629,7 +3629,7 @@ int set_ob_key_value(object * op, const char * key, const char * value, int add_
  * base name                  16
  * short name                 18
  * full name                  20
- * (note, count is extracted from begin of name parameter or 
+ * (note, count is extracted from begin of name parameter or
  *  from pl->contr->count, name has priority)
  *
  * @param pl

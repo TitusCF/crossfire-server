@@ -116,7 +116,7 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
 
     /* write the outer walls, if appropriate. */
     if(!(option & OPT_WALL_OFF )) {
-        for(i=0;i<xsize;i++) 
+        for(i=0;i<xsize;i++)
         maze[i][0] = maze[i][ysize-1] = '#';
         for(j=0;j<ysize;j++)
         maze[0][j] = maze[xsize-1][j] = '#';
@@ -125,11 +125,11 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
     if(option & OPT_WALLS_ONLY) return maze;
 
     /* pick off the mutually exclusive options */
-    if(option & OPT_BOTTOM_R) 
+    if(option & OPT_BOTTOM_R)
         bottom_right_centered_onion(maze,xsize,ysize,option,layers);
-    else if(option & OPT_BOTTOM_C) 
+    else if(option & OPT_BOTTOM_C)
         bottom_centered_onion(maze,xsize,ysize,option,layers);
-    else if(option & OPT_CENTERED) 
+    else if(option & OPT_CENTERED)
         centered_onion(maze,xsize,ysize,option,layers);
 
     return maze;
@@ -180,7 +180,7 @@ void centered_onion(char **maze, int xsize, int ysize, int option, int layers) {
 
             if(y_spaces_available>0)
                 ypitch = 2 + (RANDOM()%y_spaces_available +
-                    RANDOM()%y_spaces_available + 
+                    RANDOM()%y_spaces_available +
                     RANDOM()%y_spaces_available)/3;
             xlocations[i] = ( (i>0)?xlocations[i-1]:0) + xpitch;
             ylocations[i] = ( (i>0)?ylocations[i-1]:0) + ypitch;
@@ -252,7 +252,7 @@ void bottom_centered_onion(char **maze, int xsize, int ysize, int option, int la
 
             if(y_spaces_available>0)
                 ypitch = 2 + (RANDOM()%y_spaces_available +
-                    RANDOM()%y_spaces_available + 
+                    RANDOM()%y_spaces_available +
                     RANDOM()%y_spaces_available)/3;
             xlocations[i] = ( (i>0)?xlocations[i-1]:0) + xpitch;
             if(i < layers)
@@ -404,7 +404,7 @@ void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int 
 
             }
         }
-        if(options & OPT_NO_DOORS) 
+        if(options & OPT_NO_DOORS)
             maze[x1][y1] = '#';  /* no door. */
         else
             maze[x1][y1] = 'D'; /* write the door */
@@ -466,7 +466,7 @@ void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, 
 
             if(y_spaces_available>0)
                 ypitch = 2 + (RANDOM()%y_spaces_available +
-                    RANDOM()%y_spaces_available + 
+                    RANDOM()%y_spaces_available +
                     RANDOM()%y_spaces_available)/3;
             if(i < layers) xlocations[i] = ( (i>0)?xlocations[i-1]:0) + xpitch;
             else xlocations[i] = xsize-1;

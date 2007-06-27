@@ -35,7 +35,7 @@
 /* This writes out information on all the temporary maps.  It is called by
  * swap_map below.
  */
-static void write_map_log(void) 
+static void write_map_log(void)
 {
     FILE *fp;
     mapstruct *map;
@@ -67,7 +67,7 @@ static void write_map_log(void)
     fclose(fp);
 }
 
-void read_map_log(void) 
+void read_map_log(void)
 {
     FILE *fp;
     mapstruct *map;
@@ -113,7 +113,7 @@ void read_map_log(void)
          * of seconds from current time that it should reset).  We need
 	 * to add in the current seconds for this to work right.
 	 * On metalforge, strange behavior was observed with really high
-	 * reset times - I don't know how they got to that state, 
+	 * reset times - I don't know how they got to that state,
 	 * but easy enough to do some sanity checking here.
 	 */
 	map->reset_time += sec;

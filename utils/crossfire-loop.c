@@ -4,7 +4,7 @@
  * idea is that it periodically sends/gets udp messages to the server - if
  * the server isn't responding, it kills it off and starts a new one.  There
  * is a bit more logic to it - From Christian:
- 
+
 The wrapper is just a hack. I'm using it on a Solaris machine, and it
 seems to work fine. Notable features:
 - uses the watchdog interface

@@ -111,7 +111,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
             }
         }
         else if (!QUERY_FLAG(above, FLAG_ALIVE) &&
-            !(above->move_type & MOVE_FLYING) && 
+            !(above->move_type & MOVE_FLYING) &&
             !(QUERY_FLAG(above,FLAG_IS_FLOOR)) &&
             !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR)) &&
             !(QUERY_FLAG(above, FLAG_NO_PICK)))

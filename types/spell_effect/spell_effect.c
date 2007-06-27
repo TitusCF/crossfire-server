@@ -564,7 +564,7 @@ static void execute_word_of_recall(object *op) {
     free_object(wor);
 }
 
-/** 
+/**
  * This handles ball type spells that just sort of wander about.
  * Note that duration is handled by process_object() in time.c
  * @param op The spell effect.
@@ -744,8 +744,8 @@ static void move_swarm_spell(object *op) {
  * which he carries with him, but which acts on the map immediately
  * around him.
  * Aura parameters:
- * duration:  duration counter.   
- * attacktype:  aura's attacktype 
+ * duration:  duration counter.
+ * attacktype:  aura's attacktype
  * other_arch:  archetype to drop where we attack
  * @param aura The spell effect.
  */
@@ -758,7 +758,7 @@ static void move_aura(object *aura) {
     env = aura->env;
 
     /* no matter what we've gotta remove the aura...
-     * we'll put it back if its time isn't up.  
+     * we'll put it back if its time isn't up.
      */
     remove_ob(aura);
 
@@ -777,11 +777,11 @@ static void move_aura(object *aura) {
     aura->y = env->y;
 
     /* we need to jump out of the inventory for a bit
-     * in order to hit the map conveniently. 
+     * in order to hit the map conveniently.
      */
     insert_ob_in_map(aura,env->map,aura,0);
 
-    for(i=1;i<9;i++) { 
+    for(i=1;i<9;i++) {
 	sint16 nx, ny;
 	nx = aura->x + freearr_x[i];
 	ny = aura->y + freearr_y[i];

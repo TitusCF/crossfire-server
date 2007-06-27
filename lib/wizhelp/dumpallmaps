@@ -1,4 +1,4 @@
-syntax: dumpallmaps 
+syntax: dumpallmaps
 notes: This
 prints out map information for
 all active maps to stderr.

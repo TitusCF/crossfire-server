@@ -37,7 +37,7 @@
 #include <sproto.h>
 #endif
 
-/** The following removes doors.  The functions check to see if similar 
+/** The following removes doors.  The functions check to see if similar
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
  */
@@ -94,7 +94,7 @@ static void generate_monster_inv(object *gen) {
     int nx, ny;
     object *op,*head=NULL;
     const char *code;
-    
+
     int qty=0;
     /* Code below assumes the generator is on a map, as it tries
      * to place the monster on the map.  So if the generator
@@ -304,7 +304,7 @@ static void remove_blindness(object *op) {
   if(--op->stats.food > 0)
     return;
   CLEAR_FLAG(op, FLAG_APPLIED);
-  if(op->env!=NULL) { 
+  if(op->env!=NULL) {
      change_abil(op->env,op);
      fix_object(op->env);
   }
@@ -325,7 +325,7 @@ static void poison_more(object *op) {
     if(op->env->type==PLAYER) {
       CLEAR_FLAG(op, FLAG_APPLIED);
       fix_object(op->env);
-      draw_ext_info(NDI_UNIQUE, 0,op->env, 
+      draw_ext_info(NDI_UNIQUE, 0,op->env,
 		    MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
 		    "You feel much better now.", NULL);
     }
@@ -336,7 +336,7 @@ static void poison_more(object *op) {
   if(op->env->type==PLAYER) {
     op->env->stats.food--;
     /* Not really the start of a bad effect, more the continuing effect */
-    draw_ext_info(NDI_UNIQUE, 0,op->env, 
+    draw_ext_info(NDI_UNIQUE, 0,op->env,
 		  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
 		  "You feel very sick...", NULL);
   }
@@ -390,7 +390,7 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	 * the gate slightly.
 	 */
 
-	for (tmp=op->above; tmp!=NULL; tmp=tmp->above) 
+	for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
 	    if (!QUERY_FLAG(tmp, FLAG_NO_PICK)
 		|| QUERY_FLAG(tmp, FLAG_CAN_ROLL)
 		|| QUERY_FLAG(tmp, FLAG_ALIVE))
@@ -429,13 +429,13 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    if(tmp!=NULL) {
 		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
 		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL, 1);
-		    if(tmp->type==PLAYER) 
+		    if(tmp->type==PLAYER)
 			draw_ext_info_format(NDI_UNIQUE, 0, tmp,
 					     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
 					     "You are crushed by the %s!",
 					     "You are crushed by the %s!",
 					     op->name);
-		} else 
+		} else
 		    /* If the object is not alive, and the object either can
 		     * be picked up or the object rolls, move the object
 		     * off the gate.
@@ -456,7 +456,7 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    }
 
 	    /* See if there is still anything blocking the gate */
-	    for (tmp=op->above; tmp!=NULL; tmp=tmp->above) 
+	    for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
 		if (!QUERY_FLAG(tmp, FLAG_NO_PICK)
 			|| QUERY_FLAG(tmp, FLAG_CAN_ROLL)
 			|| QUERY_FLAG(tmp, FLAG_ALIVE))
@@ -491,7 +491,7 @@ static void move_timed_gate(object *op)
     if (op->value != v)   /* change direction ? */
       op->stats.sp = 0;
     return;
-  } 
+  }
   if (--op->stats.hp <= 0) { /* keep gate down */
     move_gate(op);
     if (op->value != v) {  /* ready ? */
@@ -507,7 +507,7 @@ static void move_timed_gate(object *op)
  *  sp:         1 if detection sets buttons
  *              -1 if detection unsets buttons
  */
-static void move_detector(object *op) 
+static void move_detector(object *op)
 {
     object *tmp, *tmp2;
     int last = op->value;
@@ -723,7 +723,7 @@ object *fix_stopped_arrow (object *op)
 }
 
 /** This routine doesnt seem to work for "inanimate" objects that
- * are being carried, ie a held torch leaps from your hands!. 
+ * are being carried, ie a held torch leaps from your hands!.
  * Modified this routine to allow held objects. b.t. */
 
 static void change_object(object *op) { /* Doesn`t handle linked objs yet */
@@ -737,7 +737,7 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
 
   /* In non-living items only change when food value is 0 */
   if(!QUERY_FLAG(op,FLAG_ALIVE)) {
-	if(op->stats.food-- > 0) return; 
+	if(op->stats.food-- > 0) return;
 	else op->stats.food=1; /* so 1 other_arch is made */
   }
   env=op->env;
@@ -850,7 +850,7 @@ void move_player_changer(object *op) {
     fix_object(player);
 	esrv_send_inventory(op->above,op->above);
 	esrv_update_item(UPD_FACE, op->above, op->above);
-	
+
 	/* update players death & WoR home-position */
 	sscanf(EXIT_PATH(op), "%c", &c);
 	if (c == '/') {
@@ -862,7 +862,7 @@ void move_player_changer(object *op) {
             LOG(llevDebug,
                 "WARNING: destination '%s' in player_changer must be an absolute path!\n",
 		EXIT_PATH(op));
-	
+
 	enter_exit(op->above,op);
 	save_player(player, 1);
     }
@@ -911,7 +911,7 @@ void move_player_mover(object *op) {
     if (!dir) dir=rndm(1, 8);
 
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
-	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) && 
+	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) &&
 	   (victim->move_type & op->move_type || !victim->move_type)) {
 
 	    if (victim->head) victim = victim->head;
@@ -929,18 +929,18 @@ void move_player_mover(object *op) {
 		    m->path, op->x, op->y);
 		return ;
 	    }
-	    
+
 	    if (should_director_abort(op, victim)) return ;
 
 	    for(nextmover=get_map_ob(m,nx, ny); nextmover !=NULL; nextmover=nextmover->above) {
-		if(nextmover->type == PLAYERMOVER) 
+		if(nextmover->type == PLAYERMOVER)
 		    nextmover->speed_left=-.99;
 		if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {
 		    op->speed_left=-1.1;  /* wait until the next thing gets out of the way */
 		}
 	    }
 
-	    if(victim->type==PLAYER) { 
+	    if(victim->type==PLAYER) {
 		/*  only level >=1 movers move people */
 		if(op->level) {
 		    /* Following is a bit of hack.  We need to make sure it
@@ -964,7 +964,7 @@ void move_player_mover(object *op) {
 		/* Not sure why, but for some chars on metalforge, they
 		 * would sometimes get -inf speed_left, and from the
 		 * description, it could only happen here, so just put
-		 * a lower sanity limit.  My only guess is that the 
+		 * a lower sanity limit.  My only guess is that the
 		 * mover has 0 speed.
 		 */
 		if (victim->speed_left < -5.0) victim->speed_left=-5.0;
@@ -1007,7 +1007,7 @@ void move_duplicator(object *op) {
 }
 
 /**
- * move_creator (by peterm) 
+ * move_creator (by peterm)
  * it has the creator object create it's other_arch right on top of it.
  * connected:  what will trigger it
  * hp:  how many times it may create before stopping
@@ -1084,7 +1084,7 @@ void move_creator(object *creator) {
  */
 void move_marker(object *op) {
     object *tmp,*tmp2;
-  
+
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 	if(tmp->type == PLAYER) { /* we've got someone to MARK */
 
@@ -1098,13 +1098,13 @@ void move_marker(object *op) {
 		free_object(tmp2);
 	    }
 
-	    /* cycle through his inventory to look for the MARK we want to 
-	     * place 
+	    /* cycle through his inventory to look for the MARK we want to
+	     * place
 	     */
 	    for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
 		if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
 	    }
-      
+
 	    /* if we didn't find our own MARK */
 	    if(tmp2==NULL) {
 		object *force = create_archetype(FORCE_NAME);
@@ -1123,11 +1123,11 @@ void move_marker(object *op) {
 
 		insert_ob_in_ob(force,tmp);
 		if(op->msg)
-		    draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,tmp, 
+		    draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,tmp,
 				  MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
 				  op->msg, op->msg);
 
-		if(op->stats.hp > 0) { 
+		if(op->stats.hp > 0) {
 		    op->stats.hp--;
 		    if(op->stats.hp==0) {
 			/* marker expires--granted mark number limit */
@@ -1140,7 +1140,7 @@ void move_marker(object *op) {
 	} /* if tmp->type == PLAYER */
     } /* For all objects on this space */
 }
- 
+
 int process_object(object *op) {
     if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
 	return 0;
@@ -1150,7 +1150,7 @@ int process_object(object *op) {
         return 0;
 
     if(QUERY_FLAG(op, FLAG_MONSTER))
-	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
+	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED))
 	    return 1;
 
     if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {

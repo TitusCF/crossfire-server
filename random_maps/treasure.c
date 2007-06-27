@@ -77,7 +77,7 @@ int wall_blocked(mapstruct *m, int x, int y) {
 }
 
 /**
- * Place treasures in the map. 
+ * Place treasures in the map.
 map,         (required)
 layout,      (required)
 treasure style    (may be empty or NULL, or "none" to cause no treasure.)
@@ -109,7 +109,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
 
   /* filter out the mutually exclusive options */
     if((treasureoptions & RICH) &&(treasureoptions &SPARSE)) {
-        if(RANDOM()%2) treasureoptions -=1; 
+        if(RANDOM()%2) treasureoptions -=1;
         else treasureoptions-=2;
     }
 
@@ -118,7 +118,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
         num_treasures = BC_RANDOM(RP->total_map_hp/600+RP->difficulty/2+1);
     else if(treasureoptions & RICH)
         num_treasures = BC_RANDOM(RP->total_map_hp/150+2*RP->difficulty+1);
-    else num_treasures = BC_RANDOM(RP->total_map_hp/300+RP->difficulty+1);  
+    else num_treasures = BC_RANDOM(RP->total_map_hp/300+RP->difficulty+1);
 
     if(num_treasures <= 0 ) return;
 
@@ -173,7 +173,7 @@ void place_treasure(mapstruct *map,char **layout, char *treasure_style,int treas
                     tries++;
                 }
                 chest=place_chest(treasureoptions,i,j,map,style_map,num_treasures,RP);
-                if(!chest) return; 
+                if(!chest) return;
                 i = chest->x; j = chest->y;
                 if(treasureoptions &( DOORED|HIDDEN)) {
                     doorlist=surround_by_doors(map,layout,i,j,treasureoptions);
@@ -313,7 +313,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
 
 
 /**
- * Places keys in the map, preferably in something alive.  
+ * Places keys in the map, preferably in something alive.
  *
  * The idea is that you call keyplace on x,y where a door is, and it'll make
  * sure a key is placed on both sides of the door.
@@ -342,7 +342,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
 
     /* get a key and set its keycode */
     the_key = create_archetype("key2");
-    the_key->slaying = add_string(keycode); 
+    the_key->slaying = add_string(keycode);
     free_string(the_key->name);
     snprintf( keybuf,256, "key from level %d of %s", RP->dungeon_level, RP->dungeon_name[0] != '\0' ? RP->dungeon_name : "a random map" );
     the_key->name = add_string(keybuf);
@@ -411,16 +411,16 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
 
     if(the_keymaster==NULL) {
         the_key->x = kx;
-        the_key->y = ky; 
+        the_key->y = ky;
         insert_ob_in_map(the_key,map,NULL,0);
         return 1;
     }
 
     insert_ob_in_ob(the_key,the_keymaster);
     return 1;
-} 
+}
 
-/** both find_monster_in_room routines need to have access to this. */ 
+/** both find_monster_in_room routines need to have access to this. */
 object *theMonsterToFind;
 
 /**
@@ -507,10 +507,10 @@ object *find_monster_in_room(mapstruct *map,int x,int y,RMParms *RP) {
     return theMonsterToFind;
 }
 
-/* a datastructure needed by find_spot_in_room and find_spot_in_room_recursive */ 
+/* a datastructure needed by find_spot_in_room and find_spot_in_room_recursive */
 int *room_free_spots_x;
 int *room_free_spots_y;
-int number_of_free_spots_in_room; 
+int number_of_free_spots_in_room;
 
 /**
  * the workhorse routine, which finds the free spots in a room:
@@ -580,7 +580,7 @@ int find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
         }
     }
 
-    /* setup num_free_spots and room_free_spots */ 
+    /* setup num_free_spots and room_free_spots */
     find_spot_in_room_recursive(layout2,x,y,RP);
 
     if(number_of_free_spots_in_room > 0) {
@@ -758,7 +758,7 @@ static object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int 
  */
 static object *door_in_square(mapstruct *map,int x,int y) {
   object *tmp;
-  for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above) 
+  for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above)
     if(tmp->type == DOOR || tmp->type== LOCKED_DOOR) return tmp;
   return NULL;
 }
@@ -843,7 +843,7 @@ object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
         }
     }
 
-    /* setup num_free_spots and room_free_spots */ 
+    /* setup num_free_spots and room_free_spots */
     find_doors_in_room_recursive(layout2,map,x,y,doorlist,&ndoors,RP);
 
     /* deallocate the temp. layout */

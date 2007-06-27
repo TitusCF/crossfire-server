@@ -423,7 +423,7 @@ Suite *bug_suite(void)
   Suite *s = suite_create("bug");
   TCase *tc_core = tcase_create("Core");
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown); 
+  tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_randommaps);

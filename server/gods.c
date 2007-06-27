@@ -1429,4 +1429,3 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     return 1;
 }
-

@@ -96,5 +96,3 @@ int command_stay (object *op, char *params)
   fire(op, 0);
   return 0;
 }
-
-

@@ -26,7 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* 
+/*
  * This tests the comet spell.  My main motivation for writing this
  * was to have a consistent test I could use for performance testing.
  * But I also wanted to make sure that the results were close before and
@@ -147,7 +147,7 @@ void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_
 	    fail("Monster destroyed at %d, %d\n", x, TEST_MAP_SIZE/2);
 	    continue;
 	}
-	fail_unless(mon->name == our_mon->name, 
+	fail_unless(mon->name == our_mon->name,
 		    "Could not find our monster on the space?");
 
 #ifdef PRINT_DEBUG_HP
@@ -157,10 +157,10 @@ void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_
 	if (our_mon->stats.hp == hp_row[x]) {
 	    diff = 0;
 	} else 	if (our_mon->stats.hp < hp_row[x]) {
-	    diff = 100 - (STARTING_HP - hp_row[x]) * 100 / 
+	    diff = 100 - (STARTING_HP - hp_row[x]) * 100 /
 		((STARTING_HP - our_mon->stats.hp)? (STARTING_HP - our_mon->stats.hp) : 1);
 	} else {
-	    diff = -(100 -(STARTING_HP - our_mon->stats.hp) * 100 / 
+	    diff = -(100 -(STARTING_HP - our_mon->stats.hp) * 100 /
 		((STARTING_HP - hp_row[x])? (STARTING_HP - hp_row[x]):1));
 	}
 
@@ -183,8 +183,8 @@ void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_
 	    fprintf(stderr,"Monster destroyed at %d, %d\n", x, x);
 	    continue;
 	}
-	
-	fail_unless(mon->name == our_mon->name, 
+
+	fail_unless(mon->name == our_mon->name,
 		    "Could not find our monster on the space?");
 
 #ifdef PRINT_DEBUG_HP
@@ -194,10 +194,10 @@ void check_hp(const char *test, int hp_row[TEST_MAP_SIZE], int hp_diag[TEST_MAP_
 	    diff = 0;
 	}
 	else if (our_mon->stats.hp < hp_diag[x]) {
-	    diff = 100 - (STARTING_HP - hp_diag[x]) * 100 / 
+	    diff = 100 - (STARTING_HP - hp_diag[x]) * 100 /
 		((STARTING_HP - our_mon->stats.hp)? (STARTING_HP - our_mon->stats.hp) : 1);
 	} else {
-	    diff = -(100 -(STARTING_HP - our_mon->stats.hp) * 100 / 
+	    diff = -(100 -(STARTING_HP - our_mon->stats.hp) * 100 /
 		((STARTING_HP - hp_diag[x])? (STARTING_HP - hp_diag[x]):1));
 	}
 
@@ -320,14 +320,14 @@ Suite *comet_suite(void)
     TCase *tc_core = tcase_create("Core");
 
     /* check by defaults has a 2 second timeout - that isn't
-     * fast enough on my system - a run of 30 comets takes about    
+     * fast enough on my system - a run of 30 comets takes about
      * 7 seconds.  Setting this to 20 is enough, but on a slower
      * system may not be.
      */
     tcase_set_timeout(tc_core, 20);
 
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-    tcase_add_checked_fixture(tc_core,setup,teardown); 
+    tcase_add_checked_fixture(tc_core,setup,teardown);
 
     suite_add_tcase (s, tc_core);
     tcase_add_test(tc_core, cast_one_comet);
@@ -358,7 +358,7 @@ int main(void)
     srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
     nf = srunner_ntests_failed(sr);
     srunner_free(sr);
-    fprintf(stderr,"Got %d supressions, %d spell merges, %d full tables\n", 
+    fprintf(stderr,"Got %d supressions, %d spell merges, %d full tables\n",
 	    statistics.spell_suppressions, statistics.spell_merges, statistics.spell_hash_full);
     return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

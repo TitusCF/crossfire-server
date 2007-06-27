@@ -314,7 +314,7 @@ void place_specials_in_map(mapstruct *map, char **layout,RMParms *RP) {
 
         /* includes a special map into the random map being made. */
         case SPECIAL_SUBMAP: {
-            special_map = find_style("/styles/specialmaps",0,RP->difficulty); 
+            special_map = find_style("/styles/specialmaps",0,RP->difficulty);
             if(special_map==NULL) return;
 
             if(find_spot_for_submap(map,layout,&ix,&iy,MAP_WIDTH(special_map),MAP_HEIGHT(special_map)))

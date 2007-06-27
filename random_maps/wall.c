@@ -319,7 +319,7 @@ object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP)
  * 1, .  If not, it
  * will only return the wall which would belong there, and doesn't
  * remove anything.  It depends on the
- * global, previously-set variable, "wall_name"  
+ * global, previously-set variable, "wall_name"
  * @param the_map
  * @param i
  * @param j
@@ -337,7 +337,7 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
     /* 1 = wall to left,
      * 2 = wall to right,
      * 4 = wall above
-     * 8 = wall below 
+     * 8 = wall below
      */
     int surround_index=0;
     int l;
@@ -352,12 +352,12 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
 
 
     /* if what we found is a door, don't remove it, set the_wall to NULL to
-     * signal that later. 
+     * signal that later.
      */
     if(the_wall && (the_wall->type==DOOR || the_wall->type==LOCKED_DOOR) ) {
         the_wall=NULL;
-        /* if we're not supposed to insert a new wall where there wasn't one, 
-         * we've gotta leave. 
+        /* if we're not supposed to insert a new wall where there wasn't one,
+         * we've gotta leave.
          */
         if(insert_flag==0) return 0;
     }

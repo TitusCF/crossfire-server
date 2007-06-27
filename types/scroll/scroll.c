@@ -48,7 +48,7 @@ void init_type_scroll(void)
  * The scroll to apply
  * @param applier
  * The object attempting to apply the scroll
- * @param aflags 
+ * @param aflags
  * Special flags (always apply/unapply)
  * @return METHOD_OK
  * @todo
@@ -60,7 +60,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
     object* applier, int aflags) {
     object *skapplier;
     object *head;
-    
+
     if (applier->head)
         head = applier->head;
     else

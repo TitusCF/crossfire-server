@@ -53,7 +53,7 @@ int surround_check(char **layout, int i, int j, int Xsize, int Ysize) {
 
 /**
  * Actually make the rogue layout. We work by a reduction process:
- * first we make everything a wall, then we remove areas to make rooms 
+ * first we make everything a wall, then we remove areas to make rooms
  * @param xsize
  * @param ysize
  * wanted layout size.
@@ -91,7 +91,7 @@ char **roguelike_layout_gen(int xsize, int ysize, int options) {
 
     /* decide on the number of rooms */
     nrooms = RANDOM() % 10 + 6;
-    Rooms = (Room *) calloc(nrooms +1 , sizeof(Room)); 
+    Rooms = (Room *) calloc(nrooms +1 , sizeof(Room));
 
     /* actually place the rooms */
     i=0;
@@ -267,7 +267,7 @@ static void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
         /* enscribe a rectangle or a circle */
         for(i=walk->ax;i<walk->zx;i++)
             for(j=walk->ay;j<walk->zy;j++) {
-                if(!making_circle || ((int)(0.5+hypot(walk->x-i,walk->y-j))) <=R) 
+                if(!making_circle || ((int)(0.5+hypot(walk->x-i,walk->y-j))) <=R)
                     maze[i][j]='.';
             }
     }

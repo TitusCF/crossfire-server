@@ -48,7 +48,7 @@ void add_friendly_object(object *op) {
     /* Add some error checking.  This shouldn't happen, but the friendly
      * object list usually isn't very long, and remove_friendly_object
      * won't remove it either.  Plus, it is easier to put a breakpoint in
-     * the debugger here and see where the problem is happening. 
+     * the debugger here and see where the problem is happening.
      */
     for (ol=first_friendly_object; ol!=NULL; ol=ol->next) {
         if (ol->ob == op) {
@@ -146,7 +146,7 @@ void clean_friendly_list(void) {
         /* If we removed the object, then prev is still valid.  */
         else prev=this;
     }
-    if (count) 
+    if (count)
         LOG(llevDebug,"clean_friendly_list: Removed %d bogus links\n", count);
 }
 

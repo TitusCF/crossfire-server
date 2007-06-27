@@ -58,7 +58,7 @@
 extern const char* const spellpathnames[NRSPELLPATHS];
 
 /* The only place this is really used is to allocate an array
- * when printing out the spells the player knows. 
+ * when printing out the spells the player knows.
  */
 #define NROFREALSPELLS	1024
 

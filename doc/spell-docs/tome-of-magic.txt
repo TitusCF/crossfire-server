@@ -2,7 +2,7 @@ Level 1
 =========
 
 spell: armour
-level: 1 
+level: 1
 sp cost: 8          speed: 2.00
 range: touch        duration: special
 description: Armour creates a magical field around you which gives you an ac level of 2 + (level+2)/3,
@@ -12,59 +12,59 @@ supplementry forms of armour (shields, helmets, bracers) however. The duration i
 means that it lasts until the next semi-permanent spell effect is cast upon the character.
 
 spell: burning hands
-level: 1 
+level: 1
 sp cost: 5          speed: 0.50
 range: 5            duration: instant
 description: Shoots forth a cone of fire with does 8 hp of fire damage/rnd to creatures within the cone.
 
 spell: magic bullet
-level: 1 
+level: 1
 sp cost: 1          speed: 0.30
 range: special      duration: instant
 description: Creates and hurls magical bullet in a single direction which does 6 points of physical damage
 upon impact.
 
 spell: magic missile
-level: 1 
+level: 1
 sp cost: 2          speed: 0.50
 range: special      duration: instant
 description: Creates a magical projectile which homes in on enemies causing 4 hp of magical damage upon
 impact.
 
 prayer: minor healing
-level: 1 
+level: 1
 sp cost: 4          speed: 2.00
 range: touch        duration: permanent
 description: Restores up to 8 hit points.
 
 spell: probe
-level: 1 
+level: 1
 sp cost: 3          speed: 0.20
 range: 5            duration: instant
 description: Describes an object with regard to power versus your current level and also describes the
 current physical condition of the object (excellent shape, weak).
 
 spell: slow
-level: 1 
+level: 1
 sp cost: 5          speed: 0.30
 range: 5            duration: standard
 description: Causes affected creatures move extremely slow (speed of 0.05).
 
 spell: small fireball
-level: 1 
+level: 1
 sp cost: 5          speed: 0.50
 range: special      duration: 6
 description: Creates a ball of fire which when thrown and detonated does 8 hp of fire damage/rnd.
 
 spell: small lightning
-level: 1 
+level: 1
 sp cost: 5          speed: 0.30
 range: 12           duration: 8
 description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd.  Lightning will reflect
 off of walls.
 
 prayer: turn undead
-level: 1 
+level: 1
 sp cost: 2          speed: 0.10
 range: special      duration: standard
 description: A cone of fear for undead with a range of (3 + Wisdom bonus) squares.
@@ -73,32 +73,32 @@ Level 2
 =========
 
 spell: confusion
-level: 2 
+level: 2
 sp cost: 10         speed: 0.50
 range: touch        duration: standard
 description: Confuses the recipient such that he has problems wielding his weapon and walking straight.
 
 spell: earth to dust
-level: 2 
+level: 2
 sp cost: 5          speed: 1.00
 range: special      duration: permanent
 description: Destroys earth walls in a radius of (level/3) + 1 sqaures around the caster.
 
 spell: paralyze
-level: 2 
+level: 2
 sp cost: 5          speed: 0.50
 range: 5            duration: standard
 description: Paralyzes affected creatures.
 
 prayer: perceive self
-level: 2 
+level: 2
 sp cost: 5          speed: 0.00
 range: self         duration: instant
 description: Describes the caster in terms of armour, special abilities (reflect missiles, reflect spells, ...),
 and current protections and immunities.
 
 spell: poison cloud
-level: 2 
+level: 2
 sp cost: 5          speed: 1.00
 range: special      duration: 10
 description: Creates a gaseous ball that explodes on impact to form a cloud of poisonous gas which does
@@ -106,7 +106,7 @@ description: Creates a gaseous ball that explodes on impact to form a cloud of p
 (due to poison in their system) after they have emerged from the gas cloud.
 
 spell: strength
-level: 2 
+level: 2
 sp cost: 10         speed: 2.00
 range: touch        duration: special
 description: Temporarily increases the recipient's Strength (Str.) by at least one point and boots it
@@ -114,13 +114,13 @@ by one point for every two points their strength is less than 20.  The spell las
 duration or until another change attribute or protection spell is cast upon the recipient.
 
 spell: summon golem
-level: 2 
+level: 2
 sp cost: 5          speed: 1.00
 range: 1            duration: special
 description: Summons golem to fight for you.  The golem will remain until it is destroyed or until you summon a type of elemental.
 
 spell: summon pet monster
-level: 2 
+level: 2
 sp cost: 5          speed: 1.00
 range: 1            duration: special
 description: Summons up to five friendly monsters to fight for you.  Monsters remain your friend until either
@@ -139,7 +139,7 @@ Level 3
 =========
 
 spell: charisma
-level: 3 
+level: 3
 sp cost: 12         speed: 2.00
 range: touch        duration: special
 description: Temporarily increases the recipient's Charisma (Cha.) by at least one point and boots it by
@@ -147,13 +147,13 @@ one point for every two points their charisma is less than 20.  The spell lasts 
 duration or until another change attribute or protection spell is cast upon the recipient.
 
 prayer: create food
-level: 3 
+level: 3
 sp cost: 5          speed: 2.00
 range: 1            duration: permanent
 description: Creates one food in a space adjacent to the caster.
 
 spell: dexterity
-level: 3 
+level: 3
 sp cost: 12         speed: 2.00
 range: touch        duration: special
 description: Temporarily increases the recipient's Dexterity (Dex.) by at least one point and boots it by one
@@ -161,13 +161,13 @@ point for every two points their dexterity is less than 20.  The spell lasts for
 duration or until another change attribute or protection spell is cast upon the recipient.
 
 spell: medium fireball
-level: 3 
+level: 3
 sp cost: 8          speed: 0.70
 range: special      duration: 10
 description: Creates a ball of fire which when thrown and detonated does 8 hp of fire damage/rnd.
 
 prayer: protection from cold
-level: 3 
+level: 3
 sp cost: 15         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from cold so well, that they only take 1/2 damage from cold based attacks.
@@ -176,7 +176,7 @@ Level 4
 =========
 
 spell: constitution
-level: 4 
+level: 4
 sp cost: 15         speed: 2.00
 range: touch        duration: special
 description: Temporarily increases the recipient's Constitution (Con.) by at least one point and boots it by
@@ -184,50 +184,50 @@ one point for every two points their constitution is less than 20.  The spell la
 standard duration or until another change attribute or protection spell is cast upon the recipient.
 
 spell: create earth wall
-level: 4 
+level: 4
 sp cost: 6          speed: 1.00
 range: 1            duration: permanent
 description: Creates a destructable earthen wall.
 
 spell: fear
-level: 4 
+level: 4
 sp cost: 6          speed: 0.20
 range: 4            duration: standard
 description: Invokes such fear within individuals that they run away at top speed from you!
 
 prayer: holy word
-level: 4 
+level: 4
 sp cost: 6          speed: 0.30
 range: special      duration: instant
 description: This spell is an improvement of Turn Undead which not only turns undead, but it will also causes
 3 hp/rnd.  The range of the cone covers (2 + Wisdom bonus) squares.
 
 spell: icestorm
-level: 4 
+level: 4
 sp cost: 7          speed: 0.50
 range: 6            duration: instant
 description: Creates a cone of frost which does 4 hp of cold damage/rnd.
 
 spell: large bullet
-level: 4 
+level: 4
 sp cost: 3          speed: 0.50
 range: special      duration: instant
 description: Creates and hurls large magical bullet in a single direction which does 25 points of physical damage upon impact.
 
 spell: large lightning
-level: 4 
+level: 4
 sp cost: 8          speed: 0.60
 range: 24           duration: 16
 description: Creates a single bolt of lightning which does 3 hp electrical damage/rnd.  Lightning will reflect off of walls.
 
 prayer: medium healing
-level: 4 
+level: 4
 sp cost: 7          speed: 3.00
 range: touch        duration: permanent
 description: Restores up to 21 hit points.
 
 prayer: protection from electricity
-level: 4 
+level: 4
 sp cost: 15         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from electricity so well, that they only take 1/2 damage from electrical attacks.
@@ -236,25 +236,25 @@ Level 5
 =========
 
 spell: large fireball
-level: 5 
+level: 5
 sp cost: 13         speed: 1.00
 range: special      duration: 14
 description: Creates a ball of fire which when thrown and detonated does 8 hp of fire damage/rnd.
 
 spell: magic mapping
-level: 5 
+level: 5
 sp cost: 15         speed: 1.00
 range: self         duration: instant
 description: Shows complete map of level.
 
 prayer: protection from fire
-level: 5 
+level: 5
 sp cost: 20         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from fire so well, that they only take 1/2 damage from fire attacks.
 
 spell: summon earth elemental
-level: 5 
+level: 5
 sp cost: 15         speed: 1.00
 range: 1            duration: special
 description: Summons earth elemental to fight for you.  The earth elemental will remain until it is destroyed
@@ -264,21 +264,21 @@ Level 6
 =========
 
 spell: create bomb
-level: 6 
+level: 6
 sp cost: 20         speed: 1.00
 range: 1            duration: special
 description: Creates a short fuse bomb which detonates 8 rounds after creation in a 4 square radius doing 5 hp
 of physical damage.  Shards of the bomb project forth until they strike a barrier.
 
 spell: create fire wall
-level: 6 
+level: 6
 sp cost: 5          speed: 1.00
 range: 1            duration: special
 description: Creates a wall of fire lasting (200 + 10*caster's level) rounds that does 1 hp fire damage/rnd.
 Creatures will not walk through this wall.
 
 spell: improved invisibility
-level: 6 
+level: 6
 sp cost: 15         speed: 1.00
 range: touch        duration: standard
 description: This spell is an improvement of Invisibility in that the recipient will stay invisible even if he attacks
@@ -286,27 +286,27 @@ something.  The spell can be cast multiple times to increase the duration, but t
 1000 rounds.
 
 spell: invisible
-level: 6 
+level: 6
 sp cost: 25         speed: 0.50
 range: touch        duration: standard
 description: Recipient becomes invisible and remains so until the spell wears off or until the recipient attacks a creature.
 
 spell: levitate
-level: 6 
+level: 6
 sp cost: 10         speed: 1.00
 range: touch        duration: standard
 description: Recipient floats several inches above the floor, thus making it impossible to pick up items,
 trigger levers or buttons, or use exits (including doors and stairs).
 
 prayer: protection from poison
-level: 6 
+level: 6
 sp cost: 20         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from electricity so well, that they only take 1/2 damage from electrical
 attacks.
 
 spell: summon water elemental
-level: 6 
+level: 6
 sp cost: 15         speed: 1.00
 range: 1            duration: special
 description: Summons water elemental to fight for you.  The water elemental will remain until it is destroyed
@@ -316,20 +316,20 @@ Level 7
 =========
 
 spell: mass confusion
-level: 7 
+level: 7
 sp cost: 20         speed: 0.70
 range: 5            duration: standard
 description: A wave of confusion on a large scale.
 
 prayer: protection from slow
-level: 7 
+level: 7
 sp cost: 20         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from slowness, giving them a +5 bonus to their saving throw against
 slow attacks.
 
 spell: summon air elemental
-level: 7 
+level: 7
 sp cost: 20         speed: 1.00
 range: 1            duration: special
 description: Summons air elemental to fight for you.  The air elemental will remain until it is destroyed or
@@ -339,27 +339,27 @@ Level 8
 =========
 
 spell: create frost wall
-level: 8 
+level: 8
 sp cost: 8          speed: 1.00
 range: 1            duration: special
 description: Creates a wall of frost lasting (160 + 10*caster's level) rounds that does 1 hp of cold
 damage/rnd.  Creatures will not walk through this wall.
 
 prayer: major healing
-level: 8 
+level: 8
 sp cost: 10         speed: 5.00
 range: touch        duration: permanent
 description: Restores up to 27 hit points.
 
 prayer: protection from paralysis
-level: 8 
+level: 8
 sp cost: 20         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from electricity, giving them a +5 bonus to their
 saving throw against paralysis attacks.
 
 spell: summon fire elemental
-level: 8 
+level: 8
 sp cost: 25         speed: 1.00
 range: 1            duration: special
 description: Summons fire elemental to fight for you.  The fire elemental will remain until it is destroyed or
@@ -369,14 +369,14 @@ Level 9
 =========
 
 prayer: invisible to undead
-level: 9 
+level: 9
 sp cost: 35         speed: 1.00
 range: touch        duration: standard
 description: Recipient becomes invisible to undead and remains so until the spell wears off or until the
 recipient attacks a creature.
 
 prayer: protection from draining
-level: 9 
+level: 9
 sp cost: 25         speed: 1.00
 range: touch        duration: special
 description: Protects recipient from undead life drain so well, that they lose life at only 1/2 the speed
@@ -446,4 +446,3 @@ level: 18
 sp cost: 20         speed: 0.20
 range: special      duration: instant
 description: Does 5+Int dmg to every creature on level.
-

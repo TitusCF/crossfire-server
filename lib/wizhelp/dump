@@ -1,4 +1,4 @@
-syntax: dump <tag> 
+syntax: dump <tag>
 notes: Using
 dump, you can see the attributes
 of any item in the game.  To

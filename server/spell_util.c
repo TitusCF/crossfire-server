@@ -467,7 +467,7 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 	 * if they have it set.
 	 */
 	if (tmp->type == op->type && tmp->subtype == op->subtype &&
-          tmp->stats.maxhp && op->stats.maxhp) { 
+          tmp->stats.maxhp && op->stats.maxhp) {
 	    if ((tmp->stats.maxhp == op->stats.maxhp) ||
 	        (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)) ||
 	        (op->spell_tags && OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp))) {
@@ -567,7 +567,7 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
 	return 1;
 
     ob_process(tmp);
-    
+
     return 1;
 }
 

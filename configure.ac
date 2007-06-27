@@ -137,7 +137,7 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(gettimeofday mkdir mktime rmdir select socket strcspn strerror strspn strstr strtol strcasecmp strncasecmp snprintf setsid srandom getdtablesize srand48 srand sysconf scandir)
 
-dnl alphasort can not be added to AC_CHECK_FUNCS because 
+dnl alphasort can not be added to AC_CHECK_FUNCS because
 AC_MSG_CHECKING(checking if alphasort is defined)
   AC_TRY_COMPILE([#include <dirent.h>], [alphasort;],
     ac_cv_func_alphasort=yes, ac_cv_func_alphasort=no)
@@ -159,7 +159,7 @@ AC_CACHE_VAL(ac_cv_gettimeofday_args,
 	[ac_gettimeofday_args=2],
 		[AC_TRY_COMPILE([#include <sys/time.h>
 		#include <unistd.h>],
-		[struct timeval tv; 
+		[struct timeval tv;
 		gettimeofday(&tv, NULL);],
 		[ac_gettimeofday_args=2],
 		[AC_TRY_COMPILE([#include <sys/time.h>
@@ -251,18 +251,18 @@ AC_OUTPUT([Makefile
 	doc/spoiler/Makefile doc/spoiler-html/Makefile
 	doc/playbook/Makefile doc/playbook-html/Makefile
 	doc/scripts/Makefile
-	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile 
+	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile
 	include/Makefile utils/Makefile lib/checkarch.pl
 	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
 	utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl
-	common/Makefile plugins/Makefile plugins/cfpython/Makefile 
-	plugins/cfpython/include/Makefile plugins/cfanim/Makefile 
+	common/Makefile plugins/Makefile plugins/cfpython/Makefile
+	plugins/cfpython/include/Makefile plugins/cfanim/Makefile
 	plugins/cfanim/include/Makefile
 	plugins/common/Makefile plugins/common/include/Makefile
 	plugins/cflogger/Makefile plugins/cflogger/include/Makefile
 	plugins/cfnewspaper/Makefile
 	devel/Makefile
-	test/Makefile test/include/Makefile test/unit/Makefile 
+	test/Makefile test/include/Makefile test/unit/Makefile
 	test/templates/Makefile test/toolkit/Makefile
 	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile
 	test/bugs/Makefile test/bugs/bugtrack/Makefile
@@ -292,7 +292,7 @@ fi
 
 if test "x$cf_have_libdl" = "xyes" ; then
 AC_MSG_NOTICE([    Will build python plugin?            $cf_will_build_python])
-			
+
 fi
 if test x"$xsltengine" != "x" ; then
     check_complement=["(will generate report)"]

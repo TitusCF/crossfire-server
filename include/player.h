@@ -41,11 +41,11 @@ typedef struct {
  * anyways.
  */
 typedef enum rangetype {
-    range_bottom    = -1, 
-    range_none	    = 0, 
+    range_bottom    = -1,
+    range_none	    = 0,
     range_bow	    = 1,
     range_magic	    = 2,
-    range_misc	    = 3, 
+    range_misc	    = 3,
     range_golem     = 4,
     range_skill	    = 5,
     range_builder   = 6,
@@ -103,7 +103,7 @@ typedef struct client_spell {
     struct client_spell *next;
 } client_spell;
 
-/* not really the player, but tied pretty closely */  
+/* not really the player, but tied pretty closely */
 typedef struct party_struct {
     char * partyleader;
     char passwd[9];
@@ -199,7 +199,7 @@ typedef struct pl {
     char	own_title[MAX_NAME];	/* Title the player has chosen for themself */
 				    /* Note that for dragon players, this is filled in for them */
     char	title[BIG_NAME];    /* Default title, like fighter, wizard, etc */
-  
+
     sint8	levhp[11];	    /* What the player gained on that level */
     sint8	levsp[11];	    /* Same for sp */
     sint8	levgrace[11];	    /* And same for grace */

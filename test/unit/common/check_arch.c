@@ -26,7 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* 
+/*
  * This is the unit tests file for common/arch.c
  */
 
@@ -115,7 +115,7 @@ START_TEST (test_get_archetype_by_skill_name)
     fail_unless(arch==NULL,"Asking for null skill should return null");
 }
 END_TEST
-        
+
 START_TEST (test_get_archetype_by_type_subtype)
 {
     archetype* arch;
@@ -170,7 +170,7 @@ START_TEST (test_create_archetype_by_object_name)
                  "Searching for \"\" should have returned a singularity");
 }
 END_TEST
-        
+
 START_TEST (test_init_archetypes)
 {
     /*init_archetypes is used by setup, just check it created the empty_archetype*/
@@ -204,7 +204,7 @@ START_TEST(test_get_archetype_struct)
 	fail_unless(arch->name==NULL,"arch->name of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->head==NULL,"arch->head of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->next==NULL,"arch->next of get_archetype_struct should be inited to NULL");
-	fail_unless(arch->more==NULL,"arch->more of get_archetype_struct should be inited to NULL");	
+	fail_unless(arch->more==NULL,"arch->more of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.other_arch==NULL,"arch->clone.other_arch of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.contr==NULL,"arch->clone.contr of get_archetype_struct should be inited to NULL");
     fail_unless(arch->clone.next==NULL,"arch->clone.next of get_archetype_struct should be inited to NULL");
@@ -219,7 +219,7 @@ START_TEST(test_get_archetype_struct)
     fail_unless(arch->clone.more==NULL,"arch->clone.more of get_archetype_struct should be inited to NULL");
     fail_unless(arch->clone.head==NULL,"arch->clone.head of get_archetype_struct should be inited to NULL");
     fail_unless(arch->clone.map==NULL,"arch->clone.map of get_archetype_struct should be inited to NULL");
-    
+
     fail_unless(arch->clone.name==NULL,"arch->clone.name of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.name_pl==NULL,"arch->clone.name_pl of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.title==NULL,"arch->clone.title of get_archetype_struct should be inited to NULL");
@@ -228,8 +228,8 @@ START_TEST(test_get_archetype_struct)
 	fail_unless(arch->clone.msg==NULL,"arch->clone.msg of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.skill==NULL,"arch->clone.skill of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.lore==NULL,"arch->clone.lore of get_archetype_struct should be inited to NULL");
-	
-	
+
+
 	fail_unless(arch->clone.current_weapon==NULL,"arch->clone.current_weapon of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.enemy==NULL,"arch->clone.enemy of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.attacked_by==NULL,"arch->clone.attacked_by of get_archetype_struct should be inited to NULL");
@@ -242,7 +242,7 @@ START_TEST(test_get_archetype_struct)
 	fail_unless(arch->clone.other_arch==NULL,"arch->clone.other_arch of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.custom_name==NULL,"arch->clone.custom_name of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->clone.key_values==NULL,"arch->clone.key_values of get_archetype_struct should be inited to NULL");
-    
+
 }
 END_TEST
 
@@ -303,7 +303,7 @@ Suite *arch_suite(void)
   Suite *s = suite_create("arch");
   TCase *tc_core = tcase_create("Core");
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown); 
+  tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_find_archetype_by_object_name);

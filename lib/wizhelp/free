@@ -1,4 +1,4 @@
-syntax: free <tag> 
+syntax: free <tag>
 notes: free
 should ONLY be used after remove.
 Freeing an object that has not

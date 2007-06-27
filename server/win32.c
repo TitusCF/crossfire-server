@@ -46,7 +46,7 @@ struct itimerval {
 
 
 /* Functions to capsule or serve linux style function
- * for Windows Visual C++ 
+ * for Windows Visual C++
 */
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 {
@@ -190,26 +190,26 @@ void service_register( )
     strcat( strDir, " -srv" );
 
 	schSCManager = OpenSCManager( NULL,NULL,SC_MANAGER_ALL_ACCESS );
- 
+
 	if (schSCManager == NULL)
         {
         printf( "openscmanager failed" );
 		exit( 1 );
         }
 
-    schService = CreateService(schSCManager, SERVICE_NAME, SERVICE_DISPLAY,           // service name to display 
-        SERVICE_ALL_ACCESS,        // desired access 
-        SERVICE_WIN32_OWN_PROCESS, // service type 
-        SERVICE_DEMAND_START,      // start type 
-        SERVICE_ERROR_NORMAL,      // error control type 
-        strDir,        // service's binary 
-        NULL,                      // no load ordering group 
-        NULL,                      // no tag identifier 
-        NULL,                      // no dependencies 
-        NULL,                      // LocalSystem account 
-        NULL);                     // no password 
- 
-    if (schService == NULL) 
+    schService = CreateService(schSCManager, SERVICE_NAME, SERVICE_DISPLAY,           // service name to display
+        SERVICE_ALL_ACCESS,        // desired access
+        SERVICE_WIN32_OWN_PROCESS, // service type
+        SERVICE_DEMAND_START,      // start type
+        SERVICE_ERROR_NORMAL,      // error control type
+        strDir,        // service's binary
+        NULL,                      // no load ordering group
+        NULL,                      // no tag identifier
+        NULL,                      // no dependencies
+        NULL,                      // LocalSystem account
+        NULL);                     // no password
+
+    if (schService == NULL)
         {
         printf( "createservice failed" );
         exit( 1 );
@@ -228,7 +228,7 @@ void service_unregister( )
 	SC_HANDLE hService;
 
 	schSCManager = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
- 
+
 	if (schSCManager == NULL)
         {
         printf( "open failed" );
@@ -237,7 +237,7 @@ void service_unregister( )
 
 	hService=OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
 
-	if (hService == NULL) 
+	if (hService == NULL)
         {
         printf( "openservice failed" );
 		exit( 1 );
@@ -266,22 +266,22 @@ void service_unregister( )
 
 void WINAPI ServiceCtrlHandler(DWORD Opcode)
     {
-    switch(Opcode) 
+    switch(Opcode)
         {
-        case SERVICE_CONTROL_PAUSE: 
-            m_ServiceStatus.dwCurrentState = SERVICE_PAUSED; 
-            break; 
- 
-        case SERVICE_CONTROL_CONTINUE: 
-            m_ServiceStatus.dwCurrentState = SERVICE_RUNNING; 
-            break; 
+        case SERVICE_CONTROL_PAUSE:
+            m_ServiceStatus.dwCurrentState = SERVICE_PAUSED;
+            break;
 
-        case SERVICE_CONTROL_STOP: 
-            m_ServiceStatus.dwWin32ExitCode = 0; 
-            m_ServiceStatus.dwCurrentState  = SERVICE_STOPPED; 
-            m_ServiceStatus.dwCheckPoint    = 0; 
-            m_ServiceStatus.dwWaitHint      = 0; 
- 
+        case SERVICE_CONTROL_CONTINUE:
+            m_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+            break;
+
+        case SERVICE_CONTROL_STOP:
+            m_ServiceStatus.dwWin32ExitCode = 0;
+            m_ServiceStatus.dwCurrentState  = SERVICE_STOPPED;
+            m_ServiceStatus.dwCheckPoint    = 0;
+            m_ServiceStatus.dwWaitHint      = 0;
+
             SetServiceStatus (m_ServiceStatusHandle,&m_ServiceStatus);
 
 			bRunning = 0;
@@ -289,11 +289,11 @@ void WINAPI ServiceCtrlHandler(DWORD Opcode)
             LOG( llevInfo, "Service stopped.\n" );
 
 			break;
- 
-        case SERVICE_CONTROL_INTERROGATE: 
-            break; 
-        }      
-    return; 
+
+        case SERVICE_CONTROL_INTERROGATE:
+            break;
+        }
+    return;
     }
 
 extern int main( int argc, char** argv );
@@ -309,23 +309,23 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
         *strSlash = '\0';
     chdir( strDir );
 
-    m_ServiceStatus.dwServiceType        = SERVICE_WIN32; 
-    m_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING; 
-    m_ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP; 
-    m_ServiceStatus.dwWin32ExitCode      = 0; 
-    m_ServiceStatus.dwServiceSpecificExitCode = 0; 
-    m_ServiceStatus.dwCheckPoint         = 0; 
-    m_ServiceStatus.dwWaitHint           = 0; 
- 
-    m_ServiceStatusHandle = RegisterServiceCtrlHandler( SERVICE_NAME, ServiceCtrlHandler );
-    if (m_ServiceStatusHandle == (SERVICE_STATUS_HANDLE)0) 
-        { 
-        return; 
-        }     
+    m_ServiceStatus.dwServiceType        = SERVICE_WIN32;
+    m_ServiceStatus.dwCurrentState       = SERVICE_START_PENDING;
+    m_ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP;
+    m_ServiceStatus.dwWin32ExitCode      = 0;
+    m_ServiceStatus.dwServiceSpecificExitCode = 0;
+    m_ServiceStatus.dwCheckPoint         = 0;
+    m_ServiceStatus.dwWaitHint           = 0;
 
-    m_ServiceStatus.dwCurrentState       = SERVICE_RUNNING; 
-    m_ServiceStatus.dwCheckPoint         = 0; 
-    m_ServiceStatus.dwWaitHint           = 0;  
+    m_ServiceStatusHandle = RegisterServiceCtrlHandler( SERVICE_NAME, ServiceCtrlHandler );
+    if (m_ServiceStatusHandle == (SERVICE_STATUS_HANDLE)0)
+        {
+        return;
+        }
+
+    m_ServiceStatus.dwCurrentState       = SERVICE_RUNNING;
+    m_ServiceStatus.dwCheckPoint         = 0;
+    m_ServiceStatus.dwWaitHint           = 0;
     SetServiceStatus (m_ServiceStatusHandle, &m_ServiceStatus);
 
     bRunning = 1;
@@ -336,7 +336,7 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
 
 void service_handle( )
     {
-    SERVICE_TABLE_ENTRY DispatchTable[ ] = { { SERVICE_NAME, ServiceMain },{ NULL, NULL } };  
+    SERVICE_TABLE_ENTRY DispatchTable[ ] = { { SERVICE_NAME, ServiceMain },{ NULL, NULL } };
 	StartServiceCtrlDispatcher( DispatchTable );
     exit( 0 );
     }

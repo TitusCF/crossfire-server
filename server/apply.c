@@ -1128,7 +1128,7 @@ static int is_legal_2ways_exit (object* op, object *exit)
                 continue; /*Not in the same place*/
             if (strcmp(exit->map->path,EXIT_PATH(tmp))!=0)
                 continue; /*Not in the same map*/
-                
+
                 /* From here we have found the exit is valid. However
                  * we do here the check of the exit owner. It is important
                  * for the town portals to prevent strangers from visiting

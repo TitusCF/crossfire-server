@@ -31,7 +31,7 @@ char **make_snake_layout(int xsize, int ysize,int options) {
     }
 
     /* write the outer walls */
-    for(i=0;i<xsize;i++) 
+    for(i=0;i<xsize;i++)
         maze[i][0] = maze[i][ysize-1] = '#';
     for(j=0;j<ysize;j++)
         maze[0][j] = maze[xsize-1][j] = '#';

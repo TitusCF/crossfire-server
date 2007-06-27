@@ -51,7 +51,7 @@ case "$1" in
 #      grep ^crossfire: /etc/group >/dev/null || {
 #          /usr/sbin/groupdel crossfire > /dev/null 2>&1
 #      }
-    ;; 
+    ;;
   *)
     echo "$0: incorrect arguments: $*" >&2
     exit 1
@@ -60,4 +60,3 @@ case "$1" in
 esac
 
 ##DEBHELPER##
-

@@ -1,11 +1,11 @@
 
 nodist_bin_SCRIPTS = crossloop.pl crossloop player_dl.pl
 dist_bin_SCRIPTS = crossloop.web
-nodist_pkglib_SCRIPTS = 
+nodist_pkglib_SCRIPTS =
 dist_pkglib_SCRIPTS = mktable.script add_throw.perl metaserver.pl
 dist_noinst_SCRIPTS = ad2c.script mktable.script player_dl.html cfmeta-rrd
 
-EXTRA_DIST = 
+EXTRA_DIST =
 
 CLEANFILES = crossloop.pl crossloop
 

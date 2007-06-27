@@ -1,4 +1,4 @@
-syntax: summon <player> 
+syntax: summon <player>
 notes:
 summoning a player will bring
 them immediately to your location.

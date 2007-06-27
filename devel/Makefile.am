@@ -46,4 +46,3 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(
 # Check if everything is installed as it should
 #installcheck-local:
 #	$(bindir)/crossfire -o
-

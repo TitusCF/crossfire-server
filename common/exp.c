@@ -120,7 +120,7 @@ int new_exp(const object *ob) {
     }
     spec_mult += (0.3*(QUERY_FLAG(ob,FLAG_SEE_INVISIBLE)!= FALSE)) +
         (0.5*(QUERY_FLAG(ob,FLAG_SPLITTING)!= FALSE))+
-        (0.3*(QUERY_FLAG(ob,FLAG_HITBACK)!= FALSE)) + 
+        (0.3*(QUERY_FLAG(ob,FLAG_HITBACK)!= FALSE)) +
         (0.1*(QUERY_FLAG(ob,FLAG_REFL_MISSILE)!= FALSE)) +
         (0.3*(QUERY_FLAG(ob,FLAG_REFL_SPELL)!= FALSE)) +
         (1.0*(QUERY_FLAG(ob,FLAG_NO_MAGIC)!= FALSE)) +
@@ -129,7 +129,7 @@ int new_exp(const object *ob) {
         (0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));
 
     exp = (ob->stats.maxhp<5) ? 5 : ob->stats.maxhp;
-    exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob)) 
+    exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob))
         ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
     exp *= (80.0/(70.0+ob->stats.wc)) * (80.0/(70.0+ob->stats.ac)) * (50.0+ob->stats.dam)/50.0;
     exp *= att_mult * prot_mult * spec_mult;
@@ -150,7 +150,7 @@ int has_ability(const object *ob) {
     object *tmp;
 
     for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
-        if(tmp->type==SPELL||tmp->type==SPELLBOOK) 
+        if(tmp->type==SPELL||tmp->type==SPELLBOOK)
             return TRUE;
     return FALSE;
 }
@@ -223,7 +223,7 @@ void init_experience(void)
             }
             lastlevel++;
             if (lastlevel > settings.max_level) {
-                LOG(llevError,"Too many levels specified in table (%d > %d)\n", 
+                LOG(llevError,"Too many levels specified in table (%d > %d)\n",
                     lastlevel, settings.max_level);
                 exit(1);
             }

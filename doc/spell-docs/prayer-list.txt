@@ -1,54 +1,54 @@
-level 1  
+level 1
 =========
-minor healing                 
-turn undead                   
+minor healing
+turn undead
 
-level 2  
+level 2
 =========
-perceive self                 
+perceive self
 
-level 3  
+level 3
 =========
-protection from cold          
-create food                   
+protection from cold
+create food
 
-level 4  
+level 4
 =========
-medium healing                
-holy word                     
-protection from electricity   
+medium healing
+holy word
+protection from electricity
 
-level 5  
+level 5
 =========
-protection from fire          
+protection from fire
 
-level 6  
+level 6
 =========
-protection from poison        
+protection from poison
 
-level 7  
+level 7
 =========
-protection from slow          
+protection from slow
 
-level 8  
+level 8
 =========
-protection from paralysis     
-major healing                 
+protection from paralysis
+major healing
 
-level 9  
+level 9
 =========
-protection from draining      
-invisible to undead           
+protection from draining
+invisible to undead
 
-level 10 
+level 10
 =========
-protection from magic         
-heal                          
+protection from magic
+heal
 
-level 13 
+level 13
 =========
-protection from attack        
+protection from attack
 
-level 15 
+level 15
 =========
-word of recall                
+word of recall

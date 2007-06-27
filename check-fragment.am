@@ -95,7 +95,7 @@ textlog:
 if PROCESS_XSLT
 CHECK_HTML = logreport template-copy
 CHECK_TXT= textlog
-endif	
+endif
 check-html: $(CHECK_HTML)
 check-text: $(CHECK_TXT)
 clean-unit:

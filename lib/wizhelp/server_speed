@@ -1,4 +1,4 @@
-syntax: server_speed [newspeed] 
+syntax: server_speed [newspeed]
 notes:
 Without arguments, this prints
 current server speed. If given an

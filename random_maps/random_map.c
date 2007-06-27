@@ -125,7 +125,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
     RP->dungeon_level+=1;
 
     /* allocate the map and set the floor */
-    theMap = make_map_floor(layout,RP->floorstyle,RP); 
+    theMap = make_map_floor(layout,RP->floorstyle,RP);
 
     /* set the name of the map. */
     strncpy(theMap->path,OutFileName, sizeof(theMap->path));
@@ -298,7 +298,7 @@ char **layoutgen(RMParms *RP) {
         RP->Xsize = RP->Xsize * 2 -1;
         RP->Ysize = RP->Ysize * 2 -1;
     }
-    return maze; 
+    return maze;
 }
 
 
@@ -365,7 +365,7 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
         connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
     /* reconnect disjointed nethackmazes:  the routine for
     spirals will do the trick?*/
-    if(RP->map_layout_style==ROGUELIKE_LAYOUT) 
+    if(RP->map_layout_style==ROGUELIKE_LAYOUT)
         connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
 
     return sym_maze;
@@ -374,7 +374,7 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
 
 /**
  * Takes  a map and rotates it. This completes the
- * onion layouts, making them possibly centered on any wall. 
+ * onion layouts, making them possibly centered on any wall.
  * It'll modify Xsize and Ysize if they're swapped.
  * @param maze
  * layout to rotate, will be free()d by this function.
@@ -570,7 +570,7 @@ int make_wall(char **maze,int x, int y, int dir){
         case 0: /* horizontal */
             {
             int i1;
-            for(i1 = x-1;maze[i1][y]==0;i1--) 
+            for(i1 = x-1;maze[i1][y]==0;i1--)
                 maze[i1][y]='#';
             for(i1 = x+1;maze[i1][y]==0;i1++)
                 maze[i1][y]='#';
@@ -579,7 +579,7 @@ int make_wall(char **maze,int x, int y, int dir){
         case 1: /* vertical */
             {
             int i1;
-            for(i1 = y-1;maze[x][i1]==0;i1--) 
+            for(i1 = y-1;maze[x][i1]==0;i1--)
                 maze[x][i1]='#';
             for(i1 = y+1;maze[x][i1]==0;i1++)
                 maze[x][i1]='#';
@@ -702,7 +702,7 @@ void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->exit_on_final_map[0]) { 
+    if(RP->exit_on_final_map[0]) {
         snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",RP->exit_on_final_map);
         strncat(buf,small_buf, bufsize);
     }

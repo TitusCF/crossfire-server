@@ -24,12 +24,12 @@
  * @file recipe.c
  * Basic stuff for use with the alchemy code. Clearly some of this stuff
  * could go into server/alchemy, but I left it here just in case it proves
- * more generally useful. 
+ * more generally useful.
  *
- * Nov 1995 - file created by b.t. thomas@astro.psu.edu 
+ * Nov 1995 - file created by b.t. thomas@astro.psu.edu
  *
  * Our definition of 'formula' is any product of an alchemical process.
- * Ingredients are just comma delimited list of archetype (or object) 
+ * Ingredients are just comma delimited list of archetype (or object)
  * names.
  *
  * Example 'formula' entry in libdir/formulae:
@@ -98,7 +98,7 @@ static recipe *get_empty_formula(void) {
     t->next=NULL;
     return t;
 }
- 
+
 /**
  * Gets a formula list by ingredients count.
  *
@@ -112,7 +112,7 @@ recipelist * get_formulalist ( int i ) {
     recipelist *fl=formulalist;
     int number=i;
 
-    while(fl && number>1) { 
+    while(fl && number>1) {
             if(!(fl=fl->next)) break;
             number--;
         }
@@ -120,7 +120,7 @@ recipelist * get_formulalist ( int i ) {
 }
 
 /**
- * Makes sure we actually have the requested artifact 
+ * Makes sure we actually have the requested artifact
  * and archetype.
  *
  * @param rp
@@ -135,14 +135,14 @@ static int check_recipe(const recipe *rp) {
 
     result = 1;
     for (i = 0; i < rp->arch_names; i++) {
-        if (find_archetype(rp->arch_name[i]) != NULL) { 
+        if (find_archetype(rp->arch_name[i]) != NULL) {
             artifact *art = locate_recipe_artifact(rp, i);
             if (!art && strcmp(rp->title, "NONE") != 0) {
-                LOG(llevError,"\nWARNING: Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title); 
+                LOG(llevError,"\nWARNING: Formula %s of %s has no artifact.\n", rp->arch_name[i], rp->title);
                 result = 0;
             }
         } else {
-            LOG(llevError,"\nWARNING: Can't find archetype %s for formula %s\n", rp->arch_name[i], rp->title); 
+            LOG(llevError,"\nWARNING: Can't find archetype %s for formula %s\n", rp->arch_name[i], rp->title);
             result = 0;
         }
     }
@@ -152,7 +152,7 @@ static int check_recipe(const recipe *rp) {
 
 
 /**
- * Builds up the lists of formula from the file in  the libdir. -b.t. 
+ * Builds up the lists of formula from the file in  the libdir. -b.t.
  */
 void init_formulae(void) {
     static int has_been_done=0;
@@ -208,10 +208,10 @@ void init_formulae(void) {
                 tmp->name = add_string(cp);
                 tmp->next = formula->ingred;
                 formula->ingred = tmp;
-                /* each ingredient's ASCII value is coadded. Later on this 
-                 * value will be used allow us to search the formula lists 
-                 * quickly for the right recipe. 
-                 */ 
+                /* each ingredient's ASCII value is coadded. Later on this
+                 * value will be used allow us to search the formula lists
+                 * quickly for the right recipe.
+                 */
                 formula->index += strtoint(cp);
             } while ((cp=next)!=NULL);
             /* now find the correct (# of ingred ordered) formulalist */
@@ -224,7 +224,7 @@ void init_formulae(void) {
             }
             fl->total_chance += formula->chance;
             fl->number++;
-            formula->next = fl->items; 
+            formula->next = fl->items;
             fl->items = formula;
         } else if (!strncmp(cp, "arch",4)) {
             build_stringlist(strchr(cp, ' ')+1, &formula->arch_name, &formula->arch_names);
@@ -290,7 +290,7 @@ void dump_alchemy( void ) {
 
     fprintf(logfile, "\n");
     while(fl) {
-        fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n", 
+        fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n",
         num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
         for (formula=fl->items; formula!=NULL; formula=formula->next) {
             artifact *art=NULL;
@@ -316,7 +316,7 @@ void dump_alchemy( void ) {
                             int nval=0,tval=0;
                             fprintf(logfile,"\tIngred: ");
                             for (next=formula->ingred; next!=NULL; next=next->next) {
-                                if(nval!=0) fprintf(logfile,","); 
+                                if(nval!=0) fprintf(logfile,",");
                                     fprintf(logfile,"%s(%d)",next->name,(nval=strtoint(next->name)));
                                 tval += nval;
                             }
@@ -332,7 +332,7 @@ void dump_alchemy( void ) {
                     }
                 } else
                     LOG(llevError,"Can't find archetype:%s for formula %s\n", string,
-                        formula->title); 
+                        formula->title);
             }
         }
         fprintf(logfile,"\n");
@@ -580,9 +580,9 @@ void dump_alchemy_costs (void)
                         }
                     }
                 }
-                else 
+                else
                 LOG(llevError, "Can't find archetype:%s for formula %s\n", string,
-                    formula->title); 
+                    formula->title);
             }
         }
         fprintf (logfile,"\n");
@@ -610,7 +610,7 @@ const char * ingred_name (const char *name) {
 }
 
 /**
- * Convert buf into an integer equal to the coadded sum of the (lowercase) character 
+ * Convert buf into an integer equal to the coadded sum of the (lowercase) character
  *
  * ASCII values in buf (times prepended integers).
  *
@@ -623,7 +623,7 @@ int strtoint (const char *buf) {
     const char *cp = ingred_name(buf);
     int val=0, len=strlen(cp), mult=numb_ingred(buf);
 
-    while (len) { 
+    while (len) {
         val += tolower(*cp);
         cp++; len--;
     }
@@ -645,7 +645,7 @@ artifact* locate_recipe_artifact(const recipe *rp, size_t idx) {
     artifactlist *at=NULL;
     artifact *art=NULL;
 
-    if(!item) return (artifact *) NULL; 
+    if(!item) return (artifact *) NULL;
 
     if((at=find_artifactlist(item->type)))
         for(art=at->items;art;art=art->next)
@@ -713,7 +713,7 @@ recipe * get_random_recipe ( recipelist *rpl ) {
     recipe *rp=NULL;
     int r=0;
 
-    /* looks like we have to choose a random one */ 
+    /* looks like we have to choose a random one */
     if(fl==NULL) if((fl=get_random_recipelist())==NULL) return rp;
 
     if (fl->total_chance > 0) {

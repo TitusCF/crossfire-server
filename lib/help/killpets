@@ -5,7 +5,7 @@ they had will be left behind, but you will get no
 experience for their death.  However, it kills them
 instantaneously.
 
-If a name is specified then only pets with that 
+If a name is specified then only pets with that
 name will be killed, eg killpets bat will kill bats
-but not bees. If a number is specified, the pet 
+but not bees. If a number is specified, the pet
 corresponding to that number is killed.

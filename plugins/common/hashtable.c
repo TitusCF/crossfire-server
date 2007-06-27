@@ -108,7 +108,7 @@ void add_ptr_assoc(ptr_assoc **hash_table, void *key, void *value) {
     if (assoc) {
 	/* Simple case first: See if the first pointer matches. */
 	if (key != assoc->key) {
-            /* Apparantly, a association with the same hash value has this 
+            /* Apparantly, a association with the same hash value has this
              * slot. We must see in the list if this perticular key has
              * been registered before.
              */

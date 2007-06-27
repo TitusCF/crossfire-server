@@ -332,7 +332,7 @@ extern int nroffreeobjects;
 #define UP_OBJ_CHANGE   3
 #define UP_OBJ_FACE     4   /* Only thing that changed was the face */
 
-/* These are flags passed to insert_ob_in_map and 
+/* These are flags passed to insert_ob_in_map and
  * insert_ob_in_ob.  Note that all flags may not be meaningful
  * for both functions.
  * Most are fairly explanatory:
@@ -343,7 +343,7 @@ extern int nroffreeobjects;
  *    originator - saves cpu time if you know the inserted object
  *    is not meaningful in terms of having an effect.
  * INS_ON_TOP: Always put object on top.  Generally only needed when loading
- *     files from disk and ordering needs to be preserved. 
+ *     files from disk and ordering needs to be preserved.
  * INS_BELOW_ORIGINATOR: Insert new object immediately below originator -
  *     Use for treasure chests so the new object is the highest thing
  *     beneath the player, but not actually above it.  Note - the

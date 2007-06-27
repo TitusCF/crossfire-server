@@ -61,6 +61,6 @@ static method_ret arrow_type_process(ob_methods *context, object *op) {
 	stop_projectile(op);
 	return METHOD_OK;
     }
-    
+
     return common_process_projectile(context, op);
 }

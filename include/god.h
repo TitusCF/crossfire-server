@@ -9,6 +9,6 @@ typedef struct glnk {
   struct archt *arch;   /**< Pointer to the archetype of this god. */
   int id;               /**< Id of the god. */
   struct glnk *next;    /**< Next god. */
-} godlink; 
+} godlink;
 
 #endif /* GOD_H */

@@ -120,7 +120,7 @@ short GetShort_String(const unsigned char *data) {
  * (As passed) is the size of the buffer allocated in the socklist.  We make
  * the assumption the buffer is at least 2 bytes long.
  */
- 
+
 int SockList_ReadPacket(int fd, SockList *sl, int len)
 {
     int stat,toread;
@@ -358,7 +358,7 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
 	LOG(llevDebug,"Write_To_Socket called with dead socket\n");
 	return;
     }
- 
+
 #ifndef __GNU__ /* This caused problems on Hurd */
     if (!ns->can_write) {
 	add_to_buffer(ns, buf, len);

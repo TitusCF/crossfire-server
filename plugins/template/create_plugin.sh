@@ -85,4 +85,3 @@ echo "Running auto* tools"
 echo
 echo
 echo "Done. Please run configure in the top-level directory to correctly generate Makefiles."
-

@@ -55,7 +55,7 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
 	return METHOD_ERROR;
     }
 
-    /* we need to stop thrown objects at some point. Like here. */ 
+    /* we need to stop thrown objects at some point. Like here. */
     if(op->type==THROWN_OBJ) {
 	/* If the object that the THROWN_OBJ encapsulates disappears,
 	 * we need to have this object go away also - otherwise, you get
@@ -70,11 +70,11 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op) {
 	    free_object(op);
             return METHOD_OK;
 	}
-	if(op->last_sp-- < 0) { 
+	if(op->last_sp-- < 0) {
 	    stop_projectile (op);
 	    return METHOD_OK;
 	}
     }
-    
+
     return common_process_projectile(context, op);
 }

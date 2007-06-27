@@ -122,4 +122,3 @@ void register_move_on(int ob_type, move_on_func method)
 {
     type_methods[ob_type].move_on = method;
 }
-

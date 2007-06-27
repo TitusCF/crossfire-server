@@ -59,7 +59,7 @@ void metaserver_init(void)
 
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
 	struct hostent *hostbn;
-	int temp = 1;	
+	int temp = 1;
 #endif
 
     if (!settings.meta_on) {
@@ -79,7 +79,7 @@ void metaserver_init(void)
     }
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
     ioctlsocket(metafd, FIONBIO , &temp);
-#else 
+#else
     fcntl(metafd, F_SETFL, O_NONBLOCK);
 #endif
     if ((metafd=socket(AF_INET, SOCK_DGRAM, 0))==-1) {
@@ -140,11 +140,10 @@ void metaserver_update(void)
         num_players++;
     }
 
-    sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 
+    sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION,
 	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
 	    (long)time(NULL) - cst_tot.time_start);
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
 	LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
     }
 }
-

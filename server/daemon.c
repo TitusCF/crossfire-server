@@ -70,9 +70,9 @@ void become_daemon ()
     register int i;
     int forkresult;
 
-    fputs("\n========================\n",logfile);    
-    fputs("Begin New Server Session\n",logfile);    
-    fputs("========================\n\n",logfile);    
+    fputs("\n========================\n",logfile);
+    fputs("Begin New Server Session\n",logfile);
+    fputs("========================\n\n",logfile);
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by
@@ -90,7 +90,7 @@ void become_daemon ()
      * Close standard file descriptors and get rid of controlling tty
      */
 
-    close (0); 
+    close (0);
     close (1);
     close (2);
 

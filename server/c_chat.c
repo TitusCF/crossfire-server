@@ -39,7 +39,7 @@ int command_say (object *op, char *params)
     ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY,
 		 buf, NULL);
     communicate(op, params);
-  
+
     return 0;
 }
 
@@ -172,12 +172,12 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
 			  "Shout/Chat what?", NULL);
 	    return 1;
 	}
-	draw_ext_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL, 
+	draw_ext_info_format(NDI_UNIQUE | NDI_ALL | color, pri, NULL,
 		     MSG_TYPE_COMMUNICATION, subtype,
-		     "%s %s: %s", 
-		     "%s %s: %s", 
+		     "%s %s: %s",
+		     "%s %s: %s",
 		     op->name, desc, params);
- 
+
         /* Lauwenmark : Here we handle the SHOUT global event */
         execute_global_event(EVENT_SHOUT,op,params,pri);
 	return 1;
@@ -227,8 +227,8 @@ static int do_tell(object* op, char* params, int adjust_listen) {
         return 1;
     } else if ( msg == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-            "Tell %s what?", 
-            "Tell %s what?", 
+            "Tell %s what?",
+            "Tell %s what?",
             name);
         return 1;
     }
@@ -246,7 +246,7 @@ static int do_tell(object* op, char* params, int adjust_listen) {
 
         execute_global_event(EVENT_TELL, op, msg, pl->ob);
 
-        draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+        draw_ext_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob,
             MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
             buf, NULL);
 
@@ -260,8 +260,8 @@ static int do_tell(object* op, char* params, int adjust_listen) {
         if (!pl->hidden || QUERY_FLAG(op, FLAG_WIZ)) {
             draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
                 MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-                "You tell %s: %s", 
-                "You tell %s: %s", 
+                "You tell %s: %s",
+                "You tell %s: %s",
                 pl->ob->name, msg);
 
             return 1;
@@ -341,10 +341,10 @@ int command_reply (object *op, char *params) {
     /* Update last_tell value */
     strcpy(pl->last_tell, op->name);
 
-    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, 
+    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob,
         MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-        "%s tells you: %s", 
-        "%s tells you: %s", 
+        "%s tells you: %s",
+        "%s tells you: %s",
         op->name, params);
 
     if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) {
@@ -353,10 +353,10 @@ int command_reply (object *op, char *params) {
         return 1;
     }
 
-    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op, 
+    draw_ext_info_format(NDI_UNIQUE | NDI_ORANGE, 0, op,
         MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_TELL,
-        "You tell to %s: %s", 
-        "You tell to %s: %s", 
+        "You tell to %s: %s",
+        "You tell to %s: %s",
         pl->ob->name, params);
     return 1;
 }
@@ -583,7 +583,7 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "You are a nut.");
 	    break;
 	} /*case*/
-	ext_info_map_except(NDI_WHITE, op->map, op, 
+	ext_info_map_except(NDI_WHITE, op->map, op,
 		    MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
 		    buf, NULL);
 	draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op,
@@ -782,10 +782,10 @@ static int basic_emote(object *op, char *params, int emotion)
 			  op->name);
 		  break;
 		} /*case*/
-		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op, 
+		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op,
 			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
 			      buf, NULL);
-		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, 
+		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob,
 			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
 			      buf2, NULL);
 		ext_info_map_except2(NDI_WHITE, op->map, op, pl->ob,
@@ -905,15 +905,15 @@ static int basic_emote(object *op, char *params, int emotion)
 		draw_ext_info(NDI_UNIQUE|NDI_WHITE, 0, op,
 			      MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
 			      buf, NULL);
-		ext_info_map_except(NDI_WHITE, op->map, op, 
+		ext_info_map_except(NDI_WHITE, op->map, op,
 			    MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_EMOTE,
 			    buf2, NULL);
 		return(0);
 	    }/*if self*/
 	}/*for*/
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			     "%s is not around.", 
-			     "%s is not around.", 
+			     "%s is not around.",
+			     "%s is not around.",
 			     params);
 	return(1);
     } /*else*/

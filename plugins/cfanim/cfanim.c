@@ -24,7 +24,7 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ 
+/*                                                                           */
 /*****************************************************************************/
 
 /* First let's include the header file needed                                */
@@ -1187,4 +1187,3 @@ CF_PLUGIN int   closePlugin()
     cf_log(llevDebug, "CFAnim 2.0a closing\n");
     return 0;
 }
-

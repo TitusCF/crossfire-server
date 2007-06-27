@@ -29,7 +29,7 @@
 /**
  * @file porting.c
  * This file contains various functions that are not really unique for
- * crossfire, but rather provides what should be standard functions 
+ * crossfire, but rather provides what should be standard functions
  * for systems that do not have them.  In this way, most of the
  * nasty system dependent stuff is contained here, with the program
  * calling these functions.
@@ -141,7 +141,7 @@ void remove_directory(const char *path)
         struct dirent *de;
 
         for (de=readdir(dirp); de; de = readdir(dirp)) {
-            /* Don't remove '.' or '..'  In  theory we should do a better 
+            /* Don't remove '.' or '..'  In  theory we should do a better
              * check for .., but the directories we are removing are fairly
              * limited and should not have dot files in them.
              */

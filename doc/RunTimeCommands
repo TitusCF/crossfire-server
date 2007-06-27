@@ -51,19 +51,19 @@ given directions without actually moving in that direction.
 
                       y         k         u
 
-                         \      |      /          
-                          \     |     /    
-                           \    |    /     
-                            \   |   /      
-                             \  |  /       
-                              \ | /         
-                      h  ------ s ------  l 
-                              / | \        
-                             /  |  \       
-                            /   |   \      
-                           /    |    \     
-                          /     |     \    
-                         /      |      \    
+                         \      |      /
+                          \     |     /
+                           \    |    /
+                            \   |   /
+                             \  |  /
+                              \ | /
+                      h  ------ s ------  l
+                              / | \
+                             /  |  \
+                            /   |   \
+                           /    |    \
+                          /     |     \
+                         /      |      \
 
                       b         j         n
 
@@ -173,7 +173,7 @@ enter extended command mode, type "'" followed by the command.
  'bind [str]   	 : bind a key to some command.  try 'help bind for
 		   more information.
 
-                  
+
  'unbind [str]	 : unbind a string.
 
  'quit           : Quit game, and destroy character.
@@ -208,4 +208,3 @@ enter extended command mode, type "'" followed by the command.
 		   that enters into dm mode cannot be saved! Any players
 		   recieving assistance or items from the dm, will also not
 		   be saved.
-

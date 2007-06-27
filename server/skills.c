@@ -1043,7 +1043,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 	     */
 	    set_owner(tmp,pl);
         query_name(tmp, name, MAX_BUF);
-	    draw_ext_info_format(NDI_UNIQUE, 0,pl, 
+	    draw_ext_info_format(NDI_UNIQUE, 0,pl,
 				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
 				 "You convince the %s to follow you instead!",
 				 "You convince the %s to follow you instead!",
@@ -1556,7 +1556,7 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
         return 0;
     }
     /* Prevent an abuse: write a spell you're denied with, then cast it from the
-     * written scroll - gros, 28th July 2006 
+     * written scroll - gros, 28th July 2006
      */
     if (chosen_spell->path_attuned & pl->path_denied && settings.allow_denied_spells_writing == 0)
     {

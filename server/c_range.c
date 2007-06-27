@@ -326,4 +326,3 @@ int command_rotateshoottype (object *op, char *params)
     change_spell(op, params[0]);
   return 0;
 }
-

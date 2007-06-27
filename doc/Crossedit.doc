@@ -23,8 +23,8 @@ Windows
 	|    Item    |
 	|            |
 	+------------+
-	  	  
-	    Attr  
+
+	    Attr
 	+---------------+
 	|ok|apply|cancel|
 	+---------------+
@@ -34,7 +34,7 @@ Windows
 	+---------------+
 
 Button & Key bindings
-	
+
 	+--------------------------+
 	|+------+ +------+ +------+|
 	||Insert| |Select| |Delete||
@@ -76,7 +76,7 @@ Edit window
 	Select		select archtype to look window
 	Ctrl + Select	feeds coordinates to Attr window
 	Delete		deletes one archetype from point
-	Arrows		Moves map	
+	Arrows		Moves map
 	Ctrl + Arrows	Resizes right & bottom border of map
 	Shift + Arrows	Scrolls map
 

@@ -10,13 +10,13 @@
 #   ^# hashes are allowed as comments in begining of line
 #   ^# first line declares type-member pairs separated by slash
 #   ^# typenames have to be in one part eg. "struct type" don't
-#   ^# work, typedef these instead. 
+#   ^# work, typedef these instead.
 #   ^      type1/member1 type2/memeber2
 #   ^
 #   ^# in data lines, exist first name of row and then members
 #   ^# of struct in order. The name may not enclose in "'s althought
 #   ^# its type is char *.
-#   ^ name member1       member2  
+#   ^ name member1       member2
 #   ^ name ...           ...
 #   ^ ...
 #
@@ -81,10 +81,3 @@ sub loop {
     }
     print "} "."$def"."_enum;\n\n";
 }
-
-
-
-
-
-
-

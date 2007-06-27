@@ -43,7 +43,7 @@
 #include <skills.h>
 
 /**
- * Draws a normal message on the client.  It is pretty 
+ * Draws a normal message on the client.  It is pretty
  * much the same thing as the draw_info above, but takes a color
  * parameter.  the esrv_drawinfo functions should probably be
  * replaced with this, just using black as the color.
@@ -58,7 +58,7 @@ static void esrv_print_msg(socket_struct *ns,int color, const char *str)
 }
 
 /**
- * Draws   an extended message on the client. 
+ * Draws   an extended message on the client.
  * ns      the socket to send message to
  * color   color informations (used mainly if client does not support message type)
  * type,
@@ -149,7 +149,7 @@ static void check_output_buffers(const object *pl, const char *buf)
     }
     else {
 	for (i=0; i<NUM_OUTPUT_BUFS; i++) {
-	    if (pl->contr->outputs[i].buf && 
+	    if (pl->contr->outputs[i].buf &&
 		!strcmp(buf, pl->contr->outputs[i].buf)) break;
 	    else if (pl->contr->outputs[i].first_update <
 		pl->contr->outputs[oldest].first_update)
@@ -174,7 +174,7 @@ static void check_output_buffers(const object *pl, const char *buf)
 	}
     }
 }
-	    
+
 
 
 /**
@@ -203,7 +203,7 @@ static void check_output_buffers(const object *pl, const char *buf)
  */
 
 void draw_ext_info(
-        int flags, int pri, const object *pl, uint8 type, 
+        int flags, int pri, const object *pl, uint8 type,
         uint8 subtype, const char* message, const char* oldmessage){
 
 
@@ -267,10 +267,10 @@ void draw_ext_info(
  * old_format will go away.
  */
 void draw_ext_info_format(
-	int flags, int pri, const object *pl, uint8 type, 
-        uint8 subtype, 
-        const char* new_format, 
-	const char* old_format, 
+	int flags, int pri, const object *pl, uint8 type,
+        uint8 subtype,
+        const char* new_format,
+	const char* old_format,
 	...)
 {
 
@@ -307,7 +307,7 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
  * Writes to everyone on the map *except* op.  This is useful for emotions.
  */
 
-void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, 
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type,
 			 uint8 subtype, const char *str1, const char *str2) {
     player *pl;
 
@@ -355,7 +355,7 @@ void rangetostring(const object *pl,char *obuf)
 	    if(op==NULL) break;
 
         query_base_name(op, 0, name, MAX_BUF);
-	    sprintf (obuf, "Range: %s (%s)", name, 
+	    sprintf (obuf, "Range: %s (%s)", name,
 		     op->race ? op->race : "nothing");
 	    }
 	    break;
@@ -370,10 +370,10 @@ void rangetostring(const object *pl,char *obuf)
 			sprintf(obuf,"Range: Casting spell (%s)",
 				pl->spell->name);
 		} else
-		    sprintf(obuf,"Range: spell (%s)", 
+		    sprintf(obuf,"Range: spell (%s)",
 			    pl->contr->ranges[range_magic]->name);
 	    } else
-		sprintf(obuf,"Range: spell (%s)", 
+		sprintf(obuf,"Range: spell (%s)",
 			pl->contr->ranges[range_magic]->name);
 	    break;
 
@@ -465,12 +465,12 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 		}
 		if (ob) f = ob->face;
 		else f = blank_face;
-		
+
 		/* Should probably have P_NO_MAGIC here also, but then shops don't
 		 * work.
 		 */
 		if (mflags & P_BLOCKSVIEW)
-		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = 
+		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] =
 			FACE_WALL | (f?f->magicmap:0);
 		else {
 		    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE* (MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
@@ -543,7 +543,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength)
  * Mark Wedel
  */
 
-void draw_magic_map(object *pl) 
+void draw_magic_map(object *pl)
 {
     int x,y;
     char *map_mark = (char *) calloc(MAGIC_MAP_SIZE*MAGIC_MAP_SIZE, 1);
@@ -554,7 +554,7 @@ void draw_magic_map(object *pl)
 	LOG(llevError,"Non player object called draw_map.\n");
 	return;
     }
-   
+
     /* First, we figure out what spaces are 'reachable' by the player */
     magic_mapping_mark(pl, map_mark, 3);
 
@@ -582,13 +582,13 @@ void draw_magic_map(object *pl)
     snprintf((char*)sl.buf, MAXSOCKSENDBUF, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
 	    MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
     sl.len=strlen((char*)sl.buf);
-    
+
     for (y = ymin; y <= ymax; y++) {
 	for (x = xmin; x <= xmax; x++) {
 	    sl.buf[sl.len++]= map_mark[x+MAGIC_MAP_SIZE*y] & ~FACE_FLOOR;
 	} /* x loop */
     } /* y loop */
-    
+
     Send_With_Handling(&pl->contr->socket, &sl);
     free(sl.buf);
     free(map_mark);

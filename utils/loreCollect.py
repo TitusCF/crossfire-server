@@ -1,7 +1,7 @@
 #loreCollect.py
 #To collect lore - endlore contents from Crossfire maps and archetypes file
 #temitchell@sympatici.ca for comments/requests
-#Python 2.x (never tested on 1.5...) 
+#Python 2.x (never tested on 1.5...)
 
 import sys
 import os

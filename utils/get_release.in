@@ -38,8 +38,8 @@ usage() {
 
 while getopts v:hsma option
 do
-  case "$option" 
-  in 
+  case "$option"
+  in
     v)	version=$OPTARG;;
     s)  server="false";;
     m)  maps="false";;

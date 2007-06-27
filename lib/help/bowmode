@@ -8,8 +8,8 @@ Threewide: Fires three arrows in parallel.
 
 Spreadshot: Fires three arrows which spread out over distance.
 
-Fire<direction>:  Locks in the direction the missiles will fire, 
-specify by compas position: 
+Fire<direction>:  Locks in the direction the missiles will fire,
+specify by compas position:
 firenorth, firene, fireeast, firese, firesouth, firesw, firewest, firenw
 
 Bestarrow: Selects and fires the probable best arrow for from your inventory.

@@ -61,4 +61,3 @@ When referring to server instance for the 7->9'th field, this means how
 long since the executable has been started.  A particular host may have
 been running a server for quite a long time, but due to updates or crashes,
 the length of time the server instance has been up may be much shorter.
-

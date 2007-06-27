@@ -6,4 +6,3 @@ autoheader
 automake -a -c
 autoconf
 ./configure $*
-

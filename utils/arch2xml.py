@@ -7,8 +7,8 @@ import fnmatch, os, string
 #Flexable Directory Walker from the Python CookBook
 
 def Walk( root, recurse=0, pattern='*', return_folders=0 ):
-	
-	
+
+
 	# initialize
 	result = []
 
@@ -21,7 +21,7 @@ def Walk( root, recurse=0, pattern='*', return_folders=0 ):
 	# expand pattern
 	pattern = pattern or '*'
 	pat_list = string.splitfields( pattern , ';' )
-	
+
 	# check each file
 	for name in names:
 		fullname = os.path.normpath(os.path.join(root, name))
@@ -32,12 +32,12 @@ def Walk( root, recurse=0, pattern='*', return_folders=0 ):
 				if os.path.isfile(fullname) or (return_folders and os.path.isdir(fullname)):
 					result.append(fullname)
 				continue
-				
+
 		# recursively scan other folders, appending results
 		if recurse:
 			if os.path.isdir(fullname) and not os.path.islink(fullname):
 				result = result + Walk( fullname, recurse, pattern, return_folders )
-			
+
 	return result
 
 def arch2xml(root,filename,xsl_file='cfarches.xsl'):
@@ -81,7 +81,7 @@ def arch2xml(root,filename,xsl_file='cfarches.xsl'):
                                 xml.write('     <comment>%s</comment>\n' %(str))
                             else:
                                 str = string.join(xp[1:])
-                                xml.write('     <%s>%s</%s>\n' %(tag,str,tag))	
+                                xml.write('     <%s>%s</%s>\n' %(tag,str,tag))
             xml.write('\n</arch>\n')
             arc.close()
     xml.write('\n</ARCHES>')
@@ -95,4 +95,3 @@ if __name__ == '__main__':
         sys.exit()
     else:
         arch2xml(sys.argv[1],sys.argv[2])
-    

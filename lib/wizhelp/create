@@ -1,6 +1,6 @@
 syntax: create <number> <bonus>
 <archtype> <variable1> <value1>
-<variable2> <value2> ...  
+<variable2> <value2> ...
 notes:
 creating items is rather dangerous
 and tends to crash the server

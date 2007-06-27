@@ -185,7 +185,7 @@ static score *add_score(score *new_score) {
   score *tmp_score,pscore[HIGHSCORE_LENGTH];
   char buf[MAX_BUF], filename[MAX_BUF], *bp;
   int nrofscores=0,flag=0,i,comp;
- 
+
   new_score->position=HIGHSCORE_LENGTH+1;
   old_score.position= -1;
   sprintf(filename,"%s/%s",settings.localdir,HIGHSCORE);
@@ -280,7 +280,7 @@ void check_score(object *op) {
     new_score.exp=op->stats.exp;
     if(op->map == NULL)
 	*new_score.maplevel = '\0';
-    else { 
+    else {
 	strncpy(new_score.maplevel,
 		op->map->name?op->map->name:op->map->path,
 		BIG_NAME-1);
@@ -367,7 +367,7 @@ void display_high_score(object *op,int max, const char *match) {
 	    }
 	    else continue;
 	}
-	if(op == NULL) 
+	if(op == NULL)
 		LOG(llevDebug, "%s\n", scorebuf);
 	else
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,

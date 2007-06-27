@@ -97,12 +97,12 @@ object *check_enemy(object *npc, rv_vector *rv) {
 
     /* periodically, a monster mayu change its target.  Also, if the object
      * has been destroyed, etc, clear the enemy.
-     * TODO: this should be changed, because it invokes to attack forced or 
-     * attacked monsters to leave the attacker alone, before it is destroyed 
+     * TODO: this should be changed, because it invokes to attack forced or
+     * attacked monsters to leave the attacker alone, before it is destroyed
      */
     /* i had removed the random target leave, this invokes problems with friendly
      * objects, getting attacked and defending herself - they don't try to attack
-     * again then but perhaps get attack on and on 
+     * again then but perhaps get attack on and on
      * If we include a aggravated flag in , we can handle evil vs evil and good vs good
      * too. */
 
@@ -112,21 +112,21 @@ object *check_enemy(object *npc, rv_vector *rv) {
 	 * the grouping checks are.  Code is the same.
 	 */
 	if ( QUERY_FLAG(npc->enemy,FLAG_REMOVED)    ||
-	     QUERY_FLAG(npc->enemy,FLAG_FREED)	    || 
+	     QUERY_FLAG(npc->enemy,FLAG_FREED)	    ||
 	     !on_same_map(npc, npc->enemy)	    ||
-	     npc == npc->enemy			    || 
-             QUERY_FLAG(npc, FLAG_NEUTRAL)	    || 
+	     npc == npc->enemy			    ||
+             QUERY_FLAG(npc, FLAG_NEUTRAL)	    ||
 	     QUERY_FLAG(npc->enemy, FLAG_NEUTRAL))
 		npc->enemy = NULL;
 
   	else if (QUERY_FLAG(npc, FLAG_FRIENDLY) && (
- 		 	(QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(should_arena_attack(npc, npc->owner, npc->enemy))) || 
- 		 	((npc->enemy->type == PLAYER) && !(should_arena_attack(npc, npc->owner, npc->enemy))) 
+ 		 	(QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && !(should_arena_attack(npc, npc->owner, npc->enemy))) ||
+ 		 	((npc->enemy->type == PLAYER) && !(should_arena_attack(npc, npc->owner, npc->enemy)))
  			 || npc->enemy == npc->owner))
   		 npc->enemy = NULL;
-		    
-		    
-	else if (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
+
+
+	else if (!QUERY_FLAG(npc, FLAG_FRIENDLY) &&
              (!QUERY_FLAG(npc->enemy, FLAG_FRIENDLY) && npc->enemy->type!=PLAYER))
                 npc->enemy=NULL;
 
@@ -136,8 +136,8 @@ object *check_enemy(object *npc, rv_vector *rv) {
 	 * the creature/owner, and so the creature then takes that
 	 * as the enemy to attack.
 	 */
-	else if (!QUERY_FLAG(npc->enemy, FLAG_MONSTER) && 
-                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR) && 
+	else if (!QUERY_FLAG(npc->enemy, FLAG_MONSTER) &&
+                  !QUERY_FLAG(npc->enemy,FLAG_GENERATOR) &&
 		 npc->enemy->type!=PLAYER && npc->enemy->type != GOLEM)
                 npc->enemy=NULL;
 
@@ -155,7 +155,7 @@ object *check_enemy(object *npc, rv_vector *rv) {
  * Note that being this may skip some number of spaces, it will
  * not necessarily find the nearest living creature - it basically
  * chooses one from within a 3 space radius, and since it skips
- * the first few directions, it could very well choose something 
+ * the first few directions, it could very well choose something
  * 3 spaces away even though something directly north is closer.
  *
  * This function is map tile aware.
@@ -187,7 +187,7 @@ object *find_nearest_living_creature(object *npc) {
 	if (mflags & P_IS_ALIVE) {
 	    tmp=get_map_ob(m,nx,ny);
 	    while(tmp!=NULL && !QUERY_FLAG(tmp,FLAG_MONSTER)&&
-		  !QUERY_FLAG(tmp,FLAG_GENERATOR ) && tmp->type!=PLAYER) 
+		  !QUERY_FLAG(tmp,FLAG_GENERATOR ) && tmp->type!=PLAYER)
                 tmp=tmp->above;
 
 	    if (!tmp) {
@@ -224,7 +224,7 @@ static object *find_enemy(object *npc, rv_vector *rv)
     object *attacker, *tmp=NULL;
 
     attacker = npc->attacked_by; /* save this for later use. This can be a attacker. */
-    npc->attacked_by = NULL;     /* always clear the attacker entry */    
+    npc->attacked_by = NULL;     /* always clear the attacker entry */
 
     /* if we berserk, we don't care about others - we attack all we can find */
     if(QUERY_FLAG(npc,FLAG_BERSERK)) {
@@ -234,7 +234,7 @@ static object *find_enemy(object *npc, rv_vector *rv)
     }
 
     /* Here is the main enemy selection.
-     * We want this: if there is an enemy, attack him until its not possible or 
+     * We want this: if there is an enemy, attack him until its not possible or
      * one of both is dead.
      * If we have no enemy and we are...
      * a monster: try to find a player, a pet or a friendly monster
@@ -249,7 +249,7 @@ static object *find_enemy(object *npc, rv_vector *rv)
 	if (tmp) get_rangevector(npc, tmp, rv, 0);
 	return tmp;
     }
-    
+
     /* we check our old enemy. */
     if((tmp=check_enemy(npc, rv))==NULL)
     {
@@ -263,8 +263,8 @@ static object *find_enemy(object *npc, rv_vector *rv)
 
                 if( QUERY_FLAG(npc, FLAG_NEUTRAL) || QUERY_FLAG(attacker, FLAG_NEUTRAL) || /* neutral */
                     (QUERY_FLAG(npc, FLAG_FRIENDLY) && QUERY_FLAG(attacker, FLAG_FRIENDLY)) ||
-                    (!QUERY_FLAG(npc, FLAG_FRIENDLY) && 
-                    (!QUERY_FLAG(attacker, FLAG_FRIENDLY) && attacker->type!=PLAYER)) )        
+                    (!QUERY_FLAG(npc, FLAG_FRIENDLY) &&
+                    (!QUERY_FLAG(attacker, FLAG_FRIENDLY) && attacker->type!=PLAYER)) )
                          CLEAR_FLAG(npc,FLAG_SLEEP); /* skip it, but lets wakeup */
                 else if(on_same_map(npc, attacker)) /* thats the only thing we must know... */
                 {
@@ -274,16 +274,16 @@ static object *find_enemy(object *npc, rv_vector *rv)
                 }
             }
         }
-                    
+
         /* we have no legal enemy or attacker, so we try to target a new one */
         if(!QUERY_FLAG(npc, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(npc, FLAG_FRIENDLY) &&
             !QUERY_FLAG(npc, FLAG_NEUTRAL))
         {
 	    npc->enemy = get_nearest_player(npc);
-	    if (npc->enemy) 
+	    if (npc->enemy)
 		tmp = check_enemy(npc,rv);
         }
-        
+
     }
 
     return tmp;
@@ -314,14 +314,14 @@ static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
     if(QUERY_FLAG(op, FLAG_BLIND))
 	radius = MIN_MON_RADIUS;
 
-    /* This covers the situation where the monster is in the dark 
-     * and has an enemy. If the enemy has no carried light (or isnt 
-     * glowing!) then the monster has trouble finding the enemy. 
-     * Remember we already checked to see if the monster can see in 
+    /* This covers the situation where the monster is in the dark
+     * and has an enemy. If the enemy has no carried light (or isnt
+     * glowing!) then the monster has trouble finding the enemy.
+     * Remember we already checked to see if the monster can see in
      * the dark. */
 
     else if(op->map && op->map->darkness>0 && enemy && !enemy->invisible &&
-	    !stand_in_light(enemy) && 
+	    !stand_in_light(enemy) &&
 	    (!QUERY_FLAG(op,FLAG_SEE_IN_DARK) || !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
 		int dark = radius/(op->map->darkness);
 		radius = (dark>MIN_MON_RADIUS)?(dark+1):MIN_MON_RADIUS;
@@ -381,7 +381,7 @@ int move_monster(object *op) {
     /* for target facing, we copy this value here for fast access */
     if(oph->head)           /* force update the head - one arch one pic */
         oph = oph->head;
-    
+
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
         enemy = op->enemy = NULL;
     else if((enemy= find_enemy(op, &rv)))
@@ -390,7 +390,7 @@ int move_monster(object *op) {
         enemy->attacked_by = op;       /* our ptr */
         enemy->attacked_by_count = op->count; /* our tag */
     }
-    
+
     if ( QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND) ||
        ((op->map->darkness>0) && !QUERY_FLAG(op,FLAG_SEE_IN_DARK) &&
 	  !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
@@ -413,7 +413,7 @@ int move_monster(object *op) {
 	/* last heal is in funny units.  Dividing by speed puts
 	 * the regeneration rate on a basis of time instead of
 	 * #moves the monster makes.  The scaling by 8 is
-	 * to capture 8th's of a hp fraction regens 
+	 * to capture 8th's of a hp fraction regens
 	 *
 	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
 	 * overflow might produce monsters with negative hp.
@@ -439,7 +439,7 @@ int move_monster(object *op) {
 	/*  last_sp is in funny units.  Dividing by speed puts
          * the regeneration rate on a basis of time instead of
          * #moves the monster makes.  The scaling by 8 is
-         * to capture 8th's of a sp fraction regens 
+         * to capture 8th's of a sp fraction regens
 	 *
 	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
 	 * overflow might produce monsters with negative sp.
@@ -529,7 +529,7 @@ int move_monster(object *op) {
 	}
         return 0;
     }
-   
+
     /* doppleganger code to change monster facing to that of the nearest
      * player.  Hmm.  The code is here, but no monster in the current
      * arch set uses it.
@@ -566,11 +566,11 @@ int move_monster(object *op) {
 
         /* now we test every part of an object .... this is a real ugly piece of code */
 	    for (part=op; part!=NULL; part=part->more) {
-	        get_rangevector(part, enemy, &rv1, 0x1);	
+	        get_rangevector(part, enemy, &rv1, 0x1);
 	        dir=rv1.direction;
 
 		/* hm, not sure about this part - in original was a scared flag here too
-		 * but that we test above... so can be old code here 
+		 * but that we test above... so can be old code here
 		 */
 	        if(QUERY_FLAG(op,FLAG_RUN_AWAY))
 		        dir=absdir(dir+4);
@@ -599,10 +599,10 @@ int move_monster(object *op) {
 		    if(monster_use_bow(op,part,enemy,dir))
 			return 0;
 		}
-	    } /* for processing of all parts */        
+	    } /* for processing of all parts */
     } /* If not scared */
 
-    
+
     part = rv.part;
     dir=rv.direction;
 
@@ -612,8 +612,8 @@ int move_monster(object *op) {
     if(QUERY_FLAG(op,FLAG_CONFUSED))
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    if ((op->attack_movement & LO4) && !QUERY_FLAG(op, FLAG_SCARED)) 
-    {        
+    if ((op->attack_movement & LO4) && !QUERY_FLAG(op, FLAG_SCARED))
+    {
 	switch (op->attack_movement & LO4) {
 	    case DISTATT:
 		dir = dist_att (dir,op,enemy,part,&rv);
@@ -631,9 +631,9 @@ int move_monster(object *op) {
 	        dir = wait_att (dir,op,enemy,part,&rv);
 		break;
 
-	    case RUSH: /* default - monster normally moves towards player */ 
+	    case RUSH: /* default - monster normally moves towards player */
 	    case ALLRUN:
-		break; 
+		break;
 
 	    case DISTHIT:
 		dir = disthit_att (dir,op,enemy,part,&rv);
@@ -655,7 +655,7 @@ int move_monster(object *op) {
 	if(move_object(op,dir)) /* Can the monster move directly toward player? */
 	    return 0;
 
-	if(QUERY_FLAG(op, FLAG_SCARED) || !can_hit(part,enemy,&rv) 
+	if(QUERY_FLAG(op, FLAG_SCARED) || !can_hit(part,enemy,&rv)
 	   || QUERY_FLAG(op,FLAG_RUN_AWAY)) {
 
 	    /* Try move around corners if !close */
@@ -867,13 +867,13 @@ static int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_
 
     /* If you want monsters to cast spells over friends, this spell should
      * be removed.  It probably should be in most cases, since monsters still
-     * don't care about residual effects (ie, casting a cone which may have a 
+     * don't care about residual effects (ie, casting a cone which may have a
      * clear path to the player, the side aspects of the code will still hit
      * other monsters)
      */
     if(!(dir=path_to_player(part,pl,0)))
         return 0;
-    
+
     if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
 	get_rangevector(head, owner, &rv1, 0x1);
 	if(dirdiff(dir,rv1.direction) < 2) {
@@ -903,14 +903,14 @@ static int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_
 	}
     }
     else
-	spell_item=head->spellitem; 
+	spell_item=head->spellitem;
 
     if (!spell_item) return 0;
 
     /* Best guess this is a defensive/healing spell */
     if (spell_item->range<=1 || spell_item->stats.dam < 0)
 	dir = 0;
-  
+
     /* Monster doesn't have enough spell-points */
     if(head->stats.sp<SP_level_spellpoint_cost(head,spell_item, SPELL_MANA))
 	return 0;
@@ -923,7 +923,7 @@ static int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_
 
     /* set this to null, so next time monster will choose something different */
     head->spellitem = NULL;
-    
+
     return cast_spell(part,part,dir, spell_item, NULL);
 }
 
@@ -950,13 +950,13 @@ static int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_
 
     /* If you want monsters to cast spells over friends, this spell should
      * be removed.  It probably should be in most cases, since monsters still
-     * don't care about residual effects (ie, casting a cone which may have a 
+     * don't care about residual effects (ie, casting a cone which may have a
      * clear path to the player, the side aspects of the code will still hit
      * other monsters)
      */
     if(!(dir=path_to_player(part,pl,0)))
         return 0;
-    
+
     if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
 	get_rangevector(head, owner, &rv1, 0x1);
 	if(dirdiff(dir,rv1.direction) < 2) {
@@ -995,9 +995,9 @@ static int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_
  * Note that monsters do not need the skills SK_MELEE_WEAPON and
  * SK_MISSILE_WEAPON to make those respective attacks, if we
  * required that we would drastically increase the memory
- * requirements of CF!! 
+ * requirements of CF!!
  *
- * The skills we are treating here are all but those. -b.t. 
+ * The skills we are treating here are all but those. -b.t.
  *
  * At the moment this is only useful for throwing, perhaps for
  * stealing. TODO: This should be more integrated in the game. -MT, 25.11.01
@@ -1032,14 +1032,14 @@ static int monster_use_skill(object *head, object *part, object *pl,int dir) {
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     /* skill selection - monster will use the next unused skill.
-     * well...the following scenario will allow the monster to 
+     * well...the following scenario will allow the monster to
      * toggle between 2 skills. One day it would be nice to make
      * more skills available to monsters.
      */
- 
+
     for(skill=head->inv;skill!=NULL;skill=skill->below)
-	if(skill->type==SKILL && skill!=head->chosen_skill) { 
-	    head->chosen_skill=skill; 
+	if(skill->type==SKILL && skill!=head->chosen_skill) {
+	    head->chosen_skill=skill;
 	    break;
 	}
 
@@ -1233,7 +1233,7 @@ static int check_good_weapon(object *who, object *item) {
     /* Monsters don't really get benefits from things like regen rates
      * from items.  But the bonus for their stats are very important.
      */
-    for (i=0; i<NUM_STATS; i++) 
+    for (i=0; i<NUM_STATS; i++)
 	val += (get_attr_value(&item->stats, i) - get_attr_value(&other_weap->stats, i))*2;
 
     if (val > 0) return 1;
@@ -1272,7 +1272,7 @@ static int check_good_armour(object *who, object *item) {
 
     /* for the other protections, do weigh them very much in the equation -
      * it is the armor protection which is most important, because there is
-     * no good way to know what the player may attack the monster with.	
+     * no good way to know what the player may attack the monster with.
      * So if the new item has better protection than the old, give that higher
      * value.  If the reverse, then decrease the value of this item some.
      */
@@ -1528,7 +1528,7 @@ void monster_check_apply(object *mon, object *item) {
 
 
     /* if we don't match one of the above types, return now.
-     * can_apply_object will say that we can apply things like flesh, 
+     * can_apply_object will say that we can apply things like flesh,
      * bolts, and whatever else, because it only checks against the
      * body_info locations.
      */
@@ -1595,11 +1595,11 @@ static int run_att (int dir, object *ob, object *enemy,object *part, rv_vector *
 }
 
 static int hitrun_att (int dir, object *ob,object *enemy) {
-    if (ob->move_status ++ < 25)  
+    if (ob->move_status ++ < 25)
 	return dir;
-    else if (ob->move_status <50) 
-	return absdir (dir+4); 
-    else 
+    else if (ob->move_status <50)
+	return absdir (dir+4);
+    else
 	ob->move_status = 0;
     return absdir(dir+4);
 }
@@ -1607,7 +1607,7 @@ static int hitrun_att (int dir, object *ob,object *enemy) {
 static int wait_att (int dir, object *ob,object *enemy,object *part,rv_vector *rv) {
 
     int inrange = can_hit (part, enemy,rv);
-      
+
     if (ob->move_status || inrange)
 	ob->move_status++;
 
@@ -1685,7 +1685,7 @@ static void pace2_movev (object *ob) {
   else if (ob->move_status <13)
     (void) move_object (ob,1);
   else return;
-}       
+}
 
 static void pace2_moveh (object *ob) {
   if (ob->move_status ++ > 16)
@@ -1697,7 +1697,7 @@ static void pace2_moveh (object *ob) {
   else if (ob->move_status <13)
     (void) move_object (ob,7);
   else return;
-}       
+}
 
 static void rand_move (object *ob) {
   int i;
@@ -1904,7 +1904,7 @@ static int talk_to_wall(object* npc, const char* txt)
     if (!cp)
 	return 0;
 
-    ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, 
+    ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,
 		 MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH,
 		 cp, cp);
     use_trigger(npc);
@@ -1923,8 +1923,8 @@ static int talk_to_wall(object* npc, const char* txt)
 
 object *find_mon_throw_ob(object *op) {
     object *tmp = NULL;
-  
-    if(op->head) tmp=op->head; else tmp=op;  
+
+    if(op->head) tmp=op->head; else tmp=op;
 
     /* New throw code: look through the inventory. Grap the first legal is_thrown
      * marked item and throw it to the enemy.
@@ -1935,9 +1935,9 @@ object *find_mon_throw_ob(object *op) {
 	/* Can't throw invisible objects or items that are applied */
       if(tmp->invisible || QUERY_FLAG(tmp,FLAG_APPLIED)) continue;
 
-      if(QUERY_FLAG(tmp,FLAG_IS_THROWN)) 
+      if(QUERY_FLAG(tmp,FLAG_IS_THROWN))
           break;
-          
+
     }
 
 #ifdef DEBUG_THROW
@@ -1953,8 +1953,8 @@ object *find_mon_throw_ob(object *op) {
 }
 
 /* determine if we can 'detect' the enemy. Check for walls blocking the
- * los. Also, just because its hidden/invisible, we may be sensitive/smart 
- * enough (based on Wis & Int) to figure out where the enemy is. -b.t. 
+ * los. Also, just because its hidden/invisible, we may be sensitive/smart
+ * enough (based on Wis & Int) to figure out where the enemy is. -b.t.
  * modified by MSW to use the get_rangevector so that map tiling works
  * properly.  I also so odd code in place that checked for x distance
  * OR y distance being within some range - that seemed wrong - both should
@@ -1988,7 +1988,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
     if(op->type==PLAYER) return 0;
 
     /* Quality invisible? Bah, we wont see them w/o SEE_INVISIBLE
-     * flag (which was already checked) in can_see_enmy (). Lets get out of here 
+     * flag (which was already checked) in can_see_enmy (). Lets get out of here
      */
     if(enemy->invisible && (!enemy->contr || (!enemy->contr->tmp_invis && !enemy->contr->hidden)))
 	return 0;
@@ -2006,7 +2006,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	if(enemy->type==PLAYER) {
 	    if((sk_hide = find_skill_by_number(enemy,SK_HIDING)))
 		bonus -= sk_hide->level;
-	    else { 
+	    else {
 		LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!\n");
 		make_visible(enemy);
 		radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
@@ -2019,12 +2019,12 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	hide_discovery += bonus*5;
     } /* else creature has modifiers for hiding */
 
-    /* Radii stealth adjustment. Only if you are stealthy 
-    * will you be able to sneak up closer to creatures */ 
-    if(QUERY_FLAG(enemy,FLAG_STEALTH)) 
+    /* Radii stealth adjustment. Only if you are stealthy
+    * will you be able to sneak up closer to creatures */
+    if(QUERY_FLAG(enemy,FLAG_STEALTH))
 	radius = radius/2, hide_discovery = hide_discovery/3;
 
-    /* Radii adjustment for enemy standing in the dark */ 
+    /* Radii adjustment for enemy standing in the dark */
     if(op->map->darkness>0 && !stand_in_light(enemy)) {
 	/* on dark maps body heat can help indicate location with infravision
 	 * undead don't have body heat, so no benefit detecting them.
@@ -2034,8 +2034,8 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	else
 	    radius -= op->map->darkness/2;
 
-	/* op next to a monster (and not in complete darkness) 
-	 * the monster should have a chance to see you. 
+	/* op next to a monster (and not in complete darkness)
+	 * the monster should have a chance to see you.
 	 */
 	if(radius<MIN_MON_RADIUS && op->map->darkness<5 && rv->distance<=1)
 	    radius = MIN_MON_RADIUS;
@@ -2057,17 +2057,17 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	if(!enemy->invisible) /* enemy in dark squares... are seen! */
 	    return 1;
 
-	/* hidden or low-quality invisible */  
+	/* hidden or low-quality invisible */
 	if(enemy->hide && (rv->distance <= 1) && (RANDOM()%100<=hide_discovery)) {
 	    make_visible(enemy);
 	    /* inform players of new status */
-	    if(enemy->type==PLAYER && player_can_view(enemy,op)) 
+	    if(enemy->type==PLAYER && player_can_view(enemy,op))
 		draw_ext_info_format(NDI_UNIQUE,0, enemy,
 			     MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			     "You are discovered by %s!",
 			     "You are discovered by %s!",
 			     op->name);
-		return 1; /* detected enemy */ 
+		return 1; /* detected enemy */
 	}
 	else if (enemy->invisible) {
 	    /* Change this around - instead of negating the invisible, just
@@ -2083,8 +2083,8 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
             query_name(op, name, MAX_BUF);
 		    draw_ext_info_format(NDI_UNIQUE,0, enemy,
 			 MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-			 "You see %s noticing your position.", 
-			 "You see %s noticing your position.", 
+			 "You see %s noticing your position.",
+			 "You see %s noticing your position.",
 			 name);
 		}
 		return 1;
@@ -2097,9 +2097,9 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 }
 
 /* determine if op stands in a lighted square. This is not a very
- * intellegent algorithm. For one thing, we ignore los here, SO it 
- * is possible for a bright light to illuminate a player on the 
- * other side of a wall (!). 
+ * intellegent algorithm. For one thing, we ignore los here, SO it
+ * is possible for a bright light to illuminate a player on the
+ * other side of a wall (!).
  */
 
 int stand_in_light( object *op) {
@@ -2112,8 +2112,8 @@ int stand_in_light( object *op) {
 
     if(op->map) {
 	int x, y, x1, y1;
-	
-	
+
+
 
 	/* Check the spaces with the max light radius to see if any of them
 	 * have lights, and if any of them light the player enough, then return 1.
@@ -2128,7 +2128,7 @@ int stand_in_light( object *op) {
 
 		x1 = abs(x - op->x)*abs(x - op->x);
 		y1 = abs(y - op->y)*abs(y - op->y);
-		if (isqrt(x1 + y1) <  GET_MAP_LIGHT(m, nx, ny)) return 1; 
+		if (isqrt(x1 + y1) <  GET_MAP_LIGHT(m, nx, ny)) return 1;
 	    }
 	}
     }
@@ -2136,7 +2136,7 @@ int stand_in_light( object *op) {
 }
 
 
-/* assuming no walls/barriers, lets check to see if its *possible* 
+/* assuming no walls/barriers, lets check to see if its *possible*
  * to see an enemy. Note, "detection" is different from "seeing".
  * See can_detect_enemy() for more details. -b.t.
  * return 0 if can't be seen, 1 if can be
@@ -2147,23 +2147,23 @@ int can_see_enemy (object *op, object *enemy) {
 
     /* safety */
     if(!looker||!enemy||!QUERY_FLAG(looker,FLAG_ALIVE))
-	return 0; 
+	return 0;
 
     /* we dont give a full treatment of xrays here (shorter range than normal,
-     * see through walls). Should we change the code elsewhere to make you 
-     * blind even if you can xray? 
+     * see through walls). Should we change the code elsewhere to make you
+     * blind even if you can xray?
      */
     if(QUERY_FLAG(looker,FLAG_BLIND) && !QUERY_FLAG(looker,FLAG_XRAYS))
 	    return 0;
 
     /* checking for invisible things */
     if(enemy->invisible) {
-	/* HIDDEN ENEMY. by definition, you can't see hidden stuff! 
+	/* HIDDEN ENEMY. by definition, you can't see hidden stuff!
 	 * However,if you carry any source of light, then the hidden
 	 * creature is seeable (and stupid) */
 
-	if(has_carried_lights(enemy)) { 
-	    if(enemy->hide) { 
+	if(has_carried_lights(enemy)) {
+	    if(enemy->hide) {
 		make_visible(enemy);
 		draw_ext_info(NDI_UNIQUE,0, enemy,
 		      MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
@@ -2171,7 +2171,7 @@ int can_see_enemy (object *op, object *enemy) {
 		      NULL);
 	    }
 	    return 1;
-	} else if (enemy->hide) return 0; 
+	} else if (enemy->hide) return 0;
 
 	/* Invisible enemy.  Break apart the check for invis undead/invis looker
 	 * into more simple checks - the QUERY_FLAG doesn't return 1/0 values,
@@ -2183,20 +2183,19 @@ int can_see_enemy (object *op, object *enemy) {
   } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */
       if(player_can_view(looker,enemy)) return 1;
 
-  /* ENEMY IN DARK MAP. Without infravision, the enemy is not seen 
+  /* ENEMY IN DARK MAP. Without infravision, the enemy is not seen
    * unless they carry a light or stand in light. Darkness doesnt
    * inhibit the undead per se (but we should give their archs
-   * CAN_SEE_IN_DARK, this is just a safety  
+   * CAN_SEE_IN_DARK, this is just a safety
    * we care about the enemy maps status, not the looker.
    * only relevant for tiled maps, but it is possible that the
    * enemy is on a bright map and the looker on a dark - in that
    * case, the looker can still see the enemy
    */
-  if(enemy->map->darkness>0&&!stand_in_light(enemy) 
+  if(enemy->map->darkness>0&&!stand_in_light(enemy)
      &&(!QUERY_FLAG(looker,FLAG_SEE_IN_DARK)||
         !is_true_undead(looker)||!QUERY_FLAG(looker,FLAG_XRAYS)))
     return 0;
 
   return 1;
 }
-

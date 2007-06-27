@@ -475,4 +475,3 @@ int closePlugin()
     }
     return 0;
 }
-

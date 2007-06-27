@@ -13,10 +13,9 @@ containers: Only keys in active containers
  are used.
 
 Note that keyrings are just a specialized
-container, so the containers will also 
+container, so the containers will also
 find keys in keyrings.
 
 Only active containers are used - keys will
 not jump out of closed containers, but hints
 will be given if you have keys in such containers.
-

@@ -95,9 +95,9 @@ void LOG (LogLevel logLevel, const char *format, ...)
 #ifdef DEBUG				/* if we have a debug version, we want see ALL output */
         fflush(logfile);    /* so flush this! */
 #endif
-        if(logfile != stderr) {   /* if was it a logfile wrote it to screen too */ 
-            fputs(loglevel_names[logLevel], stderr); 
-            fputs(buf, stderr); 
+        if(logfile != stderr) {   /* if was it a logfile wrote it to screen too */
+            fputs(loglevel_names[logLevel], stderr);
+            fputs(buf, stderr);
             if (time_buf[0] != 0) {
                 fputs(time_buf, stderr);
                 fputs(" ", stderr);

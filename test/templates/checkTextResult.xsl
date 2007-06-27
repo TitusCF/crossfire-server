@@ -214,7 +214,7 @@ width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
     </xsl:variable>
     <xsl:element name="div">
         <xsl:attribute name="class">testBox <xsl:value-of select="$theClass"/></xsl:attribute>
-        <div class="testHead">    
+        <div class="testHead">
 	    <xsl:choose>
     		<xsl:when test="@result = 'error'">
 		    <xsl:call-template name="showErrorIcon"/>

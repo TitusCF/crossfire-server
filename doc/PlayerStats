@@ -7,7 +7,7 @@ Player Stats:
 
  Score :  Score is accumulated by killing monsters. This is how you gain
           levels, hps, and sps.
-          
+
    Hp  :  Hit Points.  How much damage a character can take.  If this
           drops below 0 the player dies.  It consist of two numbers,
           the current and maximum.
@@ -44,7 +44,7 @@ Player Stats:
    Dam :  Damage.  The maximum a character can damage an enemy with a
           single successful hit.
 
-   Ac  :  Armor Class.  How hard a character is to hit. 
+   Ac  :  Armor Class.  How hard a character is to hit.
 
    Arm :  Armour.  How well protected the character is.  This number
           specifies a percentage which is subtracted from the physical
@@ -165,7 +165,7 @@ fireborn        fire,phys       no armour,      fire            vuln:ghosthit
 Fireborns are supposed to be fire spirits.  They're closely in tune with
 magic and are powerful and learn magic easily.  Being fire spirits, they
 are immune to fire and poison, and vulnerable to cold.  They are vulnerable
-to ghosthit and drain because being mostly non-physical, anything which 
+to ghosthit and drain because being mostly non-physical, anything which
 strikes directly at the spirit hits them harder....
 
 race            attacktype      restrictions    immunities      prot./vuln.

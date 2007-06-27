@@ -305,7 +305,7 @@ void send_face_cmd(char *buff, int len, socket_struct *ns)
 
 /**
  * Sends a face to a client if they are in pixmap mode
- * nothing gets sent in bitmap mode. 
+ * nothing gets sent in bitmap mode.
  * If nocache is true (nonzero), ignore the cache setting from the client -
  * this is needed for the askface, in which we really do want to send the
  * face (and askface is the only place that should be setting it).  Otherwise,
@@ -347,7 +347,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
         SockList_AddInt(&sl, face_num);
         SockList_AddChar(&sl, fallback);
         SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
-        memcpy(sl.buf+sl.len, facesets[fallback].faces[face_num].data, 
+        memcpy(sl.buf+sl.len, facesets[fallback].faces[face_num].data,
                facesets[fallback].faces[face_num].datalen);
         sl.len += facesets[fallback].faces[face_num].datalen;
         Send_With_Handling(ns, &sl);

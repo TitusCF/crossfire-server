@@ -94,7 +94,7 @@
 #define CS_SAY_SHOUT	0x2	/* Text is shouted. */
 #define CS_SAY_GSAY	0x4	/* Text is group say command */
 
-/* These are multiplication values that should be used when changing 
+/* These are multiplication values that should be used when changing
  * floats to ints, and vice version.  MULTI is integer representatin
  * (float to int), MULTF is float, for going from int to float.
  */
@@ -277,23 +277,23 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 /* AND'ing this with data from server gets us just the animation id */
 #define ANIM_MASK	0x1fff
 
- 
+
 /* Constants in the form EMI_ is for extended map infos.
  * Even if the client select the additionnal infos it wants
  * on the map, there may exist cases where this whole info
- * is not given in one buch but in separate bunches. This 
+ * is not given in one buch but in separate bunches. This
  * is done performance reasons (imagine some info related to
  * a visible object and another info related to a 4 square
  * width and height area). At the begin of an extended info packet
  * is a bit field. A bit is activated for each extended info
- * present in the data 
+ * present in the data
  */
 /* Meanings:
  * EMI_NOREDRAW  Take extended infos into account but don't redraw,
  *               some additionnal datas will follow in a new packet
- * EMI_SMOOTH    Datas about smoothing  
- */ 
-#define EMI_NOREDRAW        0x01  
+ * EMI_SMOOTH    Datas about smoothing
+ */
+#define EMI_NOREDRAW        0x01
 #define EMI_SMOOTH          0x02
 
 /* this last one says the bitfield continue un next byte
@@ -303,14 +303,14 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
  */
 #define EMI_HASMOREBITS     0x80
 
- 
+
 /*
  * Note!
  * If you add message types here, don't forget
  * to keep the client up to date too!
  */
- 
-  
+
+
 /* message types */
 #define MSG_TYPE_BOOK		    1
 #define MSG_TYPE_CARD		    2

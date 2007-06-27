@@ -11,7 +11,7 @@ LDADD = $(top_builddir)/test/toolkit/libtoolkit_common.a $(top_builddir)/common/
 
 $(top_builddir)/common/libcross.a:
 	( cd $(top_builddir)/common ; make libcross.a )
-	
+
 $(top_builddir)/test/toolkit/libtoolkit_common.a:
 	( cd $(top_builddir)/test/toolkit/; make libtoolkit_common.a)
 

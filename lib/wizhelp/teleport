@@ -1,4 +1,4 @@
-syntax: teleport <player> 
+syntax: teleport <player>
 notes:
 teleport will bring you immediately
 next to the player's location.

@@ -96,7 +96,7 @@ static void add_god_to_list (archetype *god_arch) {
     }
     first_god = god;
 
-#ifdef DEBUG_GODS 
+#ifdef DEBUG_GODS
     LOG(llevDebug,"Adding god %s (%d) to list\n",god->name,god->id);
 #endif
 }
@@ -118,7 +118,7 @@ godlink* get_rand_god ( void ) {
     if(!god) LOG(llevError,"get_rand_god(): can't find a random god!\n");
     return god;
 }
- 
+
 /** Returns a pointer to the object
  * We need to be VERY carefull about using this, as we
  * are returning a pointer to the CLONE object. -b.t.
@@ -167,10 +167,10 @@ void dump_gods(void) {
 
         fprintf(stderr,"GOD: %s\n",god->name);
         fprintf(stderr," avatar stats:\n");
-        fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n", 
-        god->stats.Str,god->stats.Con,god->stats.Dex, 
+        fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n",
+        god->stats.Str,god->stats.Con,god->stats.Dex,
         god->stats.Int,god->stats.Wis,god->stats.Pow);
-        fprintf(stderr,"  lvl:%d speed:%4.2f\n", 
+        fprintf(stderr,"  lvl:%d speed:%4.2f\n",
         god->level,god->speed);
         fprintf(stderr,"  wc:%d ac:%d hp:%d dam:%d \n",
         god->stats.wc,god->stats.ac,god->stats.hp,god->stats.dam);
@@ -178,10 +178,10 @@ void dump_gods(void) {
         if(god->other_arch) {
             object *serv = &god->other_arch->clone;
             fprintf(stderr," servant stats: (%s)\n",god->other_arch->name);
-            fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n", 
-            serv->stats.Str,serv->stats.Con,serv->stats.Dex, 
+            fprintf(stderr,"  S:%d C:%d D:%d I:%d W:%d P:%d\n",
+            serv->stats.Str,serv->stats.Con,serv->stats.Dex,
             serv->stats.Int,serv->stats.Wis,serv->stats.Pow);
-            fprintf(stderr,"  lvl:%d speed:%4.2f\n", 
+            fprintf(stderr,"  lvl:%d speed:%4.2f\n",
             serv->level,serv->speed);
             fprintf(stderr,"  wc:%d ac:%d hp:%d dam:%d \n",
             serv->stats.wc,serv->stats.ac,serv->stats.hp,serv->stats.dam);
@@ -192,44 +192,44 @@ void dump_gods(void) {
         describe_resistance(god, 1, tmpbuf, HUGE_BUF);
         fprintf(stderr,"%s", tmpbuf);
         sprintf(tmpbuf," attacktype:");
-        if((tmpvar=god->attacktype)) { 
+        if((tmpvar=god->attacktype)) {
             strcat(tmpbuf,"\n  ");
             DESCRIBE_ABILITY(tmpbuf, tmpvar, "Attacks");
         }
         strcat(tmpbuf,"\n aura:");
 
         strcat(tmpbuf,"\n paths:");
-        if((tmpvar=god->path_attuned)) { 
+        if((tmpvar=god->path_attuned)) {
             strcat(tmpbuf,"\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Attuned");
         }
-        if((tmpvar=god->path_repelled)) { 
+        if((tmpvar=god->path_repelled)) {
             strcat(tmpbuf,"\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Repelled");
         }
-        if((tmpvar=god->path_denied)) { 
+        if((tmpvar=god->path_denied)) {
             strcat(tmpbuf,"\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Denied");
         }
         fprintf(stderr,"%s\n",tmpbuf);
         fprintf(stderr," Desc: %s",god->msg?god->msg:"---\n");
         fprintf(stderr," Priest gifts/limitations: ");
-        if(!QUERY_FLAG(god,FLAG_USE_WEAPON)) {gifts=1; fprintf(stderr,"\n  weapon use is forbidden");} 
-        if(!QUERY_FLAG(god,FLAG_USE_ARMOUR)) {gifts=1; fprintf(stderr,"\n  no armour may be worn");} 
-        if(QUERY_FLAG(god,FLAG_UNDEAD)) {gifts=1; fprintf(stderr,"\n  is undead");} 
-        if(QUERY_FLAG(god,FLAG_SEE_IN_DARK)) {gifts=1; fprintf(stderr,"\n  has infravision ");} 
-        if(QUERY_FLAG(god,FLAG_XRAYS)) {gifts=1; fprintf(stderr,"\n  has X-ray vision");} 
-        if(QUERY_FLAG(god,FLAG_REFL_MISSILE)) {gifts=1; fprintf(stderr,"\n  reflect missiles");} 
-        if(QUERY_FLAG(god,FLAG_REFL_SPELL)) {gifts=1; fprintf(stderr,"\n  reflect spells");} 
-        if(QUERY_FLAG(god,FLAG_STEALTH)) {gifts=1; fprintf(stderr,"\n  is stealthy");} 
-        if(QUERY_FLAG(god,FLAG_MAKE_INVIS)) {gifts=1; fprintf(stderr,"\n  is (permanently) invisible");} 
-        if(QUERY_FLAG(god,FLAG_BLIND)) {gifts=1; fprintf(stderr,"\n  is blind");} 
-        if(god->last_heal) {gifts=1; fprintf(stderr,"\n  hp regenerate at %d",god->last_heal);} 
-        if(god->last_sp) {gifts=1; fprintf(stderr,"\n  sp regenerate at %d",god->last_sp);} 
+        if(!QUERY_FLAG(god,FLAG_USE_WEAPON)) {gifts=1; fprintf(stderr,"\n  weapon use is forbidden");}
+        if(!QUERY_FLAG(god,FLAG_USE_ARMOUR)) {gifts=1; fprintf(stderr,"\n  no armour may be worn");}
+        if(QUERY_FLAG(god,FLAG_UNDEAD)) {gifts=1; fprintf(stderr,"\n  is undead");}
+        if(QUERY_FLAG(god,FLAG_SEE_IN_DARK)) {gifts=1; fprintf(stderr,"\n  has infravision ");}
+        if(QUERY_FLAG(god,FLAG_XRAYS)) {gifts=1; fprintf(stderr,"\n  has X-ray vision");}
+        if(QUERY_FLAG(god,FLAG_REFL_MISSILE)) {gifts=1; fprintf(stderr,"\n  reflect missiles");}
+        if(QUERY_FLAG(god,FLAG_REFL_SPELL)) {gifts=1; fprintf(stderr,"\n  reflect spells");}
+        if(QUERY_FLAG(god,FLAG_STEALTH)) {gifts=1; fprintf(stderr,"\n  is stealthy");}
+        if(QUERY_FLAG(god,FLAG_MAKE_INVIS)) {gifts=1; fprintf(stderr,"\n  is (permanently) invisible");}
+        if(QUERY_FLAG(god,FLAG_BLIND)) {gifts=1; fprintf(stderr,"\n  is blind");}
+        if(god->last_heal) {gifts=1; fprintf(stderr,"\n  hp regenerate at %d",god->last_heal);}
+        if(god->last_sp) {gifts=1; fprintf(stderr,"\n  sp regenerate at %d",god->last_sp);}
         if(god->last_eat) {gifts=1; fprintf(stderr,"\n  digestion is %s (%d)",
-            god->last_eat<0?"slowed":"faster",god->last_eat);} 
-        if(god->last_grace) {gifts=1; fprintf(stderr,"\n  grace regenerates at %d",god->last_grace);} 
-        if(god->stats.luck) {gifts=1; fprintf(stderr,"\n  luck is %d",god->stats.luck);} 
+            god->last_eat<0?"slowed":"faster",god->last_eat);}
+        if(god->last_grace) {gifts=1; fprintf(stderr,"\n  grace regenerates at %d",god->last_grace);}
+        if(god->stats.luck) {gifts=1; fprintf(stderr,"\n  luck is %d",god->stats.luck);}
         if(!gifts) fprintf(stderr,"NONE");
         fprintf(stderr,"\n\n");
     }

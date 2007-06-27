@@ -89,7 +89,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 	for (tmp = get_map_ob(m, new_x, new_y); tmp != NULL; tmp=tmp->above)
 	     if (QUERY_FLAG(tmp, FLAG_ALIVE)) break;
 
-    
+
 	/* Not really fair, but don't let monsters hit themselves with
 	 * their own arrow - this can be because they fire it then
 	 * move into it.
@@ -105,7 +105,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 		(rndm(0, 99)) < (90-op->level/10)) {
 
 		int number = op->face->number;
-	    
+
 		op->direction = absdir (op->direction + 4);
 		op->state = 0;
 		if (GET_ANIM_ID (op)) {
@@ -180,7 +180,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 		/* If this space is not out of the map and not blocked, valid space -
 		 * don't need to retry again.
 		 */
-		if (!(mflags & P_OUT_OF_MAP) && 
+		if (!(mflags & P_OUT_OF_MAP) &&
 		  !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1))) break;
 
 	    }

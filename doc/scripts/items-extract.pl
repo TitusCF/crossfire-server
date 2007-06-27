@@ -16,7 +16,7 @@ eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
 $[ = 1;			# set array base to 1
 
 # These stats will be added to the "magik" string according
-# to the pattern. "%s" should be "%+d", but that isn't 
+# to the pattern. "%s" should be "%+d", but that isn't
 # portable.
 $magic{'Str'} = 'strength %s';
 $magic{'Dex'} = 'dexterity %s';
@@ -176,14 +176,14 @@ while (<>) {
 	    }
 	    elsif (defined $weapons{$type}) {
 		# Horrible, I know. Blame vidarl@ifi.uio.no -- Fy Vidar!
-		# I assume the player has max Str and Dex 
+		# I assume the player has max Str and Dex
 		# and speed of 6 here.
 
 		# weapon_speed = (last_sp*2 - magical) / 2;
 		# if (weapon_speed < 0) weapon_speed = 0;
 
-		# M = (300-121)/121.0; 
-		# M2 = 300/100.0; 
+		# M = (300-121)/121.0;
+		# M2 = 300/100.0;
 		# W = weight/20000.0;
 		# s = 2 - weapon_speed/10.0;
 
@@ -203,8 +203,8 @@ while (<>) {
 	    else {
 		$speed = 0;
 	    }
-	    printf "%d &%s &%s &%s &%d &%.1f &%d &%d &%d &~~%s~~ &%.2f\n", 
-	    $type, $obj, $name, $magik, $dam, ($weight / 1000), $ac, 
+	    printf "%d &%s &%s &%s &%d &%.1f &%d &%d &%d &~~%s~~ &%.2f\n",
+	    $type, $obj, $name, $magik, $dam, ($weight / 1000), $ac,
 	    $armour, $magical, $obj, $speed;
 	}
     }

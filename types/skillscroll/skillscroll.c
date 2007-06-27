@@ -56,7 +56,7 @@ void init_type_skillscroll(void) {
  */
 static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, object* applier, int aflags) {
     char name[MAX_BUF];
-    
+
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {
         switch ((int) learn_skill (applier, scroll)) {

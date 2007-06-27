@@ -75,7 +75,7 @@ static inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl)
 
 /**
  *  This is a similar to query_name, but returns flags
- *  to be sended to client. 
+ *  to be sended to client.
  */
 static unsigned int query_flags(const object *op)
 {
@@ -113,10 +113,10 @@ static unsigned int query_flags(const object *op)
                 break;
         }
     }
-    if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
+    if (op->type == CONTAINER && ((op->env && op->env->container == op) ||
                                   (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
         flags |= F_OPEN;
-    
+
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
         if(QUERY_FLAG(op,FLAG_DAMNED))
             flags |= F_DAMNED;
@@ -197,7 +197,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
 
 
 /**
- * Send the look window.  Don't need to do animations here 
+ * Send the look window.  Don't need to do animations here
  * This sends all the faces to the client, not just updates.  This is
  * because object ordering would otherwise be inconsistent
  */
@@ -315,7 +315,7 @@ void esrv_send_inventory(object *pl, object *op)
     object *tmp;
     int got_one=0;
     SockList sl;
-    
+
     sl.buf=malloc(MAXSOCKSENDBUF);
 
     sprintf((char*)sl.buf,"delinv %d", op->count);
@@ -326,7 +326,7 @@ void esrv_send_inventory(object *pl, object *op)
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, op->count);
-    
+
     for (tmp=op->inv; tmp; tmp=tmp->below) {
         object *head;
 
@@ -335,7 +335,7 @@ void esrv_send_inventory(object *pl, object *op)
 
         if (LOOK_OBJ(head)) {
             add_object_to_socklist(&pl->contr->socket, &sl, head);
-        
+
             got_one++;
 
                 /* It is possible for players to accumulate a huge amount of
@@ -370,7 +370,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 
         /* If we have a request to send the player item, skip a few checks. */
     if (op!=pl) {
-        if (! LOOK_OBJ(op)) 
+        if (! LOOK_OBJ(op))
             return;
             /* we remove the check for op->env, because in theory, the object
              * is hopefully in the same place, so the client should preserve
@@ -446,7 +446,7 @@ void esrv_update_item(int flags, object *pl, object *op)
         memcpy(sl.buf+sl.len, item_n, len);
         sl.len += len;
     }
-    if (flags & UPD_ANIM) 
+    if (flags & UPD_ANIM)
         SockList_AddShort(&sl,op->animation_id);
 
     if (flags & UPD_ANIMSPEED) {
@@ -475,11 +475,11 @@ void esrv_update_item(int flags, object *pl, object *op)
 void esrv_send_item(object *pl, object*op)
 {
     SockList sl;
-    
+
         /* If this is not the player object, do some more checks */
     if (op!=pl) {
             /* We only send 'visibile' objects to the client */
-        if (! LOOK_OBJ(op)) 
+        if (! LOOK_OBJ(op))
             return;
             /* if the item is on the ground, mark that the look needs to
              * be updated.
@@ -740,7 +740,7 @@ void look_at(object *op,int dx,int dy) {
 
         if(!flag) {
             if(dx||dy)
-                draw_ext_info(NDI_UNIQUE, 0,op, 
+                draw_ext_info(NDI_UNIQUE, 0,op,
                               MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                               "There you see:", NULL);
             else {
@@ -765,13 +765,13 @@ void look_at(object *op,int dx,int dy) {
                                  "- %s.",
                                  name);
 
-        if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) && 
+        if (((tmp->inv!=NULL || (tmp->head && tmp->head->inv)) &&
              (tmp->type != CONTAINER && tmp->type!=FLESH)) ||
             QUERY_FLAG(op, FLAG_WIZ))
             inventory(op,tmp->head==NULL?tmp:tmp->head);
 
             /* don't continue under the floor */
-        if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))   
+        if(QUERY_FLAG(tmp, FLAG_IS_FLOOR)&&!QUERY_FLAG(op, FLAG_WIZ))
             break;
     }
 
@@ -863,7 +863,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
     } else {
         env = esrv_get_ob_from_count(pl, to);
         if (!env) {
-            LOG(llevDebug, 
+            LOG(llevDebug,
                 "Player '%s' tried to move object to the unknown location (%d)\n",
                 pl->name, to);
             return;

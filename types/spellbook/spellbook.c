@@ -65,7 +65,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
     object *skapplier, *spell, *spell_skill;
     int read_level;
     char level[100];
-    
+
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {
         if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ)) {

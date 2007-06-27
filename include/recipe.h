@@ -24,9 +24,9 @@ typedef struct recipestruct {
 
 typedef struct recipeliststruct {
     int total_chance;
-    int number;			    /* number of recipes in this list */ 
-    struct recipestruct *items;	    /* pointer to first recipe in this list */ 
-    struct recipeliststruct *next;  /* pointer to next recipe list */ 
+    int number;			    /* number of recipes in this list */
+    struct recipestruct *items;	    /* pointer to first recipe in this list */
+    struct recipeliststruct *next;  /* pointer to next recipe list */
 } recipelist;
 
 #endif /* RECIPE_H */

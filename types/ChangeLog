@@ -139,4 +139,3 @@ Functunality moved to: legacy/apply.c
 Comment: Move legacy apply code into a temporary location.
 Alex Schultz 2006-11-29
 --EXAMPLE--
-

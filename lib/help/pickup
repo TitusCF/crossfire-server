@@ -2,7 +2,7 @@
 to pickup an item manually, use the ',' key.
 
 Mode 0: Don't pick up items.
-Mode 1: Pick up one item 
+Mode 1: Pick up one item
 Mode 2: Pickup up one item and stop
 Mode 3: Stop before picking up items
 Mode 4: Pick up all items
@@ -23,4 +23,3 @@ Goldcoins have a value density of 66,
 Density 10 will pickup silver, gold,
 rings, wands, books, and scrolls.
 Artifacts are also picked up.
-

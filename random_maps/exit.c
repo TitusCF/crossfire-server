@@ -113,7 +113,7 @@ void find_in_layout(int mode, char target,int *fx,int *fy,char **layout,RMParms 
 }
 
 
-/* orientation:  
+/* orientation:
 */
 
 /**

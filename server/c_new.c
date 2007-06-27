@@ -167,4 +167,3 @@ int command_fire_stop(object *op, char *params)
     op->contr->fire_on=0;
     return 1;
 }
-

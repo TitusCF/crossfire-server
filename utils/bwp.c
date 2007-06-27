@@ -64,12 +64,12 @@ typedef struct string_array {
  * If an entry is NULL, that is a flag not to loaded/saved.
  *
  * Copied from common/loader.c; perhaps should be defined elsewhere?
- * 
+ *
  */
 const char *const flag_names[NUM_FLAGS+1] = {
     "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
     "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
-    "is_animated", NULL /* slow_move */, 
+    "is_animated", NULL /* slow_move */,
     NULL /* flying */, "monster", "friendly", "generator",
     "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
     "see_invisible", "can_roll", "overlay_floor",
@@ -78,8 +78,8 @@ const char *const flag_names[NUM_FLAGS+1] = {
     "changing", "splitting", "hitback", "startequip",
     "blocksview", "undead", "scared", "unaggressive",
     "reflect_missile", "reflect_spell",                             /* 40 */
-    "no_magic", "no_fix_player", "is_lightable", "tear_down", 
-    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/, 
+    "no_magic", "no_fix_player", "is_lightable", "tear_down",
+    "run_away", NULL /*pass_thru */, NULL /*can_pass_thru*/,
     "pick_up", "unique", "no_drop",					/* 50 */
     NULL /* wizcast*/, "can_cast_spell", "can_use_scroll", "can_use_range",
     "can_use_bow",  "can_use_armour", "can_use_weapon",
@@ -338,7 +338,7 @@ void free_data(String_Array* array) {
  *
  * Takes an array of strings and joins them togther with a comma and a space
  * between each of them.
- * 
+ *
  * @param array
  * Pointer to struct of type String_Array, containing strings to join
  *
@@ -430,11 +430,11 @@ int main(int argc, char *argv[]) {
     }
     printf("Sorting...");
         /* Calling qsort on monster, which is archetype**     */
-    qsort(&monster[0], archnum, sizeof(archetype *), sort_archetypes); 
+    qsort(&monster[0], archnum, sizeof(archetype *), sort_archetypes);
     printf("done.  %i items found\n", archnum);
-    
+
     last_letter = '\0';
-    
+
     for(i=0; i<archnum; i++) {
         at=monster[i];
         if(at){
@@ -463,10 +463,10 @@ int main(int argc, char *argv[]) {
 
                 snprintf(wikifile, sizeof(wikifile),
                          "%s/%c", wikidir, letter);
-                fp = fopen(wikifile, "w");            
+                fp = fopen(wikifile, "w");
                 if(! fp){
                     fprintf(stderr, "Unable to write to wiki file!\n");
-                    exit(1); 
+                    exit(1);
                 }
                 char letterindex[256] = "";
                 char letterindexnext[7];
@@ -800,17 +800,17 @@ void fix_auto_apply(mapstruct *m) {
  * Added as part of glue cleaning.
  * Ryo 2005-07-15
  **/
- 
+
 
 void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2){
     fprintf(logfile, "%s\n", txt);
 }
 
 void draw_ext_info_format(
-    int flags, int pri, const object *pl, uint8 type, 
-    uint8 subtype, 
-    const char* new_format, 
-    const char* old_format, 
+    int flags, int pri, const object *pl, uint8 type,
+    uint8 subtype,
+    const char* new_format,
+    const char* old_format,
     ...){
 
     va_list ap;
@@ -826,53 +826,53 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 
 void move_teleporter( object* ob){
 }
- 
+
 void move_firewall( object* ob){
 }
- 
+
 void move_duplicator( object* ob){
 }
- 
+
 void move_marker( object* ob){
 }
- 
+
 void move_creator( object* ob){
 }
- 
+
 void emergency_save( int x ){
 }
- 
+
 void clean_tmp_files( void ){
 }
- 
+
 void esrv_send_item( object* ob, object* obx ){
 }
- 
+
 void dragon_ability_gain( object* ob, int x, int y ){
 }
- 
+
 void weather_effect(mapstruct *m){
 }
- 
+
 void set_darkness_map( mapstruct* m){
 }
- 
+
 int ob_move_on(object* op, object* victim, object* originator){
 }
- 
+
 object* find_skill_by_number(object *who, int skillno){
     return NULL;
 }
- 
+
 void esrv_del_item(player *pl, int tag){
 }
- 
+
 void esrv_update_spells(player *pl){
 }
 
 void monster_check_apply( object* ob, object* obt ){
 }
- 
+
 void trap_adjust( object* ob, int x ){
 }
 

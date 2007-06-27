@@ -95,7 +95,7 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
 
     /* the order in which these are evaluated matters*/
 
-    /* the following two are mutually exclusive.  
+    /* the following two are mutually exclusive.
        pick one if they're both set. */
     if((option & REGULAR_SPIRAL) && (option & FIT_SPIRAL))
     {
@@ -171,7 +171,7 @@ void connect_spirals(int xsize,int ysize,int sym, char **layout) {
         /* go up */
         for(i=ic,j=jc-1; j>0 && layout[i][j]=='#'   ;j--)
             layout[i][j]=0;
-        /* go down */  
+        /* go down */
         for(i=ic,j=jc+1; j<ysize-1 && layout[i][j]=='#'  ;j++)
             layout[i][j]=0;
     }
@@ -196,7 +196,7 @@ void connect_spirals(int xsize,int ysize,int sym, char **layout) {
             layout[i][j]=0;
             layout[i+ic][j]=0;
         }
-        /* go down */  
+        /* go down */
         for(i=ic/2,j=jc+1; j<ysize-1 && layout[i][j]=='#'  ;j++) {
             layout[i][j]=0;
             layout[i+ic][j]=0;

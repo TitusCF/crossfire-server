@@ -1,4 +1,4 @@
-syntax: reset <mapname> 
+syntax: reset <mapname>
 notes:
 all other characters must be
 off of the map at the time of
@@ -9,6 +9,6 @@ items being on a map, it will
 cause them to be saved before
 the map is reset.
 
-Using 'reset .' will reset the 
+Using 'reset .' will reset the
 map that the player is currently
 on.

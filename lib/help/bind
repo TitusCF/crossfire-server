@@ -24,7 +24,7 @@ bind -f cast paralyzed (F3)
   is used to select that spell (Shift
   being the fire key)
 
-bind use_skill sense curse; 
+bind use_skill sense curse;
    use_skill sense magic (S)
 will bind those two commands to the
 S key.

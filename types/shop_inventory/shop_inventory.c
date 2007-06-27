@@ -129,7 +129,7 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
     if (applier->type!=PLAYER)
         return METHOD_UNHANDLED;
 
-    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
+    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
         "\nThe shop contains:", NULL);
 
     items=malloc(40*sizeof(shopinv));
@@ -154,7 +154,7 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
         }
     }
     if (numitems == 0) {
-        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
                       "The shop is currently empty.\n", NULL);
         free(items);
         return;
@@ -170,8 +170,8 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
             free(items[i].item_real);
         } else {
             draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, 
-                                 "%d %s", "%d %s", 
+                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
+                                 "%d %s", "%d %s",
                                  items[i].nrof? items[i].nrof:1,
                                  items[i].nrof==1?items[i].item_sort: items[i].item_real);
             free(items[i].item_sort);

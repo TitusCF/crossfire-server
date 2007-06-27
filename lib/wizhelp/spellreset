@@ -1,4 +1,4 @@
-syntax: spellreset 
+syntax: spellreset
 notes: this
 causes the spell table to be
 reinitialized.

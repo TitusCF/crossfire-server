@@ -51,7 +51,7 @@
  * will probably be more portable than sint8/unit8
  */
 
- 
+
 typedef unsigned int	uint32;
 
 #ifndef UINT32_MAX
@@ -361,7 +361,7 @@ typedef struct Settings {
     char    *news;            /**< Name of news file*/
     char    dm_mail[MAX_BUF]; /**< DM's Email address */
 
-    /* The meta_ is information for the metaserver.  These are set in 
+    /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
     uint8   meta_on:1;		    /**< True if we should send updates */

@@ -8,7 +8,7 @@ client or receive/parse client commands, it should be here.
 Certainly the low level communication commands need to be here (setting
 up the socket, and the primitive reads/writes which more format the data
 but don't originate it).   The functions that encapsulate the item
-details to send to the client are also located in this directory, as 
+details to send to the client are also located in this directory, as
 are some of the protocol commands the client sends to us.
 
  The higher level commands (ie, north, maps, cast, ...) are not included
@@ -37,7 +37,7 @@ server, initialization of data structure for new clients, and the freeing
 of data when done.  This also contains the declarations for the global
 variables that are used.
 
-item.c:  Commands dealing with objects.  This includes both 
+item.c:  Commands dealing with objects.  This includes both
 server updates to the clients, and request from the client to perform
 an action on some item.  Some requests from the client may get passed
 back to functions in the server directory - more commands from the

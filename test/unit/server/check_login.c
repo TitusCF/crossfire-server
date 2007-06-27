@@ -26,7 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* 
+/*
  * This is the unit tests file for server/login.c
  */
 
@@ -54,7 +54,7 @@ Suite *login_suite(void)
   Suite *s = suite_create("login");
   TCase *tc_core = tcase_create("Core");
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown); 
+  tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_empty);

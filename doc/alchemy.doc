@@ -8,11 +8,11 @@
 
         As always, the general intention is to enhance the enjoyability and
         playability of CF. In this code, I have created a system whereby
-	players may assemble various ingredients to make artifacts. 
+	players may assemble various ingredients to make artifacts.
 
 	The amount of work I put into this was substantial; other than
-	new code -- I created new archetypes, revised archetypes, altered the 
-	treasures file and created 2 new object types and a flag. 
+	new code -- I created new archetypes, revised archetypes, altered the
+	treasures file and created 2 new object types and a flag.
 
 	It therefore may be enjoyable to install this patch (incl code)
 	and *not* define ALCHEMY in define.h. In particular, this patch
@@ -26,7 +26,7 @@
 
    	 4) if ALCHEMY is defined players may make potions/artifacts.
 
-	I have included instructions for installation, an install script 
+	I have included instructions for installation, an install script
 	and a brief document for using the code (pretty simple).
 
     	Finally, as always, feedback is appreciated.
@@ -46,7 +46,7 @@
 	cast 'alchemy' spell. You might make something :) Backfire
 	effects are possible. In order to get better at making stuff,
 	you will need to learn the alchemy skill. Books found in shops
-	(and elsewhere) will give you formulae for making stuff. 
+	(and elsewhere) will give you formulae for making stuff.
 	Of course , you can always 'experiment' on your own, but this
 	may be dangerous.
 
@@ -63,22 +63,20 @@
 
 	2- fast lookup of formulae. Lookup is randomized so that the
 	   list is attempted for a match based on # levels the player
-	   has. Obviously, higher level players get more attempts 
-	   to match the list--and thereby have a grater chance of 
-	   successfully completing a formula. 
+	   has. Obviously, higher level players get more attempts
+	   to match the list--and thereby have a grater chance of
+	   successfully completing a formula.
 
 	3- There are ~80 formulae in this version. You can dump
-	   the formulalists using the crossfire -m7 option. 
+	   the formulalists using the crossfire -m7 option.
 
-	  Basically, a simple linked list, ordered by the 
-	number of different archs in a formulae, is used to 
+	  Basically, a simple linked list, ordered by the
+	number of different archs in a formulae, is used to
 	lookup 'recipe' matches. An indexed value for each formulae
 	allows a quick comparison for a match with the cauldron
 	contents. When a player casts alchemy on a cauldron, we
-	first determine # archs inside the cauldron, pick the 
-	correct formulalist, randomly match against that list to 
+	first determine # archs inside the cauldron, pick the
+	correct formulalist, randomly match against that list to
 	see if we got a match. If matched, we remove the ingredients,
 	and insert the artifact into the cauldron. Exp is awarded
 	to the players alchemy skill (if they have it).
-
-	

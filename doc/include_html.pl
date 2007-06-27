@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# basic 
+# basic
 
 $in = $ARGV[0];
 $out = $ARGV[1];
@@ -30,4 +30,3 @@ sub include_file {
 
 &include_file($in);
 close(FOUT);
-

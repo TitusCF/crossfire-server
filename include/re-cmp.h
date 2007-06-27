@@ -3,7 +3,7 @@
  *
  * Author: Kjetil T. Homme <kjetilho@ifi.uio.no> May 1993
  */
- 
+
 #ifndef RE_CMP_H
 #define RE_CMP_H
 

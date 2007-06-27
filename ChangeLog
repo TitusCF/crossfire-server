@@ -277,7 +277,7 @@ Nicolas Weeger 2007-06-03
 Fix lamp-related issues.
  common/map.c: don't clear FLAG_APPLY for lamps, as it indicates on/off.
  server/apply.c: lamps don't change apply status when being 'unapplied'.
- types/lamp/lamp.c: lamps can only be (un)applied when in inventory. 
+ types/lamp/lamp.c: lamps can only be (un)applied when in inventory.
 Nicolas Weeger 2007-06-02
 
 common/object.c: simplify insert_ob_in_ob when merging. Correctly update the light.
@@ -640,7 +640,7 @@ Return result of cf_object_move().
  plugins/common/include/plugin_common.h
  plugins/common/plugin_common.c
 Add 'Crossfire.Object.Move' method.
- plugins/cfpython/cfpython_object.c 
+ plugins/cfpython/cfpython_object.c
  plugins/cfpython/include/cfpython_object_private.h
 Nicolas Weeger 2007-04-29
 

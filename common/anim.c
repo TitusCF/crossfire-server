@@ -207,7 +207,7 @@ void animate_object(object *op, int dir) {
     }
     else if (NUM_FACINGS(op)==4) {
         if (dir==0) base_state=0;
-        else base_state = ((dir-1)/2) * (NUM_ANIMATIONS(op)/4); 
+        else base_state = ((dir-1)/2) * (NUM_ANIMATIONS(op)/4);
     }
     else if (NUM_FACINGS(op)==8) {
         if (dir==0) base_state=0;

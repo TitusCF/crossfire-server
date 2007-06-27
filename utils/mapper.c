@@ -1677,10 +1677,10 @@ void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subty
 }
 
 void draw_ext_info_format(
-        int flags, int pri, const object *pl, uint8 type, 
-        uint8 subtype, 
-        const char* new_format, 
-        const char* old_format, 
+        int flags, int pri, const object *pl, uint8 type,
+        uint8 subtype,
+        const char* new_format,
+        const char* old_format,
         ...)
 {
     va_list ap;
@@ -1698,61 +1698,61 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 void move_teleporter( object* ob)
 {
 }
- 
+
 void move_firewall( object* ob)
 {
 }
- 
+
 void move_duplicator( object* ob)
 {
 }
- 
+
 void move_marker( object* ob)
 {
 }
- 
+
 void move_creator( object* ob)
 {
 }
- 
+
 void emergency_save( int x )
 {
 }
- 
+
 void clean_tmp_files( void )
 {
 }
- 
+
 void esrv_send_item( object* ob, object* obx )
 {
 }
- 
+
 void dragon_ability_gain( object* ob, int x, int y )
 {
 }
- 
+
 void weather_effect(mapstruct *m)
 {
 }
- 
+
 void set_darkness_map( mapstruct* m)
 {
 }
- 
+
 method_ret ob_move_on(object* op, object* victim, object* originator)
 {
     return METHOD_OK;
 }
- 
+
 object* find_skill_by_number(object *who, int skillno)
 {
     return NULL;
 }
- 
+
 void esrv_del_item(player *pl, int tag)
 {
 }
- 
+
 void esrv_update_spells(player *pl)
 {
 }
@@ -1760,7 +1760,7 @@ void esrv_update_spells(player *pl)
 void monster_check_apply( object* ob, object* obt )
 {
 }
- 
+
 void trap_adjust( object* ob, int x )
 {
 }
@@ -1807,7 +1807,7 @@ int auto_apply (object *op) {
                 return 0;
             while ((op->stats.hp--)>0)
                 create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-                op->stats.exp ? (int)op->stats.exp : 
+                op->stats.exp ? (int)op->stats.exp :
                         op->map == NULL ?  14: op->map->difficulty,0);
 
         /* If we generated an object and put it in this object inventory,
@@ -1858,14 +1858,14 @@ void do_auto_apply(mapstruct * m)
                                         m->difficulty,0);
                     invtmp->randomitems = NULL;
                 }
-                else if (invtmp && invtmp->arch && 
+                else if (invtmp && invtmp->arch &&
                          invtmp->type!=TREASURE &&
-                         invtmp->type != SPELL && 
+                         invtmp->type != SPELL &&
                          invtmp->type != CLASS &&
                          HAS_RANDOM_ITEMS(invtmp)) {
                     create_treasure(invtmp->randomitems, invtmp, 0,
                                     m->difficulty,0);
-                /* Need to clear this so that we never try to create 
+                /* Need to clear this so that we never try to create
                     * treasure again for this object
                 */
                     invtmp->randomitems = NULL;

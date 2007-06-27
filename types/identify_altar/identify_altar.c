@@ -103,7 +103,7 @@ static method_ret identify_altar_type_move_on(ob_methods* context, object* altar
 
     for (id=originator->inv; id; id=id->below)
     {
-        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) && !id->invisible && 
+        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) && !id->invisible &&
             need_identify(id))
         {
             if (operate_altar(altar,&money))

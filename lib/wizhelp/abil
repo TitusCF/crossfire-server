@@ -1,5 +1,5 @@
 syntax: abil <player> <attribute>
-<value> 
+<value>
 notes: abil will
 permanently change the ability
 scores of players.  Attribute

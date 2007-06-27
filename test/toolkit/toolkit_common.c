@@ -26,7 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* 
+/*
  * This is the toolkit for common only operations
  * All methods should start with cctk (common check toolkit)
  */

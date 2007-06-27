@@ -41,14 +41,14 @@ my $stats_requesthits = 0; # COUNTER
 my $stats_totalplayers = 0; # GAUGE
 my $stats_totalservers = 0; # GAUGE
 
-socket(SOCKET, PF_INET, SOCK_DGRAM, getprotobyname("udp")) || 
+socket(SOCKET, PF_INET, SOCK_DGRAM, getprotobyname("udp")) ||
 	die("$0: can not open udp socket: $OS_ERROR\n");
 bind(SOCKET, sockaddr_in(13326, INADDR_ANY)) ||
 	die("$0: Can not bind to socket: $OS_ERROR\n");
 
 # Socket1 is used for incoming requests - if we get a connection on this,
 # we dump out our data to that socket in an easily parsible form.
-socket(SOCKET1, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || 
+socket(SOCKET1, PF_INET, SOCK_STREAM, getprotobyname("tcp")) ||
 	die("$0: can not open tcp socket: $OS_ERROR\n");
 
 # errors on this not that critical
@@ -56,7 +56,7 @@ setsockopt(SOCKET1, SOL_SOCKET, SO_REUSEADDR, 1);
 
 bind(SOCKET1, sockaddr_in(13326, INADDR_ANY)) ||
 	die("$0: Can not bind to socket: $OS_ERROR\n");
-listen(SOCKET1, 10) || 
+listen(SOCKET1, 10) ||
 	die("$0: Can not listen on socket: $OS_ERROR\n");
 
 vec($rin, fileno(SOCKET), 1)=1;
@@ -123,7 +123,7 @@ while (1) {
 	open(CACHE,">$CACHE_FILE");
 	open(HTML,">$HTML_FILE");
 
-	print HTML 
+	print HTML
 '<title>Crossfire Server List</title>
 <h1 align=center>Crossfire Server List</h1><p>
 <table border=1 align=center cellpadding=5>
@@ -138,8 +138,8 @@ while (1) {
 	foreach $i (keys %data) {
 		$stats_totalservers++;
 	    ($ip, $time, @rest) = split /\|/, $data{$i};
-	    if ($time+$REMOVE_SERVER<$cur_time) { 
-		delete $data{$i}; 
+	    if ($time+$REMOVE_SERVER<$cur_time) {
+		delete $data{$i};
 	    } else {
 		print CACHE "$data{$i}\n";
 		$elapsed = int(($cur_time - $time)/60);
@@ -161,10 +161,10 @@ All times are in GMT.<p>
 <font size=-2>Last Updated: $gmtime<font size=+2><p>";
 	close(HTML);
 	close(CACHE);
-	
+
 	open(STATS,">$STATS_FILE");
 	print STATS "$stats_updatehits:$stats_requesthits:$stats_totalservers:$stats_totalplayers\n";
 	close(STATS);
-	
+
     }
 }

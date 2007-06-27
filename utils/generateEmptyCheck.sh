@@ -24,7 +24,7 @@ cproto $FILENAME -I include/ -f 3 > $FULLPROTOS
 
 echo "/*" >> $CHECK_CODE
 echo " * Things to check" >> $CHECK_CODE
-for i in $methods 
+for i in $methods
 do
     echo " * $i" >> $CHECK_CODE
 done

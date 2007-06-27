@@ -71,7 +71,7 @@ static int pointer_strcmp(const void *p1, const void *p2)
  * skip_dirs controls our behavioru - if nonzero, we don't
  * skip any subdirectories - if zero, we store those away,
  * since there are cases where we want to choose a random
- * directory. 
+ * directory.
  * @param dir
  * directory to list.
  * @param[out] namelist
@@ -163,7 +163,7 @@ mapstruct *load_style_map(char *style_name)
  * irrelevant to the style.  If dirname is given, but stylename
  * isn't, and difficult is -1, it returns a random style map.
  * Otherwise, it tries to match the difficulty given with a style
- * file, named style_name_# where # is an integer 
+ * file, named style_name_# where # is an integer
  * @param dirname
  * where to look.
  * @param stylename
@@ -216,7 +216,7 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
         if (n<=0) return 0; /* nothing to load.  Bye. */
 
         /* Picks a random map.  Note that if this is all directories,
-         * we know it won't be able to load, so save a few ticks.   
+         * we know it won't be able to load, so save a few ticks.
          * the door handling checks for this failure and handles
          * it properly.
          */

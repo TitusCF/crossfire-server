@@ -131,7 +131,7 @@ void do_wizard_hide(object *op, int silent_dm) {
 			     "%s has entered the game.",
 			     op->name);
         if (!silent_dm) {
-            draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL, 
+            draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
 		  MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
 		  "The Dungeon Master has arrived!", NULL);
         }
@@ -364,7 +364,7 @@ int command_overlay_reset(object *op, char* params) {
     else
         draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND,  MSG_TYPE_COMMAND_DM,
 		      "No overlay for current map.", NULL);
-    
+
     return 1;
 }
 
@@ -2188,8 +2188,8 @@ int command_stack_list(object *op, char *params) {
         display = find_object(pl->stack_items[item]);
         if (display)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-				 " %d : %s [%d]", 
-				 " %d : %s [%d]", 
+				 " %d : %s [%d]",
+				 " %d : %s [%d]",
 				 item, display->name, display->count);
         else
             /* Item was freed */
@@ -2372,25 +2372,25 @@ int command_style_map_info(object *op, char *params)
 	mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace)) + sizeof(mapstruct);
 	for (x=0; x<MAP_WIDTH(mp); x++) {
 	    for (y=0; y<MAP_HEIGHT(mp); y++) {
-		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above) 
+		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above)
 		    objects_used++;
 	    }
 	}
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-		 "[fixed]Style maps loaded:    %d", 
-		 "Style maps loaded:    %d", 
+		 "[fixed]Style maps loaded:    %d",
+		 "Style maps loaded:    %d",
 		 maps_used);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-		  "[fixed]Memory used, not", 
+		  "[fixed]Memory used, not",
 		  "Memory used, not");
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-		 "[fixed]including objects:    %d", 
-		 "including objects:    %d", 
+		 "[fixed]including objects:    %d",
+		 "including objects:    %d",
 		 mapmem);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-		 "Style objects:        %d", 
-		 "Style objects:        %d", 
+		 "Style objects:        %d",
+		 "Style objects:        %d",
 		 objects_used);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
 		 "Mem for objects:      %d",

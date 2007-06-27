@@ -29,7 +29,7 @@
 #ifndef SKILLS_H
 #define SKILLS_H
 
-/* This list is just a subtype <-> skill (code wise) in the 
+/* This list is just a subtype <-> skill (code wise) in the
  * server translation.  In theory, the processing of the different
  * skills could be done via strncmp
  * This list doesn't really try to identify what the skills do.

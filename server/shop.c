@@ -47,14 +47,14 @@
  * This is a measure of how effective store specialisation is. A general store
  * will offer this proportion of the 'maximum' price, a specialised store will
  * offer a range of prices around it such that the maximum price is always one
- * therefore making this number higher, makes specialisation less effective. 
+ * therefore making this number higher, makes specialisation less effective.
  * setting this value above 1 or to a negative value would have interesting,
  * (though not useful) effects.
  */
 #define SPECIALISATION_EFFECT 0.5
 
 /** Price a shopkeeper will give to someone they disapprove of.*/
-#define DISAPPROVAL_RATIO 0.2 
+#define DISAPPROVAL_RATIO 0.2
 
 /** Price a shopkeeper will give someone they neither like nor dislike */
 #define NEUTRAL_RATIO 0.8
@@ -91,7 +91,7 @@ static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin",
  * Added F_SHOP flag to mean that the specialisation of the shop on the
  * player's current map should be taken into account when determining
  * the price. Shops that specialise in what is being traded will give
- * better prices than those that do not. 
+ * better prices than those that do not.
  *
  * CF 0.91.4 - This function got changed around a bit.  Now the
  * number of object is multiplied by the value early on.  This fixes
@@ -283,31 +283,31 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
                                /(settings.max_level*1.05)));
         else
             diff = 0.8;
-            
+
         diff *= 1-ratio;
-        
+
         /* Diff is now a float between 0.2 and 0.8 */
         diff+=(cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
-        
+
         if(flag==F_BUY)
             val=(val*(long)(1000*(1+diff)))/1000;
         else if (flag==F_SELL)
             val=(val*(long)(1000*(1-diff)))/1000;
-        
+
         /* If we are approximating, then the value returned should
          * be allowed to be wrong however merely using a random number
          * each time will not be sufficient, as then multiple examinations
          * would give different answers, so we'll use the count instead.
-         * By taking the sine of the count, a value between -1 and 1 is 
+         * By taking the sine of the count, a value between -1 and 1 is
          * generated, we then divide by the square root of the bargaining
          * skill and the appropriate identification skills, so that higher
          * level players get better estimates. (We need a +1 there to
          * prevent dividing by zero.)
          */
-        if (approximate) 
+        if (approximate)
             val = (sint64)val + (sint64)((sint64)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
     }
-   
+
     /* I don't think this should really happen - if it does,
      * it indicates an overflow of diff above.  That should only
      * happen if we are selling objects - in that case, the person
@@ -321,14 +321,14 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
        need_identify(tmp) && !identified) {
         val = (val > 600)? 600:val;
     }
-    
+
     /* if in a shop, check how the type of shop should affect the price */
     if (shop && who) {
-        if (flag==F_SELL) 
+        if (flag==F_SELL)
             val=(sint64)val*shop_specialisation_ratio(tmp, who->map)
                 *shopkeeper_approval(who->map, who)/shop_greed(who->map);
         else if (flag==F_BUY) {
-            /* 
+            /*
              * When buying, if the item was sold by another player, it is
              * ok to let the item be sold cheaper, according to the
              * specialisation of the shop. If a player sold an item here,
@@ -505,9 +505,9 @@ const char *query_cost_string(const object *tmp,object *who,int flag) {
                     int num;
                     int cointype = LARGEST_COIN_GIVEN;
                     archetype *coin = find_next_coin(real_value, &cointype);
-        
+
                     if (coin == NULL) return "nothing";
-        
+
                     num = real_value / coin->clone.value;
                     if (num == 1)
                         sprintf(buf, "about one %s", coin->clone.name);
@@ -521,7 +521,7 @@ const char *query_cost_string(const object *tmp,object *who,int flag) {
                         sprintf(buf, "lots of %s", coin->clone.name_pl);
                     else if (num < 1000)
                         sprintf(buf, "a great many %s", coin->clone.name_pl);
-                    else 
+                    else
                         sprintf(buf, "a vast quantity of %s", coin->clone.name_pl);
                     return buf;
                 }
@@ -779,7 +779,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                     (tmp->value == tmp->arch->clone.value) ) {
 
                     /* This should not happen, but if it does, just             *
-                     * merge the two.                                           
+                     * merge the two.
                      */
                     if (coin_objs[i]!=NULL) {
                         LOG(llevError,"%s has two money entries of (%s)\n",
@@ -884,7 +884,7 @@ static void count_unpaid(object* pl, object* item, int* unpaid_count, uint64* un
                 coincount[i] += item->nrof;
                 break;
             }
-        if (item->inv) 
+        if (item->inv)
             count_unpaid(pl, item->inv, unpaid_count, unpaid_price, coincount);
     }
 }
@@ -920,7 +920,7 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
-        snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ", 
+        snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ",
                 unpaid_count, cost_string_from_value(unpaid_price));
         for (i=0; i< NUM_COINS; i++) {
             if (coincount[i] > 0 && coins[i]) {
@@ -968,7 +968,7 @@ int get_payment(object *pl, object *op) {
     if (op!=NULL&&op->below)
         ret = get_payment (pl, op->below);
 
-    if (!ret) 
+    if (!ret)
         return 0;
 
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
@@ -979,9 +979,9 @@ int get_payment(object *pl, object *op) {
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
-                                 "You lack %s to buy %s.", 
-                                 "You lack %s to buy %s.", 
+                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
+                                 "You lack %s to buy %s.",
+                                 "You lack %s to buy %s.",
                                  cost_string_from_value(i), name_op);
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
@@ -993,7 +993,7 @@ int get_payment(object *pl, object *op) {
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT, 
+                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
                                  "You paid %s for %s.",
                                  "You paid %s for %s.",
                                  buf,name_op);
@@ -1040,7 +1040,7 @@ void sell_item(object *op, object *pl) {
     if(!i) {
         query_name(op, name_op, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                             MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
+                             MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                              "We're not interested in %s.",
                              "We're not interested in %s.",
                              name_op);
@@ -1065,7 +1065,7 @@ void sell_item(object *op, object *pl) {
 
     if (extra_gain > 0)
         change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
-  
+
     for (count=LARGEST_COIN_GIVEN; coins[count]!=NULL; count++) {
         at = find_archetype(coins[count]);
         if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[count]);
@@ -1107,7 +1107,7 @@ void sell_item(object *op, object *pl) {
         }
     }
 
-    if (i!=0) 
+    if (i!=0)
 #ifndef WIN32
         LOG(llevError,"Warning - payment not zero: %llu\n", i);
 #else
@@ -1115,7 +1115,7 @@ void sell_item(object *op, object *pl) {
 #endif
 
     query_name(op, name_op, MAX_BUF);
-    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL, 
+    draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                          "You receive %s for %s.",
                          "You receive %s for %s.",
                          query_cost_string(op,pl,F_SELL | F_SHOP),
@@ -1127,8 +1127,8 @@ void sell_item(object *op, object *pl) {
 
 /**
  * returns a double that is the ratio of the price that a shop will offer for
- * item based on the shops specialisation. Does not take account of greed, 
- * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any 
+ * item based on the shops specialisation. Does not take account of greed,
+ * returned value is between (2*SPECIALISATION_EFFECT-1) and 1 and in any
  * event is never less than 0.1 (calling functions divide by it)
  *
  * @param item
@@ -1143,33 +1143,33 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
     double ratio = SPECIALISATION_EFFECT, likedness=0.001;
     int i;
 
-    if (item==NULL) { 
+    if (item==NULL) {
         LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
         return 0;
     }
     if (!item->type) {
         LOG(llevError, "shop_specialisation_ratio: passed an item with an invalid type\n");
-        /* 
+        /*
          * I'm not really sure what the /right/ thing to do here is,
          * these types of item shouldn't exist anyway, but returning
-         * the ratio is probably the best bet.." 
+         * the ratio is probably the best bet.."
          */
         return ratio;
     }
     if (map->shopitems) {
         for (i=0; i<items[0].index; i++)
-            if (items[i].typenum==item->type || (!items[i].typenum && likedness == 0.001)) 
+            if (items[i].typenum==item->type || (!items[i].typenum && likedness == 0.001))
                 likedness = items[i].strength/100.0;
     }
     if (likedness > 1.0) { /* someone has been rather silly with the map headers. */
-        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is above 100%%\n", 
+        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is above 100%%\n",
             item->type, map->path);
-        likedness = 1.0; 
+        likedness = 1.0;
     }
     if (likedness < -1.0) {
-        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is below -100%%\n", 
+        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is below -100%%\n",
             item->type, map->path);
-        likedness = -1.0; 
+        likedness = -1.0;
     }
     ratio = ratio + (1.0-ratio) * likedness;
     if (ratio <= 0.1) ratio=0.1; /* if the ratio were much lower than this, we would get silly prices */
@@ -1281,7 +1281,7 @@ int describe_shop(const object *op) {
     if (map->shopitems || map->shopgreed || map->shoprace
         || map->shopmin || map->shopmax) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
-                      "From looking at the nearby shop you determine that it trades in:", 
+                      "From looking at the nearby shop you determine that it trades in:",
                       NULL);
 
         if (map->shopitems) {
@@ -1299,17 +1299,17 @@ int describe_shop(const object *op) {
         make_list_like(tmp);
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp, NULL);
-        
+
         if (map->shopmax)
             draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade for items above %s.",
                                  "It won't trade for items above %s.",
                                  cost_string_from_value(map->shopmax));
 
         if (map->shopmin)
             draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade in items worth less than %s.",
                                  "It won't trade in items worth less than %s.",
                                  cost_string_from_value(map->shopmin));
@@ -1317,38 +1317,38 @@ int describe_shop(const object *op) {
         if (map->shopgreed) {
             if (map->shopgreed >2.0)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge massively.", NULL);
             else if (map->shopgreed >1.5)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge substantially.", NULL);
             else if (map->shopgreed >1.1)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge slightly.", NULL);
             else if (map->shopgreed <0.9)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to undercharge.", NULL);
         }
         if (map->shoprace) {
             opinion=shopkeeper_approval(map, op);
-            if (opinion > 0.8) 
+            if (opinion > 0.8)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "You think the shopkeeper likes you.", NULL);
             else if (opinion > 0.5)
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "The shopkeeper seems unconcerned by you.", NULL);
             else
                 draw_ext_info(NDI_UNIQUE, 0, op,
-                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+                              MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "The shopkeeper seems to have taken a dislike to you.", NULL);
         }
     }
-    else draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC, 
+    else draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                        "There is no shop nearby.", NULL);
 
     return 1;

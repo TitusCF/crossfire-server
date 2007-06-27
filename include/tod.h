@@ -7,7 +7,7 @@
     CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 2003-2006 Mark Wedel & Crossfire Development Team
-    Copyright (C) 2000 Tim Rightnour 
+    Copyright (C) 2000 Tim Rightnour
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ extern void get_tod(timeofday_t *tod);
  * Too much wind, and there are hurricanes and blizzards everywhere.
  * 1 is too little.
  */
-#define WIND_FACTOR  4.0 
+#define WIND_FACTOR  4.0
 
 /* editing the below might require actual changes to code */
 #define WEATHERMAPTILESX		100

@@ -74,7 +74,7 @@ static method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
     for (ab=trap->above, max=100, sound_was_played=0; --max && ab; ab=ab_next)
     {
         /* need to set this up, since if we do transfer the object,
-         * ab->above would be bogus 
+         * ab->above would be bogus
          */
         ab_next = ab->above;
 

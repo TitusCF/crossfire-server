@@ -71,7 +71,7 @@ enum {
  * TODO: It is a bad way to implement this with a special structure.
  * Because the real arch list is a at runtime not changed, we can grap for example
  * here a clone of the arch, store it in the treasure list and then run the original
- * arch parser over this clone, using the treasure list as script until an END comes. 
+ * arch parser over this clone, using the treasure list as script until an END comes.
  * This will allow ANY changes which is possible and we use ony one parser.
  *
  * @todo
@@ -98,7 +98,7 @@ typedef struct treasurestruct {
     struct treasurestruct *next_no;     /**< If this item was not generated, then continue here */
     struct _change_arch change_arch;    /**< Override default arch values if set in treasure list */
     uint8 chance;                       /**< Percent chance for this item */
-    uint8 magic;                        /**< Max magic bonus to item 
+    uint8 magic;                        /**< Max magic bonus to item
                                          * If the entry is a list transition,
                                          * 'magic' contains the difficulty
                                          * required to go to the new list

@@ -16,7 +16,7 @@ override.
  -Code for an action controlled by this system, but not yet split in to
   type-specific segments may be stored in "legacy/*.c" for the moment. This will
   obviously be removed after refactoring is complete.
-  
+
 ==API==
  -The api for this system is in "server/ob_types.c" and "server/ob_methods.c" at
   the top level. Read the comments in those files for more complete
@@ -38,7 +38,7 @@ override.
  -Defined types:
    -Always make sure your callback functions match the typedefs such as
     apply_func, as defined in ob_methods.h
-   
+
 ==Adding new object methods==
 As a quick reference, here is a checklist for adding a new object method for use
 in this section of the code.
@@ -54,12 +54,12 @@ in this section of the code.
  7) Add type-specific methods and register them in an init function for the
     type, using register_foobar(). Call this init function in init_ob_types() in
     ob_types.c
-    
+
 ==Notes on refactoring into here==
  -Always make a note in the ChangeLog file in this directory, but don't
   neglect the top level ChangeLog either when making changes here.
  -Try to refactor one whole object type at a time, adding whatever object
-  methods are required. 
+  methods are required.
  -Commit often, in fact, as often as you can so long as things don't break
  -Try not to change in-game behavior here; unless it's a really obvious bug, try
   to leave that for separate commits either before or after moving the code.
@@ -94,8 +94,8 @@ void init_type_food() {
  */
 method_ret food_type_apply(ob_methods *context, object *ob, object *pl) {
     method_ret can_apply;
-    
-    /* 
+
+    /*
      * Call the 'can_apply' method for the player to check if the player can
      * indeed apply it (checking if the player can reach it, etc).
      */

@@ -114,7 +114,7 @@ const char *get_name_of_region_for_map(const mapstruct  *m) {
  * @li an exact match to longname (case insensitive)
  * @li a substring that matches to the longname (eg Kingdom)
  * @li a substring that matches to the region name (eg nav)
- * @li if it can find none of these it returns the first parentless region 
+ * @li if it can find none of these it returns the first parentless region
  * (there should be only one of these - the top level one)
  * If we got a NULL, then just return the top level region
  *
@@ -155,9 +155,9 @@ region *get_region_from_string(const char *name) {
     for (reg=first_region;reg!=NULL;reg=reg->next)
         if (reg->longname != NULL) {
             /*
-             * This is not a bug, we want the region that is  most identifiably a discrete 
-             * area in the game, eg if we have 'scor', we want to return 'scorn' and not 
-             * 'scornarena', regardless of their order on the list so we only look at those 
+             * This is not a bug, we want the region that is  most identifiably a discrete
+             * area in the game, eg if we have 'scor', we want to return 'scorn' and not
+             * 'scornarena', regardless of their order on the list so we only look at those
              * regions with a longname set.
              */
             substr=strstr(reg->name, name);
@@ -187,13 +187,13 @@ region *get_region_from_string(const char *name) {
 int region_is_child_of_region(const region *child, const region *r) {
 
     if (r==NULL)
-        return -1; 
+        return -1;
     if (child == NULL)
         return 0;
     if (!strcmp(child->name, r->name))
         return 1;
     else if(child->parent!=NULL)
-        return region_is_child_of_region(child->parent,r);	
+        return region_is_child_of_region(child->parent,r);
     else return 0;
 }
 
@@ -213,7 +213,7 @@ int region_is_child_of_region(const region *child, const region *r) {
  */
 const char *get_region_longname(const region *r) {
 
-    if (r->longname!=NULL) 
+    if (r->longname!=NULL)
         return r->longname;
     else if(r->parent!=NULL)
         return get_region_longname(r->parent);
@@ -234,7 +234,7 @@ const char *get_region_longname(const region *r) {
  * @li obviously wrong message if no parent, and we LOG() a debug message.
  */
 const char *get_region_msg(const region *r) {
-    if (r->msg!=NULL) 
+    if (r->msg!=NULL)
         return r->msg;
     else if(r->parent!=NULL)
         return get_region_msg(r->parent);
@@ -246,7 +246,7 @@ const char *get_region_msg(const region *r) {
 
 /**
  * Returns an object which is an exit through which the player represented by op should be
- * sent in order to be imprisoned. If there is no suitable place to which an exit can be 
+ * sent in order to be imprisoned. If there is no suitable place to which an exit can be
  * constructed, then NULL will be returned. The caller is responsible for freeing the object
  * created by this function.
  *
@@ -361,13 +361,13 @@ void parse_regions(FILE *fp) {
         }
 
         /*
-         * This is a bizzare mutated form of the map and archetype parser 
-         * rolled into one. Key is the field name, value is what it should 
-         * be set to. 
+         * This is a bizzare mutated form of the map and archetype parser
+         * rolled into one. Key is the field name, value is what it should
+         * be set to.
          * We've already done the work to null terminate key,
          * and strip off any leading spaces for both of these.
          * We have not touched the newline at the end of the line -
-         * these might be needed for some values. the end pointer 
+         * these might be needed for some values. the end pointer
          * points to the first of the newlines.
          * value could be NULL!  It would be easy enough to just point
          * this to "" to prevent cores, but that would let more errors slide
@@ -419,7 +419,7 @@ void parse_regions(FILE *fp) {
             if (msgpos != 0)
             new->msg = strdup_local(msgbuf);
 
-            /* we have to reset msgpos, or the next region will store both msg blocks.*/	
+            /* we have to reset msgpos, or the next region will store both msg blocks.*/
             msgpos=0;
         }
         else if (!strcmp(key,"fallback")) {
@@ -431,7 +431,7 @@ void parse_regions(FILE *fp) {
             for (reg=first_region;reg!=NULL&&reg->next!=NULL;reg=reg->next);
 
             if (reg==NULL) first_region=new;
-            else reg->next=new;	
+            else reg->next=new;
             new = NULL;
         }
         else if (!strcmp(key,"nomore")) {
@@ -443,7 +443,7 @@ void parse_regions(FILE *fp) {
             LOG(llevError, "Got unknown value in region file: %s %s\n", key, value);
         }
     }
-    if (!key || strcmp(key,"nomore")) 
+    if (!key || strcmp(key,"nomore"))
         LOG(llevError, "Got premature eof on regions file!\n");
 }
 

@@ -4,22 +4,22 @@
 # To start a new race category w/ 'RACE' identifier
 # list the name of the archetypes singly on lines below
 #
-# Each arch entered will have thei op->race reset to 
+# Each arch entered will have thei op->race reset to
 # the value listed for the last occuring 'RACE'. Also,
 # if the arch is a creature, it is added to a linked
 # list of monsters that all have the same race.
 # Any type of archetype may be listed, but monsters
 # should be ordered by inherent level value/exp
-# 
-# Prepending a '!' will prevent an item from having its 
+#
+# Prepending a '!' will prevent an item from having its
 # op->race field reset to RACE.
 #
-# Prepending a '@' will prevent a creature from having its 
+# Prepending a '@' will prevent a creature from having its
 # arch listed on the summoning list.
-# 
+#
 # You can have an entry with both '@' and '!' (ie "@!<name>")
 # but that is the same as not listing the arch!
-# 
+#
 #
 RACE undead
   generate_ghost
@@ -27,18 +27,18 @@ RACE undead
   generate_skeleton
   generate_skull
   generate_vampire
-  ghost 
-  zombie 
+  ghost
+  zombie
   skeleton
-  grimreaper 
+  grimreaper
   wight
-  wraith 
-  ghast 
+  wraith
+  ghast
   nightmare
   spectre
-  vampire 
+  vampire
   skull
-  lich 
+  lich
   demilich
   dave
   nazgul

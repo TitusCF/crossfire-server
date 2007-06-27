@@ -207,14 +207,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define RING		            70
 #define FLOOR			    71	/* this is a floor tile -> native layer 0 */
 #define FLESH		            72	/* animal 'body parts' -b.t. */
-#define INORGANIC	            73	/* metals and minerals */ 
+#define INORGANIC	            73	/* metals and minerals */
 #define SKILL_TOOL		    74	/* Allows the use of a skill */
 #define LIGHTER		            75
 
 /* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
  * types are not used in any archetypes, and should perhaps be removed.
  */
-/*#define TRAP_PART	            76	Needed by set traps skill -b.t. */ 
+/*#define TRAP_PART	            76	Needed by set traps skill -b.t. */
 
 #define WALL			    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 /*#define LIGHT_SOURCE		    78 torches, lamps, etc. */
@@ -314,7 +314,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 typedef struct typedata {
     int number;
-    const char *name; 
+    const char *name;
     const char *name_pl;
     int identifyskill;
     int identifyskill2;
@@ -370,8 +370,8 @@ extern typedata ItemTypes[];
 
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
- * within 1 space.  <= SIZEOFFREE2 wll get you withing 
- * 2 spaces, and the entire array (< SIZEOFFREE) is 
+ * within 1 space.  <= SIZEOFFREE2 wll get you withing
+ * 2 spaces, and the entire array (< SIZEOFFREE) is
  * three spaces
  */
 #define SIZEOFFREE1 8
@@ -386,7 +386,7 @@ extern typedata ItemTypes[];
  * structure.
  *
  * Hopefully, since these offsets are integer constants set at run time,
- * the compiler will reduce the macros something as simple as the 
+ * the compiler will reduce the macros something as simple as the
  * old system was.
  *
  * Flags now have FLAG as the prefix.  This to be clearer, and also
@@ -399,7 +399,7 @@ extern typedata ItemTypes[];
  * All functions should use the macros below.  In process of converting
  * to the new system, I find several files that did not use the previous
  * macros.
- * 
+ *
  * If any FLAG's are or changed, make sure the flag_names structure in
  * common/loader.l is updated.
  *
@@ -645,7 +645,7 @@ typedef unsigned char	MoveType;
  * on the 'type' move_block parameter
  * Add check - if type is 0, don't stop anything from moving
  * onto it.
- * 
+ *
  */
 #define OB_TYPE_MOVE_BLOCK(ob1, type) \
     ( (type != 0) && (ob1->move_type & type) == ob1->move_type)
@@ -758,7 +758,7 @@ typedef unsigned char	MoveType;
                     * until the owner calls it back or off
                     * player followed denoted by 0b->owner
                     * the monster will try to attack whatever the player is
-                    * attacking, and will continue to do so until the 
+                    * attacking, and will continue to do so until the
                     * calls off the monster - a key command will be
                     * inserted to do so                                       */
 #define CIRCLE1 32 /**< If the upper four bits of move_type / attack_movement
@@ -768,19 +768,19 @@ typedef unsigned char	MoveType;
 #define CIRCLE2 48 /**< Same as ::CIRCLE1 but a larger circle is used         */
 #define PACEH   64 /**< The monster will pace back and forth until attacked
                     * this is HORIZONTAL movement                             */
-#define PACEH2  80 /**< The monster will pace as above but the length of the 
-                    * pace area is longer and the monster stops before 
-                    * changing directions 
+#define PACEH2  80 /**< The monster will pace as above but the length of the
+                    * pace area is longer and the monster stops before
+                    * changing directions
                     * this is HORIZONTAL movement                             */
-#define RANDO   96 /**< The monster will go in a random direction until 
-                    * it is stopped by an obstacle, then it chooses another 
+#define RANDO   96 /**< The monster will go in a random direction until
+                    * it is stopped by an obstacle, then it chooses another
                     * direction.                                              */
 #define RANDO2 112 /**< Constantly move in a different random direction       */
 #define PACEV  128 /**< The monster will pace back and forth until attacked
                     * this is VERTICAL movement                               */
 #define PACEV2 144 /**< The monster will pace as above but the length of the
                     * pace area is longer and the monster stops before
-                    * changing directions   
+                    * changing directions
                     * this is VERTICAL movement                               */
 #define LO4     15 /**< bitmasks for upper and lower 4 bits from 8 bit fields */
 #define HI4    240
@@ -841,7 +841,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
 
 
 /* The SAFE versions of these call the safe_strcat function above.
- * Ideally, all functions should use the SAFE functions, but they 
+ * Ideally, all functions should use the SAFE functions, but they
  * require some extra support in the calling function to remain as
  * efficient.
  */
@@ -859,7 +859,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
         } \
       safe_strcat(retbuf,")",len,maxlen); \
     }
- 
+
 
 /* separated this from the common/item.c file. b.t. Dec 1995 */
 
@@ -877,8 +877,8 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
         } \
       strcat(retbuf,")"); \
     }
- 
- 
+
+
 #define DESCRIBE_PATH(retbuf, variable, name) \
     if(variable) { \
       int i,j=0; \
@@ -1026,5 +1026,5 @@ typedef enum apply_flag {
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
  if (size__!=strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n",buf2__);}*/
 
- 
+
 #endif /* DEFINE_H */

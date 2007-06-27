@@ -143,7 +143,7 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
         yy_delete_buffer(YY_CURRENT_BUFFER);
         yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
         if (bufstate==LO_NOREAD) return LL_NORMAL;
-    } 
+    }
     if (bufstate==LO_LINEMODE) {
         YY_BUFFER_STATE  yybufstate;
         while (fgets(inbuf, MAX_BUF-3, fp)) {

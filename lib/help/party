@@ -17,9 +17,7 @@ party who
         lists the members of the party you are in
 
 party say <msg>
-        sends messsage to party members 
+        sends messsage to party members
 
 party leave
         takes you out of current party
-
-

@@ -92,7 +92,7 @@ crossfire_server_LDADD = libserver.a ../common/libcross.a ../random_maps/librand
 
 ../socket/libsocket.a:
 	( cd ../socket ; make libsocket.a )
-        
+
 ../types/libtypes.a:
 	( cd ../types ; make libtypes.a )
 

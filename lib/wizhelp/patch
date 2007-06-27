@@ -1,5 +1,5 @@
 syntax: patch <tag> <variable>
-<value> 
+<value>
 notes: using the patch
 command, you can radically modify
 the properties of objects in

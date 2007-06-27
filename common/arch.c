@@ -64,7 +64,7 @@ static void load_archetypes(void);
  * Params:
  * @param name
  * the name we're searching for (ex: "writing pen")
- * @return 
+ * @return
  * the archetype found or NULL if nothing was found
  */
 archetype *find_archetype_by_object_name(const char *name) {
@@ -355,7 +355,7 @@ static void first_arch_pass(FILE *fp) {
         /* copy the body_info to the body_used - this is only really
          * need for monsters, but doesn't hurt to do it for everything.
          * by doing so, when a monster is created, it has good starting
-         * values for the body_used info, so when items are created 
+         * values for the body_used info, so when items are created
          * for it, they can be properly equipped.
          */
         memcpy(&at->clone.body_used, &op->body_info, sizeof(op->body_info));
@@ -691,7 +691,7 @@ static void add_arch(archetype *at) {
 }
 
 /**
- * Create a full object using the given archetype. 
+ * Create a full object using the given archetype.
  * This instanciate not only the archetype but also
  * all linked archetypes in case of multisquare archetype.
  * @param at

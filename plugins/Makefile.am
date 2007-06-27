@@ -4,4 +4,3 @@ DISTCHECK_CONFIGURE_FLAGS = --localstatedir=$$dc_install_base/var --mandir=$$dc_
 
 proto:
 	(cd cfpython; make proto; cd ..; cd cfanim; make proto)
-

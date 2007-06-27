@@ -265,14 +265,14 @@ typedef struct wmapdef {
 typedef struct regiondef {
     struct	regiondef *next; /* pointer to next region, NULL for the last one */
     const char	*name;		 /* Shortend name of the region as maps refer to it */
-    const char	*parent_name;	 /* 
+    const char	*parent_name;	 /*
     				  * So that parent and child regions can be defined in
     				  * any order, we keep hold of the parent_name during
 				  * initialisation, and the children get assigned to their
 				  * parents later. (before runtime on the server though)
 				  * nothing outside the init code should ever use this value.
 				  */
-    struct     regiondef *parent;/* 
+    struct     regiondef *parent;/*
     				  * Pointer to the region that is a parent of the current
     				  * region, if a value isn't defined in the current region
 				  * we traverse this series of pointers until it is.
@@ -292,13 +292,13 @@ typedef struct shopitem {
     const char *name;     /* name of the item in question, null if it is the default item */
     const char *name_pl;  /* plural name */
     int typenum;    /* itemtype number we need to match 0 if it is the default price*/
-    sint8 strength; /* the degree of specialisation the shop has in this item, 
+    sint8 strength; /* the degree of specialisation the shop has in this item,
 		     * as a percentage from -100 to 100 */
     int index;      /* being the size of the shopitems array.*/
 } shopitems;
 
-/* In general, code should always use the macros 
- * above (or functions in map.c) to access many of the 
+/* In general, code should always use the macros
+ * above (or functions in map.c) to access many of the
  * values in the map structure.  Failure to do this will
  * almost certainly break various features.  You may think
  * it is safe to look at width and height values directly
@@ -309,8 +309,8 @@ typedef struct mapdef {
     struct mapdef *next;	/* Next map, linked list */
     char *tmpname;	/* Name of temporary file */
     char *name;		/* Name of map as given by its creator */
-    region *region;	/* What jurisdiction in the game world this map is ruled by 
-    			 * points to the struct containing all the properties of 
+    region *region;	/* What jurisdiction in the game world this map is ruled by
+    			 * points to the struct containing all the properties of
 			 * the region */
     uint32 reset_time;	/* when this map should reset */
     uint32 reset_timeout;  /* How many seconds must elapse before this map

@@ -77,11 +77,11 @@ void init_connection(socket_struct *ns, const char *from_ip)
     socklen_t buflen=sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-	int temp = 1;	
+	int temp = 1;
 
 	if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
 		LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
-#else 
+#else
     if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
 		LOG(llevError,"init_connection:  Error on fcntl.\n");
     }
@@ -294,7 +294,7 @@ void init_ericserver(void)
 
 /** Free's all the memory that ericserver allocates. */
 void free_all_newserver(void)
-{  
+{
     LOG(llevDebug,"Freeing all new client/server information.\n");
     free_socket_images();
     free(init_sockets);
@@ -337,4 +337,3 @@ void final_free_player(player *pl)
     free_newsocket(&pl->socket);
     free_player(pl);
 }
-

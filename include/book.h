@@ -24,7 +24,7 @@
 /** @file book.h
  * Describes fundental parameters of 'books' - objects with type==BOOK
  */
- 
+
 #ifndef BOOK_H
 #define BOOK_H
 
@@ -37,14 +37,14 @@
  * which is limited by 'HUGE_BUF' in the loader.
  */
 #define BOOK_BUF        HUGE_BUF-10
- 
+
 /**
  * Defines the base value that BOOKSIZE should return for books with no weight.
  * @note
  * If little books arent getting enough text generated, enlarge this.
  */
 #define BASE_BOOK_BUF   250
- 
+
 /**
  * Get the book buffer size for an individual book object. Make heavy books hold
  * more text but never let a book msg buffer exceed the max. size (BOOK_BUF)

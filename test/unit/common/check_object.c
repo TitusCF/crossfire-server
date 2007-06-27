@@ -26,7 +26,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* 
+/*
  * This is the unit tests file for common/object.c
  */
 
@@ -230,7 +230,7 @@ START_TEST (test_dump_all_objects)
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
   ob3 = cctk_create_game_object(NULL);
-  dump_all_objects(); /*Should not crash, that all i can test*/ 
+  dump_all_objects(); /*Should not crash, that all i can test*/
 }
 END_TEST
 
@@ -475,7 +475,7 @@ START_TEST (test_update_turn_face)
   update_turn_face(ob1);
   face2=ob1->face;
   fail_unless(face2!=face1,"2 opposite direction should provide different faces after update_turn_face");
-  
+
 }
 END_TEST
 
@@ -650,7 +650,7 @@ START_TEST (test_sub_weight)
   fail_unless(sum==18,"Sum of object's inventory should be 18 (30*0.6+10) but was %lu.",sum);
   sub_weight(ob4,10);
   fail_unless(ob1->carrying==12,"after call to sub_weight, carrying of ob1 should be 22 but was %d",ob1->carrying);
-  
+
 }
 END_TEST
 
@@ -693,7 +693,7 @@ START_TEST (test_merge_ob)
   ob1->name=add_string("test");
   ob2->name=add_string("test2");
   ob3->name=add_string("test3");
-  
+
 }
 END_TEST
 
@@ -1241,7 +1241,7 @@ Suite *object_suite(void)
   Suite *s = suite_create("object");
   TCase *tc_core = tcase_create("Core");
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_unchecked_fixture(tc_core,setup,teardown); 
+  tcase_add_unchecked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_can_merge);

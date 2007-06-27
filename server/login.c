@@ -149,7 +149,7 @@ int verify_player(const char *name, char *password)
     return 1;
 }
 
-/* Checks to see if anyone else by 'name' is currently playing. 
+/* Checks to see if anyone else by 'name' is currently playing.
  * If we find that file or another character of some name is already in the
  * game, we don't let this person join (we should really let the new player
  * enter the password, and if correct, disconnect that socket and attach it to
@@ -288,7 +288,7 @@ int save_player(object *op, int flag) {
     fprintf(fp,"map %s\n",op->map->path);
   else
     fprintf(fp,"map %s\n",settings.emergency_mapname);
-  
+
   fprintf(fp,"savebed_map %s\n", pl->savebed_map);
   fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
   fprintf(fp,"weapon_sp %f\n",pl->weapon_sp);
@@ -372,7 +372,7 @@ int save_player(object *op, int flag) {
 	unlink(backupfile);
 
   /* Eneq(@csd.uu.se): Reveal the container if we have one. */
-  if (flag&&container!=NULL) 
+  if (flag&&container!=NULL)
     op->container = container;
 
   if (wiz) SET_FLAG(op,FLAG_WIZ);
@@ -411,10 +411,10 @@ static void wrong_password(object *op)
     if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
 	      "You gave an incorrect password too many times, "
-	      "you will now be dropped from the server.", 
+	      "you will now be dropped from the server.",
 	      NULL);
 
-	LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n", 
+	LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n",
 	    op->contr->socket.host);
 
 	op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
@@ -500,7 +500,7 @@ void check_login(object *op) {
 	    /* New password scheme: */
 	    correct=check_password(pl->write_buf+1,buf);
 	}
-	/* Old password mode removed - I have no idea what it 
+	/* Old password mode removed - I have no idea what it
 	 * was, and the current password mechanism has been used
 	 * for at least several years.
 	 */
@@ -527,7 +527,7 @@ void check_login(object *op) {
     strcpy(pl->savebed_map, first_map_path);
     pl->bed_x=0, pl->bed_y=0;
     pl->spellparam[0] = '\0';
-    
+
     /* Loop through the file, loading the rest of the values */
     while (fgets(bufall,MAX_BUF,fp)!=NULL) {
 	sscanf(bufall,"%s %d\n",buf,&value);
@@ -645,7 +645,7 @@ void check_login(object *op) {
 
     strncpy(pl->title, op->arch->clone.name, sizeof(pl->title)-1);
     pl->title[sizeof(pl->title)-1] = '\0';
-    
+
     /* If the map where the person was last saved does not exist,
      * restart them on their home-savebed. This is good for when
      * maps change between versions
@@ -688,10 +688,10 @@ void check_login(object *op) {
 
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;
-    
+
     esrv_add_spells(op->contr, NULL);
     fix_object(op);
-    
+
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
         object *tmp, *abil=NULL, *skin=NULL;
@@ -705,7 +705,7 @@ void check_login(object *op) {
 	}
 	set_dragon_name(op, abil, skin);
     }
-    
+
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
 		  "Welcome Back!", NULL);
     draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
@@ -730,7 +730,7 @@ void check_login(object *op) {
 	kill_player(op);
 	if (pl->state != ST_PLAYING) return;
     }
-    LOG(llevInfo,"LOGIN: Player named %s from ip %s\n", op->name, 
+    LOG(llevInfo,"LOGIN: Player named %s from ip %s\n", op->name,
 	op->contr->socket.host);
 
     /* Do this after checking for death - no reason sucking up bandwidth if

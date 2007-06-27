@@ -9,7 +9,7 @@
 #
 # This CGI script allows players to download their players
 # files through a web interface.  It does password checking
-# and has some extra options.  
+# and has some extra options.
 #
 # Note 2: The player files and directories need to be readable
 # by whatever uid runs this program.  In many cases, this may be
@@ -38,7 +38,7 @@
 ####
 #   Config options:
 #
-# Where the tar program is located. 
+# Where the tar program is located.
 $tar = '@TAR@';
 
 $prefix="@prefix@";
@@ -73,7 +73,7 @@ $CGI::DISABLE_UPLOADS = 1;  # no uploads
 
 $q = new CGI;
 
-# Verify that player name contains no invalid characters. 
+# Verify that player name contains no invalid characters.
 $playername = '';
 $playername = $q->param('playername') if $q->param('playername');
 $playername =~ s/[^A-Za-z_\-]//g;	# No invalid chars
@@ -154,7 +154,7 @@ if ($valid) {
 	if ($valid and $delete_player) {
 		@files= glob("$crossfire_home/$playername/*");
 		# Rename all files except *.tar
-		foreach (@files) { 
+		foreach (@files) {
 			next if ( /\.tar$/i );
 			rename $_, "$_.downloaded";
 		}

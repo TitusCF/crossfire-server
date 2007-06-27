@@ -42,7 +42,7 @@
  *	weapons
  * ench_armour: Allow characters to enchant their armor.
  *
- * In theory, most of the values here should just be defaults, and 
+ * In theory, most of the values here should just be defaults, and
  * everything here should just be selectable by different run time
  * flags  However, for some things, that would just be too messy.
  */
@@ -98,17 +98,17 @@
  * the character level is divided by that value, and that is how many
  * stats are lost.
  *
- * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat - 
+ * BALSL_MAX_LOSS_RATIO puts the upper limit on depletion of a stat -
  * basically, level/max_loss_ratio is the most a stat can be depleted.
  *
  * BALSL_LOSS_CHANCE_RATIO controls how likely it is a stat is depleted.
- * The chance not to lose a stat is 
+ * The chance not to lose a stat is
  * depleteness^2 / (depletedness^2+ level/ratio).
  * ie, if the stats current depleted value is 2 and the character is level
  * 15, the chance not to lose the stat is 4/(4+3) or 4/7.  The higher the
  * level, the more likely it is a stat can get really depleted, but
  * this gets more offset as the stat gets more depleted.
- * 
+ *
  */
 /* GD */
 
@@ -151,7 +151,7 @@
 /* CS_LOGSTATS will cause the server to log various usage stats
  * (number of connections, amount of data sent, amount of data received,
  * and so on.)  This can be very useful if you are trying to measure
- * server/bandwidth usage.  It will periodially dump out information 
+ * server/bandwidth usage.  It will periodially dump out information
  * which contains usage stats for the last X amount of time.
  * CS_LOGTIME is how often it will print out stats.
  */
@@ -234,15 +234,15 @@
 
 /*
  * The PERM_EXP values adjust the behaviour of permenent experience. - if
- * the setting permanent_experience_percentage is zero, these values have 
- * no meaning. The value in the settings file is the percentage of the 
+ * the setting permanent_experience_percentage is zero, these values have
+ * no meaning. The value in the settings file is the percentage of the
  * experience that is permenent, the rest could be lost on death. When dying,
  * the greatest amount of non-permenent exp it is possible to lose at one time
- * is PERM_EXP_MAX_LOSS_RATIO  - this is calculated as 
- * total exp - perm exp * loss ratio. The gain ratio is how much of experienced 
- * experience goes to the permanent value. This does not detract from total 
- * exp gain (ie, if you gained 100 exp, 100 would go to the skill total and 
- * 10 to the permanent value). 
+ * is PERM_EXP_MAX_LOSS_RATIO  - this is calculated as
+ * total exp - perm exp * loss ratio. The gain ratio is how much of experienced
+ * experience goes to the permanent value. This does not detract from total
+ * exp gain (ie, if you gained 100 exp, 100 would go to the skill total and
+ * 10 to the permanent value).
  *
  * A few thoughts on these default value (by MSW)
  * gain ratio is pretty much meaningless until exp has been lost, as until
@@ -379,7 +379,7 @@
 #ifndef LOGFILE
 #ifdef WIN32 /* change define path */
 #define LOGFILE "var\\crossfire.log"
-#else 
+#else
 #define LOGFILE "/var/log/crossfire/logfile"
 #endif
 #endif
@@ -476,7 +476,7 @@
  * that happens with this activated is that one malloc is done for
  * each object - thus whatever debugging mechanism the malloc library
  * (or other debugging tool provides, like purify), it can track this
- * individual malloc.  Default behaviour when turned off is that 
+ * individual malloc.  Default behaviour when turned off is that
  * enough memory is malloced for a large group of objects so malloc does
  * not need to be called as often.
  * This should only be turned on if some form of memory debugging tool
@@ -522,7 +522,7 @@
  * This buffer is in addition to OS buffers, so it may not need to be very
  * large.  When the OS buffer and this buffer is exhausted, the server
  * will drop the client connection for falling too far behind.  So if
- * you have very slow client connections, a larger value may be 
+ * you have very slow client connections, a larger value may be
  * warranted.
  */
 
@@ -547,7 +547,7 @@
 #endif
 
 
-/* Directory to use for unique items. This is placed into the 'lib' 
+/* Directory to use for unique items. This is placed into the 'lib'
  * directory.  Changing this will cause any old unique items file
  * not to be used.
  */
@@ -709,7 +709,7 @@
  * on how the player exited the game.  But if the elapsed time is greater than
  * the value below, player will always get returned to savebed location
  * location.
- * 
+ *
  * Set to one hour as default
  */
 

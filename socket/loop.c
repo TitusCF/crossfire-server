@@ -66,7 +66,7 @@
 
 /*****************************************************************************
  * Start of command dispatch area.
- * The commands here are protocol commands. 
+ * The commands here are protocol commands.
  ****************************************************************************/
 
 /* Either keep this near the start or end of the file so it is
@@ -95,7 +95,7 @@ struct player_cmd_mapping {
  * Dispatch tables for the server.
  *
  * CmdMapping is the dispatch table for the server, used in handle_client,
- * which gets called when the client has input.  All commands called here 
+ * which gets called when the client has input.  All commands called here
  * use the same parameter form (char* data, int len, int clientnum.
  * We do implicit casts, because the data that is being passed is
  * unsigned (pretty much needs to be for binary data), however, most
@@ -130,7 +130,7 @@ static struct client_cmd_mapping client_commands[] = {
     { "version",	version_cmd },
     { "toggleextendedinfos", toggle_extended_infos_cmd}, /*Added: tchize*/
     { "toggleextendedtext", toggle_extended_text_cmd},   /*Added: tchize*/
-    { "asksmooth", ask_smooth_cmd},   /*Added: tchize (smoothing technologies)*/ 
+    { "asksmooth", ask_smooth_cmd},   /*Added: tchize (smoothing technologies)*/
     { NULL, NULL}	/* terminator (I, II & III)*/
 };
 
@@ -265,7 +265,7 @@ void handle_client(socket_struct *ns, player *pl)
  * Tell watchdog that we are still alive
  *
  * I put the function here since we should hopefully already be getting
- * all the needed include files for socket support 
+ * all the needed include files for socket support
  */
 
 void watchdog(void)
@@ -353,7 +353,7 @@ static void block_until_new_connection(void)
  *
  * A bit of this code is grabbed out of socket.c
  * There are 2 lists we need to look through - init_sockets is a list
- * 
+ *
  */
 void doeric_server(void)
 {
@@ -409,7 +409,7 @@ void doeric_server(void)
 	}
     }
 
-    if (socket_info.nconns==1 && first_player==NULL) 
+    if (socket_info.nconns==1 && first_player==NULL)
 	block_until_new_connection();
 
     /* Reset timeout each time, since some OS's will change the values on
@@ -418,7 +418,7 @@ void doeric_server(void)
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
 
-    pollret= select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, 
+    pollret= select(socket_info.max_filedescriptor, &tmp_read, &tmp_write,
 		    &tmp_exceptions, &socket_info.timeout);
 
     if (pollret==-1) {

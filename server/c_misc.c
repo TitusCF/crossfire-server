@@ -86,7 +86,7 @@ int command_body(object *op, char *params)
 {
     int i;
 
-    /* Too hard to try and make a header that lines everything up, so just 
+    /* Too hard to try and make a header that lines everything up, so just
      * give a description.
      */
     draw_ext_info(NDI_UNIQUE, 0, op,
@@ -97,7 +97,7 @@ int command_body(object *op, char *params)
 	MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
 	"The second column is how many of those locations your body has.", NULL);
 
-    draw_ext_info(NDI_UNIQUE, 0, op, 
+    draw_ext_info(NDI_UNIQUE, 0, op,
 	MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
 	"The third column is how many slots in that location are available.", NULL);
 
@@ -106,7 +106,7 @@ int command_body(object *op, char *params)
 	 * if body_info isn't also set.
 	 */
 	if (op->body_info[i] || op->body_used[i]) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, 
+	    draw_ext_info_format(NDI_UNIQUE, 0, op,
 		MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
 		"[fixed]%-30s %5d %5d",
 		"%-30s %5d %5d",
@@ -250,16 +250,16 @@ void malloc_info(object *op) {
     sum_used+=i;
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-	"[fixed]%4ld artifacts        %8d", 
-	"%4ld artifacts        %8d", 
+	"[fixed]%4ld artifacts        %8d",
+	"%4ld artifacts        %8d",
 	nrofartifacts, i=(nrofartifacts*sizeof(artifact)));
 
     sum_alloc+=i;
     sum_used +=i;
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-	  "[fixed]%4ld artifacts strngs %8d", 
-	  "%4ld artifacts strngs %8d", 
+	  "[fixed]%4ld artifacts strngs %8d",
+	  "%4ld artifacts strngs %8d",
 	  nrofallowedstr, i=(nrofallowedstr*sizeof(linked_char)));
 
     sum_alloc += i;
@@ -286,12 +286,12 @@ void malloc_info(object *op) {
 }
 
 /**
- * Pretty much identical to current map_info, but on a bigger scale 
+ * Pretty much identical to current map_info, but on a bigger scale
  * This function returns the name of the players current region, and
  * a description of it. It is there merely for flavour text.
  */
 void current_region_info(object *op) {
-    /* 
+    /*
      * Ok I /suppose/ I should write a seperate function for this, but it isn't
      * going to be /that/ slow, and won't get called much
      */
@@ -314,16 +314,16 @@ void current_map_info(object *op) {
 	return;
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-	"%s (%s) in %s", 
-	"%s (%s) in %s", 
+	"%s (%s) in %s",
+	"%s (%s) in %s",
 	 m->name, m->path, get_region_longname(get_region_by_map(m)));
 
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld",
 		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld",
-		 m->players, m->difficulty, 
-		 MAP_WIDTH(m), MAP_HEIGHT(m), 
+		 m->players, m->difficulty,
+		 MAP_WIDTH(m), MAP_HEIGHT(m),
 		 MAP_ENTER_X(m), MAP_ENTER_Y(m),
 		 MAP_TIMEOUT(m));
 
@@ -337,7 +337,7 @@ int command_malloc_verify(object *op, char *parms)
 {
     extern int malloc_verify(void);
 
-    if (!malloc_verify()) 
+    if (!malloc_verify())
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 			  "Heap is corrupted.", NULL);
     else
@@ -352,7 +352,7 @@ int command_whereabouts(object *op, char *params) {
 
     region *reg;
     player *pl;
-    
+
     /*
      * reset the counter on the region, then use it to store the number of
      * players there.
@@ -383,7 +383,7 @@ int command_whereabouts(object *op, char *params) {
 	if(reg->counter>0) {
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		 "%u players in %s",
-		 "%u players in %s", 
+		 "%u players in %s",
 		 reg->counter, get_region_longname(reg));
 	}
     return 1;
@@ -406,16 +406,16 @@ int command_who (object *op, char *params) {
     char* format;
     int num_players = 0, num_wiz = 0, num_afk = 0, num_bot = 0;
     chars_names *chars = NULL;
-    
-    /* 
+
+    /*
      * The who formats are defined in config to be blank. They should have been
      * overridden by the settings file, if there are no entries however, it will
      * have stayed blank. Since this probably isn't what is wanted, we will check if
      * new formats have been specified, and if not we will use the old defaults.
      */
-    if (!strcmp(settings.who_format,"")) 
+    if (!strcmp(settings.who_format,""))
     	strcpy(settings.who_format, "%N_%T%t%h%d%b%n<%m>");
-    if (!strcmp(settings.who_wiz_format,"")) 
+    if (!strcmp(settings.who_wiz_format,""))
     	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
     if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
     	format=settings.who_wiz_format;
@@ -423,12 +423,12 @@ int command_who (object *op, char *params) {
     	format=settings.who_format;
 
     reg=get_region_from_string(params);
-    
+
     for (pl=first_player;pl!=NULL;pl=pl->next) {
 	if (pl->ob->map == NULL)
 	    continue;
 	if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) continue;
-	
+
 	if(!region_is_child_of_region(get_region_by_map(pl->ob->map),reg)) continue;
 
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
@@ -439,7 +439,7 @@ int command_who (object *op, char *params) {
 	        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
 			      "who failed - out of memory!", NULL);
                 return 0;
-            } 
+            }
 	    sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
 	    chars[num_players-1].login_order = num_players;
 
@@ -455,21 +455,21 @@ int command_who (object *op, char *params) {
 	}
     }
     if (first_player != (player *) NULL) {
-    	if (reg == NULL) 
+    	if (reg == NULL)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
-		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
+		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
 		     num_players, num_wiz, num_afk, num_bot);
 	    else
      		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
-		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)", 
+		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
 		     reg->longname?reg->longname:reg->name, num_players, num_wiz, num_afk, num_bot);
     }
     qsort (chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
     for (i=0;i<num_players;i++)
 	display_who_entry(op, find_player(chars[i].namebuf), format);
-    free(chars);    
+    free(chars);
     return 1;
 }
 
@@ -527,9 +527,9 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * %	a literal %
  * _	a literal underscore
  */
-  
+
 void get_who_escape_code_value(char *return_val, const char letter, player *pl) {
-    
+
     switch (letter) {
 	case 'N' :	strcpy(return_val, pl->ob->name);
 			break;
@@ -546,7 +546,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 	case 'c' :	sprintf(return_val,"%d",pl->ob->count);
 			break;
 
-	case 'n' :	strcpy(return_val, "\n"); 
+	case 'n' :	strcpy(return_val, "\n");
 			break;
 
 	case 'h' :	strcpy(return_val,pl->peaceful?"":" <Hostile>");
@@ -568,7 +568,7 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 			break;
 
 	case 'M' :	strcpy(return_val,pl->ob->map->name?pl->ob->map->name:"Untitled");
-			break;		
+			break;
 
 	case 'r' :	strcpy(return_val,get_name_of_region_for_map(pl->ob->map));
 			break;
@@ -579,10 +579,10 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 	case 'i' :	strcpy(return_val,pl->socket.host);
 			break;
 
-	case '%' :	strcpy(return_val, "%"); 
+	case '%' :	strcpy(return_val, "%");
 			break;
 
-	case '_' :	strcpy(return_val, "_"); 
+	case '_' :	strcpy(return_val, "_");
 			break;
     }
 }
@@ -590,15 +590,15 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
 
 int command_afk (object *op, char *params)
 {
-    if QUERY_FLAG(op,FLAG_AFK) { 
+    if QUERY_FLAG(op,FLAG_AFK) {
 	CLEAR_FLAG(op,FLAG_AFK);
-	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You are no longer AFK", NULL);
-    }    
-    else 
+    }
+    else
     {
 	SET_FLAG(op,FLAG_AFK);
-	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You are now AFK", NULL);
     }
     return 1;
@@ -737,18 +737,18 @@ int command_weather (object *op, char *params)
     }
     if (weathermap[wx][wy].windspeed < 5)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
-	     "There is a mild breeze coming from the %s.", 
-	     "There is a mild breeze coming from the %s.", 
+	     "There is a mild breeze coming from the %s.",
+	     "There is a mild breeze coming from the %s.",
 	     buf);
     else if (weathermap[wx][wy].windspeed < 10)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
-	      "There is a strong breeze coming from the %s.", 
-	      "There is a strong breeze coming from the %s.", 
+	      "There is a strong breeze coming from the %s.",
+	      "There is a strong breeze coming from the %s.",
 	      buf);
     else if (weathermap[wx][wy].windspeed < 15)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
-	     "There is a light wind coming from the %s.", 
-	     "There is a light wind coming from the %s.", 
+	     "There is a light wind coming from the %s.",
+	     "There is a light wind coming from the %s.",
 	     buf);
     else if (weathermap[wx][wy].windspeed < 25)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
@@ -757,13 +757,13 @@ int command_weather (object *op, char *params)
 	     buf);
     else if (weathermap[wx][wy].windspeed < 35)
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
-	     "There is a heavy wind coming from the %s.", 
-	     "There is a heavy wind coming from the %s.", 
+	     "There is a heavy wind coming from the %s.",
+	     "There is a heavy wind coming from the %s.",
 	     buf);
     else
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
-	     "The wind from the %s is incredibly strong!", 
-	     "The wind from the %s is incredibly strong!", 
+	     "The wind from the %s is incredibly strong!",
+	     "The wind from the %s is incredibly strong!",
 	     buf);
 
     sky = weathermap[wx][wy].sky;
@@ -857,8 +857,8 @@ int command_debug (object *op, char *params)
     }
     settings.debug = (enum LogLevel) FABS(i);
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		 "Debug level set to %d.", 
-		 "Debug level set to %d.", 
+		 "Debug level set to %d.",
+		 "Debug level set to %d.",
 		 i);
     return 1;
 }
@@ -894,11 +894,11 @@ int command_wizpass (object *op, char *params)
 	i =onoff_value(params);
 
     if (i) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You will now walk through walls.\n", NULL);
 	SET_FLAG(op, FLAG_WIZPASS);
     } else {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You will now be stopped by walls.\n", NULL);
 	CLEAR_FLAG(op, FLAG_WIZPASS);
     }
@@ -918,11 +918,11 @@ int command_wizcast (object *op, char *params)
 	i = onoff_value(params);
 
     if (i) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You can now cast spells anywhere.", NULL);
 	SET_FLAG(op, FLAG_WIZCAST);
     } else {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "You now cannot cast spells in no-magic areas.", NULL);
 	CLEAR_FLAG(op, FLAG_WIZCAST);
     }
@@ -986,18 +986,18 @@ int command_output_sync(object *op, char *params)
     int val;
 
     if (!params) {
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
-	     "Output sync time is presently %d", 
-	     "Output sync time is presently %d", 
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+	     "Output sync time is presently %d",
+	     "Output sync time is presently %d",
 	     op->contr->outputs_sync);
 	return 1;
     }
     val=atoi(params);
     if (val>0) {
 	op->contr->outputs_sync = val;
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
-	     "Output sync time now set to %d", 
-	     "Output sync time now set to %d", 
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+	     "Output sync time now set to %d",
+	     "Output sync time now set to %d",
 	     op->contr->outputs_sync);
     }
     else
@@ -1012,7 +1012,7 @@ int command_output_count(object *op, char *params)
     int val;
 
     if (!params) {
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 	     "Output count is presently %d",
 	     "Output count is presently %d",
 	     op->contr->outputs_count);
@@ -1021,9 +1021,9 @@ int command_output_count(object *op, char *params)
     val=atoi(params);
     if (val>0) {
 	op->contr->outputs_count = val;
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
-	     "Output count now set to %d", 
-	     "Output count now set to %d", 
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+	     "Output count now set to %d",
+	     "Output count now set to %d",
 	     op->contr->outputs_count);
     }
     else
@@ -1038,19 +1038,19 @@ int command_listen (object *op, char *params)
     int i;
 
     if(params==NULL || !sscanf(params, "%d", &i)) {
-	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
-	     "Set listen to what (presently %d)?", 
-	     "Set listen to what (presently %d)?", 
+	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+	     "Set listen to what (presently %d)?",
+	     "Set listen to what (presently %d)?",
 	     op->contr->listening);
 	return 1;
     }
     if (i < 0) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
             "Verbose level should be positive.", NULL);
         return;
     }
     op->contr->listening=(char) i;
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, 
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 	 "Your verbose level is now %d.",
 	 "Your verbose level is now %d.",
 	  i);
@@ -1129,7 +1129,7 @@ int command_players(object *op, char *paramss)
     char buf[MAX_BUF];
     char *t;
     DIR *Dir;
-  
+
     sprintf(buf,"%s/%s/",settings.localdir,settings.playerdir);
     t=buf+strlen(buf);
     if ((Dir=opendir(buf))!=NULL) {
@@ -1159,7 +1159,7 @@ int command_players(object *op, char *paramss)
 				  tm->tm_mday,
 				  tm->tm_hour,
 				  tm->tm_min,
-				  tm->tm_sec);	     
+				  tm->tm_sec);
 		    }
 		}
 	    }
@@ -1182,11 +1182,11 @@ int command_applymode(object *op, char *params)
 	return 1;
     }
 
-    if (!strcmp(params,"nochoice")) 
+    if (!strcmp(params,"nochoice"))
 	op->contr->unapply=unapply_nochoice;
-    else if (!strcmp(params,"never")) 
+    else if (!strcmp(params,"never"))
 	op->contr->unapply=unapply_never;
-    else if (!strcmp(params,"always")) 
+    else if (!strcmp(params,"always"))
 	op->contr->unapply=unapply_always;
     else {
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
@@ -1263,18 +1263,18 @@ int command_petmode(object *op, char *params)
 	return 1;
     }
 
-    if (!strcmp(params,"normal")) 
+    if (!strcmp(params,"normal"))
 	op->contr->petmode=pet_normal;
-    else if (!strcmp(params,"sad")) 
+    else if (!strcmp(params,"sad"))
 	op->contr->petmode=pet_sad;
-    else if (!strcmp(params,"defend")) 
+    else if (!strcmp(params,"defend"))
 	op->contr->petmode=pet_defend;
-    else if (!strcmp(params,"arena")) 
+    else if (!strcmp(params,"arena"))
 	op->contr->petmode=pet_arena;
     else {
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-	    "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena", 
-	    "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena", 
+	    "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena",
+	    "petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena",
 	     params);
 	return 0;
     }
@@ -1302,10 +1302,10 @@ int command_showpets(object *op, char *params)
 		    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 				  "Pets:", NULL);
 		draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			     "%d  %s - level %d", 
-			     "%d  %s - level %d", 
+			     "%d  %s - level %d",
+			     "%d  %s - level %d",
 			     ++counter, ob->name, ob->level );
-	    }	
+	    }
 	    else if (!have_shown_pet && ++counter==target) {
 	    	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 				     "[fixed]level %d %s",
@@ -1322,7 +1322,7 @@ int command_showpets(object *op, char *params)
 				     "Str %d",
 				     ob->stats.Str);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Dex %d", 
+				     "[fixed]Dex %d",
 				     "Dex %d",
 				     ob->stats.Dex);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
@@ -1346,14 +1346,14 @@ int command_showpets(object *op, char *params)
 				     "Pow %d",
 				     ob->stats.Pow);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]wc %d  damage %d ac %d ", 
-				     "wc %d  damage %d ac %d ", 
+				     "[fixed]wc %d  damage %d ac %d ",
+				     "wc %d  damage %d ac %d ",
 				     ob->stats.wc, ob->stats.dam, ob->stats.ac);
 		have_shown_pet=1;
 	    }
 	}
     }
-    if (counter == 0) 
+    if (counter == 0)
     	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "you have no pets.", NULL);
     else if (target !=0 && have_shown_pet==0)
@@ -1375,11 +1375,11 @@ int command_usekeys(object *op, char *params)
 	return 1;
     }
 
-    if (!strcmp(params,"inventory")) 
+    if (!strcmp(params,"inventory"))
 	op->contr->usekeys=key_inventory;
-    else if (!strcmp(params,"keyrings")) 
+    else if (!strcmp(params,"keyrings"))
 	op->contr->usekeys=keyrings;
-    else if (!strcmp(params,"containers")) 
+    else if (!strcmp(params,"containers"))
 	op->contr->usekeys=containers;
     else {
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
@@ -1407,8 +1407,8 @@ int command_resistances(object *op, char *params)
 	if (i==ATNR_INTERNAL) continue;
 
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			     "[fixed]%-20s %+5d", 
-			     "%-20s %+5d", 
+			     "[fixed]%-20s %+5d",
+			     "%-20s %+5d",
 			     attacktype_desc[i], op->resist[i]);
     }
 
@@ -1425,8 +1425,8 @@ int command_resistances(object *op, char *params)
                 for ( attack = 0; attack < NROFATTACKS; attack++ ) {
                     if ( atnr_is_dragon_enabled( attack ) ) {
                         draw_ext_info_format( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-					     "%s: %d", 
-					     "%s: %d", 
+					     "%s: %d",
+					     "%s: %d",
 					     change_resist_msg[ attack ], tmp->resist[ attack ] );
 		    }
 		}
@@ -1448,7 +1448,7 @@ static void help_topics(object *op, int what)
     struct dirent *de;
     char filename[MAX_BUF], line[HUGE_BUF];
     int namelen;
-  
+
     switch (what) {
 	case 1:
 	    sprintf(filename, "%s/wizhelp", settings.datadir);
@@ -1492,7 +1492,7 @@ static void show_commands(object *op, int what)
     command_array_struct *ap;
     extern command_array_struct Commands[], WizCommands[];
     extern const int CommandsSize, WizCommandsSize;
-  
+
     switch (what) {
 	case 1:
 	    ap =WizCommands;
@@ -1565,7 +1565,7 @@ int command_help (object *op, char *params)
 	    help_topics(op, 1);
 	return 0;
     }
-  
+
     /*
      * Commands list
      */
@@ -1585,8 +1585,8 @@ int command_help (object *op, char *params)
      */
     if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/')) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			     "Illegal characters in '%s'", 
-			     "Illegal characters in '%s'", 
+			     "Illegal characters in '%s'",
+			     "Illegal characters in '%s'",
 			     params);
 	return 0;
     }
@@ -1636,8 +1636,8 @@ int command_help (object *op, char *params)
     nohelp:
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-	 "No help available on '%s'", 
-	 "No help available on '%s'", 
+	 "No help available on '%s'",
+	 "No help available on '%s'",
 	 params);
 
     return 0;
@@ -1823,7 +1823,7 @@ void receive_player_password(object *op,char k) {
 int command_title (object *op, char *params)
 {
     char buf[MAX_BUF];
-    
+
     if (settings.set_title == FALSE) {
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
 		      "You cannot change your title.", NULL);
@@ -1836,7 +1836,7 @@ int command_title (object *op, char *params)
 		      "Dragons cannot change titles.", NULL);
         return 1;
     }
-    
+
     if(params == NULL) {
 	if(op->contr->own_title[0]=='\0')
 	    sprintf(buf,"Your title is '%s'.", op->contr->title);
@@ -1910,8 +1910,8 @@ int command_wimpy (object *op, char *params)
 	return 1;
     }
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		 "Your new wimpy level is %d.", 
-		 "Your new wimpy level is %d.", 
+		 "Your new wimpy level is %d.",
+		 "Your new wimpy level is %d.",
 		 i);
     op->run_away = i;
     return 1;
@@ -1941,7 +1941,7 @@ int command_kill_pets(object *op, char *params)
 {
     objectlink *obl, *next;
     int counter=0, removecount=0;
-    if (params == NULL) { 
+    if (params == NULL) {
     	terminate_all_pets(op);
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
 		      "Your pets have been killed.", NULL);
@@ -1960,10 +1960,10 @@ int command_kill_pets(object *op, char *params)
 		removecount++;
             }
 	}
-	if (removecount!=0) 
+	if (removecount!=0)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			 "killed %d pets.", 
-			 "killed %d pets.", 
+			 "killed %d pets.",
+			 "killed %d pets.",
 			 removecount);
 	else
 	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,

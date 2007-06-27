@@ -20,7 +20,7 @@ case "$1" in
 #      /usr/bin/passwd -l crossfire > /dev/null 2>&1
 #    }
      ;;
-    
+
     upgrade)
 	# Source debconf library
 	. /usr/share/debconf/confmodule
@@ -41,7 +41,7 @@ case "$1" in
 		    fi
 		fi
 	    fi
-	    
+
 	fi
 	db_stop || true
 	;;
@@ -57,4 +57,3 @@ case "$1" in
 esac
 
 ##DEBHELPER##
-

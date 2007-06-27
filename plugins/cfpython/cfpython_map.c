@@ -180,10 +180,10 @@ static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;
     char *message;
-    
+
     if (!PyArg_ParseTuple(args,"s|i",&message,&color))
         return NULL;
-        
+
     MAPEXISTCHECK(map);
 
     cf_map_message(map->map, message, color);
@@ -258,12 +258,12 @@ static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args)
 {
     int x, y;
     Crossfire_Object* what;
-    
+
     if (!PyArg_ParseTuple(args,"O!ii", &Crossfire_ObjectType, &what, &x, &y))
         return NULL;
 
     MAPEXISTCHECK(map);
-    
+
     return Crossfire_Object_wrap(cf_map_insert_object(map->map, what->obj, x, y));
 }
 
@@ -320,7 +320,7 @@ static void Crossfire_Map_dealloc(PyObject *obj)
     if(self) {
         if (self->map && self->valid) {
             free_map_assoc(self->map);
-        }            
+        }
         self->ob_type->tp_free(obj);
     }
 }
@@ -333,13 +333,13 @@ void Handle_Map_Unload_Hook(Crossfire_Map *map) {
 PyObject *Crossfire_Map_wrap(mapstruct *what)
 {
     Crossfire_Map *wrapper;
-    
+
     /* return None if no object was to be wrapped */
     if(what == NULL) {
         Py_INCREF(Py_None);
         return Py_None;
     }
-    
+
     wrapper = (Crossfire_Map*)find_assoc_pymap(what);
     if (!wrapper) {
         wrapper = PyObject_NEW(Crossfire_Map, &Crossfire_MapType);
@@ -351,7 +351,6 @@ PyObject *Crossfire_Map_wrap(mapstruct *what)
     } else {
         Py_INCREF(wrapper);
     }
-        
+
     return (PyObject *)wrapper;
 }
-

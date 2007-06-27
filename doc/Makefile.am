@@ -53,7 +53,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(man6dir)/crossfire.6*
 	rm -f $(DESTDIR)$(man6dir)/crossfire-config.6*
 
-archive: spoiler playbook 
+archive: spoiler playbook
 	$(mkinstalldirs) $(DTOP)
 	cp $(EXTRA_DIST) $(DTOP)
 	cp spoiler.ps handbook.ps $(DTOP)

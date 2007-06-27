@@ -30,7 +30,7 @@ SUBDIRS = include
 if PYTHON_PLUGIN
 plugin_LTLIBRARIES = cfpython.la
 else
-plugin_LTLIBRARIES = 
+plugin_LTLIBRARIES =
 endif
 cfpython_la_SOURCES = cfpython.c\
 	cfpython_archetype.c\

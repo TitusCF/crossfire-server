@@ -20,7 +20,7 @@ REQUIREMENTS
 
   For Windows 9x, you need Visual C++ (or some other ANSI C
   compiler that can read ".dsw"-files).
-  
+
 COMPILING
 
   Crossfire has been known to compile on a wide variety of
@@ -66,8 +66,8 @@ FTP SITES
     ftp://ftp.real-time.com/pub/games/crossfire
 
   Changes made since the latest release can be found at the CVS
-  repository.  Information on anonymous CVS access as 
-  the download CVS snapshots and browsing the repository can be 
+  repository.  Information on anonymous CVS access as
+  the download CVS snapshots and browsing the repository can be
   found at:
 	http://sourceforge.net/cvs/?group_id=13833
 

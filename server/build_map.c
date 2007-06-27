@@ -75,7 +75,7 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
 	        case MAGIC_EAR:
 		    /* Allow signs and magic ears to be built on books */
 	            if ( ob->type != BOOK ) {
-		        return 0; } 
+		        return 0; }
                     break;
 		case BUTTON:
 	        case DETECTOR:
@@ -83,7 +83,7 @@ int can_build_over( struct mapdef* map, object* tmp, short x, short y)
                 case CF_HANDLE:
 		    /* Allow buttons and levers to be built under gates */
 	            if ( ob->type != GATE && ob->type != DOOR ) {
-		        return 0; } 
+		        return 0; }
                     break;
 		default:
                     return 0;
@@ -398,7 +398,7 @@ void fix_walls( struct mapdef* map, int x, int y )
     if ( !new_arch )
         return;
 
-    /* Now delete current wall, and insert new one 
+    /* Now delete current wall, and insert new one
      * We save flags to avoid any trouble with buildable/non buildable, and so on
      */
     for ( flag = 0; flag < 4; flag++ )
@@ -446,7 +446,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
     sprintf( message, "You change the floor to better suit your tastes." );
 
     /*
-     * Now the building part... 
+     * Now the building part...
      * First, remove wall(s) and floor(s) at position x, y
      */
     above_floor = NULL;
@@ -470,7 +470,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
                 free_object(floor);
             }
             }
-        else if ( ( FLOOR == tmp->type ) || ( QUERY_FLAG(tmp, FLAG_IS_FLOOR ) ) ) 
+        else if ( ( FLOOR == tmp->type ) || ( QUERY_FLAG(tmp, FLAG_IS_FLOOR ) ) )
             {
             floor = tmp;
             }
@@ -577,7 +577,7 @@ void apply_builder_wall( object* pl, object* material, short x, short y )
     struct archt* new_wall;
     char message[ MAX_BUF ];
 
-    remove_marking_runes( pl->map, x, y );    
+    remove_marking_runes( pl->map, x, y );
 
     /* Grab existing wall, if any */
     current_wall = NULL;
@@ -673,7 +673,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
 
     if ( !floor )
         {
-        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, 
+        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
             "This square has no floor, you can't build here.", NULL);
         return;
         }
@@ -728,7 +728,7 @@ void apply_builder_item( object* pl, object* item, short x, short y )
             free_object( con_rune );
         }
 
-    /* For magic mouths/ears, and signs, take the msg from a book of scroll */	
+    /* For magic mouths/ears, and signs, take the msg from a book of scroll */
     if ((tmp->type == SIGN) || (tmp->type == MAGIC_EAR)) {
         if (adjust_sign_msg( pl, x, y, tmp ) == -1) {
             free_object( tmp );
@@ -742,8 +742,8 @@ void apply_builder_item( object* pl, object* item, short x, short y )
 
     query_name( tmp, name, MAX_BUF );
     draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-        "You build the %s", 
-        "You build the %s", 
+        "You build the %s",
+        "You build the %s",
         name);
     decrease_ob_nr( item, 1 );
     }
@@ -771,7 +771,7 @@ void apply_builder_remove( object* pl, int dir )
     item = GET_MAP_OB( pl->map, x, y );
     if ( !item ) {
         /* Should not happen with previous tests, but we never know */
-        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, 
+        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
             "Invalid square.", NULL);
         LOG( llevError, "apply_builder_remove: (null) square at (%d, %d, %s)\n", x, y, pl->map->path );
         return;
@@ -813,8 +813,8 @@ void apply_builder_remove( object* pl, int dir )
             /* Remove generic item */
             query_name( item, name, MAX_BUF );
             draw_ext_info_format( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                "You remove the %s", 
-                "You remove the %s", 
+                "You remove the %s",
+                "You remove the %s",
                 name );
             remove_ob( item );
             free_object( item );

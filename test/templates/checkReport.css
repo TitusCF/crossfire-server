@@ -28,7 +28,7 @@ body {
     vertical-align:text-top;
 }
 .testMenu li{
-    list-style-type: none; 
+    list-style-type: none;
 }
 .suiteList, .runDate, .suiteHead, .suiteContent, .failedTestList, .testHead, .testContent{
     width:98%;

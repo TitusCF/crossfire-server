@@ -63,13 +63,13 @@ method_ret common_pre_ob_move_on(object* trap, object* victim,
         return METHOD_ERROR;
 
     /* common_ob_move_on() is the most likely candidate for causing unwanted and
-     * possibly unlimited recursion. 
+     * possibly unlimited recursion.
      */
     /* The following was changed because it was causing perfectly correct
      * maps to fail.  1)  it's not an error to recurse:
      * rune detonates, summoning monster.  monster lands on nearby rune.
      * nearby rune detonates.  This sort of recursion is expected and
-     * proper.  This code was causing needless crashes. 
+     * proper.  This code was causing needless crashes.
      */
     if (ob_move_on_recursion_depth >= 500)
     {

@@ -116,8 +116,8 @@
 #define AT_CHAOS        0x00040000 /*  262144 peterm@soda.berkeley.edu*/
 #define AT_COUNTERSPELL 0x00080000 /*  524288 peterm@soda.berkeley.edu*/
 #define AT_GODPOWER	0x00100000 /* 1048576  peterm@soda.berkeley.edu */
-#define AT_HOLYWORD	0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */ 
-#define AT_BLIND	0x00400000 /* 4194304 thomas@astro.psu.edu */ 
+#define AT_HOLYWORD	0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */
+#define AT_BLIND	0x00400000 /* 4194304 thomas@astro.psu.edu */
 #define AT_INTERNAL	0x00800000 /* Only used for internal calculations */
 #define AT_LIFE_STEALING \
 			0x01000000 /* 16777216 for hp drain */
@@ -176,10 +176,10 @@ EXTERN const char* const attacktype_desc[NROFATTACKS] = {
 /* This is the array that is what the player sees. */
 
 EXTERN const char* const resist_plus[NROFATTACKS] = {
-"armour", "resist magic", "resist fire", "resist electricity", "resist cold", 
-"resist confusion", "resist acid", "resist drain", 
+"armour", "resist magic", "resist fire", "resist electricity", "resist cold",
+"resist confusion", "resist acid", "resist drain",
 "resist weaponmagic", "resist ghosthit", "resist poison", "resist slow",
-"resist paralyzation", "resist turn undead", "resist fear", 
+"resist paralyzation", "resist turn undead", "resist fear",
 "resist cancellation", "resist depletion", "resist death", "resist chaos",
 "resist counterspell", "resist god power", "resist holy word",
 "resist blindness" ,  "resist internal", "resist life stealing",
@@ -202,10 +202,10 @@ EXTERN const char* const change_resist_msg[NROFATTACKS] = {
  * others, just add more entries in the table for the protections you want to
  * show up.
  */
-EXTERN int resist_table[] = {ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, 
+EXTERN int resist_table[] = {ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
     ATNR_ELECTRICITY,ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN,
     ATNR_GHOSTHIT, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_TURN_UNDEAD,
-    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND, 
+    ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND,
     ATNR_LIFE_STEALING, ATNR_DISEASE};
 
 #endif

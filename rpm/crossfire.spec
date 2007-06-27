@@ -33,7 +33,7 @@ Group: Amusements/Games/Crossfire
 Summary: Common files for all part of crossfire.
 
 %description common
-This package contains the files that are shared between crossfire-devel, 
+This package contains the files that are shared between crossfire-devel,
 crossfire-maps and the crossfire server pages.
 
 #
@@ -81,7 +81,7 @@ CFLAGS="$RPM_OPT_FLAGS" \
   --mandir=/usr/man \
   --enable-old-layout=no
 
-make CFLAGS="$RPM_OPT_FLAGS" 
+make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -116,8 +116,8 @@ touch $RPM_BUILD_ROOT/usr/games/crossfire/var/logs/crossfire.log
     gzip -dc %{SOURCE2} | tar -xf - ; \
     mv %{name}-%{version}.arch arch )
 
-find $RPM_BUILD_ROOT -name \*.orig -print0 | xargs -0 rm -f 
-find doc -name \*.orig -print0 | xargs -0 rm -f 
+find $RPM_BUILD_ROOT -name \*.orig -print0 | xargs -0 rm -f
+find doc -name \*.orig -print0 | xargs -0 rm -f
 
 (cd $RPM_BUILD_ROOT/%{prefix}/bin; strip crossedit crossfire random_map)
 
@@ -211,10 +211,10 @@ fi
 
 %changelog
 * Mon Feb 12 2001 Bob Tanner <tanner@real-time.com>
-- Split the one rpm into several. Crossfire the server, Crossfire-devel for crossedit 
-  and associate tools, Crossfire-maps for the maps and Crossfire-doc for the 
+- Split the one rpm into several. Crossfire the server, Crossfire-devel for crossedit
+  and associate tools, Crossfire-maps for the maps and Crossfire-doc for the
   documentation.
-- Had to split stuff into another package Crossfire-common for the stuff shared 
+- Had to split stuff into another package Crossfire-common for the stuff shared
   between all the other packages.
 * Tue Mar 16 1999 Toshio Kuratomi <badger@prtr-13.ucsc.edu> [0.95.2-5]
 - Edited the patch files to get rid of redundancies and excesses.
@@ -245,7 +245,7 @@ fi
 * Fri Sep  4 1998 Kjetil Wiekhorst Jørgensen <jorgens+rpm@pvv.org> [0.94.3-1]
 
 - upgraded to version 0.94.3
-- moved some files around (static files to /usr/lib/games/crossfire and 
+- moved some files around (static files to /usr/lib/games/crossfire and
   dynamic files to /var/lib/games/crossfire)
 
 * Mon Jun 01 1998 Kjetil Wiekhorst Jørgensen <jorgens+rpm@pvv.org>

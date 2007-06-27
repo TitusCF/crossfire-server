@@ -178,7 +178,7 @@ void update_button(object *op) {
             for(ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
             /* Bug? The pedestal code below looks for the head of
              * the object, this bit doesn't.  I'd think we should check
-             * for head here also.  Maybe it also makese sense to 
+             * for head here also.  Maybe it also makese sense to
              * make the for ab=tmp->above loop common, and alter
              * behaviour based on object within that loop?
              */
@@ -189,7 +189,7 @@ void update_button(object *op) {
              * this means that more work is needed to make buttons
              * that are only triggered by flying objects.
              */
-                if ((ab->move_type & tmp->move_on) || ab->move_type==0 ) 
+                if ((ab->move_type & tmp->move_on) || ab->move_type==0 )
                     tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
 
             tmp->value=(tot>=tmp->weight)?1:0;
@@ -202,8 +202,8 @@ void update_button(object *op) {
                 /* Same note regarding move_type for buttons above apply here. */
                 if  ( ((head->move_type & tmp->move_on) || ab->move_type==0) &&
                         (head->race==tmp->slaying ||
-                        ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) || 
-                        (!strcmp (tmp->slaying, "player") && 
+                        ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) ||
+                        (!strcmp (tmp->slaying, "player") &&
                         head->type == PLAYER)))
                     tmp->value = 1;
             }
@@ -252,7 +252,7 @@ void update_buttons(mapstruct *m) {
  * @param op
  * object to toggle.
  */
-void use_trigger(object *op) 
+void use_trigger(object *op)
 {
     /* Toggle value */
     op->value = !op->value;
@@ -272,8 +272,8 @@ void use_trigger(object *op)
 void animate_turning(object *op)
 {
     if (++op->state >= NUM_ANIMATIONS(op)/8)
-      op->state=0; 
-    SET_ANIMATION(op, (op->stats.sp-1) * NUM_ANIMATIONS(op) / 8 + 
+      op->state=0;
+    SET_ANIMATION(op, (op->stats.sp-1) * NUM_ANIMATIONS(op) / 8 +
 		  op->state);
     update_object(op,UP_OBJ_FACE);
 }
@@ -591,7 +591,7 @@ int check_trigger (object *op, object *cause)
                     }
                     else {
                         /* for trigger altar with last_sp, the ON/OFF
-                         * status (-> +/- value) is "simulated": 
+                         * status (-> +/- value) is "simulated":
                          */
                         op->value = !op->value;
                         trigger_move (op, 1);
@@ -611,7 +611,7 @@ int check_trigger (object *op, object *cause)
                 /* If trigger_altar has "last_sp > 0" set on the map,
                  * it will push the connected value only once per sacrifice.
                  * Otherwise (default), the connected value will be
-                 * pushed twice: First by sacrifice, second by reset! -AV 
+                 * pushed twice: First by sacrifice, second by reset! -AV
                  */
                 if (!op->last_sp)
                     trigger_move (op, 0);
@@ -755,9 +755,9 @@ int get_button_value(const object *button) {
     return 0;
 }
 
-/** This routine makes monsters who are  
+/** This routine makes monsters who are
  * standing on the 'mood floor' change their
- * disposition if it is different.  
+ * disposition if it is different.
  * If floor is to be triggered must have
  * a speed of zero (default is 1 for all
  * but the charm floor type).
@@ -781,11 +781,11 @@ void do_mood_floor(object *op, object *op2) {
      */
     if (!tmp || tmp->type == PLAYER) return;
 
-    switch(op->last_sp) { 
-        case 0:			/* furious--make all monsters mad */ 
+    switch(op->last_sp) {
+        case 0:			/* furious--make all monsters mad */
             if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
                 CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) { 
+            if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) {
                 CLEAR_FLAG(tmp, FLAG_FRIENDLY);
                 remove_friendly_object(tmp);
                 tmp->attack_movement = 0;
@@ -801,29 +801,29 @@ void do_mood_floor(object *op, object *op2) {
             }
             break;
 
-        case 1: 			/* angry -- get neutral monsters mad */	 
-            if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&& 
-               !QUERY_FLAG(tmp, FLAG_FRIENDLY))	
+        case 1: 			/* angry -- get neutral monsters mad */
+            if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&&
+               !QUERY_FLAG(tmp, FLAG_FRIENDLY))
                 CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
             break;
 
-        case 2:			/* calm -- pacify unfriendly monsters */ 
+        case 2:			/* calm -- pacify unfriendly monsters */
             if(!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) {
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
                 tmp->enemy = NULL;
             }
             break;
 
-        case 3:			/* make all monsters fall asleep */ 
+        case 3:			/* make all monsters fall asleep */
             if(!QUERY_FLAG(tmp, FLAG_SLEEP))
                 SET_FLAG(tmp, FLAG_SLEEP);
             break;
 
         case 4:			/* charm all monsters */
-            if(op == op2) break; 	     /* only if 'connected' */ 
+            if(op == op2) break; 	     /* only if 'connected' */
 
-            for(tmp2=get_map_ob(op2->map,op2->x,op2->y); /* finding an owner */ 
-            tmp2->type!=PLAYER;tmp2=tmp2->above)	
+            for(tmp2=get_map_ob(op2->map,op2->x,op2->y); /* finding an owner */
+            tmp2->type!=PLAYER;tmp2=tmp2->above)
             if(tmp2->above==NULL) break;
 
             if (tmp2->type != PLAYER)
@@ -861,9 +861,9 @@ object * check_inv_recursive(object *op, const object *trig)
     object *tmp,*ret=NULL;
 
     /* First check the object itself. */
-    if((trig->stats.hp && (op->type == trig->stats.hp)) 
-        || (trig->slaying && (op->slaying == trig->slaying)) 
-        || (trig->race && (op->arch->name == trig->race))) 
+    if((trig->stats.hp && (op->type == trig->stats.hp))
+        || (trig->slaying && (op->slaying == trig->slaying))
+        || (trig->race && (op->arch->name == trig->race)))
         return op;
 
     for(tmp=op->inv; tmp; tmp=tmp->below) {
@@ -871,9 +871,9 @@ object * check_inv_recursive(object *op, const object *trig)
             ret=check_inv_recursive(tmp, trig);
             if (ret) return ret;
         }
-        else if((trig->stats.hp && (tmp->type == trig->stats.hp)) 
-            || (trig->slaying && (tmp->slaying == trig->slaying)) 
-            || (trig->race && (tmp->arch->name == trig->race))) 
+        else if((trig->stats.hp && (tmp->type == trig->stats.hp))
+            || (trig->slaying && (tmp->slaying == trig->slaying))
+            || (trig->race && (tmp->arch->name == trig->race)))
             return tmp;
     }
     return NULL;
@@ -882,12 +882,12 @@ object * check_inv_recursive(object *op, const object *trig)
 /**
  * Function to search the inventory,
  * of a player and then based on a set of conditions,
- * the square will activate connected items. 
+ * the square will activate connected items.
  *
  * Monsters can't trigger this square (for now)
- * Values are:	last_sp = 1/0 obj/no obj triggers 
+ * Values are:	last_sp = 1/0 obj/no obj triggers
  * 		last_heal = 1/0  remove/dont remove obj if triggered
- * -b.t. (thomas@nomad.astro.psu.edu 
+ * -b.t. (thomas@nomad.astro.psu.edu
  *
  * @param op
  * object to check. Must be a player.
@@ -900,7 +900,7 @@ void check_inv (object *op, object *trig) {
     if(op->type != PLAYER) return;
     match = check_inv_recursive(op,trig);
     if (match && trig->last_sp) {
-        if(trig->last_heal) 
+        if(trig->last_heal)
             decrease_ob(match);
         use_trigger(trig);
     }

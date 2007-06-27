@@ -53,7 +53,7 @@ static const char* const fatalmsgs[80]={
 /**
  * fatal() is meant to be called whenever a fatal signal is intercepted.
  * It will call the emergency_save and the clean_tmp_files functions.
- * 
+ *
  * @note
  * this function never returns, as it calls exit().
  */

@@ -6,7 +6,7 @@ playbook:  This is a good guide on how to play crossfire.  This is in latex/
 	postscript format.
 playbook-html:  This is an html version of the playbook.
 spoiler:  This is a generation of 'spoilers' for the game.  It is in latex/
-	postscript format.  Some stuff really shouldn't be considered 
+	postscript format.  Some stuff really shouldn't be considered
 	spoilers (character stat bonuses).  Other stuff (monster stats,
 	what type of items spells appear in) is.  It could be more thorough.
 spoiler-html:  An html version of the spoiler.
@@ -20,7 +20,7 @@ all the the above:
    -  xpmtoppm from NETPBM, with _undefined_ PGM_BIGGRAYS in pbmplus.h
    -  pnmtops, pnmscale, pgmtoppm. If you install NetPbm, you should also
       have these
-   -  a crossfire binary compiled with DUMP_SWITCHES defined in 
+   -  a crossfire binary compiled with DUMP_SWITCHES defined in
       include/config.h.
    -  the arch.tar file extracted in the Crossfire lib dir.
 
@@ -70,7 +70,7 @@ HTML notes (both spoiler and playbook):
 
 Most of these documents use server side includes (files that end in .shtml
 mean this).  Unfortunately, if you are just loading them up in a web browser,
-it won't take these includes.  I have written a simple perl script 
+it won't take these includes.  I have written a simple perl script
 (include_html.pl) that will take the .shtml file and write and a .html file
 with the files included.
 

@@ -66,4 +66,3 @@ proto:
 	sed -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
 	chmod 644 rproto.h
 	rm -f rproto.h.bak
-

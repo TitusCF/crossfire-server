@@ -1,4 +1,4 @@
-syntax: kick <player> 
+syntax: kick <player>
 notes:
 this command will kick a player
 off the server. If used without

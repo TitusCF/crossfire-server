@@ -69,4 +69,3 @@ typedef struct _materialtype {
 EXTERN materialtype_t *materialt;
 
 #endif	/* MATERIAL_H */
-

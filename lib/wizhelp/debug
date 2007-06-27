@@ -1,4 +1,4 @@
-syntax: debug <level> 
+syntax: debug <level>
 notes:
 Without arguments, debug will
 simply print the current level

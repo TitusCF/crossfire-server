@@ -360,7 +360,7 @@ void clear_skill(object *who)
  * give any exp for their direct use (eg, throwing).
  *
  * Gives experience if appropriate.
- * 
+ *
  * @param op The object actually using the skill
  * @param part actual part using the skill, used by throwing for monsters
  * @param skill The skill used by op

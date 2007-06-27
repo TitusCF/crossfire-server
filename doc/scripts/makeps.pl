@@ -136,7 +136,7 @@ line: while (<IN>) {
     if ($Fld[1] eq 'msg') {
 	do {
 	    $_ = <IN>;
-	    @Fld = split;	    
+	    @Fld = split;
 	}
 	while ($Fld[1] ne 'endmsg');
     }
@@ -179,7 +179,7 @@ sub assemble {
     my($one_image)=0;
 
     $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
-    if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     } 
+    if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     }
     else { $ps_file = $faces{0, 0} . '.gif'; }
     $ps_file =~ s/[_ ]/-/g;
 
@@ -243,7 +243,7 @@ sub assemble {
     }
     $mul = $size_mul{int(sqrt($w * $h))} * $size;
     if ($output eq "tex") {
-	if ($h == 1) { 
+	if ($h == 1) {
 	    $ps = sprintf "\\psfig{figure=$ps_file,width=%0.2fcm,height=%0.2fcm}", $w * $mul, $h * $mul;
 	} else {
 	    $ps = sprintf "\\raisebox{-%0.2fcm}{\\psfig{figure=$ps_file,width=%0.2fcm,height=%0.2fcm}}", ($h-1) * $mul, $w * $mul, $h * $mul;
@@ -253,4 +253,3 @@ sub assemble {
     }
     $ps;
 }
-

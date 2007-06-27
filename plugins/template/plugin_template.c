@@ -293,4 +293,3 @@ CF_PLUGIN int   closePlugin()
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }
-

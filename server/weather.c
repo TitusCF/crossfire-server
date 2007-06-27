@@ -1871,7 +1871,7 @@ static void let_it_snow(mapstruct *m) {
  * Process rain. This should be called from weather_effect().
  *
  * @param m
- * map we are currently processing. 
+ * map we are currently processing.
  */
 static void singing_in_the_rain(mapstruct *m) {
     int x, y, i, wx, wy;

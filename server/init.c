@@ -79,13 +79,13 @@ static void set_tmpdir(char *path) { settings.tmpdir=path; }
 static void free_races(void);
 static void free_materials(void);
 
-static void showscoresparm(char *data) { 
-    display_high_score(NULL,9999,data); 
-    exit(0); 
+static void showscoresparm(char *data) {
+    display_high_score(NULL,9999,data);
+    exit(0);
 }
 
 static void set_csport(char *val)
-{ 
+{
     settings.csport=atoi(val);
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
     if (settings.csport<=0 || settings.csport>32765 ||
@@ -148,13 +148,13 @@ struct Command_Line_Options options[] = {
 {"-srv", 0, 1, service_handle},
 #endif
 
-/** Pass 2 functions.  Most of these could probably be in pass 1, 
+/** Pass 2 functions.  Most of these could probably be in pass 1,
  * as they don't require much of anything to bet set up.
  */
 {"-csport", 1, 2, set_csport},
 
 /** Start of pass 3 information. In theory, by pass 3, all data paths
- * and defaults should have been set up. 
+ * and defaults should have been set up.
  */
 {"-o", 0, 3, compile_info},
 {"-m", 0, 3, set_dumpmon1},
@@ -406,21 +406,21 @@ static void load_settings(void)
 	    }
 	} else if (!strcasecmp(buf,"metaserver_server")) {
 	    if (has_val) strcpy(settings.meta_server, cp);
-	    else 
+	    else
 		LOG(llevError,"load_settings: metaserver_server must have a value.\n");
 	} else if (!strcasecmp(buf,"motd")) {
 	    if (has_val)
 		strcpy(settings.motd, cp);
-	    else 
+	    else
 		LOG(llevError,"load_settings: motd must have a value.\n");
 	} else if (!strcasecmp(buf,"dm_mail")) {
 	    if (has_val)
 		strcpy(settings.dm_mail, cp);
-	    else 
+	    else
 		LOG(llevError,"load_settings: dm_mail must have a value.\n");
 	} else if (!strcasecmp(buf,"metaserver_host")) {
 	    if (has_val) strcpy(settings.meta_host, cp);
-	    else 
+	    else
 		LOG(llevError,"load_settings: metaserver_host must have a value.\n");
 	} else if (!strcasecmp(buf,"metaserver_port")) {
 	    int port = atoi(cp);
@@ -590,7 +590,7 @@ static void load_settings(void)
 	    	strcpy(settings.who_format, cp);
 	} else if (!strcasecmp(buf,"who_wiz_format")) {
 	    if (has_val)
-	    	strcpy(settings.who_wiz_format, cp);      
+	    	strcpy(settings.who_wiz_format, cp);
 	} else if (!strcasecmp(buf, "spellpoint_level_depend")) {
 	    if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
 		settings.spellpoint_level_depend=TRUE;
@@ -673,7 +673,7 @@ static void load_settings(void)
 		LOG(llevError, "load_settings: set_friendly_fire must be between 1 an 100"
 		    ", %d is invalid\n", val);
 	    else
-		settings.set_friendly_fire = val;	
+		settings.set_friendly_fire = val;
     } else if ( !strcasecmp( buf, "armor_max_enchant" ) ) {
         int max_e = atoi( cp );
         if ( max_e <= 0 )
@@ -895,8 +895,8 @@ static void init_beforeplay(void) {
   init_spells();     /* If not called before, links archtypes used by spells */
   init_regions();    /* If not called before, reads all regions from file */
   init_archetype_pointers(); /* Setup global pointers to archetypes */
-  init_races();	   /* overwrite race designations using entries in lib/races file */ 
-  init_gods();	/* init linked list of gods from archs*/ 
+  init_races();	   /* overwrite race designations using entries in lib/races file */
+  init_gods();	/* init linked list of gods from archs*/
   init_readable();	/* inits useful arrays for readable texts */
   init_formulae();  /* If not called before, reads formulae from file */
 
@@ -1114,13 +1114,13 @@ static void init_signals(void) {
 #endif /* win32 */
 }
 
-/** 
+/**
  * Reads the races file in the lib/ directory, then
  * overwrites old 'race' entries. This routine allow us to quickly
  * re-configure the 'alignment' of monsters, objects. Useful for
  * putting together lists of creatures, etc that belong to gods.
  */
- 
+
 static void init_races(void) {
   FILE *file;
   char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
@@ -1144,7 +1144,7 @@ static void init_races(void) {
     if((cp=strchr(buf,'\n'))!=NULL)
       *cp='\0';
     cp=buf;
-    while(*cp==' '||*cp=='!'||*cp=='@') { 
+    while(*cp==' '||*cp=='!'||*cp=='@') {
       if(*cp=='!') set_race=0;
       if(*cp=='@') set_list=0;
       cp++;
@@ -1160,7 +1160,7 @@ static void init_races(void) {
 		*cp1='\0';
 		if (cp==cp1) break;
 	}
-	
+
 	if (cp[strlen(cp)-1]=='\n') cp[strlen(cp)-1]='\0';
         /* set creature race to race value */
         if((mon=find_archetype(cp))==NULL)
@@ -1185,11 +1185,11 @@ static void init_races(void) {
 }
 
 static void dump_races(void)
-{ 
+{
     racelink *list;
     objectlink *tmp;
     for(list=first_race;list;list=list->next) {
-      fprintf(stderr,"\nRACE %s:\t",list->name); 
+      fprintf(stderr,"\nRACE %s:\t",list->name);
       for(tmp=list->member;tmp;tmp=tmp->next)
         fprintf(stderr,"%s(%d), ",tmp->ob->arch->name,tmp->ob->level);
     }
@@ -1218,17 +1218,17 @@ static void free_races(void) {
 
 static void add_to_racelist(const char *race_name, object *op) {
   racelink *race;
- 
+
   if(!op||!race_name) return;
   race=find_racelink(race_name);
- 
+
   if(!race) { /* add in a new race list */
     race = get_racelist();
     race->next = first_race;
     first_race = race;
     race->name=add_string(race_name);
   }
- 
+
   if(race->member->ob) {
     objectlink *tmp = get_objectlink();
     tmp->next=race->member;
@@ -1240,7 +1240,7 @@ static void add_to_racelist(const char *race_name, object *op) {
 
 static racelink * get_racelist(void) {
   racelink *list;
- 
+
   list = (racelink *) malloc(sizeof(racelink ));
   list->name=NULL;
   list->nrof=0;
@@ -1249,13 +1249,13 @@ static racelink * get_racelist(void) {
 
   return list;
 }
- 
+
 racelink * find_racelink(const char *name) {
   racelink *test=NULL;
- 
+
   if(name&&first_race)
     for(test=first_race;test&&test!=test->next;test=test->next)
        if(!test->name||!strcmp(name,test->name)) break;
- 
+
   return test;
 }

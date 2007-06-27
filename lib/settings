@@ -8,7 +8,7 @@
 # spaces after the setting.
 #
 
-# metaserver values.  
+# metaserver values.
 # notification on/off controls the notification to the metaserver.
 # server and port is the metaserver host and port to connect to.
 # comment is sent to the metaserver.  It can be specific settings to on
@@ -32,9 +32,9 @@ worldmaptilesy 30
 worldmaptilesizex 50
 worldmaptilesizey 50
 
-# dynamiclevel sets the level of change on the worldmaps, this should be 0 
+# dynamiclevel sets the level of change on the worldmaps, this should be 0
 # unless you are using bigworld maps (or set up the above values properly for your maps)
-# and want to run weather.  Differnet values increase the amount of dynamism from 
+# and want to run weather.  Differnet values increase the amount of dynamism from
 # weather to growth to erosion.  (see documents for more info).
 # If dynamiclevel is not 0, first run of the server will generate the weather maps
 # which could be a lengthy process.
@@ -74,7 +74,7 @@ item_power_factor 1.0
 # %%	a literal %
 # %_	a literal underscore
 #
-# an underscore that is not escaped gives a space (or you can use a real space 
+# an underscore that is not escaped gives a space (or you can use a real space
 # if you prefer)
 # who_wiz_format is the same but for those with dm powers
 
@@ -217,19 +217,19 @@ balanced_stat_loss false
 
 # This defines how much of a player's experience should be 'permanent' and
 # not able to be lost on death. A high value makes multiple frequent deaths
-# less devastating, and also ensures that any character will make some 
+# less devastating, and also ensures that any character will make some
 # gradual progress even if they die all of the time. This value is the minimum
 # amount of a player's exp that can ever be 'permanent' so setting this to 0
 # would allow all exp to be lost, and setting it to 100 would stop exp loss
-# entirely (the same effect would be achieved by setting the two 
+# entirely (the same effect would be achieved by setting the two
 # death_penalty settings below to 0).
 
 permanent_experience_percentage 25
 
-# When a player dies, they lose a proportion of their experience, which is 
-# defined by the following two values. They will lose either 
-# death_penalty_percentage% of their experience, or no more than 
-# death_penalty_levels levels, or half of their non-permenent experience, 
+# When a player dies, they lose a proportion of their experience, which is
+# defined by the following two values. They will lose either
+# death_penalty_percentage% of their experience, or no more than
+# death_penalty_levels levels, or half of their non-permenent experience,
 # whichever is the least of these. Note that this is calculated per-skill,
 # so which method is used could vary for different skills.
 
@@ -239,8 +239,8 @@ death_penalty_levels 3
 # This is the penalty to luck that is given to a player who kills another
 # player (PK's). The value here is deducted from their luck value, so set this
 # high to discourage PK-ing and zero (or negative) to encourage it.
-# Range is limited to -100 to 100, since this is the value range that the luck 
-# stat can be within. 
+# Range is limited to -100 to 100, since this is the value range that the luck
+# stat can be within.
 
 pk_luck_penalty 1
 
@@ -255,7 +255,7 @@ pk_luck_penalty 1
 pk_max_experience 5000000
 pk_max_experience_percent 10
 
-# This allows reduced damage against other players when in 
+# This allows reduced damage against other players when in
 # peaceful mode.  The value is the percent of damage done
 # compared to normal.  This does not change damage done
 # by not targeted things like walls, explosions, cone spells, disease, poison...

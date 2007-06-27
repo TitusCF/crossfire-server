@@ -32,9 +32,9 @@
  *
  * \date 2003-12-02
  *
- * This file implements all of the goo on the server side for handling 
- * clients.  It's got a bunch of global variables for keeping track of 
- * each of the clients. 
+ * This file implements all of the goo on the server side for handling
+ * clients.  It's got a bunch of global variables for keeping track of
+ * each of the clients.
  *
  * Note:  All functions that are used to process data from the client
  * have the prototype of (char *data, int datalen, int client_num).  This
@@ -97,14 +97,14 @@ short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS, CS_STAT_RES_MAG,
                                    CS_STAT_RES_COLD, CS_STAT_RES_CONF,
                                    CS_STAT_RES_ACID,
                                    CS_STAT_RES_DRAIN, -1 /* weaponmagic */,
-                                   CS_STAT_RES_GHOSTHIT, CS_STAT_RES_POISON, 
+                                   CS_STAT_RES_GHOSTHIT, CS_STAT_RES_POISON,
                                    CS_STAT_RES_SLOW, CS_STAT_RES_PARA,
                                    CS_STAT_TURN_UNDEAD,
                                    CS_STAT_RES_FEAR, -1 /* Cancellation */,
                                    CS_STAT_RES_DEPLETE, CS_STAT_RES_DEATH,
                                    -1 /* Chaos */, -1 /* Counterspell */,
                                    -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
-                                   CS_STAT_RES_BLIND, 
+                                   CS_STAT_RES_BLIND,
                                    -1, /* Internal */
                                    -1, /* life stealing */
                                    -1 /* Disease - not fully done yet */
@@ -272,7 +272,7 @@ void add_me_cmd(char *buf, int len, socket_struct *ns)
         socket_info.nconns--;
         ns->status = Ns_Avail;
     }
-    settings=oldsettings;   
+    settings=oldsettings;
 }
 
 /** Reply to ExtendedInfos command */
@@ -281,7 +281,7 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns)
     char cmdback[MAX_BUF];
     char command[50];
     int info,nextinfo, smooth = 0;
-    cmdback[0]='\0';     
+    cmdback[0]='\0';
     nextinfo=0;
     while (1){
             /* 1. Extract an info*/
@@ -291,7 +291,7 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns)
             break;
         nextinfo=info+1;
         while ( (nextinfo<len) && (buf[nextinfo]!=' ') )
-            nextinfo++;  
+            nextinfo++;
         if (nextinfo-info>=49) /*Erroneous info asked*/
             continue;
         strncpy (command,&(buf[info]),nextinfo-info);
@@ -320,7 +320,7 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns)
     char temp[10];
     char command[50];
     int info,nextinfo,i,flag;
-    cmdback[0]='\0';     
+    cmdback[0]='\0';
     nextinfo=0;
     while (1){
             /* 1. Extract an info*/
@@ -330,7 +330,7 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns)
             break;
         nextinfo=info+1;
         while ( (nextinfo<len) && (buf[nextinfo]!=' ') )
-            nextinfo++;  
+            nextinfo++;
         if (nextinfo-info>=49) /*Erroneous info asked*/
             continue;
         strncpy (command,&(buf[info]),nextinfo-info);
@@ -354,7 +354,7 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns)
 
 /**
  * A lot like the old AskSmooth (in fact, now called by AskSmooth).
- * Basically, it makes no sense to wait for the client to request a 
+ * Basically, it makes no sense to wait for the client to request a
  * a piece of data from us that we know the client wants.  So
  * if we know the client wants it, might as well push it to the
  * client.
@@ -390,7 +390,7 @@ static void send_smooth(socket_struct *ns, uint16 face) {
 }
 
     /**
-     * Tells client the picture it has to use 
+     * Tells client the picture it has to use
      * to smooth a picture number given as argument.
      */
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns){
@@ -429,7 +429,7 @@ void new_player_cmd(uint8 *buf, int len, player *pl)
     command[len-4]='\0';
 
         /* The following should never happen with a proper or honest client.
-         * Therefore, the error message doesn't have to be too clear - if 
+         * Therefore, the error message doesn't have to be too clear - if
          * someone is playing with a hacked/non working client, this gives them
          * an idea of the problem, but they deserve what they get
          */
@@ -483,7 +483,7 @@ void reply_cmd(char *buf, int len, player *pl)
     snprintf(pl->write_buf, sizeof(pl->write_buf), ":%s", buf);
 
         /* this avoids any hacking here */
-    
+
     switch (pl->state) {
         case ST_PLAYING:
             LOG(llevError,"Got reply message with ST_PLAYING input state\n");
@@ -540,14 +540,14 @@ void reply_cmd(char *buf, int len, player *pl)
  * Client tells its version.  If there is a mismatch, we close the
  * socket.  In real life, all we should care about is the client having
  * something older than the server.  If we assume the client will be
- * backwards compatible, having it be a later version should not be a 
+ * backwards compatible, having it be a later version should not be a
  * problem.
  */
 void version_cmd(char *buf, int len,socket_struct *ns)
 {
     char *cp;
     char version_warning[256];
-        
+
     if (!buf) {
         LOG(llevError, "CS: received corrupted version command\n");
         return;
@@ -576,8 +576,8 @@ void version_cmd(char *buf, int len,socket_struct *ns)
             cp, ns->host);
 
             /* This is first implementation - i skip all beta DX clients
-             * with it 
-             * Add later stuff here for other clients 
+             * with it
+             * Add later stuff here for other clients
              */
 
             /* these are old dxclients */
@@ -597,13 +597,13 @@ void version_cmd(char *buf, int len,socket_struct *ns)
 }
 
 /** sound related functions. */
- 
+
 void set_sound_cmd(char *buf, int len, socket_struct *ns)
 {
     ns->sound = atoi(buf);
 }
 
-/** client wants the map resent 
+/** client wants the map resent
  * @todo remove
 */
 
@@ -731,7 +731,7 @@ void esrv_update_stats(player *pl)
     sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf,"stats ");
     sl.len=strlen((char*)sl.buf);
-    
+
     if(pl->ob != NULL)
     {
         AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
@@ -751,7 +751,7 @@ void esrv_update_stats(player *pl)
     }
 
     for(s=0;s<NUM_SKILLS;s++) {
-        if (pl->last_skill_ob[s] && 
+        if (pl->last_skill_ob[s] &&
             pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
 
                 /* Always send along the level if exp changes.  This
@@ -800,7 +800,7 @@ void esrv_update_stats(player *pl)
                  CS_STAT_SPELL_DENY);
     }
         /* we want to use the new fire & run system in new client */
-    rangetostring(pl->ob, buf); 
+    rangetostring(pl->ob, buf);
     AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
     set_title(pl->ob, buf);
     AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
@@ -935,7 +935,7 @@ static object  *heads[MAX_HEAD_POS * MAX_HEAD_POS * MAP_LAYERS];
  *    with the function returning zero - this means there are objects
  *    on the space we have already sent to the client.
  */
-static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, 
+static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
                        socket_struct *ns, int *has_obj, int is_head)
 {
     uint16  face_num;
@@ -1014,7 +1014,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
              */
         if (ns->lastmap.cells[ax][ay].faces[layer] != face_num)  {
             uint8   len, anim_speed=0, i;
-    
+
 
                 /* This block takes care of sending the actual face
                  * to the client. */
@@ -1118,7 +1118,7 @@ static void check_space_for_heads(int ax, int ay,
                 /* in this context, got_one should always increase
                  * because heads should always point to data to really send.
                  */
-            got_one += map2_add_ob(ax, ay, layer, 
+            got_one += map2_add_ob(ax, ay, layer,
                                    heads[(ay * MAX_HEAD_POS + ax) *
                                          MAP_LAYERS + layer],
                                    sl, ns, &has_obj, 1);
@@ -1131,7 +1131,7 @@ static void check_space_for_heads(int ax, int ay,
          * extend into the viewable area.
          */
 
-        /* If nothing to do for this space, we 
+        /* If nothing to do for this space, we
          * can erase the coordinate bytes
          */
     if (!del_one && !got_one) {
@@ -1185,7 +1185,7 @@ void draw_client_map2(object *pl)
         /* Handle map scroll */
     if (pl->contr->socket.map_scroll_x || pl->contr->socket.map_scroll_y) {
         coord = ((pl->contr->socket.map_scroll_x +
-                  MAP2_COORD_OFFSET) & 0x3f) << 10 | 
+                  MAP2_COORD_OFFSET) & 0x3f) << 10 |
             ((pl->contr->socket.map_scroll_y +
               MAP2_COORD_OFFSET) & 0x3f) << 4 | 1;
         pl->contr->socket.map_scroll_x=0;
@@ -1225,7 +1225,7 @@ void draw_client_map2(object *pl)
                 nx=x;
                 ny=y;
                 m = get_map_from_coord(pl->map, &nx, &ny);
-                coord = ((ax + MAP2_COORD_OFFSET) & 0x3f) << 10 | 
+                coord = ((ax + MAP2_COORD_OFFSET) & 0x3f) << 10 |
                     ((ay + MAP2_COORD_OFFSET) & 0x3f) << 4;
 
                 if (!m) {
@@ -1273,14 +1273,14 @@ void draw_client_map2(object *pl)
                         d && pl->contr->socket.darkness) {
                         pl->contr->socket.lastmap.cells[ax][ay].darkness = d;
                             /* Darkness tag & length*/
-                        SockList_AddChar(&sl, 0x1 | 1 << 5);    
+                        SockList_AddChar(&sl, 0x1 | 1 << 5);
                         SockList_AddChar(&sl, 255 - d * (256/MAX_LIGHT_RADII));
                         have_darkness = 1;
                     }
 
                     for (layer=0; layer < MAP_LAYERS; layer++) {
                         ob = GET_MAP_FACE_OBJ(m, nx, ny, layer);
-            
+
                             /* Special case: send player itself if invisible */
                         if ( !ob && x == pl->x && y == pl->y &&
                              ( pl->invisible & (pl->invisible < 50 ? 4:1) ) &&
@@ -1308,7 +1308,7 @@ void draw_client_map2(object *pl)
                                                   &pl->contr->socket);
                         }
                     }
-                        /* If nothing to do for this space, we 
+                        /* If nothing to do for this space, we
                          * can erase the coordinate bytes
                          */
                     if (!del_one && !got_one && !have_darkness) {
@@ -1350,7 +1350,7 @@ void draw_client_map2(object *pl)
  */
 void draw_client_map(object *pl)
 {
-    int i,j; 
+    int i,j;
     sint16  ax, ay;
     int mflags;
     mapstruct   *m, *pm;
@@ -1395,7 +1395,7 @@ void draw_client_map(object *pl)
                  * really call something like swap_map, but this is
                  * much more efficient and 'good enough'
                  */
-            if (mflags & P_NEW_MAP) 
+            if (mflags & P_NEW_MAP)
                 m->timeout = 50;
         }
     }
@@ -1636,7 +1636,7 @@ void esrv_send_pickup(player* pl) {
 /** appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell (player *pl, SockList *sl, object *spell) {
     client_spell* spell_info;
-    int len, i, skill=0; 
+    int len, i, skill=0;
 
     if (!(spell->name)) {
         LOG(llevError, "item number %d is a spell with no name.\n",
@@ -1661,7 +1661,7 @@ static void append_spell (player *pl, SockList *sl, object *spell) {
     if (spell->skill) {
         for (i=1; i< NUM_SKILLS; i++)
             if (!strcmp(spell->skill, skill_names[i])) {
-                skill = i+CS_STAT_SKILLINFO; 
+                skill = i+CS_STAT_SKILLINFO;
                 break;
             }
     }
@@ -1714,7 +1714,7 @@ void esrv_add_spells(player *pl, object *spell) {
                  * and restart packet formation.
                  */
             if (sl.len >
-                (MAXSOCKSENDBUF - (26 + strlen(spell->name) + 
+                (MAXSOCKSENDBUF - (26 + strlen(spell->name) +
                                    (spell->msg?strlen(spell->msg):0)))) {
                 Send_With_Handling(&pl->socket, &sl);
                 strcpy((char*)sl.buf,"addspell ");
@@ -1739,7 +1739,7 @@ void esrv_add_spells(player *pl, object *spell) {
 
 
 /* sends a 'tick' information to the client.
- * We also take the opportunity to toggle TCP_NODELAY - 
+ * We also take the opportunity to toggle TCP_NODELAY -
  * this forces the data in the socket to be flushed sooner to the
  * client - otherwise, the OS tries to wait for full packets
  * and will this hold sending the data for some amount of time,
@@ -1755,12 +1755,12 @@ void send_tick(player *pl)
     sl.len=strlen((char*)sl.buf);
     SockList_AddInt(&sl, pticks);
     tmp = 1;
-    if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp))) 
+    if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp)))
         LOG(llevError,"send_tick: Unable to turn on TCP_NODELAY\n");
 
     Send_With_Handling(&pl->socket, &sl);
     tmp = 0;
-    if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp))) 
+    if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp)))
         LOG(llevError,"send_tick: Unable to turn off TCP_NODELAY\n");
     free(sl.buf);
 }

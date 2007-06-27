@@ -40,7 +40,7 @@ extern PyTypeObject Crossfire_MapType;
         PyErr_SetString(PyExc_ReferenceError, "Crossfire map no longer exists"); \
         return NULL; \
     } }
-    
+
 #define MAPEXISTCHECK_INT( map ) \
     { \
     if (!(map) || ((map)->valid == 0)) { \
