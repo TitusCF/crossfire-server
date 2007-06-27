@@ -964,7 +964,7 @@ S->C: setup <option1> <value1> <option2> <value2>
 	extendedMapInfos (0/1)
 	    Toggle sending from server of extended map informations.
 	    What lies in this extended info depended on what extended
-	    infos the client asked. See ToggleExtendedInfos command for
+	    infos the client asked. See toggleextendedinfos command for
 	    details.
 
 	extendedTextInfos (0/1)
