@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional changes.
+ include/timers.h
+ server/timers.c
+Nicolas Weeger 2007-07-01
+
 Change behavior of shop mats: do not fail if the destination shop mat is
 blocked. This prevents players from being trapped inside shops if the outside
 shop mat has been blocked with earthwalls.
