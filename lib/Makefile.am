@@ -51,6 +51,7 @@ dist_help_DATA = help/apply help/applymode \
 	help/quit help/range help/rename \
 	help/rules \
 	help/save help/shout help/showpets \
+	help/skills \
 	help/sort_inventory help/spells \
 	help/statistics help/take help/traps \
 	help/unbind help/use help/usekeys \

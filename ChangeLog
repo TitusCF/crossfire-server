@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/help/skills, lib/Makefile.am: Add help for skills command.
+Andreas Kirschbaum 2007-07-02
+
 Documentation, no functional changes.
  include/timers.h
  server/timers.c
