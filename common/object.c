@@ -2008,24 +2008,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
              * makes things faster, and effectively the same result.
              */
 
-            /* Have object 'fall below' other objects that block view.
-             * Unless those objects are exits, type 66
-             * If INS_ON_TOP is used, don't do this processing
-             * Need to find the object that in fact blocks view, otherwise
-             * stacking is a bit odd.
-             */
-            if (!(flag & INS_ON_TOP) &&
-              (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_BLOCKSVIEW) &&
-              (op->face && !op->face->visibility)) {
-                for (last=top; last != floor; last=last->below)
-                    if (QUERY_FLAG(last, FLAG_BLOCKSVIEW)&&(last->type != EXIT)) break;
-                /* Check to see i we found the object that blocks view,
-                 * and make sure we have a below pointer for it so that
-                 * we can get inserted below this one, which requires we
-                 * set top to the object below us.
-                 */
-                if (last && last->below && last != floor) top=last->below;
-            }
         } /* If objects on this space */
         if (flag & INS_MAP_LOAD)
             top = GET_MAP_TOP(op->map,op->x,op->y);

@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1735283: shining amulet of repulsion behaves strangely.
+ common/object.c: remove stacking logic for blockview items, obsolete with map_layer.
+Nicolas Weeger 2007-07-02
+
 lib/help/skills, lib/Makefile.am: Add help for skills command.
 Andreas Kirschbaum 2007-07-02
 
