@@ -324,7 +324,7 @@ typedef struct mapdef {
     uint32 nosmooth:1;  /* if set the content of this map has smoothlevel=0 forced*/
     sint32 timeout;	/* swapout is set to this */
     sint32 swap_time;	/* When it reaches 0, the map will be swapped out */
-    sint16 players;	/* How many plares are on this level right now */
+    sint16 players;	/**< How many plares are on this level right now. Automatically updated by the object handling functions. */
     uint32 in_memory;	/* If not true, the map has been freed and must
 		         * be loaded before used.  The map,omap and map_ob
 		         * arrays will be allocated when the map is loaded */

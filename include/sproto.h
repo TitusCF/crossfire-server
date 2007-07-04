@@ -686,7 +686,6 @@ void start_info(object *op);
 char *crypt_string(char *str, char *salt);
 int check_password(char *typed, char *crypted);
 void enter_player_savebed(object *op);
-void leave_map(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);
 void process_events(mapstruct *map);

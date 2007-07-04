@@ -1484,6 +1484,9 @@ void remove_ob(object *op) {
     /* If we get here, we are removing it from a map */
     if (op->map == NULL) return;
 
+    if (op->contr != NULL && !op->contr->hidden)
+        op->map->players--;
+
     x = op->x;
     y = op->y;
     m = get_map_from_coord(op->map, &x, &y);
@@ -1824,6 +1827,8 @@ void merge_spell(object *op, sint16 x, sint16 y)
  * This function inserts the object in the two-way linked list
  * which represents what is on a map.
  *
+ * It will update player count if the op is a player.
+ *
  * @param op
  * object to insert. Must be removed. Its coordinates must be valid for the map.
  * @param m
@@ -2059,6 +2064,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     update_object(op,UP_OBJ_INSERT);
 
+    if (op->contr && !op->contr->hidden)
+        op->map->players++;
 
     /* Don't know if moving this to the end will break anything.  However,
      * we want to have update_look set above before calling this.

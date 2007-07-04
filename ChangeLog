@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Hopefully fix invalid player count on map. Now handled by remove_ob() and
+insert_ob_in_map() directly. Also handled by leave() as the player leaves badly
+the game in this case. Remove now unused leave_map() function.
+ common/object.c
+ include/map.h sproto.h
+ server/apply.c login.c player.c server.c
+Nicolas Weeger 2007-07-04
+
 Fix bug #1735283: shining amulet of repulsion behaves strangely.
  common/object.c: remove stacking logic for blockview items, obsolete with map_layer.
 Nicolas Weeger 2007-07-02

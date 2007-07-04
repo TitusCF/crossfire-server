@@ -630,7 +630,7 @@ void check_login(object *op) {
                 party_password[strlen(party_password) - 1] = '\0';
         }
     } /* End of loop loading the character file */
-    leave_map(op);
+    remove_ob(op);
     op->speed=0;
     update_ob_speed(op);
     /*FIXME dangerous call, reset_object should be used to init freshly allocated obj struct!*/

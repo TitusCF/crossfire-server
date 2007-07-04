@@ -155,25 +155,6 @@ void enter_player_savebed(object *op)
 }
 
 /**
- * All this really is is a glorified remove_object that also updates
- * the counts on the map if needed.
- */
-void leave_map(object *op)
-{
-    mapstruct *oldmap = op->map;
-
-    remove_ob(op);
-
-    if (oldmap) {
-	if (!op->contr->hidden)
-	    oldmap->players--;
-	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
-	    set_map_timeout(oldmap);
-	}
-    }
-}
-
-/**
  *  enter_map():  Moves the player and pets from current map (if any) to
  * new map.  map, x, y must be set.  map is the map we are moving the
  * player to - it could be the map he just came from if the load failed for
@@ -289,16 +270,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
      * old map does not work.
      */
     if (oldmap != newmap) {
-        /** Hidden DMs don't appear on map. */
-        if (!op->contr->hidden)
-            newmap->players++;
-
         if (oldmap) /* adjust old map */
         {
-            if (!op->contr->hidden)
-                /** Hidden DMs don't appear on map. */
-                oldmap->players--;
-
             if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
                 set_map_timeout(oldmap);
         }
@@ -1233,7 +1206,9 @@ void leave(player *pl, int draw_exit) {
 	if (pl->ob->map) {
 	    if (pl->ob->map->in_memory==MAP_IN_MEMORY)
 		pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
-	    pl->ob->map->players--;
+        /* we need to update player count, since remove_ob() isn't called */
+        if (!pl->hidden)
+            pl->ob->map->players--;
 	    pl->ob->map=NULL;
 	}
 	pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */
