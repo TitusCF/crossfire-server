@@ -143,17 +143,6 @@ int command_cast_spell (object *op, char *params, char command)
 
     if (command=='i') castnow = 1;
 
-    /* Remove control of the golem */
-    if(op->contr->ranges[range_golem]!=NULL) {
-	if (op->contr->golem_count == op->contr->ranges[range_golem]->count) {
-	    remove_friendly_object(op->contr->ranges[range_golem]);
-	    remove_ob(op->contr->ranges[range_golem]);
-	    free_object(op->contr->ranges[range_golem]);
-	}
-        op->contr->ranges[range_golem]=NULL;
-	op->contr->golem_count = 0;
-    }
-
     if(params!=NULL) {
 	tag_t spellnumber = 0;
 	if ((spellnumber = atoi(params))!=0)
@@ -187,6 +176,17 @@ int command_cast_spell (object *op, char *params, char command)
 		    spob->skill, spob->name);
 		return 1;
 	    }
+
+        /* Remove control of the golem */
+        if(op->contr->ranges[range_golem]!=NULL) {
+            if (op->contr->golem_count == op->contr->ranges[range_golem]->count) {
+                remove_friendly_object(op->contr->ranges[range_golem]);
+                remove_ob(op->contr->ranges[range_golem]);
+                free_object(op->contr->ranges[range_golem]);
+            }
+            op->contr->ranges[range_golem]=NULL;
+            op->contr->golem_count = 0;
+        }
 
 	    if (castnow) {
 		cast_spell(op,op,op->facing,spob,cp);

@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_range.c: don't lose golem if only consulting the spell list.
+Nicolas Weeger 2007-07-05
+
 Hopefully fix invalid player count on map. Now handled by remove_ob() and
 insert_ob_in_map() directly. Also handled by leave() as the player leaves badly
 the game in this case. Remove now unused leave_map() function.
