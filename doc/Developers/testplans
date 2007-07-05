@@ -23,7 +23,6 @@ test
  |  +-socket
  |  +-random_maps
  |  +-server
- |  +-crossedit
  +-bugs  ** contains test of known bugs (fixed and opened)
  |  +-bugtrack   ** Each file has the number of associated sourceforge bug id
  |  |    +-bug_<id>.c
@@ -33,7 +32,6 @@ test
  |  +-socket
  |  +-random_maps
  |  +-server
- |  +-crossedit
  |  +-general  ** put here func test not in previous func categories
  +-plugins
     //structure still to be defined

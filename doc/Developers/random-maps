@@ -15,7 +15,7 @@ LIBDIR/maps.
 
   A "style" is usually a small map which contains only objects which
 define the "style".  For example, a monsterstyle "orc" might be a map
-generated with crossedit which has six orcs, a kobold, and a troll in it.
+generated with Gridarta which has six orcs, a kobold, and a troll in it.
 When monsters are placed, the generator will randomly choose monsters from the
 "orc" style, and for this example, on average, it will generate 6 orcs/troll
 and 1 kobold/troll.  So orcs will be very common, and there'll be occasional
@@ -26,7 +26,7 @@ trolls and kobolds.
 generator will do special things with the object depending on which directory
 it is in.  Style maps are located in
 maps/styles/*,
-you may use crossedit to modify the style maps, or create new ones.
+you may use Gridarta to modify the style maps, or create new ones.
 
 
  Style Parameters::
@@ -539,7 +539,7 @@ Below is the original proposal:
 
  Random Maps
 
-  The major thing still missing from Crossfire, I think, is a good facility
+  The major thing still missing from Gridarta, I think, is a good facility
 for generating random maps:
 
   1.  They can be used by map creators to create a basic layout for his

@@ -21,14 +21,13 @@ Sections:
 	A. Names (name, name_pl)
 	B. Types (type) & Subtypes (subtype)
 	C. Client Types (client_type)
-	D. editable field (editable)
-	E. Animations (anim - mina) (facings)
-        F. Material types (material)
-	G. Item Power (item_power)
-	H. Body Location
-	I. Meaning of certain attributes for certain items:
-	J. Lore
-	K. Movement types
+	D. Animations (anim - mina) (facings)
+	E. Material types (material)
+	F. Item Power (item_power)
+	G. Body Location
+	H. Meaning of certain attributes for certain items:
+	I. Lore
+	J. Movement types
 
 4. SPECIAL OBJECTS
 
@@ -846,44 +845,7 @@ Client Type	Notes
 25042		Trigger (27), levers (93)
 25091		Bed to reality (106)
 
-D. editable field (editable)
-=============================
-
-Editable sole meaning is for crossedit.  Crossedit uses editable to determine
-what menu(s) the item should appear in.  Crossfire does not use it at all.
-
-The following table/values determine what menus the archetype will appear
-in.  When looking at this table to determine what the value of editable
-should be, it is 2^(num-1).  That is to say if you want it to appear in the
-'shop' menu, it would be 2^6 and not 2^7.  By default, objects default
-to editable 1 - that is to say, they become monsters.
-
-Asterisk(*) marks groups that are really editable.
-
- 0 (0)	None			- Internal archetypes (spells, abilities,
-				map, etc.)
-*1 (1)	Monsters		- all monsters, generators and NPC's
-*2 (2)	Exits			- all buildings, towns, teleprorts and other
-				exits
-*3 (4)	Treasures		- Normally used maps as treasures
-*4 (8)	Backgrounds		- different backgrounds (floors, woods, etc.)
-*5 (16) Gates and door		- everything that can be opened or closed
-*6 (32) Special			- directors, spinners, firewalls
-*7 (64) Shop			- All items needed in shops.
-*8 (128) Normal objects		- sacks, signs, gravestone, furnitures etc.
-*9 (256) False walls		- Walls that C. Animations (anim - mina) (facings)can be destroyed or
-				broken through.
-10 (512) Walls			- different walls, caves, dungeons etc.
-11 (1024) Equipments		- mainly weapons and armours
-12 (2048) Rest treasures	- foods, scrolls, potions, jewels, etc
-13 (4096) Artifacts		- Named weapons, special armors, etc
-
-An archetype can belong to several editable families, by adding the values
-together.  For example, a value of 544 (512+32) would show up in both the
-special and walls menu.
-
-
-E. Animations (anim - mina) (facings)
+D. Animations (anim - mina) (facings)
 =====================================
 
 This section will briefly try to explain how all the animation values
@@ -949,7 +911,7 @@ Thus if an object has speed of 0.2, its anim_speed is effectively 5.
 
 
 
-F. Material types (material)
+E. Material types (material)
 ============================
 
 Material       bit
@@ -973,7 +935,7 @@ any way.
 An object can have multiple material types by adding these values together.
 
 
-G. Item Power (item_power)
+F. Item Power (item_power)
 ===========================
 
 item_power measures how powerful and item is.  This information is only
@@ -1028,7 +990,7 @@ writing (Aug 2002).  Further refinement is needed on the power rating
 for items.  However, if you are creating a new magic item, setting
 an appropriate item_power would save work later on.
 
-H. Body Location
+G. Body Location
 ==================
 
 The body locations information determines where the item is equipped onto
@@ -1094,7 +1056,7 @@ skill stuff do a strcmp, but then we are defining the name - easier
 to just presume that the location won't change in teh body_locations
 table - there is no reason that it should.
 
-I. Meaning of certain attributes for certain items:
+H. Meaning of certain attributes for certain items:
 ====================================================
 
 All objects have strength, intelligence, wisdom, dexterity, constitution,
@@ -1123,7 +1085,7 @@ For exits:
 slaying  = The map which the exit leads to.
 hp,sp = (x,y) of the destination on the new map.
 
-J. Lore
+I. Lore
 ============================================================
 
 Lore is a free form text field similiar to the msg bug.  Its syntax is
@@ -1138,7 +1100,7 @@ should contain background information on the object, or other somewhat general
 details about the object.  It will be put into books, possibly used by npc's
 and other places where general knowledge should be presented.
 
-K. MOVEMENT TYPES
+J. MOVEMENT TYPES
 ============================================================
 
 The movement types (MOVE_..) is a bitmask that determines which method
@@ -1566,7 +1528,7 @@ very successfully in them.  The only way to know is to test the spell you
 want to use with a wall.
 
 Several types of magical walls are predefined for you in the archetypes, and
-can be found on a pick-map available in crossedit.
+can be found on a pick-map available in Gridarta.
 
 If you want a magical wall which is not already defined, all you need to do
 is choose one of the predefined walls, and modify the 'dam' variable.  The

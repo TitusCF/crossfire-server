@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove crossedit-related documentation, replace with Gridarta.
+Removed:
+ doc/Crossedit.doc crossedit.man
+Modified:
+ doc/Makefile.am
+ doc/Developers/objects mapguide random-maps testplans
+Nicolas Weeger 2007-07-05
+
 server/c_range.c: don't lose golem if only consulting the spell list.
 Nicolas Weeger 2007-07-05
 
