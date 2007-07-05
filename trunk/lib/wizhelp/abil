@@ -1,8 +1,0 @@
-syntax: abil <player> <attribute>
-<value>
-notes: abil will
-permanently change the ability
-scores of players.  Attribute
-is one of str, dex, con, int,
-wis, pow, cha. Value may not
-exceed 30.

@@ -1,4 +1,0 @@
-syntax: dumpallobjects
-notes:
-This prints out a list of all
-active objects to stderr.

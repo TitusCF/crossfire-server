@@ -1,4 +1,0 @@
-syntax: set_god <player> <diety>
-
-notes: this will change a players
-diety to the diety specified.

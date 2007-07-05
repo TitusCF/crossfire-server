@@ -1,4 +1,0 @@
-syntax: dumpallarchtypes
-notes:
-This prints out a list of all
-archtypes to stderr.

@@ -1,4 +1,0 @@
-syntax: wizcast [<on_off>]
-notes: this will enable/disable your ability
-to cast spells and prayers anywhere as dm. Without
-argument it toggles between on and off.
