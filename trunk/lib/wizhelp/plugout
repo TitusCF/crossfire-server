@@ -1,0 +1,4 @@
+syntax: plugout <plugin name>
+
+notes: this will remove a loaded
+plugin from memory.

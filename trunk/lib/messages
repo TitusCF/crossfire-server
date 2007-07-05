@@ -1,0 +1,152 @@
+#
+# Message file for books  
+#
+# Message entries contained in this file will  
+# appear randomly in readable objects like books, scrolls
+# and such (op->type==BOOK).
+#
+# To add an entry: 
+# ---------------
+# Start all entries w/ MSG and end with ENDMSG. The body of 
+# the text between these 2 words will be the message.
+#
+# When designing messages please keep in mind: 
+# -------------------------------------------
+#    1) Message length shouldn't exceed the maximum
+# buffer size for books (you'll generate a warning message
+# if you do this). Check the file include/read.h for the 
+# current message size limit (BOOK_BUF).
+#    2) Text has to fit into the player message window.
+# Don't design lines at lengths of 40 or more, or it will
+# wrap around to the next line. Long lines will appear 
+# differently to the player than as presented in this file. 
+#
+#
+#
+MSG
+
+ <undecipherable text>
+ENDMSG
+#
+#
+MSG
+"In the mountains north-east of the great 
+city we found it at last--the hidden 
+fortress of Barad-Dur. What treasures 
+could lie in it I do not know for our 
+party never gained its way past the 
+entryway. Skulls, pixies, and a horrible 
+creature I hesitate to name decimated my 
+friends and I." 
+ENDMSG
+#
+#
+MSG
+In ancient times past the great fortress 
+of Ang was raised on the western shore. 
+Many inhabitants it has had, but the last
+known was the most unusual. A titan of 
+rare power is said to live in Ang now.
+There he serves as guardian of an arti-
+fact of unusual might.
+ENDMSG
+#
+#
+MSG
+Many have ventured into the northern 
+country. Up beyond the mountains, alone
+in the wastes lies a vast domain of 
+mines that delve deep into the earth. 
+Know that these tunnels and shafts are
+quite perilous; for only once in recent
+times have I heard of an expedition
+returning from them.
+ENDMSG
+#
+#
+MSG
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+~~~~~~~~~
+~~~~~~~~~              ^^^^^^^^^^^^^ 
+~~~~~~~~X==========   ^  %%%%%%^%^^^^^
+~~~~~~~ santo	  =     %%%%%%%%%%%%%%
+~~~~~~~	dominion  =      %%%The%%%%%%%
+~~~~~~	^^        =      %%%%%%%%%%%%%
+~~~~~~	^^        =      %%Great%%%%%%
+~~~~~~^	^         =       %%%%%%%%%%%%
+~~~~~~X===============================
+~~~~~~ Scorn  ^^^  =      %%%%%%%%%%%%
+~~~~~	     ^^^^  =  %% %%Forest%%%%%
+~~~          ^^^   =    %%%%%%%%%%%%%%
+~~~           ^^^  =    %%%%%%%%%%%%%%
+~~~         ^^   ===     %%%%%%%%%%%%%
+~~~              X Brest 
+~~~~           ~~~~~ 
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------Map of Western World--------
+ENDMSG
+#
+#
+MSG
+...and then did the Alchemist agree to
+make me my potion. First he called to 
+his grimm servants who hauld forth a 
+great iron cauldron. Into this black 
+device did he deposit his ingredients
+and, opening his spell book for refer-
+ence, then did he cast his spell of 
+alchemy therepon the cauldron. 
+
+  Greatly did the tub shake and move!
+I thought that the Alchemist had broke
+his device, but he chuckled at my ig-
+norance. Into the cauldron did he reach
+an brought forth a filled bottle of 
+golden amber fluid...
+ENDMSG
+#
+#
+MSG
+  Know that there are 4 principle 
+philosophical ingredients. In order,
+they are:
+
+   - philosophical salt
+   - philosophical sulphur
+   - philosophical phosphorus
+   - philosophical oil
+
+  The great alchemist has often said that 
+all living things are made of these
+ingredients. Proper combination of
+these with other base objects can
+often create potions of power and
+might.
+ENDMSG
+#
+#
+# (C)2007 Y.E.J. Chachkoff. All rights reserved.
+# The author agreed to have his work distributed with the original Crossfire RPG game, any fork excluded.
+MSG
+11 Tromisian 5211EK: We made a strange encounter while we were travelling down the ancient road to Lake Country. Plunderers from Jangk were attacking a caravan near the Iron Doors.
+
+We of course helped the merchants, and easily defeated the bandits, some fleeing. But merchants seemed... uneasy, once they recognized our Guard uniforms.
+
+We soon understood why: their twelve heavily sealed wagons were filled with Goblins, Orcs, and other creatures with the gift of speaking. They refused to tell us anything, so we decided to defer to the Lord's Justice. I don't know what will happen to them.
+
+From some testimonies we could gather, this traffic has been going on for years, for the benefit of the biggest domains of Lake Country.
+
+Me and my men will try to learn more about this.
+ENDMSG
+#
+#
+# (C)2007 Y.E.J. Chachkoff. All rights reserved.
+# The author agreed to have his work distributed with the original Crossfire RPG game, any fork excluded.
+MSG
+In 5122EK, Bottle Riots, only reprimed with difficulty, in Port Jospeh drove local authorities to totally forbid taverns and other drink-related places, with the sole exception of shops controlled by the Sea Princes themselves.
+
+However, Josephians rapidly found a loophole in the decree, noticing it only applied to buildings on or above the ground level. They thus refurbished to taverns caves in individual houses; they are indicated by their green frontage. 
+ENDMSG

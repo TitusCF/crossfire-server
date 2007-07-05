@@ -1,0 +1,25 @@
+#!/bin/sh
+#
+# This is a replacement for the crosserv.pl perl script.,
+# No point in using perl for such a simple task.
+
+CMDNAME="BINDIR/crossfire-server"
+maxrestart=500
+logdir="/tmp/crosservlog"
+
+
+logcount=0
+
+rm -rf $logdir
+mkdir $logdir
+
+while [ ! "$logcount"x = "$maxrestart"x ]; do
+  echo "Starting Crossfire `date` for the $logcount time..." 1>$logdir/$logcount 2>&1
+  $CMDNAME -d 2>>$logdir/$logcount 1>&2
+  if [ -f core ] ; then
+        mv core core.$logcount
+        /bin/gzip core.$logcount
+  fi
+  logcount=`expr $logcount + 1`
+  sleep 50
+done

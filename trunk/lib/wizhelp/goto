@@ -1,0 +1,5 @@
+syntax: goto <mapname>
+notes:
+using this command will instantly
+move you to the start point of
+the map specified.

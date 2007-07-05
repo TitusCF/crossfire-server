@@ -1,0 +1,4 @@
+syntax: shutdown
+notes: This
+will cause the server to shut
+down entirely.

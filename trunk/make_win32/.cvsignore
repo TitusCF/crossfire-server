@@ -1,0 +1,11 @@
+*.plg
+*.ncb
+*.opt
+FullDebug
+ReleaseLog
+ReleaseQuit
+Installer
+CrossfireServer.exe
+make_maps_nsi.vpd
+CrossfireServerBigworldMaps.nsi
+CrossfireServerBigworldMaps.exe
