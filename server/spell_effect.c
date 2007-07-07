@@ -2088,7 +2088,7 @@ int remove_curse(object *op, object *caster, object *spell) {
 		CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
 		tmp->value = 0; /* Still can't sell it */
 		if (op->type == PLAYER)
-		    esrv_send_item(op, tmp);
+		    esrv_update_item(UPD_FLAGS, op, tmp);
 	    }
 	}
 
@@ -2213,7 +2213,7 @@ int cast_identify(object *op, object *caster, object *spell) {
 					 "The item has a story:\n%s",
 					 tmp->msg);
 		}
-		esrv_send_item(op, tmp);
+		esrv_update_item(UPD_FLAGS | UPD_NAME, op, tmp);
 	    }
 	    num_ident--;
 	    success=1;
@@ -2616,10 +2616,6 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 new_altar->y = tmp->y;
                 new_altar->level = tmp->level;
                 insert_ob_in_map(new_altar,tmp->map,tmp,INS_BELOW_ORIGINATOR);
-                if(op->type==PLAYER) {
-                    esrv_del_item(op->contr, tmp->count);
-                    esrv_send_item(op, new_altar);
-                }
                 remove_ob(tmp);
                 draw_ext_info_format(NDI_UNIQUE,0, op,
 				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
@@ -2715,7 +2711,7 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
 
     if (weapon->nrof > 1) {
 	tmp = get_split_ob(weapon, 1, NULL, 0);
-	esrv_send_item(op, weapon);
+	esrv_update_item(UPD_NROF, op, weapon);
 	weapon = tmp;
     }
 
@@ -2739,9 +2735,9 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
      * used above.
      */
     if (!QUERY_FLAG(weapon, FLAG_REMOVED))
-	remove_ob (weapon);
+        remove_ob (weapon);
     insert_ob_in_ob (weapon, tmp);
-    esrv_send_item(op, weapon);
+
     /* To do everything necessary to let a golem use the weapon is a pain,
      * so instead, just set it as equipped (otherwise, we need to update
      * body_info, skills, etc)

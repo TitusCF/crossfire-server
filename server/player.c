@@ -1739,12 +1739,6 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     if (!was_destroyed(arrow, tag))
 	ob_process(arrow);
 
-    if (op->type == PLAYER) {
-	if (was_destroyed (left, left_tag))
-	    esrv_del_item(op->contr, left_tag);
-	else
-	    esrv_send_item(op, left);
-    }
     return 1;
 }
 

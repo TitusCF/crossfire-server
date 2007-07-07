@@ -1413,6 +1413,8 @@ void sub_weight (object *op, signed long weight) {
  * environment, the x and y coordinates will be updated to
  * the previous environment.
  *
+ * Will inform the client of the removal if needed.
+ *
  * @param op
  * object to remove. Must not be removed yet, else abort() is called.
  *
@@ -1449,6 +1451,9 @@ void remove_ob(object *op) {
         sub_weight(op->env, op->weight*op->nrof);
         else
         sub_weight(op->env, op->weight+op->carrying);
+
+        if (op->env->contr != NULL && op->head == NULL)
+            esrv_del_item(op->env->contr, op->count);
 
         /* NO_FIX_PLAYER is set when a great many changes are being
          * made to players inventory.  If set, avoiding the call
@@ -1586,6 +1591,8 @@ void remove_ob(object *op) {
  * This function goes through all objects below and including top, and
  * merges op to the first matching object.
  *
+ * Will correctly send updated objects to client if needed.
+ *
  * @param op
  * object to merge.
  * @param top
@@ -1603,6 +1610,8 @@ object *merge_ob(object *op, object *top) {
             continue;
         if (can_merge(op,top)) {
             top->nrof+=op->nrof;
+            if (top->env && top->env->contr)
+                esrv_update_item(UPD_NROF, top->env, top);
             op->weight = 0; /* Don't want any adjustements now */
             remove_ob(op);
             free_object(op);
@@ -1828,6 +1837,8 @@ void merge_spell(object *op, sint16 x, sint16 y)
  * which represents what is on a map.
  *
  * It will update player count if the op is a player.
+ *
+ * Player ground window will be updated if needed.
  *
  * @param op
  * object to insert. Must be removed. Its coordinates must be valid for the map.
@@ -2131,6 +2142,9 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * the rest (or is removed and freed if that number is 0).
  * On failure, NULL is returned, and the reason LOG()ed.
  *
+ * This function will send an update to the client if the remaining object
+ * is in a player inventory.
+ *
  * @param orig_ob
  * object from which to split.
  * @param nr
@@ -2163,8 +2177,11 @@ object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
         free_object2(orig_ob, 1);
     }
     else if (!is_removed) {
-        if(orig_ob->env!=NULL)
+        if(orig_ob->env!=NULL) {
             sub_weight (orig_ob->env,orig_ob->weight*nr);
+            if (orig_ob->env->contr)
+                esrv_update_item(UPD_NROF, orig_ob->env, orig_ob);
+        }
         if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
             /* This is a failure, so always log it. */
             LOG(llevDebug,
@@ -2183,6 +2200,8 @@ object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
  * Decreases a specified number from
  * the amount of an object.  If the amount reaches 0, the object
  * is subsequently removed and freed.
+ *
+ * This function will send an update to client if op is in a player inventory.
  *
  * @param op
  * object to decrease.
@@ -2229,14 +2248,11 @@ object *decrease_ob_nr (object *op, uint32 i)
             sub_weight (op->env, op->weight * i);
             op->nrof -= i;
             if (tmp) {
-                esrv_send_item(tmp, op);
+                esrv_update_item(UPD_NROF, tmp, op);
             }
         } else {
             remove_ob (op);
             op->nrof = 0;
-            if (tmp) {
-                esrv_del_item(tmp->contr, op->count);
-            }
         }
     }
     else
@@ -2249,14 +2265,6 @@ object *decrease_ob_nr (object *op, uint32 i)
             remove_ob (op);
             op->nrof = 0;
         }
-        /* Since we just removed op, op->above is null */
-        for (tmp = above; tmp != NULL; tmp = tmp->above)
-            if (tmp->type == PLAYER) {
-                if (op->nrof)
-                    esrv_send_item(tmp, op);
-                else
-                    esrv_del_item(tmp->contr, op->count);
-            }
     }
 
     if (op->nrof) {
@@ -2294,6 +2302,8 @@ void add_weight (object *op, signed long weight) {
 /**
  * This function inserts the object op in the linked list
  * inside the object environment.
+ *
+ * It will send to client where is a player.
  *
  * @param op
  * object to insert. Must be removed and not NULL. Must not be multipart.
@@ -2336,6 +2346,8 @@ object *insert_ob_in_ob(object *op,object *where) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
                 tmp->nrof += op->nrof;
+                if (tmp->env && tmp->env->contr)
+                    esrv_update_item(UPD_NROF, tmp->env, tmp);
                 /* Weight handling gets pretty funky.  Since we are adding to
                  * tmp->nrof, we need to increase the weight.
                  */
@@ -2367,6 +2379,9 @@ object *insert_ob_in_ob(object *op,object *where) {
         op->below->above = op;
         where->inv = op;
     }
+
+    if (where->contr != NULL)
+        esrv_send_item(where, op);
 
     otmp=get_player_container(where);
     if (otmp&&otmp->contr!=NULL) {

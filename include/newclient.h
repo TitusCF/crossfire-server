@@ -258,6 +258,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define UPD_ANIM	0x20
 #define UPD_ANIMSPEED	0x40
 #define UPD_NROF	0x80
+#define UPD_ALL     0xFF
 
 /* The flag values sent by the updspell command */
 #define UPD_SP_MANA	0x01

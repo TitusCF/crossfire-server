@@ -64,6 +64,10 @@ void esrv_send_item( object* ob, object* obx )
     {
     }
 
+void esrv_update_item(int flags, object *pl, object *op)
+{
+}
+
 void dragon_ability_gain( object* ob, int x, int y )
     {
     }

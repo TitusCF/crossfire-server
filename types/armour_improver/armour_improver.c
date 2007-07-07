@@ -143,14 +143,13 @@ static void improve_armour(object *op, object *improver, object *armour) {
         armour->item_power = 0;
 
     if (op->type == PLAYER) {
-        esrv_send_item(op, armour);
+        esrv_update_item(UPD_WEIGHT | UPD_NAME | UPD_NROF, op, armour);
         if(QUERY_FLAG(armour, FLAG_APPLIED))
             fix_object(op);
     }
     decrease_ob(improver);
     if (tmp) {
         insert_ob_in_ob(tmp, op);
-        esrv_send_item(op, tmp);
     }
     return;
 }

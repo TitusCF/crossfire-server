@@ -296,9 +296,7 @@ static int god_gives_present (object *op, object *god, treasure *tr)
      * Mark what god gave it, so it can be taken vengefully later!
      */
     set_ob_key_value(tmp, "divine_giver_name", god->name, TRUE);
-    tmp = insert_ob_in_ob (tmp, op);
-    if (op->type == PLAYER)
-        esrv_send_item (op, tmp);
+    insert_ob_in_ob (tmp, op);
     return 1;
 }
 
@@ -849,7 +847,7 @@ static int god_removes_curse (object *op, int remove_damnation)
             CLEAR_FLAG (tmp, FLAG_CURSED);
             CLEAR_FLAG (tmp, FLAG_KNOWN_CURSED);
             if (op->type == PLAYER)
-                esrv_send_item (op, tmp);
+                esrv_update_item (UPD_FLAGS, op, tmp);
         }
     }
 

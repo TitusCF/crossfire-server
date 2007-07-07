@@ -82,9 +82,7 @@ static method_ret lighter_type_apply(ob_methods *context, object *lighter, objec
         if(lighter->nrof > 1) {
             object *oneLighter = get_split_ob(lighter, 1, NULL, 0);
             oneLighter->stats.food--;
-            esrv_send_item(applier, lighter);
             oneLighter = insert_ob_in_ob(oneLighter, applier);
-            esrv_send_item(applier, oneLighter);
         } else {
             lighter->stats.food--;
         }

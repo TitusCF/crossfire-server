@@ -15,6 +15,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Try to factor esrv_del_item and esrv_send_item into remove_ob() and
+insert_ob_in_ob(). Fix calls to esrv_send_item that are really esrv_update_item().
+ common/object.c treasure.c
+ include/newclient.h
+ random_maps/standalone.c
+ server/apply.c attack.c c_object.c c_wiz.c gods.c player.c plugins.c skills.c shop.c spell_effect.c time.c
+ socket/item.c
+ test/unit/common/stubs_common.c
+ types/armour_improver/armour_improver.c
+ types/lamp/lamp.c
+ types/lighter/lighter.c
+Nicolas Weeger 2007-07-05
+
 Remove crossedit-related documentation, replace with Gridarta.
 Removed:
  doc/Crossedit.doc crossedit.man

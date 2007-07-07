@@ -72,9 +72,6 @@ static void do_turn(object* op, object* who, int aflags, const char* onoff) {
         SET_FLAG(tmp2, FLAG_INV_LOCKED);
     insert_ob_in_ob(tmp2, who);
 
-    /* Remove the old lantern */
-    if (who->type == PLAYER)
-        esrv_del_item(who->contr, (tag_t)op->count);
     remove_ob(op);
     free_object(op);
 
@@ -90,8 +87,6 @@ static void do_turn(object* op, object* who, int aflags, const char* onoff) {
         }
     }
 
-    if(who->type==PLAYER)
-        esrv_send_item(who, tmp2);
     if (who->map) {
         SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
         update_position(who->map, who->x, who->y);
@@ -147,8 +142,6 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object* app
     /* insert the portion that was split off. */
     if(tmp!=NULL) {
         insert_ob_in_ob(tmp,applier);
-        if(applier->type==PLAYER)
-            esrv_send_item(applier, tmp);
     }
 
     return METHOD_OK;

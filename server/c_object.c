@@ -303,21 +303,12 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 			  failure, NULL);
 	    return;
 	}
-	/* Tell a client what happened rest of objects */
-	if (pl->type == PLAYER) {
-	    if (was_destroyed (tmp2, tmp2_tag))
-		esrv_del_item (pl->contr, tmp2_tag);
-	    else
-		esrv_send_item (pl, tmp2);
-	}
     } else {
 	/* If the object is in a container, send a delete to the client.
 	 * - we are moving all the items from the container to elsewhere,
 	 * so it needs to be deleted.
 	 */
         if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
-	    if (tmp->env && pl->type==PLAYER)
-	        esrv_del_item (pl->contr, tmp->count);
 	    remove_ob(tmp); /* Unlink it */
 	}
     }
@@ -343,13 +334,12 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
      */
     if(pl->type!=PLAYER) return;
 
-    esrv_send_item (pl, tmp);
     /* These are needed to update the weight for the container we
      * are putting the object in.
      */
     if (op!=pl) {
 	esrv_update_item (UPD_WEIGHT, pl, op);
-	esrv_send_item (pl, pl);
+	esrv_update_item (UPD_WEIGHT, pl, pl);
     }
 
     /* Update the container the object was in */
@@ -626,11 +616,6 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 			  failure, NULL);
 	    return;
 	}
-	/* Tell a client what happened other objects */
-	if (was_destroyed (tmp2, tmp2_tag))
-	      esrv_del_item (op->contr, tmp2_tag);
-	else	/* this can proably be replaced with an update */
-	      esrv_send_item (op, tmp2);
     } else
 	remove_ob(tmp);
 
@@ -643,14 +628,6 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     tmp2 = insert_ob_in_ob(tmp, sack);
     fix_object(op); /* This is overkill, fix_player() is called somewhere */
 		  /* in object.c */
-
-    /* If an object merged (and thus, different object), we need to
-     * delete the original.
-     */
-    if (tmp2 != tmp)
-	esrv_del_item (op->contr, tmp_tag);
-
-    esrv_send_item (op, tmp2);
 
     /* If a transport, need to update all the players in the transport
      * the view of what is in it.
@@ -697,16 +674,6 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 			  failure, NULL);
 	    return NULL;
 	}
-	/* Tell a client what happened rest of objects.  tmp2 is now the
-	 * original object
-	 */
-	 if (op->type == PLAYER)
-	 {
-                if (was_destroyed (tmp2, tmp2_tag))
-                        esrv_del_item (op->contr, tmp2_tag);
-                else
-                        esrv_send_item (op, tmp2);
-        }
     } else
       remove_ob (tmp);
 
@@ -721,8 +688,6 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 			   "You drop the %s. The gods who lent it to you retrieves it.",
 			   "You drop the %s. The gods who lent it to you retrieves it.",
 			   name);
-      if (op->type==PLAYER)
-	esrv_del_item (op->contr, tmp->count);
       free_object(tmp);
       fix_object(op);
       return NULL;
@@ -748,8 +713,6 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
     tmp->x = op->x;
     tmp->y = op->y;
 
-    if (op->type == PLAYER)
-        esrv_del_item (op->contr, tmp->count);
     tmp_tag = tmp->count;
     insert_ob_in_map(tmp, op->map, op,0);
     if (!was_destroyed(tmp, tmp_tag) && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY && is_in_shop(op)) {
@@ -770,9 +733,9 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
 
     if (op->type == PLAYER)
     {
-	op->contr->socket.update_look = 1;
-	/* Need to update the weight for the player */
-	esrv_send_item (op, op);
+        /* insert_ob_in_map handles the update_look for the player. */
+        /* Need to update the weight for the player */
+        esrv_update_item(UPD_WEIGHT, op, op);
     }
     return tmp;
 }
@@ -1833,12 +1796,8 @@ int command_rename_item(object *op, char *params)
   tag = item->count;
   tmp = merge_ob(item, NULL);
   if (tmp == NULL) {
-    /* object was not merged */
+    /* object was not merged - if it was, merge_ob handles updating for us. */
     esrv_update_item(UPD_NAME, op, item);
-  } else {
-    /* object was merged into tmp */
-    esrv_del_item(op->contr, tag);
-    esrv_send_item(op, tmp);
   }
 
   return 1;
@@ -1885,12 +1844,8 @@ int command_lock_item(object *op, char *params) {
     tag = item->count;
     tmp = merge_ob(item, NULL);
     if (tmp == NULL) {
-        /* object was not merged */
+        /* object was not merged, if it was merge_ob handles updates for us */
         esrv_update_item(UPD_FLAGS, op, item);
-    } else {
-        /* object was merged into tmp */
-        esrv_del_item(op->contr, tag);
-        esrv_send_item(op, tmp);
     }
     return 1;
 }
@@ -1906,7 +1861,7 @@ int command_lock_item(object *op, char *params) {
  */
 int command_use(object* op, char* params) {
     char* with, copy[MAX_BUF];
-    object *first, *second, *add, *added;
+    object *first, *second, *add;
     archetype* arch;
     int count;
     sstring data;
@@ -1976,11 +1931,7 @@ int command_use(object* op, char* params) {
             }
             add = object_create_arch(arch);
             add->nrof = count;
-            added = insert_ob_in_ob(add, op);
-            if (add == added)
-                esrv_send_item(op, add);
-            else
-                esrv_update_item(UPD_NROF | UPD_WEIGHT, op, added);
+            insert_ob_in_ob(add, op);
         }
         else if (strncmp(data, "remove $", 8) == 0) {
             data += 8;

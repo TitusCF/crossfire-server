@@ -802,12 +802,6 @@ static int do_skill_ident2(object *tmp,object *pl, int obj_class, object *skill)
 				     tmp->msg);
 
         	    }
-		    /* identify will take care of updating the item if
-		     * it is in the players inventory.  IF on map, do it
-		     * here
-		     */
-		    if (tmp->map)
-			esrv_send_item(pl, tmp);
 		  }
 	          success += calc_skill_exp(pl,tmp, skill);
         	} else
@@ -1475,12 +1469,10 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
 	    newBook = get_object();
 	    copy_object(item, newBook);
 	    decrease_ob(item);
-	    esrv_send_item(pl, item);
 	    newBook->nrof = 1;
 	    if (newBook->msg) free_string(newBook->msg);
 	    newBook->msg = add_string(buf);
 	    newBook = insert_ob_in_ob(newBook, pl);
-	    esrv_send_item(pl, newBook);
 	} else {
 	    if (item->msg) free_string(item->msg);
 	    item->msg=add_string(buf);
@@ -1640,10 +1632,8 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
     {
         /* Remove to correctly merge with other items which may exist in inventory */
         remove_ob(newscroll);
-        esrv_del_item(pl->contr,newscroll->count);
     }
 	newscroll=insert_ob_in_ob(newscroll,pl);
-	esrv_send_item(pl, newscroll);
 	success = calc_skill_exp(pl,newscroll, skill);
 	if(!confused) success *= 2;
     success = success * skill->level;

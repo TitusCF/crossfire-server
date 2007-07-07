@@ -145,8 +145,6 @@ void handle_apply_yield(object* tmp)
         object* drop = create_archetype(yield);
         if (tmp->env) {
             drop = insert_ob_in_ob(drop,tmp->env);
-            if (tmp->env->type == PLAYER)
-                esrv_send_item(tmp->env,drop);
         } else {
             drop->x = tmp->x;
             drop->y = tmp->y;
@@ -653,7 +651,7 @@ static int check_improve_weapon (object *op, object *tmp)
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                   "Applied weapon builder.", NULL);
     improve_weapon(op,tmp,otmp);
-    esrv_send_item(op, otmp);
+    esrv_update_item(UPD_NAME | UPD_NROF | UPD_FLAGS, op, otmp);
     return 1;
 }
 
@@ -1455,10 +1453,9 @@ static int unapply_special (object *who, object *op, int aflags)
         tmp = merge_ob (op, NULL);
         if (who->type == PLAYER) {
             if (tmp) {  /* it was merged */
-                esrv_del_item (who->contr, del_tag);
                 op = tmp;
             }
-            esrv_send_item (who, op);
+            esrv_update_item (UPD_FLAGS, who, op);
         }
     }
     return 0;
@@ -2165,10 +2162,7 @@ int apply_special (object *who, object *op, int aflags)
         }
     }
     if(who->type==PLAYER) {
-            /* if multiple objects were applied, update both slots */
-        if (tmp)
-            esrv_send_item(who, tmp);
-        esrv_send_item(who, op);
+        esrv_update_item(UPD_NROF | UPD_FLAGS | UPD_WEIGHT, who, op);
     }
     return 0;
 }

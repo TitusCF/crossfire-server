@@ -82,7 +82,7 @@ static void cancellation(object *op)
 	CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
 	CLEAR_FLAG(op, FLAG_KNOWN_CURSED);
 	if (op->env && op->env->type == PLAYER) {
-	    esrv_send_item (op->env, op);
+	    esrv_update_item (UPD_FLAGS, op->env, op);
 	}
     }
 }
@@ -213,8 +213,6 @@ void save_throw_object (object *op, int type, object *originator)
                    if(env) {
 			op->x=env->x,op->y=env->y;
 			insert_ob_in_ob(op,env);
-			if (env->contr)
-			    esrv_send_item(env, op);
                    } else {
                       op->x=x,op->y=y;
                       insert_ob_in_map(op,m,originator,0);
@@ -232,13 +230,6 @@ void save_throw_object (object *op, int type, object *originator)
               if (op)
                   fix_stopped_item (op, m, originator);
 	} else {
-	    if (op->env) {
-		object *tmp= get_player_container(op->env);
-
-		if (tmp) {
-		    esrv_del_item(tmp->contr, op->count);
-		}
-	    }
 	    if ( ! QUERY_FLAG (op, FLAG_REMOVED))
                 remove_ob(op);
 	    free_object(op);
@@ -992,8 +983,6 @@ static int stick_arrow (object *op, object *tmp)
 	    tmp = tmp->head;
         remove_ob (op);
 	op = insert_ob_in_ob(op,tmp);
-	if (tmp->type== PLAYER)
-	    esrv_send_item (tmp, op);
         return 1;
     } else
 	return 0;
@@ -1354,7 +1343,7 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 		    flag = 1;
 		    tmp->magic--;
 		    if(op->type == PLAYER)
-			esrv_send_item(op, tmp);
+			esrv_update_item(UPD_NAME, op, tmp);
 		}
 	    }
 	    if(flag)
