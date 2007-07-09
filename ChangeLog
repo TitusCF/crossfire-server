@@ -15,6 +15,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Update face information below player if it changes.  Add P_PLAYER mapflag
+field, as well as pointer to player on space making it easy to find
+players on a space.  Fix for bug 1735459
+---
+common/map.c: Modify update_position() to look for player and
+  update MapSpace accordingly.
+common/object.c: update_object():  If player is object, update map
+   attributes immediately.  Add handling for face or object changes.
+include/map.h: Add SET/GET_MAP_PLAYER, player * to MapSpace, P_PLAYER
+  flag
+---
+MSW 2007-07-08
+
 Documentation, no functional change. Change some #define to enum for grouping purposes.
  include/map.h
 Nicolas Weeger 2007-07-08

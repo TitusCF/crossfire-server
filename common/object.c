@@ -1084,6 +1084,7 @@ void remove_from_active_list(object *op)
 void update_object(object *op, int action) {
     int update_now=0, flags;
     MoveType move_on, move_off, move_block, move_slow;
+    object  *pl;
 
     if (op == NULL) {
         /* this should never happen */
@@ -1141,15 +1142,43 @@ void update_object(object *op, int action) {
         if (((move_block | op->move_block) & ~op->move_allow) != move_block)
             update_now=1;
         if ((move_slow | op->move_slow) != move_slow) update_now=1;
+
+	if (op->type == PLAYER) update_now=1;
     }
     /* if the object is being removed, we can't make intelligent
      * decisions, because remove_ob can't really pass the object
      * that is being removed.
      */
-    else if (action == UP_OBJ_CHANGE || action == UP_OBJ_REMOVE) {
+    else if (action == UP_OBJ_REMOVE) {
         update_now=1;
-    } else if (action == UP_OBJ_FACE) {
-        /* Nothing to do for that case */
+    }
+    else if (action == UP_OBJ_FACE || action == UP_OBJ_CHANGE) {
+
+	/* In addition to sending info to client, need to update space
+	 * information.
+	 */
+	if (action == UP_OBJ_CHANGE) update_now=1;
+
+	/* There is a player on this space - we may need to send an
+	 * update to the client.
+	 * If this object is supposed to be animated by the client,
+	 * nothing to do here - let the client animate it.
+	 * We can't use FLAG_ANIMATE, as that is basically set for
+	 * all objects with multiple faces, regardless if they are animated.
+	 * (levers have it set for example).
+	 */
+	if (flags & P_PLAYER && 
+	  !QUERY_FLAG(op, FLAG_CLIENT_ANIM_SYNC) && 
+	  !QUERY_FLAG(op, FLAG_CLIENT_ANIM_RANDOM)) {
+	    pl = GET_MAP_PLAYER(op->map, op->x, op->y);
+
+	    /* If update_look is set, we're going to send this entire space
+	     * to the client, so no reason to send face information now.
+	     */
+	    if (!pl->contr->socket.update_look) {
+		esrv_update_item(UPD_FACE,pl, op);
+	    }
+	}
     }
     else {
         LOG(llevError,"update_object called with invalid action: %d\n", action);

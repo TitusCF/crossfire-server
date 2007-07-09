@@ -171,6 +171,8 @@ enum {
 #define GET_MAP_LIGHT(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].light )
 /** Sets map lighe. Not multitile aware. */
 #define SET_MAP_LIGHT(M,X,Y,L)	( (M)->spaces[(X) + (M)->width * (Y)].light = L )
+#define GET_MAP_PLAYER(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].pl )
+#define SET_MAP_PLAYER(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].pl = C )
 
 /** Gets the bottom object on a map. Not multitile aware. */
 #define GET_MAP_OB(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].bottom )
@@ -239,7 +241,7 @@ enum {
  */
 
 #define AB_NO_PASS       0x04
-/*#define P_PASS_THRU	0x08	*//* */
+#define P_PLAYER	0x08	/* There is a player on this space */
 #define P_IS_ALIVE      0x10	/**< Something alive is on this space. */
 #define P_NO_CLERIC     0x20	/**< No clerical spells cast here. */
 #define P_NEED_UPDATE	0x40	/**< This space is out of date. */
@@ -268,6 +270,7 @@ typedef struct MapSpace {
     MoveType	move_slow;	/**< What movement types this space slows. */
     MoveType	move_on;	/**< What movement types are activated. */
     MoveType	move_off;	/**< What movement types are activated. */
+    object	*pl;		/* Player that is on this space */
 } MapSpace;
 
 /**
@@ -290,8 +293,8 @@ typedef struct wmapdef {
     uint32	rainfall;	/**< Cumulative rainfall. */
     uint8 	darkness;	/**< Indicates level of darkness of map. */
     uint8	water;		/**< 0-100 percentage of water tiles. */
-	/*Dynamic parts*/
-	sint16  realtemp;  /**< Temperature at a given calculation step for this tile. */
+    /*Dynamic parts*/
+    sint16  realtemp;		/**< Temperature at a given calculation step for this tile. */
 } weathermap_t;
 
 /**
