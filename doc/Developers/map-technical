@@ -9,9 +9,16 @@ dealt with.
 
 Mark Wedel
 July 7, 2001
+------------------------------------------------------------------------------
+Contents:
+
+1. THE MAP HEADER
+2. THE MAP OBJECTS
+3. Map Tiling
+4. STACKING OF OBJECTS ON THE MAP
 
 ------------------------------------------------------------------------------
-THE MAP HEADER:
+1. THE MAP HEADER:
 
 The map header is the section at the start of the map file that
 describes the maps characteristics.  The values are described below.
@@ -90,7 +97,7 @@ tile_path_<x> - Used with map tiling.  <x> is a number, 1 is north,
 	unless you really know what you are doing.
 
 ------------------------------------------------------------------------------
-THE MAP OBJECTS:
+2. THE MAP OBJECTS:
 
 The objects within the map are saved in standard 'object save' form
 (same as is used for the players objects).  Other files document the
@@ -150,7 +157,7 @@ well as expected is for buildings where setting the move_block to non
 archetype defaults will get lost.
 
 ------------------------------------------------------------------------------
-Map Tiling:
+3. Map Tiling:
 
 Map tiling is a feature that lets multiple maps be connected, effectively
 forming a much larger single map.  This is most useful for the outdoor
@@ -201,3 +208,93 @@ from all the levels, but you can only go from the courtyard to first floor
 rooms off the courtyard.  This may not be ideal (ie, if flying, you should
 be able to go to any floor), but this tiling for elevation is just an
 example that can be used.
+
+------------------------------------------------------------------------------
+4. STACKING OF OBJECTS ON THE MAP
+
+The stacking of objects on a map is somewhat confusing.  This is because there
+are really two stacks a designer may care about - the actual stacking of
+objects on the map (as op->above points to) and the stacking of objects as they
+appear to the client.
+
+It is usually the appearance in the client the designers care most about.
+However, actual stacking in the code can be important - some objects only look
+for objects above them - if you put a teleporter above a sword, that is
+different than if you put the teleporter below the sword.
+
+When loading a map from disk, the server will keep the same stacking order as
+set in the map.  Note however that multipart (big) objects are handled
+specially - because only the head of the object is saved, the stacking for the
+non head objects is always right above the floor.  So if you put a troll down,
+with its head above a sword, when the rest of it is linked in, those other
+parts will be below any items on the ground.
+
+Additional objects put on the space during play will generally be in stack
+order - newest object is on top.  The one real exception is that flying
+objects (spells typically) will always be put on the top of the space, and
+then followed by non flying objects.  So if a sword is dropped on a space with
+a bunch of active spell objects, within the server stacking, the sword will be
+below the spell objects, but above other objects on the space.
+
+This ordering of objects in the server has little relation to how things
+appear in the client.  With the client (and map2 protocol command), there are
+10 visible layers, displayed in following order (from bottom up):
+
+Floor (by definition, nothing beneath a floor is visible)
+no_pick (2) - things like signs, savebeds, runes
+item (3) - swords, armor, scrolls, arrows, etc
+living (2) - monsters
+fly (2) - spells, arrows, some monsters
+
+The number in parentheses are the number of layers for those type of objects.
+So while there are 10 visible layers, in most cases, at least a few will not
+be used.  If there are 50 items (swords, bows) on a space, the client will
+still only be sent information on 3 of them.  It will not use the other
+layers, as only items will be sent in the items layer.
+
+In most all cases, the server automatically figures out what layer an object
+belongs to based on various flags (FLAG_IS_FLOOR, FLAG_NO_PICK, etc).
+
+An object/map maker can override these values with the 'map_layer' object
+parameter.  For example, if a map maker wanted to make what appears to be a
+flying statue, they would just put in 'map_layer fly' in the object
+definition.  The names listed above are the correct names used for the loading
+of objects.
+
+There can be other cases where map maker want to change layering.  A current
+case is levitation boots - because they seem to fly, they would normally
+always be drawn on top of other objects.  The archetype sets the map_layer
+flag to item, so that they will be drawn with the rest of the pickable
+objects.
+
+In cases of there being more objects of a type than can be displayed on a
+space, the first fallback is to look at the visibility of the defined face.
+Visibility is a face, not object, attribute, but is used when certain objects
+should take viewing precedence over others.  An example of its use is
+buildings and exits - you pretty much always want those visible, even if there
+are other non pickable objects on the space (or a player casts some runes).
+
+If the visibility for the face is the same, the last fallback is server (map)
+stacking.  In this case, the object on the top of the stack will take
+precedence of objects further down.  Note however that visibility is always
+used to put important objects higher on the space as far as the clients sees
+them.  For example, suppose we have the following space with objects with the
+hypothetical visibilities:
+
+mace (50)
+sword (50)
+bow (100)
+shield (50)
+floor (50) (this is included just to make stacking order clear).
+
+One might look at that and think that since shield is at the bottom and
+doesn't have high visibility, order would be mace, sword, bow, floor (shield
+getting dropped).
+
+But that is not the case - the high visibility of the bow causes it to be
+virtually placed above the other objects in the map view, so actual view would
+be bow, mace, sword, floor
+
+Because visibility is not an object attribute, there is generally little that
+can be done to control this, other than to set up the appropriate stacking.
+
