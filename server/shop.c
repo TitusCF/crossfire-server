@@ -780,11 +780,9 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                             pouch->name, coins[NUM_COINS-1-i]);
                         remove_ob(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
-                        esrv_del_item(pl->contr, tmp->count);
                         free_object(tmp);
                     } else {
                         remove_ob(tmp);
-                        if(pouch->type==PLAYER) esrv_del_item(pl->contr, tmp->count);
                         coin_objs[i] = tmp;
                     }
                     break;
@@ -795,9 +793,6 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                     LOG(llevError, "pay_for_item: Cannot store non-standard money object %s\n", tmp->arch->name);
                 } else {
                     remove_ob(tmp);
-                    if(pouch->type == PLAYER) {
-                        esrv_del_item(pl->contr, tmp->count);
-                    }
                     other_money[other_money_len++] = tmp;
                 }
             }

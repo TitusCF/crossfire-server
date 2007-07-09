@@ -270,7 +270,6 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
 		      "The object disappears in a puff of smoke! It must have been an illusion.",
 		      NULL);
-	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
             remove_ob (tmp);
 	free_object(tmp);

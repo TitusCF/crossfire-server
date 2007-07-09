@@ -198,13 +198,6 @@ static int attempt_steal(object* op, object* who, object *skill)
 		/* for players, play_sound: steals item */
 		success = tmp;
 		CLEAR_FLAG(tmp, FLAG_INV_LOCKED);
-
-		/* Don't delete it from target player until we know
-		 * the thief has picked it up.  can't just look at tmp->count,
-		 * as it's possible that it got merged when picked up.
-		 */
-		if (op->type == PLAYER)
-		    esrv_del_item(op->contr, tmp_count);
 	    }
 	    break;
 	}
@@ -1990,14 +1983,6 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     if((throw_ob = get_split_ob(throw_ob, 1, NULL, 0))==NULL) {
 	throw_ob = left;
 	remove_ob(left);
-	if (op->type==PLAYER)
-	    esrv_del_item(op->contr, left->count);
-    }
-    else if (op->type==PLAYER) {
-	if (was_destroyed (left, left_tag))
-	    esrv_del_item(op->contr, left_tag);
-	else
-	    esrv_update_item(UPD_NROF, op, left);
     }
 
     /* special case: throwing powdery substances like dust, dirt */

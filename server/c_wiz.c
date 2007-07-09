@@ -1194,8 +1194,6 @@ int command_remove (object *op, char *params) {
         tmp->speed = 0;
         update_ob_speed(tmp);
     }
-    if (!tmp->invisible && tmp->env && tmp->env->type == PLAYER)
-        esrv_del_item(tmp->env->contr, tmp->count);
     remove_ob(tmp);
     return 1;
 }

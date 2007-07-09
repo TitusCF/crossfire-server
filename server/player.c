@@ -2371,8 +2371,6 @@ static int save_life(object *op) {
 				 "Your %s vibrates violently, then evaporates.",
 				 "Your %s vibrates violently, then evaporates.",
 				 name);
-	    if (op->contr)
-			esrv_del_item(op->contr, tmp->count);
 	    remove_ob(tmp);
 	    free_object(tmp);
 	    CLEAR_FLAG(op, FLAG_LIFESAVE);
@@ -2406,8 +2404,6 @@ static void remove_unpaid_objects(object *op, object *env)
 	    remove_ob(op);
 	    op->x = env->x;
 	    op->y = env->y;
-	    if (env->type == PLAYER)
-		esrv_del_item(env->contr, op->count);
 	    insert_ob_in_map(op, env->map, NULL,0);
 	}
 	else if (op->inv) remove_unpaid_objects(op->inv, env);

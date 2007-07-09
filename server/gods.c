@@ -233,7 +233,6 @@ static void follower_remove_given_items (object *pl, object *op, object *god)
                                      name);
 
             remove_ob(tmp);    /* remove obj from players inv. */
-            esrv_del_item(pl->contr, tmp->count); /* notify client */
             free_object(tmp);
         } else if (tmp->inv)
             follower_remove_given_items(pl, tmp, god);

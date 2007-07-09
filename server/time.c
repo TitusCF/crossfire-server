@@ -1162,10 +1162,6 @@ int process_object(object *op) {
 	if(QUERY_FLAG(op, FLAG_APPLIED))
 	    remove_force(op);
 	else {
-	    /* IF necessary, delete the item from the players inventory */
-	    object *pl=get_player_container(op);
-	    if (pl)
-		esrv_del_item(pl->contr, op->count);
 	    remove_ob(op);
 	    if (QUERY_FLAG(op, FLAG_SEE_ANYWHERE))
 		make_sure_not_seen(op);

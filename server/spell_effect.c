@@ -85,7 +85,6 @@ int recharge(object *op, object *caster, object *spell_ob) {
 			     "The %s vibrates violently, then explodes!",
 			     name);
 	play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE);
-	esrv_del_item(op->contr, wand->count);
 	remove_ob(wand);
 	free_object(wand);
 	tmp = create_archetype("fireball");

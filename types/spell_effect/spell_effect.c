@@ -448,9 +448,6 @@ static void animate_bomb(object *op) {
         if (env->map == NULL)
             return;
 
-        if (env->type == PLAYER)
-            esrv_del_item(env->contr, op->count);
-
         remove_ob(op);
         op->x = env->x;
         op->y = env->y;

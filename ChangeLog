@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove superfluous calls to esrv_del_item (since remove_ob calls it if needed).
+Remove now unused send_removed_object function. Change esrv_send_item to esrv_update_item.
+ common/item.c
+ server/c_object.c c_wiz.c gods.c player.c plugins.c shop.c skills.c spell_effect.c time.c
+ types/spell_effect/spell_effect.c
+Nicolas Weeger 2007-07-09
+
 Update face information below player if it changes.  Add P_PLAYER mapflag
 field, as well as pointer to player on space making it easy to find
 players on a space.  Fix for bug 1735459

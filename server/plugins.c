@@ -198,39 +198,6 @@ static void send_changed_object(object *op)
     }
 }
 
-/**
- * Notify clients about a removed object.
- *
- * @param op the object about to be removed from its environment; it must still
- * be present in its environment
- */
-static void send_removed_object(object *op)
-{
-    object* tmp;
-    player *pl;
-
-    if (op->env == NULL) {
-        /* no action necessary: remove_ob() notifies the client */
-        return;
-    }
-    if (op->invisible)
-        /* invisible items aren't sent to client anyway. */
-        return;
-
-    tmp = get_player_container(op->env);
-    if (!tmp) {
-        for (pl = first_player; pl; pl = pl->next)
-            if (pl->ob->container == op->env)
-                break;
-        if (pl)
-            tmp = pl->ob;
-        else
-            tmp = NULL;
-    }
-    if (tmp)
-        esrv_del_item(tmp->contr, op->count);
-}
-
 int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
 {
     object *tmp, *next;
@@ -258,13 +225,11 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
             if (tmp->title == NULL) {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without title at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                send_removed_object(tmp);
                 remove_ob(tmp);
                 free_object(tmp);
             } else if (tmp->slaying == NULL) {
                 object *env = object_get_env_recursive(tmp);
                 LOG(llevError, "Event object without slaying at %d/%d in map %s\n", env->x, env->y, env->map->name);
-                send_removed_object(tmp);
                 remove_ob(tmp);
                 free_object(tmp);
             } else {
@@ -272,7 +237,6 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                 if (plugin == NULL) {
                     object *env = object_get_env_recursive(tmp);
                     LOG(llevError, "The requested plugin doesn't exit: %s at %d/%d in map %s\n", tmp->title, env->x, env->y, env->map->name);
-                    send_removed_object(tmp);
                     remove_ob(tmp);
                     free_object(tmp);
                 } else {
@@ -2685,7 +2649,7 @@ void* cfapi_object_set_property(int* type, ...)
                         fix_object(tmp);
                     }
                     if (tmp)
-                        esrv_send_item(tmp, op);
+                        esrv_update_item(UPD_WEIGHT, tmp, op);
                 }
                 else
                 {
@@ -2693,7 +2657,7 @@ void* cfapi_object_set_property(int* type, ...)
 
                     for (tmp = above; tmp != NULL; tmp = tmp->above)
                         if (tmp->type == PLAYER)
-                            esrv_send_item(tmp, op);
+                            esrv_update_item(UPD_WEIGHT, tmp, op);
                 }
             }
             break;
@@ -3184,7 +3148,6 @@ void* cfapi_object_remove(int* type, ...)
 
     va_end(args);
 
-    send_removed_object(op);
     remove_ob(op);
     *type = CFAPI_NONE;
     return NULL;
@@ -4152,7 +4115,6 @@ void* cfapi_object_teleport(int *type, ...)
         }
 
         if (!QUERY_FLAG(who, FLAG_REMOVED)) {
-            send_removed_object(who);
             remove_ob(who);
         }
 
