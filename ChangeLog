@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+ common/object.c
+ server/rune.c
+Nicolas Weeger 2007-07-09
+
 Remove superfluous calls to esrv_del_item (since remove_ob calls it if needed).
 Remove now unused send_removed_object function. Change esrv_send_item to esrv_update_item.
  common/item.c

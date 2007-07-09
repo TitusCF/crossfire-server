@@ -1986,7 +1986,9 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     }
 
     if (op->type != LAMP)
-        CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
+        /* lamps use the FLAG_APPLIED to keep the light/unlit status, so don't reset it.
+         Other objects just get unapplied, since the container "drops" them. */
+        CLEAR_FLAG(op,FLAG_APPLIED);
     CLEAR_FLAG(op, FLAG_INV_LOCKED);
     if (!QUERY_FLAG(op, FLAG_ALIVE))
         CLEAR_FLAG(op, FLAG_NO_STEAL);

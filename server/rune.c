@@ -28,6 +28,8 @@
 
 /**
  * @file server/rune.c
+ *
+ * All rune-related functions.
  */
 
 #include <global.h>
@@ -42,19 +44,25 @@
 #endif
 
 
-/*  peterm:
- *  write_rune:
- *  op:  rune writer
- *  skop: skill object used for casting this rune
- *  dir:  orientation of rune, direction rune's contained spell will
- *	    be cast in, if applicable
- *  inspell: spell object to put into the rune, can be null if doing
- *    a marking rune.
- *  level:  level of casting of the rune
- *  runename:  name of the rune or message displayed by the rune for
- *		a rune of marking
+/**
+ * Player is attempting to write a magical rune.
+ * This function does all checks for paths, sp/gr, ...
+ *
+ * @param op
+ * rune writer.
+ * @param caster
+ * object used for casting this rune.
+ * @param spell
+ * writing spell.
+ * @param dir
+ * orientation of rune, direction rune's contained spell will be cast in, if applicable
+ * @param runename
+ * name of the rune or message displayed by the rune for a rune of marking.
+ * @retval 0
+ * no rune was written.
+ * @retval 1
+ * rune written.
  */
-
 int write_rune(object *op,object *caster, object *spell, int dir, const char *runename) {
     object *tmp, *rune_spell, *rune;
     char buf[MAX_BUF];
@@ -177,8 +185,14 @@ int write_rune(object *op,object *caster, object *spell, int dir, const char *ru
 
 }
 
-/*  peterm: rune_attack
- * function handles those runes which detonate but do not cast spells.
+/**
+ * This function handles those runes which detonate but do not cast spells.
+ * Typically, poisoned or diseased runes.
+ *
+ * @param op
+ * rune.
+ * @param victim
+ * victim of the rune.
  */
 static void rune_attack(object *op,object *victim)
 {
@@ -200,9 +214,15 @@ static void rune_attack(object *op,object *victim)
     else  hit_map(op,0,op->attacktype,1);
 }
 
-/*  This function generalizes attacks by runes/traps.  This ought to make
- *  it possible for runes to attack from the inventory,
- *  it'll spring the trap on the victim.
+/**
+ * This function generalizes attacks by runes/traps.  This ought to make
+ * it possible for runes to attack from the inventory,
+ * it'll spring the trap on the victim.
+ *
+ * @param trap
+ * trap that activates.
+ * @param victim
+ * victim of the trap.
  */
 void spring_trap(object *trap,object *victim)
 {
@@ -283,10 +303,23 @@ void spring_trap(object *trap,object *victim)
     }
 }
 
-/* dispel_rune:  by peterm
- * dispels the target rune, depending on the level of the actor
- * and the level of the rune  risk flag, if true, means that there is
- * a chance that the trap/rune will detonate
+/**
+ * Someone is trying to disarm a rune. The actual attempt is done in trap_disarm().
+ *
+ * @param op
+ * object trying to disarm.
+ * @param caster
+ * object casting the disarm spell.
+ * @param spell
+ * actual spell for casting.
+ * @param skill
+ * skill to disarm runes.
+ * @param dir
+ * direction to disarm.
+ * @retval 0
+ * rune wasn't disarmed.
+ * @retval 1
+ * a rune was disarmed.
  */
 int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir)
 {
@@ -356,6 +389,17 @@ int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir
 
 }
 
+/**
+ * Should op see trap?
+ * @param op
+ * living that could spot the trap.
+ * @param trap
+ * trap that is invisible.
+ * @retval 0
+ * trap wasn't spotted.
+ * @retval 1
+ * trap was spotted.
+ */
 int trap_see(object *op,object *trap) {
     int chance;
 
@@ -373,6 +417,17 @@ int trap_see(object *op,object *trap) {
     return 0;
 }
 
+/**
+ * Handles showing a trap/rune detonation.
+ * @param trap
+ * trap that detonates.
+ * @param where
+ * object at the location to detonate.
+ * @retval 0
+ * no animation inserted.
+ * @retval 1
+ * animation inserted.
+ */
 int trap_show(object *trap, object *where) {
     object *tmp2;
 
@@ -385,7 +440,20 @@ int trap_show(object *trap, object *where) {
 
 }
 
-
+/**
+ * Try to disarm a trap/rune.
+ *
+ * @param disarmer
+ * object disarming the trap/rune.
+ * @param trap
+ * trap to disarm.
+ * @param risk
+ * if 0, trap/rune won't spring if disarm failure. Else it will spring.
+ * @param skill
+ * spell used to disarm.
+ * @return
+ * experience to award, 0 for failure.
+ */
 int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
     int trapworth;  /* need to compute the experience worth of the trap
                      before we kill it */
@@ -430,11 +498,16 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill) {
 }
 
 
-/*  traps need to be adjusted for the difficulty of the map.  The
- * default traps are too strong for wimpy level 1 players, and
+/**
+ * Adjust trap difficulty to the map.
+ * The default traps are too strong for wimpy level 1 players, and
  * unthreatening to anyone of high level
+ *
+ * @param trap
+ * trap to adjust.
+ * @param difficulty
+ * map difficulty.
  */
-
 void trap_adjust(object *trap, int difficulty) {
     int i;
 
