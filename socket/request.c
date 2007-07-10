@@ -1033,11 +1033,13 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
             if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC) ||
                 QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM)) {
                 len++;
-                    /* 1/0.004 == 250, so this is a good cap for an
-                     * upper limit */
-                if (FABS(ob->speed)<0.004) anim_speed=255;
+		/* 1/0.004 == 250, so this is a good cap for an
+ 		 * upper limit */
+		if (ob->anim_speed) anim_speed=ob->anim_speed;
+                else if (FABS(ob->speed)<0.004) anim_speed=255;
                 else if (FABS(ob->speed)>=1.0) anim_speed=1;
                 else anim_speed = (int) (1.0/FABS(ob->speed));
+
                 if (!ns->anims_sent[ob->animation_id])
                     esrv_send_animation(ns, ob->animation_id);
 
@@ -1414,7 +1416,6 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy)
 {
     struct Map newmap;
     int x,y, mx, my;
-    char buf[MAXSOCKSENDBUF];
 
     ns->map_scroll_x += dx;
     ns->map_scroll_y += dy;

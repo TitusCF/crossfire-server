@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+socket/request.c: In map sending routine, use object anim_speed if so for
+  animation speed instead of object speed.  Allows for zero speed objects
+  to be animated, also matches behavior for inventory items.
+MSW 2007-07-09
+
 Documentation, no functional change.
  common/object.c
  server/rune.c
