@@ -610,19 +610,19 @@ void update_all_los(const mapstruct *map, int x, int y) {
  */
 void print_los(object *op) {
     int x,y;
-    char buf[50], buf2[10];
+    char buf[MAP_CLIENT_X * 2 + 20], buf2[10];
 
-    strcpy(buf,"[fixed]   ");
+    snprintf(buf, sizeof(buf), "[fixed]   ");
     for(x=0;x<op->contr->socket.mapx;x++) {
-        sprintf(buf2,"%2d",x);
-        strcat(buf,buf2);
+        snprintf(buf2, sizeof(buf2), "%2d",x);
+        strncat(buf, buf2, sizeof(buf) - strlen(buf) - 1);
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
     for(y=0;y<op->contr->socket.mapy;y++) {
-        sprintf(buf,"[fixed]%2d:",y);
+        snprintf(buf, sizeof(buf), "[fixed]%2d:",y);
         for(x=0;x<op->contr->socket.mapx;x++) {
-            sprintf(buf2," %1d",op->contr->blocked_los[x][y]);
-            strcat(buf,buf2);
+            snprintf(buf2, sizeof(buf2), " %1d",op->contr->blocked_los[x][y] == 100 ? 1 : 0);
+            strncat(buf,buf2, sizeof(buf) - strlen(buf) - 1);
         }
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG, buf, NULL);
     }

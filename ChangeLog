@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Tentative fix for bug #1746208: Critical crash with 'printlos'.
+ common/los.c: use safe string functions. Use 0/100 for view instead of 0-100.
+Nicolas Weeger 2007-07-11
+
 socket/request.c: In map sending routine, use object anim_speed if so for
   animation speed instead of object speed.  Allows for zero speed objects
   to be animated, also matches behavior for inventory items.
