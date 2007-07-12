@@ -851,7 +851,7 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
         if (mflags & P_OUT_OF_MAP) continue;
 
         if( can_see_monsterP(m,pl->x,pl->y,i) ){
-            for(tmp=get_map_ob(pl->map,x,y);tmp;tmp=tmp->above){
+            for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above){
                 success+=do_skill_ident2(tmp,pl,obj_class, skill);
             }
         }
