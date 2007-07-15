@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete/unused things.
+ common/glue.c item.c map.c utils.c
+ include/define.h
+ socket/request.c
+Nicolas Weeger 2007-07-15
+
 Remove unused field.
  include/newserver.h
  socket/init.c request.c

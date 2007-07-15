@@ -53,9 +53,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #include <autoconf.h>
 #endif
 
-#define FONTDIR ""
-#define FONTNAME ""
-
 /** Decstations have trouble with fabs()... */
 #define FABS(x) ((x)<0?-(x):(x))
 
@@ -74,37 +71,22 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define NAME_MAX 255
 #endif
 
-/** MAX3 is basically like MAX, but instead does 3 values. */
-#ifndef MAX3
-#define MAX3(x,y, z) (MAX(x, MAX(y,z)))
-#endif
-
-/* MIN3 is basically like MIN, but instead does 3 values. */
-#ifndef MIN3
-#define MIN3(x,y, z) (MIN(x, MIN(y,z)))
-#endif
-
 #define MAX_STAT		30	/**< The maximum legal value of any stat */
 #define MIN_STAT		1	/**< The minimum legal value of any stat */
 
 #define MAX_BUF			256	/**< Used for all kinds of things */
 #define VERY_BIG_BUF		1024
 #define HUGE_BUF		4096 /**< Used for messages - some can be quite long */
-#define SOCKET_BUFLEN		4096	/**< Max length a packet could be */
-
-#define FONTSIZE		3000	/**< Max chars in font */
 
 #define MAX_ANIMATIONS		256
 
 #define MAX_NAME 48
 #define BIG_NAME 32
-#define MAX_EXT_TITLE 98
 
 /* Fatal variables; used as arguments to fatal() */
 #define OUT_OF_MEMORY		0
 #define MAP_ERROR		1
 #define ARCHTABLE_TOO_SMALL	2
-#define TOO_MANY_ERRORS		3
 
 /* TYPE DEFINES */
 /* Only add new values to this list if somewhere in the program code,
@@ -156,7 +138,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define HORN		            35
 #define MONEY		            36
 #define CLASS			    37  /* object for applying character class modifications to someone */
-#define GRAVESTONE	            38
+/*#define GRAVESTONE	            38*/
 #define AMULET		            39
 #define PLAYERMOVER	            40
 #define TELEPORTER	            41
@@ -227,7 +209,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /*#define SPAWN_GENERATOR		    81 a spawn point or monster generator object */
 #define LAMP			    82 /* a lamp */
 #define DUPLICATOR		    83 /* duplicator/multiplier object */
-#define TOOL			    84 /* a tool for building objects */
+/*#define TOOL			    84 * a tool for building objects */
 #define SPELLBOOK	            85
 /*#define BUILDFAC		    86 facilities for building objects */
 #define CLOAK		            87
@@ -320,8 +302,6 @@ typedef struct typedata {
     int identifyskill2;
 } typedata;
 
-extern const int ItemTypesSize;
-extern typedata ItemTypes[];
 
 /* definitions for detailed pickup descriptions.
  *   The objective is to define intelligent groups of items that the
@@ -580,7 +560,7 @@ extern typedata ItemTypes[];
 #define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
 #define FLAG_OBJ_ORIGINAL       103 /* NEVER SET THIS.  Item was loaded by
 				     * load_original_map() */
-#define FLAG_OBJ_SAVE_ON_OVL    104 /* this object should be saved on
+/*#define FLAG_OBJ_SAVE_ON_OVL    104 /* this object should be saved on
 				     * the overlay, and is not subject to
 				     * decay. */
 #define FLAG_ACTIVATE_ON_PUSH    105 /* connected object is activated when 'pushed' */
@@ -655,26 +635,6 @@ typedef unsigned char	MoveType;
 #define GENERATE_TYPE(xyz)	((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz)	((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
 
-/* Note: These values are only a default value, resizing can change them */
-#define INV_SIZE		12	/* How many items can be viewed in inventory */
-#define LOOK_SIZE		6	/* ditto, but for the look-window */
-#define MAX_INV_SIZE		40	/* For initializing arrays */
-#define MAX_LOOK_SIZE		40	/* ditto for the look-window */
-
-#define E_MONSTER		0x00000001
-#define E_EXIT			0x00000002
-#define E_TREASURE		0x00000004
-#define E_BACKGROUND		0x00000008
-#define E_DOOR			0x00000010
-#define E_SPECIAL		0x00000020
-#define E_SHOP			0x00000040
-#define E_NORMAL		0x00000080
-#define E_FALSE_WALL		0x00000100
-#define E_WALL			0x00000200
-#define E_EQUIPMENT		0x00000400
-#define E_OTHER			0x00000800
-#define E_ARTIFACT		0x00001000
-
 #define EXIT_PATH(xyz)		(xyz)->slaying
 #define EXIT_LEVEL(xyz)		(xyz)->stats.food
 #define EXIT_X(xyz)		(xyz)->stats.hp
@@ -691,11 +651,6 @@ typedef unsigned char	MoveType;
  * Maximum map darkness, there is no practical reason to exceed this
  **/
 #define MAX_DARKNESS		5
-/**
- * Convenience macro to ensure glow_radius doesn't exceed MAX_LIGHT_RADII.
- */
-#define BRIGHTNESS(xyz)		(xyz)->glow_radius>MAX_LIGHT_RADII? \
-				  MAX_LIGHT_RADII:(xyz)->glow_radius;
 
 #define F_BUY           0   /**< Item is being bought by player. */
 #define F_SELL          1   /**< Item is being sold by player. */
@@ -709,20 +664,9 @@ typedef unsigned char	MoveType;
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]
 
-#define D_LOCK(xyz)	(xyz)->contr->freeze_inv=(xyz)->contr->freeze_look=1;
-#define D_UNLOCK(xyz)	(xyz)->contr->freeze_inv=(xyz)->contr->freeze_look=0;
-
 #define ARMOUR_SPEED(xyz)	(xyz)->last_sp
 #define ARMOUR_SPELLS(xyz)	(xyz)->gen_sp_armour
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
-
-/* GET_?_FROM_DIR if used only for positional firing where dir is X and Y
-   each of them signed char, concatenated in a int16 */
-#define GET_X_FROM_DIR(dir) (signed char) (  dir & 0xFF )
-#define GET_Y_FROM_DIR(dir) (signed char) ( (dir & 0xFF00) >> 8)
-#define SET_DIR_FROM_XY(X,Y) (signed char)X + ( ((signed char)Y)<<8)
-#define FIRE_DIRECTIONAL 0
-#define FIRE_POSITIONAL  1
 
 /******************************************************************************/
 /* Monster Movements added by kholland@sunlab.cit.cornell.edu                 */
@@ -794,7 +738,6 @@ typedef unsigned char	MoveType;
 #define ST_ROLL_STAT                2   /**< New character, rolling stats. */
 #define ST_CHANGE_CLASS             3   /**< New character, choosing class. */
 #define ST_CONFIRM_QUIT             4   /**< Player used the 'quit' command, make sure that's ok. */
-#define ST_CONFIGURE                5   /**< Unused. @todo remove */
 #define ST_GET_NAME                 6   /**< Player just connected. */
 #define ST_GET_PASSWORD             7   /**< Name entered, now for password. */
 #define ST_CONFIRM_PASSWORD         8   /**< New character, confirm password. */

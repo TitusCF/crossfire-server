@@ -652,7 +652,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
             unique =0;
             /* check for unique items, or unique squares */
             for (otmp = get_map_ob(m, i, j); otmp; otmp = otmp->above) {
-                if (QUERY_FLAG(otmp, FLAG_UNIQUE) || QUERY_FLAG(otmp, FLAG_OBJ_SAVE_ON_OVL))
+                if (QUERY_FLAG(otmp, FLAG_UNIQUE))
                     unique = 1;
                 if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
                     SET_FLAG(otmp, FLAG_OBJ_ORIGINAL);

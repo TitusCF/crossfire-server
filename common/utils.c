@@ -202,7 +202,6 @@ void decay_objects(mapstruct *m)
                     break;
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) ||
                   QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) ||
-                  QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL) ||
                   QUERY_FLAG(op, FLAG_UNIQUE) ||
                   QUERY_FLAG(op, FLAG_OVERLAY_FLOOR) ||
                   QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))

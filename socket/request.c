@@ -509,12 +509,6 @@ void reply_cmd(char *buf, int len, player *pl)
             key_confirm_quit(pl->ob, buf[0]);
             break;
 
-        case ST_CONFIGURE:
-            LOG(llevError,
-                "In client input handling, but into configure state\n");
-            pl->state = ST_PLAYING;
-            break;
-
         case ST_GET_NAME:
             receive_player_name(pl->ob,13);
             break;
