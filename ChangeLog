@@ -18,6 +18,7 @@ Changes for SVN:
 Remove obsolete/unused things.
  common/glue.c item.c map.c utils.c
  include/define.h
+ plugins/cfpython/cfpython.c
  socket/request.c
 Nicolas Weeger 2007-07-15
 
