@@ -25,7 +25,7 @@ ICONS =	altar.tex arm_mail.tex br_wall.tex books.tex bows.tex cauldron.tex \
 CLEANFILES = $(TABLES) $(ICONS) items .bmaps in_* *.ps *x*.ppm tmp.ppm work.ppm \
 	     handbook.toc handbook.lot handbook.dvi handbook.log handbook.aux handbook.idx
 
-CROSSBIN = ../../server/crossfire
+CROSSBIN = ../../server/crossfire-server
 PERL = @PERL@
 
 handbook: ../handbook.ps

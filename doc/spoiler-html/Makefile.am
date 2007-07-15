@@ -9,7 +9,7 @@ HTML =	monput.html spells.html stats.html weap.html shield.html helmet.html\
 CLEANFILES = items .bmaps in_monput in_items in_spells in_stats \
 		*x*.ppm tmp.ppm work.ppm *.gif $(HTML) spoiler.html
 
-CROSSBIN = ../../server/crossfire
+CROSSBIN = ../../server/crossfire-server
 INCDIR = $(top_srcdir)/include
 DTOP = $(top_srcdir)/$(PACKAGE)-doc
 PERL = @PERL@
