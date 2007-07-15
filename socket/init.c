@@ -155,7 +155,6 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->can_write=1;
     ns->password_fails = 0;
 
-    ns->sent_scroll=0;
     ns->host=strdup_local(from_ip);
     sprintf((char*)buf, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
     sl.buf=buf;

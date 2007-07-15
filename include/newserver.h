@@ -116,7 +116,6 @@ typedef struct socket_struct {
     uint8   password_fails; /* how many times the player has failed to give the right password */
     buffer_struct outputbuffer;   /* For undeliverable data */
     uint32  facecache:1;    /* If true, client is caching images */
-    uint32  sent_scroll:1;
     uint32  sound;	    /* Client sound mode */
     uint32  newmapcmd:1;    /* Send newmap command when entering new map SMACFIGGEN*/
     uint32  darkness:1;	    /* True if client wants darkness information */

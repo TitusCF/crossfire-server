@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused field.
+ include/newserver.h
+ socket/init.c request.c
+Nicolas Weeger 2007-07-15
+
 Fix spoilers generation. giftrans is now disabled.
  doc/playbook/Makefile.am
  doc/playbook-html/Makefile.am

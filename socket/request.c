@@ -1340,7 +1340,6 @@ void draw_client_map2(object *pl)
         /* Only send this if there are in fact some differences. */
     if (sl.len > startlen) {
         Send_With_Handling(&pl->contr->socket, &sl);
-        pl->contr->socket.sent_scroll = 0;
     }
     free(sl.buf);
 }
@@ -1450,11 +1449,6 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy)
     }
 
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
-
-        /* Make sure that the next "map1" command will be sent (even if
-         * it is empty).
-         */
-    ns->sent_scroll = 1;
 }
 
 /**
