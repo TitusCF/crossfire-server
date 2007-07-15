@@ -10,7 +10,7 @@ TEX =	monput.tex spells.tex stats.tex weap.tex shield.tex helmet.tex\
 CLEANFILES =  $(TEX) items .bmaps in_monput in_items in_spells in_stats \
 	*.ps *x*.ppm tmp.ppm work.ppm spoiler.dvi spoiler.log spoiler.aux
 
-CROSSBIN = ../../server/crossfire
+CROSSBIN = ../../server/crossfire-server
 INCDIR = $(top_srcdir)/include
 PERL = @PERL@
 

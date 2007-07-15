@@ -27,7 +27,7 @@ else { $BG="\\#ab0945"; }
 $colour = 0;
 # IF you have giftrans installed and want transparent gifs, set
 # appropriately.  IT looks much nicer if you can do it.
-$giftrans = 1;
+$giftrans = 0;
 
 
 $bmaps = $libdir . '/bmaps';

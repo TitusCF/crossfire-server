@@ -29,7 +29,7 @@ HANDBOOK = handbook.html chap1.html chap2.html chap3.html chap4.html chap5.html 
 CLEANFILES = items .bmaps in_monput in_items in_spells in_stats in_equip \
 	*x*.ppm tmp.ppm work.ppm in_char items *.gif $(HTML)
 
-CROSSBIN = ../../server/crossfire
+CROSSBIN = ../../server/crossfire-server
 INCDIR = $(top_srcdir)/include
 DTOP = $(top_srcdir)/$(PACKAGE)-doc
 PERL = @PERL@
