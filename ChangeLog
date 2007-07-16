@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove "random_move" field, "random_movement" exists.
+ common/loader.l
+ utils/bwp.c
+Nicolas Weeger 2007-07-16
+
 Remove obsolete/unused things.
  common/glue.c item.c map.c utils.c
  include/define.h

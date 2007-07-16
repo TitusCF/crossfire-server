@@ -85,7 +85,7 @@ const char *const flag_names[NUM_FLAGS+1] = {
     "can_use_bow",  "can_use_armour", "can_use_weapon",
     "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
     "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
-    "stand_still", "random_move", "only_attack", "confused",        /* 70 */
+    "stand_still", "random_movement", "only_attack", "confused",        /* 70 */
     "stealth", NULL, NULL, "cursed", "damned",
     "see_anywhere", "known_magical", "known_cursed",
     "can_use_skill", "been_applied",                                /* 80 */

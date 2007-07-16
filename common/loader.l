@@ -943,7 +943,6 @@ A	.+
 ^no_strength{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_STRENGTH, IVAL);
 ^sleep{S}	    SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
 ^stand_still{S}	    SET_OR_CLEAR_FLAG(op, FLAG_STAND_STILL, IVAL);
-^random_move{S}	    SET_OR_CLEAR_FLAG(op, FLAG_RANDOM_MOVE, IVAL);
 ^only_attack{S}	    SET_OR_CLEAR_FLAG(op, FLAG_ONLY_ATTACK, IVAL);
 
 ^activate_on_push{S}	SET_OR_CLEAR_FLAG(op, FLAG_ACTIVATE_ON_PUSH, IVAL);
@@ -1269,7 +1268,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "can_use_bow",  "can_use_armour", "can_use_weapon",
     "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
     "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
-    "stand_still", "random_move", "only_attack", "confused",        /* 70 */
+    "stand_still", "random_movement", "only_attack", "confused",        /* 70 */
     "stealth", NULL, NULL, "cursed", "damned",
     "see_anywhere", "known_magical", "known_cursed",
     "can_use_skill", "been_applied",                                /* 80 */
