@@ -2158,7 +2158,8 @@ static PyObject* Crossfire_Object_CreateInside(Crossfire_Object* who, PyObject* 
         return NULL;
 
     myob = cf_create_object_by_name(txt);
-    myob = cf_object_insert_object(myob, who->obj);
+    if (myob)
+        myob = cf_object_insert_object(myob, who->obj);
 
     return Crossfire_Object_wrap(myob);
 

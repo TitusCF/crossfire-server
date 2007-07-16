@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+plugins/cfpython/cfpython_object.c: don't try to insert a NULL object.
+Nicolas Weeger 2007-07-16
+
 Remove "random_move" field, "random_movement" exists.
  common/loader.l
  utils/bwp.c
