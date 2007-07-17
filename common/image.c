@@ -163,9 +163,6 @@ static uint8 find_color(const char *name) {
  *
  * @note
  * will call exit() if file doesn't exist.
- *
- * @todo
- * remove color_bg from all archetypes, and remove handling for that unused line.
  */
 static void read_face_data(void)
 {
@@ -204,9 +201,6 @@ static void read_face_data(void)
             cp = buf + 9;
             cp[strlen(cp)-1] = '\0';
             if (on_face->magicmap==255) on_face->magicmap=find_color(cp);
-        }
-        else if (!strncmp(buf,"color_bg",8)) {
-        /* ignore it */
         }
         else if (!strncmp(buf,"visibility",10)) {
             on_face->visibility = atoi(buf + 11);

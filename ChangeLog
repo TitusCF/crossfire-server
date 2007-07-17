@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove obsolete color_bg handling.
+ common/image.c
+ lib/collect.pl.in
+Nicolas Weeger 2007-07-17
+
 No functional changes - various cleanups to reduce number of compiler warnings
 when compiled with -Wall - makes it easier to catch real errors.  Most things
 changed/fixed are missing returns in non void functions, missing includes,

@@ -194,34 +194,27 @@ sub storeFaceInfo {
 	    $fg{$lface} = $values[0];
 	}
     }
-    if ($values[1] ne "") {
-	if ($bg{$lface} && $bg{$lface} ne $values[1]) {
-	    &warn($arch." duplicate bg color ".$bg{$lface}."/".$values[1]." face ".$lface);
-	} else {
-	    $bg{$lface} = $values[1];
-	}
-    }
-    if ($values[2] ne "" && $lface ne "blank.111" && $lface ne "empty.111") {
+    if ($values[1] ne "" && $lface ne "blank.111" && $lface ne "empty.111") {
 #      blank.111 is a special case - see above explanation
 #      Its visibility is always 0.
-	if ($visibility{$lface} && $visibility{$lface} ne $values[2]) {
-	    &warn($arch." duplicate visibilty ".$visibility{$lface}."/".$values[2]." face ".$lface);
+	if ($visibility{$lface} && $visibility{$lface} ne $values[1]) {
+	    &warn($arch." duplicate visibilty ".$visibility{$lface}."/".$values[1]." face ".$lface);
 	} else {
-	    $visibility{$lface} = $values[2];
+	    $visibility{$lface} = $values[1];
 	}
     }
-    if ($values[3] ne "" && lface ne "blank.111" && $lface ne "empty.111") {
-	if ($magicmap{$lface} && $magicmap{$lface} ne $values[3]) {
-	    &warn($arch." duplicate magicmap color ".$magicmap{$lface}."/".$values[3]." face ".$lface);
+    if ($values[2] ne "" && lface ne "blank.111" && $lface ne "empty.111") {
+	if ($magicmap{$lface} && $magicmap{$lface} ne $values[2]) {
+	    &warn($arch." duplicate magicmap color ".$magicmap{$lface}."/".$values[2]." face ".$lface);
 	} else {
-	    $magicmap{$lface} = $values[3];
+	    $magicmap{$lface} = $values[2];
 	}
     }
-    if ($values[4] ne "") {
-	if ($floor{$lface} && $floor{$lface} ne $values[4]) {
-	    &warn($arch." duplicate floor information ".$floor{$lface}."/".$values[4]." face ".$lface);
+    if ($values[3] ne "") {
+	if ($floor{$lface} && $floor{$lface} ne $values[3]) {
+	    &warn($arch." duplicate floor information ".$floor{$lface}."/".$values[3]." face ".$lface);
 	} else {
-	    $floor{$lface} = $values[4];
+	    $floor{$lface} = $values[3];
 	}
     }
 }
@@ -252,7 +245,6 @@ line:	while(<ARC>) {
 		$lface[0] = "";
 		$#lface = 0;
 		$lfg = "";
-		$lbg = "";
 		$lvis = "";
 		$mm = "";
 		$floor = "";
@@ -264,7 +256,7 @@ line:	while(<ARC>) {
 		if ($#lface !=0) {
 		    $#lface--;
 		    foreach $face (@lface) {
-			&storeFaceInfo($face, $lfg, $lbg, $lvis,$mm,$floor);
+			&storeFaceInfo($face, $lfg, $lvis,$mm,$floor);
 		    }
 	 	}
 		if ($walkon && !$nopick) {
@@ -274,10 +266,6 @@ line:	while(<ARC>) {
 	    # Process the color/face info now
 	    if ($var eq "color_fg") {
 		$lfg = $values[0];
-		next line;
-	    }
-	    if ($var eq "color_bg") {
-		$lbg = $values[0];
 		next line;
 	    }
 	    if ($var eq "end") {
@@ -412,16 +400,12 @@ sub facesOut {
 	    if ($var eq "face") {
 		$lface = $values[0];
 		$lfg = "";
-		$lbg = "";
 		$lvis = "";
 		$mm = "";
 		$floor = "";
 	    }
 	    elsif ($var eq "color_fg") {
 		$lfg = $values[0];
-	    }
-	    elsif ($var eq "color_bg") {
-		$lbg = $values[0];
 	    }
 	    elsif ($var eq "visibility") {
 		$lvis = $values[0];
@@ -433,7 +417,7 @@ sub facesOut {
 		$floor = $values[0];
 	    }
 	    elsif ($var eq "end") {
-		&storeFaceInfo($lface, $lfg, $lbg, $lvis, $mm, $floor);
+		&storeFaceInfo($lface, $lfg, $lvis, $mm, $floor);
 	    }
 	    elsif ($var eq "animation") {
 		$animation=$values[0];
@@ -467,8 +451,6 @@ sub facesOut {
 	    print FACES "face ".$face."\n";
 	    print FACES "color_fg ".$fg{$face}."\n"
 	    if $fg{$face} ne "";
-		print FACES "color_bg ".$bg{$face}."\n"
-	    if $bg{$face} ne "";
 		print FACES "visibility ".$visibility{$face}."\n"
 	    if $visibility{$face} ne "";
 		print FACES "magicmap ".$magicmap{$face}."\n"
