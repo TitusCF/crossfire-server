@@ -209,7 +209,6 @@ void draw_ext_info(
 
     if (flags & NDI_ALL) {
 	player	*tmppl;
-	int i;
 
 	for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next)
 		draw_ext_info((flags & ~NDI_ALL), pri, tmppl->ob, type, subtype,

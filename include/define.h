@@ -560,7 +560,7 @@ typedef struct typedata {
 #define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
 #define FLAG_OBJ_ORIGINAL       103 /* NEVER SET THIS.  Item was loaded by
 				     * load_original_map() */
-/*#define FLAG_OBJ_SAVE_ON_OVL    104 /* this object should be saved on
+/*#define FLAG_OBJ_SAVE_ON_OVL    104 *//* this object should be saved on
 				     * the overlay, and is not subject to
 				     * decay. */
 #define FLAG_ACTIVATE_ON_PUSH    105 /* connected object is activated when 'pushed' */

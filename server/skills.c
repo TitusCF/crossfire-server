@@ -1567,7 +1567,7 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
     }
 
     if (execute_event(scroll, EVENT_TRIGGER, pl, chosen_spell, NULL, 0) != 0)
-        return;
+        return 0;
 
     /* ok, we are ready to try inscription */
     if(QUERY_FLAG(pl,FLAG_CONFUSED)) confused = 1;

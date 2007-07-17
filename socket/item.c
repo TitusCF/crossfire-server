@@ -899,8 +899,8 @@ void inscribe_scroll_cmd(char* buf, int len, player* pl) {
             LOG(llevDebug, "Player %s sent an invalid inscribe command.\n", pl->ob->name);
             return;
         }
-        tscroll = GetInt_String(buf+1);
-        tspell = GetInt_String(buf+5);
+        tscroll = GetInt_String((uint8*)buf+1);
+        tspell = GetInt_String((uint8*)buf+5);
 
         scroll = esrv_get_ob_from_count(pl->ob, tscroll);
         if (!scroll) {

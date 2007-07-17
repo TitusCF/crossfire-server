@@ -641,8 +641,9 @@ static PyCodeObject *compilePython(char *filename) {
     }
     if(stat(filename, &stat_buf)) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be stat:ed\n", filename);
-        if(scriptfile)
+        if(scriptfile) {
             Py_DECREF(scriptfile);
+	}
         return NULL;
     }
 
@@ -708,8 +709,9 @@ static PyCodeObject *compilePython(char *filename) {
 
     cf_free_string(sh_path);
 
-    if(scriptfile)
+    if(scriptfile) {
         Py_DECREF(scriptfile);
+    }
 
     if (run)
         return run->code;

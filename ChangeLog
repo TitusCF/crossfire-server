@@ -15,6 +15,42 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+No functional changes - various cleanups to reduce number of compiler warnings
+when compiled with -Wall - makes it easier to catch real errors.  Most things
+changed/fixed are missing returns in non void functions, missing includes,
+declared but unused variables, not escaping #include sproto in CEXTRACT
+checks.  MSW 2007-07-16
+--
+Changed files:
+common/object.c common/button.c common/logger.c common/loader.l 
+common/living.c common/map.c common/treasure.c common/glue.c 
+include/libproto.h include/define.h include/sproto.h
+plugins/cfpython/cfpython.c
+plugins/cfanim/cfanim.c
+random_maps/standalone.c
+server/apply.c server/attack.c server/c_chat.c server/c_object.c
+server/c_wiz.c server/ob_methods.c server/ob_types.c
+server/shop.c server/skill_util.c server/skills.c server/time.c
+socket/item.c socket/lowlevel.c socket/info.c
+test/toolkit/toolkit_common.c
+test/unit/random_maps/stubs_random.c test/unit/server/check_attack.c
+test/unit/server/check_c_party.c test/unit/server/check_c_object.c
+test/unit/server/comet_perf.c test/unit/common/check_object.c 
+test/unit/common/stubs_common.c test/unit/socket/stubs_socket.c 
+types/shop_inventory/shop_inventory.c types/common/common_apply.c
+types/spellbook/spellbook.c types/skillscroll/skillscroll.c
+
+server/Makefile.am: Don't include main.c when building sproto.h
+MSW 2007-07-16
+
+test/unit/server/Makefile.am, test/bugs/bugtrack/Makefile.am:
+ Remove duplicate build directions for libtypes.a
+MSW 2007-07-16
+
+common/shstr.c, include/shstr.h, server/c_misc.c: Move SS_STATISTICS from
+   shstr.h to shstr.c - c_misc.c also includes the file, 
+   and got warnings about unused static variables. - MSW 2007-07-16
+
 Add support for using png files for html handbook and spoiler - png support
 is common enough in browsers now days that don't need to convert to gif.
 Reduces tool requirements to build documents (as it is a simple copy

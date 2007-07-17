@@ -157,7 +157,7 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
                       "The shop is currently empty.\n", NULL);
         free(items);
-        return;
+        return METHOD_OK;
     }
     qsort(items, numitems, sizeof(shopinv),
           (int (*)(const void*, const void*))shop_sort);
@@ -179,4 +179,5 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
         }
     }
     free(items);
+    return METHOD_OK;
 }

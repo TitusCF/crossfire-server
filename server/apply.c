@@ -45,9 +45,6 @@
 /* need math lib for double-precision and pow() in dragon_eat_flesh() */
 #include <math.h>
 
-static int dragon_eat_flesh(object *op, object *meal);
-static void apply_lighter(object *who, object *lighter);
-
 /**
  * Can transport hold object op?
  * This is a pretty trivial function,
@@ -1332,7 +1329,6 @@ void player_apply_below (object *pl)
  */
 static int unapply_special (object *who, object *op, int aflags)
 {
-    object *tmp2;
     char name[MAX_BUF];
 
     if (op->type != LAMP)
@@ -1449,7 +1445,6 @@ static int unapply_special (object *who, object *op, int aflags)
     if ( ! (aflags & AP_NO_MERGE)) {
         object *tmp;
 
-        tag_t del_tag = op->count;
         tmp = merge_ob (op, NULL);
         if (who->type == PLAYER) {
             if (tmp) {  /* it was merged */
@@ -1769,7 +1764,7 @@ int can_apply_object(object *who, object *op)
 int apply_special (object *who, object *op, int aflags)
 {
     int basic_flag = aflags & AP_BASIC_FLAGS;
-    object *tmp, *tmp2, *skop=NULL;
+    object *tmp, *skop=NULL;
     int i;
     char name_op[MAX_BUF];
 

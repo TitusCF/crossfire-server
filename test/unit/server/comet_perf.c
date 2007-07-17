@@ -48,6 +48,7 @@
 #include <check.h>
 
 #include <global.h>
+#include <sproto.h>
 
 #define TEST_MAP_SIZE    40
 #define NUM_TICKS_TO_RUN    500
@@ -358,7 +359,7 @@ int main(void)
     srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
     nf = srunner_ntests_failed(sr);
     srunner_free(sr);
-    fprintf(stderr,"Got %d supressions, %d spell merges, %d full tables\n",
+    fprintf(stderr,"Got %ld supressions, %ld spell merges, %ld full tables\n",
 	    statistics.spell_suppressions, statistics.spell_merges, statistics.spell_hash_full);
     return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

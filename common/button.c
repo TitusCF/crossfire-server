@@ -32,7 +32,7 @@
  */
 
 #include <global.h>
-
+#include <sproto.h>
 
 /**
  * Push the specified object.  This can affect other buttons/gates/handles

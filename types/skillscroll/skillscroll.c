@@ -67,7 +67,7 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                                      "You already possess the knowledge held within the %s.",
                                      "You already possess the knowledge held within the %s.",
                                      name);
-                return;
+                return METHOD_OK;
 
             case 1:
                 draw_ext_info_format(NDI_UNIQUE, 0,applier,
@@ -81,7 +81,7 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                                      "Type 'bind ready_skill %s to store the skill in a key.",
                                      scroll->skill);
                 decrease_ob(scroll);
-                return;
+                return METHOD_OK;
 
             default:
                 query_name(scroll, name, MAX_BUF);
@@ -91,7 +91,7 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
                                      "You fail to learn the knowledge of the %s.\n",
                                      name);
                 decrease_ob(scroll);
-                return;
+                return METHOD_OK;
         }
     }
     return METHOD_OK;

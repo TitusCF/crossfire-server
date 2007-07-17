@@ -694,4 +694,3 @@ void cleanup(void);
 void leave(player *pl, int draw_exit);
 int forbid_play(void);
 int server_main(int argc, char **argv);
-/* main.c */

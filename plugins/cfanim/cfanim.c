@@ -382,6 +382,7 @@ long int initstop(char *name, char *parameters, struct CFmovement_struct *move_e
 int runstop(struct CFanimation_struct *animation, long int id, void *parameters)
 {
     cf_log(llevDebug, "CFAnim: stop encountered\n");
+    return 1;
 }
 
 

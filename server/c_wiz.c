@@ -2387,17 +2387,17 @@ int command_follow(object* op, char* params) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);
             FREE_AND_CLEAR_STR(op->contr->followed_player);
         }
-        return;
+        return 0;
     }
 
     other = find_player_partial_name(params);
     if (!other) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "No such player or ambiguous name.", NULL);
-        return;
+        return 0;
     }
     if (other == op->contr) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You can't follow yourself.", NULL);
-        return;
+        return 0;
     }
 
     if (op->contr->followed_player)
@@ -2405,4 +2405,5 @@ int command_follow(object* op, char* params) {
 
     op->contr->followed_player = add_string(other->ob->name);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Following %s.", NULL, op->contr->followed_player);
+    return 0;
 }

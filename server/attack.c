@@ -793,7 +793,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
 
     /* Lauwenmark: Handle for plugin attack event */
     if (execute_event(op, EVENT_ATTACK,hitter,hitter->current_weapon ? hitter->current_weapon : hitter,NULL,SCRIPT_FIX_ALL) != 0)
-        return;
+        return 0;
 
     /* Lauwenmark: This is used to handle script_weapons with weapons.
      * Only used for players.
@@ -805,7 +805,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
             /* Lauwenmark: Handle for plugin attack event */
             if (execute_event(hitter->current_weapon, EVENT_ATTACK,
                           hitter,op,NULL,SCRIPT_FIX_ALL) != 0)
-                return;
+                return 0;
         }
             }
     op_tag = op->count;

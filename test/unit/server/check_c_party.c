@@ -46,7 +46,7 @@ void teardown(void)
 
 START_TEST (test_party)
 {
-    partylist* p1, *p2, *p3, *p4, *p5;
+    partylist* p1, *p2, *p3;
     object* pl;
 
     fail_unless(get_firstparty() == NULL, "firstparty should be NULL!");

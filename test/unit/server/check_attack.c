@@ -35,6 +35,7 @@
 #include <check.h>
 #include <loader.h>
 #include <toolkit_common.h>
+#include <sproto.h>
 
 void setup(void) {
 }
@@ -48,7 +49,6 @@ START_TEST (test_hit_player)
 {
     object* victim = NULL;
     object* hitter = NULL;
-    object* weapon = NULL;
     object* floor = NULL;
     mapstruct* map = NULL;
     archetype* deplete = NULL;

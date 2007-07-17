@@ -294,8 +294,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
     if (nrof != tmp_nrof) {
         char failure[MAX_BUF];
-	object *tmp2 = tmp;
-        tag_t tmp2_tag = tmp2->count;
+
 	tmp = get_split_ob (tmp, nrof, failure, sizeof(failure));
 	if(!tmp) {
 	    draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -665,8 +664,7 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
      */
     if(nrof && tmp->nrof != nrof) {
         char failure[MAX_BUF];
-	object *tmp2 = tmp;
-        tag_t tmp2_tag = tmp2->count;
+
 	tmp = get_split_ob (tmp, nrof, failure, sizeof(failure));
 	if(!tmp) {
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1670,7 +1668,7 @@ int command_rename_item(object *op, char *params)
         return 1;
       }
       /* Copy the old name */
-      snprintf(buf, sizeof(buf), "%.*s", closebrace-(params+1), params+1);
+      snprintf(buf, sizeof(buf), "%.*s", (int)(closebrace-(params+1)), params+1);
 
       /* Find best matching item */
       item=find_best_object_match(op,buf);
@@ -1718,7 +1716,7 @@ int command_rename_item(object *op, char *params)
       }
 
       /* Copy the new name */
-      snprintf(buf, sizeof(buf), "%.*s", closebrace-(params+1), params+1);
+      snprintf(buf, sizeof(buf), "%.*s", (int)(closebrace-(params+1)), params+1);
 
       /* Let's check it for weird characters */
       for(counter=0;counter<strlen(buf);counter++) {

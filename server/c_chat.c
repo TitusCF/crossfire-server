@@ -285,7 +285,7 @@ static int do_tell(object* op, char* params, int adjust_listen) {
  */
 int command_tell (object *op, char *params)
 {
-    do_tell(op, params, 0);
+   return do_tell(op, params, 0);
 }
 
 /**
@@ -299,7 +299,7 @@ int command_tell (object *op, char *params)
  * 1.
  */
 int command_dmtell (object *op, char *params) {
-    do_tell(op, params, 1);
+    return do_tell(op, params, 1);
 }
 
 /**

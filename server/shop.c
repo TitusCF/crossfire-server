@@ -724,7 +724,7 @@ static void insert_objects(object *pl, object *container, object *objects[], int
 
     for (i = 0; i < objects_len; i++) {
         if (objects[i]->nrof > 0) {
-            object *tmp = insert_ob_in_ob(objects[i], container);
+            insert_ob_in_ob(objects[i], container);
             one = 1;
         } else {
             free_object(objects[i]);
@@ -976,7 +976,6 @@ int get_payment(object *pl, object *op) {
             return 0;
         } else {
             object *tmp;
-            tag_t c = op->count;
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);

@@ -27,6 +27,7 @@
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
+#include <sproto.h>
 
 /**
  * 'victim' moves onto 'trap'

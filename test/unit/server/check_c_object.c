@@ -35,13 +35,15 @@
 #include <check.h>
 #include <loader.h>
 #include <toolkit_common.h>
+#include <sproto.h>
 
 void setup(void) {
+#if 0
 /*  settings.datadir="lib";
   settings.logfilename="/unit/server/c_object.out";
     settings.archetypes="archetypes";
     settings.treasures="treasures.bld";
-/*    init_globals();
+    init_globals();
     init_hash_table();
     init_objects();
     init_vars();
@@ -50,6 +52,7 @@ void setup(void) {
     read_smooth();
     init_anim();
     init_archetypes();*/
+#endif
 }
 
 void teardown(void)

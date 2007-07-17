@@ -27,6 +27,7 @@
 */
 
 #include <global.h>
+#include <sproto.h>
 
 /**
  * @file glue.c

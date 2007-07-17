@@ -46,6 +46,7 @@
 #include <object.h>
 #include <skills.h>
 #include <loader.h>
+#include <sproto.h>
 
 static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
@@ -2288,8 +2289,6 @@ object *decrease_ob_nr (object *op, uint32 i)
     }
     else
     {
-        object *above = op->above;
-
         if (i < op->nrof) {
             op->nrof -= i;
         } else {

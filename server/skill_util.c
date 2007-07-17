@@ -166,12 +166,12 @@ static object* adjust_skill_tool(object* who, object* skill, object* skill_tool)
      */
     if (skill_tool) {
         if (!QUERY_FLAG(skill_tool, FLAG_APPLIED)) {
-            if (apply_special(who, skill_tool, 0))
+            if (apply_special(who, skill_tool, 0)) {
                 if (skill && QUERY_FLAG(skill, FLAG_CAN_USE_SKILL))
                     return skill;
                 else
                     return NULL;
-
+	    }
         }
         if (!skill) {
             skill = give_skill_by_name(who, skill_tool->skill);

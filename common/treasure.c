@@ -49,6 +49,7 @@
 #include <global.h>
 #include <treasure.h>
 #include <loader.h>
+#include <sproto.h>
 
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
@@ -311,8 +312,6 @@ treasurelist *find_treasurelist(const char *name) {
  */
 static void put_treasure (object *op, object *creator, int flags)
 {
-    object *tmp;
-
     /* Bit of a hack - spells should never be put onto the map.  The entire
      * treasure stuff is a problem - there is no clear idea of knowing
      * this is the original object, or if this is an object that should be created

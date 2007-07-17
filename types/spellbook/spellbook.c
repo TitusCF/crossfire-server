@@ -71,7 +71,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ)) {
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "You are unable to read while blind.", NULL);
-            return;
+            return METHOD_OK;
         }
 
         skapplier = find_skill_by_name(applier, book->skill);
@@ -81,7 +81,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         if (!skapplier) {
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "You can't read! Your attempt fails.", NULL);
-            return;
+            return METHOD_OK;
         }
         read_level = skapplier->level;
 
@@ -91,7 +91,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                 book->name);
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The spellbook symbols make no sense.", NULL);
-            return;
+            return METHOD_OK;
         }
 
         if (QUERY_FLAG(book, FLAG_CURSED) || QUERY_FLAG(book, FLAG_DAMNED)) {
@@ -123,7 +123,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                 else
                     applier->contr->socket.update_look=1;
             }
-            return;
+            return METHOD_OK;
         }
 
         if (QUERY_FLAG(book, FLAG_BLESSED))
@@ -132,7 +132,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         if (spell->level > (read_level+10)) {
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You are unable to decipher the strange symbols.", NULL);
-            return;
+            return METHOD_OK;
         }
 
         get_levelnumber(spell->level, level, sizeof(level));
@@ -158,7 +158,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         if (check_spell_known (applier, spell->name)) {
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You already know that spell.\n", NULL);
-            return;
+            return METHOD_OK;
         }
 
         if (spell->skill) {
@@ -169,7 +169,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                                      "You lack the skill %s to use this spell",
                                      "You lack the skill %s to use this spell",
                                      spell->skill);
-                return;
+                return METHOD_OK;
             }
             if (spell_skill->level < spell->level) {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier,
@@ -177,7 +177,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                                      "You need to be level %d in %s to learn this spell.",
                                      "You need to be level %d in %s to learn this spell.",
                                      spell->level, spell->skill);
-                return;
+                return METHOD_OK;
             }
         }
 

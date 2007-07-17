@@ -724,7 +724,7 @@ object *fix_stopped_arrow (object *op)
  * Modified this routine to allow held objects. b.t. */
 
 static void change_object(object *op) { /* Doesn`t handle linked objs yet */
-  object *tmp,*env,*pl;
+  object *tmp,*env;
   int i,j;
 
   if(op->other_arch==NULL) {

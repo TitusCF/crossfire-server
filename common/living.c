@@ -36,6 +36,7 @@
 
 #include <stdlib.h>
 #include <global.h>
+#include <sproto.h>
 
 /**
  * Handy little macro that adds exp and keeps it within bounds.  Since

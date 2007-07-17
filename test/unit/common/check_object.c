@@ -354,7 +354,7 @@ END_TEST
 START_TEST (test_reset_object)
 {
   object *ob1;
-  object *result;
+
   ob1 = cctk_create_game_object(NULL);
   reset_object(ob1);
   fail_unless(ob1->name == NULL,"Field name of ob1 was not NULLified by reset_object");
@@ -466,7 +466,7 @@ START_TEST (test_update_turn_face)
   object *ob1;
   New_Face *face1;
   New_Face *face2;
-  const char* reference;
+
   ob1 = cctk_create_game_object("xan");
   ob1->direction=1;
   update_turn_face(ob1);
@@ -1199,7 +1199,7 @@ END_TEST
 START_TEST (test_item_matched_string)
 {
     object *pl;
-    object *o1, *o2, *o3, *o4;
+    object *o1, *o2;
     int val;
 
     pl = cctk_create_game_object("kobold");
