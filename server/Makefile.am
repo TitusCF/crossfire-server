@@ -102,5 +102,5 @@ installcheck-local:
 
 proto:
 	cproto -D__CEXTRACT__ -o ../include/sproto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
-		`echo $(SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
+		`echo $(libserver_a_SOURCES) " " | $(AWK) -v RS=" " '/.c$$/ { print }'`
 	chmod 644 ../include/sproto.h
