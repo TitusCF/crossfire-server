@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused return values. Fix wrong return for cure_disease. Remove hardcoded value.
+ include/sproto.h
+ server/disease.c
+Nicolas Weeger 2007-07-17
+
 Change function return type for coherence with experience.
  common/exp.c info.c
  include/libproto.h
