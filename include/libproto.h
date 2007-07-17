@@ -44,7 +44,7 @@ extern object *check_inv_recursive(object *op, const object *trig);
 extern void check_inv(object *op, object *trig);
 extern void verify_button_links(const mapstruct *map);
 /* exp.c */
-extern int new_exp(const object *ob);
+extern uint64 new_exp(const object *ob);
 extern int has_ability(const object *ob);
 extern void init_experience(void);
 extern void dump_experience(void);

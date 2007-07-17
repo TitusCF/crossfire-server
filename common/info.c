@@ -85,7 +85,7 @@ void print_monsters(void) {
                 op->stats.wc,attbuf);
             for (i=0; i<NROFATTACKS; i++)
                 printf("%4d", op->resist[i]);
-            printf("|%8" FMT64 "|%9d|\n",op->stats.exp, new_exp(op));
+            printf("|%8" FMT64 "|%9" FMT64 "|\n",op->stats.exp, new_exp(op));
         }
         free_object(op);
     }

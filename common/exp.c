@@ -100,9 +100,8 @@ float exp_prot_mult[NROFATTACKS+2] = {
  * object for which to return experience
  * @return
  * experience computed from object's properties.
- * @todo should probably return an (s/u)int64 for coherence with experience.
  */
-int new_exp(const object *ob) {
+uint64 new_exp(const object *ob) {
     double att_mult, prot_mult, spec_mult;
     double exp;
     int i;
