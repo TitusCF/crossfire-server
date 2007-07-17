@@ -33,8 +33,6 @@
  */
 #define SS(x) ((shared_string *) ((x) - offsetof(shared_string, string)))
 
-#define SS_STATISTICS
-
 #define SS_DUMP_TABLE	1
 #define SS_DUMP_TOTALS	2
 

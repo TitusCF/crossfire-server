@@ -28,7 +28,10 @@
 
 #include <global.h>
 #include <loader.h>
+
+#undef SS_STATISTICS
 #include <shstr.h>
+
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -1047,7 +1050,7 @@ int command_listen (object *op, char *params)
     if (i < 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
             "Verbose level should be positive.", NULL);
-        return;
+        return 1;
     }
     op->contr->listening=(char) i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,

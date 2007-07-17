@@ -23,6 +23,8 @@
 #endif
 
 #include <logger.h>
+
+#define SS_STATISTICS
 #include "shstr.h"
 
 #ifdef WIN32
