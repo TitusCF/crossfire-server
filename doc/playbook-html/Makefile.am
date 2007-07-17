@@ -50,7 +50,7 @@ check_ok: dump_switches
 	touch .bmaps
 
 items: .bmaps in_items ../scripts/makeps.pl items.gif
-	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_items  inarch=$(pkgdatadir)/archetypes > items
 
 in_items: items-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f items-extract $(pkgdatadir)/archetypes > in_items
@@ -68,13 +68,13 @@ in_char: char-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f char-extract $(pkgdatadir)/archetypes > in_char
 
 char.html: .bmaps in_char ../scripts/makeps.pl characters.gif
-	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_char inarch=$(pkgdatadir)/archetypes > char.html
 
 in_stats: stats-extract $(pkgdatadir)/archetypes $(top_srcdir)/common/living.c
 	$(AWK) -v living_c=$(top_srcdir)/common/living.c 		-f stats-extract $(pkgdatadir)/archetypes > in_stats
 
 stats.html: .bmaps in_stats ../scripts/makeps.pl stats.gif
-	$(PERL) ../scripts/makeps.pl libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
+	$(PERL) ../scripts/makeps.pl output=png libdir=$(top_srcdir)/lib archdir=$(top_srcdir)/lib/ size=0.4 input=in_stats archdir=$(pkgdatadir)/archetypes > stats.html
 
 equip.html: in_equip treas2-extract
 	$(AWK) -v eqitems=in_equip -f treas2-extract 	../../lib/treasures > equip.html

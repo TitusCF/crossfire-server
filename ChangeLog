@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add support for using png files for html handbook and spoiler - png support
+is common enough in browsers now days that don't need to convert to gif.
+Reduces tool requirements to build documents (as it is a simple copy
+for the png, vs actual conversion), and speeds up building the files
+dramatically.
+--
+doc/scripts/makeps.pl: Add png output handling.  What this amounts to is
+  doing a hard link to the original png file.
+doc/playbook-html/Makefile.am, doc/spoiler-html/Makefile.am: Use png
+  output for images now, not gif.
+MSW 2007-07-16
+
 plugins/cfpython/cfpython_object.c: don't try to insert a NULL object.
 Nicolas Weeger 2007-07-16
 

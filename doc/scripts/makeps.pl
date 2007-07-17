@@ -75,15 +75,17 @@ while (<IN>) {
 }
 close(IN);
 
-
-# An array to reduce the size of the bitmap exponentially.
-# A 4x8 bitmap will be reduced to 60% of its full size.
-if ($work_todo) {
-    $size_mul{1} = 1;
-    for ($i = 2; $i <= 12; $i++) {# Max input is 12x12, a *large* bitmap ;-)
-        $size_mul{$i} = $size_mul{$i - 1} * 0.9;
+if ($output ne "png") {
+    # An array to reduce the size of the bitmap exponentially.
+    # A 4x8 bitmap will be reduced to 60% of its full size.
+    if ($work_todo) {
+	$size_mul{1} = 1;
+	for ($i = 2; $i <= 12; $i++) {# Max input is 12x12, a *large* bitmap ;-)
+	    $size_mul{$i} = $size_mul{$i - 1} * 0.9;
+        }
     }
 }
+
 
 $More = 0;
 print STDERR "starting to process $inarch\n";
@@ -180,8 +182,18 @@ sub assemble {
 
     $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
     if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     }
+    elsif ($output eq "png") { $ps_file = $faces{0, 0} . '.png'; }
     else { $ps_file = $faces{0, 0} . '.gif'; }
+
     $ps_file =~ s/[_ ]/-/g;
+
+    # We don't need to manipulate the files, so just do hard links - much
+    # faster, and also doesn't use space.
+    if ($output eq "png") {
+	link($bmap_file, $ps_file);
+	$ps = "<img src=$ps_file>";
+	return $ps;
+    }
 
     $w = $xmax - $xmin + 1;
     $h = $ymax - $ymin + 1;
