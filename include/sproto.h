@@ -297,8 +297,8 @@ void become_daemon(void);
 /* disease.c */
 int move_disease(object *disease);
 int infect_object(object *victim, object *disease, int force);
-int move_symptom(object *symptom);
-int check_physically_infect(object *victim, object *hitter);
+void move_symptom(object *symptom);
+void check_physically_infect(object *victim, object *hitter);
 int cure_disease(object *sufferer, object *caster);
 /* hiscore.c */
 void check_score(object *op);
