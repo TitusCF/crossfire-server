@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+ server/pets.c swap.c
+Nicolas Weeger 2007-07-23
+
 Remove unused return values. Fix wrong return for cure_disease. Remove hardcoded value.
  include/sproto.h
  server/disease.c

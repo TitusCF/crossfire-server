@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions deal with pets.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -37,6 +42,13 @@
  * found.  it basically looks for nasty things around the owner
  * of the pet to attack.
  * This is now tilemap aware.
+ *
+ * @param pet
+ * who is seeking an enemy.
+ * @param[out] rv
+ * will contain the path to the enemy.
+ * @return
+ * enemy, or NULL if nothing suitable.
  */
 object *get_pet_enemy(object * pet, rv_vector *rv){
     object *owner, *tmp, *attacker, *tmp3;
@@ -223,6 +235,12 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
     return check_enemy(pet, rv);
 }
 
+/**
+ * Removes all pets someone owns.
+ *
+ * @param owner
+ * player we wish to remove all pets of.
+ */
 void terminate_all_pets(object *owner) {
   objectlink *obl, *next;
   for(obl = first_friendly_object; obl != NULL; obl = next) {
@@ -238,12 +256,16 @@ void terminate_all_pets(object *owner) {
 }
 
 /**
+ * This function checks all pets so they try to follow their master around the world.
+ *
  * Unfortunately, sometimes, the owner of a pet is in the
  * process of entering a new map when this is called.
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
- * Interesting enough, we don't use the passed map structure in
- * this function.
+ *
+ * @param map
+ * unused.
+ * @todo remove useless parameter.
  */
 void remove_all_pets(mapstruct *map) {
   objectlink *obl, *next;
@@ -268,6 +290,14 @@ void remove_all_pets(mapstruct *map) {
   }
 }
 
+/**
+ * A pet is trying to follow its owner.
+ *
+ * @param ob
+ * pet trying to follow. Will be remove_ob()'d if can't follow.
+ * @param owner
+ * owner of ob.
+ */
 void follow_owner(object *ob, object *owner) {
     object *tmp;
     int dir;
@@ -305,6 +335,12 @@ void follow_owner(object *ob, object *owner) {
     return;
 }
 
+/**
+ * Handles a pet's movement.
+ *
+ * @param ob
+ * pet to move.
+ */
 void pet_move(object * ob)
 {
     int dir, tag, i;
@@ -409,9 +445,16 @@ void pet_move(object * ob)
 /**
  * This makes multisquare/single square monsters
  * proper for map insertion.
- * at is the archetype, op is the caster of the spell, dir is the
+ * @param at
+ * archetype to prepare.
+ * @param op
+ * caster of the spell
+ * @param dir
  * direction the monster should be placed in.
- * is_golem is to note that this is a golem spell.
+ * @param is_golem
+ * if set then this is a golem spell.
+ * @return
+ * suitable golem.
  */
 static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) {
     archetype *atmp;
@@ -488,8 +531,11 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
 }
 
 /**
+ * Handles a golem's movement.
+ *
  * Updated this to allow more than the golem 'head' to attack.
- * op is the golem to be moved.
+ * @param op
+ * golem to be moved.
  */
 void move_golem(object *op) {
     int made_attack=0;
@@ -581,21 +627,38 @@ void move_golem(object *op) {
 }
 
 /**
+ * Makes the golem go in specified direction.
  * This is a really stupid function when you get down and
  * look at it.  Keep it here for the time being - makes life
  * easier if we ever decide to do more interesting thing with
  * controlled golems.
+ *
+ * @param op
+ * golem.
+ * @param dir
+ * desired direction.
+ * @todo trash.
  */
 void control_golem(object *op,int dir) {
     op->direction=dir;
 }
 
 /**
- * Summons a monster for 'op'.  caster is the object
- * casting the spell, dir is the direction to place the monster,
- * at is the archetype of the monster, and spob is the spell
- * object.  At this stage, all spob is really used for is to
+ * Summons a monster.
+ *
+ * @param op
+ * who is summoning.
+ * @param caster
+ * object casting the spell.
+ * @param dir
+ * direction to place the monster.
+ * @param spob
+ * spell object casting. At this stage, all spob is really used for is to
  * adjust some values in the monster.
+ * @retval 0
+ * failed to summon something.
+ * @retval 1
+ * summoned correctly something.
  */
 int summon_golem(object *op,object *caster,int dir,object *spob) {
     object *tmp, *god=NULL;
@@ -747,9 +810,17 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
 
 /**
  * Returns a monster (chosen at random) that this particular player (and his
- * god) find acceptable.  This checks level, races allowed by god, etc
+ * god) find acceptable. This checks level, races allowed by god, etc
  * to determine what is acceptable.
- * This returns NULL if no match was found.
+ *
+ * @param pl
+ * player summoning.
+ * @param god
+ * god the player worships.
+ * @param summon_level
+ * summoning level.
+ * @return
+ * suitable monster, or NULL if no match found.
  */
 static object *choose_cult_monster(object *pl, object *god, int summon_level) {
     char buf[MAX_BUF];
@@ -822,6 +893,21 @@ static object *choose_cult_monster(object *pl, object *god, int summon_level) {
 
 /**
  * General purpose sommuning function.
+ *
+ * @param op
+ * who is summoning.
+ * @param caster
+ * what object did cast the summoning spell.
+ * @param spell_ob
+ * actual spell object for summoning.
+ * @param dir
+ * direction to summon in.
+ * @param stringarg
+ * additional parameters.
+ * @retval 0
+ * nothing was summoned.
+ * @retval 1
+ * something was summoned.
  */
 int summon_object(object *op, object *caster, object *spell_ob, int dir, const char *stringarg)
 {
@@ -1007,6 +1093,11 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
 /**
  * Recursively look through the owner property of objects until the real owner
  * is found
+ *
+ * @param ob
+ * item we're searching the owner of.
+ * @return
+ * owner, NULL if nothing found.
  */
 static object *get_real_owner(object *ob) {
 	object *realowner = ob;
@@ -1022,7 +1113,18 @@ static object *get_real_owner(object *ob) {
 
 /**
  * Determines if checks so pets don't attack players or other pets should be
- * overruled by the arena petmode
+ * overruled by the arena petmode.
+ *
+ * @param pet
+ * pet considered.
+ * @param owner
+ * pet's owner.
+ * @param target
+ * potential pet target.
+ * @retval 0
+ * pet shouldn't attack target.
+ * @retval 1
+ * target is a suitable victim for the pet.
  */
 int should_arena_attack(object *pet,object *owner,object *target) {
 	object *rowner, *towner;

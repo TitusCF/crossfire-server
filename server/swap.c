@@ -26,14 +26,22 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * All those functions deal with swapping maps to disk to claim memory space.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
 #include <object.h>
 
-/* This writes out information on all the temporary maps.  It is called by
- * swap_map below.
+/**
+ * Writes out information on all the temporary maps.  It is called by
+ * swap_map().
+ *
+ * Will LOG() in case of error.
  */
 static void write_map_log(void)
 {
@@ -67,6 +75,11 @@ static void write_map_log(void)
     fclose(fp);
 }
 
+/**
+ * Reads temporary maps information from disk.
+ *
+ * Will LOG() in case of error.
+ */
 void read_map_log(void)
 {
     FILE *fp;
@@ -125,6 +138,8 @@ void read_map_log(void)
 }
 
 /**
+ * Swaps a map to disk.
+ *
  * After calling this function, the map will be either swapped to disk, or
  * totally removed.
  *
@@ -186,6 +201,12 @@ mapstruct* swap_map(mapstruct *map) {
     return map;
 }
 
+/**
+ * Finds maps in memory to reset.
+ *
+ * @todo
+ * The check for MAX_OBJECTS_LWM is wrongly placed, and should be moved elsewhere.
+ */
 void check_active_maps(void) {
     mapstruct *map, *next;
 
@@ -204,10 +225,15 @@ void check_active_maps(void) {
     }
 }
 
-/*
- * map_least_timeout() returns the map with the lowest timeout variable (not 0)
+/**
+ * Returns the map with the lowest timeout variable (not 0).
+ *
+ * @param except_level
+ * path of map to ignore for reset. Musn't be NULL.
+ * @return
+ * map, or NULL if no map is ready for reset.
+ * @todo change the char* to const char*
  */
-
 static mapstruct *map_least_timeout(char *except_level) {
   mapstruct *map, *chosen=NULL;
   int timeout = MAP_MAXTIMEOUT + 1;
@@ -218,12 +244,15 @@ static mapstruct *map_least_timeout(char *except_level) {
   return chosen;
 }
 
-/*
- * swap_below_max() tries to swap out maps which are still in memory because
+/**
+ * Tries to swap out maps which are still in memory, because
  * of MAP_TIMEOUT until used objects is below MAX_OBJECTS or there are
  * no more maps to swap.
+ *
+ * @param except_level
+ * path of map to ignore for reset. Musn't be NULL.
+ * @todo change the char* to const char*
  */
-
 void swap_below_max(char *except_level) {
     mapstruct *map;
 
@@ -245,11 +274,18 @@ void swap_below_max(char *except_level) {
     }
 }
 
-/*
- * players_on_map(): will be replaced by map->players when I'm satisfied
- * that the variable is always correct.
- * If show_all is true, we show everyone.  If not, we don't show hidden
- * players (dms)
+/**
+ * Returns the count of players on a map, calculated from player list.
+ *
+ * @param m
+ * map we want the count of players on.
+ * @param show_all
+ * if true, show everyone. If not, don't show hidden players (dms)
+ * @return
+ * player count.
+ *
+ * @todo
+ * this doesn't take into account transports. Should be removed when mapstruct::players is valid.
  */
 
 int players_on_map(mapstruct *m, int show_all) {
@@ -262,8 +298,7 @@ int players_on_map(mapstruct *m, int show_all) {
   return nr;
 }
 
-/*
- * flush_old_maps():
+/**
  * Removes tmp-files of maps which are going to be reset next time
  * they are visited.
  * This is very useful if the tmp-disk is very full.
