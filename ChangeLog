@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/plugins.c: sanity checks on parameters for usual crashing culprit.
+Nicolas Weeger 2007-07-25
+
 Documentation, no functional change.
  server/pets.c swap.c
 Nicolas Weeger 2007-07-23
