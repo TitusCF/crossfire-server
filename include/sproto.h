@@ -153,7 +153,7 @@ int command_output_count(object *op, char *params);
 int command_listen(object *op, char *params);
 int command_statistics(object *pl, char *params);
 int command_fix_me(object *op, char *params);
-int command_players(object *op, char *paramss);
+int command_players(object *op, char *params);
 int command_applymode(object *op, char *params);
 int command_bowmode(object *op, char *params);
 int command_petmode(object *op, char *params);

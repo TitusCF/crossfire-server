@@ -26,6 +26,12 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Various functions. Handles misc. input request - things like hash table, malloc, maps,
+ * who, etc.
+ */
+
 #include <global.h>
 #include <loader.h>
 
@@ -41,10 +47,13 @@
 extern weathermap_t **weathermap;
 
 /**
- * Handles misc. input request - things like hash table, malloc, maps,
- * who, etc.
+ * This is the 'maps' command.
+ *
+ * @param op
+ * player requesting the information.
+ * @param search
+ * optional substring to search for.
  */
-
 void map_info(object *op, char *search) {
     mapstruct *m;
     char map_path[MAX_BUF];
@@ -83,7 +92,17 @@ void map_info(object *op, char *search) {
 /**
  * This command dumps the body information for object *op.
  * it doesn't care what the params are.
+ *
  * This is mostly meant as a debug command.
+ *
+ * This is the 'body' command.
+ *
+ * @param op
+ * player to display body info for.
+ * @param params
+ * unused
+ * @retval
+ * 1.
  */
 int command_body(object *op, char *params)
 {
@@ -128,25 +147,60 @@ int command_body(object *op, char *params)
     return 1;
 }
 
-
+/**
+ * Display the message of the day.
+ *
+ * @param op
+ * player requesting the motd.
+ * @param params
+ * unused.
+ * @retval
+ * 1.
+ */
 int command_motd(object *op, char *params)
 {
 	display_motd(op);
 	return 1;
 }
 
+/**
+ * Display the server rules.
+ *
+ * @param op
+ * player requesting the rules.
+ * @param params
+ * unused.
+ * @retval
+ * 1.
+ */
 int command_rules(object *op, char *params)
 {
 	send_rules(op);
 	return 1;
 }
 
+/**
+ * Display the server news.
+ *
+ * @param op
+ * player requesting the news.
+ * @param params
+ * unused.
+ * @retval
+ * 1.
+ */
 int command_news(object *op, char *params)
 {
 	send_news(op);
 	return 1;
 }
 
+/**
+ * Sends various memory-related statistics.
+ *
+ * @param op
+ * player requesting the information.
+ */
 void malloc_info(object *op) {
     int ob_used=count_used(),ob_free=count_free(),players,nrofmaps;
     int nrm=0,mapmem=0,anr,anims,sum_alloc=0,sum_used=0,i,tlnr, alnr;
@@ -289,9 +343,15 @@ void malloc_info(object *op) {
 }
 
 /**
- * Pretty much identical to current map_info, but on a bigger scale
+ * 'whereami' command.
+ *
+ * Pretty much identical to current map_info(), but on a bigger scale
+ *
  * This function returns the name of the players current region, and
  * a description of it. It is there merely for flavour text.
+ *
+ * @param op
+ * player wanting information.
  */
 void current_region_info(object *op) {
     /*
@@ -310,6 +370,12 @@ void current_region_info(object *op) {
 	 get_region_longname(r), get_region_msg(r));
 }
 
+/**
+ * 'mapinfo' command.
+ *
+ * @param op
+ * player requesting the information.
+ */
 void current_map_info(object *op) {
     mapstruct *m = op->map;
 
@@ -336,6 +402,15 @@ void current_map_info(object *op) {
 }
 
 #ifdef DEBUG_MALLOC_LEVEL
+/**
+ * Checks the server heap.
+ *
+ * @param op
+ * player checking.
+ * @param parms
+ * ignored.
+ * @retval 1
+ */
 int command_malloc_verify(object *op, char *parms)
 {
     extern int malloc_verify(void);
@@ -351,6 +426,18 @@ int command_malloc_verify(object *op, char *parms)
 }
 #endif
 
+/**
+ * 'whereabouts' command.
+ *
+ * Displays how many players are in which regions.
+ *
+ * @param op
+ * player requesting information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_whereabouts(object *op, char *params) {
 
     region *reg;
@@ -392,16 +479,35 @@ int command_whereabouts(object *op, char *params) {
     return 1;
 }
 
+/** Utility structure for the 'who' command. */
 typedef struct {
 	char namebuf[MAX_BUF];
 	int login_order;
 } chars_names;
 
-/** local functon for qsort comparison*/
+/**
+ * Local function for qsort comparison.
+ *
+ * @param c1
+ * @param c2
+ * players to compare.
+ * @return
+ * -1, 0 or 1 depending on c1 and c2's order.
+ */
 static int name_cmp (const chars_names *c1, const chars_names *c2) {
     return strcasecmp (c1->namebuf, c2->namebuf);
 }
 
+/**
+ * 'who' command.
+ *
+ * @param op
+ * player requesting the information.
+ * @param params
+ * optional region to limit the information to.
+ * @return
+ * 1.
+ */
 int command_who (object *op, char *params) {
     player *pl;
     uint16 i;
@@ -476,7 +582,16 @@ int command_who (object *op, char *params) {
     return 1;
 }
 
-/** Display a line of 'who' to op, about pl, using the formatting specified by format */
+/**
+ * Display a line of 'who' to op, about pl, using the formatting specified by format.
+ *
+ * @param op
+ * player getting the information.
+ * @param pl
+ * player to display information for.
+ * @param format
+ * format to display.
+ */
 void display_who_entry(object *op, player *pl, const char *format) {
     char tmpbuf[MAX_BUF];
     char outbuf[MAX_BUF], outbuf1[MAX_BUF];
@@ -510,27 +625,35 @@ void display_who_entry(object *op, player *pl, const char *format) {
 }
 
 /**
- * Returns the value of the escape code used in the who format specifier
- * the values are:
- * N	Name of character
- * t	title of character
- * T    the optional "the " sequence value (depend if player has own_title or not)
- * c	count
- * n	newline
- * h	<Hostile> if character is hostile, nothing otherwise
- * d	<WIZ> if character is a dm, nothing otherwise
- * a	<AFK> if character is afk, nothing otherwise
- * b	<BOT> if character is a bot, nothing otherwise
- * l	the level of the character
- * m	the map path the character is currently on
- * M	the map name of the map the character is currently on
- * r	the region name (eg scorn, wolfsburg)
- * R	the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
- * i	player's ip address
- * %	a literal %
- * _	a literal underscore
+ * Returns the value of the escape code used in the who format specifier.
+ *
+ * Specifier values are:
+ * - N	Name of character
+ * - t	title of character
+ * - T	the optional "the " sequence value (depend if player has own_title or not)
+ * - c	count
+ * - n	newline
+ * - h	\<Hostile\> if character is hostile, nothing otherwise
+ * - d	\<WIZ\> if character is a dm, nothing otherwise
+ * - a	\<AFK\> if character is afk, nothing otherwise
+ * - b	\<BOT\> if character is a bot, nothing otherwise
+ * - l	the level of the character
+ * - m	the map path the character is currently on
+ * - M	the map name of the map the character is currently on
+ * - r	the region name (eg scorn, wolfsburg)
+ * - R	the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
+ * - i	player's ip address
+ * - %	a literal %
+ * - _	a literal underscore
+ *
+ * @param[out] return_val
+ * buffer that will contain the information.
+ * @param letter
+ * format specifier.
+ * @param pl
+ * player to get information for.
+ * @todo use safe string functions.
  */
-
 void get_who_escape_code_value(char *return_val, const char letter, player *pl) {
 
     switch (letter) {
@@ -590,7 +713,16 @@ void get_who_escape_code_value(char *return_val, const char letter, player *pl) 
     }
 }
 
-
+/**
+ * Toggles the afk status of a player. 'afk' command.
+ *
+ * @param op
+ * player to toggle status for.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_afk (object *op, char *params)
 {
     if QUERY_FLAG(op,FLAG_AFK) {
@@ -607,30 +739,78 @@ int command_afk (object *op, char *params)
     return 1;
 }
 
+/**
+ * Display memory information.
+ *
+ * @param op
+ * player requesting information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_malloc (object *op, char *params)
 {
     malloc_info(op);
     return 1;
 }
 
+/**
+ * 'mapinfo' command.
+ *
+ * @param op
+ * player requesting the information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_mapinfo (object *op, char *params)
 {
     current_map_info(op);
     return 1;
 }
 
+/**
+ * 'whereami' command.
+ *
+ * @param op
+ * player requesting the information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_whereami (object *op, char *params)
 {
     current_region_info(op);
     return 1;
 }
 
- int command_maps (object *op, char *params)
+/**
+ * 'maps' command.
+ *
+ * @param op
+ * player requesting the information.
+ * @param params
+ * region to restrict to.
+ */
+int command_maps (object *op, char *params)
 {
     map_info(op,params);
     return 1;
 }
 
+/**
+ * Various string-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_strings (object *op, char *params)
 {
     char stats[HUGE_BUF];
@@ -645,12 +825,33 @@ int command_strings (object *op, char *params)
     return 1;
 }
 
+/**
+ * Players asks for the time.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_time (object *op, char *params)
 {
     time_info(op);
     return 1;
 }
 
+/**
+ * Player is wondering about the weather.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ * @todo return something even if weather is off or not on a weather tile.
+ */
 int command_weather (object *op, char *params)
 {
     int wx, wy, temp, sky;
@@ -830,18 +1031,49 @@ int command_weather (object *op, char *params)
     return 1;
 }
 
+/**
+ * Archetype-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ * @todo this should be a wizard command.
+ */
 int command_archs (object *op, char *params)
 {
     arch_info(op);
     return 1;
 }
 
+/**
+ * Player is asking for the hiscore.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_hiscore (object *op, char *params)
 {
     display_high_score(op,op==NULL?9999:50, params);
     return 1;
 }
 
+/**
+ * Player wants to see/change the debug level.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * new debug value.
+ * @return
+ * 1.
+ */
 int command_debug (object *op, char *params)
 {
     int i;
@@ -868,9 +1100,15 @@ int command_debug (object *op, char *params)
 
 
 /**
- * Those dumps should be just one dump with good parser
+ * Player wants to dump object below her.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
  */
-
 int command_dumpbelow (object *op, char *params)
 {
     if (op && op->below) {
@@ -884,6 +1122,16 @@ int command_dumpbelow (object *op, char *params)
     return 0;
 }
 
+/**
+ * Wizard toggling wall-crossing.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_wizpass (object *op, char *params)
 {
     int i;
@@ -908,6 +1156,16 @@ int command_wizpass (object *op, char *params)
     return 0;
 }
 
+/**
+ * Wizard toggling "cast everywhere" ability.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_wizcast (object *op, char *params)
 {
     int i;
@@ -932,30 +1190,80 @@ int command_wizcast (object *op, char *params)
     return 0;
 }
 
+/**
+ * Various object-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_dumpallobjects (object *op, char *params)
 {
     dump_all_objects();
     return 0;
 }
 
+/**
+ * Various friendly object-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_dumpfriendlyobjects (object *op, char *params)
 {
     dump_friendly_objects();
     return 0;
 }
 
+/**
+ * Various archetypes-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_dumpallarchetypes (object *op, char *params)
 {
     dump_all_archetypes();
     return 0;
 }
 
+/**
+ * Various string-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_ssdumptable (object *op, char *params)
 {
     ss_dump_table(SS_DUMP_TABLE, NULL, 0);
     return 0;
 }
 
+/**
+ * Various map-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_dumpmap (object *op, char *params)
 {
     if(op)
@@ -963,12 +1271,32 @@ int command_dumpmap (object *op, char *params)
     return 0;
 }
 
+/**
+ * Various map-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_dumpallmaps (object *op, char *params)
 {
     dump_all_maps();
     return 0;
 }
 
+/**
+ * Various LOS-related statistics.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_printlos (object *op, char *params)
 {
     if (op)
@@ -977,6 +1305,16 @@ int command_printlos (object *op, char *params)
 }
 
 
+/**
+ * Server version.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_version (object *op, char *params)
 {
     version(op);
@@ -984,6 +1322,16 @@ int command_version (object *op, char *params)
 }
 
 
+/**
+ * Output-sync command.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * new value.
+ * @return
+ * 1.
+ */
 int command_output_sync(object *op, char *params)
 {
     int val;
@@ -1010,6 +1358,16 @@ int command_output_sync(object *op, char *params)
     return 1;
 }
 
+/**
+ * output-count command.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * new value.
+ * @return
+ * 1.
+ */
 int command_output_count(object *op, char *params)
 {
     int val;
@@ -1036,6 +1394,16 @@ int command_output_count(object *op, char *params)
     return 1;
 }
 
+/**
+ * Change the player's listen level.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_listen (object *op, char *params)
 {
     int i;
@@ -1065,6 +1433,13 @@ int command_listen (object *op, char *params)
  * out can be determined by the docs, so we aren't revealing anything extra -
  * rather, we are making it convenient to find the values.  params have
  * no meaning here.
+ *
+ * @param pl
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
  */
 int command_statistics(object *pl, char *params)
 {
@@ -1120,6 +1495,16 @@ int command_statistics(object *pl, char *params)
    return 0;
 }
 
+/**
+ * Wrapper to fix a player.
+ *
+ * @param op
+ * player asking to be fixed.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_fix_me(object *op, char *params)
 {
     sum_weight(op);
@@ -1127,7 +1512,17 @@ int command_fix_me(object *op, char *params)
     return 1;
 }
 
-int command_players(object *op, char *paramss)
+/**
+ * Display all known players.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
+int command_players(object *op, char *params)
 {
     char buf[MAX_BUF];
     char *t;
@@ -1172,6 +1567,16 @@ int command_players(object *op, char *paramss)
     return 0;
 }
 
+/**
+ * Players wants to change the apply mode, ie how to handle applying an item when no body slot available.
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * new mode.
+ * @return
+ * 1.
+ */
 int command_applymode(object *op, char *params)
 {
     unapplymode unapply = op->contr->unapply;
@@ -1207,6 +1612,16 @@ int command_applymode(object *op, char *params)
     return 1;
 }
 
+/**
+ * Player wants to change the bowmode, how arrows are fired.
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * new mode.
+ * @return
+ * 1.
+ */
 int command_bowmode(object *op, char *params)
 {
     bowtype_t oldtype=op->contr->bowtype;
@@ -1253,6 +1668,16 @@ int command_bowmode(object *op, char *params)
     return 1;
 }
 
+/**
+ * Player wants to change how her pets behave.
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * new mode.
+ * @return
+ * 1.
+ */
 int command_petmode(object *op, char *params)
 {
     petmode_t oldtype=op->contr->petmode;
@@ -1289,6 +1714,16 @@ int command_petmode(object *op, char *params)
     return 1;
 }
 
+/**
+ * Players wants to know her pets.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_showpets(object *op, char *params)
 {
     objectlink *obl, *next;
@@ -1365,6 +1800,16 @@ int command_showpets(object *op, char *params)
     return 0;
 }
 
+/**
+ * Player wants to change how keys are used.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_usekeys(object *op, char *params)
 {
     usekeytype oldtype=op->contr->usekeys;
@@ -1400,6 +1845,16 @@ int command_usekeys(object *op, char *params)
     return 1;
 }
 
+/**
+ * Players wants to know her resistances.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_resistances(object *op, char *params)
 {
     int i;
@@ -1442,8 +1897,14 @@ int command_resistances(object *op, char *params)
 }
 
 /**
- * Actual commands.
- * Those should be in small separate files (c_object.c, c_wiz.c, cmove.c,...)
+ * Player wants to know available help topics.
+ *
+ * @param op
+ * player asking for information.
+ * @param what
+ * - 1: wizard topics.
+ * - 3: misc topics.
+ * - other: regular commands.
  */
 static void help_topics(object *op, int what)
 {
@@ -1488,6 +1949,16 @@ static void help_topics(object *op, int what)
     closedir(dirp);
 }
 
+/**
+ * Helper function to display commands.
+ *
+ * @param op
+ * player asking for information.
+ * @param what
+ * - 1: display wizard commands.
+ * - 2: display communication commands.
+ * - other: display regular commands.
+ */
 static void show_commands(object *op, int what)
 {
     char line[HUGE_BUF];
@@ -1529,7 +2000,16 @@ static void show_commands(object *op, int what)
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, line);
 }
 
-
+/**
+ * Player is asking for some help.
+ *
+ * @param op
+ * player asking for information.
+ * @param params
+ * what kind of help to ask for.
+ * @return
+ * 0.
+ */
 int command_help (object *op, char *params)
 {
     struct stat st;
@@ -1646,7 +2126,16 @@ int command_help (object *op, char *params)
     return 0;
 }
 
-
+/**
+ * Utility function to convert a reply to a yes/no or on/off value.
+ *
+ * @param line
+ * string to check.
+ * @retval 1
+ * line is one of on y k s d.
+ * @retval 0
+ * other value.
+ */
 int onoff_value(const char *line)
 {
     int i;
@@ -1674,6 +2163,16 @@ int onoff_value(const char *line)
     }
 }
 
+/**
+ * Player wants to totally delete her character.
+ *
+ * @param op
+ * player wanting to delete her character.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_quit (object *op, char *params)
 {
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,
@@ -1684,8 +2183,17 @@ int command_quit (object *op, char *params)
 }
 
 /**
- * don't allow people to exit explore mode.  It otherwise becomes
+ * Player wants to enter explore mode.
+ *
+ * Don't allow people to exit explore mode.  It otherwise becomes
  * really easy to abuse this.
+ *
+ * @param op
+ * player asking for explore mode.
+ * @param params
+ * unused.
+ * @return
+ * 1.
  */
 int command_explore (object *op, char *params)
 {
@@ -1709,6 +2217,16 @@ int command_explore (object *op, char *params)
     return 1;
 }
 
+/**
+ * Player wants to change sound status.
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_sound (object *op, char *params)
 {
     if (!(op->contr->socket.sound & SND_MUTE)) {
@@ -1725,10 +2243,17 @@ int command_sound (object *op, char *params)
 }
 
 /**
+ * A player just entered her name.
+ *
  * Perhaps these should be in player.c, but that file is
  * already a bit big.
+ *
+ * @param op
+ * player we're getting the name of.
+ * @param k
+ * unused.
+ * @todo remove spurious k variable.
  */
-
 void receive_player_name(object *op,char k) {
 
     if(!check_name(op->contr,op->contr->write_buf+1)) {
@@ -1742,6 +2267,15 @@ void receive_player_name(object *op,char k) {
     get_password(op);
 }
 
+/**
+ * A player just entered her password, including for changing it.
+ *
+ * @param op
+ * player.
+ * @param k
+ * unused.
+ * @todo remove spurious k variable.
+ */
 void receive_player_password(object *op,char k) {
 
     unsigned int pwd_len=strlen(op->contr->write_buf);
@@ -1822,7 +2356,16 @@ void receive_player_password(object *op,char k) {
     return;
 }
 
-
+/**
+ * Player wishes to change her title.
+ *
+ * @param op
+ * player asking for change.
+ * @param params
+ * new title.
+ * @return
+ * 1.
+ */
 int command_title (object *op, char *params)
 {
     char buf[MAX_BUF];
@@ -1868,6 +2411,16 @@ int command_title (object *op, char *params)
     return 1;
 }
 
+/**
+ * Player wants to get saved.
+ *
+ * @param op
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_save (object *op, char *params)
 {
     if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) {
@@ -1887,7 +2440,16 @@ int command_save (object *op, char *params)
     return 1;
 }
 
-
+/**
+ * Player toggles her peaceful status.
+ *
+ * @param op
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_peaceful (object *op, char *params)
 {
     if((op->contr->peaceful=!op->contr->peaceful))
@@ -1899,8 +2461,16 @@ int command_peaceful (object *op, char *params)
     return 1;
 }
 
-
-
+/**
+ * Player wants to change how soon she'll flee.
+ *
+ * @param op
+ * player.
+ * @param params
+ * new value.
+ * @return
+ * 1.
+ */
 int command_wimpy (object *op, char *params)
 {
     int i;
@@ -1920,7 +2490,16 @@ int command_wimpy (object *op, char *params)
     return 1;
 }
 
-
+/**
+ * Player toggles her braced status.
+ *
+ * @param op
+ * player.
+ * @param params
+ * brace status (on/off).
+ * @return
+ * 1.
+ */
 int command_brace (object *op, char *params)
 {
     if (!params)
@@ -1940,6 +2519,16 @@ int command_brace (object *op, char *params)
     return 0;
 }
 
+/**
+ * Player wants to get rid of pets.
+ *
+ * @param op
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * 0.
+ */
 int command_kill_pets(object *op, char *params)
 {
     objectlink *obl, *next;
@@ -1977,7 +2566,14 @@ int command_kill_pets(object *op, char *params)
 
 /**
  * Player is asking to change password.
- **/
+ *
+ * @param pl
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * 1.
+ */
 int command_passwd(object *pl, char *params)
 {
     send_query(&pl->contr->socket,CS_QUERY_HIDEINPUT,

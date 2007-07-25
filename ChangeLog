@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+ include/sproto.h: fix paramss to params for coherence.
+ server/c_misc.c
+Nicolas Weeger 2007-07-25
+
 server/plugins.c: sanity checks on parameters for usual crashing culprit.
 Nicolas Weeger 2007-07-25
 
