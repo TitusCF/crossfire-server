@@ -571,12 +571,12 @@ int cf_object_pay_item(object *op,object *pl)
 
 /**
  * Wrapper for pay_for_amount().
- * @copydoc pay_for_item().
+ * @copydoc pay_for_amount().
  */
-int cf_object_pay_amount(object* op, uint64 amount)
+int cf_object_pay_amount(object* pl, uint64 to_pay)
 {
     int type, value;
-    cfapiObject_pay_amount(&type, op, amount, &value);
+    cfapiObject_pay_amount(&type, pl, to_pay, &value);
     assert(type == CFAPI_INT);
     return value;
 }
@@ -777,11 +777,11 @@ int cf_object_query_cost(const object *tmp, object *who, int flag)
  * Wrapper for spring_trap().
  * @copydoc spring_trap().
  */
-void cf_spring_trap( object* op , object* victim)
+void cf_spring_trap( object* trap , object* victim)
 {
     int type;
-    if ( op )
-        cfapiObject_activate_rune( &type, op, victim );
+    if (trap)
+        cfapiObject_activate_rune( &type, trap, victim );
 }
 /**
  * Wrapper for check_trigger().

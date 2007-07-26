@@ -89,7 +89,7 @@ extern int          cf_object_get_flag( object* ob, int flag );
 extern void         cf_object_set_flag( object* ob, int flag, int value );
 extern object*      cf_object_insert_in_ob( object* op, object* where );
 extern void         cf_object_set_string_property(object* op, int propcode, const char* value);
-extern void         cf_spring_trap( object* op , object* victim);
+extern void         cf_spring_trap( object* trap, object* victim);
 extern int          cf_object_check_trigger( object* op, object* cause );
 extern int          cf_object_query_money(const object* op);
 extern int          cf_object_query_cost(const object *tmp, object *who, int flag);
@@ -98,7 +98,7 @@ extern void         cf_object_learn_spell(object *op, object *spell, int special
 extern void         cf_object_forget_spell(object* op, object* sp);
 extern object*      cf_object_check_for_spell(object *op, const char *name);
 extern int          cf_object_cast_ability(object* caster, object* ctoo, int dir, object* sp, char* flags);
-extern int          cf_object_pay_amount(object* op, uint64 amount);
+extern int          cf_object_pay_amount(object* pl, uint64 to_pay);
 extern int          cf_object_pay_item(object *op,object *pl);
 extern void         cf_object_set_long_property(object* op, int propcode, long value);
 extern int          cf_object_transfer(object *op, int x, int y, int randomly, object *originator);

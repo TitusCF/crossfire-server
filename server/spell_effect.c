@@ -29,6 +29,8 @@
 
 /**
  * @file server/spell_effect.c
+ * Various spell effects, non attacks.
+ * @todo use the same parameter names/orders.
  */
 
 #include <global.h>
@@ -41,9 +43,14 @@
 #include <sounds.h>
 
 /**
- * This is really used mostly for spell
- * fumbles at the like.  tmp is the object to propogate.
- * op is what is casting this.
+ * This is really used mostly for spell fumbles at the like.
+ *
+ * @param op
+ * what is casting this.
+ * @param tmp
+ * object to propogate.
+ * @param lvl
+ * how nasty should the propagation be.
  */
 void cast_magic_storm(object *op, object *tmp, int lvl)
 {
@@ -66,7 +73,20 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
 
 }
 
-
+/**
+ * Recharge wands.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * spell object.
+ * @retval 0
+ * nothing happened.
+ * @retval 1
+ * wand was recharged, or destroyed.
+ */
 int recharge(object *op, object *caster, object *spell_ob) {
     object *wand, *tmp;
     int ncharges;
@@ -470,10 +490,23 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
  * The # of arrows created also goes up with level, so if a 30th level mage
  * wants LOTS of arrows, and doesn't care what the plus is he could
  * create nonnmagic arrows, or even -1, etc...
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @param stringarg
+ * optional parameter specifying what kind of items to create.
+ * @retval 0
+ * no missile created.
+ * @retval
+ * missiles were created.
  */
-
-int cast_create_missile(object *op, object *caster,object *spell, int dir,
-    const char *stringarg)
+int cast_create_missile(object *op, object *caster,object *spell, int dir, const char *stringarg)
 {
     int missile_plus=0, bonus_plus=0;
     const char *missile_name;
@@ -565,8 +598,24 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir,
 
 
 /**
- * allows the choice of what sort of food object to make.
- *  If stringarg is NULL, it will create food dependent on level  --PeterM
+ * Create food.
+ * Allows the choice of what sort of food object to make.
+ * If stringarg is NULL, it will create food dependent on level  --PeterM
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @param stringarg
+ * optional parameter specifying what kind of items to create.
+ * @retval 0
+ * no food created.
+ * @retval
+ * food was created.
  */
 int cast_create_food(object *op,object *caster, object *spell_ob, int dir, const char *stringarg)
 {
@@ -629,6 +678,22 @@ int cast_create_food(object *op,object *caster, object *spell_ob, int dir, const
     return 1;
 }
 
+/**
+ * Try to get information about a living thing.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * spell object being cast.
+ * @param dir
+ * cast direction.
+ * @retval 0
+ * nothing probed.
+ * @retval 1
+ * something was probed.
+ */
 int probe(object *op, object *caster, object *spell_ob, int dir) {
     int r, mflags, maxrange;
     object *tmp;
@@ -674,11 +739,20 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
 
 /**
  * This checks to see if 'pl' is invisible to 'mon'.
- * does race check, undead check, etc
+ * Does race check, undead check, etc
  * Returns TRUE if mon can't see pl, false
  * otherwise.  This doesn't check range, walls, etc.  It
  * only checks the racial adjustments, and in fact that
  * pl is invisible.
+ *
+ * @param pl
+ * potentially invisible object.
+ * @param mon
+ * who may see pl.
+ * @retval 0
+ * mon can see pl.
+ * @retval 1
+ * mon can't see pl.
  */
 int makes_invisible_to(object *pl, object *mon)
 {
@@ -713,6 +787,17 @@ int makes_invisible_to(object *pl, object *mon)
  * For improved invis, if you cast it with a one of the others, you
  * lose the improved part of it, and the above statement about undead/
  * normal applies.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @retval 0
+ * invisibility was already in action.
+ * @retval 1
+ * op is now invisible.
  */
 int cast_invisible(object *op, object *caster, object *spell_ob) {
     object *tmp;
@@ -761,6 +846,17 @@ int cast_invisible(object *op, object *caster, object *spell_ob) {
 
 /**
  * Basically destroys earthwalls in the area.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @retval 0
+ * op isn't a player.
+ * @retval 1
+ * op is a player.
  */
 int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
     object *tmp, *next;
@@ -802,6 +898,17 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
  * Word of recall causes the player to return 'home'.
  * we put a force into the player object, so that there is a
  * time delay effect.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @retval 0
+ * op isn't a player.
+ * @retval 1
+ * word of recall initiated.
  */
 int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
     object *dummy;
@@ -854,6 +961,14 @@ int cast_word_of_recall(object *op, object *caster, object *spell_ob) {
  * wonder is really just a spell that will likely cast another
  * spell.
  *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param dir
+ * casting direction.
+ * @param spell_ob
+ * actual spell object.
  * @todo
  * doesn't it decrease sp without checking?
  */
@@ -884,7 +999,14 @@ int cast_wonder(object *op, object *caster, int dir, object *spell_ob) {
     return 1;
 }
 
-
+/**
+ * Living thing wants to know information.
+ *
+ * @param op
+ * who wants information.
+ * @return
+ * 1.
+ */
 int perceive_self(object *op) {
     char cp[VERY_BIG_BUF], buf[MAX_BUF];
     archetype *at=find_archetype(ARCH_DEPLETION);
@@ -949,7 +1071,7 @@ int perceive_self(object *op) {
 }
 
 /**
- * This function cast the spell of town portal for op
+ * This function cast the spell of town portal for op.
  *
  * The spell operates in two passes. During the first one a place
  * is marked as a destination for the portal. During the second one,
@@ -963,6 +1085,19 @@ int perceive_self(object *op) {
  * so return an error
  *
  * Code by Tchize (david.delbecq@usa.net)
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @retval 0
+ * spell was insuccessful for some reason.
+ * @retval 1
+ * spell worked.
  */
 int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 {
@@ -1237,8 +1372,20 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
 /**
  * This creates magic walls.  Really, it can create most any object,
  * within some reason.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param dir
+ * casting direction.
+ * @param spell_ob
+ * actual spell object.
+ * @retval 0
+ * spell failed.
+ * @retval 1
+ * spell was successful.
  */
-
 int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     object *tmp, *tmp2;
     int i,posblocked,negblocked, maxrange;
@@ -1387,6 +1534,22 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     return 1;
 }
 
+/**
+ * Teleport through some doors and space.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spob
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @retval 0
+ * spell failure.
+ * @retval 1
+ * spell was successful.
+ */
 int dimension_door(object *op,object *caster, object *spob, int dir) {
     uint32 dist, maxdist;
     int  mflags;
@@ -1502,9 +1665,14 @@ int dimension_door(object *op,object *caster, object *spob, int dir) {
 
 /**
  * Heals something.
- * op is the caster.
- * dir is the direction he is casting it in.
- * spell is the spell object.
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param dir
+ * casting direction.
  * @todo check spurious cure_disease call (shouldn't the spell's level be sent?) and return check value (always 1).
  */
 int cast_heal(object *op,object *caster, object *spell, int dir) {
@@ -1632,6 +1800,25 @@ static const char* const no_gain_msgs[NUM_STATS] = {
 "no pow"
 };
 
+/**
+ * Cast some stat-improving spell.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @param silent
+ * if non zero, don't say when the spell is already is effect.
+ * @retval 0
+ * spell failed.
+ * @retval 1
+ * spell was successful.
+ * @todo weird check on duration? since you'll never get there since a force would have been found?
+ */
 int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int silent) {
     object *tmp, *tmp2=NULL;
     object *force=NULL;
@@ -1754,11 +1941,21 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
 }
 
 /**
- * This used to be part of cast_change_ability, but it really didn't make
- * a lot of sense, since most of the values it derives are from the god
- * of the caster.
+ * Improve statistics of some living object.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @retval 0
+ * spell failed.
+ * @retval 1
+ * spell was successful.
  */
-
 int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
     int i;
     object *god = find_god(determine_god(op)), *tmp2, *force=NULL, *tmp;
@@ -1862,7 +2059,8 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
 
 
 
-/* Alchemy code by Mark Wedel
+/*
+ * Alchemy code by Mark Wedel
  *
  * This code adds a new spell, called alchemy.  Alchemy will turn
  * objects to gold nuggets, the value of the gold nuggets being
@@ -1888,9 +2086,23 @@ int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
  * when the spell is cast, and these are freed when the spell
  * is finished.
  */
-static object *small, *large;
-static uint64 small_value, large_value;
+static object *small, *large; /**< Nugget items. */
+static uint64 small_value, large_value; /**< Value of nuggets. */
 
+/**
+ * Compute how many nuggets an object is worth, and remove it.
+ *
+ * @param value_adj
+ * how much to adjust the cost of obj.
+ * @param obj
+ * object to convert.
+ * @param[out] small_nuggets
+ * how many small nuggets obj gives.
+ * @param[out] large_nuggets
+ * how many large nuggets obj gives.
+ * @param[out] weight
+ * the weight of the object.
+ */
 static void alchemy_object(float value_adj, object *obj, int *small_nuggets,
 	 int *large_nuggets, int *weight)
 {
@@ -1937,6 +2149,19 @@ static void alchemy_object(float value_adj, object *obj, int *small_nuggets,
     free_object(obj);
 }
 
+/**
+ * Place gold nuggets on the map.
+ * @param op
+ * player who is casting the spell. Just used so nuggets are inserted below her.
+ * @param m
+ * map to insert to.
+ * @param small_nuggets
+ * @param large_nuggets
+ * how many nuggets to place.
+ * @param x
+ * @param y
+ * where to place the nuggets.
+ */
 static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, int large_nuggets,
 	int x, int y)
 {
@@ -1966,6 +2191,20 @@ static void place_alchemy_objects(object *op, mapstruct *m, int small_nuggets, i
     }
 }
 
+/**
+ * Change items to gold nuggets. Only works for players.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell_ob
+ * actual spell object.
+ * @retval 0
+ * op isn't a player.
+ * @retval 1
+ * op is a player.
+ */
 int alchemy(object *op, object *caster, object *spell_ob)
 {
     int x,y,weight=0,weight_max,large_nuggets,small_nuggets, mflags;
@@ -2067,6 +2306,16 @@ int alchemy(object *op, object *caster, object *spell_ob)
 /**
  * This function removes the cursed/damned status on equipped
  * items.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @return
+ * how many items were affected.
+ * @todo why is the value set to 0?
  */
 int remove_curse(object *op, object *caster, object *spell) {
     object *tmp;
@@ -2157,7 +2406,20 @@ int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
     return 1;
 }
 
-/** Identifies objects in the players inventory/on the ground */
+/**
+ * Identifies objects in the players inventory/on the ground.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @retval 0
+ * nothing was identified.
+ * @retval 1
+ * at least one object was identified.
+ */
 int cast_identify(object *op, object *caster, object *spell) {
     object *tmp;
     int success = 0, num_ident;
@@ -2228,7 +2490,21 @@ int cast_identify(object *op, object *caster, object *spell) {
     return success;
 }
 
-
+/**
+ * Detect magic or invisible items.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param skill
+ * unused.
+ * @return
+ * 1.
+ * @todo remove unused skill.
+ */
 int cast_detection(object *op, object *caster, object *spell, object *skill) {
     object *tmp, *last, *god, *detect;
     int done_one, range, mflags, floor, level;
@@ -2382,8 +2658,11 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
 
 
 /**
- * Checks if victim has overcharged mana. caster_level is the caster's (skill)
- * level whos spell did cause the overcharge.
+ * Checks if victim has overcharged mana, and if so does some fireball.
+ * @param victim
+ * who may have overcharged.
+ * @param caster_level
+ * caster's (skill) level whose spell did cause the overcharge.
  */
 static void charge_mana_effect(object *victim, int caster_level)
 {
@@ -2435,8 +2714,20 @@ static void charge_mana_effect(object *victim, int caster_level)
 /**
  * This spell transfers sp from the player to another person.
  * We let the target go above their normal maximum SP.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @retval 0
+ * no transfer happened.
+ * @retval 1
+ * transfer happened.
  */
-
 int cast_transfer(object *op,object *caster, object *spell, int dir) {
     object *plyr=NULL;
     sint16 x, y;
@@ -2501,10 +2792,12 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
 
 /**
  * Nullifies spell effects.
- * op is the counterspell object, dir is the direction
- * it was cast in.
- * Basically, if the object has a magic attacktype,
- * this may nullify it.
+ * Basically, if the object has a magic attacktype, this may nullify it.
+ *
+ * @param op
+ * counterspell object.
+ * @param dir
+ * direction it was cast in.
  */
 void counterspell(object *op,int dir)
 {
@@ -2569,7 +2862,20 @@ void counterspell(object *op,int dir)
 
 
 
-/** A spell to make an altar your god's */
+/**
+ * A spell to make an altar your god's.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @retval 0
+ * no consecration happened.
+ * @retval 1
+ * an altar waas consecrated.
+ */
 int cast_consecrate(object *op, object *caster, object *spell) {
     char buf[MAX_BUF];
 
@@ -2631,7 +2937,7 @@ int cast_consecrate(object *op, object *caster, object *spell) {
 }
 
 /**
- * Generalization of staff_to_snake.  Makes a golem out of the caster's weapon.
+ * Generalization of staff_to_snake().  Makes a golem out of the caster's weapon.
  * The golem is based on the archetype specified, modified by the caster's level
  * and the attributes of the weapon.  The weapon is inserted in the golem's
  * inventory so that it falls to the ground when the golem dies.
@@ -2639,8 +2945,20 @@ int cast_consecrate(object *op, object *caster, object *spell) {
  * yet the code wass full of player checks.  I've presumed that the code
  * that only let players use it was correct, and removed all the other
  * player checks. MSW 2003-01-06
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @param dir
+ * casting direction.
+ * @retval 0
+ * spell failure.
+ * @retval 1
+ * spell was successful.
  */
-
 int animate_weapon(object *op,object *caster,object *spell, int dir) {
     object *weapon, *tmp;
     char buf[MAX_BUF];
@@ -2838,8 +3156,18 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
 
 /**
  * This changes the light level for the entire map.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @retval 0
+ * light not affected.
+ * @retval 1
+ * light changed.
  */
-
 int cast_change_map_lightlevel( object *op, object *caster, object *spell ) {
     int success;
 
@@ -2858,13 +3186,17 @@ int cast_change_map_lightlevel( object *op, object *caster, object *spell ) {
 }
 
 
-
-
-
 /**
  * Create an aura spell object and put it in the player's inventory.
- * as usual, op is player, caster is the object casting the spell,
- * spell is the spell object itself.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what is casting.
+ * @param spell
+ * actual spell object.
+ * @return
+ * 1.
  */
 int create_aura(object *op, object *caster, object *spell)
 {
@@ -2898,10 +3230,10 @@ int create_aura(object *op, object *caster, object *spell)
 
 
 /**
- * moves the peacemaker spell.
- * op is the piece object.
+ * Moves the peacemaker spell.
+ * @param op
+ * piece object.
  */
-
 void move_peacemaker(object *op) {
     object *tmp;
 
@@ -2942,8 +3274,18 @@ void move_peacemaker(object *op) {
 /**
  * This writes a rune that contains the appropriate message.
  * There really isn't any adjustments we make.
+ *
+ * @param op
+ * who is casting.
+ * @param spell
+ * actual spell cast.
+ * @param msg
+ * message to write.
+ * @retval 0
+ * failure.
+ * @retval 1
+ * success.
  */
-
 int write_mark(object *op, object *spell, const char *msg) {
     char rune[HUGE_BUF];
     object *tmp;

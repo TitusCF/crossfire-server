@@ -27,9 +27,14 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* This file contains all the spell attack code.  Grouping this code
+/**
+ * @file
+ * This file contains all the spell attack code.  Grouping this code
  * together should hopefully make it easier to find the relevent bits
- * of code
+ * of code.
+ *
+ * @todo
+ * put parameters in the same order, use same name.
  */
 
 #include <global.h>
@@ -48,12 +53,27 @@
  ***************************************************************************/
 
 /**
- * object op (cast from caster) files a bolt in dir.
- * spob is the spell object for the bolt.
- * we remove the magic flag - that can be derived from
+ * Cast a bolt-like spell.
+ *
+ * We remove the magic flag - that can be derived from
  * spob->attacktype.
  * This function sets up the appropriate owner and skill
  * pointers.
+ *
+ * @param op
+ * who is casting the spell.
+ * @param caster
+ * what object is casting the spell (rod, ...).
+ * @param dir
+ * firing direction.
+ * @param spob
+ * spell object for the bolt.
+ * @param skill
+ * skill to credit kill experience to.
+ * @retval 0
+ * no bolt could be fired.
+ * @retval 1
+ * bolt was fired (but may have been destroyed already).
  */
 int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill) {
     object *tmp = NULL;
@@ -116,7 +136,9 @@ int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill) 
  ***************************************************************************/
 
 /**
- * Causes an object to explode, eg, a firebullet, poison cloud ball, etc. op is
+ * Causes an object to explode, eg, a firebullet, poison cloud ball, etc.
+ *
+ * @param op
  * the object to explode.
  */
 void explode_bullet(object *op) {
@@ -211,7 +233,10 @@ void explode_bullet(object *op) {
 
 /**
  * Checks to see what op should do, given the space it is on (eg, explode,
- * damage player, etc)
+ * damage player, etc).
+ *
+ * @param op
+ * object to check.
  */
 void check_bullet(object *op) {
     tag_t op_tag = op->count, tmp_tag;
@@ -252,12 +277,25 @@ void check_bullet(object *op) {
 
 
 /**
- * object op (cast from caster) files a bolt in dir.
- * spob is the spell object for the bolt.
- * we remove the magic flag - that can be derived from
+ * Casts a bullet-like spell.
+ *
+ * We remove the magic flag - that can be derived from
  * spob->attacktype.
  * This function sets up the appropriate owner and skill
  * pointers.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is really casting.
+ * @param dir
+ * casting direction.
+ * @param spob
+ * spell object for the bullet.
+ * @retval 0
+ * no bullet could be fired.
+ * @retval 1
+ * bullet was fired (but may have been destroyed already).
  */
 int fire_bullet(object *op, object *caster, int dir, object *spob) {
     object *tmp = NULL;
@@ -323,6 +361,9 @@ int fire_bullet(object *op, object *caster, int dir, object *spob) {
 
 /**
  * Drops an object based on what is in the cone's "other_arch".
+ *
+ * @param op
+ * what object should drop.
  */
 void cone_drop(object *op) {
     object *new_ob = arch_to_object(op->other_arch);
@@ -343,12 +384,20 @@ void cone_drop(object *op) {
 
 /**
  * Casts a cone spell.
- * op: person firing the object.
- * caster: object casting the spell.
- * dir: direction to fire in.
- * spell: spell that is being fired.  It uses other_arch for the archetype
+ *
+ * @param op
+ * person firing the object.
+ * @param caster
+ * object casting the spell.
+ * @param dir
+ * direction to fire in.
+ * @param spell
+ * spell that is being fired.  It uses other_arch for the archetype
  * to fire.
- * returns 0 on failure, 1 on success.
+ * @retval 0
+ * couldn't cast.
+ * @retval 1
+ * successful cast.
  */
 int cast_cone(object *op, object *caster, int dir, object *spell) {
     object *tmp;
@@ -483,6 +532,22 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
  *
  ****************************************************************************/
 
+/**
+ * Create a bomb.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param dir
+ * cast direction.
+ * @param spell
+ * spell object to cast.
+ * @retval 0
+ * no bomb was placed.
+ * @retval 1
+ * bomb was placed on map.
+ */
 int create_bomb(object *op, object *caster, int dir, object *spell) {
     object *tmp;
     int mflags;
@@ -517,16 +582,23 @@ int create_bomb(object *op, object *caster, int dir, object *spell) {
  ****************************************************************************/
 
 /**
- * This is used by finger of death and the 'smite' spells. Returns the pointer
- * to the first monster in the direction which is pointed to by op. b.t.
+ * Returns the pointer to the first monster in the direction which is pointed to by op.
  *
- * op is the caster - really only used for the source location.
- * dir is the direction to look in.
- * range is how far out to look.
- * type is the type of spell - either SPELL_MANA or SPELL_GRACE.
- * this info is used for blocked magic/unholy spaces.
+ * This is used by finger of death and the 'smite' spells. 
+ *
+ * @author b.t.
+ * @param op
+ * caster - really only used for the source location.
+ * @param dir
+ * direction to look in.
+ * @param range
+ * how far out to look.
+ * @param type
+ * type of spell - either ::SPELL_MANA or ::SPELL_GRACE.
+ * This info is used for blocked magic/unholy spaces.
+ * @return
+ * suitable victim, or NULL if none was found.
  */
-
 static object *get_pointed_target(object *op, int dir, int range, int type) {
     object *target;
     sint16 x, y;
@@ -563,13 +635,21 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
 }
 
 
-/* The priest points to a creature and causes a 'godly curse' to decend.
+/**
+ * The priest points to a creature and causes a 'godly curse' to descend.
  *
- * usual params -
- * op = player
- * caster = object casting the spell.
- * dir = direction being cast
- * spell = spell object
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param dir
+ * cast direction.
+ * @param spell
+ * spell object to cast.
+ * @retval 0
+ * spell had no effect.
+ * @retval 1
+ * something was affected by the spell.
  */
 int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
     object *effect, *target;
@@ -664,10 +744,23 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
  * Destruction
  ****************************************************************************/
 
-/* Currently only makes living objects glow. we do this by creating a force and
- * inserting it in the object. if time is 0, the object glows permanently. To
- * truely make this work for non-living objects, we would have to give them the
- * capability to have an inventory. b.t.
+/**
+ * Makes living objects glow. We do this by creating a force and
+ * inserting it in the object.
+ *
+ * Creatures denied the path of light are unaffected.
+ *
+ * @param op
+ * what to make glow.
+ * @param radius
+ * glow radius.
+ * @param time
+ * glow duration. If 0, the object glows permanently.
+ * @retval 0
+ * nothing happened.
+ * @retval 1
+ * op is now glowing.
+ * @author b.t.
  */
 static int make_object_glow(object *op, int radius, int time) {
     object *tmp;
@@ -699,6 +792,18 @@ static int make_object_glow(object *op, int radius, int time) {
    return 1;
 }
 
+/**
+ * Hit all monsters around the caster.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell_ob
+ * spell object to cast.
+ * @return
+ * 1.
+ */
 int cast_destruction(object *op, object *caster, object *spell_ob) {
     int i, j, range, mflags, friendly = 0, dam, dur;
     sint16 sx, sy;
@@ -778,6 +883,22 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
  *
  ***************************************************************************/
 
+/**
+ * Curse an object, reducing its statistics.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell_ob
+ * spell object to cast.
+ * @param dir
+ * cast direction.
+ * @retval 0
+ * curse had no effect.
+ * @retval 1
+ * something was cursed.
+ */
 int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
     object *god = find_god(determine_god(op));
     object *tmp, *force;
@@ -868,6 +989,15 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
 /**
  * This covers the various spells that change the moods of monsters - makes
  * them angry, peacful, friendly, etc.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell
+ * spell object to cast.
+ * @return
+ * 1.
  */
 int mood_change(object *op, object *caster, object *spell) {
     object *tmp, *god, *head;
@@ -1022,15 +1152,22 @@ int mood_change(object *op, object *caster, object *spell) {
 }
 
 
-/*
+/**
  * The following routine creates a swarm of objects. It actually sets up a
  * specific swarm object, which then fires off all the parts of the swarm.
  *
- * op:  the owner
- * caster: the caster (owner, wand, rod, scroll)
- * dir: the direction everything will be fired in
- * spell - the spell that is this spell.
- * n:  the number to be fired.
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell
+ * spell object to cast.
+ * @param dir
+ * cast direction.
+ * @retval 0
+ * nothing happened.
+ * @retval 1
+ * swarm was placed on map.
  */
 int fire_swarm(object *op, object *caster, object *spell, int dir) {
     object *tmp;
@@ -1064,8 +1201,23 @@ int fire_swarm(object *op, object *caster, object *spell, int dir) {
     return 1;
 }
 
-/*
+/**
+ * Illuminates something on a map, or try to blind a living thing.
+ *
  * See the spells documentation file for why this is its own function.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell
+ * spell object to cast.
+ * @param dir
+ * cast direction.
+ * @retval 0
+ * no effect.
+ * @retval 1
+ * lighting successful.
  */
 int cast_light(object *op, object *caster, object *spell, int dir) {
     object *target = NULL, *tmp = NULL;
@@ -1126,10 +1278,21 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
     return 1;
 }
 
-/* This spell looks along <dir> from the player and infects someone. op is the
- * player/monster, caster is the object, dir is the direction to cast,
- * disease_arch is the specific disease, and type is the spell number perhaps
- * this should actually be in disease.c?
+/**
+ * Let's try to infect something.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * what object is casting.
+ * @param spell
+ * spell object to cast.
+ * @param dir
+ * cast direction.
+ * @retval 0
+ * no one caught anything.
+ * @retval 1
+ * at least one living was affected.
  */
 int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
     sint16 x, y;
