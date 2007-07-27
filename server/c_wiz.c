@@ -26,6 +26,12 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions are used by DMs.
+ * @todo explain item stack, item specifier for commands.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -34,14 +40,15 @@
 #include <treasure.h>
 #include <skills.h>
 
-/** Defines for DM item stack **/
-#define STACK_SIZE         50   /* Stack size, static */
-/* Values for 'from' field of get_dm_object */
-#define STACK_FROM_NONE     0   /* Item was not found */
-#define STACK_FROM_TOP      1   /* Item is stack top */
-#define STACK_FROM_STACK    2   /* Item is somewhere in stack */
-#define STACK_FROM_NUMBER   3   /* Item is a number (may be top) */
-
+/* Defines for DM item stack **/
+#define STACK_SIZE         50   /**< Stack size, static */
+/** Values for 'from' field of get_dm_object() */
+enum {
+    STACK_FROM_NONE    = 0,   /**< Item was not found */
+    STACK_FROM_TOP     = 1,   /**< Item is stack top */
+    STACK_FROM_STACK   = 2,   /**< Item is somewhere in stack */
+    STACK_FROM_NUMBER  = 3    /**< Item is a number (may be top) */
+};
 
 /**
  * Enough of the DM functions seem to need this that I broke
@@ -49,6 +56,14 @@
  * being saught, op is who is looking for them.  This
  * prints diagnostics messages, and returns the
  * other player, or NULL otherwise.
+ *
+ * @param op
+ * player searching someone.
+ * @param name
+ * name to search for.
+ * @return
+ * player, or NULL if player can't be found.
+ * @todo change name to const char*.
  */
 static player *get_other_player_from_name(object *op, char *name) {
     player *pl;
@@ -81,6 +96,15 @@ static player *get_other_player_from_name(object *op, char *name) {
 
 /**
  * This command will stress server.
+ *
+ * It will basically load all world maps (so 900 maps).
+ *
+ * @param op
+ * DM wanting to test the server.
+ * @param params
+ * option, must be "TRUE" for the test to happen.
+ * @return
+ * 0.
  */
 int command_loadtest(object *op, char *params) {
     uint32 x, y;
@@ -114,9 +138,12 @@ int command_loadtest(object *op, char *params) {
 }
 
 /**
- * Actually hides specified player (obviously a DM).
- * If 'silent_dm' is non zero, other players are informed of DM entering/leaving,
- * else they just think someone left/entered.
+ * Actually hides or unhides specified player (obviously a DM).
+ *
+ * @param op
+ * DM hiding.
+ * @param silent_dm
+ * if non zero, other players are informed of DM entering/leaving, else they just think someone left/entered.
  */
 void do_wizard_hide(object *op, int silent_dm) {
     if (op->contr->hidden) {
@@ -158,6 +185,16 @@ void do_wizard_hide(object *op, int silent_dm) {
     }
 }
 
+/**
+ * Wizard 'hide' command.
+ *
+ * @param op
+ * DM wanting to hide.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
+ */
 int command_hide(object *op, char *params)
 {
     do_wizard_hide(op, 0);
@@ -166,7 +203,12 @@ int command_hide(object *op, char *params)
 
 /**
  * This finds and returns the object which matches the name or
- * object nubmer (specified via num #whatever).
+ * object number (specified via num \#whatever).
+ *
+ * @param params
+ * object to find.
+ * @return
+ * suitable object, or NULL if none found.
  */
 static object *find_object_both(char *params) {
     if (!params)
@@ -178,8 +220,16 @@ static object *find_object_both(char *params) {
 }
 
 /**
- * Sets the god for some objects.  params should contain two values -
- * first the object to change, followed by the god to change it to.
+ * Sets the god for some objects.
+ *
+ * @param op
+ * DM wanting to change an object.
+ * @param params
+ * command options. Should contain two values, first the object to change, followed by the god to change it to.
+ * @retval 0
+ * syntax error.
+ * @retval 1
+ * correct syntax.
  */
 int command_setgod(object *op, char *params) {
     object *ob, *god;
@@ -227,11 +277,19 @@ int command_setgod(object *op, char *params) {
 }
 
 /**
- * Add player's IP to ban_file and kick them off the server
+ * Add player's IP to ban_file and kick them off the server.
+ *
  * I know most people have dynamic IPs but this is more of a short term
  * solution if they have to get a new IP to play maybe they'll calm down.
  * This uses the banish_file in the local directory *not* the ban_file
  * The action is logged with a ! for easy searching. -tm
+ *
+ * @param op
+ * DM banishing.
+ * @param params
+ * player to banish. Must be a complete name match.
+ * @return
+ * 1.
  */
 int command_banish(object *op, char *params) {
     player *pl;
@@ -283,6 +341,16 @@ int command_banish(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Kicks a player from the server.
+ *
+ * @param op
+ * DM kicking.
+ * @param params
+ * player to kick. Must be a full name match.
+ * @return
+ * 1.
+ */
 int command_kick(object *op, const char *params) {
     struct pl *pl;
 
@@ -327,6 +395,17 @@ int command_kick(object *op, const char *params) {
     return 1;
 }
 
+/**
+ * Saves the op's map as an overlay - objects are persisted.
+ *
+ * @param op
+ * DM wanting to save.
+ * @param params
+ * ignored.
+ * @return
+ * 1 unless op is NULL.
+ * @todo remove useless DM checks, since command is in the DM command array.
+ */
 int command_overlay_save(object *op, char *params) {
     if (!op)
         return 0;
@@ -350,6 +429,16 @@ int command_overlay_save(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Removes the overlay for op's current map.
+ *
+ * @param op
+ * DM acting.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
+ */
 int command_overlay_reset(object *op, char* params) {
     char filename[MAX_BUF];
     struct stat stats;
@@ -368,9 +457,15 @@ int command_overlay_reset(object *op, char* params) {
     return 1;
 }
 
-/*
- * A simple toggle for the no_shout field.
- * AKA the MUZZLE command
+/**
+ * A simple toggle for the no_shout field. AKA the MUZZLE command.
+ *
+ * @param op
+ * wizard toggling.
+ * @param params
+ * player to mute/unmute.
+ * @return
+ * 1.
  */
 int command_toggle_shout(object *op, char *params) {
     player *pl;
@@ -411,6 +506,17 @@ int command_toggle_shout(object *op, char *params) {
     }
 }
 
+/**
+ * Totally shutdowns the server.
+ *
+ * @param op
+ * wizard shutting down the server.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
+ * @todo remove test for dm, command is in WizCommands.
+ */
 int command_shutdown(object *op, char *params) {
     if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -431,6 +537,16 @@ int command_shutdown(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Wizard teleports to a map.
+ *
+ * @param op
+ * wizard teleporting.
+ * @param params
+ * map to teleport to. Can be absolute or relative path.
+ * @return
+ * 1 unless op is NULL.
+ */
 int command_goto(object *op, char *params)
 {
     char *name;
@@ -464,6 +580,9 @@ int command_goto(object *op, char *params)
 }
 
 /* is this function called from somewhere ? -Tero */
+/**
+ * @todo remove, as unused.
+ */
 int command_generate (object *op, char *params)
 {
     object *tmp;
@@ -486,6 +605,16 @@ int command_generate (object *op, char *params)
     return 1;
 }
 
+/**
+ * Freezes a player for a specified tick count, 100 by default.
+ *
+ * @param op
+ * wizard freezing the player.
+ * @param params
+ * optional tick count, followed by player name.
+ * @return
+ * 1.
+ */
 int command_freeze(object *op, char *params) {
     int ticks;
     player *pl;
@@ -524,6 +653,16 @@ int command_freeze(object *op, char *params) {
     return 0;
 }
 
+/**
+ * Wizard jails player.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * player to jail.
+ * @return
+ * 1.
+ */
 int command_arrest(object *op, char *params) {
     object *dummy;
     player *pl;
@@ -554,6 +693,15 @@ int command_arrest(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Summons player near DM.
+ * @param op
+ * DM.
+ * @param params
+ * player to summon.
+ * @return
+ * 1 unless op is NULL.
+ */
 int command_summon(object *op, char *params) {
     int i;
     object *dummy;
@@ -651,19 +799,30 @@ int command_teleport(object *op, char *params) {
 }
 
 /**
+ * Wizard wants to create an object.
+ *
  * This function is a real mess, because we're stucking getting
  * the entire item description in one block of text, so we just
  * can't simply parse it - we need to look for double quotes
  * for example.  This could actually get much simpler with just a
  * little help from the client - if we could get line breaks, it
  * makes parsing much easier, eg, something like:
- * arch dragon
- * name big nasty creature
- * hp 5
- * sp 30
- * Is much easier to parse than
+ * - arch dragon
+ * - name big nasty creature
+ * - hp 5
+ * - sp 30
+ *
+ * which is much easier to parse than
  * dragon name "big nasty creature" hp 5 sp 30
  * for example.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * object description.
+ * @return
+ * 1 unless op is NULL.
+ * @todo enable line breaks in command.
  */
 int command_create(object *op, char *params) {
     object *tmp = NULL;
@@ -996,6 +1155,16 @@ int command_create(object *op, char *params) {
  * Now follows dm-commands which are also acceptable from sockets
  */
 
+/**
+ * Shows the inventory or some item.
+ *
+ * @param op
+ * player.
+ * @param params
+ * object count to get the inventory of. If NULL then defaults to op.
+ * @return
+ * 1 unless params is NULL.
+ */
 int command_inventory(object *op, char *params) {
     object *tmp;
     int i;
@@ -1015,15 +1184,35 @@ int command_inventory(object *op, char *params) {
     return 1;
 }
 
-/* just show player's their skills for now. Dm's can
+/**
+ * Player is asking for her skills.
+ *
+ * Just show player's their skills for now. Dm's can
  * already see skills w/ inventory command - b.t.
+ *
+ * @param op
+ * player.
+ * @param params
+ * optional skill restriction.
+ * @return
+ * 0.
+ * @todo move out of this file as it is used by all players.
  */
-
 int command_skills (object *op, char *params) {
     show_skills(op, params);
     return 0;
 }
 
+/**
+ * Dumps the difference between an object and its archetype.
+ *
+ * @param op
+ * wiard.
+ * @param params
+ * object to dump.
+ * @return
+ * 1.
+ */
 int command_dump (object *op, char *params) {
     object *tmp;
     char buf[HUGE_BUF];
@@ -1043,6 +1232,13 @@ int command_dump (object *op, char *params) {
 /**
  *  When DM is possessing a monster, flip aggression on and off, to allow
  * better motion.
+ *
+ * @param op
+ * wiard.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
  */
 int command_mon_aggr(object *op, char *params) {
     if (op->enemy || !QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) {
@@ -1060,10 +1256,19 @@ int command_mon_aggr(object *op, char *params) {
     return 1;
 }
 
-/** DM can possess a monster.  Basically, this tricks the client into thinking
+/**
+ * DM can possess a monster.  Basically, this tricks the client into thinking
  * a given monster, is actually the player it controls.  This allows a DM
  * to inhabit a monster's body, and run around the game with it.
  * This function is severely broken - it has tons of hardcoded values,
+ *
+ * @param op
+ * wizard wanting to possess something.
+ * @param params
+ * monster to possess.
+ * @return
+ * 1.
+ * @todo fix and reactivate the function, or totally trash.
  */
 int command_possess(object *op, char *params) {
     object *victim;
@@ -1120,6 +1325,15 @@ int command_possess(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Wizard wants to altar an object.
+ * @param op
+ * wizard.
+ * @param params
+ * object and what to patch.
+ * @return
+ * 1.
+ */
 int command_patch(object *op, char *params) {
     char *arg, *arg2;
     object *tmp;
@@ -1156,6 +1370,16 @@ int command_patch(object *op, char *params) {
     return 1;
   }
 
+/**
+ * Remove an object from its position.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * object to remove.
+ * @return
+ * 1.
+ */
 int command_remove (object *op, char *params) {
     object *tmp;
     int from;
@@ -1198,6 +1422,15 @@ int command_remove (object *op, char *params) {
     return 1;
 }
 
+/**
+ * Totally free an object.
+ * @param op
+ * wizard.
+ * @param params
+ * object to free.
+ * @return
+ * 1.
+ */
 int command_free(object *op, char *params) {
     object *tmp;
     int from;
@@ -1229,6 +1462,13 @@ int command_free(object *op, char *params) {
 
 /**
  * This adds exp to a player.  We now allow adding to a specific skill.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * should be "player quantity [skill]".
+ * @return
+ * 1.
  */
 int command_addexp(object *op, char *params) {
     char buf[MAX_BUF], skill[MAX_BUF];
@@ -1278,6 +1518,16 @@ int command_addexp(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Changes the server speed.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * new speed, or NULL to see the speed.
+ * @return
+ * 1.
+ */
 int command_speed(object *op, char *params) {
     int i;
 
@@ -1303,6 +1553,17 @@ int command_speed(object *op, char *params) {
 /* CSUChico : tvangod@cscihp.ecst.csuchico.edu                            */
 /**************************************************************************/
 
+/**
+ * Displays the statistics of a player.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * player's name.
+ * @return
+ * 1.
+ * @todo use the get_other_player_from_name() function.
+ */
 int command_stats(object *op, char *params) {
     char thing[20];
     player *pl;
@@ -1357,6 +1618,17 @@ int command_stats(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Changes an object's statistics.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * parameters, should be "player statistic new_value".
+ * @return
+ * 1.
+ * @todo use get_other_player_from_name(). Isn't this useless with the command_patch()?
+ */
 int command_abil(object *op, char *params) {
     char thing[20], thing2[20];
     int iii;
@@ -1416,6 +1688,16 @@ int command_abil(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Resets a map.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * map to reset. Can be "." for current op's map, or a map path.
+ * @return
+ * 1.
+ */
 int command_reset (object *op, char *params) {
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
@@ -1538,6 +1820,16 @@ int command_reset (object *op, char *params) {
     return 1;
 }
 
+/**
+ * Steps down from wizard mode.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
+ */
 int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
     CLEAR_FLAG(op, FLAG_WIZ);
     CLEAR_FLAG(op, FLAG_WIZPASS);
@@ -1572,6 +1864,20 @@ int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
  * pl_name is name supplied by player.  Restrictive DM will make it harder
  * for socket users to become DM - in that case, it will check for the players
  * character name.
+ *
+ * @param op
+ * player wishing to become DM.
+ * @param pl_name
+ * player's name.
+ * @param pl_passwd
+ * entered password.
+ * @param pl_host
+ * player's host.
+ * @retval 0
+ * invalid credentials.
+ * @retval 1
+ * op can become DM.
+ * @todo can't name/host be found from op? What is RESTRICTIVE_DM?
  */
 static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const char *pl_host)
 {
@@ -1605,6 +1911,20 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
     return (0);
 }
 
+/**
+ * Actually changes a player to wizard.
+ *
+ * @param op
+ * player.
+ * @param params
+ * password.
+ * @param silent
+ * if zero, don't inform players of the mode change.
+ * @retval 0
+ * no mode change.
+ * @retval 1
+ * op is now a wizard.
+ */
 int do_wizard_dm(object *op, char *params, int silent) {
     if (!op->contr)
         return 0;
@@ -1646,9 +1966,17 @@ int do_wizard_dm(object *op, char *params, int silent) {
     }
 }
 
-/*
- * Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
- * - allow people on sockets to become dm, and allow better dm file
+/**
+ * Actual command to perhaps become dm.  Changed around a bit in version 0.92.2
+ * to allow people on sockets to become dm, and allow better dm file
+ *
+ * @param op
+ * player wishing to become wizard.
+ * @param params
+ * password.
+ * @return
+ * 0 unless op isn't a player.
+ * @todo remove useless test, op->contr should be always non NULL.
  */
 int command_dm(object *op, char *params) {
     if (!op->contr)
@@ -1659,6 +1987,16 @@ int command_dm(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Wizard wants to become invisible.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
+ */
 int command_invisible(object *op, char *params) {
     if (op) {
         op->invisible += 100;
@@ -1672,15 +2010,20 @@ int command_invisible(object *op, char *params) {
 
 /**
  * Returns spell object (from archetypes) by name.
- * Returns NULL if 0 or more than one spell matches.
  * Used for wizard's learn spell/prayer.
- *
- * op is the player issuing the command.
  *
  * Ignores archetypes "spelldirect_xxx" since these archetypes are not used
  * anymore (but may still be present in some player's inventories and thus
  * cannot be removed). We have to ignore them here since they have the same
  * name than other "spell_xxx" archetypes and would always conflict.
+ **
+ * @param op
+ * player issuing the command.
+ * @param spell_name
+ * spell to find.
+ * @return
+ * NULL if 0 or more than one spell matches, spell object else.
+ * @todo remove the spelldirect_xxx test?
  */
 static object *get_spell_by_name(object *op, const char *spell_name) {
     archetype *ar;
@@ -1783,6 +2126,20 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
     return NULL;
 }
 
+/**
+ * Wizards wants to learn a spell.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * spell name to learn.
+ * @param special_prayer
+ * if set, special (god-given) prayer.
+ * @retval 0
+ * spell wasn't learned, or was already learnt.
+ * @retval 1
+ * spell learned.
+ */
 static int command_learn_spell_or_prayer(object *op, char *params,
                                          int special_prayer) {
     object *tmp;
@@ -1811,15 +2168,49 @@ static int command_learn_spell_or_prayer(object *op, char *params,
     return 1;
 }
 
+/**
+ * Wizard wants to learn a regular spell.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * spell name.
+ * @retval 0
+ * failure.
+ * @retval 1
+ * success.
+ */
 int command_learn_spell(object *op, char *params) {
     return command_learn_spell_or_prayer(op, params, 0);
 }
 
+/**
+ * Wizard wants to learn a god-given spell.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * spell name.
+ * @retval 0
+ * failure.
+ * @retval 1
+ * success.
+ */
 int command_learn_special_prayer(object *op, char *params)
 {
     return command_learn_spell_or_prayer(op, params, 1);
 }
 
+/**
+ * Wizard wishes to forget a spell.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * spell name to forget.
+ * @return
+ * 0 if no spell was forgotten, 1 else.
+ */
 int command_forget_spell(object *op, char *params)
 {
     object *spell;
@@ -1845,6 +2236,13 @@ int command_forget_spell(object *op, char *params)
 
 /**
  * Lists all plugins currently loaded with their IDs and full names.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
  */
 int command_listplugins(object *op, char *params)
 {
@@ -1862,7 +2260,7 @@ int command_listplugins(object *op, char *params)
  * @param params
  * should be the plugin's name, eg cfpython.so
  * @return
- * 1
+ * 1.
  */
 int command_loadplugin(object *op, char *params) {
     char buf[MAX_BUF];
@@ -1902,7 +2300,7 @@ int command_loadplugin(object *op, char *params) {
  * @param params
  * should be the plugin's internal name, eg Python
  * @return
- * 1
+ * 1.
  */
 int command_unloadplugin(object *op, char *params)
 {
@@ -1931,6 +2329,15 @@ int command_unloadplugin(object *op, char *params)
  * A players wants to become DM and hide.
  * Let's see if that's authorized.
  * Make sure to not tell anything to anyone.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * password.
+ * @retval 0
+ * failure.
+ * @retval 1
+ * success.
  */
 int command_dmhide(object *op, char *params) {
     if (!do_wizard_dm(op, params, 1))
@@ -1941,6 +2348,12 @@ int command_dmhide(object *op, char *params) {
     return 1;
 }
 
+/**
+ * Remove an item from the wizard's item stack.
+ *
+ * @param pl
+ * wizard.
+ */
 void dm_stack_pop(player *pl) {
     if (!pl->stack_items || !pl->stack_position) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1961,6 +2374,11 @@ void dm_stack_pop(player *pl) {
  * If stacked item disappeared (freed), remove it.
  *
  * Ryo, august 2004
+ *
+ * @param pl
+ * wizard.
+ * @return
+ * item on top of stack, or NULL if deleted/stack empty.
  */
 object *dm_stack_peek(player *pl) {
     object* ob;
@@ -1986,6 +2404,11 @@ object *dm_stack_peek(player *pl) {
  * Push specified item on player stack.
  * Inform player of position.
  * Initializes variables if needed.
+ *
+ * @param pl
+ * wizard.
+ * @param item
+ * item to put on stack.
  */
 void dm_stack_push(player *pl, tag_t item) {
     if (!pl->stack_items) {
@@ -2011,20 +2434,28 @@ void dm_stack_push(player *pl, tag_t item) {
  * Checks 'params' for object code.
  *
  * Can be:
- *  * empty => get current object stack top for player
- *  * number => get item with that tag, stack it for future use
- *  * $number => get specified stack item
- *  * "me" => player himself
+ *  - empty => get current object stack top for player
+ *  - number => get item with that tag, stack it for future use
+ *  - $number => get specified stack item
+ *  - "me" => player himself
  *
  * At function exit, params points to first non-object char
  *
  * 'from', if not NULL, contains at exit:
- *  * STACK_FROM_NONE => object not found
- *  * STACK_FROM_TOP => top item stack, may be NULL if stack was empty
- *  * STACK_FROM_STACK => item from somewhere in the stack
- *  * STACK_FROM_NUMBER => item by number, pushed on stack
+ *  - ::STACK_FROM_NONE => object not found
+ *  - ::STACK_FROM_TOP => top item stack, may be NULL if stack was empty
+ *  - ::STACK_FROM_STACK => item from somewhere in the stack
+ *  - ::STACK_FROM_NUMBER => item by number, pushed on stack
  *
  * Ryo, august 2004
+ *
+ * @param pl
+ * wizard.
+ * @param params
+ * object specified.
+ * @param from 
+ * @return
+ * pointed object, or NULL if nothing suitable was found.
  */
 object *get_dm_object(player *pl, char **params, int *from) {
     int item_tag, item_position;
@@ -2131,6 +2562,13 @@ object *get_dm_object(player *pl, char **params, int *from) {
 
 /**
  * Pop the stack top.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
  */
 int command_stack_pop(object *op, char *params) {
     dm_stack_pop(op->contr);
@@ -2139,6 +2577,13 @@ int command_stack_pop(object *op, char *params) {
 
 /**
  * Push specified item on stack.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * object specifier.
+ * @return
+ * 0.
  */
 int command_stack_push(object *op, char *params) {
     object *ob;
@@ -2154,6 +2599,13 @@ int command_stack_push(object *op, char *params) {
 
 /**
  * Displays stack contents.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
  */
 int command_stack_list(object *op, char *params) {
     int item;
@@ -2183,6 +2635,13 @@ int command_stack_list(object *op, char *params) {
 
 /**
  * Empty DM item stack.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
  */
 int command_stack_clear(object *op, char *params) {
     op->contr->stack_position = 0;
@@ -2194,14 +2653,23 @@ int command_stack_clear(object *op, char *params) {
 /**
  * Get a diff of specified items.
  * Second item is compared to first, and differences displayed.
- * Note: get_ob_diff works the opposite way (first compared to 2nd),
+ *
+ * @note
+ * get_ob_diff() works the opposite way (first compared to 2nd),
  * but it's easier with stack functions to do it this way, so you can do:
- *  * stack_push <base>
- *  * stack_push <object to be compared>
- *  * diff
- *  * patch xxx <---- applies to object compared to base, easier :)
+ * - stack_push \<base\>
+ * - stack_push \<object to be compared\>
+ * - diff
+ * - patch xxx <---- applies to object compared to base, easier :)
  *
  * Ryo, august 2004
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * object specifier.
+ * @return
+ * 0.
  */
 int command_diff(object *op, char *params) {
     object *left, *right, *top;
@@ -2263,6 +2731,15 @@ int command_diff(object *op, char *params) {
     return 0;
 }
 
+/**
+ * Puts an object into another.
+ * @param op
+ * wizard.
+ * @param params
+ * object specifier.
+ * @return
+ * 0.
+ */
 int command_insert_into(object* op, char *params)
 {
     object *left, *right, *inserted;
@@ -2338,6 +2815,16 @@ int command_insert_into(object* op, char *params)
 
 }
 
+/**
+ * Displays information about styles loaded for random maps.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
+ */
 int command_style_map_info(object *op, char *params)
 {
     extern mapstruct *styles;
@@ -2379,6 +2866,13 @@ int command_style_map_info(object *op, char *params)
 
 /**
  * DM wants to follow a player, or stop following a player.
+ *
+ * @param op
+ * wizard.
+ * @param params
+ * player to follow. If NULL, stop following player.
+ * @return
+ * 0.
  */
 int command_follow(object* op, char* params) {
     player* other;
