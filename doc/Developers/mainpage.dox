@@ -1,0 +1,24 @@
+/**
+
+@mainpage Crossfire server documentation
+
+@section main_intro Welcome to the Crossfire server documentation.
+
+This documentation only covers the technical aspects of the server source code. It does not cover how to play, or anything like that (but it may come someday, who knows).
+
+Here is a list of topics:
+- @ref page_general
+- @ref page_object, one of the main Crossfire structure
+- @ref page_map, and everything related
+- @ref page_archetype
+- @ref page_artifact
+- @ref page_player
+- @ref page_timers, or how to trigger events after some delay
+- @ref page_connected, that is buttons, triggers, ...
+- @ref page_various
+- @ref page_region
+- @ref page_treasure_list
+- @ref page_client
+- @ref todo
+
+*/
