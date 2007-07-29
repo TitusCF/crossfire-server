@@ -27,6 +27,7 @@
 
 /**
  * @file server/apply.c
+ * Handles objects being applied, and their effect.
  */
 
 #include <global.h>
@@ -364,17 +365,17 @@ static int improve_weapon_stat(object *op,object *improver,object *weapon,
 }
 
 /* Types of improvements, hidden in the sp field. */
-#define IMPROVE_PREPARE 1
-#define IMPROVE_DAMAGE 2
-#define IMPROVE_WEIGHT 3
-#define IMPROVE_ENCHANT 4
-#define IMPROVE_STR 5
-#define IMPROVE_DEX 6
-#define IMPROVE_CON 7
-#define IMPROVE_WIS 8
-#define IMPROVE_CHA 9
-#define IMPROVE_INT 10
-#define IMPROVE_POW 11
+#define IMPROVE_PREPARE 1   /**< Prepare the weapon. */
+#define IMPROVE_DAMAGE 2    /**< Increase damage. */
+#define IMPROVE_WEIGHT 3    /**< Decrease weight. */
+#define IMPROVE_ENCHANT 4   /**< Increase magic. */
+#define IMPROVE_STR 5       /**< Increase strength bonus. */
+#define IMPROVE_DEX 6       /**< Increase dexterity bonus. */
+#define IMPROVE_CON 7       /**< Increase constitution bonus. */
+#define IMPROVE_WIS 8       /**< Increase wisdom bonus. */
+#define IMPROVE_CHA 9       /**< Increase charisma bonus. */
+#define IMPROVE_INT 10      /**< Increase intelligence bonus. */
+#define IMPROVE_POW 11      /**< Increase power bonus. */
 
 
 /**

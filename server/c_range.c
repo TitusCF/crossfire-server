@@ -26,8 +26,9 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* This file deals with range related commands (casting, shooting,
- * throwing, etc.
+/**
+ * @file
+ * Range related commands (casting, shooting, throwing, etc.).
  */
 
 #include <global.h>
@@ -39,25 +40,62 @@
 #include <newclient.h>
 #include <commands.h>
 
-
+/**
+ * 'invoke' command, fires a spell immediately.
+ *
+ * @param op
+ * player.
+ * @param params
+ * spell.
+ * @return
+ * 1 for success, 0 for failure.
+ */
 int command_invoke(object *op, char *params)
 {
 	return command_cast_spell(op, params, 'i');
 }
 
+/**
+ * 'cast' command, prepares a spell for laster casting.
+ *
+ * @param op
+ * player.
+ * @param params
+ * spell.
+ * @return
+ * 1 for success, 0 for failure.
+ */
 int command_cast(object *op, char *params)
 {
 	return command_cast_spell(op, params, 'c');
 }
 
+/**
+ * Equivalent to command_cast().
+ *
+ * @param op
+ * player.
+ * @param params
+ * spell.
+ * @return
+ * 1 for success, 0 for failure.
+ * @todo remove.
+ */
 int command_prepare(object *op, char *params)
 {
 	return command_cast_spell(op, params, 'p');
 }
 
-/* Shows all spells that op knows.  If params is supplied, the must match
- * that.  Given there is more than one skill, we can't supply break
+/**
+ * Shows all spells that op knows.
+ *
+ * Given there is more than one skill, we can't supply break
  * them down to cleric/wizardry.
+ *
+ * @param op
+ * player wanting to knows her spells.
+ * @param params
+ * if supplied, the spell name must match that.
  */
 static void show_matching_spells(object *op, char *params)
 {
@@ -129,12 +167,20 @@ static void show_matching_spells(object *op, char *params)
 
 
 
-/* sets up to cast a spell.  op is the caster, params is the spell name,
- * and command is the first letter of the spell type (c=cast, i=invoke,
- * p=prepare).  Invoke casts a spell immediately, where as cast (and I believe
- * prepare) just set up the range type.
+/**
+ * Sets up to cast a spell.
+ *
+ * Invoke casts a spell immediately, whereas cast just set up the range type.
+ *
+ * @param op
+ * caster.
+ * @param params
+ * spell name.
+ * @param command
+ * first letter of the spell type (c=cast, i=invoke, p=prepare).
+ * @return
+ * 0 if success, 1 for failure.
  */
-
 int command_cast_spell (object *op, char *params, char command)
 {
     int castnow=0;
@@ -219,11 +265,21 @@ int command_cast_spell (object *op, char *params, char command)
 
 /**************************************************************************/
 
-/* Returns TRUE if the range specified (int r) is legal - that is,
- * the character has an item that is equipped for that range type.
- * return 0 if there is no item of that range type that is usable.
+/**
+ * Check for the validity of a player range.
+ *
  * This function could probably be simplified, eg, everything
  * should index into the ranges[] array.
+ *
+ * @param op
+ * player to check.
+ * @param r
+ * range to check.
+ *
+ * @retval 1
+ * range specified is legal - that is, the character has an item that is equipped for that range type.
+ * @retval 0
+ * no item of that range type that is usable.
  */
 
 int legal_range(object *op,int r) {
@@ -254,6 +310,14 @@ int legal_range(object *op,int r) {
     return 0;
 }
 
+/**
+ * Rotate the selected range attack.
+ *
+ * @param op
+ * player.
+ * @param k
+ * '+' selects next range, other values previous range.
+ */
 void change_spell(object *op,char k) {
 
     char name[MAX_BUF];
@@ -317,7 +381,16 @@ void change_spell(object *op,char k) {
     }
 }
 
-
+/**
+ * 'rotateshoottype' command, switch range attack.
+ *
+ * @param op
+ * player.
+ * @param params
+ * arguments to the command.
+ * @return
+ * 0.
+ */
 int command_rotateshoottype (object *op, char *params)
 {
   if (!params)

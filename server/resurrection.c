@@ -26,6 +26,14 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Resurrection / raise dead related code.
+ * This is used on servers with permanent death on.
+ * @todo document permanent death and death :)
+ * @todo remove unused sys_*, classname, objects.
+ */
+
 /*  the contents of this file were create solely by peterm@soda.berkeley.edu
     all of the above disclaimers apply.  */
 
@@ -46,8 +54,19 @@ extern object *objects;
 static int resurrection_fails(int levelcaster,int leveldead);
 
 
-/*  name of the person to resurrect and which spell was used
- * to resurrect
+/**
+ * Resurrect a player. This may change the player's race, or reduce experience.
+ *
+ * @param op
+ * who is resurrecting.
+ * @param playername
+ * the name of the player to resurrect.
+ * @param spell
+ * spell that was used to resurrect.
+ * @retval 0
+ * resurrection failed.
+ * @retval 1
+ * playername is living again.
  */
 static int resurrect_player(object *op,char *playername,object *spell)
 {
@@ -154,11 +173,25 @@ static int resurrect_player(object *op,char *playername,object *spell)
 }
 
 
-/* raise_dead by peterm and mehlhaff@soda.berkeley.edu
- * op  --  who is doing the resurrecting
- * spell - spell object
- * dir  --  direction the spell is cast
- * corpseobj - corpse to raise - can be null, in which case this function will find it
+/**
+ * This handles the raise dead / resurrection spells. So try to revive a player.
+ * 
+ * @author peterm and mehlhaff@soda.berkeley.edu
+ *
+ * @param op
+ * who is doing the resurrecting.
+ * @param caster
+ * what is casting the spell (op or a scroll/rod).
+ * @param spell
+ * spell object.
+ * @param dir
+ * direction the spell is cast.
+ * @param arg
+ * name of the player to revive.
+ * @retval 0
+ * spell had no effect, or player couldn't revive.
+ * @retval 1
+ * player revived, or some nasty things happened.
  */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg)
 {
@@ -236,20 +269,36 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
     return 1;
 }
 
-
+/**
+ * Will the resurrection succeed?
+ *
+ * Rules:
+ * - equal in level, 50% success.
+ * - +5 % for each level below, -5% for each level above.
+ * - minimum 20%
+ *
+ * @param levelcaster
+ * level at which the spell is cast.
+ * @param leveldead
+ * dead player's level.
+ * @return
+ * 0 if succees, 1 if failure.
+ */
 static int resurrection_fails(int levelcaster,int leveldead)
 {
     int chance=9;
-    /*  scheme:  equal in level, 50% success.
-     * +5 % for each level below, -5% for each level above.
-     * minimum 20%
-     */
     chance+=levelcaster-leveldead;
     if(chance<4) chance=4;
     if(chance>rndm(0, 19)) return 0;  /* resurrection succeeds */
     return 1;
 }
 
+/**
+ * Kill a player on a permanent death server with resurrection.
+ *
+ * @param op
+ * player to kill.
+ */
 void dead_player(object *op)
 {
     char filename[MAX_BUF];

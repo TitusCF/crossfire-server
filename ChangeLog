@@ -16,6 +16,11 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Documentation, no functional change.
+ server/apply.c c_chat.c c_object.c c_party.c c_range.c ob_methods.c ob_types.c
+  player.c resurrection.c
+Nicolas Weeger 2007-07-29
+
+Documentation, no functional change.
  server/c_move.c c_new.c move.c
 Nicolas Weeger 2007-07-29
 

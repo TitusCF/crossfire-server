@@ -26,6 +26,12 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Player-related functions, including those used during the login and creation phases.
+ * @todo describe login/creation functions/cycles.
+ */
+
 #include <global.h>
 #ifndef WIN32 /* ---win32 remove headers */
 #include <pwd.h>
@@ -43,6 +49,14 @@
 static archetype *get_player_archetype(archetype* at);
 static int action_makes_visible (object *op);
 
+/**
+ * Find a player by her full name.
+ *
+ * @param plname
+ * name to find.
+ * @return
+ * matching player, or NULL if no match.
+ */
 player *find_player(const char *plname)
 {
     player *pl;
@@ -58,6 +72,14 @@ player *find_player(const char *plname)
     return NULL;
 }
 
+/**
+ * Find a player by a partial name.
+ *
+ * @param plname
+ * name to match.
+ * @return
+ * matching player if only one matching, or one perfectly matching, NULL if no match or more than one.
+ */
 player* find_player_partial_name( const char* plname )
     {
     player* pl;
@@ -82,6 +104,12 @@ player* find_player_partial_name( const char* plname )
     return found;
     }
 
+/**
+ * Sends the message of the day to the player.
+ *
+ * @param op
+ * player to send to.
+ */
 void display_motd(const object *op) {
     char buf[MAX_BUF];
     char motd[HUGE_BUF];
@@ -106,6 +134,12 @@ void display_motd(const object *op) {
     close_and_delete(fp, comp);
 }
 
+/**
+ * Send the rules to a player.
+ *
+ * @param op
+ * player to send rules to.
+ */
 void send_rules(const object *op) {
     char buf[MAX_BUF];
     char rules[HUGE_BUF];
@@ -135,6 +169,12 @@ void send_rules(const object *op) {
     close_and_delete(fp, comp);
 }
 
+/**
+ * Send the news to a player.
+ *
+ * @param op
+ * player to send to.
+ */
 void send_news(const object *op) {
     char buf[MAX_BUF];
     char news[HUGE_BUF];
@@ -183,6 +223,14 @@ void send_news(const object *op) {
     close_and_delete(fp, comp);
 }
 
+/**
+ * Is the player name valid.
+ *
+ * @param cp
+ * name to test.
+ * @return
+ * 0 if invalid, 1 if valid.
+ */
 int playername_ok(const char *cp) {
     /* Don't allow - or _ as first character in the name */
     if (*cp == '-' || *cp == '_') return 0;
@@ -193,15 +241,20 @@ int playername_ok(const char *cp) {
     return 1;
 }
 
-/* This no longer sets the player map.  Also, it now updates
+/**
+ * Create a player's object, initialize a player's structure.
+ *
+ * This no longer sets the player map.  Also, it now updates
  * all the pointers so the caller doesn't need to do that.
  * Caller is responsible for setting the correct map.
  *
  * Redo this to do both get_player_ob and get_player.
  * Hopefully this will be less bugfree and simpler.
- * Returns the player structure.  If 'p' is null,
- * we create a new one.  Otherwise, we recycle
- * the one that is passed.
+ *
+ * @param p
+ * if NULL, a new player structure is created, else p is recycled.
+ * @return
+ * initialized player structure.
  */
 static player* get_player(player *p) {
     object *op=arch_to_object(get_player_archetype(NULL));
@@ -305,7 +358,12 @@ static player* get_player(player *p) {
 }
 
 
-/* This loads the first map an puts the player on it. */
+/**
+ * This loads the first map an puts the player on it.
+ *
+ * @param op
+ * player to put on map.
+ */
 static void set_first_map(object *op)
 {
     strcpy(op->contr->maplevel, first_map_path);
@@ -316,10 +374,14 @@ static void set_first_map(object *op)
 
 /**
  * Tries to add player on the connection passwd in ns.
- * All we can really get in this is some settings like host and display
- * mode.
+ *
+ * Player object is created and put on the first map, rules/news/motd are sent.
+ *
+ * @param ns
+ * connection.
+ * @return
+ * 0.
  */
-
 int add_player(socket_struct *ns) {
     player *p;
 
@@ -350,9 +412,15 @@ int add_player(socket_struct *ns) {
     return 0;
 }
 
-/* get_player_archetype() return next player archetype from archetype
- * list. Not very efficient routine, but used only creating new players.
- * Note: there MUST be at least one player archetype!
+/**
+ * Get next player archetype from archetype list.
+ * Not very efficient routine, but used only creating new players.
+ * @note there MUST be at least one player archetype! Will exit() if none.
+ *
+ * @param at
+ * archetype to search from.
+ * @return
+ * next player archetype available.
  */
 static archetype *get_player_archetype(archetype* at)
 {
@@ -371,7 +439,14 @@ static archetype *get_player_archetype(archetype* at)
     }
 }
 
-
+/**
+ * Finds the nearest visible player for some object.
+ *
+ * @param mon
+ * what object is searching a player.
+ * @return
+ * player, or NULL if nothing suitable.
+ */
 object *get_nearest_player(object *mon) {
     object *op = NULL;
     player *pl = NULL;
@@ -424,15 +499,19 @@ object *get_nearest_player(object *mon) {
     return op;
 }
 
-/* I believe this can safely go to 2, 3 is questionable, 4 will likely
- * result in a monster paths backtracking.  It basically determines how large a
- * detour a monster will take from the direction path when looking
- * for a path to the player.  The values are in the amount of direction
- * the deviation is
+/**
+ * This value basically determines how large a detour a monster will take from
+ * the direction path when looking for a path to the player.
+ *
+ * The values are in the amount of direction the deviation is.
+ *
+ * I believe this can safely go to 2, 3 is questionable, 4 will likely
+ * result in a monster paths backtracking.  
  */
 #define DETOUR_AMOUNT	2
 
-/* This is used to prevent infinite loops.  Consider a case where the
+/**
+ * This is used to prevent infinite loops.  Consider a case where the
  * player is in a chamber (with gate closed), and monsters are outside.
  * with DETOUR_AMOUNT==2, the function will turn each corner, trying to
  * find a path into the chamber.  This is a good thing, but since there
@@ -447,8 +526,10 @@ object *get_nearest_player(object *mon) {
 #define MAX_SPACES	50
 
 
-/* Returns the direction to the player, if valid.  Returns 0 otherwise.
- * modified to verify there is a path to the player.  Does this by stepping towards
+/**
+ * Returns the direction to the player, if valid.  Returns 0 otherwise.
+ *
+ * Modified to verify there is a path to the player.  Does this by stepping towards
  * player and if path is blocked then see if blockage is close enough to player that
  * direction to player is changed (ie zig or zag).  Continue zig zag until either
  * reach player or path is blocked.  Thus, will only return true if there is a free
@@ -456,16 +537,25 @@ object *get_nearest_player(object *mon) {
  * player hiding along a corridor at right angles to the corridor with the monster.
  *
  * Modified by MSW 2001-08-06 to handle tiled maps. Various notes:
- * 1) With DETOUR_AMOUNT being 2, it should still go and find players hiding
+ * - With DETOUR_AMOUNT being 2, it should still go and find players hiding
  * down corriders.
- * 2) I think the old code was broken if the first direction the monster
+ * - I think the old code was broken if the first direction the monster
  * should move was blocked - the code would store the first direction without
  * verifying that the player can actually move in that direction.  The new
  * code does not store anything in firstdir until we have verified that the
  * monster can in fact move one space in that direction.
- * 3) I'm not sure how good this code will be for moving multipart monsters,
+ * - I'm not sure how good this code will be for moving multipart monsters,
  * since only simple checks to blocked are being called, which could mean the monster
  * is blocking itself.
+ *
+ * @param mon
+ * source object.
+ * @param pl
+ * target.
+ * @param mindiff
+ * minimal distance mon and pl should have.
+ * @return
+ * direction from mon to pl, 0 if can't get there.
  */
 int path_to_player(object *mon, object *pl, unsigned mindiff) {
     rv_vector	rv;
@@ -577,6 +667,16 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
     return firstdir;
 }
 
+/**
+ * Gives a new player her initial items.
+ *
+ * They will be god-given, and suitable for the player's race/restrictions.
+ *
+ * @param pl
+ * player.
+ * @param items
+ * treasure list containing the items.
+ */
 void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
 
@@ -669,18 +769,36 @@ void give_initial_items(object *pl,treasurelist *items) {
     }
 }
 
+/**
+ * Waiting for the player's name.
+ *
+ * @param op
+ * player.
+ */
 void get_name(object *op) {
     op->contr->write_buf[0]='\0';
     op->contr->state=ST_GET_NAME;
     send_query(&op->contr->socket,0,"What is your name?\n:");
 }
 
+/**
+ * Waiting for the player's password.
+ *
+ * @param op
+ * player.
+ */
 void get_password(object *op) {
     op->contr->write_buf[0]='\0';
     op->contr->state=ST_GET_PASSWORD;
     send_query(&op->contr->socket,CS_QUERY_HIDEINPUT, "What is your password?\n:");
 }
 
+/**
+ * Ask the player whether to play again or disconnect.
+ *
+ * @param op
+ * player.
+ */
 void play_again(object *op)
 {
     op->contr->state=ST_PLAY_AGAIN;
@@ -703,7 +821,19 @@ void play_again(object *op)
     op->map = NULL;
 }
 
-
+/**
+ * Player replied to play again / disconnect.
+ *
+ * @param op
+ * player.
+ * @param key
+ * received choice.
+ * @retval 0
+ * player is playing again.
+ * @retval 2
+ * player wants to disconnect.
+ * @todo check why 2?
+ */
 int receive_play_again(object *op, char key)
 {
     if(key=='q'||key=='Q') {
@@ -739,6 +869,12 @@ int receive_play_again(object *op, char key)
     return 0;
 }
 
+/**
+ * Ask the player to confirm her password during creation.
+ *
+ * @param op
+ * player.
+ */
 void confirm_password(object *op) {
 
     op->contr->write_buf[0]='\0';
@@ -746,6 +882,14 @@ void confirm_password(object *op) {
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
 
+/**
+ * Ask the player for the password of the party she wants to join.
+ *
+ * @param op
+ * player.
+ * @param party
+ * party op wishes to join.
+ */
 void get_party_password(object *op, partylist *party) {
     if (party == NULL) {
 	LOG(llevError, "get_party_password(): tried to make player %s join a NULL party\n", op->name);
@@ -758,7 +902,12 @@ void get_party_password(object *op, partylist *party) {
 }
 
 
-/* This rolls four 1-6 rolls and sums the best 3 of the 4. */
+/**
+ * This rolls four 1-6 rolls and sums the best 3 of the 4.
+ *
+ * @return
+ * sum of rolls.
+ */
 int roll_stat(void) {
     int a[4],i,j,k;
 
@@ -776,6 +925,12 @@ int roll_stat(void) {
     return k;
 }
 
+/**
+ * Roll the initial player's statistics.
+ *
+ * @param op
+ * player to roll for.
+ */
 void roll_stats(object *op) {
     int sum=0;
     int i = 0, j = 0;
@@ -847,12 +1002,27 @@ void roll_stats(object *op) {
     op->contr->orig_stats=op->stats;
 }
 
+/**
+ * Ask the player what to do with the statistics.
+ *
+ * @param op
+ * player.
+ */
 void roll_again(object *op)
 {
     esrv_new_player(op->contr, 0);
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"[y] to roll new stats [n] to use stats\n[1-7] [1-7] to swap stats.\nRoll again (y/n/1-7)?  ");
 }
 
+/**
+ * Player finishes selecting what stats to swap.
+ *
+ * @param op
+ * player.
+ * @param Swap_Second
+ * second statistic to swap.
+ * @todo why the reinit of exp/ac/...?
+ */
 static void swap_stat(object *op,int Swap_Second)
 {
     signed char tmp;
@@ -900,12 +1070,23 @@ static void swap_stat(object *op,int Swap_Second)
 }
 
 
-/* This code has been greatly reduced, because with set_attr_value
+/**
+ * Player is currently swapping stats.
+ *
+ * This code has been greatly reduced, because with set_attr_value
  * and get_attr_value, the stats can be accessed just numeric
  * ids.  stat_trans is a table that translate the number entered
  * into the actual stat.  It is needed because the order the stats
  * are displayed in the stat window is not the same as how
  * the number's access that stat.  The table does that translation.
+ *
+ * @param op
+ * player.
+ * @param key
+ * received key.
+ * @return
+ * 0 or 1.
+ * @todo check return value.
  */
 int key_roll_stat(object *op, char key)
 {
@@ -965,11 +1146,19 @@ int key_roll_stat(object *op, char key)
     return 0;
 }
 
-/* This function takes the key that is passed, and does the
+/**
+ * This function takes the key that is passed, and does the
  * appropriate action with it (change race, or other things).
  * The function name is for historical reasons - now we have
  * separate race and class; this actually changes the RACE,
  * not the class.
+ *
+ * @param op
+ * player.
+ * @param key
+ * key to handle.
+ * @return
+ * 0.
  */
 
 int key_change_class(object *op, char key)
@@ -1079,6 +1268,16 @@ int key_change_class(object *op, char key)
     return 0;
 }
 
+/**
+ * We receive the reply to the 'quit confirmation' message.
+ *
+ * @param op
+ * player.
+ * @param key
+ * reply.
+ * @return
+ * 1.
+ */
 int key_confirm_quit(object *op, char key)
 {
     char buf[MAX_BUF];
@@ -1127,6 +1326,12 @@ int key_confirm_quit(object *op, char key)
     return 1;
 }
 
+/**
+ * The player is scared, and should flee. If she can't, then she isn't scared anymore.
+ *
+ * @param op
+ * player.
+ */
 static void flee_player(object *op) {
     int dir,diff;
     rv_vector rv;
@@ -1174,9 +1379,14 @@ static void flee_player(object *op) {
 }
 
 
-/* check_pick sees if there is stuff to be picked up/picks up stuff.
- * IT returns 1 if the player should keep on moving, 0 if he should
- * stop.
+/**
+ * Sees if there is stuff to be picked up/picks up stuff, for players only.
+ * @param op
+ * player to check for.
+ * @retval 1
+ * player should keep on moving.
+ * @retval 0
+ * player should stop.
  */
 int check_pick(object *op) {
   object *tmp, *next;
@@ -1439,9 +1649,17 @@ int check_pick(object *op) {
   return ! stop;
 }
 
-/*  Find an arrow in the inventory and after that
+/**
+ * Find an arrow in the inventory and after that
  *  in the right type container (quiver). Pointer to the
  *  found object is returned.
+ *
+ * @param op
+ * object to find arrow for.
+ * @param type
+ * what arrow race to search for.
+ * @return
+ * suitable arrow, NULL if none found.
  */
 static object *find_arrow(object *op, const char *type)
 {
@@ -1456,12 +1674,24 @@ static object *find_arrow(object *op, const char *type)
     return tmp;
 }
 
-/* Similar to find_arrow, but looks for (roughly) the best arrow to use
+/**
+ * Similar to find_arrow(), but looks for (roughly) the best arrow to use
  * against the target.  A full test is not performed, simply a basic test
  * of resistances.  The archer is making a quick guess at what he sees down
  * the hall.  Failing that it does it's best to pick the highest plus arrow.
+ *
+ * @param op
+ * who to search arrows for.
+ * @param target
+ * what op is aiming at.
+ * @param type
+ * arrow race to search for.
+ * @param[out] better
+ * will contain the arrow's value.
+ * @return
+ * suitable arrow, NULL if none found.
+ * @todo remove unused better parameter.
  */
-
 static object *find_better_arrow(object *op, object *target, const char *type, int *better)
 {
     object *tmp = NULL, *arrow, *ntmp;
@@ -1517,13 +1747,18 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
     return tmp;
 }
 
-/* looks in a given direction, finds the first valid target, and calls
- * find_better_arrow to find a decent arrow to use.
- * op = the shooter
- * type = bow->race
- * dir = fire direction
+/**
+ * Looks in a given direction, finds the first valid target, and calls
+ * find_better_arrow() to find a decent arrow to use.
+ * @param op
+ * shooter.
+ * @param type
+ * arrow's race to search for (the bow's usually).
+ * @param dir
+ * fire direction.
+ * @return
+ * suitable arrow, or NULL if none found.
  */
-
 static object *pick_arrow_target(object *op, const char *type, int dir)
 {
     object *tmp = NULL;
@@ -1577,14 +1812,25 @@ static object *pick_arrow_target(object *op, const char *type, int dir)
     return find_better_arrow(op, tmp, type, &i);
 }
 
-/* Creature fires a bow - op can be monster or player.  Returns
+/**
+ * Creature (monster or player) fires a bow.
+ *
+ * @param op
+ * object firing the bow.
+ * @param part
+ * unused.
+ * @param arrow
+ * object to fire.
+ * @param dir
+ * direction of fire.
+ * @param wc_mod
+ * any special modifier to give (used in special player fire modes)
+ * @param sx
+ * @param sy
+ * coordinates to fire arrow from - also used in some of the special player fire modes.
+ * @return
  * 1 if bow was actually fired, 0 otherwise.
- * op is the object firing the bow.
- * part is for multipart creatures - the part firing the bow.
- * dir is the direction of fire.
- * wc_mod is any special modifier to give (used in special player fire modes)
- * sx, sy are coordinates to fire arrow from - also used in some of the special
- * player fire modes.
+ * @todo remove unused part. Describe player firing modes.
  */
 int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
              sint16 sx, sint16 sy)
@@ -1742,12 +1988,21 @@ int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
     return 1;
 }
 
-/* Special fire code for players - this takes into
+/**
+ * Special fire code for players - this takes into
  * account the special fire modes players can have
  * but monsters can't.  Putting that code here
- * makes the fire_bow code much cleaner.
- * this function should only be called if 'op' is a player,
+ * makes the fire_bow() code much cleaner.
+ *
+ * This function should only be called if 'op' is a player,
  * hence the function name.
+ *
+ * @param op
+ * player.
+ * @param dir
+ * firing direction.
+ * @return
+ * 1 if arrow was fired, 0 else.
  */
 static int player_fire_bow(object *op, int dir)
 {
@@ -1859,7 +2114,13 @@ static void fire_misc_object(object *op, int dir)
     }
 }
 
-/* Received a fire command for the player - go and do it.
+/**
+ * Received a fire command for the player - go and do it.
+ *
+ * @param op
+ * player.
+ * @param dir
+ * direction to fire into.
  */
 void fire(object *op,int dir) {
     int spellcost=0;
@@ -1918,16 +2179,25 @@ void fire(object *op,int dir) {
 
 
 
-/* We try to find a key for the door as passed.  If we find a key
- * and successfully use it, we return the key, otherwise NULL
+/**
+ * We try to find a key for the door as passed.  If we find a key
+ * and player can use it (based on the usekeys settings), we return the key, otherwise NULL.
+ *
  * This function merges both normal and locked door, since the logic
  * for both is the same - just the specific key is different.
- * pl is the player,
- * inv is the objects inventory to searched
- * door is the door we are trying to match against.
+ *
  * This function can be called recursively to search containers.
+ *
+ * @param pl
+ * player.
+ * @param container
+ * inventory to searched for keys.
+ * @param door
+ * door we are trying to match against.
+ * @return
+ * key to use, NULL if none found or usekeys mode doesn't let reach the key.
+ * @todo document use key modes.
  */
-
 object * find_key(object *pl, object *container, object *door)
 {
     object *tmp,*key;
@@ -1996,10 +2266,15 @@ object * find_key(object *pl, object *container, object *door)
     return tmp;
 }
 
-/* moved door processing out of move_player_attack.
- * returns 1 if player has opened the door with a key
- * such that the caller should not do anything more,
- * 0 otherwise
+/**
+ * Player is "attacking" a door. Will try to open it with a key, or warn if can't open it.
+ *
+ * Moved out of move_player_attack().
+ *
+ * @retval 1
+ * player has opened the door with a key such that the caller should not do anything more.
+ * @retval 0
+ * nothing happened.
  */
 static int player_attack_door(object *op, object *door)
 {
@@ -2046,13 +2321,19 @@ static int player_attack_door(object *op, object *door)
     return 0;
 }
 
-/* This function is just part of a breakup from move_player.
+/**
+ * The player is also actually going to try and move (not fire weapons).
+ *
+ * This function is just part of a breakup from move_player().
  * It should keep the code cleaner.
  * When this is called, the players direction has been updated
- * (taking into account confusion.)  The player is also actually
- * going to try and move (not fire weapons).
+ * (taking into account confusion).
+ *
+ * @param op
+ * player moving.
+ * @param dir
+ * moving direction.
  */
-
 void move_player_attack(object *op, int dir)
 {
     object *tmp, *mon, *tpl, *mon_owner;
@@ -2217,6 +2498,16 @@ void move_player_attack(object *op, int dir)
     } /* if player should attack something */
 }
 
+/**
+ * Player gave us a direction, check whether to move or fire.
+ *
+ * @param op
+ * player.
+ * @param dir
+ * direction to move/fire.
+ * @return
+ * 0.
+ */
 int move_player(object *op,int dir) {
     int pick;
     object *transport = op->contr->transport;
@@ -2284,12 +2575,17 @@ int move_player(object *op,int dir) {
     return 0;
 }
 
-/* This is similar to handle_player, below, but is only used by the
- * new client/server stuff.
+/**
+ * Handles commands the player can send us, and various checks on
+ * invisibility, golem and such.
+ *
  * This is sort of special, in that the new client/server actually uses
  * the new speed values for commands.
  *
- * Returns true if there are more actions we can do.
+ * @param op
+ * player to handle.
+ * @return
+ * true if there are more actions we can do.
  */
 int handle_newcs_player(object *op)
 {
@@ -2353,8 +2649,15 @@ int handle_newcs_player(object *op)
     return 0;
 }
 
-/* Returns 1 if player had his life saved by an item.
- * In this case, first item saving life is removed.
+/**
+ * Can the player be saved by an item?
+ *
+ * @param op
+ * player to try to save.
+ * @retval 1
+ * player had his life saved by an item, first item saving life is removed.
+ * @retval 0
+ * player had no life-saving item.
  */
 static int save_life(object *op) {
     object *tmp;
@@ -2387,10 +2690,15 @@ static int save_life(object *op) {
     return 0;
 }
 
-/* This goes throws the inventory and removes unpaid objects, and puts them
+/**
+ * This goes throws the inventory and removes unpaid objects, and puts them
  * back in the map (location and map determined by values of env).  This
- * function will descend into containers.  op is the object to start the search
- * from.
+ * function will descend into containers.
+ *
+ * @param op
+ * object to start the search from.
+ * @param env
+ * top-level container, should be in a map.
  */
 static void remove_unpaid_objects(object *op, object *env)
 {
@@ -2412,11 +2720,19 @@ static void remove_unpaid_objects(object *op, object *env)
 }
 
 
-/* Returns pointer a static string containing gravestone text
+/**
+ * Create a text for a player's gravestobe.
+ *
  * Moved from apply.c to player.c - player.c is what
  * actually uses this function.  player.c may not be quite the
  * best, a misc file for object actions is probably better,
  * but there isn't one in the server directory.
+ *
+ * @param op
+ * player.
+ * @return
+ * pointer a static string containing gravestone text.
+ * @todo remove static buffer, use safe string functions.
  */
 static const char *gravestone_text (object *op)
 {
@@ -2448,8 +2764,12 @@ static const char *gravestone_text (object *op)
     return buf2;
 }
 
-/* Regenerate hp/sp/gr, decreases food. This only works for players.
+/**
+ * Regenerate hp/sp/gr, decreases food. This only works for players.
  * Will grab food if needed, or kill player.
+ *
+ * @param op
+ * player to regenerate for.
  */
 void do_some_living(object *op) {
   int last_food=op->stats.food;
@@ -2625,8 +2945,13 @@ void do_some_living(object *op) {
 	kill_player(op);
 }
 
-
-static void loot_object(object *op) { /* Grab and destroy some treasure */
+/**
+ * Grab and destroy some treasure.
+ *
+ * @param op
+ * object to loot.
+ */
+static void loot_object(object *op) {
     object *tmp,*tmp2,*next;
 
     if (op->container) { /* close open sack first */
@@ -2655,10 +2980,18 @@ static void loot_object(object *op) { /* Grab and destroy some treasure */
 }
 
 
-/* If the player should die (lack of hp, food, etc), we call this.
- * op is the player in jeopardy.  If the player can not be saved (not
- * permadeath, no lifesave), this will take care of removing the player
- * file.
+/**
+ * When a player should die (lack of hp, food, etc), we call this.
+ *
+ * If the player can not be saved (permadeath, no lifesave), this will take care of removing the player file.
+ *
+ * Will remove diseases, apply death penalties, and so on.
+ *
+ * Takes battleground into account.
+ *
+ * @param op
+ * player in jeopardy.
+ * @todo describe battleground.
  */
 void kill_player(object *op)
 {
@@ -3057,11 +3390,13 @@ void kill_player(object *op)
     }
 }
 
-/* fix_weight(): Check recursively the weight of all players, and fix
+/**
+ * Check recursively the weight of all players, and fix
  * what needs to be fixed.  Refresh windows and fix speed if anything
  * was changed.
+ *
+ * @todo is this still useful?
  */
-
 void fix_weight(void) {
   player *pl;
   for (pl = first_player; pl != NULL; pl = pl->next) {
@@ -3074,6 +3409,11 @@ void fix_weight(void) {
   }
 }
 
+/**
+ * Fixes luck of players.
+ *
+ * @todo is this still used?
+ */
 void fix_luck(void) {
   player *pl;
   for (pl = first_player; pl != NULL; pl = pl->next)
@@ -3082,11 +3422,18 @@ void fix_luck(void) {
 }
 
 
-/* Handles op throwing objects of type 'DUST'.
+/**
+ * Handles op throwing objects of type 'DUST'.
  * This is much simpler in the new spell code - we basically
  * just treat this as any other spell casting object.
+ *
+ * @param op
+ * object throwing.
+ * @param throw_ob
+ * what to throw.
+ * @param dir
+ * direction to throw into.
  */
-
 void cast_dust (object *op, object *throw_ob, int dir) {
     object *skop, *spob;
 
@@ -3111,6 +3458,12 @@ void cast_dust (object *op, object *throw_ob, int dir) {
     free_object(throw_ob);
 }
 
+/**
+ * Makes an object visible again.
+ *
+ * @param op
+ * what to make visible.
+ */
 void make_visible (object *op) {
     op->hide = 0;
     op->invisible = 0;
@@ -3121,6 +3474,14 @@ void make_visible (object *op) {
     update_object(op,UP_OBJ_FACE);
 }
 
+/**
+ * Is the object a true undead?
+ *
+ * @param op
+ * object to test.
+ * @return
+ * 1 if undead, 0 else.
+ */
 int is_true_undead(object *op) {
   object *tmp=NULL;
 
@@ -3133,11 +3494,16 @@ int is_true_undead(object *op) {
   return 0;
 }
 
-/* Look at the surrounding terrain to determine
+/**
+ * Look at the surrounding terrain to determine
  * the hideability of this object. Positive levels
  * indicate greater hideability.
+ *
+ * @param ob
+ * object that may want to hide.
+ * @return
+ * the higher the value, the easier to hide here.
  */
-
 int hideability(object *ob) {
     int i,level=0, mflag;
     sint16 x,y;
@@ -3166,10 +3532,14 @@ int hideability(object *ob) {
     return level;
 }
 
-/* For Hidden creatures - a chance of becoming 'unhidden'
+/**
+ * For hidden creatures - a chance of becoming 'unhidden'
  * every time they move - as we subtract off 'invisibility'
  * AND, for players, if they move into a ridiculously unhideable
  * spot (surrounded by clear terrain in broad daylight). -b.t.
+ *
+ * @param op
+ * object moving.
  */
 void do_hidden_move (object *op) {
     int hide=0, num=random_roll(0, 19, op, PREFER_LOW);
@@ -3202,7 +3572,14 @@ void do_hidden_move (object *op) {
     }
 }
 
-/* determine if who is standing near a hostile creature. */
+/**
+ * Determine if who is standing near a hostile creature.
+ *
+ * @param who
+ * object to check.
+ * @return
+ * 1 if near a monster, 0 else.
+ */
 int stand_near_hostile( object *who ) {
     object *tmp=NULL;
     int i,friendly=0,player=0, mflags;
@@ -3241,7 +3618,8 @@ int stand_near_hostile( object *who ) {
     return 0;
 }
 
-/* Check the player los field for viewability of the
+/**
+ * Check the player los field for viewability of the
  * object op. This function works fine for monsters,
  * but we dont worry if the object isnt the top one in
  * a pile (say a coin under a table would return "viewable"
@@ -3252,7 +3630,19 @@ int stand_near_hostile( object *who ) {
  * imply the way your head, or body is facing? Its possible
  * for them to differ. Sigh, this fctn could get a bit more complex.
  * -b.t.
+ *
  * This function is now map tiling safe.
+ *
+ * @param pl
+ * player that may see op.
+ * @param op
+ * what may be seen by pl.
+ * @retval -1
+ * pl isn't a player
+ * @retval 0
+ * pl can't see op.
+ * @retval 1
+ * pl can see op.
  */
 int player_can_view (object *pl,object *op) {
     rv_vector rv;
@@ -3290,11 +3680,18 @@ int player_can_view (object *pl,object *op) {
     return 0;
 }
 
-/* routine for both players and monsters. We call this when
- * there is a possibility for our action distrubing our hiding
+/**
+ * We call this when there is a possibility for our action disturbing our hiding
  * place or invisiblity spell. Artefact invisiblity is not
  * effected by this. If we arent invisible to begin with, we
  * return 0.
+ *
+ * This routine works for both players and monsters. 
+ *
+ * @param op
+ * object to check.
+ * @return
+ * 1 if op isn't invisible anymore, 0 else.
  */
 static int action_makes_visible (object *op) {
 
@@ -3316,13 +3713,23 @@ static int action_makes_visible (object *op) {
     return 0;
 }
 
-/* op_on_battleground - checks if the given object op (usually
- * a player) is standing on a valid battleground-tile,
- * function returns TRUE/FALSE. If true x, y returns the battleground
+/**
+ * Checks if the given object op (usually a player) is standing on a valid battleground-tile.
+ *
+ * Function returns TRUE/FALSE. If true x, y returns the battleground
  * -exit-coord. (and if x, y not NULL)
+ *
  * 19 March 2005 - josh@woosworld.net modifed to check if the battleground also has slaying, maxhp, and maxsp set
  * and if those are all set and the player has a marker that matches the slaying send them to a different x, y
  * Default is to do the same as before, so only people wanting to have different points need worry about this
+ *
+ * @param op
+ * object to check.
+ * @param[out] x
+ * @param[out] y
+ * will contain the exit coordinates for the battleground if returns 1.
+ * @return
+ * 1 if op is on battleground, 0 else.
  */
 int op_on_battleground (object *op, int *x, int *y) {
   object *tmp;
@@ -3360,13 +3767,15 @@ int op_on_battleground (object *op, int *x, int *y) {
   return 0;
 }
 
-/* When a dragon-player gains a new stage of evolution,
- * he gets some treasure
+/**
+ * When a dragon-player gains a new stage of evolution, he gets some treasure.
  *
- * attributes:
- *      object *who        the dragon player
- *      int atnr           the attack-number of the ability focus
- *      int level          ability level
+ * @param who
+ * the dragon player.
+ * @param atnr
+ * the attack-number of the ability focus.
+ * @param level
+ * ability level.
  */
 void dragon_ability_gain(object *who, int atnr, int level) {
     treasurelist *trlist = NULL;    /* treasurelist */
@@ -3523,8 +3932,14 @@ void dragon_ability_gain(object *who, int atnr, int level) {
     }
 }
 
-/* Unready an object for a player. This function does nothing if the object was
+/**
+ * Unready an object for a player. This function does nothing if the object was
  * not readied.
+ *
+ * @param pl
+ * player.
+ * @param ob
+ * object to unready.
  */
 void player_unready_range_ob(player *pl, object *ob) {
     rangetype i;

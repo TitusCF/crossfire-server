@@ -25,6 +25,11 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions deal with the object/type system.
+ */
+
 #include <global.h>
 #include <ob_types.h>
 #include <ob_methods.h>
@@ -33,6 +38,7 @@
 #include <sproto.h>
 #endif
 
+/** Registered method handlers. */
 ob_methods type_methods[OBJECT_TYPE_MAX];
 
 /**

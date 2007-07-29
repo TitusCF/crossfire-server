@@ -26,15 +26,25 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Party-related functions and variables.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
 #include <spells.h>
 
-static partylist * firstparty=NULL; /* Keeps track of first party in list */
-static partylist * lastparty=NULL; /*Keeps track of last party in list */
+static partylist * firstparty=NULL; /**< Keeps track of first party in list */
+static partylist * lastparty=NULL;  /**< Keeps track of last party in list */
 
+/**
+ * Simple wrapper to get ::firstparty.
+ * @return
+ * ::firstparty.
+ */
 partylist* get_firstparty(void)
 {
 	return firstparty;
@@ -82,6 +92,13 @@ partylist *form_party(object *op, const char *params) {
     return newparty;
 }
 
+/**
+ * Remove and free party.
+ *
+ * @param target_party
+ * party to remove.
+ * @todo clean/simplify the mess.
+ */
 void remove_party(partylist *target_party) {
     partylist *tmpparty;
     partylist *previousparty;
@@ -132,7 +149,9 @@ void remove_party(partylist *target_party) {
 	}
 }
 
-/* Remove unused parties, this could be made to scale a lot better. */
+/**
+ * Remove unused parties (no players), this could be made to scale a lot better.
+ */
 void obsolete_parties(void) {
     int player_count;
     player *pl;
@@ -151,6 +170,19 @@ void obsolete_parties(void) {
 }
 
 #ifdef PARTY_KILL_LOG
+/**
+ * Logs a kill for a party.
+ *
+ * @param party
+ * party to log for.
+ * @param killer
+ * name of the killer.
+ * @param dead
+ * victim's name.
+ * @param exp
+ * how much experience was gained.
+ * @todo use const char*.
+ */
 void add_kill_to_party(partylist *party, char *killer, char *dead, long exp)
 {
   int i,pos;
@@ -175,6 +207,16 @@ void add_kill_to_party(partylist *party, char *killer, char *dead, long exp)
 }
 #endif
 
+/**
+ * Is the password the player entered to join a party the right one?
+ *
+ * @param op
+ * player. Must have party_to_join correctly set.
+ * @retval 0
+ * password is correct.
+ * @retval 1
+ * invalid password or party not found.
+ */
 int confirm_party_password(object *op) {
     partylist *tmppartylist;
     for(tmppartylist = firstparty; tmppartylist != NULL;tmppartylist = tmppartylist->next) {
@@ -188,6 +230,15 @@ int confirm_party_password(object *op) {
     return 1;
 }
 
+/**
+ * Player entered a party password.
+ *
+ * @param op
+ * player.
+ * @param k
+ * unused.
+ * @todo remove k.
+ */
 void receive_party_password(object *op, char k) {
 
   if(confirm_party_password(op) == 0) {
@@ -213,6 +264,14 @@ void receive_party_password(object *op, char k) {
   }
 }
 
+/**
+ * Send a message to all party members except the speaker.
+ *
+ * @param op
+ * player talking.
+ * @param msg
+ * message to send.
+ */
 void send_party_message(object *op,char *msg)
 {
   player *pl;
@@ -222,6 +281,17 @@ void send_party_message(object *op,char *msg)
 		      msg, NULL);
 }
 
+/**
+ * 'gsay' command, talks to party.
+ *
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ * @todo message when params is empty.
+ */
 int command_gsay(object *op, char *params)
 {
   char party_params[MAX_BUF];
@@ -233,7 +303,12 @@ int command_gsay(object *op, char *params)
   return 0;
 }
 
-
+/**
+ * Give help for party commands.
+ *
+ * @param op
+ * player.
+ */
 static void party_help(object *op)
 {
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_HELP,
@@ -252,6 +327,16 @@ static void party_help(object *op)
 		  , NULL);
 }
 
+/**
+ * 'party' command, subdivided in different sub commands.
+ *
+ * @param op
+ * player.
+ * @param params
+ * additional parameters.
+ * 1.
+ * @todo split in different functions. clean the 'form' mess.
+ */
 int command_party (object *op, char *params)
 {
   char buf[MAX_BUF];
@@ -592,6 +677,7 @@ int command_party (object *op, char *params)
   return 1;
 }
 
+/** Valid modes for 'party_rejoin'. @todo document that */
 static const char* rejoin_modes[] = {
     "no",
     "if_exists",

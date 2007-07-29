@@ -23,9 +23,13 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     The author can be reached via e-mail to crossfire-devel@real-time.com
-
-   Object (handling) commands
 */
+
+/**
+ * @file
+ * Object commands, including picking/dropping, locking, etc.
+ * @todo clean multiple variations of same stuff (pickup and such), or rename for less confusion.
+ */
 
 #include <global.h>
 #include <loader.h>
@@ -42,6 +46,7 @@ static void set_pickup_mode(const object *op, int i);
  * Object id parsing functions
  */
 
+/** Simple ::objectlink allocation, fail-safe. */
 #define OBLINKMALLOC(p) if(!((p)=(objectlink *)malloc(sizeof(objectlink))))\
                           fatal(OUT_OF_MEMORY);
 
@@ -49,8 +54,19 @@ static void set_pickup_mode(const object *op, int i);
  * Search from start and through below for what matches best with params.
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.
- * aflag is used with apply -u , and apply -a to
- * only unapply applied, or apply unapplied objects
+ *
+ * @param start
+ * first object to start searching at.
+ * @param pl
+ * what object we're searching for.
+ * @param params
+ * what to search for.
+ * @param aflag
+ * Combination of AP_APPLY and/or AP_UNAPPLY. Used with apply -u , and apply -a to
+ * only unapply applied, or apply unapplied objects.
+ * @return
+ * matching object, or NULL if no suitable.
+ * @todo move the ap_xxx tests before the item_matched_string for performance reasons?
  **/
 static object *find_best_apply_object_match(object *start, object* pl, const char *params, enum apply_flag aflag)
 {
@@ -70,13 +86,30 @@ static object *find_best_apply_object_match(object *start, object* pl, const cha
 }
 
 /**
- * Shortcut to find_best_apply_object_match(pl, params, AF_NULL);
+ * Shortcut to find_best_apply_object_match(pl->inv, pl, params, AF_NULL);
+ *
+ * @param pl
+ * who to search an item for.
+ * @param params
+ * what to search for.
+ * @return
+ * matching object, or NULL if no suitable.
  **/
 static object *find_best_object_match(object *pl, const char *params)
 {
     return find_best_apply_object_match(pl->inv, pl, params, AP_NULL);
 }
 
+/**
+ * 'use_skill' command.
+ *
+ * @param pl
+ * player.
+ * @param params
+ * skill to use, and optional parameters.
+ * @return
+ * whether skill was used or not.
+ */
 int command_uskill ( object *pl, char *params) {
    if (!params) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -86,6 +119,16 @@ int command_uskill ( object *pl, char *params) {
    return use_skill(pl,params);
 }
 
+/**
+ * 'ready_skill' command.
+ *
+ * @param pl
+ * player.
+ * @param params
+ * skill name.
+ * @return
+ * whether skill was readied or not.
+ */
 int command_rskill ( object *pl, char *params) {
     object *skill;
 
@@ -111,17 +154,47 @@ int command_rskill ( object *pl, char *params) {
  * things like 'use_skill ...').  In fact, they should really be obsoleted
  * and replaced with those.
  */
+/**
+ * 'search' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * whether skill was used or not.
+ */
 int command_search (object *op, char *params) {
     return use_skill(op, skill_names[SK_FIND_TRAPS]);
 }
 
+/**
+ * 'disarm' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * unused.
+ * @return
+ * whether skill was used or not.
+ */
 int command_disarm (object *op, char *params) {
     return use_skill(op, skill_names[SK_DISARM_TRAPS]);
 }
 
 
-/* A little special because we do want to pass the full params along
+/**
+ * 'throw' command.
+ *
+ * A little special because we do want to pass the full params along
  * as it includes the object to throw.
+ *
+ * @param op
+ * player.
+ * @param params
+ * what to throw.
+ * @return
+ * whether skill was used or not.
  */
 int command_throw (object *op, char *params)
 {
@@ -137,6 +210,16 @@ int command_throw (object *op, char *params)
 }
 
 
+/**
+ * 'apply' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * what to apply.
+ * @return
+ * whether skill was used or not.
+ */
 int command_apply (object *op, char *params)
 {
     if (!params) {
@@ -180,14 +263,23 @@ int command_apply (object *op, char *params)
     return 0;
 }
 
-/*
+/**
  * Check if an item op can be put into a sack. If pl exists then tell
  * a player the reason of failure.
- * returns 1 if it will fit, 0 if it will not.  nrof is the number of
- * objects (op) we want to put in.  We specify it separately instead of
+ *
+ * @param pl
+ * player.
+ * @param sack
+ * container to try to put into.
+ * @param op
+ * what to put in the sack.
+ * @param nrof
+ * number of objects (op) we want to put in. We specify it separately instead of
  * using op->nrof because often times, a player may have specified a
  * certain number of objects to drop, so we can pass that number, and
- * not need to use split_ob and stuff.
+ * not need to use split_ob() and stuff.
+ * @return
+ * 1 if it will fit, 0 if it will not.
  */
 int sack_can_hold(const object *pl, const object *sack, const object *op, uint32 nrof) {
 
@@ -237,11 +329,17 @@ int sack_can_hold(const object *pl, const object *sack, const object *op, uint32
     return 1;
 }
 
-/* Pick up commands follow */
-/* pl = player (not always - monsters can use this now)
- * op is the object to put tmp into,
- * tmp is the object to pick up, nrof is the number to
- * pick up (0 means all of them)
+/**
+ * Try to pick up some item.
+ *
+ * @param pl
+ * object (player or monster) picking up.
+ * @param op
+ * object to put tmp into.
+ * @param tmp
+ * object to pick up.
+ * @param nrof
+ * number of tmp to pick up (0 means all of them).
  */
 static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 {
@@ -344,7 +442,15 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if (env && env!=pl && env!=op) esrv_update_item (UPD_WEIGHT, pl, env);
 }
 
-
+/**
+ * Try to pick up an item.
+ *
+ * @param op
+ * object trying to pick up.
+ * @param alt
+ * optional object op is trying to pick. If NULL, try to pick first item under op.
+ * @todo remove goto that doesn't have any effect.
+ */
 void pick_up(object *op,object *alt)
 /* modified slightly to allow monsters use this -b.t. 5-31-95 */
 {
@@ -445,10 +551,15 @@ void pick_up(object *op,object *alt)
 }
 
 
-/* This takes (picks up) and item.  op is the player
- * who issued the command.  params is a string to
- * match against the item name.  Basically, always
- * returns zero, but that should be improved.
+/**
+ * This takes (picks up) and item.
+ *
+ * @param op
+ * player who issued the command.
+ * @param params
+ * string to match against the item name.
+ * @return
+ * 0.
  */
 int command_take (object *op, char *params)
 {
@@ -531,12 +642,23 @@ int command_take (object *op, char *params)
 }
 
 
-/*
- *  This function was part of drop, now is own function.
- *  Player 'op' tries to put object 'tmp' into sack 'sack',
- *  if nrof is non zero, then nrof objects is tried to put into sack.
- * Note that the 'sack' in question can now be a transport,
+/**
+ * Something tries to put an object into another.
+ *
+ * This function was part of drop(), now is own function.
+ *
+ * @note
+ * the 'sack' in question can now be a transport,
  * so this function isn't named very good anymore.
+ *
+ * @param op
+ * who is moving the item.
+ * @param sack
+ * where to put the object.
+ * @param tmp
+ * what to put into sack.
+ * @param nrof
+ * if non zero, then nrof objects is tried to put into sack, else everything is put.
  */
 void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 {
@@ -640,11 +762,20 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
     }
 }
 
-/*
- *  This function was part of drop, now is own function.
- *  Player 'op' tries to drop object 'tmp', if nrof is non zero, then
- *  nrof objects is tried to dropped.
- * This is used when dropping objects onto the floor.
+/**
+ * Try to drop an object on the floor.
+ *
+ * This function was part of drop, now is own function.
+ *
+ * @param op
+ * who is dropping the item.
+ * @param tmp
+ * item to drop.
+ * @param nrof
+ * if is non zero, then nrof objects is tried to be dropped.
+ * @return
+ * object dropped, NULL if it was destroyed.
+ * @todo shouldn't tmp be NULL if was_destroyed returns true?
  */
 object *drop_object (object *op, object *tmp, uint32 nrof)
 {
@@ -737,6 +868,14 @@ object *drop_object (object *op, object *tmp, uint32 nrof)
     return tmp;
 }
 
+/**
+ * Drop an item, either on the floor or in a container.
+ *
+ * @param op
+ * who is dropping an item.
+ * @param tmp
+ * what object to drop.
+ */
 void drop(object *op, object *tmp)
 {
     /* Hopeful fix for disappearing objects when dropping from a container -
@@ -808,9 +947,16 @@ void drop(object *op, object *tmp)
         op->contr->count = 0;
 }
 
-
-
-/* Command will drop all items that have not been locked */
+/**
+ * Command to drop all items that have not been locked.
+ *
+ * @param op
+ * player.
+ * @param params
+ * optional specifier, like 'armour', 'weapon' and such.
+ * @return
+ * 0.
+ */
 int command_dropall (object *op, char *params) {
 
     object * curinv, *nextinv;
@@ -923,10 +1069,16 @@ int command_dropall (object *op, char *params) {
     return 0;
 }
 
-/* Object op wants to drop object(s) params.  params can be a
- * comma seperated list.
+/**
+ * 'drop' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * what to drop.
+ * @return
+ * 0.
  */
-
 int command_drop (object *op, char *params)
 {
     object  *tmp, *next;
@@ -969,6 +1121,16 @@ int command_drop (object *op, char *params)
     return 0;
 }
 
+/**
+ * 'examine' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * optional item specifier.
+ * @return
+ * 0.
+ */
 int command_examine (object *op, char *params)
 {
     if (!params) {
@@ -989,11 +1151,16 @@ int command_examine (object *op, char *params)
     return 0;
 }
 
-/* op should be a player.
- * we return the object the player has marked with the 'mark' command
+/**
+ * Return the object the player has marked with the 'mark' command
  * below.  If no match is found (or object has changed), we return
  * NULL.  We leave it up to the calling function to print messages if
  * nothing is found.
+ *
+ * @param op
+ * object. Should be a player.
+ * @return
+ * marked object if still valid, NULL else.
  */
 object *find_marked_object(object *op)
 {
@@ -1021,9 +1188,16 @@ object *find_marked_object(object *op)
 }
 
 
-/* op should be a player, params is any params.
- * If no params given, we print out the currently marked object.
- * otherwise, try to find a matching object - try best match first.
+/**
+ * 'mark' command, to mark an item for some effects (enchant armor, ...).
+ *
+ * @param op
+ * player.
+ * @param params
+ * If empty, we print out the currently marked object.
+ * Otherwise, try to find a matching object - try best match first.
+ * @return
+ * 1 or 0.
  */
 int command_mark(object *op, char *params)
 {
@@ -1066,8 +1240,13 @@ int command_mark(object *op, char *params)
 }
 
 
-/* op is the player
- * tmp is the monster being examined.
+/**
+ * Player examine a monster.
+ *
+ * @param op
+ * player.
+ * @param tmp
+ * monster being examined.
  */
 void examine_monster(object *op,object *tmp) {
     object *mon=tmp->head?tmp->head:tmp;
@@ -1116,6 +1295,14 @@ void examine_monster(object *op,object *tmp) {
 }
 
 
+/**
+ * Player examines some object.
+ *
+ * @param op
+ * player.
+ * @param tmp
+ * object to examine.
+ */
 void examine(object *op, object *tmp) {
     char buf[VERY_BIG_BUF];
     int in_shop;
@@ -1277,10 +1464,13 @@ void examine(object *op, object *tmp) {
 		  " ", " "); /* Blank line */
 }
 
-/*
- * inventory prints object's inventory. If inv==NULL then print player's
- * inventory.
- * [ Only items which are applied are showed. Tero.Haatanen@lut.fi ]
+/**
+ * Prints object's inventory.
+ *
+ * @param op
+ * who to print for.
+ * @param inv
+ * if NULL then print op's inventory, else print the inventory of inv.
  */
 void inventory(object *op,object *inv) {
   object *tmp;
@@ -1347,6 +1537,12 @@ void inventory(object *op,object *inv) {
   }
 }
 
+/**
+ * Utility function to display the pickup mode for a player.
+ *
+ * @param op
+ * must be a player.
+ */
 static void display_new_pickup(const object* op)
     {
     int i = op->contr->mode;
@@ -1480,6 +1676,17 @@ static void display_new_pickup(const object* op)
 		  "", "");
     }
 
+/**
+ * 'pickup' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * pickup mode. Can be empty to display the current mode.
+ * @return
+ * 1 if success, 0 else.
+ * @todo trash old pickup mode, merge with new pickup.
+ */
 int command_pickup (object *op, char *params)
 {
   uint32 i;
@@ -1547,6 +1754,14 @@ int command_pickup (object *op, char *params)
   return 1;
 }
 
+/**
+ * Sets the 'old' pickup mode.
+ *
+ * @param op
+ * player.
+ * @param i
+ * new pickup mode.
+ */
 static void set_pickup_mode(const object *op, int i) {
   switch(op->contr->mode=i) {
     case 0:
@@ -1584,6 +1799,16 @@ static void set_pickup_mode(const object *op, int i) {
     }
 }
 
+/**
+ * 'search-items' command.
+ *
+ * @param op
+ * player.
+ * @param params
+ * options.
+ * @return
+ * 1.
+ */
 int command_search_items (object *op, char *params)
 {
 
@@ -1619,16 +1844,22 @@ int command_search_items (object *op, char *params)
     return 1;
 }
 
-/*
+/**
  * Changing the custom name of an item
  *
- * Syntax is: rename <what object> to <new name>
- *  if '<what object>' is omitted, marked object is used
- *  if 'to <new name>' is omitted, custom name is cleared
+ * Syntax is: rename \<what object\> to \<new name\>
+ * - if 'what object' is omitted, marked object is used
+ * - if 'to new name' is omitted, custom name is cleared
  *
  * Names are considered for all purpose having a length <=127 (max length sent to client
- * by server) */
-
+ * by server).
+ *
+ * @param op
+ * player.
+ * @param params
+ * how to rename.
+ * @return 1
+ */
 int command_rename_item(object *op, char *params)
 {
   char buf[VERY_BIG_BUF], name[MAX_BUF];

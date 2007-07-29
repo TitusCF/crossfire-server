@@ -26,10 +26,24 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * All player communication commands, except the 'gsay' one.
+ */
+
 #include <global.h>
 #include <loader.h>
 #include <sproto.h>
 
+/**
+ * 'say' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_say (object *op, char *params)
 {
     char buf[MAX_BUF];
@@ -43,7 +57,15 @@ int command_say (object *op, char *params)
     return 0;
 }
 
-
+/**
+ * 'me' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_me (object *op, char *params)
 {
     char buf[MAX_BUF];
@@ -56,7 +78,15 @@ int command_me (object *op, char *params)
     return 0;
 }
 
-
+/**
+ * 'cointoss' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_cointoss(object *op, char *params)
 {
     char buf[MAX_BUF];
@@ -82,6 +112,8 @@ int command_cointoss(object *op, char *params)
 static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
     "princess", "dragon", "orc"};
 
+#define DICE    4 /**< How many dice to roll for orcknuckle. */
+
 /**
  * Plays the "orcknucke" game.
  *
@@ -101,7 +133,6 @@ static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
  */
 int command_orcknuckle(object *op, char *params)
 {
-#define DICE    4
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
     object* dice[DICE];
@@ -160,6 +191,24 @@ int command_orcknuckle(object *op, char *params)
 #undef DICE
 }
 
+/**
+ * Utility function for chat or shout.
+ *
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @param pri
+ * message priority.
+ * @param color
+ * message color.
+ * @param subtype
+ * message subtype.
+ * @param desc
+ * 'chat' or 'shouts', will be appened after the player's name and before a :.
+ * @return
+ * 1.
+ */
 static int command_tell_all(object *op, char *params, int pri, int color, int subtype, const char *desc)
 {
     if (op->contr->no_shout == 1){
@@ -184,11 +233,29 @@ static int command_tell_all(object *op, char *params, int pri, int color, int su
     }
 }
 
+/**
+ * 'sbout' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_shout (object *op, char *params)
 {
     return command_tell_all(op, params, 1, NDI_RED, MSG_TYPE_COMMUNICATION_SHOUT, "shouts");
 }
 
+/**
+ * 'chat' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_chat (object *op, char *params)
 {
     return command_tell_all(op, params, 9, NDI_BLUE, MSG_TYPE_COMMUNICATION_CHAT, "chats");
@@ -361,7 +428,7 @@ int command_reply (object *op, char *params) {
     return 1;
 }
 
-/*
+/**
  * This function covers basic emotions a player can have.  An emotion can be
  * one of three things currently.  Directed at oneself, directed at someone,
  * or directed at nobody.  The first set is nobody, the second at someone, and
@@ -371,8 +438,17 @@ int command_reply (object *op, char *params) {
  * arguments, translating them into commands.  Adding a new emotion can be
  * done by editing command.c and command.h.
  * [garbled 09-25-2001]
+ *
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @param emotion
+ * emotion code, one of EMOTE_xxx.
+ * @return
+ * 0 for invalid emotion, 1 else.
+ * @todo make an enum/anchor for EMOTE_xxx and link to that. simplify function (indexed array, for instance).
  */
-
 static int basic_emote(object *op, char *params, int emotion)
 {
     char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
@@ -925,271 +1001,757 @@ static int basic_emote(object *op, char *params, int emotion)
  * everything from here on out are just wrapper calls to basic_emote
  */
 
+/**
+ * 'nod' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_nod(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_NOD));
 }
 
+/**
+ * 'dance' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_dance(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_DANCE));
 }
 
+/**
+ * 'kiss' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_kiss(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_KISS));
 }
 
+/**
+ * 'bounce' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_bounce(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BOUNCE));
 }
 
+/**
+ * 'smile' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_smile(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SMILE));
 }
 
+/**
+ * 'cackle' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_cackle(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CACKLE));
 }
 
+/**
+ * 'laugh' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_laugh(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_LAUGH));
 }
 
+/**
+ * 'giggle' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_giggle(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GIGGLE));
 }
 
+/**
+ * 'shake' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_shake(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHAKE));
 }
 
+/**
+ * 'puke' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_puke(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_PUKE));
 }
 
+/**
+ * 'growl' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_growl(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GROWL));
 }
 
+/**
+ * 'scream' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_scream(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SCREAM));
 }
 
+/**
+ * 'sigh' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_sigh(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SIGH));
 }
 
+/**
+ * 'sulk' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_sulk(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SULK));
 }
 
+/**
+ * 'hug' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_hug(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_HUG));
 }
 
+/**
+ * 'cry' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_cry(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CRY));
 }
 
+/**
+ * 'poke' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_poke(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_POKE));
 }
 
+/**
+ * 'accuse' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_accuse(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_ACCUSE));
 }
 
+/**
+ * 'grin' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_grin(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GRIN));
 }
 
+/**
+ * 'bow' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_bow(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BOW));
 }
 
+/**
+ * 'clap' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_clap(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CLAP));
 }
 
+/**
+ * 'blush' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_blush(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BLUSH));
 }
 
+/**
+ * 'burp' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_burp(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BURP));
 }
 
+/**
+ * 'chuckle' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_chuckle(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CHUCKLE));
 }
 
+/**
+ * 'cough' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_cough(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_COUGH));
 }
 
+/**
+ * 'flip' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_flip(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_FLIP));
 }
 
+/**
+ * 'frown' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_frown(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_FROWN));
 }
 
+/**
+ * 'gasp' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_gasp(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GASP));
 }
 
+/**
+ * 'glare' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_glare(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GLARE));
 }
 
+/**
+ * 'groan' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_groan(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_GROAN));
 }
 
+/**
+ * 'hiccup' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_hiccup(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_HICCUP));
 }
 
+/**
+ * 'lick' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_lick(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_LICK));
 }
 
+/**
+ * 'pout' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_pout(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_POUT));
 }
 
+/**
+ * 'shiver' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_shiver(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHIVER));
 }
 
+/**
+ * 'shrug' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_shrug(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SHRUG));
 }
 
+/**
+ * 'slap' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_slap(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SLAP));
 }
 
+/**
+ * 'smirk' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_smirk(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SMIRK));
 }
 
+/**
+ * 'snap' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_snap(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNAP));
 }
 
+/**
+ * 'sneeze' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_sneeze(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNEEZE));
 }
 
+/**
+ * 'snicker' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_snicker(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNICKER));
 }
 
+/**
+ * 'sniff' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_sniff(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNIFF));
 }
 
+/**
+ * 'snore' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_snore(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SNORE));
 }
 
+/**
+ * 'spit' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_spit(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_SPIT));
 }
 
+/**
+ * 'strut' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_strut(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_STRUT));
 }
 
+/**
+ * 'thank' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_thank(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_THANK));
 }
 
+/**
+ * 'twiddle' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_twiddle(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_TWIDDLE));
 }
 
+/**
+ * 'wave' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_wave(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WAVE));
 }
 
+/**
+ * 'whistle' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_whistle(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WHISTLE));
 }
 
+/**
+ * 'wink' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_wink(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_WINK));
 }
 
+/**
+ * 'yawn' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_yawn(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_YAWN));
 }
 
+/**
+ * 'beg' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_beg(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BEG));
 }
 
+/**
+ * 'bleed' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_bleed(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_BLEED));
 }
 
+/**
+ * 'cringe' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_cringe(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_CRINGE));
 }
 
+/**
+ * 'think' command.
+ * @param op
+ * player.
+ * @param params
+ * message.
+ * @return
+ * 0.
+ */
 int command_think(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_THINK));

@@ -25,6 +25,11 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions deal with the object/type system.
+ */
+
 #include <global.h>
 #include <ob_methods.h>
 #include <ob_types.h>
