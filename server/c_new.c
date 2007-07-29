@@ -26,7 +26,11 @@
   The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* This file deals with administrative commands from the client. */
+/**
+ * @file
+ * This file deals with administrative commands from the client.
+ */
+
 #include <global.h>
 #include <commands.h>
 #ifndef __CEXTRACT__
@@ -34,16 +38,42 @@
 #endif
 
 #ifndef tolower
+/** Simple macro to convert a letter to lowercase. */
 #define tolower(C)      (((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
 #endif
 
-
+/**
+ * Compare function for commands.
+ *
+ * @param a
+ * @param b
+ * commands to compare.
+ * @retval -1
+ * a is less then b.
+ * @retval 0
+ * a and b are equals.
+ * @retval 1
+ * a is greater than b.
+ */
 static int compare_A(const void *a, const void *b)
 {
     return strcmp(((const command_array_struct *)a)->name,
                   ((const command_array_struct *)b)->name);
 }
 
+/**
+ * Finds the specified command in the command array. Utility function.
+ *
+ * @param cmd
+ * command to find. Will be put to lowercase.
+ * @param commarray
+ * commands to search into.
+ * @param commsize
+ * length of commarray.
+ * @return
+ * matching command, NULL for no match.
+ * @todo move the lowercase conversion to execute_newserver_command() for performance reasons.
+ */
 static command_array_struct *find_command_element(char *cmd,
                                                   command_array_struct *commarray,
                                                   int commsize)
@@ -63,9 +93,16 @@ static command_array_struct *find_command_element(char *cmd,
 }
 
 /**
+ * Player issued a command, let's handle it.
+ *
  * This function is called from the new client/server code.
- * pl is the player who is issuing the command, command is the
- * command.
+ *
+ * @param pl
+ * player who is issuing the command
+ * @param command
+ * the actual command with its arguments.
+ * @return
+ * 0 if invalid command, else actual command's return value (which may be zero).
  */
 int execute_newserver_command(object *pl, char *command)
 {
@@ -128,6 +165,16 @@ int execute_newserver_command(object *pl, char *command)
     return csp->func(pl, cp);
 }
 
+/**
+ * Player wants to start running.
+ *
+ * @param op
+ * player.
+ * @param params
+ * additional parameters.
+ * @return
+ * 0.
+ */
 int command_run(object *op, char *params)
 {
     int dir;
@@ -142,12 +189,32 @@ int command_run(object *op, char *params)
     return move_player(op, dir);
 }
 
+/**
+ * Player wants to stop running.
+ *
+ * @param op
+ * player.
+ * @param params
+ * ignored.
+ * @return
+ * 1.
+ */
 int command_run_stop(object *op, char *params)
 {
     op->contr->run_on=0;
     return 1;
 }
 
+/**
+ * Player wants to start furing.
+ *
+ * @param op
+ * player.
+ * @param params
+ * additional parameters.
+ * @return
+ * 0.
+ */
 int command_fire(object *op, char *params)
 {
     int dir;
@@ -162,6 +229,16 @@ int command_fire(object *op, char *params)
     return move_player(op, dir);
 }
 
+/**
+ * Player wants to stop firing.
+ *
+ * @param op
+ * player.
+ * @param params
+ * ignored.
+ * @return
+ * 0.
+ */
 int command_fire_stop(object *op, char *params)
 {
     op->contr->fire_on=0;

@@ -16,6 +16,10 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Documentation, no functional change.
+ server/c_move.c c_new.c move.c
+Nicolas Weeger 2007-07-29
+
+Documentation, no functional change.
  server/c_wiz.c
 Nicolas Weeger 2007-07-27
 

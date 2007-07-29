@@ -26,6 +26,11 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Those functions handle object moving and pushing.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -34,11 +39,15 @@
 static int roll_ob(object *op, int dir, object *pusher);
 
 /**
- * move_object() tries to move object op in the direction "dir".
- * If it fails (something blocks the passage), it returns 0,
- * otherwise 1.
- * This is an improvement from the previous move_ob(), which
- * removed and inserted objects even if they were unable to move.
+ * Try to move op in the direction "dir".
+ * @param op
+ * what to move.
+ * @param dir
+ * moving direction.
+ * @retval 0
+ * something blocks the passage.
+ * @retval 1
+ * op was moved..
  */
 
 int move_object(object *op, int dir) {
@@ -47,14 +56,19 @@ int move_object(object *op, int dir) {
 
 
 /**
- * object op is trying to move in direction dir.
- * originator is typically the same as op, but
- * can be different if originator is causing op to
- * move (originator is pushing op)
- * returns 0 if the object is not able to move to the
- * desired space, 1 otherwise (in which case we also
- * move the object accordingly.  This function is
- * very similiar to move_object.
+ * Op is trying to move in direction dir.
+ *
+ * @param op
+ * what is moving.
+ * @param dir
+ * what direction op wants to move.
+ * @param originator
+ * typically the same as op, but can be different if originator is causing op to
+ * move (originator is pushing op).
+ * @retval 0
+ * op is not able to move to the desired space.
+ * @retval 1
+ * op was moved.
   */
 int move_ob (object *op, int dir, object *originator)
 {
@@ -163,15 +177,25 @@ int move_ob (object *op, int dir, object *originator)
 
 
 /**
- * transfer_ob(): Move an object (even linked objects) to another spot
+ * Move an object (even linked objects) to another spot
  * on the same map.
  *
  * Does nothing if there is no free spot.
  *
- * randomly: If true, use find_free_spot() to find the destination, otherwise
+ * @param op
+ * what to move.
+ * @param x
+ * @param y
+ * new coordinates.
+ * @param randomly
+ * if true, use find_free_spot() to find the destination, otherwise
  * use find_first_free_spot().
- *
- * Return value: 1 if object was destroyed, 0 otherwise.
+ * @param originator
+ * what is causing op to move.
+ * @retval 1
+ * op was destroyed.
+ * @retval 0
+ * op was moved.
  */
 
 int transfer_ob (object *op, int x, int y, int randomly, object *originator)
@@ -201,16 +225,23 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator)
 }
 
 /**
- * Return value: 1 if object was destroyed, 0 otherwise.
- * Modified so that instead of passing the 'originator' that had no
- * real use, instead we pass the 'user' of the teleporter.  All the
- * callers know what they wanted to teleporter (move_teleporter or
- * shop map code)
- * tele_type is the type of teleporter we want to match against -
- * currently, this is either set to SHOP_MAT or TELEPORTER.
+ * Teleport an item around a nearby random teleporter of specified type.
+ *
  * It is basically used so that shop_mats and normal teleporters can
  * be used close to each other and not have the player put to the
  * one of another type.
+ *
+ * @param teleporter
+ * what is teleporting user.
+ * @param tele_type
+ * what object type user can be put on. this is either set to SHOP_MAT or TELEPORTER.
+ * @param user
+ * what object to teleport.
+ * @retval 1
+ * user was destroyed.
+ * @retval 0
+ * user is still valid, but may have moved or not.
+ * @todo fix weird return values.
  */
 int teleport (object *teleporter, uint8 tele_type, object *user)
 {
@@ -299,6 +330,16 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     return (tmp == NULL);
 }
 
+/**
+ * An object is pushed by another which is trying to take its place.
+ *
+ * @param op
+ * what is being pushed.
+ * @param dir
+ * pushing direction.
+ * @param pusher
+ * what is pushing op.
+ */
 void recursive_roll(object *op,int dir,object *pusher) {
     char name[MAX_BUF];
     query_name(op, name, MAX_BUF);
@@ -320,12 +361,24 @@ void recursive_roll(object *op,int dir,object *pusher) {
 }
 
 /**
+ * Checks if an objects fits on a specified spot.
+ *
  * This is a new version of blocked, this one handles objects
  * that can be passed through by monsters with the CAN_PASS_THRU defined.
  *
- * very new version handles also multipart objects
+ * Very new version handles also multipart objects
  * This is currently only used for the boulder roll code.
- * Returns 1 if object does not fit, 0 if it does.
+ *
+ * @param op
+ * what object to fit.
+ * @param m
+ * @param x
+ * @param y
+ * where to put op.
+ * @retval 1
+ * object does not fit.
+ * @retval 0
+ * object fits.
  */
 
 static int try_fit (object *op, mapstruct *m, int x, int y)
@@ -362,9 +415,22 @@ static int try_fit (object *op, mapstruct *m, int x, int y)
 }
 
 /**
- * this is not perfect yet.
+ * An object is being pushed, and may push other objects.
+ *
+ * This is not perfect yet.
  * it does not roll objects behind multipart objects properly.
  * Support for rolling multipart objects is questionable.
+ *
+ * @param op
+ * what is being pushed.
+ * @param dir
+ * pushing direction.
+ * @param pusher
+ * what is pushing op.
+ * @retval 0
+ * op couldn't move.
+ * @retval 1
+ * op, and potentially other objects, moved.
  */
 
 static int roll_ob(object *op,int dir, object *pusher) {
@@ -412,7 +478,21 @@ static int roll_ob(object *op,int dir, object *pusher) {
     return 1;
 }
 
-/** returns 1 if pushing invokes a attack, 0 when not */
+/**
+ * Something is pushing some other object.
+ *
+ * @param who
+ * object being pushed.
+ * @param dir
+ * pushing direction.
+ * @param pusher
+ * what is pushing who.
+ * @retval 1
+ * if pushing invokes a attack
+ * @retval 0
+ * no attack during pushing.
+ * @todo fix return value which is weird for last case.
+ */
 int push_ob(object *who, int dir, object *pusher) {
     int str1, str2;
     object *owner;
