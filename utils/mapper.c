@@ -129,6 +129,10 @@
  * - index_region_region:
  *  - REGIONFILE: relative path to region page.
  *  - REGIONNAME: region name.
+ *
+ *
+ * To build this program, from the lib dir:
+ *  gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd
  */
 
 #include <time.h>
@@ -1750,6 +1754,10 @@ object* find_skill_by_number(object *who, int skillno)
 }
 
 void esrv_del_item(player *pl, int tag)
+{
+}
+
+void esrv_update_item(int flags, object *pl, object *op)
 {
 }
 

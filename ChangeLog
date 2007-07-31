@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix compilation, document compile command line.
+ utils/mapper.c
+Nicolas Weeger 2007-07-31
+
 Move read_client_images() from socket/ to common/.
  common/image.c
  include/image.h libproto.h sockproto.h
