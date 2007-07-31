@@ -28,15 +28,12 @@
 
 /**
  * @file common/image.c
- * Handles face-related stuff.
- *
- * @note
- * those functions do not handle images per se, but their information.
- * @see socket/image.c
+ * Handles face-related stuff, including the actual face data.
  */
 
 #include <global.h>
 #include <stdio.h>
+#include "image.h"
 
 New_Face *new_faces;
 
@@ -455,4 +452,218 @@ void free_all_images(void)
     free(xbm);
     free(new_faces);
     free(smooth);
+}
+
+/**
+ * Checks fallback are correctly defined.
+ * This is a simple recursive function that makes sure the fallbacks
+ * are all proper (eg, the fall back to defined sets, and also
+ * eventually fall back to 0).  At the top level, togo is set to
+ * MAX_FACE_SETS.  If togo gets to zero, it means we have a loop.
+ * This is only run when we first load the facesets.
+ */
+static void check_faceset_fallback(int faceset, int togo)
+{
+    int fallback = facesets[faceset].fallback;
+
+        /* proper case - falls back to base set */
+    if (fallback == 0) return;
+
+    if (!facesets[fallback].prefix) {
+        LOG(llevError,"Face set %d falls to non set faceset %d\n",
+            faceset, fallback);
+        abort();
+    }
+    togo--;
+    if (togo == 0) {
+        LOG(llevError,"Infinite loop found in facesets. aborting.\n");
+        abort();
+    }
+    check_faceset_fallback(fallback, togo);
+}
+
+/**
+ * Loads all the image types into memory.
+ *
+ * This  way, we can easily send them to the client.  We should really
+ * do something better than abort on any errors - on the other hand,
+ * these are all fatal to the server (can't work around them), but the
+ * abort just seems a bit messy (exit would probably be better.)
+ *
+ * Couple of notes:  We assume that the faces are in a continous block.
+ * This works fine for now, but this could perhaps change in the future
+ *
+ * Function largely rewritten May 2000 to be more general purpose.
+ * The server itself does not care what the image data is - to the server,
+ * it is just data it needs to allocate.  As such, the code is written
+ * to do such.
+ */
+
+void read_client_images(void)
+{
+    char filename[400];
+    char buf[HUGE_BUF];
+    char *cp, *cps[7];
+    FILE *infile;
+    int num,len,compressed, fileno,i, badline;
+
+    memset(facesets, 0, sizeof(facesets));
+    sprintf(filename,"%s/image_info",settings.datadir);
+    if ((infile=open_and_uncompress(filename, 0, &compressed))==NULL) {
+        LOG(llevError,"Unable to open %s\n", filename);
+        abort();
+    }
+    while (fgets(buf, HUGE_BUF-1, infile)!=NULL) {
+        badline=0;
+
+        if (buf[0] == '#') continue;
+        if (!(cps[0] = strtok(buf, ":"))) badline=1;
+        for (i=1; i<7; i++) {
+            if (!(cps[i] = strtok(NULL, ":"))) badline=1;
+        }
+        if (badline) {
+            LOG(llevError,"Bad line in image_info file, ignoring line:\n  %s",
+                buf);
+        } else {
+            len = atoi(cps[0]);
+            if (len >=MAX_FACE_SETS) {
+                LOG(llevError,"To high a setnum in image_info file: %d > %d\n",
+                    len, MAX_FACE_SETS);
+                abort();
+            }
+            facesets[len].prefix = strdup_local(cps[1]);
+            facesets[len].fullname = strdup_local(cps[2]);
+            facesets[len].fallback = atoi(cps[3]);
+            facesets[len].size = strdup_local(cps[4]);
+            facesets[len].extension = strdup_local(cps[5]);
+            facesets[len].comment = strdup_local(cps[6]);
+        }
+    }
+    close_and_delete(infile,compressed);
+    for (i=0; i<MAX_FACE_SETS; i++) {
+        if (facesets[i].prefix) check_faceset_fallback(i, MAX_FACE_SETS);
+    }
+        /* Loaded the faceset information - now need to load up the
+         * actual faces.
+         */
+
+    for (fileno=0; fileno<MAX_FACE_SETS; fileno++) {
+            /* if prefix is not set, this is not used */
+        if (!facesets[fileno].prefix) continue;
+        facesets[fileno].faces = calloc(nrofpixmaps, sizeof(face_info));
+
+        sprintf(filename,"%s/crossfire.%d",settings.datadir, fileno);
+        LOG(llevDebug,"Loading image file %s\n", filename);
+
+        if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
+            LOG(llevError,"Unable to open %s\n", filename);
+            abort();
+        }
+        while(fgets(buf, HUGE_BUF-1, infile)!=NULL) {
+            if(strncmp(buf,"IMAGE ",6)!=0) {
+                LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
+                abort();
+            }
+            num = atoi(buf+6);
+            if (num<0 || num>=nrofpixmaps) {
+                LOG(llevError,
+                    "read_client_images: Image num %d not in 0..%d\n%s",
+                    num,nrofpixmaps,buf);
+                abort();
+            }
+                /* Skip accross the number data */
+            for (cp=buf+6; *cp!=' '; cp++) ;
+            len = atoi(cp);
+            if (len==0 || len>MAX_IMAGE_SIZE) {
+                LOG(llevError,
+                    "read_client_images: length not valid: %d > %d \n%s",
+                    len,MAX_IMAGE_SIZE,buf);
+                abort();
+            }
+                /* We don't actualy care about the name if the image that
+                 * is embedded in the image file, so just ignore it.
+                 */
+            facesets[fileno].faces[num].datalen = len;
+            facesets[fileno].faces[num].data = malloc(len);
+            if ((i=fread(facesets[fileno].faces[num].data,
+                         len, 1, infile)) != 1) {
+                LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",
+                    len, i, buf);
+                abort();
+            }
+            facesets[fileno].faces[num].checksum=0;
+            for (i=0; i<len; i++) {
+                ROTATE_RIGHT(facesets[fileno].faces[num].checksum);
+                facesets[fileno].faces[num].checksum +=
+                    facesets[fileno].faces[num].data[i];
+                facesets[fileno].faces[num].checksum &= 0xffffffff;
+            }
+        }
+        close_and_delete(infile,compressed);
+    } /* For fileno < MAX_FACE_SETS */
+}
+
+face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
+
+/**
+ * Checks specified faceset is valid
+ * \param fsn faceset number
+ */
+int is_valid_faceset(int fsn)
+{
+    if (fsn >=0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix) return TRUE;
+    return FALSE;
+}
+
+/**
+ * Frees all faceset information
+ */
+void free_socket_images(void)
+{
+    int num,q;
+
+    for(num=0;num<MAX_FACE_SETS; num++) {
+        if (facesets[num].prefix) {
+            for (q=0; q<nrofpixmaps; q++)
+                if (facesets[num].faces[q].data)
+                    free(facesets[num].faces[q].data);
+            free(facesets[num].prefix);
+            free(facesets[num].fullname);
+            free(facesets[num].size);
+            free(facesets[num].extension);
+            free(facesets[num].comment);
+            free(facesets[num].faces);
+        }
+    }
+}
+
+/**
+ * This returns the set we will actually use when sending
+ * a face.  This is used because the image files may be sparse.
+ * This function is recursive.  imageno is the face number we are
+ * trying to send
+ *
+ * If face is not found in specified faceset, tries with 'fallback' faceset.
+ *
+ * \param faceset faceset to check
+ * \param imageno image number
+ *
+ */
+int get_face_fallback(int faceset, int imageno)
+{
+        /* faceset 0 is supposed to have every image, so just return.  Doing
+         * so also prevents infinite loops in the case if it not having
+         * the face, but in that case, we are likely to crash when we try
+         * to access the data, but that is probably preferable to an infinite
+         * loop.
+         */
+    if (faceset==0) return 0;
+
+    if (!facesets[faceset].prefix) {
+        LOG(llevError,"get_face_fallback called with unused set (%d)?\n",
+            faceset);
+        return 0;   /* use default set */
+    }
+    if (facesets[faceset].faces[imageno].data) return faceset;
+    return get_face_fallback(facesets[faceset].fallback, imageno);
 }

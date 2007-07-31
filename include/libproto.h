@@ -73,6 +73,9 @@ extern unsigned find_face(const char *name, unsigned error);
 extern int read_smooth(void);
 extern int find_smooth(uint16 face, uint16 *smoothed);
 extern void free_all_images(void);
+extern void free_socket_images(void);
+extern void read_client_images(void);
+extern int get_face_fallback(int faceset, int imageno);
 /* init.c */
 extern void init_library(void);
 extern void init_environ(void);

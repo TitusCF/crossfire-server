@@ -1,7 +1,5 @@
 /* image.c */
 int is_valid_faceset(int fsn);
-void free_socket_images(void);
-void read_client_images(void);
 void set_face_mode_cmd(char *buf, int len, socket_struct *ns);
 void send_face_cmd(char *buff, int len, socket_struct *ns);
 void esrv_send_face(socket_struct *ns, short face_num, int nocache);
