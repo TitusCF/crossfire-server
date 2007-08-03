@@ -26,9 +26,11 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/*
- * BecomeDaemon.c
- * shamelessly swiped from xdm source code.
+/**
+ * @file
+ * Daemon mode for the server.
+ *
+ * Shamelessly swiped from xdm source code.
  * Appropriate copyrights kept, and hereby follow
  * ERic mehlhaff, 3/11/92
  *
@@ -51,7 +53,6 @@
  * Author:  Keith Packard, MIT X Consortium
  */
 
-
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -65,6 +66,9 @@
 #include <stdio.h>
 #include <sys/file.h>
 
+/**
+ * Starts the server as a daemon.
+ */
 void become_daemon ()
 {
     register int i;

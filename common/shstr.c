@@ -1,7 +1,9 @@
-/**
+/*
  * static char *rcsid_shstr_c =
  *   "$Id$";
- *
+ */
+
+/**
  * @file shstr.c
  * This is a simple shared strings package with a simple interface.
  *

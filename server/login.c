@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Player login/logout/save functions.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -34,13 +39,15 @@
 #include <loader.h>
 #include <define.h>
 
-extern void sub_weight (object *, signed long);
-extern void add_weight (object *, signed long);
-
 static void copy_file(const char *filename, FILE *fpout);
 
-/* If flag is non zero, it means that we want to try and save everyone, but
+/**
+ * Save all players.
+ *
+ * @param flag
+ * if non zero, it means that we want to try and save everyone, but
  * keep the game running.  Thus, we don't want to free any information.
+ * @todo remove empty loop.
  */
 void emergency_save(int flag) {
   player *pl;
@@ -102,11 +109,21 @@ void delete_character(const char *name) {
     remove_directory(buf);
 }
 
-/* This verify that a character of name exits, and that it matches
- * password.  It return 0 if there is match, 1 if no such player,
- * 2 if incorrect password.
+/**
+ * This verify that a character of name exits, and that it matches
+ * password.
+ *
+ * @param name
+ * player name.
+ * @param password
+ * player's password, not encrypted.
+ * @retval 0
+ * there is match.
+ * @retval 1
+ * no such player.
+ * @retval 2
+ * incorrect password.
  */
-
 int verify_player(const char *name, char *password)
 {
     char buf[MAX_BUF];
@@ -149,16 +166,18 @@ int verify_player(const char *name, char *password)
     return 1;
 }
 
-/* Checks to see if anyone else by 'name' is currently playing.
- * If we find that file or another character of some name is already in the
- * game, we don't let this person join (we should really let the new player
- * enter the password, and if correct, disconnect that socket and attach it to
- * the players current session.
- * If no one by that name is currently playing, we then make sure the name
- * doesn't include any bogus characters.
- * We return 0 if the name is in use/bad, 1 if it is OK to use this name.
+/**
+ * Ensure player's name is valid.
+ *
+ * @param me
+ * player to report to.
+ * @param name
+ * name to check.
+ * @retval 0
+ * invalid name.
+ * @retval 1
+ * valid name.
  */
-
 int check_name(player *me,const char *name) {
 
     if (*name=='\0') {
@@ -181,6 +200,13 @@ int check_name(player *me,const char *name) {
     return 1;
 }
 
+/**
+ * Recursively free_object() op and its inventory.
+ *
+ * @param op
+ * object to totally free_object().
+ * @todo doesn't free_object() handle inventory?
+ */
 void destroy_object (object *op)
 {
     object *tmp;
@@ -192,13 +218,19 @@ void destroy_object (object *op)
     free_object(op);
 }
 
-/*
- * If flag is set, it's only backup, ie dont remove objects from inventory
+/**
+ * Saves a player to disk.
+ *
+ * @param op
+ * player to save.
+ * @param flag
+ * if is set, it's only backup, ie dont remove objects from inventory.
  * If BACKUP_SAVE_AT_HOME is set, and the flag is set, then the player
  * will be saved at the emergency save location.
- * Returns non zero if successful.
+ * @return
+ * non zero if successful.
+ * @todo actually check the save worked :)
  */
-
 int save_player(object *op, int flag) {
   FILE *fp;
   char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
@@ -383,6 +415,14 @@ int save_player(object *op, int flag) {
   return 1;
 }
 
+/**
+ * Copy a file.
+ *
+ * @param filename
+ * source file.
+ * @param fpout
+ * where to copy to.
+ */
 static void copy_file(const char *filename, FILE *fpout) {
   FILE *fp;
   char buf[MAX_BUF];
@@ -393,8 +433,12 @@ static void copy_file(const char *filename, FILE *fpout) {
   fclose(fp);
 }
 
-/* Simple function to print errors when password is
- * not correct
+/**
+ * Simple function to print errors when password is
+ * not correct, and reinitialise the name.
+ *
+ * @param op
+ * player.
  */
 static void wrong_password(object *op)
 {
@@ -422,6 +466,13 @@ static void wrong_password(object *op)
     else get_name(op);
 }
 
+/**
+ * Actually login a player, load from disk and such.
+ *
+ * @param op
+ * player.
+ * @todo describe connect/login/logout/disconnect process.
+ */
 void check_login(object *op) {
     FILE *fp;
     char filename[MAX_BUF];

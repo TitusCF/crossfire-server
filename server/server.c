@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Main server functions.
+ */
+
 #include <global.h>
 #include <object.h>
 #include <tod.h>
@@ -52,9 +57,16 @@
 
 void process_events (mapstruct *map);
 
+/** Ingame days. */
 static char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
+/**
+ * Displays basic game version information.
+ *
+ * @param op
+ * who is requesting the verison information.
+ */
 void version(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
@@ -66,6 +78,12 @@ void version(object *op) {
 
 }
 
+/**
+ * Gives basic start information to player.
+ *
+ * @param op
+ * player.
+ */
 void start_info(object *op) {
 
     draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
@@ -86,9 +104,19 @@ void start_info(object *op) {
 }
 
 /**
+ * Encrypt a string. Used for password storage on disk.
+ *
  * Really, there is no reason to crypt the passwords  any system.  But easier
  * to just leave this enabled for backward compatibility.  Put the
  * simple case at top - no encryption - makes it easier to read.
+ *
+ * @param str
+ * string to crypt.
+ * @param salt
+ * salt to crypt with.
+ * @return
+ * crypted str.
+ * @todo make thread-safe?
  */
 char *crypt_string(char *str, char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
@@ -113,6 +141,16 @@ char *crypt_string(char *str, char *salt) {
 #endif
 }
 
+/**
+ * Check if 2 passwords match.
+ *
+ * @param typed
+ * entered password. Not crypted.
+ * @param crypted
+ * password to check against. Must be crypted.
+ * @return
+ * 1 if the passwords match, 0 else.
+ */
 int check_password(char *typed,char *crypted) {
   return !strcmp(crypt_string(typed,crypted),crypted);
 }
@@ -122,6 +160,9 @@ int check_password(char *typed,char *crypted) {
  * savebed.  We do some error checking - its possible that the
  * savebed map may no longer exist, so we make sure the player
  * goes someplace.
+ *
+ * @param op
+ * player.
  */
 void enter_player_savebed(object *op)
 {
@@ -155,11 +196,15 @@ void enter_player_savebed(object *op)
 }
 
 /**
- *  enter_map():  Moves the player and pets from current map (if any) to
- * new map.  map, x, y must be set.  map is the map we are moving the
- * player to - it could be the map he just came from if the load failed for
- * whatever reason.  If default map coordinates are to be used, then
- * the function that calls this should figure them out.
+ * Moves the player and pets from current map (if any) to
+ * new map.
+ *
+ * @param op
+ * player to move.
+ * @param newmap
+ * @param x
+ * @param y
+ * new location. If (x, y) point to an out of map point, will use default map coordinates.
  */
 static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     mapstruct *oldmap = op->map;
@@ -282,6 +327,12 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
         map_newmap_cmd(op->contr);
 }
 
+/**
+ * Applies the map timeout.
+ *
+ * @param oldmap
+ * map to process.
+ */
 void set_map_timeout(mapstruct *oldmap)
 {
 #if MAP_MAXTIMEOUT
@@ -368,6 +419,11 @@ static char *unclean_path(const char *src, char* newpath, int size)
 /**
  * The player is trying to enter a randomly generated map.  In this case, generate the
  * random map as needed.
+ *
+ * @param pl
+ * player.
+ * @param exit_ob
+ * exit containing random map parameters.
  */
 static void enter_random_map(object *pl, object *exit_ob)
 {
@@ -428,9 +484,13 @@ static void enter_random_map(object *pl, object *exit_ob)
 
 /**
  * The player is trying to enter a non-randomly generated template map.  In this
- * case, use a map file for a template
+ * case, use a map file for a template.
+ *
+ * @param pl
+ * player.
+ * @param exit_ob
+ * exit containing template map parameters.
  */
-
 static void enter_fixed_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
@@ -524,8 +584,12 @@ static void enter_fixed_template_map(object *pl, object *exit_ob)
 /**
  * The player is trying to enter a randomly generated template map.  In this
  * case, generate the map as needed.
+ *
+ * @param pl
+ * player.
+ * @param exit_ob
+ * exit containing random template map parameters.
  */
-
 static void enter_random_template_map(object *pl, object *exit_ob)
 {
     mapstruct *new_map;
@@ -588,7 +652,12 @@ static void enter_random_template_map(object *pl, object *exit_ob)
 
 
 /**
- * Code to enter/detect a character entering a unique map.
+ * Player is entering a unique map.
+ *
+ * @param op
+ * player.
+ * @param exit_ob
+ * exit containing unique map information.
  */
 static void enter_unique_map(object *op, object *exit_ob)
 {
@@ -668,15 +737,19 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 
 /**
- * Tries to move 'op' to exit_ob.  op is the character or monster that is
- * using the exit, where exit_ob is the exit object (boat, door, teleporter,
- * etc.)  if exit_ob is null, then op->contr->maplevel contains that map to
- * move the object to.  This is used when loading the player.
+ * Tries to move 'op' to exit_ob.
+ *
+ * This is used when loading the player.
  *
  * Largely redone by MSW 2001-01-21 - this function was overly complex
  * and had some obscure bugs.
+ *
+ * @param op
+ * character or monster that is using the exit.
+ * @param exit_ob
+ * exit object (boat, door, teleporter, etc.). if null, then op->contr->maplevel contains that map to
+ * move the object to.
  */
-
 void enter_exit(object *op, object *exit_ob) {
     #define PORTAL_DESTINATION_NAME "Town portal destination" /* this one should really be in a header file */
     object *tmp;
@@ -842,14 +915,14 @@ void enter_exit(object *op, object *exit_ob) {
 }
 
 /**
- * process_players1 and process_players2 do all the player related stuff.
- * I moved it out of process events and process_map.  This was to some
- * extent for debugging as well as to get a better idea of the time used
- * by the various functions.  process_players1() does the processing before
- * objects have been updated, process_players2() does the processing that
- * is needed after the players have been updated.
+ * Do all player-related stuff before objects have been updated.
+ *
+ * @sa process_players2().
+ *
+ * @param map
+ * map to process.
+ * @todo remove map, as always called with NULL from process_events().
  */
-
 static void process_players1(mapstruct *map)
 {
     int flag;
@@ -937,6 +1010,16 @@ static void process_players1(mapstruct *map)
     }
 }
 
+/**
+ * Do all player-related stuff after objects have been updated.
+ *
+ * @sa process_players1().
+ *
+ * @param map
+ * map to process.
+ * @todo remove map, as always called with NULL from process_events().
+ * @todo explain why 2 passes for players.s
+ */
 static void process_players2(mapstruct *map)
 {
     player *pl;
@@ -972,7 +1055,13 @@ static void process_players2(mapstruct *map)
 
 #define SPEED_DEBUG
 
-
+/**
+ * Process all active objects.
+ *
+ * @param map
+ * map to restrict processing to.
+ * @todo remove map, as always called with NULL.
+ */
 void process_events (mapstruct *map)
 {
     object *op;
@@ -1112,6 +1201,11 @@ void process_events (mapstruct *map)
     process_players2 (map);
 }
 
+/**
+ * Remove temporary map files.
+ *
+ * @todo check logic, why is file only removed if map is in memory?
+ */
 void clean_tmp_files(void) {
   mapstruct *m, *next;
 
@@ -1143,7 +1237,7 @@ void clean_tmp_files(void) {
   write_todclock(); /* lets just write the clock here */
 }
 
-/** clean up everything before exiting */
+/** Clean up everything and exit. */
 void cleanup(void)
 {
     LOG(llevDebug,"Cleanup called.  freeing data.\n");
@@ -1172,6 +1266,15 @@ void cleanup(void)
     exit(0);
 }
 
+/**
+ * Player logs out, or was disconnected.
+ *
+ * @param pl
+ * player.
+ * @param draw_exit
+ * if set, display leaving message to other players.
+ * @todo check for pl != NULL should include the 'left the game', just in case (or remove it?)
+ */
 void leave(player *pl, int draw_exit) {
 
     if (pl!=NULL) {
@@ -1227,6 +1330,13 @@ void leave(player *pl, int draw_exit) {
 			  pl->ob->name);
 }
 
+/**
+ * Checks if server should be started.
+ *
+ * @return
+ * 1 if play is forbidden, 0 if ok.
+ * @todo document forbidden stuff.
+ */
 int forbid_play(void)
 {
 #if !defined(_IBMR2) && !defined(___IBMR2) && defined(PERM_FILE)
@@ -1271,8 +1381,11 @@ int forbid_play(void)
 #endif
 }
 
+extern unsigned long todtick;
+
 /**
- *  do_specials() is a collection of functions to call from time to time.
+ * Collection of functions to call from time to time.
+ *
  * Modified 2000-1-14 MSW to use the global pticks count to determine how
  * often to do things.  This will allow us to spred them out more often.
  * I use prime numbers for the factor count - in that way, it is less likely
@@ -1284,9 +1397,6 @@ int forbid_play(void)
  * I also think this code makes it easier to see how often we really are
  * doing the various things.
  */
-
-extern unsigned long todtick;
-
 static void do_specials(void) {
 
 #ifdef WATCHDOG
@@ -1319,6 +1429,16 @@ static void do_specials(void) {
       fix_luck();
 }
 
+/**
+ * Server main function.
+ *
+ * @param argc
+ * length of argv.
+ * @param argv
+ * command-line options.
+ * @return
+ * 0.
+ */
 int server_main(int argc, char **argv)
 {
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */

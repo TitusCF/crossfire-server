@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Server initialisation, settings loading, command-line handling and such.
+ */
+
 #include <global.h>
 #include <loader.h>
 #ifndef __CEXTRACT__
@@ -46,6 +51,7 @@ static racelink *get_racelist(void);
 /** global weathermap */
 weathermap_t **weathermap;
 
+/** Filename when in daemon mode. */
 static char default_daemon_log[] = "logfile";
 
 static void set_logfile(char *val) { settings.logfilename=val; }
@@ -84,6 +90,12 @@ static void showscoresparm(char *data) {
     exit(0);
 }
 
+/**
+ * Change the server's port. Will exit() if invalid value.
+ *
+ * @param val
+ * port to use. Must be a valid one, between 1 and 32765 inclusive.
+ */
 static void set_csport(char *val)
 {
     settings.csport=atoi(val);
@@ -96,20 +108,24 @@ static void set_csport(char *val)
 #endif /* win32 */
 }
 
-/** Most of this is shamelessly stolen from XSysStats.  But since that is
+/**
+ * One command line option definition.
+ * Most of this is shamelessly stolen from XSysStats.  But since that is
  * also my program, no problem.
  */
 struct Command_Line_Options {
-    const char *cmd_option; /* how it is called on the command line */
-    uint8   num_args;	    /* Number or args it takes */
-    uint8   pass;           /* What pass this should be processed on. */
-    void    (*func)();      /* function to call when we match this.
+    const char *cmd_option; /**< How it is called on the command line. */
+    uint8   num_args;	    /**< Number or args it takes. */
+    uint8   pass;           /**< What pass this should be processed on. @todo describe passes :) */
+    void    (*func)();      /**< function to call when we match this.
 			     * if num_args is true, than that gets passed
 			     * to the function, otherwise nothing is passed
 			     */
 };
 
-/** The way this system works is pretty simple - parse_args takes
+/**
+ * Actual valid command line options.
+ * The way this system works is pretty simple - parse_args takes
  * the options passed to the program and a pass number.  If an option
  * matches both in name and in pass (and we have enough options),
  * we call the associated function.  This makes writing a multi
@@ -117,7 +133,7 @@ struct Command_Line_Options {
  */
 struct Command_Line_Options options[] = {
 
-/** Pass 1 functions - STuff that can/should be called before we actually
+/** Pass 1 functions - Stuff that can/should be called before we actually
  * initialize any data.
  */
 {"-h", 0, 1, help},
@@ -173,8 +189,19 @@ struct Command_Line_Options options[] = {
 };
 
 
-/** Note since this may be called before the library has been set up,
+/**
+ * Parse command line arguments.
+ *
+ * Note since this may be called before the library has been set up,
  * we don't use any of crossfires built in logging functions.
+ *
+ * @param argc
+ * length of argv.
+ * @param argv
+ * arguments.
+ * @param pass
+ * initialization pass arguments to use.
+ * @todo describe pass.
  */
 static void parse_args(int argc, char *argv[], int pass)
 {
@@ -219,8 +246,17 @@ static void parse_args(int argc, char *argv[], int pass)
     }
 }
 
+/** Material types. */
 materialtype_t *materialt;
 
+/**
+ * Creates an empty materialtype_t structure.
+ *
+ * @return
+ * new blanked structure.
+ * @note
+ * will fatal() instead of returning NULL.
+ */
 static materialtype_t *get_empty_mat(void) {
     materialtype_t *mt;
     int i;
@@ -247,6 +283,10 @@ static materialtype_t *get_empty_mat(void) {
     return mt;
 }
 
+/**
+ * Loads the materials.
+ * @todo describe materials and such.
+ */
 static void load_materials(void)
 {
     char buf[MAX_BUF], filename[MAX_BUF], *cp, *next;
@@ -784,7 +824,9 @@ static void load_settings(void)
 
 
 /**
- * init() is called only once, when starting the program.
+ * This is the main server initialisation function.
+ *
+ * Called only once, when starting the program.
  */
 
 void init(int argc, char **argv) {
@@ -834,8 +876,8 @@ void init(int argc, char **argv) {
 
 /**
  * Frees all memory allocated around here:
- *  * materials
- * * races
+ * - materials
+ * - races
  */
 void free_server(void) {
     free_materials();
@@ -933,6 +975,11 @@ static void init_beforeplay(void) {
   }
 }
 
+/**
+ * Checks if starting the server is allowed.
+ *
+ * @todo describe forbid_play() and such restrictions.
+ */
 static void init_startup(void) {
   char buf[MAX_BUF];
   FILE *fp;
@@ -955,7 +1002,8 @@ static void init_startup(void) {
 }
 
 /**
- * compile_info(): activated with the -o flag.
+ * Dump compilation information, activated with the -o flag.
+ *
  * It writes out information on how Imakefile and config.h was configured
  * at compile time.
  */
@@ -1021,22 +1069,37 @@ static void compile_info(void) {
 
 /* Signal handlers: */
 
+/**
+ * SIGSERV handler.
+ * @param i
+ * unused.
+ */
 void rec_sigsegv(int i) {
   LOG(llevError,"\nSIGSEGV received.\n");
   fatal_signal(1, 1);
 }
 
+/**
+ * SIGINT handler.
+ * @param i
+ * unused.
+ */
 void rec_sigint(int i) {
   LOG(llevInfo,"\nSIGINT received.\n");
   fatal_signal(0, 1);
 }
 
-/* SIGHUP handlers on daemons typically make them reread the config
+/**
+ * SIGHUP handler.
+ * SIGHUP handlers on daemons typically make them reread the config
  * files and reinitialize itself.  This behaviour is better left for
  * an explicit shutdown and restart with Crossfire, as there is just
  * too much persistent runtime state.  However, another function of
  * SIGHUP handlers is to reopen the log file for logrotate's benefit.
  * We can do that here.
+ *
+ * @param i
+ * unused.
  */
 void rec_sighup(int i) {
   /* Don't call LOG().  It calls non-reentrant functions.  The other
@@ -1046,20 +1109,32 @@ void rec_sighup(int i) {
   }
 }
 
+/**
+ * SIGQUIT handler.
+ *
+ * @param i
+ * unused.
+ */
 void rec_sigquit(int i) {
   LOG(llevInfo,"\nSIGQUIT received\n");
   fatal_signal(1, 1);
 }
 
-void rec_sigpipe(int i) {
-
-/* Keep running if we receive a sigpipe.  Crossfire should really be able
+/**
+ * SIGPIPE handler.
+ *
+ * Keep running if we receive a sigpipe.  Crossfire should really be able
  * to handle this signal (at least at some point in the future if not
  * right now).  By causing a dump right when it is received, it is not
  * doing much good.  However, if it core dumps later on, at least it can
  * be looked at later on, and maybe fix the problem that caused it to
  * dump core.  There is no reason that SIGPIPES should be fatal
+ *
+ * @param i
+ * unused.
  */
+void rec_sigpipe(int i) {
+
   LOG(llevError,"\nSIGPIPE--------------\n------------\n--------\n---\n");
 #if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
   LOG(llevInfo,"\nReceived SIGPIPE, ignoring...\n");
@@ -1070,6 +1145,12 @@ void rec_sigpipe(int i) {
 #endif
 }
 
+/**
+ * SIGBUS handler.
+ *
+ * @param i
+ * unused.
+ */
 void rec_sigbus(int i) {
 #ifdef SIGBUS
   LOG(llevError,"\nSIGBUS received\n");
@@ -1077,11 +1158,26 @@ void rec_sigbus(int i) {
 #endif
 }
 
+/**
+ * SIGTERM handler.
+ *
+ * @param i
+ * unused.
+ */
 void rec_sigterm(int i) {
   LOG(llevInfo,"\nSIGTERM received\n");
   fatal_signal(0, 1);
 }
 
+/**
+ * General signal handling. Will exit() in any case.
+ *
+ * @param make_core
+ * if set abort() instead of exit() to generate a core dump.
+ * @param close_sockets
+ * ignored.
+ * @todo remove close_sockets.
+ */
 void fatal_signal(int make_core, int close_sockets) {
   if(init_done) {
     emergency_save(0);
@@ -1092,6 +1188,9 @@ void fatal_signal(int make_core, int close_sockets) {
   exit(0);
 }
 
+/**
+ * Setup our signal handlers.
+ */
 static void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
   struct sigaction sa;
@@ -1120,7 +1219,6 @@ static void init_signals(void) {
  * re-configure the 'alignment' of monsters, objects. Useful for
  * putting together lists of creatures, etc that belong to gods.
  */
-
 static void init_races(void) {
   FILE *file;
   char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
@@ -1184,6 +1282,9 @@ static void init_races(void) {
     LOG(llevDebug,"done races.\n");
 }
 
+/**
+ * Dumps all race information to stderr.
+ */
 static void dump_races(void)
 {
     racelink *list;
@@ -1216,6 +1317,14 @@ static void free_races(void) {
     }
 }
 
+/**
+ * Add an object to the racelist.
+ *
+ * @param race_name
+ * race name.
+ * @param op
+ * what object to add to the race.
+ */
 static void add_to_racelist(const char *race_name, object *op) {
   racelink *race;
 
@@ -1238,6 +1347,13 @@ static void add_to_racelist(const char *race_name, object *op) {
   race->member->ob = op;
 }
 
+/**
+ * Create a new ::racelink structure.
+ *
+ * @return
+ * empty structure.
+ * @todo fatal() in case malloc() fails.
+ */
 static racelink * get_racelist(void) {
   racelink *list;
 
@@ -1250,6 +1366,14 @@ static racelink * get_racelist(void) {
   return list;
 }
 
+/**
+ * Find the race information for the specified name.
+ *
+ * @param name
+ * race to search for.
+ * @return
+ * race structure, NULL if not found.
+ */
 racelink * find_racelink(const char *name) {
   racelink *test=NULL;
 

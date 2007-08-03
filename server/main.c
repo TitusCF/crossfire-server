@@ -26,9 +26,24 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Server main entry point.
+ */
+
 #include <global.h>
 #include <sproto.h>
 
+/**
+ * Main entry point.
+ *
+ * @param argc
+ * length of argv.
+ * @param argv
+ * command-line options.
+ * @return
+ * 0.
+ */
 int main(int argc, char **argv)
 {
     return server_main(argc,argv);

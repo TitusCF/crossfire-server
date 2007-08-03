@@ -26,30 +26,42 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Hiscore handling functions.
+ */
+
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
 
-/*
- * The score structure is used when treating new high-scores
+/**
+ * The score structure is used when treating new high-scores.
  */
 
 typedef struct scr {
-  char name[BIG_NAME];      /* name  */
-  char title[BIG_NAME];	    /* Title */
-  char killer[BIG_NAME];    /* name (+ title) or "quit" */
-  sint64 exp;               /* Experience */
-  char maplevel[BIG_NAME];  /* Killed on what level */
-  int maxhp,maxsp,maxgrace; /* Max hp, sp, grace when killed */
-  int position;             /* Position in the highscore list */
+  char name[BIG_NAME];      /**< Name.  */
+  char title[BIG_NAME];	    /**< Title. */
+  char killer[BIG_NAME];    /**< Name (+ title) or "left". */
+  sint64 exp;               /**< Experience. */
+  char maplevel[BIG_NAME];  /**< Killed on what level. */
+  int maxhp,maxsp,maxgrace; /**< Max hp, sp, grace when killed. */
+  int position;             /**< Position in the highscore list. */
 } score;
 
-/*
- * spool works mostly like strtok(char *, ":"), but it can also
+/**
+ * Spool works mostly like strtok(char *, ":"), but it can also
  * log a specified error message if something goes wrong.
+ *
+ * @param bp
+ * string to search into. Should be non NULL for first call, NULL for subsequent calls.
+ * @param error
+ * message to display in case there is an error.
+ * @return
+ * next token, NULL if no more found.
+ * @todo make thread-safe. is this function really useful?
  */
-
 static char *spool(char *bp, const char *error) {
   static char *prev_pos = NULL;
   char *next_pos;
@@ -73,11 +85,15 @@ static char *spool(char *bp, const char *error) {
   return bp;
 }
 
-/*
+/**
  * Does what it says, copies the contents of the first score structure
  * to the second one.
+ *
+ * @param sc1
+ * what to copy.
+ * @param sc2
+ * where to copy to.
  */
-
 static void copy_score(const score *sc1, score *sc2) {
     strncpy(sc2->name, sc1->name, BIG_NAME);
     sc2->name[BIG_NAME - 1] = '\0';
@@ -92,11 +108,16 @@ static void copy_score(const score *sc1, score *sc2) {
     sc2->maxgrace = sc1->maxgrace;
 }
 
-/*
+/**
  * Writes the given score structure to a static buffer, and returns
  * a pointer to it.
+ *
+ * @param sc
+ * score to write.
+ * @return
+ * score line.
+ * @todo make thread-safe, trash static buffers.
  */
-
 static char *put_score(const score *sc) {
     static char buf[MAX_BUF];
 
@@ -106,9 +127,15 @@ static char *put_score(const score *sc) {
     return buf;
 }
 
-/*
- * The oposite of put_score, get_score reads from the given buffer into
+/**
+ * The opposite of put_score(), get_score reads from the given buffer into
  * a static score structure, and returns a pointer to it.
+ *
+ * @param bp
+ * string to parse.
+ * @return
+ * parsed score.
+ * @todo make thread-safe, remove static stuff.
  */
 
 static score *get_score(char *bp) {
@@ -157,6 +184,15 @@ static score *get_score(char *bp) {
   return &sc;
 }
 
+/**
+ * Formats one score to display to a player.
+ *
+ * @param sc
+ * score to format.
+ * @return
+ * suitably formatted score.
+ * @todo remove static variable.
+ */
 static char * draw_one_high_score(const score *sc) {
     static char retbuf[MAX_BUF];
 
@@ -174,11 +210,16 @@ static char * draw_one_high_score(const score *sc) {
             sc->maxhp,sc->maxsp,sc->maxgrace);
     return retbuf;
 }
-/*
- * add_score() adds the given score-structure to the high-score list, but
+/**
+ * Adds the given score-structure to the high-score list, but
  * only if it was good enough to deserve a place.
+ *
+ * @param new_score
+ * score to add.
+ * @return
+ * old player score.
+ * @todo remove static buffer.
  */
-
 static score *add_score(score *new_score) {
   FILE *fp;
   static score old_score;
@@ -240,6 +281,12 @@ static score *add_score(score *new_score) {
   return NULL;
 }
 
+/**
+ * Checks if player should enter the hiscore, and if so writes her into the list.
+ *
+ * @param op
+ * player to check.
+ */
 void check_score(object *op) {
     score new_score;
     score *old_score;
@@ -325,12 +372,17 @@ void check_score(object *op) {
 
 
 
-/* displays the high score file.  object is the calling object
- * (null if being called via command line.)  max is the maximum
- * number of scores to display.  match, if set, is the name or class
- * to match to.
+/**
+ * Displays the high score file.
+ *
+ * @param op
+ * player asking for the score file.
+ * @param max
+ * maximum number of scores to display.
+ * @param match
+ * if set, is the name or class to match to.
+ * @todo actually use match for the hiscore command.
  */
-
 void display_high_score(object *op,int max, const char *match) {
     FILE *fp;
     char buf[MAX_BUF],*scorebuf;

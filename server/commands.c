@@ -26,8 +26,9 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/*
- * Command parser
+/**
+ * @file
+ * Contains the definition for all in-game commands a player can issue.
  */
 
 #include <global.h>
@@ -42,8 +43,8 @@
  * take 0 time.
  */
 
-/*
- * Normal game commands
+/**
+ * Normal game commands.
  */
 command_array_struct Commands[] = {
   {"save", command_save,	0.0},
@@ -128,8 +129,10 @@ command_array_struct Commands[] = {
   {"northwest", command_northwest,	1.0},
 };
 
+/** Length of ::Commands array. */
 const int CommandsSize =sizeof(Commands) / sizeof(command_array_struct);
 
+/** Chat/shout related commands. */
 command_array_struct CommunicationCommands [] = {
   /* begin emotions */
   {"tell", command_tell,		0.1},
@@ -197,8 +200,11 @@ command_array_struct CommunicationCommands [] = {
   {"printlos", command_printlos,0.0},
 };
 
+/** Length of the ::CommunicationCommands array. */
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(command_array_struct);
 
+/** Additional commands a player can issue.
+ * @todo merge with ::Commands. */
 command_array_struct NewServerCommands [] = {
   {"run", command_run, 1.0},
   {"run_stop", command_run_stop, 0.0},
@@ -206,11 +212,10 @@ command_array_struct NewServerCommands [] = {
   {"fire_stop", command_fire_stop, 0.0}
 };
 
+/** Length of ::NewServerCommands. */
 const int NewServerCommandSize = sizeof(NewServerCommands)/ sizeof(command_array_struct);
 
-/*
- * Wizard commands (for both)
- */
+/** Wizard commands. */
 command_array_struct WizCommands [] = {
   {"abil", command_abil,0.0},
   {"addexp", command_addexp,0.0},
@@ -270,13 +275,29 @@ command_array_struct WizCommands [] = {
   {"mon_aggr", command_mon_aggr, 0.0},
   {"loadtest", command_loadtest, 0.0},
 };
+/** Length of ::WizCommands array. */
 const int WizCommandsSize =sizeof(WizCommands) / sizeof(command_array_struct);
 
+/**
+ * Comparison function for 2 command_array_struct.
+ * @param a
+ * @param b
+ * commands to compare.
+ * @retval -1
+ * a is less than b.
+ * @retval 0
+ * a equals b.
+ * @retval 1
+ * a is greater than b.
+ */
 static int compare_A(const void *a, const void *b)
 {
     return strcmp(((const command_array_struct *)a)->name, ((const command_array_struct *)b)->name);
 }
 
+/**
+ * Sorts the command arrays for easy search through bsearch().
+ */
 void init_commands(void)
 {
     qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
