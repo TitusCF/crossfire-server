@@ -59,6 +59,9 @@
 static int attack_hth(object *pl, int dir, const char *string, object *skill);
 static int attack_melee_weapon(object *op, int dir, const char *string, object *skill);
 
+/**
+ * Will contain a number-name mapping for skills, initialized by init_skills().
+ */
 const char *skill_names[NUM_SKILLS];
 
 /**

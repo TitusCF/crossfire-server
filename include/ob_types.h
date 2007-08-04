@@ -25,6 +25,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Object type variables.
+ */
+
 #ifndef OB_TYPES_H
 #define OB_TYPES_H
 

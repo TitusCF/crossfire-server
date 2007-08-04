@@ -26,7 +26,8 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/*
+/**
+ * @file
  * Routines that is executed from objects based on their speed have been
  * collected in this file.
  */
@@ -37,11 +38,16 @@
 #include <sproto.h>
 #endif
 
-/** The following removes doors.  The functions check to see if similar
+/**
+ * Remove non locked doors. The functions check to see if similar
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
+ *
+ * @sa remove_door2().
+ *
+ * @param op
+ * door to remove.
  */
-
 void remove_door(object *op) {
   int i;
   object *tmp;
@@ -63,7 +69,11 @@ void remove_door(object *op) {
 }
 
 /**
- * Same as remove_door but for locked doors.
+ * Same as remove_door() but for locked doors.
+ *
+ * @param op
+ * door to remove.
+ * @todo rename to something more meaningful.
  */
 void remove_door2(object *op) {
   int i;
@@ -86,8 +96,15 @@ void remove_door2(object *op) {
   free_object(op);
 }
 
-/** Will generate a monster according to content
- * of generator.
+/**
+ * Will generate a monster according to parameters of generator.
+ *
+ * What is generated should be in the generator's inventory.
+ *
+ * See generate_monster() for the main generator function.
+ *
+ * @param gen
+ * generator.
  */
 static void generate_monster_inv(object *gen) {
     int i;
@@ -134,6 +151,14 @@ static void generate_monster_inv(object *gen) {
                       gen->map->difficulty,0);
 }
 
+/**
+ * Generate a monster from the other_arch field.
+ *
+ * See generate_monster() for the main generator function.
+ *
+ * @param gen
+ * generator.
+ */
 static void generate_monster_arch(object *gen) {
     int i;
     int nx, ny;
@@ -180,6 +205,12 @@ static void generate_monster_arch(object *gen) {
     }
 }
 
+/**
+ * Main generator function. Will generate a monster based on the parameters.
+ *
+ * @param gen
+ * generator.
+ */
 static void generate_monster(object *gen) {
     sint8 children;
     sint8 max_children;
@@ -236,6 +267,13 @@ static void generate_monster(object *gen) {
         generate_monster_arch(gen);
 }
 
+/**
+ * Move for ::FORCE objects.
+ *
+ * @param op
+ * force to test.
+ * @todo rename to move_force?
+ */
 static void remove_force(object *op) {
     if (--op->duration > 0) {
         check_spell_expiry(op);
@@ -297,6 +335,13 @@ static void remove_force(object *op) {
     free_object(op);
 }
 
+/**
+ * Move for blindness object.
+ *
+ * @param op
+ * blindness to check.
+ * @todo rename to something more meaningful.
+ */
 static void remove_blindness(object *op) {
   if(--op->stats.food > 0)
     return;
@@ -309,6 +354,13 @@ static void remove_blindness(object *op) {
   free_object(op);
 }
 
+/**
+ * Move function for ::POISON.
+ *
+ * @param op
+ * poison to move.
+ * @todo rename.
+ */
 static void poison_more(object *op) {
   if(op->env==NULL||!QUERY_FLAG(op->env,FLAG_ALIVE)||op->env->stats.hp<0) {
     remove_ob(op);
@@ -342,7 +394,12 @@ static void poison_more(object *op) {
                    op,AT_INTERNAL,1);
 }
 
-
+/**
+ * Move function for a ::GATE.
+ *
+ * @param op
+ * gate to move.
+ */
 static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     object *tmp;
 
@@ -475,9 +532,15 @@ static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     } /* gate is going up */
 }
 
-/**  hp      : how long door is open/closed
- *  maxhp   : initial value for hp
- *  sp      : 1 = open, 0 = close
+/**
+ * Move function for a ::TIMED_GATE.
+ *
+ * - hp      : how long door is open/closed
+ * - maxhp   : initial value for hp
+ * - sp      : 1 = open, 0 = close
+ *
+ * @param op
+ * timed gate to move.
  */
 static void move_timed_gate(object *op)
 {
@@ -498,11 +561,17 @@ static void move_timed_gate(object *op)
   }
 }
 
-/**  slaying:    name of the thing the detector is to look for
- *	 speed:      frequency of 'glances'
- *	 connected:  connected value of detector
- *  sp:         1 if detection sets buttons
+/**
+ * Move a ::DETECTOR.
+ *
+ * - slaying:    name of the thing the detector is to look for
+ * - speed:      frequency of 'glances'
+ * - connected:  connected value of detector
+ * - sp:         1 if detection sets buttons
  *              -1 if detection unsets buttons
+ *
+ * @param op
+ * detector to move.
  */
 static void move_detector(object *op)
 {
@@ -573,7 +642,12 @@ static void move_detector(object *op)
     }
 }
 
-
+/**
+ * Animate a ::TRIGGER.
+ *
+ * @param op
+ * trigger.
+ */
 static void animate_trigger(object *op)
 {
   if((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op)) {
@@ -585,6 +659,12 @@ static void animate_trigger(object *op)
   }
 }
 
+/**
+ * Move a ::HOLE.
+ *
+ * @param op
+ * hole to move.
+ */
 static void move_hole(object *op) { /* 1 = opening, 0 = closing */
     object *next,*tmp;
 
@@ -621,7 +701,10 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
 }
 
 
-/** stop_item() returns a pointer to the stopped object.  The stopped object
+/**
+ * An item (::ARROW or such) stops moving.
+ *
+ * stop_item() returns a pointer to the stopped object.  The stopped object
  * may or may not have been removed from maps or inventories.  It will not
  * have been merged with other items.
  *
@@ -632,6 +715,11 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
  *
  * fix_stopped_item() should be used if the stopped item should be put on
  * the map.
+ *
+ * @param op
+ * object to check.
+ * @return
+ * pointer to stopped object, NULL if destroyed or can't be stopped.
  */
 object *stop_item (object *op)
 {
@@ -661,10 +749,16 @@ object *stop_item (object *op)
     }
 }
 
-/** fix_stopped_item() - put stopped item where stop_item() had found it.
+/**
+ * Put stopped item where stop_item() had found it.
  * Inserts item into the old map, or merges it if it already is on the map.
  *
- * 'map' must be the value of op->map before stop_item() was called.
+ * @param op
+ * object to stop.
+ * @param map
+ * must be the value of op->map before stop_item() was called.
+ * @param originator
+ * what caused op to be stopped.
  */
 void fix_stopped_item (object *op, mapstruct *map, object *originator)
 {
@@ -676,7 +770,14 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
         merge_ob (op, NULL);   /* only some arrows actually need this */
 }
 
-
+/**
+ * An ::ARROW stops moving.
+ *
+ * @param op
+ * arrow stopping.
+ * @return
+ * arrow, or NULL if it was broken.
+ */
 object *fix_stopped_arrow (object *op)
 {
     if(rndm(0, 99) < op->stats.food) {
@@ -719,10 +820,16 @@ object *fix_stopped_arrow (object *op)
     return op;
 }
 
-/** This routine doesnt seem to work for "inanimate" objects that
+/**
+ * Replaces op with its other_arch if it has reached its end of life.
+ *
+ * This routine doesnt seem to work for "inanimate" objects that
  * are being carried, ie a held torch leaps from your hands!.
- * Modified this routine to allow held objects. b.t. */
-
+ * Modified this routine to allow held objects. b.t.
+ *
+ * @param op
+ * object to change. Will be removed and replaced.
+ */
 static void change_object(object *op) { /* Doesn`t handle linked objs yet */
   object *tmp,*env;
   int i,j;
@@ -760,6 +867,12 @@ static void change_object(object *op) { /* Doesn`t handle linked objs yet */
   free_object(op);
 }
 
+/**
+ * Move function for ::TELEPORTER objects.
+ *
+ * @param op
+ * teleporter.
+ */
 void move_teleporter(object *op) {
     object *tmp, *head=op;
 
@@ -813,11 +926,18 @@ void move_teleporter(object *op) {
 }
 
 
-/**  This object will teleport someone to a different map
-  *  and will also apply changes to the player from its inventory.
-  *  This was invented for giving classes, but there's no reason it
-  *  can't be generalized.
-  */
+/**
+ * Move for ::PLAYER_CHANGER.
+ *
+ * This object will teleport someone to a different map
+ * and will also apply changes to the player from its inventory.
+ *
+ * This was invented for giving classes, but there's no reason it
+ *  can't be generalized.
+ *
+ * @param op
+ * changer to move.
+ */
 void move_player_changer(object *op) {
     object *player;
     object *walk;
@@ -858,9 +978,14 @@ void move_player_changer(object *op) {
 }
 
 /**
+ * Move for ::FIREWALL.
+ *
  * firewalls fire other spells.
  * The direction of the wall is stored in op->stats.sp.
  * walls can have hp, so they can be torn down.
+ *
+ * @param op
+ * firewall.
  */
 void move_firewall(object *op) {
     object *spell;
@@ -881,14 +1006,17 @@ void move_firewall(object *op) {
 
 
 /**
- * move_player_mover:  this function takes a "player mover" as an
+ * This function takes a ::PLAYERMOVER as an
  * argument, and performs the function of a player mover, which is:
  *
  * a player mover finds any players that are sitting on it.  It
  * moves them in the op->stats.sp direction.  speed is how often it'll move.
- * If attacktype is nonzero it will paralyze the player.  If lifesave is set,
- * it'll dissapear after hp+1 moves.  If hp is set and attacktype is set,
- * it'll paralyze the victim for hp*his speed/op->speed
+ * - If attacktype is nonzero it will paralyze the player.  If lifesave is set,
+ * - it'll dissapear after hp+1 moves.  If hp is set and attacktype is set,
+ * - it'll paralyze the victim for hp*his speed/op->speed
+ *
+ * @param op
+ * mover.
  */
 void move_player_mover(object *op) {
     object *victim, *nextmover;
@@ -963,12 +1091,16 @@ void move_player_mover(object *op) {
 }
 
 /**
+ * Move for ::DUPLICATOR.
+ *
  * Will duplicate a specified object placed on top of it.
- * connected: what will trigger it.
- * level: multiplier.  0 to destroy.
- * other_arch: the object to look for and duplicate.
+ * - connected: what will trigger it.
+ * - level: multiplier.  0 to destroy.
+ * - other_arch: the object to look for and duplicate.
+ *
+ * @param op
+ * duplicator.
  */
-
 void move_duplicator(object *op) {
     object *tmp;
 
@@ -996,19 +1128,24 @@ void move_duplicator(object *op) {
 }
 
 /**
- * move_creator (by peterm)
+ * Move for ::CREATOR.
+ *
  * it has the creator object create it's other_arch right on top of it.
  * connected:  what will trigger it
- * hp:  how many times it may create before stopping
- * lifesave:  if set, it'll never disappear but will go on creating
+ * - hp:  how many times it may create before stopping
+ * - lifesave:  if set, it'll never disappear but will go on creating
  *    everytime it's triggered
- * other_arch:  the object to create
+ * - other_arch:  the object to create
+ *
  * Note this can create large objects, however, in that case, it
  * has to make sure that there is in fact space for the object.
  * It should really do this for small objects also, but there is
  * more concern with large objects, most notably a part being placed
  * outside of the map which would cause the server to crash
-*/
+ *
+ * @param creator
+ * creator to move.
+ */
 void move_creator(object *creator) {
     object *new_ob;
 
@@ -1062,14 +1199,20 @@ void move_creator(object *creator) {
 }
 
 /**
- * move_marker --peterm@soda.csua.berkeley.edu
- * when moved, a marker will search for a player sitting above
+ * Move for ::MARKER.
+ *
+ * When moved, a marker will search for a player sitting above
  * it, and insert an invisible, weightless force into him
  * with a specific code as the slaying field.
+ *
  * At that time, it writes the contents of its own message
  * field to the player.  The marker will decrement hp to
  * 0 and then delete itself every time it grants a mark.
  * unless hp was zero to start with, in which case it is infinite.
+ * @author peterm@soda.csua.berkeley.edu
+ *
+ * @param op
+ * marker to move.
  */
 void move_marker(object *op) {
     object *tmp,*tmp2;
@@ -1130,6 +1273,15 @@ void move_marker(object *op) {
     } /* For all objects on this space */
 }
 
+/**
+ * Main object move function.
+ *
+ * @param op
+ * object to move.
+ * @return
+ * 0 if object didn't move, 1 else?
+ * @todo remove unused return value?
+ */
 int process_object(object *op) {
     if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
 	return 0;

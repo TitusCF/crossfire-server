@@ -26,15 +26,22 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Skill-related defines, including subtypes.
+ */
+
 #ifndef SKILLS_H
 #define SKILLS_H
 
-/* This list is just a subtype <-> skill (code wise) in the
+/**
+ * This list is just a subtype <-> skill (code wise) in the
  * server translation.  In theory, the processing of the different
  * skills could be done via strncmp
  * This list doesn't really try to identify what the skills do.
  * The order of this list has no special meaning.  0 is not used
  * to denote improperly set objects.
+ * @todo do an enum.
  */
 #define SK_LOCKPICKING		1
 #define SK_HIDING		2
@@ -76,7 +83,8 @@
 #define SK_WRAITH_FEED		38
 #define SK_HARVESTING 39
 
-/* This is the highest number skill in the table +1
+/**
+ * This is the highest number skill in the table +1
  * This is used to store pointers to the actual skills -
  * to make life easier, we use the value above as index,
  * eg, SK_EVOCATION (35) will be in last_skills[35].
@@ -84,8 +92,10 @@
 #define NUM_SKILLS		40
 
 
-/* This is used in the exp functions - basically what to do if
+/**
+ * This is used in the exp functions - basically what to do if
  * the player doesn't have the skill he should get exp in.
+ * @todo make an enum.
  */
 
 #define SK_EXP_ADD_SKILL	0   /* Give the player the skill */
@@ -93,9 +103,11 @@
 #define SK_EXP_NONE		2   /* Player gets nothing */
 #define SK_SUBTRACT_SKILL_EXP	3   /* Used when removing exp */
 
+/** True if op is using skill, false else. */
 #define USING_SKILL(op, skill)  ((op)->chosen_skill && (op)->chosen_skill->subtype == skill)
 
-/* This macro is used in fix_object() to define if this is a sill
+/**
+ * This macro is used in fix_object() to define if this is a sill
  * that should be used to calculate wc's and the like.
  */
 #define IS_COMBAT_SKILL(num) \
@@ -104,14 +116,16 @@
      (num==SK_THROWING) || (num==SK_CLAWING) || (num==SK_TWO_HANDED_WEAPON) || \
      (num==SK_WRAITH_FEED))
 
-/* Like IS_COMBAT_SKILL above, but instead this is used to determine
+/**
+ * Like IS_COMBAT_SKILL above, but instead this is used to determine
  * how many mana points the player has.
  */
 #define IS_MANA_SKILL(num) \
     ((num==SK_SORCERY) || (num==SK_EVOCATION) || \
      (num==SK_PYROMANCY) || (num==SK_SUMMONING))
 
-/* Currently only one of these, but put the define here to make
+/**
+ * Currently only one of these, but put the define here to make
  * it easier to expand it in the future */
 #define IS_GRACE_SKILL(num) \
     (num==SK_PRAYING)
@@ -121,7 +135,7 @@
 extern const char *skill_names[NUM_SKILLS];
 
 #ifdef WANT_UNARMED_SKILLS
-/* Table of unarmed attack skills.  Terminated by -1.  This
+/** Table of unarmed attack skills.  Terminated by -1.  This
  * is also the list that we should try to use skills when
  * automatically applying one for the player.
  * Note it is hardcoded in the skill_util.c that dragons always

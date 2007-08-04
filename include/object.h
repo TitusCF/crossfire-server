@@ -26,15 +26,23 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Object structure, the core of Crossfire.
+ */
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
+/** Object tag, unique during the whole game. */
 typedef uint32 tag_t;
-#define NUM_BODY_LOCATIONS	13
-#define BODY_ARMS		1
+#define NUM_BODY_LOCATIONS	13  /**< Number of body locations. */
+#define BODY_ARMS		1       /**< This should be the index of the arms. */
 
-/* See common/item.c */
-
+/**
+ * One body location.
+ * See common/item.c.
+ */
 typedef struct body_locations_struct {
     const char *save_name;	/**< Name used to load/save it to disk */
     const char *use_name;	/**< Name used when describing an item we can use */
@@ -60,10 +68,12 @@ typedef struct _key_value {
 } key_value;
 
 
-/* Definition for WILL_APPLY values.  Replaces having harcoded values
+/**
+ * Definition for WILL_APPLY values.  Replaces having harcoded values
  * sprinkled in the code.  Note that some of these also replace fields
  * that were in the can_apply area.  What is the point of having both
  * can_apply and will_apply?
+ * @todo do an enum.
  */
 #define WILL_APPLY_HANDLE	0x1
 #define WILL_APPLY_TREASURE	0x2
@@ -85,7 +95,8 @@ typedef struct _key_value {
     (op->count != old_tag || QUERY_FLAG (op, FLAG_FREED))
 
 
-/* Defines default size of the *spell_tags pointer.
+/**
+ * Defines default size of the *spell_tags pointer.
  * The OB_SPELL_TAG_HASH is a simple mechanism to get/set the
  * spell tags based on a simple hash - it should change if the tag size
  * also changes.  Note that since count is used for this, this value
@@ -98,6 +109,8 @@ typedef struct _key_value {
 #define OB_SPELL_TAG_MATCH(op, count)	(op->spell_tags[count & 0xf] == count)
 
 /**
+ * Main Crossfire structure, one ingame object.
+ *
  * Note that the ordering of this structure is sort of relevent -
  * copy_object copies everything over beyond 'name' using memcpy.
  * Thus, values that need to be copied need to be located beyond that
@@ -113,6 +126,8 @@ typedef struct _key_value {
  * related ones, etc.
  * This structure is best viewed with about a 100 width screen.
  * MSW 2002-07-05
+ *
+ * See the @ref page_object "documentation page" for more details.
  */
 typedef struct obj {
     /* These variables are not changed by copy_object() */
@@ -324,15 +339,17 @@ extern int nroffreeobjects;
  */
 #define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER && ob->type!=EVENT_CONNECTOR)
 
-/* Used by update_object to know if the object being passed is
+/** Used by update_object to know if the object being passed is
  * being added or removed.
+ * @todo make an enum for linking purposes.
  */
 #define UP_OBJ_INSERT   1
 #define UP_OBJ_REMOVE   2
 #define UP_OBJ_CHANGE   3
 #define UP_OBJ_FACE     4   /* Only thing that changed was the face */
 
-/* These are flags passed to insert_ob_in_map and
+/**
+ * These are flags passed to insert_ob_in_map and
  * insert_ob_in_ob.  Note that all flags may not be meaningful
  * for both functions.
  * Most are fairly explanatory:
@@ -358,6 +375,8 @@ extern int nroffreeobjects;
  * should be considered undefined - while you may notice what happens
  * right now if you pass more than one, that could very well change
  * in future revisions of the code.
+ *
+ * @todo make an enum, for linking purposes.
  */
 #define INS_NO_MERGE		0x0001
 #define INS_ABOVE_FLOOR_ONLY	0x0002
@@ -366,10 +385,10 @@ extern int nroffreeobjects;
 #define INS_BELOW_ORIGINATOR	0x0010
 #define INS_MAP_LOAD		0x0020
 
-#define ARCH_SINGULARITY        "singularity"
-#define ARCH_SINGULARITY_LEN    11
-#define ARCH_DETECT_MAGIC       "detect_magic"
-#define ARCH_DEPLETION          "depletion"
-#define ARCH_SYMPTOM            "symptom"
+#define ARCH_SINGULARITY        "singularity"   /**< Archetype for singularity. */
+#define ARCH_SINGULARITY_LEN    11              /**< Length of ::ARCH_SINGULARITY. */
+#define ARCH_DETECT_MAGIC       "detect_magic"  /**< Archetype for detect magic spell. */
+#define ARCH_DEPLETION          "depletion"     /**< Archetype for depletion. */
+#define ARCH_SYMPTOM            "symptom"       /**< Archetype for disease symptom. */
 
 #endif /* OBJECT_H */

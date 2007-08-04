@@ -1,9 +1,12 @@
 #ifndef WIN32_H
 #define WIN32_H
 
-/*
+/**
+ * @file
  * Structures and types used to implement opendir/readdir/closedir
- * on Windows 95/NT and set the loe level defines
+ * on Windows 95/NT and set the loe level defines.
+ *
+ * Also some Windows-specific includes and tweaks.
  */
 
 #if !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_)

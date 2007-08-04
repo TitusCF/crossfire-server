@@ -16,6 +16,13 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Documentation, no functional change.
+ include/newclient.h newserver.h ob_methods.h ob_types.h object.h path.h player.h
+  plugin.h re-cmp.h recipe.h shstr.h skills.h sounds.h spellist.h spells.h
+  tod.h treasure.h win32.h
+ server/skill_util.c spell_util.c time.c weather.c win32.c
+Nicolas Weeger 2007-08-04
+
+Documentation, no functional change.
  common/shstr.c
  include/race.h
  server/commands.c daemon.c hiscore.c init.c login.c main.c server.c

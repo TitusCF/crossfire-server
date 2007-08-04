@@ -26,8 +26,9 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/*
- * defines and variables used by the artifact generation routines
+/**
+ * @file
+ * Defines and variables used by the artifact generation routines.
  */
 
 #ifndef TREASURE_H

@@ -27,6 +27,10 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Spell-related helper functions.
+ */
 
 #include <global.h>
 #include <spells.h>
@@ -39,9 +43,18 @@
 
 extern char *spell_mapping[];
 
-/* This returns a random spell from 'ob'.  If skill is set, then
+/**
+ * This returns a random spell from 'ob'.  If skill is set, then
  * the spell must be of this skill, it can be NULL in which case all
  * matching spells are used.
+ *
+ * @param ob
+ * object to find spells in.
+ * @param skill
+ * skill the spell should match, NULL if can match any spell.
+ * @return
+ * random spell, or NULL if none found.
+ * @todo change skill to sstring.
  */
 object *find_random_spell_in_ob(object *ob, const char *skill)
 {
@@ -65,13 +78,25 @@ object *find_random_spell_in_ob(object *ob, const char *skill)
     return NULL;
 }
 
-/* Relatively simple function that gets used a lot.
+/**
+ * Utility function to assign the correct skill when casting.
+ *
+ * Relatively simple function that gets used a lot.
  * Basically, it sets up the skill pointer for the spell being
  * cast.  If op is really casting the spell, then the skill
  * is whatever skill the spell requires.
  * if instead caster (rod, horn, wand, etc) is casting the skill,
  * then they get exp for the skill that you need to use for
  * that object (use magic device).
+ *
+ * @param op
+ * object casting the spell.
+ * @param caster
+ * object used to cast the spell (rod, wand, ...).
+ * @param spob
+ * spell object.
+ * @param dest
+ * object to set the skill for.
  */
 void set_spell_skill(object *op, object *caster, object *spob, object *dest)
 {
@@ -82,11 +107,14 @@ void set_spell_skill(object *op, object *caster, object *spob, object *dest)
 	dest->skill = add_refcount(caster->skill);
 }
 
-/* init_spells: This should really be called check_spells, as that
- * is what it does.  It goes through the spells looking for any
+/**
+ * It goes through the spells looking for any
  * obvious errors.  This was most useful in debugging when re-doing
  * all the spells to catch simple errors.  To use it all the time
  * will result in it spitting out messages that aren't really errors.
+ *
+ * @todo This should really be called check_spells, as that
+ * is what it does.
  */
 void init_spells(void) {
 #ifdef SPELL_DEBUG
@@ -122,7 +150,8 @@ void init_spells(void) {
 #endif
 }
 
-/* Dumps all the spells - now also dumps skill associated with the spell.
+/**
+ * Dumps all the spells - now also dumps skill associated with the spell.
  * not sure what this would be used for, as the data seems pretty
  * minimal, but easy enough to keep around.
  */
@@ -139,8 +168,17 @@ void dump_spells(void)
     }
 }
 
-/* pretty basic function - basically just takes
- * an object, sets the x,y, and calls insert_ob_in_map
+/**
+ * Inserts into map a spell effect based on other_arch.
+ *
+ * @param spob
+ * spell object to insert object from.
+ * @param x
+ * @param y
+ * @param map
+ * coordinates to put the effect at.
+ * @param originator
+ * what causes the effect to be inserted. Can be NULL.
  */
 
 void spell_effect (object *spob, int x, int y, mapstruct *map,
@@ -157,15 +195,18 @@ void spell_effect (object *spob, int x, int y, mapstruct *map,
     }
 }
 
-/*
+/**
  * This function takes a caster and spell and presents the
  * effective level the caster needs to be to cast the spell.
- * basically, it just adjusts the spell->level with attuned/repelled
- * spellpaths.  Was called path_level_mod
+ * Basically, it just adjusts the spell->level with attuned/repelled
+ * spellpaths.
  *
- * caster is person casting hte spell.
- * spell is the spell object.
- * Returns modified level.
+ * @param caster
+ * person casting the spell.
+ * @param spell
+ * spell object.
+ * @return
+ * adjusted level.
  */
 int min_casting_level(object *caster, object *spell)
 {
@@ -184,13 +225,20 @@ int min_casting_level(object *caster, object *spell)
 }
 
 
-/* This function returns the effective level the spell
+/**
+ * This function returns the effective level the spell
  * is being cast at.
  * Note that I changed the repelled/attuned bonus to 2 from 5.
  * This is because the new code compares casting_level against
  * min_caster_level, so the difference is effectively 4
+ *
+ * @param caster
+ * person casting the spell.
+ * @param spell
+ * spell object.
+ * @return
+ * adjusted level.
  */
-
 int caster_level(object *caster, object *spell)
 {
     int level= caster->level;
@@ -217,18 +265,24 @@ int caster_level(object *caster, object *spell)
     return level;
 }
 
-/* The following function scales the spellpoint cost of
- * a spell by it's increased effectiveness.  Some of the
- * lower level spells become incredibly vicious at high
+/**
+ * Scales the spellpoint cost of a spell by it's increased effectiveness.
+ * Some of the lower level spells become incredibly vicious at high
  * levels.  Very cheap mass destruction.  This function is
  * intended to keep the sp cost related to the effectiveness.
- * op is the player/monster
- * caster is what is casting the spell, can be op.
- * spell is the spell object.
+ *
  * Note that it is now possible for a spell to cost both grace and
  * mana.  In that case, we return which ever value is higher.
+ *
+ * @param caster
+ * what is casting the spell.
+ * @param spell
+ * spell object.
+ * @param flags
+ * one of @ref SPELL_xxx.
+ * @return
+ * sp/mana points cost.
  */
-
 sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
 {
     int sp, grace, level = caster_level(caster, spell);
@@ -272,8 +326,15 @@ sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
 }
 
 
-/* SP_level_dam_adjust: Returns adjusted damage based on the caster.
- * spob is the spell we are adjusting.
+/**
+ * Returns adjusted damage based on the caster.
+ *
+ * @param caster
+ * who is casting.
+ * @param spob
+ * spell we are adjusting.
+ * @return
+ * adjusted damage.
  */
 int SP_level_dam_adjust(object *caster, object *spob)
 {
@@ -287,9 +348,17 @@ int SP_level_dam_adjust(object *caster, object *spob)
     return adj;
 }
 
-/* Adjust the strength of the spell based on level.
- * This is basically the same as SP_level_dam_adjust above,
+/**
+ * Adjust the duration of the spell based on level.
+ * This is basically the same as SP_level_dam_adjust() above,
  * but instead looks at the level_modifier value.
+ *
+ * @param caster
+ * who is casting.
+ * @param spob
+ * spell we are adjusting.
+ * @return
+ * adjusted duration.
  */
 int SP_level_duration_adjust(object *caster, object *spob)
 {
@@ -304,9 +373,17 @@ int SP_level_duration_adjust(object *caster, object *spob)
     return adj;
 }
 
-/* Adjust the strength of the spell based on level.
- * This is basically the same as SP_level_dam_adjust above,
+/**
+ * Adjust the range of the spell based on level.
+ * This is basically the same as SP_level_dam_adjust() above,
  * but instead looks at the level_modifier value.
+ *
+ * @param caster
+ * who is casting.
+ * @param spob
+ * spell we are adjusting.
+ * @return
+ * adjusted range.
  */
 int SP_level_range_adjust(object *caster, object *spob)
 {
@@ -321,9 +398,16 @@ int SP_level_range_adjust(object *caster, object *spob)
     return adj;
 }
 
-/* Checks to see if player knows the spell.  If the name is the same
+/**
+ * Checks to see if player knows the spell.  If the name is the same
  * as an existing spell, we presume they know it.
- * returns 1 if they know the spell, 0 if they don't.
+ *
+ * @param op
+ * object we're looking into.
+ * @param name
+ * spell name. Doesn't need to be a shared string.
+ * @return
+ * 1 if op knows the spell, 0 if it don't.
  */
 object *check_spell_known (object *op, const char *name)
 {
@@ -348,7 +432,6 @@ object *check_spell_known (object *op, const char *name)
  * @returns
  * matching spell object, or NULL. If we match multiple spells but don't get an exact match, we also return NULL.
  */
-
 object *lookup_spell_by_name(object *op,const char *spname) {
     object *spob1=NULL, *spob;
 
@@ -373,12 +456,24 @@ object *lookup_spell_by_name(object *op,const char *spname) {
     return spob1;
 }
 
-/* reflwall - decides weither the (spell-)object sp_op will
+/**
+ * Decides weither the (spell-)object sp_op will
  * be reflected from the given mapsquare. Returns 1 if true.
+ *
  * (Note that for living creatures there is a small chance that
  * reflect_spell fails.)
+ *
  * Caller should be sure it passes us valid map coordinates
  * eg, updated for tiled maps.
+ *
+ * @param m
+ * @param x
+ * @param y
+ * position of the object to test.
+ * @param sp_op
+ * spell object to test.
+ * @return
+ * 1 if reflected, 0 else.
  */
 int reflwall(mapstruct *m,int x,int y, object *sp_op) {
     object *op;
@@ -392,12 +487,22 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
     return 0;
 }
 
-/* cast_create_object: creates object new_op in direction dir
- * or if that is blocked, beneath the player (op).
+/**
+ * Creates object new_op in direction dir or if that is blocked, beneath the player (op).
  * we pass 'caster', but don't use it for anything.
  * This is really just a simple wrapper function .
- * returns the direction that the object was actually placed
- * in.
+ *
+ * @param op
+ * who is casting.
+ * @param caster
+ * unused.
+ * @param new_op
+ * object to insert.
+ * @param dir
+ * direction to insert into. Can be 0.
+ * @return
+ * direction that the object was actually placed in.
+ * @todo remove caster.
  */
 int cast_create_obj(object *op,object *caster,object *new_op, int dir)
 {
@@ -420,13 +525,23 @@ int cast_create_obj(object *op,object *caster,object *new_op, int dir)
     return dir;
 }
 
-/* Returns true if it is ok to put spell *op on the space/may provided.
- * immune_stop is basically the attacktype of the spell (why
+/**
+ * Returns true if it is ok to put spell op on the space/may provided.
+ *
+ * @param m
+ * @param x
+ * @param y
+ * coordinates to test.
+ * @param op
+ * spell to test for.
+ * @param immune_stop
+ * basically the attacktype of the spell (why
  * passed as a different value, not sure of).  If immune_stop
  * has the AT_MAGIC bit set, and there is a counterwall
- * on the space, the object doesn't get placed.  if immune stop
+ * on the space, the object doesn't get placed.  if immune_stop
  * does not have AT_MAGIC, then counterwalls do not effect the spell.
- *
+ * @return
+ * 1 if we can add op, 0 else.
  */
 int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
     object *tmp;
@@ -497,17 +612,27 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
     return 1;
 }
 
-/* fire_arch_from_position: fires an archetype.
- * op: person firing the object.
- * caster: object casting the spell.
- * x, y: where to fire the spell (note, it then uses op->map for the map
- *   for these coordinates, which is probably a really bad idea.
- * dir: direction to fire in.
- * spell: spell that is being fired.  It uses other_arch for the archetype
- * to fire.
- * returns 0 on failure, 1 on success.
+/**
+ * Fires an archetype.
+ *
+ * @note
+ * it uses op->map for the map for these coordinates, which is probably a really bad idea.
+ *
+ * @param op
+ * person firing the object.
+ * @param caster
+ * object casting the spell.
+ * @param x
+ * @param y
+ * where to fire the spell.
+ * @param dir
+ * direction to fire in.
+ * @param spell
+ * spell that is being fired.  It uses other_arch for the archetype to fire.
+ * @return
+ * 0 on failure, 1 on success.
+ * @todo check the note?
  */
-
 int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
 	int dir, object *spell)
 {
@@ -579,6 +704,12 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
  *
  ****************************************************************************/
 
+/**
+ * Regenerates a rod's charges.
+ *
+ * @param rod
+ * rod to regenerate.
+ */
 void regenerate_rod(object *rod) {
     if (rod->stats.hp < rod->stats.maxhp) {
 	rod->stats.hp+= 1 + rod->stats.maxhp/10;
@@ -588,21 +719,26 @@ void regenerate_rod(object *rod) {
     }
 }
 
-
+/**
+ * Drain charges from a rod.
+ *
+ * @param rod
+ * rod to drain.
+ */
 void drain_rod_charge(object *rod) {
     rod->stats.hp -= SP_level_spellpoint_cost(rod, rod->inv, SPELL_HIGHEST);
 }
 
-
-
-
-/* this function is commonly used to find a friendly target for
+/**
+ * This function is commonly used to find a friendly target for
  * spells such as heal or protection or armour
- * op is what is looking for the target (which can be a player),
- * dir is the direction we are looking in.  Return object found, or
- * NULL if no good object.
+ * @param op
+ * what is looking for the target (which can be a player).
+ * @param dir
+ * direction we are looking in.
+ * @return
+ * object found, or NULL if no good object.
  */
-
 object *find_target_for_friendly_spell(object *op,int dir) {
     object *tmp;
     mapstruct *m;
@@ -662,19 +798,26 @@ object *find_target_for_friendly_spell(object *op,int dir) {
 
 
 
-/* raytrace:
- * spell_find_dir(map, x, y, exclude) will search first the center square
+/**
+ * Search what direction a spell should go in, first the center square
  * then some close squares in the given map at the given coordinates for
  * live objects.
+ *
  * It will not consider the object given as exclude (= caster) among possible
  * live objects. If the caster is a player, the spell will go after
  * monsters/generators only. If not, the spell will hunt players only.
+ *
  * Exception is player on a battleground, who will be targeted unless excluded.
- * It returns the direction toward the first/closest live object if it finds
- * any, otherwise -1.
- * note that exclude can be NULL, in which case all bets are off.
+ *
+ * @param m
+ * @param x
+ * @param y
+ * where to search from.
+ * @param exclude
+ * what object to avoid. Can be NULL, in which case all bets are off.
+ * @return
+ * direction toward the first/closest live object if it finds any, otherwise -1.
  */
-
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
     int i,max=SIZEOFFREE;
     sint16 nx,ny;
@@ -710,11 +853,17 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
 
 
 
-/* put_a_monster: puts a monster named monstername near by
+/**
+ * Puts a monster named monstername near by
  * op.  This creates the treasures for the monsters, and
  * also deals with multipart monsters properly.
+ *
+ * @param op
+ * victim.
+ * @param monstername
+ * monster's archetype name.
+ * @todo there is a multipart-aware archetype conversion function, use it.
  */
-
 static void put_a_monster(object *op,const char *monstername) {
     object *tmp,*head=NULL,*prev=NULL;
     archetype *at;
@@ -761,20 +910,27 @@ static void put_a_monster(object *op,const char *monstername) {
     }
 }
 
-/* peterm:  function which summons hostile monsters and
- * places them in nearby squares.
- * op is the summoner.
- * n is the number of monsters.
- * monstername is the name of the monster.
- * returns the number of monsters, which is basically n.
- * it should really see how many it successfully replaced and
- * return that instead.
- * Note that this is not used by any spells (summon evil monsters
+/**
+ * Summons hostile monsters and places them in nearby squares.
+ *
+ * @note
+ * this is not used by any spells (summon evil monsters
  * use to call this, but best I can tell, that spell/ability was
  * never used.  This is however used by various failures on the
  * players part (alchemy, reincarnation, etc)
+ *
+ * @param op
+ * the summoner.
+ * @param n
+ * number of monsters.
+ * @param monstername
+ * name of the monster to summon, should be a valid archetype.
+ * @return
+ * number of monsters, which is basically n.
+ *
+ * @todo it should really see how many it successfully replaced and
+ * return that instead.
  */
-
 int summon_hostile_monsters(object *op,int n,const char *monstername){
     int i;
     for(i=0;i<n;i++)
@@ -784,7 +940,7 @@ int summon_hostile_monsters(object *op,int n,const char *monstername){
 }
 
 
-/*  Some local definitions for shuffle-attack */
+/** Some local definitions for shuffle_attack(). */
     struct {
 	int attacktype;
 	int face;
@@ -814,21 +970,29 @@ int summon_hostile_monsters(object *op,int n,const char *monstername){
 
 
 
-/* shuffle_attack:  peterm
+/**
  * This routine shuffles the attack of op to one of the
- * ones in the list.  It does this at random.  It also
- *  chooses a face appropriate to the attack that is
- *  being committed by that square at the moment.
- *  right now it's being used by color spray and create pool of
- *  chaos.
+ * ones in the list. It does this at random.  It also
+ * chooses a face appropriate to the attack that is
+ * being committed by that square at the moment.
+ *
+ * right now it's being used by color spray and create pool of
+ * chaos.
+ *
  * This could really be a better implementation - the
  * faces and attacktypes above are hardcoded, which is never
  * good.  The faces refer to faces in the animation sequence.
  * Not sure how to do better - but not having it hardcoded
  * would be nice.
+ *
  * I also fixed a bug here in that attacktype was |= -
  * to me, that would be that it would quickly get all
  * attacktypes, which probably wasn't the intent.  MSW 2003-06-03
+ *
+ * @param op
+ * object to change.
+ * @param change_face
+ * if set, also changes the face, else only changes the attacktype.
  */
 void shuffle_attack(object *op,int change_face)
 {
@@ -843,13 +1007,16 @@ void shuffle_attack(object *op,int change_face)
 }
 
 
-/* prayer_failure: This is called when a player fails
- * at casting a prayer.
- * op is the player.
- * failure is basically how much grace they had.
- * power is how much grace the spell would normally take to cast.
+/**
+ * Called when a player fails at casting a prayer.
+ *
+ * @param op
+ * player.
+ * @param failure
+ * basically how much grace they had.
+ * @param power
+ * how much grace the spell would normally take to cast.
  */
-
 static void prayer_failure(object *op, int failure, int power)
 {
     const char *godname;
@@ -894,15 +1061,18 @@ static void prayer_failure(object *op, int failure, int power)
     }
 }
 
-/*
- * spell_failure()  handles the various effects for differing degrees
- * of failure badness.
- * op is the player that failed.
- * failure is a random value of how badly you failed.
- * power is how many spellpoints you'd normally need for the spell.
- * skill is the skill you'd need to cast the spell.
+/**
+ * Handles the various effects for differing degrees of failure badness.
+ *
+ * @param op
+ * player that failed.
+ * @param failure
+ * random value of how badly you failed.
+ * @param power
+ * how many spellpoints you'd normally need for the spell.
+ * @param skill
+ * skill needed to cast the spell.
  */
-
 void spell_failure(object *op, int failure,int power, object *skill)
 {
     object *tmp;
@@ -1087,34 +1257,41 @@ static void handle_spell_confusion(object* op) {
     }
 }
 
-/* This is where the main dispatch when someone casts a spell.
+/**
+ * Main dispatch when someone casts a spell.
  *
- * op is the creature that is owner of the object that is casting the spell -
- *    eg, the player or monster.
- * caster is the actual object (wand, potion) casting the spell. can be
- *    same as op.
- * dir is the direction to cast in.  Note in some cases, if the spell
- *    is self only, dir really doesn't make a difference.
- * spell_ob is the spell object that is being cast.  From that,
- *    we can determine what to do.
- * stringarg is any options that are being used.  It can be NULL.  Almost
- *    certainly, only players will set it.  It is basically used as optional
- *    parameters to a spell (eg, item to create, information for marking runes,
- *    etc.
- * returns 1 on successful cast, or 0 on error.  These values should really
- * be swapped, so that 0 is successful, and non zero is failure, with a code
- * of what it failed.
+ * Will decrease mana/gr points, check for skill, confusion and such.
  *
  * Note that this function is really a dispatch routine that calls other
  * functions - it just blindly returns what ever value those functions
  * return.  So if your writing a new function that is called from this,
- * it shoudl also return 1 on success, 0 on failure.
+ * it should also return 1 on success, 0 on failure.
  *
  * if it is a player casting the spell (op->type == PLAYER, op == caster),
- * this function will decrease teh mana/grace appropriately.  For other
+ * this function will decrease the mana/grace appropriately.  For other
  * objects, the caller should do what it considers appropriate.
+ *
+ * @param op
+ * creature that is owner of the object that is casting the spell -
+ *    eg, the player or monster.
+ * @param caster
+ * actual object (wand, potion) casting the spell. can be same as op.
+ * @param dir
+ * direction to cast in.  Note in some cases, if the spell
+ * is self only, dir really doesn't make a difference.
+ * @param spell_ob
+ * spell object that is being cast.  From that, we can determine what to do.
+ * *@param stringarg
+ * any options that are being used.  It can be NULL.  Almost
+ * certainly, only players will set it.  It is basically used as optional
+ * parameters to a spell (eg, item to create, information for marking runes,
+ * etc.
+ * @return
+ * 1 on successful cast, or 0 on error. These values should really
+ * be swapped, so that 0 is successful, and non zero is failure, with a code
+ * of what it failed.
+ * @todo return a failure value?
  */
-
 int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg) {
 
     const char *godname;

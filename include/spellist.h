@@ -24,6 +24,12 @@
 
     The author can be reached via e-mail to mark@pyramid.com
 */
+
+/**
+ * @file
+ * Path name definition.
+ */
+
 #ifndef SPELLIST_H
 #define SPELLIST_H
 

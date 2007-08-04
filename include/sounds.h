@@ -19,6 +19,12 @@
 
     The author can be reached via e-mail to mark@pyramid.com.
 */
+
+/**
+ * @file
+ * Sound-related defines. Mostly unused.
+ */
+
 #ifndef SOUNDS_H
 #define SOUNDS_H
 

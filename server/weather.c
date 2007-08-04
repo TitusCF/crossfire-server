@@ -26,7 +26,12 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
-/* This weather system was written for crossfire by Tim Rightnour */
+/**
+ * @file
+ * Weather-related functions.
+ *
+ * @author This weather system was written for crossfire by Tim Rightnour.
+ */
 
 #include <global.h>
 #include <tod.h>

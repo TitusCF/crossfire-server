@@ -1,5 +1,10 @@
 /* $Id$ */
 
+/**
+ * @file
+ * Path-related function prototypes.
+ */
+
 #ifndef PATH_H
 #define PATH_H
 

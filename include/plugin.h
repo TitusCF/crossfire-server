@@ -3,6 +3,12 @@
 /* This code is placed under the GPL.                                        */
 /*****************************************************************************/
 
+/**
+ * @file
+ * Definitions for the plugin system.
+ * @todo link to plugin stuff when the documentation exists in doxygen form :) remove commented things line 329+.
+ */
+
 /*****************************************************************************/
 /* Headers needed.                                                           */
 /*****************************************************************************/
@@ -39,54 +45,54 @@
 #include <../random_maps/rproto.h>
 
 
-/*****************************************************************************/
-/* This one does not exist under Win32.                                      */
-/*****************************************************************************/
+/*******************************************************************************/
+/* This one does not exist under Win32.                                        */
+/*******************************************************************************/
 #ifndef WIN32
 #include <dirent.h>
 #endif
 
-/*****************************************************************************/
-/* Event ID codes. I sorted them to present local events first, but it is    */
-/* just a 'cosmetic' thing.                                                  */
-/*****************************************************************************/
-/*****************************************************************************/
-/* Local events. Those are always linked to a specific object.               */
-/*****************************************************************************/
-#define EVENT_NONE     0  /* No event. This exists only to reserve the "0".  */
-#define EVENT_APPLY    1  /* Object applied-unapplied.                       */
-#define EVENT_ATTACK   2  /* Monster attacked or Scripted Weapon used.       */
-#define EVENT_DEATH    3  /* Player or monster dead.                         */
-#define EVENT_DROP     4  /* Object dropped on the floor.                    */
-#define EVENT_PICKUP   5  /* Object picked up.                               */
-#define EVENT_SAY      6  /* Someone speaks.                                 */
-#define EVENT_STOP     7  /* Thrown object stopped.                          */
-#define EVENT_TIME     8  /* Triggered each time the object can react/move.  */
-#define EVENT_THROW    9  /* Object is thrown.                               */
-#define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
-#define EVENT_CLOSE    11 /* Container closed.                               */
-#define EVENT_TIMER    12 /* Timer connected triggered it.                   */
-#define EVENT_DESTROY  13 /* Object destroyed (includes map reset/swapout)   */
-/*****************************************************************************/
-/* Global events. Those are never linked to a specific object.               */
-/*****************************************************************************/
-#define EVENT_BORN     14 /* A new character has been created.               */
-#define EVENT_CLOCK    15 /* Global time event.                              */
-#define EVENT_CRASH    16 /* Triggered when the server crashes. Not recursive*/
-#define EVENT_PLAYER_DEATH  17 /* Global Death event                         */
-#define EVENT_GKILL    18 /* Triggered when anything got killed by anyone.   */
-#define EVENT_LOGIN    19 /* Player login.                                   */
-#define EVENT_LOGOUT   20 /* Player logout.                                  */
-#define EVENT_MAPENTER 21 /* A player entered a map.                         */
-#define EVENT_MAPLEAVE 22 /* A player left a map.                            */
-#define EVENT_MAPRESET 23 /* A map is resetting.                             */
-#define EVENT_REMOVE   24 /* A Player character has been removed.            */
-#define EVENT_SHOUT    25 /* A player 'shout' something.                     */
-#define EVENT_TELL     26 /* A player 'tell' something.                      */
-#define EVENT_MUZZLE   27 /* A player was Muzzled (no_shout set).            */
-#define EVENT_KICK     28 /* A player was Kicked by a DM                     */
-#define EVENT_MAPUNLOAD     29 /* A map is freed (includes swapping out)     */
-#define EVENT_MAPLOAD       30 /* A map is loaded                            */
+/*******************************************************************************/
+/* Event ID codes. I sorted them to present local events first, but it is      */
+/* just a 'cosmetic' thing.                                                    */
+/*******************************************************************************/
+/*******************************************************************************/
+/* Local events. Those are always linked to a specific object.                 */
+/*******************************************************************************/
+#define EVENT_NONE     0  /**< No event. This exists only to reserve the "0".  */
+#define EVENT_APPLY    1  /**< Object applied-unapplied.                       */
+#define EVENT_ATTACK   2  /**< Monster attacked or Scripted Weapon used.       */
+#define EVENT_DEATH    3  /**< Player or monster dead.                         */
+#define EVENT_DROP     4  /**< Object dropped on the floor.                    */
+#define EVENT_PICKUP   5  /**< Object picked up.                               */
+#define EVENT_SAY      6  /**< Someone speaks.                                 */
+#define EVENT_STOP     7  /**< Thrown object stopped.                          */
+#define EVENT_TIME     8  /**< Triggered each time the object can react/move.  */
+#define EVENT_THROW    9  /**< Object is thrown.                               */
+#define EVENT_TRIGGER  10 /**< Button pushed, lever pulled, etc.               */
+#define EVENT_CLOSE    11 /**< Container closed.                               */
+#define EVENT_TIMER    12 /**< Timer connected triggered it.                   */
+#define EVENT_DESTROY  13 /**< Object destroyed (includes map reset/swapout)   */
+/*******************************************************************************/
+/* Global events. Those are never linked to a specific object.                 */
+/*******************************************************************************/
+#define EVENT_BORN     14 /**< A new character has been created.               */
+#define EVENT_CLOCK    15 /**< Global time event.                              */
+#define EVENT_CRASH    16 /**< Triggered when the server crashes. Not recursive*/
+#define EVENT_PLAYER_DEATH  17 /**< Global Death event                         */
+#define EVENT_GKILL    18 /**< Triggered when anything got killed by anyone.   */
+#define EVENT_LOGIN    19 /**< Player login.                                   */
+#define EVENT_LOGOUT   20 /**< Player logout.                                  */
+#define EVENT_MAPENTER 21 /**< A player entered a map.                         */
+#define EVENT_MAPLEAVE 22 /**< A player left a map.                            */
+#define EVENT_MAPRESET 23 /**< A map is resetting.                             */
+#define EVENT_REMOVE   24 /**< A Player character has been removed.            */
+#define EVENT_SHOUT    25 /**< A player 'shout' something.                     */
+#define EVENT_TELL     26 /**< A player 'tell' something.                      */
+#define EVENT_MUZZLE   27 /**< A player was Muzzled (no_shout set).            */
+#define EVENT_KICK     28 /**< A player was Kicked by a DM                     */
+#define EVENT_MAPUNLOAD     29 /**< A map is freed (includes swapping out)     */
+#define EVENT_MAPLOAD       30 /**< A map is loaded                            */
 
 #define NR_EVENTS 31
 
@@ -112,27 +118,32 @@
 #define CFAPI_SSTRING 17 /* Shared string that shouldn't be changed, or const char* */
 #define CFAPI_MOVETYPE 18 /* MoveType */
 
+/** General API function. */
 typedef void* (*f_plug_api) (int* type, ...);
+/** Function called after the plugin was initialized. */
 typedef int   (*f_plug_postinit) (void);
+/** First function called in a plugin. */
 typedef int   (*f_plug_init)(const char* iversion, f_plug_api gethooksptr);
 
 #ifndef WIN32
 #define LIBPTRTYPE void*
 #else
+/** Library handle. */
 #define LIBPTRTYPE HMODULE
 #endif
 
+/** One loaded plugin. */
 typedef struct _crossfire_plugin
 {
-    f_plug_api      eventfunc;          /* Event Handler function            */
-    f_plug_api      propfunc;           /* Plugin getProperty function       */
-    f_plug_postinit closefunc;          /* Plugin Termination function       */
-    LIBPTRTYPE      libptr;             /* Pointer to the plugin library     */
-    char            id[MAX_BUF];        /* Plugin identification string      */
-    char            fullname[MAX_BUF];  /* Plugin full name                  */
-    f_plug_api      gevent[NR_EVENTS];  /* Global events registered          */
-    struct _crossfire_plugin *next;
-    struct _crossfire_plugin *prev;
+    f_plug_api      eventfunc;          /**< Event Handler function            */
+    f_plug_api      propfunc;           /**< Plugin getProperty function       */
+    f_plug_postinit closefunc;          /**< Plugin Termination function       */
+    LIBPTRTYPE      libptr;             /**< Pointer to the plugin library     */
+    char            id[MAX_BUF];        /**< Plugin identification string      */
+    char            fullname[MAX_BUF];  /**< Plugin full name                  */
+    f_plug_api      gevent[NR_EVENTS];  /**< Global events registered          */
+    struct _crossfire_plugin *next;     /**< Next plugin in list               */
+    struct _crossfire_plugin *prev;     /**< Previous plugin in list           */
 } crossfire_plugin;
 
 extern int plugin_number;
@@ -146,10 +157,10 @@ extern crossfire_plugin* plugins_list;
 
 #else /*WIN32 */
 
-#define plugins_dlopen(fname) dlopen(fname,RTLD_NOW|RTLD_GLOBAL)
-#define plugins_dlclose(lib) dlclose(lib)
-#define plugins_dlsym(lib,name) dlsym(lib,name)
-#define plugins_dlerror() dlerror()
+#define plugins_dlopen(fname) dlopen(fname,RTLD_NOW|RTLD_GLOBAL)    /**< Load a shared library. */
+#define plugins_dlclose(lib) dlclose(lib)                           /**< Unload a shared library. */
+#define plugins_dlsym(lib,name) dlsym(lib,name)                     /**< Get a function from a shared library. */
+#define plugins_dlerror() dlerror()                                 /**< Library error. */
 #endif /* WIN32 */
 
 
@@ -331,11 +342,12 @@ extern MODULEAPI CFParm* registerHook(CFParm* PParm);
 extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
 */
 
+/** One function the server exposes to plugins. @todo make fname const. */
 typedef struct _hook_entry
 {
-    f_plug_api func;
-    int fid;
-    char fname[256];
+    f_plug_api func;    /**< Function itself. */
+    int fid;            /**< Function identifier. */
+    char fname[256];    /**< Function name. */
 } hook_entry;
 
 #endif /* PLUGIN_H */
