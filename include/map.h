@@ -190,8 +190,6 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define SET_MAP_OB(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
 /** Sets the top object on a map. Not multitile aware. */
 #define SET_MAP_TOP(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
-/** legacy @todo remove */
-#define set_map_ob SET_MAP_OB
 
 /** Sets the layer face of specified square. Not multitile aware. */
 #define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C )

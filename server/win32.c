@@ -41,19 +41,6 @@ struct timezone {
 	int tz_dsttime;
 };
 
-/** @todo remove. */
-struct itimerval {
-	struct timeval it_interval;	/**< Next value */
-	struct timeval it_value;	/**< Current value */
-};
-
-/** @todo remove those defines. */
-#define ITIMER_REAL    0		/*generates sigalrm */
-#define ITIMER_VIRTUAL 1		/*generates sigvtalrm */
-#define ITIMER_VIRT    1		/*generates sigvtalrm */
-#define ITIMER_PROF    2		/*generates sigprof */
-
-
 /**
  * Gets the time of the day.
  *

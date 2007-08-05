@@ -510,7 +510,7 @@ void reply_cmd(char *buf, int len, player *pl)
             break;
 
         case ST_GET_NAME:
-            receive_player_name(pl->ob,13);
+            receive_player_name(pl->ob);
             break;
 
         case ST_GET_PASSWORD:
@@ -518,11 +518,11 @@ void reply_cmd(char *buf, int len, player *pl)
         case ST_CHANGE_PASSWORD_OLD:
         case ST_CHANGE_PASSWORD_NEW:
         case ST_CHANGE_PASSWORD_CONFIRM:
-            receive_player_password(pl->ob,13);
+            receive_player_password(pl->ob);
             break;
 
         case ST_GET_PARTY_PASSWORD:        /* Get password for party */
-            receive_party_password(pl->ob,13);
+            receive_party_password(pl->ob);
             break;
 
         default:

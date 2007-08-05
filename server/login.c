@@ -47,7 +47,6 @@ static void copy_file(const char *filename, FILE *fpout);
  * @param flag
  * if non zero, it means that we want to try and save everyone, but
  * keep the game running.  Thus, we don't want to free any information.
- * @todo remove empty loop.
  */
 void emergency_save(int flag) {
   player *pl;
@@ -85,13 +84,6 @@ void emergency_save(int flag) {
 #else
   LOG(llevInfo,"Emergency saves disabled, no save attempted\n");
 #endif
-  /* If the game is exiting, remove the player locks */
-  if (!flag) {
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-      if(pl->ob) {
-      }
-    }
-  }
 }
 
 /**

@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused defines, functions and parameters.
+ common/living.c
+ include/commands.h map.h sproto.h
+ server/c_misc.c c_party.c login.c player.c resurrection.c win32.c
+ socket/request.c
+Nicolas Weeger 2007-08-05
+
 Remove unused parameter.
  include/sproto.h
  server/server.c

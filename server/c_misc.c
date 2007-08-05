@@ -2250,11 +2250,8 @@ int command_sound (object *op, char *params)
  *
  * @param op
  * player we're getting the name of.
- * @param k
- * unused.
- * @todo remove spurious k variable.
  */
-void receive_player_name(object *op,char k) {
+void receive_player_name(object *op) {
 
     if(!check_name(op->contr,op->contr->write_buf+1)) {
 	get_name(op);
@@ -2272,11 +2269,8 @@ void receive_player_name(object *op,char k) {
  *
  * @param op
  * player.
- * @param k
- * unused.
- * @todo remove spurious k variable.
  */
-void receive_player_password(object *op,char k) {
+void receive_player_password(object *op) {
 
     unsigned int pwd_len=strlen(op->contr->write_buf);
 

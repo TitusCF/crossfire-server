@@ -408,13 +408,6 @@ void check_stat_bounds(living *stats) {
 }
 
 /**
- * Utility macro.
- * @todo
- * make sure it's still useful, and if not trash.
- */
-#define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
-
-/**
  * Rather than having a whole bunch of if (flag) draw.. else _draw,
  * make this macro to clean those up.  Not usuable outside change_abil
  * function since some of the values passed to draw_ext_info are hardcoded.

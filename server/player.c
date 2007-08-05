@@ -3407,9 +3407,7 @@ void fix_weight(void) {
 }
 
 /**
- * Fixes luck of players.
- *
- * @todo is this still used?
+ * Fixes luck of players, slowly move it towards 0.
  */
 void fix_luck(void) {
   player *pl;

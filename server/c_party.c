@@ -235,11 +235,8 @@ int confirm_party_password(object *op) {
  *
  * @param op
  * player.
- * @param k
- * unused.
- * @todo remove k.
  */
-void receive_party_password(object *op, char k) {
+void receive_party_password(object *op) {
 
   if(confirm_party_password(op) == 0) {
     partylist* joined_party = op->contr->party_to_join;

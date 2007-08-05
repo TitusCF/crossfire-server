@@ -29,7 +29,6 @@
 /**
  * @file
  * Defines and structures related to commands the player can send.
- * @todo remove unused SocketCommands.
  */
 
 #ifndef COMMANDS_H

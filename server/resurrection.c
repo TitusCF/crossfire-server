@@ -31,7 +31,6 @@
  * Resurrection / raise dead related code.
  * This is used on servers with permanent death on.
  * @todo document permanent death and death :)
- * @todo remove unused sys_*, classname, objects.
  */
 
 /*  the contents of this file were create solely by peterm@soda.berkeley.edu
@@ -43,13 +42,6 @@
 #endif
 #include <spells.h>
 #include <errno.h>
-#ifdef sequent
-/* stoopid sequent includes don't do this like they should */
-extern char * sys_errlist[];
-extern int sys_nerr;
-#endif
-extern char **classname;
-extern object *objects;
 
 static int resurrection_fails(int levelcaster,int leveldead);
 
