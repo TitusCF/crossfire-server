@@ -68,7 +68,7 @@ struct Map {
 /** True max is 16383 given current map compaction method. */
 #define MAXANIMNUM  2000
 
-/** @todo is this really used? */
+/** Contains the last range/title information sent to client. */
 struct statsinfo {
     char *range, *title;
 };
@@ -103,7 +103,6 @@ typedef struct buffer_struct {
 
 /**
  * Socket structure, represents a client-server connection.
- * @todo check unused/always the same value fields.
  */
 typedef struct socket_struct {
     enum Sock_Status status;
