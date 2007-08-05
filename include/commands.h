@@ -63,11 +63,9 @@ typedef struct {
 } command_array_struct;
 
 
-extern command_array_struct Commands[],NewServerCommands [],SocketCommands[],
-	WizCommands [], CommunicationCommands[];
+extern command_array_struct Commands[], WizCommands [], CommunicationCommands[];
 
-extern const int CommandsSize,NewServerCommandSize,
-	SocketCommandsSize, WizCommandsSize, CommunicationCommandSize;
+extern const int CommandsSize, WizCommandsSize, CommunicationCommandSize;
 
 /**
  * @defgroup EMOTE_xxx Emotes players can use to communicate

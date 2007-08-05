@@ -127,6 +127,10 @@ command_array_struct Commands[] = {
   {"southeast", command_southeast,	1.0},
   {"southwest", command_southwest,	1.0},
   {"northwest", command_northwest,	1.0},
+  {"run", command_run, 1.0},
+  {"run_stop", command_run_stop, 0.0},
+  {"fire", command_fire, 1.0},
+  {"fire_stop", command_fire_stop, 0.0}
 };
 
 /** Length of ::Commands array. */
@@ -202,18 +206,6 @@ command_array_struct CommunicationCommands [] = {
 
 /** Length of the ::CommunicationCommands array. */
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(command_array_struct);
-
-/** Additional commands a player can issue.
- * @todo merge with ::Commands. */
-command_array_struct NewServerCommands [] = {
-  {"run", command_run, 1.0},
-  {"run_stop", command_run_stop, 0.0},
-  {"fire", command_fire, 1.0},
-  {"fire_stop", command_fire_stop, 0.0}
-};
-
-/** Length of ::NewServerCommands. */
-const int NewServerCommandSize = sizeof(NewServerCommands)/ sizeof(command_array_struct);
 
 /** Wizard commands. */
 command_array_struct WizCommands [] = {
@@ -302,6 +294,5 @@ void init_commands(void)
 {
     qsort(Commands, CommandsSize, sizeof(command_array_struct), compare_A);
     qsort(CommunicationCommands, CommunicationCommandSize, sizeof(command_array_struct), compare_A);
-    qsort(NewServerCommands, NewServerCommandSize, sizeof(command_array_struct), compare_A);
     qsort(WizCommands, WizCommandsSize, sizeof(command_array_struct), compare_A);
 }

@@ -128,9 +128,6 @@ int execute_newserver_command(object *pl, char *command)
     csp = find_plugin_command(command,pl);
 
     if (!csp)
-        csp = find_command_element(command, NewServerCommands,
-                                   NewServerCommandSize);
-    if (!csp)
         csp = find_command_element(command, Commands, CommandsSize);
     if (!csp)
         csp = find_command_element(command, CommunicationCommands,
