@@ -1007,8 +1007,6 @@ static void process_players1()
  *
  * @sa process_players1().
  *
- * @param map
- * map to process.
  * @todo explain why 2 passes for players.
  */
 static void process_players2()
