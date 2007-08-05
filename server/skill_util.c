@@ -494,7 +494,7 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	    break;
 
 	case SK_DISARM_TRAPS:
-	    exp = success = remove_trap(op,dir, skill);
+	    exp = success = remove_trap(op, skill);
 	    break;
 
 	case SK_THROWING:

@@ -525,13 +525,9 @@ int hide(object *op, object *skill) {
  * End of jump. Restore the map.
  * @param pl
  * player.
- * @param dist
- * ignored.
- * @param spaces
- * ignored.
- * @todo remove dumb parameters. Is fix_object() required?
+ * @todo Is fix_object() required?
  */
-static void stop_jump(object *pl, int dist, int spaces) {
+static void stop_jump(object *pl) {
     fix_object(pl);
     insert_ob_in_map(pl,pl->map,pl,0);
 }
@@ -579,13 +575,13 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 	mflags = get_map_flags(m, &m, x, y, &x, &y);
 
 	if (mflags & P_OUT_OF_MAP) {
-	    (void) stop_jump(pl,i,spaces);
+	    (void) stop_jump(pl);
 	    return 0;
 	}
 	if (OB_TYPE_MOVE_BLOCK(pl, GET_MAP_MOVE_BLOCK(m, x, y))) {
 	    draw_ext_info(NDI_UNIQUE, 0,pl,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			  "Your jump is blocked.", NULL);
-	    stop_jump(pl,i,spaces);
+	    stop_jump(pl);
 	    return 0;
 	}
 
@@ -605,7 +601,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 		    pl->contr->party!=tmp->contr->party))
 			exp = skill_attack(tmp,pl,pl->facing,"kicked", skill); /* pl makes an attack */
 
-		stop_jump(pl,i,spaces);
+		stop_jump(pl);
 		return exp;  /* note that calc_skill_exp() is already called by skill_attack() */
 	    }
 	    /* If the space has fly on set (no matter what the space is),
@@ -618,7 +614,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 		pl->map = m;
 		if (pl->contr)
 		    esrv_map_scroll(&pl->contr->socket, dx, dy);
-		stop_jump(pl,i,spaces);
+		stop_jump(pl);
 		return calc_skill_exp(pl,NULL, skill);
 	    }
 	}
@@ -628,7 +624,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 	if (pl->contr)
 	    esrv_map_scroll(&pl->contr->socket, dx, dy);
     }
-    stop_jump(pl,i,spaces);
+    stop_jump(pl);
     return calc_skill_exp(pl,NULL, skill);
 }
 
@@ -1242,15 +1238,12 @@ int find_traps (object *pl, object *skill) {
  *
  * @param op
  * player disarming. Must be on a map.
- * @param dir
- * unused.
  * @param skill
  * disarming skill.
  * @return
  * experience gained to disarm.
- * @todo removed unused dir.
  */
-int remove_trap (object *op, int dir, object *skill) {
+int remove_trap (object *op, object *skill) {
     object *tmp,*tmp2;
     int i,success=0,mflags;
     mapstruct *m;
@@ -1317,7 +1310,6 @@ int remove_trap (object *op, int dir, object *skill) {
  * praying skill.
  * @return
  * 0.
- * @todo use safe string buffers.
  */
 int pray (object *pl, object *skill) {
     char buf[MAX_BUF];
@@ -1325,7 +1317,7 @@ int pray (object *pl, object *skill) {
 
     if(pl->type!=PLAYER) return 0;
 
-    strcpy(buf,"You pray.");
+    snprintf(buf, sizeof(buf), "You pray.");
 
     /* Check all objects - we could stop at floor objects,
      * but if someone buries an altar, I don't see a problem with
@@ -1335,7 +1327,7 @@ int pray (object *pl, object *skill) {
     for (tmp=pl->below; tmp!=NULL; tmp=tmp->below) {
 	/* Only if the altar actually belongs to someone do you get special benefits */
 	if(tmp && tmp->type==HOLY_ALTAR && tmp->other_arch) {
-	    sprintf(buf,"You pray over the %s.",tmp->name);
+	    snprintf(buf, sizeof(buf), "You pray over the %s.",tmp->name);
 	    pray_at_altar(pl,tmp, skill);
 	    break;  /* Only pray at one altar */
 	}
@@ -1425,7 +1417,7 @@ void meditate (object *pl, object *skill) {
  * writing skill object.
  * @return
  * experience gained for writing.
- * @todo use safe string functions. assert() instead of simple check.
+ * @todo assert() instead of simple check.
  */
 static int write_note(object *pl, object *item, const char *msg, object *skill) {
     char buf[BOOK_BUF];
@@ -1453,11 +1445,11 @@ static int write_note(object *pl, object *item, const char *msg, object *skill) 
 
     buf[0] = 0;
     if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
-	if(item->msg)
-	    strcpy(buf,item->msg);
+        if(item->msg)
+            snprintf(buf, sizeof(buf), "%s%s\n", item->msg, msg);
+        else
+            snprintf(buf, sizeof(buf), "%s\n", msg);
 
-	strcat(buf,msg);
-	strcat(buf,"\n"); /* new msg needs a LF */
 	if(item->nrof > 1) {
 	    newBook = get_object();
 	    copy_object(item, newBook);

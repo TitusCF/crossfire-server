@@ -533,7 +533,7 @@ int skill_ident(object *pl, object *skill);
 int use_oratory(object *pl, int dir, object *skill);
 int singing(object *pl, int dir, object *skill);
 int find_traps(object *pl, object *skill);
-int remove_trap(object *op, int dir, object *skill);
+int remove_trap(object *op, object *skill);
 int pray(object *pl, object *skill);
 void meditate(object *pl, object *skill);
 int write_on_item(object *pl, const char *params, object *skill);

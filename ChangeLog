@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Use safe string functions. Removed unused parameters.
+ include/sproto.h
+ server/skill_util.c skills.c
+Nicolas Weeger 2007-08-05
+
 Use safe string functions.
  common/living.c
  include/sproto.h
