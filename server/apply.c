@@ -1324,7 +1324,7 @@ void player_apply_below (object *pl)
  * @param op
  * ::object.
  * @param aflags
- * combination of @ref AP_xxx flags.
+ * combination of @ref AP_xxx "AP_xxx" flags.
  * @return
  * 0.
  */
@@ -1508,7 +1508,7 @@ static object *get_item_from_body_location(object *start, int loc)
  * @param op
  * ::object being applied.
  * @param aflags
- * combination of @ref AP_xxx flags.
+ * combination of @ref AP_xxx "AP_xxx" flags.
  * @return
  * 0 on success, 1 if there is some problem.
  */
@@ -1620,14 +1620,12 @@ static int unapply_for_ob(object *who, object *op, int aflags)
  * object applied.
  * @return
  * 0 if apply can be done without anything special.
- * Otherwise returns a bitmask - potentially several of these may be
+ * Otherwise returns a bitmask of @ref CAN_APPLY_xxx "CAN_APPLY_xxx" - potentially several of these may be
  * set, but largely depends on circumstance - in the future, processing
  * may be  pruned once we know some status (eg, once CAN_APPLY_NEVER
  * is set, do we really are what the other flags may be?)
  * See include/define.h for detailed description of the meaning of
  * these return values.
- * @todo
- * do a nice enum for can_apply_xxx, and link to this doc.
  */
 int can_apply_object(object *who, object *op)
 {
@@ -1755,7 +1753,7 @@ int can_apply_object(object *who, object *op)
  * eg, one which you put on and keep on for a while, and not something
  * like a potion or scroll.
  * @param aflags
- * combination of @ref AP_xxx flags.
+ * combination of @ref AP_xxx "AP_xxx" flags.
  * @return
  * 1 if the action could not be completed, 0 on success.
  * However, success is a matter of meaning - if the

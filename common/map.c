@@ -1377,7 +1377,7 @@ static void load_unique_objects(mapstruct *m) {
  * @param m
  * map to save.
  * @param flag
- * One of @ref SAVE_MODE_xxx values.
+ * One of @ref SAVE_MODE_xxx "SAVE_MODE_xxx" values.
  */
 
 int save_map(mapstruct *m, int flag) {

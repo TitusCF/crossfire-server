@@ -68,7 +68,7 @@ static void set_pickup_mode(const object *op, int i);
  * matching object, or NULL if no suitable.
  * @todo move the ap_xxx tests before the item_matched_string for performance reasons?
  **/
-static object *find_best_apply_object_match(object *start, object* pl, const char *params, enum apply_flag aflag)
+static object *find_best_apply_object_match(object *start, object* pl, const char *params, int aflag)
 {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;
@@ -227,7 +227,7 @@ int command_apply (object *op, char *params)
 	return 0;
     }
     else {
-	enum apply_flag aflag = 0;
+	int aflag = 0;
 	object *inv = op->inv;
 
 	while (*params==' ') params++;

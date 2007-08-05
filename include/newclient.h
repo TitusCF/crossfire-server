@@ -194,7 +194,9 @@
 #define SF_RUNON    0x02
 
 /**
- * The following are the color flags passed to new_draw_info.
+ * @defgroup NDI_xxx Flags for messages
+ *
+ * The following are the color flags passed to new_draw_info().
  *
  * We also set up some control flags
  *
@@ -204,9 +206,8 @@
  *
  * Note 2:  Black, the default color, is 0.  Thus, it does not need to
  * be implicitly specified.
- *
- * @todo make an enum for linking purposes.
  */
+/*@{*/
 #define NDI_BLACK	0
 #define NDI_WHITE	1
 #define NDI_NAVY	2
@@ -230,6 +231,7 @@
 
 #define NDI_UNIQUE	0x100	/**< Print this out immediately, don't buffer. */
 #define NDI_ALL		0x200	/**< Inform all players of this message. */
+/*@}*/
 
 /** Flags for the item command */
 enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};

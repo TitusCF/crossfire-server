@@ -26,6 +26,11 @@
     The author can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Global definitions: u/sint8, things like that.
+ */
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
@@ -180,18 +185,20 @@ typedef struct linked_char {
 
 extern New_Face *new_faces;
 
-/*
- * These are the beginnings of linked lists:
+/**
+ * @defgroup first_xxx Beginnings of linked lists.
  */
-EXTERN player *first_player;
-EXTERN mapstruct *first_map;
-EXTERN region *first_region;
-EXTERN treasurelist *first_treasurelist;
-EXTERN artifactlist *first_artifactlist;
-EXTERN archetype *first_archetype;
-EXTERN objectlink *first_friendly_object;	/* Objects monsters will go after */
-EXTERN godlink *first_god;
-EXTERN racelink *first_race;
+/*@{*/
+EXTERN player *first_player;                /**< First player. */
+EXTERN mapstruct *first_map;                /**< First map. */
+EXTERN region *first_region;                /**< First region. */
+EXTERN treasurelist *first_treasurelist;    /**< First treasure. */
+EXTERN artifactlist *first_artifactlist;    /**< First artifact. */
+EXTERN archetype *first_archetype;          /**< First archetype. */
+EXTERN objectlink *first_friendly_object;   /**< Objects monsters will go after. */
+EXTERN godlink *first_god;                  /**< God list. */
+EXTERN racelink *first_race;                /**< Race list. */
+/*@}*/
 
 #define NROF_COMPRESS_METHODS 4
 EXTERN const char *uncomp[NROF_COMPRESS_METHODS][3];
@@ -200,30 +207,33 @@ EXTERN const char *uncomp[NROF_COMPRESS_METHODS][3];
  * Variables set by different flags (see init.c):
  */
 
-EXTERN long warn_archetypes;	/* If true, write warnings when failing */
-				/* to find archetypes when loading from file */
-EXTERN long init_done;			/* Ignores signals until init_done is true */
-EXTERN long trying_emergency_save;	/* True when emergency_save() is reached */
-EXTERN long nroferrors;		/* If it exceeds MAX_ERRORS, call fatal() */
+EXTERN long warn_archetypes;	/**< If true, write warnings when failing
+                                 * to find archetypes when loading from file. */
+EXTERN long init_done;          /**< Ignores signals until init_done is true. */
+EXTERN long trying_emergency_save;  /**< True when emergency_save() is reached. */
+EXTERN long nroferrors;         /**< If it exceeds MAX_ERRORS, call fatal() */
 
-extern uint32 pticks;		/* used by various function to determine */
-				/* how often to save the character */
-/*
- * Misc global variables:
+extern uint32 pticks;           /**< Used by various function to determine
+                                 * how often to save the character */
+/**
+ * @defgroup GLOBAL_VARIABLES Misc global variables.
  */
+/*@{*/
 EXTERN FILE *logfile;			/* Used by server/daemon.c */
 EXTERN int reopen_logfile;
-EXTERN int exiting;			/* True if the game is about to exit */
-EXTERN long nroftreasures;		/* Only used in malloc_info() */
-EXTERN long nrofartifacts;		/* Only used in malloc_info() */
-EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
+EXTERN int exiting;			/**< True if the game is about to exit. */
+EXTERN long nroftreasures;		/**< Only used in malloc_info(). */
+EXTERN long nrofartifacts;		/**< Only used in malloc_info(). */
+EXTERN long nrofallowedstr;		/**< Only used in malloc_info(). */
 
-EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *empty_archetype;	/**< Nice to have fast access to it. */
 EXTERN archetype *map_archeytpe;
-EXTERN char first_map_path[MAX_BUF];	/* The start-level */
-EXTERN char first_map_ext_path[MAX_BUF]; /* Path used for per-race start maps */
+EXTERN char first_map_path[MAX_BUF];	/**< The start-level. */
+EXTERN char first_map_ext_path[MAX_BUF]; /**< Path used for per-race start maps. */
 
 EXTERN long ob_count;
+/*@}*/
+
 /*
  * Used in treasure.c
  */
@@ -314,6 +324,9 @@ extern socket_struct *init_sockets;
 #endif
 #endif
 
+/**
+ * Server settings.
+ */
 typedef struct Settings {
     char    *logfilename;   /**< Logfile to use */
     uint16  csport;	    /**< Port for new client/server */
@@ -404,7 +417,8 @@ typedef struct Settings {
 
 extern Settings settings;
 
-/* This is used for various performance tracking statistics,
+/**
+ * This is used for various performance tracking statistics,
  * or just how often certain events are done.  It is much better
  * to use a common structure then variables about.
  * Note that since these are often counters, I'm using uint64s -
@@ -435,7 +449,10 @@ extern Statistics statistics;
 #define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif
 
-/* GROS: Those are used by plugin events (argument fixthem) */
+/**
+ * @defgroup SCRIPT_FIX_xxx For plugin events
+ * GROS: Those are used by plugin events (argument fixthem).
+ */
 #define SCRIPT_FIX_ACTIVATOR 2
 #define SCRIPT_FIX_ALL 1
 #define SCRIPT_FIX_NOTHING 0

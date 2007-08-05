@@ -16,6 +16,18 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Documentation, no functional change.
+ Doxyfile
+ common/living.c map.c object.c
+ doc/Developers/mainpage.dox
+ include/artifact.h attack.h commands.h config.h define.h face.h global.h god.h
+  image.h includes.h living.h loader.h logger.h map.h material.h newclient.h object.h
+  skills.h spells.h
+ random_maps/random_map.h room_gen_onion.c room_gen_spiral.c special.c treasure.c
+ test/unit/server/check_c_object.c
+ server/apply.c attack.c c_chat.c c_object.c shop.c
+Nicolas Weeger 2007-08-05
+
+Documentation, no functional change.
  include/newclient.h newserver.h ob_methods.h ob_types.h object.h path.h player.h
   plugin.h re-cmp.h recipe.h shstr.h skills.h sounds.h spellist.h spells.h
   tod.h treasure.h win32.h

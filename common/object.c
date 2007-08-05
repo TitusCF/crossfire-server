@@ -1066,17 +1066,11 @@ void remove_from_active_list(object *op)
  * @param op
  * object to update
  * @param action
- * Hint of what the caller believes need to be done.
+ * Hint of what the caller believes need to be done. One of @ref UP_OBJ_xxx "UP_OBJ_xxx" values.
  * For example, if the only thing that has changed is the face (due to
  * an animation), we don't need to call update_position until that actually
  * comes into view of a player.  OTOH, many other things, like addition/removal
  * of walls or living creatures may need us to update the flags now.
- * current action are:
- * @li ::UP_OBJ_INSERT: op was inserted
- * @li ::UP_OBJ_REMOVE: op was removed
- * @li ::UP_OBJ_CHANGE: object has somehow changed.  In this case, we always update
- *  as that is easier than trying to look at what may have changed.
- * @li ::UP_OBJ_FACE: only the objects face has changed.
  *
  * @todo
  * this function should be renamed to something like update_object_map, update_object is a too general term
@@ -1660,9 +1654,9 @@ object *merge_ob(object *op, object *top) {
  * @param m
  * map to insert into.
  * @param originator
- *
+ * what caused op to be inserted.
  * @param flag
- *
+ * Combination of @ref INS_xxx "INS_xxx" values.
  * @param x
  * @param y
  * coordinates to insert at.
@@ -1879,7 +1873,7 @@ void merge_spell(object *op, sint16 x, sint16 y)
  * into 'm'.  May be NULL.
  * @param flag
  * bitmask about special things to do (or not do) when this
- * function is called. See the object.h file for the INS_ values.
+ * function is called. See the object.h file for the @ref INS_xxx "INS_xxx" values.
  * Passing 0 for flag gives proper default values, so flag really only needs
  * to be set if special handling is needed.
  * @return

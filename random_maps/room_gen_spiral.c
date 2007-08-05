@@ -26,16 +26,22 @@
  * @file
  * The spiral room generator:
  * @todo
- * make options an enum with anchor for linking purposes. Check if MAX_FINE can't be removed.
+ * Check if MAX_FINE can't be removed.
  */
 #include <global.h>
 #include <random_map.h>
 
+/**
+ * @defgroup SPIRAL_xxx Random spiral map options
+ */
+/*@{*/
 #define RANDOM_OPTIONS 0  /**< Pick random options below */
 #define REGULAR_SPIRAL 1  /**< Regular spiral--distance increases constantly*/
 #define FINE_SPIRAL 2     /**< uses the min. separation:  most coiling */
 #define FIT_SPIRAL 4      /**< scale to a rectangular region, not square */
 #define MAX_SPIRAL_OPT 8  /**< this should be 2x the last real option */
+/*@}*/
+
 #include <math.h>
 
 int *free_x_list;
@@ -58,11 +64,9 @@ extern int surround_check(char **maze,int i, int j, int xsize, int ysize);
  * @param ysize
  * layout size.
  * @param option
- * combination of values.
+ * combination of @ref SPIRAL_xxx "SPIRAL_xxx" values.
  * @return
  * generated layout.
- * @todo
- * link to RANDOM_OPTIONS and others when enum is done.
  */
 char **map_gen_spiral(int xsize, int ysize, int option) {
     int i,j;
@@ -147,7 +151,7 @@ char **map_gen_spiral(int xsize, int ysize, int option) {
  * @param ysize
  * layout size.
  * @param sym
- * one of the @ref SYM_xxx values.
+ * one of the @ref SYM_xxx "SYM_xxx" values.
  * @param layout
  * layout to alter.
  */

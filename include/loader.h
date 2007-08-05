@@ -26,6 +26,11 @@
     The authors can be reached via e-mail to crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Defines for loader.l / loader.c.
+ */
+
 #ifndef LOADER_H
 #define LOADER_H
 

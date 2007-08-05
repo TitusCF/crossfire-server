@@ -32,15 +32,19 @@
  * @file random_maps/treasure.c
  * This deals with inserting treasures in random maps.
  * @todo
- * use enum instead of define for linking purposes, link where needed. Remove global variables.
+ * link where needed. Remove global variables.
  */
 
 #include <global.h>
 #include <random_map.h>
 #include <rproto.h>
 
-/* some defines for various options which can be set. */
-
+/**
+ * @defgroup TREASURE_OPTIONS Treasure options
+ *
+ * Some defines for various options which can be set for random map treasures.
+ */
+/*@{*/
 #define CONCENTRATED 1 /* all the treasure is at the C's for onions. */
 #define HIDDEN 2   /* doors to treasure are hidden. */
 #define KEYREQUIRED 4 /* chest has a key, which is placed randomly in the map. */
@@ -50,6 +54,7 @@
 #define RICH 64   /* 2x as much treasure as default */
 #define FILLED 128  /* Fill/tile the entire map with treasure */
 #define LAST_OPTION 64  /* set this to the last real option, for random */
+/*@}*/
 
 #define NO_PASS_DOORS 0
 #define PASS_DOORS 1

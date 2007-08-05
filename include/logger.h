@@ -25,11 +25,20 @@
     The author can be reached via e-mail to mark@pyramid.com.
 */
 
+/**
+ * @file
+ * Log levels.
+ */
+
 #ifndef LOGGER_H
 #define LOGGER_H
 
+/** Log levels for the LOG() function. */
 typedef enum LogLevel {
-  llevError = 0, llevInfo = 1, llevDebug = 2, llevMonster = 3
+  llevError = 0,    /**< Error, serious thing. */
+  llevInfo = 1,     /**< Information. */
+  llevDebug = 2,    /**< Only for debugging purposes. */
+  llevMonster = 3   /**< Many many details. */
 } LogLevel;
 
 #endif /* LOGGER_H */

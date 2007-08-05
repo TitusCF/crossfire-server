@@ -21,6 +21,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Image-related structures.
+ */
+
 #ifndef IMAGE_H
 #define IMAGE_H
 

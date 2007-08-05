@@ -26,6 +26,11 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Standard includes.
+ */
+
 #ifndef INCLUDES_H
 #define INCLUDES_H
 

@@ -60,7 +60,7 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-static object *find_best_apply_object_match(object *start, object* pl, const char *params, enum apply_flag aflag)
+static object *find_best_apply_object_match(object *start, object* pl, const char *params, int aflag)
 {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;

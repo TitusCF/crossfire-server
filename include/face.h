@@ -26,6 +26,11 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
+/**
+ * @file
+ * Face-related structures.
+ */
+
 #ifndef FACE_H
 #define FACE_H
 

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * God-related structure.
+ */
+
 #ifndef GOD_H
 #define GOD_H
 

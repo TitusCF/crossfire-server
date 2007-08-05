@@ -1181,12 +1181,13 @@ static void scare_creature(object *target, object *hitter)
  * maximum dealt damage.
  * @param attacknum
  * number of the attacktype of the attack. Must be a single value and not a combination.
+ * See @ref Attacktypes "the ATNR_xxx" values.
  * @param magic
  * unused
  * @return
  * damage to actually do.
  * @todo
- * removed unused magic. Link to ATNR_ values when they got an anchor. Rename since it's called for monsters too.
+ * removed unused magic. Rename since it's called for monsters too.
  */
 static int hit_player_attacktype(object *op, object *hitter, int dam,
 	uint32 attacknum, int magic) {

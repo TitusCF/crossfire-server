@@ -29,8 +29,6 @@
 /**
  * @file
  * Random map related variables.
- * @todo
- * replace defines with enum so can be linked from other places.
  */
 
 #ifndef RANDOM_MAP_H
@@ -84,7 +82,10 @@ typedef struct {
 
 int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 
-
+/**
+ * @defgroup RM_LAYOUT Random map layout
+ */
+/*@{*/
 #define ONION_LAYOUT 1
 #define MAZE_LAYOUT 2
 #define SPIRAL_LAYOUT 3
@@ -92,11 +93,15 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 #define SNAKE_LAYOUT 5
 #define SQUARE_SPIRAL_LAYOUT 6
 #define NROFLAYOUTS 6
+/*@}*/
 
 /**
+ * @defgroup OPT_xxx Random map layout options.
+ *
  * Move these defines out of room_gen_onion.c to here, as
  * other files (like square_spiral) also uses them.
  */
+/*@{*/
 #define OPT_RANDOM    0     /**< Random option. */
 #define OPT_CENTERED  1     /**< Centered. */
 #define OPT_LINEAR    2     /**< Linear doors (default is nonlinear). */
@@ -106,20 +111,20 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 #define OPT_WALL_OFF 32     /**< No outer wall. */
 #define OPT_WALLS_ONLY 64   /**< Only walls. */
 #define OPT_NO_DOORS 256    /**< Place walls insead of doors.  Produces broken map. */
-
+/*@}*/
 
 /**
+ * @defgroup SYM_xxx Random map symetry
  * Symmetry definitions -- used in this file AND in @ref random_maps/treasure.c "treasures.c",
  * the numerical values matter so don't change them.
- * @anchor SYM_xxx
  */
-enum {
-    RANDOM_SYM = 0, /**< Random symmetry. */
-    NO_SYM = 1,     /**< No symmetry. */
-    X_SYM = 2,      /**< Vertical symmetry. */
-    Y_SYM = 3,      /**< Horizontal symmetry. */
-    XY_SYM = 4      /**< Reflection. */
-};
+/*@{*/
+#define RANDOM_SYM  0   /**< Random symmetry. */
+#define NO_SYM      1   /**< No symmetry. */
+#define X_SYM       2   /**< Vertical symmetry. */
+#define Y_SYM       3   /**< Horizontal symmetry. */
+#define XY_SYM      4   /**< Reflection. */
+/*@}*/
 
 /** Minimal size a random should have to actually be generated. */
 #define MIN_RANDOM_MAP_SIZE 10

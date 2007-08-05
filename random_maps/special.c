@@ -29,24 +29,32 @@
 /**
  * @file
  * Those functions handle placement of fountains, submaps, and so on.
- * @todo
- * replace defines by enums for linking purposes.
  */
 
 #include <global.h>
 #include <random_map.h>
 #include <rproto.h>
 
+/**
+ * @defgroup SPECIAL_xxx Special objects in random map
+ */
+/*@{*/
 #define NUM_OF_SPECIAL_TYPES 4
 #define NO_SPECIAL 0
 #define SPECIAL_SUBMAP 1
 #define SPECIAL_FOUNTAIN 2
 #define SPECIAL_EXIT 3
+/*@}*/
 
+/**
+ * @defgroup HOLE_xxx Random map holes
+ */
+/*@{*/
 #define GLORY_HOLE 1
 #define ORC_ZONE 2
 #define MINING_ZONE 3
 #define NR_OF_HOLE_TYPES 3
+/*@}*/
 
 /**
  * Erases all objects (except floor) in the given rectangle.
@@ -212,11 +220,9 @@ void place_fountain_with_specials(mapstruct *map) {
  * @param map
  * where to put the exit.
  * @param hole_type
- * type of random map to link to.
+ * type of random map to link to, see @ref HOLE_xxx "HOLE_xxx".
  * @param RP
  * parameters from which map was generated.
- * @todo
- * link to holy types when transformed to enum.
  */
 void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
     int ix,iy,i=-1;

@@ -80,13 +80,11 @@ void make_doors(char **maze,float *xlocations,float *ylocations,int layers,int o
  * @param ysize
  * layout size.
  * @param option
- * combination of OPT_xxx values.
+ * combination of @ref OPT_xxx "OPT_xxx" values.
  * @param layers
  * number of layers the onion should have.
  * @return
  * layout.
- * @todo
- * add a link to OPT_xxx values when enum is done.
  */
 char **map_gen_onion(int xsize, int ysize, int option, int layers) {
     int i,j;
@@ -143,11 +141,9 @@ char **map_gen_onion(int xsize, int ysize, int option, int layers) {
  * @param ysize
  * layout size.
  * @param option
- * options.
+ * combination of @ref OPT_xxx "OPT_xxx" values.
  * @param layers
  * number of layers to create.
- * @todo
- * add a link to OPT_xxx values when enum is done.
  */
 void centered_onion(char **maze, int xsize, int ysize, int option, int layers) {
     int i,maxlayers;
@@ -215,11 +211,9 @@ void centered_onion(char **maze, int xsize, int ysize, int option, int layers) {
  * @param ysize
  * layout size.
  * @param option
- * options.
+ * combination of @ref OPT_xxx "OPT_xxx" values.
  * @param layers
  * number of layers to create.
- * @todo
- * add a link to OPT_xxx values when enum is done.
  */
 void bottom_centered_onion(char **maze, int xsize, int ysize, int option, int layers) {
     int i,maxlayers;
@@ -331,9 +325,9 @@ void draw_onion(char **maze,float *xlocations,float *ylocations, int layers) {
  * @param layers
  * number of layers.
  * @param options
- * layout options.
+ * combination of @ref OPT_xxx "OPT_xxx" values.
  * @todo
- * explain what locations arrays should be, and the meaning of layers. Link to OPT_xxx when done.
+ * explain what locations arrays should be, and the meaning of layers.
  */
 void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int options) {
     int freedoms;  /* number of different walls on which we could place a door */
@@ -429,11 +423,9 @@ void make_doors(char **maze, float *xlocations,float *ylocations,int layers,int 
  * @param ysize
  * layout size.
  * @param option
- * options.
+ * combination of @ref OPT_xxx "OPT_xxx" values.
  * @param layers
  * number of layers to create.
- * @todo
- * add a link to OPT_xxx values when enum is done.
  */
 void bottom_right_centered_onion(char **maze, int xsize, int ysize, int option, int layers){
     int i,maxlayers;

@@ -106,10 +106,8 @@ static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin",
  * @param who
  * who is inquiring. Can be NULL, only meaningful if player.
  * @param flag
- * combination of F_xxx flags.
+ * combination of @ref F_xxx "F_xxx" flags.
  * @return
- * price of the item.
- * @todo link to F_xxx when enum created. Simplify documentation.
  */
 uint64 query_cost(const object *tmp, object *who, int flag) {
     uint64 val;
@@ -475,10 +473,9 @@ static const char *cost_string_from_value(uint64 cost)
  * @param who
  * who is getting the price.
  * @param flag
- * combination of F_xxx values.
+ * combination of @ref F_xxx "F_xxx" values.
  * @return
  * buffer containing the price.
- * @todo remove static buffer, link to F_xxx when exists.
  */
 const char *query_cost_string(const object *tmp,object *who,int flag) {
     uint64 real_value = query_cost(tmp,who,flag);

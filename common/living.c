@@ -1850,7 +1850,7 @@ void calc_perm_exp(object *op)
  * skill to add exp to.  Can be NULL, in which case exp increases the players general
  * total, but not any particular skill.
  * @param flag
- * what to do if the player doesn't have the skill. See ::SK_EXP_NONE, ::SK_EXP_TOTAL and ::SK_EXP_ADD_SKILL.
+ * what to do if the player doesn't have the skill. Combination of @ref SK_EXP_xxx "SK_EXP_xxx" flags.
  */
 static void add_player_exp(object *op, sint64 exp, const char *skill_name, int flag)
 {

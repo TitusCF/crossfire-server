@@ -21,6 +21,13 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Artifact-related structures.
+ *
+ * See the @ref page_artifact "page on artifacts" for more information.
+ */
+
 #ifndef ARTIFACT_H
 #define ARTIFACT_H
 

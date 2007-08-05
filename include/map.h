@@ -62,7 +62,10 @@
 
 extern const char *map_layer_name[MAP_LAYERS];
 
-
+/**
+ * @defgroup MAP_LAYER_xxx Map layers
+ */
+/*@{*/
 #define MAP_LAYER_FLOOR		0
 #define MAP_LAYER_NO_PICK1	1   /**< Non pickable ground objects */
 #define MAP_LAYER_NO_PICK2	2   /**< Non pickable ground objects */
@@ -73,6 +76,7 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define MAP_LAYER_LIVING2	7
 #define MAP_LAYER_FLY1		8   /**< Flying objects - creatures, spells */
 #define MAP_LAYER_FLY2		9   /**< Arrows, etc */
+/*@}*/
 
 /** This is when the map will reset */
 #define MAP_WHEN_RESET(m)	((m)->reset_time)
@@ -113,50 +117,51 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define MAP_NOSMOOTH(m)		(m)->nosmooth
 
 /**
+ * @defgroup MAP_xxx Map loading flags
  * Options passed to ready_map_name() and load_original_map().
- * @anchor MAP_xxx
  * @todo remove map_block
  */
-enum {
-    MAP_FLUSH =         0x1,    /**< Always load map from the map directory, and don't do unique items or the like. */
-    MAP_PLAYER_UNIQUE = 0x2,    /**< This map is player-specific. Don't do any more name translation on it. */
-    MAP_BLOCK =         0x4,    /**< Unused. */
-    MAP_STYLE =         0x8,    /**< Active objects shouldn't be put on active list. */
-    MAP_OVERLAY =       0x10    /**< Map to load is an overlay. Always put items above floor. */
-};
+/*@{*/
+#define MAP_FLUSH           0x1     /**< Always load map from the map directory, and don't do unique items or the like. */
+#define MAP_PLAYER_UNIQUE   0x2     /**< This map is player-specific. Don't do any more name translation on it. */
+#define MAP_BLOCK           0x4     /**< Unused. */
+#define MAP_STYLE           0x8     /**< Active objects shouldn't be put on active list. */
+#define MAP_OVERLAY         0x10    /**< Map to load is an overlay. Always put items above floor. */
+/*@}*/
 
 /**
+ * @defgroup SAVE_FLAG_xxx Save object flags
+ *
  * Flags for save_object() and save_objects().
  * Can be combined for various effects.
  *
- * @anchor SAVE_FLAG_xxx
  */
-enum {
-    SAVE_FLAG_SAVE_UNPAID = 1,  /**< If set, unpaid items will be saved. */
-    SAVE_FLAG_NO_REMOVE = 2    /**< If set, objects are not removed while saving. */
-};
+/*@{*/
+#define SAVE_FLAG_SAVE_UNPAID   1   /**< If set, unpaid items will be saved. */
+#define SAVE_FLAG_NO_REMOVE     2   /**< If set, objects are not removed while saving. */
+/*@}*/
 
 /**
- * How save_map() should save the map. Can't be combined.
+ * @defgroup SAVE_MODE_xxx Save map flags
  *
- * @anchor SAVE_MODE_xxx
+ * How save_map() should save the map. Can't be combined.
  */
-enum {
-    SAVE_MODE_NORMAL = 0,   /**< No special handling. */
-    SAVE_MODE_INPLACE = 1,  /**< Map is saved from where it was loaded.*/
-    SAVE_MODE_OVERLAY = 2  /**< Map is persisted as an overlay. */
-};
+/*@{*/
+#define SAVE_MODE_NORMAL    0   /**< No special handling. */
+#define SAVE_MODE_INPLACE   1   /**< Map is saved from where it was loaded.*/
+#define SAVE_MODE_OVERLAY   2   /**< Map is persisted as an overlay. */
+/*@}*/
 
 /**
- * Values for mapdef->in_memory field.
- * @anchor IN_MEMORY
+ * @defgroup IN_MEMORY_xxx Values for mapdef->in_memory field.
+ * @todo rename to IM_xxx ?
  */
-enum {
-    MAP_IN_MEMORY = 1,  /**< Map is fully loaded. */
-    MAP_SWAPPED = 2,    /**< Map spaces have been saved to disk. */
-    MAP_LOADING = 3,    /**< This map is being loaded. */
-    MAP_SAVING = 4      /**< Map being saved. Will stop remove_ob() from some processing. */
-};
+/*@{*/
+#define MAP_IN_MEMORY   1   /**< Map is fully loaded. */
+#define MAP_SWAPPED     2   /**< Map spaces have been saved to disk. */
+#define MAP_LOADING     3   /**< This map is being loaded. */
+#define MAP_SAVING      4   /**< Map being saved. Will stop remove_ob() from some processing. */
+/*@}*/
 
 /* GET_MAP_FLAGS really shouldn't be used very often - get_map_flags should
  * really be used, as it is multi tile aware.  However, there are some cases
@@ -226,10 +231,13 @@ enum {
  */
 #define OUT_OF_REAL_MAP(M,X,Y) ((X)<0 || (Y)<0 || (X)>=(M)->width || (Y)>=(M)->height)
 
-/* These are used in the MapLook flags element.  They are not used in
+/**
+ * @defgroup P_xxx Square flags.
+ *
+ * These are used in the MapLook flags element.  They are not used in
  * in the object flags structure.
  */
-
+/*@{*/
 #define P_BLOCKSVIEW    0x01    /**< This spot blocks the player's view. */
 #define P_NO_MAGIC      0x02    /**< Spells (some) can't pass this object */
 
@@ -241,7 +249,7 @@ enum {
  */
 
 #define AB_NO_PASS       0x04
-#define P_PLAYER	0x08	/* There is a player on this space */
+#define P_PLAYER	0x08	/**< There is a player on this space */
 #define P_IS_ALIVE      0x10	/**< Something alive is on this space. */
 #define P_NO_CLERIC     0x20	/**< No clerical spells cast here. */
 #define P_NEED_UPDATE	0x40	/**< This space is out of date. */
@@ -256,6 +264,7 @@ enum {
  */
 #define P_OUT_OF_MAP	0x100   /**< This space is outside the map. */
 #define	P_NEW_MAP	0x200       /**< Coordinates passed result in a new tiled map.  */
+/*@}*/
 
 /**
  * This structure contains all information related to one map square.
@@ -369,7 +378,7 @@ typedef struct mapdef {
     sint32 timeout;	/**< Swapout is set to this. */
     sint32 swap_time;	/**< When it reaches 0, the map will be swapped out. */
     sint16 players;	/**< How many players are on this level right now. Automatically updated by the object handling functions. */
-    uint32 in_memory;	/**< Combination of @ref IN_MEMORY flags. */
+    uint32 in_memory;	/**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
     uint8 compressed;	/**< Compression method used. */
     uint16 difficulty;	/**< What level the player should be to play here. */
 

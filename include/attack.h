@@ -26,16 +26,22 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Attack-related definitions.
+ */
 
 #ifndef ATTACK_H
 #define ATTACK_H
 
-/*
- * Attacktypes:
- * ATNR_... is the attack number that is indexed into the
+/**
+ * @defgroup Attacktypes Attack types
+ * - ATNR_xxx is the attack number that is indexed into the
  * the resist array in the object structure.
+ * - ATM_xxx is the message number
+ * - AT_xxx is the bitmask in the ::obj::attacktype field.
  */
-
+/*@{*/
 #define NROFATTACKS		26
 #define NROFATTACKMESS		21
 #define MAXATTACKMESS		21
@@ -122,6 +128,7 @@
 #define AT_LIFE_STEALING \
 			0x01000000 /* 16777216 for hp drain */
 #define AT_DISEASE	0x02000000 /* 33554432 disease attacktypes */
+/*@}*/
 
 /* attacktypes_load is suffixed to resist_ when saving objects.
  * (so the line may be 'resist_fire' 20 for example).  These are never
@@ -135,7 +142,7 @@
  * and not have mystery values appear.
  */
 
-/* attack messages structure */
+/** Attack messages structure. */
 typedef struct attackmess {
   int level;
   char *buf1;
@@ -156,6 +163,7 @@ EXTERN char *resist_save[NROFATTACKS];
  * as for example: resist_life stealing 50!
  */
 #else
+/** Attack types. */
 EXTERN const char* const resist_save[NROFATTACKS] = {
 "physical ", "magic ", "fire ", "electricity ", "cold ", "confusion ", "acid ",
 "drain ", "weaponmagic ", "ghosthit ", "poison ", "slow ", "paralyze ",
@@ -164,7 +172,7 @@ EXTERN const char* const resist_save[NROFATTACKS] = {
 "disease "
 };
 
-/* Short description of names of the attacktypes */
+/** Short description of names of the attacktypes */
 EXTERN const char* const attacktype_desc[NROFATTACKS] = {
 "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
 "drain", "weapon magic", "ghost hit", "poison", "slow", "paralyze",
@@ -173,8 +181,7 @@ EXTERN const char* const attacktype_desc[NROFATTACKS] = {
 "disease"
 };
 
-/* This is the array that is what the player sees. */
-
+/** Attack types to show to the player. */
 EXTERN const char* const resist_plus[NROFATTACKS] = {
 "armour", "resist magic", "resist fire", "resist electricity", "resist cold",
 "resist confusion", "resist acid", "resist drain",
@@ -186,7 +193,8 @@ EXTERN const char* const resist_plus[NROFATTACKS] = {
 "resist diseases"
 };
 
-/* These are the descriptions of the resistances displayed when a
+/**
+ * These are the descriptions of the resistances displayed when a
  * player puts on/takes off an item. See change_abil() in living.c.
  */
 EXTERN const char* const change_resist_msg[NROFATTACKS] = {
@@ -198,7 +206,8 @@ EXTERN const char* const change_resist_msg[NROFATTACKS] = {
 };
 
 
-/* If you want to weight things so certain resistances show up more often than
+/**
+ * If you want to weight things so certain resistances show up more often than
  * others, just add more entries in the table for the protections you want to
  * show up.
  */

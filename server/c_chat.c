@@ -444,10 +444,10 @@ int command_reply (object *op, char *params) {
  * @param params
  * message.
  * @param emotion
- * emotion code, one of EMOTE_xxx.
+ * emotion code, one of @ref EMOTE_xxx "EMOTE_xxx".
  * @return
  * 0 for invalid emotion, 1 else.
- * @todo make an enum/anchor for EMOTE_xxx and link to that. simplify function (indexed array, for instance).
+ * @todo simplify function (indexed array, for instance).
  */
 static int basic_emote(object *op, char *params, int emotion)
 {

@@ -35,14 +35,16 @@
 #define SKILLS_H
 
 /**
+ * @defgroup SK_xxx Skill subtypes
+ *
  * This list is just a subtype <-> skill (code wise) in the
  * server translation.  In theory, the processing of the different
  * skills could be done via strncmp
  * This list doesn't really try to identify what the skills do.
  * The order of this list has no special meaning.  0 is not used
  * to denote improperly set objects.
- * @todo do an enum.
  */
+/*@{*/
 #define SK_LOCKPICKING		1
 #define SK_HIDING		2
 #define SK_SMITHERY		3
@@ -82,6 +84,7 @@
 #define SK_TWO_HANDED_WEAPON	37
 #define SK_WRAITH_FEED		38
 #define SK_HARVESTING 39
+/*@}*/
 
 /**
  * This is the highest number skill in the table +1
@@ -93,15 +96,16 @@
 
 
 /**
+ * @defgroup SK_EXP_xxx Experience flags
  * This is used in the exp functions - basically what to do if
  * the player doesn't have the skill he should get exp in.
- * @todo make an enum.
  */
-
-#define SK_EXP_ADD_SKILL	0   /* Give the player the skill */
-#define SK_EXP_TOTAL		1   /* Give player exp to total, no skill */
-#define SK_EXP_NONE		2   /* Player gets nothing */
-#define SK_SUBTRACT_SKILL_EXP	3   /* Used when removing exp */
+/*@{*/
+#define SK_EXP_ADD_SKILL	0   /**< Give the player the skill. */
+#define SK_EXP_TOTAL		1   /**< Give player exp to total, no skill. */
+#define SK_EXP_NONE		2   /**< Player gets nothing. */
+#define SK_SUBTRACT_SKILL_EXP	3   /**< Used when removing exp. */
+/*@}*/
 
 /** True if op is using skill, false else. */
 #define USING_SKILL(op, skill)  ((op)->chosen_skill && (op)->chosen_skill->subtype == skill)

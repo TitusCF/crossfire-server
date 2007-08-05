@@ -69,18 +69,20 @@ typedef struct _key_value {
 
 
 /**
+ * @defgroup WILL_APPLY_xxx what monsters apply
  * Definition for WILL_APPLY values.  Replaces having harcoded values
  * sprinkled in the code.  Note that some of these also replace fields
  * that were in the can_apply area.  What is the point of having both
  * can_apply and will_apply?
- * @todo do an enum.
+ * @todo err, is this still used??
  */
+/*@{*/
 #define WILL_APPLY_HANDLE	0x1
 #define WILL_APPLY_TREASURE	0x2
 #define WILL_APPLY_EARTHWALL	0x4
 #define WILL_APPLY_DOOR		0x8
 #define WILL_APPLY_FOOD		0x10
-
+/*@}*/
 
 /**
  * Checks if an object still exists.
@@ -339,34 +341,42 @@ extern int nroffreeobjects;
  */
 #define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER && ob->type!=EVENT_CONNECTOR)
 
-/** Used by update_object to know if the object being passed is
+/**
+ * @defgroup UP_OBJ_xxx Object update flags
+ *
+ * Used by update_object() to know if the object being passed is
  * being added or removed.
- * @todo make an enum for linking purposes.
  */
-#define UP_OBJ_INSERT   1
-#define UP_OBJ_REMOVE   2
-#define UP_OBJ_CHANGE   3
-#define UP_OBJ_FACE     4   /* Only thing that changed was the face */
+/*@{*/
+#define UP_OBJ_INSERT   1   /**< Object was inserted. */
+#define UP_OBJ_REMOVE   2   /**< Object was removed. */
+#define UP_OBJ_CHANGE   3   /**< Object changed. */
+#define UP_OBJ_FACE     4   /**< Only thing that changed was the face. In this case,
+                             * we always update everything as that is easier than trying
+                             * to look at what may have changed. */
+/*@}*/
 
 /**
- * These are flags passed to insert_ob_in_map and
- * insert_ob_in_ob.  Note that all flags may not be meaningful
+ * @defgroup INS_xxx Object insertion flags.
+ *
+ * These are flags passed to insert_ob_in_map() and
+ * insert_ob_in_ob().  Note that all flags may not be meaningful
  * for both functions.
  * Most are fairly explanatory:
- * INS_NO_MERGE: don't try to merge inserted object with ones alrady
+ * - INS_NO_MERGE: don't try to merge inserted object with ones alrady
  *    on space.
- * INS_ABOVE_FLOOR_ONLY: Put object immediatly above the floor.
- * INS_NO_WALK_ON: Don't call check_walk_on against the
+ * - INS_ABOVE_FLOOR_ONLY: Put object immediatly above the floor.
+ * - INS_NO_WALK_ON: Don't call check_walk_on against the
  *    originator - saves cpu time if you know the inserted object
  *    is not meaningful in terms of having an effect.
- * INS_ON_TOP: Always put object on top.  Generally only needed when loading
+ * - INS_ON_TOP: Always put object on top.  Generally only needed when loading
  *     files from disk and ordering needs to be preserved.
- * INS_BELOW_ORIGINATOR: Insert new object immediately below originator -
+ * - INS_BELOW_ORIGINATOR: Insert new object immediately below originator -
  *     Use for treasure chests so the new object is the highest thing
  *     beneath the player, but not actually above it.  Note - the
  *     map and x,y coordinates for the object to be inserted must
  *     match the originator.
- * INS_MAP_LOAD: disable lots of checkings done at insertion to
+ * - INS_MAP_LOAD: disable lots of checkings done at insertion to
  *     speed up map loading process, as we assume the ordering in
  *     loaded map is correct.
  *
@@ -375,15 +385,15 @@ extern int nroffreeobjects;
  * should be considered undefined - while you may notice what happens
  * right now if you pass more than one, that could very well change
  * in future revisions of the code.
- *
- * @todo make an enum, for linking purposes.
  */
+/*@{*/
 #define INS_NO_MERGE		0x0001
 #define INS_ABOVE_FLOOR_ONLY	0x0002
 #define INS_NO_WALK_ON		0x0004
 #define INS_ON_TOP		0x0008
 #define INS_BELOW_ORIGINATOR	0x0010
 #define INS_MAP_LOAD		0x0020
+/*@}*/
 
 #define ARCH_SINGULARITY        "singularity"   /**< Archetype for singularity. */
 #define ARCH_SINGULARITY_LEN    11              /**< Length of ::ARCH_SINGULARITY. */

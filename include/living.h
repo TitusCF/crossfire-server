@@ -26,24 +26,30 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+/**
+ * @file
+ * Structure containing object statistics.
+ */
+
 #ifndef LIVING_H
 #define LIVING_H
 
-#define STR 0
-#define DEX 1
-#define CON 2
-#define WIS 3
-#define CHA 4
-#define INT 5
-#define POW 6
-#define NUM_STATS 7
-
-#define MAXLEVEL      115
-
-/* Changed from NO_STAT to NO_STAT_VAL to fix conlfict on
- * AIX systems
+/**
+ * @defgroup STATS Object statistics.
  */
-#define NO_STAT_VAL 99    /* needed by skills code -b.t. */
+/*@{*/
+#define STR 0       /**< Strength. */
+#define DEX 1       /**< Dexterity. */
+#define CON 2       /**< Constitution. */
+#define WIS 3       /**< Wisdom. */
+#define CHA 4       /**< Charisma. */
+#define INT 5       /**< Intelligence. */
+#define POW 6       /**< Power. */
+#define NUM_STATS 7 /**< Number of statistics. */
+/*@}*/
+
+/** Maximum level a player can reach. */
+#define MAXLEVEL      115
 
 extern const char *const attacks[NROFATTACKS];
 

@@ -26,13 +26,17 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/* This file is best viewed with a window width of about 100 character */
-
-/* This file is really too large.  With all the .h files
+/**
+ * @file
+ * Core defines: object types, flags, etc.
+ *
+ * This file is really too large.  With all the .h files
  * around, this file should be better split between them - things
  * that deal with objects should be in objects.h, things dealing
  * with players in player.h, etc.  As it is, everything just seems
  * to be dumped in here.
+ *
+ * This file is best viewed with a window width of about 100 character.
  */
 
 #ifndef DEFINE_H
@@ -83,24 +87,30 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX_NAME 48
 #define BIG_NAME 32
 
-/* Fatal variables; used as arguments to fatal() */
+/**
+ * Fatal variables; used as arguments to fatal().
+ */
+/*@{*/
 #define OUT_OF_MEMORY		0
 #define MAP_ERROR		1
 #define ARCHTABLE_TOO_SMALL	2
+/*@}*/
 
-/* TYPE DEFINES */
-/* Only add new values to this list if somewhere in the program code,
+/**
+ * @defgroup OBJECT_TYPE Object types.
+ *
+ * Only add new values to this list if somewhere in the program code,
  * it is actually needed.  Just because you add a new monster does not
  * mean it has to have a type defined here.  That only needs to happen
  * if in some .c file, it needs to do certain special actions based on
  * the monster type, that can not be handled by any of the numerous
  * flags
  * Also, if you add new entries, try and fill up the holes in this list.
- * Additionally, when you add a new entry, include it in the table in item.c
+ * Additionally, when you add a new entry, include it in the table in common/item.c
+ *
+ * type 0 will be undefined and shows a non valid type information.
  */
-
-/* type 0 will be undefined and shows a non valid type information */
-
+/*@{*/
 #define PLAYER		            1
 #define TRANSPORT		    2	/* see doc/Developers/objects */
 #define ROD		            3
@@ -272,15 +282,24 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define OBJECT_TYPE_MAX		    161 /* update if you add new types */
 /* END TYPE DEFINE */
+/*@}*/
 
-/* Subtypes for BUILDER */
-#define ST_BD_BUILD    1 /* Builds an item */
-#define ST_BD_REMOVE     2 /* Removes an item */
+/**
+ * @defgroup TYPE_BUILDER Subtypes for ::BUILDER objects.
+ */
+/*@{*/
+#define ST_BD_BUILD    1 /**< Builds an item */
+#define ST_BD_REMOVE     2 /**< Removes an item */
+/*@}*/
 
-/* Subtypes for MATERIAL */
-#define ST_MAT_FLOOR    1 /* Floor */
-#define ST_MAT_WALL     2 /* Wall */
-#define ST_MAT_ITEM     3 /* All other items, including doors & such */
+/**
+ * @defgroup TYPE_MATERIAL Subtypes for ::MATERIAL objects.
+ */
+/*@{*/
+#define ST_MAT_FLOOR    1 /**< Floor. */
+#define ST_MAT_WALL     2 /**< Wall. */
+#define ST_MAT_ITEM     3 /**< All other items, including doors & such. */
+/*@}*/
 
 /* definitions for weapontypes */
 
@@ -294,19 +313,23 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define WEAP_CRUSH	7  /* big hammers, flails */
 #define WEAP_BLUD	8  /* bludgeoning, club, stick */
 
+/** Link an object type with skill needed to identify, and general name. */
 typedef struct typedata {
-    int number;
-    const char *name;
-    const char *name_pl;
-    int identifyskill;
-    int identifyskill2;
+    int number;         /**< Type. */
+    const char *name;   /**< Object name. */
+    const char *name_pl;/**< Plural name. */
+    int identifyskill;  /**< Skill used to identify this object class. */
+    int identifyskill2; /**< Second skill used to identify this object class. */
 } typedata;
 
 
-/* definitions for detailed pickup descriptions.
+/**
+ * @defgroup PU_xxx Pickup modes
+ * Definitions for detailed pickup descriptions.
  *   The objective is to define intelligent groups of items that the
- *   user can pick up or leave as he likes. */
-
+ *   user can pick up or leave as he likes.
+ */
+/*@{*/
 /* high bit as flag for new pickup options */
 #define PU_NOTHING		0x00000000
 
@@ -345,8 +368,7 @@ typedef struct typedata {
 #define PU_NOT_CURSED		0x01000000
 #define PU_JEWELS		0x02000000
 #define PU_FLESH		0x04000000
-
-
+/*@}*/
 
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
@@ -360,7 +382,40 @@ typedef struct typedata {
 
 #define NROF_SOUNDS (23 + NROFREALSPELLS) /* Number of sounds */
 
-/* Flag structure now changed.
+/**
+ * @defgroup IS_xxx Convenience macros to determine what kind of things we are dealing with.
+ */
+/*@{*/
+#define IS_WEAPON(op) \
+	(op->type == ARROW || op->type == BOW || op->type == WEAPON)
+
+#define IS_ARMOR(op) \
+	(op->type == ARMOUR || op->type == HELMET || \
+	 op->type == BOOTS || op->type == GLOVES)
+
+#define IS_SHIELD(op) \
+	(op->type == SHIELD)
+
+#define IS_LIVE(op) \
+	((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
+	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
+	!op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
+
+#define IS_ARROW(op) \
+	(op->type==ARROW || \
+	(op->type==SPELL_EFFECT && \
+	     (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
+/*@}*/
+
+/** This return TRUE if object has still randomitems which could be expanded. */
+#define HAS_RANDOM_ITEMS(op) (op->randomitems && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
+
+/**
+ * @defgroup FLAG_xxx Object flags
+ *
+ * Those flags are object-related flags, stored in the ::obj::flags fields.
+ *
+ * Flag structure now changed.
  * Each flag is now a bit offset, starting at zero.  The macros
  * will update/read the appropriate flag element in the object
  * structure.
@@ -383,12 +438,16 @@ typedef struct typedata {
  * If any FLAG's are or changed, make sure the flag_names structure in
  * common/loader.l is updated.
  *
- * flags[0] is 0 to 31
- * flags[1] is 32 to 63
- * flags[2] is 64 to 95
- * flags[3] is 96 to 127
+ * - flags[0] is 0 to 31
+ * - flags[1] is 32 to 63
+ * - flags[2] is 64 to 95
+ * - flags[3] is 96 to 127
+ *
+ * Values can go up to 127 before the size of the flags array in the
+ * object structure needs to be enlarged.
+ * So there are 18 available flags slots
  */
-/* Basic routines to do above */
+/*@{*/
 #define SET_FLAG(xyz, p) \
 	((xyz)->flags[p/32] |= (1U << (p % 32)))
 #define CLEAR_FLAG(xyz, p) \
@@ -402,34 +461,8 @@ typedef struct typedata {
 		((p)->flags[2] == (q)->flags[2]) &&  \
 		((p)->flags[3] == (q)->flags[3])     \
 	)
-/* convenience macros to determine what kind of things we are dealing with */
 
-#define IS_WEAPON(op) \
-	(op->type == ARROW || op->type == BOW || op->type == WEAPON)
-
-#define IS_ARMOR(op) \
-	(op->type == ARMOUR || op->type == HELMET || \
-	 op->type == BOOTS || op->type == GLOVES)
-
-#define IS_SHIELD(op) \
-	(op->type == SHIELD)
-
-#define IS_LIVE(op) \
-	((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
-	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-	!op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
-
-#define IS_ARROW(op) \
-	(op->type==ARROW || \
-	(op->type==SPELL_EFFECT && \
-	     (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
-
-/* This return TRUE if object has still randomitems which
- * could be expanded.
- */
-#define HAS_RANDOM_ITEMS(op) (op->randomitems && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
-
-/* the flags */
+/* the flags themselves. */
 
 #define FLAG_ALIVE	 	0 /* Object can fight (or be fought) */
 #define FLAG_WIZ	 	1 /* Object has special privilegies */
@@ -578,27 +611,30 @@ typedef struct typedata {
                                       * in common/loader.l
                                       */
 
-/* Values can go up to 127 before the size of the flags array in the
- * object structure needs to be enlarged.
- * So there are 18 available flags slots
- */
-
+/*@}*/
 
 #define NROFNEWOBJS(xyz)	((xyz)->stats.food)
 
-/* If you add new movement types, you may need to update
+/**
+ * @defgroup MOVE_xxx Movement types and related macros.
+ *
+ * Those flags are all possible movement types.
+ *
+ * If you add new movement types, you may need to update
  * describe_item() so properly describe those types.
  * change_abil() probably should be updated also.
  */
-#define MOVE_WALK	0x1	/* Object walks */
-#define MOVE_FLY_LOW	0x2	/* Low flying object */
-#define MOVE_FLY_HIGH	0x4	/* High flying object */
-#define	MOVE_FLYING	0x6	/* Combo of fly_low and fly_high */
-#define MOVE_SWIM	0x8	/* Swimming object */
-#define MOVE_BOAT	0x10	/* Boats/sailing */
-#define MOVE_ALL	0x1f	/* Mask of all movement types */
+/*@{*/
+#define MOVE_WALK	0x1	/**< Object walks. */
+#define MOVE_FLY_LOW	0x2	/**< Low flying object. */
+#define MOVE_FLY_HIGH	0x4	/**< High flying object. */
+#define	MOVE_FLYING	0x6	/**< Combo of fly_low and fly_high. */
+#define MOVE_SWIM	0x8	/**< Swimming object. */
+#define MOVE_BOAT	0x10	/**< Boats/sailing. */
+#define MOVE_ALL	0x1f	/**< Mask of all movement types. */
 
-/* the normal assumption is that objects are walking/flying.
+/**
+ * The normal assumption is that objects are walking/flying.
  * So often we don't want to block movement, but still don't want
  * to allow all types (swimming is rather specialized) - I also
  * expect as more movement types show up, this is likely to get
@@ -608,28 +644,30 @@ typedef struct typedata {
  */
 #define MOVE_BLOCK_DEFAULT  MOVE_SWIM
 
-/* typdef here to define type large enough to hold bitmask of
+/**
+ * Typdef here to define type large enough to hold bitmask of
  * all movement types.  Make one declaration so easy to update.
  * uint8 is defined yet, so just use what that would define it
  * at anyways.
  */
 typedef unsigned char	MoveType;
 
-/* Basic macro to see if ob2 blocks ob1 from moving onto this space.
+/**
+ * Basic macro to see if ob2 blocks ob1 from moving onto this space.
  * Basically, ob2 has to block all of ob1 movement types.
  */
 #define OB_MOVE_BLOCK(ob1, ob2) \
     ((ob1->move_type & ob2->move_block) == ob1->move_type)
 
-/* Basic macro to see if if ob1 can not move onto a space based
+/**
+ * Basic macro to see if if ob1 can not move onto a space based
  * on the 'type' move_block parameter
  * Add check - if type is 0, don't stop anything from moving
  * onto it.
- *
  */
 #define OB_TYPE_MOVE_BLOCK(ob1, type) \
     ( (type != 0) && (ob1->move_type & type) == ob1->move_type)
-
+/*@}*/
 
 #define SET_GENERATE_TYPE(xyz,va)	(xyz)->stats.sp=(va)
 #define GENERATE_TYPE(xyz)	((xyz)->stats.sp)
@@ -652,6 +690,11 @@ typedef unsigned char	MoveType;
  **/
 #define MAX_DARKNESS		5
 
+/**
+ * @defgroup F_xxx Buy/sell flags.
+ * Those flags are mostly used for query_cost() and similar functions.
+ */
+/*@{*/
 #define F_BUY           0   /**< Item is being bought by player. */
 #define F_SELL          1   /**< Item is being sold by player. */
 #define F_TRUE          2   /**< True value of item, unadjusted. */
@@ -660,6 +703,7 @@ typedef unsigned char	MoveType;
 #define F_NOT_CURSED    16  /**< Flag to calculate value of uncursed item. */
 #define F_APPROX        32  /**< Flag to give a guess of item value. */
 #define F_SHOP          64  /**< Consider the effect that the shop that the player is in has. */
+/*@}*/
 
 #define DIRX(xyz)	freearr_x[(xyz)->direction]
 #define DIRY(xyz)	freearr_y[(xyz)->direction]
@@ -668,10 +712,13 @@ typedef unsigned char	MoveType;
 #define ARMOUR_SPELLS(xyz)	(xyz)->gen_sp_armour
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
 
-/******************************************************************************/
-/* Monster Movements added by kholland@sunlab.cit.cornell.edu                 */
-/******************************************************************************/
-/* if your monsters start acting wierd, mail me                               */
+/**
+/* @defgroup MONSTER_MOVEMENT Monster movements
+ * @author kholland@sunlab.cit.cornell.edu
+ *
+ * if your monsters start acting wierd, mail me.
+ */
+/*@{*/
 /******************************************************************************/
 /* the following definitions are for the attack_movement variable in monsters */
 /* if the attack_variable movement is left out of the monster archetype, or is*/
@@ -728,11 +775,13 @@ typedef unsigned char	MoveType;
                     * this is VERTICAL movement                               */
 #define LO4     15 /**< bitmasks for upper and lower 4 bits from 8 bit fields */
 #define HI4    240
+/*@}*/
 
-/*
+/**
+ * @defgroup ST_xxx Player state.
  * Use of the state-variable in player objects:
  */
-
+/*@{*/
 #define ST_PLAYING                  0   /**< Usual state. */
 #define ST_PLAY_AGAIN               1   /**< Player left through a bed of reality, and can login again. */
 #define ST_ROLL_STAT                2   /**< New character, rolling stats. */
@@ -745,6 +794,7 @@ typedef unsigned char	MoveType;
 #define ST_CHANGE_PASSWORD_OLD      11  /**< Player is entering old password to change password */
 #define ST_CHANGE_PASSWORD_NEW      12  /**< Player is entering new password */
 #define ST_CHANGE_PASSWORD_CONFIRM  13  /**< Player is confirming new password */
+/*@}*/
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"
@@ -854,61 +904,65 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
     }
 
 /**
- * Flags for apply_special().
- * @anchor AP_xxx
+ * @defgroup AP_xxx Flags for apply_special().
+ *
+ * Those flags correspond to the aflags parameter of the apply_special() function.
  */
-typedef enum apply_flag {
+/*@{*/
     /* Basic flags, always use one of these */
-    AP_NULL             = 0,
-    AP_APPLY            = 1,    /**< Item is to be applied. */
-    AP_UNAPPLY          = 2,    /**< Item is to be remvoed. */
+#define AP_NULL         0   /**< Nothing specific. */
+#define AP_APPLY        1   /**< Item is to be applied. */
+#define AP_UNAPPLY      2   /**< Item is to be remvoed. */
 
-    AP_BASIC_FLAGS      = 15,
+#define AP_BASIC_FLAGS  15
 
   /* Optional flags, for bitwise or with a basic flag */
-    AP_NO_MERGE         = 16,   /**< Don't try to merge object after (un)applying it. */
-    AP_IGNORE_CURSE     = 32,   /**< Apply/unapply regardless of cursed/damned status. */
-    AP_PRINT            = 64,   /**< Print what to do, don't actually do it
-                                 * Note this is supported in all the functions */
-    AP_NOPRINT          = 128   /**< Don't print messages - caller will do that
-                                 * may be some that still print */
+#define AP_NO_MERGE     16  /**< Don't try to merge object after (un)applying it. */
+#define AP_IGNORE_CURSE 32  /**< Apply/unapply regardless of cursed/damned status. */
+#define AP_PRINT        64  /**< Print what to do, don't actually do it
+                             * Note this is supported in all the functions */
+#define AP_NOPRINT      128 /**< Don't print messages - caller will do that
+                             * may be some that still print */
+/*@}*/
 
-} apply_flag;
-
-/* Bitmask values for 'can_apply_object()' return values.
+/**
+ * @defgroup CAN_APPLY_xxx Values returned by can_apply_object().
+ *
+ * Bitmask values for 'can_apply_object()' return values.
  * the CAN_APPLY_ prefix is to just note what function the
  * are returned from.
  *
- * CAN_APPLY_NEVER: who will never be able to use this - requires a body
+ * - CAN_APPLY_NEVER: who will never be able to use this - requires a body
  *      location who doesn't have.
- * CAN_APPLY_RESTRICTION: There is some restriction from using this item -
+ * - CAN_APPLY_RESTRICTION: There is some restriction from using this item -
  *      this basically means one of the FLAGS are set saying you can't
  *      use this.
- * CAN_APPLY_NOT_MASK - this can be used to check the return value to see
+ * - CAN_APPLY_NOT_MASK - this can be used to check the return value to see
  *	if this object can do anything to use this object.  If the value
  *	returned from can_apply_object() anded with the mask is non zero,
  *	then it is out of the control of this creature to use the item.
  *	otherwise it means that by unequipping stuff, they could apply the object
- * CAN_APPLY_UNAPPLY: Player needs to unapply something before applying
+ * - CAN_APPLY_UNAPPLY: Player needs to unapply something before applying
  *      this.
- * CAN_APPLY_UNAPPLY_MULT: There are multiple items that need to be
+ * - CAN_APPLY_UNAPPLY_MULT: There are multiple items that need to be
  *      unapplied before this can be applied.  Think of switching to
  *      a bow but you have a sword & shield - both the sword and
  *      shield need to be uneqipped before you can do the bow.
- * CAN_APPLY_UNAPPLY_CHOICE: There is a choice of items to unapply before
+ * - CAN_APPLY_UNAPPLY_CHOICE: There is a choice of items to unapply before
  *      this one can be applied.  Think of rings - human is wearing two
  *      rings and tries to apply one - there are two possible rings he
  *      could remove.
- *
  */
+/*@{*/
 #define CAN_APPLY_NEVER		    0x1
 #define CAN_APPLY_RESTRICTION	    0x2
 #define CAN_APPLY_NOT_MASK	    0xf
 #define CAN_APPLY_UNAPPLY	    0x10
 #define CAN_APPLY_UNAPPLY_MULT	    0x20
 #define CAN_APPLY_UNAPPLY_CHOICE    0x40
+/*@}*/
 
-/* Cut off point of when an object is put on the active list or not */
+/** Cut off point of when an object is put on the active list or not */
 #define MIN_ACTIVE_SPEED	0.00001
 
 /*
@@ -947,17 +1001,19 @@ typedef enum apply_flag {
 #define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
 
 
-/* Code fastening defines
+/**
+ * @defgroup FASTCAT_xxx Code fastening defines
+ *
  * FAST_STRCAT & FAST_STRNCAT will add buf2__ at position pointed by
  * buf__ and increment buf__ position so it will point to the end of buf__.
- * the '\0' caracter will not be put at end of buf__.
+ * the '\\0' caracter will not be put at end of buf__.
  * use preparefastcat and finishfastcat on buf__ to prepare
  * and clean up the string. (Lots faster than doing each time...)
  * If you use them and have choice between FAST_STRCAT and FAST_STRNCAT,
  * keep in mind FAST_STRNCAT is faster since length of second argument is
  * kown in advance.
  */
-
+/*@{*/
  #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
  #define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
  #define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
@@ -968,6 +1024,6 @@ typedef enum apply_flag {
   */
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
  if (size__!=strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n",buf2__);}*/
-
+/*@}*/
 
 #endif /* DEFINE_H */
