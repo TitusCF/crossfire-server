@@ -569,12 +569,10 @@ int command_goto(object *op, char *params)
 
     enter_exit(op, dummy);
     free_object(dummy);
-    if (op->contr->loading == NULL) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			     "Difficulty: %d.",
-			     "Difficulty: %d.",
-			     op->map->difficulty);
-    }
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "Difficulty: %d.",
+        "Difficulty: %d.",
+        op->map->difficulty);
 
     return 1;
 }

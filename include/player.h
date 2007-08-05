@@ -143,12 +143,11 @@ typedef enum party_rejoin_mode {
     party_rejoin_always = 2    /**< If party doesn't exist, form it. */
 } party_rejoin_mode;
 
-/** One player. @todo check unused loading fields? */
+/** One player. */
 typedef struct pl {
     struct pl	*next;		    /**< Pointer to next player, NULL if this is last. */
     socket_struct	socket;		    /**< Socket information for this player. */
     char	maplevel[MAX_BUF];  /**< On which level is the player? */
-    struct mapdef *loading;	    /**< When entering a map in progress of loading, not really used. */
     char	savebed_map[MAX_BUF];  /**< Map where player will respawn after death. */
     sint16	bed_x, bed_y;	    /**< x,y - coordinates of respawn (savebed). */
     rangetype	shoottype;	    /**< Which range-attack is being used by player. */

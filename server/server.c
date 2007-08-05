@@ -1029,8 +1029,6 @@ static void process_players2(mapstruct *map)
 	if (map!=NULL) {
 	    if(pl->ob == NULL || QUERY_FLAG(pl->ob,FLAG_REMOVED))
 		continue;
-	    else if(pl->loading != NULL) /* Player is blocked */
-		pl->ob->speed_left -= pl->ob->speed;
 	    if (pl->ob->map!=map) continue;
 	}
 

@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused loading field.
+ include/player.h
+ server/c_wiz.c server.c
+Nicolas Weeger 2007-08-05
+
+include/newserver.h: fix documentation.
+Nicolas Weeger 2007-08-05
+
 Documentation, no functional change.
  Doxyfile
  common/living.c map.c object.c
