@@ -233,7 +233,7 @@ START_TEST (cast_one_comet)
 
     cast_spell(rod, rod, 1, rod->inv, NULL);
     for (tick=0; tick < NUM_TICKS_TO_RUN; tick++) {
-	process_events(NULL);
+	process_events();
     }
 
     check_hp("cast_one_comet", hp_row, hp_diag);
@@ -275,7 +275,7 @@ START_TEST (cast_random_comet)
 	    cast_spell(rod, rod, 1, rod->inv, NULL);
 	    num_cast++;
 	}
-	process_events(NULL);
+	process_events();
     }
     check_hp("cast_random_comet", hp_row, hp_diag);
 
@@ -308,7 +308,7 @@ START_TEST (cast_bunch_comet)
 	    cast_spell(rod, rod, 1, rod->inv, NULL);
 	    num_cast++;
 	}
-	process_events(NULL);
+	process_events();
     }
     check_hp("cast_bunch_comet", hp_row, hp_diag);
 

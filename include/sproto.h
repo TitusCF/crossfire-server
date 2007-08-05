@@ -679,7 +679,7 @@ int check_password(char *typed, char *crypted);
 void enter_player_savebed(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);
-void process_events(mapstruct *map);
+void process_events();
 void clean_tmp_files(void);
 void cleanup(void);
 void leave(player *pl, int draw_exit);

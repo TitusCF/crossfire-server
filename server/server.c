@@ -55,7 +55,7 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
-void process_events (mapstruct *map);
+void process_events();
 
 /** Ingame days. */
 static char days[7][4] = {
@@ -918,12 +918,8 @@ void enter_exit(object *op, object *exit_ob) {
  * Do all player-related stuff before objects have been updated.
  *
  * @sa process_players2().
- *
- * @param map
- * map to process.
- * @todo remove map, as always called with NULL from process_events().
  */
-static void process_players1(mapstruct *map)
+static void process_players1()
 {
     int flag;
     player *pl,*plnext;
@@ -935,8 +931,6 @@ static void process_players1(mapstruct *map)
 	    plnext=pl->next; /* In case a player exits the game in handle_player() */
 
 	    if (pl->ob == NULL) continue;
-
-	    if (map!=NULL && pl->ob->map!=map) continue;
 
         /** Handle DM follow command */
         if (pl->followed_player) {
@@ -993,8 +987,6 @@ static void process_players1(mapstruct *map)
 	} /* end of for loop for all the players */
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map))
-	    continue;
 	if (settings.casting_time == TRUE) {
 	    if (pl->ob->casting_time > 0){
 		pl->ob->casting_time--;
@@ -1017,20 +1009,14 @@ static void process_players1(mapstruct *map)
  *
  * @param map
  * map to process.
- * @todo remove map, as always called with NULL from process_events().
- * @todo explain why 2 passes for players.s
+ * @todo explain why 2 passes for players.
  */
-static void process_players2(mapstruct *map)
+static void process_players2()
 {
     player *pl;
 
     /* Then check if any players should use weapon-speed instead of speed */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if (map!=NULL) {
-	    if(pl->ob == NULL || QUERY_FLAG(pl->ob,FLAG_REMOVED))
-		continue;
-	    if (pl->ob->map!=map) continue;
-	}
 
 	/* The code that did weapon_sp handling here was out of place -
 	 * this isn't called until after the player has finished there
@@ -1055,18 +1041,14 @@ static void process_players2(mapstruct *map)
 
 /**
  * Process all active objects.
- *
- * @param map
- * map to restrict processing to.
- * @todo remove map, as always called with NULL.
  */
-void process_events (mapstruct *map)
+void process_events ()
 {
     object *op;
     object marker;
     tag_t tag;
 
-    process_players1 (map);
+    process_players1();
 
     memset(&marker, 0, sizeof(object));
     /* Put marker object at beginning of active list */
@@ -1136,7 +1118,7 @@ void process_events (mapstruct *map)
         }
 
         if (op->map == NULL && op->env == NULL && op->name &&
-            op->type != MAP && map == NULL)
+            op->type != MAP)
         {
             LOG (llevError, "BUG: process_events(): Object without map or "
                 "inventory is on active list: %s (%d)\n", op->name, op->count);
@@ -1144,9 +1126,6 @@ void process_events (mapstruct *map)
             update_ob_speed (op);
             continue;
 	}
-
-        if (map != NULL && op->map != map)
-            continue;
 
 	/* Seen some cases where process_object() is crashing because
 	 * the object is on a swapped out map.  But can't be sure if
@@ -1196,7 +1175,7 @@ void process_events (mapstruct *map)
     else
         active_objects = NULL;
 
-    process_players2 (map);
+    process_players2();
 }
 
 /**
@@ -1461,7 +1440,7 @@ int server_main(int argc, char **argv)
     nroferrors = 0;
 
     doeric_server();
-    process_events(NULL);    /* "do" something with objects with speed */
+    process_events();    /* "do" something with objects with speed */
     cftimer_process_timers();/* Process the crossfire Timers */
     /* Lauwenmark : Here we handle the CLOCK global event */
     execute_global_event(EVENT_CLOCK);
