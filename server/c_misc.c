@@ -851,21 +851,26 @@ int command_time (object *op, char *params)
  * unused.
  * @return
  * 1.
- * @todo return something even if weather is off or not on a weather tile.
  */
 int command_weather (object *op, char *params)
 {
     int wx, wy, temp, sky;
     char buf[MAX_BUF];
 
-    if (settings.dynamiclevel < 1)
-	return 1;
+    if (settings.dynamiclevel < 1) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
+            "The weather is perpetually great around here.", NULL);
+        return 1;
+    }
 
     if (op->map == NULL)
 	return 1;
 
-    if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map) != 0)
-	return 1;
+    if (worldmap_to_weathermap(op->x, op->y, &wx, &wy, op->map) != 0) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WEATHER,
+            "You can't see the weather from here.", NULL);
+        return 1;
+    }
 
     if (QUERY_FLAG(op, FLAG_WIZ)) {
 	/* dump the weather, Dm style! Yo! */
@@ -1033,7 +1038,7 @@ int command_weather (object *op, char *params)
 }
 
 /**
- * Archetype-related statistics.
+ * Archetype-related statistics. Wizard 'archs' command.
  *
  * @param op
  * player asking for information.
@@ -1041,7 +1046,6 @@ int command_weather (object *op, char *params)
  * unused.
  * @return
  * 1.
- * @todo this should be a wizard command.
  */
 int command_archs (object *op, char *params)
 {

@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Various fixes.
+ server/c_misc.c: display information for weather even if turned off.
+ server/commands.c: make 'archs' a wizard command.
+Nicolas Weeger 2007-08-05
+
 Use safe string functions. Removed unused parameters. Rename init_spells() to check_spells().
  common/recipe.c
  include/sproto.h

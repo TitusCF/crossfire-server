@@ -58,7 +58,6 @@ command_array_struct Commands[] = {
 #endif
   {"apply", command_apply,	1.0},	/* should be variable */
   {"applymode", command_applymode,	1.0},	/* should be variable */
-  {"archs", command_archs,	0.0},
   {"body", command_body,	0.0},
   {"brace", command_brace,	0.0},
   {"cast", command_cast,	0.2},	/* Is this right? */
@@ -211,6 +210,7 @@ const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(comma
 command_array_struct WizCommands [] = {
   {"abil", command_abil,0.0},
   {"addexp", command_addexp,0.0},
+  {"archs", command_archs, 0.0},
   {"arrest", command_arrest,0.0},
   {"banish", command_banish,0.0},
   {"create", command_create,0.0},
