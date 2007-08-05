@@ -602,7 +602,7 @@ int write_mark(object *op, object *spell, const char *msg);
 /* spell_util.c */
 object *find_random_spell_in_ob(object *ob, const char *skill);
 void set_spell_skill(object *op, object *caster, object *spob, object *dest);
-void init_spells(void);
+void check_spells(void);
 void dump_spells(void);
 void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator);
 int min_casting_level(object *caster, object *spell);
@@ -614,7 +614,7 @@ int SP_level_range_adjust(object *caster, object *spob);
 object *check_spell_known(object *op, const char *name);
 object *lookup_spell_by_name(object *op, const char *spname);
 int reflwall(mapstruct *m, int x, int y, object *sp_op);
-int cast_create_obj(object *op, object *caster, object *new_op, int dir);
+int cast_create_obj(object *op, object *new_op, int dir);
 int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, int immune_stop);
 int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell);
 void regenerate_rod(object *rod);

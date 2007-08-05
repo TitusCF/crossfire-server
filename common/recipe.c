@@ -411,9 +411,6 @@ archetype* find_treasure_by_name (const treasure *t, const char *name, int depth
  * ingredient we're searching for. Can start with a number.
  * @return
  * cost of ingredient, -1 if wasn't found.
- *
- * @todo
- * use safe string functions.
  */
 long find_ingred_cost (const char *name)
 {
@@ -443,7 +440,7 @@ long find_ingred_cost (const char *name)
         if (at->clone.title != NULL)
         {
             /* inefficient, but who cares? */
-            sprintf (part1, "%s %s", at->clone.name, at->clone.title);
+            snprintf(part1, sizeof(part1), "%s %s", at->clone.name, at->clone.title);
             if (! strcasecmp (part1, name))
                 return mult * at->clone.value;
         }
@@ -728,9 +725,6 @@ recipe * get_random_recipe ( recipelist *rpl ) {
 
 /**
  * Frees all memory allocated to recipes and recipes lists.
- *
- * @todo
- * clear formulalist pointer?
  */
 void free_all_recipes(void)
 {
@@ -762,6 +756,7 @@ void free_all_recipes(void)
         }
         free(fl);
     }
+    formulalist = NULL;
 }
 
 /**

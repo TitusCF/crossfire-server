@@ -935,7 +935,7 @@ static void help(void) {
 static void init_beforeplay(void) {
   init_archetypes(); /* If not called before, reads all archetypes from file */
   init_artifacts();  /* If not called before, reads all artifacts from file */
-  init_spells();     /* If not called before, links archtypes used by spells */
+  check_spells();     /* If not called before, links archtypes used by spells */
   init_regions();    /* If not called before, reads all regions from file */
   init_archetype_pointers(); /* Setup global pointers to archetypes */
   init_races();	   /* overwrite race designations using entries in lib/races file */

@@ -112,18 +112,12 @@ void set_spell_skill(object *op, object *caster, object *spob, object *dest)
  * obvious errors.  This was most useful in debugging when re-doing
  * all the spells to catch simple errors.  To use it all the time
  * will result in it spitting out messages that aren't really errors.
- *
- * @todo This should really be called check_spells, as that
- * is what it does.
  */
-void init_spells(void) {
+void check_spells(void) {
 #ifdef SPELL_DEBUG
-    static int init_spells_done = 0;
     int i;
     archetype *at;
 
-    if (init_spells_done)
-	return;
     LOG(llevDebug, "Checking spells...\n");
 
     for (at=first_archetype; at; at=at->next) {
@@ -494,17 +488,14 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
  *
  * @param op
  * who is casting.
- * @param caster
- * unused.
  * @param new_op
  * object to insert.
  * @param dir
  * direction to insert into. Can be 0.
  * @return
  * direction that the object was actually placed in.
- * @todo remove caster.
  */
-int cast_create_obj(object *op,object *caster,object *new_op, int dir)
+int cast_create_obj(object *op,object *new_op, int dir)
 {
     mapstruct *m;
     sint16  sx, sy;

@@ -588,7 +588,7 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
     SET_FLAG(missile, FLAG_IDENTIFIED);
     tag = missile->count;
 
-    if ( ! cast_create_obj (op, caster, missile, dir) && op->type == PLAYER
+    if ( ! cast_create_obj (op, missile, dir) && op->type == PLAYER
       && ! was_destroyed (missile, tag))
     {
         pick_up(op, missile);
@@ -674,7 +674,7 @@ int cast_create_food(object *op,object *caster, object *spell_ob, int dir, const
     new_op->value = 0;
     if (new_op->nrof<1) new_op->nrof = 1;
 
-    cast_create_obj(op, caster,new_op, dir);
+    cast_create_obj(op, new_op, dir);
     return 1;
 }
 
@@ -1293,7 +1293,7 @@ int cast_create_town_portal (object *op, object *caster, object *spell, int dir)
     FREE_AND_COPY(dummy->name_pl, portal_name);
     dummy->msg=add_string (portal_message);
     dummy->race=add_string (op->name);  /*Save the owner of the portal*/
-    cast_create_obj (op, caster, dummy, 0);
+    cast_create_obj (op, dummy, 0);
 
     /* Now we need to to create a town portal marker inside the player
      * object, so on future castings, we can know that he has an active
