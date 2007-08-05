@@ -576,18 +576,14 @@
  * These define the players starting map and location on that map, and where
  * emergency saves are defined.  This should be left as is unless you make
  * major changes to the map.
- * @todo remove unless used, i think that's obsolete now with the map archetype.
  */
 #ifdef WIN32 /* change define path city */
-
-#  define EMERGENCY_MAPPATH "\\city\\city"
-#  define EMERGENCY_X 15
-#  define EMERGENCY_Y 19
+#  define EMERGENCY_MAPPATH "\\world\\world_105_115"
 #else
-#  define EMERGENCY_MAPPATH "/city/city"
-#  define EMERGENCY_X 15
-#  define EMERGENCY_Y 19
+#  define EMERGENCY_MAPPATH "/world/world_105_115"
 #endif
+#  define EMERGENCY_X 5
+#  define EMERGENCY_Y 37
 
 
 /**
