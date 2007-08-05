@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused command_generate().
+ include/sproto.h
+ server/c_wiz.c
+Nicolas Weeger 2007-08-05
+
 include/config.h: fix default emergency path/coordinates.
 Nicolas Weeger 2007-08-05
 

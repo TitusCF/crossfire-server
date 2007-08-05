@@ -248,7 +248,6 @@ int command_overlay_reset(object *op, char *params);
 int command_toggle_shout(object *op, char *params);
 int command_shutdown(object *op, char *params);
 int command_goto(object *op, char *params);
-int command_generate(object *op, char *params);
 int command_freeze(object *op, char *params);
 int command_arrest(object *op, char *params);
 int command_summon(object *op, char *params);

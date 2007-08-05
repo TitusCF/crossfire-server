@@ -577,32 +577,6 @@ int command_goto(object *op, char *params)
     return 1;
 }
 
-/* is this function called from somewhere ? -Tero */
-/**
- * @todo remove, as unused.
- */
-int command_generate (object *op, char *params)
-{
-    object *tmp;
-    int nr = 1, i, retry;
-
-    if (!op)
-        return 0;
-
-    if (params != NULL)
-        sscanf(params, "%d", &nr);
-    for (i = 0; i < nr; i++) {
-        retry = 50;
-        while ((tmp=generate_treasure(0, op->map->difficulty)) == NULL && --retry)
-            ;
-        if (tmp != NULL) {
-            tmp = insert_ob_in_ob(tmp, op);
-        }
-    }
-
-    return 1;
-}
-
 /**
  * Freezes a player for a specified tick count, 100 by default.
  *
