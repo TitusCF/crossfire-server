@@ -47,6 +47,7 @@ static void init_races(void);
 static void dump_races(void);
 static void add_to_racelist(const char *race_name, object *op);
 static racelink *get_racelist(void);
+static void fatal_signal(int make_core);
 
 /** global weathermap */
 weathermap_t **weathermap;
@@ -1074,9 +1075,9 @@ static void compile_info(void) {
  * @param i
  * unused.
  */
-void rec_sigsegv(int i) {
+static void rec_sigsegv(int i) {
   LOG(llevError,"\nSIGSEGV received.\n");
-  fatal_signal(1, 1);
+  fatal_signal(1);
 }
 
 /**
@@ -1084,9 +1085,9 @@ void rec_sigsegv(int i) {
  * @param i
  * unused.
  */
-void rec_sigint(int i) {
+static void rec_sigint(int i) {
   LOG(llevInfo,"\nSIGINT received.\n");
-  fatal_signal(0, 1);
+  fatal_signal(0);
 }
 
 /**
@@ -1101,7 +1102,7 @@ void rec_sigint(int i) {
  * @param i
  * unused.
  */
-void rec_sighup(int i) {
+static void rec_sighup(int i) {
   /* Don't call LOG().  It calls non-reentrant functions.  The other
    * signal handlers shouldn't really call LOG() either. */
   if(logfile != stderr) {
@@ -1115,9 +1116,9 @@ void rec_sighup(int i) {
  * @param i
  * unused.
  */
-void rec_sigquit(int i) {
+static void rec_sigquit(int i) {
   LOG(llevInfo,"\nSIGQUIT received\n");
-  fatal_signal(1, 1);
+  fatal_signal(1);
 }
 
 /**
@@ -1133,7 +1134,7 @@ void rec_sigquit(int i) {
  * @param i
  * unused.
  */
-void rec_sigpipe(int i) {
+static void rec_sigpipe(int i) {
 
   LOG(llevError,"\nSIGPIPE--------------\n------------\n--------\n---\n");
 #if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
@@ -1141,7 +1142,7 @@ void rec_sigpipe(int i) {
   signal(SIGPIPE,rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
   LOG(llevError,"\nSIGPIPE received, not ignoring...\n");
-  fatal_signal(1, 1); /*Might consider to uncomment this line */
+  fatal_signal(1); /*Might consider to uncomment this line */
 #endif
 }
 
@@ -1151,10 +1152,10 @@ void rec_sigpipe(int i) {
  * @param i
  * unused.
  */
-void rec_sigbus(int i) {
+static void rec_sigbus(int i) {
 #ifdef SIGBUS
   LOG(llevError,"\nSIGBUS received\n");
-  fatal_signal(1, 1);
+  fatal_signal(1);
 #endif
 }
 
@@ -1164,9 +1165,9 @@ void rec_sigbus(int i) {
  * @param i
  * unused.
  */
-void rec_sigterm(int i) {
+static void rec_sigterm(int i) {
   LOG(llevInfo,"\nSIGTERM received\n");
-  fatal_signal(0, 1);
+  fatal_signal(0);
 }
 
 /**
@@ -1174,11 +1175,8 @@ void rec_sigterm(int i) {
  *
  * @param make_core
  * if set abort() instead of exit() to generate a core dump.
- * @param close_sockets
- * ignored.
- * @todo remove close_sockets.
  */
-void fatal_signal(int make_core, int close_sockets) {
+static void fatal_signal(int make_core) {
   if(init_done) {
     emergency_save(0);
     clean_tmp_files();

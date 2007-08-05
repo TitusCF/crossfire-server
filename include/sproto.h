@@ -313,14 +313,6 @@ int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void init(int argc, char **argv);
 void free_server(void);
-void rec_sigsegv(int i);
-void rec_sigint(int i);
-void rec_sighup(int i);
-void rec_sigquit(int i);
-void rec_sigpipe(int i);
-void rec_sigbus(int i);
-void rec_sigterm(int i);
-void fatal_signal(int make_core, int close_sockets);
 racelink *find_racelink(const char *name);
 /* login.c */
 void emergency_save(int flag);
