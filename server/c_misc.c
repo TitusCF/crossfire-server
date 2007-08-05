@@ -607,7 +607,7 @@ void display_who_entry(object *op, player *pl, const char *format) {
     for (i=0;i<=strlen(format);i++) {
         if (format[i]=='%') {
             i++;
-            get_who_escape_code_value(tmpbuf,format[i],pl);
+            get_who_escape_code_value(tmpbuf,sizeof(tmpbuf), format[i],pl);
             strcat(outbuf, tmpbuf);
             strcat(outbuf1, tmpbuf);
         }
@@ -648,67 +648,68 @@ void display_who_entry(object *op, player *pl, const char *format) {
  *
  * @param[out] return_val
  * buffer that will contain the information.
+ * @param size
+ * length of return_val.
  * @param letter
  * format specifier.
  * @param pl
  * player to get information for.
- * @todo use safe string functions.
  */
-void get_who_escape_code_value(char *return_val, const char letter, player *pl) {
+void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
 
     switch (letter) {
-	case 'N' :	strcpy(return_val, pl->ob->name);
+	case 'N' :	snprintf(return_val, size, pl->ob->name);
 			break;
 
-	case 't' :	strcpy(return_val,(pl->own_title[0]=='\0'?pl->title:pl->own_title));
+	case 't' :	snprintf(return_val,size, (pl->own_title[0]=='\0'?pl->title:pl->own_title));
 			break;
 
 	case 'T' :	if (pl->own_title[0]=='\0')
-			    strcpy(return_val,"the ");
+			    snprintf(return_val, size, "the ");
 			else
 			    *return_val='\0';
 			break;
 
-	case 'c' :	sprintf(return_val,"%d",pl->ob->count);
+	case 'c' :	snprintf(return_val, size, "%d",pl->ob->count);
 			break;
 
-	case 'n' :	strcpy(return_val, "\n");
+	case 'n' :	snprintf(return_val, size, "\n");
 			break;
 
-	case 'h' :	strcpy(return_val,pl->peaceful?"":" <Hostile>");
+	case 'h' :	snprintf(return_val, size, pl->peaceful?"":" <Hostile>");
 			break;
 
-	case 'l' :	sprintf(return_val,"%d",pl->ob->level);
+	case 'l' :	snprintf(return_val, size, "%d",pl->ob->level);
 			break;
 
-	case 'd' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
+	case 'd' :	snprintf(return_val, size, (QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
 			break;
 
-	case 'a' :	strcpy(return_val,(QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
+	case 'a' :	snprintf(return_val, size, (QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
 			break;
 
-	case 'b' :	strcpy(return_val,(pl->socket.is_bot == 1)?" <BOT>":"");
+	case 'b' :	snprintf(return_val, size, (pl->socket.is_bot == 1)?" <BOT>":"");
 			break;
 
-	case 'm' :	strcpy(return_val,pl->ob->map->path);
+	case 'm' :	snprintf(return_val, size, pl->ob->map->path);
 			break;
 
-	case 'M' :	strcpy(return_val,pl->ob->map->name?pl->ob->map->name:"Untitled");
+	case 'M' :	snprintf(return_val, size, pl->ob->map->name?pl->ob->map->name:"Untitled");
 			break;
 
-	case 'r' :	strcpy(return_val,get_name_of_region_for_map(pl->ob->map));
+	case 'r' :	snprintf(return_val, size, get_name_of_region_for_map(pl->ob->map));
 			break;
 
-	case 'R' :	strcpy(return_val,get_region_longname(get_region_by_map(pl->ob->map)));
+	case 'R' :	snprintf(return_val, size, get_region_longname(get_region_by_map(pl->ob->map)));
 			break;
 
-	case 'i' :	strcpy(return_val,pl->socket.host);
+	case 'i' :	snprintf(return_val, size, pl->socket.host);
 			break;
 
-	case '%' :	strcpy(return_val, "%");
+	case '%' :	snprintf(return_val, size, "%");
 			break;
 
-	case '_' :	strcpy(return_val, "_");
+	case '_' :	snprintf(return_val, size, "_");
 			break;
     }
 }

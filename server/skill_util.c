@@ -766,7 +766,6 @@ static int clipped_percent(sint64 a, sint64 b)
  * player wanting to examine skills.
  * @param search
  * optional string to restrict skills to show.
- * @todo use safe string functions.
  */
 void show_skills(object *op, const char* search) {
     object *tmp=NULL;
@@ -782,17 +781,17 @@ void show_skills(object *op, const char* search) {
 	if (tmp->type == SKILL) {
 		if ( search && strstr(tmp->name,search)==NULL ) continue;
 	    /* Basically want to fill this out to 40 spaces with periods */
-	    sprintf(buf,"%s%s", tmp->name, periods);
+	    snprintf(buf, sizeof(buf), "%s%s", tmp->name, periods);
 	    buf[40] = 0;
 
 	    if (settings.permanent_exp_ratio) {
-		sprintf(skills[num_skills_found++],"%slvl:%3d (xp:%" FMT64 "/%" FMT64 "/%d%%)",
+		snprintf(skills[num_skills_found++], MAX_BUF, "%slvl:%3d (xp:%" FMT64 "/%" FMT64 "/%d%%)",
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul),
 			 clipped_percent(tmp->perm_exp,tmp->stats.exp));
 	    } else {
-		sprintf(skills[num_skills_found++], "%slvl:%3d (xp:%" FMT64 "/%" FMT64 ")",
+		snprintf(skills[num_skills_found++], MAX_BUF, "%slvl:%3d (xp:%" FMT64 "/%" FMT64 ")",
 			 buf,tmp->level,
 			 tmp->stats.exp,
 			 level_exp(tmp->level+1, op->expmul));

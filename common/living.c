@@ -1563,9 +1563,6 @@ int allowed_class(const object *op) {
  * dragon's innate abilities.
  * @param skin
  * dragon's skin.
- *
- * @todo
- * use safe string functions.
  */
 void set_dragon_name(object *pl, const object *abil, const object *skin) {
     int atnr=-1;  /* attacknumber of highest level */
@@ -1595,25 +1592,25 @@ void set_dragon_name(object *pl, const object *abil, const object *skin) {
     /* now set the new title */
     if (pl->contr != NULL) {
         if(level == 0)
-            sprintf(pl->contr->title, "%s hatchling", attacks[atnr]);
+            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s hatchling", attacks[atnr]);
         else if (level == 1)
-            sprintf(pl->contr->title, "%s wyrm", attacks[atnr]);
+            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s wyrm", attacks[atnr]);
         else if (level == 2)
-            sprintf(pl->contr->title, "%s wyvern", attacks[atnr]);
+            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s wyvern", attacks[atnr]);
         else if (level == 3)
-            sprintf(pl->contr->title, "%s dragon", attacks[atnr]);
+            snprintf(pl->contr->title, sizeof(pl->contr->title), "%s dragon", attacks[atnr]);
         else {
             /* special titles for extra high resistance! */
             if (skin->resist[atnr] > 80)
-                sprintf(pl->contr->title, "legendary %s dragon", attacks[atnr]);
+                snprintf(pl->contr->title, sizeof(pl->contr->title), "legendary %s dragon", attacks[atnr]);
             else if (skin->resist[atnr] > 50)
-                sprintf(pl->contr->title, "ancient %s dragon", attacks[atnr]);
+                snprintf(pl->contr->title, sizeof(pl->contr->title), "ancient %s dragon", attacks[atnr]);
             else
-                sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
+                snprintf(pl->contr->title, sizeof(pl->contr->title), "big %s dragon", attacks[atnr]);
         }
     }
 
-    strcpy(pl->contr->own_title, "");
+    pl->contr->own_title[0] = '\0';
 }
 
 /**

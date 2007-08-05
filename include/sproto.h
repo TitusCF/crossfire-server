@@ -125,7 +125,7 @@ void current_map_info(object *op);
 int command_whereabouts(object *op, char *params);
 int command_who(object *op, char *params);
 void display_who_entry(object *op, player *pl, const char *format);
-void get_who_escape_code_value(char *return_val, const char letter, player *pl);
+void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl);
 int command_afk(object *op, char *params);
 int command_malloc(object *op, char *params);
 int command_mapinfo(object *op, char *params);
