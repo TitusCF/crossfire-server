@@ -1195,7 +1195,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
         dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     /* in server/player.c */
-    return fire_bow(head, part, NULL, dir, 0, part->x, part->y);
+    return fire_bow(head, NULL, dir, 0, part->x, part->y);
 
 }
 

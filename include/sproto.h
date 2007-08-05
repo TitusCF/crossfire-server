@@ -391,7 +391,7 @@ int key_roll_stat(object *op, char key);
 int key_change_class(object *op, char key);
 int key_confirm_quit(object *op, char key);
 int check_pick(object *op);
-int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod, sint16 sx, sint16 sy);
+int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 sy);
 void fire(object *op, int dir);
 object *find_key(object *pl, object *container, object *door);
 void move_player_attack(object *op, int dir);

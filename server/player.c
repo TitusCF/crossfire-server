@@ -1817,8 +1817,6 @@ static object *pick_arrow_target(object *op, const char *type, int dir)
  *
  * @param op
  * object firing the bow.
- * @param part
- * unused.
  * @param arrow
  * object to fire.
  * @param dir
@@ -1830,9 +1828,9 @@ static object *pick_arrow_target(object *op, const char *type, int dir)
  * coordinates to fire arrow from - also used in some of the special player fire modes.
  * @return
  * 1 if bow was actually fired, 0 otherwise.
- * @todo remove unused part. Describe player firing modes.
+ * @todo describe player firing modes.
  */
-int fire_bow(object *op, object *part, object *arrow, int dir, int wc_mod,
+int fire_bow(object *op, object *arrow, int dir, int wc_mod,
              sint16 sx, sint16 sy)
 {
     object *left, *bow;
@@ -2009,26 +2007,25 @@ static int player_fire_bow(object *op, int dir)
     int ret=0, wcmod=0;
 
     if (op->contr->bowtype == bow_bestarrow) {
-	ret = fire_bow(op, op,
-	    pick_arrow_target(op, op->contr->ranges[range_bow]->race, dir),
+	ret = fire_bow(op, pick_arrow_target(op, op->contr->ranges[range_bow]->race, dir),
 	    dir, 0, op->x, op->y);
     } else if (op->contr->bowtype >= bow_n && op->contr->bowtype <= bow_nw) {
 	if (!similar_direction(dir, op->contr->bowtype - bow_n + 1))
 	    wcmod =-1;
-	ret = fire_bow(op, op, NULL, op->contr->bowtype - bow_n + 1, wcmod,
+	ret = fire_bow(op, NULL, op->contr->bowtype - bow_n + 1, wcmod,
 	    op->x, op->y);
     } else if (op->contr->bowtype == bow_threewide) {
-	ret = fire_bow(op, op, NULL, dir, 0, op->x, op->y);
-	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir+2)], op->y + freearr_y[absdir(dir+2)]);
-	ret |= fire_bow(op, op, NULL, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-2)]);
+	ret = fire_bow(op, NULL, dir, 0, op->x, op->y);
+	ret |= fire_bow(op, NULL, dir, -5, op->x + freearr_x[absdir(dir+2)], op->y + freearr_y[absdir(dir+2)]);
+	ret |= fire_bow(op, NULL, dir, -5, op->x + freearr_x[absdir(dir-2)], op->y + freearr_y[absdir(dir-2)]);
     } else if (op->contr->bowtype == bow_spreadshot) {
-	ret |= fire_bow(op, op, NULL, dir, 0, op->x, op->y);
-	ret |= fire_bow(op, op, NULL, absdir(dir-1), -5, op->x, op->y);
-	ret |= fire_bow(op, op, NULL, absdir(dir+1), -5, op->x, op->y);
+	ret |= fire_bow(op, NULL, dir, 0, op->x, op->y);
+	ret |= fire_bow(op, NULL, absdir(dir-1), -5, op->x, op->y);
+	ret |= fire_bow(op, NULL, absdir(dir+1), -5, op->x, op->y);
 
     } else {
 	/* Simple case */
-	ret = fire_bow(op, op, NULL, dir, 0, op->x, op->y);
+	ret = fire_bow(op, NULL, dir, 0, op->x, op->y);
     }
     return ret;
 }
