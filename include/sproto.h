@@ -358,7 +358,7 @@ void register_move_on(int ob_type, move_on_func method);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
-void remove_all_pets(mapstruct *map);
+void remove_all_pets();
 void follow_owner(object *ob, object *owner);
 void pet_move(object *ob);
 void move_golem(object *op);

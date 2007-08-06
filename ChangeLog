@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove useless parameter.
+ include/sproto.h
+ server/pets.c server.c swap.c
+Nicolas Weeger 2007-08-06
+
 Rename remove_door2() to remove_locked_door().
  include/sproto.h
  server/player.c time.c

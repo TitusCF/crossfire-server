@@ -262,12 +262,8 @@ void terminate_all_pets(object *owner) {
  * process of entering a new map when this is called.
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
- *
- * @param map
- * unused.
- * @todo remove useless parameter.
  */
-void remove_all_pets(mapstruct *map) {
+void remove_all_pets() {
   objectlink *obl, *next;
   object *owner;
 
