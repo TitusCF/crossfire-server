@@ -43,7 +43,7 @@
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
  *
- * @sa remove_door2().
+ * @sa remove_locked_door().
  *
  * @param op
  * door to remove.
@@ -73,9 +73,8 @@ void remove_door(object *op) {
  *
  * @param op
  * door to remove.
- * @todo rename to something more meaningful.
  */
-void remove_door2(object *op) {
+void remove_locked_door(object *op) {
   int i;
   object *tmp;
   for(i=1;i<9;i+=2) {

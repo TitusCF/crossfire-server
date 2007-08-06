@@ -2300,7 +2300,7 @@ static int player_attack_door(object *op, object *door)
 				 "You open the door with the %s",
 				 "You open the door with the %s",
 				 name);
-	    remove_door2(door); /* remove door without violence ;-) */
+	    remove_locked_door(door); /* remove door without violence ;-) */
 	}
 	/* Do this after we print the message */
 	decrease_ob(key); /* Use up one of the keys */

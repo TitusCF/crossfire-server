@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Rename remove_door2() to remove_locked_door().
+ include/sproto.h
+ server/player.c time.c
+ types/legacy/process.c
+Nicolas Weeger 2007-08-06
+
 Documentation, no functional change.
  doc/Developers/login.dox: new file.
  doc/Developers/mainpage.dox

@@ -636,7 +636,7 @@ int players_on_map(mapstruct *m, int show_all);
 void flush_old_maps(void);
 /* time.c */
 void remove_door(object *op);
-void remove_door2(object *op);
+void remove_locked_door(object *op);
 object *stop_item(object *op);
 void fix_stopped_item(object *op, mapstruct *map, object *originator);
 object *fix_stopped_arrow(object *op);

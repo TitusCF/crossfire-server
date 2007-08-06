@@ -63,7 +63,7 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             return 0;
 
         case LOCKED_DOOR:
-            remove_door2(op);
+            remove_locked_door(op);
             return 0;
 
         case TELEPORTER:
