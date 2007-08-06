@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Documentation, no functional change.
+ doc/Developers/login.dox: new file.
+ doc/Developers/mainpage.dox
+ include/define.h player.h
+ socket/init.c
+Nicolas Weeger 2007-08-06
+
 Various fixes.
  server/c_misc.c: display information for weather even if turned off.
  server/commands.c: make 'archs' a wizard command.

@@ -779,7 +779,9 @@ typedef unsigned char	MoveType;
 
 /**
  * @defgroup ST_xxx Player state.
- * Use of the state-variable in player objects:
+ * Use of the state-variable in player objects.
+ *
+ * See the @ref page_connection "login process" page.
  */
 /*@{*/
 #define ST_PLAYING                  0   /**< Usual state. */

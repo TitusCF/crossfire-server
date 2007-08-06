@@ -13,6 +13,7 @@ Here is a list of topics:
 - @ref page_archetype
 - @ref page_artifact
 - @ref page_player
+- @ref page_connection
 - @ref page_timers, or how to trigger events after some delay
 - @ref page_connected, that is buttons, triggers, ...
 - @ref page_various

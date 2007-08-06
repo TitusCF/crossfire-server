@@ -60,7 +60,12 @@
 #include <newserver.h>
 #include <loader.h>
 
+/** Socket information. */
 Socket_Info socket_info;
+/**
+ * Established connections for clients not yet playing.  See the page on
+ * @ref page_connection "the login process" for a description of its use.
+ */
 socket_struct* init_sockets;
 
 /**

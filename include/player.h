@@ -146,7 +146,8 @@ typedef enum party_rejoin_mode {
 /** One player. */
 typedef struct pl {
     struct pl	*next;		    /**< Pointer to next player, NULL if this is last. */
-    socket_struct	socket;		    /**< Socket information for this player. */
+    socket_struct	socket; /**< Socket information for this player.  See the page on
+                             * @ref page_connection "the login process" for a description of its use. */
     char	maplevel[MAX_BUF];  /**< On which level is the player? */
     char	savebed_map[MAX_BUF];  /**< Map where player will respawn after death. */
     sint16	bed_x, bed_y;	    /**< x,y - coordinates of respawn (savebed). */
@@ -169,7 +170,8 @@ typedef struct pl {
     sint16	gen_sp_armour;	    /**< Penalty to sp regen from armour. */
     sint16	gen_grace;	    /**< Bonuses to regeneration speed of grace. */
     sint16	item_power;	    /**< Total item power of objects equipped. */
-    uint8	state;		    /**< Input state of the player (name, password, etc.) @todo document. */
+    uint8	state;		    /**< Input state of the player (name, password, etc). See the page on
+                             * @ref page_connection "the login process" for a description of its use. */
     uint8	listening;	    /**< Which priority will be used in info_all. */
     sint8	last_level;	    /**< Last level we sent to client. */
 
