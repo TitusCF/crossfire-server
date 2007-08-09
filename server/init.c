@@ -871,6 +871,7 @@ void init(int argc, char **argv) {
     init_beforeplay();
     init_ericserver();
     metaserver_init();
+    metaserver2_init();
     reset_sleep();
     init_done=1;
 }

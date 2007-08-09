@@ -15,6 +15,19 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Server support for Metaserver2:
+acinclude.m4: Add LIBCURL_CHECK_CONFIG macro, used by configure.
+configure.ac: Add check for pthread, LIBCURL.  Extra
+  logic to display if we will build with metaserver2 support
+lib/Makefile.am: add metaserver2 to list of files to install.
+lib/metaserver2: Settings file for metaserver2 support.
+server/init.c: Add call to metaserver2_init() during startup.
+include/metaserver2.h: Header file include metaserver2 related data.
+include/autoconf.h.in: Rebuilt
+include/sockproto.h: Rebuilt with new metaserver2 functions.
+socket/metaserver.c: metaserver2 update logic added.
+MSW 2007-08-08
+
 Remove useless parameter.
  include/sproto.h
  server/pets.c server.c swap.c

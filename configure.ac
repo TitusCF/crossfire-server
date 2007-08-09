@@ -100,6 +100,12 @@ AC_CHECK_LIB(crypt, main)
 AC_CHECK_LIB(des, des_crypt)
 
 AC_CHECK_LIB(z, compress)
+AC_CHECK_LIB(pthread, pthread_create)
+LIBCURL_CHECK_CONFIG()
+
+
+LIBS="$LIBS $LIBCURL"
+CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
 dnl Gros - Changed this to support some external programs that do not like dmalloc (like Python).
 dnl If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
@@ -113,8 +119,7 @@ fi
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h zlib.h)
-
+AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h zlib.h pthread.h curl/curl.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -283,6 +288,7 @@ AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Build options])
 AC_MSG_NOTICE([])
+AC_MSG_NOTICE([    Will build metasever2 support?       $ac_cv_header_curl_curl_h])
 AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
 
 if test x"$cf_have_libsqlite" = "xyes" ; then

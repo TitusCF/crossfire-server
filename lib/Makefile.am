@@ -31,7 +31,7 @@ dist_pkgdata_DATA = artifacts def_help formulae  messages races smooth\
 	animations archetypes  bmaps bmaps.paths crossfire.0 \
 	crossfire.1 faces attackmess image_info materials
 
-CONF_FILES = settings motd dm_file forbid ban_file exp_table news rules
+CONF_FILES = settings metaserver2 motd dm_file forbid ban_file exp_table news rules
 VAR_FILES = highscore banish_file bookarch temp.maps clockdata
 EXTRA_DIST = README .collect-stamp $(CONF_FILES) treasures treasures.bld
 
