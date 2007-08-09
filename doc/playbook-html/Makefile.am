@@ -27,7 +27,7 @@ HTML = gods.html appC.html stats.gif potion.html flesh.html food.html rings.html
 HANDBOOK = handbook.html chap1.html chap2.html chap3.html chap4.html chap5.html chap6.html appC.html
 
 CLEANFILES = items .bmaps in_monput in_items in_spells in_stats in_equip \
-	*x*.ppm tmp.ppm work.ppm in_char items *.gif $(HTML)
+	*x*.ppm tmp.ppm work.ppm in_char items *.png $(HTML)
 
 CROSSBIN = ../../server/crossfire-server
 INCDIR = $(top_srcdir)/include

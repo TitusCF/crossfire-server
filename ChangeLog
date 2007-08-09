@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+doc/playbook-html/Makefile.am,doc/spoiler-html/Makefile.am:  Update the
+  clean directive to remove the png files, since that is what is now
+  used, and not gif files.
+MSW 2007-08-08
+
 Server support for Metaserver2:
 acinclude.m4: Add LIBCURL_CHECK_CONFIG macro, used by configure.
 configure.ac: Add check for pthread, LIBCURL.  Extra
