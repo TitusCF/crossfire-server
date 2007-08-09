@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+doc/Developers/map.dox: add some real content.
+Nicolas Weeger 2007-08-09
+
 doc/playbook-html/Makefile.am,doc/spoiler-html/Makefile.am:  Update the
   clean directive to remove the png files, since that is what is now
   used, and not gif files.
