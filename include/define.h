@@ -713,7 +713,7 @@ typedef unsigned char	MoveType;
 #define WEAPON_SPEED(xyz)	(xyz)->last_sp
 
 /**
-/* @defgroup MONSTER_MOVEMENT Monster movements
+ * @defgroup MONSTER_MOVEMENT Monster movements
  * @author kholland@sunlab.cit.cornell.edu
  *
  * if your monsters start acting wierd, mail me.
