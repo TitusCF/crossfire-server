@@ -1775,30 +1775,35 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
  * @param op
  * object to save.
  * @param flag
- * Combination of @ref SAVE_FLAG_xxx flags.
+ * combination of @ref SAVE_FLAG_xxx "SAVE_FLAG_xxx" flags.
+ * @return
+ * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" values.
  */
-void save_object(FILE *fp,object *op, int flag) {
+int save_object(FILE *fp,object *op, int flag) {
     archetype *at;
     char cp[HUGE_BUF];
-    object *tmp,*old;
+    object *tmp;
+    int res;
 
     /* Even if the object does have an owner, it would seem that we should
      * still save it.
      */
     if(op->owner!=NULL || fp == NULL)
-        return;
+        return SAVE_ERROR_OK;
 
     /* If it is unpaid and we don't want to save those, just return. */
     if(!(flag & SAVE_FLAG_SAVE_UNPAID) && (QUERY_FLAG(op, FLAG_UNPAID))) {
-        return;
+        return SAVE_ERROR_OK;
     }
 
     /* If the object has no_save set, just return */
     if(op->no_save)
-        return;
+        return SAVE_ERROR_OK;
 
-    if((at=op->arch)==NULL) at=empty_archetype;
-    fprintf(fp,"arch %s\n",at->name);
+    if((at=op->arch)==NULL)
+        at=empty_archetype;
+    if (fprintf(fp,"arch %s\n",at->name) < 0)
+        return SAVE_ERROR_WRITE;
 
     if (op->arch->reference_count > 0) {
         /* The object is a custom item/monster, so we handle its save differently.
@@ -1827,34 +1832,17 @@ void save_object(FILE *fp,object *op, int flag) {
         get_ob_diff(op,&at->clone, cp, HUGE_BUF);
 
     if (cp!=NULL)
-        fputs(cp,fp);	/* We really should do some status checking on this */
+        if (fputs(cp,fp) == EOF)
+            return SAVE_ERROR_WRITE;
 
     /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
 
-    old=NULL;
+    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+        if ((res = save_object(fp,tmp,flag)) != 0)
+            return res;
 
-    if (flag & SAVE_FLAG_NO_REMOVE)
-        for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-            save_object(fp,tmp,flag);
+    if (fprintf(fp,"end\n") < 0)
+        return SAVE_ERROR_WRITE;
 
-    /* Slightly different logic because tmp/op will be removed by
-     * the save_object we call.  So we just keep looking at op->inv
-     * until there is nothing left.  In theory, the variable old
-     * should not be needed, as recursive loops shouldn't happen.
-     */
-    else while ((tmp=op->inv)!=NULL) {
-        if(old==tmp) {
-            LOG(llevError," Recursive loop in inventory\n");
-            break;
-        }
-        save_object(fp,tmp,flag);
-        old=tmp;
-    }
-
-    if (!(flag & SAVE_FLAG_NO_REMOVE)) {
-        remove_ob(op);
-        free_object (op);
-    }
-
-    fprintf(fp,"end\n");
+    return SAVE_ERROR_OK;
 }

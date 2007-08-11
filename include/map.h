@@ -163,6 +163,22 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define MAP_SAVING      4   /**< Map being saved. Will stop remove_ob() from some processing. */
 /*@}*/
 
+/**
+ * @defgroup SAVE_ERROR_xxx Save error values
+ * Those values are returned by save_map(), save_object() and save_objects().
+ *
+ * Values under -10 are returned by swap_map() only.
+ */
+/*@{*/
+#define SAVE_ERROR_OK                0   /**< No error. */
+#define SAVE_ERROR_RCREATION        -1  /**< Couldn't create the regular save file. */
+#define SAVE_ERROR_UCREATION        -2  /**< Couldn't create the file for unique objects. */
+#define SAVE_ERROR_WRITE            -3  /**< Write error. */
+#define SAVE_ERROR_NO_PATH          -4  /**< Map had no path set. */
+#define SAVE_ERROR_NOT_IN_MEMORY    -10 /**< Map to swap isn't in memory. */
+#define SAVE_ERROR_PLAYER           -11 /**< Player on map to save. */
+/*@}*/
+
 /* GET_MAP_FLAGS really shouldn't be used very often - get_map_flags should
  * really be used, as it is multi tile aware.  However, there are some cases
  * where it is known the map is not tiled or the values are known

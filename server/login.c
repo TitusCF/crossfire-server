@@ -349,13 +349,13 @@ int save_player(object *op, int flag) {
   /* Save objects, but not unpaid objects.  Don't remove objects from
    * inventory.
    */
-  save_object(fp, op, 2);
+  save_object(fp, op, SAVE_FLAG_NO_REMOVE);
   if (flag) {
     op->x = backup_x;
     op->y = backup_y;
   }
 #else
-  save_object(fp, op, 3); /* don't check and don't remove */
+  save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE); /* don't check and don't remove */
 #endif
 
   CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

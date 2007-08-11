@@ -416,15 +416,12 @@ int command_overlay_save(object *op, char *params) {
         return 1;
     }
 
-    save_map(op->map, SAVE_MODE_OVERLAY);
-    /* No need to save again the map and reset it. Overlay saving is non destructive.
-     * save_map(op->map, 0);
-     * This fixes bug #1553636 (Crashbug: reset/swaped map after use of "overlay_save")
-     * Ryo 2006-10-22 */
+    if (save_map(op->map, SAVE_MODE_OVERLAY) < 0)
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-		  "Current map has been saved as an overlay.", NULL);
-
-    /*ready_map_name(op->map->path, 0);*/
+        "Overlay save error!", NULL);
+    else
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        "Current map has been saved as an overlay.", NULL);
 
     return 1;
 }
@@ -1673,7 +1670,8 @@ int command_abil(object *op, char *params) {
 int command_reset (object *op, char *params) {
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
-	char path[HUGE_BUF];
+    char path[HUGE_BUF];
+    int res = 0;
 
     if (params == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1738,11 +1736,10 @@ int command_reset (object *op, char *params) {
             op->map = NULL;
             tmp = op;
         }
-        /* swap_map can totally remove the map in some cases. */
-        m = swap_map(m);
+        res = swap_map(m);
     }
 
-    if (m && m->in_memory != MAP_SWAPPED) {
+    if (res < 0 || m->in_memory != MAP_SWAPPED) {
         player *pl;
         int playercount = 0;
 
@@ -1751,6 +1748,10 @@ int command_reset (object *op, char *params) {
             insert_ob_in_map(op, m, NULL, 0);
             free_object(dummy);
         }
+
+        if (res < 0)
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "Reset failed, error code: %d.", NULL, res);
 
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
             "Reset failed, couldn't swap map, the following players are on it:",

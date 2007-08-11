@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Don't delete (partial) map from memory in case of save error, warn DMs.
+ include/libproto.h map.h sproto.h
+ common/loader.l map.c
+ server/c_wiz.c login.c swap.c
+Nicolas Weeger 2007-08-11
+
 Add new NDI_ALL_DMS to send a message to all connected DMs. Used in case of errors.
  include/newclient.h
  socket/info.c

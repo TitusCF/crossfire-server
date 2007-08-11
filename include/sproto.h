@@ -629,7 +629,7 @@ void store_spell_expiry(object *spell);
 void check_spell_expiry(object *spell);
 /* swap.c */
 void read_map_log(void);
-mapstruct *swap_map(mapstruct *map);
+int swap_map(mapstruct *map);
 void check_active_maps(void);
 void swap_below_max(char *except_level);
 int players_on_map(mapstruct *m, int show_all);

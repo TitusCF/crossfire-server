@@ -140,65 +140,65 @@ void read_map_log(void)
 /**
  * Swaps a map to disk.
  *
- * After calling this function, the map will be either swapped to disk, or
- * totally removed.
+ * After calling this function, the map will be:
+ * - swapped to disk
+ * - kept in memory in case of save error
  *
  * @param map
  * map to swap.
  * @return
- * map if swap failed or map was written to disk, NULL if map was totally deleted.
+ * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx".
  */
-mapstruct* swap_map(mapstruct *map) {
+int swap_map(mapstruct *map) {
     player *pl;
+    int res;
 
     if(map->in_memory != MAP_IN_MEMORY) {
-	LOG(llevError,"Tried to swap out map which was not in memory.\n");
-	return map;
+        LOG(llevError,"Tried to swap out map which was not in memory.\n");
+        return SAVE_ERROR_NOT_IN_MEMORY;
     }
     for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
-	    break;
+        if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
+            break;
 
     if(pl != NULL) {
-	LOG(llevDebug,"Wanted to swap out map with player.\n");
-	return map;
+        LOG(llevDebug,"Wanted to swap out map with player.\n");
+        return SAVE_ERROR_PLAYER;
     }
     remove_all_pets(); /* Give them a chance to follow */
 
     /* Update the reset time.  Only do this is STAND_STILL is not set */
     if (!map->fixed_resettime)
-	set_map_reset_time(map);
+        set_map_reset_time(map);
 
     /* If it is immediate reset time, don't bother saving it - just get
      * rid of it right away.
      */
     if (map->reset_time <= seconds()) {
-	mapstruct *oldmap = map;
+        mapstruct *oldmap = map;
 
-	LOG(llevDebug,"Resetting map %s.\n",map->path);
+        LOG(llevDebug,"Resetting map %s.\n",map->path);
         /* Lauwenmark : Here we handle the MAPRESET global event */
         execute_global_event(EVENT_MAPRESET, map);
-	map = map->next;
-	delete_map(oldmap);
-	return NULL;
+        map = map->next;
+        delete_map(oldmap);
+        return SAVE_ERROR_OK;
     }
 
-    if (save_map (map, SAVE_MODE_NORMAL) == -1) {
-	LOG(llevError, "Failed to swap map %s.\n", map->path);
-	/* need to reset the in_memory flag so that delete map will also
-	 * free the objects with it.
-	 */
-	map->in_memory = MAP_IN_MEMORY;
-	delete_map(map);
-    map = NULL;
-    } else {
-	free_map(map,1);
+    if ((res = save_map (map, SAVE_MODE_NORMAL)) < 0) {
+        LOG(llevError, "Failed to swap map %s.\n", map->path);
+        /* This is sufficiently critical to mandate to warn all DMs. */
+        draw_ext_info_format(NDI_ALL_DMS | NDI_UNIQUE | NDI_RED, -1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+            "Failed to swap map %s!", NULL, map->path);
+        return res;
     }
+
+    free_map(map,1);
 
     if (settings.recycle_tmp_maps == TRUE)
         write_map_log();
 
-    return map;
+    return SAVE_ERROR_OK;
 }
 
 /**
