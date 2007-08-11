@@ -1687,10 +1687,9 @@ static object *find_arrow(object *op, const char *type)
  * @param type
  * arrow race to search for.
  * @param[out] better
- * will contain the arrow's value.
+ * will contain the arrow's value if not NULL.
  * @return
  * suitable arrow, NULL if none found.
- * @todo remove unused better parameter.
  */
 static object *find_better_arrow(object *op, object *target, const char *type, int *better)
 {
@@ -1714,7 +1713,8 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
 	    if (target->race != NULL && arrow->slaying != NULL &&
 		strstr(arrow->slaying, target->race)) {
 		if (arrow->attacktype & AT_DEATH) {
-		    *better = 100;
+            if (better)
+		      *better = 100;
 		    return arrow;
 		} else {
 		    tmp = arrow;
@@ -1743,7 +1743,8 @@ static object *find_better_arrow(object *op, object *target, const char *type, i
     if (tmp == NULL && arrow == NULL)
 	return find_arrow(op, type);
 
-    *better = betterby;
+    if (better)
+        *better = betterby;
     return tmp;
 }
 
@@ -1809,7 +1810,7 @@ static object *pick_arrow_target(object *op, const char *type, int dir)
     if (tmp->head)
 	tmp = tmp->head;
 
-    return find_better_arrow(op, tmp, type, &i);
+    return find_better_arrow(op, tmp, type, NULL);
 }
 
 /**
