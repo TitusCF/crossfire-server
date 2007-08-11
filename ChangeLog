@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add new NDI_ALL_DMS to send a message to all connected DMs. Used in case of errors.
+ include/newclient.h
+ socket/info.c
+Nicolas Weeger 2007-08-11
+
 server/player.c: fix find_better_arrow() comment, allow parameter to be NULL.
 Nicolas Weeger 2007-08-11
 

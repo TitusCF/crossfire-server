@@ -231,6 +231,7 @@
 
 #define NDI_UNIQUE	0x100	/**< Print this out immediately, don't buffer. */
 #define NDI_ALL		0x200	/**< Inform all players of this message. */
+#define NDI_ALL_DMS 0x400   /**< Inform all logged in DMs. Used in case of errors. Overrides NDI_ALL. */
 /*@}*/
 
 /** Flags for the item command */

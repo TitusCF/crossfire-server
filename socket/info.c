@@ -207,14 +207,17 @@ void draw_ext_info(
         uint8 subtype, const char* message, const char* oldmessage){
 
 
-    if (flags & NDI_ALL) {
-	player	*tmppl;
+    if ((flags & NDI_ALL) || (flags & NDI_ALL_DMS)) {
+        player *tmppl;
 
-	for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next)
-		draw_ext_info((flags & ~NDI_ALL), pri, tmppl->ob, type, subtype,
-			      message, oldmessage);
+        for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next) {
+            if ((flags & NDI_ALL_DMS) && !QUERY_FLAG(tmppl->ob, FLAG_WIZ))
+                continue;
+            draw_ext_info((flags & ~NDI_ALL & ~NDI_ALL_DMS), pri, tmppl->ob, type, subtype,
+                message, oldmessage);
+        }
 
-	return;
+        return;
     }
 
     if(!pl || (pl->type==PLAYER && pl->contr==NULL)) {
