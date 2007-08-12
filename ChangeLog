@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Save maps into a .savefile first, then rename if success. Flush files.
+This should fix bug #1542893: Full disk destroys player's apartment.
+ common/map.c
+ include/map.h
+ server/c_wiz.c swap.c
+Nicolas Weeger 2007-08-12
+
 Don't delete (partial) map from memory in case of save error, warn DMs.
  include/libproto.h map.h sproto.h
  common/loader.l map.c

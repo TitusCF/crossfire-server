@@ -175,6 +175,9 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define SAVE_ERROR_UCREATION        -2  /**< Couldn't create the file for unique objects. */
 #define SAVE_ERROR_WRITE            -3  /**< Write error. */
 #define SAVE_ERROR_NO_PATH          -4  /**< Map had no path set. */
+#define SAVE_ERROR_URENAME          -5  /**< Couldn't rename unique temporary file. */
+#define SAVE_ERROR_CLOSE            -6  /**< Close error for regular file. */
+#define SAVE_ERROR_RRENAME          -7  /**< Couldn't rename regular temporary file. */
 #define SAVE_ERROR_NOT_IN_MEMORY    -10 /**< Map to swap isn't in memory. */
 #define SAVE_ERROR_PLAYER           -11 /**< Player on map to save. */
 /*@}*/

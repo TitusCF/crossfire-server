@@ -1750,7 +1750,7 @@ int command_reset (object *op, char *params) {
         }
 
         if (res < 0)
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info_format(NDI_UNIQUE | NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                 "Reset failed, error code: %d.", NULL, res);
 
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
