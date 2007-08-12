@@ -17,12 +17,14 @@ map-technical: Technical aspect of maps - fields in the map header (and
 mapguide: Do's and Don'ts when making new maps.
 objects: Explains the different fields/values for the objects, as well as
   breakdowns for a some specific objects (was crossfire.doc)
-plugins: Describes technical information, and the various events that plugins
+plugins: information on plugins, not as up to date as plugins.ps.
+plugins.ps: Describes technical information, and the various events that plugins
  can be connected to.
 programming_guide: Hints, style guide, and directions for coders as well
   as information on sending in patches.
 protocol: Describes the client/server protocol.
-python: Contains the crossfire python extensions usable by the plugins.
+python: python documentation, not up to date (see python.ps).
+python.ps: Contains the crossfire python extensions usable by the plugins.
 quests: How to manage player quests. Technical implementation details.
 random-maps: How to use and options for randomly generated maps.
 random-styles: Description of the various style maps used with the random maps.

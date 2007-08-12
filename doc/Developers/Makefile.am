@@ -21,6 +21,6 @@
 #   The author can be reached via e-mail to mwedel@scruz.net
 
 EXTRA_DIST = README cvs images key-value map-technical mapguide \
-	objects plugins programming_guide protocol python \
+	objects plugins plugins.ps programming_guide protocol python python.ps \
 	random-maps random-styles runes skills spells teleporters testplans
 

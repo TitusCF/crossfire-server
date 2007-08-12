@@ -1,3 +1,8 @@
+An enhanced version of this documentation is in the plugins.ps file (PostScript format).
+
+The latest version can be found at http://wiki.metalforge.net/doku.php/server_plugin
+
+
 Plugin support
 ==============
 
@@ -21,6 +26,10 @@ provided by plugin_common.c.
 Important: a plugin should *never* directly call malloc, free, or any function
 manipulating memory if the memory needs to be given to server. This breaks Windows
 compatibility. Hooks are provided in case of need.
+
+
+The technical documentation is in Developers/plugins.ps, and Developers/cfpython.ps
+for Python plugin.
 
 List of supported events.
 =========================

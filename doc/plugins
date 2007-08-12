@@ -18,7 +18,7 @@ the Python plugin, you need to do 'plugout Python'.
 plugin <libname>
 
 Loads a given plugin, whose _filename_ is libname. So in the case of Python,
-you'd have to do a 'plugin plugin_python.so.0.1'. Note that all filenames are
+you'd have to do a 'plugin cfpython.so'. Note that all filenames are
 relative to the default plugin path (SHARE/plugins).
 
 Console messages.
@@ -30,19 +30,17 @@ has the opportunity to signal itself by a message on the console. Then the
 server displays an informative message containing both the plugin content and
 its keyword. For the Python plugin, the standard load process thus gives:
 
-Initializing plugins :
- -> Loading plugin : plugin_python.so
-    Plugin CFPython Plugin 0.7 (Koursk) loaded under the name of Python
-Done
+[Info]    Initializing plugins
+[Info]    Plugins directory is /usr/games/crossfire/lib/crossfire/plugins/
+[Info]     -> Loading plugin : cfpython.so
+[Debug]   CFPython 2.0a init
+[Debug]   CFPython 2.0a post init
+Running python initialize script.
+Updating Guilds
+['GUILD_TEMPLATE', 'PoisonedDagger', 'GreenGoblin']
 
 When a plugin has been loaded, it can request to be warned whenever a global
-event occurs (global events are 'shout', 'login', 'death', and so on). When a
-plugin makes such a request, a message is displayed in the console log:
-
-Plugin Python (0) registered the event 13
-
-It simply tells that the plugin associated with the keyword 'Python' asked to
-be warned whenever the global event Nr. 13 ('New player born') occurs. A
+event occurs (global events are 'shout', 'login', 'death', and so on). A
 complete list of events is available in the include/plugin.h file.
 
 Specific notes related to the Python plugin.
@@ -51,9 +49,9 @@ The Python plugin supports all global events. The constant PYTHON_DEBUG
 defined at the start of the plugin_python.c file increases the verbosity of
 the plugin.
 
-Global event scripts go into SHARE/maps/python/events, and are named
-python_xxx.py, where xxx is the name of the global event to intercept. If the
-file doesn't exist, nothing will happen.
+Global event scripts go into SHARE/maps/python/events/<event name>, and are named
+freely by the developer. If the directory doesn't exist, nothing will happen.
+<event name> can be 'init', 'login', ... (the right part of the EVENT_xxx defines).
 
 Some problems have already been reported about the autodetection of the Python
 libraries. Don't forget that you need the development files of Python (it

@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix plugin documentation, add some .ps version made from the wiki.
+This fixes bug #1537236: cfpython 2.0 - documentation missing.
+ doc/plugins
+ doc/Developers/Makefile.am plugins python README
+Added files:
+ doc/Developers/plugins.ps python.ps
+Nicolas Weeger 2007-08-12
+
 Save maps into a .savefile first, then rename if success. Flush files.
 This should fix bug #1542893: Full disk destroys player's apartment.
  common/map.c
