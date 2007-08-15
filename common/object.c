@@ -1476,8 +1476,25 @@ void remove_ob(object *op) {
         else
         sub_weight(op->env, op->weight+op->carrying);
 
+        /* Update in two cases: item is in a player, or in a container the player is looking into. */
         if (op->env->contr != NULL && op->head == NULL)
             esrv_del_item(op->env->contr, op->count);
+        else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
+            player* pl = NULL;
+            if (op->env->env && op->env->env->contr)
+                /* Container is in player's inventory. */
+                pl = op->env->env->contr;
+            else if (op->env->map) {
+                /* Container on map, look above for player. */
+                object* above = op->env->above;
+                while (above && !above->contr)
+                    above = above->above;
+                if (above)
+                    pl = above->contr;
+            }
+            if (pl)
+                esrv_del_item(pl, op->count);
+        }
 
         /* NO_FIX_PLAYER is set when a great many changes are being
          * made to players inventory.  If set, avoiding the call
@@ -2404,8 +2421,26 @@ object *insert_ob_in_ob(object *op,object *where) {
         where->inv = op;
     }
 
+    /* Update in 2 cases: object goes into player's inventory, or object goes into container the player
+     * is looking into. */
     if (where->contr != NULL)
         esrv_send_item(where, op);
+    else if (where->type == CONTAINER && QUERY_FLAG(where, FLAG_APPLIED)) {
+        object* pl = NULL;
+        if (op->env->env && op->env->env->contr)
+            /* Container is in player's inventory. */
+            pl = op->env->env;
+        else if (op->env->map) {
+            /* Container on map, look above for player. */
+            object* above = op->env->above;
+            while (above && !above->contr)
+                above = above->above;
+            if (above)
+                pl = above;
+        }
+        if (pl)
+            esrv_send_item(pl, op);
+    }
 
     otmp=get_player_container(where);
     if (otmp&&otmp->contr!=NULL) {
