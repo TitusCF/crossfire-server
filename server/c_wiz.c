@@ -404,24 +404,17 @@ int command_kick(object *op, const char *params) {
  * ignored.
  * @return
  * 1 unless op is NULL.
- * @todo remove useless DM checks, since command is in the DM command array.
  */
 int command_overlay_save(object *op, char *params) {
     if (!op)
         return 0;
 
-    if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-            "Sorry, you can't force an overlay save.", NULL);
-        return 1;
-    }
-
     if (save_map(op->map, SAVE_MODE_OVERLAY) < 0)
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-        "Overlay save error!", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+          "Overlay save error!", NULL);
     else
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-        "Current map has been saved as an overlay.", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+          "Current map has been saved as an overlay.", NULL);
 
     return 1;
 }
@@ -512,15 +505,8 @@ int command_toggle_shout(object *op, char *params) {
  * ignored.
  * @return
  * 1.
- * @todo remove test for dm, command is in WizCommands.
  */
 int command_shutdown(object *op, char *params) {
-    if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "Sorry, you can't shutdown the server.", NULL);
-        return 1;
-    }
-
     /*
      * We need to give op - command_kick expects it.  however, this means
      * the op won't get kicked off, so we do it ourselves
@@ -1949,11 +1935,8 @@ int do_wizard_dm(object *op, char *params, int silent) {
  * password.
  * @return
  * 0 unless op isn't a player.
- * @todo remove useless test, op->contr should be always non NULL.
  */
 int command_dm(object *op, char *params) {
-    if (!op->contr)
-        return 0;
 
     do_wizard_dm(op, params, 0);
 

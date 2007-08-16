@@ -342,12 +342,12 @@ extern MODULEAPI CFParm* registerHook(CFParm* PParm);
 extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
 */
 
-/** One function the server exposes to plugins. @todo make fname const. */
+/** One function the server exposes to plugins. */
 typedef struct _hook_entry
 {
-    f_plug_api func;    /**< Function itself. */
-    int fid;            /**< Function identifier. */
-    char fname[256];    /**< Function name. */
+    f_plug_api func;        /**< Function itself. */
+    int fid;                /**< Function identifier. */
+    const char fname[256];  /**< Function name. */
 } hook_entry;
 
 #endif /* PLUGIN_H */

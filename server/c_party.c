@@ -287,13 +287,15 @@ void send_party_message(object *op,char *msg)
  * message.
  * @return
  * 0.
- * @todo message when params is empty.
  */
 int command_gsay(object *op, char *params)
 {
   char party_params[MAX_BUF];
 
-  if (!params) return 0;
+  if (!params) {
+      draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR, "Say what?", NULL);
+      return 0;
+  }
   strcpy(party_params, "say ");
   strcat(party_params,params);
   command_party(op,party_params);

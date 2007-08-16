@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Various small fixes.
+ common/exp.c: fix comment.
+ include/plugin.h: make fname const char*.
+ server/c_party.c: say something if no parameter to gsay.
+ server/c_wiz.c: remove some useless tests.
+ server/init.c: make get_racelink() abort() if memory failure.
+Nicolas Weeger 2007-08-16
+
 Fix spurious function replace_insert_ob_in_map(), document it.
 Implement unit test for that.
  common/object.c

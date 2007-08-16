@@ -1349,14 +1349,17 @@ static void add_to_racelist(const char *race_name, object *op) {
 /**
  * Create a new ::racelink structure.
  *
+ * @note
+ * will call fatal() in case of memory allocation failure.
  * @return
  * empty structure.
- * @todo fatal() in case malloc() fails.
  */
 static racelink * get_racelist(void) {
   racelink *list;
 
   list = (racelink *) malloc(sizeof(racelink ));
+  if (!list)
+      fatal(OUT_OF_MEMORY);
   list->name=NULL;
   list->nrof=0;
   list->member=get_objectlink();

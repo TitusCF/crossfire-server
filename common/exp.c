@@ -163,7 +163,6 @@ int has_ability(const object *ob) {
  *
  * @note
  * will call exit() if file is invalid.
-  @todo should probably call fatal() instead of exit()
  */
 void init_experience(void)
 {
