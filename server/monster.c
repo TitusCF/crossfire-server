@@ -1305,8 +1305,6 @@ static int check_good_armour(object *who, object *item) {
  *
  * @param monster
  * monster that can pick up items.
- * @todo
- * check tmp->next, shouldn't it be tmp->below?
  */
 
 static void monster_check_pickup(object *monster) {
