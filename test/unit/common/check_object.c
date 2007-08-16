@@ -703,7 +703,30 @@ END_TEST
  */
 START_TEST (test_insert_ob_in_map_at)
 {
-    /*TESTME*/
+    mapstruct* map;
+    object* first = NULL;
+    object* got = NULL;
+
+    map = get_empty_map(5, 5);
+    fail_unless(map != NULL, "get_empty_map returned NULL.");
+
+    /* Single tile object */
+    first = cctk_create_game_object("barrel");
+    fail_unless(first != NULL, "create barrel failed");
+
+    got = insert_ob_in_map_at(first, map, NULL, 0, 0, 0);
+    fail_unless(got == first, "item shouldn't be destroyed");
+
+    first = cctk_create_game_object("dragon");
+    fail_unless(first != NULL, "create dragon failed");
+    fail_unless(first->more != NULL, "no other body part");
+
+    got = insert_ob_in_map_at(first, map, NULL, 0, 1, 1);
+    fail_unless(got == first, "item shouldn't be destroyed");
+
+    fail_unless(GET_MAP_OB(map, 1, 1) == first, "item isn't on 1,1");
+    fail_unless(GET_MAP_OB(map, 2, 1) != NULL, "no item on 2,1");
+    fail_unless(GET_MAP_OB(map, 2, 1)->head == first, "head of 2,1 isn't 1,1");
 }
 END_TEST
 
@@ -821,7 +844,8 @@ END_TEST
 START_TEST (test_replace_insert_ob_in_map)
 {
     mapstruct* map;
-    object* first = NULL;
+    object* first = NULL, *second = NULL, *third = NULL;
+    tag_t tag_first, tag_second, tag_third;
     object* got = NULL;
 
     map = get_empty_map(5, 5);
@@ -830,20 +854,39 @@ START_TEST (test_replace_insert_ob_in_map)
     /* Single tile object */
     first = cctk_create_game_object("barrel");
     fail_unless(first != NULL, "create barrel failed");
+    tag_first = first->count;
 
     got = insert_ob_in_map_at(first, map, NULL, 0, 0, 0);
     fail_unless(got == first, "item shouldn't be destroyed");
 
-    first = cctk_create_game_object("dragon");
-    fail_unless(first != NULL, "create dragon failed");
-    fail_unless(first->more != NULL, "no other body part");
+    second = cctk_create_game_object("table");
+    fail_unless(second != NULL, "create table failed");
 
-    got = insert_ob_in_map_at(first, map, NULL, 0, 1, 1);
-    fail_unless(got == first, "item shouldn't be destroyed");
+    got = insert_ob_in_map_at(second, map, NULL, 0, 0, 0);
+    fail_unless(got == second, "second item shouldn't be destroyed");
+    tag_second = second->count;
 
-    fail_unless(GET_MAP_OB(map, 1, 1) == first, "item isn't on 1,1");
-    fail_unless(GET_MAP_OB(map, 2, 1) != NULL, "no item on 2,1");
-    fail_unless(GET_MAP_OB(map, 2, 1)->head == first, "head of 2,1 isn't 1,1");
+    third = cctk_create_game_object("barrel");
+    fail_unless(third != NULL, "create 2nd barrel failed");
+    got = insert_ob_in_map_at(third, map, NULL, 0, 0, 0);
+    fail_unless(got == third, "second barrel shouldn't be destroyed");
+    tag_third = third->count;
+
+    fail_unless(GET_MAP_OB(map, 0, 0) == first, "item at 0,0 isn't barrel");
+    fail_unless(GET_MAP_OB(map, 0, 0)->above == second, "second item at 0,0 isn't table");
+    fail_unless(GET_MAP_OB(map, 0, 0)->above->above == third, "third item at 0,0 isn't barrel");
+
+    replace_insert_ob_in_map("barrel", second);
+
+    fail_unless(GET_MAP_OB(map, 0, 0) != first, "item at 0, 0 is still first?");
+    fail_unless(was_destroyed(first, tag_first), "1st barrel should be destroyed");
+    fail_unless(!was_destroyed(second, tag_second), "table shouldn't be destroyed");
+    fail_unless(was_destroyed(third, tag_third), "2nd barrel should be destroyed");
+
+    fail_unless(GET_MAP_OB(map, 0, 0) != NULL, "no item at 0,0 after replace_insert_ob_in_map");
+    fail_unless(GET_MAP_OB(map, 0, 0) != second, "second at bottom at 0,0 after replace_insert_ob_in_map");
+    fail_unless(GET_MAP_OB(map, 0, 0)->above == second, "table isn't above new barrel");
+    fail_unless(strcmp(GET_MAP_OB(map, 0, 0)->arch->name, "barrel") == 0, "item at 0,0 is not a barrel after replace_insert_ob_in_map");
 }
 END_TEST
 
@@ -1316,6 +1359,8 @@ int main(void)
   Suite *s = object_suite();
   sr = srunner_create(s);
   srunner_set_xml(sr,LOGDIR "/unit/common/object.xml");
+  /* if you wish to debug, uncomment the following line. */
+/*  srunner_set_fork_status (sr, CK_NOFORK);*/
 
   srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
   nf = srunner_ntests_failed(sr);

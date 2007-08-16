@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix spurious function replace_insert_ob_in_map(), document it.
+Implement unit test for that.
+ common/object.c
+ test/unit/common/check_object.c
+Nicolas Weeger 2007-08-16
+
 Partial fix for #1772759: Too much alchemy causes client crash.
  common/object.c: correctly send/remove object when in container the player is
   looking into.

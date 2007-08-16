@@ -2148,25 +2148,20 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
 /**
  * This function inserts an object of a specified archetype in the map, but if it
- * finds an object of its own type, it'll remove that one first.
+ * finds objects of its own type, it'll remove them first.
  *
  * @param arch_string
- * object's archetype to insert
- *
+ * object's archetype to insert.
  * @param op
  * object to insert it under:  supplies x and the map.
- *
- * @todo
- * the remove loop is suspicious - what happens when remove_ob() is called on tmp, which then
- * has its above/below cleared?
  */
 void replace_insert_ob_in_map(const char *arch_string, object *op) {
     object *tmp;
     object *tmp1;
 
     /* first search for itself and remove any old instances */
-
-    for(tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
+    for(tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp1) {
+        tmp1 = tmp->above;
         if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
             remove_ob(tmp);
             free_object(tmp);
@@ -2176,7 +2171,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
     tmp1=arch_to_object(find_archetype(arch_string));
 
     tmp1->x = op->x; tmp1->y = op->y;
-    insert_ob_in_map(tmp1,op->map,op,0);
+    insert_ob_in_map(tmp1,op->map,op,INS_BELOW_ORIGINATOR);
 }
 
 /**
