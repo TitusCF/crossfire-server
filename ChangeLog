@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix item update on ground. Factorize code. Add increase_ob_nr() function.
+ include/libproto.h
+ common/object.c
+Nicolas Weeger 2007-08-18
+
 Various small fixes.
  common/exp.c: fix comment.
  include/plugin.h: make fname const char*.

@@ -1650,9 +1650,7 @@ object *merge_ob(object *op, object *top) {
         if(top==op)
             continue;
         if (can_merge(op,top)) {
-            top->nrof+=op->nrof;
-            if (top->env && top->env->contr)
-                esrv_update_item(UPD_NROF, top->env, top);
+            increase_ob_nr(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
             remove_ob(op);
             free_object(op);
@@ -2209,27 +2207,8 @@ object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
         return NULL;
     }
     newob = object_create_clone(orig_ob);
-    if((orig_ob->nrof-=nr)<1) {
-        if (!is_removed)
-            remove_ob(orig_ob);
-        free_object2(orig_ob, 1);
-    }
-    else if (!is_removed) {
-        if(orig_ob->env!=NULL) {
-            sub_weight (orig_ob->env,orig_ob->weight*nr);
-            if (orig_ob->env->contr)
-                esrv_update_item(UPD_NROF, orig_ob->env, orig_ob);
-        }
-        if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
-            /* This is a failure, so always log it. */
-            LOG(llevDebug,
-                "Error, tried to split object whose map is not in memory.\n");
-            if (err)
-                snprintf(err, size, "Error, tried to split object whose map is not in memory.\n");
-            return NULL;
-        }
-    }
     newob->nrof=nr;
+    decrease_ob_nr(orig_ob, nr);
 
     return newob;
 }
@@ -2295,8 +2274,16 @@ object *decrease_ob_nr (object *op, uint32 i)
     }
     else
     {
+        /* On a map. */
         if (i < op->nrof) {
+            object *pl;
             op->nrof -= i;
+
+            pl = GET_MAP_OB(op->map, op->x, op->y);
+            while (pl && !pl->contr)
+                pl = pl->above;
+            if (pl && pl->contr)
+                pl->contr->socket.update_look = 1;
         } else {
             remove_ob (op);
             op->nrof = 0;
@@ -2308,6 +2295,68 @@ object *decrease_ob_nr (object *op, uint32 i)
     } else {
         free_object (op);
         return NULL;
+    }
+}
+
+/**
+ * Increase the count of an object.
+ *
+ * This function will send an update to client if needed.
+ *
+ * @param op
+ * object to increase.
+ * @param i
+ * number to add.
+ */
+void increase_ob_nr(object *op, uint32 i)
+{
+    object *tmp;
+    player *pl;
+
+    if (i == 0)   /* objects with op->nrof require this check */
+        return;
+
+    if (QUERY_FLAG (op, FLAG_REMOVED))
+    {
+        op->nrof += i;
+    }
+    else if (op->env != NULL)
+    {
+        /* is this object in the players inventory, or sub container
+         * therein?
+         */
+        tmp = get_player_container (op->env);
+        /* nope.  Is this a container the player has opened?
+         * If so, set tmp to that player.
+         * IMO, searching through all the players will mostly
+         * likely be quicker than following op->env to the map,
+         * and then searching the map for a player.
+         */
+        if (!tmp) {
+            for (pl=first_player; pl; pl=pl->next)
+            if (pl->ob->container == op->env) break;
+            if (pl)
+                tmp=pl->ob;
+            else tmp=NULL;
+        }
+
+        add_weight (op->env, op->weight * i);
+        op->nrof += i;
+        if (tmp) {
+            esrv_update_item(UPD_NROF, tmp, op);
+        }
+    }
+    else
+    {
+        /* On a map. */
+        object *pl;
+        op->nrof += i;
+
+        pl = GET_MAP_OB(op->map, op->x, op->y);
+        while (pl && !pl->contr)
+            pl = pl->above;
+        if (pl && pl->contr)
+            pl->contr->socket.update_look = 1;
     }
 }
 
@@ -2381,13 +2430,7 @@ object *insert_ob_in_ob(object *op,object *where) {
             if ( can_merge(tmp,op) ) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
-                tmp->nrof += op->nrof;
-                if (tmp->env && tmp->env->contr)
-                    esrv_update_item(UPD_NROF, tmp->env, tmp);
-                /* Weight handling gets pretty funky.  Since we are adding to
-                 * tmp->nrof, we need to increase the weight.
-                 */
-                add_weight (where, op->weight*op->nrof);
+                increase_ob_nr(tmp, op->nrof);
                 SET_FLAG(op, FLAG_REMOVED);
                 free_object(op); /* free the inserted object */
                 return tmp;
