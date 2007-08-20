@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Don't display an evil error message when trying to reset a map with a player on.
+ server/c_wiz.c
+Nicolas Weeger 2007-08-20
+
 Write when an item is glowing.
  common/item.c: add "glowing" to glowing items.
  types/legacy/legacy_describe.c: LAMP have some description, too.

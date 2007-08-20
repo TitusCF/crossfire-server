@@ -1735,25 +1735,27 @@ int command_reset (object *op, char *params) {
             free_object(dummy);
         }
 
-        if (res < 0)
+        if (res < 0 && res != SAVE_ERROR_PLAYER)
+            /* no need to warn if player on map, code below checks that. */
             draw_ext_info_format(NDI_UNIQUE | NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                 "Reset failed, error code: %d.", NULL, res);
-
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-            "Reset failed, couldn't swap map, the following players are on it:",
-                NULL);
-        for (pl = first_player; pl != NULL; pl = pl->next) {
-            if (pl->ob->map == m && pl->ob != op) {
-                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-                    pl->ob->name, NULL);
-                playercount++;
-            }
-        }
-        if (!playercount)
+        else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-            "hmm, I don't see any other players on this map, something else is the problem.",
-            NULL);
-        return 1;
+                "Reset failed, couldn't swap map, the following players are on it:",
+                NULL);
+            for (pl = first_player; pl != NULL; pl = pl->next) {
+                if (pl->ob->map == m && pl->ob != op) {
+                    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                        pl->ob->name, NULL);
+                    playercount++;
+                }
+            }
+            if (!playercount)
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                    "hmm, I don't see any other players on this map, something else is the problem.",
+                    NULL);
+            return 1;
+        }
     }
 
     /* Here, map reset succeeded. */
