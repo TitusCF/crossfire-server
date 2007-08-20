@@ -61,6 +61,7 @@ void legacy_ob_describe(const ob_methods* context, const object* op, const objec
         case DRINK:
         case FLESH:
         case SKILL_TOOL:
+        case LAMP:
             common_ob_describe(context, op, observer, buf, size);
             return;
         default:

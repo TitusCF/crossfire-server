@@ -1023,6 +1023,9 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
         case SKILL_TOOL:
             break;  /* We have more information to do below this switch */
 
+        case LAMP:
+            break; /* just so we get the "glowing" part. */
+
         case POWER_CRYSTAL:
             if (op->stats.maxsp>1000){ /*higher capacity crystals*/
                 i = (op->stats.maxsp%1000)/100;
@@ -1100,6 +1103,8 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s%+d)", short_stat_name[attr], val);
             }
         }
+        if (op->glow_radius)
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(glowing)");
 
         switch (op->type) {
             case FLESH:
