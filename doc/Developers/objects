@@ -493,8 +493,20 @@ What did you sssay?
 
 a. Wildcard Character
 
-A key containing only '*' will match anything, but it is not handled in the
-same way that regular expressions are normally handled.
+   ----------------------------------------------------------------------------
+   BUG ALERT!!!  A key containing only '*' will match anything, but it is not
+                 handled in the same way that regular expressions are normally
+                 handled!  This can only be considered erroneous behavior.  The
+                 following paragraphs in this section shall not be construed to
+                 be an acceptable design for the server.  For immediate best
+                 results, do not use the wildcard character except in the form
+                 '@match *' to avoid setting up conversations that do not
+                 function correctly.  On the other hand, do use it in expected
+                 regular notation form, and do fix the server code bug.
+
+   http://sf.net/tracker/index.php?func=detail&aid=1778380&group_id=13833&atid=
+   113833
+   ----------------------------------------------------------------------------
 
 If a message does not contain an '@match *', then the first key that contains
 an asterisk will be treated as though the key was '*'.  In the example below,
