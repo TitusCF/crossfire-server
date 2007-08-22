@@ -39,6 +39,7 @@ helpdir=$(pkgdatadir)/help
 dist_help_DATA = help/apply help/applymode \
 	help/bind help/bowmode help/brace \
 	help/cast help/drop help/dropall \
+	help/fire help/fire_stop \
 	help/golem help/invoke \
 	help/keys help/killpets \
 	help/listen help/maps \

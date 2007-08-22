@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/help/{fire,fire_stop}: Add help for "fire" and "fire_stop" commands.
+Andreas Kirschbaum 2007-08-22
+
 Don't display an evil error message when trying to reset a map with a player on.
  server/c_wiz.c
 Nicolas Weeger 2007-08-20
