@@ -108,7 +108,7 @@ Existing tags
 Colors
 ======
 Colors are handled the way XParseColor handle them. This process is quite
-complex.  It is suggested you alays use standard color names, ideally
+complex.  It is suggested you always use standard color names, ideally
 restricting yourself to standard crossfire color names, eg
 
 [color=Red], [color=DodgerBlue] [color=DarkSeaGreen]

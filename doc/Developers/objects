@@ -911,7 +911,7 @@ order is kept.  So with only 2 facings, the first half in the group will be
 used when the creature is pointing to the right, second half to the left.
 
 
-anim_speed is used to determine how often the object is animated.  IF
+anim_speed is used to determine how often the object is animated.  If
 anim_speed is 0, then the object is animated anytime it gets an action.
 If anim_speed is nonzero, then every anim_speed ticks, the object is
 animated (irregardless of how fast the item is)  last_anim is used internally

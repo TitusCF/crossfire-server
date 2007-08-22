@@ -340,7 +340,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 					/* resistances, etc) */
 #define MSG_TYPE_SKILL		    12	/* Messages related to using skills */
 #define MSG_TYPE_APPLY		    13	/* Applying objects */
-#define MSG_TYPE_ATTACK		    14	/* Attack related messges */
+#define MSG_TYPE_ATTACK		    14	/* Attack related messages */
 #define MSG_TYPE_COMMUNICATION	    15	/* Communication between players */
 #define MSG_TYPE_SPELL		    16	/* Spell related info */
 #define MSG_TYPE_ITEM		    17	/* Item related information */
