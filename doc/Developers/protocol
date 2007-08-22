@@ -382,6 +382,28 @@ S->C: drawextinfo <color> <type> <subtype> message
 		6	scripted dialogs
 		7   motd
 		       no subtype, content of message is the media tag enabled motd
+		8	admin
+		9	shop
+		10	command
+		       Responses to commands, eg, who.
+		11	attribute
+		       Changes to attributes (stats, resistances, etc).
+		12	skill
+		       Messages related to using skills.
+		13	apply
+		       Applying objects.
+		14	attack
+		       Attack related messages.
+		15	communication
+		       Communication between players.
+		16	spell
+		       Spell related info.
+		17	item
+		       Item related information.
+		18	misc
+		       Messages that don't go anyplace else.
+		19	victim
+		       Something bad is happening to the player.
 
 ******************************************************************************
 ITEM MANIPULATION RELATED COMMANDS
