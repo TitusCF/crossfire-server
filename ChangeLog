@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix mistake in check logic, preventing from building connected items.
+ server/build_map.c
+Nicolas Weeger 2007-08-23
+
 Fix bug #1779574: can destroy outer walls in lone town apartment, level 2.
  server/build_map.c: fix can_build_over(), add missing check.
 Nicolas Weeger 2007-08-23

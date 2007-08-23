@@ -63,6 +63,12 @@ int can_build_over(struct mapdef* map, object* tmp, short x, short y) {
             /* you can always build on marking runes, used for connected building things. */
             continue;
 
+        if ((ob->head && QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
+            /* Check for the flag is required, as this function
+             * can be called recursively on different spots.
+             */
+          continue;
+
         switch ( tmp->type ) {
             case SIGN:
             case MAGIC_EAR:
@@ -81,11 +87,7 @@ int can_build_over(struct mapdef* map, object* tmp, short x, short y) {
 
                 break;
             default:
-                if ((ob->head && !QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && !QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
-                    /* Check for the flag is required, as this function
-                     * can be called recursively on different spots.
-                     */
-                    return 0;
+                return 0;
         }
     }
 
@@ -179,7 +181,7 @@ int find_or_create_connection_for_map( object* pl, short x, short y, object* run
     if ( !rune )
         rune = get_connection_rune( pl, x, y );
 
-    if ( !rune )
+    if ( !rune || !rune->msg )
         {
         draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
 		      "You need to put a marking rune with the group name.", NULL);
