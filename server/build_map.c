@@ -42,7 +42,7 @@
 #include <sproto.h>
 
 /**
- *  Check if objects on a square interfere with building
+ * Check if objects on a square interfere with building.
  *
  * @param map
  * map we're building on.
@@ -54,45 +54,42 @@
  * @return
  * 0 if tmp can't be built on the spot, 1 if it can be built.
  */
-int can_build_over( struct mapdef* map, object* tmp, short x, short y)
-    {
+int can_build_over(struct mapdef* map, object* tmp, short x, short y) {
     object* ob;
 
-    ob = GET_MAP_OB( map, x, y );
-    while ( ob )
-        {
-            if ((ob->head && !QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && !QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
+    for ( ob = GET_MAP_OB( map, x, y ); ob; ob = ob->above) {
+
+        if (strcmp( ob->arch->name, "rune_mark" ) == 0)
+            /* you can always build on marking runes, used for connected building things. */
+            continue;
+
+        switch ( tmp->type ) {
+            case SIGN:
+            case MAGIC_EAR:
+                /* Allow signs and magic ears to be built on books */
+                if ( ob->type != BOOK )
+                    return 0;
+
+                break;
+            case BUTTON:
+            case DETECTOR:
+            case PEDESTAL:
+            case CF_HANDLE:
+                /* Allow buttons and levers to be built under gates */
+                if ( ob->type != GATE && ob->type != DOOR )
+                    return 0;
+
+                break;
+            default:
+                if ((ob->head && !QUERY_FLAG(ob->head, FLAG_IS_BUILDABLE)) || (!ob->head && !QUERY_FLAG(ob, FLAG_IS_BUILDABLE)))
                     /* Check for the flag is required, as this function
                      * can be called recursively on different spots.
                      */
-                return 0;
-	/* if ob is not a marking rune or floor, then check special cases */
-	if ( strcmp( ob->arch->name, "rune_mark" ) && ob->type != FLOOR && !QUERY_FLAG(ob, FLAG_IS_FLOOR ))
-	    {
-            switch ( tmp->type )
-                {
-	        case SIGN:
-	        case MAGIC_EAR:
-		    /* Allow signs and magic ears to be built on books */
-	            if ( ob->type != BOOK ) {
-		        return 0; }
-                    break;
-		case BUTTON:
-	        case DETECTOR:
-                case PEDESTAL:
-                case CF_HANDLE:
-		    /* Allow buttons and levers to be built under gates */
-	            if ( ob->type != GATE && ob->type != DOOR ) {
-		        return 0; }
-                    break;
-		default:
                     return 0;
-                }
-            }
-        ob = ob->above;
-	}
+        }
+    }
 
-    /* If item is multi-tile, need to check other parts too. */
+    /* If builded item is multi-tile, need to check other parts too. */
     if (tmp->more)
         return can_build_over(map, tmp->more, x + tmp->more->arch->clone.x - tmp->arch->clone.x, y + tmp->more->arch->clone.y - tmp->arch->clone.y);
 
@@ -638,9 +635,14 @@ void apply_builder_wall( object* pl, object* material, short x, short y )
  * Generic item builder.
  *
  * Item must be put on a square with a floor, you can have something under.
+ *
  * Archetype of created object is item->slaying (raw material).
+ *
  * Type of inserted item is tested for specific cases (doors & such).
- * Item is inserted above the floor, unless Str == 1 (only for detectors i guess)
+ *
+ * Item is inserted above the floor.
+ *
+ * Note that it is the responsability of the caller to check whether the space is buildable or not.
  *
  * @param pl
  * player building.
@@ -683,14 +685,6 @@ void apply_builder_item( object* pl, object* item, short x, short y )
         return;
 
     tmp = object_create_arch(arch);
-
-    if ( !can_build_over(pl->map, tmp, x, y) )
-        {
-        draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-            "You can't build here.", NULL);
-        return;
-        }
-
     SET_FLAG( tmp, FLAG_IS_BUILDABLE );
     SET_FLAG( tmp, FLAG_NO_PICK );
 
@@ -920,6 +914,12 @@ void apply_map_builder( object* pl, int dir ) {
             draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                 "You can't use the marked item to build.", NULL);
 	        return;
+        }
+
+        if (!can_build_over(pl->map, tmp, x, y)) {
+            draw_ext_info( NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                "You can't build here.", NULL);
+            return;
         }
 
         switch( tmp->subtype )
