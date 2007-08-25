@@ -552,9 +552,9 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
     mapstruct *m;
 
     /* Jump loop. Go through spaces opject wants to jump. Halt the
-     * jump if a wall or creature is in the way. We set FLAG_FLYING
+     * jump if a wall or creature is in the way. We set FLY_LOW
      * temporarily to allow player to aviod exits/archs that are not
-     * fly_on, fly_off. This will also prevent pickup of objects
+     * move_on/off fly_low. This will also prevent pickup of objects
      * while jumping over them.
      */
 

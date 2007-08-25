@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove support for obsolete 'fly_on/fly_off/walk_on/walk_off' attributes.
+--
+doc/Developers/objects: Update documentation about no_pass attribute.
+doc/{checkarch,collect}.pl.in: Check for move_on/off instead.
+common/loader.l: Remove support for fly_on/fly_off/walk_on/walk_off
+ attributes.
+Andreas Kirschbaum 2007-08-25
+
 Fix incorrect lookup_spell_by_name() that prevented eg marking runes to work.
  server/spell_util.c
 Nicolas Weeger 2007-08-23

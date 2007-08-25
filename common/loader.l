@@ -841,13 +841,6 @@ A	.+
 ^client_anim_sync{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_SYNC, IVAL);
 ^client_anim_random{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CLIENT_ANIM_RANDOM, IVAL);
 
-%{ /* These are all legacy - any new objects should use the move_ .. values */
-%}
-^walk_on{S}	    { if (IVAL) op->move_on |= MOVE_WALK; else op->move_on &= ~MOVE_WALK; }
-^walk_off{S}	    { if (IVAL) op->move_off |= MOVE_WALK; else op->move_off &= ~MOVE_WALK; }
-^fly_on{S}	    { if (IVAL) op->move_on |= MOVE_FLY_LOW; else op->move_on &= ~MOVE_FLY_LOW; }
-^fly_off{S}	    { if (IVAL) op->move_off |= MOVE_FLY_LOW; else op->move_off &= ~MOVE_FLY_LOW; }
-
 %{ /* These are the new values */
 %}
 ^move_block{S}	    set_move(&op->move_block, yval());

@@ -1256,11 +1256,6 @@ FLAG_PASS_THRU -> was unused, would be move_type
 FLAG_CAN_PASS_THRU -> was unused, would be move_type
 
 
-Load/Save behaviour and backward compatability:
-The loader knows about certain old flags (walk_on, blocked, etc) and
-sets up the appropriate bitmasks.  When data is saved, it is saved
-as the move_... with actual bitmasks.
-
 Special player notes:
 Player can only pick up items if MOVE_WALK is set (this may need
 to be expanded down the road).  Basic idea is that if you are flying,
@@ -1982,14 +1977,18 @@ unpaid                  set if object is unpaid (internal)
 no_pick <1>             set if O can't be taken.
 no_pass <1>             set if O can't be passed. (eg, a closed door) (obsolete
                         -- use move_block all instead)
-walk_on <1>             O is applied by anything walking onto it.
-walk_off <1>            O is applied by anything walking off it.
-fly_on <1>              O is applied by anything flying onto it
-fly_off <1>             O is applied by anything flying off it.
+walk_on <1>             O is applied by anything walking onto it. (obsolete --
+                        use move_on walk instead)
+walk_off <1>            O is applied by anything walking off it. (obsolete --
+                        use move_off walk instead)
+fly_on <1>              O is applied by anything flying onto it. (obsolete --
+                        use move_on fly_low instead)
+fly_off <1>             O is applied by anything flying off it. (obsolete --
+                        use move_off fly_low instead)
 is_animated <1>         set if O is animated.
 
-flying <1>              set if O is flying (used in fly_on/fly_off). (obsolete
-                        -- use move_type fly_low instead)
+flying <1>              set if O is flying. (obsolete -- use move_type fly_low
+                        instead)
 monster <1>             set if O is a monster.
 friendly <1>            set if O will help player instead of attacking.
 generator <1>           set if O is a generator.

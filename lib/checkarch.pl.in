@@ -71,10 +71,9 @@ line:	while(<ARCH>) {
                 $type = $values[0];
                 next line;
             }
-            if ($var eq "walk_on" || $var eq "fly_on" || $var eq "walk_off"
-                || $var eq "fly_off")
+            if ($var eq "move_on" || $var eq "move_off")
             {
-                $move_apply |= $values[0];
+                $move_apply |= 1;
                 next line;
             }
     }

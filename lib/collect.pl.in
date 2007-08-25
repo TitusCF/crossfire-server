@@ -248,7 +248,7 @@ line:	while(<ARC>) {
 		$lvis = "";
 		$mm = "";
 		$floor = "";
-		$walkon = 0;
+		$moveon = 0;
 		$nopick = 0;
 		$arch = join "_", @values;
 	    }
@@ -259,8 +259,8 @@ line:	while(<ARC>) {
 			&storeFaceInfo($face, $lfg, $lvis,$mm,$floor);
 		    }
 	 	}
-		if ($walkon && !$nopick) {
-		    &warn("File $arch has an object with walk_on set which can be picked up\n");
+		if ($moveon && !$nopick) {
+		    &warn("File $arch has an object with move_on set which can be picked up\n");
 		}
 	    }
 	    # Process the color/face info now
@@ -301,8 +301,8 @@ line:	while(<ARC>) {
 	    }
 	    elsif ($var eq "no_pick") {
 		$nopick = $values[0];
-	    } elsif ($var eq "walk_on") {
-		$walkon = $values[0];
+	    } elsif ($var eq "move_on") {
+		$moveon = 1;
 	    }
 	    elsif ($var eq "face") {
 		$lface[$#lface++] = $values[0]
