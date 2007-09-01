@@ -15,6 +15,8 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+lib/metaserver2: Update with official metaserver2 location.  MSW 2007-08-31
+
 Remove support for obsolete 'fly_on/fly_off/walk_on/walk_off' attributes.
 --
 doc/Developers/objects: Update documentation about no_pass attribute.
