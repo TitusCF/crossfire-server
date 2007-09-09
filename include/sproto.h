@@ -206,6 +206,7 @@ object *drop_object(object *op, object *tmp, uint32 nrof);
 void drop(object *op, object *tmp);
 int command_dropall(object *op, char *params);
 int command_drop(object *op, char *params);
+int command_empty(object *op, char *params);
 int command_examine(object *op, char *params);
 object *find_marked_object(object *op);
 int command_mark(object *op, char *params);

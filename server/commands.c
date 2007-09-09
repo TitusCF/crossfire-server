@@ -66,6 +66,7 @@ command_array_struct Commands[] = {
   {"dmhide", command_dmhide,		0.0}, /* Like dm, but don't tell a dm arrived, hide player */
   {"drop", command_drop,	1.0},
   {"dropall", command_dropall,	1.0},
+  {"empty", command_empty,	1.0},
   {"examine", command_examine,	0.5},
   {"explore", command_explore,  0.0},
   {"fix_me", command_fix_me,	0.0},
