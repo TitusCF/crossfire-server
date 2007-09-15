@@ -1305,7 +1305,7 @@ void player_apply_below (object *pl)
              * the item needs.
              */
         if ( ! tmp->invisible || (tmp->move_on & pl->move_type)) {
-            if (player_apply (pl, tmp, 0, 1) == 1)
+            if (player_apply (pl, tmp, 0, 1) == METHOD_OK)
                 return;
         }
         if (floors >= 2)

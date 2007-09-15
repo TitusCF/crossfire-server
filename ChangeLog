@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix many objects getting applied with 'a' key.
+ server/apply.c: use METHOD_OK for success, not 1.
+Nicolas Weeger 2007-09-15
+
 Fix player teleported on wrong HallOfSelection for race if dying before class selection.
  server/player.c
 Nicolas Weeger 2007-09-15
