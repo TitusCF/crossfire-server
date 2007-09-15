@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix player teleported on wrong HallOfSelection for race if dying before class selection.
+ server/player.c
+Nicolas Weeger 2007-09-15
+
 Add an 'empty' command, that puts all contents of a (or all) container either
 on ground or in player's opened container.
  include/sproto.h

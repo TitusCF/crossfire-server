@@ -1211,17 +1211,26 @@ int key_change_class(object *op, char key)
         if(*first_map_ext_path) {
             object *tmp;
             char mapname[MAX_BUF];
+            mapstruct* oldmap;
+
+            oldmap = op->map;
 
             snprintf(mapname, MAX_BUF-1, "%s/%s",
                      first_map_ext_path, op->arch->name);
-            printf("%s\n", mapname);
+            /*printf("%s\n", mapname);*/
             tmp=get_object();
             EXIT_PATH(tmp) = add_string(mapname);
             EXIT_X(tmp) = op->x;
             EXIT_Y(tmp) = op->y;
-            enter_exit(op,tmp); /* we don't really care if it succeeded;
-                                 * if the map isn't there, then stay on the
-                                 * default initial map */
+            enter_exit(op,tmp);
+
+            if (oldmap != op->map) {
+                /* map exists, update bed of reality location, in case player dies */
+                op->contr->bed_x = op->x;
+                op->contr->bed_y = op->y;
+                snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), mapname);
+            }
+
             free_object(tmp);
         } else {
             LOG(llevDebug,"first_map_ext_path not set\n");
