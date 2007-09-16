@@ -501,7 +501,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
          * a monster generated from a trap, thus we should give it treasures
          * and equipment - gros, 12th August 2006
          */
-        if (head && head->randomitems) {
+        if (head->randomitems) {
             object *htmp;
             create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
                 6, 0);
