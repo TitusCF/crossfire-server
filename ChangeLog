@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add a message when explore mode is disabled. Add help file for this command.
+ lib/Makefile.am
+ server/c_misc.c
+Added file:
+ lib/help/explore
+Nicolas Weeger 2007-09-16
+
 Fix many objects getting applied with 'a' key.
  server/apply.c: use METHOD_OK for success, not 1.
 Nicolas Weeger 2007-09-15

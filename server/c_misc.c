@@ -2188,7 +2188,7 @@ int command_quit (object *op, char *params)
 }
 
 /**
- * Player wants to enter explore mode.
+ * Player wants to enter explore mode, that is never-dying mode.
  *
  * Don't allow people to exit explore mode.  It otherwise becomes
  * really easy to abuse this.
@@ -2202,22 +2202,25 @@ int command_quit (object *op, char *params)
  */
 int command_explore (object *op, char *params)
 {
-    if (settings.explore_mode == FALSE)
-	return 1;
+    if (settings.explore_mode == FALSE) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+            "Explore mode is disabled on this server, sorry.", NULL);
+        return 1;
+    }
     /*
      * I guess this is the best way to see if we are solo or not.  Actually,
      * are there any cases when first_player->next==NULL and we are not solo?
      */
     if ((first_player!=op->contr) || (first_player->next!=NULL)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You can not enter explore mode if there are other players", NULL);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+            "You can not enter explore mode if there are other players", NULL);
     } else if (op->contr->explore)
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "There is no return from explore mode", NULL);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+            "There is no return from explore mode", NULL);
     else {
-	op->contr->explore=1;
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You are now in explore mode", NULL);
+        op->contr->explore=1;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+            "You are now in explore mode", NULL);
     }
     return 1;
 }
