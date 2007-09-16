@@ -511,8 +511,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
     head->direction = dir;
 
     if (head->randomitems) {
-        create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
-            6, 0);
+        create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
     }
     mark_inventory_as_no_drop(head);
 
