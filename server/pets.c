@@ -888,7 +888,7 @@ static object *choose_cult_monster(object *pl, object *god, int summon_level) {
 }
 
 /**
- * General purpose sommuning function.
+ * General purpose summoning function.
  *
  * @param op
  * who is summoning.
