@@ -520,9 +520,9 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
         if (head->randomitems) {
             create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
                 6, 0);
-            mark_inventory_as_no_drop(head);
         }
     }
+    mark_inventory_as_no_drop(head);
 
     /* need to change some monster attr to prevent problems/crashing */
     head->last_heal=0;
@@ -1092,6 +1092,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         head = insert_ob_in_map(head, head->map, op, 0);
         if (head && head->randomitems) {
             create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
+        }
+        if (head != NULL) {
             mark_inventory_as_no_drop(head);
         }
     } /* for i < nrof */
