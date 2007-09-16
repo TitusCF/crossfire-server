@@ -510,15 +510,9 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
     }
     head->direction = dir;
 
-    if (head->type != GOLEM && op->type != PLAYER) {
-        /* It isn't a golem, and the caster wasn't a player; that's probably
-         * a monster generated from a trap, thus we should give it treasures
-         * and equipment - gros, 12th August 2006
-         */
-        if (head->randomitems) {
-            create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
-                6, 0);
-        }
+    if (head->randomitems) {
+        create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
+            6, 0);
     }
     mark_inventory_as_no_drop(head);
 
