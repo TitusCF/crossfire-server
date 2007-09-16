@@ -131,7 +131,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 
 	    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
 				!QUERY_FLAG(tmp2, FLAG_FRIENDLY) &&
-				(tmp2->type != PLAYER)) ||
+				tmp2->type != PLAYER) ||
 			should_arena_attack(pet, owner, tmp2))
 		&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
 		tmp2 != pet && tmp2 != owner &&
@@ -199,7 +199,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
 					!QUERY_FLAG(tmp2, FLAG_FRIENDLY) &&
-					(tmp2->type != PLAYER)) ||
+					tmp2->type != PLAYER) ||
 				should_arena_attack(pet, owner, tmp2))
 			&& !QUERY_FLAG(tmp2,FLAG_UNAGGRESSIVE) &&
 			tmp2 != pet && tmp2 != owner &&
@@ -496,7 +496,7 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
     }
     head->direction = dir;
 
-    if ((head->type != GOLEM)&&(op->type!= PLAYER)) {
+    if (head->type != GOLEM && op->type != PLAYER) {
         /* It isn't a golem, and the caster wasn't a player; that's probably
          * a monster generated from a trap, thus we should give it treasures
          * and equipment - gros, 12th August 2006
@@ -1145,7 +1145,7 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 
 	/* if the target is not a player, and has no owner, we shouldn't be here
 	*/
-	if ((towner == NULL) && (target->type != PLAYER)) {
+	if (towner == NULL && target->type != PLAYER) {
 		LOG(llevError,"Target is not a player but has no owner. We should not be here.\n");
 		return 0;
 	}
@@ -1163,14 +1163,14 @@ int should_arena_attack(object *pet,object *owner,object *target) {
 	     return 0;
 
 	/* if the target is a monster, make sure it's owner is not the same */
-	if ((target->type != PLAYER) && (rowner == towner)) return 0;
+	if (target->type != PLAYER && rowner == towner) return 0;
 
 	/* check if the target is a player which affects how it will handle
 	parties */
 	if (target->type != PLAYER) {
 		/* if the target is owned by a player make sure than make sure
 		it's not in the same party */
-		if ((towner->type == PLAYER) && (rowner->contr->party != NULL)) {
+		if (towner->type == PLAYER && rowner->contr->party != NULL) {
 			if (rowner->contr->party == towner->contr->party) return 0;
 		}
 	} else {
