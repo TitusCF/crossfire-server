@@ -37,6 +37,22 @@
 #endif
 
 /**
+ * Mark all inventory items as FLAG_NO_DROP.
+ *
+ * @param ob
+ * the object to modify.
+ */
+static void mark_inventory_as_no_drop(object *ob) {
+    object *tmp;
+
+    for (tmp = ob->inv; tmp != NULL; tmp = tmp->below) {
+        if (!tmp->nrof) {
+            SET_FLAG(tmp, FLAG_NO_DROP);
+        }
+    }
+}
+
+/**
  * Given that 'pet' is a friendly object, this function returns a
  * monster the pet should attack, NULL if nothing appropriate is
  * found.  it basically looks for nasty things around the owner
@@ -502,11 +518,9 @@ static object *fix_summon_pet(archetype *at, object *op, int dir, int is_golem) 
          * and equipment - gros, 12th August 2006
          */
         if (head->randomitems) {
-            object *htmp;
             create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP,
                 6, 0);
-            for (htmp=head->inv; htmp; htmp=htmp->below)
-                if (!htmp->nrof) SET_FLAG(htmp, FLAG_NO_DROP);
+            mark_inventory_as_no_drop(head);
         }
     }
 
@@ -1077,10 +1091,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         head->stats.exp = 0;
         head = insert_ob_in_map(head, head->map, op, 0);
         if (head && head->randomitems) {
-            object *tmp;
             create_treasure(head->randomitems, head, GT_APPLY | GT_STARTEQUIP, 6, 0);
-            for (tmp=head->inv; tmp; tmp=tmp->below)
-                if (!tmp->nrof) SET_FLAG(tmp, FLAG_NO_DROP);
+            mark_inventory_as_no_drop(head);
         }
     } /* for i < nrof */
     return 1;
