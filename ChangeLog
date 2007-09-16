@@ -16,7 +16,7 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 server/pets.c: Always mark inventory objects as FLAG_NO_DROP, not only
- objects created from randomitems attribute.
+ objects created from randomitems attribute and having nrof=0.
 Andreas Kirschbaum 2007-09-16
 
 Add a message when explore mode is disabled. Add help file for this command.

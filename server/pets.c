@@ -46,9 +46,7 @@ static void mark_inventory_as_no_drop(object *ob) {
     object *tmp;
 
     for (tmp = ob->inv; tmp != NULL; tmp = tmp->below) {
-        if (!tmp->nrof) {
-            SET_FLAG(tmp, FLAG_NO_DROP);
-        }
+        SET_FLAG(tmp, FLAG_NO_DROP);
     }
 }
 
