@@ -706,7 +706,7 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
 	case 'i' :	snprintf(return_val, size, pl->socket.host);
 			break;
 
-	case '%' :	snprintf(return_val, size, "%");
+	case '%' :	snprintf(return_val, size, "%%");
 			break;
 
 	case '_' :	snprintf(return_val, size, "_");
