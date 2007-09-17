@@ -2196,7 +2196,6 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  */
 object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
     object *newob;
-    int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 
     if(orig_ob->nrof<nr) {
         /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
