@@ -721,19 +721,11 @@ void check_login(object *op) {
     pl->last_save_tick = pticks;
 #endif
     op->carrying = sum_weight (op);
-    /* Need to call fix_object now - program modified so that it is not
-     * called during the load process (FLAG_NO_FIX_PLAYER set when
-     * saved)
-     * Moved ahead of the esrv functions, so proper weights will be
-     * sent to the client.
-     */
+
     link_player_skills(op);
 
     if ( ! legal_range (op, op->contr->shoottype))
         op->contr->shoottype = range_none;
-
-    esrv_add_spells(op->contr, NULL);
-    fix_object(op);
 
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
@@ -780,6 +772,20 @@ void check_login(object *op) {
      * the data isn't needed.
      */
     esrv_new_player(op->contr,op->weight+op->carrying);
+    /* Need to do these after esvr_new_player, as once the client
+     * sees that, it wipes any info it has about the player.
+     */
+    esrv_add_spells(op->contr, NULL);
+
+    /* Need to call fix_object now - program modified so that it is not
+     * called during the load process (FLAG_NO_FIX_PLAYER set when
+     * saved)
+     * Moved ahead of the esrv functions, so proper weights will be
+     * sent to the client.  Needs to be after esvr_add_spells, otherwise
+     * we'll try to update spells from fix_object.
+     */
+    fix_object(op);
+
     esrv_send_inventory(op, op);
     esrv_send_pickup(pl);
 

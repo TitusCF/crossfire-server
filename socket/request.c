@@ -1545,7 +1545,17 @@ void esrv_update_spells(player *pl) {
     int flags=0;
     object *spell;
     client_spell* spell_info;
+
     if (!pl->socket.monitor_spells) return;
+
+    /* Handles problem at login, where this is called from fix_object
+     * before we have had a chance to send spells to the player.  It does seem
+     * to me that there should never be a case where update_spells is called
+     * before add_spells has been called.  Add_spells() will update the
+     * spell_state to non null.
+     */
+    if (!pl->spell_state) return;
+
     for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
         if (spell->type == SPELL) {
             spell_info = get_client_spell_state(pl, spell);

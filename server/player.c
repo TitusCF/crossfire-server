@@ -313,7 +313,6 @@ static player* get_player(player *p) {
     op->direction=5;     /* So player faces south */
     op->stats.wc=2;
     op->run_away = 25; /* Then we panick... */
-    p->socket.monitor_spells = 0; /* Needed because esrv_update_spells( ) gets called by roll_stats */
 
     roll_stats(op);
     p->state=ST_ROLL_STAT;

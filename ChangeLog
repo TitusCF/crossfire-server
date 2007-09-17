@@ -15,6 +15,22 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix problems with player updating client with spell handling - should all
+work now.
+--
+server/login.c: Move esvr_add_spells() and fix_object() to after 
+  esvr_new_player() - when client gets new player protocol from server,
+  it purges all info it has, including spell data.
+server/player.c: Remove the line that clears the monitor_spells in the
+  socket structure.  With the clear there, if you play a new character on
+  the same server (savebed, a to play again), this second character
+  doesn't get any spells.
+socket/request.c: Check to see if pl->spell_state is non null in 
+  esrv_update_spells() - in this way, server doesn't try to update
+  spells on client before the first add_player_spells() is called.
+--
+MSW 2007-09-16
+
 server/pets.c: Always mark inventory objects as FLAG_NO_DROP, not only
  objects created from randomitems attribute and having nrof=0. Always
  expand randomitems; do not omit it for player summoned monsters or
