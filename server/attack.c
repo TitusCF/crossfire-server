@@ -1930,12 +1930,15 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
     }
 
     /* AT_CHAOS here is a weapon or monster.  Spells are handled by hit_map
-     * If the attacktype still has chaos, shuffle it, then clear the Chaos bit
+     * We don't use shuffle_attack(), because that changes the it in the
+     * creature structure, and thus is permanent until fix_object() is
+     * called again.  Chaos should change on each attack.
      */
     if(type & AT_CHAOS){
-      shuffle_attack(op,0);  /*0 flag tells it to not change the face */
-      update_object(op,UP_OBJ_FACE);
-      type &= ~AT_CHAOS;
+	int i;
+	i=rndm(0, 21);
+
+	type=ATTACKS[i].attacktype|AT_MAGIC;
     }
 
     /* Holyword is really an attacktype modifier (like magic is).  If

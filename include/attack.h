@@ -150,7 +150,13 @@ typedef struct attackmess {
   char *buf3;
 } attackmess_t;
 
+typedef struct {
+    int attacktype;
+    int face;
+} Chaos_Attacks;
+
 EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
+EXTERN Chaos_Attacks ATTACKS[22];
 
 #ifndef INIT_C
 EXTERN int resist_table[];
@@ -217,7 +223,35 @@ EXTERN int resist_table[] = {ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
     ATNR_FEAR, ATNR_DEPLETE, ATNR_DEATH, ATNR_HOLYWORD, ATNR_BLIND,
     ATNR_LIFE_STEALING, ATNR_DISEASE};
 
-#endif
+
+/** Some local definitions for shuffle_attack(). */
+EXTERN Chaos_Attacks ATTACKS[22] = {
+	{AT_PHYSICAL,0},
+	{AT_PHYSICAL,0},  /*face = explosion*/
+	{AT_PHYSICAL,0},
+	{AT_MAGIC,1},
+	{AT_MAGIC,1},   /* face = last-burnout */
+	{AT_MAGIC,1},
+	{AT_FIRE,2},
+	{AT_FIRE,2},  /* face = fire....  */
+	{AT_FIRE,2},
+	{AT_ELECTRICITY,3},
+	{AT_ELECTRICITY,3},  /* ball_lightning */
+	{AT_ELECTRICITY,3},
+	{AT_COLD,4},
+	{AT_COLD,4},  /* face=icestorm*/
+	{AT_COLD,4},
+	{AT_CONFUSION,5},
+	{AT_POISON,7},
+	{AT_POISON,7}, /* face = acid sphere.  generator */
+	{AT_POISON,7},  /* poisoncloud face */
+	{AT_SLOW,8},
+	{AT_PARALYZE,9},
+	{AT_FEAR,10}  };
+
+
+
+#endif /* ifdef init_c */
 
 #define num_resist_table 19
 

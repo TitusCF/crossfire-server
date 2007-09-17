@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix chaos attacktypes when used from a weapon - Fixes bug 1795875.
+Problem was target of attack was getting attacktype changed, and
+attacker was never getting chaos attacktypes.
+--
+include/attack.h: move ATTACKS array and Chaos_Attacks structure
+  here.  server/attack.c now needs that data, so having it only in
+  server/spell_util.c no longer works.
+server/attack.c:  Remove call to shuffle_attack(), instead just update
+  the local type (attack type) variable.
+server/spell_util.c: Remove ATTACKS array - moved to include/attack.h.
+MSW 2007-09-16
+
 Fix problems with player updating client with spell handling - should all
 work now.
 --
