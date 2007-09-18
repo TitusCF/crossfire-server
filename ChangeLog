@@ -15,6 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add ability to specify port that crossfire listens to in settings file.
+Handy when you want to run 2 servers on same host and don't want to
+mess with command line options.
+--
+lib/settings: Add port variable and comment on its usage.
+server/init.c: Add code to handle port value in settings file.
+MSW 2007-09-17
+
 Fix chaos attacktypes when used from a weapon - Fixes bug 1795875.
 Problem was target of attack was getting attacktype changed, and
 attacker was never getting chaos attacktypes.

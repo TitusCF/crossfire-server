@@ -463,6 +463,8 @@ static void load_settings(void)
 	    if (has_val) strcpy(settings.meta_host, cp);
 	    else
 		LOG(llevError,"load_settings: metaserver_host must have a value.\n");
+	} else if (!strcasecmp(buf,"port")) {
+	    set_csport(cp);
 	} else if (!strcasecmp(buf,"metaserver_port")) {
 	    int port = atoi(cp);
 
