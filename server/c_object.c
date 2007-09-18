@@ -960,6 +960,7 @@ void drop(object *op, object *tmp)
 int command_dropall (object *op, char *params) {
 
     object * curinv, *nextinv;
+    int count=0;
 
     if(op->inv == NULL)
     {
@@ -970,6 +971,8 @@ int command_dropall (object *op, char *params) {
     }
 
     curinv = op->inv;
+
+    if (op->contr) count=op->contr->count;
 
     /*
      * This is the default.  Drops everything not locked or considered
@@ -990,6 +993,7 @@ int command_dropall (object *op, char *params) {
                 && (curinv->type!=CONTAINER || op->container!=curinv))
             {
                 drop(op,curinv);
+		if (op->contr) op->contr->count=count;
             }
             curinv = nextinv;
         }
@@ -1005,6 +1009,7 @@ int command_dropall (object *op, char *params) {
                 || (curinv->type == BOW) || (curinv->type == ARROW)))
             {
                 drop(op,curinv);
+		if (op->contr) op->contr->count=count;
             }
             curinv = nextinv;
         }
@@ -1022,6 +1027,7 @@ int command_dropall (object *op, char *params) {
                 || curinv->type == SHIELD || curinv->type==HELMET))
             {
                 drop(op,curinv);
+		if (op->contr) op->contr->count=count;
             }
             curinv = nextinv;
         }
@@ -1055,6 +1061,7 @@ int command_dropall (object *op, char *params) {
                     case POTION:
                         drop(op,curinv);
                         curinv = nextinv;
+			if (op->contr) op->contr->count=count;
                         break;
                     default:
                         curinv = nextinv;

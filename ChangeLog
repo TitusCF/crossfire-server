@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug 1790456 - dropall with count drops more than 'count' of each
+object.
+server/c_object.c: in command_dropall(), after each call to drop(),
+  set op->contr->count back to original value - drop() sets it to 0.
+MSW 2007-09-17
+
 Add ability to specify port that crossfire listens to in settings file.
 Handy when you want to run 2 servers on same host and don't want to
 mess with command line options.
