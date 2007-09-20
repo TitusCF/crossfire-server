@@ -21,8 +21,8 @@ normal doors next to locked doors.  On broken test map, this change results
 in key being placed in right area.
 --
 random_maps/treasure.c: Update some comments on keyplace(), since the comments
-  did not go into limitations on what keyplace does.  Add 
-  remove_adjacent_doors() to remove the doors, and call to function from 
+  did not go into limitations on what keyplace does.  Add
+  remove_adjacent_doors() to remove the doors, and call to function from
   lock_and_hide_doors()
 MSW 2007-09-18
 
@@ -55,14 +55,14 @@ MSW 2007-09-16
 Fix problems with player updating client with spell handling - should all
 work now.
 --
-server/login.c: Move esvr_add_spells() and fix_object() to after 
+server/login.c: Move esvr_add_spells() and fix_object() to after
   esvr_new_player() - when client gets new player protocol from server,
   it purges all info it has, including spell data.
 server/player.c: Remove the line that clears the monitor_spells in the
   socket structure.  With the clear there, if you play a new character on
   the same server (savebed, a to play again), this second character
   doesn't get any spells.
-socket/request.c: Check to see if pl->spell_state is non null in 
+socket/request.c: Check to see if pl->spell_state is non null in
   esrv_update_spells() - in this way, server doesn't try to update
   spells on client before the first add_player_spells() is called.
 --
