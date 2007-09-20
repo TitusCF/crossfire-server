@@ -331,6 +331,12 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
  * keycode is the key's code.
  * @param door_flag
  * if NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
+ * if PASS_DOORS is set, the x & y values that are passed in are basically
+ * meaningless - IMO, it is a bit of misnomer, as when it is set, it just 
+ * randomly chooses spaces on the map, ideally finding a close monster, to put
+ * the key in.  In fact, if PASS_DOORS is set, there is no guarantee that
+ * the keys will be on both sides of the door - it may happen by randomness,
+ * but the code doesn't work to make sure it happens.
  * @param n_keys
  * number of keys to place. If 1, it will place 1 key. Else, it will place 2-4 keys.
  * @param RP
@@ -379,7 +385,8 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
     }
     else {  /* NO_PASS_DOORS --we have to work harder.*/
         /* don't try to keyplace if we're sitting on a blocked square and
-        NO_PASS_DOORS is set. */
+         * NO_PASS_DOORS is set. 
+	 */
         if(n_keys==1) {
             if(wall_blocked(map,x,y))
                 return 0;
@@ -389,7 +396,9 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
                     return 0;
         }
         else {
-            /* It can happen that spots around that point are all blocked, so try to look farther away if needed */
+            /* It can happen that spots around that point are all blocked, so
+	     * try to look farther away if needed 
+	     */
             int sum=0; /* count how many keys we actually place */
             int distance = 1;
             while ( distance < 5 )
@@ -400,7 +409,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
                 sum += keyplace(map, x - distance, y, keycode, NO_PASS_DOORS, 1, RP);
                 sum += keyplace(map, x, y - distance, keycode, NO_PASS_DOORS, 1, RP);
                 if( sum < 2 ) { /* we might have made a disconnected map-place more keys. */
-                    /* diagnoally this time. */
+                    /* diagonally this time. */
                     keyplace(map, x + distance, y + distance, keycode, NO_PASS_DOORS, 1, RP);
                     keyplace(map, x + distance, y - distance, keycode, NO_PASS_DOORS, 1, RP);
                     keyplace(map, x - distance, y + distance, keycode, NO_PASS_DOORS, 1, RP);
@@ -859,6 +868,40 @@ object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
     return doorlist;
 }
 
+/* This removes any 'normal' doors around the passed in coordinates.
+ * This is used for lock_and_hide_doors below - it doesn't make sense
+ * to have a locked door right behind a normal door, so lets
+ * remove the normal ones.  It also fixes key placement issues.
+ * @param m
+ * map to remove the doors from.
+ * @param x
+ * @param y
+ * position of the locked door on the map.
+ */
+static void remove_adjacent_doors(mapstruct *m, int x, int y)
+{
+    int i, flags;
+    object *tmp;
+
+    for (i=1; i<=8; i++) {
+	flags=get_map_flags(m, NULL, x + freearr_x[i], y + freearr_y[i], NULL, NULL);
+	if (flags & P_OUT_OF_MAP) continue;
+
+	/* Old style doors are living objects.  So if P_IS_ALIVE is not
+	 * set, can not be a door on this space.
+	 */
+	if (flags & P_IS_ALIVE) {
+	    for (tmp=GET_MAP_OB(m, x + freearr_x[i], y + freearr_y[i]); tmp; tmp=tmp->above) {
+		if (tmp->type == DOOR) {
+		    remove_ob(tmp);
+		    free_object(tmp);
+		    break;
+		}
+	    }
+	}
+    }
+}
+
 /**
  * Locks and/or hides all the doors in doorlist, or does nothing if
  * opts doesn't say to lock/hide doors.
@@ -891,6 +934,9 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
             free_object(door);
             doorlist[i]=new_door;
             insert_ob_in_map(new_door,map,NULL,0);
+
+	    remove_adjacent_doors(map, door->x, door->y);
+
             snprintf(keybuf,256,"%d",(int)RANDOM());
             if (keyplace(map, new_door->x, new_door->y, keybuf, NO_PASS_DOORS, 2, RP) )
                 new_door->slaying = add_string(keybuf);

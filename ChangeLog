@@ -15,6 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug 1763098 - wrong key placement in random maps.  The key placement breaks
+if there is a normal door next to the locked door, so modify code to remove
+normal doors next to locked doors.  On broken test map, this change results
+in key being placed in right area.
+--
+random_maps/treasure.c: Update some comments on keyplace(), since the comments
+  did not go into limitations on what keyplace does.  Add 
+  remove_adjacent_doors() to remove the doors, and call to function from 
+  lock_and_hide_doors()
+MSW 2007-09-18
+
 Fix bug 1790456 - dropall with count drops more than 'count' of each
 object.
 server/c_object.c: in command_dropall(), after each call to drop(),
