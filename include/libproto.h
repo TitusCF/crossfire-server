@@ -206,6 +206,7 @@ extern void update_ob_speed(object *op);
 extern void remove_from_active_list(object *op);
 extern void update_object(object *op, int action);
 extern void free_object(object *ob);
+extern void free_object2(object *ob, int free_inventory);
 extern int count_free(void);
 extern int count_used(void);
 extern int count_active(void);

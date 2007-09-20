@@ -722,6 +722,9 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
  */
 object *stop_item (object *op)
 {
+    if (free_no_drop(op))
+        return NULL;
+
     if (op->map == NULL)
         return op;
 
@@ -779,6 +782,9 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
  */
 object *fix_stopped_arrow (object *op)
 {
+    if (free_no_drop(op))
+        return NULL;
+
     if(rndm(0, 99) < op->stats.food) {
 	/* Small chance of breaking */
         remove_ob (op);
@@ -817,6 +823,28 @@ object *fix_stopped_arrow (object *op)
     op->owner=NULL; /* So that stopped arrows will be saved */
     update_object (op,UP_OBJ_FACE);
     return op;
+}
+
+/**
+ * Check whether the given object is FLAG_NO_DROP. If so, (optionally) remove
+ * and free it.
+ *
+ * @param op
+ * the object to check
+ * @return
+ * whether the object was freed
+ */
+int free_no_drop(object *op) {
+    if (!QUERY_FLAG(op, FLAG_NO_DROP)) {
+        return 0;
+    }
+
+    if(!QUERY_FLAG(op, FLAG_REMOVED)) {
+        remove_ob(op);
+    }
+
+    free_object2(op, 1);
+    return 1;
 }
 
 /**

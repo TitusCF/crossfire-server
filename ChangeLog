@@ -15,6 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Always destroy projectiles having no_drop when they stop being a
+projectile. This prevents arrows and weapons fired from summoned monsters
+to stick to the ground/into the victim's inventory.
+--
+common/objects.c: Remove static modifier from free_object2().
+server/attack.c: In hit_with_arrow() destroy no_drop arrows.
+server/time.c: In stop_item() and fix_stopped_arrow() destroy no_drop
+ projectiles. Add new function free_no_drop() to check for and destroy
+ objects having no_drop.
+Andreas Kirschbaum 2007-09-20
+
 Fix bug 1763098 - wrong key placement in random maps.  The key placement breaks
 if there is a normal door next to the locked door, so modify code to remove
 normal doors next to locked doors.  On broken test map, this change results
