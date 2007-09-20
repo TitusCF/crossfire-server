@@ -1162,8 +1162,8 @@ void update_object(object *op, int action) {
 	 * all objects with multiple faces, regardless if they are animated.
 	 * (levers have it set for example).
 	 */
-	if (flags & P_PLAYER && 
-	  !QUERY_FLAG(op, FLAG_CLIENT_ANIM_SYNC) && 
+	if (flags & P_PLAYER &&
+	  !QUERY_FLAG(op, FLAG_CLIENT_ANIM_SYNC) &&
 	  !QUERY_FLAG(op, FLAG_CLIENT_ANIM_RANDOM)) {
 	    pl = GET_MAP_PLAYER(op->map, op->x, op->y);
 
