@@ -1039,7 +1039,7 @@ static void apply_savebed (object *pl)
     pl->contr->bed_y = pl->y;
 
     strcpy(pl->contr->killer,"left");
-    check_score(pl); /* Always check score */
+    check_score(pl,0); /* Always check score */
     (void)save_player(pl,0);
 #if MAP_MAXTIMEOUT
     MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);

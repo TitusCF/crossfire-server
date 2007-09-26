@@ -49,8 +49,9 @@ static void copy_file(const char *filename, FILE *fpout);
  * keep the game running.  Thus, we don't want to free any information.
  */
 void emergency_save(int flag) {
-  player *pl;
 #ifndef NO_EMERGENCY_SAVE
+  player *pl;
+
   trying_emergency_save = 1;
   LOG(llevError,"Emergency save:  ");
   for(pl=first_player;pl!=NULL;pl=pl->next) {
@@ -78,7 +79,7 @@ void emergency_save(int flag) {
       draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
 		    "Emergency save failed, checking score...", NULL);
     }
-    check_score(pl->ob);
+    check_score(pl->ob,0);
   }
   LOG(llevError,"\n");
 #else

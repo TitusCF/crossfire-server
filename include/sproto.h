@@ -301,7 +301,7 @@ void move_symptom(object *symptom);
 void check_physically_infect(object *victim, object *hitter);
 int cure_disease(object *sufferer, object *caster);
 /* hiscore.c */
-void check_score(object *op);
+void check_score(object *op, int quiet);
 void display_high_score(object *op, int max, const char *match);
 /* gods.c */
 object *find_god(const char *name);
@@ -359,7 +359,7 @@ void register_move_on(int ob_type, move_on_func method);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
-void remove_all_pets();
+void remove_all_pets(void);
 void follow_owner(object *ob, object *owner);
 void pet_move(object *ob);
 void move_golem(object *op);
@@ -681,7 +681,7 @@ int check_password(char *typed, char *crypted);
 void enter_player_savebed(object *op);
 void set_map_timeout(mapstruct *oldmap);
 void enter_exit(object *op, object *exit_ob);
-void process_events();
+void process_events(void);
 void clean_tmp_files(void);
 void cleanup(void);
 void leave(player *pl, int draw_exit);

@@ -286,8 +286,12 @@ static score *add_score(score *new_score) {
  *
  * @param op
  * player to check.
+ * @quiet
+ * If set, don't print anything out - used for periodic updates during game
+ * play or when player unexpected quits - don't need to print anything
+ * in those cases
  */
-void check_score(object *op) {
+void check_score(object *op, int quiet) {
     score new_score;
     score *old_score;
 
@@ -296,20 +300,23 @@ void check_score(object *op) {
 
     if(!op->contr->name_changed) {
 	if(op->stats.exp>0) {
-	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	    if (!quiet)
+		draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 			  "As you haven't changed your name, you won't "
 			  "get into the high-score list.", NULL);
 	}
 	return;
     }
     if(QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	if (!quiet)
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "Since you have been in wizard mode, "
 		      "you can't enter the high-score list.", NULL);
 	return;
     }
     if (op->contr->explore) {
-	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	if (!quiet)
+	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "Since you were in explore mode, "
 		      "you can't enter the high-score list.", NULL);
 	return;
@@ -337,13 +344,21 @@ void check_score(object *op) {
     new_score.maxsp=(int) op->stats.maxsp;
     new_score.maxgrace=(int) op->stats.maxgrace;
     if((old_score=add_score(&new_score))==NULL) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+	if (!quiet)
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		      "Error in the highscore list.", NULL);
 	return;
     }
+    /* Everything below here is just related to print messages
+     * to the player.  If quiet is set, we can just return
+     * now.
+     */
+    if (quiet) return;
+
     if(new_score.position == -1) {
 	new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
-	if(!strcmp(old_score->name,new_score.name))
+
+	if(!strcmp(old_score->name,new_score.name)) 
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
 			  "You didn't beat your last highscore:", NULL);
 	else

@@ -15,6 +15,23 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add support for periodic updating of hiscore information for players - fixes
+bug 1735262.  Main change was to modify check_score() to take a flag that
+determines if messages related to high score placement should be displayed
+or not.
+--
+include/sproto.h: Rebuilt because of change to check_score()
+server/apply.c: Change calls to check_score() to take quiet flag.
+server/c_wiz.c: Change calls to check_score() to take quiet flag.
+server/hiscore.c: Modify check_score to take quiet flag, update function
+  not to print messages if it is set.
+server/login.c: Change calls to check_score() to take quiet flag.
+server/player.c: Change calls to check_score() to take quiet flag.
+server/server.c: Add calls to check_score() when doing autosaves as well
+  as when player connection is unexpected terminated.
+--
+MSW 2007-09-25
+
 Always destroy projectiles having no_drop when they stop being a
 projectile. This prevents arrows and weapons fired from summoned monsters
 to stick to the ground/into the victim's inventory.
