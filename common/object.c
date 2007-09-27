@@ -3438,10 +3438,26 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
  * this introduces a weight limitation for monsters.
  */
 int can_pick(const object *who, const object *item) {
-  return /*QUERY_FLAG(who,FLAG_WIZ)||*/
-    (item->weight>0&&!QUERY_FLAG(item,FLAG_NO_PICK)&&
-    !QUERY_FLAG(item,FLAG_ALIVE)&&!item->invisible &&
-    (who->type==PLAYER||item->weight<who->weight/3));
+
+    /* I re-wrote this as a series of if statements
+     * instead of a nested return (foo & bar && yaz)
+     * - I think this is much more readable,
+     * and likely compiler effectively optimizes it the
+     * same.
+     */
+    if (item->weight <= 0) return 0;
+    if (QUERY_FLAG(item, FLAG_NO_PICK)) return 0;
+    if (QUERY_FLAG(item, FLAG_ALIVE)) return 0;
+    if (item->invisible) return 0;
+
+    /* Weight limit for monsters */
+    if (who->type != PLAYER && item->weight > (who->weight/3)) return 0;
+
+    /* Can not pick up multipart objects */
+    if (item->head || item->more) return 0;
+
+    /* Everything passes, so OK to pick up */
+    return 1;
 }
 
 

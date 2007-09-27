@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/object.c: Modify can_pick() so you are not allowed to pick up
+  multipart objects.  insert_ob_in_ob() doesn't let it happen, but
+  this way, at least the player gets a message.  Also cleaned up function
+  so it is easier to read.
+MSW 2007-09-26
+
 Adding the minor, medium and major Potions of Life to the treasure list so
 they can be found in shops, dungeons, et al.
 --
