@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Couple bug fixes related to 1713188 - dropall performance issues.
+---
+include/config.h: Increase SOCKETBUFSIZE - should help reduce premature
+  dropped connections.
+server/c_object.c: Improve dropall logic - instead of calling fix_object() for
+  each object dropped, call it just once for the entire stack - should
+  improve performance considerably.  This also fixes sending updated
+  weight information to the client for each object dropped (player weight
+  1000, player weight 995, player weight 992, etc), so may help on dropped
+  connections.
+MSW 2007-09-26
+
 common/object.c: Modify can_pick() so you are not allowed to pick up
   multipart objects.  insert_ob_in_ob() doesn't let it happen, but
   this way, at least the player gets a message.  Also cleaned up function
