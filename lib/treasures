@@ -1265,7 +1265,7 @@ treasureone uncommon_weapons
   end
 # uncommon artifacts 
 treasureone uncommon_artifacts
-  arch potion_invulnerability
+  arch potion_shielding
     chance 5
   more
   arch mjoellnir
