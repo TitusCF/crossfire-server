@@ -806,9 +806,9 @@ skill alchemy
 cauldron cauldron
 ingred ice para-elemental's residue,3 balm of warmth,chinese dragon's steak,7 water of sapphire
 #
-# -- guess what this is....
+# -- renamed potion of invulnerability to potion of shielding
 Object NONE
-arch potion_invulnerability
+arch potion_shielding
 chance 0
 diff 50
 exp 500000
