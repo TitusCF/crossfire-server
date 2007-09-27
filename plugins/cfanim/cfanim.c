@@ -97,7 +97,7 @@ int runturn(struct CFanimation_struct* animation, long int id, void* parameters)
     int face;
     cf_log(llevDebug, "CFAnim: Turning in direction %ld\n",id);
     op->facing=dir;
-    cf_object_set_int_property(op,CFAPI_OBJECT_ANIMATION,face);
+    cf_object_set_int_property(op,CFAPI_OBJECT_PROP_ANIMATION,face);
     return 1;
 }
 

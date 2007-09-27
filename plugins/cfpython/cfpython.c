@@ -110,6 +110,8 @@ static PyObject* CFPythonError;
 static PyObject* getTime(PyObject* self, PyObject* args);
 static PyObject* destroyTimer(PyObject* self, PyObject* args);
 static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args);
+static PyObject* findAnimation(PyObject* self, PyObject* args);
+static PyObject* findFace(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
@@ -162,6 +164,8 @@ static PyMethodDef CFPythonMethods[] = {
     {"GetTime",             getTime,                METH_VARARGS},
     {"DestroyTimer",        destroyTimer,           METH_VARARGS},
     {"MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS},
+    {"FindFace",            findFace,               METH_VARARGS},
+    {"FindAnimation",       findAnimation,          METH_VARARGS},
     {NULL, NULL, 0}
 };
 
@@ -586,6 +590,22 @@ static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "s", &name))
         return NULL;
     return Crossfire_Map_wrap(cf_map_has_been_loaded(name));
+}
+
+static PyObject* findFace(PyObject* self, PyObject* args)
+{
+    char* name;
+    if (!PyArg_ParseTuple(args, "s", &name))
+        return NULL;
+    return Py_BuildValue("i", cf_find_face(name, 0));
+}
+
+static PyObject* findAnimation(PyObject* self, PyObject* args)
+{
+    char* name;
+    if (!PyArg_ParseTuple(args, "s", &name))
+        return NULL;
+    return Py_BuildValue("i", cf_find_animation(name));
 }
 
 void initContextStack()

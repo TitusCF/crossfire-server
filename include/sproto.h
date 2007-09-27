@@ -420,6 +420,7 @@ int plugins_remove_plugin(const char *id);
 crossfire_plugin *plugins_find_plugin(const char *id);
 void plugins_display_list(object *op);
 void *cfapi_system_find_animation(int *type, ...);
+void *cfapi_system_find_face(int *type, ...);
 void *cfapi_system_strdup_local(int *type, ...);
 void *cfapi_system_register_global_event(int *type, ...);
 void *cfapi_system_unregister_global_event(int *type, ...);

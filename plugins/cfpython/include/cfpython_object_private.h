@@ -77,6 +77,8 @@ static PyObject* Object_GetLastGrace(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLastEat(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetLevel(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetFace(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetAnim(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetAnimSpeed(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAttackType(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetBeenApplied(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetIdentified(Crossfire_Object* whoptr, void* closure);
@@ -221,6 +223,8 @@ static int Object_SetOnlyAttack(Crossfire_Object* whoptr, PyObject* value, void*
 static int Object_SetMakeInvisible(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetValue(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetFace(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetAnim(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetAnimSpeed(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetNoSave(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetOwner(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetEnemy(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -324,6 +328,8 @@ static PyGetSetDef Object_getseters[] = {
     { "LastEat",    (getter)Object_GetLastEat,  (setter)Object_SetLastEat, NULL, NULL },
     { "Level",      (getter)Object_GetLevel,    NULL, NULL, NULL },
     { "Face",       (getter)Object_GetFace,     (setter)Object_SetFace, NULL, NULL },
+    { "Anim",       (getter)Object_GetAnim,     (setter)Object_SetAnim, NULL, NULL },
+    { "AnimSpeed",  (getter)Object_GetAnimSpeed,(setter)Object_SetAnimSpeed, NULL, NULL },
     { "AttackType", (getter)Object_GetAttackType, (setter)Object_SetAttackType, NULL, NULL },
     { "BeenApplied",(getter)Object_GetBeenApplied,NULL, NULL, NULL },
     { "Identified", (getter)Object_GetIdentified, NULL, NULL, NULL },

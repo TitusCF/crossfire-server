@@ -131,6 +131,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_object_pickup,           67, "cfapi_object_pickup"},
     {cfapi_object_move,             68, "cfapi_object_move"},
     {cfapi_object_apply_below,      69, "cfapi_object_apply_below"},
+    {cfapi_generate_random_map,     70, "cfapi_generate_random_map"},
     {cfapi_archetype_get_property,  71, "cfapi_archetype_get_property"},
     {cfapi_party_get_property,      72, "cfapi_party_get_property"},
     {cfapi_region_get_property,     73, "cfapi_region_get_property"},
@@ -141,7 +142,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_timer_destroy,           78, "cfapi_system_timer_destroy"},
     {cfapi_friendlylist_get_next,   79, "cfapi_friendlylist_get_next"},
     {cfapi_set_random_map_variable, 80, "cfapi_set_random_map_variable"},
-    {cfapi_generate_random_map,     70, "cfapi_generate_random_map"},
+    {cfapi_system_find_face,        81, "cfapi_system_find_face"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -659,6 +660,31 @@ void* cfapi_system_find_animation(int *type, ...)
     va_end(args);
 
     *num = find_animation(anim);
+    *type = CFAPI_INT;
+    return NULL;
+}
+
+/**
+ * Wrapper for find_face().
+ * @param type
+ * will be CFAPI_INT.
+ * @return
+ * NULL.
+ */
+void* cfapi_system_find_face(int *type, ...)
+{
+    va_list args;
+    const char* face;
+    int error;
+    int* num;
+
+    va_start(args, type);
+    face = va_arg(args, const char*);
+    error = va_arg(args, int);
+    num = va_arg(args, int*);
+    va_end(args);
+
+    *num = find_face(face, error);
     *type = CFAPI_INT;
     return NULL;
 }
@@ -2271,6 +2297,12 @@ void* cfapi_object_get_property(int* type, ...)
 
         case CFAPI_OBJECT_PROP_FACE:
             rint = va_arg(args, int*);
+            *rint = op->face->number;
+            *type = CFAPI_INT;
+            break;
+
+       case CFAPI_OBJECT_PROP_ANIMATION:
+            rint = va_arg(args, int*);
             *rint = op->animation_id;
             *type = CFAPI_INT;
             break;
@@ -2892,16 +2924,16 @@ void* cfapi_object_set_property(int* type, ...)
         case CFAPI_OBJECT_PROP_FACE:
             iarg = va_arg(args, int);
             *type = CFAPI_INT;
-            op->animation_id = iarg;
+            op->face = &new_faces[iarg];
+            op->state = 0;
             update_object(op, UP_OBJ_FACE);
             break;
 
-        case CFAPI_OBJECT_ANIMATION:
+        case CFAPI_OBJECT_PROP_ANIMATION:
             iarg = va_arg(args, int);
             *type = CFAPI_INT;
-            if (iarg != -1) {
-                SET_ANIMATION(op, iarg);
-            }
+            op->animation_id = iarg;
+            SET_ANIMATION(op, 0);
             update_object(op, UP_OBJ_FACE);
             break;
         case CFAPI_OBJECT_PROP_DURATION:

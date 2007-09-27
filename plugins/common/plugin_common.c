@@ -42,6 +42,7 @@ static f_plug_api cfapiSystem_remove_string = NULL;
 static f_plug_api cfapiSystem_unregister_global_event = NULL;
 static f_plug_api cfapiSystem_strdup_local = NULL;
 static f_plug_api cfapiSystem_find_animation = NULL;
+static f_plug_api cfapiSystem_find_face = NULL;
 static f_plug_api cfapiSystem_log = NULL;
 static f_plug_api cfapiSystem_get_time = NULL;
 static f_plug_api cfapiSystem_timer_create = NULL;
@@ -131,6 +132,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_directory, "cfapi_system_directory", z );
     GET_HOOK( cfapiSystem_unregister_global_event, "cfapi_system_unregister_global_event", z );
     GET_HOOK( cfapiSystem_find_animation, "cfapi_system_find_animation", z );
+    GET_HOOK( cfapiSystem_find_face, "cfapi_system_find_face", z );
     GET_HOOK( cfapiSystem_re_cmp, "cfapi_system_re_cmp", z );
     GET_HOOK( cfapiObject_get_property, "cfapi_object_get_property", z );
     GET_HOOK( cfapiObject_set_property, "cfapi_object_set_property", z );
@@ -1281,6 +1283,18 @@ int cf_find_animation(const char* name)
 {
     int type, anim;
     cfapiSystem_find_animation(&type, name, &anim);
+    assert(type == CFAPI_INT);
+    return anim;
+}
+
+/**
+ * Wrapper for find_face().
+ * @copydoc find_face().
+ */
+int cf_find_face(const char* name, int error)
+{
+    int type, anim;
+    cfapiSystem_find_face(&type, name, error, &anim);
     assert(type == CFAPI_INT);
     return anim;
 }

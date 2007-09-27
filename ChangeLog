@@ -15,6 +15,28 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Face/animation related plugin functions.
+---
+Enable a plugin to find a face, and change face or animation. Make property
+  name coherent with others.
+ include/plugin.h sproto.h
+ plugins/cfanim/cfanim.c
+ server/plugins.c
+---
+Add wrapper for find_face().
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+---
+Add Object.AnimSpeed and Object.Anim, fix face handling.
+ plugins/cfpython/cfpython_object.c
+ plugins/cfpython/include/cfpython_object_private.h
+---
+Add Crossfire.FindFace() and Crossfire.FindAnimation()
+ plugins/cfpython/cfpython.c
+---
+ doc/Developers/python.ps: updated
+Nicolas Weeger 2007-09-27
+
 Couple bug fixes related to 1713188 - dropall performance issues.
 ---
 include/config.h: Increase SOCKETBUFSIZE - should help reduce premature

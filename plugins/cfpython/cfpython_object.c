@@ -444,6 +444,16 @@ static PyObject* Object_GetFace(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE));
 }
+static PyObject* Object_GetAnim(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION));
+}
+static PyObject* Object_GetAnimSpeed(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIM_SPEED));
+}
 static PyObject* Object_GetAttackType(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
@@ -1326,12 +1336,50 @@ static int Object_SetLastEat(Crossfire_Object* whoptr, PyObject* value, void* cl
 static int Object_SetFace(Crossfire_Object* whoptr, PyObject* value, void* closure)
 {
     char* txt;
+    int face;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_ParseTuple(value,"s",&txt))
+    if (!PyArg_Parse(value,"s",&txt))
         return -1;
 
-    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, cf_find_animation(txt));
+    face = cf_find_face(txt, -1);
+    if (face == -1)
+    {
+        PyErr_SetString(PyExc_TypeError, "Unknown face.");
+        return -1;
+    }
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_FACE, face);
+    return 0;
+}
+static int Object_SetAnim(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    char* txt;
+    int anim;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"s",&txt))
+        return -1;
+
+    anim = cf_find_animation(txt);
+    if (anim == 0)
+    {
+        PyErr_SetString(PyExc_TypeError, "Unknown animation.");
+        return -1;
+    }
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIMATION, anim);
+    return 0;
+}
+static int Object_SetAnimSpeed(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_ANIM_SPEED, val);
     return 0;
 }
 static int Object_SetAttackType(Crossfire_Object* whoptr, PyObject* value, void* closure)

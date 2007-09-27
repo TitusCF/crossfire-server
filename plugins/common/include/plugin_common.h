@@ -49,6 +49,7 @@ extern void         cf_free_string(sstring str);
 extern char*        cf_strdup_local(const char* str);
 extern char*        cf_get_maps_directory(const char *name, char* buf, int size);
 extern int          cf_find_animation(const char* txt);
+extern int          cf_find_face(const char* name, int error);
 extern void         cf_log( LogLevel logLevel, const char* format, ... );
 extern void         cf_get_time( timeofday_t* tod );
 extern int          cf_timer_create(object* ob, long delay, int mode);
