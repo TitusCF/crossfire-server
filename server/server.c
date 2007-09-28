@@ -981,7 +981,7 @@ static void process_players1()
 		} else {
 		    save_player(pl->ob,1);
 		    pl->last_save_tick = pticks;
-		    check_score(pl->ob, 0);
+		    check_score(pl->ob, 1);
 		}
 	    }
 #endif

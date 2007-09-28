@@ -1009,21 +1009,11 @@ static void apply_treasure (object *op, object *tmp)
  */
 static void apply_savebed (object *pl)
 {
-    if(!pl->contr->name_changed||!pl->stats.exp) {
-        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You don't deserve to save your character yet.", NULL);
-        return;
-    }
-    if(QUERY_FLAG(pl,FLAG_WAS_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Since you have cheated you can't save.", NULL);
-        return;
-    }
 
-        /* Lauwenmark : Here we handle the LOGOUT global event */
+    /* Lauwenmark : Here we handle the LOGOUT global event */
     execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
 
-        /* Need to call terminate_all_pets()  before we remove the player ob */
+    /* Need to call terminate_all_pets()  before we remove the player ob */
     terminate_all_pets(pl);
     remove_ob(pl);
     pl->direction=0;
@@ -1033,7 +1023,7 @@ static void apply_savebed (object *pl)
                          "%s leaves the game.",
                          pl->name);
 
-        /* update respawn position */
+    /* update respawn position */
     strcpy(pl->contr->savebed_map, pl->map->path);
     pl->contr->bed_x = pl->x;
     pl->contr->bed_y = pl->y;

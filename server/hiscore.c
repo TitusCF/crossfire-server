@@ -321,6 +321,13 @@ void check_score(object *op, int quiet) {
 		      "you can't enter the high-score list.", NULL);
 	return;
     }
+    if (!op->stats.exp) {
+	if (!quiet)
+	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                      "You don't deserve to save your character yet.", NULL);
+	return;
+    }
+
     strncpy(new_score.name,op->name,BIG_NAME);
     new_score.name[BIG_NAME-1] = '\0';
     strncpy(new_score.title,op->contr->own_title,BIG_NAME);

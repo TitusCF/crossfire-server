@@ -79,7 +79,7 @@ void emergency_save(int flag) {
       draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
 		    "Emergency save failed, checking score...", NULL);
     }
-    check_score(pl->ob,0);
+    check_score(pl->ob,1);
   }
   LOG(llevError,"\n");
 #else
