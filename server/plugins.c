@@ -58,7 +58,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 81
+#define NR_OF_HOOKS 82
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {

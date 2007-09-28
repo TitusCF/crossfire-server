@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/plugins.c: fix wrong #define leading to crashes.
+Nicolas Weeger 2007-09-28
+
 common/map.c: Move update_buttons() from ready_map_name() to
   load_original_map() - in this way, button state is not reset when
   swapping a map back into memory, but button state is still verified
