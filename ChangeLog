@@ -15,6 +15,15 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/gods.c: modify god_enchants_weapon() to increase item_power of weapon
+  by 1 each time god improves it.  This make sense, but also fixes bug
+  1696807 - if the weapon has item_power 0, when player logs on, game
+  will calculate new item power, which may be quite surprising to
+  character.  If item_power is set, new item_power won't be calculated.
+  Note: For trunk, item_power was not recalculated, but I think the changing
+  of item_power is just good for some balance.
+MSW 2007-09-27
+
 Fix some hiscore changes - some functions were not passing in quiet flag
 when they should have been, etc.
 --
