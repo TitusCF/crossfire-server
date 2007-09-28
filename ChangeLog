@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/map.c: Move update_buttons() from ready_map_name() to
+  load_original_map() - in this way, button state is not reset when
+  swapping a map back into memory, but button state is still verified
+  at first load.  Fixes bug 1706075.
+MSW 2007-09-27
+
 server/gods.c: modify god_enchants_weapon() to increase item_power of weapon
   by 1 each time god improves it.  This make sense, but also fixes bug
   1696807 - if the weapon has item_power 0, when player logs on, game
