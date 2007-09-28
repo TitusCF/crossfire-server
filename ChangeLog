@@ -15,6 +15,17 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix some hiscore changes - some functions were not passing in quiet flag
+when they should have been, etc.
+--
+server/apply.c: Remove some code that sees if player can save - update_score()
+  does this, so no reason to have it in both places.
+server/hiscore.c: Add check not to save 0 scores.
+server/login.c: Be quiet for backup saves.
+server/server.c: Be quiet for backup saves.
+---
+MSW 2007-09-27
+
 Face/animation related plugin functions.
 ---
 Enable a plugin to find a face, and change face or animation. Make property
