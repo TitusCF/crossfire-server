@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_range.c: Bug fix for [ 1804610 ] cast : info.c:message_callback:
+  unidentified messages.  Text output to the gtk2 client may not contain text
+  enclosed in square brackets... which is probably a bug in and of itself.
+socket/info.c: doxygenated parameters for draw_ext_info() and
+  draw_ext_info_format().
+Kevin Bulgrien 2007-09-30
+
 server/plugins.c: fix wrong #define leading to crashes.
 Nicolas Weeger 2007-09-28
 

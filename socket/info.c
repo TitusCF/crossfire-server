@@ -175,33 +175,32 @@ static void check_output_buffers(const object *pl, const char *buf)
     }
 }
 
-
-
 /**
  * Sends message to player(s).
  *
- * flags is various flags - mostly color, plus a few specials.
+ * @param flags Various flags - mostly color, plus a few specials.
  *
- * pri is priority.  It is a little odd - the lower the value, the more
+ * @param pri Priority.  It is a little odd - the lower the value, the more
  * important it is.  Thus, 0 gets sent no matter what.  Otherwise, the
  * value must be less than the listening level that the player has set.
  * Unfortunately, there is no clear guideline on what each level does what.
  *
- * pl can be passed as NULL - in fact, this will be done if NDI_ALL is set
- * in the flags.
+ * @param pl Can be passed as NULL - in fact, this will be done if NDI_ALL is
+ * set in the flags.
  *
  * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
- * if the client supports the new readables, this is sent to the client
- * without processing in the output buffers.
+ * If the client supports the new readables, this is sent to the client without
+ * processing in the output buffers.
  *
- * type and subtype are the type MSG_TYPE for the type of message.
+ * @param type The type MSG_TYPE for the type of message.
  *
- * message is the message to send for clients that support draw_ext_info
- * oldmessage is for clients that do not support it.  oldmessage can be
+ * @param subtype The type MSG_TYPE for the type of message.
+ *
+ * @param message The message to send for clients that support draw_ext_info.
+ *
+ * @param oldmessage is for clients that do not support it.  oldmessage can be
  * NULL, in which case this function will strip out the tags of message.
- *
  */
-
 void draw_ext_info(
         int flags, int pri, const object *pl, uint8 type,
         uint8 subtype, const char* message, const char* oldmessage){
@@ -260,13 +259,35 @@ void draw_ext_info(
 }
 
 /**
- *  draw_ext_info_format is basically same as draw_ext_info
- * above, but takes varargs format.  Otherwise, the meaining of
- * all the fields is the same.
- * This is perhaps not the most efficient as we do vnsprintf on
- * both the old and newbuf.  But it simplifies the code greatly since
- * we can jsut call draw_ext_info.  Also, hopefully at some point, need for
- * old_format will go away.
+ * Sends message to player(s).
+ *
+ *  This function is the same as draw_ext_info, but takes varargs format.
+ *  Otherwise, the meaning of all the fields is the same.  This is perhaps not
+ *  the most efficient as we do vnsprintf on both the old and newbuf, but it
+ *  simplifies the code greatly since we can just call draw_ext_info.  Also,
+ *  hopefully at some point, need for old_format will go away.
+ *
+ * @param flags Various flags - mostly color, plus a few specials.
+ *
+ * @param pri Priority.  It is a little odd - the lower the value, the more
+ * important it is.  Thus, 0 gets sent no matter what.  Otherwise, the
+ * value must be less than the listening level that the player has set.
+ * Unfortunately, there is no clear guideline on what each level does what.
+ *
+ * @param pl Can be passed as NULL - in fact, this will be done if NDI_ALL is
+ * set in the flags.
+ *
+ * If message is black, and not NDI_UNIQUE, gets sent through output buffers.
+ * If the client supports the new readables, this is sent to the client without
+ * processing in the output buffers.
+ *
+ * @param type The type MSG_TYPE for the type of message.
+ *
+ * @param subtype The type MSG_TYPE for the type of message.
+ *
+ * @param new_format
+ *
+ * @param old_format
  */
 void draw_ext_info_format(
 	int flags, int pri, const object *pl, uint8 type,

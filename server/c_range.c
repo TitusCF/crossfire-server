@@ -153,8 +153,8 @@ static void show_matching_spells(object *op, char *params)
 		*cp = '\0';
 
 		draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-				     "\n[fixed]%s spells %.*s [lvl] [sp]",
-				     "\n%s spells %.*s [lvl] [sp]",
+				     "\n[fixed]%s spells %.*s <lvl> <sp>",
+				     "\n%s spells %.*s <lvl> <sp>",
 				     tmp, 12-strlen(tmp), "              ");
 	    }
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
