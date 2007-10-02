@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/c_object.c:  Add call to fix_object() in pick_up_ob() - this causes
+  player weight & speed to be recalculated - fixes bug 1799411 where this
+  wasn't happening.
+MSW 2007-10-01
+
 server/c_range.c: Bug fix for [ 1804610 ] cast : info.c:message_callback:
   unidentified messages.  Text output to the gtk2 client may not contain text
   enclosed in square brackets... which is probably a bug in and of itself.

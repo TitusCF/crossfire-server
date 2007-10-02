@@ -364,6 +364,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
     if (QUERY_FLAG (tmp, FLAG_NO_DROP))
 	return;
+
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
 	draw_ext_info(NDI_UNIQUE, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
 		      "The object disappears in a puff of smoke! It must have been an illusion.",
@@ -376,20 +377,25 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 
     if (nrof > tmp_nrof || nrof == 0)
 	nrof = tmp_nrof;
+
     /* Figure out how much weight this object will add to the player */
     weight = tmp->weight * nrof;
     if (tmp->inv) weight += tmp->carrying * (100 - tmp->stats.Str) / 100;
+
     if (pl->stats.Str <= MAX_STAT)
         effective_weight_limit = weight_limit[pl->stats.Str];
     else
         effective_weight_limit = weight_limit[MAX_STAT];
+
     if ((pl->weight + pl->carrying + weight) > effective_weight_limit) {
 	draw_ext_info(0, 0,pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
 		      "That item is too heavy for you to pick up.", NULL);
 	return;
     }
+
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
+
     if (nrof != tmp_nrof) {
         char failure[MAX_BUF];
 
@@ -409,6 +415,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	}
     }
     query_name(tmp, name, MAX_BUF);
+
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	snprintf(buf, sizeof(buf), "%s will cost you %s.", name,
 		query_cost_string(tmp,pl,F_BUY | F_SHOP));
@@ -424,11 +431,13 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 
     tmp = insert_ob_in_ob(tmp, op);
 
-
     /* All the stuff below deals with client/server code, and is only
      * usable by players
      */
     if(pl->type!=PLAYER) return;
+
+    /* Additional weight changes speed, etc */
+    fix_object(pl);
 
     /* These are needed to update the weight for the container we
      * are putting the object in.
