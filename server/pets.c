@@ -1076,7 +1076,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
             prev = tmp;
             tmp->x = op->x + x + tmp->arch->clone.x;
             tmp->y = op->y + y + tmp->arch->clone.y;
-            tmp->map = op->map;
+	    tmp->map = get_map_from_coord(op->map, &tmp->x, &tmp->y);
         }
         head->direction = freedir[ndir];
         head->stats.exp = 0;
