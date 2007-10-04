@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+common/map.c: Add misisng call to unlink() empty unique maps.  Fixes bug
+  1799361 - Permadeath corpse reproduction.  Bug is more general - any unique
+  object could be duplicated, so long as it was the only unique object on
+  the map.
+MSW 2007-10-03
+
 server/pets.c: Add missing call to get_map_from_coord() - summoned big
   creatures on tiled maps end up having incorrect map/coordinate data set,
   resulting in crash.  Fixes bug 1800719

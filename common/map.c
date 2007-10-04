@@ -1498,6 +1498,7 @@ int save_map(mapstruct *m, int flag) {
     fp2 = fp; /* save unique items into fp2 */
     if ((flag == SAVE_MODE_NORMAL || flag == SAVE_MODE_OVERLAY) && !m->unique && !m->template) {
         char name[MAX_BUF], final_unique[MAX_BUF];
+
         create_items_path (m->path, name, MAX_BUF);
         snprintf(final_unique, sizeof(final_unique), "%s.v00", name);
         snprintf(buf, sizeof(buf), "%s%s", final_unique, TEMP_EXT);
@@ -1526,6 +1527,11 @@ int save_map(mapstruct *m, int flag) {
             if (ftell (fp2) == 0) {
                 fclose (fp2);
                 unlink (buf);
+		/* If there are no unique items left on the map, we need to
+		 * unlink the original unique map so that the unique
+		 * items don't show up again.
+		 */
+		unlink(final_unique);
             } else {
                 fflush(fp2);
                 fclose (fp2);
