@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1815251: Multiple 'the' displayed in party who.
+Moved player listing code to own function, call it from command_who and party who.
+Move 'who' format checking to load_settings().
+ include/sproto.h
+ server/c_misc.c c_party.c init.c
+Nicolas Weeger 2007-10-20
+
 common/map.c: Add misisng call to unlink() empty unique maps.  Fixes bug
   1799361 - Permadeath corpse reproduction.  Bug is more general - any unique
   object could be duplicated, so long as it was the only unique object on

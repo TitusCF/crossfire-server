@@ -823,6 +823,17 @@ static void load_settings(void)
     close_and_delete(fp, comp);
     if (settings.log_timestamp_format == NULL)
         settings.log_timestamp_format = strdup_local("%y/%m/%d %H:%M:%S");
+
+    /*
+    * The who formats are defined in config to be blank. They should have been
+    * overridden by the settings file, if there are no entries however, it will
+    * have stayed blank. Since this probably isn't what is wanted, we will check if
+    * new formats have been specified, and if not we will use the old defaults.
+    */
+    if (!strcmp(settings.who_format,""))
+        strcpy(settings.who_format, "%N_%T%t%h%d%b%n<%m>");
+    if (!strcmp(settings.who_wiz_format,""))
+        strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
 }
 
 

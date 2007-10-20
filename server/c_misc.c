@@ -499,6 +499,85 @@ static int name_cmp (const chars_names *c1, const chars_names *c2) {
 }
 
 /**
+ * Displays the players in a region or party. If both are NULL, all players are listed.
+ *
+ * @param op
+ * who is asking for player list.
+ * @param reg
+ * region to display players of.
+ * @param party
+ * party to list.
+ */
+void list_players(object* op, region* reg, partylist* party) {
+    player *pl;
+    uint16 i;
+    char* format;
+    int num_players = 0, num_wiz = 0, num_afk = 0, num_bot = 0;
+    chars_names *chars = NULL;
+
+    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
+        format=settings.who_wiz_format;
+    else
+        format=settings.who_format;
+
+    for (pl=first_player;pl!=NULL;pl=pl->next) {
+        if (pl->ob->map == NULL)
+            continue;
+        if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ))
+            continue;
+
+        if(reg && !region_is_child_of_region(get_region_by_map(pl->ob->map),reg))
+            continue;
+        if (party && pl->party != party)
+            continue;
+
+        if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
+
+            num_players++;
+            chars = (chars_names *) realloc(chars, num_players*sizeof(chars_names));
+            if (chars == NULL) {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
+                              "who failed - out of memory!", NULL);
+                return;
+            }
+            sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
+            chars[num_players-1].login_order = num_players;
+
+            /* Check for WIZ's & AFK's*/
+            if (QUERY_FLAG(pl->ob,FLAG_WIZ))
+                num_wiz++;
+
+            if (QUERY_FLAG(pl->ob,FLAG_AFK))
+                num_afk++;
+
+            if (pl->socket.is_bot)
+                num_bot++;
+        }
+    }
+    if (first_player != (player *) NULL) {
+        if (reg == NULL && party == NULL)
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
+                "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                num_players, num_wiz, num_afk, num_bot);
+        else if (party == NULL)
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
+                "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                reg->longname?reg->longname:reg->name, num_players, num_wiz, num_afk, num_bot);
+        else
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
+                "Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                "Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
+                party->partyname, num_players, num_wiz, num_afk, num_bot);
+    }
+    qsort (chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
+    for (i=0;i<num_players;i++)
+        display_who_entry(op, find_player(chars[i].namebuf), format);
+    free(chars);
+}
+
+/**
  * 'who' command.
  *
  * @param op
@@ -509,76 +588,11 @@ static int name_cmp (const chars_names *c1, const chars_names *c2) {
  * 1.
  */
 int command_who (object *op, char *params) {
-    player *pl;
-    uint16 i;
     region *reg;
-    char* format;
-    int num_players = 0, num_wiz = 0, num_afk = 0, num_bot = 0;
-    chars_names *chars = NULL;
-
-    /*
-     * The who formats are defined in config to be blank. They should have been
-     * overridden by the settings file, if there are no entries however, it will
-     * have stayed blank. Since this probably isn't what is wanted, we will check if
-     * new formats have been specified, and if not we will use the old defaults.
-     */
-    if (!strcmp(settings.who_format,""))
-    	strcpy(settings.who_format, "%N_%T%t%h%d%b%n<%m>");
-    if (!strcmp(settings.who_wiz_format,""))
-    	strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
-    if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-    	format=settings.who_wiz_format;
-    else
-    	format=settings.who_format;
-
     reg=get_region_from_string(params);
 
-    for (pl=first_player;pl!=NULL;pl=pl->next) {
-	if (pl->ob->map == NULL)
-	    continue;
-	if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ)) continue;
+    list_players(op, reg, NULL);
 
-	if(!region_is_child_of_region(get_region_by_map(pl->ob->map),reg)) continue;
-
-	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
-
-	    num_players++;
-	    chars = (chars_names *) realloc(chars, num_players*sizeof(chars_names));
-            if (chars == NULL) {
-	        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-			      "who failed - out of memory!", NULL);
-                return 0;
-            }
-	    sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
-	    chars[num_players-1].login_order = num_players;
-
-	    /* Check for WIZ's & AFK's*/
-	    if (QUERY_FLAG(pl->ob,FLAG_WIZ))
-		num_wiz++;
-
-	    if (QUERY_FLAG(pl->ob,FLAG_AFK))
-		num_afk++;
-
-	    if (pl->socket.is_bot)
-		num_bot++;
-	}
-    }
-    if (first_player != (player *) NULL) {
-    	if (reg == NULL)
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
-		     "Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
-		     num_players, num_wiz, num_afk, num_bot);
-	    else
-     		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
-		     "Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)",
-		     reg->longname?reg->longname:reg->name, num_players, num_wiz, num_afk, num_bot);
-    }
-    qsort (chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
-    for (i=0;i<num_players;i++)
-	display_who_entry(op, find_player(chars[i].namebuf), format);
-    free(chars);
     return 1;
 }
 

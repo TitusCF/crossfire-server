@@ -495,35 +495,15 @@ int command_party (object *op, char *params)
     op->contr->party=NULL;
     return 1;
   }
-  if(strcmp(params, "who")==0) {
-    player *pl;
-    tmpparty = op->contr->party;
-    if(op->contr->party==NULL) {
-      draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		    "You are not a member of any party.", NULL);
-      return 1;
-    }
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			 "Members of party: %s.",
-			 "Members of party: %s.",
-			 op->contr->party->partyname);
-
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl->ob->contr->party==op->contr->party) {
-	    if (settings.set_title == TRUE && pl->ob->contr->own_title[0]!='\0') {
-		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			     "[fixed]%3d %s the %s",
-			     "%3d %s the %s",
-			     pl->ob->level,pl->ob->name,pl->ob->contr->own_title);
-	    } else {
-		draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-			     "[fixed]%3d %s the %s",
-			     "%3d %s the %s",
-			     pl->ob->level,pl->ob->name,pl->ob->contr->title);
-	    }
-	}
-	return 1;
-  } /* leave */
+    if(strcmp(params, "who")==0) {
+        if(op->contr->party==NULL) {
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "You are not a member of any party.", NULL);
+            return 1;
+        }
+        list_players(op, NULL, op->contr->party);
+        return 1;
+    } /* leave */
 
   if(strncmp(params, "passwd ", 7) == 0) {
     partylist *tmplist;
