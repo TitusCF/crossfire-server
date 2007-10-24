@@ -222,7 +222,6 @@ void destroy_object (object *op)
  * will be saved at the emergency save location.
  * @return
  * non zero if successful.
- * @todo actually check the save worked :)
  */
 int save_player(object *op, int flag) {
   FILE *fp;
@@ -350,14 +349,26 @@ int save_player(object *op, int flag) {
   /* Save objects, but not unpaid objects.  Don't remove objects from
    * inventory.
    */
-  save_object(fp, op, SAVE_FLAG_NO_REMOVE);
+  i = save_object(fp, op, SAVE_FLAG_NO_REMOVE);
   if (flag) {
     op->x = backup_x;
     op->y = backup_y;
   }
 #else
-  save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE); /* don't check and don't remove */
+  i = save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE); /* don't check and don't remove */
 #endif
+
+  if (wiz)
+      SET_FLAG(op,FLAG_WIZ);
+
+  if ((i != SAVE_ERROR_OK) || (fclose(fp) == EOF)) {	/* make sure the write succeeded */
+      draw_ext_info(NDI_UNIQUE | NDI_RED, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                    "Can't save character!", NULL);
+      draw_ext_info_format(NDI_ALL_DMS | NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", NULL, op->name);
+      unlink(tmpfilename);
+      free(tmpfilename);
+      return 0;
+  }
 
   CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
@@ -365,13 +376,6 @@ int save_player(object *op, int flag) {
       while ((tmp = op->inv))
 	  destroy_object (tmp);
 
-  if (fclose(fp) == EOF) {	/* make sure the write succeeded */
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-		      "Can't save character.", NULL);
-	unlink(tmpfilename);
-	free(tmpfilename);
-	return 0;
-  }
   checksum = 0;
   sprintf(backupfile, "%s.tmp", filename);
   rename(filename, backupfile);
@@ -400,7 +404,6 @@ int save_player(object *op, int flag) {
   if (flag&&container!=NULL)
     op->container = container;
 
-  if (wiz) SET_FLAG(op,FLAG_WIZ);
   if(!flag)
 	esrv_send_inventory(op, op);
 
