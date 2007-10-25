@@ -361,7 +361,7 @@ int save_player(object *op, int flag) {
   if (wiz)
       SET_FLAG(op,FLAG_WIZ);
 
-  if ((i != SAVE_ERROR_OK) || (fclose(fp) == EOF)) {	/* make sure the write succeeded */
+  if (fclose(fp) != 0 || i != SAVE_ERROR_OK) {	/* make sure the write succeeded */
       draw_ext_info(NDI_UNIQUE | NDI_RED, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
                     "Can't save character!", NULL);
       draw_ext_info_format(NDI_ALL_DMS | NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", NULL, op->name);
@@ -554,6 +554,7 @@ void check_login(object *op) {
     }
     if (!correct) {
 	wrong_password(op);
+	fclose(fp);
 	return;
     }
 

@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+server/login.c: Fix file handle leaks in save_player() and check_login().
+Andreas Kirschbaum 2007-10-25
+
 Don't remove inventory if player save fails. Warn online DMs.
  server/login.c
 Nicolas Weeger 2007-10-24
