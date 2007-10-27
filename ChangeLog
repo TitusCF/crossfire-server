@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for bug #1693250: loader.c isn't correctly generated.
+ configure.ac: remove AM_MAINTAINER_MODE macro, no one remembers
+  why it was set.
+Nicolas Weeger 2007-10-27
+
 server/login.c: Fix file handle leaks in save_player() and check_login().
 Andreas Kirschbaum 2007-10-25
 

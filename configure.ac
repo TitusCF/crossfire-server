@@ -7,8 +7,6 @@ AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(include/autoconf.h)
 
-AM_MAINTAINER_MODE
-
 AC_PREFIX_DEFAULT(/usr/games/crossfire)
 
 dnl we want a config.h file instead of -D options.
