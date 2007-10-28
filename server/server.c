@@ -991,11 +991,6 @@ static void process_players1()
 	if (settings.casting_time == TRUE) {
 	    if (pl->ob->casting_time > 0){
 		pl->ob->casting_time--;
-		pl->ob->start_holding = 1;
-	    }
-	    /* set spell_state so we can update the range in stats field */
-	    if ((pl->ob->casting_time == 0) && (pl->ob->start_holding ==1)){
-		pl->ob->start_holding = 0;
 	    }
 	}
 	do_some_living(pl->ob);

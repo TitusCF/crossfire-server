@@ -252,7 +252,6 @@ typedef struct obj {
     uint8	duration_modifier; /**< how level modifies duration */
     sint16	casting_time;	/**< Time left before spell goes off */
     struct obj	*spell;		/**< Spell that was being cast */
-    uint16	start_holding;
     char	*spellarg;
     uint8	dam_modifier;	/**< How going up in level effects damage */
     sint8	range;		/**< Range of the spell */
