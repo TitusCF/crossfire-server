@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused 'tooltype' field.
+ common/loader.l
+ include/object.h
+Nicolas Weeger 2007-10-28
+
 Fix for bug #1693250: loader.c isn't correctly generated.
  configure.ac: remove AM_MAINTAINER_MODE macro, no one remembers
   why it was set.

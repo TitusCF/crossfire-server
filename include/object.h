@@ -219,7 +219,6 @@ typedef struct obj {
     sint64	perm_exp;	/**< Permanent exp */
     struct obj	*current_weapon;   /**< Pointer to the weapon currently used */
     uint32	weapontype;	/**< Type of weapon */
-    uint32	tooltype;	/**< Type of tool or build facility */
     sint8	body_info[NUM_BODY_LOCATIONS];	/**< Body info as loaded from the file */
     sint8	body_used[NUM_BODY_LOCATIONS];	/**< Calculated value based on items equipped */
 				/* See the doc/Developers/objects for more info about body locations */

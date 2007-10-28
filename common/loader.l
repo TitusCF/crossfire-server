@@ -1009,7 +1009,6 @@ A	.+
 ^can_cut{S}            { /* just ignore for now */ }
 ^can_dam_armour{S}     { }
 ^weapontype{S}		op->weapontype = IVAL;
-^tooltype{S}            op->tooltype = IVAL;
 ^casting_time{S}	op->casting_time = FVAL;
 ^elevation{S}		op->elevation = IVAL;
 ^smoothlevel{S}		op->smoothlevel = IVAL;
@@ -1643,9 +1642,6 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
 
     if(op->weapontype && op->weapontype!=op2->weapontype) {
         FAST_SAVE_LONG(fastbuf,"weapontype ",op->weapontype,11);
-    }
-    if(op->tooltype && op->tooltype!=op2->tooltype) {
-        FAST_SAVE_LONG(fastbuf,"tooltype ",op->tooltype,9);
     }
     if (op->elevation && op->elevation != op2->elevation) {
         FAST_SAVE_LONG(fastbuf,"elevation ",op->elevation,10);
