@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Adapt alchemy formulas to changed archetypes.
+ lib/formulae: rename "shoes" to "pair of shoes".
+Andreas Kirschbaum 2007-11-03
+
 Remove useless 'start_holding' field.
  include/object.h
  server/server.c

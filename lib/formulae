@@ -1564,7 +1564,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred shoes,3 lead
+ingred pair of shoes,3 lead
 #
 Object mobility
 arch low_boots
@@ -1575,7 +1575,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred shoes,beholdereye,3 lead
+ingred pair of shoes,beholdereye,3 lead
 #
 Object mobility
 arch elvenboots
@@ -1608,7 +1608,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred shoes,goblin's head,lead
+ingred pair of shoes,goblin's head,lead
 #
 Object clawing
 arch high_boots,high_boots_b,high_boots_w
@@ -1641,7 +1641,7 @@ trans 1
 yield 1
 skill smithery
 cauldron forge
-ingred shoes,3 mithril crystal
+ingred pair of shoes,3 mithril crystal
 #
 # -------------------
 # Armour
