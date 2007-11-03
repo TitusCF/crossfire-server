@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix collect script to not insert editor_folder lines into nested inventory
+objects.
+ lib/collect.pl.in
+Andreas Kirschbaum 2007-11-03
+
 Adapt alchemy formulas to changed archetypes.
  lib/formulae: rename "shoes" to "pair of shoes".
 Andreas Kirschbaum 2007-11-03
