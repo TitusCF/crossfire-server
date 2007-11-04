@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove support for spellcasting objects using sp/dam fields.
+ common/loader.l
+Andreas Kirschbaum 2007-11-04
+
 Fix collect script to not insert editor_folder lines into nested inventory
 objects.
  lib/collect.pl.in

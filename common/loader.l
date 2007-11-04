@@ -389,27 +389,6 @@ static void check_loaded_object(object *op) {
         }
     }
 
-    /* Old spellcasting object - need to load in the appropiate object
-     * This is actually required as of 2007-06-09, since Gridarta doesn't yet support spells in
-     * inventory. See
-     * http://sourceforge.net/tracker/index.php?func=detail&aid=1555828&group_id=166996&atid=841182
-     *
-     * This can be removed when Gridarta is updated, and archetypes, maps and artifacts too.
-     */
-    if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN
-        || op->type == FIREWALL ||
-        /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
-        ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv && !arch_init)  {
-        object *tmp;
-
-    /* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
-     * in that spell was stored in sp.
-     */
-        tmp = create_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
-        insert_ob_in_ob(tmp, op);
-        op->randomitems = NULL;	/* So another spell isn't created for this object */
-    }
-
     /* spellbooks & runes use slaying.  But not to arch name, but to spell name */
     if ((op->type == SPELLBOOK || op->type == RUNE) && op->slaying && !op->inv && !arch_init) {
         object *tmp;
