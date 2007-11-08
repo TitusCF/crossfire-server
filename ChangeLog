@@ -15,6 +15,9 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add Log() support to python scripts
+David Delbecq (tchize) 2007-11-09
+
 Add SVN version to the server version (as -rnnnn suffix) reported at server
 startup, by the player "version" command, and by the metaservers.  The method
 to for adding the SVN version information was copied from the client.  The

@@ -111,6 +111,7 @@ static PyObject* getTime(PyObject* self, PyObject* args);
 static PyObject* destroyTimer(PyObject* self, PyObject* args);
 static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args);
 static PyObject* findAnimation(PyObject* self, PyObject* args);
+static PyObject* log_message(PyObject* self, PyObject* args);
 static PyObject* findFace(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
@@ -164,6 +165,7 @@ static PyMethodDef CFPythonMethods[] = {
     {"GetTime",             getTime,                METH_VARARGS},
     {"DestroyTimer",        destroyTimer,           METH_VARARGS},
     {"MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS},
+    {"Log",                 log_message,            METH_VARARGS},
     {"FindFace",            findFace,               METH_VARARGS},
     {"FindAnimation",       findAnimation,          METH_VARARGS},
     {NULL, NULL, 0}
@@ -598,6 +600,36 @@ static PyObject* findFace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "s", &name))
         return NULL;
     return Py_BuildValue("i", cf_find_face(name, 0));
+}
+
+static PyObject* log_message(PyObject* self, PyObject* args){
+    LogLevel level;
+    int intLevel;
+    char* message;
+    if (!PyArg_ParseTuple(args,"is",&intLevel,&message))
+	return NULL;
+    switch (intLevel) {
+        case llevError: 
+            level=llevError;
+            break;
+        case llevInfo: 
+            level=llevInfo;
+            break;
+        case llevDebug: 
+            level=llevDebug;
+            break;
+        case llevMonster: 
+            level=llevMonster;
+            break;
+        default:
+            return NULL;
+    }
+    if ( (message!=NULL) && (message[strlen(message)]=='\n'))
+	cf_log(level,"%s: %s",(current_context==NULL || current_context->script==NULL)?"CFPython":current_context->script,message);
+    else
+	cf_log(level,"%s: %s\n",(current_context==NULL || current_context->script==NULL)?"CFPython":current_context->script,message);
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject* findAnimation(PyObject* self, PyObject* args)
@@ -1115,6 +1147,11 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     PyModule_AddObject(m, "Archetype", (PyObject*)&Crossfire_ArchetypeType);
     PyModule_AddObject(m, "Party", (PyObject*)&Crossfire_PartyType);
     PyModule_AddObject(m, "Region", (PyObject*)&Crossfire_RegionType);
+
+    PyModule_AddObject(m, "LogError", Py_BuildValue("i", llevError));
+    PyModule_AddObject(m, "LogInfo", Py_BuildValue("i", llevInfo));
+    PyModule_AddObject(m, "LogDebug", Py_BuildValue("i", llevDebug));
+    PyModule_AddObject(m, "LogMonster", Py_BuildValue("i", llevMonster));
 
     CFPythonError = PyErr_NewException("Crossfire.error", NULL, NULL);
     PyDict_SetItemString(d, "error", CFPythonError);

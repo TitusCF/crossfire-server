@@ -1319,7 +1319,15 @@ void cf_log( LogLevel logLevel, const char* format, ... )
     cfapiSystem_log(&type, logLevel, buf);
     assert(type == CFAPI_NONE);
 }
-
+/**
+ * Wrapper for LOG() that
+ * uses directly a buffer, without format
+ */
+void cf_log_plain( LogLevel logLevel, const char* message) {
+    int type;
+    cfapiSystem_log(&type, logLevel, message);
+    assert(type == CFAPI_NONE);
+}
 void cf_get_time( timeofday_t* tod )
 {
     int type;
