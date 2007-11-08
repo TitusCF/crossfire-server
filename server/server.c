@@ -34,6 +34,7 @@
 #include <global.h>
 #include <object.h>
 #include <tod.h>
+#include <version.h>
 
 #ifdef HAVE_DES_H
 #include <des.h>
@@ -72,7 +73,7 @@ void version(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
 		       "This is Crossfire v%s",
 		       "This is Crossfire v%s",
-		       VERSION);
+		       FULL_VERSION);
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_VERSION,
 		"The authors can be reached at crossfire@metalforge.org", NULL);
 

@@ -33,6 +33,7 @@
 
 #include <global.h>
 #include <loader.h>
+#include <version.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
@@ -856,7 +857,7 @@ void init(int argc, char **argv) {
     init_weather();
     load_materials();
     parse_args(argc, argv, 2);
-    fprintf(logfile,"Welcome to CrossFire, v%s\n",VERSION);
+    fprintf(logfile,"Welcome to CrossFire, v%s\n",FULL_VERSION);
     fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
     fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
 

@@ -72,6 +72,9 @@ if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
 	echo "any files.";
 fi;
 
+dnl Check if svnversion is avaliable to get the rev number
+AC_PATH_PROG(SVNVERSION, svnversion)
+
 dnl nsl, socket may be needed for the X-windowing system, so check
 dnl for them before before checking for X.
 AC_CHECK_LIB(nsl, main)

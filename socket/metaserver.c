@@ -45,6 +45,7 @@
 
 #include <pthread.h>
 #include <metaserver2.h>
+#include <version.h>
 
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>
@@ -150,9 +151,10 @@ void metaserver_update(void)
         num_players++;
     }
 
-    /* Only do this if se have a valid connection */
+    /* Only do this if we have a valid connection */
     if (metafd != -1) {
-	sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION,
+	sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players,
+FULL_VERSION,
 	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
 	    (long)time(NULL) - cst_tot.time_start);
 	if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
@@ -518,7 +520,7 @@ static void metaserver2_updates()
      */
     curl_formadd(&formpost, &lastptr,
 		 CURLFORM_COPYNAME, "version",
-		 CURLFORM_COPYCONTENTS, VERSION,
+		 CURLFORM_COPYCONTENTS, FULL_VERSION,
 		 CURLFORM_END);
 
     snprintf(buf, MAX_BUF-1, "%d", VERSION_SC);

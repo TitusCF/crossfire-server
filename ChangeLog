@@ -15,6 +15,20 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add SVN version to the server version (as -rnnnn suffix) reported at server
+startup, by the player "version" command, and by the metaservers.  The method
+to for adding the SVN version information was copied from the client.  The
+expanded version information should not be generated if the sources are built
+outside of an SVN checkout.
+  configure.ac
+  server/init.c
+  server/server.c
+  include/version.h
+  include/svnversion.h
+  include/Makefile.am
+  socket/metaserver.c
+Kevin Bulgrien 2007-11-08
+
 Remove support for spellcasting objects using sp/dam fields.
  common/loader.l
 Andreas Kirschbaum 2007-11-04
