@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Adding svnversion.h to SVN was not a good idea.  It will get re-committed over
+and over even though that was not the intent.  Removed.
+  include/svnversion.h
+Kevin Bulgrien 2007-11-09
+
 Add Log() support to python scripts
 David Delbecq (tchize) 2007-11-09
 
