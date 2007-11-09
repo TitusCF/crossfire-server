@@ -625,9 +625,9 @@ static PyObject* log_message(PyObject* self, PyObject* args){
             return NULL;
     }
     if ( (message!=NULL) && (message[strlen(message)]=='\n'))
-	cf_log(level,"%s: %s",(current_context==NULL || current_context->script==NULL)?"CFPython":current_context->script,message);
+	cf_log(level,"CFPython: %s",message);
     else
-	cf_log(level,"%s: %s\n",(current_context==NULL || current_context->script==NULL)?"CFPython":current_context->script,message);
+	cf_log(level,"CFPython: %s\n",message);
     Py_INCREF(Py_None);
     return Py_None;
 }
