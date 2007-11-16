@@ -20,7 +20,7 @@ $(top_builddir)/test/toolkit/libtoolkit_common.a:
 # check_item check_links check_living check_loader check_logger check_los check_map
 # check_path check_player check_porting check_readable check_recipe check_re-cmp check_region
 # check_time check_treasure check_utils
-TESTS= check_arch check_object check_shstr
+TESTS= check_arch check_object check_shstr check_time
 
 clean-local:
 	$(RM) .autorun.xml

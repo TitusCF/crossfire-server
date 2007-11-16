@@ -42,6 +42,8 @@
 #define DAYS_PER_WEEK		7
 #define WEEKS_PER_MONTH		5
 #define MONTHS_PER_YEAR		17
+#define SEASONS_PER_YEAR        5
+#define PERIODS_PER_DAY         6
 
 /* convenience */
 #define WEEKS_PER_YEAR		(WEEKS_PER_MONTH*MONTHS_PER_YEAR)
@@ -65,6 +67,7 @@ typedef struct _timeofday {
 	int minute;
 	int weekofmonth;
 	int season;
+        int periodofday;
 } timeofday_t;
 
 /* from common/time.c */

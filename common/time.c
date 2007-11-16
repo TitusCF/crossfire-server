@@ -57,7 +57,7 @@ uint32 pticks;                         /**< ? */
 uint32 process_utime_long_count;       /**< ? */
 
 /** Ingame seasons. */
-const char *season_name[] =
+const char *season_name[SEASONS_PER_YEAR+1] =
 {
     "The Season of New Year",
     "The Season of Growth",
@@ -98,6 +98,41 @@ const char *month_name[MONTHS_PER_YEAR] = {
    "Month of the Ancient Darkness",
    "Month of Gorokh"
 };
+
+const char *periodsofday[PERIODS_PER_DAY] = {
+   "Night",
+   "Dawn",
+   "Morning",
+   "Noon",
+   "Evening",
+   "Dusk"
+};
+
+/**
+ * give access to weekday names
+ */
+const char *get_periodofday(const int index){        
+    return ((index>=0) && (index < PERIODS_PER_DAY))?periodsofday[index]:NULL;
+}
+/* *
+ * give access to month names
+ */
+const char *get_month_name(const int index){
+    return ((index>=0) && (index < MONTHS_PER_YEAR))?month_name[index]:NULL;
+}
+
+/**
+ * give access to weekday names
+ */
+const char *get_weekday(const int index){
+    return ((index>=0) && (index < DAYS_PER_WEEK))?weekdays[index]:NULL;
+}
+/**
+ * give access to season names
+ */
+const char *get_season_name(const int index){
+    return ((index>=0) && (index < (SEASONS_PER_YEAR+1)))?season_name[index]:NULL;
+}
 
 /**
  * Initialise all variables used in the timing routines.
@@ -255,6 +290,21 @@ void get_tod(timeofday_t *tod)
         tod->season = 3;
     else
         tod->season = 4;
+   
+    if (tod ->hour <5) /*until 4:59*/
+        tod->periodofday=0;
+    else if (tod ->hour <8)
+        tod->periodofday=1;
+    else if (tod ->hour <13)
+        tod->periodofday=2;
+    else if (tod ->hour <15)
+        tod->periodofday=3;
+    else if (tod ->hour <20)
+        tod->periodofday=4;
+    else if (tod ->hour <23)
+        tod->periodofday=5;
+    else /*back to night*/
+        tod->periodofday=0;
 }
 
 /**

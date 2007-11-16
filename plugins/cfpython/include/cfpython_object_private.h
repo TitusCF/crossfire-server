@@ -150,6 +150,7 @@ static PyObject* Object_GetGodGiven(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetIsPet(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetAttackMovement(Crossfire_Object* whoptr, void* closure);
 static PyObject* Object_GetDuration(Crossfire_Object* whoptr, void* closure);
+static PyObject* Object_GetGlowRadius(Crossfire_Object* whoptr, void* closure);
 
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetExp(Crossfire_Object* whoptr, PyObject* value, void* closure);
@@ -232,6 +233,7 @@ static int Object_SetGodGiven(Crossfire_Object* whoptr, PyObject* value, void* c
 static int Object_SetIsPet(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetAttackMovement(Crossfire_Object* whoptr, PyObject* value, void* closure);
 static int Object_SetDuration(Crossfire_Object* whoptr, PyObject* value, void* closure);
+static int Object_SetGlowRadius(Crossfire_Object* whoptr, PyObject* value, void* closure);
 
 static PyObject* Crossfire_Object_Remove( Crossfire_Object* who, PyObject* args );
 static PyObject* Crossfire_Object_Apply( Crossfire_Object* who, PyObject* args );
@@ -401,6 +403,7 @@ static PyGetSetDef Object_getseters[] = {
     { "IsPet",          (getter)Object_GetIsPet,     (setter)Object_SetIsPet, NULL, NULL },
     { "AttackMovement", (getter)Object_GetAttackMovement, (setter)Object_SetAttackMovement, NULL, NULL },
     { "Duration",       (getter)Object_GetDuration,     (setter)Object_SetDuration, NULL, NULL },
+    { "GlowRadius",     (getter)Object_GetGlowRadius,   (setter)Object_SetGlowRadius, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }
 };
 

@@ -35,6 +35,135 @@
 #include <sproto.h>
 
 /**
+ * Trigger every object in an objectlink. This was originally
+ * part of push_button but has been extracted to make it
+ * possible to trigger the connected object on a map
+ * from a plugin without requiring a source object.
+ * This method will take care of calling EVENT_TRIGGER of all
+ * elligible object in list (see state parameter)
+ * @param ol the objectlink to trigger. This can be acquire from map
+ * @param cause the object that cause this path to trigger, may be NULL
+ * @param state which object to apply. 
+ *          0=all object with FLAG_ACTIVATE_ON_PUSH
+ *          other=all object with FLAG_ACTIVATE_ON_RELEASE
+ */ 
+void trigger_connected(objectlink *ol, object* cause, const int state){
+    object* tmp;
+    for (; ol; ol = ol->next) {
+        if (!ol->ob || ol->ob->count != ol->id) {
+            LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%d) (cause='%s'.\n", ol->id, (cause && cause->name)?cause->name:"");
+            continue;
+        }
+        /* a button link object can become freed when the map is saving.  As
+         * a map is saved, objects are removed and freed, and if an object is
+         * on top of a button, this function is eventually called.  If a map
+         * is getting moved out of memory, the status of buttons and levers
+         * probably isn't important - it will get sorted out when the map is
+         * re-loaded.  As such, just exit this function if that is the case.
+         */
+
+        if (QUERY_FLAG(ol->ob, FLAG_FREED)) return;
+        tmp = ol->ob;
+
+        /* if the criteria isn't appropriate, don't do anything */
+        if (state && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_PUSH)) continue;
+        if (!state && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_RELEASE)) continue;
+
+        /* 
+         * (tchize) call the triggers of the activated object.
+         * tmp = activated object
+         * op is activator (aka button)
+         */
+        if (execute_event(tmp, EVENT_TRIGGER, cause, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+	    continue;
+
+        switch(tmp->type) {
+
+            case GATE:
+            case HOLE:
+                tmp->value=tmp->stats.maxsp?!state:state;
+                tmp->speed=0.5;
+                update_ob_speed(tmp);
+                break;
+
+            case CF_HANDLE:
+                SET_ANIMATION(tmp, (tmp->value=tmp->stats.maxsp?!state:state));
+                update_object(tmp,UP_OBJ_FACE);
+                break;
+
+            case SIGN:
+                if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
+                    ext_info_map(NDI_UNIQUE | NDI_NAVY,tmp->map,
+                        MSG_TYPE_SIGN,MSG_SUBTYPE_NONE,
+                        tmp->msg, tmp->msg);
+                    if (tmp->stats.food) tmp->last_eat++;
+                }
+                break;
+
+            case ALTAR:
+                tmp->value = 1;
+                SET_ANIMATION(tmp, tmp->value);
+                update_object(tmp,UP_OBJ_FACE);
+                break;
+
+            case BUTTON:
+            case PEDESTAL:
+                tmp->value=state;
+                SET_ANIMATION(tmp, tmp->value);
+                update_object(tmp,UP_OBJ_FACE);
+                break;
+
+            case MOOD_FLOOR:
+                do_mood_floor(tmp, cause);
+                break;
+
+            case TIMED_GATE:
+                tmp->speed = tmp->arch->clone.speed;
+                update_ob_speed(tmp);  /* original values */
+                tmp->value = tmp->arch->clone.value;
+                tmp->stats.sp = 1;
+                tmp->stats.hp = tmp->stats.maxhp;
+                 /* Handle multipart gates.  We copy the value for the other parts
+                 * from the head - this ensures that the data will consistent
+                 */
+                for (tmp=tmp->more; tmp!=NULL; tmp=tmp->more) {
+                    tmp->speed = tmp->head->speed;
+                    tmp->value = tmp->head->value;
+                    tmp->stats.sp = tmp->head->stats.sp;
+                    tmp->stats.hp = tmp->head->stats.hp;
+                    update_ob_speed(tmp);
+                }
+                break;
+
+            case DIRECTOR:
+            case FIREWALL:
+                if(!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) move_firewall(tmp);
+                else {
+                    if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
+                        tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
+                    animate_turning(tmp);
+                }
+                break;
+
+            case TELEPORTER:
+                move_teleporter(tmp);
+                break;
+
+            case CREATOR:
+                move_creator(tmp);
+                break;
+
+            case TRIGGER_MARKER:
+                move_marker(tmp);
+                break;
+
+            case DUPLICATOR:
+                move_duplicator(tmp);
+                break;
+        }
+    }
+}
+/**
  * Push the specified object.  This can affect other buttons/gates/handles
  * altars/pedestals/holes in the whole map.
  * Changed the routine to loop through _all_ linked objects.
@@ -45,8 +174,9 @@
 void push_button(object *op) {
     object *tmp;
     objectlink *ol;
-
     /* LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count); */
+    trigger_connected (get_button_links(op), op, op->value);
+#if 0
     for (ol = get_button_links(op); ol; ol = ol->next) {
         if (!ol->ob || ol->ob->count != ol->id) {
             LOG(llevError, "Internal error in push_button (%s).\n", op->name);
@@ -66,6 +196,14 @@ void push_button(object *op) {
         /* if the criteria isn't appropriate, don't do anything */
         if (op->value && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_PUSH)) continue;
         if (!op->value && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_RELEASE)) continue;
+
+        /* 
+         * (tchize) call the triggers of the activated object.
+         * tmp = activated object
+         * op is activator (aka button)
+         */
+        if (execute_event(tmp, EVENT_TRIGGER, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
+	    continue;
 
         switch(tmp->type) {
 
@@ -152,6 +290,7 @@ void push_button(object *op) {
                 break;
         }
     }
+#endif
 }
 
 /**

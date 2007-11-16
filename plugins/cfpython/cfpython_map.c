@@ -277,7 +277,40 @@ static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args)
 
     return Py_BuildValue("i", cf_map_change_light(map->map, change));
 }
+/**
+ * python backend method for Map.TriggerConnected(int connected, CfObject cause, int state)
+ * @param connected will be used to locate Objectlink with given id on map
+ * @param state: 0=trigger the "release", other is trigger the "push", default is push
+ * @param cause, eventual CfObject causing this trigger
+ */
+static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args)
+{
+    objectlink* ol=NULL;
+    int connected;
+    int state;
+    Crossfire_Object* cause=NULL;
+    oblinkpt* olp;
+    if (!PyArg_ParseTuple(args,"ii|O!", &connected,&state,&Crossfire_ObjectType,&cause))
+        return NULL;
 
+    MAPEXISTCHECK(map);
+    /* locate objectlink for this connected value */
+    if (!map->map->buttons)
+        return NULL;
+    for (olp=map->map->buttons;olp;olp=olp->next){
+        if (olp->value==connected){
+            ol = olp->link;
+            break;
+        }
+    }
+    if (ol==NULL)
+        return NULL;
+    /* run the object link */
+    cf_map_trigger_connected(ol,cause?cause->obj:NULL,state);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)
 {
     MAPEXISTCHECK_INT(left);

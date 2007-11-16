@@ -57,6 +57,9 @@ extern int          cf_timer_create(object* ob, long delay, int mode);
 extern int          cf_timer_destroy(int id);
 extern const char*  cf_get_directory(int id);
 extern const char*  cf_re_cmp(const char *str, const char *regexp);
+extern const char*  cf_get_season_name( int index );
+extern const char*  cf_get_month_name( int index );
+extern const char*  cf_get_weekday_name( int index );
 
 /* Objects */
 extern void         cf_object_set_int_property(object* op, int propcode, int value);
@@ -166,6 +169,7 @@ extern int          cf_map_get_sky(mapstruct* map);
 extern int          cf_map_get_wpartx(mapstruct* map);
 extern int          cf_map_get_wparty(mapstruct* map);
 extern int          cf_map_change_light(mapstruct *m, int change);
+extern void         cf_map_trigger_connected(objectlink* ol, object* cause, int state);
 
 /* Random maps */
 extern int           cf_random_map_set_variable(RMParms* rp, const char* buf);

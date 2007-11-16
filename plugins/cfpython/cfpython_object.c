@@ -818,6 +818,11 @@ static PyObject* Object_GetDuration(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION));
 }
+static PyObject* Object_GetGlowRadius(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj,CFAPI_OBJECT_PROP_GLOW_RADIUS));
+}
 
 /** Setters */
 static int Object_SetMessage(Crossfire_Object* whoptr, PyObject* value, void* closure)
@@ -1823,6 +1828,17 @@ static int Object_SetDuration(Crossfire_Object* whoptr, PyObject* value, void* c
         return -1;
 
     cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_DURATION, val);
+    return 0;
+}
+static int Object_SetGlowRadius(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GLOW_RADIUS, val);
     return 0;
 }
 

@@ -24,7 +24,8 @@
 /*  You should have received a copy of the GNU General Public License        */
 /*  along with this program; if not, write to the Free Software              */
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
-/*                                                                           */ /*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 static PyObject* Map_GetDifficulty(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetPath(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetTempName(Crossfire_Map* whoptr, void* closure);
@@ -58,6 +59,7 @@ static PyObject* Map_Check(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Next(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args);
 static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args);
+static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args);
 
 static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
 
@@ -103,6 +105,7 @@ static PyMethodDef MapMethods[] = {
     { "Next",    (PyCFunction)Map_Next, METH_VARARGS},
     { "Insert",  (PyCFunction)Map_Insert, METH_VARARGS},
     { "ChangeLight", (PyCFunction)Map_ChangeLight, METH_VARARGS},
+    { "TriggerConnected", (PyCFunction)Map_TriggerConnected, METH_VARARGS},
     {NULL, NULL, 0}
 };
 

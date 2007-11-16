@@ -97,6 +97,7 @@ static f_plug_api cfapiMap_present_arch_by_name = NULL;
 static f_plug_api cfapiMap_create_path = NULL;
 static f_plug_api cfapiMap_has_been_loaded = NULL;
 static f_plug_api cfapiMap_change_light = NULL;
+static f_plug_api cfapiMap_trigger_connected = NULL;
 static f_plug_api cfapiPlayer_find = NULL;
 static f_plug_api cfapiPlayer_message = NULL;
 static f_plug_api cfapiPlayer_send_inventory = NULL;
@@ -114,6 +115,10 @@ static f_plug_api cfapiFriendlylist_get_next = NULL;
 static f_plug_api cfapiSet_random_map_variable = NULL;
 static f_plug_api cfapiGenerate_random_map = NULL;
 static f_plug_api cfapiObject_change_exp = NULL;
+static f_plug_api cfapiSystem_get_month_name = NULL;
+static f_plug_api cfapiSystem_get_season_name = NULL;
+static f_plug_api cfapiSystem_get_weekday_name = NULL;
+static f_plug_api cfapiSystem_get_periodofday_name = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -182,6 +187,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiMap_present_arch_by_name, "cfapi_map_present_arch_by_name", z );
     GET_HOOK( cfapiMap_change_light, "cfapi_map_change_light", z );
     GET_HOOK( cfapiMap_has_been_loaded, "cfapi_map_has_been_loaded", z );
+    GET_HOOK( cfapiMap_trigger_connected, "cfapi_map_trigger_connected", z );
     GET_HOOK( cfapiPlayer_find, "cfapi_player_find", z );
     GET_HOOK( cfapiPlayer_message, "cfapi_player_message", z );
     GET_HOOK( cfapiObject_teleport, "cfapi_object_teleport", z );
@@ -202,6 +208,10 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSet_random_map_variable, "cfapi_set_random_map_variable", z );
     GET_HOOK( cfapiGenerate_random_map, "cfapi_generate_random_map", z );
     GET_HOOK( cfapiObject_change_exp, "cfapi_object_change_exp", z );
+    GET_HOOK( cfapiSystem_get_season_name, "cfapi_system_get_season_name", z );
+    GET_HOOK( cfapiSystem_get_month_name, "cfapi_system_get_month_name", z );
+    GET_HOOK( cfapiSystem_get_weekday_name, "cfapi_system_get_weekday_name", z );
+    GET_HOOK( cfapiSystem_get_periodofday_name, "cfapi_system_get_periodofday_name", z );
 
     return 1;
 }
@@ -796,6 +806,16 @@ int cf_object_check_trigger(object* op, object* cause)
     assert(type == CFAPI_INT);
     return value;
 }
+/**
+ * Wrapper for trigger_connected().
+ * @copydoc trigger_connected().
+ */
+void cf_map_trigger_connected(objectlink* ol, object* cause, int state)
+{
+    int type;
+    cfapiMap_trigger_connected(&type, ol, cause, state);
+    assert(type == CFAPI_NONE);
+}
 int cf_object_out_of_map( object* op, int x, int y)
 {
     int type, value;
@@ -1334,6 +1354,43 @@ void cf_get_time( timeofday_t* tod )
     cfapiSystem_get_time(&type, tod);
     assert(type == CFAPI_NONE);
 }
+
+const char *cf_get_season_name( int index )
+{
+    int type;
+    char* result;
+    cfapiSystem_get_season_name(&type, index, &result);
+    assert(type == CFAPI_STRING);
+    return result;
+}
+
+const char *cf_get_month_name( int index )
+{
+    int type;
+    char* result;
+    cfapiSystem_get_month_name(&type, index, &result);
+    assert(type == CFAPI_STRING);
+    return result;
+}
+
+const char *cf_get_weekday_name( int index )
+{
+    int type;
+    char* result;
+    cfapiSystem_get_weekday_name(&type, index, &result);
+    assert(type == CFAPI_STRING);
+    return result;
+}
+
+const char *cf_get_periodofday_name( int index )
+{
+    int type;
+    char* result;
+    cfapiSystem_get_periodofday_name(&type, index, &result);
+    assert(type == CFAPI_STRING);
+    return result;
+}
+
 
 /**
  * Creates a timer, equivalent of calling cftimer_create().

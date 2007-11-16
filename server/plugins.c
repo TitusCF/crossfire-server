@@ -58,7 +58,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 82
+#define NR_OF_HOOKS 87
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -143,6 +143,11 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_friendlylist_get_next,   79, "cfapi_friendlylist_get_next"},
     {cfapi_set_random_map_variable, 80, "cfapi_set_random_map_variable"},
     {cfapi_system_find_face,        81, "cfapi_system_find_face"},
+    {cfapi_get_season_name,         82, "cfapi_system_get_season_name"},
+    {cfapi_get_month_name,          83, "cfapi_system_get_month_name"},
+    {cfapi_get_weekday_name,        84, "cfapi_system_get_weekday_name"},
+    {cfapi_get_periodofday_name,    85, "cfapi_system_get_periodofday_name"},
+    {cfapi_map_trigger_connected,   86, "cfapi_map_trigger_connected"},
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -925,6 +930,65 @@ void *cfapi_get_time(int *type, ...)
     return NULL;
 }
 
+#define string_get_int(name) \
+va_list args;\
+    int index;\
+    const char** str;\
+    va_start(args, type);\
+    index = va_arg(args, int);\
+    str = va_arg(args, const char**);\
+    va_end(args);\
+    *str = name(index);\
+    *type = CFAPI_STRING;\
+    return NULL;\
+/**
+ * Wrapper for get_season_name().
+ *
+ * @param type
+ * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
+ * @return
+ * NULL.
+ */
+void *cfapi_get_season_name(int *type, ...)
+{
+    string_get_int(get_season_name)
+}
+/**
+ * Wrapper for get_season_name().
+ *
+ * @param type
+ * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
+ * @return
+ * NULL.
+ */
+void *cfapi_get_weekday_name(int *type, ...)
+{
+    string_get_int(get_weekday)
+}
+/**
+ * Wrapper for get_season_name().
+ *
+ * @param type
+ * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
+ * @return
+ * NULL.
+ */
+void *cfapi_get_month_name(int *type, ...)
+{
+    string_get_int(get_month_name)
+}
+/**
+ * Wrapper for get_season_name().
+ *
+ * @param type
+ * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
+ * @return
+ * NULL.
+ */
+void *cfapi_get_periodofday_name(int *type, ...)
+{
+    string_get_int(get_periodofday)
+}
 /**
  * Wrapper for cfapi_timer_create().
  * @param type
@@ -2703,7 +2767,16 @@ void* cfapi_object_set_property(int* type, ...)
         case CFAPI_OBJECT_PROP_GLOW_RADIUS:
             iarg = va_arg(args, int);
             *type = CFAPI_INT;
-            op->glow_radius = iarg;
+	    if (op->glow_radius !=iarg){
+                op->glow_radius = iarg;
+                object* tmp;
+                tmp=object_get_env_recursive(op);
+                if (tmp->map!=NULL){
+                    SET_MAP_FLAGS(tmp->map, tmp->x, tmp->y,  P_NEED_UPDATE);
+                    update_position(tmp->map, tmp->x, tmp->y);
+                    update_all_los(tmp->map,tmp->x,tmp->y);
+                }
+            }
             break;
 
         case CFAPI_OBJECT_PROP_PERM_EXP:
@@ -3679,6 +3752,34 @@ void* cfapi_object_check_trigger(int* type, ...)
 
     *rint = check_trigger(op, cause);
     *type = CFAPI_INT;
+    return NULL;
+}
+
+/**
+ * Wrapper for trigger_connected().
+ * @param type
+ * Will be CFAPI_NONE.
+ * @param objectlink* the link to trigger. Can be obtained from map structure
+ * @param cause the cause object of triggering, can be NULL
+ * @param state the state to trigger. 0=APPLY_RELEASE other=APPLY_PUSH
+ * Other params include the objectlink to trigger, the cause of the trigger and the state of trigger
+ * @return
+ * NULL.
+ */
+void* cfapi_map_trigger_connected(int* type, ...)
+{
+    objectlink* ol;
+    object* cause;
+    int state;
+    va_list args;
+
+    va_start(args, type);
+    ol = va_arg(args, objectlink*);
+    cause = va_arg(args, object*);
+    state = va_arg(args, int);
+    va_end(args);
+    trigger_connected(ol,cause,state);
+    *type = CFAPI_NONE;
     return NULL;
 }
 

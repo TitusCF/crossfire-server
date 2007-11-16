@@ -113,6 +113,10 @@ static PyObject* getMapHasBeenLoaded(PyObject* self, PyObject* args);
 static PyObject* findAnimation(PyObject* self, PyObject* args);
 static PyObject* log_message(PyObject* self, PyObject* args);
 static PyObject* findFace(PyObject* self, PyObject* args);
+static PyObject* getSeasonName(PyObject* self, PyObject* args);
+static PyObject* getMonthName(PyObject* self, PyObject* args);
+static PyObject* getWeekdayName(PyObject* self, PyObject* args);
+static PyObject* getPeriodofdayName(PyObject* self, PyObject* args);
 
 /** Set up an Python exception object. */
 static void set_exception(const char *fmt, ...)
@@ -168,6 +172,10 @@ static PyMethodDef CFPythonMethods[] = {
     {"Log",                 log_message,            METH_VARARGS},
     {"FindFace",            findFace,               METH_VARARGS},
     {"FindAnimation",       findAnimation,          METH_VARARGS},
+    {"GetSeasonName",       getSeasonName,          METH_VARARGS},
+    {"GetMonthName",        getMonthName,           METH_VARARGS},
+    {"GetWeekdayName",      getWeekdayName,         METH_VARARGS},
+    {"GetPeriodofdayName",  getPeriodofdayName,     METH_VARARGS},
     {NULL, NULL, 0}
 };
 
@@ -574,6 +582,7 @@ static PyObject* getTime(PyObject* self, PyObject* args)
     PyList_Append(list, Py_BuildValue("i",tod.dayofweek));
     PyList_Append(list, Py_BuildValue("i",tod.weekofmonth));
     PyList_Append(list, Py_BuildValue("i",tod.season));
+    PyList_Append(list, Py_BuildValue("i",tod.periodofday));
 
     return list;
     }
@@ -640,6 +649,38 @@ static PyObject* findAnimation(PyObject* self, PyObject* args)
     return Py_BuildValue("i", cf_find_animation(name));
 }
 
+
+static PyObject* getSeasonName(PyObject* self, PyObject* args)
+{
+    int i;
+    if (!PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+    return Py_BuildValue("s", cf_get_season_name(i));
+}
+
+static PyObject* getMonthName(PyObject* self, PyObject* args)
+{
+    int i;
+    if (!PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+    return Py_BuildValue("s", cf_get_month_name(i));
+}
+
+static PyObject* getWeekdayName(PyObject* self, PyObject* args)
+{
+    int i;
+    if (!PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+    return Py_BuildValue("s", cf_get_weekday_name(i));
+}
+
+static PyObject* getPeriodofdayName(PyObject* self, PyObject* args)
+{
+    int i;
+    if (!PyArg_ParseTuple(args, "i", &i))
+        return NULL;
+    return Py_BuildValue("s", cf_get_periodofday_name(i));
+}
 void initContextStack()
 {
     current_context = NULL;
@@ -841,6 +882,32 @@ static void addConstants(PyObject* module, const char* name, CFConstant* constan
     strncat(tmp, "Name", 1024 - strlen(tmp));
     PyDict_SetItemString(PyModule_GetDict(module), tmp, dict);
     Py_DECREF(dict);
+}
+/**
+ * Do half the job of addConstants. It only 
+ * Set constantc, but not a hashtable to get constant
+ * names from values. To be used for collections of constants
+ * which are not unique but still are usefull for scripts
+ */
+static void addSimpleConstants(PyObject* module, const char* name, CFConstant* constants)
+{
+    int i = 0;
+    char tmp[1024];
+    PyObject* new;
+
+    strncpy(tmp, "Crossfire_", 1024);
+    strncat(tmp, name, 1024 - strlen(tmp));
+
+    new = Py_InitModule(tmp, NULL);
+
+    while ( constants[i].name != NULL)
+    {
+        PyModule_AddIntConstant(new, constants[i].name, constants[i].value);
+        i++;
+    }
+    PyDict_SetItemString(PyModule_GetDict(module), name, new);
+    Py_DECREF(new);
+
 }
 
 static void initConstants(PyObject* module)
@@ -1098,6 +1165,16 @@ static void initConstants(PyObject* module)
         { "MAPLOAD", EVENT_MAPLOAD },
         { NULL, 0 } };
 
+
+    static CFConstant cstTime[] = {
+        { "HOURS_PER_DAY", HOURS_PER_DAY },
+        { "DAYS_PER_WEEK", DAYS_PER_WEEK },
+        { "WEEKS_PER_MONTH", WEEKS_PER_MONTH },
+        { "MONTHS_PER_YEAR", MONTHS_PER_YEAR },
+        { "SEASONS_PER_YEAR", SEASONS_PER_YEAR },
+        { "PERIODS_PER_DAY", PERIODS_PER_DAY },
+        { NULL, 0 } };
+
     addConstants(module, "Direction", cstDirection);
     addConstants(module, "Type", cstType);
     addConstants(module, "Move", cstMove);
@@ -1106,6 +1183,7 @@ static void initConstants(PyObject* module)
     addConstants(module, "AttackType", cstAttackType);
     addConstants(module, "AttackTypeNumber", cstAttackTypeNumber);
     addConstants(module, "EventType", cstEventType);
+    addSimpleConstants(module, "Time", cstTime);
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)

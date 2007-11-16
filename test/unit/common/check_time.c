@@ -32,10 +32,13 @@
 
 #include <stdlib.h>
 #include <check.h>
+#include <global.h>
+#include <libproto.h>
+#include "tod.h"
 
 
 void setup(void) {
-    /* put any initialisation steps here, they will be run before each testcase */
+    reset_sleep();
 }
 
 void teardown(void)
@@ -43,9 +46,30 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_empty)
+START_TEST (test_get_month_name)
 {
-    /*TESTME test not yet developped*/
+    fail_unless(get_month_name(-1)==NULL,"getting month name for negative value should bring a NULL");
+    fail_unless(get_month_name(MONTHS_PER_YEAR)==NULL,"getting month name for too high value should bring a NULL");
+    fail_unless(get_month_name(0)!=NULL,"getting month name for correct value should bring a non NULL season name");
+}
+END_TEST
+
+START_TEST (test_get_weekday)
+{
+    fail_unless(get_weekday(-1)==NULL,"getting week day name for negative value should bring a NULL");
+    fail_unless(get_weekday(DAYS_PER_WEEK)==NULL,"getting weekday name for too high value should bring a NULL");
+    fail_unless(get_weekday(0)!=NULL,"getting weekday name for correct value should bring a non NULL season name");
+}
+END_TEST
+
+START_TEST (test_get_season_name)
+{
+    fail_unless(get_season_name(-1)==NULL,"getting season name for negative value should bring a NULL");
+printf("got at season +2: %s\n",get_season_name(SEASONS_PER_YEAR+2));
+    fail_unless(get_season_name(SEASONS_PER_YEAR+2)==NULL,"getting season name for too high value should bring a NULL");
+    fail_unless(get_season_name(SEASONS_PER_YEAR)!=NULL,"getting season name for limit value should bring a '\\n'");
+    fail_unless(strcmp(get_season_name(SEASONS_PER_YEAR),"\n")==0,"getting season name for limit value should bring a '\n'");
+    fail_unless(get_season_name(0)!=NULL,"getting season name for correct value should bring a non NULL season name");
 }
 END_TEST
 
@@ -57,7 +81,9 @@ Suite *time_suite(void)
   tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_empty);
+  tcase_add_test(tc_core, test_get_month_name);
+  tcase_add_test(tc_core, test_get_season_name);
+  tcase_add_test(tc_core, test_get_weekday);
 
   return s;
 }
