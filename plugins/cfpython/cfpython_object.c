@@ -2238,6 +2238,12 @@ static PyObject* Crossfire_Object_InsertInto(Crossfire_Object* who, PyObject* ar
     EXISTCHECK(who);
     EXISTCHECK(op);
 
+    /* we can only insert removed object, so first remove it
+     * from it's current container
+     */
+    if (!cf_object_get_flag(who->obj,FLAG_REMOVED)) {
+        cf_object_remove(who->obj);
+    }
     myob = cf_object_insert_in_ob(who->obj, op->obj);
 
     return Crossfire_Object_wrap(myob);
