@@ -1528,51 +1528,61 @@ int command_listen (object *op, char *params)
 int command_statistics(object *pl, char *params)
 {
     if (!pl->contr) return 1;
+    char buf[MAX_BUF];
+    char buf2[MAX_BUF];
 
+    strcpy(buf, i18n_translate(get_language(pl),I18N_MSG_CMISC_108));
+    strcpy(buf2, i18n_translate(get_language(pl),I18N_MSG_CMISC_109));
+    strcat(buf, FMT64);
+    strcat(buf2, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_108) FMT64,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_109) FMT64,
+			 buf,
+			 buf2,
 			 pl->stats.exp);
+    strcpy(buf, i18n_translate(get_language(pl),I18N_MSG_CMISC_110));
+    strcpy(buf2, i18n_translate(get_language(pl),I18N_MSG_CMISC_111));
+    strcat(buf, FMT64);
+    strcat(buf2, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_110) FMT64,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_111) FMT64,
+			 buf,
+			 buf2,
 			 level_exp(pl->level+1, pl->expmul));
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-		  i18n_translate(get_language(op),I18N_MSG_CMISC_112),
-		  i18n_translate(get_language(op),I18N_MSG_CMISC_113));
+		  i18n_translate(get_language(pl),I18N_MSG_CMISC_112),
+		  i18n_translate(get_language(pl),I18N_MSG_CMISC_113));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_114),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_115),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_114),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_115),
 			 pl->contr->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_116),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_117),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_116),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_117),
 			 pl->contr->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_118),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_119),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_118),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_119),
 			 pl->contr->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_120),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_121),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_120),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_121),
 			 pl->contr->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_122),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_123),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_122),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_123),
 			 pl->contr->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_124),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_125),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_124),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_125),
 			 pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_126),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_127),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_126),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_127),
 			 pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_128),
-			 i18n_translate(get_language(op),I18N_MSG_CMISC_129),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_128),
+			 i18n_translate(get_language(pl),I18N_MSG_CMISC_129),
 			 pl->contr->peaceful? "Peaceful":"Hostile");
 
    /* Can't think of anything else to print right now */
