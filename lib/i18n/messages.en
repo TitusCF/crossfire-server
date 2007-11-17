@@ -51,3 +51,102 @@
 49|In the world currently there are:
 50|%u players in %s
 51|Available languages:
+52|who failed - out of memory!
+53|Total Players (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+54|Total Players in %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+55|Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+56|You are no longer AFK
+57|You are now AFK
+58|The weather is perpetually great around here.
+59|You can't see the weather from here.
+60|Real temp: %d
+61|Base temp: %d
+62|Humid: %d
+63|Wind: dir=%d speed=%d
+64|Pressure: %d
+65|Avg Elevation: %d
+66|Rainfall: %d  Water: %d
+67|It's currently %d degrees Centigrade out.
+68|It is very dry.
+69|It is very comfortable today.
+70|It is a bit muggy.
+71|It is muggy.
+72|It is uncomfortably muggy.
+73|There is a mild breeze coming from the %s.
+74|There is a strong breeze coming from the %s.
+75|There is a light wind coming from the %s.
+76|There is a strong wind coming from the %s.
+77|There is a heavy wind coming from the %s.
+78|The wind from the %s is incredibly strong!
+79|There isn't a cloud in the sky.
+80|There are a few light clouds in the sky
+81|The sky is cloudy and dreary.
+82|It is raining softly.
+83|It is raining.
+84|It is raining heavily.
+85|There is a heavy storm!  You should go inside!
+86|It's foggy and miserable.
+87|It's hailing out!  Take cover!
+88|Snow is gently falling from the sky.
+89|It is snowing out.
+90|Snow is falling very heavily.
+91|A full blown blizzard is in effect.  You might want to take cover!
+92|Global debug level is %d.
+93|Debug is a privileged command.
+94|Debug level set to %d.
+95|You will now walk through walls.\n
+96|You will now be stopped by walls.\n
+97|You can now cast spells anywhere.
+98|You now cannot cast spells in no-magic areas.
+99|Output sync time is presently %d
+100|Output sync time now set to %d
+101|Invalid value for output_sync.
+102|Output count is presently %d
+103|Output count now set to %d
+104|Invalid value for output_count.
+105|Set listen to what (presently %d)?
+106|Verbose level should be positive.
+107|Your verbose level is now %d.
+108|[fixed]  Experience: %
+109|  Experience: %
+110|[fixed]  Next Level: %
+111|  Next Level: %
+112|[fixed]\nStat       Nat/Real/Max
+113|\nStat       Nat/Real/Max
+114|[fixed]Str         %2d/ %3d/%3d
+115|Str         %2d/ %3d/%3d
+116|[fixed]Dex         %2d/ %3d/%3d
+117|Dex         %2d/ %3d/%3d
+118|[fixed]Con         %2d/ %3d/%3d
+119|Con         %2d/ %3d/%3d
+120|[fixed]Int         %2d/ %3d/%3d
+121|Int         %2d/ %3d/%3d
+122|[fixed]Wis         %2d/ %3d/%3d
+123|Wis         %2d/ %3d/%3d
+124|[fixed]Pow         %2d/ %3d/%3d
+125|Pow         %2d/ %3d/%3d
+126|[fixed]Cha         %2d/ %3d/%3d
+127|Cha         %2d/ %3d/%3d
+128|\nAttack Mode: %s
+129|\nAttack Mode: %s
+130|[fixed]%s\t%04d %02d %02d %02d %02d %02d
+131|%s\t%04d %02d %02d %02d %02d %02d
+132|applymode is set to %s
+133|applymode is set to %s
+134|applymode: Unknown options %s, valid options are nochoice, never, always
+135|Applymode %s set to %s
+136|bowmode is set to %s
+137|bowmode %s set to %s
+138|petmode is set to %s
+139|petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena
+140|petmode %s set to %s
+#141|
+#142|
+#143|
+#144|
+#145|
+#146|
+#147|
+#148|
+#149|
+#150|
