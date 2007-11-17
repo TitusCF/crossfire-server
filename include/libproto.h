@@ -105,6 +105,10 @@ extern void describe_item(const object *op, const object *owner, char *retbuf, i
 extern int is_magical(const object *op);
 extern int need_identify(const object *op);
 extern void identify(object *op);
+/* languages.c */
+extern int get_language(object *op);
+extern const char *i18n_translate(int language, int id);
+extern void i18n_init(void);
 /* links.c */
 extern objectlink *get_objectlink(void);
 extern oblinkpt *get_objectlinkpt(void);

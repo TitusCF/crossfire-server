@@ -37,6 +37,7 @@ libcross_a_SOURCES = \
 	image.c \
 	init.c\
 	item.c\
+	languages.c\
 	links.c\
 	living.c\
 	loader.l\

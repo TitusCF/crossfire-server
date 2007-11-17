@@ -1,0 +1,53 @@
+# English and Default messages
+0|Current time is: %02ld:%02ld:%02ld.
+1|[fixed]Path               Pl PlM IM   TO Dif Reset
+2|Path               Pl PlM IM   TO Dif Reset
+3|[fixed]%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
+4|%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
+5|Your current language is set to: %s
+6|Your language setting has been changed to: %s
+7|The first column is the name of the body location.
+8|The second column is how many of those locations your body has.
+9|The third column is how many slots in that location are available.
+10|[fixed]%-30s %5d %5d
+11|%-30s %5d %5d
+12|You are not allowed to wear armor
+13|You are not allowed to use weapons
+14|Sizeof: object=%d  player=%d  map=%d
+15|[fixed]%4d used objects:    %8d
+16|%4d used objects:    %8d
+17|[fixed]%4d free objects:    %8d
+18|%4d free objects:    %8d
+19|[fixed]%4d active objects:  %8d
+20|%4d active objects:  %8d
+21|[fixed]%4d players:         %8d
+22|%4d players:         %8d
+23|[fixed]%4d maps allocated:  %8d
+24|%4d maps allocated:  %8d
+25|[fixed]%4d maps in memory:  %8d
+26|%4d maps in memory:  %8d
+27|[fixed]%4d archetypes:      %8d
+28|%4d archetypes:      %8d
+29|[fixed]%4d animations:      %8d
+30|%4d animations:      %8d
+31|[fixed]%4d treasurelists    %8d
+32|%4d treasurelists    %8d
+33|[fixed]%4ld treasures        %8d
+34|%4ld treasures        %8d
+35|[fixed]%4ld artifacts        %8d
+36|%4ld artifacts        %8d
+37|[fixed]%4ld artifacts strngs %8d
+38|%4ld artifacts strngs %8d
+39|[fixed]%4d artifactlists    %8d
+40|%4d artifactlists    %8d
+41|[fixed]Total space allocated:%8d
+42|Total space allocated:%8d
+43|[fixed]Total space used:     %8d
+44|Total space used:     %8d
+45|You are in %s. \n %s
+46|players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld
+47|Heap is corrupted.
+48|Heap checks out OK.
+49|In the world currently there are:
+50|%u players in %s
+51|Available languages:

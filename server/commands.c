@@ -47,6 +47,7 @@
  * Normal game commands.
  */
 command_array_struct Commands[] = {
+  {"language", command_language, 0.0},
   {"save", command_save,	0.0},
 
   {"sound", command_sound,	0.0},

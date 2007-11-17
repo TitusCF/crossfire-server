@@ -198,6 +198,7 @@ void init_library(void) {
     init_environ();
     init_globals();
     init_hash_table();
+    i18n_init();
     init_objects();
     init_vars();
     init_block();

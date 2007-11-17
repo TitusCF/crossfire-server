@@ -1,0 +1,9 @@
+Explore mode lets a player explore without fear of dying.
+
+Player will simply get back all her hp if she should die, and not even teleport back to bed of reality.
+
+Caveats to enter explore mode:
+- the mode should be activated in the server configuration file
+- there should be only one player on the server
+
+WARNING: there is no returning from explore mode. A character entering this mode will never be able to exit it, even if applying a bed of reality. The only way is to manually turn off explore mode into the player file directly.

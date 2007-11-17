@@ -115,6 +115,7 @@ int command_cringe(object *op, char *params);
 int command_think(object *op, char *params);
 /* c_misc.c */
 void map_info(object *op, char *search);
+int command_language(object *op, char *params);
 int command_body(object *op, char *params);
 int command_motd(object *op, char *params);
 int command_rules(object *op, char *params);

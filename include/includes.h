@@ -104,6 +104,7 @@
 #include "define.h"
 #include "logger.h"
 #include "newclient.h"
+#include "languages.h"
 
 #ifndef TRUE
 #define TRUE 1
