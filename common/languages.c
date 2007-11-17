@@ -20,7 +20,17 @@
 
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
+
+/**
+ * @file
+ * i18n support routines.
+ * @warning
+ * This file is encoded in UTF-8, take care to not mess the language_names array.
+ */
+
 #include <global.h>
+
+/** List of available language codes. */
 const char* language_codes[] =
 {
     "en",
@@ -30,14 +40,16 @@ const char* language_codes[] =
     "de"
 };
 
+/** Language names. */
 const char* language_names[] =
 {
     "English",
-    "Français",
+    "FranÃ§ais",
     "Nederlands",
     "Italiano",
     "Deutsch"
 };
+/** All translated strings. */
 const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
 
 /**

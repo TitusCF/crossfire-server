@@ -15,7 +15,27 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Addes basical i18n support for help and "static" server strings.
+Misc fixes, no functional change.
+ common/languages.c: convert to UTF-8, fix comment, add missing new line at end.
+ doc/Developers/object.dox: fix references.
+ include/spellist.h: fix comment.
+ lib/i18n/messages.fr: convert to UTF-8.
+ server/c_misc.c hiscore.c: fix comments.
+Nicolas Weeger 2007-11-17
+
+Adds basical i18n support for help and "static" server strings.
+Modified files:
+ common/init.c Makefile.am
+ include/includes.h libproto.h sproto.h
+ lib/Makefile.am
+ server/c_misc.c commands.c
+Added files:
+ server/trunk/common/languages.c
+ include/languages.h
+ lib/help/*.en
+ lib/i18n/messages.fr messages.en
+Removed files:
+ lib/help/* (old help files)
 Yann Chachkoff (gros) 2007-11-17
 
 Adding svnversion.h to SVN was not a good idea.  It will get re-committed over

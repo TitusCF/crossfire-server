@@ -94,7 +94,7 @@ void map_info(object *op, char *search) {
  *
  * @param op
  * player requesting the information.
- * @param search
+ * @param params
  * optional language code ("en", "fr", etc.)
  */
 int command_language(object* op, char* params)

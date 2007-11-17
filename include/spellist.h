@@ -28,6 +28,8 @@
 /**
  * @file
  * Path name definition.
+ * @todo
+ * only used in the documentation, the variable is also defined in init.c. So fix documentation and trash.
  */
 
 #ifndef SPELLIST_H

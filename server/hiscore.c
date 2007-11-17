@@ -286,7 +286,7 @@ static score *add_score(score *new_score) {
  *
  * @param op
  * player to check.
- * @quiet
+ * @param quiet
  * If set, don't print anything out - used for periodic updates during game
  * play or when player unexpected quits - don't need to print anything
  * in those cases

@@ -6,7 +6,7 @@
 
 Objects are one of the main structures in Crossfire. They represent every item the player can interact with, including skills, experience, spells and their effects, monsters, walls...
 
-Objects in Crossfire are represented by the ::obj structure. One important field is obj::type, which defines the object type (wall, monster, exit, ...). Another important field is @ref obj::flags "the flags", that indicate some special properties of the object.
+Objects in Crossfire are represented by the ::obj structure. One important field is object::type, which defines the object type (wall, monster, exit, ...). Another important field is object::flags "the flags", that indicate some special properties of the object.
 @todo link to types, flags, ...
 
 This structure should not be created directly, but managed through suitable functions (see @ref sec_obj_functions below).
@@ -15,19 +15,19 @@ An object can exist in the following states:
 
 - freed, with its ::FLAG_FREED set. Such an object should never be manipulated
 - removed, with its ::FLAG_REMOVED set. The object is in an indeterminate state, between insertion in a map or in another object and destruction
-- in another object, in which case its obj::env field points to the containing object
-- on a map, in which case the obj::map, obj::x and obj::x fields specify where it is located.
+- in another object, in which case its object::env field points to the containing object
+- on a map, in which case the object::map, object::x and object::x fields specify where it is located.
 
 Objects are managed on lists, one object can be on different lists.
 
-The following global object lists are defined, the obj::next and obj::prev fields are used to link to the other objects:
+The following global object lists are defined, the object::next and object::prev fields are used to link to the other objects:
 - a freed object list, containing all objects once used and now unused. Items on this list can be recycled and reused later. The pointer to the first item is ::free_objects
 - an allocated object list, containing all objects currently used, on a map or in another object. The pointer to the first item is ::objects
-- an active object list, containing all objects that change over time (with obj::speed not 0). The pointer to the first item is ::active_objects. Fields used to specify next and previous items are obj::active_next and obj::active_prev.
+- an active object list, containing all objects that change over time (with object::speed not 0). The pointer to the first item is ::active_objects. Fields used to specify next and previous items are object::active_next and object::active_prev.
 
 The following local object lists are defined:
-- each map spot contains a pointer to the bottom and top objects, accessible through the ::GET_MAP_OB and ::GET_MAP_TOP macros respectively. Other objects are linked through the obj::below and obj::above fields.
-- an object containing other objects will use its obj::inv field to point to the first object, subsequent objects are linked through the obj::below and obj::above fields.
+- each map spot contains a pointer to the bottom and top objects, accessible through the ::GET_MAP_OB and ::GET_MAP_TOP macros respectively. Other objects are linked through the object::below and object::above fields.
+- an object containing other objects will use its object::inv field to point to the first object, subsequent objects are linked through the object::below and object::above fields.
 
 @section sec_obj_multipart Multipart objects
 
@@ -50,7 +50,7 @@ An object can be obtained:
 
 An object will be freed, thus become invalid:
 - through a call to free_object()
-- when its obj::nrof reaches 0 during a call to get_split_ob() or decrease_ob_nr()
+- when its object::nrof reaches 0 during a call to get_split_ob() or decrease_ob_nr()
 - when the map it is on is reset or deleted
 - when the item it is into is freed.
 
@@ -74,8 +74,8 @@ Various functions exist to manipulate objects. They should be used instead of mo
 
 There are special objects that, even if they use the ::obj structure, should not be manipulated through the usual functions.
 
-@ref page_archetype "Archetypes" have a clone field that is an ::obj structure. This object is never on any list, even if active.
+@ref page_archetype "Archetypes" have a archetype::clone field that is an ::obj structure. This object is never on any list, even if active.
 
-@ref page_artifact "Artifacts" have a malloc()'d object structure, that isn't on any list either. Those objects should never be manipulated directly.
+@ref page_artifact "Artifacts" have a malloc()'d artifact::item object structure, that isn't on any list either. Those objects should never be manipulated directly.
 
 */

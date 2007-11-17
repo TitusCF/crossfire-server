@@ -1,4 +1,4 @@
-# Messages en Français
+# Messages en FranÃ§ais
 0|Heure actuelle: %02ld:%02ld:%02ld.
 #1|[fixed]Path               Pl PlM IM   TO Dif Reset
 #2|Path               Pl PlM IM   TO Dif Reset
@@ -6,48 +6,48 @@
 #4|%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d
 5|Votre parlez le %s
 6|Votre choix de langue est maintenant: %s
-7|La première colonne contient le nom de la partie du corps concernée.
+7|La premiÃ¨re colonne contient le nom de la partie du corps concernÃ©e.
 8|La seconde, le nombre de telles parties votre corps comporte.
-9|La troisième, le nombre de slots que chacune comporte.
+9|La troisiÃ¨me, le nombre de slots que chacune comporte.
 #10|[fixed]%-30s %5d %5d
 #11|%-30s %5d %5d
 12|Vous ne pouvez pas porter d'armure
 13|Vous ne pouvez pas porter d'arme
 14|Sizeof: object=%d  player=%d  map=%d
-15|[fixed]%4d objets utilisés:    %8d
+15|[fixed]%4d objets utilisÃ©s:    %8d
 17|[fixed]%4d objets libres:      %8d
 19|[fixed]%4d objets actifs:      %8d
 21|[fixed]%4d joueurs:            %8d
-23|[fixed]%4d cartes allouées:    %8d
-25|[fixed]%4d cartes en mémoire:  %8d
+23|[fixed]%4d cartes allouÃ©es:    %8d
+25|[fixed]%4d cartes en mÃ©moire:  %8d
 27|[fixed]%4d archetypes:         %8d
 29|[fixed]%4d animations:         %8d
 31|[fixed]%4d treasurelists       %8d
-33|[fixed]%4ld trésors            %8d
-35|[fixed]%4ld artéfacts          %8d
-37|[fixed]%4ld chaînes artéfacts: %8d
+33|[fixed]%4ld trÃ©sors            %8d
+35|[fixed]%4ld artÃ©facts          %8d
+37|[fixed]%4ld chaÃ®nes artÃ©facts: %8d
 39|[fixed]%4d artifactlists       %8d
-41|[fixed]Espace total alloué:    %8d
-43|[fixed]Espace total utilisé:   %8d
-16|%4d objets utilisés:    %8d
+41|[fixed]Espace total allouÃ©:    %8d
+43|[fixed]Espace total utilisÃ©:   %8d
+16|%4d objets utilisÃ©s:    %8d
 18|%4d objets libres:      %8d
 20|%4d objets actifs:      %8d
 22|%4d joueurs:            %8d
-24|%4d cartes allouées:    %8d
-26|%4d cartes en mémoire:  %8d
+24|%4d cartes allouÃ©es:    %8d
+26|%4d cartes en mÃ©moire:  %8d
 28|%4d archetypes:         %8d
 30|%4d animations:         %8d
 32|%4d treasurelists       %8d
-34|%4ld trésors            %8d
-36|%4ld artéfacts          %8d
-38|%4ld chaînes artéfacts: %8d
+34|%4ld trÃ©sors            %8d
+36|%4ld artÃ©facts          %8d
+38|%4ld chaÃ®nes artÃ©facts: %8d
 40|%4d artifactlists       %8d
-42|Espace total alloué:    %8d
-44|Espace total utilisé:   %8d
-45|Vous êtes dans %s. \n %s
-46|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %ld
+42|Espace total allouÃ©:    %8d
+44|Espace total utilisÃ©:   %8d
+45|Vous Ãªtes dans %s. \n %s
+46|joueurs:%d difficultÃ©:%d taille:%dx%d dÃ©but:%dx%d timeout %ld
 47|Le Tas est corrompu.
-48|Aucune erreur détectée dans le Tas.
+48|Aucune erreur dÃ©tectÃ©e dans le Tas.
 49|Pour l'instant, il y a dans le monde entier:
 50|%u joueurs dans %s
 51|Langues disponibles:
