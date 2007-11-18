@@ -1841,6 +1841,16 @@ static int Object_SetGlowRadius(Crossfire_Object* whoptr, PyObject* value, void*
     cf_object_set_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GLOW_RADIUS, val);
     return 0;
 }
+static int Object_SetAnimated(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+    cf_object_set_flag(whoptr->obj, FLAG_ANIMATE, val );
+    return 0;
+}
 
 /* Methods. */
 
