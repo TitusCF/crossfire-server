@@ -1244,6 +1244,12 @@ void move_creator(object *creator) {
 void move_marker(object *op) {
     object *tmp,*tmp2;
 
+    /* 
+     * markers not on a map for any reason should not crash server
+     */
+    if (!op->map){
+        return;
+    }
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 	if(tmp->type == PLAYER) { /* we've got someone to MARK */
 
