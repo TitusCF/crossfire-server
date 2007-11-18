@@ -787,6 +787,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     uint32 type;
     const char *op_name = NULL;
     tag_t op_tag, hitter_tag;
+    char buf[MAX_BUF];
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
@@ -806,11 +807,26 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
             if (execute_event(hitter->current_weapon, EVENT_ATTACK,
                           hitter,op,NULL,SCRIPT_FIX_ALL) != 0)
                 return 0;
-        }
+            if (hitter->current_weapon->anim_suffix)
+            {
+                int anim;
+                sprintf(buf,"%s_%s", animations[hitter->animation_id].name,
+                    hitter->current_weapon->anim_suffix);
+                anim = find_animation(buf);
+                if (anim)
+                {
+                    hitter->temp_animation_id = anim;
+                    hitter->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
+                    hitter->temp_last_anim = 0;
+                    hitter->last_anim = 0;
+                    hitter->state = 0;
+                    update_object(hitter, UP_OBJ_FACE);
+                }
             }
+        }
+    }
     op_tag = op->count;
     hitter_tag = hitter->count;
-
     /*
      * A little check to make it more difficult to dance forward and back
      * to avoid ever being hit by monsters.

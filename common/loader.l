@@ -655,6 +655,11 @@ A	.+
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
 			else FREE_AND_COPY(op->name_pl, yv);
 		    }
+^anim_suffix{S}        {   char *yv=yval();
+
+            if (*yv=='\0') LOG(llevError,"Anim suffix without val\n");
+            else FREE_AND_COPY(op->anim_suffix, yv);
+            }
 ^skill{S}	    FREE_AND_COPY(op->skill,yval());
 ^custom_name{S}	    {	char *yv=yval();
 
@@ -1433,6 +1438,9 @@ void get_ob_diff(object *op,object *op2, char* buf, int size) {
     }
     if(op->name_pl && op->name_pl!=op2->name_pl) {
         ADD_STRINGLINE_ENTRY(fastbuf,"name_pl ",op->name_pl,8);
+    }
+    if(op->anim_suffix && op->anim_suffix!=op2->anim_suffix) {
+        ADD_STRINGLINE_ENTRY(fastbuf,"anim_suffix ",op->anim_suffix,12);
     }
     if(op->custom_name && op->custom_name!=op2->custom_name) {
         ADD_STRINGLINE_ENTRY(fastbuf,"custom_name ",op->custom_name,12);

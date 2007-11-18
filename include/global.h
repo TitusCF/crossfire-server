@@ -247,16 +247,16 @@ EXTERN int num_animations,animations_allocated, bmaps_checksum;
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
 
-#define SET_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]
-#define GET_ANIMATION(ob,anim) (animations[ob->animation_id].faces[anim])
-#define GET_ANIM_ID(ob) (ob->animation_id)
+#define SET_ANIMATION(ob,newanim) if(ob->temp_animation_id) { ob->face=&new_faces[animations[ob->temp_animation_id].faces[newanim]]; } else { ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]; }
+#define GET_ANIMATION(ob,anim) (ob->temp_animation_id ? animations[ob->temp_animation_id].faces[anim] : animations[ob->animation_id].faces[anim])
+#define GET_ANIM_ID(ob) (ob->temp_animation_id ? ob->temp_animation_id : ob->animation_id)
 /* NUM_ANIMATIONS returns the number of animations allocated.  The last
  * usuable animation will be NUM_ANIMATIONS-1 (for example, if an object
  * has 8 animations, NUM_ANIMATIONS will return 8, but the values will
  * range from 0 through 7.
  */
-#define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
-#define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
+#define NUM_ANIMATIONS(ob) (ob->temp_animation_id ? animations[ob->temp_animation_id].num_animations : animations[ob->animation_id].num_animations)
+#define NUM_FACINGS(ob) (ob->temp_animation_id ? animations[ob->temp_animation_id].facings : animations[ob->animation_id].facings)
 
 extern short freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];

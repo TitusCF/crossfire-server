@@ -166,6 +166,7 @@ typedef struct obj {
      */
     const char	*name;		/**< The name of the object, obviously... */
     const char	*name_pl;	/**< The plural name of the object */
+    const char  *anim_suffix;   /**< Used to determine combined animations */
     const char	*title;		/**< Of foo, etc */
     const char	*race;		/**< Human, goblin, dragon, etc */
     const char	*slaying;	/**< Which race to do double damage to.
@@ -265,6 +266,9 @@ typedef struct obj {
     uint16	animation_id;	/**< An index into the animation array */
     uint8	anim_speed;	/**< Ticks between animation-frames */
     uint8	last_anim;	/**< Last sequence used to draw face */
+    uint16  temp_animation_id;   /**< An index into the temporary animation array */
+    uint8   temp_anim_speed; /**< Ticks between temporary animation-frames */
+    uint8   temp_last_anim;  /**< Last sequence used to draw temporary animation face */
     sint32	elevation;	/**< Elevation of this terrain - used in weather code */
     uint8	smoothlevel;    /**< how to smooth this square around*/
     uint8	map_layer;	/**< What level to draw this on the map */

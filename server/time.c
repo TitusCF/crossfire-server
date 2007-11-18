@@ -1321,7 +1321,7 @@ int process_object(object *op) {
 	if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED))
 	    return 1;
 
-    if(QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0) {
+    if((QUERY_FLAG(op, FLAG_ANIMATE) && op->anim_speed==0)||(op->temp_animation_id && op->temp_anim_speed==0)) {
 	if (op->type == PLAYER)
 	    animate_object(op, op->facing);
 	else

@@ -1138,7 +1138,8 @@ void process_events ()
         /* Animate the object.  Bug of feature that andim_speed
          * is based on ticks, and not the creatures speed?
          */
-        if (op->anim_speed && op->last_anim >= op->anim_speed)
+        if ((op->anim_speed && op->last_anim >= op->anim_speed)
+            ||(op->temp_animation_id && op->last_anim >= op->temp_anim_speed))
         {
             if ((op->type==PLAYER)||(op->type==MONSTER))
                 animate_object(op, op->facing);

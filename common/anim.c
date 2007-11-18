@@ -154,9 +154,10 @@ int find_animation(const char *name)
 
 
     if (match) return match->num;
-    LOG(llevError,"Unable to find animation %s\n", name);
+    /*LOG(llevError,"Unable to find animation %s\n", name);*/ /* Commented out to prevent too many messages using combined animation sequences */
     return 0;
 }
+
 
 /**
  * Updates the face-variable of an object.
@@ -170,7 +171,6 @@ int find_animation(const char *name)
 void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
-
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
         char buf[HUGE_BUF];
         LOG(llevError,"Object lacks animation.\n");
@@ -215,8 +215,16 @@ void animate_object(object *op, int dir) {
     }
 
     /* If beyond drawable states, reset */
-    if (op->state>=max_state) op->state=0;
-
+    if (op->state>=max_state) 
+    {
+        op->state=0;
+        if (op->temp_animation_id)
+        {
+            op->temp_animation_id = 0;
+            op->state = 0;
+            //animate_object(op, dir);
+        }
+    }
     SET_ANIMATION(op, op->state + base_state);
 
     if(op->face==blank_face)
