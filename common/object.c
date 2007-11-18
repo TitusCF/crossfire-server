@@ -746,6 +746,7 @@ void copy_object(object *op2, object *op) {
     they'll be overwritten by memcpy. */
     if(op->name!=NULL)			free_string(op->name);
     if(op->name_pl!=NULL)		free_string(op->name_pl);
+    if(op->anim_suffix!=NULL)          free_string(op->anim_suffix);
     if(op->title!=NULL)			free_string(op->title);
     if(op->race!=NULL)			free_string(op->race);
     if(op->slaying!=NULL)		free_string(op->slaying);
@@ -770,6 +771,7 @@ void copy_object(object *op2, object *op) {
     if(is_removed)	    SET_FLAG(op,FLAG_REMOVED);
     if(op->name!=NULL)	    add_refcount(op->name);
     if(op->name_pl!=NULL)   add_refcount(op->name_pl);
+    if(op->anim_suffix!=NULL)   add_refcount(op->anim_suffix);
     if(op->title!=NULL)	    add_refcount(op->title);
     if(op->race!=NULL)	    add_refcount(op->race);
     if(op->slaying!=NULL)   add_refcount(op->slaying);
@@ -839,7 +841,6 @@ void copy_object(object *op2, object *op) {
  */
 void copy_object_with_inv(object *src_ob, object *dest_ob) {
     object *walk,*tmp;
-
     copy_object(src_ob,dest_ob);
 
     for(walk=src_ob->inv;walk!=NULL;walk=walk->below) {

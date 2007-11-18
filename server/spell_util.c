@@ -1271,6 +1271,7 @@ static void handle_spell_confusion(object* op) {
 int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg) {
 
     const char *godname;
+    char buf[MAX_BUF];
     int success=0,mflags, cast_level=0, old_shoottype;
     object *skill=NULL;
     int confusion_effect = 0;
@@ -1285,8 +1286,25 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 
     /* the caller should set caster to op if appropriate */
     if (!caster) {
-	LOG(llevError,"cast_spell: null caster object passed\n");
-	return 0;
+        LOG(llevError,"cast_spell: null caster object passed\n");
+        return 0;
+    }
+    if (spell_ob->anim_suffix)
+    {
+        int anim;
+        sprintf(buf,"%s_%s", animations[caster->animation_id].name,
+            spell_ob->anim_suffix);
+        anim = find_animation(buf);
+        if (anim)
+        {
+            caster->temp_animation_id = anim;
+            caster->temp_anim_speed = 
+                animations[anim].num_animations/animations[anim].facings;
+            caster->temp_last_anim = 0;
+            caster->last_anim = 0;
+            caster->state = 0;
+            update_object(caster, UP_OBJ_FACE);
+        }
     }
 
     /* Handle some random effect if confused. */
