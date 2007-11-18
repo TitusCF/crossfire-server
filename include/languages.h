@@ -28,7 +28,7 @@
 #define LANGUAGES_H
 
 #define NUM_LANGUAGES 5
-#define NUM_I18N_STRINGS   210
+#define NUM_I18N_STRINGS   218
 extern const char* language_codes[]; /**< Language codes ("en", "fr", etc.) table */
 extern const char* language_names[]; /**< Language names ("English", "French", etc.) table */
 extern const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS]; /**< Translation table */
