@@ -1832,54 +1832,54 @@ int command_showpets(object *op, char *params)
 	    if (target ==0) {
 	    	if (counter==0)
 		    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				  "Pets:", NULL);
+				  i18n_translate(get_language(op),I18N_MSG_CMISC_141), NULL);
 		draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			     "%d  %s - level %d",
-			     "%d  %s - level %d",
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_142),
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_142),
 			     ++counter, ob->name, ob->level );
 	    }
 	    else if (!have_shown_pet && ++counter==target) {
 	    	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]level %d %s",
-				     "level %d %s",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_143),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_144),
 				     ob->level, ob->name);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]%d/%d HP, %d/%d SP",
-				     "%d/%d HP, %d/%d SP",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_145),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_146),
 				     ob->stats.hp, ob->stats.maxhp, ob->stats.sp, ob->stats.maxsp);
 
 		/* this is not a nice way to do this, it should be made to be more like the statistics command */
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Str %d",
-				     "Str %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_147),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_148),
 				     ob->stats.Str);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Dex %d",
-				     "Dex %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_149),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_150),
 				     ob->stats.Dex);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Con %d",
-				     "Con %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_151),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_152),
 				     ob->stats.Con);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Int %d",
-				     "Int %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_153),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_154),
 				     ob->stats.Int);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Wis %d",
-				     "Wis %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_155),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_156),
 				     ob->stats.Wis);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Cha %d",
-				     "Cha %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_157),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_158),
 				     ob->stats.Cha);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]Pow %d",
-				     "Pow %d",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_159),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_160),
 				     ob->stats.Pow);
 		draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-				     "[fixed]wc %d  damage %d ac %d ",
-				     "wc %d  damage %d ac %d ",
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_161),
+				     i18n_translate(get_language(op),I18N_MSG_CMISC_162),
 				     ob->stats.wc, ob->stats.dam, ob->stats.ac);
 		have_shown_pet=1;
 	    }
@@ -1887,10 +1887,10 @@ int command_showpets(object *op, char *params)
     }
     if (counter == 0)
     	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "you have no pets.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_163), NULL);
     else if (target !=0 && have_shown_pet==0)
     	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "no such pet.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_164), NULL);
     return 0;
 }
 
@@ -1911,8 +1911,8 @@ int command_usekeys(object *op, char *params)
 
     if (!params) {
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		     "usekeys is set to %s",
-		     "usekeys is set to %s",
+		     i18n_translate(get_language(op),I18N_MSG_CMISC_165),
+		     i18n_translate(get_language(op),I18N_MSG_CMISC_165),
 		     types[op->contr->usekeys]);
 	return 1;
     }
@@ -1925,14 +1925,14 @@ int command_usekeys(object *op, char *params)
 	op->contr->usekeys=containers;
     else {
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-	    "usekeys: Unknown options %s, valid options are inventory, keyrings, containers",
-	    "usekeys: Unknown options %s, valid options are inventory, keyrings, containers",
+	    i18n_translate(get_language(op),I18N_MSG_CMISC_166),
+	    i18n_translate(get_language(op),I18N_MSG_CMISC_166),
 	     params);
 	return 0;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-	 "usekeys %s set to %s",
-	 "usekeys %s set to %s",
+	 i18n_translate(get_language(op),I18N_MSG_CMISC_167),
+	 i18n_translate(get_language(op),I18N_MSG_CMISC_167),
 	(oldtype==op->contr->usekeys?"":"now"),
 	types[op->contr->usekeys]);
 
@@ -1959,8 +1959,8 @@ int command_resistances(object *op, char *params)
 	if (i==ATNR_INTERNAL) continue;
 
 	draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			     "[fixed]%-20s %+5d",
-			     "%-20s %+5d",
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_168),
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_169),
 			     attacktype_desc[i], op->resist[i]);
     }
 
@@ -1972,13 +1972,13 @@ int command_resistances(object *op, char *params)
         for ( tmp = op->inv; tmp != NULL; tmp = tmp->below ) {
             if ( ( tmp->type == FORCE ) && ( strcmp( tmp->arch->name, "dragon_skin_force" )== 0 ) ) {
                 draw_ext_info( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			      "\nNatural skin resistances:", NULL);
+			      i18n_translate(get_language(op),I18N_MSG_CMISC_170), NULL);
 
                 for ( attack = 0; attack < NROFATTACKS; attack++ ) {
                     if ( atnr_is_dragon_enabled( attack ) ) {
                         draw_ext_info_format( NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-					     "%s: %d",
-					     "%s: %d",
+					     i18n_translate(get_language(op),I18N_MSG_CMISC_171),
+					     i18n_translate(get_language(op),I18N_MSG_CMISC_171),
 					     change_resist_msg[ attack ], tmp->resist[ attack ] );
 		    }
 		}
@@ -2016,17 +2016,17 @@ static void help_topics(object *op, int what)
         case 1:
             sprintf(filename, "%s/wizhelp", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                "      Wiz commands:", NULL);
+                i18n_translate(get_language(op),I18N_MSG_CMISC_172), NULL);
             break;
         case 3:
             sprintf(filename, "%s/mischelp", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                    "      Misc help:", NULL);
+                    i18n_translate(get_language(op),I18N_MSG_CMISC_173), NULL);
             break;
         default:
             sprintf(filename, "%s/help", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                    "      Commands:", NULL);
+                    i18n_translate(get_language(op),I18N_MSG_CMISC_174), NULL);
             break;
     }
     if (!(dirp=opendir(filename)))
@@ -2073,21 +2073,21 @@ static void show_commands(object *op, int what)
 	    ap =WizCommands;
 	    size =WizCommandsSize;
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			  "      Wiz commands:", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_175), NULL);
 	    break;
 
 	case 2:
 	    ap= CommunicationCommands;
 	    size= CommunicationCommandSize;
 	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			  "      Communication commands:", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_176), NULL);
 	    break;
 
 	default:
 	    ap =Commands;
 	    size =CommandsSize;
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			  "      Commands:", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_177), NULL);
 	    break;
     }
 
@@ -2172,8 +2172,8 @@ int command_help (object *op, char *params)
      */
     if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/')) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-			     "Illegal characters in '%s'",
-			     "Illegal characters in '%s'",
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_178),
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_178),
 			     params);
 	return 0;
     }
@@ -2202,8 +2202,8 @@ int command_help (object *op, char *params)
     }
 
   draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-		       "Help about '%s'",
-		       "Help about '%s'",
+		       i18n_translate(get_language(op),I18N_MSG_CMISC_179),
+		       i18n_translate(get_language(op),I18N_MSG_CMISC_179),
 		       params);
 
     while (fgets(line, MAX_BUF, fp)) {
@@ -2223,8 +2223,8 @@ int command_help (object *op, char *params)
     nohelp:
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-	 "No help available on '%s'",
-	 "No help available on '%s'",
+	 i18n_translate(get_language(op),I18N_MSG_CMISC_180),
+	 i18n_translate(get_language(op),I18N_MSG_CMISC_180),
 	 params);
 
     return 0;
@@ -2280,7 +2280,7 @@ int onoff_value(const char *line)
 int command_quit (object *op, char *params)
 {
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,
-	       "Quitting will delete your character.\nAre you sure you want to quit (y/n):");
+	       i18n_translate(get_language(op),I18N_MSG_CMISC_181));
 
     op->contr->state = ST_CONFIRM_QUIT;
     return 1;
@@ -2303,7 +2303,7 @@ int command_explore (object *op, char *params)
 {
     if (settings.explore_mode == FALSE) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-            "Explore mode is disabled on this server, sorry.", NULL);
+            i18n_translate(get_language(op),I18N_MSG_CMISC_182), NULL);
         return 1;
     }
     /*
@@ -2312,14 +2312,14 @@ int command_explore (object *op, char *params)
      */
     if ((first_player!=op->contr) || (first_player->next!=NULL)) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-            "You can not enter explore mode if there are other players", NULL);
+            i18n_translate(get_language(op),I18N_MSG_CMISC_183), NULL);
     } else if (op->contr->explore)
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-            "There is no return from explore mode", NULL);
+            i18n_translate(get_language(op),I18N_MSG_CMISC_184), NULL);
     else {
         op->contr->explore=1;
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-            "You are now in explore mode", NULL);
+            i18n_translate(get_language(op),I18N_MSG_CMISC_185), NULL);
     }
     return 1;
 }
@@ -2339,12 +2339,12 @@ int command_sound (object *op, char *params)
     if (!(op->contr->socket.sound & SND_MUTE)) {
         op->contr->socket.sound=op->contr->socket.sound | SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "Sounds are turned off", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_186), NULL);
     }
     else {
         op->contr->socket.sound=op->contr->socket.sound & ~SND_MUTE;
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "The sounds are enabled.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_187), NULL);
     }
     return 1;
 }
@@ -2384,7 +2384,7 @@ void receive_player_password(object *op) {
     if(pwd_len<=1||pwd_len>17) {
         if (op->contr->state == ST_CHANGE_PASSWORD_OLD || op->contr->state == ST_CHANGE_PASSWORD_NEW || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "Password changed cancelled.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_188), NULL);
             op->contr->state = ST_PLAYING;
         }
         else
@@ -2398,7 +2398,7 @@ void receive_player_password(object *op) {
     if (checkbanned(op->name, op->contr->socket.host)) {
         LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You are not allowed to play.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_189), NULL);
         get_name(op);
         return;
     }
@@ -2406,14 +2406,14 @@ void receive_player_password(object *op) {
     if(op->contr->state==ST_CONFIRM_PASSWORD) {
         if(!check_password(op->contr->write_buf+1,op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0,op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "The passwords did not match.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_190), NULL);
             get_name(op);
             return;
         }
         LOG(llevInfo,"LOGIN: New player named %s from ip %s\n", op->name, op->contr->socket.host);
         display_motd(op);
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "\nWelcome, Brave New Warrior!\n", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_191), NULL);
         roll_again(op);
         op->contr->state=ST_ROLL_STAT;
         return;
@@ -2422,10 +2422,10 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CHANGE_PASSWORD_OLD) {
         if (!check_password(op->contr->write_buf + 1, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "You entered the wrong current password.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_192), NULL);
             op->contr->state = ST_PLAYING;
         } else {
-            send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please enter your new password, or blank to cancel:");
+            send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op),I18N_MSG_CMISC_193));
             op->contr->state = ST_CHANGE_PASSWORD_NEW;
         }
         return;
@@ -2433,7 +2433,7 @@ void receive_player_password(object *op) {
 
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
         strcpy(op->contr->new_password, crypt_string(op->contr->write_buf + 1, NULL));
-        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please confirm your new password, or blank to cancel:");
+        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op),I18N_MSG_CMISC_194));
         op->contr->state = ST_CHANGE_PASSWORD_CONFIRM;
         return;
     }
@@ -2441,10 +2441,10 @@ void receive_player_password(object *op) {
     if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
         if (strcmp(crypt_string(op->contr->write_buf + 1, op->contr->new_password), op->contr->new_password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "The new passwords don't match!", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_195), NULL);
         } else {
         	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			      "Password changed.", NULL);
+			      i18n_translate(get_language(op),I18N_MSG_CMISC_196), NULL);
             strncpy(op->contr->password, op->contr->new_password, 13);
         }
         op->contr->state = ST_PLAYING;
@@ -2473,39 +2473,39 @@ int command_title (object *op, char *params)
 
     if (settings.set_title == FALSE) {
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		      "You cannot change your title.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_197), NULL);
 	return 1;
     }
 
     /* dragon players cannot change titles */
     if (is_dragon_pl(op)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		      "Dragons cannot change titles.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_198), NULL);
         return 1;
     }
 
     if(params == NULL) {
 	if(op->contr->own_title[0]=='\0')
-	    sprintf(buf,"Your title is '%s'.", op->contr->title);
+	    sprintf(buf,i18n_translate(get_language(op),I18N_MSG_CMISC_199), op->contr->title);
 	else
-	    sprintf(buf,"Your title is '%s'.", op->contr->own_title);
+	    sprintf(buf,i18n_translate(get_language(op),I18N_MSG_CMISC_200), op->contr->own_title);
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,buf, NULL);
 	return 1;
     }
     if(strcmp(params, "clear")==0 || strcmp(params, "default")==0) {
 	if(op->contr->own_title[0]=='\0')
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-			  "Your title is the default title.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_201), NULL);
 	else
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-			  "Title set to default.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_202), NULL);
 	op->contr->own_title[0]='\0';
 	return 1;
     }
 
     if((int)strlen(params) >= MAX_NAME) {
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		      "Title too long.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_203), NULL);
 	return 1;
     }
     strcpy(op->contr->own_title, params);
@@ -2526,17 +2526,17 @@ int command_save (object *op, char *params)
 {
     if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) {
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You can not save on unholy ground", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_204), NULL);
     } else if (!op->stats.exp) {
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You don't deserve to save yet.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_205), NULL);
     } else {
 	if(save_player(op,1))
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "You have been saved.", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_206), NULL);
 	else
 	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "SAVE FAILED!", NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_207), NULL);
     }
     return 1;
 }
@@ -2555,10 +2555,10 @@ int command_peaceful (object *op, char *params)
 {
     if((op->contr->peaceful=!op->contr->peaceful))
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		      "You will not attack other players.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_208), NULL);
     else
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		      "You will attack other players.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_209), NULL);
     return 1;
 }
 
@@ -2578,14 +2578,14 @@ int command_wimpy (object *op, char *params)
 
     if (params==NULL || !sscanf(params, "%d", &i)) {
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-			     "Your current wimpy level is %d.",
-			     "Your current wimpy level is %d.",
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_210),
+			     i18n_translate(get_language(op),I18N_MSG_CMISC_210),
 			     op->run_away);
 	return 1;
     }
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-		 "Your new wimpy level is %d.",
-		 "Your new wimpy level is %d.",
+		 i18n_translate(get_language(op),I18N_MSG_CMISC_211),
+		 i18n_translate(get_language(op),I18N_MSG_CMISC_211),
 		 i);
     op->run_away = i;
     return 1;
@@ -2610,10 +2610,10 @@ int command_brace (object *op, char *params)
 
     if(op->contr->braced)
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "You are braced.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_212), NULL);
     else
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "Not braced.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_213), NULL);
 
     fix_object(op);
 
@@ -2637,7 +2637,7 @@ int command_kill_pets(object *op, char *params)
     if (params == NULL) {
     	terminate_all_pets(op);
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-		      "Your pets have been killed.", NULL);
+		      i18n_translate(get_language(op),I18N_MSG_CMISC_214), NULL);
     }
     else {
 	int target = atoi(params);
@@ -2655,12 +2655,12 @@ int command_kill_pets(object *op, char *params)
 	}
 	if (removecount!=0)
 	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			 "killed %d pets.",
-			 "killed %d pets.",
+			 i18n_translate(get_language(op),I18N_MSG_CMISC_215),
+			 i18n_translate(get_language(op),I18N_MSG_CMISC_215),
 			 removecount);
 	else
 	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-			  "Couldn't find any suitable pets to kill.",NULL);
+			  i18n_translate(get_language(op),I18N_MSG_CMISC_216),NULL);
     }
     return 0;
 }
@@ -2678,7 +2678,7 @@ int command_kill_pets(object *op, char *params)
 int command_passwd(object *pl, char *params)
 {
     send_query(&pl->contr->socket,CS_QUERY_HIDEINPUT,
-        "Password change.\nPlease enter your current password, or empty string to cancel.");
+        i18n_translate(get_language(pl),I18N_MSG_CMISC_217));
 
     pl->contr->state = ST_CHANGE_PASSWORD_OLD;
     return 1;

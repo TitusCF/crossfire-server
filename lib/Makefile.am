@@ -57,8 +57,22 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/sort_inventory.en help/spells.en \
 	help/statistics.en help/take.en help/traps.en \
 	help/unbind.en help/use.en help/usekeys.en \
-	help/whereabouts.en
-	help/apply.fr
+	help/whereabouts.en \
+	help/apply.fr \
+	help/bowmode.fr \
+	help/dropall.fr \
+	help/killpets.fr \
+	help/mark.fr \
+	help/applymode.fr \
+	help/brace.fr \
+	help/drop.fr \
+	help/listen.fr \
+	help/melee.fr \
+	help/bind.fr \
+	help/cast.fr \
+	help/empty.fr \
+	help/maps.fr \
+	help/mode.fr
 
 wizhelpdir=$(pkgdatadir)/wizhelp
 dist_wizhelp_DATA = wizhelp/abil wizhelp/addexp \

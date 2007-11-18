@@ -140,13 +140,91 @@
 138|petmode is set to %s
 139|petmode: Unknown options %s, valid options are normal, sad (seek and destroy), defend, arena
 140|petmode %s set to %s
-#141|
-#142|
-#143|
-#144|
-#145|
-#146|
-#147|
-#148|
-#149|
-#150|
+141|Pets:
+142|%d  %s - level %d
+143|[fixed]level %d %s
+144|level %d %s
+145|[fixed]%d/%d HP, %d/%d SP
+146|%d/%d HP, %d/%d SP
+147|[fixed]Str %d
+148|Str %d
+149|[fixed]Dex %d
+150|Dex %d
+151|[fixed]Con %d
+152|Con %d
+153|[fixed]Int %d
+154|Int %d
+155|[fixed]Wis %d
+156|Wis %d
+157|[fixed]Cha %d
+158|Cha %d
+159|[fixed]Pow %d
+160|Pow %d
+161|[fixed]wc %d  damage %d ac %d 
+162|wc %d  damage %d ac %d 
+163|you have no pets.
+164|no such pet.
+165|usekeys is set to %s
+166|usekeys: Unknown options %s, valid options are inventory, keyrings, containers
+167|usekeys %s set to %s
+168|[fixed]%-20s %+5d
+169|%-20s %+5d
+170|\nNatural skin resistances:
+171|%s: %d
+172|      Wiz commands:
+173|      Misc help:
+174|      Commands:
+175|      Wiz commands:
+176|      Communication commands:
+177|      Commands:
+178|Illegal characters in '%s'
+179|Help about '%s'
+180|No help available on '%s'
+181|Quitting will delete your character.\nAre you sure you want to quit (y/n):
+182|Explore mode is disabled on this server, sorry.
+183|You can not enter explore mode if there are other players
+184|There is no return from explore mode
+185|You are now in explore mode
+186|Sounds are turned off
+187|The sounds are enabled.
+188|Password changed cancelled.
+189|You are not allowed to play.
+190|The passwords did not match.
+191|\nWelcome, Brave New Warrior!\n
+192|You entered the wrong current password.
+193|Please enter your new password, or blank to cancel:
+194|Please confirm your new password, or blank to cancel:
+195|The new passwords don't match!
+196|Password changed.
+197|You cannot change your title.
+198|Dragons cannot change titles.
+199|Your title is '%s'.
+200|Your title is '%s'.
+201|Your title is the default title.
+202|Title set to default.
+203|Title too long.
+204|You can not save on unholy ground
+205|You don't deserve to save yet.
+206|You have been saved.
+207|SAVE FAILED!
+208|You will not attack other players.
+209|You will attack other players.
+210|Your current wimpy level is %d.
+211|Your new wimpy level is %d.
+212|You are braced.
+213|Not braced.
+214|Your pets have been killed.
+215|killed %d pets.
+216|Couldn't find any suitable pets to kill.
+217|Password change.\nPlease enter your current password, or empty string to cancel.
+#210|
+#211|
+#212|
+#213|
+#214|
+#215|
+#216|
+#217|
+#218|
+#219|
+#220|
