@@ -51,3 +51,169 @@
 49|Pour l'instant, il y a dans le monde entier:
 50|%u joueurs dans %s
 51|Langues disponibles:
+52|who a échoué - mémoire insuffisante !
+53|Total Joueurs (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+54|Total Joueurs dans %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+55|Total Joueurs dans le groupe %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
+56|Vous êtes à nouveau disponible
+57|Vous êtes marqué comme absent
+58|Le temps est perpétuellement beau ici.
+59|Vous ne pouvez pas voir quel temps il fait de votre position.
+60|Température réelle: %d
+61|Température de base: %d
+62|Humidité: %d
+63|Vent: direction=%d vitesse=%d
+64|Pression: %d
+65|Altitude moyenne: %d
+66|Pluie: %d  Eau: %d
+67|Il fait %d °C.
+68|Il fait très sec.
+69|Il fait bon aujourd'hui.
+70|Il fait un peu moite.
+71|Il fait moite.
+72|Le temps est très moite.
+73|Une brise souffle du %s.
+74|Une forte brise souffle du %s.
+75|Un vent léger vient du %s.
+76|Un vent fort vient du %s.
+77|Un vent violent souffle du %s.
+78|Le vent soufflant du %s est incroyablement fort !
+79|Il n'y a pas un seul nuage à l'horizon.
+80|Il y a quelques nuages.
+81|Le ciel est couvert.
+82|Il bruine.
+83|Il pleut.
+84|Il tombe des cordes.
+85|C'est une vraie tempête ! Vous devriez vous abriter !
+86|Il y a du brouillard.
+87|Il grêle ! Abritez-vous !
+88|Il tombe un peu de neige.
+89|Il neige.
+90|Il tombe assez bien de neige.
+91|Quel blizzard ! Vous devriez vous abriter !
+92|Niveau global de debogage: %d.
+93|Debug est une commande privilégiée.
+94|Niveau de débogage: %d.
+95|Vous pouvez maintenant traverser les murs.\n
+96|Vous serez désormais bloqué par les murs.\n
+97|Vous pouvez maintenant lancer des sorts n'importe où.
+98|Vous ne pouvez plus lancer de sorts dans les zones non-magiques.
+99|Output sync time is presently %d
+100|Output sync time now set to %d
+101|Invalid value for output_sync.
+102|Output count is presently %d
+103|Output count now set to %d
+104|Invalid value for output_count.
+105|À quel niveau d'écoute faut-il se placer (actuellement: %d)?
+106|Le niveau de verbosité doit être positif.
+107|Niveau de verbosité réglé sur %d.
+108|[fixed]  Experience: %
+109|  Experience: %
+110|[fixed]  Prochain niveau: %
+111|  Prochain niveau: %
+112|[fixed]\nStat       Nat/Réel/Max
+113|\nStat       Nat/Réel/Max
+114|[fixed]For         %2d/ %3d/%3d
+115|For         %2d/ %3d/%3d
+116|[fixed]Dex         %2d/ %3d/%3d
+117|Dex         %2d/ %3d/%3d
+118|[fixed]Con         %2d/ %3d/%3d
+119|Con         %2d/ %3d/%3d
+120|[fixed]Int         %2d/ %3d/%3d
+121|Int         %2d/ %3d/%3d
+122|[fixed]Sag         %2d/ %3d/%3d
+123|Sag         %2d/ %3d/%3d
+124|[fixed]Pou         %2d/ %3d/%3d
+125|Pou         %2d/ %3d/%3d
+126|[fixed]Cha         %2d/ %3d/%3d
+127|Cha         %2d/ %3d/%3d
+128|\nMode d'attaque: %s
+129|\nMode d'attaque: %s
+130|[fixed]%s\t%04d %02d %02d %02d %02d %02d
+131|%s\t%04d %02d %02d %02d %02d %02d
+132|applymode mis sur %s
+133|applymode mis sur %s
+134|applymode: %s est une option inconnue, les choix valides sont nochoice, never, always
+135|Applymode %s mis sur %s
+136|bowmode est mis sur %s
+137|bowmode %s mis sur %s
+138|petmode est mis sur %s
+139|petmode: %s est une option inconnue, les choix valides sont normal, sad (trouver et détruire), defend, arena
+140|petmode %s mis sur %s
+141|Familiers:
+142|%d  %s - niveau %d
+143|[fixed]niveau %d %s
+144|niveau %d %s
+145|[fixed]%d/%d HP, %d/%d SP
+146|%d/%d HP, %d/%d SP
+147|[fixed]For %d
+148|For %d
+149|[fixed]Dex %d
+150|Dex %d
+151|[fixed]Con %d
+152|Con %d
+153|[fixed]Int %d
+154|Int %d
+155|[fixed]Sag %d
+156|Sag %d
+157|[fixed]Cha %d
+158|Cha %d
+159|[fixed]Pou %d
+160|Pou %d
+161|[fixed]wc %d  dégats %d ac %d 
+162|wc %d  dégats %d ac %d 
+163|Vous n'avez pas un tel familier.
+164|Pas de familier correspondant.
+165|usekeys mis sur %s
+166|usekeys: %s est une option inconnue, les choix valides sont inventory, keyrings, containers
+167|usekeys %s mis sur %s
+168|[fixed]%-20s %+5d
+169|%-20s %+5d
+170|\nRésistances naturelles de peau:
+171|%s: %d
+172|      Commandes DM:
+173|      Divers:
+174|      Commandes:
+175|      Commandes DM:
+176|      Commandes de communication:
+177|      Commandes:
+178|Caractère illégal dans '%s'
+179|Aide sur '%s'
+180|Aucune aide disponible sur '%s'
+181|Quitter effacera votre personnage.\nÊtes-vous vraiment sûr de vouloir quitter ? (y=oui/n=non):
+182|Désolé, le mode d'exploration est désactivé sur ce serveur.
+183|Vous ne pouvez pas passer en mode exploration tant que vous n'êtes pas seul.
+184|Vous ne pouvez pas quitterle mode d'exploration.
+185|Vous êtes désormais en mode d'exploration.
+186|Les sons sont désactivés.
+187|Les sons sont activés.
+188|Changement du mot de passe annulé.
+189|Vous ne pouvez pas jouer ici.
+190|Les mots de passe ne concordent pas.
+191|\nBienvenue, Brave Guerrier !\n
+192|Vous avez entré un mot de passe incorrect.
+193|Entrez votre nouveau mot de passe, ou rien pour annuler:
+194|Confirmez votre nouveau mot de passe, ou rien pour annuler:
+195|Les nouveaux mots de passe ne correspondent pas !
+196|Mot de passe changé.
+197|Vous ne pouvez pas choisir votre titre.
+198|Les Dragons ne peuvent changer leur titre.
+199|Votre titre est '%s'.
+200|Votre titre est '%s'.
+201|Votre titre est le titre par défaut.
+202|Titre par défaut.
+203|Titre trop long.
+204|Vous ne pouvez pas sauver sur un sol maudit.
+205|Vous n'avez pas encore besoin de sauver.
+206|Sauvegarde effectuée.
+207|SAUVEGARDE IMPOSSIBLE!
+208|Vous n'attaquerez plus les autres joueurs.
+209|Vous attaquerez les autres joueurs.
+210|Votre niveau de Wimpy est %d.
+211|Votre nouveau niveau de Wimpy est %d.
+#212|You are braced.
+#213|Not braced.
+214|Vos familiers ont été tués.
+215|tué %d familiers.
+216|Couldn't find any suitable pets to kill.
+217|Password change.\nPlease enter your current password, or empty string to cancel.
