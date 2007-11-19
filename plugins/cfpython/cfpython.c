@@ -1185,6 +1185,8 @@ static void initConstants(PyObject* module)
     addConstants(module, "EventType", cstEventType);
     addSimpleConstants(module, "Time", cstTime);
 }
+extern PyMODINIT_FUNC
+initcjson(void);
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
@@ -1241,6 +1243,9 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     initConstants(m);
     private_data = PyDict_New();
     shared_data = PyDict_New();
+    
+    /* add cjson module*/
+    initcjson();
     return 0;
 }
 
