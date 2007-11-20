@@ -936,7 +936,7 @@ static void print_shop_string(mapstruct *m, char *output_string, int size) {
 static int load_map_header(FILE *fp, mapstruct *m)
 {
     char buf[HUGE_BUF], *key=NULL, *value, *end;
-
+    m->width=m->height=0;
     while (fgets(buf, sizeof(buf), fp)!=NULL) {
         key = buf;
         while (isspace(*key)) key++;
@@ -1134,6 +1134,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
         } else {
             LOG(llevError,"Got unknown value in map header: %s %s\n", key, value);
         }
+    }
+    if ((m->width == 0) || (m->height==0)){
+        LOG(llevError,"Map width or height not specified\n");
+        return 1;
     }
     if (!key || strcmp(key,"end")) {
         LOG(llevError,"Got premature eof on map header!\n");
