@@ -1180,7 +1180,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
         char err[MAX_BUF];
-        LOG(llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
+        LOG((flags & MAP_PLAYER_UNIQUE)?llevDebug:llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
         return (NULL);
     }
 
