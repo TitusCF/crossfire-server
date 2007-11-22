@@ -940,68 +940,6 @@ void do_forget_spell (object *op, const char *spell)
 }
 
 /**
- * Applies a treasure object - usually, chest.
- *
- * Inform op of contents.
- *
- * @param op
- * person doing the applying.
- * @param tmp
- * tmp is the treasure chest.
- */
-static void apply_treasure (object *op, object *tmp)
-{
-    object *treas;
-    tag_t tmp_tag = tmp->count, op_tag = op->count;
-    char name[MAX_BUF];
-
-
-        /* Nice side effect of new treasure creation method is that the
-         * treasure for the chest is done when the chest is created,
-         * and put into the chest inventory.  So that when the chest
-         * burns up, the items still exist.  Also prevents people from
-         * moving chests to more difficult maps to get better treasure
-         */
-
-    treas = tmp->inv;
-    if(treas==NULL) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                      "The chest was empty.", NULL);
-        decrease_ob(tmp);
-        return;
-    }
-    while (tmp->inv) {
-        treas = tmp->inv;
-
-        remove_ob(treas);
-        query_name(treas, name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "You find %s in the chest.",
-                             "You find %s in the chest.",
-                             name);
-
-        treas->x=op->x;
-        treas->y=op->y;
-        treas = insert_ob_in_map (treas, op->map, op,INS_BELOW_ORIGINATOR);
-
-        if (treas && (treas->type == RUNE || treas->type == TRAP) &&
-            treas->level && QUERY_FLAG (op, FLAG_ALIVE))
-            spring_trap (treas, op);
-            /* If either player or container was destroyed, no need to do
-             * further processing.  I think this should be enclused with
-             * spring trap above, as I don't think there is otherwise
-             * any way for the treasure chest or player to get killed
-             */
-        if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
-            break;
-    }
-
-    if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
-        decrease_ob (tmp);
-}
-
-/**
  * This fonction return true if the exit is not a 2 ways one
  * or it is 2 ways, valid exit.
  * A valid 2 way exit means:
@@ -2436,8 +2374,4 @@ void legacy_apply_container(object* op, object* sack)
 int legacy_is_legal_2ways_exit(object* op, object* exit)
 {
     return is_legal_2ways_exit(op, exit);
-}
-void legacy_apply_treasure(object* op, object* tmp)
-{
-    apply_treasure(op, tmp);
 }

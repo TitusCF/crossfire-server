@@ -75,6 +75,8 @@ void init_type_trap(void);
 void init_type_rune(void);
 /* trapdoor/trapdoor.c */
 void init_type_trapdoor(void);
+/* treasure/treasure.c */
+void init_type_treasure(void);
 /* trigger/trigger.c */
 void init_type_trigger(void);
 /* trigger_altar/trigger_altar.c */

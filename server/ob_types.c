@@ -91,6 +91,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_transport();
     init_type_trap();
     init_type_trapdoor();
+    init_type_treasure();
     init_type_trigger();
     init_type_trigger_altar();
     init_type_trigger_button();

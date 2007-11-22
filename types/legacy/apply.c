@@ -62,14 +62,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
                 legacy_apply_container (applier, op);
             return METHOD_OK;
 
-        case TREASURE:
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_treasure (applier, op);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
         case WEAPON:
         case ARMOUR:
         case BOOTS:

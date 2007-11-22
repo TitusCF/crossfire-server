@@ -39,6 +39,7 @@ trap/common_trap.c \
 trap/trap.c \
 trap/rune.c \
 trapdoor/trapdoor.c \
+treasure/treasure.c \
 trigger/trigger.c \
 trigger_altar/trigger_altar.c \
 trigger_button/trigger_button.c \
