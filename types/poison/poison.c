@@ -32,7 +32,7 @@
 
 static method_ret poison_type_apply(ob_methods *context, object *op,
     object* applier, int aflags);
-BIG_NAME
+
 /**
  * Initializer for the POISON object type.
  */
