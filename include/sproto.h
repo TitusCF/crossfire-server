@@ -21,7 +21,6 @@ void legacy_check_improve_weapon(object *op, object *tmp);
 void legacy_apply_container(object *op, object *sack);
 int legacy_is_legal_2ways_exit(object *op, object *exit);
 void legacy_apply_treasure(object *op, object *tmp);
-void legacy_apply_savebed(object *pl);
 /* attack.c */
 void save_throw_object(object *op, int type, object *originator);
 int hit_map(object *op, int dir, int type, int full_hit);

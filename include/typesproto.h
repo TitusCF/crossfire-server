@@ -40,6 +40,8 @@ void init_type_player_mover(void);
 void init_type_potion(void);
 /* power_crystal/power_crystal.c */
 void init_type_power_crystal(void);
+/* savebed/savebed.c */
+void init_type_savebed(void);
 /* scroll/scroll.c */
 void init_type_scroll(void);
 /* shop_inventory/shop_inventory.c */

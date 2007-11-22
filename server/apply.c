@@ -1002,44 +1002,6 @@ static void apply_treasure (object *op, object *tmp)
 }
 
 /**
- * Handle savebed.
- *
- * @param pl
- * player who is applying the bed.
- */
-static void apply_savebed (object *pl)
-{
-
-    /* Lauwenmark : Here we handle the LOGOUT global event */
-    execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
-
-    /* Need to call terminate_all_pets()  before we remove the player ob */
-    terminate_all_pets(pl);
-    remove_ob(pl);
-    pl->direction=0;
-    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, pl,
-                         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s leaves the game.",
-                         "%s leaves the game.",
-                         pl->name);
-
-    /* update respawn position */
-    strcpy(pl->contr->savebed_map, pl->map->path);
-    pl->contr->bed_x = pl->x;
-    pl->contr->bed_y = pl->y;
-
-    strcpy(pl->contr->killer,"left");
-    check_score(pl,0); /* Always check score */
-    (void)save_player(pl,0);
-#if MAP_MAXTIMEOUT
-    MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
-#endif
-    play_again(pl);
-    pl->speed = 0;
-    update_ob_speed(pl);
-}
-
-/**
  * Someone ate some poison.
  *
  * @param op
@@ -2504,8 +2466,4 @@ int legacy_is_legal_2ways_exit(object* op, object* exit)
 void legacy_apply_treasure(object* op, object* tmp)
 {
     apply_treasure(op, tmp);
-}
-void legacy_apply_savebed (object *pl)
-{
-    apply_savebed(pl);
 }

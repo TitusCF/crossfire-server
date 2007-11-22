@@ -109,14 +109,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             apply_poison(applier, op);
             return METHOD_OK;
 
-        case SAVEBED:
-            if (applier->type == PLAYER)
-            {
-                legacy_apply_savebed(applier);
-                return METHOD_OK;
-            }
-            return METHOD_UNHANDLED;
-
         case WEAPON_IMPROVER:
             (void) legacy_check_improve_weapon(applier, op);
             return METHOD_OK;

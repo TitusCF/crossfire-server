@@ -8,6 +8,12 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
+Ob types   : SAVEBED
+Events     : apply
+Moved from : ../server/apply.c, legacy/apply.c
+Moved to   : savebed/savebed.c
+Comment    : Moved apply code for savebeds.
+2007-11-21 - Alex Schultz
 --
 Ob types   : FOOD, DRINK, FLESH
 Events     : apply
