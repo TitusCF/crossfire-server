@@ -11,12 +11,12 @@ int manual_apply(object *op, object *tmp, int aflag);
 int player_apply(object *pl, object *op, int aflag, int quiet);
 void player_apply_below(object *pl);
 int can_apply_object(object *who, object *op);
+int check_weapon_power(const object *who, int improvs);
 int apply_special(object *who, object *op, int aflags);
 int auto_apply(object *op);
 void fix_auto_apply(mapstruct *m);
 void scroll_failure(object *op, int failure, int power);
 void apply_changes_to_player(object *pl, object *change);
-void legacy_check_improve_weapon(object *op, object *tmp);
 void legacy_apply_container(object *op, object *sack);
 int legacy_is_legal_2ways_exit(object *op, object *exit);
 /* attack.c */

@@ -150,509 +150,7 @@ void handle_apply_yield(object* tmp)
         }
     }
 }
-
-/****************************************************************************
- * Weapon improvement code follows
- ****************************************************************************/
-
-/**
- * Counts suitable items with specified archetype name. Will not consider unpaid/cursed items.
- * @param op
- * object just before the bottom of the pile, others will be checked through object->below.
- * @param item
- * what archetype to check for.
- * @return
- * count of matching items.
- * @todo
- * couldn't item be a shared string, and == be used instead of strcmp?
- * The op = op->below is weird - what is it's NULL?
- */
-static int check_item(object *op, const char *item)
-{
-    int count=0;
-
-
-    if (item==NULL) return 0;
-    op=op->below;
-    while(op!=NULL) {
-        if (strcmp(op->arch->name,item)==0){
-            if (!QUERY_FLAG (op, FLAG_CURSED) && !QUERY_FLAG (op, FLAG_DAMNED)
-                /* Loophole bug? -FD- */ && !QUERY_FLAG (op, FLAG_UNPAID) )
-            {
-                if (op->nrof == 0)/* this is necessary for artifact sacrifices --FD-- */
-                    count++;
-                else
-                    count += op->nrof;
-            }
-        }
-        op=op->below;
-    }
-    return count;
-}
-
-/**
- * This removes 'nrof' items with specified archetype.
- * op is typically the player, which is only
- * really used to determine what space to look at.
- * Modified to only eat 'nrof' of objects.
- *
- * @param op
- * item at the bottom to check.
- * @param item
- * archetype to look for.
- * @param nrof
- * count to remove.
- * @todo
- * couldn't item be a shared string, and use == instead of strcmp?
- * also, the remove logic is wrong - op->nrof will be 0 after decreat_ob_nr in the 2nd case.
- */
-static void eat_item(object *op,const char *item, uint32 nrof)
-{
-    object *prev;
-
-    prev = op;
-    op=op->below;
-
-    while(op!=NULL) {
-        if (strcmp(op->arch->name,item)==0) {
-            if (op->nrof >= nrof) {
-                decrease_ob_nr(op,nrof);
-                return;
-            } else {
-                decrease_ob_nr(op,op->nrof);
-                nrof -= op->nrof;
-            }
-            op=prev;
-        }
-        prev = op;
-        op=op->below;
-    }
-}
-
-/**
- * This checks to see of the player (who) is sufficient level to use a weapon
- * with improvs improvements (typically last_eat).  We take an int here
- * instead of the object so that the improvement code can pass along the
- * increased value to see if the object is usuable.
- * we return 1 (true) if the player can use the weapon.
- *
- * @param who
- * living to check
- * @param improvs
- * improvement level.
- * @return
- * 1 if who can use the item, 0 else.
- * @todo
- * remove obsolete code.
- */
-static int check_weapon_power(const object *who, int improvs)
-{
-        /* Old code is below (commented out).  Basically, since weapons
-         * are the only object players really have any control to improve,
-         * it's a bit harsh to require high level in some combat skill,
-         * so we just use overall level.
-         */
-#if 1
-    if (((who->level/5)+5) >= improvs) return 1;
-    else return 0;
-
-#else
-    int level=0;
-
-        /* The skill system hands out wc and dam bonuses to fighters
-         * more generously than the old system (see fix_object). Thus
-         * we need to curtail the power of player enchanted weapons.
-         * I changed this to 1 improvement per "fighter" level/5 -b.t.
-         * Note:  Nothing should break by allowing this ratio to be
-         * different or using normal level - it is just a matter of play
-         * balance.
-         */
-    if(who->type==PLAYER) {
-        object *wc_obj=NULL;
-
-        for(wc_obj=who->inv;wc_obj;wc_obj=wc_obj->below)
-            if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype)
-                && wc_obj->level > level)
-                level  = wc_obj->level;
-
-        if (!level )  {
-            LOG(llevError,"Error: Player: %s lacks wc experience object\n",
-                who->name);
-            level = who->level;
-        }
-    }
-    else
-        level=who->level;
-
-    return (improvs <= ((level/5)+5));
-#endif
-}
-
-/**
- * Returns how many items of type improver->slaying there are under op.
- * Will display a message if none found, and 1 if improver->slaying is NULL.
- *
- * @param op
- * item just below the bottom of the pile.
- * @param improver
- * sacrifice object.
- * @return
- * count of matching items.
- * @todo
- * weird logic? use shared string directly, improver isn't really useful.
- */
-static int check_sacrifice(object *op, const object *improver)
-{
-    int count=0;
-
-    if (improver->slaying!=NULL) {
-        count = check_item(op,improver->slaying);
-        if (count<1) {
-            draw_ext_info_format(NDI_UNIQUE,0,op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "The gods want more %ss",
-                                 "The gods want more %ss",
-                                 improver->slaying);
-            return 0;
-        }
-    }
-    else
-        count=1;
-
-    return count;
-}
-
-/**
- * Actually improves the weapon, and tells user. Won't test anything.
- *
- * @param op
- * player improving.
- * @param improver
- * scroll used to improve.
- * @param weapon
- * improved weapon.
- * @param stat
- * what statistic to improve.
- * @param sacrifice_count
- * how much to improve stat by.
- * @param statname
- * name of stat to display to player.
- * @return
- * 1.
- */
-static int improve_weapon_stat(object *op,object *improver,object *weapon,
-                               signed char *stat,int sacrifice_count,
-                               const char *statname)
-{
-
-    draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                  "Your sacrifice was accepted.", NULL);
-
-    *stat += sacrifice_count;
-    weapon->last_eat++;
-
-    draw_ext_info_format(NDI_UNIQUE,0,op,
-                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                         "Weapon's bonus to %s improved by %d",
-                         "Weapon's bonus to %s improved by %d",
-                         statname,sacrifice_count);
-
-    decrease_ob(improver);
-
-        /* So it updates the players stats and the window */
-    fix_object(op);
-    return 1;
-}
-
-/* Types of improvements, hidden in the sp field. */
-#define IMPROVE_PREPARE 1   /**< Prepare the weapon. */
-#define IMPROVE_DAMAGE 2    /**< Increase damage. */
-#define IMPROVE_WEIGHT 3    /**< Decrease weight. */
-#define IMPROVE_ENCHANT 4   /**< Increase magic. */
-#define IMPROVE_STR 5       /**< Increase strength bonus. */
-#define IMPROVE_DEX 6       /**< Increase dexterity bonus. */
-#define IMPROVE_CON 7       /**< Increase constitution bonus. */
-#define IMPROVE_WIS 8       /**< Increase wisdom bonus. */
-#define IMPROVE_CHA 9       /**< Increase charisma bonus. */
-#define IMPROVE_INT 10      /**< Increase intelligence bonus. */
-#define IMPROVE_POW 11      /**< Increase power bonus. */
-
-
-/**
- * This does the prepare weapon scroll.
- *
- * Checks for sacrifice, and so on. Will inform the player of failures or success.
- *
- * @param op
- * player using the scroll.
- * @param improver
- * improvement scroll.
- * @param weapon
- * weapon to improve.
- * @return
- * 1 if weapon was prepared, 0 else.
- */
-static int prepare_weapon(object *op, object *improver, object *weapon)
-{
-    int sacrifice_count,i;
-    char buf[MAX_BUF];
-
-    if (weapon->level!=0) {
-        draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Weapon already prepared.", NULL);
-        return 0;
-    }
-    for (i=0; i<NROFATTACKS; i++)
-        if (weapon->resist[i]) break;
-
-        /* If we break out, i will be less than nrofattacks, preventing
-         * improvement of items that already have protections.
-         */
-    if (i<NROFATTACKS ||
-        weapon->stats.hp ||     /* regeneration */
-        (weapon->stats.sp && weapon->type == WEAPON) || /* sp regeneration */
-        weapon->stats.exp ||    /* speed */
-        weapon->stats.ac)       /* AC - only taifu's I think */
-    {
-        draw_ext_info(NDI_UNIQUE,0,op,
-                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Cannot prepare magic weapons.", NULL);
-        return 0;
-    }
-    sacrifice_count=check_sacrifice(op,improver);
-    if (sacrifice_count<=0)
-        return 0;
-    weapon->level=isqrt(sacrifice_count);
-    draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                  "Your sacrifice was accepted.", NULL);
-    eat_item(op, improver->slaying, sacrifice_count);
-
-    draw_ext_info_format(NDI_UNIQUE, 0, op,
-                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                         "Your *%s may be improved %d times.",
-                         "Your *%s may be improved %d times.",
-                         weapon->name,weapon->level);
-
-    sprintf(buf,"%s's %s",op->name,weapon->name);
-    FREE_AND_COPY(weapon->name, buf);
-    FREE_AND_COPY(weapon->name_pl, buf);
-    weapon->nrof=0;  /*  prevents preparing n weapons in the same
-                         slot at once! */
-    decrease_ob(improver);
-    weapon->last_eat=0;
-    return 1;
-}
-
-
-/**
- * Does the dirty job for 'improve weapon' scroll, prepare or add something.
- * This is the new improve weapon code.
- *
- * Checks if weapon was prepared, if enough potions on the floor, ...
- *
- * We are hiding extra information about the weapon in the level and
- * last_eat numbers for an object.  Hopefully this won't break anything ??
- * level == max improve last_eat == current improve
- *
- * @param op
- * player improving.
- * @param improver
- * the scroll that was read.
- * @param weapon
- * wepaon to improve.
- * @return
- * 1 if weapon was improved, 0 if not enough sacrifice, weapon not prepared, ...
- */
-static int improve_weapon(object *op,object *improver,object *weapon)
-{
-    int sacrifice_count, sacrifice_needed=0;
-
-    if(improver->stats.sp==IMPROVE_PREPARE) {
-        return prepare_weapon(op, improver, weapon);
-    }
-    if (weapon->level==0) {
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "This weapon has not been prepared.", NULL);
-        return 0;
-    }
-    if (weapon->level==weapon->last_eat && weapon->item_power >=100) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "This weapon cannot be improved any more.", NULL);
-        return 0;
-    }
-    if (QUERY_FLAG(weapon, FLAG_APPLIED) &&
-        !check_weapon_power(op, weapon->last_eat+1)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Improving the weapon will make it too"
-                      "powerful for you to use.  Unready it if you"
-                      "really want to improve it.", NULL);
-        return 0;
-    }
-
-        /* All improvements add to item power, so check if player can
-         * still wear the weapon after improvement.
-         */
-    if (QUERY_FLAG(weapon, FLAG_APPLIED) && op->type == PLAYER &&
-        (op->contr->item_power+1) > (settings.item_power_factor * op->level)) {
-        apply_special(op, weapon, AP_UNAPPLY);
-        if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
-                /* Weapon is cursed, too bad */
-            draw_ext_info(NDI_UNIQUE, 0, op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You can't enchant this weapon without unapplying it because it would consume your soul!", NULL);
-            return 0;
-        }
-    }
-
-        /* This just increases damage by 5 points, no matter what.  No
-         * sacrifice is needed.  Since stats.dam is now a 16 bit value and
-         * not 8 bit, don't put any maximum value on damage - the limit is
-         * how much the weapon  can be improved.
-         */
-    if (improver->stats.sp==IMPROVE_DAMAGE) {
-        weapon->stats.dam += 5;
-        weapon->weight += 5000;         /* 5 KG's */
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "Damage has been increased by 5 to %d",
-                             "Damage has been increased by 5 to %d",
-                             weapon->stats.dam);
-        weapon->last_eat++;
-
-        weapon->item_power++;
-        decrease_ob(improver);
-        return 1;
-    }
-    if (improver->stats.sp == IMPROVE_WEIGHT) {
-            /* Reduce weight by 20% */
-        weapon->weight = (weapon->weight * 8)/10;
-        if (weapon->weight < 1) weapon->weight = 1;
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "Weapon weight reduced to %6.1f kg",
-                             "Weapon weight reduced to %6.1f kg",
-                             (float)weapon->weight/1000.0);
-        weapon->last_eat++;
-        weapon->item_power++;
-        decrease_ob(improver);
-        return 1;
-    }
-    if (improver->stats.sp == IMPROVE_ENCHANT) {
-        weapon->magic++;
-        weapon->last_eat++;
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "Weapon magic increased to %d",
-                             "Weapon magic increased to %d",
-                             weapon->magic);
-        decrease_ob(improver);
-        weapon->item_power++;
-        return 1;
-    }
-
-    sacrifice_needed = weapon->stats.Str + weapon->stats.Int +
-        weapon->stats.Dex + weapon->stats.Pow + weapon->stats.Con +
-        weapon->stats.Cha + weapon->stats.Wis;
-
-    if (sacrifice_needed<1)
-        sacrifice_needed =1;
-    sacrifice_needed *=2;
-
-    sacrifice_count = check_sacrifice(op,improver);
-    if (sacrifice_count < sacrifice_needed) {
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                             "You need at least %d %s",
-                             "You need at least %d %s",
-                             sacrifice_needed, improver->slaying);
-        return 0;
-    }
-    eat_item(op,improver->slaying, sacrifice_needed);
-    weapon->item_power++;
-
-    switch (improver->stats.sp) {
-        case IMPROVE_STR:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Str),
-                                       1, "strength");
-        case IMPROVE_DEX:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Dex),
-                                       1, "dexterity");
-        case IMPROVE_CON:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Con),
-                                       1, "constitution");
-        case IMPROVE_WIS:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Wis),
-                                       1, "wisdom");
-        case IMPROVE_CHA:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Cha),
-                                       1, "charisma");
-        case IMPROVE_INT:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Int),
-                                       1, "intelligence");
-        case IMPROVE_POW:
-            return improve_weapon_stat(op,improver,weapon,
-                                       (signed char *) &(weapon->stats.Pow),
-                                       1, "power");
-        default:
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "Unknown improvement type.", NULL);
-    }
-    LOG(llevError,"improve_weapon: Got to end of function\n");
-    return 0;
-}
-
-/**
- * Handles the applying of improve/prepare/enchant weapon scroll.
- *
- * Checks a few things (not on a non-magic square, marked weapon, ...),
- * then calls improve_weapon() to do the dirty work.
- *
- * Will inform the player of failure/success.
- *
- * @param op
- * player applying the scroll.
- * @param tmp
- * improve scroll.
- * @return
- * 0 if failure for some reason, 1 if success.
- */
-static int check_improve_weapon (object *op, object *tmp)
-{
-    object *otmp;
-
-    if(op->type!=PLAYER)
-        return 0;
-    if (!QUERY_FLAG(op, FLAG_WIZCAST) &&
-        (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC)){
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Something blocks the magic of the scroll.", NULL);
-        return 0;
-    }
-    otmp=find_marked_object(op);
-    if(!otmp) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You need to mark a weapon object.", NULL);
-        return 0;
-    }
-    if (otmp->type != WEAPON && otmp->type != BOW) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "Marked item is not a weapon or bow", NULL);
-        return 0;
-    }
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                  "Applied weapon builder.", NULL);
-    improve_weapon(op,tmp,otmp);
-    esrv_update_item(UPD_NAME | UPD_NROF | UPD_FLAGS, op, otmp);
-    return 1;
-}
-
+int check_weapon_power(const object *who, int improvs);
 /**
  * Makes an object's face the main one
  *
@@ -1601,7 +1099,65 @@ int can_apply_object(object *who, object *op)
     return retval;
 }
 
+/**
+ * This checks to see of the player (who) is sufficient level to use a weapon
+ * with improvs improvements (typically last_eat).  We take an int here
+ * instead of the object so that the improvement code can pass along the
+ * increased value to see if the object is usuable.
+ * we return 1 (true) if the player can use the weapon.
+ * See ../types/weapon_improver/weapon_improver.c
+ *
+ * @param who
+ * living to check
+ * @param improvs
+ * improvement level.
+ * @return
+ * 1 if who can use the item, 0 else.
+ * @todo
+ * remove obsolete code.
+ */
+int check_weapon_power(const object *who, int improvs)
+{
+        /* Old code is below (commented out).  Basically, since weapons
+         * are the only object players really have any control to improve,
+         * it's a bit harsh to require high level in some combat skill,
+         * so we just use overall level.
+         */
+#if 1
+    if (((who->level/5)+5) >= improvs) return 1;
+    else return 0;
 
+#else
+    int level=0;
+
+        /* The skill system hands out wc and dam bonuses to fighters
+         * more generously than the old system (see fix_object). Thus
+         * we need to curtail the power of player enchanted weapons.
+         * I changed this to 1 improvement per "fighter" level/5 -b.t.
+         * Note:  Nothing should break by allowing this ratio to be
+         * different or using normal level - it is just a matter of play
+         * balance.
+         */
+    if(who->type==PLAYER) {
+        object *wc_obj=NULL;
+
+        for(wc_obj=who->inv;wc_obj;wc_obj=wc_obj->below)
+            if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype)
+                && wc_obj->level > level)
+                level  = wc_obj->level;
+
+        if (!level )  {
+            LOG(llevError,"Error: Player: %s lacks wc experience object\n",
+                who->name);
+            level = who->level;
+        }
+    }
+    else
+        level=who->level;
+
+    return (improvs <= ((level/5)+5));
+#endif
+}
 
 /**
  * Apply an object.
@@ -2363,10 +1919,6 @@ void apply_changes_to_player(object *pl, object *change) {
     }
 }
 
-void legacy_check_improve_weapon(object* op, object* tmp)
-{
-    check_improve_weapon(op, tmp);
-}
 void legacy_apply_container(object* op, object* sack)
 {
     apply_container(op, sack);

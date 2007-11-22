@@ -44,12 +44,14 @@ trigger/trigger.c \
 trigger_altar/trigger_altar.c \
 trigger_button/trigger_button.c \
 trigger_pedestal/trigger_pedestal.c \
+weapon_improver/weapon_improver.c \
 common/common_apply.c \
 common/describe.c \
 common/projectile.c \
 legacy/apply.c \
 legacy/legacy_describe.c \
 legacy/process.c
+
 
 AM_CPPFLAGS = -I$(top_srcdir)/include -DDATADIR=\"$(pkgdatadir)\" -DCONFDIR=\"$(pkgconfdir)\" \
 	      -DLIBDIR=\"$(pkglibdir)\" -DLOCALDIR=\"$(pkgstatedir)\" \

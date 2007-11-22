@@ -15,7 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Refactor savebed, poison, cf_handle, and treasure code.
+Refactor savebed, poison, cf_handle, treasure, and weapon_improver code.
 Generalize 'killer' message for poison objects.
     server/ob_types.c
     server/apply.c
@@ -28,6 +28,7 @@ Generalize 'killer' message for poison objects.
     types/poison/poison.c
     types/cf_handle/cf_handle.c
     types/treasure/treasure.c
+    types/weapon_improver/weapon_improver.c
 Alex Schultz 2007-11-21
 
 Added support for compound spellcasting animations

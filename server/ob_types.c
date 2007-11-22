@@ -96,6 +96,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_trigger_altar();
     init_type_trigger_button();
     init_type_trigger_pedestal();
+    init_type_weapon_improver();
 }
 
 /* Functions for registering methods for types */

@@ -8,12 +8,14 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
-Ob types   : SAVEBED, POISON, CF_HANDLE, TREASURE
+Ob types   : SAVEBED, POISON, CF_HANDLE, TREASURE, WEAPON_IMPROVER
 Events     : apply
 Moved from : ../server/apply.c, legacy/apply.c
 Moved to   : savebed/savebed.c, poison/poison.c, cf_handle/cf_handle.c,
-             treasure/treasure.c
-Comment    : Moved apply code for savebeds, poison, cf_handle, and treasure.
+             treasure/treasure.c, weapon_improver/weapon_improver.c
+Comment    : Moved apply code for savebeds, poison, cf_handle, treasure and
+             weapon_improver. Now the only ob types left for apply, are
+             containers and equippable items.
 2007-11-21 - Alex Schultz
 --
 Ob types   : FOOD, DRINK, FLESH

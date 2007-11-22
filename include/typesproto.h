@@ -85,6 +85,8 @@ void init_type_trigger_altar(void);
 void init_type_trigger_button(void);
 /* trigger_pedestal/trigger_pedestal.c */
 void init_type_trigger_pedestal(void);
+/* weapon_improver/weapon_improver.c */
+void init_type_weapon_improver(void);
 /* common/common_apply.c */
 method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 method_ret common_pre_ob_move_on(object *trap, object *victim, object *originator);
