@@ -16,6 +16,7 @@ else.  With this, include the file(s) that you changed.
 Changes for SVN:
 
 Refactor savebed and poison code.
+Generalize 'killer' message for poison objects.
     server/ob_types.c
     server/apply.c
     server/attack.d

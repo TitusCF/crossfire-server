@@ -32,7 +32,7 @@
 
 static method_ret poison_type_apply(ob_methods *context, object *op,
     object* applier, int aflags);
-
+BIG_NAME
 /**
  * Initializer for the POISON object type.
  */
@@ -57,7 +57,7 @@ static method_ret poison_type_apply(ob_methods *context, object *op,
         play_sound_player_only(applier->contr, SOUND_DRINK_POISON,0,0);
         draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                       "Yech!  That tasted poisonous!", NULL);
-        strcpy(applier->contr->killer,"poisonous booze");
+        snprintf(applier->contr->killer, BIG_NAME, "poisonous %s", op->name);
     }
     /* If the 'hp' of the poison is greater than zero, use poison attacktype */
     if (op->stats.hp > 0) {
