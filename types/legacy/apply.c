@@ -51,18 +51,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
 {
     switch (op->type)
     {
-        case CF_HANDLE:
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                "You turn the handle.", NULL);
-            play_sound_map(applier->map, applier->x, applier->y,
-                SOUND_TURN_HANDLE);
-            op->value=op->value?0:1;
-            SET_ANIMATION(op, op->value);
-            update_object(op,UP_OBJ_FACE);
-            push_button(op);
-            return METHOD_OK;
-
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
         case CLOSE_CON:
             if (applier->type==PLAYER)

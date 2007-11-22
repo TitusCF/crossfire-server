@@ -8,11 +8,11 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
-Ob types   : SAVEBED, POISON
+Ob types   : SAVEBED, POISON, CF_HANDLE
 Events     : apply
 Moved from : ../server/apply.c, legacy/apply.c
-Moved to   : savebed/savebed.c, poison/poison.c
-Comment    : Moved apply code for savebeds and poison.
+Moved to   : savebed/savebed.c, poison/poison.c, cf_handle/cf_handle.c
+Comment    : Moved apply code for savebeds, poison, and cf_handle.
 2007-11-21 - Alex Schultz
 --
 Ob types   : FOOD, DRINK, FLESH

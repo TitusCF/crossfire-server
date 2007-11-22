@@ -6,6 +6,7 @@ armour_improver/armour_improver.c \
 arrow/arrow.c \
 book/book.c \
 button/button.c \
+cf_handle/cf_handle.c \
 check_inv/check_inv.c \
 clock/clock.c \
 container/container.c \

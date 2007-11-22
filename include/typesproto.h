@@ -8,6 +8,8 @@ void init_type_arrow(void);
 void init_type_book(void);
 /* button/button.c */
 void init_type_button(void);
+/* cf_handle/cf_handle.c */
+void init_type_cf_handle(void);
 /* check_inv/check_inv.c */
 void init_type_check_inv(void);
 /* clock/clock.c */
