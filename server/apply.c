@@ -1002,32 +1002,6 @@ static void apply_treasure (object *op, object *tmp)
 }
 
 /**
- * Someone ate some poison.
- *
- * @param op
- * living eating.
- * @param tmp
- * poisoned object.
- */
-void apply_poison (object *op, object *tmp)
-{
-    if (op->type == PLAYER) {
-        play_sound_player_only(op->contr, SOUND_DRINK_POISON,0,0);
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                      "Yech!  That tasted poisonous!", NULL);
-        strcpy(op->contr->killer,"poisonous booze");
-    }
-    if (tmp->stats.hp > 0) {
-        LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
-            tmp->stats.hp);
-        hit_player(op, tmp->stats.hp, tmp, AT_POISON, 1);
-    }
-    op->stats.food-=op->stats.food/4;
-    handle_apply_yield(tmp);
-    decrease_ob(tmp);
-}
-
-/**
  * This fonction return true if the exit is not a 2 ways one
  * or it is 2 ways, valid exit.
  * A valid 2 way exit means:

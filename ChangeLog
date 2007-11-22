@@ -15,15 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Refactor savebed code.
+Refactor savebed and poison code.
     server/ob_types.c
     server/apply.c
+    server/attack.d
     include/sproto.h
     include/typesproto.h
     types/legacy/apply.c
     types/Makefile.am
-    types/savebed
     types/savebed/savebed.c
+    types/poison/poison.c
 Alex Schultz 2007-11-21
 
 Added support for compound spellcasting animations

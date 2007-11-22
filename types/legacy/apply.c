@@ -105,10 +105,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
             (void) apply_special (applier, op, aflags);
             return METHOD_OK;
 
-        case POISON:
-            apply_poison(applier, op);
-            return METHOD_OK;
-
         case WEAPON_IMPROVER:
             (void) legacy_check_improve_weapon(applier, op);
             return METHOD_OK;

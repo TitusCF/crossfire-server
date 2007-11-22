@@ -20,6 +20,7 @@ lamp/lamp.c \
 lighter/lighter.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \
+poison/poison.c \
 potion/potion.c \
 power_crystal/power_crystal.c \
 savebed/savebed.c \

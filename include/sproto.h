@@ -7,7 +7,6 @@ void handle_apply_yield(object *tmp);
 int apply_container(object *op, object *sack);
 void do_learn_spell(object *op, object *spell, int special_prayer);
 void do_forget_spell(object *op, const char *spell);
-void apply_poison(object *op, object *tmp);
 int manual_apply(object *op, object *tmp, int aflag);
 int player_apply(object *pl, object *op, int aflag, int quiet);
 void player_apply_below(object *pl);

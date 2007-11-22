@@ -2472,7 +2472,7 @@ static void thrown_item_effect (object *hitter, object *victim)
 	    case POISON: /* poison drinks */
 		/* As with potions, should monster get a save? */
 		if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD)
-		   &&(victim->resist[ATNR_POISON]<60)) apply_poison(victim,hitter);
+		   &&(victim->resist[ATNR_POISON]<60)) (void) ob_apply(victim, hitter, 0);
 		break;
 
 	    /* Removed case statements that did nothing.

@@ -36,6 +36,8 @@ void init_type_lighter(void);
 void init_type_pedestal(void);
 /* player_mover/player_mover.c */
 void init_type_player_mover(void);
+/* poison/poison.c */
+void init_type_poison(void);
 /* potion/potion.c */
 void init_type_potion(void);
 /* power_crystal/power_crystal.c */
