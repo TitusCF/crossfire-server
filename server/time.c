@@ -394,173 +394,6 @@ static void poison_more(object *op) {
 }
 
 /**
- * Move function for a ::GATE.
- *
- * @param op
- * gate to move.
- */
-static void move_gate(object *op) { /* 1 = going down, 0 = goind up */
-    object *tmp;
-
-    if(op->stats.wc < 0 || (int)op->stats.wc  >= NUM_ANIMATIONS(op)) {
-        char buf[HUGE_BUF];
-	LOG(llevError,"Gate error: animation was %d, max=%d\n",op->stats.wc,
-	    NUM_ANIMATIONS(op));
-	dump_object(op, buf, sizeof(buf));
-	LOG(llevError,"%s\n",buf);
-	op->stats.wc=0;
-    }
-
-    /* We're going down */
-    if(op->value) {
-	if(--op->stats.wc<=0) { /* Reached bottom, let's stop */
-	    op->stats.wc=0;
-	    if(op->arch->clone.speed)
-		op->value=0;
-	    else {
-		op->speed = 0;
-		update_ob_speed(op);
-	    }
-	}
-	if((int)op->stats.wc < (NUM_ANIMATIONS(op)/2+1)) {
-	    op->move_block = 0;
-	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-	    update_all_los(op->map, op->x, op->y);
-	}
-	SET_ANIMATION(op, op->stats.wc);
-	update_object(op,UP_OBJ_CHANGE);
-	return;
-    }
-
-    /* We're going up */
-
-    /* First, lets see if we are already at the top */
-    if((unsigned char) op->stats.wc==(NUM_ANIMATIONS(op)-1)) {
-
-	/* Check to make sure that only non pickable and non rollable
-	 * objects are above the gate.  If so, we finish closing the gate,
-	 * otherwise, we fall through to the code below which should lower
-	 * the gate slightly.
-	 */
-
-	for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
-	    if (!QUERY_FLAG(tmp, FLAG_NO_PICK)
-		|| QUERY_FLAG(tmp, FLAG_CAN_ROLL)
-		|| QUERY_FLAG(tmp, FLAG_ALIVE))
-		break;
-
-	if (tmp==NULL) {
-	    if(op->arch->clone.speed)
-		op->value=1;
-	    else {
-		op->speed = 0;
-		update_ob_speed(op); /* Reached top, let's stop */
-	    }
-	    return;
-	}
-    }
-
-    if(op->stats.food) {    /* The gate is going temporarily down */
-	if(--op->stats.wc<=0) { /* Gone all the way down? */
-	    op->stats.food=0;	    /* Then let's try again */
-	    op->stats.wc=0;
-	}
-    } else {                /* The gate is still going up */
-	op->stats.wc++;
-
-	if((int)op->stats.wc >= (NUM_ANIMATIONS(op)))
-	    op->stats.wc=(signed char)NUM_ANIMATIONS(op)-1;
-
-	/* If there is something on top of the gate, we try to roll it off.
-	 * If a player/monster, we don't roll, we just hit them with damage
-	 */
-	if((int)op->stats.wc >= NUM_ANIMATIONS(op)/2) {
-	    /* Halfway or further, check blocks */
-	    /* First, get the top object on the square. */
-	    for(tmp=op->above;tmp!=NULL && tmp->above!=NULL;tmp=tmp->above);
-
-	    if(tmp!=NULL) {
-		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
-		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL, 1);
-		    if(tmp->type==PLAYER)
-			draw_ext_info_format(NDI_UNIQUE, 0, tmp,
-					     MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
-					     "You are crushed by the %s!",
-					     "You are crushed by the %s!",
-					     op->name);
-		} else
-		    /* If the object is not alive, and the object either can
-		     * be picked up or the object rolls, move the object
-		     * off the gate.
-		     */
-		    if(!QUERY_FLAG(tmp, FLAG_ALIVE)
-			&& (!QUERY_FLAG(tmp, FLAG_NO_PICK)
-			   ||QUERY_FLAG(tmp,FLAG_CAN_ROLL))) {
-		    /* If it has speed, it should move itself, otherwise: */
-		    int i=find_free_spot(tmp,op->map,op->x,op->y,1,9);
-
-		    /* If there is a free spot, move the object someplace */
-		    if (i!=-1) {
-			remove_ob(tmp);
-			tmp->x+=freearr_x[i],tmp->y+=freearr_y[i];
-			insert_ob_in_map(tmp,op->map,op,0);
-		    }
-		}
-	    }
-
-	    /* See if there is still anything blocking the gate */
-	    for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
-		if (!QUERY_FLAG(tmp, FLAG_NO_PICK)
-			|| QUERY_FLAG(tmp, FLAG_CAN_ROLL)
-			|| QUERY_FLAG(tmp, FLAG_ALIVE))
-		    break;
-
-	    /* IF there is, start putting the gate down  */
-	    if(tmp) {
-		    op->stats.food=1;
-	    } else {
-		op->move_block = MOVE_ALL;
-		if(!op->arch->clone.stats.ac)
-		    SET_FLAG(op, FLAG_BLOCKSVIEW);
-		update_all_los(op->map, op->x, op->y);
-	    }
-	} /* gate is halfway up */
-
-	SET_ANIMATION(op, op->stats.wc);
-	update_object(op,UP_OBJ_CHANGE);
-    } /* gate is going up */
-}
-
-/**
- * Move function for a ::TIMED_GATE.
- *
- * - hp      : how long door is open/closed
- * - maxhp   : initial value for hp
- * - sp      : 1 = open, 0 = close
- *
- * @param op
- * timed gate to move.
- */
-static void move_timed_gate(object *op)
-{
-  int v = op->value;
-
-  if (op->stats.sp) {
-    move_gate(op);
-    if (op->value != v)   /* change direction ? */
-      op->stats.sp = 0;
-    return;
-  }
-  if (--op->stats.hp <= 0) { /* keep gate down */
-    move_gate(op);
-    if (op->value != v) {  /* ready ? */
-	op->speed = 0;
-	update_ob_speed(op);
-    }
-  }
-}
-
-/**
  * Move a ::DETECTOR.
  *
  * - slaying:    name of the thing the detector is to look for
@@ -1354,7 +1187,7 @@ int process_object(object *op) {
 	}
 	return 1;
     }
-    return ob_process(op);
+    return (ob_process(op) == METHOD_OK ? 1 : 0);
 }
 void legacy_move_detector(object *op)
 {
@@ -1363,10 +1196,6 @@ void legacy_move_detector(object *op)
 void legacy_remove_force(object *op)
 {
     remove_force(op);
-}
-void legacy_move_timed_gate(object *op)
-{
-    move_timed_gate(op);
 }
 void legacy_animate_trigger(object *op)
 {
@@ -1379,10 +1208,6 @@ void legacy_remove_blindness(object *op)
 void legacy_poison_more(object* op)
 {
     poison_more(op);
-}
-void legacy_move_gate(object *op)
-{
-    move_gate(op);
 }
 void legacy_move_hole(object *op)
 {

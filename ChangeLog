@@ -15,6 +15,16 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Refactor gate code.
+    server/time.c
+    server/ob_types.c
+    include/sproto.h
+    include/typesproto.h
+    types/gate/gate.c
+    types/legacy/process.c
+    types/Makefile.am
+Alex Schultz 2007-11-23
+
 Refactor savebed, poison, cf_handle, treasure, and weapon_improver code.
 Generalize 'killer' message for poison objects.
     server/ob_types.c

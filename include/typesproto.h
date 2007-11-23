@@ -26,6 +26,8 @@ void init_type_director(void);
 void init_type_exit(void);
 /* food/food.c */
 void init_type_food(void);
+/* gate/gate.c */
+void init_type_gate(void);
 /* hole/hole.c */
 void init_type_hole(void);
 /* identify_altar/identify_altar.c */

@@ -35,104 +35,97 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
         case ROD:
         case HORN:
             regenerate_rod(op);
-            return 1;
+            return METHOD_OK;
 
         case FORCE:
         case POTION_EFFECT:
             legacy_remove_force(op);
-            return 1;
+            return METHOD_OK;
 
         case BLINDNESS:
             legacy_remove_blindness(op);
-            return 0;
+            return METHOD_OK;
 
         case POISONING:
             legacy_poison_more(op);
-            return 0;
+            return METHOD_OK;
 
         case DISEASE:
             move_disease(op);
-            return 0;
+            return METHOD_OK;
 
         case SYMPTOM:
             move_symptom(op);
-            return 0;
+            return METHOD_OK;
 
         case DOOR:
             remove_door(op);
-            return 0;
+            return METHOD_OK;
 
         case LOCKED_DOOR:
             remove_locked_door(op);
-            return 0;
+            return METHOD_OK;
 
         case TELEPORTER:
             move_teleporter(op);
-            return 0;
+            return METHOD_OK;
 
         case GOLEM:
             move_golem(op);
-            return 0;
+            return METHOD_OK;
 
         case EARTHWALL:
             hit_player(op, 2, op, AT_PHYSICAL, 1);
-            return 0;
+            return METHOD_OK;
 
         case FIREWALL:
             move_firewall(op);
             if (op->stats.maxsp)
                 animate_turning(op);
-            return 0;
+            return METHOD_OK;
 
         case MOOD_FLOOR:
             do_mood_floor(op, op);
-            return 0;
-
-        case GATE:
-            legacy_move_gate(op);
-            return 0;
-
-        case TIMED_GATE:
-            legacy_move_timed_gate(op);
-            return 0;
+            return METHOD_OK;
 
         case TRIGGER_BUTTON:
         case TRIGGER_PEDESTAL:
         case TRIGGER_ALTAR:
             legacy_animate_trigger(op);
-            return 0;
+            return METHOD_OK;
 
         case DETECTOR:
             legacy_move_detector(op);
+            return METHOD_OK;
 
         case DIRECTOR:
             if (op->stats.maxsp)
                 animate_turning(op);
-            return 0;
+            return METHOD_OK;
 
         case HOLE:
             legacy_move_hole(op);
-            return 0;
+            return METHOD_OK;
 
         case PLAYERMOVER:
             move_player_mover(op);
-            return 0;
+            return METHOD_OK;
 
         case CREATOR:
             move_creator(op);
-            return 0;
+            return METHOD_OK;
 
         case MARKER:
             move_marker(op);
-            return 0;
+            return METHOD_OK;
 
         case PLAYER_CHANGER:
             move_player_changer(op);
-            return 0;
+            return METHOD_OK;
 
         case PEACEMAKER:
             move_peacemaker(op);
-            return 0;
+            return METHOD_OK;
     }
-    return 0;
+    return METHOD_UNHANDLED;
 }

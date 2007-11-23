@@ -8,6 +8,13 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
+Ob types   : GATE, TIMED_GATE
+Events     : process
+Moved from : ../server/time.c, legacy/process.c
+Moved to   : gate/gate.c
+Comment    : Moved process code for GATE and TIMED_GATE.
+2007-11-23 - Alex Schultz
+--
 Ob types   : SAVEBED, POISON, CF_HANDLE, TREASURE, WEAPON_IMPROVER
 Events     : apply
 Moved from : ../server/apply.c, legacy/apply.c

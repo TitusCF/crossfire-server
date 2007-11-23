@@ -15,6 +15,7 @@ deep_swamp/deep_swamp.c \
 director/director.c \
 exit/exit.c \
 food/food.c \
+gate/gate.c \
 hole/hole.c \
 identify_altar/identify_altar.c \
 lamp/lamp.c \
