@@ -2451,8 +2451,8 @@ static int adjacent_map(const mapstruct *map1, const mapstruct *map2, int *dx, i
  * This is used by get_player to determine where the other
  * creature is.  get_rangevector takes into account map tiling,
  * so you just can not look the the map coordinates and get the
- * righte value.  distance_x/y are distance away, which
- * can be negativbe.  direction is the crossfire direction scheme
+ * right value.  distance_x/y are distance away, which
+ * can be negative.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
  *

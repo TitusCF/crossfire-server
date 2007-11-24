@@ -1730,7 +1730,7 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
  * unneeded complication - since the setup of that data is never re-used
  * (say 'hi' to monster, then 'yes', it would re-do the entire parse-message)
  * it seems to me to make more sense to just have simple function that returns
- * the 'text' portion of the message that it matches - this savees us a bunch
+ * the 'text' portion of the message that it matches - this saves us a bunch
  * of malloc's and free's, as well as that setup.
  * This function takes the message to be parsed in 'msg', the text to
  * match in 'match', and returns the portion of the message.  This

@@ -120,7 +120,7 @@ static void generate_monster_inv(object *gen) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
 	return;
     }
-    /*First count numer of objects in inv*/
+    /*First count number of objects in inv*/
     for (op=gen->inv;op;op=op->below)
         qty++;
     if (!qty){

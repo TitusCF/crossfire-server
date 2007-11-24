@@ -568,7 +568,7 @@ void become_follower (object *op, object *new_god) {
 
     /* Player has no skill - give them the skill */
     if (!skop) {
-	/* The arhetype should always be defined - if we crash here because it doesn't,
+	/* The archetype should always be defined - if we crash here because it doesn't,
 	 * things are really messed up anyways.
 	 */
 	skop = give_skill_by_name(op, get_archetype_by_type_subtype(SKILL, SK_PRAYING)->clone.skill);

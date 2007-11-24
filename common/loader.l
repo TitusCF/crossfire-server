@@ -56,7 +56,7 @@ static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "
  * to go through every mapping looking for every potion, rod, wand, etc
  * that had a sp set and update to the new value.  So this maps the
  * old spell numbers to the name of the new archs.
- * If you are adding a new spell, you should not modify this - you
+ * If you are adding a new spell, you should not modify this - your
  * new spell won't have been used, and thus won't have any legacy object.
  * NULL entries in this table are valid - to denote objects that should
  * not be updated for whatever reason.
@@ -1382,7 +1382,7 @@ static int eol_size=sizeof("\n")-1; /*Substract 1 to suppress terminal 0*/
 void get_ob_diff(object *op,object *op2, char* buf, int size) {
 
 /*
- * A bit of explantion on strings handling in this function:
+ * A bit of explanation on strings handling in this function:
  * buf is never null terminated until the end. So
  * works only with buf2 and fastbuf. What concern fastbuf,
  * use ONLY through the FAST macros. Classical C string handling

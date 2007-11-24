@@ -600,7 +600,7 @@ typedef struct typedata {
 #define FLAG_ACTIVATE_ON_RELEASE 106	/* connected object is activated when 'released' */
 #define FLAG_IS_WATER            107
 #define FLAG_CONTENT_ON_GEN      108
-#define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instanciated*/
+#define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instantiated*/
 #define FLAG_IS_BUILDABLE        110 /* Can build on item */
 #define FLAG_AFK                 111 /* Player is AFK */
 #define FLAG_BLESSED             112 /* Item has a blessing, opposite of cursed/damned. */
@@ -1013,7 +1013,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  * and clean up the string. (Lots faster than doing each time...)
  * If you use them and have choice between FAST_STRCAT and FAST_STRNCAT,
  * keep in mind FAST_STRNCAT is faster since length of second argument is
- * kown in advance.
+ * known in advance.
  */
 /*@{*/
  #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)

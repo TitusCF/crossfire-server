@@ -144,7 +144,7 @@ Caveats:
   quite long.
 
 - There is no function that walks the key/value list for you. If this
-  is needed, should write your own.  However, sucn functionality really
+  is needed, should write your own.  However, such functionality really
   shouldn't be needed.
 
 - key names with no value are an indicator to the loader that there is

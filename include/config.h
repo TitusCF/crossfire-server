@@ -411,7 +411,7 @@
  *
  * MAP_MINTIMEOUT is used as a minimum timeout value - if the map is set
  * to swap out in less than that many ticks, we use the MINTIMEOUT value
- * velow.  If MINTIMEOUT > MAXTIMEOUT, MAXTIMEOUT will be used for all
+ * below.  If MINTIMEOUT > MAXTIMEOUT, MAXTIMEOUT will be used for all
  * maps.
  */
 

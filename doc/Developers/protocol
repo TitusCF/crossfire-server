@@ -713,7 +713,7 @@ S->C: smooth <facenbr><smoothpic>
 C->S: asksmooth <facenbr>
 	Parameters is a plain text integer.
 	Ask server to send a smooth sequence. Server will respond with a smooth command.
-	<facenbr> is an integer telling server which face we want smooth informations on.
+	<facenbr> is an integer telling server which face we want smooth information on.
 
 ******************************************************************************
 MAP UPDATE COMMANDS
@@ -897,14 +897,14 @@ S->C: magicmap <width> <height> <px> <py> <data>
 	then up to down.
 
 C->S: toggleextendedinfos <string1> <string2> .... <stringn>
-	Ask the server to send some additionnal informations about the map.
+	Ask the server to send some additionnal information about the map.
 	This command is followed by 1 or more strings. String are separated
 	with spaces. Each string toggle an info. The server will respond
 	with the command ExtendedInfoSet telling client what actual
 	extended infos will be send to the client.
 	Valid extended infos are as follow:
 		smooth
-			send smoothlevel informations to the client.
+			send smoothlevel information to the client.
 
 S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 	Tell client what actually are the extended infos server may

@@ -77,7 +77,7 @@
 /* This flag is useful to see what kind of output messages are created */
 /* #define BOOK_MSG_DEBUG */
 
-/* This flag is useful for debuging archiving action */
+/* This flag is useful for debugging archiving action */
 /* #define ARCHIVE_DEBUG */
 
 /* Moved these structures from struct.h to this file in 0.94.3 - they
@@ -463,7 +463,7 @@ static const char* const book_descrpt[] =
  * Each line of this array is a readable subtype
  * Be careful to keep the order. If you add readable subtype, add them
  * at the bottom of the list. Never delete a subtype because index is used as
- * subtype paramater in arch files!
+ * subtype parameter in arch files!
  */
 static readable_message_type readable_message_types[] =
 {
@@ -1363,7 +1363,7 @@ object* get_random_mon (int level)
      * appropriate level.  This wasn't very random because if you had a
      * bunch of low level monsters and then a high level one, if the random
      * determine took one of the low level ones, it would just forward to the
-     * high level one and return that.  Thus, monsters that immediatly followed
+     * high level one and return that.  Thus, monsters that immediately followed
      * a bunch of low level monsters would be more heavily returned.  It also
      * means some of the dragons would be poorly represented, since they
      * are a group of high level monsters all around each other.
@@ -1544,7 +1544,7 @@ static char *artifact_msg (int level, char* retbuf, int booksize)
         return retbuf;
     }
 
-    /* There is no reason to start on the artifact list at the begining. Lets
+    /* There is no reason to start on the artifact list at the beginning. Lets
      * take our starting position randomly... */
     art = al->items;
     for (i = RANDOM () % level + RANDOM () % 2 + 1; i > 0; i--)
@@ -2182,7 +2182,7 @@ void tailor_readable_ob (object *book, int msg_type)
 
 /*****************************************************************************
  *
- * Cleanup routine for readble stuff.
+ * Cleanup routine for readable stuff.
  *
  *****************************************************************************/
 

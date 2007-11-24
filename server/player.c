@@ -858,7 +858,7 @@ int receive_play_again(object *op, char key)
 	draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
 		      "\n", "\n");
 	get_name(op);
-	op->name = name;		/* Alrady added a refcount above */
+	op->name = name;		/* Already added a refcount above */
 	op->name_pl = add_string(name);
 	set_first_map(op);
     } else {
