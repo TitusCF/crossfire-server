@@ -54,10 +54,8 @@ void free_all_anim(void) {
 void init_anim(void) {
     char buf[MAX_BUF];
     FILE *fp;
-    static int anim_init=0;
     int num_frames=0,faces[MAX_ANIMATIONS],i;
 
-    if (anim_init) return;
     animations_allocated=9;
     num_animations=0;
     /* Make a default.  New animations start at one, so if something
