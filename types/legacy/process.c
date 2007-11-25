@@ -122,10 +122,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
         case PLAYER_CHANGER:
             move_player_changer(op);
             return METHOD_OK;
-
-        case PEACEMAKER:
-            move_peacemaker(op);
-            return METHOD_OK;
     }
     return METHOD_UNHANDLED;
 }

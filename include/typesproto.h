@@ -36,6 +36,8 @@ void init_type_identify_altar(void);
 void init_type_lamp(void);
 /* lighter/lighter.c */
 void init_type_lighter(void);
+/* peacemaker/peacemaker.c */
+void init_type_peacemaker(void);
 /* pedestal/pedestal.c */
 void init_type_pedestal(void);
 /* player_mover/player_mover.c */

@@ -603,7 +603,6 @@ int cast_consecrate(object *op, object *caster, object *spell);
 int animate_weapon(object *op, object *caster, object *spell, int dir);
 int cast_change_map_lightlevel(object *op, object *caster, object *spell);
 int create_aura(object *op, object *caster, object *spell);
-void move_peacemaker(object *op);
 int write_mark(object *op, object *spell, const char *msg);
 /* spell_util.c */
 object *find_random_spell_in_ob(object *ob, const char *skill);
