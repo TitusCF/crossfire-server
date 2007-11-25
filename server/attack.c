@@ -1067,8 +1067,10 @@ object *hit_with_arrow (object *op, object *victim)
           correct level. This might proves an awfull hack :/ We should really
           provide attack_ob_simple with the skill to use...
          */
-        old_skill = hitter->skill;
-        hitter->skill = add_refcount(container->skill);
+        if (container!=NULL) {
+            old_skill = hitter->skill;
+            hitter->skill = add_refcount(container->skill);
+        }
         hit_something = attack_ob_simple (victim, hitter, op->stats.dam,
                                         op->stats.wc);
     }
@@ -1085,7 +1087,7 @@ object *hit_with_arrow (object *op, object *victim)
         }
         return NULL;
     }
-    if (old_skill!=NULL){
+    if (container!=NULL){
         free_string(hitter->skill);
         hitter->skill=old_skill;
     }
