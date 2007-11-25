@@ -621,6 +621,26 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
                                   MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                   "You must get it first!\n", NULL);
     }
+    if (tmp == METHOD_OK)
+    {
+        if (op->anim_suffix!=NULL)
+        {
+            int anim;
+            char buf[MAX_BUF];
+            sprintf(buf,"%s_%s", animations[pl->animation_id].name,
+            op->anim_suffix);
+            anim = find_animation(buf);
+            if (anim)
+            {
+                pl->temp_animation_id = anim;
+                pl->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
+                pl->temp_last_anim = 0;
+                pl->last_anim = 0;
+                pl->state = 0;
+                update_object(pl, UP_OBJ_FACE);
+            }
+        }
+    }
     return tmp;
 }
 
