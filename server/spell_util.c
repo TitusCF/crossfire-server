@@ -1292,18 +1292,26 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     if (spell_ob->anim_suffix)
     {
         int anim;
-        sprintf(buf,"%s_%s", animations[caster->animation_id].name,
+        object* head;
+        if (caster->head != NULL)
+            head = caster->head;
+        else
+            head = caster;
+        sprintf(buf,"%s_%s", animations[head->animation_id].name,
             spell_ob->anim_suffix);
         anim = find_animation(buf);
         if (anim)
         {
-            caster->temp_animation_id = anim;
-            caster->temp_anim_speed = 
-                animations[anim].num_animations/animations[anim].facings;
-            caster->temp_last_anim = 0;
-            caster->last_anim = 0;
-            caster->state = 0;
-            update_object(caster, UP_OBJ_FACE);
+            for(;head!=NULL;head=head->more)
+            {
+                head->temp_animation_id = anim;
+                head->temp_anim_speed = 
+                    animations[anim].num_animations/animations[anim].facings;
+                head->temp_last_anim = 0;
+                head->last_anim = 0;
+                head->state = 0;
+                update_object(head, UP_OBJ_FACE);
+            }
         }
     }
 

@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Adapted the compound animations code so that it properly works with multipart
+monsters.
+    server/apply.c
+    server/attack.c
+    server/spell_util.c
+Yann Chachkoff (gros) 2007-11-25
+
 Refactor poisoning code.
     server/time.c
     server/ob_types.c

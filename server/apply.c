@@ -626,18 +626,26 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
         if (op->anim_suffix!=NULL)
         {
             int anim;
+            object* head;
             char buf[MAX_BUF];
-            sprintf(buf,"%s_%s", animations[pl->animation_id].name,
-            op->anim_suffix);
+            if (pl->head != NULL)
+                head = pl->head;
+            else
+                head = pl;
+            sprintf(buf,"%s_%s", animations[head->animation_id].name,
+                op->anim_suffix);
             anim = find_animation(buf);
             if (anim)
             {
-                pl->temp_animation_id = anim;
-                pl->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
-                pl->temp_last_anim = 0;
-                pl->last_anim = 0;
-                pl->state = 0;
-                update_object(pl, UP_OBJ_FACE);
+                for(;head!=NULL;head=head->more)
+                {
+                    head->temp_animation_id = anim;
+                    head->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
+                    head->temp_last_anim = 0;
+                    head->last_anim = 0;
+                    head->state = 0;
+                    update_object(head, UP_OBJ_FACE);
+                }
             }
         }
     }
