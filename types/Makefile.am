@@ -24,6 +24,7 @@ peacemaker/peacemaker.c \
 pedestal/pedestal.c \
 player_mover/player_mover.c \
 poison/poison.c \
+poisoning/poisoning.c \
 potion/potion.c \
 power_crystal/power_crystal.c \
 savebed/savebed.c \

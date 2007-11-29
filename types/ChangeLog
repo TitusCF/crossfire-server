@@ -8,6 +8,13 @@ level ChangeLog file.
 should be inlcluded here. Other changes should simply be in the top level
 ChangeLog.
 
+Ob types   : POISONING
+Events     : process
+Moved from : ../server/time.c, legacy/process.c
+Moved to   : poisoning/poisoning.c
+Comment    : Moved process code for POISONING.
+2007-11-28 - Alex Schultz
+--
 Ob types   : PEACEMAKER
 Events     : process
 Moved from : ../server/spell_effect.c, legacy/process.c

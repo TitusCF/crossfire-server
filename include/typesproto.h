@@ -44,6 +44,8 @@ void init_type_pedestal(void);
 void init_type_player_mover(void);
 /* poison/poison.c */
 void init_type_poison(void);
+/* poisoning/poisoning.c */
+void init_type_poisoning(void);
 /* potion/potion.c */
 void init_type_potion(void);
 /* power_crystal/power_crystal.c */

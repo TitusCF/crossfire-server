@@ -354,46 +354,6 @@ static void remove_blindness(object *op) {
 }
 
 /**
- * Move function for ::POISON.
- *
- * @param op
- * poison to move.
- * @todo rename.
- */
-static void poison_more(object *op) {
-  if(op->env==NULL||!QUERY_FLAG(op->env,FLAG_ALIVE)||op->env->stats.hp<0) {
-    remove_ob(op);
-    free_object(op);
-    return;
-  }
-  if(op->stats.food==1) {
-    /* need to remove the object before fix_player is called, else fix_object
-     * will not do anything.
-     */
-    if(op->env->type==PLAYER) {
-      CLEAR_FLAG(op, FLAG_APPLIED);
-      fix_object(op->env);
-      draw_ext_info(NDI_UNIQUE, 0,op->env,
-		    MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-		    "You feel much better now.", NULL);
-    }
-    remove_ob(op);
-    free_object(op);
-    return;
-  }
-  if(op->env->type==PLAYER) {
-    op->env->stats.food--;
-    /* Not really the start of a bad effect, more the continuing effect */
-    draw_ext_info(NDI_UNIQUE, 0,op->env,
-		  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-		  "You feel very sick...", NULL);
-  }
-  (void)hit_player(op->env,
-                   op->stats.dam,
-                   op,AT_INTERNAL,1);
-}
-
-/**
  * Move a ::DETECTOR.
  *
  * - slaying:    name of the thing the detector is to look for
@@ -1204,10 +1164,6 @@ void legacy_animate_trigger(object *op)
 void legacy_remove_blindness(object *op)
 {
     remove_blindness(op);
-}
-void legacy_poison_more(object* op)
-{
-    poison_more(op);
 }
 void legacy_move_hole(object *op)
 {

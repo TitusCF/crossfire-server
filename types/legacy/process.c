@@ -46,10 +46,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             legacy_remove_blindness(op);
             return METHOD_OK;
 
-        case POISONING:
-            legacy_poison_more(op);
-            return METHOD_OK;
-
         case DISEASE:
             move_disease(op);
             return METHOD_OK;
