@@ -691,6 +691,11 @@ typedef unsigned char	MoveType;
 #define MAX_DARKNESS		5
 
 /**
+ * Maximum item power an item can have. If changed, check object::item_power for overflow issues.
+ */
+#define MAX_WEAPON_ITEM_POWER   100
+
+/**
  * @defgroup F_xxx Buy/sell flags.
  * Those flags are mostly used for query_cost() and similar functions.
  */

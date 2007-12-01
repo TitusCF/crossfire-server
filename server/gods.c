@@ -911,6 +911,15 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
     if (weapon == NULL || god_examines_item (god, weapon) <= 0)
         return 0;
 
+    if (weapon->item_power >= MAX_WEAPON_ITEM_POWER) {
+        draw_ext_info_format (NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
+            "%s considers your %s is not worthy to be enchanted any more.",
+            "%s considers your %s is not worthy to be enchanted any more.",
+            god->name,
+            weapon->name);
+        return 0;
+    }
+
     /* If personalized_blessings is activated, then the god's name is
      * associated with the weapon, as well as the owner (the one who blesses it),
      * and a "weapon willpower", which is equivalent to the owner's experience
