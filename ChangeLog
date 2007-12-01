@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bug #1828785: Possible false positive in the alchemy formula list.
+ common/recipe.c: don't warn of same index id if not same cauldron.
+Nicolas Weeger 2007-12-01
+
 Fix bug #1825685: "Got no region..." when creating weather.
  server/init.c: delay weather initialisation after other ones.
 Nicolas Weeger 2007-12-01

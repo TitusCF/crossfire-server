@@ -264,7 +264,8 @@ void check_formulae( void ) {
     for(fl=formulalist; fl!=NULL; fl = fl->next) {
         for (formula=fl->items; formula!=NULL; formula=formula->next)
             for (check=formula->next; check!=NULL; check=check->next)
-                if(check->index==formula->index) {
+                if(check->index==formula->index && strcmp(check->cauldron, formula->cauldron) == 0) {
+                    /* if the recipes don't have the same facility, then no issue anyway. */
                     LOG(llevError," ERROR: On %d ingred list:\n", numb);
                     LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n",
                         formula->arch_name[0],formula->title,check->arch_name[0],check->title,formula->index);
