@@ -235,6 +235,7 @@ int can_merge(object *ob1, object *ob2) {
         (ob1->title != ob2->title) ||
         (ob1->msg != ob2->msg) ||
         (ob1->weight != ob2->weight) ||
+        (ob1->item_power != ob2->item_power) ||
         (memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
         (memcmp(&ob1->stats, &ob2->stats, sizeof(ob1->stats))!=0) ||
         (ob1->attacktype != ob2->attacktype) ||
