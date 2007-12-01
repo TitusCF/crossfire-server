@@ -1518,7 +1518,7 @@ void examine(object *op, object *tmp) {
 
     if(tmp->weight) {
 	snprintf(buf, sizeof(buf), tmp->nrof > 1 ? "They weigh %3.3f kg." : "It weighs %3.3f kg.",
-            tmp->weight*(tmp->nrof?tmp->nrof:1)/1000.0);
+            tmp->weight*((float)(tmp->nrof?tmp->nrof:1)/1000.0));
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_EXAMINE,
 		      buf, NULL);
     }

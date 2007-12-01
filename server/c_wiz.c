@@ -781,7 +781,8 @@ int command_teleport(object *op, char *params) {
  */
 int command_create(object *op, char *params) {
     object *tmp = NULL;
-    int nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+    int i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+    uint32 nrof;
     char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *endline;
     archetype *at, *at_spell = NULL;
     artifact *art = NULL;
@@ -800,7 +801,7 @@ int command_create(object *op, char *params) {
     /* We need to know where the line ends */
     endline = bp+strlen(bp);
 
-    if (sscanf(bp, "%d ", &nrof)) {
+    if (sscanf(bp, "%u ", &nrof)) {
         if ((bp = strchr(params, ' ')) == NULL) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
 		  "Usage: create [nr] [magic] <archetype> [ of <artifact>] [variable_to_patch setting]",
@@ -809,7 +810,7 @@ int command_create(object *op, char *params) {
         }
         bp++;
         set_nrof = 1;
-        LOG(llevDebug, "%s creates: (%d) %s\n", op->name, nrof, bp);
+        LOG(llevDebug, "%s creates: (%u) %s\n", op->name, nrof, bp);
     }
     if (sscanf(bp, "%d ", &magic)) {
         if ((bp = strchr(bp, ' ')) == NULL) {
