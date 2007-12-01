@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix bugs #825265: Broken container images and #799392: 2.0 server mat container = chest.
+ server/apply.c: store custom container image at container opening, and restore it later.
+Nicolas Weeger 2007-12-01
+
 Adapted the compound animations code so that it properly works with multipart
 monsters.
     server/apply.c

@@ -151,8 +151,9 @@ void handle_apply_yield(object* tmp)
     }
 }
 int check_weapon_power(const object *who, int improvs);
+
 /**
- * Makes an object's face the main one
+ * Makes an object's face the main face, which is supposed to be the "closed" one.
  *
  * Sets an object's face to the 'face' in the archetype.
  * Meant for showing containers opening and closing.
@@ -163,17 +164,20 @@ int check_weapon_power(const object *who, int improvs);
  * @return TRUE if face changed
  */
 static int set_object_face_main(object *op){
-
-    if( op->face && op->arch->clone.face &&
-        op->face != op->arch->clone.face ){
-        op->face =  op->arch->clone.face;
+    int newface = op->arch->clone.face->number;
+    sstring saved = get_ob_key_value(op, "face_closed");
+    if (saved) {
+        newface = find_face(saved, newface);
+    }
+    if( newface && op->face != &new_faces[newface] ){
+        op->face =  &new_faces[newface];
         return TRUE;
     }
     return FALSE;
 }
 
 /**
- * Makes an object's face the other_arch face
+ * Makes an object's face the other_arch face, supposed to be the "opened" one.
  *
  * Sets an object's face to the other_arch 'face'.
  * Meant for showing containers opening and closing.
@@ -184,10 +188,23 @@ static int set_object_face_main(object *op){
  * @return TRUE if face changed
  */
 static int set_object_face_other(object *op){
+    sstring custom;
+    int newface = 0;
+    if ( op->face && op->other_arch && op->other_arch->clone.face )
+        newface = op->other_arch->clone.face->number;
 
-    if( op->face && op->other_arch && op->other_arch->clone.face &&
-        op->face != op->other_arch->clone.face ){
-        op->face =  op->other_arch->clone.face;
+    if (op->face != op->arch->clone.face) {
+        /* object has a custom face, save it so it gets correctly restored later. */
+        set_ob_key_value(op, "face_closed", op->face->name, 1);
+    }
+
+    custom = get_ob_key_value(op, "face_opened");
+    if (custom) {
+        newface = find_face(custom, newface);
+    }
+
+    if( newface && op->face->number != newface ){
+        op->face =  &new_faces[newface];
         return TRUE;
     }
     return FALSE;
