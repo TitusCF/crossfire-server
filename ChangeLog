@@ -15,7 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
-Fux bug #1841391: Item Power and pickup bug.
+Fix bug #1827100: Curse dection not working or problem with containers ?
+ server/alchemy.c: ensure cursed items can be identified.
+ server/skills.c: cauldrons are always checked for curse status, it is important to know it.
+Nicolas Weeger 2007-12-01
+
+Fix bug #1841391: Item Power and pickup bug.
  common/object.c: check item_power for merging test.
 Nicolas Weeger 2007-12-01
 

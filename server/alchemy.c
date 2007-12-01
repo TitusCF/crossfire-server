@@ -566,8 +566,11 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	      	return;
 
 	if((tmp=attempt_recipe(op,cauldron,1,rp,-1,0))) {
-	    if(!QUERY_FLAG(tmp,FLAG_CURSED)) /* curse it */
+	    if(!QUERY_FLAG(tmp,FLAG_CURSED)) { /* curse it */
 	   	SET_FLAG(tmp,FLAG_CURSED);
+                CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
+                CLEAR_FLAG(tmp, FLAG_IDENTIFIED);
+            }
 
 	    /* the apply code for potions already deals with cursed
 	     * potions, so any code here is basically ignored.
@@ -649,8 +652,11 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 	return;
 
     } else if (level<100) {               	/* WHAMMY the CAULDRON */
-	if(!QUERY_FLAG(cauldron,FLAG_CURSED))
+	if(!QUERY_FLAG(cauldron,FLAG_CURSED)) {
 	    SET_FLAG(cauldron,FLAG_CURSED);
+            CLEAR_FLAG(cauldron, FLAG_KNOWN_CURSED);
+            CLEAR_FLAG(cauldron, FLAG_IDENTIFIED);
+        }
 	else cauldron->magic--;
 	cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
 	if(rndm(0, 1)) {
