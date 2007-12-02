@@ -316,12 +316,14 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
                 return;
 
             the_exit_down->slaying = add_string(RP->final_map);
+            EXIT_X(the_exit_down) = MAP_ENTER_X(new_map);
+            EXIT_Y(the_exit_down) = MAP_ENTER_Y(new_map);
             strncpy(new_map->path,RP->final_map, sizeof(new_map->path));
 
             for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
             /* Remove exit back to previous random map.  There should only be one
              * which is why we break out.  To try to process more than one
-             * would require keeping a 'next' pointer, ad free_object kills tmp, which
+             * would require keeping a 'next' pointer, as free_object kills tmp, which
              * breaks the for loop.
              */
                 if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
