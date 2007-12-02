@@ -701,6 +701,10 @@ void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
         snprintf(small_buf, sizeof(small_buf), "final_map %s\n",RP->final_map);
         strncat(buf,small_buf, bufsize);
     }
+    if (RP->final_exit_archetype[0]) {
+        snprintf(small_buf, sizeof(small_buf), "final_exit_archetype %s\n",RP->final_exit_archetype);
+        strncat(buf,small_buf, bufsize);
+    }
 
     if(RP->exit_on_final_map[0]) {
         snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",RP->exit_on_final_map);

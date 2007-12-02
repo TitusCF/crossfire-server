@@ -197,7 +197,9 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 
     /* we need a down exit only if we're recursing. */
     if(RP->dungeon_level < RP->dungeon_depth || RP->final_map[0]!=0)
-        if(style_map_down == 0)
+        if (RP->dungeon_level >= RP->dungeon_depth && RP->final_exit_archetype[0] != 0)
+            the_exit_down = arch_to_object(find_archetype(RP->final_exit_archetype));
+        else if(style_map_down == 0)
             the_exit_down = arch_to_object(find_archetype("exit"));
         else {
             object *tmp;

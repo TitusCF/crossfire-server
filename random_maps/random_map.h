@@ -50,6 +50,7 @@ typedef struct {
     char decorstyle[RM_SIZE];
     char origin_map[RM_SIZE];
     char final_map[RM_SIZE];
+    char final_exit_archetype[RM_SIZE];
     char exitstyle[RM_SIZE];
     char this_map[RM_SIZE];
     char exit_on_final_map[RM_SIZE];

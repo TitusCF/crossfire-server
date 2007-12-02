@@ -94,6 +94,7 @@ WS	[ \t]*
 ^dungeon_name{S}	strncpy(RP->dungeon_name, rmap_yval(),RM_SIZE);
 ^dungeon_depth{S}   RP->dungeon_depth = IVAL;
 ^final_map{S}       strncpy(RP->final_map,rmap_yval(),RM_SIZE);
+^final_exit_archetype{S} strncpy(RP->final_exit_archetype, rmap_yval(), RM_SIZE);
 ^orientation{S}    RP-> orientation = IVAL;
 ^origin_x{S}        RP->origin_x = IVAL;
 ^origin_y{S}       RP-> origin_y = IVAL;
