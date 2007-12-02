@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add death animation to objects, through the key 'death_animation' (which should
+ be an archetype).
+ server/attack.c: check for a death animation to insert.
+Nicolas Weeger 2007-12-02
+
 Fix bug #1828785: Possible false positive in the alchemy formula list.
  common/recipe.c: don't warn of same index id if not same cauldron.
 Nicolas Weeger 2007-12-01

@@ -1595,6 +1595,7 @@ static int kill_object(object *op,int dam, object *hitter, int type)
     int pk=0;         /* true if op and what controls hitter are both players*/
     object *owner=NULL;
     object *skop=NULL;
+    sstring death_animation;
 
     if (op->stats.hp>=0)
 	return -1;
@@ -1604,6 +1605,16 @@ static int kill_object(object *op,int dam, object *hitter, int type)
                 return 0;
     /* Lauwenmark: Handle for the global kill event */
     execute_global_event(EVENT_GKILL, op, hitter);
+
+    if ((op->map) && (death_animation = get_ob_key_value(op, "death_animation")) != NULL) {
+        object* death = create_archetype(death_animation);
+        if (death) {
+            death->map = op->map;
+            death->x = op->x;
+            death->y = op->y;
+            insert_ob_in_map(death, op->map, op, 0);
+        }
+    }
 
     /* maxdam needs to be the amount of damage it took to kill
      * this creature.  The function(s) that call us have already
