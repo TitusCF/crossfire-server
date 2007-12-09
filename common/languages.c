@@ -86,6 +86,27 @@ const char* i18n_translate(int language, int id)
         return i18n_strings[language][id];
 }
 
+
+/**
+ * Replaces '\n' by a newline char.
+ *
+ * Since we are replacing 2 chars by 1, no overflow should happen.
+ *
+ * @param line
+ * text to replace into.
+ */
+static void convert_newline(char* line) {
+    char* next;
+    char buf[MAX_BUF];
+
+    while ((next = strstr(line, "\\n")) != NULL) {
+        *next = '\n';
+        *(next + 1) = '\0';
+        snprintf(buf, MAX_BUF, "%s%s", line, next + 2);
+        strcpy(line, buf);
+    }
+}
+
 /**
  * Initializes the i18n subsystem.
  */
@@ -115,11 +136,13 @@ void i18n_init()
             {
                 if (strstr(line,"#")!=line)
                 {
+                    line[strlen(line) - 1] = '\0'; /* erase the final newline that messes things. */
                     token = strtok(line, "|");
                     entry = atoi(token);
                     token = strtok(NULL, "|");
                     buffer = malloc(sizeof(char)*(strlen(token)+1));
                     strcpy(buffer,token);
+                    convert_newline(buffer);
                     i18n_strings[i][entry]=buffer;
                 }
                 counter++;
