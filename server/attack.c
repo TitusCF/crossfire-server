@@ -808,29 +808,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
                           hitter,op,NULL,SCRIPT_FIX_ALL) != 0)
                 return 0;
             if (hitter->current_weapon->anim_suffix)
-            {
-                int anim;
-                object* head;
-                if (hitter->head != NULL)
-                    head = hitter->head;
-                else
-                    head = hitter;
-                sprintf(buf,"%s_%s", animations[head->animation_id].name,
-                    head->current_weapon->anim_suffix);
-                anim = find_animation(buf);
-                if (anim)
-                {
-                    for(;head!=NULL;head=head->more)
-                    {
-                        head->temp_animation_id = anim;
-                        head->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
-                        head->temp_last_anim = 0;
-                        head->last_anim = 0;
-                        head->state = 0;
-                        update_object(head, UP_OBJ_FACE);
-                    }
-                }
-            }
+                apply_anim_suffix(hitter, hitter->current_weapon->anim_suffix);
         }
     }
     op_tag = op->count;

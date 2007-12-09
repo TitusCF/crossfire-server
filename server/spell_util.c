@@ -1290,30 +1290,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
         return 0;
     }
     if (spell_ob->anim_suffix)
-    {
-        int anim;
-        object* head;
-        if (caster->head != NULL)
-            head = caster->head;
-        else
-            head = caster;
-        sprintf(buf,"%s_%s", animations[head->animation_id].name,
-            spell_ob->anim_suffix);
-        anim = find_animation(buf);
-        if (anim)
-        {
-            for(;head!=NULL;head=head->more)
-            {
-                head->temp_animation_id = anim;
-                head->temp_anim_speed = 
-                    animations[anim].num_animations/animations[anim].facings;
-                head->temp_last_anim = 0;
-                head->last_anim = 0;
-                head->state = 0;
-                update_object(head, UP_OBJ_FACE);
-            }
-        }
-    }
+        apply_anim_suffix(caster, spell_ob->anim_suffix);
 
     /* Handle some random effect if confused. */
     if (QUERY_FLAG(op, FLAG_CONFUSED) && caster == op && op->type == PLAYER) {

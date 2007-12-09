@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Factorize compound animation code.
+ common/anim.c
+ include/libproto.h
+ server/apply.c attack.c spell_util.c
+Nicolas Weeger 2007-12-09
+
 Fix 0 destination coordinates warning for final exit of random maps.
  random_maps/exit.c
 Nicolas Weeger 2007-12-02

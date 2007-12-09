@@ -33,6 +33,7 @@
 
 #include <global.h>
 #include <stdio.h>
+#include <assert.h>
 
 /**
  * Clears all animation-related memory.
@@ -254,4 +255,42 @@ void animate_object(object *op, int dir) {
      */
     if (!op->head)
         update_object(op, UP_OBJ_FACE);
+}
+
+/**
+ * Applies a compound animation to an object.
+ *
+ * @param who
+ * object to apply the animation to. Must not be NULL.
+ * @param suffix
+ * animation suffix to apply. Must not be NULL.
+ * @todo document existing prefixes, describe compound animations.
+ */
+void apply_anim_suffix(object* who, sstring suffix) {
+    int anim;
+    object* head;
+    char buf[MAX_BUF];
+
+    assert(who);
+    assert(suffix);
+
+    if (who->head != NULL)
+        head = who->head;
+    else
+        head = who;
+    snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
+    anim = find_animation(buf);
+    if (anim)
+    {
+        for(;head!=NULL;head=head->more)
+        {
+            head->temp_animation_id = anim;
+            head->temp_anim_speed = 
+                    animations[anim].num_animations/animations[anim].facings;
+            head->temp_last_anim = 0;
+            head->last_anim = 0;
+            head->state = 0;
+            update_object(head, UP_OBJ_FACE);
+        }
+    }
 }
