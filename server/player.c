@@ -328,7 +328,8 @@ static player* get_player(player *p) {
     p->peaceful=1;			/* default peaceful */
     p->do_los=1;
     p->explore=0;
-	p->no_shout=0;			/* default can shout */
+    p->no_shout=0;			/* default can shout */
+    p->language = 0;
 
     strncpy(p->title, op->arch->clone.name, sizeof(p->title)-1);
     p->title[sizeof(p->title)-1] = '\0';

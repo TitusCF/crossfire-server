@@ -335,6 +335,7 @@ int save_player(object *op, int flag) {
       fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
       fprintf(fp, "party_rejoin_password %s\n", pl->party->passwd);
   }
+  fprintf(fp, "language %d\n", pl->language);
   fprintf(fp,"endplst\n");
 
   SET_FLAG(op, FLAG_NO_FIX_PLAYER);
@@ -676,6 +677,11 @@ void check_login(object *op) {
             snprintf(party_password, sizeof(party_password), bufall + strlen("party_rejoin_password") + 1);
             if (strlen(party_password) > 0)
                 party_password[strlen(party_password) - 1] = '\0';
+        }
+        else if (!strcmp(buf, "language")) {
+            if (value < 0 || value >= NUM_LANGUAGES)
+                value = 0;
+            pl->language = value;
         }
     } /* End of loop loading the character file */
     remove_ob(op);

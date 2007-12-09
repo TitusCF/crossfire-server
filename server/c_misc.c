@@ -102,7 +102,7 @@ int command_language(object* op, char* params)
     const char* language_str;
     int language;
     int i;
-    if (op->type!=PLAYER)
+    if (!op->contr)
         return 0;
 
     language_str = language_names[get_language(op)];
@@ -141,14 +141,13 @@ int command_language(object* op, char* params)
                 i = NUM_LANGUAGES;
             }
         }
-        sprintf(buf,"%i", language);
-        set_ob_key_value(op, "language", buf, TRUE);
-        language_str = language_names[get_language(op)];
+        op->contr->language = language;
+        language_str = language_names[language];
 
         draw_ext_info_format(NDI_UNIQUE,0,op,
             MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-            i18n_translate(get_language(op),I18N_MSG_CMISC_006),
-            i18n_translate(get_language(op),I18N_MSG_CMISC_006),
+            i18n_translate(language,I18N_MSG_CMISC_006),
+            i18n_translate(language,I18N_MSG_CMISC_006),
             language_str);
         return 0;
     }

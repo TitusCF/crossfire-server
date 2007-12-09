@@ -253,6 +253,7 @@ typedef struct pl {
     tag_t*  stack_items;    /**< Item stack for patch/dump/... commands. */
     int     stack_position; /**< Current stack position, 0 for no item. */
     sstring followed_player; /**< Player the DM is following. */
+    int     language; /**< The language the player wishes to use. */
 } player;
 
 #endif /* PLAYER_H */

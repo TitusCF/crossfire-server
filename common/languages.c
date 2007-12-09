@@ -60,17 +60,11 @@ const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
  */
 int get_language(object* op)
 {
-    int language;
-    const char* language_str;
-    if (op->type!=PLAYER)
+    if (!op->contr)
         return 0;
-    language_str = get_ob_key_value(op, "language");
-    if (!language_str || strcmp(language_str, "") == 0)
+    if (op->contr->language < 0 || op->contr->language >= NUM_LANGUAGES)
         return 0;
-    language = atoi(language_str);
-    if (language >= NUM_LANGUAGES)
-        language = 0;
-    return language;
+    return op->contr->language;
 }
 
 /**

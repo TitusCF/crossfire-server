@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Have player's language be a variable in player instead of a key/value.
+Makes things faster, no key lookup, and it's only useful for players anyway.
+ common/languages.c
+ include/player.h
+ server/c_misc.c login.c player.c
+Nicolas Weeger 2007-12-09
+
 Factorize compound animation code.
  common/anim.c
  include/libproto.h
