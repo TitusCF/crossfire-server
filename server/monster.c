@@ -32,6 +32,7 @@
  * The core function is move_monster().
  */
 
+#include <assert.h>
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -357,6 +358,75 @@ static int move_randomly(object *op) {
     return 0;
 }
 
+#define MAX_EXPLORE 5000
+
+/**
+ * Computes a path from source to target. Takes into account walls, other living things, and such.
+ * Only works if both items are on same map.
+ *
+ * @param source
+ * what wants to move.
+ * @param target
+ * target to go to.
+ * @param default_dir
+ * general direction from source to target.
+ * @return
+ * direction to go into. Will be default_dir if no path found.
+ */
+static int compute_path(object* source, object* target, int default_dir) {
+    char* path;
+    int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
+    int current = 0, dir, max = 1, size, x, y, check_dir;
+
+    if (target->map != source->map)
+        return default_dir;
+
+/*    printf("compute_path (%d, %d) => (%d, %d)\n", source->x, source->y, target->x, target->y);*/
+
+    size = source->map->width * source->map->height;
+    path = calloc(size, sizeof(char));
+    explore_x[0] = target->x;
+    explore_y[0] = target->y;
+
+    while (current < max) {
+
+        for (check_dir = 0; check_dir < 8; check_dir++) {
+            dir = absdir(default_dir + check_dir);
+            x = explore_x[current] + freearr_x[dir];
+            y = explore_y[current] + freearr_y[dir];
+
+            if (x == source->x && y == source->y) {
+  /*          LOG(llevDebug, "compute_path => %d\n", absdir(dir + 4));*/
+                free(path);
+                return absdir(dir + 4);
+            }
+
+            if (OUT_OF_REAL_MAP(source->map, x, y))
+                continue;
+            if (ob_blocked(source, source->map, x, y))
+                continue;
+
+            assert(source->map->height * x + y >= 0);
+            assert(source->map->height * x + y < size);
+
+            if (path[source->map->height * x + y] == 0) {
+                assert(max < MAX_EXPLORE);
+                explore_x[max] = x;
+                explore_y[max] = y;
+
+                path[source->map->height * x + y] = absdir(dir + 4);
+/*                printf("explore[%d] => (%d, %d) %d\n", max, x, y, path[source->map->height * x + y]);*/
+                max++;
+                if (max == MAX_EXPLORE)
+                    return default_dir;
+            }
+        }
+        current++;
+    }
+
+    return default_dir;
+}
+
 /**
  * Main monster processing routine.
  *
@@ -608,6 +678,8 @@ int move_monster(object *op) {
 
     if(QUERY_FLAG(op, FLAG_SCARED) || QUERY_FLAG(op,FLAG_RUN_AWAY))
     	dir=absdir(dir+4);
+    else if (!can_hit(part, enemy, &rv))
+        dir = compute_path(op, enemy, rv.direction);
 
     if(QUERY_FLAG(op,FLAG_CONFUSED))
 	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);

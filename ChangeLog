@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Real path-finding algorithm for monsters. Pretty basic, but works for now.
+ server/monster.c
+Nicolas Weeger 2007-12-10
+
 Fix trailing newline in i18n messing display. Convert \n to "real" newline.
  common/languages.c
 Nicolas Weeger 2007-12-09
