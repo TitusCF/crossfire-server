@@ -385,6 +385,9 @@ static int compute_path(object* source, object* target, int default_dir) {
 
     size = source->map->width * source->map->height;
     path = calloc(size, sizeof(char));
+    if (path == NULL) {
+        fatal(OUT_OF_MEMORY);
+    }
     explore_x[0] = target->x;
     explore_y[0] = target->y;
 
@@ -417,13 +420,16 @@ static int compute_path(object* source, object* target, int default_dir) {
                 path[source->map->height * x + y] = absdir(dir + 4);
 /*                printf("explore[%d] => (%d, %d) %d\n", max, x, y, path[source->map->height * x + y]);*/
                 max++;
-                if (max == MAX_EXPLORE)
+                if (max == MAX_EXPLORE) {
+                    free(path);
                     return default_dir;
+                }
             }
         }
         current++;
     }
 
+    free(path);
     return default_dir;
 }
 
