@@ -624,6 +624,7 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, int immune_stop
 int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell);
 void regenerate_rod(object *rod);
 void drain_rod_charge(object *rod);
+void drain_wand_charge(object* wand);
 object *find_target_for_friendly_spell(object *op, int dir);
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude);
 int summon_hostile_monsters(object *op, int n, const char *monstername);

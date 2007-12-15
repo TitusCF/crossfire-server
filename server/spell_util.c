@@ -40,6 +40,7 @@
 #include <sproto.h>
 #endif
 #include <sounds.h>
+#include <assert.h>
 
 extern char *spell_mapping[];
 
@@ -733,6 +734,28 @@ void regenerate_rod(object *rod) {
  */
 void drain_rod_charge(object *rod) {
     rod->stats.hp -= SP_level_spellpoint_cost(rod, rod->inv, SPELL_HIGHEST);
+}
+
+/**
+ * Drains a charge from a wand. Handles animation fix, and player update if required.
+ *
+ * @param wand
+ * wand to drain. Must be of type WAND.
+ */
+void drain_wand_charge(object* wand) {
+    assert(wand->type == WAND);
+
+    if (!(--wand->stats.food)) {
+        object *tmp;
+        if (wand->arch) {
+            CLEAR_FLAG(wand, FLAG_ANIMATE);
+            wand->face = wand->arch->clone.face;
+            wand->speed = 0;
+            update_ob_speed(wand);
+        }
+        if ((tmp=get_player_container(wand)))
+            esrv_update_item(UPD_ANIM, tmp, wand);
+    }
 }
 
 /**

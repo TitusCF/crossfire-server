@@ -1171,17 +1171,8 @@ static int monster_use_range(object *head,object *part,object *pl,int dir)
                 continue;
 
             cast_spell( head, wand, dir, wand->inv, NULL );
+            drain_wand_charge(wand);
 
-            if ( !( --wand->stats.food ) )
-                {
-		        if ( wand->arch )
-                    {
-		            CLEAR_FLAG(wand, FLAG_ANIMATE);
-		            wand->face = wand->arch->clone.face;
-		            wand->speed = 0;
-		            update_ob_speed(wand);
-		            }
-                }
             /* Success */
             return 1;
             }

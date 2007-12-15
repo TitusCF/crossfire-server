@@ -2103,17 +2103,7 @@ static void fire_misc_object(object *op, int dir)
     if(cast_spell(op,item,dir,item->inv,NULL)) {
         SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
         if (item->type == WAND) {
-            if (!(--item->stats.food)) {
-                object *tmp;
-                if (item->arch) {
-                    CLEAR_FLAG(item, FLAG_ANIMATE);
-                    item->face = item->arch->clone.face;
-                    item->speed = 0;
-                    update_ob_speed(item);
-                }
-                if ((tmp=get_player_container(item)))
-                    esrv_update_item(UPD_ANIM, tmp, item);
-            }
+            drain_wand_charge(item);
         }
         else if (item->type == ROD || item->type==HORN) {
             drain_rod_charge(item);
