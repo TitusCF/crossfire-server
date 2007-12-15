@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Remove unused variables.
+ common/image.c
+ include/define.h global.h
+Nicolas Weeger 2007-12-15s
+
 Extract some code from massive move_monster().
  server/monster.c
 Nicolas Weeger 2007-12-15
