@@ -916,10 +916,9 @@ S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 SOUND RELATED COMMANDS:
 
 C->S: setsound <val>
-	<val> is a plaintext integer.  Current supported values are 0 and 1.
-	0 says that the client does not want sounds, 1 says it does want
-	sound information.  By default, the server does not send sound
-	information.
+	<val> is a plaintext integer bitmask. Current supported values are as
+	described in the "sound" setup option.
+
 	Note that the player can use the 'sound' command once the game
 	is started to control future sound transmissions.  However, if
 	the client was not started with sound support, the necessary
@@ -930,8 +929,9 @@ C->S: setsound <val>
 S->C: sound <x><y><num><type>
 	Informs the client to play a sound.  All arguments are binary data.
 	x,y are signed 1 byte values which are offsets from the player.
-	num is the sound number stored as a short (16 bit).
-	(IT is up to client to determine which sound to
+	num is the sound number stored as a short (16 bit). Currently defined
+	numbers are in include/sounds.h
+	(It is up to client to determine which sound to
 	play based on that.)  Since sound numbers seldom change (and in fact,
 	new sounds will have a higher number than the old sounds - old
 	sounds numbers will not change in meaning like what can happen with
@@ -1048,9 +1048,17 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    of war mode to receive newmap commands from the server each time
 	    the player changes maps.
 
-	sound
+	sound (bitmask)
 	    Set to true if the client wants to get sent sound information.
-	    This is an integer in string form (0/1).
+	    bitmask is an integer in string form. Default is "0".
+
+	    bit 0 (value 1) - send sound effects via the "sound" command.
+
+	    bit 1 (value 2) - send background music info; if set, the server
+		sends a 'music <id>' command whenever the current map changes.
+
+	    bit 5 (value 64) - send no sound; reflects the state of the in-game
+		"sound" command.
 
 	spellmon (0/1)
 	    If set to 1 the client has indicated that it wishes to be
