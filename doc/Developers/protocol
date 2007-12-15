@@ -234,9 +234,9 @@ S->C: version <csval> [scval [vinfo]]
 	the server will never send back.
 
 C->S: addme
-    Tells the server that it should add me (the client) to the game.
-    Generally, the client will always send this command, but I suppose there
-    can be actions the client wants to do before being added.
+	Tells the server that it should add me (the client) to the game.
+	Generally, the client will always send this command, but I suppose there
+	can be actions the client wants to do before being added.
 
 S->C: addme_failed
 S->C: addme_success
@@ -262,40 +262,39 @@ Also see the setfacemode command below.
 COMMANDS RELATING TO PLAYER INPUT AND OUTPUT IN THE INFO WINDOW
 
 C->S: ncom <packet> <repeat> <command>
-     (ncom = new command)
-     Client sends a command to the server.  Ordinary commands (ie, north,
-     west, apply, maps, etc), might be sent, commands with options may be sent
-     (ie, 'invoke create food of booze', 'cast medium fireball').  There are a
-     few special commands that can also be sent.
+	(ncom = new command)
+	Client sends a command to the server.  Ordinary commands (ie, north,
+	west, apply, maps, etc), might be sent, commands with options may be sent
+	(ie, 'invoke create food of booze', 'cast medium fireball').  There are a
+	few special commands that can also be sent.
 
-     Packet is a 16 bit arbitrary value the server will send back through comc
-     to inform the client of execution end.
+	Packet is a 16 bit arbitrary value the server will send back through comc
+	to inform the client of execution end.
 
-     repeat is a 32 bit value and is the repeat value, or a count value used
-     for instance for dropping.
+	repeat is a 32 bit value and is the repeat value, or a count value used
+	for instance for dropping.
 
-     command is the actual command data (north, whatever).
+	command is the actual command data (north, whatever).
 
-    'fire' command is a special case.  The server will handle repeat firing.
+	'fire' command is a special case.  The server will handle repeat firing.
 
-    'fire_stop' will be sent to inform the server to stop firing.  A
-    different command name has been chosen to make things easier on the
-    server ('fire_stop' should be a 0 time command, with the rest of the
-    fire commands actually taking some time.)  In some cases, 'fire_stop'
-    may be sent almost immediately after the first fire (in cases where the
-    player only wants to fire once).
+	'fire_stop' will be sent to inform the server to stop firing.  A
+	different command name has been chosen to make things easier on the
+	server ('fire_stop' should be a 0 time command, with the rest of the
+	fire commands actually taking some time.)  In some cases, 'fire_stop'
+	may be sent almost immediately after the first fire (in cases where the
+	player only wants to fire once).
 
 S->C: comc <packet> <time>
-     (comc = completed command)
-     This is used in the window of the ncom command above.  packet is
-     the command number we just executed (16 bit binary), and time
-     is a 32 bit value represent how many milliseconds the player is
-     currently taking to execute commands.  This information can be
-     used by the client to do some throttling.
+	(comc = completed command)
+	This is used in the window of the ncom command above.  packet is
+	the command number we just executed (16 bit binary), and time
+	is a 32 bit value represent how many milliseconds the player is
+	currently taking to execute commands.  This information can be
+	used by the client to do some throttling.
 
 C->S: reply <text>
-    Sends <text> as a reply to the last query command sent.
-
+	Sends <text> as a reply to the last query command sent.
 
 S->C: drawinfo <color> <text>
 	Tell the client to draw whatever text in color.  Color are specified
@@ -411,27 +410,27 @@ ITEM MANIPULATION RELATED COMMANDS
  Client requests to server:
 
 C->S: move <to> <tag> <nrof>
-    All parameters are integers sent in string format.  <to> is where to move
-    the object to, tag is the object tag, nrof is how many to move.  This
-    command is used to pickup/drop objects.  If <to> or <tag> is zero, the
-    object is being moved from/to the ground.  This command is used to move
-    items from a container into inventory and vice versa.  if nrof
-    is zero, all objects will be moved.
+	All parameters are integers sent in string format.  <to> is where to move
+	the object to, tag is the object tag, nrof is how many to move.  This
+	command is used to pickup/drop objects.  If <to> or <tag> is zero, the
+	object is being moved from/to the ground.  This command is used to move
+	items from a container into inventory and vice versa.  if nrof
+	is zero, all objects will be moved.
 
 C->S: examine <val>
-    Tells the server that I want to examine object <val>, where <val> is a
-    text string that represents that objects tag.  Objects tags are unique
-    for each object.
+	Tells the server that I want to examine object <val>, where <val> is a
+	text string that represents that objects tag.  Objects tags are unique
+	for each object.
 
 C->S: apply <val>
-    Tells the server that I want to apply the object <val>.  Like examine,
-    <val> is a text representation of an integer tag.
+	Tells the server that I want to apply the object <val>.  Like examine,
+	<val> is a text representation of an integer tag.
 
 C->S: lock <val><tag>
-    Tells to server to set the inventory lock flag of item tag to val.
-    val of 1 means that the item should be locked, 0 means unlocked.
-    val is 1 byte binary, tag is 4 byte binary.  The server should send
-    and upditem command with new flags to reflect this change.
+	Tells to server to set the inventory lock flag of item tag to val.
+	val of 1 means that the item should be locked, 0 means unlocked.
+	val is 1 byte binary, tag is 4 byte binary.  The server should send
+	and upditem command with new flags to reflect this change.
 
 C->S: mark <tag>
 	'marks' and item for secondary usage.  Some actions in crossfire
@@ -445,9 +444,9 @@ C->S: mark <tag>
 	client knowing this is not strictly needed)
 
 C->S: inscribe 0 <tag1> <tag2>
-    Player wants to write spell 'tag1' on scroll 'tag2'. This is rougly equivalent
-    of manually marking an item, readying the spell, and using the inscription skill.
-    '0' should be one byte, tags should be 4 byte integers.
+	Player wants to write spell 'tag1' on scroll 'tag2'. This is rougly equivalent
+	of manually marking an item, readying the spell, and using the inscription skill.
+	'0' should be one byte, tags should be 4 byte integers.
 
 Server updates to client:
 
@@ -708,8 +707,8 @@ S->C: smooth <facenbr><smoothpic>
 	Following are the facenbr of the picture involved in the
 	smoothing algorithm. See doc on smoothing on how to use them.
 	This info may be send automatically from server if client has
-    smoothing enabled but may also be requested by client using
-    the asksmooth command below
+	smoothing enabled but may also be requested by client using
+	the asksmooth command below
 C->S: asksmooth <facenbr>
 	Parameters is a plain text integer.
 	Ask server to send a smooth sequence. Server will respond with a smooth command.
@@ -1002,9 +1001,9 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    valid, the server returns the faceset the client will be
 	    using (default 0).
 
-    inscribe (0/1):
-        Client will probably always send 1. Server will reply with 1 if it
-        supports the 'inscribe' command, 0 else.
+	inscribe (0/1):
+	    Client will probably always send 1. Server will reply with 1 if it
+	    supports the 'inscribe' command, 0 else.
 
 	map2cmd: This indicates client support for the map2 protocol command.
 	    See the map2 protocol details above for the main differences.
@@ -1082,33 +1081,33 @@ it easier to read the different structures.
 C->S: requestinfo <info_type>[options]
 S->C: replyinfo <info_type>[options]<data>
 
-    The requestinfo command is a general purpose way for the client to request
-    some piece of data the server may have.  The server still needs to be
-    coded to respond to the specific info_type, but if the passed info_type is
-    not supported, the server will still respond with the replyinfo, but with
-    an empty data list.
+	The requestinfo command is a general purpose way for the client to request
+	some piece of data the server may have.  The server still needs to be
+	coded to respond to the specific info_type, but if the passed info_type is
+	not supported, the server will still respond with the replyinfo, but with
+	an empty data list.
 
-    This mechanism allows the client to send requests for data and not need to
-    do complicated checking if the server would understand the specific
-    request - if the server understands it, the data gets sent back.  If the
-    server doesn't understand it, the client gets no data, but does get the
-    replyinfo so that it knows that the server does not support that
-    particular aspect.
+	This mechanism allows the client to send requests for data and not need to
+	do complicated checking if the server would understand the specific
+	request - if the server understands it, the data gets sent back.  If the
+	server doesn't understand it, the client gets no data, but does get the
+	replyinfo so that it knows that the server does not support that
+	particular aspect.
 
-    Only one info_type is allowed for each requestinfo.  If the client
-    requests many pieces of information (say image sets available, spell
-    listings, etc), it should send multiple requestinfos.
+	Only one info_type is allowed for each requestinfo.  If the client
+	requests many pieces of information (say image sets available, spell
+	listings, etc), it should send multiple requestinfos.
 
-    [options] is specific to the info_type - it could be a range of values, or
-    empty.
+	[options] is specific to the info_type - it could be a range of values, or
+	empty.
 
-    Requestinfo requests will not change any data on the server - the setup
-    command should be used for that.  The requestinfo just requests data.
-    Note that since the requests can be made before a player logs in, the
-    requestinfo command will not generally support getting information related
-    to the player object.
+	Requestinfo requests will not change any data on the server - the setup
+	command should be used for that.  The requestinfo just requests data.
+	Note that since the requests can be made before a player logs in, the
+	requestinfo command will not generally support getting information related
+	to the player object.
 
-    The following info_types are supported:
+	The following info_types are supported:
 
     image_info:
 	'image_info' (no options):
