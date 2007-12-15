@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Extract some code from massive move_monster().
+ server/monster.c
+Nicolas Weeger 2007-12-15
+
 Remove redundant check.
  server/player.c: can_detect_enemy() calls on_same_map().
 Nicolas Weeger 2007-12-15

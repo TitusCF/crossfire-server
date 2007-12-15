@@ -434,6 +434,135 @@ static int compute_path(object* source, object* target, int default_dir) {
 }
 
 /**
+ * For a monster, regenerate hp and sp, potentially clear scared status.
+ *
+ * @param op
+ * monster. Must have FLAG_MONSTER set.
+ */
+static void monster_do_living(object* op) {
+    assert(QUERY_FLAG(op, FLAG_MONSTER));
+
+    /*  generate hp, if applicable */
+    if(op->stats.Con > 0 && op->stats.hp < op->stats.maxhp) {
+
+	/* last heal is in funny units.  Dividing by speed puts
+        * the regeneration rate on a basis of time instead of
+        * #moves the monster makes.  The scaling by 8 is
+        * to capture 8th's of a hp fraction regens
+        *
+        * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+        * overflow might produce monsters with negative hp.
+        */
+
+        op->last_heal+= (int)((float)(8*op->stats.Con)/FABS(op->speed));
+        op->stats.hp = MIN((sint32)op->stats.hp+op->last_heal/32, op->stats.maxhp); /* causes Con/4 hp/tick */
+        op->last_heal%=32;
+
+        /* So if the monster has gained enough HP that they are no longer afraid */
+        if (QUERY_FLAG(op,FLAG_RUN_AWAY) &&
+            op->stats.hp >= (signed short)(((float)op->run_away / (float)100) * (float)op->stats.maxhp))
+            CLEAR_FLAG(op, FLAG_RUN_AWAY);
+
+        if(op->stats.hp>op->stats.maxhp)
+            op->stats.hp=op->stats.maxhp;
+    }
+
+    /* generate sp, if applicable */
+    if(op->stats.Pow > 0 && op->stats.sp < op->stats.maxsp) {
+
+	/*  last_sp is in funny units.  Dividing by speed puts
+        * the regeneration rate on a basis of time instead of
+        * #moves the monster makes.  The scaling by 8 is
+        * to capture 8th's of a sp fraction regens
+        *
+        * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
+        * overflow might produce monsters with negative sp.
+        */
+
+        op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
+        op->stats.sp = MIN(op->stats.sp+op->last_sp/128, op->stats.maxsp);  /* causes Pow/16 sp/tick */
+        op->last_sp%=128;
+    }
+
+    /* this should probably get modified by many more values.
+    * (eg, creatures resistance to fear, level, etc. )
+    */
+    if(QUERY_FLAG(op, FLAG_SCARED) &&!(RANDOM()%20)) {
+        CLEAR_FLAG(op,FLAG_SCARED); /* Time to regain some "guts"... */
+    }
+}
+
+/**
+ * Makes a monster without any enemy move.
+ *
+ * @param op
+ * monster, must have FLAG_MONSTER set.
+ * @return
+ * 1 if monster was removed, 0 else.
+ */
+static int monster_move_no_enemy(object* op) {
+    assert(QUERY_FLAG(op, FLAG_MONSTER));
+
+    if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
+        remove_ob(op);
+        free_object(op);
+        return 1;
+    }
+
+	/* Probably really a bug for a creature to have both
+    * stand still and a movement type set.
+        */
+    if(!QUERY_FLAG(op, FLAG_STAND_STILL))  {
+        if (op->attack_movement & HI4)
+        {
+            switch (op->attack_movement & HI4) {
+                case (PETMOVE):
+                    pet_move (op);
+                    break;
+
+                case (CIRCLE1):
+                    circ1_move (op);
+                    break;
+
+                case (CIRCLE2):
+                    circ2_move (op);
+                    break;
+
+                case (PACEV):
+                    pace_movev(op);
+                    break;
+
+                case (PACEH):
+                    pace_moveh(op);
+                    break;
+
+                case (PACEV2):
+                    pace2_movev (op);
+                    break;
+
+                case (PACEH2):
+                    pace2_moveh (op);
+                    break;
+
+                case (RANDO):
+                    rand_move (op);
+                    break;
+
+                case (RANDO2):
+                    move_randomly (op);
+                    break;
+            }
+            return 0;
+        }
+        else if (QUERY_FLAG(op,FLAG_RANDOM_MOVE))
+            move_randomly(op);
+
+    } /* stand still */
+
+    return 0;
+}
+
+/**
  * Main monster processing routine.
  *
  * Will regenerate spell points, hit points.
@@ -483,114 +612,11 @@ int move_monster(object *op) {
     if(op->will_apply)
 	monster_apply_below(op); /* Check for items to apply below */
 
-    /*  generate hp, if applicable */
-    if(op->stats.Con > 0 && op->stats.hp < op->stats.maxhp) {
-
-	/* last heal is in funny units.  Dividing by speed puts
-	 * the regeneration rate on a basis of time instead of
-	 * #moves the monster makes.  The scaling by 8 is
-	 * to capture 8th's of a hp fraction regens
-	 *
-	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
-	 * overflow might produce monsters with negative hp.
-	 */
-
-	op->last_heal+= (int)((float)(8*op->stats.Con)/FABS(op->speed));
-	op->stats.hp = MIN((sint32)op->stats.hp+op->last_heal/32, op->stats.maxhp); /* causes Con/4 hp/tick */
-	op->last_heal%=32;
-
-	/* So if the monster has gained enough HP that they are no longer afraid */
-	if (QUERY_FLAG(op,FLAG_RUN_AWAY) &&
-	    op->stats.hp >= (signed short)(((float)op->run_away/(float)100)*
-                        (float)op->stats.maxhp))
-	    CLEAR_FLAG(op, FLAG_RUN_AWAY);
-
-	if(op->stats.hp>op->stats.maxhp)
-	    op->stats.hp=op->stats.maxhp;
-    }
-
-    /* generate sp, if applicable */
-    if(op->stats.Pow > 0 && op->stats.sp < op->stats.maxsp) {
-
-	/*  last_sp is in funny units.  Dividing by speed puts
-         * the regeneration rate on a basis of time instead of
-         * #moves the monster makes.  The scaling by 8 is
-         * to capture 8th's of a sp fraction regens
-	 *
-	 * Cast to sint32 before comparing to maxhp since otherwise an (sint16)
-	 * overflow might produce monsters with negative sp.
-	 */
-
-	op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
-	op->stats.sp = MIN(op->stats.sp+op->last_sp/128, op->stats.maxsp);  /* causes Pow/16 sp/tick */
-	op->last_sp%=128;
-    }
-
-    /* this should probably get modified by many more values.
-     * (eg, creatures resistance to fear, level, etc. )
-     */
-    if(QUERY_FLAG(op, FLAG_SCARED) &&!(RANDOM()%20)) {
-	CLEAR_FLAG(op,FLAG_SCARED); /* Time to regain some "guts"... */
-    }
+    monster_do_living(op);
 
     /* If we don't have an enemy, do special movement or the like */
     if(!enemy) {
-        if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
-            remove_ob(op);
-	    free_object(op);
-            return 1;
-	}
-
-	/* Probably really a bug for a creature to have both
-	 * stand still and a movement type set.
-	 */
-        if(!QUERY_FLAG(op, FLAG_STAND_STILL))  {
-            if (op->attack_movement & HI4)
-            {
-                switch (op->attack_movement & HI4) {
-		    case (PETMOVE):
-			pet_move (op);
-			break;
-
-		    case (CIRCLE1):
-			circ1_move (op);
-			break;
-
-		    case (CIRCLE2):
-			circ2_move (op);
-			break;
-
-		    case (PACEV):
-			pace_movev(op);
-			break;
-
-		    case (PACEH):
-			pace_moveh(op);
-			break;
-
-		    case (PACEV2):
-			pace2_movev (op);
-			break;
-
-		    case (PACEH2):
-			pace2_moveh (op);
-			break;
-
-		    case (RANDO):
-			rand_move (op);
-			break;
-
-		    case (RANDO2):
-			move_randomly (op);
-		    break;
-		}
-		return 0;
-	    }
-    	    else if (QUERY_FLAG(op,FLAG_RANDOM_MOVE))
-                (void) move_randomly(op);
-
-	} /* stand still */
-        return 0;
+        return monster_move_no_enemy(op);
     } /* no enemy */
 
     /* We have an enemy.  Block immediately below is for pets */
@@ -678,6 +704,9 @@ int move_monster(object *op) {
 	    } /* for processing of all parts */
     } /* If not scared */
 
+
+    /* code below is for when we didn't use a range attack or a skill, so
+     * either move or hit with hth attack. */
 
     part = rv.part;
     dir=rv.direction;
