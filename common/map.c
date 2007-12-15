@@ -1477,6 +1477,7 @@ int save_map(mapstruct *m, int flag) {
     if (m->sky) fprintf(fp, "sky %d\n", m->sky);
     if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
     if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
+    if (m->background_music) fprintf(fp, "background_music %s\n", m->background_music);
 
     /* Save any tiling information, except on overlays */
     if (flag != SAVE_MODE_OVERLAY)
