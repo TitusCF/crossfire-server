@@ -805,9 +805,6 @@ typedef unsigned char	MoveType;
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"
-#define DARK_FACE1_NAME		"dark1.111"
-#define DARK_FACE2_NAME		"dark2.111"
-#define DARK_FACE3_NAME		"dark3.111"
 #define SMOOTH_FACE_NAME	"default_smoothed.111"
 
 /*
