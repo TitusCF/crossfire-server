@@ -935,37 +935,34 @@ static void print_shop_string(mapstruct *m, char *output_string, int size) {
  */
 static int load_map_header(FILE *fp, mapstruct *m)
 {
-    char buf[HUGE_BUF], *key=NULL, *value, *end;
+    char buf[HUGE_BUF], *key=NULL, *value;
     m->width=m->height=0;
     while (fgets(buf, sizeof(buf), fp)!=NULL) {
+        char *p;
+
+        p = strchr(buf, '\n');
+        if (p == NULL) {
+            LOG(llevError, "Error loading map header - did not find a newline - perhaps file is truncated?  Buf=%s\n", buf);
+            return 1;
+        }
+        *p = '\0';
+
         key = buf;
         while (isspace(*key)) key++;
         if (*key == 0) continue;    /* empty line */
         value = strchr(key, ' ');
-        if (!value) {
-            end = strchr(key, '\n');
-            if (end != NULL) {
-                *end = 0;
-            }
-        } else {
+        if (value) {
             *value = 0;
             value++;
-            end = strchr(value, '\n');
             while (isspace(*value)) {
                 value++;
-                if (*value == '\0' || value == end) {
+                if (*value == '\0') {
                     /* Nothing but spaces. */
                     value = NULL;
                     break;
                 }
             }
         }
-        if (!end) {
-            LOG(llevError, "Error loading map header - did not find a newline - perhaps file is truncated?  Buf=%s\n",
-            buf);
-            return 1;
-        }
-
 
         /* key is the field name, value is what it should be set
          * to.  We've already done the work to null terminate key,
@@ -1024,11 +1021,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
         }
         else if (!strcmp(key, "arch")) {
             /* This is an oddity, but not something we care about much. */
-            if (strcmp(value,"map\n"))
+            if (strcmp(value,"map"))
                 LOG(llevError,"loading map and got a non 'arch map' line(%s %s)?\n",key,value);
         }
         else if (!strcmp(key,"name")) {
-            *end=0;
             /* When loading eg an overlay, the name is already set, so free() current one. */
             free(m->name);
             m->name = strdup_local(value);
@@ -1062,7 +1058,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
         } else if (!strcmp(key,"region")) {
             m->region = get_region_by_name(value);
         } else if (!strcmp(key,"shopitems")) {
-            *end=0;
             m->shopitems = parse_shop_string(value);
         } else if (!strcmp(key,"shopgreed")) {
             m->shopgreed = atof(value);
@@ -1071,7 +1066,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
         } else if (!strcmp(key,"shopmax")) {
             m->shopmax = atol(value);
         } else if (!strcmp(key,"shoprace")) {
-            *end=0;
             m->shoprace = strdup_local(value);
         } else if (!strcmp(key,"outdoor")) {
             m->outdoor = atoi(value);
@@ -1101,8 +1095,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
                     tile, m->path);
             } else {
                 char path[HUGE_BUF];
-
-                *end = 0;
 
                 if (m->tile_path[tile-1]) {
                     LOG(llevError,"load_map_header: tile location %d duplicated (%s)\n",

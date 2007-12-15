@@ -53,8 +53,7 @@
  */
 region *get_region_by_name(const char *region_name) {
     region *reg;
-    char *p = strchr(region_name, '\n');
-    if (p) *p = '\0';
+
     for (reg=first_region;reg!=NULL;reg=reg->next)
         if (!strcmp(reg->name, region_name)) return reg;
 

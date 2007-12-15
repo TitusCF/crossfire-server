@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Do not include stray \n character in background_music field. Do not modify
+const strings.
+common/map.c common/region.c
+Andreas Kirschbaum 2007-12-15
+
 Remove unused variables.
  common/image.c
  include/define.h global.h
