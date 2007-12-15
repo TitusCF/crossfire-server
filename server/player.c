@@ -488,8 +488,7 @@ object *get_nearest_player(object *mon) {
 	}
     }
     for (pl=first_player; pl != NULL; pl=pl->next) {
-	if (on_same_map(mon, pl->ob)&& can_detect_enemy(mon, pl->ob,&rv)) {
-
+	if (can_detect_enemy(mon, pl->ob,&rv)) {
 	    if(lastdist>rv.distance) {
 		op=pl->ob;
 		lastdist=rv.distance;
