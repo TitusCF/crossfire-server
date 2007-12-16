@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add Object.NoDamage and Object.RandomMovement to Python Crossfire Object.
+ plugins/cfpython/cfpython_object.c
+ plugins/cfpython/include/cfpython_object_private.h
+Nicolas Weeger 2007-12-16
+
+Add 'apply' sound, sounds for spell casting. Give more sounds when emitter is in
+ something on a map.
+ doc/Developers/sound
+ server/apply.c spell_util.c
+ socket/sounds.c
+Nicolas Weeger 2007-12-16
+
 New sound support. Check doc/Developers/sound.
  common/loader.l
  doc/Developers/protocol sound

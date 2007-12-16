@@ -802,6 +802,16 @@ static PyObject* Object_GetGodGiven(Crossfire_Object* whoptr, void* closure)
     EXISTCHECK(whoptr);
     return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_STARTEQUIP));
 }
+static PyObject* Object_GetNoDamage(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_NO_DAMAGE));
+}
+static PyObject* Object_GetRandomMovement(Crossfire_Object* whoptr, void* closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i",cf_object_get_flag(whoptr->obj, FLAG_RANDOM_MOVE));
+}
 static PyObject* Object_GetIsPet(Crossfire_Object* whoptr, void* closure)
 {
     EXISTCHECK(whoptr);
@@ -1781,6 +1791,30 @@ static int Object_SetGodGiven(Crossfire_Object* whoptr, PyObject* value, void* c
         return -1;
 
     cf_object_set_flag(whoptr->obj, FLAG_STARTEQUIP, val);
+    return 0;
+}
+
+static int Object_SetNoDamage(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_NO_DAMAGE, val);
+    return 0;
+}
+
+static int Object_SetRandomMovement(Crossfire_Object* whoptr, PyObject* value, void* closure)
+{
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value,"i",&val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_RANDOM_MOVE, val);
     return 0;
 }
 
