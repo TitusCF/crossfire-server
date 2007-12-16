@@ -1563,6 +1563,8 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
         return 0;
     }
 
+    play_sound_map(SOUND_TYPE_SPELL, caster, dir, spell_ob->name);
+
     switch(spell_ob->subtype) {
 	/* The order of case statements is same as the order they show up
 	 * in in spells.h.
@@ -1796,7 +1798,6 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     }
 
     /* FIXME - we need some better sound suppport */
-/*    play_sound_map(op->map, op->x, op->y, SOUND_CAST_SPELL_0 + type);*/
     /* free the spell arg */
     if(settings.casting_time == TRUE && stringarg) {
 	free(stringarg);

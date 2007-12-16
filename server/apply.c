@@ -565,6 +565,9 @@ int manual_apply (object *op, object *tmp, int aflag)
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
         return METHOD_OK;
 
+    if (op->contr)
+        play_sound_player_only(op->contr, SOUND_TYPE_ITEM, tmp, 0, "apply");
+
     return ob_apply(tmp,op,aflag);
 }
 

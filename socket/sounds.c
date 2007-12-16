@@ -43,11 +43,16 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
     SockList sl;
     int volume = 50;
     sstring name;
+    object* source;
 
     if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_EFFECTS))
         return;
     if (pl->socket.sounds_this_tick >= MAX_SOUNDS_TICK)
         return;
+    if (!emitter->map && !(emitter->env && emitter->env->map))
+        return;
+
+    source = emitter->map ? emitter : emitter->env;
 
     if ((RANDOM() % 100) >= emitter->sound_chance)
         return;
@@ -55,12 +60,14 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
     pl->socket.sounds_this_tick = 0;
 
     name = emitter->type == PLAYER ? emitter->race : emitter->name;
+    if (!source)
+        source = emitter;
 
     sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf, "sound2 ");
     sl.len=strlen((char*)sl.buf);
-    SockList_AddChar(&sl, emitter->map ? ( sint8 )( emitter->x - pl->ob->x ) : 0);
-    SockList_AddChar(&sl, emitter->map ? ( sint8 )( emitter->y - pl->ob->y ) : 0);
+    SockList_AddChar(&sl, ( sint8 )( source->x - pl->ob->x ));
+    SockList_AddChar(&sl, ( sint8 )( source->y - pl->ob->y ));
     SockList_AddChar(&sl, dir);
     SockList_AddChar(&sl, volume);
     SockList_AddChar(&sl, sound_type);
@@ -88,16 +95,19 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
 void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action)
 {
     player *pl;
+    object* source;
 
     if ((RANDOM() % 100) >= emitter->sound_chance)
         return;
 
-    if (!emitter->map)
+    if (!emitter->map && !(emitter->env && emitter->env->map))
         return;
+
+    source = emitter->map ? emitter : emitter->env;
 
     for (pl = first_player; pl; pl = pl->next) {
         if (pl->ob->map == emitter->map) {
-            int distance=isqrt(POW2(pl->ob->x - emitter->x) + POW2(pl->ob->y - emitter->y));
+            int distance=isqrt(POW2(pl->ob->x - source->x) + POW2(pl->ob->y - source->y));
 
             if (distance<=MAX_SOUND_DISTANCE) {
                 play_sound_player_only(pl, sound_type, emitter, dir, action);

@@ -111,6 +111,7 @@ item:
 - poof: wand has no more charges
 - tick: clock sound
 - turn handle: handle is activated
+- apply
 
 ground
 - open: door opens
