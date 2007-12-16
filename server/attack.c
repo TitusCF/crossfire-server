@@ -639,12 +639,14 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
 	else {
 	    sprintf(buf,"%s%s you.",hitter->name, buf2);
 	    if (dam != 0) {
-		if (dam < 10)
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT1,0,0);
+                if (hitter->chosen_skill)
+                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, hitter->chosen_skill->name);
+                else if (dam < 10)
+                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "low");
 		else if (dam < 20)
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT2,0,0);
+                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "medium");
 		else
-		    play_sound_player_only(op->contr, SOUND_PLAYER_IS_HIT3,0,0);
+                    play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, "high");
 	    }
 	}
 	draw_ext_info(NDI_BLACK, 0,op,MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT, buf, NULL);
@@ -654,12 +656,14 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     if(hitter->type==PLAYER && rndm(0, 2) == 0) {
 	sprintf(buf,"You %s.",buf1);
 	if (dam != 0) {
-	    if (dam < 10)
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS1,0,0);
+            if (hitter->chosen_skill)
+                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, hitter->chosen_skill->name);
+	    else if (dam < 10)
+                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "low");
 	    else if (dam < 20)
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS2,0,0);
+                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "medium");
 	    else
-		play_sound_player_only(hitter->contr, SOUND_PLAYER_HITS3,0,0);
+                play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, "high");
 	}
 	draw_ext_info(NDI_BLACK, 0, hitter,MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_DID_HIT,
 		      buf, NULL);
@@ -689,7 +693,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
 	       return;
 	} else if (rndm(0, 5) != 0)
 	    return;
-	play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_HITS4);
+	play_sound_map(SOUND_TYPE_HIT, hitter->owner, 0, "hit");
 	draw_ext_info_format(NDI_BLACK, 0, hitter->owner, MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_HIT,
 		     "Your %s%s %s.",
 		     "Your %s%s %s.",
@@ -1687,7 +1691,7 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 	    }
 	    /* Only play sounds for melee kills */
 	    if (hitter->type == PLAYER)
-		play_sound_map(owner->map, owner->x, owner->y, SOUND_PLAYER_KILLS);
+		play_sound_map(SOUND_TYPE_HIT, owner, 0, "kill");
 	}
 
 	/* If a player kills another player, not on
@@ -1804,7 +1808,7 @@ static int kill_object(object *op,int dam, object *hitter, int type)
 	    object *owner1 = get_owner(op);
 
 	    if(owner1!= NULL && owner1->type == PLAYER) {
-		play_sound_player_only(owner1->contr, SOUND_PET_IS_KILLED,0,0);
+		/*play_sound_player_only(owner1->contr, SOUND_PET_IS_KILLED,0,0);*/
 		/* Maybe we should include the owner that killed this, maybe not */
 		draw_ext_info_format(NDI_UNIQUE, 0,owner1,MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_PET_DIED,
 				     "Your pet, the %s, is killed by %s.",

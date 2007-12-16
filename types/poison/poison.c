@@ -54,7 +54,7 @@ static method_ret poison_type_apply(ob_methods *context, object *op,
 {
     /* If a player, let's tell them what happened */
     if (applier->type == PLAYER) {
-        play_sound_player_only(applier->contr, SOUND_DRINK_POISON,0,0);
+        play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "poison");
         draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                       "Yech!  That tasted poisonous!", NULL);
         snprintf(applier->contr->killer, BIG_NAME, "poisonous %s", op->name);

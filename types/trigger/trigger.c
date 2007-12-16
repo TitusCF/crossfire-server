@@ -60,7 +60,7 @@ static method_ret trigger_type_apply(ob_methods *context, object *op,
         draw_ext_info (NDI_UNIQUE, 0, applier,
                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                     "You turn the handle.", NULL);
-        play_sound_map (op->map, op->x, op->y, SOUND_TURN_HANDLE);
+        play_sound_map(SOUND_TYPE_GROUND, op, 0, "turn handle");
     }
     else
     {

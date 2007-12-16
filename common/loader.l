@@ -1021,6 +1021,7 @@ A	.+
 ^dam_modifier{S}	op->dam_modifier = IVAL;
 ^duration_modifier{S}	op->duration_modifier = IVAL;
 ^is_buildable{S}	SET_OR_CLEAR_FLAG( op, FLAG_IS_BUILDABLE, IVAL );
+^sound_chance{S}        op->sound_chance = IVAL;
 
   /* Discrete damage */
 ^damage_physical{S}	set_damage(op, ATNR_PHYSICAL, IVAL);

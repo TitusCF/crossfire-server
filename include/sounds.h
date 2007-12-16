@@ -22,41 +22,23 @@
 
 /**
  * @file
- * Sound-related defines. Mostly unused.
+ * Sound-related defines.
  */
 
 #ifndef SOUNDS_H
 #define SOUNDS_H
 
-#define SOUND_NEW_PLAYER	0
-#define SOUND_FIRE_ARROW	1
-#define SOUND_LEARN_SPELL	2
-#define SOUND_FUMBLE_SPELL	3
-#define SOUND_WAND_POOF		4
-#define SOUND_OPEN_DOOR		5
-#define SOUND_PUSH_PLAYER	6
-#define SOUND_PLAYER_HITS1	7
-#define SOUND_PLAYER_HITS2	8
-#define SOUND_PLAYER_HITS3	9
-#define SOUND_PLAYER_HITS4	10
-#define SOUND_PLAYER_IS_HIT1	11
-#define SOUND_PLAYER_IS_HIT2	12
-#define SOUND_PLAYER_IS_HIT3	13
-#define SOUND_PLAYER_KILLS	14
-#define SOUND_PET_IS_KILLED	15
-#define SOUND_PLAYER_DIES	16
-#define SOUND_OB_EVAPORATE	17
-#define SOUND_OB_EXPLODE	18
-#define SOUND_CLOCK		19
-#define SOUND_TURN_HANDLE	20
-#define SOUND_FALL_HOLE		21
-#define SOUND_DRINK_POISON     	22
-#define SOUND_CAST_SPELL_0	23
-/* ... + other sounds for spells : SOUND_CAST_SPELL_0 + spell type */
-
-/* NROF_SOUNDS is defined in "defines.h".  Don't forget to change this number
- * if you add or remove any sound.
+/**
+ * @defgroup Soundtypes Sound types
  */
+/*@{*/
+#define SOUND_TYPE_LIVING       1
+#define SOUND_TYPE_SPELL        2
+#define SOUND_TYPE_ITEM         3
+#define SOUND_TYPE_GROUND       4
+#define SOUND_TYPE_HIT          5
+#define SOUND_TYPE_HIT_BY       6
+/*@}*/
 
 /**
  * Those flags are for the 'socket.sound' field.
@@ -64,5 +46,7 @@
 #define SND_EFFECTS     1       /**< Client wands regular sounds. */
 #define SND_MUSIC       2       /**< Client wants background music info. */
 #define SND_MUTE        64      /**< Don't sent anything for now. */
+
+#define MAX_SOUNDS_TICK     3 /**< Maximum number of sounds a player can receive for each tick. */
 
 #endif /* SOUNDS_H */

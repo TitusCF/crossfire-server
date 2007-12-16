@@ -210,7 +210,7 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             if ( ! QUERY_FLAG (book, FLAG_STARTEQUIP))
                 change_exp(applier,calc_skill_exp(applier,book,skapplier), skapplier->skill, 0);
         } else {
-            play_sound_player_only(applier->contr, SOUND_FUMBLE_SPELL,0,0);
+            play_sound_player_only(applier->contr, SOUND_TYPE_SPELL, book, 0, "fumble");
             draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You fail to learn the spell.\n", NULL);
         }

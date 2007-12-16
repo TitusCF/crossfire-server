@@ -55,8 +55,7 @@ static method_ret cf_handle_type_apply(ob_methods *context, object *op,
     draw_ext_info(NDI_UNIQUE, 0,applier,
         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "You turn the handle.", NULL);
-    play_sound_map(applier->map, applier->x, applier->y,
-        SOUND_TURN_HANDLE);
+    play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");
     op->value=op->value?0:1;
     SET_ANIMATION(op, op->value);
     update_object(op,UP_OBJ_FACE);

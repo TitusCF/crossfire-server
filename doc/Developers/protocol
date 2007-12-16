@@ -916,29 +916,21 @@ S->C: ExtendedInfoSet <string1> <string2> .... <stringn>
 SOUND RELATED COMMANDS:
 
 C->S: setsound <val>
-	<val> is a plaintext integer bitmask. Current supported values are as
-	described in the "sound" setup option.
-
-	Note that the player can use the 'sound' command once the game
-	is started to control future sound transmissions.  However, if
-	the client was not started with sound support, the necessary
-	initialization of the sound device might not have happened.
-	However, if the client started with sounds enabled, the user can
-	certainly disable future sounds.
+	Obsolete command, should not be used, will be removed at some point.
 
 S->C: sound <x><y><num><type>
-	Informs the client to play a sound.  All arguments are binary data.
-	x,y are signed 1 byte values which are offsets from the player.
-	num is the sound number stored as a short (16 bit). Currently defined
-	numbers are in include/sounds.h
-	(It is up to client to determine which sound to
-	play based on that.)  Since sound numbers seldom change (and in fact,
-	new sounds will have a higher number than the old sounds - old
-	sounds numbers will not change in meaning like what can happen with
-	the images), this should not be much of a problem.
-	type is a 1 byte value which determines sound type.  Currently, 0
-	is normal sound, 1 is spell sound.  This may be extended in the
-	future.
+	Obsolete, will never be sent.
+
+S->C: sound2 <x><y><dir><volume><type><len of subtype>subtype<len of name>name
+	Plays a sound. See the 'sound' document for more information.
+	'x' and 'y' are bytes, position of the sound relative to the player.
+	'dir' is a byte from 0 to 8, the direction the sound is moving to.
+	'volume' is a byte from 1 to 100, arbitrary intensity of the sound.
+	'type' is a byte, the major sound type.
+	'len of action' is a byte, length of action.
+	'action' is a string, the actual sound name to play.
+	'len of name' is a byte, length of name.
+	'name' is the name of the sound emitter, that can be used to find a specific sound.
 
 ******************************************************************************
 MISC COMMANDS:
@@ -1049,16 +1041,10 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    the player changes maps.
 
 	sound (bitmask)
-	    Set to true if the client wants to get sent sound information.
-	    bitmask is an integer in string form. Default is "0".
+	    Obsolete, server will return FALSE.
 
-	    bit 0 (value 1) - send sound effects via the "sound" command.
-
-	    bit 1 (value 2) - send background music info; if set, the server
-		sends a 'music <id>' command whenever the current map changes.
-
-	    bit 5 (value 64) - send no sound; reflects the state of the in-game
-		"sound" command.
+	sound2
+            New sound support. Check above for more information.
 
 	spellmon (0/1)
 	    If set to 1 the client has indicated that it wishes to be

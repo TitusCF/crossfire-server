@@ -82,7 +82,7 @@ static method_ret trapdoor_type_move_on(ob_methods* context, object* trap,
         {
             if ( ! sound_was_played)
             {
-                play_sound_map(trap->map, trap->x, trap->y, SOUND_FALL_HOLE);
+                play_sound_map(SOUND_TYPE_GROUND, trap, 0, "fall hole");
                 sound_was_played = 1;
             }
             draw_ext_info(NDI_UNIQUE, 0,ab,MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,

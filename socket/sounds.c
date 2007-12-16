@@ -24,52 +24,85 @@
 #define MAX_SOUND_DISTANCE 10
 
 /**
- * Plays a sound for specified player only
+ * Plays a sound for specified player only.
+ *
+ * @param pl
+ * player to play sound to.
+ * @param sound_type
+ * sound type, see @ref Soundtypes "the sound types".
+ * @param emitter
+ * object emitting a sound.
+ * @param dir
+ * direction the sound is moving into.
+ * @param action
+ * sound name to play.
  */
-void play_sound_player_only(player *pl, short soundnum,  sint8 x, sint8 y)
+void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action)
 {
     char soundtype;
     SockList sl;
+    int volume = 50;
+    sstring name;
 
-    if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_EFFECTS)) return;
-    /* Do some quick conversion to the sound type we want. */
-    if (soundnum>=SOUND_CAST_SPELL_0) {
-	soundtype=SOUND_SPELL;
-	soundnum -=SOUND_CAST_SPELL_0;
-    }
-    else soundtype=SOUND_NORMAL;
+    if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_EFFECTS))
+        return;
+    if (pl->socket.sounds_this_tick >= MAX_SOUNDS_TICK)
+        return;
+
+    if ((RANDOM() % 100) >= emitter->sound_chance)
+        return;
+
+    pl->socket.sounds_this_tick = 0;
+
+    name = emitter->type == PLAYER ? emitter->race : emitter->name;
 
     sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf, "sound ");
+    strcpy((char*)sl.buf, "sound2 ");
     sl.len=strlen((char*)sl.buf);
-    SockList_AddChar(&sl, x);
-    SockList_AddChar(&sl, y);
-    SockList_AddShort(&sl, soundnum);
-    SockList_AddChar(&sl, soundtype);
+    SockList_AddChar(&sl, emitter->map ? ( sint8 )( emitter->x - pl->ob->x ) : 0);
+    SockList_AddChar(&sl, emitter->map ? ( sint8 )( emitter->y - pl->ob->y ) : 0);
+    SockList_AddChar(&sl, dir);
+    SockList_AddChar(&sl, volume);
+    SockList_AddChar(&sl, sound_type);
+    SockList_AddChar(&sl, strlen(action));
+    SockList_AddString(&sl, action);
+    SockList_AddChar(&sl, strlen(name));
+    SockList_AddString(&sl, name);
     Send_With_Handling(&pl->socket, &sl);
     free(sl.buf);
 }
 
 #define POW2(x) ((x) * (x))
 
-/** Plays some sound on map at x,y.  */
-void play_sound_map(const mapstruct *map, int x, int y, short sound_num)
+/**
+ * Plays a sound on a map.
+ * @param sound_type
+ * sound type, see @ref Soundtypes "the sound types".
+ * @param emitter
+ * object emitting the sound. Must be on a map.
+ * @param dir
+ * direction the sound is moving.
+ * @param action
+ * sound name to play.
+ */
+void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action)
 {
     player *pl;
 
-    if (sound_num >= NROF_SOUNDS) {
-	LOG(llevError,"Tried to play an invalid sound num: %d\n", sound_num);
-	return;
-    }
+    if ((RANDOM() % 100) >= emitter->sound_chance)
+        return;
+
+    if (!emitter->map)
+        return;
 
     for (pl = first_player; pl; pl = pl->next) {
-	if (pl->ob->map == map) {
-	    int distance=isqrt(POW2(pl->ob->x - x) + POW2(pl->ob->y - y));
+        if (pl->ob->map == emitter->map) {
+            int distance=isqrt(POW2(pl->ob->x - emitter->x) + POW2(pl->ob->y - emitter->y));
 
-	    if (distance<=MAX_SOUND_DISTANCE) {
-		play_sound_player_only(pl, sound_num, ( sint8 )( x-pl->ob->x ), ( sint8 )( y-pl->ob->y ));
-	    }
-	}
+            if (distance<=MAX_SOUND_DISTANCE) {
+                play_sound_player_only(pl, sound_type, emitter, dir, action);
+            }
+        }
     }
 }
 

@@ -989,6 +989,7 @@ static void process_players1()
 	} /* end of for loop for all the players */
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
+        pl->socket.sounds_this_tick = 0;
 	if (settings.casting_time == TRUE) {
 	    if (pl->ob->casting_time > 0){
 		pl->ob->casting_time--;

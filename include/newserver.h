@@ -137,6 +137,7 @@ typedef struct socket_struct {
     /* Below are flags for extedend infos to pass to client
      * with S->C mapextended command */
     uint32  want_pickup:1;  /**< Client wants pickup information when logging in. */
+    sint8   sounds_this_tick;   /**< Number of sounds sent this tick. */
 } socket_struct;
 
 

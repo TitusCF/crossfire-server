@@ -1985,12 +1985,13 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod,
     arrow->move_type = MOVE_FLY_LOW;
     arrow->move_on = MOVE_FLY_LOW | MOVE_WALK;
 
-    play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW);
     tag = arrow->count;
     insert_ob_in_map(arrow, m, op, 0);
 
-    if (!was_destroyed(arrow, tag))
-	ob_process(arrow);
+    if (!was_destroyed(arrow, tag)) {
+        play_sound_map(SOUND_TYPE_ITEM, arrow, arrow->direction, "fire");
+        ob_process(arrow);
+    }
 
     return 1;
 }
@@ -2070,7 +2071,7 @@ static void fire_misc_object(object *op, int dir)
     }
     if (item->type == WAND) {
         if(item->stats.food<=0) {
-            play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            play_sound_player_only(op->contr, SOUND_TYPE_ITEM, item, 0, "poof");
             query_base_name(item, 0, name, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0,op,
                 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
@@ -2081,7 +2082,7 @@ static void fire_misc_object(object *op, int dir)
         }
     } else if (item->type == ROD || item->type==HORN) {
         if(item->stats.hp<SP_level_spellpoint_cost(item, item->inv, SPELL_HIGHEST)) {
-            play_sound_player_only(op->contr, SOUND_WAND_POOF,0,0);
+            play_sound_player_only(op->contr, SOUND_TYPE_ITEM, item, 0, "poof");
             query_base_name(item,0, name, MAX_BUF);
             if (item->type== ROD)
                 draw_ext_info_format(NDI_UNIQUE, 0,op,
@@ -2285,7 +2286,7 @@ static int player_attack_door(object *op, object *door)
     if (key) {
 	object *container=key->env;
 
-	play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR);
+	play_sound_map(SOUND_TYPE_GROUND, door, 0, "open");
 	if(action_makes_visible(op)) make_visible(op);
 	if(door->inv &&(door->inv->type ==RUNE || door->inv->type ==TRAP)) spring_trap(door->inv,op);
 	if (door->type == DOOR) {
@@ -2421,7 +2422,7 @@ void move_player_attack(object *op, int dir)
 	{
 	    /* If we're braced, we don't want to switch places with it */
 	    if (op->contr->braced) return;
-	    play_sound_map(tpl->map, tpl->x, tpl->y, SOUND_PUSH_PLAYER);
+	    play_sound_map(SOUND_TYPE_LIVING, mon, dir, "push");
 	    (void) push_ob(mon,dir,op);
 	    if(op->contr->tmp_invis||op->hide) make_visible(op);
 	    return;
@@ -2436,7 +2437,7 @@ void move_player_attack(object *op, int dir)
 	    (mon->type==PLAYER || QUERY_FLAG(mon,FLAG_UNAGGRESSIVE) || QUERY_FLAG(mon, FLAG_FRIENDLY)) &&
 	    (op->contr->peaceful && !on_battleground)) {
 	    if (!op->contr->braced) {
-		play_sound_map(tpl->map, tpl->x, tpl->y, SOUND_PUSH_PLAYER);
+		play_sound_map(SOUND_TYPE_LIVING, mon, dir, "push");
 		(void) push_ob(mon,dir,op);
 	    } else {
 		draw_ext_info(0, 0,op,MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOATTACK,
@@ -2663,9 +2664,9 @@ static int save_life(object *op) {
 
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
 	if(QUERY_FLAG(tmp, FLAG_APPLIED)&&QUERY_FLAG(tmp,FLAG_LIFESAVE)) {
-        char name[MAX_BUF];
-        query_name(tmp, name, MAX_BUF);
-	    play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
+            char name[MAX_BUF];
+            query_name(tmp, name, MAX_BUF);
+            play_sound_map(SOUND_TYPE_ITEM, tmp, 0, "evaporate");
 	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 				 "Your %s vibrates violently, then evaporates.",
 				 "Your %s vibrates violently, then evaporates.",
@@ -3095,7 +3096,7 @@ void kill_player(object *op)
 	}
 	sprintf(buf,"%s died.",op->name);
     }
-    play_sound_player_only(op->contr, SOUND_PLAYER_DIES,0,0);
+    play_sound_player_only(op->contr, SOUND_TYPE_LIVING, op, 0, "death");
 
     /*  save the map location for corpse, gravestone*/
     x=op->x;y=op->y;map=op->map;

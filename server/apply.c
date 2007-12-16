@@ -404,7 +404,7 @@ void do_learn_spell (object *op, object *spell, int special_prayer)
         return;
     }
 
-    play_sound_player_only (op->contr, SOUND_LEARN_SPELL, 0, 0);
+    play_sound_player_only(op->contr, SOUND_TYPE_SPELL, spell, 0, "learn");
     tmp = get_object();
     copy_object(spell, tmp);
     insert_ob_in_ob(tmp, op);
@@ -607,7 +607,7 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
          */
     if (op->type != PLAYER &&
         QUERY_FLAG (op, FLAG_WAS_WIZ) && ! QUERY_FLAG (pl, FLAG_WAS_WIZ)){
-        play_sound_map (pl->map, pl->x, pl->y, SOUND_OB_EVAPORATE);
+        play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
         draw_ext_info (NDI_UNIQUE, 0, pl,
                        MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                        "The object disappears in a puff of smoke!", NULL);

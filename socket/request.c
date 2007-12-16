@@ -150,6 +150,12 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
         safe_strcat(cmdback, " ", &slen, HUGE_BUF);
 
         if (!strcmp(cmd,"sound")) {
+            /* this is the old sound command, which means the client doesn't understand our sound => mute. */
+            ns->sound = 0;
+            safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+        }
+        if (!strcmp(cmd,"sound2")) {
+            /* this is the old sound command, which means the client doesn't understand our sound => mute. */
             ns->sound = atoi(param);
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
         }
@@ -590,11 +596,13 @@ void version_cmd(char *buf, int len,socket_struct *ns)
     }
 }
 
-/** sound related functions. */
+/**
+ * Sound related function.
+ * @todo remove once clients don't try to use this - server closes connection on invalid client.
+ */
 
 void set_sound_cmd(char *buf, int len, socket_struct *ns)
 {
-    ns->sound = atoi(buf);
 }
 
 /** client wants the map resent

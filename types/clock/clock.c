@@ -57,7 +57,7 @@ static method_ret clock_type_apply(ob_methods *context, object *op,
         timeofday_t tod;
 
         get_tod(&tod);
-        play_sound_player_only(applier->contr, SOUND_CLOCK,0,0);
+        play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "tick");
         draw_ext_info_format(NDI_UNIQUE, 0,applier,
              MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
              "It is %d minute%s past %d o'clock %s",

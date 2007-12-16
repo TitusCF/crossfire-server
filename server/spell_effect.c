@@ -104,7 +104,7 @@ int recharge(object *op, object *caster, object *spell_ob) {
 			     "The %s vibrates violently, then explodes!",
 			     "The %s vibrates violently, then explodes!",
 			     name);
-	play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE);
+        play_sound_map(SOUND_TYPE_ITEM, wand, 0, "explode");
 	remove_ob(wand);
 	free_object(wand);
 	tmp = create_archetype("fireball");
@@ -278,7 +278,7 @@ static void polymorph_melt(object *who, object *op)
             "The %s glows red, melts and evaporates!",
             "The %s glows red, melts and evaporates!",
             name);
-    play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE);
+    play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
     remove_ob(op);
     free_object(op);
     return;

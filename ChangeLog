@@ -15,6 +15,21 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New sound support. Check doc/Developers/sound.
+ common/loader.l
+ doc/Developers/protocol sound
+ include/newserver.h object.h sockproto.h sounds.h
+ server/apply.c attack.c player.c server.c spell_effect.c spell_util.c
+ socket/request.c sounds.c
+ types/cf_handle/cf_handle.c
+ types/clock/clock.c
+ types/hole/hole.c
+ types/poison/poison.c
+ types/spellbook/spellbook.c
+ types/trapdoor/trapdoor.c
+ types/trigger/trigger.c
+Nicolas Weeger 2007-12-16
+
 Do not forget background music when swapping map.
  common/map.c
 Andreas Kirschbaum 2007-12-15
@@ -27,7 +42,7 @@ Andreas Kirschbaum 2007-12-15
 Remove unused variables.
  common/image.c
  include/define.h global.h
-Nicolas Weeger 2007-12-15s
+Nicolas Weeger 2007-12-15
 
 Extract some code from massive move_monster().
  server/monster.c

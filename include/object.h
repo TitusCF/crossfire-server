@@ -244,6 +244,7 @@ typedef struct obj {
     struct obj	*spellitem;	/**< Spell ability monster is choosing to use */
     double	expmul;		/**< needed experience = (calc_exp*expmul) - means some *
                          * races/classes can need less/more exp to gain levels */
+    sint8       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
 
     /* Spell related information, may be useful elsewhere
      * Note that other fields are used - these files are basically
