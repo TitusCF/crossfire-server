@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix incorrect "setup sound FALSEFALSE" response.
+ socket/request.c
+Andreas Kirschbaum 2007-12-18
+
 Add Object.NoDamage and Object.RandomMovement to Python Crossfire Object.
  plugins/cfpython/cfpython_object.c
  plugins/cfpython/include/cfpython_object_private.h
