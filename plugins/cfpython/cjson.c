@@ -79,7 +79,7 @@ static void getRowAndCol(char* begin, char* current, int *row, int*col){
             if (*current=='\n')
                 (*row)++;
             if (*row<2)
-                *col++;
+                (*col)++;
             current--;
         }
 }
