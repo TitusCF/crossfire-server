@@ -175,6 +175,9 @@ int try_find_animation(const char* name) {
 /**
  * Updates the face-variable of an object.
  * If the object is the head of a multi-object, all objects are animated.
+ * The object's state is not changed, but merely updated if needed (out of bounds of
+ * new animation, reached end of animation, ...)
+ *
  * @param op is the object to animate.
  * @param dir is the direction the object is facing.  This is generally same as
  *    op->direction, but in some cases, op->facing is used instead - the
@@ -184,6 +187,7 @@ int try_find_animation(const char* name) {
 void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
+    int oldface = op->face->number;
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
         char buf[HUGE_BUF];
         LOG(llevError,"Object lacks animation.\n");
@@ -196,11 +200,6 @@ void animate_object(object *op, int dir) {
 
         if (NUM_ANIMATIONS(op) == NUM_ANIMATIONS(op->head))
             op->state = op->head->state;
-        else
-            ++op->state;
-    }
-    else {
-        ++op->state;    /* increase draw state */
     }
 
     /* If object is turning, then max animation state is half through the
@@ -267,7 +266,7 @@ void animate_object(object *op, int dir) {
      * as such, we call it last, and only call it for the head
      * piece, and not for the other tail pieces.
      */
-    if (!op->head)
+    if (!op->head && (oldface != op->face->number))
         update_object(op, UP_OBJ_FACE);
 }
 
@@ -308,9 +307,8 @@ void apply_anim_suffix(object* who, sstring suffix) {
                     animations[anim].num_animations/animations[anim].facings;
             head->temp_last_anim = 0;
             head->last_anim = 0;
-            head->state = -1; /* so animate_object will set it to 0 */
-            /** @todo when attacking without shift-direction, first animation pic is missing (probably animate_object called many times). */
+            head->state = 0;
         }
-        animate_object(orig, orig->direction);
+        animate_object(orig, orig->facing);
     }
 }

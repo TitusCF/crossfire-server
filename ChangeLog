@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix missing animation first pic. Change animate_object to not alter the state,
+but merely ensure the pic is valid. Move state/face changing upstream.
+ common/anim.c
+ server/player.c server.c time.c
+Nicolas Weeger 2007-12-16
+
 More compound animations. Make animations loop instead of resetting all the time.
 Fix missing first animation pic in some cases.
  common/anim.c

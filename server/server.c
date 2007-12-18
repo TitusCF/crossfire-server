@@ -1142,6 +1142,7 @@ void process_events ()
         if ((op->anim_speed && op->last_anim >= op->anim_speed)
             ||(op->temp_animation_id && op->last_anim >= op->temp_anim_speed))
         {
+            op->state++;
             if ((op->type==PLAYER)||(op->type==MONSTER))
                 animate_object(op, op->facing);
             else

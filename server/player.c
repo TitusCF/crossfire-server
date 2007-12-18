@@ -2547,6 +2547,12 @@ int move_player(object *op,int dir) {
 	if (op->speed_left < 0.0) op->speed_left = -0.01;
 
     }
+    else {
+        /* it is important to change the animation now, as fire or move_player_attack can start a compound animation,
+         * and leave us with state = 0, which we don't want to change again. */
+        op->state++; /* player moved, so change animation. */
+        animate_object(op, op->facing);
+    }
 
     if(op->contr->fire_on) {
 	fire(op,dir);
@@ -2564,11 +2570,6 @@ int move_player(object *op,int dir) {
     } else {
 	op->direction=0;
     }
-    /* Update how the player looks.  Use the facing, so direction may
-     * get reset to zero.  This allows for full animation capabilities
-     * for players.
-     */
-    if (!transport) animate_object(op, op->facing);
     return 0;
 }
 
