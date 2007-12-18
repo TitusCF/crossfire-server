@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Add try_find_animation() for compound animations, LOG() again in find_animation().
+ common/anim.c
+ include/libproto.h
+Nicolas Weeger 2007-12-16
+
 Fix incorrect "setup sound FALSEFALSE" response.
  socket/request.c
 Andreas Kirschbaum 2007-12-18

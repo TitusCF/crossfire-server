@@ -136,27 +136,41 @@ static int anim_compare(const Animations *a, const Animations *b) {
 }
 
 /**
- * Tries to find the animation id that matches name.
+ * Finds the animation id that matches name. Will LOG() an error if not found.
  * @param name
- * the animation's name
+ * the animation's name.
  * @return
- * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face
+ * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face).
+ * @see try_find_animation
  */
-int find_animation(const char *name)
-{
+int find_animation(const char *name) {
+    int face = try_find_animation(name);
+    if (!face)
+        LOG(llevError,"Unable to find animation %s\n", name);
+    return face;
+}
+
+/**
+ * Tries to find the animation id that matches name, don't LOG() an error if not found.
+ * @param name
+ * the animation's name.
+ * @return
+ * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face).
+ * @see find_animation
+ */
+int try_find_animation(const char* name) {
     Animations search, *match;
 
     search.name = name;
 
     match = (Animations*)bsearch(&search, animations, (num_animations+1),
-        sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
+             sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
 
 
-    if (match) return match->num;
-    /*LOG(llevError,"Unable to find animation %s\n", name);*/ /* Commented out to prevent too many messages using combined animation sequences */
+    if (match)
+        return match->num;
     return 0;
 }
-
 
 /**
  * Updates the face-variable of an object.
@@ -279,7 +293,7 @@ void apply_anim_suffix(object* who, sstring suffix) {
     else
         head = who;
     snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
-    anim = find_animation(buf);
+    anim = try_find_animation(buf);
     if (anim)
     {
         for(;head!=NULL;head=head->more)
