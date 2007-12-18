@@ -393,6 +393,8 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	skill = tmp;
     }
 
+    apply_anim_suffix(op, skill->name);
+
     switch(skill->subtype) {
 	case SK_LEVITATION:
 	    /* Not 100% sure if this will work with new movement code -

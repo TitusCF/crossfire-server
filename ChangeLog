@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+More compound animations. Make animations loop instead of resetting all the time.
+Fix missing first animation pic in some cases.
+ common/anim.c
+ server/skill_util.c
+Nicolas Weeger 2007-12-16
+
 Add line/row info to cjson module upon error
 Tchize 2007-12-18
 

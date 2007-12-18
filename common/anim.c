@@ -235,7 +235,7 @@ void animate_object(object *op, int dir) {
         {
             op->temp_animation_id = 0;
             //op->last_anim = 0;
-            update_object(op, UP_OBJ_FACE);
+            //update_object(op, UP_OBJ_FACE);
             animate_object(op, dir);
             return;
         }
@@ -282,16 +282,21 @@ void animate_object(object *op, int dir) {
  */
 void apply_anim_suffix(object* who, sstring suffix) {
     int anim;
-    object* head;
+    object* head, *orig;
     char buf[MAX_BUF];
 
     assert(who);
     assert(suffix);
 
+    if (who->temp_animation_id != 0)
+        /* don't overlap animation, let the current one finish. */
+        return;
+
     if (who->head != NULL)
         head = who->head;
     else
         head = who;
+    orig = head;
     snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
     anim = try_find_animation(buf);
     if (anim)
@@ -303,8 +308,9 @@ void apply_anim_suffix(object* who, sstring suffix) {
                     animations[anim].num_animations/animations[anim].facings;
             head->temp_last_anim = 0;
             head->last_anim = 0;
-            head->state = 0;
-            update_object(head, UP_OBJ_FACE);
+            head->state = -1; /* so animate_object will set it to 0 */
+            /** @todo when attacking without shift-direction, first animation pic is missing (probably animate_object called many times). */
         }
+        animate_object(orig, orig->direction);
     }
 }
