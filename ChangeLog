@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+
+Added my missing entries to Changelog
+Tchize 2007-12-18
+
 Add try_find_animation() for compound animations, LOG() again in find_animation().
  common/anim.c
  include/libproto.h
@@ -153,6 +157,23 @@ monsters.
     server/spell_util.c
 Yann Chachkoff (gros) 2007-11-25
 
+------------------------------------------------------------------------
+r7575 | tchize | 2007-11-25 16:27:46 +0100 (dim, 25 nov 2007) | 2 lines
+Chemins modifiés :
+   M server/attack.c
+
+Fix sigsegv when arrows are thrown by monster and hit (no wrapped object)
+
+------------------------------------------------------------------------
+r7573 | tchize | 2007-11-25 16:06:45 +0100 (dim, 25 nov 2007) | 4 lines
+Chemins modifiés :
+   M server/attack.c
+
+probable fix for [ 1835332 ]. At least, now, the experiences for
+throwing object is rewarded to a skill.
+--
+
+
 Refactor poisoning code.
     server/time.c
     server/ob_types.c
@@ -202,6 +223,47 @@ Generalize 'killer' message for poison objects.
     types/treasure/treasure.c
     types/weapon_improver/weapon_improver.c
 Alex Schultz 2007-11-21
+------------------------------------------------------------------------
+r7550 | tchize | 2007-11-20 20:35:08 +0100 (mar, 20 nov 2007) | 3 lines
+Chemins modifiés :
+   M common/map.c
+
+Fix for [ 1825248 ] Logging missing apartment map for player as error
+The "can not load original map" message are now debug level for player appartments, but stay error level for normal maps
+
+------------------------------------------------------------------------
+r7549 | tchize | 2007-11-20 20:25:26 +0100 (mar, 20 nov 2007) | 2 lines
+Chemins modifiés :
+   M common/map.c
+
+Fix for [ 1823026 ] Server accepts map files missing size attributes
+
+------------------------------------------------------------------------
+r7547 | tchize | 2007-11-20 19:03:14 +0100 (mar, 20 nov 2007) | 2 lines
+Chemins modifiés :
+   M server/c_object.c
+
+Fix #1825589 Cheat bug with containers (access to locked container without key)
+
+------------------------------------------------------------------------
+r7545 | tchize | 2007-11-20 00:18:12 +0100 (mar, 20 nov 2007) | 5 lines
+Chemins modifiés :
+   M plugins/cfpython/Makefile.am
+   M plugins/cfpython/cfpython.c
+   A plugins/cfpython/cjson.c
+
+JSON notation support for parameters
+This notation will make it easier to customize script from editor interface.
+For performances reasons, the JSON parser is C implemented. It's LGPL but
+was converted to GPL for crossfire
+
+------------------------------------------------------------------------
+r7531 | tchize | 2007-11-18 19:03:18 +0100 (dim, 18 nov 2007) | 2 lines
+Chemins modifiés :
+   M server/time.c
+
+Fixed a sigsegv when maker is outside of map
+--------------
 
 Added support for compound spellcasting animations
     server/spell_util.c
@@ -232,6 +294,19 @@ Misc fixes, no functional change.
  server/c_misc.c hiscore.c: fix comments.
 Nicolas Weeger 2007-11-17
 
+------------------------------------------------------------------------
+r7518 | tchize | 2007-11-17 18:31:20 +0100 (sam, 17 nov 2007) | 6 lines
+Chemins modifiés :
+   M plugins/cfpython/cfpython_object.c
+
+Added a "removed" check in CrossfireObject.InsertInto
+This check is needed because backend proprety of
+cfapi issue error messages when it's not the case and
+the python CrossfireObject.RemoveObject issue a free
+that make object unusable. 
+-------------------
+
+
 Adds basical i18n support for help and "static" server strings.
 Modified files:
  common/init.c Makefile.am
@@ -246,6 +321,46 @@ Added files:
 Removed files:
  lib/help/* (old help files)
 Yann Chachkoff (gros) 2007-11-17
+------------------------------------------------------------------------
+r7508 | tchize | 2007-11-16 14:24:51 +0100 (ven, 16 nov 2007) | 10 lines
+Chemins modifiés :
+   M common/button.c
+   M common/time.c
+   M include/autoconf.h.in
+   M include/libproto.h
+   M include/sproto.h
+   M include/tod.h
+   M plugins/cfanim/include/cfanim_proto.h
+   M plugins/cfpython/cfpython.c
+   M plugins/cfpython/cfpython_map.c
+   M plugins/cfpython/cfpython_object.c
+   M plugins/cfpython/include/cfpython_map_private.h
+   M plugins/cfpython/include/cfpython_object_private.h
+   M plugins/cfpython/include/cfpython_proto.h
+   M plugins/common/include/plugin_common.h
+   M plugins/common/plugin_common.c
+   M server/plugins.c
+   M test/unit/common/Makefile.am
+   M test/unit/common/check_time.c
+
+Plugins Added Trigger, updated TimeOfDay and glowRadius
+Add support to trigger a specific "connected" from plugins
+Add support to get timeofday names (seasons, months, weeks, day, period of day)
+Add in timeofday the notion of period of the day (Night, Morning, Noon, etc)
+Fixed glowRadius setter priperty in plugin interface so changes are reflected to user's UI
+Add EVENT_TRIGGER call to all objects triggered in a connected chain
+autogen.sh invoked
+
+Note: those changes were necessary to build some basic tod based scripts
+
+------------------------------------------------------------------------
+r7502 | tchize | 2007-11-09 18:58:49 +0100 (ven, 09 nov 2007) | 2 lines
+Chemins modifiés :
+   M include/version.h
+
+removed FIXME comment, kbulgrien fixed it.
+-----------------------
+
 
 Adding svnversion.h to SVN was not a good idea.  It will get re-committed over
 and over even though that was not the intent.  Removed.  Move include prior to
