@@ -1,6 +1,6 @@
 
 
-This files so far only concernes how to make archetypes,treasure and NPC's
+This so far only concerns how to make archetypes, treasure and NPC's
 
 Sections:
 
@@ -70,18 +70,18 @@ Sections:
     directory.  For objects with many animations or that are very large,
     you may want to make a new subdirectory.
  2) Create a bitmap.  It must be dividable by 32 in both height and width.
-    The file format should be .PNG 256 colour and use transparancy.
+    The file format should be .PNG 256 colour and use transparency.
  3) create additional bitmaps if you want animation or directional facing.
  4) split the bitmaps up into 32x32 bitmaps and named according to the
     naming.doc conventions in the arch tar package.  Note, this
-    is not really necessary at current time - non splitted images should
+    is not really necessary at current time - non-split images should
     work properly, but some older clients may have problems with it.
  		(you can use the script "splitxbm" which is included below).
  5) Create an archetype entry.  The file should be called
     object.arc, where object is whatever the new object is.
     This is by far the most complicated step.  First read "crossfire.doc" for
     an introduction on how to create archetypes.
-    Look at other similary archetypes to see how they have been done.
+    Look at other similarly archetypes to see how they have been done.
     If you only made one 32x32 bitmap, you will only need one archetype, but
     if you made a larger bitmap which is cut down to several 32x32 bitmaps,
     you will need to use "linked" archetypes.  To create a linked archetype,
@@ -124,6 +124,10 @@ updated and all objects that are derived from it will get updated -
 this is very useful when new fields are added - the archetypes can get
 updated, and all objects in maps, player save files, wherever, get
 this new value.
+
+It is valid to put items into an archetype, including a customized version. All
+objects created from the archetype will include the object(s) (including their
+own inventory).
 
 *******************************************************************************
 2. Things that are alive
@@ -187,7 +191,7 @@ damage).  The attack code goes through all the attacktypes, and
 calculates the damage that each will cause.  It uses the highest damage
 total that any of these attacktypes will use.
 
-For attacktypes that don't deal phyiscal damage but instead effect
+For attacktypes that don't deal physical damage but instead effect
 the creature in some way (drain, slow, paralyze, etc), the resistance
 in general reduces the effect (duration, amount drained, etc).
 
@@ -205,7 +209,7 @@ Set the variable attack_movement to one of the below (cut from define.h):
 /* set to zero                                                                */
 /* the standard mode of movement from previous versions of crossfire will be  */
 /* used. the upper four bits of movement data are not in effect when the monst*/
-/* er has an enemy. these should only be used for non agressive monsters.     */
+/* er has an enemy. these should only be used for non aggressive monsters.     */
 /* to program a monsters movement add the attack movement numbers to the movem*/
 /* ment numbers example a monster that moves in a circle until attacked and   */
 /* then attacks from a distance:                                              */
@@ -373,9 +377,10 @@ Very powerful, use carefully
 Pass through (can_pass_thru)
 ============
 
-Kamakaze attacks (one_hit)
+Kamikaze attacks (one_hit)
 ================
-set to 1 if this creature disapates on attacking (like ghosts)
+Creatures with this value set to 1 will dissipate when they attack (like
+ghosts).  They dissipate on the first hit, whether it does any damage or not.
 
 Morale (run_away)
 ======
@@ -414,30 +419,70 @@ resist_cold -30
 ----------------------------
 SPECIAL NOTE (IMPORTANT!!!):
 -----------------------------
-The fields resist_*, armour, wc and dam can be
+<del>The fields resist_*, armour, wc and dam can be
 set in map files to customize monsters.  However, if that monster can
 be equipped with items, and actually equips some, these values will
 get reset back to those in the clone archetype (normal values.)  Thus,
 if you want to put a wizard in that does dam 50, make sure can_use_armour,
 and can_use_weapon are set back to 0.  Otherwise, when items are equipped,
-all the above fields will be reset to standard values.
+all the above fields will be reset to standard values.</Del>
+
+As of 2006-12-09, this shouldn't be the case anymore: server will detect
+modified archetypes, and store its values in a temporary archetype structure to
+be able to recompute everything.
 
 
-
-H. Generators and creature spawning (generate) (other_arch) (use_content_on_gen)
+H. Generators and Creature Spawning
 ===================================
 
-There are 2 types of generators in crossfire since september 2003.
-both are identified as generators by setting the flag "generate" to 1.
-For the first type (the classical one) use "other_arch" to specify
-archetype of object to be spawned.
-The second type allow more fine tuning on what to generate. To activate
-second type, set the flag "use_content_on_gen" to 1. Then each
-time something must be generated, it will be a copy of a randomly
-choosen item in the generator's inventory.
+Generators spawn monsters or other objects.  By default, generators are alive
+and visible and can be destroyed like any other monster.
+
+H.1 Generator (generator)
+
+If set, this object is a generator.  Monsters (like mice) can be generators.
+
+H.2 Use Inventory (use_content_on_gen)
+
+If set, the generator will create objects from its inventory.  If the inventory
+holds more than one object, one will be randomly selected from the list each
+time the generator creates one.  If not set, the ''other_arch'' object will be
+used.
+
+H.3 Object to Create (other_arch)
+
+If ''use_content_on_gen'' is not set, the generator will create copies of the
+object set in this field.
+
+H.4 Generator Radius (generator_radius)
+
+The generator will spawn objects within this radius of itself.  (Within a
+square of radius*2+1 tiles centered on the generator, to be exact.)  If this is
+not set, the radius defaults to 1, for legacy behavior.  Setting it to zero
+effectively turns off the generator.
+
+H.5 Maximum Number of Objects  (generator_max)
+
+If this is set, it limits the number of objects the generator will create at
+one time.  Only objects on the same map are counted.  If objects are destroyed
+or leave the map, the generator will no longer count them and will be able to
+replace them.
+
+H.6 Generator Name (generator_name)
+
+This value is used by the generator for marking and identifying the objects it
+creates, so it can count them to determine whether ''generator_max'' has been
+met.  This field is only used when ''generator_max'' is set.  If
+''generator_name'' is not set, the generator defaults to using its ''name'', or
+if that is not set, to ''"generator"''.  If multiple generators on the same map
+have the same ''generator_name'', they will claim the same monsters.  This is a
+feature, not a bug. :-)  It means that you could have four generators in the
+corners of a room, each named "four generators" and each with a
+''generator_max'' of 50, and they would create up to 50 total monsters, but in
+different parts of the room, and possibly from different inventory lists.
 
 
-H. NPC's and their life:
+I. NPC's and their life:
 =======================
 
 An NPC can have any combination of the following programs (flags):
@@ -453,17 +498,18 @@ FLAGS: (They are checked in the following order:)
 sleep + (any)           = sleep until woken, then do any of the other things...
 neutral + random_movement = move randomly around all the time.
 neutral (alone)         = stand still until attacked, then attack and move.
-stand_still + (any)     = do anything except moveing
+stand_still + (any)     = do anything except moving
 
 In addition it can have run_away set to which percentage of full
 hit-points the npc will run away at.
 
 And then there is the NPC features made by Karl Holland  (see attack_movement)
 
-Note that scared creatures will become unscared at some point, so it
+Note that scared creatures will become unafraid at some point, so it
 is typically not useful to set this in maps or in archetypes.
 
-I. NPC's Speak out
+
+J. NPC's Speak out
 ==================
 
 The message structure in a monster may contain:
@@ -888,10 +934,9 @@ FLAG_ANIMATE is not set is for arrows and other objects in which the anim
 field is instead used to determine what face to draw for different facings of
 the object.
 
-facings is used in conjunctin with FLAG_ANIMATE.  This is a states
-the number of facing the objects has (2, 4, or 8 - 1 is the default).
-the number of faces in the anim/mina sequence must be a multiple of
-num facings..
+facings is used in conjunction with FLAG_ANIMATE.  This is a states the number
+of facing the objects has (2, 4, or 8 - 1 is the default).  the number of faces
+in the anim/mina sequence must be a multiple of num facings..
 
 here is an example of using animation and facings:
 
@@ -979,9 +1024,22 @@ formula is used:
     2        1
     3        2
     4        3
-    5        5
-    6        8
-    7        11
+    5        4
+    6        4
+    7        7
+    8        9 
+    9       11 
+   10       13 
+   11       15 
+   12       18 
+   13       21 
+   14       24 
+   15       27 
+   16       30 
+   17       35 
+   18       40 
+   19       45 
+   20       50
 
 An enchantment is:
 Each plus an item has.
@@ -989,7 +1047,17 @@ Each point an item increases an ability.
 Each 20% protection an item gives (rounded normally, eg 0-9 counts as nothing,
 10-29 counts as one, etc)
 Each attacktype a weapon has.
-Spell path adjustments
+Spell path adjustments ( denied paths -2 )
+
+These properties have the following enchantment value 
+  *lifesaving 5 
+  *reflect spells 3 
+  *reflect missiles 2 
+  *stealth 1 
+  *xray vison 2 
+  *see in dark 1 
+  *invisibility 1 
+  *slay 2
 
 This same formula can be used for custom objects to figure out their
 item power.
@@ -999,10 +1067,7 @@ there should not be objects with a negative item power.  However, negative
 effects an item has may reduce the item power.  Eg, a
 'sword +4 (str +2)(wis -3)' would really be 3 enchantments.
 
-Note: The enforcement of item power is currently not in use as of this
-writing (Aug 2002).  Further refinement is needed on the power rating
-for items.  However, if you are creating a new magic item, setting
-an appropriate item_power would save work later on.
+FIXME add settings explanation, ensure information is correct.
 
 G. Body Location
 ==================
@@ -1102,7 +1167,7 @@ hp,sp = (x,y) of the destination on the new map.
 I. Lore
 ============================================================
 
-Lore is a free form text field similiar to the msg bug.  Its syntax is
+Lore is a free form text field similar to the msg bug.  Its syntax is
 
 lore
 ..
@@ -1133,18 +1198,18 @@ MOVE_ALL may change in the future - it is mask for all movement types -
 it sets move_block to MOVE_ALL, other places that check for all movement types
 may also use this value.
 
-It is possible to use string names instead of the numeric bitmask in
-the move_fields below.  It is strongly encouraged that the string names be
-used for improved readability.  In addition, using string names, especially
-'all', will result in easier maintability in the future.  For example, if you
-specify 'move_block 31' right now, that is equivalant of all.  However, if new
-move types are added, using a numeric option will not block the new movement
-types, where if 'move_block all' was used, it continue to block everything.
+It is possible to use string names instead of the numeric bitmask in the
+move_fields below.  It is strongly encouraged that the string names be used for
+improved readability.  In addition, using string names, especially 'all', will
+result in easier maintainability in the future.  For example, if you specify
+'move_block 31' right now, that is equivalent of all.  However, if new move
+types are added, using a numeric option will not block the new movement types,
+where if 'move_block all' was used, it continue to block everything.
 
 The string names are same as the MOVE_ defines, but with the MOVE_ portion
-removed, eg, 'walk', 'fly_low', 'fly_high', etc.  Multiple types can be
-listed, seperated by a space.  In addition, a - (minus) can precede the name,
-which means to negate that type.  These are all equivalant:
+removed, eg, 'walk', 'fly_low', 'fly_high', etc.  Multiple types can be listed,
+separated by a space.  In addition, a - (minus) can precede the name, which
+means to negate that type.  These are all equivalent:
 
 move_block 6
 move_block fly_low fly_high
@@ -1200,12 +1265,12 @@ move_allow: This overrides move_block - basically, this allows movement
 move_on/move_off: Take bitmasks - represents for what movement types
   this object is activated on.  Replaces the walk/fly_on/off values
 
-move_slow: Like move_block, but represents what movement types are slowed
-  on this space.  Note that it is not possible to specifiy different
-  penalties for different movement types in the same object.  However,
-  multiple objects with different move_slow values (and penalties) can
-  be put on the same space.  This replaced FLAG_SLOW_MOVE, which is
-  converted to only slow down walking movement
+move_slow: Like move_block, but represents what movement types are slowed on
+  this space.  Note that it is not possible to specify different penalties for
+  different movement types in the same object.  However, multiple objects with
+  different move_slow values (and penalties) can be put on the same space.
+  This replaced FLAG_SLOW_MOVE, which is converted to only slow down walking
+  movement.
 
 move_slow_penalty (was slow_move) - how much the player is slowed down.
   This value is a float (before it was an int converted to a float
@@ -1262,9 +1327,19 @@ to be expanded down the road).  Basic idea is that if you are flying,
 can't reach the ground, if swimming, don't really have any free hands
 to grab anything.
 
+Misc fields:
+Those fields are kind of used by all objects, but aren't really in the previous
+parts.
+
+  * death_animation (key/value): should point to a valid archetype name that
+    will be inserted in the map when the object dies. It should probably be a
+    one-time animation (''is_used_up 1'').
+
 ******************************************************************************
 4. SPECIAL OBJECTS
 ******************************************************************************
+
+
 A. MAPS:
 ========
 see doc/map-technical for this information.
@@ -1324,6 +1399,9 @@ level           Plague Level    General description of the plague's deadliness
 last_grace	Attenuation     reduction in wc per generation of disease.
                                 This builds in a self-limiting factor.
 
+last_heal       Immunity        If set, will not grant immunity when cured
+                                naturally
+
 Explanations:
 * means this # should be negative to cause adverse effect.
 + means that this effect is modulated in spells by ldur
@@ -1361,11 +1439,11 @@ maxsp how much mana is sapped per "disease move".  if negative, a %-age is
      taken.
 
 ac  every "disease move" the severity of the symptoms are increased by
-    ac/100.  (severity = 1 + (accumlated_progression)/100)
+    ac/100.  (severity = 1 + (accumulated_progression)/100)
 
 last_eat  increases food usage if negative.
 
-last_grace  Reduction in the diseases' contageousness everytime it infects someone
+last_grace  Reduction in the diseases' contagiousness everytime it infects someone
 	new.  This limits how many generations a disease can propagate.
 
 
@@ -1396,11 +1474,10 @@ E. BOWS & ARROWS:
 =================
 Missile weapons
 
-Missile weapons (type BOW) can be used to shoot missiles
-(type ARROW). The most common wepons are bows and crossbows
-but other weapons are also easy to implement (e.g. a sling).
-The following variables have the same meaning for both weapons
-and bullets:
+Missile weapons (type BOW) can be used to shoot missiles (type ARROW). The most
+common weapons are bows and crossbows but other weapons are also easy to
+implement (e.g. a sling).  The following variables have the same meaning for
+both weapons and bullets:
 
 race	type of missile (indentifies weapon and missile pairs)
 dam	the basic damage
@@ -1457,7 +1534,7 @@ a pattern, and so can monsters.
 Motion is involuntary.  Additionally, players or monsters can be paralyzed
 so that they MUST move along a chain of movers.
 
-Multisquare monsters can be moved by movers, however enough space is required.
+Multi-square monsters can be moved by movers, however enough space is required.
 
 Here is the meaning of various fields:
 
@@ -1583,7 +1660,6 @@ connected	either rotate the wall or trigger it.  If triggering,
 		set speed to 0 for best results.
 
 
-
 J. Containers
 =============
 container <xxx>         :  the maximum weight the container can hold
@@ -1592,6 +1668,17 @@ container <xxx>         :  the maximum weight the container can hold
 Str <xx>                :  reduces the weight of the objects in the container
                            0 == no reduction,   100 = weightless
 
+slaying                 :  only let items of this type in the container 
+
+Key/value fields that can be used (trunk only):
+
+face_opened             :  face name (including the final ''.111'') to use when
+                           the container is opened. Will default to
+                           ''other_arch->face'' if not defined.
+
+face_closed             :  face name to use when the container is closed. Will
+                           automatically be set if a custom face is defined, so
+                           not required to set it manually.
 
 K. Mood Floors
 ==============
@@ -1708,27 +1795,30 @@ obvious what is going on.)
 
 DETECTOR:
 ---------
-This object samples the square its in, and if it finds an object
-named in the slaying field, it toggles its connected value.  Detectors are a
-lot like pedestals - the only really difference is that they sample the
-space periodically, where as pedestals will get triggered the instant
-something is dropped.  The use for pedestals is to add some indeterminate
-time delay (indeterminate since you can never be sure at what point in its
-timing the player will actually drop something on the detector.)  Personally,
-I don't see much if any use for detectors.  (The author of this last sentence
-didn't realize that if you blow a spell over a detector, it may be detected,
-but a pedestal won't notice it.)
 
-slaying   name of the thing the detector is to look for
+This object samples the square its in, and if it finds an object named in the
+slaying field, it will trigger other objects. Detectors are a lot like
+pedestals - the only really difference is that they sample the space
+periodically, where as pedestals will get triggered the instant something is
+dropped.  The use for pedestals is to add some indeterminate time delay
+(indeterminate since you can never be sure at what point in its timing the
+player will actually drop something on the detector.)
+
+slaying   name of the thing the detector is to look for. FORCEs with slaying
+          fields matching slaying field of detector will be detected if hp is
+          set.  SPECIAL_KEY with slaying field will match when on the ground
+          (not in inventory). If equals ''player'', will detect playersname of
+          the thing the detector is to look for
 	  * note:  FORCEs with slaying fields == slaying field of detector
 	   will be detected if hp is 1.
 	  * if 'player', will match players
 speed     time between samples
 connected connected value of detector
 sp        1 if detection sets buttons,
-          -1 if detection unsets buttons
-hp	  1 if it is to search through an inventory of an object
-	  sitting over it. Won't search in inventories of inventory, though
+          another value if detection unsets buttons
+hp	  non-zero if it is to search through an inventory of an object
+	  sitting over it. Note that the search only goes in the direct
+          inventory, not recursively in all inventories
 
 
 MARKER:
@@ -1753,7 +1843,7 @@ NOTE ABOUT ALL CONNECTED ITEMS:
 with the same connected tag also gets pushed.  For some objects
 (pedestals, inventory checkers) this is likely to be meaningless.  However,
 if something like an altar is pushed in this fashion, it will no longer
-be usuable (only take one sacrifice, and being activated in this fashion
+be usable (only take one sacrifice, and being activated in this fashion
 makes it so that it looks to have been activated.)
 
  One trick for connected objects that you want activated once:  Set your
@@ -1921,7 +2011,8 @@ anim
  .                      which bitmaps to use in animation of the O.
  .                      If TEAR_DOWN flag is set, this contains the different
  .                      stages of being destroyed.
-face name		Name of the face (ie, food.111)
+face name		Name of the face (ie, food.111). This may only be set
+ .                      in the arches, not in maps.
  .
 mina
 end                     terminates definition of this O.
@@ -2322,29 +2413,52 @@ For flags:
 This section provides some specific programming notes about objects.  If
 you don't actually work with the C code, there is no need to read this section.
 
-Basically, all the char* pointers in the object structure use a shared
-string library.  Using shared strings saves memory and improved performance.
-
-To use the share string library, it is as simple as calling add_string(char
-*cp), where *cp is the pointer to the string you want to add.  You can pass
-defined strings also.  The function the finds the string, if it exists,
-increases the referecne count, and returns a pointer to the existing string.
-If the string does not exist in the table, it allocates space for it, copies
-the data into the space, and returns that new pointer.
-
-free_string should be called to free these strings.
-
-strdup and free should never be used on these shared strings.
+Almost all the char* pointers in the object structure use a shared string
+library.  See Shared Strings below or on the wiki for more details.
 
 When copying objects, the copy_object routine should always be used.  It will
 add reference counts to the copied strings.
 
-Because shared strings will return a pointer to a string if it
-exists, one can see if the strings are equal by comparing the shared
-string address they point to.
+Shared string data should never be modified by any means - eg, strcpy(op->name,
+"new value") will update all the objects that use the same shared string as op
+does for its name.
 
-Shared string data should never be modified by any means - eg,
-strcpy(op->name, "new value") will update all the objects that use the same
-shared string as op does for its name.  Even without shared strings, this
-should never be done, because you can not be sure of the space allocation for
-op->name is long enough.
+Shared Strings
+==============
+
+Ref:  http://wiki.metalforge.net/doku.php/dev:shared_strings
+
+To minimize memory use, Crossfire uses a shared string mechanism. This is
+intended to be used for strings whose contents is not expected to change during
+the server’s life. Using shared strings saves memory and improved performance.
+
+Those strings are used like regular const char*, but should not be changed via
+strcpy, snprintf or other means because it would affect all structures using
+the shared string. Internally, they use a counter to track at how many places
+they are used. When it reaches 0, string is freed.
+
+To alter such a string, the right behaviour is:
+
+    * write new value in a char[] new_value variable
+    * use free_string(str)
+    * call str = add_string(new_value)
+
+FIXME replace with sstring when done in code
+
+To manipulate them, the following functions (defined in common/shstr.c) are
+available:
+
+    * const char* add_string(const char *str), used to share a string. Returned
+      value is a string with the same contents that can be shared with other
+      objects
+    * const char* add_refcount(const char *str), equivalent of add_string when
+      the string is already a shared string
+    * const char* find_string(const char *str), to search if a string is shared
+      or not
+    * void free_string(const char *str), to decrement the use counter. After
+      it’s called, str should not be used anymore.
+
+Because shared strings will return a pointer to a string if it exists, one can
+see if the strings are equal by comparing the shared string address they point
+to (ie str == str2 directly). 
+
