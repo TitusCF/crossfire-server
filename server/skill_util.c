@@ -393,7 +393,8 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
 	skill = tmp;
     }
 
-    apply_anim_suffix(op, skill->name);
+    if (skill->anim_suffix)
+        apply_anim_suffix(op, skill->anim_suffix);
 
     switch(skill->subtype) {
 	case SK_LEVITATION:

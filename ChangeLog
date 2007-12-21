@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Change skill animation to use anim_suffix instead of the name.
+ server/skill_util.c
+Nicolas Weeger 2007-12-21
+
 Fix missing animation first pic. Change animate_object to not alter the state,
 but merely ensure the pic is valid. Move state/face changing upstream.
  common/anim.c
