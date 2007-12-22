@@ -25,7 +25,6 @@ programming_guide: Hints, style guide, and directions for coders as well
 protocol: Describes the client/server protocol.
 python: python documentation, not up to date (see python.ps).
 python.ps: Contains the crossfire python extensions usable by the plugins.
-quests: How to manage player quests. Technical implementation details.
 random-maps: How to use and options for randomly generated maps.
 random-styles: Description of the various style maps used with the random maps.
 runes: Explains how to use runes on maps, different fields in the runes.
