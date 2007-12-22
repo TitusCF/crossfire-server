@@ -295,16 +295,20 @@ static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args)
 
     MAPEXISTCHECK(map);
     /* locate objectlink for this connected value */
-    if (!map->map->buttons)
+    if (!map->map->buttons){
+        cf_log(llevError, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH),connected);
         return NULL;
+    }
     for (olp=map->map->buttons;olp;olp=olp->next){
         if (olp->value==connected){
             ol = olp->link;
             break;
         }
     }
-    if (ol==NULL)
+    if (ol==NULL){
+        cf_log(llevInfo, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH),connected);
         return NULL;
+    }
     /* run the object link */
     cf_map_trigger_connected(ol,cause?cause->obj:NULL,state);
 

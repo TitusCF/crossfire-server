@@ -63,7 +63,7 @@ static void pace2_movev(object *ob);
 static void pace2_moveh(object *ob);
 static void rand_move(object *ob);
 static int talk_to_npc(object* op, object *npc, const char *txt);
-static int talk_to_wall(object *npc, const char *txt);
+static int talk_to_wall(object* op, object *npc, const char *txt);
 
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
@@ -1930,7 +1930,7 @@ void communicate(object *op, const char *txt) {
 
 	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
 	    if (npc->type == MAGIC_EAR) {
-		(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+		(void) talk_to_wall(op, npc, txt); /* Maybe exit after 1. success? */
 		if (orig_map != op->map) {
 		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
 		    return;
@@ -1990,9 +1990,11 @@ static int talk_to_npc(object *op, object *npc, const char *txt) {
     return do_talk_npc(npc, txt);
 }
 
-static int talk_to_wall(object* npc, const char* txt)
+static int talk_to_wall(object* op, object* npc, const char* txt)
 {
     char* cp;
+    if (execute_event(npc, EVENT_SAY,op,NULL,txt,SCRIPT_FIX_ALL)!=0)
+	    return 0;
     if(npc->msg == NULL || *npc->msg != '@')
 	return 0;
 
