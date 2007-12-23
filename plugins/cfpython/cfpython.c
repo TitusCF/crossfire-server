@@ -1321,7 +1321,6 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     context->returnvalue = 1; /* Default is "command successful" */
 
     current_command = -999;
-
     if (!do_script(context, 0)) {
         freeContext(context);
         return rv;

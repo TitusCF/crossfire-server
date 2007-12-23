@@ -2327,6 +2327,26 @@ static PyObject* Crossfire_Object_Move(Crossfire_Object* who, PyObject* args) {
     return Py_BuildValue("i", cf_object_move(who->obj,dir, who->obj));
 }
 
+static PyObject* Crossfire_Object_Event(Crossfire_Object* who, PyObject* args) {
+    int fix;
+    const char* message = NULL;
+    object* op1=NULL;
+    object* op2=NULL;
+    object* op3=NULL;
+    Crossfire_Object* activator = NULL;
+    Crossfire_Object* third = NULL;
+
+    if (!PyArg_ParseTuple(args,"OOsi", &activator, &third, &message, &fix))
+        return NULL;
+    EXISTCHECK(who);
+    EXISTCHECK(activator);
+    EXISTCHECK(third);
+    op1 = who->obj;
+    op2 = activator->obj;
+    op3 = third->obj;
+    return Py_BuildValue("i", cf_object_user_event(op1,op2,op3,message,fix));
+}
+
 static int Crossfire_Object_InternalCompare(Crossfire_Object* left, Crossfire_Object* right)
 {
     EXISTCHECK_INT(left);

@@ -73,6 +73,7 @@
 #define EVENT_CLOSE    11 /**< Container closed.                               */
 #define EVENT_TIMER    12 /**< Timer connected triggered it.                   */
 #define EVENT_DESTROY  13 /**< Object destroyed (includes map reset/swapout)   */
+#define EVENT_USER     31 /**< User-defined event.                             */
 /*******************************************************************************/
 /* Global events. Those are never linked to a specific object.                 */
 /*******************************************************************************/
@@ -93,8 +94,7 @@
 #define EVENT_KICK     28 /**< A player was Kicked by a DM                     */
 #define EVENT_MAPUNLOAD     29 /**< A map is freed (includes swapping out)     */
 #define EVENT_MAPLOAD       30 /**< A map is loaded                            */
-
-#define NR_EVENTS 31
+#define NR_EVENTS 32
 
 #include <stdarg.h>
 

@@ -411,6 +411,7 @@ int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 /* plugins.c */
+int user_event(object* op, object* activator, object* third, const char* message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
 int execute_global_event(int eventcode, ...);
 int plugins_init_plugin(const char *libfile);
@@ -504,6 +505,7 @@ void *cfapi_region_get_property(int *type, ...);
 void *cfapi_friendlylist_get_next(int *type, ...);
 void *cfapi_set_random_map_variable(int *type, ...);
 void *cfapi_generate_random_map(int *type, ...);
+void* cfapi_object_user_event(int* type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 /* resurrection.c */

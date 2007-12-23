@@ -58,7 +58,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 87
+#define NR_OF_HOOKS 88
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -148,6 +148,7 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_get_weekday_name,        84, "cfapi_system_get_weekday_name"},
     {cfapi_get_periodofday_name,    85, "cfapi_system_get_periodofday_name"},
     {cfapi_map_trigger_connected,   86, "cfapi_map_trigger_connected"},
+    {cfapi_object_user_event,       87, "cfapi_object_user_event"}
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -202,6 +203,11 @@ static void send_changed_object(object *op)
             if (tmp->type == PLAYER)
                 tmp->contr->socket.update_look = 1;
     }
+}
+
+int user_event(object* op, object* activator, object* third, const char* message, int fix)
+{
+    return execute_event(op,EVENT_USER, activator, third, message, fix);
 }
 
 int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
@@ -4586,6 +4592,31 @@ void* cfapi_generate_random_map(int *type, ...) {
     va_end(args);
 
     *ret = generate_random_map(name, rp, use_layout);
+
+    return NULL;
+}
+
+void* cfapi_object_user_event(int* type, ...)
+{
+    object* op;
+    object* activator;
+    object* third;
+    const char* message;
+    int fix;
+    int* ret;
+    va_list args;
+
+    va_start(args, type);
+    op = va_arg(args, object*);
+    activator = va_arg(args, object*);
+    third = va_arg(args, object*);
+    message = va_arg(args, const char*);
+    fix = va_arg(args, int);
+    ret = va_arg(args, int*);
+    va_end(args);
+
+    *ret = user_event(op, activator, third, message, fix);
+    *type = CFAPI_INT;
 
     return NULL;
 }

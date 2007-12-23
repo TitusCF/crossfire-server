@@ -119,6 +119,7 @@ static f_plug_api cfapiSystem_get_month_name = NULL;
 static f_plug_api cfapiSystem_get_season_name = NULL;
 static f_plug_api cfapiSystem_get_weekday_name = NULL;
 static f_plug_api cfapiSystem_get_periodofday_name = NULL;
+static f_plug_api cfapiObject_user_event = NULL;
 
 #define GET_HOOK( x, y, z ) \
     { \
@@ -212,7 +213,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_get_month_name, "cfapi_system_get_month_name", z );
     GET_HOOK( cfapiSystem_get_weekday_name, "cfapi_system_get_weekday_name", z );
     GET_HOOK( cfapiSystem_get_periodofday_name, "cfapi_system_get_periodofday_name", z );
-
+    GET_HOOK( cfapiObject_user_event, "cfapi_object_user_event", z );
     return 1;
 }
 
@@ -227,6 +228,14 @@ int cf_map_get_int_property(mapstruct* map, int property)
 {
     int type, value;
     cfapiMap_get_property(&type, map, property, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+int cf_object_user_event(object* op, object* activator, object* third, const char* message, int fix)
+{
+    int type, value;
+    cfapiObject_user_event(&type, op, activator, third, message, fix, &value);
     assert(type == CFAPI_INT);
     return value;
 }
