@@ -402,6 +402,10 @@ static PyObject* getScriptParameters(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args, "", NULL))
         return NULL;
+    if (!current_context->options) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
     return Py_BuildValue("s", current_context->options);
 }
 
@@ -1317,7 +1321,10 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     context->third       = NULL;
     context->fix         = 0;
     snprintf(context->script, sizeof(context->script), "%s", buf);
-    snprintf(context->options, sizeof(context->options), "%s", params);
+    if (params)
+        snprintf(context->options, sizeof(context->options), "%s", params);
+    else
+        context->options[0] = 0;
     context->returnvalue = 1; /* Default is "command successful" */
 
     current_command = -999;
