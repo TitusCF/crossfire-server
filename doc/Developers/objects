@@ -61,48 +61,48 @@ Sections:
 *******************************************************************************
 1. HOW TO CREATE NEW ARCHETYPES AND BITMAPS:
 ********************************************************************************
- 0) Determine if you really need a new archetype.  Archetypes are only needed
-    if you are adding new images, or the archetype you are creating will be
-    of general interest.  Don't make a new arch if all you really need to do
-    is customize an existing archetype.
+ 0) Determine if a new archetype is really needed.  Archetypes are only needed
+    to add new images, or if the archetype simplifies creation of a very common
+    item.  Don't make a new arch if all you really need to simply customize an
+    existing archetype.
  1) Figure out which directory/category the object will belong to.  This
-    will determine the appropriate location for it inside the 'arch'
-    directory.  For objects with many animations or that are very large,
-    you may want to make a new subdirectory.
- 2) Create a bitmap.  It must be dividable by 32 in both height and width.
-    The file format should be .PNG 256 colour and use transparency.
- 3) create additional bitmaps if you want animation or directional facing.
- 4) split the bitmaps up into 32x32 bitmaps and named according to the
-    naming.doc conventions in the arch tar package.  Note, this
-    is not really necessary at current time - non-split images should
-    work properly, but some older clients may have problems with it.
- 		(you can use the script "splitxbm" which is included below).
- 5) Create an archetype entry.  The file should be called
-    object.arc, where object is whatever the new object is.
-    This is by far the most complicated step.  First read "crossfire.doc" for
-    an introduction on how to create archetypes.
-    Look at other similarly archetypes to see how they have been done.
-    If you only made one 32x32 bitmap, you will only need one archetype, but
-    if you made a larger bitmap which is cut down to several 32x32 bitmaps,
-    you will need to use "linked" archetypes.  To create a linked archetype,
-    add a 'More' line filed by the next piece.  The X and Y coordinates in
-    this next piece determine the offset from the head (first) object.
-    When making multipart objects, they should be rectangular.  Non rectangular
-    may work, but has not been tested.
+    determines an appropriate location for it inside the 'arch' directory.  For
+    objects with many animations or that are very large, a new subdirectory may
+    be advisable.
+ 2) Create a bitmap.  It must be divisible by 32 in both height and width.  The
+    file format should be .PNG 256 colour with transparency.
+ 3) Create additional bitmaps if you want animation or directional facing.
+ 4) Split the bitmaps up into 32x32 bitmaps and named according to the
+    naming.doc conventions in the arch tar package.  Note, this is not really
+    necessary at current time - non-split images should work properly, but some
+    older clients may have problems with it.  (the script "splitxbm" may be
+    used and is included below).
+ 5) Create an archetype entry.  The file should be called object.arc, where
+    object is whatever the new object is.  This is by far the most complicated
+    step.  See "crossfire.doc" for an introduction on how to create archetypes.
+    Look at other similar archetypes to see how they have been made.  If a
+    single 32x32 bitmap is created, only need one archetype is needed, but if a
+    larger bitmap is made which is cut down to several 32x32 bitmaps, use
+    "linked" archetypes are needed.  To create a linked archetype, add a 'More'
+    line filed by the next piece.  The X and Y coordinates in this next piece
+    determine the offset from the head (first) object.  When making multipart
+    objects, they should be rectangular.  Non rectangular may work, but has not
+    been tested.
 
-    Note that for these multipart objects, in most cases, only the values
-    in the head portion are used (eg, hp, damage, etc for monsters).
+    Note that for multi-part objects, in most cases, only the values in the
+    head portion are used (eg, hp, damage, etc for monsters) so it is generally
+    unnecessary to put a copy of all the head tags in the other parts.
 
     See the section later in this document about animations.
 
- 6) If your archetype is a creature or NPC you might want to give it
-    abilities such as firebreathing or magical attacks.  You put these
-    abilities into the treasures file in the appropriate entry as invisible
-    objects.  This is also how you can give inventory like bows or swords
-    as well.  Look at the other entries in the treasures file for the format.
-    Note that if an existing entry in the treasures file does what you
-    want, use it for your new archetype.  There is no requirement that
-    each archetype has a unique treasure list.
+ 6) If the archetype is a creature or NPC, and if it has abilities such as
+    firebreathing or magical attacks, these abilities are put into the
+    treasures file in the appropriate entry, and as invisible objects.  This is
+    also how inventory like bows or swords is given.  Look at the other entries
+    in the treasures file for the format to use.  Note that if an existing
+    entry in the treasures file does what you want, reuse it for the new
+    archetype.  There is no requirement that each archetype have a unique
+    treasure list.
 
 ------------------------------------------------------------------------------
 What is an archetype and what is an object?
@@ -307,8 +307,8 @@ Treasure lists are also used to give spell and skill abilities to creatures.
 
 
 
-G. Usage of certain flags for monsters
-======================================
+G. Monster Flag Usage
+=====================
 
 Damage (dam)
 ======
@@ -646,23 +646,25 @@ within the spellbook for example).
 B. Types (type) & Subtypes (subtype)
 ====================================
 
-Specified in defines.h.  A type determines how an item operates/what it does.
-A type only needs to be added for a new archetype if in some area of the
-program, it is actually used.  Addition of new types is generally
-a rare event.
+Specified in defines.h, the type field determines how an item operates/what it
+does.
 
+A type only needs to be added for a new archetype if it is actually used in
+some part of the program.  Addition of new types is generally a rare event.
 For example, if adding a new monster, there is no need to add a new type
-in defines.h if crossfire never checks the type element in the object
-structure for that new type.
+in defines.h if the crossfire-server never checks the type element in the
+object structure for that new type.
 
 Most types are set for items that are applied, items that have special
 properties.
 
-You should look at the include/defines.h file for the latest type
-information.  Note that within maps, you should almost never change
-the type field of an object - instead, you should start with an
-object of the appropriate type and change the fields of the object
-to appear as you want it.
+You should look at the include/defines.h file for the latest type information.
+When making a map, you should almost never change the type field of an object -
+instead, you should start with an object of an appropriate type and change the
+fields of the object to appear as you want it to.
+
+http://wiki.metalforge.net/doku.php/dev:object_types contains a wiki version of
+the defines.h type definitions.
 
 Subtypes are related to types, in that it narrows down the scope of the
 type of object.  For example, the type may be the value for skill,
@@ -680,8 +682,8 @@ be a helm.  But for type skills, subtype 1 might be smithery.  One should not
 rely on subtype to convey any meaningful information unless the type of the
 object is known or also examined.
 
-The question may then be asked - when making a new arch, how do I know
-if I need a new type, or if I should be the subtype of an existing type.
+The question may then be asked - when making a new arch, when is a new type
+needed as opposed to a new subtype?
 
 When to add a new type:
 1) If code to support applying the object is completely different than
@@ -690,10 +692,10 @@ When to add a new type:
    functions (server/time.c)
 
 When to make a new subtype:
-1) Your behaviour is _close_ to that of an existing type, but you want it
-   to be slightly different (eg, teleporters that don't work on players), or
-2) You need to be able to differentiate between objects of the same type.
-   Eg, adding a new skill would add a new subtype, not a new type.
+1) New behavior is _close_ to that of an existing type, but is slightly
+   different (eg, teleporters that don't work on players), or
+2) It is necessary to differentiate between objects of the same type.  Eg,
+   addition of a new skill adds a new subtype, not a new type.
 
 If your not sure, drop a mail to the crossfire developers list.
 
@@ -708,8 +710,8 @@ prefix if it is very long.
 C. Client Types (client_type)
 ==============================
 
-client type information in public information communicated to the client.
-Client type differes from the type in several ways:
+Client type information in public information communicated to the client.
+Client type differs from the type in several ways:
 
 1) It is more specific than the type information.
 2) The numbers used for client type are more logically grouped (all armor
