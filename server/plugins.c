@@ -1565,7 +1565,7 @@ void* cfapi_map_present_arch_by_name(int* type, ...)
 
     va_end(args);
 
-    *robj = present_arch(find_archetype(msg), map, x, y);
+    *robj = present_arch(try_find_archetype(msg), map, x, y);
     *type = CFAPI_POBJECT;
     return NULL;
 }
@@ -3401,7 +3401,7 @@ void* cfapi_object_create(int* type, ...)
             robj = va_arg(args, object**);
             va_end(args);
 
-            at = find_archetype(sval);
+            at = try_find_archetype(sval);
             if (!at)
                 at = find_archetype_by_object_name(sval);
             if (at) {
@@ -4062,7 +4062,7 @@ void* cfapi_object_find_archetype_inside(int* type, ...)
     case 0: /* By name, either exact or from query_name */
         str = va_arg(args, char*);
         robj = va_arg(args, object**);
-        *robj = present_arch_in_ob(find_archetype(str), op);
+        *robj = present_arch_in_ob(try_find_archetype(str), op);
         if (*robj == NULL) {
             object* tmp;
             char name[MAX_BUF];

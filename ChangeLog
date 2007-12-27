@@ -15,6 +15,12 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix spurious errors in log from plugins.
+ common/arch.c: new function try_find_archetype().
+ include/libproto.h: new prototype.
+ server/plugins.c: replace find_archetype() by try_find_archetype().
+Nicolas Weeger 2007-12-27
+
 plugins/cfpython/cfpython.c: fix invalid options when empty parameter.
 Nicolas Weeger 2007-12-26
 

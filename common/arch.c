@@ -644,11 +644,12 @@ hasharch(const char *str, int tablesize) {
 }
 
 /**
- * Finds, using the hashtable, which archetype matches the given name.
+ * Finds, using the hashtable, which archetype matches the given name. Will not LOG() if not found.
  * @return
  * pointer to the found archetype, otherwise NULL.
+ * @see find_archetype()
  */
-archetype *find_archetype(const char *name) {
+archetype *try_find_archetype(const char *name) {
     archetype *at;
     unsigned long index;
 
@@ -660,8 +661,6 @@ archetype *find_archetype(const char *name) {
     for(;;) {
         at = arch_table[index];
         if (at==NULL) {
-            if(warn_archetypes)
-                LOG(llevError,"Couldn't find archetype %s\n",name);
             return NULL;
         }
         arch_cmp++;
@@ -670,6 +669,24 @@ archetype *find_archetype(const char *name) {
         if(++index>=ARCHTABLE)
             index=0;
     }
+}
+
+/**
+ * Finds, using the hashtable, which archetype matches the given name. Will LOG() if not found.
+ * @return
+ * pointer to the found archetype, otherwise NULL.
+ * @see try_find_archetype
+ * @todo replace by try_find_archetype() when suitable and trash ::warn_archetypes.
+ */
+archetype *find_archetype(const char *name) {
+    archetype *at;
+
+    if (name == NULL)
+        return (archetype *) NULL;
+    at = try_find_archetype(name);
+    if (at==NULL && warn_archetypes)
+        LOG(llevError,"Couldn't find archetype %s\n",name);
+    return at;
 }
 
 /**

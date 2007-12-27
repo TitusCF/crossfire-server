@@ -26,6 +26,7 @@ extern object *create_singularity(const char *name);
 extern object *create_archetype(const char *name);
 extern unsigned long hasharch(const char *str, int tablesize);
 extern archetype *find_archetype(const char *name);
+extern archetype *try_find_archetype(const char *name);
 extern object *object_create_arch(archetype *at);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
