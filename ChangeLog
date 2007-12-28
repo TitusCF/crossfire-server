@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+No functional change, reformat object types defines for export to wiki page.
+  include/define.h
+Kevin Bulgrien 2007-12-27
+
 Fix spurious errors in log from plugins.
  common/arch.c: new function try_find_archetype().
  include/libproto.h: new prototype.
