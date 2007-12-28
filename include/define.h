@@ -99,188 +99,207 @@ error - Your ANSI C compiler should be defining __STDC__;
 /**
  * @defgroup OBJECT_TYPE Object types.
  *
- * Only add new values to this list if somewhere in the program code,
- * it is actually needed.  Just because you add a new monster does not
- * mean it has to have a type defined here.  That only needs to happen
- * if in some .c file, it needs to do certain special actions based on
- * the monster type, that can not be handled by any of the numerous
- * flags
- * Also, if you add new entries, try and fill up the holes in this list.
- * Additionally, when you add a new entry, include it in the table in common/item.c
+ * Only add new values to this list if somewhere in the program code, it is
+ * actually needed.  Just because you add a new monster does not mean it has to
+ * have a type defined here.  That only needs to happen if in some .c file, it
+ * needs to do certain special actions based on the monster type, that can not
+ * be handled by any of the numerous flags.  Also, if you add new entries, try
+ * and fill up the holes in this list.  Additionally, when you add a new entry,
+ * include it in the table in common/item.c
  *
- * type 0 will be undefined and shows a non valid type information.
+ * type 0 is undefined and indicates non-valid type information.
  */
 /*@{*/
-#define PLAYER		            1
-#define TRANSPORT		    2	/* see doc/Developers/objects */
-#define ROD		            3
-#define TREASURE	            4
-#define POTION		            5
-#define FOOD		            6
-#define POISON		            7
-#define BOOK		            8
-#define CLOCK		            9
-/*#define FBULLET		    10 */
-/*#define FBALL		            11 */
-/*#define LIGHTNING	            12 */
-#define ARROW		            13
-#define BOW		            14
-#define WEAPON		            15
-#define ARMOUR		            16
-#define PEDESTAL	            17
-#define ALTAR		            18
-/*#define CONFUSION	            19 */
-#define LOCKED_DOOR	            20
-#define SPECIAL_KEY	            21
-#define MAP		            22
-#define DOOR		            23
-#define KEY		            24
-/*#define MMISSILE	            25 */
-#define TIMED_GATE	            26
-#define TRIGGER		            27
-#define GRIMREAPER	            28
-#define MAGIC_EAR	            29
-#define TRIGGER_BUTTON		    30
-#define TRIGGER_ALTAR		    31
-#define TRIGGER_PEDESTAL	    32
-#define SHIELD		            33
-#define HELMET		            34
-#define HORN		            35
-#define MONEY		            36
-#define CLASS			    37  /* object for applying character class modifications to someone */
-/*#define GRAVESTONE	            38*/
-#define AMULET		            39
-#define PLAYERMOVER	            40
-#define TELEPORTER	            41
-#define CREATOR		            42
-#define SKILL		            43	/* also see SKILL_TOOL (74) below */
-#define EXPERIENCE	            44	/* This is basically obsolete now.  It used to contain */
-					/* experience for broad skill categories.  This value */
-					/* is now automatically converteed at load time. */
-#define EARTHWALL	            45
-#define GOLEM		            46
-/*#define BOMB		            47 */
-#define THROWN_OBJ	            48
-#define BLINDNESS	            49
-#define GOD		            50
+#define PLAYER                      1
+#define TRANSPORT                   2     /* see doc/Developers/objects */
+#define ROD                         3
+#define TREASURE                    4
+#define POTION                      5
+#define FOOD                        6
+#define POISON                      7
+#define BOOK                        8
+#define CLOCK                       9
+/*#define FBULLET                   10 */
+/*#define FBALL                     11 */
+/*#define LIGHTNING                 12 */
+#define ARROW                       13
+#define BOW                         14
+#define WEAPON                      15
+#define ARMOUR                      16
+#define PEDESTAL                    17
+#define ALTAR                       18
+/*#define CONFUSION                 19 */
+#define LOCKED_DOOR                 20
+#define SPECIAL_KEY                 21
+#define MAP                         22
+#define DOOR                        23
+#define KEY                         24
+/*#define MMISSILE                  25 */
+#define TIMED_GATE                  26
+#define TRIGGER                     27
+#define GRIMREAPER                  28
+#define MAGIC_EAR                   29
+#define TRIGGER_BUTTON              30
+#define TRIGGER_ALTAR               31
+#define TRIGGER_PEDESTAL            32
+#define SHIELD                      33
+#define HELMET                      34
+#define HORN                        35
+#define MONEY                       36
+#define CLASS                       37    /* object for applying character class
+                                           * modifications to someone */
+/*#define GRAVESTONE                38 */
+#define AMULET                      39
+#define PLAYERMOVER                 40
+#define TELEPORTER                  41
+#define CREATOR                     42
+#define SKILL                       43    /* also see SKILL_TOOL (74) below */
+#define EXPERIENCE                  44    /* This is basically obsolete now.
+                                           * It used to contain experience for
+                                           * broad skill categories.  This
+                                           * value is now automatically
+                                           * converted at load time. */
+#define EARTHWALL                   45
+#define GOLEM                       46
+/*#define BOMB                      47 */
+#define THROWN_OBJ                  48
+#define BLINDNESS                   49
+#define GOD                         50
 
-#define DETECTOR	            51	/* peterm:  detector is an object */
-					/* which notices the presense of */
-					/* another object and is triggered */
-					/* like buttons.  */
-#define TRIGGER_MARKER            52 /* inserts an invisible, weightless */
-					/* force into a player with a specified string WHEN TRIGGERED. */
-#define DEAD_OBJECT	            53
-#define DRINK		            54
-#define MARKER			    55	/* inserts an invisible, weightless */
-					/* force into a player with a specified string. */
-#define HOLY_ALTAR	            56
-#define PLAYER_CHANGER		    57
-#define BATTLEGROUND		    58      /* battleground, by Andreas Vogl */
+#define DETECTOR                    51    /* peterm:  detector is an object */
+                                          /* which notices the presense of */
+                                          /* another object and is triggered */
+                                          /* like buttons.  */
+#define TRIGGER_MARKER              52    /* inserts an invisible, weightless */
+                                          /* force into a player with a
+                                           * specified string WHEN TRIGGERED. */
+#define DEAD_OBJECT                 53
+#define DRINK                       54
+#define MARKER                      55    /* inserts an invisible, weightless
+                                           * force into a player with a
+                                           * specified string. */
+#define HOLY_ALTAR                  56
+#define PLAYER_CHANGER              57
+#define BATTLEGROUND                58    /* battleground, by Andreas Vogl */
 
-#define PEACEMAKER		    59	/* Object owned by a player which can convert */
-					/* a monster into a peaceful being incapable of attack.  */
-#define GEM		            60
-/*#define FIRECHEST	            61*/    /* FIRECHEST folded into FIREWALL */
-#define FIREWALL	            62
-/*#define ANVIL			    63*/
-#define CHECK_INV	            64	/* by b.t. thomas@nomad.astro.psu.edu */
-#define MOOD_FLOOR	            65	/* by b.t. thomas@nomad.astro.psu.edu
-				                     * values of last_sp set how to change:
-				                     * 0 = furious,	all monsters become aggressive
-				                     * 1 = angry, all but friendly become aggressive
-				                     * 2 = calm, all aggressive monsters calm down
-				                     * 3 = sleep, all monsters fall asleep
-				                     * 4 = charm, monsters become pets */
-#define EXIT		            66
-#define ENCOUNTER	            67
-#define SHOP_FLOOR	            68
-#define SHOP_MAT	            69
-#define RING		            70
-#define FLOOR			    71	/* this is a floor tile -> native layer 0 */
-#define FLESH		            72	/* animal 'body parts' -b.t. */
-#define INORGANIC	            73	/* metals and minerals */
-#define SKILL_TOOL		    74	/* Allows the use of a skill */
-#define LIGHTER		            75
+#define PEACEMAKER                  59    /* Object owned by a player which can
+                                           * convert a monster into a peaceful
+                                           * being incapable of attack.  */
+#define GEM                         60
+/*#define FIRECHEST                 61 */ /* FIRECHEST folded into FIREWALL */
+#define FIREWALL                    62
+/*#define ANVIL                     63 */
+#define CHECK_INV                   64    /* b.t. thomas@nomad.astro.psu.edu */
+#define MOOD_FLOOR                  65    /* b.t. thomas@nomad.astro.psu.edu
+                                           * values of last_sp set how to
+                                           * change:
+                                           * 0 = furious, all monsters become
+                                           *     aggressive
+                                           * 1 = angry, all but friendly become
+                                           *     aggressive
+                                           * 2 = calm, all aggressive monsters
+                                           *     calm down
+                                           * 3 = sleep, all monsters fall asleep
+                                           * 4 = charm, monsters become pets */
+#define EXIT                        66
+#define ENCOUNTER                   67
+#define SHOP_FLOOR                  68
+#define SHOP_MAT                    69
+#define RING                        70
+#define FLOOR                       71    /* Floor tile -> native layer 0 */
+#define FLESH                       72    /* animal 'body parts' -b.t. */
+#define INORGANIC                   73    /* metals and minerals */
+#define SKILL_TOOL                  74    /* Allows the use of a skill */
+#define LIGHTER                     75
 
 /* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
  * types are not used in any archetypes, and should perhaps be removed.
  */
-/*#define TRAP_PART	            76	Needed by set traps skill -b.t. */
+/*#define TRAP_PART                 76 */ /* Needed by set traps skill -b.t. */
 
-#define WALL			    77 /* this is a wall. put it always in layer 1 if not set is_floor */
-/*#define LIGHT_SOURCE		    78 torches, lamps, etc. */
-#define MISC_OBJECT		    79 /* misc. objects are for objects without a function
-                                      in the engine. Like statues, clocks, chairs,...
-                                      If perhaps we create a function where we can sit
-                                      on chairs, we create a new type and remove all
-                                      chairs from here. */
-#define MONSTER			    80 /* yes, thats a real, living creature */
-/*#define SPAWN_GENERATOR		    81 a spawn point or monster generator object */
-#define LAMP			    82 /* a lamp */
-#define DUPLICATOR		    83 /* duplicator/multiplier object */
-/*#define TOOL			    84 * a tool for building objects */
-#define SPELLBOOK	            85
-/*#define BUILDFAC		    86 facilities for building objects */
-#define CLOAK		            87
-/*#define CONE		            88 */
-/*#define AURA			    89  *//* aura spell object */
+#define WALL                        77    /* Wall. Put it always in layer 1 if
+                                           * not set is_floor */
+/*#define LIGHT_SOURCE              78 */ /* torches, lamps, etc. */
+#define MISC_OBJECT                 79    /* misc. objects are for objects
+                                           * without a function in the engine.
+                                           * Like statues, clocks, chairs...
+                                           *  If perhaps we create a function
+                                           * where we can sit on chairs, we
+                                           * create a new type and remove all
+                                           * chairs from here. */
+#define MONSTER                     80    /* A real, living creature */
+/*#define SPAWN_GENERATOR           81 */ /* Spawn point or monster generator */
+#define LAMP                        82    /* Lamp */
+#define DUPLICATOR                  83    /* Duplicator/multiplier object */
+/*#define TOOL                      84 */ /* Tool for building objects */
+#define SPELLBOOK                   85
+/*#define BUILDFAC                  86 */ /* Facilities for building objects */
+#define CLOAK                       87
+/*#define CONE                      88 */
+/*#define AURA                      89 */ /* Aura spell object */
 
-#define SPINNER		            90
-#define GATE		            91
-#define BUTTON		            92
-#define CF_HANDLE		    93
-#define HOLE		            94
-#define TRAPDOOR	            95
-/*#define WORD_OF_RECALL	    96 */
-/*#define PARAIMAGE	            97 */
-#define SIGN		            98
-#define BOOTS		            99
-#define GLOVES		            100
-#define SPELL			    101
-#define SPELL_EFFECT		    102
-#define CONVERTER	            103
-#define BRACERS		            104
-#define POISONING	            105
-#define SAVEBED		            106
-/*#define POISONCLOUD	            107*/
-/*#define FIREHOLES	            108*/
-#define WAND		            109
-/*#define ABILITY		    110*/
-#define SCROLL		            111
-#define DIRECTOR	            112
-#define GIRDLE		            113
-#define FORCE		            114
-#define POTION_EFFECT		    115    /* a force, holding the effect of a potion */
-#define EVENT_CONNECTOR             116    /* Lauwenmark: an invisible object holding a plugin event hook */
-#define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
-#define CONTAINER	            122
-#define ARMOUR_IMPROVER		    123
-#define WEAPON_IMPROVER		    124
+#define SPINNER                     90
+#define GATE                        91
+#define BUTTON                      92
+#define CF_HANDLE                   93
+#define HOLE                        94
+#define TRAPDOOR                    95
+/*#define WORD_OF_RECALL            96 */
+/*#define PARAIMAGE                 97 */
+#define SIGN                        98
+#define BOOTS                       99
+#define GLOVES                      100
+#define SPELL                       101
+#define SPELL_EFFECT                102
+#define CONVERTER                   103
+#define BRACERS                     104
+#define POISONING                   105
+#define SAVEBED                     106
+/*#define POISONCLOUD               107*/
+/*#define FIREHOLES                 108*/
+#define WAND                        109
+/*#define ABILITY                   110*/
+#define SCROLL                      111
+#define DIRECTOR                    112
+#define GIRDLE                      113
+#define FORCE                       114
+#define POTION_EFFECT               115   /* A force, holding the effect of a
+                                           * potion */
+#define EVENT_CONNECTOR             116   /* Lauwenmark: an invisible object
+                                           * holding a plugin event hook */
+#define CLOSE_CON                   121   /* Eneq(@csd.uu.se): Id for
+                                           * close_container archetype. */
+#define CONTAINER                   122
+#define ARMOUR_IMPROVER             123
+#define WEAPON_IMPROVER             124
 
 /* unused: 125 - 129
  * type 125 was MONEY_CHANGER
  */
-#define SKILLSCROLL	            130	/* can add a skill to player's inventory -bt.*/
-#define DEEP_SWAMP	            138
-#define IDENTIFY_ALTAR		    139
-/*#define CANCELLATION		    141*/ /* not used with new spell code */
-#define SHOP_INVENTORY          150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
-/*#define BALL_LIGHTNING		    151 */ /* peterm:  ball lightning and color spray */
-/*#define SWARM_SPELL		    153*/
-#define RUNE			    154
-#define TRAP			    155
+#define SKILLSCROLL                 130   /* can add a skill to player's
+                                           * inventory -bt.*/
+#define DEEP_SWAMP                  138
+#define IDENTIFY_ALTAR              139
+/*#define CANCELLATION              141*/ /* not used with new spell code */
+#define SHOP_INVENTORY              150   /* Mark Wedel (mark@pyramid.com) Shop
+                                           * inventories */
+/*#define BALL_LIGHTNING            151*/ /* peterm:  ball lightning and color
+                                           * spray */
+/*#define SWARM_SPELL               153*/
+#define RUNE                        154
+#define TRAP                        155
 
-#define POWER_CRYSTAL		    156
-#define CORPSE			    157
+#define POWER_CRYSTAL               156
+#define CORPSE                      157
 
-#define DISEASE			    158
-#define SYMPTOM			    159
+#define DISEASE                     158
+#define SYMPTOM                     159
 
-#define BUILDER            160 /* Generic item builder, see subtypes */
-#define MATERIAL            161 /* Material for building */
+#define BUILDER                     160   /* Generic item builder, see subtypes
+                                           * below */
+#define MATERIAL                    161   /* Material for building */
 
-#define OBJECT_TYPE_MAX		    161 /* update if you add new types */
+#define OBJECT_TYPE_MAX             161   /* Update if you add new types */
 /* END TYPE DEFINE */
 /*@}*/
 
