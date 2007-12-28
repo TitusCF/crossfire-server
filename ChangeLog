@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix variable being used while not initialized.
+ server/player.c
+Nicolas Weeger 2007-12-28
+
 No functional change, reformat object types defines for export to wiki page.
   include/define.h
 Kevin Bulgrien 2007-12-27
