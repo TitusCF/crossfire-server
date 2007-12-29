@@ -1069,7 +1069,7 @@ there should not be objects with a negative item power.  However, negative
 effects an item has may reduce the item power.  Eg, a
 'sword +4 (str +2)(wis -3)' would really be 3 enchantments.
 
-FIXME add settings explanation, ensure information is correct.
+FIXME - add settings explanation, ensure information is correct.
 
 G. Body Location
 ==================
@@ -1106,7 +1106,10 @@ body_hand		2	gloves
 body_wrist		2	bracers
 body_waist		1	girdle
 
-Using body locations:
+FIXME - Add information for legs.
+
+Using body information:
+
 Using this information is quite easy - for objects, just add the approprate
 body_.. with a negative value.  For monsters, put those in with a positive
 value.  If a monster has a location to use an object, is is presumed in the
@@ -1121,6 +1124,7 @@ locations for dragons or other creatures can easily be added.
 Adding body locations:
 
 The steps for adding a body location is as follows:
+
 1) Update the table above for documentation purposes.
 2) Update the NUM_BODY_LOCATIONS in include/object.h.
 3) Update the body_locations structure in common/item.c.  Be sure to read
