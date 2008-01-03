@@ -1526,10 +1526,10 @@ int command_listen (object *op, char *params)
  */
 int command_statistics(object *pl, char *params)
 {
-    if (!pl->contr) return 1;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
+    if (!pl->contr) return 1;
     strcpy(buf, i18n_translate(get_language(pl),I18N_MSG_CMISC_108));
     strcpy(buf2, i18n_translate(get_language(pl),I18N_MSG_CMISC_109));
     strcat(buf, FMT64);

@@ -2774,8 +2774,8 @@ void* cfapi_object_set_property(int* type, ...)
             iarg = va_arg(args, int);
             *type = CFAPI_INT;
 	    if (op->glow_radius !=iarg){
-                op->glow_radius = iarg;
                 object* tmp;
+                op->glow_radius = iarg;
                 tmp=object_get_env_recursive(op);
                 if (tmp->map!=NULL){
                     SET_MAP_FLAGS(tmp->map, tmp->x, tmp->y,  P_NEED_UPDATE);
