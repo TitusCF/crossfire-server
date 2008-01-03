@@ -160,4 +160,7 @@ extern void service_handle( );
 /* For Win32 service */
 extern int bRunning;
 
+/* Win32's Sleep takes milliseconds, not seconds. */
+#define sleep(x) Sleep(x * 1000)
+
 #endif /* WIN32_H */
