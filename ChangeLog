@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix plugin-related potential crash.
+ server/plugins.c: ensure msg has a newline at the end, else bad things happen.
+Nicolas Weeger 2008-01-03
+
 Win32 compilation fixes.
  server/c_misc.c plugins.c: variable declaration/use order.
 Nicolas Weeger 2008-01-03
