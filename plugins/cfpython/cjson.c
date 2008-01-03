@@ -198,8 +198,8 @@ decode_string(JSONData *jsondata)
                          (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
         } else {
             if (PyErr_GivenExceptionMatches(type, PyExc_UnicodeDecodeError)) {
-                reason = PyObject_GetAttrString(value, "reason");
                 int row,col;
+                reason = PyObject_GetAttrString(value, "reason");
                 getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
                 PyErr_Format(JSON_DecodeError, "cannot decode string starting"
                              " at position " SSIZE_T_F  "(row " SSIZE_T_F ", col " SSIZE_T_F "): %s",
