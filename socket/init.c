@@ -324,6 +324,7 @@ void free_newsocket(socket_struct *ns)
 	LOG(llevDebug,"Error closing socket %d\n", ns->fd);
 #endif
     }
+    ns->fd = -1;
     if (ns->stats.range)
 	FREE_AND_CLEAR(ns->stats.range);
     if (ns->stats.title)

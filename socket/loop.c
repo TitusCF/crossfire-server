@@ -347,6 +347,17 @@ static void block_until_new_connection(void)
     reset_sleep(); /* Or the game would go too fast */
 }
 
+/**
+ * Checks if file descriptor is valid.
+ *
+ * @param fd
+ * file descriptor to check.
+ * @return
+ * 1 if fd is valid, 0 else.
+ */
+static int is_fd_valid(int fd) {
+    return fcntl(fd, F_GETFL) != -1 || errno != EBADF;
+}
 
 /**
  * This checks the sockets for input and exceptions, does the right thing.
@@ -374,6 +385,10 @@ void doeric_server(void)
     FD_ZERO(&tmp_exceptions);
 
     for(i=0;i<socket_info.allocated_sockets;i++) {
+        if (init_sockets[i].status == Ns_Add && !is_fd_valid(init_sockets[i].fd)) {
+            LOG(llevError, "doeric_server: invalid waiting fd %d\n", i);
+            init_sockets[i].status = Ns_Dead;
+        }
 	if (init_sockets[i].status == Ns_Dead) {
 	    free_newsocket(&init_sockets[i]);
 	    init_sockets[i].status = Ns_Avail;
@@ -389,7 +404,12 @@ void doeric_server(void)
      * since we may remove some
      */
     for (pl=first_player; pl!=NULL; ) {
-	if (pl->socket.status == Ns_Dead) {
+        if (pl->socket.status != Ns_Dead && !is_fd_valid(pl->socket.fd)) {
+            LOG(llevError, "doeric_server: invalid file descriptor for player %s [%s]: %d\n", (pl->ob && pl->ob->name) ? pl->ob->name : "(unnamed player?)", (pl->socket.host) ? pl->socket.host : "(unknown ip?)", pl->socket.fd);
+            pl->socket.status = Ns_Dead;
+        }
+
+        if (pl->socket.status == Ns_Dead) {
 	    player *npl=pl->next;
 
 	    save_player(pl->ob, 0);
