@@ -473,7 +473,9 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
         ob_move_on(op,tmp,tmp);
 	    }
 	}
-	SET_ANIMATION(op, op->stats.wc);
+
+        op->state = op->stats.wc;
+        animate_object(op, 0);
 	update_object(op,UP_OBJ_FACE);
 	return;
     }
@@ -483,7 +485,9 @@ static void move_hole(object *op) { /* 1 = opening, 0 = closing */
     op->stats.wc++;
     if((int)op->stats.wc >= NUM_ANIMATIONS(op))
 	op->stats.wc=NUM_ANIMATIONS(op)-1;
-    SET_ANIMATION(op, op->stats.wc);
+
+    op->state = op->stats.wc;
+    animate_object(op, 0);
     update_object(op,UP_OBJ_FACE);
     if((unsigned char) op->stats.wc==(NUM_ANIMATIONS(op)-1)) {
 	op->speed = 0;
