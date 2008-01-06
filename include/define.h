@@ -111,7 +111,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  */
 /*@{*/
 #define PLAYER                      1
-#define TRANSPORT                   2     /* see doc/Developers/objects */
+#define TRANSPORT                   2     /**< see doc/Developers/objects */
 #define ROD                         3
 #define TREASURE                    4
 #define POTION                      5
@@ -146,15 +146,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define HELMET                      34
 #define HORN                        35
 #define MONEY                       36
-#define CLASS                       37    /* object for applying character class
+#define CLASS                       37    /**< Object for applying character class
                                            * modifications to someone */
 /*#define GRAVESTONE                38 */
 #define AMULET                      39
 #define PLAYERMOVER                 40
 #define TELEPORTER                  41
 #define CREATOR                     42
-#define SKILL                       43    /* also see SKILL_TOOL (74) below */
-#define EXPERIENCE                  44    /* This is basically obsolete now.
+#define SKILL                       43    /**< Also see ::SKILL_TOOL (74) below */
+#define EXPERIENCE                  44    /**< This is basically obsolete now.
                                            * It used to contain experience for
                                            * broad skill categories.  This
                                            * value is now automatically
@@ -166,31 +166,31 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BLINDNESS                   49
 #define GOD                         50
 
-#define DETECTOR                    51    /* peterm:  detector is an object */
-                                          /* which notices the presense of */
-                                          /* another object and is triggered */
-                                          /* like buttons.  */
-#define TRIGGER_MARKER              52    /* inserts an invisible, weightless */
-                                          /* force into a player with a
+#define DETECTOR                    51    /**< peterm:  detector is an object
+                                           * which notices the presense of
+                                           * another object and is triggered
+                                           * like buttons. */
+#define TRIGGER_MARKER              52    /**< inserts an invisible, weightless
+                                           * force into a player with a
                                            * specified string WHEN TRIGGERED. */
 #define DEAD_OBJECT                 53
 #define DRINK                       54
-#define MARKER                      55    /* inserts an invisible, weightless
+#define MARKER                      55    /**< inserts an invisible, weightless
                                            * force into a player with a
                                            * specified string. */
 #define HOLY_ALTAR                  56
 #define PLAYER_CHANGER              57
-#define BATTLEGROUND                58    /* battleground, by Andreas Vogl */
+#define BATTLEGROUND                58    /**< battleground, by Andreas Vogl */
 
-#define PEACEMAKER                  59    /* Object owned by a player which can
+#define PEACEMAKER                  59    /**< Object owned by a player which can
                                            * convert a monster into a peaceful
                                            * being incapable of attack.  */
 #define GEM                         60
 /*#define FIRECHEST                 61 */ /* FIRECHEST folded into FIREWALL */
 #define FIREWALL                    62
 /*#define ANVIL                     63 */
-#define CHECK_INV                   64    /* b.t. thomas@nomad.astro.psu.edu */
-#define MOOD_FLOOR                  65    /* b.t. thomas@nomad.astro.psu.edu
+#define CHECK_INV                   64    /**< b.t. thomas@nomad.astro.psu.edu */
+#define MOOD_FLOOR                  65    /**< b.t. thomas@nomad.astro.psu.edu
                                            * values of last_sp set how to
                                            * change:
                                            * 0 = furious, all monsters become
@@ -206,10 +206,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SHOP_FLOOR                  68
 #define SHOP_MAT                    69
 #define RING                        70
-#define FLOOR                       71    /* Floor tile -> native layer 0 */
-#define FLESH                       72    /* animal 'body parts' -b.t. */
-#define INORGANIC                   73    /* metals and minerals */
-#define SKILL_TOOL                  74    /* Allows the use of a skill */
+#define FLOOR                       71    /**< Floor tile -> native layer 0 */
+#define FLESH                       72    /**< animal 'body parts' -b.t. */
+#define INORGANIC                   73    /**< metals and minerals */
+#define SKILL_TOOL                  74    /**< Allows the use of a skill */
 #define LIGHTER                     75
 
 /* The trap_part, wall, light_source, misc_object, monster, and spawn_generator
@@ -217,20 +217,20 @@ error - Your ANSI C compiler should be defining __STDC__;
  */
 /*#define TRAP_PART                 76 */ /* Needed by set traps skill -b.t. */
 
-#define WALL                        77    /* Wall. Put it always in layer 1 if
+#define WALL                        77    /**< Wall. Put it always in layer 1 if
                                            * not set is_floor */
 /*#define LIGHT_SOURCE              78 */ /* torches, lamps, etc. */
-#define MISC_OBJECT                 79    /* misc. objects are for objects
+#define MISC_OBJECT                 79    /**< misc. objects are for objects
                                            * without a function in the engine.
                                            * Like statues, clocks, chairs...
                                            *  If perhaps we create a function
                                            * where we can sit on chairs, we
                                            * create a new type and remove all
                                            * chairs from here. */
-#define MONSTER                     80    /* A real, living creature */
+#define MONSTER                     80    /**< A real, living creature */
 /*#define SPAWN_GENERATOR           81 */ /* Spawn point or monster generator */
-#define LAMP                        82    /* Lamp */
-#define DUPLICATOR                  83    /* Duplicator/multiplier object */
+#define LAMP                        82    /**< Lamp */
+#define DUPLICATOR                  83    /**< Duplicator/multiplier object */
 /*#define TOOL                      84 */ /* Tool for building objects */
 #define SPELLBOOK                   85
 /*#define BUILDFAC                  86 */ /* Facilities for building objects */
@@ -263,11 +263,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DIRECTOR                    112
 #define GIRDLE                      113
 #define FORCE                       114
-#define POTION_EFFECT               115   /* A force, holding the effect of a
+#define POTION_EFFECT               115   /**< A force, holding the effect of a
                                            * potion */
-#define EVENT_CONNECTOR             116   /* Lauwenmark: an invisible object
+#define EVENT_CONNECTOR             116   /**< Lauwenmark: an invisible object
                                            * holding a plugin event hook */
-#define CLOSE_CON                   121   /* Eneq(@csd.uu.se): Id for
+#define CLOSE_CON                   121   /**< Eneq((at)csd.uu.se): Id for
                                            * close_container archetype. */
 #define CONTAINER                   122
 #define ARMOUR_IMPROVER             123
@@ -276,12 +276,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* unused: 125 - 129
  * type 125 was MONEY_CHANGER
  */
-#define SKILLSCROLL                 130   /* can add a skill to player's
+#define SKILLSCROLL                 130   /**< can add a skill to player's
                                            * inventory -bt.*/
 #define DEEP_SWAMP                  138
 #define IDENTIFY_ALTAR              139
 /*#define CANCELLATION              141*/ /* not used with new spell code */
-#define SHOP_INVENTORY              150   /* Mark Wedel (mark@pyramid.com) Shop
+#define SHOP_INVENTORY              150   /**< Mark Wedel (mark@pyramid.com) Shop
                                            * inventories */
 /*#define BALL_LIGHTNING            151*/ /* peterm:  ball lightning and color
                                            * spray */
@@ -295,11 +295,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define DISEASE                     158
 #define SYMPTOM                     159
 
-#define BUILDER                     160   /* Generic item builder, see subtypes
+#define BUILDER                     160   /**< Generic item builder, see subtypes
                                            * below */
-#define MATERIAL                    161   /* Material for building */
+#define MATERIAL                    161   /**< Material for building */
 
-#define OBJECT_TYPE_MAX             161   /* Update if you add new types */
+#define OBJECT_TYPE_MAX             161   /**< Update if you add new types */
 /* END TYPE DEFINE */
 /*@}*/
 
@@ -320,17 +320,20 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST_MAT_ITEM     3 /**< All other items, including doors & such. */
 /*@}*/
 
-/* definitions for weapontypes */
-
-#define WEAP_HIT	0  /* the basic */
-#define WEAP_SLASH	1  /* slash */
-#define WEAP_PIERCE	2  /* arrows, stiletto */
-#define WEAP_CLEAVE	3  /* axe */
-#define WEAP_SLICE	4  /* katana */
-#define WEAP_STAB	5  /* knife, dagger */
-#define WEAP_WHIP	6  /* whips n chains */
-#define WEAP_CRUSH	7  /* big hammers, flails */
-#define WEAP_BLUD	8  /* bludgeoning, club, stick */
+/**
+ * @defgroup TYPE_WEAPON Weapon types
+ */
+/*@{*/
+#define WEAP_HIT	0  /**< the basic */
+#define WEAP_SLASH	1  /**< slash */
+#define WEAP_PIERCE	2  /**< arrows, stiletto */
+#define WEAP_CLEAVE	3  /**< axe */
+#define WEAP_SLICE	4  /**< katana */
+#define WEAP_STAB	5  /**< knife, dagger */
+#define WEAP_WHIP	6  /**< whips n chains */
+#define WEAP_CRUSH	7  /**< big hammers, flails */
+#define WEAP_BLUD	8  /**< bludgeoning, club, stick */
+/*@}*/
 
 /** Link an object type with skill needed to identify, and general name. */
 typedef struct typedata {
@@ -483,148 +486,148 @@ typedef struct typedata {
 
 /* the flags themselves. */
 
-#define FLAG_ALIVE	 	0 /* Object can fight (or be fought) */
-#define FLAG_WIZ	 	1 /* Object has special privilegies */
-#define FLAG_REMOVED	 	2 /* Object is not in any map or invenory */
-#define FLAG_FREED	 	3 /* Object is in the list of free objects */
-#define FLAG_WAS_WIZ	 	4 /* Player was once a wiz */
-#define FLAG_APPLIED	 	5 /* Object is ready for use by living */
-#define FLAG_UNPAID	 	6 /* Object hasn't been paid for yet */
-#define FLAG_USE_SHIELD		7 /* Can this creature use a shield? */
+#define FLAG_ALIVE	 	0 /**< Object can fight (or be fought) */
+#define FLAG_WIZ	 	1 /**< Object has special privilegies */
+#define FLAG_REMOVED	 	2 /**< Object is not in any map or invenory */
+#define FLAG_FREED	 	3 /**< Object is in the list of free objects */
+#define FLAG_WAS_WIZ	 	4 /**< Player was once a wiz */
+#define FLAG_APPLIED	 	5 /**< Object is ready for use by living */
+#define FLAG_UNPAID	 	6 /**< Object hasn't been paid for yet */
+#define FLAG_USE_SHIELD		7 /**< Can this creature use a shield? */
 
-#define FLAG_NO_PICK	 	8 /* Object can't be picked up */
-#define FLAG_CLIENT_ANIM_SYNC 	9 /* Let client animate this, synchronized */
-#define FLAG_CLIENT_ANIM_RANDOM	10/* Client animate this, randomized */
-#define FLAG_ANIMATE		11 /* The object looks at archetype for faces */
+#define FLAG_NO_PICK	 	8 /**< Object can't be picked up */
+#define FLAG_CLIENT_ANIM_SYNC 	9 /**< Let client animate this, synchronized */
+#define FLAG_CLIENT_ANIM_RANDOM	10/**< Client animate this, randomized */
+#define FLAG_ANIMATE		11 /**< The object looks at archetype for faces */
 /*#define FLAG_SLOW_MOVE	12*//* Uses the stats.exp/1000 to slow down */
 /*#define FLAG_FLYING		13*//* Not affected by WALK_ON or SLOW_MOVE) */
-#define FLAG_MONSTER		14 /* Will attack players */
-#define FLAG_FRIENDLY		15 /* Will help players */
+#define FLAG_MONSTER		14 /**< Will attack players */
+#define FLAG_FRIENDLY		15 /**< Will help players */
 
-#define FLAG_GENERATOR		16 /* Will generate type ob->stats.food */
-#define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
-#define FLAG_AUTO_APPLY		18 /* Will be applied when created */
-#define FLAG_TREASURE		19 /* Will generate treasure when applied */
-#define FLAG_PLAYER_SOLD	20 /* Object was sold to a shop by a player. */
-#define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
-#define FLAG_CAN_ROLL		22 /* Object can be rolled */
-#define FLAG_OVERLAY_FLOOR	23 /* Object is an overlay floor */
-#define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
+#define FLAG_GENERATOR		16 /**< Will generate type ob->stats.food */
+#define FLAG_IS_THROWN		17 /**< Object is designed to be thrown. */
+#define FLAG_AUTO_APPLY		18 /**< Will be applied when created */
+#define FLAG_TREASURE		19 /**< Will generate treasure when applied */
+#define FLAG_PLAYER_SOLD	20 /**< Object was sold to a shop by a player. */
+#define FLAG_SEE_INVISIBLE 	21 /**< Will see invisible player */
+#define FLAG_CAN_ROLL		22 /**< Object can be rolled */
+#define FLAG_OVERLAY_FLOOR	23 /**< Object is an overlay floor */
+#define FLAG_IS_TURNABLE 	24 /**< Object can change face with direction */
 /*#define FLAG_WALK_OFF		25*//* Object is applied when left */
 /*#define FLAG_FLY_ON		26*//* As WALK_ON, but only with FLAG_FLYING */
 /*#define FLAG_FLY_OFF		27*//* As WALK_OFF, but only with FLAG_FLYING */
-#define FLAG_IS_USED_UP		28 /* When (--food<0) the object will exit */
-#define FLAG_IDENTIFIED		29 /* Player knows full info about item */
-#define FLAG_REFLECTING		30 /* Object reflects from walls (lightning) */
-#define FLAG_CHANGING		31 /* Changes to other_arch when anim is done*/
+#define FLAG_IS_USED_UP		28 /**< When (--food<0) the object will exit */
+#define FLAG_IDENTIFIED		29 /**< Player knows full info about item */
+#define FLAG_REFLECTING		30 /**< Object reflects from walls (lightning) */
+#define FLAG_CHANGING		31 /**< Changes to other_arch when anim is done*/
 
 /* Start of values in flags[1] */
-#define FLAG_SPLITTING		32 /* Object splits into stats.food other objs */
-#define FLAG_HITBACK		33 /* Object will hit back when hit */
-#define FLAG_STARTEQUIP		34 /* Object was given to player at start */
-#define FLAG_BLOCKSVIEW		35 /* Object blocks view */
-#define FLAG_UNDEAD		36 /* Monster is undead */
-#define FLAG_SCARED		37 /* Monster is scared (mb player in future)*/
-#define FLAG_UNAGGRESSIVE	38 /* Monster doesn't attack players */
-#define FLAG_REFL_MISSILE	39 /* Arrows will reflect from object */
+#define FLAG_SPLITTING		32 /**< Object splits into stats.food other objs */
+#define FLAG_HITBACK		33 /**< Object will hit back when hit */
+#define FLAG_STARTEQUIP		34 /**< Object was given to player at start */
+#define FLAG_BLOCKSVIEW		35 /**< Object blocks view */
+#define FLAG_UNDEAD		36 /**< Monster is undead */
+#define FLAG_SCARED		37 /**< Monster is scared (mb player in future)*/
+#define FLAG_UNAGGRESSIVE	38 /**< Monster doesn't attack players */
+#define FLAG_REFL_MISSILE	39 /**< Arrows will reflect from object */
 
-#define FLAG_REFL_SPELL		40 /* Spells (some) will reflect from object */
-#define FLAG_NO_MAGIC		41 /* Spells (some) can't pass this object */
-#define FLAG_NO_FIX_PLAYER	42 /* fix_object() won't be called */
-#define FLAG_IS_LIGHTABLE	43 /* object can be lit */
-#define FLAG_TEAR_DOWN		44 /* at->faces[hp*animations/maxhp] at hit */
-#define FLAG_RUN_AWAY		45 /* Object runs away from nearest player \
+#define FLAG_REFL_SPELL		40 /**< Spells (some) will reflect from object */
+#define FLAG_NO_MAGIC		41 /**< Spells (some) can't pass this object */
+#define FLAG_NO_FIX_PLAYER	42 /**< fix_object() won't be called */
+#define FLAG_IS_LIGHTABLE	43 /**< object can be lit */
+#define FLAG_TEAR_DOWN		44 /**< at->faces[hp*animations/maxhp] at hit */
+#define FLAG_RUN_AWAY		45 /**< Object runs away from nearest player \
 				      but can still attack at a distance */
 /*#define FLAG_PASS_THRU	46*/ /* Objects with can_pass_thru can pass \
 				      thru this object as if it wasn't there */
 /*#define FLAG_CAN_PASS_THRU	47*/ /* Can pass thru... */
 
 /*#define FLAG_PICK_UP		48*/ /* Can pick up */
-#define FLAG_UNIQUE		49 /* Item is really unique (UNIQUE_ITEMS) */
-#define FLAG_NO_DROP		50 /* Object can't be dropped */
-#define FLAG_WIZCAST		51 /* The wizard can cast spells in no-magic area */
-#define FLAG_CAST_SPELL		52 /* (Monster) can learn and cast spells */
-#define FLAG_USE_SCROLL		53 /* (Monster) can read scroll */
-#define FLAG_USE_RANGE		54 /* (Monster) can apply and use range items */
-#define FLAG_USE_BOW		55 /* (Monster) can apply and fire bows */
+#define FLAG_UNIQUE		49 /**< Item is really unique (UNIQUE_ITEMS) */
+#define FLAG_NO_DROP		50 /**< Object can't be dropped */
+#define FLAG_WIZCAST		51 /**< The wizard can cast spells in no-magic area */
+#define FLAG_CAST_SPELL		52 /**< (Monster) can learn and cast spells */
+#define FLAG_USE_SCROLL		53 /**< (Monster) can read scroll */
+#define FLAG_USE_RANGE		54 /**< (Monster) can apply and use range items */
+#define FLAG_USE_BOW		55 /**< (Monster) can apply and fire bows */
 
-#define FLAG_USE_ARMOUR		56 /* (Monster) can wear armour/shield/helmet */
-#define FLAG_USE_WEAPON		57 /* (Monster) can wield weapons */
-#define FLAG_USE_RING		58 /* (Monster) can use rings, boots, gauntlets, etc */
-#define FLAG_READY_RANGE	59 /* (Monster) has a range attack readied... 8) */
-#define FLAG_READY_BOW		60 /* not implemented yet */
-#define FLAG_XRAYS		61 /* X-ray vision */
-#define FLAG_NO_APPLY		62 /* Avoids step_on/fly_on to this object */
-#define FLAG_IS_FLOOR		63 /* Can't see what's underneath this object */
+#define FLAG_USE_ARMOUR		56 /**< (Monster) can wear armour/shield/helmet */
+#define FLAG_USE_WEAPON		57 /**< (Monster) can wield weapons */
+#define FLAG_USE_RING		58 /**< (Monster) can use rings, boots, gauntlets, etc */
+#define FLAG_READY_RANGE	59 /**< (Monster) has a range attack readied... 8) */
+#define FLAG_READY_BOW		60 /**< not implemented yet */
+#define FLAG_XRAYS		61 /**< X-ray vision */
+#define FLAG_NO_APPLY		62 /**< Avoids step_on/fly_on to this object */
+#define FLAG_IS_FLOOR		63 /**< Can't see what's underneath this object */
 
 /* Start of values in flags[2] */
-#define FLAG_LIFESAVE		64 /* Saves a players' life once, then destr. */
-#define FLAG_NO_STRENGTH	65 /* Strength-bonus not added to wc/dam */
-#define FLAG_SLEEP		66 /* NPC is sleeping */
-#define FLAG_STAND_STILL	67 /* NPC will not (ever) move */
-#define FLAG_RANDOM_MOVE	68 /* NPC will move randomly */
-#define FLAG_ONLY_ATTACK	69 /* NPC will evaporate if there is no enemy */
-#define FLAG_CONFUSED		70 /* Will also be unable to cast spells */
-#define FLAG_STEALTH		71 /* Will wake monsters with less range */
+#define FLAG_LIFESAVE		64 /**< Saves a players' life once, then destr. */
+#define FLAG_NO_STRENGTH	65 /**< Strength-bonus not added to wc/dam */
+#define FLAG_SLEEP		66 /**< NPC is sleeping */
+#define FLAG_STAND_STILL	67 /**< NPC will not (ever) move */
+#define FLAG_RANDOM_MOVE	68 /**< NPC will move randomly */
+#define FLAG_ONLY_ATTACK	69 /**< NPC will evaporate if there is no enemy */
+#define FLAG_CONFUSED		70 /**< Will also be unable to cast spells */
+#define FLAG_STEALTH		71 /**< Will wake monsters with less range */
 
-#define FLAG_WIZPASS		72 /* The wizard can go through walls */
-#define FLAG_IS_LINKED		73 /* The object is linked with other objects */
-#define FLAG_CURSED		74 /* The object is cursed */
-#define FLAG_DAMNED		75 /* The object is _very_ cursed */
-#define FLAG_SEE_ANYWHERE	76 /* The object will be visible behind walls */
-#define FLAG_KNOWN_MAGICAL	77 /* The object is known to be magical */
-#define FLAG_KNOWN_CURSED	78 /* The object is known to be cursed */
-#define FLAG_CAN_USE_SKILL	79 /* The monster can use skills */
+#define FLAG_WIZPASS		72 /**< The wizard can go through walls */
+#define FLAG_IS_LINKED		73 /**< The object is linked with other objects */
+#define FLAG_CURSED		74 /**< The object is cursed */
+#define FLAG_DAMNED		75 /**< The object is _very_ cursed */
+#define FLAG_SEE_ANYWHERE	76 /**< The object will be visible behind walls */
+#define FLAG_KNOWN_MAGICAL	77 /**< The object is known to be magical */
+#define FLAG_KNOWN_CURSED	78 /**< The object is known to be cursed */
+#define FLAG_CAN_USE_SKILL	79 /**< The monster can use skills */
 
-#define FLAG_BEEN_APPLIED	80 /* The object has been applied */
-#define FLAG_READY_SCROLL	81 /* monster has scroll in inv and can use it */
-#define FLAG_USE_ROD		82 /* (Monster) can apply and use rods */
+#define FLAG_BEEN_APPLIED	80 /**< The object has been applied */
+#define FLAG_READY_SCROLL	81 /**< monster has scroll in inv and can use it */
+#define FLAG_USE_ROD		82 /**< (Monster) can apply and use rods */
 /*#define FLAG_READY_HORN	83 unused (Monster) has a horn readied */
-#define FLAG_USE_HORN		84 /* (Monster) can apply and use horns */
-#define FLAG_MAKE_INVIS	        85 /* (Item) gives invisibility when applied */
-#define FLAG_INV_LOCKED		86 /* Item will not be dropped from inventory */
-#define FLAG_IS_WOODED		87 /* Item is wooded terrain */
+#define FLAG_USE_HORN		84 /**< (Monster) can apply and use horns */
+#define FLAG_MAKE_INVIS	        85 /**< (Item) gives invisibility when applied */
+#define FLAG_INV_LOCKED		86 /**< Item will not be dropped from inventory */
+#define FLAG_IS_WOODED		87 /**< Item is wooded terrain */
 
-#define FLAG_IS_HILLY		88 /* Item is hilly/mountain terrain */
-#define FLAG_READY_SKILL	89 /* (Monster or Player) has a skill readied */
-#define FLAG_READY_WEAPON	90 /* (Monster or Player) has a weapon readied */
-#define FLAG_NO_SKILL_IDENT	91 /* If set, item cannot be identified w/ a skill */
-#define FLAG_BLIND		92 /* If set, object cannot see (visually) */
-#define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */
-#define FLAG_IS_CAULDRON	94 /* container can make alchemical stuff */
+#define FLAG_IS_HILLY		88 /**< Item is hilly/mountain terrain */
+#define FLAG_READY_SKILL	89 /**< (Monster or Player) has a skill readied */
+#define FLAG_READY_WEAPON	90 /**< (Monster or Player) has a weapon readied */
+#define FLAG_NO_SKILL_IDENT	91 /**< If set, item cannot be identified w/ a skill */
+#define FLAG_BLIND		92 /**< If set, object cannot see (visually) */
+#define FLAG_SEE_IN_DARK	93 /**< if set ob not effected by darkness */
+#define FLAG_IS_CAULDRON	94 /**< container can make alchemical stuff */
 /*#define FLAG_DUST		95 *//* item is a 'powder', effects throwing */
 
 /* Start of values in flags[3] */
-#define FLAG_NO_STEAL		96 /* Item can't be stolen */
-#define FLAG_ONE_HIT		97 /* Monster can only hit once before going
+#define FLAG_NO_STEAL		96 /**< Item can't be stolen */
+#define FLAG_ONE_HIT		97 /**< Monster can only hit once before going
 				    * away (replaces ghosthit)
 				    */
-#define FLAG_CLIENT_SENT	98 /* THIS IS A DEBUG FLAG ONLY.  We use it to
+#define FLAG_CLIENT_SENT	98 /**< THIS IS A DEBUG FLAG ONLY.  We use it to
 				    * detect cases were the server is trying
 				    * to send an upditem when we have not
 				    * actually sent the item.
 				    */
 
-#define FLAG_BERSERK            99 /* monster will attack closest living
+#define FLAG_BERSERK            99 /**< monster will attack closest living
 				      object */
-#define FLAG_NEUTRAL            100 /* monster is from type neutral */
-#define FLAG_NO_ATTACK          101 /* monster don't attack */
-#define FLAG_NO_DAMAGE          102 /* monster can't be damaged */
-#define FLAG_OBJ_ORIGINAL       103 /* NEVER SET THIS.  Item was loaded by
+#define FLAG_NEUTRAL            100 /**< monster is from type neutral */
+#define FLAG_NO_ATTACK          101 /**< monster don't attack */
+#define FLAG_NO_DAMAGE          102 /**< monster can't be damaged */
+#define FLAG_OBJ_ORIGINAL       103 /**< NEVER SET THIS.  Item was loaded by
 				     * load_original_map() */
 /*#define FLAG_OBJ_SAVE_ON_OVL    104 *//* this object should be saved on
 				     * the overlay, and is not subject to
 				     * decay. */
-#define FLAG_ACTIVATE_ON_PUSH    105 /* connected object is activated when 'pushed' */
-#define FLAG_ACTIVATE_ON_RELEASE 106	/* connected object is activated when 'released' */
+#define FLAG_ACTIVATE_ON_PUSH    105 /**< connected object is activated when 'pushed' */
+#define FLAG_ACTIVATE_ON_RELEASE 106 /**< connected object is activated when 'released' */
 #define FLAG_IS_WATER            107
 #define FLAG_CONTENT_ON_GEN      108
-#define FLAG_IS_A_TEMPLATE       109 /* Object has no ingame life until instantiated*/
-#define FLAG_IS_BUILDABLE        110 /* Can build on item */
-#define FLAG_AFK                 111 /* Player is AFK */
-#define FLAG_BLESSED             112 /* Item has a blessing, opposite of cursed/damned. */
-#define FLAG_KNOWN_BLESSED       113 /* Item is known to be blessed. */
-#define NUM_FLAGS                113 /* Should always be equal to the last
+#define FLAG_IS_A_TEMPLATE       109 /**< Object has no ingame life until instantiated*/
+#define FLAG_IS_BUILDABLE        110 /**< Can build on item */
+#define FLAG_AFK                 111 /**< Player is AFK */
+#define FLAG_BLESSED             112 /**< Item has a blessing, opposite of cursed/damned. */
+#define FLAG_KNOWN_BLESSED       113 /**< Item is known to be blessed. */
+#define NUM_FLAGS                113 /**< Should always be equal to the last
                                       * defined flag.  If you change this,
                                       * make sure you update the flag_links
                                       * in common/loader.l
