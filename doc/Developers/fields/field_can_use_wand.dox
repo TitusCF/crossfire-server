@@ -1,0 +1,14 @@
+/**
+@fn obj::can_use_wand
+@section Use
+<table>
+	<tr>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</tr>	<tr>
+		<td>
+@ref page_type_212, @ref page_type_28
+		</td><td>    Monster is able to use wands and staves.</td>
+	</tr>
+
+*/

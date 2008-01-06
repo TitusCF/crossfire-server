@@ -1,0 +1,145 @@
+/**
+@var CONVERTER
+See @ref page_type_103
+*/
+
+/**
+@page page_type_103 Converter
+
+
+@section Description
+    Converters are like "exchange tables". When the player drops a
+    specific type of items, they get converted into other items, at a
+    predefined exchange-ratio. 
+
+
+
+Type defined by:
+- @ref object::type = 103
+
+
+@section Attributes
+
+<table>
+	<tr>
+		<th>Attribute</th>
+		<th>Field</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>block view</td>
+		<td>@ref FLAG_BLOCKSVIEW</td>
+		<td>    If an item is set to block view, players (and monsters) cannot
+    see beyond it unless they cross it or manage to stand on top.
+		</td>
+	</tr>
+	<tr>
+		<td>cost arch</td>
+		<td>@ref obj::slaying</td>
+		<td>    &lt;cost arch&gt; is the name of the archetype the player has to
+    put on the converter, as payment.
+		</td>
+	</tr>
+	<tr>
+		<td>cost number</td>
+		<td>@ref liv::food</td>
+		<td>    The player has to put &lt;cost number&gt; items of &lt;cost arch&gt;
+    on the converter, in order to get &lt;receive number&gt; items
+    of &lt;receive arch&gt;.
+		</td>
+	</tr>
+	<tr>
+		<td>description</td>
+		<td>@ref obj::msg</td>
+		<td>    This text may contain a description of the converter.
+		</td>
+	</tr>
+	<tr>
+		<td>elevation</td>
+		<td>@ref obj::elevation</td>
+		<td>    The elevation (height above sea level) of this tile. It is used for weather
+    calculations and should be in the range -32000..32000. The elevation of a
+    tile must be set in the bottom-most game object; elevation values for
+    non-bottom-most game objects are ignored by the Crossfire server.
+		</td>
+	</tr>
+	<tr>
+		<td>glow radius</td>
+		<td>@ref obj::glow_radius</td>
+		<td>    If &lt;glow radius&gt; is set to a value greater zero, the object
+    appears lit up on dark maps. &lt;glow radius&gt; can be a value
+    between 0 and 4, the higher, the more light does the object emit.
+		</td>
+	</tr>
+	<tr>
+		<td>identified</td>
+		<td>@ref FLAG_IDENTIFIED</td>
+		<td>    If an item is identified, the player has full knowledge about it.
+		</td>
+	</tr>
+	<tr>
+		<td>image</td>
+		<td>@ref obj::face</td>
+		<td>    The image-name defines what image is displayed for this object in-game.
+		</td>
+	</tr>
+	<tr>
+		<td>invisible</td>
+		<td>@ref obj::invisible</td>
+		<td>    Generally makes the object invisible. Depending on the object-type,
+    some can be made visible by the show_invisible spell. If in doubt, test it.
+    Putting an invisible object under the floor always prevents it from being
+    shown.
+		</td>
+	</tr>
+	<tr>
+		<td>material</td>
+		<td>@ref obj::material</td>
+		<td>    This bitmask-value informs the player of which material(s) the
+    object consists. Material does also affect how likely the object
+    can be destroyed by hazardous spell-effects.
+		</td>
+	</tr>
+	<tr>
+		<td>name</td>
+		<td>@ref obj::name</td>
+		<td>    This is the name of the object, displayed to the player.
+		</td>
+	</tr>
+	<tr>
+		<td>receive arch</td>
+		<td>@ref obj::other_arch</td>
+		<td>    &lt;receive arch&gt; is the name of the archetype to convert into.
+    This field is ignored if the converter has items in inventory. In this
+    case one of the inventory items is duplicated. The duplicated item is
+    randomly chosen from all items present.
+		</td>
+	</tr>
+	<tr>
+		<td>receive number</td>
+		<td>@ref liv::sp</td>
+		<td>    The player has to put &lt;cost number&gt; items of &lt;cost arch&gt;
+    on the converter, in order to get &lt;receive number&gt; items
+    of &lt;receive arch&gt;.
+		</td>
+	</tr>
+	<tr>
+		<td>smooth level</td>
+		<td>@ref obj::smoothlevel</td>
+		<td>    If &lt;smooth level&gt; is set to a value greater zero, the object will be
+    drawn partially over adjacent squares having a lower &lt;smooth level&gt;
+    value. The value must be between 0 and 255 (inclusive); 0 means &quot;never
+    overlap adjacent squares&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>weight</td>
+		<td>@ref obj::weight</td>
+		<td>    This value defines the object's weight in grams (1000g is 1kg). Objects with
+    zero weight are not pickable for players. Still, set the "non-pickable"-flag
+    for explicitly non-pickable objects (hey, this is opensource.. you
+    never know ;) ).
+		</td>
+	</tr>
+</table>
+*/

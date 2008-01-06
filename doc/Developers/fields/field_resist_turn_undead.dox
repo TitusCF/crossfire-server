@@ -1,0 +1,14 @@
+/**
+@fn obj::resist
+@section resist_turn_undead turn_undead resistance
+<table>
+	<tr>
+		<th>Type(s)</th>
+		<th>Description</th>
+	</tr>	<tr>
+		<td>
+@ref page_type_62, @ref page_type_212, @ref page_type_28, @ref page_type_214
+		</td><td>(no description)</td>
+	</tr>
+
+*/
