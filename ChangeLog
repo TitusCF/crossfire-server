@@ -15,6 +15,13 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New small program to extract information from Gridarta's types.xml file and
+generate doxygen documentation.
+ doc/Developers/fields/README
+ doc/Developers/types/README
+ utils/gridarta-types-convert.c
+Nicolas Weeger 2008-01-06
+
 Fix multipart holes not animating properly.
  server/time.c: use convenient animate_object function.
 Nicolas Weeger 2008-01-05

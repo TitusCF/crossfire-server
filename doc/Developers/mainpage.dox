@@ -20,7 +20,7 @@ Here is a list of topics:
 - @ref page_region
 - @ref page_treasure_list
 - @ref page_client
-- @ref todo
+- @ref type_index
 - @ref TYPE_BUILDER
 - @ref TYPE_MATERIAL
 - @ref PU_xxx
@@ -57,4 +57,5 @@ Here is a list of topics:
 - @ref OPT_xxx
 - @ref RM_LAYOUT
 - @ref EMOTE_xxx
+- @ref todo
 */
