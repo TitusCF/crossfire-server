@@ -1303,7 +1303,7 @@ int key_confirm_quit(object *op, char key)
     terminate_all_pets(op);
     remove_ob(op);
     op->direction=0;
-    draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
+    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
 			 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
 			 "%s quits the game.",
 			 "%s quits the game.",
