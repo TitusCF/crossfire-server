@@ -1,0 +1,9 @@
+Les commandes output-count et output-sync contrôlent la manière dont certains messages sont envoyés à la console du joueur.
+
+La commande output-count détermine après combien de messages du même type le serveur décide d'en notifier le client. Cette fonction permet de regrouper les messages et donc de réduire la "pollution" de la console du joueur par des dizaines de messages identiques.
+
+Usage:
+
+    output-count <valeur>
+
+valeur: définit combien de messages du même type doivent être produits avant qu'ils ne soient notifiés au joueur. Par exemple, si cette valeur est de 10, le message "10 fois vous avez tué un orc" serait affiché après avoir éliminé dix de tels ennemis et pas avant. La valeur par défaut est de 1, ce qui signifie qu'aucun regroupement de message n'est effectué - les messages sont envoyés dès l'instant où ils se sont produits.

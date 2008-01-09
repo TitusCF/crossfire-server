@@ -1,0 +1,9 @@
+Les commandes output-count et output-sync contrôlent la manière dont certains messages sont envoyés à la console du joueur.
+
+output-sync contrôle la fréquence avec laquelle l'information est envoyée à l'écran.
+
+Usage:
+
+    output-sync <ticks>
+
+ticks: Intervalle d'envoi. La valeur par défaut de 16 ticks correspond à environ 2 secondes.
