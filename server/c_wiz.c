@@ -1171,14 +1171,18 @@ int command_skills (object *op, char *params) {
  */
 int command_dump (object *op, char *params) {
     object *tmp;
-    char buf[HUGE_BUF];
+    StringBuffer *sb;
+    char *diff;
 
     tmp = get_dm_object(op->contr, &params, NULL);
     if (!tmp)
         return 1;
 
-    dump_object(tmp, buf, sizeof(buf));
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, buf, buf);
+    sb = stringbuffer_new();
+    dump_object(tmp, sb);
+    diff = stringbuffer_finish(sb);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff, diff);
+    free(diff);
     if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
 		      "Object is marked original", NULL);
@@ -2632,7 +2636,8 @@ int command_stack_clear(object *op, char *params) {
  */
 int command_diff(object *op, char *params) {
     object *left, *right, *top;
-    char diff[HUGE_BUF];
+    char *diff;
+    StringBuffer *sb;
     int left_from, right_from;
 
     top = NULL;
@@ -2677,16 +2682,15 @@ int command_diff(object *op, char *params) {
         }
     }
 
-    get_ob_diff(left, right, diff, HUGE_BUF);
-
-    if (diff[0]=='\0') {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-		      "Objects are the same.", NULL);
-        return 0;
+    sb = stringbuffer_new();
+    get_ob_diff(sb, left, right);
+    diff = stringbuffer_finish(sb);
+    if (*diff == '\0') {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, "Objects are the same.", NULL);
+    } else {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM, diff, NULL);
     }
-
-    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-		  diff, NULL);
+    free(diff);
     return 0;
 }
 

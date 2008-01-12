@@ -53,6 +53,7 @@ libcross_a_SOURCES = \
 	recipe.c\
 	region.c\
 	shstr.c\
+	stringbuffer.c\
 	time.c\
 	treasure.c\
 	utils.c

@@ -53,11 +53,16 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
     object *tmp;
 
     if(op->stats.wc < 0 || (int)op->stats.wc  >= NUM_ANIMATIONS(op)) {
-        char buf[HUGE_BUF];
+        StringBuffer *sb;
+        char *diff;
+
 	LOG(llevError,"Gate error: animation was %d, max=%d\n",op->stats.wc,
 	    NUM_ANIMATIONS(op));
-	dump_object(op, buf, sizeof(buf));
-	LOG(llevError,"%s\n",buf);
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError, "%s\n", diff);
+        free(diff);
 	op->stats.wc=0;
     }
 

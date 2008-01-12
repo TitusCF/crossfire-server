@@ -238,13 +238,11 @@ void init_archetable(void) {
  *
  * @param at
  * archetype to dump. Must not be NULL.
- * @param buf
+ * @param sb
  * buffer that will contain dumped information.
- * @param size
- * buf's size.
  */
-void dump_arch(archetype *at, char* buf, int size) {
-    dump_object(&at->clone, buf, size);
+void dump_arch(archetype *at, StringBuffer *sb) {
+    dump_object(&at->clone, sb);
 }
 
 /**
@@ -254,10 +252,16 @@ void dump_arch(archetype *at, char* buf, int size) {
  */
 void dump_all_archetypes(void) {
     archetype *at;
-    char buf[HUGE_BUF];
+
     for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
-        dump_arch(at, buf, sizeof(buf));
-        LOG(llevDebug, "%s\n", buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_arch(at, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevDebug, "%s\n", diff);
+        free(diff);
     }
 }
 

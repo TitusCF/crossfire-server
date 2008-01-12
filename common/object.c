@@ -47,6 +47,7 @@
 #include <skills.h>
 #include <loader.h>
 #include <sproto.h>
+#include "stringbuffer.h"
 
 static int compare_ob_value_lists_one(const object *, const object *);
 static int compare_ob_value_lists(const object *, const object *);
@@ -358,45 +359,53 @@ object *get_player_container(object *op) {
  *
  * @param op
  * object to dump. Can be NULL.
- * @param buf
+ * @param sb
  * buffer that will contain object information. Must not be NULL.
- * @param size
- * buf's size.
  */
-void dump_object(object *op, char* buf, int size) {
-    char cp[HUGE_BUF];
-
+void dump_object(object *op, StringBuffer *sb) {
     if(op==NULL) {
-        snprintf(buf, size, "[NULL pointer]");
+        stringbuffer_append_string(sb, "[NULL pointer]");
         return;
     }
 
     /*  object *tmp;*/
 
     if(op->arch!=NULL) {
-        snprintf(buf, size, "arch %s\n", op->arch->name?op->arch->name:"(null)");
+        stringbuffer_append_string(sb, "arch ");
+        stringbuffer_append_string(sb, op->arch->name ? op->arch->name : "(null)");
+        stringbuffer_append_string(sb, "\n");
 
-        get_ob_diff(op,&empty_archetype->clone, cp, HUGE_BUF);
-        if(cp[0]!='\0')
-            snprintf(buf + strlen(buf) , size - strlen(buf), cp);
+        get_ob_diff(sb, op, &empty_archetype->clone);
         if (op->more) {
-            snprintf(buf + strlen(buf), size - strlen(buf), "more %s\n", ltostr10(op->more->count));
+            stringbuffer_append_string(sb, "more ");
+            stringbuffer_append_string(sb, ltostr10(op->more->count));
+            stringbuffer_append_string(sb, "\n");
         }
         if (op->head) {
-            snprintf(buf + strlen(buf), size - strlen(buf), "head %s\n", ltostr10(op->head->count));
+            stringbuffer_append_string(sb, "head ");
+            stringbuffer_append_string(sb, ltostr10(op->head->count));
+            stringbuffer_append_string(sb, "\n");
         }
         if (op->env) {
-            snprintf(buf + strlen(buf), size - strlen(buf), "env %s\n", ltostr10(op->env->count));
+            stringbuffer_append_string(sb, "env ");
+            stringbuffer_append_string(sb, ltostr10(op->env->count));
+            stringbuffer_append_string(sb, "\n");
         }
         if (op->inv) {
-            snprintf(buf + strlen(buf), size - strlen(buf), "inv %s\n", ltostr10(op->inv->count));
+            stringbuffer_append_string(sb, "inv ");
+            stringbuffer_append_string(sb, ltostr10(op->inv->count));
+            stringbuffer_append_string(sb, "\n");
         }
         if (op->owner) {
-            snprintf(buf + strlen(buf), size - strlen(buf), "owner %s\n", ltostr10(op->owner->count));
+            stringbuffer_append_string(sb, "owner ");
+            stringbuffer_append_string(sb, ltostr10(op->owner->count));
+            stringbuffer_append_string(sb, "\n");
         }
-        snprintf(buf + strlen(buf), size - strlen(buf), "end\n");
+        stringbuffer_append_string(sb, "end\n");
     } else {
-        snprintf(buf + strlen(buf), size - strlen(buf), "Object %s\nend\n", op->name==NULL ? "(null)" : op->name);
+        stringbuffer_append_string(sb, "Object ");
+        stringbuffer_append_string(sb, op->name == NULL ? "(null)" : op->name);
+        stringbuffer_append_string(sb, "\nend\n");
     }
 }
 
@@ -409,10 +418,16 @@ void dump_object(object *op, char* buf, int size) {
  */
 void dump_all_objects(void) {
     object *op;
-    char buf[HUGE_BUF];
+
     for(op=objects;op!=NULL;op=op->next) {
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevDebug, "Object %d\n:%s\n", op->count, buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevDebug, "Object %d\n:%s\n", op->count, diff);
+        free(diff);
     }
 }
 
@@ -1226,10 +1241,15 @@ void free_object2(object *ob, int free_inventory) {
     object *tmp,*op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
-        char buf[HUGE_BUF];
+        StringBuffer *sb;
+        char *diff;
+
         LOG(llevDebug,"Free object called with non removed object\n");
-        dump_object(ob, buf, sizeof(buf));
-        LOG(llevError, buf);
+        sb = stringbuffer_new();
+        dump_object(ob, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError, diff);
+        free(diff);
 #ifdef MANY_CORES
         abort();
 #endif
@@ -1239,9 +1259,14 @@ void free_object2(object *ob, int free_inventory) {
         remove_friendly_object(ob);
     }
     if(QUERY_FLAG(ob,FLAG_FREED)) {
-        char buf[HUGE_BUF];
-        dump_object(ob, buf, sizeof(buf));
-        LOG(llevError,"Trying to free freed object.\n%s\n",buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(ob, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to free freed object.\n%s\n", diff);
+        free(diff);
         return;
     }
 
@@ -1456,9 +1481,14 @@ void remove_ob(object *op) {
     sint16 x,y;
 
     if(QUERY_FLAG(op,FLAG_REMOVED)) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to remove removed object.\n%s\n",buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to remove removed object.\n%s\n", diff);
+        free(diff);
         abort();
     }
     if(op->more!=NULL)
@@ -1564,11 +1594,20 @@ void remove_ob(object *op) {
          */
         /*TODO is this check really needed?*/
         if(GET_MAP_OB(m,x,y)!=op) {
-            char buf[HUGE_BUF];
-            dump_object(op, buf, sizeof(buf));
-            LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", buf);
-            dump_object(GET_MAP_OB(m,x,y), buf, sizeof(buf));
-            LOG(llevError,"%s\n",buf);
+            StringBuffer *sb;
+            char *diff;
+
+            sb = stringbuffer_new();
+            dump_object(op, sb);
+            diff = stringbuffer_finish(sb);
+            LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
+            free(diff);
+
+            sb = stringbuffer_new();
+            dump_object(GET_MAP_OB(m,x,y), sb);
+            diff = stringbuffer_finish(sb);
+            LOG(llevError,"%s\n", diff);
+            free(diff);
         }
         SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
     }
@@ -1911,15 +1950,25 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
         return NULL;
     }
     if(m==NULL) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to insert in null-map!\n%s\n",buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to insert in null-map!\n%s\n", diff);
+        free(diff);
         return op;
     }
     if(out_of_map(m,op->x,op->y)) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to insert object outside the map.\n%s\n", buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to insert object outside the map.\n%s\n", diff);
+        free(diff);
 #ifdef MANY_CORES
         /* Better to catch this here, as otherwise the next use of this object
          * is likely to cause a crash.  Better to find out where it is getting
@@ -1930,9 +1979,14 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
         return op;
     }
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", diff);
+        free(diff);
         return op;
     }
     if(op->more!=NULL) {
@@ -2402,15 +2456,25 @@ object *insert_ob_in_ob(object *op,object *where) {
     object *tmp, *otmp;
 
     if(!QUERY_FLAG(op,FLAG_REMOVED)) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to insert (ob) inserted object.\n%s\n", buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to insert (ob) inserted object.\n%s\n", diff);
+        free(diff);
         return op;
     }
     if(where==NULL) {
-        char buf[HUGE_BUF];
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError,"Trying to put object in NULL.\n%s\n", buf);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError,"Trying to put object in NULL.\n%s\n", diff);
+        free(diff);
         return op;
     }
     if (where->head) {

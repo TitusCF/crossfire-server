@@ -189,10 +189,15 @@ void animate_object(object *op, int dir) {
     int base_state; /* starting index # to draw from */
     int oldface = op->face->number;
     if(!op->animation_id || !NUM_ANIMATIONS(op)) {
-        char buf[HUGE_BUF];
+        StringBuffer *sb;
+        char *diff;
+
         LOG(llevError,"Object lacks animation.\n");
-        dump_object(op, buf, sizeof(buf));
-        LOG(llevError, buf);
+        sb = stringbuffer_new();
+        dump_object(op, sb);
+        diff = stringbuffer_finish(sb);
+        LOG(llevError, diff);
+        free(diff);
         return;
     }
     if (op->head) {

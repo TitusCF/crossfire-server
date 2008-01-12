@@ -1097,10 +1097,15 @@ void process_events ()
         if (QUERY_FLAG (op, FLAG_REMOVED) && op->type != PLAYER &&
             op->map && op->map->in_memory != MAP_IN_MEMORY)
         {
-            char buf[HUGE_BUF];
+            StringBuffer *sb;
+            char *diff;
+
             LOG (llevError, "BUG: process_events(): Removed object on list\n");
-            dump_object(op, buf, sizeof(buf));
-            LOG(llevError, "%s\n", buf);
+            sb = stringbuffer_new();
+            dump_object(op, sb);
+            diff = stringbuffer_finish(sb);
+            LOG(llevError, "%s\n", diff);
+            free(diff);
             free_object(op);
             continue;
         }

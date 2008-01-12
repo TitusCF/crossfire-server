@@ -1195,9 +1195,14 @@ int command_debug (object *op, char *params)
 int command_dumpbelow (object *op, char *params)
 {
     if (op && op->below) {
-        char buf[HUGE_BUF];
-	dump_object(op->below, buf, sizeof(buf));
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, buf, NULL);
+        StringBuffer *sb;
+        char *diff;
+
+        sb = stringbuffer_new();
+        dump_object(op->below, sb);
+        diff = stringbuffer_finish(sb);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, diff, NULL);
+        free(diff);
 
 	/* Let's push that item on the dm's stack */
 	dm_stack_push( op->contr, op->below->count );
