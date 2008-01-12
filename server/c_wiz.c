@@ -2412,7 +2412,7 @@ void dm_stack_push(player *pl, tag_t item) {
  * wizard.
  * @param params
  * object specified.
- * @param from 
+ * @param from
  * @return
  * pointed object, or NULL if nothing suitable was found.
  */

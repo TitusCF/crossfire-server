@@ -179,7 +179,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
 	SET_ANIMATION(op, op->stats.wc);
 	update_object(op,UP_OBJ_CHANGE);
     } /* gate is going up */
-    
+
     return METHOD_OK;
 }
 

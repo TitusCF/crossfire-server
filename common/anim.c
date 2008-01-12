@@ -227,7 +227,7 @@ void animate_object(object *op, int dir) {
     }
 
     /* If beyond drawable states, reset */
-    if (op->state>=max_state) 
+    if (op->state>=max_state)
     {
         op->state=0;
         if (op->temp_animation_id)
@@ -303,7 +303,7 @@ void apply_anim_suffix(object* who, sstring suffix) {
         for(;head!=NULL;head=head->more)
         {
             head->temp_animation_id = anim;
-            head->temp_anim_speed = 
+            head->temp_anim_speed =
                     animations[anim].num_animations/animations[anim].facings;
             head->temp_last_anim = 0;
             head->last_anim = 0;

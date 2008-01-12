@@ -443,7 +443,7 @@ Added a "removed" check in CrossfireObject.InsertInto
 This check is needed because backend proprety of
 cfapi issue error messages when it's not the case and
 the python CrossfireObject.RemoveObject issue a free
-that make object unusable. 
+that make object unusable.
 -------------------
 
 
