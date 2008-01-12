@@ -36,6 +36,8 @@
 #include <loader.h>
 #include <toolkit_common.h>
 
+#include "stringbuffer.h"
+
 
 void setup(void) {
   cctk_setdatadir(SOURCE_ROOT "lib");
@@ -207,14 +209,18 @@ START_TEST (test_dump_object)
   object *ob1;
   object *ob2;
   object *ob3;
-  char buf[HUGE_BUF];
+  StringBuffer *sb;
+  char *result;
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
   ob3 = cctk_create_game_object(NULL);
   insert_ob_in_ob(ob2,ob1);
   insert_ob_in_ob(ob3,ob2);
-  dump_object(ob1, buf, sizeof(buf));
-  fail_unless(strstr(buf,"arch")!=NULL,"The object dump should contain 'arch' but was %s",buf);
+  sb = stringbuffer_new();
+  dump_object(ob1, sb);
+  result = stringbuffer_finish(sb);
+  fail_unless(strstr(sb, "arch") != NULL, "The object dump should contain 'arch' but was %s", sb);
+  free(result);
 }
 END_TEST
 
