@@ -219,7 +219,7 @@ START_TEST (test_dump_object)
   sb = stringbuffer_new();
   dump_object(ob1, sb);
   result = stringbuffer_finish(sb);
-  fail_unless(strstr(sb, "arch") != NULL, "The object dump should contain 'arch' but was %s", sb);
+  fail_unless(strstr(result, "arch") != NULL, "The object dump should contain 'arch' but was %s", sb);
   free(result);
 }
 END_TEST
