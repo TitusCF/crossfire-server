@@ -22,6 +22,14 @@ Nicolas Weeger 2008-01-13
 Fix buffer overflows in get_ob_diff(), dump_object(), and dump_arch().
 Introduce a new module stringbuffer which implements a buffer that can hold
 variable-sized strings.
+ Makefile.am
+ common/anim.c arch.c loader.l object.c
+ include/global.h libproto.h Makefile.am
+ server/c_misc.c c_wiz.c server.c
+ types/gate/gate.c
+Added files:
+ common/stringbuffer.c
+ include/stringbuffer.h
 Andreas Kirschbaum 2008-01-12
 
 Added more French help translations.
