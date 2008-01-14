@@ -544,6 +544,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_ATTACK_NOKEY	    6	/* Keys are like attacks, so... */
 #define MSG_TYPE_ATTACK_NOATTACK    7	/* You avoid attacking */
 #define MSG_TYPE_ATTACK_PUSHED	    8	/* Pushed a friendly player */
+#define MSG_TYPE_ATTACK_MISS	    9	/* attack didn't hit */
 
 #define	MSG_TYPE_COMMUNICATION_RANDOM	1   /* Random event (coin toss) */
 #define	MSG_TYPE_COMMUNICATION_SAY	2   /* Player says something */

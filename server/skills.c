@@ -1898,9 +1898,14 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     }
 
     /* the more we carry, the less we can throw. Limit only on players */
-    maxc=max_carry[str]*1000;
-    if(op->carrying>maxc&&op->type==PLAYER)
-	load_factor = (float)maxc/(float) op->carrying;
+    /* This logic is basically grabbed right out of fix_object() */
+    if (op->type == PLAYER && 
+	op->carrying > (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT) &&
+        (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
+
+	 int extra_weight = op->carrying - weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT;
+         load_factor = (float) extra_weight / (float)(weight_limit[op->stats.Str] * (1.0 - FREE_PLAYER_LOAD_PERCENT));
+    }
 
     /* lighter items are thrown harder, farther, faster */
     if(throw_ob->weight>0)

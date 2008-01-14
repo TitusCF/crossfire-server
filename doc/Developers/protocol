@@ -1446,6 +1446,11 @@ can check this to know if it should expect a replyinfo to its requestinfo.
 SC version 1027 -> 1028: mostly remove obsolete commands:
  image, face, face1, map, map1, map1a, command
 
+SC version 1028 -> 1029: Changes the way weapon_speed is reported for
+  the player - version 1028 needed the client to divide weapon speed
+  by player speed to get actual valu, version 1029 just reports weapon
+  speed as it should be displayed.
+
 ------------------------------------------------------------------------------
 Todo:
 

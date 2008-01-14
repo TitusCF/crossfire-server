@@ -989,14 +989,29 @@ static void process_players1()
 	} /* end of for loop for all the players */
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
+	int has_action=1;
+
+	pl->ob->weapon_speed_left += pl->ob->weapon_speed;
+	if (pl->ob->weapon_speed_left > 1.0) pl->ob->weapon_speed_left=1.0;
+
         pl->socket.sounds_this_tick = 0;
+
 	if (settings.casting_time == TRUE) {
 	    if (pl->ob->casting_time > 0){
 		pl->ob->casting_time--;
+		has_action=0;
 	    }
 	}
+	/* If the character is idle (standing around resting) increase
+	 * regen rates.
+	 */
+	if (has_action && pl->ob->speed_left > 0) {
+	    pl->ob->last_heal -= 2;
+	    pl->ob->last_sp -= 2;
+	    pl->ob->last_grace -= 2;
+	    pl->ob->last_eat +=2;	/* Slow down food consumption */
+	}
 	do_some_living(pl->ob);
-/*	draw(pl->ob);*/	/* updated in socket code */
     }
 }
 
@@ -1020,8 +1035,6 @@ static void process_players2()
 	 * checking.
 	 */
 	if (pl->has_hit) {
-	    if (pl->ob->speed_left > pl->weapon_sp) pl->ob->speed_left = pl->weapon_sp;
-
 	    /* This needs to be here - if the player is running, we need to
 	     * clear this each tick, but new commands are not being received
 	     * so execute_newserver_command() is never called

@@ -104,8 +104,10 @@ void remove_locked_door(object *op) {
  *
  * @param gen
  * generator.
+ * @return
+ * TRUE if put a monster on a map, FALSE if did not
  */
-static void generate_monster_inv(object *gen) {
+static int generate_monster_inv(object *gen) {
     int i;
     int nx, ny;
     object *op,*head=NULL;
@@ -118,21 +120,21 @@ static void generate_monster_inv(object *gen) {
      */
     if (gen->map == NULL) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
-	return;
+	return FALSE;
     }
     /*First count number of objects in inv*/
     for (op=gen->inv;op;op=op->below)
         qty++;
     if (!qty){
         LOG(llevError,"Generator (%s) has no inventory in generate_monster_inv?\n", gen->name);
-        return;/*No inventory*/
-        }
+        return FALSE;/*No inventory*/
+    }
     qty=rndm(0,qty-1);
     for (op=gen->inv;qty;qty--)
         op=op->below;
     i=find_multi_free_spot_within_radius(op, gen, &nx, &ny);
     if (i==-1)
-        return;
+        return FALSE;
     head=object_create_clone(op);
     CLEAR_FLAG(head, FLAG_IS_A_TEMPLATE);
     unflag_inv (head,FLAG_IS_A_TEMPLATE);
@@ -143,11 +145,12 @@ static void generate_monster_inv(object *gen) {
         set_ob_key_value(head, "generator_code", code, 1);
     }
     insert_ob_in_map_at(head,gen->map,gen,0,nx,ny);
-    if (QUERY_FLAG(head, FLAG_FREED)) return;
+    if (QUERY_FLAG(head, FLAG_FREED)) return TRUE;
     fix_multipart_object(head);
     if(HAS_RANDOM_ITEMS(head))
         create_treasure(head->randomitems,head,GT_APPLY,
                       gen->map->difficulty,0);
+    return TRUE;
 }
 
 /**
@@ -157,8 +160,10 @@ static void generate_monster_inv(object *gen) {
  *
  * @param gen
  * generator.
+ * @return
+ * TRUE if monster was put on map, FALSE if not
  */
-static void generate_monster_arch(object *gen) {
+static int generate_monster_arch(object *gen) {
     int i;
     int nx, ny;
     object *op,*head=NULL,*prev=NULL;
@@ -167,7 +172,7 @@ static void generate_monster_arch(object *gen) {
 
     if(gen->other_arch==NULL) {
 	LOG(llevError,"Generator without other_arch: %s\n",gen->name);
-	return;
+	return FALSE;
     }
     /* Code below assumes the generator is on a map, as it tries
      * to place the monster on the map.  So if the generator
@@ -175,10 +180,10 @@ static void generate_monster_arch(object *gen) {
      */
     if (gen->map == NULL) {
 	LOG(llevError,"Generator (%s) not on a map?\n", gen->name);
-	return;
+	return FALSE;
     }
     i=find_multi_free_spot_within_radius(&at->clone, gen, &nx, &ny);
-    if (i==-1) return;
+    if (i==-1) return FALSE;
     while(at!=NULL) {
 	op=arch_to_object(at);
 	op->x=nx+at->clone.x;
@@ -188,12 +193,14 @@ static void generate_monster_arch(object *gen) {
 	    op->head=head,prev->more=op;
 
 	if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
-    code = get_ob_key_value(gen, "generator_code");
-    if(code){
-        set_ob_key_value(head, "generator_code", code, 1);
-    }
+
+	code = get_ob_key_value(gen, "generator_code");
+	if(code)
+	    set_ob_key_value(head, "generator_code", code, 1);
+
 	insert_ob_in_map(op,gen->map,gen,0);
-	if (QUERY_FLAG(op, FLAG_FREED)) return;
+	/* Did generate a monster, just didn't live very long */
+	if (QUERY_FLAG(op, FLAG_FREED)) return TRUE;
 	if(HAS_RANDOM_ITEMS(op))
 	    create_treasure(op->randomitems,op,GT_APPLY,
                       gen->map->difficulty,0);
@@ -202,6 +209,7 @@ static void generate_monster_arch(object *gen) {
 	prev=op;
 	at=at->more;
     }
+    return TRUE;
 }
 
 /**
@@ -211,45 +219,44 @@ static void generate_monster_arch(object *gen) {
  * generator.
  */
 static void generate_monster(object *gen) {
-    sint8 children;
-    sint8 max_children;
+    sint8 children, max_children;
     sint8 x, y;
     object *tmp;
-    const char *code;
-    const char *value;
+    const char *code, *value;
+    int did_gen=0;
 
     if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
         return;
-        /* See if generator has a generator_max limit set */
-    value = get_ob_key_value(gen, "generator_max");
+
+    value = get_ob_key_value(gen, "generator_max_map");
     if(value){
-        max_children = (sint8)strtol_local((char *)value, NULL, 10);
-        if( max_children < 1 )
-            return;
-        code = get_ob_key_value(gen, "generator_code");
-        if( code ){
-                /* Generator has a limit and has created some,
-                 * so count how many already exist
-                 */
-            children = 0;
-            for(x = 0; x < MAP_WIDTH(gen->map); x++){
-                for(y = 0; y < MAP_HEIGHT(gen->map); y++){
-                    for(tmp = get_map_ob(gen->map,x,y);
-                        tmp!=NULL; tmp=tmp->above){
-                        value = get_ob_key_value(tmp, "generator_code");
-                        if(value && value == code){
-                            children++;
-                        }
+	max_children = (sint8)strtol_local((char *)value, NULL, 10);
+	if( max_children < 1 )
+	    return;
+	code = get_ob_key_value(gen, "generator_code");
+	if( code ){
+	    /* Generator has a limit and has created some,
+	     * so count how many already exist
+	     */
+	    children = 0;
+	    for(x = 0; x < MAP_WIDTH(gen->map); x++){
+		for(y = 0; y < MAP_HEIGHT(gen->map); y++){
+		    for(tmp = get_map_ob(gen->map,x,y);
+			tmp!=NULL; tmp=tmp->above){
+			value = get_ob_key_value(tmp, "generator_code");
+			if(value && value == code){
+			    children++;
+			}
                     }
                 }
-            }
-                /* and return without generating if there are already enough */
+	    }
+	    /* and return without generating if there are already enough */
             if( children >= max_children+1 )
                 return;
-        } else {
-                /* Generator has a limit, but hasn't created anything yet,
-                 * so no need to count, just set code and go
-                 */
+        }  else {
+	    /* Generator has a limit, but hasn't created anything yet,
+	     * so no need to count, just set code and go
+	     */
             value = get_ob_key_value(gen, "generator_name");
             if( value ){
                 set_ob_key_value( gen, "generator_code", value, 1 );
@@ -258,12 +265,34 @@ static void generate_monster(object *gen) {
             } else {
                 set_ob_key_value( gen, "generator_code", "generator", 1 );
             }
-        }
-    }
+	}
+    } /* If this has a max map generator limit */
+
     if (QUERY_FLAG(gen,FLAG_CONTENT_ON_GEN))
-        generate_monster_inv(gen);
+        did_gen = generate_monster_inv(gen);
     else
-        generate_monster_arch(gen);
+        did_gen = generate_monster_arch(gen);
+
+    /* See if generator has a generator_max_map limit set */
+    value = get_ob_key_value(gen, "generator_limit");
+
+    /* Only do this if we actually made a monster.  If the generator
+     * was unable to create a monster (no space for example),
+     * we don't want to prematurely remove the generator.
+     */
+    if (value && did_gen) {
+	int limit=atoi(value), num_generated=0;
+
+	value = get_ob_key_value(gen, "generator_generated");
+	if (value) num_generated=atoi(value);
+
+	if (num_generated++ >= limit) {
+	    remove_ob(gen);
+	    free_object(gen);
+	} else {
+	    set_ob_key_value(gen, "generator_generated", ltostr10(num_generated), 1);
+	}
+    }
 }
 
 /**

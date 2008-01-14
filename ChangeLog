@@ -15,6 +15,65 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Commit combat rebalancing.  Combat is slower now, so less deadly.  If player
+is idle, they get faster hp/sp regen.  Allow generators to have limit on
+number of monsters they generate before disappearing.  Starting characters
+all have same stat total (re-rolling may make the distribution different,
+but total will be the same).  Add weapon_speed as an object attributed,
+and also add weapon_speed_left - distinct values fixes some odd speed
+bugs.  Change encumberance for players - character can carry some portion
+with no slowdown.  Allow more tuning for races (hp/sp/grace can be
+customized more)
+---
+common/exp.c: Refine exp calculator (for dump) for monsters.  This
+  isn't used in play, but system gave too much bonus for resistances
+  and speed, resulting in skewed exp values when using the dump values.
+common/living.c: Greatly reduce speed bonuses for high dex.  Reduce
+  damage and to hit bonuses from strength.  Remove max_carry.  Improve
+  disease handling - player gets speed penalty from worse disease.
+  Change speed benefits from magical devices.  For players, give them
+  extra hp/sp/grace based upon what the archetype says.  Reduce
+  rate of increase of wc and damage from melee skill.  Implement new
+  encumberance calculations.  Add code to calculate weapon speed.
+common/loader.l: Add support for loading an saving weapon_speed and 
+  weapon_speed_left.
+doc/Developers/objects: Update notes for the generators to detail
+  generator_limit
+doc/Developers/protocol: Add note about sc protocol 1029 (change way weapon
+  speed is calculated)
+include/config.h: Add new defines related to encumberance handling.  Also
+  add new define related to characters base weapon speed
+include/newclient.h: Add MSG_TYPE_ATTACK_MISS
+include/newserver.h: Bump up SC_VERSION because of weapon_speed handling.
+include/object.h: Add weapon_speed, weapon_speed_left to object structure.
+include/player.h: remove weapon_sp from player structure.
+lib/exp_table: Add new experience table to slows down character advancment.
+  (table D)
+server/attack.c: Display all attack messages, not just a portion of them.
+  With slower combat, this is still reasonable, and is useful in debugging
+  stages of combat.  If not all messages are to be displayed, this should
+  really be controlled by listen level and not random choice.
+server/login.c: Remove load/save support of weapon_sp in player file.
+  Now an object attribute handled in common/loader.l
+server/player.c: Keep rolling stat until total is 105 (arbitrary value) -
+  good for testing balance since all characters are closer in power.  Add
+  code to handle weapon_speed properly.
+server/server.c: Add weapon_speed_left handling.  Give boost to players
+  sp/hp/grace/food consumption when player is 'resting'
+server/skills.c: Change throw calculation based on new character encumberance
+server/skill_util.c: Add 'you miss foo' messages when attacking - otherwise
+  hard to know what is going on.
+server/time.c: Modify generator code for max limiting of monsters.
+  Functions that actually generate monsters were modified to return if
+  in fact they generated a monster, so that generator_limit only happens
+  if in fact that number of monsters were generated, not attempted to
+  generate (otherwise generators go poof in room full of monsters
+  because there is no space to make new monster).
+socket/request.c: Pull weapon_speed from object, not player structure
+  when sending to client
+---
+MSW 2008-01-13
+
 Fix invalid check in test unit, resulting in failure.
  test/unit/common/check_object.c
 Nicolas Weeger 2008-01-13

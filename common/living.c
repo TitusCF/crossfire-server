@@ -104,9 +104,13 @@ const int dex_bonus[MAX_STAT + 1]={
 
 /** speed_bonus, which uses dex as its stat */
 const float speed_bonus[MAX_STAT + 1]={
-  -0.4, -0.4, -0.3, -0.3, -0.2, -0.2, -0.2, -0.1, -0.1, -0.1, -0.05, 0, 0, 0,
-  0.05, 0.1, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.2, 1.4,
-  1.6, 1.8, 2.0, 2.5, 3.0
+    -0.1,				/* 0 */
+    -0.1, -0.1, -0.05, -0.05, -0.05,	/* 5 */
+    -0.05, 0.0, 0.0, 0.0, 0.0,		/* 10 */
+     0.05, 0.05, 0.05, 0.1, 0.1,	/* 15 */
+    0.1, 0.1, 0.1, 0.15, 0.15,		/* 20 */
+    0.15, 0.15, 0.2, 0.2, 0.2,		/* 25 */
+    0.2, 0.25, 0.25, 0.25, 0.25		/* 30 */
 };
 
 /**
@@ -114,18 +118,17 @@ const float speed_bonus[MAX_STAT + 1]={
  * strength.
  */
 const int dam_bonus[MAX_STAT + 1]={
-  -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,6,7,8,10,15
+  -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,6,7,8,9,10
 };
 
 /** THAC0 bonus */
 const int thaco_bonus[MAX_STAT + 1]={
-  -2,-2,-1,-1,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,10
-};
-
-/* Max you can carry before you start getting extra speed penalties */
-const int max_carry[MAX_STAT + 1]={
-  2,4,7,11,16,22,29,37,46,56,67,79,92,106,121,137,154,172,191,211,232,254,277,
-  301,326,352,400,450,500,600,1000
+    -2,-2,-2,-2,-1,-1,	/* 5 */
+    -1,-1,0,0,0,	/* 10 */
+    0,1,1,1,1,		/* 15 */
+    2,2,2,2,2,		/* 20 */
+    3,3,3,3,4,		/* 25 */
+    4,4,4,5,5		/* 30 */
 };
 
 /**
@@ -897,7 +900,7 @@ void add_statbonus(object *op) {
  */
 void fix_object(object *op) {
     int i,j;
-    float f,max=9,added_speed=0,bonus_speed=0, sp_tmp,speed_reduce_from_disease=1;
+    float max=9,added_speed=0, sp_tmp,speed_reduce_from_disease=1;
     int weapon_weight=0,weapon_speed=0;
     int best_wc=0, best_ac=0, wc=0, ac=0;
     int prot[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
@@ -1073,10 +1076,10 @@ void fix_object(object *op) {
                     op->body_used[i] += tmp->body_info[i];
             }
 
-            if(tmp->type==SYMPTOM) {
-                speed_reduce_from_disease = tmp->last_sp / 100.0;
-                if(speed_reduce_from_disease ==0)
-                    speed_reduce_from_disease = 1;
+            if(tmp->type==SYMPTOM && tmp->last_sp) {
+		/* Should take the worst disease of the bunch */
+		if (((float)tmp->last_sp / 100.0) < speed_reduce_from_disease)
+		    speed_reduce_from_disease = (float)tmp->last_sp / 100.0;
             }
 
             /* Pos. and neg. protections are counted seperate (-> pro/vuln).
@@ -1136,11 +1139,7 @@ void fix_object(object *op) {
             }
 
             if(tmp->stats.exp && tmp->type!=SKILL) {
-                if(tmp->stats.exp > 0) {
-                    added_speed+=(float)tmp->stats.exp/3.0;
-                    bonus_speed+=1.0+(float)tmp->stats.exp/3.0;
-                } else
-                    added_speed+=(float)tmp->stats.exp;
+                added_speed+=(float)tmp->stats.exp/3.0;
             }
 
             switch(tmp->type) {
@@ -1312,6 +1311,8 @@ void fix_object(object *op) {
         for(i=11;i<=op->level;i++)
             op->stats.maxhp+=2;
 
+	op->stats.maxhp += op->arch->clone.stats.maxhp;
+
         if(op->stats.hp>op->stats.maxhp)
             op->stats.hp=op->stats.maxhp;
 
@@ -1348,7 +1349,7 @@ void fix_object(object *op) {
                     stmp=1.0;
                 sp_tmp+=stmp;
             }
-            op->stats.maxsp=(int)sp_tmp;
+            op->stats.maxsp=(int)sp_tmp + op->arch->clone.stats.maxsp;
 
             for(i=11;i<=mana_obj->level;i++)
                 op->stats.maxsp+=2;
@@ -1387,7 +1388,7 @@ void fix_object(object *op) {
                     grace_tmp=1.0;
                 sp_tmp+=grace_tmp;
             }
-            op->stats.maxgrace=(int)sp_tmp;
+            op->stats.maxgrace=(int)sp_tmp + op->arch->clone.stats.maxgrace;
 
             /* two grace points per level after 11 */
             for(i=11;i<=grace_obj->level;i++)
@@ -1415,80 +1416,89 @@ void fix_object(object *op) {
          */
 
         if(op->type==PLAYER && wc_obj && wc_obj->level>1) {
-            wc-=(wc_obj->level+thaco_bonus[op->stats.Str]);
-            for(i=1;i<wc_obj->level;i++) {
-                /* addtional wc every 6 levels */
-                if(!(i%6)) wc--;
-                /* addtional dam every 4 levels. */
-                if(!(i%4) && (dam_bonus[op->stats.Str]>=0))
-                    op->stats.dam+=(1+(dam_bonus[op->stats.Str]/5));
-            }
-        } else
+            wc-=thaco_bonus[op->stats.Str];
+	    wc -= (wc_obj->level-1) / 5;
+	    op->stats.dam += (wc_obj->level -1 ) / 4;
+        } else {
             wc-=(op->level+thaco_bonus[op->stats.Str]);
+	}
+	op->stats.dam+=dam_bonus[op->stats.Str];
 
-            op->stats.dam+=dam_bonus[op->stats.Str];
+        if(op->stats.dam<1)
+            op->stats.dam=1;
 
-            if(op->stats.dam<1)
-                op->stats.dam=1;
+        op->speed = MAX_PLAYER_SPEED + speed_bonus[op->stats.Dex];
 
-            op->speed = 1.0 + speed_bonus[op->stats.Dex];
-            if (settings.search_items && op->contr->search_str[0])
-                op->speed -= 1;
-            if (op->attacktype==0)
-                op->attacktype=op->arch->clone.attacktype;
+        if (settings.search_items && op->contr->search_str[0])
+            op->speed -= 0.25;
+
+        if (op->attacktype==0)
+            op->attacktype=op->arch->clone.attacktype;
 
     } /* End if player */
+
+    if(op->type == PLAYER) {
+	/* First block is for encumbrance of the player */
+
+	float character_load=0.0;
+
+	/* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
+	 * think that it should never be the case if that is set to 1.0, that carrying
+	 * would be above the limit.  But it could be if character is weakened and
+	 * was otherwise at limit.  Without that safety, could get divide by zeros.
+	 */
+	if (op->carrying > (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT) &&
+	    (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
+	    int extra_weight = op->carrying - weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT;
+
+	    character_load = (float) extra_weight / (float)(weight_limit[op->stats.Str] * (1.0 - FREE_PLAYER_LOAD_PERCENT));
+
+	    /* character_load is used for weapon speed below, so sanitize value */
+	    if (character_load >=1.0) character_load=1.0;
+
+	    /* If a character is fully loaded, they will always get cut down to min
+	     * speed no matter what their dex.  Note that magic is below, so
+	     * still helps out.
+	     */
+	    if (op->speed > MAX_PLAYER_SPEED)
+		op->speed -= character_load * (op->speed - MIN_PLAYER_SPEED);
+	    else
+		op->speed -= character_load * (MAX_PLAYER_SPEED - MIN_PLAYER_SPEED);
+	}
+
+	/* This block is for weapon speed */
+	op->weapon_speed = BASE_WEAPON_SPEED +  speed_bonus[op->stats.Dex] - weapon_speed/20.0 +
+	    added_speed / 10.0;
+	if (wc_obj) {
+	    op->weapon_speed += 0.005 * wc_obj->level;
+	} else
+	    op->weapon_speed += 0.005 * op->level;
+
+	/* character_load=1.0 means character is fully loaded, 0.0 is unloaded.  Multiplying
+	 * by 0.2 for penalty is purely arbitrary, but slows things down without completely
+	 * stopping them.
+	 */
+	op->weapon_speed -= character_load * 0.2;
+
+	if (op->weapon_speed < 0.05) op->weapon_speed=0.05;
+	
+    }
+
+    op->speed = op->speed * speed_reduce_from_disease;
 
     /* Max is determined by armour */
     if(op->speed>max)
         op->speed=max;
 
-    if(added_speed>=0)
-        op->speed+=added_speed/10.0;
-    else /* Something wrong here...: */
-        op->speed /= (float)(1.0-added_speed);
+    op->speed+=added_speed/10.0;
 
-    op->speed+=bonus_speed/10.0; /* Not affected by limits */
-
-    if(op->type == PLAYER) {
-        /* f is a number the represents the number of kg above (positive num)
-         * or below (negative number) that the player is carrying.  If above
-         * weight limit, then player suffers a speed reduction based on how
-         * much above he is, and what is max carry is
-         */
-        f=(op->carrying/1000)-max_carry[op->stats.Str];
-        if(f>0)
-            op->speed=op->speed/(1.0+f/max_carry[op->stats.Str]);
-    }
 
     /* Put a lower limit on speed.  Note with this speed, you move once every
-     * 100 ticks or so.  This amounts to once every 12 seconds of realtime.
+     * 20 ticks or so.  This amounts to once every 3 seconds of realtime.
      */
-    op->speed = op->speed * speed_reduce_from_disease;
+    if (op->speed<0.05 && op->type==PLAYER)
+        op->speed=0.05;
 
-    if (op->speed<0.01 && op->type==PLAYER)
-        op->speed=0.01;
-
-    if(op->type == PLAYER) {
-        float M,W,s,D,K,S,M2;
-
-        /* (This formula was made by vidarl@ifi.uio.no)
-         * Note that we never used these values again - basically
-         * all of these could be subbed into one big equation, but
-         * that would just be a real pain to read.
-         */
-        M=(max_carry[op->stats.Str]-121)/121.0;
-        M2=max_carry[op->stats.Str]/100.0;
-        W=weapon_weight/20000.0;
-        s=2-weapon_speed/10.0;
-        D=(op->stats.Dex-14)/14.0;
-        K=1 + M/3.0 - W/(3*M2) + op->speed/5.0 + D/2.0;
-        K*=(4+op->level)/(float)(6+op->level)*1.2;
-        if(K<=0)
-            K=0.01;
-        S=op->speed/(K*s);
-        op->contr->weapon_sp=S;
-    }
     /* I want to limit the power of small monsters with big weapons: */
     if(op->type!=PLAYER&&op->arch!=NULL&&
        op->stats.dam>op->arch->clone.stats.dam*3)

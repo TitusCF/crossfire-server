@@ -770,7 +770,7 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
-    AddIfFloat(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
+    AddIfFloat(pl->last_weapon_sp, pl->ob->weapon_speed, CS_STAT_WEAP_SP);
     AddIfInt(pl->last_weight_limit, (sint32)weight_limit[pl->ob->stats.Str],
              CS_STAT_WEIGHT_LIM);
     flags=0;

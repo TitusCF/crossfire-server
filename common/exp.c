@@ -115,8 +115,16 @@ uint64 new_exp(const object *ob) {
          * the doubling is to take into account the table and resistances
          * are lower than they once were.
          */
-        prot_mult += (exp_prot_mult[i] * 200*ob->resist[i]) / 100.0;
+	/* prot_mult should increase by fairly minor amounts -
+	 * for example, if a creature has resist physical 30,
+	 * and exp mult on that is 0.4, then prot_mult should really
+	 * go up by 1.2 - still a considerable increase.
+	 */
+	prot_mult += (exp_prot_mult[i] * ob->resist[i]) / 10.0;
     }
+
+    if (prot_mult < 0) prot_mult = 1;
+
     spec_mult += (0.3*(QUERY_FLAG(ob,FLAG_SEE_INVISIBLE)!= FALSE)) +
         (0.5*(QUERY_FLAG(ob,FLAG_SPLITTING)!= FALSE))+
         (0.3*(QUERY_FLAG(ob,FLAG_HITBACK)!= FALSE)) +
@@ -132,7 +140,8 @@ uint64 new_exp(const object *ob) {
         ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
     exp *= (80.0/(70.0+ob->stats.wc)) * (80.0/(70.0+ob->stats.ac)) * (50.0+ob->stats.dam)/50.0;
     exp *= att_mult * prot_mult * spec_mult;
-    exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));
+/*    exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));*/
+    exp *= 2.0/(2.0-FABS(ob->speed));
     exp *= (20.0+ob->stats.Con)/20.0;
     if (QUERY_FLAG(ob, FLAG_STAND_STILL))
         exp /= 2;

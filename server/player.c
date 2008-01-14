@@ -947,7 +947,7 @@ void roll_stats(object *op) {
 	sum=op->stats.Str+op->stats.Dex+op->stats.Int+
 	    op->stats.Con+op->stats.Wis+op->stats.Pow+
 	    op->stats.Cha;
-    } while(sum<82||sum>116);
+    } while (sum!=105);	/* 116 used to be best possible character */
 
     /* Sort the stats so that rerolling is easier... */
     statsort[0] = op->stats.Str;
@@ -2471,11 +2471,11 @@ void move_player_attack(object *op, int dir)
 	     * it here is better than process_players2, which basically
 	     * incurred a 1 tick offset.
 	     */
-	    if (!op->contr->has_hit) {
-		op->speed_left += op->speed / op->contr->weapon_sp;
-
-		op->contr->has_hit = 1; /* The last action was to hit, so use weapon_sp */
+	    if (op->weapon_speed_left < 0) {
+		op->speed_left = -0.01;
+		return;
 	    }
+	    op->weapon_speed_left -= 1.0;
 
 	    skill_attack(mon, op, 0, NULL, NULL);
 

@@ -82,6 +82,60 @@
  *
  ***********************************************************************/
 
+/* These are basically experimental values right now - perhaps should
+ * be turned into settings values at load time, but want to make
+ * sure we go down this road before doing that.
+ *
+ * MIN_PLAYER_SPEED: If a player is fully loaded with junk, this is
+ * how slow the character will move.
+ *
+ * MAX_PLAYER_SPEED: If the player is unloaded, this is how fast the
+ * player will move.  Note that armor will still affect this (a
+ * character otherwise unloaded but wearing plate will be slower)
+ *
+ * FREE_PLAYER_LOAD_PERCENT: This value is how much of the players
+ * load is 'free' before it starts slowing them down - just because
+ * I pick up a book doesn't make me slower.
+ *
+ * Example:  Player has a max carrying capacity of 1000 kg.  If he is
+ * carrying 1000 KG, he moves at MIN_PLAYER_SPEED (0.25 by default).
+ * The free load is 0.50 (50%), which means he can carry 500 kg before
+ * he starts to slow down.  So if his load is anywhere between 0 and 500 kg
+ * and character is otherwise not wearing armor or other things that slow
+ * him down, he moves at 0.75
+ * Once he goes above 500 kg, his speed is now a linear difference of
+ * MIN and MAX.  With the nice round numbers chosen, it amounts to
+ * each 1 kg of look slows character down 0.001 (500 * 0.001 = 0.5,
+ * 0.75 - 0.5 = 0.25)
+ *
+ * The values can be adjusted in various ways - a free load percent
+ * of 1.0 means how much you carry does not affect movement speed.
+ * One could also adjust these values for slower of faster movement.
+ *
+ * 0.75 was chosen as default for fast movement as this gives room
+ * for magic (and other effects) to speed up the player, but speed
+ * still remain below 1.
+ *
+ * 0.25 was chosen as low end as that is still fairly slow (about
+ * 2 spaces/second), but not so slow to be really painful -
+ * typically it is low level characters that have this issue
+ * more, so I think this will improve playing quality.
+ */
+
+#define MIN_PLAYER_SPEED    0.25
+#define MAX_PLAYER_SPEED    0.75
+#define FREE_PLAYER_LOAD_PERCENT    0.50
+
+/*
+ * BASE_WEAPON_SPEED is sort of like the speed - what the characters
+ * weapon_speed is before we start factoring in bonuses & penalties.
+ * Want fast melee?  Increase this.  Slow melee?  decrease this.
+ * Note that weapon_speed decreases this, so generally you want
+ * to start higher, as there isn't a lot of things that
+ * will increase this
+ */
+#define BASE_WEAPON_SPEED   1.0
+
 /* Use balanced stat loss code?
  * This code is a little more merciful with repeated stat loss at lower
  * levels. Basically, the more stats you have lost, the less likely that

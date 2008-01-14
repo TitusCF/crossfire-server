@@ -192,7 +192,6 @@ typedef struct pl {
     object	*last_skill_ob[NUM_SKILLS];	/**< Exp objects sent to client. */
     sint64	last_skill_exp[NUM_SKILLS];	/**< Last exp sent to client. If != exp. obj update client. */
 
-    float	weapon_sp;	    /**< Penalties to speed when fighting w speed >ws/10. */
     float	last_weapon_sp;	    /**< if diff than weapon_sp, update client. */
     uint16	last_flags;	    /**< Fire/run on flags for last tick. */
     sint32	last_weight;	    /**< Last weight as sent to client; -1 means do not send weight. */

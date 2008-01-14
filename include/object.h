@@ -180,6 +180,8 @@ typedef struct obj {
     sint16	ox,oy;		/**< For debugging: Where it was last inserted */
     float	speed;		/**< The overall speed of this object */
     float	speed_left;	/**< How much speed is left to spend this round */
+    float	weapon_speed;		/**< The overall speed of this object */
+    float	weapon_speed_left;	/**< How much speed is left to spend this round */
     uint32	nrof;		/**< How many of the objects */
     New_Face	*face;		/**< Face with colors */
     sint8	direction;	/**< Means the object is moving that way. */

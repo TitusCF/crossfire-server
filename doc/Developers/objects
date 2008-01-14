@@ -14,8 +14,9 @@ Sections:
 	E. Using other objects (will_apply)
 	F. Treasure lists (randomitems)
 	G. Usage of certain flags for monsters
-	H. NPC's and their life - behaviours
-	I. NPC's Speak out - messages
+	H. Generators
+	I. NPC's and their life - behaviours
+	J. NPC's Speak out - messages
 
 3. Objects in general
 	A. Names (name, name_pl)
@@ -461,25 +462,41 @@ square of radius*2+1 tiles centered on the generator, to be exact.)  If this is
 not set, the radius defaults to 1, for legacy behavior.  Setting it to zero
 effectively turns off the generator.
 
-H.5 Maximum Number of Objects  (generator_max)
+H.5 Maximum Number of Objects on Map (generator_max_map)
 
 If this is set, it limits the number of objects the generator will create at
 one time.  Only objects on the same map are counted.  If objects are destroyed
 or leave the map, the generator will no longer count them and will be able to
-replace them.
+replace them.  If the generator is at its limit, the generator will still
+remain on the map, it just will not generate anything.
 
 H.6 Generator Name (generator_name)
 
 This value is used by the generator for marking and identifying the objects it
-creates, so it can count them to determine whether ''generator_max'' has been
-met.  This field is only used when ''generator_max'' is set.  If
+creates, so it can count them to determine whether ''generator_max_map'' has been
+met.  This field is only used when ''generator_max_map'' is set.  If
 ''generator_name'' is not set, the generator defaults to using its ''name'', or
 if that is not set, to ''"generator"''.  If multiple generators on the same map
 have the same ''generator_name'', they will claim the same monsters.  This is a
 feature, not a bug. :-)  It means that you could have four generators in the
 corners of a room, each named "four generators" and each with a
-''generator_max'' of 50, and they would create up to 50 total monsters, but in
+''generator_max_map'' of 50, and they would create up to 50 total monsters, but in
 different parts of the room, and possibly from different inventory lists.
+
+H.7 Maximum Objects Generator Will Create (generator_limit)
+
+This value limits how many objects the generator will create before it
+disappears.  The default is 0 (unlimited), but many of the archetypes now
+set this to a non zero value.  Upon creating the last creature, the generator
+will be removed from the map.
+
+H.8 Creatures Generated (generator_generated)
+
+This should never be set in archetypes or on maps, but it may sees on
+a swapped out map. It is the variable that holds how many monsters
+this generator has created - it is only used if generator_limit is set
+
+
 
 
 I. NPC's and their life:

@@ -315,7 +315,6 @@ int save_player(object *op, int flag) {
 
   fprintf(fp,"savebed_map %s\n", pl->savebed_map);
   fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
-  fprintf(fp,"weapon_sp %f\n",pl->weapon_sp);
   fprintf(fp,"Str %d\n",pl->orig_stats.Str);
   fprintf(fp,"Dex %d\n",pl->orig_stats.Dex);
   fprintf(fp,"Con %d\n",pl->orig_stats.Con);
@@ -620,8 +619,6 @@ void check_login(object *op) {
 	    pl->bed_x=value;
 	else if (!strcmp(buf,"bed_y"))
 	    pl->bed_y=value;
-	else if (!strcmp(buf,"weapon_sp"))
-	    sscanf(buf,"weapon_sp %f",&pl->weapon_sp);
         else if (!strcmp(buf,"Str"))
 	    pl->orig_stats.Str=value;
         else if (!strcmp(buf,"Dex"))

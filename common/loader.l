@@ -767,6 +767,10 @@ A	.+
 			}
 		    }
 ^speed_left{S}    op->speed_left = FVAL;
+
+^weapon_speed_left{S}    op->weapon_speed_left = FVAL;
+^weapon_speed{S}    op->weapon_speed = FVAL;
+
 ^slow_move{S}	    {	op->move_slow |= MOVE_WALK;
 			op->move_slow_penalty = FVAL;
 		    }
@@ -1502,6 +1506,12 @@ void get_ob_diff(StringBuffer *sb, object *op,object *op2) {
     }
     if(op->speed > 0 && op->speed_left!=op2->speed_left) {
         FAST_SAVE_DOUBLE(sb, "speed_left ", op->speed_left);
+    }
+    if (op->weapon_speed!=op2->weapon_speed) {
+        FAST_SAVE_DOUBLE(sb,"weapon_speed ",op->weapon_speed);
+    }
+    if(op->weapon_speed > 0 && op->weapon_speed_left!=op2->weapon_speed_left) {
+        FAST_SAVE_DOUBLE(sb,"weapon_speed_left ",op->weapon_speed_left);
     }
     if(op->move_status != op2->move_status)
         FAST_SAVE_LONG(sb, "move_state ", op->move_status);
