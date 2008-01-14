@@ -1196,7 +1196,7 @@ static int monster_use_range(object *head,object *part,object *pl,int dir)
             {
             /* Found a wand, let's see if it has charges left */
             at_least_one = 1;
-	        if( wand->stats.food<=0 )
+	    if( wand->stats.food<=0 )
                 continue;
 
             cast_spell( head, wand, dir, wand->inv, NULL );
