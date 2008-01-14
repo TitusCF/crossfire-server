@@ -86,6 +86,9 @@ evergreens_1.111 empty_S.111
 farmland.111 empty_S.111
 fcross-blue.111 empty_S.111
 fcross-white.111 empty_S.111
+fireball.111 fireball_S.111
+fireball.112 fireball_S.112
+fireball.113 fireball_S.113
 flagstone.111 flagstone_S.111
 footpath_0.111 grass_S.111
 footpath_1.111 grass_S.111
@@ -198,7 +201,7 @@ snow.111 empty_S.111
 snow2.111 empty_S.111
 snow3.111 empty_S.111
 snow4.111 empty_S.111
-snow5.111 empty_S.111
+snow5.111 snow5_S.111
 steppe.111 steppe_S.111
 stfloor.111 empty_S.111
 swamp.111 swamp_S.111
@@ -250,4 +253,3 @@ woodlarge.111 empty_S.111
 woods_1.111 sgrass_S.111
 woods_2.111 woods_2_S.111
 woods_3.111 sgrass_S.111
-woods_4.111 grass_S.111
