@@ -29,7 +29,8 @@
 
 /**
  * @file common/treasure.c
- * Everything concerning treasures.
+ * Everything concerning treasures and artifacts.
+ * @see page_treasure_list
  */
 
 #define ALLOWED_COMBINATION
@@ -81,6 +82,7 @@ void init_archetype_pointers(void) {
  *
  * @note
  * will call fatal() if memory allocation error.
+ * @ingroup page_treasure_list
  */
 static treasurelist *get_empty_treasurelist(void) {
     treasurelist *tl = (treasurelist *) malloc(sizeof(treasurelist));
@@ -98,6 +100,7 @@ static treasurelist *get_empty_treasurelist(void) {
  *
  * @note
  * will call fatal() if memory allocation error.
+ * @ingroup page_treasure_list
  */
 static treasure *get_empty_treasure(void) {
     treasure *t = (treasure *) calloc(1,sizeof(treasure));
@@ -126,6 +129,7 @@ static treasure *get_empty_treasure(void) {
  *
  * @todo
  * check if change_name is still used, and remove it if no.
+ * @ingroup page_treasure_list
  */
 static treasure *load_treasure(FILE *fp, int *line) {
     char buf[MAX_BUF], *cp, variable[MAX_BUF];
@@ -188,6 +192,7 @@ static treasure *load_treasure(FILE *fp, int *line) {
  * treasure to check.
  * @param tl
  * needed only so that the treasure name can be printed out.
+ * @ingroup page_treasure_list
  */
 static void check_treasurelist(const treasure *t, const treasurelist *tl)
 {
@@ -210,6 +215,7 @@ static void check_treasurelist(const treasure *t, const treasurelist *tl)
  * Each treasure is parsed with the help of load_treasure().
  *
  * Will LOG() if file can't be accessed.
+ * @ingroup page_treasure_list
  */
 void load_treasures(void) {
     FILE *fp;
@@ -280,6 +286,7 @@ void load_treasures(void) {
  * treasure list to search.
  * @return
  * match, or NULL if treasurelist doesn't exist or is 'none'.
+ * @ingroup page_treasure_list
  */
 treasurelist *find_treasurelist(const char *name) {
     const char *tmp=find_string(name);
@@ -309,6 +316,7 @@ treasurelist *find_treasurelist(const char *name) {
  * for which object the treasure is being generated.
  * @param flags
  * combination of @ref GT_xxx values.
+ * @ingroup page_treasure_list
  */
 static void put_treasure (object *op, object *creator, int flags)
 {
@@ -337,6 +345,7 @@ static void put_treasure (object *op, object *creator, int flags)
  * treasure.
  * @param op
  * actual generated treasure.
+ * @ingroup page_treasure_list
  */
 static void change_treasure(treasure *t, object *op)
 {
@@ -376,6 +385,7 @@ static void change_treasure(treasure *t, object *op)
  * map difficulty.
  * @param tries
  * to avoid infinite recursion.
+ * @ingroup page_treasure_list
  */
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
     object *tmp;
@@ -421,6 +431,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
  *
  * @note
  * can abort() if treasure has errors.
+ * @ingroup page_treasure_list
  */
 void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int tries)
 {
@@ -481,6 +492,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
  * map difficulty.
  * @param tries
  * to avoid infinite recursion.
+ * @ingroup page_treasure_list
  */
 void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int tries)
 {
@@ -507,6 +519,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  * treasure difficulty.
  * @return
  * generated treasure. Can be NULL if no suitable treasure was found.
+ * @ingroup page_treasure_list
  */
 object *generate_treasure(treasurelist *t, int difficulty)
 {
