@@ -1167,6 +1167,7 @@ static void initConstants(PyObject* module)
         { "KICK", EVENT_KICK },
         { "MAPUNLOAD", EVENT_MAPUNLOAD },
         { "MAPLOAD", EVENT_MAPLOAD },
+        { "USER", EVENT_USER },
         { NULL, 0 } };
 
 
