@@ -129,6 +129,8 @@ static unsigned int query_flags(const object *op)
         flags |= F_UNPAID;
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
         flags |= F_LOCKED;
+    if (QUERY_FLAG(op, FLAG_KNOWN_BLESSED) && QUERY_FLAG(op, FLAG_BLESSED))
+       flags |= F_BLESSED;
 
     return flags;
 }
