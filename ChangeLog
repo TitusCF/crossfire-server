@@ -15,6 +15,10 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Solved an issue about the portability of strerror_r.
+ common/porting.c
+Yann "gros" Chachkoff, 2008-01-25
+
 Add F_BLESSED to send blessed status to client.
  include/newclient.h
  socket/item.c

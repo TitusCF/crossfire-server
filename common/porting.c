@@ -488,7 +488,11 @@ int snprintf(char *dest, int max, const char *format, ...)
 char *strerror_local(int errnum, char* buf, int size)
 {
 #if defined(HAVE_STRERROR)
-    strerror_r(errnum, buf, size);
+    char* bbuf;
+    buf[0]=0;
+    bbuf = (char*)strerror_r(errnum, buf, size);
+    if ((buf[0]==0)&&(bbuf!=NULL))
+        strncpy(buf,bbuf,size);
 #else
     snprintf(buf, size, "strerror_local not implemented");
 #endif
