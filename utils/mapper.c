@@ -131,7 +131,7 @@
  *  - REGIONNAME: region name.
  *
  *
- * To build this program, from the lib dir:
+ * To build this program, from the utils directory:
  *  gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd
  */
 
@@ -169,6 +169,7 @@ int generate_index = 1;    /**< Whether to do the map index or not. */
 int size_small = 16;       /**< Tile size for small map */
 int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
 int show_maps = 0;         /**< If set, will generate much information on map loaded. */
+int world_map = 1;         /**< If set, will generate a world map. */
 
 char* world_template;                 /**< World map template. */
 char* world_row_template;             /**< One row in the world map. */
@@ -245,6 +246,12 @@ int color_linked_exit;      /**< Exit leading to another map. */
 int color_road;             /**< Road or equivalent. */
 int color_blocking;         /**< Block all movement. */
 int color_slowing;          /**< Slows movement. */
+
+/* Links between regions */
+int do_regions_link = 0;
+char** regions_link;
+int regions_link_count = 0;
+int regions_link_allocated = 0;
 
 /**
  * Checks if ::object is considered a road or not.
@@ -673,6 +680,34 @@ static void save_picture(FILE* file, gdImagePtr pic) {
         gdImageJpeg(pic, file, jpeg_quality);
 }
 
+static void add_region_link(mapstruct* source, mapstruct* dest, const char* linkname) {
+    int search = 0;
+    char entry[500];
+    region* s, *d;
+
+    s = get_region_by_map(source);
+    d = get_region_by_map(dest);
+    if (s == d)
+        return;
+
+    if (linkname && 0)
+        snprintf(entry, sizeof(entry), "%s -> %s [ label = \"%s\" ]\n", s->name, d->name, linkname);
+    else
+        snprintf(entry, sizeof(entry), "%s -> %s\n", s->name, d->name);
+
+    for (search = 0; search < regions_link_count; search++) {
+        if (strcmp(regions_link[search], entry) == 0)
+            return;
+    }
+
+    if (regions_link_count == regions_link_allocated) {
+        regions_link_allocated += 10;
+        regions_link = realloc(regions_link, sizeof(const char*) * regions_link_allocated);
+    }
+    regions_link[regions_link_count] = strdup(entry);
+    regions_link_count++;
+}
+
 /**
  * Processes a map.
  *
@@ -801,6 +836,17 @@ void domap(const char* name)
             {
                 add_map(exit_path, &exits, &exits_count, &exits_allocated);
                 add_map(exit_path, &maps_list, &maps_count, &count_allocated);
+                if (do_regions_link) {
+                    mapstruct* link = ready_map_name(exit_path, 0);
+                    if (link && link != m) {
+                        /* no need to link a map with itself. Also, if the exit points to the same map, we don't
+                        * want to reset it. */
+                        add_region_link(m, link, NULL);
+                        link->reset_time = 1;
+                        link->in_memory = MAP_IN_MEMORY;
+                        delete_map(link);
+                    }
+                }
             }
         }
 
@@ -861,6 +907,17 @@ void domap(const char* name)
                             {
                                 add_map(exit_path, &exits, &exits_count, &exits_allocated);
                                 add_map(exit_path, &maps_list, &maps_count, &count_allocated);
+                                if (do_regions_link) {
+                                    mapstruct* link = ready_map_name(exit_path, 0);
+                                    if (link && link != m) {
+                                        /* no need to link a map with itself. Also, if the exit points to the same map, we don't
+                                         * want to reset it. */
+                                        add_region_link(m, link, item->arch->clone.name);
+                                        link->reset_time = 1;
+                                        link->in_memory = MAP_IN_MEMORY;
+                                        delete_map(link);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1171,7 +1228,7 @@ void do_region_index() {
     for (reg = 0; reg < region_count; reg++) {
         region = regions[reg];
         sprintf(file, "%s.html", region->name);
-        values[2] = region->name;
+        values[2] = get_region_longname(get_region_by_name(region->name));
         txt = cat_template(txt, do_template(index_region_region_template, vars, values));
     }
     vars[1] = "REGIONS";
@@ -1195,7 +1252,7 @@ void do_region_index() {
  * Generates a big world map.
  */
 void do_world_map() {
-#define SIZE 32
+#define SIZE 50
     int x, y;
     FILE* out;
     int wx, wy;
@@ -1215,6 +1272,9 @@ void do_world_map() {
     int regenerated = 0;
     gdFontPtr font;
     int region, color;
+
+    if (!world_map)
+        return;
 
     printf("Generating world map in world.html...");
     fflush(stdout);
@@ -1428,6 +1488,24 @@ void write_world_info() {
     infomap = NULL;
 }
 
+void write_regions_link() {
+    int link;
+    if (!do_regions_link)
+        return;
+
+    printf("Writing regions link file...");
+    FILE* file;
+    char path[MAX_BUF];
+    snprintf(path, sizeof(path), "%s/%s", root, "region_links.dot");
+    file = fopen(path, "wb+");
+    fprintf(file, "digraph {\n");
+    for (link = 0; link < regions_link_count; link++)
+        fprintf(file, regions_link[link]);
+    fprintf(file, "}\n");
+    fclose(file);
+    printf("done.\n");
+}
+
 /**
  * Prints usage information, and exit.
  *
@@ -1449,6 +1527,9 @@ void do_help(const char* program) {
     printf("  -rawmaps            generates maps pics without items on random (shop, treasure) tiles.\n");
     printf("  -warnnopath         inform when an exit has no path set.\n");
     printf("  -listunusedmaps     finds all unused maps in the maps directory.\n");
+    printf("  -noworldmap         don't write the world map in world.png.\n");
+    printf("  -noregionslink      don't generate regions relation file.\n");
+    printf("  -regionslink        generate regions relation file.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1468,17 +1549,17 @@ void do_parameters(int argc, char** argv) {
     root[0] = '\0';
 
     while (arg < argc) {
-        if (strncmp(argv[arg], "-nopics", 7) == 0)
+        if (strcmp(argv[arg], "-nopics") == 0)
             generate_pics = 0;
-        else if (strncmp(argv[arg], "-noindex", 8) == 0)
+        else if (strcmp(argv[arg], "-noindex") == 0)
             generate_index = 0;
         else if (strncmp(argv[arg], "-root=", 6) == 0)
             strncpy(root, argv[arg] + 6, 500);
         else if (strncmp(argv[arg], "-limit=", 7) == 0)
             map_limit = atoi(argv[arg] + 7);
-        else if (strncmp(argv[arg], "-showmaps", 9) == 0)
+        else if (strcmp(argv[arg], "-showmaps") == 0)
             show_maps = 1;
-        else if (strncmp(argv[arg], "-jpg", 4) == 0) {
+        else if (strcmp(argv[arg], "-jpg") == 0) {
             output_format = OF_JPG;
             if (argv[arg][4] == '=') {
                 jpeg_quality = atoi(argv[arg] + 5);
@@ -1486,7 +1567,7 @@ void do_parameters(int argc, char** argv) {
                     jpeg_quality = -1;
             }
         }
-        else if (strncmp(argv[arg], "-forcepics", 10) == 0)
+        else if (strcmp(argv[arg], "-forcepics") == 0)
             force_pics = 1;
         else if (strncmp(argv[arg], "-addmap=", 8) == 0) {
             if (*(argv[arg] + 8) == '/')
@@ -1495,12 +1576,18 @@ void do_parameters(int argc, char** argv) {
                 snprintf(path, 500, "/%s", argv[arg] + 8);
             add_map(path, &maps_list, &maps_count, &count_allocated);
         }
-        else if (strncmp(argv[arg], "-rawmaps", 8) == 0)
+        else if (strcmp(argv[arg], "-rawmaps") == 0)
             rawmaps = 1;
-        else if (strncmp(argv[arg], "-warnnopath", 11) == 0)
+        else if (strcmp(argv[arg], "-warnnopath") == 0)
             warn_no_path = 1;
-        else if (strncmp(argv[arg], "-listunusedmaps", 15) == 0)
+        else if (strcmp(argv[arg], "-listunusedmaps") == 0)
             list_unused_maps = 1;
+        else if (strcmp(argv[arg], "-noworldmap") == 0)
+            world_map = 0;
+        else if (strcmp(argv[arg], "-noregionslink") == 0)
+            do_regions_link = 0;
+        else if (strcmp(argv[arg], "-regionslink") == 0)
+            do_regions_link = 1;
         else
             do_help(argv[0]);
         arg++;
@@ -1621,6 +1708,8 @@ int main(int argc, char** argv)
     printf("  generate raw maps:                   %s\n", yesno(rawmaps));
     printf("  warn of exit without path:           %s\n", yesno(warn_no_path));
     printf("  list unused maps:                    %s\n", yesno(list_unused_maps));
+    printf("  generate world map:                  %s\n", yesno(world_map));
+    printf("  generate regions link file:          %s\n", yesno(do_regions_link));
     printf("\n");
 
     if (list_unused_maps) {
@@ -1666,6 +1755,8 @@ int main(int argc, char** argv)
     do_maps_index();
     do_world_map();
     write_world_info();
+
+    write_regions_link();
 
     return 0;
 }
