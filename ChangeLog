@@ -15,10 +15,14 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+.cvsignore files created in types subdirectories and svn:ignore set.
+Kevin Bulgrien
+  
 Spelling mistakes corrected.
   README
   configure.ac
   doc/crossfire-server.man
+Kevin Bulgrien
 
 Solved an issue about the portability of strerror_r.
  common/porting.c
