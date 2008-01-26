@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix template plugin generation and compilation.
+ plugins/template/plugin_template.c: fix compilation and parameter order for strncpy.
+ plugins/template/create_plugin.sh: missing "exit" to quit if no name.
+Nicolas Weeger, 2008-01-26
+
 utils/mapper.c: new option, "-regionslink", to generate a .dot file containing
  relationship between regions. New option "-noworldmap" to not generate the full
  world map. Use region's longname instead of the short name in regions index.

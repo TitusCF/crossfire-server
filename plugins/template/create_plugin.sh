@@ -17,8 +17,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #    The authors can be reached via e-mail at crossfire-devel@real-time.com
-							*/
-
+#
 # This script creates a plugin from the template directory.
 # The plugin will have for id (slaying field in events) the first argument,
 # and for name an optional second argument, or the id.
@@ -34,6 +33,7 @@
 if test  "x$1" = "x"  ; then
 	echo "This script creates a plugin from the template directory."
 	echo "Usage: $0 plugin_id [plugin_name]"
+	exit
 fi
 
 ID=$1

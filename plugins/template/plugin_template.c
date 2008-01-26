@@ -98,8 +98,6 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 
         /** Check if plugin handles custom command */
         return NULL;
-        }
-        return NULL;
     } else if (!strcmp(propname, "Identification")) {
         buf = va_arg(args, char*);
         size = va_arg(args, int);
@@ -275,7 +273,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     context->fix         = va_arg(args, int);
     context->event       = va_arg(args, object*);
     context->event_code  = context->event->subtype;
-    strncpy(context->options, sizeof(context->options), context->event->name);
+    strncpy(context->options, context->event->name, sizeof(context->options));
     context->returnvalue = 0;
     va_end(args);
 
