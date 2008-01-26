@@ -289,7 +289,7 @@ AC_MSG_NOTICE([    Will put server runtime datas in:    $localstatedir])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([  Build options])
 AC_MSG_NOTICE([])
-AC_MSG_NOTICE([    Will build metasever2 support?       $ac_cv_header_curl_curl_h])
+AC_MSG_NOTICE([    Will build metaserver2 support?      $ac_cv_header_curl_curl_h])
 AC_MSG_NOTICE([    Will build plugins?                  $cf_have_libdl])
 
 if test x"$cf_have_libsqlite" = "xyes" ; then

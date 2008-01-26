@@ -19,8 +19,8 @@ same world.
 .PP
 .B CrossFire
 runs as a client/server model. You will also need one of the clients to
-play. With them you can either connect to a server s.o. else has set up, or
-run your own server and connect to that. At now clients exit for the
+play. With them you can either connect to a server someone else has set up,
+or run your own server and connect to that. At now clients exit for the
 X-Windows, GTK, Java, and Windows NT environment.
 
 .SH OPTIONS

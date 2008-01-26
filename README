@@ -104,7 +104,7 @@ REPORTING BUGS
     of the sort 'it failed with a line like ...' doesn't help any.
   o If the bug happened while running crossfire:
     - Include any output before to the bug.
-    - Give a description of what you did before the bug occured.  The better
+    - Give a description of what you did before the bug occurred.  The better
 	detailed the description, the better chance I have of figuring
 	out where the bug happened, or how I can recreate the bug.
     - If possible, a stack trace from gdb (or other debugger) is very
@@ -113,7 +113,7 @@ REPORTING BUGS
 The more information provided, the better chance of the bug being fixed in
 a timely fashion.
 
-Further debugging informatiion can be found at
+Further debugging information can be found at
 http://crossfire.real-time.com/debugging_tips.html
 
 ------------------------------------------------------------------------------

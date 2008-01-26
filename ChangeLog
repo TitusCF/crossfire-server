@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Spelling mistakes corrected.
+  README
+  configure.ac
+  doc/crossfire-server.man
+
 Solved an issue about the portability of strerror_r.
  common/porting.c
 Yann "gros" Chachkoff, 2008-01-25
