@@ -965,7 +965,10 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
         }
         skillop = find_skill_by_number(op, SK_PRAYING);
         if (skillop==NULL)
+        {
             LOG(llevError, "god_enchants_weapon: no praying skill object found ?!\n");
+            sprintf(buf, "%d", 1);
+        }
         else
             sprintf(buf, "%" FMT64, skillop->stats.exp);
         set_ob_key_value(weapon, "divine_blessing_name", god->name, TRUE);
