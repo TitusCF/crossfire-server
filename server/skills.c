@@ -1864,7 +1864,7 @@ static object *make_throw_ob (object *orig) {
 static int do_throw(object *op, object *part, object *toss_item, int dir, object *skill) {
     object *throw_ob=toss_item, *left=NULL;
     tag_t left_tag;
-    int eff_str = 0,maxc,str=op->stats.Str,dam=0;
+    int eff_str = 0,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0, mflags;
     float str_factor=1.0,load_factor=1.0,item_factor=1.0;
     mapstruct *m;
@@ -1909,7 +1909,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
     /* lighter items are thrown harder, farther, faster */
     if(throw_ob->weight>0)
-	item_factor = (float) maxc/(float) (3.0 * throw_ob->weight);
+        item_factor = (float) (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT)/(float) (3.0 * throw_ob->weight);
     else { /* 0 or negative weight?!? Odd object, can't throw it */
         query_name(throw_ob, name, MAX_BUF);
 	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
@@ -1928,7 +1928,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
 #ifdef DEBUG_THROW
     LOG(llevDebug,"%s carries %d, eff_str=%d\n",op->name,op->carrying,eff_str);
-    LOG(llevDebug," max_c=%d, item_f=%f, load_f=%f, str=%d\n",maxc,
+    LOG(llevDebug," max_c=%d, item_f=%f, load_f=%f, str=%d\n",(weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT),
         item_factor,load_factor,op->stats.Str);
     LOG(llevDebug," str_factor=%f\n",str_factor);
     LOG(llevDebug," item %s weight= %d\n",throw_ob->name,throw_ob->weight);
