@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+Fix for #1878323: "trunk server crashes when praying on alter"
+Modified files:
+ server/gods.c
+Yann "gros" Chachkoff, 2008-01-26
+
 New plugin: citylife. Adds NPCs to town, to make them more lively.
 See the plugin documentation for more details.
 Modified files:
