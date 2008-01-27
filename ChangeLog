@@ -15,6 +15,18 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 Changes for SVN:
 
+New plugin: citylife. Adds NPCs to town, to make them more lively.
+See the plugin documentation for more details.
+Modified files:
+ configure.ac: build new plugin.
+ doc/Developers/mainpage.dox: link to plugin documentation.
+ plugins/Makefile.am: build new plugin.
+Added files:
+ plugins/citylife/include/citylife.h
+ plugins/citylife/citylife.c
+ plugins/citylife/Makefile.am
+Nicolas Weeger, 2008-01-27
+
 Fix template plugin generation and compilation.
  plugins/template/plugin_template.c: fix compilation and parameter order for strncpy.
  plugins/template/create_plugin.sh: missing "exit" to quit if no name.

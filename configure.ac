@@ -267,6 +267,7 @@ AC_OUTPUT([Makefile
 	plugins/common/Makefile plugins/common/include/Makefile
 	plugins/cflogger/Makefile plugins/cflogger/include/Makefile
 	plugins/cfnewspaper/Makefile
+	plugins/citylife/Makefile
 	devel/Makefile
 	test/Makefile test/include/Makefile test/unit/Makefile
 	test/templates/Makefile test/toolkit/Makefile
