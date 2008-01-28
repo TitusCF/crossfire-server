@@ -139,6 +139,7 @@ static method_ret transport_type_apply(ob_methods *context, object *op,
         /* player is trying to board a transport */
         int pc=0, p_limit;
         const char *kv;
+	sint16 ox, oy;
 
         if (aflags & AP_UNAPPLY)
             return 1;
@@ -223,18 +224,21 @@ static method_ret transport_type_apply(ob_methods *context, object *op,
         }
 
         remove_ob(applier);
+	/* insert_ob_in_ob clear applier->x and applier->y, so store them away */
+	ox = applier->x;
+	oy = applier->y;
         insert_ob_in_ob(applier, op);
         sum_weight(op);
         applier->map = op->map;
-        if (applier->x != op->x || applier->y != op->y)
+        if (ox != op->x || oy != op->y)
         {
             esrv_map_scroll(&applier->contr->socket,
-                (applier->x - op->x), (applier->y - op->y));
-            applier->contr->socket.update_look=1;
-            applier->contr->socket.look_position=0;
-            applier->x = op->x;
-            applier->y = op->y;
-        }
+                (ox - op->x), (oy - op->y));
+	}
+        applier->contr->socket.update_look=1;
+        applier->contr->socket.look_position=0;
+        applier->x = op->x;
+        applier->y = op->y;
 
         /* Might need to update face, animation info */
         if (!pc)

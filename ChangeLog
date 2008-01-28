@@ -13,6 +13,17 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+Fix for bug 1850524 - SDL clients crash when entering boat.  Bogus scroll
+values were being sent on mapscroll, but only the SDL client did anything
+with the mapscroll variables, so only it saw problems.
+---
+types/transport/transport.c: Store away player x and y positions so we
+  can do proper comparisions.  Move update of applier values out of
+  if coordinates are different, since those need to get updated in all
+  cases.
+MSW 2008-01-27
+
 Changes for SVN:
 Fix for #1878361: "Hill Giants no longer throw boulders"
 Modified files:
