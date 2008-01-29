@@ -16,8 +16,13 @@ CLEANFILES = svnversion.h
 
 svnversion.h: FORCE
 	OUTPUT_DATA='/* Auto-generated at build time. */'; \
-	if test -n "$(SVNVERSION)" -a -d .svn; then \
-		OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo -n '#define SVN_REV "'; $(SVNVERSION) -n`'"'; \
+	if [ "X`echo -n`" = "X-n" ]; then \
+		echo_n() { echo $${1+r"$$@"}"\c"; } \
+	else \
+		echo_n() { echo -n $${1+"$$@"}; } \
+	fi; \
+	if test -n "$(SVNVERSION)" -a -d .svn; \
+	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; $(SVNVERSION) -n`'"'; \
 	fi; \
 	if test ! -e svnversion.h; then \
 		echo "$$OUTPUT_DATA" > svnversion.h; \
