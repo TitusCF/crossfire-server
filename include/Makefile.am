@@ -17,7 +17,7 @@ CLEANFILES = svnversion.h
 svnversion.h: FORCE
 	OUTPUT_DATA='/* Auto-generated at build time. */'; \
 	if [ "X`echo -n`" = "X-n" ]; then \
-		echo_n() { echo $${1+r"$$@"}"\c"; } \
+		echo_n() { echo $${1+"$$@"}"\c"; } \
 	else \
 		echo_n() { echo -n $${1+"$$@"}; } \
 	fi; \
