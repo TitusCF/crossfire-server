@@ -242,7 +242,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GATE                        91
 #define BUTTON                      92
 #define CF_HANDLE                   93
-#define HOLE                        94
+#define HOLE                        94    /* When open, objects fall through */
 #define TRAPDOOR                    95
 /*#define WORD_OF_RECALL            96 */
 /*#define PARAIMAGE                 97 */

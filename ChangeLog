@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/define.h: Add a comment to HOLE.
+include/, include/.cvsignore: svnversion.h should not be controlled in SVN so
+  ignore it. Changed svn:ignore property accordingly.
+Kevin Bulgrien 2008-01-30
+
 include/Makefile.am:  Use hint at http://www.in-ulm.de/~mascheck/various/echo/
   to try to remove a portability issue regarding use of echo -n.
 Kevin Bulgrien 2008-01-29
