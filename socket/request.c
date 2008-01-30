@@ -572,25 +572,6 @@ void version_cmd(char *buf, int len,socket_struct *ns)
     if (cp) {
         LOG(llevDebug,"CS: connection from client of type <%s>, ip %s\n",
             cp, ns->host);
-
-            /* This is first implementation - i skip all beta DX clients
-             * with it
-             * Add later stuff here for other clients
-             */
-
-            /* these are old dxclients */
-            /* Version 1024 added support for singular + plural name
-             * values - requiing this minimal value reduces complexity
-             * of that code, and it has been around for a long time.
-             */
-        if(!strcmp(" CF DX CLIENT", cp) || ns->sc_version < 1024 )
-        {
-            sprintf(version_warning,"drawinfo %d %s", NDI_RED,
-                    "**** VERSION WARNING ****\n**** CLIENT IS TOO OLD!! UPDATE THE CLIENT!! ****");
-            Write_String_To_Socket(ns, version_warning,
-                                   strlen(version_warning));
-        }
-
     }
 }
 
