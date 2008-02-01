@@ -565,20 +565,20 @@ int equality_split (char* buffer, char**variable, char**value)
  * if return value is true, bool was set successfully
  * else, an error occured and bool was not touched
  */
-int get_boolean (char* string,int* bool)
+int get_boolean (char* strg,int* bl)
 {
-    if (!strncmp (string,"y",1))
-        *bool=1;
-    else if (!strncmp (string,"n",1))
-        *bool=0;
-    else if (!strncmp (string,"Y",1))
-        *bool=1;
-    else if (!strncmp (string,"N",1))
-        *bool=0;
-    else if (!strncmp (string,"1",1))
-        *bool=1;
-    else if (!strncmp (string,"0",1))
-        *bool=0;
+    if (!strncmp (strg,"y",1))
+        *bl=1;
+    else if (!strncmp (strg,"n",1))
+        *bl=0;
+    else if (!strncmp (strg,"Y",1))
+        *bl=1;
+    else if (!strncmp (strg,"N",1))
+        *bl=0;
+    else if (!strncmp (strg,"1",1))
+        *bl=1;
+    else if (!strncmp (strg,"0",1))
+        *bl=0;
     else return 0;
     return 1;
 }

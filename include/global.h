@@ -459,4 +459,5 @@ extern Statistics statistics;
 
 #include "plugin.h"
 
+JNIEnv* java_env;
 #endif /* GLOBAL_H */

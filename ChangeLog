@@ -13,6 +13,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+plugins/cfanim/cfanim.c,
+plugins/cfanim/include/cfanim.h,
+plugins/cfanim/include/cfanim_proto.h:
+  Changed the name of variables that some C compilers considered as
+  keywords.
+Yann "gros" Chachkoff 2008-02-01
 
 configure.in: Remove to eliminate autoconf complaints that configure.ac and
   configure.in exist.

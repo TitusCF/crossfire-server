@@ -100,6 +100,8 @@
 
 #include <sys/stat.h>
 
+#include <jni.h>
+
 #include "config.h"
 #include "define.h"
 #include "logger.h"

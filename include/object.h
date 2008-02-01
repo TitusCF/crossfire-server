@@ -292,6 +292,7 @@ typedef struct obj {
                                 * loading or saving code. */
     sint16* discrete_damage; /**< damage values, based on each attacktype. */
     tag_t   *spell_tags;
+    jobject    job;
 } object;
 
 /**

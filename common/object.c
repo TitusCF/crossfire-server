@@ -3540,6 +3540,8 @@ int can_pick(const object *who, const object *item) {
  */
 object *object_create_clone (object *asrc) {
     object *dst = NULL,*tmp,*src,*part,*prev, *item;
+    jclass          java_class;
+    jmethodID       java_constructor;
 
     if(!asrc) return NULL;
     src = asrc;
@@ -3567,7 +3569,9 @@ object *object_create_clone (object *asrc) {
     for(item = src->inv; item; item = item->below) {
         (void) insert_ob_in_ob(object_create_clone(item),dst);
     }
-
+    java_class =       (*java_env)->FindClass(java_env, "net.sf.crossfire.Item");
+    java_constructor = (*java_env)->GetMethodID(java_env,java_class,"<init>", "()V");
+    dst->job =         (*java_env)->NewObject(java_env,java_class,java_constructor);
     return dst;
 }
 

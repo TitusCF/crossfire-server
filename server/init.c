@@ -845,6 +845,10 @@ static void load_settings(void)
  */
 
 void init(int argc, char **argv) {
+    JNIEnv          *env;
+    JavaVM          *jvm;
+    jint            res;
+    JavaVMInitArgs  vm_args;
 
     init_done=0;		/* Must be done before init_signal() */
     logfile=stderr;
@@ -865,6 +869,8 @@ void init(int argc, char **argv) {
 	fprintf(logfile,"Questions and bugs should be mailed to above address.\n");
     }
     SRANDOM(time(NULL));
+
+    res = JNI_CreateJavaVM(&jvm,(void **)&env,&vm_args);
 
     init_startup();	/* Write (C), check shutdown/forbid files */
     init_signals();	/* Sets up signal interceptions */
