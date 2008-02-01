@@ -523,14 +523,6 @@ static void load_settings(void)
 		    "greater than 1, %d is invalid\n", size);
 	    else
 		settings.worldmaptilesizey = size;
-	} else if (!strcasecmp(buf, "dynamiclevel")) {
-	    int lev = atoi(cp);
-
-	    if (lev < 0)
-		LOG(llevError, "load_settings: dynamiclevel must be "
-		    "at least 0, %d is invalid\n", lev);
-	    else
-		settings.dynamiclevel = lev;
 	} else if (!strcasecmp(buf, "fastclock")) {
 	    int lev = atoi(cp);
 
@@ -882,7 +874,6 @@ void init(int argc, char **argv) {
 #endif
 
     init_beforeplay();
-    init_weather();
     init_ericserver();
     metaserver_init();
     metaserver2_init();

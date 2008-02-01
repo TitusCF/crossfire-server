@@ -1843,8 +1843,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
 
     if (m->outdoor)
         set_darkness_map(m);
-    /* run the weather over this map */
-    weather_effect(m);
     if (!(flags & (MAP_FLUSH))) {
         if (m->last_reset_time.tv_sec==0)
             gettimeofday(&(m->last_reset_time),NULL);

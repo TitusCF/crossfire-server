@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove weather code, unused and messy.
+ include/global.h sproto.h tod.h
+ common/init.c map.c
+ lib/i18n/messages.en messages.fr settings
+ server/c_misc.c commands.c init.c weather.c
+Nicolas Weeger, 2008-02-01
+
 Fix for bug #1882265: Server failure when all exp_table entries commented out.
  common/exp.c: exit() in case of errors.
  lib/exp_table: enable a table by default.

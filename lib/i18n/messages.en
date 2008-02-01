@@ -57,40 +57,6 @@
 55|Total Players in party %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
 56|You are no longer AFK
 57|You are now AFK
-58|The weather is perpetually great around here.
-59|You can't see the weather from here.
-60|Real temp: %d
-61|Base temp: %d
-62|Humid: %d
-63|Wind: dir=%d speed=%d
-64|Pressure: %d
-65|Avg Elevation: %d
-66|Rainfall: %d  Water: %d
-67|It's currently %d degrees Centigrade out.
-68|It is very dry.
-69|It is very comfortable today.
-70|It is a bit muggy.
-71|It is muggy.
-72|It is uncomfortably muggy.
-73|There is a mild breeze coming from the %s.
-74|There is a strong breeze coming from the %s.
-75|There is a light wind coming from the %s.
-76|There is a strong wind coming from the %s.
-77|There is a heavy wind coming from the %s.
-78|The wind from the %s is incredibly strong!
-79|There isn't a cloud in the sky.
-80|There are a few light clouds in the sky
-81|The sky is cloudy and dreary.
-82|It is raining softly.
-83|It is raining.
-84|It is raining heavily.
-85|There is a heavy storm!  You should go inside!
-86|It's foggy and miserable.
-87|It's hailing out!  Take cover!
-88|Snow is gently falling from the sky.
-89|It is snowing out.
-90|Snow is falling very heavily.
-91|A full blown blizzard is in effect.  You might want to take cover!
 92|Global debug level is %d.
 93|Debug is a privileged command.
 94|Debug level set to %d.

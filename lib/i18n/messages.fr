@@ -57,40 +57,6 @@
 55|Total Joueurs dans le groupe %s (%d) -- WIZ(%d) AFK(%d) BOT(%d)
 56|Vous êtes à nouveau disponible
 57|Vous êtes marqué comme absent
-58|Le temps est perpétuellement beau ici.
-59|Vous ne pouvez pas voir quel temps il fait de votre position.
-60|Température réelle: %d
-61|Température de base: %d
-62|Humidité: %d
-63|Vent: direction=%d vitesse=%d
-64|Pression: %d
-65|Altitude moyenne: %d
-66|Pluie: %d  Eau: %d
-67|Il fait %d °C.
-68|Il fait très sec.
-69|Il fait bon aujourd'hui.
-70|Il fait un peu moite.
-71|Il fait moite.
-72|Le temps est très moite.
-73|Une brise souffle du %s.
-74|Une forte brise souffle du %s.
-75|Un vent léger vient du %s.
-76|Un vent fort vient du %s.
-77|Un vent violent souffle du %s.
-78|Le vent soufflant du %s est incroyablement fort !
-79|Il n'y a pas un seul nuage à l'horizon.
-80|Il y a quelques nuages.
-81|Le ciel est couvert.
-82|Il bruine.
-83|Il pleut.
-84|Il tombe des cordes.
-85|C'est une vraie tempête ! Vous devriez vous abriter !
-86|Il y a du brouillard.
-87|Il grêle ! Abritez-vous !
-88|Il tombe un peu de neige.
-89|Il neige.
-90|Il tombe assez bien de neige.
-91|Quel blizzard ! Vous devriez vous abriter !
 92|Niveau global de debogage: %d.
 93|Debug est une commande privilégiée.
 94|Niveau de débogage: %d.

@@ -32,14 +32,8 @@ worldmaptilesy 30
 worldmaptilesizex 50
 worldmaptilesizey 50
 
-# dynamiclevel sets the level of change on the worldmaps, this should be 0
-# unless you are using bigworld maps (or set up the above values properly for your maps)
-# and want to run weather.  Differnet values increase the amount of dynamism from
-# weather to growth to erosion.  (see documents for more info).
-# If dynamiclevel is not 0, first run of the server will generate the weather maps
-# which could be a lengthy process.
-
-dynamiclevel 0
+# If this is set, when there is no player, the ingame clock will tick really fast.
+# If not set, it will not move and wait for a player to join.
 fastclock 0
 
 # item_power_factor is the relation of how the players equipped item_power

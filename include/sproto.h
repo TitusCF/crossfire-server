@@ -132,7 +132,6 @@ int command_whereami(object *op, char *params);
 int command_maps(object *op, char *params);
 int command_strings(object *op, char *params);
 int command_time(object *op, char *params);
-int command_weather(object *op, char *params);
 int command_archs(object *op, char *params);
 int command_hiscore(object *op, char *params);
 int command_debug(object *op, char *params);
