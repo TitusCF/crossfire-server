@@ -13,12 +13,21 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+Fix for bug #1882265: Server failure when all exp_table entries commented out.
+ common/exp.c: exit() in case of errors.
+ lib/exp_table: enable a table by default.
+Nicolas Weeger, 2008-02-01
+
 plugins/cfanim/cfanim.c,
 plugins/cfanim/include/cfanim.h,
 plugins/cfanim/include/cfanim_proto.h:
   Changed the name of variables that some C compilers considered as
   keywords.
 Yann "gros" Chachkoff 2008-02-01
+
+socket/request.c: trash obsolete code (and version is checked for >= 1027 anyway).
+Nicolas Weeger, 2008-01-30
 
 configure.in: Remove to eliminate autoconf complaints that configure.ac and
   configure.in exist.
