@@ -263,6 +263,25 @@ char** regions_link;
 int regions_link_count = 0;
 int regions_link_allocated = 0;
 
+#define S_DOOR      0
+#define S_KEY       1
+#define S_CONTAINER 2
+#define S_DETECTOR  3
+#define S_CONNECT   4
+#define S_MAX       5
+
+/** slaying information. */
+typedef struct {
+    char* slaying;          /**< Slaying value. */
+    char** maps[S_MAX];     /**< Linked maps, indexed by the S_xxx values above. */
+    int count[S_MAX];       /**< Count for the maps arrays. */
+    int allocated[S_MAX];   /**< Number of allocated items for the maps arrays. */
+} slaying_info_struct;
+
+slaying_info_struct** slaying_info = NULL;  /**< Found slaying fields. */
+int slaying_count = 0;                      /**< Count of items in slaying_info. */
+int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
+
 /**
  * Checks if ::object is considered a road or not.
  * @param item
@@ -719,6 +738,118 @@ static void add_region_link(mapstruct* source, mapstruct* dest, const char* link
 }
 
 /**
+ * Is the slaying field relevant for this item?
+ *
+ * @param item
+ * item to check.
+ * @return
+ * 1 if relevant, 0 else.
+ */
+static int is_slaying(object* item) {
+    return (item->type == LOCKED_DOOR || item->type == SPECIAL_KEY || item->type == CONTAINER || item->type == CHECK_INV);
+}
+
+
+/**
+ * Returns a slaying_info_struct for specified slaying. Creates a new one if not yet found.
+ *
+ * @param slaying
+ * value to get the structure of.
+ * @return
+ * structure for slaying. Never NULL.
+ */
+static slaying_info_struct* get_slaying_struct(const char* slaying) {
+    slaying_info_struct* add;
+    int l;
+    for (l = 0; l < slaying_count; l++) {
+        if (!strcmp(slaying_info[l]->slaying, slaying))
+            return slaying_info[l];
+    }
+    add = (slaying_info_struct*)calloc(1, sizeof(slaying_info_struct));
+    add->slaying = strdup(slaying);
+
+    if (slaying_count == slaying_allocated) {
+        slaying_allocated += 10;
+        slaying_info = (slaying_info_struct**)realloc(slaying_info, sizeof(slaying_info_struct*) * slaying_allocated);
+    }
+
+    slaying_info[slaying_count] = add;
+    slaying_count++;
+
+    return add;
+}
+
+/**
+ * Adds the specified path to the slaying information if not already present.
+ *
+ * @param info
+ * structure to add to.
+ * @param item
+ * one of the S_xxx values specifying what type of slaying this is.
+ * @param path
+ * path to add.
+ */
+static void add_path_to_slaying(slaying_info_struct* info, int item, const char* path) {
+    int key;
+    for (key = 0; key < info->count[item]; key++) {
+        if (!strcmp(path, info->maps[item][key]))
+            return;
+    }
+
+    if (info->count[item] == info->allocated[item]) {
+        info->allocated[item] += 10;
+        info->maps[item] = realloc(info->maps[item], sizeof(char*) * info->allocated[item]);
+    }
+
+    info->maps[item][info->count[item]] = strdup(path);
+    info->count[item]++;
+}
+
+/**
+ * Adds the item's information to the map.
+ *
+ * @param source
+ * map containing the item.
+ * @param item
+ * item which slaying field we're considering.
+ */
+static void add_slaying(mapstruct* source, object* item) {
+    slaying_info_struct* info;
+
+    if (!item->slaying)
+        /* can be undefined */
+        return;
+
+    info = get_slaying_struct(item->slaying);
+    if (item->type == LOCKED_DOOR)
+        add_path_to_slaying(info, S_DOOR, source->path);
+    else if (item->type == SPECIAL_KEY)
+        add_path_to_slaying(info, S_KEY, source->path);
+    else if (item->type == CONTAINER)
+        add_path_to_slaying(info, S_CONTAINER, source->path);
+    else
+        add_path_to_slaying(info, S_CONNECT, source->path);
+}
+
+/**
+ * Recursively checks if the object should be considered for slaying information.
+ *
+ * @param map
+ * map containing the items.
+ * @param item
+ * item to consider. Must not be NULL.
+ */
+static void check_slaying_inventory(mapstruct* map, object* item) {
+    object* inv;
+
+    for (inv = item->inv; inv; inv = inv->below) {
+        if (is_slaying(inv))
+            add_slaying(map, inv);
+        check_slaying_inventory(map, inv);
+    }
+}
+
+/**
  * Processes a map.
  *
  * Generates the .html file, the pictures (big and small).
@@ -742,7 +873,7 @@ void domap(const char* name)
     const char** exits = NULL;
     int exits_count = 0;
     int exits_allocated = 0;
-    object* floor;
+    object* inv;
     char tmppath[MAX_BUF];
 
     char* exits_text;
@@ -863,18 +994,7 @@ void domap(const char* name)
 
     for ( x = MAP_WIDTH(m) - 1; x >= 0; x-- )
         for ( y = MAP_HEIGHT(m) - 1; y >= 0 ; y-- ) {
-            floor = GET_MAP_OB(m, x, y);
-            if (!floor)
-                continue;
-
-            while (floor)
-                floor = floor->above;
-            while (floor && !QUERY_FLAG(floor, FLAG_IS_FLOOR))
-                floor = floor->below;
-            if (!floor)
-                floor = GET_MAP_OB(m, x, y);
-
-            for ( item = floor; item; item = item->above ) {
+            for ( item = GET_MAP_OB(m, x, y); item; item = item->above ) {
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
                     const char* start;
@@ -932,7 +1052,10 @@ void domap(const char* name)
                             }
                         }
                     }
-                }
+                } else if (is_slaying(item))
+                    add_slaying(m, item);
+
+                check_slaying_inventory(m, item);
 
                 if (item->invisible)
                     continue;
@@ -1528,6 +1651,117 @@ void write_regions_link() {
 }
 
 /**
+ * Helper function to write a map to a file with its link and full path.
+ *
+ * @param file
+ * where to write.
+ * @param path
+ * map path to write.
+ */
+static void write_slaying_map_name(FILE* file, const char* path) {
+    const char* last = strrchr(path, '/');
+    const char* first;
+    if (last) {
+        last++;
+        first = strchr(path, '/') + 1;
+    } else {
+        last = path;
+        first = path;
+    }
+    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", first, last, path);
+}
+
+/**
+ * Writes all maps of the specified slaying information.
+ *
+ * @param file
+ * file to write to.
+ * @param info
+ * slaying information to write.
+ * @param item
+ * which of the S_xxx to write.
+ * @param with
+ * text to write when there are maps to write. Mustn't be NULL.
+ * @param without
+ * text to write when there are no maps. Can be NULL.
+ */
+static void write_one_slaying_info(FILE* file, slaying_info_struct* info, int item, const char* with, const char* without) {
+    int map;
+    if (info->count[item] == 0) {
+        if (without)
+            fprintf(file, without);
+        return;
+    }
+
+    qsort(info->maps[item], info->count[item], sizeof(const char*), sort_mapname);
+
+    fprintf(file, with);
+    fprintf(file, "<ul>\n");
+    for (map = 0; map < info->count[item]; map++) {
+        fprintf(file, "\t<li>");
+        write_slaying_map_name(file, info->maps[item][map]);
+        fprintf(file, "</li>\n");
+    }
+    fprintf(file, "</ul>\n");
+}
+
+/**
+ * Helper function to sort an array of slaying_info_struct.
+ *
+ * @param left
+ * first item.
+ * @param right
+ * second item.
+ * @return
+ * sort order.
+ */
+static int sort_slaying( const void* left, const void* right )
+{
+    slaying_info_struct* l = *(slaying_info_struct**)left;
+    slaying_info_struct* r = *(slaying_info_struct**)right;
+    return strcasecmp(l->slaying, r->slaying);
+}
+
+/**
+ * Writes all slaying info to file.
+ */
+void write_slaying_info() {
+    FILE* file;
+    char path[MAX_BUF];
+    int lock, map, door;
+    slaying_info_struct* info;
+
+    printf("Writing slaying info file...");
+
+    qsort(slaying_info, slaying_count, sizeof(slaying_info_struct*), sort_slaying);
+
+    snprintf(path, sizeof(path), "%s/%s", root, "slaying_info.html");
+    file = fopen(path, "wb+");
+
+    fprintf(file, "<html>\n<head>\n<title>Slaying information</title>\n</head>\n<body>\n");
+    fprintf(file, "<p>This is a list of various slaying fields on keys, containers, doors, detectors.</p>");
+
+    for (lock = 0; lock < slaying_count; lock++) {
+        info = slaying_info[lock];
+        fprintf(file, "<h1>%s</h1>\n", info->slaying);
+
+        if (info->count[S_DOOR] == 0 && info->count[S_CONTAINER] == 0 && info->count[S_CONNECT] == 0) {
+            fprintf(file, "No door, container or detector matching this slaying.<br />\n");
+        } else {
+            write_one_slaying_info(file, info, S_DOOR, "Connected doors:\n", NULL);
+            write_one_slaying_info(file, info, S_CONTAINER, "Matching containers:\n", NULL);
+            write_one_slaying_info(file, info, S_CONNECT, "Detectors and such:\n", NULL);
+        }
+        write_one_slaying_info(file, info, S_KEY, "Matching keys:\n", "No key with this slaying.<br />\n");
+    }
+
+    fprintf(file, "</body>\n</html>\n");
+
+    fclose(file);
+    printf("done.\n");
+}
+
+/**
  * Prints usage information, and exit.
  *
  * @param program
@@ -1782,6 +2016,7 @@ int main(int argc, char** argv)
     write_world_info();
 
     write_regions_link();
+    write_slaying_info();
 
     return 0;
 }
