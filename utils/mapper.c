@@ -235,7 +235,7 @@ int rawmaps = 0;
 int warn_no_path = 0;
 
 typedef struct maps_in_region {
-    const char* name;
+    region* reg;
     /** Maps in the region. */
     struct_map_list maps_list;
     /** Sum of locations, to compute name position. */
@@ -278,11 +278,6 @@ int regions_link_allocated = 0;
 typedef struct {
     char* slaying;          /**< Slaying value. */
     struct_map_list maps[S_MAX];
-#if 0
-    char** maps[S_MAX];     /**< Linked maps, indexed by the S_xxx values above. */
-    int count[S_MAX];       /**< Count for the maps arrays. */
-    int allocated[S_MAX];   /**< Number of allocated items for the maps arrays. */
-#endif
 } slaying_info_struct;
 
 slaying_info_struct** slaying_info = NULL;  /**< Found slaying fields. */
@@ -656,7 +651,7 @@ static int sort_map_info( const void* left, const void* right )
  */
 static int sort_region( const void* left, const void* right )
 {
-    return strcmp((*((maps_in_region**)left))->name, (*((maps_in_region**)right))->name);
+    return strcmp((*((maps_in_region**)left))->reg->name, (*((maps_in_region**)right))->reg->name);
 }
 
 /**
@@ -736,28 +731,28 @@ void list_map(const char* path) {
  * @param region
  * region name.
  */
-void add_map_to_region(struct_map_info* map, const char* region) {
-    int reg;
+void add_map_to_region(struct_map_info* map, region* reg) {
+    int test;
     int x, y;
-    for (reg = 0; reg < region_count; reg++) {
-        if (strcmp(regions[reg]->name, region) == 0)
+    for (test = 0; test < region_count; test++) {
+        if (regions[test]->reg == reg)
             break;
     }
-    if (reg == region_count) {
-        if (reg == region_allocated) {
+    if (test == region_count) {
+        if (test == region_allocated) {
             region_allocated++;
             regions = realloc(regions, sizeof(maps_in_region*) * region_allocated);
-            regions[reg] = calloc(1, sizeof(maps_in_region));
+            regions[test] = calloc(1, sizeof(maps_in_region));
         }
         region_count++;
-        regions[reg]->name = strdup(region);
+        regions[test]->reg = reg;
     }
-    add_map(map, &regions[reg]->maps_list);
+    add_map(map, &regions[test]->maps_list);
     if (sscanf(map->path, "/world/world_%d_%d",&x,&y) == 2) {
-        regions[reg]->sum_x += (x-100);
-        regions[reg]->sum_y += (y-100);
-        regions[reg]->sum++;
-        regions[reg]->is_world = 1;
+        regions[test]->sum_x += (x-100);
+        regions[test]->sum_y += (y-100);
+        regions[test]->sum++;
+        regions[test]->is_world = 1;
     }
 }
 
@@ -858,32 +853,17 @@ static slaying_info_struct* get_slaying_struct(const char* slaying) {
 }
 
 /**
- * Adds the specified path to the slaying information if not already present.
+ * Adds the specified map to the slaying information if not already present.
  *
  * @param info
  * structure to add to.
  * @param item
  * one of the S_xxx values specifying what type of slaying this is.
- * @param path
- * path to add.
+ * @param map
+ * map to add.
  */
 static void add_map_to_slaying(slaying_info_struct* info, int item, struct_map_info* map) {
     add_map(map, &info->maps[item]);
-#if 0
-    int key;
-    for (key = 0; key < info->count[item]; key++) {
-        if (!strcmp(path, info->maps[item][key]))
-            return;
-    }
-
-    if (info->count[item] == info->allocated[item]) {
-        info->allocated[item] += 10;
-        info->maps[item] = realloc(info->maps[item], sizeof(char*) * info->allocated[item]);
-    }
-
-    info->maps[item][info->count[item]] = strdup(path);
-    info->count[item]++;
-#endif
 }
 
 /**
@@ -995,7 +975,7 @@ void domap(struct_map_info* info)
     if (!rawmaps)
         do_auto_apply(m);
 
-    add_map_to_region(info, get_name_of_region_for_map(m));
+    add_map_to_region(info, get_region_by_map(m));
 
     relative_path(info->path, "/maps.html", indexpath);
     relative_path(info->path, "/world.html", worldmappath);
@@ -1383,31 +1363,23 @@ void do_region(maps_in_region* reg) {
     char* string;
     FILE* index;
     char html[500];
-    region* cfregion;
 
     const char* vars[] = { "REGIONNAME", "REGIONHTML", "REGIONLONGNAME", "REGIONDESC", NULL };
-    const char* values[] = { reg->name, html, NULL, NULL };
+    const char* values[] = { reg->reg->name, html, NULL, NULL };
 
-    printf("Generating map index for region %s...", reg->name);
+    printf("Generating map index for region %s...", reg->reg->name);
 
-    cfregion = get_region_by_name(reg->name);
-    if (cfregion) {
-        values[2] = get_region_longname(cfregion);
-        values[3] = get_region_msg(cfregion);
-    }
-    else {
-        printf(" this isn't a real Crossfire region??");
-        return;
-    }
+    values[2] = get_region_longname(reg->reg);
+    values[3] = get_region_msg(reg->reg);
 
-    strcpy(html, reg->name);
+    strcpy(html, reg->reg->name);
     strcat(html, ".html");
 
     string = do_map_index(html, &reg->maps_list, region_template, region_letter_template, region_map_template, vars, values);
 
     strcpy(html, root);
     strcat(html, "/");
-    strcat(html, reg->name);
+    strcat(html, reg->reg->name);
     strcat(html, ".html");
     index = fopen(html, "w+");
     fprintf(index, string);
@@ -1473,8 +1445,8 @@ void do_region_index() {
 
     for (reg = 0; reg < region_count; reg++) {
         region = regions[reg];
-        sprintf(file, "%s.html", region->name);
-        values[2] = get_region_longname(get_region_by_name(region->name));
+        sprintf(file, "%s.html", region->reg->name);
+        values[2] = get_region_longname(region->reg);
         txt = cat_template(txt, do_template(index_region_region_template, vars, values));
     }
     vars[1] = "REGIONS";
@@ -1607,15 +1579,15 @@ void do_world_map() {
         if (!regions[region]->is_world || regions[region]->sum == 0)
             continue;
 
-        x = regions[region]->sum_x * SIZE / regions[region]->sum + SIZE / 2 - strlen(regions[region]->name) * font->w / 2;
+        x = regions[region]->sum_x * SIZE / regions[region]->sum + SIZE / 2 - strlen(regions[region]->reg->name) * font->w / 2;
         y = regions[region]->sum_y * SIZE / regions[region]->sum + SIZE / 2 - font->h / 2;
-        gdImageString(small, font, x, y, regions[region]->name, color);
-        gdImageString(pic, font, x, y, regions[region]->name, color);
+        gdImageString(small, font, x, y, regions[region]->reg->name, color);
+        gdImageString(pic, font, x, y, regions[region]->reg->name, color);
 
         /* For exit/road map, size isn't the same. */
-        x = regions[region]->sum_x * 50 / regions[region]->sum + 50 / 2 - strlen(regions[region]->name) * font->w / 2;
+        x = regions[region]->sum_x * 50 / regions[region]->sum + 50 / 2 - strlen(regions[region]->reg->name) * font->w / 2;
         y = regions[region]->sum_y * 50 / regions[region]->sum + 50 / 2 - font->h / 2;
-        gdImageString(infomap, font, x, y, regions[region]->name, color);
+        gdImageString(infomap, font, x, y, regions[region]->reg->name, color);
     }
 
     sprintf(mappath, "%s/world_regions%s", root, output_extensions[output_format]);
