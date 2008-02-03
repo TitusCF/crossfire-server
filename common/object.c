@@ -709,7 +709,7 @@ void clear_object(object *op) {
     if (op->msg!=NULL)	    FREE_AND_CLEAR_STR(op->msg);
     if (op->lore!=NULL)	    FREE_AND_CLEAR_STR(op->lore);
     if (op->materialname!= NULL) FREE_AND_CLEAR_STR(op->materialname);
-
+    if(op->discrete_damage != NULL)	FREE_AND_CLEAR(op->discrete_damage);
 
     memset((void*)((char*)op + offsetof(object, name)),
 		   0, sizeof(object)-offsetof(object, name));
