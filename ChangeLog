@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Major refactoring, to prepare for more fun things.
+ utils/mapper.c
+Nicolas Weeger, 2008-02-03
+
 Generate information on 'slaying' fields. Not complete yet, missing
 FORCE created by markers and other things.
  utils/mapper.c
