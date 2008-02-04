@@ -287,7 +287,7 @@ slaying_info_struct** slaying_info = NULL;  /**< Found slaying fields. */
 int slaying_count = 0;                      /**< Count of items in slaying_info. */
 int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
 
-static init_map_list(struct_map_list* list) {
+static void init_map_list(struct_map_list* list) {
     list->maps = NULL;
     list->count = 0;
     list->allocated = 0;
@@ -431,7 +431,6 @@ static char* cat_template(char* source, char* add) {
  */
 static int read_template(const char* name, char** buffer) {
     FILE* file;
-    size_t size;
     struct stat info;
 
     if (stat(name, &info)) {
@@ -554,7 +553,6 @@ static void relative_path(const char* from, const char* to, char* result)
 {
     const char* fslash;
     const char* rslash;
-    int dot = 0;
 
     result[0] = '\0';
 
@@ -934,9 +932,6 @@ void domap(struct_map_info* info)
     char mapname[500];
     char exit_path[500];
     char* tmp;
-    int exits_count = 0;
-    int exits_allocated = 0;
-    object* inv;
     char tmppath[MAX_BUF];
 
     char* exits_text;
@@ -1249,7 +1244,6 @@ void domap(struct_map_info* info)
  */
 char* do_map_index(const char* dest, struct_map_list* maps_list, const char* template, const char* template_letter, const char* template_map, const char** vars, const char** values) {
 #define VARSADD 6
-    FILE* index;
     int map;
     char* string;
     char name[500];
@@ -1268,7 +1262,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
     int basevalues;
 
     if (!generate_index)
-        return;
+        return strdup("");
 
     if (vars)
         for (basevalues = 0; vars[basevalues] != NULL; basevalues++) ;
@@ -1502,9 +1496,6 @@ void do_world_map() {
     char mappath[500], mapraw[500], mapregion[500];
     gdImagePtr pic;
     gdImagePtr small;
-    int needpic;
-    struct stat stats, statspic;
-    int regenerated = 0;
     gdFontPtr font;
     int region, color;
 
@@ -1713,8 +1704,6 @@ void write_world_info() {
     printf("Saving exit/blocking/road information...");
     snprintf(path, sizeof(path), "%s/%s%s", root, "world_info", output_extensions[output_format]);
     file = fopen(path, "wb+");
-    /*gdImageJpeg(infomap, file, 50);*/
-    //gdImagePng(infomap, file);
     save_picture(file, infomap);
     fclose(file);
     printf("done.\n");
@@ -1723,13 +1712,14 @@ void write_world_info() {
 }
 
 void write_regions_link() {
+    FILE* file;
+    char path[MAX_BUF];
     int link;
+
     if (!do_regions_link)
         return;
 
     printf("Writing regions link file...");
-    FILE* file;
-    char path[MAX_BUF];
     snprintf(path, sizeof(path), "%s/%s", root, "region_links.dot");
     file = fopen(path, "wb+");
     fprintf(file, "digraph {\n");
@@ -1818,7 +1808,7 @@ static int sort_slaying( const void* left, const void* right )
 void write_slaying_info() {
     FILE* file;
     char path[MAX_BUF];
-    int lock, map, door;
+    int lock;
     slaying_info_struct* info;
 
     printf("Writing slaying info file...");
@@ -1858,7 +1848,7 @@ void write_slaying_info() {
  * program path.
  */
 void do_help(const char* program) {
-    printf("Crossfire Mapper will generate pictures of maps, and create indexes for all maps and regions.\n\n", program);
+    printf("Crossfire Mapper will generate pictures of maps, and create indexes for all maps and regions.\n\n");
     printf("Syntax: %s\n\n", program);
     printf("Optional arguments:\n");
     printf("  -nopics             don't generate pictures.\n");
@@ -1998,43 +1988,43 @@ int main(int argc, char** argv)
     gdfaces = calloc(1, sizeof(gdImagePtr) * nrofpixmaps);
 
     if (read_template("templates/map.template", &map_template))
-        return;
+        return 1;
     if (read_template("templates/map_no_exit.template", &map_no_exit_template))
-        return;
+        return 1;
     if (read_template("templates/map_with_exit.template", &map_with_exit_template))
-        return;
+        return 1;
     if (read_template("templates/map_exit.template", &map_exit_template))
-        return;
+        return 1;
     if (read_template("templates/map_lore.template", &map_lore_template))
-        return;
+        return 1;
     if (read_template("templates/map_no_lore.template", &map_no_lore_template))
-        return;
+        return 1;
 
     if (read_template("templates/index.template", &index_template))
-        return;
+        return 1;
     if (read_template("templates/index_letter.template", &index_letter))
-        return;
+        return 1;
     if (read_template("templates/index_map.template", &index_map))
-        return;
+        return 1;
 
     if (read_template("templates/region.template", &region_template))
-        return;
+        return 1;
     if (read_template("templates/region_letter.template", &region_letter_template))
-        return;
+        return 1;
     if (read_template("templates/region_map.template", &region_map_template))
-        return;
+        return 1;
 
     if (read_template("templates/index_region.template", &index_region_template))
-        return;
+        return 1;
     if (read_template("templates/index_region_region.template", &index_region_region_template))
-        return;
+        return 1;
 
     if (read_template("templates/world.template", &world_template))
-        return;
+        return 1;
     if (read_template("templates/world_row.template", &world_row_template))
-        return;
+        return 1;
     if (read_template("templates/world_map.template", &world_map_template))
-        return;
+        return 1;
 
     if (map_limit != -1)
         sprintf(max, "%d", map_limit);
