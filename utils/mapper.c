@@ -166,6 +166,9 @@ typedef struct {
 
 typedef struct struct_map_info {
     char* path;
+    char* name;
+    char* filename;
+    char* lore;
     struct_map_list exits_from;
     struct_map_list exits_to;
 } struct_map_info;
@@ -953,7 +956,7 @@ void domap(struct_map_info* info)
     struct_map_info* link;
 
     const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", NULL, NULL, NULL };
-    const char* values[] = { info->path, htmlpath, mapname, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL, NULL };
+    const char* values[] = { info->path, htmlpath, NULL, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL, NULL };
     int vars_count = 0;
     while (vars[vars_count])
         vars_count++;
@@ -974,6 +977,20 @@ void domap(struct_map_info* info)
 
     if (!rawmaps)
         do_auto_apply(m);
+
+    if (m->maplore)
+        info->lore = strdup(m->maplore);
+    tmp = strrchr(m->path, '/');
+    if (tmp)
+        info->filename = strdup(tmp + 1);
+    else
+        info->filename = strdup(m->path);
+
+    if (m->name)
+        info->name = strdup(m->name);
+    else
+        info->name = strdup(info->filename);
+    values[2] = info->name;
 
     add_map_to_region(info, get_region_by_map(m));
 
@@ -1138,8 +1155,8 @@ void domap(struct_map_info* info)
             }
         }
 
-    if (m->maplore) {
-        values[11] = m->maplore;
+    if (info->lore) {
+        values[11] = info->lore;
         maplore = do_template(map_lore_template, vars, values);
     }
     else {
@@ -1316,7 +1333,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
         idx_vars[basevalues+1] = "MAPNAME";
         idx_vars[basevalues+2] = "MAPPATH";
         idx_vars[basevalues+3] = "MAPHTML";
-        idx_values[basevalues+1] = name;
+        idx_values[basevalues+1] = maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path;
         relative_path(index_path, maps_list->maps[map]->path, mappath);
         strcpy(maphtml, mappath);
         strcat(maphtml, ".html");
