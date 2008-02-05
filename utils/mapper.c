@@ -166,6 +166,8 @@ typedef struct {
 
 typedef struct struct_map_info {
     char* path;
+    mapstruct* cfmap;
+    region* cfregion;
     char* name;
     char* filename;
     char* lore;
@@ -625,15 +627,9 @@ static int sort_map_info( const void* left, const void* right )
 {
     struct_map_info* l = *(struct_map_info**)left;
     struct_map_info* r = *(struct_map_info**)right;
-    const char* sl = strrchr(l->path, '/');
-    const char* sr = strrchr(r->path, '/');
     int c;
 
-    if (!sl)
-        sl = l->path;
-    if (!sr)
-        sr = r->path;
-    c = strcasecmp(sl, sr);
+    c = strcasecmp(l->name, r->name);
     if (c)
         return c;
 
@@ -698,6 +694,10 @@ struct_map_info* get_map_info(const char* path) {
 
     add = calloc(1, sizeof(struct_map_info));
     add->path = strdup(path);
+    add->cfmap = ready_map_name(path, 0);
+    add->cfregion = get_region_by_map(add->cfmap);
+    add->name = strdup(add->cfmap->name);
+
     init_map_list(&add->exits_to);
     init_map_list(&add->exits_from);
     add_map(add, &maps_list);
@@ -962,11 +962,12 @@ void domap(struct_map_info* info)
     if (show_maps)
         printf(" processing map %s\n", info->path);
 
-    m = ready_map_name(info->path ,0);
+    m = info->cfmap;
+/*    m = ready_map_name(info->path ,0);
     if (!m) {
         printf("couldn't load map %s\n", info->path);
         return;
-    }
+    }*/
 
     do_exit_map(m);
 
@@ -981,10 +982,10 @@ void domap(struct_map_info* info)
     else
         info->filename = strdup(m->path);
 
-    if (m->name)
+/*    if (m->name)
         info->name = strdup(m->name);
     else
-        info->name = strdup(info->filename);
+        info->name = strdup(info->filename);*/
     values[2] = info->name;
 
     add_map_to_region(info, get_region_by_map(m));
@@ -1220,6 +1221,7 @@ void domap(struct_map_info* info)
     m->reset_time = 1;
     m->in_memory = MAP_IN_MEMORY;
     delete_map(m);
+    info->cfmap = NULL;
 }
 
 /**
@@ -1298,13 +1300,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
 
     string = NULL;
     for (map = 0; map < maps_list->count; map++ ) {
-        tmp = strrchr(maps_list->maps[map]->path, '/');
-        if (tmp)
-            strcpy(name, tmp + 1);
-        else {
-            printf(" warning: map with no / in path: %s\n", maps_list->maps[map]->path);
-            strcpy(name, maps_list->maps[map]->path);
-        }
+        strcpy(name, maps_list->maps[map]->name);
         if (tolower(name[0]) != last_letter) {
             if (mapstext != NULL) {
                 idx_vars[basevalues+1] = "MAPS";
