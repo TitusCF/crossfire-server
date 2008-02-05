@@ -189,6 +189,7 @@ int size_small = 16;       /**< Tile size for small map */
 int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
 int show_maps = 0;         /**< If set, will generate much information on map loaded. */
 int world_map = 1;         /**< If set, will generate a world map. */
+int world_exit_info = 1;   /**< If set, will generate a world map of exits. */
 
 char* world_template;                 /**< World map template. */
 char* world_row_template;             /**< One row in the world map. */
@@ -1700,6 +1701,9 @@ void write_world_info() {
     FILE* file;
     char path[MAX_BUF];
 
+    if (!world_exit_info)
+        return;
+
     printf("Saving exit/blocking/road information...");
     snprintf(path, sizeof(path), "%s/%s%s", root, "world_info", output_extensions[output_format]);
     file = fopen(path, "wb+");
@@ -1864,6 +1868,8 @@ void do_help(const char* program) {
     printf("  -noworldmap         don't write the world map in world.png.\n");
     printf("  -noregionslink      don't generate regions relation file.\n");
     printf("  -regionslink        generate regions relation file.\n");
+    printf("  -noexitmap          don't generate map of exits.\n");
+    printf("  -exitmap            generate map of exits.\n");
     printf("\n\n");
     exit(0);
 }
@@ -1922,6 +1928,10 @@ void do_parameters(int argc, char** argv) {
             do_regions_link = 0;
         else if (strcmp(argv[arg], "-regionslink") == 0)
             do_regions_link = 1;
+        else if (strcmp(argv[arg], "-noexitmap") == 0)
+            world_exit_info = 0;
+        else if (strcmp(argv[arg], "-exitmap") == 0)
+            world_exit_info = 1;
         else
             do_help(argv[0]);
         arg++;
@@ -2028,6 +2038,7 @@ int main(int argc, char** argv)
     printf("  warn of exit without path:           %s\n", yesno(warn_no_path));
     printf("  list unused maps:                    %s\n", yesno(list_unused_maps));
     printf("  generate world map:                  %s\n", yesno(world_map));
+    printf("  generate exit map:                   %s\n", yesno(world_exit_info));
     printf("  generate regions link file:          %s\n", yesno(do_regions_link));
     printf("\n");
 
