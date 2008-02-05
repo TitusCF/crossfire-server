@@ -200,6 +200,9 @@ char* map_template;                 /**< Map template. */
 char* map_no_exit_template;         /**< World map template: no exit. */
 char* map_with_exit_template;       /**< Map template: exit template. */
 char* map_exit_template;            /**< Map template: one exit. */
+char* map_no_exit_to_template;      /**< World map template: no exit leading to this map. */
+char* map_with_exit_to_template;    /**< Map template: exits leading to this map. */
+char* map_exit_to_template;         /**< Map template: one exit leading to this map. */
 char* map_lore_template;            /**< Map template: lore. */
 char* map_no_lore_template;         /**< Map template: no lore. */
 
@@ -527,7 +530,8 @@ static char* do_template(const char* template, const char** vars, const char** v
         else {
         current_result = current_result + strlen(current_result);
         var = 0;
-        while (vars[var] != 0 && strncmp(vars[var], sharp + 1, end - sharp - 1))
+        while (vars[var] != 0 && (strncmp(vars[var], sharp + 1, end - sharp - 1) || (strlen(vars[var]) != end - sharp - 1)))
+            /* tag must be the same length, else can take a wrong tag */
             var++;
         if (vars[var] == 0)
             printf("Wrong tag: %s\n", sharp);
@@ -1519,6 +1523,7 @@ void write_world_map() {
  */
 void write_map_page(struct_map_info* map) {
     char* exits_text;
+    char* exits_to;
     char* maplore;
     char* tmp;
 
@@ -1533,8 +1538,8 @@ void write_map_page(struct_map_info* map) {
     char exit_path[500];
     FILE* out;
 
-    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", NULL, NULL, NULL };
-    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL, NULL };
+    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", NULL, NULL, NULL };
+    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", NULL, NULL, NULL };
     int vars_count = 0;
 
     while (vars[vars_count])
@@ -1600,6 +1605,36 @@ void write_map_page(struct_map_info* map) {
         exits_text = do_template(map_no_exit_template, vars, values);
 
     values[5] = exits_text;
+
+    if (map->exits_to.count)
+    {
+        char* one_exit = NULL;
+        int exit;
+        char relative[500];
+
+        vars[vars_count] = "EXITNAME";
+        vars[vars_count+1] = "EXITFILE";
+
+        qsort(map->exits_to.maps, map->exits_to.count, sizeof(const char*), sort_map_info);
+        for (exit = 0; exit < map->exits_to.count; exit++)
+        {
+            relative_path(map->path, map->exits_to.maps[exit]->path, relative);
+            values[vars_count] = map->exits_to.maps[exit]->name;
+            strcat(relative, ".html");
+            values[vars_count+1] = relative;
+            one_exit = cat_template(one_exit, do_template(map_exit_to_template, vars, values));
+        }
+        vars[vars_count] = "EXIT";
+        vars[vars_count+1] = NULL;
+        values[vars_count] = one_exit;
+        exits_to = do_template(map_with_exit_to_template, vars, values);
+        free(one_exit);
+    }
+    else
+        exits_to = do_template(map_no_exit_to_template, vars, values);
+
+    values[12] = exits_to;
+
     vars[vars_count] = NULL;
     out = fopen(htmlpath, "w+");
     tmp = do_template(map_template, vars, values);
@@ -1607,6 +1642,7 @@ void write_map_page(struct_map_info* map) {
     fclose(out);
     free(tmp);
     free(exits_text);
+    free(exits_to);
     free(maplore);
 }
 
@@ -2026,6 +2062,9 @@ int main(int argc, char** argv)
     read_template("templates/map_no_exit.template", &map_no_exit_template);
     read_template("templates/map_with_exit.template", &map_with_exit_template);
     read_template("templates/map_exit.template", &map_exit_template);
+    read_template("templates/map_no_exit_to.template", &map_no_exit_to_template);
+    read_template("templates/map_with_exit_to.template", &map_with_exit_to_template);
+    read_template("templates/map_exit_to.template", &map_exit_to_template);
     read_template("templates/map_lore.template", &map_lore_template);
     read_template("templates/map_no_lore.template", &map_no_lore_template);
 
