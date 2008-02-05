@@ -166,11 +166,10 @@ typedef struct {
 
 typedef struct struct_map_info {
     char* path;
-    mapstruct* cfmap;
-    region* cfregion;
     char* name;
     char* filename;
     char* lore;
+    region* cfregion;
     struct_map_list exits_from;
     struct_map_list exits_to;
 } struct_map_info;
@@ -212,12 +211,12 @@ char* region_template;          /**< Region page template. */
 char* region_letter_template;   /**< One letter for the region. */
 char* region_map_template;      /**< Region page template: one map. */
 
-char* index_region_template;
-char* index_region_region_template;
+char* index_region_template;        /**< Region index template. */
+char* index_region_region_template; /**< One region in the region index template. */
 
 /** Picture statistics. */
 int created_pics = 0; /**< Total created pics. */
-int cached_pics = 0;  /**< Non recrated pics. */
+int cached_pics = 0;  /**< Non recreated pics. */
 
 /** Map output formats. */
 enum output_format_type {
@@ -240,24 +239,22 @@ int rawmaps = 0;
 /** Whether to warn of exits without a path */
 int warn_no_path = 0;
 
-typedef struct maps_in_region {
-    region* reg;
-    /** Maps in the region. */
-    struct_map_list maps_list;
-    /** Sum of locations, to compute name position. */
-    int sum_x, sum_y, sum;
-    /** If set, this region has at least one map part of the world, thus region name should be written. */
-    int is_world;
-} maps_in_region;
+/** Region information. */
+typedef struct struct_region_info {
+    region* reg;                /**< Region. */
+    struct_map_list maps_list;  /**< Maps in the region. */
+    int sum_x, sum_y, sum;      /**< Sum of locations, to compute name position. */
+    int is_world;               /**< If set, this region has at least one map part of the world, thus region name should be written. */
+} struct_region_info;
 
-struct maps_in_region** regions = NULL;
-int region_count = 0;
-int region_allocated = 0;
+struct struct_region_info** regions = NULL; /**< Found regions. */
+int region_count = 0;                       /**< Count of regions. */
+int region_allocated = 0;                   /**< Allocated size of regions. */
 
-int list_unused_maps = 0;
-char** found_maps = NULL;
-int found_maps_count = 0;
-int found_maps_allocated = 0;
+int list_unused_maps = 0;       /**< If set, program will list maps found in directory but not linked from the first maps. */
+char** found_maps = NULL;       /**< Maps found in directories. */
+int found_maps_count = 0;       /**< Number of items in found_maps. */
+int found_maps_allocated = 0;   /**< Allocated size of found_maps. */
 
 /* Path/exit info */
 gdImagePtr infomap;         /**< World map with exits / roads / blocking / ... */
@@ -273,6 +270,7 @@ char** regions_link;
 int regions_link_count = 0;
 int regions_link_allocated = 0;
 
+/** Connection/slaying information. */
 #define S_DOOR      0
 #define S_KEY       1
 #define S_CONTAINER 2
@@ -284,12 +282,17 @@ int regions_link_allocated = 0;
 typedef struct {
     char* slaying;          /**< Slaying value. */
     struct_map_list maps[S_MAX];
-} slaying_info_struct;
+} struct_slaying_info;
 
-slaying_info_struct** slaying_info = NULL;  /**< Found slaying fields. */
+struct_slaying_info** slaying_info = NULL;  /**< Found slaying fields. */
 int slaying_count = 0;                      /**< Count of items in slaying_info. */
 int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
 
+/**
+ * Initialises a list structure.
+ * @param list
+ * list to blank.
+ */
 static void init_map_list(struct_map_list* list) {
     list->maps = NULL;
     list->count = 0;
@@ -344,7 +347,7 @@ static int is_blocking(object* item) {
 }
 
 /**
- * Writes exit / road / blocking information for specified map.
+ * Proceses exit / road / blocking information for specified map into the global infomap map.
  *
  * If map isn't a world map, won't do anything.
  *
@@ -614,14 +617,14 @@ static int sort_mapname( const void* left, const void* right )
 }
 
 /**
- * Sorts the struct_map_info according to the last part of their path (after the last /).
+ * Sorts the struct_map_info according to the map name or the path if equal.
  *
  * @param left
  * first item.
  * @param right
  * second item.
  * @return
- * comparison on last element, and if equal then on whole string.
+ * comparison on name, and if equal then on whole path.
  */
 static int sort_map_info( const void* left, const void* right )
 {
@@ -637,7 +640,7 @@ static int sort_map_info( const void* left, const void* right )
 }
 
 /**
- * Sorts an array of maps_in_region by region name.
+ * Sorts an array of struct_region_info by region name.
  *
  * @param left
  * first region.
@@ -648,7 +651,7 @@ static int sort_map_info( const void* left, const void* right )
  */
 static int sort_region( const void* left, const void* right )
 {
-    return strcmp((*((maps_in_region**)left))->reg->name, (*((maps_in_region**)right))->reg->name);
+    return strcmp((*((struct_region_info**)left))->reg->name, (*((struct_region_info**)right))->reg->name);
 }
 
 /**
@@ -679,6 +682,7 @@ void add_map(struct_map_info* info, struct_map_list* list)
 
 /**
  * Gets or creates if required the info structure for a map.
+ *
  * @param path
  * map to consider.
  * @return
@@ -687,6 +691,8 @@ void add_map(struct_map_info* info, struct_map_list* list)
 struct_map_info* get_map_info(const char* path) {
     int map;
     struct_map_info* add;
+    char* tmp;
+
     for (map = 0; map < maps_list.count; map++) {
         if (strcmp(maps_list.maps[map]->path, path) == 0)
             return maps_list.maps[map];
@@ -694,9 +700,11 @@ struct_map_info* get_map_info(const char* path) {
 
     add = calloc(1, sizeof(struct_map_info));
     add->path = strdup(path);
-    add->cfmap = ready_map_name(path, 0);
-    add->cfregion = get_region_by_map(add->cfmap);
-    add->name = strdup(add->cfmap->name);
+    tmp = strrchr(path, '/');
+    if (tmp)
+        add->filename = strdup(tmp + 1);
+    else
+        add->filename = strdup(path);
 
     init_map_list(&add->exits_to);
     init_map_list(&add->exits_from);
@@ -742,8 +750,8 @@ void add_map_to_region(struct_map_info* map, region* reg) {
     if (test == region_count) {
         if (test == region_allocated) {
             region_allocated++;
-            regions = realloc(regions, sizeof(maps_in_region*) * region_allocated);
-            regions[test] = calloc(1, sizeof(maps_in_region));
+            regions = realloc(regions, sizeof(struct_region_info*) * region_allocated);
+            regions[test] = calloc(1, sizeof(struct_region_info));
         }
         region_count++;
         regions[test]->reg = reg;
@@ -823,29 +831,29 @@ static int is_slaying(object* item) {
 
 
 /**
- * Returns a slaying_info_struct for specified slaying. Creates a new one if not yet found.
+ * Returns a struct_slaying_info for specified slaying. Creates a new one if required.
  *
  * @param slaying
  * value to get the structure of.
  * @return
  * structure for slaying. Never NULL.
  */
-static slaying_info_struct* get_slaying_struct(const char* slaying) {
-    slaying_info_struct* add;
+static struct_slaying_info* get_slaying_struct(const char* slaying) {
+    struct_slaying_info* add;
     int l;
     for (l = 0; l < slaying_count; l++) {
         if (!strcmp(slaying_info[l]->slaying, slaying))
             return slaying_info[l];
     }
-    add = (slaying_info_struct*)calloc(1, sizeof(slaying_info_struct));
+    if (slaying_count == slaying_allocated) {
+        slaying_allocated += 10;
+        slaying_info = (struct_slaying_info**)realloc(slaying_info, sizeof(struct_slaying_info*) * slaying_allocated);
+    }
+
+    add = (struct_slaying_info*)calloc(1, sizeof(struct_slaying_info));
     add->slaying = strdup(slaying);
     for (l = 0; l < S_MAX; l++)
         init_map_list(&add->maps[l]);
-
-    if (slaying_count == slaying_allocated) {
-        slaying_allocated += 10;
-        slaying_info = (slaying_info_struct**)realloc(slaying_info, sizeof(slaying_info_struct*) * slaying_allocated);
-    }
 
     slaying_info[slaying_count] = add;
     slaying_count++;
@@ -863,7 +871,7 @@ static slaying_info_struct* get_slaying_struct(const char* slaying) {
  * @param map
  * map to add.
  */
-static void add_map_to_slaying(slaying_info_struct* info, int item, struct_map_info* map) {
+static void add_map_to_slaying(struct_slaying_info* info, int item, struct_map_info* map) {
     add_map(map, &info->maps[item]);
 }
 
@@ -876,7 +884,7 @@ static void add_map_to_slaying(slaying_info_struct* info, int item, struct_map_i
  * item which slaying field we're considering.
  */
 static void add_slaying(struct_map_info* map, object* item) {
-    slaying_info_struct* info;
+    struct_slaying_info* info;
 
     if (!item->slaying)
         /* can be undefined */
@@ -914,47 +922,27 @@ static void check_slaying_inventory(struct_map_info* map, object* item) {
 /**
  * Processes a map.
  *
- * Generates the .html file, the pictures (big and small).
+ * Generates the map pictures (big and small), and exit information.
  *
- * @param name
- * file to process. Must start with a /, relative to Crossfire map directory.
+ * @param info
+ * map to process.
  */
-void domap(struct_map_info* info)
+void process_map(struct_map_info* info)
 {
     mapstruct* m;
     int x, y;
     object* item;
+    FILE* out;
     gdImagePtr pic;
     gdImagePtr small;
-    FILE* out;
     struct stat stats;
     struct stat statspic;
-    char mapname[500];
     char exit_path[500];
-    char* tmp;
     char tmppath[MAX_BUF];
+    char picpath[MAX_BUF], smallpicpath[MAX_BUF];
 
-    char* exits_text;
-    char* maplore;
-
-    char htmlpath[500];         /* Map file path. */
-    char mappic[500];           /* Name of map's full size picture. */
-    char mapsmallpic[500];      /* Name of map's small size picture. */
-    char mappicpath[500];       /* Path of map's full size picture. */
-    char mapsmallpicpath[500];  /* Path of map's small size picture. */
-    char indexpath[500];        /* Relative path of full index. */
-    char regionpath[500];       /* Path to region's filename. */
-    char regionname[500];       /* Name of map's region. */
-    char regionindexpath[500];  /* Path to region index file. */
-    char worldmappath[500];     /* Path to world map. */
     int needpic = 0;
     struct_map_info* link;
-
-    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", NULL, NULL, NULL };
-    const char* values[] = { info->path, htmlpath, NULL, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL, NULL };
-    int vars_count = 0;
-    while (vars[vars_count])
-        vars_count++;
 
     if (list_unused_maps)
         list_map(info->path);
@@ -962,12 +950,11 @@ void domap(struct_map_info* info)
     if (show_maps)
         printf(" processing map %s\n", info->path);
 
-    m = info->cfmap;
-/*    m = ready_map_name(info->path ,0);
+    m = ready_map_name(info->path ,0);
     if (!m) {
         printf("couldn't load map %s\n", info->path);
         return;
-    }*/
+    }
 
     do_exit_map(m);
 
@@ -976,58 +963,26 @@ void domap(struct_map_info* info)
 
     if (m->maplore)
         info->lore = strdup(m->maplore);
-    tmp = strrchr(m->path, '/');
-    if (tmp)
-        info->filename = strdup(tmp + 1);
-    else
-        info->filename = strdup(m->path);
 
-/*    if (m->name)
+    if (m->name)
         info->name = strdup(m->name);
     else
-        info->name = strdup(info->filename);*/
-    values[2] = info->name;
+        info->name = strdup(info->filename);
 
-    add_map_to_region(info, get_region_by_map(m));
+    info->cfregion = get_region_by_map(m);
+    add_map_to_region(info, info->cfregion);
 
-    relative_path(info->path, "/maps.html", indexpath);
-    relative_path(info->path, "/world.html", worldmappath);
-    relative_path(info->path, "/regions.html", regionindexpath);
-
-    strcpy(regionname, get_name_of_region_for_map(m));
-    strcpy(exit_path, "/");
-    strcat(exit_path, regionname);
-    strcat(exit_path, ".html");
-    relative_path(info->path, exit_path, regionpath);
-
-    tmp = strrchr(info->path, '/');
-    strcpy(mapname, tmp + 1);
-    strcpy(mappic, mapname);
-    strcat(mappic, output_extensions[output_format]);
-    strcpy(mapsmallpic, mapname);
-    strcat(mapsmallpic, ".small");
-    strcat(mapsmallpic, output_extensions[output_format]);
-
-    strcpy(htmlpath, root);
-    strncat(htmlpath, info->path, 500 - strlen(htmlpath));
-
-    strcpy(mappicpath, htmlpath);
-    strcat(mappicpath, output_extensions[output_format]);
-    strcpy(mapsmallpicpath, htmlpath);
-    strcat(mapsmallpicpath, ".small");
-    strcat(mapsmallpicpath, output_extensions[output_format]);
-
-    strcat(htmlpath, ".html");
-    make_path_to_file(htmlpath);
+    snprintf(picpath, sizeof(picpath), "%s%s%s", root, info->path, output_extensions[output_format]);
+    snprintf(smallpicpath, sizeof(smallpicpath), "%s%s.small%s", root, info->path, output_extensions[output_format]);
 
     if (force_pics)
         needpic = 1;
     else if (generate_pics) {
         create_pathname(info->path, tmppath, MAX_BUF);
         stat(tmppath, &stats);
-        if (stat(mappicpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
+        if (stat(picpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
             needpic = 1;
-        else if (stat(mapsmallpicpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
+        else if (stat(smallpicpath, &statspic) || (statspic.st_mtime < stats.st_mtime))
             needpic = 1;
     }
     else
@@ -1151,66 +1106,15 @@ void domap(struct_map_info* info)
             }
         }
 
-    if (info->lore) {
-        values[11] = info->lore;
-        maplore = do_template(map_lore_template, vars, values);
-    }
-    else {
-        maplore = do_template(map_no_lore_template, vars, values);
-    }
-    values[11] = maplore;
-
-    if (info->exits_from.count)
-    {
-        char* one_exit = NULL;
-        int exit;
-        char relative[500];
-        char exitname[500];
-
-        vars[vars_count] = "EXITNAME";
-        vars[vars_count+1] = "EXITFILE";
-
-        qsort(info->exits_from.maps, info->exits_from.count, sizeof(const char*), sort_map_info);
-        for (exit = 0; exit < info->exits_from.count; exit++)
-        {
-            relative_path(info->path, info->exits_from.maps[exit]->path, relative);
-            tmp = strrchr(relative, '/');
-            if (!tmp)
-                strcpy(exitname, relative);
-            else
-                strcpy(exitname, tmp+1);
-            strcat(relative, ".html");
-            values[vars_count] = exitname;
-            values[vars_count+1] = relative;
-            one_exit = cat_template(one_exit, do_template(map_exit_template, vars, values));
-        }
-        vars[vars_count] = "EXIT";
-        vars[vars_count+1] = NULL;
-        values[vars_count] = one_exit;
-        exits_text = do_template(map_with_exit_template, vars, values);
-        free(one_exit);
-    }
-    else
-        exits_text = do_template(map_no_exit_template, vars, values);
-
-    values[5] = exits_text;
-    vars[vars_count] = NULL;
-    out = fopen(htmlpath, "w+");
-    tmp = do_template(map_template, vars, values);
-    fprintf(out, tmp);
-    fclose(out);
-    free(tmp);
-    free(exits_text);
-    free(maplore);
-
     if (needpic) {
-        out = fopen(mappicpath, "wb+");
+        out = fopen(picpath, "wb+");
         save_picture(out, pic);
         fclose(out);
 
         small = gdImageCreateTrueColor( MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small );
         gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small, MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32 );
-        out = fopen(mapsmallpicpath, "wb+");
+
+        out = fopen(smallpicpath, "wb+");
         save_picture(out, small);
         fclose(out);
         gdImageDestroy(small);
@@ -1221,17 +1125,16 @@ void domap(struct_map_info* info)
     m->reset_time = 1;
     m->in_memory = MAP_IN_MEMORY;
     delete_map(m);
-    info->cfmap = NULL;
 }
 
 /**
  * Creates the page for a map index.
  *
  * @param dest
- * 
+ * path relative to root where the index will be located, without leading /. Used to compute the map's path relative to the index.
  * @param maps_list
  * maps in the index.
- * @param template
+ * @param template_page
  * global page template.
  * @param template_letter
  * template for one letter of the index.
@@ -1244,11 +1147,10 @@ void domap(struct_map_info* info)
  * @return
  * processed template. Should be free() by the caller.
  */
-char* do_map_index(const char* dest, struct_map_list* maps_list, const char* template, const char* template_letter, const char* template_map, const char** vars, const char** values) {
+char* do_map_index(const char* dest, struct_map_list* maps_list, const char* template_page, const char* template_letter, const char* template_map, const char** vars, const char** values) {
 #define VARSADD 6
     int map;
     char* string;
-    char name[500];
     char mappath[500];
     char maphtml[500];
     char count[50];
@@ -1300,8 +1202,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
 
     string = NULL;
     for (map = 0; map < maps_list->count; map++ ) {
-        strcpy(name, maps_list->maps[map]->name);
-        if (tolower(name[0]) != last_letter) {
+        if (tolower(maps_list->maps[map]->name[0]) != last_letter) {
             if (mapstext != NULL) {
                 idx_vars[basevalues+1] = "MAPS";
                 idx_vars[basevalues+2] = "LETTER";
@@ -1316,7 +1217,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
                 mapstext = NULL;
                 idx_values[basevalues+2] = NULL;
             }
-            last_letter = tolower(name[0]);
+            last_letter = tolower(maps_list->maps[map]->name[0]);
             str_letter[0] = last_letter;
             byletter = 0;
         }
@@ -1350,7 +1251,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
     idx_values[basevalues+1] = string;
     idx_vars[basevalues+1] = "LETTERS";
     idx_vars[basevalues+2] = NULL;
-    tmp = do_template(template, idx_vars, idx_values);
+    tmp = do_template(template_page, idx_vars, idx_values);
     free(string);
     free(idx_vars);
     free(idx_values);
@@ -1366,7 +1267,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
  * @note
  * will sort the maps.
  */
-void do_region(maps_in_region* reg) {
+void write_region_page(struct_region_info* reg) {
     char* string;
     FILE* index;
     char html[500];
@@ -1400,19 +1301,19 @@ void do_region(maps_in_region* reg) {
 /**
  * Generates all map indexes for a region.
  */
-void do_maps_index_by_region() {
+void write_all_regions() {
     int reg;
 
-    qsort(regions, region_count, sizeof(maps_in_region*), sort_region);
+    qsort(regions, region_count, sizeof(struct_region_info*), sort_region);
 
     for (reg = 0; reg < region_count; reg++ )
-        do_region(regions[reg]);
+        write_region_page(regions[reg]);
 }
 
 /**
  * Generates global map index, file maps.html.
  */
-void do_maps_index() {
+void write_maps_index() {
     char index_path[500];
     char* tmp;
     FILE* index;
@@ -1434,11 +1335,11 @@ void do_maps_index() {
 /**
  * Generates region index.
  */
-void do_region_index() {
+void write_region_index() {
     char* txt;
     char* final;
     char count[10];
-    maps_in_region* region;
+    struct_region_info* region;
     int reg;
     char file[500];
     const char* vars[] = {"REGIONCOUNT", "REGIONFILE", "REGIONNAME", NULL};
@@ -1476,7 +1377,7 @@ void do_region_index() {
 /**
  * Generates a big world map.
  */
-void do_world_map() {
+void write_world_map() {
 #define SIZE 50
     int x, y;
     FILE* out;
@@ -1610,6 +1511,125 @@ void do_world_map() {
 #undef SIZE
 }
 
+/**
+ * Write a map page.
+ *
+ * @param map
+ * map to write page of.
+ */
+void write_map_page(struct_map_info* map) {
+    char* exits_text;
+    char* maplore;
+    char* tmp;
+
+    char htmlpath[500];         /* Map file path. */
+    char mappic[500];           /* Name of map's full size picture. */
+    char mapsmallpic[500];      /* Name of map's small size picture. */
+    char indexpath[500];        /* Relative path of full index. */
+    char regionpath[500];       /* Path to region's filename. */
+    char regionname[500];       /* Name of map's region. */
+    char regionindexpath[500];  /* Path to region index file. */
+    char worldmappath[500];     /* Path to world map. */
+    char exit_path[500];
+    FILE* out;
+
+    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXIT", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", NULL, NULL, NULL };
+    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, NULL, NULL, NULL, NULL };
+    int vars_count = 0;
+
+    while (vars[vars_count])
+        vars_count++;
+
+    relative_path(map->path, "/maps.html", indexpath);
+    relative_path(map->path, "/world.html", worldmappath);
+    relative_path(map->path, "/regions.html", regionindexpath);
+
+    if (map->cfregion) {
+        strcpy(regionname, map->cfregion->name);
+        strcpy(exit_path, "/");
+        strcat(exit_path, regionname);
+        strcat(exit_path, ".html");
+        relative_path(map->path, exit_path, regionpath);
+    }
+    else {
+        snprintf(regionpath, sizeof(regionpath), "");
+        snprintf(regionname, sizeof(regionname), "(map was not processed)");
+    }
+
+    snprintf(mappic, sizeof(mappic), "%s%s", map->filename, output_extensions[output_format]);
+    snprintf(mapsmallpic, sizeof(mapsmallpic), "%s.small%s", map->filename, output_extensions[output_format]);
+
+    snprintf(htmlpath, sizeof(htmlpath), "%s%s.html", root, map->path);
+    make_path_to_file(htmlpath);
+
+
+    if (map->lore) {
+        values[11] = map->lore;
+        maplore = do_template(map_lore_template, vars, values);
+    }
+    else {
+        maplore = do_template(map_no_lore_template, vars, values);
+    }
+    values[11] = maplore;
+
+    if (map->exits_from.count)
+    {
+        char* one_exit = NULL;
+        int exit;
+        char relative[500];
+
+        vars[vars_count] = "EXITNAME";
+        vars[vars_count+1] = "EXITFILE";
+
+        qsort(map->exits_from.maps, map->exits_from.count, sizeof(const char*), sort_map_info);
+        for (exit = 0; exit < map->exits_from.count; exit++)
+        {
+            relative_path(map->path, map->exits_from.maps[exit]->path, relative);
+            values[vars_count] = map->exits_from.maps[exit]->name;
+            strcat(relative, ".html");
+            values[vars_count+1] = relative;
+            one_exit = cat_template(one_exit, do_template(map_exit_template, vars, values));
+        }
+        vars[vars_count] = "EXIT";
+        vars[vars_count+1] = NULL;
+        values[vars_count] = one_exit;
+        exits_text = do_template(map_with_exit_template, vars, values);
+        free(one_exit);
+    }
+    else
+        exits_text = do_template(map_no_exit_template, vars, values);
+
+    values[5] = exits_text;
+    vars[vars_count] = NULL;
+    out = fopen(htmlpath, "w+");
+    tmp = do_template(map_template, vars, values);
+    fprintf(out, tmp);
+    fclose(out);
+    free(tmp);
+    free(exits_text);
+    free(maplore);
+}
+
+/** Ensures all maps have a name, and writes all map pages. */
+void write_all_maps() {
+    int map;
+
+    /* we need to ensure all maps have a name: if there was a limit to map processing, some maps will have a NULL name which causes issues. */
+    for (map = 0; map < maps_list.count; map++) {
+        if (maps_list.maps[map]->name)
+            continue;
+        maps_list.maps[map]->name = strdup(maps_list.maps[map]->filename);
+    }
+
+    printf("Writing map pages...");
+
+    for (map = 0; map < maps_list.count; map++)
+        write_map_page(maps_list.maps[map]);
+
+    printf(" done.\n");
+}
+
+/** Directories to ignore for map search. */
 const char* ignore_path[] = {
     "/Info",
     "/editor",
@@ -1620,6 +1640,7 @@ const char* ignore_path[] = {
     "/unlinked",
     NULL };
 
+/** File names to ignore for map search. */
 const char* ignore_name[] = {
     ".",
     "..",
@@ -1627,6 +1648,12 @@ const char* ignore_name[] = {
     "README",
     NULL };
 
+/**
+ * Recursively find all all maps in a directory.
+ *
+ * @param from
+ * path to search from, without trailing /.
+ */
 void find_maps(const char* from) {
     struct dirent* file;
     struct stat statbuf;
@@ -1671,6 +1698,7 @@ void find_maps(const char* from) {
     }
 }
 
+/** Writes the list of unused maps, maps found in the directories but not linked from the other maps. */
 void dump_unused_maps() {
     FILE* dump;
     char path[1024];
@@ -1693,6 +1721,7 @@ void dump_unused_maps() {
     printf("%d unused maps.\n", found);
 }
 
+/** Writes the exit information world map. */
 void write_world_info() {
     FILE* file;
     char path[MAX_BUF];
@@ -1710,6 +1739,7 @@ void write_world_info() {
     infomap = NULL;
 }
 
+/** Write the .dot file representing links between regions. */
 void write_regions_link() {
     FILE* file;
     char path[MAX_BUF];
@@ -1764,7 +1794,7 @@ static void write_slaying_map_name(FILE* file, struct_map_info* map) {
  * @param without
  * text to write when there are no maps. Can be NULL.
  */
-static void write_one_slaying_info(FILE* file, slaying_info_struct* info, int item, const char* with, const char* without) {
+static void write_one_slaying_info(FILE* file, struct_slaying_info* info, int item, const char* with, const char* without) {
     int map;
     if (info->maps[item].count == 0) {
         if (without)
@@ -1785,7 +1815,7 @@ static void write_one_slaying_info(FILE* file, slaying_info_struct* info, int it
 }
 
 /**
- * Helper function to sort an array of slaying_info_struct.
+ * Helper function to sort an array of struct_slaying_info.
  *
  * @param left
  * first item.
@@ -1796,8 +1826,8 @@ static void write_one_slaying_info(FILE* file, slaying_info_struct* info, int it
  */
 static int sort_slaying( const void* left, const void* right )
 {
-    slaying_info_struct* l = *(slaying_info_struct**)left;
-    slaying_info_struct* r = *(slaying_info_struct**)right;
+    struct_slaying_info* l = *(struct_slaying_info**)left;
+    struct_slaying_info* r = *(struct_slaying_info**)right;
     return strcasecmp(l->slaying, r->slaying);
 }
 
@@ -1808,11 +1838,11 @@ void write_slaying_info() {
     FILE* file;
     char path[MAX_BUF];
     int lock;
-    slaying_info_struct* info;
+    struct_slaying_info* info;
 
     printf("Writing slaying info file...");
 
-    qsort(slaying_info, slaying_count, sizeof(slaying_info_struct*), sort_slaying);
+    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info*), sort_slaying);
 
     snprintf(path, sizeof(path), "%s/%s", root, "slaying_info.html");
     file = fopen(path, "wb+");
@@ -2059,7 +2089,7 @@ int main(int argc, char** argv)
 
     while (current_map < maps_list.count)
     {
-        domap(maps_list.maps[current_map++]);
+        process_map(maps_list.maps[current_map++]);
         if (current_map % 100 == 0)
         {
             printf(" %d maps processed, %d map pictures created, %d map pictures were uptodate. %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
@@ -2076,10 +2106,12 @@ int main(int argc, char** argv)
     if (list_unused_maps)
         dump_unused_maps();
 
-    do_maps_index_by_region();
-    do_region_index();
-    do_maps_index();
-    do_world_map();
+    write_all_maps();
+    write_maps_index();
+    write_all_regions();
+    write_region_index();
+
+    write_world_map();
     write_world_info();
 
     write_regions_link();
