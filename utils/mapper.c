@@ -1804,16 +1804,7 @@ void write_regions_link() {
  * map info to write.
  */
 static void write_slaying_map_name(FILE* file, struct_map_info* map) {
-    const char* last = strrchr(map->path, '/');
-    const char* first;
-    if (last) {
-        last++;
-        first = strchr(map->path, '/') + 1;
-    } else {
-        last = map->path;
-        first = map->path;
-    }
-    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", first, last, map->path);
+    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->path + 1, map->name, map->path);
 }
 
 /**
