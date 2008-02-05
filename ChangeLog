@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Simplify code.
+ utils/mapper.c
+Nicolas Weeger, 2008-02-05
+
 Fix warnings.
  utils/mapper.c
 Nicolas Weeger, 2008-02-04

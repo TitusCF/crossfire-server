@@ -1,7 +1,7 @@
 /*
     Crossfire map browser generator.
 
-    Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006.
+    Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006, 2007, 2008.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -426,43 +426,42 @@ static char* cat_template(char* source, char* add) {
  * file path to read.
  * @param buffer
  * where to store. Can be left uninitialized in case of errors.
- * @return
- * 1 if error, 0 else.
+ * @note
+ * will exit() with code 1 if any error occurs or if the file doesn't exist.
  */
-static int read_template(const char* name, char** buffer) {
+static void read_template(const char* name, char** buffer) {
     FILE* file;
     struct stat info;
 
     if (stat(name, &info)) {
         printf("Couldn't stat template %s!\n", name);
-        return 1;
+        exit(1);
     }
 
     (*buffer) = calloc(1, info.st_size + 1);
     if (!(*buffer)) {
         printf("Template %s calloc failed!\n", name);
-        return 1;
+        exit(1);
     }
 
     if (info.st_size == 0) {
         (*buffer)[0] = '\0';
-        return 0;
+        return;
     }
 
     file = fopen(name, "rb");
     if (!file) {
         printf("Couldn't open template %s!\n", name);
         free(*buffer);
-        return 1;
+        exit(1);
     }
     if (fread(*buffer, info.st_size, 1, file) != 1) {
         printf("Couldn't read template %s!\n", name);
         free(*buffer);
         fclose(file);
-        return 1;
+        exit(1);
     }
     fclose(file);
-    return 0;
 }
 
 /**
@@ -1987,44 +1986,27 @@ int main(int argc, char** argv)
     create_destination();
     gdfaces = calloc(1, sizeof(gdImagePtr) * nrofpixmaps);
 
-    if (read_template("templates/map.template", &map_template))
-        return 1;
-    if (read_template("templates/map_no_exit.template", &map_no_exit_template))
-        return 1;
-    if (read_template("templates/map_with_exit.template", &map_with_exit_template))
-        return 1;
-    if (read_template("templates/map_exit.template", &map_exit_template))
-        return 1;
-    if (read_template("templates/map_lore.template", &map_lore_template))
-        return 1;
-    if (read_template("templates/map_no_lore.template", &map_no_lore_template))
-        return 1;
+    read_template("templates/map.template", &map_template);
+    read_template("templates/map_no_exit.template", &map_no_exit_template);
+    read_template("templates/map_with_exit.template", &map_with_exit_template);
+    read_template("templates/map_exit.template", &map_exit_template);
+    read_template("templates/map_lore.template", &map_lore_template);
+    read_template("templates/map_no_lore.template", &map_no_lore_template);
 
-    if (read_template("templates/index.template", &index_template))
-        return 1;
-    if (read_template("templates/index_letter.template", &index_letter))
-        return 1;
-    if (read_template("templates/index_map.template", &index_map))
-        return 1;
+    read_template("templates/index.template", &index_template);
+    read_template("templates/index_letter.template", &index_letter);
+    read_template("templates/index_map.template", &index_map);
 
-    if (read_template("templates/region.template", &region_template))
-        return 1;
-    if (read_template("templates/region_letter.template", &region_letter_template))
-        return 1;
-    if (read_template("templates/region_map.template", &region_map_template))
-        return 1;
+    read_template("templates/region.template", &region_template);
+    read_template("templates/region_letter.template", &region_letter_template);
+    read_template("templates/region_map.template", &region_map_template);
 
-    if (read_template("templates/index_region.template", &index_region_template))
-        return 1;
-    if (read_template("templates/index_region_region.template", &index_region_region_template))
-        return 1;
+    read_template("templates/index_region.template", &index_region_template);
+    read_template("templates/index_region_region.template", &index_region_region_template);
 
-    if (read_template("templates/world.template", &world_template))
-        return 1;
-    if (read_template("templates/world_row.template", &world_row_template))
-        return 1;
-    if (read_template("templates/world_map.template", &world_map_template))
-        return 1;
+    read_template("templates/world.template", &world_template);
+    read_template("templates/world_row.template", &world_row_template);
+    read_template("templates/world_map.template", &world_map_template);
 
     if (map_limit != -1)
         sprintf(max, "%d", map_limit);
