@@ -109,6 +109,7 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
         va_end(arg);
 
         if (n > -1 && (size_t)n < size) {
+            sb->pos += (size_t)n;
             break;
         }
 
