@@ -159,7 +159,7 @@ Nicolas Weeger, 2008-01-26
 
 .cvsignore files created in types subdirectories and svn:ignore set.
 Kevin Bulgrien
-  
+
 Spelling mistakes corrected.
   README
   configure.ac
@@ -205,7 +205,7 @@ common/living.c: Greatly reduce speed bonuses for high dex.  Reduce
   extra hp/sp/grace based upon what the archetype says.  Reduce
   rate of increase of wc and damage from melee skill.  Implement new
   encumberance calculations.  Add code to calculate weapon speed.
-common/loader.l: Add support for loading an saving weapon_speed and 
+common/loader.l: Add support for loading an saving weapon_speed and
   weapon_speed_left.
 doc/Developers/objects: Update notes for the generators to detail
   generator_limit
