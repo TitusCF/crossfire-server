@@ -77,4 +77,13 @@ char *stringbuffer_finish(StringBuffer *sb);
  */
 void stringbuffer_append_string(StringBuffer *sb, const char *str);
 
+/**
+ * Append a formatted string to a string buffer instance.
+ *
+ * @param sb The string buffer to modify.
+ *
+ * @param format The format string to append.
+ */
+void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
+
 #endif

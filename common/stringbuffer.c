@@ -20,6 +20,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -91,6 +92,32 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     stringbuffer_ensure(sb, len+1);
     memcpy(sb->buf+sb->pos, str, len);
     sb->pos += len;
+}
+
+void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
+    size_t size;
+
+    size = 100;                 /* arbitrary guess */
+    for (;;) {
+        int n;
+        va_list arg;
+
+        stringbuffer_ensure(sb, size);
+
+        va_start(arg, format);
+        n = vsnprintf(sb->buf+sb->pos, size, format, arg);
+        va_end(arg);
+
+        if (n > -1 && (size_t)n < size) {
+            break;
+        }
+
+        if (n > -1) {
+            size = n+1;         /* precisely what is needed */
+        } else {
+            size *= 2;          /* twice the old size */
+        }
+    }
 }
 
 static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
