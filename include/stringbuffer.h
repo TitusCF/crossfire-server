@@ -86,4 +86,14 @@ void stringbuffer_append_string(StringBuffer *sb, const char *str);
  */
 void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
 
+/**
+ * Append the contents of a string buffer instance to another string buffer
+ * instance.
+ *
+ * @param sb The string buffer to modify.
+ *
+ * @param sb2 The string buffer to append; it must be different from sb.
+ */
+void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
+
 #endif

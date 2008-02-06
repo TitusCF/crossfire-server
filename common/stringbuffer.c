@@ -121,6 +121,12 @@ void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...) {
     }
 }
 
+void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2) {
+    stringbuffer_ensure(sb, sb2->pos+1);
+    memcpy(sb->buf+sb->pos, sb2->buf, sb2->pos);
+    sb->pos += sb2->pos;
+}
+
 static void stringbuffer_ensure(StringBuffer *sb, size_t len) {
     char *tmp;
     size_t new_size;
