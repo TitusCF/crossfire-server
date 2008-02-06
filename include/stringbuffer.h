@@ -44,6 +44,9 @@
 #ifndef STRING_BUFFER_H
 #define STRING_BUFFER_H
 
+#include "global.h"
+
+
 /**
  * The string buffer state.
  */
@@ -67,6 +70,19 @@ StringBuffer *stringbuffer_new(void);
  * @return The result string; to free it, call <code>free()</code> on it.
  */
 char *stringbuffer_finish(StringBuffer *sb);
+
+/**
+ * Deallocate the string buffer instance and return the string as a shared
+ * string.
+ *
+ * The passed string buffer must not be accessed afterwards.
+ *
+ * @param sb The string buffer to deallocate.
+ *
+ * @return The result shared string; to free it, call
+ * <code>free_string()</code> on it.
+ */
+sstring stringbuffer_finish_shared(StringBuffer *sb);
 
 /**
  * Append a string to a string buffer instance.

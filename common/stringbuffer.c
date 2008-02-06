@@ -85,6 +85,16 @@ char *stringbuffer_finish(StringBuffer *sb) {
     return result;
 }
 
+sstring stringbuffer_finish_shared(StringBuffer *sb) {
+    char *str;
+    sstring result;
+
+    str = stringbuffer_finish(sb);
+    result = add_string(str);
+    free(str);
+    return result;
+}
+
 void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     size_t len;
 

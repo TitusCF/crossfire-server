@@ -14,7 +14,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
-Add stringbuffer_append_printf() and stringbuffer_append_stringbuffer().
+Add stringbuffer_append_printf(), stringbuffer_append_stringbuffer(), and
+stringbuffer_finish_shared().
   common/stringbuffer.c
   include/stringbuffer.h
 Andreas Kirschbaum 2008-02-07
