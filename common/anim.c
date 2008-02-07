@@ -282,7 +282,6 @@ void animate_object(object *op, int dir) {
  * object to apply the animation to. Must not be NULL.
  * @param suffix
  * animation suffix to apply. Must not be NULL.
- * @todo document existing prefixes, describe compound animations.
  */
 void apply_anim_suffix(object* who, sstring suffix) {
     int anim;
