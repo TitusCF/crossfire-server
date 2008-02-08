@@ -64,6 +64,10 @@
  *   - index_map.template: one map in the whole index
  * - index_region.template: region index template.
  *  - index_region_region.template: one region in the index.
+ * - level.template: index of maps by level.
+ *  - level_value.template: one level.
+ *   - level_map.template: one map in the level.
+ *
  *
  * Tags must be in the form #TAG#. To have a # in the code, please put ##. Valid tags are:
  *
@@ -80,6 +84,7 @@
  *  - REGIONINDEXPATH: path to region index file.
  *  - WORLDMAPPATH: path to world map file.
  *  - MAPLORE: map's lore.
+ *  - MAPLEVEL: level as defined in the map.
  * - map_no_exit:
  *  - tags for map, except MAPEXIT.
  * - map_with_exit:
@@ -137,6 +142,15 @@
  * - index_region_region:
  *  - REGIONFILE: relative path to region page.
  *  - REGIONNAME: region name.
+ * - level:
+ *  - COUNT: count of different levels.
+ *  - LEVELS: result of the sub-level templates.
+ * - level_value:
+ *  - LEVEL: current level.
+ *  - MAPS: result of the level maps templates.
+ * - level_map:
+ *  - MAPNAME: name of the map.
+ *  - MAPPATH: relative path of the map from the index.
  *
  *
  * To build this program, from the utils directory:
@@ -170,6 +184,7 @@ typedef struct struct_map_info {
     char* filename;
     char* lore;
     region* cfregion;
+    int level;
     struct_map_list exits_from;
     struct_map_list exits_to;
 } struct_map_info;
@@ -216,6 +231,10 @@ char* region_map_template;      /**< Region page template: one map. */
 
 char* index_region_template;        /**< Region index template. */
 char* index_region_region_template; /**< One region in the region index template. */
+
+char* level_template;
+char* level_value_template;
+char* level_map_template;
 
 /** Picture statistics. */
 int created_pics = 0; /**< Total created pics. */
@@ -621,6 +640,26 @@ static int sort_mapname( const void* left, const void* right )
 }
 
 /**
+ * Compares struct_map_info according to the map name or the path if equal.
+ *
+ * @param left
+ * first item.
+ * @param right
+ * second item.
+ * @return
+ * comparison on name, and if equal then on whole path.
+ */
+static int compare_map_info(const struct_map_info* left, const struct_map_info* right) {
+    int c;
+
+    c = strcasecmp(left->name, right->name);
+    if (c)
+        return c;
+
+    return strcasecmp(left->path, right->path);
+}
+
+/**
  * Sorts the struct_map_info according to the map name or the path if equal.
  *
  * @param left
@@ -632,15 +671,29 @@ static int sort_mapname( const void* left, const void* right )
  */
 static int sort_map_info( const void* left, const void* right )
 {
-    struct_map_info* l = *(struct_map_info**)left;
-    struct_map_info* r = *(struct_map_info**)right;
-    int c;
+    const struct_map_info* l = *(const struct_map_info**)left;
+    const struct_map_info* r = *(const struct_map_info**)right;
+    return compare_map_info(l, r);
+}
 
-    c = strcasecmp(l->name, r->name);
+/**
+ * Sorts the struct_map_info according to the map's level, and if equal the name or the path.
+ *
+ * @param left
+ * first item.
+ * @param right
+ * second item.
+ * @return
+ * comparison on name, and if equal then on whole path.
+ */
+static int sort_map_info_by_level( const void* left, const void* right )
+{
+    const struct_map_info* l = *(const struct_map_info**)left;
+    const struct_map_info* r = *(const struct_map_info**)right;
+    int c = l->level - r->level;
     if (c)
         return c;
-
-    return strcasecmp(l->path, r->path);
+    return compare_map_info(l, r);
 }
 
 /**
@@ -965,6 +1018,7 @@ void process_map(struct_map_info* info)
     if (!rawmaps)
         do_auto_apply(m);
 
+    info->level = m->difficulty;
     if (m->maplore)
         info->lore = strdup(m->maplore);
 
@@ -1536,10 +1590,11 @@ void write_map_page(struct_map_info* map) {
     char regionindexpath[500];  /* Path to region index file. */
     char worldmappath[500];     /* Path to world map. */
     char exit_path[500];
+    char maplevel[5];
     FILE* out;
 
-    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", NULL, NULL, NULL };
-    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", NULL, NULL, NULL };
+    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", "MAPLEVEL", NULL, NULL, NULL };
+    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", maplevel, NULL, NULL, NULL };
     int vars_count = 0;
 
     while (vars[vars_count])
@@ -1568,6 +1623,7 @@ void write_map_page(struct_map_info* map) {
     make_path_to_file(htmlpath);
 
 
+    snprintf(maplevel, sizeof(maplevel), "%d", map->level);
     if (map->lore) {
         values[11] = map->lore;
         maplore = do_template(map_lore_template, vars, values);
@@ -1615,7 +1671,7 @@ void write_map_page(struct_map_info* map) {
         vars[vars_count] = "EXITNAME";
         vars[vars_count+1] = "EXITFILE";
 
-        qsort(map->exits_to.maps, map->exits_to.count, sizeof(const char*), sort_map_info);
+        qsort(map->exits_to.maps, map->exits_to.count, sizeof(struct_map_info*), sort_map_info);
         for (exit = 0; exit < map->exits_to.count; exit++)
         {
             relative_path(map->path, map->exits_to.maps[exit]->path, relative);
@@ -1661,6 +1717,70 @@ void write_all_maps() {
 
     for (map = 0; map < maps_list.count; map++)
         write_map_page(maps_list.maps[map]);
+
+    printf(" done.\n");
+}
+
+/** Outputs the list of maps sorted by level. */
+void write_maps_by_level()
+{
+    int map;
+    FILE* out;
+    char name[500];
+    char mappath[500];
+    char* letters = NULL;
+    char* maps = NULL;
+    char* level = NULL;
+    int lastlevel = -1;
+    char strlevel[10];
+    char strcount[10];
+    const char* val_vars[] = { "LEVEL", "MAPS", NULL };
+    const char* val_values[] = { strlevel, NULL, NULL };
+    const char* map_vars[] = { "MAPNAME", "MAPPATH", NULL };
+    const char* map_values[] = { NULL, mappath, NULL };
+    const char* idx_vars[] = { "COUNT", "LEVELS", NULL };
+    const char* idx_values[] = { strcount, NULL, NULL };
+    int levelcount = 0;
+
+    printf("Writing map index by level...");
+
+    snprintf(name, sizeof(name), "%s/index_by_level.html", root);
+
+    qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info*), sort_map_info_by_level);
+
+    for (map = 0; map < maps_list.count; map++) {
+        if (maps_list.maps[map]->level != lastlevel) {
+            if (maps) {
+                snprintf(strlevel, sizeof(strlevel), "%d", lastlevel);
+                val_values[1] = maps;
+                letters = cat_template(letters, do_template(level_value_template, val_vars, val_values));
+                free(maps);
+                maps = NULL;
+            }
+            lastlevel = maps_list.maps[map]->level;
+            levelcount++;
+        }
+
+        map_values[0] = maps_list.maps[map]->name;
+        snprintf(mappath, sizeof(mappath), "%s.html", maps_list.maps[map]->path + 1); /* don't want the leading / */
+        maps = cat_template(maps, do_template(level_map_template, map_vars, map_values));
+    }
+
+    snprintf(strlevel, sizeof(strlevel), "%d", lastlevel);
+    val_values[1] = maps;
+    letters = cat_template(letters, do_template(level_value_template, val_vars, val_values));
+    free(maps);
+    maps = NULL;
+
+    snprintf(strcount, sizeof(strcount), "%d", levelcount);
+    idx_values[1] = letters;
+    level = do_template(level_template, idx_vars, idx_values);
+    free(letters);
+
+    out = fopen(name, "w+");
+    fprintf(out, level);
+    fclose(out);
+    free(level);
 
     printf(" done.\n");
 }
@@ -2074,6 +2194,10 @@ int main(int argc, char** argv)
     read_template("templates/world_row.template", &world_row_template);
     read_template("templates/world_map.template", &world_map_template);
 
+    read_template("templates/level.template", &level_template);
+    read_template("templates/level_value.template", &level_value_template);
+    read_template("templates/level_map.template", &level_map_template);
+
     if (map_limit != -1)
         sprintf(max, "%d", map_limit);
     else
@@ -2138,6 +2262,7 @@ int main(int argc, char** argv)
 
     write_all_maps();
     write_maps_index();
+    write_maps_by_level();
     write_all_regions();
     write_region_index();
 

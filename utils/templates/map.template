@@ -3,7 +3,7 @@
 <title>#MAPNAME#</title>
 </head>
 <body>
-Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>.
+Map #MAPNAME#, in region <a href="#REGIONPATH#">#REGIONNAME#</a>. Map level: #MAPLEVEL#.
 <br />
 <br />
 Map view:

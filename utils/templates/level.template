@@ -1,0 +1,9 @@
+<html>
+<head>
+<title>Maps by level</title>
+</head>
+<body>
+Maps by level:<br />
+#LEVELS#
+</body>
+</html>
