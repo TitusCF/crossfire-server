@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Get quest information from map's lore. Generate quest index.
+ utils/mapper.c
+ utils/templates/map.template
+Added files:
+ templates/map_no_quest.template map_one_quest.template map_with_quests.template
+  quests.template quests_map.template quests_quest.template 
+Nicolas Weeger, 2008-02-08
+
 Include level of map in variables. Generate global map index by level.
  utils/mapper.c
 Added files:

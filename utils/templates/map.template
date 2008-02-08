@@ -16,6 +16,7 @@ Map view:
 #MAPEXITTO#
 <br />
 #MAPLORE#
+#QUESTS#
 <br />
 <a href="#REGIONPATH#">#REGIONNAME#'s map index</a> | <a href="#REGIONINDEXPATH#">Region index</a> | <a href="#INDEXPATH#">Global map index</a> | <a href="#WORLDMAPPATH#">World map</a>
 </body>
