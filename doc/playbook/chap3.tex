@@ -440,14 +440,14 @@ grace grows 1 per {\tt wisdom} {\tt level}.
 \subsection{Death $---$ the ultimate penalty?}\label{sec:death}
 
 Should your hit point total drop below 0 you will die\inputimage{gravestone}. 
-What happens next depends on how the game is compiled. If the 
-{\tt NOT\_PERMDEATH} option is being 
-used (this is the default) then your character (and his all of his 
-{\em carried}
-equipment at the instant of death) will appear in the base map (the one
-you first started out in). 
+What happens next depends on the options the server administrator choose.
 
-For each time you die, your character loses 20\%
+If the {\tt NOT\_PERMDEATH} option is being used (this is the default) then your character
+ (and his all of his {\em carried}
+equipment at the instant of death) will appear at the last savebed you used.
+
+For each time you die, your character loses 20\% (this is the default and can be different 
+depending on the server).
 of their experience (in all categories) and a random primary stat decreases by 1. 
 At low levels, the stat loss is bad news, while it is the experience loss that
 {\em really} hurts at those high levels. You may still re-gain lost stats (up to your
@@ -457,10 +457,10 @@ If the server administrator has made death permanent, there is still hope
 for your character. When the {\tt RESURRECTION} option is enabled (the default option
 when {\tt NOT\_PERMDEATH} is {\em not} being used) other characters may bring you back
 from the beyond. There are 3 spells that are capable of doing this, but
-remember to retrieve the corpse\inputimage{corpse}\ of the character 
-that is to be resurrected! 
+you may need to retrieve the corpse\inputimage{corpse}\ of the character 
+that is to be resurrected!
 
- 
+
 \section{Some advanced stuff}
 
 \subsection{Some useful advanced commands}
