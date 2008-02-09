@@ -85,6 +85,17 @@ char *stringbuffer_finish(StringBuffer *sb);
 sstring stringbuffer_finish_shared(StringBuffer *sb);
 
 /**
+ * Deallocate the string buffer instance and put its contents to the
+ * specified SockList.
+ *
+ * The passed string buffer must not be accessed afterwards.
+ *
+ * @param sb The string buffer to deallocate.
+ * @param sl Result SockList. It's <code>buf</code> field must be <code>free()</code>'d.
+ */
+void stringbuffer_finish_socklist(StringBuffer* sb, SockList* sl);
+
+/**
  * Append a string to a string buffer instance.
  *
  * @param sb The string buffer to modify.
