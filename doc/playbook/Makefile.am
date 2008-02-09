@@ -113,10 +113,10 @@ guild.tex: items sorter
 	egrep -e "^66 " items | grep "guild" | $(AWK) -F'&' 	-f generic-extract | sort > guild.tex
 
 holysymbol.tex: items sorter
-	egrep -e "^43 " items | grep "holy" | $(AWK) -F'&' 	-f generic-extract | sort > holysymbol.tex
+	egrep -e "^74 " items | grep "holy" | $(AWK) -F'&' 	-f generic-extract | sort > holysymbol.tex
 
 lockpicks.tex: items sorter
-	egrep -e "^43 " items | grep "lockpicks" | $(AWK) -F'&' 	-f generic-extract | sort > lockpicks.tex
+	egrep -e "^74 " items | grep "lockpicks" | $(AWK) -F'&' 	-f generic-extract | sort > lockpicks.tex
 
 potion.tex: items sorter
 	egrep -e "^5 " items | grep "potiongen" | $(AWK) -F'&' 	-f generic-extract | sort > potion.tex
@@ -128,7 +128,8 @@ runedeath.tex: items sorter
 	egrep -e "^154 " items | grep "rune-death" | 	$(AWK) -F'&' -f generic-extract | sort > runedeath.tex
 
 runegen.tex: items sorter
-	egrep -e "^154 " items | grep "generic-rune" | 	$(AWK) -F'&' -f generic-extract | sort > runegen.tex
+	egrep -e "^101 " items | grep -e "penta" | 	$(AWK) -F'&' -f generic-extract | sort -u > runegen.tex
+	egrep -e "^101 " items | grep -e "glyph" | 	$(AWK) -F'&' -f generic-extract | sort -u >> runegen.tex
 
 runefrost.tex: items sorter
 	egrep -e "^154 " items | grep "rune-frost." | 	$(AWK) -F'&' -f generic-extract | sort > runefrost.tex
@@ -146,7 +147,7 @@ shops.tex: items sorter
 	egrep -e "^66 " items | grep "store" | $(AWK) -F'&' 	-f generic-extract | sort > shops.tex
 
 talisman.tex: items sorter
-	egrep -e "^43 " items | grep "talisman" | $(AWK) -F'&' 	-f generic-extract | sort > talisman.tex
+	egrep -e "^74 " items | grep "talisman" | $(AWK) -F'&' 	-f generic-extract | sort > talisman.tex
 
 altar.tex: items sorter
 	egrep -e "^18 " items | $(AWK) -F'&' -f generic-extract | sort > altar.tex
@@ -191,7 +192,7 @@ gems.tex: items sorter
 	egrep -e "^60 " items | $(AWK) -F'&' -f generic-extract | sort > gems.tex
 
 gravestone.tex: items sorter
-	egrep -e "^38 " items | $(AWK) -F'&' -f generic-extract | sort > gravestone.tex
+	egrep -e "^98 " items | $(AWK) -F'&' -f generic-extract | grep "gravestone\." > gravestone.tex
 
 handbutt.tex: items sorter
 	egrep -e "^92 " items | $(AWK) -F'&' -f generic-extract | sort > handbutt.tex

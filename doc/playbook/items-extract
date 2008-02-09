@@ -38,6 +38,10 @@ BEGIN {
 
 	# earthwall, firewall, spinner, director
   	artifact[45] = artifact[62] = artifact[90] = artifact[112] = 1;
+  	
+        # skill tools, spells
+  	artifact[74] = artifact[101] = 1;
+  	force[101] = 1;
 
 	# Don't eleminate repeat occurances
 	keeprepeat[66] = keeprepeat[98] = keeprepeat[24] = 1;
@@ -83,7 +87,7 @@ BEGIN {
 /^invisible/	{ invisible = $2 }
 /^end/ {
 	# but they are in the worthless, we ignore it
-	if (artifact[type] && !worthless[name] && !invisible) {
+	if (artifact[type] && !worthless[name] && (!invisible || force[type])) {
 
 		if(!valuable[type] || (valuable[type] ~ name)) 
 		   if(keeprepeat[type] || !(oldname ~ name)) 
