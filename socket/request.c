@@ -1581,7 +1581,7 @@ void send_race_info(socket_struct *ns, char *params) {
     SockList sl;
 
     buf = stringbuffer_new();
-    stringbuffer_append_printf(buf, "replyinfo race_info %s");
+    stringbuffer_append_printf(buf, "replyinfo race_info %s", params);
 
     if (race) {
     }
