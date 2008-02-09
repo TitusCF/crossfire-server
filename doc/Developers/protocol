@@ -1226,6 +1226,24 @@ S->C: replyinfo <info_type>[options]<data>
 
 	16:missiles
 
+    race_list (no parameters)
+        Returns the races players can choose.
+        The names can be used to request more information with race_info.
+        Reply format is: replyinfo race_list |race1|race2|...|racen
+
+    race_info <race name>
+        Returns information about specified race.
+        (work in progress)
+
+    class_list (no parameters)
+        Returns the classes players can choose.
+        The names can be used to request more information with class_info.
+        Reply format is: replyinfo class_list |class1|class2|...|classn
+
+    class_info <class name>
+        Returns information about specified class.
+        (work in progress)
+
 ------------------------------------------------------------------------------
 
 Example Session:

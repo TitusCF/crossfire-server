@@ -15,6 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Some bases for sending race/class info to client. Not finished.
+ doc/Developers/protocol: update.
  include/sockproto.h
  socket/loop.c request.c
 Nicolas Weeger, 2008-02-09
