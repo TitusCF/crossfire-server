@@ -1523,6 +1523,131 @@ void send_spell_paths (socket_struct *ns, char *params) {
 }
 
 /**
+ * Creates the appropriate reply to the 'race_list' request info.
+ *
+ * @return
+ * suitable reply.
+ */
+static char* build_race_list_reply() {
+    StringBuffer* buf = stringbuffer_new();
+    archetype* race;
+
+    stringbuffer_append_string(buf, "replyinfo race_list ");
+
+    for (race = first_archetype; race; race = race->next) {
+        if (race->clone.type == PLAYER) {
+            stringbuffer_append_printf(buf, "|%s", race->name);
+        }
+    }
+    return stringbuffer_finish(buf);
+}
+
+/**
+ * Send the list of player races to the client.
+ * The reply is kept in a static buffer, as it won't change during server run.
+ *
+ * @param ns
+ * where to send.
+ * @param params
+ * ignored.
+ */
+void send_race_list(socket_struct *ns, char *params) {
+    static char* reply = NULL;
+    static int reply_length = 0;
+    SockList sl;
+
+    if (!reply) {
+        reply = build_race_list_reply();
+        reply_length = strlen(reply);
+    }
+
+    sl.buf = reply;
+    sl.len = reply_length;
+    Send_With_Handling(ns, &sl);
+}
+
+/**
+ * Sends information on specified race to the client.
+ *
+ * @param ns
+ * where to send.
+ * @param params
+ * race name to send.
+ * @todo finish writing
+ */
+void send_race_info(socket_struct *ns, char *params) {
+    archetype* race = try_find_archetype(params);
+    StringBuffer* buf;
+    SockList sl;
+
+    buf = stringbuffer_new();
+    stringbuffer_append_printf(buf, "replyinfo race_info %s");
+
+    if (race) {
+    }
+
+    stringbuffer_finish_socklist(buf, &sl);
+    Send_With_Handling(ns, &sl);
+    free(sl.buf);
+}
+
+/**
+ * Creates the appropriate reply to the 'class_list' request info.
+ *
+ * @return
+ * reply.
+ */
+static char* build_class_list_reply() {
+    StringBuffer* buf = stringbuffer_new();
+    archetype* cl;
+
+    stringbuffer_append_string(buf, "replyinfo class_list ");
+
+    for (cl = first_archetype; cl; cl = cl->next) {
+        if (cl->clone.type == CLASS) {
+            stringbuffer_append_printf(buf, "|%s", cl->name);
+        }
+    }
+    return stringbuffer_finish(buf);
+}
+
+/**
+ * Sends the list of classes to the client.
+ * The reply is kept in a static buffer, as it won't change during server run.
+ *
+ * @param ns
+ * client to send to.
+ * @param params
+ * ignored.
+ */
+void send_class_list(socket_struct *ns, char *params) {
+    static char* reply = NULL;
+    static int reply_length = 0;
+    SockList sl;
+
+    if (!reply) {
+        reply = build_class_list_reply();
+        reply_length = strlen(reply);
+    }
+
+    sl.buf = reply;
+    sl.len = reply_length;
+    Send_With_Handling(ns, &sl);
+}
+
+/**
+ * Send information on the specified class.
+ *
+ * @param ns
+ * where to send.
+ * @param params
+ * class name to send.
+ * @todo finish writing
+ */
+void send_class_info(socket_struct *ns, char *params) {
+}
+
+/**
  * This looks for any spells the player may have that have changed
  * their stats. It then sends an updspell packet for each spell that
  * has changed in this way.

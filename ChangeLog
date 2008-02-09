@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Some bases for sending race/class info to client. Not finished.
+ include/sockproto.h
+ socket/loop.c request.c
+Nicolas Weeger, 2008-02-09
+
 Helper stringbuffer function.
  common/stringbuffer.c
  include/stringbuffer.h
