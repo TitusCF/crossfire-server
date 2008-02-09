@@ -1935,6 +1935,20 @@ void apply_changes_to_player(object *pl, object *change) {
                     CLEAR_FLAG(pl,FLAG_ANIMATE);
             }
 
+            if (change->anim_suffix) {
+                char buf[MAX_BUF];
+                int anim;
+
+                snprintf(buf, MAX_BUF, "%s_%s", animations[pl->animation_id].name, change->anim_suffix);
+                anim = try_find_animation(buf);
+                if (anim) {
+                    pl->animation_id = anim;
+                    pl->anim_speed = -1;
+                    CLEAR_FLAG(pl,FLAG_ANIMATE);
+                    animate_object(pl, pl->facing);
+                }
+            }
+
                 /* check the special case of can't use weapons */
                 /*if(QUERY_FLAG(change,FLAG_USE_WEAPON)) CLEAR_FLAG(pl,FLAG_USE_WEAPON);*/
             if(!strcmp(change->name,"monk")) CLEAR_FLAG(pl,FLAG_USE_WEAPON);
