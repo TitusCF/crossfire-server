@@ -181,6 +181,13 @@
  *
  * To build this program, from the utils directory:
  *  gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd
+ *
+ * @todo
+ * - split this file in multiple ones for easier maintenance
+ * - add support for the tile sets, and command line argument to specify which one to use
+ * - add missing documentation on variables / functions
+ * - add command line argument for large / small picture size
+ * - add maximum width/height for small picture
  */
 
 #include <time.h>
@@ -223,10 +230,20 @@ typedef struct struct_map_info {
     struct_map_list exits_from;
     struct_map_list exits_to;
     struct_map_in_quest_list quests;
+
+    struct_map_list tiled_maps;
+
+    struct struct_map_info* tiled_group;
+    int height, width;
+    int tiled_x_from, tiled_y_from, processed;
+    struct struct_map_info* tiles[4];
 } struct_map_info;
 
 /** Maps to process or found. */
 struct_map_list maps_list;
+
+/** Pseudo-maps grouping other maps. */
+struct_map_list tiled_map_list;
 
 /** Path to store generated files. Relative or absolute, shouldn't end with a / */
 char root[500];
@@ -696,6 +713,11 @@ static int sort_mapname( const void* left, const void* right )
 static int compare_map_info(const struct_map_info* left, const struct_map_info* right) {
     int c;
 
+    if (left->tiled_group)
+        left = left->tiled_group;
+    if (right->tiled_group)
+        right = right->tiled_group;
+
     c = strcasecmp(left->name, right->name);
     if (c)
         return c;
@@ -988,6 +1010,9 @@ static void write_quests_page() {
         text_map = NULL;
     }
 
+    if (!text_quest)
+        text_quest = strdup("No quest.");
+
     idx_vals[0] = text_quest;
     text_idx = do_template(index_quest_template, idx_vars, idx_vals);
     free(text_quest);
@@ -1032,6 +1057,94 @@ void add_map(struct_map_info* info, struct_map_list* list)
 }
 
 /**
+ * Replaces a map in a map list. Will emit a warning if map can't be found.
+ *
+ * @param find
+ * map to replace.
+ * @param replace_by
+ * replacement map.
+ * @param list
+ * where to search.
+ */
+void replace_map(struct_map_info* find, struct_map_info* replace_by, struct_map_list* list) {
+    int map;
+    for (map = 0; map < list->count; map++) {
+        if (list->maps[map] == find) {
+            list->maps[map] = replace_by;
+            return;
+        }
+    }
+    printf("replace_map: couldn't find map %s.\n", find->path);
+}
+
+/**
+ * Returns an initialised struct_map_info.
+ *
+ * @return
+ * new struct_map_info.
+ */
+struct_map_info* create_map_info() {
+    struct_map_info* add = calloc(1, sizeof(struct_map_info));
+
+    init_map_list(&add->exits_to);
+    init_map_list(&add->exits_from);
+    init_map_list(&add->tiled_maps);
+    init_struct_map_in_quest_list(&add->quests);
+    add->tiled_group = NULL;
+
+    return add;
+}
+
+/**
+ * Create a new tiled map and link it to the tiled map list.
+ *
+ * @return
+ * new tiled map.
+ */
+struct_map_info* create_tiled_map() {
+    struct_map_info* add = create_map_info();
+    add_map(add, &tiled_map_list);
+    return add;
+}
+
+/**
+ * Merge two tiled maps groups. This can happen if based on processing we do one map with tiled maps,
+ * another with tiled maps, and later figure out the tiles are actually linked.
+ *
+ * @param map
+ * the map that being processed has a tiling to a map in another group. Its group will be the final merging group.
+ * @param tile
+ * the tile index causing the merge
+ * @param tiled_map
+ * the map tiled to another group. Its group will disappear.
+ */
+void merge_tiled_maps(struct_map_info* map, int tile, struct_map_info* tiled_map) {
+    int dec_x, dec_y, g;
+    struct_map_info* group = tiled_map->tiled_group;
+    struct_map_info* change;
+
+    while (group->tiled_maps.count > 0) {
+        change = group->tiled_maps.maps[group->tiled_maps.count - 1];
+        change->tiled_group = map->tiled_group;
+        add_map(change, &map->tiled_group->tiled_maps);
+        group->tiled_maps.count--;
+    }
+
+    for (g = 0; g < tiled_map_list.count; g++) {
+        if (tiled_map_list.maps[g] == group) {
+            if (g < tiled_map_list.count - 1)
+                tiled_map_list.maps[g] = tiled_map_list.maps[tiled_map_list.count - 1];
+            tiled_map_list.count--;
+            free(group);
+            return;
+        }
+    }
+    printf("tiled_map not in tiled_map_list!");
+    abort();
+
+}
+
+/**
  * Gets or creates if required the info structure for a map.
  *
  * @param path
@@ -1049,7 +1162,7 @@ struct_map_info* get_map_info(const char* path) {
             return maps_list.maps[map];
     }
 
-    add = calloc(1, sizeof(struct_map_info));
+    add = create_map_info();
     add->path = strdup(path);
     tmp = strrchr(path, '/');
     if (tmp)
@@ -1057,9 +1170,6 @@ struct_map_info* get_map_info(const char* path) {
     else
         add->filename = strdup(path);
 
-    init_map_list(&add->exits_to);
-    init_map_list(&add->exits_from);
-    init_struct_map_in_quest_list(&add->quests);
     add_map(add, &maps_list);
     return add;
 }
@@ -1282,7 +1392,7 @@ static void check_slaying_inventory(struct_map_info* map, object* item) {
 void process_map(struct_map_info* info)
 {
     mapstruct* m;
-    int x, y;
+    int x, y, isworld;
     object* item;
     FILE* out;
     gdImagePtr pic;
@@ -1318,6 +1428,8 @@ void process_map(struct_map_info* info)
         info->lore = strdup(m->maplore);
         process_map_lore(info);
     }
+
+    isworld = (sscanf(info->path, "/world/world_%d_%d",&x,&y) == 2);
 
     if (m->name)
         info->name = strdup(m->name);
@@ -1357,8 +1469,8 @@ void process_map(struct_map_info* info)
             if (stat(tmppath, &stats)) {
                 printf("  map %s doesn't exist in map %s, for tile %d.\n", exit_path, info->path, x);
             }
-            else
-            {
+
+            if (isworld) {
                 link = get_map_info(exit_path);
                 add_map(link, &info->exits_from);
                 add_map(info, &link->exits_to);
@@ -1375,7 +1487,34 @@ void process_map(struct_map_info* info)
                     }
                 }
             }
+            else {
+                link = get_map_info(exit_path);
+                info->tiles[x] = link;
+                if (link->tiled_group) {
+                    if (info->tiled_group && link->tiled_group != info->tiled_group) {
+                        merge_tiled_maps(info, x, link);
+                        continue;
+                    }
+                    if (link->tiled_group == info->tiled_group) {
+                        continue;
+                    }
+                    if (!info->tiled_group) {
+                        add_map(info, &link->tiled_group->tiled_maps);
+                        continue;
+                    }
+                }
+
+                if (!info->tiled_group) {
+                    info->tiled_group = create_tiled_map();
+                    add_map(info, &info->tiled_group->tiled_maps);
+                }
+                link->tiled_group = info->tiled_group;
+                add_map(link, &info->tiled_group->tiled_maps);
+            }
         }
+
+    info->width = MAP_WIDTH(m);
+    info->height = MAP_HEIGHT(m);
 
     for ( x = MAP_WIDTH(m) - 1; x >= 0; x-- )
         for ( y = MAP_HEIGHT(m) - 1; y >= 0 ; y-- ) {
@@ -1462,6 +1601,7 @@ void process_map(struct_map_info* info)
         }
 
     if (needpic) {
+        make_path_to_file(picpath);
         out = fopen(picpath, "wb+");
         save_picture(out, pic);
         fclose(out);
@@ -1518,7 +1658,8 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
     char index_path[500];
     char* mapstext = NULL;
     int byletter;
-    int basevalues;
+    int basevalues, realcount = 0;
+    struct_map_info* last_group = NULL;
 
     if (!generate_index)
         return strdup("");
@@ -1538,8 +1679,9 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
 
     string = NULL;
 
-    sprintf(count, "%d", maps_list->count);
     idx_values[0] = count;
+    /* wrong value, but in case the template needs to display something... */
+    snprintf(count, sizeof(count), "%d", maps_list->count);
 
     idx_vars[basevalues+1] = "MAPNAME";
     idx_vars[basevalues+2] = "MAPPATH";
@@ -1575,12 +1717,20 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
             last_letter = tolower(maps_list->maps[map]->name[0]);
             str_letter[0] = last_letter;
             byletter = 0;
+            last_group = NULL;
         }
+
+        if (last_group && last_group == maps_list->maps[map]->tiled_group)
+            continue;
+        else
+            last_group = maps_list->maps[map]->tiled_group;
+
+        realcount++;
         idx_vars[basevalues+1] = "MAPNAME";
         idx_vars[basevalues+2] = "MAPPATH";
         idx_vars[basevalues+3] = "MAPHTML";
-        idx_values[basevalues+1] = maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path;
-        relative_path(index_path, maps_list->maps[map]->path, mappath);
+        idx_values[basevalues+1] = last_group ? last_group->name : ( maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path );
+        relative_path(index_path, last_group ? last_group->path : maps_list->maps[map]->path, mappath);
         strcpy(maphtml, mappath);
         strcat(maphtml, ".html");
         idx_values[basevalues+2] = mappath;
@@ -1603,6 +1753,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
         idx_values[basevalues+2] = NULL;
     }
 
+    sprintf(count, "%d", realcount);
     idx_values[basevalues+1] = string;
     idx_vars[basevalues+1] = "LETTERS";
     idx_vars[basevalues+2] = NULL;
@@ -2027,23 +2178,304 @@ void write_map_page(struct_map_info* map) {
     free(quests);
 }
 
+/** Ensures all maps have a name (if there was a limit to map processing, some maps will have a NULL name which causes issues). */
+void fix_map_names() {
+    int map;
+
+    for (map = 0; map < maps_list.count; map++) {
+        if (maps_list.maps[map]->name)
+            continue;
+        if (!maps_list.maps[map]->filename) {
+            printf("map without path!\n");
+            abort();
+        }
+        maps_list.maps[map]->name = strdup(maps_list.maps[map]->filename);
+    }
+}
+
+/**
+ * Ensures all tiled maps have a name, a region, a filename and a path.
+ * Will try to find a suitable name and region from the maps in the group.
+ * @todo
+ * use a better filename, try to get the start of the map filenames.
+ */
+void fix_tiled_map() {
+    int map, tile;
+    char name[500];
+    char* slash, *test;
+    region* cfregion;
+
+    for (map = 0; map < tiled_map_list.count; map++) {
+        if (tiled_map_list.maps[map]->tiled_maps.count == 0) {
+            printf("empty tiled map group!");
+            abort();
+        }
+
+        snprintf(name, sizeof(name), "tiled_map_group_%d", map);
+        tiled_map_list.maps[map]->filename = strdup(name);
+
+        cfregion = NULL;
+        test = NULL;
+
+        for (tile = 0; tile < tiled_map_list.maps[map]->tiled_maps.count; tile++) {
+            if (tiled_map_list.maps[map]->tiled_maps.maps[tile]->cfregion == NULL)
+                /* map not processed, ignore it. */
+                continue;
+
+            if (!cfregion)
+                cfregion = tiled_map_list.maps[map]->tiled_maps.maps[tile]->cfregion;
+            else if (cfregion != tiled_map_list.maps[map]->tiled_maps.maps[tile]->cfregion) {
+                printf("*** warning: tiled maps %s and %s not in same region (%s and %s).\n",
+                    tiled_map_list.maps[map]->tiled_maps.maps[0]->path, tiled_map_list.maps[map]->tiled_maps.maps[tile]->path,
+                    tiled_map_list.maps[map]->tiled_maps.maps[0]->cfregion->name, tiled_map_list.maps[map]->tiled_maps.maps[tile]->cfregion->name);
+                cfregion = NULL;
+            }
+
+            if (strcmp(tiled_map_list.maps[map]->tiled_maps.maps[tile]->name, tiled_map_list.maps[map]->tiled_maps.maps[tile]->filename)) {
+                /* map has a custom name, use it */
+                if (!test)
+                    test = tiled_map_list.maps[map]->tiled_maps.maps[tile]->name;
+            }
+        }
+
+        if (!test) {
+            /* this can happen of course if only partial maps were processed, but well... */
+            printf("*** warning: tiled map without any name. First map path %s\n", tiled_map_list.maps[map]->tiled_maps.maps[0]->path);
+            test = name;
+        }
+
+        tiled_map_list.maps[map]->name = strdup(test);
+        tiled_map_list.maps[map]->cfregion = cfregion;
+
+        strncpy(name, tiled_map_list.maps[map]->tiled_maps.maps[0]->path, sizeof(name));
+        slash = strrchr(name, '/');
+        if (!slash)
+            snprintf(name, sizeof(name), "/");
+        else
+            *(slash + 1) = '\0';
+        strncat(name, tiled_map_list.maps[map]->filename, sizeof(name));
+        tiled_map_list.maps[map]->path = strdup(name);
+    }
+}
+
+/**
+ * Changes for the list all maps to the tiled map they are part of, if applicable.
+ *
+ * @param map
+ * map currently being processed.
+ * @param from
+ * list that contains the exits to/from map to be fixed.
+ * @param to
+ * group's from/to map list in which map can be added if needed.
+ */
+void fix_exits_for_map(struct_map_info* current, struct_map_list* from, int is_from) {
+    int map, max;
+    struct_map_info* group;
+    max = from->count - 1;
+
+    for (map = max; map >= 0; map--) {
+        if (from->maps[map]->tiled_group) {
+            group = from->maps[map]->tiled_group;
+            if (map != max)
+                from->maps[map] = from->maps[max];
+            from->count--;
+            max--;
+            add_map(group, from);
+            add_map(current->tiled_group ? current->tiled_group : current, is_from ? &group->exits_to : &group->exits_from);
+        }
+    }
+}
+
+/** Changes all exits to maps in a tiled map to point directly to the tiled map. Same for region lists. */
+void fix_exits_to_tiled_maps() {
+    int map, region, max;
+    struct_map_info* group;
+
+    for (map = 0; map < maps_list.count; map++) {
+        fix_exits_for_map(maps_list.maps[map], &maps_list.maps[map]->exits_from, 1);
+        fix_exits_for_map(maps_list.maps[map], &maps_list.maps[map]->exits_to, 0);
+    }
+
+    for (region = 0; region < region_count; region++) {
+        max = regions[region]->maps_list.count - 1;
+        for (map = max; map >= 0; map--) {
+            if (regions[region]->maps_list.maps[map]->tiled_group) {
+                group = regions[region]->maps_list.maps[map]->tiled_group;
+                if (map != max)
+                    regions[region]->maps_list.maps[map] = regions[region]->maps_list.maps[max];
+                regions[region]->maps_list.count--;
+                max--;
+                add_map(group, &regions[region]->maps_list);
+            }
+        }
+    }
+}
+
 /** Ensures all maps have a name, and writes all map pages. */
 void write_all_maps() {
     int map;
 
-    /* we need to ensure all maps have a name: if there was a limit to map processing, some maps will have a NULL name which causes issues. */
-    for (map = 0; map < maps_list.count; map++) {
-        if (maps_list.maps[map]->name)
-            continue;
-        maps_list.maps[map]->name = strdup(maps_list.maps[map]->filename);
-    }
-
     printf("Writing map pages...");
 
     for (map = 0; map < maps_list.count; map++)
-        write_map_page(maps_list.maps[map]);
+        if (!maps_list.maps[map]->tiled_group)
+            write_map_page(maps_list.maps[map]);
 
     printf(" done.\n");
+}
+
+/**
+ * Generates the large and small pictures for a tiled map.
+ * This uses the large/small pictures made during process_map(), so having a map limit could lead
+ * to maps not found and invalid results.
+ *
+ * @param map
+ * tiled map to make the picture of.
+ * @todo
+ * add a field to struct_map_info to remember if pic was updated or not, and update the tiled map
+ * only if one map has changed / the pic doesn't exist.
+ */
+void do_tiled_map_picture(struct_map_info* map) {
+    int xmin = 0, xmax = 0, ymin = 0, ymax = 0, tiled, count, last;
+    char picpath[500];
+    gdImagePtr small, large, load;
+    FILE* out;
+    struct_map_info* current;
+
+    if (!generate_pics)
+        return;
+
+    printf(" Generating composite map for %s...", map->name);
+    fflush(stdout);
+
+    count = map->tiled_maps.count;
+    if (count == 0) {
+        printf("Tiled map without tiled maps?\n");
+        abort();
+    }
+    map->tiled_maps.maps[0]->processed = 1;
+    map->tiled_maps.maps[0]->tiled_x_from = 0;
+    map->tiled_maps.maps[0]->tiled_y_from = 0;
+
+    while (count > 0) {
+        last = count;
+
+        for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
+            current = map->tiled_maps.maps[tiled];
+            if (current->processed != 1)
+                continue;
+
+            count--;
+
+            if ((current->tiles[0]) && (current->tiles[0]->processed == 0)) {
+                current->tiles[0]->processed = 1;
+                current->tiles[0]->tiled_x_from = current->tiled_x_from;
+                current->tiles[0]->tiled_y_from = current->tiled_y_from - current->tiles[0]->height;
+            }
+            if ((current->tiles[1]) && (current->tiles[1]->processed == 0)) {
+                current->tiles[1]->processed = 1;
+                current->tiles[1]->tiled_x_from = current->tiled_x_from + current->width;
+                current->tiles[1]->tiled_y_from = current->tiled_y_from;
+            }
+            if ((current->tiles[2]) && (current->tiles[2]->processed == 0)) {
+                current->tiles[2]->processed = 1;
+                current->tiles[2]->tiled_x_from = current->tiled_x_from;
+                current->tiles[2]->tiled_y_from = current->tiled_y_from + current->height;
+            }
+            if ((current->tiles[3]) && (current->tiles[3]->processed == 0)) {
+                current->tiles[3]->processed = 1;
+                current->tiles[3]->tiled_x_from = current->tiled_x_from - current->tiles[3]->width;
+                current->tiles[3]->tiled_y_from = current->tiled_y_from;
+            }
+        }
+
+        if (last == count) {
+            printf("do_tiled_map_picture: didn't process any map in %s (%d left)??\n", map->path, last);
+            abort();
+        }
+    }
+
+    for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
+        if (map->tiled_maps.maps[tiled]->tiled_x_from < xmin)
+            xmin = map->tiled_maps.maps[tiled]->tiled_x_from;
+        if (map->tiled_maps.maps[tiled]->tiled_y_from < ymin)
+            ymin = map->tiled_maps.maps[tiled]->tiled_y_from;
+        if (map->tiled_maps.maps[tiled]->tiled_x_from + map->tiled_maps.maps[tiled]->width > xmax)
+            xmax = map->tiled_maps.maps[tiled]->tiled_x_from + map->tiled_maps.maps[tiled]->width;
+        if (map->tiled_maps.maps[tiled]->tiled_y_from + map->tiled_maps.maps[tiled]->height > ymax)
+            ymax = map->tiled_maps.maps[tiled]->tiled_y_from + map->tiled_maps.maps[tiled]->height;
+    }
+
+    large = gdImageCreateTrueColor(32 * (xmax - xmin), 32 * (ymax - ymin));
+    small = gdImageCreateTrueColor(size_small * (xmax - xmin), size_small * (ymax - ymin));
+
+    for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
+        sprintf(picpath, "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+
+        out = fopen(picpath, "rb");
+        if (output_format == OF_PNG)
+            load = gdImageCreateFromPng(out);
+        else
+            load = gdImageCreateFromJpeg(out);
+        fclose(out);
+        if (!load) {
+            printf("\n  do_tiled_map_picture: warning: pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
+            continue;
+        }
+        gdImageCopy(large, load, 32*(map->tiled_maps.maps[tiled]->tiled_x_from - xmin), 32*(map->tiled_maps.maps[tiled]->tiled_y_from - ymin), 0, 0, load->sx, load->sy);
+        gdImageDestroy(load);
+
+        sprintf(picpath, "%s%s.small%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        out = fopen(picpath, "rb");
+        if (output_format == OF_PNG)
+            load = gdImageCreateFromPng(out);
+        else
+            load = gdImageCreateFromJpeg(out);
+        fclose(out);
+        if (!load) {
+            printf("\n  do_tiled_map_picture: warning: small pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
+            continue;
+        }
+        gdImageCopy(small, load, size_small*(map->tiled_maps.maps[tiled]->tiled_x_from - xmin), size_small*(map->tiled_maps.maps[tiled]->tiled_y_from - ymin), 0, 0, load->sx, load->sy);
+        gdImageDestroy(load);
+    }
+
+    sprintf(picpath, "%s%s%s", root, map->path, output_extensions[output_format]);
+    out = fopen(picpath, "wb+");
+    save_picture(out, large);
+    fclose(out);
+
+    sprintf(picpath, "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    out = fopen(picpath, "wb+");
+    save_picture(out, small);
+    fclose(out);
+
+    gdImageDestroy(small);
+    gdImageDestroy(large);
+
+    printf(" done.\n");
+}
+
+/** Writes the page for a tiled map group. */
+void write_tiled_map_page(struct_map_info* map) {
+
+    do_tiled_map_picture(map);
+
+    /** @todo: do a real page, with the various levels, maps and such. */
+
+    write_map_page(map);
+}
+
+/** Outputs all tiled map pages. */
+void write_tiled_maps() {
+    int map;
+
+    printf("Writing tiled map information...\n");
+
+    for (map = 0; map < tiled_map_list.count; map++)
+        write_tiled_map_page(tiled_map_list.maps[map]);
+
+        printf(" done.\n");
 }
 
 /** Outputs the list of maps sorted by level. */
@@ -2066,6 +2498,8 @@ void write_maps_by_level()
     const char* idx_vars[] = { "COUNT", "LEVELS", NULL };
     const char* idx_values[] = { strcount, NULL, NULL };
     int levelcount = 0;
+    struct_map_info* last_tiled = NULL;
+    struct_map_info* process;
 
     printf("Writing map index by level...");
 
@@ -2074,6 +2508,7 @@ void write_maps_by_level()
     qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info*), sort_map_info_by_level);
 
     for (map = 0; map < maps_list.count; map++) {
+        process = maps_list.maps[map];
         if (maps_list.maps[map]->level != lastlevel) {
             if (maps) {
                 snprintf(strlevel, sizeof(strlevel), "%d", lastlevel);
@@ -2082,12 +2517,23 @@ void write_maps_by_level()
                 free(maps);
                 maps = NULL;
             }
-            lastlevel = maps_list.maps[map]->level;
+            lastlevel = process->level;
             levelcount++;
+            last_tiled = NULL;
         }
+        else
+            if (last_tiled && last_tiled == process->tiled_group)
+                /* Group maps of same tiled group and level, but make them appear in different levels if applicable. */
+                continue;
 
-        map_values[0] = maps_list.maps[map]->name;
-        snprintf(mappath, sizeof(mappath), "%s.html", maps_list.maps[map]->path + 1); /* don't want the leading / */
+        if (process->tiled_group) {
+            process = process->tiled_group;
+            last_tiled = process;
+        } else
+            last_tiled = process->tiled_group;
+
+        map_values[0] = process->name;
+        snprintf(mappath, sizeof(mappath), "%s.html", process->path + 1); /* don't want the leading / */
         maps = cat_template(maps, do_template(level_map_template, map_vars, map_values));
     }
 
@@ -2470,6 +2916,7 @@ int main(int argc, char** argv)
     char max[50];
 
     init_map_list(&maps_list);
+    init_map_list(&tiled_map_list);
     pics_allocated = 0;
 
     do_parameters(argc, argv);
@@ -2593,9 +3040,15 @@ int main(int argc, char** argv)
     if (list_unused_maps)
         dump_unused_maps();
 
+    fix_exits_to_tiled_maps();
+    fix_map_names();
+    fix_tiled_map();
+
     write_all_maps();
     write_maps_index();
     write_maps_by_level();
+    write_tiled_maps();
+
     write_all_regions();
     write_region_index();
 
