@@ -84,7 +84,7 @@ static method_ret gate_type_process(ob_methods *context, object *op) {
 	}
 	SET_ANIMATION(op, op->stats.wc);
 	update_object(op,UP_OBJ_CHANGE);
-	return;
+        return METHOD_OK;
     }
 
     /* We're going up */

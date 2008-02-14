@@ -792,7 +792,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam,
     uint32 type;
     const char *op_name = NULL;
     tag_t op_tag, hitter_tag;
-    char buf[MAX_BUF];
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;

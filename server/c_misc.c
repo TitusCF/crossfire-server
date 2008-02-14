@@ -132,7 +132,6 @@ int command_language(object* op, char* params)
     }
     else
     {
-        char buf[MAX_BUF];
         for(i=0;i<NUM_LANGUAGES; i++)
         {
             if (!strcmp(language_codes[i], params))

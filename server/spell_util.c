@@ -1294,7 +1294,6 @@ static void handle_spell_confusion(object* op) {
 int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg) {
 
     const char *godname;
-    char buf[MAX_BUF];
     int success=0,mflags, cast_level=0, old_shoottype;
     object *skill=NULL;
     int confusion_effect = 0;

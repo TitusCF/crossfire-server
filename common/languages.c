@@ -115,7 +115,6 @@ void i18n_init()
     char filename[MAX_BUF], line[HUGE_BUF];
     int i, entry;
     FILE* fp;
-    int len;
     char* token;
     int counter;
     char* buffer;

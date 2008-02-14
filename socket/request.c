@@ -544,7 +544,6 @@ void reply_cmd(char *buf, int len, player *pl)
 void version_cmd(char *buf, int len,socket_struct *ns)
 {
     char *cp;
-    char version_warning[256];
 
     if (!buf) {
         LOG(llevError, "CS: received corrupted version command\n");

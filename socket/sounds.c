@@ -39,7 +39,6 @@
  */
 void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action)
 {
-    char soundtype;
     SockList sl;
     int volume = 50;
     sstring name;
