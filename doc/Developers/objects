@@ -1187,6 +1187,17 @@ For exits:
 slaying  = The map which the exit leads to.
 hp,sp = (x,y) of the destination on the new map.
 
+
+All items that can be applied, including items, exits, handles, and thus
+can have a 'race_restriction' key. The value should be set to a : delimited
+list of races that will be able to use/apply/open this item.
+The list is in the form:
+    :race1:race2:...:racen:
+with leading and trailing :.
+Note that that this only applies to players - monsters can always apply everything.
+Also, Dungeon Masters are immune.
+
+
 I. Lore
 ============================================================
 

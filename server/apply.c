@@ -529,6 +529,38 @@ static int is_legal_2ways_exit (object* op, object *exit)
     return 0;
 }
 
+/**
+ * Checks if an item is restricted to a race. Non players and DMs can always apply.
+ *
+ * @param player
+ * living thing trying to apply an item.
+ * @param item
+ * item being applied.
+ * @return
+ * 0 if item can't be applied, 1 else.
+ */
+static int check_race_restrictions(object* who, object* item) {
+    char buf[MAX_BUF];
+    sstring restriction;
+
+    if (who->type != PLAYER || QUERY_FLAG(who, FLAG_WIZ))
+        return 1;
+
+    restriction = get_ob_key_value(item, "race_restriction");
+    if (!restriction)
+        return 1;
+
+    snprintf(buf, sizeof(buf), ":%s:", who->race);
+    buf[sizeof(buf) - 1] = '\0';
+
+    if (strstr(restriction, buf) != NULL)
+        return 1;
+
+    query_name(item, buf, sizeof(buf));
+    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION, "Somehow you can't seem to use the %s.", NULL, buf);
+
+    return 0;
+}
 
 /**
  * Main apply handler.
@@ -560,6 +592,9 @@ int manual_apply (object *op, object *tmp, int aflag)
         }
         return 0;   /* monsters just skip unpaid items */
     }
+
+    if (!check_race_restrictions(op, tmp))
+        return 1;
 
         /* Lauwenmark: Handle for plugin apply event */
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
