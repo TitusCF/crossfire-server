@@ -273,8 +273,6 @@ extern char *strerror_local(int errnum, char *buf, int size);
 extern int isqrt(int n);
 extern char *ltostr10(signed long n);
 extern char *doubletostr10(double v);
-extern void save_long(char *buf, const char *name, long n);
-extern void save_long_long(char *buf, char *name, sint64 n);
 extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(const char *filename);

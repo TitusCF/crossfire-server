@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove unused functions.
+ common/porting.c
+ include/libproto.h
+Nicolas Weeger, 2008-02-13
+
 Better tiled maps handling. Now tiled maps are considered as one map, and
 all links will point to the group.
  utils/mapper.c

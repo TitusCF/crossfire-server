@@ -567,57 +567,6 @@ char *doubletostr10(double v){
 }
 
 /**
- * A fast routine which appends the name and decimal number specified
- * to the given buffer.
- * Could be faster, though, if the strcat()s at the end could be changed
- * into alternate strcat which returned a pointer to the _end_, not the
- * start!
- *
- * Hey good news, it IS faster now, according to changes in get_ob_diff
- * Completly redone prototype and made define in loader.l. See changes there.
- * Didn't touch those for speed reason (don't use them anymore) .
- *                                                             Tchize
- *
- * @param buf
- * buffer we're appending to.
- * @param name
- * name of the long we're saving.
- * @param n
- * value to save.
- *
- * @todo
- * use safe string functions?
- */
-void save_long(char *buf, const char *name, long n) {
-    char buf2[MAX_BUF];
-    strcpy(buf2,name);
-    strcat(buf2," ");
-    strcat(buf2,ltostr10(n));
-    strcat(buf2,"\n");
-    strcat(buf,buf2);
-}
-
-/**
- * Appends the name and value of a long long.
- *
- * @param buf
- * buffer we're appending to.
- * @param name
- * name of the long we're saving.
- * @param n
- * value to save.
- *
- * @todo
- * use safe string functions?
- */
-void save_long_long(char *buf, char *name, sint64 n) {
-    char buf2[MAX_BUF];
-
-    sprintf(buf2,"%s %" FMT64 "\n", name, n);
-    strcat(buf,buf2);
-}
-
-/**
  * This is a list of the suffix, uncompress and compress functions.  Thus,
  * if you have some other compress program you want to use, the only thing
  * that needs to be done is to extended this.
