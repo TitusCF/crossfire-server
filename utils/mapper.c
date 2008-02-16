@@ -184,7 +184,6 @@
  *
  * @todo
  * - split this file in multiple ones for easier maintenance
- * - add support for the tile sets, and command line argument to specify which one to use
  * - add missing documentation on variables / functions
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
@@ -259,6 +258,7 @@ int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
 int show_maps = 0;         /**< If set, will generate much information on map loaded. */
 int world_map = 1;         /**< If set, will generate a world map. */
 int world_exit_info = 1;   /**< If set, will generate a world map of exits. */
+int tileset = 0;           /**< Tileset to use to generate pics. */
 
 char* world_template;                 /**< World map template. */
 char* world_row_template;             /**< One row in the world map. */
@@ -1589,7 +1589,8 @@ void process_map(struct_map_info* info)
                 if (needpic) {
                     if (gdfaces[item->face->number] == NULL)
                     {
-                        gdfaces[item->face->number] = gdImageCreateFromPngPtr(facesets[0].faces[item->face->number].datalen, facesets[0].faces[item->face->number].data);
+                        int set = get_face_fallback(tileset, item->face->number);
+                        gdfaces[item->face->number] = gdImageCreateFromPngPtr(facesets[set].faces[item->face->number].datalen, facesets[set].faces[item->face->number].data);
                         pics_allocated++;
                     }
                     if (gdfaces[item->face->number] != 0 && !(item->head && item->face->number == item->head->face->number))
@@ -2814,6 +2815,7 @@ void do_help(const char* program) {
     printf("  -regionslink        generate regions relation file.\n");
     printf("  -noexitmap          don't generate map of exits.\n");
     printf("  -exitmap            generate map of exits.\n");
+    printf("  -tileset=<number>   use specified tileset to generate the pictures. Default 0 (standard).\n");
     printf("\n\n");
     exit(0);
 }
@@ -2876,7 +2878,10 @@ void do_parameters(int argc, char** argv) {
             world_exit_info = 0;
         else if (strcmp(argv[arg], "-exitmap") == 0)
             world_exit_info = 1;
-        else
+        else if (strncmp(argv[arg], "-tileset=", 9) == 0) {
+            tileset = atoi(argv[arg] + 9);
+            /* check of validity is done in main() as we need to actually have the sets loaded. */
+        } else
             do_help(argv[0]);
         arg++;
     }
@@ -2937,6 +2942,11 @@ int main(int argc, char** argv)
     read_client_images();
 
     printf("\n\n done.\n\n");
+
+    if (!is_valid_faceset(tileset)) {
+        printf("Erreor: invalid tileset %d!\n", tileset);
+        exit(1);
+    }
 
     create_destination();
     gdfaces = calloc(1, sizeof(gdImagePtr) * nrofpixmaps);
@@ -3000,6 +3010,7 @@ int main(int argc, char** argv)
     printf("  generate world map:                  %s\n", yesno(world_map));
     printf("  generate exit map:                   %s\n", yesno(world_exit_info));
     printf("  generate regions link file:          %s\n", yesno(do_regions_link));
+    printf("  tileset:                             %s\n", facesets[tileset].fullname);
     printf("\n");
 
     if (list_unused_maps) {
