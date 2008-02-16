@@ -38,14 +38,6 @@ static PyObject* Map_GetWidth(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetHeight(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetEnterX(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetEnterY(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetTemperature(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetPressure(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetHumidity(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetWindSpeed(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetWindDir(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetSky(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetWPartX(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure);
 static PyObject* Map_GetUnique(Crossfire_Map* whoptr, void* closure);
@@ -83,14 +75,6 @@ static PyGetSetDef Map_getseters[] = {
     {"Height",          (getter)Map_GetHeight,      NULL, NULL, NULL },
     {"EnterX",          (getter)Map_GetEnterX,      NULL, NULL, NULL },
     {"EnterY",          (getter)Map_GetEnterY,      NULL, NULL, NULL },
-    {"Temperature",     (getter)Map_GetTemperature, NULL, NULL, NULL },
-    {"Pressure",        (getter)Map_GetPressure,    NULL, NULL, NULL },
-    {"Humidity",        (getter)Map_GetHumidity,    NULL, NULL, NULL },
-    {"WindSpeed",       (getter)Map_GetWindSpeed,   NULL, NULL, NULL },
-    {"WindDirection",   (getter)Map_GetWindDir,     NULL, NULL, NULL },
-    {"Sky",             (getter)Map_GetSky,         NULL, NULL, NULL },
-    {"WPartX",          (getter)Map_GetWPartX,      NULL, NULL, NULL },
-    {"WPartY",          (getter)Map_GetWPartY,      NULL, NULL, NULL },
     {"Message",         (getter)Map_GetMessage,     NULL, NULL, NULL },
     {"Region",          (getter)Map_GetRegion,     NULL, NULL, NULL },
     {"Unique",          (getter)Map_GetUnique,     NULL, NULL, NULL },

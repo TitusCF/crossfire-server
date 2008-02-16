@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove left-over from weather code.
+ common/map.c utils.c
+ include/map.h plugin.h sproto.h
+ plugins/cfpython/include/cfpython_map_private.h
+ plugins/cfpython/cfpython_map.c
+ plugins/common/include/plugin_common.h
+ plugins/common/plugin_common.c
+ server/c_misc.c init.c plugins.c weather.c
+Nicolas Weeger, 2008-02-16
+
 Fix various warnings, remove unused variables/code.
  common/button.c languages.c
  server/attack.c c_misc.c spell_util.c

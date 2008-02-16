@@ -50,9 +50,6 @@ static void add_to_racelist(const char *race_name, object *op);
 static racelink *get_racelist(void);
 static void fatal_signal(int make_core);
 
-/** global weathermap */
-weathermap_t **weathermap;
-
 /** Filename when in daemon mode. */
 static char default_daemon_log[] = "logfile";
 

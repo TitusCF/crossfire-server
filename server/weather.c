@@ -40,7 +40,6 @@
 #include <assert.h>
 
 extern unsigned long todtick;
-extern weathermap_t **weathermap;
 
 static void dawn_to_dusk(const timeofday_t *tod);
 /** How to alter darkness, based on time of day and season. */

@@ -1186,46 +1186,6 @@ int cf_map_get_enter_y(mapstruct* map)
     return cf_map_get_int_property(map,CFAPI_MAP_PROP_ENTER_Y);
 }
 
-int cf_map_get_temperature(mapstruct* map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_TEMPERATURE);
-}
-
-int cf_map_get_pressure(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_PRESSURE);
-}
-
-int cf_map_get_humidity(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_HUMIDITY);
-}
-
-int cf_map_get_windspeed(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WINDSPEED);
-}
-
-int cf_map_get_winddir(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WINDDIR);
-}
-
-int cf_map_get_sky(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_SKY);
-}
-
-int cf_map_get_wpartx(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WPARTX);
-}
-
-int cf_map_get_wparty(mapstruct* map)
-{
-	return cf_map_get_int_property(map,CFAPI_MAP_PROP_WPARTY);
-}
-
 /**
  * Wrapper for change_map_light().
  * @copydoc change_map_light().

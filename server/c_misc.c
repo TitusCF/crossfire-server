@@ -44,8 +44,6 @@
 #include <assert.h>
 #include <sounds.h>
 
-extern weathermap_t **weathermap;
-
 /**
  * This is the 'maps' command.
  *

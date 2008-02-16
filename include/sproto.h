@@ -668,14 +668,8 @@ int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
 void cftimer_init(void);
 /* weather.c */
-void set_darkness_map(mapstruct *m);
 void tick_the_clock(void);
-void init_weather(void);
-void free_weather(void);
-void weather_effect(mapstruct *m);
-int worldmap_to_weathermap(int x, int y, int *wx, int *wy, mapstruct *m);
-int real_world_temperature(int x, int y, mapstruct *m);
-int similar_direction(int a, int b);
+void set_darkness_map(mapstruct *m);
 /* server.c */
 void version(object *op);
 void start_info(object *op);

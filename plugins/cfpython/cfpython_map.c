@@ -106,46 +106,6 @@ static PyObject* Map_GetEnterY(Crossfire_Map* whoptr, void* closure)
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_enter_x(whoptr->map));
 }
-static PyObject* Map_GetTemperature(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_temperature(whoptr->map));
-}
-static PyObject* Map_GetPressure(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_pressure(whoptr->map));
-}
-static PyObject* Map_GetHumidity(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_humidity(whoptr->map));
-}
-static PyObject* Map_GetWindSpeed(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_windspeed(whoptr->map));
-}
-static PyObject* Map_GetWindDir(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_winddir(whoptr->map));
-}
-static PyObject* Map_GetSky(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_sky(whoptr->map));
-}
-static PyObject* Map_GetWPartX(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_wpartx(whoptr->map));
-}
-static PyObject* Map_GetWPartY(Crossfire_Map* whoptr, void* closure)
-{
-    MAPEXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_map_get_wparty(whoptr->map));
-}
 static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure)
 {
     MAPEXISTCHECK(whoptr);

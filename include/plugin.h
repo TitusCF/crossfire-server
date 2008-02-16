@@ -297,14 +297,6 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_MAP_PROP_HEIGHT               11
 #define CFAPI_MAP_PROP_ENTER_X              12
 #define CFAPI_MAP_PROP_ENTER_Y              13
-#define CFAPI_MAP_PROP_TEMPERATURE          14
-#define CFAPI_MAP_PROP_PRESSURE             15
-#define CFAPI_MAP_PROP_HUMIDITY             16
-#define CFAPI_MAP_PROP_WINDSPEED            17
-#define CFAPI_MAP_PROP_WINDDIR              18
-#define CFAPI_MAP_PROP_SKY                  19
-#define CFAPI_MAP_PROP_WPARTX               20
-#define CFAPI_MAP_PROP_WPARTY               21
 #define CFAPI_MAP_PROP_MESSAGE              22
 #define CFAPI_MAP_PROP_NEXT                 23
 #define CFAPI_MAP_PROP_REGION               24

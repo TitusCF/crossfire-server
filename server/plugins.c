@@ -1316,54 +1316,6 @@ void* cfapi_map_get_map_property(int* type, ...)
         *type = CFAPI_INT;
         break;
 
-    case CFAPI_MAP_PROP_TEMPERATURE:
-        rint = va_arg(args, int*);
-        *rint = map->temp;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_PRESSURE:
-        rint = va_arg(args, int*);
-        *rint = map->pressure;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_HUMIDITY:
-        rint = va_arg(args, int*);
-        *rint = map->humid;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_WINDSPEED:
-        rint = va_arg(args, int*);
-        *rint = map->windspeed;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_WINDDIR:
-        rint = va_arg(args, int*);
-        *rint = map->winddir;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_SKY:
-        rint = va_arg(args, int*);
-        *rint = map->sky;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_WPARTX:
-        rint = va_arg(args, int*);
-        *rint = map->wpartx;
-        *type = CFAPI_INT;
-        break;
-
-    case CFAPI_MAP_PROP_WPARTY:
-        rint = va_arg(args, int*);
-        *rint = map->wparty;
-        *type = CFAPI_INT;
-        break;
-
     case CFAPI_MAP_PROP_MESSAGE:
         rstr = va_arg(args, sstring*);
         *rstr = map->msg;

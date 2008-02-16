@@ -752,9 +752,6 @@ mapstruct *get_linked_map(void) {
     MAP_TIMEOUT(map)=300;
     MAP_ENTER_X(map)=0;
     MAP_ENTER_Y(map)=0;
-    /*set part to -1 indicating conversion to weather map not yet done*/
-    MAP_WORLDPARTX(map)=-1;
-    MAP_WORLDPARTY(map)=-1;
     map->last_reset_time.tv_sec = 0;
     return map;
 }
@@ -1069,18 +1066,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
             m->shoprace = strdup_local(value);
         } else if (!strcmp(key,"outdoor")) {
             m->outdoor = atoi(value);
-        } else if (!strcmp(key, "temp")) {
-            m->temp = atoi(value);
-        } else if (!strcmp(key, "pressure")) {
-            m->pressure = atoi(value);
-        } else if (!strcmp(key, "humid")) {
-            m->humid = atoi(value);
-        } else if (!strcmp(key, "windspeed")) {
-            m->windspeed = atoi(value);
-        } else if (!strcmp(key, "winddir")) {
-            m->winddir = atoi(value);
-        } else if (!strcmp(key, "sky")) {
-            m->sky = atoi(value);
         } else if (!strcmp(key, "nosmooth")) {
             m->nosmooth = atoi(value);
         }
@@ -1469,12 +1454,6 @@ int save_map(mapstruct *m, int flag) {
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
     if (m->template) fprintf(fp,"template %d\n", m->template);
     if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
-    if (m->temp) fprintf(fp, "temp %d\n", m->temp);
-    if (m->pressure) fprintf(fp, "pressure %d\n", m->pressure);
-    if (m->humid) fprintf(fp, "humid %d\n", m->humid);
-    if (m->windspeed) fprintf(fp, "windspeed %d\n", m->windspeed);
-    if (m->winddir) fprintf(fp, "winddir %d\n", m->winddir);
-    if (m->sky) fprintf(fp, "sky %d\n", m->sky);
     if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
     if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
     if (m->background_music) fprintf(fp, "background_music %s\n", m->background_music);

@@ -106,14 +106,6 @@ extern const char *map_layer_name[MAP_LAYERS];
 /** Default Y coordinate for map enter. */
 #define MAP_ENTER_Y(m)		(m)->enter_y
 
-#define MAP_TEMP(m)		(m)->temp
-#define MAP_PRESSURE(m)		(m)->pressure
-#define MAP_HUMID(m)		(m)->humid
-#define MAP_WINDSPEED(m)	(m)->windspeed
-#define MAP_WINDDIRECTION(m)	(m)->winddir
-#define MAP_SKYCOND(m)		(m)->sky
-#define MAP_WORLDPARTX(m)	(m)->wpartx
-#define MAP_WORLDPARTY(m)	(m)->wparty
 #define MAP_NOSMOOTH(m)		(m)->nosmooth
 
 /**
@@ -300,30 +292,6 @@ typedef struct MapSpace {
 } MapSpace;
 
 /**
- * This is an overlay structure of the whole world.  It exists as a simple
- * high level map, which doesn't contain the full data of the underlying map.
- * in this map, only things such as weather are recorded.  By doing so, we
- * can keep the entire world parameters in memory, and act as a whole on
- * them at once.  We can then, in a separate loop, update the actual world
- * with the new values we have assigned.
- */
-
-typedef struct wmapdef {
-    sint16	temp;		/**< Base temperature of this tile (F). */
-    sint16	pressure;	/**< Barometric pressure (mb). */
-    sint8	humid;		/**< Humitidy of this tile. */
-    sint8	windspeed;	/**< Windspeed of this tile. */
-    sint8	winddir;	/**< Direction of wind. */
-    sint8	sky;		/**< Sky conditions. */
-    sint32	avgelev;	/**< Average elevation. */
-    uint32	rainfall;	/**< Cumulative rainfall. */
-    uint8 	darkness;	/**< Indicates level of darkness of map. */
-    uint8	water;		/**< 0-100 percentage of water tiles. */
-    /*Dynamic parts*/
-    sint16  realtemp;		/**< Temperature at a given calculation step for this tile. */
-} weathermap_t;
-
-/**
  * This is a game region.
  * Each map is in a given region of the game world and links to a region definiton, so
  * they have to appear here in the headers, before the mapdef
@@ -406,13 +374,6 @@ typedef struct mapdef {
     uint32  outdoor:1;	/**< True if an outdoor map. */
     oblinkpt *buttons;	/**< Linked list of linked lists of buttons. */
     MapSpace	*spaces;    /**< Array of spaces on this map. */
-    sint16	temp;	/**< Base temperature of this tile (F). */
-    sint16    pressure;  /**< Barometric pressure (mb). */
-    sint8	humid;	/**< Humidity of this tile. */
-    sint8     windspeed; /**< Windspeed of this tile. */
-    sint8     winddir;   /**< Direction of wind. */
-    sint8     sky;	/**< Sky conditions. */
-    int     wpartx,wparty; /**< Highly fasten conversion between worldmap and weathermap. */
     shopitems   *shopitems; /**< List of item-types the map's shop will trade in. */
     char    *shoprace;  /**< The preffered race of the local shopkeeper. */
     double  shopgreed;  /**< How much our shopkeeper overcharges. */
