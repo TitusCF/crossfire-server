@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Smarter pic generation for tiled maps. Fix crash if no map for quest.
+ utils/mapper.c
+Nicolas Weeger, 2008-02-16
+
 Remove obsolete functions (related to weather).
  random_maps/standalone.c
  utils/bwp.c mapper.c
@@ -42,7 +46,7 @@ Unit test for get_ob_diff().
 Nicolas Weeger, 2008-02-17
 
 Tileset support, through '-tileset=' option. Default 'standard' tileset.
-utils/mapper.c
+ utils/mapper.c
 Nicolas Weeger, 2008-02-16
 
 Remove left-over from weather code.

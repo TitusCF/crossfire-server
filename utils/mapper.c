@@ -225,7 +225,7 @@ typedef struct struct_map_info {
     char* filename;
     char* lore;
     region* cfregion;
-    int level;
+    int level, pic_was_done;
     struct_map_list exits_from;
     struct_map_list exits_to;
     struct_map_in_quest_list quests;
@@ -992,6 +992,8 @@ static void write_quests_page() {
             map_vals[2] = quests[quest]->maps.list[map]->description ? quests[quest]->maps.list[map]->description : "(no description)";
             text_map = cat_template(text_map, do_template(quest_map_template, map_vars, map_vals));
         }
+        if (!text_map)
+            text_map = strdup("");
 
         quest_vals[0] = quests[quest]->name;
         quest_vals[1] = quests[quest]->description ? quests[quest]->description : "(main map not processed)";
@@ -1623,6 +1625,8 @@ void process_map(struct_map_info* info)
         gdImageDestroy(small);
 
         gdImageDestroy(pic);
+
+        info->pic_was_done = 1;
     }
 
     m->reset_time = 1;
@@ -2332,6 +2336,27 @@ void write_all_maps() {
     printf(" done.\n");
 }
 
+static int tiled_map_need_pic(struct_map_info* map) {
+    int test;
+    char picpath[500];
+    struct stat stats;
+
+    sprintf(picpath, "%s%s%s", root, map->path, output_extensions[output_format]);
+    if (stat(picpath, &stats))
+        return 1;
+
+    sprintf(picpath, "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    if (stat(picpath, &stats))
+        return 1;
+
+    for (test = 0; test < map->tiled_maps.count; test++) {
+        if (map->tiled_maps.maps[test]->pic_was_done)
+            return 1;
+    }
+
+    return 0;
+}
+
 /**
  * Generates the large and small pictures for a tiled map.
  * This uses the large/small pictures made during process_map(), so having a map limit could lead
@@ -2355,6 +2380,11 @@ void do_tiled_map_picture(struct_map_info* map) {
 
     printf(" Generating composite map for %s...", map->name);
     fflush(stdout);
+
+    if (!tiled_map_need_pic(map)) {
+        printf(" already uptodate.\n");
+        return;
+    }
 
     count = map->tiled_maps.count;
     if (count == 0) {
