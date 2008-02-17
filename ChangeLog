@@ -15,7 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Remove obsolete functions (related to weather).
+ random_maps/standalone.c
  utils/bwp.c mapper.c
+ test/unit/common/stubs_common.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
 Nicolas Weeger, 2008-02-17
 
 Fix shifted pic for eg Titan.
