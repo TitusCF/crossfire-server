@@ -271,8 +271,6 @@ extern long strtol_local(register char *str, char **ptr, register int base);
 extern const char *strcasestr_local(const char *s, const char *find);
 extern char *strerror_local(int errnum, char *buf, int size);
 extern int isqrt(int n);
-extern char *ltostr10(signed long n);
-extern char *doubletostr10(double v);
 extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(const char *filename);

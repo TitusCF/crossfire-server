@@ -78,12 +78,54 @@ START_TEST (test_get_ob_diff)
     free(result);
 
     orc->stats.hp = 50;
+    orc->stats.Wis = 59;
     orc->expmul = 8.5;
+    orc->stats.dam = 168;
 
     buf = stringbuffer_new();
     get_ob_diff(buf, orc, &arch->clone);
     result = stringbuffer_finish(buf);
-    fail_unless(result && strcmp(result, "name Orc chief\nhp 50\nexpmul 8.500000\nspeed 0.500000\n") == 0, "2n diff modified obj/clone was %s!", result);
+    fail_unless(result && strcmp(result, "name Orc chief\nWis 59\nhp 50\nexpmul 8.500000\ndam 168\nspeed 0.500000\n") == 0, "2n diff modified obj/clone was %s!", result);
+    free(result);
+}
+END_TEST
+
+START_TEST (test_dump_object)
+{
+    /** we only test specific things like env/more/head/..., the rest is in test_get_ob_diff(). */
+    StringBuffer* buf;
+    object* empty;
+    char* result;
+    char expect[10000];
+
+    /* Basic */
+    empty = arch_to_object(empty_archetype);
+    fail_unless(empty != NULL, "Couldn't create empty archetype!");
+
+    snprintf(expect, sizeof(expect), "arch empty_archetype\nend\n");
+    buf = stringbuffer_new();
+    dump_object(empty, buf);
+    result = stringbuffer_finish(buf);
+    fail_unless(result && strcmp(result, expect) == 0, "dump_object was \"%s\" instead of \"%s\"!", result, expect);
+    free(result);
+
+    /* With more things */
+    empty->head = arch_to_object(empty_archetype);
+    empty->inv = arch_to_object(empty_archetype);
+    empty->more = arch_to_object(empty_archetype);
+    empty->owner = arch_to_object(empty_archetype);
+    empty->env = arch_to_object(empty_archetype);
+    fail_unless(empty->head != NULL, "Couldn't create empty archetype as head!");
+    fail_unless(empty->inv != NULL, "Couldn't create empty archetype as inv!");
+    fail_unless(empty->more != NULL, "Couldn't create empty archetype as more!");
+    fail_unless(empty->owner != NULL, "Couldn't create empty archetype as owner!");
+    fail_unless(empty->env != NULL, "Couldn't create empty archetype as env!");
+
+    snprintf(expect, sizeof(expect), "arch empty_archetype\nmore %d\nhead %d\nenv %d\ninv %d\nowner %d\nend\n", empty->more->count, empty->head->count, empty->env->count, empty->inv->count, empty->owner->count);
+    buf = stringbuffer_new();
+    dump_object(empty, buf);
+    result = stringbuffer_finish(buf);
+    fail_unless(result && strcmp(result, expect) == 0, "dump_object was \"%s\" instead of \"%s\"!", result, expect);
     free(result);
 }
 END_TEST
@@ -97,6 +139,7 @@ Suite *loader_suite(void)
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_get_ob_diff);
+  tcase_add_test(tc_core, test_dump_object);
 
   return s;
 }

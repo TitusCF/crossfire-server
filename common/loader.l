@@ -1346,12 +1346,12 @@ static void get_string_move_type(StringBuffer *sb, MoveType mt)
     stringbuffer_append_string(sb__, entryvalue__);\
     stringbuffer_append_string(sb__, "\n");\
     } while(0)
-/** Adds a long to the buffer. */
+/** Adds a long to the buffer.  entryname__ must have a space at the end. */
 #define FAST_SAVE_LONG(sb__, entryname__, entryvalue__) \
-    ADD_STRINGLINE_ENTRY(sb__, entryname__, ltostr10(entryvalue__))
-/** Adds a double to the buffer. */
+    stringbuffer_append_printf(sb__, "%s%ld\n", entryname__, entryvalue__)
+/** Adds a double to the buffer. entryname__ must have a space at the end. */
 #define FAST_SAVE_DOUBLE(sb__, entryname__, entryvalue__) \
-    ADD_STRINGLINE_ENTRY(sb__, entryname__, doubletostr10(entryvalue__))
+    stringbuffer_append_printf(sb__, "%s%f\n", entryname__, entryvalue__)
 
 /**
  * Returns a pointer to a static string which contains all variables

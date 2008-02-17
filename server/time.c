@@ -290,7 +290,9 @@ static void generate_monster(object *gen) {
 	    remove_ob(gen);
 	    free_object(gen);
 	} else {
-	    set_ob_key_value(gen, "generator_generated", ltostr10(num_generated), 1);
+            char buf[50];
+            snprintf(buf, sizeof(buf), "%d", num_generated);
+	    set_ob_key_value(gen, "generator_generated", buf, 1);
 	}
     }
 }

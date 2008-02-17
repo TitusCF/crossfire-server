@@ -528,44 +528,6 @@ int isqrt(int n)
     return result;
 }
 
-
-/**
- * Converts a long to a string.
- *
- * @param n
- * long to convert.
- * @return
- * char-pointer to a static array, in which a representation
- * of the decimal number given will be stored.
- *
- * @todo
- * remove static buffer?
- */
-char *ltostr10(signed long n) {
-    static char buf[12]; /* maximum size is n=-2 billion, i.e. 11 characters+1
-                            character for the trailing nul character */
-    snprintf(buf, sizeof(buf), "%ld", n);
-    return buf;
-}
-
-/**
- * Converts a double to a string.
- *
- * @param v
- * double to convert.
- * @return
- * char-pointer to a static array, in which a representation
- * of the decimal number given will be stored.
- *
- * @todo
- * remove static buffer?
- */
-char *doubletostr10(double v){
-    static char tbuf[200];
-    sprintf(tbuf,"%f",v);
-    return tbuf;
-}
-
 /**
  * This is a list of the suffix, uncompress and compress functions.  Thus,
  * if you have some other compress program you want to use, the only thing

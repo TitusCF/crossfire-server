@@ -377,29 +377,19 @@ void dump_object(object *op, StringBuffer *sb) {
 
         get_ob_diff(sb, op, &empty_archetype->clone);
         if (op->more) {
-            stringbuffer_append_string(sb, "more ");
-            stringbuffer_append_string(sb, ltostr10(op->more->count));
-            stringbuffer_append_string(sb, "\n");
+            stringbuffer_append_printf(sb, "more %ld\n", op->more->count);
         }
         if (op->head) {
-            stringbuffer_append_string(sb, "head ");
-            stringbuffer_append_string(sb, ltostr10(op->head->count));
-            stringbuffer_append_string(sb, "\n");
+            stringbuffer_append_printf(sb, "head %ld\n", op->head->count);
         }
         if (op->env) {
-            stringbuffer_append_string(sb, "env ");
-            stringbuffer_append_string(sb, ltostr10(op->env->count));
-            stringbuffer_append_string(sb, "\n");
+            stringbuffer_append_printf(sb, "env %ld\n", op->env->count);
         }
         if (op->inv) {
-            stringbuffer_append_string(sb, "inv ");
-            stringbuffer_append_string(sb, ltostr10(op->inv->count));
-            stringbuffer_append_string(sb, "\n");
+            stringbuffer_append_printf(sb, "inv %ld\n", op->inv->count);
         }
         if (op->owner) {
-            stringbuffer_append_string(sb, "owner ");
-            stringbuffer_append_string(sb, ltostr10(op->owner->count));
-            stringbuffer_append_string(sb, "\n");
+            stringbuffer_append_printf(sb, "owner %ld\n", op->owner->count);
         }
         stringbuffer_append_string(sb, "end\n");
     } else {
