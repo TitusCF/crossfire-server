@@ -72,9 +72,6 @@ void dragon_ability_gain( object* ob, int x, int y )
     {
     }
 
-void weather_effect(mapstruct *m)
-    {
-    }
 
 void set_darkness_map( mapstruct* m)
     {

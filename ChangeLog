@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove obsolete functions (related to weather).
+ utils/bwp.c mapper.c
+Nicolas Weeger, 2008-02-17
+
 Fix shifted pic for eg Titan.
  common/object.c: make get_multi_size() non static so can be used elsewhere.
  include/libproto.h
