@@ -1587,13 +1587,20 @@ void process_map(struct_map_info* info)
                     continue;
 
                 if (needpic) {
+                    int sx, sy, hx, hy;
                     if (gdfaces[item->face->number] == NULL)
                     {
                         int set = get_face_fallback(tileset, item->face->number);
                         gdfaces[item->face->number] = gdImageCreateFromPngPtr(facesets[set].faces[item->face->number].datalen, facesets[set].faces[item->face->number].data);
                         pics_allocated++;
                     }
-                    if (gdfaces[item->face->number] != 0 && !(item->head && item->face->number == item->head->face->number))
+                    if (item->head || item->more) {
+                        get_multi_size(item, &sx, &sy, &hx, &hy);
+                    } else {
+                        hx = 0;
+                        hy = 0;
+                    }
+                    if (gdfaces[item->face->number] != 0 && ((!item->head && !item->more) || (item->arch->clone.x + hx == 0 && item->arch->clone.y + hy == 0)))
                     {
                         gdImageCopy(pic, gdfaces[item->face->number], x * 32, y * 32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
                     }

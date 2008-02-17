@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix shifted pic for eg Titan.
+ common/object.c: make get_multi_size() non static so can be used elsewhere.
+ include/libproto.h
+ utils/mapper.c
+Nicolas Weeger, 2008-02-17
+
 Remove ltostr10 and doubletostr10. They were using static buffer, and
 are nicely replaced by stringbuffer_append_printf() or snprintf().
  common/loader.l object.c porting.c

@@ -54,7 +54,6 @@ static int compare_ob_value_lists(const object *, const object *);
 static void expand_objects(void);
 static void permute(int *, int, int);
 static int set_ob_key_value_s(object *, const char *, const char *, int);
-static void get_multi_size(object *, int *, int *, int *, int *);
 
 
 
@@ -3970,7 +3969,7 @@ void fix_multipart_object(object* tmp)
  * @todo
  * either check for sx/sy everywhere or remove the check :)
  */
-static void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
+void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
     int maxx=0, maxy=0, minx=0, miny=0;
     if (ob->head)
