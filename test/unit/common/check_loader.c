@@ -30,12 +30,18 @@
  * This is the unit tests file for common/loader.c
  */
 
+#include <global.h>
 #include <stdlib.h>
 #include <check.h>
-
+#include <loader.h>
+#include <toolkit_common.h>
+#include <object.h>
+#include <stringbuffer.h>
 
 void setup(void) {
-    /* put any initialisation steps here, they will be run before each testcase */
+    cctk_setdatadir(SOURCE_ROOT "lib");
+    cctk_setlog(LOGDIR "/unit/common/loader.out");
+    cctk_init_std_archetypes();
 }
 
 void teardown(void)
@@ -43,9 +49,42 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_empty)
+START_TEST (test_get_ob_diff)
 {
-    /*TESTME test not yet developped*/
+    StringBuffer* buf;
+    object* orc;
+    archetype* arch;
+    char* result;
+
+    arch = find_archetype("orc");
+    fail_unless(arch != NULL, "Can't find 'orc' archetype!");
+    orc = arch_to_object(arch);
+    fail_unless(orc != NULL, "Couldn't create first orc!");
+
+    buf = stringbuffer_new();
+    get_ob_diff(buf, orc, &arch->clone);
+    result = stringbuffer_finish(buf);
+    fail_unless(result && result[0] == '\0', "diff obj/clone was %s!", result);
+    free(result);
+
+    orc->speed = 0.5;
+    orc->speed_left = arch->clone.speed_left;
+    FREE_AND_COPY(orc->name, "Orc chief");
+
+    buf = stringbuffer_new();
+    get_ob_diff(buf, orc, &arch->clone);
+    result = stringbuffer_finish(buf);
+    fail_unless(result && strcmp(result, "name Orc chief\nspeed 0.500000\n") == 0, "diff modified obj/clone was %s!", result);
+    free(result);
+
+    orc->stats.hp = 50;
+    orc->expmul = 8.5;
+
+    buf = stringbuffer_new();
+    get_ob_diff(buf, orc, &arch->clone);
+    result = stringbuffer_finish(buf);
+    fail_unless(result && strcmp(result, "name Orc chief\nhp 50\nexpmul 8.500000\nspeed 0.500000\n") == 0, "2n diff modified obj/clone was %s!", result);
+    free(result);
 }
 END_TEST
 
@@ -57,7 +96,7 @@ Suite *loader_suite(void)
   tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_empty);
+  tcase_add_test(tc_core, test_get_ob_diff);
 
   return s;
 }

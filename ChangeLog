@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Unit test for get_ob_diff().
+ test/unit/common/check_loader.c
+ test/unit/common/Makefile.am
+Nicolas Weeger, 2008-02-17
+
 Tileset support, through '-tileset=' option. Default 'standard' tileset.
 utils/mapper.c
 Nicolas Weeger, 2008-02-16
