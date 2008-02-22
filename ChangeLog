@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Generate a list of special equipment in maps. Not yet listed in the map page itself.
+ utils/mapper.c
+Nicolas Weeger, 2008-02-22
+
 Smarter pic generation for tiled maps. Fix crash if no map for quest.
  utils/mapper.c
 Nicolas Weeger, 2008-02-16

@@ -187,6 +187,7 @@
  * - add missing documentation on variables / functions
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
+ * - use region's name instead of filename in the maps page
  */
 
 #include <time.h>
@@ -243,6 +244,20 @@ struct_map_list maps_list;
 
 /** Pseudo-maps grouping other maps. */
 struct_map_list tiled_map_list;
+
+/** One special item (weapon, shield, ...). */
+typedef struct struct_equipment {
+    char* name;             /**< Item's name. */
+    int power;              /**< Item power as declared by the item itself. */
+    int calc_power;         /**< Item power calculated via calc_item_power(). */
+    char* diff;             /**< Result of get_ob_diff() with the item's clone. */
+    struct_map_list origin; /**< Map(s) this item is found in. */
+} struct_equipment;
+
+struct_equipment** special_equipment = NULL;    /**< Special equipment list. */
+int equipment_count = 0;                        /**< Number of items in special_equipment. */
+int equipment_allocated = 0;                    /**< Allocated items in special_equipment. */
+
 
 /** Path to store generated files. Relative or absolute, shouldn't end with a / */
 char root[500];
@@ -380,6 +395,165 @@ static void init_map_list(struct_map_list* list) {
     list->maps = NULL;
     list->count = 0;
     list->allocated = 0;
+}
+
+void add_map(struct_map_info* info, struct_map_list* list);
+
+static int is_special_equipment(object* item) {
+    if (item->name == item->arch->clone.name)
+        return 0;
+    if (QUERY_FLAG(item, FLAG_NO_PICK))
+        return 0;
+    if (item->move_block == MOVE_ALL)
+        return 0;
+
+    if (IS_SHIELD(item) || IS_WEAPON(item) || IS_ARMOR(item) || IS_ARROW(item) || (item->type == ROD) || (item->type == WAND))
+        return 1;
+
+    return 0;
+}
+
+/**
+ * Gets an empty struct_equipment.
+ * @return
+ * new item.
+ */
+static struct_equipment* get_equipment() {
+    struct_equipment* add = calloc(1, sizeof(struct_equipment));
+    init_map_list(&add->origin);
+    return add;
+}
+
+/**
+ * Frees a struct_equipment.
+ *
+ * @param equip
+ * item to free.
+ */
+static void free_equipment(struct_equipment* equip) {
+    free(equip->diff);
+    free(equip->name);
+    free(equip);
+}
+
+/**
+ * Searches the item list for an identical item, except maps.
+ *
+ * @param item
+ * item to search. The variable may be freed, so must not be used after calling this function.
+ * @return
+ * item guaranteed to be unique in the item list.
+ */
+static struct_equipment* ensure_unique(struct_equipment* item) {
+    int check;
+    struct_equipment* comp;
+
+    for (check = 0; check < equipment_count; check++) {
+        comp = special_equipment[check];
+
+        if (strcmp(comp->name, item->name))
+            continue;
+        if (comp->power != item->power)
+            continue;
+        if (comp->calc_power != item->calc_power)
+            continue;
+        if (strcmp(comp->diff, item->diff))
+            continue;
+
+        free_equipment(item);
+        return comp;
+    }
+
+    if (equipment_count == equipment_allocated) {
+        equipment_allocated += 50;
+        special_equipment = realloc(special_equipment, sizeof(struct_equipment*) * equipment_allocated);
+    }
+    special_equipment[equipment_count] = item;
+    equipment_count++;
+
+    return item;
+}
+
+/**
+ * Adds an item to the list of special items.
+ *
+ * @param item
+ * item to add.
+ * @param map
+ * map it is on.
+ * @todo merge items with the same properties.
+ */
+static void add_one_item(object* item, struct_map_info* map) {
+    struct_equipment* add = get_equipment();
+    StringBuffer* bf = stringbuffer_new();
+    int x, y;
+    sstring name, namepl;
+
+    x = item->x;
+    y = item->y;
+    name = item->name;
+    namepl = item->name_pl;
+
+    item->x = item->arch->clone.x;
+    item->y = item->arch->clone.y;
+    item->name = item->arch->clone.name;
+    item->name_pl = item->arch->clone.name_pl;
+    get_ob_diff(bf, item, &item->arch->clone);
+    add->diff = stringbuffer_finish(bf);
+
+    item->x = x;
+    item->y = y;
+    item->name = name;
+    item->name_pl = namepl;
+
+    if (add->diff == NULL || strcmp(add->diff, "") == 0) {
+        free_equipment(add);
+        return;
+    }
+
+    add->name = strdup(item->name);
+    add->power = item->item_power;
+    add->calc_power = calc_item_power(item, 0);
+
+    add = ensure_unique(add);
+    add_map(map, &add->origin);
+}
+
+/**
+ * Checks if item and its inventory are worthy to be listed.
+ *
+ * @param item
+ * item to check.
+ * @param map
+ * map the item is on.
+ */
+static void check_equipment(object* item, struct_map_info* map) {
+    object* inv;
+
+    if (is_special_equipment(item))
+        add_one_item(item, map);
+
+    for (inv = item->inv; inv; inv = inv->below) {
+        check_equipment(inv, map);
+    }
+}
+
+/**
+ * Sort 2 struct_equipment, first on item power then name.
+ * @param a
+ * @param b
+ * items to compare.
+ * @return
+ * -1, 0 or 1.
+ */
+static int sort_equipment(const void* a, const void* b) {
+    const struct_equipment* l = *(const struct_equipment**)a;
+    const struct_equipment* r = *(const struct_equipment**)b;
+    int c = l->power - r->power;
+
+    if (c)
+        return c;
+    return strcasecmp(l->name, r->name);
 }
 
 /**
@@ -1583,6 +1757,8 @@ void process_map(struct_map_info* info)
                 } else if (is_slaying(item))
                     add_slaying(info, item);
 
+                check_equipment(item, info);
+
                 check_slaying_inventory(info, item);
 
                 if (item->invisible)
@@ -2594,6 +2770,39 @@ void write_maps_by_level()
     printf(" done.\n");
 }
 
+/**
+ * Writes the item page.
+ */
+void write_equipment_index() {
+    int item, map;
+    FILE* out;
+    char name[500];
+
+    printf("Generating special equipment list..");
+    fflush(stdout);
+
+    qsort(special_equipment, equipment_count, sizeof(struct_equipment*), sort_equipment);
+
+    snprintf(name, sizeof(name), "%s/items.html", root);
+    out = fopen(name, "w+");
+
+    fprintf(out, "<html><head><title>Item list</title></head></body><h1>Special items found in maps</h1>\n");
+    fprintf(out, "<table border=\"1\"><tr><th>Name</th><th>Map(s)</th><th>Item power</th><th>Calc item power</th><th>Description</th></tr>\n");
+
+    for (item = 0; item < equipment_count; item++) {
+        fprintf(out, "<tr><td>%s</td><td><ul>", special_equipment[item]->name);
+
+        for (map = 0; map < special_equipment[item]->origin.count; map++)
+            fprintf(out, "<li>%s</li>\n", special_equipment[item]->origin.maps[map]->path);
+
+        fprintf(out, "</ul></td><td>%d</td><td>%d</td><td><pre>%s</pre></td></tr>\n", special_equipment[item]->power, special_equipment[item]->calc_power, special_equipment[item]->diff);
+    }
+    fprintf(out, "</body></html>\n");
+    fclose(out);
+
+    printf(" done.\n");
+}
+
 /** Directories to ignore for map search. */
 const char* ignore_path[] = {
     "/Info",
@@ -3107,6 +3316,8 @@ int main(int argc, char** argv)
     write_slaying_info();
 
     write_quests_page();
+
+    write_equipment_index();
 
     return 0;
 }
