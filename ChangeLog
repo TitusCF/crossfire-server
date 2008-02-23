@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Generate a global list of monsters in maps, and list monsters on each map.
+ utils/templates/map.template
+ utils/mapper.c
+Added files:
+ utils/templates/map_monster_after.template map_monster_before.template
+ map_monster_between.template map_no_monster.template map_monster_one.template
+Nicolas Weeger, 2008-02-23
+
 Generate a list of special equipment in maps. Not yet listed in the map page itself.
  utils/mapper.c
 Nicolas Weeger, 2008-02-22
