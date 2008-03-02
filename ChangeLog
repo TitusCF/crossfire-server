@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix i18n bug resulting in erroneous output for 'statistics' command.
+ include/languages.h 
+Kevin Bulgrien, 2008-03-02
+
 Generate a global list of monsters in maps, and list monsters on each map.
  utils/templates/map.template
  utils/mapper.c
