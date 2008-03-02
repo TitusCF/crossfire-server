@@ -22,7 +22,10 @@
 */
 /**
  * @file
- * i18n support definitions
+ * i18n support definitions.
+ * This one-liner will check to be sure the defines are lined up properly
+ * with the values they represent:<br>
+ * awk -v FS="[ _]" '/I18N_MSG/ { if ($5 != $6) print $5, $6 }' languages.h
  */
 #ifndef LANGUAGES_H
 #define LANGUAGES_H
@@ -45,7 +48,7 @@ extern const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS]; /**< Translati
 #define I18N_MSG_CMISC_009 9
 #define I18N_MSG_CMISC_010 10
 #define I18N_MSG_CMISC_011 11
-#define I18N_MSG_CMISC_012 12
+#define I18N_MSG_CMISC_012 11
 #define I18N_MSG_CMISC_013 13
 #define I18N_MSG_CMISC_014 14
 #define I18N_MSG_CMISC_015 15
