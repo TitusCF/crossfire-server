@@ -496,6 +496,31 @@ This should never be set in archetypes or on maps, but it may sees on
 a swapped out map. It is the variable that holds how many monsters
 this generator has created - it is only used if generator_limit is set
 
+H.9 Spawn Rate Limiter (maxsp/GENERATE_SPEED)
+
+Normally, the generate makes the monster whenever it gets its action
+(speed_left is positive).  This works fine for static generators like
+those for orcs which don't do anything but generate monsters.  However,
+there are some monsters, like mice and centipedes, that are also generators.
+If the speed was set low enough that the rate the generate monsters didn't
+overwhelm the map, they would be harmless as monsters.  And if these
+creatures generated a new creature each time they got an action, map
+would quickly be full.  To limit this, maxsp is used as a limiter
+(note within the code, GENERATE_SPEED should always ge used to get
+this field)
+
+maxsp is basically a random limiter random()%maxsp must be zero for
+a creature to be generated.  Thus, if maxsp is 100, each time the monster
+moves, there is a 1% chance of a new creature being made.  If maxsp is 20,
+each time the monster moves there is a 5% chance.
+
+Making maxsp a higher value reduces the generation rate.
+
+Note - there is a bug here, in that a spellcasting creature can not 
+be effectively limited for generator rate, since maxsp is used for both
+its normal meaning in this case as well as generator limitation.  It is
+unlikely that one would want spell casting creature to also be a
+generator.
 
 
 
