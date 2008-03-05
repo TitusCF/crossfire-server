@@ -506,7 +506,7 @@ If the speed was set low enough that the rate the generate monsters didn't
 overwhelm the map, they would be harmless as monsters.  And if these
 creatures generated a new creature each time they got an action, map
 would quickly be full.  To limit this, maxsp is used as a limiter
-(note within the code, GENERATE_SPEED should always ge used to get
+(note within the code, GENERATE_SPEED should always be used to get
 this field)
 
 maxsp is basically a random limiter random()%maxsp must be zero for
