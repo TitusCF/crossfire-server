@@ -1014,13 +1014,13 @@ object *hit_with_arrow (object *op, object *victim)
     sint16 victim_x, victim_y;
     mapstruct	*victim_map;
     const char* old_skill=NULL;
-    
+
     /* Disassemble missile */
     for (hitter = op->inv; hitter; hitter = hitter->below) {
         if (hitter->type == EVENT_CONNECTOR)
             continue;
         container = op;
-        /* 11-2007, commented seems buggy 
+        /* 11-2007, commented seems buggy
         hitter = op->inv;*/
         remove_ob (hitter);
         if (free_no_drop(hitter))
@@ -1052,8 +1052,8 @@ object *hit_with_arrow (object *op, object *victim)
     */
     if (execute_event(op, EVENT_ATTACK,hitter,victim,NULL,SCRIPT_FIX_ALL) == 0){
         /*
-          temporary set the hitter's skill to the one associated with the 
-          throw wrapper. This is needed to that thrower gets it's xp at the 
+          temporary set the hitter's skill to the one associated with the
+          throw wrapper. This is needed to that thrower gets it's xp at the
           correct level. This might proves an awfull hack :/ We should really
           provide attack_ob_simple with the skill to use...
          */

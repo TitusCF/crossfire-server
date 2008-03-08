@@ -1481,7 +1481,7 @@ void fix_object(object *op) {
 	op->weapon_speed -= character_load * 0.2;
 
 	if (op->weapon_speed < 0.05) op->weapon_speed=0.05;
-	
+
     }
 
     op->speed = op->speed * speed_reduce_from_disease;

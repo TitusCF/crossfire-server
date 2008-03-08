@@ -15,7 +15,7 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 Fix i18n bug resulting in erroneous output for 'statistics' command.
- include/languages.h 
+ include/languages.h
 Kevin Bulgrien, 2008-03-02
 
 Generate a global list of monsters in maps, and list monsters on each map.
@@ -131,7 +131,7 @@ Get quest information from map's lore. Generate quest index.
  utils/templates/map.template
 Added files:
  templates/map_no_quest.template map_one_quest.template map_with_quests.template
-  quests.template quests_map.template quests_quest.template 
+  quests.template quests_map.template quests_quest.template
 Nicolas Weeger, 2008-02-08
 
 Include level of map in variables. Generate global map index by level.
