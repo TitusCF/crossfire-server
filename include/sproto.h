@@ -553,7 +553,7 @@ object *find_skill_by_number(object *who, int skillno);
 int change_skill(object *who, object *new_skill, int flag);
 void clear_skill(object *who);
 int do_skill(object *op, object *part, object *skill, int dir, const char *string);
-int calc_skill_exp(object *who, object *op, object *skill);
+sint64 calc_skill_exp(object *who, object *op, object *skill);
 int learn_skill(object *pl, object *scroll);
 void show_skills(object *op, const char *search);
 int use_skill(object *op, const char *string);

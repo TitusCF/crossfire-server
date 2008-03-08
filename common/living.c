@@ -1820,12 +1820,12 @@ sint64 level_exp(int level,double expmul) {
  */
 void calc_perm_exp(object *op)
 {
-    int p_exp_min;
+    sint64 p_exp_min;
 
     /* Ensure that our permanent experience minimum is met.
      * permenent_exp_ratio is an integer percentage, we divide by 100
      * to get the fraction   */
-    p_exp_min = (int)(settings.permanent_exp_ratio * (float)(op->stats.exp)/100);
+    p_exp_min = settings.permanent_exp_ratio*op->stats.exp/100;
 
     if (op->perm_exp < p_exp_min)
         op->perm_exp = p_exp_min;
@@ -2192,7 +2192,7 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
     if(count==1 || shares>exp)
         change_exp(op,exp, skill, flag);
     else {
-        int share=exp/shares,given=0,nexp;
+        sint64 share=exp/shares,given=0,nexp;
         for(pl=first_player;pl!=NULL;pl=pl->next) {
             if(party && pl->ob->contr->party==party && on_same_map(pl->ob, op)) {
                 nexp=(pl->ob->level+4)*share;

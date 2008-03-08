@@ -597,8 +597,9 @@ int do_skill (object *op, object *part, object *skill, int dir, const char *stri
  * @return
  * experience for the skill use.
  */
-int calc_skill_exp(object *who, object *op, object *skill) {
-    int op_exp=0,op_lvl= 0;
+sint64 calc_skill_exp(object *who, object *op, object *skill) {
+    sint64 op_exp=0;
+    int op_lvl= 0;
     float base,value,lvl_mult=0.0;
 
     if (!skill) skill = who;
@@ -631,7 +632,7 @@ int calc_skill_exp(object *who, object *op, object *skill) {
     if(op_lvl<1) op_lvl = 1;
 
     if(who->type!=PLAYER) {             /* for monsters only */
-        return ((int) (op_exp*0.1)+1);	/* we add one to insure positive value is returned */
+        return ((sint64) (op_exp*0.1)+1);	/* we add one to insure positive value is returned */
     } else {                            /* for players */
 	base = op_exp;
 	/* if skill really is a skill, then we can look at the skill archetype for
@@ -666,7 +667,7 @@ int calc_skill_exp(object *who, object *op, object *skill) {
       LOG(llevDebug,"calc_skill_exp(): who: %s(lvl:%d)  op:%s(lvl:%d)\n",
 		who->name,skill->level,op->name,op_lvl);
 #endif
-    return ( (int) value);
+    return ( (sint64) value);
 }
 
 /**

@@ -101,7 +101,7 @@ float exp_prot_mult[NROFATTACKS+2] = {
  * @return
  * experience computed from object's properties.
  */
-uint64 new_exp(const object *ob) {
+sint64 new_exp(const object *ob) {
     double att_mult, prot_mult, spec_mult;
     double exp;
     int i;
@@ -146,7 +146,7 @@ uint64 new_exp(const object *ob) {
     if (QUERY_FLAG(ob, FLAG_STAND_STILL))
         exp /= 2;
 
-    return (int) exp;
+    return (sint64) exp;
 }
 
 /**
