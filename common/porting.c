@@ -41,6 +41,7 @@
 #define pid_t int  /* we include it non global, because there is a redefinition in python.h */
 #else
 #include <ctype.h>
+#include <errno.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -481,9 +482,6 @@ int snprintf(char *dest, int max, const char *format, ...)
  * buf's length.
  * @return
  * buf.
- *
- * @note
- * this function will return a dummy string if strerror() doesn't exist on the current platform.
  */
 char *strerror_local(int errnum, char* buf, int size)
 {
@@ -494,7 +492,7 @@ char *strerror_local(int errnum, char* buf, int size)
     if ((buf[0]==0)&&(bbuf!=NULL))
         strncpy(buf,bbuf,size);
 #else
-    snprintf(buf, size, "strerror_local not implemented");
+    snprintf(buf, size, "%s", strerror(errnum));
 #endif
     return buf;
 }
