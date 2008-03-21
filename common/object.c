@@ -1497,9 +1497,10 @@ void remove_ob(object *op) {
         sub_weight(op->env, op->weight+op->carrying);
 
         /* Update in two cases: item is in a player, or in a container the player is looking into. */
-        if (op->env->contr != NULL && op->head == NULL)
-            esrv_del_item(op->env->contr, op->count);
-        else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
+        if (op->env->contr != NULL && op->head == NULL) {
+            if (LOOK_OBJ(op))
+                esrv_del_item(op->env->contr, op->count);
+        } else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
             player* pl = NULL;
             if (op->env->env && op->env->env->contr)
                 /* Container is in player's inventory. */
@@ -1512,7 +1513,7 @@ void remove_ob(object *op) {
                 if (above)
                     pl = above->contr;
             }
-            if (pl)
+            if (pl && LOOK_OBJ(op))
                 esrv_del_item(pl, op->count);
         }
 
