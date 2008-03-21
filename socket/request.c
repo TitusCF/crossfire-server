@@ -805,6 +805,9 @@ void esrv_new_player(player *pl, uint32 weight)
 
     pl->last_weight = weight;
 
+    if (!(pl->socket.faces_sent[pl->ob->face->number] & NS_FACESENT_FACE))
+        esrv_send_face(&pl->socket, pl->ob->face->number, 0);
+
     sl.buf=malloc(MAXSOCKSENDBUF);
 
     strcpy((char*)sl.buf,"player ");
@@ -1753,6 +1756,10 @@ static void append_spell (player *pl, SockList *sl, object *spell) {
             spell->count);
         return;
     }
+
+    if (spell->face && !(pl->socket.faces_sent[spell->face->number] & NS_FACESENT_FACE))
+        esrv_send_face(&pl->socket, spell->face->number, 0);
+
     spell_info = get_client_spell_state(pl, spell);
     SockList_AddInt(sl, spell->count);
     SockList_AddShort(sl, spell->level);
