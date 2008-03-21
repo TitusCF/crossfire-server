@@ -1380,8 +1380,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     va_list args;
     static int rv = 0;
     CFPContext* context;
-    Crossfire_Player* cfpl;
-    Crossfire_Object* cfob;
     char* buf;
     player* pl;
     object* op;
@@ -1409,20 +1407,17 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             snprintf(context->options, sizeof(context->options), "born");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_PLAYER_DEATH:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
             snprintf(context->options, sizeof(context->options), "death");
-            cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_GKILL:
             op = va_arg(args, object*);
             context->who = Crossfire_Object_wrap(op);
             context->activator = Crossfire_Object_wrap(op);
             snprintf(context->options, sizeof(context->options), "gkill");
-            cfob = (Crossfire_Object*)context->who;
             break;
         case EVENT_LOGIN:
             pl = va_arg(args, player*);
@@ -1431,7 +1426,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
             snprintf(context->options, sizeof(context->options), "login");
-            cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_LOGOUT:
             pl = va_arg(args, player*);
@@ -1440,13 +1434,11 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
             snprintf(context->options, sizeof(context->options), "logout");
-            cfpl = (Crossfire_Player*)context->activator;
             break;
         case EVENT_REMOVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             snprintf(context->options, sizeof(context->options), "remove");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_SHOUT:
             op = va_arg(args, object*);
@@ -1455,7 +1447,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
             snprintf(context->options, sizeof(context->options), "shout");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MUZZLE:
             op = va_arg(args, object*);
@@ -1464,7 +1455,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
             snprintf(context->options, sizeof(context->options), "muzzle");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_KICK:
             op = va_arg(args, object*);
@@ -1473,21 +1463,18 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
             if (buf != NULL)
                 snprintf(context->message, sizeof(context->message), "%s", buf);
             snprintf(context->options, sizeof(context->options), "kick");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPENTER:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
             snprintf(context->options, sizeof(context->options), "mapenter");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_MAPLEAVE:
             op = va_arg(args, object*);
             context->activator = Crossfire_Object_wrap(op);
             context->who = Crossfire_Map_wrap(va_arg(args, mapstruct*));
             snprintf(context->options, sizeof(context->options), "mapleave");
-            cfob = (Crossfire_Object*)context->activator;
             break;
         case EVENT_CLOCK:
             snprintf(context->options, sizeof(context->options), "clock");
