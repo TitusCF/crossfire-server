@@ -622,16 +622,16 @@ static PyObject* log_message(PyObject* self, PyObject* args){
     if (!PyArg_ParseTuple(args,"is",&intLevel,&message))
 	return NULL;
     switch (intLevel) {
-        case llevError: 
+        case llevError:
             level=llevError;
             break;
-        case llevInfo: 
+        case llevInfo:
             level=llevInfo;
             break;
-        case llevDebug: 
+        case llevDebug:
             level=llevDebug;
             break;
-        case llevMonster: 
+        case llevMonster:
             level=llevMonster;
             break;
         default:
@@ -888,7 +888,7 @@ static void addConstants(PyObject* module, const char* name, CFConstant* constan
     Py_DECREF(dict);
 }
 /**
- * Do half the job of addConstants. It only 
+ * Do half the job of addConstants. It only
  * Set constantc, but not a hashtable to get constant
  * names from values. To be used for collections of constants
  * which are not unique but still are usefull for scripts
@@ -1248,7 +1248,7 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     initConstants(m);
     private_data = PyDict_New();
     shared_data = PyDict_New();
-    
+
     /* add cjson module*/
     initcjson();
     return 0;
