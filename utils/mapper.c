@@ -2529,6 +2529,7 @@ void write_map_page(struct_map_info* map) {
     free(exits_to);
     free(maplore);
     free(quests);
+    free(monsters);
 }
 
 /** Ensures all maps have a name (if there was a limit to map processing, some maps will have a NULL name which causes issues). */

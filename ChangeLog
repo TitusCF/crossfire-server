@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix memory leak.
+ utils/mapper.c
+Nicolas Weeger, 2008-03-23
+
 Fix documentation, no functional change.
  common/button.c image.c info.c init.c item.c player.c time.c treasure.c
  plugins/cfpython/cfpython_map.c
