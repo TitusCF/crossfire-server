@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/init.c
+ * @file
  * Basic initialization for the common library.
  */
 

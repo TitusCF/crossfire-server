@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/time.c
+ * @file
  * Ingame time functions.
  */
 

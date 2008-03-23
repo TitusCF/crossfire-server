@@ -28,7 +28,7 @@
 */
 
 /**
- * @file server/spell_effect.c
+ * @file
  * Various spell effects, non attacks.
  * @todo use the same parameter names/orders.
  */

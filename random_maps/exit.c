@@ -32,7 +32,7 @@
 #include <rproto.h>
 
 /**
- * @file random_maps/exit.c
+ * @file
  * Handle exit placement in map.
  */
 

@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/image.c
+ * @file
  * Handles face-related stuff, including the actual face data.
  */
 

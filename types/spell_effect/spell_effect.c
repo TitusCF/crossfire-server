@@ -21,7 +21,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file spell_effect/spell_effect.c
+/** @file
  * The implementation of the Spell Effect class of objects.
  * @todo Split the subtype functions into their own file each, and split large functions.
  */

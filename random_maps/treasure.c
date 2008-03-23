@@ -29,7 +29,7 @@
 /*  placing treasure in maps, where appropriate.  */
 
 /**
- * @file random_maps/treasure.c
+ * @file
  * This deals with inserting treasures in random maps.
  * @todo
  * link where needed. Remove global variables.

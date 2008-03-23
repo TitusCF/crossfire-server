@@ -21,7 +21,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file treasure/treasure.c
+/** @file
  * The implementation of the Treasure class of objects.
  */
 #include <global.h>

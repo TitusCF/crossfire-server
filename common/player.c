@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/player.c
+ * @file
  * Player-structure related functions.
  */
 

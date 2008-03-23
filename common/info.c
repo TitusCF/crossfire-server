@@ -29,7 +29,7 @@
 #include <global.h>
 
 /**
- * @file common/info.c
+ * @file
  * The functions in this file are purely mean to generate information
  * in differently formatted output, mainly about monsters.
  */

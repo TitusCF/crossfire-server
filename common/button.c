@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/button.c
+ * @file
  * This handles triggers, buttons, altars and associated objects.
  */
 

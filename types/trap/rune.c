@@ -21,7 +21,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file trap/rune.c
+/** @file
  * The implementation of the Rune class of objects.
  */
 #include <global.h>

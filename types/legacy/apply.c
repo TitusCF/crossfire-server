@@ -26,7 +26,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-/** @file legacy/apply.c
+/** @file
  * Legacy implementation of apply-related methods.
  */
 /**

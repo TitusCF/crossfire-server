@@ -27,7 +27,7 @@
 */
 
 /**
- * @file server/rune.c
+ * @file
  *
  * All rune-related functions.
  */

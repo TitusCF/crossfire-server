@@ -116,7 +116,7 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 
 /**
  * @defgroup SYM_xxx Random map symetry
- * Symmetry definitions -- used in this file AND in @ref random_maps/treasure.c "treasures.c",
+ * Symmetry definitions -- used in this file AND in @ref treasure.c,
  * the numerical values matter so don't change them.
  */
 /*@{*/

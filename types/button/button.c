@@ -21,7 +21,7 @@
     The authors can be reached via e-mail at crossfire-devel@real-time.com
 */
 
-/** @file button/button.c
+/** @file
  * The implementation of the Button class of objects.
  */
 #include <global.h>

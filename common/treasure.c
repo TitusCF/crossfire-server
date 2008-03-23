@@ -28,7 +28,7 @@
 */
 
 /**
- * @file common/treasure.c
+ * @file
  * Everything concerning treasures and artifacts.
  * @see page_treasure_list
  */

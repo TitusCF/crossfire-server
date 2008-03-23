@@ -27,7 +27,7 @@
 */
 
 /**
- * @file common/item.c
+ * @file
  * Those functions deal with objects in general, including description, body location, and such.
  *
  * @todo

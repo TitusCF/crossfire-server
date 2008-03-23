@@ -3746,12 +3746,14 @@ void* cfapi_object_check_trigger(int* type, ...)
 
 /**
  * Wrapper for trigger_connected().
- * @param type
+ *
+ * Expected parameters after type:
+ * - ::objectlink*: the link to trigger. Can be obtained from map structure
+ * - ::object*: the object that cause this link to trigger, may be NULL
+ * - int: the state to trigger. 0=APPLY_RELEASE other=APPLY_PUSH
+ *
+ * @param[out] type
  * Will be CFAPI_NONE.
- * @param objectlink* the link to trigger. Can be obtained from map structure
- * @param cause the cause object of triggering, can be NULL
- * @param state the state to trigger. 0=APPLY_RELEASE other=APPLY_PUSH
- * Other params include the objectlink to trigger, the cause of the trigger and the state of trigger
  * @return
  * NULL.
  */

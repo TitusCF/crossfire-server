@@ -238,10 +238,19 @@ static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args)
     return Py_BuildValue("i", cf_map_change_light(map->map, change));
 }
 /**
- * python backend method for Map.TriggerConnected(int connected, CfObject cause, int state)
- * @param connected will be used to locate Objectlink with given id on map
- * @param state: 0=trigger the "release", other is trigger the "push", default is push
- * @param cause, eventual CfObject causing this trigger
+ * Python backend method for Map.TriggerConnected(int connected, CfObject cause, int state)
+ *
+ * Expected arguments:
+ * - connected will be used to locate Objectlink with given id on map
+ * - state: 0=trigger the "release", other is trigger the "push", default is push
+ * - cause, eventual CfObject causing this trigger
+ *
+ * @param map
+ * map we're on.
+ * @param args
+ * arguments as explained above.
+ * @return
+ * NULL if error, Py_None else.
  */
 static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args)
 {

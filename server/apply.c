@@ -26,7 +26,7 @@
 */
 
 /**
- * @file server/apply.c
+ * @file
  * Handles objects being applied, and their effect.
  */
 
@@ -532,7 +532,7 @@ static int is_legal_2ways_exit (object* op, object *exit)
 /**
  * Checks if an item is restricted to a race. Non players and DMs can always apply.
  *
- * @param player
+ * @param who
  * living thing trying to apply an item.
  * @param item
  * item being applied.
