@@ -27,7 +27,7 @@
 /*****************************************************************************/
 
 /**
- * @page plugin_citylife City life plugin
+ * @defgroup plugin_citylife City life plugin
  * This plugin adds random NPCs to town, and makes them enter houses, spawns new
  * ones.
  *
@@ -48,6 +48,8 @@
  * - vary NPCs based on time of day
  * - define "objectives" to go to
  * - make NPCs pause when player talks to them
+ *
+ * @{
  */
 
 /**
@@ -72,7 +74,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
 {
     va_list args;
     const char* propname;
-    int i, size;
+    int size;
     char* buf;
 
     va_start(args, type);
@@ -132,12 +134,13 @@ typedef struct {
     const char** available_archetypes;  /**< What archetypes can we chose from for an NPC? */
     int archetypes_count;               /**< Number of items in available_archetypes. */
 } mapzone;
-
+/*@}*/
 /**
  * @defgroup citylife_scorn Scorn parameters
  * Parameters for the @ref plugin_citylife "City life" plugin for Scorn.
  *
  * The city is pretty rectangular, so quite easy to define large zones to add to.
+ * @ingroup plugin_citylife
  */
 /*@{*/
 /** Zones for map 104_115. */
@@ -210,6 +213,8 @@ static const char* scorn_archs[] = {
 };
 /*@}*/
 
+/** @ingroup  plugin_citylife
+@{*/
 /**
  * All maps we work on.
  */
@@ -328,7 +333,6 @@ static void add_npcs_to_map(mapstruct* map) {
  */
 static void add_npc_to_random_map() {
     int count, test;
-    mapstruct* map;
     mapstruct* list[50];
     int zones[50];
     count = 0;
@@ -352,9 +356,6 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
-    char* buf;
-    player* pl;
-    object* op;
     mapstruct* map;
     int code;
 
@@ -460,3 +461,4 @@ CF_PLUGIN int   closePlugin()
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }
+/*@}*/
