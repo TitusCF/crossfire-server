@@ -3,8 +3,8 @@
  * This small program will extract information from Gridarta's types.xml file to generate documentation about types and fields.
  * Files are placed in developer's documentation subdirs by default.
  *
- * To build: gcc -g -pg -O0 -Wall -pedantic gridarta-types-convert.c -I../include -o gridarta-types-convert
- * To run: ./gridarta-types-convert ../../gridarta/crossfire/resource/conf/types.xml
+ * To build: <pre>gcc -g -pg -O0 -Wall -pedantic gridarta-types-convert.c -I../include -o gridarta-types-convert</pre>
+ * To run: <pre>./gridarta-types-convert ../../gridarta/crossfire/resource/conf/types.xml</pre>
  * (adjust the path according to your setup)
  *
  * Note that someone wishing to tweak this program should know the format of Gridarta's types.xml.
@@ -715,7 +715,7 @@ void add_type_to_attribute(attribute_definition* attribute, type_definition* typ
     att->number[att->count - 1] = type->number;
 }
 
-/** Read the contents of a <ignore_list> tag. */
+/** Read the contents of a <code>\<ignore_list\></code> tag. */
 void read_ignore_list(const char* name, FILE* file) {
     char buf[200], tmp[200];
     char *start, *end;

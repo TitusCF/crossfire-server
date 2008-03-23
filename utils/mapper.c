@@ -80,7 +80,7 @@
  *   - quests_map.template: one map in a quest.
  *
  *
- * Tags must be in the form #TAG#. To have a # in the code, please put ##. Valid tags are:
+ * Tags must be in the form <code>\#TAG#</code>. To have a # in the code, please put ##. Valid tags are:
  *
  * - map:
  *  - NAME: map relative path
@@ -195,7 +195,7 @@
  *  - MAPTEXT: description associated.
  *
  * To build this program, from the utils directory:
- *  gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd
+ *  <pre>gcc mapper.c -I../include ../common/libcross.a -o mapper -lm -lgd</pre>
  *
  * @todo
  * - split this file in multiple ones for easier maintenance
@@ -870,7 +870,7 @@ static void read_template(const char* name, char** buffer) {
 /**
  * Processes a template.
  *
- * Variables in the form #VARIABLE# will be substituted for specified values.
+ * Variables in the form <code>\#VARIABLE#</code> will be substituted for specified values.
  *
  * @param template
  * template to process.
@@ -1516,8 +1516,8 @@ void list_map(const char* path) {
  *
  * @param map
  * map name.
- * @param region
- * region name.
+ * @param reg
+ * region to link the map to.
  */
 void add_map_to_region(struct_map_info* map, region* reg) {
     int test;
@@ -1657,7 +1657,7 @@ static void add_map_to_slaying(struct_slaying_info* info, int item, struct_map_i
 /**
  * Adds the item's information to the map.
  *
- * @param source
+ * @param map
  * map containing the item.
  * @param item
  * item which slaying field we're considering.
@@ -2615,12 +2615,12 @@ void fix_tiled_map() {
 /**
  * Changes for the list all maps to the tiled map they are part of, if applicable.
  *
- * @param map
+ * @param current
  * map currently being processed.
  * @param from
  * list that contains the exits to/from map to be fixed.
- * @param to
- * group's from/to map list in which map can be added if needed.
+ * @param is_from
+ * if non zero, <code>from</code> is exit_from field, else it is an exit_to.
  */
 void fix_exits_for_map(struct_map_info* current, struct_map_list* from, int is_from) {
     int map, max;
@@ -3562,6 +3562,102 @@ int main(int argc, char** argv)
     return 0;
 }
 
+void do_auto_apply(mapstruct * m)
+{
+    object *tmp,*above=NULL;
+    int x,y;
+
+    if(m==NULL) return;
+
+    for(x=0;x<MAP_WIDTH(m);x++)
+        for(y=0;y<MAP_HEIGHT(m);y++)
+            for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
+        above=tmp->above;
+
+        if (tmp->inv) {
+            object *invtmp, *invnext;
+
+            for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
+                invnext = invtmp->below;
+
+                if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
+                    auto_apply(invtmp);
+                else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
+                    while ((invtmp->stats.hp--)>0)
+                        create_treasure(invtmp->randomitems, invtmp, 0,
+                                        m->difficulty,0);
+                    invtmp->randomitems = NULL;
+                }
+                else if (invtmp && invtmp->arch &&
+                         invtmp->type!=TREASURE &&
+                         invtmp->type != SPELL &&
+                         invtmp->type != CLASS &&
+                         HAS_RANDOM_ITEMS(invtmp)) {
+                    create_treasure(invtmp->randomitems, invtmp, 0,
+                                    m->difficulty,0);
+                /* Need to clear this so that we never try to create
+                    * treasure again for this object
+                */
+                    invtmp->randomitems = NULL;
+                         }
+            }
+            /* This is really temporary - the code at the bottom will
+            * also set randomitems to null.  The problem is there are bunches
+            * of maps/players already out there with items that have spells
+            * which haven't had the randomitems set to null yet.
+            * MSW 2004-05-13
+            *
+            * And if it's a spellbook, it's better to set randomitems to NULL too,
+            * else you get two spells in the book ^_-
+            * Ryo 2004-08-16
+            */
+            if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
+                tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
+                tmp->type == ALTAR || tmp->type == SPELLBOOK)
+                tmp->randomitems = NULL;
+
+        }
+
+        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+            auto_apply(tmp);
+        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&& HAS_RANDOM_ITEMS(tmp)) {
+            while ((tmp->stats.hp--)>0)
+                create_treasure(tmp->randomitems, tmp, 0,
+                                m->difficulty,0);
+            tmp->randomitems = NULL;
+        }
+        else if(tmp->type==TIMED_GATE) {
+            object *head = tmp->head != NULL ? tmp->head : tmp;
+            if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
+                tmp->speed = 0;
+                update_ob_speed(tmp);
+            }
+        }
+        /* This function can be called everytime a map is loaded, even when
+        * swapping back in.  As such, we don't want to create the treasure
+        * over and ove again, so after we generate the treasure, blank out
+        * randomitems so if it is swapped in again, it won't make anything.
+        * This is a problem for the above objects, because they have counters
+        * which say how many times to make the treasure.
+        */
+        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
+                tmp->type != SPELL && tmp->type != PLAYER_CHANGER && tmp->type != CLASS &&
+                HAS_RANDOM_ITEMS(tmp)) {
+            create_treasure(tmp->randomitems, tmp, GT_APPLY,
+                            m->difficulty,0);
+            tmp->randomitems = NULL;
+                }
+            }
+
+            for(x=0;x<MAP_WIDTH(m);x++)
+                for(y=0;y<MAP_HEIGHT(m);y++)
+                    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+                        if (tmp->above &&
+                            (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
+                            check_trigger (tmp, tmp->above);
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /**
  * Dummy functions to link the library.
@@ -3728,97 +3824,4 @@ void fix_auto_apply(mapstruct * m)
 {
 }
 
-void do_auto_apply(mapstruct * m)
-{
-    object *tmp,*above=NULL;
-    int x,y;
-
-    if(m==NULL) return;
-
-    for(x=0;x<MAP_WIDTH(m);x++)
-        for(y=0;y<MAP_HEIGHT(m);y++)
-            for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
-        above=tmp->above;
-
-        if (tmp->inv) {
-            object *invtmp, *invnext;
-
-            for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
-                invnext = invtmp->below;
-
-                if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
-                    auto_apply(invtmp);
-                else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
-                    while ((invtmp->stats.hp--)>0)
-                        create_treasure(invtmp->randomitems, invtmp, 0,
-                                        m->difficulty,0);
-                    invtmp->randomitems = NULL;
-                }
-                else if (invtmp && invtmp->arch &&
-                         invtmp->type!=TREASURE &&
-                         invtmp->type != SPELL &&
-                         invtmp->type != CLASS &&
-                         HAS_RANDOM_ITEMS(invtmp)) {
-                    create_treasure(invtmp->randomitems, invtmp, 0,
-                                    m->difficulty,0);
-                /* Need to clear this so that we never try to create
-                    * treasure again for this object
-                */
-                    invtmp->randomitems = NULL;
-                         }
-            }
-            /* This is really temporary - the code at the bottom will
-            * also set randomitems to null.  The problem is there are bunches
-            * of maps/players already out there with items that have spells
-            * which haven't had the randomitems set to null yet.
-            * MSW 2004-05-13
-            *
-            * And if it's a spellbook, it's better to set randomitems to NULL too,
-            * else you get two spells in the book ^_-
-            * Ryo 2004-08-16
-            */
-            if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
-                tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
-                tmp->type == ALTAR || tmp->type == SPELLBOOK)
-                tmp->randomitems = NULL;
-
-        }
-
-        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-            auto_apply(tmp);
-        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&& HAS_RANDOM_ITEMS(tmp)) {
-            while ((tmp->stats.hp--)>0)
-                create_treasure(tmp->randomitems, tmp, 0,
-                                m->difficulty,0);
-            tmp->randomitems = NULL;
-        }
-        else if(tmp->type==TIMED_GATE) {
-            object *head = tmp->head != NULL ? tmp->head : tmp;
-            if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
-                tmp->speed = 0;
-                update_ob_speed(tmp);
-            }
-        }
-        /* This function can be called everytime a map is loaded, even when
-        * swapping back in.  As such, we don't want to create the treasure
-        * over and ove again, so after we generate the treasure, blank out
-        * randomitems so if it is swapped in again, it won't make anything.
-        * This is a problem for the above objects, because they have counters
-        * which say how many times to make the treasure.
-        */
-        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-                tmp->type != SPELL && tmp->type != PLAYER_CHANGER && tmp->type != CLASS &&
-                HAS_RANDOM_ITEMS(tmp)) {
-            create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                            m->difficulty,0);
-            tmp->randomitems = NULL;
-                }
-            }
-
-            for(x=0;x<MAP_WIDTH(m);x++)
-                for(y=0;y<MAP_HEIGHT(m);y++)
-                    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-                        if (tmp->above &&
-                            (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-                            check_trigger (tmp, tmp->above);
-}
+#endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

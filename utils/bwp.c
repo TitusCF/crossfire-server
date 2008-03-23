@@ -168,7 +168,7 @@ static int read_template(const char* name, char** buffer) {
 /**
  * Processes a template.
  *
- * Variables in the form #VARIABLE# will be substituted for specified values.
+ * Variables in the form <code>\#VARIABLE#</code> will be substituted for specified values.
  *
  * @param template
  * template to process.
@@ -795,6 +795,8 @@ void fix_auto_apply(mapstruct *m) {
                     check_trigger(tmp,tmp->above);
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /**
  * Those are dummy functions defined to resolve all symboles.
  * Added as part of glue cleaning.
@@ -880,3 +882,4 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
 int execute_global_event(int eventcode, ...){
     return 0;
 }
+#endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

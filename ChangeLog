@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tweak documentation so some programs in utils/ are part of Doxygen's output.
+ Doxyfile
+ utils/bwp.c gridarta-types-convert.c mapper.c
+Nicolas Weeger, 2008-03-23
+
 Tweak documentation, remove unused parameters.
 plugins/citylife/citylife.c
 Nicolas Weeger, 2008-03-23
