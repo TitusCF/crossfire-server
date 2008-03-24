@@ -3177,7 +3177,7 @@ void write_regions_link() {
  * map info to write.
  */
 static void write_slaying_map_name(FILE* file, struct_map_info* map) {
-    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->path + 1, map->name, map->path);
+    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->tiled_group ? map->tiled_group->path + 1 : map->path + 1, map->name, map->path);
 }
 
 /**
