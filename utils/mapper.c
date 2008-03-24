@@ -1177,6 +1177,8 @@ static void add_map_to_quest(struct_map_info* map, const char* name, const char*
     add->map = map;
     add->quest = quest;
     add->description = strdup(description);
+    while (strlen(add->description) && add->description[strlen(add->description) - 1] == '\n')
+        add->description[strlen(add->description) - 1] = '\0';
     add_to_struct_map_in_quest_list(&quest->maps, add);
     add_to_struct_map_in_quest_list(&map->quests, add);
 }
@@ -1198,6 +1200,8 @@ static void define_quest(const char* name, struct_map_info* mainmap, const char*
         return;
     }
     quest->description = strdup(description);
+    while (strlen(quest->description) && quest->description[strlen(quest->description) - 1] == '\n')
+        quest->description[strlen(quest->description) - 1] = '\0';
     quest->mainmap = mainmap;
 }
 
