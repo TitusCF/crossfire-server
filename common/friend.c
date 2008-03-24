@@ -39,8 +39,6 @@
  *
  * @param op
  * object to add to the list.
- * @todo
- * use is_friendly() to check if already onlist.
  */
 void add_friendly_object(object *op) {
     objectlink *ol;
@@ -50,12 +48,10 @@ void add_friendly_object(object *op) {
      * won't remove it either.  Plus, it is easier to put a breakpoint in
      * the debugger here and see where the problem is happening.
      */
-    for (ol=first_friendly_object; ol!=NULL; ol=ol->next) {
-        if (ol->ob == op) {
-            LOG(llevError, "add_friendly_object: Trying to add object already on list (%s)\n",
-                op->name);
-        return;
-        }
+    if (is_friendly(op)) {
+        LOG(llevError, "add_friendly_object: Trying to add object already on list (%s)\n",
+            op->name);
+    return;
     }
 
     ol=first_friendly_object;
