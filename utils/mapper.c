@@ -202,7 +202,6 @@
  * - add missing documentation on variables / functions
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
- * - use region's name instead of filename in the maps page
  */
 
 #include <time.h>
@@ -2399,9 +2398,9 @@ void write_map_page(struct_map_info* map) {
     relative_path(map->path, "/regions.html", regionindexpath);
 
     if (map->cfregion) {
-        strcpy(regionname, map->cfregion->name);
+        strcpy(regionname, get_region_longname(map->cfregion));
         strcpy(exit_path, "/");
-        strcat(exit_path, regionname);
+        strcat(exit_path, map->cfregion->name);
         strcat(exit_path, ".html");
         relative_path(map->path, exit_path, regionpath);
     }
