@@ -31,7 +31,8 @@
  * - a page per region
  * - a global map index
  * - the world map, including regions information
- * - the world map, with exits and blocking zones.
+ * - the world map, with exits and blocking zones
+ * - the world map, with elevation information.
  *
  * Since this program browses maps from the first map, only maps linked from there will be processed.
  *
@@ -202,6 +203,7 @@
  * - add missing documentation on variables / functions
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
+ * - add slaying information to maps themselves
  */
 
 #include <time.h>
@@ -437,6 +439,10 @@ int color_linked_exit;      /**< Exit leading to another map. */
 int color_road;             /**< Road or equivalent. */
 int color_blocking;         /**< Block all movement. */
 int color_slowing;          /**< Slows movement. */
+
+int** elevation_info;       /**< All elevation spots in the "world_" maps. */
+int elevation_min;          /**< Maximal elevation found. */
+int elevation_max;          /**< Lowest elevation found. */
 
 /* Links between regions */
 int do_regions_link = 0;
@@ -743,6 +749,23 @@ static int is_blocking(object* item) {
 }
 
 /**
+ * Gets the color for an elevation.
+ *
+ * @param elevation
+ * elevation to get color for.
+ * @param elevationmap
+ * picture that will get the color.
+ * @return
+ * color.
+ */
+static int get_elevation_color(int elevation, gdImagePtr elevationmap) {
+    if (elevation > 0)
+        return gdImageColorResolve(elevationmap, 200 * elevation / elevation_max, 0, 0);
+    else
+        return gdImageColorResolve(elevationmap, 0, 0, 200 * elevation / elevation_min);
+}
+
+/**
  * Proceses exit / road / blocking information for specified map into the global infomap map.
  *
  * If map isn't a world map, won't do anything.
@@ -779,6 +802,12 @@ void do_exit_map(mapstruct* map) {
                     break;
                 } else if (test->move_slow != 0)
                     gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_slowing);
+
+                if (item->elevation) {
+                    elevation_min = MIN(elevation_min, item->elevation);
+                    elevation_max = MAX(elevation_max, item->elevation);
+                    elevation_info[x * 50 + tx][y * 50 + ty] = item->elevation;
+                }
 
                 item = item->above;
             }
@@ -3134,6 +3163,8 @@ void dump_unused_maps() {
 void write_world_info() {
     FILE* file;
     char path[MAX_BUF];
+    int x, y;
+    gdImagePtr elevationmap;
 
     if (!world_exit_info)
         return;
@@ -3146,6 +3177,23 @@ void write_world_info() {
     printf("done.\n");
     gdImageDestroy(infomap);
     infomap = NULL;
+
+    elevationmap = gdImageCreateTrueColor(30 * 50, 30 * 50);;
+
+    for (x = 0; x < 30 * 50; x++) {
+        for (y = 0; y < 30 * 50; y++) {
+            gdImageSetPixel(elevationmap, x, y, get_elevation_color(elevation_info[x][y], elevationmap));
+        }
+    }
+
+    printf("Saving elevation world map...");
+    snprintf(path, sizeof(path), "%s/%s%s", root, "world_elevation", output_extensions[output_format]);
+    file = fopen(path, "wb+");
+    save_picture(file, elevationmap);
+    fclose(file);
+    printf("done.\n");
+    gdImageDestroy(elevationmap);
+    elevationmap = NULL;
 }
 
 /** Write the .dot file representing links between regions. */
@@ -3398,7 +3446,7 @@ static const char* yesno(int value) {
 
 int main(int argc, char** argv)
 {
-    int current_map = 0;
+    int current_map = 0, i;
     char max[50];
 
     init_map_list(&maps_list);
@@ -3514,6 +3562,11 @@ int main(int argc, char** argv)
     color_road = gdImageColorResolve(infomap, 0, 255, 0);
     color_blocking = gdImageColorResolve(infomap, 0, 0, 255);
     color_slowing = gdImageColorResolve(infomap, 0, 0, 127);
+    elevation_info = calloc(50 * 30, sizeof(int*));
+    for (i = 0; i < 50 * 30; i++)
+        elevation_info[i] = calloc(50 * 30, sizeof(int));
+    elevation_min = 0;
+    elevation_max = 0;
 
     printf("browsing maps...\n");
 
