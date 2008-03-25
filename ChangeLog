@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Write 'describe_item' unit tests.
+ test/unit/common/check_item.c Makefile.am
+Nicolas Weeger, 2008-03-25
+
 Generate global elevation map.
  utils/mapper.c
 Nicolas Weeger, 2008-03-25
