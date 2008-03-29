@@ -434,9 +434,6 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
     return 1;
 }
 
-/** both find_monster_in_room routines need to have access to this. */
-object *theMonsterToFind;
-
 /**
  * A recursive routine which will return a monster, eventually,if there is one.
  * One should really call find_monster_in_room().
@@ -454,34 +451,35 @@ object *theMonsterToFind;
  */
 object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y, RMParms *RP) {
     int i,j;
-    /* if we've found a monster already, leave */
-    if(theMonsterToFind!=NULL) return theMonsterToFind;
+    object *the_monster;
 
     /* bounds check x and y */
-    if(!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize)) return theMonsterToFind;
+    if(!(x >= 0 && y >= 0 && x < RP->Xsize && y < RP->Ysize))
+        return NULL;
 
     /* if the square is blocked or searched already, leave */
-    if(layout[x][y]!=0) return theMonsterToFind; /* might be NULL, that's fine.*/
+    if(layout[x][y]!=0)
+        return NULL;
 
     /* check the current square for a monster.  If there is one,
        set theMonsterToFind and return it. */
     layout[x][y]=1;
     if(GET_MAP_FLAGS(map,x,y) & P_IS_ALIVE) {
-        object *the_monster = get_map_ob(map,x,y);
+        the_monster = get_map_ob(map,x,y);
         /* check off this point */
         for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_ALIVE));the_monster=the_monster->above);
         if(the_monster && QUERY_FLAG(the_monster,FLAG_ALIVE)) {
-            theMonsterToFind=the_monster;
-            return theMonsterToFind;
+            return the_monster;
         }
     }
 
     /* now search all the 8 squares around recursively for a monster,in random order */
-    for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
-        theMonsterToFind = find_monster_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
-        if(theMonsterToFind!=NULL) return theMonsterToFind;
+    for(i = RANDOM() % 8, j = 0; j < 8; i++, j++) {
+        the_monster = find_monster_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
+        if(the_monster!=NULL)
+            return the_monster;
     }
-    return theMonsterToFind;
+    return NULL;
 }
 
 /**
@@ -501,7 +499,8 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
 object *find_monster_in_room(mapstruct *map,int x,int y,RMParms *RP) {
     char **layout2;
     int i,j;
-    theMonsterToFind=0;
+    object* theMonsterToFind;
+
     layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
     /* allocate and copy the layout, converting C to 0. */
     for(i=0;i<RP->Xsize;i++) {
@@ -548,14 +547,13 @@ void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
     if(layout[x][y]!=0) return;
 
     /* set the current square as checked, and add it to the list.
-        set theMonsterToFind and return it. */
-    /* check off this point */
+      check off this point */
     layout[x][y]=1;
     room_free_spots_x[number_of_free_spots_in_room]=x;
     room_free_spots_y[number_of_free_spots_in_room]=y;
     number_of_free_spots_in_room++;
     /* now search all the 8 squares around recursively for free spots,in random order */
-    for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
+    for(i = RANDOM() % 8, j = 0; j < 8; i++, j++) {
         find_spot_in_room_recursive(layout,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
     }
 }
@@ -819,7 +817,7 @@ void find_doors_in_room_recursive(char **layout,mapstruct *map,int x,int y,objec
     else {
         layout[x][y]=1;
         /* now search all the 8 squares around recursively for free spots,in random order */
-        for(i=RANDOM()%8,j=0; j<8 && theMonsterToFind==NULL;i++,j++) {
+        for(i = RANDOM() % 8, j = 0; j < 8; i++, j++) {
             find_doors_in_room_recursive(layout,map,x+freearr_x[i%8+1],y+freearr_y[i%8+1],doorlist,ndoors,RP);
         }
     }
