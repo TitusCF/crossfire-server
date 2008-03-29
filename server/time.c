@@ -1066,7 +1066,7 @@ void move_creator(object *creator) {
  * @author peterm@soda.csua.berkeley.edu
  *
  * @param op
- * marker to move.
+ * marker to move. Can be removed if it reached its marking limit.
  */
 void move_marker(object *op) {
     object *tmp,*tmp2;
@@ -1079,16 +1079,6 @@ void move_marker(object *op) {
     }
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 	if(tmp->type == PLAYER) { /* we've got someone to MARK */
-
-	    /* remove an old force with a slaying field == op->name */
-	    for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
-		if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->name)) break;
-	    }
-
-	    if(tmp2) {
-		remove_ob(tmp2);
-		free_object(tmp2);
-	    }
 
 	    /* cycle through his inventory to look for the MARK we want to
 	     * place

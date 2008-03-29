@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove obsolete code, tweak comment.
+ server/time.c
+Nicolas Weeger 2008-03-29
+
 Remove autohook inserted in items, and use was_destroyed() to check item's validity.
  plugins/cfpython/include/cfpython_object.h: keep item's count, change check macros.
  plugins/cfpython/cfpython_map.c: fix wrong EXISTCHECK_INT to MAPEXISTCHECK_INT.
