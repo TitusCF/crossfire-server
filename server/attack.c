@@ -1442,7 +1442,7 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
       {
 	if (QUERY_FLAG(op,FLAG_UNDEAD)) {
 	    object *owner = get_owner(hitter) == NULL ? hitter : get_owner(hitter);
-            object *god = find_god (determine_god (owner));
+            const object *god = find_god (determine_god (owner));
             int div = 1;
 
 	    /* if undead are not an enemy of your god, you turn them
@@ -1986,7 +1986,7 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
      * a proper match, otherwise no damage.
      */
     if (type & AT_HOLYWORD) {
-        object *god;
+        const object *god;
 	if ((!hitter->slaying ||
 	     (!(op->race && strstr(hitter->slaying,op->race)) &&
 	     !(op->name && strstr(hitter->slaying,op->name)))) &&

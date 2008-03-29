@@ -1888,7 +1888,7 @@ char* god_info_msg (int level, char* retbuf, int booksize)
     char buf[BOOK_BUF];
     int     i, retlen, buflen;
     int introlen;
-    object *god = pntr_to_god_obj (get_rand_god ());
+    const object *god = pntr_to_god_obj (get_rand_god ());
     char en[BOOK_BUF];
 
     if (booksize > BOOK_BUF) {

@@ -653,7 +653,7 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
  */
 int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
     object *effect, *target;
-    object *god = find_god(determine_god(op));
+    const object *god = find_god(determine_god(op));
     int range;
 
     range = spell->range+SP_level_range_adjust(caster, spell);
@@ -900,7 +900,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
  * something was cursed.
  */
 int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
-    object *god = find_god(determine_god(op));
+    const object *god = find_god(determine_god(op));
     object *tmp, *force;
 
     tmp = get_pointed_target(op, (dir == 0) ? op->direction : dir, spell_ob->range, SPELL_GRACE);
@@ -1000,7 +1000,8 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
  * 1.
  */
 int mood_change(object *op, object *caster, object *spell) {
-    object *tmp, *god, *head;
+    object *tmp, *head;
+    const object* god;
     int done_one, range, mflags, level, at, best_at;
     sint16 x, y, nx, ny;
     mapstruct *m;

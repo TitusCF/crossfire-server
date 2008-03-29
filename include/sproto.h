@@ -302,11 +302,11 @@ int cure_disease(object *sufferer, object *caster);
 void check_score(object *op, int quiet);
 void display_high_score(object *op, int max, const char *match);
 /* gods.c */
-object *find_god(const char *name);
+const object *find_god(const char *name);
 const char *determine_god(object *op);
 void pray_at_altar(object *pl, object *altar, object *skill);
-void become_follower(object *op, object *new_god);
-archetype *determine_holy_arch(object *god, const char *type);
+void become_follower(object *op, const object *new_god);
+archetype *determine_holy_arch(const object *god, const char *type);
 int tailor_god_spell(object *spellop, object *caster);
 /* init.c */
 void init(int argc, char **argv);

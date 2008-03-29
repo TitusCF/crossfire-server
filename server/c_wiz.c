@@ -231,7 +231,8 @@ static object *find_object_both(char *params) {
  * correct syntax.
  */
 int command_setgod(object *op, char *params) {
-    object *ob, *god;
+    object *ob;
+    const object *god;
     char *str;
 
     if (!params || !(str = strchr(params, ' '))) {

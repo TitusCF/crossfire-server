@@ -47,10 +47,10 @@
 
 static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string);
 static void stop_using_item(object *op, int type, int number);
-static void update_priest_flag (object *god, object *exp_ob, uint32 flag);
-static void god_intervention(object *op, object *god, object *skill);
-static int god_examines_priest (object *op, object *god);
-static int god_examines_item(object *god, object *item);
+static void update_priest_flag (const object *god, object *exp_ob, uint32 flag);
+static void god_intervention(object *op, const object *god, object *skill);
+static int god_examines_priest (object *op, const object *god);
+static int god_examines_item(const object *god, object *item);
 static const char *get_god_for_race(const char *race);
 
 /**
@@ -87,19 +87,19 @@ static int lookup_god_by_name(const char *name) {
  * god's name.
  * @return
  * pointer to god's object, NULL if doesn't match any god.
-* @todo use const for return value.
  */
-object *find_god(const char *name) {
-    object *god=NULL;
+const object *find_god(const char *name) {
+    godlink *gl;
 
-    if(name) {
-	godlink *gl;
+    if (!name)
+        return NULL;
 
-	for(gl=first_god;gl;gl=gl->next)
-	    if(!strcmp(name,gl->name)) break;
-	if(gl) god=pntr_to_god_obj(gl);
+    for(gl = first_god; gl; gl = gl->next) {
+        if(!strcmp(name,gl->name))
+            return pntr_to_god_obj(gl);
     }
-    return god;
+
+    return NULL;
 }
 
 /**
@@ -207,7 +207,7 @@ static int same_string (const char *s1, const char *s2)
  *
  */
 
-static void follower_remove_given_items (object *pl, object *op, object *god)
+static void follower_remove_given_items (object *pl, object *op, const object *god)
 {
     object *tmp, *next;
     const char* given_by;
@@ -277,7 +277,7 @@ static int follower_has_similar_item (object *op, object *item)
  * @return
  * 0 if nothing was given, 1 else.
  */
-static int god_gives_present (object *op, object *god, treasure *tr)
+static int god_gives_present (object *op, const object *god, treasure *tr)
 {
     object *tmp;
     char name[HUGE_BUF];
@@ -311,7 +311,7 @@ static int god_gives_present (object *op, object *god, treasure *tr)
  * praying skill.
  */
 void pray_at_altar(object *pl, object *altar, object *skill) {
-    object *pl_god=find_god(determine_god(pl));
+    const object *pl_god = find_god(determine_god(pl));
 
     /* Lauwenmark: Handle for plugin altar-praying (apply) event */
     if (execute_event(altar, EVENT_APPLY,pl,NULL,NULL,SCRIPT_FIX_ALL)!=0)
@@ -420,7 +420,7 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
  * @param god
  * god we're removing the prayers.
  */
-static void check_special_prayers(object *op, object *god)
+static void check_special_prayers(object *op, const object *god)
 {
     /* Ensure that 'op' doesn't know any special prayers that are not granted
      * by 'god'.
@@ -493,8 +493,8 @@ static void check_special_prayers(object *op, object *god)
  * new god to worship.
  * @todo isn't there duplication with check_special_prayers() for spell removing?
  */
-void become_follower (object *op, object *new_god) {
-    object *old_god = NULL;                      /* old god */
+void become_follower (object *op, const object *new_god) {
+    const object *old_god = NULL;                      /* old god */
     treasure *tr;
     object *item, *skop, *next;
     int i,sk_applied;
@@ -745,7 +745,7 @@ static void stop_using_item ( object *op, int type, int number ) {
  * @param flag
  * flag to consider.
  */
-static void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
+static void update_priest_flag (const object *god, object *exp_ob, uint32 flag) {
       if(QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
           SET_FLAG(exp_ob,flag);
       else if(QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag))
@@ -778,7 +778,7 @@ static void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
  * @return
  * random archetype matching the type, NULL if none found.
  */
-archetype *determine_holy_arch (object *god, const char *type)
+archetype *determine_holy_arch (const object *god, const char *type)
 {
     treasure *tr;
     int count;
@@ -897,7 +897,7 @@ static int follower_level_to_enchantments (int level, int difficulty)
  * @return
  * 0 if weapon wasn't changed, 1 if changed.
  */
-static int god_enchants_weapon (object *op, object *god, object *tr, object *skill)
+static int god_enchants_weapon (object *op, const object *god, object *tr, object *skill)
 {
     char buf[MAX_BUF];
     object *weapon;
@@ -1036,7 +1036,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr, object *ski
  * @param skill
  * player's praying skill.
  */
-static void god_intervention (object *op, object *god, object *skill)
+static void god_intervention (object *op, const object *god, object *skill)
 {
     treasure *tr;
 
@@ -1276,7 +1276,7 @@ static void god_intervention (object *op, object *god, object *skill)
  * @return
  * negative value is god is not pleased, else positive value, the higher the better.
  */
-static int god_examines_priest (object *op, object *god) {
+static int god_examines_priest (object *op, const object *god) {
     int reaction=1;
     object *item=NULL, *skop;
 
@@ -1326,7 +1326,7 @@ static int god_examines_priest (object *op, object *god) {
  * @retval 1
  * item is good.
  */
-static int god_examines_item(object *god, object *item) {
+static int god_examines_item(const object *god, object *item) {
     char buf[MAX_BUF];
 
     if(!god||!item) return 0;
@@ -1392,7 +1392,7 @@ static const char *get_god_for_race(const char *race) {
  * the spell attacktype contains AT_HOLYWORD, 1 else.
  */
 int tailor_god_spell(object *spellop, object *caster) {
-    object *god=find_god(determine_god(caster));
+    const object *god=find_god(determine_god(caster));
     int caster_is_spell=0;
 
     if (caster->type==SPELL_EFFECT || caster->type == SPELL) caster_is_spell=1;

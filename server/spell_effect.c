@@ -1011,16 +1011,17 @@ int perceive_self(object *op) {
     char cp[VERY_BIG_BUF], buf[MAX_BUF];
     archetype *at=find_archetype(ARCH_DEPLETION);
     object *tmp;
+    const object* god;
     int i;
     describe_item(op, op, cp, VERY_BIG_BUF);
 
-    tmp=find_god(determine_god(op));
-    if (tmp)
+    god = find_god(determine_god(op));
+    if (god)
 	draw_ext_info_format(NDI_UNIQUE, 0, op,
 			     MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
 			     "You worship %s",
 			     "You worship %s",
-			     tmp->name);
+			     god->name);
     else
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
 		      "You worship no god", NULL);
@@ -1958,7 +1959,8 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
  */
 int cast_bless(object *op,object *caster,object *spell_ob, int dir) {
     int i;
-    object *god = find_god(determine_god(op)), *tmp2, *force=NULL, *tmp;
+    const object *god = find_god(determine_god(op));
+    object *tmp2, *force=NULL, *tmp;
 
     /* if dir = 99 op defaults to tmp, eat_special_food() requires this. */
     if(dir!=0) {
@@ -2506,7 +2508,8 @@ int cast_identify(object *op, object *caster, object *spell) {
  * @todo remove unused skill.
  */
 int cast_detection(object *op, object *caster, object *spell, object *skill) {
-    object *tmp, *last, *god, *detect;
+    object *tmp, *last, *detect;
+    const object* god;
     int done_one, range, mflags, floor, level;
     sint16 x, y, nx, ny;
     mapstruct	*m;
@@ -2879,7 +2882,8 @@ void counterspell(object *op,int dir)
 int cast_consecrate(object *op, object *caster, object *spell) {
     char buf[MAX_BUF];
 
-    object *tmp, *god=find_god(determine_god(op));
+    object *tmp;
+    const object *god=find_god(determine_god(op));
 
     if(!god) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,

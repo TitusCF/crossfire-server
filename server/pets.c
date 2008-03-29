@@ -662,7 +662,8 @@ void control_golem(object *op,int dir) {
  * summoned correctly something.
  */
 int summon_golem(object *op,object *caster,int dir,object *spob) {
-    object *tmp, *god=NULL;
+    object *tmp;
+    const object *god=NULL;
     archetype *at;
     char buf[MAX_BUF];
 
@@ -823,7 +824,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
  * @return
  * suitable monster, or NULL if no match found.
  */
-static object *choose_cult_monster(object *pl, object *god, int summon_level) {
+static object *choose_cult_monster(object *pl, const object *god, int summon_level) {
     char buf[MAX_BUF];
     const char *race;
     int racenr, mon_nr,i;
@@ -947,7 +948,8 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         nrof = lasttr->nrof;
 
     } else if (spell_ob->race && !strcmp(spell_ob->race,"GODCULTMON")) {
-        object *god=find_god(determine_god(op)), *mon, *owner;
+        const object *god=find_god(determine_god(op));
+        object *mon, *owner;
         int summon_level, tries;
 
         if (!god && ((owner=get_owner(op))!=NULL)) {

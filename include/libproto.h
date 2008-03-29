@@ -64,7 +64,7 @@ extern void fatal(int err);
 /* holy.c */
 extern void init_gods(void);
 extern godlink *get_rand_god(void);
-extern object *pntr_to_god_obj(godlink *godlnk);
+extern const object *pntr_to_god_obj(godlink *godlnk);
 extern void free_all_god(void);
 extern void dump_gods(void);
 /* info.c */

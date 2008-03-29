@@ -119,19 +119,18 @@ godlink* get_rand_god ( void ) {
     return god;
 }
 
-/** Returns a pointer to the object
- * We need to be VERY carefull about using this, as we
+/**
+ * Returns a pointer to the object
+ * We need to be VERY careful about using this, as we
  * are returning a pointer to the CLONE object. -b.t.
  *
  * @param godlnk
  * god to get object.
  */
-object *pntr_to_god_obj(godlink *godlnk) {
-    object *god=NULL;
-
+const object *pntr_to_god_obj(godlink *godlnk) {
     if(godlnk && godlnk->arch)
-        god=&godlnk->arch->clone;
-    return god;
+        return &godlnk->arch->clone;
+    return NULL;
 }
 
 /**
@@ -161,7 +160,7 @@ void dump_gods(void) {
 
     fprintf(stderr,"\n");
     for(glist=first_god;glist;glist=glist->next) {
-        object *god=pntr_to_god_obj(glist);
+        const object *god=pntr_to_god_obj(glist);
         char tmpbuf[HUGE_BUF];
         int tmpvar,gifts=0;
 
