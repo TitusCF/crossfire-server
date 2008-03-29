@@ -380,10 +380,8 @@ static void set_first_map(object *op)
  *
  * @param ns
  * connection.
- * @return
- * 0.
  */
-int add_player(socket_struct *ns) {
+void add_player(socket_struct *ns) {
     player *p;
 
     p=get_player(NULL);
@@ -410,7 +408,6 @@ int add_player(socket_struct *ns) {
     send_news(p->ob);
     display_motd(p->ob);
     get_name(p->ob);
-    return 0;
 }
 
 /**
@@ -1078,11 +1075,8 @@ static void swap_stat(object *op,int Swap_Second)
  * player.
  * @param key
  * received key.
- * @return
- * 0 or 1.
- * @todo check return value.
  */
-int key_roll_stat(object *op, char key)
+void key_roll_stat(object *op, char key)
 {
     int keynum = key -'0';
     static sint8 stat_trans[] = {-1, STR, DEX, CON, INT, WIS, POW, CHA};
@@ -1100,7 +1094,7 @@ int key_roll_stat(object *op, char key)
 	    swap_stat(op,stat_trans[keynum]);
 
 	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
-	return 1;
+	return;
     }
     switch (key) {
 	case 'n':
@@ -1120,24 +1114,24 @@ int key_roll_stat(object *op, char key)
 		draw_ext_info(NDI_BLUE, 0, op,
 			      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
 			      op->msg, op->msg);
-	    return 0;
+	    return;
 	}
      case 'y':
      case 'Y':
 	roll_stats(op);
 	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
-	return 1;
+	return;
 
      case 'q':
      case 'Q':
       play_again(op);
-      return 1;
+      return;
 
      default:
 	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No, Quit or 1-6.  Roll again?");
-	return 0;
+	return;
     }
-    return 0;
+    return;
 }
 
 /**
@@ -1151,18 +1145,16 @@ int key_roll_stat(object *op, char key)
  * player.
  * @param key
  * key to handle.
- * @return
- * 0.
  */
 
-int key_change_class(object *op, char key)
+void key_change_class(object *op, char key)
 {
     int tmp_loop;
 
     if(key=='q'||key=='Q') {
       remove_ob(op);
       play_again(op);
-      return 0;
+      return;
     }
     if(key=='d'||key=='D') {
 	char buf[MAX_BUF];
@@ -1229,7 +1221,7 @@ int key_change_class(object *op, char key)
         } else {
             LOG(llevDebug,"first_map_ext_path not set\n");
         }
-	return 0;
+	return;
     }
 
     /* Following actually changes the race - this is the default command
@@ -1268,7 +1260,6 @@ int key_change_class(object *op, char key)
 	draw_ext_info(NDI_BLUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_NEWPLAYER,
 		      op->msg, op->msg);
     send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Press any key for the next race.\nPress `d' to play this race.\n");
-    return 0;
 }
 
 /**
@@ -1278,10 +1269,8 @@ int key_change_class(object *op, char key)
  * player.
  * @param key
  * reply.
- * @return
- * 1.
  */
-int key_confirm_quit(object *op, char key)
+void key_confirm_quit(object *op, char key)
 {
     char buf[MAX_BUF];
 
@@ -1289,7 +1278,7 @@ int key_confirm_quit(object *op, char key)
 	op->contr->state=ST_PLAYING;
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
 		      "OK, continuing to play.", NULL);
-	return 1;
+	return;
     }
 
     /* Lauwenmark : Here we handle the REMOVE global event */
@@ -1326,7 +1315,6 @@ int key_confirm_quit(object *op, char key)
 	delete_character(op->name);
     }
     play_again(op);
-    return 1;
 }
 
 /**

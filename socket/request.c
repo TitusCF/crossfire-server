@@ -250,12 +250,14 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
  * This is what takes care of it.  We tell the client how things worked out.
  * I am not sure if this file is the best place for this function.  however,
  * it either has to be here or init_sockets needs to be exported.
+ *
+ * @todo can ns->status not be Ns_Add?
  */
 void add_me_cmd(char *buf, int len, socket_struct *ns)
 {
     Settings oldsettings;
     oldsettings=settings;
-    if (ns->status != Ns_Add || add_player(ns)) {
+    if (ns->status != Ns_Add) {
         Write_String_To_Socket(ns, "addme_failed",12);
     } else {
             /* Basically, the add_player copies the socket structure into

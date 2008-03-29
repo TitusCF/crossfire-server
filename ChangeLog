@@ -16,6 +16,12 @@ else.  With this, include the file(s) that you changed.
 Remove unused return value.
  include/sproto.h
  server/player.c
+ socket/request.c
+Nicolas Weeger, 2008-03-29
+
+Remove unused return value.
+ include/sproto.h
+ server/player.c
 Nicolas Weeger, 2008-03-29
 
 Remove static buffer.
