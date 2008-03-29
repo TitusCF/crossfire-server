@@ -1521,60 +1521,60 @@ int command_speed(object *op, char *params) {
  * player's name.
  * @return
  * 1.
- * @todo use the get_other_player_from_name() function.
  */
 int command_stats(object *op, char *params) {
-    char thing[20];
     player *pl;
 
-    thing[0] = '\0';
-    if (params == NULL || !sscanf(params, "%s", thing) || thing == NULL) {
-       draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		     "Who?", NULL);
-       return 1;
+    if (params == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            "Who?", NULL);
+        return 1;
     }
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
-        if (!strcmp(pl->ob->name, thing)) {
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Str : %-2d      H.P. : %-4d  MAX : %d",
-			 "Str : %-2d      H.P. : %-4d  MAX : %d",
-			 pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp);
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Dex : %-2d      S.P. : %-4d  MAX : %d",
-			 "Dex : %-2d      S.P. : %-4d  MAX : %d",
-			 pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp);
-
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Con : %-2d        AC : %-4d  WC  : %d",
-			 "Con : %-2d        AC : %-4d  WC  : %d",
-			 pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc) ;
-
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Int : %-2d    Damage : %d",
-			 "Int : %-2d    Damage : %d",
-			 pl->ob->stats.Int, pl->ob->stats.dam);
-
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Wis : %-2d       EXP : %" FMT64,
-			 "Wis : %-2d       EXP : %" FMT64,
-			 pl->ob->stats.Wis, pl->ob->stats.exp);
-
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Pow : %-2d    Grace : %d",
-			 "Pow : %-2d    Grace : %d",
-			 pl->ob->stats.Pow, pl->ob->stats.grace);
-
-	    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-			 "[fixed]Cha : %-2d      Food : %d",
-			 "Cha : %-2d      Food : %d",
-			 pl->ob->stats.Cha, pl->ob->stats.food);
-            break;
-        }
-    if (pl == NULL)
+    pl = find_player_partial_name(params);
+    if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-		      "No such player.", NULL);
-    return 1;
+            "No such player.", NULL);
+        return;
+    }
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[Fixed]Statistics for %s:", "Statistics for %s:", pl->ob->name);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Str : %-2d      H.P. : %-4d  MAX : %d",
+        "Str : %-2d      H.P. : %-4d  MAX : %d",
+        pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Dex : %-2d      S.P. : %-4d  MAX : %d",
+        "Dex : %-2d      S.P. : %-4d  MAX : %d",
+        pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Con : %-2d        AC : %-4d  WC  : %d",
+        "Con : %-2d        AC : %-4d  WC  : %d",
+        pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc) ;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Int : %-2d    Damage : %d",
+        "Int : %-2d    Damage : %d",
+        pl->ob->stats.Int, pl->ob->stats.dam);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Wis : %-2d       EXP : %" FMT64,
+        "Wis : %-2d       EXP : %" FMT64,
+        pl->ob->stats.Wis, pl->ob->stats.exp);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Pow : %-2d    Grace : %d",
+        "Pow : %-2d    Grace : %d",
+        pl->ob->stats.Pow, pl->ob->stats.grace);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+        "[fixed]Cha : %-2d      Food : %d",
+        "Cha : %-2d      Food : %d",
+        pl->ob->stats.Cha, pl->ob->stats.food);
 }
 
 /**

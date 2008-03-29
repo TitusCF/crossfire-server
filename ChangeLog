@@ -13,6 +13,10 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Clean code, use player-finding function.
+ server/c_wiz.c
+Nicolas Weeger, 2008-03-29
+
 Remove global variables, make them in a structure. Make function static.
  random_maps/rproto.h treasure.c
 Nicolas Weeger, 2008-03-29
