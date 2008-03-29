@@ -75,6 +75,7 @@ void init_ob_types(ob_methods *base_type) {
     init_type_lighter();
     init_type_peacemaker();
     init_type_pedestal();
+    init_type_player_changer();
     init_type_player_mover();
     init_type_poison();
     init_type_poisoning();

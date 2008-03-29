@@ -780,58 +780,6 @@ void move_teleporter(object *op) {
     }
 }
 
-
-/**
- * Move for ::PLAYER_CHANGER.
- *
- * This object will teleport someone to a different map
- * and will also apply changes to the player from its inventory.
- *
- * This was invented for giving classes, but there's no reason it
- *  can't be generalized.
- *
- * @param op
- * changer to move.
- */
-void move_player_changer(object *op) {
-    object *player;
-    object *walk;
-    char c;
-
-    if (!op->above || !EXIT_PATH(op)) return;
-
-    /* This isn't all that great - means that the player_mover
-     * needs to be on top.
-     */
-    if(op->above->type==PLAYER) {
-        /* Lauwenmark: Handle for plugin TRIGGER event */
-        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_NOTHING)!=0)
-            return;
-	player=op->above;
-	for(walk=op->inv;walk!=NULL;walk=walk->below)
-	    apply_changes_to_player(player,walk);
-
-    fix_object(player);
-	esrv_send_inventory(op->above,op->above);
-	esrv_update_item(UPD_FACE, op->above, op->above);
-
-	/* update players death & WoR home-position */
-	sscanf(EXIT_PATH(op), "%c", &c);
-	if (c == '/') {
-	    strcpy(player->contr->savebed_map, EXIT_PATH(op));
-	    player->contr->bed_x = EXIT_X(op);
-	    player->contr->bed_y = EXIT_Y(op);
-	}
-	else
-            LOG(llevDebug,
-                "WARNING: destination '%s' in player_changer must be an absolute path!\n",
-		EXIT_PATH(op));
-
-	enter_exit(op->above,op);
-	save_player(player, 1);
-    }
-}
-
 /**
  * Move for ::FIREWALL.
  *

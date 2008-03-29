@@ -22,6 +22,7 @@ lamp/lamp.c \
 lighter/lighter.c \
 peacemaker/peacemaker.c \
 pedestal/pedestal.c \
+player_changer/player_changer.c \
 player_mover/player_mover.c \
 poison/poison.c \
 poisoning/poisoning.c \

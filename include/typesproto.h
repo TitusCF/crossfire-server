@@ -40,6 +40,8 @@ void init_type_lighter(void);
 void init_type_peacemaker(void);
 /* pedestal/pedestal.c */
 void init_type_pedestal(void);
+/* player_changer/player_changer.c */
+void init_type_player_changer(void);
 /* player_mover/player_mover.c */
 void init_type_player_mover(void);
 /* poison/poison.c */
