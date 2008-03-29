@@ -731,7 +731,7 @@ static PyObject* Object_GetNoSave(Crossfire_Object* whoptr, void* closure)
 }
 static PyObject* Object_GetExists(Crossfire_Object* whoptr, void* closure)
 {
-    if (whoptr->valid) {
+    if (!was_destroyed(whoptr->obj, whoptr->obj->count)) {
         Py_INCREF(Py_True);
 	return Py_True;
     } else {
@@ -2374,8 +2374,10 @@ static PyObject *
     Crossfire_Object *self;
 
     self = (Crossfire_Object *)type->tp_alloc(type, 0);
-    if(self)
+    if(self) {
         self->obj = NULL;
+        self->count = 0;
+    }
 
     return (PyObject *)self;
 }
@@ -2385,8 +2387,10 @@ static PyObject *
     Crossfire_Player *self;
 
     self = (Crossfire_Player *)type->tp_alloc(type, 0);
-    if(self)
+    if(self) {
         self->obj = NULL;
+        self->count = 0;
+    }
 
     return (PyObject *)self;
 }
@@ -2395,12 +2399,8 @@ static void Crossfire_Object_dealloc(PyObject *obj)
     Crossfire_Object *self;
     self = (Crossfire_Object *)obj;
     if(self) {
-        if (self->obj && self->valid) {
+        if (self->obj) {
             free_object_assoc(self->obj);
-            if (self->del_event) {
-                cf_object_remove(self->del_event);
-                cf_object_free(self->del_event);
-            }
         }
         self->ob_type->tp_free(obj);
     }
@@ -2410,54 +2410,11 @@ static void Crossfire_Player_dealloc(PyObject *obj)
     Crossfire_Player *self;
     self = (Crossfire_Player *)obj;
     if(self) {
-        if (self->obj && self->valid) {
+        if (self->obj) {
             free_object_assoc(self->obj);
-            if (self->del_event) {
-                cf_object_remove(self->del_event);
-                cf_object_free(self->del_event);
-                self->del_event = NULL;
-            }
         }
         self->ob_type->tp_free(obj);
     }
-}
-
-void Handle_Destroy_Hook(Crossfire_Object *ob) {
-    ob->valid = 0;
-    free_object_assoc(ob->obj);
-    /* Destruction of the object should remove the event, but just in case... */
-    if (ob->del_event) {
-        cf_object_remove(ob->del_event);
-        cf_object_free(ob->del_event);
-        ob->del_event = NULL;
-    }
-}
-
-static void Insert_Destroy_Hook(Crossfire_Object *pyobj) {
-    object *event, *ob;
-    ob = pyobj->obj;
-    pyobj->del_event = NULL;
-    if (ob->type == EVENT_CONNECTOR && ob->subtype == EVENT_DESTROY && ob->slaying && !strcmp(ob->slaying, "cfpython_auto_hook"))
-        return;
-    if (&ob->arch->clone == ob)
-        /* Don't insert that in an archetype, leads to weird issues. */
-        return;
-
-    if (ob->head)
-        /* Don't insert in an object's other part, head has it, enough. */
-        return;
-
-    event = cf_create_object_by_name("event_destroy");
-    if (!event)
-    {
-        pyobj->del_event = NULL;
-        return;
-    }
-    cf_object_set_string_property(event, CFAPI_OBJECT_PROP_TITLE, "Python");
-    cf_object_set_string_property(event, CFAPI_OBJECT_PROP_SLAYING, "cfpython_auto_hook");
-    cf_object_set_int_property(event, CFAPI_OBJECT_PROP_NO_SAVE, 1);
-    cf_object_insert_object(event, ob);
-    pyobj->del_event = event;
 }
 
 PyObject *Crossfire_Object_wrap(object *what)
@@ -2473,14 +2430,13 @@ PyObject *Crossfire_Object_wrap(object *what)
     }
 
     pyobj = find_assoc_pyobject(what);
-    if ((!pyobj) || (!((Crossfire_Object *)pyobj)->valid)) {
+    if ((!pyobj) || (was_destroyed(((Crossfire_Object *)pyobj)->obj, ((Crossfire_Object *)pyobj)->count))) {
         if (what->type == PLAYER)
         {
             plwrap = PyObject_NEW(Crossfire_Player, &Crossfire_PlayerType);
             if(plwrap != NULL) {
                 plwrap->obj = what;
-                plwrap->valid = 1;
-                Insert_Destroy_Hook((Crossfire_Object *)plwrap);
+                plwrap->count = what->count;
             }
             pyobj = (PyObject *)plwrap;
         }
@@ -2489,8 +2445,7 @@ PyObject *Crossfire_Object_wrap(object *what)
             wrapper = PyObject_NEW(Crossfire_Object, &Crossfire_ObjectType);
             if(wrapper != NULL) {
                 wrapper->obj = what;
-                wrapper->valid = 1;
-                Insert_Destroy_Hook(wrapper);
+                wrapper->count = what->count;
             }
             pyobj = (PyObject *)wrapper;
         }

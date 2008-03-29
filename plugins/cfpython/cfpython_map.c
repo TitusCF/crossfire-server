@@ -122,7 +122,7 @@ static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure)
 {
     const char* val;
 
-    EXISTCHECK_INT(whoptr);
+    MAPEXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value,"s",&val))
         return -1;
 

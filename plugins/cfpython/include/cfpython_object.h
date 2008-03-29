@@ -30,29 +30,27 @@
 typedef struct {
     PyObject_HEAD
             object *obj;
-            int valid;
-            object *del_event;
+            tag_t count;
 } Crossfire_Object;
 extern PyTypeObject Crossfire_ObjectType;
 
 typedef struct {
     PyObject_HEAD
             object *obj;
-            int valid;
-            object *del_event;
+            tag_t count;
 } Crossfire_Player;
 extern PyTypeObject Crossfire_PlayerType;
 
 #define EXISTCHECK( ob ) \
     { \
-    if (!ob || ((ob)->valid == 0)) { \
+    if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return NULL; \
     } }
 
 #define EXISTCHECK_INT( ob ) \
     { \
-    if (!ob || ((ob)->valid == 0)) { \
+    if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return -1; \
     } }

@@ -1554,12 +1554,6 @@ CF_PLUGIN void* eventListener(int* type, ...)
 
     va_end(args);
 
-    if ((context->event_code == EVENT_DESTROY) && !strcmp(event->slaying, "cfpython_auto_hook")) {
-        Handle_Destroy_Hook((Crossfire_Object*)context->who);
-        freeContext(context);
-        return &rv;
-    }
-
     if (!do_script(context, 0)) {
         freeContext(context);
         return &rv;
