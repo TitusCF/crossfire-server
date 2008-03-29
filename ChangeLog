@@ -13,6 +13,10 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Use safe string functions.
+ server/build_map.c
+Nicolas Weeger 2008-03-29
+
 Use flags instead of hardcoded values for monster's will_apply.
  include/object.h
  server/monster.c move.c

@@ -296,7 +296,6 @@ object* get_wall( struct mapdef* map, int x, int y )
  * @param x
  * @param y
  * position to fix.
- * @todo use safe string functions.
  */
 void fix_walls( struct mapdef* map, int x, int y )
     {
@@ -306,7 +305,7 @@ void fix_walls( struct mapdef* map, int x, int y )
     char* underscore;
     uint32 old_flags[ 4 ];
     struct archt* new_arch;
-    int flag;
+    int flag, len;
 
     /* First, find the wall on that spot */
     wall = get_wall( map, x, y );
@@ -315,7 +314,7 @@ void fix_walls( struct mapdef* map, int x, int y )
         return;
 
     /* Find base name */
-    strcpy( archetype, wall->arch->name );
+    strncpy(archetype, wall->arch->name, sizeof(archetype));
     underscore = strchr( archetype, '_' );
     if ( !underscore || ( !isdigit( *( underscore + 1 ) ) ) )
         /* Not in a format we can change, bail out */
@@ -323,6 +322,7 @@ void fix_walls( struct mapdef* map, int x, int y )
 
     underscore++;
     *underscore = '\0';
+    len = sizeof(archetype) - strlen(archetype) - 2;
 
     connect = 0;
 
@@ -340,52 +340,52 @@ void fix_walls( struct mapdef* map, int x, int y )
     switch( connect )
         {
         case 0:
-            strcat( archetype, "0");
+            strncat(archetype, "0", len);
             break;
         case 1:
-            strcat( archetype, "1_3");
+            strncat( archetype, "1_3", len);
             break;
         case 2:
-            strcat( archetype, "1_4");
+            strncat( archetype, "1_4", len);
             break;
         case 3:
-            strcat( archetype, "2_1_2");
+            strncat( archetype, "2_1_2", len);
             break;
         case 4:
-            strcat( archetype, "1_2");
+            strncat( archetype, "1_2", len);
             break;
         case 5:
-            strcat( archetype, "2_2_4");
+            strncat( archetype, "2_2_4", len);
             break;
         case 6:
-            strcat( archetype, "2_2_1");
+            strncat( archetype, "2_2_1", len);
             break;
         case 7:
-            strcat( archetype, "3_1");
+            strncat( archetype, "3_1", len);
             break;
         case 8:
-            strcat( archetype, "1_1");
+            strncat( archetype, "1_1", len);
             break;
         case 9:
-            strcat( archetype, "2_2_3");
+            strncat( archetype, "2_2_3", len);
             break;
         case 10:
-            strcat( archetype, "2_2_2");
+            strncat( archetype, "2_2_2", len);
             break;
         case 11:
-            strcat( archetype, "3_3");
+            strncat( archetype, "3_3", len);
             break;
         case 12:
-            strcat( archetype, "2_1_1");
+            strncat( archetype, "2_1_1", len);
             break;
         case 13:
-            strcat( archetype, "3_4");
+            strncat( archetype, "3_4", len);
             break;
         case 14:
-            strcat( archetype, "3_2");
+            strncat( archetype, "3_2", len);
             break;
         case 15:
-            strcat( archetype, "4");
+            strncat( archetype, "4", len);
             break;
         }
 
@@ -430,7 +430,6 @@ void fix_walls( struct mapdef* map, int x, int y )
  * @param x
  * @param y
  * where to build.
- * @todo use safe string functions
  */
 void apply_builder_floor(object* pl, object* material, short x, short y )
     {
@@ -442,7 +441,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
     int i, xt, yt, wall_removed;
     char message[ MAX_BUF ];
 
-    sprintf( message, "You change the floor to better suit your tastes." );
+    snprintf(message, sizeof(message), "You change the floor to better suit your tastes.");
 
     /*
      * Now the building part...
@@ -462,7 +461,7 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
             new_wall = tmp->arch;
             remove_ob( tmp );
             free_object( tmp );
-            sprintf( message, "You destroy the wall and redo the floor." );
+            snprintf(message, sizeof(message), "You destroy the wall and redo the floor.");
             wall_removed = 1;
             if ( floor != NULL ) {
                 remove_ob(floor);
@@ -566,7 +565,6 @@ void apply_builder_floor(object* pl, object* material, short x, short y )
  * @param x
  * @param y
  * where to build.
- * @todo use safe string functions
  */
 void apply_builder_wall( object* pl, object* material, short x, short y )
     {
@@ -590,7 +588,7 @@ void apply_builder_wall( object* pl, object* material, short x, short y )
         }
 
     /* Find the raw wall in inventory */
-    sprintf( message, "You build a wall." );
+    snprintf(message, sizeof(message), "You build a wall.");
 
     /* Now we can actually insert the wall */
     new_wall = find_archetype( material->slaying );
@@ -611,7 +609,7 @@ void apply_builder_wall( object* pl, object* material, short x, short y )
         remove_ob( current_wall );
         free_object( current_wall );
         fix_walls( pl->map, x, y );
-        sprintf( message, "You redecorate the wall to better suit your tastes." );
+        snprintf(message, sizeof(message), "You redecorate the wall to better suit your tastes.");
         }
     else
         {
