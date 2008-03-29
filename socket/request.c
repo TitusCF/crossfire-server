@@ -260,6 +260,7 @@ void add_me_cmd(char *buf, int len, socket_struct *ns)
     if (ns->status != Ns_Add) {
         Write_String_To_Socket(ns, "addme_failed",12);
     } else {
+        add_player(ns);
             /* Basically, the add_player copies the socket structure into
              * the player structure, so this one (which is from init_sockets)
              * is not needed anymore.  The write below should still work,
