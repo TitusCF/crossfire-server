@@ -232,8 +232,6 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
  * contained for which to generate a hash.
  * @return
  * hash value.
- * @todo
- * use safe string functions.
  */
 static int content_recipe_value (object *op) {
   char name[MAX_BUF];
@@ -244,7 +242,7 @@ static int content_recipe_value (object *op) {
 	tval=0;
         strcpy(name, tmp->name);
         if (tmp->title)
-	    sprintf(name, "%s %s", tmp->name, tmp->title);
+	    snprintf(name, sizeof(name), "%s %s", tmp->name, tmp->title);
 	tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 #ifdef ALCHEMY_DEBUG
         LOG(llevDebug,"Got ingredient %d %s(%d)\n", tmp->nrof?tmp->nrof:1,
@@ -260,22 +258,18 @@ static int content_recipe_value (object *op) {
 }
 
 /**
- * Returns the total number of items in op.
+ * Returns the total number of items in op, excluding ones in item's items.
  * @param op
  * container.
  * @return
  * total item count.
- * @todo
- * what is number used for??
  */
 static int numb_ob_inside (object *op) {
   object *tmp=op->inv;
-  int number=0,o_number=0;
+  int o_number=0;
 
     while(tmp) {
-        if(tmp->nrof) number += tmp->nrof;
-        else number++;
-	o_number++;
+        o_number++;
         tmp=tmp->below;
     }
 #ifdef ALCHEMY_DEBUG
