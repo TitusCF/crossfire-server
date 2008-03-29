@@ -891,16 +891,18 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
  * victim.
  * @param monstername
  * monster's archetype name.
+ * @return
+ * 1 if a monster was put, 0 else (no free space around the spot or invalid monster name).
  * @todo there is a multipart-aware archetype conversion function, use it.
  */
-static void put_a_monster(object *op,const char *monstername) {
+static int put_a_monster(object *op,const char *monstername) {
     object *tmp,*head=NULL,*prev=NULL;
     archetype *at;
     int dir;
 
     /* Handle cases where we are passed a bogus mosntername */
 
-    if((at=find_archetype(monstername))==NULL) return;
+    if((at=find_archetype(monstername))==NULL) return 0;
 
     /* find a free square nearby
      * first we check the closest square for free squares
@@ -955,17 +957,14 @@ static void put_a_monster(object *op,const char *monstername) {
  * @param monstername
  * name of the monster to summon, should be a valid archetype.
  * @return
- * number of monsters, which is basically n.
- *
- * @todo it should really see how many it successfully replaced and
- * return that instead.
+ * number of monsters actually put on the map.
  */
 int summon_hostile_monsters(object *op,int n,const char *monstername){
-    int i;
+    int i, put = 0;
     for(i=0;i<n;i++)
-	put_a_monster(op,monstername);
+        put += put_a_monster(op,monstername);
 
-    return n;
+    return put;
 }
 
 

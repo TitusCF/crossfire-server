@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix non meaningful return value of summon_hostile_monsters().
+ server/spell_util.c
+Nicolas Weeger, 2008-03-29
+
 Use 'const char*' instead of 'char*'.
  include/sproto.h
  server/swap.c
