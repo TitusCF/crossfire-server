@@ -31,8 +31,6 @@
 /**
  * @file
  * This deals with inserting treasures in random maps.
- * @todo
- * link where needed. Remove global variables.
  */
 
 #include <global.h>
@@ -520,10 +518,12 @@ object *find_monster_in_room(mapstruct *map,int x,int y,RMParms *RP) {
     return theMonsterToFind;
 }
 
-/* a datastructure needed by find_spot_in_room and find_spot_in_room_recursive */
-int *room_free_spots_x;
-int *room_free_spots_y;
-int number_of_free_spots_in_room;
+/** Datastructure needed by find_spot_in_room() and find_spot_in_room_recursive() */
+typedef struct free_spots_struct {
+    int *room_free_spots_x;             /**< Positions. */
+    int *room_free_spots_y;             /**< Positions. */
+    int number_of_free_spots_in_room;   /**< Number of positions. */
+} free_spots_struct;
 
 /**
  * the workhorse routine, which finds the free spots in a room:
@@ -536,8 +536,10 @@ int number_of_free_spots_in_room;
  * where to look from.
  * @param RP
  * random map parameters.
+ * @param spots
+ * currently found free spots.
  */
-void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
+static void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP, free_spots_struct* spots) {
     int i,j;
 
     /* bounds check x and y */
@@ -549,12 +551,12 @@ void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
     /* set the current square as checked, and add it to the list.
       check off this point */
     layout[x][y]=1;
-    room_free_spots_x[number_of_free_spots_in_room]=x;
-    room_free_spots_y[number_of_free_spots_in_room]=y;
-    number_of_free_spots_in_room++;
+    spots->room_free_spots_x[spots->number_of_free_spots_in_room]=x;
+    spots->room_free_spots_y[spots->number_of_free_spots_in_room]=y;
+    spots->number_of_free_spots_in_room++;
     /* now search all the 8 squares around recursively for free spots,in random order */
     for(i = RANDOM() % 8, j = 0; j < 8; i++, j++) {
-        find_spot_in_room_recursive(layout,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP);
+        find_spot_in_room_recursive(layout,x+freearr_x[i%8+1],y+freearr_y[i%8+1],RP, spots);
     }
 }
 
@@ -579,9 +581,11 @@ void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP) {
 int find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
     char **layout2;
     int i,j;
-    number_of_free_spots_in_room=0;
-    room_free_spots_x = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
-    room_free_spots_y = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
+    free_spots_struct spots;
+
+    spots.number_of_free_spots_in_room = 0;
+    spots.room_free_spots_x = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
+    spots.room_free_spots_y = (int *)calloc(sizeof(int),RP->Xsize * RP->Ysize);
 
     layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
     /* allocate and copy the layout, converting C to 0. */
@@ -593,12 +597,12 @@ int find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
     }
 
     /* setup num_free_spots and room_free_spots */
-    find_spot_in_room_recursive(layout2,x,y,RP);
+    find_spot_in_room_recursive(layout2,x,y,RP, &spots);
 
-    if(number_of_free_spots_in_room > 0) {
-        i = RANDOM()%number_of_free_spots_in_room;
-        *kx = room_free_spots_x[i];
-        *ky = room_free_spots_y[i];
+    if(spots.number_of_free_spots_in_room > 0) {
+        i = RANDOM()%spots.number_of_free_spots_in_room;
+        *kx = spots.room_free_spots_x[i];
+        *ky = spots.room_free_spots_y[i];
     }
 
     /* deallocate the temp. layout */
@@ -606,10 +610,10 @@ int find_spot_in_room(mapstruct *map,int x,int y,int *kx,int *ky,RMParms *RP) {
         free(layout2[i]);
     }
     free(layout2);
-    free(room_free_spots_x);
-    free(room_free_spots_y);
+    free(spots.room_free_spots_x);
+    free(spots.room_free_spots_y);
 
-    if (number_of_free_spots_in_room > 0)
+    if (spots.number_of_free_spots_in_room > 0)
         return 1;
     return 0;
 }
