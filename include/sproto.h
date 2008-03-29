@@ -597,7 +597,7 @@ int alchemy(object *op, object *caster, object *spell_ob);
 int remove_curse(object *op, object *caster, object *spell);
 int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob);
 int cast_identify(object *op, object *caster, object *spell);
-int cast_detection(object *op, object *caster, object *spell, object *skill);
+int cast_detection(object *op, object *caster, object *spell);
 int cast_transfer(object *op, object *caster, object *spell, int dir);
 void counterspell(object *op, int dir);
 int cast_consecrate(object *op, object *caster, object *spell);

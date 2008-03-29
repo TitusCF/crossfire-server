@@ -2501,13 +2501,10 @@ int cast_identify(object *op, object *caster, object *spell) {
  * what is casting.
  * @param spell
  * actual spell object.
- * @param skill
- * unused.
  * @return
  * 1.
- * @todo remove unused skill.
  */
-int cast_detection(object *op, object *caster, object *spell, object *skill) {
+int cast_detection(object *op, object *caster, object *spell) {
     object *tmp, *last, *detect;
     const object* god;
     int done_one, range, mflags, floor, level;
@@ -2520,8 +2517,6 @@ int cast_detection(object *op, object *caster, object *spell, object *skill) {
     god=find_god(determine_god(op));
     level=caster_level(caster, spell);
     range = spell->range + SP_level_range_adjust(caster, spell);
-
-    if (!skill) skill=caster;
 
     for (x = op->x - range; x <= op->x + range; x++)
 	for (y = op->y - range; y <= op->y + range; y++) {

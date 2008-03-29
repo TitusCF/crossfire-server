@@ -1713,7 +1713,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
 	    break;
 
 	case SP_DETECTION:
-	    success = cast_detection(op, caster, spell_ob, skill);
+	    success = cast_detection(op, caster, spell_ob);
 	    break;
 
 	case SP_MOOD_CHANGE:
