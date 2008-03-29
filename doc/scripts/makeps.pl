@@ -183,15 +183,23 @@ sub assemble {
     $bmap_file = $archdir.$bmap{$faces{0,0}}.".png";
     if ($output eq "tex") {$ps_file = $faces{0, 0} . '.ps';     }
     elsif ($output eq "png") { $ps_file = $faces{0, 0} . '.png'; }
-    else { $ps_file = $faces{0, 0} . '.gif'; }
+    elsif ($output eq "pdf") {
+        $tmp = $faces{0, 0};
+        $tmp =~ s/\./-/gi;
+        $ps_file = $tmp . '.png';
+    } else { $ps_file = $faces{0, 0} . '.gif'; }
 
     $ps_file =~ s/[_ ]/-/g;
 
     # We don't need to manipulate the files, so just do hard links - much
     # faster, and also doesn't use space.
-    if ($output eq "png") {
+    if (($output eq "png") || ($output eq "pdf")) {
 	link($bmap_file, $ps_file);
-	$ps = "<img src=$ps_file>";
+	if ($output eq "png") {
+	   $ps = "<img src=$ps_file>";
+        } else {
+            $ps = "\\includegraphics[scale=0.5]{" . $ps_file . "}";
+        }
 	return $ps;
     }
 

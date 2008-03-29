@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tweak documentation generation.
+ doc/playbook/Makefile.am: factorize code to make it easy to generate PDFs,
+  fix many pic issues.
+ doc/scripts/makeps.pl: add "pdf" output support.
+Nicolas Weeger 2008-03-29
+
 Remove unused variable. Use safe string functions.
  server/alchemy.c
 Nicolas Weeger 2008-03-29
