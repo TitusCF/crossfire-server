@@ -520,7 +520,7 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
 void trap_adjust(object *trap, int difficulty);
 /* shop.c */
 uint64 query_cost(const object *tmp, object *who, int flag);
-const char *query_cost_string(const object *tmp, object *who, int flag);
+StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer* buf);
 uint64 query_money(const object *op);
 int pay_for_amount(uint64 to_pay, object *pl);
 int pay_for_item(object *op, object *pl);

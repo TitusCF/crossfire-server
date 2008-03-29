@@ -400,21 +400,25 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  *
  * @param cost
  * value to transform to currency.
+ * @param buf
+ * buffer to append to, if NULL a new one is returned.
  * @return
- * buffer containing the price.
- * @todo remove static buffer.
+ * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-static const char *cost_string_from_value(uint64 cost)
+static StringBuffer* cost_string_from_value(uint64 cost, StringBuffer* buf)
 {
-    static char buf[MAX_BUF];
     archetype *coin, *next_coin;
-    char *endbuf;
     uint32 num;
     int cointype = LARGEST_COIN_GIVEN;
 
+    if (!buf)
+        buf = stringbuffer_new();
+
     coin = find_next_coin(cost, &cointype);
-    if (coin == NULL)
-        return "nothing";
+    if (coin == NULL) {
+        stringbuffer_append_string(buf, "nothing");
+        return buf;
+    }
 
     num = cost / coin->clone.value;
     /* so long as nrof is 32 bit, this is true.
@@ -422,23 +426,21 @@ static const char *cost_string_from_value(uint64 cost)
      * is basically true.
      */
     if ( (cost / coin->clone.value) > UINT32_MAX) {
-        strcpy(buf,"an unimaginable sum of money.");
+        stringbuffer_append_string(buf, "an unimaginable sum of money.");
         return buf;
     }
 
     cost -= (uint64)num * (uint64)coin->clone.value;
     if (num == 1)
-        sprintf(buf, "1 %s", coin->clone.name);
+        stringbuffer_append_printf(buf, "1 %s", coin->clone.name);
     else
-        sprintf(buf, "%u %ss", num, coin->clone.name);
+        stringbuffer_append_printf(buf, "%u %ss", num, coin->clone.name);
 
     next_coin = find_next_coin(cost, &cointype);
     if (next_coin == NULL)
         return buf;
 
     do {
-        endbuf = buf + strlen(buf);
-
         coin = next_coin;
         num = cost / coin->clone.value;
         cost -= (uint64)num * (uint64)coin->clone.value;
@@ -452,14 +454,14 @@ static const char *cost_string_from_value(uint64 cost)
             /* There will be at least one more string to add to the list,
              * use a comma.
              */
-            strcat(endbuf, ", "); endbuf += 2;
+            stringbuffer_append_string(buf, ", ");
         } else {
-            strcat(endbuf, " and "); endbuf += 5;
+            stringbuffer_append_string(buf, " and ");
         }
         if (num == 1)
-            sprintf(endbuf, "1 %s", coin->clone.name);
+            stringbuffer_append_printf(buf, "1 %s", coin->clone.name);
         else
-            sprintf(endbuf, "%u %ss", num, coin->clone.name);
+            stringbuffer_append_printf(buf, "%u %ss", num, coin->clone.name);
     } while (next_coin);
 
     return buf;
@@ -470,16 +472,16 @@ static const char *cost_string_from_value(uint64 cost)
  *
  * @param coin
  * coin. Must be of type MONEY.
+ * @param buf
+ * buffer to append to. Must not be NULL.
  * @return
- * value in string, static buffer.
- * @todo remove static buffer.
+ * buf with the value.
  */
-const char* real_money_value(const object* coin) {
-    static char buf[MAX_BUF];
-
+static StringBuffer* real_money_value(const object* coin, StringBuffer* buf) {
     assert(coin->type == MONEY);
+    assert(buf);
 
-    snprintf(buf, sizeof(buf), "%ld %s", coin->nrof, coin->nrof == 1 ? coin->name : coin->name_pl);
+    stringbuffer_append_printf(buf, "%ld %s", coin->nrof, coin->nrof == 1 ? coin->name : coin->name_pl);
     return buf;
 }
 
@@ -493,19 +495,23 @@ const char* real_money_value(const object* coin) {
  * who is getting the price.
  * @param flag
  * combination of @ref F_xxx "F_xxx" values.
+ * @param buf
+ * buffer to append to. If NULL, a newly allocated one will be used and returned.
  * @return
- * buffer containing the price.
- * @todo remove evil static buffer thingy.
+ * buffer containing the price, new if buf was NULL.
  */
-const char *query_cost_string(const object *tmp,object *who,int flag) {
+StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBuffer* buf) {
     uint64 real_value = query_cost(tmp,who,flag);
     int idskill1=0;
     int idskill2=0;
     const typedata *tmptype;
 
+    if (!buf)
+        buf = stringbuffer_new();
+
     /* money it's pretty hard to not give the exact price, so skip all logic and just return the real value. */
     if (tmp->type == MONEY) {
-        return real_money_value(tmp);
+        return real_money_value(tmp, buf);
     }
 
     tmptype=get_typedata(tmp->type);
@@ -523,34 +529,36 @@ const char *query_cost_string(const object *tmp,object *who,int flag) {
         if (!idskill1 || !find_skill_by_number(who, idskill1)) {
             if (!idskill2 || !find_skill_by_number(who, idskill2)) {
                 if (!find_skill_by_number(who,SK_BARGAINING)) {
-                    static char buf[MAX_BUF];
                     int num;
                     int cointype = LARGEST_COIN_GIVEN;
                     archetype *coin = find_next_coin(real_value, &cointype);
 
-                    if (coin == NULL) return "nothing";
+                    if (coin == NULL) {
+                        stringbuffer_append_string(buf, "nothing");
+                        return buf;
+                    }
 
                     num = real_value / coin->clone.value;
                     if (num == 1)
-                        sprintf(buf, "about one %s", coin->clone.name);
+                        stringbuffer_append_printf(buf, "about one %s", coin->clone.name);
                     else if (num < 5)
-                        sprintf(buf, "a few %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "a few %s", coin->clone.name_pl);
                     else if (num < 10)
-                        sprintf(buf, "several %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "several %s", coin->clone.name_pl);
                     else if (num < 25)
-                        sprintf(buf, "a moderate amount of %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "a moderate amount of %s", coin->clone.name_pl);
                     else if (num < 100)
-                        sprintf(buf, "lots of %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "lots of %s", coin->clone.name_pl);
                     else if (num < 1000)
-                        sprintf(buf, "a great many %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "a great many %s", coin->clone.name_pl);
                     else
-                        sprintf(buf, "a vast quantity of %s", coin->clone.name_pl);
+                        stringbuffer_append_printf(buf, "a vast quantity of %s", coin->clone.name_pl);
                     return buf;
                 }
             }
         }
     }
-    return cost_string_from_value(real_value);
+    return cost_string_from_value(real_value, buf);
 }
 
 /**
@@ -931,8 +939,10 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
+        char* value = stringbuffer_finish(cost_string_from_value(unpaid_price, NULL));
         snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ",
-                unpaid_count, cost_string_from_value(unpaid_price));
+                unpaid_count, value);
+        free(value);
         for (i=0; i< NUM_COINS; i++) {
             if (coincount[i] > 0 && coins[i]) {
                 if (denominations == 0)
@@ -967,7 +977,7 @@ int can_pay(object *pl) {
  * @retval 1 player has paid for everything.
  */
 int get_payment(object *pl, object *op) {
-    char buf[MAX_BUF], name_op[MAX_BUF];
+    char name_op[MAX_BUF];
     int ret=1;
 
     if (op!=NULL&&op->inv)
@@ -983,21 +993,22 @@ int get_payment(object *pl, object *op) {
         return 0;
 
     if(op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
-        strncpy(buf,query_cost_string(op,pl,F_BUY | F_SHOP),MAX_BUF);
-        buf[MAX_BUF-1] = '\0';
         if(!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
+            char* missing = stringbuffer_finish(cost_string_from_value(i, NULL));
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
                                  "You lack %s to buy %s.",
                                  "You lack %s to buy %s.",
-                                 cost_string_from_value(i), name_op);
+                                 missing, name_op);
+            free(missing);
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
             object *tmp;
+            char* value = stringbuffer_finish(query_cost_string(op, pl, F_BUY | F_SHOP, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
@@ -1006,7 +1017,8 @@ int get_payment(object *pl, object *op) {
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
                                  "You paid %s for %s.",
                                  "You paid %s for %s.",
-                                 buf,name_op);
+                                 value,name_op);
+            free(value);
             tmp=merge_ob(op,NULL);
             if (pl->type == PLAYER && !tmp) {
                 /* If item wasn't merged we update it. If merged, merge_ob handled everything for us. */
@@ -1035,7 +1047,7 @@ void sell_item(object *op, object *pl) {
     int count;
     object *tmp, *pouch;
     archetype *at;
-    char name_op[MAX_BUF];
+    char name_op[MAX_BUF], *value;
 
     if(pl==NULL||pl->type!=PLAYER) {
         LOG(llevDebug,"Object other than player tried to sell something.\n");
@@ -1118,11 +1130,15 @@ void sell_item(object *op, object *pl) {
 #endif
 
     query_name(op, name_op, MAX_BUF);
+    value = stringbuffer_finish(query_cost_string(op, pl, F_SELL | F_SHOP, NULL));
+
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                          "You receive %s for %s.",
                          "You receive %s for %s.",
-                         query_cost_string(op,pl,F_SELL | F_SHOP),
+                         value,
                          name_op);
+
+    free(value);
 
     SET_FLAG(op, FLAG_UNPAID);
     identify(op);
@@ -1276,7 +1292,7 @@ int describe_shop(const object *op) {
     /*shopitems *items=map->shopitems;*/
     int pos=0, i;
     double opinion=0;
-    char tmp[MAX_BUF]="\0";
+    char tmp[MAX_BUF]="\0", *value;
 
     if (op->type != PLAYER) return 0;
 
@@ -1303,19 +1319,25 @@ int describe_shop(const object *op) {
         draw_ext_info(NDI_UNIQUE, 0, op,
                       MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING, tmp, NULL);
 
-        if (map->shopmax)
+        if (map->shopmax) {
+            value = stringbuffer_finish(cost_string_from_value(map->shopmax, NULL));
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade for items above %s.",
                                  "It won't trade for items above %s.",
-                                 cost_string_from_value(map->shopmax));
+                                 value);
+            free(value);
+        }
 
-        if (map->shopmin)
+        if (map->shopmin) {
+            value = stringbuffer_finish(cost_string_from_value(map->shopmin, NULL));
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                                  "It won't trade in items worth less than %s.",
                                  "It won't trade in items worth less than %s.",
-                                 cost_string_from_value(map->shopmin));
+                                 value);
+            free(value);
+        }
 
         if (map->shopgreed) {
             if (map->shopgreed >2.0)

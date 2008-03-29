@@ -13,6 +13,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+
+Use StringBuffer to remove static buffers.
+ include/sproto.h
+ server/c_object.c shop.c
+Nicolas Weeger 2008-03-29
+
 Fix accidentally broken connection.
  socket/request.c
 Nicolas Weeger 2008-03-29
