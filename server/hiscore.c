@@ -109,22 +109,19 @@ static void copy_score(const score *sc1, score *sc2) {
 }
 
 /**
- * Writes the given score structure to a static buffer, and returns
- * a pointer to it.
+ * Writes the given score structure to specified buffer.
  *
  * @param sc
  * score to write.
- * @return
- * score line.
- * @todo make thread-safe, trash static buffers.
+ * @param buf
+ * buffer to write to.
+ * @param size
+ * buf's size.
  */
-static char *put_score(const score *sc) {
-    static char buf[MAX_BUF];
-
-    snprintf(buf, MAX_BUF,
-	 "%s:%s:%" FMT64 ":%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
-         sc->maxhp,sc->maxsp,sc->maxgrace);
-    return buf;
+static void put_score(const score *sc, char* buf, int size) {
+    snprintf(buf, size,
+        "%s:%s:%" FMT64 ":%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
+        sc->maxhp,sc->maxsp,sc->maxgrace);
 }
 
 /**
@@ -225,7 +222,7 @@ static score *add_score(score *new_score) {
   FILE *fp;
   static score old_score;
   score *tmp_score,pscore[HIGHSCORE_LENGTH];
-  char buf[MAX_BUF], filename[MAX_BUF], *bp;
+  char buf[MAX_BUF], filename[MAX_BUF], bp[MAX_BUF];
   int nrofscores=0,flag=0,i,comp;
 
   new_score->position=HIGHSCORE_LENGTH+1;
@@ -260,7 +257,7 @@ static score *add_score(score *new_score) {
     return NULL;
   }
   for(i=0;i<nrofscores;i++) {
-    bp=put_score(&pscore[i]);
+    put_score(&pscore[i], bp, sizeof(bp));
     fprintf(fp,"%s\n",bp);
   }
   fclose(fp);
