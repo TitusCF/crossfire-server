@@ -1520,12 +1520,12 @@ static void monster_apply_below(object *monster) {
 	switch (tmp->type) {
 	    case CF_HANDLE:
 	    case TRIGGER:
-		if (monster->will_apply&1)
+                if (monster->will_apply & WILL_APPLY_HANDLE)
 		    manual_apply(monster,tmp,0);
 		break;
 
 	    case TREASURE:
-		if (monster->will_apply&2)
+                if (monster->will_apply & WILL_APPLY_TREASURE)
 		    manual_apply(monster,tmp,0);
 		break;
 

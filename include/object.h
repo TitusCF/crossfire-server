@@ -69,12 +69,9 @@ typedef struct _key_value {
 
 
 /**
- * @defgroup WILL_APPLY_xxx what monsters apply
- * Definition for WILL_APPLY values.  Replaces having harcoded values
- * sprinkled in the code.  Note that some of these also replace fields
- * that were in the can_apply area.  What is the point of having both
- * can_apply and will_apply?
- * @todo err, is this still used??
+ * @defgroup WILL_APPLY_xxx What monsters apply
+ * How monsters should handle some items they have or things on the ground.
+ * Those flags correspond to the object::will_apply field.
  */
 /*@{*/
 #define WILL_APPLY_HANDLE	0x1
@@ -242,7 +239,7 @@ typedef struct obj {
     /* allows different movement patterns for attackers */
     sint32	move_status;	/**< What stage in attack mode */
     uint16	attack_movement;/**< What kind of attack movement */
-    uint8	will_apply;     /**< See crossfire.doc */
+    uint8	will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
     struct obj	*spellitem;	/**< Spell ability monster is choosing to use */
     double	expmul;		/**< needed experience = (calc_exp*expmul) - means some *
                          * races/classes can need less/more exp to gain levels */

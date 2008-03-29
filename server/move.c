@@ -108,9 +108,9 @@ int move_ob (object *op, int dir, object *originator)
 
     op->direction = dir;
 
-    if(op->will_apply&4)
+    if(op->will_apply & WILL_APPLY_EARTHWALL)
 	check_earthwalls(op,m, newx,newy);
-    if(op->will_apply&8)
+    if(op->will_apply & WILL_APPLY_DOOR)
 	check_doors(op,m, newx,newy);
 
     /* 0.94.1 - I got a stack trace that showed it crash with remove_ob trying
