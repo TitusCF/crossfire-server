@@ -841,8 +841,6 @@ void move_player_changer(object *op) {
  *
  * @param op
  * firewall.
- * @todo
- * trash the other_arch thingy when all maps are converted - msg on 2008-01-03, let's say one month.
  */
 void move_firewall(object *op) {
     object *spell;
@@ -851,8 +849,6 @@ void move_firewall(object *op) {
 	return;   /* dm has created a firewall in his inventory */
 
     spell = op->inv;
-    if ((!spell || spell->type != SPELL) && op->other_arch)
-        spell=&op->other_arch->clone;
     if (!spell) {
 	LOG(llevError,"move_firewall: no spell specified (%s, %s, %d, %d)\n",
 	    op->name, op->map->name, op->x, op->y);
