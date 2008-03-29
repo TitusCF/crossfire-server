@@ -63,9 +63,8 @@ enum {
  * name to search for.
  * @return
  * player, or NULL if player can't be found.
- * @todo change name to const char*.
  */
-static player *get_other_player_from_name(object *op, char *name) {
+static player *get_other_player_from_name(object *op, const char *name) {
     player *pl;
 
     if (!name)

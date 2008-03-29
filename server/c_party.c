@@ -181,9 +181,8 @@ void obsolete_parties(void) {
  * victim's name.
  * @param exp
  * how much experience was gained.
- * @todo use const char*.
  */
-void add_kill_to_party(partylist *party, char *killer, char *dead, long exp)
+void add_kill_to_party(partylist *party, const char *killer, const char *dead, long exp)
 {
   int i,pos;
 

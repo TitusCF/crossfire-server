@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Use 'const char*' instead of 'char*'.
+ server/c_party.c c_wiz.c
+Nicolas Weeger, 2008-03-29
+
 Fix non meaningful return value of summon_hostile_monsters().
  server/spell_util.c
 Nicolas Weeger, 2008-03-29
