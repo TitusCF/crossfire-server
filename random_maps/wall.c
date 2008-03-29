@@ -224,7 +224,6 @@ void make_map_walls(mapstruct *map,char **layout, char *w_style,RMParms *RP) {
  * correct wall archetype to fit on the square.
  * @todo
  * check if there isn't an equivalent function in the building code, merge?
- * check spurious call to nroferrors.
  */
 object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP) {
   /* 1 = wall to left,
@@ -304,10 +303,10 @@ object *pick_joined_wall(object *the_wall,char **layout,int i,int j,RMParms *RP)
             strcat(wall_name,"_4");
             break;
     }
-    wall_arch = find_archetype(wall_name);
-    if(wall_arch) return arch_to_object(wall_arch);
+    wall_arch = try_find_archetype(wall_name);
+    if(wall_arch)
+        return arch_to_object(wall_arch);
     else {
-        nroferrors--;
         return arch_to_object(the_wall->arch);
     }
 }
@@ -425,7 +424,7 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
             strcat(RP->wall_name,"_4");
             break;
     }
-    wall_arch = find_archetype(RP->wall_name);
+    wall_arch = try_find_archetype(RP->wall_name);
     if(wall_arch!=NULL) {
         new_wall=arch_to_object(wall_arch);
         new_wall->x = i;
@@ -437,7 +436,5 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
         the_wall->move_block = MOVE_ALL;
         insert_ob_in_map(new_wall,the_map,new_wall,INS_NO_MERGE | INS_NO_WALK_ON);
         }
-    else
-        nroferrors--;  /* it's OK not to find an arch. */
     return new_wall;
 }

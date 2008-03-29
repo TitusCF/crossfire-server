@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Use try_find_archetype() instead of find_archetype() and remove the nroferrors
+handling.
+ random_maps/wall.c
+Nicolas Weeger 2008-03-29
+
 Remove unused parameter.
  random_maps/random_map.c rproto.h snake.c square_spiral.c test.c
 Nicolas Weeger 2008-03-29
