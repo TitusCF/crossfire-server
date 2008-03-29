@@ -189,26 +189,27 @@ static score *get_score(char *bp) {
  *
  * @param sc
  * score to format.
+ * @param buf
+ * buffer to write to. Will contain suitably formatted score.
+ * @param size
+ * length of buf.
  * @return
- * suitably formatted score.
- * @todo remove static variable.
+ * buf.
  */
-static char * draw_one_high_score(const score *sc) {
-    static char retbuf[MAX_BUF];
-
+static char * draw_one_high_score(const score *sc, char* buf, int size) {
     if(!strncmp(sc->killer,"quit",MAX_NAME))
-	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s quit the game on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s quit the game on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
-		sc->maxgrace);
+            sc->maxgrace);
     else if(!strncmp(sc->killer,"left",MAX_NAME))
-	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s left the game on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s left the game on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
-		sc->maxgrace);
+            sc->maxgrace);
     else
-	sprintf(retbuf,"[fixed]%3d %10" FMT64 "[print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
+        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
             sc->position,sc->exp,sc->name,sc->title,sc->killer,sc->maplevel,
             sc->maxhp,sc->maxsp,sc->maxgrace);
-    return retbuf;
+    return buf;
 }
 /**
  * Adds the given score-structure to the high-score list, but
@@ -294,6 +295,7 @@ static score *add_score(score *new_score) {
 void check_score(object *op, int quiet) {
     score new_score;
     score *old_score;
+    char bufscore[MAX_BUF];
 
     if(op->stats.exp==0)
 	return;
@@ -373,10 +375,10 @@ void check_score(object *op, int quiet) {
 			  "You didn't enter the highscore list:", NULL);
 
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-			     draw_one_high_score(old_score), NULL);
+            draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
 
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-			     draw_one_high_score(&new_score), NULL);
+            draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
 	return;
     }
     if(old_score->exp>=new_score.exp)
@@ -387,9 +389,9 @@ void check_score(object *op, int quiet) {
 		      "You beat your last score:", NULL);
 
     draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-		     draw_one_high_score(old_score), NULL);
+        draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-		     draw_one_high_score(&new_score), NULL);
+        draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
 }
 
 
@@ -402,50 +404,45 @@ void check_score(object *op, int quiet) {
  * @param max
  * maximum number of scores to display.
  * @param match
- * if set, is the name or class to match to.
- * @todo actually use match for the hiscore command.
+ * if set, will only print players with name or title containing the string (non case-sensitive).
  */
 void display_high_score(object *op,int max, const char *match) {
     FILE *fp;
-    char buf[MAX_BUF],*scorebuf;
+    char buf[MAX_BUF], scorebuf[MAX_BUF];
     int i=0,j=0,comp;
     score *sc;
 
     sprintf(buf,"%s/%s",settings.localdir,HIGHSCORE);
     if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
         char err[MAX_BUF];
-	LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
-	if(op!=NULL)
-	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
-			  "There is no highscore file.", NULL);
-	return;
+        LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
+        if(op!=NULL)
+            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                "There is no highscore file.", NULL);
+        return;
     }
 
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-		  "[fixed]Nr    Score    Who <max hp><max sp><max grace>",
-		  "Nr    Score    Who <max hp><max sp><max grace>");
+        "[Fixed]Nr    Score    Who <max hp><max sp><max grace>",
+        "Nr    Score    Who <max hp><max sp><max grace>");
 
     while(fgets(buf,MAX_BUF,fp)!=NULL) {
-	if(j>=HIGHSCORE_LENGTH||i>=(max-1))
-	    break;
-	if((sc=get_score(buf))==NULL)
-	    break;
-	sc->position=++j;
-	if (match==NULL) {
-	    scorebuf=draw_one_high_score(sc);
-	    i++;
-	} else {
-	    if (!strcasecmp(sc->name, match) || !strcasecmp(sc->title, match)) {
-		scorebuf=draw_one_high_score(sc);
-		i++;
-	    }
-	    else continue;
-	}
-	if(op == NULL)
-		LOG(llevDebug, "%s\n", scorebuf);
-	else
-	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
-			     scorebuf, NULL);
+        if(j>=HIGHSCORE_LENGTH||i>=(max-1))
+            break;
+        if((sc=get_score(buf))==NULL)
+            break;
+        sc->position=++j;
+        if (match == NULL || strcasestr(sc->name, match) || strcasestr(sc->title, match)) {
+            draw_one_high_score(sc, scorebuf, sizeof(scorebuf));
+            i++;
+        }
+        else
+            continue;
+
+        if(op == NULL)
+            LOG(llevDebug, "%s\n", scorebuf);
+        else
+            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
 
     }
     close_and_delete(fp, comp);

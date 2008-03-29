@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove static buffer, simplify code.
+ server/hiscore.c
+Nicolas Weeger, 2008-03-29
+
 Make god-related object const to avoid modification.
  common/holy.c readable.c
  include/libproto.h sproto.h
