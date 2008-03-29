@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Use 'const char*' instead of 'char*'.
+ include/sproto.h
+ server/swap.c
+Nicolas Weeger, 2008-03-29
+
 Write 'describe_item' unit tests.
  test/unit/common/check_item.c Makefile.am
 Nicolas Weeger, 2008-03-25

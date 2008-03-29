@@ -638,7 +638,7 @@ void check_spell_expiry(object *spell);
 void read_map_log(void);
 int swap_map(mapstruct *map);
 void check_active_maps(void);
-void swap_below_max(char *except_level);
+void swap_below_max(const char *except_level);
 int players_on_map(mapstruct *m, int show_all);
 void flush_old_maps(void);
 /* time.c */

@@ -234,9 +234,8 @@ void check_active_maps(void) {
  * path of map to ignore for reset. Musn't be NULL.
  * @return
  * map, or NULL if no map is ready for reset.
- * @todo change the char* to const char*
  */
-static mapstruct *map_least_timeout(char *except_level) {
+static mapstruct *map_least_timeout(const char *except_level) {
   mapstruct *map, *chosen=NULL;
   int timeout = MAP_MAXTIMEOUT + 1;
   for(map = first_map;map != NULL; map = map->next)
@@ -253,9 +252,8 @@ static mapstruct *map_least_timeout(char *except_level) {
  *
  * @param except_level
  * path of map to ignore for reset. Musn't be NULL.
- * @todo change the char* to const char*
  */
-void swap_below_max(char *except_level) {
+void swap_below_max(const char *except_level) {
     mapstruct *map;
 
     if(nrofallocobjects - nroffreeobjects < MAX_OBJECTS)
