@@ -84,14 +84,12 @@ void find_top_left_corner(char **maze,int *cx, int *cy) {
  * @param xsize
  * @param ysize
  * size of the layout.
- * @param options
- * unused.
  * @return
  * generated layout.
  * @todo
- * remove options. Use function in another file for character searching.
+ * use function in another file for character searching.
  */
-char **make_square_spiral_layout(int xsize, int ysize,int options) {
+char **make_square_spiral_layout(int xsize, int ysize) {
     int i,j;
     int cx,cy;
     int tx,ty;

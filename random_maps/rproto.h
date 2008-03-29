@@ -81,9 +81,9 @@ extern void free_style_maps(void);
 extern int surround_check(char **layout, int i, int j, int Xsize, int Ysize);
 extern char **roguelike_layout_gen(int xsize, int ysize, int options);
 /* snake.c */
-extern char **make_snake_layout(int xsize, int ysize, int options);
+extern char **make_snake_layout(int xsize, int ysize);
 /* square_spiral.c */
 extern void find_top_left_corner(char **maze, int *cx, int *cy);
-extern char **make_square_spiral_layout(int xsize, int ysize, int options);
+extern char **make_square_spiral_layout(int xsize, int ysize);
 /* expand2x.c */
 extern char **expand2x(char **layout, int xsize, int ysize);

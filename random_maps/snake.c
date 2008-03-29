@@ -14,14 +14,10 @@
  * @param xsize
  * @param ysize
  * layout size.
- * @param options
- * unused
  * @return
  * generated layout.
- * @todo
- * remove options.
  */
-char **make_snake_layout(int xsize, int ysize,int options) {
+char **make_snake_layout(int xsize, int ysize) {
     int i,j;
 
     /* allocate that array, set it up */

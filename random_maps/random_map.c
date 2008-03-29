@@ -279,12 +279,12 @@ char **layoutgen(RMParms *RP) {
             break;
 
         case SNAKE_LAYOUT:
-            maze = make_snake_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+            maze = make_snake_layout(RP->Xsize,RP->Ysize);
             if(RANDOM()%2) roomify_layout(maze,RP);
             break;
 
         case SQUARE_SPIRAL_LAYOUT:
-            maze = make_square_spiral_layout(RP->Xsize,RP->Ysize,RP->layoutoptions1);
+            maze = make_square_spiral_layout(RP->Xsize,RP->Ysize);
             if(RANDOM()%2) roomify_layout(maze,RP);
             break;
     }

@@ -7,8 +7,8 @@
    included here for convenience only.  */
 char **map_gen_spiral(int,int,int);
 char **roguelike_layout_gen(int xsize, int ysize, int options);
-char **make_snake_layout(int xsize, int ysize, int options );
-char **make_square_spiral_layout(int xsize, int ysize, int options );
+char **make_snake_layout(int xsize, int ysize);
+char **make_square_spiral_layout(int xsize, int ysize);
 char **gen_corridor_rooms(int, int, int);
 
 void dump_layout(char **layout, int Xsize, int Ysize) {
