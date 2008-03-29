@@ -195,7 +195,7 @@ int swap_map(mapstruct *map) {
         return res;
     }
 
-    free_map(map,1);
+    free_map(map);
 
     if (settings.recycle_tmp_maps == TRUE)
         write_map_log();

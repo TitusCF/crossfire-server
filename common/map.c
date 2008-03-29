@@ -1627,13 +1627,8 @@ void free_all_objects(mapstruct *m) {
  *
  * @param m
  * map to free.
- * @param flag
- * if set, frees all map spaces too.
- *
- * @todo
- * seems to be called with flag always set, check and remove variable if so.
  */
-void free_map(mapstruct *m,int flag) {
+void free_map(mapstruct *m) {
     int i;
 
     if (!m->in_memory) {
@@ -1644,7 +1639,7 @@ void free_map(mapstruct *m,int flag) {
     /* Handle for plugin map unload event. */
     execute_global_event(EVENT_MAPUNLOAD, m);
 
-    if (flag && m->spaces) free_all_objects(m);
+    if (m->spaces) free_all_objects(m);
     if (m->name) FREE_AND_CLEAR(m->name);
     if (m->spaces) FREE_AND_CLEAR(m->spaces);
     if (m->msg) FREE_AND_CLEAR(m->msg);
@@ -1682,7 +1677,7 @@ void delete_map(mapstruct *m) {
          * so that remove_ob doesn't do as much work.
          */
         m->in_memory = MAP_SAVING;
-        free_map (m, 1);
+        free_map (m);
     }
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.

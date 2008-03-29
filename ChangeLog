@@ -13,6 +13,12 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Remove free_map()'s second parameter, unused.
+ common/map.c
+ include/libproto.h
+ server/swap.c
+ test/unit/server/comet_perf.c
+Nicolas Weeger, 2008-03-29
 
 Use 'const char*' instead of 'char*'.
  server/c_party.c c_wiz.c

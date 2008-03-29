@@ -126,7 +126,7 @@ void setup(void) {
 void teardown(void)
 {
 
-    free_map(test_map, 1);
+    free_map(test_map);
 
 }
 

@@ -176,7 +176,7 @@ extern mapstruct *load_overlay_map(const char *filename, mapstruct *m);
 extern int save_map(mapstruct *m, int flag);
 extern void clean_object(object *op);
 extern void free_all_objects(mapstruct *m);
-extern void free_map(mapstruct *m, int flag);
+extern void free_map(mapstruct *m);
 extern void delete_map(mapstruct *m);
 extern mapstruct *ready_map_name(const char *name, int flags);
 extern int calculate_difficulty(mapstruct *m);
