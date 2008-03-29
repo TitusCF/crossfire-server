@@ -828,18 +828,13 @@ void play_again(object *op)
  * player.
  * @param key
  * received choice.
- * @retval 0
- * player is playing again.
- * @retval 2
- * player wants to disconnect.
- * @todo check why 2?
  */
-int receive_play_again(object *op, char key)
+void receive_play_again(object *op, char key)
 {
     if(key=='q'||key=='Q') {
 	remove_friendly_object(op);
 	leave(op->contr,0); /* ericserver will draw the message */
-	return 2;
+	return;
     }
     else if(key=='a'||key=='A') {
 	player *pl = op->contr;
@@ -866,7 +861,6 @@ int receive_play_again(object *op, char key)
 	/* user pressed something else so just ask again... */
 	play_again(op);
     }
-    return 0;
 }
 
 /**

@@ -379,7 +379,7 @@ void give_initial_items(object *pl, treasurelist *items);
 void get_name(object *op);
 void get_password(object *op);
 void play_again(object *op);
-int receive_play_again(object *op, char key);
+void receive_play_again(object *op, char key);
 void confirm_password(object *op);
 void get_party_password(object *op, partylist *party);
 int roll_stat(void);
