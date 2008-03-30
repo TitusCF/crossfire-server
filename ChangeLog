@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove unused parameter, rename to better name.
+ server/attack.c
+Nicolas Weeger 2008-03-30
+
 Extract player_changer to its own file.
  include/sproto.h typesproto.h
  server/ob_types.c time.c

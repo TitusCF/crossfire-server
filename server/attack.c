@@ -1211,27 +1211,22 @@ static void scare_creature(object *target, object *hitter)
  * @param attacknum
  * number of the attacktype of the attack. Must be a single value and not a combination.
  * See @ref Attacktypes "the ATNR_xxx" values.
- * @param magic
- * unused
  * @return
  * damage to actually do.
- * @todo
- * removed unused magic. Rename since it's called for monsters too.
  */
-static int hit_player_attacktype(object *op, object *hitter, int dam,
-	uint32 attacknum, int magic) {
+static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 attacknum) {
 
     int doesnt_slay = 1;
     char name_hitter[MAX_BUF], name_op[MAX_BUF];
 
     /* Catch anyone that may be trying to send us a bitmask instead of the number */
     if (attacknum >= NROFATTACKS) {
-	LOG(llevError, "hit_player_attacktype: Invalid attacknumber passed: %u\n", attacknum);
+        LOG(llevError, "hit_with_one_attacktype: Invalid attacknumber passed: %u\n", attacknum);
 	return 0;
     }
 
     if (dam < 0) {
-	LOG(llevError,"hit_player_attacktype called with negative damage: %d\n", dam);
+        LOG(llevError,"hit_with_one_attacktype called with negative damage: %d\n", dam);
 	return 0;
     }
 
@@ -1403,7 +1398,7 @@ static int hit_player_attacktype(object *op, object *hitter, int dam,
 		dam = 999; /* Its force is "sucked" away. 8) */
 	    else
 	      /* If we can't drain, lets try to do physical damage */
-		dam = hit_player_attacktype(op, hitter, dam, ATNR_PHYSICAL, magic);
+                dam = hit_with_one_attacktype(op, hitter, dam, ATNR_PHYSICAL);
 	} else {
 	    /* Randomly give the hitter some hp */
 	    if(hitter->stats.hp<hitter->stats.maxhp &&
@@ -2007,12 +2002,12 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
 	if ((attacktype==AT_MAGIC) && (type & ~AT_MAGIC)) continue;
 
 	/* Go through and hit the player with each attacktype, one by one.
-	 * hit_player_attacktype only figures out the damage, doesn't inflict
+        * hit_with_one_attacktype only figures out the damage, doesn't inflict
 	 * it.  It will do the appropriate action for attacktypes with
 	 * effects (slow, paralization, etc.
          */
 	if (type & attacktype) {
-	    ndam=hit_player_attacktype(op,hitter,dam,attacknum,magic);
+            ndam = hit_with_one_attacktype(op, hitter, dam, attacknum);
 	    /* the >= causes us to prefer messages from special attacks, if
 	     * the damage is equal.
 	     */
