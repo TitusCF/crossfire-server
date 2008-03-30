@@ -62,12 +62,11 @@ static void set_pickup_mode(const object *op, int i);
  * @param params
  * what to search for.
  * @param aflag
- * Combination of AP_APPLY and/or AP_UNAPPLY. Used with apply -u , and apply -a to
+ * Either 0 or AP_APPLY or AP_UNAPPLY. Used with apply -u , and apply -a to
  * only unapply applied, or apply unapplied objects.
  * @return
  * matching object, or NULL if no suitable.
- * @todo move the ap_xxx tests before the item_matched_string for performance reasons?
- **/
+**/
 static object *find_best_apply_object_match(object *start, object* pl, const char *params, int aflag)
 {
     object *tmp, *best=NULL;
@@ -75,9 +74,9 @@ static object *find_best_apply_object_match(object *start, object* pl, const cha
 
     for (tmp=start; tmp; tmp=tmp->below) {
         if (tmp->invisible) continue;
+        if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
+        if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
         if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val) {
-            if ((aflag==AP_APPLY) && (QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
-            if ((aflag==AP_UNAPPLY) && (!QUERY_FLAG(tmp,FLAG_APPLIED))) continue;
             match_val=tmpmatch;
             best=tmp;
         }
