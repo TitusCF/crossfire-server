@@ -1696,8 +1696,6 @@ void dragon_level_gain(object *who) {
  *
  * @note
  * this doesn't check whether the object already has the skill or not.
- * @todo
- * arch_to_object() never returns NULL (since skill_arch is not NULL), so remove useless test.
  */
 object *give_skill_by_name(object *op, const char *skill_name)
 {
@@ -1709,11 +1707,8 @@ object *give_skill_by_name(object *op, const char *skill_name)
 	LOG(llevError, "add_player_exp: couldn't find skill %s\n", skill_name);
 	return NULL;
     }
-    skill_obj = arch_to_object(skill_arch);
-    if (!skill_obj) {
-        LOG(llevError, "add_player_exp: couldn't instanciate skill %s\n", skill_name);
-        return NULL;
-    }
+    skill_obj = arch_to_object(skill_arch); /* never returns NULL. */
+
     /* clear the flag - exp goes into this bucket, but player
      * still doesn't know it.
      */
