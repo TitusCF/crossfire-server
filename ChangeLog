@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Extract blindness to its own file.
+ include/sproto.h typesproto.h
+ server/ob_types.c time.c
+ types/legacy/process.c
+ types/Makefile.am
+Added file:
+ types/blindness/blindness.c
+Nicolas Weeger 2008-03-30
+
 Change test order to speed up some, fix comments.
  server/c_object.c
 Nicolas Weeger 2008-03-30

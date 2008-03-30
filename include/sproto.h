@@ -658,7 +658,6 @@ int process_object(object *op);
 void legacy_move_detector(object *op);
 void legacy_remove_force(object *op);
 void legacy_animate_trigger(object *op);
-void legacy_remove_blindness(object *op);
 void legacy_move_hole(object *op);
 /* timers.c */
 void cftimer_process_timers(void);

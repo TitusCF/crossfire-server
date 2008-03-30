@@ -4,6 +4,8 @@ void init_type_altar(void);
 void init_type_armour_improver(void);
 /* arrow/arrow.c */
 void init_type_arrow(void);
+/* blindness/blindness.c */
+void init_type_blindness(void);
 /* book/book.c */
 void init_type_book(void);
 /* button/button.c */

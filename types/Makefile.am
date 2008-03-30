@@ -4,6 +4,7 @@ noinst_LIBRARIES = libtypes.a
 libtypes_a_SOURCES = altar/altar.c \
 armour_improver/armour_improver.c \
 arrow/arrow.c \
+blindness/blindness.c \
 book/book.c \
 button/button.c \
 cf_handle/cf_handle.c \

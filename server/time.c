@@ -366,25 +366,6 @@ static void remove_force(object *op) {
 }
 
 /**
- * Move for blindness object.
- *
- * @param op
- * blindness to check.
- * @todo rename to something more meaningful.
- */
-static void remove_blindness(object *op) {
-  if(--op->stats.food > 0)
-    return;
-  CLEAR_FLAG(op, FLAG_APPLIED);
-  if(op->env!=NULL) {
-     change_abil(op->env,op);
-     fix_object(op->env);
-  }
-  remove_ob(op);
-  free_object(op);
-}
-
-/**
  * Move a ::DETECTOR.
  *
  * - slaying:    name of the thing the detector is to look for
@@ -1133,10 +1114,6 @@ void legacy_remove_force(object *op)
 void legacy_animate_trigger(object *op)
 {
     animate_trigger(op);
-}
-void legacy_remove_blindness(object *op)
-{
-    remove_blindness(op);
 }
 void legacy_move_hole(object *op)
 {
