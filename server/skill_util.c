@@ -1160,7 +1160,7 @@ int skill_attack (object *tmp, object *pl, int dir, const char *string, object *
 	    return 0;
 	}
 
-	for(tmp=get_map_ob(m, tx, ty); tmp; tmp=tmp->above)
+        for(tmp=GET_MAP_OB(m, tx, ty); tmp; tmp=tmp->above)
 	    if((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->stats.hp>=0)
 	       || QUERY_FLAG(tmp, FLAG_CAN_ROLL)
 	       || tmp->type==LOCKED_DOOR ) {

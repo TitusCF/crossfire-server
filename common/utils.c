@@ -195,7 +195,7 @@ void decay_objects(mapstruct *m)
 
     for (x=0; x < MAP_WIDTH(m); x++)
         for (y=0; y < MAP_HEIGHT(m); y++)
-            for (op = get_map_ob(m, x, y); op; op = otmp) {
+            for (op = GET_MAP_OB(m, x, y); op; op = otmp) {
                 destroy = 0;
                 otmp = op->above;
                 if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))

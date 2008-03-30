@@ -109,9 +109,9 @@ static int is_legal_2ways_exit (object* op, object *exit)
     else exitmap = ready_map_name(EXIT_PATH (exit), 0);
     if (exitmap)
     {
-        tmp=get_map_ob (exitmap,EXIT_X(exit),EXIT_Y(exit));
+        tmp=GET_MAP_OB (exitmap,EXIT_X(exit),EXIT_Y(exit));
         if (!tmp) return 0;
-        for ( (tmp=get_map_ob(exitmap,EXIT_X(exit),EXIT_Y(exit)));
+        for ( (tmp=GET_MAP_OB(exitmap,EXIT_X(exit),EXIT_Y(exit)));
                tmp;tmp=tmp->above) {
                    if (tmp->type!=EXIT) continue;  /*Not an exit*/
                    if (!EXIT_PATH (tmp)) continue; /*Not a valid exit*/

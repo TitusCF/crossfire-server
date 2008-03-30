@@ -225,7 +225,7 @@ void esrv_draw_look(object *pl)
     if (pl->contr->transport)
         for (tmp=pl->contr->transport->inv; tmp && tmp->above;tmp=tmp->above) ;
     else
-        for (tmp=get_map_ob(pl->map,pl->x,pl->y);
+        for (tmp=GET_MAP_OB(pl->map,pl->x,pl->y);
              tmp && tmp->above;tmp=tmp->above) ;
 
     sl.buf=malloc(MAXSOCKSENDBUF);
@@ -555,7 +555,7 @@ static object *esrv_get_ob_from_count(object *pl, tag_t count)
                 if (tmp->count == count)
                     return tmp;
 
-    for(op = get_map_ob (pl->map, pl->x, pl->y); op; op = op->above)
+    for(op = GET_MAP_OB (pl->map, pl->x, pl->y); op; op = op->above)
         if (op->head != NULL && op->head->count == count)
             return op;
         else if (op->count == count)
@@ -730,7 +730,7 @@ void look_at(object *op,int dx,int dy) {
     m = get_map_from_coord(op->map, &x, &y);
     if (!m) return;
 
-    for(tmp=get_map_ob(m, x ,y);tmp!=NULL&&tmp->above!=NULL;
+    for(tmp=GET_MAP_OB(m, x ,y);tmp!=NULL&&tmp->above!=NULL;
         tmp=tmp->above);
 
     for ( ; tmp != NULL; tmp=tmp->below ) {

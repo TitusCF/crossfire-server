@@ -51,7 +51,7 @@
 int obj_count_in_map(mapstruct *map,int x,int y) {
     int count=0;
     object *tmp;
-    for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above)
+    for(tmp=GET_MAP_OB(map,x,y);tmp!=NULL;tmp=tmp->above)
         count++;
     return count;
 }

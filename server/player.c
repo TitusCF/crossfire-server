@@ -2344,8 +2344,8 @@ void move_player_attack(object *op, int dir)
 	}
 	else m =tpl->map;
 
-	if ((tmp=get_map_ob(m,nx,ny))==NULL) {
-	    /*	LOG(llevError,"player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
+	if ((tmp=GET_MAP_OB(m,nx,ny))==NULL) {
+	    /*	LOG(llevError,"player_move_attack: GET_MAP_OB returns NULL, but player can not more there.\n");*/
 	    return;
 	}
 
@@ -3279,7 +3279,7 @@ void kill_player(object *op)
 	 * on the space that might harm the player.
 	 */
 	will_kill_again=0;
-	for (tmp= get_map_ob(op->map, op->x, op->y); tmp; tmp=tmp->above) {
+	for (tmp= GET_MAP_OB(op->map, op->x, op->y); tmp; tmp=tmp->above) {
 	    if (tmp->type ==SPELL_EFFECT)
 		will_kill_again|=tmp->attacktype;
 	}
@@ -3584,7 +3584,7 @@ int stand_near_hostile( object *who ) {
 	if (mflags & P_OUT_OF_MAP) continue;
 	if (OB_TYPE_MOVE_BLOCK(who, GET_MAP_MOVE_BLOCK(m, x, y))) continue;
 
-	for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above) {
+	for(tmp=GET_MAP_OB(m,x,y);tmp;tmp=tmp->above) {
 	    if((player||friendly)
 	       &&QUERY_FLAG(tmp,FLAG_MONSTER)&&!QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE))
 		return 1;

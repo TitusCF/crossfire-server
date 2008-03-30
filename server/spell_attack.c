@@ -260,7 +260,7 @@ void check_bullet(object *op) {
     if (!(mflags&P_IS_ALIVE))
         return;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             tmp_tag = tmp->count;
             dam = hit_player(tmp, op->stats.dam, op, op->attacktype, 1);
@@ -624,7 +624,7 @@ static object *get_pointed_target(object *op, int dir, int range, int type) {
             return NULL;
 
         if (mflags&P_IS_ALIVE) {
-            for (target = get_map_ob(mp, x, y); target; target = target->above) {
+            for (target = GET_MAP_OB(mp, x, y); target; target = target->above) {
                 if (QUERY_FLAG(target->head ? target->head : target, FLAG_MONSTER)) {
                     return target;
                 }
@@ -842,7 +842,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
             if (mflags&P_OUT_OF_MAP)
                 continue;
             if (mflags&P_IS_ALIVE) {
-                for (tmp = get_map_ob(m, sx, sy); tmp; tmp = tmp->above) {
+                for (tmp = GET_MAP_OB(m, sx, sy); tmp; tmp = tmp->above) {
                     if (QUERY_FLAG(tmp, FLAG_ALIVE) || tmp->type == PLAYER)
                         break;
                 }
@@ -1041,7 +1041,7 @@ int mood_change(object *op, object *caster, object *spell) {
             if (!(mflags&P_IS_ALIVE))
                 continue;
 
-            for (tmp = get_map_ob(m, nx, ny); tmp; tmp = tmp->above)
+            for (tmp = GET_MAP_OB(m, nx, ny); tmp; tmp = tmp->above)
                 if (QUERY_FLAG(tmp, FLAG_MONSTER))
                     break;
 
@@ -1245,7 +1245,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
     }
 
     if (mflags&P_IS_ALIVE && spell->attacktype) {
-        for (target = get_map_ob(m, x, y); target; target = target->above)
+        for (target = GET_MAP_OB(m, x, y); target; target = target->above)
             if (QUERY_FLAG(target, FLAG_MONSTER)) {
                 /* oky doky. got a target monster. Lets make a blinding attack */
                 if (target->head)
@@ -1335,7 +1335,7 @@ int cast_cause_disease(object *op, object *caster, object *spell, int dir) {
         /* Only bother looking on this space if there is something living here */
         if (mflags&P_IS_ALIVE) {
             /* search this square for a victim */
-            for (walk = get_map_ob(m, x, y); walk; walk = walk->above) {
+            for (walk = GET_MAP_OB(m, x, y); walk; walk = walk->above) {
                 /* Flags for monster is set on head only, so get it now */
                 target_head = walk;
                 while (target_head->head)

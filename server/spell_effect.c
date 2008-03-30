@@ -457,7 +457,7 @@ int cast_polymorph(object *op, object *caster, object *spell_ob, int dir) {
             break;
 
         /* Get the top most object */
-        for(tmp = get_map_ob(m,x,y); tmp != NULL && tmp->above != NULL;
+        for(tmp = GET_MAP_OB(m,x,y); tmp != NULL && tmp->above != NULL;
             tmp = tmp->above);
 
         /* Now start polymorphing the objects, top down */
@@ -719,7 +719,7 @@ int probe(object *op, object *caster, object *spell_ob, int dir) {
 	    return 0;
 	}
 	if (mflags & P_IS_ALIVE) {
-	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+            for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
 		if(QUERY_FLAG(tmp, FLAG_ALIVE)&&(tmp->type==PLAYER||QUERY_FLAG(tmp, FLAG_MONSTER))) {
 		    draw_ext_info(NDI_UNIQUE, 0,op,
 				  MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
@@ -884,7 +884,7 @@ int cast_earth_to_dust(object *op,object *caster, object *spell_ob) {
 	     * type effects.
 	     */
 	    if (GET_MAP_MOVE_BLOCK(m, sx, sy)) {
-		for(tmp=get_map_ob(m, sx, sy);tmp!=NULL;tmp=next) {
+                for(tmp=GET_MAP_OB(m, sx, sy);tmp!=NULL;tmp=next) {
 		    next=tmp->above;
 		    if(tmp&&QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
 			hit_player(tmp,9998,op,AT_PHYSICAL,0);
@@ -2260,7 +2260,7 @@ int alchemy(object *op, object *caster, object *spell_ob)
 	    small_nuggets=0;
 	    large_nuggets=0;
 
-	    for(tmp=get_map_ob(mp,nx,ny);tmp!=NULL;tmp=next) {
+            for(tmp=GET_MAP_OB(mp,nx,ny);tmp!=NULL;tmp=next) {
 		next=tmp->above;
 		if (tmp->weight>0 && !QUERY_FLAG(tmp, FLAG_NO_PICK) &&
 		    !QUERY_FLAG(tmp, FLAG_ALIVE) &&
@@ -2459,7 +2459,7 @@ int cast_identify(object *op, object *caster, object *spell) {
      * was not fully used.
      */
     if (num_ident) {
-	for(tmp = get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+        for(tmp = GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
 	if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !tmp->invisible &&
 	    need_identify(tmp)) {
 
@@ -2531,7 +2531,7 @@ int cast_detection(object *op, object *caster, object *spell) {
 	     * down - that is easier than working up.
 	     */
 
-	    for (last=NULL, tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
+            for (last=NULL, tmp=GET_MAP_OB(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
 	    /* Shouldn't happen, but if there are no objects on a space, this
 	     * would happen.
 	     */
@@ -2739,7 +2739,7 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
     mflags = get_map_flags(m, &m, x, y, &x, &y);
 
     if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
-	for(plyr=get_map_ob(m, x, y); plyr!=NULL; plyr=plyr->above)
+        for(plyr=GET_MAP_OB(m, x, y); plyr!=NULL; plyr=plyr->above)
 	    if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
 		break;
     }
@@ -2749,7 +2749,7 @@ int cast_transfer(object *op,object *caster, object *spell, int dir) {
      * to anyone on top of us. This is used for the rune of transference mostly.
      */
     if(plyr==NULL)
-        for(plyr=get_map_ob(op->map,op->x,op->y); plyr!=NULL; plyr=plyr->above)
+        for(plyr=GET_MAP_OB(op->map,op->x,op->y); plyr!=NULL; plyr=plyr->above)
 	    if (plyr != op && QUERY_FLAG(plyr, FLAG_ALIVE))
 		break;
 
@@ -2810,7 +2810,7 @@ void counterspell(object *op,int dir)
     mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
     if (mflags & P_OUT_OF_MAP) return;
 
-    for(tmp=get_map_ob(m,sx,sy); tmp!=NULL; tmp=next) {
+    for(tmp=GET_MAP_OB(m,sx,sy); tmp!=NULL; tmp=next) {
 	next = tmp->above;
 
 	/* Need to look at the head object - otherwise, if tmp

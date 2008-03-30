@@ -307,7 +307,7 @@ static void check_infection(object *disease) {
 	for(j=y-range;j<=y+range;j++) {
 	    mflags = get_map_flags(map,&map2, i,j, &i2, &j2);
 	    if (!(mflags & P_OUT_OF_MAP) && (mflags & P_IS_ALIVE)) {
-		for(tmp=get_map_ob(map2,i2,j2);tmp;tmp=tmp->above) {
+                for(tmp=GET_MAP_OB(map2,i2,j2);tmp;tmp=tmp->above) {
 		    infect_object(tmp,disease,0);
 		}
 	    }

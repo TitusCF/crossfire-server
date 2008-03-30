@@ -186,7 +186,7 @@ object *find_nearest_living_creature(object *npc) {
 	if (mflags & P_OUT_OF_MAP) continue;
 
 	if (mflags & P_IS_ALIVE) {
-	    tmp=get_map_ob(m,nx,ny);
+	    tmp=GET_MAP_OB(m,nx,ny);
 	    while(tmp!=NULL && !QUERY_FLAG(tmp,FLAG_MONSTER)&&
 		  !QUERY_FLAG(tmp,FLAG_GENERATOR ) && tmp->type!=PLAYER)
                 tmp=tmp->above;
@@ -1661,7 +1661,7 @@ void npc_call_help(object *op) {
 	    if ((mflags & P_OUT_OF_MAP) || !(mflags & P_IS_ALIVE))
 		continue;
 
-	    for(npc = get_map_ob(m,sx,sy);npc!=NULL;npc=npc->above)
+	    for(npc = GET_MAP_OB(m,sx,sy);npc!=NULL;npc=npc->above)
 		if(QUERY_FLAG(npc, FLAG_ALIVE)&&QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
 		    npc->enemy = op->enemy;
 	}
@@ -1806,7 +1806,7 @@ static void rand_move (object *ob) {
 
 void check_earthwalls(object *op, mapstruct *m, int x, int y) {
     object *tmp;
-    for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
+    for (tmp = GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == EARTHWALL) {
 	    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL,1);
 	    return;
@@ -1816,7 +1816,7 @@ void check_earthwalls(object *op, mapstruct *m, int x, int y) {
 
 void check_doors(object *op, mapstruct *m, int x, int y) {
     object *tmp;
-    for (tmp = get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
+    for (tmp = GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->type == DOOR) {
 	    hit_player(tmp,1000,op,AT_PHYSICAL,1);
 	    return;
@@ -1928,7 +1928,7 @@ void communicate(object *op, const char *txt) {
 	mflags = get_map_flags(mp, &mp, x, y, &x, &y);
 	if (mflags & P_OUT_OF_MAP) continue;
 
-	for(npc = get_map_ob(mp,x,y); npc != NULL; npc = npc->above) {
+	for(npc = GET_MAP_OB(mp,x,y); npc != NULL; npc = npc->above) {
 	    if (npc->type == MAGIC_EAR) {
 		(void) talk_to_wall(op, npc, txt); /* Maybe exit after 1. success? */
 		if (orig_map != op->map) {

@@ -2800,7 +2800,7 @@ int command_style_map_info(object *op, char *params)
 	mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace)) + sizeof(mapstruct);
 	for (x=0; x<MAP_WIDTH(mp); x++) {
 	    for (y=0; y<MAP_HEIGHT(mp); y++) {
-		for (tmp=get_map_ob(mp, x, y); tmp!=NULL; tmp=tmp->above)
+		for (tmp=GET_MAP_OB(mp, x, y); tmp!=NULL; tmp=tmp->above)
 		    objects_used++;
 	    }
 	}

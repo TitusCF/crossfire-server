@@ -990,7 +990,7 @@ int use_alchemy(object* op)
     int did_alchemy = 0;
     char name[MAX_BUF];
 
-    for (tmp=get_map_ob(op->map, op->x, op->y); tmp != NULL;tmp=next) {
+    for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp != NULL;tmp=next) {
         next=tmp->above;
         if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {

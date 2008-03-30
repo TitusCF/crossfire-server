@@ -1460,7 +1460,7 @@ void* cfapi_map_message(int* type, ...)
 }
 
 /**
- * Wrapper for get_map_ob().
+ * Wrapper for GET_MAP_OB().
  * @param type
  * will be CFAPI_POBJECT.
  * @return
@@ -1486,7 +1486,7 @@ void* cfapi_map_get_object_at(int* type, ...)
     if (get_map_flags(map, &map, x, y, &sx, &sy) & P_OUT_OF_MAP)
         *robj = NULL;
     else
-        *robj = get_map_ob(map, sx, sy);
+        *robj = GET_MAP_OB(map, sx, sy);
     *type = CFAPI_POBJECT;
     return NULL;
 }

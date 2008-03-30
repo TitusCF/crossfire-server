@@ -139,7 +139,7 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
     for (i=0; i<MAP_WIDTH(applier->map); i++) {
         for (j=0; j<MAP_HEIGHT(applier->map); j++) {
 
-            stack  = get_map_ob(applier->map,i,j);
+            stack  = GET_MAP_OB(applier->map,i,j);
 
             while (stack) {
                 if (QUERY_FLAG(stack, FLAG_UNPAID)) {

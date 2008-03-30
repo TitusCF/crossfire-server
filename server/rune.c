@@ -82,7 +82,7 @@ int write_rune(object *op,object *caster, object *spell, int dir, const char *ru
 		      "Can't make a rune there!", NULL);
 	return 0;
     }
-    for(tmp=get_map_ob(m,nx,ny);tmp!=NULL;tmp=tmp->above)
+    for(tmp=GET_MAP_OB(m,nx,ny);tmp!=NULL;tmp=tmp->above)
 	if(tmp->type==RUNE) break;
 
     if(tmp){
@@ -350,7 +350,7 @@ int dispel_rune(object *op,object *caster, object *spell, object *skill, int dir
      */
     if (!skill) return 0;
 
-    for(tmp=get_map_ob(m,x, y); tmp!=NULL;  tmp=tmp->above)  {
+    for(tmp=GET_MAP_OB(m,x, y); tmp!=NULL;  tmp=tmp->above)  {
 	if(tmp->type==RUNE || tmp->type==TRAP) break;
 
 	/* we could put a probability chance here, but since nothing happens

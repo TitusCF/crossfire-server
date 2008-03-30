@@ -14,6 +14,23 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove obsolete get_map_ob define, replaced by GET_MAP_OB.
+ common/button.c map.c utils.c
+ include/map.h
+ plugins/common/plugin_common.c
+ random_maps/decor.c exit.c special.c standalone.c style.c treasure.c wall.c
+ server/alchemy.c apply.c attack.c c_wiz.c disease.c monster.c move.c pets.c
+  player.c plugins.c resurrection.c rune.c shop.c skill_util.c skills.c
+  spell_attack.c spell_effect.c spell_util.c time.c
+ socket/item.c
+ utils/bwp.c mapper.c
+ types/common/projectile.c
+ types/exit/exit.c
+ types/peacemaker/peacemaker.c
+ types/shop_inventory/shop_inventory.c
+ types/spell_effect/spell_effect.c
+Nicolas Weeger 2008-03-30
+
 Remove static buffer.
  server/player.c
 Nicolas Weeger 2008-03-30

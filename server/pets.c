@@ -140,7 +140,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	/* Only look on the space if there is something alive there. */
 	mflags = get_map_flags(nm, &nm, x, y, &x, &y);
 	if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
-	    for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+            for (tmp = GET_MAP_OB(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 
 	    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
@@ -209,7 +209,7 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	    /* Only look on the space if there is something alive there. */
 	    mflags = get_map_flags(nm, &nm, x,y, &x, &y);
 	    if (!(mflags & P_OUT_OF_MAP) && mflags & P_IS_ALIVE) {
-		for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above) {
+                for (tmp = GET_MAP_OB(nm, x, y); tmp != NULL; tmp = tmp->above) {
 		    object *tmp2 = tmp->head == NULL?tmp:tmp->head;
 		    if (QUERY_FLAG(tmp2,FLAG_ALIVE) && ((
 					!QUERY_FLAG(tmp2, FLAG_FRIENDLY) &&
@@ -409,7 +409,7 @@ void pet_move(object * ob)
 	    m = get_map_from_coord(part->map, &dx, &dy);
 	    if (!m) continue;
 
-	    for (ob2 = get_map_ob(m, dx, dy); ob2 != NULL; ob2 = ob2->above)
+            for (ob2 = GET_MAP_OB(m, dx, dy); ob2 != NULL; ob2 = ob2->above)
 	    {
 		object *new_ob;
 		new_ob = ob2->head?ob2->head:ob2;
@@ -590,7 +590,7 @@ void move_golem(object *op) {
 
 	if (mflags & P_OUT_OF_MAP) continue;
 
-	for(victim=get_map_ob(op->map,x,y);victim;victim=victim->above)
+        for(victim=GET_MAP_OB(op->map,x,y);victim;victim=victim->above)
 	    if(QUERY_FLAG(victim,FLAG_ALIVE)) break;
 
 	/* We used to call will_hit_self to make sure we don't

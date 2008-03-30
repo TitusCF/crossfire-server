@@ -305,7 +305,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
         if(lx >= 0 && ly >= 0 && lx < RP->Xsize && ly < RP->Ysize)
             /* don't bother searching this square unless the map says life exists.*/
             if(GET_MAP_FLAGS(map,lx,ly) & P_IS_ALIVE) {
-                object *the_monster=get_map_ob(map,lx,ly);
+                object *the_monster=GET_MAP_OB(map,lx,ly);
                 for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_MONSTER));the_monster=the_monster->above);
                 if(the_monster && QUERY_FLAG(the_monster,FLAG_MONSTER))
                     return the_monster;
@@ -463,7 +463,7 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
        set theMonsterToFind and return it. */
     layout[x][y]=1;
     if(GET_MAP_FLAGS(map,x,y) & P_IS_ALIVE) {
-        the_monster = get_map_ob(map,x,y);
+        the_monster = GET_MAP_OB(map,x,y);
         /* check off this point */
         for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_ALIVE));the_monster=the_monster->above);
         if(the_monster && QUERY_FLAG(the_monster,FLAG_ALIVE)) {
@@ -696,12 +696,12 @@ void find_enclosed_spot(mapstruct *map, int *cx, int *cy,RMParms *RP) {
 void remove_monsters(int x,int y,mapstruct *map) {
     object *tmp;
 
-    for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above)
+    for(tmp=GET_MAP_OB(map,x,y);tmp!=NULL;tmp=tmp->above)
         if(QUERY_FLAG(tmp,FLAG_ALIVE)) {
             if(tmp->head) tmp=tmp->head;
             remove_ob(tmp);
             free_object(tmp);
-            tmp=get_map_ob(map,x,y);
+            tmp=GET_MAP_OB(map,x,y);
             if(tmp==NULL) break;
         };
 }
@@ -774,7 +774,7 @@ static object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int 
  */
 static object *door_in_square(mapstruct *map,int x,int y) {
   object *tmp;
-  for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above)
+  for(tmp=GET_MAP_OB(map,x,y);tmp!=NULL;tmp=tmp->above)
     if(tmp->type == DOOR || tmp->type== LOCKED_DOOR) return tmp;
   return NULL;
 }

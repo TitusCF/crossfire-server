@@ -72,12 +72,12 @@ void nuke_map_region(mapstruct *map,int xstart,int ystart, int xsize, int ysize)
     object *tmp;
     for(i=xstart;i<xstart + xsize;i++)
         for(j=ystart;j<ystart +ysize;j++) {
-            for(tmp=get_map_ob(map,i,j);tmp!=NULL;tmp=tmp->above) {
+            for(tmp=GET_MAP_OB(map,i,j);tmp!=NULL;tmp=tmp->above) {
                 if(!QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
                 if(tmp->head) tmp=tmp->head;
                 remove_ob(tmp);
                 free_object(tmp);
-                tmp=get_map_ob(map,i,j);
+                tmp=GET_MAP_OB(map,i,j);
                 }
                 if(tmp==NULL) break;
             }
@@ -104,7 +104,7 @@ void include_map_in_map(mapstruct *dest_map, mapstruct *in_map,int x, int y) {
 
     for(i=0;i<MAP_WIDTH(in_map);i++)
         for(j=0;j<MAP_HEIGHT(in_map);j++) {
-            for(tmp=get_map_ob(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
+            for(tmp=GET_MAP_OB(in_map,i,j);tmp!=NULL;tmp=tmp->above) {
                 /* don't copy things with multiple squares:  must be dealt with
                    specially. */
                 if(tmp->head!=NULL) continue;

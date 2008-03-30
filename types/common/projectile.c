@@ -86,7 +86,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 
     /* only need to look for living creatures if this flag is set */
     if (mflags & P_IS_ALIVE) {
-	for (tmp = get_map_ob(m, new_x, new_y); tmp != NULL; tmp=tmp->above)
+	for (tmp = GET_MAP_OB(m, new_x, new_y); tmp != NULL; tmp=tmp->above)
 	     if (QUERY_FLAG(tmp, FLAG_ALIVE)) break;
 
 

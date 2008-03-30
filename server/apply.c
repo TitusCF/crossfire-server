@@ -1650,7 +1650,7 @@ void fix_auto_apply(mapstruct *m) {
 
     for(x=0;x<MAP_WIDTH(m);x++)
         for(y=0;y<MAP_HEIGHT(m);y++)
-            for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
+            for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
                 above=tmp->above;
 
                 if (tmp->inv) {
@@ -1737,7 +1737,7 @@ void fix_auto_apply(mapstruct *m) {
 
     for(x=0;x<MAP_WIDTH(m);x++)
         for(y=0;y<MAP_HEIGHT(m);y++)
-            for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
+            for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
                 if (tmp->above &&
                     (tmp->type == TRIGGER_BUTTON ||
                      tmp->type == TRIGGER_PEDESTAL))

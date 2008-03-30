@@ -307,7 +307,7 @@ int steal(object* op, int dir, object *skill)
 	return 0;
 
     /* Find the topmost object at this spot */
-    for(tmp = get_map_ob(m,x,y);
+    for(tmp = GET_MAP_OB(m,x,y);
 	tmp != NULL && tmp->above != NULL;
         tmp = tmp->above);
 
@@ -405,7 +405,7 @@ int pick_lock(object *pl, int dir, object *skill)
 	return 0;
     }
 
-    for(tmp=get_map_ob(pl->map,x,y); tmp; tmp=tmp->above)
+    for(tmp=GET_MAP_OB(pl->map,x,y); tmp; tmp=tmp->above)
 	if (tmp->type == DOOR || tmp->type == LOCKED_DOOR) break;
 
     if (!tmp) {
@@ -585,7 +585,7 @@ static int attempt_jump (object *pl, int dir, int spaces, object *skill) {
 	    return 0;
 	}
 
-	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above) {
+	for(tmp=GET_MAP_OB(m, x, y); tmp;tmp=tmp->above) {
 	    /* Jump into creature */
 	    if(QUERY_FLAG(tmp, FLAG_MONSTER)
 	    || (tmp->type==PLAYER && (!QUERY_FLAG(tmp, FLAG_WIZ) || !tmp->contr->hidden))) {
@@ -697,7 +697,7 @@ static int do_skill_detect_curse(object *pl, object *skill) {
 
     /* Check ground, too, but only objects the player could pick up. Cauldrons are exceptions,
      * you definitely want to know if they are cursed */
-    for(tmp=get_map_ob(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
+    for(tmp=GET_MAP_OB(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
 	if ((can_pick(pl, tmp) || QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) &&
 	    !QUERY_FLAG(tmp,FLAG_IDENTIFIED) &&
 	    !QUERY_FLAG(tmp,FLAG_KNOWN_CURSED)
@@ -735,7 +735,7 @@ static int do_skill_detect_magic(object *pl, object *skill) {
 	}
 
     /* Check ground, too, but like above, only if the object can be picked up*/
-    for(tmp=get_map_ob(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
+    for(tmp=GET_MAP_OB(pl->map,pl->x,pl->y);tmp;tmp=tmp->above)
         if (can_pick(pl, tmp) &&
 	    !QUERY_FLAG(tmp,FLAG_IDENTIFIED) &&
 	    !QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL)
@@ -848,7 +848,7 @@ static int do_skill_ident(object *pl, int obj_class, object *skill) {
         if (mflags & P_OUT_OF_MAP) continue;
 
         if( can_see_monsterP(m,pl->x,pl->y,i) ){
-            for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above){
+            for(tmp=GET_MAP_OB(m,x,y);tmp;tmp=tmp->above){
                 success+=do_skill_ident2(tmp,pl,obj_class, skill);
             }
         }
@@ -977,7 +977,7 @@ int use_oratory(object *pl, int dir, object *skill) {
 	return 0;
     }
 
-    for(tmp=get_map_ob(m,x,y);tmp;tmp=tmp->above) {
+    for(tmp=GET_MAP_OB(m,x,y);tmp;tmp=tmp->above) {
         /* can't persuade players - return because there is nothing else
 	 * on that space to charm.  Same for multi space monsters and
 	 * special monsters - we don't allow them to be charmed, and there
@@ -1118,7 +1118,7 @@ int singing(object *pl, int dir, object *skill) {
 	if (mflags & P_OUT_OF_MAP) continue;
 	if (!(mflags & P_IS_ALIVE)) continue;
 
-	for(tmp=get_map_ob(m, x, y); tmp;tmp=tmp->above) {
+	for(tmp=GET_MAP_OB(m, x, y); tmp;tmp=tmp->above) {
 	    if(QUERY_FLAG(tmp,FLAG_MONSTER)) break;
 	    /* can't affect players */
             if(tmp->type==PLAYER) break;
@@ -1198,7 +1198,7 @@ int find_traps (object *pl, object *skill) {
 	if (mflags & P_OUT_OF_MAP) continue;
 
         /*  Check everything in the square for trapness */
-        for(tmp = get_map_ob(m, x, y); tmp!=NULL;tmp=tmp->above) {
+        for(tmp = GET_MAP_OB(m, x, y); tmp!=NULL;tmp=tmp->above) {
 
             /* And now we'd better do an inventory traversal of each
              * of these objects' inventory
@@ -1259,7 +1259,7 @@ int remove_trap (object *op, object *skill) {
 	if (mflags & P_OUT_OF_MAP) continue;
 
 	/* Check everything in the square for trapness */
-	for(tmp = get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) {
+	for(tmp = GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above) {
 	    /* And now we'd better do an inventory traversal of each
 	     * of these objects inventory.  Like above, only
 	     * do this for interesting objects.

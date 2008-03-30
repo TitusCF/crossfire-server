@@ -1404,7 +1404,7 @@ int is_in_shop(object *ob) {
  */
 int coords_in_shop(mapstruct *map, int x, int y) {
     object *floor;
-    for (floor = get_map_ob (map, x, y); floor; floor = floor->above)
+    for (floor = GET_MAP_OB (map, x, y); floor; floor = floor->above)
         if (floor->type == SHOP_FLOOR)
             return 1;
     return 0;

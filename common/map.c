@@ -576,7 +576,7 @@ static void link_multipart_objects(mapstruct *m)
 
     for(x=0;x<MAP_WIDTH(m);x++)
         for(y=0;y<MAP_HEIGHT(m);y++)
-            for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
+            for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
                 above=tmp->above;
 
                 /* already multipart - don't do anything more */
@@ -652,7 +652,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
         for (j=0;j<m->height;j++){
             unique =0;
             /* check for unique items, or unique squares */
-            for (otmp = get_map_ob(m, i, j); otmp; otmp = otmp->above) {
+            for (otmp = GET_MAP_OB(m, i, j); otmp; otmp = otmp->above) {
                 if (QUERY_FLAG(otmp, FLAG_UNIQUE))
                     unique = 1;
                 if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
@@ -688,7 +688,7 @@ int save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     for(i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++) {
             unique=0;
-            for(op = get_map_ob (m, i, j); op; op = otmp) {
+            for(op = GET_MAP_OB (m, i, j); op; op = otmp) {
                 otmp = op->above;
 
                 if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
@@ -1304,7 +1304,7 @@ static void delete_unique_items(mapstruct *m)
     for(i=0; i<MAP_WIDTH(m); i++)
         for(j=0; j<MAP_HEIGHT(m); j++) {
             unique=0;
-            for (op=get_map_ob(m, i, j); op; op=next) {
+            for (op=GET_MAP_OB(m, i, j); op; op=next) {
                 next = op->above;
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
                     unique=1;
@@ -1859,7 +1859,7 @@ int calculate_difficulty(mapstruct *m) {
 
     for(x=0;x<MAP_WIDTH(m);x++)
         for(y=0;y<MAP_HEIGHT(m);y++)
-            for(op=get_map_ob(m,x,y);op!=NULL;op=op->above) {
+            for(op=GET_MAP_OB(m,x,y);op!=NULL;op=op->above) {
                 if(QUERY_FLAG(op,FLAG_MONSTER))
                     total_exp+=op->stats.exp;
                 if(QUERY_FLAG(op,FLAG_GENERATOR)) {
@@ -2075,7 +2075,7 @@ void update_position(mapstruct *m, int x, int y) {
 
     memset(layers, 0, MAP_LAYERS * sizeof(object*));
 
-    for (tmp = get_map_ob (m, x, y); tmp; tmp = tmp->above) {
+    for (tmp = GET_MAP_OB (m, x, y); tmp; tmp = tmp->above) {
 
         /* DMs just don't do anything when hidden, including no light. */
         if (QUERY_FLAG(tmp, FLAG_WIZ) && tmp->contr->hidden)

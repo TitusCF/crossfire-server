@@ -194,8 +194,6 @@ extern const char *map_layer_name[MAP_LAYERS];
 #define GET_MAP_OB(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].bottom )
 /** Gets the top object on a map. Not multitile aware. */
 #define GET_MAP_TOP(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].top )
-/** legacy @todo remove */
-#define get_map_ob		GET_MAP_OB
 
 /** Sets the bottom object on a map. Not multitile aware. */
 #define SET_MAP_OB(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )

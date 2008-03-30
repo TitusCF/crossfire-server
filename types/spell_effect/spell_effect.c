@@ -878,7 +878,7 @@ static void check_spell_knockback(object *op) {
         /*LOG(llevDebug, "DEBUG: arch weighs %d and masses %d (%s,level %d)\n", op->weight, weight_move, op->name, op->level);*/
     }
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
         int num_sections = 1;
 
         /* don't move DM */

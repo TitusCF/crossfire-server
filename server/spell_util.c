@@ -489,7 +489,7 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
     object *op;
 
     if(OUT_OF_REAL_MAP(m,x,y)) return 0;
-    for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
+    for(op=GET_MAP_OB(m,x,y);op!=NULL;op=op->above)
 	if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
 			       (rndm(0, 99)) < 90-(sp_op->level/10)))
 	return 1;
@@ -562,7 +562,7 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 
     if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(mp, x, y))) return 0;
 
-    for(tmp=get_map_ob(mp,x,y);tmp!=NULL;tmp=tmp->above) {
+    for(tmp=GET_MAP_OB(mp,x,y);tmp!=NULL;tmp=tmp->above) {
 	/* If there is a counterspell on the space, and this
 	 * object is using magic, don't progess.  I believe we could
 	 * leave this out and let in progress, and other areas of the code
@@ -798,7 +798,7 @@ object *find_target_for_friendly_spell(object *op,int dir) {
             tmp=NULL;
         else
         {
-            for(tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above)
+            for(tmp=GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above)
             {
                 if(tmp->type==PLAYER)
                     break;
@@ -807,7 +807,7 @@ object *find_target_for_friendly_spell(object *op,int dir) {
     }
     /* didn't find a player there, look in current square for a player */
     if(tmp==NULL)
-        for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
+        for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
         {
             if(tmp->type==PLAYER)
                 break;
@@ -866,7 +866,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
 	mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
 	if (mflags & (P_OUT_OF_MAP | P_BLOCKSVIEW)) continue;
 
-	tmp=get_map_ob(mp,nx,ny);
+        tmp=GET_MAP_OB(mp,nx,ny);
 
 	while(tmp!=NULL && (
              ((owner_type==PLAYER && !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR) && !(tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL)))

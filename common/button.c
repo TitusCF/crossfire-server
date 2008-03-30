@@ -844,7 +844,7 @@ void do_mood_floor(object *op, object *op2) {
         case 4:			/* charm all monsters */
             if(op == op2) break; 	     /* only if 'connected' */
 
-            for(tmp2=get_map_ob(op2->map,op2->x,op2->y); /* finding an owner */
+            for(tmp2=GET_MAP_OB(op2->map,op2->x,op2->y); /* finding an owner */
             tmp2->type!=PLAYER;tmp2=tmp2->above)
             if(tmp2->above==NULL) break;
 

@@ -241,7 +241,7 @@ static void generate_monster(object *gen) {
 	    children = 0;
 	    for(x = 0; x < MAP_WIDTH(gen->map); x++){
 		for(y = 0; y < MAP_HEIGHT(gen->map); y++){
-		    for(tmp = get_map_ob(gen->map,x,y);
+		    for(tmp = GET_MAP_OB(gen->map,x,y);
 			tmp!=NULL; tmp=tmp->above){
 			value = get_ob_key_value(tmp, "generator_code");
 			if(value && value == code){
@@ -396,7 +396,7 @@ static void move_detector(object *op)
         return;
     }
 
-    for(tmp = get_map_ob(op->map, op->x, op->y); tmp!=NULL ;tmp = tmp->above) {
+    for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL ;tmp = tmp->above) {
         if (op->stats.hp) {
             for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
                 if (op->slaying == tmp2->name) {
@@ -810,7 +810,7 @@ void move_player_mover(object *op) {
     /* Determine direction now for random movers so we do the right thing */
     if (!dir) dir=rndm(1, 8);
 
-    for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
+    for(victim=GET_MAP_OB(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
 	if(QUERY_FLAG(victim, FLAG_ALIVE) && !QUERY_FLAG(victim, FLAG_WIZPASS) &&
 	   (victim->move_type & op->move_type || !victim->move_type)) {
 
@@ -832,7 +832,7 @@ void move_player_mover(object *op) {
 
 	    if (should_director_abort(op, victim)) return ;
 
-	    for(nextmover=get_map_ob(m,nx, ny); nextmover !=NULL; nextmover=nextmover->above) {
+	    for(nextmover=GET_MAP_OB(m,nx, ny); nextmover !=NULL; nextmover=nextmover->above) {
 		if(nextmover->type == PLAYERMOVER)
 		    nextmover->speed_left=-.99;
 		if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {
@@ -1006,7 +1006,7 @@ void move_marker(object *op) {
     if (!op->map){
         return;
     }
-    for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+    for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
 	if(tmp->type == PLAYER) { /* we've got someone to MARK */
 
 	    /* cycle through his inventory to look for the MARK we want to

@@ -538,7 +538,7 @@ object* cf_object_change_map(object* op, mapstruct* m, object* originator, int f
 }
 
 /**
- * Wrapper for get_map_ob().
+ * Wrapper for GET_MAP_OB().
  * @copydoc GET_MAP_OB()
  */
 object* cf_map_get_object_at(mapstruct* m, int x, int y)

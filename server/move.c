@@ -266,7 +266,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 	    /* Perhaps this should be extended to support tiled maps */
 	    if(OUT_OF_REAL_MAP(teleporter->map,teleporter->x+i,teleporter->y+j))
 		continue;
-	    other_teleporter=get_map_ob(teleporter->map,
+	    other_teleporter=GET_MAP_OB(teleporter->map,
                                   teleporter->x+i,teleporter->y+j);
 
 	    while (other_teleporter) {
@@ -400,7 +400,7 @@ static int try_fit (object *op, mapstruct *m, int x, int y)
 	if (mflags & P_OUT_OF_MAP)
 	    return 1;
 
-	for (tmp = get_map_ob (m2, tx, ty); tmp; tmp=tmp->above) {
+	for (tmp = GET_MAP_OB (m2, tx, ty); tmp; tmp=tmp->above) {
 	    if (tmp->head == op || tmp == op)
 		continue;
 
@@ -461,7 +461,7 @@ static int roll_ob(object *op,int dir, object *pusher) {
 
     /* If the target space is not blocked, no need to look at the objects on it */
     if ((op->move_type & move_block) == op->move_type) {
-	for (tmp=get_map_ob(m, x, y); tmp!=NULL; tmp=tmp->above) {
+	for (tmp=GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above) {
 	if (tmp->head == op)
 	    continue;
 	if (OB_MOVE_BLOCK(op, tmp) && !roll_ob(tmp,dir,pusher))

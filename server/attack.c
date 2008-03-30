@@ -344,7 +344,7 @@ int hit_map(object *op, int dir, int type, int full_hit) {
 	type &= ~AT_CHAOS;
     }
 
-    next = get_map_ob (map, x, y);
+    next = GET_MAP_OB (map, x, y);
     if (next)
 	next_tag = next->count;
 
@@ -678,7 +678,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
 	   map = hitter->map;
 	   if (out_of_map(map, hitter->x, hitter->y))
 	       return;
-	   next = get_map_ob(map, hitter->x, hitter->y);
+           next = GET_MAP_OB(map, hitter->x, hitter->y);
 	   if (next)
 	       while(next) {
 		   if (next->type == SPELL_EFFECT &&

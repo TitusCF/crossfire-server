@@ -345,7 +345,7 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
     archetype * wall_arch=0;
 
     /* first find the wall */
-    for(the_wall = get_map_ob(the_map,i,j);the_wall!=NULL;the_wall=the_wall->above)
+    for(the_wall = GET_MAP_OB(the_map,i,j);the_wall!=NULL;the_wall=the_wall->above)
         if ((the_wall->move_type & MOVE_WALK) && the_wall->type!=EXIT && the_wall->type!=TELEPORTER)
             break;
 
