@@ -2711,37 +2711,39 @@ static void remove_unpaid_objects(object *op, object *env)
  *
  * @param op
  * player.
+ * @param buf2
+ * buffer to write the text to. Mustn't be NULL.
+ * @param len
+ * length of buf2.
  * @return
- * pointer a static string containing gravestone text.
- * @todo remove static buffer, use safe string functions.
+ * buf2, containing gravestone text.
  */
-static const char *gravestone_text (object *op)
+static const char *gravestone_text (object *op, char* buf2, int len)
 {
-    static char buf2[MAX_BUF];
     char buf[MAX_BUF];
     time_t now = time (NULL);
 
-    strcpy (buf2, "                 R.I.P.\n\n");
+    strncpy(buf2, "                 R.I.P.\n\n", len);
     if (op->type == PLAYER)
-        sprintf (buf, "%s the %s\n", op->name, op->contr->title);
+        snprintf(buf, sizeof(buf), "%s the %s\n", op->name, op->contr->title);
     else
-        sprintf (buf, "%s\n", op->name);
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
+        snprintf(buf, sizeof(buf), "%s\n", op->name);
+    strncat(buf2, "                    ",  20 - strlen (buf) / 2);
+    strncat(buf2, buf, len - strlen(buf2) - 1);
     if (op->type == PLAYER)
-        sprintf (buf, "who was in level %d when killed\n", op->level);
+        snprintf(buf, sizeof(buf), "who was in level %d when killed\n", op->level);
     else
-        sprintf (buf, "who was in level %d when died.\n\n", op->level);
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
+        snprintf(buf, sizeof(buf), "who was in level %d when died.\n\n", op->level);
+    strncat(buf2, "                    ",  20 - strlen (buf) / 2);
+    strncat(buf2, buf, len - strlen(buf2) - 1);
     if (op->type == PLAYER) {
-        sprintf (buf, "by %s.\n\n", op->contr->killer);
-        strncat (buf2, "                    ",  21 - strlen (buf) / 2);
-        strcat (buf2, buf);
+        snprintf(buf, sizeof(buf), "by %s.\n\n", op->contr->killer);
+        strncat(buf2, "                    ",  21 - strlen (buf) / 2);
+        strncat(buf2, buf, len - strlen(buf2) - 1);
     }
     strftime (buf, MAX_BUF, "%b %d %Y\n", localtime (&now));
-    strncat (buf2, "                    ",  20 - strlen (buf) / 2);
-    strcat (buf2, buf);
+    strncat(buf2, "                    ",  20 - strlen (buf) / 2);
+    strncat(buf2, buf, len - strlen(buf2) - 1);
     return buf2;
 }
 
@@ -3365,7 +3367,7 @@ void kill_player(object *op)
 	tmp->x=x;tmp->y=y;
 	if (tmp->msg)
 	    free_string(tmp->msg);
-	tmp->msg = add_string (gravestone_text(op));
+	tmp->msg = add_string (gravestone_text(op, buf, sizeof(buf)));
 	SET_FLAG (tmp, FLAG_UNIQUE);
 	insert_ob_in_map (tmp, map, NULL,0);
     }
