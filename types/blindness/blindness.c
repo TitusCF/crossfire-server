@@ -51,7 +51,7 @@ void init_type_blindness(void)
  */
 static method_ret blindness_type_process(ob_methods *context, object *op) {
     if(--op->stats.food > 0)
-        return;
+        return METHOD_OK;
     CLEAR_FLAG(op, FLAG_APPLIED);
     if(op->env!=NULL) {
         change_abil(op->env,op);
