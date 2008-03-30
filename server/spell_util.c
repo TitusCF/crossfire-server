@@ -1037,7 +1037,7 @@ static void prayer_failure(object *op, int failure, int power)
     {
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 		      "Your diety touches your mind!", NULL);
-	confuse_player(op,op,99);
+        confuse_living(op,op,99);
     }
     else if (failure <= -60 && failure> -150) /* paralysis */
     {
@@ -1046,7 +1046,7 @@ static void prayer_failure(object *op, int failure, int power)
 		     "%s requires you to pray NOW. You comply, ignoring all else.",
 		     godname);
 
-	paralyze_player(op,op,99);
+        paralyze_living(op,op,99);
     }
     else if (failure <= -150) /* blast the immediate area */
     {
@@ -1091,13 +1091,13 @@ void spell_failure(object *op, int failure,int power, object *skill)
     {
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 		      "Your magic recoils on you, making you confused!", NULL);
-	confuse_player(op,op,99);
+        confuse_living(op,op,99);
     }
     else if (failure <= -60 && failure> -80) /* paralysis */
     {
 	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
 		      "Your magic stuns you!", NULL);
-	paralyze_player(op,op,99);
+        paralyze_living(op,op,99);
     }
     else if (failure <= -80) /* blast the immediate area */
     {

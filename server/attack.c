@@ -46,12 +46,12 @@
 
 /*#define ATTACK_DEBUG*/
 
-static void slow_player(object *op, object *hitter, int dam);
-static void deathstrike_player(object *op, object *hitter, int *dam);
+static void slow_living(object *op, object *hitter, int dam);
+static void deathstrike_living(object *op, object *hitter, int *dam);
 static int adj_attackroll(object *hitter, object *target);
 static int is_aimed_missile(object *op);
 static int did_make_save_item(object *op, int type, object *originator);
-static void poison_player(object *op, object *hitter, int dam);
+static void poison_living(object *op, object *hitter, int dam);
 
 /**
  * Cancels object *op.  Cancellation basically means an object loses
@@ -1307,15 +1307,15 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
 		!did_make_save(op, level_diff,  op->resist[attacknum]/10)) {
 
 		/* Player has been hit by something */
-		if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,dam);
-		else if (attacknum == ATNR_POISON) poison_player(op,hitter,dam);
-		else if (attacknum == ATNR_SLOW) slow_player(op,hitter,dam);
-		else if (attacknum == ATNR_PARALYZE) paralyze_player(op,hitter,dam);
+		if (attacknum == ATNR_CONFUSION) confuse_living(op,hitter,dam);
+                else if (attacknum == ATNR_POISON) poison_living(op,hitter,dam);
+                else if (attacknum == ATNR_SLOW) slow_living(op,hitter,dam);
+                else if (attacknum == ATNR_PARALYZE) paralyze_living(op,hitter,dam);
 		else if (attacknum == ATNR_FEAR) scare_creature(op, hitter);
 		else if (attacknum == ATNR_CANCELLATION) cancellation(op);
 		else if (attacknum == ATNR_DEPLETE) drain_stat(op);
 		else if (attacknum == ATNR_BLIND  && !QUERY_FLAG(op,FLAG_UNDEAD) &&
-		   !QUERY_FLAG(op,FLAG_GENERATOR)) blind_player(op,hitter,dam);
+                    !QUERY_FLAG(op,FLAG_GENERATOR)) blind_living(op,hitter,dam);
 	    }
 	    dam = 0; /* These are all effects and don't do real damage */
 	}
@@ -1456,7 +1456,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                       undead? */
       } break;
     case ATNR_DEATH:
-	deathstrike_player(op, hitter, &dam);
+        deathstrike_living(op, hitter, &dam);
 	break;
     case ATNR_CHAOS:
         query_name(op, name_op, MAX_BUF);
@@ -2165,10 +2165,8 @@ int hit_player(object *op,int dam, object *hitter, int type, int full_hit) {
  * who is attacking.
  * @param dam
  * damage to deal.
- * @todo
- * rename to poison_living?
  */
-static void poison_player(object *op, object *hitter, int dam)
+static void poison_living(object *op, object *hitter, int dam)
 {
     archetype *at = find_archetype("poisoning");
     object *tmp=present_arch_in_ob(at,op);
@@ -2239,10 +2237,8 @@ static void poison_player(object *op, object *hitter, int dam)
  * who is attacking.
  * @param dam
  * damage to deal.
- * @todo
- * rename to slow_living?
  */
-static void slow_player(object *op,object *hitter,int dam)
+static void slow_living(object *op,object *hitter,int dam)
 {    archetype *at = find_archetype("slowness");
     object *tmp;
     if(at == NULL) {
@@ -2269,10 +2265,8 @@ static void slow_player(object *op,object *hitter,int dam)
  * who is attacking.
  * @param dam
  * damage to deal.
- * @todo
- * rename to confuse_living?
  */
-void confuse_player(object *op, object *hitter, int dam)
+void confuse_living(object *op, object *hitter, int dam)
 {
     object *tmp;
     int maxduration;
@@ -2310,10 +2304,8 @@ void confuse_player(object *op, object *hitter, int dam)
  * who is attacking.
  * @param dam
  * damage to deal.
- * @todo
- * rename to blind_living?
  */
-void blind_player(object *op, object *hitter, int dam)
+void blind_living(object *op, object *hitter, int dam)
 {
     object *tmp,*owner;
     char victim[MAX_BUF];
@@ -2357,10 +2349,8 @@ void blind_player(object *op, object *hitter, int dam)
  * who is attacking.
  * @param dam
  * damage to deal.
- * @todo
- * rename to paralyze_living?
  */
-void paralyze_player(object *op, object *hitter, int dam)
+void paralyze_living(object *op, object *hitter, int dam)
 {
     float effect,max;
     /* object *tmp; */
@@ -2414,7 +2404,7 @@ void paralyze_player(object *op, object *hitter, int dam)
  * @param[out] dam
  * damage to deal, will contain computed damage or 0 if strike failed.
  */
-static void deathstrike_player(object *op, object *hitter, int *dam)
+static void deathstrike_living(object *op, object *hitter, int *dam)
 {
     int atk_lev, def_lev, kill_lev;
 

@@ -2701,7 +2701,7 @@ static void charge_mana_effect(object *victim, int caster_level)
     else if (victim->stats.sp >= victim->stats.maxsp*1.5) {
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,
 		      "Chaos fills your world.", NULL);
-        confuse_player(victim, victim, 99);
+        confuse_living(victim, victim, 99);
     }
     else if (victim->stats.sp >= victim->stats.maxsp*1.25) {
         draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SPELL, MSG_TYPE_SPELL_TARGET,

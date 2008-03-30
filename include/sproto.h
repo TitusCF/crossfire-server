@@ -26,9 +26,9 @@ int attack_ob(object *op, object *hitter);
 object *hit_with_arrow(object *op, object *victim);
 int friendly_fire(object *op, object *hitter);
 int hit_player(object *op, int dam, object *hitter, int type, int full_hit);
-void confuse_player(object *op, object *hitter, int dam);
-void blind_player(object *op, object *hitter, int dam);
-void paralyze_player(object *op, object *hitter, int dam);
+void confuse_living(object *op, object *hitter, int dam);
+void blind_living(object *op, object *hitter, int dam);
+void paralyze_living(object *op, object *hitter, int dam);
 /* ban.c */
 int checkbanned(const char *login, const char *host);
 /* build_map.c */

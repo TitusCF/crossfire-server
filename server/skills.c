@@ -1633,13 +1633,13 @@ static int write_scroll (object *pl, object *scroll, object *skill) {
 	    if(random_roll(0, 1, pl, PREFER_LOW)==1)
 		drain_specific_stat(pl,4);
 	    else {
-	        confuse_player(pl,pl,99);
+                confuse_living(pl,pl,99);
 		return (-30*chosen_spell->level);
 	    }
 	} else if(random_roll(0, pl->stats.Int-1, pl, PREFER_HIGH) < 15) {
 	    draw_ext_info(NDI_UNIQUE,0,pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 		"Your attempt to write a new scroll rattles your mind!", NULL);
-	    confuse_player(pl,pl,99);
+            confuse_living(pl,pl,99);
 	} else
 	    draw_ext_info(NDI_UNIQUE,0,pl,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
 			  "You fail to write a new scroll.", NULL);

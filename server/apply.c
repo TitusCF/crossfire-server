@@ -1856,7 +1856,7 @@ void scroll_failure(object *op, int failure, int power)
             draw_ext_info(NDI_UNIQUE, 0,op,
                           MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils on you!", NULL);
-            confuse_player(op,op,power);
+            confuse_living(op,op,power);
             return;
         }
 
@@ -1864,7 +1864,7 @@ void scroll_failure(object *op, int failure, int power)
             draw_ext_info(NDI_UNIQUE, 0,op,
                           MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils and paralyzes you!", NULL);
-            paralyze_player(op,op,power);
+            paralyze_living(op,op,power);
             return;
         }
 
@@ -1872,7 +1872,7 @@ void scroll_failure(object *op, int failure, int power)
             draw_ext_info(NDI_UNIQUE, 0,op,
                           MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils on you!", NULL);
-            blind_player(op,op,power);
+            blind_living(op,op,power);
             return;
         }
 
