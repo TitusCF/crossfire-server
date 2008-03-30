@@ -1,12 +1,31 @@
+/*
+    CrossFire, A Multiplayer game for X-windows
 
+    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
+    Copyright (C) 1992 Frank Tore Johansen
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The authors can be reached via e-mail at crossfire-devel@real-time.com
+*/
 
 /**
  * @file
  * General maze generator.
  * @author
  * peterm@langmuir.eecs.berkeley.edu
- * @todo
- * remove global variables.
  */
 
 /* we need to maintain a list of wall points to generate
@@ -20,12 +39,18 @@
 #include <time.h>
 
 
+/** Contains free walls in the map. */
+typedef struct free_walls_struct {
+    int *wall_x_list;       /**< X coordinates of free spots for walls. */
+    int *wall_y_list;       /**< Y coordinates of free spots for walls. */
+    int wall_free_size;     /**< Number of items in wall_x_list and wall_y_list. */
+} free_walls_struct;
 
-/* global variables that everyone needs:  don't want to pass them in
-   as parameters every time. */
-int *wall_x_list=0;     /**< X coordinates of free spots for walls. */
-int *wall_y_list=0;     /**< Y coordinates of free spots for walls. */
-int wall_free_size=0;   /**< Number of items in wall_x_list and wall_y_list. */
+static void fill_maze_full(char **maze,int x,int y,int xsize,int ysize, free_walls_struct*);
+static void fill_maze_sparse(char **maze,int x,int y,int xsize,int ysize, free_walls_struct*);
+static void make_wall_free_list(int xsize,int ysize, free_walls_struct*);
+static void pop_wall_point(int *x, int *y, free_walls_struct*);
+static int find_free_point(char **maze,int *x,int *y,int xc, int yc,int xsize,int ysize);
 
 /**
  * This function generates a random blocked maze with the property that there is only one path from one spot
@@ -42,6 +67,7 @@ int wall_free_size=0;   /**< Number of items in wall_x_list and wall_y_list. */
 */
 char **maze_gen(int xsize, int ysize,int option) {
     int i,j;
+    struct free_walls_struct free_walls;
 
     /* allocate that array, set it up */
     char **maze = (char **)calloc(sizeof(char*),xsize);
@@ -57,26 +83,28 @@ char **maze_gen(int xsize, int ysize,int option) {
 
 
     /* find how many free wall spots there are */
-    wall_free_size = 2 * (xsize-4) + 2*(ysize-4);
+    free_walls.wall_free_size = 2 * (xsize-4) + 2*(ysize-4);
+    free_walls.wall_x_list = NULL;
+    free_walls.wall_y_list = NULL;
 
-    make_wall_free_list(xsize, ysize);
+    make_wall_free_list(xsize, ysize, &free_walls);
 
     /* return the empty maze */
-    if(wall_free_size <=0 ) return maze;
+    if(free_walls.wall_free_size <=0 ) return maze;
 
     /* recursively generate the walls of the maze */
     /* first pop a random starting point */
-    while (wall_free_size > 0) {
-        pop_wall_point(&i,&j);
+    while (free_walls.wall_free_size > 0) {
+        pop_wall_point(&i,&j, &free_walls);
         if(option)
-            fill_maze_full(maze,i,j,xsize,ysize);
+            fill_maze_full(maze,i,j,xsize,ysize, &free_walls);
         else
-            fill_maze_sparse(maze,i,j,xsize,ysize);
+            fill_maze_sparse(maze,i,j,xsize,ysize, &free_walls);
     }
 
     /* clean up our intermediate data structures. */
-    free(wall_x_list);
-    free(wall_y_list);
+    free(free_walls.wall_x_list);
+    free(free_walls.wall_y_list);
 
     return maze;
 }
@@ -88,34 +116,36 @@ char **maze_gen(int xsize, int ysize,int option) {
  * @param xsize
  * @param ysize
  * size of the map.
+ * @param free_walls
+ * structure to initialise. free_walls_struct::wall_free_size must be initialised.
  */
-void make_wall_free_list(int xsize, int ysize) {
+static void make_wall_free_list(int xsize, int ysize, free_walls_struct* free_walls) {
     int i,j,count;
 
     count = 0;  /* entries already placed in the free list */
     /*allocate it*/
-    if(wall_free_size < 0) return;
-    wall_x_list = (int *) calloc(sizeof(int),wall_free_size);
-    wall_y_list = (int *) calloc(sizeof(int),wall_free_size);
+    if(free_walls->wall_free_size < 0) return;
+    free_walls->wall_x_list = (int *) calloc(sizeof(int), free_walls->wall_free_size);
+    free_walls->wall_y_list = (int *) calloc(sizeof(int), free_walls->wall_free_size);
 
 
     /* top and bottom wall */
     for(i = 2; i<xsize-2; i++) {
-        wall_x_list[count] = i;
-        wall_y_list[count] = 0;
+        free_walls->wall_x_list[count] = i;
+        free_walls->wall_y_list[count] = 0;
         count++;
-        wall_x_list[count] = i;
-        wall_y_list[count] = ysize-1;
+        free_walls->wall_x_list[count] = i;
+        free_walls->wall_y_list[count] = ysize-1;
         count++;
     }
 
     /* left and right wall */
     for(j = 2; j<ysize-2; j++) {
-        wall_x_list[count] = 0;
-        wall_y_list[count] = j;
+        free_walls->wall_x_list[count] = 0;
+        free_walls->wall_y_list[count] = j;
         count++;
-        wall_x_list[count] = xsize-1;
-        wall_y_list[count] = j;
+        free_walls->wall_x_list[count] = xsize-1;
+        free_walls->wall_y_list[count] = j;
         count++;
     }
 }
@@ -125,15 +155,17 @@ void make_wall_free_list(int xsize, int ysize) {
  * @param[out] x
  * @param[out] y
  * coordinates of the point.
+ * @param free_walls
+ * free walls list.
  */
-void pop_wall_point(int *x,int *y) {
-    int index = RANDOM() % wall_free_size;
-    *x = wall_x_list[index];
-    *y = wall_y_list[index];
+static void pop_wall_point(int *x,int *y, free_walls_struct* free_walls) {
+    int index = RANDOM() % free_walls->wall_free_size;
+    *x = free_walls->wall_x_list[index];
+    *y = free_walls->wall_y_list[index];
     /* write the last array point here */
-    wall_x_list[index]=wall_x_list[wall_free_size-1];
-    wall_y_list[index]=wall_y_list[wall_free_size-1];
-    wall_free_size--;
+    free_walls->wall_x_list[index]=free_walls->wall_x_list[free_walls->wall_free_size-1];
+    free_walls->wall_y_list[index]=free_walls->wall_y_list[free_walls->wall_free_size-1];
+    free_walls->wall_free_size--;
 }
 
 /**
@@ -154,7 +186,7 @@ void pop_wall_point(int *x,int *y) {
  * @return
  * -1 if no free spot, 0 else.
  */
-int find_free_point(char **maze,int *x, int *y,int xc,int yc, int xsize, int ysize) {
+static int find_free_point(char **maze,int *x, int *y,int xc,int yc, int xsize, int ysize) {
 
     /* we will randomly pick from this list, 1=up,2=down,3=right,4=left */
     int dirlist[4];
@@ -265,22 +297,24 @@ int find_free_point(char **maze,int *x, int *y,int xc,int yc, int xsize, int ysi
  * @param xsize
  * @param ysize
  * maze size.
+ * @param free_walls
+ * free walls list.
  */
-void fill_maze_full(char **maze, int x, int y, int xsize, int ysize ) {
+static void fill_maze_full(char **maze, int x, int y, int xsize, int ysize, free_walls_struct* free_walls) {
     int xc,yc;
 
     /* write a wall here */
     maze[x][y] = '#';
 
     /* decide if we're going to pick from the wall_free_list */
-    if(RANDOM()%4 && wall_free_size > 0) {
-        pop_wall_point(&xc,&yc);
-        fill_maze_full(maze,xc,yc,xsize,ysize);
+    if(RANDOM()%4 && free_walls->wall_free_size > 0) {
+        pop_wall_point(&xc,&yc, free_walls);
+        fill_maze_full(maze,xc,yc,xsize,ysize, free_walls);
     }
 
     /* change the if to a while for a complete maze.  */
     while(find_free_point(maze,&xc,&yc,x,y,xsize,ysize)!=-1) {
-        fill_maze_full(maze,xc,yc,xsize,ysize);
+        fill_maze_full(maze,xc,yc,xsize,ysize, free_walls);
     }
 }
 
@@ -296,21 +330,23 @@ void fill_maze_full(char **maze, int x, int y, int xsize, int ysize ) {
  * @param xsize
  * @param ysize
  * maze size.
+ * @param free_walls
+ * free walls list.
  */
-void fill_maze_sparse(char **maze, int x, int y, int xsize, int ysize ) {
+static void fill_maze_sparse(char **maze, int x, int y, int xsize, int ysize, free_walls_struct* free_walls) {
     int xc,yc;
 
     /* write a wall here */
     maze[x][y] = '#';
 
     /* decide if we're going to pick from the wall_free_list */
-    if(RANDOM()%4 && wall_free_size > 0) {
-        pop_wall_point(&xc,&yc);
-        fill_maze_sparse(maze,xc,yc,xsize,ysize);
+    if(RANDOM()%4 && free_walls->wall_free_size > 0) {
+        pop_wall_point(&xc,&yc, free_walls);
+        fill_maze_sparse(maze,xc,yc,xsize,ysize, free_walls);
     }
 
     /* change the if to a while for a complete maze.  */
     if(find_free_point(maze,&xc,&yc,x,y,xsize,ysize)!=-1) {
-        fill_maze_sparse(maze,xc,yc,xsize,ysize);
+        fill_maze_sparse(maze,xc,yc,xsize,ysize, free_walls);
     }
 }

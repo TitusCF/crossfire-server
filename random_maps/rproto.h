@@ -22,11 +22,6 @@ extern char **map_gen_spiral(int xsize, int ysize, int option);
 extern void connect_spirals(int xsize, int ysize, int sym, char **layout);
 /* maze_gen.c */
 extern char **maze_gen(int xsize, int ysize, int option);
-extern void make_wall_free_list(int xsize, int ysize);
-extern void pop_wall_point(int *x, int *y);
-extern int find_free_point(char **maze, int *x, int *y, int xc, int yc, int xsize, int ysize);
-extern void fill_maze_full(char **maze, int x, int y, int xsize, int ysize);
-extern void fill_maze_sparse(char **maze, int x, int y, int xsize, int ysize);
 /* floor.c */
 extern mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP);
 /* wall.c */
