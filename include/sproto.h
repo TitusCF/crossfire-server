@@ -18,7 +18,6 @@ void fix_auto_apply(mapstruct *m);
 void scroll_failure(object *op, int failure, int power);
 void apply_changes_to_player(object *pl, object *change);
 void legacy_apply_container(object *op, object *sack);
-int legacy_is_legal_2ways_exit(object *op, object *exit);
 /* attack.c */
 void save_throw_object(object *op, int type, object *originator);
 int hit_map(object *op, int dir, int type, int full_hit);

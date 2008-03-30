@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Move function is_legal_2ways_exit() to relevant file, remove legacy function.
+ include/sproto.h
+ server/apply.c
+ types/exit/exit.c
+Nicolas Weeger 2008-03-30
+
 Extract blindness to its own file.
  include/sproto.h typesproto.h
  server/ob_types.c time.c

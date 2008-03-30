@@ -455,81 +455,6 @@ void do_forget_spell (object *op, const char *spell)
 }
 
 /**
- * This fonction return true if the exit is not a 2 ways one
- * or it is 2 ways, valid exit.
- * A valid 2 way exit means:
- *  - You can come back (there is another exit at the other side)
- *  - You are
- *     - the owner of the exit
- *     - or in the same party as the owner
- *
- * @note
- * a owner in a 2 way exit is saved as the owner's name
- * in the field exit->name cause the field exit->owner doesn't
- * survive in the swapping (in fact the whole exit doesn't survive).
- *
- * @param op
- * player to check for.
- * @param exit
- * exit object.
- * @return
- * 1 if exit is not 2 way, 0 else.
- */
-static int is_legal_2ways_exit (object* op, object *exit)
-{
-    object * tmp;
-    object * exit_owner;
-    player * pp;
-    mapstruct * exitmap;
-    if (exit->stats.exp!=1) return 1; /*This is not a 2 way, so it is legal*/
-    if (!has_been_loaded(EXIT_PATH(exit)) && exit->race) return 0; /* This is a reset town portal */
-        /* To know if an exit has a correspondant, we look at
-         * all the exits in destination and try to find one with same path as
-         * the current exit's position */
-    if (!strncmp(EXIT_PATH (exit), settings.localdir,
-                 strlen(settings.localdir)))
-        exitmap = ready_map_name(EXIT_PATH (exit), MAP_PLAYER_UNIQUE);
-    else exitmap = ready_map_name(EXIT_PATH (exit), 0);
-    if (exitmap)
-    {
-        tmp=get_map_ob (exitmap,EXIT_X(exit),EXIT_Y(exit));
-        if (!tmp) return 0;
-        for ( (tmp=get_map_ob(exitmap,EXIT_X(exit),EXIT_Y(exit)));
-              tmp;tmp=tmp->above) {
-            if (tmp->type!=EXIT) continue;  /*Not an exit*/
-            if (!EXIT_PATH (tmp)) continue; /*Not a valid exit*/
-            if ( (EXIT_X(tmp)!=exit->x) || (EXIT_Y(tmp)!=exit->y))
-                continue; /*Not in the same place*/
-            if (strcmp(exit->map->path,EXIT_PATH(tmp))!=0)
-                continue; /*Not in the same map*/
-
-                /* From here we have found the exit is valid. However
-                 * we do here the check of the exit owner. It is important
-                 * for the town portals to prevent strangers from visiting
-                 * your apartments
-                 */
-            if (!exit->race) return 1;  /*No owner, free for all!*/
-            exit_owner=NULL;
-            for (pp=first_player;pp;pp=pp->next){
-                if (!pp->ob) continue;
-                if (pp->ob->name!=exit->race) continue;
-                exit_owner= pp->ob; /*We found a player which correspond to the player name*/
-                break;
-            }
-            if (!exit_owner) return 0;    /* No more owner*/
-            if (exit_owner->contr==op->contr) return 1;  /*It is your exit*/
-            if  ( exit_owner &&   /*There is a owner*/
-                  (op->contr) &&  /*A player tries to pass */
-                  ( (exit_owner->contr->party==NULL) || /*No pass if controller has no party*/
-                    (exit_owner->contr->party!=op->contr->party)) ) /* Or not the same as op*/
-                return 0;
-            return 1;
-        }
-    }
-    return 0;
-}
-
-/**
  * Checks if an item is restricted to a race. Non players and DMs can always apply.
  *
  * @param who
@@ -1996,8 +1921,4 @@ void apply_changes_to_player(object *pl, object *change) {
 void legacy_apply_container(object* op, object* sack)
 {
     apply_container(op, sack);
-}
-int legacy_is_legal_2ways_exit(object* op, object* exit)
-{
-    return is_legal_2ways_exit(op, exit);
 }
