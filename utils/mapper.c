@@ -1212,6 +1212,34 @@ static void add_map_to_quest(struct_map_info* map, const char* name, const char*
 }
 
 /**
+ * Sorts 2 struct_map_in_quest, on the map's name or path.
+ * @param left
+ * @param right
+ * items to compare.
+ * @return
+ * -1, 0 or 1.
+ */
+static int sort_struct_map_in_quest(const void* left, const void* right) {
+    int c;
+
+    const struct_map_in_quest* l = *(const struct_map_in_quest**)left;
+    const struct_map_in_quest* r = *(const struct_map_in_quest**)right;
+    const struct_map_info* ml = l->map;
+    const struct_map_info* mr = r->map;
+
+    if (ml->tiled_group)
+        ml = ml->tiled_group;
+    if (mr->tiled_group)
+        mr = mr->tiled_group;
+
+    c = strcasecmp(ml->name, mr->name);
+    if (c)
+        return c;
+
+    return strcasecmp(ml->path, mr->path);
+}
+
+/**
  * Sets the main map for a quest.
  *
  * @param name
@@ -1332,6 +1360,7 @@ static void write_quests_page() {
     printf("Writing quest index...");
 
     for (quest = 0; quest < quests_count; quest++) {
+        qsort(quests[quest]->maps.list, quests[quest]->maps.count, sizeof(struct_map_in_quest*), sort_struct_map_in_quest);
         for (map = 0; map < quests[quest]->maps.count; map++) {
             snprintf(mappath, sizeof(mappath), "%s.html", quests[quest]->maps.list[map]->map->path + 1);
             map_vals[1] = quests[quest]->maps.list[map]->map->name;
