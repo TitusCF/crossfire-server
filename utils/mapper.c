@@ -2435,7 +2435,7 @@ void write_map_page(struct_map_info* map) {
     char exit_path[500];
     char maplevel[5];
     FILE* out;
-    char questpath[500];
+    char questpath[500], questtemp[500];
 
     const char* quest_vars[] = { "NAME", "PATH", "TEXT", NULL };
     const char* quest_vals[] = { NULL, questpath, NULL, NULL };
@@ -2548,7 +2548,8 @@ void write_map_page(struct_map_info* map) {
         quest = NULL;
         for (q = 0; q < map->quests.count; q++) {
             quest_vals[0] = map->quests.list[q]->quest->name;
-            relative_path(map->path, "/quests.html", questpath);
+            relative_path(map->path, "/quests.html", questtemp);
+            snprintf(questpath, sizeof(questpath), "%s#quest_%d", questtemp, map->quests.list[q]->quest->number);
             quest_vals[2] = map->quests.list[q]->description;
             quest = cat_template(quest, do_template(map_one_quest_template, quest_vars, quest_vals));
         }
