@@ -72,17 +72,12 @@ static int compare_A(const void *a, const void *b)
  * length of commarray.
  * @return
  * matching command, NULL for no match.
- * @todo move the lowercase conversion to execute_newserver_command() for performance reasons.
  */
-static command_array_struct *find_command_element(char *cmd,
+static command_array_struct *find_command_element(const char *cmd,
                                                   command_array_struct *commarray,
                                                   int commsize)
 {
     command_array_struct *asp, dummy;
-    char *cp;
-
-    for (cp=cmd; *cp; cp++)
-        *cp =tolower(*cp);
 
     dummy.name =cmd;
     asp =(command_array_struct *)bsearch((void *)&dummy,
@@ -107,7 +102,7 @@ static command_array_struct *find_command_element(char *cmd,
 int execute_newserver_command(object *pl, char *command)
 {
     command_array_struct *csp;
-    char *cp;
+    char *cp, *low;
 
     pl->contr->has_hit=0;
 
@@ -124,6 +119,9 @@ int execute_newserver_command(object *pl, char *command)
         *(cp++) ='\0';
         while (*cp==' ') cp++;
     }
+
+    for (low = command; *low; low++)
+        *low = tolower(*low);
 
     csp = find_plugin_command(command,pl);
 

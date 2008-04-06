@@ -13,6 +13,9 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Move conversion to lower case to calling function.
+ server/c_new.c
+Nicolas Weeger 2008-04-06
 
 Link to quest's definition instead of the page itself.
  utils/mapper.c
