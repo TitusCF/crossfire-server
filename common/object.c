@@ -2709,11 +2709,8 @@ object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
  * where to search. Must be valid position.
  * @return
  * first matching object, or NULL if none matches.
- *
- * @todo
- * type should be the same type as object::type.
  */
-object *present(unsigned char type,mapstruct *m, int x,int y) {
+object *present(uint8 type,mapstruct *m, int x,int y) {
     object *tmp;
     if(out_of_map(m,x,y)) {
         LOG(llevError,"Present called outside map.\n");
@@ -2735,7 +2732,7 @@ object *present(unsigned char type,mapstruct *m, int x,int y) {
  * @return
  * first matching object, or NULL if none matches.
  */
-object *present_in_ob(unsigned char type, const object *op) {
+object *present_in_ob(uint8 type, const object *op) {
     object *tmp;
     for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
         if(tmp->type==type)
