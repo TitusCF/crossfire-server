@@ -203,6 +203,7 @@ extern void register_apply(int ob_type, apply_func method);
 extern void register_process(int ob_type, process_func method);
 extern void register_describe(int ob_type, describe_func method);
 extern void register_move_on(int ob_type, move_on_func method);
+extern void register_trigger(int ob_type, trigger_func method);
 /* object.c */
 extern int can_merge(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);
