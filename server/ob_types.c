@@ -38,19 +38,11 @@
 #include <sproto.h>
 #endif
 
-/** Registered method handlers. */
-ob_methods type_methods[OBJECT_TYPE_MAX];
-
 /**
- * Initializes the type_methods structure and runs the intialization functions
- * for all individual types.
- * @param base_type The default ob_methods fallback for all types
+ * Calls the intialization functions for all individual types.
+ * @todo this should probably be moved to a file in the types/ directory, to separate types and server.
  */
-void init_ob_types(ob_methods *base_type) {
-    int tmp;
-    for (tmp=0; tmp < OBJECT_TYPE_MAX; tmp++)
-        init_ob_method_struct(&type_methods[tmp], base_type);
-
+void register_all_ob_types() {
     /* init_type_foobar() here, where foobar is for a type. In other words,
      * from here, call functions that register object methods for types.
      */
@@ -102,42 +94,4 @@ void init_ob_types(ob_methods *base_type) {
     init_type_trigger_button();
     init_type_trigger_pedestal();
     init_type_weapon_improver();
-}
-
-/* Functions for registering methods for types */
-/**
- * Registers the apply method for the given type.
- * @param ob_type The type of object to register this method to
- * @param method The method to link
- */
-void register_apply(int ob_type, apply_func method)
-{
-    type_methods[ob_type].apply = method;
-}
-/**
- * Registers the process method for the given type.
- * @param ob_type The type of object to register this method to
- * @param method The method to link
- */
-void register_process(int ob_type, process_func method)
-{
-    type_methods[ob_type].process = method;
-}
-/**
- * Registers the describe method for the given type.
- * @param ob_type The type of object to register this method to
- * @param method The method to link
- */
-void register_describe(int ob_type, describe_func method)
-{
-    type_methods[ob_type].describe = method;
-}
-/**
- * Registers the move_on method for the given type.
- * @param ob_type The type of object to register this method to
- * @param method The method to link
- */
-void register_move_on(int ob_type, move_on_func method)
-{
-    type_methods[ob_type].move_on = method;
 }

@@ -2,9 +2,9 @@
 extern void free_all_anim(void);
 extern void init_anim(void);
 extern int find_animation(const char *name);
-extern int try_find_animation(const char* name);
+extern int try_find_animation(const char *name);
 extern void animate_object(object *op, int dir);
-extern void apply_anim_suffix(object* who, sstring suffix);
+extern void apply_anim_suffix(object *who, sstring suffix);
 /* arch.c */
 extern archetype *find_archetype_by_object_name(const char *name);
 extern archetype *find_archetype_by_object_type_name(int type, const char *name);
@@ -25,8 +25,8 @@ extern object *arch_to_object(archetype *at);
 extern object *create_singularity(const char *name);
 extern object *create_archetype(const char *name);
 extern unsigned long hasharch(const char *str, int tablesize);
-extern archetype *find_archetype(const char *name);
 extern archetype *try_find_archetype(const char *name);
+extern archetype *find_archetype(const char *name);
 extern object *object_create_arch(archetype *at);
 /* button.c */
 extern void trigger_connected(objectlink *ol, object *cause, const int state);
@@ -190,6 +190,18 @@ extern mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y);
 extern void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flags);
 extern void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const object *op2, rv_vector *retval, int flags);
 extern int on_same_map(const object *op1, const object *op2);
+/* ob_methods.c */
+extern method_ret ob_apply(object *op, object *applier, int aflags);
+extern method_ret ob_process(object *op);
+extern char *ob_describe(const object *op, const object *observer, char *buf, int size);
+extern method_ret ob_move_on(object *op, object *victim, object *originator);
+/* ob_types.c */
+extern void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
+extern void init_ob_types(ob_methods *base_type);
+extern void register_apply(int ob_type, apply_func method);
+extern void register_process(int ob_type, process_func method);
+extern void register_describe(int ob_type, describe_func method);
+extern void register_move_on(int ob_type, move_on_func method);
 /* object.c */
 extern int can_merge(object *ob1, object *ob2);
 extern signed long sum_weight(object *op);
@@ -233,7 +245,7 @@ extern void add_weight(object *op, signed long weight);
 extern object *insert_ob_in_ob(object *op, object *where);
 extern int check_move_on(object *op, object *originator);
 extern object *present_arch(const archetype *at, mapstruct *m, int x, int y);
-extern object *present(uint8, mapstruct *m, int x, int y);
+extern object *present(uint8 type, mapstruct *m, int x, int y);
 extern object *present_in_ob(uint8 type, const object *op);
 extern object *present_in_ob_by_name(int type, const char *str, const object *op);
 extern object *present_arch_in_ob(const archetype *at, const object *op);
@@ -259,7 +271,7 @@ extern const char *get_ob_key_value(const object *op, const char *const key);
 extern int set_ob_key_value(object *op, const char *key, const char *value, int add_key);
 extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object *tmp);
-extern void get_multi_size(object *, int *, int *, int *, int *);
+extern void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy);
 /* path.c */
 extern char *path_combine(const char *src, const char *dst, char *path, int size);
 extern void path_normalize(char *path);
@@ -340,6 +352,14 @@ extern void free_string(sstring str);
 extern void ss_dump_statistics(char *buf, int size);
 extern char *ss_dump_table(int what, char *buf, int size);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
+/* stringbuffer.c */
+extern StringBuffer *stringbuffer_new(void);
+extern char *stringbuffer_finish(StringBuffer *sb);
+extern sstring stringbuffer_finish_shared(StringBuffer *sb);
+extern void stringbuffer_finish_socklist(StringBuffer *sb, SockList *sl);
+extern void stringbuffer_append_string(StringBuffer *sb, const char *str);
+extern void stringbuffer_append_printf(StringBuffer *sb, const char *format, ...);
+extern void stringbuffer_append_stringbuffer(StringBuffer *sb, const StringBuffer *sb2);
 /* time.c */
 extern const char *get_periodofday(const int index);
 extern const char *get_month_name(const int index);

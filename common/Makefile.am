@@ -44,6 +44,8 @@ libcross_a_SOURCES = \
 	logger.c\
 	los.c\
 	map.c\
+	ob_methods.c \
+	ob_types.c \
 	object.c\
 	path.c\
 	porting.c\

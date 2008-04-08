@@ -204,6 +204,7 @@
  * - add command line argument for large / small picture size
  * - add maximum width/height for small picture
  * - add slaying information to maps themselves
+ * - make the equipment page use templates
  */
 
 #include <time.h>
@@ -3811,11 +3812,6 @@ void dragon_ability_gain( object* ob, int x, int y )
 
 void set_darkness_map( mapstruct* m)
 {
-}
-
-method_ret ob_move_on(object* op, object* victim, object* originator)
-{
-    return METHOD_OK;
 }
 
 object* find_skill_by_number(object *who, int skillno)

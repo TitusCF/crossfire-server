@@ -341,18 +341,9 @@ int teleport(object *teleporter, uint8 tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
 /* ob_methods.c */
-void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 void init_ob_methods(void);
-method_ret ob_apply(object *op, object *applier, int aflags);
-method_ret ob_process(object *op);
-char *ob_describe(const object *op, const object *observer, char *buf, int size);
-method_ret ob_move_on(object *op, object *victim, object *originator);
 /* ob_types.c */
-void init_ob_types(ob_methods *base_type);
-void register_apply(int ob_type, apply_func method);
-void register_process(int ob_type, process_func method);
-void register_describe(int ob_type, describe_func method);
-void register_move_on(int ob_type, move_on_func method);
+void register_all_ob_types(void);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
@@ -409,7 +400,7 @@ int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 /* plugins.c */
-int user_event(object* op, object* activator, object* third, const char* message, int fix);
+int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
 int execute_global_event(int eventcode, ...);
 int plugins_init_plugin(const char *libfile);
@@ -503,7 +494,7 @@ void *cfapi_region_get_property(int *type, ...);
 void *cfapi_friendlylist_get_next(int *type, ...);
 void *cfapi_set_random_map_variable(int *type, ...);
 void *cfapi_generate_random_map(int *type, ...);
-void* cfapi_object_user_event(int* type, ...);
+void *cfapi_object_user_event(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
 /* resurrection.c */
@@ -519,7 +510,6 @@ int trap_disarm(object *disarmer, object *trap, int risk, object *skill);
 void trap_adjust(object *trap, int difficulty);
 /* shop.c */
 uint64 query_cost(const object *tmp, object *who, int flag);
-StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer* buf);
 uint64 query_money(const object *op);
 int pay_for_amount(uint64 to_pay, object *pl);
 int pay_for_item(object *op, object *pl);
@@ -624,7 +614,7 @@ int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, int immune_stop
 int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int dir, object *spell);
 void regenerate_rod(object *rod);
 void drain_rod_charge(object *rod);
-void drain_wand_charge(object* wand);
+void drain_wand_charge(object *wand);
 object *find_target_for_friendly_spell(object *op, int dir);
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude);
 int summon_hostile_monsters(object *op, int n, const char *monstername);
@@ -665,8 +655,9 @@ int cftimer_destroy(int id);
 int cftimer_find_free_id(void);
 void cftimer_init(void);
 /* weather.c */
-void tick_the_clock(void);
 void set_darkness_map(mapstruct *m);
+void tick_the_clock(void);
+int similar_direction(int a, int b);
 /* server.c */
 void version(object *op);
 void start_info(object *op);
