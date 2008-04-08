@@ -13,6 +13,25 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+New 'ob_trigger' object function.
+ common/ob_methods.c ob_types.c
+ include/libproto.h ob_methods.h
+Nicolas Weeger 2008-04-08
+
+Move most of the object system's logic to common, to prepare for more refactoring
+and easier calling from the common library.
+ common/Makefile.am
+ include/libproto.h sproto.h
+ random_maps/standalone.c
+ server/ob_methods.c ob_types.c
+ test/unit/common/stubs_common.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
+ utils/bwp.c mapper.c
+Added files:
+ common/ob_methods.c ob_types.c: duplicated from server/ and cleaned
+Nicolas Weeger 2008-04-08
+
 Make type's type coherent.
  common/object.c
  include/libproto.h

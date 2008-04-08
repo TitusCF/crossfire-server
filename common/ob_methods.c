@@ -137,3 +137,27 @@ method_ret ob_move_on(object* op, object* victim, object* originator)
     }
     return METHOD_UNHANDLED;
 }
+
+/**
+ * An object is triggered by another one.
+ * @param op The object being triggered
+ * @param cause The object that is the cause of the trigger
+ * @param state trigger state, 0 for released, other for pushed
+ * @retval METHOD_UNHANDLED if the process method does not exist for that object
+ * @todo check the exact state values/meaning
+ */
+method_ret ob_trigger(object* op, object* cause, int state)
+{
+    method_ret ret;
+    ob_methods* methods;
+    for (methods = &type_methods[op->type]; methods; methods = methods->fallback)
+    {
+        if (methods->trigger)
+        {
+            ret = methods->trigger(methods, op, cause, state);
+            if (ret != METHOD_UNHANDLED)
+                return ret;
+        }
+    }
+    return METHOD_UNHANDLED;
+}

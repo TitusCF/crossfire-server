@@ -195,6 +195,7 @@ extern method_ret ob_apply(object *op, object *applier, int aflags);
 extern method_ret ob_process(object *op);
 extern char *ob_describe(const object *op, const object *observer, char *buf, int size);
 extern method_ret ob_move_on(object *op, object *victim, object *originator);
+extern method_ret ob_trigger(object* op, object* cause, int state);
 /* ob_types.c */
 extern void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 extern void init_ob_types(ob_methods *base_type);

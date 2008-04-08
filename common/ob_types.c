@@ -52,6 +52,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
     methods->process  = NULL;
     methods->describe = NULL;
     methods->move_on  = NULL;
+    methods->trigger  = NULL;
 }
 
 /**
@@ -104,4 +105,14 @@ void register_describe(int ob_type, describe_func method)
 void register_move_on(int ob_type, move_on_func method)
 {
     type_methods[ob_type].move_on = method;
+}
+
+/**
+ * Registers the trigger method for the given type.
+ * @param ob_type The type of object to register this method to
+ * @param method The method to link
+ */
+void register_trigger(int ob_type, trigger_func method)
+{
+    type_methods[ob_type].trigger = method;
 }
