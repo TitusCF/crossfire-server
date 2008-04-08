@@ -113,3 +113,5 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int
 void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
 /* legacy/process.c */
 method_ret legacy_ob_process(ob_methods *context, object *op);
+/* teleporter/teleporter.c */
+void init_type_teleporter(void);

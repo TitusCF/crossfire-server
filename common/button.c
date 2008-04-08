@@ -145,10 +145,6 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
                 }
                 break;
 
-            case TELEPORTER:
-                move_teleporter(tmp);
-                break;
-
             case CREATOR:
                 move_creator(tmp);
                 break;
@@ -160,6 +156,9 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
             case DUPLICATOR:
                 move_duplicator(tmp);
                 break;
+
+            default:
+                ob_trigger(tmp, cause, state);
         }
     }
 }

@@ -38,6 +38,7 @@ skillscroll/skillscroll.c \
 spell_effect/spell_effect.c \
 spellbook/spellbook.c \
 spinner/spinner.c \
+teleporter/teleporter.c \
 thrown_object/thrown_object.c \
 transport/transport.c \
 trap/common_trap.c \

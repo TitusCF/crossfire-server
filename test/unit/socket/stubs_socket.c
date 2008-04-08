@@ -9,10 +9,6 @@ void fix_auto_apply(mapstruct * m)
 {
 }
 
-void move_teleporter( object* ob)
-    {
-    }
-
 void move_firewall( object* ob)
     {
     }

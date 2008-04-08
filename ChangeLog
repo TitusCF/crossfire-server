@@ -14,6 +14,21 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Extract teleporter handling to its own type file.
+ common/button.c
+ include/sproto.h typesproto.h
+ random_maps/standalone.c
+ server/ob_types.c time.c
+ test/unit/common/stubs_common.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
+ utils/bwp.c mapper.c
+ types/legacy/process.c
+ types/Makefile.am
+New file:
+ types/teleporter/teleporter.c
+Nicolas Weeger 2008-04-08
+
 include/libproto.h: missing register_trigger prototype.
 Nicolas Weeger 2008-04-08
 

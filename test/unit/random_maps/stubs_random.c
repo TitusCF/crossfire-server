@@ -14,10 +14,6 @@ void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subty
     fprintf(logfile, "%s\n", txt);
     }
 
-void move_teleporter( object* ob)
-    {
-    }
-
 void move_firewall( object* ob)
     {
     }

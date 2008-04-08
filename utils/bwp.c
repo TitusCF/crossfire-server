@@ -826,9 +826,6 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_teleporter( object* ob){
-}
-
 void move_firewall( object* ob){
 }
 

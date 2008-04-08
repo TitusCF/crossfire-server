@@ -58,10 +58,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             remove_locked_door(op);
             return METHOD_OK;
 
-        case TELEPORTER:
-            move_teleporter(op);
-            return METHOD_OK;
-
         case GOLEM:
             move_golem(op);
             return METHOD_OK;

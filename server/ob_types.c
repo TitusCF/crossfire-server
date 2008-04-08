@@ -84,6 +84,7 @@ void register_all_ob_types() {
     init_type_spell_effect();
     init_type_spellbook();
     init_type_spinner();
+    init_type_teleporter();
     init_type_thrown_object();
     init_type_transport();
     init_type_trap();
