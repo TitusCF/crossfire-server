@@ -23,6 +23,7 @@ identify_altar/identify_altar.c \
 lamp/lamp.c \
 lighter/lighter.c \
 marker/marker.c \
+mood_floor/mood_floor.c \
 peacemaker/peacemaker.c \
 pedestal/pedestal.c \
 player_changer/player_changer.c \

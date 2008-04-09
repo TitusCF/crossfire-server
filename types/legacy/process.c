@@ -72,10 +72,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
                 animate_turning(op);
             return METHOD_OK;
 
-        case MOOD_FLOOR:
-            do_mood_floor(op, op);
-            return METHOD_OK;
-
         case TRIGGER_BUTTON:
         case TRIGGER_PEDESTAL:
         case TRIGGER_ALTAR:

@@ -113,10 +113,6 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
                 update_object(tmp,UP_OBJ_FACE);
                 break;
 
-            case MOOD_FLOOR:
-                do_mood_floor(tmp, cause);
-                break;
-
             case TIMED_GATE:
                 tmp->speed = tmp->arch->clone.speed;
                 update_ob_speed(tmp);  /* original values */
@@ -766,92 +762,6 @@ int get_button_value(const object *button) {
             if (ol->ob == button && ol->id == button->count)
                 return obp->value;
     return 0;
-}
-
-/** This routine makes monsters who are
- * standing on the 'mood floor' change their
- * disposition if it is different.
- * If floor is to be triggered must have
- * a speed of zero (default is 1 for all
- * but the charm floor type).
- * by b.t. thomas@nomad.astro.psu.edu
- * @param op
- * floor that activates
- * @param op2
- * object that caused op to activate. Should be either op (for floors with speed), or
- * a connected button a player pushed. Must not be NULL. Will be used for charming floors
- * to locate the player the monster will become a pet of.
- */
-void do_mood_floor(object *op, object *op2) {
-    object *tmp;
-    object *tmp2;
-
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp=tmp->above)
-        if (QUERY_FLAG(tmp, FLAG_MONSTER)) break;
-
-    /* doesn't effect players, and if there is a player on this space, won't also
-     * be a monster here.
-     */
-    if (!tmp || tmp->type == PLAYER) return;
-
-    switch(op->last_sp) {
-        case 0:			/* furious--make all monsters mad */
-            if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
-                CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) {
-                CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-                remove_friendly_object(tmp);
-                tmp->attack_movement = 0;
-                /* lots of checks here, but want to make sure we don't
-                 * dereference a null value
-                 */
-                if (tmp->type == GOLEM && tmp->owner && tmp->owner->type==PLAYER &&
-                    tmp->owner->contr->ranges[range_golem]==tmp) {
-                    tmp->owner->contr->ranges[range_golem]=NULL;
-                    tmp->owner->contr->golem_count = 0;
-                    }
-                    tmp->owner = 0;
-            }
-            break;
-
-        case 1: 			/* angry -- get neutral monsters mad */
-            if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&&
-               !QUERY_FLAG(tmp, FLAG_FRIENDLY))
-                CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            break;
-
-        case 2:			/* calm -- pacify unfriendly monsters */
-            if(!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) {
-                SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                tmp->enemy = NULL;
-            }
-            break;
-
-        case 3:			/* make all monsters fall asleep */
-            if(!QUERY_FLAG(tmp, FLAG_SLEEP))
-                SET_FLAG(tmp, FLAG_SLEEP);
-            break;
-
-        case 4:			/* charm all monsters */
-            if(op == op2) break; 	     /* only if 'connected' */
-
-            for(tmp2=GET_MAP_OB(op2->map,op2->x,op2->y); /* finding an owner */
-            tmp2->type!=PLAYER;tmp2=tmp2->above)
-            if(tmp2->above==NULL) break;
-
-            if (tmp2->type != PLAYER)
-                break;
-            set_owner(tmp,tmp2);
-            SET_FLAG(tmp,FLAG_MONSTER);
-            tmp->stats.exp = 0;
-            SET_FLAG(tmp, FLAG_FRIENDLY);
-            add_friendly_object (tmp);
-            tmp->attack_movement = PETMOVE;
-            break;
-
-        default:
-            break;
-    }
 }
 
 /**

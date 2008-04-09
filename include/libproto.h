@@ -43,7 +43,6 @@ extern void add_button_link(object *button, mapstruct *map, int connected);
 extern void remove_button_link(object *op);
 extern objectlink *get_button_links(const object *button);
 extern int get_button_value(const object *button);
-extern void do_mood_floor(object *op, object *op2);
 extern object *check_inv_recursive(object *op, const object *trig);
 extern void check_inv(object *op, object *trig);
 extern void verify_button_links(const mapstruct *map);

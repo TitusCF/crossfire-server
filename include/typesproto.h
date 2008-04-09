@@ -42,6 +42,8 @@ void init_type_lamp(void);
 void init_type_lighter(void);
 /* marker/marker.c */
 void init_type_marker(void);
+/* moodfloor/moodfloor.c */
+void init_type_mood_floor(void);
 /* peacemaker/peacemaker.c */
 void init_type_peacemaker(void);
 /* pedestal/pedestal.c */
