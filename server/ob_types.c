@@ -57,6 +57,7 @@ void register_all_ob_types() {
     init_type_clock();
     init_type_container();
     init_type_converter();
+    init_type_creator();
     init_type_deep_swamp();
     init_type_director();
     init_type_exit();

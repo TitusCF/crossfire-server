@@ -640,7 +640,6 @@ int free_no_drop(object *op);
 void move_firewall(object *op);
 void move_player_mover(object *op);
 void move_duplicator(object *op);
-void move_creator(object *creator);
 void move_marker(object *op);
 int process_object(object *op);
 void legacy_move_detector(object *op);

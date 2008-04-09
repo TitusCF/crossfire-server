@@ -20,6 +20,8 @@ void init_type_clock(void);
 void init_type_container(void);
 /* converter/converter.c */
 void init_type_converter(void);
+/* creator/creator.c */
+void init_type_creator(void);
 /* deep_swamp/deep_swamp.c */
 void init_type_deep_swamp(void);
 /* director/director.c */

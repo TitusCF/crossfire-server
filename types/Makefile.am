@@ -12,6 +12,7 @@ check_inv/check_inv.c \
 clock/clock.c \
 container/container.c \
 converter/converter.c \
+creator/creator.c \
 deep_swamp/deep_swamp.c \
 director/director.c \
 exit/exit.c \

@@ -26,10 +26,6 @@ void move_marker( object* ob)
     {
     }
 
-void move_creator( object* ob)
-    {
-    }
-
 void emergency_save( int x )
     {
     }

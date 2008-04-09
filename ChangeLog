@@ -13,6 +13,20 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Extract creator handling to its own type file.
+ common/button.c
+ include/sproto.h typesproto.h
+ random_maps/standalone.c
+ server/ob_types.c time.c
+ test/unit/common/stubs_common.c
+ test/unit/random_maps/stubs_random.c
+ test/unit/socket/stubs_socket.c
+ utils/bwp.c mapper.c
+ types/legacy/process.c
+ types/Makefile.am
+New file:
+ types/creator/creator.c
+Nicolas Weeger 2008-04-09
 
 Extract teleporter handling to its own type file.
  common/button.c
