@@ -17,10 +17,6 @@ void move_duplicator( object* ob)
     {
     }
 
-void move_marker( object* ob)
-    {
-    }
-
 void emergency_save( int x )
     {
     }

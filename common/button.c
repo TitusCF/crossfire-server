@@ -145,10 +145,6 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
                 }
                 break;
 
-            case TRIGGER_MARKER:
-                move_marker(tmp);
-                break;
-
             case DUPLICATOR:
                 move_duplicator(tmp);
                 break;

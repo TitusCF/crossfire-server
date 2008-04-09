@@ -98,10 +98,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
         case PLAYERMOVER:
             move_player_mover(op);
             return METHOD_OK;
-
-        case MARKER:
-            move_marker(op);
-            return METHOD_OK;
     }
     return METHOD_UNHANDLED;
 }

@@ -67,6 +67,7 @@ void register_all_ob_types() {
     init_type_identify_altar();
     init_type_lamp();
     init_type_lighter();
+    init_type_marker();
     init_type_peacemaker();
     init_type_pedestal();
     init_type_player_changer();
