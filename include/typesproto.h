@@ -24,6 +24,8 @@ void init_type_converter(void);
 void init_type_creator(void);
 /* deep_swamp/deep_swamp.c */
 void init_type_deep_swamp(void);
+/* detector/detector.c */
+void init_type_detector(void);
 /* director/director.c */
 void init_type_director(void);
 /* exit/exit.c */

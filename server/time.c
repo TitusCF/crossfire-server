@@ -366,87 +366,6 @@ static void remove_force(object *op) {
 }
 
 /**
- * Move a ::DETECTOR.
- *
- * - slaying:    name of the thing the detector is to look for
- * - speed:      frequency of 'glances'
- * - connected:  connected value of detector
- * - sp:         1 if detection sets buttons
- *              -1 if detection unsets buttons
- *
- * @param op
- * detector to move.
- */
-static void move_detector(object *op)
-{
-    object *tmp, *tmp2;
-    int last = op->value;
-    int detected;
-    detected = 0;
-
-    if (!op->slaying) {
-        if (op->map)
-            LOG(llevError, "Detector with no slaying set at %s (%d,%d)\n", op->map->path, op->x, op->y);
-        else if (op->env)
-            LOG(llevError, "Detector with no slaying in %s\n", op->env->name);
-        else
-            LOG(llevError, "Detector with no slaying nowhere?\n");
-        op->speed = 0;
-        update_ob_speed(op);
-        return;
-    }
-
-    for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL ;tmp = tmp->above) {
-        if (op->stats.hp) {
-            for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
-                if (op->slaying == tmp2->name) {
-                    detected=1;
-                    break;
-                }
-                if (tmp2->type==FORCE && tmp2->slaying == op->slaying) {
-                    detected=1;
-                    break;
-                }
-            }
-        }
-        if (op->slaying == tmp->name) {
-            detected = 1;
-            break;
-        }
-        if (tmp->type == PLAYER && !strcmp(op->slaying, "player")) {
-            detected = 1;
-            break;
-        }
-        if (tmp->type==SPECIAL_KEY && tmp->slaying==op->slaying) {
-            detected=1;
-            break;
-        }
-    }
-
-    /* the detector sets the button if detection is found */
-    if(op->stats.sp == 1)  {
-	if(detected && last == 0) {
-	    op->value = 1;
-	    push_button(op);
-	}
-	if(!detected && last == 1) {
-	    op->value = 0;
-	    push_button(op);
-	}
-    }
-    else { /* in this case, we unset buttons */
-	if(detected && last == 1) {
-	    op->value = 0;
-	    push_button(op);
-	}
-	if(!detected && last == 0) {
-	    op->value = 1;
-	    push_button(op);
-	}
-    }
-}
-
-/**
  * Animate a ::TRIGGER.
  *
  * @param op
@@ -902,10 +821,6 @@ int process_object(object *op) {
 	return 1;
     }
     return (ob_process(op) == METHOD_OK ? 1 : 0);
-}
-void legacy_move_detector(object *op)
-{
-    move_detector(op);
 }
 void legacy_remove_force(object *op)
 {

@@ -641,7 +641,6 @@ void move_firewall(object *op);
 void move_player_mover(object *op);
 void move_duplicator(object *op);
 int process_object(object *op);
-void legacy_move_detector(object *op);
 void legacy_remove_force(object *op);
 void legacy_animate_trigger(object *op);
 void legacy_move_hole(object *op);

@@ -78,10 +78,6 @@ method_ret legacy_ob_process(ob_methods *context, object *op)
             legacy_animate_trigger(op);
             return METHOD_OK;
 
-        case DETECTOR:
-            legacy_move_detector(op);
-            return METHOD_OK;
-
         case DIRECTOR:
             if (op->stats.maxsp)
                 animate_turning(op);

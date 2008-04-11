@@ -14,6 +14,7 @@ container/container.c \
 converter/converter.c \
 creator/creator.c \
 deep_swamp/deep_swamp.c \
+detector/detector.c \
 director/director.c \
 exit/exit.c \
 food/food.c \
