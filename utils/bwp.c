@@ -829,9 +829,6 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 void move_firewall( object* ob){
 }
 
-void move_duplicator( object* ob){
-}
-
 void emergency_save( int x ){
 }
 

@@ -61,6 +61,7 @@ void register_all_ob_types() {
     init_type_deep_swamp();
     init_type_detector();
     init_type_director();
+    init_type_duplicator();
     init_type_exit();
     init_type_food();
     init_type_gate();

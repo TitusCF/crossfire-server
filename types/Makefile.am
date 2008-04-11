@@ -16,6 +16,7 @@ creator/creator.c \
 deep_swamp/deep_swamp.c \
 detector/detector.c \
 director/director.c \
+duplicator/duplicator.c \
 exit/exit.c \
 food/food.c \
 gate/gate.c \

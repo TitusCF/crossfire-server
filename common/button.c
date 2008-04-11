@@ -141,10 +141,6 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
                 }
                 break;
 
-            case DUPLICATOR:
-                move_duplicator(tmp);
-                break;
-
             default:
                 ob_trigger(tmp, cause, state);
         }

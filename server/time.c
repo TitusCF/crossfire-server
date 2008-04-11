@@ -735,43 +735,6 @@ void move_player_mover(object *op) {
 }
 
 /**
- * Move for ::DUPLICATOR.
- *
- * Will duplicate a specified object placed on top of it.
- * - connected: what will trigger it.
- * - level: multiplier.  0 to destroy.
- * - other_arch: the object to look for and duplicate.
- *
- * @param op
- * duplicator.
- */
-void move_duplicator(object *op) {
-    object *tmp;
-
-    if ( !op->other_arch ) {
-        LOG(llevInfo, "Duplicator with no other_arch! %d %d %s\n", op->x, op->y, op->map ? op->map->path : "nullmap");
-        return;
-    }
-
-    if (op->above == NULL)
-	return;
-    for (tmp=op->above; tmp != NULL; tmp=tmp->above) {
-	if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
-	    if (op->level <= 0) {
-		remove_ob(tmp);
-		free_object(tmp);
-	    } else {
-		uint64 new_nrof = (uint64)tmp->nrof*op->level;
-		if (new_nrof >= 1UL<<31)
-		    new_nrof = 1UL<<31;
-		tmp->nrof = new_nrof;
-	    }
-	    break;
-	}
-    }
-}
-
-/**
  * Main object move function.
  *
  * @param op

@@ -28,6 +28,8 @@ void init_type_deep_swamp(void);
 void init_type_detector(void);
 /* director/director.c */
 void init_type_director(void);
+/* duplicator/duplicator.c */
+void init_type_duplicator(void);
 /* exit/exit.c */
 void init_type_exit(void);
 /* food/food.c */

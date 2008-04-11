@@ -200,10 +200,6 @@ void move_firewall( object* ob)
     {
     }
 
-void move_duplicator( object* ob)
-    {
-    }
-
 void emergency_save( int x )
     {
     }
