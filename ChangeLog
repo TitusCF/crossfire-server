@@ -13,6 +13,15 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+New plugin: random house generator. Check cfrhg.c for details.
+Still basic, but should be a good start.
+ configure.ac
+ plugins/Makefile.am
+Added:
+ cfrhg/include/cfrhg.h
+ cfrhg/cfrhg.c Makefile.am
+Nicolas Weeger 2008-04-12
+
 Extract duplicator handling to its own type file.
  common/button.c
  include/sproto.h typesproto.h
