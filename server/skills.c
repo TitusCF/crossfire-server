@@ -1700,10 +1700,11 @@ int write_on_item (object *pl,const char *params, object *skill) {
 	return 0;
     }
     if (msgtype != item->type) {
-	draw_ext_info_format(NDI_UNIQUE,0,pl,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-			     "You have no %s to write on",
-			     "You have no %s to write on",
-                         msgtype==BOOK ? "book" : "scroll");
+        draw_ext_info_format(NDI_UNIQUE,0,pl,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                             "You have no %s to write %s",
+                             "You have no %s to write %s",
+                         msgtype==BOOK ? "book" : "scroll",
+                         msgtype==BOOK ? "on" : "your spell down");
 	return 0;
     }
 

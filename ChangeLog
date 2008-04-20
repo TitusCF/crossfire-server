@@ -13,6 +13,11 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Provide a more explicit message when attempting to write down a spell with
+no marked scroll, as per bug #1910805.
+ server/skills.c
+Yann Chachkoff 2008-04-20
+
 New plugin: random house generator. Check cfrhg.c for details.
 Still basic, but should be a good start.
  configure.ac
