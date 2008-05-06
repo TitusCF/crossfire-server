@@ -1839,9 +1839,6 @@ mapstruct *ready_map_name(const char *name, int flags) {
  * map for which to compute difficulty.
  * @return
  * difficulty of the map.
- *
- * @todo
- * remove debug message which isn't that useful?
  */
 
 int calculate_difficulty(mapstruct *m) {
@@ -1853,7 +1850,6 @@ int calculate_difficulty(mapstruct *m) {
     sint64 exp_pr_sq, total_exp=0;
 
     if (MAP_DIFFICULTY(m)) {
-        LOG(llevDebug, "Using stored map difficulty: %d\n", MAP_DIFFICULTY(m));
         return MAP_DIFFICULTY(m);
     }
 
@@ -1869,14 +1865,7 @@ int calculate_difficulty(mapstruct *m) {
                     total_exp+=at->clone.stats.exp*8;
                 }
             }
-#ifdef NEWCALC
-    (int)exp_pr_sq=((double)1000*total_exp)/(m->map_object->x*m->map_object->y+1);
-    for(i=20;i>0;i--)
-        if(exp_pr_sq>level_exp(i,1.0)) {
-            diff=i;
-            break;
-        }
-#else
+
     exp_pr_sq=((double)1000*total_exp)/(MAP_WIDTH(m)*MAP_HEIGHT(m)+1);
     diff=20;
     for(i=1;i<20;i++)
@@ -1884,7 +1873,7 @@ int calculate_difficulty(mapstruct *m) {
             diff=i;
             break;
         }
-#endif
+
     return diff;
 }
 
