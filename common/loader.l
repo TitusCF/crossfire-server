@@ -1575,12 +1575,6 @@ void get_ob_diff(StringBuffer *sb, object *op,object *op2) {
     if (op->randomitems!=op2->randomitems) {
         ADD_STRINGLINE_ENTRY(sb, "randomitems ", op->randomitems ? op->randomitems->name : "none");
     }
-#ifdef NPC_PROG
-    if(op->npc_status!=op2->npc_status)
-        FAST_SAVE_LONG(sb, "npc_status ", op->npc_status);
-    if(op->npc_program!=op2->npc_program)
-        FAST_SAVE_LONG(sb, "npc_program ", op->npc_program);
-#endif
 
     if(op->run_away!=op2->run_away)
         FAST_SAVE_LONG(sb, "run_away ", op->run_away);
