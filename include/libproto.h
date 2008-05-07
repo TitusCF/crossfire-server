@@ -403,6 +403,7 @@ extern void free_charlinks(linked_char *lc);
 extern void free_artifact(artifact *at);
 extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
+extern int legal_artifact_combination(object *op, artifact *art);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);
 extern sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad);

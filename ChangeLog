@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #1929084: Wrong artifact stats on forged items. Use 'legal_artifact_combination'
+to check that the item matches the artifact.
+ common/recipe.c treasure.c
+ include/libproto.h
+Nicolas Weeger 2008-05-07
+
 common/loader.l: remove obsolete code.
 Nicolas Weeger 2008-05-07
 
