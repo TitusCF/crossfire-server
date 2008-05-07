@@ -1946,12 +1946,18 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod,
     arrow->speed_left = 0;
 
     if (op->type == PLAYER) {
-	arrow->stats.wc = 20 - bow->magic - arrow->magic -
-	    (op->chosen_skill?op->chosen_skill->level:op->level) -
-	    dex_bonus[op->stats.Dex] - thaco_bonus[op->stats.Str] -
-	    arrow->stats.wc - bow->stats.wc + wc_mod;
+        /* we don't want overflows of wc (sint), so cap the value - mod and pl should be substracted */
+        int mod = bow->magic + arrow->magic +
+            dex_bonus[op->stats.Dex] + thaco_bonus[op->stats.Str] +
+            arrow->stats.wc + bow->stats.wc - wc_mod;
+        int plmod = (op->chosen_skill?op->chosen_skill->level:op->level);
+        if (plmod + mod > 140)
+            plmod = 140 - mod;
+        else if (plmod + mod < -100)
+            plmod = -100 - mod;
+        arrow->stats.wc = 20 - (sint8)plmod - (sint8)mod;
 
-	arrow->level = op->chosen_skill?op->chosen_skill->level:op->level;
+        arrow->level = op->chosen_skill?op->chosen_skill->level:op->level;
     } else {
 	arrow->stats.wc= op->stats.wc - bow->magic - arrow->magic -
 	    arrow->stats.wc + wc_mod;

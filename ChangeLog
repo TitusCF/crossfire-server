@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #1956908: bolt wc can overflow.
+ server/player.c: cap modifiers so we don't overflow wc.
+Nicolas Weeger 2008-05-07
+
 Fix bug #1929084: Wrong artifact stats on forged items. Use 'legal_artifact_combination'
 to check that the item matches the artifact.
  common/recipe.c treasure.c
