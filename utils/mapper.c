@@ -97,6 +97,7 @@
  *  - WORLDMAPPATH: path to world map file.
  *  - MAPLORE: map's lore.
  *  - MAPLEVEL: level as defined in the map.
+ *  - MINMONSTER and MAXMONSTER: minimum and maximum level of monsters on the map.
  * - map_no_exit:
  *  - tags for map, except MAPEXIT.
  * - map_with_exit:
@@ -205,6 +206,8 @@
  * - add maximum width/height for small picture
  * - add slaying information to maps themselves
  * - make the equipment page use templates
+ * - shop catalog
+ * - treasure list use
  */
 
 #include <time.h>
@@ -251,7 +254,7 @@ typedef struct struct_map_info {
     char* filename;
     char* lore;
     region* cfregion;
-    int level, pic_was_done;
+    int level, pic_was_done, max_monster, min_monster;
     struct_map_list exits_from;
     struct_map_list exits_to;
     struct_map_in_quest_list quests;
@@ -682,6 +685,9 @@ static void add_monster(object* monster, struct_map_info* map) {
 
     if (monster->head && monster != monster->head)
         return;
+
+    map->min_monster = MIN(monster->level, map->min_monster);
+    map->max_monster = MAX(monster->level, map->max_monster);
 
     race = get_race(monster->name);
     add_map(map, &race->origin);
@@ -1464,6 +1470,7 @@ void replace_map(struct_map_info* find, struct_map_info* replace_by, struct_map_
 struct_map_info* create_map_info() {
     struct_map_info* add = calloc(1, sizeof(struct_map_info));
 
+    add->min_monster = 2000;
     init_map_list(&add->exits_to);
     init_map_list(&add->exits_from);
     init_map_list(&add->tiled_maps);
@@ -2434,7 +2441,7 @@ void write_map_page(struct_map_info* map) {
     char regionindexpath[500];  /* Path to region index file. */
     char worldmappath[500];     /* Path to world map. */
     char exit_path[500];
-    char maplevel[5];
+    char maplevel[5], minmonster[5], maxmonster[5];
     FILE* out;
     char questpath[500], questtemp[500];
 
@@ -2445,12 +2452,15 @@ void write_map_page(struct_map_info* map) {
     const char* m_vars[] = { "NAME", NULL };
     const char* m_vals[] = { NULL, NULL };
 
-    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", "MAPLEVEL", "QUESTS", "MONSTERS", NULL, NULL, NULL };
-    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", maplevel, NULL, "", NULL, NULL, NULL };
+    const char* vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", "MAPLEVEL", "QUESTS", "MONSTERS", "MINMONSTER", "MAXMONSTER", NULL, NULL, NULL };
+    const char* values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", maplevel, NULL, "", minmonster, maxmonster, NULL, NULL, NULL };
     int vars_count = 0;
 
     while (vars[vars_count])
         vars_count++;
+
+    snprintf(minmonster, sizeof(minmonster), "%d", map->min_monster);
+    snprintf(maxmonster, sizeof(maxmonster), "%d", map->max_monster);
 
     relative_path(map->path, "/maps.html", indexpath);
     relative_path(map->path, "/world.html", worldmappath);
