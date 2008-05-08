@@ -399,6 +399,7 @@ int player_can_view(object *pl, object *op);
 int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
+void remove_unpaid_objects(object *op, object *env, int free_items);
 /* plugins.c */
 int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);

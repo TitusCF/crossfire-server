@@ -707,6 +707,8 @@ void check_login(object *op) {
       if (check_path(pl->maplevel,0)==-1) {
 	strcpy(pl->maplevel, pl->savebed_map);
 	op->x = pl->bed_x, op->y = pl->bed_y;
+        /* if the map was a shop, the player can have unpaid items, remove them. */
+        remove_unpaid_objects(op, NULL, 1);
       }
     }
 
@@ -716,6 +718,8 @@ void check_login(object *op) {
     if ((settings.reset_loc_time >0) && (elapsed_save_time > settings.reset_loc_time)) {
 	strcpy(pl->maplevel, pl->savebed_map);
 	op->x = pl->bed_x, op->y = pl->bed_y;
+        /* if the map was a shop, the player can have unpaid items, remove them. */
+        remove_unpaid_objects(op, NULL, 1);
     }
 
     /* make sure he's a player--needed because of class change. */

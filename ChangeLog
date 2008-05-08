@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove unpaid items when returning a player to his savebed for map reset or
+after server-specific timeout.
+ include/sproto.h
+ server/login.c player.c
+Nicolas Weeger 2008-05-08
+
 Generate NPC information page.
  utils/mapper.c
 Nicolas Weeger 2008-05-08
