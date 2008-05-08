@@ -1943,9 +1943,11 @@ int cast_change_ability(object *op,object *caster,object *spell_ob, int dir, int
     force->stats.ac = spell_ob->stats.ac;
     force->attacktype = spell_ob->attacktype;
 
+    SET_FLAG(tmp, FLAG_NO_FIX_PLAYER); /* we don't want insert_ob_in_ob to call fix_object. */
     insert_ob_in_ob(force,tmp);
-    change_abil(tmp,force);	/* Mostly to display any messages */
-    fix_object(tmp);
+    CLEAR_FLAG(tmp, FLAG_NO_FIX_PLAYER);
+    change_abil(tmp,force);	/* Display any relevant messages, and call fix_object to update the player */
+
     return 1;
 }
 
