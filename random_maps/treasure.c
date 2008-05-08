@@ -876,27 +876,21 @@ object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
  * to have a locked door right behind a normal door, so lets
  * remove the normal ones.  It also fixes key placement issues.
  *
- * Removed doors will be removed from the doorlist if they appear on it.
- *
- * @param doorlist
- * doorlist currently being processed.
- * @param index
- * current door's index.
+ * @param door
+ * door around which to remove unlocked doors.
  */
-static void remove_adjacent_doors(object** doorlist, int index)
+static void remove_adjacent_doors(object* door)
 {
-    mapstruct* m = doorlist[index]->map;
-    int x = doorlist[index]->x;
-    int y = doorlist[index]->y;
-    int i, flags, lastindex = index, remindex;
+    mapstruct* m = door->map;
+    int x = door->x;
+    int y = door->y;
+    int i, flags;
     object *tmp;
 
-    while (doorlist[lastindex + 1])
-        lastindex++;
-
     for (i=1; i<=8; i++) {
-	flags=get_map_flags(m, NULL, x + freearr_x[i], y + freearr_y[i], NULL, NULL);
-	if (flags & P_OUT_OF_MAP) continue;
+        flags=get_map_flags(m, NULL, x + freearr_x[i], y + freearr_y[i], NULL, NULL);
+        if (flags & P_OUT_OF_MAP)
+             continue;
 
 	/* Old style doors are living objects.  So if P_IS_ALIVE is not
 	 * set, can not be a door on this space.
@@ -904,15 +898,6 @@ static void remove_adjacent_doors(object** doorlist, int index)
 	if (flags & P_IS_ALIVE) {
 	    for (tmp=GET_MAP_OB(m, x + freearr_x[i], y + freearr_y[i]); tmp; tmp=tmp->above) {
 		if (tmp->type == DOOR) {
-
-                    /* the door we're removing may be on the doorlist, so need to remove it to avoid using it later. */
-                    for (remindex = lastindex; remindex > index; remindex--) {
-                        if (doorlist[remindex] == tmp) {
-                            doorlist[remindex] = doorlist[lastindex];
-                            lastindex--;
-                        }
-                    }
-
 		    remove_ob(tmp);
 		    free_object(tmp);
 		    break;
@@ -955,12 +940,12 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
             doorlist[i]=new_door;
             insert_ob_in_map(new_door,map,NULL,0);
 
-            remove_adjacent_doors(doorlist, i);
-
             snprintf(keybuf,256,"%d",(int)RANDOM());
             if (keyplace(map, new_door->x, new_door->y, keybuf, NO_PASS_DOORS, 2, RP) )
                 new_door->slaying = add_string(keybuf);
         }
+        for (i = 0; doorlist[i] != NULL; i++)
+            remove_adjacent_doors(doorlist[i]);
     }
 
     /* change the faces of the doors and surrounding walls to hide them. */
