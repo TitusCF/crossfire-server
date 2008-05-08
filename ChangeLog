@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix artifact reading to (kind of) trim strings. Fix add missing artifacts
+to fix alchemy warning.
+ common/treasure.c
+ lib/artifacts
+Nicolas Weeger 2008-05-08
+
 Tentative fix for bug #1936178: Trying to remove removed object causes server crash.
  random_maps/treasure.c: update doorlist to process when removing a door.
 Nicolas Weeger 2008-05-08

@@ -1447,10 +1447,16 @@ void init_artifacts(void) {
                 art=get_empty_artifact();
                 nrofartifacts++;
             }
+
             cp = strchr(cp,' ') + 1;
+            while (*(cp + strlen(cp) - 1) == ' ')
+                cp[strlen(cp) - 1] = '\0';
+
             if (!strcmp(cp,"all")) continue;
 
             do {
+                while (*cp == ' ')
+                    cp++;
                 nrofallowedstr++;
                 if ((next=strchr(cp, ','))!=NULL)
                     *(next++) = '\0';

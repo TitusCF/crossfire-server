@@ -1298,7 +1298,7 @@ magic 1
 item_power 2
 end
 #
-Allowed plate_mail,scale_mail
+Allowed plate_mail,scale_mail,b_scale_mail,b_plate_mail
 chance 6
 Object Gorokh
 type 16
@@ -1312,7 +1312,7 @@ magic 1
 item_power 3
 end
 #
-Allowed plate_mail,scale_mail
+Allowed plate_mail,scale_mail,b_scale_mail,b_plate_mail
 chance 6
 Object Gnarg
 type 16
@@ -1325,7 +1325,7 @@ magic 1
 item_power 2
 end
 #
-Allowed plate_mail,scale_mail,dragon_mail
+Allowed plate_mail,scale_mail,dragon_mail,b_scale_mail
 chance 6
 Object Blazing Fires
 type 16
@@ -1424,7 +1424,7 @@ luck -1
 value 5
 end
 #
-Allowed plate_mail
+Allowed plate_mail,b_plate_mail
 chance 1
 Object Power
 type 16
@@ -3283,7 +3283,7 @@ nrof 10
 level 50
 end
 #
-Allowed arrow
+Allowed arrow,bolt
 chance 100
 difficulty 5
 Object Slay Dragon
@@ -3294,7 +3294,7 @@ dam -12
 food 10
 end
 #
-Allowed arrow
+Allowed arrow,bolt
 chance 50
 difficulty 8
 Object Magic
