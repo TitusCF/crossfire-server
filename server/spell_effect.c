@@ -577,6 +577,14 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
         missile_plus = -4;
 
     missile->nrof = spell->duration + SP_level_duration_adjust(caster, spell);
+    if (missile->nrof <= 3 * (missile_plus + bonus_plus)) {
+        free_object(missile);
+        draw_ext_info_format(NDI_UNIQUE, 0, op,
+            MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+            "This item is too powerful for you to create!",
+            NULL);
+        return;
+    }
     missile->nrof -= 3 * (missile_plus + bonus_plus);
     if (missile->nrof < 1)
         missile->nrof=1;

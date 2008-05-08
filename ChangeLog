@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix a potential underflow, forbid players to create too powerful missiles.
+ server/spell_effect.c
+Nicolas Weeger 2008-05-08
+
 Remove unpaid items when returning a player to his savebed for map reset or
 after server-specific timeout.
  include/sproto.h
