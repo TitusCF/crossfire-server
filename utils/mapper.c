@@ -225,6 +225,20 @@
 gdImagePtr* gdfaces;
 extern int nrofpixmaps; /* Found in common/image.c */
 
+/** Information about a NPC with a custom message. */
+typedef struct struct_npc_info {
+    const char* name;       /**< NPC's name. */
+    const char* message;    /**< NPC's message. */
+    int x, y;               /**< Coordinates in the map. */
+} struct_npc_info;
+
+/** List of NPCs with a custom message. */
+typedef struct struct_npc_list {
+    struct_npc_info** npc;
+    int count;
+    int allocated;
+} struct_npc_list;
+
 /** Collection of races. */
 typedef struct struct_race_list {
     struct struct_race** races; /**< Races on the list. */
@@ -262,6 +276,8 @@ typedef struct struct_map_info {
     struct_map_list tiled_maps;
 
     struct_race_list monsters;
+
+    struct_npc_list npcs;
 
     struct struct_map_info* tiled_group;
     int height, width;
@@ -1414,6 +1430,57 @@ static void write_quests_page() {
  End of quest-related definitions.
 ************************************/
 
+/*********
+NPC-related stuff
+********/
+
+/**
+ * Initialise a list of NPCs.
+ * @param list
+ * list to initialise.
+ */
+static void init_npc_list(struct_npc_list* list) {
+    list->allocated = 0;
+    list->count = 0;
+    list->npc = NULL;
+}
+
+/**
+ * Create the struct_npc_info from the specified NPC. It must have a name and message.
+ * @param npc
+ * NPC to gather info for.
+ * @return
+ * structure with info.
+ */
+static struct_npc_info* create_npc_info(const object* npc) {
+    struct_npc_info* info = calloc(1, sizeof(struct_npc_info));
+
+    info->name = strdup(npc->name);
+    info->message = strdup(npc->msg);
+    info->x = npc->x;
+    info->y = npc->y;
+
+    return info;
+}
+
+/**
+ * Link the specified NPC to the specified map.
+ * @param map
+ * map the NPC is in.
+ * @param npc
+ * NPC to link. Must have a name and message.
+ */
+static void add_npc_to_map(struct_map_info* map, const object* npc) {
+    if (map->npcs.count == map->npcs.allocated) {
+        map->npcs.allocated += 50;
+        map->npcs.npc = realloc(map->npcs.npc, map->npcs.allocated * sizeof(struct_npc_info*));
+    }
+
+    map->npcs.npc[map->npcs.count] = create_npc_info(npc);
+    map->npcs.count++;
+}
+/* end of NPC stuff */
+
 /**
  * Adds a map to specified array, if it isn't already.
  *
@@ -1476,6 +1543,7 @@ struct_map_info* create_map_info() {
     init_map_list(&add->tiled_maps);
     init_struct_map_in_quest_list(&add->quests);
     init_race_list(&add->monsters);
+    init_npc_list(&add->npcs);
     add->tiled_group = NULL;
 
     return add;
@@ -1971,8 +2039,13 @@ void process_map(struct_map_info* info)
 
                 check_slaying_inventory(info, item);
 
-                if (QUERY_FLAG(item, FLAG_MONSTER))
+                if (QUERY_FLAG(item, FLAG_MONSTER)) {
+                    /* need to get the "real" archetype, as the item's archetype can certainly be a temporary one. */
+                    archetype* arch = find_archetype(item->arch->name);
                     add_monster(item, info);
+                    if (QUERY_FLAG(item, FLAG_UNAGGRESSIVE) && (item->msg != arch->clone.msg) && (item->msg != NULL))
+                        add_npc_to_map(info, item);
+                }
 
                 if (item->invisible)
                     continue;
@@ -3360,6 +3433,42 @@ void write_slaying_info() {
 }
 
 /**
+ * Write the list of all found NPCs in maps.
+ */
+static void write_npc_list() {
+    FILE* file;
+    char path[MAX_BUF];
+    int map, npc;
+
+    printf("Writing NPC info file...");
+
+    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info*), sort_slaying);
+
+    snprintf(path, sizeof(path), "%s/%s", root, "npc_info.html");
+    file = fopen(path, "wb+");
+
+    fprintf(file, "<html>\n<head>\n<title>NPCs who have a special message</title>\n</head>\n<body>\n");
+    fprintf(file, "<p>This is a list of NPCs having a special message.</p>");
+    fprintf(file, "<ul>\n");
+
+    for (map = 0; map < maps_list.count; map++) {
+        if (maps_list.maps[map]->npcs.count == 0)
+            continue;
+        fprintf(file, "<li>%s</li>\n<ul>", maps_list.maps[map]->path);
+        for (npc = 0; npc < maps_list.maps[map]->npcs.count; npc++) {
+            fprintf(file, "<li>%s (%d,%d): <br /><pre>%s</pre></li>\n", maps_list.maps[map]->npcs.npc[npc]->name, maps_list.maps[map]->npcs.npc[npc]->x, maps_list.maps[map]->npcs.npc[npc]->y, maps_list.maps[map]->npcs.npc[npc]->message);
+        }
+        fprintf(file, "</ul>\n</li>\n");
+    }
+
+    fprintf(file, "</ul>\n");
+    fprintf(file, "</body>\n</html>\n");
+
+    fclose(file);
+    printf("done.\n");
+}
+
+/**
  * Prints usage information, and exit.
  *
  * @param program
@@ -3655,6 +3764,7 @@ int main(int argc, char** argv)
 
     write_equipment_index();
     write_race_index();
+    write_npc_list();
 
     return 0;
 }
