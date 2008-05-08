@@ -2043,7 +2043,7 @@ void process_map(struct_map_info* info)
                     /* need to get the "real" archetype, as the item's archetype can certainly be a temporary one. */
                     archetype* arch = find_archetype(item->arch->name);
                     add_monster(item, info);
-                    if (QUERY_FLAG(item, FLAG_UNAGGRESSIVE) && (item->msg != arch->clone.msg) && (item->msg != NULL))
+                    if ((QUERY_FLAG(item, FLAG_UNAGGRESSIVE) || QUERY_FLAG(item, FLAG_FRIENDLY)) && (item->msg != arch->clone.msg) && (item->msg != NULL))
                         add_npc_to_map(info, item);
                 }
 
