@@ -1530,6 +1530,12 @@ void add_abilities(object *op, object *change) {
 #endif
         op->face = change->face;
     }
+    if (change->animation_id != 0) {
+        op->animation_id = change->animation_id;
+        SET_FLAG(op, FLAG_ANIMATE);
+        animate_object(op, op->facing);
+    }
+
     for (i = 0; i < NUM_STATS; i++)
         change_attr_value(&(op->stats), i, get_attr_value(&(change->stats), i));
 

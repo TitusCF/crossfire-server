@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #1846018: artifact monster graphics broken.
+ common/treasure.c: animation is part of things artifact can change.
+ lib/artifacts: add correct animations to monsters.
+Nicolas Weeger 2008-05-09
+
+
 Also extract NPC messages for friendly living things.
  utils/mapper.c
 Nicolas Weeger 2008-05-08

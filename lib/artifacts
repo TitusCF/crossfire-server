@@ -136,6 +136,7 @@ level 1
 resist_physical 20
 dam 13
 face orc_leader.111
+animation orc_leader_arc
 stand_still 1
 end
 #
@@ -152,6 +153,7 @@ level 1
 resist_physical 20
 dam 13
 face goblin_leader.111
+animation goblin_leader_arc
 stand_still 1
 end
 #
@@ -168,6 +170,7 @@ level 1
 resist_physical 20
 dam 13
 face gnoll_leader.111
+animation gnoll_leader_arc
 stand_still 1
 end
 #
@@ -184,6 +187,7 @@ level 1
 resist_physical 20
 dam 13
 face ogre_leader.111
+animation ogre_leader_arc
 stand_still 1
 end
 #
@@ -198,6 +202,7 @@ level 2
 resist_physical 20
 dam 1
 face skeleton_leader.111
+animation skeleton_leader_arc
 stand_still 1
 end
 #
@@ -230,6 +235,7 @@ level 2
 resist_physical 30
 dam 14
 face orc_chief.111
+animation orc_chief_arc
 stand_still 1
 end
 #
@@ -246,6 +252,7 @@ level 2
 resist_physical 30
 dam 13
 face goblin_chief.111
+animation goblin_chief_arc
 stand_still 1
 end
 #
@@ -262,6 +269,7 @@ level 2
 resist_physical 30
 dam 14
 face gnoll_chief.111
+animation gnoll_chief_arc
 stand_still 1
 end
 #
@@ -278,6 +286,7 @@ level 2
 resist_physical 30
 dam 19
 face ogre_chief.111
+animation ogre_chief_arc
 stand_still 1
 end
 #
@@ -293,6 +302,7 @@ level 2
 resist_physical 40
 dam 1
 face skeleton_chief.111
+animation skeleton_chief_arc
 stand_still 1
 end
 #
