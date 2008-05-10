@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Implement feature request #1961031: 'drop food' and 'drop flesh' buttons would be nice.
+ lib/help/dropall.{fr,en}: update help text.
+ server/c_object.c: extend 'dropall' to accept 'food' and 'flesh'.
+Nicolas Weeger 2008-05-10
+
 Fix bug #1846018: artifact monster graphics broken.
  common/treasure.c: animation is part of things artifact can change.
  lib/artifacts: add correct animations to monsters.

@@ -1047,6 +1047,31 @@ int command_dropall (object *op, char *params) {
         }
     }
 
+    else if(strcmp(params, "food") == 0)
+    {
+        while(curinv != NULL)
+        {
+            nextinv = curinv->below;
+            if(!QUERY_FLAG(curinv,FLAG_INV_LOCKED) && (curinv->type == FOOD || curinv->type == DRINK)) {
+                drop(op,curinv);
+                if (op->contr) op->contr->count=count;
+            }
+            curinv = nextinv;
+        }
+    }
+    else if(strcmp(params, "flesh") == 0)
+    {
+        while(curinv != NULL)
+        {
+            nextinv = curinv->below;
+            if(!QUERY_FLAG(curinv,FLAG_INV_LOCKED) && (curinv->type == FLESH)) {
+                drop(op,curinv);
+                if (op->contr) op->contr->count=count;
+            }
+            curinv = nextinv;
+        }
+    }
+
     else if(strcmp(params, "misc") == 0)
     {
         while(curinv != NULL) {
