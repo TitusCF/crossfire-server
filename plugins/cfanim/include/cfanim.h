@@ -38,20 +38,26 @@
 #endif
 
 #include <plugin_common.h>
-enum time_enum {time_second, time_tick};
+/** Time units the animation can use. @todo add owner's speed unit */
+enum time_enum {
+        time_second,    /**< One second. */
+        time_tick       /**< One server tick. */
+};
 struct CFanimation_struct;
 struct CFmovement_struct;
 typedef int (*CFAnimRunFunc) (struct CFanimation_struct* animation, long int id, void* parameters);
 typedef long int (*CFAnimInitFunc) (char* name,char* parameters,struct CFmovement_struct*);
+/** One move in an animation. */
 typedef struct CFmovement_struct
 {
-    struct CFanimation_struct* parent;
-    CFAnimRunFunc func;
-    void* parameters;
-    long int id;
-    int tick;
-    struct CFmovement_struct* next;
+    struct CFanimation_struct* parent;  /**< Animation this move is linked to. */
+    CFAnimRunFunc func;                 /**< Function to run for this move. */
+    void* parameters;                   /**< Parameters to the function. */
+    long int id;                        /**< Identifier, used for various things. */
+    int tick;                           /**< Move duration, units depending on parent's time_representation. */
+    struct CFmovement_struct* next;     /**< Next move in the animation. */
 } CFmovement;
+/** One full animation. */
 typedef struct CFanimation_struct
 {
     char* name;
@@ -69,11 +75,12 @@ typedef struct CFanimation_struct
     struct CFmovement_struct* nextmovement;
     struct CFanimation_struct* nextanimation;
 } CFanimation;
+/** Available animation move. */
 typedef struct
 {
-    const char *name;
-    CFAnimInitFunc funcinit;
-    CFAnimRunFunc funcrun;
+    const char *name;           /**< Name as it appears in the animation file. */
+    CFAnimInitFunc funcinit;    /**< Function to process the parameters of the move. */
+    CFAnimRunFunc funcrun;      /**< Function to run the move. */
 } CFanimationHook;
 extern CFanimationHook animationbox[];
 extern int animationcount;

@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Document a few things.
+ plugins/cfanim/cfanim.c
+ plugins/cfanim/include/cfanim_proto.h
+Nicolas Weeger 2008-05-10
+
+Fix bombs being really too powerful.
+ server/spell_attack.c: set the maxhp (for spell merging) for bombs too.
+Nicolas Weeger 2008-05-10
+
 Make the 'second' timemode work. Don't set FLAG_WIZ* on non player object.
 Correctly remove event if unique.
  plugins/cfanim/cfanim.c

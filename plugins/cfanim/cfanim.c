@@ -34,8 +34,13 @@
 
 CFPContext* context_stack;
 CFPContext* current_context;
-CFanimation *first_animation=NULL;
+CFanimation *first_animation=NULL;  /**< Animations we're currently processing. */
 
+/**
+ * Returns the direction from its name.
+ * @param name direction's name
+ * @return direction or -1 if unknown.
+ */
 int get_dir_from_name (char*name)
 {
     if (!strcmp(name,"north"))      return 1;
@@ -388,7 +393,7 @@ int runstop(struct CFanimation_struct *animation, long int id, void *parameters)
     return 1;
 }
 
-
+/** Available animation commands. */
 CFanimationHook animationbox[]=
 {
     {"north",initmovement,runmovement},
@@ -460,6 +465,14 @@ static CFanimationHook *get_command(char *command)
                       sizeof(CFanimationHook), compareAnims);
 }
 
+/**
+ * Parse an animation block in the animation file.
+ * @param buffer buffer to read data info, will have been modified when function exits.
+ * @param buffer_size size of buffer.
+ * @param fichier file to read from.
+ * @param parent animation we're reading the block for.
+ * @return one animation frame.
+ */
 static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE *fichier, CFanimation *parent)
 {
     CFmovement* first=NULL;
@@ -532,17 +545,15 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
     return first;
 }
 
-/*
- * This function take buffer with a value like "blabla= things"
- * Its arguments are:
- *    buffer: where equality is written
- *    variable: the address of a char pointer. It will
- *              be positionned to where in buffer the
- *              variable name starts. leading spaces
- *              will be converted to \0
- *    value:    the same as above but for the value part
- *    Note that variable and value become pointers to internals of
- *    buffer. If buffer chages, they will whange too!
+/**
+ * This function take buffer with a value like "blabla= things" and extracts some things.
+ *
+ * @param buffer where equality is written
+ * @param[out] variable will be positionned to where in buffer the
+ *  variable name starts. leading spaces will be converted to \0
+ * @param[out] value same as above but for the value part
+ * @note variable and value become pointers to internals of
+ *  buffer. If buffer chages, they will change too and/or become invalid!
  */
 int equality_split (char* buffer, char**variable, char**value)
 {
@@ -561,14 +572,19 @@ int equality_split (char* buffer, char**variable, char**value)
     if ((**variable=='\0') || (**value=='\0')) return 0;
     return 1;
 }
-/*
+
+/**
  * This function gets a string containing
  * [Y/y](es)/[N/n](o), 1/0
- * and set bool according to what's read
- * if return value is true, bool was set successfully
- * else, an error occured and bool was not touched
+ * and set bl according to what's read
+ * if return value is true, strg was set successfully
+ * else, an error occured and bl was not touched
+ *
+ * @param strg string to process.
+ * @param bl value strg meant.
+ * @return 1 if strg was processed, 0 else.
  */
-int get_boolean (char* strg,int* bl)
+int get_boolean (char* strg, int* bl)
 {
     if (!strncmp (strg,"y",1))
         *bl=1;
@@ -586,6 +602,11 @@ int get_boolean (char* strg,int* bl)
     return 1;
 }
 
+/**
+ * Is specified player currently victim of a paralysing animation?
+ * @param pl player to search for.
+ * @return 1 if pl is part of animation, 0 else.
+ */
 int is_animated_player (object* pl)
 {
     CFanimation* current;
@@ -599,8 +620,9 @@ int is_animated_player (object* pl)
     return 0;
 }
 
-/*
- * return a new animation pointer inserted in the list of animations
+/**
+ * Create a new animation.
+ * @return new animation pointer inserted in the list of animations.
  */
 static CFanimation *create_animation(void)
 {
@@ -621,8 +643,16 @@ static CFanimation *create_animation(void)
     return new;
 }
 
-/*
+/**
  * Create a new animation object according to file, option and activator (who)
+ *
+ * @param who object that raised the event leading to the plugin.
+ * @param activator object that caused who to get an event.
+ * @param event actual event object linking who and this plugin. Can be removed.
+ * @param file file name to read from, should be accessible from the current path.
+ * @param options unused.
+ * @return 1 if the animation was created, 0 else.
+ * @todo return memory leaks in case of errors.
  */
 int start_animation (object* who,object* activator, object* event, char* file, char* options)
 {
@@ -824,6 +854,12 @@ int start_animation (object* who,object* activator, object* event, char* file, c
     fclose (fichier);
     return 1;
 }
+/**
+ * Checks if an animation can execute one or more moves, and if so does them.
+ * @param animation animation to check
+ * @param milliseconds time elapsed since the last time this function was called.
+ */
+
 static void animate_one(CFanimation *animation, long int milliseconds)
 {
     CFmovement* current;
@@ -876,6 +912,9 @@ static void animate_one(CFanimation *animation, long int milliseconds)
     cf_object_set_flag(animation->victim, FLAG_WIZ,0);
 }
 
+/**
+ * Animates all currently running animations.
+ */
 void animate(void)
 {
     CFanimation* current;
@@ -965,6 +1004,12 @@ CFPContext* popContext()
         return NULL;
 }
 
+/**
+ * Plugin initialisation function.
+ * @param iversion server version.
+ * @param gethooksptr function to get the hooks.
+ * @return 0
+ */
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
     cf_init_plugin( gethooksptr );
