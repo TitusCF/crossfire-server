@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make the 'second' timemode work. Don't set FLAG_WIZ* on non player object.
+Correctly remove event if unique.
+ plugins/cfanim/cfanim.c
+ plugins/cfanim/include/cfanim_proto.h
+Nicolas Weeger 2008-05-10
+
 Fix a few warnings.
  include/sproto.h: add prototype for query_cost_string().
  test/toolkit/toolkit_common.c: make argument const.

@@ -76,6 +76,7 @@ long int initfire(char* name,char* parameters,struct CFmovement_struct* move_ent
     return dir;
 }
 
+/** @todo fix */
 int runfire(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     cf_log(llevDebug, "CFAnim: Firing in direction %ld\n",id);
@@ -108,6 +109,7 @@ long int initcamera(char* name,char* parameters,struct CFmovement_struct* move_e
     move_entity->parameters=NULL;
     return dir;
 }
+/** @todo fix */
 int runcamera(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     cf_log(llevDebug, "CFAnim: Moving the camera in direction %ld\n",id);
@@ -379,6 +381,7 @@ long int initstop(char *name, char *parameters, struct CFmovement_struct *move_e
 {
     return 1;
 }
+/** @todo fix */
 int runstop(struct CFanimation_struct *animation, long int id, void *parameters)
 {
     cf_log(llevDebug, "CFAnim: stop encountered\n");
@@ -618,30 +621,10 @@ static CFanimation *create_animation(void)
     return new;
 }
 
-void free_events(object* who)
-{
-/*if (who->event_hook[current_event])
-    {
-    hook_free_string (who->event_hook[current_event]);
-    who->event_hook[current_event]=NULL;
-}
-    if (who->event_plugin[current_event])
-    {
-    hook_free_string (who->event_plugin[current_event]);
-    who->event_plugin[current_event]=NULL;
-}
-    if (who->event_hook[current_event])
-    {
-    hook_free_string (who->event_options[current_event]);
-    who->event_options[current_event]=NULL;
-}*/
-
-}
-
 /*
  * Create a new animation object according to file, option and activator (who)
  */
-int start_animation (object* who,object* activator,char* file, char* options)
+int start_animation (object* who,object* activator, object* event, char* file, char* options)
 {
     FILE*   fichier;
     char*   name=NULL;
@@ -799,7 +782,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     if (always_delete)
     {
         /*if (verbose) printf("CFAnim: Freeing event nr. %d for %s.\n",current_event,who->name);*/
-        free_events(who);
+        cf_object_remove(event);
     }
     if (!victim)
     {
@@ -816,7 +799,7 @@ int start_animation (object* who,object* activator,char* file, char* options)
     if (unique && !always_delete)
     {
         /*if (verbose) printf ("CFAnim: Freeing event nr. %d for %s.\n",current_event,who->name);*/
-        free_events(who);
+        cf_object_remove(event);
     }
     current_anim->name      = name;
     current_anim->victim    = victim;
@@ -844,17 +827,23 @@ int start_animation (object* who,object* activator,char* file, char* options)
 static void animate_one(CFanimation *animation, long int milliseconds)
 {
     CFmovement* current;
+    int mult = 1;
 
-    if (animation->time_representation==time_second)
+    if (animation->time_representation==time_second) {
         animation->tick_left+=milliseconds;
-    else animation->tick_left++;
+        mult = 1000;
+    }
+    else
+        animation->tick_left++;
+
     if (animation->verbose)
         cf_log(llevDebug, "CFAnim: Ticking %s for %s. Tickleft is %ld\n",
                animation->name,animation->victim->name,animation->tick_left);
     if (animation->invisible)
         animation->victim->invisible=10;
-    if (animation->wizard)
+    if (animation->wizard && animation->victim->type == PLAYER)
     {
+        /* setting FLAG_WIZ* on non player leads to issues, as many functions expect contr to not be NULL in this case. */
         if (animation->verbose)
             cf_log(llevDebug, "CFAnim: Setting wizard flags\n");
         cf_object_set_flag(animation->victim, FLAG_WIZPASS,1);
@@ -870,16 +859,17 @@ static void animate_one(CFanimation *animation, long int milliseconds)
     cf_object_update(animation->victim,UP_OBJ_CHANGE);
 
     if (animation->nextmovement)
-        while ( animation->tick_left> animation->nextmovement->tick)
+        while ( animation->tick_left > animation->nextmovement->tick * mult)
     {
-        animation->tick_left-=animation->nextmovement->tick;
+        animation->tick_left-=animation->nextmovement->tick * mult;
         animation->nextmovement->func (animation,
                                        animation->nextmovement->id,
                                        animation->nextmovement->parameters);
         current=animation->nextmovement;
         animation->nextmovement=animation->nextmovement->next;
         free (current);
-        if (!animation->nextmovement) break;
+        if (!animation->nextmovement)
+            break;
     }
     cf_object_set_flag(animation->victim, FLAG_WIZPASS,0);
     cf_object_set_flag(animation->victim, FLAG_WIZCAST,0);
@@ -1173,7 +1163,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
            context->script,
            context->options);
     }
-    context->returnvalue = start_animation(context->who, context->activator,
+    context->returnvalue = start_animation(context->who, context->activator, context->event,
                                            context->script, context->options);
 
     context = popContext();
