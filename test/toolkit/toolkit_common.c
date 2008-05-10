@@ -94,7 +94,7 @@ void cctk_init_std_archetypes(void){
  * @param archname the archetype name to use (NULL= default one)
  * @return created object, including its more parts, or NULL if archetype doesn't exist.
  */
-object* cctk_create_game_object(char* archname){
+object* cctk_create_game_object(const char* archname){
   archetype *arch;
   object *obj;
   CCTK_ASSERT((STATUS_OBJECTS|STATUS_ARCH));

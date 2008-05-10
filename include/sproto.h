@@ -521,6 +521,7 @@ double shopkeeper_approval(const mapstruct *map, const object *player);
 int describe_shop(const object *op);
 int is_in_shop(object *ob);
 int coords_in_shop(mapstruct *map, int x, int y);
+StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBuffer* buf);
 /* skills.c */
 int steal(object *op, int dir, object *skill);
 int pick_lock(object *pl, int dir, object *skill);

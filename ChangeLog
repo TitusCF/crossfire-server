@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix a few warnings.
+ include/sproto.h: add prototype for query_cost_string().
+ test/toolkit/toolkit_common.c: make argument const.
+Nicolas Weeger 2008-05-10
+
 Rename some functions, fix documentation.
  doc/Developers/login.dox
  include/sockproto.h
