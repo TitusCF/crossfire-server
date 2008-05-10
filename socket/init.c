@@ -175,7 +175,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
 
 
 /** This sets up the socket and reads all the image information into memory. */
-void init_ericserver(void)
+void init_server(void)
 {
     struct sockaddr_in	insock;
     struct protoent  *protox;
@@ -221,7 +221,7 @@ void init_ericserver(void)
 
     protox = getprotobyname("tcp");
     if (protox==NULL) {
-	LOG(llevError,"init_ericserver: Error getting protox\n");
+	LOG(llevError,"init_server: Error getting protox\n");
 	return;
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);

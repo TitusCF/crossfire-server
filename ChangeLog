@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rename some functions, fix documentation.
+ doc/Developers/login.dox
+ include/sockproto.h
+ server/init.c server.c
+ socket/init.c loop.c request.c
+Nicolas Weeger 2008-05-10
+
 Implement feature request #1961031: 'drop food' and 'drop flesh' buttons would be nice.
  lib/help/dropall.{fr,en}: update help text.
  server/c_object.c: extend 'dropall' to accept 'food' and 'flesh'.

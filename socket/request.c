@@ -396,10 +396,10 @@ static void send_smooth(socket_struct *ns, uint16 face) {
     Send_With_Handling(ns, &sl);
 }
 
-    /**
-     * Tells client the picture it has to use
-     * to smooth a picture number given as argument.
-     */
+/**
+ * Tells client the picture it has to use
+ * to smooth a picture number given as argument.
+ */
 void ask_smooth_cmd(char *buf, int len, socket_struct *ns){
     uint16 facenbr;
 
@@ -408,9 +408,16 @@ void ask_smooth_cmd(char *buf, int len, socket_struct *ns){
 }
 
 /**
- * This handles the general commands from the client (ie, north, fire, cast,
+ * This handles the commands issued by the player (ie, north, fire, cast,
  * etc.).  This is called with the 'ncom' method which gives more information back
  * to the client so it can throttle.
+ *
+ * @param buf
+ * data received.
+ * @param len
+ * length of buf.
+ * @param pl
+ * player who issued the command. Mustn't be NULL.
  */
 void new_player_cmd(uint8 *buf, int len, player *pl)
 {

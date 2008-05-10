@@ -1457,7 +1457,7 @@ int server_main(int argc, char **argv)
 #endif
     nroferrors = 0;
 
-    doeric_server();
+    do_server();
     process_events();    /* "do" something with objects with speed */
     cftimer_process_timers();/* Process the crossfire Timers */
     /* Lauwenmark : Here we handle the CLOCK global event */

@@ -18,7 +18,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength);
 void draw_magic_map(object *pl);
 /* init.c */
 void init_connection(socket_struct *ns, const char *from_ip);
-void init_ericserver(void);
+void init_server(void);
 void free_all_newserver(void);
 void free_newsocket(socket_struct *ns);
 void final_free_player(player *pl);
@@ -40,7 +40,7 @@ void inscribe_scroll_cmd(char *buf, int len, player *pl);
 void request_info_cmd(char *buf, int len, socket_struct *ns);
 void handle_client(socket_struct *ns, player *pl);
 void watchdog(void);
-void doeric_server(void);
+void do_server(void);
 /* lowlevel.c */
 void SockList_Init(SockList *sl);
 void SockList_AddChar(SockList *sl, char c);

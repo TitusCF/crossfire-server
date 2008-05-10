@@ -33,9 +33,9 @@
  *
  * \date 2003-12-02
  *
- * loop.c mainly deals with initialization and higher level socket
+ * Mainly deals with initialization and higher level socket
  * maintenance (checking for lost connections and if data has arrived.)
- * The reading of data is handled in ericserver.c
+ * The reading of data is handled in lowlevel.c
  */
 
 
@@ -77,18 +77,22 @@
  * we end up having 2 tables.
  */
 
+/** Prototype for functions the client sends without player interaction. */
 typedef void (*func_uint8_int_ns) (char*, int, socket_struct *);
 
+/** Definition of a function the client sends without player interaction. */
 struct client_cmd_mapping {
-    const char *cmdname;
-    func_uint8_int_ns cmdproc;
+    const char *cmdname;        /**< Command name. */
+    func_uint8_int_ns cmdproc;  /**< Function to call. */
 };
 
+/** Prototype for functions used to handle player actions. */
 typedef void (*func_uint8_int_pl)(char*, int, player *);
+/** Definition of a function called in reaction to player's action. */
 struct player_cmd_mapping {
-    const char *cmdname;
-    func_uint8_int_pl cmdproc;
-    uint8   flag;
+    const char *cmdname;        /**< Command name. */
+    func_uint8_int_pl cmdproc;  /**< Function to call. */
+    uint8   flag;               /**< If set, the player must be in the ST_PLAYING state for this command to be available. */
 };
 
 /**
@@ -104,7 +108,8 @@ struct player_cmd_mapping {
  * flag is 1 if the player must be in the playing state to issue the
  * command, 0 if they can issue it at any time.
  */
-/** Commands sent by the player during the game play itself */
+
+/** Commands sent by the client reacting to player's actions. */
 static struct player_cmd_mapping player_commands[] = {
     { "examine",	examine_cmd,	1},
     { "apply",		apply_cmd,	1},
@@ -119,7 +124,7 @@ static struct player_cmd_mapping player_commands[] = {
     { NULL, NULL, 0}	/* terminator */
 };
 
-/** Commands sent directly by client, when connecting */
+/** Commands sent directly by client, when connecting or when needed. */
 static struct client_cmd_mapping client_commands[] = {
     { "addme",		add_me_cmd },
     { "askface",	send_face_cmd},	/* Added: phil */
@@ -175,15 +180,15 @@ void request_info_cmd(char *buf, int len, socket_struct *ns)
 }
 
 /**
- * Handle client input.
+ * Handle client commands.
  *
- * handle_client is actually not named really well - we only get here once
- * there is input, so we don't do exception or other stuff here.
- * sock is the output socket information.  pl is the player associated
- * with this socket, null if no player (one of the init_sockets for just
- * starting a connection)
+ * We only get here once there is input, and only do basic connection checking.
+ *
+ * @param ns
+ * socket sending the command. Will be set to Ns_Dead if read error.
+ * @param pl
+ * player associated to the socket. If NULL, only commands in client_cmd_mapping will be checked.
  */
-
 void handle_client(socket_struct *ns, player *pl)
 {
     int len=0,i;
@@ -370,7 +375,7 @@ static int is_fd_valid(int fd) {
  * There are 2 lists we need to look through - init_sockets is a list
  *
  */
-void doeric_server(void)
+void do_server(void)
 {
     int i, pollret;
     fd_set tmp_read, tmp_exceptions, tmp_write;
@@ -390,7 +395,7 @@ void doeric_server(void)
 
     for(i=0;i<socket_info.allocated_sockets;i++) {
         if (init_sockets[i].status == Ns_Add && !is_fd_valid(init_sockets[i].fd)) {
-            LOG(llevError, "doeric_server: invalid waiting fd %d\n", i);
+            LOG(llevError, "do_server: invalid waiting fd %d\n", i);
             init_sockets[i].status = Ns_Dead;
         }
 	if (init_sockets[i].status == Ns_Dead) {
@@ -409,7 +414,7 @@ void doeric_server(void)
      */
     for (pl=first_player; pl!=NULL; ) {
         if (pl->socket.status != Ns_Dead && !is_fd_valid(pl->socket.fd)) {
-            LOG(llevError, "doeric_server: invalid file descriptor for player %s [%s]: %d\n", (pl->ob && pl->ob->name) ? pl->ob->name : "(unnamed player?)", (pl->socket.host) ? pl->socket.host : "(unknown ip?)", pl->socket.fd);
+            LOG(llevError, "do_server: invalid file descriptor for player %s [%s]: %d\n", (pl->ob && pl->ob->name) ? pl->ob->name : "(unnamed player?)", (pl->socket.host) ? pl->socket.host : "(unknown ip?)", pl->socket.fd);
             pl->socket.status = Ns_Dead;
         }
 
@@ -458,7 +463,7 @@ void doeric_server(void)
 	int newsocknum=0;
 
 #ifdef ESRV_DEBUG
-	LOG(llevDebug,"doeric_server: New Connection\n");
+	LOG(llevDebug,"do_server: New Connection\n");
 #endif
 	/* If this is the case, all sockets currently in used */
 	if (socket_info.allocated_sockets <= socket_info.nconns) {
