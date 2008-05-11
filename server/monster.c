@@ -63,7 +63,6 @@ static void pace2_movev(object *ob);
 static void pace2_moveh(object *ob);
 static void rand_move(object *ob);
 static int talk_to_npc(object* op, object *npc, const char *txt);
-static int talk_to_wall(object* op, object *npc, const char *txt);
 
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
@@ -1824,16 +1823,14 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
     }
 }
 
-/* This replaces all the msglang stuff about which seems to be a lot of
- * unneeded complication - since the setup of that data is never re-used
- * (say 'hi' to monster, then 'yes', it would re-do the entire parse-message)
- * it seems to me to make more sense to just have simple function that returns
- * the 'text' portion of the message that it matches - this saves us a bunch
- * of malloc's and free's, as well as that setup.
+/**
  * This function takes the message to be parsed in 'msg', the text to
- * match in 'match', and returns the portion of the message.  This
- * returned portion is in a malloc'd buf that should be freed.
- * Returns NULL if no match is found.
+ * match in 'match', and returns the portion of the message that matches
+ * said text.  This returned portion is in a malloc'd buf that should be freed.
+ *
+ * @param msg message to explore.
+ * @param match text to match, which can have some regexp-like properties.
+ * @return NULL if no match is found, else buffer that should be free()d.
  */
 static char *find_matching_message(const char *msg, const char *match)
 {
@@ -1894,11 +1891,8 @@ static char *find_matching_message(const char *msg, const char *match)
     /* Should never get reached */
 }
 
-/* This function looks for an object or creature that is listening.
- * I've disabled the bit that has only the first npc monster listen -
- * we'll see how this works out.  only the first npc listens, which
- * is sort of bogus since it uses the free_arr which has a preference
- * to certain directions.
+/**
+ * This function looks for an object or creature that is listening to said text.
  *
  * There is a rare even that the orig_map is used for - basically, if
  * a player says the magic word that gets him teleported off the map,
@@ -1911,6 +1905,9 @@ static char *find_matching_message(const char *msg, const char *match)
  * of further conversation.  Also, depending on the value of i,
  * the conversation would continue on the new map, which probably isn't
  * what is really wanted either.
+ *
+ * @param op who is saying something.
+ * @param txt what is said.
  */
 void communicate(object *op, const char *txt) {
     object *npc;
@@ -1918,52 +1915,60 @@ void communicate(object *op, const char *txt) {
     sint16 x, y;
     mapstruct *mp, *orig_map = op->map;
 
-    int flag=1; /*hasn't spoken to a NPC yet*/
     for(i = 0; i <= SIZEOFFREE2; i++) {
 
-	mp = op->map;
-	x = op->x + freearr_x[i];
-	y = op->y + freearr_y[i];
+        mp = op->map;
+        x = op->x + freearr_x[i];
+        y = op->y + freearr_y[i];
 
-	mflags = get_map_flags(mp, &mp, x, y, &x, &y);
-	if (mflags & P_OUT_OF_MAP) continue;
+        mflags = get_map_flags(mp, &mp, x, y, &x, &y);
+        if (mflags & P_OUT_OF_MAP) continue;
 
-	for(npc = GET_MAP_OB(mp,x,y); npc != NULL; npc = npc->above) {
-	    if (npc->type == MAGIC_EAR) {
-		(void) talk_to_wall(op, npc, txt); /* Maybe exit after 1. success? */
-		if (orig_map != op->map) {
-		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
-		    return;
-		}
-	    }
-	    else if (flag)  {
-		talk_to_npc(op, npc,txt);
-		if (orig_map != op->map) {
-		    LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
-		    return;
-		}
-	    }
-	}
+        for(npc = GET_MAP_OB(mp,x,y); npc != NULL; npc = npc->above) {
+            talk_to_npc(op, npc,txt);
+            if (orig_map != op->map) {
+                LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
+                return;
+            }
+        }
     }
 }
 
+/**
+ * Checks the messages of a NPC for a matching text. Will not call
+ * plugin events. Called by talk_to_npc().
+ * @param npc object that gets a chance to reply.
+ * @param txt text being said.
+ * @return 1 if npc talked, 0 else.
+ */
 static int do_talk_npc(object* npc, const char* txt)
 {
     char* cp;
 
     if(npc->msg == NULL || *npc->msg != '@')
-	return 0;
+        return 0;
 
     cp = find_matching_message(npc->msg, txt);
     if (cp) {
-        npc_say(npc, cp);
+        if (npc->type == MAGIC_EAR) {
+            ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, cp, cp);
+            use_trigger(npc);
+        }
+        else
+            npc_say(npc, cp);
+
         free(cp);
         return 1;
     }
     return 0;
 }
 
-void npc_say(object *npc, char *cp) {
+/**
+ * Simple function to have some NPC say something.
+ * @param npc who should say something.
+ * @param cp what is being said.
+ */
+void npc_say(object *npc, const char *cp) {
     char buf[HUGE_BUF], name[MAX_BUF];
     query_name(npc, name, sizeof(name));
     snprintf(buf, sizeof(buf), "%s says: %s", name, cp);
@@ -1971,13 +1976,23 @@ void npc_say(object *npc, char *cp) {
         buf, buf);
 }
 
+/**
+ * Give an object the chance to handle something being said.
+ * Plugin hooks will be called, including in the NPC's inventory.
+ *
+ * @param op who is talking.
+ * @param npc object to try to talk to. Can be an NPC or a MAGIC_EAR.
+ * @param txt what op is saying.
+ * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
+ */
 static int talk_to_npc(object *op, object *npc, const char *txt) {
     object *cobj;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
     /* Lauwenmark: Handle for plugin say event */
-    if (op==npc) return 0;
+    if (op==npc)
+        return 0;
     if (execute_event(npc, EVENT_SAY,op,NULL,txt,SCRIPT_FIX_ALL)!=0)
 	    return 0;
     /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
@@ -1988,27 +2003,6 @@ static int talk_to_npc(object *op, object *npc, const char *txt) {
                 return 0;
             }
     return do_talk_npc(npc, txt);
-}
-
-static int talk_to_wall(object* op, object* npc, const char* txt)
-{
-    char* cp;
-    if (execute_event(npc, EVENT_SAY,op,NULL,txt,SCRIPT_FIX_ALL)!=0)
-	    return 0;
-    if(npc->msg == NULL || *npc->msg != '@')
-	return 0;
-
-    cp = find_matching_message(npc->msg, txt);
-    if (!cp)
-	return 0;
-
-    ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,
-		 MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH,
-		 cp, cp);
-    use_trigger(npc);
-    free(cp);
-
-    return 1;
 }
 
 /* find_mon_throw_ob() - modeled on find_throw_ob

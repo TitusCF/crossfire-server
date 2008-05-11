@@ -328,7 +328,7 @@ void npc_call_help(object *op);
 void check_earthwalls(object *op, mapstruct *m, int x, int y);
 void check_doors(object *op, mapstruct *m, int x, int y);
 void communicate(object *op, const char *txt);
-void npc_say(object *npc, char *cp);
+void npc_say(object *npc, const char *cp);
 object *find_mon_throw_ob(object *op);
 int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int stand_in_light(object *op);
