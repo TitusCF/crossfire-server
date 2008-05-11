@@ -29,6 +29,7 @@ libcross_a_SOURCES = \
 	anim.c \
 	arch.c\
 	button.c\
+	dialog.c \
 	exp.c\
 	friend.c\
 	glue.c\

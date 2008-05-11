@@ -685,6 +685,7 @@ void clear_object(object *op) {
      * as much info available as possible (eg, object name).
      */
     free_key_values(op);
+    free_dialog_information(op);
 
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
@@ -766,6 +767,7 @@ void copy_object(object *op2, object *op) {
     /* Basically, same code as from clear_object() */
 
     free_key_values(op);
+    free_dialog_information(op);
 
     /* op is the destination, op2 is the source. */
     (void) memcpy((void *)((char *) op +offsetof(object,name)),
@@ -831,6 +833,8 @@ void copy_object(object *op2, object *op) {
             }
         }
     }
+
+    op->dialog_information = duplicate_dialog_information(op2->dialog_information);
 
     update_ob_speed(op);
 }
@@ -1362,6 +1366,8 @@ void free_object2(object *ob, int free_inventory) {
 
     /* Why aren't events freed? */
     free_key_values(ob);
+
+    free_dialog_information(ob);
 
     /* Test whether archetype is a temporary one, and if so look whether it should be trashed. */
     if (ob->arch && ob->arch->reference_count > 0) {

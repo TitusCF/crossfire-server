@@ -46,6 +46,11 @@ extern int get_button_value(const object *button);
 extern object *check_inv_recursive(object *op, const object *trig);
 extern void check_inv(object *op, object *trig);
 extern void verify_button_links(const mapstruct *map);
+/* dialog.c */
+extern void free_dialog_information(object *op);
+extern struct_dialog_information *duplicate_dialog_information(struct_dialog_information *original);
+extern void parse_dialog_information(object *op);
+extern int get_dialog_message(object* op, const char* text, struct_dialog_message** message, struct_dialog_reply** reply);
 /* exp.c */
 extern sint64 new_exp(const object *ob);
 extern int has_ability(const object *ob);
@@ -194,7 +199,7 @@ extern method_ret ob_apply(object *op, object *applier, int aflags);
 extern method_ret ob_process(object *op);
 extern char *ob_describe(const object *op, const object *observer, char *buf, int size);
 extern method_ret ob_move_on(object *op, object *victim, object *originator);
-extern method_ret ob_trigger(object* op, object* cause, int state);
+extern method_ret ob_trigger(object *op, object *cause, int state);
 /* ob_types.c */
 extern void init_ob_method_struct(ob_methods *methods, ob_methods *fallback);
 extern void init_ob_types(ob_methods *base_type);
@@ -394,6 +399,7 @@ extern void dump_monster_treasure_rec(const char *name, treasure *t, int depth);
 extern void dump_monster_treasure(const char *name);
 extern void init_artifacts(void);
 extern void add_abilities(object *op, object *change);
+extern int legal_artifact_combination(object *op, artifact *art);
 extern void give_artifact_abilities(object *op, object *artifact);
 extern void generate_artifact(object *op, int difficulty);
 extern void fix_flesh_item(object *item, object *donor);
@@ -403,7 +409,6 @@ extern void free_charlinks(linked_char *lc);
 extern void free_artifact(artifact *at);
 extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
-extern int legal_artifact_combination(object *op, artifact *art);
 /* utils.c */
 extern int random_roll(int min, int max, const object *op, int goodbad);
 extern sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad);

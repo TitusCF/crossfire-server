@@ -556,6 +556,8 @@ J. NPC's Speak out
 
 The message structure in a monster may contain:
 @match <key>|<key>[...]
+[@reply value message] (multiple possible)
+[@question value message] (multiple possible)
   [text]
 [...]
 
@@ -564,6 +566,14 @@ any keys.  They keys are processed as primitive regular expressions, so some
 characters act as match operators or metacharacters.  The asterisk, caret,
 square braces, and dollar characters are useful to some degree.
 
+The '@reply' and '@question' lines will be sent to the client so the player knows available replies.
+The 'value' is a text that should correspond to a @match, and 'message' is what the player
+will actually say when saying the 'value'. If using '@reply', the server will display 'player replies: message',
+with '@question' it will be 'player asks: message'.
+Note that the order of @reply and @question is non significant, they can be mixed, and can probably be
+in the middle of the message's text (though easier to put'em at top).
+Also, 'value' can't contain spaces.
+
 An example of usage:
 
 @match hello|hi
@@ -571,6 +581,8 @@ Welcome, good friend!
 @match bye
 Goodbye!
 @match sss
+@reply yes Yes, isn't it a shame?
+@question no No, why?
 Whasssamatter?  You got a lisssp or sssomething?
 @match yes
 Sssorry, me too.

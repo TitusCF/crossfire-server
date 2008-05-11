@@ -30,6 +30,7 @@ void init_type_detector(void);
 void init_type_director(void);
 /* duplicator/duplicator.c */
 void init_type_duplicator(void);
+void move_duplicator(object *op);
 /* exit/exit.c */
 void init_type_exit(void);
 /* food/food.c */
@@ -46,7 +47,8 @@ void init_type_lamp(void);
 void init_type_lighter(void);
 /* marker/marker.c */
 void init_type_marker(void);
-/* moodfloor/moodfloor.c */
+void move_marker(object *op);
+/* mood_floor/mood_floor.c */
 void init_type_mood_floor(void);
 /* peacemaker/peacemaker.c */
 void init_type_peacemaker(void);
@@ -82,6 +84,8 @@ void init_type_spell_effect(void);
 void init_type_spellbook(void);
 /* spinner/spinner.c */
 void init_type_spinner(void);
+/* teleporter/teleporter.c */
+void init_type_teleporter(void);
 /* thrown_object/thrown_object.c */
 void init_type_thrown_object(void);
 /* transport/transport.c */
@@ -123,5 +127,3 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int
 void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
 /* legacy/process.c */
 method_ret legacy_ob_process(ob_methods *context, object *op);
-/* teleporter/teleporter.c */
-void init_type_teleporter(void);

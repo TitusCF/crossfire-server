@@ -31,6 +31,8 @@
  * Object structure, the core of Crossfire.
  */
 
+#include "dialog.h"
+
 #ifndef OBJECT_H
 #define OBJECT_H
 
@@ -154,6 +156,8 @@ typedef struct obj {
     struct mapdef *map;		/**< Pointer to the map in which this object is present */
 
     tag_t	count;		/**< Unique object number for this object */
+    struct struct_dialog_information* dialog_information; /**< Parsed dialog information for this object.
+            Valid if FLAG_DIALOG_PARSED is set (but can be NULL). */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If

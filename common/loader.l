@@ -1235,7 +1235,7 @@ int set_variable(object *op,char *buf) {
 static const char *const flag_names[NUM_FLAGS+1] = {
     "alive", "wiz", NULL, NULL, "was_wiz", "applied", "unpaid",
     "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
-    "is_animated", NULL /* slow_move */,
+    "is_animated", NULL /* FLAG_DIALOG_PARSED, not saved */,
     NULL /* flying */, "monster", "friendly", "generator",
     "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
     "see_invisible", "can_roll", "overlay_floor",

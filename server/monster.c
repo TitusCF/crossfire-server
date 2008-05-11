@@ -62,7 +62,7 @@ static void pace_moveh(object *ob);
 static void pace2_movev(object *ob);
 static void pace2_moveh(object *ob);
 static void rand_move(object *ob);
-static int talk_to_npc(object* op, object *npc, const char *txt);
+static int talk_to_npc(object* op, object *npc, const char *txt, int* talked);
 
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
@@ -1825,74 +1825,6 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
 }
 
 /**
- * This function takes the message to be parsed in 'msg', the text to
- * match in 'match', and returns the portion of the message that matches
- * said text.  This returned portion is in a malloc'd buf that should be freed.
- *
- * @param msg message to explore.
- * @param match text to match, which can have some regexp-like properties.
- * @return NULL if no match is found, else buffer that should be free()d.
- */
-static char *find_matching_message(const char *msg, const char *match)
-{
-    const char *cp=msg, *cp1, *cp2;
-    char *cp3, regex[MAX_BUF], gotmatch=0;
-
-    while (1) {
-	if (strncmp(cp, "@match ", 7)) {
-	    LOG(llevDebug,"find_matching_message: Invalid message %s\n", msg);
-	    return NULL;
-	}
-	else {
-	    /* Find the end of the line, and copy the regex portion into it */
-	    cp2 = strchr(cp+7, '\n');
-	    strncpy(regex, cp+7, (cp2 - cp -7 ));
-	    regex[cp2 - cp -7] = 0;
-
-	    /* Find the next match command */
-	    cp1 = strstr(cp+6, "\n@match");
-
-	    /* Got a match - handle * as special case - proper regex would be .*,
-	     * but lots of messages don't use that form.
-	     */
-	    if (regex[0] == '*') gotmatch=1;
-	    else {
-		char *pipe, *pnext=NULL;
-		/* need to parse all the | seperators.  Our re_cmp isn't
-		 * realy a fully blown regex parser.
-		 */
-		for (pipe=regex; pipe != NULL; pipe = pnext) {
-		    pnext = strchr(pipe, '|');
-		    if (pnext) {
-			*pnext = 0;
-			pnext ++;
-		    }
-		    if (re_cmp(match, pipe)) {
-			gotmatch = 1;
-			break;
-		    }
-		}
-	    }
-	    if (gotmatch) {
-		if (cp1) {
-		    cp3 = malloc(cp1 - cp2 + 1);
-		    strncpy(cp3, cp2+1, cp1 - cp2);
-		    cp3[cp1 - cp2] = 0;
-		}
-		else {	/* if no next match, just want the rest of the string */
-		    cp3 = strdup_local(cp2+1);
-		}
-        return cp3;
-	    }
-        gotmatch = 0;
-	    if (cp1) cp = cp1 + 1;
-	    else return NULL;
-	}
-    }
-    /* Should never get reached */
-}
-
-/**
  * This function looks for an object or creature that is listening to said text.
  *
  * There is a rare even that the orig_map is used for - basically, if
@@ -1912,9 +1844,10 @@ static char *find_matching_message(const char *msg, const char *match)
  */
 void communicate(object *op, const char *txt) {
     object *npc;
-    int i, mflags;
+    int i, mflags, talked = 0;
     sint16 x, y;
     mapstruct *mp, *orig_map = op->map;
+    char buf[MAX_BUF];
 
     for(i = 0; i <= SIZEOFFREE2; i++) {
 
@@ -1926,42 +1859,67 @@ void communicate(object *op, const char *txt) {
         if (mflags & P_OUT_OF_MAP) continue;
 
         for(npc = GET_MAP_OB(mp,x,y); npc != NULL; npc = npc->above) {
-            talk_to_npc(op, npc,txt);
+            talk_to_npc(op, npc, txt, &talked);
             if (orig_map != op->map) {
                 LOG(llevDebug,"Warning: Forced to swap out very recent map - MAX_OBJECTS should probably be increased\n");
                 return;
             }
         }
     }
+
+    if (!talked) {
+        snprintf(buf, sizeof(buf), "%s says: %s",op->name, txt);
+        ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
+    }
 }
 
 /**
  * Checks the messages of a NPC for a matching text. Will not call
  * plugin events. Called by talk_to_npc().
+ * @param op who is saying something
  * @param npc object that gets a chance to reply.
  * @param txt text being said.
+ * @param talked did op already talk? Will be modified if this function makes op talk.
  * @return 1 if npc talked, 0 else.
  */
-static int do_talk_npc(object* npc, const char* txt)
+static int do_talk_npc(object* op, object* npc, const char* txt, int* talked)
 {
-    char* cp;
+    char buf[MAX_BUF];
 
-    if(npc->msg == NULL || *npc->msg != '@')
+    struct_dialog_reply* reply;
+    struct_dialog_message* message;
+
+    if (!get_dialog_message(npc, txt, &message, &reply))
         return 0;
 
-    cp = find_matching_message(npc->msg, txt);
-    if (cp) {
-        if (npc->type == MAGIC_EAR) {
-            ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, cp, cp);
-            use_trigger(npc);
-        }
-        else
-            npc_say(npc, cp);
-
-        free(cp);
-        return 1;
+    if (reply) {
+        snprintf(buf, sizeof(buf), "%s %s: %s", op->name, (reply->type == rt_reply ? "replies" : "asks"), reply->message);
+        ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
+        *talked = 1;
+    } else if (!*talked) {
+        *talked = 1;
+        snprintf(buf, sizeof(buf), "%s says: %s",op->name, txt);
+        ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
     }
-    return 0;
+
+    if (npc->type == MAGIC_EAR) {
+        ext_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, message->message, NULL);
+        use_trigger(npc);
+    }
+    else {
+        npc_say(npc, message->message);
+        reply = message->replies;
+
+        if (reply) {
+            draw_ext_info(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, "Replies:", NULL);
+            while (reply) {
+                draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, " - %s: %s", NULL, reply->reply, reply->message);
+                reply = reply->next;
+            }
+        }
+    }
+
+    return 1;
 }
 
 /**
@@ -1984,9 +1942,10 @@ void npc_say(object *npc, const char *cp) {
  * @param op who is talking.
  * @param npc object to try to talk to. Can be an NPC or a MAGIC_EAR.
  * @param txt what op is saying.
+ * @param talked did op already talk? Can be modified by this function.
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
  */
-static int talk_to_npc(object *op, object *npc, const char *txt) {
+static int talk_to_npc(object *op, object *npc, const char *txt, int* talked) {
     object *cobj;
 
     /* Move this commone area up here - shouldn't cost much extra cpu
@@ -2003,7 +1962,7 @@ static int talk_to_npc(object *op, object *npc, const char *txt) {
         if (execute_event(cobj, EVENT_SAY,npc,NULL,txt,SCRIPT_FIX_ALL)!=0)
                 return 0;
             }
-    return do_talk_npc(npc, txt);
+    return do_talk_npc(op, npc, txt, talked);
 }
 
 /* find_mon_throw_ob() - modeled on find_throw_ob

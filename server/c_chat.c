@@ -46,12 +46,7 @@
  */
 int command_say (object *op, char *params)
 {
-    char buf[MAX_BUF];
-
     if (!params) return 0;
-    snprintf(buf, MAX_BUF-1, "%s says: %s",op->name, params);
-    ext_info_map(NDI_WHITE,op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY,
-		 buf, NULL);
     communicate(op, params);
 
     return 0;
