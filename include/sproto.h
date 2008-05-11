@@ -333,9 +333,11 @@ object *find_mon_throw_ob(object *op);
 int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int stand_in_light(object *op);
 int can_see_enemy(object *op, object *enemy);
+int compute_path(object* source, object* target, int default_dir);
 /* move.c */
 int move_object(object *op, int dir);
 int move_ob(object *op, int dir, object *originator);
+int move_to(object* op, int x, int y);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator);
 int teleport(object *teleporter, uint8 tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);

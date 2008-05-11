@@ -622,3 +622,31 @@ int push_ob(object *who, int dir, object *pusher) {
 
     return 1;
 }
+
+/**
+ * Move an object one square toward a specified destination on the same map.
+ * The move takes into account blocked squares for op, and things like that.
+ * No check is done to know if the object has enough speed to move.
+ *
+ * @param op object to move
+ * @param x 
+ * @param y destination coordinates
+ * @return
+ * 0 if op is on the specified spot, 1 if it moved towards the goal, 2 if it didn't find any path to the goal.
+ */
+int move_to(object* op, int x, int y) {
+    int direction;
+    if (op->x == x && op->y == y)
+        return 0;
+
+    if (GET_MAP_FLAGS(op->map, x, y) & P_OUT_OF_MAP)
+        return 2;
+
+    direction = compute_path(op, GET_MAP_OB(op->map, x, y), -1);
+    if (direction == -1)
+        return 2;
+
+    /* this shouldn't fail, as the direction computing takes into account the blocked state... */
+    move_ob(op, direction, op);
+    return 1;
+}

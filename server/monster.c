@@ -371,8 +371,9 @@ static int move_randomly(object *op) {
  * general direction from source to target.
  * @return
  * direction to go into. Will be default_dir if no path found.
+ * @todo cache path, smart ajustment and such things to not compute all the time ; try directions randomly.
  */
-static int compute_path(object* source, object* target, int default_dir) {
+int compute_path(object* source, object* target, int default_dir) {
     char* path;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
     int current = 0, dir, max = 1, size, x, y, check_dir;
