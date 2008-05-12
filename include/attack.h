@@ -156,9 +156,9 @@ typedef struct {
 } Chaos_Attacks;
 
 EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
-EXTERN Chaos_Attacks ATTACKS[22];
 
 #ifndef INIT_C
+EXTERN Chaos_Attacks ATTACKS[22];
 EXTERN int resist_table[];
 EXTERN char *change_resist_msg[NROFATTACKS];
 EXTERN char *resist_plus[NROFATTACKS];

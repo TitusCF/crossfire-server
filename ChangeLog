@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Ansi C compatibility improvements courtesy Arvid Norlander:
+ include/attack.h: do not redeclare variable
+Andreas Kirschbaum 2008-05-12
+
 Fix possible buffer overflows courtesy Arvid Norlander.
  common/init.c
 Andreas Kirschbaum 2008-05-12
