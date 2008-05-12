@@ -525,6 +525,17 @@ int cf_object_transfer(object *op, int x, int y, int randomly, object *originato
 }
 
 /**
+ * Wrapper for move_to().
+ * @copydoc move_to()
+ */
+int cf_object_move_to(object* op, int x, int y) {
+    int type, value;
+    cfapiObject_transfer(&type, op, x, y, &value);
+    assert(type == CFAPI_INT);
+    return value;
+}
+
+/**
  * Wrapper for insert_ob_in_map_at().
  * @copydoc insert_ob_in_map_at().
  */

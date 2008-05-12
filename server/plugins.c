@@ -3971,6 +3971,7 @@ void* cfapi_object_pay_item(int* type, ...)
  * Parameters are object*, int meaning:
  * 0: call to transfer_ob()
  * 1: call to insert_ob_in_map_at()
+ * 2: call to move_to()
  * @return
  * NULL.
  */
@@ -4018,6 +4019,17 @@ void* cfapi_object_transfer(int* type, ...)
         *type = CFAPI_POBJECT;
         return NULL;
         break;
+
+    case 2:
+        op = va_arg(args, object*);
+        x = va_arg(args, int);
+        y = va_arg(args, int);
+        rint = va_arg(args, int*);
+        va_end(args);
+
+        *rint = move_to(op, x, y);
+        *type = CFAPI_INT;
+        return NULL;
 
     default:
         *type = CFAPI_NONE;

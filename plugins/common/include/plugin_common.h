@@ -107,6 +107,7 @@ extern int          cf_object_pay_amount(object* pl, uint64 to_pay);
 extern int          cf_object_pay_item(object *op,object *pl);
 extern void         cf_object_set_long_property(object* op, int propcode, long value);
 extern int          cf_object_transfer(object *op, int x, int y, int randomly, object *originator);
+extern int          cf_object_move_to(object* op, int x, int y);
 extern int          cf_object_out_of_map( object* op, int x, int y);
 extern void         cf_object_drop( object* op, object* author);
 extern void         cf_object_say( object* op, char* msg);
