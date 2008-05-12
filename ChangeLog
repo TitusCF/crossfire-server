@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix possible buffer overflows courtesy Arvid Norlander.
+ common/init.c
+Andreas Kirschbaum 2008-05-12
+
 Give access to move_to() to plugins.
  plugins/common/include/plugin_common.h
  plugins/common/plugin_common.c
@@ -27,7 +31,7 @@ or check doc/Developers/dialog.dox, or the maps/test/say map.
  include/define.h Makefile.am object.h libproto.h typesproto.h
  server/c_chat.c monster.c
 New files:
- common/dialog.c 
+ common/dialog.c
  doc/Developers/dialog.dox
  include/dialog.h
 Nicolas Weeger 2008-05-11
