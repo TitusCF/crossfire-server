@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add 'moveto' command, and 'byname' victim type. Fix potential memory leak.
+Enable moves to take more than one tick.
+ plugins/cfanim/cfanim.c
+ plugins/cfanim/include/cfanim.h cfanim_proto.h
+Nicolas Weeger 2008-05-12
+
 Wrapper for move_to(). Fix invalid move_to parameter order.
  plugins/common/include/plugin_common.h
  plugins/common/plugin_common.c

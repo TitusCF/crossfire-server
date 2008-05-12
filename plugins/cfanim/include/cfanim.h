@@ -43,9 +43,16 @@ enum time_enum {
         time_second,    /**< One second. */
         time_tick       /**< One server tick. */
 };
+
+/** Result of one animation move. */
+typedef enum anim_move_result {
+    mr_finished,        /**< Move completed. */
+    mr_again            /**< Move should continue next time. */
+} anim_move_result;
+
 struct CFanimation_struct;
 struct CFmovement_struct;
-typedef int (*CFAnimRunFunc) (struct CFanimation_struct* animation, long int id, void* parameters);
+typedef anim_move_result (*CFAnimRunFunc) (struct CFanimation_struct* animation, long int id, void* parameters);
 typedef long int (*CFAnimInitFunc) (char* name,char* parameters,struct CFmovement_struct*);
 /** One move in an animation. */
 typedef struct CFmovement_struct
