@@ -41,6 +41,7 @@
 #include <global.h>
 #include <newclient.h>
 #include <sproto.h>
+#include <errno.h>
 
 /***********************************************************************
  *
@@ -124,7 +125,6 @@ short GetShort_String(const unsigned char *data) {
 int SockList_ReadPacket(int fd, SockList *sl, int len)
 {
     int stat,toread;
-    extern int errno;
     char err[MAX_BUF];
 
     /* Sanity check - shouldn't happen */
