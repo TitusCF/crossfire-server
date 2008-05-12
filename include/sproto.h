@@ -418,6 +418,7 @@ void *cfapi_system_register_global_event(int *type, ...);
 void *cfapi_system_unregister_global_event(int *type, ...);
 void *cfapi_system_add_string(int *type, ...);
 void *cfapi_system_remove_string(int *type, ...);
+void *cfapi_system_find_string(int *type, ...);
 void *cfapi_system_check_path(int *type, ...);
 void *cfapi_system_re_cmp(int *type, ...);
 void *cfapi_system_directory(int *type, ...);

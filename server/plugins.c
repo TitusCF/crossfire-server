@@ -58,7 +58,7 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 88
+#define NR_OF_HOOKS 89
 
 static const hook_entry plug_hooks[NR_OF_HOOKS] =
 {
@@ -148,7 +148,8 @@ static const hook_entry plug_hooks[NR_OF_HOOKS] =
     {cfapi_get_weekday_name,        84, "cfapi_system_get_weekday_name"},
     {cfapi_get_periodofday_name,    85, "cfapi_system_get_periodofday_name"},
     {cfapi_map_trigger_connected,   86, "cfapi_map_trigger_connected"},
-    {cfapi_object_user_event,       87, "cfapi_object_user_event"}
+    {cfapi_object_user_event,       87, "cfapi_object_user_event"},
+    {cfapi_system_find_string,      88, "cfapi_system_find_string"}
 };
 int plugin_number = 0;
 crossfire_plugin* plugins_list = NULL;
@@ -809,6 +810,30 @@ void* cfapi_system_remove_string(int *type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
+
+/**
+ * Wrapper for find_string().
+ *
+ * @param type
+ * will be CFAPI_SSTRING.
+ * @return
+ * NULL.
+ */
+void* cfapi_system_find_string(int *type, ...) {
+    va_list args;
+    const char* str;
+    sstring* rv;
+
+    va_start(args, type);
+    str = va_arg(args, const char*);
+    rv = va_arg(args, sstring*);
+    va_end(args);
+
+    *rv = find_string(str);
+    *type = CFAPI_SSTRING;
+    return NULL;
+}
+
 /**
  * Wrapper for check_path().
  * @param type
@@ -3092,8 +3117,8 @@ void* cfapi_object_apply(int* type, ...)
 
     va_start(args, type);
 
-    applied = va_arg(args, object*);
     applier = va_arg(args, object*);
+    applied = va_arg(args, object*);
     aflags  = va_arg(args, int);
     ret = va_arg(args, int*);
 
@@ -4021,7 +4046,6 @@ void* cfapi_object_transfer(int* type, ...)
         break;
 
     case 2:
-        op = va_arg(args, object*);
         x = va_arg(args, int);
         y = va_arg(args, int);
         rint = va_arg(args, int*);
