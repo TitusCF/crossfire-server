@@ -377,7 +377,7 @@ typedef struct Settings {
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
-    uint8   meta_on:1;		    /**< True if we should send updates */
+    unsigned int meta_on:1;	    /**< True if we should send updates */
     char    meta_server[MAX_BUF];   /**< Hostname/ip addr of the metaserver */
     char    meta_host[MAX_BUF];	    /**< Hostname of this host */
     uint16  meta_port;		    /**< Port number to use for updates */
