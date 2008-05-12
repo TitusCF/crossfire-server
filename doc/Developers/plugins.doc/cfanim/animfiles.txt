@@ -2,8 +2,8 @@ Plugin animator file specs
 
 [Config]
 name= "anystring"
-victimtype=  player|object|any
-victim= who|activator|who_owner|activator_owner
+victimtype=  player|object|any|byname
+victim= who|activator|who_owner|activator_owner|object's name
 unique= yes|no
 always_delete= yes|no
 parallel= yes|no
@@ -64,5 +64,6 @@ ghosted			yes or no				Player leave its corpse at the current location and becom
 								Usefull for camera effects. Puts the invisible and wizards flag to yes
 invisible		yes or no				Show or hide player
 wizard			yes or no				Can or not walk through walls and monster (dungeon master)
-teleport		x y mapname				teleport object ot mapname at position x,y
-notice			noticewhat				put a beautifull text (noticewhat) in Navy in the console of player
+teleport		x y mapname				Teleport object ot mapname at position x,y
+notice			noticewhat				Put a beautifull text (noticewhat) in Navy in the console of player
+moveto                  x y                                     Will make the object move towards the specified point in its map

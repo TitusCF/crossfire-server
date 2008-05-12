@@ -16,6 +16,7 @@ else.  With this, include the file(s) that you changed.
 
 Add 'moveto' command, and 'byname' victim type. Fix potential memory leak.
 Enable moves to take more than one tick.
+ doc/Developers/plugins.doc/cfanim/animfiles.txt
  plugins/cfanim/cfanim.c
  plugins/cfanim/include/cfanim.h cfanim_proto.h
 Nicolas Weeger 2008-05-12
