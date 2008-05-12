@@ -203,7 +203,7 @@ decode_string(JSONData *jsondata)
                 getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
                 PyErr_Format(JSON_DecodeError, "cannot decode string starting"
                              " at position " SSIZE_T_F  "(row " SSIZE_T_F ", col " SSIZE_T_F "): %s",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str, (Py_ssize_t)row, (Py_ssize_t)col),
+                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col,
                              reason ? PyString_AsString(reason) : "bad format");
                 Py_XDECREF(reason);
             } else {

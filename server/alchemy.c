@@ -630,7 +630,7 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
 
     } else if (level<60) {                	/* CREATE MONSTER */
 	draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s %s.", NULL, cauldron->name, cauldron_sound(), NULL);
+		     "The %s %s.", NULL, cauldron->name, cauldron_sound());
 	remove_contents(cauldron->inv,NULL);
 	return;
     } else if (level<80) {                	/* MAJOR FIRE */
