@@ -46,6 +46,7 @@ extern void cf_system_unregister_global_event( int event, const char* name );
 /* General functions */
 extern sstring      cf_add_string(const char* str);
 extern void         cf_free_string(sstring str);
+extern sstring      cf_find_string(const char* str);
 extern char*        cf_strdup_local(const char* str);
 extern char*        cf_get_maps_directory(const char *name, char* buf, int size);
 extern int          cf_find_animation(const char* txt);

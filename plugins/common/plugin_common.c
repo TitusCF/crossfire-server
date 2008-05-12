@@ -37,6 +37,7 @@
 #include <assert.h>
 
 static f_plug_api cfapiSystem_add_string = NULL;
+static f_plug_api cfapiSystem_find_string = NULL;
 static f_plug_api cfapiSystem_register_global_event = NULL;
 static f_plug_api cfapiSystem_remove_string = NULL;
 static f_plug_api cfapiSystem_unregister_global_event = NULL;
@@ -214,6 +215,7 @@ int cf_init_plugin( f_plug_api getHooks )
     GET_HOOK( cfapiSystem_get_weekday_name, "cfapi_system_get_weekday_name", z );
     GET_HOOK( cfapiSystem_get_periodofday_name, "cfapi_system_get_periodofday_name", z );
     GET_HOOK( cfapiObject_user_event, "cfapi_object_user_event", z );
+    GET_HOOK( cfapiSystem_find_string, "cfapi_system_find_string", z );
     return 1;
 }
 
@@ -530,7 +532,7 @@ int cf_object_transfer(object *op, int x, int y, int randomly, object *originato
  */
 int cf_object_move_to(object* op, int x, int y) {
     int type, value;
-    cfapiObject_transfer(&type, op, x, y, &value);
+    cfapiObject_transfer(&type, op, 2, x, y, &value);
     assert(type == CFAPI_INT);
     return value;
 }
@@ -984,6 +986,18 @@ void cf_free_string(sstring str)
     int type;
     if ( str )
         cfapiSystem_remove_string( &type, str );
+}
+
+sstring cf_find_string(const char* str) {
+    int type;
+    sstring ret;
+
+    if (!str)
+        return NULL;
+
+    cfapiSystem_find_string(&type, str, &ret);
+    assert(type == CFAPI_SSTRING);
+    return ret;
 }
 
 char* cf_query_name(object* ob, char* name, int size)
