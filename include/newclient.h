@@ -255,7 +255,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 
 /**
  * Used in the new_face structure on the magicmap field.  Low bits
- * are color informatin.  For now, only high bit information we need
+ * are color information.  For now, only high bit information we need
  * is floor information.
  */
 #define FACE_FLOOR	0x80
