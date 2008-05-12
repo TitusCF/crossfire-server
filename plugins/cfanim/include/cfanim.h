@@ -93,25 +93,6 @@ extern CFanimationHook animationbox[];
 extern int animationcount;
 int get_boolean (char* strg,int* bl);
 
-typedef struct _cfpcontext
-{
-    struct _cfpcontext* down;
-    object*     who;
-    object*     activator;
-    object*     third;
-    object*     event;
-    char        message[1024];
-    int         fix;
-    int         event_code;
-    char        options[1024];
-    char        script[1024];
-    int         returnvalue;
-    int         parms[5];
-} CFPContext;
-
-extern f_plug_api  gethook;
-extern CFPContext* context_stack;
-extern CFPContext* current_context;
 #include <cfanim_proto.h>
 
 #endif /* PLUGIN_ANIM_H */

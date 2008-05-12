@@ -29,11 +29,10 @@
 
 /* First let's include the header file needed                                */
 
+#include <assert.h>
 #include <cfanim.h>
 #include <stdarg.h>
 
-CFPContext* context_stack;
-CFPContext* current_context;
 CFanimation *first_animation=NULL;  /**< Animations we're currently processing. */
 
 /**
@@ -726,11 +725,10 @@ object* find_by_name(object* origin, const char* name) {
  * @param activator object that caused who to get an event.
  * @param event actual event object linking who and this plugin. Can be removed.
  * @param file file name to read from, should be accessible from the current path.
- * @param options unused.
  * @return 1 if the animation was created, 0 else.
- * @todo return memory leaks in case of errors.
+ * @todo fix memory leaks in case of errors.
  */
-int start_animation (object* who,object* activator, object* event, char* file, char* options)
+int start_animation (object* who,object* activator, object* event, const char* file)
 {
     FILE*   fichier;
     char*   name=NULL;
@@ -1047,46 +1045,6 @@ void animate(void)
     }
 }
 
-
-
-
-
-
-
-
-void initContextStack(void)
-{
-    current_context = NULL;
-    context_stack = NULL;
-}
-
-void pushContext(CFPContext* context)
-{
-    if (current_context == NULL)
-    {
-        context_stack = context;
-        context->down = NULL;
-    }
-    else
-    {
-        context->down = current_context;
-    }
-    current_context = context;
-}
-
-CFPContext* popContext(void)
-{
-    CFPContext* oldcontext;
-    if (current_context != NULL)
-    {
-        oldcontext = current_context;
-        current_context = current_context->down;
-        return oldcontext;
-    }
-    else
-        return NULL;
-}
-
 /**
  * Plugin initialisation function.
  * @param iversion server version.
@@ -1140,7 +1098,6 @@ CF_PLUGIN anim_move_result runPluginCommand(object* op, char* params)
 CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, "CFAnim 2.0a post init\n");
-    initContextStack();
     /* Pick the global events you want to monitor from this plugin */
     cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
     return 0;
@@ -1150,97 +1107,15 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 {
     va_list args;
     static int rv=0;
-    CFPContext* context;
-    char* buf;
-    player* pl;
-    context = malloc(sizeof(CFPContext));
+    int event_code;
 
     va_start(args, type);
-    context->event_code = va_arg(args, int);
+    event_code = va_arg(args, int);
+    assert(event_code == EVENT_CLOCK);
 
-    context->message[0]=0;
+    animate();
 
-    context->who         = NULL;
-    context->activator   = NULL;
-    context->third       = NULL;
-    context->event       = NULL;
-    rv = context->returnvalue = 0;
-    switch(context->event_code)
-    {
-        case EVENT_CRASH:
-            cf_log(llevDebug, "Unimplemented for now\n");
-            break;
-        case EVENT_BORN:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_PLAYER_DEATH:
-            context->who = va_arg(args, object*);
-            break;
-        case EVENT_GKILL:
-            context->who = va_arg(args, object*);
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_LOGIN:
-            pl = va_arg(args, player*);
-            context->activator = pl->ob;
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_LOGOUT:
-            pl = va_arg(args, player*);
-            context->activator = pl->ob;
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_REMOVE:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_SHOUT:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_MUZZLE:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_KICK:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_MAPENTER:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_MAPLEAVE:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_CLOCK:
-            animate();
-            break;
-        case EVENT_MAPRESET:
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_TELL:
-            break;
-    }
     va_end(args);
-    context->returnvalue = 0;
-
-    pushContext(context);
-    /* Put your plugin action(s) here */
-
-    context = popContext();
-    rv = context->returnvalue;
-    free(context);
 
     return &rv;
 }
@@ -1249,55 +1124,38 @@ CF_PLUGIN void* eventListener(int* type, ...)
 {
     static int rv=0;
     va_list args;
-    char* buf;
-    CFPContext* context;
-
-    context = malloc(sizeof(CFPContext));
-
-    context->message[0]=0;
+    char* buf, message[MAX_BUF], script[MAX_BUF];
+    object* who, *activator, *third, *event;
 
     va_start(args,type);
 
-    context->who         = va_arg(args, object*);
-    /*context->event_code  = va_arg(args,int);*/
-    context->activator   = va_arg(args, object*);
-    context->third       = va_arg(args, object*);
+    who         = va_arg(args, object*);
+    activator   = va_arg(args, object*);
+    third       = va_arg(args, object*);
     buf                  = va_arg(args, char*);
 
     if (buf !=0)
-        strcpy(context->message,buf);
-    context->fix         = va_arg(args, int);
-    context->event       = va_arg(args, object*);
-    context->event_code  = context->event->subtype;
-    /** @todo build from current map's path */
-    cf_get_maps_directory(context->event->slaying, context->script, sizeof(context->script));
-    strcpy(context->options,context->event->name);
-    context->returnvalue = 0;
+        strcpy(message,buf);
+    va_arg(args, int); /* 'fix', ignored */
+    event       = va_arg(args, object*);
+
+    /** @todo build from current map's path, probably */
+    cf_get_maps_directory(event->slaying, script, sizeof(script));
     va_end(args);
 
-    pushContext(context);
     /* Put your plugin action(s) here */
-    if (context->activator != NULL)
+    if (activator != NULL)
     {
-        cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
-           context->activator->name,
-           context->script,
-           context->options);
+        cf_log(llevDebug, "CFAnim: %s called animator script %s\n", activator->name, script);
     }
-    else if (context->who != NULL)
+    else if (who != NULL)
     {
-        context->activator = context->who;
-        cf_log(llevDebug, "CFAnim: %s called animator script %s, options are %s\n",
-           context->who->name,
-           context->script,
-           context->options);
+        activator = who;
+        cf_log(llevDebug, "CFAnim: %s called animator script %s\n", who->name, script);
     }
-    context->returnvalue = start_animation(context->who, context->activator, context->event,
-                                           context->script, context->options);
 
-    context = popContext();
-    rv = context->returnvalue;
-    free(context);
+    rv = start_animation(who, activator, event, script);
+
     cf_log(llevDebug, "Execution complete");
     return &rv;
 }
