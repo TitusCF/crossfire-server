@@ -288,7 +288,7 @@ extern void remove_directory(const char *path);
 extern char *strdup_local(const char *str);
 extern long strtol_local(register char *str, char **ptr, register int base);
 extern const char *strcasestr_local(const char *s, const char *find);
-extern char *strerror_local(int errnum, char *buf, int size);
+extern char *strerror_local(int errnum, char *buf, size_t size);
 extern int isqrt(int n);
 extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);

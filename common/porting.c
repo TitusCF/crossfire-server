@@ -480,17 +480,35 @@ int snprintf(char *dest, int max, const char *format, ...)
  * @return
  * buf.
  */
-char *strerror_local(int errnum, char* buf, int size)
+char *strerror_local(int errnum, char* buf, size_t size)
 {
-#if defined(HAVE_STRERROR)
+#if defined(HAVE_STRERROR_R)
+/* Then what flavour of strerror_r... */
+# if defined(STRERROR_R_CHAR_P)
     char* bbuf;
     buf[0]=0;
     bbuf = (char*)strerror_r(errnum, buf, size);
     if ((buf[0]==0)&&(bbuf!=NULL))
         strncpy(buf,bbuf,size);
-#else
+# else
+    if (strerror_r(errnum, buf, size) != 0) {
+      /* EINVAL and ERANGE are possible errors from this strerror_r */
+      if (errno == ERANGE) {
+         strncat(buf, "Too small buffer.", size);
+      } else if (errno == EINVAL) {
+         strncat(buf, "Error number invalid.", size);
+      }
+    }
+# endif /* STRERROR_R_CHAR_P */
+
+#else /* HAVE_STRERROR_R */
+
+# if defined(HAVE_STRERROR)
     snprintf(buf, size, "%s", strerror(errnum));
-#endif
+# else
+#  error If this is C89 the compiler should have strerror!;
+# endif
+#endif /* HAVE_STRERROR_R */
     return buf;
 }
 
