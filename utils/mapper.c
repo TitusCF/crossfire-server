@@ -520,7 +520,7 @@ static int is_special_equipment(object* item) {
  * @return
  * new item.
  */
-static struct_equipment* get_equipment() {
+static struct_equipment* get_equipment(void) {
     struct_equipment* add = calloc(1, sizeof(struct_equipment));
     init_map_list(&add->origin);
     return add;
@@ -1363,7 +1363,7 @@ void process_map_lore(struct_map_info* map) {
 /**
  * Writes the global quests page.
  */
-static void write_quests_page() {
+static void write_quests_page(void) {
     int quest, map;
     FILE* out;
     char path[500];
@@ -1534,7 +1534,7 @@ void replace_map(struct_map_info* find, struct_map_info* replace_by, struct_map_
  * @return
  * new struct_map_info.
  */
-struct_map_info* create_map_info() {
+struct_map_info* create_map_info(void) {
     struct_map_info* add = calloc(1, sizeof(struct_map_info));
 
     add->min_monster = 2000;
@@ -1555,7 +1555,7 @@ struct_map_info* create_map_info() {
  * @return
  * new tiled map.
  */
-struct_map_info* create_tiled_map() {
+struct_map_info* create_tiled_map(void) {
     struct_map_info* add = create_map_info();
     add_map(add, &tiled_map_list);
     return add;
@@ -2281,7 +2281,7 @@ void write_region_page(struct_region_info* reg) {
 /**
  * Generates all map indexes for a region.
  */
-void write_all_regions() {
+void write_all_regions(void) {
     int reg;
 
     qsort(regions, region_count, sizeof(struct_region_info*), sort_region);
@@ -2293,7 +2293,7 @@ void write_all_regions() {
 /**
  * Generates global map index, file maps.html.
  */
-void write_maps_index() {
+void write_maps_index(void) {
     char index_path[500];
     char* tmp;
     FILE* index;
@@ -2315,7 +2315,7 @@ void write_maps_index() {
 /**
  * Generates region index.
  */
-void write_region_index() {
+void write_region_index(void) {
     char* txt;
     char* final;
     char count[10];
@@ -2357,7 +2357,7 @@ void write_region_index() {
 /**
  * Generates a big world map.
  */
-void write_world_map() {
+void write_world_map(void) {
 #define SIZE 50
     int x, y;
     FILE* out;
@@ -2679,7 +2679,7 @@ void write_map_page(struct_map_info* map) {
 }
 
 /** Ensures all maps have a name (if there was a limit to map processing, some maps will have a NULL name which causes issues). */
-void fix_map_names() {
+void fix_map_names(void) {
     int map;
 
     for (map = 0; map < maps_list.count; map++) {
@@ -2699,7 +2699,7 @@ void fix_map_names() {
  * @todo
  * use a better filename, try to get the start of the map filenames.
  */
-void fix_tiled_map() {
+void fix_tiled_map(void) {
     int map, tile;
     char name[500];
     char* slash, *test;
@@ -2787,7 +2787,7 @@ void fix_exits_for_map(struct_map_info* current, struct_map_list* from, int is_f
 }
 
 /** Changes all exits to maps in a tiled map to point directly to the tiled map. Same for region lists. */
-void fix_exits_to_tiled_maps() {
+void fix_exits_to_tiled_maps(void) {
     int map, region, max;
     struct_map_info* group;
 
@@ -2815,7 +2815,7 @@ void fix_exits_to_tiled_maps() {
  * Makes all monsters point to tiled maps instead of map when appliable, and merge
  * map monster to tiled map.
  */
-void fix_tiled_map_monsters() {
+void fix_tiled_map_monsters(void) {
     int map, race, max;
     struct_map_info* group;
 
@@ -2843,7 +2843,7 @@ void fix_tiled_map_monsters() {
 }
 
 /** Ensures all maps have a name, and writes all map pages. */
-void write_all_maps() {
+void write_all_maps(void) {
     int map;
 
     printf("Writing map pages...");
@@ -3024,7 +3024,7 @@ void write_tiled_map_page(struct_map_info* map) {
 }
 
 /** Outputs all tiled map pages. */
-void write_tiled_maps() {
+void write_tiled_maps(void) {
     int map;
 
     printf("Writing tiled map information...\n");
@@ -3036,7 +3036,7 @@ void write_tiled_maps() {
 }
 
 /** Outputs the list of maps sorted by level. */
-void write_maps_by_level()
+void write_maps_by_level(void)
 {
     int map;
     FILE* out;
@@ -3116,7 +3116,7 @@ void write_maps_by_level()
 /**
  * Writes the item page.
  */
-void write_equipment_index() {
+void write_equipment_index(void) {
     int item, map;
     FILE* out;
     char name[500];
@@ -3149,7 +3149,7 @@ void write_equipment_index() {
 /**
  * Writes the monster information page.
  */
-static void write_race_index() {
+static void write_race_index(void) {
     int item, map;
     FILE* out;
     char name[500];
@@ -3251,7 +3251,7 @@ void find_maps(const char* from) {
 }
 
 /** Writes the list of unused maps, maps found in the directories but not linked from the other maps. */
-void dump_unused_maps() {
+void dump_unused_maps(void) {
     FILE* dump;
     char path[1024];
     int index, found = 0;
@@ -3274,7 +3274,7 @@ void dump_unused_maps() {
 }
 
 /** Writes the exit information world map. */
-void write_world_info() {
+void write_world_info(void) {
     FILE* file;
     char path[MAX_BUF];
     int x, y;
@@ -3311,7 +3311,7 @@ void write_world_info() {
 }
 
 /** Write the .dot file representing links between regions. */
-void write_regions_link() {
+void write_regions_link(void) {
     FILE* file;
     char path[MAX_BUF];
     int link;
@@ -3396,7 +3396,7 @@ static int sort_slaying( const void* left, const void* right )
 /**
  * Writes all slaying info to file.
  */
-void write_slaying_info() {
+void write_slaying_info(void) {
     FILE* file;
     char path[MAX_BUF];
     int lock;
@@ -3435,7 +3435,7 @@ void write_slaying_info() {
 /**
  * Write the list of all found NPCs in maps.
  */
-static void write_npc_list() {
+static void write_npc_list(void) {
     FILE* file;
     char path[MAX_BUF];
     int map, npc;
@@ -3575,7 +3575,7 @@ void do_parameters(int argc, char** argv) {
 /**
  * Ensures destination directory exists.
  */
-void create_destination() {
+void create_destination(void) {
     char dummy[502];
     strcpy(dummy, root);
     strcat(dummy, "/a");

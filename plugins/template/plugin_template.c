@@ -35,7 +35,7 @@ CFPContext* context_stack;
 CFPContext* current_context;
 static int current_command = -999;
 
-void initContextStack()
+void initContextStack(void)
 {
     current_context = NULL;
     context_stack = NULL;
@@ -56,7 +56,7 @@ void pushContext(CFPContext* context)
     current_context = context;
 }
 
-CFPContext* popContext()
+CFPContext* popContext(void)
 {
     CFPContext* oldcontext;
     if (current_context != NULL)
@@ -120,7 +120,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     return -1;
 }
 
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
     initContextStack();
@@ -286,7 +286,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin()
+CF_PLUGIN int   closePlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;

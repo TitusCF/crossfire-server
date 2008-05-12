@@ -156,7 +156,7 @@ int get_time_id(timeofday_t* tod, int create) {
     return id;
 }
 
-void read_parameters() {
+void read_parameters(void) {
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
@@ -222,7 +222,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     char path[500];
     const char* dir;
@@ -466,7 +466,7 @@ void* eventListener(int* type, ...)
     return &rv;
 }
 
-int closePlugin()
+int closePlugin(void)
 {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (logger_database) {

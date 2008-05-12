@@ -685,7 +685,7 @@ static PyObject* getPeriodofdayName(PyObject* self, PyObject* args)
         return NULL;
     return Py_BuildValue("s", cf_get_periodofday_name(i));
 }
-void initContextStack()
+void initContextStack(void)
 {
     current_context = NULL;
     context_stack = NULL;
@@ -702,7 +702,7 @@ void pushContext(CFPContext* context)
     current_context = context;
 }
 
-CFPContext* popContext()
+CFPContext* popContext(void)
 {
     CFPContext* oldcontext;
     if (current_context != NULL) {
@@ -1341,7 +1341,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
     return rv;
 }
 
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     PyObject*   scriptfile;
     char path[1024];
@@ -1565,7 +1565,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin()
+CF_PLUGIN int   closePlugin(void)
 {
     cf_log(llevDebug, "CFPython 2.0a closing\n");
     Py_Finalize();

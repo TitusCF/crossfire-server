@@ -123,7 +123,7 @@ WS	[ \t]*
  * This skips over the space and returns the value, or "" if no value
  * is found.
  */
-static char *rmap_yval()
+static char *rmap_yval(void)
 {
     static char *em="";
     char *cp;

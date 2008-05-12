@@ -289,10 +289,7 @@ islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
  * @todo
  * check weird -+ handling (missing break?)
  */
-long strtol_local(str, ptr, base)
-        register char *str;
-        char **ptr;
-        register int base;
+long strtol_local(register char *str, char **ptr, register int base)
 {
     register long val;
     register int c;

@@ -69,7 +69,7 @@
 /**
  * Starts the server as a daemon.
  */
-void become_daemon ()
+void become_daemon (void)
 {
     register int i;
     int forkresult;

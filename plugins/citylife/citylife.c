@@ -331,7 +331,7 @@ static void add_npcs_to_map(mapstruct* map) {
 /**
  * Find a suitable map loaded and add an NPC to it.
  */
-static void add_npc_to_random_map() {
+static void add_npc_to_random_map(void) {
     int count, test;
     mapstruct* list[50];
     int zones[50];
@@ -379,7 +379,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
 
@@ -456,7 +456,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin()
+CF_PLUGIN int   closePlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;

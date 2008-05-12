@@ -878,7 +878,7 @@ char* cf_get_maps_directory(const char *name, char* buf, int size)
  * Wrapper for get_object().
  * @copydoc get_object().
  */
-object* cf_create_object()
+object* cf_create_object(void)
 {
     int type;
     object* value;
@@ -1465,7 +1465,7 @@ int cf_object_change_abil(object* op, object* tmp) {
  * @return
  * first archetype in the archetype list.
  */
-archetype* cf_archetype_get_first()
+archetype* cf_archetype_get_first(void)
 {
     int type;
     archetype* value;

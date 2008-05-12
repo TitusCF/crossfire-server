@@ -14,7 +14,7 @@
 #endif
 
 int
-main()
+main(void)
 {
 	int map[100][100];
 	int x, y;

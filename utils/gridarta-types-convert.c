@@ -388,7 +388,7 @@ void copy_default_attributes(type_definition* type) {
 /**
  * Returns a new type_definition having the default attributes.
  */
-type_definition* get_type_definition() {
+type_definition* get_type_definition(void) {
     type_definition* ret = calloc(1, sizeof(type_definition));
     ret->attribute_count = 0;
     ret->attributes = NULL;
@@ -651,7 +651,7 @@ void dump_type(type_definition* type) {
     }
 }
 
-void dump_types() {
+void dump_types(void) {
     int t;
     type_definition* type;
 
@@ -753,7 +753,7 @@ void read_ignore_list(const char* name, FILE* file) {
     }
 }
 
-void dump_ignore_lists() {
+void dump_ignore_lists(void) {
     int list, field;
     printf("ignore lists:\n");
     for (list = 0; list < list_count; list++) {
@@ -883,7 +883,7 @@ void write_type_file(type_definition* type) {
 }
 
 /** Write index of all types. */
-void write_type_index() {
+void write_type_index(void) {
     FILE* index;
     int type;
     char buf[200];

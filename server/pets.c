@@ -277,7 +277,7 @@ void terminate_all_pets(object *owner) {
  * Thus the map isn't loaded yet, and we have to remove
  * the pet...
  */
-void remove_all_pets() {
+void remove_all_pets(void) {
   objectlink *obl, *next;
   object *owner;
 

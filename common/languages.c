@@ -110,7 +110,7 @@ static void convert_newline(char* line) {
 /**
  * Initializes the i18n subsystem.
  */
-void i18n_init()
+void i18n_init(void)
 {
     char filename[MAX_BUF], line[HUGE_BUF];
     int i, entry;

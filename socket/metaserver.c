@@ -249,7 +249,7 @@ static void free_metaserver2(MetaServer2 *ms)
  * metaserver updates
  */
 
-int metaserver2_init()
+int metaserver2_init(void)
 {
     static int has_init=0;
     FILE    *fp;
@@ -431,7 +431,7 @@ size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data)
  * It generates the form, and then sends it to the
  * server
  */
-static void metaserver2_updates()
+static void metaserver2_updates(void)
 {
 #ifdef HAVE_CURL_CURL_H
     MetaServer2	*ms2;

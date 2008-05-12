@@ -1540,7 +1540,7 @@ void send_spell_paths (socket_struct *ns, char *params) {
  * @return
  * suitable reply.
  */
-static char* build_race_list_reply() {
+static char* build_race_list_reply(void) {
     StringBuffer* buf = stringbuffer_new();
     archetype* race;
 
@@ -1609,7 +1609,7 @@ void send_race_info(socket_struct *ns, char *params) {
  * @return
  * reply.
  */
-static char* build_class_list_reply() {
+static char* build_class_list_reply(void) {
     StringBuffer* buf = stringbuffer_new();
     archetype* cl;
 

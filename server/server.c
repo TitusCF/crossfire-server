@@ -56,7 +56,7 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
-void process_events();
+void process_events(void);
 
 /** Ingame days. */
 static char days[7][4] = {
@@ -920,7 +920,7 @@ void enter_exit(object *op, object *exit_ob) {
  *
  * @sa process_players2().
  */
-static void process_players1()
+static void process_players1(void)
 {
     int flag;
     player *pl,*plnext;
@@ -1022,7 +1022,7 @@ static void process_players1()
  *
  * @todo explain why 2 passes for players.
  */
-static void process_players2()
+static void process_players2(void)
 {
     player *pl;
 
@@ -1051,7 +1051,7 @@ static void process_players2()
 /**
  * Process all active objects.
  */
-void process_events ()
+void process_events (void)
 {
     object *op;
     object marker;

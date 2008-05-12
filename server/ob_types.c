@@ -42,7 +42,7 @@
  * Calls the intialization functions for all individual types.
  * @todo this should probably be moved to a file in the types/ directory, to separate types and server.
  */
-void register_all_ob_types() {
+void register_all_ob_types(void) {
     /* init_type_foobar() here, where foobar is for a type. In other words,
      * from here, call functions that register object methods for types.
      */

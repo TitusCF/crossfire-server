@@ -101,7 +101,7 @@ void do_sql(const char* sql) {
 /**
  * Checks the database format, and applies changes if old version.
  */
-void check_tables() {
+void check_tables(void) {
     int format;
     int err;
     format = 0;
@@ -240,7 +240,7 @@ int get_map_id(mapstruct* map) {
  * @return
  * 1 if a line was inserted, 0 if the current ingame time was already logged.
  */
-int store_time() {
+int store_time(void) {
     char** line;
     char* sql;
     int nrow, ncolumn;
@@ -503,7 +503,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
  * @return
  * 0.
  */
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     char path[500];
     const char* dir;
@@ -555,7 +555,7 @@ CF_PLUGIN int postInitPlugin()
  * @return
  * 0.
  */
-int closePlugin()
+int closePlugin(void)
 {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (database) {

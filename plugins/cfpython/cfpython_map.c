@@ -33,7 +33,7 @@
 static ptr_assoc_table map_assoc_table;
 
 /* Helper functions for dealing with object_assoc_table */
-void init_map_assoc_table() {
+void init_map_assoc_table(void) {
     init_ptr_assoc_table(map_assoc_table);
 }
 static void add_map_assoc(mapstruct *key, Crossfire_Map *value) {

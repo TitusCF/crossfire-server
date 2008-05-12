@@ -303,7 +303,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
  * @return
  * 0.
  */
-CF_PLUGIN int postInitPlugin()
+CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
 
@@ -317,7 +317,7 @@ CF_PLUGIN int postInitPlugin()
  * @return
  * 0.
  */
-CF_PLUGIN int closePlugin()
+CF_PLUGIN int closePlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;

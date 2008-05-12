@@ -991,7 +991,7 @@ void pushContext(CFPContext* context)
     current_context = context;
 }
 
-CFPContext* popContext()
+CFPContext* popContext(void)
 {
     CFPContext* oldcontext;
     if (current_context != NULL)
@@ -1218,7 +1218,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin()
+CF_PLUGIN int   closePlugin(void)
 {
     cf_log(llevDebug, "CFAnim 2.0a closing\n");
     return 0;

@@ -17,6 +17,7 @@ else.  With this, include the file(s) that you changed.
 Ansi C compatibility improvements courtesy Arvid Norlander:
  include/attack.h: do not redeclare variable
  socket/lowlevel.c: use #include <errno.h>
+ (lots of files): use prototypes
 Andreas Kirschbaum 2008-05-12
 
 Fix possible buffer overflows courtesy Arvid Norlander.

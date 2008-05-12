@@ -35,7 +35,7 @@
 static ptr_assoc_table object_assoc_table;
 
 /* Helper functions for dealing with object_assoc_table */
-void init_object_assoc_table() {
+void init_object_assoc_table(void) {
     init_ptr_assoc_table(object_assoc_table);
 }
 static void add_object_assoc(object *key, PyObject *value) {
