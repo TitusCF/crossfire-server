@@ -1027,29 +1027,34 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             break; /* just so we get the "glowing" part. */
 
         case POWER_CRYSTAL:
-            if (op->stats.maxsp>1000){ /*higher capacity crystals*/
-                i = (op->stats.maxsp%1000)/100;
-                if (i)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000,i);
+            /* Avoid division by zero... */
+            if (op->stats.maxsp == 0) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d).", op->stats.maxsp);
+            } else {
+                if (op->stats.maxsp>1000){ /*higher capacity crystals*/
+                    i = (op->stats.maxsp%1000)/100;
+                    if (i)
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000,i);
+                    else
+                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
+                } else
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
+                i = (op->stats.sp*10)/op->stats.maxsp;
+                if (op->stats.sp==0)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
+                else if (i==0)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
+                else if (i<3)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
+                else if (i<6)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
+                else if (i<9)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
+                else if (op->stats.sp == op->stats.maxsp)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
                 else
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
-            } else
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
-            i = (op->stats.sp*10)/op->stats.maxsp;
-            if (op->stats.sp==0)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
-            else if (i==0)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
-            else if (i<3)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
-            else if (i<6)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
-            else if (i<9)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
-            else if (op->stats.sp == op->stats.maxsp)
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
-            else
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
+            }
             break;
 
         case FOOD:
