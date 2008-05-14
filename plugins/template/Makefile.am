@@ -31,7 +31,7 @@ plugin_template_la_SOURCES = plugin_template.c\
 
 plugin_template_la_LIBADD =
 plugin_template_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
-AM_CPPFLAGS = -I$(srcdir)/include -I../common/include -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:
 	cproto -D__CEXTRACT__ -o include/plugin_template_proto.h $(CPPFLAGS) $(AM_CPPFLAGS) \
