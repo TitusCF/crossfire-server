@@ -14,13 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix memory leaks, courtesy Arvid Norlander.
+ common/dialog.c
+Andreas Kirschbaum 2008-05-23
+
 Added the possibility to build the server outside of its source directory.
  plugins/citylife/Makefile.am
  plugins/cfrhg/Makefile.am
  plugins/template/Makefile.am
  plugins/cfnewspaper/Makefile.am
 Arvid Norlander 2008-05-14
- 
+
 Fixed bug #1962926 "Fix for crash on division by zero", courtesy of Arvid Norlander
  common/item.c
 Yann "gros" Chachkoff 2008-05-13

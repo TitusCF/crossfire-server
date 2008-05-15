@@ -58,6 +58,7 @@ void free_dialog_information(object* op) {
             free(currep->message);
             currep = nextrep;
         }
+        free(current);
         current = next;
     }
 
@@ -66,9 +67,11 @@ void free_dialog_information(object* op) {
         nextrep = currep->next;
         free(currep->reply);
         free(currep->message);
+        free(currep);
         currep = nextrep;
     }
 
+    free(op->dialog_information);
     op->dialog_information = NULL;
 }
 
