@@ -299,7 +299,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                            * below */
 #define MATERIAL                    161   /**< Material for building */
 
-#define OBJECT_TYPE_MAX             161   /**< Update if you add new types */
+#define OBJECT_TYPE_MAX             162   /**< Update if you add new types */
 /* END TYPE DEFINE */
 /*@}*/
 
