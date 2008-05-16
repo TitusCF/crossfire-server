@@ -45,7 +45,7 @@
 43|[fixed]Total space used:     %8d
 44|Total space used:     %8d
 45|You are in %s. \n %s
-46|players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld
+46|players:%d difficulty:%d size:%dx%d start:%dx%d timeout %d
 47|Heap is corrupted.
 48|Heap checks out OK.
 49|In the world currently there are:

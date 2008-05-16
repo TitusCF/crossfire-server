@@ -45,7 +45,7 @@
 42|Espace total alloué:    %8d
 44|Espace total utilisé:   %8d
 45|Vous êtes dans %s. \n %s
-46|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %ld
+46|joueurs:%d difficulté:%d taille:%dx%d début:%dx%d timeout %d
 47|Le Tas est corrompu.
 48|Aucune erreur détectée dans le Tas.
 49|Pour l'instant, il y a dans le monde entier:
