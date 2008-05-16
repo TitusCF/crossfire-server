@@ -1249,7 +1249,6 @@ void cleanup(void)
     free_all_god();
     free_all_anim();
     free_loader();
-    free_weather();
     free_globals();
     free_server();
     free_all_object_data();
