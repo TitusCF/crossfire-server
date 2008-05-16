@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Apply patch #1964058: Fix missing \0 in buffer in add_object_to_socklist.
+ socket/item.c
+Arvid Norlander 2008-05-16
+
 Apply patch #1964051: Valgrind error fix: Bad format string.
  lib/i18n/messages.en messages.fr
 Arvid Norlander 2008-05-16
