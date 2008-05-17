@@ -31,8 +31,11 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <check.h>
+#include <global.h>
 
+#include "path.h"
 
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
@@ -43,9 +46,85 @@ void teardown(void)
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_empty)
+static void check_combine(const char * src, const char * dst, const char * exp) {
+    char res[HUGE_BUF];
+    path_combine(src, dst, res, HUGE_BUF);
+    fail_unless(strcmp(res, exp) == 0, "path_combine(%s, %s) = %s but should be %s", src, dst, res, exp);
+}
+
+static void check_normalize(const char *path, const char *exp) {
+    char tmp[HUGE_BUF];
+    /* This is needed as path_normalize modifies in place. */
+    strncpy(tmp, path, sizeof(tmp));
+    tmp[HUGE_BUF-1] = '\0';
+    path_normalize(tmp);
+    fail_unless(strcmp(tmp, exp) == 0, "path_normalize(%s) = %s but should be %s", path, tmp, exp);
+}
+
+static void check_combine_and_normalize(const char *src, const char *dst, const char *exp) {
+    char res[HUGE_BUF];
+    path_combine_and_normalize(src, dst, res, sizeof(res));
+    fail_unless(strcmp(res, exp) == 0, "path_combine_and_normalize(%s, %s) = %s but should be %s", src, dst, res, exp);
+}
+
+
+
+START_TEST (test_path_combine)
 {
-    /*TESTME test not yet developped*/
+    check_combine("/path1/file1", "/path2/file2", "/path2/file2");
+    check_combine("path1/file1", "/path2/file2", "/path2/file2");
+    check_combine("/path1/file1", "path2/file2", "/path1/path2/file2");
+    check_combine("path1/file1", "path2/file2", "path1/path2/file2");
+    check_combine("/path1", "/path2", "/path2");
+    check_combine("path1", "/path2", "/path2");
+    check_combine("/path1", "path2", "/path2");
+    check_combine("path1", "path2", "path2");
+}
+END_TEST
+
+START_TEST (test_path_normalize)
+{
+    check_normalize("", "");
+    check_normalize("/", "/");
+    check_normalize("path1/file1", "path1/file1");
+    check_normalize("/path1/file1", "/path1/file1");
+    check_normalize("/path1//file1", "/path1/file1");
+    check_normalize("//path1/file1", "/path1/file1");
+    check_normalize("///////x////////y///////z////////", "/x/y/z");
+    check_normalize("/a/b/../c/d/../e/../../f/g/../h", "/a/f/h");
+    check_normalize("//a//b//..//c//d//..//e//..//..//f//g//..//h", "/a/f/h");
+    check_normalize("../a", "../a");
+    check_normalize("a/../../b", "../b");
+    check_normalize("/../a", "/a");
+    check_normalize("/a/../../b", "/b");
+    check_normalize("./b/./c/.d/..e/./f", "b/c/.d/..e/f");
+    check_normalize("/b/././././e", "/b/e");
+    check_normalize(".", ""); /* maybe the result should be "."? */
+    check_normalize("/.", "/");
+    check_normalize("./", ""); /* maybe the result should be "."? */
+    check_normalize("/a/b/..", "/a");
+    check_normalize("/a/b/../..", "/");
+    check_normalize("/a/b/../../..", "/");
+    check_normalize("a/b/..", "a");
+    check_normalize("a/b/../..", "");
+    check_normalize("a/b/../../..", "..");
+}
+END_TEST
+
+START_TEST (test_path_combine_and_normalize)
+{
+    check_combine_and_normalize("/path1/file1", "/path2/file2", "/path2/file2");
+    check_combine_and_normalize("path1/file1", "/path2/file2", "/path2/file2");
+    check_combine_and_normalize("/path1/file1", "path2/file2", "/path1/path2/file2");
+    check_combine_and_normalize("/path1", "/path2", "/path2");
+    check_combine_and_normalize("path1", "/path2", "/path2");
+    check_combine_and_normalize("/path1", "path2", "/path2");
+    check_combine_and_normalize("/path1/file1/../u", "path2/x/../y/z/../a/b/..", "/path1/path2/y/a");
+    check_combine_and_normalize("/path1/file1", "/path2//file2", "/path2/file2");
+    check_combine_and_normalize("/path1/file1", "/..", "/");
+    check_combine_and_normalize("/path1/file1", "../x", "/x");
+    check_combine_and_normalize("/path1/file1", "../../../x", "/x");
+    check_combine_and_normalize("/path1/file1", "/.x/..x/...x/x", "/.x/..x/...x/x");
 }
 END_TEST
 
@@ -57,7 +136,9 @@ Suite *path_suite(void)
   tcase_add_checked_fixture(tc_core,setup,teardown);
 
   suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_empty);
+  tcase_add_test(tc_core, test_path_combine);
+  tcase_add_test(tc_core, test_path_normalize);
+  tcase_add_test(tc_core, test_path_combine_and_normalize);
 
   return s;
 }
