@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Increase base book max size, to try to get more various messages.
+ include/book.h
+Nicolas Weeger 2008-05-19
+
 Apply Patch #1967076: Fix crash in use command.
  command/c_object.c
 Arvid Norlander 2008-05-19

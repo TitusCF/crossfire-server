@@ -43,7 +43,7 @@
  * @note
  * If little books arent getting enough text generated, enlarge this.
  */
-#define BASE_BOOK_BUF   250
+#define BASE_BOOK_BUF   700
 
 /**
  * Get the book buffer size for an individual book object. Make heavy books hold
