@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Apply Patch #1967076: Fix crash in use command.
+ command/c_object.c
+Arvid Norlander 2008-05-19
+
 Apply patch #1965969: Unit test for common/path.c.
  common/path.c
  test/unit/common/check_path.c Makefile.am
