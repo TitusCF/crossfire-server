@@ -270,6 +270,7 @@ static object *find_enemy(object *npc, rv_vector *rv)
                 {
                     CLEAR_FLAG(npc,FLAG_SLEEP); /* well, NOW we really should wake up! */
                     npc->enemy = attacker;
+                    get_rangevector(npc, attacker, rv, 0);
                     return attacker; /* yes, we face our attacker! */
                 }
             }
