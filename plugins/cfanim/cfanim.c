@@ -440,6 +440,23 @@ anim_move_result runmoveto(struct CFanimation_struct *animation, long int id, vo
     return mr_finished;
 }
 
+static int initmessage(char *name, char *parameters, struct CFmovement_struct *move_entity) {
+    if (parameters)
+        move_entity->parameters = strdup(parameters);
+    else
+        move_entity->parameters = NULL;
+    return 1;
+}
+
+anim_move_result runmessage(struct CFanimation_struct *animation, long int id, void *parameters) {
+    if (parameters && animation->victim->map) {
+        cf_map_message(animation->victim->map, (const char*)parameters, NDI_UNIQUE | NDI_GREEN);
+        free(parameters);
+    }
+
+    return mr_finished;
+}
+
 /** Available animation commands. */
 CFanimationHook animationbox[]=
 {
@@ -487,7 +504,8 @@ CFanimationHook animationbox[]=
     {"teleport",initteleport,runteleport},
     {"notice",initnotice,runnotice},
     {"stop", initstop, runstop},
-    {"moveto", initmoveto, runmoveto}
+    {"moveto", initmoveto, runmoveto},
+    {"message", initmessage, runmessage}
 };
 int animationcount=sizeof (animationbox) / sizeof (CFanimationHook);
 int ordered_commands=0;

@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add a 'message' command, that will display a message on the whole map the victim is on.
+ plugins/cfanim/cfanim.c
+Nicolas Weeger 2008-05-20
+
 Clean some log messages. Add the option to specify the animation to play
 through the 'message' sent as part of the event.
  plugins/cfanim/cfanim.c
