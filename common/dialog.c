@@ -121,8 +121,11 @@ static int matches(const char* exp, const char* text) {
 void parse_dialog_information(object* op) {
     struct_dialog_message* message = NULL, *last = NULL;
     struct_dialog_reply* reply = NULL;
-    char *current, *save, *msg, buf[MAX_BUF], *cp;
+    char *current, *save, *msg, *cp;
     int len;
+    /* Used for constructing message with */
+    char *tmp = NULL;
+    size_t tmplen = 0;
 
     if (QUERY_FLAG(op, FLAG_DIALOG_PARSED))
         return;
@@ -139,7 +142,9 @@ void parse_dialog_information(object* op) {
     while (current) {
         if (strncmp(current, "@match ", 7) == 0) {
             if (message) {
-                message->message = strdup(buf);
+                message->message = tmp;
+                tmp = NULL;
+                tmplen = 0;
             }
 
             message = (struct_dialog_message*)calloc(1, sizeof(struct_dialog_message));
@@ -150,7 +155,6 @@ void parse_dialog_information(object* op) {
             last = message;
 
             message->match = strdup(current + 7);
-            buf[0] = 0;
         }
         else if ((strncmp(current, "@reply ", 7) == 0 && (len = 7)) || (strncmp(current, "@question ", 10) == 0 && (len = 10))) {
             if (message) {
@@ -181,14 +185,29 @@ void parse_dialog_information(object* op) {
                 LOG(llevDebug, "Warning: @reply not in @match block for %s!", op->name);
         }
         else if (message) {
-            strncat(buf, current, sizeof(buf) - strlen(buf) - 1);
-            strncat(buf, "\n", sizeof(buf) - strlen(buf) - 1);
+            /* Needed to set initial \0 */
+            int wasnull = FALSE;
+            tmplen += strlen(current) + 2;
+            if (!tmp)
+                wasnull = TRUE;
+            tmp = realloc(tmp, tmplen * sizeof(char));
+            if (!tmp)
+                fatal(OUT_OF_MEMORY);
+            if (wasnull)
+                tmp[0] = 0;
+            strncat(tmp, current, tmplen - strlen(tmp) - 1);
+            strncat(tmp, "\n", tmplen - strlen(tmp) - 1);
         }
         current = strtok_r(NULL, "\n", &save);
     }
 
     if (message) {
-        message->message = strdup(buf);
+        if (!tmp)
+            message->message = strdup("");
+        else
+            message->message = tmp;
+        tmp = NULL;
+        tmplen = 0;
     }
 
     free(msg);
