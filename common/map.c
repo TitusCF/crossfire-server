@@ -1977,7 +1977,7 @@ int change_map_light(mapstruct *m, int change) {
  * is basically fixed - don't want to re-order walls,
  * pentagrams, etc.
  */
-static void inline add_face_layer(int low_layer, int high_layer, object *ob, object *layers[], int honor_visibility)
+static inline void add_face_layer(int low_layer, int high_layer, object *ob, object *layers[], int honor_visibility)
 {
     int l, l1;
     object *tmp;

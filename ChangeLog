@@ -14,6 +14,24 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+The current configure.ac was already set to use the utils directory for auxillary
+files, so the config.guess and config.sub in the top source directory were not
+used, thus moved them to utils directory. (Before, locally created copies by
+autogen.sh placed in utils/ would were used. Try removing them if svn complains
+about already existing files). Also force update of all autoconf/automake files
+to last versions. Also fix a minor issue with "inline" and "void" being in wrong
+order in a function (gcc will handle it, but the C standard doesn't allow it).
+ INSTALL
+ common/map.c
+ utils/depcomp
+ utils/install-sh
+ utils/missing
+ utils/mkinstalldirs
+Moved:
+ config.guess to utils/config.guess
+ config.sub to utils/config.sub
+Arvid Norlander 2008-05-20
+
 Fix some cases of using snprintf function with potentially untrusted data as
 format parameter. Change two sprintf into snprintf. Add return value for all
 code paths in a non-void returning function.
