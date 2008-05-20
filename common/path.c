@@ -66,10 +66,10 @@ char *path_combine(const char *src, const char *dst, char* path, int size) {
 
     if (*dst == '/') {
         /* absolute destination path => ignore source path */
-        snprintf(path, size, dst);
+        snprintf(path, size, "%s", dst);
     } else {
         /* relative destination path => add after last '/' of source */
-        snprintf(path, size, src);
+        snprintf(path, size, "%s", src);
         p = strrchr(path, '/');
         if (p != NULL) {
             p++;
@@ -78,7 +78,7 @@ char *path_combine(const char *src, const char *dst, char* path, int size) {
             if (*src == '/')
                 *p++ = '/';
         }
-        snprintf(p, size - (p - path), dst);
+        snprintf(p, size - (p - path), "%s", dst);
     }
 
 #if defined(DEBUG_PATH)
@@ -184,7 +184,6 @@ void path_normalize(char *path) {
  * path
  */
 char *path_combine_and_normalize(const char *src, const char *dst, char* path, int size) {
-
     path_combine(src, dst, path, size);
     path_normalize(path);
     return(path);

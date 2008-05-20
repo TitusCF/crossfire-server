@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix some cases of using snprintf function with potentially untrusted data as
+format parameter. Change two sprintf into snprintf. Add return value for all
+code paths in a non-void returning function.
+ common/path.c
+ server/c_chat.c
+ server/c_misc.c
+ server/c_wiz.c
+Arvid Norlander 2008-05-20
+
 Update svn:ignore property for various directories in the server source,
 in order to make it simpler to work with.
  (Lots of directories in the source tree, too many to list here)

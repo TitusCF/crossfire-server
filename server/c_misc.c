@@ -733,10 +733,10 @@ void display_who_entry(object *op, player *pl, const char *format) {
 void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
 
     switch (letter) {
-	case 'N' :	snprintf(return_val, size, pl->ob->name);
+	case 'N' :	snprintf(return_val, size, "%s", pl->ob->name);
 			break;
 
-	case 't' :	snprintf(return_val,size, (pl->own_title[0]=='\0'?pl->title:pl->own_title));
+	case 't' :	snprintf(return_val, size, "%s", (pl->own_title[0]=='\0'?pl->title:pl->own_title));
 			break;
 
 	case 'T' :	if (pl->own_title[0]=='\0')
@@ -745,40 +745,40 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
 			    *return_val='\0';
 			break;
 
-	case 'c' :	snprintf(return_val, size, "%d",pl->ob->count);
+	case 'c' :	snprintf(return_val, size, "%d", pl->ob->count);
 			break;
 
 	case 'n' :	snprintf(return_val, size, "\n");
 			break;
 
-	case 'h' :	snprintf(return_val, size, pl->peaceful?"":" <Hostile>");
+	case 'h' :	snprintf(return_val, size, "%s", pl->peaceful?"":" <Hostile>");
 			break;
 
-	case 'l' :	snprintf(return_val, size, "%d",pl->ob->level);
+	case 'l' :	snprintf(return_val, size, "%d", pl->ob->level);
 			break;
 
-	case 'd' :	snprintf(return_val, size, (QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
+	case 'd' :	snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
 			break;
 
-	case 'a' :	snprintf(return_val, size, (QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
+	case 'a' :	snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
 			break;
 
-	case 'b' :	snprintf(return_val, size, (pl->socket.is_bot == 1)?" <BOT>":"");
+	case 'b' :	snprintf(return_val, size, "%s", (pl->socket.is_bot == 1)?" <BOT>":"");
 			break;
 
-	case 'm' :	snprintf(return_val, size, pl->ob->map->path);
+	case 'm' :	snprintf(return_val, size, "%s", pl->ob->map->path);
 			break;
 
-	case 'M' :	snprintf(return_val, size, pl->ob->map->name?pl->ob->map->name:"Untitled");
+	case 'M' :	snprintf(return_val, size, "%s", pl->ob->map->name?pl->ob->map->name:"Untitled");
 			break;
 
-	case 'r' :	snprintf(return_val, size, get_name_of_region_for_map(pl->ob->map));
+	case 'r' :	snprintf(return_val, size, "%s", get_name_of_region_for_map(pl->ob->map));
 			break;
 
-	case 'R' :	snprintf(return_val, size, get_region_longname(get_region_by_map(pl->ob->map)));
+	case 'R' :	snprintf(return_val, size, "%s", get_region_longname(get_region_by_map(pl->ob->map)));
 			break;
 
-	case 'i' :	snprintf(return_val, size, pl->socket.host);
+	case 'i' :	snprintf(return_val, size, "%s", pl->socket.host);
 			break;
 
 	case '%' :	snprintf(return_val, size, "%%");
@@ -2292,9 +2292,9 @@ int command_title (object *op, char *params)
 
     if(params == NULL) {
 	if(op->contr->own_title[0]=='\0')
-	    sprintf(buf,i18n_translate(get_language(op),I18N_MSG_CMISC_199), op->contr->title);
+	    snprintf(buf, sizeof(buf), i18n_translate(get_language(op),I18N_MSG_CMISC_199), op->contr->title);
 	else
-	    sprintf(buf,i18n_translate(get_language(op),I18N_MSG_CMISC_200), op->contr->own_title);
+	    snprintf(buf, sizeof(buf), i18n_translate(get_language(op),I18N_MSG_CMISC_200), op->contr->own_title);
 	draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,buf, NULL);
 	return 1;
     }

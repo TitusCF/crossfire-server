@@ -316,7 +316,7 @@ static int do_tell(object* op, char* params, int adjust_listen) {
             pl->listening = original_listen;
 
         /* Update last_tell value [mids 01/14/2002] */
-        snprintf(pl->last_tell, sizeof(pl->last_tell), op->name);
+        snprintf(pl->last_tell, sizeof(pl->last_tell), "%s", op->name);
 
         /* Hidden DMs get the message, but player should think DM isn't online. */
         if (!pl->hidden || QUERY_FLAG(op, FLAG_WIZ)) {

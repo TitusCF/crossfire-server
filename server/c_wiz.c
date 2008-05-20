@@ -1536,7 +1536,7 @@ int command_stats(object *op, char *params) {
     if (pl == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
             "No such player.", NULL);
-        return;
+        return 1;
     }
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -1576,6 +1576,7 @@ int command_stats(object *op, char *params) {
         "[fixed]Cha : %-2d      Food : %d",
         "Cha : %-2d      Food : %d",
         pl->ob->stats.Cha, pl->ob->stats.food);
+    return 1;
 }
 
 /**
@@ -1671,7 +1672,7 @@ int command_reset (object *op, char *params) {
     }
 
     if (strcmp(params, ".") == 0)
-        snprintf(path, sizeof(path), op->map->path);
+        snprintf(path, sizeof(path), "%s", op->map->path);
     else
         path_combine_and_normalize(op->map->path, params, path, sizeof(path));
     m = has_been_loaded(path);
@@ -1691,7 +1692,7 @@ int command_reset (object *op, char *params) {
         return 1;
     }
 
-	snprintf(path, sizeof(path), m->path);
+	snprintf(path, sizeof(path), "%s", m->path);
 
     if (m->in_memory != MAP_SWAPPED) {
         if (m->in_memory != MAP_IN_MEMORY) {
