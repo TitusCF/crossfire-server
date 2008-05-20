@@ -38,7 +38,7 @@ void prepare_commands(void);
 int equality_split(char *buffer, char **variable, char **value);
 int get_boolean(char *strg, int *bl);
 int is_animated_player(object *pl);
-int start_animation(object *who, object *activator, object *event, const char *file);
+int start_animation(object *who, object *activator, object *event, const char *file, const char* message);
 void animate(void);
 CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr);
 CF_PLUGIN void *getPluginProperty(int *type, ...);
