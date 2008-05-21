@@ -57,7 +57,7 @@ uint32 pticks;                         /**< ? */
 uint32 process_utime_long_count;       /**< ? */
 
 /** Ingame seasons. */
-const char *season_name[SEASONS_PER_YEAR+1] =
+const char * const season_name[SEASONS_PER_YEAR+1] =
 {
     "The Season of New Year",
     "The Season of Growth",
@@ -68,7 +68,7 @@ const char *season_name[SEASONS_PER_YEAR+1] =
 };
 
 /** Days of the week. */
-const char *weekdays[DAYS_PER_WEEK] = {
+const char * const weekdays[DAYS_PER_WEEK] = {
    "the Day of the Moon",
    "the Day of the Bull",
    "the Day of the Deception",
@@ -79,7 +79,7 @@ const char *weekdays[DAYS_PER_WEEK] = {
 };
 
 /** Months. */
-const char *month_name[MONTHS_PER_YEAR] = {
+const char * const month_name[MONTHS_PER_YEAR] = {
    "Month of Winter",           /* 0 */
    "Month of the Ice Dragon",
    "Month of the Frost Giant",
@@ -99,7 +99,7 @@ const char *month_name[MONTHS_PER_YEAR] = {
    "Month of Gorokh"
 };
 
-const char *periodsofday[PERIODS_PER_DAY] = {
+const char * const periodsofday[PERIODS_PER_DAY] = {
    "Night",
    "Dawn",
    "Morning",

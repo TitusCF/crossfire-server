@@ -14,6 +14,27 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change a lot of static variables to static const, as they are never modified.
+Also remove some non-needed nested (inside a function) extern. Also fix some
+compiler warning in cfanim (on x86_64 int is not same size as long int!).
+ common/exp.c
+ common/logger.c
+ common/los.c
+ common/item.c
+ common/object.c
+ common/readable.c
+ common/time.c
+ common/treasure.c
+ plugins/cfanim/cfanim.c
+ server/c_object.c
+ server/c_misc.c
+ server/monster.c
+ server/player.c
+ server/server.c
+ socket/loop.c
+ socket/request.c
+Arvid Norlander 2008-05-21
+
 Fix wrong format string for 64-bit unsigned values. Fix confusing error log message
 in shop code (confusing due to not refering to the correct function).
  include/global.h

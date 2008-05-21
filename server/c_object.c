@@ -1836,7 +1836,7 @@ int command_pickup (object *op, char *params)
       "shield", "armour", "boots", "gloves", "cloak", "key", "missile", "allweapon",
       "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice",
       "notcursed", "jewels", "flesh", NULL };
-      static uint32 modes[ ] = {
+      static const uint32 modes[ ] = {
       PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
       PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_ALLWEAPON,
       PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,

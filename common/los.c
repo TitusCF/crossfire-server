@@ -101,7 +101,7 @@ static void set_block(int x, int y, int bx, int by) {
  */
 void init_block(void) {
     int x,y, dx, dy, i;
-    static int block_x[3] = {-1, -1, 0}, block_y[3] = {-1, 0, -1};
+    static const int block_x[3] = {-1, -1, 0}, block_y[3] = {-1, 0, -1};
 
     for(x=0;x<MAP_CLIENT_X;x++)
         for(y=0;y<MAP_CLIENT_Y;y++) {

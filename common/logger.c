@@ -40,10 +40,10 @@ int reopen_logfile = 0; /* May be set in SIGHUP handler */
 /**
  * Human-readable name of log levels.
  */
-static char* loglevel_names[] = {"[Error]   ",
-                                 "[Info]    ",
-                                 "[Debug]   ",
-                                 "[Monster] "};
+static const char* const loglevel_names[] = {"[Error]   ",
+                                             "[Info]    ",
+                                             "[Debug]   ",
+                                             "[Monster] "};
 
 /**
  * Logs a message to stderr, or to file.

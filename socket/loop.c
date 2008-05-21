@@ -83,16 +83,16 @@ typedef void (*func_uint8_int_ns) (char*, int, socket_struct *);
 /** Definition of a function the client sends without player interaction. */
 struct client_cmd_mapping {
     const char *cmdname;        /**< Command name. */
-    func_uint8_int_ns cmdproc;  /**< Function to call. */
+    const func_uint8_int_ns cmdproc;  /**< Function to call. */
 };
 
 /** Prototype for functions used to handle player actions. */
 typedef void (*func_uint8_int_pl)(char*, int, player *);
 /** Definition of a function called in reaction to player's action. */
 struct player_cmd_mapping {
-    const char *cmdname;        /**< Command name. */
-    func_uint8_int_pl cmdproc;  /**< Function to call. */
-    uint8   flag;               /**< If set, the player must be in the ST_PLAYING state for this command to be available. */
+    const char    *cmdname;          /**< Command name. */
+    const func_uint8_int_pl cmdproc; /**< Function to call. */
+    const uint8    flag;             /**< If set, the player must be in the ST_PLAYING state for this command to be available. */
 };
 
 /**
@@ -110,7 +110,7 @@ struct player_cmd_mapping {
  */
 
 /** Commands sent by the client reacting to player's actions. */
-static struct player_cmd_mapping player_commands[] = {
+static const struct player_cmd_mapping player_commands[] = {
     { "examine",	examine_cmd,	1},
     { "apply",		apply_cmd,	1},
     { "move",		move_cmd,	1},
@@ -125,7 +125,7 @@ static struct player_cmd_mapping player_commands[] = {
 };
 
 /** Commands sent directly by client, when connecting or when needed. */
-static struct client_cmd_mapping client_commands[] = {
+static const struct client_cmd_mapping client_commands[] = {
     { "addme",		add_me_cmd },
     { "askface",	send_face_cmd},	/* Added: phil */
     { "requestinfo",	request_info_cmd},

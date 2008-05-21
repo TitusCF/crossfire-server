@@ -59,7 +59,7 @@
 void process_events(void);
 
 /** Ingame days. */
-static char days[7][4] = {
+static const char days[7][4] = {
   "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
 /**
@@ -123,7 +123,7 @@ char *crypt_string(char *str, char *salt) {
 #if defined(WIN32) || (defined(__FreeBSD__) && !defined(HAVE_LIBDES))
     return(str);
 #else
-    static const char *c=
+    static const char * const c=
 	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
     char s[2];
 

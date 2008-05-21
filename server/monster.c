@@ -1739,7 +1739,7 @@ static int wait_att2 (int dir, object *ob,object *enemy,object *part, rv_vector 
 }
 
 static void circ1_move (object *ob) {
-  static int circle [12] = {3,3,4,5,5,6,7,7,8,1,1,2};
+  static const int circle [12] = {3,3,4,5,5,6,7,7,8,1,1,2};
   if(++ob->move_status > 11)
     ob->move_status = 0;
   if (!(move_object(ob,circle[ob->move_status])))
@@ -1747,7 +1747,7 @@ static void circ1_move (object *ob) {
 }
 
 static void circ2_move (object *ob) {
-  static int circle[20] = {3,3,3,4,4,5,5,5,6,6,7,7,7,8,8,1,1,1,2,2};
+  static const int circle[20] = {3,3,3,4,4,5,5,5,6,6,7,7,7,8,8,1,1,1,2,2};
   if(++ob->move_status > 19)
     ob->move_status = 0;
   if(!(move_object(ob,circle[ob->move_status])))

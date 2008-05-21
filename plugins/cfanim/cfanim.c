@@ -440,7 +440,7 @@ anim_move_result runmoveto(struct CFanimation_struct *animation, long int id, vo
     return mr_finished;
 }
 
-static int initmessage(char *name, char *parameters, struct CFmovement_struct *move_entity) {
+static long int initmessage(char *name, char *parameters, struct CFmovement_struct *move_entity) {
     if (parameters)
         move_entity->parameters = strdup(parameters);
     else
@@ -511,7 +511,7 @@ int animationcount=sizeof (animationbox) / sizeof (CFanimationHook);
 int ordered_commands=0;
 static int compareAnims (const void *a, const void *b)
 {
-    return strcmp ( ((CFanimationHook*)a)->name,((CFanimationHook*)b)->name);
+    return strcmp ( ((const CFanimationHook*)a)->name,((const CFanimationHook*)b)->name);
 }
 
 void prepare_commands (void)
@@ -707,7 +707,7 @@ static CFanimation *create_animation(void)
     return new;
 }
 
-object* find_by_name(object* origin, const char* name) {
+static object* find_by_name(object* origin, const char* name) {
     int x, y, w, h;
     mapstruct* map;
     const char* sname;

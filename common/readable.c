@@ -106,7 +106,7 @@ typedef struct titleliststruct {
 typedef struct namebytype
 {
     const char *name;  /**< generic name to call artifacts of this type */
-    int type;          /**< matching type */
+    const int type;    /**< matching type */
 } arttypename;
 
 
@@ -138,7 +138,7 @@ static linked_char *first_msg = NULL;
 /**
  * Spellpath information
  */
-static uint32 spellpathdef[NRSPELLPATHS] =
+static const uint32 spellpathdef[NRSPELLPATHS] =
 {
     PATH_PROT,
     PATH_FIRE,
@@ -197,7 +197,7 @@ static const char* const path_author[] =
  * if it isnt listed here, then art_attr_msg() will never generate
  * a message for this type of artifact. -b.t.
  */
-static arttypename art_name_array[] =
+static const arttypename art_name_array[] =
 {
     {"Helmet", HELMET},
     {"Amulet", AMULET},
@@ -531,7 +531,7 @@ static readable_message_type readable_message_types[] =
                     {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3}
 };
 /** Number of elements in ::readable_message_types */
-int last_readable_subtype = sizeof(readable_message_types)/sizeof(readable_message_type);
+static int last_readable_subtype = sizeof(readable_message_types)/sizeof(readable_message_type);
 
 /** Number of titles for different name lists. */
 static int max_titles[6] =

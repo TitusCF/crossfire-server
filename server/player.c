@@ -1079,7 +1079,7 @@ static void swap_stat(object *op,int Swap_Second)
 void key_roll_stat(object *op, char key)
 {
     int keynum = key -'0';
-    static sint8 stat_trans[] = {-1, STR, DEX, CON, INT, WIS, POW, CHA};
+    static const sint8 stat_trans[] = {-1, STR, DEX, CON, INT, WIS, POW, CHA};
 
     if (keynum>0 && keynum<=7) {
 	if (op->contr->Swap_First==-1) {

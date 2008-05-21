@@ -92,22 +92,22 @@
  * client.  If a value is -1, then we don't send that to the
  * client.
  */
-short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS, CS_STAT_RES_MAG,
-                                   CS_STAT_RES_FIRE, CS_STAT_RES_ELEC,
-                                   CS_STAT_RES_COLD, CS_STAT_RES_CONF,
-                                   CS_STAT_RES_ACID,
-                                   CS_STAT_RES_DRAIN, -1 /* weaponmagic */,
-                                   CS_STAT_RES_GHOSTHIT, CS_STAT_RES_POISON,
-                                   CS_STAT_RES_SLOW, CS_STAT_RES_PARA,
-                                   CS_STAT_TURN_UNDEAD,
-                                   CS_STAT_RES_FEAR, -1 /* Cancellation */,
-                                   CS_STAT_RES_DEPLETE, CS_STAT_RES_DEATH,
-                                   -1 /* Chaos */, -1 /* Counterspell */,
-                                   -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
-                                   CS_STAT_RES_BLIND,
-                                   -1, /* Internal */
-                                   -1, /* life stealing */
-                                   -1 /* Disease - not fully done yet */
+static const short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS, CS_STAT_RES_MAG,
+                                                CS_STAT_RES_FIRE, CS_STAT_RES_ELEC,
+                                                CS_STAT_RES_COLD, CS_STAT_RES_CONF,
+                                                CS_STAT_RES_ACID,
+                                                CS_STAT_RES_DRAIN, -1 /* weaponmagic */,
+                                                CS_STAT_RES_GHOSTHIT, CS_STAT_RES_POISON,
+                                                CS_STAT_RES_SLOW, CS_STAT_RES_PARA,
+                                                CS_STAT_TURN_UNDEAD,
+                                                CS_STAT_RES_FEAR, -1 /* Cancellation */,
+                                                CS_STAT_RES_DEPLETE, CS_STAT_RES_DEATH,
+                                                -1 /* Chaos */, -1 /* Counterspell */,
+                                                -1 /* Godpower */, CS_STAT_RES_HOLYWORD,
+                                                CS_STAT_RES_BLIND,
+                                                -1, /* Internal */
+                                                -1, /* life stealing */
+                                                -1 /* Disease - not fully done yet */
 };
 
 /** This is the Setup cmd - easy first implementation */
@@ -272,7 +272,7 @@ void add_me_cmd(char *buf, int len, socket_struct *ns)
                  * quick test with client 1.1.0, it didn't print it
                  * out correctly when done as a single line.
                  */
-            char *buf= "drawinfo 3 Warning: Your client is too old to receive map data.  Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833";
+            const char *buf= "drawinfo 3 Warning: Your client is too old to receive map data.  Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833";
             Write_String_To_Socket(ns, buf, strlen(buf));
         }
 

@@ -543,7 +543,7 @@ object *generate_treasure(treasurelist *t, int difficulty)
  * The array has two arguments, the difficulty of the level, and the
  * magical bonus "wanted".
  */
-static int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
+static const int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] =
 {
 /*chance of magic    difficulty*/
 /* +0  +1 +2 +3 +4 */

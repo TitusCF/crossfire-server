@@ -230,7 +230,7 @@ const int item_types_size=sizeof(item_types)/sizeof(*item_types);
  * note that this table is only really used for program generated items -
  * custom objects can use whatever they want.
  */
-static int enc_to_item_power[21] = {
+static const int enc_to_item_power[21] = {
 0, 0, 1, 2, 3, 4,    /* 5 */
 5, 7, 9, 11, 13,    /* 10 */
 15, 18, 21, 24, 27, /* 15 */

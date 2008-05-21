@@ -41,7 +41,7 @@ sint64 *levels; /**< Number of levels for which we have experience. */
 #define TRUE	1
 #define FALSE	0
 
-float exp_att_mult[NROFATTACKS+2] = {
+const float exp_att_mult[NROFATTACKS+2] = {
     0.0,				/* AT_PHYSICAL	*/
     0.0,				/* AT_MAGIC	*/
     0.0,				/* AT_FIRE	*/
@@ -64,7 +64,7 @@ float exp_att_mult[NROFATTACKS+2] = {
     0.0				/* AT_COUNTERSPELL */
 };
 
-float exp_prot_mult[NROFATTACKS+2] = {
+const float exp_prot_mult[NROFATTACKS+2] = {
     0.4,				/* AT_PHYSICAL	*/
     0.5,				/* AT_MAGIC	*/
     0.1,				/* AT_FIRE	*/

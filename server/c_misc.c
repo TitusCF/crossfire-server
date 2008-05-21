@@ -1871,8 +1871,6 @@ static void show_commands(object *op, int what)
     char line[HUGE_BUF];
     int i, size, namelen;
     command_array_struct *ap;
-    extern command_array_struct Commands[], WizCommands[];
-    extern const int CommandsSize, WizCommandsSize;
 
     switch (what) {
 	case 1:

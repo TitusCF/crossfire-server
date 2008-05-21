@@ -3383,7 +3383,7 @@ int dirdiff(int dir1, int dir2) {
  * peterm:
  * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
  */
-int reduction_dir[SIZEOFFREE][3] = {
+const int reduction_dir[SIZEOFFREE][3] = {
     {0,0,0}, /* 0 */
     {0,0,0}, /* 1 */
     {0,0,0}, /* 2 */
