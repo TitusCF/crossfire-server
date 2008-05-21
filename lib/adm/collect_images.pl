@@ -127,7 +127,7 @@ for ($count=0; $count<=$#extension; $count++) {
 close(BMAPS);
 
 if ($archive) {
-    open(OUT,">$DESTDIR/bmaps.client") || die("Can not open $DESTDIR/bmaps.paths\n");
+    open(OUT,">$DESTDIR/bmaps.client") || die("Can not open $DESTDIR/bmaps.client\n");
 	binmode(OUT);
     print OUT sort @csums;
     close(OUT);
