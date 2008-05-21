@@ -665,7 +665,7 @@ int pay_for_item(object *op,object *pl) {
         }
     }
     if (to_pay > 0) {
-        LOG(llevError, "pay_for_amount: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
+        LOG(llevError, "pay_for_item: Cannot remove enough money -- %"FMT64U" remains\n", to_pay);
     }
     if (settings.real_wiz == FALSE && QUERY_FLAG(pl, FLAG_WAS_WIZ))
         SET_FLAG(op, FLAG_WAS_WIZ);

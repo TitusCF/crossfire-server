@@ -109,13 +109,13 @@ typedef signed __int64		sint64;
 typedef unsigned long	    uint64;
 typedef signed long	    sint64;
 #define FMT64		    "ld"
-#define FMT64U		    "ld"
+#define FMT64U		    "lu"
 
 #elif SIZEOF_LONG_LONG == 8
 typedef unsigned long long	uint64;
 typedef signed long long 	sint64;
 #define FMT64		    "lld"
-#define FMT64U		    "lld"
+#define FMT64U		    "llu"
 
 #else
 #error do not know how to get a 64 bit value on this system.
