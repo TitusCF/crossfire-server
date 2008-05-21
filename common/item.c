@@ -79,13 +79,6 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
     /*{"body_dragon_torso", "your body", "a dragon's body"} */
 };
 
-/** To write nice count instead of just the number. */
-static const char numbers[21][20] = {
-    "no","","two","three","four","five","six","seven","eight","nine","ten",
-    "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen",
-    "eighteen","nineteen","twenty"
-};
-
 /** Tens */
 static const char numbers_10[10][20] = {
     "zero","ten","twenty","thirty","fourty","fifty","sixty","seventy",
