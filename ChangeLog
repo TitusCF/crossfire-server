@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #1965528. Not sure if it fixes all cases of the bug.
+ server/shop.c
+Arvid Norlander 2008-05-21
+
+
 Change a lot of static variables to static const, as they are never modified.
 Also remove some non-needed nested (inside a function) extern. Also fix some
 compiler warning in cfanim (on x86_64 int is not same size as long int!).

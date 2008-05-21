@@ -689,7 +689,7 @@ static sint64 remove_value(object *coin_objs[], sint64 remain) {
 
     for (i = 0; i < NUM_COINS; i++) {
         int count;
-        int num_coins;
+        sint64 num_coins;
 
         if (coin_objs[i]->nrof*coin_objs[i]->value > remain) {
             num_coins = remain/coin_objs[i]->value;
