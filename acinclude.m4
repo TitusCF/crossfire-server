@@ -93,7 +93,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 			LIBS="$LIBS $PYTHON_LIB $PY_LIBS"
 			saved_CFLAGS="$CFLAGS"
 			CFLAGS="$CFLAGS $PY_INCLUDES"
-			AC_TRY_RUN([
+			AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <Python.h>
 #include <stdlib.h>
 
@@ -120,15 +120,14 @@ int main()
     Py_InitModule("test", methods);
     return(PyRun_SimpleString("import test\ntest.callback(1)\n") != 0);
 }
-				], [
+				]])],[
 				AC_MSG_RESULT([yes])
-				], [
+				],[
 				AC_MSG_RESULT([no])
 				PYTHON_LIB=""
 				PYLIBS=""
 				PY_INCLUDE=""
-				],
-				[
+				],[
 				AC_MSG_RESULT([skipped because cross compiling])
 				])
 			LIBS="$saved_LIBS"
@@ -146,14 +145,14 @@ int main()
 	AC_SUBST(PY_LIBS)
 	AC_SUBST(PY_INCLUDES)
 ])
-dnl AM_PATH_CHECK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
-dnl Test for check, and define CHECK_CFLAGS and CHECK_LIBS
-dnl
+# AM_PATH_CHECK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
+# Test for check, and define CHECK_CFLAGS and CHECK_LIBS
+#
 
 AC_DEFUN([AM_PATH_CHECK],
 [
   AC_ARG_WITH(check,
-  [  --with-check=PATH       prefix where check is installed [default=auto]])
+  [AS_HELP_STRING([--with-check=PATH], [prefix where check is installed [default=auto]])])
 
   min_check_version=ifelse([$1], ,0.8.2,$1)
 
@@ -178,7 +177,7 @@ AC_DEFUN([AM_PATH_CHECK],
     LIBS="$CHECK_LIBS $LIBS"
 
     rm -f conf.check-test
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -203,9 +202,9 @@ int main ()
       (CHECK_MICRO_VERSION != check_micro_version))
     {
       printf("\n*** The check header file (version %d.%d.%d) does not match\n",
-	     CHECK_MAJOR_VERSION, CHECK_MINOR_VERSION, CHECK_MICRO_VERSION);
+             CHECK_MAJOR_VERSION, CHECK_MINOR_VERSION, CHECK_MICRO_VERSION);
       printf("*** the check library (version %d.%d.%d).\n",
-	     check_major_version, check_minor_version, check_micro_version);
+             check_major_version, check_minor_version, check_micro_version);
       return 1;
     }
 
@@ -229,7 +228,7 @@ int main ()
 
   return 1;
 }
-],, no_check=yes, [echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])],[],[no_check=yes],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
 
     CFLAGS="$ac_save_CFLAGS"
     LIBS="$ac_save_LIBS"
@@ -245,17 +244,17 @@ int main ()
         echo "*** Could not run check test program, checking why..."
         CFLAGS="$CFLAGS $CHECK_CFLAGS"
         LIBS="$CHECK_LIBS $LIBS"
-        AC_TRY_LINK([
+        AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <check.h>
-], ,  [ echo "*** The test program compiled, but did not run. This usually means"
+]], [[]])],[ echo "*** The test program compiled, but did not run. This usually means"
         echo "*** that the run-time linker is not finding check. You'll need to set your"
         echo "*** LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf to point"
         echo "*** to the installed location  Also, make sure you have run ldconfig if that"
         echo "*** is required on your system"
-	echo "***"
+        echo "***"
         echo "*** If you have an old version installed, it is best to remove it, although"
         echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
       [ echo "*** The test program failed to compile or link. See the file config.log for"
@@ -281,13 +280,13 @@ int main ()
 ])
 
 
-dnl CF_IS_XSLT_COMPLIANT(progpath,ACTION-IF-FOUND, ACTION_IF_NOT_FOUND)
-dnl check for xslt compliance of a given prog, prog must be a full executable
-dnl execution command, in this command, this substitution will be donne:
-dnl %1  = xml file
-dnl %2  = xsl file
-dnl %3  = html file
-dnl
+# CF_IS_XSLT_COMPLIANT(progpath,ACTION-IF-FOUND, ACTION_IF_NOT_FOUND)
+# check for xslt compliance of a given prog, prog must be a full executable
+# execution command, in this command, this substitution will be donne:
+# %1  = xml file
+# %2  = xsl file
+# %3  = html file
+#
 AC_DEFUN([CF_IS_XSLT_COMPLIANT],[
     cat << \EOF > configtest.xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -358,7 +357,8 @@ EOF
 ])
 
 AC_DEFUN([CF_CHECK_XSLT],[
-    AC_ARG_WITH(xsltproc, [  --with-xsltproc=path     specify xslt engine to use for test report generation],
+    AC_ARG_WITH(xsltproc,
+        [AS_HELP_STRING([--with-xsltproc=path], [specify xslt engine to use for test report generation])],
         [check_xslt_forcedprogfound=$withval])
     if test "x$check_xslt_forcedprogfound" != "x";  then
         AC_PATH_PROG([check_xslt_forcedprogfound],[$check_xslt_forcedprogfound],[notfound])
@@ -440,7 +440,7 @@ AC_DEFUN([LIBCURL_CHECK_CONFIG],
   AH_TEMPLATE([LIBCURL_PROTOCOL_TFTP],[Defined if libcurl supports TFTP])
 
   AC_ARG_WITH(libcurl,
-     AC_HELP_STRING([--with-libcurl=DIR],[look for the curl library in DIR]),
+     AS_HELP_STRING([--with-libcurl=DIR],[look for the curl library in DIR]),
      [_libcurl_with=$withval],[_libcurl_with=ifelse([$1],,[yes],[$1])])
 
   if test "$_libcurl_with" != "no" ; then

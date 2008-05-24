@@ -1,17 +1,18 @@
-dnl Process this file with autoconf to produce a configure script.
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
 
 AC_REVISION($Id$)
 AC_INIT([crossfire], [2.0-dev], [crossfire-devel@listserv.real-time.com])
-AC_CONFIG_AUX_DIR(utils)
+AC_CONFIG_AUX_DIR([utils])
 AC_CONFIG_SRCDIR([server/main.c])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(include/autoconf.h)
+AC_CONFIG_HEADERS([include/autoconf.h])
 
 AC_PREFIX_DEFAULT(/usr/games/crossfire)
 
-dnl we want a config.h file instead of -D options.
+# we want a config.h file instead of -D options.
 
-dnl Checks for programs.
+# Checks for programs.
 AC_PROG_LIBTOOL
 AC_PROG_CC
 
@@ -34,14 +35,15 @@ AM_PROG_CC_C_O
 AC_PROG_AWK
 
 AC_ARG_ENABLE(dmalloc,
-              [ --enable-dmalloc    Use the dmalloc library if available, may prevent plugins from working],,
+              [AS_HELP_STRING([--enable-dmalloc], [Use the dmalloc library if available, may prevent plugins from working])],,
               enable_dmalloc=no)
 
-AC_ARG_WITH(python, [  --with-python=dir       Directory to look for python headers/library (default=standard system location)	],
-			PYTHON_HOME="$withval")
+AC_ARG_WITH(python,
+            [AS_HELP_STRING([--with-python=dir], [Directory to look for python headers/library (default=standard system location)])],
+            PYTHON_HOME="$withval")
 
 
-dnl check for some other programs
+# check for some other programs
 AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(GUNZIP, gunzip)
@@ -55,8 +57,8 @@ if test -n "$GZIP" -a -z "$GUNZIP" ; then
 fi;
 
 if test -z "$COMPRESS" ; then
-	AC_PATH_PROG(COMPRESS, compress)
-	AC_PATH_PROG(UNCOMPRESS, uncompress)
+    AC_PATH_PROG(COMPRESS, compress)
+    AC_PATH_PROG(UNCOMPRESS, uncompress)
 fi
 
 AC_PATH_PROG(BZIP, bzip2)
@@ -68,36 +70,20 @@ if test -n "$BZIP" -a -z "$BUNZIP" ; then
 fi;
 
 if test -z "$COMPRESS" -a -z "$GZIP" -a -z "$BZIP" ; then
-	echo "Unable to find either compress, bzip2,  or gzip - hope you don't plan on compressing";
-	echo "any files.";
+    echo "Unable to find either compress, bzip2,  or gzip - hope you don't plan on compressing";
+    echo "any files.";
 fi;
 
-dnl Check if svnversion is avaliable to get the rev number
+# Check if svnversion is avaliable to get the rev number
 AC_PATH_PROG(SVNVERSION, svnversion)
 
-dnl nsl, socket may be needed for the X-windowing system, so check
-dnl for them before before checking for X.
-AC_CHECK_LIB(nsl, main)
-AC_CHECK_LIB(socket, main)
+# Check for some library functions
+AC_SEARCH_LIBS([gethostbyname], [nsl])
+AC_SEARCH_LIBS([pow], [m])
+AC_SEARCH_LIBS([sqrt], [m])
 
-dnl Checks for libraries.
-dnl Start of X11 libraries
-AC_PATH_XTRA
-
-dnl Some of these checks are probably excessive.  Unfortunately, on
-dnl some systems, to link in Xaw, Xt you need SM, which needs ICE.
-dnl the order of the checks below is important
-
-AC_CHECK_LIB(m, main)
-
-AC_CHECK_LIB(png, main,  AC_DEFINE(HAVE_LIBPNG,[],[Define if libpng is available]) X11LIBS="$X11LIBS -lpng", , $X11LIBS )
-
-dnl png has a dependency in some cases on libz - if we have it, can't really
-dnl be harmful to link it in.
-AC_CHECK_LIB(z, main,  AC_DEFINE(HAVE_LIBZ,[],[Define if libz is available]) X11LIBS="$X11LIBS -lz", , $X11LIBS )
-
-dnl Misc libraries.
-AC_CHECK_LIB(crypt, main)
+# Misc libraries.
+AC_SEARCH_LIBS([crypt], [crypt])
 AC_CHECK_LIB(des, des_crypt)
 
 AC_CHECK_LIB(z, compress)
@@ -108,8 +94,8 @@ LIBCURL_CHECK_CONFIG()
 LIBS="$LIBS $LIBCURL"
 CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
 
-dnl Gros - Changed this to support some external programs that do not like dmalloc (like Python).
-dnl If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
+# Gros - Changed this to support some external programs that do not like dmalloc (like Python).
+# If you really need to make some memory debugging, uncomment the dmalloc line and comment out the dmalloclp one.
 
 if eval "test x$enable_dmalloc = xyes"; then
     AC_CHECK_LIB(dmalloc, main)
@@ -117,24 +103,32 @@ else
     AC_CHECK_LIB(dmalloclp, main)
 fi
 
-dnl Checks for header files.
+# Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h stddef.h stdlib.h sys/ttycom.h sys/termios.h crypt.h arpa/inet.h des.h zlib.h pthread.h curl/curl.h)
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h stddef.h stdlib.h strings.h sys/file.h sys/ioctl.h sys/time.h time.h unistd.h sys/ttycom.h sys/termios.h crypt.h des.h zlib.h pthread.h curl/curl.h])
 
-dnl Checks for typedefs, structures, and compiler characteristics.
+# Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT8_T
+AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
+AC_HEADER_STDBOOL
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT8_T
 AC_TYPE_UID_T
 
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 
-dnl Checks for library functions.
+# Checks for library functions.
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MEMCMP
 AC_FUNC_SETPGRP
@@ -142,12 +136,11 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRERROR_R
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gettimeofday mkdir mktime rmdir select socket strcspn strerror strspn strstr strtol strcasecmp strncasecmp snprintf setsid srandom getdtablesize srand48 srand sysconf scandir)
+AC_CHECK_FUNCS([getdtablesize gettimeofday mkdir mktime rmdir select socket strcasecmp strcspn strerror strncasecmp strspn strstr strtol snprintf setsid srandom srand48 srand sysconf scandir])
 
-dnl alphasort can not be added to AC_CHECK_FUNCS because
+# alphasort can not be added to AC_CHECK_FUNCS because
 AC_MSG_CHECKING(checking if alphasort is defined)
-  AC_TRY_COMPILE([#include <dirent.h>], [alphasort;],
-    ac_cv_func_alphasort=yes, ac_cv_func_alphasort=no)
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <dirent.h>]], [[alphasort;]])],[ac_cv_func_alphasort=yes],[ac_cv_func_alphasort=no])
   if test "$ac_cv_func_alphasort" = yes; then
     AC_DEFINE(HAVE_ALPHASORT, 1, [Define if you have the alphasort() function declaration.])
     AC_MSG_RESULT(yes)
@@ -188,11 +181,6 @@ else
   AC_MSG_RESULT(unknown)
 fi
 
-AC_SUBST(x_includes)
-AC_SUBST(x_libraries)
-AC_SUBST(no_x)
-AM_CONDITIONAL(HAVE_X,test "x$no_x" = "x")
-AC_SUBST(X11LIBS)
 AC_SUBST(PERL)
 AC_SUBST(BASENAME)
 
@@ -212,17 +200,17 @@ AC_CHECK_LIB(dl, dlopen,[ cf_have_libdl=yes ])
 AM_CONDITIONAL(HAVE_LIBDL,test "x$cf_have_libdl" = "xyes")
 
 if test "x$cf_have_libdl" = "xyes" ; then
-	###############
-	# Python plugin
-	CF_CHECK_PYTHON(
-		[PLUGIN_PYTHON="cfpython.la"]
-		[cf_will_build_python="yes"],
-		[cf_will_build_python="no"]
-		[AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
-	)
-	dnl *** Put other plugins configuration code here ***
+    ###############
+    # Python plugin
+    CF_CHECK_PYTHON(
+        [PLUGIN_PYTHON="cfpython.la"]
+        [cf_will_build_python="yes"],
+        [cf_will_build_python="no"]
+        [AC_MSG_NOTICE([No Python found. Python plugin will not be built.])]
+    )
+    # *** Put other plugins configuration code here ***
 else
-	AC_MSG_NOTICE([No dl library found. Plugins will not be supported.])
+    AC_MSG_NOTICE([No dl library found. Plugins will not be supported.])
 fi
 AM_CONDITIONAL(PYTHON_PLUGIN,test "x$PLUGIN_PYTHON" != "x")
 AC_SUBST(PLUGIN_PYTHON)
@@ -231,12 +219,12 @@ AC_SUBST(PLUGIN_PYTHON)
 # CFLogger and CFNewsPaper configuration
 
 AC_ARG_ENABLE(logger,
-		[ --disable-logger	Disable the logger compilation],,
-		enable_logger=yes)
+              [AS_HELP_STRING([--disable-logger], [Disable the logger compilation])],,
+              enable_logger=yes)
 AC_ARG_ENABLE(newspaper,
-                [ --disable-newspaper   Disable the newspaper plugin compilation],,
-		enable_newspaper=yes)
-AC_CHECK_LIB(sqlite3, main,[ cf_have_libsqlite=yes ])
+              [AS_HELP_STRING([--disable-newspaper], [Disable the newspaper plugin compilation])],,
+              enable_newspaper=yes)
+AC_CHECK_LIB(sqlite3, sqlite3_open,[ cf_have_libsqlite=yes ])
 AM_CONDITIONAL(HAVE_CFLOGGER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enable_logger" = "xyes"])
 AM_CONDITIONAL(HAVE_CFNEWSPAPER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enable_newspaper" = "xyes"])
 
@@ -244,7 +232,7 @@ AM_CONDITIONAL(HAVE_CFNEWSPAPER, [test x"$cf_have_libsqlite" = "xyes" -a x"$enab
 # Unit test configuration
 
 AC_ARG_ENABLE(check,
-              [ --disable-check       Disable the unit tests even if check is available],,
+              [AS_HELP_STRING([--disable-check], [Disable the unit tests even if check is available])],,
               enable_check=yes)
 AM_PATH_CHECK(,[have_check="yes"],
   AC_MSG_WARN([Check not found; cannot run unit tests!])
@@ -253,30 +241,43 @@ AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes" -a x"$enable_check" = "x
 CF_CHECK_XSLT(xsltengine)
 AM_CONDITIONAL(PROCESS_XSLT,[test x"$have_check" = "xyes" -a x"$enable_check" = "xyes" -a x"$xsltengine" != x])
 AC_SUBST(XSLTENGINE,[$xsltengine])
-AC_OUTPUT([Makefile
-	doc/Makefile doc/Developers/Makefile doc/spell-docs/Makefile
-	doc/spoiler/Makefile doc/spoiler-html/Makefile
-	doc/playbook/Makefile doc/playbook-html/Makefile
-	doc/scripts/Makefile
-	lib/Makefile random_maps/Makefile socket/Makefile server/Makefile
-	include/Makefile utils/Makefile lib/checkarch.pl
-	lib/collect.pl utils/add_throw.perl utils/crossloop.tmpl utils/crossloop.pl.tmpl
-	utils/metaserver.pl utils/crossloop.web utils/scores.pl utils/player_dl.pl
-	common/Makefile plugins/Makefile plugins/cfpython/Makefile
-	plugins/cfpython/include/Makefile plugins/cfanim/Makefile
-	plugins/cfanim/include/Makefile
-	plugins/common/Makefile plugins/common/include/Makefile
-	plugins/cflogger/Makefile plugins/cflogger/include/Makefile
-	plugins/cfnewspaper/Makefile
-	plugins/citylife/Makefile
-	plugins/cfrhg/Makefile
-	devel/Makefile
-	test/Makefile test/include/Makefile test/unit/Makefile
-	test/templates/Makefile test/toolkit/Makefile
-	test/unit/common/Makefile test/unit/random_maps/Makefile test/unit/socket/Makefile test/unit/server/Makefile
-	test/bugs/Makefile test/bugs/bugtrack/Makefile
-        types/Makefile
-	 ])
+
+########################
+# Generate output
+AC_CONFIG_FILES([Makefile
+                 doc/Makefile
+                 doc/Developers/Makefile
+                 doc/playbook/Makefile doc/playbook-html/Makefile
+                 doc/scripts/Makefile
+                 doc/spell-docs/Makefile
+                 doc/spoiler/Makefile doc/spoiler-html/Makefile
+                 common/Makefile
+                 devel/Makefile
+                 include/Makefile
+                 lib/Makefile
+                 random_maps/Makefile
+                 server/Makefile
+                 socket/Makefile
+                 types/Makefile
+                 utils/Makefile
+                 lib/checkarch.pl lib/collect.pl
+                 utils/add_throw.perl utils/metaserver.pl utils/scores.pl utils/player_dl.pl
+                 utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/crossloop.web
+                 plugins/Makefile
+                 plugins/cfanim/Makefile plugins/cfanim/include/Makefile
+                 plugins/cflogger/Makefile plugins/cflogger/include/Makefile
+                 plugins/cfnewspaper/Makefile
+                 plugins/cfpython/Makefile plugins/cfpython/include/Makefile
+                 plugins/cfrhg/Makefile
+                 plugins/citylife/Makefile
+                 plugins/common/Makefile plugins/common/include/Makefile
+                 test/Makefile
+                 test/bugs/Makefile test/bugs/bugtrack/Makefile
+                 test/include/Makefile test/templates/Makefile test/toolkit/Makefile
+                 test/unit/Makefile
+                 test/unit/common/Makefile test/unit/random_maps/Makefile
+                 test/unit/server/Makefile test/unit/socket/Makefile])
+AC_OUTPUT
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([])
 AC_MSG_NOTICE([])
