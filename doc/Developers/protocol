@@ -14,7 +14,7 @@ Outline:
 	are extending the server.
  Todo: Things to do in the future.
 
- Note:  each section is seperated by a line of dashes. This should make finding
+ Note:  each section is separated by a line of dashes. This should make finding
 a specific section easier.
 
  In order to make things a little for people doing porting, I have
@@ -31,7 +31,7 @@ These messages are what is originally detailed below (now removed).  It was
 up to the server and client to parse these messages and determine what to
 do.  These messages were assumed to be 1 line per message.
 
-At a reasonably early stage of developement, Eric Anderson wrote a fairly
+At a reasonably early stage of development, Eric Anderson wrote a fairly
 (but not totally) complete client/server that used his eutl package.  This
 package pretty much set up packets with subpackets - these subpackets would
 have a tag for the data type, then the data itself.  Thus, you could any many
@@ -45,7 +45,7 @@ currently in production.  Also, Eric left to work on other products shortly
 after writing his client, which didn't really leave anyone with a full
 understanding.
 
-I have decided to remove the eutl dependancy.  At least one advantage is
+I have decided to remove the eutl dependency.  At least one advantage is
 that having this network related code directly in the client and server
 makes error handling a bit easier/cleaner.
 
@@ -92,7 +92,7 @@ generally won't be sending so much data that the its flow is much problem.
 
 Note that all the commands as detailed below are up to date descriptions
 I removed a lot of the old notes on this file, because they were
-out of date, and while might be good ideas, were not all that relevent to
+out of date, and while might be good ideas, were not all that relevant to
 how things currently work.
 
 Summary: Packets sent back and forth have a 2 byte header (MSB order)
@@ -253,7 +253,7 @@ S->C: goodbye (Added in SC protocol version 1022)
 	to the client.  This is a bit cleaner than the client detecting
 	a read error.  In theory, a C->S of the same type could be done,
 	but I don't think it would make a big difference for the server (is
-	going to do the same thing regardless of a clean conection drop
+	going to do the same thing regardless of a clean connection drop
 	or a bad one).
 
 Also see the setfacemode command below.
@@ -444,7 +444,7 @@ C->S: mark <tag>
 	client knowing this is not strictly needed)
 
 C->S: inscribe 0 <tag1> <tag2>
-	Player wants to write spell 'tag1' on scroll 'tag2'. This is rougly equivalent
+	Player wants to write spell 'tag1' on scroll 'tag2'. This is roughly equivalent
 	of manually marking an item, readying the spell, and using the inscription skill.
 	'0' should be one byte, tags should be 4 byte integers.
 
@@ -477,7 +477,7 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 
 	name is the name of the object.  The first byte of this field is the
 	text length of the name.  Starting at SC 1024, this name is two
-	strings, with a null seperation.  The first byte (length) is the
+	strings, with a null separation.  The first byte (length) is the
 	length for both of these strings.  This name information is just
 	the information of what the object is called.  It does not include
 	how many of the items there are.
@@ -495,7 +495,7 @@ S->C: item2 <location><tag1><flags1><weight1><face1><name1><anim1>
 	nrof:  How many objects comprise this item.  This is used for
 	the name field and calculating total weight.  It is 4 bytes.
 
-	type: A numeric type id for the item.  The only meaining of this
+	type: A numeric type id for the item.  The only meaning of this
 	value is really for sorting - all armors will have type values
 	the same or near that each other.  The client is free to ignore
 	this. This value is 2 bytes.
@@ -522,7 +522,7 @@ S->C: delitem <tag1><tag2>...
 S->C delinv <tag>
 	Tells the client to delete items carried in/by the object <tag>.
 	<tag> is sent as plaintext numbers.  Tag of 0 means to delete
-	all items on the space teh character is standing on.  This command
+	all items on the space tech character is standing on.  This command
 	only affects the inventory of the object.  To fully delete a
 	container object, a delinv followed by a delitem should be issued.
 
@@ -571,14 +571,14 @@ S->C addspell <tag1> <level1> <casting time1> <mana1> <grace1> <damage1> <skill>
 		can request this facenumber if they want to show a graphical spell
 		representation.
 
-	<name> (1 (non-zero) length byte, followed by that many bytes of ascii text)
+	<name> (1 (non-zero) length byte, followed by that many bytes of ASCII text)
 		This is a name to identify the spell, which the client can use
 		for display purposes, it should /NOT/ be used with the 'cast'
-		command, whilst it might work, no such guarentee is made by the
+		command, whilst it might work, no such guarantee is made by the
 		server. - Use tag instead.
 
 	<message> (2 length bytes (which may be zero) followed by that many
-		bytes of ascii text)
+		bytes of ASCII text)
 		The description of the spell. Note that this has an extra length
 		byte because the messages may well be longer than 256 bytes in
 		length.
@@ -675,7 +675,7 @@ S->C: face2 <num><setnum><checksum><name>
 	Informs the client that image <num> (binary short) of faceset <setnum>
 	(A byte) is associated with <name>.  This is used when the client is
 	caching images.  In normal
-	operation, when the server runs accross a face that it hasn't sent
+	operation, when the server runs across a face that it hasn't sent
 	the client, it sends a png for that face.  If the face
 	mode is none, the server then sends this command.  The client can
 	then check to see if it might have cached this face, and if not,
@@ -746,7 +746,7 @@ S->C: map2 <coord1><len1/type1><data1><len2/type2><data2>...<coord2>
 
 
 	The x & y coordinates are offset by MAP2_COORD_OFFSET (15).
-	This is necessary because there may be effects noticable to the
+	This is necessary because there may be effects noticeable to the
 	player (light sources) that to the left/above the visible map.
 	By using this offset, we can use a coordinate like
 	10, 27 to denote that something is 5 spaces above the top
@@ -886,17 +886,17 @@ S->C: newmap
 
 S->C: magicmap <width> <height> <px> <py> <data>
 	This gives the client information from a magic map command.
-	<width> <height> and text integers of the size.  <px> <py> is
-	the players location, and data is binary data of the
+	<width> <height> are ASCII integers of the size.  <px> <py> is
+	the player's location (ASCII), and data is binary data of the
 	appropriate color.  It is 1 byte per space, with the low
 	nibble containing the color information, and the high nibble
-	containing extra flags, like the existance of walls and floors.
+	containing extra flags, like the existence of walls and floors.
 	See the FACE_FLOOR and FACE_WALL values.
 	The string of data represents the space from left to right,
 	then up to down.
 
 C->S: toggleextendedinfos <string1> <string2> .... <stringn>
-	Ask the server to send some additionnal information about the map.
+	Ask the server to send some additional information about the map.
 	This command is followed by 1 or more strings. String are separated
 	with spaces. Each string toggle an info. The server will respond
 	with the command ExtendedInfoSet telling client what actual
@@ -937,7 +937,7 @@ MISC COMMANDS:
 
 C->S: lookat <dx> <dy>
 	Client (player) is looking at space dx,dy.  dx and dy are delta
-	offsets from the player (client doesnt know where the player is
+	offsets from the player (client doesn't know where the player is
 	on the map, so this is the only real way to deal with it.)  dx
 	and dy plaintext integers.  This is only a request to the
 	server - a response will typically come back in drawinfo commands.
@@ -1056,10 +1056,10 @@ S->C: setup <option1> <value1> <option2> <value2>
 
 	want_pickup (0/1)
 	    If set, the client wants pickup mode to be sent when player
-	    correctly logs in (to synchronise interface).
+	    correctly logs in (to synchronize interface).
 	    Note that this flag only sends at login, not when mode changes.
 
-	All data in the setup command is in ascii text form.  options and
+	All data in the setup command is in ASCII text form.  options and
 	values can not have whitepace - the client and server use whitspace
 	to split the options and values.
 
@@ -1145,7 +1145,7 @@ S->C: replyinfo <info_type>[options]<data>
 	image_sums <start> <stop> <imagenum><checksum><namelength><name>
 
 	There is an initial space after the stop value, but no spaces after
-	that point.  The <start> and <stop> values are ascii text (same
+	that point.  The <start> and <stop> values are ASCII text (same
 	format as it is sent to the server in).  The start and stop
 	values are inclusive - thus, if the start is 0 and the stop
 	is 100, 101 checksums will be set.
@@ -1157,7 +1157,7 @@ S->C: replyinfo <info_type>[options]<data>
 	facenum is 8 bit binary data.
 	namelength is 8 bit binary data.  It is the length of the
 	name field below, including the null terminator.
-	name is chraracter data.  It is null terminated to make processing
+	name is character data.  It is null terminated to make processing
 	easier - in this way, the client doesn't need to copy the data
 	to make it null terminated.
 
@@ -1274,7 +1274,7 @@ be added.
 NOTE: I am not sure if this is the exact order of the next few commands,
 since a whole bunch of stuff is being done at once.
 
-S->C: pixmap (All that the map command uses wil lbe sent.)
+S->C: pixmap (All that the map command uses will be sent.)
 S->C: map (display starting town map.)
 S->C: stats (display default character stats)
 S->C: drawinfo (display motd)
@@ -1287,7 +1287,7 @@ C->S: reply (return player password.)
  At this point, things could deviate two ways - player could be
 starting a new character, in which case, numerous draw infos, query's
 (stat rolling), replys, stats (change stats that were just
-rolled), map updates (player changing clasS) could be sent.  However,
+rolled), map updates (player changing class) could be sent.  However,
 we will assume that the player actually entered the proper password
 and an existing character is rejoining the game.
 
@@ -1325,7 +1325,7 @@ Programming Notes:
 
  These are a few quick notes on how things work.  Note that they really
 only apply to the code in the standard distribution, most of the direct
-i/o is handled by functions that are talked about.  IF writing a client
+i/o is handled by functions that are talked about.  If writing a client
 from scratch, you will need to port this over (or write your own - it
 isn't very complicated.)
 
@@ -1345,10 +1345,10 @@ not removed.
 client and server distribution, but except for the SockList data type,
 it could probably be used by itself.  The newsocket.c file contains
 some routines to pack ints, shorts, and single chars into SockList
-structs, as well as functions for the reverse.  IT also contains a
+structs, as well as functions for the reverse.  It also contains a
 function to send socklists, as well as read them.  The Add??? functions
 increase the len field of the socklist, the Get??? functions do not
-change the pointer in anyways.  Thus, to get and int and move the buffer,
+change the pointer in anyways.  Thus, to get an int and move the buffer,
 you do something like:
    int = GetIntString(data); data+=4
 As a side note, if you malloc the data for the buffer, make sure to free
@@ -1426,12 +1426,12 @@ the pixmap/bitmap command comes in, and free that data.
 
  Also, the client does occasional redraws of all data if it has received
 new images and is running in cached mode.  Otherwise, the map can remain
-out of date indefinately (although, once the player moves, things will get
+out of date indefinitely (although, once the player moves, things will get
 redrawn.)
 
  This has the effect that first time running in cached mode, performance
 will actually be a little bit worse for the client (after all, it needs
-to still request all the images, but isstill doing pretty constand redraws
+to still request all the images, but is still doing pretty constant redraws
 of the data.)  But times after that, performance is greatly improved.
 
 ------------------------------------------------------------------------------
@@ -1466,7 +1466,7 @@ SC version 1027 -> 1028: mostly remove obsolete commands:
 
 SC version 1028 -> 1029: Changes the way weapon_speed is reported for
   the player - version 1028 needed the client to divide weapon speed
-  by player speed to get actual valu, version 1029 just reports weapon
+  by player speed to get actual value, version 1029 just reports weapon
   speed as it should be displayed.
 
 ------------------------------------------------------------------------------

@@ -790,9 +790,9 @@ void esrv_update_stats(player *pl)
                  CS_STAT_SPELL_DENY);
     }
         /* we want to use the new fire & run system in new client */
-    rangetostring(pl->ob, buf);
+    rangetostring(pl->ob, buf, sizeof(buf));
     AddIfString(pl->socket.stats.range, buf, CS_STAT_RANGE);
-    set_title(pl->ob, buf);
+    set_title(pl->ob, buf, sizeof(buf));
     AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
 
         /* Only send it away if we have some actual data */

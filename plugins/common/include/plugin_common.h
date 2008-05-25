@@ -146,7 +146,7 @@ extern mapstruct*   cf_map_get_map(const char* name, int flags);
 extern mapstruct*   cf_get_empty_map(int sizex, int sizey);
 extern mapstruct*   cf_map_get_first(void);
 extern mapstruct*   cf_map_has_been_loaded(const char* name);
-extern void         cf_map_message(mapstruct* m, char* msg, int color);
+extern void         cf_map_message(mapstruct* m, const char* msg, int color);
 extern object*      cf_map_get_object_at(mapstruct* m, int x, int y);
 extern object*      cf_map_insert_object(mapstruct* where, object* op, int x, int y);
 extern object*      cf_map_present_arch_by_name(const char* str, mapstruct* map, int nx, int ny);

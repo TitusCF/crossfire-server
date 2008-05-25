@@ -566,7 +566,7 @@ object* cf_map_get_object_at(mapstruct* m, int x, int y)
  * Partial wrapper for ext_info_map().
  * @todo add missing parameters.
  */
-void cf_map_message(mapstruct* m, char* msg, int color)
+void cf_map_message(mapstruct* m, const char* msg, int color)
 {
     int type;
     cfapiMap_message(&type, m, msg, color);

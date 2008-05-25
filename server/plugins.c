@@ -1469,12 +1469,12 @@ void* cfapi_map_message(int* type, ...)
 {
     va_list args;
     mapstruct* map;
-    char* string;
+    const char* string;
     int color;
 
     va_start(args, type);
     map = va_arg(args, mapstruct*);
-    string = va_arg(args, char*);
+    string = va_arg(args, const char*);
     color = va_arg(args, int);
     va_end(args);
 

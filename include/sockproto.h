@@ -12,8 +12,8 @@ void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint
 void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2);
 void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1, const char *str2);
 void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1, const char *str2);
-void rangetostring(const object *pl, char *obuf);
-void set_title(const object *pl, char *buf);
+void rangetostring(const object *pl, char *obuf, size_t len);
+void set_title(const object *pl, char *buf, size_t len);
 void magic_mapping_mark(object *pl, char *map_mark, int strength);
 void draw_magic_map(object *pl);
 /* init.c */

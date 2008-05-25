@@ -331,7 +331,7 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
  */
 
 void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type,
-			 uint8 subtype, const char *str1, const char *str2) {
+                         uint8 subtype, const char *str1, const char *str2) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -345,7 +345,7 @@ void ext_info_map_except(int color, const mapstruct *map, const object *op, uint
  */
 
 void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2,
-			  int type, int subtype, const char *str1, const char *str2) {
+                          int type, int subtype, const char *str1, const char *str2) {
     player *pl;
 
     for(pl = first_player; pl != NULL; pl = pl->next)
@@ -360,91 +360,92 @@ void ext_info_map_except2(int color, const mapstruct *map, const object *op1, co
 /**
  * Get player's current range attack in obuf.
  */
-void rangetostring(const object *pl,char *obuf)
+void rangetostring(const object *pl, char *obuf, size_t len)
 {
     char name[MAX_BUF];
     switch(pl->contr->shoottype) {
-	case range_none:
-	    strcpy(obuf,"Range: nothing");
-	    break;
+        case range_none:
+            strncpy(obuf, "Range: nothing", len);
+            break;
 
-	case range_bow:
-	    {
-	    object *op;
+        case range_bow:
+            {
+            object *op;
 
-	    for (op = pl->inv; op; op=op->below)
-		if (op->type == BOW && QUERY_FLAG (op, FLAG_APPLIED))
-		    break;
-	    if(op==NULL) break;
+            for (op = pl->inv; op; op=op->below)
+                if (op->type == BOW && QUERY_FLAG (op, FLAG_APPLIED))
+                    break;
+            if(op==NULL)
+                break;
 
-        query_base_name(op, 0, name, MAX_BUF);
-	    sprintf (obuf, "Range: %s (%s)", name,
-		     op->race ? op->race : "nothing");
-	    }
-	    break;
+            query_base_name(op, 0, name, MAX_BUF);
+            snprintf(obuf, len, "Range: %s (%s)", name,
+                     op->race ? op->race : "nothing");
+            }
+            break;
 
-	case range_magic:
-	    if (settings.casting_time == TRUE) {
-		if (pl->casting_time > -1) {
-		    if (pl->casting_time == 0)
-			sprintf(obuf,"Range: Holding spell (%s)",
-				pl->spell->name);
-		    else
-			sprintf(obuf,"Range: Casting spell (%s)",
-				pl->spell->name);
-		} else
-		    sprintf(obuf,"Range: spell (%s)",
-			    pl->contr->ranges[range_magic]->name);
-	    } else
-		sprintf(obuf,"Range: spell (%s)",
-			pl->contr->ranges[range_magic]->name);
-	    break;
+        case range_magic:
+            if (settings.casting_time == TRUE) {
+                if (pl->casting_time > -1) {
+                    if (pl->casting_time == 0)
+                        snprintf(obuf, len, "Range: Holding spell (%s)",
+                                pl->spell->name);
+                    else
+                        snprintf(obuf, len, "Range: Casting spell (%s)",
+                                pl->spell->name);
+                } else
+                    snprintf(obuf, len, "Range: spell (%s)",
+                            pl->contr->ranges[range_magic]->name);
+            } else
+                snprintf(obuf, len, "Range: spell (%s)",
+                        pl->contr->ranges[range_magic]->name);
+            break;
 
-	case range_misc:
-        if (pl->contr->ranges[range_misc])
-            query_base_name(pl->contr->ranges[range_misc],0, name, MAX_BUF);
-        else
-            strncpy(name, "none", MAX_BUF);
-	    sprintf(obuf,"Range: %s", name);
-	    break;
+        case range_misc:
+            if (pl->contr->ranges[range_misc])
+                query_base_name(pl->contr->ranges[range_misc],0, name, MAX_BUF);
+            else
+                strncpy(name, "none", MAX_BUF);
+            snprintf(obuf, len, "Range: %s", name);
+            break;
 
-	/* range_scroll is only used for controlling golems.  If the
-	 * the player does not have a golem, reset some things.
-	 */
-	case range_golem:
-	    if (pl->contr->ranges[range_golem]!=NULL)
-		sprintf(obuf,"Range: golem (%s)",pl->contr->ranges[range_golem]->name);
-	    else {
-		pl->contr->shoottype = range_none;
-		strcpy(obuf,"Range: nothing");
-	    }
-	    break;
+        /* range_scroll is only used for controlling golems.  If the
+         * the player does not have a golem, reset some things.
+         */
+        case range_golem:
+            if (pl->contr->ranges[range_golem]!=NULL)
+                snprintf(obuf, len, "Range: golem (%s)",pl->contr->ranges[range_golem]->name);
+            else {
+                pl->contr->shoottype = range_none;
+                strncpy(obuf, "Range: nothing", len);
+            }
+            break;
 
-	case range_skill:
-	    sprintf(obuf,"Skill: %s", pl->chosen_skill!=NULL ?
-		    pl->chosen_skill->name : "none");
-	    break;
+        case range_skill:
+            snprintf(obuf, len, "Skill: %s", pl->chosen_skill!=NULL ?
+                     pl->chosen_skill->name : "none");
+            break;
 
-    case range_builder:
-        query_base_name( pl->contr->ranges[ range_builder ], 0, name, MAX_BUF );
-        sprintf( obuf, "Builder: %s", name );
-        break;
+        case range_builder:
+            query_base_name( pl->contr->ranges[ range_builder ], 0, name, MAX_BUF );
+            snprintf(obuf, len, "Builder: %s", name);
+            break;
 
-	default:
-	    strcpy(obuf,"Range: illegal");
+        default:
+            strncpy(obuf, "Range: illegal", len);
     }
 }
 
 /**
  * Sets player title.
  */
-void set_title(const object *pl, char *buf)
+void set_title(const object *pl, char *buf, size_t len)
 {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
     if (pl->contr->own_title[0]=='\0')
-	sprintf(buf,"Player: %s the %s",pl->name,pl->contr->title);
+        snprintf(buf, len, "Player: %s the %s",pl->name,pl->contr->title);
     else
-	sprintf(buf,"Player: %s %s",pl->name,pl->contr->own_title);
+        snprintf(buf, len, "Player: %s %s",pl->name,pl->contr->own_title);
 }
 
 
