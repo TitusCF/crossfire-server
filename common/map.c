@@ -907,7 +907,7 @@ static void print_shop_string(mapstruct *m, char *output_string, int size) {
             }
             else snprintf(tmp, sizeof(tmp), "*");
         }
-        snprintf(output_string + strlen(output_string), size - strlen(output_string), tmp);
+        snprintf(output_string + strlen(output_string), size - strlen(output_string), "%s", tmp);
     }
 }
 
@@ -1090,7 +1090,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 
                 if (check_path(value, 1) != -1) {
                     /* The unadorned path works. */
-                    snprintf(path, sizeof(path), value);
+                    snprintf(path, sizeof(path), "%s", value);
                 } else {
                     /* Try again; it could be a relative exit. */
                     path_combine_and_normalize(m->path, value, path, sizeof(path));
@@ -1412,10 +1412,10 @@ int save_map(mapstruct *m, int flag) {
     if (m->compressed && (m->unique || m->template || flag != SAVE_MODE_NORMAL)) {
         char buf[MAX_BUF];
         snprintf(buf, sizeof(buf), "%s > %s%s", uncomp[m->compressed][2], filename, TEMP_EXT);
-        snprintf(final, sizeof(final), filename);
+        snprintf(final, sizeof(final), "%s", filename);
         fp = popen(buf, "w");
     } else {
-        snprintf(final, sizeof(final), filename);
+        snprintf(final, sizeof(final), "%s", filename);
         snprintf(filename, sizeof(filename), "%s%s", final, TEMP_EXT);
         fp = fopen(filename, "w");
     }

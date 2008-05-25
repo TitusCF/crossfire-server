@@ -645,8 +645,8 @@ int nstrtok (const char *buf1, const char *buf2)
 
     if (!buf1 || !buf2)
         return 0;
-    snprintf(buf, sizeof(buf), buf1);
-    snprintf (sbuf, sizeof(sbuf), buf2);
+    snprintf(buf, sizeof(buf), "%s", buf1);
+    snprintf (sbuf, sizeof(sbuf), "%s", buf2);
     tbuf = strtok (buf, sbuf);
     while (tbuf)
     {
@@ -684,7 +684,7 @@ char* strtoktolin (const char *buf1, const char *buf2, char* retbuf, int size)
     tbuf = strtok (buf, sbuf);
     while (tbuf && i > 0)
     {
-        snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), tbuf);
+        snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), "%s", tbuf);
         i--;
         if (i == 1 && maxi > 1)
             snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), " and ");
@@ -1479,7 +1479,7 @@ char* mon_info_msg (int level, char* buf, int booksize)
         snprintf(tmpbuf, sizeof(tmpbuf), "\n---\n%s", mon_desc (tmp, desc, sizeof(desc)));
 
         if (!book_overflow (buf, tmpbuf, booksize))
-            snprintf(buf + strlen(buf), booksize - strlen(buf), tmpbuf);
+            snprintf(buf + strlen(buf), booksize - strlen(buf), "%s", tmpbuf);
         else
             break;
 
@@ -1607,7 +1607,7 @@ static char *artifact_msg (int level, char* retbuf, int booksize)
         * level is kinda high */
         if (art->item->msg && (RANDOM () % 4 + 1) < level &&
             !((strlen (art->item->msg) + strlen (buf)) > BOOK_BUF))
-            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), art->item->msg);
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s", art->item->msg);
 
         /* properties of the artifact */
         tmp = get_object ();
@@ -1621,7 +1621,7 @@ static char *artifact_msg (int level, char* retbuf, int booksize)
         free_object(tmp);
         /* add the buf if it will fit */
         if (!book_overflow (retbuf, buf, booksize))
-            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), buf);
+            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "%s", buf);
         else
             break;
 
@@ -1683,7 +1683,7 @@ char* spellpath_msg (int level, char* retbuf, int booksize)
             if (did_first_sp)
                 snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), ",\n");
             did_first_sp = 1;
-            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), at->clone.name);
+            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "%s", at->clone.name);
         }
     }
     /* Geez, no spells were generated. */
@@ -1782,10 +1782,8 @@ void make_formula_book(object *book, int level) {
                 op_name);
             if (at->clone.title)
             {
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " ");
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), at->clone.title);
-                snprintf(title + strlen(title), sizeof(title) - strlen(title), " ");
-                snprintf(title + strlen(title), sizeof(title) - strlen(title), at->clone.title);
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " %s", at->clone.title);
+                snprintf(title + strlen(title), sizeof(title) - strlen(title), " %s", at->clone.title);
             }
         }
         /* Lets name the book something meaningful ! */
@@ -1815,8 +1813,7 @@ void make_formula_book(object *book, int level) {
 
             for (next = formula->ingred; next != NULL; next = next->next)
             {
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), next->name);
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
+                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "%s\n", next->name);
             }
         }
         else

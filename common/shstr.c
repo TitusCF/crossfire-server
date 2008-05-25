@@ -319,23 +319,20 @@ void ss_dump_statistics(char* buf, int size) {
 
     snprintf(buf, size, "%-13s %6s %6s %6s %6s %6s\n",
         "", "calls", "hashed", "strcmp", "search", "linked");
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n",
+    snprintf(line, sizeof(line), "%-13s %6d %6d %6d %6d %6d\n",
         "add_string:", add_stats.calls, add_stats.hashed,
         add_stats.strcmps, add_stats.search, add_stats.linked);
-    snprintf(buf + strlen(buf), size - strlen(buf), line);
-    sprintf(line, "%-13s %6d\n",
-        "add_refcount:", add_ref_stats.calls);
-    snprintf(buf + strlen(buf), size - strlen(buf), line);
-    sprintf(line, "%-13s %6d\n",
-        "free_string:", free_stats.calls);
-    snprintf(buf + strlen(buf), size - strlen(buf), line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n",
+    snprintf(buf + strlen(buf), size - strlen(buf), "%s", line);
+    snprintf(line, sizeof(line), "%-13s %6d\n", "add_refcount:", add_ref_stats.calls);
+    snprintf(buf + strlen(buf), size - strlen(buf), "%s", line);
+    snprintf(line, sizeof(line), "%-13s %6d\n", "free_string:", free_stats.calls);
+    snprintf(buf + strlen(buf), size - strlen(buf), "%s", line);
+    snprintf(line, sizeof(line), "%-13s %6d %6d %6d %6d %6d\n",
         "find_string:", find_stats.calls, find_stats.hashed,
         find_stats.strcmps, find_stats.search, find_stats.linked);
-    snprintf(buf + strlen(buf), size - strlen(buf), line);
-    sprintf(line, "%-13s %6d\n",
-        "hashstr:", hash_stats.calls);
-    snprintf(buf + strlen(buf), size - strlen(buf), line);
+    snprintf(buf + strlen(buf), size - strlen(buf), "%s", line);
+    snprintf(line, sizeof(line), "%-13s %6d\n", "hashstr:", hash_stats.calls);
+    snprintf(buf + strlen(buf), size - strlen(buf), "%s", line);
 }
 #endif /* SS_STATISTICS */
 

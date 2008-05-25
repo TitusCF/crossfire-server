@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix some snprintf using a non-constant string as format parameter, and no
+arguments to format string. Also change some // comments to /**/, as crossfire
+is C89 not C99.
+ common/anim.c
+ common/init.c
+ common/map.c
+ common/readable.c
+ common/shstr.c
+Arvid Norlander 2008-05-25
+
 Removed unused .cvsignore files, after all we use SVN since a long time.
  .cvsignore
  */.cvsignore
