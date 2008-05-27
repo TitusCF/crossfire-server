@@ -115,28 +115,29 @@ typedef struct socket_struct {
     struct statsinfo stats;
     SockList	inbuf;      /**< If we get an incomplete packet, this is used to hold the data. */
     char    *host;	    /**< Which host it is connected from (ip address). */
-    uint8   password_fails; /**< How many times the player has failed to give the right password. */
     buffer_struct outputbuffer;   /**< For undeliverable data. */
-    uint32  facecache:1;    /**< If true, client is caching images. */
-    uint32  sound;	    /**< Client sound mode. */
-    uint32  newmapcmd:1;    /**< Send newmap command when entering new map SMACFIGGEN. */
-    uint32  darkness:1;	    /**< True if client wants darkness information. */
-    uint32  update_look:1;  /**< If true, we need to send the look window. */
-    uint32  can_write:1;    /**< Can we write to this socket? */
-    uint32  has_readable_type:1; /**< If true client accept additional text information
-                                    used to arrange text in books, scrolls, or scripted dialogs. */
-    uint32  monitor_spells:1; /**< Client wishes to be informed when their spell list changes. */
-    uint32  tick:1;	    /**< Client wishes to get tick commands. */
-    uint32  supported_readables; /**< Each bit is a readable supported by client. */
+    uint8   password_fails; /**< How many times the player has failed to give the right password. */
+    uint32  facecache:1;          /**< If true, client is caching images. */
+    uint32  newmapcmd:1;          /**< Send newmap command when entering new map SMACFIGGEN. */
+    uint32  darkness:1;           /**< True if client wants darkness information. */
+    uint32  update_look:1;        /**< If true, we need to send the look window. */
+    uint32  can_write:1;          /**< Can we write to this socket? */
+    uint32  has_readable_type:1;  /**< If true client accept additional text information
+                                   *   used to arrange text in books, scrolls, or scripted dialogs. */
+    uint32  monitor_spells:1;     /**< Client wishes to be informed when their spell list changes. */
+    uint32  tick:1;               /**< Client wishes to get tick commands. */
+    uint32  is_bot:1;             /**< Client shouldn't be reported to metaserver. */
+    uint32  want_pickup:1;        /**< Client wants pickup information when logging in. */
+    uint32  sound;                /**< Client sound mode. */
+    uint32  supported_readables;  /**< Each bit is a readable supported by client. */
     uint32  cs_version, sc_version; /**< Versions of the client. */
     enum MapMode mapmode;   /**< Type of map commands the client wants. */
     uint16  look_position;  /**< Start of drawing of look window. */
-    uint8   mapx, mapy;	    /**< How large a map the client wants. */
-    uint8   faceset;	    /**< Set the client is using, default 0. */
-    uint32	is_bot:1;		/**< Client shouldn't be reported to metaserver. */
+    uint8   mapx, mapy;     /**< How large a map the client wants. */
+    uint8   faceset;        /**< Set the client is using, default 0. */
+
     /* Below are flags for extedend infos to pass to client
-     * with S->C mapextended command */
-    uint32  want_pickup:1;  /**< Client wants pickup information when logging in. */
+     * with S->C mapextended command (note: this comment seems incorrect?) */
     sint8   sounds_this_tick;   /**< Number of sounds sent this tick. */
 } socket_struct;
 

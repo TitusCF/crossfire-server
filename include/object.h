@@ -183,84 +183,84 @@ typedef struct obj {
     float	speed_left;	/**< How much speed is left to spend this round */
     float	weapon_speed;		/**< The overall speed of this object */
     float	weapon_speed_left;	/**< How much speed is left to spend this round */
-    uint32	nrof;		/**< How many of the objects */
     New_Face	*face;		/**< Face with colors */
+    uint32	nrof;		/**< How many of the objects */
     sint8	direction;	/**< Means the object is moving that way. */
     sint8	facing;		/**< Object is oriented/facing that way. */
 
     /* This next big block are basically used for monsters and equipment */
-    uint8	type;		/**< PLAYER, BULLET, etc.  See define.h */
-    uint8	subtype;	/**< Subtype of object */
-    uint16	client_type;	/**< Public type information.  see doc/Developers/objects */
+    uint8	type;           /**< PLAYER, BULLET, etc.  See define.h */
+    uint8	subtype;        /**< Subtype of object */
+    uint16	client_type;    /**< Public type information.  see doc/Developers/objects */
     sint16	resist[NROFATTACKS];	/**< Resistance adjustments for attacks */
-    uint32	attacktype;	/**< Bitmask of attacks this object does */
-    uint32	path_attuned;	/**< Paths the object is attuned to */
-    uint32	path_repelled;	/**< Paths the object is repelled from */
-    uint32	path_denied; 	/**< Paths the object is denied access to */
-    uint16	material;      	/**< What materials this object consist of */
+    uint32	attacktype;     /**< Bitmask of attacks this object does */
+    uint32	path_attuned;   /**< Paths the object is attuned to */
+    uint32	path_repelled;  /**< Paths the object is repelled from */
+    uint32	path_denied;    /**< Paths the object is denied access to */
     const char 	*materialname;  /**< Specific material name */
-    sint8	magic;		/**< Any magical bonuses to this item */
+    uint16	material;       /**< What materials this object consist of */
+    sint8	magic;          /**< Any magical bonuses to this item */
     uint8	state;          /**< How the object was last drawn (animation) */
-    sint32	value;		/**< How much money it is worth (or contains) */
-    sint16	level;		/**< Level of creature or object */
+    sint32	value;          /**< How much money it is worth (or contains) */
+    sint16	level;          /**< Level of creature or object */
 
     /* Note that the last_.. values are sometimes used for non obvious
      * meanings by some objects, eg, sp penalty, permanent exp.
      */
-    sint32	last_heal;	/**< Last healed. Depends on constitution */
-    sint32	last_sp;	/**< As last_heal, but for spell points */
-    sint16	last_grace;	/**< As last_sp, except for grace */
-    sint16	last_eat;	/**< How long since we last ate */
-    sint16	invisible;	/**< How much longer the object will be invis */
+    sint16	last_eat;       /**< How long since we last ate */
+    sint32	last_heal;      /**< Last healed. Depends on constitution */
+    sint32	last_sp;        /**< As last_heal, but for spell points */
+    sint16	last_grace;     /**< As last_sp, except for grace */
+    sint16	invisible;      /**< How much longer the object will be invis */
     uint8	pick_up;        /**< See crossfire.doc */
-    sint8	item_power;	/**< Power rating of the object */
-    sint8	gen_sp_armour;	/**< Sp regen penalty this object has (was last_heal)*/
-    sint32	weight;		/**< Attributes of the object */
-    sint32	weight_limit;	/**< Weight-limit of object */
-    sint32	carrying;	/**< How much weight this object contains */
-    sint8	glow_radius;	/**< indicates the glow radius of the object */
-    living	stats;		/**< Str, Con, Dex, etc */
-    sint64	perm_exp;	/**< Permanent exp */
+    sint8	item_power;     /**< Power rating of the object */
+    sint8	gen_sp_armour;  /**< Sp regen penalty this object has (was last_heal)*/
+    sint8	glow_radius;    /**< indicates the glow radius of the object */
+    sint32	weight;         /**< Attributes of the object */
+    sint32	weight_limit;   /**< Weight-limit of object */
+    sint32	carrying;       /**< How much weight this object contains */
+    living	stats;          /**< Str, Con, Dex, etc */
+    sint64	perm_exp;       /**< Permanent exp */
     struct obj	*current_weapon;   /**< Pointer to the weapon currently used */
-    uint32	weapontype;	/**< Type of weapon */
+    uint32	weapontype;     /**< Type of weapon */
     sint8	body_info[NUM_BODY_LOCATIONS];	/**< Body info as loaded from the file */
     sint8	body_used[NUM_BODY_LOCATIONS];	/**< Calculated value based on items equipped */
-				/* See the doc/Developers/objects for more info about body locations */
+                                /* See the doc/Developers/objects for more info about body locations */
 
     /* Following mostly refers to fields only used for monsters */
-    struct obj	*owner;		/**< Pointer to the object which controls this one.
-                              * Owner should not be referred to directly -
-                              * get_owner should be used instead. */
-    tag_t	ownercount;	/**< What count the owner had (in case owner has been freed) */
-    struct obj	*enemy;		/**< Monster/player to follow even if not closest */
+    struct obj	*owner;         /**< Pointer to the object which controls this one.
+                                 * Owner should not be referred to directly -
+                                 * get_owner should be used instead. */
+    tag_t	ownercount;     /**< What count the owner had (in case owner has been freed) */
+    struct obj	*enemy;         /**< Monster/player to follow even if not closest */
     struct obj	*attacked_by;   /**< This object start to attack us! only player & monster */
     tag_t	attacked_by_count;         /**< The tag of attacker, so we can be sure */
-    struct treasureliststruct *randomitems; /**< Items to be generated */
     uint16	run_away;	/**< Monster runs away if it's hp goes below this percentage. */
-    struct obj	*chosen_skill;	/**< The skill chosen to use */
-    uint32	hide;		/**< The object is hidden, not invisible */
+    struct treasureliststruct *randomitems; /**< Items to be generated */
+    struct obj	*chosen_skill;  /**< The skill chosen to use */
+    uint32	hide;           /**< The object is hidden, not invisible */
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
-    sint32	move_status;	/**< What stage in attack mode */
+    sint32	move_status;    /**< What stage in attack mode */
     uint16	attack_movement;/**< What kind of attack movement */
     uint8	will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
-    struct obj	*spellitem;	/**< Spell ability monster is choosing to use */
-    double	expmul;		/**< needed experience = (calc_exp*expmul) - means some *
-                         * races/classes can need less/more exp to gain levels */
     sint8       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
+    struct obj	*spellitem;     /**< Spell ability monster is choosing to use */
+    double	expmul;         /**< needed experience = (calc_exp*expmul) - means some *
+                                 * races/classes can need less/more exp to gain levels */
 
     /* Spell related information, may be useful elsewhere
      * Note that other fields are used - these files are basically
      * only used in spells.
      */
+    sint16	casting_time;	/**< Time left before spell goes off */
     sint16	duration;	/**< How long the spell lasts */
     uint8	duration_modifier; /**< how level modifies duration */
-    sint16	casting_time;	/**< Time left before spell goes off */
-    struct obj	*spell;		/**< Spell that was being cast */
-    char	*spellarg;
-    uint8	dam_modifier;	/**< How going up in level effects damage */
     sint8	range;		/**< Range of the spell */
     uint8	range_modifier;	/**< How going up in level effects range  */
+    uint8	dam_modifier;	/**< How going up in level effects damage */
+    struct obj	*spell;		/**< Spell that was being cast */
+    char	*spellarg;
 
     /* Following are values used by any object */
     struct archt *arch;         /**< Pointer to archetype */

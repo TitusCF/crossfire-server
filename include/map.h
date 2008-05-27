@@ -348,28 +348,28 @@ typedef struct mapdef {
     char *tmpname;	/**< Name of temporary file. */
     char *name;		/**< Name of map as given by its creator. */
     region *region;	/**< What jurisdiction in the game world this map is ruled by
-    			 * points to the struct containing all the properties of
-			 * the region. */
+                         * points to the struct containing all the properties of
+                         * the region. */
     uint32 reset_time;	/**< When this map should reset. */
     uint32 reset_timeout;  /**< How many seconds must elapse before this map
-			    * should be reset. */
+                            * should be reset. */
     uint32 fixed_resettime:1;	/**< If true, reset time is not affected by
-				 * players entering/exiting map. */
+                                 * players entering/exiting map. */
     uint32 unique:1;	/**< If set, this is a per player unique map. */
     uint32 template:1;	/**< If set, this is a template map. */
     uint32 nosmooth:1;  /**< If set the content of this map has smoothlevel=0 forced. */
+    uint32 outdoor:1;	/**< True if an outdoor map. */
     sint32 timeout;	/**< Swapout is set to this. */
     sint32 swap_time;	/**< When it reaches 0, the map will be swapped out. */
+    uint16 difficulty;	/**< What level the player should be to play here. */
     sint16 players;	/**< How many players are on this level right now. Automatically updated by the object handling functions. */
     uint32 in_memory;	/**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
     uint8 compressed;	/**< Compression method used. */
-    uint16 difficulty;	/**< What level the player should be to play here. */
 
     uint8 darkness;    	/**< Indicates level of darkness of map. */
     uint16 width,height;	/**< Width and height of map. */
     uint16 enter_x;	/**< Enter_x and enter_y are default entrance location. */
     uint16 enter_y;	/**< on the map if none are set in the exit. */
-    uint32  outdoor:1;	/**< True if an outdoor map. */
     oblinkpt *buttons;	/**< Linked list of linked lists of buttons. */
     MapSpace	*spaces;    /**< Array of spaces on this map. */
     shopitems   *shopitems; /**< List of item-types the map's shop will trade in. */
@@ -377,11 +377,11 @@ typedef struct mapdef {
     double  shopgreed;  /**< How much our shopkeeper overcharges. */
     uint64  shopmin;    /**< Minimum price a shop will trade for. */
     uint64  shopmax;    /**< MMaximum price a shop will offer. */
-    char    *msg;	/**< Message map creator may have left. */
-    char    *maplore;	/**< Map lore information. */
+    char    *msg;       /**< Message map creator may have left. */
+    char    *maplore;   /**< Map lore information. */
     char    *tile_path[4];  /**< Path to adjoining maps. */
-    struct mapdef *tile_map[4];	/**< Adjoining maps. */
-    char path[HUGE_BUF];	/**< Filename of the map. */
+    struct mapdef *tile_map[4]; /**< Adjoining maps. */
+    char path[HUGE_BUF];        /**< Filename of the map. */
     struct timeval last_reset_time; /**< A timestamp of the last original map loading. */
     char* background_music; /**< Background music to use for this map. */
 } mapstruct;

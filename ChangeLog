@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change the order of some members in some of the large and often used structs in
+order to pack them better. This will mainly help on x86_64, but also a bit on x86.
+No actual functionality change. Some structs could be packed even better but that
+would destroy the logical sectioning of the members in groups.
+ include/living.h
+ include/map.h
+ include/newserver.h
+ include/object.h
+ include/player.h
+Arvid Norlander 2008-05-27
+
 Fix some more snprintf using a non-constant string as format parameter, and no
 arguments to format string. Also change some more // comments to /**/, as crossfire
 is C89 not C99. Add some missing prototypes to headers. Add missing value to a return.
