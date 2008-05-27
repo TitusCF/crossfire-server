@@ -950,7 +950,7 @@ int can_pay(object *pl) {
                 denominations++;
                 snprintf(coinbuf, sizeof(coinbuf), " %d %s,", coincount[i],
                         find_archetype(coins[i])->clone.name_pl);
-                snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), coinbuf);
+                snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s", coinbuf);
             }
         }
         if (denominations == 0)

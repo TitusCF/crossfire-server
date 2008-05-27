@@ -61,6 +61,7 @@ extern const char*  cf_re_cmp(const char *str, const char *regexp);
 extern const char*  cf_get_season_name( int index );
 extern const char*  cf_get_month_name( int index );
 extern const char*  cf_get_weekday_name( int index );
+extern const char*  cf_get_periodofday_name( int index );
 
 /* Objects */
 extern void         cf_object_set_int_property(object* op, int propcode, int value);

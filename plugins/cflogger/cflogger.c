@@ -46,7 +46,7 @@
  */
 
 #include <cflogger.h>
-//#include <stdarg.h>
+/*#include <stdarg.h>*/
 
 #include <sqlite3.h>
 

@@ -1214,7 +1214,7 @@ void key_change_class(object *op, char key)
                 /* map exists, update bed of reality location, in case player dies */
                 op->contr->bed_x = op->x;
                 op->contr->bed_y = op->y;
-                snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), mapname);
+                snprintf(op->contr->savebed_map, sizeof(op->contr->savebed_map), "%s", mapname);
             }
 
             free_object(tmp);

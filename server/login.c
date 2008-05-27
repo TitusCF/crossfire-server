@@ -671,7 +671,7 @@ void check_login(object *op) {
                 party_name[strlen(party_name) - 1] = '\0';
         }
         else if (!strcmp(buf, "party_rejoin_password")) {
-            snprintf(party_password, sizeof(party_password), bufall + strlen("party_rejoin_password") + 1);
+            snprintf(party_password, sizeof(party_password), "%s", bufall + strlen("party_rejoin_password") + 1);
             if (strlen(party_password) > 0)
                 party_password[strlen(party_password) - 1] = '\0';
         }
@@ -821,7 +821,7 @@ void check_login(object *op) {
         }
         if (!party && pl->rejoin_party == party_rejoin_always) {
             party = form_party(op, party_name);
-            snprintf(party->passwd, sizeof(party->passwd), party_password);
+            snprintf(party->passwd, sizeof(party->passwd), "%s", party_password);
         }
         if (party && strcmp(party->passwd, party_password) == 0) {
             pl->party = party;

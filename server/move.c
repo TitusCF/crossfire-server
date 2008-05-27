@@ -307,9 +307,10 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 	    if (k==9) {
 		LOG(llevError,"Shop mat %s (%d, %d) is in solid rock?\n",
 		    other_teleporter->name, other_teleporter->x, other_teleporter->y);
-		// Teleport player on top of blocked destination: this prevents
-		// players from being trapped inside shops if the destination
-		// is blocked with earth walls.
+		/* Teleport player on top of blocked destination: this prevents
+		 * players from being trapped inside shops if the destination
+		 * is blocked with earth walls.
+		 */
 		k = 0;
 	    }
 	}

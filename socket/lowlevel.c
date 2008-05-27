@@ -91,7 +91,7 @@ void SockList_AddInt64(SockList *sl, uint64 data)
 
 void SockList_AddString(SockList *sl, const char *data)
 {
-    sprintf((char*)&sl->buf[sl->len], data);
+    sprintf((char*)&sl->buf[sl->len], "%s", data);
     sl->len += strlen(data);
 }
 

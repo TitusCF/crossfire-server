@@ -583,7 +583,7 @@ int cast_create_missile(object *op, object *caster,object *spell, int dir, const
             MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
             "This item is too powerful for you to create!",
             NULL);
-        return;
+        return 0;
     }
     missile->nrof -= 3 * (missile_plus + bonus_plus);
     if (missile->nrof < 1)

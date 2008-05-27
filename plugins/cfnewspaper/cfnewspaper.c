@@ -64,7 +64,7 @@ int get_living_id(object* living) {
     else
         sql = sqlite3_mprintf("select liv_id from living where liv_name='%q' and liv_is_player = 0 and liv_level = %d", living->name, living->level);
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
-//    printf("get_table: nrow = %d, ncolumn = %d\n", nrow, ncolumn);
+    /* printf("get_table: nrow = %d, ncolumn = %d\n", nrow, ncolumn); */
     if (nrow > 0)
         id = atoi( line[ncolumn] );
     else {
