@@ -14,6 +14,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix the member order in global.h to match the one in init.c. Fix some extern
+with wrong type (was char* instead of const char* const). Change some prototypes
+to use const pointers. Change to strtol if it exists, and only fall back to
+strtol_local if it doesn't.
+ common/object.c
+ common/porting.c
+ common/treasure.c
+ include/attack.h
+ include/global.h
+ include/libproto.h
+ include/sproto.h
+ server/login.c
+ server/spell_util.c
+ server/time.c
+Arvid Norlander 2008-05-29
+
 Fix a case of assigning and passing a string literal (const char*) as a char*.
 Also pack one structure a bit better.
  random_maps/random_map.c

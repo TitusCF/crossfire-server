@@ -273,6 +273,7 @@ char *strdup_local(const char *str) {
 islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
 #define MBASE ('z' - 'a' + 1 + 10)
 
+#if !defined(HAVE_STRTOL)
 /**
  * Converts a string to long.
  *
@@ -289,7 +290,7 @@ islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
  * @todo
  * check weird -+ handling (missing break?)
  */
-long strtol_local(register char *str, char **ptr, register int base)
+long strtol(register char *str, char **ptr, register int base)
 {
     register long val;
     register int c;
@@ -336,6 +337,7 @@ long strtol_local(register char *str, char **ptr, register int base)
         *ptr = str;
     return (neg ? val : -val);
 }
+#endif
 
 /**
  * Case-insensitive comparaison of strings.
@@ -430,7 +432,7 @@ const char *strcasestr_local(const char *s, const char *find)
         } while (strncasecmp(s, find, len) != 0);
         s--;
      }
-     return (char *)s;
+     return s;
 }
 
 #if !defined(HAVE_SNPRINTF)

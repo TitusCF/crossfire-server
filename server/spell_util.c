@@ -42,7 +42,7 @@
 #include <sounds.h>
 #include <assert.h>
 
-extern char *spell_mapping[];
+extern const char * const spell_mapping[];
 
 /**
  * This returns a random spell from 'ob'.  If skill is set, then
@@ -176,8 +176,7 @@ void dump_spells(void)
  * what causes the effect to be inserted. Can be NULL.
  */
 
-void spell_effect (object *spob, int x, int y, mapstruct *map,
-	object *originator)
+void spell_effect (object *spob, int x, int y, mapstruct *map, object *originator)
 {
 
     if (spob->other_arch !=  NULL) {
@@ -203,7 +202,7 @@ void spell_effect (object *spob, int x, int y, mapstruct *map,
  * @return
  * adjusted level.
  */
-int min_casting_level(object *caster, object *spell)
+int min_casting_level(const object *caster, const object *spell)
 {
     int new_level;
 
@@ -234,7 +233,7 @@ int min_casting_level(object *caster, object *spell)
  * @return
  * adjusted level.
  */
-int caster_level(object *caster, object *spell)
+int caster_level(const object *caster, const object *spell)
 {
     int level= caster->level;
 
@@ -331,7 +330,7 @@ sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
  * @return
  * adjusted damage.
  */
-int SP_level_dam_adjust(object *caster, object *spob)
+int SP_level_dam_adjust(const object *caster, const object *spob)
 {
     int level = caster_level (caster, spob);
     int adj = level - min_casting_level(caster, spob);
@@ -355,7 +354,7 @@ int SP_level_dam_adjust(object *caster, object *spob)
  * @return
  * adjusted duration.
  */
-int SP_level_duration_adjust(object *caster, object *spob)
+int SP_level_duration_adjust(const object *caster, const object *spob)
 {
     int level = caster_level (caster, spob);
     int adj = level - min_casting_level(caster, spob);
@@ -380,7 +379,7 @@ int SP_level_duration_adjust(object *caster, object *spob)
  * @return
  * adjusted range.
  */
-int SP_level_range_adjust(object *caster, object *spob)
+int SP_level_range_adjust(const object *caster, const object *spob)
 {
     int level = caster_level (caster, spob);
     int adj = level - min_casting_level(caster, spob);
@@ -511,7 +510,7 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
  * @return
  * direction that the object was actually placed in.
  */
-int cast_create_obj(object *op,object *new_op, int dir)
+int cast_create_obj(object *op, object *new_op, int dir)
 {
     mapstruct *m;
     sint16  sx, sy;
@@ -519,16 +518,16 @@ int cast_create_obj(object *op,object *new_op, int dir)
     if(dir &&
       ((get_map_flags(op->map, &m, op->x+freearr_x[dir],op->y+freearr_y[dir], &sx, &sy) & P_OUT_OF_MAP) ||
       OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
-			  "Something is in the way. You cast it at your feet.", NULL);
-	dir = 0;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+                      "Something is in the way. You cast it at your feet.", NULL);
+        dir = 0;
     }
     new_op->x=op->x+freearr_x[dir];
     new_op->y=op->y+freearr_y[dir];
     if (dir == 0)
-	insert_ob_in_map(new_op,op->map,op,INS_BELOW_ORIGINATOR);
+        insert_ob_in_map(new_op,op->map,op,INS_BELOW_ORIGINATOR);
     else
-	insert_ob_in_map(new_op,op->map,op,0);
+        insert_ob_in_map(new_op,op->map,op,0);
     return dir;
 }
 
@@ -895,7 +894,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
  * 1 if a monster was put, 0 else (no free space around the spot or invalid monster name).
  * @todo there is a multipart-aware archetype conversion function, use it.
  */
-static int put_a_monster(object *op,const char *monstername) {
+static int put_a_monster(object *op, const char *monstername) {
     object *tmp,*head=NULL,*prev=NULL;
     archetype *at;
     int dir;
@@ -959,7 +958,7 @@ static int put_a_monster(object *op,const char *monstername) {
  * @return
  * number of monsters actually put on the map.
  */
-int summon_hostile_monsters(object *op,int n,const char *monstername){
+int summon_hostile_monsters(object *op, int n, const char *monstername){
     int i, put = 0;
     for(i=0;i<n;i++)
         put += put_a_monster(op,monstername);
@@ -992,7 +991,7 @@ int summon_hostile_monsters(object *op,int n,const char *monstername){
  * @param change_face
  * if set, also changes the face, else only changes the attacktype.
  */
-void shuffle_attack(object *op,int change_face)
+void shuffle_attack(object *op, int change_face)
 {
     int i;
     i=rndm(0, 21);

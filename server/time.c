@@ -230,7 +230,7 @@ static void generate_monster(object *gen) {
 
     value = get_ob_key_value(gen, "generator_max_map");
     if(value){
-	max_children = (sint8)strtol_local((char *)value, NULL, 10);
+	max_children = (sint8)strtol(value, NULL, 10);
 	if( max_children < 1 )
 	    return;
 	code = get_ob_key_value(gen, "generator_code");

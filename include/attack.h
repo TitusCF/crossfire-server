@@ -160,10 +160,10 @@ EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 #ifndef INIT_C
 EXTERN Chaos_Attacks ATTACKS[22];
 EXTERN int resist_table[];
-EXTERN char *change_resist_msg[NROFATTACKS];
-EXTERN char *resist_plus[NROFATTACKS];
-EXTERN char *attacktype_desc[NROFATTACKS];
-EXTERN char *resist_save[NROFATTACKS];
+EXTERN const char* const change_resist_msg[NROFATTACKS];
+EXTERN const char* const resist_plus[NROFATTACKS];
+EXTERN const char* const attacktype_desc[NROFATTACKS];
+EXTERN const char* const resist_save[NROFATTACKS];
 
 /* Beware, names require an _ if there is a space, else they will be read
  * as for example: resist_life stealing 50!

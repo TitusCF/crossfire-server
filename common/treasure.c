@@ -54,7 +54,7 @@
 
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
-extern char *spell_mapping[];
+extern const char * const spell_mapping[];
 int artifact_init;  /**< 1 if doing archetypes initialization */
 
 /**

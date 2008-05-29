@@ -540,7 +540,7 @@ void check_login(object *op) {
 
     if(fgets(bufall,MAX_BUF,fp) != NULL) {
 	if(!strncmp(bufall,"checksum ",9)) {
-	    checksum = strtol_local(bufall+9,(char **) NULL, 16);
+	    checksum = strtol(bufall+9,(char **) NULL, 16);
 	    (void) fgets(bufall,MAX_BUF,fp);
 	}
 	if(sscanf(bufall,"password %s\n",buf)) {
