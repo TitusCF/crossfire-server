@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix use of uninitialised variables in the plugin API and remove some dead code
+from the plugin API (as in: never called from plugin_common.c) Also cleanup
+indention in map.h, change order of members in some structs in face.h to pack
+them a bit better.
+ include/face.h
+ include/map.h
+ plugins/common/plugin_common.c
+ server/plugins.c
+Arvid Norlander 2008-05-29
+
 Fix the member order in global.h to match the one in init.c. Fix some extern
 with wrong type (was char* instead of const char* const). Change some prototypes
 to use const pointers. Change to strtol if it exists, and only fall back to

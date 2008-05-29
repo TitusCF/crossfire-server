@@ -3435,7 +3435,6 @@ void* cfapi_object_insert(int* type, ...)
     mapstruct* map;
     int flag, x, y;
     int itype;
-    char* arch_string;
     object** robj;
 
     va_start(args, type);
@@ -3489,19 +3488,6 @@ void* cfapi_object_insert(int* type, ...)
             *robj = insert_ob_in_map(op, map, orig, flag);
         *type = CFAPI_POBJECT;
         break;
-
-    case 2:
-        arch_string = va_arg(args, char*);
-        if (!arch_string) {
-            LOG(llevError, "cfapi_object_insert (2): called with NULL arch_string, object %s!\n", op->name);
-            free_object(op);
-            *robj = NULL;
-        }
-        else
-            replace_insert_ob_in_map(arch_string, op);
-        *type = CFAPI_NONE;
-        break;
-
     case 3:
         orig = va_arg(args, object*);
         robj = va_arg(args, object**);
@@ -3513,6 +3499,11 @@ void* cfapi_object_insert(int* type, ...)
         else
             *robj = insert_ob_in_ob(op, orig);
         *type = CFAPI_POBJECT;
+        break;
+    default:
+        LOG(llevError, "cfapi_object_insert (1): called with itype %d which is not valid, object %s!\n", itype, op->name);
+        free_object(op);
+        *type = CFAPI_NONE;
         break;
     }
 
@@ -4068,7 +4059,6 @@ void* cfapi_object_transfer(int* type, ...)
 void* cfapi_object_find_archetype_inside(int* type, ...)
 {
     object* op;
-    int     critera;
     char*   str;
     va_list args;
     object** robj;
@@ -4076,33 +4066,23 @@ void* cfapi_object_find_archetype_inside(int* type, ...)
     *type = CFAPI_POBJECT;
     va_start(args, type);
     op = va_arg(args, object*);
-    critera = va_arg(args, int);
 
-    switch(critera)
-    {
-    case 0: /* By name, either exact or from query_name */
-        str = va_arg(args, char*);
-        robj = va_arg(args, object**);
-        *robj = present_arch_in_ob(try_find_archetype(str), op);
-        if (*robj == NULL) {
-            object* tmp;
-            char name[MAX_BUF];
-            /* Search by query_name instead */
-            for (tmp = op->inv; tmp; tmp = tmp->below) {
-                query_name(tmp, name, MAX_BUF);
-                if (!strncmp(name, str, strlen(str)))
-                    *robj = tmp;
-                if (!strncmp(tmp->name, str, strlen(str)))
-                    *robj = tmp;
-                if (*robj != NULL)
-                    break;
-            }
+    str = va_arg(args, char*);
+    robj = va_arg(args, object**);
+    *robj = present_arch_in_ob(try_find_archetype(str), op);
+    if (*robj == NULL) {
+        object* tmp;
+        char name[MAX_BUF];
+        /* Search by query_name instead */
+        for (tmp = op->inv; tmp; tmp = tmp->below) {
+            query_name(tmp, name, MAX_BUF);
+            if (!strncmp(name, str, strlen(str)))
+                *robj = tmp;
+            if (!strncmp(tmp->name, str, strlen(str)))
+                *robj = tmp;
+            if (*robj != NULL)
+                break;
         }
-        break;
-
-    default:
-        *robj = NULL;
-        break;
     }
     va_end(args);
 

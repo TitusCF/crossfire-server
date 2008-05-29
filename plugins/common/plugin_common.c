@@ -509,7 +509,7 @@ object* cf_object_present_archname_inside(object* op, char* whatstr)
 {
     int type;
     object* value;
-    cfapiObject_find_archetype_inside(&type, op, 0, whatstr, &value);
+    cfapiObject_find_archetype_inside(&type, op, whatstr, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }

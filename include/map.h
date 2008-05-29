@@ -255,11 +255,11 @@ extern const char *map_layer_name[MAP_LAYERS];
  * arch_blocked and functions that examine the return value.
  */
 
-#define AB_NO_PASS       0x04
-#define P_PLAYER	0x08	/**< There is a player on this space */
+#define AB_NO_PASS      0x04
+#define P_PLAYER        0x08	/**< There is a player on this space */
 #define P_IS_ALIVE      0x10	/**< Something alive is on this space. */
 #define P_NO_CLERIC     0x20	/**< No clerical spells cast here. */
-#define P_NEED_UPDATE	0x40	/**< This space is out of date. */
+#define P_NEED_UPDATE   0x40	/**< This space is out of date. */
 #define P_NO_ERROR      0x80	/**< Purely temporary - if set, update_position
                                  * does not complain if the flags are different.
                                  */
@@ -295,28 +295,28 @@ typedef struct MapSpace {
  * they have to appear here in the headers, before the mapdef
  */
 typedef struct regiondef {
-    struct	regiondef *next; /**< Pointer to next region, NULL for the last one */
-    const char	*name;		 /**< Shortend name of the region as maps refer to it */
-    const char	*parent_name;	 /**<
-    				  * So that parent and child regions can be defined in
-    				  * any order, we keep hold of the parent_name during
-				  * initialisation, and the children get assigned to their
-				  * parents later. (before runtime on the server though)
-				  * nothing outside the init code should ever use this value.
-				  */
+    struct      regiondef *next; /**< Pointer to next region, NULL for the last one */
+    const char  *name;           /**< Shortend name of the region as maps refer to it */
+    const char  *parent_name;    /**<
+                                  * So that parent and child regions can be defined in
+                                  * any order, we keep hold of the parent_name during
+                                  * initialisation, and the children get assigned to their
+                                  * parents later. (before runtime on the server though)
+                                  * nothing outside the init code should ever use this value.
+                                  */
     struct     regiondef *parent;/**<
-    				  * Pointer to the region that is a parent of the current
-    				  * region, if a value isn't defined in the current region
-				  * we traverse this series of pointers until it is.
-				  */
-    const char	*longname;	 /**< Official title of the region, this might be defined
-    				  * to be the same as name*/
-    const char	*msg;		 /**< The description of the region */
-    uint32	counter;	 /**< A generic counter for holding temporary data. */
-    sint8	fallback;	 /**< Whether, in the event of a region not existing,
-    				  * this should be the one we fall back on as the default. */
-    char	*jailmap;        /**< Where a player that is arrested in this region should be imprisoned. */
-    sint16	jailx, jaily;	 /**< The coodinates in jailmap to which the player should be sent. */
+                                  * Pointer to the region that is a parent of the current
+                                  * region, if a value isn't defined in the current region
+                                  * we traverse this series of pointers until it is.
+                                  */
+    const char  *longname;       /**< Official title of the region, this might be defined
+                                  * to be the same as name*/
+    const char  *msg;            /**< The description of the region */
+    uint32      counter;         /**< A generic counter for holding temporary data. */
+    sint8       fallback;        /**< Whether, in the event of a region not existing,
+                                  * this should be the one we fall back on as the default. */
+    char        *jailmap;        /**< Where a player that is arrested in this region should be imprisoned. */
+    sint16	jailx, jaily;    /**< The coodinates in jailmap to which the player should be sent. */
 } region;
 
 /**
