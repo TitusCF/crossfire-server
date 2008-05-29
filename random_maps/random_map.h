@@ -39,7 +39,7 @@
 /**
  * Random map parameters.
  */
-typedef struct {
+typedef struct RMParms {
     char wallstyle[RM_SIZE];
     char wall_name[RM_SIZE];
     char floorstyle[RM_SIZE];
@@ -73,8 +73,8 @@ typedef struct {
     int origin_y;
     int origin_x;
     int random_seed;
-    long unsigned int total_map_hp;
     int map_layout_style;
+    long unsigned int total_map_hp;
     int treasureoptions;
     int symmetry_used;
     region *region;

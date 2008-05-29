@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix a case of assigning and passing a string literal (const char*) as a char*.
+Also pack one structure a bit better.
+ random_maps/random_map.c
+ random_maps/random_map.h
+ random_maps/rproto.h
+ random_maps/special.c
+Arvid Norlander 2008-05-29
+
 Make server send size and data in one packet, this fix is suboptimal though as
 it uses memcpy to do so, it should use writev instead.
  socket/lowlevel.c

@@ -226,7 +226,8 @@ void place_fountain_with_specials(mapstruct *map) {
  */
 void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
     int ix,iy,i=-1;
-    char buf[HUGE_BUF], *style, *decor, *mon;
+    char buf[HUGE_BUF];
+    const char *style, *decor, *mon;
     mapstruct *exit_style=find_style("/styles/misc","obscure_exits",-1);
     int g_xsize,g_ysize;
 
