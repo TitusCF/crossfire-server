@@ -414,6 +414,8 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
 /**
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
+ *
+ * @TODO This is a duplicate of Write_String_To_Socket, one should be removed.
  */
 void cs_write_string(socket_struct *ns, const char *buf, int len)
 {
@@ -433,7 +435,8 @@ void cs_write_string(socket_struct *ns, const char *buf, int len)
  */
 void Send_With_Handling(socket_struct *ns, const SockList *msg)
 {
-    unsigned char sbuf[2];
+    /* Buffer used to store temporary message in. */
+    unsigned char * buffer;
 
     if (ns->status == Ns_Dead || !msg)
 	return;
@@ -446,15 +449,23 @@ void Send_With_Handling(socket_struct *ns, const SockList *msg)
 	 */
 	abort();
     }
-    sbuf[0] = ((uint32)(msg->len) >> 8) & 0xFF;
-    sbuf[1] = ((uint32)(msg->len)) & 0xFF;
-    Write_To_Socket(ns, sbuf, 2);
-    Write_To_Socket(ns, msg->buf, msg->len);
+    /* TODO: This should use vectored IO (man writev)... */
+    buffer = malloc(2 + msg->len);
+    if (!buffer) {
+        fatal(OUT_OF_MEMORY);
+    }
+    buffer[0] = ((uint32)(msg->len) >> 8) & 0xFF;
+    buffer[1] = ((uint32)(msg->len)) & 0xFF;
+    memcpy(buffer+2, msg->buf, msg->len);
+    Write_To_Socket(ns, buffer, 2 + msg->len);
+    free(buffer);
 }
 
 /**
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
+ *
+ * @TODO This is a duplicate of cs_write_string, one should be removed.
  */
 void Write_String_To_Socket(socket_struct *ns, const char *buf, int len)
 {

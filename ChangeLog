@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make server send size and data in one packet, this fix is suboptimal though as
+it uses memcpy to do so, it should use writev instead.
+ socket/lowlevel.c
+Arvid Norlander 2008-05-29
+
 Change the order of some members in some of the large and often used structs in
 order to pack them better. This will mainly help on x86_64, but also a bit on x86.
 No actual functionality change. Some structs could be packed even better but that
