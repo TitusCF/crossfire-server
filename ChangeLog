@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change some sprintf to snprintf.
+ socket/image.c
+ socket/item.c
+ socket/request.c
+Arvid Norlander 2008-05-30
+
 Fix use of uninitialised variables in the plugin API and remove some dead code
 from the plugin API (as in: never called from plugin_common.c) Also cleanup
 indention in map.h, change order of members in some structs in face.h to pack

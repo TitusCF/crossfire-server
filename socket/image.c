@@ -59,7 +59,7 @@ void set_face_mode_cmd(char *buf, int len, socket_struct *ns)
     if (mode==CF_FACE_NONE) {
         ns->facecache=1;
     } else if (mode!=CF_FACE_PNG) {
-        sprintf(tmp,"drawinfo %d %s", NDI_RED,
+        snprintf(tmp, sizeof(tmp), "drawinfo %d %s", NDI_RED,
                 "Warning - send unsupported face mode.  Will use Png");
         Write_String_To_Socket(ns, tmp, strlen(tmp));
 #ifdef ESRV_DEBUG
@@ -153,11 +153,11 @@ void send_image_info(socket_struct *ns, char *params)
 
     sl.buf = malloc(MAXSOCKSENDBUF);
 
-    sprintf((char*)sl.buf,"replyinfo image_info\n%d\n%d\n",
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "replyinfo image_info\n%d\n%d\n",
             nrofpixmaps-1, bmaps_checksum);
     for (i=0; i<MAX_FACE_SETS; i++) {
         if (facesets[i].prefix) {
-            sprintf((char*)sl.buf + strlen((char*)sl.buf),
+            snprintf((char*)sl.buf + strlen((char*)sl.buf), MAXSOCKSENDBUF-strlen((char*)sl.buf),
                     "%d:%s:%s:%d:%s:%s:%s",
                     i,  facesets[i].prefix, facesets[i].fullname,
                     facesets[i].fallback, facesets[i].size,
@@ -195,11 +195,11 @@ void send_image_sums(socket_struct *ns, char *params)
     stop = atoi(cp);
     if (stop < start || *cp == '\0' || (stop-start)>1000 ||
         stop >= nrofpixmaps) {
-        sprintf(buf,"replyinfo image_sums %d %d", start, stop);
+        snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
         cs_write_string(ns, buf, strlen(buf));
         return;
     }
-    sprintf((char*)sl.buf,"replyinfo image_sums %d %d ", start, stop);
+    snprintf((char*)sl.buf, sizeof(buf), "replyinfo image_sums %d %d ", start, stop);
 
     sl.len = strlen((char*)sl.buf);
 
@@ -208,7 +208,7 @@ void send_image_sums(socket_struct *ns, char *params)
             LOG(llevError,
                 "send_image_sums: buffer overflow, rejecting range %d..%d\n",
                 start, stop);
-            sprintf(buf, "replyinfo image_sums %d %d", start, stop);
+            snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
             cs_write_string(ns, buf, strlen(buf));
             return;
         }

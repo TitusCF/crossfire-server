@@ -232,7 +232,7 @@ void esrv_draw_look(object *pl)
     sl.buf=malloc(MAXSOCKSENDBUF);
 
     Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
-    sprintf((char*)sl.buf,"item2 ");
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, 0);
@@ -246,7 +246,7 @@ void esrv_draw_look(object *pl)
         SockList_AddInt(&sl, 0);
         SockList_AddInt(&sl, -1);
         SockList_AddInt(&sl, empty_face->number);
-        sprintf(buf,"Click here to see %d previous items", NUM_LOOK_OBJECTS);
+        snprintf(buf, sizeof(buf), "Click here to see %d previous items", NUM_LOOK_OBJECTS);
         add_stringlen_to_sockbuf(buf, &sl);
         SockList_AddShort(&sl,0);
         SockList_AddChar(&sl, 0);
@@ -281,7 +281,7 @@ void esrv_draw_look(object *pl)
                 SockList_AddInt(&sl, 0);
                 SockList_AddInt(&sl, -1);
                 SockList_AddInt(&sl, empty_face->number);
-                sprintf(buf,"Click here to see next group of items");
+                snprintf(buf, sizeof(buf), "Click here to see next group of items");
                 add_stringlen_to_sockbuf(buf, &sl);
                 SockList_AddShort(&sl,0);
                 SockList_AddChar(&sl, 0);
@@ -297,7 +297,7 @@ void esrv_draw_look(object *pl)
 
             if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                sprintf((char*)sl.buf,"item2 ");
+                snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
                 sl.len=strlen((char*)sl.buf);
                 SockList_AddInt(&sl, 0);
                 got_one=0;
@@ -321,11 +321,11 @@ void esrv_send_inventory(object *pl, object *op)
 
     sl.buf=malloc(MAXSOCKSENDBUF);
 
-    sprintf((char*)sl.buf,"delinv %d", op->count);
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "delinv %d", op->count);
     sl.len=strlen((char*)sl.buf);
     Send_With_Handling(&pl->contr->socket, &sl);
 
-    sprintf((char*)sl.buf,"item2 ");
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
     sl.len=strlen((char*)sl.buf);
 
     SockList_AddInt(&sl, op->count);
@@ -347,7 +347,7 @@ void esrv_send_inventory(object *pl, object *op)
                  */
             if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                sprintf((char*)sl.buf,"item2 ");
+                snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
                 sl.len=strlen((char*)sl.buf);
                 SockList_AddInt(&sl, op->count);
                 got_one=0;
@@ -495,7 +495,7 @@ void esrv_send_item(object *pl, object*op)
 
     sl.buf=malloc(MAXSOCKSENDBUF);
 
-    sprintf((char*)sl.buf,"item2 ");
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
     sl.len=strlen((char*)sl.buf);
 
     if (op->head) op=op->head;
@@ -789,7 +789,7 @@ void look_at(object *op,int dx,int dy) {
 
 
 /** Client wants to look at some object.  Lets do so. */
-void look_at_cmd(char *buf, int len,player *pl)
+void look_at_cmd(char *buf, int len, player *pl)
 {
     int dx, dy;
     char *cp;

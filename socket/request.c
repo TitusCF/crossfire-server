@@ -181,7 +181,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
 
             if (is_valid_faceset(q))
                 ns->faceset=q;
-            sprintf(tmpbuf,"%d", ns->faceset);
+            snprintf(tmpbuf, sizeof(tmpbuf), "%d", ns->faceset);
             safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"itemcmd")) {
             /* client ignore the value anyway. */
@@ -197,7 +197,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
                     break;
                 }
             if (x < 9 || y < 9 || x>MAP_CLIENT_X || y > MAP_CLIENT_Y) {
-                sprintf(tmpbuf," %dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
+                snprintf(tmpbuf, sizeof(tmpbuf), " %dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             } else {
                 ns->mapx = x;
@@ -205,7 +205,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
                     /* better to send back what we are really using and not the
                      * param as given to us in case it gets parsed differently.
                      */
-                sprintf(tmpbuf,"%dx%d", x,y);
+                snprintf(tmpbuf, sizeof(tmpbuf), "%dx%d", x,y);
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
                     /* If beyond this size and still using orig map
                      * command, need to go to map1cmd.
@@ -221,7 +221,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns)
             char tmpbuf[20];
 
             ns->has_readable_type = (atoi(param));
-            sprintf(tmpbuf,"%d", ns->has_readable_type);
+            snprintf(tmpbuf, sizeof(tmpbuf), "%d", ns->has_readable_type);
             safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"tick")) {
             ns->tick = atoi(param);
@@ -668,7 +668,7 @@ void send_query(socket_struct *ns, uint8 flags, const char *text)
 {
     char buf[MAX_BUF];
 
-    sprintf(buf,"query %d %s", flags, text?text:"");
+    snprintf(buf, sizeof(buf), "query %d %s", flags, text?text:"");
     Write_String_To_Socket(ns, buf, strlen(buf));
 }
 
@@ -1499,7 +1499,7 @@ void send_skill_info(socket_struct *ns, char *params)
             break;
         }
 
-        sprintf((char*)sl.buf+sl.len, "%d:%s\n",
+        snprintf((char*)sl.buf+sl.len, MAXSOCKSENDBUF-sl.len, "%d:%s\n",
                 i+CS_STAT_SKILLINFO, skill_names[i]);
         sl.len += strlen((char*)sl.buf+sl.len);
     }
@@ -1527,7 +1527,7 @@ void send_spell_paths (socket_struct *ns, char *params) {
             break;
         }
 
-        sprintf((char*)sl.buf+sl.len, "%d:%s\n", 1<<i, spellpathnames[i]);
+        snprintf((char*)sl.buf+sl.len, MAXSOCKSENDBUF-sl.len, "%d:%s\n", 1<<i, spellpathnames[i]);
         sl.len += strlen((char*)sl.buf+sl.len);
     }
     Send_With_Handling(ns, &sl);
