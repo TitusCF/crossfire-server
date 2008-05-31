@@ -489,7 +489,7 @@ int command_party (object *op, char *params)
 			 "You leave party %s.",
 			 "You leave party %s.",
 			 currentparty);
-    sprintf(buf,"%s leaves party %s.",op->name,currentparty);
+    snprintf(buf, sizeof(buf), "%s leaves party %s.",op->name,currentparty);
     send_party_message(op,buf);
     op->contr->party=NULL;
     return 1;

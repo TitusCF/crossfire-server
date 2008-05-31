@@ -783,7 +783,7 @@ int summon_golem(object *op,object *caster,int dir,object *spob) {
     if (god) {
 	object *tmp2;
 
-	sprintf(buf,"%s of %s",spob->name,god->name);
+	snprintf(buf, sizeof(buf), "%s of %s",spob->name,god->name);
 	buf[0] = toupper(buf[0]);
 	for (tmp2=tmp; tmp2; tmp2=tmp2->more) {
 	    if (tmp2->name) free_string(tmp2->name);

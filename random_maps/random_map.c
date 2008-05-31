@@ -870,128 +870,128 @@ void write_parameters_to_string(char *buf,
     sprintf(buf,"xsize %d\nysize %d\n",xsize_n,ysize_n);
 
     if(wallstyle_n && wallstyle_n[0]) {
-        sprintf(small_buf,"wallstyle %s\n",wallstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "wallstyle %s\n",wallstyle_n);
         strcat(buf,small_buf);
     }
 
     if(floorstyle_n && floorstyle_n[0]) {
-        sprintf(small_buf,"floorstyle %s\n",floorstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "floorstyle %s\n",floorstyle_n);
         strcat(buf,small_buf);
     }
 
     if(monsterstyle_n && monsterstyle_n[0]) {
-        sprintf(small_buf,"monsterstyle %s\n",monsterstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "monsterstyle %s\n",monsterstyle_n);
         strcat(buf,small_buf);
     }
 
     if(treasurestyle_n && treasurestyle_n[0]) {
-        sprintf(small_buf,"treasurestyle %s\n",treasurestyle_n);
+        snprintf(small_buf, sizeof(small_buf), "treasurestyle %s\n",treasurestyle_n);
         strcat(buf,small_buf);
     }
 
     if(layoutstyle_n &&layoutstyle_n[0]) {
-        sprintf(small_buf,"layoutstyle %s\n",layoutstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "layoutstyle %s\n",layoutstyle_n);
         strcat(buf,small_buf);
     }
 
     if(decorstyle_n && decorstyle_n[0]) {
-        sprintf(small_buf,"decorstyle %s\n",decorstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "decorstyle %s\n",decorstyle_n);
         strcat(buf,small_buf);
     }
 
     if(doorstyle_n && doorstyle_n[0]) {
-        sprintf(small_buf,"doorstyle %s\n",doorstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "doorstyle %s\n",doorstyle_n);
         strcat(buf,small_buf);
     }
 
     if(exitstyle_n && exitstyle_n[0]) {
-        sprintf(small_buf,"exitstyle %s\n",exitstyle_n);
+        snprintf(small_buf, sizeof(small_buf), "exitstyle %s\n",exitstyle_n);
         strcat(buf,small_buf);
     }
 
     if(final_map_n && final_map_n[0]) {
-        sprintf(small_buf,"final_map %s\n",final_map_n);
+        snprintf(small_buf, sizeof(small_buf), "final_map %s\n",final_map_n);
         strcat(buf,small_buf);
     }
 
     if(exit_on_final_map_n && exit_on_final_map_n[0]) {
-        sprintf(small_buf,"exit_on_final_map %s\n",exit_on_final_map_n);
+        snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",exit_on_final_map_n);
         strcat(buf,small_buf);
     }
 
     if(this_map_n && this_map_n[0]) {
-        sprintf(small_buf,"origin_map %s\n",this_map_n);
+        snprintf(small_buf, sizeof(small_buf), "origin_map %s\n",this_map_n);
         strcat(buf,small_buf);
     }
 
     if(layoutoptions1_n) {
-        sprintf(small_buf,"layoutoptions1 %d\n",layoutoptions1_n);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions1 %d\n",layoutoptions1_n);
         strcat(buf,small_buf);
     }
 
 
     if(layoutoptions2_n) {
-        sprintf(small_buf,"layoutoptions2 %d\n",layoutoptions2_n);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions2 %d\n",layoutoptions2_n);
         strcat(buf,small_buf);
     }
 
 
     if(layoutoptions3_n) {
-        sprintf(small_buf,"layoutoptions3 %d\n",layoutoptions3_n);
+        snprintf(small_buf, sizeof(small_buf), "layoutoptions3 %d\n",layoutoptions3_n);
         strcat(buf,small_buf);
     }
 
     if(symmetry_n) {
-        sprintf(small_buf,"symmetry %d\n",symmetry_n);
+        snprintf(small_buf, sizeof(small_buf), "symmetry %d\n",symmetry_n);
         strcat(buf,small_buf);
     }
 
 
     if(difficulty_n && difficulty_given_n ) {
-        sprintf(small_buf,"difficulty %d\n",difficulty_n);
+        snprintf(small_buf, sizeof(small_buf), "difficulty %d\n",difficulty_n);
         strcat(buf,small_buf);
     }
 
     if(difficulty_increase > 0.001 ) {
-        sprintf(small_buf,"difficulty_increase %f\n",difficulty_increase);
+        snprintf(small_buf, sizeof(small_buf), "difficulty_increase %f\n",difficulty_increase);
         strcat(buf,small_buf);
     }
 
-    sprintf(small_buf,"dungeon_level %d\n",dungeon_level_n);
+    snprintf(small_buf, sizeof(small_buf), "dungeon_level %d\n",dungeon_level_n);
     strcat(buf,small_buf);
 
     if(dungeon_depth_n) {
-        sprintf(small_buf,"dungeon_depth %d\n",dungeon_depth_n);
+        snprintf(small_buf, sizeof(small_buf), "dungeon_depth %d\n",dungeon_depth_n);
         strcat(buf,small_buf);
     }
 
     if(decoroptions_n) {
-        sprintf(small_buf,"decoroptions %d\n",decoroptions_n);
+        snprintf(small_buf, sizeof(small_buf), "decoroptions %d\n",decoroptions_n);
         strcat(buf,small_buf);
     }
 
     if(orientation_n) {
-        sprintf(small_buf,"orientation %d\n",orientation_n);
+        snprintf(small_buf, sizeof(small_buf), "orientation %d\n",orientation_n);
         strcat(buf,small_buf);
     }
 
     if(origin_x_n) {
-        sprintf(small_buf,"origin_x %d\n",origin_x_n);
+        snprintf(small_buf, sizeof(small_buf), "origin_x %d\n",origin_x_n);
         strcat(buf,small_buf);
     }
 
     if(origin_y_n) {
-        sprintf(small_buf,"origin_y %d\n",origin_y_n);
+        snprintf(small_buf, sizeof(small_buf), "origin_y %d\n",origin_y_n);
         strcat(buf,small_buf);
     }
     if(random_seed_n) {
         /* Add one so that the next map is a bit different */
-        sprintf(small_buf,"random_seed %d\n",random_seed_n + 1);
+        snprintf(small_buf, sizeof(small_buf), "random_seed %d\n",random_seed_n + 1);
         strcat(buf,small_buf);
     }
 
     if(treasureoptions_n) {
-        sprintf(small_buf,"treasureoptions %d\n",treasureoptions_n);
+        snprintf(small_buf, sizeof(small_buf), "treasureoptions %d\n",treasureoptions_n);
         strcat(buf,small_buf);
     }
 }

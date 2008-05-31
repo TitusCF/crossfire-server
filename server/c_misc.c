@@ -691,7 +691,7 @@ void display_who_entry(object *op, player *pl, const char *format) {
             strcat(outbuf1," "); /* allow '_' to be used in place of spaces */
 	}
         else {
-            sprintf(tmpbuf,"%c",format[i]);
+            snprintf(tmpbuf, sizeof(tmpbuf), "%c",format[i]);
             strcat(outbuf,tmpbuf);
             strcat(outbuf1,tmpbuf);
         }
@@ -1428,7 +1428,7 @@ int command_players(object *op, char *params)
     char *t;
     DIR *Dir;
 
-    sprintf(buf,"%s/%s/",settings.localdir,settings.playerdir);
+    snprintf(buf, sizeof(buf), "%s/%s/",settings.localdir,settings.playerdir);
     t=buf+strlen(buf);
     if ((Dir=opendir(buf))!=NULL) {
 	const struct dirent *Entry;
@@ -1548,7 +1548,7 @@ int command_bowmode(object *op, char *params)
 	}
     }
     if (!found) {
-	sprintf(buf, "bowmode: Unknown options %s, valid options are:", params);
+	snprintf(buf, sizeof(buf), "bowmode: Unknown options %s, valid options are:", params);
 	for (i=0; i<=bow_bestarrow; i++) {
 	    strcat(buf, " ");
 	    strcat(buf, types[i]);
@@ -1816,21 +1816,21 @@ static void help_topics(object *op, int what)
     const char* language;
 
     language = language_codes[get_language(op)];
-    sprintf(suffix, ".%s", language);
+    snprintf(suffix, sizeof(suffix), ".%s", language);
 
     switch (what) {
         case 1:
-            sprintf(filename, "%s/wizhelp", settings.datadir);
+            snprintf(filename, sizeof(filename), "%s/wizhelp", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                 i18n_translate(get_language(op),I18N_MSG_CMISC_172), NULL);
             break;
         case 3:
-            sprintf(filename, "%s/mischelp", settings.datadir);
+            snprintf(filename, sizeof(filename), "%s/mischelp", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                     i18n_translate(get_language(op),I18N_MSG_CMISC_173), NULL);
             break;
         default:
-            sprintf(filename, "%s/help", settings.datadir);
+            snprintf(filename, sizeof(filename), "%s/help", settings.datadir);
             draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                     i18n_translate(get_language(op),I18N_MSG_CMISC_174), NULL);
             break;
@@ -1930,7 +1930,7 @@ int command_help (object *op, char *params)
      */
 
     if (!params) {
-	sprintf(filename, "%s/def_help", settings.datadir);
+	snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
 	if ((fp=fopen(filename, "r")) == NULL) {
 	    LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
 	    return 0;
@@ -1982,13 +1982,13 @@ int command_help (object *op, char *params)
 	return 0;
     }
 
-    sprintf(filename, "%s/mischelp/%s.%s", settings.datadir, params, language);
+    snprintf(filename, sizeof(filename), "%s/mischelp/%s.%s", settings.datadir, params, language);
     if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
 	if (op) {
-	    sprintf(filename, "%s/help/%s.%s", settings.datadir, params, language);
+	    snprintf(filename, sizeof(filename), "%s/help/%s.%s", settings.datadir, params, language);
 	    if (stat(filename, &st) || !S_ISREG(st.st_mode)) {
 		if (QUERY_FLAG(op, FLAG_WIZ)) {
-		    sprintf(filename, "%s/wizhelp/%s.%s", settings.datadir, params, language);
+		    snprintf(filename, sizeof(filename), "%s/wizhelp/%s.%s", settings.datadir, params, language);
 		    if (stat(filename, &st) || !S_ISREG(st.st_mode))
 			goto nohelp;
 		} else

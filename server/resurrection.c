@@ -96,7 +96,7 @@ static int resurrect_player(object *op,char *playername,object *spell)
     }
 
     /*  set up our paths/strings...  */
-    sprintf(path,"%s/%s/%s/%s",settings.localdir,settings.playerdir,playername,
+    snprintf(path, sizeof(path), "%s/%s/%s/%s",settings.localdir,settings.playerdir,playername,
 	  playername);
 
     strcpy(newname,path);
@@ -139,17 +139,17 @@ static int resurrect_player(object *op,char *playername,object *spell)
 	    sscanf(buf,"%s %" FMT64, buf2, &exp);
 	    if (spell->stats.exp) {
 		exp-=exp/spell->stats.exp;
-		sprintf(buf,"exp %" FMT64 "\n",exp);
+		snprintf(buf, sizeof(buf), "exp %" FMT64 "\n",exp);
 	    }
 	}
 	if(! (strcmp(buf2,"Con"))) {
 	    sscanf(buf,"%s %d",buf2,&Con);
 	    Con -= spell->stats.Con;
 	    if (Con < 1) Con = 1;
-	    sprintf(buf,"Con %d\n",Con);
+	    snprintf(buf, sizeof(buf), "Con %d\n",Con);
 	}
 	if(race && !strcmp(buf2,"race")) {
-	    sprintf(buf,"race %s\n",race);
+	    snprintf(buf, sizeof(buf), "race %s\n",race);
 	}
 	fputs(buf,liveplayer);
     }
@@ -298,8 +298,8 @@ void dead_player(object *op)
     char path[MAX_BUF];
 
     /*  set up our paths/strings...  */
-    sprintf(path,"%s/%s/%s/%s",settings.localdir,settings.playerdir,op->name,
-	  op->name);
+    snprintf(path, sizeof(path), "%s/%s/%s/%s",settings.localdir,settings.playerdir,op->name,
+             op->name);
 
     strcpy(filename,path);
     strcat(filename,".pl");
@@ -307,6 +307,6 @@ void dead_player(object *op)
     strcat(newname,".dead");
 
     if(rename(filename,newname) != 0) {
-	LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
+        LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
     }
 }

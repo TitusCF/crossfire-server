@@ -967,10 +967,10 @@ static int god_enchants_weapon (object *op, const object *god, object *tr, objec
         if (skillop==NULL)
         {
             LOG(llevError, "god_enchants_weapon: no praying skill object found ?!\n");
-            sprintf(buf, "%d", 1);
+            snprintf(buf, sizeof(buf), "%d", 1);
         }
         else
-            sprintf(buf, "%" FMT64, skillop->stats.exp);
+            snprintf(buf, sizeof(buf), "%" FMT64, skillop->stats.exp);
         set_ob_key_value(weapon, "divine_blessing_name", god->name, TRUE);
         set_ob_key_value(weapon, "item_owner", op->name, TRUE);
         set_ob_key_value(weapon, "item_willpower", buf, TRUE);
@@ -978,7 +978,7 @@ static int god_enchants_weapon (object *op, const object *god, object *tr, objec
 
     /* First give it a title, so other gods won't touch it */
     if ( ! weapon->title) {
-        sprintf (buf, "of %s", god->name);
+        snprintf(buf, sizeof(buf), "of %s", god->name);
         weapon->title = add_string (buf);
         if (op->type == PLAYER)
 	    esrv_update_item (UPD_NAME, op, weapon);
@@ -1333,11 +1333,11 @@ static int god_examines_item(const object *god, object *item) {
 
     if(!item->title) return 1; /* unclaimed item are ok */
 
-    sprintf(buf,"of %s",god->name);
+    snprintf(buf, sizeof(buf), "of %s",god->name);
     if(!strcmp(item->title,buf)) return 1; /* belongs to that God */
 
     if(god->title) { /* check if we have any enemy blessed item*/
-	sprintf(buf,"of %s",god->title);
+	snprintf(buf, sizeof(buf), "of %s",god->title);
 	if(!strcmp(item->title,buf)) {
 	    if(item->env) {
             char name[MAX_BUF];
@@ -1436,7 +1436,7 @@ int tailor_god_spell(object *spellop, object *caster) {
          spellop->title=add_string(god->name);
          if(spellop->title){
 	    char buf[MAX_BUF];
-	    sprintf(buf,"%s of %s",spellop->name,spellop->title);
+	    snprintf(buf, sizeof(buf), "%s of %s",spellop->name,spellop->title);
 	    FREE_AND_COPY(spellop->name, buf);
 	    FREE_AND_COPY(spellop->name_pl, buf);
 	}

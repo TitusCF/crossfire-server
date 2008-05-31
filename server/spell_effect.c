@@ -1065,9 +1065,9 @@ int perceive_self(object *op) {
 	for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
 	    if (tmp->type == FORCE && !strcmp(tmp->arch->name, "dragon_ability_force")) {
 		if(tmp->stats.exp == 0) {
-		    sprintf(buf, "Your metabolism isn't focused on anything.");
+		    snprintf(buf, sizeof(buf), "Your metabolism isn't focused on anything.");
 		} else {
-		    sprintf(buf, "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
+		    snprintf(buf, sizeof(buf), "Your metabolism is focused on %s.", change_resist_msg[tmp->stats.exp]);
 		}
 		draw_ext_info(NDI_UNIQUE, 0,op,
 			      MSG_TYPE_SPELL, MSG_TYPE_SPELL_PERCEIVE_SELF,
@@ -1425,7 +1425,7 @@ int magic_wall(object *op,object *caster,int dir,object *spell_ob) {
     } else if (spell_ob->race) {
 	char buf1[MAX_BUF];
 
-	sprintf(buf1,spell_ob->race,dir);
+	snprintf(buf1, sizeof(buf1), spell_ob->race, dir);
 	at = find_archetype(buf1);
 	if (!at) {
 	    LOG(llevError, "summon_wall: Unable to find archetype %s\n", buf1);
@@ -3135,7 +3135,7 @@ int animate_weapon(object *op,object *caster,object *spell, int dir) {
     if(tmp->speed > 3.33) tmp->speed = 3.33;
 
     if (!spell->race) {
-	sprintf(buf, "animated %s", weapon->name);
+	snprintf(buf, sizeof(buf), "animated %s", weapon->name);
 	if(tmp->name) free_string(tmp->name);
 	tmp->name = add_string(buf);
 

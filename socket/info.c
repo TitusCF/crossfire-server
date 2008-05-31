@@ -263,7 +263,7 @@ void draw_ext_info(
  *
  *  This function is the same as draw_ext_info, but takes varargs format.
  *  Otherwise, the meaning of all the fields is the same.  This is perhaps not
- *  the most efficient as we do vnsprintf on both the old and newbuf, but it
+ *  the most efficient as we do vsnprintf on both the old and newbuf, but it
  *  simplifies the code greatly since we can just call draw_ext_info.  Also,
  *  hopefully at some point, need for old_format will go away.
  *

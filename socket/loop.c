@@ -497,7 +497,7 @@ void do_server(void)
 	    ns = &init_sockets[newsocknum];
 
 	    ip = ntohl(addr.sin_addr.s_addr);
-	    sprintf(buf, "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+	    snprintf(buf, sizeof(buf), "%ld.%ld.%ld.%ld", (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
 
 	    if (checkbanned(NULL, buf)) {
 		LOG(llevInfo, "Banned host tried to connect: [%s]\n", buf);

@@ -293,7 +293,7 @@ static void load_materials(void)
     materialtype_t *mt;
     int i, value;
 
-    sprintf(filename, "%s/materials", settings.datadir);
+    snprintf(filename, sizeof(filename), "%s/materials", settings.datadir);
     LOG(llevDebug, "Reading material type data from %s...\n", filename);
     if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Cannot open %s for reading\n", filename);
@@ -405,7 +405,7 @@ static void load_settings(void)
     int	has_val,comp;
     FILE    *fp;
 
-    sprintf(buf,"%s/settings",settings.confdir);
+    snprintf(buf, sizeof(buf), "%s/settings",settings.confdir);
 
     /* We don't require a settings file at current time, but down the road,
      * there will probably be so many values that not having a settings file
@@ -990,7 +990,7 @@ static void init_startup(void) {
   int comp;
 
 #ifdef SHUTDOWN_FILE
-  sprintf(buf,"%s/%s",settings.confdir,SHUTDOWN_FILE);
+  snprintf(buf, sizeof(buf), "%s/%s",settings.confdir,SHUTDOWN_FILE);
   if ((fp = open_and_uncompress(buf, 0, &comp)) != NULL) {
     while (fgets(buf, MAX_BUF-1, fp) != NULL)
       printf("%s", buf);
@@ -1230,7 +1230,7 @@ static void init_races(void) {
   init_done=1;
   first_race=NULL;
 
-  sprintf(fname,"%s/races",settings.datadir);
+  snprintf(fname, sizeof(fname), "%s/races",settings.datadir);
   LOG(llevDebug, "Reading races from %s...\n",fname);
   if(! (file=fopen(fname,"r"))) {
     LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));

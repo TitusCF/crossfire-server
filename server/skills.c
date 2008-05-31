@@ -244,18 +244,18 @@ static int attempt_steal(object* op, object* who, object *skill)
 	    /* Notify the other player */
 	    if (success && who->stats.Int > random_roll(0, 19, op, PREFER_LOW)) {
             query_name(success, name, MAX_BUF);
-		sprintf(buf, "Your %s is missing!", name);
+		snprintf(buf, sizeof(buf), "Your %s is missing!", name);
 	    } else {
-		sprintf(buf, "Your pack feels strangely lighter.");
+		snprintf(buf, sizeof(buf), "Your pack feels strangely lighter.");
 	    }
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
 			  buf, buf);
 	    if (!success) {
 		if (who->invisible) {
-		    sprintf(buf, "you feel itchy fingers getting at your pack.");
+		    snprintf(buf, sizeof(buf), "you feel itchy fingers getting at your pack.");
 		} else {
             query_name(who, name, MAX_BUF);
-		    sprintf(buf, "%s looks very shifty.", name);
+		    snprintf(buf, sizeof(buf), "%s looks very shifty.", name);
 		}
 		draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_STEAL,
 			      buf, buf);

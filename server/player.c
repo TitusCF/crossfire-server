@@ -117,7 +117,7 @@ void display_motd(const object *op) {
     int comp;
     int size;
 
-    sprintf(buf, "%s/%s", settings.confdir, settings.motd);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.motd);
     if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL) {
 	return;
     }
@@ -147,7 +147,7 @@ void send_rules(const object *op) {
     int comp;
     int size;
 
-    sprintf(buf, "%s/%s", settings.confdir, settings.rules);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.rules);
     if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL) {
     return;
     }
@@ -183,7 +183,7 @@ void send_news(const object *op) {
     int comp;
     int size;
 
-    sprintf(buf, "%s/%s", settings.confdir, settings.news);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, settings.news);
     if ((fp=open_and_uncompress(buf, 0, &comp)) == NULL)
         return;
     news[0]='\0';
@@ -1178,7 +1178,7 @@ void key_change_class(object *op, char key)
 	/* We create this now because some of the unique maps will need it
 	 * to save here.
 	 */
-	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
+	snprintf(buf, sizeof(buf), "%s/%s/%s",settings.localdir,settings.playerdir,op->name);
 	make_path_to_file(buf);
 
 #ifdef AUTOSAVE
@@ -1305,7 +1305,7 @@ void key_confirm_quit(object *op, char key)
 	 * get rid of them.  The trailing slash in the path is intentional,
 	 * so that players named 'Ab' won't match against players 'Abe' pathname
 	 */
-	sprintf(buf,"%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
+	snprintf(buf, sizeof(buf), "%s/%s/%s/", settings.localdir, settings.playerdir, op->name);
 	for (mp=first_map; mp!=NULL; mp=next) {
 	    next = mp->next;
 	    if (!strncmp(mp->path, buf, strlen(buf)))
@@ -1465,14 +1465,14 @@ int check_pick(object *op) {
 		      (int)(query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
 
 
-	sprintf(putstring,"...flags: ");
+	snprintf(putstring, sizeof(putstring), "...flags: ");
 	for(k=0;k<4;k++)
 	{
 	  for(j=0;j<32;j++)
 	  {
 	    if((tmp->flags[k]>>j)&0x01)
 	    {
-	      sprintf(tmpstr,"%d ",k*32+j);
+	      snprintf(tmpstr, sizeof(tmpstr), "%d ",k*32+j);
 	      strcat(putstring, tmpstr);
 	    }
 	  }
@@ -3046,9 +3046,9 @@ void kill_player(object *op)
 	tmp=arch_to_object(find_archetype("finger"));
         if (tmp != NULL)
         {
-	    sprintf(buf,"%s's finger",op->name);
+	    snprintf(buf, sizeof(buf), "%s's finger",op->name);
 	    tmp->name = add_string(buf);
-	    sprintf(buf,"  This finger has been cut off %s\n"
+	    snprintf(buf, sizeof(buf), "  This finger has been cut off %s\n"
 	            "  the %s, when he was defeated at\n  level %d by %s.\n",
 	        op->name, op->contr->title, (int)(op->level),
 	        op->contr->killer);
@@ -3080,7 +3080,7 @@ void kill_player(object *op)
 	    op->stats.food=999;
 	    return;
 	}
-	sprintf(buf,"%s starved to death.",op->name);
+	snprintf(buf, sizeof(buf), "%s starved to death.",op->name);
 	strcpy(op->contr->killer,"starvation");
     }
     else {
@@ -3092,7 +3092,7 @@ void kill_player(object *op)
 	    op->stats.hp=op->stats.maxhp;
 	    return;
 	}
-	sprintf(buf,"%s died.",op->name);
+	snprintf(buf, sizeof(buf), "%s died.",op->name);
     }
     play_sound_player_only(op->contr, SOUND_TYPE_LIVING, op, 0, "death");
 
@@ -3224,11 +3224,11 @@ void kill_player(object *op)
 	 * exp loss on the stone.
 	 */
 	tmp=arch_to_object(find_archetype("gravestone"));
-	sprintf(buf,"%s's gravestone",op->name);
+	snprintf(buf, sizeof(buf),"%s's gravestone",op->name);
 	FREE_AND_COPY(tmp->name, buf);
-	sprintf(buf,"%s's gravestones",op->name);
+	snprintf(buf, sizeof(buf),"%s's gravestones",op->name);
 	FREE_AND_COPY(tmp->name_pl, buf);
-	sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
+	snprintf(buf, sizeof(buf),"RIP\nHere rests the hero %s the %s,\n"
 	        "who was killed\n"
 	        "by %s.\n",
 	        op->name, op->contr->title,
@@ -3372,7 +3372,7 @@ void kill_player(object *op)
 
 	/*  peterm:  added to create a corpse at deathsite.  */
 	tmp=arch_to_object(find_archetype("corpse_pl"));
-	sprintf(buf,"%s", op->name);
+	snprintf(buf, sizeof(buf),"%s", op->name);
 	FREE_AND_COPY(tmp->name, buf);
 	FREE_AND_COPY(tmp->name_pl, buf);
 	tmp->level=op->level;
@@ -3879,7 +3879,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
 	    skin->path_attuned |= item->path_attuned; /* add attunement to skin */
 
 	    /* print message */
-	    sprintf(buf, "You feel attuned to ");
+	    snprintf(buf, sizeof(buf), "You feel attuned to ");
 	    for(i=0, j=0; i<NRSPELLPATHS; i++) {
 		if(item->path_attuned & (1<<i)) {
 		    if (j)

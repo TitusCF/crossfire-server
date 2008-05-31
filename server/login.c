@@ -258,7 +258,7 @@ int save_player(object *op, int flag) {
   if (flag == 0)
     terminate_all_pets(op);
 
-  sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
+  snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
   make_path_to_file(filename);
   tmpfilename = tempnam_local(settings.tmpdir,NULL);
   fp=fopen(tmpfilename, "w");
@@ -377,7 +377,7 @@ int save_player(object *op, int flag) {
 	  destroy_object (tmp);
 
   checksum = 0;
-  sprintf(backupfile, "%s.tmp", filename);
+  snprintf(backupfile, sizeof(backupfile), "%s.tmp", filename);
   rename(filename, backupfile);
   fp = fopen(filename,"w");
   if(!fp) {
@@ -517,7 +517,7 @@ void check_login(object *op) {
 	}
     }
 
-    sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
+    snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
 
     /* If no file, must be a new player, so lets get confirmation of
      * the password.  Return control to the higher level dispatch,

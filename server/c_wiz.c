@@ -128,7 +128,7 @@ int command_loadtest(object *op, char *params) {
 
     for (x = 0; x < settings.worldmaptilesx; x++) {
         for (y = 0; y < settings.worldmaptilesy; y++) {
-            sprintf(buf, "/world/world_%d_%d", x+settings.worldmapstartx, y+settings.worldmapstarty);
+            snprintf(buf, sizeof(buf), "/world/world_%d_%d", x+settings.worldmapstartx, y+settings.worldmapstarty);
             command_goto(op, buf);
         }
     }
@@ -307,7 +307,7 @@ int command_banish(object *op, char *params) {
     if (!pl)
         return 1;
 
-    sprintf(buf, "%s/%s", settings.localdir, BANISHFILE);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, BANISHFILE);
 
     if ((banishfile = fopen(buf, "a")) == NULL) {
         LOG (llevDebug, "Could not find file banish_file.\n");
@@ -1856,7 +1856,7 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
     *pl_name = op->name ? op->name : "*";
 #endif
 
-    sprintf(buf, "%s/%s", settings.confdir, DMFILE);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, DMFILE);
     if ((dmfile = fopen(buf, "r")) == NULL) {
         LOG(llevDebug, "Could not find DM file.\n");
         return 0;

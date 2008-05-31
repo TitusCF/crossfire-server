@@ -780,7 +780,7 @@ static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
      * and thus the backfire will be worse.  */
    for(item=cauldron->inv;item;item=item->below) {
         strcpy(name,item->name);
-        if(item->title) sprintf(name,"%s %s",item->name,item->title);
+        if(item->title) snprintf(name, sizeof(name), "%s %s",item->name,item->title);
         danger += (strtoint(name)/1000) + 3;
 	nrofi++;
    }

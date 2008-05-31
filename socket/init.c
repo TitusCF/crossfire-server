@@ -77,30 +77,30 @@ void init_connection(socket_struct *ns, const char *from_ip)
 {
     SockList sl;
     unsigned char buf[256];
-    int	bufsize=65535;	/*Supposed absolute upper limit */
+    int bufsize=65535;	/*Supposed absolute upper limit */
     int oldbufsize;
     socklen_t buflen=sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-	int temp = 1;
+    int temp = 1;
 
-	if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
-		LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
+    if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
+        LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
 #else
     if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
-		LOG(llevError,"init_connection:  Error on fcntl.\n");
+        LOG(llevError,"init_connection:  Error on fcntl.\n");
     }
 #endif /* end win32 */
 
     if (getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen)==-1)
-	oldbufsize=0;
+        oldbufsize=0;
     if (oldbufsize<bufsize) {
 #ifdef ESRV_DEBUG
-	LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
+        LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
-	if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
-	    LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
-	}
+        if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
+            LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
+        }
     }
     buflen=sizeof(oldbufsize);
     getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen);
@@ -141,8 +141,8 @@ void init_connection(socket_struct *ns, const char *from_ip)
     memset(ns->inbuf.buf, 0, MAXSOCKRECVBUF);
     memset(&ns->lastmap,0,sizeof(struct Map));
     if (!ns->faces_sent)
-	ns->faces_sent =  calloc(sizeof(*ns->faces_sent),
-			     nrofpixmaps);
+        ns->faces_sent =  calloc(sizeof(*ns->faces_sent),
+                                 nrofpixmaps);
     ns->faces_sent_len = nrofpixmaps;
 
     memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
@@ -161,7 +161,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
     ns->password_fails = 0;
 
     ns->host=strdup_local(from_ip);
-    sprintf((char*)buf, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
+    snprintf((char*)buf, sizeof(buf), "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
     sl.buf=buf;
     sl.len=strlen((char*)buf);
     Send_With_Handling(ns, &sl);

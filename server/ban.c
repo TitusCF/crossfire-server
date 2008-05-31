@@ -56,7 +56,7 @@ int checkbanned(const char *login, const char *host)
         /* First time through look for BANFILE */
 
         if (loop == 0) {
-            sprintf(buf, "%s/%s", settings.confdir, BANFILE);
+            snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, BANFILE);
             bannedfile = fopen(buf, "r");
             if (bannedfile == NULL) {
                 LOG(llevDebug, "Could not find file Banned file\n");
@@ -67,7 +67,7 @@ int checkbanned(const char *login, const char *host)
         /* Second time through look for BANISHFILE */
 
         if (loop == 1) {
-            sprintf(buf, "%s/%s", settings.localdir, BANISHFILE);
+            snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, BANISHFILE);
             bannedfile = fopen(buf, "r");
             if (bannedfile == NULL) {
                 LOG(llevDebug, "Could not find file Banish file\n");

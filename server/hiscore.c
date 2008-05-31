@@ -227,7 +227,7 @@ static score *add_score(score *new_score) {
 
   new_score->position=HIGHSCORE_LENGTH+1;
   old_score.position= -1;
-  sprintf(filename,"%s/%s",settings.localdir,HIGHSCORE);
+  snprintf(filename, sizeof(filename), "%s/%s",settings.localdir,HIGHSCORE);
   if((fp=open_and_uncompress(filename,1,&comp))!=NULL) {
     while(fgets(buf,MAX_BUF,fp)!=NULL&&nrofscores<HIGHSCORE_LENGTH) {
       if((tmp_score=get_score(buf))==NULL) break;
@@ -409,7 +409,7 @@ void display_high_score(object *op,int max, const char *match) {
     int i=0,j=0,comp;
     score *sc;
 
-    sprintf(buf,"%s/%s",settings.localdir,HIGHSCORE);
+    snprintf(buf, sizeof(buf), "%s/%s",settings.localdir,HIGHSCORE);
     if((fp=open_and_uncompress(buf,0,&comp))==NULL) {
         char err[MAX_BUF];
         LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));

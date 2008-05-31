@@ -419,9 +419,9 @@ int infect_object(object *victim, object *disease, int force) {
 	  * This messages is printed in the form MESSAGE victim
 	  */
 	 if(new_disease->title)
-	    sprintf(buf,"%s %s!!",disease->title,victim->name);
+	    snprintf(buf, sizeof(buf), "%s %s!!",disease->title,victim->name);
 	 else
-	    sprintf(buf,"You infect %s with your disease, %s!",victim->name,new_disease->name);
+	    snprintf(buf, sizeof(buf), "You infect %s with your disease, %s!",victim->name,new_disease->name);
 
 	 if(victim->type == PLAYER)
 	    draw_ext_info(NDI_UNIQUE | NDI_RED, 0, new_disease->owner,

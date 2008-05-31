@@ -50,7 +50,7 @@ static void write_map_log(void)
     char buf[MAX_BUF];
     long current_time=time(NULL);
 
-    sprintf(buf,"%s/temp.maps", settings.localdir);
+    snprintf(buf, sizeof(buf), "%s/temp.maps", settings.localdir);
     if (!(fp=fopen(buf,"w"))) {
 	LOG(llevError,"Could not open %s for writing\n", buf);
 	return;
@@ -89,7 +89,7 @@ void read_map_log(void)
     long sec =  seconds();
 
 
-    sprintf(buf,"%s/temp.maps", settings.localdir);
+    snprintf(buf, sizeof(buf), "%s/temp.maps", settings.localdir);
     if (!(fp=fopen(buf,"r"))) {
 	LOG(llevDebug,"Could not open %s for reading\n", buf);
 	return;

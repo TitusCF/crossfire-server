@@ -14,6 +14,30 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change even more sprintf to snprintf.
+ socket/init.c
+ socket/loop.c
+ socket/info.c
+ random_maps/random_map.c
+ server/c_party.c
+ server/init.c
+ server/rune.c
+ server/swap.c
+ server/pets.c
+ server/disease.c
+ server/alchemy.c
+ server/resurrection.c
+ server/gods.c
+ server/player.c
+ server/c_misc.c
+ server/ban.c
+ server/skills.c
+ server/login.c
+ server/c_wiz.c
+ server/spell_effect.c
+ server/hiscore.c
+Arvid Norlander 2008-05-31
+
 Change some more sprintf to snprintf.
  common/readable.c
  common/languages.c
