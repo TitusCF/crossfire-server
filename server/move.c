@@ -630,7 +630,7 @@ int push_ob(object *who, int dir, object *pusher) {
  * No check is done to know if the object has enough speed to move.
  *
  * @param op object to move
- * @param x 
+ * @param x
  * @param y destination coordinates
  * @return
  * 0 if op is on the specified spot, 1 if it moved towards the goal, 2 if it didn't find any path to the goal.

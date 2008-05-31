@@ -364,7 +364,7 @@ void check_score(object *op, int quiet) {
     if(new_score.position == -1) {
 	new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
 
-	if(!strcmp(old_score->name,new_score.name)) 
+	if(!strcmp(old_score->name,new_score.name))
 	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
 			  "You didn't beat your last highscore:", NULL);
 	else

@@ -167,7 +167,7 @@ static int resurrect_player(object *op,char *playername,object *spell)
 
 /**
  * This handles the raise dead / resurrection spells. So try to revive a player.
- * 
+ *
  * @author peterm and mehlhaff@soda.berkeley.edu
  *
  * @param op

@@ -43,10 +43,10 @@
  * elligible object in list (see state parameter)
  * @param ol the objectlink to trigger. This can be acquire from map
  * @param cause the object that cause this path to trigger, may be NULL
- * @param state which object to apply. 
+ * @param state which object to apply.
  *          0=all object with FLAG_ACTIVATE_ON_PUSH
  *          other=all object with FLAG_ACTIVATE_ON_RELEASE
- */ 
+ */
 void trigger_connected(objectlink *ol, object* cause, const int state){
     object* tmp;
     for (; ol; ol = ol->next) {
@@ -69,7 +69,7 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
         if (state && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_PUSH)) continue;
         if (!state && !QUERY_FLAG(tmp, FLAG_ACTIVATE_ON_RELEASE)) continue;
 
-        /* 
+        /*
          * (tchize) call the triggers of the activated object.
          * tmp = activated object
          * op is activator (aka button)

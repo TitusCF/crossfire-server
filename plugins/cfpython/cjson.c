@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 Dan Pascu. 
+ * Copyright (C) 2006-2007 Dan Pascu.
  * Author: Dan Pascu <dan@ag-projects.com>
  *
  * Fast JSON encoder/decoder implementation for Python
@@ -1198,5 +1198,3 @@ initcjson(void)
     PyModule_AddStringConstant(m, "__version__", MODULE_VERSION);
 
 }
-
-

@@ -503,7 +503,7 @@ object *get_nearest_player(object *mon) {
  * The values are in the amount of direction the deviation is.
  *
  * I believe this can safely go to 2, 3 is questionable, 4 will likely
- * result in a monster paths backtracking.  
+ * result in a monster paths backtracking.
  */
 #define DETOUR_AMOUNT	2
 
@@ -3679,7 +3679,7 @@ int player_can_view (object *pl,object *op) {
  * effected by this. If we arent invisible to begin with, we
  * return 0.
  *
- * This routine works for both players and monsters. 
+ * This routine works for both players and monsters.
  *
  * @param op
  * object to check.

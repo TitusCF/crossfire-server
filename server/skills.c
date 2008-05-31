@@ -1900,7 +1900,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
     /* the more we carry, the less we can throw. Limit only on players */
     /* This logic is basically grabbed right out of fix_object() */
-    if (op->type == PLAYER && 
+    if (op->type == PLAYER &&
 	op->carrying > (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT) &&
         (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
 

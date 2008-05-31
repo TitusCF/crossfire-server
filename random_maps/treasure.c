@@ -330,7 +330,7 @@ object *find_closest_monster(mapstruct *map,int x,int y,RMParms *RP) {
  * @param door_flag
  * if NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
  * if PASS_DOORS is set, the x & y values that are passed in are basically
- * meaningless - IMO, it is a bit of misnomer, as when it is set, it just 
+ * meaningless - IMO, it is a bit of misnomer, as when it is set, it just
  * randomly chooses spaces on the map, ideally finding a close monster, to put
  * the key in.  In fact, if PASS_DOORS is set, there is no guarantee that
  * the keys will be on both sides of the door - it may happen by randomness,
@@ -383,7 +383,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
     }
     else {  /* NO_PASS_DOORS --we have to work harder.*/
         /* don't try to keyplace if we're sitting on a blocked square and
-         * NO_PASS_DOORS is set. 
+         * NO_PASS_DOORS is set.
 	 */
         if(n_keys==1) {
             if(wall_blocked(map,x,y))
@@ -395,7 +395,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
         }
         else {
             /* It can happen that spots around that point are all blocked, so
-	     * try to look farther away if needed 
+	     * try to look farther away if needed
 	     */
             int sum=0; /* count how many keys we actually place */
             int distance = 1;

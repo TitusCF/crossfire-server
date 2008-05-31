@@ -123,7 +123,7 @@ void i18n_init(void)
         snprintf(filename, sizeof(filename), "%s/i18n/messages.%s", settings.datadir, language_codes[i]);
         if ((fp=fopen(filename, "r")) == NULL)
         {
-            LOG(llevError, "Cannot open i18n file %s: %s\n", 
+            LOG(llevError, "Cannot open i18n file %s: %s\n",
                 filename, strerror_local(errno, line, sizeof(line)));
             if(i==0)
                 exit(1);

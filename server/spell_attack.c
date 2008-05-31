@@ -585,7 +585,7 @@ int create_bomb(object *op, object *caster, int dir, object *spell) {
 /**
  * Returns the pointer to the first monster in the direction which is pointed to by op.
  *
- * This is used by finger of death and the 'smite' spells. 
+ * This is used by finger of death and the 'smite' spells.
  *
  * @author b.t.
  * @param op

@@ -14,6 +14,24 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Scripted removal of trailing whitespaces, also removing excessive newlines at
+end of files (one final newline should be all).
+ plugins/cfpython/cjson.c
+ socket/metaserver.c
+ common/languages.c
+ common/button.c
+ common/time.c
+ random_maps/treasure.c
+ server/spell_attack.c
+ server/resurrection.c
+ server/player.c
+ server/skills.c
+ server/move.c
+ server/c_object.c
+ server/hiscore.c
+ INSTALL
+Arvid Norlander 2008-06-01
+
 Change even more sprintf to snprintf.
  socket/init.c
  socket/loop.c

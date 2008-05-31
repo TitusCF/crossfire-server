@@ -725,7 +725,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, uint32 nrof)
 	esrv_update_item (UPD_WEIGHT, op, sack2);
 	return;
     }
-    
+
     /* Don't worry about this for containers - our caller should have
      * already checked this.
      */

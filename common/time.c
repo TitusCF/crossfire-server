@@ -111,7 +111,7 @@ const char * const periodsofday[PERIODS_PER_DAY] = {
 /**
  * give access to weekday names
  */
-const char *get_periodofday(const int index){        
+const char *get_periodofday(const int index){
     return ((index>=0) && (index < PERIODS_PER_DAY))?periodsofday[index]:NULL;
 }
 /* *
@@ -290,7 +290,7 @@ void get_tod(timeofday_t *tod)
         tod->season = 3;
     else
         tod->season = 4;
-   
+
     if (tod ->hour <5) /*until 4:59*/
         tod->periodofday=0;
     else if (tod ->hour <8)
