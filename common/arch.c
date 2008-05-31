@@ -504,7 +504,7 @@ static void load_archetypes(void) {
     struct timeval tv1,tv2;
 #endif
 
-    sprintf(filename,"%s/%s",settings.datadir,settings.archetypes);
+    snprintf(filename, sizeof(filename), "%s/%s",settings.datadir,settings.archetypes);
     LOG(llevDebug,"Reading archetypes from %s...\n",filename);
     if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
         LOG(llevError," Can't open archetype file.\n");
@@ -590,7 +590,7 @@ object *arch_to_object(archetype *at) {
 object *create_singularity(const char *name) {
     object *op;
     char buf[MAX_BUF];
-    sprintf(buf,"%s (%s)",ARCH_SINGULARITY,name);
+    snprintf(buf, sizeof(buf), "%s (%s)",ARCH_SINGULARITY,name);
     op = get_object();
     op->name = add_string(buf);
     op->name_pl = add_string(buf);

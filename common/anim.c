@@ -74,7 +74,7 @@ void init_anim(void) {
     animations[0].faces[0]=0;
     animations[0].facings=0;
 
-    sprintf(buf,"%s/animations", settings.datadir);
+    snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);
     LOG(llevDebug,"Reading animations from %s...\n", buf);
     if ((fp=fopen(buf,"r")) ==NULL) {
         LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror_local(errno, buf, sizeof(buf)));

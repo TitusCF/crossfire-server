@@ -153,13 +153,13 @@ void metaserver_update(void)
 
     /* Only do this if we have a valid connection */
     if (metafd != -1) {
-	sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players,
-FULL_VERSION,
-	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
-	    (long)time(NULL) - cst_tot.time_start);
-	if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
-	    LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
-	}
+        snprintf(data, sizeof(data), "%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players,
+                 FULL_VERSION,
+                 settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
+                 (long)time(NULL) - cst_tot.time_start);
+        if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
+            LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
+        }
     }
 
     /* Everything inside the pthread lock/unlock is related
@@ -285,7 +285,7 @@ int metaserver2_init(void)
 #endif
 
     /* Now load up the values from the file */
-    sprintf(buf,"%s/metaserver2",settings.confdir);
+    snprintf(buf, sizeof(buf), "%s/metaserver2",settings.confdir);
 
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
         LOG(llevError,"Warning: No metaserver2 file found\n");

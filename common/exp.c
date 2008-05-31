@@ -181,7 +181,7 @@ void init_experience(void)
     FILE *fp;
 
 
-    sprintf(buf,"%s/exp_table",settings.confdir);
+    snprintf(buf, sizeof(buf), "%s/exp_table",settings.confdir);
 
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
         LOG(llevError,"Fatal error: could not open experience table (%s)\n", buf);

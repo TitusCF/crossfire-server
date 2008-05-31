@@ -153,11 +153,11 @@ void remove_directory(const char *path)
              */
             status=stat(de->d_name, &statbuf);
             if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
-                sprintf(buf,"%s/%s", path, de->d_name);
+                snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
                 remove_directory(buf);
                 continue;
             }
-            sprintf(buf,"%s/%s", path, de->d_name);
+            snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
             if (unlink(buf)) {
                 LOG(llevError,"Unable to remove %s\n", path);
             }
@@ -593,7 +593,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
         errno = ENAMETOOLONG; /* File name too long */
         return NULL;
     }
-    sprintf(buf, "%s%s", name, ext);
+    snprintf(buf, sizeof(buf), "%s%s", name, ext);
 
     if (stat(buf, &st) != 0) {
         return NULL;
@@ -626,7 +626,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
             errno = ENAMETOOLONG;       /* File name too long */
             return NULL;
         }
-        sprintf(buf2, "%s < '%s'", uncompressor, buf);
+        snprintf(buf2, sizeof(buf2), "%s < '%s'", uncompressor, buf);
 
         return popen(buf2, "r");
     }
@@ -642,7 +642,7 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
         errno = ENAMETOOLONG;   /* File name too long */
         return NULL;
     }
-    sprintf(buf2, "%s < '%s' > '%s'", uncompressor, buf, name);
+    snprintf(buf2, sizeof(buf2), "%s < '%s' > '%s'", uncompressor, buf, name);
 
     ret = system(buf2);
     if (!WIFEXITED(ret) || WEXITSTATUS(ret) != 0) {

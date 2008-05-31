@@ -224,7 +224,7 @@ void load_treasures(void) {
     treasure *t;
     int comp, line=0;
 
-    sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
+    snprintf(filename, sizeof(filename), "%s/%s",settings.datadir,settings.treasures);
     if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
         LOG(llevError,"Can't open treasure file.\n");
         return;
@@ -1426,7 +1426,7 @@ void init_artifacts(void) {
 
     artifact_init = 1;
 
-    sprintf(filename, "%s/artifacts", settings.datadir);
+    snprintf(filename, sizeof(filename), "%s/artifacts", settings.datadir);
     LOG(llevDebug, "Reading artifacts from %s...\n",filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
@@ -1740,7 +1740,7 @@ int legal_artifact_combination(object *op, artifact *art) {
 void give_artifact_abilities(object *op, object *artifact) {
     char new_name[MAX_BUF];
 
-    sprintf(new_name, "of %s", artifact->name);
+    snprintf(new_name, sizeof(new_name), "of %s", artifact->name);
     if (op->title)
         free_string(op->title);
     op->title = add_string(new_name);
@@ -1815,9 +1815,9 @@ void fix_flesh_item(object *item, object *donor) {
 
     if(item->type==FLESH && donor && QUERY_FLAG(donor, FLAG_MONSTER)) {
         /* change the name */
-        sprintf(tmpbuf,"%s's %s",donor->name,item->name);
+        snprintf(tmpbuf, sizeof(tmpbuf), "%s's %s", donor->name, item->name);
         FREE_AND_COPY(item->name, tmpbuf);
-        sprintf(tmpbuf,"%s's %s",donor->name,item->name_pl);
+        snprintf(tmpbuf, sizeof(tmpbuf), "%s's %s", donor->name, item->name_pl);
         FREE_AND_COPY(item->name_pl, tmpbuf);
 
             /* store original arch in other_arch */

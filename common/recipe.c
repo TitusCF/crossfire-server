@@ -168,7 +168,7 @@ void init_formulae(void) {
     if (has_been_done) return;
     else has_been_done = 1;
 
-    sprintf(filename, "%s/formulae", settings.datadir);
+    snprintf(filename, sizeof(filename), "%s/formulae", settings.datadir);
     LOG(llevDebug, "Reading alchemical formulae from %s...\n",filename);
     if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
         LOG(llevError, "Can't open %s.\n", filename);
@@ -306,9 +306,9 @@ void dump_alchemy( void ) {
                         LOG(llevError,"Formula %s has no artifact\n",formula->title);
                     else {
                         if(strcmp(formula->title,"NONE"))
-                                sprintf(buf,"%s of %s",string,formula->title);
+                                snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
                         else
-                                sprintf(buf,"%s",string);
+                                snprintf(buf, sizeof(buf), "%s", string);
                         fprintf(logfile,"%-30s(%d) bookchance %3d  ",buf,formula->index,
                             formula->chance);
                         fprintf(logfile,"skill %s",formula->skill);
@@ -532,9 +532,9 @@ void dump_alchemy_costs (void)
                     else
                     {
                         if (! strcmp (formula->title, "NONE"))
-                            sprintf (buf, "%s", string);
+                            snprintf(buf, sizeof(buf), "%s", string);
                         else
-                            sprintf (buf, "%s of %s", string, formula->title);
+                            snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
                         fprintf (logfile, "\n%-40s bookchance %3d  skill %s\n",
                             buf, formula->chance, formula->skill);
                         if (formula->ingred !=NULL)

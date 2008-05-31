@@ -78,7 +78,7 @@ static method_ret food_type_apply(ob_methods *context, object *food,
                 SET_FLAG(skill, FLAG_CAN_USE_SKILL);
                 link_player_skills(applier);
 
-                sprintf(buf,"You have been dead for too long to taste %s, ",
+                snprintf(buf, sizeof(buf), "You have been dead for too long to taste %s, ",
                         food->name);
                 draw_ext_info(NDI_UNIQUE, 0,applier,MSG_TYPE_APPLY,
                               MSG_TYPE_APPLY_FAILURE,buf, NULL);
@@ -93,7 +93,7 @@ static method_ret food_type_apply(ob_methods *context, object *food,
             /* Wraith player gets no food from eating. */
         else if (is_wraith_pl(applier)) {
             char buf[MAX_BUF];
-            sprintf(buf,"You can no longer taste %s, and do not feel less hungry after %s it.",
+            snprintf(buf, sizeof(buf), "You can no longer taste %s, and do not feel less hungry after %s it.",
                     food->name, food->type==DRINK ? "drinking" : "eating");
             draw_ext_info(NDI_UNIQUE, 0,applier,
                           MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,buf,NULL);
@@ -119,14 +119,14 @@ static method_ret food_type_apply(ob_methods *context, object *food,
                 if (!is_dragon_pl(applier)) {
                         /* eating message for normal players*/
                     if(food->type==DRINK)
-                        sprintf(buf,"Ahhh...that %s tasted good.",food->name);
+                        snprintf(buf, sizeof(buf), "Ahhh...that %s tasted good.",food->name);
                     else
-                        sprintf(buf,"The %s tasted %s",food->name,
+                        snprintf(buf, sizeof(buf), "The %s tasted %s",food->name,
                                 food->type==FLESH?"terrible!":"good.");
                 }
                 else {
                         /* eating message for dragon players*/
-                    sprintf(buf,"The %s tasted terrible!",food->name);
+                    snprintf(buf, sizeof(buf), "The %s tasted terrible!",food->name);
                 }
 
                 draw_ext_info(NDI_UNIQUE, 0,applier,
@@ -343,19 +343,19 @@ static int dragon_eat_flesh(object *op, object *meal) {
     totalchance = 100 - totalchance*100;
         /* print message according to totalchance */
     if (totalchance > 50.)
-        sprintf(buf, "Hmm! The %s tasted delicious!", meal->name);
+        snprintf(buf, sizeof(buf), "Hmm! The %s tasted delicious!", meal->name);
     else if (totalchance > 10.)
-        sprintf(buf, "The %s tasted very good.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s tasted very good.", meal->name);
     else if (totalchance > 1.)
-        sprintf(buf, "The %s tasted good.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s tasted good.", meal->name);
     else if (totalchance > 0.1)
-        sprintf(buf, "The %s tasted bland.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s tasted bland.", meal->name);
     else if (totalchance >= 0.01)
-        sprintf(buf, "The %s had a boring taste.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s had a boring taste.", meal->name);
     else if (meal->last_eat > 0 && atnr_is_dragon_enabled(meal->last_eat))
-        sprintf(buf, "The %s tasted strange.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s tasted strange.", meal->name);
     else
-        sprintf(buf, "The %s had no taste.", meal->name);
+        snprintf(buf, sizeof(buf), "The %s had no taste.", meal->name);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY,
                   MSG_TYPE_APPLY_SUCCESS,buf, NULL);
 

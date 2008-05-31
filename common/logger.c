@@ -85,7 +85,7 @@ void LOG (LogLevel logLevel, const char *format, ...)
             }
         }
 
-        vsprintf(buf, format, ap);
+        vsnprintf(buf, sizeof(buf), format, ap);
 #ifdef WIN32 /* ---win32 change log handling for win32 */
         if (time_buf[0] != 0) {
             fputs(time_buf, logfile);

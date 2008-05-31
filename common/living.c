@@ -1763,9 +1763,9 @@ void player_lvl_adj(object *who, object *op) {
             fix_object(who);
         if(op->level>1) {
             if (op->type!=PLAYER)
-                sprintf(buf,"You are now level %d in the %s skill.",op->level,op->name);
+                snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.",op->level,op->name);
             else
-                sprintf(buf,"You are now level %d.",op->level);
+                snprintf(buf, sizeof(buf), "You are now level %d.",op->level);
 
         if(who)
             draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN,buf, buf);

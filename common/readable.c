@@ -740,7 +740,7 @@ static void init_msgfile (void)
         return;
     did_init_msgfile = 1;
 
-    sprintf (fname, "%s/messages", settings.datadir);
+    snprintf(fname, sizeof(fname), "%s/messages", settings.datadir);
     LOG (llevDebug, "Reading messages from %s...\n", fname);
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
@@ -812,7 +812,7 @@ static void init_book_archive (void)
     if (!booklist)
         booklist = bl;
 
-    sprintf (fname, "%s/bookarch", settings.localdir);
+    snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG (llevDebug, " Reading bookarch from %s...\n", fname);
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
@@ -1091,7 +1091,7 @@ static void add_author (object *op, int msgtype)
             strcpy (name, book_author[RANDOM () % nbr]);
       }
 
-    sprintf (title, "of %s", name);
+    snprintf(title, sizeof(title), "of %s", name);
     op->title = add_string (title);
 }
 
@@ -1855,7 +1855,7 @@ char* msgfile_msg (int level, int booksize)
     if (msg && !book_overflow (retbuf, msg->name, booksize))
         strcpy (retbuf, msg->name);
     else
-        sprintf (retbuf, "\n <undecipherable text>");
+        snprintf(retbuf, sizeof(retbuf), "\n <undecipherable text>");
 
 #ifdef BOOK_MSG_DEBUG
     LOG (llevDebug, "\n info_list_msg() created strng: %d\n", strlen (retbuf));

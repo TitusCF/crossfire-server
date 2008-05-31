@@ -190,7 +190,7 @@ void dump_gods(void) {
         fprintf(stderr," enemy_race(s): %s\n",(god->slaying?god->slaying:"none"));
         describe_resistance(god, 1, tmpbuf, HUGE_BUF);
         fprintf(stderr,"%s", tmpbuf);
-        sprintf(tmpbuf," attacktype:");
+        snprintf(tmpbuf, sizeof(tmpbuf), " attacktype:");
         if((tmpvar=god->attacktype)) {
             strcat(tmpbuf,"\n  ");
             DESCRIBE_ABILITY(tmpbuf, tmpvar, "Attacks");

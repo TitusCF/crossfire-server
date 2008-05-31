@@ -14,6 +14,25 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Change some more sprintf to snprintf.
+ common/readable.c
+ common/languages.c
+ common/holy.c
+ common/logger.c
+ common/image.c
+ common/region.c
+ common/living.c
+ common/exp.c
+ common/recipe.c
+ common/arch.c
+ common/porting.c
+ common/anim.c
+ common/treasure.c
+ socket/metaserver.c
+ types/food/food.c
+ types/weapon_improver/weapon_improver.c
+Arvid Norlander 2008-05-31
+
 Change some sprintf to snprintf.
  socket/image.c
  socket/item.c

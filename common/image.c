@@ -167,7 +167,7 @@ static void read_face_data(void)
     New_Face *on_face=NULL;
     FILE *fp;
 
-    sprintf(buf,"%s/faces", settings.datadir);
+    snprintf(buf, sizeof(buf), "%s/faces", settings.datadir);
     LOG(llevDebug,"Reading faces from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
         LOG(llevError, "Cannot open faces file: %s\n", strerror_local(errno, buf, sizeof(buf)));
@@ -233,7 +233,7 @@ void read_bmap_names(void) {
     size_t l;
 
     bmaps_checksum=0;
-    sprintf (buf,"%s/bmaps", settings.datadir);
+    snprintf(buf, sizeof(buf), "%s/bmaps", settings.datadir);
     LOG(llevDebug,"Reading bmaps from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
         LOG(llevError, "Cannot open bmaps file: %s\n", strerror_local(errno, buf, sizeof(buf)));
@@ -379,7 +379,7 @@ int read_smooth(void) {
     int smoothcount = 0;
 
     bmaps_checksum=0;
-    sprintf (buf,"%s/smooth", settings.datadir);
+    snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
     LOG(llevDebug,"Reading smooth from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {
         LOG(llevError, "Cannot open smooth file %s: %s\n", strerror_local(errno, buf, sizeof(buf)));
@@ -504,7 +504,7 @@ void read_client_images(void)
     int num,len,compressed, fileno,i, badline;
 
     memset(facesets, 0, sizeof(facesets));
-    sprintf(filename,"%s/image_info",settings.datadir);
+    snprintf(filename, sizeof(filename), "%s/image_info",settings.datadir);
     if ((infile=open_and_uncompress(filename, 0, &compressed))==NULL) {
         LOG(llevError,"Unable to open %s\n", filename);
         abort();
@@ -548,7 +548,7 @@ void read_client_images(void)
         if (!facesets[fileno].prefix) continue;
         facesets[fileno].faces = calloc(nrofpixmaps, sizeof(face_info));
 
-        sprintf(filename,"%s/crossfire.%d",settings.datadir, fileno);
+        snprintf(filename, sizeof(filename), "%s/crossfire.%d",settings.datadir, fileno);
         LOG(llevDebug,"Loading image file %s\n", filename);
 
         if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
