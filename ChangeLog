@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add missing call to init_gods in check_item unit test that caused a crash at
+-O1 or higher (sometimes). That however broke other parts of the test suite
+that depends on a certain sequence of random numbers. (Very brittle code!) Fix
+so it matches the new generated random order.
+ test/unit/common/check_item.c
+Arvid Norlander 2008-06-01
+
 Add some missing "extern" keywords that caused warnings. Change some EXTERN to
 extern (as EXTERN is undefined in some files, but that caused issues in a few
 cases). Add some missing "const" keywords to devel/devel.c and fix a typo in

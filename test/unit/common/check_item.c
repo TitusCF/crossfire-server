@@ -40,6 +40,7 @@ void setup(void) {
     cctk_setdatadir(SOURCE_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/item.out");
     cctk_init_std_archetypes();
+    init_gods();
 }
 
 void teardown(void)
@@ -137,6 +138,7 @@ START_TEST (test_describe_item)
         "random_food",
         "random_artifact",
         "random_read",
+        "random_amulet",
         "random_artifact",
         "random_amulet",
         "random_artifact",
@@ -151,10 +153,11 @@ START_TEST (test_describe_item)
         "(food+200)",
         "(Con+2)(Cha-1)(dam+10)(item_power +15)(weapon speed 5)(regeneration+1)(Attacks: weaponmagic)(resist drain +100)(resist poison +30)",
         "",
-        "(Str+1)(dam+9)(item_power +15)(weapon speed 6)(magic+1)(Attacks: drain, weaponmagic)(resist magic +30)(resist drain +100)",
         "",
         "(Str+1)(dam+9)(item_power +20)(weapon speed 6)(regeneration+1)(Attacks: electricity, drain)(resist magic +30)(resist electricity +30)(resist drain +100)",
-        "(dam+6)(ac-1)(weapon speed 11)(Attacks: physical)",
+        "",
+        "(Str+1)(armour +3)",
+        "",
         NULL
     };
 
@@ -181,14 +184,14 @@ START_TEST (test_describe_item)
         list = find_treasurelist(treasures[check]);
         fail_unless(list != NULL, "couldn't find treasure list %s", treasures[check]);
         test = generate_treasure(list, 50);
-        fail_unless(test != NULL, "couldn't create item from treasure list %s", treasures[check]);
+        fail_if(test == NULL, "couldn't create item from treasure list %s", treasures[check]);
         SET_FLAG(test, FLAG_IDENTIFIED);
         describe_item(test, NULL, buf, sizeof(buf));
 
         /* if you're adding lists, uncomment that so make finding the good value easier. */
         /*
         if (strcmp(buf, treasure_results[check]))
-            printf("describe_item(treasure %s) returned \"%s\" instead of \"%s\"\n", treasures[check], buf, treasure_results[check]);
+            printf("Item %d describe_item(treasure %s) returned \"%s\" instead of \"%s\"\n", check, treasures[check], buf, treasure_results[check]);
         */
 
         fail_unless(strcmp(buf, treasure_results[check]) == 0, "describe_item(treasure %s) returned \"%s\" instead of \"%s\"", treasures[check], buf, treasure_results[check]);
