@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Update 'make collect' so that it does not complain about files that are not
+really junk: CHANGES, TODO, *.xcf* (including *.xcf.gz or *.xcf.bz2), *.doc
+and *.txt.
+ lib/collect.pl.in
+Raphael Quinet 2008-06-01
+
 Scripted removal of trailing whitespaces, also removing excessive newlines at
 end of files (one final newline should be all).
  plugins/cfpython/cjson.c

@@ -164,13 +164,13 @@ sub traverse {
 	} elsif ( $file =~ /.*\.trs$/) {	# Treasure information file
 	    push(@treasure_files, $file);
 	}
-	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /$faceExt$/) {
+	elsif ( $file =~ /\.png$/ || $file =~ /\.xpm$/ || $file =~ /\.xcf/ || $file =~ /\.doc$/ || $file =~ /\.txt$/ || $file =~ /$faceExt$/) {
 	# we cover many files we probably shouldn't, but oh well.
 	# we just don't want complaints about all of these.
 	}
 	# ignore a couple of the more common 'junk' files that are not
 	# really junk.
-	elsif (($name ne "README") && ($name ne ".svn")) {
+	elsif (($name ne "README") && ($name ne "CHANGES") && ($name ne "TODO") && ($name ne ".svn")) {
 	    $trashNum++;
 	    print "Warning: $file might be a junk file\n";
 	}
