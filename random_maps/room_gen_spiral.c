@@ -44,9 +44,6 @@
 
 #include <math.h>
 
-int *free_x_list;
-int *free_y_list;
-
 #ifndef MIN
 #define MIN(x,y) (((x)<(y))? (x):(y))
 #endif

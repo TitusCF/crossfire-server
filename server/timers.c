@@ -42,6 +42,9 @@
 #include <sproto.h>
 #endif
 
+/* Extern in header. */
+cftimer timers_table[MAX_TIMERS];
+
 static void cftimer_process_event(tag_t ob_tag);
 
 /**

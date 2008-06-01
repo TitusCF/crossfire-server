@@ -32,10 +32,10 @@
 #include "string.h"
 typedef struct
 {
-    char* name;
-    char* value;
+    const char* name;
+    const char* value;
 } cf_parameter;
-cf_parameter cf_parameter_list[]=
+const cf_parameter cf_parameter_list[]=
 {
  {"CONFDIR",CONFDIR},
  {"DATADIR",DATADIR},
@@ -43,7 +43,7 @@ cf_parameter cf_parameter_list[]=
  {"LOCALDIR",LOCALDIR},
  {"PLUGIN_SUFFIX",PLUGIN_SUFFIX},
  };
-int cf_parameter_list_size = sizeof (cf_parameter_list)/sizeof (cf_parameter);
+const int cf_parameter_list_size = sizeof (cf_parameter_list)/sizeof (cf_parameter);
 
 int main (int argc, char **argv)
 {
@@ -77,7 +77,7 @@ int main (int argc, char **argv)
         }
       }
     }
-    /* Bad arguments count of invalid ones*/
+    /* Bad arguments count or invalid ones */
     printf ("usage: crossfire-config --Dflags");
     printf (" (gives complete Dflags line for compiler invocation)\n");
     printf ("usage: crossfire-config --parameter-list");

@@ -14,6 +14,18 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add some missing "extern" keywords that caused warnings. Change some EXTERN to
+extern (as EXTERN is undefined in some files, but that caused issues in a few
+cases). Add some missing "const" keywords to devel/devel.c and fix a typo in
+a comment. Remove some unused variables from random_maps.
+ include/timers.h
+ include/global.h
+ devel/devel.c
+ random_maps/room_gen_onion.c
+ random_maps/room_gen_spiral.c
+ server/timers.c
+Arvid Norlander 2008-06-01
+
 Set svn:eol-style to native on *.c and *.h files that were missing it.
  server/ob_methods.c
  server/ob_types.c

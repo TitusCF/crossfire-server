@@ -201,7 +201,7 @@ EXTERN racelink *first_race;                /**< Race list. */
 /*@}*/
 
 #define NROF_COMPRESS_METHODS 4
-EXTERN const char *uncomp[NROF_COMPRESS_METHODS][3];
+extern const char *uncomp[NROF_COMPRESS_METHODS][3];
 
 /*
  * Variables set by different flags (see init.c):
@@ -219,8 +219,8 @@ extern uint32 pticks;           /**< Used by various function to determine
  * @defgroup GLOBAL_VARIABLES Misc global variables.
  */
 /*@{*/
-EXTERN FILE *logfile;			/* Used by server/daemon.c */
-EXTERN int reopen_logfile;
+EXTERN FILE *logfile;			/**< Used by server/daemon.c */
+extern int reopen_logfile;
 EXTERN int exiting;			/**< True if the game is about to exit. */
 EXTERN long nroftreasures;		/**< Only used in malloc_info(). */
 EXTERN long nrofartifacts;		/**< Only used in malloc_info(). */

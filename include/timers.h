@@ -64,7 +64,7 @@ typedef struct _cftimer
 #define MAX_TIMERS 1000
 
 /** The actual timers. */
-cftimer timers_table[MAX_TIMERS];
+extern cftimer timers_table[MAX_TIMERS];
 
 #define TIMER_ERR_NONE      0   /**< No error. */
 #define TIMER_ERR_ID       -1   /**< Invalid timer id. */
