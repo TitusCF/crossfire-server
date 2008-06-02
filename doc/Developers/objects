@@ -224,7 +224,7 @@ Set the variable attack_movement to one of the below (cut from define.h):
 #define RUNATT   2 /* run but attack if player catches up to object         */
 #define HITRUN   3 /* run to then hit player then run away cyclicly         */
 #define WAITATT  4 /* wait for player to approach then hit, move if hit     */
-#define RUSH     5 /* Rush toward player blindly, similiar to dumb monster  */
+#define RUSH     5 /* Rush toward player blindly, similar to dumb monster  */
 #define ALLRUN   6 /* always run never attack good for sim. of weak player  */
 #define DISTHIT  7 /* attack from a distance if hit as recommended by Frank */
 #define WAIT2    8 /* monster does not try to move towards player if far    */
@@ -408,7 +408,7 @@ can_use_ring 1
 Resistances (resist_x)
 ===========
 The amount of resistance the object has to certain attack types or
-environmental effects.  Use negative numbers to make onjects more vunerable to
+environmental effects.  Use negative numbers to make objects more vulnerable to
 the effects.
 
 e.g
@@ -1164,7 +1164,7 @@ FIXME - Add information for legs.
 
 Using body information:
 
-Using this information is quite easy - for objects, just add the approprate
+Using this information is quite easy - for objects, just add the appropriate
 body_.. with a negative value.  For monsters, put those in with a positive
 value.  If a monster has a location to use an object, is is presumed in the
 code that the monster should pick up/equip objects into that location.
@@ -1192,7 +1192,7 @@ However, a few bits do care - the skill stuff checks to see if you have
 any arms free - thus, BODY_ARMS is defined so we know if the player
 does or does not.  The alternative to this would be to have the
 skill stuff do a strcmp, but then we are defining the name - easier
-to just presume that the location won't change in teh body_locations
+to just presume that the location won't change in the body_locations
 table - there is no reason that it should.
 
 H. Meaning of certain attributes for certain items:
@@ -1649,7 +1649,7 @@ race: only affect objects with a arch/name/race matching this.
 
 slaying: don't affect objects with a arch/name/race matching this.
 
-Note from Mark:  Player Movers and Directors are seperate objects, even
+Note from Mark:  Player Movers and Directors are separate objects, even
 though they look and act similar.  Directors only do spells/missiles,
 however, while player movers only do living creatures (depending on how it
 is set)
@@ -1658,7 +1658,7 @@ H. Directors
 ============
 Directors are objects that change the direcion of objects moving through the
 air such as spells and missiles. As in the noted in the section on player
-movers, they act similar, however in constrast they only affect spells,
+movers, they act similar, however in contrast they only affect spells,
 missiles, or other flying projectiles.
 
 Here are the various fields:
@@ -1764,7 +1764,7 @@ when the floor is activated:
                 3:  'sleep'     Puts all monsters to sleep
                 4:  'charm'     Makes monster into a pet of person
                                 who triggers the square. This setting
-                                is not enabled for continous operation
+                                is not enabled for continuous operation
 
 
 L. Altars, Triggers, Detectors and other connected items:
@@ -1973,13 +1973,13 @@ unaffected.
 P. Transports:
 ==============
 
-Tranports are objects that help the player move.  These should not be confused
+Transports are objects that help the player move.  These should not be confused
 with EXITS, which instaneously transport a player from one map to another.
 
-Instead, tranports may let the player move faster, give them move types they
+Instead, transports may let the player move faster, give them move types they
 don't have, etc.  A simple example of this would a horse.  It doesn't let the
 player move anyplace he normally couldn't go, but lets him get there faster.
-Ships would be another case - the player normally can't move accross water,
+Ships would be another case - the player normally can't move across water,
 but with a ship, he can.
 
 Meaning of various object attributes (KV means the value is stored in the
@@ -2022,9 +2022,9 @@ passenger_limit(KV)
 
 face_full
 		It may be desirable to have different faces to denote what
-		the tranport looks like if someone is on it vs not (mounted
+		the transport looks like if someone is on it vs not (mounted
 		horse vs just a horse).  This is used to denote what it will
-		look like when loaded.  If the tranport becomes empty, it will
+		look like when loaded.  If the transport becomes empty, it will
 		fall back to the archetype face.
 
 anim_full	Like face_full above, but for animated objects.
@@ -2037,7 +2037,7 @@ player.  The player is placed into the inventory of the transport.
 
 When on the transport, the player will see other objects on the transport.
 When the player issues a map command, if they are the 'captain', the
-tranport moves as directed.  If not, the move command is ignored.  Note
+transport moves as directed.  If not, the move command is ignored.  Note
 that players on the transport can issue other commands (say, cast, etc).
 
 Some special handling is done relating the player and transport speed so that
@@ -2243,7 +2243,7 @@ made to generate an item (or list transition) from that treasurelist.  There
 is a maximum number of attempts that can be made.
 
 Also, a reserved list name of 'NONE' is allowed.  This means that no
-item should be generated (of relevence only on treasureone lists.)
+item should be generated (of relevance only on treasureone lists.)
 
 To use such a treasure, just put "randomitem <name>" into any
 archetype in the archetype-file.  Random treasure will then be generated
@@ -2395,7 +2395,7 @@ If the follower doesn't already have this or a similar item (with same
 type, name, title, msg and slaying fields), gives a copy of this item
 to the follower.  You have to set FLAG_STARTEQUIP in the archetype
 yourself if you wan't the copy to have this flag.  This method (with
-FLAG_STARTEQUIP set) should be prefered for giving items to followers,
+FLAG_STARTEQUIP set) should be preferred for giving items to followers,
 because it is rather safe to use.  The amount is limited, because if
 the follower wants more of it he has to go back to an altar of his
 god.  He can't pray an hour over an altar and then go fighting with a
@@ -2426,7 +2426,7 @@ LIGHTING CODE (by Brian Thomas):
 
                 - New attacktype -AT_BLIND. This is a pretty severe penalty
 		for monsters and players alike. Players cant see any square
-		but thier own, monsters can only attack/follow players who
+		but their own, monsters can only attack/follow players who
 		are in an adjacent square. Need to make the monsters stumble
 		around when no player is near, rather than the current way
 		in which they stand around waiting to get "ace'd". Undead
@@ -2441,7 +2441,7 @@ LIGHTING CODE (by Brian Thomas):
 		(do something) whether the lighting code is used or not.
 
                 - Modified archetypes and artifacts list to encompass changes
-		to the code from lighting. Also, some new archs instroduced,
+		to the code from lighting. Also, some new archs introduced,
 		namely "flint and steel" for lighting stuff on fire and
 		"torch" a source of light.
 
@@ -2501,7 +2501,7 @@ Ref:  http://wiki.metalforge.net/doku.php/dev:shared_strings
 
 To minimize memory use, Crossfire uses a shared string mechanism. This is
 intended to be used for strings whose contents is not expected to change during
-the server’s life. Using shared strings saves memory and improved performance.
+the server's life. Using shared strings saves memory and improved performance.
 
 Those strings are used like regular const char*, but should not be changed via
 strcpy, snprintf or other means because it would affect all structures using
@@ -2527,7 +2527,7 @@ available:
     * const char* find_string(const char *str), to search if a string is shared
       or not
     * void free_string(const char *str), to decrement the use counter. After
-      it’s called, str should not be used anymore.
+      it's called, str should not be used anymore.
 
 Because shared strings will return a pointer to a string if it exists, one can
 see if the strings are equal by comparing the shared string address they point

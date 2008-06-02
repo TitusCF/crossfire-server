@@ -47,7 +47,7 @@ char *name: Name of the spell (large fireball, icestorm, etc)
 
 char *lore: Description of the spell to be put in books, or perhaps even
    to just let the player see.  In a sense, this puts documentation of
-   the spells within the object, instead of having to maintain seperate
+   the spells within the object, instead of having to maintain separate
    files.
 
 sint16 casting_time :  How long it takes to cast the spell (was time)
@@ -153,7 +153,7 @@ cleric is basically redundant now - the skill says what skill to use
 for this spell.  Note that a spell could in theory cost both mana
 and grace - what it costs is not necessarily tied to a skill.  However,
 it would be bad practice to make a wizardry spell use mana.  However,
-I could potentially see hybrid skills that have some variosu benefits,
+I could potentially see hybrid skills that have some various benefits,
 or if we have say a 'magic' god, perhaps some special spells it provides
 a use mana.
 
@@ -410,7 +410,7 @@ SP_BOMB (8):
     other_arch at a customized bomb.
 
     A bomb then explodes.  It explodes into 'splints' (this is
-    unfortuantely hardcode), and the other_arch pointer of the bomb,
+    unfortunately hardcode), and the other_arch pointer of the bomb,
     which default is of SP_EXPLOSION.
 
 SP_WONDER(9):
@@ -424,7 +424,7 @@ SP_WONDER(9):
     as in the treasurelist.
 
     Note 2: Ideally, the flower effect should also be in this treasure list,
-    so the occurence could be accurately controlled.
+    so the occurrence could be accurately controlled.
 
 SP_SMITE(10):
     smite spells are target spells - the spell looks for an appropriate
@@ -464,7 +464,7 @@ SP_SUMMON_GOLEM(12):
 	to determine_holy_arch()
     dam: How much damage the golem will do.  dam_modifier alters this in the
 	expected way.  If zero, damage from the golem is used, but damage
-  	modifer will still be added.
+  	modifier will still be added.
     duration: increases the golems hp, which basically amounts to duration.
     attacktype: If set, golem gets this attacktype instead of the
   	normal arch attacktype.
@@ -549,7 +549,7 @@ SP_DESTRUCTION(16):
       as an effect to show what spaces where hit.
     race
 
-    Note: As converted to a spell object, this is now usuable by monsters.
+    Note: As converted to a spell object, this is now usable by monsters.
     The rule for what is damaged is basically this:
     If cast by a player/friendly creature, damages non players/non friendlies.
     If cast by a monster (non friendly), damages players/friendlies.
@@ -582,7 +582,7 @@ SP_INVISIBLE(19):
         be NULL, in which case it will make the player invisible
         to everything _but_ undead.  Note also that check is done that
 	'race' a subset of the race of the monster (eg, don't use
-        comma seperated values).
+        comma separated values).
         It is not possible to be invisible to both undead and non
         undead at the same time.
      make_invisible: if set, this is 'improved' invisible vs temporary
@@ -605,12 +605,12 @@ SP_HEALING(21): This spell heals a character/monster.  Creature must
     last_sp: Regenerate this number of spell points.
     last_grace: Regenerate this number of grace points.
 	(since the sp and grace fields are used for how much it costs
-	to use the spell, we can't re-use those fields unfortuantely)
+	to use the spell, we can't re-use those fields unfortunately)
     other_arch: seems unused - kept could be used as a spell effect
  	indicator.
     Note that any number of these fields can be combined.
 
-SP_CREATE_FOOD(22): This creats food for the player.  The food is
+SP_CREATE_FOOD(22): This creates food for the player.  The food is
     not worth any money, but otherwise normal food.
     food: Base amount of food to create.
     duration_modifier: Creates an addition 50 food/increase of this value.
@@ -630,7 +630,7 @@ SP_CHANGE_ABILITY(24): this adjust some ability the player has (str,
 
     By default, only one benefit spell of each time can be active at a
     time (eg, you could have a strength and a dex, but not two strength
-    spells).  This is noormally tracked by changing the force name to
+    spells).  This is normally tracked by changing the force name to
     be the same name as the spell, but see the race attribute below.
 
     If a spell is already in effect, the duration of the existing
@@ -654,7 +654,7 @@ SP_CHANGE_ABILITY(24): this adjust some ability the player has (str,
     resist_*: The protection the spell grants.  Note that the code does
     no sanity checking on these values, other than to make sure they
     do not exceed 100.  Before spell objects, there was code to put
-    caps on these values.  There is no practical way to say waht the
+    caps on these values.  There is no practical way to say what the
     caps should be if so put on - instead, just make sure that
     that dam_modifier is a sane value.
 
@@ -665,9 +665,9 @@ SP_CHANGE_ABILITY(24): this adjust some ability the player has (str,
     hp: Copied over, but damage adjustment added as a bonus.  hp
        in the form of a force increases characters hp regen rate.
 
-    Str, Dex, Con, Wis, Int, Pow, Cha: Attempted adjustement to the
+    Str, Dex, Con, Wis, Int, Pow, Cha: Attempted adjustment to the
     stat.  These values are number of d3's rolled to adjust.  In
-    additin, these values also determine the max benefit based on the
+    addition, these values also determine the max benefit based on the
     recipient - the table is 15 + 5 * attr_value.  If 1, then the
     highest the recipients stat after this would be 20.  If 2, highest
     would be 25, if 3, highest would be 30, etc.
@@ -755,7 +755,7 @@ SP_SUMMON_MONSTER (27):
     list for friendly objects, and we really don't want the spell on that
     list.
     The reason not all summoned monsters are friendly is because there are
-    some spells that create monsters specifically meant to be agressive
+    some spells that create monsters specifically meant to be aggressive
     to the player.
     If flag_monster is set, the monster/created object is not changed.
     Only if it is not set, do we set a value (flag_friendly).
@@ -769,7 +769,7 @@ SP_RECHARGE (28):
     level wands.
 
 SP_POLYMORPH (29):
-    This spell by default is disabled because of variosu abuses within
+    This spell by default is disabled because of various abuses within
     the spell.
 
     The spell normally turns one object into another similar type of
@@ -826,7 +826,7 @@ SP_MOOD_CHANGE (34):
     range (& modifier): How for this spell effects, just like SP_DETECT above.
     race: If set, only monsters of matching race are effected.  Can be set
        to GOD_SLAYING, in which enemy races of the god are effected.
-       if set to GOD_FRIEND, then races alligned with the god are effected.
+       if set to GOD_FRIEND, then races aligned with the god are effected.
     attacktype: Attacktype the spell hits with.  The spell doesn't do any
 	damage - this instead is used for saving throw information.  Note
         that the monster uses its best resistance for the saving throw.
@@ -914,7 +914,7 @@ SP_ANIMATE_WEAPON (41)
 	other_arch field can be appropriate set.
     range_adjust: Bonus to wc and speed for the spell
     duration & modifier: Bonus to creatures hp.
-    dam & modifer: Adjust to damage the golem does.
+    dam & modifier: Adjust to damage the golem does.
 
 SP_LIGHT (42)
     Arguably, such a basic spell wouldn't seem to need its own subtype.
@@ -961,7 +961,7 @@ SP_FAERY_FIRE (44)
     other_arch: This can in practice be anything, but is typically just used
       as an effect to show what spaces where hit.
 
-    Note: As converted to a spell object, this is now usuable by monsters.
+    Note: As converted to a spell object, this is now usable by monsters.
     The rule for what is damaged is basically this:
     If cast by a player/friendly creature, damages non players/non friendlies.
     If cast by a monster (non friendly), damages players/friendlies.
@@ -1001,7 +1001,7 @@ SP_TOWN_PORTAL (47):
 
     other_arch: Name of the force object to use to mark the first portal
 	target location (town_portal).
-    race: Name of the object used to mark where the portals goe
+    race: Name of the object used to mark where the portals go
 	(town_portal_active)
     slaying: Name of the object used for the actual exit objects
 	(town_portal_magic)
@@ -1021,7 +1021,7 @@ SP_PARTY_SPELL (48):
  document, or clean totally broken spell :)
 
 SP_ITEM_CURSE_BLESS (49):
-    This will curse or bless player’s marked item. Curse will not change
+    This will curse or bless player's marked item. Curse will not change
     weight, just set the cursed flag. Bless will make the item god-given.
 
     cursed: if set, item gets cursed.
@@ -1040,7 +1040,7 @@ as the type of spell to cast.
 
 Treasure lists are used to determine what spell goes in the object.  Thus,
 what spells show up in the objects is determined purely by the treasure lists,
-and unique lists can be pade for potions, scrolls, wands, horns, and even
+and unique lists can be made for potions, scrolls, wands, horns, and even
 different lists for heavy and light rods.
 
 The value of the finished object is the value field in the spell object
@@ -1082,7 +1082,7 @@ potions and dusts (which were really just potions with a is_dust flag set)
 have been redone in several ways.
 
 First, potions had varying meanings for the same archetype.  You could
-have potions that improve stats permenantly, ones that cast spells,
+have potions that improve stats permanently, ones that cast spells,
 and dust.
 
 
@@ -1213,7 +1213,7 @@ spells the monster would cast.
 In the new system, abilities are no different than spells, and use the
 same type/subtype.
 
-Abilities may still be seperate for a few reasons: 1) monsters are not
+Abilities may still be separate for a few reasons: 1) monsters are not
 likely to have all the needed skills. 2) sp/grace costs may be
 different. 3) Many abilities shouldn't add attacktype magic. 4) Abilities
 generally have a very fast casting time, since monsters move slower.
@@ -1259,7 +1259,7 @@ same (or close enough - in the revised code, the results were +/- 3%)
 In the end, through the various changes, the code ran 70% faster than before.
 
 Breakdown of gains:
-Setting op->range in explosion() after propogating spell:	32%
+Setting op->range in explosion() after propagating spell:	32%
 Making was_destroyed() a macro:					 9%
 was_destroyed() + op->range changes				48%
 Allowing spells to merge:					21%
@@ -1273,8 +1273,8 @@ Notes on the changes:
 op->range=0 in explosion:
 -------------------------
 Each time the explosion object got an action, if op->range>0, it would try
-to propogate to all neighboring squares.  In almost all cases this is a
-futile excercise, because if that neighboring square has an instance of this
+to propagate to all neighboring squares.  In almost all cases this is a
+futile exercise, because if that neighboring square has an instance of this
 spell, it won't put another one there (one thing that ok_to_put_more()
 checks on).  By setting the range to 0, we prevent this attempt.  It also
 has the side benefit of allowing more spells to merge (we can not merge
@@ -1302,7 +1302,7 @@ move to 1, but if A@1 moves first, it merges with B@4, so now there is AB@4,
 and like AB@2, it will not move to space 1 (spell is already there).
 
 But enforcing the range==0 check, this works fine - if the spells are still
-propogating to different spaces, we don't merge.  So in the above example,
+propagating to different spaces, we don't merge.  So in the above example,
 spells A & B @ 2 do not merge, but instead remain individual spell object - B
 can move to 1, A can move to 4, and after doing so, the range to each spell is
 set to zero, and they can then merge at that point
@@ -1316,7 +1316,7 @@ a macro was not particularly messy.
 Allowing spells to merge:
 -------------------------
 The simplest aspect of this is to have like spells be merged in
-insert_ob_in_map().  However, as noted above, we won't propogate a spell to a
+insert_ob_in_map().  However, as noted above, we won't propagate a spell to a
 space if there is already an instance of that spell from the same casting.  So
 to do this, we needed to record the tags of the parent spell that we merge in,
 so the spell_tags array (dynamically allocated) is created.  For speed, a
@@ -1327,7 +1327,7 @@ must be same type of spell, same owner, same level, etc.  We then adjust the
 damage and duration of the merged spell.  We can not merge spells of different
 ranges - one can not really associate what effect that should have on damage
 
-There are some player noticable effects to this - players will not see as many
+There are some player noticeable effects to this - players will not see as many
 spell objects on a space they are on, as some could have been merged together.
 
 Also, the test case makes it so that damage for objects not moving within the
@@ -1348,12 +1348,12 @@ aspects of the code, notable merging the tables together.  So a too small hash
 table would result in not enough objects getting merged.
 
 In the test case above, following results on my system with the 16 slot table:
-Got 201640 supressions, 8421 spell merges, 289 full tables
+Got 201640 suppressions, 8421 spell merges, 289 full tables
 3.623u 0.060s 0:03.90 94.3%     0+0k 0+0io 0pf+0w
 
 With a 32 slot table:
 3.462u 0.031s 0:03.98 87.6%     0+0k 0+0io 0pf+0w
-Got 201641 supressions, 8748 spell merges, 249 full tables
+Got 201641 suppressions, 8748 spell merges, 249 full tables
 
 Doubling the size of the table makes a minor improvement in full tables as
 well as performance (.16 seconds is about 4%).  And there is definitely a
@@ -1372,7 +1372,7 @@ not reduce the number of objects on the different spaces.
 
 Other Thoughts Related on Merging:
 ----------------------------------
-After the changes above, this is the top cpu users when run in the test
+After the changes above, this is the top CPU users when run in the test
 program:
 
  63.42      1.82     1.82   687168     0.00     0.00  hit_map

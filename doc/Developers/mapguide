@@ -117,7 +117,7 @@ single players (not able to complete it), and makes a map that requires
 multiple players for only a small portion.
 
 7) Try not to make the maps too many levels deep.  To get to the goal,
-it should not require a 6 hour continous sitting, as the player works
+it should not require a 6 hour continuous sitting, as the player works
 through each map to get to the next.  Multi level maps are fine - just
 don't over do it.  One way to do this is have several maps with a key
 or other special item at the end.  The final map could have the various
@@ -163,7 +163,7 @@ The first monster in the map should not be the most difficult monster,
 nor should the last monster be orders of magnitude more difficult
 than anything before it.
 
-It is very frustating to play a map, killing most every monster without
+It is very frustrating to play a map, killing most every monster without
 much difficulty, only to find that last monster unkillable.
 
 It is reasonable to have the monster increase in difficulty.  Also, if the
@@ -332,7 +332,7 @@ to enter, you will need to change the face of exit for this to work.  If
 you do this, you should also accompany it with a magic mouth.)
 
 5) Make sure you set the difficulty field in the map attributes to
-somethign meaningful.  Crossfire will calculate a default dificulty,
+something meaningful.  Crossfire will calculate a default difficulty,
 but its formula is hardly ideal.  The difficulty of a map determines how
 magical the treasure will be (and some treasure types won't show up
 unless the map has a certain difficulty level.)

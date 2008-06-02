@@ -163,5 +163,5 @@ Caveats:
   above some certain amount.  It's also conceivable since the real
   high cost here is the comparisons, hashing the keys or values and
   storing that hash in the object could be a big gain, but once again,
-  depends on how often the values change (as you'd have to recalcuate
+  depends on how often the values change (as you'd have to recalculate
   the entire hash)

@@ -56,7 +56,7 @@ name in the map structure.
 	happen.  This is useful for shops and towns, which are constantly
 	accessed, but should be reset periodically.
 
-'darkness', was 'invisible'.  Light/darnkess of map (overall).  If 0,
+'darkness', was 'invisible'.  Light/darkness of map (overall).  If 0,
 	all of map is fully bright.
 
 'unique' - if set, this entire map is unique.  Exactly unique to what

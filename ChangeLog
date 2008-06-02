@@ -14,6 +14,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Spellcheck and update documentation. Updated CVS commit guide lines to refer
+to SVN (and current practice). Added missing docs for "music" command to
+protocol docs.
+ doc/Developers/objects
+ doc/Developers/mapguide
+ doc/Developers/protocol
+ doc/Developers/key-value
+ doc/Developers/spells
+ doc/Developers/svn
+ doc/Developers/README
+ doc/Developers/map-technical
+ doc/Developers/random-maps
+Moved:
+ doc/Developers/cvs to doc/Developers/svn
+Arvid Norlander 2008-06-02
+
 Add missing call to init_gods in check_item unit test that caused a crash at
 -O1 or higher (sometimes). That however broke other parts of the test suite
 that depends on a certain sequence of random numbers. (Very brittle code!) Fix

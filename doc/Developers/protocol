@@ -932,6 +932,12 @@ S->C: sound2 <x><y><dir><volume><type><len of subtype>subtype<len of name>name
 	'len of name' is a byte, length of name.
 	'name' is the name of the sound emitter, that can be used to find a specific sound.
 
+S->C: music <string>
+	Change background music. Server will send NONE as the string to stop any
+	music from playing. (Due to someone forgetting to update this file when
+	he/she implemented the command, it is unknown what exactly should be done
+	with the string parameter, is it a filename? If yes: relative what?)
+
 ******************************************************************************
 MISC COMMANDS:
 

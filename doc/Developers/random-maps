@@ -145,7 +145,7 @@ will be placed at random in the maze.
 			"difficulty" defined in common/*.c.
 			If nonzero, this map and its descendants will
 			have the same difficulty.  If zero, it'll be set
-			to the value of dungeon_level and incremeneted with
+			to the value of dungeon_level and incremented with
 			each recursive map.
 
   'difficulty_increase'	Sets how fast the difficulty increases.  This value
@@ -368,7 +368,7 @@ will be placed at random in the maze.
     0  pick random options
     1  Regular spiral:  distance increases constantly with angle
     2  Fine spiral:  most coils possible are fit in
-    4  Fit Spiral:  scale spiral to fit rectanglar region
+    4  Fit Spiral:  scale spiral to fit rectangular region
       (i.e., the spiral will look elliptical)
 
 

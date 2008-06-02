@@ -1,11 +1,8 @@
-
-CVS checkin process:
+SVN checkin process:
 
 1) All checkins should include a log message.  Included in the log
    message should be what changed (files), why it changed (what new
-   feature or bug was fixed), as well as the date and time (while CVS
-   does stamp these automatically, it can be easier to read the log for
-   that information than looking at the CVS header).
+   feature or bug was fixed).
 
    It is not necessary to go into a long exposition, and pasting the actual
    changes is not generally useful.  But this log message should be useful for
@@ -80,7 +77,7 @@ CVS checkin process:
    is reported in it, go an fix it.
 
 6) Look at the testplans, and if your code may benefit from them, use them.
-   Likewise, if you develope a testplan for your code, record it in the
+   Likewise, if you develop a testplan for your code, record it in the
    testplan directory.
 
 Mark Wedel

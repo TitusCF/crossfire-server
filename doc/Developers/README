@@ -9,7 +9,7 @@ If you add a file to this directory, please update this file.  Also,
 user lowercase names for the files, and the addition of readme or doc or
 txt to the file name is not needed - that is implied in the doc directory.
 
-cvs: Guidelines for developers working with CVS access - guidelines
+svn: Guidelines for developers working with SVN access - guidelines
   for discussing new projects, commit messages, etc.
 images: Guide for adding image sets to crossfire.
 map-technical: Technical aspect of maps - fields in the map header (and
