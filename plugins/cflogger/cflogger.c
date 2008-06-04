@@ -46,6 +46,9 @@
  */
 
 #include <cflogger.h>
+#ifndef __CEXTRACT__
+#include <cflogger_proto.h>
+#endif
 /*#include <stdarg.h>*/
 
 #include <sqlite3.h>
@@ -84,7 +87,7 @@ static int check_tables_callback(void *param, int argc, char **argv, char **azCo
  * @param sql
  * query to run.
  */
-void do_sql(const char* sql) {
+static void do_sql(const char* sql) {
     int err;
     char* msg;
 
@@ -101,7 +104,7 @@ void do_sql(const char* sql) {
 /**
  * Checks the database format, and applies changes if old version.
  */
-void check_tables(void) {
+static void check_tables(void) {
     int format;
     int err;
     format = 0;
@@ -137,7 +140,7 @@ void check_tables(void) {
  * @return
  * unique identifier in the 'living' table.
  */
-int get_living_id(object* living) {
+static int get_living_id(object* living) {
     char** line;
     char* sql;
     int nrow, ncolumn, id;
@@ -171,7 +174,7 @@ int get_living_id(object* living) {
  * @return
  * unique region identifier, or 0 if reg is NULL.
  */
-int get_region_id(region* reg) {
+static int get_region_id(region* reg) {
     char** line;
     char* sql;
     int nrow, ncolumn, id;
@@ -207,11 +210,11 @@ int get_region_id(region* reg) {
  * @return
  * unique map identifier.
  */
-int get_map_id(mapstruct* map) {
+static int get_map_id(mapstruct* map) {
     char** line;
     char* sql;
     int nrow, ncolumn, id, reg_id;
-    char* path = map->path;
+    const char* path = map->path;
 
     if (strncmp(path, "/random/", 7) == 0)
         path = "/random/";
@@ -240,7 +243,7 @@ int get_map_id(mapstruct* map) {
  * @return
  * 1 if a line was inserted, 0 if the current ingame time was already logged.
  */
-int store_time(void) {
+static int store_time(void) {
     char** line;
     char* sql;
     int nrow, ncolumn;
@@ -276,7 +279,7 @@ int store_time(void) {
  * @param event_code
  * arbitrary event code.
  */
-void add_player_event(object* pl, int event_code) {
+static void add_player_event(object* pl, int event_code) {
     int id = get_living_id(pl);
     int map_id = 0;
     char* sql;
@@ -299,7 +302,7 @@ void add_player_event(object* pl, int event_code) {
  * @param pl
  * object causing the event. Can be NULL.
  */
-void add_map_event(mapstruct* map, int event_code, object* pl) {
+static void add_map_event(mapstruct* map, int event_code, object* pl) {
     int mapid;
     int playerid = 0;
     char* sql;
@@ -323,7 +326,7 @@ void add_map_event(mapstruct* map, int event_code, object* pl) {
  * @param killer
  * who killed.
  */
-void add_death(object* victim, object* killer) {
+static void add_death(object* victim, object* killer) {
     int vid, kid, map_id;
     char* sql;
     if (!victim || !killer)
@@ -555,7 +558,7 @@ CF_PLUGIN int postInitPlugin(void)
  * @return
  * 0.
  */
-int closePlugin(void)
+CF_PLUGIN int closePlugin(void)
 {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (database) {

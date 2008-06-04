@@ -856,34 +856,34 @@ static int do_script(CFPContext* context, int silent)
 
 typedef struct
 {
-    char* name;
-    int value;
+    const char* name;
+    const int value;
 } CFConstant;
 
-static void addConstants(PyObject* module, const char* name, CFConstant* constants)
+static void addConstants(PyObject* module, const char* name, const CFConstant* constants)
 {
     int i = 0;
     char tmp[1024];
     PyObject* new;
     PyObject* dict;
 
-    strncpy(tmp, "Crossfire_", 1024);
-    strncat(tmp, name, 1024 - strlen(tmp));
+    strncpy(tmp, "Crossfire_", sizeof(tmp));
+    strncat(tmp, name, sizeof(tmp) - strlen(tmp));
 
     new = Py_InitModule(tmp, NULL);
     dict = PyDict_New();
 
     while ( constants[i].name != NULL)
     {
-        PyModule_AddIntConstant(new, constants[i].name, constants[i].value);
+        PyModule_AddIntConstant(new, (char*)constants[i].name, constants[i].value);
         PyDict_SetItem(dict, PyInt_FromLong(constants[i].value), PyString_FromString(constants[i].name));
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
     Py_DECREF(new);
 
-    strncpy(tmp, name, 1024);
-    strncat(tmp, "Name", 1024 - strlen(tmp));
+    strncpy(tmp, name, sizeof(tmp));
+    strncat(tmp, "Name", sizeof(tmp) - strlen(tmp));
     PyDict_SetItemString(PyModule_GetDict(module), tmp, dict);
     Py_DECREF(dict);
 }
@@ -893,20 +893,20 @@ static void addConstants(PyObject* module, const char* name, CFConstant* constan
  * names from values. To be used for collections of constants
  * which are not unique but still are usefull for scripts
  */
-static void addSimpleConstants(PyObject* module, const char* name, CFConstant* constants)
+static void addSimpleConstants(PyObject* module, const char* name, const CFConstant* constants)
 {
     int i = 0;
     char tmp[1024];
     PyObject* new;
 
-    strncpy(tmp, "Crossfire_", 1024);
-    strncat(tmp, name, 1024 - strlen(tmp));
+    strncpy(tmp, "Crossfire_", sizeof(tmp));
+    strncat(tmp, name, sizeof(tmp) - strlen(tmp));
 
     new = Py_InitModule(tmp, NULL);
 
     while ( constants[i].name != NULL)
     {
-        PyModule_AddIntConstant(new, constants[i].name, constants[i].value);
+        PyModule_AddIntConstant(new, (char*)constants[i].name, constants[i].value);
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
@@ -916,7 +916,7 @@ static void addSimpleConstants(PyObject* module, const char* name, CFConstant* c
 
 static void initConstants(PyObject* module)
 {
-    static CFConstant cstDirection[] = {
+    static const CFConstant cstDirection[] = {
         { "NORTH", 1 },
         { "NORTHEAST", 2 },
         { "EAST", 3 },
@@ -927,7 +927,7 @@ static void initConstants(PyObject* module)
         { "NORTHWEST", 8 },
         { NULL, 0 } };
 
-    static CFConstant cstType[] = {
+    static const CFConstant cstType[] = {
         { "PLAYER", PLAYER },
         { "TRANSPORT", TRANSPORT },
         { "ROD", ROD },
@@ -1041,7 +1041,7 @@ static void initConstants(PyObject* module)
         { "MATERIAL", MATERIAL },
         { NULL, 0 } };
 
-    static CFConstant cstMove[] = {
+    static const CFConstant cstMove[] = {
         { "WALK", MOVE_WALK },
         { "FLY_LOW", MOVE_FLY_LOW },
         { "FLY_HIGH", MOVE_FLY_HIGH },
@@ -1051,7 +1051,7 @@ static void initConstants(PyObject* module)
         { "ALL", MOVE_ALL },
         { NULL, 0 } };
 
-    static CFConstant cstMessageFlag[] = {
+    static const CFConstant cstMessageFlag[] = {
         { "NDI_BLACK", NDI_BLACK },
         { "NDI_WHITE", NDI_WHITE },
         { "NDI_NAVY", NDI_NAVY },
@@ -1069,7 +1069,7 @@ static void initConstants(PyObject* module)
         { "NDI_ALL", NDI_ALL },
         { NULL, 0 } };
 
-    static CFConstant cstCostFlag[] = {
+    static const CFConstant cstCostFlag[] = {
         { "TRUE", F_TRUE },
         { "BUY", F_BUY },
         { "SELL", F_SELL },
@@ -1078,7 +1078,7 @@ static void initConstants(PyObject* module)
         { "NOTCURSED", F_NOT_CURSED },
         { NULL, 0 } };
 
-    static CFConstant cstAttackType[] = {
+    static const CFConstant cstAttackType[] = {
         { "PHYSICAL", AT_PHYSICAL },
         { "MAGIC", AT_MAGIC },
         { "FIRE", AT_FIRE },
@@ -1107,7 +1107,7 @@ static void initConstants(PyObject* module)
         { "DISEASE", AT_DISEASE },
         { NULL, 0 } };
 
-    static CFConstant cstAttackTypeNumber[] = {
+    static const CFConstant cstAttackTypeNumber[] = {
         { "PHYSICAL", ATNR_PHYSICAL },
         { "MAGIC", ATNR_MAGIC },
         { "FIRE", ATNR_FIRE },
@@ -1136,7 +1136,7 @@ static void initConstants(PyObject* module)
         { "DISEASE", ATNR_DISEASE },
         { NULL, 0 } };
 
-    static CFConstant cstEventType[] = {
+    static const CFConstant cstEventType[] = {
         { "APPLY", EVENT_APPLY },
         { "ATTACK", EVENT_ATTACK },
         { "DEATH", EVENT_DEATH },
@@ -1171,7 +1171,7 @@ static void initConstants(PyObject* module)
         { NULL, 0 } };
 
 
-    static CFConstant cstTime[] = {
+    static const CFConstant cstTime[] = {
         { "HOURS_PER_DAY", HOURS_PER_DAY },
         { "DAYS_PER_WEEK", DAYS_PER_WEEK },
         { "WEEKS_PER_MONTH", WEEKS_PER_MONTH },

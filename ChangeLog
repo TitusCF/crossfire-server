@@ -14,6 +14,37 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Clean up in plugins, fix a lot of gcc warnings (in plugins), update prototype
+headers in plugins, make some functions static. Also update build system for
+cflogger to make it not include common plugin stuff in header. Followed example
+set by cfnewspaper's Makefile.am. Make the template plugin include prototype
+header. (It is a good idea to do so, for various reasons.) Also add some missing
+newlines at end of copyright header comments in some files. Also make some
+variables const (in python plugin) in order to fix gcc warnings and to make
+code cleaner (a string literal is always a const char* in C90 or later, but
+char* is allowed for compatibility reasons, though it will actually be a const).
+ configure.ac
+ plugins/cflogger/include/cflogger_proto.h
+ plugins/cflogger/include/cflogger.h
+ plugins/cflogger/Makefile.am
+ plugins/cflogger/cflogger.c
+ plugins/citylife/citylife.c
+ plugins/cfrhg/cfrhg.c
+ plugins/cfpython/include/cfpython_proto.h
+ plugins/cfpython/include/cfpython_object.h
+ plugins/cfpython/cfpython.c
+ plugins/template/create_plugin.sh
+ plugins/template/plugin_template.c
+ plugins/cfnewspaper/include/cfnewspaper.h
+ plugins/cfnewspaper/include/cfnewspaper_proto.h
+ plugins/cfnewspaper/cfnewspaper.c
+Added:
+ plugins/citylife/include/citylife_proto.h
+ plugins/cfrhg/include/cfrhg_proto.h
+Removed:
+ plugins/cflogger/include/Makefile.am
+Arvid Norlander 2008-06-04
+
 Spellcheck and update documentation. Updated CVS commit guide lines to refer
 to SVN (and current practice). Added missing docs for "music" command to
 protocol docs.

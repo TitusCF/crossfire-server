@@ -29,7 +29,9 @@
 
 #include <cfnewspaper.h>
 #include <stdarg.h>
-
+#ifndef __CEXTRACT__
+#include <cfnewspaper_proto.h>
+#endif
 #include <sqlite3.h>
 
 f_plug_api gethook;
@@ -38,9 +40,9 @@ f_plug_api unregisterGlobalEvent;
 f_plug_api reCmp;
 
 sqlite3* logger_database;
-sqlite3* newspaper_database;
+static sqlite3* newspaper_database;
 
-void do_sql(const char* sql, sqlite3* base) {
+static void do_sql(const char* sql, sqlite3* base) {
     int err;
     char* msg;
 
@@ -54,7 +56,7 @@ void do_sql(const char* sql, sqlite3* base) {
     }
 }
 
-int get_living_id(object* living) {
+static int get_living_id(object* living) {
     char** line;
     char* sql;
     int nrow, ncolumn, id;
@@ -78,7 +80,7 @@ int get_living_id(object* living) {
     return id;
 }
 
-int get_region_id(region* reg) {
+static int get_region_id(region* reg) {
     char** line;
     char* sql;
     int nrow, ncolumn, id;
@@ -102,11 +104,11 @@ int get_region_id(region* reg) {
     return id;
 }
 
-int get_map_id(mapstruct* map) {
+static int get_map_id(mapstruct* map) {
     char** line;
     char* sql;
     int nrow, ncolumn, id, reg_id;
-    char* path = map->path;
+    const char* path = map->path;
 
     if (strncmp(path, "/random/", 7) == 0)
         path = "/random/";
@@ -129,11 +131,11 @@ int get_map_id(mapstruct* map) {
     return id;
 }
 
-void format_time(timeofday_t* tod, char* buffer, int size) {
+static void format_time(timeofday_t* tod, char* buffer, int size) {
     snprintf(buffer, size, "%10d-%2d-%2d %2d:%2d", tod->year, tod->month, tod->day, tod->hour, tod->minute);
 }
 
-int get_time_id(timeofday_t* tod, int create) {
+static int get_time_id(timeofday_t* tod, int create) {
     char** line;
     char* sql;
     int nrow, ncolumn, id = 0;
@@ -156,7 +158,7 @@ int get_time_id(timeofday_t* tod, int create) {
     return id;
 }
 
-void read_parameters(void) {
+static void read_parameters(void) {
 }
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
@@ -275,11 +277,11 @@ typedef struct kill_format {
     const char* many_monster_death;
 } kill_format;
 
-paper_properties* get_newspaper(const char* name) {
+static paper_properties* get_newspaper(const char* name) {
     return &default_properties;
 }
 
-void news_cat(char* buffer, int size, const char* format, ...) {
+static void news_cat(char* buffer, int size, const char* format, ...) {
     va_list args;
 
     size -= strlen(buffer) - 1;
@@ -290,7 +292,7 @@ void news_cat(char* buffer, int size, const char* format, ...) {
     va_end(args);
 }
 
-void do_kills(char* buffer, int size, time_t start, time_t end, const char* reg,  kill_format* format) {
+static void do_kills(char* buffer, int size, time_t start, time_t end, const char* reg,  kill_format* format) {
     char* sql;
     char** results;
     int deaths = 0;
@@ -336,7 +338,7 @@ void do_kills(char* buffer, int size, time_t start, time_t end, const char* reg,
     news_cat(buffer, size, "\n");
 }
 
-void do_region_kills(region* reg, char* buffer, int size, time_t start, time_t end) {
+static void do_region_kills(region* reg, char* buffer, int size, time_t start, time_t end) {
     kill_format f;
     char where[ 50 ];
     int region_id;
@@ -353,13 +355,13 @@ void do_region_kills(region* reg, char* buffer, int size, time_t start, time_t e
     do_kills(buffer, size, start, end, where, &f);
 }
 
-void do_region(region* reg, char* buffer, int size, time_t start, time_t end) {
+static void do_region(region* reg, char* buffer, int size, time_t start, time_t end) {
     news_cat(buffer, size, "--- local %s news ---\n", reg->name);
     do_region_kills(reg, buffer, size, start, end);
     news_cat(buffer, size, "\n\n");
 }
 
-void do_world_kills(char* buffer, int size, time_t start, time_t end) {
+static void do_world_kills(char* buffer, int size, time_t start, time_t end) {
     kill_format f;
     f.no_player_death = "No player died at all.";
     f.one_player_death = "Only one player died in the whole world, May Fido(tm) Have Mercy.";
@@ -370,13 +372,13 @@ void do_world_kills(char* buffer, int size, time_t start, time_t end) {
     do_kills(buffer, size, start, end, "", &f);
 }
 
-void do_world(char* buffer, int size, time_t start, time_t end) {
+static void do_world(char* buffer, int size, time_t start, time_t end) {
     news_cat(buffer, size, "--- worldnews section ---\n");
     do_world_kills(buffer, size, start, end);
     news_cat(buffer, size, "\n\n");
 }
 
-void get_newspaper_content(object* paper, paper_properties* properties, region* reg) {
+static void get_newspaper_content(object* paper, paper_properties* properties, region* reg) {
     char contents[ 5000 ];
     char* sql;
     char** results;
@@ -416,7 +418,7 @@ void get_newspaper_content(object* paper, paper_properties* properties, region* 
     cf_object_set_string_property(paper, CFAPI_OBJECT_PROP_MESSAGE, contents);
 }
 
-void* eventListener(int* type, ...)
+CF_PLUGIN void* eventListener(int* type, ...)
 {
     static int rv=0;
     va_list args;
@@ -466,7 +468,7 @@ void* eventListener(int* type, ...)
     return &rv;
 }
 
-int closePlugin(void)
+CF_PLUGIN int closePlugin(void)
 {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (logger_database) {

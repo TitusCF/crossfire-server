@@ -265,7 +265,7 @@ AC_CONFIG_FILES([Makefile
                  utils/crossloop.tmpl utils/crossloop.pl.tmpl utils/crossloop.web
                  plugins/Makefile
                  plugins/cfanim/Makefile plugins/cfanim/include/Makefile
-                 plugins/cflogger/Makefile plugins/cflogger/include/Makefile
+                 plugins/cflogger/Makefile
                  plugins/cfnewspaper/Makefile
                  plugins/cfpython/Makefile plugins/cfpython/include/Makefile
                  plugins/cfrhg/Makefile

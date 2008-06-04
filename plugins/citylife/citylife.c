@@ -60,6 +60,9 @@
 
 #include <citylife.h>
 #include <stdarg.h>
+#ifndef __CEXTRACT__
+#include <citylife_proto.h>
+#endif
 
 CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
 {
@@ -125,14 +128,14 @@ typedef struct {
  * Options for a map.
  */
 typedef struct {
-    const spawn_point* points;          /**< Points to spawn from when there is a player on the map. */
-    int count_points;                   /**< How many items in points. */
-    const spawn_zone* zones;            /**< Zones where to spawn at load time. */
-    int count_zones;                    /**< How many items in zones. */
-    int population;                     /**< Maximum of NPCs to add at load time. */
-    const char* mapname;                /**< Map path. */
-    const char** available_archetypes;  /**< What archetypes can we chose from for an NPC? */
-    int archetypes_count;               /**< Number of items in available_archetypes. */
+    const spawn_point* points;                 /**< Points to spawn from when there is a player on the map. */
+    int count_points;                          /**< How many items in points. */
+    const spawn_zone* zones;                   /**< Zones where to spawn at load time. */
+    int count_zones;                           /**< How many items in zones. */
+    int population;                            /**< Maximum of NPCs to add at load time. */
+    const char* mapname;                       /**< Map path. */
+    const char* const * available_archetypes;  /**< What archetypes can we chose from for an NPC? */
+    int archetypes_count;                      /**< Number of items in available_archetypes. */
 } mapzone;
 /*@}*/
 /**
@@ -197,7 +200,7 @@ static const spawn_point scorn_se_points[] = {
 };
 
 /** Archetypes to spawn in Scorn. */
-static const char* scorn_archs[] = {
+static const char* const scorn_archs[] = {
     "c_man",
     "c_woman",
     "child",
@@ -223,7 +226,7 @@ static const mapzone available_zones[] = {
     { scorn_ne_points, 1, scorn_ne_zones, 1, 5, "/world/world_105_115", scorn_archs, 12 },
     { scorn_sw_points, 3, scorn_sw_zones, 1, 5, "/world/world_104_116", scorn_archs, 12 },
     { scorn_se_points, 1, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
-    { NULL, -1, NULL, -1, 1, "" },
+    { NULL, -1, NULL, -1, 1, "", NULL, 0 },
     };
 
 /**

@@ -14,7 +14,6 @@ CF_PLUGIN int closePlugin(void);
 PyObject *Crossfire_Archetype_wrap(archetype *what);
 /* cfpython_object.c */
 void init_object_assoc_table(void);
-void Handle_Destroy_Hook(Crossfire_Object *ob);
 PyObject *Crossfire_Object_wrap(object *what);
 /* cfpython_party.c */
 PyObject *Crossfire_Party_wrap(partylist *what);

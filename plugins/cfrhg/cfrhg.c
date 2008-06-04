@@ -51,6 +51,9 @@
 #include <assert.h>
 
 #include <cfrhg.h>
+#ifndef __CEXTRACT__
+#include <cfrhg_proto.h>
+#endif
 
 /** Link between a map and the exits to generate for it. */
 typedef struct house_zone_struct {

@@ -62,6 +62,7 @@ sed -i -e "s/PLUGIN_NAME\s\+\"Template\"/PLUGIN_NAME \"$ID\"/g" $FIC_INC
 sed -i -e "s/PLUGIN_VERSION\s\+\"Template Plugin 2.0\"/PLUGIN_VERSION \"$NAME plugin version 1.0\"/" $FIC_INC
 sed -i -e "s/PLUGIN_TEMPLATE_H/PLUGIN_$ID\_H/" $FIC_INC
 sed -i -e "s/plugin_template.h/$ID.h/" $FIC_INC
+sed -i -e "s/plugin_template_proto.h/${ID}_proto.h/" $FIC_INC
 
 echo "Altering plugin's c"
 sed -i -e "s/plugin_template.h/$ID.h/" $FIC_C

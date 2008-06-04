@@ -1,4 +1,4 @@
-/* cfnewspaper.c */
+/* citylife.c */
 int initPlugin(const char *iversion, f_plug_api gethooksptr);
 void *getPluginProperty(int *type, ...);
 int runPluginCommand(object *op, char *params);
