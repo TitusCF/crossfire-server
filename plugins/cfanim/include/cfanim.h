@@ -40,8 +40,8 @@
 #include <plugin_common.h>
 /** Time units the animation can use. @todo add owner's speed unit */
 enum time_enum {
-        time_second,    /**< One second. */
-        time_tick       /**< One server tick. */
+    time_second,    /**< One second. */
+    time_tick       /**< One server tick. */
 };
 
 /** Result of one animation move. */
@@ -53,7 +53,7 @@ typedef enum anim_move_result {
 struct CFanimation_struct;
 struct CFmovement_struct;
 typedef anim_move_result (*CFAnimRunFunc) (struct CFanimation_struct* animation, long int id, void* parameters);
-typedef long int (*CFAnimInitFunc) (char* name,char* parameters,struct CFmovement_struct*);
+typedef long int (*CFAnimInitFunc) (const char* name, char* parameters, struct CFmovement_struct*);
 /** One move in an animation. */
 typedef struct CFmovement_struct
 {
@@ -93,6 +93,8 @@ extern CFanimationHook animationbox[];
 extern int animationcount;
 int get_boolean (char* strg,int* bl);
 
+#ifndef __CEXTRACT__
 #include <cfanim_proto.h>
+#endif
 
 #endif /* PLUGIN_ANIM_H */

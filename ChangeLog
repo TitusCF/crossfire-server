@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Make more functions and variables in plugins static. Clean up some indention in plugins.
+ plugins/cflogger/cflogger.c
+ plugins/cfanim/include/cfanim.h
+ plugins/cfanim/include/cfanim_proto.h
+ plugins/cfanim/cfanim.c
+ plugins/cfnewspaper/cfnewspaper.c
+Arvid Norlander 2008-06-05
+
 Clean up in plugins, fix a lot of gcc warnings (in plugins), update prototype
 headers in plugins, make some functions static. Also update build system for
 cflogger to make it not include common plugin stuff in header. Followed example

@@ -54,7 +54,7 @@
 #include <sqlite3.h>
 
 /** Pointer to the logging database. */
-sqlite3* database;
+static sqlite3* database;
 /** To keep track of stored ingame/real time matching. */
 int last_stored_day = -1;
 

@@ -39,7 +39,7 @@ f_plug_api registerGlobalEvent;
 f_plug_api unregisterGlobalEvent;
 f_plug_api reCmp;
 
-sqlite3* logger_database;
+static sqlite3* logger_database;
 static sqlite3* newspaper_database;
 
 static void do_sql(const char* sql, sqlite3* base) {

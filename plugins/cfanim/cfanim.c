@@ -33,14 +33,14 @@
 #include <cfanim.h>
 #include <stdarg.h>
 
-CFanimation *first_animation=NULL;  /**< Animations we're currently processing. */
+static CFanimation *first_animation=NULL;  /**< Animations we're currently processing. */
 
 /**
  * Returns the direction from its name.
  * @param name direction's name
  * @return direction or -1 if unknown.
  */
-int get_dir_from_name (char*name)
+static int get_dir_from_name (const char* name)
 {
     if (!strcmp(name,"north"))      return 1;
     if (!strcmp(name,"north_east")) return 2;
@@ -53,14 +53,14 @@ int get_dir_from_name (char*name)
     return -1;
 }
 
-long int initmovement(char* name,char* parameters, struct CFmovement_struct* move_entity)
+static long int initmovement(const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     int dir;
     dir=get_dir_from_name (name);
     move_entity->parameters=NULL;
     return dir;
 }
-anim_move_result runmovement(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runmovement(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* op=animation->victim;
     int dir=id;
@@ -73,7 +73,7 @@ anim_move_result runmovement(struct CFanimation_struct* animation, long int id, 
     return mr_finished;
 }
 
-long int initfire(char* name,char* parameters,struct CFmovement_struct* move_entity)
+static long int initfire(const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     int dir;
     dir=get_dir_from_name(&(name[5]));
@@ -82,14 +82,14 @@ long int initfire(char* name,char* parameters,struct CFmovement_struct* move_ent
 }
 
 /** @todo fix */
-anim_move_result runfire(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runfire(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (animation->verbose)
         cf_log(llevDebug, "CFAnim: Firing in direction %ld\n",id);
     return mr_finished;
 }
 
-long int initturn(char* name,char* parameters,struct CFmovement_struct* move_entity)
+static long int initturn(const char* name, char* parameters,struct CFmovement_struct* move_entity)
 {
     int dir;
     dir=get_dir_from_name (&(name[5]));
@@ -97,7 +97,7 @@ long int initturn(char* name,char* parameters,struct CFmovement_struct* move_ent
     return dir;
 }
 
-anim_move_result runturn(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runturn(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* op=animation->victim;
     int dir=id;
@@ -109,7 +109,7 @@ anim_move_result runturn(struct CFanimation_struct* animation, long int id, void
     return mr_finished;
 }
 
-long int initcamera(char* name,char* parameters,struct CFmovement_struct* move_entity)
+static long int initcamera(const char* name, char* parameters,struct CFmovement_struct* move_entity)
 {
     int dir;
     dir=get_dir_from_name (&(name[7]));
@@ -117,7 +117,7 @@ long int initcamera(char* name,char* parameters,struct CFmovement_struct* move_e
     return dir;
 }
 /** @todo fix */
-anim_move_result runcamera(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runcamera(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (animation->verbose)
         cf_log(llevDebug, "CFAnim: Moving the camera in direction %ld\n",id);
@@ -128,7 +128,7 @@ anim_move_result runcamera(struct CFanimation_struct* animation, long int id, vo
     return 1;*/
 }
 
-long int initvisible (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initvisible (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     int result;
     if (get_boolean (parameters,&result))
@@ -136,7 +136,7 @@ long int initvisible (char* name, char* parameters, struct CFmovement_struct* mo
     cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'invisible' are 'yes' and 'no'\n");
     return -1;
 }
-anim_move_result runvisible(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runvisible(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (id==-1)
         return mr_finished;
@@ -144,7 +144,7 @@ anim_move_result runvisible(struct CFanimation_struct* animation, long int id, v
     return mr_finished;
 }
 
-long int initwizard (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initwizard (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     int result;
     if (get_boolean (parameters,&result))
@@ -152,14 +152,14 @@ long int initwizard (char* name, char* parameters, struct CFmovement_struct* mov
     cf_log(llevDebug, "CFAnim: Error in animation - possible values for 'wizard' are 'yes' and 'no'\n");
     return -1;
 }
-anim_move_result runwizard(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runwizard(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (id==-1)
         return 1;
     animation->wizard=id;
     return mr_finished;
 }
-long int initsay (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initsay (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     if (parameters)
         move_entity->parameters=cf_strdup_local (parameters);
@@ -169,7 +169,7 @@ long int initsay (char* name, char* parameters, struct CFmovement_struct* move_e
         cf_log(llevDebug, "CFAnim: init say: parameters: %s\n",parameters ? parameters : "null");
     return 1;
 }
-anim_move_result runsay(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runsay(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (parameters)
     {
@@ -180,11 +180,11 @@ anim_move_result runsay(struct CFanimation_struct* animation, long int id, void*
         cf_log(llevDebug, "CFAnim: Error in animation: nothing to say with say function\n");
     return mr_finished;
 }
-long int initapply (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initapply (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     return 1;
 }
-anim_move_result runapply(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runapply(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* current_container;
     if (animation->victim->type!=PLAYER)
@@ -195,12 +195,12 @@ anim_move_result runapply(struct CFanimation_struct* animation, long int id, voi
     animation->victim->container=current_container;
     return mr_finished;
 }
-long int initapplyobject (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initapplyobject (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     move_entity->parameters=parameters?cf_add_string(parameters):NULL;
     return 1;
 }
-anim_move_result runapplyobject(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runapplyobject(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* current;
     int aflag;
@@ -223,12 +223,12 @@ anim_move_result runapplyobject(struct CFanimation_struct* animation, long int i
     return mr_finished;
 }
 
-long int initdropobject (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initdropobject (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     move_entity->parameters=parameters?cf_strdup_local(parameters):NULL;
     return 1;
 }
-anim_move_result rundropobject(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result rundropobject(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     if (!parameters)
         return mr_finished;
@@ -237,11 +237,11 @@ anim_move_result rundropobject(struct CFanimation_struct* animation, long int id
     return mr_finished;
 }
 
-long int initpickup (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initpickup (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     return 1;
 }
-anim_move_result runpickup(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runpickup(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* current;
     current=animation->victim->below;
@@ -251,12 +251,12 @@ anim_move_result runpickup(struct CFanimation_struct* animation, long int id, vo
     return mr_finished;
 }
 
-long int initpickupobject (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initpickupobject (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     move_entity->parameters=parameters?cf_add_string(parameters):NULL;
     return 1;
 }
-anim_move_result runpickupobject(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runpickupobject(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* current;
     if (!parameters)
@@ -269,7 +269,7 @@ anim_move_result runpickupobject(struct CFanimation_struct* animation, long int 
     cf_free_string(parameters);
     return mr_finished;
 }
-long int initghosted (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initghosted (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     int result;
     if (get_boolean(parameters,&result))
@@ -277,7 +277,7 @@ long int initghosted (char* name, char* parameters, struct CFmovement_struct* mo
     cf_log(llevDebug, "CFAnim: Error in animation: possible values for 'ghosted' are 'yes' and 'no'\n");
     return -1;
 }
-anim_move_result runghosted(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runghosted(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     object* corpse;
 
@@ -318,7 +318,7 @@ typedef struct
     int mapy;
 }teleport_params;
 
-long int initteleport (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initteleport (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     char* mapname;
     int mapx;
@@ -361,7 +361,7 @@ long int initteleport (char* name, char* parameters, struct CFmovement_struct* m
     move_entity->parameters=teleport;
     return 1;
 }
-anim_move_result runteleport(struct CFanimation_struct* animation, long int id, void* parameters)
+static anim_move_result runteleport(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     teleport_params* teleport=(teleport_params*)parameters;
     if (!parameters)
@@ -372,12 +372,12 @@ anim_move_result runteleport(struct CFanimation_struct* animation, long int id, 
     return mr_finished;
 }
 
-long int initnotice (char* name, char* parameters, struct CFmovement_struct* move_entity)
+static long int initnotice (const char* name, char* parameters, struct CFmovement_struct* move_entity)
 {
     move_entity->parameters=parameters?cf_strdup_local(parameters):NULL;
     return 1;
 }
-anim_move_result runnotice(struct CFanimation_struct* animation, long int id, void* parameters)
+static  anim_move_result runnotice(struct CFanimation_struct* animation, long int id, void* parameters)
 {
     int val;
 
@@ -387,12 +387,12 @@ anim_move_result runnotice(struct CFanimation_struct* animation, long int id, vo
     return mr_finished;
 }
 
-long int initstop(char *name, char *parameters, struct CFmovement_struct *move_entity)
+static long int initstop(const char *name, char *parameters, struct CFmovement_struct *move_entity)
 {
     return 1;
 }
 /** @todo fix */
-anim_move_result runstop(struct CFanimation_struct *animation, long int id, void *parameters)
+static anim_move_result runstop(struct CFanimation_struct *animation, long int id, void *parameters)
 {
     if (animation->verbose)
         cf_log(llevDebug, "CFAnim: stop encountered\n");
@@ -404,7 +404,7 @@ typedef struct {
     int x, y;   /**< Coordinates. */
 } param_moveto;
 
-long int initmoveto(char *name, char *parameters, struct CFmovement_struct *move_entity)
+static long int initmoveto(const char *name, char *parameters, struct CFmovement_struct *move_entity)
 {
     param_moveto* moveto;
     int x, y;
@@ -420,7 +420,7 @@ long int initmoveto(char *name, char *parameters, struct CFmovement_struct *move
     return 1;
 }
 
-anim_move_result runmoveto(struct CFanimation_struct *animation, long int id, void *parameters)
+static anim_move_result runmoveto(struct CFanimation_struct *animation, long int id, void *parameters)
 {
     int move;
     param_moveto* dest = (param_moveto*)parameters;
@@ -440,7 +440,7 @@ anim_move_result runmoveto(struct CFanimation_struct *animation, long int id, vo
     return mr_finished;
 }
 
-static long int initmessage(char *name, char *parameters, struct CFmovement_struct *move_entity) {
+static long int initmessage(const char *name, char *parameters, struct CFmovement_struct *move_entity) {
     if (parameters)
         move_entity->parameters = strdup(parameters);
     else
@@ -448,7 +448,7 @@ static long int initmessage(char *name, char *parameters, struct CFmovement_stru
     return 1;
 }
 
-anim_move_result runmessage(struct CFanimation_struct *animation, long int id, void *parameters) {
+static anim_move_result runmessage(struct CFanimation_struct *animation, long int id, void *parameters) {
     if (parameters && animation->victim->map) {
         cf_map_message(animation->victim->map, (const char*)parameters, NDI_UNIQUE | NDI_GREEN);
         free(parameters);
@@ -514,7 +514,7 @@ static int compareAnims (const void *a, const void *b)
     return strcmp ( ((const CFanimationHook*)a)->name,((const CFanimationHook*)b)->name);
 }
 
-void prepare_commands (void)
+static void prepare_commands (void)
 {
     qsort (animationbox,animationcount,sizeof (CFanimationHook),compareAnims);
     ordered_commands=1;
@@ -619,7 +619,7 @@ static CFmovement *parse_animation_block(char *buffer, size_t buffer_size, FILE 
  * @note variable and value become pointers to internals of
  *  buffer. If buffer chages, they will change too and/or become invalid!
  */
-int equality_split (char* buffer, char**variable, char**value)
+static int equality_split (char* buffer, char**variable, char**value)
 {
     if (!strcmp (&buffer[strlen(buffer)-strlen("\n")],"\n"))
         buffer[strlen(buffer)-strlen("\n")]='\0';
@@ -751,7 +751,7 @@ static object* find_by_name(object* origin, const char* name) {
  * @return 1 if the animation was created, 0 else.
  * @todo fix memory leaks in case of errors.
  */
-int start_animation (object* who,object* activator, object* event, const char* file, const char* message)
+static int start_animation (object* who,object* activator, object* event, const char* file, const char* message)
 {
     FILE*   fichier;
     char*   name=NULL;
@@ -978,12 +978,12 @@ int start_animation (object* who,object* activator, object* event, const char* f
     fclose (fichier);
     return 1;
 }
+
 /**
  * Checks if an animation can execute one or more moves, and if so does them.
  * @param animation animation to check
  * @param milliseconds time elapsed since the last time this function was called.
  */
-
 static void animate_one(CFanimation *animation, long int milliseconds)
 {
     CFmovement* current;
@@ -1043,7 +1043,7 @@ static void animate_one(CFanimation *animation, long int milliseconds)
 /**
  * Animates all currently running animations.
  */
-void animate(void)
+static void animate(void)
 {
     CFanimation* current;
     CFanimation* next;
