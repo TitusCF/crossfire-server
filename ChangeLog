@@ -14,21 +14,30 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat some files to fit with current coding style standard, a combination of
+astyle and manual review afterwards. Also fix bad date in ChangeLog I entered
+below (copy and paste blergh).
+ server/init.c
+ server/disease.c
+ server/login.c
+ server/main.c
+Arvid Norlander 2008-06-11
+
 Reformat two files to fit with current coding style standard, a combination of
 astyle and manual review afterwards.
  server/move.c
  server/server.c
-Arvid Norlander 2008-06-05
+Arvid Norlander 2008-06-11
 
 Prevent running the crossfire server as root on *nix systems. Give an explaining
 error message. It will also prevent running it as suid (intentional).
  server/server.c
-Arvid Norlander 2008-06-05
+Arvid Norlander 2008-06-11
 
 Temporary work around a crash in move_disease() that is very hard to reproduce,
 and I haven't managed to find the cause for.
  server/disease.c
-Arvid Norlander 2008-06-05
+Arvid Norlander 2008-06-11
 
 Make more functions and variables in plugins static. Clean up some indention in plugins.
  plugins/cflogger/cflogger.c

@@ -50,40 +50,40 @@ static void copy_file(const char *filename, FILE *fpout);
  */
 void emergency_save(int flag) {
 #ifndef NO_EMERGENCY_SAVE
-  player *pl;
+    player *pl;
 
-  trying_emergency_save = 1;
-  LOG(llevError,"Emergency save:  ");
-  for(pl=first_player;pl!=NULL;pl=pl->next) {
-    if(!pl->ob) {
-      LOG(llevError, "No name, ignoring this.\n");
-      continue;
-    }
-    LOG(llevError,"%s ",pl->ob->name);
-    draw_ext_info(NDI_UNIQUE, 0,pl->ob, MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
-		  "Emergency save...", NULL);
+    trying_emergency_save = 1;
+    LOG(llevError,"Emergency save:  ");
+    for (pl=first_player;pl!=NULL;pl=pl->next) {
+        if (!pl->ob) {
+            LOG(llevError, "No name, ignoring this.\n");
+            continue;
+        }
+        LOG(llevError,"%s ",pl->ob->name);
+        draw_ext_info(NDI_UNIQUE, 0,pl->ob, MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
+                      "Emergency save...", NULL);
 
-/* If we are not exiting the game (ie, this is sort of a backup save), then
- * don't change the location back to the village.  Note that there are other
- * options to have backup saves be done at the starting village
- */
-    if (!flag) {
-	strcpy(pl->maplevel, first_map_path);
-	if(pl->ob->map!=NULL)
-	    pl->ob->map = NULL;
-	pl->ob->x = -1;
-	pl->ob->y = -1;
+        /* If we are not exiting the game (ie, this is sort of a backup save), then
+         * don't change the location back to the village.  Note that there are other
+         * options to have backup saves be done at the starting village
+         */
+        if (!flag) {
+            strcpy(pl->maplevel, first_map_path);
+            if (pl->ob->map!=NULL)
+                pl->ob->map = NULL;
+            pl->ob->x = -1;
+            pl->ob->y = -1;
+        }
+        if (!save_player(pl->ob,flag)) {
+            LOG(llevError, "(failed) ");
+            draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
+                          "Emergency save failed, checking score...", NULL);
+        }
+        check_score(pl->ob,1);
     }
-    if(!save_player(pl->ob,flag)) {
-      LOG(llevError, "(failed) ");
-      draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN,  MSG_TYPE_ADMIN_LOADSAVE,
-		    "Emergency save failed, checking score...", NULL);
-    }
-    check_score(pl->ob,1);
-  }
-  LOG(llevError,"\n");
+    LOG(llevError,"\n");
 #else
-  LOG(llevInfo,"Emergency saves disabled, no save attempted\n");
+    LOG(llevInfo,"Emergency saves disabled, no save attempted\n");
 #endif
 }
 
@@ -117,21 +117,20 @@ void delete_character(const char *name) {
  * @retval 2
  * incorrect password.
  */
-int verify_player(const char *name, char *password)
-{
+int verify_player(const char *name, char *password) {
     char buf[MAX_BUF];
     int comp;
     FILE *fp;
 
     if (strpbrk(name, "/.\\") != NULL) {
-	LOG(llevError, "Username contains illegal characters: %s\n", name);
-	return 1;
+        LOG(llevError, "Username contains illegal characters: %s\n", name);
+        return 1;
     }
 
     snprintf(buf, sizeof(buf), "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, name, name);
     if (strlen(buf) >= sizeof(buf)-1) {
-	LOG(llevError, "Username too long: %s\n", name);
-	return 1;
+        LOG(llevError, "Username too long: %s\n", name);
+        return 1;
     }
 
     if ((fp=open_and_uncompress(buf,0,&comp))==NULL) return 1;
@@ -142,17 +141,16 @@ int verify_player(const char *name, char *password)
      * syntax should be pretty standard.
      */
     while (fgets(buf, MAX_BUF-1, fp) != NULL) {
-	if (!strncmp(buf,"password ",9)) {
-	    buf[strlen(buf)-1]=0;	/* remove newline */
-	    if (check_password(password, buf+9)) {
-		close_and_delete(fp, comp);
-		return 0;
-	    }
-	    else {
-		close_and_delete(fp, comp);
-		return 2;
-	    }
-	}
+        if (!strncmp(buf,"password ",9)) {
+            buf[strlen(buf)-1]=0; /* remove newline */
+            if (check_password(password, buf+9)) {
+                close_and_delete(fp, comp);
+                return 0;
+            } else {
+                close_and_delete(fp, comp);
+                return 2;
+            }
+        }
     }
     LOG(llevDebug,"Could not find a password line in player %s\n", name);
     close_and_delete(fp, comp);
@@ -174,20 +172,20 @@ int verify_player(const char *name, char *password)
 int check_name(player *me,const char *name) {
 
     if (*name=='\0') {
-	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "Your username cannot be blank.", NULL);
-	return 0;
+        draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+                      "Your username cannot be blank.", NULL);
+        return 0;
     }
 
-    if(!playername_ok(name)) {
-	draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "That name contains illegal characters. Use letters, hyphens and underscores only. Hyphens and underscores are not allowed as the first character.", NULL);
-	return 0;
+    if (!playername_ok(name)) {
+        draw_ext_info(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+                      "That name contains illegal characters. Use letters, hyphens and underscores only. Hyphens and underscores are not allowed as the first character.", NULL);
+        return 0;
     }
     if (strlen(name) >= MAX_NAME) {
-	draw_ext_info_format(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "That name is too long. (Max length: %d characters)", NULL, MAX_NAME);
-	return 0;
+        draw_ext_info_format(NDI_UNIQUE, 0,me->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+                             "That name is too long. (Max length: %d characters)", NULL, MAX_NAME);
+        return 0;
     }
 
     return 1;
@@ -200,14 +198,13 @@ int check_name(player *me,const char *name) {
  * object to totally free_object().
  * @todo doesn't free_object() handle inventory?
  */
-void destroy_object (object *op)
-{
+void destroy_object(object *op) {
     object *tmp;
     while ((tmp = op->inv))
-	destroy_object (tmp);
+        destroy_object(tmp);
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
-	remove_ob(op);
+        remove_ob(op);
     free_object(op);
 }
 
@@ -224,27 +221,27 @@ void destroy_object (object *op)
  * non zero if successful.
  */
 int save_player(object *op, int flag) {
-  FILE *fp;
-  char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
-  object *tmp, *container=NULL;
-  player *pl = op->contr;
-  int i,wiz=QUERY_FLAG(op,FLAG_WIZ);
-  long checksum;
+    FILE *fp;
+    char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
+    object *tmp, *container=NULL;
+    player *pl = op->contr;
+    int i,wiz=QUERY_FLAG(op,FLAG_WIZ);
+    long checksum;
 #ifdef BACKUP_SAVE_AT_HOME
-  sint16 backup_x, backup_y;
+    sint16 backup_x, backup_y;
 #endif
 
-  if (!op->stats.exp) return 0;	/* no experience, no save */
+    if (!op->stats.exp) return 0; /* no experience, no save */
 
-  flag&=1;
+    flag&=1;
 
-  if(!pl->name_changed||(!flag&&!op->stats.exp)) {
-    if(!flag) {
-      draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-		    "Your game is not valid, game not saved.", NULL);
+    if (!pl->name_changed||(!flag&&!op->stats.exp)) {
+        if (!flag) {
+            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                          "Your game is not valid, game not saved.", NULL);
+        }
+        return 0;
     }
-    return 0;
-  }
 
     /* Sanity check - some stuff changes this when player is exiting */
     if (op->type != PLAYER) return 0;
@@ -253,162 +250,161 @@ int save_player(object *op, int flag) {
      * mostly exited.
      */
     if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD)
-	return 0;
+        return 0;
 
-  if (flag == 0)
-    terminate_all_pets(op);
+    if (flag == 0)
+        terminate_all_pets(op);
 
-  snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-  make_path_to_file(filename);
-  tmpfilename = tempnam_local(settings.tmpdir,NULL);
-  fp=fopen(tmpfilename, "w");
-  if(!fp) {
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-		  "Can't open file for save.", NULL);
-    LOG(llevDebug,"Can't open file for save (%s).\n",tmpfilename);
-    free(tmpfilename);
-    return 0;
-  }
+    snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
+    make_path_to_file(filename);
+    tmpfilename = tempnam_local(settings.tmpdir,NULL);
+    fp=fopen(tmpfilename, "w");
+    if (!fp) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                      "Can't open file for save.", NULL);
+        LOG(llevDebug,"Can't open file for save (%s).\n",tmpfilename);
+        free(tmpfilename);
+        return 0;
+    }
 
-/* Eneq(@csd.uu.se): If we have an open container hide it. */
-   if (op->container)  {
-     container=op->container;
-       op->container=NULL;
-   }
+    /* Eneq(@csd.uu.se): If we have an open container hide it. */
+    if (op->container)  {
+        container=op->container;
+        op->container=NULL;
+    }
 
-  fprintf(fp,"password %s\n",pl->password);
-  if (settings.set_title == TRUE)
-      if(pl->own_title[0]!='\0')
-	  fprintf(fp,"title %s\n",pl->own_title);
+    fprintf(fp,"password %s\n",pl->password);
+    if (settings.set_title == TRUE)
+        if (pl->own_title[0]!='\0')
+            fprintf(fp,"title %s\n",pl->own_title);
 
-  fprintf(fp,"explore %d\n",pl->explore);
-  fprintf(fp,"gen_hp %d\n",pl->gen_hp);
-  fprintf(fp,"gen_sp %d\n",pl->gen_sp);
-  fprintf(fp,"gen_grace %d\n",pl->gen_grace);
-  fprintf(fp,"listening %d\n",pl->listening);
-  fprintf(fp,"shoottype %d\n",pl->shoottype);
-  fprintf(fp,"bowtype %d\n",pl->bowtype);
-  fprintf(fp,"petmode %d\n",pl->petmode);
-  fprintf(fp,"peaceful %d\n",pl->peaceful);
-  fprintf(fp,"no_shout %d\n",pl->no_shout);
-  fprintf(fp,"digestion %d\n",pl->digestion);
-  fprintf(fp,"pickup %d\n", pl->mode);
-  fprintf(fp,"outputs_sync %d\n", pl->outputs_sync);
-  fprintf(fp,"outputs_count %d\n", pl->outputs_count);
-  /* Match the enumerations but in string form */
-  fprintf(fp,"usekeys %s\n", pl->usekeys==key_inventory?"key_inventory":
-	  (pl->usekeys==keyrings?"keyrings":"containers"));
-  /* Match the enumerations but in string form */
-  fprintf(fp,"unapply %s\n", pl->unapply==unapply_nochoice?"unapply_nochoice":
-	  (pl->unapply==unapply_never?"unapply_never":"unapply_always"));
+    fprintf(fp,"explore %d\n",pl->explore);
+    fprintf(fp,"gen_hp %d\n",pl->gen_hp);
+    fprintf(fp,"gen_sp %d\n",pl->gen_sp);
+    fprintf(fp,"gen_grace %d\n",pl->gen_grace);
+    fprintf(fp,"listening %d\n",pl->listening);
+    fprintf(fp,"shoottype %d\n",pl->shoottype);
+    fprintf(fp,"bowtype %d\n",pl->bowtype);
+    fprintf(fp,"petmode %d\n",pl->petmode);
+    fprintf(fp,"peaceful %d\n",pl->peaceful);
+    fprintf(fp,"no_shout %d\n",pl->no_shout);
+    fprintf(fp,"digestion %d\n",pl->digestion);
+    fprintf(fp,"pickup %d\n", pl->mode);
+    fprintf(fp,"outputs_sync %d\n", pl->outputs_sync);
+    fprintf(fp,"outputs_count %d\n", pl->outputs_count);
+    /* Match the enumerations but in string form */
+    fprintf(fp,"usekeys %s\n", pl->usekeys==key_inventory?"key_inventory":
+            (pl->usekeys==keyrings?"keyrings":"containers"));
+    /* Match the enumerations but in string form */
+    fprintf(fp,"unapply %s\n", pl->unapply==unapply_nochoice?"unapply_nochoice":
+            (pl->unapply==unapply_never?"unapply_never":"unapply_always"));
 
 
 
 #ifdef BACKUP_SAVE_AT_HOME
-  if (op->map!=NULL && flag==0)
+    if (op->map!=NULL && flag==0)
 #else
-  if (op->map!=NULL)
+    if (op->map!=NULL)
 #endif
-    fprintf(fp,"map %s\n",op->map->path);
-  else
-    fprintf(fp,"map %s\n",settings.emergency_mapname);
+        fprintf(fp,"map %s\n",op->map->path);
+    else
+        fprintf(fp,"map %s\n",settings.emergency_mapname);
 
-  fprintf(fp,"savebed_map %s\n", pl->savebed_map);
-  fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
-  fprintf(fp,"Str %d\n",pl->orig_stats.Str);
-  fprintf(fp,"Dex %d\n",pl->orig_stats.Dex);
-  fprintf(fp,"Con %d\n",pl->orig_stats.Con);
-  fprintf(fp,"Int %d\n",pl->orig_stats.Int);
-  fprintf(fp,"Pow %d\n",pl->orig_stats.Pow);
-  fprintf(fp,"Wis %d\n",pl->orig_stats.Wis);
-  fprintf(fp,"Cha %d\n",pl->orig_stats.Cha);
+    fprintf(fp,"savebed_map %s\n", pl->savebed_map);
+    fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
+    fprintf(fp,"Str %d\n",pl->orig_stats.Str);
+    fprintf(fp,"Dex %d\n",pl->orig_stats.Dex);
+    fprintf(fp,"Con %d\n",pl->orig_stats.Con);
+    fprintf(fp,"Int %d\n",pl->orig_stats.Int);
+    fprintf(fp,"Pow %d\n",pl->orig_stats.Pow);
+    fprintf(fp,"Wis %d\n",pl->orig_stats.Wis);
+    fprintf(fp,"Cha %d\n",pl->orig_stats.Cha);
 
-  fprintf(fp,"lev_array %d\n",op->level>10?10:op->level);
-  for(i=1;i<=pl->last_level&&i<=10;i++) {
-    fprintf(fp,"%d\n",pl->levhp[i]);
-    fprintf(fp,"%d\n",pl->levsp[i]);
-	 fprintf(fp,"%d\n",pl->levgrace[i]);
-  }
-  fprintf(fp, "party_rejoin_mode %d\n", pl->rejoin_party);
-  if (pl->party != NULL) {
-      fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
-      fprintf(fp, "party_rejoin_password %s\n", pl->party->passwd);
-  }
-  fprintf(fp, "language %d\n", pl->language);
-  fprintf(fp,"endplst\n");
+    fprintf(fp,"lev_array %d\n",op->level>10?10:op->level);
+    for (i=1;i<=pl->last_level&&i<=10;i++) {
+        fprintf(fp,"%d\n",pl->levhp[i]);
+        fprintf(fp,"%d\n",pl->levsp[i]);
+        fprintf(fp,"%d\n",pl->levgrace[i]);
+    }
+    fprintf(fp, "party_rejoin_mode %d\n", pl->rejoin_party);
+    if (pl->party != NULL) {
+        fprintf(fp, "party_rejoin_name %s\n", pl->party->partyname);
+        fprintf(fp, "party_rejoin_password %s\n", pl->party->passwd);
+    }
+    fprintf(fp, "language %d\n", pl->language);
+    fprintf(fp,"endplst\n");
 
-  SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-  CLEAR_FLAG(op, FLAG_WIZ);
+    SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(op, FLAG_WIZ);
 #ifdef BACKUP_SAVE_AT_HOME
-  if (flag) {
-    backup_x = op->x;
-    backup_y = op->y;
-    op->x = -1;
-    op->y = -1;
-  }
-  /* Save objects, but not unpaid objects.  Don't remove objects from
-   * inventory.
-   */
-  i = save_object(fp, op, SAVE_FLAG_NO_REMOVE);
-  if (flag) {
-    op->x = backup_x;
-    op->y = backup_y;
-  }
+    if (flag) {
+        backup_x = op->x;
+        backup_y = op->y;
+        op->x = -1;
+        op->y = -1;
+    }
+    /* Save objects, but not unpaid objects.  Don't remove objects from
+     * inventory.
+     */
+    i = save_object(fp, op, SAVE_FLAG_NO_REMOVE);
+    if (flag) {
+        op->x = backup_x;
+        op->y = backup_y;
+    }
 #else
-  i = save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE); /* don't check and don't remove */
+    i = save_object(fp, op, SAVE_FLAG_SAVE_UNPAID | SAVE_FLAG_NO_REMOVE); /* don't check and don't remove */
 #endif
 
-  if (wiz)
-      SET_FLAG(op,FLAG_WIZ);
+    if (wiz)
+        SET_FLAG(op,FLAG_WIZ);
 
-  if (fclose(fp) != 0 || i != SAVE_ERROR_OK) {	/* make sure the write succeeded */
-      draw_ext_info(NDI_UNIQUE | NDI_RED, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                    "Can't save character!", NULL);
-      draw_ext_info_format(NDI_ALL_DMS | NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", NULL, op->name);
-      unlink(tmpfilename);
-      free(tmpfilename);
-      return 0;
-  }
+    if (fclose(fp) != 0 || i != SAVE_ERROR_OK) { /* make sure the write succeeded */
+        draw_ext_info(NDI_UNIQUE | NDI_RED, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                      "Can't save character!", NULL);
+        draw_ext_info_format(NDI_ALL_DMS | NDI_RED, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE, "Save failure for player %s!", NULL, op->name);
+        unlink(tmpfilename);
+        free(tmpfilename);
+        return 0;
+    }
 
-  CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+    CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
-  if(!flag)
-      while ((tmp = op->inv))
-	  destroy_object (tmp);
+    if (!flag)
+        while ((tmp = op->inv))
+            destroy_object(tmp);
 
-  checksum = 0;
-  snprintf(backupfile, sizeof(backupfile), "%s.tmp", filename);
-  rename(filename, backupfile);
-  fp = fopen(filename,"w");
-  if(!fp) {
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-		  "Can't open file for save.", NULL);
+    checksum = 0;
+    snprintf(backupfile, sizeof(backupfile), "%s.tmp", filename);
+    rename(filename, backupfile);
+    fp = fopen(filename,"w");
+    if (!fp) {
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                      "Can't open file for save.", NULL);
+        unlink(tmpfilename);
+        free(tmpfilename);
+        return 0;
+    }
+    fprintf(fp,"checksum %lx\n",checksum);
+    copy_file(tmpfilename, fp);
     unlink(tmpfilename);
     free(tmpfilename);
-    return 0;
-  }
-  fprintf(fp,"checksum %lx\n",checksum);
-  copy_file(tmpfilename, fp);
-  unlink(tmpfilename);
-  free(tmpfilename);
-  if (fclose(fp) == EOF) {	/* got write error */
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-		      "Can't close file for save.", NULL);
-	rename(backupfile, filename); /* Restore the original */
-	return 0;
-  }
-  else
-	unlink(backupfile);
+    if (fclose(fp) == EOF) { /* got write error */
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
+                      "Can't close file for save.", NULL);
+        rename(backupfile, filename); /* Restore the original */
+        return 0;
+    } else
+        unlink(backupfile);
 
-  /* Eneq(@csd.uu.se): Reveal the container if we have one. */
-  if (flag&&container!=NULL)
-    op->container = container;
+    /* Eneq(@csd.uu.se): Reveal the container if we have one. */
+    if (flag&&container!=NULL)
+        op->container = container;
 
-  if(!flag)
-	esrv_send_inventory(op, op);
+    if (!flag)
+        esrv_send_inventory(op, op);
 
-  chmod(filename,SAVE_MODE);
-  return 1;
+    chmod(filename,SAVE_MODE);
+    return 1;
 }
 
 /**
@@ -420,13 +416,13 @@ int save_player(object *op, int flag) {
  * where to copy to.
  */
 static void copy_file(const char *filename, FILE *fpout) {
-  FILE *fp;
-  char buf[MAX_BUF];
-  if((fp = fopen(filename,"r")) == NULL)
-    return;
-  while(fgets(buf,MAX_BUF,fp)!=NULL)
-    fputs(buf,fpout);
-  fclose(fp);
+    FILE *fp;
+    char buf[MAX_BUF];
+    if ((fp = fopen(filename,"r")) == NULL)
+        return;
+    while (fgets(buf,MAX_BUF,fp)!=NULL)
+        fputs(buf,fpout);
+    fclose(fp);
 }
 
 /**
@@ -436,30 +432,28 @@ static void copy_file(const char *filename, FILE *fpout) {
  * @param op
  * player.
  */
-static void wrong_password(object *op)
-{
+static void wrong_password(object *op) {
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-	  "\nA character with this name already exists. "
-	  "Please choose another name, or make sure you entered your "
-	  "password correctly.\n",
-	  NULL);
+                  "\nA character with this name already exists. "
+                  "Please choose another name, or make sure you entered your "
+                  "password correctly.\n",
+                  NULL);
 
     FREE_AND_COPY(op->name, "noname");
     FREE_AND_COPY(op->name_pl, "noname");
 
     op->contr->socket.password_fails++;
     if (op->contr->socket.password_fails >= MAX_PASSWORD_FAILURES) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-	      "You gave an incorrect password too many times, "
-	      "you will now be dropped from the server.",
-	      NULL);
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+                      "You gave an incorrect password too many times, "
+                      "you will now be dropped from the server.",
+                      NULL);
 
-	LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n",
-	    op->contr->socket.host);
+        LOG(llevInfo, "A player connecting from %s has been dropped for password failure\n",
+            op->contr->socket.host);
 
-	op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
-    }
-    else get_name(op);
+        op->contr->socket.status = Ns_Dead; /* the socket loop should handle the rest for us */
+    } else get_name(op);
 }
 
 /**
@@ -478,43 +472,43 @@ void check_login(object *op) {
     player *pl = op->contr, *pltmp;
     int correct = 0;
     time_t    elapsed_save_time=0;
-    struct stat	statbuf;
+    struct stat statbuf;
     char *party_name = NULL, party_password[9];
 
-    strcpy (pl->maplevel,first_map_path);
+    strcpy(pl->maplevel,first_map_path);
     party_password[0] = 0;
 
     /* Check if this matches a connected player, and if yes disconnect old / connect new. */
-    for(pltmp=first_player; pltmp!=NULL; pltmp=pltmp->next) {
-	if(pltmp!=pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name,op->name)) {
-	    if (check_password(pl->write_buf+1, pltmp->password)) {
+    for (pltmp=first_player; pltmp!=NULL; pltmp=pltmp->next) {
+        if (pltmp!=pl && pltmp->ob->name != NULL && !strcmp(pltmp->ob->name,op->name)) {
+            if (check_password(pl->write_buf+1, pltmp->password)) {
 
-		/* We could try and be more clever and re-assign the existing
-		 * object to the new player, etc.  However, I'm concerned that
-		 * there may be a lot of other state that still needs to be sent
-		 * in that case (we can't make any assumptions on what the
-		 * client knows, as maybe the client crashed), so treating it
-		 * as just a normal login is the safest and easiest thing to do.
-		 */
+                /* We could try and be more clever and re-assign the existing
+                 * object to the new player, etc.  However, I'm concerned that
+                 * there may be a lot of other state that still needs to be sent
+                 * in that case (we can't make any assumptions on what the
+                 * client knows, as maybe the client crashed), so treating it
+                 * as just a normal login is the safest and easiest thing to do.
+                 */
 
-		pltmp->socket.status=Ns_Dead;
+                pltmp->socket.status=Ns_Dead;
 
-		save_player(pltmp->ob, 0);
-		if(!QUERY_FLAG(pltmp->ob,FLAG_REMOVED)) {
-		    /* Need to terminate the pets, since the new object
-		     * will be different
-		     */
-		    terminate_all_pets(pltmp->ob);
-		    remove_ob(pltmp->ob);
-		}
-		leave(pltmp,1);
-		final_free_player(pltmp);
-		break;
-	    } else {
-		wrong_password(op);
-		return;
-	    }
-	}
+                save_player(pltmp->ob, 0);
+                if (!QUERY_FLAG(pltmp->ob,FLAG_REMOVED)) {
+                    /* Need to terminate the pets, since the new object
+                     * will be different
+                     */
+                    terminate_all_pets(pltmp->ob);
+                    remove_ob(pltmp->ob);
+                }
+                leave(pltmp,1);
+                final_free_player(pltmp);
+                break;
+            } else {
+                wrong_password(op);
+                return;
+            }
+        }
     }
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
@@ -524,38 +518,38 @@ void check_login(object *op) {
      * since the rest of this just deals with loading of the file.
      */
     if ((fp=open_and_uncompress(filename,1,&comp)) == NULL) {
-	confirm_password(op);
-	return;
+        confirm_password(op);
+        return;
     }
     if (fstat(fileno(fp), &statbuf)) {
-	LOG(llevError,"Unable to stat %s?\n", filename);
-	elapsed_save_time=0;
+        LOG(llevError,"Unable to stat %s?\n", filename);
+        elapsed_save_time=0;
     } else {
-	elapsed_save_time = time(NULL) - statbuf.st_mtime;
-	if (elapsed_save_time<0) {
-	    LOG(llevError,"Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
-	    elapsed_save_time=0;
-	}
+        elapsed_save_time = time(NULL) - statbuf.st_mtime;
+        if (elapsed_save_time<0) {
+            LOG(llevError,"Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
+            elapsed_save_time=0;
+        }
     }
 
-    if(fgets(bufall,MAX_BUF,fp) != NULL) {
-	if(!strncmp(bufall,"checksum ",9)) {
-	    checksum = strtol(bufall+9,(char **) NULL, 16);
-	    (void) fgets(bufall,MAX_BUF,fp);
-	}
-	if(sscanf(bufall,"password %s\n",buf)) {
-	    /* New password scheme: */
-	    correct=check_password(pl->write_buf+1,buf);
-	}
-	/* Old password mode removed - I have no idea what it
-	 * was, and the current password mechanism has been used
-	 * for at least several years.
-	 */
+    if (fgets(bufall,MAX_BUF,fp) != NULL) {
+        if (!strncmp(bufall,"checksum ",9)) {
+            checksum = strtol(bufall+9,(char **) NULL, 16);
+            (void) fgets(bufall,MAX_BUF,fp);
+        }
+        if (sscanf(bufall,"password %s\n",buf)) {
+            /* New password scheme: */
+            correct=check_password(pl->write_buf+1,buf);
+        }
+        /* Old password mode removed - I have no idea what it
+         * was, and the current password mechanism has been used
+         * for at least several years.
+         */
     }
     if (!correct) {
-	wrong_password(op);
-	fclose(fp);
-	return;
+        wrong_password(op);
+        fclose(fp);
+        return;
     }
 
 #ifdef SAVE_INTERVAL
@@ -563,7 +557,7 @@ void check_login(object *op) {
 #endif /* SAVE_INTERVAL */
     pl->party = NULL;
     if (settings.search_items == TRUE)
-	pl->search_str[0]='\0';
+        pl->search_str[0]='\0';
     pl->name_changed=1;
     pl->orig_stats.Str=0;
     pl->orig_stats.Dex=0;
@@ -578,104 +572,98 @@ void check_login(object *op) {
 
     /* Loop through the file, loading the rest of the values */
     while (fgets(bufall,MAX_BUF,fp)!=NULL) {
-	sscanf(bufall,"%s %d\n",buf,&value);
+        sscanf(bufall,"%s %d\n",buf,&value);
         if (!strcmp(buf,"endplst"))
-          break;
-	else if (!strcmp(buf,"title") && settings.set_title == TRUE)
-	    sscanf(bufall,"title %[^\n]",pl->own_title);
-	else if (!strcmp(buf,"explore"))
-	    pl->explore = value;
-	else if (!strcmp(buf,"gen_hp"))
-	    pl->gen_hp=value;
+            break;
+        else if (!strcmp(buf,"title") && settings.set_title == TRUE)
+            sscanf(bufall,"title %[^\n]",pl->own_title);
+        else if (!strcmp(buf,"explore"))
+            pl->explore = value;
+        else if (!strcmp(buf,"gen_hp"))
+            pl->gen_hp=value;
         else if (!strcmp(buf,"shoottype"))
-	    pl->shoottype=(rangetype)value;
-	else if (!strcmp(buf,"bowtype"))
-	    pl->bowtype=(bowtype_t)value;
-	else if (!strcmp(buf,"petmode"))
-	    pl->petmode=(petmode_t)value;
+            pl->shoottype=(rangetype)value;
+        else if (!strcmp(buf,"bowtype"))
+            pl->bowtype=(bowtype_t)value;
+        else if (!strcmp(buf,"petmode"))
+            pl->petmode=(petmode_t)value;
         else if (!strcmp(buf,"gen_sp"))
-	    pl->gen_sp=value;
+            pl->gen_sp=value;
         else if (!strcmp(buf,"gen_grace"))
-	    pl->gen_grace=value;
+            pl->gen_grace=value;
         else if (!strcmp(buf,"listening"))
-	    pl->listening=value;
+            pl->listening=value;
         else if (!strcmp(buf,"peaceful"))
-	    pl->peaceful=value;
-		else if (!strcmp(buf,"no_shout"))
-		pl->no_shout=value;
+            pl->peaceful=value;
+        else if (!strcmp(buf,"no_shout"))
+            pl->no_shout=value;
         else if (!strcmp(buf,"digestion"))
-	    pl->digestion=value;
-	else if (!strcmp(buf,"pickup"))
-	    pl->mode=value;
-	else if (!strcmp(buf,"outputs_sync"))
-	    pl->outputs_sync = value;
-	else if (!strcmp(buf,"outputs_count"))
-	    pl->outputs_count = value;
+            pl->digestion=value;
+        else if (!strcmp(buf,"pickup"))
+            pl->mode=value;
+        else if (!strcmp(buf,"outputs_sync"))
+            pl->outputs_sync = value;
+        else if (!strcmp(buf,"outputs_count"))
+            pl->outputs_count = value;
         else if (!strcmp(buf,"map"))
-	    sscanf(bufall,"map %s", pl->maplevel);
+            sscanf(bufall,"map %s", pl->maplevel);
         else if (!strcmp(buf,"savebed_map"))
-	    sscanf(bufall,"savebed_map %s", pl->savebed_map);
-	else if (!strcmp(buf,"bed_x"))
-	    pl->bed_x=value;
-	else if (!strcmp(buf,"bed_y"))
-	    pl->bed_y=value;
+            sscanf(bufall,"savebed_map %s", pl->savebed_map);
+        else if (!strcmp(buf,"bed_x"))
+            pl->bed_x=value;
+        else if (!strcmp(buf,"bed_y"))
+            pl->bed_y=value;
         else if (!strcmp(buf,"Str"))
-	    pl->orig_stats.Str=value;
+            pl->orig_stats.Str=value;
         else if (!strcmp(buf,"Dex"))
-	    pl->orig_stats.Dex=value;
+            pl->orig_stats.Dex=value;
         else if (!strcmp(buf,"Con"))
-	    pl->orig_stats.Con=value;
+            pl->orig_stats.Con=value;
         else if (!strcmp(buf,"Int"))
-	    pl->orig_stats.Int=value;
+            pl->orig_stats.Int=value;
         else if (!strcmp(buf,"Pow"))
-	    pl->orig_stats.Pow=value;
+            pl->orig_stats.Pow=value;
         else if (!strcmp(buf,"Wis"))
-	    pl->orig_stats.Wis=value;
+            pl->orig_stats.Wis=value;
         else if (!strcmp(buf,"Cha"))
-	    pl->orig_stats.Cha=value;
-	else if (!strcmp(buf,"usekeys")) {
-	    if (!strcmp(bufall+8,"key_inventory\n"))
-		pl->usekeys=key_inventory;
-	    else if (!strcmp(bufall+8,"keyrings\n"))
-		pl->usekeys=keyrings;
-	    else if (!strcmp(bufall+8,"containers\n"))
-		pl->usekeys=containers;
-	    else LOG(llevDebug,"load_player: got unknown usekeys type: %s\n", bufall+8);
-	}
-	else if (!strcmp(buf,"unapply")) {
-	    if (!strcmp(bufall+8,"unapply_nochoice\n"))
-		pl->unapply=unapply_nochoice;
-	    else if (!strcmp(bufall+8,"unapply_never\n"))
-		pl->unapply=unapply_never;
-	    else if (!strcmp(bufall+8,"unapply_always\n"))
-		pl->unapply=unapply_always;
-	    else LOG(llevDebug,"load_player: got unknown unapply type: %s\n", bufall+8);
-	}
-        else if (!strcmp(buf,"lev_array")){
-	    for(i=1;i<=value;i++) {
-		int j;
-		fscanf(fp,"%d\n",&j);
-		pl->levhp[i]=j;
-		fscanf(fp,"%d\n",&j);
-		pl->levsp[i]=j;
-		fscanf(fp,"%d\n",&j);
-		pl->levgrace[i]=j;
-	    }
-	}
-        else if (!strcmp(buf, "party_rejoin_mode")) {
+            pl->orig_stats.Cha=value;
+        else if (!strcmp(buf,"usekeys")) {
+            if (!strcmp(bufall+8,"key_inventory\n"))
+                pl->usekeys=key_inventory;
+            else if (!strcmp(bufall+8,"keyrings\n"))
+                pl->usekeys=keyrings;
+            else if (!strcmp(bufall+8,"containers\n"))
+                pl->usekeys=containers;
+            else LOG(llevDebug,"load_player: got unknown usekeys type: %s\n", bufall+8);
+        } else if (!strcmp(buf,"unapply")) {
+            if (!strcmp(bufall+8,"unapply_nochoice\n"))
+                pl->unapply=unapply_nochoice;
+            else if (!strcmp(bufall+8,"unapply_never\n"))
+                pl->unapply=unapply_never;
+            else if (!strcmp(bufall+8,"unapply_always\n"))
+                pl->unapply=unapply_always;
+            else LOG(llevDebug,"load_player: got unknown unapply type: %s\n", bufall+8);
+        } else if (!strcmp(buf,"lev_array")) {
+            for (i=1;i<=value;i++) {
+                int j;
+                fscanf(fp,"%d\n",&j);
+                pl->levhp[i]=j;
+                fscanf(fp,"%d\n",&j);
+                pl->levsp[i]=j;
+                fscanf(fp,"%d\n",&j);
+                pl->levgrace[i]=j;
+            }
+        } else if (!strcmp(buf, "party_rejoin_mode")) {
             pl->rejoin_party = value;
-        }
-        else if (!strcmp(buf, "party_rejoin_name")) {
+        } else if (!strcmp(buf, "party_rejoin_name")) {
             party_name = strdup_local(bufall + strlen("party_rejoin_name") + 1);
             if (party_name && strlen(party_name) > 0)
                 party_name[strlen(party_name) - 1] = '\0';
-        }
-        else if (!strcmp(buf, "party_rejoin_password")) {
+        } else if (!strcmp(buf, "party_rejoin_password")) {
             snprintf(party_password, sizeof(party_password), "%s", bufall + strlen("party_rejoin_password") + 1);
             if (strlen(party_password) > 0)
                 party_password[strlen(party_password) - 1] = '\0';
-        }
-        else if (!strcmp(buf, "language")) {
+        } else if (!strcmp(buf, "language")) {
             if (value < 0 || value >= NUM_LANGUAGES)
                 value = 0;
             pl->language = value;
@@ -704,20 +692,20 @@ void check_login(object *op) {
      * path (for unique player maps)
      */
     if (check_path(pl->maplevel,1)==-1) {
-      if (check_path(pl->maplevel,0)==-1) {
-	strcpy(pl->maplevel, pl->savebed_map);
-	op->x = pl->bed_x, op->y = pl->bed_y;
-        /* if the map was a shop, the player can have unpaid items, remove them. */
-        remove_unpaid_objects(op, NULL, 1);
-      }
+        if (check_path(pl->maplevel,0)==-1) {
+            strcpy(pl->maplevel, pl->savebed_map);
+            op->x = pl->bed_x, op->y = pl->bed_y;
+            /* if the map was a shop, the player can have unpaid items, remove them. */
+            remove_unpaid_objects(op, NULL, 1);
+        }
     }
 
     /* If player saved beyond some time ago, and the feature is
      * enabled, put the player back on his savebed map.
      */
     if ((settings.reset_loc_time >0) && (elapsed_save_time > settings.reset_loc_time)) {
-	strcpy(pl->maplevel, pl->savebed_map);
-	op->x = pl->bed_x, op->y = pl->bed_y;
+        strcpy(pl->maplevel, pl->savebed_map);
+        op->x = pl->bed_x, op->y = pl->bed_y;
         /* if the map was a shop, the player can have unpaid items, remove them. */
         remove_unpaid_objects(op, NULL, 1);
     }
@@ -732,34 +720,34 @@ void check_login(object *op) {
 #ifdef AUTOSAVE
     pl->last_save_tick = pticks;
 #endif
-    op->carrying = sum_weight (op);
+    op->carrying = sum_weight(op);
 
     link_player_skills(op);
 
-    if ( ! legal_range (op, op->contr->shoottype))
+    if (! legal_range(op, op->contr->shoottype))
         op->contr->shoottype = range_none;
 
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
         object *tmp, *abil=NULL, *skin=NULL;
         for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
-	    if (tmp->type == FORCE) {
-	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
-		    abil = tmp;
-		else if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
-		    skin = tmp;
-	    }
-	}
-	set_dragon_name(op, abil, skin);
+            if (tmp->type == FORCE) {
+                if (strcmp(tmp->arch->name, "dragon_ability_force")==0)
+                    abil = tmp;
+                else if (strcmp(tmp->arch->name, "dragon_skin_force")==0)
+                    skin = tmp;
+            }
+        }
+        set_dragon_name(op, abil, skin);
     }
 
     draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		  "Welcome Back!", NULL);
+                  "Welcome Back!", NULL);
     draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
-		 MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-		 "%s has entered the game.",
-		 "%s has entered the game.",
-		 pl->ob->name);
+                         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+                         "%s has entered the game.",
+                         "%s has entered the game.",
+                         pl->ob->name);
 
     /* Lauwenmark : Here we handle the LOGIN global event */
     execute_global_event(EVENT_LOGIN, pl, pl->socket.host);
@@ -771,14 +759,14 @@ void check_login(object *op) {
      * set the play_again flag, so return.
      */
     if (op->stats.hp<0) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
-		      "Your character was dead last your played.",
-		      NULL);
-	kill_player(op);
-	if (pl->state != ST_PLAYING) return;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOGIN,
+                      "Your character was dead last your played.",
+                      NULL);
+        kill_player(op);
+        if (pl->state != ST_PLAYING) return;
     }
     LOG(llevInfo,"LOGIN: Player named %s from ip %s\n", op->name,
-	op->contr->socket.host);
+        op->contr->socket.host);
 
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.
@@ -834,7 +822,7 @@ void check_login(object *op) {
         else
             snprintf(buf, MAX_BUF, "Couldn't rejoined party %s: %s.", party_name, party ? "invalid password." : "no such party.");
         draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-            buf, NULL);
+                      buf, NULL);
     }
     if (party_name)
         free(party_name);
