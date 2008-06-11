@@ -14,6 +14,21 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove some auto generated (by autoconf/automake) files from svn. Updated
+svn:ignore to match. Also updated svn:ignore for other places.
+Removed:
+ utils/depcomp
+ utils/config.guess
+ utils/config.sub
+ utils/mkinstalldirs
+ utils/missing
+ utils/install-sh
+Property change on:
+ .
+ utils
+ test/bugs/bugtrack
+Arvid Norlander 2008-06-11
+
 Reformat some files to fit with current coding style standard, a combination of
 astyle and manual review afterwards. Also fix bad date in ChangeLog I entered
 below (copy and paste blergh).
