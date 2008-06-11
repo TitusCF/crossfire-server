@@ -52,6 +52,11 @@
 #include <time.h>
 #endif
 
+#ifndef WIN32
+#  include <unistd.h>
+#  include <sys/types.h>
+#endif
+
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 #include "path.h"
@@ -1438,6 +1443,16 @@ int server_main(int argc, char **argv)
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY ;
     bRunning = 1;
+#endif
+
+#ifndef WIN32
+    /* Here we check that we aren't root or suid */
+    if (getuid() == 0 || geteuid() == 0) {
+        fputs("Don't run crossfire as root, it is unsupported.\n", stderr);
+        fputs("Instead run it as a normal unprivileged user.\n", stderr);
+        fputs("Aborting...\n", stderr);
+        return 1;
+    }
 #endif
 
 #ifdef DEBUG_MALLOC_LEVEL

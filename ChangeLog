@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Prevent running the crossfire server as root on *nix systems. Give an explaining
+error message. It will also prevent running it as suid (intentional).
+ server/server.c
+Arvid Norlander 2008-06-05
+
 Temporary work around a crash in move_disease() that is very hard to reproduce,
 and I haven't managed to find the cause for.
  server/disease.c
