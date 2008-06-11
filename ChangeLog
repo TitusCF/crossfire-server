@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat two files to fit with current coding style standard, a combination of
+astyle and manual review afterwards.
+ server/move.c
+ server/server.c
+Arvid Norlander 2008-06-05
+
 Prevent running the crossfire server as root on *nix systems. Give an explaining
 error message. It will also prevent running it as suid (intentional).
  server/server.c
