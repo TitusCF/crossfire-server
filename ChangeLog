@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Temporary work around a crash in move_disease() that is very hard to reproduce,
+and I haven't managed to find the cause for.
+ server/disease.c
+Arvid Norlander 2008-06-05
+
 Make more functions and variables in plugins static. Clean up some indention in plugins.
  plugins/cflogger/cflogger.c
  plugins/cfanim/include/cfanim.h

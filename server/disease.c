@@ -663,6 +663,10 @@ void move_symptom(object *symptom) {
             insert_ob_in_map(new_ob,victim->map,victim,0);
         }
     }
+    if (!symptom->msg) {
+        LOG(llevError, "BUG: move_symptom(): symptom %d (%s) without message!\n", symptom->count, symptom->name);
+        return;
+    }
     draw_ext_info(NDI_UNIQUE | NDI_RED,0,victim,
 		  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
 		  symptom->msg, symptom->msg);
