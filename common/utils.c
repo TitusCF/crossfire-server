@@ -56,8 +56,8 @@ int random_roll(int min, int max, const object *op, int goodbad) {
     ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
 
     if (max < 1 || diff < 1) {
-      LOG(llevError, "Calling random_roll with min=%d max=%d\n", min, max);
-      return(min); /* avoids a float exception */
+        LOG(llevError, "Calling random_roll with min=%d max=%d\n", min, max);
+        return(min); /* avoids a float exception */
     }
 
     ran = RANDOM();
@@ -97,7 +97,7 @@ sint64 random_roll64(sint64 min, sint64 max, const object *op, int goodbad) {
 #else
         LOG(llevError, "Calling random_roll with min=%I64d max=%I64d\n", min, max);
 #endif
-      return(min); /* avoids a float exception */
+        return(min); /* avoids a float exception */
     }
 
     /* Don't know of a portable call to get 64 bit random values.
@@ -139,8 +139,8 @@ int die_roll(int num, int size, const object *op, int goodbad) {
     luck = total = gotlucky = 0;
     ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
     if (size < 2 || diff < 1) {
-      LOG(llevError, "Calling die_roll with num=%d size=%d\n", num, size);
-      return(num); /* avoids a float exception */
+        LOG(llevError, "Calling die_roll with num=%d size=%d\n", num, size);
+        return(num); /* avoids a float exception */
     }
 
     if (op->type == PLAYER)
@@ -171,8 +171,7 @@ int die_roll(int num, int size, const object *op, int goodbad) {
  * would appear that a number of off-by-one-errors exist due to improper
  * use of %.  This should also prevent SIGFPE.
  */
-int rndm(int min, int max)
-{
+int rndm(int min, int max) {
     int diff;
 
     diff = max - min + 1;
@@ -185,8 +184,7 @@ int rndm(int min, int max)
 /**
  * Decay and destroy persihable items in a map
  */
-void decay_objects(mapstruct *m)
-{
+void decay_objects(mapstruct *m) {
     int x, y, destroy;
     object *op, *otmp;
 
@@ -201,10 +199,10 @@ void decay_objects(mapstruct *m)
                 if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
                     break;
                 if (QUERY_FLAG(op, FLAG_IS_FLOOR) ||
-                  QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) ||
-                  QUERY_FLAG(op, FLAG_UNIQUE) ||
-                  QUERY_FLAG(op, FLAG_OVERLAY_FLOOR) ||
-                  QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))
+                        QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) ||
+                        QUERY_FLAG(op, FLAG_UNIQUE) ||
+                        QUERY_FLAG(op, FLAG_OVERLAY_FLOOR) ||
+                        QUERY_FLAG(op, FLAG_UNPAID) || IS_LIVE(op))
                     continue;
                 if (op->head)
                     /* Don't try to remove a non head part of a multipart object, remove_ob() would abort(). */
@@ -213,29 +211,29 @@ void decay_objects(mapstruct *m)
                 if (IS_WEAPON(op)) {
                     op->stats.dam--;
                     if (op->stats.dam < 0)
-                    destroy = 1;
+                        destroy = 1;
                 } else if (IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK) {
                     op->stats.ac--;
                     if (op->stats.ac < 0)
-                    destroy = 1;
+                        destroy = 1;
                 } else if (op->type == FOOD) {
                     op->stats.food -= rndm(5,20);
                     if (op->stats.food < 0)
-                    destroy = 1;
+                        destroy = 1;
                 } else {
                     if (op->material & M_PAPER || op->material & M_LEATHER ||
-                      op->material & M_WOOD || op->material & M_ORGANIC ||
-                      op->material & M_CLOTH || op->material & M_LIQUID)
+                            op->material & M_WOOD || op->material & M_ORGANIC ||
+                            op->material & M_CLOTH || op->material & M_LIQUID)
                         destroy = 1;
                     if (op->material & M_IRON && rndm(1,5) == 1)
                         destroy = 1;
                     if (op->material & M_GLASS && rndm(1,2) == 1)
                         destroy = 1;
                     if ((op->material & M_STONE || op->material & M_ADAMANT) &&
-                      rndm(1,10) == 1)
+                            rndm(1,10) == 1)
                         destroy = 1;
                     if ((op->material & M_SOFT_METAL || op->material & M_BONE) &&
-                      rndm(1,3) == 1)
+                            rndm(1,3) == 1)
                         destroy = 1;
                     if (op->material & M_ICE && rndm(0, 100) > 70)
                         destroy = 1;
@@ -254,8 +252,7 @@ void decay_objects(mapstruct *m)
  * @todo
  * why use a break?
  */
-materialtype_t *name_to_material(const char *name)
-{
+materialtype_t *name_to_material(const char *name) {
     materialtype_t *mt, *nmt;
 
     mt = NULL;
@@ -274,8 +271,7 @@ materialtype_t *name_to_material(const char *name)
  *
  * Only works on armors.
  */
-void transmute_materialname(object *op, const object *change)
-{
+void transmute_materialname(object *op, const object *change) {
     materialtype_t *mt;
     int j;
 
@@ -283,7 +279,7 @@ void transmute_materialname(object *op, const object *change)
         return;
 
     if (change->materialname != NULL &&
-      strcmp(op->materialname, change->materialname))
+            strcmp(op->materialname, change->materialname))
         return;
 
     if (!(IS_ARMOR(op)  || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK))
@@ -308,8 +304,7 @@ void transmute_materialname(object *op, const object *change)
 /**
  * Set the materialname and type for an item
  */
-void set_materialname(object *op, int difficulty, materialtype_t *nmt)
-{
+void set_materialname(object *op, int difficulty, materialtype_t *nmt) {
     materialtype_t *mt, *lmt;
 
     if (op->materialname != NULL)
@@ -330,8 +325,8 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
 #else
         for (mt = materialt; mt != NULL && mt->next != NULL; mt=mt->next) {
             if (op->material & mt->material && rndm(1, 100) <= mt->chance &&
-              difficulty >= mt->difficulty &&
-              (op->magic >= mt->magic || mt->magic == 0)) {
+                    difficulty >= mt->difficulty &&
+                    (op->magic >= mt->magic || mt->magic == 0)) {
                 lmt = mt;
                 if (!(IS_WEAPON(op) || IS_ARMOR(op) || IS_SHIELD(op) || op->type == GIRDLE || op->type == GLOVES || op->type == CLOAK))
                     break;
@@ -365,9 +360,9 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
                 if (op->resist[j] != 0) {
                     op->resist[j] += lmt->mod[j];
                     if (op->resist[j] > 100)
-                    op->resist[j] = 100;
+                        op->resist[j] = 100;
                     if (op->resist[j] < -100)
-                    op->resist[j] = -100;
+                        op->resist[j] = -100;
                 }
         }
         op->materialname = add_string(lmt->name);
@@ -384,17 +379,17 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt)
  * Strip out the media tags from a String.
  * Warning the input string will contain the result string
  */
-void strip_media_tag(char *message){
+void strip_media_tag(char *message) {
     int in_tag=0;
     char* dest;
     char* src;
     src=dest=message;
-    while (*src!='\0'){
-        if (*src=='['){
+    while (*src!='\0') {
+        if (*src=='[') {
             in_tag=1;
         } else if (in_tag && (*src==']'))
             in_tag=0;
-        else if (!in_tag){
+        else if (!in_tag) {
             *dest=*src;
             dest++;
         }
@@ -409,10 +404,10 @@ void strip_media_tag(char *message){
  * @todo
  * isn't there another function (porting.c?) for that?
  */
-const char* strrstr(const char* haystack, const char* needle){
+const char* strrstr(const char* haystack, const char* needle) {
     const char* lastneedle;
     lastneedle=NULL;
-    while((haystack=strstr(haystack,needle))!=NULL){
+    while ((haystack=strstr(haystack,needle))!=NULL) {
         lastneedle=haystack;
         haystack++;
     }
@@ -423,8 +418,8 @@ const char* strrstr(const char* haystack, const char* needle){
 /**
  * Removes endline from buffer (modified in place).
  */
-void strip_endline(char* buf){
-    if (strlen(buf)<sizeof("\n")){
+void strip_endline(char* buf) {
+    if (strlen(buf)<sizeof("\n")) {
         return;
     }
     if (!strcmp(buf+strlen(buf)-EOL_SIZE,"\n"))
@@ -436,14 +431,12 @@ void strip_endline(char* buf){
  * string is put into result; at most resultsize characters (including the
  * terminating null character) will be written to result.
  */
-void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize)
-{
+void replace(const char *src, const char *key, const char *replacement, char *result, size_t resultsize) {
     size_t resultlen;
     size_t keylen;
 
     /* special case to prevent infinite loop if key==replacement=="" */
-    if(strcmp(key, replacement) == 0)
-    {
+    if (strcmp(key, replacement) == 0) {
         snprintf(result, resultsize, "%s", src);
         return;
     }
@@ -451,16 +444,12 @@ void replace(const char *src, const char *key, const char *replacement, char *re
     keylen = strlen(key);
 
     resultlen = 0;
-    while(*src != '\0' && resultlen+1 < resultsize)
-    {
-        if(strncmp(src, key, keylen) == 0)
-        {
+    while (*src != '\0' && resultlen+1 < resultsize) {
+        if (strncmp(src, key, keylen) == 0) {
             snprintf(result+resultlen, resultsize-resultlen, "%s", replacement);
             resultlen += strlen(result+resultlen);
             src += keylen;
-        }
-        else
-        {
+        } else {
             result[resultlen++] = *src++;
         }
     }
@@ -502,7 +491,6 @@ void make_list_like(char *input) {
         p++;
         strcat(input, " and");
         strcat(input, p);
-    }
-    else strcpy(input, tmp);
+    } else strcpy(input, tmp);
     return;
 }

@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat some files to fit with current coding style standard, a combination of
+astyle and manual review afterwards.
+ common/utils.c
+ common/init.c
+ common/time.c
+ common/porting.c
+Arvid Norlander 2008-06-11
+
 Remove some auto generated (by autoconf/automake) files from svn. Updated
 svn:ignore to match. Also updated svn:ignore for other places.
 Removed:

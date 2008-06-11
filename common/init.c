@@ -41,7 +41,7 @@
  */
 struct Settings settings = {
     LOGFILE,   /* Logfile */
-    CSPORT,				/* Client/server port */
+    CSPORT,    /* Client/server port */
 
     /* Debug level */
 #ifdef DEBUG
@@ -83,8 +83,8 @@ struct Settings settings = {
     MOTD,
     "rules",
     "news",
-    "",		/* DM_MAIL */
-    0,		/* This and the next 3 values are metaserver values */
+    "",  /* DM_MAIL */
+    0,  /* This and the next 3 values are metaserver values */
     "",
     "",
     0,
@@ -118,26 +118,26 @@ struct Statistics statistics;
  * programs, like the random map generator, can be built.
  */
 const char* const spellpathnames[NRSPELLPATHS] = {
- "Protection",
- "Fire",
- "Frost",
- "Electricity",
- "Missiles",
- "Self",
- "Summoning",
- "Abjuration",
- "Restoration",
- "Detonation",
- "Mind",
- "Creation",
- "Teleportation",
- "Information",
- "Transmutation",
- "Transferrence",
- "Turning",
- "Wounding",
- "Death",
- "Light"
+    "Protection",
+    "Fire",
+    "Frost",
+    "Electricity",
+    "Missiles",
+    "Self",
+    "Summoning",
+    "Abjuration",
+    "Restoration",
+    "Detonation",
+    "Mind",
+    "Creation",
+    "Teleportation",
+    "Information",
+    "Transmutation",
+    "Transferrence",
+    "Turning",
+    "Wounding",
+    "Death",
+    "Light"
 };
 
 
@@ -152,8 +152,7 @@ const char* const spellpathnames[NRSPELLPATHS] = {
  * @note
  * If file doesn't exist, will not do anything.
  */
-static void init_emergency_mappath(void)
-{
+static void init_emergency_mappath(void) {
     char filename[MAX_BUF], tmpbuf[MAX_BUF];
     FILE    *fp;
     int online=0;
@@ -165,13 +164,11 @@ static void init_emergency_mappath(void)
             if (tmpbuf[0] == '#') continue; /* ignore comments */
 
             if (online == 0) {
-                tmpbuf[strlen(tmpbuf)-1] = 0;	/* kill newline */
+                tmpbuf[strlen(tmpbuf)-1] = 0; /* kill newline */
                 settings.emergency_mapname = strdup_local(tmpbuf);
-            }
-            else if (online == 1) {
+            } else if (online == 1) {
                 settings.emergency_x = atoi(tmpbuf);
-            }
-            else if (online == 2) {
+            } else if (online == 2) {
                 settings.emergency_y = atoi(tmpbuf);
             }
             online++;
@@ -202,15 +199,15 @@ void init_library(void) {
     init_objects();
     init_vars();
     init_block();
-    read_bmap_names ();
+    read_bmap_names();
     read_smooth();
     init_anim();    /* Must be after we read in the bitmaps */
-    init_archetypes();	/* Reads all archetypes from file */
+    init_archetypes(); /* Reads all archetypes from file */
     init_attackmess();
     init_clocks();
     init_emergency_mappath();
     init_experience();
-    init_dynamic ();
+    init_dynamic();
 }
 
 
@@ -254,13 +251,11 @@ void init_globals(void) {
     memset(&statistics, 0, sizeof(struct Statistics));
     if (settings.logfilename[0] == 0) {
         logfile = stderr;
-    }
-    else if ((logfile=fopen(settings.logfilename, "a"))==NULL) {
+    } else if ((logfile=fopen(settings.logfilename, "a"))==NULL) {
         fprintf(stderr,"Unable to open %s as the logfile - will use stderr instead\n",
-            settings.logfilename);
+                settings.logfilename);
         logfile = stderr;
-    }
-    else {
+    } else {
         setvbuf(logfile, NULL, _IOLBF, 0);
     }
     exiting = 0;
@@ -296,8 +291,7 @@ void init_globals(void) {
  *  * experience
  *  * regions
  */
-void free_globals(void)
-{
+void free_globals(void) {
     int msg, attack;
     objectlink* friend;
     region* reg;
@@ -347,11 +341,11 @@ void init_objects(void) {
     free_objects=NULL;
 #else
     free_objects=objarray;
-    objarray[0].prev=NULL,
-    objarray[0].next= &objarray[1],
+    objarray[0].prev = NULL,
+    objarray[0].next = &objarray[1],
     SET_FLAG(&objarray[0], FLAG_REMOVED);
     SET_FLAG(&objarray[0], FLAG_FREED);
-    for(i=1;i<STARTMAX-1;i++) {
+    for (i=1;i<STARTMAX-1;i++) {
         objarray[i].next= &objarray[i+1];
         objarray[i].prev= &objarray[i-1];
         SET_FLAG(&objarray[i], FLAG_REMOVED);
@@ -370,7 +364,7 @@ void init_objects(void) {
  */
 
 void init_defaults(void) {
-  nroferrors=0;
+    nroferrors=0;
 }
 
 /**
@@ -381,14 +375,14 @@ void init_defaults(void) {
  * @note
  * will call exit() if no MAP archetype was found.
  */
-void init_dynamic (void) {
+void init_dynamic(void) {
     archetype *at = first_archetype;
     while (at) {
         if (at->clone.type == MAP) {
             if (at->clone.race) {
-                strcpy (first_map_ext_path, at->clone.race);
+                strcpy(first_map_ext_path, at->clone.race);
             }
-            if (EXIT_PATH (&at->clone)) {
+            if (EXIT_PATH(&at->clone)) {
                 mapstruct* first;
                 snprintf(first_map_path, sizeof(first_map_path), "%s", EXIT_PATH(&at->clone));
                 first = ready_map_name(first_map_path, 0);
@@ -404,7 +398,7 @@ void init_dynamic (void) {
         at = at->next;
     }
     LOG(llevError,"You need a archetype called 'map' and it have to contain start map\n");
-    exit (-1);
+    exit(-1);
 }
 
 /** Ingame time */
@@ -414,8 +408,7 @@ unsigned long todtick;
  * Write out the current time to the file so time does not
  * reset every time the server reboots.
  */
-void write_todclock(void)
-{
+void write_todclock(void) {
     char filename[MAX_BUF];
     FILE *fp;
 
@@ -432,8 +425,7 @@ void write_todclock(void)
  * Initializes the gametime and TOD counters
  * Called by init_library().
  */
-void init_clocks(void)
-{
+void init_clocks(void) {
     char filename[MAX_BUF];
     FILE *fp;
     static int has_been_done=0;
@@ -465,7 +457,7 @@ attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
  *
  * Memory will be cleared by free_globals().
  */
-void init_attackmess(void){
+void init_attackmess(void) {
     char buf[MAX_BUF];
     char filename[MAX_BUF];
     char *cp, *p;
@@ -489,10 +481,10 @@ void init_attackmess(void){
     level = 0;
     while (fgets(buf, MAX_BUF, fp)!=NULL) {
         if (*buf=='#') continue;
-        if((cp=strchr(buf,'\n'))!=NULL)
+        if ((cp=strchr(buf,'\n'))!=NULL)
             *cp='\0';
         cp=buf;
-        while(*cp==' ') /* Skip blanks */
+        while (*cp==' ') /* Skip blanks */
             cp++;
 
         if (strncmp(cp, "TYPE:", 5)==0) {

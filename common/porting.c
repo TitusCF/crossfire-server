@@ -84,8 +84,7 @@ static unsigned int curtmp = 0;
  * @return
  * path to temporary file, or NULL if failure. Must be freed by caller.
  */
-char *tempnam_local(const char *dir, const char *pfx)
-{
+char *tempnam_local(const char *dir, const char *pfx) {
     char *name;
     pid_t pid=getpid();
 
@@ -103,8 +102,8 @@ char *tempnam_local(const char *dir, const char *pfx)
      * find one that is free.
      */
     if (dir!=NULL) {
-    if (!(name = (char *) malloc(MAXPATHLEN)))
-        return(NULL);
+        if (!(name = (char *) malloc(MAXPATHLEN)))
+            return(NULL);
         do {
 #ifdef HAVE_SNPRINTF
             (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
@@ -115,7 +114,7 @@ char *tempnam_local(const char *dir, const char *pfx)
         } while (access(name, F_OK)!=-1);
         return(name);
     }
-  return(NULL);
+    return(NULL);
 }
 
 
@@ -131,8 +130,7 @@ char *tempnam_local(const char *dir, const char *pfx)
  * @note
  * will fail if any file has a name starting by .
  */
-void remove_directory(const char *path)
-{
+void remove_directory(const char *path) {
     DIR *dirp;
     char buf[MAX_BUF];
     struct stat statbuf;
@@ -192,52 +190,41 @@ void remove_directory(const char *path)
  * @todo
  * is this actually used?
  */
-FILE *popen_local(const char *command, const char *type)
-{
+FILE *popen_local(const char *command, const char *type) {
     int     fd[2];
     int     pd;
     FILE    *ret;
-    if (!strcmp(type,"r"))
-    {
+    if (!strcmp(type,"r")) {
         pd=STDOUT_FILENO;
-    }
-    else if (!strcmp(type,"w"))
-    {
+    } else if (!strcmp(type,"w")) {
         pd=STDIN_FILENO;
-    }
-    else
-    {
+    } else {
         return NULL;
     }
-    if (pipe(fd)!=-1)
-    {
-        switch (fork())
-        {
-        case -1:
-            close(fd[0]);
-            close(fd[1]);
-            break;
-        case 0:
-            close(fd[0]);
-            if ((fd[1]==pd)||(dup2(fd[1],pd)==pd))
-            {
-                if (fd[1]!=pd)
-                {
-                    close(fd[1]);
+    if (pipe(fd)!=-1) {
+        switch (fork()) {
+            case -1:
+                close(fd[0]);
+                close(fd[1]);
+                break;
+            case 0:
+                close(fd[0]);
+                if ((fd[1]==pd)||(dup2(fd[1],pd)==pd)) {
+                    if (fd[1]!=pd) {
+                        close(fd[1]);
+                    }
+                    execl("/bin/sh","sh","-c",command,NULL);
+                    close(pd);
                 }
-                execl("/bin/sh","sh","-c",command,NULL);
-                close(pd);
-            }
-            exit(1);
-            break;
-        default:
-            close(fd[1]);
-            if (ret=fdopen(fd[0],type))
-            {
-                return ret;
-            }
-            close(fd[0]);
-            break;
+                exit(1);
+                break;
+            default:
+                close(fd[1]);
+                if (ret=fdopen(fd[0],type)) {
+                    return ret;
+                }
+                close(fd[0]);
+                break;
         }
     }
     return NULL;
@@ -290,8 +277,7 @@ islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
  * @todo
  * check weird -+ handling (missing break?)
  */
-long strtol(register char *str, char **ptr, register int base)
-{
+long strtol(register char *str, char **ptr, register int base) {
     register long val;
     register int c;
     int xx, neg = 0;
@@ -300,8 +286,8 @@ long strtol(register char *str, char **ptr, register int base)
         *ptr = str;         /* in case no number is formed */
     if (base < 0 || base > MBASE)
         return (0);         /* base is invalid */
-    if (!isalnum (c = *str)) {
-        while (isspace (c))
+    if (!isalnum(c = *str)) {
+        while (isspace(c))
             c = *++str;
         switch (c) {
             case '-':
@@ -312,24 +298,24 @@ long strtol(register char *str, char **ptr, register int base)
     }
     if (base == 0) {
         if (c != '0')
-        base = 10;
+            base = 10;
         else {
-        if (str[1] == 'x' || str[1] == 'X')
-            base = 16;
-        else
-            base = 8;
+            if (str[1] == 'x' || str[1] == 'X')
+                base = 16;
+            else
+                base = 8;
         }
     }
     /*
     ** For any base > 10, the digits incrementally following
     ** 9 are assumed to be "abc...z" or "ABC...Z"
     */
-    if (!isalnum (c) || (xx = DIGIT (c)) >= base)
+    if (!isalnum(c) || (xx = DIGIT(c)) >= base)
         return 0;           /* no number formed */
-    if (base == 16 && c == '0' && isxdigit (str[2]) &&
-      (str[1] == 'x' || str[1] == 'X'))
+    if (base == 16 && c == '0' && isxdigit(str[2]) &&
+            (str[1] == 'x' || str[1] == 'X'))
         c = *(str += 2);    /* skip over leading "0x" or "0X" */
-    for (val = -DIGIT (c); isalnum (c = *++str) && (xx = DIGIT (c)) < base;)
+    for (val = -DIGIT(c); isalnum(c = *++str) && (xx = DIGIT(c)) < base;)
         /* accumulate neg avoids surprises near
         MAXLONG */
         val = base * val - xx;
@@ -355,22 +341,21 @@ long strtol(register char *str, char **ptr, register int base)
  * @li 1 if s1 is greater than s2
  */
 #if !defined(HAVE_STRNCASECMP)
-int strncasecmp(const char *s1, const char *s2, int n)
-{
+int strncasecmp(const char *s1, const char *s2, int n) {
     register int c1, c2;
 
     while (*s1 && *s2 && n) {
         c1 = tolower(*s1);
         c2 = tolower(*s2);
         if (c1 != c2)
-        return (c1 - c2);
+            return (c1 - c2);
         s1++;
         s2++;
         n--;
     }
     if (!n)
         return(0);
-    return (int) (*s1 - *s2);
+    return (int)(*s1 - *s2);
 }
 #endif
 
@@ -388,21 +373,20 @@ int strncasecmp(const char *s1, const char *s2, int n)
  * @li 0 if s1 equals s2
  * @li 1 if s1 is greater than s2
  */
-int strcasecmp(const char *s1, const char*s2)
-{
+int strcasecmp(const char *s1, const char*s2) {
     register int c1, c2;
 
     while (*s1 && *s2) {
         c1 = tolower(*s1);
         c2 = tolower(*s2);
         if (c1 != c2)
-        return (c1 - c2);
+            return (c1 - c2);
         s1++;
         s2++;
     }
     if (*s1=='\0' && *s2=='\0')
         return 0;
-    return (int) (*s1 - *s2);
+    return (int)(*s1 - *s2);
 }
 #endif
 
@@ -416,8 +400,7 @@ int strcasecmp(const char *s1, const char*s2)
  * @return
  * pointer to first occurrence of find in s, NULL if not found.
  */
-const char *strcasestr_local(const char *s, const char *find)
-{
+const char *strcasestr_local(const char *s, const char *find) {
     char c, sc;
     size_t len;
 
@@ -426,13 +409,13 @@ const char *strcasestr_local(const char *s, const char *find)
         len = strlen(find);
         do {
             do {
-                 if ((sc = *s++) == 0)
-                     return NULL;
+                if ((sc = *s++) == 0)
+                    return NULL;
             } while (tolower(sc) != c);
         } while (strncasecmp(s, find, len) != 0);
         s--;
-     }
-     return s;
+    }
+    return s;
 }
 
 #if !defined(HAVE_SNPRINTF)
@@ -454,8 +437,7 @@ const char *strcasestr_local(const char *s, const char *find)
  * @todo
  * try to do something better than abort()?
  */
-int snprintf(char *dest, int max, const char *format, ...)
-{
+int snprintf(char *dest, int max, const char *format, ...) {
     va_list var;
     int ret;
 
@@ -482,10 +464,9 @@ int snprintf(char *dest, int max, const char *format, ...)
  * @return
  * buf.
  */
-char *strerror_local(int errnum, char* buf, size_t size)
-{
+char *strerror_local(int errnum, char* buf, size_t size) {
 #if defined(HAVE_STRERROR_R)
-/* Then what flavour of strerror_r... */
+    /* Then what flavour of strerror_r... */
 # if defined(STRERROR_R_CHAR_P)
     char* bbuf;
     buf[0]=0;
@@ -494,12 +475,12 @@ char *strerror_local(int errnum, char* buf, size_t size)
         strncpy(buf,bbuf,size);
 # else
     if (strerror_r(errnum, buf, size) != 0) {
-      /* EINVAL and ERANGE are possible errors from this strerror_r */
-      if (errno == ERANGE) {
-         strncat(buf, "Too small buffer.", size);
-      } else if (errno == EINVAL) {
-         strncat(buf, "Error number invalid.", size);
-      }
+        /* EINVAL and ERANGE are possible errors from this strerror_r */
+        if (errno == ERANGE) {
+            strncat(buf, "Too small buffer.", size);
+        } else if (errno == EINVAL) {
+            strncat(buf, "Error number invalid.", size);
+        }
     }
 # endif /* STRERROR_R_CHAR_P */
 
@@ -530,8 +511,7 @@ char *strerror_local(int errnum, char* buf, size_t size)
  * @return
  * square root.
  */
-int isqrt(int n)
-{
+int isqrt(int n) {
     int result, sum, prev;
     result = 0;
     prev = sum = 1;
@@ -724,20 +704,19 @@ void close_and_delete(FILE *fp, int compressed) {
  * @note
  * will LOG() to debug and error.
  */
-void make_path_to_file (const char *filename)
-{
+void make_path_to_file(const char *filename) {
     char buf[MAX_BUF], *cp = buf;
     struct stat statbuf;
 
     if (!filename || !*filename)
         return;
-    strcpy (buf, filename);
+    strcpy(buf, filename);
     LOG(llevDebug, "make_path_tofile %s...\n", filename);
-    while ((cp = strchr (cp + 1, (int) '/'))) {
+    while ((cp = strchr(cp + 1, (int) '/'))) {
         *cp = '\0';
-        if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
+        if (stat(buf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
             LOG(llevDebug, "Was not dir...\n");
-            if (mkdir (buf, SAVE_DIR_MODE)) {
+            if (mkdir(buf, SAVE_DIR_MODE)) {
                 char err[MAX_BUF];
                 LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
                 return;
