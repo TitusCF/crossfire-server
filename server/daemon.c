@@ -69,8 +69,7 @@
 /**
  * Starts the server as a daemon.
  */
-void become_daemon (void)
-{
+void become_daemon(void) {
     register int i;
     int forkresult;
 
@@ -83,32 +82,32 @@ void become_daemon (void)
      * init (pid 1).
      */
 
-    if ( (forkresult = fork ()) ){	/* if parent */
-	  if(forkresult < 0 ){
-		perror("Fork error!");
-	  }
-	  exit (0);			/* then no more work to do */
-      }
+    if ((forkresult = fork())) {   /* if parent */
+        if (forkresult < 0) {
+            perror("Fork error!");
+        }
+        exit(0);    /* then no more work to do */
+    }
 
     /*
      * Close standard file descriptors and get rid of controlling tty
      */
 
-    close (0);
-    close (1);
-    close (2);
+    close(0);
+    close(1);
+    close(2);
 
     /*
      * Set up the standard file descriptors.
      */
-    (void) open ("/dev/null", O_RDONLY);	/* root inode already in core */
-    (void) dup2 (0, 1);
-    (void) dup2 (0, 2);
+    (void) open("/dev/null", O_RDONLY);  /* root inode already in core */
+    (void) dup2(0, 1);
+    (void) dup2(0, 2);
 
-    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
+    if ((i = open("/dev/tty", O_RDWR)) >= 0) {  /* did open succeed? */
 #if (defined(SYSV) || defined(hpux)) && defined(TIOCTTY)
-	int zero = 0;
-	(void) ioctl (i, TIOCTTY, &zero);
+        int zero = 0;
+        (void) ioctl(i, TIOCTTY, &zero);
 #else
 
 #  ifdef HAVE_SYS_TERMIOS_H
@@ -118,20 +117,20 @@ void become_daemon (void)
 #      include <sys/ttycom.h>
 #    endif
 #  endif
-	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
+        (void) ioctl(i, TIOCNOTTY, (char *) 0);     /* detach, BSD style */
 #endif
-	(void) close (i);
+        (void) close(i);
     }
 
 
 #ifdef HAVE_SETSID
     setsid();
 #else
-/* Are these really different?  */
+    /* Are these really different?  */
 #  if defined(SYSV) || defined(SVR4)
-      setpgrp (0, 0);
+    setpgrp(0, 0);
 #  else /* Non SYSV machines */
-      setpgrp (0, getpid());
+    setpgrp(0, getpid());
 #  endif
 #endif
 }

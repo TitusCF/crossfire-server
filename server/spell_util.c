@@ -57,13 +57,12 @@ extern const char * const spell_mapping[];
  * random spell, or NULL if none found.
  * @todo change skill to sstring.
  */
-object *find_random_spell_in_ob(object *ob, const char *skill)
-{
+object *find_random_spell_in_ob(object *ob, const char *skill) {
     int k=0,s;
     object *tmp;
 
     for (tmp=ob->inv; tmp; tmp=tmp->below)
-	if (tmp->type == SPELL && (!skill || tmp->skill == skill)) k++;
+        if (tmp->type == SPELL && (!skill || tmp->skill == skill)) k++;
 
     /* No spells, no need to progess further */
     if (!k) return NULL;
@@ -71,10 +70,10 @@ object *find_random_spell_in_ob(object *ob, const char *skill)
     s = RANDOM() % k;
 
     for (tmp=ob->inv; tmp; tmp=tmp->below)
-	if (tmp->type == SPELL && (!skill || tmp->skill == skill)) {
-	    if (!s) return tmp;
-	    else s--;
-	}
+        if (tmp->type == SPELL && (!skill || tmp->skill == skill)) {
+            if (!s) return tmp;
+            else s--;
+        }
     /* Should never get here, but just in case */
     return NULL;
 }
@@ -99,13 +98,12 @@ object *find_random_spell_in_ob(object *ob, const char *skill)
  * @param dest
  * object to set the skill for.
  */
-void set_spell_skill(object *op, object *caster, object *spob, object *dest)
-{
+void set_spell_skill(object *op, object *caster, object *spob, object *dest) {
     if (dest->skill) FREE_AND_CLEAR_STR(dest->skill);
     if (caster == op && spob->skill)
-	dest->skill = add_refcount(spob->skill);
+        dest->skill = add_refcount(spob->skill);
     else if (caster->skill)
-	dest->skill = add_refcount(caster->skill);
+        dest->skill = add_refcount(caster->skill);
 }
 
 /**
@@ -122,24 +120,24 @@ void check_spells(void) {
     LOG(llevDebug, "Checking spells...\n");
 
     for (at=first_archetype; at; at=at->next) {
-	if (at->clone.type == SPELL) {
-	    if (at->clone.skill) {
-		for (i=1; i<NUM_SKILLS; i++)
-		    if (!strcmp(skill_names[i], at->clone.skill)) break;
-		if (i==NUM_SKILLS) {
-		    LOG(llevError,"Spell %s has improper associated skill %s\n", at->name, at->clone.skill);
-		}
-	    }
-	    /* other_arch is already checked for in the loader */
-	}
+        if (at->clone.type == SPELL) {
+            if (at->clone.skill) {
+                for (i=1; i<NUM_SKILLS; i++)
+                    if (!strcmp(skill_names[i], at->clone.skill)) break;
+                if (i==NUM_SKILLS) {
+                    LOG(llevError,"Spell %s has improper associated skill %s\n", at->name, at->clone.skill);
+                }
+            }
+            /* other_arch is already checked for in the loader */
+        }
     }
 
     i=0;
     while (spell_mapping[i]) {
-	if (!find_archetype(spell_mapping[i])) {
-	    LOG(llevError,"Unable to find spell mapping %s (%i)\n", spell_mapping[i], i);
-	}
-	i++;
+        if (!find_archetype(spell_mapping[i])) {
+            LOG(llevError,"Unable to find spell mapping %s (%i)\n", spell_mapping[i], i);
+        }
+        i++;
     }
     LOG(llevDebug, "Checking spells completed.\n");
 #endif
@@ -150,16 +148,15 @@ void check_spells(void) {
  * not sure what this would be used for, as the data seems pretty
  * minimal, but easy enough to keep around.
  */
-void dump_spells(void)
-{
+void dump_spells(void) {
     archetype *at;
 
     for (at=first_archetype; at; at=at->next) {
-	if (at->clone.type == SPELL) {
-	    fprintf(stderr, "%s:%s:%s:%s:%d\n", at->clone.name?at->clone.name:"null",
-		    at->name, at->clone.other_arch?at->clone.other_arch->name:"null",
-		    at->clone.skill?at->clone.skill:"null", at->clone.level);
-	}
+        if (at->clone.type == SPELL) {
+            fprintf(stderr, "%s:%s:%s:%s:%d\n", at->clone.name?at->clone.name:"null",
+                    at->name, at->clone.other_arch?at->clone.other_arch->name:"null",
+                    at->clone.skill?at->clone.skill:"null", at->clone.level);
+        }
     }
 }
 
@@ -176,16 +173,15 @@ void dump_spells(void)
  * what causes the effect to be inserted. Can be NULL.
  */
 
-void spell_effect (object *spob, int x, int y, mapstruct *map, object *originator)
-{
+void spell_effect(object *spob, int x, int y, mapstruct *map, object *originator) {
 
     if (spob->other_arch !=  NULL) {
-	object *effect = arch_to_object(spob->other_arch);
+        object *effect = arch_to_object(spob->other_arch);
 
-	effect->x = x;
-	effect->y = y;
+        effect->x = x;
+        effect->y = y;
 
-	insert_ob_in_map(effect, map, originator,0);
+        insert_ob_in_map(effect, map, originator,0);
     }
 }
 
@@ -202,19 +198,18 @@ void spell_effect (object *spob, int x, int y, mapstruct *map, object *originato
  * @return
  * adjusted level.
  */
-int min_casting_level(const object *caster, const object *spell)
-{
+int min_casting_level(const object *caster, const object *spell) {
     int new_level;
 
     if (caster->path_denied & spell->path_attuned) {
-	/* This case is not a bug, just the fact that this function is
-	 * usually called BEFORE checking for path_deny. -AV
-	 */
+        /* This case is not a bug, just the fact that this function is
+         * usually called BEFORE checking for path_deny. -AV
+         */
         return 1;
     }
     new_level = spell->level
-             + ((caster->path_repelled & spell->path_attuned) ? +2 : 0)
-             + ((caster->path_attuned & spell->path_attuned) ? -2 : 0);
+                + ((caster->path_repelled & spell->path_attuned) ? +2 : 0)
+                + ((caster->path_attuned & spell->path_attuned) ? -2 : 0);
     return (new_level < 1) ? 1 : new_level;
 }
 
@@ -233,20 +228,19 @@ int min_casting_level(const object *caster, const object *spell)
  * @return
  * adjusted level.
  */
-int caster_level(const object *caster, const object *spell)
-{
+int caster_level(const object *caster, const object *spell) {
     int level= caster->level;
 
     /* If this is a player, try to find the matching skill */
     if (caster->type == PLAYER && spell->skill) {
-	int i;
+        int i;
 
-	for (i=0; i < NUM_SKILLS; i++)
-	    if (caster->contr->last_skill_ob[i] &&
-		caster->contr->last_skill_ob[i]->skill == spell->skill) {
-		level = caster->contr->last_skill_ob[i]->level;
-		break;
-	    }
+        for (i=0; i < NUM_SKILLS; i++)
+            if (caster->contr->last_skill_ob[i] &&
+                caster->contr->last_skill_ob[i]->skill == spell->skill) {
+                level = caster->contr->last_skill_ob[i]->level;
+                break;
+            }
     }
     /* Got valid caster level.  Now adjust for attunement */
     level += ((caster->path_repelled & spell->path_attuned) ? -2 : 0)
@@ -277,45 +271,42 @@ int caster_level(const object *caster, const object *spell)
  * @return
  * sp/mana points cost.
  */
-sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
-{
+sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags) {
     int sp, grace, level = caster_level(caster, spell);
 
     if (settings.spellpoint_level_depend == TRUE) {
-	if (spell->stats.sp && spell->stats.maxsp) {
-	    sp= (int) (spell->stats.sp *
-	     (1.0 + MAX(0,
-		 (float)(level-spell->level)/ (float)spell->stats.maxsp)));
-	}
-	else sp = spell->stats.sp;
+        if (spell->stats.sp && spell->stats.maxsp) {
+            sp= (int)(spell->stats.sp *
+                      (1.0 + MAX(0,
+                                 (float)(level-spell->level)/ (float)spell->stats.maxsp)));
+        } else sp = spell->stats.sp;
 
-	sp *= PATH_SP_MULT(caster,spell);
-	if (!sp && spell->stats.sp) sp=1;
+        sp *= PATH_SP_MULT(caster,spell);
+        if (!sp && spell->stats.sp) sp=1;
 
-	if (spell->stats.grace && spell->stats.maxgrace) {
-	    grace= (int) (spell->stats.grace *
-	     (1.0 + MAX(0,
-		 (float)(level-spell->level)/ (float)spell->stats.maxgrace)));
-	}
-	else grace = spell->stats.grace;
+        if (spell->stats.grace && spell->stats.maxgrace) {
+            grace= (int)(spell->stats.grace *
+                         (1.0 + MAX(0,
+                                    (float)(level-spell->level)/ (float)spell->stats.maxgrace)));
+        } else grace = spell->stats.grace;
 
-	grace *= PATH_SP_MULT(caster,spell);
-	if (spell->stats.grace && !grace) grace=1;
+        grace *= PATH_SP_MULT(caster,spell);
+        if (spell->stats.grace && !grace) grace=1;
     } else {
-	sp = spell->stats.sp * PATH_SP_MULT(caster,spell);
-	if (spell->stats.sp && !sp) sp=1;
-	grace = spell->stats.grace * PATH_SP_MULT(caster,spell);
-	if (spell->stats.grace && !grace) grace=1;
+        sp = spell->stats.sp * PATH_SP_MULT(caster,spell);
+        if (spell->stats.sp && !sp) sp=1;
+        grace = spell->stats.grace * PATH_SP_MULT(caster,spell);
+        if (spell->stats.grace && !grace) grace=1;
     }
     if (flags == SPELL_HIGHEST)
-	return MAX(sp, grace);
+        return MAX(sp, grace);
     else if (flags == SPELL_GRACE)
-	return grace;
+        return grace;
     else if (flags == SPELL_MANA)
-	return sp;
+        return sp;
     else {
-	LOG(llevError, "SP_level_spellpoint_cost: Unknown flags passed: %d\n", flags);
-	return 0;
+        LOG(llevError, "SP_level_spellpoint_cost: Unknown flags passed: %d\n", flags);
+        return 0;
     }
 }
 
@@ -330,14 +321,13 @@ sint16 SP_level_spellpoint_cost(object *caster, object *spell, int flags)
  * @return
  * adjusted damage.
  */
-int SP_level_dam_adjust(const object *caster, const object *spob)
-{
-    int level = caster_level (caster, spob);
+int SP_level_dam_adjust(const object *caster, const object *spob) {
+    int level = caster_level(caster, spob);
     int adj = level - min_casting_level(caster, spob);
 
-    if(adj < 0) adj=0;
+    if (adj < 0) adj=0;
     if (spob->dam_modifier)
-	adj/=spob->dam_modifier;
+        adj/=spob->dam_modifier;
     else adj=0;
     return adj;
 }
@@ -354,14 +344,13 @@ int SP_level_dam_adjust(const object *caster, const object *spob)
  * @return
  * adjusted duration.
  */
-int SP_level_duration_adjust(const object *caster, const object *spob)
-{
-    int level = caster_level (caster, spob);
+int SP_level_duration_adjust(const object *caster, const object *spob) {
+    int level = caster_level(caster, spob);
     int adj = level - min_casting_level(caster, spob);
 
-    if(adj < 0) adj=0;
-    if(spob->duration_modifier)
-	adj/=spob->duration_modifier;
+    if (adj < 0) adj=0;
+    if (spob->duration_modifier)
+        adj/=spob->duration_modifier;
     else adj=0;
 
     return adj;
@@ -379,14 +368,13 @@ int SP_level_duration_adjust(const object *caster, const object *spob)
  * @return
  * adjusted range.
  */
-int SP_level_range_adjust(const object *caster, const object *spob)
-{
-    int level = caster_level (caster, spob);
+int SP_level_range_adjust(const object *caster, const object *spob) {
+    int level = caster_level(caster, spob);
     int adj = level - min_casting_level(caster, spob);
 
-    if(adj < 0) adj=0;
-    if(spob->range_modifier)
-	adj/=spob->range_modifier;
+    if (adj < 0) adj=0;
+    if (spob->range_modifier)
+        adj/=spob->range_modifier;
     else adj=0;
 
     return adj;
@@ -403,12 +391,11 @@ int SP_level_range_adjust(const object *caster, const object *spob)
  * @return
  * 1 if op knows the spell, 0 if it don't.
  */
-object *check_spell_known (object *op, const char *name)
-{
+object *check_spell_known(object *op, const char *name) {
     object *spop;
 
     for (spop=op->inv; spop; spop=spop->below)
-	if (spop->type == SPELL && !strcmp(spop->name, name)) return spop;
+        if (spop->type == SPELL && !strcmp(spop->name, name)) return spop;
 
     return NULL;
 }
@@ -430,7 +417,7 @@ object *lookup_spell_by_name(object *op,const char *spname) {
     object *spob1=NULL, *spob2=NULL, *spob;
     int nummatch=0;
 
-    if(spname==NULL) return NULL;
+    if (spname==NULL) return NULL;
 
     /* Try to find the spell.  We store the results in spob1
      * and spob2 - spob1 is only taking the length of
@@ -487,11 +474,11 @@ object *lookup_spell_by_name(object *op,const char *spname) {
 int reflwall(mapstruct *m,int x,int y, object *sp_op) {
     object *op;
 
-    if(OUT_OF_REAL_MAP(m,x,y)) return 0;
-    for(op=GET_MAP_OB(m,x,y);op!=NULL;op=op->above)
-	if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
-			       (rndm(0, 99)) < 90-(sp_op->level/10)))
-	return 1;
+    if (OUT_OF_REAL_MAP(m,x,y)) return 0;
+    for (op=GET_MAP_OB(m,x,y);op!=NULL;op=op->above)
+        if (QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
+                                                (rndm(0, 99)) < 90-(sp_op->level/10)))
+            return 1;
 
     return 0;
 }
@@ -510,14 +497,13 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
  * @return
  * direction that the object was actually placed in.
  */
-int cast_create_obj(object *op, object *new_op, int dir)
-{
+int cast_create_obj(object *op, object *new_op, int dir) {
     mapstruct *m;
     sint16  sx, sy;
 
-    if(dir &&
-      ((get_map_flags(op->map, &m, op->x+freearr_x[dir],op->y+freearr_y[dir], &sx, &sy) & P_OUT_OF_MAP) ||
-      OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))) {
+    if (dir &&
+        ((get_map_flags(op->map, &m, op->x+freearr_x[dir],op->y+freearr_y[dir], &sx, &sy) & P_OUT_OF_MAP) ||
+         OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, sx, sy)))) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
                       "Something is in the way. You cast it at your feet.", NULL);
         dir = 0;
@@ -561,58 +547,58 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
 
     if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(mp, x, y))) return 0;
 
-    for(tmp=GET_MAP_OB(mp,x,y);tmp!=NULL;tmp=tmp->above) {
-	/* If there is a counterspell on the space, and this
-	 * object is using magic, don't progess.  I believe we could
-	 * leave this out and let in progress, and other areas of the code
-	 * will then remove it, but that would seem to to use more
-	 * resources, and may not work as well if a player is standing
-	 * on top of a counterwall spell (may hit the player before being
-	 * removed.)  On the other hand, it may be more dramatic for the
-	 * spell to actually hit the counterwall and be sucked up.
-	 */
-	if ((tmp->attacktype & AT_COUNTERSPELL) &&
-	    (tmp->type != PLAYER) && !QUERY_FLAG(tmp,FLAG_MONSTER) &&
-	    (tmp->type != WEAPON) && (tmp->type != BOW) &&
-	    (tmp->type != ARROW) && (tmp->type != GOLEM) &&
-	    (immune_stop & AT_MAGIC)) return 0;
+    for (tmp=GET_MAP_OB(mp,x,y);tmp!=NULL;tmp=tmp->above) {
+        /* If there is a counterspell on the space, and this
+         * object is using magic, don't progess.  I believe we could
+         * leave this out and let in progress, and other areas of the code
+         * will then remove it, but that would seem to to use more
+         * resources, and may not work as well if a player is standing
+         * on top of a counterwall spell (may hit the player before being
+         * removed.)  On the other hand, it may be more dramatic for the
+         * spell to actually hit the counterwall and be sucked up.
+         */
+        if ((tmp->attacktype & AT_COUNTERSPELL) &&
+            (tmp->type != PLAYER) && !QUERY_FLAG(tmp,FLAG_MONSTER) &&
+            (tmp->type != WEAPON) && (tmp->type != BOW) &&
+            (tmp->type != ARROW) && (tmp->type != GOLEM) &&
+            (immune_stop & AT_MAGIC)) return 0;
 
-	/* This is to prevent 'out of control' spells.  Basically, this
-	 * limits one spell effect per space per spell.  This is definitely
-	 * needed for performance reasons, and just for playability I believe.
-	 * there are no such things as multispaced spells right now, so
-	 * we don't need to worry about the head.
-	 * We only need to go down this path is maxhp is set on both objects -
-	 * otherwise, no reason to check.  But if we do check, we need to
-	 * do some extra work, looking in the spell_tags[] of each object,
-	 * if they have it set.
-	 */
-	if (tmp->type == op->type && tmp->subtype == op->subtype &&
-          tmp->stats.maxhp && op->stats.maxhp) {
-	    if ((tmp->stats.maxhp == op->stats.maxhp) ||
-	        (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)) ||
-	        (op->spell_tags && OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp))) {
-		statistics.spell_suppressions++;
-		return 0;
-	    }
+        /* This is to prevent 'out of control' spells.  Basically, this
+         * limits one spell effect per space per spell.  This is definitely
+         * needed for performance reasons, and just for playability I believe.
+         * there are no such things as multispaced spells right now, so
+         * we don't need to worry about the head.
+         * We only need to go down this path is maxhp is set on both objects -
+         * otherwise, no reason to check.  But if we do check, we need to
+         * do some extra work, looking in the spell_tags[] of each object,
+         * if they have it set.
+         */
+        if (tmp->type == op->type && tmp->subtype == op->subtype &&
+            tmp->stats.maxhp && op->stats.maxhp) {
+            if ((tmp->stats.maxhp == op->stats.maxhp) ||
+                (tmp->spell_tags && OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)) ||
+                (op->spell_tags && OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp))) {
+                statistics.spell_suppressions++;
+                return 0;
+            }
 
-	    /* if both objects have spell tags, then if the two tags entries
-	     * from either match, that also counts.  Need to check
-	     * the spell_tags, because 0 values are allowed to match
-	     */
-	    if (op->spell_tags && tmp->spell_tags) {
-		int i;
+            /* if both objects have spell tags, then if the two tags entries
+             * from either match, that also counts.  Need to check
+             * the spell_tags, because 0 values are allowed to match
+             */
+            if (op->spell_tags && tmp->spell_tags) {
+                int i;
 
-		for (i=0; i<SPELL_TAG_SIZE; i++) {
-		    if (op->spell_tags[i] && op->spell_tags[i] == tmp->spell_tags[i])
-			statistics.spell_suppressions++;
-			return 0;
-		}
-	    }
-	}
-	/* Perhaps we should also put checks in for no magic and unholy
-	 * ground to prevent it from moving along?
-	 */
+                for (i=0; i<SPELL_TAG_SIZE; i++) {
+                    if (op->spell_tags[i] && op->spell_tags[i] == tmp->spell_tags[i])
+                        statistics.spell_suppressions++;
+                    return 0;
+                }
+            }
+        }
+        /* Perhaps we should also put checks in for no magic and unholy
+         * ground to prevent it from moving along?
+         */
     }
     /* If it passes the above tests, it must be OK */
     return 1;
@@ -639,34 +625,33 @@ int ok_to_put_more(mapstruct *m,sint16 x,sint16 y,object *op,int immune_stop) {
  * 0 on failure, 1 on success.
  * @todo check the note?
  */
-int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
-	int dir, object *spell)
-{
+int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y,
+                            int dir, object *spell) {
     object *tmp;
     int mflags;
     mapstruct *m;
 
-    if(spell->other_arch==NULL)
-	return 0;
+    if (spell->other_arch==NULL)
+        return 0;
 
     m = op->map;
     mflags = get_map_flags(m, &m, x, y, &x, &y);
     if (mflags & P_OUT_OF_MAP) {
-	return 0;
+        return 0;
     }
 
     tmp=arch_to_object(spell->other_arch);
 
-    if(tmp==NULL)
-	return 0;
+    if (tmp==NULL)
+        return 0;
 
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(m, x, y))) {
-        if ( caster->type == PLAYER )
+        if (caster->type == PLAYER)
             /* If caster is not player, it's for instance a swarm, so don't say there's an issue. */
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-			  "You can't cast the spell on top of a wall!", NULL);
-	free_object(tmp);
-	return 0;
+                          "You can't cast the spell on top of a wall!", NULL);
+        free_object(tmp);
+        return 0;
     }
 
 
@@ -680,22 +665,22 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
     tmp->x=x;
     tmp->y=y;
     tmp->direction=dir;
-    if (get_owner (op) != NULL)
-	copy_owner (tmp, op);
+    if (get_owner(op) != NULL)
+        copy_owner(tmp, op);
     else
-	set_owner (tmp, op);
-    tmp->level = caster_level (caster, spell);
+        set_owner(tmp, op);
+    tmp->level = caster_level(caster, spell);
     set_spell_skill(op, caster, spell, tmp);
 
     /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
-    if(tmp->attacktype&AT_HOLYWORD || tmp->attacktype&AT_GODPOWER) {
-	if(!tailor_god_spell(tmp,op)) return 0;
+    if (tmp->attacktype&AT_HOLYWORD || tmp->attacktype&AT_GODPOWER) {
+        if (!tailor_god_spell(tmp,op)) return 0;
     }
-    if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
-	SET_ANIMATION(tmp, dir);
+    if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
+        SET_ANIMATION(tmp, dir);
 
-    if ((tmp = insert_ob_in_map (tmp, m, op,0)) == NULL)
-	return 1;
+    if ((tmp = insert_ob_in_map(tmp, m, op,0)) == NULL)
+        return 1;
 
     ob_process(tmp);
 
@@ -718,10 +703,10 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
  */
 void regenerate_rod(object *rod) {
     if (rod->stats.hp < rod->stats.maxhp) {
-	rod->stats.hp+= 1 + rod->stats.maxhp/10;
+        rod->stats.hp+= 1 + rod->stats.maxhp/10;
 
-	if (rod->stats.hp > rod->stats.maxhp)
-	    rod->stats.hp = rod->stats.maxhp;
+        if (rod->stats.hp > rod->stats.maxhp)
+            rod->stats.hp = rod->stats.maxhp;
     }
 }
 
@@ -777,16 +762,13 @@ object *find_target_for_friendly_spell(object *op,int dir) {
      * we then make the owner of this object the target.
      * The owner could very well be no where near op.
      */
-    if(op->type!=PLAYER && op->type!=RUNE)
-    {
+    if (op->type!=PLAYER && op->type!=RUNE) {
         tmp=get_owner(op);
         /* If the owner does not exist, or is not a monster, than apply the spell
          * to the caster.
          */
-        if(!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER)) tmp=op;
-    }
-    else
-    {
+        if (!tmp || !QUERY_FLAG(tmp,FLAG_MONSTER)) tmp=op;
+    } else {
         m = op->map;
         x =  op->x+freearr_x[dir];
         y =  op->y+freearr_y[dir];
@@ -795,27 +777,22 @@ object *find_target_for_friendly_spell(object *op,int dir) {
 
         if (mflags & P_OUT_OF_MAP)
             tmp=NULL;
-        else
-        {
-            for(tmp=GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above)
-            {
-                if(tmp->type==PLAYER)
+        else {
+            for (tmp=GET_MAP_OB(m, x, y); tmp!=NULL; tmp=tmp->above) {
+                if (tmp->type==PLAYER)
                     break;
             }
         }
     }
     /* didn't find a player there, look in current square for a player */
-    if(tmp==NULL)
-        for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-        {
-            if(tmp->type==PLAYER)
+    if (tmp==NULL)
+        for (tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+            if (tmp->type==PLAYER)
                 break;
             /* Don't forget to browse inside transports ! - gros 2006/07/25 */
-            if(tmp->type==TRANSPORT)
-            {
+            if (tmp->type==TRANSPORT) {
                 object* inv;
-                for (inv=tmp->inv; inv; inv=inv->below)
-                {
+                for (inv=tmp->inv; inv; inv=inv->below) {
                     if ((inv->type == PLAYER)&&(op == inv))
                         return inv;
                 }
@@ -854,27 +831,27 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude) {
     mapstruct *mp;
 
     if (exclude && exclude->head)
-	exclude = exclude->head;
+        exclude = exclude->head;
     if (exclude && exclude->type)
-	owner_type = exclude->type;
+        owner_type = exclude->type;
 
-    for(i=rndm(1, 8);i<max;i++) {
-	nx = x + freearr_x[i];
-	ny = y + freearr_y[i];
-	mp = m;
-	mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
-	if (mflags & (P_OUT_OF_MAP | P_BLOCKSVIEW)) continue;
+    for (i=rndm(1, 8);i<max;i++) {
+        nx = x + freearr_x[i];
+        ny = y + freearr_y[i];
+        mp = m;
+        mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
+        if (mflags & (P_OUT_OF_MAP | P_BLOCKSVIEW)) continue;
 
         tmp=GET_MAP_OB(mp,nx,ny);
 
-	while(tmp!=NULL && (
-             ((owner_type==PLAYER && !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR) && !(tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL)))
-              || (owner_type!=PLAYER && tmp->type!=PLAYER))
-             || (tmp == exclude || (tmp->head && tmp->head == exclude))))
-	    tmp=tmp->above;
+        while (tmp!=NULL && (
+                   ((owner_type==PLAYER && !QUERY_FLAG(tmp,FLAG_MONSTER) && !QUERY_FLAG(tmp,FLAG_GENERATOR) && !(tmp->type == PLAYER && op_on_battleground(tmp, NULL, NULL)))
+                    || (owner_type!=PLAYER && tmp->type!=PLAYER))
+                   || (tmp == exclude || (tmp->head && tmp->head == exclude))))
+            tmp=tmp->above;
 
-	if(tmp!=NULL && can_see_monsterP(m,x,y,i))
-	    return freedir[i];
+        if (tmp!=NULL && can_see_monsterP(m,x,y,i))
+            return freedir[i];
     }
     return -1;  /* flag for "keep going the way you were" */
 }
@@ -901,42 +878,42 @@ static int put_a_monster(object *op, const char *monstername) {
 
     /* Handle cases where we are passed a bogus mosntername */
 
-    if((at=find_archetype(monstername))==NULL) return 0;
+    if ((at=find_archetype(monstername))==NULL) return 0;
 
     /* find a free square nearby
      * first we check the closest square for free squares
      */
 
     dir=find_first_free_spot(&at->clone,op->map,op->x,op->y);
-    if(dir!=-1) {
-	/* This is basically grabbed for generate monster.  Fixed 971225 to
-	 * insert multipart monsters properly
-	 */
-	while (at!=NULL) {
-	    tmp=arch_to_object(at);
-	    tmp->x=op->x+freearr_x[dir]+at->clone.x;
-	    tmp->y=op->y+freearr_y[dir]+at->clone.y;
-	    tmp->map = op->map;
-	    if (head) {
-		tmp->head=head;
-		prev->more=tmp;
-	    }
-	    if (!head) head=tmp;
-	    prev=tmp;
-	    at=at->more;
-	}
+    if (dir!=-1) {
+        /* This is basically grabbed for generate monster.  Fixed 971225 to
+         * insert multipart monsters properly
+         */
+        while (at!=NULL) {
+            tmp=arch_to_object(at);
+            tmp->x=op->x+freearr_x[dir]+at->clone.x;
+            tmp->y=op->y+freearr_y[dir]+at->clone.y;
+            tmp->map = op->map;
+            if (head) {
+                tmp->head=head;
+                prev->more=tmp;
+            }
+            if (!head) head=tmp;
+            prev=tmp;
+            at=at->more;
+        }
 
-	if (head->randomitems)
-	    create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
+        if (head->randomitems)
+            create_treasure(head->randomitems, head, GT_INVISIBLE, op->map->difficulty,0);
 
-	insert_ob_in_map(head,op->map,op,0);
+        insert_ob_in_map(head,op->map,op,0);
 
-	/* thought it'd be cool to insert a burnout, too.*/
-	tmp=create_archetype("burnout");
-	tmp->map = op->map;
-	tmp->x=op->x+freearr_x[dir];
-	tmp->y=op->y+freearr_y[dir];
-	insert_ob_in_map(tmp,op->map,op,0);
+        /* thought it'd be cool to insert a burnout, too.*/
+        tmp=create_archetype("burnout");
+        tmp->map = op->map;
+        tmp->x=op->x+freearr_x[dir];
+        tmp->y=op->y+freearr_y[dir];
+        insert_ob_in_map(tmp,op->map,op,0);
     }
 }
 
@@ -958,9 +935,9 @@ static int put_a_monster(object *op, const char *monstername) {
  * @return
  * number of monsters actually put on the map.
  */
-int summon_hostile_monsters(object *op, int n, const char *monstername){
+int summon_hostile_monsters(object *op, int n, const char *monstername) {
     int i, put = 0;
-    for(i=0;i<n;i++)
+    for (i=0;i<n;i++)
         put += put_a_monster(op,monstername);
 
     return put;
@@ -991,15 +968,14 @@ int summon_hostile_monsters(object *op, int n, const char *monstername){
  * @param change_face
  * if set, also changes the face, else only changes the attacktype.
  */
-void shuffle_attack(object *op, int change_face)
-{
+void shuffle_attack(object *op, int change_face) {
     int i;
     i=rndm(0, 21);
 
     op->attacktype=ATTACKS[i].attacktype|AT_MAGIC;
 
-    if(change_face) {
-	SET_ANIMATION(op, ATTACKS[i].face);
+    if (change_face) {
+        SET_ANIMATION(op, ATTACKS[i].face);
     }
 }
 
@@ -1014,47 +990,40 @@ void shuffle_attack(object *op, int change_face)
  * @param power
  * how much grace the spell would normally take to cast.
  */
-static void prayer_failure(object *op, int failure, int power)
-{
+static void prayer_failure(object *op, int failure, int power) {
     const char *godname;
     object *tmp;
 
-    if(!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
+    if (!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
 
-    if(failure<= -20 && failure > -40) /* wonder */
-    {
-	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			     "%s gives a sign to renew your faith.",
-			     "%s gives a sign to renew your faith.",
-			     godname);
-	tmp = create_archetype(SPELL_WONDER);
-	cast_cone(op,op,0,tmp);
-	free_object(tmp);
+    if (failure<= -20 && failure > -40) { /* wonder */
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                             "%s gives a sign to renew your faith.",
+                             "%s gives a sign to renew your faith.",
+                             godname);
+        tmp = create_archetype(SPELL_WONDER);
+        cast_cone(op,op,0,tmp);
+        free_object(tmp);
     }
 
-    else if (failure <= -40 && failure > -60) /* confusion */
-    {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		      "Your diety touches your mind!", NULL);
+    else if (failure <= -40 && failure > -60) { /* confusion */
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                      "Your diety touches your mind!", NULL);
         confuse_living(op,op,99);
-    }
-    else if (failure <= -60 && failure> -150) /* paralysis */
-    {
-	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		     "%s requires you to pray NOW. You comply, ignoring all else.",
-		     "%s requires you to pray NOW. You comply, ignoring all else.",
-		     godname);
+    } else if (failure <= -60 && failure> -150) { /* paralysis */
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                             "%s requires you to pray NOW. You comply, ignoring all else.",
+                             "%s requires you to pray NOW. You comply, ignoring all else.",
+                             godname);
 
         paralyze_living(op,op,99);
-    }
-    else if (failure <= -150) /* blast the immediate area */
-    {
-	tmp = create_archetype(GOD_POWER);
-	draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			     "%s smites you!",
-			     "%s smites you!",
-			     godname);
-	cast_magic_storm(op,tmp, power);
+    } else if (failure <= -150) { /* blast the immediate area */
+        tmp = create_archetype(GOD_POWER);
+        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                             "%s smites you!",
+                             "%s smites you!",
+                             godname);
+        cast_magic_storm(op,tmp, power);
     }
 }
 
@@ -1070,61 +1039,54 @@ static void prayer_failure(object *op, int failure, int power)
  * @param skill
  * skill needed to cast the spell.
  */
-void spell_failure(object *op, int failure,int power, object *skill)
-{
+void spell_failure(object *op, int failure,int power, object *skill) {
     object *tmp;
 
     if (settings.spell_failure_effects == FALSE)
-	return;
+        return;
 
-    if (failure<=-20 && failure > -40) /* wonder */
-    {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		      "Your spell causes an unexpected effect.", NULL);
-	tmp = create_archetype(SPELL_WONDER);
-	cast_cone(op,op,0,tmp);
-	free_object(tmp);
+    if (failure<=-20 && failure > -40) { /* wonder */
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                      "Your spell causes an unexpected effect.", NULL);
+        tmp = create_archetype(SPELL_WONDER);
+        cast_cone(op,op,0,tmp);
+        free_object(tmp);
     }
 
-    else if (failure <= -40 && failure > -60) /* confusion */
-    {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		      "Your magic recoils on you, making you confused!", NULL);
+    else if (failure <= -40 && failure > -60) { /* confusion */
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                      "Your magic recoils on you, making you confused!", NULL);
         confuse_living(op,op,99);
-    }
-    else if (failure <= -60 && failure> -80) /* paralysis */
-    {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-		      "Your magic stuns you!", NULL);
+    } else if (failure <= -60 && failure> -80) { /* paralysis */
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                      "Your magic stuns you!", NULL);
         paralyze_living(op,op,99);
-    }
-    else if (failure <= -80) /* blast the immediate area */
-    {
-	object *tmp;
-	/* Safety check to make sure we don't get any mana storms in scorn */
-	if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
-	    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "The magic warps and you are turned inside out!", NULL);
-	    hit_player(op,9998,op,AT_INTERNAL,1);
+    } else if (failure <= -80) { /* blast the immediate area */
+        object *tmp;
+        /* Safety check to make sure we don't get any mana storms in scorn */
+        if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_MAGIC) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                          "The magic warps and you are turned inside out!", NULL);
+            hit_player(op,9998,op,AT_INTERNAL,1);
 
-	} else {
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "You lose control of the mana! The uncontrolled magic blasts you!",
-			  NULL);
-	    tmp=create_archetype(LOOSE_MANA);
-	    tmp->level=skill->level;
-	    tmp->x=op->x;
-	    tmp->y=op->y;
+        } else {
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                          "You lose control of the mana! The uncontrolled magic blasts you!",
+                          NULL);
+            tmp=create_archetype(LOOSE_MANA);
+            tmp->level=skill->level;
+            tmp->x=op->x;
+            tmp->y=op->y;
 
-	    /* increase the area of destruction a little for more powerful spells */
-	    tmp->range+=isqrt(power);
+            /* increase the area of destruction a little for more powerful spells */
+            tmp->range+=isqrt(power);
 
-	    if (power>25) tmp->stats.dam = 25 + isqrt(power);
-	    else tmp->stats.dam=power; /* nasty recoils! */
+            if (power>25) tmp->stats.dam = 25 + isqrt(power);
+            else tmp->stats.dam=power; /* nasty recoils! */
 
-	    tmp->stats.maxhp=tmp->count;
-	    insert_ob_in_map(tmp,op->map,NULL,0);
-	}
+            tmp->stats.maxhp=tmp->count;
+            insert_ob_in_map(tmp,op->map,NULL,0);
+        }
     }
 }
 
@@ -1162,7 +1124,7 @@ static void transmute_item_to_flower(object* op) {
     count = rndm(0, count-1);
     for (item = first; item && count>0; item = item->below) {
         if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
-        count--;
+            count--;
         }
     }
 
@@ -1187,10 +1149,10 @@ static void transmute_item_to_flower(object* op) {
 
     query_short_name(item, name, HUGE_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0,op,
-        MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
-        "Your %s turns to a flower!",
-        "Your %s turns to a flower!",
-        name);
+                         MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+                         "Your %s turns to a flower!",
+                         "Your %s turns to a flower!",
+                         name);
 
     insert_ob_in_ob(force, flower);
     flower = insert_ob_in_ob(flower, op);
@@ -1217,9 +1179,9 @@ static void swap_random_stats(object* op) {
         second++;
 
     draw_ext_info_format(NDI_UNIQUE, 0,op,
-        MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SPELL,
-        "You suddenly feel really weird!",
-        "You suddenly feel really weird!");
+                         MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SPELL,
+                         "You suddenly feel really weird!",
+                         "You suddenly feel really weird!");
 
     force = create_archetype(FORCE_NAME);
     force->duration = 100 + rndm(0,10)*100;
@@ -1299,10 +1261,10 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
     old_shoottype = op->contr ? op->contr->shoottype : 0;
 
     if (!spell_ob) {
-	LOG(llevError,"cast_spell: null spell object passed\n");
-	return 0;
+        LOG(llevError,"cast_spell: null spell object passed\n");
+        return 0;
     }
-    if(!strcmp((godname=determine_god(op)),"none")) godname="A random spirit";
+    if (!strcmp((godname=determine_god(op)),"none")) godname="A random spirit";
 
     /* the caller should set caster to op if appropriate */
     if (!caster) {
@@ -1317,11 +1279,10 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
         if (rndm(0, 5) < 4) {
             spell_ob = find_random_spell_in_ob(op, NULL);
             draw_ext_info_format(NDI_UNIQUE, 0,op,
-                MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                "In your confused state, you're not sure of what you cast!",
-                "In your confused state, you're not sure of what you cast!");
-        }
-        else
+                                 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                                 "In your confused state, you're not sure of what you cast!",
+                                 "In your confused state, you're not sure of what you cast!");
+        } else
             /* We fall through to deplate sp/gr, and do some checks. */
             confusion_effect = 1;
     }
@@ -1330,9 +1291,9 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * an issue, because they don't have any spellpaths set up.
      */
     if ((caster->path_denied & spell_ob->path_attuned) && !QUERY_FLAG(caster,FLAG_WIZ)) {
-	draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-		      "That spell path is denied to you.", NULL);
-	return 0;
+        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "That spell path is denied to you.", NULL);
+        return 0;
     }
 
     /* if it is a player casting the spell, and they are really casting it
@@ -1345,85 +1306,84 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * at least process that code.
      */
     if (op->type == PLAYER && op == caster) {
-	cast_level = caster_level(caster, spell_ob);
-	if (spell_ob->skill) {
-	    skill = find_skill_by_name(op, spell_ob->skill);
-	    if (!skill) {
-		draw_ext_info_format(NDI_UNIQUE, 0,op,
-				     MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-				     "You need the skill %s to cast %s.",
-				     "You need the skill %s to cast %s.",
-				     spell_ob->skill, spell_ob->name);
-		return 0;
-	    }
-	    if (min_casting_level(op, spell_ob) > cast_level && !QUERY_FLAG(op, FLAG_WIZ)) {
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-			      "You lack enough skill to cast that spell.", NULL);
-		return 0;
-	    }
-	}
-	/* If the caster is the wiz, they don't ever fail, and don't have
-	 * to have sufficient grace/mana.
-	 */
-	if (!QUERY_FLAG(op, FLAG_WIZ)) {
-	    if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
-		SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-			      "You don't have enough mana.", NULL);
-		return 0;
-	    }
-	    if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
-		SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
-		if(random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
-		   10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
-			draw_ext_info_format(NDI_UNIQUE, 0,op,
-				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
-				     "%s grants your prayer, though you are unworthy.",
-				     "%s grants your prayer, though you are unworthy.",
-				     godname);
-		}
-		else {
-		    prayer_failure(op,op->stats.grace,
-			   SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) - op->stats.grace);
-		    draw_ext_info_format(NDI_UNIQUE, 0,op,
-					 MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-					 "%s ignores your prayer.",
-					 "%s ignores your prayer.",
-					 godname);
-		    return 0;
-		}
-	    }
+        cast_level = caster_level(caster, spell_ob);
+        if (spell_ob->skill) {
+            skill = find_skill_by_name(op, spell_ob->skill);
+            if (!skill) {
+                draw_ext_info_format(NDI_UNIQUE, 0,op,
+                                     MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                                     "You need the skill %s to cast %s.",
+                                     "You need the skill %s to cast %s.",
+                                     spell_ob->skill, spell_ob->name);
+                return 0;
+            }
+            if (min_casting_level(op, spell_ob) > cast_level && !QUERY_FLAG(op, FLAG_WIZ)) {
+                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                              "You lack enough skill to cast that spell.", NULL);
+                return 0;
+            }
+        }
+        /* If the caster is the wiz, they don't ever fail, and don't have
+         * to have sufficient grace/mana.
+         */
+        if (!QUERY_FLAG(op, FLAG_WIZ)) {
+            if (SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) &&
+                SP_level_spellpoint_cost(caster, spell_ob, SPELL_MANA) >  op->stats.sp) {
+                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                              "You don't have enough mana.", NULL);
+                return 0;
+            }
+            if (SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) &&
+                SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) >  op->stats.grace) {
+                if (random_roll(0, op->stats.Wis-1, op, PREFER_HIGH) + op->stats.grace -
+                    10*SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE)/op->stats.maxgrace >0) {
+                    draw_ext_info_format(NDI_UNIQUE, 0,op,
+                                         MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
+                                         "%s grants your prayer, though you are unworthy.",
+                                         "%s grants your prayer, though you are unworthy.",
+                                         godname);
+                } else {
+                    prayer_failure(op,op->stats.grace,
+                                   SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE) - op->stats.grace);
+                    draw_ext_info_format(NDI_UNIQUE, 0,op,
+                                         MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                                         "%s ignores your prayer.",
+                                         "%s ignores your prayer.",
+                                         godname);
+                    return 0;
+                }
+            }
 
-	    /* player/monster is trying to cast the spell.  might fumble it */
-	    if (spell_ob->stats.grace && random_roll(0, 99, op, PREFER_HIGH) <
-	      (spell_ob->level/(float)MAX(1,op->level) *cleric_chance[op->stats.Wis])) {
+            /* player/monster is trying to cast the spell.  might fumble it */
+            if (spell_ob->stats.grace && random_roll(0, 99, op, PREFER_HIGH) <
+                (spell_ob->level/(float)MAX(1,op->level) *cleric_chance[op->stats.Wis])) {
                 play_sound_player_only(op->contr, SOUND_TYPE_SPELL, spell_ob, 0, "fumble");
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			      "You fumble the spell.", NULL);
-		if (settings.casting_time == TRUE) {
-		    op->casting_time = -1;
-		}
-		op->stats.grace -= random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW);
-		return 0;
-	    } else if (spell_ob->stats.sp) {
-		int failure = random_roll(0, 199, op, PREFER_HIGH) -
-		    op->contr->encumbrance +op->level - spell_ob->level +35;
+                draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                              "You fumble the spell.", NULL);
+                if (settings.casting_time == TRUE) {
+                    op->casting_time = -1;
+                }
+                op->stats.grace -= random_roll(1, SP_level_spellpoint_cost(caster,spell_ob, SPELL_GRACE), op, PREFER_LOW);
+                return 0;
+            } else if (spell_ob->stats.sp) {
+                int failure = random_roll(0, 199, op, PREFER_HIGH) -
+                              op->contr->encumbrance +op->level - spell_ob->level +35;
 
-		if( failure < 0) {
-		    draw_ext_info(NDI_UNIQUE, 0,op,
-			  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "You bungle the spell because you have too much heavy equipment in use.",
-			  NULL);
-		    if (settings.spell_failure_effects == TRUE)
-			spell_failure(op,failure,
-			  SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA),
-			  skill);
-		    op->contr->shoottype = old_shoottype;
-		    op->stats.sp -= random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW);
-		    return 0;
-		}
-	    }
-	}
+                if (failure < 0) {
+                    draw_ext_info(NDI_UNIQUE, 0,op,
+                                  MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                                  "You bungle the spell because you have too much heavy equipment in use.",
+                                  NULL);
+                    if (settings.spell_failure_effects == TRUE)
+                        spell_failure(op,failure,
+                                      SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA),
+                                      skill);
+                    op->contr->shoottype = old_shoottype;
+                    op->stats.sp -= random_roll(0, SP_level_spellpoint_cost(caster,spell_ob, SPELL_MANA), op, PREFER_LOW);
+                    return 0;
+                }
+            }
+        }
     }
 
     mflags = get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL);
@@ -1435,35 +1395,35 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      */
     if (spell_ob->type == SPELL && caster->type != POTION && !QUERY_FLAG(op, FLAG_WIZCAST) &&
         (QUERY_FLAG(caster, FLAG_ALIVE) || QUERY_FLAG(op, FLAG_ALIVE)) && !QUERY_FLAG(op,FLAG_MONSTER) &&
-	(((mflags & P_NO_MAGIC) && spell_ob->stats.sp) ||
-	   ((mflags & P_NO_CLERIC) && spell_ob->stats.grace))) {
+        (((mflags & P_NO_MAGIC) && spell_ob->stats.sp) ||
+         ((mflags & P_NO_CLERIC) && spell_ob->stats.grace))) {
 
-	if (op->type!=PLAYER)
-	    return 0;
+        if (op->type!=PLAYER)
+            return 0;
 
-	if ((mflags & P_NO_CLERIC) && spell_ob->stats.grace)
-	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-				 "This ground is unholy!  %s ignores you.",
-				 "This ground is unholy!  %s ignores you.",
-				 godname);
-	else
-	switch(op->contr->shoottype) {
-	    case range_magic:
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-			      "Something blocks your spellcasting.", NULL);
-		break;
-	    case range_misc:
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-			      "Something blocks the magic of your item.", NULL);
-		break;
-	    case range_golem:
-		draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-			      "Something blocks the magic of your scroll.", NULL);
-		break;
-	    default:
-		break;
-	}
-	return 0;
+        if ((mflags & P_NO_CLERIC) && spell_ob->stats.grace)
+            draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                                 "This ground is unholy!  %s ignores you.",
+                                 "This ground is unholy!  %s ignores you.",
+                                 godname);
+        else
+            switch (op->contr->shoottype) {
+                case range_magic:
+                    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                                  "Something blocks your spellcasting.", NULL);
+                    break;
+                case range_misc:
+                    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                                  "Something blocks the magic of your item.", NULL);
+                    break;
+                case range_golem:
+                    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                                  "Something blocks the magic of your scroll.", NULL);
+                    break;
+                default:
+                    break;
+            }
+        return 0;
     }
 
     if (caster == op && settings.casting_time == TRUE && spell_ob->type == SPELL) {
@@ -1474,16 +1434,14 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
             * spell is actually cast, it knows about the stringarg.
             * necessary for the invoke command spells.
             */
-            if(stringarg) {
+            if (stringarg) {
                 op->spellarg = strdup_local(stringarg);
-            }
-                else op->spellarg=NULL;
+            } else op->spellarg=NULL;
             return 0;
-        }
-        else if (op->casting_time != 0) {
-            if (op->type == PLAYER )
+        } else if (op->casting_time != 0) {
+            if (op->type == PLAYER)
                 draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_INFO,
-                    "You are casting!", NULL);
+                              "You are casting!", NULL);
             return 0;
         } else {    /* casting_time == 0 */
             op->casting_time = -1;
@@ -1506,11 +1464,11 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
                  * put a lower limit so that the player isn't stuck here too long
                  */
                 if ((spell_ob->casting_time > 0) &&
-                  op->speed_left < -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed))
+                    op->speed_left < -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed))
                     op->speed_left = -spell_ob->casting_time*PATH_TIME_MULT(op,spell_ob) * FABS(op->speed);
             } else if (caster->type == WAND || caster->type == HORN ||
-              caster->type == ROD || caster->type == POTION ||
-              caster->type == SCROLL) {
+                       caster->type == ROD || caster->type == POTION ||
+                       caster->type == SCROLL) {
                 op->speed_left -= 2 * FABS(op->speed);
             }
         }
@@ -1526,19 +1484,19 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * object requires.
      */
     if (op != caster && !skill && caster->skill) {
-	skill = find_skill_by_name(op, caster->skill);
-	if (!skill) {
-	    char name[MAX_BUF];
+        skill = find_skill_by_name(op, caster->skill);
+        if (!skill) {
+            char name[MAX_BUF];
 
-	    query_name(caster, name, MAX_BUF);
-	    draw_ext_info_format(NDI_UNIQUE, 0,op,
-				 MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-				 "You lack the skill %s to use the %s",
-				 "You lack the skill %s to use the %s",
-				 caster->skill, name);
-	    return 0;
-	}
-	change_skill(op, skill, 0);    /* needed for proper exp credit */
+            query_name(caster, name, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0,op,
+                                 MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                                 "You lack the skill %s to use the %s",
+                                 "You lack the skill %s to use the %s",
+                                 caster->skill, name);
+            return 0;
+        }
+        change_skill(op, skill, 0);    /* needed for proper exp credit */
     }
 
     /* Need to get proper ownership for spells cast via runes - these are not
@@ -1546,260 +1504,259 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
      * put some other spell into the rune (glyph, firetrap, magic rune, etc)
      */
     if (caster->type == RUNE) {
-	object *owner = get_owner(caster);
+        object *owner = get_owner(caster);
 
-	if (owner) skill = find_skill_by_name(owner, caster->skill);
+        if (owner) skill = find_skill_by_name(owner, caster->skill);
     }
 
     if (confusion_effect) {
         /* If we get here, the confusion effect was 'random effect', so do it and bail out. */
         draw_ext_info_format(NDI_UNIQUE, 0,op,
-            MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-            "In your confused state, you can't control the magic!",
-            "In your confused state, you can't control the magic!");
+                             MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                             "In your confused state, you can't control the magic!",
+                             "In your confused state, you can't control the magic!");
         handle_spell_confusion(op);
         return 0;
     }
 
     play_sound_map(SOUND_TYPE_SPELL, caster, dir, spell_ob->name);
 
-    switch(spell_ob->subtype) {
-	/* The order of case statements is same as the order they show up
-	 * in in spells.h.
-	 */
-	case SP_RAISE_DEAD:
-	    success = cast_raise_dead_spell(op,caster, spell_ob, dir,stringarg);
-	    break;
+    switch (spell_ob->subtype) {
+            /* The order of case statements is same as the order they show up
+             * in in spells.h.
+             */
+        case SP_RAISE_DEAD:
+            success = cast_raise_dead_spell(op,caster, spell_ob, dir,stringarg);
+            break;
 
-	case SP_RUNE:
-	    success = write_rune(op,caster, spell_ob, dir,stringarg);
-	    break;
+        case SP_RUNE:
+            success = write_rune(op,caster, spell_ob, dir,stringarg);
+            break;
 
-	case SP_MAKE_MARK:
-	    success = write_mark(op, spell_ob, stringarg);
-	    break;
+        case SP_MAKE_MARK:
+            success = write_mark(op, spell_ob, stringarg);
+            break;
 
-	case SP_BOLT:
-	    success = fire_bolt(op,caster,dir,spell_ob,skill);
-	    break;
+        case SP_BOLT:
+            success = fire_bolt(op,caster,dir,spell_ob,skill);
+            break;
 
-	case SP_BULLET:
-	    success = fire_bullet(op, caster, dir, spell_ob);
-	    break;
+        case SP_BULLET:
+            success = fire_bullet(op, caster, dir, spell_ob);
+            break;
 
-	case SP_CONE:
-	    success = cast_cone(op, caster, dir, spell_ob);
-	    break;
+        case SP_CONE:
+            success = cast_cone(op, caster, dir, spell_ob);
+            break;
 
-	case SP_BOMB:
-	    success = create_bomb(op,caster,dir, spell_ob);
-	    break;
+        case SP_BOMB:
+            success = create_bomb(op,caster,dir, spell_ob);
+            break;
 
-	case SP_WONDER:
-	    success = cast_wonder(op,caster, dir,spell_ob);
-	    break;
+        case SP_WONDER:
+            success = cast_wonder(op,caster, dir,spell_ob);
+            break;
 
-	case SP_SMITE:
-	    success = cast_smite_spell(op,caster, dir,spell_ob);
-	    break;
+        case SP_SMITE:
+            success = cast_smite_spell(op,caster, dir,spell_ob);
+            break;
 
-	case SP_MAGIC_MISSILE:
-	    success = fire_arch_from_position(op, caster, op->x + freearr_x[dir],
-				    op->y + freearr_y[dir], dir, spell_ob);
-	    break;
+        case SP_MAGIC_MISSILE:
+            success = fire_arch_from_position(op, caster, op->x + freearr_x[dir],
+                                              op->y + freearr_y[dir], dir, spell_ob);
+            break;
 
-	case SP_SUMMON_GOLEM:
-	    success = summon_golem(op, caster, dir, spell_ob);
-	    old_shoottype = range_golem;
-	    break;
+        case SP_SUMMON_GOLEM:
+            success = summon_golem(op, caster, dir, spell_ob);
+            old_shoottype = range_golem;
+            break;
 
-	case SP_DIMENSION_DOOR:
-	    /* dimension door needs the actual caster, because that is what is
-	     * moved.
-	     */
-	    success = dimension_door(op,caster, spell_ob, dir);
-	    break;
+        case SP_DIMENSION_DOOR:
+            /* dimension door needs the actual caster, because that is what is
+             * moved.
+             */
+            success = dimension_door(op,caster, spell_ob, dir);
+            break;
 
-	case SP_MAGIC_MAPPING:
-	    if(op->type==PLAYER) {
-		spell_effect(spell_ob, op->x, op->y, op->map, op);
-		draw_magic_map(op);
-		success=1;
-	    }
-	    else success=0;
-	    break;
+        case SP_MAGIC_MAPPING:
+            if (op->type==PLAYER) {
+                spell_effect(spell_ob, op->x, op->y, op->map, op);
+                draw_magic_map(op);
+                success=1;
+            } else success=0;
+            break;
 
-	case SP_MAGIC_WALL:
-	    success = magic_wall(op,caster,dir,spell_ob);
-	    break;
+        case SP_MAGIC_WALL:
+            success = magic_wall(op,caster,dir,spell_ob);
+            break;
 
-	case SP_DESTRUCTION:
-	    success = cast_destruction(op,caster,spell_ob);
-	    break;
+        case SP_DESTRUCTION:
+            success = cast_destruction(op,caster,spell_ob);
+            break;
 
-	case SP_PERCEIVE_SELF:
-	    success = perceive_self(op);
-	    break;
+        case SP_PERCEIVE_SELF:
+            success = perceive_self(op);
+            break;
 
-	case SP_WORD_OF_RECALL:
-	    success = cast_word_of_recall(op,caster,spell_ob);
-	    break;
+        case SP_WORD_OF_RECALL:
+            success = cast_word_of_recall(op,caster,spell_ob);
+            break;
 
-	case SP_INVISIBLE:
-	    success = cast_invisible(op,caster,spell_ob);
-	    break;
+        case SP_INVISIBLE:
+            success = cast_invisible(op,caster,spell_ob);
+            break;
 
-	case SP_PROBE:
-	    success = probe(op,caster, spell_ob, dir);
-	    break;
+        case SP_PROBE:
+            success = probe(op,caster, spell_ob, dir);
+            break;
 
-	case SP_HEALING:
-	    success = cast_heal(op,caster, spell_ob, dir);
-	    break;
+        case SP_HEALING:
+            success = cast_heal(op,caster, spell_ob, dir);
+            break;
 
-	case SP_CREATE_FOOD:
-	    success = cast_create_food(op,caster,spell_ob, dir,stringarg);
-	    break;
+        case SP_CREATE_FOOD:
+            success = cast_create_food(op,caster,spell_ob, dir,stringarg);
+            break;
 
-	case SP_EARTH_TO_DUST:
-	    success = cast_earth_to_dust(op,caster,spell_ob);
-	    break;
+        case SP_EARTH_TO_DUST:
+            success = cast_earth_to_dust(op,caster,spell_ob);
+            break;
 
-	case SP_CHANGE_ABILITY:
-	    success = cast_change_ability(op,caster,spell_ob, dir, 0);
-	    break;
+        case SP_CHANGE_ABILITY:
+            success = cast_change_ability(op,caster,spell_ob, dir, 0);
+            break;
 
-	case SP_BLESS:
-	    success = cast_bless(op,caster,spell_ob, dir);
-	    break;
+        case SP_BLESS:
+            success = cast_bless(op,caster,spell_ob, dir);
+            break;
 
-	case SP_CURSE:
-	    success = cast_curse(op,caster,spell_ob, dir);
-	    break;
+        case SP_CURSE:
+            success = cast_curse(op,caster,spell_ob, dir);
+            break;
 
-	case SP_SUMMON_MONSTER:
-	    success = summon_object(op,caster,spell_ob, dir,stringarg);
-	    break;
+        case SP_SUMMON_MONSTER:
+            success = summon_object(op,caster,spell_ob, dir,stringarg);
+            break;
 
-	case SP_CHARGING:
-	    success = recharge(op, caster, spell_ob);
-	    break;
+        case SP_CHARGING:
+            success = recharge(op, caster, spell_ob);
+            break;
 
-	case SP_POLYMORPH:
+        case SP_POLYMORPH:
 #if 0
-	    /* Not great, but at least provide feedback so if players do have
-	     * polymorph (ie, find it as a preset item or left over from before
-  	     * it was disabled), they get some feedback.
-	     */
-	    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "The spell fizzles", NULL);
-	    success = 0;
+            /* Not great, but at least provide feedback so if players do have
+             * polymorph (ie, find it as a preset item or left over from before
+             * it was disabled), they get some feedback.
+             */
+            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                          "The spell fizzles", NULL);
+            success = 0;
 #else
-	    success = cast_polymorph(op,caster,spell_ob, dir);
+            success = cast_polymorph(op,caster,spell_ob, dir);
 #endif
-	    break;
+            break;
 
-	case SP_ALCHEMY:
-	    success = alchemy(op, caster, spell_ob);
-	    break;
+        case SP_ALCHEMY:
+            success = alchemy(op, caster, spell_ob);
+            break;
 
-	case SP_REMOVE_CURSE:
-	    success = remove_curse(op, caster, spell_ob);
-	    break;
+        case SP_REMOVE_CURSE:
+            success = remove_curse(op, caster, spell_ob);
+            break;
 
-	case SP_IDENTIFY:
-	    success = cast_identify(op, caster, spell_ob);
-	    break;
+        case SP_IDENTIFY:
+            success = cast_identify(op, caster, spell_ob);
+            break;
 
-	case SP_DETECTION:
-	    success = cast_detection(op, caster, spell_ob);
-	    break;
+        case SP_DETECTION:
+            success = cast_detection(op, caster, spell_ob);
+            break;
 
-	case SP_MOOD_CHANGE:
-	    success = mood_change(op, caster, spell_ob);
-	    break;
+        case SP_MOOD_CHANGE:
+            success = mood_change(op, caster, spell_ob);
+            break;
 
-	case SP_MOVING_BALL:
-	    if (spell_ob->path_repelled &&
-		(spell_ob->path_repelled & caster->path_attuned) != spell_ob->path_repelled) {
-		draw_ext_info_format(NDI_UNIQUE, 0, op,
-				     MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
-				     "You lack the proper attunement to cast %s",
-				     "You lack the proper attunement to cast %s",
-				     spell_ob->name);
-		success = 0;
-	    } else
-		success = fire_arch_from_position(op,caster,
-			op->x + freearr_x[dir], op->y + freearr_y[dir],
-			  dir, spell_ob);
-	    break;
+        case SP_MOVING_BALL:
+            if (spell_ob->path_repelled &&
+                (spell_ob->path_repelled & caster->path_attuned) != spell_ob->path_repelled) {
+                draw_ext_info_format(NDI_UNIQUE, 0, op,
+                                     MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                                     "You lack the proper attunement to cast %s",
+                                     "You lack the proper attunement to cast %s",
+                                     spell_ob->name);
+                success = 0;
+            } else
+                success = fire_arch_from_position(op,caster,
+                                                  op->x + freearr_x[dir], op->y + freearr_y[dir],
+                                                  dir, spell_ob);
+            break;
 
-	case SP_SWARM:
-	    success = fire_swarm(op, caster, spell_ob, dir);
-	    break;
+        case SP_SWARM:
+            success = fire_swarm(op, caster, spell_ob, dir);
+            break;
 
-	case SP_CHANGE_MANA:
-	    success = cast_transfer(op,caster, spell_ob, dir);
-	    break;
+        case SP_CHANGE_MANA:
+            success = cast_transfer(op,caster, spell_ob, dir);
+            break;
 
-	case SP_DISPEL_RUNE:
-	    /* in rune.c */
-	    success = dispel_rune(op,caster, spell_ob, skill, dir);
-	    break;
+        case SP_DISPEL_RUNE:
+            /* in rune.c */
+            success = dispel_rune(op,caster, spell_ob, skill, dir);
+            break;
 
-	case SP_CREATE_MISSILE:
-	    success = cast_create_missile(op,caster,spell_ob, dir,stringarg);
-	    break;
+        case SP_CREATE_MISSILE:
+            success = cast_create_missile(op,caster,spell_ob, dir,stringarg);
+            break;
 
-	case SP_CONSECRATE:
-	    success = cast_consecrate(op, caster, spell_ob);
-	    break;
+        case SP_CONSECRATE:
+            success = cast_consecrate(op, caster, spell_ob);
+            break;
 
-	case SP_ANIMATE_WEAPON:
-	    success = animate_weapon(op, caster, spell_ob, dir);
-	    old_shoottype = range_golem;
-	    break;
+        case SP_ANIMATE_WEAPON:
+            success = animate_weapon(op, caster, spell_ob, dir);
+            old_shoottype = range_golem;
+            break;
 
-	case SP_LIGHT:
-	    success = cast_light(op, caster, spell_ob, dir);
-	    break;
+        case SP_LIGHT:
+            success = cast_light(op, caster, spell_ob, dir);
+            break;
 
-	case SP_CHANGE_MAP_LIGHT:
-	    success = cast_change_map_lightlevel(op, caster, spell_ob);
-	    break;
+        case SP_CHANGE_MAP_LIGHT:
+            success = cast_change_map_lightlevel(op, caster, spell_ob);
+            break;
 
-	case SP_FAERY_FIRE:
-	    success = cast_destruction(op,caster,spell_ob);
-	    break;
+        case SP_FAERY_FIRE:
+            success = cast_destruction(op,caster,spell_ob);
+            break;
 
-	case SP_CAUSE_DISEASE:
-	    success = cast_cause_disease(op, caster, spell_ob, dir);
-	    break;
+        case SP_CAUSE_DISEASE:
+            success = cast_cause_disease(op, caster, spell_ob, dir);
+            break;
 
-	case SP_AURA:
-	    success = create_aura(op, caster, spell_ob);
-	    break;
+        case SP_AURA:
+            success = create_aura(op, caster, spell_ob);
+            break;
 
-	case SP_TOWN_PORTAL:
-	    success= cast_create_town_portal (op,caster,spell_ob, dir);
-	    break;
+        case SP_TOWN_PORTAL:
+            success= cast_create_town_portal(op,caster,spell_ob, dir);
+            break;
 
-    case SP_ITEM_CURSE_BLESS:
-        success = cast_item_curse_or_curse(op, caster, spell_ob);
-        break;
+        case SP_ITEM_CURSE_BLESS:
+            success = cast_item_curse_or_curse(op, caster, spell_ob);
+            break;
 
-	default:
-	    LOG(llevError,"cast_spell: Unhandled spell subtype %d\n",
-		spell_ob->subtype);
+        default:
+            LOG(llevError,"cast_spell: Unhandled spell subtype %d\n",
+                spell_ob->subtype);
 
 
     }
 
     /* FIXME - we need some better sound suppport */
     /* free the spell arg */
-    if(settings.casting_time == TRUE && stringarg) {
-	free(stringarg);
-	stringarg=NULL;
+    if (settings.casting_time == TRUE && stringarg) {
+        free(stringarg);
+        stringarg=NULL;
     }
     /* perhaps a bit of a hack, but if using a wand, it has to change the skill
      * to something like use_magic_item, but you really want to be able to fire

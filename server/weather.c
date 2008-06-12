@@ -129,13 +129,12 @@ void tick_the_clock(void) {
  * @return
  * 1 if similar, 0 if not.
  */
-int similar_direction(int a, int b)
-{
+int similar_direction(int a, int b) {
     /* shortcut the obvious */
     if (a == b)
         return 1;
 
-    switch(a) {
+    switch (a) {
         case 1: if (b <= 2 || b == 8) return 1; break;
         case 2: if (b > 0 && b < 4) return 1; break;
         case 3: if (b > 1 && b < 5) return 1; break;

@@ -99,7 +99,7 @@ static void set_csport(char *val) {
     settings.csport=atoi(val);
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
     if (settings.csport<=0 || settings.csport>32765 ||
-            (settings.csport<1024 && getuid()!=0)) {
+        (settings.csport<1024 && getuid()!=0)) {
         LOG(llevError, "%d is an invalid csport number.\n", settings.csport);
         exit(1);
     }
@@ -940,35 +940,35 @@ static void init_beforeplay(void) {
     init_formulae();  /* If not called before, reads formulae from file */
 
     switch (settings.dumpvalues) {
-    case 1:
-        print_monsters();
-        cleanup();
-    case 2:
-        dump_abilities();
-        cleanup();
-    case 3:
-        dump_artifacts();
-        cleanup();
-    case 4:
-        dump_spells();
-        cleanup();
-    case 5:
-        cleanup();
-    case 6:
-        dump_races();
-        cleanup();
-    case 7:
-        dump_alchemy();
-        cleanup();
-    case 8:
-        dump_gods();
-        cleanup();
-    case 9:
-        dump_alchemy_costs();
-        cleanup();
-    case 10:
-        dump_monster_treasure(settings.dumparg);
-        cleanup();
+        case 1:
+            print_monsters();
+            cleanup();
+        case 2:
+            dump_abilities();
+            cleanup();
+        case 3:
+            dump_artifacts();
+            cleanup();
+        case 4:
+            dump_spells();
+            cleanup();
+        case 5:
+            cleanup();
+        case 6:
+            dump_races();
+            cleanup();
+        case 7:
+            dump_alchemy();
+            cleanup();
+        case 8:
+            dump_gods();
+            cleanup();
+        case 9:
+            dump_alchemy_costs();
+            cleanup();
+        case 10:
+            dump_monster_treasure(settings.dumparg);
+            cleanup();
     }
 }
 

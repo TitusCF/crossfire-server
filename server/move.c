@@ -95,7 +95,7 @@ int move_ob(object *op, int dir, object *originator) {
      * this condition.
      */
     if (blocked_link(op, m, newx, newy) &&
-            !QUERY_FLAG(op, FLAG_WIZPASS))
+        !QUERY_FLAG(op, FLAG_WIZPASS))
         return 0;
 
     /* 0.94.2 - we need to set the direction for the new animation code.
@@ -295,7 +295,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
                 if (get_map_flags(other_teleporter->map, &m,
                                   other_teleporter->x + freearr_x[k],
                                   other_teleporter->y + freearr_y[k], &sx,&sy) &
-                        P_OUT_OF_MAP) continue;
+                    P_OUT_OF_MAP) continue;
 
                 if (!OB_TYPE_MOVE_BLOCK(user, GET_MAP_MOVE_BLOCK(m, sx, sy))) break;
 
@@ -442,8 +442,8 @@ static int roll_ob(object *op,int dir, object *pusher) {
     y=op->y+freearr_y[dir];
 
     if (!QUERY_FLAG(op,FLAG_CAN_ROLL) ||
-            (op->weight &&
-             random_roll(0, op->weight/50000-1, pusher, PREFER_LOW) > pusher->stats.Str))
+        (op->weight &&
+         random_roll(0, op->weight/50000-1, pusher, PREFER_LOW) > pusher->stats.Str))
         return 0;
 
     m = op->map;
@@ -541,7 +541,7 @@ int push_ob(object *who, int dir, object *pusher) {
     /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
 
     if (owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
-            !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL)) {
+        !QUERY_FLAG(who,FLAG_FRIENDLY)&& !QUERY_FLAG(who,FLAG_NEUTRAL)) {
         if (pusher->contr->run_on) { /* only when we run */
             draw_ext_info_format(NDI_UNIQUE, 0, pusher,
                                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
@@ -580,9 +580,9 @@ int push_ob(object *who, int dir, object *pusher) {
     str1 = (who->stats.Str>0?who->stats.Str:who->level);
     str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
     if (QUERY_FLAG(who,FLAG_WIZ) ||
-            random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >=
-            random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
-            !move_object(who,dir)) {
+        random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >=
+        random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
+        !move_object(who,dir)) {
         if (who ->type == PLAYER) {
             draw_ext_info_format(NDI_UNIQUE, 0, who,
                                  MSG_TYPE_VICTIM,MSG_TYPE_VICTIM_WAS_PUSHED,

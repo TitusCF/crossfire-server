@@ -37,8 +37,8 @@
 
 /** Timezone structure, for gettimeofday(). */
 struct timezone {
-	int tz_minuteswest;
-	int tz_dsttime;
+        int tz_minuteswest;
+        int tz_dsttime;
 };
 
 /**
@@ -53,19 +53,19 @@ struct timezone {
  */
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 {
-	/* Get the time, if they want it */
-	if (time_Info != NULL) {
-		time_Info->tv_sec = time(NULL);
-		time_Info->tv_usec = timeGetTime()*1000;
-	}
-	/* Get the timezone, if they want it */
-	if (timezone_Info != NULL) {
-		_tzset();
-		timezone_Info->tz_minuteswest = _timezone;
-		timezone_Info->tz_dsttime = _daylight;
-	}
-	/* And return */
-	return 0;
+        /* Get the time, if they want it */
+        if (time_Info != NULL) {
+                time_Info->tv_sec = time(NULL);
+                time_Info->tv_usec = timeGetTime()*1000;
+        }
+        /* Get the timezone, if they want it */
+        if (timezone_Info != NULL) {
+                _tzset();
+                timezone_Info->tz_minuteswest = _timezone;
+                timezone_Info->tz_dsttime = _daylight;
+        }
+        /* And return */
+        return 0;
 }
 
 /**
@@ -78,31 +78,31 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
  */
 DIR *opendir(const char *dir)
 {
-	DIR *dp;
-	char *filespec;
-	long handle;
-	int index;
+        DIR *dp;
+        char *filespec;
+        long handle;
+        int index;
 
-	filespec = malloc(strlen(dir) + 2 + 1);
-	strcpy(filespec, dir);
-	index = strlen(filespec) - 1;
-	if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
-		filespec[index] = '\0';
-	strcat(filespec, "/*");
+        filespec = malloc(strlen(dir) + 2 + 1);
+        strcpy(filespec, dir);
+        index = strlen(filespec) - 1;
+        if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
+                filespec[index] = '\0';
+        strcat(filespec, "/*");
 
-	dp = (DIR *) malloc(sizeof(DIR));
-	dp->offset = 0;
-	dp->finished = 0;
-	dp->dir = strdup(dir);
+        dp = (DIR *) malloc(sizeof(DIR));
+        dp->offset = 0;
+        dp->finished = 0;
+        dp->dir = strdup(dir);
 
-	if ((handle = _findfirst(filespec, &(dp->fileinfo))) < 0) {
-		free(filespec); free(dp);
-		return NULL;
-	}
-	dp->handle = handle;
-	free(filespec);
+        if ((handle = _findfirst(filespec, &(dp->fileinfo))) < 0) {
+                free(filespec); free(dp);
+                return NULL;
+        }
+        dp->handle = handle;
+        free(filespec);
 
-	return dp;
+        return dp;
 }
 
 /**
@@ -116,28 +116,28 @@ DIR *opendir(const char *dir)
  */
 struct dirent *readdir(DIR * dp)
 {
-	if (!dp || dp->finished)
-		return NULL;
+        if (!dp || dp->finished)
+                return NULL;
 
-	if (dp->offset != 0) {
-		if (_findnext(dp->handle, &(dp->fileinfo)) < 0) {
-			dp->finished = 1;
+        if (dp->offset != 0) {
+                if (_findnext(dp->handle, &(dp->fileinfo)) < 0) {
+                        dp->finished = 1;
       if (ENOENT == errno)
         /* Clear error set to mean no more files else that breaks things */
         errno = 0;
-			return NULL;
-		}
-	}
-	dp->offset++;
+                        return NULL;
+                }
+        }
+        dp->offset++;
 
-	strncpy(dp->dent.d_name, dp->fileinfo.name, _MAX_FNAME);
-	dp->dent.d_name[_MAX_FNAME] = '\0';
-	dp->dent.d_ino = 1;
+        strncpy(dp->dent.d_name, dp->fileinfo.name, _MAX_FNAME);
+        dp->dent.d_name[_MAX_FNAME] = '\0';
+        dp->dent.d_ino = 1;
   /* reclen is used as meaning the length of the whole record */
-	dp->dent.d_reclen = strlen(dp->dent.d_name) + sizeof(char) + sizeof(dp->dent.d_ino) + sizeof(dp->dent.d_reclen) + sizeof(dp->dent.d_off);
-	dp->dent.d_off = dp->offset;
+        dp->dent.d_reclen = strlen(dp->dent.d_name) + sizeof(char) + sizeof(dp->dent.d_ino) + sizeof(dp->dent.d_reclen) + sizeof(dp->dent.d_off);
+        dp->dent.d_off = dp->offset;
 
-	return &(dp->dent);
+        return &(dp->dent);
 }
 
 /**
@@ -150,15 +150,15 @@ struct dirent *readdir(DIR * dp)
  */
 int closedir(DIR * dp)
 {
-	if (!dp)
-		return 0;
-	_findclose(dp->handle);
-	if (dp->dir)
-		free(dp->dir);
-	if (dp)
-		free(dp);
+        if (!dp)
+                return 0;
+        _findclose(dp->handle);
+        if (dp->dir)
+                free(dp->dir);
+        if (dp)
+                free(dp);
 
-	return 0;
+        return 0;
 }
 
 /**
@@ -169,29 +169,29 @@ int closedir(DIR * dp)
  */
 void rewinddir(DIR *dir_Info)
 {
-	/* Re-set to the beginning */
-	char *filespec;
-	long handle;
-	int index;
+        /* Re-set to the beginning */
+        char *filespec;
+        long handle;
+        int index;
 
-	dir_Info->handle = 0;
-	dir_Info->offset = 0;
-	dir_Info->finished = 0;
+        dir_Info->handle = 0;
+        dir_Info->offset = 0;
+        dir_Info->finished = 0;
 
-	filespec = malloc(strlen(dir_Info->dir) + 2 + 1);
-	strcpy(filespec, dir_Info->dir);
-	index = strlen(filespec) - 1;
-	if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
-		filespec[index] = '\0';
-	strcat(filespec, "/*");
+        filespec = malloc(strlen(dir_Info->dir) + 2 + 1);
+        strcpy(filespec, dir_Info->dir);
+        index = strlen(filespec) - 1;
+        if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
+                filespec[index] = '\0';
+        strcat(filespec, "/*");
 
-	if ((handle = _findfirst(filespec, &(dir_Info->fileinfo))) < 0) {
-		if (errno == ENOENT) {
-			dir_Info->finished = 1;
-		}
-	}
-	dir_Info->handle = handle;
-	free(filespec);
+        if ((handle = _findfirst(filespec, &(dir_Info->fileinfo))) < 0) {
+                if (errno == ENOENT) {
+                        dir_Info->finished = 1;
+                }
+        }
+        dir_Info->handle = handle;
+        free(filespec);
 }
 
 /* Service-related stuff
@@ -224,19 +224,19 @@ SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
  */
 void service_register( )
     {
-	char strDir[ 1024 ];
-	HANDLE schSCManager,schService;
+        char strDir[ 1024 ];
+        HANDLE schSCManager,schService;
     char* strDescription = SERVICE_DESCRIPTION;
 
-	GetModuleFileName( NULL, strDir, 1024 );
+        GetModuleFileName( NULL, strDir, 1024 );
     strcat( strDir, " -srv" );
 
-	schSCManager = OpenSCManager( NULL,NULL,SC_MANAGER_ALL_ACCESS );
+        schSCManager = OpenSCManager( NULL,NULL,SC_MANAGER_ALL_ACCESS );
 
-	if (schSCManager == NULL)
+        if (schSCManager == NULL)
         {
         printf( "openscmanager failed" );
-		exit( 1 );
+                exit( 1 );
         }
 
     schService = CreateService(schSCManager, SERVICE_NAME, SERVICE_DISPLAY,           // service name to display
@@ -270,35 +270,35 @@ void service_register( )
  */
 void service_unregister( )
     {
-	HANDLE schSCManager;
-	SC_HANDLE hService;
+        HANDLE schSCManager;
+        SC_HANDLE hService;
 
-	schSCManager = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
+        schSCManager = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
 
-	if (schSCManager == NULL)
+        if (schSCManager == NULL)
         {
         printf( "open failed" );
-		exit( 1 );
+                exit( 1 );
         }
 
-	hService=OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
+        hService=OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
 
-	if (hService == NULL)
+        if (hService == NULL)
         {
         printf( "openservice failed" );
-		exit( 1 );
+                exit( 1 );
         }
 
-	if(DeleteService(hService)==0)
+        if(DeleteService(hService)==0)
         {
         printf( "Delete failed" );
-		exit( 1 );
+                exit( 1 );
         }
 
-	if(CloseServiceHandle(hService)==0)
+        if(CloseServiceHandle(hService)==0)
         {
         printf( "close failed" );
-		exit( 1 );
+                exit( 1 );
         }
 
     if ( !CloseServiceHandle( schSCManager ) )
@@ -336,11 +336,11 @@ void WINAPI ServiceCtrlHandler(DWORD Opcode)
 
             SetServiceStatus (m_ServiceStatusHandle,&m_ServiceStatus);
 
-			bRunning = 0;
+                        bRunning = 0;
 
             LOG( llevInfo, "Service stopped.\n" );
 
-			break;
+                        break;
 
         case SERVICE_CONTROL_INTERROGATE:
             break;
@@ -359,10 +359,10 @@ extern int main( int argc, char** argv );
  */
 void WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
     {
-	char strDir[ 1024 ];
+        char strDir[ 1024 ];
     char* strSlash;
 
-	GetModuleFileName( NULL, strDir, 1024 );
+        GetModuleFileName( NULL, strDir, 1024 );
     strSlash = strrchr( strDir, '\\' );
     if ( strSlash )
         *strSlash = '\0';
@@ -399,7 +399,7 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv)
 void service_handle( )
     {
     SERVICE_TABLE_ENTRY DispatchTable[ ] = { { SERVICE_NAME, ServiceMain },{ NULL, NULL } };
-	StartServiceCtrlDispatcher( DispatchTable );
+        StartServiceCtrlDispatcher( DispatchTable );
     exit( 0 );
     }
 #endif /* PYTHON_PLUGIN_EXPORTS */

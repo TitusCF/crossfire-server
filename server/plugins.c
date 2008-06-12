@@ -60,8 +60,7 @@
 
 #define NR_OF_HOOKS 89
 
-static const hook_entry plug_hooks[NR_OF_HOOKS] =
-{
+static const hook_entry plug_hooks[NR_OF_HOOKS] = {
     {cfapi_system_add_string,       0, "cfapi_system_add_string"},
     {cfapi_system_register_global_event,   1, "cfapi_system_register_global_event"},
     {cfapi_system_remove_string,    2, "cfapi_system_remove_string"},
@@ -159,8 +158,7 @@ crossfire_plugin* plugins_list = NULL;
 /*****************************************************************************/
 
 #ifdef WIN32
-static const char *plugins_dlerror(void)
-{
+static const char *plugins_dlerror(void) {
     static char buf[256];
     DWORD err;
     char* p;
@@ -180,8 +178,7 @@ static const char *plugins_dlerror(void)
  *
  * @param op the object that has changed
  */
-static void send_changed_object(object *op)
-{
+static void send_changed_object(object *op) {
     object* tmp;
     player *pl;
 
@@ -206,13 +203,11 @@ static void send_changed_object(object *op)
     }
 }
 
-int user_event(object* op, object* activator, object* third, const char* message, int fix)
-{
+int user_event(object* op, object* activator, object* third, const char* message, int fix) {
     return execute_event(op,EVENT_USER, activator, third, message, fix);
 }
 
-int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
-{
+int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix) {
     object *tmp, *next;
     crossfire_plugin* plugin;
     int rv = 0;
@@ -257,8 +252,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
                     int *rv;
 
                     rv = plugin->eventfunc(&rvt, op, /*eventcode, */activator, third, message, fix, /*tmp->slaying, tmp->name*/ tmp);
-                    if (QUERY_FLAG(tmp, FLAG_UNIQUE))
-                    {
+                    if (QUERY_FLAG(tmp, FLAG_UNIQUE)) {
 #ifdef PLUGIN_DEBUG
                         LOG(llevDebug, "Removing unique event %s\n", tmp->slaying);
 #endif
@@ -273,8 +267,7 @@ int execute_event(object* op, int eventcode, object* activator, object* third, c
     return rv;
 }
 
-int execute_global_event(int eventcode, ...)
-{
+int execute_global_event(int eventcode, ...) {
     va_list args;
     mapstruct* map;
     object* op;
@@ -289,171 +282,170 @@ int execute_global_event(int eventcode, ...)
     va_start(args, eventcode);
 
     switch (eventcode) {
-    case EVENT_BORN:
-        /*BORN: op*/
-        op = va_arg(args, object*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
-        }
-        break;
+        case EVENT_BORN:
+            /*BORN: op*/
+            op = va_arg(args, object*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op);
+            }
+            break;
 
-    case EVENT_CLOCK:
-        /*CLOCK: -*/
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode);
-        }
-        break;
+        case EVENT_CLOCK:
+            /*CLOCK: -*/
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode);
+            }
+            break;
 
-    case EVENT_CRASH:
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode);
-        }
-        break;
+        case EVENT_CRASH:
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode);
+            }
+            break;
 
-    case EVENT_PLAYER_DEATH:
-        /*PLAYER_DEATH: op*/
-        op = va_arg(args, object*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
-        }
-        break;
+        case EVENT_PLAYER_DEATH:
+            /*PLAYER_DEATH: op*/
+            op = va_arg(args, object*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op);
+            }
+            break;
 
-    case EVENT_GKILL:
-        /*GKILL: op, hitter*/
-        op = va_arg(args, object*);
-        op2 = va_arg(args, object*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, op2);
-        }
-        break;
+        case EVENT_GKILL:
+            /*GKILL: op, hitter*/
+            op = va_arg(args, object*);
+            op2 = va_arg(args, object*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, op2);
+            }
+            break;
 
-    case EVENT_LOGIN:
-        /*LOGIN: pl, pl->socket.host*/
-        pl = va_arg(args, player*);
-        buf = va_arg(args, char*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, pl, buf);
-        }
-        break;
+        case EVENT_LOGIN:
+            /*LOGIN: pl, pl->socket.host*/
+            pl = va_arg(args, player*);
+            buf = va_arg(args, char*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, pl, buf);
+            }
+            break;
 
-    case EVENT_LOGOUT:
-        /*LOGOUT: pl, pl->socket.host*/
-        pl = va_arg(args, player*);
-        buf = va_arg(args, char*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, pl, buf);
-        }
-        break;
+        case EVENT_LOGOUT:
+            /*LOGOUT: pl, pl->socket.host*/
+            pl = va_arg(args, player*);
+            buf = va_arg(args, char*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, pl, buf);
+            }
+            break;
 
-    case EVENT_MAPENTER:
-        /*MAPENTER: op, map*/
-        op = va_arg(args, object*);
-        map = va_arg(args, mapstruct*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, map);
-        }
-        break;
+        case EVENT_MAPENTER:
+            /*MAPENTER: op, map*/
+            op = va_arg(args, object*);
+            map = va_arg(args, mapstruct*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, map);
+            }
+            break;
 
-    case EVENT_MAPLEAVE:
-        /*MAPLEAVE: op, map*/
-        op = va_arg(args, object*);
-        map = va_arg(args, mapstruct*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, map);
-        }
-        break;
+        case EVENT_MAPLEAVE:
+            /*MAPLEAVE: op, map*/
+            op = va_arg(args, object*);
+            map = va_arg(args, mapstruct*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, map);
+            }
+            break;
 
-    case EVENT_MAPRESET:
-        /*MAPRESET: map*/
-        map = va_arg(args, mapstruct*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
+        case EVENT_MAPRESET:
+            /*MAPRESET: map*/
+            map = va_arg(args, mapstruct*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, map);
+            }
+            break;
 
-    case EVENT_REMOVE:
-        /*REMOVE: op*/
-        op = va_arg(args, object*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op);
-        }
-        break;
+        case EVENT_REMOVE:
+            /*REMOVE: op*/
+            op = va_arg(args, object*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op);
+            }
+            break;
 
-    case EVENT_SHOUT:
-        /*SHOUT: op, parms, priority*/
-        op = va_arg(args, object*);
-        buf = va_arg(args, char*);
-        i = va_arg(args, int);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf, i);
-        }
-        break;
+        case EVENT_SHOUT:
+            /*SHOUT: op, parms, priority*/
+            op = va_arg(args, object*);
+            buf = va_arg(args, char*);
+            i = va_arg(args, int);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, buf, i);
+            }
+            break;
 
-    case EVENT_TELL:
-        /* Tell: who, what, to who */
-        op = va_arg(args, object*);
-        buf = va_arg(args, const char*);
-        op2 = va_arg(args, object*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf, op2);
-        }
-        break;
+        case EVENT_TELL:
+            /* Tell: who, what, to who */
+            op = va_arg(args, object*);
+            buf = va_arg(args, const char*);
+            op2 = va_arg(args, object*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, buf, op2);
+            }
+            break;
 
-    case EVENT_MUZZLE:
-        /*MUZZLE: op, parms*/
-        op = va_arg(args, object*);
-        buf = va_arg(args, char*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf);
-        }
-        break;
+        case EVENT_MUZZLE:
+            /*MUZZLE: op, parms*/
+            op = va_arg(args, object*);
+            buf = va_arg(args, char*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, buf);
+            }
+            break;
 
-    case EVENT_KICK:
-        /*KICK: op, parms*/
-        op = va_arg(args, object*);
-        buf = va_arg(args, char*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, op, buf);
-        }
-        break;
-    case EVENT_MAPUNLOAD:
-        /*MAPUNLOAD: map*/
-        map = va_arg(args, mapstruct*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
-    case EVENT_MAPLOAD:
-        /*MAPLOAD: map*/
-        map = va_arg(args, mapstruct*);
-        for (cp = plugins_list; cp != NULL; cp = cp->next) {
-            if (cp->gevent[eventcode] != NULL)
-                cp->gevent[eventcode](&rt, eventcode, map);
-        }
-        break;
+        case EVENT_KICK:
+            /*KICK: op, parms*/
+            op = va_arg(args, object*);
+            buf = va_arg(args, char*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, op, buf);
+            }
+            break;
+        case EVENT_MAPUNLOAD:
+            /*MAPUNLOAD: map*/
+            map = va_arg(args, mapstruct*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, map);
+            }
+            break;
+        case EVENT_MAPLOAD:
+            /*MAPLOAD: map*/
+            map = va_arg(args, mapstruct*);
+            for (cp = plugins_list; cp != NULL; cp = cp->next) {
+                if (cp->gevent[eventcode] != NULL)
+                    cp->gevent[eventcode](&rt, eventcode, map);
+            }
+            break;
     }
     va_end(args);
     return 0;
 }
 
-int plugins_init_plugin(const char* libfile)
-{
+int plugins_init_plugin(const char* libfile) {
     LIBPTRTYPE ptr;
     f_plug_init      initfunc;
     f_plug_api       propfunc;
@@ -536,8 +528,7 @@ int plugins_init_plugin(const char* libfile)
     return 0;
 }
 
-void* cfapi_get_hooks(int* type, ...)
-{
+void* cfapi_get_hooks(int* type, ...) {
     va_list args;
     int request_type;
     char* buf;
@@ -576,8 +567,7 @@ void* cfapi_get_hooks(int* type, ...)
     return NULL;
 }
 
-int plugins_remove_plugin(const char* id)
-{
+int plugins_remove_plugin(const char* id) {
     crossfire_plugin* cp;
 
     if (plugins_list == NULL)
@@ -614,8 +604,7 @@ int plugins_remove_plugin(const char* id)
     return -1;
 }
 
-crossfire_plugin* plugins_find_plugin(const char* id)
-{
+crossfire_plugin* plugins_find_plugin(const char* id) {
     crossfire_plugin* cp;
 
     if (plugins_list == NULL)
@@ -633,21 +622,20 @@ crossfire_plugin* plugins_find_plugin(const char* id)
 /* Displays a list of loaded plugins (keystrings and description) in the     */
 /* game log window.                                                          */
 /*****************************************************************************/
-void plugins_display_list(object *op)
-{
+void plugins_display_list(object *op) {
     crossfire_plugin* cp;
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-		  "List of loaded plugins:\n-----------------------", NULL);
+                  "List of loaded plugins:\n-----------------------", NULL);
 
     if (plugins_list == NULL)
         return;
 
     for (cp = plugins_list; cp != NULL; cp = cp->next) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-			     "%s, %s",
-			     "%s, %s",
-			     cp->id, cp->fullname);
+                             "%s, %s",
+                             "%s, %s",
+                             cp->id, cp->fullname);
     }
 }
 
@@ -660,8 +648,7 @@ void plugins_display_list(object *op)
  * @return
  * NULL.
  */
-void* cfapi_system_find_animation(int *type, ...)
-{
+void* cfapi_system_find_animation(int *type, ...) {
     va_list args;
     const char* anim;
     int* num;
@@ -683,8 +670,7 @@ void* cfapi_system_find_animation(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_system_find_face(int *type, ...)
-{
+void* cfapi_system_find_face(int *type, ...) {
     va_list args;
     const char* face;
     int error;
@@ -708,8 +694,7 @@ void* cfapi_system_find_face(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_system_strdup_local(int *type, ...)
-{
+void* cfapi_system_strdup_local(int *type, ...) {
     va_list args;
     const char* txt;
     char** ret;
@@ -724,8 +709,7 @@ void* cfapi_system_strdup_local(int *type, ...)
     return NULL;
 }
 
-void* cfapi_system_register_global_event(int *type, ...)
-{
+void* cfapi_system_register_global_event(int *type, ...) {
     va_list args;
     int eventcode;
     char* pname;
@@ -745,8 +729,7 @@ void* cfapi_system_register_global_event(int *type, ...)
     return NULL;
 }
 
-void* cfapi_system_unregister_global_event(int *type, ...)
-{
+void* cfapi_system_unregister_global_event(int *type, ...) {
     va_list args;
     int eventcode;
     char* pname;
@@ -773,8 +756,7 @@ void* cfapi_system_unregister_global_event(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_system_add_string(int *type, ...)
-{
+void* cfapi_system_add_string(int *type, ...) {
     va_list args;
     const char* str;
     sstring* rv;
@@ -797,8 +779,7 @@ void* cfapi_system_add_string(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_system_remove_string(int *type, ...)
-{
+void* cfapi_system_remove_string(int *type, ...) {
     va_list args;
     sstring str;
 
@@ -841,8 +822,7 @@ void* cfapi_system_find_string(int *type, ...) {
  * @return
  * NULL.
  */
-void* cfapi_system_check_path(int* type, ...)
-{
+void* cfapi_system_check_path(int* type, ...) {
     va_list args;
     const char* name;
     int prepend_dir;
@@ -868,8 +848,7 @@ void* cfapi_system_check_path(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_system_re_cmp(int* type, ...)
-{
+void* cfapi_system_re_cmp(int* type, ...) {
     va_list args;
     const char* str;
     const char* regexp;
@@ -888,8 +867,7 @@ void* cfapi_system_re_cmp(int* type, ...)
     return NULL;
 }
 
-void* cfapi_system_directory(int* type, ...)
-{
+void* cfapi_system_directory(int* type, ...) {
     va_list args;
     int dirtype;
     const char** str;
@@ -902,38 +880,37 @@ void* cfapi_system_directory(int* type, ...)
 
     *type = CFAPI_STRING;
 
-    switch (dirtype)
-    {
-    case 0:
-        *str = settings.mapdir;
-        break;
+    switch (dirtype) {
+        case 0:
+            *str = settings.mapdir;
+            break;
 
-    case 1:
-        *str = settings.uniquedir;
-        break;
+        case 1:
+            *str = settings.uniquedir;
+            break;
 
-    case 2:
-        *str = settings.tmpdir;
-        break;
+        case 2:
+            *str = settings.tmpdir;
+            break;
 
-    case 3:
-        *str = settings.confdir;
-        break;
+        case 3:
+            *str = settings.confdir;
+            break;
 
-    case 4:
-        *str = settings.localdir;
-        break;
+        case 4:
+            *str = settings.localdir;
+            break;
 
-    case 5:
-        *str = settings.playerdir;
-        break;
+        case 5:
+            *str = settings.playerdir;
+            break;
 
-    case 6:
-        *str = settings.datadir;
-        break;
+        case 6:
+            *str = settings.datadir;
+            break;
 
-    default:
-        *str = NULL;
+        default:
+            *str = NULL;
     }
 
     return NULL;
@@ -947,8 +924,7 @@ void* cfapi_system_directory(int* type, ...)
  * @return
  * NULL.
  */
-void *cfapi_get_time(int *type, ...)
-{
+void *cfapi_get_time(int *type, ...) {
     va_list args;
     timeofday_t *tod;
 
@@ -973,15 +949,14 @@ va_list args;\
     *type = CFAPI_STRING;\
     return NULL;\
 /**
- * Wrapper for get_season_name().
- *
- * @param type
- * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
- * @return
- * NULL.
- */
-void *cfapi_get_season_name(int *type, ...)
-{
+* Wrapper for get_season_name().
+    *
+    * @param type
+    * will be CFAPI_STRING. Other parameters are int index and char** where to store result string
+    * @return
+        * NULL.
+        */
+    void *cfapi_get_season_name(int *type, ...) {
     string_get_int(get_season_name)
 }
 /**
@@ -992,8 +967,7 @@ void *cfapi_get_season_name(int *type, ...)
  * @return
  * NULL.
  */
-void *cfapi_get_weekday_name(int *type, ...)
-{
+void *cfapi_get_weekday_name(int *type, ...) {
     string_get_int(get_weekday)
 }
 /**
@@ -1004,8 +978,7 @@ void *cfapi_get_weekday_name(int *type, ...)
  * @return
  * NULL.
  */
-void *cfapi_get_month_name(int *type, ...)
-{
+void *cfapi_get_month_name(int *type, ...) {
     string_get_int(get_month_name)
 }
 /**
@@ -1016,8 +989,7 @@ void *cfapi_get_month_name(int *type, ...)
  * @return
  * NULL.
  */
-void *cfapi_get_periodofday_name(int *type, ...)
-{
+void *cfapi_get_periodofday_name(int *type, ...) {
     string_get_int(get_periodofday)
 }
 /**
@@ -1033,8 +1005,7 @@ void *cfapi_get_periodofday_name(int *type, ...)
  * - mode : int, either ::TIMER_MODE_SECONDS or ::TIMER_MODE_CYCLES
  * - timer : int* that will contain timer's id
  */
-void *cfapi_timer_create(int *type, ...)
-{
+void *cfapi_timer_create(int *type, ...) {
     va_list args;
     int res;
     object* ob;
@@ -1051,10 +1022,9 @@ void *cfapi_timer_create(int *type, ...)
     *type = CFAPI_INT;
 
     *timer = cftimer_find_free_id();
-    if ( *timer != TIMER_ERR_ID )
-    {
+    if (*timer != TIMER_ERR_ID) {
         res = cftimer_create(*timer, delay, ob, mode);
-        if ( res != TIMER_ERR_NONE )
+        if (res != TIMER_ERR_NONE)
             *timer = res;
     }
     return 0;
@@ -1071,8 +1041,7 @@ void *cfapi_timer_create(int *type, ...)
  * - timer: int that should be destroyed
  * - err: int* which will contain the return code of cftimer_destroy().
  */
-void *cfapi_timer_destroy(int *type, ...)
-{
+void *cfapi_timer_destroy(int *type, ...) {
     va_list args;
     int id;
     int* err;
@@ -1095,8 +1064,7 @@ void *cfapi_timer_destroy(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_log(int* type, ...)
-{
+void* cfapi_log(int* type, ...) {
     va_list args;
     LogLevel logLevel;
     const char* message;
@@ -1122,8 +1090,7 @@ void* cfapi_log(int* type, ...)
  * - 1 with char*, int, mapstruct**: call ready_map_name().
  * - 2 with mapstruct*, 2 int and mapstruct**: call to get_map_from_coord().
  */
-void* cfapi_map_get_map(int* type, ...)
-{
+void* cfapi_map_get_map(int* type, ...) {
     va_list args;
     mapstruct** ret;
     int ctype;
@@ -1136,35 +1103,34 @@ void* cfapi_map_get_map(int* type, ...)
 
     ctype = va_arg(args, int);
 
-    switch (ctype)
-    {
-    case 0:
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        ret = va_arg(args, mapstruct**);
-        *ret = get_empty_map(x, y);
-        break;
+    switch (ctype) {
+        case 0:
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            ret = va_arg(args, mapstruct**);
+            *ret = get_empty_map(x, y);
+            break;
 
-    case 1:
-        name = va_arg(args, const char*);
-        x = va_arg(args, int);
-        ret = va_arg(args, mapstruct**);
-        *ret = ready_map_name(name, x);
-        break;
+        case 1:
+            name = va_arg(args, const char*);
+            x = va_arg(args, int);
+            ret = va_arg(args, mapstruct**);
+            *ret = ready_map_name(name, x);
+            break;
 
-    case 2:
-        m = va_arg(args, mapstruct*);
-        nx = va_arg(args, int);
-        ny = va_arg(args, int);
-        ret = va_arg(args, mapstruct**);
-        *ret = get_map_from_coord(m, &nx, &ny);
-        break;
+        case 2:
+            m = va_arg(args, mapstruct*);
+            nx = va_arg(args, int);
+            ny = va_arg(args, int);
+            ret = va_arg(args, mapstruct**);
+            *ret = get_map_from_coord(m, &nx, &ny);
+            break;
 
-    default:
-        *type = CFAPI_NONE;
-        va_end(args);
-        return NULL;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            va_end(args);
+            return NULL;
+            break;
     }
     va_end(args);
     *type = CFAPI_PMAP;
@@ -1178,8 +1144,7 @@ void* cfapi_map_get_map(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_has_been_loaded(int* type, ...)
-{
+void* cfapi_map_has_been_loaded(int* type, ...) {
     va_list args;
     mapstruct** map;
     char* string;
@@ -1200,8 +1165,7 @@ void* cfapi_map_has_been_loaded(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_create_path(int* type, ...)
-{
+void* cfapi_map_create_path(int* type, ...) {
     va_list args;
     int ctype, size;
     const char* str;
@@ -1215,31 +1179,29 @@ void* cfapi_map_create_path(int* type, ...)
     size = va_arg(args, int);
     *type = CFAPI_STRING;
 
-    switch (ctype)
-    {
-    case 0:
-        create_pathname(str, name, size);
-        break;
+    switch (ctype) {
+        case 0:
+            create_pathname(str, name, size);
+            break;
 
-    case 1:
-        create_overlay_pathname(str, name, MAX_BUF);
-        break;
+        case 1:
+            create_overlay_pathname(str, name, MAX_BUF);
+            break;
 
-    /*case 2:
-        rv = create_items_path(str);
-        break;*/
+            /*case 2:
+                rv = create_items_path(str);
+                break;*/
 
-    default:
-        *type = CFAPI_NONE;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
     return NULL;
 }
 
 
-void* cfapi_map_get_map_property(int* type, ...)
-{
+void* cfapi_map_get_map_property(int* type, ...) {
     va_list args;
     mapstruct* map;
     int property;
@@ -1256,125 +1218,123 @@ void* cfapi_map_get_map_property(int* type, ...)
     map = va_arg(args, mapstruct*);
     property = va_arg(args, int);
 
-    switch (property)
-    {
-    case CFAPI_MAP_PROP_FLAGS:
-        rmap = va_arg(args, mapstruct**);
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        nx = va_arg(args, sint16*);
-        ny = va_arg(args, sint16*);
-        rint = va_arg(args, int*);
-        *rint = get_map_flags(map, rmap, x, y, nx, ny);
-        *type = CFAPI_INT;
-        break;
+    switch (property) {
+        case CFAPI_MAP_PROP_FLAGS:
+            rmap = va_arg(args, mapstruct**);
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            nx = va_arg(args, sint16*);
+            ny = va_arg(args, sint16*);
+            rint = va_arg(args, int*);
+            *rint = get_map_flags(map, rmap, x, y, nx, ny);
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_DIFFICULTY:
-        rint = va_arg(args, int*);
-        *rint = calculate_difficulty(map);
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_DIFFICULTY:
+            rint = va_arg(args, int*);
+            *rint = calculate_difficulty(map);
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_PATH:
-        rstr = va_arg(args, sstring*);
-        *rstr = map->path;
-        *type = CFAPI_SSTRING;
-        break;
+        case CFAPI_MAP_PROP_PATH:
+            rstr = va_arg(args, sstring*);
+            *rstr = map->path;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_MAP_PROP_TMPNAME:
-        rstr = va_arg(args, sstring*);
-        *rstr = map->tmpname;
-        *type = CFAPI_SSTRING;
-        break;
+        case CFAPI_MAP_PROP_TMPNAME:
+            rstr = va_arg(args, sstring*);
+            *rstr = map->tmpname;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_MAP_PROP_NAME:
-        rstr = va_arg(args, sstring*);
-        *rstr = map->name;
-        *type = CFAPI_SSTRING;
-        break;
+        case CFAPI_MAP_PROP_NAME:
+            rstr = va_arg(args, sstring*);
+            *rstr = map->name;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_MAP_PROP_RESET_TIME:
-        rint = va_arg(args, int*);
-        *rint = map->reset_time;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_RESET_TIME:
+            rint = va_arg(args, int*);
+            *rint = map->reset_time;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_RESET_TIMEOUT:
-        rint = va_arg(args, int*);
-        *rint = map->reset_timeout;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_RESET_TIMEOUT:
+            rint = va_arg(args, int*);
+            *rint = map->reset_timeout;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_PLAYERS:
-        rint = va_arg(args, int*);
-        *rint = map->players;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_PLAYERS:
+            rint = va_arg(args, int*);
+            *rint = map->players;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_DARKNESS:
-        rint = va_arg(args, int*);
-        *rint = map->darkness;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_DARKNESS:
+            rint = va_arg(args, int*);
+            *rint = map->darkness;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_WIDTH:
-        rint = va_arg(args, int*);
-        *rint = map->width;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_WIDTH:
+            rint = va_arg(args, int*);
+            *rint = map->width;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_HEIGHT:
-        rint = va_arg(args, int*);
-        *rint = map->height;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_HEIGHT:
+            rint = va_arg(args, int*);
+            *rint = map->height;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_ENTER_X:
-        rint = va_arg(args, int*);
-        *rint = map->enter_x;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_ENTER_X:
+            rint = va_arg(args, int*);
+            *rint = map->enter_x;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_ENTER_Y:
-        rint = va_arg(args, int*);
-        *rint = map->enter_y;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_ENTER_Y:
+            rint = va_arg(args, int*);
+            *rint = map->enter_y;
+            *type = CFAPI_INT;
+            break;
 
-    case CFAPI_MAP_PROP_MESSAGE:
-        rstr = va_arg(args, sstring*);
-        *rstr = map->msg;
-        *type = CFAPI_SSTRING;
-        break;
+        case CFAPI_MAP_PROP_MESSAGE:
+            rstr = va_arg(args, sstring*);
+            *rstr = map->msg;
+            *type = CFAPI_SSTRING;
+            break;
 
-    case CFAPI_MAP_PROP_NEXT:
-        rmap = va_arg(args, mapstruct**);
-        *rmap = map ? map->next : first_map;
-        *type = CFAPI_PMAP;
-        break;
+        case CFAPI_MAP_PROP_NEXT:
+            rmap = va_arg(args, mapstruct**);
+            *rmap = map ? map->next : first_map;
+            *type = CFAPI_PMAP;
+            break;
 
-    case CFAPI_MAP_PROP_REGION:
-        rreg = va_arg(args, region**);
-        *rreg = get_region_by_map(map);
-        *type = CFAPI_PREGION;
-        break;
+        case CFAPI_MAP_PROP_REGION:
+            rreg = va_arg(args, region**);
+            *rreg = get_region_by_map(map);
+            *type = CFAPI_PREGION;
+            break;
 
-    case CFAPI_MAP_PROP_UNIQUE:
-        rint = va_arg(args, int*);
-        *rint = map->unique;
-        *type = CFAPI_INT;
-        break;
+        case CFAPI_MAP_PROP_UNIQUE:
+            rint = va_arg(args, int*);
+            *rint = map->unique;
+            *type = CFAPI_INT;
+            break;
 
-    default:
-        *type = CFAPI_NONE;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
     return NULL;
 }
 
-void* cfapi_map_set_map_property(int* type, ...)
-{
+void* cfapi_map_set_map_property(int* type, ...) {
     va_list args;
     mapstruct* map;
     int property;
@@ -1385,8 +1345,7 @@ void* cfapi_map_set_map_property(int* type, ...)
     map = va_arg(args, mapstruct*);
     property = va_arg(args, int);
 
-    switch (property)
-    {
+    switch (property) {
         case CFAPI_MAP_PROP_PATH:
             buf = va_arg(args, const char*);
             snprintf(map->path, sizeof(map->path), "%s", buf);
@@ -1408,8 +1367,7 @@ void* cfapi_map_set_map_property(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_out_of_map(int* type, ...)
-{
+void* cfapi_map_out_of_map(int* type, ...) {
     va_list args;
     mapstruct* map;
     int x, y;
@@ -1434,8 +1392,7 @@ void* cfapi_map_out_of_map(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_update_position(int* type, ...)
-{
+void* cfapi_map_update_position(int* type, ...) {
     va_list args;
     mapstruct* map;
     int x, y;
@@ -1451,8 +1408,7 @@ void* cfapi_map_update_position(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_map_delete_map(int* type, ...)
-{
+void* cfapi_map_delete_map(int* type, ...) {
     va_list args;
     mapstruct* map;
     va_start(args, type);
@@ -1465,8 +1421,7 @@ void* cfapi_map_delete_map(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_map_message(int* type, ...)
-{
+void* cfapi_map_message(int* type, ...) {
     va_list args;
     mapstruct* map;
     const char* string;
@@ -1491,8 +1446,7 @@ void* cfapi_map_message(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_get_object_at(int* type, ...)
-{
+void* cfapi_map_get_object_at(int* type, ...) {
     va_list args;
     mapstruct* map;
     int x, y;
@@ -1524,8 +1478,7 @@ void* cfapi_map_get_object_at(int* type, ...)
  * NULL.
  * @todo fix archetype instead of string.
  */
-void* cfapi_map_present_arch_by_name(int* type, ...)
-{
+void* cfapi_map_present_arch_by_name(int* type, ...) {
     va_list args;
     int x, y;
     mapstruct* map;
@@ -1554,8 +1507,7 @@ void* cfapi_map_present_arch_by_name(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_change_light(int* type, ...)
-{
+void* cfapi_map_change_light(int* type, ...) {
     va_list args;
     int change;
     mapstruct* map;
@@ -1589,8 +1541,7 @@ void* cfapi_map_change_light(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_move(int* type, ...)
-{
+void* cfapi_object_move(int* type, ...) {
     va_list args;
     int     kind;
     object* op;
@@ -1601,24 +1552,23 @@ void* cfapi_object_move(int* type, ...)
 
     va_start(args, type);
     kind = va_arg(args, int);
-    switch (kind)
-    {
-    case 0:
-        op = va_arg(args, object*);
-        direction = va_arg(args, int);
-        activator = va_arg(args, object*);
-        ret = va_arg(args, int*);
-        va_end(args);
-        *ret = move_ob(op, direction, activator);
-        break;
+    switch (kind) {
+        case 0:
+            op = va_arg(args, object*);
+            direction = va_arg(args, int);
+            activator = va_arg(args, object*);
+            ret = va_arg(args, int*);
+            va_end(args);
+            *ret = move_ob(op, direction, activator);
+            break;
 
-    case 1:
-        pl = va_arg(args, player*);
-        direction = va_arg(args, int);
-        ret = va_arg(args, int*);
-        va_end(args);
-        *ret = move_player(pl->ob, direction);
-        break;
+        case 1:
+            pl = va_arg(args, player*);
+            direction = va_arg(args, int);
+            ret = va_arg(args, int*);
+            va_end(args);
+            *ret = move_player(pl->ob, direction);
+            break;
     }
     *type = CFAPI_INT;
     return NULL;
@@ -1633,8 +1583,7 @@ void* cfapi_object_move(int* type, ...)
  * NULL.
  * @see get_ob_key_value().
  */
-void* cfapi_object_get_key(int* type, ...)
-{
+void* cfapi_object_get_key(int* type, ...) {
     va_list args;
     const char* keyname;
     const char** value;
@@ -1659,8 +1608,7 @@ void* cfapi_object_get_key(int* type, ...)
  * NULL.
  * @see set_ob_key_value().
  */
-void* cfapi_object_set_key(int* type, ...)
-{
+void* cfapi_object_set_key(int* type, ...) {
     va_list args;
     const char* keyname;
     const char* value;
@@ -1684,8 +1632,7 @@ void* cfapi_object_set_key(int* type, ...)
 /**
  * Main object property getter.
  */
-void* cfapi_object_get_property(int* type, ...)
-{
+void* cfapi_object_get_property(int* type, ...) {
     va_list args;
     int property;
     object* op;
@@ -1707,8 +1654,7 @@ void* cfapi_object_get_property(int* type, ...)
 
     op = va_arg(args, object*);
     property = va_arg(args, int);
-    switch (property)
-        {
+    switch (property) {
         case CFAPI_OBJECT_PROP_OB_ABOVE:
             robject = va_arg(args, object**);
             *robject = op->above;
@@ -1878,16 +1824,15 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_INT;
             break;
 
-        case CFAPI_OBJECT_PROP_RESIST:
-            {
-                int idx;
-                sint16* resist;
-                idx = va_arg(args, int);
-                resist = va_arg(args, sint16*);
-                *resist = op->resist[idx];
-            }
-            *type = CFAPI_INT16;
-            break;
+        case CFAPI_OBJECT_PROP_RESIST: {
+            int idx;
+            sint16* resist;
+            idx = va_arg(args, int);
+            resist = va_arg(args, sint16*);
+            *resist = op->resist[idx];
+        }
+        *type = CFAPI_INT16;
+        break;
 
         case CFAPI_OBJECT_PROP_ATTACK_TYPE:
             rint = va_arg(args, int*);
@@ -2118,16 +2063,15 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_STRING;
             break;
 
-        case CFAPI_OBJECT_PROP_BASE_NAME:
-            {
-                int i;
-                i = va_arg(args, int);
-                rbuffer = va_arg(args, char*);
-                rbufsize = va_arg(args, int);
-                query_base_name(op, i, rbuffer, rbufsize);
-                *type = CFAPI_STRING;
-            }
-            break;
+        case CFAPI_OBJECT_PROP_BASE_NAME: {
+            int i;
+            i = va_arg(args, int);
+            rbuffer = va_arg(args, char*);
+            rbufsize = va_arg(args, int);
+            query_base_name(op, i, rbuffer, rbufsize);
+            *type = CFAPI_STRING;
+        }
+        break;
 
         case CFAPI_OBJECT_PROP_MAGICAL:
             rint = va_arg(args, int*);
@@ -2153,15 +2097,14 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_POBJECT;
             break;
 
-        case CFAPI_OBJECT_PROP_PRESENT:
-            {
-                int stype;
-                stype = va_arg(args, int);
-                switch (stype) {
+        case CFAPI_OBJECT_PROP_PRESENT: {
+            int stype;
+            stype = va_arg(args, int);
+            switch (stype) {
 
-                unsigned char ptype;
-                char* buf;
-                archetype* at;
+                    unsigned char ptype;
+                    char* buf;
+                    archetype* at;
 
                 case 0: /* present_in_ob */
                     ptype = (unsigned char)(va_arg(args, int));
@@ -2181,10 +2124,10 @@ void* cfapi_object_get_property(int* type, ...)
                     robject = va_arg(args, object**);
                     *robject = present_arch_in_ob(at, op);
                     break;
-                }
             }
-            *type = CFAPI_POBJECT;
-            break;
+        }
+        *type = CFAPI_POBJECT;
+        break;
 
         case CFAPI_OBJECT_PROP_CHEATER:
             rint = va_arg(args, int*);
@@ -2192,35 +2135,32 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_INT;
             break;
 
-        case CFAPI_OBJECT_PROP_MERGEABLE:
-            {
-                object* op2;
-                op2 = va_arg(args, object*);
-                rint = va_arg(args, int*);
-                *rint = can_merge(op, op2);
-            }
-            *type = CFAPI_INT;
-            break;
+        case CFAPI_OBJECT_PROP_MERGEABLE: {
+            object* op2;
+            op2 = va_arg(args, object*);
+            rint = va_arg(args, int*);
+            *rint = can_merge(op, op2);
+        }
+        *type = CFAPI_INT;
+        break;
 
-        case CFAPI_OBJECT_PROP_PICKABLE:
-            {
-                object* op2;
-                op2 = va_arg(args, object*);
-                rint = va_arg(args, int*);
-                *rint = can_pick(op2, op);
-            }
-            *type = CFAPI_INT;
-            break;
+        case CFAPI_OBJECT_PROP_PICKABLE: {
+            object* op2;
+            op2 = va_arg(args, object*);
+            rint = va_arg(args, int*);
+            *rint = can_pick(op2, op);
+        }
+        *type = CFAPI_INT;
+        break;
 
-        case CFAPI_OBJECT_PROP_FLAGS:
-            {
-                int fl;
-                fl = va_arg(args, int);
-                rint = va_arg(args, int*);
-                *rint = QUERY_FLAG(op, fl);
-            }
-            *type = CFAPI_INT;
-            break;
+        case CFAPI_OBJECT_PROP_FLAGS: {
+            int fl;
+            fl = va_arg(args, int);
+            rint = va_arg(args, int*);
+            *rint = QUERY_FLAG(op, fl);
+        }
+        *type = CFAPI_INT;
+        break;
 
         case CFAPI_OBJECT_PROP_STR:
             rint = va_arg(args, int*);
@@ -2348,7 +2288,7 @@ void* cfapi_object_get_property(int* type, ...)
             *type = CFAPI_INT;
             break;
 
-       case CFAPI_OBJECT_PROP_ANIMATION:
+        case CFAPI_OBJECT_PROP_ANIMATION:
             rint = va_arg(args, int*);
             *rint = op->animation_id;
             *type = CFAPI_INT;
@@ -2490,8 +2430,7 @@ static void copy_message(object* op, const char* msg) {
  * @return
  * NULL.
  */
-void* cfapi_object_set_property(int* type, ...)
-{
+void* cfapi_object_set_property(int* type, ...) {
     va_list args;
     int iarg;
     long larg;
@@ -2510,127 +2449,122 @@ void* cfapi_object_set_property(int* type, ...)
     *type = CFAPI_NONE;
 
     if (op != NULL && (!op->arch || (op != &op->arch->clone))) {
-        switch (property)
-        {
-        case CFAPI_OBJECT_PROP_NAME:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->name, sarg);
-            send_changed_object(op);
-            break;
+        switch (property) {
+            case CFAPI_OBJECT_PROP_NAME:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->name, sarg);
+                send_changed_object(op);
+                break;
 
-        case CFAPI_OBJECT_PROP_NAME_PLURAL:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->name_pl, sarg);
-            send_changed_object(op);
-            break;
+            case CFAPI_OBJECT_PROP_NAME_PLURAL:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->name_pl, sarg);
+                send_changed_object(op);
+                break;
 
-        case CFAPI_OBJECT_PROP_TITLE:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->title, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_TITLE:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->title, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_RACE:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->race, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_RACE:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->race, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_SLAYING:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->slaying, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_SLAYING:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->slaying, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_SKILL:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->skill, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_SKILL:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->skill, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_MESSAGE:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            copy_message(op, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_MESSAGE:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                copy_message(op, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_LORE:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->lore, sarg);
-            break;
+            case CFAPI_OBJECT_PROP_LORE:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->lore, sarg);
+                break;
 
-        case CFAPI_OBJECT_PROP_SPEED:
-            farg = va_arg(args, double);
-            *type = CFAPI_FLOAT;
-            if (farg != op->speed) {
-                op->speed = farg;
-                update_ob_speed(op);
-            }
-            break;
-
-        case CFAPI_OBJECT_PROP_SPEED_LEFT:
-            farg = va_arg(args, double);
-            *type = CFAPI_FLOAT;
-            op->speed_left = farg;
-            break;
-
-        case CFAPI_OBJECT_PROP_NROF:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            if (iarg < 0)
-                iarg = 0;
-            if (op->nrof > (uint32)iarg)
-                decrease_ob_nr(op, op->nrof-iarg);
-            else if (op->nrof < (uint32)iarg) {
-                object* tmp;
-                player *pl;
-                op->nrof = iarg;
-                if (op->env != NULL) {
-                    tmp = get_player_container(op->env);
-                    if (!tmp) {
-                        for (pl = first_player; pl; pl = pl->next)
-                            if (pl->ob->container == op->env)
-                                break;
-                        if (pl)
-                            tmp = pl->ob;
-                        else
-                            tmp = NULL;
-                    }
-                    else {
-                        sum_weight(tmp);
-                        fix_object(tmp);
-                    }
-                    if (tmp)
-                        esrv_update_item(UPD_NROF, tmp, op);
+            case CFAPI_OBJECT_PROP_SPEED:
+                farg = va_arg(args, double);
+                *type = CFAPI_FLOAT;
+                if (farg != op->speed) {
+                    op->speed = farg;
+                    update_ob_speed(op);
                 }
-                else
-                {
-                    object *above = op->above;
+                break;
 
-                    for (tmp = above; tmp != NULL; tmp = tmp->above)
-                        if (tmp->type == PLAYER)
-                            tmp->contr->socket.update_look=1;
+            case CFAPI_OBJECT_PROP_SPEED_LEFT:
+                farg = va_arg(args, double);
+                *type = CFAPI_FLOAT;
+                op->speed_left = farg;
+                break;
+
+            case CFAPI_OBJECT_PROP_NROF:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                if (iarg < 0)
+                    iarg = 0;
+                if (op->nrof > (uint32)iarg)
+                    decrease_ob_nr(op, op->nrof-iarg);
+                else if (op->nrof < (uint32)iarg) {
+                    object* tmp;
+                    player *pl;
+                    op->nrof = iarg;
+                    if (op->env != NULL) {
+                        tmp = get_player_container(op->env);
+                        if (!tmp) {
+                            for (pl = first_player; pl; pl = pl->next)
+                                if (pl->ob->container == op->env)
+                                    break;
+                            if (pl)
+                                tmp = pl->ob;
+                            else
+                                tmp = NULL;
+                        } else {
+                            sum_weight(tmp);
+                            fix_object(tmp);
+                        }
+                        if (tmp)
+                            esrv_update_item(UPD_NROF, tmp, op);
+                    } else {
+                        object *above = op->above;
+
+                        for (tmp = above; tmp != NULL; tmp = tmp->above)
+                            if (tmp->type == PLAYER)
+                                tmp->contr->socket.update_look=1;
+                    }
                 }
-            }
-            break;
+                break;
 
-        case CFAPI_OBJECT_PROP_DIRECTION:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->direction = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_DIRECTION:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->direction = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_FACING:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->facing = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_FACING:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->facing = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_RESIST:
-            {
+            case CFAPI_OBJECT_PROP_RESIST: {
                 int iargbis = va_arg(args, int);
                 *type = CFAPI_INT16;
                 iarg = va_arg(args, int);
@@ -2638,262 +2572,259 @@ void* cfapi_object_set_property(int* type, ...)
             }
             break;
 
-        case CFAPI_OBJECT_PROP_ATTACK_TYPE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->attacktype = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_ATTACK_TYPE:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->attacktype = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_PATH_ATTUNED:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->path_attuned = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_PATH_ATTUNED:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->path_attuned = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_PATH_REPELLED:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->path_repelled = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_PATH_REPELLED:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->path_repelled = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_PATH_DENIED:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->path_denied = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_PATH_DENIED:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->path_denied = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MATERIAL:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->material = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MATERIAL:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->material = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MATERIAL_NAME:
-            break;
+            case CFAPI_OBJECT_PROP_MATERIAL_NAME:
+                break;
 
-        case CFAPI_OBJECT_PROP_MAGIC:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->magic = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MAGIC:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->magic = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_VALUE:
-            larg = va_arg(args, long);
-            *type = CFAPI_LONG;
-            op->value = larg;
-            break;
+            case CFAPI_OBJECT_PROP_VALUE:
+                larg = va_arg(args, long);
+                *type = CFAPI_LONG;
+                op->value = larg;
+                break;
 
-        case CFAPI_OBJECT_PROP_LEVEL:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->level = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LEVEL:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->level = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_LAST_HEAL:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->last_heal = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LAST_HEAL:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->last_heal = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_LAST_SP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->last_sp = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LAST_SP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->last_sp = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_LAST_GRACE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->last_grace = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LAST_GRACE:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->last_grace = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_LAST_EAT:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->last_eat = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LAST_EAT:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->last_eat = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_INVISIBLE_TIME:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->invisible = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_INVISIBLE_TIME:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->invisible = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_PICK_UP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->pick_up = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_PICK_UP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->pick_up = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_ITEM_POWER:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->item_power = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_ITEM_POWER:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->item_power = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_GEN_SP_ARMOUR:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->gen_sp_armour = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_GEN_SP_ARMOUR:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->gen_sp_armour = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_WEIGHT:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            if (op->weight != iarg) {
-                object* tmp;
-                player *pl;
-                op->weight = iarg;
-                if (op->env != NULL) {
-                    tmp = get_player_container(op->env);
-                    if (!tmp) {
-                        for (pl = first_player; pl; pl = pl->next)
-                            if (pl->ob->container == op->env)
-                                break;
-                        if (pl)
-                            tmp = pl->ob;
-                        else
-                            tmp = NULL;
-                    } else {
-                        sum_weight(tmp);
-                        fix_object(tmp);
-                    }
-                    if (tmp)
-                        esrv_update_item(UPD_WEIGHT, tmp, op);
-                }
-                else
-                {
-                    object *above = op->above;
-
-                    for (tmp = above; tmp != NULL; tmp = tmp->above)
-                        if (tmp->type == PLAYER)
+            case CFAPI_OBJECT_PROP_WEIGHT:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                if (op->weight != iarg) {
+                    object* tmp;
+                    player *pl;
+                    op->weight = iarg;
+                    if (op->env != NULL) {
+                        tmp = get_player_container(op->env);
+                        if (!tmp) {
+                            for (pl = first_player; pl; pl = pl->next)
+                                if (pl->ob->container == op->env)
+                                    break;
+                            if (pl)
+                                tmp = pl->ob;
+                            else
+                                tmp = NULL;
+                        } else {
+                            sum_weight(tmp);
+                            fix_object(tmp);
+                        }
+                        if (tmp)
                             esrv_update_item(UPD_WEIGHT, tmp, op);
+                    } else {
+                        object *above = op->above;
+
+                        for (tmp = above; tmp != NULL; tmp = tmp->above)
+                            if (tmp->type == PLAYER)
+                                esrv_update_item(UPD_WEIGHT, tmp, op);
+                    }
                 }
-            }
-            break;
+                break;
 
-        case CFAPI_OBJECT_PROP_WEIGHT_LIMIT:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->weight_limit = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_WEIGHT_LIMIT:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->weight_limit = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_GLOW_RADIUS:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-	    if (op->glow_radius !=iarg){
-                object* tmp;
-                op->glow_radius = iarg;
-                tmp=object_get_env_recursive(op);
-                if (tmp->map!=NULL){
-                    SET_MAP_FLAGS(tmp->map, tmp->x, tmp->y,  P_NEED_UPDATE);
-                    update_position(tmp->map, tmp->x, tmp->y);
-                    update_all_los(tmp->map,tmp->x,tmp->y);
+            case CFAPI_OBJECT_PROP_GLOW_RADIUS:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                if (op->glow_radius !=iarg) {
+                    object* tmp;
+                    op->glow_radius = iarg;
+                    tmp=object_get_env_recursive(op);
+                    if (tmp->map!=NULL) {
+                        SET_MAP_FLAGS(tmp->map, tmp->x, tmp->y,  P_NEED_UPDATE);
+                        update_position(tmp->map, tmp->x, tmp->y);
+                        update_all_los(tmp->map,tmp->x,tmp->y);
+                    }
                 }
-            }
-            break;
+                break;
 
-        case CFAPI_OBJECT_PROP_PERM_EXP:
-            s64arg = va_arg(args, sint64);
-            *type = CFAPI_SINT64;
-            op->perm_exp = s64arg;
-            break;
+            case CFAPI_OBJECT_PROP_PERM_EXP:
+                s64arg = va_arg(args, sint64);
+                *type = CFAPI_SINT64;
+                op->perm_exp = s64arg;
+                break;
 
-        case CFAPI_OBJECT_PROP_ENEMY:
-            oparg = va_arg(args, object*);
-            *type = CFAPI_POBJECT;
-            op->enemy = oparg;
-            break;
+            case CFAPI_OBJECT_PROP_ENEMY:
+                oparg = va_arg(args, object*);
+                *type = CFAPI_POBJECT;
+                op->enemy = oparg;
+                break;
 
-        case CFAPI_OBJECT_PROP_RUN_AWAY:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->run_away = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_RUN_AWAY:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->run_away = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_CHOSEN_SKILL:
-            oparg = va_arg(args, object*);
-            *type = CFAPI_POBJECT;
-            op->chosen_skill = oparg;
-            break;
+            case CFAPI_OBJECT_PROP_CHOSEN_SKILL:
+                oparg = va_arg(args, object*);
+                *type = CFAPI_POBJECT;
+                op->chosen_skill = oparg;
+                break;
 
-        case CFAPI_OBJECT_PROP_HIDDEN:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->hide = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_HIDDEN:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->hide = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MOVE_STATUS:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->move_status = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MOVE_STATUS:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->move_status = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_ATTACK_MOVEMENT:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->attack_movement = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_ATTACK_MOVEMENT:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->attack_movement = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_SPELL_ITEM:
-            oparg = va_arg(args, object*);
-            *type = CFAPI_POBJECT;
-            op->spellitem = oparg;
-            break;
+            case CFAPI_OBJECT_PROP_SPELL_ITEM:
+                oparg = va_arg(args, object*);
+                *type = CFAPI_POBJECT;
+                op->spellitem = oparg;
+                break;
 
-        case CFAPI_OBJECT_PROP_EXP_MULTIPLIER:
-            darg = va_arg(args, double);
-            *type = CFAPI_DOUBLE;
-            op->expmul = darg;
-            break;
+            case CFAPI_OBJECT_PROP_EXP_MULTIPLIER:
+                darg = va_arg(args, double);
+                *type = CFAPI_DOUBLE;
+                op->expmul = darg;
+                break;
 
-        case CFAPI_OBJECT_PROP_CUSTOM_NAME:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            FREE_AND_COPY(op->custom_name, sarg);
-            send_changed_object(op);
-            break;
+            case CFAPI_OBJECT_PROP_CUSTOM_NAME:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                FREE_AND_COPY(op->custom_name, sarg);
+                send_changed_object(op);
+                break;
 
-        case CFAPI_OBJECT_PROP_ANIM_SPEED:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->anim_speed = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_ANIM_SPEED:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->anim_speed = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_FRIENDLY:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            if (iarg == 1 && is_friendly(op) == 0)
-                add_friendly_object(op);
-            else if (iarg == 0 && is_friendly(op) == 1)
-                remove_friendly_object(op);
-            break;
+            case CFAPI_OBJECT_PROP_FRIENDLY:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                if (iarg == 1 && is_friendly(op) == 0)
+                    add_friendly_object(op);
+                else if (iarg == 0 && is_friendly(op) == 1)
+                    remove_friendly_object(op);
+                break;
 
-        case CFAPI_OBJECT_PROP_LUCK:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.luck = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_LUCK:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.luck = iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_EXP:
-            s64arg = va_arg(args, sint64);
-            *type = CFAPI_SINT64;
-            op->stats.exp = s64arg;
-            break;
+            case CFAPI_OBJECT_PROP_EXP:
+                s64arg = va_arg(args, sint64);
+                *type = CFAPI_SINT64;
+                op->stats.exp = s64arg;
+                break;
 
-        case CFAPI_OBJECT_PROP_OWNER:
-            oparg = va_arg(args, object*);
-            *type = CFAPI_POBJECT;
-            set_owner(op, oparg);
-            break;
+            case CFAPI_OBJECT_PROP_OWNER:
+                oparg = va_arg(args, object*);
+                *type = CFAPI_POBJECT;
+                set_owner(op, oparg);
+                break;
 
-        case CFAPI_OBJECT_PROP_CHEATER:
-            set_cheat(op);
-            *type = CFAPI_NONE;
-            break;
+            case CFAPI_OBJECT_PROP_CHEATER:
+                set_cheat(op);
+                *type = CFAPI_NONE;
+                break;
 
-        case CFAPI_OBJECT_PROP_FLAGS:
-            {
+            case CFAPI_OBJECT_PROP_FLAGS: {
                 int iargbis;
                 iarg = va_arg(args, int);
                 iargbis = va_arg(args, int);
@@ -2906,168 +2837,168 @@ void* cfapi_object_set_property(int* type, ...)
             }
             break;
 
-        case CFAPI_OBJECT_PROP_STR:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Str=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_STR:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Str=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_DEX:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Dex=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_DEX:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Dex=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_CON:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Con=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_CON:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Con=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_WIS:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Wis=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_WIS:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Wis=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_INT:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Int=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_INT:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Int=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_POW:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Pow=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_POW:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Pow=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_CHA:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.Cha=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_CHA:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.Cha=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_WC:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.wc=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_WC:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.wc=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_AC:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.ac=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_AC:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.ac=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_HP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.hp=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_HP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.hp=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_SP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.sp=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_SP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.sp=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_GP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.grace=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_GP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.grace=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_FP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.food=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_FP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.food=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MAXHP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.maxhp=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MAXHP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.maxhp=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MAXSP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.maxsp=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MAXSP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.maxsp=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_MAXGP:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.maxgrace=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_MAXGP:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.maxgrace=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_DAM:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->stats.dam=iarg;
-            break;
+            case CFAPI_OBJECT_PROP_DAM:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->stats.dam=iarg;
+                break;
 
-        case CFAPI_OBJECT_PROP_FACE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->face = &new_faces[iarg];
-            op->state = 0;
-            update_object(op, UP_OBJ_FACE);
-            break;
+            case CFAPI_OBJECT_PROP_FACE:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->face = &new_faces[iarg];
+                op->state = 0;
+                update_object(op, UP_OBJ_FACE);
+                break;
 
-        case CFAPI_OBJECT_PROP_ANIMATION:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->animation_id = iarg;
-            SET_ANIMATION(op, 0);
-            update_object(op, UP_OBJ_FACE);
-            break;
-        case CFAPI_OBJECT_PROP_DURATION:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->duration = iarg;
-            break;
+            case CFAPI_OBJECT_PROP_ANIMATION:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->animation_id = iarg;
+                SET_ANIMATION(op, 0);
+                update_object(op, UP_OBJ_FACE);
+                break;
+            case CFAPI_OBJECT_PROP_DURATION:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->duration = iarg;
+                break;
 
-        case CFAPI_PLAYER_PROP_MARKED_ITEM:
-            if (op->contr) {
-                oparg = va_arg(args, object*);
-                *type = CFAPI_POBJECT;
-                op->contr->mark = oparg;
-                if (oparg)
-                    op->contr->mark_count = oparg->count;
-            }
-            break;
+            case CFAPI_PLAYER_PROP_MARKED_ITEM:
+                if (op->contr) {
+                    oparg = va_arg(args, object*);
+                    *type = CFAPI_POBJECT;
+                    op->contr->mark = oparg;
+                    if (oparg)
+                        op->contr->mark_count = oparg->count;
+                }
+                break;
 
-        case CFAPI_PLAYER_PROP_PARTY:
-            if (op->contr) {
-                partyarg = va_arg(args, partylist*);
-                *type = CFAPI_PPARTY;
-                op->contr->party = partyarg;
-            }
-            break;
-        case CFAPI_OBJECT_PROP_NO_SAVE:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->no_save = iarg;
-            break;
-        case CFAPI_PLAYER_PROP_BED_MAP:
-            sarg = va_arg(args, char*);
-            *type = CFAPI_STRING;
-            strncpy(op->contr->savebed_map, sarg, MAX_BUF);
-            break;
-        case CFAPI_PLAYER_PROP_BED_X:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->contr->bed_x = iarg;
-            break;
-        case CFAPI_PLAYER_PROP_BED_Y:
-            iarg = va_arg(args, int);
-            *type = CFAPI_INT;
-            op->contr->bed_y = iarg;
-            break;
-        default:
-            break;
+            case CFAPI_PLAYER_PROP_PARTY:
+                if (op->contr) {
+                    partyarg = va_arg(args, partylist*);
+                    *type = CFAPI_PPARTY;
+                    op->contr->party = partyarg;
+                }
+                break;
+            case CFAPI_OBJECT_PROP_NO_SAVE:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->no_save = iarg;
+                break;
+            case CFAPI_PLAYER_PROP_BED_MAP:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                strncpy(op->contr->savebed_map, sarg, MAX_BUF);
+                break;
+            case CFAPI_PLAYER_PROP_BED_X:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->contr->bed_x = iarg;
+                break;
+            case CFAPI_PLAYER_PROP_BED_Y:
+                iarg = va_arg(args, int);
+                *type = CFAPI_INT;
+                op->contr->bed_y = iarg;
+                break;
+            default:
+                break;
         }
     }
     va_end(args);
@@ -3083,8 +3014,7 @@ void* cfapi_object_set_property(int* type, ...)
  * @return
  * always NULL.
  */
-void* cfapi_object_apply_below(int* type, ...)
-{
+void* cfapi_object_apply_below(int* type, ...) {
     va_list args;
     object* applier;
 
@@ -3107,8 +3037,7 @@ void* cfapi_object_apply_below(int* type, ...)
  * @return
  * always NULL.
  */
-void* cfapi_object_apply(int* type, ...)
-{
+void* cfapi_object_apply(int* type, ...) {
     va_list args;
     object* applied;
     object* applier;
@@ -3136,8 +3065,7 @@ void* cfapi_object_apply(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_identify(int* type, ...)
-{
+void* cfapi_object_identify(int* type, ...) {
     va_list args;
     object* op;
 
@@ -3159,8 +3087,7 @@ void* cfapi_object_identify(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_describe(int* type, ...)
-{
+void* cfapi_object_describe(int* type, ...) {
     va_list args;
     object* op;
     object* owner;
@@ -3179,8 +3106,7 @@ void* cfapi_object_describe(int* type, ...)
     describe_item(op, owner, desc, size);
     return NULL;
 }
-void* cfapi_object_drain(int* type, ...)
-{
+void* cfapi_object_drain(int* type, ...) {
     va_list args;
 
     object* op;
@@ -3198,8 +3124,7 @@ void* cfapi_object_drain(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_fix(int* type, ...)
-{
+void* cfapi_object_fix(int* type, ...) {
     va_list args;
     object* op;
 
@@ -3214,8 +3139,7 @@ void* cfapi_object_fix(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_give_skill(int* type, ...)
-{
+void* cfapi_object_give_skill(int* type, ...) {
     va_list args;
 
     object* op;
@@ -3231,8 +3155,7 @@ void* cfapi_object_give_skill(int* type, ...)
     *type = CFAPI_POBJECT;
     return give_skill_by_name(op, skillname);
 }
-void* cfapi_object_transmute(int* type, ...)
-{
+void* cfapi_object_transmute(int* type, ...) {
     va_list args;
 
     object* op;
@@ -3249,8 +3172,7 @@ void* cfapi_object_transmute(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_remove(int* type, ...)
-{
+void* cfapi_object_remove(int* type, ...) {
     va_list args;
     object* op;
 
@@ -3258,8 +3180,7 @@ void* cfapi_object_remove(int* type, ...)
 
     op = va_arg(args, object*);
 
-    if (QUERY_FLAG(op, FLAG_REMOVED))
-    {
+    if (QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to remove removed object %s\n", op->name);
         *type = CFAPI_NONE;
         return NULL;
@@ -3271,8 +3192,7 @@ void* cfapi_object_remove(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_delete(int* type, ...)
-{
+void* cfapi_object_delete(int* type, ...) {
     va_list args;
     object* op;
 
@@ -3280,8 +3200,7 @@ void* cfapi_object_delete(int* type, ...)
 
     op = va_arg(args, object*);
 
-    if (QUERY_FLAG(op, FLAG_FREED) || !QUERY_FLAG(op, FLAG_REMOVED))
-    {
+    if (QUERY_FLAG(op, FLAG_FREED) || !QUERY_FLAG(op, FLAG_REMOVED)) {
         LOG(llevError, "Plugin trying to free freed/non removed object %s\n", op->name);
         *type = CFAPI_NONE;
         return NULL;
@@ -3301,8 +3220,7 @@ void* cfapi_object_delete(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_clone(int* type, ...)
-{
+void* cfapi_object_clone(int* type, ...) {
     va_list args;
     object* op;
     int kind;
@@ -3329,8 +3247,7 @@ void* cfapi_object_clone(int* type, ...)
     return NULL;
 }
 
-void* cfapi_object_find(int* type, ...)
-{
+void* cfapi_object_find(int* type, ...) {
     va_list args;
     int ftype;
     void* rv;
@@ -3342,34 +3259,33 @@ void* cfapi_object_find(int* type, ...)
 
     *type = CFAPI_POBJECT;
     ftype = va_arg(args, int);
-    switch (ftype)
-    {
-    case 0:
-        ival = va_arg(args, int);
-        rv = find_object(ival);
-        break;
+    switch (ftype) {
+        case 0:
+            ival = va_arg(args, int);
+            rv = find_object(ival);
+            break;
 
-    case 1:
-        sval = va_arg(args, char*);
-        rv = find_object_name(sval);
-        break;
+        case 1:
+            sval = va_arg(args, char*);
+            rv = find_object_name(sval);
+            break;
 
-    case 2:
-        op = va_arg(args, object*);
-        ival = va_arg(args, int);
-        ival2 = va_arg(args, int);
-        rv = find_obj_by_type_subtype(op, ival, ival2);
-        break;
+        case 2:
+            op = va_arg(args, object*);
+            ival = va_arg(args, int);
+            ival2 = va_arg(args, int);
+            rv = find_obj_by_type_subtype(op, ival, ival2);
+            break;
 
-    case 3:
-        op = va_arg(args, object*);
-        rv = get_player_container(op);
-        break;
+        case 3:
+            op = va_arg(args, object*);
+            rv = get_player_container(op);
+            break;
 
-    default:
-        rv = NULL;
-        *type = CFAPI_NONE;
-        break;
+        default:
+            rv = NULL;
+            *type = CFAPI_NONE;
+            break;
     }
 
     va_end(args);
@@ -3384,8 +3300,7 @@ void* cfapi_object_find(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_create(int* type, ...)
-{
+void* cfapi_object_create(int* type, ...) {
     va_list args;
     int ival;
     object** robj;
@@ -3393,15 +3308,13 @@ void* cfapi_object_create(int* type, ...)
     ival = va_arg(args, int);
 
     *type = CFAPI_POBJECT;
-    switch (ival)
-    {
-    case 0:
-        robj = va_arg(args, object**);
-        *robj = get_object();
-        break;
+    switch (ival) {
+        case 0:
+            robj = va_arg(args, object**);
+            *robj = get_object();
+            break;
 
-    case 1: /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
-        {
+        case 1: { /* Named object. Nearly the old plugin behavior, but we don't add artifact suffixes */
             const char* sval;
             archetype* at;
 
@@ -3414,21 +3327,19 @@ void* cfapi_object_create(int* type, ...)
                 at = find_archetype_by_object_name(sval);
             if (at) {
                 *robj = object_create_arch(at);
-            }
-            else
+            } else
                 *robj = NULL;
         }
         break;
 
-    default:
-        *type = CFAPI_NONE;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
     return NULL;
 }
-void* cfapi_object_insert(int* type, ...)
-{
+void* cfapi_object_insert(int* type, ...) {
     va_list args;
     object* op;
     object* orig;
@@ -3457,54 +3368,51 @@ void* cfapi_object_insert(int* type, ...)
     itype = va_arg(args, int);
 
     switch (itype) {
-    case 0:
-        map = va_arg(args, mapstruct*);
-        orig = va_arg(args, object*);
-        flag = va_arg(args, int);
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        robj = va_arg(args, object**);
-        if (!map) {
-            LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
-            free_object(op);
-            *robj = NULL;
-        }
-        else
-            *robj = insert_ob_in_map_at(op, map, orig, flag, x, y);
-        *type = CFAPI_POBJECT;
-        break;
+        case 0:
+            map = va_arg(args, mapstruct*);
+            orig = va_arg(args, object*);
+            flag = va_arg(args, int);
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            robj = va_arg(args, object**);
+            if (!map) {
+                LOG(llevError, "cfapi_object_insert (0): called with NULL map, object %s!\n", op->name);
+                free_object(op);
+                *robj = NULL;
+            } else
+                *robj = insert_ob_in_map_at(op, map, orig, flag, x, y);
+            *type = CFAPI_POBJECT;
+            break;
 
-    case 1:
-        map = va_arg(args, mapstruct*);
-        orig = va_arg(args, object*);
-        flag = va_arg(args, int);
-        robj = va_arg(args, object**);
-        if (!map) {
-            LOG(llevError, "cfapi_object_insert (1): called with NULL map, object %s!\n", op->name);
+        case 1:
+            map = va_arg(args, mapstruct*);
+            orig = va_arg(args, object*);
+            flag = va_arg(args, int);
+            robj = va_arg(args, object**);
+            if (!map) {
+                LOG(llevError, "cfapi_object_insert (1): called with NULL map, object %s!\n", op->name);
+                free_object(op);
+                *robj = NULL;
+            } else
+                *robj = insert_ob_in_map(op, map, orig, flag);
+            *type = CFAPI_POBJECT;
+            break;
+        case 3:
+            orig = va_arg(args, object*);
+            robj = va_arg(args, object**);
+            if (!orig) {
+                LOG(llevError, "cfapi_object_insert (3): called with NULL orig, object %s!\n", op->name);
+                free_object(op);
+                *robj = NULL;
+            } else
+                *robj = insert_ob_in_ob(op, orig);
+            *type = CFAPI_POBJECT;
+            break;
+        default:
+            LOG(llevError, "cfapi_object_insert (1): called with itype %d which is not valid, object %s!\n", itype, op->name);
             free_object(op);
-            *robj = NULL;
-        }
-        else
-            *robj = insert_ob_in_map(op, map, orig, flag);
-        *type = CFAPI_POBJECT;
-        break;
-    case 3:
-        orig = va_arg(args, object*);
-        robj = va_arg(args, object**);
-        if (!orig) {
-            LOG(llevError, "cfapi_object_insert (3): called with NULL orig, object %s!\n", op->name);
-            free_object(op);
-            *robj = NULL;
-        }
-        else
-            *robj = insert_ob_in_ob(op, orig);
-        *type = CFAPI_POBJECT;
-        break;
-    default:
-        LOG(llevError, "cfapi_object_insert (1): called with itype %d which is not valid, object %s!\n", itype, op->name);
-        free_object(op);
-        *type = CFAPI_NONE;
-        break;
+            *type = CFAPI_NONE;
+            break;
     }
 
     va_end(args);
@@ -3518,8 +3426,7 @@ void* cfapi_object_insert(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_split(int* type, ...)
-{
+void* cfapi_object_split(int* type, ...) {
     va_list args;
 
     int nr, size;
@@ -3548,8 +3455,7 @@ void* cfapi_object_split(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_merge(int* type, ...)
-{
+void* cfapi_object_merge(int* type, ...) {
     va_list args;
     object* op;
     object* op2;
@@ -3576,8 +3482,7 @@ void* cfapi_object_merge(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_distance(int* type, ...)
-{
+void* cfapi_object_distance(int* type, ...) {
     va_list args;
     object* op;
     object* op2;
@@ -3601,8 +3506,7 @@ void* cfapi_object_distance(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_update(int* type, ...)
-{
+void* cfapi_object_update(int* type, ...) {
     va_list args;
     int action;
     object* op;
@@ -3624,8 +3528,7 @@ void* cfapi_object_update(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_clear(int* type, ...)
-{
+void* cfapi_object_clear(int* type, ...) {
     va_list args;
     object* op;
     va_start(args, type);
@@ -3646,8 +3549,7 @@ void* cfapi_object_clear(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_reset(int* type, ...)
-{
+void* cfapi_object_reset(int* type, ...) {
     va_list args;
     object* op;
 
@@ -3662,8 +3564,7 @@ void* cfapi_object_reset(int* type, ...)
     return NULL;
 }
 
-void* cfapi_object_check_inventory(int* type, ...)
-{
+void* cfapi_object_check_inventory(int* type, ...) {
     va_list args;
     object* op;
     object* op2;
@@ -3689,8 +3590,7 @@ void* cfapi_object_check_inventory(int* type, ...)
     return ret;
 }
 
-void* cfapi_object_clean_object(int* type, ...)
-{
+void* cfapi_object_clean_object(int* type, ...) {
     va_list args;
     object* op;
     va_start(args, type);
@@ -3700,8 +3600,7 @@ void* cfapi_object_clean_object(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_on_same_map(int* type, ...)
-{
+void* cfapi_object_on_same_map(int* type, ...) {
     va_list args;
     object* op1;
     object* op2;
@@ -3719,8 +3618,7 @@ void* cfapi_object_on_same_map(int* type, ...)
     return NULL;
 }
 
-void* cfapi_object_spring_trap(int* type, ...)
-{
+void* cfapi_object_spring_trap(int* type, ...) {
     object* trap;
     object* victim;
     va_list args;
@@ -3742,8 +3640,7 @@ void* cfapi_object_spring_trap(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_check_trigger(int* type, ...)
-{
+void* cfapi_object_check_trigger(int* type, ...) {
     object* op;
     object* cause;
     va_list args;
@@ -3773,8 +3670,7 @@ void* cfapi_object_check_trigger(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_map_trigger_connected(int* type, ...)
-{
+void* cfapi_map_trigger_connected(int* type, ...) {
     objectlink* ol;
     object* cause;
     int state;
@@ -3797,8 +3693,7 @@ void* cfapi_map_trigger_connected(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_query_cost(int* type, ...)
-{
+void* cfapi_object_query_cost(int* type, ...) {
     object* op;
     object* who;
     int flags;
@@ -3824,8 +3719,7 @@ void* cfapi_object_query_cost(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_query_money(int* type, ...)
-{
+void* cfapi_object_query_money(int* type, ...) {
     object* op;
     va_list args;
     int* rint;
@@ -3847,8 +3741,7 @@ void* cfapi_object_query_money(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_cast(int* type, ...)
-{
+void* cfapi_object_cast(int* type, ...) {
     object* op;
     object* sp;
     int dir;
@@ -3876,8 +3769,7 @@ void* cfapi_object_cast(int* type, ...)
     *rint = cast_spell(op, caster, dir, sp, str);
     return NULL;
 }
-void* cfapi_object_learn_spell(int* type, ...)
-{
+void* cfapi_object_learn_spell(int* type, ...) {
     object* op;
     object* sp;
     int prayer;
@@ -3892,8 +3784,7 @@ void* cfapi_object_learn_spell(int* type, ...)
     *type = CFAPI_NONE;
     return NULL;
 }
-void* cfapi_object_forget_spell(int* type, ...)
-{
+void* cfapi_object_forget_spell(int* type, ...) {
     object* op;
     object* sp;
     va_list args;
@@ -3916,8 +3807,7 @@ void* cfapi_object_forget_spell(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_check_spell(int* type, ...)
-{
+void* cfapi_object_check_spell(int* type, ...) {
     object* op;
     char* spellname;
     va_list args;
@@ -3939,8 +3829,7 @@ void* cfapi_object_check_spell(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_pay_amount(int* type, ...)
-{
+void* cfapi_object_pay_amount(int* type, ...) {
     object* op;
     uint64 amount;
     va_list args;
@@ -3963,8 +3852,7 @@ void* cfapi_object_pay_amount(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_pay_item(int* type, ...)
-{
+void* cfapi_object_pay_item(int* type, ...) {
     object* op;
     object* tobuy;
     int* rint;
@@ -3991,8 +3879,7 @@ void* cfapi_object_pay_item(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_transfer(int* type, ...)
-{
+void* cfapi_object_transfer(int* type, ...) {
     object* op;
     object* originator;
     int x, y, randompos, ttype, flag;
@@ -4004,60 +3891,58 @@ void* cfapi_object_transfer(int* type, ...)
     va_start(args, type);
     op = va_arg(args, object*);
     ttype = va_arg(args, int);
-    switch (ttype)
-    {
-    case 0:
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        randompos = va_arg(args, int);
-        originator = va_arg(args, object*);
-        rint = va_arg(args, int*);
-        va_end(args);
+    switch (ttype) {
+        case 0:
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            randompos = va_arg(args, int);
+            originator = va_arg(args, object*);
+            rint = va_arg(args, int*);
+            va_end(args);
 
-        *rint = transfer_ob(op, x, y, randompos, originator);
-        *type = CFAPI_INT;
-        return NULL;
-        break;
+            *rint = transfer_ob(op, x, y, randompos, originator);
+            *type = CFAPI_INT;
+            return NULL;
+            break;
 
-    case 1:
-        map = va_arg(args, mapstruct*);
-        originator = va_arg(args, object*);
-        flag = va_arg(args, int);
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        robj = va_arg(args, object**);
-        va_end(args);
-        if (x < 0 || y < 0) {
-            x = map->enter_x;
-            y = map->enter_y;
-        }
-        *robj = insert_ob_in_map_at(op, map, originator, flag, x, y);
-        *type = CFAPI_POBJECT;
-        return NULL;
-        break;
+        case 1:
+            map = va_arg(args, mapstruct*);
+            originator = va_arg(args, object*);
+            flag = va_arg(args, int);
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            robj = va_arg(args, object**);
+            va_end(args);
+            if (x < 0 || y < 0) {
+                x = map->enter_x;
+                y = map->enter_y;
+            }
+            *robj = insert_ob_in_map_at(op, map, originator, flag, x, y);
+            *type = CFAPI_POBJECT;
+            return NULL;
+            break;
 
-    case 2:
-        x = va_arg(args, int);
-        y = va_arg(args, int);
-        rint = va_arg(args, int*);
-        va_end(args);
+        case 2:
+            x = va_arg(args, int);
+            y = va_arg(args, int);
+            rint = va_arg(args, int*);
+            va_end(args);
 
-        *rint = move_to(op, x, y);
-        *type = CFAPI_INT;
-        return NULL;
+            *rint = move_to(op, x, y);
+            *type = CFAPI_INT;
+            return NULL;
 
-    default:
-        *type = CFAPI_NONE;
-        return NULL;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            return NULL;
+            break;
     }
 }
 
 /**
  * Kinda wrapper for present_arch_in_ob().
  */
-void* cfapi_object_find_archetype_inside(int* type, ...)
-{
+void* cfapi_object_find_archetype_inside(int* type, ...) {
     object* op;
     char*   str;
     va_list args;
@@ -4096,8 +3981,7 @@ void* cfapi_object_find_archetype_inside(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_drop(int* type, ...)
-{
+void* cfapi_object_drop(int* type, ...) {
     object* op;
     object* author;
     va_list args;
@@ -4123,8 +4007,7 @@ void* cfapi_object_drop(int* type, ...)
 /**
  * Wrapper for change_abil().
  */
-void* cfapi_object_change_abil(int* type, ...)
-{
+void* cfapi_object_change_abil(int* type, ...) {
     object* op, *tmp;
     int* rint;
     va_list args;
@@ -4141,8 +4024,7 @@ void* cfapi_object_change_abil(int* type, ...)
     return NULL;
 }
 
-void* cfapi_object_say(int* type, ...)
-{
+void* cfapi_object_say(int* type, ...) {
     object* op;
     char* msg;
     va_list args;
@@ -4173,8 +4055,7 @@ void* cfapi_object_say(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_player_find(int* type, ...)
-{
+void* cfapi_player_find(int* type, ...) {
     va_list args;
     char* sval;
     player** rpl;
@@ -4189,8 +4070,7 @@ void* cfapi_player_find(int* type, ...)
     *type = CFAPI_PPLAYER;
     return NULL;
 }
-void* cfapi_player_message(int* type, ...)
-{
+void* cfapi_player_message(int* type, ...) {
     va_list args;
     int flags;
     int pri;
@@ -4206,7 +4086,7 @@ void* cfapi_player_message(int* type, ...)
     va_end(args);
 
     draw_ext_info(flags, pri, pl, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
-		  buf, buf);
+                  buf, buf);
     *type = CFAPI_NONE;
     return NULL;
 }
@@ -4218,8 +4098,7 @@ void* cfapi_player_message(int* type, ...)
  * @return
  * NULL.
  */
-void *cfapi_object_change_exp(int *type, ...)
-{
+void *cfapi_object_change_exp(int *type, ...) {
     va_list(args);
     int flag;
     object* ob;
@@ -4245,8 +4124,7 @@ void *cfapi_object_change_exp(int *type, ...)
  * @return
  * NULL.
  */
-void *cfapi_player_can_pay(int *type, ...)
-{
+void *cfapi_player_can_pay(int *type, ...) {
     va_list args;
     object* pl;
     int* rint;
@@ -4268,8 +4146,7 @@ void *cfapi_player_can_pay(int *type, ...)
  * @return
  * NULL.
  */
-void* cfapi_object_teleport(int *type, ...)
-{
+void* cfapi_object_teleport(int *type, ...) {
     mapstruct* map;
     int x, y;
     object* who;
@@ -4304,8 +4181,7 @@ void* cfapi_object_teleport(int *type, ...)
 
     return NULL;
 }
-void* cfapi_object_pickup(int *type, ...)
-{
+void* cfapi_object_pickup(int *type, ...) {
     object* who;
     object* what;
     va_list args;
@@ -4321,8 +4197,7 @@ void* cfapi_object_pickup(int *type, ...)
 }
 
 /* Archetype-related functions */
-void* cfapi_archetype_get_property(int* type, ...)
-{
+void* cfapi_archetype_get_property(int* type, ...) {
     int prop;
     archetype* arch;
     va_list args;
@@ -4334,39 +4209,39 @@ void* cfapi_archetype_get_property(int* type, ...)
     arch = va_arg(args, archetype*);
     prop = va_arg(args, int);
     switch (prop) {
-    case CFAPI_ARCH_PROP_NAME:
-        *type = CFAPI_SSTRING;
-        rsstring = va_arg(args, sstring*);
-        *rsstring = arch->name;
-        break;
+        case CFAPI_ARCH_PROP_NAME:
+            *type = CFAPI_SSTRING;
+            rsstring = va_arg(args, sstring*);
+            *rsstring = arch->name;
+            break;
 
-    case CFAPI_ARCH_PROP_NEXT:
-        *type = CFAPI_PARCH;
-        rarch = va_arg(args, archetype**);
-        *rarch = arch ? arch->next : first_archetype;
-        break;
+        case CFAPI_ARCH_PROP_NEXT:
+            *type = CFAPI_PARCH;
+            rarch = va_arg(args, archetype**);
+            *rarch = arch ? arch->next : first_archetype;
+            break;
 
-    case CFAPI_ARCH_PROP_HEAD:
-        *type = CFAPI_PARCH;
-        rarch = va_arg(args, archetype**);
-        *rarch = arch->head;
-        break;
+        case CFAPI_ARCH_PROP_HEAD:
+            *type = CFAPI_PARCH;
+            rarch = va_arg(args, archetype**);
+            *rarch = arch->head;
+            break;
 
-    case CFAPI_ARCH_PROP_MORE:
-        *type = CFAPI_PARCH;
-        rarch = va_arg(args, archetype**);
-        *rarch = arch->more;
-        break;
+        case CFAPI_ARCH_PROP_MORE:
+            *type = CFAPI_PARCH;
+            rarch = va_arg(args, archetype**);
+            *rarch = arch->more;
+            break;
 
-    case CFAPI_ARCH_PROP_CLONE:
-        *type = CFAPI_POBJECT;
-        robject = va_arg(args, object**);
-        *robject = &arch->clone;
-        break;
+        case CFAPI_ARCH_PROP_CLONE:
+            *type = CFAPI_POBJECT;
+            robject = va_arg(args, object**);
+            *robject = &arch->clone;
+            break;
 
-    default:
-        *type = CFAPI_NONE;
-        break;
+        default:
+            *type = CFAPI_NONE;
+            break;
     }
     va_end(args);
     return NULL;
@@ -4380,8 +4255,7 @@ void* cfapi_archetype_get_property(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_party_get_property(int* type, ...)
-{
+void* cfapi_party_get_property(int* type, ...) {
     partylist* party;
     int prop;
     va_list args;
@@ -4393,8 +4267,7 @@ void* cfapi_party_get_property(int* type, ...)
     va_start(args, type);
     party = va_arg(args, partylist*);
     prop = va_arg(args, int);
-    switch (prop)
-    {
+    switch (prop) {
         case CFAPI_PARTY_PROP_NAME:
             rsstring = va_arg(args, sstring*);
             *rsstring = party->partyname;
@@ -4440,8 +4313,7 @@ void* cfapi_party_get_property(int* type, ...)
  * @return
  * NULL.
  */
-void* cfapi_region_get_property(int* type, ...)
-{
+void* cfapi_region_get_property(int* type, ...) {
     region* reg;
     int prop;
     va_list args;
@@ -4502,8 +4374,7 @@ void* cfapi_region_get_property(int* type, ...)
  * - if ob is NULL, gets the first object on the friendlylist.
  * - if not NULL, get next object on the friendlylist after ob. NULL if none or ob not on list.
  */
-void *cfapi_friendlylist_get_next(int *type, ...)
-{
+void *cfapi_friendlylist_get_next(int *type, ...) {
     object* ob;
     va_list args;
     objectlink* link;
@@ -4523,8 +4394,7 @@ void *cfapi_friendlylist_get_next(int *type, ...)
                 if (link->next) {
                     *robject = link->next->ob;
                     return NULL;
-                }
-                else {
+                } else {
                     return NULL;
                 }
             }
@@ -4597,8 +4467,7 @@ void* cfapi_generate_random_map(int *type, ...) {
     return NULL;
 }
 
-void* cfapi_object_user_event(int* type, ...)
-{
+void* cfapi_object_user_event(int* type, ...) {
     object* op;
     object* activator;
     object* third;
@@ -4637,8 +4506,7 @@ void* cfapi_object_user_event(int* type, ...)
  * @todo
  * remove static buffer.
  */
-command_array_struct *find_plugin_command(char *cmd, object *op)
-{
+command_array_struct *find_plugin_command(char *cmd, object *op) {
     int i;
     crossfire_plugin* cp;
     static command_array_struct rtn_cmd;
@@ -4658,8 +4526,7 @@ command_array_struct *find_plugin_command(char *cmd, object *op)
 /* initOnePlugin for each file found.                                        */
 /* Returns 0 if at least one plugin was successfully loaded, -1 if not       */
 /*****************************************************************************/
-int initPlugins(void)
-{
+int initPlugins(void) {
     struct dirent *currentfile;
     DIR *plugdir;
     size_t l;

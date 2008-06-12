@@ -150,7 +150,7 @@ static void grant_immunity(object *disease);
 
 /*  IMPLEMENTATION NOTES
 
-	 Diseases may be contageous.  They are objects which exist in a player's
+Diseases may be contageous.  They are objects which exist in a player's
 inventory.  They themselves do nothing, except modify Symptoms, or
 spread to other live objects.  Symptoms are what actually damage the player:
 these are their own object. */
@@ -178,7 +178,7 @@ static int is_susceptible_to_disease(object *victim, object *disease) {
         return 1;
 
     if ((victim->race && strstr(disease->race, victim->race)) ||
-            strstr(disease->race, victim->name))
+        strstr(disease->race, victim->name))
         return 1;
 
     return 0;
@@ -718,8 +718,8 @@ int cure_disease(object *sufferer,object *caster) {
              * is 1 in 5.
              */
             if ((casting_level >= disease->level) ||
-                    (!(random_roll(0, (disease->level - casting_level - 1),
-                                   caster, PREFER_LOW)))) {
+                (!(random_roll(0, (disease->level - casting_level - 1),
+                               caster, PREFER_LOW)))) {
 
                 remove_symptoms(disease);
                 remove_ob(disease);

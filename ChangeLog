@@ -14,6 +14,48 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat all files in server/ to fit with current coding style standard, a
+combination of using the astyle tool and manual review afterwards.
+ server/c_range.c
+ server/weather.c
+ server/c_party.c
+ server/commands.c
+ server/win32.c
+ server/init.c
+ server/daemon.c
+ server/timers.c
+ server/spell_attack.c
+ server/attack.c
+ server/c_move.c
+ server/rune.c
+ server/shop.c
+ server/swap.c
+ server/pets.c
+ server/skill_util.c
+ server/spell_util.c
+ server/disease.c
+ server/c_chat.c
+ server/alchemy.c
+ server/resurrection.c
+ server/c_new.c
+ server/player.c
+ server/gods.c
+ server/build_map.c
+ server/c_misc.c
+ server/time.c
+ server/ban.c
+ server/skills.c
+ server/move.c
+ server/server.c
+ server/c_object.c
+ server/c_wiz.c
+ server/plugins.c
+ server/apply.c
+ server/monster.c
+ server/spell_effect.c
+ server/hiscore.c
+Arvid Norlander 2008-06-12
+
 Reformat all files in random_maps/ to fit with current coding style standard, a
 combination of using the astyle tool and manual review afterwards.
  random_maps/wall.c

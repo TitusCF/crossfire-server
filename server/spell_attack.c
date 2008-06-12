@@ -113,7 +113,7 @@ int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill) 
         return 0;
     }
     if (OB_TYPE_MOVE_BLOCK(tmp, GET_MAP_MOVE_BLOCK(tmp->map, tmp->x, tmp->y))) {
-        if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
+        if (!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
             free_object(tmp);
             return 0;
         }
@@ -158,8 +158,8 @@ void explode_bullet(object *op) {
         env = object_get_env_recursive(op);
         if (env->map == NULL || out_of_map(env->map, env->x, env->y)) {
             LOG(llevError, "BUG: explode_bullet(): env out of map\n");
-            remove_ob (op);
-            free_object (op);
+            remove_ob(op);
+            free_object(op);
             return;
         }
         remove_ob(op);
@@ -226,7 +226,7 @@ void explode_bullet(object *op) {
 
     insert_ob_in_map(tmp, op->map, op, 0);
     /* remove the firebullet */
-    if (!was_destroyed (op, op_tag)) {
+    if (!was_destroyed(op, op_tag)) {
         remove_ob(op);
         free_object(op);
     }
@@ -266,7 +266,7 @@ void check_bullet(object *op) {
             tmp_tag = tmp->count;
             dam = hit_player(tmp, op->stats.dam, op, op->attacktype, 1);
             if (was_destroyed(op, op_tag) || ! was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0) {
-                if(!QUERY_FLAG(op, FLAG_REMOVED)) {
+                if (!QUERY_FLAG(op, FLAG_REMOVED)) {
                     remove_ob(op);
                     free_object(op);
                     return;
@@ -670,10 +670,10 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
      */
 
     if (!target
-    || QUERY_FLAG(target, FLAG_REFL_SPELL)
-    || (!god && spell->stats.grace)
-    || (target->title && god && !strcmp(target->title, god->name))
-    || (target->race && god && strstr(target->race, god->race))) {
+        || QUERY_FLAG(target, FLAG_REFL_SPELL)
+        || (!god && spell->stats.grace)
+        || (target->title && god && !strcmp(target->title, god->name))
+        || (target->race && god && strstr(target->race, god->race))) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE, "Your request is unheeded.", NULL);
         return 0;
     }
@@ -688,10 +688,10 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
     effect->attacktype = spell->attacktype;
     if (effect->attacktype&(AT_HOLYWORD|AT_GODPOWER)) {
         if (tailor_god_spell(effect, op))
-           draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
-               "%s answers your call!",
-               "%s answers your call!",
-               determine_god(op));
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
+                                 "%s answers your call!",
+                                 "%s answers your call!",
+                                 determine_god(op));
         else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE, "Your request is ignored.", NULL);
             return 0;
@@ -716,10 +716,10 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
 
                 query_name(target, target_name, HUGE_BUF);
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
-                    MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                    "The %s looks stronger!",
-                    "The %s looks stronger!",
-                    target_name);
+                                     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                                     "The %s looks stronger!",
+                                     "The %s looks stronger!",
+                                     target_name);
                 target->stats.hp = target->stats.maxhp*2;
                 free_object(effect);
                 return 0;
@@ -789,8 +789,8 @@ static int make_object_glow(object *op, int radius, int time) {
     if (!tmp->env || op != tmp->env) {
         LOG(llevError, "make_object_glow() failed to insert glowing force in %s\n", op->name);
         return 0;
-   }
-   return 1;
+    }
+    return 1;
 }
 
 /**
@@ -852,7 +852,7 @@ int cast_destruction(object *op, object *caster, object *spell_ob) {
                         tmp = tmp->head;
 
                     if ((friendly && !QUERY_FLAG(tmp, FLAG_FRIENDLY) && tmp->type != PLAYER)
-                    || (!friendly && (QUERY_FLAG(tmp, FLAG_FRIENDLY) || tmp->type == PLAYER))) {
+                        || (!friendly && (QUERY_FLAG(tmp, FLAG_FRIENDLY) || tmp->type == PLAYER))) {
                         if (spell_ob->subtype == SP_DESTRUCTION) {
                             hit_player(tmp, dam, op, spell_ob->attacktype, 0);
                             if (spell_ob->other_arch) {
@@ -917,10 +917,10 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
                 break;
             } else if (spell_ob->race && spell_ob->race == force->name) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-                             "You can not cast %s while %s is in effect",
-                             "You can not cast %s while %s is in effect",
-                             spell_ob->name, force->name_pl);
+                                     MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                                     "You can not cast %s while %s is in effect",
+                                     "You can not cast %s while %s is in effect",
+                                     spell_ob->name, force->name_pl);
                 return 0;
             }
         }
@@ -1070,8 +1070,8 @@ int mood_change(object *op, object *caster, object *spell) {
                         if (best_at == -1 || head->resist[at] > head->resist[best_at])
                             best_at = at;
 
-            if (best_at == -1)
-                at = 0;
+                if (best_at == -1)
+                    at = 0;
                 else {
                     if (head->resist[best_at] == 100)
                         continue;

@@ -50,26 +50,19 @@ static void cftimer_process_event(tag_t ob_tag);
 /**
  * Processes all timers.
  */
-void cftimer_process_timers(void)
-{
+void cftimer_process_timers(void) {
     int i;
-    for(i=0;i<MAX_TIMERS;i++)
-    {
-        if (timers_table[i].mode == TIMER_MODE_CYCLES)
-        {
+    for (i=0;i<MAX_TIMERS;i++) {
+        if (timers_table[i].mode == TIMER_MODE_CYCLES) {
             timers_table[i].delay --;
-            if (timers_table[i].delay == 0)
-            {
-            /* Call object timer event */
+            if (timers_table[i].delay == 0) {
+                /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
                 cftimer_process_event(timers_table[i].ob_tag);
             }
-        }
-        else if (timers_table[i].mode == TIMER_MODE_SECONDS)
-        {
-            if (timers_table[i].delay <= seconds())
-            {
-            /* Call object timer event */
+        } else if (timers_table[i].mode == TIMER_MODE_SECONDS) {
+            if (timers_table[i].delay <= seconds()) {
+                /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
                 cftimer_process_event(timers_table[i].ob_tag);
             }
@@ -83,10 +76,9 @@ void cftimer_process_timers(void)
  * @param ob_tag
  * object tag to use.
  */
-static void cftimer_process_event(tag_t ob_tag)
-{
+static void cftimer_process_event(tag_t ob_tag) {
     object* ob = find_object(ob_tag);
-    if ( ob )
+    if (ob)
         execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
 }
 
@@ -109,8 +101,7 @@ static void cftimer_process_event(tag_t ob_tag)
  * @retval ::TIMER_ERR_OBJ
  * ob is NULL or has no ::EVENT_TIMER handler.
  */
-int cftimer_create(int id, long delay, object* ob, int mode)
-{
+int cftimer_create(int id, long delay, object* ob, int mode) {
     if (id >= MAX_TIMERS)
         return TIMER_ERR_ID;
     if (id < 0)
@@ -141,8 +132,7 @@ int cftimer_create(int id, long delay, object* ob, int mode)
  * @retval ::TIMER_ERR_ID
  * unknown id - timer not found or invalid.
  */
-int cftimer_destroy(int id)
-{
+int cftimer_destroy(int id) {
     if (id >= MAX_TIMERS)
         return TIMER_ERR_ID;
     if (id < 0)
@@ -158,11 +148,9 @@ int cftimer_destroy(int id)
  * @retval >0
  * an available ID.
  */
-int cftimer_find_free_id(void)
-{
+int cftimer_find_free_id(void) {
     int i;
-    for(i=0;i<MAX_TIMERS;i++)
-    {
+    for (i=0;i<MAX_TIMERS;i++) {
         if (timers_table[i].mode == TIMER_MODE_DEAD)
             return i;
     }
@@ -172,7 +160,6 @@ int cftimer_find_free_id(void)
 /**
  * Initialize timers.
  */
-void cftimer_init(void)
-{
+void cftimer_init(void) {
     memset(&timers_table[0], 0, sizeof(cftimer) * MAX_TIMERS);
 }

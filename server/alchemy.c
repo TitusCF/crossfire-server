@@ -53,41 +53,41 @@
 
 /** Random cauldrons effects */
 static const char* const cauldron_effect [] = {
- "vibrates briefly",
- "produces a cloud of steam",
- "emits bright flames",
- "pours forth heavy black smoke",
- "emits sparks",
- "shoots out small flames",
- "whines painfully",
- "hiccups loudly",
- "wheezes",
- "burps",
- "shakes",
- "rattles",
- "makes chugging sounds",
- "smokes heavily for a while"
+    "vibrates briefly",
+    "produces a cloud of steam",
+    "emits bright flames",
+    "pours forth heavy black smoke",
+    "emits sparks",
+    "shoots out small flames",
+    "whines painfully",
+    "hiccups loudly",
+    "wheezes",
+    "burps",
+    "shakes",
+    "rattles",
+    "makes chugging sounds",
+    "smokes heavily for a while"
 };
 
 
 static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster);
 static recipe *find_recipe(recipelist *fl, int formula, object *ingredients);
-static int content_recipe_value (object *op);
-static int numb_ob_inside (object *op);
+static int content_recipe_value(object *op);
+static int numb_ob_inside(object *op);
 static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger);
 static object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *rp, int nbatches, int ignore_cauldron);
 static int calc_alch_danger(object *caster,object *cauldron, recipe *rp);
 static object * make_item_from_recipe(object *cauldron, recipe *rp);
-static void remove_contents (object *first_ob, object *save_item);
+static void remove_contents(object *first_ob, object *save_item);
 static void adjust_product(object *item, int lvl, int yield);
-static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
+static object * find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item);
 static void attempt_do_alchemy(object *caster, object *cauldron);
 
 /** Returns a random selection from cauldron_effect[] */
 static const char *cauldron_sound(void) {
-  int size=sizeof(cauldron_effect)/sizeof(char *);
+    int size=sizeof(cauldron_effect)/sizeof(char *);
 
-  return cauldron_effect[rndm(0, size-1)];
+    return cauldron_effect[rndm(0, size-1)];
 }
 
 /**
@@ -128,7 +128,7 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
     object *item, *skop;
 
     if (caster->type!=PLAYER)
-	return; /* only players for now */
+        return; /* only players for now */
 
     /* if no ingredients, no formula! lets forget it */
     if (!(formula=content_recipe_value(cauldron))) return;
@@ -136,91 +136,91 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
     numb=numb_ob_inside(cauldron);
     if ((fl=get_formulalist(numb))) {
         if (QUERY_FLAG(caster, FLAG_WIZ)) {
-	    rp = find_recipe(fl, formula, cauldron->inv);
-	    if (rp != NULL) {
+            rp = find_recipe(fl, formula, cauldron->inv);
+            if (rp != NULL) {
 #ifdef ALCHEMY_DEBUG
-		if(strcmp(rp->title, "NONE"))
-		    LOG(llevDebug, "WIZ got formula: %s of %s\n",
-			rp->arch_name[0], rp->title);
-		else
-		    LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n",
-			rp->arch_name[0], formula/rp->index);
+                if (strcmp(rp->title, "NONE"))
+                    LOG(llevDebug, "WIZ got formula: %s of %s\n",
+                        rp->arch_name[0], rp->title);
+                else
+                    LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n",
+                        rp->arch_name[0], formula/rp->index);
 #endif
-		attempt_recipe(caster, cauldron, ability, rp, formula/rp->index,
-                    !is_defined_recipe(rp, cauldron, caster));
-	    } else LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n");
-	    return;
-	} /* End of WIZ alchemy */
+                attempt_recipe(caster, cauldron, ability, rp, formula/rp->index,
+                               !is_defined_recipe(rp, cauldron, caster));
+            } else LOG(llevDebug, "WIZ couldn't find formula for ingredients.\n");
+            return;
+        } /* End of WIZ alchemy */
 
-	/* find the recipe */
-	rp = find_recipe(fl, formula, cauldron->inv);
-	if (rp != NULL) {
-	    uint64 value_ingredients;
-	    uint64 value_item;
-	    object *tmp;
-	    int attempt_shadow_alchemy;
+        /* find the recipe */
+        rp = find_recipe(fl, formula, cauldron->inv);
+        if (rp != NULL) {
+            uint64 value_ingredients;
+            uint64 value_item;
+            object *tmp;
+            int attempt_shadow_alchemy;
 
-	    ave_chance = fl->total_chance/(float)fl->number;
-	    /* the caster gets an increase in ability based on thier skill lvl */
-	    if (rp->skill != NULL) {
-		skop = find_skill_by_name(caster, rp->skill);
-		if (!skop) {
-		    draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
-			  "You do not have the proper skill for this recipe", NULL);
-		} else {
-		    ability+=skop->level*((4.0 + cauldron->magic)/4.0);
-		}
-	    } else {
-		LOG(llevDebug, "Recipe %s has NULL skill!\n", rp->title);
-		return;
-	    }
+            ave_chance = fl->total_chance/(float)fl->number;
+            /* the caster gets an increase in ability based on thier skill lvl */
+            if (rp->skill != NULL) {
+                skop = find_skill_by_name(caster, rp->skill);
+                if (!skop) {
+                    draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_MISSING,
+                                  "You do not have the proper skill for this recipe", NULL);
+                } else {
+                    ability+=skop->level*((4.0 + cauldron->magic)/4.0);
+                }
+            } else {
+                LOG(llevDebug, "Recipe %s has NULL skill!\n", rp->title);
+                return;
+            }
 
-	    if (rp->cauldron == NULL) {
-		LOG(llevDebug, "Recipe %s has NULL cauldron!\n", rp->title);
-		return;
-	    }
+            if (rp->cauldron == NULL) {
+                LOG(llevDebug, "Recipe %s has NULL cauldron!\n", rp->title);
+                return;
+            }
 
-	    /* determine value of ingredients */
-	    value_ingredients = 0;
-	    for(tmp = cauldron->inv; tmp != NULL; tmp = tmp->below)
-		value_ingredients += query_cost(tmp, NULL, F_TRUE);
+            /* determine value of ingredients */
+            value_ingredients = 0;
+            for (tmp = cauldron->inv; tmp != NULL; tmp = tmp->below)
+                value_ingredients += query_cost(tmp, NULL, F_TRUE);
 
-	    attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
+            attempt_shadow_alchemy = !is_defined_recipe(rp, cauldron, caster);
 
-	    /* create the object **FIRST**, then decide whether to keep it.	*/
-	    if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
-		/*  compute base chance of recipe success */
-		success_chance = ((float)ability /
-				  (float)(rp->diff * (item->level+2)));
-		if (ave_chance == 0)
-		    ave_chance = 1;
+            /* create the object **FIRST**, then decide whether to keep it. */
+            if ((item=attempt_recipe(caster, cauldron, ability, rp, formula/rp->index, attempt_shadow_alchemy)) != NULL) {
+                /*  compute base chance of recipe success */
+                success_chance = ((float)ability /
+                                  (float)(rp->diff * (item->level+2)));
+                if (ave_chance == 0)
+                    ave_chance = 1;
 
 #ifdef ALCHEMY_DEBUG
-		LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n",
-		    success_chance, ability, rp->diff, item->level);
+                LOG(llevDebug, "percent success chance =  %f ab%d / diff%d*lev%d\n",
+                    success_chance, ability, rp->diff, item->level);
 #endif
 
-		value_item = query_cost(item, NULL, F_TRUE|F_IDENTIFIED|F_NOT_CURSED);
-		if(attempt_shadow_alchemy && value_item > value_ingredients) {
+                value_item = query_cost(item, NULL, F_TRUE|F_IDENTIFIED|F_NOT_CURSED);
+                if (attempt_shadow_alchemy && value_item > value_ingredients) {
 #ifdef ALCHEMY_DEBUG
 #ifndef WIN32
-		    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%llu) is less than price of result (%llu).\n", value_ingredients, value_item);
+                    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%llu) is less than price of result (%llu).\n", value_ingredients, value_item);
 #else
-		    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%I64d) is less than price of result (%I64d).\n", value_ingredients, value_item);
+                    LOG(llevDebug, "Forcing failure for shadow alchemy recipe because price of ingredients (%I64d) is less than price of result (%I64d).\n", value_ingredients, value_item);
 #endif
 #endif
-		}
-		/* roll the dice */
-		else if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
-		    change_exp(caster, rp->exp, rp->skill, SK_EXP_NONE);
-		    return;
-		}
-	    }
-	}
+                }
+                /* roll the dice */
+                else if ((float)(random_roll(0, 101, caster, PREFER_LOW)) <= 100.0 * success_chance) {
+                    change_exp(caster, rp->exp, rp->skill, SK_EXP_NONE);
+                    return;
+                }
+            }
+        }
     }
     /* if we get here, we failed!! */
     alchemy_failure_effect(caster, cauldron, rp,
-	calc_alch_danger(caster, cauldron, rp));
+                           calc_alch_danger(caster, cauldron, rp));
 }
 
 /**
@@ -233,22 +233,22 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
  * @return
  * hash value.
  */
-static int content_recipe_value (object *op) {
-  char name[MAX_BUF];
-  object *tmp=op->inv;
-  int tval=0, formula=0;
+static int content_recipe_value(object *op) {
+    char name[MAX_BUF];
+    object *tmp=op->inv;
+    int tval=0, formula=0;
 
-    while(tmp) {
-	tval=0;
+    while (tmp) {
+        tval=0;
         strcpy(name, tmp->name);
         if (tmp->title)
-	    snprintf(name, sizeof(name), "%s %s", tmp->name, tmp->title);
-	tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
+            snprintf(name, sizeof(name), "%s %s", tmp->name, tmp->title);
+        tval = (strtoint(name) * (tmp->nrof?tmp->nrof:1));
 #ifdef ALCHEMY_DEBUG
         LOG(llevDebug,"Got ingredient %d %s(%d)\n", tmp->nrof?tmp->nrof:1,
-		name, tval);
+            name, tval);
 #endif
-	formula += tval;
+        formula += tval;
         tmp=tmp->below;
     }
 #ifdef ALCHEMY_DEBUG
@@ -264,11 +264,11 @@ static int content_recipe_value (object *op) {
  * @return
  * total item count.
  */
-static int numb_ob_inside (object *op) {
-  object *tmp=op->inv;
-  int o_number=0;
+static int numb_ob_inside(object *op) {
+    object *tmp=op->inv;
+    int o_number=0;
 
-    while(tmp) {
+    while (tmp) {
         o_number++;
         tmp=tmp->below;
     }
@@ -311,52 +311,52 @@ static object * attempt_recipe(object *caster, object *cauldron, int ability, re
 
     /* is the cauldron the right type? */
     if (!ignore_cauldron && (strcmp(rp->cauldron, cauldron->arch->name) != 0)) {
-	draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-	      "You are not using the proper facilities for this formula.", NULL);
-	return 0;
+        draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                      "You are not using the proper facilities for this formula.", NULL);
+        return 0;
     }
 
     skop = find_skill_by_name(caster, rp->skill);
     /* does the caster have the skill? */
     if (!skop)
-	return 0;
+        return 0;
 
     /* code required for this recipe, search the caster */
-    if(rp->keycode) {
-	object *tmp;
-	for(tmp=caster->inv; tmp != NULL; tmp=tmp->below) {
-	    if(tmp->type==FORCE && tmp->slaying &&
-		!strcmp(rp->keycode, tmp->slaying))
-		break;
-	}
-	if(tmp==NULL) { /* failure--no code found */
-	   draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-		 "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
-		 NULL);
-	    return 0;
-	}
+    if (rp->keycode) {
+        object *tmp;
+        for (tmp=caster->inv; tmp != NULL; tmp=tmp->below) {
+            if (tmp->type==FORCE && tmp->slaying &&
+                !strcmp(rp->keycode, tmp->slaying))
+                break;
+        }
+        if (tmp==NULL) { /* failure--no code found */
+            draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+                          "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
+                          NULL);
+            return 0;
+        }
     }
 
 #ifdef EXTREME_ALCHEMY_DEBUG
     LOG(llevDebug,"attempt_recipe(): got %d nbatches\n",nbatches);
     LOG(llevDebug,"attempt_recipe(): using recipe %s\n",
-	rp->title?rp->title:"unknown");
+        rp->title?rp->title:"unknown");
 #endif
 
-    if((item=make_item_from_recipe(cauldron, rp))!=NULL) {
-	remove_contents(cauldron->inv, item);
+    if ((item=make_item_from_recipe(cauldron, rp))!=NULL) {
+        remove_contents(cauldron->inv, item);
         /* adj lvl, nrof on caster level */
-	adjust_product(item, ability, rp->yield?(rp->yield*batches):batches);
-	if(!item->env && (item=insert_ob_in_ob(item,cauldron)) == NULL) {
-	    draw_ext_info(NDI_UNIQUE, 0,caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-			  "Nothing happened.", NULL);
-	} else {
-	    draw_ext_info_format(NDI_UNIQUE, 0,caster,
-		 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-		"The %s %s.",
-		"The %s %s.",
-		 cauldron->name,cauldron_sound());
-	}
+        adjust_product(item, ability, rp->yield?(rp->yield*batches):batches);
+        if (!item->env && (item=insert_ob_in_ob(item,cauldron)) == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0,caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                          "Nothing happened.", NULL);
+        } else {
+            draw_ext_info_format(NDI_UNIQUE, 0,caster,
+                                 MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                                 "The %s %s.",
+                                 "The %s %s.",
+                                 cauldron->name,cauldron_sound());
+        }
     }
     return item;
 }
@@ -377,15 +377,15 @@ static void adjust_product(object *item, int lvl, int yield) {
     int nrof=1;
 
     if (!yield)
-	yield = 1;
+        yield = 1;
     if (lvl<=0)
-	lvl = 1; /* lets avoid div by zero! */
+        lvl = 1; /* lets avoid div by zero! */
     if (item->nrof) {
-	nrof = (1.0 - 1.0/(lvl/10.0 + 1.0)) *
-	    (rndm(0, yield-1) + rndm(0, yield-1) + rndm(0, yield-1)) + 1;
-	if (nrof > yield)
-	    nrof = yield;
-	item->nrof=nrof;
+        nrof = (1.0 - 1.0/(lvl/10.0 + 1.0)) *
+               (rndm(0, yield-1) + rndm(0, yield-1) + rndm(0, yield-1)) + 1;
+        if (nrof > yield)
+            nrof = yield;
+        item->nrof=nrof;
     }
 }
 
@@ -401,14 +401,14 @@ static void adjust_product(object *item, int lvl, int yield) {
  */
 
 static object * make_item_from_recipe(object *cauldron, recipe *rp) {
-  artifact *art=NULL;
-  object *item=NULL;
+    artifact *art=NULL;
+    object *item=NULL;
     size_t rp_arch_index;
 
-    if(rp==NULL) return (object *) NULL;
+    if (rp==NULL) return (object *) NULL;
 
     /* Find the appropriate object to transform...*/
-    if((item=find_transmution_ob(cauldron->inv, rp, &rp_arch_index, 1))==NULL) {
+    if ((item=find_transmution_ob(cauldron->inv, rp, &rp_arch_index, 1))==NULL) {
         LOG(llevDebug,"make_alchemy_item(): failed to create alchemical object.\n");
         return (object *) NULL;
     }
@@ -418,8 +418,8 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp) {
         sub_weight(cauldron, item->weight * (item->nrof != 0 ? item->nrof : 1));
 
     /* Find the appropriate artifact template...*/
-    if(strcmp(rp->title,"NONE")) {
-        if((art=locate_recipe_artifact(rp, rp_arch_index))==NULL) {
+    if (strcmp(rp->title,"NONE")) {
+        if ((art=locate_recipe_artifact(rp, rp_arch_index))==NULL) {
             LOG(llevError,"make_alchemy_item(): failed to locate recipe artifact.\n");
             LOG(llevDebug,"  --requested recipe: %s of %s.\n",rp->arch_name[0],rp->title);
             return (object *) NULL;
@@ -431,8 +431,8 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp) {
         add_weight(cauldron, item->weight * (item->nrof != 0 ? item->nrof : 1));
 
 
-    if(QUERY_FLAG(cauldron,FLAG_CURSED)) SET_FLAG(item,FLAG_CURSED);
-    if(QUERY_FLAG(cauldron,FLAG_DAMNED)) SET_FLAG(item,FLAG_DAMNED);
+    if (QUERY_FLAG(cauldron,FLAG_CURSED)) SET_FLAG(item,FLAG_CURSED);
+    if (QUERY_FLAG(cauldron,FLAG_DAMNED)) SET_FLAG(item,FLAG_DAMNED);
 
     return item;
 }
@@ -452,17 +452,17 @@ static object * make_item_from_recipe(object *cauldron, recipe *rp) {
  * NULL if no suitable item was found and create_item is 0, existing or new item else.
  */
 
-static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
-   object *item=NULL;
+static object * find_transmution_ob(object *first_ingred, recipe *rp, size_t *rp_arch_index, int create_item) {
+    object *item=NULL;
 
-   *rp_arch_index = 0;
+    *rp_arch_index = 0;
 
-   if(rp->transmute) /* look for matching ingredient/prod archs */
-        for(item=first_ingred;item;item=item->below) {
+    if (rp->transmute) /* look for matching ingredient/prod archs */
+        for (item=first_ingred;item;item=item->below) {
             size_t i;
 
             for (i = 0; i < rp->arch_names; i++) {
-                if(strcmp(item->arch->name, rp->arch_name[i]) == 0) {
+                if (strcmp(item->arch->name, rp->arch_name[i]) == 0) {
                     *rp_arch_index = i;
                     break;
                 }
@@ -473,7 +473,7 @@ static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *
 
     /* failed, create a fresh object. Note no nrof>1 because that would
      * allow players to create massive amounts of artifacts easily */
-    if(create_item && (!item || item->nrof > 1)) {
+    if (create_item && (!item || item->nrof > 1)) {
         *rp_arch_index = RANDOM()%rp->arch_names;
         item = create_archetype(rp->arch_name[*rp_arch_index]);
     }
@@ -486,7 +486,7 @@ static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *
     }
 #endif
 
-   return item;
+    return item;
 }
 
 
@@ -509,210 +509,210 @@ static object * find_transmution_ob ( object *first_ingred, recipe *rp, size_t *
 static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
     int level=0;
 
-    if(!op || !cauldron) return;
+    if (!op || !cauldron) return;
 
-    if(danger>1) level=random_roll(1, danger, op, PREFER_LOW);
+    if (danger>1) level=random_roll(1, danger, op, PREFER_LOW);
 
 #ifdef ALCHEMY_DEBUG
     LOG(llevDebug,"Alchemy_failure_effect(): using level=%d\n",level);
 #endif
 
     /* possible outcomes based on level */
-    if(level<25) { 		      	/* INGREDIENTS USED/SLAGGED */
-	object *item=NULL;
+    if (level<25) {         /* INGREDIENTS USED/SLAGGED */
+        object *item=NULL;
 
-	if(rndm(0, 2)) {  /* slag created */
-	    object *tmp=cauldron->inv;
-	    int weight=0;
-	    uint16 material=M_STONE;
+        if (rndm(0, 2)) { /* slag created */
+            object *tmp=cauldron->inv;
+            int weight=0;
+            uint16 material=M_STONE;
 
-	    while(tmp) { /* slag has coadded ingredient properties */
-		weight+=tmp->weight;
-		if(!(material&tmp->material))
-		    material |= tmp->material;
-		tmp=tmp->below;
-	    }
-	    tmp = create_archetype("rock");
-	    tmp->weight=weight;
-	    tmp->value=0;
-	    tmp->material=material;
-	    tmp->materialname = add_string("stone");
-	    free_string(tmp->name);
-	    tmp->name=add_string("slag");
-	    if (tmp->name_pl) free_string(tmp->name_pl);
-	    tmp->name_pl=add_string("slags");
-	    item=insert_ob_in_ob(tmp,cauldron);
-	    CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
-	    CLEAR_FLAG(tmp,FLAG_NO_PICK);
-	    tmp->move_block = 0;
-	}
-	remove_contents(cauldron->inv,item);
-	draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s %s.",
-		     "The %s %s.",
-		     cauldron->name,cauldron_sound());
-	return;
-    } else if (level< 40) {                	/* MAKE TAINTED ITEM */
-	object *tmp=NULL;
+            while (tmp) { /* slag has coadded ingredient properties */
+                weight+=tmp->weight;
+                if (!(material&tmp->material))
+                    material |= tmp->material;
+                tmp=tmp->below;
+            }
+            tmp = create_archetype("rock");
+            tmp->weight=weight;
+            tmp->value=0;
+            tmp->material=material;
+            tmp->materialname = add_string("stone");
+            free_string(tmp->name);
+            tmp->name=add_string("slag");
+            if (tmp->name_pl) free_string(tmp->name_pl);
+            tmp->name_pl=add_string("slags");
+            item=insert_ob_in_ob(tmp,cauldron);
+            CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
+            CLEAR_FLAG(tmp,FLAG_NO_PICK);
+            tmp->move_block = 0;
+        }
+        remove_contents(cauldron->inv,item);
+        draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                             "The %s %s.",
+                             "The %s %s.",
+                             cauldron->name,cauldron_sound());
+        return;
+    } else if (level< 40) {                 /* MAKE TAINTED ITEM */
+        object *tmp=NULL;
 
-	if (!rp)
-	   if((rp=get_random_recipe((recipelist *) NULL))==NULL)
-	      	return;
+        if (!rp)
+            if ((rp=get_random_recipe((recipelist *) NULL))==NULL)
+                return;
 
-	if((tmp=attempt_recipe(op,cauldron,1,rp,-1,0))) {
-	    if(!QUERY_FLAG(tmp,FLAG_CURSED)) { /* curse it */
-	   	SET_FLAG(tmp,FLAG_CURSED);
+        if ((tmp=attempt_recipe(op,cauldron,1,rp,-1,0))) {
+            if (!QUERY_FLAG(tmp,FLAG_CURSED)) { /* curse it */
+                SET_FLAG(tmp,FLAG_CURSED);
                 CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
                 CLEAR_FLAG(tmp, FLAG_IDENTIFIED);
             }
 
-	    /* the apply code for potions already deals with cursed
-	     * potions, so any code here is basically ignored.
-	     */
-	    if(tmp->type==FOOD) {
-		tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
-	    }
-	   tmp->value = 0; /* unsaleable item */
+            /* the apply code for potions already deals with cursed
+             * potions, so any code here is basically ignored.
+             */
+            if (tmp->type==FOOD) {
+                tmp->stats.hp=random_roll(0, 149, op, PREFER_LOW);
+            }
+            tmp->value = 0; /* unsaleable item */
 
-       	   /* change stats downward */
- 	   do {
-           	change_attr_value(&tmp->stats,rndm(0, 6),-1*(rndm(1, 3)));
-           } while (rndm(0, 2));
-	}
-	return;
-    } if(level==40) {                  		/* MAKE RANDOM RECIPE */
-	recipelist *fl;
-	int numb=numb_ob_inside(cauldron);
+            /* change stats downward */
+            do {
+                change_attr_value(&tmp->stats,rndm(0, 6),-1*(rndm(1, 3)));
+            } while (rndm(0, 2));
+        }
+        return;
+    }
+    if (level==40) {                   /* MAKE RANDOM RECIPE */
+        recipelist *fl;
+        int numb=numb_ob_inside(cauldron);
 
-	fl=get_formulalist(numb-1); /* take a lower recipe list */
-	if(fl &&(rp=get_random_recipe(fl)))
-	    /* even though random, don't grant user any EXP for it */
-	    (void) attempt_recipe(op,cauldron,1,rp,-1,0);
-	else
-	    alchemy_failure_effect(op,cauldron,rp,level-1);
-	return;
+        fl=get_formulalist(numb-1); /* take a lower recipe list */
+        if (fl &&(rp=get_random_recipe(fl)))
+            /* even though random, don't grant user any EXP for it */
+            (void) attempt_recipe(op,cauldron,1,rp,-1,0);
+        else
+            alchemy_failure_effect(op,cauldron,rp,level-1);
+        return;
 
-    } else if (level<45) {                	/* INFURIATE NPC's */
-	/* this is kind of kludgy I know...*/
-	cauldron->enemy=op;
-	npc_call_help(cauldron);
-	cauldron->enemy=NULL;
+    } else if (level<45) {                 /* INFURIATE NPC's */
+        /* this is kind of kludgy I know...*/
+        cauldron->enemy=op;
+        npc_call_help(cauldron);
+        cauldron->enemy=NULL;
 
-	alchemy_failure_effect(op,cauldron,rp,level-5);
-	return;
-    } else if (level<50) {               		/* MINOR EXPLOSION/FIREBALL */
-	object *tmp;
-	remove_contents(cauldron->inv,NULL);
-	switch(rndm(0, 2)) {
-	    case 0:
-		tmp=create_archetype("bomb");
-		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
-		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
-		draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s creates a bomb!",
-		     "The %s creates a bomb!",
-		     cauldron->name);
-		break;
+        alchemy_failure_effect(op,cauldron,rp,level-5);
+        return;
+    } else if (level<50) {                 /* MINOR EXPLOSION/FIREBALL */
+        object *tmp;
+        remove_contents(cauldron->inv,NULL);
+        switch (rndm(0, 2)) {
+            case 0:
+                tmp=create_archetype("bomb");
+                tmp->stats.dam=random_roll(1, level, op, PREFER_LOW);
+                tmp->stats.hp=random_roll(1, level, op, PREFER_LOW);
+                draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                                     "The %s creates a bomb!",
+                                     "The %s creates a bomb!",
+                                     cauldron->name);
+                break;
 
-	    default:
-		tmp=create_archetype("fireball");
-		tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
-		tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
-		draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s erupts in flame!",
-		     "The %s erupts in flame!",
-		     cauldron->name);
-		break;
-	}
-	tmp->x=cauldron->x,tmp->y=cauldron->y;
-	insert_ob_in_map(tmp,op->map,NULL,0);
-	return;
+            default:
+                tmp=create_archetype("fireball");
+                tmp->stats.dam=random_roll(1, level, op, PREFER_LOW)/5+1;
+                tmp->stats.hp=random_roll(1, level, op, PREFER_LOW)/10+2;
+                draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                                     "The %s erupts in flame!",
+                                     "The %s erupts in flame!",
+                                     cauldron->name);
+                break;
+        }
+        tmp->x=cauldron->x,tmp->y=cauldron->y;
+        insert_ob_in_map(tmp,op->map,NULL,0);
+        return;
 
-    } else if (level<60) {                	/* CREATE MONSTER */
-	draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s %s.", NULL, cauldron->name, cauldron_sound());
-	remove_contents(cauldron->inv,NULL);
-	return;
-    } else if (level<80) {                	/* MAJOR FIRE */
-	object *fb = create_archetype(SP_MED_FIREBALL);
-	remove_contents(cauldron->inv,NULL);
-	fire_arch_from_position(cauldron, cauldron,cauldron->x, cauldron->y,
-	    0, fb);
-	free_object(fb);
-	draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		     "The %s erupts in flame!",
-		     "The %s erupts in flame!",
-		     cauldron->name);
-	return;
+    } else if (level<60) {                 /* CREATE MONSTER */
+        draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                             "The %s %s.", NULL, cauldron->name, cauldron_sound());
+        remove_contents(cauldron->inv,NULL);
+        return;
+    } else if (level<80) {                 /* MAJOR FIRE */
+        object *fb = create_archetype(SP_MED_FIREBALL);
+        remove_contents(cauldron->inv,NULL);
+        fire_arch_from_position(cauldron, cauldron,cauldron->x, cauldron->y,
+                                0, fb);
+        free_object(fb);
+        draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                             "The %s erupts in flame!",
+                             "The %s erupts in flame!",
+                             cauldron->name);
+        return;
 
-    } else if (level<100) {               	/* WHAMMY the CAULDRON */
-	if(!QUERY_FLAG(cauldron,FLAG_CURSED)) {
-	    SET_FLAG(cauldron,FLAG_CURSED);
+    } else if (level<100) {                /* WHAMMY the CAULDRON */
+        if (!QUERY_FLAG(cauldron,FLAG_CURSED)) {
+            SET_FLAG(cauldron,FLAG_CURSED);
             CLEAR_FLAG(cauldron, FLAG_KNOWN_CURSED);
             CLEAR_FLAG(cauldron, FLAG_IDENTIFIED);
+        } else cauldron->magic--;
+        cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
+        if (rndm(0, 1)) {
+            remove_contents(cauldron->inv,NULL);
+            draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                                 "Your %s turns darker then makes a gulping sound!",
+                                 "Your %s turns darker then makes a gulping sound!",
+                                 cauldron->name);
+        } else
+            draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                                 "Your %s becomes darker.",
+                                 "Your %s becomes darker.",
+                                 cauldron->name);
+        return;
+
+    } else if (level<110) {                /* SUMMON EVIL MONSTERS */
+        object *tmp=get_random_mon(level/5);
+
+        remove_contents(cauldron->inv,NULL);
+        if (!tmp)
+            alchemy_failure_effect(op,cauldron,rp,level);
+        else if (summon_hostile_monsters(cauldron, random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
+            draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                                 "The %s %s and then pours forth monsters!",
+                                 "The %s %s and then pours forth monsters!",
+                                 cauldron->name,cauldron_sound());
+        return;
+
+    } else if (level<150) {                /* COMBO EFFECT */
+        int roll = rndm(1, 3);
+        while (roll) {
+            alchemy_failure_effect(op,cauldron,rp,level-39);
+            roll--;
         }
-	else cauldron->magic--;
-	cauldron->magic -= random_roll(0, 4, op, PREFER_LOW);
-	if(rndm(0, 1)) {
-	    remove_contents(cauldron->inv,NULL);
-	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		 "Your %s turns darker then makes a gulping sound!",
-		 "Your %s turns darker then makes a gulping sound!",
-		 cauldron->name);
-	} else
-	    draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		"Your %s becomes darker.",
-		"Your %s becomes darker.",
-		 cauldron->name);
-	return;
-
-    } else if (level<110) {               	/* SUMMON EVIL MONSTERS */
-	object *tmp=get_random_mon(level/5);
-
-	remove_contents(cauldron->inv,NULL);
-	if(!tmp)
-	    alchemy_failure_effect(op,cauldron,rp,level);
-	else if(summon_hostile_monsters(cauldron, random_roll(1, 10, op, PREFER_LOW), tmp->arch->name))
-	    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-		 "The %s %s and then pours forth monsters!",
-		 "The %s %s and then pours forth monsters!",
-		 cauldron->name,cauldron_sound());
-	return;
-
-    } else if (level<150) {               	/* COMBO EFFECT */
-	int roll = rndm(1, 3);
-	while(roll) {
-	    alchemy_failure_effect(op,cauldron,rp,level-39);
-	    roll--;
-	}
-	return;
-    } else if (level==151) {              	/* CREATE RANDOM ARTIFACT */
-	object *tmp;
-	/* this is meant to be better than prior possiblity,
-	 * in this one, we allow *any* valid alchemy artifact
-  	 * to be made (rather than only those on the given
-	 * formulalist) */
-	if(!rp) rp=get_random_recipe((recipelist *) NULL);
-	if(rp && (tmp=create_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) {
-	    generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
-	    if((tmp=insert_ob_in_ob(tmp,cauldron))) {
-		remove_contents(cauldron->inv,tmp);
-		draw_ext_info_format(NDI_UNIQUE, 0,op,
-		     MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
-		     "The %s %s.",
-		     "The %s %s.",
-		     cauldron->name,cauldron_sound());
-	    }
-	}
-	return;
-  } else {               	/* MANA STORM - watch out!! */
-	object *tmp = create_archetype(LOOSE_MANA);
-	draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
-	      "You unwisely release potent forces!", NULL);
-	remove_contents (cauldron->inv,NULL);
-	cast_magic_storm(op,tmp, level);
-	return;
-  }
+        return;
+    } else if (level==151) {               /* CREATE RANDOM ARTIFACT */
+        object *tmp;
+        /* this is meant to be better than prior possiblity,
+         * in this one, we allow *any* valid alchemy artifact
+           * to be made (rather than only those on the given
+         * formulalist) */
+        if (!rp) rp=get_random_recipe((recipelist *) NULL);
+        if (rp && (tmp=create_archetype(rp->arch_name[RANDOM()%rp->arch_names]))) {
+            generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
+            if ((tmp=insert_ob_in_ob(tmp,cauldron))) {
+                remove_contents(cauldron->inv,tmp);
+                draw_ext_info_format(NDI_UNIQUE, 0,op,
+                                     MSG_TYPE_SKILL, MSG_TYPE_SKILL_SUCCESS,
+                                     "The %s %s.",
+                                     "The %s %s.",
+                                     cauldron->name,cauldron_sound());
+            }
+        }
+        return;
+    } else {                /* MANA STORM - watch out!! */
+        object *tmp = create_archetype(LOOSE_MANA);
+        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                      "You unwisely release potent forces!", NULL);
+        remove_contents(cauldron->inv,NULL);
+        cast_magic_storm(op,tmp, level);
+        return;
+    }
 }
 
 
@@ -725,16 +725,16 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
  * @param save_item
  * what item to not remove. Can be NULL.
  */
-static void remove_contents (object *first_ob, object *save_item) {
-  object *next,*tmp=first_ob;
+static void remove_contents(object *first_ob, object *save_item) {
+    object *next,*tmp=first_ob;
 
-    while(tmp) {
+    while (tmp) {
         next = tmp->below;
-        if(tmp==save_item) {
-          if(!(tmp=next)) break;
-          else next=next->below;
-	}
- 	if(tmp->inv) remove_contents(tmp->inv,NULL);
+        if (tmp==save_item) {
+            if (!(tmp=next)) break;
+            else next=next->below;
+        }
+        if (tmp->inv) remove_contents(tmp->inv,NULL);
         remove_ob(tmp);
         free_object(tmp);
         tmp=next;
@@ -761,43 +761,43 @@ static void remove_contents (object *first_ob, object *save_item) {
  * danger value.
  */
 static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
-   object *item;
-   char name[MAX_BUF];
-   int danger=0,nrofi=0;
+    object *item;
+    char name[MAX_BUF];
+    int danger=0,nrofi=0;
 
     /* Knowing alchemy skill reduces yer risk */
-   danger -= caster->chosen_skill?caster->chosen_skill->level:caster->level;
+    danger -= caster->chosen_skill?caster->chosen_skill->level:caster->level;
 
-   /* better cauldrons reduce risk */
-   danger -= cauldron->magic;
+    /* better cauldrons reduce risk */
+    danger -= cauldron->magic;
 
-   /* Higher Int, lower the risk */
-   danger -= 3 * (caster->stats.Int - 15);
+    /* Higher Int, lower the risk */
+    danger -= 3 * (caster->stats.Int - 15);
 
     /* Ingredients. Longer names usually mean rarer stuff.
      * Thus the backfire is worse. Also, more ingredients
      * means we are attempting a more powerfull potion,
      * and thus the backfire will be worse.  */
-   for(item=cauldron->inv;item;item=item->below) {
+    for (item=cauldron->inv;item;item=item->below) {
         strcpy(name,item->name);
-        if(item->title) snprintf(name, sizeof(name), "%s %s",item->name,item->title);
+        if (item->title) snprintf(name, sizeof(name), "%s %s",item->name,item->title);
         danger += (strtoint(name)/1000) + 3;
-	nrofi++;
-   }
-   if (rp == NULL)
-       danger += 110;
-   else
-       danger += rp->diff*3;
+        nrofi++;
+    }
+    if (rp == NULL)
+        danger += 110;
+    else
+        danger += rp->diff*3;
 
     /* Using a bad device is *majorly* stupid */
-   if(QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;
-   if(QUERY_FLAG(cauldron,FLAG_DAMNED)) danger +=200;
+    if (QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;
+    if (QUERY_FLAG(cauldron,FLAG_DAMNED)) danger +=200;
 
 #ifdef ALCHEMY_DEBUG
-   LOG(llevDebug,"calc_alch_danger() returned danger=%d\n",danger);
+    LOG(llevDebug,"calc_alch_danger() returned danger=%d\n",danger);
 #endif
 
-   return danger;
+    return danger;
 }
 
 /**
@@ -819,8 +819,7 @@ static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
  * @return
  * 1 if the ingredients match the recipe, 0 if not.
  */
-static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster)
-{
+static int is_defined_recipe(const recipe *rp, const object *cauldron, object *caster) {
     uint32 batches_in_cauldron;
     const linked_char *ingredient;
     int number;
@@ -828,61 +827,61 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
 
     /* check for matching number of ingredients */
     number = 0;
-    for(ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next)
-	number++;
-    for(ob = cauldron->inv; ob != NULL; ob = ob->below)
-	number--;
-    if(number != 0)
-	return 0;
+    for (ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next)
+        number++;
+    for (ob = cauldron->inv; ob != NULL; ob = ob->below)
+        number--;
+    if (number != 0)
+        return 0;
 
     /* check for matching ingredients */
     batches_in_cauldron = 0;
-    for(ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next) {
-	uint32 nrof;
-	const char *name;
-	int ok;
+    for (ingredient = rp->ingred; ingredient != NULL; ingredient = ingredient->next) {
+        uint32 nrof;
+        const char *name;
+        int ok;
 
-	/* determine and remove nrof from name */
-	name = ingredient->name;
-	nrof = 0;
-	while(isdigit(*name)) {
-	    nrof = 10*nrof+(*name-'0');
-	    name++;
-	}
-	if(nrof == 0)
-	    nrof = 1;
-	while(*name == ' ')
-	    name++;
+        /* determine and remove nrof from name */
+        name = ingredient->name;
+        nrof = 0;
+        while (isdigit(*name)) {
+            nrof = 10*nrof+(*name-'0');
+            name++;
+        }
+        if (nrof == 0)
+            nrof = 1;
+        while (*name == ' ')
+            name++;
 
-	/* find the current ingredient in the cauldron */
-	ok = 0;
-	for(ob = cauldron->inv; ob != NULL; ob = ob->below) {
-	    char name_ob[MAX_BUF];
-	    const char *name2;
+        /* find the current ingredient in the cauldron */
+        ok = 0;
+        for (ob = cauldron->inv; ob != NULL; ob = ob->below) {
+            char name_ob[MAX_BUF];
+            const char *name2;
 
-	    if(ob->title == NULL)
-		name2 = ob->name;
-	    else {
-		snprintf(name_ob, sizeof(name_ob), "%s %s", ob->name, ob->title);
-		name2 = name_ob;
-	    }
+            if (ob->title == NULL)
+                name2 = ob->name;
+            else {
+                snprintf(name_ob, sizeof(name_ob), "%s %s", ob->name, ob->title);
+                name2 = name_ob;
+            }
 
-	    if(strcmp(name2, name) == 0) {
-		if(ob->nrof%nrof == 0) {
-		    uint32 batches;
+            if (strcmp(name2, name) == 0) {
+                if (ob->nrof%nrof == 0) {
+                    uint32 batches;
 
-		    batches = ob->nrof/nrof;
-		    if(batches_in_cauldron == 0) {
-			batches_in_cauldron = batches;
-			ok = 1;
-		    } else if(batches_in_cauldron == batches)
-			ok = 1;
-		}
-		break;
-	    }
-	}
-	if(!ok)
-	    return(0);
+                    batches = ob->nrof/nrof;
+                    if (batches_in_cauldron == 0) {
+                        batches_in_cauldron = batches;
+                        ok = 1;
+                    } else if (batches_in_cauldron == batches)
+                        ok = 1;
+                }
+                break;
+            }
+        }
+        if (!ok)
+            return(0);
     }
 
     return(1);
@@ -904,8 +903,7 @@ static int is_defined_recipe(const recipe *rp, const object *cauldron, object *c
  * @todo
  * document parameters.
  */
-static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
-{
+static recipe *find_recipe(recipelist *fl, int formula, object *ingredients) {
     recipe *rp;
     recipe *result;       /* winning recipe, or NULL if no recipe found */
     int recipes_matching; /* total number of matching recipes so far */
@@ -963,7 +961,7 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
     }
 
 #ifdef ALCHEMY_DEBUG
-    if(strcmp(result->title, "NONE") != 0)
+    if (strcmp(result->title, "NONE") != 0)
         LOG(llevDebug, "got formula: %s of %s (nbatches:%d)\n", result->arch_name[0], result->title, formula/result->index);
     else
         LOG(llevDebug, "got formula: %s (nbatches:%d)\n", result->arch_name[0], formula/result->index);
@@ -982,8 +980,7 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients)
  * @todo
  * check if no superflous message when 2 cauldrons on same spot, one unpaid? (shouldn't happen, but well).
  **/
-int use_alchemy(object* op)
-{
+int use_alchemy(object* op) {
     object* tmp, *item, *next;
     object* unpaid_cauldron = NULL;
     object* unpaid_item = NULL;
@@ -992,7 +989,7 @@ int use_alchemy(object* op)
 
     for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp != NULL;tmp=next) {
         next=tmp->above;
-        if(QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
+        if (QUERY_FLAG(tmp, FLAG_IS_CAULDRON)) {
             if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
                 unpaid_cauldron = tmp;
                 continue;
@@ -1004,7 +1001,7 @@ int use_alchemy(object* op)
                     break;
                 }
             }
-            if ( unpaid_item != NULL )
+            if (unpaid_item != NULL)
                 continue;
 
             attempt_do_alchemy(op, tmp);
@@ -1013,18 +1010,18 @@ int use_alchemy(object* op)
             did_alchemy = 1;
         }
     }
-    if ( unpaid_cauldron ) {
+    if (unpaid_cauldron) {
         query_base_name(unpaid_cauldron,0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-	     "You must pay for your %s first!",
-	     "You must pay for your %s first!",
-	     name);
-    } else if ( unpaid_item ) {
+                             "You must pay for your %s first!",
+                             "You must pay for your %s first!",
+                             name);
+    } else if (unpaid_item) {
         query_base_name(unpaid_item,0, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE,0,op,MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
-	     "You must pay for your %s first!",
-	     "You must pay for your %s first!",
-	     name);
+                             "You must pay for your %s first!",
+                             "You must pay for your %s first!",
+                             name);
     }
 
     return did_alchemy;

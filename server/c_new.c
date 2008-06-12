@@ -55,8 +55,7 @@
  * @retval 1
  * a is greater than b.
  */
-static int compare_A(const void *a, const void *b)
-{
+static int compare_A(const void *a, const void *b) {
     return strcmp(((const command_array_struct *)a)->name,
                   ((const command_array_struct *)b)->name);
 }
@@ -74,9 +73,8 @@ static int compare_A(const void *a, const void *b)
  * matching command, NULL for no match.
  */
 static command_array_struct *find_command_element(const char *cmd,
-                                                  command_array_struct *commarray,
-                                                  int commsize)
-{
+        command_array_struct *commarray,
+        int commsize) {
     command_array_struct *asp, dummy;
 
     dummy.name =cmd;
@@ -99,18 +97,17 @@ static command_array_struct *find_command_element(const char *cmd,
  * @return
  * 0 if invalid command, else actual command's return value (which may be zero).
  */
-int execute_newserver_command(object *pl, char *command)
-{
+int execute_newserver_command(object *pl, char *command) {
     command_array_struct *csp;
     char *cp, *low;
 
     pl->contr->has_hit=0;
 
-        /*
-         * remove trailing spaces from commant
-         */
+    /*
+     * remove trailing spaces from commant
+     */
     cp=command+strlen(command)-1;
-    while ( (cp>=command) && (*cp==' ')){
+    while ((cp>=command) && (*cp==' ')) {
         *cp='\0';
         cp--;
     }
@@ -144,15 +141,15 @@ int execute_newserver_command(object *pl, char *command)
 
     pl->speed_left -= csp->time;
 
-        /* A character time can never exceed his speed (which in many cases,
-         * if wearing armor, is less than one.)  Thus, in most cases, if
-         * the command takes 1.0, the player's speed will be less than zero.
-         * it is only really an issue if time goes below -1
-         * Due to various reasons that are too long to go into here, we will
-         * actually still execute player even if his time is less than 0,
-         * but greater than -1.  This is to improve the performance of the
-         * new client/server.  In theory, it shouldn't make much difference.
-         */
+    /* A character time can never exceed his speed (which in many cases,
+     * if wearing armor, is less than one.)  Thus, in most cases, if
+     * the command takes 1.0, the player's speed will be less than zero.
+     * it is only really an issue if time goes below -1
+     * Due to various reasons that are too long to go into here, we will
+     * actually still execute player even if his time is less than 0,
+     * but greater than -1.  This is to improve the performance of the
+     * new client/server.  In theory, it shouldn't make much difference.
+     */
 
     if (csp->time && pl->speed_left<-2.0) {
         LOG(llevDebug,"execute_newclient_command: Player issued command that takes more time than he has left.\n");
@@ -170,11 +167,10 @@ int execute_newserver_command(object *pl, char *command)
  * @return
  * 0.
  */
-int command_run(object *op, char *params)
-{
+int command_run(object *op, char *params) {
     int dir;
     dir = params?atoi(params):0;
-    if ( dir<0 || dir>=9 ){
+    if (dir<0 || dir>=9) {
         draw_ext_info(NDI_UNIQUE, 0,op,
                       MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't run into a non adjacent square.", NULL);
@@ -194,8 +190,7 @@ int command_run(object *op, char *params)
  * @return
  * 1.
  */
-int command_run_stop(object *op, char *params)
-{
+int command_run_stop(object *op, char *params) {
     op->contr->run_on=0;
     return 1;
 }
@@ -210,11 +205,10 @@ int command_run_stop(object *op, char *params)
  * @return
  * 0.
  */
-int command_fire(object *op, char *params)
-{
+int command_fire(object *op, char *params) {
     int dir;
     dir = params?atoi(params):0;
-    if ( dir<0 || dir>=9 ){
+    if (dir<0 || dir>=9) {
         draw_ext_info(NDI_UNIQUE, 0,op,
                       MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't fire to a non adjacent square.", NULL);
@@ -234,8 +228,7 @@ int command_fire(object *op, char *params)
  * @return
  * 0.
  */
-int command_fire_stop(object *op, char *params)
-{
+int command_fire_stop(object *op, char *params) {
     op->contr->fire_on=0;
     return 1;
 }

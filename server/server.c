@@ -1095,7 +1095,7 @@ void process_events(void) {
          * around.
          */
         if (QUERY_FLAG(op, FLAG_REMOVED) && op->type != PLAYER &&
-                op->map && op->map->in_memory != MAP_IN_MEMORY) {
+            op->map && op->map->in_memory != MAP_IN_MEMORY) {
             StringBuffer *sb;
             char *diff;
 
@@ -1117,7 +1117,7 @@ void process_events(void) {
         }
 
         if (op->map == NULL && op->env == NULL && op->name &&
-                op->type != MAP) {
+            op->type != MAP) {
             LOG(llevError, "BUG: process_events(): Object without map or "
                 "inventory is on active list: %s (%d)\n", op->name, op->count);
             op->speed = 0;
@@ -1142,7 +1142,7 @@ void process_events(void) {
          * is based on ticks, and not the creatures speed?
          */
         if ((op->anim_speed && op->last_anim >= op->anim_speed)
-                ||(op->temp_animation_id && op->last_anim >= op->temp_anim_speed)) {
+            ||(op->temp_animation_id && op->last_anim >= op->temp_anim_speed)) {
             op->state++;
             if ((op->type==PLAYER)||(op->type==MONSTER))
                 animate_object(op, op->facing);
@@ -1293,8 +1293,8 @@ void leave(player *pl, int draw_exit) {
     * inconsistencies by showing that they have left the game
     */
     if (!(QUERY_FLAG(pl->ob,FLAG_WIZ) && pl->ob->contr->hidden) &&
-            (pl!=NULL && draw_exit) &&
-            (pl->state != ST_GET_NAME && pl->state!=ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD))
+        (pl!=NULL && draw_exit) &&
+        (pl->state != ST_GET_NAME && pl->state!=ST_GET_PASSWORD && pl->state != ST_CONFIRM_PASSWORD))
 
         draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, NULL,
                              MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
@@ -1340,7 +1340,7 @@ int forbid_play(void) {
 
         for (i=0; i< 7; i++) {
             if (!strncmp(buf, days[i], 3) && (tm->tm_wday == i) &&
-                    (tm->tm_hour >= start) && (tm->tm_hour < stop))
+                (tm->tm_hour >= start) && (tm->tm_hour < stop))
                 forbit = 1;
         }
     }

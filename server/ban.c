@@ -35,8 +35,7 @@
  * @return
  * 1=player/host is banned; 0=player/host is not banned
  */
-int checkbanned(const char *login, const char *host)
-{
+int checkbanned(const char *login, const char *host) {
     FILE *bannedfile;
     char buf[MAX_BUF];
     char log_buf0[160], host_buf[64], line_buf[160];
@@ -84,7 +83,7 @@ int checkbanned(const char *login, const char *host)
             hits = 0;
 
             /* Split line up */
-            if(*line_buf == '#' || *line_buf == '\n')
+            if (*line_buf == '#' || *line_buf == '\n')
                 continue;
 
             indexpos = strrchr(line_buf, '@');
@@ -119,7 +118,7 @@ int checkbanned(const char *login, const char *host)
               LOG(llevDebug, "    Checking Banned <%s> and <%s>.\n", log_buf, host_buf);
             */
 
-            if(*log_buf=='*')
+            if (*log_buf=='*')
                 hits = 1;
             else if (login != NULL && strcmp(login, log_buf) == 0)
                 hits = 1;
@@ -130,14 +129,12 @@ int checkbanned(const char *login, const char *host)
 
                     /* break out now. otherwise hits will get reset to one */
                     break;
-                }
-                else if (strstr(host, host_buf) != NULL) { /* Lock out subdomains (eg, "*@usc.edu" */
+                } else if (strstr(host, host_buf) != NULL) { /* Lock out subdomains (eg, "*@usc.edu" */
                     hits++;
 
                     /* break out now. otherwise hits will get reset to one */
                     break;
-                }
-                else if (strcmp(host, host_buf) == 0) { /* Lock out specific host */
+                } else if (strcmp(host, host_buf) == 0) { /* Lock out specific host */
                     hits++;
 
                     /* break out now. otherwise hits will get reset to one */
