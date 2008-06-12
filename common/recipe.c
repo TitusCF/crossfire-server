@@ -33,7 +33,7 @@
  * names.
  *
  * Example 'formula' entry in libdir/formulae:
- * 	Object transparency
+ *	Object transparency
  *	chance 10
  *	ingred dust of beholdereye,gem
  *	arch potion_generic
@@ -61,7 +61,7 @@ static recipelist *formulalist;
  */
 static recipelist *init_recipelist(void) {
     recipelist *tl = (recipelist *) malloc(sizeof(recipelist));
-    if(tl==NULL)
+    if (tl==NULL)
         fatal(OUT_OF_MEMORY);
     tl->total_chance=0;
     tl->number=0;
@@ -80,7 +80,7 @@ static recipelist *init_recipelist(void) {
  */
 static recipe *get_empty_formula(void) {
     recipe *t = (recipe *) malloc(sizeof(recipe));
-    if(t==NULL)
+    if (t==NULL)
         fatal(OUT_OF_MEMORY);
     t->chance = 0;
     t->index = 0;
@@ -108,14 +108,14 @@ static recipe *get_empty_formula(void) {
  * @return
  * pointer to the formula list, or NULL if it doesn't exist.
  */
-recipelist * get_formulalist ( int i ) {
+recipelist * get_formulalist(int i) {
     recipelist *fl=formulalist;
     int number=i;
 
-    while(fl && number>1) {
-            if(!(fl=fl->next)) break;
-            number--;
-        }
+    while (fl && number>1) {
+        if (!(fl=fl->next)) break;
+        number--;
+    }
     return fl;
 }
 
@@ -163,7 +163,7 @@ void init_formulae(void) {
     linked_char *tmp;
     int value, comp;
 
-    if(!formulalist) formulalist = fl;
+    if (!formulalist) formulalist = fl;
 
     if (has_been_done) return;
     else has_been_done = 1;
@@ -177,10 +177,10 @@ void init_formulae(void) {
 
     while (fgets(buf, MAX_BUF, fp)!=NULL) {
         if (*buf=='#') continue;
-        if((cp=strchr(buf,'\n'))!=NULL)
-        *cp='\0';
+        if ((cp=strchr(buf,'\n'))!=NULL)
+            *cp='\0';
         cp=buf;
-        while(*cp==' ') /* Skip blanks */
+        while (*cp==' ') /* Skip blanks */
             cp++;
 
         if (!strncmp(cp, "Object", 6)) {
@@ -203,7 +203,7 @@ void init_formulae(void) {
             cp = strchr(cp,' ') + 1;
             do {
                 if ((next=strchr(cp,','))!=NULL)
-                {*(next++) = '\0'; numb_ingred++;}
+                    {*(next++) = '\0'; numb_ingred++;}
                 tmp = (linked_char*) malloc(sizeof(linked_char));
                 tmp->name = add_string(cp);
                 tmp->next = formula->ingred;
@@ -216,11 +216,11 @@ void init_formulae(void) {
             } while ((cp=next)!=NULL);
             /* now find the correct (# of ingred ordered) formulalist */
             fl=formulalist;
-            while(numb_ingred!=1) {
-                if(!fl->next)
+            while (numb_ingred!=1) {
+                if (!fl->next)
                     fl->next = init_recipelist();
                 fl = fl->next;
-                    numb_ingred--;
+                numb_ingred--;
             }
             fl->total_chance += formula->chance;
             fl->number++;
@@ -254,17 +254,17 @@ void init_formulae(void) {
  *
  * LOG() to error level.
  */
-void check_formulae( void ) {
+void check_formulae(void) {
     recipelist *fl;
     recipe *check, *formula;
     int numb = 1;
 
     LOG(llevDebug,"Checking formulae lists...\n");
 
-    for(fl=formulalist; fl!=NULL; fl = fl->next) {
+    for (fl=formulalist; fl!=NULL; fl = fl->next) {
         for (formula=fl->items; formula!=NULL; formula=formula->next)
             for (check=formula->next; check!=NULL; check=check->next)
-                if(check->index==formula->index && strcmp(check->cauldron, formula->cauldron) == 0) {
+                if (check->index==formula->index && strcmp(check->cauldron, formula->cauldron) == 0) {
                     /* if the recipes don't have the same facility, then no issue anyway. */
                     LOG(llevError," ERROR: On %d ingred list:\n", numb);
                     LOG(llevError, "Formulae [%s] of %s and [%s] of %s have matching index id (%d)\n",
@@ -283,16 +283,16 @@ void check_formulae( void ) {
  * @todo
  * use LOG() instead of fprintf?
  */
-void dump_alchemy( void ) {
+void dump_alchemy(void) {
     recipelist *fl=formulalist;
     recipe *formula=NULL;
     linked_char *next;
     int num_ingred=1;
 
     fprintf(logfile, "\n");
-    while(fl) {
+    while (fl) {
         fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n",
-        num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
+                num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
         for (formula=fl->items; formula!=NULL; formula=formula->next) {
             artifact *art=NULL;
             char buf[MAX_BUF];
@@ -300,36 +300,36 @@ void dump_alchemy( void ) {
 
             for (i = 0; i < formula->arch_names; i++) {
                 const char *string = formula->arch_name[i];
-                if(find_archetype(string)!=NULL) {
+                if (find_archetype(string)!=NULL) {
                     art = locate_recipe_artifact(formula, i);
                     if (!art && strcmp(formula->title,"NONE"))
                         LOG(llevError,"Formula %s has no artifact\n",formula->title);
                     else {
-                        if(strcmp(formula->title,"NONE"))
-                                snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
+                        if (strcmp(formula->title,"NONE"))
+                            snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
                         else
-                                snprintf(buf, sizeof(buf), "%s", string);
+                            snprintf(buf, sizeof(buf), "%s", string);
                         fprintf(logfile,"%-30s(%d) bookchance %3d  ",buf,formula->index,
-                            formula->chance);
+                                formula->chance);
                         fprintf(logfile,"skill %s",formula->skill);
                         fprintf(logfile,"\n");
                         if (formula->ingred !=NULL) {
                             int nval=0,tval=0;
                             fprintf(logfile,"\tIngred: ");
                             for (next=formula->ingred; next!=NULL; next=next->next) {
-                                if(nval!=0) fprintf(logfile,",");
-                                    fprintf(logfile,"%s(%d)",next->name,(nval=strtoint(next->name)));
+                                if (nval!=0) fprintf(logfile,",");
+                                fprintf(logfile,"%s(%d)",next->name,(nval=strtoint(next->name)));
                                 tval += nval;
                             }
                             fprintf(logfile,"\n");
-                            if(tval!=formula->index) fprintf(logfile, "WARNING:ingredient list and formula values not equal.\n");
+                            if (tval!=formula->index) fprintf(logfile, "WARNING:ingredient list and formula values not equal.\n");
                         }
                         if (formula->skill != NULL)
                             fprintf(logfile, "\tSkill Required: %s", formula->skill);
                         if (formula->cauldron != NULL)
                             fprintf(logfile, "\tCauldron: %s\n", formula->cauldron);
                         fprintf(logfile, "\tDifficulty: %d\t Exp: %d\n", formula->diff,
-                            formula->exp);
+                                formula->exp);
                     }
                 } else
                     LOG(llevError,"Can't find archetype:%s for formula %s\n", string,
@@ -356,36 +356,29 @@ void dump_alchemy( void ) {
  * @return
  * archetype with name, or NULL if nothing found.
  */
-archetype* find_treasure_by_name (const treasure *t, const char *name, int depth)
-{
+archetype* find_treasure_by_name(const treasure *t, const char *name, int depth) {
     treasurelist *tl;
     archetype    *at;
 
     if (depth > 10)
         return NULL;
-    while (t != NULL)
-    {
-        if (t->name != NULL)
-        {
-            tl = find_treasurelist (t->name);
-            at = find_treasure_by_name (tl->items, name, depth + 1);
+    while (t != NULL) {
+        if (t->name != NULL) {
+            tl = find_treasurelist(t->name);
+            at = find_treasure_by_name(tl->items, name, depth + 1);
             if (at != NULL)
                 return at;
-        }
-        else
-        {
-            if (! strcasecmp (t->item->clone.name, name))
+        } else {
+            if (! strcasecmp(t->item->clone.name, name))
                 return t->item;
         }
-        if (t->next_yes != NULL)
-        {
-            at = find_treasure_by_name (t->next_yes, name, depth);
+        if (t->next_yes != NULL) {
+            at = find_treasure_by_name(t->next_yes, name, depth);
             if (at != NULL)
                 return at;
         }
-        if (t->next_no != NULL)
-        {
-            at = find_treasure_by_name (t->next_no, name, depth);
+        if (t->next_no != NULL) {
+            at = find_treasure_by_name(t->next_no, name, depth);
             if (at != NULL)
                 return at;
         }
@@ -413,8 +406,7 @@ archetype* find_treasure_by_name (const treasure *t, const char *name, int depth
  * @return
  * cost of ingredient, -1 if wasn't found.
  */
-long find_ingred_cost (const char *name)
-{
+long find_ingred_cost(const char *name) {
     archetype    *at;
     archetype    *at2;
     artifactlist *al;
@@ -426,8 +418,7 @@ long find_ingred_cost (const char *name)
 
     /* same as atoi(), but skip number */
     mult = 0;
-    while (isdigit (*name))
-    {
+    while (isdigit(*name)) {
         mult = 10 * mult + (*name - '0');
         name++;
     }
@@ -436,58 +427,50 @@ long find_ingred_cost (const char *name)
     else
         mult = 1;
     /* first, try to match the name of an archetype */
-    for (at = first_archetype; at != NULL; at = at->next)
-    {
-        if (at->clone.title != NULL)
-        {
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (at->clone.title != NULL) {
             /* inefficient, but who cares? */
             snprintf(part1, sizeof(part1), "%s %s", at->clone.name, at->clone.title);
-            if (! strcasecmp (part1, name))
+            if (! strcasecmp(part1, name))
                 return mult * at->clone.value;
         }
-        if (! strcasecmp (at->clone.name, name))
+        if (! strcasecmp(at->clone.name, name))
             return mult * at->clone.value;
     }
     /* second, try to match an artifact ("arch of something") */
-    cp = strstr (name, " of ");
-    if (cp != NULL)
-    {
-        strcpy (part1, name);
+    cp = strstr(name, " of ");
+    if (cp != NULL) {
+        strcpy(part1, name);
         part1[cp - name] = '\0';
-        strcpy (part2, cp + 4);
+        strcpy(part2, cp + 4);
         /* find the first archetype matching the first part of the name */
         for (at = first_archetype; at != NULL; at = at->next)
-            if (! strcasecmp (at->clone.name, part1) && at->clone.title == NULL)
+            if (! strcasecmp(at->clone.name, part1) && at->clone.title == NULL)
                 break;
-        if (at != NULL)
-        {
+        if (at != NULL) {
             /* find the first artifact derived from that archetype (same type) */
             for (al = first_artifactlist; al != NULL; al = al->next)
-                if (al->type == at->clone.type)
-                {
+                if (al->type == at->clone.type) {
                     for (art = al->items; art != NULL; art = art->next)
-                        if (! strcasecmp (art->item->name, part2))
+                        if (! strcasecmp(art->item->name, part2))
                             return mult * at->clone.value * art->item->value;
                 }
         }
     }
     /* third, try to match a body part ("arch's something") */
-    cp = strstr (name, "'s ");
-    if (cp != NULL)
-    {
-        strcpy (part1, name);
+    cp = strstr(name, "'s ");
+    if (cp != NULL) {
+        strcpy(part1, name);
         part1[cp - name] = '\0';
-        strcpy (part2, cp + 3);
+        strcpy(part2, cp + 3);
         /* examine all archetypes matching the first part of the name */
         for (at = first_archetype; at != NULL; at = at->next)
-            if (! strcasecmp (at->clone.name, part1) && at->clone.title == NULL)
-            {
-                if (at->clone.randomitems != NULL)
-                {
-                    at2 = find_treasure_by_name (at->clone.randomitems->items,
-                        part2, 0);
+            if (! strcasecmp(at->clone.name, part1) && at->clone.title == NULL) {
+                if (at->clone.randomitems != NULL) {
+                    at2 = find_treasure_by_name(at->clone.randomitems->items,
+                                                part2, 0);
                     if (at2 != NULL)
-                        return mult * at2->clone.value * isqrt (at->clone.level * 2);
+                        return mult * at2->clone.value * isqrt(at->clone.level * 2);
                 }
             }
     }
@@ -503,8 +486,7 @@ long find_ingred_cost (const char *name)
  * @todo
  * should use LOG()
  */
-void dump_alchemy_costs (void)
-{
+void dump_alchemy_costs(void) {
     recipelist *fl=formulalist;
     recipe *formula=NULL;
     linked_char *next;
@@ -513,10 +495,10 @@ void dump_alchemy_costs (void)
     long cost;
     long tcost;
 
-    fprintf (logfile, "\n");
+    fprintf(logfile, "\n");
     while (fl) {
         fprintf(logfile, "\n Formulae with %d ingredient%s  %d Formulae with total_chance=%d\n",
-            num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
+                num_ingred, num_ingred>1?"s.":".",fl->number,fl->total_chance);
         for (formula = fl->items; formula != NULL; formula = formula->next) {
             artifact *art=NULL;
             archetype *at=NULL;
@@ -525,71 +507,65 @@ void dump_alchemy_costs (void)
 
             for (i = 0; i < formula->arch_names; i++) {
                 const char *string = formula->arch_name[i];
-                if ((at = find_archetype (string)) != NULL) {
-                    art = locate_recipe_artifact (formula, i);
-                    if (!art && strcmp (formula->title,"NONE"))
-                        LOG (llevError, "Formula %s has no artifact\n", formula->title);
-                    else
-                    {
-                        if (! strcmp (formula->title, "NONE"))
+                if ((at = find_archetype(string)) != NULL) {
+                    art = locate_recipe_artifact(formula, i);
+                    if (!art && strcmp(formula->title,"NONE"))
+                        LOG(llevError, "Formula %s has no artifact\n", formula->title);
+                    else {
+                        if (! strcmp(formula->title, "NONE"))
                             snprintf(buf, sizeof(buf), "%s", string);
                         else
                             snprintf(buf, sizeof(buf), "%s of %s", string, formula->title);
-                        fprintf (logfile, "\n%-40s bookchance %3d  skill %s\n",
-                            buf, formula->chance, formula->skill);
-                        if (formula->ingred !=NULL)
-                        {
+                        fprintf(logfile, "\n%-40s bookchance %3d  skill %s\n",
+                                buf, formula->chance, formula->skill);
+                        if (formula->ingred !=NULL) {
                             tcost = 0;
-                            for (next = formula->ingred; next != NULL; next = next->next)
-                            {
-                                cost = find_ingred_cost (next->name);
+                            for (next = formula->ingred; next != NULL; next = next->next) {
+                                cost = find_ingred_cost(next->name);
                                 if (cost < 0)
-                                num_errors++;
-                                fprintf (logfile,"\t%-33s%5ld\n", next->name, cost);
+                                    num_errors++;
+                                fprintf(logfile,"\t%-33s%5ld\n", next->name, cost);
                                 if (cost < 0 || tcost < 0)
-                                tcost = -1;
+                                    tcost = -1;
                                 else
-                                tcost += cost;
+                                    tcost += cost;
                             }
                             if (art != NULL && art->item != NULL)
                                 cost = at->clone.value * art->item->value;
                             else
                                 cost = at->clone.value;
-                            fprintf (logfile, "\t\tBuying result costs: %5ld", cost);
-                            if (formula->yield > 1)
-                            {
-                                fprintf (logfile, " to %ld (max %d items)\n",
-                                    cost * formula->yield, formula->yield);
+                            fprintf(logfile, "\t\tBuying result costs: %5ld", cost);
+                            if (formula->yield > 1) {
+                                fprintf(logfile, " to %ld (max %d items)\n",
+                                        cost * formula->yield, formula->yield);
                                 cost = cost * (formula->yield + 1L) / 2L;
-                            }
-                            else
-                                fprintf (logfile, "\n");
-                            fprintf (logfile, "\t\tIngredients cost:    %5ld\n\t\tComment: ", tcost);
+                            } else
+                                fprintf(logfile, "\n");
+                            fprintf(logfile, "\t\tIngredients cost:    %5ld\n\t\tComment: ", tcost);
                             if (tcost < 0)
-                                fprintf (logfile, "Could not find some ingredients.  Check the formula!\n");
+                                fprintf(logfile, "Could not find some ingredients.  Check the formula!\n");
                             else if (tcost > cost)
-                                fprintf (logfile, "Ingredients are much too expensive.  Useless formula.\n");
+                                fprintf(logfile, "Ingredients are much too expensive.  Useless formula.\n");
                             else if (tcost * 2L > cost)
-                                fprintf (logfile, "Ingredients are too expensive.\n");
+                                fprintf(logfile, "Ingredients are too expensive.\n");
                             else if (tcost * 10L < cost)
-                                fprintf (logfile, "Ingredients are too cheap.\n");
+                                fprintf(logfile, "Ingredients are too cheap.\n");
                             else
-                                fprintf (logfile, "OK.\n");
+                                fprintf(logfile, "OK.\n");
                         }
                     }
-                }
-                else
-                LOG(llevError, "Can't find archetype:%s for formula %s\n", string,
-                    formula->title);
+                } else
+                    LOG(llevError, "Can't find archetype:%s for formula %s\n", string,
+                        formula->title);
             }
         }
-        fprintf (logfile,"\n");
+        fprintf(logfile,"\n");
         fl = fl->next;
         num_ingred++;
     }
     if (num_errors > 0)
-        fprintf (logfile, "WARNING: %d objects required by the formulae do not exist in the game.\n",
-            num_errors);
+        fprintf(logfile, "WARNING: %d objects required by the formulae do not exist in the game.\n",
+                num_errors);
 }
 
 /**
@@ -600,10 +576,10 @@ void dump_alchemy_costs (void)
  * @return
  * pointer in name to the first character of the ingredient's name.
  */
-const char * ingred_name (const char *name) {
+const char * ingred_name(const char *name) {
     const char *cp=name;
 
-    if(atoi(cp)) cp = strchr(cp,' ') + 1;
+    if (atoi(cp)) cp = strchr(cp,' ') + 1;
     return cp;
 }
 
@@ -617,7 +593,7 @@ const char * ingred_name (const char *name) {
  * @return
  * sum of lowercase characters of the ingredient's name.
  */
-int strtoint (const char *buf) {
+int strtoint(const char *buf) {
     const char *cp = ingred_name(buf);
     int val=0, len=strlen(cp), mult=numb_ingred(buf);
 
@@ -643,11 +619,11 @@ artifact* locate_recipe_artifact(const recipe *rp, size_t idx) {
     artifactlist *at=NULL;
     artifact *art=NULL;
 
-    if(!item) return (artifact *) NULL;
+    if (!item) return (artifact *) NULL;
 
-    if((at=find_artifactlist(item->type)))
-        for(art=at->items;art;art=art->next)
-            if(!strcmp(art->item->name,rp->title) && legal_artifact_combination(item, art)) break;
+    if ((at=find_artifactlist(item->type)))
+        for (art=at->items;art;art=art->next)
+            if (!strcmp(art->item->name,rp->title) && legal_artifact_combination(item, art)) break;
 
     free_object(item);
 
@@ -662,11 +638,11 @@ artifact* locate_recipe_artifact(const recipe *rp, size_t idx) {
  * @return
  * number part of an ingredient.
  */
-int numb_ingred (const char *buf) {
-  int numb;
+int numb_ingred(const char *buf) {
+    int numb;
 
-  if((numb=atoi(buf))) return numb;
-  else return 1;
+    if ((numb=atoi(buf))) return numb;
+    else return 1;
 }
 
 /**
@@ -675,25 +651,25 @@ int numb_ingred (const char *buf) {
  * @return
  * random recipe list.
  */
-recipelist * get_random_recipelist ( void ) {
+recipelist * get_random_recipelist(void) {
     recipelist *fl=NULL;
     int number=0,roll=0;
 
     /* first, determine # of recipelist we have */
-    for(fl=get_formulalist(1);fl;fl=fl->next) number++;
+    for (fl=get_formulalist(1);fl;fl=fl->next) number++;
 
     /* now, randomly choose one */
-    if(number>0) roll=RANDOM()%number;
+    if (number>0) roll=RANDOM()%number;
 
     fl=get_formulalist(1);
-    while(roll && fl) {
-        if(fl->next) fl = fl->next;
+    while (roll && fl) {
+        if (fl->next) fl = fl->next;
         else break;
         roll--;
     }
-    if(!fl) /* failed! */
+    if (!fl) /* failed! */
         LOG(llevError,"get_random_recipelist(): no recipelists found!\n");
-    else if(fl->total_chance==0) fl=get_random_recipelist();
+    else if (fl->total_chance==0) fl=get_random_recipelist();
 
     return fl;
 }
@@ -706,13 +682,13 @@ recipelist * get_random_recipelist ( void ) {
  * @return
  * random recipe. Can be NULL if recipelist has a total_chance of 0.
  */
-recipe * get_random_recipe ( recipelist *rpl ) {
+recipe * get_random_recipe(recipelist *rpl) {
     recipelist *fl=rpl;
     recipe *rp=NULL;
     int r=0;
 
     /* looks like we have to choose a random one */
-    if(fl==NULL) if((fl=get_random_recipelist())==NULL) return rp;
+    if (fl==NULL) if ((fl=get_random_recipelist())==NULL) return rp;
 
     if (fl->total_chance > 0) {
         r=RANDOM()%fl->total_chance;
@@ -727,8 +703,7 @@ recipe * get_random_recipe ( recipelist *rpl ) {
 /**
  * Frees all memory allocated to recipes and recipes lists.
  */
-void free_all_recipes(void)
-{
+void free_all_recipes(void) {
     recipelist *fl=formulalist,*flnext;
     recipe *formula=NULL,*next;
     linked_char *lchar, *charnext;
@@ -771,8 +746,7 @@ void free_all_recipes(void)
  * @param[out] result_size
  * pointer to return value for the size of the newly created list
  */
-static void build_stringlist(const char *str, char ***result_list, size_t *result_size)
-{
+static void build_stringlist(const char *str, char ***result_list, size_t *result_size) {
     char *dup;
     char *p;
     size_t size;

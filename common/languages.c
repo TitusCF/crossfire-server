@@ -31,8 +31,7 @@
 #include <global.h>
 
 /** List of available language codes. */
-const char* language_codes[] =
-{
+const char* language_codes[] = {
     "en",
     "fr",
     "nl",
@@ -41,8 +40,7 @@ const char* language_codes[] =
 };
 
 /** Language names. */
-const char* language_names[] =
-{
+const char* language_names[] = {
     "English",
     "Français",
     "Nederlands",
@@ -58,8 +56,7 @@ const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
  * @param op The player object to get the language of
  * @return The language numerical code. If none is associated, get_language returns 0
  */
-int get_language(object* op)
-{
+int get_language(object* op) {
     if (!op->contr)
         return 0;
     if (op->contr->language < 0 || op->contr->language >= NUM_LANGUAGES)
@@ -73,8 +70,7 @@ int get_language(object* op)
  * @param id The i18n string identifier
  * @return The translated string, or NULL if an error occured.
  */
-const char* i18n_translate(int language, int id)
-{
+const char* i18n_translate(int language, int id) {
     if (language >= NUM_LANGUAGES)
         return NULL;
     else if (id >= NUM_I18N_STRINGS)
@@ -110,31 +106,24 @@ static void convert_newline(char* line) {
 /**
  * Initializes the i18n subsystem.
  */
-void i18n_init(void)
-{
+void i18n_init(void) {
     char filename[MAX_BUF], line[HUGE_BUF];
     int i, entry;
     FILE* fp;
     char* token;
     int counter;
     char* buffer;
-    for(i=0;i<NUM_LANGUAGES;i++)
-    {
+    for (i=0;i<NUM_LANGUAGES;i++) {
         snprintf(filename, sizeof(filename), "%s/i18n/messages.%s", settings.datadir, language_codes[i]);
-        if ((fp=fopen(filename, "r")) == NULL)
-        {
+        if ((fp=fopen(filename, "r")) == NULL) {
             LOG(llevError, "Cannot open i18n file %s: %s\n",
                 filename, strerror_local(errno, line, sizeof(line)));
-            if(i==0)
+            if (i==0)
                 exit(1);
-        }
-        else
-        {
+        } else {
             counter = 0;
-            while(fgets(line, MAX_BUF, fp))
-            {
-                if (strstr(line,"#")!=line)
-                {
+            while (fgets(line, MAX_BUF, fp)) {
+                if (strstr(line,"#")!=line) {
                     line[strlen(line) - 1] = '\0'; /* erase the final newline that messes things. */
                     token = strtok(line, "|");
                     entry = atoi(token);

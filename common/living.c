@@ -49,8 +49,8 @@
  * Constitution bonus
  */
 static const int con_bonus[MAX_STAT + 1]={
-  -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
-  22,25,30,40,50
+    -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
+    22,25,30,40,50
 };
 
 /**
@@ -60,8 +60,8 @@ static const int con_bonus[MAX_STAT + 1]={
  * advancement. -b.t.
  */
 static const int sp_bonus[MAX_STAT + 1]={
-  -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
-  30,40,50,70,100
+    -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
+    30,40,50,70,100
 };
 
 /**
@@ -69,7 +69,7 @@ static const int sp_bonus[MAX_STAT + 1]={
  */
 static const int grace_bonus[MAX_STAT +1] = {
     -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
-  30,40,50,70,100
+    30,40,50,70,100
 };
 
 /**
@@ -91,26 +91,29 @@ static const int grace_bonus[MAX_STAT +1] = {
  * This is figured by diff=(y-1)/(1+y), and for buy, it is 1+diff, for sell
  * it is 1-diff
  */
-const float cha_bonus[MAX_STAT + 1]={10.0, 10.0, 9.0, 8.0, 7.0, 6.0, /*<-5*/
-    5.0, 4.5, 4.0, 3.5, 3.0, /*<-10*/ 2.9, 2.8, 2.7, 2.6, 2.5, /*<-15*/
-    2.4, 2.3, 2.2, 2.1, 2.0, /*<-20*/ 1.95, 1.90, 1.85, 1.80, 1.75, /*25 */
-    1.70, 1.65, 1.60, 1.55, 1.50 /*30 */
+const float cha_bonus[MAX_STAT + 1]={
+    10.0, 10.0, 9.0, 8.0, 7.0, 6.0, /*<-5*/
+    5.0, 4.5, 4.0, 3.5, 3.0,        /*<-10*/
+    2.9, 2.8, 2.7, 2.6, 2.5,        /*<-15*/
+    2.4, 2.3, 2.2, 2.1, 2.0,        /*<-20*/
+    1.95, 1.90, 1.85, 1.80, 1.75,   /*25 */
+    1.70, 1.65, 1.60, 1.55, 1.50    /*30 */
 };
 
 /** Dexterity bonus */
 const int dex_bonus[MAX_STAT + 1]={
-  -4,-3,-2,-2,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,6,7
+    -4,-3,-2,-2,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,6,7
 };
 
 /** speed_bonus, which uses dex as its stat */
 const float speed_bonus[MAX_STAT + 1]={
-    -0.1,				/* 0 */
-    -0.1, -0.1, -0.05, -0.05, -0.05,	/* 5 */
-    -0.05, 0.0, 0.0, 0.0, 0.0,		/* 10 */
-     0.05, 0.05, 0.05, 0.1, 0.1,	/* 15 */
-    0.1, 0.1, 0.1, 0.15, 0.15,		/* 20 */
-    0.15, 0.15, 0.2, 0.2, 0.2,		/* 25 */
-    0.2, 0.25, 0.25, 0.25, 0.25		/* 30 */
+    -0.1,                            /* 0 */
+    -0.1, -0.1, -0.05, -0.05, -0.05, /* 5 */
+    -0.05, 0.0, 0.0, 0.0, 0.0,       /* 10 */
+    0.05, 0.05, 0.05, 0.1, 0.1,      /* 15 */
+    0.1, 0.1, 0.1, 0.15, 0.15,       /* 20 */
+    0.15, 0.15, 0.2, 0.2, 0.2,       /* 25 */
+    0.2, 0.25, 0.25, 0.25, 0.25      /* 30 */
 };
 
 /**
@@ -118,17 +121,17 @@ const float speed_bonus[MAX_STAT + 1]={
  * strength.
  */
 const int dam_bonus[MAX_STAT + 1]={
-  -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,6,7,8,9,10
+    -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,6,7,8,9,10
 };
 
 /** THAC0 bonus */
 const int thaco_bonus[MAX_STAT + 1]={
-    -2,-2,-2,-2,-1,-1,	/* 5 */
-    -1,-1,0,0,0,	/* 10 */
-    0,1,1,1,1,		/* 15 */
-    2,2,2,2,2,		/* 20 */
-    3,3,3,3,4,		/* 25 */
-    4,4,4,5,5		/* 30 */
+    -2,-2,-2,-2,-1,-1, /* 5 */
+    -1,-1,0,0,0,       /* 10 */
+    0,1,1,1,1,         /* 15 */
+    2,2,2,2,2,         /* 20 */
+    3,3,3,3,4,         /* 25 */
+    4,4,4,5,5          /* 30 */
 };
 
 /**
@@ -142,33 +145,33 @@ const int thaco_bonus[MAX_STAT + 1]={
  */
 const uint32 weight_limit[MAX_STAT+ 1] = {
     200000,  /* 0 */
-    250000,300000,350000,400000,500000,	    /* 5*/
-    600000,700000,800000,900000,1000000,    /* 10 */
-    1100000,1200000,1300000,1400000,1500000,/* 15 */
-    1650000,1800000,1950000,2100000,2250000,/* 20 */
+    250000,300000,350000,400000,500000,      /* 5*/
+    600000,700000,800000,900000,1000000,     /* 10 */
+    1100000,1200000,1300000,1400000,1500000, /* 15 */
+    1650000,1800000,1950000,2100000,2250000, /* 20 */
     2400000,2550000,2700000,2850000,3000000, /* 25 */
     3250000,3500000,3750000,4000000,4500000  /*30 */
 };
 
 /** Probability to learn a spell or skill, based on intelligence or wisdom. */
 const int learn_spell[MAX_STAT + 1]={
-  0,0,0,1,2,4,8,12,16,25,36,45,55,65,70,75,80,85,90,95,100,100,100,100,100,
-  100,100,100,100,100,100
+    0,0,0,1,2,4,8,12,16,25,36,45,55,65,70,75,80,85,90,95,100,100,100,100,100,
+    100,100,100,100,100,100
 };
 
 /** Probability of messing a divine spell. Based on wisdom. */
 const int cleric_chance[MAX_STAT + 1]={
-  100,100,100,100,90,80,70,60,50,40,35,30,25,20,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,0
+    100,100,100,100,90,80,70,60,50,40,35,30,25,20,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0,0
 };
 
 /** Bonus for spell duration (holyword and turn undead), bonus for resistance to these spells. */
 const int turn_bonus[MAX_STAT + 1]={
-  -1,-1,-1,-1,-1,-1,-1,-1,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,9,10,12,15
+    -1,-1,-1,-1,-1,-1,-1,-1,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,9,10,12,15
 };
 
 /** Bonus for fear resistance for players. */
 const int fear_bonus[MAX_STAT + 1]={
-  3,3,3,3,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    3,3,3,3,2,2,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 };
 
 /**
@@ -294,7 +297,7 @@ const char *const short_stat_name[NUM_STATS] = {
  * check if attr is valid? Check whether value is valid or not.
  */
 void set_attr_value(living *stats,int attr,sint8 value) {
-    switch(attr) {
+    switch (attr) {
         case STR:
             stats->Str=value;
             break;
@@ -335,7 +338,7 @@ void set_attr_value(living *stats,int attr,sint8 value) {
  */
 void change_attr_value(living *stats,int attr,sint8 value) {
     if (value==0) return;
-    switch(attr) {
+    switch (attr) {
         case STR:
             stats->Str+=value;
             break;
@@ -375,7 +378,7 @@ void change_attr_value(living *stats,int attr,sint8 value) {
  * @see set_attr_value().
  */
 sint8 get_attr_value(const living *stats,int attr) {
-    switch(attr) {
+    switch (attr) {
         case STR:
             return(stats->Str);
         case DEX:
@@ -403,10 +406,10 @@ sint8 get_attr_value(const living *stats,int attr) {
  */
 void check_stat_bounds(living *stats) {
     int i,v;
-    for(i=0;i<NUM_STATS;i++)
-        if((v=get_attr_value(stats,i))>MAX_STAT)
+    for (i=0;i<NUM_STATS;i++)
+        if ((v=get_attr_value(stats,i))>MAX_STAT)
             set_attr_value(stats,i,MAX_STAT);
-        else if(v<MIN_STAT)
+        else if (v<MIN_STAT)
             set_attr_value(stats,i,MIN_STAT);
 }
 
@@ -451,10 +454,10 @@ int change_abil(object *op, object *tmp) {
      */
     memcpy(&refop, op, sizeof(object));
 
-    if(op->type==PLAYER) {
+    if (op->type==PLAYER) {
         if (tmp->type==POTION) {
             potion_max=1;
-            for(j=0;j<NUM_STATS;j++) {
+            for (j=0;j<NUM_STATS;j++) {
                 int nstat, ostat;
 
                 ostat = get_attr_value(&(op->contr->orig_stats),j);
@@ -468,15 +471,14 @@ int change_abil(object *op, object *tmp) {
                  * that adjust that stat by more than one point, so we need
                  * to allow for that.
                  */
-                if (nstat < 1 && i*flag < 0 ) nstat = 1;
+                if (nstat < 1 && i*flag < 0) nstat = 1;
                 else if (nstat > 20 + get_attr_value(&(op->arch->clone.stats),j)) {
                     nstat =  20 + get_attr_value(&(op->arch->clone.stats),j);
                 }
                 if (nstat != ostat) {
                     set_attr_value(&(op->contr->orig_stats), j, nstat);
                     potion_max=0;
-                }
-                else if (i) {
+                } else if (i) {
                     /* potion is useless - player has already hit the natural maximum */
                     potion_max = 1;
                 }
@@ -485,7 +487,7 @@ int change_abil(object *op, object *tmp) {
              * sure if this is strictly necessary, being that fix_object probably
              * recalculates this anyway.
              */
-            for(j=0;j<NUM_STATS;j++)
+            for (j=0;j<NUM_STATS;j++)
                 change_attr_value(&(op->stats),j,flag*get_attr_value(&(tmp->stats),j));
             check_stat_bounds(&(op->stats));
         } /* end of potion handling code */
@@ -494,7 +496,7 @@ int change_abil(object *op, object *tmp) {
     /* reset attributes that fix_object doesn't reset since it doesn't search
      * everything to set
      */
-    if(flag == -1) {
+    if (flag == -1) {
         op->attacktype&=~tmp->attacktype;
         op->path_attuned&=~tmp->path_attuned;
         op->path_repelled&=~tmp->path_repelled;
@@ -514,29 +516,29 @@ int change_abil(object *op, object *tmp) {
     /* Fix player won't add the bows ability to the player, so don't
      * print out message if this is a bow.
      */
-    if(tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
+    if (tmp->attacktype & AT_CONFUSION && tmp->type != BOW) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_ATTACKTYPE_GAIN, MSG_TYPE_ATTRIBUTE_ATTACKTYPE_LOSS,
-            "Your hands begin to glow red.",
-            "Your hands stop glowing red.");
+                 "Your hands begin to glow red.",
+                 "Your hands stop glowing red.");
     }
-    if ( QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)){
+    if (QUERY_FLAG(op,FLAG_LIFESAVE) != QUERY_FLAG(&refop,FLAG_LIFESAVE)) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
-            "You feel very protected.",
-            "You don't feel protected anymore.");
+                 "You feel very protected.",
+                 "You don't feel protected anymore.");
     }
-    if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
+    if (QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
-            "A magic force shimmers around you.",
-            "The magic force fades away.");
+                 "A magic force shimmers around you.",
+                 "The magic force fades away.");
     }
-    if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
+    if (QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
-            "You feel more safe now, somehow.",
-            "Suddenly you feel less safe, somehow.");
+                 "You feel more safe now, somehow.",
+                 "Suddenly you feel less safe, somehow.");
     }
     /* movement type has changed.  We don't care about cases where
      * user has multiple items giving the same type appled like we
@@ -552,8 +554,8 @@ int change_abil(object *op, object *tmp) {
          */
         if (tmp->move_type & MOVE_FLY_LOW && !(op->move_type & MOVE_FLY_HIGH)) {
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
-                "You start to float in the air!.",
-                "You float down to the ground.");
+                     "You start to float in the air!.",
+                     "You float down to the ground.");
         }
 
         if (tmp->move_type & MOVE_FLY_HIGH) {
@@ -561,14 +563,14 @@ int change_abil(object *op, object *tmp) {
              * in that case, you don't actually land
              */
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
-                "You soar into the air air!.",
-                (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
-                "You float down to the ground."));
+                     "You soar into the air air!.",
+                     (op->move_type&MOVE_FLY_LOW ? "You fly lower in the air":
+                      "You float down to the ground."));
         }
         if (tmp->move_type & MOVE_SWIM)
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
-                "You feel ready for a swim",
-                "You no longer feel like swimming");
+                     "You feel ready for a swim",
+                     "You no longer feel like swimming");
 
         /* Changing move status may mean you are affected by things you weren't before */
         check_move_on(op, op);
@@ -577,157 +579,157 @@ int change_abil(object *op, object *tmp) {
     /* becoming UNDEAD... a special treatment for this flag. Only those not
      * originally undead may change their status
      */
-    if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
-        if ( QUERY_FLAG(op,FLAG_UNDEAD) != QUERY_FLAG(&refop,FLAG_UNDEAD)) {
+    if (!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
+        if (QUERY_FLAG(op,FLAG_UNDEAD) != QUERY_FLAG(&refop,FLAG_UNDEAD)) {
             success=1;
-            if(flag>0) {
-                if(op->race) free_string(op->race);
+            if (flag>0) {
+                if (op->race) free_string(op->race);
                 op->race=add_string("undead");
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                    "Your lifeforce drains away!", NULL);
+                              "Your lifeforce drains away!", NULL);
             } else {
-                if(op->race) free_string(op->race);
-                if(op->arch->clone.race)
+                if (op->race) free_string(op->race);
+                if (op->arch->clone.race)
                     op->race=add_string(op->arch->clone.race);
                 else
                     op->race = NULL;
                 draw_ext_info(NDI_UNIQUE, 0, op,MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                    "Your lifeforce returns!", NULL);
+                              "Your lifeforce returns!", NULL);
             }
         }
 
-    if ( QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)){
+    if (QUERY_FLAG(op,FLAG_STEALTH) != QUERY_FLAG(&refop,FLAG_STEALTH)) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-            "You walk more quietly.",
-            "You walk more noisily.");
+                 "You walk more quietly.",
+                 "You walk more noisily.");
     }
-    if ( QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)){
+    if (QUERY_FLAG(op,FLAG_MAKE_INVIS) != QUERY_FLAG(&refop,FLAG_MAKE_INVIS)) {
         success=1;
         DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-            "You become transparent.",
-            "You can see yourself.");
+                 "You become transparent.",
+                 "You can see yourself.");
     }
     /* blinded you can tell if more blinded since blinded player has minimal
      * vision
      */
-    if(QUERY_FLAG(tmp,FLAG_BLIND)) {
+    if (QUERY_FLAG(tmp,FLAG_BLIND)) {
         success=1;
-        if(flag>0) {
-            if(QUERY_FLAG(op,FLAG_WIZ))
+        if (flag>0) {
+            if (QUERY_FLAG(op,FLAG_WIZ))
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                    "Your mortal self is blinded.", NULL);
-                else {
-                    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-                        "You are blinded.", NULL);
-                    SET_FLAG(op,FLAG_BLIND);
-                    if(op->type==PLAYER)
-                        op->contr->do_los=1;
-                }
+                              "Your mortal self is blinded.", NULL);
+            else {
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+                              "You are blinded.", NULL);
+                SET_FLAG(op,FLAG_BLIND);
+                if (op->type==PLAYER)
+                    op->contr->do_los=1;
+            }
         } else {
-            if(QUERY_FLAG(op,FLAG_WIZ))
+            if (QUERY_FLAG(op,FLAG_WIZ))
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                    "Your mortal self can now see again.", NULL);
+                              "Your mortal self can now see again.", NULL);
             else {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-                    "Your vision returns.", NULL);
+                              "Your vision returns.", NULL);
                 CLEAR_FLAG(op,FLAG_BLIND);
-                if(op->type==PLAYER)
+                if (op->type==PLAYER)
                     op->contr->do_los=1;
             }
         }
     }
 
-    if ( QUERY_FLAG(op,FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop,FLAG_SEE_IN_DARK)) {
+    if (QUERY_FLAG(op,FLAG_SEE_IN_DARK) != QUERY_FLAG(&refop,FLAG_SEE_IN_DARK)) {
         success=1;
-        if(op->type==PLAYER)
+        if (op->type==PLAYER)
             op->contr->do_los=1;
-            DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-                "Your vision is better in the dark.",
-                "You see less well in the dark.");
+        DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
+                 "Your vision is better in the dark.",
+                 "You see less well in the dark.");
     }
 
     if (QUERY_FLAG(op,FLAG_XRAYS) != QUERY_FLAG(&refop,FLAG_XRAYS)) {
         success=1;
-        if(flag>0) {
-            if(QUERY_FLAG(op,FLAG_WIZ))
+        if (flag>0) {
+            if (QUERY_FLAG(op,FLAG_WIZ))
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START,
-                    "Your vision becomes a little clearer.", NULL);
+                              "Your vision becomes a little clearer.", NULL);
             else {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_START,
-                    "Everything becomes transparent.", NULL);
-                if(op->type==PLAYER)
+                              "Everything becomes transparent.", NULL);
+                if (op->type==PLAYER)
                     op->contr->do_los=1;
             }
         } else {
-            if(QUERY_FLAG(op,FLAG_WIZ))
+            if (QUERY_FLAG(op,FLAG_WIZ))
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-                    "Your vision becomes a bit out of focus.", NULL);
+                              "Your vision becomes a bit out of focus.", NULL);
             else {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOOD_EFFECT_END,
-                    "Everything suddenly looks very solid.", NULL);
-                if(op->type==PLAYER)
+                              "Everything suddenly looks very solid.", NULL);
+                if (op->type==PLAYER)
                     op->contr->do_los=1;
             }
         }
     }
 
-    if(tmp->stats.luck) {
+    if (tmp->stats.luck) {
         success=1;
         DIFF_MSG(flag*tmp->stats.luck, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-            "You feel more lucky.",
-            "You feel less lucky.");
+                 "You feel more lucky.",
+                 "You feel less lucky.");
     }
 
-    if(tmp->stats.hp && op->type==PLAYER) {
+    if (tmp->stats.hp && op->type==PLAYER) {
         success=1;
         DIFF_MSG(flag*tmp->stats.hp, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-            "You feel much more healthy!",
-            "You feel much less healthy!");
+                 "You feel much more healthy!",
+                 "You feel much less healthy!");
     }
 
-    if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
+    if (tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
         success=1;
         DIFF_MSG(flag*tmp->stats.sp, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-            "You feel one with the powers of magic!",
-            "You suddenly feel very mundane.");
+                 "You feel one with the powers of magic!",
+                 "You suddenly feel very mundane.");
     }
 
     /* for the future when artifacts set this -b.t. */
-    if(tmp->stats.grace && op->type==PLAYER) {
+    if (tmp->stats.grace && op->type==PLAYER) {
         success=1;
         DIFF_MSG(flag*tmp->stats.grace, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-            "You feel closer to your god!",
-            "You suddenly feel less holy.");
+                 "You feel closer to your god!",
+                 "You suddenly feel less holy.");
     }
 
-    if(tmp->stats.food && op->type==PLAYER) {
+    if (tmp->stats.food && op->type==PLAYER) {
         success=1;
         DIFF_MSG(flag*tmp->stats.food, MSG_TYPE_ATTRIBUTE_STAT_GAIN, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
-            "You feel your digestion slowing down.",
-            "You feel your digestion speeding up.");
+                 "You feel your digestion slowing down.",
+                 "You feel your digestion speeding up.");
     }
 
     /* Messages for changed resistance */
     for (i=0; i<NROFATTACKS; i++) {
-        if (i==ATNR_PHYSICAL) continue;	/* Don't display about armour */
+        if (i==ATNR_PHYSICAL) continue; /* Don't display about armour */
 
         if (op->resist[i] != refop.resist[i]) {
             success=1;
             if (op->resist[i] > refop.resist[i])
-            draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
-                "Your resistance to %s rises to %d%%.",
-                "Your resistance to %s rises to %d%%.",
-                change_resist_msg[i], op->resist[i]);
+                draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
+                                     "Your resistance to %s rises to %d%%.",
+                                     "Your resistance to %s rises to %d%%.",
+                                     change_resist_msg[i], op->resist[i]);
             else
-            draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
-                "Your resistance to %s drops to %d%%.",
-                "Your resistance to %s drops to %d%%.",
-                change_resist_msg[i], op->resist[i]);
+                draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_LOSS,
+                                     "Your resistance to %s drops to %d%%.",
+                                     "Your resistance to %s drops to %d%%.",
+                                     change_resist_msg[i], op->resist[i]);
         }
     }
 
-    if(tmp->type!=EXPERIENCE && !potion_max) {
+    if (tmp->type!=EXPERIENCE && !potion_max) {
         for (j=0; j<NUM_STATS; j++) {
             if ((i=get_attr_value(&(tmp->stats),j))!=0) {
                 success=1;
@@ -907,8 +909,8 @@ void fix_object(object *op) {
     object *grace_obj=NULL,*mana_obj=NULL,*wc_obj=NULL,*tmp;
 
     /* First task is to clear all the values back to their original values */
-    if(op->type==PLAYER) {
-        for(i=0;i<NUM_STATS;i++) {
+    if (op->type==PLAYER) {
+        for (i=0;i<NUM_STATS;i++) {
             set_attr_value(&(op->stats),i,get_attr_value(&(op->contr->orig_stats),i));
         }
         if (settings.spell_encumbrance == TRUE)
@@ -933,11 +935,11 @@ void fix_object(object *op) {
     } /* If player */
     memcpy(op->body_used, op->body_info, sizeof(op->body_info));
 
-    if(op->slaying!=NULL) {
+    if (op->slaying!=NULL) {
         free_string(op->slaying);
         op->slaying=NULL;
     }
-    if(!QUERY_FLAG(op,FLAG_WIZ)) {
+    if (!QUERY_FLAG(op,FLAG_WIZ)) {
         CLEAR_FLAG(op, FLAG_XRAYS);
         CLEAR_FLAG(op, FLAG_MAKE_INVIS);
     }
@@ -945,13 +947,13 @@ void fix_object(object *op) {
     CLEAR_FLAG(op,FLAG_LIFESAVE);
     CLEAR_FLAG(op,FLAG_STEALTH);
     CLEAR_FLAG(op,FLAG_BLIND);
-    if (!QUERY_FLAG (&op->arch->clone, FLAG_REFL_SPELL))
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_SPELL))
         CLEAR_FLAG(op,FLAG_REFL_SPELL);
-    if (!QUERY_FLAG (&op->arch->clone, FLAG_REFL_MISSILE))
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_REFL_MISSILE))
         CLEAR_FLAG(op,FLAG_REFL_MISSILE);
-    if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
+    if (!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
         CLEAR_FLAG(op,FLAG_UNDEAD);
-    if (!QUERY_FLAG (&op->arch->clone, FLAG_SEE_IN_DARK))
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_IN_DARK))
         CLEAR_FLAG(op,FLAG_SEE_IN_DARK);
 
     op->path_attuned=op->arch->clone.path_attuned;
@@ -984,7 +986,7 @@ void fix_object(object *op) {
      * basically, if a server updates its max level, these playes may find
      * that their protection from physical goes down
      */
-    if(!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) {
+    if (!QUERY_FLAG(op,FLAG_USE_ARMOUR) && op->type==PLAYER) {
         ac=MAX(-10,op->arch->clone.stats.ac - op->level/3);
         prot[ATNR_PHYSICAL] += ((100-prot[AT_PHYSICAL])*(80*op->level/settings.max_level))/100;
     } else
@@ -997,7 +999,7 @@ void fix_object(object *op) {
      * now go through and make adjustments for what the player has equipped.
      */
 
-    for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
+    for (tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
         /* See note in map.c:update_position about making this additive
          * since light sources are never applied, need to put check here.
          */
@@ -1038,15 +1040,15 @@ void fix_object(object *op) {
          * up, etc.
          */
         if ((QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON) ||
-            (tmp->type == SKILL && tmp->subtype == SK_PRAYING)) {
-            if(op->type==PLAYER) {
+                (tmp->type == SKILL && tmp->subtype == SK_PRAYING)) {
+            if (op->type==PLAYER) {
                 if (tmp->type == BOW)
                     op->contr->ranges[range_bow] = tmp;
 
                 if (tmp->type == WAND || tmp->type == ROD || tmp->type==HORN)
                     op->contr->ranges[range_misc] = tmp;
 
-                for(i=0;i<NUM_STATS;i++)
+                for (i=0;i<NUM_STATS;i++)
                     change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
 
                 /* these are the items that currently can change digestion, regeneration,
@@ -1054,20 +1056,20 @@ void fix_object(object *op) {
                  * list, but other items store other info into stats array.
                  */
                 if ((tmp->type == EXPERIENCE)  || (tmp->type == WEAPON) ||
-                     (tmp->type == ARMOUR)   || (tmp->type == HELMET) ||
-                     (tmp->type == SHIELD)   || (tmp->type == RING) ||
-                     (tmp->type == BOOTS)    || (tmp->type == GLOVES) ||
-                     (tmp->type == AMULET )  || (tmp->type == GIRDLE) ||
-                     (tmp->type == BRACERS ) || (tmp->type == CLOAK) ||
-                     (tmp->type == DISEASE)  || (tmp->type == FORCE) ||
-                     (tmp->type == SKILL)) {
+                        (tmp->type == ARMOUR)   || (tmp->type == HELMET) ||
+                        (tmp->type == SHIELD)   || (tmp->type == RING) ||
+                        (tmp->type == BOOTS)    || (tmp->type == GLOVES) ||
+                        (tmp->type == AMULET)  || (tmp->type == GIRDLE) ||
+                        (tmp->type == BRACERS) || (tmp->type == CLOAK) ||
+                        (tmp->type == DISEASE)  || (tmp->type == FORCE) ||
+                        (tmp->type == SKILL)) {
                     op->contr->digestion    += tmp->stats.food;
                     op->contr->gen_hp       += tmp->stats.hp;
                     op->contr->gen_sp       += tmp->stats.sp;
                     op->contr->gen_grace    += tmp->stats.grace;
                     op->contr->gen_sp_armour+= tmp->gen_sp_armour;
-                    op->contr->item_power	+= tmp->item_power;
-                     }
+                    op->contr->item_power += tmp->item_power;
+                }
             } /* if this is a player */
 
             /* Update slots used for items */
@@ -1076,10 +1078,10 @@ void fix_object(object *op) {
                     op->body_used[i] += tmp->body_info[i];
             }
 
-            if(tmp->type==SYMPTOM && tmp->last_sp) {
-		/* Should take the worst disease of the bunch */
-		if (((float)tmp->last_sp / 100.0) < speed_reduce_from_disease)
-		    speed_reduce_from_disease = (float)tmp->last_sp / 100.0;
+            if (tmp->type==SYMPTOM && tmp->last_sp) {
+                /* Should take the worst disease of the bunch */
+                if (((float)tmp->last_sp / 100.0) < speed_reduce_from_disease)
+                    speed_reduce_from_disease = (float)tmp->last_sp / 100.0;
             }
 
             /* Pos. and neg. protections are counted seperate (-> pro/vuln).
@@ -1097,8 +1099,7 @@ void fix_object(object *op) {
                             potion_resist[i] = MAX(potion_resist[i], tmp->resist[i]);
                         else
                             potion_resist[i] = tmp->resist[i];
-                    }
-                    else if (tmp->resist[i] > 0)
+                    } else if (tmp->resist[i] > 0)
                         prot[i] += ((100-prot[i])*tmp->resist[i])/100;
                     else if (tmp->resist[i] < 0)
                         vuln[i] += ((100-vuln[i])*(-tmp->resist[i]))/100;
@@ -1115,34 +1116,34 @@ void fix_object(object *op) {
             op->stats.luck+=tmp->stats.luck;
             op->move_type |= tmp->move_type;
 
-            if(QUERY_FLAG(tmp,FLAG_LIFESAVE))
+            if (QUERY_FLAG(tmp,FLAG_LIFESAVE))
                 SET_FLAG(op,FLAG_LIFESAVE);
-            if(QUERY_FLAG(tmp,FLAG_REFL_SPELL))
+            if (QUERY_FLAG(tmp,FLAG_REFL_SPELL))
                 SET_FLAG(op,FLAG_REFL_SPELL);
-            if(QUERY_FLAG(tmp,FLAG_REFL_MISSILE))
+            if (QUERY_FLAG(tmp,FLAG_REFL_MISSILE))
                 SET_FLAG(op,FLAG_REFL_MISSILE);
-            if(QUERY_FLAG(tmp,FLAG_STEALTH))
+            if (QUERY_FLAG(tmp,FLAG_STEALTH))
                 SET_FLAG(op,FLAG_STEALTH);
-            if(QUERY_FLAG(tmp,FLAG_XRAYS))
+            if (QUERY_FLAG(tmp,FLAG_XRAYS))
                 SET_FLAG(op,FLAG_XRAYS);
-            if(QUERY_FLAG(tmp,FLAG_BLIND))
+            if (QUERY_FLAG(tmp,FLAG_BLIND))
                 SET_FLAG(op,FLAG_BLIND);
-            if(QUERY_FLAG(tmp,FLAG_SEE_IN_DARK))
+            if (QUERY_FLAG(tmp,FLAG_SEE_IN_DARK))
                 SET_FLAG(op,FLAG_SEE_IN_DARK);
 
-            if(QUERY_FLAG(tmp,FLAG_UNDEAD) && !QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
+            if (QUERY_FLAG(tmp,FLAG_UNDEAD) && !QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
                 SET_FLAG(op,FLAG_UNDEAD);
 
-            if(QUERY_FLAG(tmp,FLAG_MAKE_INVIS)) {
+            if (QUERY_FLAG(tmp,FLAG_MAKE_INVIS)) {
                 SET_FLAG(op,FLAG_MAKE_INVIS);
                 op->invisible=1;
             }
 
-            if(tmp->stats.exp && tmp->type!=SKILL) {
+            if (tmp->stats.exp && tmp->type!=SKILL) {
                 added_speed+=(float)tmp->stats.exp/3.0;
             }
 
-            switch(tmp->type) {
+            switch (tmp->type) {
                 /* skills modifying the character -b.t. */
                 /* for all skills and skill granting objects */
                 case SKILL:
@@ -1156,28 +1157,28 @@ void fix_object(object *op) {
                         LOG(llevDebug, "fix_object, op %s has multiple skills applied\n", op->name);
                     }
                     op->chosen_skill = tmp;
-                    if(tmp->stats.dam>0) { 	/* skill is a 'weapon' */
-                        if(!QUERY_FLAG(op,FLAG_READY_WEAPON))
+                    if (tmp->stats.dam>0) { /* skill is a 'weapon' */
+                        if (!QUERY_FLAG(op,FLAG_READY_WEAPON))
                             weapon_speed = (int) WEAPON_SPEED(tmp);
-                        if(weapon_speed<0)
+                        if (weapon_speed<0)
                             weapon_speed = 0;
                         weapon_weight=tmp->weight;
                         op->stats.dam+=tmp->stats.dam*(1 + (op->chosen_skill->level/9));
-                        if(tmp->magic)
+                        if (tmp->magic)
                             op->stats.dam += tmp->magic;
                     }
-                    if(tmp->stats.wc)
+                    if (tmp->stats.wc)
                         wc-=(tmp->stats.wc+tmp->magic);
 
-                    if(tmp->slaying!=NULL) {
+                    if (tmp->slaying!=NULL) {
                         if (op->slaying != NULL)
-                            free_string (op->slaying);
+                            free_string(op->slaying);
                         add_refcount(op->slaying = tmp->slaying);
                     }
 
-                    if(tmp->stats.ac)
+                    if (tmp->stats.ac)
                         ac-=(tmp->stats.ac+tmp->magic);
-                    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+                    if (settings.spell_encumbrance == TRUE && op->type==PLAYER)
                         op->contr->encumbrance+=(int)3*tmp->weight/1000;
                     if (op->type == PLAYER)
                         op->contr->ranges[range_skill] = op;
@@ -1193,7 +1194,7 @@ void fix_object(object *op) {
                     break;
 
                 case SHIELD:
-                    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+                    if (settings.spell_encumbrance == TRUE && op->type==PLAYER)
                         op->contr->encumbrance+=(int)tmp->weight/2000;
                 case RING:
                 case AMULET:
@@ -1202,26 +1203,26 @@ void fix_object(object *op) {
                 case BOOTS:
                 case GLOVES:
                 case CLOAK:
-                    if(tmp->stats.wc)
+                    if (tmp->stats.wc)
                         wc-=(tmp->stats.wc+tmp->magic);
-                    if(tmp->stats.dam)
+                    if (tmp->stats.dam)
                         op->stats.dam+=(tmp->stats.dam+tmp->magic);
-                    if(tmp->stats.ac)
+                    if (tmp->stats.ac)
                         ac-=(tmp->stats.ac+tmp->magic);
                     break;
 
                 case WEAPON:
                     wc-=(tmp->stats.wc+tmp->magic);
-                    if(tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
+                    if (tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
                         ac-=tmp->stats.ac+tmp->magic;
                     op->stats.dam+=(tmp->stats.dam+tmp->magic);
                     weapon_weight=tmp->weight;
                     weapon_speed=((int)WEAPON_SPEED(tmp)*2-tmp->magic)/2;
-                    if(weapon_speed<0)
+                    if (weapon_speed<0)
                         weapon_speed=0;
-                    if(tmp->slaying!=NULL) {
+                    if (tmp->slaying!=NULL) {
                         if (op->slaying != NULL)
-                            free_string (op->slaying);
+                            free_string(op->slaying);
                         add_refcount(op->slaying = tmp->slaying);
                     }
                     /* If there is desire that two handed weapons should do
@@ -1229,42 +1230,41 @@ void fix_object(object *op) {
                      * go.
                      */
                     op->current_weapon = tmp;
-                    if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
+                    if (settings.spell_encumbrance == TRUE && op->type==PLAYER)
                         op->contr->encumbrance+=(int)3*tmp->weight/1000;
                     break;
 
-                    case ARMOUR: /* Only the best of these three are used: */
-                        if(settings.spell_encumbrance == TRUE && op->type==PLAYER)
-                            op->contr->encumbrance+=(int)tmp->weight/1000;
+                case ARMOUR: /* Only the best of these three are used: */
+                    if (settings.spell_encumbrance == TRUE && op->type==PLAYER)
+                        op->contr->encumbrance+=(int)tmp->weight/1000;
 
                 case BRACERS:
                 case FORCE:
-                    if(tmp->stats.wc) {
-                        if(best_wc<tmp->stats.wc+tmp->magic) {
+                    if (tmp->stats.wc) {
+                        if (best_wc<tmp->stats.wc+tmp->magic) {
                             wc+=best_wc;
                             best_wc=tmp->stats.wc+tmp->magic;
                         } else
                             wc+=tmp->stats.wc+tmp->magic;
                     }
-                    if(tmp->stats.ac) {
-                        if(best_ac<tmp->stats.ac+tmp->magic) {
+                    if (tmp->stats.ac) {
+                        if (best_ac<tmp->stats.ac+tmp->magic) {
                             ac+=best_ac; /* Remove last bonus */
                             best_ac=tmp->stats.ac+tmp->magic;
-                        }
-                        else /* To nullify the below effect */
+                        } else /* To nullify the below effect */
                             ac+=tmp->stats.ac+tmp->magic;
                     }
-                    if(tmp->stats.dam && tmp->type == BRACERS)
+                    if (tmp->stats.dam && tmp->type == BRACERS)
                         op->stats.dam+=(tmp->stats.dam+tmp->magic);
-                    if(tmp->stats.wc)
+                    if (tmp->stats.wc)
                         wc-=(tmp->stats.wc+tmp->magic);
-                    if(tmp->stats.ac)
+                    if (tmp->stats.ac)
                         ac-=(tmp->stats.ac+tmp->magic);
-                    if(ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0<max)
+                    if (ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0<max)
                         max=ARMOUR_SPEED(tmp)/10.0;
                     break;
             } /* switch tmp->type */
-            } /* item is equipped */
+        } /* item is equipped */
     } /* for loop of items */
 
     /* We've gone through all the objects the player has equipped.  For many things, we
@@ -1280,70 +1280,70 @@ void fix_object(object *op) {
     for (i=0; i<NROFATTACKS; i++) {
         op->resist[i] = prot[i] - vuln[i];
         if (potion_resist[i] && ((potion_resist[i] > op->resist[i]) ||
-            (potion_resist[i] < 0)))
+                                 (potion_resist[i] < 0)))
             op->resist[i] = potion_resist[i];
     }
 
     /* Figure out the players sp/mana/hp totals. */
-    if(op->type==PLAYER) {
+    if (op->type==PLAYER) {
         int pl_level;
 
         check_stat_bounds(&(op->stats));
         pl_level=op->level;
 
-        if(pl_level<1)
+        if (pl_level<1)
             pl_level=1; /* safety, we should always get 1 levels worth of hp! */
 
         /* You basically get half a con bonus/level.  But we do take into account rounding,
          * so if your bonus is 7, you still get 7 worth of bonus every 2 levels.
          */
-        for(i=1,op->stats.maxhp=0;i<=pl_level&&i<=10;i++) {
+        for (i=1,op->stats.maxhp=0;i<=pl_level&&i<=10;i++) {
             j = op->contr->levhp[i] + con_bonus[op->stats.Con] / 2;
-            if(i%2 && con_bonus[op->stats.Con]%2) {
+            if (i%2 && con_bonus[op->stats.Con]%2) {
                 if (con_bonus[op->stats.Con]>0)
                     j++;
                 else
                     j--;
             }
-            op->stats.maxhp+=j>1?j:1;	/* always get at least 1 hp/level */
+            op->stats.maxhp+=j>1?j:1; /* always get at least 1 hp/level */
         }
 
-        for(i=11;i<=op->level;i++)
+        for (i=11;i<=op->level;i++)
             op->stats.maxhp+=2;
 
-	op->stats.maxhp += op->arch->clone.stats.maxhp;
+        op->stats.maxhp += op->arch->clone.stats.maxhp;
 
-        if(op->stats.hp>op->stats.maxhp)
+        if (op->stats.hp>op->stats.maxhp)
             op->stats.hp=op->stats.maxhp;
 
         /* Sp gain is controlled by the level of the player's
          * relevant experience object (mana_obj, see above)
          */
         /* following happen when skills system is not used */
-        if(!mana_obj)
+        if (!mana_obj)
             mana_obj = op;
-        if(!grace_obj)
+        if (!grace_obj)
             grace_obj = op;
 
         /* set maxsp */
-        if(!mana_obj || !mana_obj->level || op->type!=PLAYER)
+        if (!mana_obj || !mana_obj->level || op->type!=PLAYER)
             mana_obj = op;
 
         if (mana_obj == op && op->type == PLAYER) {
             op->stats.maxsp = 1;
         } else {
             sp_tmp=0.0;
-            for(i=1;i<=mana_obj->level&&i<=10;i++) {
+            for (i=1;i<=mana_obj->level&&i<=10;i++) {
                 float stmp;
 
                 /* Got some extra bonus at first level */
-                if(i<2) {
+                if (i<2) {
                     stmp = op->contr->levsp[i] +((2.0 * (float)sp_bonus[op->stats.Pow] +
-                        (float)sp_bonus[op->stats.Int])/6.0);
+                                                  (float)sp_bonus[op->stats.Int])/6.0);
                 } else {
                     stmp=(float)op->contr->levsp[i]
-                        +(2.0 * (float)sp_bonus[op->stats.Pow] +
-                        (float)sp_bonus[op->stats.Int])/12.0;
+                         +(2.0 * (float)sp_bonus[op->stats.Pow] +
+                           (float)sp_bonus[op->stats.Int])/12.0;
                 }
                 if (stmp<1.0)
                     stmp=1.0;
@@ -1351,16 +1351,16 @@ void fix_object(object *op) {
             }
             op->stats.maxsp=(int)sp_tmp + op->arch->clone.stats.maxsp;
 
-            for(i=11;i<=mana_obj->level;i++)
+            for (i=11;i<=mana_obj->level;i++)
                 op->stats.maxsp+=2;
         }
 
         /* Characters can get their sp supercharged via rune of transferrance */
-        if(op->stats.sp>op->stats.maxsp*2)
+        if (op->stats.sp>op->stats.maxsp*2)
             op->stats.sp=op->stats.maxsp*2;
 
         /* set maxgrace, notice 3-4 lines below it depends on both Wis and Pow */
-        if(!grace_obj || !grace_obj->level || op->type!=PLAYER)
+        if (!grace_obj || !grace_obj->level || op->type!=PLAYER)
             grace_obj = op;
 
         if (grace_obj == op && op->type == PLAYER) {
@@ -1372,17 +1372,17 @@ void fix_object(object *op) {
              * step of 8 - with floats, even fractional ones are useful.
              */
             sp_tmp=0.0;
-            for(i=1,op->stats.maxgrace=0;i<=grace_obj->level&&i<=10;i++) {
+            for (i=1,op->stats.maxgrace=0;i<=grace_obj->level&&i<=10;i++) {
                 float grace_tmp=0.0;
 
                 /* Got some extra bonus at first level */
-                if(i<2) {
+                if (i<2) {
                     grace_tmp = op->contr->levgrace[i]+(((float)grace_bonus[op->stats.Pow] +
-                        2.0 * (float)grace_bonus[op->stats.Wis])/6.0);
+                                                         2.0 * (float)grace_bonus[op->stats.Wis])/6.0);
                 } else {
                     grace_tmp=(float)op->contr->levgrace[i]
-                        +((float)grace_bonus[op->stats.Pow] +
-                        2.0 * (float)grace_bonus[op->stats.Wis])/12.0;
+                              +((float)grace_bonus[op->stats.Pow] +
+                                2.0 * (float)grace_bonus[op->stats.Wis])/12.0;
                 }
                 if (grace_tmp<1.0)
                     grace_tmp=1.0;
@@ -1391,16 +1391,15 @@ void fix_object(object *op) {
             op->stats.maxgrace=(int)sp_tmp + op->arch->clone.stats.maxgrace;
 
             /* two grace points per level after 11 */
-            for(i=11;i<=grace_obj->level;i++)
+            for (i=11;i<=grace_obj->level;i++)
                 op->stats.maxgrace+=2;
         }
         /* No limit on grace vs maxgrace */
 
-        if(op->contr->braced) {
+        if (op->contr->braced) {
             ac+=2;
             wc+=4;
-        }
-        else
+        } else
             ac-=dex_bonus[op->stats.Dex];
 
         /* In new exp/skills system, wc bonuses are related to
@@ -1415,16 +1414,16 @@ void fix_object(object *op) {
          * monster bonus the same as before. -b.t.
          */
 
-        if(op->type==PLAYER && wc_obj && wc_obj->level>1) {
+        if (op->type==PLAYER && wc_obj && wc_obj->level>1) {
             wc-=thaco_bonus[op->stats.Str];
-	    wc -= (wc_obj->level-1) / 5;
-	    op->stats.dam += (wc_obj->level -1 ) / 4;
+            wc -= (wc_obj->level-1) / 5;
+            op->stats.dam += (wc_obj->level -1) / 4;
         } else {
             wc-=(op->level+thaco_bonus[op->stats.Str]);
-	}
-	op->stats.dam+=dam_bonus[op->stats.Str];
+        }
+        op->stats.dam+=dam_bonus[op->stats.Str];
 
-        if(op->stats.dam<1)
+        if (op->stats.dam<1)
             op->stats.dam=1;
 
         op->speed = MAX_PLAYER_SPEED + speed_bonus[op->stats.Dex];
@@ -1437,57 +1436,57 @@ void fix_object(object *op) {
 
     } /* End if player */
 
-    if(op->type == PLAYER) {
-	/* First block is for encumbrance of the player */
+    if (op->type == PLAYER) {
+        /* First block is for encumbrance of the player */
 
-	float character_load=0.0;
+        float character_load=0.0;
 
-	/* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
-	 * think that it should never be the case if that is set to 1.0, that carrying
-	 * would be above the limit.  But it could be if character is weakened and
-	 * was otherwise at limit.  Without that safety, could get divide by zeros.
-	 */
-	if (op->carrying > (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT) &&
-	    (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-	    int extra_weight = op->carrying - weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT;
+        /* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
+         * think that it should never be the case if that is set to 1.0, that carrying
+         * would be above the limit.  But it could be if character is weakened and
+         * was otherwise at limit.  Without that safety, could get divide by zeros.
+         */
+        if (op->carrying > (weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT) &&
+                (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
+            int extra_weight = op->carrying - weight_limit[op->stats.Str] * FREE_PLAYER_LOAD_PERCENT;
 
-	    character_load = (float) extra_weight / (float)(weight_limit[op->stats.Str] * (1.0 - FREE_PLAYER_LOAD_PERCENT));
+            character_load = (float) extra_weight / (float)(weight_limit[op->stats.Str] * (1.0 - FREE_PLAYER_LOAD_PERCENT));
 
-	    /* character_load is used for weapon speed below, so sanitize value */
-	    if (character_load >=1.0) character_load=1.0;
+            /* character_load is used for weapon speed below, so sanitize value */
+            if (character_load >=1.0) character_load=1.0;
 
-	    /* If a character is fully loaded, they will always get cut down to min
-	     * speed no matter what their dex.  Note that magic is below, so
-	     * still helps out.
-	     */
-	    if (op->speed > MAX_PLAYER_SPEED)
-		op->speed -= character_load * (op->speed - MIN_PLAYER_SPEED);
-	    else
-		op->speed -= character_load * (MAX_PLAYER_SPEED - MIN_PLAYER_SPEED);
-	}
+            /* If a character is fully loaded, they will always get cut down to min
+             * speed no matter what their dex.  Note that magic is below, so
+             * still helps out.
+             */
+            if (op->speed > MAX_PLAYER_SPEED)
+                op->speed -= character_load * (op->speed - MIN_PLAYER_SPEED);
+            else
+                op->speed -= character_load * (MAX_PLAYER_SPEED - MIN_PLAYER_SPEED);
+        }
 
-	/* This block is for weapon speed */
-	op->weapon_speed = BASE_WEAPON_SPEED +  speed_bonus[op->stats.Dex] - weapon_speed/20.0 +
-	    added_speed / 10.0;
-	if (wc_obj) {
-	    op->weapon_speed += 0.005 * wc_obj->level;
-	} else
-	    op->weapon_speed += 0.005 * op->level;
+        /* This block is for weapon speed */
+        op->weapon_speed = BASE_WEAPON_SPEED +  speed_bonus[op->stats.Dex] - weapon_speed/20.0 +
+                           added_speed / 10.0;
+        if (wc_obj) {
+            op->weapon_speed += 0.005 * wc_obj->level;
+        } else
+            op->weapon_speed += 0.005 * op->level;
 
-	/* character_load=1.0 means character is fully loaded, 0.0 is unloaded.  Multiplying
-	 * by 0.2 for penalty is purely arbitrary, but slows things down without completely
-	 * stopping them.
-	 */
-	op->weapon_speed -= character_load * 0.2;
+        /* character_load=1.0 means character is fully loaded, 0.0 is unloaded.  Multiplying
+         * by 0.2 for penalty is purely arbitrary, but slows things down without completely
+         * stopping them.
+         */
+        op->weapon_speed -= character_load * 0.2;
 
-	if (op->weapon_speed < 0.05) op->weapon_speed=0.05;
+        if (op->weapon_speed < 0.05) op->weapon_speed=0.05;
 
     }
 
     op->speed = op->speed * speed_reduce_from_disease;
 
     /* Max is determined by armour */
-    if(op->speed>max)
+    if (op->speed>max)
         op->speed=max;
 
     op->speed+=added_speed/10.0;
@@ -1500,8 +1499,8 @@ void fix_object(object *op) {
         op->speed=0.05;
 
     /* I want to limit the power of small monsters with big weapons: */
-    if(op->type!=PLAYER&&op->arch!=NULL&&
-       op->stats.dam>op->arch->clone.stats.dam*3)
+    if (op->type!=PLAYER&&op->arch!=NULL&&
+            op->stats.dam>op->arch->clone.stats.dam*3)
         op->stats.dam=op->arch->clone.stats.dam*3;
 
     /* Prevent overflows of wc - best you can get is ABS(120) - this
@@ -1552,9 +1551,9 @@ void fix_object(object *op) {
  * 1 if allowed, 0 else.
  */
 int allowed_class(const object *op) {
-  return op->stats.Dex>0&&op->stats.Str>0&&op->stats.Con>0&&
-         op->stats.Int>0&&op->stats.Wis>0&&op->stats.Pow>0&&
-	 op->stats.Cha>0;
+    return op->stats.Dex>0&&op->stats.Str>0&&op->stats.Con>0&&
+           op->stats.Int>0&&op->stats.Wis>0&&op->stats.Pow>0&&
+           op->stats.Cha>0;
 }
 
 /**
@@ -1583,25 +1582,25 @@ void set_dragon_name(object *pl, const object *abil, const object *skin) {
     if (!abil || !skin) return;
 
     /* first, look for the highest level */
-    for(i=0; i<NROFATTACKS; i++) {
+    for (i=0; i<NROFATTACKS; i++) {
         if (atnr_is_dragon_enabled(i) &&
-        (atnr==-1 || abil->resist[i] > abil->resist[atnr])) {
-        level = abil->resist[i];
-        atnr = i;
+                (atnr==-1 || abil->resist[i] > abil->resist[atnr])) {
+            level = abil->resist[i];
+            atnr = i;
         }
     }
 
     /* now if there are equals at highest level, pick the one with focus,
         or else at random */
     if (atnr_is_dragon_enabled(abil->stats.exp) &&
-        abil->resist[abil->stats.exp] >= level)
+            abil->resist[abil->stats.exp] >= level)
         atnr = abil->stats.exp;
 
     level = (int)(level/5.);
 
     /* now set the new title */
     if (pl->contr != NULL) {
-        if(level == 0)
+        if (level == 0)
             snprintf(pl->contr->title, sizeof(pl->contr->title), "%s hatchling", attacks[atnr]);
         else if (level == 1)
             snprintf(pl->contr->title, sizeof(pl->contr->title), "%s wyrm", attacks[atnr]);
@@ -1658,15 +1657,15 @@ void dragon_level_gain(object *who) {
         if (abil->resist[abil->stats.exp]>0 && abil->resist[abil->stats.exp]%5 == 0) {
             /* time to hand out a new ability-gift */
             dragon_ability_gain(who, (int)abil->stats.exp,
-                (int)((1+abil->resist[abil->stats.exp])/5.));
+                                (int)((1+abil->resist[abil->stats.exp])/5.));
         }
 
         if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat)) {
             /* apply new ability focus */
             draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_RACE,
-                "Your metabolism now focuses on %s!",
-                "Your metabolism now focuses on %s!",
-                change_resist_msg[abil->last_eat]);
+                                 "Your metabolism now focuses on %s!",
+                                 "Your metabolism now focuses on %s!",
+                                 change_resist_msg[abil->last_eat]);
 
             abil->stats.exp = abil->last_eat;
             abil->last_eat = 0;
@@ -1697,15 +1696,14 @@ void dragon_level_gain(object *who) {
  * @note
  * this doesn't check whether the object already has the skill or not.
  */
-object *give_skill_by_name(object *op, const char *skill_name)
-{
+object *give_skill_by_name(object *op, const char *skill_name) {
     object *skill_obj;
     archetype *skill_arch;
 
     skill_arch = get_archetype_by_skill_name(skill_name, SKILL);
     if (!skill_arch) {
-	LOG(llevError, "add_player_exp: couldn't find skill %s\n", skill_name);
-	return NULL;
+        LOG(llevError, "add_player_exp: couldn't find skill %s\n", skill_name);
+        return NULL;
     }
     skill_obj = arch_to_object(skill_arch); /* never returns NULL. */
 
@@ -1717,8 +1715,8 @@ object *give_skill_by_name(object *op, const char *skill_name)
     skill_obj->level = 1;
     insert_ob_in_ob(skill_obj, op);
     if (op->contr) {
-	op->contr->last_skill_ob[skill_obj->subtype] = skill_obj;
-	op->contr->last_skill_exp[skill_obj->subtype] = -1;
+        op->contr->last_skill_ob[skill_obj->subtype] = skill_obj;
+        op->contr->last_skill_exp[skill_obj->subtype] = -1;
     }
     return skill_obj;
 }
@@ -1743,44 +1741,44 @@ object *give_skill_by_name(object *op, const char *skill_name)
 void player_lvl_adj(object *who, object *op) {
     char buf[MAX_BUF];
 
-    if(!op)        /* when rolling stats */
+    if (!op)       /* when rolling stats */
         op = who;
 
-    if(op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1,who->expmul)) {
+    if (op->level < settings.max_level && op->stats.exp >= level_exp(op->level+1,who->expmul)) {
         op->level++;
 
         if (op != NULL && op == who && op->stats.exp > 1 && is_dragon_pl(who))
             dragon_level_gain(who);
 
-            /* Only roll these if it is the player (who) that gained the level */
-        if(who && op==who && (who->level < 11) && who->type==PLAYER) {
+        /* Only roll these if it is the player (who) that gained the level */
+        if (who && op==who && (who->level < 11) && who->type==PLAYER) {
             who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
             who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
             who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
         }
 
-        if(who)
+        if (who)
             fix_object(who);
-        if(op->level>1) {
+        if (op->level>1) {
             if (op->type!=PLAYER)
                 snprintf(buf, sizeof(buf), "You are now level %d in the %s skill.",op->level,op->name);
             else
                 snprintf(buf, sizeof(buf), "You are now level %d.",op->level);
 
-        if(who)
-            draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN,buf, buf);
+            if (who)
+                draw_ext_info(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_GAIN,buf, buf);
         }
         player_lvl_adj(who,op); /* To increase more levels */
     } else if (op->level>1 && op->stats.exp<level_exp(op->level,who->expmul)) {
         op->level--;
-        if(who)
+        if (who)
             fix_object(who);
-        if(op->type!=PLAYER) {
-            if(who)
+        if (op->type!=PLAYER) {
+            if (who)
                 draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, who, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_LEVEL_LOSS,
-                    "You are now level %d in the %s skill.",
-                    "You are now level %d in the %s skill.",
-                    op->level,op->name);
+                                     "You are now level %d in the %s skill.",
+                                     "You are now level %d in the %s skill.",
+                                     op->level,op->name);
         }
         player_lvl_adj(who,op); /* To decrease more levels */
     }
@@ -1813,8 +1811,7 @@ sint64 level_exp(int level,double expmul) {
  * @param op
  * object to check.
  */
-void calc_perm_exp(object *op)
-{
+void calc_perm_exp(object *op) {
     sint64 p_exp_min;
 
     /* Ensure that our permanent experience minimum is met.
@@ -1847,14 +1844,13 @@ void calc_perm_exp(object *op)
  * @param flag
  * what to do if the player doesn't have the skill. Combination of @ref SK_EXP_xxx "SK_EXP_xxx" flags.
  */
-static void add_player_exp(object *op, sint64 exp, const char *skill_name, int flag)
-{
+static void add_player_exp(object *op, sint64 exp, const char *skill_name, int flag) {
     object *skill_obj=NULL;
     sint64 limit, exp_to_add;
     int i;
 
     /* prevents some forms of abuse. */
-    if(op->contr->braced) exp=exp/5;
+    if (op->contr->braced) exp=exp/5;
 
     /* Try to find the matching skill.
      * We do a shortcut/time saving mechanism first - see if it matches
@@ -1863,12 +1859,12 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
      */
     if (skill_name) {
         if (op->chosen_skill && op->chosen_skill->type == SKILL &&
-            !strcmp(skill_name, op->chosen_skill->skill))
+                !strcmp(skill_name, op->chosen_skill->skill))
             skill_obj = op->chosen_skill;
         else {
             for (i=0; i<NUM_SKILLS; i++)
                 if (op->contr->last_skill_ob[i] &&
-                    !strcmp(op->contr->last_skill_ob[i]->skill, skill_name)) {
+                        !strcmp(op->contr->last_skill_ob[i]->skill, skill_name)) {
                     skill_obj = op->contr->last_skill_ob[i];
                     break;
                 }
@@ -1894,7 +1890,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
     ADD_EXP(op->stats.exp, (float) exp_to_add * (skill_obj? skill_obj->expmul:1));
     if (settings.permanent_exp_ratio) {
         ADD_EXP(op->perm_exp, (float) exp_to_add * PERM_EXP_GAIN_RATIO * (skill_obj? skill_obj->expmul:1));
-    calc_perm_exp(op);
+        calc_perm_exp(op);
     }
 
     player_lvl_adj(op,NULL);
@@ -1926,8 +1922,7 @@ static void add_player_exp(object *op, sint64 exp, const char *skill_name, int f
  * @return
  * the amount of exp object 'op' can in fact lose -
  */
-sint64 check_exp_loss(const object *op, sint64 exp)
-{
+sint64 check_exp_loss(const object *op, sint64 exp) {
     sint64 del_exp;
 
     if (exp > op->stats.exp) exp = op->stats.exp;
@@ -1949,8 +1944,7 @@ sint64 check_exp_loss(const object *op, sint64 exp)
  * @return
  * maximum value op can gain or lose (can be positive or negative).
  */
-sint64 check_exp_adjust(const object *op, sint64 exp)
-{
+sint64 check_exp_adjust(const object *op, sint64 exp) {
     if (exp<0) return check_exp_loss(op, exp);
     else return MIN(exp, MAX_EXPERIENCE - op->stats.exp);
 }
@@ -1978,14 +1972,13 @@ sint64 check_exp_adjust(const object *op, sint64 exp)
  * @todo
  * check whether flag is necessary, can't it be only based on skill==null?
  */
-static void subtract_player_exp(object *op, sint64 exp, const char *skill, int flag)
-{
+static void subtract_player_exp(object *op, sint64 exp, const char *skill, int flag) {
     float fraction = (float) exp/(float) op->stats.exp;
     object *tmp;
     sint64 del_exp;
 
-    for(tmp=op->inv;tmp;tmp=tmp->below)
-        if(tmp->type==SKILL && tmp->stats.exp) {
+    for (tmp=op->inv;tmp;tmp=tmp->below)
+        if (tmp->type==SKILL && tmp->stats.exp) {
             if (flag == SK_SUBTRACT_SKILL_EXP && skill && !strcmp(tmp->skill, skill)) {
                 del_exp = check_exp_loss(tmp, exp);
                 tmp->stats.exp -= del_exp;
@@ -2042,7 +2035,7 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
 #endif
 
     /* safety */
-    if(!op) {
+    if (!op) {
         LOG(llevError,"change_exp() called for null object!\n");
         return;
     }
@@ -2057,7 +2050,7 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
      * the exp they have - the monsters exp represents what its
      * worth.
      */
-    if(op->type != PLAYER) {
+    if (op->type != PLAYER) {
         /* Sanity check */
         if (!QUERY_FLAG(op, FLAG_ALIVE)) return;
 
@@ -2065,15 +2058,14 @@ void change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
         * MAX_EXPERIENCE to prevent overflows.  If the player somehow has
         * more than max exp, just return.
         */
-        if (exp > 0 && ( op->stats.exp > (MAX_EXPERIENCE - exp))) {
+        if (exp > 0 && (op->stats.exp > (MAX_EXPERIENCE - exp))) {
             exp = MAX_EXPERIENCE - op->stats.exp;
             if (exp < 0) return;
         }
 
         op->stats.exp += exp;
-    }
-    else {				/* Players only */
-        if(exp>0)
+    } else {   /* Players only */
+        if (exp>0)
             add_player_exp(op, exp, skill_name, flag);
         else
             subtract_player_exp(op, FABS(exp), skill_name, flag);
@@ -2094,8 +2086,8 @@ void apply_death_exp_penalty(object *op) {
     sint64 percentage_loss;  /* defined by the setting 'death_penalty_percent' */
     sint64 level_loss;   /* defined by the setting 'death_penalty_levels */
 
-    for(tmp=op->inv;tmp;tmp=tmp->below)
-        if(tmp->type==SKILL && tmp->stats.exp) {
+    for (tmp=op->inv;tmp;tmp=tmp->below)
+        if (tmp->type==SKILL && tmp->stats.exp) {
 
             percentage_loss = tmp->stats.exp * settings.death_penalty_ratio/100;
             level_loss = tmp->stats.exp - levels[MAX(0,tmp->level - settings.death_penalty_level)];
@@ -2136,12 +2128,11 @@ void apply_death_exp_penalty(object *op) {
  * @return
  * 1 if op makes his save, 0 if he failed
  */
-int did_make_save(const object *op, int level, int bonus)
-{
+int did_make_save(const object *op, int level, int bonus) {
     if (level > MAX_SAVE_LEVEL) level = MAX_SAVE_LEVEL;
 
     if ((random_roll(1, 20, op, PREFER_HIGH) + bonus) < savethrow[level])
-	return 0;
+        return 0;
     return 1;
 }
 
@@ -2171,25 +2162,25 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
     player *pl;
     partylist *party;
 
-    if(op->type!=PLAYER || op->contr->party==NULL) {
+    if (op->type!=PLAYER || op->contr->party==NULL) {
         change_exp(op,exp, skill, 0);
         return;
     }
 
     party = op->contr->party;
 
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-        if(party && pl->ob->contr->party==party && on_same_map(pl->ob, op)) {
+    for (pl=first_player;pl!=NULL;pl=pl->next) {
+        if (party && pl->ob->contr->party==party && on_same_map(pl->ob, op)) {
             count++;
             shares += (pl->ob->level+4);
         }
     }
-    if(count==1 || shares>exp)
+    if (count==1 || shares>exp)
         change_exp(op,exp, skill, flag);
     else {
         sint64 share=exp/shares,given=0,nexp;
-        for(pl=first_player;pl!=NULL;pl=pl->next) {
-            if(party && pl->ob->contr->party==party && on_same_map(pl->ob, op)) {
+        for (pl=first_player;pl!=NULL;pl=pl->next) {
+            if (party && pl->ob->contr->party==party && on_same_map(pl->ob, op)) {
                 nexp=(pl->ob->level+4)*share;
                 change_exp(pl->ob,nexp, skill, SK_EXP_TOTAL);
                 given+=nexp;

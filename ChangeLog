@@ -14,6 +14,39 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat all files in common/ to fit with current coding style standard, a
+combination of using the astyle tool and manual review afterwards.
+ common/item.c
+ common/readable.c
+ common/dialog.c
+ common/shstr.c
+ common/object.c
+ common/languages.c
+ common/button.c
+ common/holy.c
+ common/logger.c
+ common/image.c
+ common/re-cmp.c
+ common/ob_methods.c
+ common/region.c
+ common/living.c
+ common/info.c
+ common/player.c
+ common/exp.c
+ common/stringbuffer.c
+ common/recipe.c
+ common/friend.c
+ common/map.c
+ common/arch.c
+ common/links.c
+ common/porting.c
+ common/ob_types.c
+ common/anim.c
+ common/treasure.c
+ common/glue.c
+ common/los.c
+Arvid Norlander 2008-06-12
+
 Get rid of a GCC warning, fix a typo in a comment.
  include/libproto.h
  common/loader.l

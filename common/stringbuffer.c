@@ -29,8 +29,7 @@
 #include "stringbuffer.h"
 
 
-struct StringBuffer
-{
+struct StringBuffer {
     /**
      * The string buffer. The first {@link #pos} bytes contain the collected
      * string. It's size is at least {@link #size} bytes.

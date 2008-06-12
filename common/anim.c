@@ -95,10 +95,9 @@ void init_anim(void) {
                 animations_allocated+=10;
             }
             animations[num_animations].name = add_string(buf+5);
-            animations[num_animations].num = num_animations;	/* for bsearch */
+            animations[num_animations].num = num_animations; /* for bsearch */
             animations[num_animations].facings = 1;
-        }
-        else if (!strncmp(buf,"mina",4)) {
+        } else if (!strncmp(buf,"mina",4)) {
             animations[num_animations].faces = malloc(sizeof(Fontindex)*num_frames);
             for (i=0; i<num_frames; i++)
                 animations[num_animations].faces[i]=faces[i];
@@ -108,16 +107,14 @@ void init_anim(void) {
                     animations[num_animations].name, num_frames, animations[num_animations].facings);
             }
             num_frames=0;
-        }
-        else if (!strncmp(buf,"facings",7)) {
+        } else if (!strncmp(buf,"facings",7)) {
             if (!(animations[num_animations].facings = atoi(buf+7))) {
                 LOG(llevDebug,"Animation %s has 0 facings, line=%s\n",
                     animations[num_animations].name, buf);
                 animations[num_animations].facings=1;
             }
 
-        }
-        else {
+        } else {
             if (!(faces[num_frames++] = find_face(buf,0)))
                 LOG(llevDebug,"Could not find face %s for animation %s\n",
                     buf, animations[num_animations].name);
@@ -164,7 +161,7 @@ int try_find_animation(const char* name) {
     search.name = name;
 
     match = (Animations*)bsearch(&search, animations, (num_animations+1),
-             sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
+                                 sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
 
 
     if (match)
@@ -188,7 +185,7 @@ void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
     int oldface = op->face->number;
-    if(!op->animation_id || !NUM_ANIMATIONS(op)) {
+    if (!op->animation_id || !NUM_ANIMATIONS(op)) {
         StringBuffer *sb;
         char *diff;
 
@@ -221,22 +218,18 @@ void animate_object(object *op, int dir) {
     if (NUM_FACINGS(op)==2) {
         if (dir<5) base_state=0;
         else base_state=NUM_ANIMATIONS(op)/2;
-    }
-    else if (NUM_FACINGS(op)==4) {
+    } else if (NUM_FACINGS(op)==4) {
         if (dir==0) base_state=0;
         else base_state = ((dir-1)/2) * (NUM_ANIMATIONS(op)/4);
-    }
-    else if (NUM_FACINGS(op)==8) {
+    } else if (NUM_FACINGS(op)==8) {
         if (dir==0) base_state=0;
         else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8);
     }
 
     /* If beyond drawable states, reset */
-    if (op->state>=max_state)
-    {
+    if (op->state>=max_state) {
         op->state=0;
-        if (op->temp_animation_id)
-        {
+        if (op->temp_animation_id) {
             op->temp_animation_id = 0;
             /* op->last_anim = 0; */
             /* update_object(op, UP_OBJ_FACE); */
@@ -246,7 +239,7 @@ void animate_object(object *op, int dir) {
     }
     SET_ANIMATION(op, op->state + base_state);
 
-    if(op->face==blank_face)
+    if (op->face==blank_face)
         op->invisible=1;
 
     /* This block covers monsters (eg, pixies) which are supposed to
@@ -254,8 +247,8 @@ void animate_object(object *op, int dir) {
      * as such, disable it for players, as then players would become
      * visible.
      */
-    else if(op->type != PLAYER && QUERY_FLAG((&op->arch->clone),FLAG_ALIVE)) {
-        if(op->face->number==0) {
+    else if (op->type != PLAYER && QUERY_FLAG((&op->arch->clone),FLAG_ALIVE)) {
+        if (op->face->number==0) {
             op->invisible=1;
             CLEAR_FLAG(op, FLAG_ALIVE);
         } else {
@@ -264,7 +257,7 @@ void animate_object(object *op, int dir) {
         }
     }
 
-    if(op->more)
+    if (op->more)
         animate_object(op->more, dir);
 
     /* update_object will also recursively update all the pieces.
@@ -302,13 +295,11 @@ void apply_anim_suffix(object* who, sstring suffix) {
     orig = head;
     snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
     anim = try_find_animation(buf);
-    if (anim)
-    {
-        for(;head!=NULL;head=head->more)
-        {
+    if (anim) {
+        for (;head!=NULL;head=head->more) {
             head->temp_animation_id = anim;
             head->temp_anim_speed =
-                    animations[anim].num_animations/animations[anim].facings;
+                animations[anim].num_animations/animations[anim].facings;
             head->temp_last_anim = 0;
             head->last_anim = 0;
             head->state = 0;

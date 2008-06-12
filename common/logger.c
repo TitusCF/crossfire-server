@@ -58,8 +58,7 @@ static const char* const loglevel_names[] = {"[Error]   ",
  * @param format
  * message to log. Works like printf() and such
  */
-void LOG (LogLevel logLevel, const char *format, ...)
-{
+void LOG(LogLevel logLevel, const char *format, ...) {
     char buf[20480];  /* This needs to be really really big - larger
                        * than any other buffer, since that buffer may
                        * need to be put in this one.
@@ -93,10 +92,10 @@ void LOG (LogLevel logLevel, const char *format, ...)
         }
         fputs(loglevel_names[logLevel], logfile);    /* wrote to file or stdout */
         fputs(buf, logfile);    /* wrote to file or stdout */
-#ifdef DEBUG				/* if we have a debug version, we want see ALL output */
+#ifdef DEBUG    /* if we have a debug version, we want see ALL output */
         fflush(logfile);    /* so flush this! */
 #endif
-        if(logfile != stderr) {   /* if was it a logfile wrote it to screen too */
+        if (logfile != stderr) {  /* if was it a logfile wrote it to screen too */
             fputs(loglevel_names[logLevel], stderr);
             fputs(buf, stderr);
             if (time_buf[0] != 0) {
@@ -105,35 +104,35 @@ void LOG (LogLevel logLevel, const char *format, ...)
             }
         }
 #else /* not WIN32 */
-    if (reopen_logfile) {
-        reopen_logfile = 0;
-        if (fclose(logfile) != 0) {
-            /* stderr has been closed if -detach was used, but it's better
-             * to try to report about this anyway. */
-            perror("tried to close log file after SIGHUP in logger.c:LOG()");
+        if (reopen_logfile) {
+            reopen_logfile = 0;
+            if (fclose(logfile) != 0) {
+                /* stderr has been closed if -detach was used, but it's better
+                 * to try to report about this anyway. */
+                perror("tried to close log file after SIGHUP in logger.c:LOG()");
+            }
+            if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
+                /* There's likely to be something very wrong with the OS anyway
+                 * if reopening fails. */
+                perror("tried to open log file after SIGHUP in logger.c:LOG()");
+                emergency_save(0);
+                clean_tmp_files();
+                exit(1);
+            }
+            setvbuf(logfile, NULL, _IOLBF, 0);
+            LOG(llevInfo,"logfile reopened\n");
         }
-        if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
-            /* There's likely to be something very wrong with the OS anyway
-             * if reopening fails. */
-            perror("tried to open log file after SIGHUP in logger.c:LOG()");
-            emergency_save(0);
-            clean_tmp_files();
-            exit(1);
-        }
-        setvbuf(logfile, NULL, _IOLBF, 0);
-        LOG(llevInfo,"logfile reopened\n");
-    }
 
-    if (time_buf[0] != 0) {
-        fputs(time_buf, logfile);
-        fputs(" ", logfile);
-    }
-    fputs(loglevel_names[logLevel], logfile);
-    fputs(buf, logfile);
+        if (time_buf[0] != 0) {
+            fputs(time_buf, logfile);
+            fputs(" ", logfile);
+        }
+        fputs(loglevel_names[logLevel], logfile);
+        fputs(buf, logfile);
 #endif
     }
     if (!exiting && !trying_emergency_save &&
-        logLevel == llevError && ++nroferrors > MAX_ERRORS) {
+            logLevel == llevError && ++nroferrors > MAX_ERRORS) {
         exiting = 1;
         if (!trying_emergency_save)
             emergency_save(0);

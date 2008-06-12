@@ -80,9 +80,9 @@ oblinkpt *get_objectlinkpt(void) {
  */
 
 void free_objectlink(objectlink *ol) {
-  if (ol->next)
-    free_objectlink(ol->next);
-  free(ol);
+    if (ol->next)
+        free_objectlink(ol->next);
+    free(ol);
 }
 
 /**

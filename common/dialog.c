@@ -155,8 +155,7 @@ void parse_dialog_information(object* op) {
             last = message;
 
             message->match = strdup(current + 7);
-        }
-        else if ((strncmp(current, "@reply ", 7) == 0 && (len = 7)) || (strncmp(current, "@question ", 10) == 0 && (len = 10))) {
+        } else if ((strncmp(current, "@reply ", 7) == 0 && (len = 7)) || (strncmp(current, "@question ", 10) == 0 && (len = 10))) {
             if (message) {
                 reply = (struct_dialog_reply*)calloc(1, sizeof(struct_dialog_reply));
                 reply->type = (len == 7 ? rt_reply : rt_question);
@@ -165,8 +164,7 @@ void parse_dialog_information(object* op) {
                     *cp = '\0';
                     reply->reply = strdup(current + len);
                     reply->message = strdup(cp + 1);
-                }
-                else {
+                } else {
                     reply->reply = strdup(current + len);
                     reply->message = strdup(reply->reply);
                     LOG(llevDebug, "Warning: @reply/@question without message for %s!", op->name);
@@ -180,11 +178,9 @@ void parse_dialog_information(object* op) {
                 reply->type = message->replies->type;
                 reply->next = op->dialog_information->all_replies;
                 op->dialog_information->all_replies = reply;
-            }
-            else
+            } else
                 LOG(llevDebug, "Warning: @reply not in @match block for %s!", op->name);
-        }
-        else if (message) {
+        } else if (message) {
             /* Needed to set initial \0 */
             int wasnull = FALSE;
             tmplen += strlen(current) + 2;

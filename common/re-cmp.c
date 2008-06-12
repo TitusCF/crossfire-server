@@ -50,10 +50,10 @@ static void re_dump_sel(selection *);
 
 /*   G l o b a l   v a r i a b l e s
  */
-static Boolean		re_init_done = False;
-static selection	*re_token[RE_TOKEN_MAX];
-static const char	*re_substr[RE_TOKEN_MAX];
-static unsigned int	re_token_depth;
+static Boolean      re_init_done = False;
+static selection    *re_token[RE_TOKEN_MAX];
+static const char   *re_substr[RE_TOKEN_MAX];
+static unsigned int re_token_depth;
 
 /*   E x t e r n a l   f u n c t i o n
  */
@@ -124,7 +124,7 @@ const char* re_cmp(const char *str, const char *regexp) {
             case rep_null_or_more:
                 if (matched) {
                     if (re_cmp_step(str+1, regexp, 0, 1))
-                    return str;
+                        return str;
                 } else {
                     return re_cmp_step(str, next_regexp, 1, 0) ? str : NULL;
                 }
@@ -223,12 +223,12 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
 
     switch (re_token[slot]->repeat) {
         case rep_once:
-            if (matches == 1) {	/* (matches == 1) => (matched == True) */
+            if (matches == 1) { /* (matches == 1) => (matched == True) */
                 return re_cmp_step(str+1, next_regexp, slot+1, 0);
             }
             return False;
         case rep_once_or_more:
-            if (matched) {	/* (matched == True) => (matches >= 1) */
+            if (matched) { /* (matched == True) => (matches >= 1) */
                 /* First check if the current token repeats more */
                 if (re_cmp_step(str+1, regexp, slot, matches))
                     return True;
@@ -242,7 +242,7 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
             } else if (matches == 1) {
                 return re_cmp_step(str+1, next_regexp, slot+1, 0);
             }
-            return False;	/* Not reached */
+            return False; /* Not reached */
         case rep_null_or_more:
             if (matched) {
                 /* Look for further repeats, advance str */
@@ -317,7 +317,7 @@ static Boolean re_match_token(uchar c, selection *sel) {
 static const char* re_get_token(selection *sel, const char *regexp) {
 
 #ifdef SAFE_CHECKS
-#   define exit_if_null	if (*regexp == 0) return NULL
+#   define exit_if_null if (*regexp == 0) return NULL
 #else
 #   define exit_if_null
 #endif
@@ -453,10 +453,10 @@ static const char* re_get_token(selection *sel, const char *regexp) {
                                         return NULL;
 #endif
                                     for (i = previous+1; i < looking_at; i++) {
-                                    /* previous has already been set and
-                                     * looking_at is set below.
-                                     */
-                                    sel->u.array[i] = !neg;
+                                        /* previous has already been set and
+                                         * looking_at is set below.
+                                         */
+                                        sel->u.array[i] = !neg;
                                     }
                                     exit_if_null;
                                 } else {
@@ -515,7 +515,7 @@ static const char* re_get_token(selection *sel, const char *regexp) {
  * token to dump.
  */
 static void re_dump_sel(selection *sel) {
-    switch(sel->type) {
+    switch (sel->type) {
         case sel_any:
             printf(".");
             break;
@@ -528,18 +528,17 @@ static void re_dump_sel(selection *sel) {
         case sel_range:
             printf("[%c-%c]", sel->u.range.low, sel->u.range.high);
             break;
-        case sel_array:
-            {
-                int i;
-                printf("[");
-                for (i = 0; i < UCHAR_MAX; i++) {
-                    if (sel->u.array[i]) {
-                        printf("%c", i);
-                    }
+        case sel_array: {
+            int i;
+            printf("[");
+            for (i = 0; i < UCHAR_MAX; i++) {
+                if (sel->u.array[i]) {
+                    printf("%c", i);
                 }
-                printf("]");
             }
-            break;
+            printf("]");
+        }
+        break;
         case sel_not_single:
             printf("[^%c]", sel->u.single);
             break;
@@ -550,7 +549,7 @@ static void re_dump_sel(selection *sel) {
             printf("<UNKNOWN TOKEN!>");
             break;
     }
-    switch(sel->repeat) {
+    switch (sel->repeat) {
         case rep_once:
             break;
         case rep_null_or_once:

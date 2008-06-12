@@ -38,53 +38,53 @@
 
 sint64 *levels; /**< Number of levels for which we have experience. */
 
-#define TRUE	1
-#define FALSE	0
+#define TRUE 1
+#define FALSE 0
 
 const float exp_att_mult[NROFATTACKS+2] = {
-    0.0,				/* AT_PHYSICAL	*/
-    0.0,				/* AT_MAGIC	*/
-    0.0,				/* AT_FIRE	*/
-    0.0,				/* AT_ELECTRICITY */
-    0.0,				/* AT_COLD	*/
-    0.0,				/* AT_WATER	*//*AT_CONFUSION!*/
-    0.4,				/* AT_ACID	*/
-    1.5,				/* AT_DRAIN	*/
-    0.0,				/* AT_WEAPONMAGIC */
-    0.1,				/* AT_GHOSTHIT	*/
-    0.3,				/* AT_POISON	*/
-    0.2,				/* AT_DISEASE	*/
-    0.3,				/* AT_PARALYZE	*/
-    0.0,				/* AT_TURN_UNDEAD */
-    0.0,				/* AT_FEAR	*/
-    0.0,				/* AT_CANCELLATION */
-    0.0,				/* AT_DEPLETE */
-    0.0,				/* AT_DEATH */
-    0.0,				/* AT_CHAOS */
-    0.0				/* AT_COUNTERSPELL */
+    0.0,    /* AT_PHYSICAL */
+    0.0,    /* AT_MAGIC */
+    0.0,    /* AT_FIRE */
+    0.0,    /* AT_ELECTRICITY */
+    0.0,    /* AT_COLD */
+    0.0,    /* AT_WATER *//*AT_CONFUSION!*/
+    0.4,    /* AT_ACID */
+    1.5,    /* AT_DRAIN */
+    0.0,    /* AT_WEAPONMAGIC */
+    0.1,    /* AT_GHOSTHIT */
+    0.3,    /* AT_POISON */
+    0.2,    /* AT_DISEASE */
+    0.3,    /* AT_PARALYZE */
+    0.0,    /* AT_TURN_UNDEAD */
+    0.0,    /* AT_FEAR */
+    0.0,    /* AT_CANCELLATION */
+    0.0,    /* AT_DEPLETE */
+    0.0,    /* AT_DEATH */
+    0.0,    /* AT_CHAOS */
+    0.0     /* AT_COUNTERSPELL */
 };
 
 const float exp_prot_mult[NROFATTACKS+2] = {
-    0.4,				/* AT_PHYSICAL	*/
-    0.5,				/* AT_MAGIC	*/
-    0.1,				/* AT_FIRE	*/
-    0.1,				/* AT_ELECTRICITY */
-    0.1,				/* AT_COLD	*/
-    0.1,				/* AT_WATER	*/
-    0.1,				/* AT_ACID	*/
-    0.1,				/* AT_DRAIN	*/
-    0.1,				/* AT_WEAPONMAGIC */
-    0.1,				/* AT_GHOSTHIT	*/
-    0.1,				/* AT_POISON	*/
-    0.1,				/* AT_DISEASE	*/
-    0.1,				/* AT_PARALYZE	*/
-    0.1,				/* AT_TURN_UNDEAD */
-    0.1,				/* AT_FEAR	*/
-    0.0,				/* AT_CANCELLATION */
-    0.0,				/* AT_DEPLETE */
-    0.0,				/* AT_DEATH */
-    0.0,				/* AT_CHAOS */
-    0.0				/* AT_COUNTERSPELL */
+    0.4,    /* AT_PHYSICAL */
+    0.5,    /* AT_MAGIC */
+    0.1,    /* AT_FIRE */
+    0.1,    /* AT_ELECTRICITY */
+    0.1,    /* AT_COLD */
+    0.1,    /* AT_WATER */
+    0.1,    /* AT_ACID */
+    0.1,    /* AT_DRAIN */
+    0.1,    /* AT_WEAPONMAGIC */
+    0.1,    /* AT_GHOSTHIT */
+    0.1,    /* AT_POISON */
+    0.1,    /* AT_DISEASE */
+    0.1,    /* AT_PARALYZE */
+    0.1,    /* AT_TURN_UNDEAD */
+    0.1,    /* AT_FEAR */
+    0.0,    /* AT_CANCELLATION */
+    0.0,    /* AT_DEPLETE */
+    0.0,    /* AT_DEATH */
+    0.0,    /* AT_CHAOS */
+    0.0     /* AT_COUNTERSPELL */
 };
 
 /**
@@ -108,39 +108,39 @@ sint64 new_exp(const object *ob) {
     long mask = 1;
 
     att_mult = prot_mult =spec_mult = 1.0;
-    for(i=0;i<NROFATTACKS;i++) {
+    for (i=0;i<NROFATTACKS;i++) {
         mask = 1<<i;
         att_mult += (exp_att_mult[i] * ((ob->attacktype&mask) != FALSE));
         /* We multiply & then divide to prevent roundoffs on the floats.
          * the doubling is to take into account the table and resistances
          * are lower than they once were.
          */
-	/* prot_mult should increase by fairly minor amounts -
-	 * for example, if a creature has resist physical 30,
-	 * and exp mult on that is 0.4, then prot_mult should really
-	 * go up by 1.2 - still a considerable increase.
-	 */
-	prot_mult += (exp_prot_mult[i] * ob->resist[i]) / 10.0;
+        /* prot_mult should increase by fairly minor amounts -
+         * for example, if a creature has resist physical 30,
+         * and exp mult on that is 0.4, then prot_mult should really
+         * go up by 1.2 - still a considerable increase.
+         */
+        prot_mult += (exp_prot_mult[i] * ob->resist[i]) / 10.0;
     }
 
     if (prot_mult < 0) prot_mult = 1;
 
     spec_mult += (0.3*(QUERY_FLAG(ob,FLAG_SEE_INVISIBLE)!= FALSE)) +
-        (0.5*(QUERY_FLAG(ob,FLAG_SPLITTING)!= FALSE))+
-        (0.3*(QUERY_FLAG(ob,FLAG_HITBACK)!= FALSE)) +
-        (0.1*(QUERY_FLAG(ob,FLAG_REFL_MISSILE)!= FALSE)) +
-        (0.3*(QUERY_FLAG(ob,FLAG_REFL_SPELL)!= FALSE)) +
-        (1.0*(QUERY_FLAG(ob,FLAG_NO_MAGIC)!= FALSE)) +
-        (0.1*(QUERY_FLAG(ob,FLAG_USE_SCROLL)!= FALSE)) +
-        (0.2*(QUERY_FLAG(ob,FLAG_USE_RANGE)!= FALSE)) +
-        (0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));
+                 (0.5*(QUERY_FLAG(ob,FLAG_SPLITTING)!= FALSE))+
+                 (0.3*(QUERY_FLAG(ob,FLAG_HITBACK)!= FALSE)) +
+                 (0.1*(QUERY_FLAG(ob,FLAG_REFL_MISSILE)!= FALSE)) +
+                 (0.3*(QUERY_FLAG(ob,FLAG_REFL_SPELL)!= FALSE)) +
+                 (1.0*(QUERY_FLAG(ob,FLAG_NO_MAGIC)!= FALSE)) +
+                 (0.1*(QUERY_FLAG(ob,FLAG_USE_SCROLL)!= FALSE)) +
+                 (0.2*(QUERY_FLAG(ob,FLAG_USE_RANGE)!= FALSE)) +
+                 (0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));
 
     exp = (ob->stats.maxhp<5) ? 5 : ob->stats.maxhp;
     exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob))
-        ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
+       ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
     exp *= (80.0/(70.0+ob->stats.wc)) * (80.0/(70.0+ob->stats.ac)) * (50.0+ob->stats.dam)/50.0;
     exp *= att_mult * prot_mult * spec_mult;
-/*    exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));*/
+    /*    exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));*/
     exp *= 2.0/(2.0-FABS(ob->speed));
     exp *= (20.0+ob->stats.Con)/20.0;
     if (QUERY_FLAG(ob, FLAG_STAND_STILL))
@@ -157,8 +157,8 @@ sint64 new_exp(const object *ob) {
 int has_ability(const object *ob) {
     object *tmp;
 
-    for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
-        if(tmp->type==SPELL||tmp->type==SPELLBOOK)
+    for (tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
+        if (tmp->type==SPELL||tmp->type==SPELLBOOK)
             return TRUE;
     return FALSE;
 }
@@ -173,8 +173,7 @@ int has_ability(const object *ob) {
  * @note
  * will call exit() if file is invalid or not found.
  */
-void init_experience(void)
-{
+void init_experience(void) {
     char buf[MAX_BUF], *cp;
     int lastlevel=0, comp;
     sint64 lastexp=-1, tmpexp;
@@ -216,7 +215,7 @@ void init_experience(void)
             }
 
             tmpexp = atoll(cp);
-	        /* Do some sanity checking - if value is bogus, just exit because
+            /* Do some sanity checking - if value is bogus, just exit because
              * the table otherwise is probably in an inconsistent state
              */
             if (tmpexp <= lastexp) {
@@ -237,7 +236,7 @@ void init_experience(void)
             }
             levels[lastlevel] = tmpexp;
             lastexp = tmpexp;
-	        /* First, skip over the number we just processed. Then skip over
+            /* First, skip over the number we just processed. Then skip over
              * any spaces, commas, etc.
              */
             while (isdigit(*cp) && *cp!=0) cp++;
@@ -261,8 +260,7 @@ void init_experience(void)
  * Dump the experience table, then calls exit() - useful in terms of debugging to make sure the
  * format of the exp_table is correct.
  */
-void dump_experience(void)
-{
+void dump_experience(void) {
     int i;
 
     for (i=1; i<= settings.max_level; i++) {

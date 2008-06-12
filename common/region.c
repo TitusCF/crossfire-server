@@ -191,7 +191,7 @@ int region_is_child_of_region(const region *child, const region *r) {
         return 0;
     if (!strcmp(child->name, r->name))
         return 1;
-    else if(child->parent!=NULL)
+    else if (child->parent!=NULL)
         return region_is_child_of_region(child->parent,r);
     else return 0;
 }
@@ -214,7 +214,7 @@ const char *get_region_longname(const region *r) {
 
     if (r->longname!=NULL)
         return r->longname;
-    else if(r->parent!=NULL)
+    else if (r->parent!=NULL)
         return get_region_longname(r->parent);
     else {
         LOG(llevDebug,"NOTICE region %s has no parent and no longname.\n", r->name);
@@ -235,7 +235,7 @@ const char *get_region_longname(const region *r) {
 const char *get_region_msg(const region *r) {
     if (r->msg!=NULL)
         return r->msg;
-    else if(r->parent!=NULL)
+    else if (r->parent!=NULL)
         return get_region_msg(r->parent);
     else {
         LOG(llevDebug,"NOTICE region %s has no parent and no msg.\n", r->name);
@@ -271,8 +271,7 @@ object *get_jail_exit(object *op) {
             EXIT_X(exit) = reg->jailx;
             EXIT_Y(exit) = reg->jaily;
             return exit;
-        }
-        else reg=reg->parent;
+        } else reg=reg->parent;
     }
     LOG(llevDebug,"No suitable jailmap for region %s was found.\n", reg->name);
     return NULL;
@@ -286,12 +285,12 @@ void init_regions(void) {
     char filename[MAX_BUF];
     int comp;
 
-    if(first_region!=NULL) /* Only do this once */
+    if (first_region!=NULL) /* Only do this once */
         return;
 
     snprintf(filename, sizeof(filename), "%s/%s/%s",settings.datadir,settings.mapdir,settings.regions);
     LOG(llevDebug,"Reading regions from %s...\n",filename);
-    if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
+    if ((fp=open_and_uncompress(filename,0,&comp))==NULL) {
         LOG(llevError," Can't open regions file %s in init_regions.\n", filename);
         return;
     }
@@ -320,7 +319,7 @@ region *get_region_struct(void) {
     region *new;
 
     new=(region *)CALLOC(1,sizeof(region));
-    if(new==NULL)
+    if (new==NULL)
         fatal(OUT_OF_MEMORY);
 
     memset(new, '\0', sizeof(region));
@@ -376,8 +375,7 @@ void parse_regions(FILE *fp) {
             *end=0;
             new=get_region_struct();
             new->name = strdup_local(value);
-        }
-        else if (!strcmp(key,"parent")) {
+        } else if (!strcmp(key,"parent")) {
             /*
              * Note that this is in the initialisation code, so we don't actually
              * assign the pointer to the parent yet, because it might not have been
@@ -385,12 +383,10 @@ void parse_regions(FILE *fp) {
              */
             *end=0;
             new->parent_name = strdup_local(value);
-        }
-        else if (!strcmp(key,"longname")) {
+        } else if (!strcmp(key,"longname")) {
             *end=0;
             new->longname = strdup_local(value);
-        }
-        else if (!strcmp(key,"jail")) {
+        } else if (!strcmp(key,"jail")) {
             /* jail entries are of the form: /path/to/map x y */
             char path[MAX_BUF];
             int x,y;
@@ -401,8 +397,7 @@ void parse_regions(FILE *fp) {
             new->jailmap = strdup_local(path);
             new->jailx = x;
             new->jaily = y;
-        }
-        else if (!strcmp(key,"msg")) {
+        } else if (!strcmp(key,"msg")) {
             while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
                 if (!strcmp(buf,"endmsg\n")) break;
                 else {
@@ -416,28 +411,24 @@ void parse_regions(FILE *fp) {
              * so better do it here too...
              */
             if (msgpos != 0)
-            new->msg = strdup_local(msgbuf);
+                new->msg = strdup_local(msgbuf);
 
             /* we have to reset msgpos, or the next region will store both msg blocks.*/
             msgpos=0;
-        }
-        else if (!strcmp(key,"fallback")) {
+        } else if (!strcmp(key,"fallback")) {
             *end=0;
             new->fallback = atoi(value);
-        }
-        else if (!strcmp(key,"end")) {
-        /* Place this new region last on the list, if the list is empty put it first */
+        } else if (!strcmp(key,"end")) {
+            /* Place this new region last on the list, if the list is empty put it first */
             for (reg=first_region;reg!=NULL&&reg->next!=NULL;reg=reg->next);
 
             if (reg==NULL) first_region=new;
             else reg->next=new;
             new = NULL;
-        }
-        else if (!strcmp(key,"nomore")) {
+        } else if (!strcmp(key,"nomore")) {
             /* we have reached the end of the region specs....*/
             break;
-        }
-        else {
+        } else {
             /* we should never get here, if we have, then something is wrong */
             LOG(llevError, "Got unknown value in region file: %s %s\n", key, value);
         }

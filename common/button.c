@@ -47,7 +47,7 @@
  *          0=all object with FLAG_ACTIVATE_ON_PUSH
  *          other=all object with FLAG_ACTIVATE_ON_RELEASE
  */
-void trigger_connected(objectlink *ol, object* cause, const int state){
+void trigger_connected(objectlink *ol, object* cause, const int state) {
     object* tmp;
     for (; ol; ol = ol->next) {
         if (!ol->ob || ol->ob->count != ol->id) {
@@ -75,9 +75,9 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
          * op is activator (aka button)
          */
         if (execute_event(tmp, EVENT_TRIGGER, cause, NULL, NULL, SCRIPT_FIX_ALL) != 0)
-	    continue;
+            continue;
 
-        switch(tmp->type) {
+        switch (tmp->type) {
 
             case GATE:
             case HOLE:
@@ -94,8 +94,8 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
             case SIGN:
                 if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
                     ext_info_map(NDI_UNIQUE | NDI_NAVY,tmp->map,
-                        MSG_TYPE_SIGN,MSG_SUBTYPE_NONE,
-                        tmp->msg, tmp->msg);
+                                 MSG_TYPE_SIGN,MSG_SUBTYPE_NONE,
+                                 tmp->msg, tmp->msg);
                     if (tmp->stats.food) tmp->last_eat++;
                 }
                 break;
@@ -119,7 +119,7 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
                 tmp->value = tmp->arch->clone.value;
                 tmp->stats.sp = 1;
                 tmp->stats.hp = tmp->stats.maxhp;
-                 /* Handle multipart gates.  We copy the value for the other parts
+                /* Handle multipart gates.  We copy the value for the other parts
                  * from the head - this ensures that the data will consistent
                  */
                 for (tmp=tmp->more; tmp!=NULL; tmp=tmp->more) {
@@ -133,7 +133,7 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
 
             case DIRECTOR:
             case FIREWALL:
-                if(!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) move_firewall(tmp);
+                if (!QUERY_FLAG(tmp,FLAG_ANIMATE)&&tmp->type==FIREWALL) move_firewall(tmp);
                 else {
                     if ((tmp->stats.sp += tmp->stats.maxsp) > 8) /* next direction */
                         tmp->stats.sp = ((tmp->stats.sp-1)%8)+1;
@@ -156,7 +156,7 @@ void trigger_connected(objectlink *ol, object* cause, const int state){
  */
 void push_button(object *op) {
     /* LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count); */
-    trigger_connected (get_button_links(op), op, op->value);
+    trigger_connected(get_button_links(op), op, op->value);
 }
 
 /**
@@ -180,43 +180,43 @@ void update_button(object *op) {
         }
         tmp = ol->ob;
         if (tmp->type==BUTTON) {
-            for(ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
-            /* Bug? The pedestal code below looks for the head of
-             * the object, this bit doesn't.  I'd think we should check
-             * for head here also.  Maybe it also makese sense to
-             * make the for ab=tmp->above loop common, and alter
-             * behaviour based on object within that loop?
-             */
+            for (ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
+                /* Bug? The pedestal code below looks for the head of
+                 * the object, this bit doesn't.  I'd think we should check
+                 * for head here also.  Maybe it also makese sense to
+                 * make the for ab=tmp->above loop common, and alter
+                 * behaviour based on object within that loop?
+                 */
 
-            /* Basically, if the move_type matches that on what the
-             * button wants, we count it.  The second check is so that
-             * objects don't move (swords, etc) will count.  Note that
-             * this means that more work is needed to make buttons
-             * that are only triggered by flying objects.
-             */
-                if ((ab->move_type & tmp->move_on) || ab->move_type==0 )
+                /* Basically, if the move_type matches that on what the
+                 * button wants, we count it.  The second check is so that
+                 * objects don't move (swords, etc) will count.  Note that
+                 * this means that more work is needed to make buttons
+                 * that are only triggered by flying objects.
+                 */
+                if ((ab->move_type & tmp->move_on) || ab->move_type==0)
                     tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
 
             tmp->value=(tot>=tmp->weight)?1:0;
-            if(tmp->value)
+            if (tmp->value)
                 any_down=1;
         } else if (tmp->type == PEDESTAL) {
             tmp->value = 0;
-            for(ab=tmp->above; ab!=NULL; ab=ab->above) {
+            for (ab=tmp->above; ab!=NULL; ab=ab->above) {
                 head = ab->head ? ab->head : ab;
                 /* Same note regarding move_type for buttons above apply here. */
-                if  ( ((head->move_type & tmp->move_on) || ab->move_type==0) &&
+                if (((head->move_type & tmp->move_on) || ab->move_type==0) &&
                         (head->race==tmp->slaying ||
-                        ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) ||
-                        (!strcmp (tmp->slaying, "player") &&
-                        head->type == PLAYER)))
+                         ((head->type==SPECIAL_KEY) && (head->slaying==tmp->slaying)) ||
+                         (!strcmp(tmp->slaying, "player") &&
+                          head->type == PLAYER)))
                     tmp->value = 1;
             }
-            if(tmp->value)
+            if (tmp->value)
                 any_down=1;
         }
     }
-    if(any_down) /* If any other buttons were down, force this to remain down */
+    if (any_down) /* If any other buttons were down, force this to remain down */
         op->value=1;
 
     /* If this button hasn't changed, don't do anything */
@@ -235,20 +235,19 @@ void update_buttons(mapstruct *m) {
     oblinkpt *obp;
     for (obp = m->buttons; obp; obp = obp->next)
         for (ol = obp->link; ol; ol = ol->next) {
-        if (!ol->ob || ol->ob->count != ol->id) {
-            LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %ld).\n",
-                ol->ob?ol->ob->name:"null",
-                ol->ob?ol->ob->x:-1,
-                ol->ob?ol->ob->y:-1,
-                ol->id,
-                obp->value);
-            continue;
-        }
-        if (ol->ob->type==BUTTON || ol->ob->type==PEDESTAL)
-        {
-            update_button(ol->ob);
-            break;
-        }
+            if (!ol->ob || ol->ob->count != ol->id) {
+                LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %ld).\n",
+                    ol->ob?ol->ob->name:"null",
+                    ol->ob?ol->ob->x:-1,
+                    ol->ob?ol->ob->y:-1,
+                    ol->id,
+                    obp->value);
+                continue;
+            }
+            if (ol->ob->type==BUTTON || ol->ob->type==PEDESTAL) {
+                update_button(ol->ob);
+                break;
+            }
         }
 }
 
@@ -257,8 +256,7 @@ void update_buttons(mapstruct *m) {
  * @param op
  * object to toggle.
  */
-void use_trigger(object *op)
-{
+void use_trigger(object *op) {
     /* Toggle value */
     op->value = !op->value;
     push_button(op);
@@ -274,12 +272,11 @@ void use_trigger(object *op)
  * @todo
  * check if object is really animated?
  */
-void animate_turning(object *op)
-{
+void animate_turning(object *op) {
     if (++op->state >= NUM_ANIMATIONS(op)/8)
-      op->state=0;
+        op->state=0;
     SET_ANIMATION(op, (op->stats.sp-1) * NUM_ANIMATIONS(op) / 8 +
-		  op->state);
+                  op->state);
     update_object(op,UP_OBJ_FACE);
 }
 
@@ -304,11 +301,11 @@ static int matches_sacrifice(const object* altar, const object* sacrifice) {
 
     query_base_name(sacrifice,0, name, MAX_BUF);
     if (ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
-      ARCH_SACRIFICE(altar) == sacrifice->name ||
-      ARCH_SACRIFICE(altar) == sacrifice->slaying ||
-      (!strcmp(ARCH_SACRIFICE(altar),name)))
-            return 1;
-    if (strcmp (ARCH_SACRIFICE(altar), "money") == 0 && sacrifice->type == MONEY)
+            ARCH_SACRIFICE(altar) == sacrifice->name ||
+            ARCH_SACRIFICE(altar) == sacrifice->slaying ||
+            (!strcmp(ARCH_SACRIFICE(altar),name)))
+        return 1;
+    if (strcmp(ARCH_SACRIFICE(altar), "money") == 0 && sacrifice->type == MONEY)
         return 1;
 
     return 0;
@@ -343,8 +340,7 @@ static int matches_sacrifice(const object* altar, const object* sacrifice) {
  * @return
  * 1 if the sacrifice meets the needs of the altar, 0 else
  */
-int check_altar_sacrifice (const object *altar, const object *sacrifice, int remove_others, int* toremove)
-{
+int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int* toremove) {
     int money;
     object* tmp;
     int wanted, rest;
@@ -355,7 +351,7 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice, int rem
          * activate altar, else they would have disappeared. */
         return 0;
 
-    money = (strcmp (ARCH_SACRIFICE(altar), "money") == 0) ? 1 : 0;
+    money = (strcmp(ARCH_SACRIFICE(altar), "money") == 0) ? 1 : 0;
 
     /* Easy checks: newly dropped object is enough for sacrifice. */
     if (money && sacrifice->nrof * sacrifice->value >= NROF_SACRIFICE(altar)) {
@@ -376,8 +372,7 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice, int rem
 
     if (money) {
         wanted = NROF_SACRIFICE(altar) - sacrifice->nrof * sacrifice->value;
-    }
-    else {
+    } else {
         wanted = NROF_SACRIFICE(altar) - (sacrifice->nrof?sacrifice->nrof:1);
     }
     rest = wanted;
@@ -396,7 +391,7 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice, int rem
 
     if (wanted > 0)
         /* Not enough value, let's bail out. */
-         return 0;
+        return 0;
 
     /* From there on, we do have enough objects for the altar. */
 
@@ -424,8 +419,7 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice, int rem
                 decrease_ob_nr(tmp, wanted);
                 return 1;
             }
-        }
-        else
+        } else
             if (rest > (tmp->nrof?tmp->nrof:1)) {
                 rest -= (tmp->nrof?tmp->nrof:1);
                 remove_ob(tmp);
@@ -457,34 +451,32 @@ int check_altar_sacrifice (const object *altar, const object *sacrifice, int rem
  * @return
  * 1 if sacrifice was accepted, else 0
  */
-int operate_altar (object *altar, object **sacrifice)
-{
+int operate_altar(object *altar, object **sacrifice) {
     int number;
-    if ( ! altar->map) {
-        LOG (llevError, "BUG: operate_altar(): altar has no map\n");
+    if (! altar->map) {
+        LOG(llevError, "BUG: operate_altar(): altar has no map\n");
         return 0;
     }
 
     if (!altar->slaying || altar->value)
         return 0;
 
-    if ( ! check_altar_sacrifice (altar, *sacrifice, 1, &number))
+    if (! check_altar_sacrifice(altar, *sacrifice, 1, &number))
         return 0;
 
     /* check_altar_sacrifice fills in number for us. */
-    *sacrifice = decrease_ob_nr (*sacrifice, number);
+    *sacrifice = decrease_ob_nr(*sacrifice, number);
 
     if (altar->msg)
         ext_info_map(NDI_BLACK, altar->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_ALTAR,
-            altar->msg, altar->msg);
+                     altar->msg, altar->msg);
     return 1;
 }
 
 /**
  * @todo document?
  */
-void trigger_move (object *op, int state) /* 1 down and 0 up */
-{
+void trigger_move(object *op, int state) { /* 1 down and 0 up */
     op->stats.wc = state;
     if (state) {
         use_trigger(op);
@@ -515,8 +507,7 @@ void trigger_move (object *op, int state) /* 1 down and 0 up */
  *
  * TRIGGER_BUTTON, TRIGGER_PEDESTAL: Returns 0.
  */
-int check_trigger (object *op, object *cause)
-{
+int check_trigger(object *op, object *cause) {
     object *tmp;
     int push = 0, tot = 0;
     int in_movement = op->stats.wc || op->speed;
@@ -535,21 +526,21 @@ int check_trigger (object *op, object *cause)
                          */
                         if ((tmp->move_type & op->move_on) || tmp->move_type==0) {
                             tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1)
-                                 + tmp->carrying;
+                                   + tmp->carrying;
                         }
-                        if (tot >= op->weight)
-                            push = 1;
-                        if (op->stats.ac == push)
-                            return 0;
-                        op->stats.ac = push;
-                        if (NUM_ANIMATIONS(op)>1) {
-                            SET_ANIMATION (op, push);
-                            update_object (op, UP_OBJ_FACE);
-                        }
-                        if (in_movement || ! push)
-                            return 0;
+                    if (tot >= op->weight)
+                        push = 1;
+                    if (op->stats.ac == push)
+                        return 0;
+                    op->stats.ac = push;
+                    if (NUM_ANIMATIONS(op)>1) {
+                        SET_ANIMATION(op, push);
+                        update_object(op, UP_OBJ_FACE);
+                    }
+                    if (in_movement || ! push)
+                        return 0;
                 }
-                trigger_move (op, push);
+                trigger_move(op, push);
             }
             return 0;
 
@@ -560,46 +551,45 @@ int check_trigger (object *op, object *cause)
 
                     /* See comment in TRIGGER_BUTTON about move_types */
                     if (((head->move_type & op->move_on) || head->move_type==0)
-                        && (head->race==op->slaying ||
-                        (!strcmp (op->slaying, "player") && head->type == PLAYER))) {
+                            && (head->race==op->slaying ||
+                                (!strcmp(op->slaying, "player") && head->type == PLAYER))) {
                         push = 1;
                         break;
-                        }
+                    }
                 }
                 if (op->stats.ac == push)
                     return 0;
                 op->stats.ac = push;
                 if (NUM_ANIMATIONS(op)>1) {
-                    SET_ANIMATION (op, push);
+                    SET_ANIMATION(op, push);
                     update_object(op,UP_OBJ_FACE);
                 }
                 if (in_movement || ! push)
                     return 0;
             }
-            trigger_move (op, push);
+            trigger_move(op, push);
             return 0;
 
         case TRIGGER_ALTAR:
             if (cause) {
                 if (in_movement)
                     return 0;
-                if (operate_altar (op, &cause)) {
+                if (operate_altar(op, &cause)) {
                     if (NUM_ANIMATIONS(op)>1) {
-                        SET_ANIMATION (op, 1);
+                        SET_ANIMATION(op, 1);
                         update_object(op,UP_OBJ_FACE);
                     }
 
                     if (op->last_sp >= 0) {
-                        trigger_move (op, 1);
+                        trigger_move(op, 1);
                         if (op->last_sp > 0)
                             op->last_sp = -op->last_sp;
-                    }
-                    else {
+                    } else {
                         /* for trigger altar with last_sp, the ON/OFF
                          * status (-> +/- value) is "simulated":
                          */
                         op->value = !op->value;
-                        trigger_move (op, 1);
+                        trigger_move(op, 1);
                         op->last_sp = -op->last_sp;
                         op->value = !op->value;
                     }
@@ -609,7 +599,7 @@ int check_trigger (object *op, object *cause)
                 }
             } else {
                 if (NUM_ANIMATIONS(op)>1) {
-                    SET_ANIMATION (op, 0);
+                    SET_ANIMATION(op, 0);
                     update_object(op,UP_OBJ_FACE);
                 }
 
@@ -619,7 +609,7 @@ int check_trigger (object *op, object *cause)
                  * pushed twice: First by sacrifice, second by reset! -AV
                  */
                 if (!op->last_sp)
-                    trigger_move (op, 0);
+                    trigger_move(op, 0);
                 else {
                     op->stats.wc = 0;
                     op->value = !op->value;
@@ -636,10 +626,10 @@ int check_trigger (object *op, object *cause)
                 push = 1;
             }
             if (NUM_ANIMATIONS(op)>1) {
-                SET_ANIMATION (op, push);
+                SET_ANIMATION(op, push);
                 update_object(op,UP_OBJ_FACE);
             }
-            trigger_move (op, push);
+            trigger_move(op, push);
             return 1;
 
         default:
@@ -708,8 +698,8 @@ void remove_button_link(object *op) {
     for (obp = op->map->buttons; obp; obp = obp->next)
         for (olp = &obp->link; (ol = *olp); olp = &ol->next)
             if (ol->ob == op) {
-/*        LOG(llevDebug, "Removed link %d in button %s and map %s.\n",
-           obp->value, op->name, op->map->path);
+/*              LOG(llevDebug, "Removed link %d in button %s and map %s.\n",
+                    obp->value, op->name, op->map->path);
 */
                 *olp = ol->next;
                 free(ol);
@@ -765,7 +755,7 @@ int get_button_value(const object *button) {
  *
  * It will descend through containers to find the object.
  *		slaying = match object slaying flag
- * 		race = match object archetype name flag
+ *		race = match object archetype name flag
  *		hp = match object type (excpt type '0'== PLAYER)
 
  * @param op
@@ -775,24 +765,22 @@ int get_button_value(const object *button) {
  * @return
  * object that matches, or NULL if none matched.
  */
-object * check_inv_recursive(object *op, const object *trig)
-{
+object * check_inv_recursive(object *op, const object *trig) {
     object *tmp,*ret=NULL;
 
     /* First check the object itself. */
-    if((trig->stats.hp && (op->type == trig->stats.hp))
-        || (trig->slaying && (op->slaying == trig->slaying))
-        || (trig->race && (op->arch->name == trig->race)))
+    if ((trig->stats.hp && (op->type == trig->stats.hp))
+            || (trig->slaying && (op->slaying == trig->slaying))
+            || (trig->race && (op->arch->name == trig->race)))
         return op;
 
-    for(tmp=op->inv; tmp; tmp=tmp->below) {
+    for (tmp=op->inv; tmp; tmp=tmp->below) {
         if (tmp->inv) {
             ret=check_inv_recursive(tmp, trig);
             if (ret) return ret;
-        }
-        else if((trig->stats.hp && (tmp->type == trig->stats.hp))
-            || (trig->slaying && (tmp->slaying == trig->slaying))
-            || (trig->race && (tmp->arch->name == trig->race)))
+        } else if ((trig->stats.hp && (tmp->type == trig->stats.hp))
+                   || (trig->slaying && (tmp->slaying == trig->slaying))
+                   || (trig->race && (tmp->arch->name == trig->race)))
             return tmp;
     }
     return NULL;
@@ -804,8 +792,8 @@ object * check_inv_recursive(object *op, const object *trig)
  * the square will activate connected items.
  *
  * Monsters can't trigger this square (for now)
- * Values are:	last_sp = 1/0 obj/no obj triggers
- * 		last_heal = 1/0  remove/dont remove obj if triggered
+ * Values are:   last_sp = 1/0 obj/no obj triggers
+ *               last_heal = 1/0  remove/dont remove obj if triggered
  * -b.t. (thomas@nomad.astro.psu.edu
  *
  * @param op
@@ -813,17 +801,16 @@ object * check_inv_recursive(object *op, const object *trig)
  * @param trig
  * trigger object that may be activated.
  */
-void check_inv (object *op, object *trig) {
+void check_inv(object *op, object *trig) {
     object *match;
 
-    if(op->type != PLAYER) return;
+    if (op->type != PLAYER) return;
     match = check_inv_recursive(op,trig);
     if (match && trig->last_sp) {
-        if(trig->last_heal)
+        if (trig->last_heal)
             decrease_ob(match);
         use_trigger(trig);
-    }
-    else if (!match && !trig->last_sp)
+    } else if (!match && !trig->last_sp)
         use_trigger(trig);
 }
 

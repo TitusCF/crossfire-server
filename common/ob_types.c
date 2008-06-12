@@ -75,8 +75,7 @@ void init_ob_types(ob_methods* base_type) {
  * @param ob_type The type of object to register this method to
  * @param method The method to link
  */
-void register_apply(int ob_type, apply_func method)
-{
+void register_apply(int ob_type, apply_func method) {
     type_methods[ob_type].apply = method;
 }
 /**
@@ -84,8 +83,7 @@ void register_apply(int ob_type, apply_func method)
  * @param ob_type The type of object to register this method to
  * @param method The method to link
  */
-void register_process(int ob_type, process_func method)
-{
+void register_process(int ob_type, process_func method) {
     type_methods[ob_type].process = method;
 }
 /**
@@ -93,8 +91,7 @@ void register_process(int ob_type, process_func method)
  * @param ob_type The type of object to register this method to
  * @param method The method to link
  */
-void register_describe(int ob_type, describe_func method)
-{
+void register_describe(int ob_type, describe_func method) {
     type_methods[ob_type].describe = method;
 }
 /**
@@ -102,8 +99,7 @@ void register_describe(int ob_type, describe_func method)
  * @param ob_type The type of object to register this method to
  * @param method The method to link
  */
-void register_move_on(int ob_type, move_on_func method)
-{
+void register_move_on(int ob_type, move_on_func method) {
     type_methods[ob_type].move_on = method;
 }
 
@@ -112,7 +108,6 @@ void register_move_on(int ob_type, move_on_func method)
  * @param ob_type The type of object to register this method to
  * @param method The method to link
  */
-void register_trigger(int ob_type, trigger_func method)
-{
+void register_trigger(int ob_type, trigger_func method) {
     type_methods[ob_type].trigger = method;
 }

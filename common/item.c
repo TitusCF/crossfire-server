@@ -62,19 +62,19 @@
  * "This item goes %s\n", with the use/nonuse values filling in the %s
  */
 body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
-    {"body_range",	"in your range slot",	"in a human's range slot"},
-    {"body_arm",	"on your arm",		"on a human's arm"},
-    {"body_torso",	"on your body",		"on a human's torso"},
-    {"body_head",	"on your head",		"on a human's head"},
-    {"body_neck",	"around your neck",	"around a humans neck"},
-    {"body_skill",	"in your skill slot",	"in a human's skill slot"},
-    {"body_finger",	"on your finger",	"on a human's finger"},
+    {"body_range",    "in your range slot",     "in a human's range slot"},
+    {"body_arm",      "on your arm",            "on a human's arm"},
+    {"body_torso",    "on your body",           "on a human's torso"},
+    {"body_head",     "on your head",           "on a human's head"},
+    {"body_neck",     "around your neck",       "around a humans neck"},
+    {"body_skill",    "in your skill slot",     "in a human's skill slot"},
+    {"body_finger",   "on your finger",         "on a human's finger"},
     {"body_shoulder", "around your shoulders",  "around a human's shoulders"},
-    {"body_foot",	"on your feet",		"on a human's feet"},
-    {"body_hand",	"on your hands",	"on a human's hands"},
-    {"body_wrist",	"around your wrists",	"around a human's wrist"},
-    {"body_waist",	"around your waist",	"around a human's waist"},
-    {"body_leg",	"around your legs",	"around a human's legs"},
+    {"body_foot",     "on your feet",           "on a human's feet"},
+    {"body_hand",     "on your hands",          "on a human's hands"},
+    {"body_wrist",    "around your wrists",     "around a human's wrist"},
+    {"body_waist",    "around your waist",      "around a human's waist"},
+    {"body_leg",      "around your legs",       "around a human's legs"},
 
     /*{"body_dragon_torso", "your body", "a dragon's body"} */
 };
@@ -95,8 +95,8 @@ static const char levelnumbers[21][20] = {
 
 /** Tens for levels */
 static const char levelnumbers_10[11][20] = {
-  "zeroth","tenth","twentieth","thirtieth","fortieth","fiftieth","sixtieth",
-  "seventieth","eightieth","ninetieth"
+    "zeroth","tenth","twentieth","thirtieth","fortieth","fiftieth","sixtieth",
+    "seventieth","eightieth","ninetieth"
 };
 
 /**
@@ -231,14 +231,13 @@ const int item_types_size=sizeof(item_types)/sizeof(*item_types);
  * custom objects can use whatever they want.
  */
 static const int enc_to_item_power[21] = {
-0, 0, 1, 2, 3, 4,    /* 5 */
-5, 7, 9, 11, 13,    /* 10 */
-15, 18, 21, 24, 27, /* 15 */
-30, 35, 40, 45, 50  /* 20 */
+    0, 0, 1, 2, 3, 4,    /* 5 */
+    5, 7, 9, 11, 13,    /* 10 */
+    15, 18, 21, 24, 27, /* 15 */
+    30, 35, 40, 45, 50  /* 20 */
 };
 
-int get_power_from_ench(int ench)
-{
+int get_power_from_ench(int ench) {
     if (ench < 0)  ench = 0;
     if (ench > 20) ench = 20;
     return enc_to_item_power[ench];
@@ -260,8 +259,7 @@ int get_power_from_ench(int ench)
  * @todo
  * fix function, and remove unused flag variable.
  */
-int calc_item_power(const object *op, int flag)
-{
+int calc_item_power(const object *op, int flag) {
     int i, tmp, enc;
 
     enc = 0;
@@ -289,19 +287,19 @@ int calc_item_power(const object *op, int flag)
     if (op->type == WEAPON) {
         for (i=1; i<NROFATTACKS; i++)
             if (op->attacktype & (1 << i)) enc++;
-        if (op->slaying) enc += 2;	    /* What it slays is probably more relevent */
+        if (op->slaying) enc += 2;     /* What it slays is probably more relevent */
     }
     /* Items the player can equip */
     if ((op->type == WEAPON) || (op->type == ARMOUR)   || (op->type == HELMET) ||
         (op->type == SHIELD)   || (op->type == RING) ||
         (op->type == BOOTS)    || (op->type == GLOVES) ||
-        (op->type == AMULET )  || (op->type == GIRDLE) ||
-        (op->type == BRACERS ) || (op->type == CLOAK)) {
-        enc += op->stats.food;	    /* sustenance */
-        enc += op->stats.hp;	    /* hp regen */
-        enc += op->stats.sp;	    /* mana regen */
-        enc += op->stats.grace;	    /* grace regen */
-        enc += op->stats.exp;	    /* speed bonus */
+        (op->type == AMULET)  || (op->type == GIRDLE) ||
+        (op->type == BRACERS) || (op->type == CLOAK)) {
+        enc += op->stats.food;     /* sustenance */
+        enc += op->stats.hp;       /* hp regen */
+        enc += op->stats.sp;       /* mana regen */
+        enc += op->stats.grace;    /* grace regen */
+        enc += op->stats.exp;      /* speed bonus */
     }
     enc += op->stats.luck;
 
@@ -312,13 +310,13 @@ int calc_item_power(const object *op, int flag)
         else if (op->path_repelled & (1 << i)) enc--;
     }
 
-    if(QUERY_FLAG(op,FLAG_LIFESAVE))	    enc += 5;
-    if(QUERY_FLAG(op,FLAG_REFL_SPELL))	    enc += 3;
-    if(QUERY_FLAG(op,FLAG_REFL_MISSILE))    enc += 2;
-    if(QUERY_FLAG(op,FLAG_STEALTH))	    enc += 1;
-    if(QUERY_FLAG(op,FLAG_XRAYS))	    enc += 2;
-    if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))	    enc += 1;
-    if(QUERY_FLAG(op,FLAG_MAKE_INVIS))	    enc += 1;
+    if (QUERY_FLAG(op,FLAG_LIFESAVE))      enc += 5;
+    if (QUERY_FLAG(op,FLAG_REFL_SPELL))    enc += 3;
+    if (QUERY_FLAG(op,FLAG_REFL_MISSILE))  enc += 2;
+    if (QUERY_FLAG(op,FLAG_STEALTH))       enc += 1;
+    if (QUERY_FLAG(op,FLAG_XRAYS))         enc += 2;
+    if (QUERY_FLAG(op,FLAG_SEE_IN_DARK))   enc += 1;
+    if (QUERY_FLAG(op,FLAG_MAKE_INVIS))    enc += 1;
 
     return get_power_from_ench(enc);
 }
@@ -373,8 +371,7 @@ const typedata *get_typedata_by_name(const char *name) {
  * @param size
  * buffer size.
  */
-void describe_resistance(const object *op, int newline, char* buf, int size)
-{
+void describe_resistance(const object *op, int newline, char* buf, int size) {
     char *p;
     int tmpvar;
 
@@ -402,9 +399,9 @@ void describe_resistance(const object *op, int newline, char* buf, int size)
 void query_weight(const object *op, char* buf, int size) {
     sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
-    if(op->weight<0)
+    if (op->weight<0)
         snprintf(buf, size, "      ");
-    else if(i%1000)
+    else if (i%1000)
         snprintf(buf, size, "%6.1f",i/1000.0);
     else
         snprintf(buf, size, "%4d  ",i/1000);
@@ -424,11 +421,11 @@ void get_levelnumber(int i, char* buf, int size) {
         snprintf(buf, size, "%d.", i);
         return;
     }
-    if(i < 21) {
+    if (i < 21) {
         snprintf(buf, size, "%s", levelnumbers[i]);
         return;
     }
-    if(!(i%10)) {
+    if (!(i%10)) {
         snprintf(buf, size, "%s", levelnumbers_10[i/10]);
         return;
     }
@@ -458,8 +455,7 @@ void get_levelnumber(int i, char* buf, int size) {
  * @todo
  Use safe string functions. Check if really ring/amulet?
  */
-static void ring_desc (const object *op, char* buf, int size)
-{
+static void ring_desc(const object *op, char* buf, int size) {
     int attr, val,len;
 
     buf[0] = 0;
@@ -472,13 +468,13 @@ static void ring_desc (const object *op, char* buf, int size)
             snprintf(buf+strlen(buf), size-strlen(buf), "(%s%+d)", short_stat_name[attr], val);
         }
     }
-    if(op->stats.exp)
+    if (op->stats.exp)
         snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+" FMT64 ")", op->stats.exp);
-    if(op->stats.wc)
+    if (op->stats.wc)
         snprintf(buf+strlen(buf), size-strlen(buf), "(wc%+d)", op->stats.wc);
-    if(op->stats.dam)
+    if (op->stats.dam)
         snprintf(buf+strlen(buf), size-strlen(buf), "(dam%+d)", op->stats.dam);
-    if(op->stats.ac)
+    if (op->stats.ac)
         snprintf(buf+strlen(buf), size-strlen(buf), "(ac%+d)", op->stats.ac);
 
     describe_resistance(op, 0, buf+strlen(buf), size-strlen(buf));
@@ -487,21 +483,21 @@ static void ring_desc (const object *op, char* buf, int size)
         snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);
     /* else if (op->stats.food < 0)
         snprintf(buf+strlen(buf), size-strlen(buf), "(hunger%+d)", op->stats.food); */
-    if(op->stats.grace)
+    if (op->stats.grace)
         snprintf(buf+strlen(buf), size-strlen(buf), "(grace%+d)", op->stats.grace);
-    if(op->stats.sp && op->type!=SKILL)
+    if (op->stats.sp && op->type!=SKILL)
         snprintf(buf+strlen(buf), size-strlen(buf), "(magic%+d)", op->stats.sp);
-    if(op->stats.hp)
+    if (op->stats.hp)
         snprintf(buf+strlen(buf), size-strlen(buf), "(regeneration%+d)", op->stats.hp);
-    if(op->stats.luck)
+    if (op->stats.luck)
         snprintf(buf+strlen(buf), size-strlen(buf), "(luck%+d)", op->stats.luck);
-    if(QUERY_FLAG(op,FLAG_LIFESAVE))
+    if (QUERY_FLAG(op,FLAG_LIFESAVE))
         snprintf(buf+strlen(buf), size-strlen(buf), "(lifesaving)");
-    if(QUERY_FLAG(op,FLAG_REFL_SPELL))
+    if (QUERY_FLAG(op,FLAG_REFL_SPELL))
         snprintf(buf+strlen(buf), size-strlen(buf), "(reflect spells)");
-    if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
+    if (QUERY_FLAG(op,FLAG_REFL_MISSILE))
         snprintf(buf+strlen(buf), size-strlen(buf), "(reflect missiles)");
-    if(QUERY_FLAG(op,FLAG_STEALTH))
+    if (QUERY_FLAG(op,FLAG_STEALTH))
         snprintf(buf+strlen(buf), size-strlen(buf), "(stealth)");
     /* Shorten some of the names, so they appear better in the windows */
     len=strlen(buf);
@@ -510,9 +506,9 @@ static void ring_desc (const object *op, char* buf, int size)
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
 
     /*    if(op->item_power)
-	snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
     */
-    if(buf[0] == 0 && op->type!=SKILL)
+    if (buf[0] == 0 && op->type!=SKILL)
         snprintf(buf, size, "of adornment");
 }
 
@@ -527,15 +523,14 @@ static void ring_desc (const object *op, char* buf, int size)
  * @param size
  * buffer length.
  */
-void query_short_name(const object *op, char* buf, int size)
-{
+void query_short_name(const object *op, char* buf, int size) {
     int len=0;
 
-    if(op->name == NULL) {
+    if (op->name == NULL) {
         snprintf(buf, size, "(null)");
         return;
     }
-    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) {
+    if (!op->nrof && !op->weight && !op->title && !is_magical(op)) {
         snprintf(buf, size, "%s", op->name); /* To speed things up (or make things slower?) */
         return;
     }
@@ -551,20 +546,20 @@ void query_short_name(const object *op, char* buf, int size)
         safe_strcat(buf, op->title, &len, size);
     }
 
-    switch(op->type) {
+    switch (op->type) {
         case SPELLBOOK:
         case SCROLL:
         case WAND:
         case ROD:
             if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                if(!op->title) {
+                if (!op->title) {
                     safe_strcat(buf," of ", &len, size);
                     if (op->inv)
                         safe_strcat(buf,op->inv->name, &len, size);
                     else
                         LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
                 }
-                if(op->type != SPELLBOOK) {
+                if (op->type != SPELLBOOK) {
                     snprintf(buf+len, size-len, " (lvl %d)", op->level);
                     len += strlen(buf+len);
                 }
@@ -586,8 +581,8 @@ void query_short_name(const object *op, char* buf, int size)
             break;
 
         default:
-            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
-                need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
+            if (op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
+                               need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
                 snprintf(buf+len, size-len, " %+d", op->magic);
                 len += strlen(buf+len);
             }
@@ -628,17 +623,17 @@ void query_name(const object *op, char* buf, int size) {
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
     if (op->type == CONTAINER && ((op->env && op->env->container == op) ||
-        (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
+                                  (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
         safe_strcat(buf," (open)", &len, size);
 
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
-        if(QUERY_FLAG(op,FLAG_DAMNED))
+        if (QUERY_FLAG(op,FLAG_DAMNED))
             safe_strcat(buf, " (damned)", &len, size);
-        else if(QUERY_FLAG(op,FLAG_CURSED))
+        else if (QUERY_FLAG(op,FLAG_CURSED))
             safe_strcat(buf, " (cursed)", &len, size);
     }
-    if(QUERY_FLAG(op,FLAG_BLESSED) && QUERY_FLAG(op,FLAG_KNOWN_BLESSED))
-            safe_strcat(buf, " (blessed)", &len, size);
+    if (QUERY_FLAG(op,FLAG_BLESSED) && QUERY_FLAG(op,FLAG_KNOWN_BLESSED))
+        safe_strcat(buf, " (blessed)", &len, size);
 
     /* Basically, if the object is known magical (detect magic spell on it),
      * and it isn't identified,  print out the fact that
@@ -653,7 +648,7 @@ void query_name(const object *op, char* buf, int size) {
         safe_strcat(buf, " (magic)", &len, size);
 
     if (QUERY_FLAG(op,FLAG_APPLIED)) {
-        switch(op->type) {
+        switch (op->type) {
             case BOW:
             case WAND:
             case ROD:
@@ -683,7 +678,7 @@ void query_name(const object *op, char* buf, int size) {
                 safe_strcat(buf," (applied)", &len, size);
         }
     }
-    if(QUERY_FLAG(op, FLAG_UNPAID))
+    if (QUERY_FLAG(op, FLAG_UNPAID))
         safe_strcat(buf," (unpaid)", &len, size);
 }
 
@@ -710,12 +705,12 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
     materialtype_t *mt;
 #endif
 
-    if((!plural && !op->name) || (plural && !op->name_pl)) {
+    if ((!plural && !op->name) || (plural && !op->name_pl)) {
         strncpy(buf, "(null)", size);
         return;
     }
 
-    if(!op->nrof && !op->weight && !op->title && !is_magical(op)) {
+    if (!op->nrof && !op->weight && !op->title && !is_magical(op)) {
         strncpy(buf, op->name, size); /* To speed things up (or make things slower?) */
         return;
     }
@@ -729,16 +724,16 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
         mt = NULL;
 
     if (mt &&
-        op->arch->clone.materialname != mt->name &&
-        !(op->material & M_SPECIAL)) {
+            op->arch->clone.materialname != mt->name &&
+            !(op->material & M_SPECIAL)) {
         snprintf(buf, size, "%s", mt->description);
         len=strlen(buf);
         safe_strcat(buf, " ", &len, size);
         safe_strcat(buf, plural ? op->name_pl : op->name, &len, size);
     } else {
 #endif
-    snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
-    len=strlen(buf);
+        snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
+        len=strlen(buf);
 #ifdef NEW_MATERIAL_CODE
     }
 #endif
@@ -748,20 +743,20 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
         safe_strcat(buf, op->title, &len, size);
     }
 
-    switch(op->type) {
+    switch (op->type) {
         case SPELLBOOK:
         case SCROLL:
         case WAND:
         case ROD:
             if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                if(!op->title) {
+                if (!op->title) {
                     safe_strcat(buf," of ", &len, size);
                     if (op->inv)
                         safe_strcat(buf,op->inv->name, &len, size);
                     else
                         LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
                 }
-                if(op->type != SPELLBOOK) {
+                if (op->type != SPELLBOOK) {
                     snprintf(buf+len, size-len, " (lvl %d)", op->level);
                     len += strlen(buf+len);
                 }
@@ -772,19 +767,19 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
         case AMULET:
         case RING:
             if (!op->title) {
-            /* If ring has a title, full description isn't so useful */
+                /* If ring has a title, full description isn't so useful */
                 char s[MAX_BUF];
                 ring_desc(op, s, MAX_BUF);
                 if (s[0]) {
-                    safe_strcat (buf, " ", &len, size);
-                    safe_strcat (buf, s, &len, size);
+                    safe_strcat(buf, " ", &len, size);
+                    safe_strcat(buf, s, &len, size);
                 }
             }
             break;
 
         default:
-            if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
-                need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
+            if (op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
+                               need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
                 snprintf(buf+strlen(buf), size-strlen(buf), " %+d", op->magic);
             }
     }
@@ -820,8 +815,8 @@ void describe_monster(const object *op, char* retbuf, int size) {
      * very good.  Any player with a speed greater than .67 will
      * fall into the 'lightning fast movement' category.
      */
-    if(FABS(op->speed)>MIN_ACTIVE_SPEED) {
-        switch((int)((FABS(op->speed))*15)) {
+    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
+        switch ((int)((FABS(op->speed))*15)) {
             case 0:
                 snprintf(retbuf, size,"(very slow movement)");
                 break;
@@ -847,43 +842,43 @@ void describe_monster(const object *op, char* retbuf, int size) {
                 break;
             default:
                 snprintf(retbuf, size, "(lightning fast movement)");
-            break;
+                break;
         }
     }
-    if(QUERY_FLAG(op,FLAG_UNDEAD))
+    if (QUERY_FLAG(op,FLAG_UNDEAD))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(undead)");
-    if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
+    if (QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(see invisible)");
-    if(QUERY_FLAG(op,FLAG_USE_WEAPON))
+    if (QUERY_FLAG(op,FLAG_USE_WEAPON))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wield weapon)");
-    if(QUERY_FLAG(op,FLAG_USE_BOW))
+    if (QUERY_FLAG(op,FLAG_USE_BOW))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(archer)");
-    if(QUERY_FLAG(op,FLAG_USE_ARMOUR))
+    if (QUERY_FLAG(op,FLAG_USE_ARMOUR))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear armour)");
-    if(QUERY_FLAG(op,FLAG_USE_RING))
+    if (QUERY_FLAG(op,FLAG_USE_RING))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear ring)");
-    if(QUERY_FLAG(op,FLAG_USE_SCROLL))
+    if (QUERY_FLAG(op,FLAG_USE_SCROLL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(read scroll)");
-    if(QUERY_FLAG(op,FLAG_USE_RANGE))
+    if (QUERY_FLAG(op,FLAG_USE_RANGE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fires wand/rod/horn)");
-    if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
+    if (QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(skill user)");
-    if(QUERY_FLAG(op,FLAG_CAST_SPELL))
+    if (QUERY_FLAG(op,FLAG_CAST_SPELL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellcaster)");
-    if(QUERY_FLAG(op,FLAG_FRIENDLY))
+    if (QUERY_FLAG(op,FLAG_FRIENDLY))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(friendly)");
-    if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
+    if (QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(unaggressive)");
-    if(QUERY_FLAG(op,FLAG_HITBACK))
+    if (QUERY_FLAG(op,FLAG_HITBACK))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(hitback)");
-    if(QUERY_FLAG(op,FLAG_STEALTH))
+    if (QUERY_FLAG(op,FLAG_STEALTH))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealthy)");
-    if(op->randomitems != NULL) {
+    if (op->randomitems != NULL) {
         treasure *t;
         int first = 1;
-        for(t=op->randomitems->items; t != NULL; t=t->next)
-            if(t->item && (t->item->clone.type == SPELL)) {
-                if(first) {
+        for (t=op->randomitems->items; t != NULL; t=t->next)
+            if (t->item && (t->item->clone.type == SPELL)) {
+                if (first) {
                     first = 0;
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell abilities:)");
                 }
@@ -891,20 +886,20 @@ void describe_monster(const object *op, char* retbuf, int size) {
             }
     }
     if (op->type == PLAYER) {
-        if(op->contr->digestion) {
-            if(op->contr->digestion!=0)
+        if (op->contr->digestion) {
+            if (op->contr->digestion!=0)
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->contr->digestion);
         }
-        if(op->contr->gen_grace) {
+        if (op->contr->gen_grace) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->contr->gen_grace);
         }
-        if(op->contr->gen_sp) {
+        if (op->contr->gen_sp) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->contr->gen_sp);
         }
-        if(op->contr->gen_hp) {
+        if (op->contr->gen_hp) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->contr->gen_hp);
         }
-        if(op->stats.luck) {
+        if (op->stats.luck) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)",op->stats.luck);
         }
     }
@@ -923,8 +918,7 @@ void describe_monster(const object *op, char* retbuf, int size) {
 
         if (tmp && tmp->attacktype!=0) {
             DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
-        }
-        else {
+        } else {
             DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
         }
     } else {
@@ -986,7 +980,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
     int identified,i;
 
     retbuf[0]='\0';
-    if(QUERY_FLAG(op,FLAG_MONSTER) || op->type==PLAYER) {
+    if (QUERY_FLAG(op,FLAG_MONSTER) || op->type==PLAYER) {
         describe_monster(op, retbuf, size);
         return;
     }
@@ -998,7 +992,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
         snprintf(retbuf, size, "(unidentified)");
         identified = 0;
     }
-    switch(op->type) {
+    switch (op->type) {
         case BOW:
         case ARROW:
         case WAND:
@@ -1024,7 +1018,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             if (op->stats.maxsp == 0) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d).", op->stats.maxsp);
             } else {
-                if (op->stats.maxsp>1000){ /*higher capacity crystals*/
+                if (op->stats.maxsp>1000) { /*higher capacity crystals*/
                     i = (op->stats.maxsp%1000)/100;
                     if (i)
                         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000,i);
@@ -1053,7 +1047,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
         case FOOD:
         case FLESH:
         case DRINK:
-            if(identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
+            if (identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
 
                 if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
@@ -1065,8 +1059,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(heals)");
                     if (op->stats.sp)
                         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint regen)");
-                }
-                else {
+                } else {
                     if (op->stats.hp)
                         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(damages)");
                     if (op->stats.sp)
@@ -1078,7 +1071,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
         case SKILL:
         case RING:
         case AMULET:
-            if(op->item_power) {
+            if (op->item_power) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
             }
             if (op->title) {
@@ -1108,12 +1101,12 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             case FLESH:
                 break;
             default:
-                if(op->stats.exp) {
+                if (op->stats.exp) {
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(speed %+" FMT64 ")", op->stats.exp);
                 }
                 break;
         }
-        switch(op->type) {
+        switch (op->type) {
             case BOW:
             case ARROW:
             case GIRDLE:
@@ -1129,13 +1122,13 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             case BRACERS:
             case FORCE:
             case CLOAK:
-                if(op->stats.wc) {
+                if (op->stats.wc) {
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wc%+d)", op->stats.wc);
                 }
-                if(op->stats.dam) {
+                if (op->stats.dam) {
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(dam%+d)", op->stats.dam);
                 }
-                if(op->stats.ac) {
+                if (op->stats.ac) {
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(ac%+d)", op->stats.ac);
                 }
                 if ((op->type==WEAPON || op->type == BOW) && op->level>0) {
@@ -1146,9 +1139,9 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
             default:
                 break;
         }
-        if(QUERY_FLAG(op,FLAG_XRAYS))
+        if (QUERY_FLAG(op,FLAG_XRAYS))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(xray-vision)");
-        if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
+        if (QUERY_FLAG(op,FLAG_SEE_IN_DARK))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(infravision)");
 
         /* levitate was what is was before, so we'll keep it */
@@ -1163,7 +1156,7 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
 
         /* walking is presumed as 'normal', so doesn't need mentioning */
 
-        if(op->item_power) {
+        if (op->item_power) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
         }
     } /* End if identified or applied */
@@ -1172,11 +1165,11 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
      * it is intentional that this is not an 'else' from a above -
      * in this way, information is added.
       */
-    if(identified) {
+    if (identified) {
         int more_info = 0;
         int len;
 
-        switch(op->type) {
+        switch (op->type) {
             case ROD:  /* These use stats.sp for spell selection and stats.food */
             case HORN: /* and stats.hp for spell-point regeneration... */
             case BOW:
@@ -1218,33 +1211,33 @@ void describe_item(const object *op, const object *owner, char* retbuf, int size
                 break;
         }
         if (more_info) {
-            if(op->stats.food) {
-                if(op->stats.food!=0)
+            if (op->stats.food) {
+                if (op->stats.food!=0)
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->stats.food);
             }
-            if(op->stats.grace) {
+            if (op->stats.grace) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(grace%+d)", op->stats.grace);
             }
-            if(op->stats.sp) {
+            if (op->stats.sp) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(magic%+d)", op->stats.sp);
             }
-            if(op->stats.hp) {
+            if (op->stats.hp) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->stats.hp);
             }
         }
 
-        if(op->stats.luck) {
+        if (op->stats.luck) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
         }
-        if(QUERY_FLAG(op,FLAG_LIFESAVE))
+        if (QUERY_FLAG(op,FLAG_LIFESAVE))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(lifesaving)");
-        if(QUERY_FLAG(op,FLAG_REFL_SPELL))
+        if (QUERY_FLAG(op,FLAG_REFL_SPELL))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect spells)");
-        if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
+        if (QUERY_FLAG(op,FLAG_REFL_MISSILE))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect missiles)");
-        if(QUERY_FLAG(op,FLAG_STEALTH))
+        if (QUERY_FLAG(op,FLAG_STEALTH))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealth)");
-        if(op->slaying!=NULL && op->type != FOOD) {
+        if (op->slaying!=NULL && op->type != FOOD) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(slay %s)", op->slaying);
         }
         len = strlen(retbuf);
@@ -1287,19 +1280,19 @@ int is_magical(const object *op) {
      * values, it means they are magical.
      */
     if ((op->type==AMULET || op->type==RING) &&
-        (op->stats.ac || op->stats.food || op->stats.exp || op->stats.dam ||
-        op->stats.wc || op->stats.sp || op->stats.hp || op->stats.luck))
+            (op->stats.ac || op->stats.food || op->stats.exp || op->stats.dam ||
+             op->stats.wc || op->stats.sp || op->stats.hp || op->stats.luck))
         return 1;
 
     /* Check for stealty, speed, flying, or just plain magic in the boots */
     /* Presume any boots that have a move_type are special. */
     if (op->type== BOOTS &&
-        ((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type ||  op->stats.exp)))
+            ((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type ||  op->stats.exp)))
         return 1;
 
     /* Take care of amulet/shield that reflects spells/missiles */
     if ((op->type==AMULET || op->type==SHIELD) &&
-        (QUERY_FLAG(op, FLAG_REFL_SPELL) || QUERY_FLAG(op, FLAG_REFL_MISSILE)))
+            (QUERY_FLAG(op, FLAG_REFL_SPELL) || QUERY_FLAG(op, FLAG_REFL_MISSILE)))
         return 1;
 
     /* Take care of helmet of xrays */
@@ -1309,7 +1302,7 @@ int is_magical(const object *op) {
      * assuming they still have any charges left.
      */
     if (op->type==POTION || op->type==ROD ||
-        (op->type==WAND && op->stats.food))
+            (op->type==WAND && op->stats.food))
         return 1;
 
     /* if something gives a protection, either positive or negative, its magical */
@@ -1323,12 +1316,12 @@ int is_magical(const object *op) {
      * not be considered magical.
      */
     if (op->resist[ATNR_PHYSICAL] && op->type != HELMET && op->type != SHIELD &&
-        op->type != BOOTS && op->type != GLOVES && op->type != ARMOUR)
+            op->type != BOOTS && op->type != GLOVES && op->type != ARMOUR)
         return 1;
 
-   /* power crystal, spellbooks, and scrolls are always magical.  */
-   if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK ||
-        op->type==SCROLL || op->type==GIRDLE)
+    /* power crystal, spellbooks, and scrolls are always magical.  */
+    if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK ||
+            op->type==SCROLL || op->type==GIRDLE)
         return 1;
 
     /* Check to see if it increases/decreases any stats */
@@ -1353,7 +1346,7 @@ int is_magical(const object *op) {
  * either remove this function, or fix comment above :)
  */
 int need_identify(const object *op) {
-    switch(op->type) {
+    switch (op->type) {
         case RING:
         case WAND:
         case ROD:
@@ -1418,7 +1411,7 @@ void identify(object *op) {
     if (op->type == POTION) {
         if (op->inv && op->randomitems) {
             if (op->title) free_string(op->title);
-                op->title = add_refcount(op->inv->name);
+            op->title = add_refcount(op->inv->name);
         } else if (op->arch) {
             free_string(op->name);
             op->name = add_refcount(op->arch->clone.name);

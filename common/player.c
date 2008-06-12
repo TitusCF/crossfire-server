@@ -45,9 +45,9 @@ void free_player(player *pl) {
 
     if (first_player!=pl) {
         player *prev=first_player;
-        while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
+        while (prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
             prev=prev->next;
-        if(prev->next!=pl) {
+        if (prev->next!=pl) {
             LOG(llevError,"Free_player: Can't find previous player.\n");
             exit(1);
         }
@@ -55,19 +55,18 @@ void free_player(player *pl) {
     } else
         first_player=pl->next;
 
-    if(pl->ob != NULL) {
+    if (pl->ob != NULL) {
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) remove_ob(pl->ob);
         free_object(pl->ob);
     }
     /* Clear item stack (used by DMs only) */
     if (pl->stack_items)
-        free( pl->stack_items );
+        free(pl->stack_items);
 
     info = pl->spell_state;
-    while ( info )
-    {
+    while (info) {
         next = info->next;
-        free( info );
+        free(info);
         info = next;
     }
 
@@ -89,11 +88,11 @@ void free_player(player *pl) {
  * TRUE if player can gain resistances in that, FALSE else.
  */
 int atnr_is_dragon_enabled(int attacknr) {
-  if (attacknr == ATNR_MAGIC || attacknr == ATNR_FIRE ||
-      attacknr == ATNR_ELECTRICITY || attacknr == ATNR_COLD ||
-      attacknr == ATNR_ACID || attacknr == ATNR_POISON)
-    return 1;
-  return 0;
+    if (attacknr == ATNR_MAGIC || attacknr == ATNR_FIRE ||
+        attacknr == ATNR_ELECTRICITY || attacknr == ATNR_COLD ||
+        attacknr == ATNR_ACID || attacknr == ATNR_POISON)
+        return 1;
+    return 0;
 }
 
 /**
@@ -105,11 +104,11 @@ int atnr_is_dragon_enabled(int attacknr) {
  * TRUE if the adressed object 'ob' is a player of the dragon race.
  */
 int is_dragon_pl(const object* op) {
-  if (op != NULL && op->type == PLAYER && op->arch != NULL
-      && op->arch->clone.race != NULL &&
-      strcmp(op->arch->clone.race, "dragon")==0)
-    return 1;
-  return 0;
+    if (op != NULL && op->type == PLAYER && op->arch != NULL
+        && op->arch->clone.race != NULL &&
+        strcmp(op->arch->clone.race, "dragon")==0)
+        return 1;
+    return 0;
 }
 
 /**
@@ -124,11 +123,9 @@ int is_dragon_pl(const object* op) {
  * @return
  * state information for that spell.
  */
-client_spell* get_client_spell_state(player* pl, object* spell)
-{
+client_spell* get_client_spell_state(player* pl, object* spell) {
     client_spell* info = pl->spell_state;
-    while (info)
-    {
+    while (info) {
         if (info->spell == spell)
             return info;
         info = info->next;
