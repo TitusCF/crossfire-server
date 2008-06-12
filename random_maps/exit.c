@@ -62,49 +62,49 @@ void find_in_layout(int mode, char target,int *fx,int *fy,char **layout,RMParms 
     *fy=-1;
 
     /* if a starting mode isn't given, pick one */
-    if(mode < 1 || mode > 4) M=RANDOM() % 4 + 1 ;
+    if (mode < 1 || mode > 4) M=RANDOM() % 4 + 1 ;
     else M = mode;
 
     /* four different search starting points and methods so that
        we can do something different for symmetrical maps instead of
        the same damned thing every time. */
-    switch(M) {
+    switch (M) {
         case 1: {  /* search from top left down/right */
-            for(i=1;i<RP->Xsize;i++)
-                for(j=1;j<RP->Ysize;j++) {
-                    if(layout[i][j]==target) {
-                    *fx = i; *fy = j;
-                    return;
+            for (i=1;i<RP->Xsize;i++)
+                for (j=1;j<RP->Ysize;j++) {
+                    if (layout[i][j]==target) {
+                        *fx = i; *fy = j;
+                        return;
                     }
                 }
             break;
         }
         case 2: { /* Search from top right down/left */
-            for(i=RP->Xsize-2;i>0;i--)
-                for(j=1;j<RP->Ysize-1;j++) {
-                    if(layout[i][j]==target) {
-                    *fx = i; *fy = j;
-                    return;
+            for (i=RP->Xsize-2;i>0;i--)
+                for (j=1;j<RP->Ysize-1;j++) {
+                    if (layout[i][j]==target) {
+                        *fx = i; *fy = j;
+                        return;
                     }
                 }
             break;
         }
         case 3: { /* search from bottom-left up-right */
-            for(i=1;i<RP->Xsize-1;i++)
-                for(j=RP->Ysize-2;j>0;j--) {
-                    if(layout[i][j]==target) {
-                    *fx = i; *fy = j;
-                    return;
+            for (i=1;i<RP->Xsize-1;i++)
+                for (j=RP->Ysize-2;j>0;j--) {
+                    if (layout[i][j]==target) {
+                        *fx = i; *fy = j;
+                        return;
                     }
                 }
             break;
         }
         case 4: { /* search from bottom-right up-left */
-            for(i=RP->Xsize-2;i>0;i--)
-                for(j=RP->Ysize-2;j>0;j--) {
-                    if(layout[i][j]==target) {
-                    *fx = i; *fy = j;
-                    return;
+            for (i=RP->Xsize-2;i>0;i--)
+                for (j=RP->Ysize-2;j>0;j--) {
+                    if (layout[i][j]==target) {
+                        *fx = i; *fy = j;
+                        return;
                     }
                 }
             break;
@@ -160,34 +160,31 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
             final_map_exit = 0;
     }
 
-    if(orientation == 0) orientation = RANDOM() % 6 + 1;
+    if (orientation == 0) orientation = RANDOM() % 6 + 1;
 
-    switch(orientation) {
-        case 1:
-        {
+    switch (orientation) {
+        case 1: {
             snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/up");
             style_map_up = find_style(styledirname,exitstyle,-1);
             snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/down");
             style_map_down = find_style(styledirname,exitstyle,-1);
             break;
         }
-        case 2:
-        {
+        case 2: {
             snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/down");
             style_map_up = find_style(styledirname,exitstyle,-1);
             snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/up");
             style_map_down = find_style(styledirname,exitstyle,-1);
             break;
         }
-        default:
-        {
+        default: {
             snprintf(styledirname, sizeof(styledirname), "/styles/exitstyles/generic");
             style_map_up = find_style(styledirname,exitstyle,-1);
             style_map_down = style_map_up;
             break;
         }
     }
-    if(style_map_up == 0)
+    if (style_map_up == 0)
         the_exit_up = arch_to_object(find_archetype("exit"));
     else {
         object *tmp;
@@ -196,10 +193,10 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     }
 
     /* we need a down exit only if we're recursing. */
-    if(RP->dungeon_level < RP->dungeon_depth || RP->final_map[0]!=0)
+    if (RP->dungeon_level < RP->dungeon_depth || RP->final_map[0]!=0)
         if (RP->dungeon_level >= RP->dungeon_depth && RP->final_exit_archetype[0] != 0)
             the_exit_down = arch_to_object(find_archetype(RP->final_exit_archetype));
-        else if(style_map_down == 0)
+        else if (style_map_down == 0)
             the_exit_down = arch_to_object(find_archetype("exit"));
         else {
             object *tmp;
@@ -221,32 +218,32 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     find_in_layout(0,'C',&cx,&cy,maze,RP);
 
     /* if we didn't find an up, find an empty place far from the center */
-    if(upx==-1 && cx!=-1) {
-        if(cx > RP->Xsize/2) upx = 1;
+    if (upx==-1 && cx!=-1) {
+        if (cx > RP->Xsize/2) upx = 1;
         else upx = RP->Xsize -2;
-        if(cy > RP->Ysize/2) upy = 1;
+        if (cy > RP->Ysize/2) upy = 1;
         else upy = RP->Ysize -2;
 
         /* find an empty place far from the center */
-        if(upx==1 && upy==1) find_in_layout(1,0,&upx,&upy,maze,RP);
+        if (upx==1 && upy==1) find_in_layout(1,0,&upx,&upy,maze,RP);
         else
-            if(upx==1 && upy>1) find_in_layout(3,0,&upx,&upy,maze,RP);
+            if (upx==1 && upy>1) find_in_layout(3,0,&upx,&upy,maze,RP);
             else
-                if(upx>1 && upy==1) find_in_layout(2,0,&upx,&upy,maze,RP);
+                if (upx>1 && upy==1) find_in_layout(2,0,&upx,&upy,maze,RP);
                 else
-                    if(upx>1 && upy>1) find_in_layout(4,0,&upx,&upy,maze,RP);
+                    if (upx>1 && upy>1) find_in_layout(4,0,&upx,&upy,maze,RP);
     }
 
     /* no indication of where to place the exit, so just place it at any empty spot. */
-    if(upx==-1)
+    if (upx==-1)
         find_in_layout(0, 0, &upx, &upy, maze, RP);
 
     the_exit_up->x = upx;
     the_exit_up->y = upy;
 
     /* surround the exits with notices that this is a random map. */
-    for(j=1;j<9;j++) {
-        if(!wall_blocked(map,the_exit_up->x+freearr_x[j],the_exit_up->y+freearr_y[j])) {
+    for (j=1;j<9;j++) {
+        if (!wall_blocked(map,the_exit_up->x+freearr_x[j],the_exit_up->y+freearr_y[j])) {
             random_sign = create_archetype("sign");
             random_sign->x = the_exit_up->x+freearr_x[j];
             random_sign->y = the_exit_up->y+freearr_y[j];
@@ -270,31 +267,31 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
     /* first, look for a '>' character */
     find_in_layout(0,'>',&downx,&downy,maze,RP);
     /* if no > is found use C */
-    if(downx==-1) {
+    if (downx==-1) {
         downx = cx;
         downy=cy;
     }
 
     /* make the other exit far away from this one if
        there's no center. */
-    if(downx==-1) {
-        if(upx > RP->Xsize/2) downx = 1;
+    if (downx==-1) {
+        if (upx > RP->Xsize/2) downx = 1;
         else downx = RP->Xsize -2;
-        if(upy > RP->Ysize/2) downy = 1;
+        if (upy > RP->Ysize/2) downy = 1;
         else downy = RP->Ysize -2;
 
         /* find an empty place far from the entrance */
-        if(downx==1 && downy==1) find_in_layout(1,0,&downx,&downy,maze,RP);
+        if (downx==1 && downy==1) find_in_layout(1,0,&downx,&downy,maze,RP);
         else
-            if(downx==1 && downy>1) find_in_layout(3,0,&downx,&downy,maze,RP);
+            if (downx==1 && downy>1) find_in_layout(3,0,&downx,&downy,maze,RP);
             else
-                if(downx>1 && downy==1) find_in_layout(2,0,&downx,&downy,maze,RP);
+                if (downx>1 && downy==1) find_in_layout(2,0,&downx,&downy,maze,RP);
                 else
-                    if(downx>1 && downy>1) find_in_layout(4,0,&downx,&downy,maze,RP);
+                    if (downx>1 && downy>1) find_in_layout(4,0,&downx,&downy,maze,RP);
 
     }
     /* no indication of where to place the down exit, so just place it on an empty spot. */
-    if(downx==-1)
+    if (downx==-1)
         find_in_layout(0,0,&downx,&downy,maze,RP);
     if (the_exit_down) {
         char buf[2048];
@@ -306,13 +303,13 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         write_map_parameters_to_string(RP, buf, sizeof(buf));
         the_exit_down->msg = add_string(buf);
         /* the identifier for making a random map. */
-        if(RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
+        if (RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
             /* Next map is the final map, special case. */
             mapstruct *new_map;
             object *the_exit_back = arch_to_object(the_exit_up->arch), *tmp;
 
             /* load it */
-            if((new_map=ready_map_name(RP->final_map,0)) == NULL)
+            if ((new_map=ready_map_name(RP->final_map,0)) == NULL)
                 return;
 
             the_exit_down->slaying = add_string(RP->final_map);
@@ -321,19 +318,18 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
             strncpy(new_map->path,RP->final_map, sizeof(new_map->path));
 
             for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
-            /* Remove exit back to previous random map.  There should only be one
-             * which is why we break out.  To try to process more than one
-             * would require keeping a 'next' pointer, as free_object kills tmp, which
-             * breaks the for loop.
-             */
+                /* Remove exit back to previous random map.  There should only be one
+                 * which is why we break out.  To try to process more than one
+                 * would require keeping a 'next' pointer, as free_object kills tmp, which
+                 * breaks the for loop.
+                 */
                 if (tmp->type == EXIT && EXIT_PATH(tmp) && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
                     remove_ob(tmp);
                     free_object(tmp);
                     break;
                 }
 
-            if (final_map_exit == 1)
-            {
+            if (final_map_exit == 1) {
                 /* setup the exit back */
                 the_exit_back->slaying = add_string(map->path);
                 the_exit_back->stats.hp = the_exit_down->x;
@@ -345,14 +341,13 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
             }
 
             set_map_timeout(new_map);   /* So it gets swapped out */
-      }
-      else
-        the_exit_down->slaying = add_string("/!");
+        } else
+            the_exit_down->slaying = add_string("/!");
 
-      /* Block the exit so things don't get dumped on top of it. */
-    the_exit_down->move_block = MOVE_ALL;
-    insert_ob_in_map(the_exit_down, map, NULL, 0);
-    maze[the_exit_down->x][the_exit_down->y] = '>';
+        /* Block the exit so things don't get dumped on top of it. */
+        the_exit_down->move_block = MOVE_ALL;
+        insert_ob_in_map(the_exit_down, map, NULL, 0);
+        maze[the_exit_down->x][the_exit_down->y] = '>';
     }
 }
 
@@ -373,11 +368,11 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
     int i=0,j=0;
     object *walk;
 
-    for(i=0;i<RP->Xsize;i++)
-        for(j=0;j<RP->Ysize;j++)
-            if(maze[i][j]=='>' || maze[i][j]=='<') {
-                for(walk=GET_MAP_OB(map,i,j);walk!=NULL;walk=walk->above) {
-                    if(walk->move_block == MOVE_ALL && walk->type != LOCKED_DOOR) {
+    for (i=0;i<RP->Xsize;i++)
+        for (j=0;j<RP->Ysize;j++)
+            if (maze[i][j]=='>' || maze[i][j]=='<') {
+                for (walk=GET_MAP_OB(map,i,j);walk!=NULL;walk=walk->above) {
+                    if (walk->move_block == MOVE_ALL && walk->type != LOCKED_DOOR) {
                         walk->move_block = MOVE_BLOCK_DEFAULT;
                         update_object(walk,UP_OBJ_CHANGE);
                     }

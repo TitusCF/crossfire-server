@@ -50,8 +50,7 @@
  * @return
  * return of strcmp() on pointed strings.
  */
-static int pointer_strcmp(const void *p1, const void *p2)
-{
+static int pointer_strcmp(const void *p1, const void *p2) {
     const char *s1 = *(const char **)p1;
     const char *s2 = *(const char **)p2;
 
@@ -81,19 +80,18 @@ static int pointer_strcmp(const void *p1, const void *p2)
  * @return
  * -1 if dir is invalid, number of files else.
  */
-int load_dir (const char *dir, char ***namelist, int skip_dirs)
-{
+int load_dir(const char *dir, char ***namelist, int skip_dirs) {
     DIR *dp;
     struct dirent *d;
     int entries=0, entry_size=0;
     char name[NAME_MAX+1], **rn=NULL;
     struct stat sb;
 
-    dp = opendir (dir);
+    dp = opendir(dir);
     if (dp == NULL)
         return -1;
 
-    while ((d = readdir (dp)) != NULL) {
+    while ((d = readdir(dp)) != NULL) {
         if (skip_dirs) {
             snprintf(name, sizeof(name), "%s/%s", dir, d->d_name);
             stat(name, &sb);
@@ -110,7 +108,7 @@ int load_dir (const char *dir, char ***namelist, int skip_dirs)
         entries++;
 
     }
-    (void) closedir (dp);
+    (void) closedir(dp);
 
     qsort(rn, entries, sizeof(char*), pointer_strcmp);
 
@@ -130,8 +128,7 @@ mapstruct *styles=NULL;
  * @return
  * map.
  */
-mapstruct *load_style_map(char *style_name)
-{
+mapstruct *load_style_map(char *style_name) {
     mapstruct *style_map;
 
     /* Given a file.  See if its in memory */
@@ -147,7 +144,7 @@ mapstruct *load_style_map(char *style_name)
             first_map = style_map->next;
         else {
             for (tmp = first_map; tmp && tmp->next != style_map; tmp = tmp->next);
-            if(tmp)
+            if (tmp)
                 tmp->next = style_map->next;
         }
         style_map->next = styles;
@@ -183,7 +180,7 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
     int i, only_subdirs=0;
 
     /* if stylename exists, set style_file_path to that file.*/
-    if(stylename && strlen(stylename)>0)
+    if (stylename && strlen(stylename)>0)
         snprintf(style_file_path, sizeof(style_file_path), "%s/%s",dirname,stylename);
     else /* otherwise, just use the dirname.  We'll pick a random stylefile.*/
         snprintf(style_file_path, sizeof(style_file_path), "%s",dirname);
@@ -191,11 +188,10 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
     /* is what we were given a directory, or a file? */
     snprintf(style_file_full_path, sizeof(style_file_full_path), "%s/maps%s",settings.datadir,style_file_path);
     if (stat(style_file_full_path, &file_stat) == 0
-      && !S_ISDIR(file_stat.st_mode)) {
+        && !S_ISDIR(file_stat.st_mode)) {
         style_map=load_style_map(style_file_path);
     }
-    if(style_map == NULL)  /* maybe we were given a directory! */
-    {
+    if (style_map == NULL) { /* maybe we were given a directory! */
         char **namelist;
         int n;
         char style_dir_full_path[256];
@@ -220,7 +216,7 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
          * the door handling checks for this failure and handles
          * it properly.
          */
-        if(difficulty==-1) {  /* pick a random style from this dir. */
+        if (difficulty==-1) { /* pick a random style from this dir. */
             if (only_subdirs)
                 style_map=NULL;
             else {
@@ -228,26 +224,25 @@ mapstruct *find_style(const char *dirname,const char *stylename,int difficulty) 
                 strncat(style_file_path,namelist[RANDOM()%n], sizeof(style_file_path));
                 style_map = load_style_map(style_file_path);
             }
-        }
-        else {  /* find the map closest in difficulty */
+        } else { /* find the map closest in difficulty */
             int min_dist=32000,min_index=-1;
 
-            for(i=0;i<n;i++) {
+            for (i=0;i<n;i++) {
                 int dist;
                 char *mfile_name = strrchr(namelist[i],'_')+1;
 
-                if((mfile_name-1) == NULL) { /* since there isn't a sequence, */
+                if ((mfile_name-1) == NULL) { /* since there isn't a sequence, */
                     int q;
                     /*pick one at random to recurse */
                     style_map= find_style(style_file_path,
-                        namelist[RANDOM()%n],difficulty);
+                                          namelist[RANDOM()%n],difficulty);
                     for (q=0; q<n; q++)
                         free(namelist[q]);
                     free(namelist);
                     return style_map;
                 } else {
                     dist = abs(difficulty-atoi(mfile_name));
-                    if(dist<min_dist) {
+                    if (dist<min_dist) {
                         min_dist = dist;
                         min_index = i;
                     }
@@ -300,8 +295,7 @@ object *pick_random_object(mapstruct *style) {
 /**
  * Frees cached style maps.
  */
-void free_style_maps(void)
-{
+void free_style_maps(void) {
     mapstruct *next;
     int  style_maps=0;
 

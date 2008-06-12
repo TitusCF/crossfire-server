@@ -39,38 +39,38 @@
 #include <rproto.h>
 
 int main(int argc, char *argv[]) {
-  char InFileName[1024],OutFileName[1024];
-  mapstruct *newMap;
-  RMParms rp;
-  FILE *fp;
+    char InFileName[1024],OutFileName[1024];
+    mapstruct *newMap;
+    RMParms rp;
+    FILE *fp;
 
-  if(argc < 3) {
-    printf("\nUsage:  %s inputfile outputfile\n",argv[0]);
+    if (argc < 3) {
+        printf("\nUsage:  %s inputfile outputfile\n",argv[0]);
+        exit(0);
+    }
+    strcpy(InFileName,argv[1]);
+    strcpy(OutFileName,argv[2]);
+
+    init_globals();
+    init_library();
+    init_archetypes();
+    init_artifacts();
+    init_formulae();
+    init_readable();
+
+    init_gods();
+    memset(&rp, 0, sizeof(RMParms));
+    rp.Xsize=-1;
+    rp.Ysize=-1;
+    if ((fp=fopen(InFileName, "r"))==NULL) {
+        fprintf(stderr,"\nError: can not open %s\n", InFileName);
+        exit(1);
+    }
+    load_parameters(fp, LO_NEWFILE, &rp);
+    fclose(fp);
+    newMap = generate_random_map(OutFileName, &rp, NULL);
+    save_map(newMap,SAVE_MODE_INPLACE);
     exit(0);
-  }
-  strcpy(InFileName,argv[1]);
-  strcpy(OutFileName,argv[2]);
-
-  init_globals();
-  init_library();
-  init_archetypes();
-  init_artifacts();
-  init_formulae();
-  init_readable();
-
-  init_gods();
-  memset(&rp, 0, sizeof(RMParms));
-  rp.Xsize=-1;
-  rp.Ysize=-1;
-  if ((fp=fopen(InFileName, "r"))==NULL) {
-    fprintf(stderr,"\nError: can not open %s\n", InFileName);
-    exit(1);
-  }
-  load_parameters(fp, LO_NEWFILE, &rp);
-  fclose(fp);
-  newMap = generate_random_map(OutFileName, &rp, NULL);
-  save_map(newMap,SAVE_MODE_INPLACE);
-  exit(0);
 }
 
 void set_map_timeout(void) {}   /* doesn't need to do anything */
@@ -80,45 +80,44 @@ void set_map_timeout(void) {}   /* doesn't need to do anything */
 
 /* some plagarized code from apply.c--I needed just these two functions
 without all the rest of the junk, so.... */
-int auto_apply (object *op) {
-  object *tmp = NULL;
-  int i;
+int auto_apply(object *op) {
+    object *tmp = NULL;
+    int i;
 
-  switch(op->type) {
-  case SHOP_FLOOR:
-    if (!HAS_RANDOM_ITEMS(op)) return 0;
-    do {
-      i=10; /* let's give it 10 tries */
-      while((tmp=generate_treasure(op->randomitems,op->stats.exp?
-		op->stats.exp:5))==NULL&&--i);
-      if(tmp==NULL)
-	  return 0;
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-      {
-        free_object(tmp);
-        tmp = NULL;
-      }
-    } while(!tmp);
+    switch (op->type) {
+        case SHOP_FLOOR:
+            if (!HAS_RANDOM_ITEMS(op)) return 0;
+            do {
+                i=10; /* let's give it 10 tries */
+                while ((tmp=generate_treasure(op->randomitems,op->stats.exp?
+                                              op->stats.exp:5))==NULL&&--i);
+                if (tmp==NULL)
+                    return 0;
+                if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+                    free_object(tmp);
+                    tmp = NULL;
+                }
+            } while (!tmp);
 
-    tmp->x=op->x,tmp->y=op->y;
-    SET_FLAG(tmp,FLAG_UNPAID);
-    insert_ob_in_map(tmp,op->map,NULL,0);
-    CLEAR_FLAG(op,FLAG_AUTO_APPLY);
-    identify(tmp);
-    break;
+            tmp->x=op->x,tmp->y=op->y;
+            SET_FLAG(tmp,FLAG_UNPAID);
+            insert_ob_in_map(tmp,op->map,NULL,0);
+            CLEAR_FLAG(op,FLAG_AUTO_APPLY);
+            identify(tmp);
+            break;
 
-  case TREASURE:
-    if (HAS_RANDOM_ITEMS(op))
-      while ((op->stats.hp--)>0)
-        create_treasure(op->randomitems, op, GT_ENVIRONMENT,
-    op->stats.exp ? op->stats.exp :
-    op->map == NULL ?  14: op->map->difficulty,0);
-    remove_ob(op);
-    free_object(op);
-    break;
-  }
+        case TREASURE:
+            if (HAS_RANDOM_ITEMS(op))
+                while ((op->stats.hp--)>0)
+                    create_treasure(op->randomitems, op, GT_ENVIRONMENT,
+                                    op->stats.exp ? op->stats.exp :
+                                    op->map == NULL ?  14: op->map->difficulty,0);
+            remove_ob(op);
+            free_object(op);
+            break;
+    }
 
-  return tmp ? 1 : 0;
+    return tmp ? 1 : 0;
 }
 
 /* fix_auto_apply goes through the entire map (only the first time
@@ -128,41 +127,40 @@ int auto_apply (object *op) {
  */
 
 void fix_auto_apply(mapstruct *m) {
-  object *tmp,*above=NULL;
-  int x,y;
+    object *tmp,*above=NULL;
+    int x,y;
 
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
-        above=tmp->above;
+    for (x=0;x<MAP_WIDTH(m);x++)
+        for (y=0;y<MAP_HEIGHT(m);y++)
+            for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
+                above=tmp->above;
 
-        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-          auto_apply(tmp);
-        else if(tmp->type==TREASURE) {
-          if (HAS_RANDOM_ITEMS(tmp))
-            while ((tmp->stats.hp--)>0)
-              create_treasure(tmp->randomitems, tmp, 0,
-                              m->difficulty,0);
-        }
-        if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-           tmp->randomitems){
-          if(tmp->type==CONTAINER) {
-            if (HAS_RANDOM_ITEMS(tmp))
-              while ((tmp->stats.hp--)>0)
-                create_treasure(tmp->randomitems, tmp, 0,
-                                m->difficulty,0);
-          }
-          else if (HAS_RANDOM_ITEMS(tmp))
-            create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                            m->difficulty,0);
-        }
-      }
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
-        if (tmp->above
-            && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-          check_trigger(tmp,tmp->above);
+                if (QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+                    auto_apply(tmp);
+                else if (tmp->type==TREASURE) {
+                    if (HAS_RANDOM_ITEMS(tmp))
+                        while ((tmp->stats.hp--)>0)
+                            create_treasure(tmp->randomitems, tmp, 0,
+                                            m->difficulty,0);
+                }
+                if (tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
+                        tmp->randomitems) {
+                    if (tmp->type==CONTAINER) {
+                        if (HAS_RANDOM_ITEMS(tmp))
+                            while ((tmp->stats.hp--)>0)
+                                create_treasure(tmp->randomitems, tmp, 0,
+                                                m->difficulty,0);
+                    } else if (HAS_RANDOM_ITEMS(tmp))
+                        create_treasure(tmp->randomitems, tmp, GT_APPLY,
+                                        m->difficulty,0);
+                }
+            }
+    for (x=0;x<MAP_WIDTH(m);x++)
+        for (y=0;y<MAP_HEIGHT(m);y++)
+            for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
+                if (tmp->above
+                        && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
+                    check_trigger(tmp,tmp->above);
 }
 
 /**
@@ -172,18 +170,16 @@ void fix_auto_apply(mapstruct *m) {
  **/
 
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2)
-    {
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2) {
     fprintf(logfile, "%s\n", txt);
-    }
+}
 
 void draw_ext_info_format(
-        int flags, int pri, const object *pl, uint8 type,
-        uint8 subtype,
-        const char* new_format,
-        const char* old_format,
-        ...)
-{
+    int flags, int pri, const object *pl, uint8 type,
+    uint8 subtype,
+    const char* new_format,
+    const char* old_format,
+    ...) {
     va_list ap;
     va_start(ap, old_format);
     vfprintf(logfile, old_format, ap);
@@ -191,66 +187,51 @@ void draw_ext_info_format(
 }
 
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2)
-{
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_firewall( object* ob)
-    {
-    }
-
-void emergency_save( int x )
-    {
-    }
-
-void clean_tmp_files( void )
-    {
-    }
-
-void esrv_send_item( object* ob, object* obx )
-    {
-    }
-
-void esrv_update_item(int flags, object *pl, object *op)
-{
+void move_firewall(object* ob) {
 }
 
-void dragon_ability_gain( object* ob, int x, int y )
-    {
-    }
+void emergency_save(int x) {
+}
 
-void set_darkness_map( mapstruct* m)
-    {
-    }
+void clean_tmp_files(void) {
+}
 
-object* find_skill_by_number(object *who, int skillno)
-    {
+void esrv_send_item(object* ob, object* obx) {
+}
+
+void esrv_update_item(int flags, object *pl, object *op) {
+}
+
+void dragon_ability_gain(object* ob, int x, int y) {
+}
+
+void set_darkness_map(mapstruct* m) {
+}
+
+object* find_skill_by_number(object *who, int skillno) {
     return NULL;
-    }
+}
 
-void esrv_del_item(player *pl, int tag)
-    {
-    }
+void esrv_del_item(player *pl, int tag) {
+}
 
-void esrv_update_spells(player *pl)
-    {
-    }
+void esrv_update_spells(player *pl) {
+}
 
-void monster_check_apply( object* ob, object* obt )
-    {
-    }
+void monster_check_apply(object* ob, object* obt) {
+}
 
-void trap_adjust( object* ob, int x )
-    {
-    }
+void trap_adjust(object* ob, int x) {
+}
 
-int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
-    {
+int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix) {
     return 0;
-    }
+}
 
-int execute_global_event(int eventcode, ...)
-    {
+int execute_global_event(int eventcode, ...) {
     return 0;
-    }
+}

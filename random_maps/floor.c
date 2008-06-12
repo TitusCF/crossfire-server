@@ -101,7 +101,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     snprintf(styledirname, sizeof(styledirname), "%s","/styles/floorstyles");
     snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s",styledirname,floorstyle);
     style_map = find_style(styledirname,floorstyle,-1);
-    if(style_map == 0) return newMap;
+    if (style_map == 0) return newMap;
 
     if (RP->multiple_floors) {
         for (x = 0; x < RP->Xsize; x++) {
@@ -114,9 +114,9 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
 
     /* fill up the map with the given floor style */
     if ((the_floor=pick_random_object(style_map))!=NULL) {
-		object *thisfloor;
-        for(x=0;x<RP->Xsize;x++)
-            for(y=0;y<RP->Ysize;y++) {
+        object *thisfloor;
+        for (x=0;x<RP->Xsize;x++)
+            for (y=0;y<RP->Ysize;y++) {
                 if (GET_MAP_OB(newMap, x, y) != NULL)
                     continue;
                 thisfloor = arch_to_object(the_floor->arch);

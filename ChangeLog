@@ -14,6 +14,29 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat all files in random_maps/ to fit with current coding style standard, a
+combination of using the astyle tool and manual review afterwards.
+ random_maps/wall.c
+ random_maps/style.c
+ random_maps/snake.c
+ random_maps/door.c
+ random_maps/room_gen_onion.c
+ random_maps/exit.c
+ random_maps/square_spiral.c
+ random_maps/random_map.c
+ random_maps/rogue_layout.c
+ random_maps/room_gen_spiral.c
+ random_maps/test.c
+ random_maps/special.c
+ random_maps/floor.c
+ random_maps/maze_gen.c
+ random_maps/monster.c
+ random_maps/standalone.c
+ random_maps/expand2x.c
+ random_maps/treasure.c
+ random_maps/decor.c
+Arvid Norlander 2008-06-12
+
 Reformat all files in socket/ to fit with current coding style standard, a
 combination of using the astyle tool and manual review afterwards. Also fix
 copy-and-paste typo from svn output in changelog below.

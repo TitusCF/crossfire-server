@@ -52,13 +52,13 @@
  * - 4 = door or wall above.
  * - 8 = door or wall below.
  */
-int surround_check2(char **layout,int i,int j,int Xsize, int Ysize){
+int surround_check2(char **layout,int i,int j,int Xsize, int Ysize) {
     int surround_index = 0;
-  if((i > 0) && (layout[i-1][j]=='D'||layout[i-1][j]=='#')) surround_index +=1;
-  if((i < Xsize-1) && (layout[i+1][j]=='D'||layout[i+1][j]=='#')) surround_index +=2;
-  if((j > 0) && (layout[i][j-1]=='D'||layout[i][j-1]=='#')) surround_index +=4;
-  if((j < Ysize-1) && (layout[i][j+1]=='D'&&layout[i][j+1]=='#')) surround_index +=8;
-  return surround_index;
+    if ((i > 0) && (layout[i-1][j]=='D'||layout[i-1][j]=='#')) surround_index +=1;
+    if ((i < Xsize-1) && (layout[i+1][j]=='D'||layout[i+1][j]=='#')) surround_index +=2;
+    if ((j > 0) && (layout[i][j-1]=='D'||layout[i][j-1]=='#')) surround_index +=4;
+    if ((j < Ysize-1) && (layout[i][j+1]=='D'&&layout[i][j+1]=='#')) surround_index +=8;
+    return surround_index;
 }
 
 /**
@@ -78,19 +78,19 @@ void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *
     mapstruct *hdoors;
     char doorpath[128];
 
-    if(!strcmp(doorstyle,"none")) return;
+    if (!strcmp(doorstyle,"none")) return;
     vdoors = find_style("/styles/doorstyles", doorstyle, -1);
-    if(vdoors)
+    if (vdoors)
         hdoors = vdoors;
     else {
         vdoors = find_style("/styles/doorstyles/vdoors", doorstyle, -1);
-        if(!vdoors) return;
+        if (!vdoors) return;
         snprintf(doorpath, sizeof(doorpath), "/styles/doorstyles/hdoors%s", strrchr(vdoors->path, '/'));
         hdoors = find_style(doorpath, 0, -1);
     }
-    for(i=0; i<RP->Xsize; i++)
-        for(j=0; j<RP->Ysize; j++) {
-            if(maze[i][j]=='D') {
+    for (i=0; i<RP->Xsize; i++)
+        for (j=0; j<RP->Ysize; j++) {
+            if (maze[i][j]=='D') {
                 int sindex;
                 object *this_door, *new_door;
                 sindex = surround_check2(maze, i, j, RP->Xsize, RP->Ysize);

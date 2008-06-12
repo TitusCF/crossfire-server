@@ -14,8 +14,8 @@
  * H. S. Teoh
  */
 
-#include <stdlib.h>			/* just in case */
-#include <expand2x.h>			/* use compiler to do sanity check */
+#include <stdlib.h>   /* just in case */
+#include <expand2x.h>   /* use compiler to do sanity check */
 
 
 /* PROTOTYPES */
@@ -52,15 +52,15 @@ char **expand2x(char **layout, int xsize, int ysize) {
 
     for (i=0; i<xsize; i++) {
         for (j=0; j<ysize; j++) {
-            switch(layout[i][j]) {
-            case '#':
-                expand_wall(newlayout, i,j, layout, xsize, ysize);
-                break;
-            case 'D':
-                expand_door(newlayout, i,j, layout, xsize, ysize);
-                break;
-            default:
-                expand_misc(newlayout, i,j, layout);
+            switch (layout[i][j]) {
+                case '#':
+                    expand_wall(newlayout, i,j, layout, xsize, ysize);
+                    break;
+                case 'D':
+                    expand_door(newlayout, i,j, layout, xsize, ysize);
+                    break;
+                default:
+                    expand_misc(newlayout, i,j, layout);
             }
         }
     }
@@ -164,7 +164,7 @@ static void expand_wall(char **newlayout, int i, int j, char **layout,
         if (both_pattern & 2) {
             /* join walls/doors to the bottom */
             newlayout[i*2][j*2+1] = layout[i][j+1];
-    }
+        }
 
         if (wall_pattern==7) {
             /* if orig layout is a 2x2 wall block,

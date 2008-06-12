@@ -52,11 +52,11 @@
  */
 void dump_layout(char **layout,RMParms *RP) {
     int i,j;
-    for(i=0;i<RP->Xsize;i++) {
-        for(j=0;j<RP->Ysize;j++) {
-            if(layout[i][j]==0) layout[i][j]=' ';
+    for (i=0;i<RP->Xsize;i++) {
+        for (j=0;j<RP->Ysize;j++) {
+            if (layout[i][j]==0) layout[i][j]=' ';
             printf("%c",layout[i][j]);
-            if(layout[i][j]==' ') layout[i][j]=0;
+            if (layout[i][j]==' ') layout[i][j]=0;
         }
         printf("\n");
     }
@@ -80,28 +80,27 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
     int i;
 
     /* pick a random seed, or use the one from the input file */
-    if(RP->random_seed == 0)
+    if (RP->random_seed == 0)
         RP->random_seed=time(0);
 
     SRANDOM(RP->random_seed);
 
     write_map_parameters_to_string(RP, buf, sizeof(buf));
 
-    if(RP->difficulty==0) {
+    if (RP->difficulty==0) {
         RP->difficulty = RP->dungeon_level; /* use this instead of a map difficulty  */
         if (RP->difficulty_increase > 0.001) {
             RP->difficulty = (int)((float)RP->dungeon_level * RP->difficulty_increase);
             if (RP->difficulty < 1) RP->difficulty=1;
         }
-    }
-    else
+    } else
         RP->difficulty_given=1;
 
     if (!use_layout) {
-        if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
-        if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+        if (RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
+        if (RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%25 + 5;
 
-        if(RP->expand2x > 0) {
+        if (RP->expand2x > 0) {
             RP->Xsize /=2;
             RP->Ysize /=2;
         }
@@ -117,8 +116,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
 #ifdef RMAP_DEBUG
         dump_layout(layout,RP);
 #endif
-    }
-    else
+    } else
         layout = use_layout;
 
     /* increment these for the current map */
@@ -134,34 +132,34 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
     theMap->region=RP->region;
 
     /* create walls unless the wallstyle is "none" */
-    if (strcmp (RP->wallstyle, "none")) {
+    if (strcmp(RP->wallstyle, "none")) {
         make_map_walls(theMap,layout,RP->wallstyle,RP);
 
         /* place doors unless doorstyle or wallstyle is "none"*/
-        if (strcmp (RP->doorstyle, "none"))
-        put_doors(theMap,layout,RP->doorstyle,RP);
+        if (strcmp(RP->doorstyle, "none"))
+            put_doors(theMap,layout,RP->doorstyle,RP);
 
     }
 
     /* create exits unless the exitstyle is "none" */
-    if (strcmp (RP->exitstyle, "none"))
+    if (strcmp(RP->exitstyle, "none"))
         place_exits(theMap,layout,RP->exitstyle,RP->orientation,RP);
 
     place_specials_in_map(theMap,layout,RP);
 
     /* create monsters unless the monsterstyle is "none" */
-    if (strcmp (RP->monsterstyle, "none"))
+    if (strcmp(RP->monsterstyle, "none"))
         place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
 
     /* treasures needs to have a proper difficulty set for the map. */
     theMap->difficulty=calculate_difficulty(theMap);
 
     /* create treasure unless the treasurestyle is "none" */
-    if (strcmp (RP->treasurestyle, "none"))
+    if (strcmp(RP->treasurestyle, "none"))
         place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
 
     /* create decor unless the decorstyle is "none" */
-    if (strcmp (RP->decorstyle, "none"))
+    if (strcmp(RP->decorstyle, "none"))
         put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
 
     /* generate treasures, etc. */
@@ -171,7 +169,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char** use_
 
     /* free the layout unless it was given by caller */
     if (!use_layout) {
-        for(i=0;i<RP->Xsize;i++)
+        for (i=0;i<RP->Xsize;i++)
             free(layout[i]);
         free(layout);
     }
@@ -201,16 +199,16 @@ char **layoutgen(RMParms *RP) {
     char **maze=0;
     int oxsize= RP->Xsize, oysize=RP->Ysize;
 
-    if(RP->symmetry == RANDOM_SYM)
-        RP->symmetry_used = (RANDOM() % ( XY_SYM))+1;
+    if (RP->symmetry == RANDOM_SYM)
+        RP->symmetry_used = (RANDOM() % (XY_SYM))+1;
     else
         RP->symmetry_used = RP->symmetry;
 
-    if(RP->symmetry_used==Y_SYM||RP->symmetry_used==XY_SYM) RP->Ysize = RP->Ysize/2+1;
-    if(RP->symmetry_used==X_SYM||RP->symmetry_used==XY_SYM) RP->Xsize = RP->Xsize/2+1;
+    if (RP->symmetry_used==Y_SYM||RP->symmetry_used==XY_SYM) RP->Ysize = RP->Ysize/2+1;
+    if (RP->symmetry_used==X_SYM||RP->symmetry_used==XY_SYM) RP->Xsize = RP->Xsize/2+1;
 
-    if(RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
-    if(RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
+    if (RP->Xsize<MIN_RANDOM_MAP_SIZE) RP->Xsize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
+    if (RP->Ysize<MIN_RANDOM_MAP_SIZE) RP->Ysize = MIN_RANDOM_MAP_SIZE + RANDOM()%5;
     RP->map_layout_style = 0;
 
     /* Redo this - there was a lot of redundant code of checking for preset
@@ -218,27 +216,27 @@ char **layoutgen(RMParms *RP) {
      * the numeric layoutstyle, so there is only one area that actually
      * calls the code to make the maps.
      */
-    if(strstr(RP->layoutstyle,"onion")) {
+    if (strstr(RP->layoutstyle,"onion")) {
         RP->map_layout_style = ONION_LAYOUT;
     }
 
-    if(strstr(RP->layoutstyle,"maze")) {
+    if (strstr(RP->layoutstyle,"maze")) {
         RP->map_layout_style = MAZE_LAYOUT;
     }
 
-    if(strstr(RP->layoutstyle,"spiral")) {
+    if (strstr(RP->layoutstyle,"spiral")) {
         RP->map_layout_style = SPIRAL_LAYOUT;
     }
 
-    if(strstr(RP->layoutstyle,"rogue")) {
+    if (strstr(RP->layoutstyle,"rogue")) {
         RP->map_layout_style = ROGUELIKE_LAYOUT;
     }
 
-    if(strstr(RP->layoutstyle,"snake")) {
+    if (strstr(RP->layoutstyle,"snake")) {
         RP->map_layout_style = SNAKE_LAYOUT;
     }
 
-    if(strstr(RP->layoutstyle,"squarespiral")) {
+    if (strstr(RP->layoutstyle,"squarespiral")) {
         RP->map_layout_style = SQUARE_SPIRAL_LAYOUT;
     }
     /* No style found - choose one ranomdly */
@@ -246,21 +244,21 @@ char **layoutgen(RMParms *RP) {
         RP->map_layout_style = (RANDOM() % NROFLAYOUTS) + 1;
     }
 
-    switch(RP->map_layout_style) {
+    switch (RP->map_layout_style) {
 
         case ONION_LAYOUT:
             maze = map_gen_onion(RP->Xsize,RP->Ysize,RP->layoutoptions1,RP->layoutoptions2);
-            if(!(RANDOM()%3)&& !(RP->layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze,RP);
+            if (!(RANDOM()%3)&& !(RP->layoutoptions1 & OPT_WALLS_ONLY)) roomify_layout(maze,RP);
             break;
 
         case MAZE_LAYOUT:
             maze = maze_gen(RP->Xsize,RP->Ysize,RANDOM()%2);
-            if(!(RANDOM()%2)) doorify_layout(maze,RP);
+            if (!(RANDOM()%2)) doorify_layout(maze,RP);
             break;
 
         case SPIRAL_LAYOUT:
             maze = map_gen_spiral(RP->Xsize,RP->Ysize,RP->layoutoptions1);
-            if(!(RANDOM()%2)) doorify_layout(maze,RP);
+            if (!(RANDOM()%2)) doorify_layout(maze,RP);
             break;
 
         case ROGUELIKE_LAYOUT:
@@ -280,12 +278,12 @@ char **layoutgen(RMParms *RP) {
 
         case SNAKE_LAYOUT:
             maze = make_snake_layout(RP->Xsize,RP->Ysize);
-            if(RANDOM()%2) roomify_layout(maze,RP);
+            if (RANDOM()%2) roomify_layout(maze,RP);
             break;
 
         case SQUARE_SPIRAL_LAYOUT:
             maze = make_square_spiral_layout(RP->Xsize,RP->Ysize);
-            if(RANDOM()%2) roomify_layout(maze,RP);
+            if (RANDOM()%2) roomify_layout(maze,RP);
             break;
     }
 
@@ -293,7 +291,7 @@ char **layoutgen(RMParms *RP) {
 #ifdef RMAP_DEBUG
     dump_layout(maze,RP);
 #endif
-    if(RP->expand2x) {
+    if (RP->expand2x) {
         maze = expand2x(maze,RP->Xsize,RP->Ysize);
         RP->Xsize = RP->Xsize * 2 -1;
         RP->Ysize = RP->Ysize * 2 -1;
@@ -321,7 +319,7 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
     Xsize_orig = RP->Xsize;
     Ysize_orig = RP->Ysize;
     RP->symmetry_used = sym;  /* tell everyone else what sort of symmetry is used.*/
-    if(sym == NO_SYM) {
+    if (sym == NO_SYM) {
         RP->Xsize = Xsize_orig;
         RP->Ysize = Ysize_orig;
         return maze;
@@ -331,24 +329,24 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
     RP->Ysize = ((sym==Y_SYM||sym==XY_SYM)?RP->Ysize*2-3:RP->Ysize);
 
     sym_maze = (char **)calloc(sizeof(char*),RP->Xsize);
-    for(i=0;i<RP->Xsize;i++)
+    for (i=0;i<RP->Xsize;i++)
         sym_maze[i] = (char *)calloc(sizeof(char),RP->Ysize);
 
-    if(sym==X_SYM)
-        for(i=0;i<RP->Xsize/2+1;i++)
-            for(j=0;j<RP->Ysize;j++) {
+    if (sym==X_SYM)
+        for (i=0;i<RP->Xsize/2+1;i++)
+            for (j=0;j<RP->Ysize;j++) {
                 sym_maze[i][j] = maze[i][j];
                 sym_maze[RP->Xsize - i-1][j] = maze[i][j];
             };
-    if(sym==Y_SYM)
-        for(i=0;i<RP->Xsize;i++)
-            for(j=0;j<RP->Ysize/2+1;j++) {
+    if (sym==Y_SYM)
+        for (i=0;i<RP->Xsize;i++)
+            for (j=0;j<RP->Ysize/2+1;j++) {
                 sym_maze[i][j] = maze[i][j];
                 sym_maze[i][RP->Ysize-j-1] = maze[i][j];
             }
-    if(sym==XY_SYM)
-        for(i=0;i<RP->Xsize/2+1;i++)
-            for(j=0;j<RP->Ysize/2+1;j++) {
+    if (sym==XY_SYM)
+        for (i=0;i<RP->Xsize/2+1;i++)
+            for (j=0;j<RP->Ysize/2+1;j++) {
                 sym_maze[i][j] = maze[i][j];
                 sym_maze[i][RP->Ysize-j-1] = maze[i][j];
                 sym_maze[RP->Xsize - i-1][j] = maze[i][j];
@@ -356,16 +354,16 @@ char **symmetrize_layout(char **maze, int sym,RMParms *RP) {
             }
 
     /* delete the old maze */
-    for(i=0;i<Xsize_orig;i++)
+    for (i=0;i<Xsize_orig;i++)
         free(maze[i]);
     free(maze);
 
     /* reconnect disjointed spirals */
-    if(RP->map_layout_style==SPIRAL_LAYOUT)
+    if (RP->map_layout_style==SPIRAL_LAYOUT)
         connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
     /* reconnect disjointed nethackmazes:  the routine for
     spirals will do the trick?*/
-    if(RP->map_layout_style==ROGUELIKE_LAYOUT)
+    if (RP->map_layout_style==ROGUELIKE_LAYOUT)
         connect_spirals(RP->Xsize,RP->Ysize,sym,sym_maze);
 
     return sym_maze;
@@ -393,20 +391,19 @@ char ** rotate_layout(char **maze,int rotation,RMParms *RP) {
     char **new_maze;
     int i,j;
 
-    switch(rotation) {
+    switch (rotation) {
         case 0:
             return maze;
             break;
-        case 2:  /* a reflection */
-            {
+        case 2: { /* a reflection */
             char *new=malloc(sizeof(char) * RP->Xsize*RP->Ysize);
-            for(i=0;i<RP->Xsize;i++) {  /* make a copy */
-                for(j=0;j<RP->Ysize;j++) {
+            for (i=0;i<RP->Xsize;i++) { /* make a copy */
+                for (j=0;j<RP->Ysize;j++) {
                     new[i * RP->Ysize + j] = maze[i][j];
                 }
             }
-            for(i=0;i<RP->Xsize;i++) { /* copy a reflection back */
-                for(j=0;j<RP->Ysize;j++) {
+            for (i=0;i<RP->Xsize;i++) { /* copy a reflection back */
+                for (j=0;j<RP->Ysize;j++) {
                     maze[i][j]= new[(RP->Xsize-i-1)*RP->Ysize + RP->Ysize-j-1];
                 }
             }
@@ -415,26 +412,25 @@ char ** rotate_layout(char **maze,int rotation,RMParms *RP) {
             break;
         }
         case 1:
-        case 3:
-            {
+        case 3: {
             int swap;
             new_maze = (char **) calloc(sizeof(char *),RP->Ysize);
-            for(i=0;i<RP->Ysize;i++) {
+            for (i=0;i<RP->Ysize;i++) {
                 new_maze[i] = (char *) calloc(sizeof(char),RP->Xsize);
             }
-            if(rotation == 1) /* swap x and y */
-                for(i=0;i<RP->Xsize;i++)
-                    for(j=0;j<RP->Ysize;j++)
-                    new_maze[j][i] = maze[i][j];
+            if (rotation == 1) /* swap x and y */
+                for (i=0;i<RP->Xsize;i++)
+                    for (j=0;j<RP->Ysize;j++)
+                        new_maze[j][i] = maze[i][j];
 
-            if(rotation == 3) { /* swap x and y */
-                for(i=0;i<RP->Xsize;i++)
-                    for(j=0;j<RP->Ysize;j++)
-                    new_maze[j][i] = maze[RP->Xsize -i-1][RP->Ysize - j-1];
+            if (rotation == 3) { /* swap x and y */
+                for (i=0;i<RP->Xsize;i++)
+                    for (j=0;j<RP->Ysize;j++)
+                        new_maze[j][i] = maze[RP->Xsize -i-1][RP->Ysize - j-1];
             }
 
             /* delete the old layout */
-            for(i=0;i<RP->Xsize;i++)
+            for (i=0;i<RP->Xsize;i++)
                 free(maze[i]);
             free(maze);
 
@@ -443,7 +439,7 @@ char ** rotate_layout(char **maze,int rotation,RMParms *RP) {
             RP->Xsize = swap;
             return new_maze;
             break;
-            }
+        }
     }
     return NULL;
 }
@@ -459,23 +455,23 @@ void roomify_layout(char **maze,RMParms *RP) {
     int tries = RP->Xsize*RP->Ysize/30;
     int ti;
 
-    for(ti=0; ti<tries; ti++) {
+    for (ti=0; ti<tries; ti++) {
         int dx,dy;  /* starting location for looking at creating a door */
         int cx,cy;  /* results of checking on creating walls. */
         dx = RANDOM() % RP->Xsize;
         dy = RANDOM() % RP->Ysize;
         cx = can_make_wall(maze,dx,dy,0,RP);  /* horizontal */
         cy = can_make_wall(maze,dx,dy,1,RP);  /* vertical */
-        if(cx == -1) {
-            if(cy != -1)
+        if (cx == -1) {
+            if (cy != -1)
                 make_wall(maze,dx,dy,1);
             continue;
         }
-        if(cy == -1) {
+        if (cy == -1) {
             make_wall(maze,dx,dy,0);
             continue;
         }
-        if(cx < cy) make_wall(maze,dx,dy,0);
+        if (cx < cy) make_wall(maze,dx,dy,0);
         else make_wall(maze,dx,dy,1);
     }
 }
@@ -502,50 +498,49 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
     int length=0;
 
     /* dont make walls if we're on the edge. */
-    if(dx == 0 || dx == (RP->Xsize -1) || dy == 0 || dy == (RP->Ysize-1)) return -1;
+    if (dx == 0 || dx == (RP->Xsize -1) || dy == 0 || dy == (RP->Ysize-1)) return -1;
 
     /* don't make walls if we're ON a wall. */
-    if(maze[dx][dy]!=0) return -1;
+    if (maze[dx][dy]!=0) return -1;
 
-    if(dir==0) {
-         /* horizontal */
+    if (dir==0) {
+        /* horizontal */
         int y = dy;
-        for(i1=dx-1;i1>0;i1--) {
+        for (i1=dx-1;i1>0;i1--) {
             int sindex=surround_flag2(maze,i1,y,RP);
-            if(sindex == 1) break;
-            if(sindex != 0) return -1;  /* can't make horiz.  wall here */
-            if(maze[i1][y]!=0) return -1;  /* can't make horiz.  wall here */
+            if (sindex == 1) break;
+            if (sindex != 0) return -1; /* can't make horiz.  wall here */
+            if (maze[i1][y]!=0) return -1; /* can't make horiz.  wall here */
             length++;
         }
 
-        for(i1=dx+1;i1<RP->Xsize-1;i1++) {
+        for (i1=dx+1;i1<RP->Xsize-1;i1++) {
             int sindex=surround_flag2(maze,i1,y,RP);
-            if(sindex == 2) break;
-            if(sindex != 0) return -1;   /* can't make horiz.  wall here */
-            if(maze[i1][y]!=0) return -1;  /* can't make horiz.  wall here */
+            if (sindex == 2) break;
+            if (sindex != 0) return -1;  /* can't make horiz.  wall here */
+            if (maze[i1][y]!=0) return -1; /* can't make horiz.  wall here */
             length++;
         }
-      return length;
-    }
-    else {
+        return length;
+    } else {
         /* vertical */
         int x = dx;
-        for(i1=dy-1;i1>0;i1--) {
+        for (i1=dy-1;i1>0;i1--) {
             int sindex=surround_flag2(maze,x,i1,RP);
-            if(sindex == 4) break;
-            if(sindex != 0) return -1;  /* can't make vert. wall here */
-            if(maze[x][i1]!=0) return -1;  /* can't make horiz.  wall here */
+            if (sindex == 4) break;
+            if (sindex != 0) return -1; /* can't make vert. wall here */
+            if (maze[x][i1]!=0) return -1; /* can't make horiz.  wall here */
             length++;
         }
 
-        for(i1=dy+1;i1<RP->Ysize-1;i1++) {
+        for (i1=dy+1;i1<RP->Ysize-1;i1++) {
             int sindex=surround_flag2(maze,x,i1,RP);
-            if(sindex == 8) break;
-            if(sindex != 0) return -1;  /* can't make verti. wall here */
-            if(maze[x][i1]!=0) return -1;  /* can't make horiz.  wall here */
+            if (sindex == 8) break;
+            if (sindex != 0) return -1; /* can't make verti. wall here */
+            if (maze[x][i1]!=0) return -1; /* can't make horiz.  wall here */
             length++;
         }
-    return length;
+        return length;
     }
     return -1;
 }
@@ -564,30 +559,28 @@ int can_make_wall(char **maze,int dx,int dy,int dir,RMParms *RP) {
  * @return
  * 0
  */
-int make_wall(char **maze,int x, int y, int dir){
+int make_wall(char **maze,int x, int y, int dir) {
     maze[x][y] = 'D'; /* mark a door */
-    switch(dir) {
-        case 0: /* horizontal */
-            {
+    switch (dir) {
+        case 0: { /* horizontal */
             int i1;
-            for(i1 = x-1;maze[i1][y]==0;i1--)
+            for (i1 = x-1;maze[i1][y]==0;i1--)
                 maze[i1][y]='#';
-            for(i1 = x+1;maze[i1][y]==0;i1++)
+            for (i1 = x+1;maze[i1][y]==0;i1++)
                 maze[i1][y]='#';
             break;
-            }
-        case 1: /* vertical */
-            {
+        }
+        case 1: { /* vertical */
             int i1;
-            for(i1 = y-1;maze[x][i1]==0;i1--)
+            for (i1 = y-1;maze[x][i1]==0;i1--)
                 maze[x][i1]='#';
-            for(i1 = y+1;maze[x][i1]==0;i1++)
+            for (i1 = y+1;maze[x][i1]==0;i1++)
                 maze[x][i1]='#';
             break;
-            }
+        }
     }
 
-  return 0;
+    return 0;
 }
 
 /**
@@ -609,24 +602,24 @@ void doorify_layout(char **maze,RMParms *RP) {
 
 
     /* make a list of possible door locations */
-    for(i=1;i<RP->Xsize-1;i++)
-        for(j=1;j<RP->Ysize-1;j++) {
+    for (i=1;i<RP->Xsize-1;i++)
+        for (j=1;j<RP->Ysize-1;j++) {
             int sindex = surround_flag(maze,i,j,RP);
-            if(sindex == 3 || sindex == 12) {
-                 /* these are possible door sindex*/
+            if (sindex == 3 || sindex == 12) {
+                /* these are possible door sindex*/
                 doorlist_x[doorlocs]=i;
                 doorlist_y[doorlocs]=j;
                 doorlocs++;
             }
         }
-    while(ndoors > 0 && doorlocs > 0) {
+    while (ndoors > 0 && doorlocs > 0) {
         int di;
         int sindex;
         di = RANDOM() % doorlocs;
         i=doorlist_x[di];
         j=doorlist_y[di];
         sindex= surround_flag(maze,i,j,RP);
-        if(sindex == 3 || sindex == 12) { /* these are possible door sindex*/
+        if (sindex == 3 || sindex == 12) { /* these are possible door sindex*/
             maze[i][j] = 'D';
             ndoors--;
         }
@@ -657,47 +650,47 @@ void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
     bufsize--;
     buf[bufsize] = '\0';
 
-    if(RP->wallstyle[0]) {
+    if (RP->wallstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "wallstyle %s\n",RP->wallstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->floorstyle[0]) {
+    if (RP->floorstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "floorstyle %s\n",RP->floorstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->monsterstyle[0]) {
+    if (RP->monsterstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "monsterstyle %s\n",RP->monsterstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->treasurestyle[0]) {
+    if (RP->treasurestyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "treasurestyle %s\n",RP->treasurestyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->layoutstyle[0]) {
+    if (RP->layoutstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "layoutstyle %s\n",RP->layoutstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->decorstyle[0]) {
+    if (RP->decorstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "decorstyle %s\n",RP->decorstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->doorstyle[0]) {
+    if (RP->doorstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "doorstyle %s\n",RP->doorstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->exitstyle[0]) {
+    if (RP->exitstyle[0]) {
         snprintf(small_buf, sizeof(small_buf), "exitstyle %s\n",RP->exitstyle);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->final_map[0]) {
+    if (RP->final_map[0]) {
         snprintf(small_buf, sizeof(small_buf), "final_map %s\n",RP->final_map);
         strncat(buf,small_buf, bufsize);
     }
@@ -706,47 +699,47 @@ void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->exit_on_final_map[0]) {
+    if (RP->exit_on_final_map[0]) {
         snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",RP->exit_on_final_map);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->this_map[0]) {
+    if (RP->this_map[0]) {
         snprintf(small_buf, sizeof(small_buf), "origin_map %s\n",RP->this_map);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->expand2x) {
+    if (RP->expand2x) {
         snprintf(small_buf, sizeof(small_buf), "expand2x %d\n",RP->expand2x);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->layoutoptions1) {
+    if (RP->layoutoptions1) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions1 %d\n",RP->layoutoptions1);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->layoutoptions2) {
+    if (RP->layoutoptions2) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions2 %d\n",RP->layoutoptions2);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->layoutoptions3) {
+    if (RP->layoutoptions3) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions3 %d\n",RP->layoutoptions3);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->symmetry) {
+    if (RP->symmetry) {
         snprintf(small_buf, sizeof(small_buf), "symmetry %d\n",RP->symmetry);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->difficulty && RP->difficulty_given ) {
+    if (RP->difficulty && RP->difficulty_given) {
         snprintf(small_buf, sizeof(small_buf), "difficulty %d\n",RP->difficulty);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->difficulty_increase != 1.0 ) {
+    if (RP->difficulty_increase != 1.0) {
         snprintf(small_buf, sizeof(small_buf), "difficulty_increase %f\n",RP->difficulty_increase);
         strncat(buf,small_buf, bufsize);
     }
@@ -754,42 +747,42 @@ void write_map_parameters_to_string(RMParms *RP, char *buf, int bufsize) {
     snprintf(small_buf, sizeof(small_buf), "dungeon_level %d\n",RP->dungeon_level);
     strncat(buf,small_buf, bufsize);
 
-    if(RP->dungeon_depth) {
+    if (RP->dungeon_depth) {
         snprintf(small_buf, sizeof(small_buf), "dungeon_depth %d\n",RP->dungeon_depth);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->dungeon_name[0]) {
+    if (RP->dungeon_name[0]) {
         snprintf(small_buf, sizeof(small_buf), "dungeon_name %s\n",RP->dungeon_name);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->decoroptions) {
+    if (RP->decoroptions) {
         snprintf(small_buf, sizeof(small_buf), "decoroptions %d\n",RP->decoroptions);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->orientation) {
+    if (RP->orientation) {
         snprintf(small_buf, sizeof(small_buf), "orientation %d\n",RP->orientation);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->origin_x) {
+    if (RP->origin_x) {
         snprintf(small_buf, sizeof(small_buf), "origin_x %d\n",RP->origin_x);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->origin_y) {
+    if (RP->origin_y) {
         snprintf(small_buf, sizeof(small_buf), "origin_y %d\n",RP->origin_y);
         strncat(buf,small_buf, bufsize);
     }
-    if(RP->random_seed) {
+    if (RP->random_seed) {
         /* Add one so that the next map is a bit different */
         snprintf(small_buf, sizeof(small_buf), "random_seed %d\n",RP->random_seed + 1);
         strncat(buf,small_buf, bufsize);
     }
 
-    if(RP->treasureoptions) {
+    if (RP->treasureoptions) {
         snprintf(small_buf, sizeof(small_buf), "treasureoptions %d\n",RP->treasureoptions);
         strncat(buf,small_buf, bufsize);
     }
@@ -869,90 +862,90 @@ void write_parameters_to_string(char *buf,
     char small_buf[256];
     sprintf(buf,"xsize %d\nysize %d\n",xsize_n,ysize_n);
 
-    if(wallstyle_n && wallstyle_n[0]) {
+    if (wallstyle_n && wallstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "wallstyle %s\n",wallstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(floorstyle_n && floorstyle_n[0]) {
+    if (floorstyle_n && floorstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "floorstyle %s\n",floorstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(monsterstyle_n && monsterstyle_n[0]) {
+    if (monsterstyle_n && monsterstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "monsterstyle %s\n",monsterstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(treasurestyle_n && treasurestyle_n[0]) {
+    if (treasurestyle_n && treasurestyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "treasurestyle %s\n",treasurestyle_n);
         strcat(buf,small_buf);
     }
 
-    if(layoutstyle_n &&layoutstyle_n[0]) {
+    if (layoutstyle_n &&layoutstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "layoutstyle %s\n",layoutstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(decorstyle_n && decorstyle_n[0]) {
+    if (decorstyle_n && decorstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "decorstyle %s\n",decorstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(doorstyle_n && doorstyle_n[0]) {
+    if (doorstyle_n && doorstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "doorstyle %s\n",doorstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(exitstyle_n && exitstyle_n[0]) {
+    if (exitstyle_n && exitstyle_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "exitstyle %s\n",exitstyle_n);
         strcat(buf,small_buf);
     }
 
-    if(final_map_n && final_map_n[0]) {
+    if (final_map_n && final_map_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "final_map %s\n",final_map_n);
         strcat(buf,small_buf);
     }
 
-    if(exit_on_final_map_n && exit_on_final_map_n[0]) {
+    if (exit_on_final_map_n && exit_on_final_map_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "exit_on_final_map %s\n",exit_on_final_map_n);
         strcat(buf,small_buf);
     }
 
-    if(this_map_n && this_map_n[0]) {
+    if (this_map_n && this_map_n[0]) {
         snprintf(small_buf, sizeof(small_buf), "origin_map %s\n",this_map_n);
         strcat(buf,small_buf);
     }
 
-    if(layoutoptions1_n) {
+    if (layoutoptions1_n) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions1 %d\n",layoutoptions1_n);
         strcat(buf,small_buf);
     }
 
 
-    if(layoutoptions2_n) {
+    if (layoutoptions2_n) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions2 %d\n",layoutoptions2_n);
         strcat(buf,small_buf);
     }
 
 
-    if(layoutoptions3_n) {
+    if (layoutoptions3_n) {
         snprintf(small_buf, sizeof(small_buf), "layoutoptions3 %d\n",layoutoptions3_n);
         strcat(buf,small_buf);
     }
 
-    if(symmetry_n) {
+    if (symmetry_n) {
         snprintf(small_buf, sizeof(small_buf), "symmetry %d\n",symmetry_n);
         strcat(buf,small_buf);
     }
 
 
-    if(difficulty_n && difficulty_given_n ) {
+    if (difficulty_n && difficulty_given_n) {
         snprintf(small_buf, sizeof(small_buf), "difficulty %d\n",difficulty_n);
         strcat(buf,small_buf);
     }
 
-    if(difficulty_increase > 0.001 ) {
+    if (difficulty_increase > 0.001) {
         snprintf(small_buf, sizeof(small_buf), "difficulty_increase %f\n",difficulty_increase);
         strcat(buf,small_buf);
     }
@@ -960,37 +953,37 @@ void write_parameters_to_string(char *buf,
     snprintf(small_buf, sizeof(small_buf), "dungeon_level %d\n",dungeon_level_n);
     strcat(buf,small_buf);
 
-    if(dungeon_depth_n) {
+    if (dungeon_depth_n) {
         snprintf(small_buf, sizeof(small_buf), "dungeon_depth %d\n",dungeon_depth_n);
         strcat(buf,small_buf);
     }
 
-    if(decoroptions_n) {
+    if (decoroptions_n) {
         snprintf(small_buf, sizeof(small_buf), "decoroptions %d\n",decoroptions_n);
         strcat(buf,small_buf);
     }
 
-    if(orientation_n) {
+    if (orientation_n) {
         snprintf(small_buf, sizeof(small_buf), "orientation %d\n",orientation_n);
         strcat(buf,small_buf);
     }
 
-    if(origin_x_n) {
+    if (origin_x_n) {
         snprintf(small_buf, sizeof(small_buf), "origin_x %d\n",origin_x_n);
         strcat(buf,small_buf);
     }
 
-    if(origin_y_n) {
+    if (origin_y_n) {
         snprintf(small_buf, sizeof(small_buf), "origin_y %d\n",origin_y_n);
         strcat(buf,small_buf);
     }
-    if(random_seed_n) {
+    if (random_seed_n) {
         /* Add one so that the next map is a bit different */
         snprintf(small_buf, sizeof(small_buf), "random_seed %d\n",random_seed_n + 1);
         strcat(buf,small_buf);
     }
 
-    if(treasureoptions_n) {
+    if (treasureoptions_n) {
         snprintf(small_buf, sizeof(small_buf), "treasureoptions %d\n",treasureoptions_n);
         strcat(buf,small_buf);
     }

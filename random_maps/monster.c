@@ -46,7 +46,7 @@
  * @todo
  * there probably is a function in the common library for that, so remove this one.
  */
-void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
+void  insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
     int x,y;
     archetype *at;
     object *old_seg;
@@ -58,7 +58,7 @@ void	 insert_multisquare_ob_in_map(object *new_obj,mapstruct *map) {
     y = new_obj->y;
     old_seg=new_obj;
     head = new_obj;
-    for(at=new_obj->arch->more;at!=NULL;at=at->more) {
+    for (at=new_obj->arch->more;at!=NULL;at=at->more) {
         object *new_seg;
         new_seg = arch_to_object(at);
         new_seg->x = x + at->clone.x;
@@ -94,22 +94,22 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
 
     snprintf(styledirname, sizeof(styledirname), "%s","/styles/monsterstyles");
     style_map = find_style(styledirname,monsterstyle,difficulty);
-    if(style_map == 0) return;
+    if (style_map == 0) return;
 
     /* fill up the map with random monsters from the monster style*/
 
     total_experience = 0;
     failed_placements = 0;
     exp_per_sq = 0;
-    while(exp_per_sq <= level_exp(difficulty,1.0) && failed_placements < 100
-      && number_monsters < (RP->Xsize * RP->Ysize)/8) {
+    while (exp_per_sq <= level_exp(difficulty,1.0) && failed_placements < 100
+           && number_monsters < (RP->Xsize * RP->Ysize)/8) {
         object *this_monster=pick_random_object(style_map);
         int x,y,freeindex;
-        if(this_monster == NULL) return;  /* no monster?? */
+        if (this_monster == NULL) return; /* no monster?? */
         x = RANDOM() % RP->Xsize;
         y = RANDOM() % RP->Ysize;
         freeindex = find_first_free_spot(this_monster,map,x,y);
-        if(freeindex!=-1) {
+        if (freeindex!=-1) {
             object *new_monster = arch_to_object(this_monster->arch);
             x += freearr_x[freeindex];
             y += freearr_y[freeindex];
@@ -118,11 +118,10 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty,RMParms *
             new_monster->y = y;
             insert_multisquare_ob_in_map(new_monster,map);
             total_experience+= this_monster->stats.exp;
-            for(at = new_monster->arch; at != NULL; at = at->more)
+            for (at = new_monster->arch; at != NULL; at = at->more)
                 number_monsters++;
             RP->total_map_hp+=new_monster->stats.hp;  /*  a global count */
-        }
-        else {
+        } else {
             failed_placements++;
         }
         exp_per_sq=((double)1000*total_experience)/(MAP_WIDTH(map)*MAP_HEIGHT(map)+1);
