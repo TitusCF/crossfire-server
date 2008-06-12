@@ -37,8 +37,7 @@
  * @param action
  * sound name to play.
  */
-void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action)
-{
+void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action) {
     SockList sl;
     int volume = 50;
     sstring name;
@@ -65,8 +64,8 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
     sl.buf=malloc(MAXSOCKSENDBUF);
     strcpy((char*)sl.buf, "sound2 ");
     sl.len=strlen((char*)sl.buf);
-    SockList_AddChar(&sl, ( sint8 )( source->x - pl->ob->x ));
-    SockList_AddChar(&sl, ( sint8 )( source->y - pl->ob->y ));
+    SockList_AddChar(&sl, (sint8)(source->x - pl->ob->x));
+    SockList_AddChar(&sl, (sint8)(source->y - pl->ob->y));
     SockList_AddChar(&sl, dir);
     SockList_AddChar(&sl, volume);
     SockList_AddChar(&sl, sound_type);
@@ -91,8 +90,7 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
  * @param action
  * sound name to play.
  */
-void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action)
-{
+void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action) {
     player *pl;
     object* source;
 

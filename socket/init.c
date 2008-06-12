@@ -73,18 +73,17 @@ socket_struct* init_sockets;
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
-void init_connection(socket_struct *ns, const char *from_ip)
-{
+void init_connection(socket_struct *ns, const char *from_ip) {
     SockList sl;
     unsigned char buf[256];
-    int bufsize=65535;	/*Supposed absolute upper limit */
+    int bufsize=65535; /*Supposed absolute upper limit */
     int oldbufsize;
     socklen_t buflen=sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
     int temp = 1;
 
-    if(ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
+    if (ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
         LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
 #else
     if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
@@ -98,7 +97,7 @@ void init_connection(socket_struct *ns, const char *from_ip)
 #ifdef ESRV_DEBUG
         LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
-        if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
+        if (setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
             LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
         }
     }
@@ -167,37 +166,36 @@ void init_connection(socket_struct *ns, const char *from_ip)
     Send_With_Handling(ns, &sl);
 #ifdef CS_LOGSTATS
     if (socket_info.nconns>cst_tot.max_conn)
-	cst_tot.max_conn = socket_info.nconns;
+        cst_tot.max_conn = socket_info.nconns;
     if (socket_info.nconns>cst_lst.max_conn)
-	cst_lst.max_conn = socket_info.nconns;
+        cst_lst.max_conn = socket_info.nconns;
 #endif
 }
 
 
 /** This sets up the socket and reads all the image information into memory. */
-void init_server(void)
-{
-    struct sockaddr_in	insock;
+void init_server(void) {
+    struct sockaddr_in insock;
     struct protoent  *protox;
     struct linger linger_opt;
     char err[MAX_BUF];
 
 #ifdef WIN32 /* ***win32  -  we init a windows socket */
-	WSADATA w;
+    WSADATA w;
 
-	socket_info.max_filedescriptor = 1;	/* used in select, ignored in winsockets */
-	WSAStartup (0x0101,&w);				/* this setup all socket stuff */
-	/* ill include no error tests here, winsocket 1.1 should always work */
-	/* except some old win95 versions without tcp/ip stack */
-#else	/* non windows */
+    socket_info.max_filedescriptor = 1; /* used in select, ignored in winsockets */
+    WSAStartup(0x0101,&w);     /* this setup all socket stuff */
+    /* ill include no error tests here, winsocket 1.1 should always work */
+    /* except some old win95 versions without tcp/ip stack */
+#else /* non windows */
 
 #ifdef HAVE_SYSCONF
-  socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
+    socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
 #else
 #  ifdef HAVE_GETDTABLESIZE
-  socket_info.max_filedescriptor = getdtablesize();
+    socket_info.max_filedescriptor = getdtablesize();
 #  else
-  "Unable to find usable function to get max filedescriptors";
+    "Unable to find usable function to get max filedescriptors";
 #  endif
 #endif
 #endif /* win32 */
@@ -221,13 +219,13 @@ void init_server(void)
 
     protox = getprotobyname("tcp");
     if (protox==NULL) {
-	LOG(llevError,"init_server: Error getting protox\n");
-	return;
+        LOG(llevError,"init_server: Error getting protox\n");
+        return;
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (init_sockets[0].fd == -1) {
-	LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
-	exit(-1);
+        LOG(llevError, "Cannot create socket: %s\n", strerror_local(errno, err, sizeof(err)));
+        exit(-1);
     }
     insock.sin_family = AF_INET;
     insock.sin_port = htons(settings.csport);
@@ -235,9 +233,9 @@ void init_server(void)
 
     linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
-    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
-       sizeof(struct linger))) {
-	LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
+    if (setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
+                   sizeof(struct linger))) {
+        LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
  * these functions are both using the same calling syntax, just one
@@ -250,40 +248,40 @@ void init_server(void)
         defined(__GNU__) /* HURD */
     {
 #ifdef WIN32
-    char tmp = 1;
+        char tmp = 1;
 #else
-	int tmp =1;
+        int tmp =1;
 #endif
 
-	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
-	    LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
-	}
+        if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
+            LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
+        }
     }
 #else
-    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
-	LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
+    if (setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
+        LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 #endif
 
     if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
-	LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
-	shutdown(init_sockets[0].fd,SD_BOTH);
-	closesocket(init_sockets[0].fd);
+        shutdown(init_sockets[0].fd,SD_BOTH);
+        closesocket(init_sockets[0].fd);
 #else
-	close(init_sockets[0].fd);
+        close(init_sockets[0].fd);
 #endif /* win32 */
-	exit(-1);
+        exit(-1);
     }
     if (listen(init_sockets[0].fd,5) == (-1))  {
-	LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
+        LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
-	shutdown(init_sockets[0].fd,SD_BOTH);
-	closesocket(init_sockets[0].fd);
+        shutdown(init_sockets[0].fd,SD_BOTH);
+        closesocket(init_sockets[0].fd);
 #else
-	close(init_sockets[0].fd);
+        close(init_sockets[0].fd);
 #endif /* win32 */
-	exit(-1);
+        exit(-1);
     }
     init_sockets[0].status=Ns_Add;
     read_client_images();
@@ -297,8 +295,7 @@ void init_server(void)
  ******************************************************************************/
 
 /** Free's all the memory that ericserver allocates. */
-void free_all_newserver(void)
-{
+void free_all_newserver(void) {
     LOG(llevDebug,"Freeing all new client/server information.\n");
     free_socket_images();
     free(init_sockets);
@@ -311,33 +308,31 @@ void free_all_newserver(void)
  * update the list
  */
 
-void free_newsocket(socket_struct *ns)
-{
+void free_newsocket(socket_struct *ns) {
 #ifdef WIN32 /* ***win32: closesocket in windows style */
-	shutdown(ns->fd,SD_BOTH);
+    shutdown(ns->fd,SD_BOTH);
     if (closesocket(ns->fd)) {
 #else
     if (close(ns->fd)) {
 #endif /* win32 */
 
 #ifdef ESRV_DEBUG
-	LOG(llevDebug,"Error closing socket %d\n", ns->fd);
+        LOG(llevDebug,"Error closing socket %d\n", ns->fd);
 #endif
     }
     ns->fd = -1;
     if (ns->stats.range)
-	FREE_AND_CLEAR(ns->stats.range);
+        FREE_AND_CLEAR(ns->stats.range);
     if (ns->stats.title)
         FREE_AND_CLEAR(ns->stats.title);
     if (ns->host)
-	FREE_AND_CLEAR(ns->host);
+        FREE_AND_CLEAR(ns->host);
     if (ns->inbuf.buf)
-	FREE_AND_CLEAR(ns->inbuf.buf);
+        FREE_AND_CLEAR(ns->inbuf.buf);
 }
 
 /** Sends the 'goodbye' command to the player, and closes connection. */
-void final_free_player(player *pl)
-{
+void final_free_player(player *pl) {
     cs_write_string(&pl->socket, "goodbye", 8);
     free_newsocket(&pl->socket);
     free_player(pl);

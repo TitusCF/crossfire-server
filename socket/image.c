@@ -50,8 +50,7 @@
  * the caching attribute.
  */
 
-void set_face_mode_cmd(char *buf, int len, socket_struct *ns)
-{
+void set_face_mode_cmd(char *buf, int len, socket_struct *ns) {
     char tmp[256];
 
     int mask =(atoi(buf) & CF_FACE_CACHE), mode=(atoi(buf) & ~CF_FACE_CACHE);
@@ -60,7 +59,7 @@ void set_face_mode_cmd(char *buf, int len, socket_struct *ns)
         ns->facecache=1;
     } else if (mode!=CF_FACE_PNG) {
         snprintf(tmp, sizeof(tmp), "drawinfo %d %s", NDI_RED,
-                "Warning - send unsupported face mode.  Will use Png");
+                 "Warning - send unsupported face mode.  Will use Png");
         Write_String_To_Socket(ns, tmp, strlen(tmp));
 #ifdef ESRV_DEBUG
         LOG(llevDebug,"set_face_mode_cmd: Invalid mode from client: %d\n",
@@ -78,12 +77,11 @@ void set_face_mode_cmd(char *buf, int len, socket_struct *ns)
  * caching images.
  */
 
-void send_face_cmd(char *buff, int len, socket_struct *ns)
-{
+void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum = atoi(buff);
     short facenum=tmpnum & 0xffff;
 
-    if(facenum!=0)
+    if (facenum!=0)
         esrv_send_face(ns, facenum,1);
 }
 
@@ -96,8 +94,7 @@ void send_face_cmd(char *buff, int len, socket_struct *ns)
  * we look at the facecache, and if set, send the image name.
  */
 
-void esrv_send_face(socket_struct *ns,short face_num, int nocache)
-{
+void esrv_send_face(socket_struct *ns,short face_num, int nocache) {
     SockList sl;
     int fallback;
 
@@ -124,8 +121,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
         strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
         sl.len += strlen(new_faces[face_num].name);
         Send_With_Handling(ns, &sl);
-    }
-    else {
+    } else {
         strcpy((char*)sl.buf, "image2 ");
         sl.len=strlen((char*)sl.buf);
         SockList_AddInt(&sl, face_num);
@@ -146,22 +142,21 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache)
  * if you want further detail.
  */
 
-void send_image_info(socket_struct *ns, char *params)
-{
+void send_image_info(socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
     sl.buf = malloc(MAXSOCKSENDBUF);
 
     snprintf((char*)sl.buf, MAXSOCKSENDBUF, "replyinfo image_info\n%d\n%d\n",
-            nrofpixmaps-1, bmaps_checksum);
+             nrofpixmaps-1, bmaps_checksum);
     for (i=0; i<MAX_FACE_SETS; i++) {
         if (facesets[i].prefix) {
             snprintf((char*)sl.buf + strlen((char*)sl.buf), MAXSOCKSENDBUF-strlen((char*)sl.buf),
-                    "%d:%s:%s:%d:%s:%s:%s",
-                    i,  facesets[i].prefix, facesets[i].fullname,
-                    facesets[i].fallback, facesets[i].size,
-                    facesets[i].extension, facesets[i].comment);
+                     "%d:%s:%s:%d:%s:%s:%s",
+                     i,  facesets[i].prefix, facesets[i].fullname,
+                     facesets[i].fallback, facesets[i].size,
+                     facesets[i].extension, facesets[i].comment);
         }
     }
     sl.len = strlen((char*)sl.buf);
@@ -178,8 +173,7 @@ void send_image_info(socket_struct *ns, char *params)
  *  - checksum
  *  - name
  */
-void send_image_sums(socket_struct *ns, char *params)
-{
+void send_image_sums(socket_struct *ns, char *params) {
     int start, stop;
     short i;
     int qq;
@@ -221,7 +215,7 @@ void send_image_sums(socket_struct *ns, char *params)
         SockList_AddChar(&sl, qq);
 
         qq = strlen(new_faces[i].name);
-        SockList_AddChar(&sl, ( char )( qq + 1 ));
+        SockList_AddChar(&sl, (char)(qq + 1));
         strcpy((char*)sl.buf + sl.len, new_faces[i].name);
         sl.len += qq;
         SockList_AddChar(&sl, 0);
