@@ -3,8 +3,7 @@ init_library() as a part of your initializing.
 
 (If not, a lot of function-pointers will point to god knows where...)
 
-Documentation for the functions have been collected into
-the file ../doc/crosslib.doc.
-This was done using cextract, see "doc:" at the end of the Imakefile.
+Documentation for the functions can be generated using doxygen.
+See ../Doxyfile.
 
 -Frank.

@@ -46,7 +46,7 @@ static char *yval(void);
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
-int	msglen=0, total_msglen=0;
+int    msglen=0, total_msglen=0;
 static char lorebuf[HUGE_BUF];
 
 /** Maps the MOVE_* values to names */
@@ -68,218 +68,218 @@ static const char *const move_name[] = {"walk", "fly_low", "fly_high", "swim", "
  * is this still required? it's used, but can it happen?
  */
 const char *const spell_mapping[] = {
-    "spell_magic_bullet",		/* 0 */
-    "spell_small_fireball",		/* 1 */
-    "spell_medium_fireball",	/* 2 */
-    "spell_large_fireball",		/* 3 */
-    "spell_burning_hands",		/* 4 */
-    "spell_sm_lightning",		/* 5 */
-    "spell_large_lightning",	/* 6 */
-    "spell_magic_missile",		/* 7 */
-    "spell_create_bomb",		/* 8 */
-    "spell_summon_golem",		/* 9 */
-    "spell_summon_fire_elemental",	/* 10 */
-    "spell_summon_earth_elemental",	/* 11 */
-    "spell_summon_water_elemental",	/* 12 */
-    "spell_summon_air_elemental",	/* 13 */
-    "spell_dimension_door",		/* 14 */
-    "spell_create_earth_wall",	/* 15 */
-    "spell_paralyze",		/* 16 */
-    "spell_icestorm",		/* 17 */
-    "spell_magic_mapping",		/* 18 */
-    "spell_turn_undead",		/* 19 */
-    "spell_fear",			/* 20 */
-    "spell_poison_cloud",		/* 21 */
-    "spell_wonder",			/* 22 */
-    "spell_destruction",		/* 23 */
-    "spell_perceive_self",		/* 24 */
-    "spell_word_of_recall",		/* 25 */
-    "spell_invisible",		/* 26 */
-    "spell_invisible_to_undead",	/* 27 */
-    "spell_probe",			/* 28 */
-    "spell_lg_magic_bullet",	/* 29 */
-    "spell_improved_invisibility",	/* 30 */
-    "spell_holy_word",		/* 31 */
-    "spell_minor_healing",		/* 32 */
-    "spell_medium_healing",		/* 33 */
-    "spell_major_healing",		/* 34 */
-    "spell_heal",			/* 35 */
-    "spell_create_food",		/* 36 */
-    "spell_earth_to_dust",		/* 37 */
-    "spell_armour",			/* 38 */
-    "spell_strength",		/* 39 */
-    "spell_dexterity",		/* 40 */
-    "spell_constitution",		/* 41 */
-    "spell_charisma",		/* 42 */
-    "spell_create_fire_wall",	/* 43 */
-    "spell_create_frost_wall",	/* 44 */
-    "spell_protection_from_cold",	/* 45 */
-    "spell_protection_from_electricity",	/* 46 */
-    "spell_protection_from_fire",	/* 47 */
-    "spell_protection_from_poison",	/* 48 */
-    "spell_protection_from_slow",	/* 49 */
-    "spell_protection_from_paralysis",	/* 50 */
-    "spell_protection_from_draining",	/* 51 */
-    "spell_protection_from_magic",	/* 52 */
-    "spell_protection_from_attack",	/* 53 */
-    "spell_levitate",		/* 54 */
-    "spell_small_speedball",	/* 55 */
-    "spell_large_speedball",	/* 56 */
-    "spell_hellfire",		/* 57 */
-    "spell_dragonbreath",		/* 58 */
-    "spell_large_icestorm",		/* 59 */
-    "spell_charging",		/* 60 */
-    "spell_polymorph",		/* 61 */
-    "spell_cancellation",		/* 62 */
-    "spell_confusion",		/* 63 */
-    "spell_mass_confusion",		/* 64 */
-    "spell_summon_pet_monster",	/* 65 */
-    "spell_slow",			/* 66 */
-    "spell_regenerate_spellpoints",	/* 67 */
-    "spell_cure_poison",		/* 68 */
-    "spell_protection_from_confusion",	/* 69 */
-    "spell_protection_from_cancellation",	/* 70 */
-    "spell_protection_from_depletion",	/* 71 */
-    "spell_alchemy",		/* 72 */
-    "spell_remove_curse",		/* 73 */
-    "spell_remove_damnation",	/* 74 */
-    "spell_identify",		/* 75*/
-    "spell_detect_magic",		/* 76 */
-    "spell_detect_monster",		/* 77 */
-    "spell_detect_evil",		/* 78 */
-    "spell_detect_curse",		/* 79 */
-    "spell_heroism",		/* 80 */
-    "spell_aggravation",		/* 81 */
-    "spell_firebolt",		/* 82 */
-    "spell_frostbolt",		/* 83 */
-    "spell_shockwave",		/* 84 */
-    "spell_color_spray",		/* 85 */
-    "spell_haste",			/* 86 */
-    "spell_face_of_death",		/* 87 */
-    "spell_ball_lightning",		/* 88 */
-    "spell_meteor_swarm",		/* 89 */
-    "spell_comet",			/* 90 */
-    "spell_mystic_fist",		/* 91 */
-    "spell_raise_dead",		/* 92 */
-    "spell_resurrection",		/* 93 */
-    "spell_reincarnation",		/* 94 */
-    "spell_immunity_to_cold",	/* 95 */
-    "spell_immunity_to_electricity",/* 96 */
-    "spell_immunity_to_fire",	/* 97 */
-    "spell_immunity_to_poison",	/* 98 */
-    "spell_immunity_to_slow",	/* 99 */
-    "spell_immunity_to_paralysis",	/* 100 */
-    "spell_immunity_to_draining",	/* 101 */
-    "spell_immunity_to_magic",	/* 102 */
-    "spell_immunity_to_attack",	/* 103 */
-    "spell_invulnerability",	/* 104 */
-    "spell_defense",		/* 105 */
-    "spell_rune_of_fire",		/* 106 */
-    "spell_rune_of_frost",		/* 107 */
-    "spell_rune_of_shocking",	/* 108 */
-    "spell_rune_of_blasting",	/* 109 */
-    "spell_rune_of_death",		/* 110 */
-    "spell_marking_rune",		/* 111 */
-    "spell_build_director",		/* 112 */
-    "spell_create_pool_of_chaos",	/* 113 */
-    "spell_build_bullet_wall",	/* 114 */
-    "spell_build_lightning_wall",	/* 115 */
-    "spell_build_fireball_wall",	/* 116 */
-    "spell_magic_rune",		/* 117 */
-    "spell_rune_of_magic_drain",	/* 118 */
-    "spell_antimagic_rune",		/* 119 */
-    "spell_rune_of_transference",	/* 120 */
-    "spell_transference",		/* 121 */
-    "spell_magic_drain",		/* 122 */
-    "spell_counterspell",		/* 123 */
-    "spell_disarm",			/* 124 */
-    "spell_cure_confusion",		/* 125 */
-    "spell_restoration",		/* 126 */
-    "was summon evil monster",	/* 127 */   /* Not implenented as nothing used it */
-    "spell_counterwall",		/* 128 */
-    "spell_cause_light_wounds",	/* 129 */
-    "spell_cause_medium_wounds",	/* 130 */
-    "spell_cause_heavy_wounds",	/* 131 */
-    "spell_charm_monsters",		/* 132 */
-    "spell_banishment",		/* 133 */
-    "spell_create_missile",		/* 134 */
-    "spell_show_invisible",		/* 135 */
-    "spell_xray",			/* 136 */
-    "spell_pacify",			/* 137 */
-    "spell_summon_fog",		/* 138 */
-    "spell_steambolt",		/* 139 */
-    "spell_command_undead",		/* 140 */
-    "spell_holy_orb",		/* 141 */
-    "spell_summon_avatar",		/* 142 */
-    "spell_holy_possession",	/* 143 */
-    "spell_bless",			/* 144 */
-    "spell_curse",			/* 145 */
-    "spell_regeneration",		/* 146 */
-    "spell_consecrate",		/* 147 */
-    "spell_summon_cult_monsters",	/* 148 */
-    "spell_cause_critical_wounds",	/* 149 */
-    "spell_holy_wrath",		/* 150 */
-    "spell_retributive_strike",	/* 151 */
-    "spell_finger_of_death",	/* 152 */
-    "spell_insect_plague",		/* 153 */
-    "spell_call_holy_servant",	/* 154 */
-    "spell_wall_of_thorns",		/* 155 */
-    "spell_staff_to_snake",		/* 156 */
-    "spell_light",			/* 157 */
-    "spell_darkness",		/* 158 */
-    "spell_nightfall",		/* 159 */
-    "spell_daylight",		/* 160 */
-    "spell_sunspear",		/* 161 */
-    "spell_faery_fire",		/* 162 */
-    "spell_cure_blindness",		/* 163 */
-    "spell_dark_vision",		/* 164 */
-    "spell_bullet_swarm",		/* 165 */
-    "spell_bullet_storm",		/* 166 */
-    "spell_cause_many_wounds",	/* 167 */
-    "spell_small_snowstorm",	/* 168 */
-    "spell_medium_snowstorm",	/* 169 */
-    "spell_large_snowstorm",	/* 170 */
-    "spell_cure_disease",		/* 171 */
-    "spell_cause_red_death",	/* 172 */
-    "spell_cause_flu",		/* 173 */
-    "spell_cause_black_death",	/* 174 */
-    "spell_cause_leprosy",		/* 175 */
-    "spell_cause_smallpox",		/* 176 */
-    "spell_cause_white_death",	/* 177 */
-    "spell_cause_anthrax",		/* 178 */
-    "spell_cause_typhoid",		/* 179 */
-    "spell_mana_blast",		/* 180 */
-    "spell_small_manaball",		/* 181 */
-    "spell_medium_manaball",	/* 182 */
-    "spell_large_manaball",		/* 183 */
-    "spell_manabolt",		/* 184 */
-    "spell_dancing_sword",		/* 185 */
-    "spell_animate_weapon",		/* 186 */
-    "spell_cause_cold",		/* 187 */
-    "spell_divine_shock",		/* 188 */
-    "spell_windstorm",		/* 189 */
-    "spell_sanctuary",		/* 190 */
-    "spell_peace",			/* 191 */
-    "spell_spiderweb",		/* 192 */
-    "spell_conflict",		/* 193 */
-    "spell_rage",			/* 194 */
-    "spell_forked_lightning",	/* 195 */
-    "spell_poison_fog",		/* 196 */
-    "spell_flaming_aura",		/* 197 */
-    "spell_vitriol",		/* 198 */
-    "spell_vitriol_splash",		/* 199 */
-    "spell_iron_skin",		/* 200 */
-    "spell_wrathful_eye",		/* 201 */
-    "spell_town_portal",		/* 202 */
-    "spell_missile_swarm",		/* 203 */
-    "spell_cause_rabies",		/* 204 */
-    "spell_glyph",			/* 205 */
+    "spell_magic_bullet",               /* 0 */
+    "spell_small_fireball",             /* 1 */
+    "spell_medium_fireball",            /* 2 */
+    "spell_large_fireball",             /* 3 */
+    "spell_burning_hands",              /* 4 */
+    "spell_sm_lightning",               /* 5 */
+    "spell_large_lightning",            /* 6 */
+    "spell_magic_missile",              /* 7 */
+    "spell_create_bomb",                /* 8 */
+    "spell_summon_golem",               /* 9 */
+    "spell_summon_fire_elemental",      /* 10 */
+    "spell_summon_earth_elemental",     /* 11 */
+    "spell_summon_water_elemental",     /* 12 */
+    "spell_summon_air_elemental",       /* 13 */
+    "spell_dimension_door",             /* 14 */
+    "spell_create_earth_wall",          /* 15 */
+    "spell_paralyze",                   /* 16 */
+    "spell_icestorm",                   /* 17 */
+    "spell_magic_mapping",              /* 18 */
+    "spell_turn_undead",                /* 19 */
+    "spell_fear",                       /* 20 */
+    "spell_poison_cloud",               /* 21 */
+    "spell_wonder",                     /* 22 */
+    "spell_destruction",                /* 23 */
+    "spell_perceive_self",              /* 24 */
+    "spell_word_of_recall",             /* 25 */
+    "spell_invisible",                  /* 26 */
+    "spell_invisible_to_undead",        /* 27 */
+    "spell_probe",                      /* 28 */
+    "spell_lg_magic_bullet",            /* 29 */
+    "spell_improved_invisibility",      /* 30 */
+    "spell_holy_word",                  /* 31 */
+    "spell_minor_healing",              /* 32 */
+    "spell_medium_healing",             /* 33 */
+    "spell_major_healing",              /* 34 */
+    "spell_heal",                       /* 35 */
+    "spell_create_food",                /* 36 */
+    "spell_earth_to_dust",              /* 37 */
+    "spell_armour",                     /* 38 */
+    "spell_strength",                   /* 39 */
+    "spell_dexterity",                  /* 40 */
+    "spell_constitution",               /* 41 */
+    "spell_charisma",                   /* 42 */
+    "spell_create_fire_wall",           /* 43 */
+    "spell_create_frost_wall",          /* 44 */
+    "spell_protection_from_cold",       /* 45 */
+    "spell_protection_from_electricity", /* 46 */
+    "spell_protection_from_fire",       /* 47 */
+    "spell_protection_from_poison",     /* 48 */
+    "spell_protection_from_slow",       /* 49 */
+    "spell_protection_from_paralysis",  /* 50 */
+    "spell_protection_from_draining",   /* 51 */
+    "spell_protection_from_magic",      /* 52 */
+    "spell_protection_from_attack",     /* 53 */
+    "spell_levitate",                   /* 54 */
+    "spell_small_speedball",            /* 55 */
+    "spell_large_speedball",            /* 56 */
+    "spell_hellfire",                   /* 57 */
+    "spell_dragonbreath",               /* 58 */
+    "spell_large_icestorm",             /* 59 */
+    "spell_charging",                   /* 60 */
+    "spell_polymorph",                  /* 61 */
+    "spell_cancellation",               /* 62 */
+    "spell_confusion",                  /* 63 */
+    "spell_mass_confusion",             /* 64 */
+    "spell_summon_pet_monster",         /* 65 */
+    "spell_slow",                       /* 66 */
+    "spell_regenerate_spellpoints",     /* 67 */
+    "spell_cure_poison",                /* 68 */
+    "spell_protection_from_confusion",  /* 69 */
+    "spell_protection_from_cancellation", /* 70 */
+    "spell_protection_from_depletion",  /* 71 */
+    "spell_alchemy",                    /* 72 */
+    "spell_remove_curse",               /* 73 */
+    "spell_remove_damnation",           /* 74 */
+    "spell_identify",                   /* 75 */
+    "spell_detect_magic",               /* 76 */
+    "spell_detect_monster",             /* 77 */
+    "spell_detect_evil",                /* 78 */
+    "spell_detect_curse",               /* 79 */
+    "spell_heroism",                    /* 80 */
+    "spell_aggravation",                /* 81 */
+    "spell_firebolt",                   /* 82 */
+    "spell_frostbolt",                  /* 83 */
+    "spell_shockwave",                  /* 84 */
+    "spell_color_spray",                /* 85 */
+    "spell_haste",                      /* 86 */
+    "spell_face_of_death",              /* 87 */
+    "spell_ball_lightning",             /* 88 */
+    "spell_meteor_swarm",               /* 89 */
+    "spell_comet",                      /* 90 */
+    "spell_mystic_fist",                /* 91 */
+    "spell_raise_dead",                 /* 92 */
+    "spell_resurrection",               /* 93 */
+    "spell_reincarnation",              /* 94 */
+    "spell_immunity_to_cold",           /* 95 */
+    "spell_immunity_to_electricity",    /* 96 */
+    "spell_immunity_to_fire",           /* 97 */
+    "spell_immunity_to_poison",         /* 98 */
+    "spell_immunity_to_slow",           /* 99 */
+    "spell_immunity_to_paralysis",      /* 100 */
+    "spell_immunity_to_draining",       /* 101 */
+    "spell_immunity_to_magic",          /* 102 */
+    "spell_immunity_to_attack",         /* 103 */
+    "spell_invulnerability",            /* 104 */
+    "spell_defense",                    /* 105 */
+    "spell_rune_of_fire",               /* 106 */
+    "spell_rune_of_frost",              /* 107 */
+    "spell_rune_of_shocking",           /* 108 */
+    "spell_rune_of_blasting",           /* 109 */
+    "spell_rune_of_death",              /* 110 */
+    "spell_marking_rune",               /* 111 */
+    "spell_build_director",             /* 112 */
+    "spell_create_pool_of_chaos",       /* 113 */
+    "spell_build_bullet_wall",          /* 114 */
+    "spell_build_lightning_wall",       /* 115 */
+    "spell_build_fireball_wall",        /* 116 */
+    "spell_magic_rune",                 /* 117 */
+    "spell_rune_of_magic_drain",        /* 118 */
+    "spell_antimagic_rune",             /* 119 */
+    "spell_rune_of_transference",       /* 120 */
+    "spell_transference",               /* 121 */
+    "spell_magic_drain",                /* 122 */
+    "spell_counterspell",               /* 123 */
+    "spell_disarm",                     /* 124 */
+    "spell_cure_confusion",             /* 125 */
+    "spell_restoration",                /* 126 */
+    "was summon evil monster",          /* 127 */   /* Not implenented as nothing used it */
+    "spell_counterwall",                /* 128 */
+    "spell_cause_light_wounds",         /* 129 */
+    "spell_cause_medium_wounds",        /* 130 */
+    "spell_cause_heavy_wounds",         /* 131 */
+    "spell_charm_monsters",             /* 132 */
+    "spell_banishment",                 /* 133 */
+    "spell_create_missile",             /* 134 */
+    "spell_show_invisible",             /* 135 */
+    "spell_xray",                       /* 136 */
+    "spell_pacify",                     /* 137 */
+    "spell_summon_fog",                 /* 138 */
+    "spell_steambolt",                  /* 139 */
+    "spell_command_undead",             /* 140 */
+    "spell_holy_orb",                   /* 141 */
+    "spell_summon_avatar",              /* 142 */
+    "spell_holy_possession",            /* 143 */
+    "spell_bless",                      /* 144 */
+    "spell_curse",                      /* 145 */
+    "spell_regeneration",               /* 146 */
+    "spell_consecrate",                 /* 147 */
+    "spell_summon_cult_monsters",       /* 148 */
+    "spell_cause_critical_wounds",      /* 149 */
+    "spell_holy_wrath",                 /* 150 */
+    "spell_retributive_strike",         /* 151 */
+    "spell_finger_of_death",            /* 152 */
+    "spell_insect_plague",              /* 153 */
+    "spell_call_holy_servant",          /* 154 */
+    "spell_wall_of_thorns",             /* 155 */
+    "spell_staff_to_snake",             /* 156 */
+    "spell_light",                      /* 157 */
+    "spell_darkness",                   /* 158 */
+    "spell_nightfall",                  /* 159 */
+    "spell_daylight",                   /* 160 */
+    "spell_sunspear",                   /* 161 */
+    "spell_faery_fire",                 /* 162 */
+    "spell_cure_blindness",             /* 163 */
+    "spell_dark_vision",                /* 164 */
+    "spell_bullet_swarm",               /* 165 */
+    "spell_bullet_storm",               /* 166 */
+    "spell_cause_many_wounds",          /* 167 */
+    "spell_small_snowstorm",            /* 168 */
+    "spell_medium_snowstorm",           /* 169 */
+    "spell_large_snowstorm",            /* 170 */
+    "spell_cure_disease",               /* 171 */
+    "spell_cause_red_death",            /* 172 */
+    "spell_cause_flu",                  /* 173 */
+    "spell_cause_black_death",          /* 174 */
+    "spell_cause_leprosy",              /* 175 */
+    "spell_cause_smallpox",             /* 176 */
+    "spell_cause_white_death",          /* 177 */
+    "spell_cause_anthrax",              /* 178 */
+    "spell_cause_typhoid",              /* 179 */
+    "spell_mana_blast",                 /* 180 */
+    "spell_small_manaball",             /* 181 */
+    "spell_medium_manaball",            /* 182 */
+    "spell_large_manaball",             /* 183 */
+    "spell_manabolt",                   /* 184 */
+    "spell_dancing_sword",              /* 185 */
+    "spell_animate_weapon",             /* 186 */
+    "spell_cause_cold",                 /* 187 */
+    "spell_divine_shock",               /* 188 */
+    "spell_windstorm",                  /* 189 */
+    "spell_sanctuary",                  /* 190 */
+    "spell_peace",                      /* 191 */
+    "spell_spiderweb",                  /* 192 */
+    "spell_conflict",                   /* 193 */
+    "spell_rage",                       /* 194 */
+    "spell_forked_lightning",           /* 195 */
+    "spell_poison_fog",                 /* 196 */
+    "spell_flaming_aura",               /* 197 */
+    "spell_vitriol",                    /* 198 */
+    "spell_vitriol_splash",             /* 199 */
+    "spell_iron_skin",                  /* 200 */
+    "spell_wrathful_eye",               /* 201 */
+    "spell_town_portal",                /* 202 */
+    "spell_missile_swarm",              /* 203 */
+    "spell_cause_rabies",               /* 204 */
+    "spell_glyph",                      /* 205 */
     NULL
 };
 
 /** Utility macro to transform a bit into a flag. */
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
-	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
+        { if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
 /**
  * SET_RESIST is really only really needed for transition code.  We normally
@@ -306,9 +306,9 @@ static void set_damage(object* op, int type, int val) {
 }
 
 /** Next value as integer. */
-#define IVAL	atoi(yval())
+#define IVAL    atoi(yval())
 /** Next value as float. */
-#define FVAL	atof(yval())
+#define FVAL    atof(yval())
 extern int arch_init;
 extern int artifact_init;
 
@@ -327,12 +327,12 @@ static void set_body_info(object *op, char *params) {
     /* go to first space character */
     for (cp=params; !isspace(*cp); cp++) ;
 
-    *cp++ = 0;	/* null it out */
+    *cp++ = 0;  /* null it out */
 
     for (i=0; i<NUM_BODY_LOCATIONS; i++) {
         if (!strcmp(params, body_locations[i].save_name)) {
             op->body_info[i] = atoi(cp);
-            return;	/* Only one line passed in params */
+            return;     /* Only one line passed in params */
         }
     }
     LOG(llevError,"set_body_info called with bogus params: %s\n", params);
@@ -398,7 +398,7 @@ static void check_loaded_object(object *op) {
 
         tmp = create_archetype_by_object_name(op->slaying);
         insert_ob_in_ob(tmp, op);
-        op->randomitems = NULL;	/* So another spell isn't created for this object */
+        op->randomitems = NULL; /* So another spell isn't created for this object */
         /* without this, value is all screwed up */
         op->value = op->arch->clone.value * op->inv->value;
     }
@@ -1237,10 +1237,10 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "can_use_shield", "no_pick", "client_anim_sync", "client_anim_random", /* 10 */
     "is_animated", NULL /* FLAG_DIALOG_PARSED, not saved */,
     NULL /* flying */, "monster", "friendly", "generator",
-    "is_thrown", "auto_apply", "treasure", "player sold",   /* 20 */
+    "is_thrown", "auto_apply", "treasure", "player sold",           /* 20 */
     "see_invisible", "can_roll", "overlay_floor",
     "is_turnable", NULL /* walk_off */, NULL /* fly_on */,
-    NULL /*fly_off*/, "is_used_up", "identified", "reflecting",	/* 30 */
+    NULL /*fly_off*/, "is_used_up", "identified", "reflecting",     /* 30 */
     "changing", "splitting", "hitback", "startequip",
     "blocksview", "undead", "scared", "unaggressive",
     "reflect_missile", "reflect_spell",                             /* 40 */
@@ -1251,7 +1251,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "can_use_bow",  "can_use_armour", "can_use_weapon",
     "can_use_ring", "has_ready_range", "has_ready_bow",             /* 60 */
     "xrays", NULL, "is_floor", "lifesave", "no_strength", "sleep",
-    "stand_still", "random_movement", "only_attack", "confused",        /* 70 */
+    "stand_still", "random_movement", "only_attack", "confused",    /* 70 */
     "stealth", NULL, NULL, "cursed", "damned",
     "see_anywhere", "known_magical", "known_cursed",
     "can_use_skill", "been_applied",                                /* 80 */
@@ -1259,7 +1259,7 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
     "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
     "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
-    "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",	/* 100 */
+    "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",   /* 100 */
     "no_attack", "no_damage", NULL, NULL, "activate_on_push",
     "activate_on_release", "is_water", "use_content_on_gen", NULL, "is_buildable",   /* 110 */
     NULL, "blessed", "known_blessed"
@@ -1298,7 +1298,7 @@ void free_loader() {
  */
 static void get_string_move_type(StringBuffer *sb, MoveType mt)
 {
-    static char	retbuf[MAX_BUF], retbuf_all[MAX_BUF];
+    static char retbuf[MAX_BUF], retbuf_all[MAX_BUF];
     int i, all_count=0, count;
 
     strcpy(retbuf,"");

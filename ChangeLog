@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat common/loader.l a bit too. Update info in common/README. Clean up
+some trailing whitespaces in some header files.
+M      common/loader.l
+M      common/README
+M      make_win32/plugin_python/resource.h
+M      make_win32/resource.h
+Arvid Norlander 2008-06-12
+
 Reformat all files in common/ to fit with current coding style standard, a
 combination of using the astyle tool and manual review afterwards.
  common/item.c
