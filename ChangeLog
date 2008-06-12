@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+First step in fixing bug #1992235 (citylife/rabies potential DOS). Make citylife
+NPCs undead.
+ plugins/citylife/citylife.c
+Arvid Norlander 2008-06-12
+
 Reformat all files in server/ to fit with current coding style standard, a
 combination of using the astyle tool and manual review afterwards.
  server/c_range.c

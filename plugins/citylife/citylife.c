@@ -264,6 +264,8 @@ static object* get_npc(const mapzone* zone) {
     }
 
     cf_object_set_flag(npc, FLAG_RANDOM_MOVE, 1);
+    /* Prevent disease spreading in Scorn, mostly rabies. */
+    cf_object_set_flag(npc, FLAG_UNDEAD, 1);
     /* add a key so NPC will not disappear in the house it came from */
     cf_object_set_key(npc, FIRST_MOVE_KEY, "1", 1);
 
