@@ -273,7 +273,7 @@ static void generate_monster(object *gen) {
     else
         did_gen = generate_monster_arch(gen);
 
-    /* See if generator has a generator_max_map limit set */
+    /* See if generator has a generator_limit limit set */
     value = get_ob_key_value(gen, "generator_limit");
 
     /* Only do this if we actually made a monster.  If the generator

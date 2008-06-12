@@ -438,7 +438,7 @@ extern int yyget_debug(void);
 extern void yyset_debug(int bdebug);
 extern int yylex_destroy(void);
 extern void yyfree(void *ptr);
-extern int yyerror(char *s);
+extern int yyerror(const char *s);
 extern int load_object(FILE *fp, object *op, int bufstate, int map_flags);
 extern int set_variable(object *op, char *buf);
 extern void init_vars(void);

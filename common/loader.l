@@ -1073,7 +1073,7 @@ A	.+
  * @param s
  * lex-generated error message.
  */
-int yyerror(char *s)
+int yyerror(const char *s)
 {
     LOG(llevError, "%s: %s\n", s, yytext);
     return -1;
