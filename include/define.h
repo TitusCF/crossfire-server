@@ -75,14 +75,14 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define NAME_MAX 255
 #endif
 
-#define MAX_STAT		30	/**< The maximum legal value of any stat */
-#define MIN_STAT		1	/**< The minimum legal value of any stat */
+#define MAX_STAT                30      /**< The maximum legal value of any stat */
+#define MIN_STAT                1       /**< The minimum legal value of any stat */
 
-#define MAX_BUF			256	/**< Used for all kinds of things */
-#define VERY_BIG_BUF		1024
-#define HUGE_BUF		4096 /**< Used for messages - some can be quite long */
+#define MAX_BUF                 256     /**< Used for all kinds of things */
+#define VERY_BIG_BUF            1024
+#define HUGE_BUF                4096    /**< Used for messages - some can be quite long */
 
-#define MAX_ANIMATIONS		256
+#define MAX_ANIMATIONS          256
 
 #define MAX_NAME 48
 #define BIG_NAME 32
@@ -91,9 +91,9 @@ error - Your ANSI C compiler should be defining __STDC__;
  * Fatal variables; used as arguments to fatal().
  */
 /*@{*/
-#define OUT_OF_MEMORY		0
-#define MAP_ERROR		1
-#define ARCHTABLE_TOO_SMALL	2
+#define OUT_OF_MEMORY           0
+#define MAP_ERROR               1
+#define ARCHTABLE_TOO_SMALL     2
 /*@}*/
 
 /**
@@ -324,15 +324,15 @@ error - Your ANSI C compiler should be defining __STDC__;
  * @defgroup TYPE_WEAPON Weapon types
  */
 /*@{*/
-#define WEAP_HIT	0  /**< the basic */
-#define WEAP_SLASH	1  /**< slash */
-#define WEAP_PIERCE	2  /**< arrows, stiletto */
-#define WEAP_CLEAVE	3  /**< axe */
-#define WEAP_SLICE	4  /**< katana */
-#define WEAP_STAB	5  /**< knife, dagger */
-#define WEAP_WHIP	6  /**< whips n chains */
-#define WEAP_CRUSH	7  /**< big hammers, flails */
-#define WEAP_BLUD	8  /**< bludgeoning, club, stick */
+#define WEAP_HIT        0  /**< the basic */
+#define WEAP_SLASH      1  /**< slash */
+#define WEAP_PIERCE     2  /**< arrows, stiletto */
+#define WEAP_CLEAVE     3  /**< axe */
+#define WEAP_SLICE      4  /**< katana */
+#define WEAP_STAB       5  /**< knife, dagger */
+#define WEAP_WHIP       6  /**< whips n chains */
+#define WEAP_CRUSH      7  /**< big hammers, flails */
+#define WEAP_BLUD       8  /**< bludgeoning, club, stick */
 /*@}*/
 
 /** Link an object type with skill needed to identify, and general name. */
@@ -353,43 +353,43 @@ typedef struct typedata {
  */
 /*@{*/
 /* high bit as flag for new pickup options */
-#define PU_NOTHING		0x00000000
+#define PU_NOTHING              0x00000000
 
-#define PU_DEBUG		0x10000000
-#define PU_INHIBIT		0x20000000
-#define PU_STOP			0x40000000
-#define PU_NEWMODE		0x80000000
+#define PU_DEBUG                0x10000000
+#define PU_INHIBIT              0x20000000
+#define PU_STOP                 0x40000000
+#define PU_NEWMODE              0x80000000
 
-#define PU_RATIO		0x0000000F
+#define PU_RATIO                0x0000000F
 
-#define PU_FOOD			0x00000010
-#define PU_DRINK		0x00000020
-#define PU_VALUABLES		0x00000040
-#define PU_BOW			0x00000080
+#define PU_FOOD                 0x00000010
+#define PU_DRINK                0x00000020
+#define PU_VALUABLES            0x00000040
+#define PU_BOW                  0x00000080
 
-#define PU_ARROW		0x00000100
-#define PU_HELMET		0x00000200
-#define PU_SHIELD		0x00000400
-#define PU_ARMOUR		0x00000800
+#define PU_ARROW                0x00000100
+#define PU_HELMET               0x00000200
+#define PU_SHIELD               0x00000400
+#define PU_ARMOUR               0x00000800
 
-#define PU_BOOTS		0x00001000
-#define PU_GLOVES		0x00002000
-#define PU_CLOAK		0x00004000
-#define PU_KEY			0x00008000
+#define PU_BOOTS                0x00001000
+#define PU_GLOVES               0x00002000
+#define PU_CLOAK                0x00004000
+#define PU_KEY                  0x00008000
 
-#define PU_MISSILEWEAPON	0x00010000
-#define PU_ALLWEAPON		0x00020000
-#define PU_MAGICAL		0x00040000
-#define PU_POTION		0x00080000
+#define PU_MISSILEWEAPON        0x00010000
+#define PU_ALLWEAPON            0x00020000
+#define PU_MAGICAL              0x00040000
+#define PU_POTION               0x00080000
 
-#define PU_SPELLBOOK		0x00100000
-#define PU_SKILLSCROLL		0x00200000
-#define PU_READABLES		0x00400000
-#define PU_MAGIC_DEVICE		0x00800000
+#define PU_SPELLBOOK            0x00100000
+#define PU_SKILLSCROLL          0x00200000
+#define PU_READABLES            0x00400000
+#define PU_MAGIC_DEVICE         0x00800000
 
-#define PU_NOT_CURSED		0x01000000
-#define PU_JEWELS		0x02000000
-#define PU_FLESH		0x04000000
+#define PU_NOT_CURSED           0x01000000
+#define PU_JEWELS               0x02000000
+#define PU_FLESH                0x04000000
 /*@}*/
 
 /* Instead of using arbitrary constants for indexing the
@@ -409,24 +409,24 @@ typedef struct typedata {
  */
 /*@{*/
 #define IS_WEAPON(op) \
-	(op->type == ARROW || op->type == BOW || op->type == WEAPON)
+        (op->type == ARROW || op->type == BOW || op->type == WEAPON)
 
 #define IS_ARMOR(op) \
-	(op->type == ARMOUR || op->type == HELMET || \
-	 op->type == BOOTS || op->type == GLOVES)
+        (op->type == ARMOUR || op->type == HELMET || \
+         op->type == BOOTS || op->type == GLOVES)
 
 #define IS_SHIELD(op) \
-	(op->type == SHIELD)
+        (op->type == SHIELD)
 
 #define IS_LIVE(op) \
-	((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
-	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-	!op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
+        ((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
+        (QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
+        !op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
-	(op->type==ARROW || \
-	(op->type==SPELL_EFFECT && \
-	     (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
+        (op->type==ARROW || \
+        (op->type==SPELL_EFFECT && \
+             (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
 /*@}*/
 
 /** This return TRUE if object has still randomitems which could be expanded. */
@@ -471,153 +471,153 @@ typedef struct typedata {
  */
 /*@{*/
 #define SET_FLAG(xyz, p) \
-	((xyz)->flags[p/32] |= (1U << (p % 32)))
+        ((xyz)->flags[p/32] |= (1U << (p % 32)))
 #define CLEAR_FLAG(xyz, p) \
-	((xyz)->flags[p/32] &= ~(1U << (p % 32)))
+        ((xyz)->flags[p/32] &= ~(1U << (p % 32)))
 #define QUERY_FLAG(xyz, p) \
-	((xyz)->flags[p/32] & (1U << (p % 32)))
+        ((xyz)->flags[p/32] & (1U << (p % 32)))
 #define COMPARE_FLAGS(p,q) \
-	(                                            \
-		((p)->flags[0] == (q)->flags[0]) &&  \
-		((p)->flags[1] == (q)->flags[1]) &&  \
-		((p)->flags[2] == (q)->flags[2]) &&  \
-		((p)->flags[3] == (q)->flags[3])     \
-	)
+        (                                            \
+                ((p)->flags[0] == (q)->flags[0]) &&  \
+                ((p)->flags[1] == (q)->flags[1]) &&  \
+                ((p)->flags[2] == (q)->flags[2]) &&  \
+                ((p)->flags[3] == (q)->flags[3])     \
+        )
 
 /* the flags themselves. */
 
-#define FLAG_ALIVE	 	0 /**< Object can fight (or be fought) */
-#define FLAG_WIZ	 	1 /**< Object has special privilegies */
-#define FLAG_REMOVED	 	2 /**< Object is not in any map or invenory */
-#define FLAG_FREED	 	3 /**< Object is in the list of free objects */
-#define FLAG_WAS_WIZ	 	4 /**< Player was once a wiz */
-#define FLAG_APPLIED	 	5 /**< Object is ready for use by living */
-#define FLAG_UNPAID	 	6 /**< Object hasn't been paid for yet */
-#define FLAG_USE_SHIELD		7 /**< Can this creature use a shield? */
+#define FLAG_ALIVE              0  /**< Object can fight (or be fought) */
+#define FLAG_WIZ                1  /**< Object has special privilegies */
+#define FLAG_REMOVED            2  /**< Object is not in any map or invenory */
+#define FLAG_FREED              3  /**< Object is in the list of free objects */
+#define FLAG_WAS_WIZ            4  /**< Player was once a wiz */
+#define FLAG_APPLIED            5  /**< Object is ready for use by living */
+#define FLAG_UNPAID             6  /**< Object hasn't been paid for yet */
+#define FLAG_USE_SHIELD         7  /**< Can this creature use a shield? */
 
-#define FLAG_NO_PICK	 	8 /**< Object can't be picked up */
-#define FLAG_CLIENT_ANIM_SYNC 	9 /**< Let client animate this, synchronized */
-#define FLAG_CLIENT_ANIM_RANDOM	10/**< Client animate this, randomized */
-#define FLAG_ANIMATE		11 /**< The object looks at archetype for faces */
-#define FLAG_DIALOG_PARSED	12 /**< Was the object::msg field parsed? Temporary flag not saved */
-/*#define FLAG_FLYING		13*//* Not affected by WALK_ON or SLOW_MOVE) */
-#define FLAG_MONSTER		14 /**< Will attack players */
-#define FLAG_FRIENDLY		15 /**< Will help players */
+#define FLAG_NO_PICK            8  /**< Object can't be picked up */
+#define FLAG_CLIENT_ANIM_SYNC   9  /**< Let client animate this, synchronized */
+#define FLAG_CLIENT_ANIM_RANDOM 10 /**< Client animate this, randomized */
+#define FLAG_ANIMATE            11 /**< The object looks at archetype for faces */
+#define FLAG_DIALOG_PARSED      12 /**< Was the object::msg field parsed? Temporary flag not saved */
+/*#define FLAG_FLYING           13*//* Not affected by WALK_ON or SLOW_MOVE) */
+#define FLAG_MONSTER            14 /**< Will attack players */
+#define FLAG_FRIENDLY           15 /**< Will help players */
 
-#define FLAG_GENERATOR		16 /**< Will generate type ob->stats.food */
-#define FLAG_IS_THROWN		17 /**< Object is designed to be thrown. */
-#define FLAG_AUTO_APPLY		18 /**< Will be applied when created */
-#define FLAG_TREASURE		19 /**< Will generate treasure when applied */
-#define FLAG_PLAYER_SOLD	20 /**< Object was sold to a shop by a player. */
-#define FLAG_SEE_INVISIBLE 	21 /**< Will see invisible player */
-#define FLAG_CAN_ROLL		22 /**< Object can be rolled */
-#define FLAG_OVERLAY_FLOOR	23 /**< Object is an overlay floor */
-#define FLAG_IS_TURNABLE 	24 /**< Object can change face with direction */
-/*#define FLAG_WALK_OFF		25*//* Object is applied when left */
-/*#define FLAG_FLY_ON		26*//* As WALK_ON, but only with FLAG_FLYING */
-/*#define FLAG_FLY_OFF		27*//* As WALK_OFF, but only with FLAG_FLYING */
-#define FLAG_IS_USED_UP		28 /**< When (--food<0) the object will exit */
-#define FLAG_IDENTIFIED		29 /**< Player knows full info about item */
-#define FLAG_REFLECTING		30 /**< Object reflects from walls (lightning) */
-#define FLAG_CHANGING		31 /**< Changes to other_arch when anim is done*/
+#define FLAG_GENERATOR          16 /**< Will generate type ob->stats.food */
+#define FLAG_IS_THROWN          17 /**< Object is designed to be thrown. */
+#define FLAG_AUTO_APPLY         18 /**< Will be applied when created */
+#define FLAG_TREASURE           19 /**< Will generate treasure when applied */
+#define FLAG_PLAYER_SOLD        20 /**< Object was sold to a shop by a player. */
+#define FLAG_SEE_INVISIBLE      21 /**< Will see invisible player */
+#define FLAG_CAN_ROLL           22 /**< Object can be rolled */
+#define FLAG_OVERLAY_FLOOR      23 /**< Object is an overlay floor */
+#define FLAG_IS_TURNABLE        24 /**< Object can change face with direction */
+/*#define FLAG_WALK_OFF         25*//* Object is applied when left */
+/*#define FLAG_FLY_ON           26*//* As WALK_ON, but only with FLAG_FLYING */
+/*#define FLAG_FLY_OFF          27*//* As WALK_OFF, but only with FLAG_FLYING */
+#define FLAG_IS_USED_UP         28 /**< When (--food<0) the object will exit */
+#define FLAG_IDENTIFIED         29 /**< Player knows full info about item */
+#define FLAG_REFLECTING         30 /**< Object reflects from walls (lightning) */
+#define FLAG_CHANGING           31 /**< Changes to other_arch when anim is done*/
 
 /* Start of values in flags[1] */
-#define FLAG_SPLITTING		32 /**< Object splits into stats.food other objs */
-#define FLAG_HITBACK		33 /**< Object will hit back when hit */
-#define FLAG_STARTEQUIP		34 /**< Object was given to player at start */
-#define FLAG_BLOCKSVIEW		35 /**< Object blocks view */
-#define FLAG_UNDEAD		36 /**< Monster is undead */
-#define FLAG_SCARED		37 /**< Monster is scared (mb player in future)*/
-#define FLAG_UNAGGRESSIVE	38 /**< Monster doesn't attack players */
-#define FLAG_REFL_MISSILE	39 /**< Arrows will reflect from object */
+#define FLAG_SPLITTING          32 /**< Object splits into stats.food other objs */
+#define FLAG_HITBACK            33 /**< Object will hit back when hit */
+#define FLAG_STARTEQUIP         34 /**< Object was given to player at start */
+#define FLAG_BLOCKSVIEW         35 /**< Object blocks view */
+#define FLAG_UNDEAD             36 /**< Monster is undead */
+#define FLAG_SCARED             37 /**< Monster is scared (mb player in future)*/
+#define FLAG_UNAGGRESSIVE       38 /**< Monster doesn't attack players */
+#define FLAG_REFL_MISSILE       39 /**< Arrows will reflect from object */
 
-#define FLAG_REFL_SPELL		40 /**< Spells (some) will reflect from object */
-#define FLAG_NO_MAGIC		41 /**< Spells (some) can't pass this object */
-#define FLAG_NO_FIX_PLAYER	42 /**< fix_object() won't be called */
-#define FLAG_IS_LIGHTABLE	43 /**< object can be lit */
-#define FLAG_TEAR_DOWN		44 /**< at->faces[hp*animations/maxhp] at hit */
-#define FLAG_RUN_AWAY		45 /**< Object runs away from nearest player \
-				      but can still attack at a distance */
-/*#define FLAG_PASS_THRU	46*/ /* Objects with can_pass_thru can pass \
-				      thru this object as if it wasn't there */
-/*#define FLAG_CAN_PASS_THRU	47*/ /* Can pass thru... */
+#define FLAG_REFL_SPELL         40 /**< Spells (some) will reflect from object */
+#define FLAG_NO_MAGIC           41 /**< Spells (some) can't pass this object */
+#define FLAG_NO_FIX_PLAYER      42 /**< fix_object() won't be called */
+#define FLAG_IS_LIGHTABLE       43 /**< object can be lit */
+#define FLAG_TEAR_DOWN          44 /**< at->faces[hp*animations/maxhp] at hit */
+#define FLAG_RUN_AWAY           45 /**< Object runs away from nearest player \
+                                      but can still attack at a distance */
+/*#define FLAG_PASS_THRU        46*/ /* Objects with can_pass_thru can pass \
+                                      thru this object as if it wasn't there */
+/*#define FLAG_CAN_PASS_THRU    47*/ /* Can pass thru... */
 
-/*#define FLAG_PICK_UP		48*/ /* Can pick up */
-#define FLAG_UNIQUE		49 /**< Item is really unique (UNIQUE_ITEMS) */
-#define FLAG_NO_DROP		50 /**< Object can't be dropped */
-#define FLAG_WIZCAST		51 /**< The wizard can cast spells in no-magic area */
-#define FLAG_CAST_SPELL		52 /**< (Monster) can learn and cast spells */
-#define FLAG_USE_SCROLL		53 /**< (Monster) can read scroll */
-#define FLAG_USE_RANGE		54 /**< (Monster) can apply and use range items */
-#define FLAG_USE_BOW		55 /**< (Monster) can apply and fire bows */
+/*#define FLAG_PICK_UP          48*/ /* Can pick up */
+#define FLAG_UNIQUE             49 /**< Item is really unique (UNIQUE_ITEMS) */
+#define FLAG_NO_DROP            50 /**< Object can't be dropped */
+#define FLAG_WIZCAST            51 /**< The wizard can cast spells in no-magic area */
+#define FLAG_CAST_SPELL         52 /**< (Monster) can learn and cast spells */
+#define FLAG_USE_SCROLL         53 /**< (Monster) can read scroll */
+#define FLAG_USE_RANGE          54 /**< (Monster) can apply and use range items */
+#define FLAG_USE_BOW            55 /**< (Monster) can apply and fire bows */
 
-#define FLAG_USE_ARMOUR		56 /**< (Monster) can wear armour/shield/helmet */
-#define FLAG_USE_WEAPON		57 /**< (Monster) can wield weapons */
-#define FLAG_USE_RING		58 /**< (Monster) can use rings, boots, gauntlets, etc */
-#define FLAG_READY_RANGE	59 /**< (Monster) has a range attack readied... 8) */
-#define FLAG_READY_BOW		60 /**< not implemented yet */
-#define FLAG_XRAYS		61 /**< X-ray vision */
-#define FLAG_NO_APPLY		62 /**< Avoids step_on/fly_on to this object */
-#define FLAG_IS_FLOOR		63 /**< Can't see what's underneath this object */
+#define FLAG_USE_ARMOUR         56 /**< (Monster) can wear armour/shield/helmet */
+#define FLAG_USE_WEAPON         57 /**< (Monster) can wield weapons */
+#define FLAG_USE_RING           58 /**< (Monster) can use rings, boots, gauntlets, etc */
+#define FLAG_READY_RANGE        59 /**< (Monster) has a range attack readied... 8) */
+#define FLAG_READY_BOW          60 /**< not implemented yet */
+#define FLAG_XRAYS              61 /**< X-ray vision */
+#define FLAG_NO_APPLY           62 /**< Avoids step_on/fly_on to this object */
+#define FLAG_IS_FLOOR           63 /**< Can't see what's underneath this object */
 
 /* Start of values in flags[2] */
-#define FLAG_LIFESAVE		64 /**< Saves a players' life once, then destr. */
-#define FLAG_NO_STRENGTH	65 /**< Strength-bonus not added to wc/dam */
-#define FLAG_SLEEP		66 /**< NPC is sleeping */
-#define FLAG_STAND_STILL	67 /**< NPC will not (ever) move */
-#define FLAG_RANDOM_MOVE	68 /**< NPC will move randomly */
-#define FLAG_ONLY_ATTACK	69 /**< NPC will evaporate if there is no enemy */
-#define FLAG_CONFUSED		70 /**< Will also be unable to cast spells */
-#define FLAG_STEALTH		71 /**< Will wake monsters with less range */
+#define FLAG_LIFESAVE           64 /**< Saves a players' life once, then destr. */
+#define FLAG_NO_STRENGTH        65 /**< Strength-bonus not added to wc/dam */
+#define FLAG_SLEEP              66 /**< NPC is sleeping */
+#define FLAG_STAND_STILL        67 /**< NPC will not (ever) move */
+#define FLAG_RANDOM_MOVE        68 /**< NPC will move randomly */
+#define FLAG_ONLY_ATTACK        69 /**< NPC will evaporate if there is no enemy */
+#define FLAG_CONFUSED           70 /**< Will also be unable to cast spells */
+#define FLAG_STEALTH            71 /**< Will wake monsters with less range */
 
-#define FLAG_WIZPASS		72 /**< The wizard can go through walls */
-#define FLAG_IS_LINKED		73 /**< The object is linked with other objects */
-#define FLAG_CURSED		74 /**< The object is cursed */
-#define FLAG_DAMNED		75 /**< The object is _very_ cursed */
-#define FLAG_SEE_ANYWHERE	76 /**< The object will be visible behind walls */
-#define FLAG_KNOWN_MAGICAL	77 /**< The object is known to be magical */
-#define FLAG_KNOWN_CURSED	78 /**< The object is known to be cursed */
-#define FLAG_CAN_USE_SKILL	79 /**< The monster can use skills */
+#define FLAG_WIZPASS            72 /**< The wizard can go through walls */
+#define FLAG_IS_LINKED          73 /**< The object is linked with other objects */
+#define FLAG_CURSED             74 /**< The object is cursed */
+#define FLAG_DAMNED             75 /**< The object is _very_ cursed */
+#define FLAG_SEE_ANYWHERE       76 /**< The object will be visible behind walls */
+#define FLAG_KNOWN_MAGICAL      77 /**< The object is known to be magical */
+#define FLAG_KNOWN_CURSED       78 /**< The object is known to be cursed */
+#define FLAG_CAN_USE_SKILL      79 /**< The monster can use skills */
 
-#define FLAG_BEEN_APPLIED	80 /**< The object has been applied */
-#define FLAG_READY_SCROLL	81 /**< monster has scroll in inv and can use it */
-#define FLAG_USE_ROD		82 /**< (Monster) can apply and use rods */
-/*#define FLAG_READY_HORN	83 unused (Monster) has a horn readied */
-#define FLAG_USE_HORN		84 /**< (Monster) can apply and use horns */
-#define FLAG_MAKE_INVIS	        85 /**< (Item) gives invisibility when applied */
-#define FLAG_INV_LOCKED		86 /**< Item will not be dropped from inventory */
-#define FLAG_IS_WOODED		87 /**< Item is wooded terrain */
+#define FLAG_BEEN_APPLIED       80 /**< The object has been applied */
+#define FLAG_READY_SCROLL       81 /**< monster has scroll in inv and can use it */
+#define FLAG_USE_ROD            82 /**< (Monster) can apply and use rods */
+/*#define FLAG_READY_HORN       83 unused (Monster) has a horn readied */
+#define FLAG_USE_HORN           84 /**< (Monster) can apply and use horns */
+#define FLAG_MAKE_INVIS         85 /**< (Item) gives invisibility when applied */
+#define FLAG_INV_LOCKED         86 /**< Item will not be dropped from inventory */
+#define FLAG_IS_WOODED          87 /**< Item is wooded terrain */
 
-#define FLAG_IS_HILLY		88 /**< Item is hilly/mountain terrain */
-#define FLAG_READY_SKILL	89 /**< (Monster or Player) has a skill readied */
-#define FLAG_READY_WEAPON	90 /**< (Monster or Player) has a weapon readied */
-#define FLAG_NO_SKILL_IDENT	91 /**< If set, item cannot be identified w/ a skill */
-#define FLAG_BLIND		92 /**< If set, object cannot see (visually) */
-#define FLAG_SEE_IN_DARK	93 /**< if set ob not effected by darkness */
-#define FLAG_IS_CAULDRON	94 /**< container can make alchemical stuff */
-/*#define FLAG_DUST		95 *//* item is a 'powder', effects throwing */
+#define FLAG_IS_HILLY           88 /**< Item is hilly/mountain terrain */
+#define FLAG_READY_SKILL        89 /**< (Monster or Player) has a skill readied */
+#define FLAG_READY_WEAPON       90 /**< (Monster or Player) has a weapon readied */
+#define FLAG_NO_SKILL_IDENT     91 /**< If set, item cannot be identified w/ a skill */
+#define FLAG_BLIND              92 /**< If set, object cannot see (visually) */
+#define FLAG_SEE_IN_DARK        93 /**< if set ob not effected by darkness */
+#define FLAG_IS_CAULDRON        94 /**< container can make alchemical stuff */
+/*#define FLAG_DUST             95 *//* item is a 'powder', effects throwing */
 
 /* Start of values in flags[3] */
-#define FLAG_NO_STEAL		96 /**< Item can't be stolen */
-#define FLAG_ONE_HIT		97 /**< Monster can only hit once before going
-				    * away (replaces ghosthit)
-				    */
-#define FLAG_CLIENT_SENT	98 /**< THIS IS A DEBUG FLAG ONLY.  We use it to
-				    * detect cases were the server is trying
-				    * to send an upditem when we have not
-				    * actually sent the item.
-				    */
+#define FLAG_NO_STEAL           96 /**< Item can't be stolen */
+#define FLAG_ONE_HIT            97 /**< Monster can only hit once before going
+                                    * away (replaces ghosthit)
+                                    */
+#define FLAG_CLIENT_SENT        98 /**< THIS IS A DEBUG FLAG ONLY.  We use it to
+                                    * detect cases were the server is trying
+                                    * to send an upditem when we have not
+                                    * actually sent the item.
+                                    */
 
-#define FLAG_BERSERK            99 /**< monster will attack closest living
-				      object */
+#define FLAG_BERSERK            99  /**< monster will attack closest living
+                                     * object */
 #define FLAG_NEUTRAL            100 /**< monster is from type neutral */
 #define FLAG_NO_ATTACK          101 /**< monster don't attack */
 #define FLAG_NO_DAMAGE          102 /**< monster can't be damaged */
 #define FLAG_OBJ_ORIGINAL       103 /**< NEVER SET THIS.  Item was loaded by
-				     * load_original_map() */
+                                     * load_original_map() */
 /*#define FLAG_OBJ_SAVE_ON_OVL    104 *//* this object should be saved on
-				     * the overlay, and is not subject to
-				     * decay. */
+                                     * the overlay, and is not subject to
+                                     * decay. */
 #define FLAG_ACTIVATE_ON_PUSH    105 /**< connected object is activated when 'pushed' */
 #define FLAG_ACTIVATE_ON_RELEASE 106 /**< connected object is activated when 'released' */
 #define FLAG_IS_WATER            107
@@ -635,7 +635,7 @@ typedef struct typedata {
 
 /*@}*/
 
-#define NROFNEWOBJS(xyz)	((xyz)->stats.food)
+#define NROFNEWOBJS(xyz)        ((xyz)->stats.food)
 
 /**
  * @defgroup MOVE_xxx Movement types and related macros.
@@ -647,13 +647,13 @@ typedef struct typedata {
  * change_abil() probably should be updated also.
  */
 /*@{*/
-#define MOVE_WALK	0x1	/**< Object walks. */
-#define MOVE_FLY_LOW	0x2	/**< Low flying object. */
-#define MOVE_FLY_HIGH	0x4	/**< High flying object. */
-#define	MOVE_FLYING	0x6	/**< Combo of fly_low and fly_high. */
-#define MOVE_SWIM	0x8	/**< Swimming object. */
-#define MOVE_BOAT	0x10	/**< Boats/sailing. */
-#define MOVE_ALL	0x1f	/**< Mask of all movement types. */
+#define MOVE_WALK       0x1     /**< Object walks. */
+#define MOVE_FLY_LOW    0x2     /**< Low flying object. */
+#define MOVE_FLY_HIGH   0x4     /**< High flying object. */
+#define MOVE_FLYING     0x6     /**< Combo of fly_low and fly_high. */
+#define MOVE_SWIM       0x8     /**< Swimming object. */
+#define MOVE_BOAT       0x10    /**< Boats/sailing. */
+#define MOVE_ALL        0x1f    /**< Mask of all movement types. */
 
 /**
  * The normal assumption is that objects are walking/flying.
@@ -672,7 +672,7 @@ typedef struct typedata {
  * uint8 is defined yet, so just use what that would define it
  * at anyways.
  */
-typedef unsigned char	MoveType;
+typedef unsigned char   MoveType;
 
 /**
  * Basic macro to see if ob2 blocks ob1 from moving onto this space.
@@ -691,26 +691,26 @@ typedef unsigned char	MoveType;
     ( (type != 0) && (ob1->move_type & type) == ob1->move_type)
 /*@}*/
 
-#define SET_GENERATE_TYPE(xyz,va)	(xyz)->stats.sp=(va)
-#define GENERATE_TYPE(xyz)	((xyz)->stats.sp)
-#define GENERATE_SPEED(xyz)	((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
+#define SET_GENERATE_TYPE(xyz,va)       (xyz)->stats.sp=(va)
+#define GENERATE_TYPE(xyz)      ((xyz)->stats.sp)
+#define GENERATE_SPEED(xyz)     ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
 
-#define EXIT_PATH(xyz)		(xyz)->slaying
-#define EXIT_LEVEL(xyz)		(xyz)->stats.food
-#define EXIT_X(xyz)		(xyz)->stats.hp
-#define EXIT_Y(xyz)		(xyz)->stats.sp
-#define EXIT_ALT_X(xyz)		(xyz)->stats.maxhp
-#define EXIT_ALT_Y(xyz)		(xyz)->stats.maxsp
+#define EXIT_PATH(xyz)          (xyz)->slaying
+#define EXIT_LEVEL(xyz)         (xyz)->stats.food
+#define EXIT_X(xyz)             (xyz)->stats.hp
+#define EXIT_Y(xyz)             (xyz)->stats.sp
+#define EXIT_ALT_X(xyz)         (xyz)->stats.maxhp
+#define EXIT_ALT_Y(xyz)         (xyz)->stats.maxsp
 
 /**
  * Max radii for 'light' object, really large values allow objects that can
  * slow down the game
  */
-#define MAX_LIGHT_RADII		4
+#define MAX_LIGHT_RADII         4
 /**
  * Maximum map darkness, there is no practical reason to exceed this
  **/
-#define MAX_DARKNESS		5
+#define MAX_DARKNESS            5
 
 /**
  * Maximum item power an item can have. If changed, check object::item_power for overflow issues.
@@ -732,12 +732,12 @@ typedef unsigned char	MoveType;
 #define F_SHOP          64  /**< Consider the effect that the shop that the player is in has. */
 /*@}*/
 
-#define DIRX(xyz)	freearr_x[(xyz)->direction]
-#define DIRY(xyz)	freearr_y[(xyz)->direction]
+#define DIRX(xyz)       freearr_x[(xyz)->direction]
+#define DIRY(xyz)       freearr_y[(xyz)->direction]
 
-#define ARMOUR_SPEED(xyz)	(xyz)->last_sp
-#define ARMOUR_SPELLS(xyz)	(xyz)->gen_sp_armour
-#define WEAPON_SPEED(xyz)	(xyz)->last_sp
+#define ARMOUR_SPEED(xyz)       (xyz)->last_sp
+#define ARMOUR_SPELLS(xyz)      (xyz)->gen_sp_armour
+#define WEAPON_SPEED(xyz)       (xyz)->last_sp
 
 /**
  * @defgroup MONSTER_MOVEMENT Monster movements
@@ -827,14 +827,14 @@ typedef unsigned char	MoveType;
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"
-#define SMOOTH_FACE_NAME	"default_smoothed.111"
+#define SMOOTH_FACE_NAME        "default_smoothed.111"
 
 /*
  * Defines for the luck/random functions to make things more readable
  */
 
-#define PREFER_HIGH	1
-#define PREFER_LOW	0
+#define PREFER_HIGH     1
+#define PREFER_LOW      0
 
 /**
  * Simple function we use below to keep adding to the same string
@@ -935,14 +935,14 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  * Those flags correspond to the aflags parameter of the apply_special() function.
  */
 /*@{*/
-    /* Basic flags, always use one of these */
+/* Basic flags, always use one of these */
 #define AP_NULL         0   /**< Nothing specific. */
 #define AP_APPLY        1   /**< Item is to be applied. */
 #define AP_UNAPPLY      2   /**< Item is to be remvoed. */
 
 #define AP_BASIC_FLAGS  15
 
-  /* Optional flags, for bitwise or with a basic flag */
+/* Optional flags, for bitwise or with a basic flag */
 #define AP_NO_MERGE     16  /**< Don't try to merge object after (un)applying it. */
 #define AP_IGNORE_CURSE 32  /**< Apply/unapply regardless of cursed/damned status. */
 #define AP_PRINT        64  /**< Print what to do, don't actually do it
@@ -964,10 +964,10 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  *      this basically means one of the FLAGS are set saying you can't
  *      use this.
  * - CAN_APPLY_NOT_MASK - this can be used to check the return value to see
- *	if this object can do anything to use this object.  If the value
- *	returned from can_apply_object() anded with the mask is non zero,
- *	then it is out of the control of this creature to use the item.
- *	otherwise it means that by unequipping stuff, they could apply the object
+ *      if this object can do anything to use this object.  If the value
+ *      returned from can_apply_object() anded with the mask is non zero,
+ *      then it is out of the control of this creature to use the item.
+ *      otherwise it means that by unequipping stuff, they could apply the object
  * - CAN_APPLY_UNAPPLY: Player needs to unapply something before applying
  *      this.
  * - CAN_APPLY_UNAPPLY_MULT: There are multiple items that need to be
@@ -980,16 +980,16 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  *      could remove.
  */
 /*@{*/
-#define CAN_APPLY_NEVER		    0x1
-#define CAN_APPLY_RESTRICTION	    0x2
-#define CAN_APPLY_NOT_MASK	    0xf
-#define CAN_APPLY_UNAPPLY	    0x10
-#define CAN_APPLY_UNAPPLY_MULT	    0x20
+#define CAN_APPLY_NEVER             0x1
+#define CAN_APPLY_RESTRICTION       0x2
+#define CAN_APPLY_NOT_MASK          0xf
+#define CAN_APPLY_UNAPPLY           0x10
+#define CAN_APPLY_UNAPPLY_MULT      0x20
 #define CAN_APPLY_UNAPPLY_CHOICE    0x40
 /*@}*/
 
 /** Cut off point of when an object is put on the active list or not */
-#define MIN_ACTIVE_SPEED	0.00001
+#define MIN_ACTIVE_SPEED        0.00001
 
 /*
  * random() is much better than rand().  If you have random(), use it instead.
@@ -1040,14 +1040,14 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  * known in advance.
  */
 /*@{*/
- #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
- #define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
- #define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
- #define FINISH_FASTCAT(buf__) buf__[0]='\0';
+#define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
+#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
+#define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
+#define FINISH_FASTCAT(buf__) buf__[0]='\0';
 
- /* You may uncomment following define to check sanity of code.
-  * But use as debug only (loses all speed gained by those macros)
-  */
+/* You may uncomment following define to check sanity of code.
+ * But use as debug only (loses all speed gained by those macros)
+ */
 /*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
  if (size__!=strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n",buf2__);}*/
 /*@}*/

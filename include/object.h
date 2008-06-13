@@ -38,17 +38,17 @@
 
 /** Object tag, unique during the whole game. */
 typedef uint32 tag_t;
-#define NUM_BODY_LOCATIONS	13  /**< Number of body locations. */
-#define BODY_ARMS		1       /**< This should be the index of the arms. */
+#define NUM_BODY_LOCATIONS      13  /**< Number of body locations. */
+#define BODY_ARMS               1   /**< This should be the index of the arms. */
 
 /**
  * One body location.
  * See common/item.c.
  */
 typedef struct body_locations_struct {
-    const char *save_name;	/**< Name used to load/save it to disk */
-    const char *use_name;	/**< Name used when describing an item we can use */
-    const char *nonuse_name;	/**< Name to describe objects we can't use */
+    const char *save_name;      /**< Name used to load/save it to disk */
+    const char *use_name;       /**< Name used when describing an item we can use */
+    const char *nonuse_name;    /**< Name to describe objects we can't use */
 } body_locations_struct;
 
 extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
@@ -76,11 +76,11 @@ typedef struct _key_value {
  * Those flags correspond to the object::will_apply field.
  */
 /*@{*/
-#define WILL_APPLY_HANDLE	0x1
-#define WILL_APPLY_TREASURE	0x2
-#define WILL_APPLY_EARTHWALL	0x4
-#define WILL_APPLY_DOOR		0x8
-#define WILL_APPLY_FOOD		0x10
+#define WILL_APPLY_HANDLE       0x1
+#define WILL_APPLY_TREASURE     0x2
+#define WILL_APPLY_EARTHWALL    0x4
+#define WILL_APPLY_DOOR         0x8
+#define WILL_APPLY_FOOD         0x10
 /*@}*/
 
 /**
@@ -105,9 +105,9 @@ typedef struct _key_value {
  * least in the low bits.  And a size of 16 lets us do a very
  * fast operation.
  */
-#define SPELL_TAG_SIZE	16
-#define OB_SPELL_TAG_HASH(op, count)	(op->spell_tags[count & 0xf])
-#define OB_SPELL_TAG_MATCH(op, count)	(op->spell_tags[count & 0xf] == count)
+#define SPELL_TAG_SIZE  16
+#define OB_SPELL_TAG_HASH(op, count)    (op->spell_tags[count & 0xf])
+#define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count & 0xf] == count)
 
 /**
  * Main Crossfire structure, one ingame object.
@@ -132,32 +132,32 @@ typedef struct _key_value {
  */
 typedef struct obj {
     /* These variables are not changed by copy_object() */
-    struct pl	*contr;		/**< Pointer to the player which control this object */
-    struct obj	*next;		/**< Pointer to the next object in the free/used list */
-    struct obj	*prev;		/**< Pointer to the previous object in the free/used list*/
-    struct obj	*active_next;	/**< Next object in the 'active' list
+    struct pl   *contr;         /**< Pointer to the player which control this object */
+    struct obj  *next;          /**< Pointer to the next object in the free/used list */
+    struct obj  *prev;          /**< Pointer to the previous object in the free/used list*/
+    struct obj  *active_next;   /**< Next object in the 'active' list
                                  * This is used in process_events
                                  * so that the entire object list does not
                                  * need to be gone through.*/
-    struct obj	*active_prev;	/**< Previous object in the 'active list
+    struct obj  *active_prev;   /**< Previous object in the 'active list
                                  * This is used in process_events
                                  * so that the entire object list does not
                                  * need to be gone through. */
-    struct obj	*below;		/**< Pointer to the object stacked below this one */
-    struct obj	*above;		/**< Pointer to the object stacked above this one */
-                            /* Note: stacked in the *same* environment*/
-    struct obj	*inv;		/**< Pointer to the first object in the inventory */
-    struct obj	*container;	/**< Current container being used.  I think this
-                              * is only used by the player right now. */
-    struct obj	*env;		/**< Pointer to the object which is the environment.
-                             * This is typically the container that the object is in. */
-    struct obj	*more;		/**< Pointer to the rest of a large body of objects */
-    struct obj	*head;		/**< Points to the main object of a large body */
-    struct mapdef *map;		/**< Pointer to the map in which this object is present */
+    struct obj  *below;         /**< Pointer to the object stacked below this one */
+    struct obj  *above;         /**< Pointer to the object stacked above this one */
+                                /* Note: stacked in the *same* environment*/
+    struct obj  *inv;           /**< Pointer to the first object in the inventory */
+    struct obj  *container;     /**< Current container being used.  I think this
+                                 * is only used by the player right now. */
+    struct obj  *env;           /**< Pointer to the object which is the environment.
+                                 * This is typically the container that the object is in. */
+    struct obj  *more;          /**< Pointer to the rest of a large body of objects */
+    struct obj  *head;          /**< Points to the main object of a large body */
+    struct mapdef *map;         /**< Pointer to the map in which this object is present */
 
-    tag_t	count;		/**< Unique object number for this object */
+    tag_t       count;          /**< Unique object number for this object */
     struct struct_dialog_information* dialog_information; /**< Parsed dialog information for this object.
-            Valid if FLAG_DIALOG_PARSED is set (but can be NULL). */
+                                                           * Valid if FLAG_DIALOG_PARSED is set (but can be NULL). */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
@@ -165,133 +165,133 @@ typedef struct obj {
      * copy_object to do so.  Everything below here also gets cleared
      * by clear_object()
      */
-    const char	*name;		/**< The name of the object, obviously... */
-    const char	*name_pl;	/**< The plural name of the object */
+    const char  *name;          /**< The name of the object, obviously... */
+    const char  *name_pl;       /**< The plural name of the object */
     const char  *anim_suffix;   /**< Used to determine combined animations */
-    const char	*title;		/**< Of foo, etc */
-    const char	*race;		/**< Human, goblin, dragon, etc */
-    const char	*slaying;	/**< Which race to do double damage to.
-                              * If this is an exit, this is the filename */
-    const char	*skill;		/**< Name of the skill this object uses/grants */
-    const char	*msg;		/**< If this is a book/sign/magic mouth/etc */
-    const char	*lore;		/**< Obscure information about this object,
-                              * to get put into books and the like. */
+    const char  *title;         /**< Of foo, etc */
+    const char  *race;          /**< Human, goblin, dragon, etc */
+    const char  *slaying;       /**< Which race to do double damage to.
+                                 * If this is an exit, this is the filename */
+    const char  *skill;         /**< Name of the skill this object uses/grants */
+    const char  *msg;           /**< If this is a book/sign/magic mouth/etc */
+    const char  *lore;          /**< Obscure information about this object,
+                                 * to get put into books and the like. */
 
-    sint16	x,y;		/**< Position in the map for this object */
-    sint16	ox,oy;		/**< For debugging: Where it was last inserted */
-    float	speed;		/**< The overall speed of this object */
-    float	speed_left;	/**< How much speed is left to spend this round */
-    float	weapon_speed;		/**< The overall speed of this object */
-    float	weapon_speed_left;	/**< How much speed is left to spend this round */
-    New_Face	*face;		/**< Face with colors */
-    uint32	nrof;		/**< How many of the objects */
-    sint8	direction;	/**< Means the object is moving that way. */
-    sint8	facing;		/**< Object is oriented/facing that way. */
+    sint16      x,y;            /**< Position in the map for this object */
+    sint16      ox,oy;          /**< For debugging: Where it was last inserted */
+    float       speed;          /**< The overall speed of this object */
+    float       speed_left;     /**< How much speed is left to spend this round */
+    float       weapon_speed;   /**< The overall speed of this object */
+    float       weapon_speed_left; /**< How much speed is left to spend this round */
+    New_Face    *face;          /**< Face with colors */
+    uint32      nrof;           /**< How many of the objects */
+    sint8       direction;      /**< Means the object is moving that way. */
+    sint8       facing;         /**< Object is oriented/facing that way. */
 
     /* This next big block are basically used for monsters and equipment */
-    uint8	type;           /**< PLAYER, BULLET, etc.  See define.h */
-    uint8	subtype;        /**< Subtype of object */
-    uint16	client_type;    /**< Public type information.  see doc/Developers/objects */
-    sint16	resist[NROFATTACKS];	/**< Resistance adjustments for attacks */
-    uint32	attacktype;     /**< Bitmask of attacks this object does */
-    uint32	path_attuned;   /**< Paths the object is attuned to */
-    uint32	path_repelled;  /**< Paths the object is repelled from */
-    uint32	path_denied;    /**< Paths the object is denied access to */
-    const char 	*materialname;  /**< Specific material name */
-    uint16	material;       /**< What materials this object consist of */
-    sint8	magic;          /**< Any magical bonuses to this item */
-    uint8	state;          /**< How the object was last drawn (animation) */
-    sint32	value;          /**< How much money it is worth (or contains) */
-    sint16	level;          /**< Level of creature or object */
+    uint8       type;           /**< PLAYER, BULLET, etc.  See define.h */
+    uint8       subtype;        /**< Subtype of object */
+    uint16      client_type;    /**< Public type information.  see doc/Developers/objects */
+    sint16      resist[NROFATTACKS]; /**< Resistance adjustments for attacks */
+    uint32      attacktype;     /**< Bitmask of attacks this object does */
+    uint32      path_attuned;   /**< Paths the object is attuned to */
+    uint32      path_repelled;  /**< Paths the object is repelled from */
+    uint32      path_denied;    /**< Paths the object is denied access to */
+    const char  *materialname;  /**< Specific material name */
+    uint16      material;       /**< What materials this object consist of */
+    sint8       magic;          /**< Any magical bonuses to this item */
+    uint8       state;          /**< How the object was last drawn (animation) */
+    sint32      value;          /**< How much money it is worth (or contains) */
+    sint16      level;          /**< Level of creature or object */
 
     /* Note that the last_.. values are sometimes used for non obvious
      * meanings by some objects, eg, sp penalty, permanent exp.
      */
-    sint16	last_eat;       /**< How long since we last ate */
-    sint32	last_heal;      /**< Last healed. Depends on constitution */
-    sint32	last_sp;        /**< As last_heal, but for spell points */
-    sint16	last_grace;     /**< As last_sp, except for grace */
-    sint16	invisible;      /**< How much longer the object will be invis */
-    uint8	pick_up;        /**< See crossfire.doc */
-    sint8	item_power;     /**< Power rating of the object */
-    sint8	gen_sp_armour;  /**< Sp regen penalty this object has (was last_heal)*/
-    sint8	glow_radius;    /**< indicates the glow radius of the object */
-    sint32	weight;         /**< Attributes of the object */
-    sint32	weight_limit;   /**< Weight-limit of object */
-    sint32	carrying;       /**< How much weight this object contains */
-    living	stats;          /**< Str, Con, Dex, etc */
-    sint64	perm_exp;       /**< Permanent exp */
-    struct obj	*current_weapon;   /**< Pointer to the weapon currently used */
-    uint32	weapontype;     /**< Type of weapon */
-    sint8	body_info[NUM_BODY_LOCATIONS];	/**< Body info as loaded from the file */
-    sint8	body_used[NUM_BODY_LOCATIONS];	/**< Calculated value based on items equipped */
+    sint16      last_eat;       /**< How long since we last ate */
+    sint32      last_heal;      /**< Last healed. Depends on constitution */
+    sint32      last_sp;        /**< As last_heal, but for spell points */
+    sint16      last_grace;     /**< As last_sp, except for grace */
+    sint16      invisible;      /**< How much longer the object will be invis */
+    uint8       pick_up;        /**< See crossfire.doc */
+    sint8       item_power;     /**< Power rating of the object */
+    sint8       gen_sp_armour;  /**< Sp regen penalty this object has (was last_heal)*/
+    sint8       glow_radius;    /**< indicates the glow radius of the object */
+    sint32      weight;         /**< Attributes of the object */
+    sint32      weight_limit;   /**< Weight-limit of object */
+    sint32      carrying;       /**< How much weight this object contains */
+    living      stats;          /**< Str, Con, Dex, etc */
+    sint64      perm_exp;       /**< Permanent exp */
+    struct obj  *current_weapon; /**< Pointer to the weapon currently used */
+    uint32      weapontype;     /**< Type of weapon */
+    sint8       body_info[NUM_BODY_LOCATIONS];  /**< Body info as loaded from the file */
+    sint8       body_used[NUM_BODY_LOCATIONS];  /**< Calculated value based on items equipped */
                                 /* See the doc/Developers/objects for more info about body locations */
 
     /* Following mostly refers to fields only used for monsters */
-    struct obj	*owner;         /**< Pointer to the object which controls this one.
+    struct obj  *owner;         /**< Pointer to the object which controls this one.
                                  * Owner should not be referred to directly -
                                  * get_owner should be used instead. */
-    tag_t	ownercount;     /**< What count the owner had (in case owner has been freed) */
-    struct obj	*enemy;         /**< Monster/player to follow even if not closest */
-    struct obj	*attacked_by;   /**< This object start to attack us! only player & monster */
-    tag_t	attacked_by_count;         /**< The tag of attacker, so we can be sure */
-    uint16	run_away;	/**< Monster runs away if it's hp goes below this percentage. */
+    tag_t       ownercount;     /**< What count the owner had (in case owner has been freed) */
+    struct obj  *enemy;         /**< Monster/player to follow even if not closest */
+    struct obj  *attacked_by;   /**< This object start to attack us! only player & monster */
+    tag_t       attacked_by_count; /**< The tag of attacker, so we can be sure */
+    uint16      run_away;          /**< Monster runs away if it's hp goes below this percentage. */
     struct treasureliststruct *randomitems; /**< Items to be generated */
-    struct obj	*chosen_skill;  /**< The skill chosen to use */
-    uint32	hide;           /**< The object is hidden, not invisible */
+    struct obj  *chosen_skill;  /**< The skill chosen to use */
+    uint32      hide;           /**< The object is hidden, not invisible */
     /* changes made by kholland@sunlab.cit.cornell.edu */
     /* allows different movement patterns for attackers */
-    sint32	move_status;    /**< What stage in attack mode */
-    uint16	attack_movement;/**< What kind of attack movement */
-    uint8	will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
+    sint32      move_status;    /**< What stage in attack mode */
+    uint16      attack_movement;/**< What kind of attack movement */
+    uint8       will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
     sint8       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
-    struct obj	*spellitem;     /**< Spell ability monster is choosing to use */
-    double	expmul;         /**< needed experience = (calc_exp*expmul) - means some *
+    struct obj  *spellitem;     /**< Spell ability monster is choosing to use */
+    double      expmul;         /**< needed experience = (calc_exp*expmul) - means some *
                                  * races/classes can need less/more exp to gain levels */
 
     /* Spell related information, may be useful elsewhere
      * Note that other fields are used - these files are basically
      * only used in spells.
      */
-    sint16	casting_time;	/**< Time left before spell goes off */
-    sint16	duration;	/**< How long the spell lasts */
-    uint8	duration_modifier; /**< how level modifies duration */
-    sint8	range;		/**< Range of the spell */
-    uint8	range_modifier;	/**< How going up in level effects range  */
-    uint8	dam_modifier;	/**< How going up in level effects damage */
-    struct obj	*spell;		/**< Spell that was being cast */
-    char	*spellarg;
+    sint16      casting_time;   /**< Time left before spell goes off */
+    sint16      duration;       /**< How long the spell lasts */
+    uint8       duration_modifier; /**< how level modifies duration */
+    sint8       range;          /**< Range of the spell */
+    uint8       range_modifier; /**< How going up in level effects range  */
+    uint8       dam_modifier;   /**< How going up in level effects damage */
+    struct obj  *spell;         /**< Spell that was being cast */
+    char        *spellarg;
 
     /* Following are values used by any object */
     struct archt *arch;         /**< Pointer to archetype */
-    struct archt *other_arch;	/**< Pointer used for various things - mostly used for what
+    struct archt *other_arch;   /**< Pointer used for various things - mostly used for what
                                  * this objects turns into or what this object creates */
-    uint32	flags[4];	/**< Various flags */
-    uint16	animation_id;	/**< An index into the animation array */
-    uint8	anim_speed;	/**< Ticks between animation-frames */
-    uint8	last_anim;	/**< Last sequence used to draw face */
-    uint16  temp_animation_id;   /**< An index into the temporary animation array */
-    uint8   temp_anim_speed; /**< Ticks between temporary animation-frames */
-    uint8   temp_last_anim;  /**< Last sequence used to draw temporary animation face */
-    sint32	elevation;	/**< Elevation of this terrain - used in weather code */
-    uint8	smoothlevel;    /**< how to smooth this square around*/
-    uint8	map_layer;	/**< What level to draw this on the map */
+    uint32      flags[4];       /**< Various flags */
+    uint16      animation_id;   /**< An index into the animation array */
+    uint8       anim_speed;     /**< Ticks between animation-frames */
+    uint8       last_anim;      /**< Last sequence used to draw face */
+    uint16      temp_animation_id; /**< An index into the temporary animation array */
+    uint8       temp_anim_speed;   /**< Ticks between temporary animation-frames */
+    uint8       temp_last_anim; /**< Last sequence used to draw temporary animation face */
+    sint32      elevation;      /**< Elevation of this terrain - used in weather code */
+    uint8       smoothlevel;    /**< how to smooth this square around*/
+    uint8       map_layer;      /**< What level to draw this on the map */
 
-    MoveType   move_type;	/**< Type of movement this object uses */
-    MoveType   move_block;	/**< What movement types this blocks */
-    MoveType   move_allow;	/**< What movement types explicitly allowed */
-    MoveType   move_on;		/**< Move types affected moving on to this space */
-    MoveType   move_off;	/**< Move types affected moving off this space */
-    MoveType   move_slow;	/**< Movement types this slows down */
-    float   move_slow_penalty;	/**< How much this slows down the object */
+    MoveType   move_type;       /**< Type of movement this object uses */
+    MoveType   move_block;      /**< What movement types this blocks */
+    MoveType   move_allow;      /**< What movement types explicitly allowed */
+    MoveType   move_on;         /**< Move types affected moving on to this space */
+    MoveType   move_off;        /**< Move types affected moving off this space */
+    MoveType   move_slow;       /**< Movement types this slows down */
+    float   move_slow_penalty;  /**< How much this slows down the object */
 
-    const char  *custom_name; /**< Custom name assigned by player */
-    key_value *key_values; /**< Fields not explictly known by the loader. */
+    const char  *custom_name;   /**< Custom name assigned by player */
+    key_value *key_values;      /**< Fields not explictly known by the loader. */
 
-    uint8       no_save;       /**< This field indicates that the object should never
-                                * be saved even for map swapout. Not handled by the
-                                * loading or saving code. */
-    sint16* discrete_damage; /**< damage values, based on each attacktype. */
+    uint8       no_save;        /**< This field indicates that the object should never
+                                 * be saved even for map swapout. Not handled by the
+                                 * loading or saving code. */
+    sint16* discrete_damage;    /**< damage values, based on each attacktype. */
     tag_t   *spell_tags;
 } object;
 
@@ -299,18 +299,18 @@ typedef struct obj {
  * Used to link together several objects
  */
 typedef struct oblnk {
-  object *ob;
-  struct oblnk *next;
-  tag_t id;
+    object *ob;
+    struct oblnk *next;
+    tag_t id;
 } objectlink;
 
 /**
  * Used to link together several object links
  */
 typedef struct oblinkpt {
-  struct oblnk *link;
-  long value;		/**< Used as connected value in buttons/gates */
-  struct oblinkpt *next;
+    struct oblnk *link;
+    long value;           /**< Used as connected value in buttons/gates */
+    struct oblinkpt *next;
 } oblinkpt;
 
 /**
@@ -323,14 +323,14 @@ typedef struct oblinkpt {
  */
 
 typedef struct archt {
-    const char *name;		    /**< More definite name, like "generate_kobold" */
-    struct archt *next;	    /**< Next archetype in a linked list */
-    struct archt *head;	    /**< The main part of a linked object */
-    struct archt *more;	    /**< Next part of a linked object */
-    object clone;	    /**< An object from which to do copy_object() */
+    const char *name;       /**< More definite name, like "generate_kobold" */
+    struct archt *next;     /**< Next archetype in a linked list */
+    struct archt *head;     /**< The main part of a linked object */
+    struct archt *more;     /**< Next part of a linked object */
+    object clone;           /**< An object from which to do copy_object() */
     sint8   tail_x, tail_y; /**< Where the lower right most portion of the object is
                              * in comparison to the head. */
-    int reference_count; /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */
+    int reference_count;    /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */
 } archetype;
 
 extern object *objects;
@@ -393,12 +393,12 @@ extern int nroffreeobjects;
  * in future revisions of the code.
  */
 /*@{*/
-#define INS_NO_MERGE		0x0001
-#define INS_ABOVE_FLOOR_ONLY	0x0002
-#define INS_NO_WALK_ON		0x0004
-#define INS_ON_TOP		0x0008
-#define INS_BELOW_ORIGINATOR	0x0010
-#define INS_MAP_LOAD		0x0020
+#define INS_NO_MERGE            0x0001
+#define INS_ABOVE_FLOOR_ONLY    0x0002
+#define INS_NO_WALK_ON          0x0004
+#define INS_ON_TOP              0x0008
+#define INS_BELOW_ORIGINATOR    0x0010
+#define INS_MAP_LOAD            0x0020
 /*@}*/
 
 #define ARCH_SINGULARITY        "singularity"   /**< Archetype for singularity. */

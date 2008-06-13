@@ -41,7 +41,7 @@
  * these from the treasure file.  Some things to look for are:
  *
  * prepare_weapon, improve_*: Allow characters to enchant their own
- *	weapons
+ *      weapons
  * ench_armour: Allow characters to enchant their armor.
  *
  * In theory, most of the values here should just be defaults, and
@@ -64,7 +64,7 @@
  * Section 4 deals with save file related options.
  */
 
- /*******************************************************************
+/*******************************************************************
  * SECTION 1 - FEATURES
  *
  * You don't have to change anything here to get a working program, but
@@ -224,7 +224,7 @@
  * in the crosssite.def file if I want this.  By default, you probably
  * dont want this defined.
  */
-#ifndef WIN32			/* ***win32 we set the following stuff in the IDE */
+#ifndef WIN32                   /* ***win32 we set the following stuff in the IDE */
 #ifndef DEBUG
 #define DEBUG
 #endif
@@ -265,8 +265,8 @@
  *
  * MSW 2001-05-28
  */
-#define MAP_CLIENT_X	25
-#define MAP_CLIENT_Y	25
+#define MAP_CLIENT_X    25
+#define MAP_CLIENT_Y    25
 
 /**
  * If you feel the game is too fast or too slow, change MAX_TIME.
@@ -275,7 +275,7 @@
  * players, monsters, or items with speed 1 can do one thing.
  */
 
-#define MAX_TIME	120000
+#define MAX_TIME        120000
 
 /**
  * Polymorph as it currently stands is unbalancing, so by default
@@ -328,7 +328,7 @@
  * It shouldn't hurt anyone if this is defined but you don't
  * have an watchdog program.
  */
-#ifndef WIN32	/* ***win32 disable watchdog as win32 default */
+#ifndef WIN32   /* ***win32 disable watchdog as win32 default */
 #define WATCHDOG
 #endif
 
@@ -470,7 +470,7 @@
  */
 
 /** How many ticks till maps are swapped out. */
-#define MAP_MAXTIMEOUT	1000
+#define MAP_MAXTIMEOUT  1000
 /** At least that many ticks before swapout. */
 #define MAP_MINTIMEOUT  500
 
@@ -488,7 +488,7 @@
  */
 
 /** Maximum time to reset. */
-#define MAP_MAXRESET	7200
+#define MAP_MAXRESET    7200
 /** Default time to reset. */
 #define MAP_DEFAULTRESET       7200
 
@@ -505,7 +505,7 @@
  * might not be a bad idea.  Each object is around 350 bytes right now.
  * 25000 is about 8.5 MB
  */
-#define MAX_OBJECTS	100000
+#define MAX_OBJECTS     100000
 
 /**
  * Max objects low water mark (lwm).  If defined, the map swapping strategy
@@ -530,7 +530,7 @@
  * many maps to get below the low water mark.
  */
 
-/*#define MAX_OBJECTS_LWM	MAX_OBJECTS/2*/
+/*#define MAX_OBJECTS_LWM       MAX_OBJECTS/2*/
 
 /**
  * Turning on MEMORY_DEBUG slows down execution, but makes it easier
@@ -645,24 +645,24 @@
  * archetypes highscore and treaures files and directories can be found.
  */
 
-#define MAPDIR		"maps"
-#define TEMPLATE_DIR	"template-maps"
-#define ARCHETYPES	"archetypes"
-#define REGIONS	"regions"
-#define HIGHSCORE	"highscore"
-#define TREASURES	"treasures"
-#define	BANISHFILE  "banish_file"
+#define MAPDIR          "maps"
+#define TEMPLATE_DIR    "template-maps"
+#define ARCHETYPES      "archetypes"
+#define REGIONS         "regions"
+#define HIGHSCORE       "highscore"
+#define TREASURES       "treasures"
+#define BANISHFILE      "banish_file"
 
-#define MAX_ERRORS	25	/**< Bail out if more are received during tick. */
+#define MAX_ERRORS      25      /**< Bail out if more are received during tick. */
 #define STARTMAX        500     /**< How big array of objects to start with. */
 #define OBJ_EXPAND      100     /**< How big steps to use when expanding array. */
 
-#define HIGHSCORE_LENGTH 1000	/**< How many entries there are room for. */
+#define HIGHSCORE_LENGTH 1000   /**< How many entries there are room for. */
 
-#define ARCHTABLE 8192		/**< Used when hashing archetypes. */
+#define ARCHTABLE 8192          /**< Used when hashing archetypes. */
 #define MAXSTRING 20
 
-#define COMMAND_HASH_SIZE 107	/**< If you change this, delete all characters :) */
+#define COMMAND_HASH_SIZE 107   /**< If you change this, delete all characters :) */
 
 
 
@@ -699,8 +699,8 @@
  * SAVE_MODE is permissions for the files, SAVE_DIR_MODE is permission
  * for nay directories created.
  */
-#define	SAVE_MODE	0660
-#define	SAVE_DIR_MODE	0770
+#define SAVE_MODE       0660
+#define SAVE_DIR_MODE   0770
 
 /* NOTE ON SAVE_INTERVAL and AUTOSAVE:  Only one of these two really
  * needs to be selected.  You can set both, and things will work fine,
@@ -770,6 +770,6 @@
  * Set to one hour as default
  */
 
-#define RESET_LOCATION_TIME	3600
+#define RESET_LOCATION_TIME     3600
 
 #endif /* CONFIG_H */

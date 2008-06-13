@@ -39,44 +39,44 @@
  * @defgroup M_xxx Material types.
  */
 /*@{*/
-#define NROFMATERIALS		13
+#define NROFMATERIALS           13
 
-#define M_PAPER			1
-#define M_IRON			2
-#define M_GLASS			4
-#define M_LEATHER		8
-#define M_WOOD			16
-#define M_ORGANIC		32
-#define M_STONE			64
-#define M_CLOTH			128
-#define M_ADAMANT		256
-#define M_LIQUID		512
-#define M_SOFT_METAL		1024
-#define M_BONE			2048
-#define M_ICE			4096
-#define M_SPECIAL		8192	/* when displaying names, don't show the
-								   materialname */
+#define M_PAPER                 1
+#define M_IRON                  2
+#define M_GLASS                 4
+#define M_LEATHER               8
+#define M_WOOD                  16
+#define M_ORGANIC               32
+#define M_STONE                 64
+#define M_CLOTH                 128
+#define M_ADAMANT               256
+#define M_LIQUID                512
+#define M_SOFT_METAL            1024
+#define M_BONE                  2048
+#define M_ICE                   4096
+#define M_SPECIAL               8192    /* when displaying names, don't show the
+                                           materialname */
 /*@}*/
 
 /** One material type. */
 typedef struct _materialtype {
-    const char	*name;
-	const char 	*description;
-    int		material;
-    sint8	save[NROFATTACKS];
-    sint8	mod[NROFATTACKS];
-    sint8	chance;
-    sint8	difficulty;
-    sint8	magic;
-    sint8	damage;
-    sint8	wc;
-    sint8	ac;
-	sint8	sp;
-    int		weight;
-    int		value;
+    const char  *name;
+    const char  *description;
+    int         material;
+    sint8       save[NROFATTACKS];
+    sint8       mod[NROFATTACKS];
+    sint8       chance;
+    sint8       difficulty;
+    sint8       magic;
+    sint8       damage;
+    sint8       wc;
+    sint8       ac;
+    sint8       sp;
+    int         weight;
+    int         value;
     struct _materialtype *next;
 } materialtype_t;
 
 EXTERN materialtype_t *materialt;
 
-#endif	/* MATERIAL_H */
+#endif  /* MATERIAL_H */

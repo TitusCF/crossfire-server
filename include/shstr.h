@@ -43,8 +43,8 @@
  */
 #define SS(x) ((shared_string *) ((x) - offsetof(shared_string, string)))
 
-#define SS_DUMP_TABLE	1
-#define SS_DUMP_TOTALS	2
+#define SS_DUMP_TABLE   1
+#define SS_DUMP_TOTALS  2
 
 #ifdef SS_STATISTICS
 /** Used to collect statistics on string manipulation. */
@@ -60,17 +60,17 @@ static struct statistics {
 #define GATHER(n)
 #endif /* SS_STATISTICS */
 
-#define TOPBIT	((unsigned REFCOUNT_TYPE) 1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
+#define TOPBIT  ((unsigned REFCOUNT_TYPE) 1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 
-#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
+#define PADDING ((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
 
 /**
  * One actual shared string.
  */
 typedef struct _shared_string {
     union {
-	struct _shared_string **array;
-	struct _shared_string *previous;
+        struct _shared_string **array;
+        struct _shared_string *previous;
     } u;
     struct _shared_string *next;
     /* The top bit of "refcount" is used to signify that "u.array" points

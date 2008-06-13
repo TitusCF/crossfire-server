@@ -57,30 +57,30 @@
  */
 
 
-typedef unsigned int	uint32;
+typedef unsigned int    uint32;
 
 #ifndef UINT32_MAX
-#define UINT32_MAX	4294967295U
+#define UINT32_MAX      4294967295U
 #endif
 
-typedef signed int	sint32;
-#define SINT32_MAX	2147483647
+typedef signed int      sint32;
+#define SINT32_MAX      2147483647
 
-typedef unsigned short	uint16;
+typedef unsigned short  uint16;
 #ifndef UINT16_MAX
-#define UINT16_MAX	65535
+#define UINT16_MAX      65535
 #endif
 
-typedef signed short	sint16;
-#define SINT16_MAX	32767
+typedef signed short    sint16;
+#define SINT16_MAX      32767
 
-typedef unsigned char	uint8;
+typedef unsigned char   uint8;
 #ifndef UINT8_MAX
-#define UINT8_MAX	255
+#define UINT8_MAX       255
 #endif
 
-typedef signed char	sint8;
-#define SINT8_MAX	127
+typedef signed char     sint8;
+#define SINT8_MAX       127
 
 /** Strings that should be manipulated through add_string() and free_string(). */
 typedef const char* sstring;
@@ -90,13 +90,13 @@ typedef unsigned short Fontindex;
 #ifdef WIN32
 /* Python plugin stuff defines SIZEOF_LONG_LONG as 8, and besides __int64 is a 64b type on MSVC...
  * So let's force the typedef */
-typedef unsigned __int64	uint64;
-typedef signed __int64		sint64;
+typedef unsigned __int64        uint64;
+typedef signed __int64          sint64;
 /* Needed for experience */
-#define atoll	_atoi64
+#define atoll   _atoi64
 
-#define FMT64		    "I64d"
-#define FMT64U		    "I64u"
+#define FMT64                   "I64d"
+#define FMT64U                  "I64u"
 
 /* To reduce number of warnings */
 #pragma warning( disable: 4244 ) /* conversion from 'xxx' to 'yyy', possible loss of data */
@@ -106,16 +106,16 @@ typedef signed __int64		sint64;
 
 #if SIZEOF_LONG == 8
 
-typedef unsigned long	    uint64;
-typedef signed long	    sint64;
-#define FMT64		    "ld"
-#define FMT64U		    "lu"
+typedef unsigned long       uint64;
+typedef signed long         sint64;
+#define FMT64               "ld"
+#define FMT64U              "lu"
 
 #elif SIZEOF_LONG_LONG == 8
-typedef unsigned long long	uint64;
-typedef signed long long 	sint64;
-#define FMT64		    "lld"
-#define FMT64U		    "llu"
+typedef unsigned long long      uint64;
+typedef signed long long        sint64;
+#define FMT64                   "lld"
+#define FMT64U                  "llu"
 
 #else
 #error do not know how to get a 64 bit value on this system.
@@ -159,8 +159,8 @@ typedef signed long long 	sint64;
  * (now used by alchemy and other code too. Nov 95 b.t).
  */
 typedef struct linked_char {
-  const char *name;
-  struct linked_char *next;
+    const char *name;
+    struct linked_char *next;
 } linked_char;
 
 
@@ -180,7 +180,7 @@ typedef struct linked_char {
 #include "spells.h"
 
 /*****************************************************************************
- * GLOBAL VARIABLES:							     *
+ * GLOBAL VARIABLES:                                                         *
  *****************************************************************************/
 
 extern New_Face *new_faces;
@@ -207,28 +207,28 @@ extern const char *uncomp[NROF_COMPRESS_METHODS][3];
  * Variables set by different flags (see init.c):
  */
 
-EXTERN long warn_archetypes;	/**< If true, write warnings when failing
-                                 * to find archetypes when loading from file. */
-EXTERN long init_done;          /**< Ignores signals until init_done is true. */
-EXTERN long trying_emergency_save;  /**< True when emergency_save() is reached. */
-EXTERN long nroferrors;         /**< If it exceeds MAX_ERRORS, call fatal() */
+EXTERN long warn_archetypes;       /**< If true, write warnings when failing
+                                    * to find archetypes when loading from file. */
+EXTERN long init_done;             /**< Ignores signals until init_done is true. */
+EXTERN long trying_emergency_save; /**< True when emergency_save() is reached. */
+EXTERN long nroferrors;            /**< If it exceeds MAX_ERRORS, call fatal() */
 
-extern uint32 pticks;           /**< Used by various function to determine
-                                 * how often to save the character */
+extern uint32 pticks;              /**< Used by various function to determine
+                                    * how often to save the character */
 /**
  * @defgroup GLOBAL_VARIABLES Misc global variables.
  */
 /*@{*/
-EXTERN FILE *logfile;			/**< Used by server/daemon.c */
+EXTERN FILE *logfile;                    /**< Used by server/daemon.c */
 extern int reopen_logfile;
-EXTERN int exiting;			/**< True if the game is about to exit. */
-EXTERN long nroftreasures;		/**< Only used in malloc_info(). */
-EXTERN long nrofartifacts;		/**< Only used in malloc_info(). */
-EXTERN long nrofallowedstr;		/**< Only used in malloc_info(). */
+EXTERN int exiting;                      /**< True if the game is about to exit. */
+EXTERN long nroftreasures;               /**< Only used in malloc_info(). */
+EXTERN long nrofartifacts;               /**< Only used in malloc_info(). */
+EXTERN long nrofallowedstr;              /**< Only used in malloc_info(). */
 
-EXTERN archetype *empty_archetype;	/**< Nice to have fast access to it. */
+EXTERN archetype *empty_archetype;       /**< Nice to have fast access to it. */
 EXTERN archetype *map_archeytpe;
-EXTERN char first_map_path[MAX_BUF];	/**< The start-level. */
+EXTERN char first_map_path[MAX_BUF];     /**< The start-level. */
 EXTERN char first_map_ext_path[MAX_BUF]; /**< Path used for per-race start maps. */
 
 EXTERN long ob_count;
@@ -238,7 +238,7 @@ EXTERN long ob_count;
  * Used in treasure.c
  */
 EXTERN archetype *ring_arch,*amulet_arch,*staff_arch,*crown_arch;
-EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
+EXTERN const char *undead_name; /* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
 EXTERN int num_animations,animations_allocated, bmaps_checksum;
@@ -267,7 +267,7 @@ extern New_Face *blank_face, *empty_face;
 extern New_Face *smooth_face;
 
 
-extern uint32 max_time;	/* loop time */
+extern uint32 max_time; /* loop time */
 extern socket_struct *init_sockets;
 
 
@@ -298,11 +298,11 @@ extern socket_struct *init_sockets;
 #endif
 
 #ifdef USE_CALLOC
-# define CALLOC(x,y)	calloc(x,y)
-# define CFREE(x)	free(x)
+# define CALLOC(x,y)    calloc(x,y)
+# define CFREE(x)       free(x)
 #else
-# define CALLOC(x,y)	malloc(x*y)
-# define CFREE(x)	free(x)
+# define CALLOC(x,y)    malloc(x*y)
+# define CFREE(x)       free(x)
 #endif
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
@@ -328,89 +328,89 @@ extern socket_struct *init_sockets;
  * Server settings.
  */
 typedef struct Settings {
-    char    *logfilename;   /**< Logfile to use */
-    uint16  csport;	    /**< Port for new client/server */
-    LogLevel debug;	    /**< Default debugging level */
-    uint8   dumpvalues;	    /**< Set to dump various values/tables */
-    char    *dumparg;       /**< Additional argument for some dump functions */
-    uint8   daemonmode;     /**< If true, detach and become daemon */
-    int	    argc;	    /**< Parameters that were passed to the program */
-    char    **argv;	    /**< Only used by xio.c, so will go away at some time */
-    char    *confdir;	    /**< Configuration files */
-    char    *datadir;	    /**< Read only data files */
-    char    *localdir;	    /**< Read/write data files */
-    char    *playerdir;	    /**< Where the player files are */
-    char    *mapdir;	    /**< Where the map files are */
-    char    *archetypes;    /**< Name of the archetypes file - libdir is prepended */
-    char    *regions;       /**< Name of the regions file - libdir is prepended */
-    char    *treasures;	    /**< Location of the treasures file. */
-    char    *uniquedir;	    /**< Directory for the unique items */
-    char    *templatedir;   /**< Directory for the template map */
-    char    *tmpdir;	    /**< Directory to use for temporary files */
-    uint8   stat_loss_on_death;	/**< If true, chars lose a random stat when they die */
+    char    *logfilename;       /**< Logfile to use */
+    uint16  csport;             /**< Port for new client/server */
+    LogLevel debug;             /**< Default debugging level */
+    uint8   dumpvalues;         /**< Set to dump various values/tables */
+    char    *dumparg;           /**< Additional argument for some dump functions */
+    uint8   daemonmode;         /**< If true, detach and become daemon */
+    int     argc;               /**< Parameters that were passed to the program */
+    char    **argv;             /**< Only used by xio.c, so will go away at some time */
+    char    *confdir;           /**< Configuration files */
+    char    *datadir;           /**< Read only data files */
+    char    *localdir;          /**< Read/write data files */
+    char    *playerdir;         /**< Where the player files are */
+    char    *mapdir;            /**< Where the map files are */
+    char    *archetypes;        /**< Name of the archetypes file - libdir is prepended */
+    char    *regions;           /**< Name of the regions file - libdir is prepended */
+    char    *treasures;         /**< Location of the treasures file. */
+    char    *uniquedir;         /**< Directory for the unique items */
+    char    *templatedir;       /**< Directory for the template map */
+    char    *tmpdir;            /**< Directory to use for temporary files */
+    uint8   stat_loss_on_death; /**< If true, chars lose a random stat when they die */
     sint16  pk_luck_penalty;    /**< Amount by which player luck is reduced if they PK */
     uint8   permanent_exp_ratio; /**< How much exp should be 'permenant' and unable to be lost*/
     uint8   death_penalty_ratio; /**< Hhow much exp should be lost at death */
     uint8   death_penalty_level; /**< How many levels worth of exp may be lost on one death */
     uint8   balanced_stat_loss; /**< If true, Death stat depletion based on level etc */
-    uint8   not_permadeth;  /**< If true, death is non-permament */
-    uint8   simple_exp;	    /**< If true, use the simple experience system */
-    int	    reset_loc_time; /**< Number of seconds to put player back at home */
-    uint8   set_title;	    /**< Players can set thier title */
-    uint8   resurrection;   /**< Ressurection possible w/ permadeth on */
-    uint8   search_items;   /**< Search_items command */
-    uint8   spell_encumbrance; /**< Encumbrance effects spells */
+    uint8   not_permadeth;      /**< If true, death is non-permament */
+    uint8   simple_exp;         /**< If true, use the simple experience system */
+    int     reset_loc_time;     /**< Number of seconds to put player back at home */
+    uint8   set_title;          /**< Players can set thier title */
+    uint8   resurrection;       /**< Ressurection possible w/ permadeth on */
+    uint8   search_items;       /**< Search_items command */
+    uint8   spell_encumbrance;  /**< Encumbrance effects spells */
     uint8   spell_failure_effects; /**< Nasty backlash to spell failures */
-    uint8   casting_time;   /**< It takes awhile to cast a spell */
-    uint8   real_wiz;       /**< Use mud-like wizards */
-    uint8   recycle_tmp_maps; /**< Re-use tmp maps. */
-    uint8   explore_mode;     /**< Explore mode allowed? */
+    uint8   casting_time;       /**< It takes awhile to cast a spell */
+    uint8   real_wiz;           /**< Use mud-like wizards */
+    uint8   recycle_tmp_maps;   /**< Re-use tmp maps. */
+    uint8   explore_mode;       /**< Explore mode allowed? */
     uint8   spellpoint_level_depend; /**< Spell costs go up with level */
-    uint16  set_friendly_fire;	/**< Percent of damage done by peaceful player vs player damage */
-    char    who_format[MAX_BUF]; /**< The format that the who command should use */
+    uint16  set_friendly_fire;       /**< Percent of damage done by peaceful player vs player damage */
+    char    who_format[MAX_BUF];     /**< The format that the who command should use */
     char    who_wiz_format[MAX_BUF]; /**< The format that the who command should use when called by a dm*/
-    char    motd[MAX_BUF];    /**< Name of the motd file */
-    char    *rules;           /**< Name of rules file*/
-    char    *news;            /**< Name of news file*/
-    char    dm_mail[MAX_BUF]; /**< DM's Email address */
+    char    motd[MAX_BUF];      /**< Name of the motd file */
+    char    *rules;             /**< Name of rules file*/
+    char    *news;              /**< Name of news file*/
+    char    dm_mail[MAX_BUF];   /**< DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
-    unsigned int meta_on:1;	    /**< True if we should send updates */
+    unsigned int meta_on:1;         /**< True if we should send updates */
     char    meta_server[MAX_BUF];   /**< Hostname/ip addr of the metaserver */
-    char    meta_host[MAX_BUF];	    /**< Hostname of this host */
-    uint16  meta_port;		    /**< Port number to use for updates */
+    char    meta_host[MAX_BUF];     /**< Hostname of this host */
+    uint16  meta_port;              /**< Port number to use for updates */
     char    meta_comment[MAX_BUF];  /**< Comment we send to the metaserver */
 
-    uint32  worldmapstartx;	    /**< Starting x tile for the worldmap */
-    uint32  worldmapstarty;	    /**< Starting y tile for the worldmap */
-    uint32  worldmaptilesx;	    /**< Number of tiles wide the worldmap is */
-    uint32  worldmaptilesy;	    /**< Number of tiles high the worldmap is */
-    uint32  worldmaptilesizex;	    /**< Number of squares wide in a wm tile */
-    uint32  worldmaptilesizey;	    /**< Number of squares high in a wm tile */
-    uint8   fastclock;		    /**< If true, clock goes warp 9 */
+    uint32  worldmapstartx;         /**< Starting x tile for the worldmap */
+    uint32  worldmapstarty;         /**< Starting y tile for the worldmap */
+    uint32  worldmaptilesx;         /**< Number of tiles wide the worldmap is */
+    uint32  worldmaptilesy;         /**< Number of tiles high the worldmap is */
+    uint32  worldmaptilesizex;      /**< Number of squares wide in a wm tile */
+    uint32  worldmaptilesizey;      /**< Number of squares high in a wm tile */
+    uint8   fastclock;              /**< If true, clock goes warp 9 */
 
-    char    *emergency_mapname;	    /**< Map to return players to in emergency */
-    uint16  emergency_x, emergency_y;	/**< Coordinates to use on that map */
+    char    *emergency_mapname;       /**< Map to return players to in emergency */
+    uint16  emergency_x, emergency_y; /**< Coordinates to use on that map */
 
-    sint16  max_level;		    /**< This is read out of exp_table */
-    float   item_power_factor;	    /**< See note in setings file */
+    sint16  max_level;                /**< This is read out of exp_table */
+    float   item_power_factor;        /**< See note in setings file */
 
-    int     armor_max_enchant;  /**< Maximum number of times an armor can be enchanted */
-    int     armor_weight_reduction; /**< Weight reduction per enchantment */
-    uint8   armor_weight_linear;  /**< If 1, weight reduction is linear, else exponantiel */
-    int     armor_speed_improvement;    /**< Speed improvement */
-    uint8   armor_speed_linear;         /**< If 1, speed improvement is linear, else exponantiel */
-    uint8   no_player_stealing;     /**< If 1, can not steal from other players */
-    uint8   create_home_portals;     /**< If 1, can create portals in unique maps (apartments) */
-    uint8   personalized_blessings; /**< If 1, blessed weapons get an owner and a willpower value */
-    sint64  pk_max_experience; /**< Maximum experience one can get for PKing. Ignore if negative. */
-    int     pk_max_experience_percent; /**< Percentage of experience of victim the killer gets. */
+    int     armor_max_enchant;        /**< Maximum number of times an armor can be enchanted */
+    int     armor_weight_reduction;   /**< Weight reduction per enchantment */
+    uint8   armor_weight_linear;      /**< If 1, weight reduction is linear, else exponantiel */
+    int     armor_speed_improvement;  /**< Speed improvement */
+    uint8   armor_speed_linear;       /**< If 1, speed improvement is linear, else exponantiel */
+    uint8   no_player_stealing;       /**< If 1, can not steal from other players */
+    uint8   create_home_portals;      /**< If 1, can create portals in unique maps (apartments) */
+    uint8   personalized_blessings;   /**< If 1, blessed weapons get an owner and a willpower value */
+    sint64  pk_max_experience;        /**< Maximum experience one can get for PKing. Ignore if negative. */
+    int     pk_max_experience_percent;   /**< Percentage of experience of victim the killer gets. */
     int     allow_denied_spells_writing; /**< If set, players can write spells they can't cast. */
-    int     allow_broken_converters; /**< If set, converters will work even if price of generated item is higher
-                                       * than the price of converted items. */
-    int     log_timestamp; /**< If set, log will comport a timestamp. */
+    int     allow_broken_converters;     /**< If set, converters will work even if price of generated item is higher
+                                          * than the price of converted items. */
+    int     log_timestamp;        /**< If set, log will comport a timestamp. */
     char*   log_timestamp_format; /**< Format for timestap, if log_timestamp is set. */
 } Settings;
 
@@ -427,9 +427,9 @@ extern Settings settings;
  * just a memset.
  */
 typedef struct Statistics {
-    uint64  spell_merges;	/**< Number of spell merges done */
-    uint64  spell_hash_full;	/**< Number of times spell hash was full*/
-    uint64  spell_suppressions;	/**< Number of times ok_to_put_more() returned FALSE*/
+    uint64  spell_merges;       /**< Number of spell merges done */
+    uint64  spell_hash_full;    /**< Number of times spell hash was full*/
+    uint64  spell_suppressions; /**< Number of times ok_to_put_more() returned FALSE*/
 } Statistics;
 
 extern Statistics statistics;

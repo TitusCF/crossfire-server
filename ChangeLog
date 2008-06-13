@@ -14,6 +14,41 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Reformat all header files in include/ to fit with current coding style standard,
+a combination of using the astyle tool and manual review afterwards.
+ include/define.h
+ include/treasure.h
+ include/commands.h
+ include/win32.h
+ include/shstr.h
+ include/timers.h
+ include/config.h
+ include/object.h
+ include/loader.h
+ include/attack.h
+ include/race.h
+ include/logger.h
+ include/newserver.h
+ include/image.h
+ include/ob_methods.h
+ include/re-cmp.h
+ include/living.h
+ include/book.h
+ include/player.h
+ include/plugin.h
+ include/material.h
+ include/metaserver2.h
+ include/spellist.h
+ include/global.h
+ include/skills.h
+ include/spells.h
+ include/includes.h
+ include/god.h
+ include/map.h
+ include/tod.h
+ include/newclient.h
+Arvid Norlander 2008-06-13
+
 First step in fixing bug #1992235 (citylife/rabies potential DOS). Make citylife
 NPCs undead.
  plugins/citylife/citylife.c

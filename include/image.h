@@ -31,9 +31,9 @@
 
 /** Information about one image */
 typedef struct face_info {
-    uint8 *data;		    /**< image data */
-    uint16 datalen;	    /**< length of the xpm data */
-    uint32 checksum;	    /**< Checksum of face data */
+    uint8 *data;            /**< image data */
+    uint16 datalen;         /**< length of the xpm data */
+    uint32 checksum;        /**< Checksum of face data */
 } face_info;
 
 /** Information about one face set */
@@ -44,9 +44,9 @@ typedef struct {
     char    *size;
     char    *extension;
     char    *comment;
-    face_info	*faces; /**< images in this faceset */
+    face_info   *faces; /**< images in this faceset */
 } face_sets;
-#define MAX_FACE_SETS	20  /**< Maximum number of image sets the program will handle */
+#define MAX_FACE_SETS   20  /**< Maximum number of image sets the program will handle */
 
 extern face_sets facesets[MAX_FACE_SETS];
 

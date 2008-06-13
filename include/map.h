@@ -58,7 +58,7 @@
  * this removes the need for hardcoding, and also makes sure
  * we don't overstep the number of layers.
  */
-#define MAP_LAYERS		10
+#define MAP_LAYERS              10
 
 extern const char *map_layer_name[MAP_LAYERS];
 
@@ -66,47 +66,47 @@ extern const char *map_layer_name[MAP_LAYERS];
  * @defgroup MAP_LAYER_xxx Map layers
  */
 /*@{*/
-#define MAP_LAYER_FLOOR		0
-#define MAP_LAYER_NO_PICK1	1   /**< Non pickable ground objects */
-#define MAP_LAYER_NO_PICK2	2   /**< Non pickable ground objects */
-#define MAP_LAYER_ITEM1		3   /**< Items that can be picked up */
-#define MAP_LAYER_ITEM2		4
-#define MAP_LAYER_ITEM3		5
-#define MAP_LAYER_LIVING1	6   /**< Living creatures */
-#define MAP_LAYER_LIVING2	7
-#define MAP_LAYER_FLY1		8   /**< Flying objects - creatures, spells */
-#define MAP_LAYER_FLY2		9   /**< Arrows, etc */
+#define MAP_LAYER_FLOOR         0
+#define MAP_LAYER_NO_PICK1      1   /**< Non pickable ground objects */
+#define MAP_LAYER_NO_PICK2      2   /**< Non pickable ground objects */
+#define MAP_LAYER_ITEM1         3   /**< Items that can be picked up */
+#define MAP_LAYER_ITEM2         4
+#define MAP_LAYER_ITEM3         5
+#define MAP_LAYER_LIVING1       6   /**< Living creatures */
+#define MAP_LAYER_LIVING2       7
+#define MAP_LAYER_FLY1          8   /**< Flying objects - creatures, spells */
+#define MAP_LAYER_FLY2          9   /**< Arrows, etc */
 /*@}*/
 
 /** This is when the map will reset */
-#define MAP_WHEN_RESET(m)	((m)->reset_time)
+#define MAP_WHEN_RESET(m)       ((m)->reset_time)
 
-#define MAP_RESET_TIMEOUT(m)	((m)->reset_timeout)
-#define MAP_DIFFICULTY(m)	((m)->difficulty)
-#define MAP_TIMEOUT(m)		((m)->timeout)
-#define MAP_SWAP_TIME(m)	((m)->swap_time)
-#define MAP_OUTDOORS(m)		((m)->outdoor)
+#define MAP_RESET_TIMEOUT(m)    ((m)->reset_timeout)
+#define MAP_DIFFICULTY(m)       ((m)->difficulty)
+#define MAP_TIMEOUT(m)          ((m)->timeout)
+#define MAP_SWAP_TIME(m)        ((m)->swap_time)
+#define MAP_OUTDOORS(m)         ((m)->outdoor)
 
 /**
  * Map darkness used to enforce the MAX_DARKNESS value.
  * but IMO, if it is beyond max value, that should be fixed
  * on the map or in the code.
  */
-#define MAP_DARKNESS(m)	   	(m)->darkness
+#define MAP_DARKNESS(m)         (m)->darkness
 
 /** Map width. */
-#define MAP_WIDTH(m)		(m)->width
+#define MAP_WIDTH(m)            (m)->width
 /** Map height. */
-#define MAP_HEIGHT(m)		(m)->height
+#define MAP_HEIGHT(m)           (m)->height
 /** Convenient function - total number of spaces is used in many places. */
-#define MAP_SIZE(m)		((m)->width * (m)->height)
+#define MAP_SIZE(m)             ((m)->width * (m)->height)
 
 /** Default X coordinate for map enter. */
-#define MAP_ENTER_X(m)		(m)->enter_x
+#define MAP_ENTER_X(m)          (m)->enter_x
 /** Default Y coordinate for map enter. */
-#define MAP_ENTER_Y(m)		(m)->enter_y
+#define MAP_ENTER_Y(m)          (m)->enter_y
 
-#define MAP_NOSMOOTH(m)		(m)->nosmooth
+#define MAP_NOSMOOTH(m)         (m)->nosmooth
 
 /**
  * @defgroup MAP_xxx Map loading flags
@@ -180,25 +180,25 @@ extern const char *map_layer_name[MAP_LAYERS];
  * consistent (eg, op->map, op->x, op->y)
  */
 /** Gets map flags. Not multitile aware. */
-#define GET_MAP_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].flags )
+#define GET_MAP_FLAGS(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].flags )
 /** Sets map flags. Not multitile aware. */
-#define SET_MAP_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
+#define SET_MAP_FLAGS(M,X,Y,C)  ( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
 /** Gets map light. Not multitile aware. */
-#define GET_MAP_LIGHT(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].light )
+#define GET_MAP_LIGHT(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].light )
 /** Sets map lighe. Not multitile aware. */
-#define SET_MAP_LIGHT(M,X,Y,L)	( (M)->spaces[(X) + (M)->width * (Y)].light = L )
-#define GET_MAP_PLAYER(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].pl )
-#define SET_MAP_PLAYER(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].pl = C )
+#define SET_MAP_LIGHT(M,X,Y,L)  ( (M)->spaces[(X) + (M)->width * (Y)].light = L )
+#define GET_MAP_PLAYER(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].pl )
+#define SET_MAP_PLAYER(M,X,Y,C) ( (M)->spaces[(X) + (M)->width * (Y)].pl = C )
 
 /** Gets the bottom object on a map. Not multitile aware. */
-#define GET_MAP_OB(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].bottom )
+#define GET_MAP_OB(M,X,Y)       ( (M)->spaces[(X) + (M)->width * (Y)].bottom )
 /** Gets the top object on a map. Not multitile aware. */
-#define GET_MAP_TOP(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].top )
+#define GET_MAP_TOP(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].top )
 
 /** Sets the bottom object on a map. Not multitile aware. */
-#define SET_MAP_OB(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
+#define SET_MAP_OB(M,X,Y,tmp)   ( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
 /** Sets the top object on a map. Not multitile aware. */
-#define SET_MAP_TOP(M,X,Y,tmp)	( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
+#define SET_MAP_TOP(M,X,Y,tmp)  ( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
 
 /** Sets the layer face of specified square. Not multitile aware. */
 #define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C )
@@ -256,11 +256,11 @@ extern const char *map_layer_name[MAP_LAYERS];
  */
 
 #define AB_NO_PASS      0x04
-#define P_PLAYER        0x08	/**< There is a player on this space */
-#define P_IS_ALIVE      0x10	/**< Something alive is on this space. */
-#define P_NO_CLERIC     0x20	/**< No clerical spells cast here. */
-#define P_NEED_UPDATE   0x40	/**< This space is out of date. */
-#define P_NO_ERROR      0x80	/**< Purely temporary - if set, update_position
+#define P_PLAYER        0x08    /**< There is a player on this space */
+#define P_IS_ALIVE      0x10    /**< Something alive is on this space. */
+#define P_NO_CLERIC     0x20    /**< No clerical spells cast here. */
+#define P_NEED_UPDATE   0x40    /**< This space is out of date. */
+#define P_NO_ERROR      0x80    /**< Purely temporary - if set, update_position
                                  * does not complain if the flags are different.
                                  */
 /* The following two values are not stored in the MapLook flags, but instead
@@ -269,24 +269,24 @@ extern const char *map_layer_name[MAP_LAYERS];
  * function that does more of the work can hopefully be used to replace
  * lots of duplicate checks currently in the code.
  */
-#define P_OUT_OF_MAP	0x100   /**< This space is outside the map. */
-#define	P_NEW_MAP	0x200       /**< Coordinates passed result in a new tiled map.  */
+#define P_OUT_OF_MAP    0x100   /**< This space is outside the map. */
+#define P_NEW_MAP       0x200   /**< Coordinates passed result in a new tiled map.  */
 /*@}*/
 
 /**
  * This structure contains all information related to one map square.
  */
 typedef struct MapSpace {
-    object	*bottom;	/**< Lowest object on this space. */
-    object	*top;		/**< Highest object on this space. */
-    object	*faces_obj[MAP_LAYERS];	/**< Face objects for the layers. */
-    uint8	flags;		/**< Flags about this space (see the P_ values above). */
-    sint8	light;		/**< How much light this space provides. */
-    MoveType	move_block;	/**< What movement types this space blocks. */
-    MoveType	move_slow;	/**< What movement types this space slows. */
-    MoveType	move_on;	/**< What movement types are activated. */
-    MoveType	move_off;	/**< What movement types are activated. */
-    object	*pl;		/* Player that is on this space */
+    object      *bottom;        /**< Lowest object on this space. */
+    object      *top;           /**< Highest object on this space. */
+    object      *faces_obj[MAP_LAYERS]; /**< Face objects for the layers. */
+    uint8       flags;          /**< Flags about this space (see the P_ values above). */
+    sint8       light;          /**< How much light this space provides. */
+    MoveType    move_block;     /**< What movement types this space blocks. */
+    MoveType    move_slow;      /**< What movement types this space slows. */
+    MoveType    move_on;        /**< What movement types are activated. */
+    MoveType    move_off;       /**< What movement types are activated. */
+    object      *pl;            /* Player that is on this space */
 } MapSpace;
 
 /**
@@ -316,7 +316,7 @@ typedef struct regiondef {
     sint8       fallback;        /**< Whether, in the event of a region not existing,
                                   * this should be the one we fall back on as the default. */
     char        *jailmap;        /**< Where a player that is arrested in this region should be imprisoned. */
-    sint16	jailx, jaily;    /**< The coodinates in jailmap to which the player should be sent. */
+    sint16      jailx, jaily;    /**< The coodinates in jailmap to which the player should be sent. */
 } region;
 
 /**
@@ -328,7 +328,7 @@ typedef struct shopitem {
     const char *name_pl;  /**< Plural name. */
     int typenum;    /**< Itemtype number we need to match, 0 if it is the default price. */
     sint8 strength; /**< The degree of specialisation the shop has in this item,
-		     * as a percentage from -100 to 100. */
+                     * as a percentage from -100 to 100. */
     int index;      /**< Being the size of the shopitems array.*/
 } shopitems;
 
@@ -344,46 +344,46 @@ typedef struct shopitem {
  * break map tiling.
  */
 typedef struct mapdef {
-    struct mapdef *next;	/**< Next map, linked list. */
-    char *tmpname;	/**< Name of temporary file. */
-    char *name;		/**< Name of map as given by its creator. */
-    region *region;	/**< What jurisdiction in the game world this map is ruled by
-                         * points to the struct containing all the properties of
-                         * the region. */
-    uint32 reset_time;	/**< When this map should reset. */
-    uint32 reset_timeout;  /**< How many seconds must elapse before this map
-                            * should be reset. */
-    uint32 fixed_resettime:1;	/**< If true, reset time is not affected by
+    struct mapdef *next;        /**< Next map, linked list. */
+    char    *tmpname;           /**< Name of temporary file. */
+    char    *name;              /**< Name of map as given by its creator. */
+    region  *region;            /**< What jurisdiction in the game world this map is ruled by
+                                 * points to the struct containing all the properties of
+                                 * the region. */
+    uint32  reset_time;         /**< When this map should reset. */
+    uint32  reset_timeout;      /**< How many seconds must elapse before this map
+                                 * should be reset. */
+    uint32  fixed_resettime:1;  /**< If true, reset time is not affected by
                                  * players entering/exiting map. */
-    uint32 unique:1;	/**< If set, this is a per player unique map. */
-    uint32 template:1;	/**< If set, this is a template map. */
-    uint32 nosmooth:1;  /**< If set the content of this map has smoothlevel=0 forced. */
-    uint32 outdoor:1;	/**< True if an outdoor map. */
-    sint32 timeout;	/**< Swapout is set to this. */
-    sint32 swap_time;	/**< When it reaches 0, the map will be swapped out. */
-    uint16 difficulty;	/**< What level the player should be to play here. */
-    sint16 players;	/**< How many players are on this level right now. Automatically updated by the object handling functions. */
-    uint32 in_memory;	/**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
-    uint8 compressed;	/**< Compression method used. */
+    uint32  unique:1;           /**< If set, this is a per player unique map. */
+    uint32  template:1;         /**< If set, this is a template map. */
+    uint32  nosmooth:1;         /**< If set the content of this map has smoothlevel=0 forced. */
+    uint32  outdoor:1;          /**< True if an outdoor map. */
+    sint32  timeout;            /**< Swapout is set to this. */
+    sint32  swap_time;          /**< When it reaches 0, the map will be swapped out. */
+    uint16  difficulty;         /**< What level the player should be to play here. */
+    sint16  players;            /**< How many players are on this level right now. Automatically updated by the object handling functions. */
+    uint32  in_memory;          /**< Combination of @ref IN_MEMORY_xxx "IN_MEMORY_xxx" flags. */
+    uint8   compressed;         /**< Compression method used. */
 
-    uint8 darkness;    	/**< Indicates level of darkness of map. */
-    uint16 width,height;	/**< Width and height of map. */
-    uint16 enter_x;	/**< Enter_x and enter_y are default entrance location. */
-    uint16 enter_y;	/**< on the map if none are set in the exit. */
-    oblinkpt *buttons;	/**< Linked list of linked lists of buttons. */
-    MapSpace	*spaces;    /**< Array of spaces on this map. */
-    shopitems   *shopitems; /**< List of item-types the map's shop will trade in. */
-    char    *shoprace;  /**< The preffered race of the local shopkeeper. */
-    double  shopgreed;  /**< How much our shopkeeper overcharges. */
-    uint64  shopmin;    /**< Minimum price a shop will trade for. */
-    uint64  shopmax;    /**< MMaximum price a shop will offer. */
-    char    *msg;       /**< Message map creator may have left. */
-    char    *maplore;   /**< Map lore information. */
-    char    *tile_path[4];  /**< Path to adjoining maps. */
+    uint8   darkness;           /**< Indicates level of darkness of map. */
+    uint16  width,height;       /**< Width and height of map. */
+    uint16  enter_x;            /**< Enter_x and enter_y are default entrance location. */
+    uint16  enter_y;            /**< on the map if none are set in the exit. */
+    oblinkpt    *buttons;       /**< Linked list of linked lists of buttons. */
+    MapSpace    *spaces;        /**< Array of spaces on this map. */
+    shopitems   *shopitems;     /**< List of item-types the map's shop will trade in. */
+    char    *shoprace;          /**< The preffered race of the local shopkeeper. */
+    double  shopgreed;          /**< How much our shopkeeper overcharges. */
+    uint64  shopmin;            /**< Minimum price a shop will trade for. */
+    uint64  shopmax;            /**< MMaximum price a shop will offer. */
+    char    *msg;               /**< Message map creator may have left. */
+    char    *maplore;           /**< Map lore information. */
+    char    *tile_path[4];      /**< Path to adjoining maps. */
     struct mapdef *tile_map[4]; /**< Adjoining maps. */
-    char path[HUGE_BUF];        /**< Filename of the map. */
+    char    path[HUGE_BUF];     /**< Filename of the map. */
     struct timeval last_reset_time; /**< A timestamp of the last original map loading. */
-    char* background_music; /**< Background music to use for this map. */
+    char*   background_music;   /**< Background music to use for this map. */
 } mapstruct;
 
 /**
@@ -398,9 +398,9 @@ typedef struct mapdef {
  */
 typedef struct rv_vector {
     unsigned int distance;  /**< Distance, in squares. */
-    int	    distance_x;     /**< X delta. */
-    int	    distance_y;     /**< Y delta. */
-    int	    direction;      /**< General direction to the targer. */
+    int     distance_x;     /**< X delta. */
+    int     distance_y;     /**< Y delta. */
+    int     direction;      /**< General direction to the targer. */
     object  *part;          /**< Part we found. */
 } rv_vector;
 

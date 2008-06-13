@@ -35,7 +35,7 @@
 #define TREASURE_H
 
 /** Chance an item becomes an artifact if not magic is 1 in this value. */
-#define CHANCE_FOR_ARTIFACT	20
+#define CHANCE_FOR_ARTIFACT     20
 
 /** Maximum magic for difficulty/magic mapping. */
 #define MAXMAGIC 4
@@ -62,7 +62,7 @@ enum {
     GT_APPLY = 0x0008,          /**< Monsters should apply generated item. */
     GT_ONLY_GOOD = 0x0010,      /**< Don't generate bad/cursed items. Used for new player's equipment. */
     GT_UPDATE_INV = 0x0020,     /**< When object has been generated, send its information to player. */
-    GT_MINIMAL = 0x0040	        /**< Do minimal adjustments, don't make artifacts, and so on. */
+    GT_MINIMAL = 0x0040         /**< Do minimal adjustments, don't make artifacts, and so on. */
 };
 
 
@@ -94,7 +94,7 @@ typedef struct _change_arch {
 typedef struct treasurestruct {
     struct archt *item;                 /**< Which item this link can be */
     const char *name;                   /**< If non null, name of list to use instead */
-    struct treasurestruct *next;	    /**< Next treasure-item in a linked list */
+    struct treasurestruct *next;        /**< Next treasure-item in a linked list */
     struct treasurestruct *next_yes;    /**< If this item was generated, use this link instead of ->next */
     struct treasurestruct *next_no;     /**< If this item was not generated, then continue here */
     struct _change_arch change_arch;    /**< Override default arch values if set in treasure list */

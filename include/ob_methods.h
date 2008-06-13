@@ -68,17 +68,16 @@ typedef void (*describe_func)(const ob_methods*, const object*, const object*, c
 typedef method_ret  (*move_on_func)(ob_methods*, object*, object*, object*);
 typedef method_ret  (*trigger_func)(ob_methods*, object*, object*, int);
 
-struct ob_methods
-{
+struct ob_methods {
     apply_func      apply;          /**< The apply method */
     process_func    process;        /**< The process method */
     describe_func   describe;       /**< The describe method */
     move_on_func    move_on;        /**< The move_on method */
     trigger_func    trigger;        /**< When something is triggered via a button. */
     struct ob_methods *fallback;    /**< ob_method structure to fallback to */
-/* Example:
- * apply_func *apply;
- */
+    /* Example:
+     * apply_func *apply;
+     */
 };
 
 #endif /* OB_METHODS_H */

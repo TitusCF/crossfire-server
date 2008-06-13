@@ -35,7 +35,7 @@
 #define INCLUDES_H
 
 #if defined(osf1) && !defined(__osf__)
-#  define	__osf__
+#  define __osf__
 #endif
 
 #if defined(sgi) && !defined(__sgi__)

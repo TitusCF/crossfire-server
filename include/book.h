@@ -57,8 +57,8 @@
  * Struct to store the message_type and message_subtype for signs and books used by the player.
  */
 typedef struct {
-	uint8 message_type;     /**< Message type to be sent to the client. */
-	uint8 message_subtype;  /**< Message subtype to be sent to the client. */
+    uint8 message_type;     /**< Message type to be sent to the client. */
+    uint8 message_subtype;  /**< Message subtype to be sent to the client. */
 } readable_message_type;
 
 #endif /* BOOK_H */

@@ -44,9 +44,9 @@
 
 /** One map cell, as sent to the client. */
 struct map_cell_struct {
-  uint16 faces[MAP_LAYERS];
-  uint16 smooth[MAP_LAYERS];
-  int darkness;
+    uint16 faces[MAP_LAYERS];
+    uint16 smooth[MAP_LAYERS];
+    int darkness;
 };
 
 /**
@@ -55,14 +55,14 @@ struct map_cell_struct {
  * some structures, as well as determining how far
  * we should look for the heads of big images.
  */
-#define MAX_HEAD_OFFSET	    8
+#define MAX_HEAD_OFFSET     8
 
 #define MAX_CLIENT_X (MAP_CLIENT_X + MAX_HEAD_OFFSET)
 #define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)
 
 /** One map for a player. */
 struct Map {
-  struct map_cell_struct cells[MAX_CLIENT_X][MAX_CLIENT_Y];
+    struct map_cell_struct cells[MAX_CLIENT_X][MAX_CLIENT_Y];
 };
 
 /** True max is 16383 given current map compaction method. */
@@ -94,8 +94,8 @@ enum MapMode { Map2Cmd = 0 };
  */
 typedef struct buffer_struct {
     char    data[SOCKETBUFSIZE];
-    int	    start;
-    int	    len;
+    int     start;
+    int     len;
 } buffer_struct;
 
 /** How many times we are allowed to give the wrong password before being kicked. */
@@ -106,35 +106,35 @@ typedef struct buffer_struct {
  */
 typedef struct socket_struct {
     enum Sock_Status status;
-    int fd;
-    struct Map lastmap;
-    sint8 map_scroll_x, map_scroll_y;
-    size_t faces_sent_len;  /**< This is the number of elements allocated in faces_sent[]. */
-    uint8 *faces_sent;      /**< This is a bitmap on sent face status. */
-    uint8 anims_sent[MAXANIMNUM]; /**< What animations we sent. */
+    int         fd;
+    struct Map  lastmap;
+    sint8       map_scroll_x, map_scroll_y;
+    size_t      faces_sent_len;         /**< This is the number of elements allocated in faces_sent[]. */
+    uint8       *faces_sent;            /**< This is a bitmap on sent face status. */
+    uint8       anims_sent[MAXANIMNUM]; /**< What animations we sent. */
     struct statsinfo stats;
-    SockList	inbuf;      /**< If we get an incomplete packet, this is used to hold the data. */
-    char    *host;	    /**< Which host it is connected from (ip address). */
-    buffer_struct outputbuffer;   /**< For undeliverable data. */
-    uint8   password_fails; /**< How many times the player has failed to give the right password. */
-    uint32  facecache:1;          /**< If true, client is caching images. */
-    uint32  newmapcmd:1;          /**< Send newmap command when entering new map SMACFIGGEN. */
-    uint32  darkness:1;           /**< True if client wants darkness information. */
-    uint32  update_look:1;        /**< If true, we need to send the look window. */
-    uint32  can_write:1;          /**< Can we write to this socket? */
-    uint32  has_readable_type:1;  /**< If true client accept additional text information
-                                   *   used to arrange text in books, scrolls, or scripted dialogs. */
-    uint32  monitor_spells:1;     /**< Client wishes to be informed when their spell list changes. */
-    uint32  tick:1;               /**< Client wishes to get tick commands. */
-    uint32  is_bot:1;             /**< Client shouldn't be reported to metaserver. */
-    uint32  want_pickup:1;        /**< Client wants pickup information when logging in. */
-    uint32  sound;                /**< Client sound mode. */
-    uint32  supported_readables;  /**< Each bit is a readable supported by client. */
-    uint32  cs_version, sc_version; /**< Versions of the client. */
-    enum MapMode mapmode;   /**< Type of map commands the client wants. */
-    uint16  look_position;  /**< Start of drawing of look window. */
-    uint8   mapx, mapy;     /**< How large a map the client wants. */
-    uint8   faceset;        /**< Set the client is using, default 0. */
+    SockList    inbuf;                  /**< If we get an incomplete packet, this is used to hold the data. */
+    char        *host;                  /**< Which host it is connected from (ip address). */
+    buffer_struct outputbuffer;         /**< For undeliverable data. */
+    uint8       password_fails;         /**< How many times the player has failed to give the right password. */
+    uint32      facecache:1;            /**< If true, client is caching images. */
+    uint32      newmapcmd:1;            /**< Send newmap command when entering new map SMACFIGGEN. */
+    uint32      darkness:1;             /**< True if client wants darkness information. */
+    uint32      update_look:1;          /**< If true, we need to send the look window. */
+    uint32      can_write:1;            /**< Can we write to this socket? */
+    uint32      has_readable_type:1;    /**< If true client accept additional text information
+                                         *   used to arrange text in books, scrolls, or scripted dialogs. */
+    uint32      monitor_spells:1;       /**< Client wishes to be informed when their spell list changes. */
+    uint32      tick:1;                 /**< Client wishes to get tick commands. */
+    uint32      is_bot:1;               /**< Client shouldn't be reported to metaserver. */
+    uint32      want_pickup:1;          /**< Client wants pickup information when logging in. */
+    uint32      sound;                  /**< Client sound mode. */
+    uint32      supported_readables;    /**< Each bit is a readable supported by client. */
+    uint32      cs_version, sc_version; /**< Versions of the client. */
+    enum MapMode mapmode;               /**< Type of map commands the client wants. */
+    uint16      look_position;          /**< Start of drawing of look window. */
+    uint8       mapx, mapy;             /**< How large a map the client wants. */
+    uint8       faceset;                /**< Set the client is using, default 0. */
 
     /* Below are flags for extedend infos to pass to client
      * with S->C mapextended command (note: this comment seems incorrect?) */
@@ -143,26 +143,26 @@ typedef struct socket_struct {
 
 
 #define CLIENT_SUPPORT_READABLES(__sockPtr,__type)\
-	( ((__type)>0) &&\
-	  ((__sockPtr)->has_readable_type) && \
-	  ((__sockPtr)->supported_readables & (1<<(__type))) )
+        ( ((__type)>0) &&\
+          ((__sockPtr)->has_readable_type) && \
+          ((__sockPtr)->supported_readables & (1<<(__type))) )
 
 /**
  * Bitmask for the faces_sent[] array - what
  * portion of the face have we sent?
  */
-#define NS_FACESENT_FACE	0x1
-#define NS_FACESENT_SMOOTH	0x2
+#define NS_FACESENT_FACE        0x1
+#define NS_FACESENT_SMOOTH      0x2
 
 #define FACE_TYPES  1
-#define PNG_FACE_INDEX	0
+#define PNG_FACE_INDEX  0
 
 /** Holds some system-related information. */
 typedef struct Socket_Info {
-    struct timeval timeout;	/**< Timeout for select. */
-    int	    max_filedescriptor;	/**< max filedescriptor on the system. */
-    int	    nconns;		/**< Number of connections. */
-    int	    allocated_sockets;	/**< Number of allocated in init_sockets. */
+    struct timeval timeout;     /**< Timeout for select. */
+    int     max_filedescriptor; /**< max filedescriptor on the system. */
+    int     nconns;             /**< Number of connections. */
+    int     allocated_sockets;  /**< Number of allocated in init_sockets. */
 } Socket_Info;
 
 extern Socket_Info socket_info;

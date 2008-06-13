@@ -45,44 +45,44 @@
  * to denote improperly set objects.
  */
 /*@{*/
-#define SK_LOCKPICKING		1
-#define SK_HIDING		2
-#define SK_SMITHERY		3
-#define SK_BOWYER		4
-#define SK_JEWELER		5
-#define SK_ALCHEMY		6
-#define SK_STEALING		7
-#define SK_LITERACY		8
-#define SK_BARGAINING		9
-#define SK_JUMPING		10
-#define SK_DET_MAGIC		11
-#define SK_ORATORY		12
-#define SK_SINGING		13
-#define SK_DET_CURSE		14
-#define SK_FIND_TRAPS		15
-#define SK_MEDITATION		16
-#define SK_PUNCHING		17
-#define SK_FLAME_TOUCH		18
-#define SK_KARATE		19
-#define SK_CLIMBING		20
-#define SK_WOODSMAN		21
-#define SK_INSCRIPTION		22
-#define SK_ONE_HANDED_WEAPON	23
-#define SK_MISSILE_WEAPON	24
-#define SK_THROWING		25
-#define SK_USE_MAGIC_ITEM	26
-#define SK_DISARM_TRAPS		27
-#define SK_SET_TRAP		28
-#define SK_THAUMATURGY		29
-#define SK_PRAYING		30
-#define	SK_CLAWING		31
-#define SK_LEVITATION		32
-#define SK_SUMMONING		33
-#define SK_PYROMANCY		34
-#define SK_EVOCATION		35
-#define SK_SORCERY		36
-#define SK_TWO_HANDED_WEAPON	37
-#define SK_WRAITH_FEED		38
+#define SK_LOCKPICKING          1
+#define SK_HIDING               2
+#define SK_SMITHERY             3
+#define SK_BOWYER               4
+#define SK_JEWELER              5
+#define SK_ALCHEMY              6
+#define SK_STEALING             7
+#define SK_LITERACY             8
+#define SK_BARGAINING           9
+#define SK_JUMPING              10
+#define SK_DET_MAGIC            11
+#define SK_ORATORY              12
+#define SK_SINGING              13
+#define SK_DET_CURSE            14
+#define SK_FIND_TRAPS           15
+#define SK_MEDITATION           16
+#define SK_PUNCHING             17
+#define SK_FLAME_TOUCH          18
+#define SK_KARATE               19
+#define SK_CLIMBING             20
+#define SK_WOODSMAN             21
+#define SK_INSCRIPTION          22
+#define SK_ONE_HANDED_WEAPON    23
+#define SK_MISSILE_WEAPON       24
+#define SK_THROWING             25
+#define SK_USE_MAGIC_ITEM       26
+#define SK_DISARM_TRAPS         27
+#define SK_SET_TRAP             28
+#define SK_THAUMATURGY          29
+#define SK_PRAYING              30
+#define SK_CLAWING              31
+#define SK_LEVITATION           32
+#define SK_SUMMONING            33
+#define SK_PYROMANCY            34
+#define SK_EVOCATION            35
+#define SK_SORCERY              36
+#define SK_TWO_HANDED_WEAPON    37
+#define SK_WRAITH_FEED          38
 #define SK_HARVESTING 39
 /*@}*/
 
@@ -92,7 +92,7 @@
  * to make life easier, we use the value above as index,
  * eg, SK_EVOCATION (35) will be in last_skills[35].
  */
-#define NUM_SKILLS		40
+#define NUM_SKILLS              40
 
 
 /**
@@ -101,10 +101,10 @@
  * the player doesn't have the skill he should get exp in.
  */
 /*@{*/
-#define SK_EXP_ADD_SKILL	0   /**< Give the player the skill. */
-#define SK_EXP_TOTAL		1   /**< Give player exp to total, no skill. */
-#define SK_EXP_NONE		2   /**< Player gets nothing. */
-#define SK_SUBTRACT_SKILL_EXP	3   /**< Used when removing exp. */
+#define SK_EXP_ADD_SKILL        0   /**< Give the player the skill. */
+#define SK_EXP_TOTAL            1   /**< Give player exp to total, no skill. */
+#define SK_EXP_NONE             2   /**< Player gets nothing. */
+#define SK_SUBTRACT_SKILL_EXP   3   /**< Used when removing exp. */
 /*@}*/
 
 /** True if op is using skill, false else. */
@@ -151,12 +151,12 @@ extern const char *skill_names[NUM_SKILLS];
  * skill numbers above.
  */
 static uint8 unarmed_skills[] = {
-SK_KARATE,
-SK_CLAWING,
-SK_FLAME_TOUCH,
-SK_PUNCHING,
-SK_WRAITH_FEED,
--1
+    SK_KARATE,
+    SK_CLAWING,
+    SK_FLAME_TOUCH,
+    SK_PUNCHING,
+    SK_WRAITH_FEED,
+    -1
 };
 
 /* Just in case one file includes this more than once */

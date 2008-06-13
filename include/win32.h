@@ -32,7 +32,7 @@
 #include <direct.h>
 #include <math.h>
 
-#include <sys/stat.h>	/* somewhat odd, but you don't get stat here with __STDC__ */
+#include <sys/stat.h>   /* somewhat odd, but you don't get stat here with __STDC__ */
 
 #include <io.h>
 #include <stdio.h>
@@ -69,7 +69,7 @@
 #define pclose(__a) _pclose(__a)
 #define vsnprintf _vsnprintf
 
-#define R_OK 6		/* for __access() */
+#define R_OK 6          /* for __access() */
 #define F_OK 6
 
 #define PREFIXDIR ""
@@ -123,22 +123,22 @@
 /* struct dirent - same as Unix */
 
 typedef struct dirent {
-	long d_ino;					/* inode (always 1 in WIN32) */
-	off_t d_off;				/* offset to this dirent */
-	unsigned short d_reclen;	/* length of d_name */
-	char d_name[_MAX_FNAME + 1];	/* filename (null terminated) */
+    long d_ino;                         /* inode (always 1 in WIN32) */
+    off_t d_off;                        /* offset to this dirent */
+    unsigned short d_reclen;            /* length of d_name */
+    char d_name[_MAX_FNAME + 1];        /* filename (null terminated) */
 }dirent;
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
 
 /* typedef DIR - not the same as Unix */
 typedef struct {
-	long handle;				/* _findfirst/_findnext handle */
-	short offset;				/* offset into directory */
-	short finished;				/* 1 if there are not more files */
-	struct _finddata_t fileinfo;	/* from _findfirst/_findnext */
-	char *dir;					/* the dir we are reading */
-	struct dirent dent;			/* the dirent to return */
+    long handle;                        /* _findfirst/_findnext handle */
+    short offset;                       /* offset into directory */
+    short finished;                     /* 1 if there are not more files */
+    struct _finddata_t fileinfo;        /* from _findfirst/_findnext */
+    char *dir;                          /* the dir we are reading */
+    struct dirent dent;                 /* the dirent to return */
 } DIR;
 
 #ifndef socklen_t

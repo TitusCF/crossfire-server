@@ -38,26 +38,26 @@
 #include "spells.h"
 
 const char *spellpathnames[NRSPELLPATHS] = {
- "Protection",
- "Fire",
- "Frost",
- "Electricity",
- "Missiles",
- "Self",
- "Summoning",
- "Abjuration",
- "Restoration",
- "Detonation",
- "Mind",
- "Creation",
- "Teleportation",
- "Information",
- "Transmutation",
- "Transferrence",
- "Turning",
- "Wounding",
- "Death",
- "Light"
+    "Protection",
+    "Fire",
+    "Frost",
+    "Electricity",
+    "Missiles",
+    "Self",
+    "Summoning",
+    "Abjuration",
+    "Restoration",
+    "Detonation",
+    "Mind",
+    "Creation",
+    "Teleportation",
+    "Information",
+    "Transmutation",
+    "Transferrence",
+    "Turning",
+    "Wounding",
+    "Death",
+    "Light"
 };
 
 #endif /* SPELLIST_H */

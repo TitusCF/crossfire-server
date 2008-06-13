@@ -59,41 +59,41 @@
 /*******************************************************************************/
 /* Local events. Those are always linked to a specific object.                 */
 /*******************************************************************************/
-#define EVENT_NONE     0  /**< No event. This exists only to reserve the "0".  */
-#define EVENT_APPLY    1  /**< Object applied-unapplied.                       */
-#define EVENT_ATTACK   2  /**< Monster attacked or Scripted Weapon used.       */
-#define EVENT_DEATH    3  /**< Player or monster dead.                         */
-#define EVENT_DROP     4  /**< Object dropped on the floor.                    */
-#define EVENT_PICKUP   5  /**< Object picked up.                               */
-#define EVENT_SAY      6  /**< Someone speaks.                                 */
-#define EVENT_STOP     7  /**< Thrown object stopped.                          */
-#define EVENT_TIME     8  /**< Triggered each time the object can react/move.  */
-#define EVENT_THROW    9  /**< Object is thrown.                               */
-#define EVENT_TRIGGER  10 /**< Button pushed, lever pulled, etc.               */
-#define EVENT_CLOSE    11 /**< Container closed.                               */
-#define EVENT_TIMER    12 /**< Timer connected triggered it.                   */
-#define EVENT_DESTROY  13 /**< Object destroyed (includes map reset/swapout)   */
-#define EVENT_USER     31 /**< User-defined event.                             */
+#define EVENT_NONE      0  /**< No event. This exists only to reserve the "0". */
+#define EVENT_APPLY     1  /**< Object applied-unapplied.                      */
+#define EVENT_ATTACK    2  /**< Monster attacked or Scripted Weapon used.      */
+#define EVENT_DEATH     3  /**< Player or monster dead.                        */
+#define EVENT_DROP      4  /**< Object dropped on the floor.                   */
+#define EVENT_PICKUP    5  /**< Object picked up.                              */
+#define EVENT_SAY       6  /**< Someone speaks.                                */
+#define EVENT_STOP      7  /**< Thrown object stopped.                         */
+#define EVENT_TIME      8  /**< Triggered each time the object can react/move. */
+#define EVENT_THROW     9  /**< Object is thrown.                              */
+#define EVENT_TRIGGER   10 /**< Button pushed, lever pulled, etc.              */
+#define EVENT_CLOSE     11 /**< Container closed.                              */
+#define EVENT_TIMER     12 /**< Timer connected triggered it.                  */
+#define EVENT_DESTROY   13 /**< Object destroyed (includes map reset/swapout)  */
+#define EVENT_USER      31 /**< User-defined event.                            */
 /*******************************************************************************/
 /* Global events. Those are never linked to a specific object.                 */
 /*******************************************************************************/
-#define EVENT_BORN     14 /**< A new character has been created.               */
-#define EVENT_CLOCK    15 /**< Global time event.                              */
-#define EVENT_CRASH    16 /**< Triggered when the server crashes. Not recursive*/
+#define EVENT_BORN      14 /**< A new character has been created.              */
+#define EVENT_CLOCK     15 /**< Global time event.                             */
+#define EVENT_CRASH     16 /**< Triggered when the server crashes. Not recursive */
 #define EVENT_PLAYER_DEATH  17 /**< Global Death event                         */
-#define EVENT_GKILL    18 /**< Triggered when anything got killed by anyone.   */
-#define EVENT_LOGIN    19 /**< Player login.                                   */
-#define EVENT_LOGOUT   20 /**< Player logout.                                  */
-#define EVENT_MAPENTER 21 /**< A player entered a map.                         */
-#define EVENT_MAPLEAVE 22 /**< A player left a map.                            */
-#define EVENT_MAPRESET 23 /**< A map is resetting.                             */
-#define EVENT_REMOVE   24 /**< A Player character has been removed.            */
-#define EVENT_SHOUT    25 /**< A player 'shout' something.                     */
-#define EVENT_TELL     26 /**< A player 'tell' something.                      */
-#define EVENT_MUZZLE   27 /**< A player was Muzzled (no_shout set).            */
-#define EVENT_KICK     28 /**< A player was Kicked by a DM                     */
-#define EVENT_MAPUNLOAD     29 /**< A map is freed (includes swapping out)     */
-#define EVENT_MAPLOAD       30 /**< A map is loaded                            */
+#define EVENT_GKILL     18 /**< Triggered when anything got killed by anyone.  */
+#define EVENT_LOGIN     19 /**< Player login.                                  */
+#define EVENT_LOGOUT    20 /**< Player logout.                                 */
+#define EVENT_MAPENTER  21 /**< A player entered a map.                        */
+#define EVENT_MAPLEAVE  22 /**< A player left a map.                           */
+#define EVENT_MAPRESET  23 /**< A map is resetting.                            */
+#define EVENT_REMOVE    24 /**< A Player character has been removed.           */
+#define EVENT_SHOUT     25 /**< A player 'shout' something.                    */
+#define EVENT_TELL      26 /**< A player 'tell' something.                     */
+#define EVENT_MUZZLE    27 /**< A player was Muzzled (no_shout set).           */
+#define EVENT_KICK      28 /**< A player was Kicked by a DM                    */
+#define EVENT_MAPUNLOAD 29 /**< A map is freed (includes swapping out)         */
+#define EVENT_MAPLOAD   30 /**< A map is loaded                                */
 #define NR_EVENTS 32
 
 #include <stdarg.h>
@@ -133,8 +133,7 @@ typedef int   (*f_plug_init)(const char* iversion, f_plug_api gethooksptr);
 #endif
 
 /** One loaded plugin. */
-typedef struct _crossfire_plugin
-{
+typedef struct _crossfire_plugin {
     f_plug_api      eventfunc;          /**< Event Handler function            */
     f_plug_api      propfunc;           /**< Plugin getProperty function       */
     f_plug_postinit closefunc;          /**< Plugin Termination function       */
@@ -302,11 +301,11 @@ extern crossfire_plugin* plugins_list;
 #define CFAPI_MAP_PROP_REGION               24
 #define CFAPI_MAP_PROP_UNIQUE               25
 
-#define CFAPI_ARCH_PROP_NAME				0
-#define CFAPI_ARCH_PROP_NEXT				1
-#define CFAPI_ARCH_PROP_HEAD				2
-#define CFAPI_ARCH_PROP_MORE				3
-#define CFAPI_ARCH_PROP_CLONE				4
+#define CFAPI_ARCH_PROP_NAME                0
+#define CFAPI_ARCH_PROP_NEXT                1
+#define CFAPI_ARCH_PROP_HEAD                2
+#define CFAPI_ARCH_PROP_MORE                3
+#define CFAPI_ARCH_PROP_CLONE               4
 
 #define CFAPI_PARTY_PROP_NAME               0
 #define CFAPI_PARTY_PROP_NEXT               1
@@ -335,8 +334,7 @@ extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
 */
 
 /** One function the server exposes to plugins. */
-typedef struct _hook_entry
-{
+typedef struct _hook_entry {
     f_plug_api func;        /**< Function itself. */
     int fid;                /**< Function identifier. */
     const char fname[256];  /**< Function name. */
