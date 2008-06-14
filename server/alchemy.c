@@ -131,7 +131,14 @@ static void attempt_do_alchemy(object *caster, object *cauldron) {
         return; /* only players for now */
 
     /* if no ingredients, no formula! lets forget it */
-    if (!(formula=content_recipe_value(cauldron))) return;
+    if (!(formula=content_recipe_value(cauldron))) {
+        draw_ext_info_format(NDI_UNIQUE, 0, caster,
+                             MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
+                             "The %s is empty.",
+                             "The %s is empty.",
+                             cauldron->name);
+        return;
+    }
 
     numb=numb_ob_inside(cauldron);
     if ((fl=get_formulalist(numb))) {

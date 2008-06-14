@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #1990016 (No message when using skills over an empty cauldron)
+ server/alchemy.c
+Raphael Quinet 2008-06-14
+
 Add missing newlines in copyright header in some plugin source/header files.
  plugins/cfpython/include/cfpython.h
  plugins/cfpython/include/cfpython_object_private.h
