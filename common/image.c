@@ -370,7 +370,6 @@ int read_smooth(void) {
     FILE *fp;
     int smoothcount = 0;
 
-    bmaps_checksum=0;
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
     LOG(llevDebug,"Reading smooth from %s...\n",buf);
     if ((fp=fopen(buf,"r"))==NULL) {

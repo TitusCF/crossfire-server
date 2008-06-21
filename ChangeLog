@@ -13,6 +13,9 @@ changes' is much more useful than 'misc edits' or 'code cleanup'.
 small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
+Don't reset image checksum.
+ common/image.c
+Nicolas Weeger 2008-06-21
 
 Fix for bug #1990016 (No message when using skills over an empty cauldron)
  server/alchemy.c
