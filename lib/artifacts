@@ -1249,8 +1249,8 @@ material 8200
 materialname leather
 type 100
 resist_acid 25
-cha -4
-dex -2
+Cha -4
+Dex -2
 weight 115
 value 40
 end
