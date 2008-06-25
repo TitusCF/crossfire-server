@@ -2031,19 +2031,6 @@ treasure monk
   more
   arch sandals
   end
-treasure dwarf
-  list fighter_skills
-  more
-  arch hammer
-  more
-  arch shield
-  more
-  arch chain_mail
-  more
-  arch helmet
-  more
-  arch skill_smithery
-  end
 treasure pl_half_orc
   list fighter_skills
   more
@@ -2056,17 +2043,6 @@ treasure pl_half_orc
   arch sack
   more
   arch skill_stealing
-  end
-treasure halfling
-  list fighter_skills
-  more
-  arch leather_armour
-  more
-  arch dagger
-  more
-  arch skill_stealing
-  more
-  arch skill_hide
   end
 treasure pl_troll
   arch skill_clawing
