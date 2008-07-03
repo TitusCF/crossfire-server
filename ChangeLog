@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2009802 (alchemy experience not stored correctly): Remove useless
+and dangerous casts to uint16 because both source and destination variables
+are of type int, and the experience points for several recipes do not fit in
+16 bits.
+ common/recipe.c
+Raphael Quinet 2008-07-03
+
 Partially update metaserver specification.
  doc/metaserver
 Andreas Kirschbaum 2008-06-27

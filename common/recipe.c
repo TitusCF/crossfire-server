@@ -189,15 +189,15 @@ void init_formulae(void) {
         } else if (!strncmp(cp, "keycode", 7)) {
             formula->keycode = add_string(strchr(cp,' ') + 1);
         } else if (sscanf(cp, "trans %d", &value)) {
-            formula->transmute = (uint16)value;
+            formula->transmute = value;
         } else if (sscanf(cp, "yield %d", &value)) {
-            formula->yield = (uint16)value;
+            formula->yield = value;
         } else if (sscanf(cp, "chance %d", &value)) {
-            formula->chance = (uint16)value;
+            formula->chance = value;
         } else if (sscanf(cp, "exp %d", &value)) {
-            formula->exp = (uint16)value;
+            formula->exp = value;
         } else if (sscanf(cp, "diff %d", &value)) {
-            formula->diff = (uint16)value;
+            formula->diff = value;
         } else if (!strncmp(cp, "ingred",6)) {
             int numb_ingred = 1;
             cp = strchr(cp,' ') + 1;
