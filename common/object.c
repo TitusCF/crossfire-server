@@ -3641,7 +3641,7 @@ const char * get_ob_key_value(const object * op, const char * const key) {
 static int set_ob_key_value_s(object * op, const char * canonical_key, const char * value, int add_key) {
     key_value * field = NULL, *last=NULL;
 
-    LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value, add_key);
+    LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value?value:"null", add_key);
 
     for (field=op->key_values; field != NULL; field=field->next) {
         if (field->key != canonical_key) {

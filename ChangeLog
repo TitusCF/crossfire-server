@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+In debug log message, check for null value and substitute as needed - it is
+not universal that printf("%s", NULL) will not crash.
+MSW 2008-07-07
+
 Fix for bug #2009802 (alchemy experience not stored correctly): Remove useless
 and dangerous casts to uint16 because both source and destination variables
 are of type int, and the experience points for several recipes do not fit in
