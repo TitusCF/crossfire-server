@@ -1254,9 +1254,9 @@ int apply_special(object *who, object *op, int aflags) {
      * amount of the wielder.
      */
     if (settings.personalized_blessings) {
-        const char* owner = get_ob_key_value(op, "item_owner");
-        const char* will  = get_ob_key_value(op, "item_willpower");
+        const char *owner = get_ob_key_value(op, "item_owner");
         if ((owner!=NULL)&&(strcmp(owner, who->name))) {
+            const char *will = get_ob_key_value(op, "item_willpower");
             long item_will = 0;
             long margin = 0;
             const char* msg = NULL;
@@ -1264,11 +1264,7 @@ int apply_special(object *who, object *op, int aflags) {
             int damage_percentile = 0;
 
             if (will!=NULL)
-                item_will = atol(get_ob_key_value(op, "item_willpower"));
-            if (item_will != 0)
-                margin = (who->stats.exp / (item_will/1000))/1000;
-            else
-                margin = who->stats.exp;
+                item_will = atol(will);
             if (item_will > who->stats.exp) {
                 draw_ext_info_format(NDI_UNIQUE, 0, who,
                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
@@ -1277,6 +1273,10 @@ int apply_special(object *who, object *op, int aflags) {
                                      op->name);
                 return 1;
             }
+            if (item_will != 0)
+                margin = who->stats.exp / item_will;
+            else
+                margin = who->stats.exp;
             random_effect = (random_roll(0, 100, who, 1)-(margin*20));
             if (random_effect>80) {
                 msg = "You don't know why, but you have the feeling that the %s is angry at you !";
