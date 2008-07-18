@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix bug #2009686 "party password does not work if 8 characters long". 8 chars
+long passwords broke with party_rejoin to auto rejoin on login due to 9 char
+buffer and assuming the last char would always be an \n.
+ server/login.c
+Arvid Norlander 2008-07-18
+
 Fix bug #2017648 "applying devourer weap causes crash", this was a division by
 zero bug that affected any "personalized blessings" weapons with a willpower in
 the range 0-1000. Also fix some minor issues in the same code block (reordering
