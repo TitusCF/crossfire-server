@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2017790 "Cannot build talking books, listening books or signs".
+Fixed the incorrect usage of the function can_build_over(), refactored and
+simplified the code, made functions static, added test to prevent the same wall
+from being rebuilt several times, do not remove the marking rune prematurely if
+a listening book cannot be built.
+ include/sproto.h
+ server/build_map.c
+Raphael Quinet 2008-07-19
+
 Fix bug #2009686 "party password does not work if 8 characters long". 8 chars
 long passwords broke with party_rejoin to auto rejoin on login due to 9 char
 buffer and assuming the last char would always be an \n.
@@ -32,7 +41,7 @@ In debug log message, check for null value and substitute as needed - it is
 not universal that printf("%s", NULL) will not crash.
 MSW 2008-07-07
 
-Fix for bug #2009802 (alchemy experience not stored correctly): Remove useless
+Fix for bug #2009802 "alchemy experience not stored correctly": Remove useless
 and dangerous casts to uint16 because both source and destination variables
 are of type int, and the experience points for several recipes do not fit in
 16 bits.
@@ -47,7 +56,7 @@ Don't reset image checksum.
  common/image.c
 Nicolas Weeger 2008-06-21
 
-Fix for bug #1990016 (No message when using skills over an empty cauldron)
+Fix for bug #1990016 "No message when using skills over an empty cauldron"
  server/alchemy.c
 Raphael Quinet 2008-06-14
 
