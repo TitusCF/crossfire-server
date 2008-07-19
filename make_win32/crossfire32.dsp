@@ -52,7 +52,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"d:\python21\libs"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept /libpath:"d:\python21\libs"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy FullDebug\crossfire32.exe ..\crossfire32.exe
@@ -112,7 +112,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib wsock32.lib winmm.lib pthreadVC2.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python21\libs"
 # SUBTRACT LINK32 /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -1600,6 +1600,10 @@ SOURCE=..\common\button.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\dialog.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\exp.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -1760,6 +1764,10 @@ SOURCE=..\common\item.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\languages.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\links.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -1872,6 +1880,42 @@ SOURCE=..\common\map.c
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
 
 # PROP BASE Intermediate_Dir "Win32_Release\common"
+# PROP Intermediate_Dir "ReleaseQuit\common"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
+
+# PROP Intermediate_Dir "ReleaseLog\common"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\ob_methods.c
+
+!IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
+
+# PROP Intermediate_Dir "FullDebug\common"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
+
+# PROP Intermediate_Dir "ReleaseLog\common"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\ob_types.c
+
+!IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
+
+# PROP Intermediate_Dir "FullDebug\common"
+
+!ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseQuit"
+
 # PROP Intermediate_Dir "ReleaseQuit\common"
 
 !ELSEIF  "$(CFG)" == "crossfire32 - Win32 ReleaseLog"
@@ -2031,6 +2075,10 @@ SOURCE=..\common\shstr.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\common\stringbuffer.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\common\time.c
 
 !IF  "$(CFG)" == "crossfire32 - Win32 FullDebug"
@@ -2090,6 +2138,9 @@ SOURCE=..\common\utils.c
 
 # End Source File
 # End Group
+# Begin Group "types"
+
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=..\types\altar\altar.c
@@ -2108,11 +2159,19 @@ SOURCE=..\types\arrow\arrow.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\blindness\blindness.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\book\book.c
 # End Source File
 # Begin Source File
 
 SOURCE=..\types\button\button.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\cf_handle\cf_handle.c
 # End Source File
 # Begin Source File
 
@@ -2140,6 +2199,10 @@ SOURCE=..\types\converter\converter.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\creator\creator.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\deep_swamp\deep_swamp.c
 # End Source File
 # Begin Source File
@@ -2148,7 +2211,15 @@ SOURCE=..\types\common\describe.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\detector\detector.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\director\director.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\duplicator\duplicator.c
 # End Source File
 # Begin Source File
 
@@ -2157,6 +2228,10 @@ SOURCE=..\types\exit\exit.c
 # Begin Source File
 
 SOURCE=..\types\food\food.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\gate\gate.c
 # End Source File
 # Begin Source File
 
@@ -2180,11 +2255,35 @@ SOURCE=..\types\lighter\lighter.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\marker\marker.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\mood_floor\mood_floor.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\peacemaker\peacemaker.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\pedestal\pedestal.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\player_changer\player_changer.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\player_mover\player_mover.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\poison\poison.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\poisoning\poisoning.c
 # End Source File
 # Begin Source File
 
@@ -2205,6 +2304,10 @@ SOURCE=..\types\common\projectile.c
 # Begin Source File
 
 SOURCE=..\types\trap\rune.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\savebed\savebed.c
 # End Source File
 # Begin Source File
 
@@ -2240,6 +2343,10 @@ SOURCE=..\types\spinner\spinner.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\types\teleporter\teleporter.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\types\thrown_object\thrown_object.c
 # End Source File
 # Begin Source File
@@ -2253,6 +2360,10 @@ SOURCE=..\types\trap\trap.c
 # Begin Source File
 
 SOURCE=..\types\trapdoor\trapdoor.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\types\treasure\treasure.c
 # End Source File
 # Begin Source File
 
@@ -2270,6 +2381,11 @@ SOURCE=..\types\trigger_button\trigger_button.c
 
 SOURCE=..\types\trigger_pedestal\trigger_pedestal.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\types\weapon_improver\weapon_improver.c
+# End Source File
+# End Group
 # End Group
 # Begin Group "Header-Dateien"
 

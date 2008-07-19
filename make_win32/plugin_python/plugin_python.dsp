@@ -123,6 +123,10 @@ SOURCE=..\..\plugins\cfpython\cfpython_party.c
 
 SOURCE=..\..\plugins\cfpython\cfpython_region.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\plugins\cfpython\cjson.c
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 

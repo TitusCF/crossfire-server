@@ -59,6 +59,8 @@
 #endif
 #define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
+#define HAVE_STRTOL
+#define HAVE_STRERROR
 
 /* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
@@ -68,6 +70,7 @@
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
 #define vsnprintf _vsnprintf
+#define strtok_r(x, y, z) strtok(x, y)
 
 #define R_OK 6          /* for __access() */
 #define F_OK 6

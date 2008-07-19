@@ -357,7 +357,10 @@ static void block_until_new_connection(void) {
  * 1 if fd is valid, 0 else.
  */
 static int is_fd_valid(int fd) {
+#ifndef WIN32
     return fcntl(fd, F_GETFL) != -1 || errno != EBADF;
+#endif
+	return 1;
 }
 
 /**

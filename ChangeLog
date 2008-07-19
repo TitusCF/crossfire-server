@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Win32 compilation fixes.
+ include/win32.h: some #define to fix things.
+ make_win32/crossfire32.dsp: add missing files.
+ make_win32/plugin_python/plugin_python.dsp: add missing files.
+ socket/loop.c: function doesn't exist, so we'll suppose the socket is ok for now.
+Nicolas Weeger 2008-07-19
+
 Fix for bug #2017790 "Cannot build talking books, listening books or signs".
 Fixed the incorrect usage of the function can_build_over(), refactored and
 simplified the code, made functions static, added test to prevent the same wall
