@@ -30,7 +30,7 @@
 #include <sproto.h>
 
 static method_ret power_crystal_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the POWER_CRYSTAL object type.
@@ -53,7 +53,7 @@ void init_type_power_crystal(void)
  * @return The return value is always METHOD_OK
  */
 static method_ret power_crystal_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     int available_power;
     int power_space;
@@ -62,9 +62,9 @@ static method_ret power_crystal_type_apply(ob_methods *context, object *op,
     available_power =  applier->stats.sp - applier->stats.maxsp;
     power_space = op->stats.maxsp - op->stats.sp;
     power_grab = 0;
-    if(available_power>=0 && power_space> 0 )
-        power_grab = MIN ( power_space, 0.5 * applier->stats.sp );
-    if(available_power < 0 && op->stats.sp >0 )
+    if(available_power>=0 && power_space> 0)
+        power_grab = MIN ( power_space, 0.5 * applier->stats.sp);
+    if(available_power < 0 && op->stats.sp >0)
         power_grab = - MIN( -available_power, op->stats.sp);
 
     applier->stats.sp-=power_grab;

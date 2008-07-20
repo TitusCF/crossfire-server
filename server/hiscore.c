@@ -118,7 +118,7 @@ static void copy_score(const score *sc1, score *sc2) {
  * @param size
  * buf's size.
  */
-static void put_score(const score *sc, char* buf, int size) {
+static void put_score(const score *sc, char *buf, int size) {
     snprintf(buf, size,
              "%s:%s:%" FMT64 ":%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
              sc->maxhp,sc->maxsp,sc->maxgrace);
@@ -193,7 +193,7 @@ static score *get_score(char *bp) {
  * @return
  * buf.
  */
-static char * draw_one_high_score(const score *sc, char* buf, int size) {
+static char * draw_one_high_score(const score *sc, char *buf, int size) {
     if (!strncmp(sc->killer,"quit",MAX_NAME))
         snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s quit the game on map %s <%d><%d><%d>.",
                  sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,

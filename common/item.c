@@ -31,7 +31,7 @@
  * Those functions deal with objects in general, including description, body location, and such.
  *
  * @todo
- * put const char* instead of char* when possible.
+ * put const char *instead of char *when possible.
  */
 
 #include <stdio.h>
@@ -371,7 +371,7 @@ const typedata *get_typedata_by_name(const char *name) {
  * @param size
  * buffer size.
  */
-void describe_resistance(const object *op, int newline, char* buf, int size) {
+void describe_resistance(const object *op, int newline, char *buf, int size) {
     char *p;
     int tmpvar;
 
@@ -396,7 +396,7 @@ void describe_resistance(const object *op, int newline, char* buf, int size) {
  * @param size
  * buffer size.
  */
-void query_weight(const object *op, char* buf, int size) {
+void query_weight(const object *op, char *buf, int size) {
     sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
 
     if (op->weight<0)
@@ -416,7 +416,7 @@ void query_weight(const object *op, char* buf, int size) {
  * @param size
  * size of the buffer.
  */
-void get_levelnumber(int i, char* buf, int size) {
+void get_levelnumber(int i, char *buf, int size) {
     if (i > 99 || i < 0) {
         snprintf(buf, size, "%d.", i);
         return;
@@ -455,7 +455,7 @@ void get_levelnumber(int i, char* buf, int size) {
  * @todo
  Use safe string functions. Check if really ring/amulet?
  */
-static void ring_desc(const object *op, char* buf, int size) {
+static void ring_desc(const object *op, char *buf, int size) {
     int attr, val,len;
 
     buf[0] = 0;
@@ -523,7 +523,7 @@ static void ring_desc(const object *op, char* buf, int size) {
  * @param size
  * buffer length.
  */
-void query_short_name(const object *op, char* buf, int size) {
+void query_short_name(const object *op, char *buf, int size) {
     int len=0;
 
     if (op->name == NULL) {
@@ -599,7 +599,7 @@ void query_short_name(const object *op, char* buf, int size) {
  * @param size
  * size of buffer.
  */
-void query_name(const object *op, char* buf, int size) {
+void query_name(const object *op, char *buf, int size) {
     int len=0;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
@@ -699,7 +699,7 @@ void query_name(const object *op, char* buf, int size) {
  * @param size
  * buffer's length
  */
-void query_base_name(const object *op, int plural, char* buf, int size) {
+void query_base_name(const object *op, int plural, char *buf, int size) {
     int len;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
@@ -805,7 +805,7 @@ void query_base_name(const object *op, int plural, char* buf, int size) {
  * Rename to describe_living (or equivalent) since called for player too.
  * Use safe string functions. Fix weird sustenance logic.
  */
-void describe_monster(const object *op, char* retbuf, int size) {
+void describe_monster(const object *op, char *retbuf, int size) {
     int i;
     int len;
 
@@ -976,7 +976,7 @@ void describe_monster(const object *op, char* retbuf, int size) {
  * Check whether owner is really needed. Use safe string functions.
  * Check spurious food logic.
  */
-void describe_item(const object *op, const object *owner, char* retbuf, int size) {
+void describe_item(const object *op, const object *owner, char *retbuf, int size) {
     int identified,i;
 
     retbuf[0]='\0';

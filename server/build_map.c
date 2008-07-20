@@ -110,7 +110,7 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
  * marking rune, NULL if none found.
  */
 static object *get_connection_rune(object *pl, short x, short y) {
-    object* rune;
+    object *rune;
 
     rune = GET_MAP_OB(pl->map, x, y);
     while (rune && ((rune->type != SIGN) || (strcmp(rune->arch->name, "rune_mark"))))
@@ -169,8 +169,8 @@ static object *get_wall(struct mapdef *map, int x, int y) {
  * coordinates to erase runes at.
  */
 static void remove_marking_runes(struct mapdef *map, short x, short y) {
-    object* rune;
-    object* next;
+    object *rune;
+    object *next;
 
     rune = GET_MAP_OB(map, x, y);
     while (rune) {
@@ -200,8 +200,8 @@ static void remove_marking_runes(struct mapdef *map, short x, short y) {
  * @return
  * -1 if no text found, 0 if ok to build.
  */
-static int adjust_sign_msg(object* pl, short x, short y, object* tmp) {
-    object* book;
+static int adjust_sign_msg(object *pl, short x, short y, object *tmp) {
+    object *book;
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
@@ -253,7 +253,7 @@ static int adjust_sign_msg(object* pl, short x, short y, object* tmp) {
 static int find_unused_connected_value(struct mapdef *map) {
     int connected = 0;
     int itest = 0;
-    oblinkpt* obp;
+    oblinkpt *obp;
 
     while (itest++ < 1000) {
         connected = 1 + rand() % 20000;
@@ -288,7 +288,7 @@ static int find_unused_connected_value(struct mapdef *map) {
  * -1 for failure, else connection value.
  */
 static int find_or_create_connection_for_map(object *pl, short x, short y, object *rune) {
-    object* force;
+    object *force;
     int connected;
 
     if (!rune)
@@ -709,7 +709,7 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
 
     /*
      * This doesn't work on non unique maps. pedestals under floor will not be saved...
-    insert_flag = ( material->stats.Str == 1 ) ? INS_BELOW_ORIGINATOR : INS_ABOVE_FLOOR_ONLY;
+    insert_flag = ( material->stats.Str == 1) ? INS_BELOW_ORIGINATOR : INS_ABOVE_FLOOR_ONLY;
     */
     insert_flag = INS_ABOVE_FLOOR_ONLY;
 
@@ -845,7 +845,7 @@ void apply_builder_remove(object *pl, int dir) {
  * @param dir
  * building direction.
  */
-void apply_map_builder(object* pl, int dir) {
+void apply_map_builder(object *pl, int dir) {
     object *builder;
     object *tmp;
     short x, y;

@@ -64,21 +64,21 @@
 #include <citylife_proto.h>
 #endif
 
-CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
 {
-    cf_init_plugin( gethooksptr );
+    cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
     return 0;
 }
 
-CF_PLUGIN void* getPluginProperty(int* type, ...)
+CF_PLUGIN void *getPluginProperty(int *type, ...)
 {
     va_list args;
-    const char* propname;
+    const char *propname;
     int size;
-    char* buf;
+    char *buf;
 
     va_start(args, type);
     propname = va_arg(args, const char *);
@@ -100,7 +100,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object *op, char *params)
 {
     return -1;
 }
@@ -128,13 +128,13 @@ typedef struct {
  * Options for a map.
  */
 typedef struct {
-    const spawn_point* points;                 /**< Points to spawn from when there is a player on the map. */
+    const spawn_point *points;                 /**< Points to spawn from when there is a player on the map. */
     int count_points;                          /**< How many items in points. */
-    const spawn_zone* zones;                   /**< Zones where to spawn at load time. */
+    const spawn_zone *zones;                   /**< Zones where to spawn at load time. */
     int count_zones;                           /**< How many items in zones. */
     int population;                            /**< Maximum of NPCs to add at load time. */
-    const char* mapname;                       /**< Map path. */
-    const char* const * available_archetypes;  /**< What archetypes can we chose from for an NPC? */
+    const char *mapname;                       /**< Map path. */
+    const char *const * available_archetypes;  /**< What archetypes can we chose from for an NPC? */
     int archetypes_count;                      /**< Number of items in available_archetypes. */
 } mapzone;
 /*@}*/
@@ -200,7 +200,7 @@ static const spawn_point scorn_se_points[] = {
 };
 
 /** Archetypes to spawn in Scorn. */
-static const char* const scorn_archs[] = {
+static const char *const scorn_archs[] = {
     "c_man",
     "c_woman",
     "child",
@@ -237,7 +237,7 @@ static const mapzone available_zones[] = {
  * @return
  * map zone, NULL if not defined.
  */
-static const mapzone* get_zone_for_map(mapstruct* map) {
+static const mapzone *get_zone_for_map(mapstruct *map) {
     int test;
     for (test = 0; available_zones[test].count_points != -1; test++) {
         if (strcmp(available_zones[test].mapname, map->path) == 0)
@@ -253,10 +253,10 @@ static const mapzone* get_zone_for_map(mapstruct* map) {
  * @return
  * new NPC, with event handled for time. NULL if invalid archetype in the zone.
  */
-static object* get_npc(const mapzone* zone) {
+static object *get_npc(const mapzone *zone) {
     int arch = RANDOM() % zone->archetypes_count;
-    object* npc = cf_create_object_by_name(zone->available_archetypes[arch]);
-    object* evt;
+    object *npc = cf_create_object_by_name(zone->available_archetypes[arch]);
+    object *evt;
 
     if (!npc) {
         cf_log(llevError, PLUGIN_NAME ": get_npc() got NULL object for %s!\n", zone->available_archetypes[arch]);
@@ -284,10 +284,10 @@ static object* get_npc(const mapzone* zone) {
  * @param map
  * map to insert into.
  */
-static void add_npc_to_zone(const mapzone* zone, mapstruct* map) {
+static void add_npc_to_zone(const mapzone *zone, mapstruct *map) {
     int which;
 
-    object* npc = get_npc(zone);
+    object *npc = get_npc(zone);
     if (!npc)
         return;
     which = RANDOM() % zone->count_zones;
@@ -303,10 +303,10 @@ static void add_npc_to_zone(const mapzone* zone, mapstruct* map) {
  * @param map
  * map to insert into.
  */
-static void add_npc_to_point(const mapzone* zone, mapstruct* map) {
+static void add_npc_to_point(const mapzone *zone, mapstruct *map) {
     int which;
 
-    object* npc = get_npc(zone);
+    object *npc = get_npc(zone);
     which = RANDOM() % zone->count_points;
     if (cf_object_teleport(npc, map, zone->points[which].x, zone->points[which].y)) {
         cf_object_free(npc);
@@ -318,9 +318,9 @@ static void add_npc_to_point(const mapzone* zone, mapstruct* map) {
  * @param map
  * map to add to.
  */
-static void add_npcs_to_map(mapstruct* map) {
+static void add_npcs_to_map(mapstruct *map) {
     int add;
-    const mapzone* zone = get_zone_for_map(map);
+    const mapzone *zone = get_zone_for_map(map);
 
     if (!zone)
         return;
@@ -338,7 +338,7 @@ static void add_npcs_to_map(mapstruct* map) {
  */
 static void add_npc_to_random_map(void) {
     int count, test;
-    mapstruct* list[50];
+    mapstruct *list[50];
     int zones[50];
     count = 0;
 
@@ -357,11 +357,11 @@ static void add_npc_to_random_map(void) {
     add_npc_to_point(&available_zones[zones[test]], list[test]);
 }
 
-CF_PLUGIN void* globalEventListener(int* type, ...)
+CF_PLUGIN void *globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
-    mapstruct* map;
+    mapstruct *map;
     int code;
 
     va_start(args, type);
@@ -412,14 +412,14 @@ CF_PLUGIN int postInitPlugin(void)
     return 0;
 }
 
-CF_PLUGIN void* eventListener(int* type, ...)
+CF_PLUGIN void *eventListener(int *type, ...)
 {
     static int rv=1;
     va_list args;
-    char* buf;
-    object* ground, *who, *activator, *third, *event;
+    char *buf;
+    object *ground, *who, *activator, *third, *event;
     int fix;
-    const char* value;
+    const char *value;
 
     va_start(args,type);
 
@@ -435,7 +435,7 @@ CF_PLUGIN void* eventListener(int* type, ...)
     if (RANDOM() % 100 < 30) {
         for (ground = cf_map_get_object_at(who->map, who->x, who->y); ground; ground = cf_object_get_object_property(ground, CFAPI_OBJECT_PROP_OB_ABOVE)) {
             if (ground->type == EXIT) {
-                object* inv;
+                object *inv;
 
                 value = cf_object_get_key(who, FIRST_MOVE_KEY);
                 if (strcmp(value, "1") == 0) {

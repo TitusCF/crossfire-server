@@ -95,8 +95,8 @@ void map_info(object *op, char *search) {
  * @param params
  * optional language code ("en", "fr", etc.)
  */
-int command_language(object* op, char* params) {
-    const char* language_str;
+int command_language(object *op, char *params) {
+    const char *language_str;
     int language;
     int i;
     if (!op->contr)
@@ -556,10 +556,10 @@ static int name_cmp(const chars_names *c1, const chars_names *c2) {
  * @param party
  * party to list.
  */
-void list_players(object* op, region* reg, partylist* party) {
+void list_players(object *op, region *reg, partylist *party) {
     player *pl;
     uint16 i;
-    char* format;
+    char *format;
     int num_players = 0, num_wiz = 0, num_afk = 0, num_bot = 0;
     chars_names *chars = NULL;
 
@@ -1432,7 +1432,7 @@ int command_players(object *op, char *params) {
  */
 int command_applymode(object *op, char *params) {
     unapplymode unapply = op->contr->unapply;
-    static const char* const types[]={"nochoice", "never", "always"};
+    static const char *const types[]={"nochoice", "never", "always"};
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
@@ -1476,7 +1476,7 @@ int command_applymode(object *op, char *params) {
  */
 int command_bowmode(object *op, char *params) {
     bowtype_t oldtype=op->contr->bowtype;
-    static const char* const types[] = {"normal", "threewide", "spreadshot", "firenorth",
+    static const char *const types[] = {"normal", "threewide", "spreadshot", "firenorth",
                                         "firene", "fireeast", "firese", "firesouth",
                                         "firesw", "firewest", "firenw", "bestarrow"
                                        };
@@ -1531,7 +1531,7 @@ int command_bowmode(object *op, char *params) {
  */
 int command_petmode(object *op, char *params) {
     petmode_t oldtype=op->contr->petmode;
-    static const char* const types[]={"normal", "sad", "defend", "arena"};
+    static const char *const types[]={"normal", "sad", "defend", "arena"};
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
@@ -1660,7 +1660,7 @@ int command_showpets(object *op, char *params) {
  */
 int command_usekeys(object *op, char *params) {
     usekeytype oldtype=op->contr->usekeys;
-    static const char* const types[]={"inventory", "keyrings", "containers"};
+    static const char *const types[]={"inventory", "keyrings", "containers"};
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
@@ -1719,7 +1719,7 @@ int command_resistances(object *op, char *params) {
     /* If dragon player, let's display natural resistances */
     if (is_dragon_pl(op)) {
         int attack;
-        object* tmp;
+        object *tmp;
 
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
             if ((tmp->type == FORCE) && (strcmp(tmp->arch->name, "dragon_skin_force")== 0)) {
@@ -1758,7 +1758,7 @@ static void help_topics(object *op, int what) {
     char filename[MAX_BUF], line[HUGE_BUF];
     char suffix[MAX_BUF];
     int namelen;
-    const char* language;
+    const char *language;
 
     language = language_codes[get_language(op)];
     snprintf(suffix, sizeof(suffix), ".%s", language);
@@ -1863,7 +1863,7 @@ int command_help(object *op, char *params) {
     FILE *fp;
     char filename[MAX_BUF], line[MAX_BUF];
     int len;
-    const char* language;
+    const char *language;
 
     language = language_codes[get_language(op)];
 
@@ -2427,13 +2427,13 @@ int command_passwd(object *pl, char *params) {
  * @return
  * 0
  */
-int do_harvest(object* pl, int dir, object* skill) {
+int do_harvest(object *pl, int dir, object *skill) {
     sint16 x, y;
     int count = 0, proba; /* Probability to get the item, 100 based. */
     int level, exp;
-    object* found[10]; /* Found items that can be harvested. */
-    mapstruct* map;
-    object* item, *inv;
+    object *found[10]; /* Found items that can be harvested. */
+    mapstruct *map;
+    object *item, *inv;
     sstring trace, ttool, tspeed, race, tool, slevel, sexp;
     float speed;
 

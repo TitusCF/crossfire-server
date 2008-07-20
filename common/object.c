@@ -163,7 +163,7 @@ static int compare_ob_value_lists(const object * ob1, const object * ob2) {
  * replaces - this is mostly for clarity - a decent compiler should hopefully
  * reduce this to the same efficiency.
  *
- * Check nrof variable *before* calling can_merge()
+ * Check nrof variable *before *calling can_merge()
  *
  * Improvements made with merge:  Better checking on potion, and also
  * check weight
@@ -1504,13 +1504,13 @@ void remove_ob(object *op) {
             if (LOOK_OBJ(op))
                 esrv_del_item(op->env->contr, op->count);
         } else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
-            player* pl = NULL;
+            player *pl = NULL;
             if (op->env->env && op->env->env->contr)
                 /* Container is in player's inventory. */
                 pl = op->env->env->contr;
             else if (op->env->map) {
                 /* Container on map, look above for player. */
-                object* above = op->env->above;
+                object *above = op->env->above;
                 while (above && !above->contr)
                     above = above->above;
                 if (above)
@@ -1709,7 +1709,7 @@ object *merge_ob(object *op, object *top) {
  * coordinates to insert at.
  */
 object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
-    object* tmp;
+    object *tmp;
     if (op->head)
         op=op->head;
     for (tmp=op;tmp;tmp=tmp->more) {
@@ -2064,7 +2064,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         op->below = originator->below;
         if (op->below) op->below->above = op;
         else SET_MAP_OB(op->map, op->x, op->y, op);
-        /* since *below* originator, no need to update top */
+        /* since *below *originator, no need to update top */
         originator->below = op;
     } else {
         /* If there are other objects, then */
@@ -2237,7 +2237,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * @todo
  * handle case orig_ob->nrof == 0 (meaning 1).
  */
-object *get_split_ob(object *orig_ob, uint32 nr, char* err, int size) {
+object *get_split_ob(object *orig_ob, uint32 nr, char *err, int size) {
     object *newob;
 
     if (orig_ob->nrof<nr) {
@@ -2504,13 +2504,13 @@ object *insert_ob_in_ob(object *op,object *where) {
     if (where->contr != NULL)
         esrv_send_item(where, op);
     else if (where->type == CONTAINER && QUERY_FLAG(where, FLAG_APPLIED)) {
-        object* pl = NULL;
+        object *pl = NULL;
         if (op->env->env && op->env->env->contr)
             /* Container is in player's inventory. */
             pl = op->env->env;
         else if (op->env->map) {
             /* Container on map, look above for player. */
-            object* above = op->env->above;
+            object *above = op->env->above;
             while (above && !above->contr)
                 above = above->above;
             if (above)
@@ -2964,8 +2964,8 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
     sint8 x, y, radius;
     int freecount=0, freecountstop=0;
     const char *value;
-    sint8* x_array;
-    sint8* y_array;
+    sint8 *x_array;
+    sint8 *y_array;
 
 
     /* If radius is not set, default to 1 */
@@ -3607,7 +3607,7 @@ const char * get_ob_key_value(const object * op, const char * const key) {
         /* 1. There being a field named key on any object
          *    implies there'd be a shared string to find.
          * 2. Since there isn't, no object has this field.
-         * 3. Therefore, *this* object doesn't have this field.
+         * 3. Therefore, *this *object doesn't have this field.
          */
         return NULL;
     }
@@ -3885,7 +3885,7 @@ int item_matched_string(object *pl, object *op, const char *name) {
  * @param tmp
  * object we want to fix. Must be on a map.
  **/
-void fix_multipart_object(object* tmp) {
+void fix_multipart_object(object *tmp) {
     archetype *at;
     object *op, *last;
 

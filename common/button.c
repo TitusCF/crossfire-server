@@ -47,8 +47,8 @@
  *          0=all object with FLAG_ACTIVATE_ON_PUSH
  *          other=all object with FLAG_ACTIVATE_ON_RELEASE
  */
-void trigger_connected(objectlink *ol, object* cause, const int state) {
-    object* tmp;
+void trigger_connected(objectlink *ol, object *cause, const int state) {
+    object *tmp;
     for (; ol; ol = ol->next) {
         if (!ol->ob || ol->ob->count != ol->id) {
             LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%d) (cause='%s'.\n", ol->id, (cause && cause->name)?cause->name:"");
@@ -294,7 +294,7 @@ void animate_turning(object *op) {
  * @return
  * 1 if object is suitable for the altar (number not taken into account), 0 else.
  */
-static int matches_sacrifice(const object* altar, const object* sacrifice) {
+static int matches_sacrifice(const object *altar, const object *sacrifice) {
     char name[MAX_BUF];
     if (QUERY_FLAG(sacrifice, FLAG_ALIVE) || QUERY_FLAG(sacrifice, FLAG_IS_LINKED) || sacrifice->type == PLAYER)
         return 0;
@@ -340,11 +340,11 @@ static int matches_sacrifice(const object* altar, const object* sacrifice) {
  * @return
  * 1 if the sacrifice meets the needs of the altar, 0 else
  */
-int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int* toremove) {
+int check_altar_sacrifice(const object *altar, const object *sacrifice, int remove_others, int *toremove) {
     int money;
-    object* tmp;
+    object *tmp;
     int wanted, rest;
-    object* above;
+    object *above;
 
     if (!matches_sacrifice(altar, sacrifice))
         /* New dropped object doesn't match the altar, other objects already on top are not enough to

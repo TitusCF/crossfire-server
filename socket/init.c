@@ -66,7 +66,7 @@ Socket_Info socket_info;
  * Established connections for clients not yet playing.  See the page on
  * @ref page_connection "the login process" for a description of its use.
  */
-socket_struct* init_sockets;
+socket_struct *init_sockets;
 
 /**
  * Initializes a connection. Really, it just sets up the data structure,

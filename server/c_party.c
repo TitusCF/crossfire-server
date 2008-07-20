@@ -45,7 +45,7 @@ static partylist * lastparty=NULL;  /**< Keeps track of last party in list */
  * @return
  * ::firstparty.
  */
-partylist* get_firstparty(void) {
+partylist *get_firstparty(void) {
     return firstparty;
 }
 
@@ -153,7 +153,7 @@ void obsolete_parties(void) {
     int player_count;
     player *pl;
     partylist *party;
-    partylist* next = NULL;
+    partylist *next = NULL;
 
     if (!firstparty) return; /* we can't obsolete parties if there aren't any */
     for (party=firstparty; party!=NULL; party=next) {
@@ -232,7 +232,7 @@ int confirm_party_password(object *op) {
 void receive_party_password(object *op) {
 
     if (confirm_party_password(op) == 0) {
-        partylist* joined_party = op->contr->party_to_join;
+        partylist *joined_party = op->contr->party_to_join;
         char buf[MAX_BUF];
         op->contr->party = op->contr->party_to_join;
         op->contr->party_to_join = NULL;
@@ -631,7 +631,7 @@ int command_party(object *op, char *params) {
 }
 
 /** Valid modes for 'party_rejoin'. @todo document that */
-static const char* rejoin_modes[] = {
+static const char *rejoin_modes[] = {
     "no",
     "if_exists",
     "always",

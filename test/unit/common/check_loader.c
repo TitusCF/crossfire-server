@@ -51,10 +51,10 @@ void teardown(void)
 
 START_TEST (test_get_ob_diff)
 {
-    StringBuffer* buf;
-    object* orc;
-    archetype* arch;
-    char* result;
+    StringBuffer *buf;
+    object *orc;
+    archetype *arch;
+    char *result;
 
     arch = find_archetype("orc");
     fail_unless(arch != NULL, "Can't find 'orc' archetype!");
@@ -93,9 +93,9 @@ END_TEST
 START_TEST (test_dump_object)
 {
     /** we only test specific things like env/more/head/..., the rest is in test_get_ob_diff(). */
-    StringBuffer* buf;
-    object* empty;
-    char* result;
+    StringBuffer *buf;
+    object *empty;
+    char *result;
     char expect[10000];
 
     /* Basic */

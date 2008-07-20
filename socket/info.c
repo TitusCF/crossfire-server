@@ -197,7 +197,7 @@ static void check_output_buffers(const object *pl, const char *buf) {
  */
 void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
-    uint8 subtype, const char* message, const char* oldmessage) {
+    uint8 subtype, const char *message, const char *oldmessage) {
 
 
     if ((flags & NDI_ALL) || (flags & NDI_ALL_DMS)) {
@@ -286,8 +286,8 @@ void draw_ext_info(
 void draw_ext_info_format(
     int flags, int pri, const object *pl, uint8 type,
     uint8 subtype,
-    const char* new_format,
-    const char* old_format,
+    const char *new_format,
+    const char *old_format,
     ...) {
 
     char newbuf[HUGE_BUF], oldbuf[HUGE_BUF];
@@ -320,7 +320,7 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 }
 
 /**
- * Writes to everyone on the map *except* op.  This is useful for emotions.
+ * Writes to everyone on the map *except *op.  This is useful for emotions.
  */
 
 void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type,

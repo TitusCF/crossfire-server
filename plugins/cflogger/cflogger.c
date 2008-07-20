@@ -54,7 +54,7 @@
 #include <sqlite3.h>
 
 /** Pointer to the logging database. */
-static sqlite3* database;
+static sqlite3 *database;
 /** To keep track of stored ingame/real time matching. */
 int last_stored_day = -1;
 
@@ -74,8 +74,8 @@ int last_stored_day = -1;
  * always returns 0 to continue the execution.
  */
 static int check_tables_callback(void *param, int argc, char **argv, char **azColName) {
-    int* format = (int*)param;
-    *format = atoi( argv[0] );
+    int *format = (int*)param;
+    *format = atoi(argv[0] );
     return 0;
 }
 
@@ -87,9 +87,9 @@ static int check_tables_callback(void *param, int argc, char **argv, char **azCo
  * @param sql
  * query to run.
  */
-static void do_sql(const char* sql) {
+static void do_sql(const char *sql) {
     int err;
-    char* msg;
+    char *msg;
 
     if (!database)
         return;
@@ -111,16 +111,16 @@ static void check_tables(void) {
     err = sqlite3_exec(database, "select param_value from parameters where param_name = 'version';", check_tables_callback, &format, NULL);
 
     if (format < 1) {
-        do_sql("create table living( liv_id integer primary key autoincrement, liv_name text, liv_is_player integer, liv_level integer );");
-        do_sql("create table region( reg_id integer primary key autoincrement, reg_name text );");
-        do_sql("create table map( map_id integer primary key autoincrement, map_path text, map_reg_id integer );");
-        do_sql("create table time( time_real integer, time_ingame text );" );
+        do_sql("create table living(liv_id integer primary key autoincrement, liv_name text, liv_is_player integer, liv_level integer);");
+        do_sql("create table region(reg_id integer primary key autoincrement, reg_name text);");
+        do_sql("create table map(map_id integer primary key autoincrement, map_path text, map_reg_id integer);");
+        do_sql("create table time(time_real integer, time_ingame text);" );
 
-        do_sql("create table living_event( le_liv_id integer, le_time integer, le_code integer, le_map_id integer );");
-        do_sql("create table map_event( me_map_id integer, me_time integer, me_code integer, me_living_id integer );");
-        do_sql("create table kill_event( ke_time integer, ke_victim_id integer, ke_victim_level integer, ke_map_id integer , ke_killer_id integer, ke_killer_level integer );");
+        do_sql("create table living_event(le_liv_id integer, le_time integer, le_code integer, le_map_id integer);");
+        do_sql("create table map_event(me_map_id integer, me_time integer, me_code integer, me_living_id integer);");
+        do_sql("create table kill_event(ke_time integer, ke_victim_id integer, ke_victim_level integer, ke_map_id integer , ke_killer_id integer, ke_killer_level integer);");
 
-        do_sql("create table parameters( param_name text, param_value text );");
+        do_sql("create table parameters(param_name text, param_value text);");
         do_sql("insert into parameters values( 'version', '1' );");
     }
 }
@@ -140,9 +140,9 @@ static void check_tables(void) {
  * @return
  * unique identifier in the 'living' table.
  */
-static int get_living_id(object* living) {
+static int get_living_id(object *living) {
     char** line;
-    char* sql;
+    char *sql;
     int nrow, ncolumn, id;
 
     if (living->type == PLAYER)
@@ -152,10 +152,10 @@ static int get_living_id(object* living) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi( line[ncolumn] );
+        id = atoi(line[ncolumn] );
     else {
         sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into living( liv_name, liv_is_player, liv_level ) values('%q', %d, %d )", living->name, living->type == PLAYER ? 1 : 0, living->level);
+        sql = sqlite3_mprintf("insert into living(liv_name, liv_is_player, liv_level) values('%q', %d, %d)", living->name, living->type == PLAYER ? 1 : 0, living->level);
         do_sql(sql);
         id = sqlite3_last_insert_rowid(database);
     }
@@ -174,9 +174,9 @@ static int get_living_id(object* living) {
  * @return
  * unique region identifier, or 0 if reg is NULL.
  */
-static int get_region_id(region* reg) {
+static int get_region_id(region *reg) {
     char** line;
-    char* sql;
+    char *sql;
     int nrow, ncolumn, id;
 
     if (!reg)
@@ -186,10 +186,10 @@ static int get_region_id(region* reg) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi( line[ncolumn] );
+        id = atoi(line[ncolumn] );
     else {
         sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into region( reg_name ) values( '%q' )", reg->name);
+        sql = sqlite3_mprintf("insert into region(reg_name) values( '%q' )", reg->name);
         do_sql(sql);
         id = sqlite3_last_insert_rowid(database);
     }
@@ -210,11 +210,11 @@ static int get_region_id(region* reg) {
  * @return
  * unique map identifier.
  */
-static int get_map_id(mapstruct* map) {
+static int get_map_id(mapstruct *map) {
     char** line;
-    char* sql;
+    char *sql;
     int nrow, ncolumn, id, reg_id;
-    const char* path = map->path;
+    const char *path = map->path;
 
     if (strncmp(path, "/random/", 7) == 0)
         path = "/random/";
@@ -224,10 +224,10 @@ static int get_map_id(mapstruct* map) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi( line[ncolumn] );
+        id = atoi(line[ncolumn] );
     else {
         sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into map( map_path, map_reg_id ) values( '%q', %d )", map->path, reg_id);
+        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", map->path, reg_id);
         do_sql(sql);
         id = sqlite3_last_insert_rowid(database);
     }
@@ -245,7 +245,7 @@ static int get_map_id(mapstruct* map) {
  */
 static int store_time(void) {
     char** line;
-    char* sql;
+    char *sql;
     int nrow, ncolumn;
     char date[50];
     timeofday_t tod;
@@ -279,15 +279,15 @@ static int store_time(void) {
  * @param event_code
  * arbitrary event code.
  */
-static void add_player_event(object* pl, int event_code) {
+static void add_player_event(object *pl, int event_code) {
     int id = get_living_id(pl);
     int map_id = 0;
-    char* sql;
+    char *sql;
 
     if (pl->map)
         map_id = get_map_id(pl->map);
 
-    sql = sqlite3_mprintf("insert into living_event values( %d, %d, %d, %d )", id, time(NULL), event_code, map_id);
+    sql = sqlite3_mprintf("insert into living_event values( %d, %d, %d, %d)", id, time(NULL), event_code, map_id);
     do_sql(sql);
     sqlite3_free(sql);
 }
@@ -302,16 +302,16 @@ static void add_player_event(object* pl, int event_code) {
  * @param pl
  * object causing the event. Can be NULL.
  */
-static void add_map_event(mapstruct* map, int event_code, object* pl) {
+static void add_map_event(mapstruct *map, int event_code, object *pl) {
     int mapid;
     int playerid = 0;
-    char* sql;
+    char *sql;
 
     if (pl && pl->type == PLAYER)
         playerid = get_living_id(pl);
 
     mapid = get_map_id(map);
-    sql = sqlite3_mprintf("insert into map_event values( %d, %d, %d, %d )", mapid, time(NULL), event_code, playerid);
+    sql = sqlite3_mprintf("insert into map_event values( %d, %d, %d, %d)", mapid, time(NULL), event_code, playerid);
     do_sql(sql);
     sqlite3_free(sql);
 }
@@ -326,9 +326,9 @@ static void add_map_event(mapstruct* map, int event_code, object* pl) {
  * @param killer
  * who killed.
  */
-static void add_death(object* victim, object* killer) {
+static void add_death(object *victim, object *killer) {
     int vid, kid, map_id;
-    char* sql;
+    char *sql;
     if (!victim || !killer)
         return;
     if (victim->type != PLAYER && killer->type != PLAYER)
@@ -337,7 +337,7 @@ static void add_death(object* victim, object* killer) {
     vid = get_living_id(victim);
     kid = get_living_id(killer);
     map_id = get_map_id(victim->map);
-    sql = sqlite3_mprintf("insert into kill_event values( %d, %d, %d, %d, %d, %d )", time(NULL), vid, victim->level, map_id, kid, killer->level);
+    sql = sqlite3_mprintf("insert into kill_event values( %d, %d, %d, %d, %d, %d)", time(NULL), vid, victim->level, map_id, kid, killer->level);
     do_sql(sql);
     sqlite3_free(sql);
 }
@@ -352,9 +352,9 @@ static void add_death(object* victim, object* killer) {
  * @return
  * always 0.
  */
-CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
 {
-    cf_init_plugin( gethooksptr );
+    cf_init_plugin(gethooksptr);
 
     cf_log(llevInfo, "%s init\n", PLUGIN_VERSION);
 
@@ -371,11 +371,11 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
  * @li the version, if asked for 'FullName'.
  * @li NULL else.
  */
-CF_PLUGIN void* getPluginProperty(int* type, ...)
+CF_PLUGIN void *getPluginProperty(int *type, ...)
 {
     va_list args;
-    const char* propname;
-    char* buf;
+    const char *propname;
+    char *buf;
     int size;
 
     va_start(args, type);
@@ -411,7 +411,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
  * @return
  * -1.
  */
-CF_PLUGIN int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object *op, char *params)
 {
     return -1;
 }
@@ -424,7 +424,7 @@ CF_PLUGIN int runPluginCommand(object* op, char* params)
  * @return
  * pointer to an int containing 0.
  */
-void* eventListener(int* type, ...)
+void *eventListener(int *type, ...)
 {
     static int rv=0;
     return &rv;
@@ -438,14 +438,14 @@ void* eventListener(int* type, ...)
  * @return
  * pointer to an int containing 0.
  */
-CF_PLUGIN void* globalEventListener(int* type, ...)
+CF_PLUGIN void *globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
-    player* pl;
-    object* op;
+    player *pl;
+    object *op;
     int event_code;
-    mapstruct* map;
+    mapstruct *map;
 
     va_start(args, type);
     event_code = va_arg(args, int);
@@ -482,7 +482,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 
         case EVENT_GKILL:
             {
-                object* killer;
+                object *killer;
                 op = va_arg(args, object*);
                 killer = va_arg(args, object*);
                 add_death(op, killer);
@@ -509,7 +509,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
 CF_PLUGIN int postInitPlugin(void)
 {
     char path[500];
-    const char* dir;
+    const char *dir;
 
     cf_log(llevInfo, "%s post init\n", PLUGIN_VERSION);
 

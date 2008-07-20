@@ -31,7 +31,7 @@
 #include <sproto.h>
 
 static method_ret treasure_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the TREASURE object type.
@@ -51,7 +51,7 @@ void init_type_treasure(void)
  * @return The return value is always METHOD_OK
  */
 static method_ret treasure_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     object *treas;
     tag_t op_tag = op->count, applier_tag = applier->count;

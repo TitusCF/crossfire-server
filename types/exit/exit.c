@@ -30,8 +30,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret exit_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator);
+static method_ret exit_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator);
 static method_ret exit_type_apply(ob_methods *context, object *exit, object *op, int autoapply);
 
 /**
@@ -51,8 +51,8 @@ void init_type_exit(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret exit_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
+static method_ret exit_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;
@@ -92,7 +92,7 @@ static method_ret exit_type_move_on(ob_methods* context, object* trap,
  * @return
  * 1 if exit is not 2 way, 0 else.
  */
-static int is_legal_2ways_exit (object* op, object *exit)
+static int is_legal_2ways_exit (object *op, object *exit)
 {
     object * tmp;
     object * exit_owner;
@@ -127,7 +127,7 @@ static int is_legal_2ways_exit (object* op, object *exit)
                 */
                    if (!exit->race) return 1;  /*No owner, free for all!*/
                    exit_owner=NULL;
-                   for (pp=first_player;pp;pp=pp->next){
+                   for (pp=first_player;pp;pp=pp->next) {
                        if (!pp->ob) continue;
                        if (pp->ob->name!=exit->race) continue;
                        exit_owner= pp->ob; /*We found a player which correspond to the player name*/
@@ -158,7 +158,7 @@ static method_ret exit_type_apply(ob_methods *context, object *exit, object *op,
 {
     if (op->type != PLAYER)
         return METHOD_ERROR;
-    if( ! EXIT_PATH (exit) || !is_legal_2ways_exit(op,exit))
+    if(! EXIT_PATH (exit) || !is_legal_2ways_exit(op,exit))
     {
         char name[MAX_BUF];
         query_name(exit, name, MAX_BUF);

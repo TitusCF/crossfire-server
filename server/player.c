@@ -46,7 +46,7 @@
 #include <skills.h>
 #include <newclient.h>
 
-static archetype *get_player_archetype(archetype* at);
+static archetype *get_player_archetype(archetype *at);
 static int action_makes_visible(object *op);
 
 /**
@@ -78,9 +78,9 @@ player *find_player(const char *plname) {
  * @return
  * matching player if only one matching, or one perfectly matching, NULL if no match or more than one.
  */
-player* find_player_partial_name(const char* plname) {
-    player* pl;
-    player* found = NULL;
+player *find_player_partial_name(const char *plname) {
+    player *pl;
+    player *found = NULL;
     size_t namelen = strlen(plname);
     for (pl = first_player; pl != NULL; pl = pl->next) {
         if (strlen(pl->ob->name) < namelen)
@@ -248,7 +248,7 @@ int playername_ok(const char *cp) {
  * @return
  * initialized player structure.
  */
-static player* get_player(player *p) {
+static player *get_player(player *p) {
     object *op=arch_to_object(get_player_archetype(NULL));
     int i;
 
@@ -411,7 +411,7 @@ void add_player(socket_struct *ns) {
  * @return
  * next player archetype available.
  */
-static archetype *get_player_archetype(archetype* at) {
+static archetype *get_player_archetype(archetype *at) {
     archetype *start = at;
     for (;;) {
         if (at==NULL || at->next==NULL)
@@ -1178,7 +1178,7 @@ void key_change_class(object *op, char key) {
         if (*first_map_ext_path) {
             object *tmp;
             char mapname[MAX_BUF];
-            mapstruct* oldmap;
+            mapstruct *oldmap;
 
             oldmap = op->map;
 
@@ -2674,7 +2674,7 @@ void remove_unpaid_objects(object *op, object *env, int free_items) {
  * @return
  * buf2, containing gravestone text.
  */
-static const char *gravestone_text(object *op, char* buf2, int len) {
+static const char *gravestone_text(object *op, char *buf2, int len) {
     char buf[MAX_BUF];
     time_t now = time(NULL);
 
@@ -3480,7 +3480,7 @@ void do_hidden_move(object *op) {
 
     skop = find_obj_by_type_subtype(op, SKILL, SK_HIDING);
 
-    /* its *extremely* hard to run and sneak/hide at the same time! */
+    /* its *extremely *hard to run and sneak/hide at the same time! */
     if (op->type==PLAYER && op->contr->run_on) {
         if (!skop || num >= skop->level) {
             draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,

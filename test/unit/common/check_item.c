@@ -50,12 +50,12 @@ void teardown(void)
 
 START_TEST (test_describe_item)
 {
-    object* test;
+    object *test;
     char buf[5000];
     int check;
-    treasurelist* list;
+    treasurelist *list;
 
-    static const char* archs[] = {
+    static const char *archs[] = {
         "gem",
         "food",
         "lantern_1",
@@ -91,7 +91,7 @@ START_TEST (test_describe_item)
         "DShieldms",
         "holy_shield",
         NULL };
-    static const char* arch_results[] = {
+    static const char *arch_results[] = {
         "",
         "(food+200)",
         "(glowing)",
@@ -130,7 +130,7 @@ START_TEST (test_describe_item)
 
     /* if you change the order, the result will quite certainly change, as the generation depends on the value returned
         by rand() - changing the order changes the item generated... */
-    static const char* treasures[] = {
+    static const char *treasures[] = {
         "random_knowledge",
         "missile_weapons",
         "random_talisman",
@@ -145,7 +145,7 @@ START_TEST (test_describe_item)
         "standard_old",
         NULL
     };
-    static const char* treasure_results[] = {
+    static const char *treasure_results[] = {
         "",
         "(wc+1)(dam+2)(item_power +2)(Attacks: physical)",
         "",

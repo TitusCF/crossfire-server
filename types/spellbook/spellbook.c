@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret spellbook_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret spellbook_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the SPELLBOOK object type.
@@ -61,7 +61,7 @@ void init_type_spellbook(void) {
  * @todo
  * split into multiple functions
  */
-static method_ret spellbook_type_apply(ob_methods *context, object *book, object* applier, int aflags) {
+static method_ret spellbook_type_apply(ob_methods *context, object *book, object *applier, int aflags) {
     object *skapplier, *spell, *spell_skill;
     int read_level;
     char level[100];

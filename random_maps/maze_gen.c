@@ -119,7 +119,7 @@ char **maze_gen(int xsize, int ysize,int option) {
  * @param free_walls
  * structure to initialise. free_walls_struct::wall_free_size must be initialised.
  */
-static void make_wall_free_list(int xsize, int ysize, free_walls_struct* free_walls) {
+static void make_wall_free_list(int xsize, int ysize, free_walls_struct *free_walls) {
     int i,j,count;
 
     count = 0;  /* entries already placed in the free list */
@@ -158,7 +158,7 @@ static void make_wall_free_list(int xsize, int ysize, free_walls_struct* free_wa
  * @param free_walls
  * free walls list.
  */
-static void pop_wall_point(int *x,int *y, free_walls_struct* free_walls) {
+static void pop_wall_point(int *x,int *y, free_walls_struct *free_walls) {
     int index = RANDOM() % free_walls->wall_free_size;
     *x = free_walls->wall_x_list[index];
     *y = free_walls->wall_y_list[index];
@@ -295,7 +295,7 @@ static int find_free_point(char **maze,int *x, int *y,int xc,int yc, int xsize, 
  * @param free_walls
  * free walls list.
  */
-static void fill_maze_full(char **maze, int x, int y, int xsize, int ysize, free_walls_struct* free_walls) {
+static void fill_maze_full(char **maze, int x, int y, int xsize, int ysize, free_walls_struct *free_walls) {
     int xc,yc;
 
     /* write a wall here */
@@ -328,7 +328,7 @@ static void fill_maze_full(char **maze, int x, int y, int xsize, int ysize, free
  * @param free_walls
  * free walls list.
  */
-static void fill_maze_sparse(char **maze, int x, int y, int xsize, int ysize, free_walls_struct* free_walls) {
+static void fill_maze_sparse(char **maze, int x, int y, int xsize, int ysize, free_walls_struct *free_walls) {
     int xc,yc;
 
     /* write a wall here */

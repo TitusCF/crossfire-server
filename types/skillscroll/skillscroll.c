@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret skillscroll_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret skillscroll_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the SKILLSCROLL object type.
@@ -54,7 +54,7 @@ void init_type_skillscroll(void) {
  * @return
  * METHOD_OK always.
  */
-static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, object* applier, int aflags) {
+static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, object *applier, int aflags) {
     char name[MAX_BUF];
 
     /* Must be applied by a player. */

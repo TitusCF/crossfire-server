@@ -17,8 +17,8 @@ void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subty
 void draw_ext_info_format(
         int flags, int pri, const object *pl, uint8 type,
         uint8 subtype,
-        const char* new_format,
-        const char* old_format,
+        const char *new_format,
+        const char *old_format,
         ...)
 {
     va_list ap;
@@ -32,19 +32,19 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_firewall( object* ob)
+void move_firewall(object *ob)
     {
     }
 
-void emergency_save( int x )
+void emergency_save(int x)
     {
     }
 
-void clean_tmp_files( void )
+void clean_tmp_files(void)
     {
     }
 
-void esrv_send_item( object* ob, object* obx )
+void esrv_send_item(object *ob, object *obx)
     {
     }
 
@@ -52,16 +52,16 @@ void esrv_update_item(int flags, object *pl, object *op)
 {
 }
 
-void dragon_ability_gain( object* ob, int x, int y )
+void dragon_ability_gain(object *ob, int x, int y)
     {
     }
 
 
-void set_darkness_map( mapstruct* m)
+void set_darkness_map(mapstruct *m)
     {
     }
 
-object* find_skill_by_number(object *who, int skillno)
+object *find_skill_by_number(object *who, int skillno)
     {
     return NULL;
     }
@@ -74,15 +74,15 @@ void esrv_update_spells(player *pl)
     {
     }
 
-void monster_check_apply( object* ob, object* obt )
+void monster_check_apply(object *ob, object *obt)
     {
     }
 
-void trap_adjust( object* ob, int x )
+void trap_adjust(object *ob, int x)
     {
     }
 
-int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix)
+int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix)
     {
     return 0;
     }

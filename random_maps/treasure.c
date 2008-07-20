@@ -491,7 +491,7 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
 object *find_monster_in_room(mapstruct *map,int x,int y,RMParms *RP) {
     char **layout2;
     int i,j;
-    object* theMonsterToFind;
+    object *theMonsterToFind;
 
     layout2 = (char **) calloc(sizeof(char *),RP->Xsize);
     /* allocate and copy the layout, converting C to 0. */
@@ -533,7 +533,7 @@ typedef struct free_spots_struct {
  * @param spots
  * currently found free spots.
  */
-static void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP, free_spots_struct* spots) {
+static void find_spot_in_room_recursive(char **layout,int x,int y,RMParms *RP, free_spots_struct *spots) {
     int i,j;
 
     /* bounds check x and y */
@@ -870,8 +870,8 @@ object** find_doors_in_room(mapstruct *map,int x,int y,RMParms *RP) {
  * @param door
  * door around which to remove unlocked doors.
  */
-static void remove_adjacent_doors(object* door) {
-    mapstruct* m = door->map;
+static void remove_adjacent_doors(object *door) {
+    mapstruct *m = door->map;
     int x = door->x;
     int y = door->y;
     int i, flags;

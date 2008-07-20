@@ -30,25 +30,25 @@
 #include <cfpython.h>
 #include <cfpython_party_private.h>
 
-static PyObject* Crossfire_Party_GetName( Crossfire_Party* partyptr, void* closure)
+static PyObject *Crossfire_Party_GetName(Crossfire_Party *partyptr, void *closure)
 {
     return Py_BuildValue("s",cf_party_get_name(partyptr->party));
 }
 
-static PyObject* Crossfire_Party_GetPassword( Crossfire_Party* partyptr, void* closure)
+static PyObject *Crossfire_Party_GetPassword(Crossfire_Party *partyptr, void *closure)
 {
     return Py_BuildValue("s",cf_party_get_password(partyptr->party));
 }
 
-static PyObject* Crossfire_Party_GetNext( Crossfire_Party* party, void* closure )
+static PyObject *Crossfire_Party_GetNext(Crossfire_Party *party, void *closure)
 {
     return Crossfire_Party_wrap(cf_party_get_next(party->party));
 }
 
-static PyObject* Crossfire_Party_GetPlayers( Crossfire_Party* party, PyObject* args )
+static PyObject *Crossfire_Party_GetPlayers(Crossfire_Party *party, PyObject *args)
 {
-    PyObject* list;
-    player* pl;
+    PyObject *list;
+    player *pl;
 
     list = PyList_New(0);
     pl = cf_party_get_first_player(party->party);
@@ -76,7 +76,7 @@ PyObject *Crossfire_Party_wrap(partylist *what)
     return (PyObject *)wrapper;
 }
 
-static int Crossfire_Party_InternalCompare(Crossfire_Party* left, Crossfire_Party* right)
+static int Crossfire_Party_InternalCompare(Crossfire_Party *left, Crossfire_Party *right)
 {
-    return (left->party < right->party ? -1 : ( left->party == right->party ? 0 : 1 ) );
+    return (left->party < right->party ? -1 : ( left->party == right->party ? 0 : 1) );
 }

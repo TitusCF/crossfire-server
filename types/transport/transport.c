@@ -33,7 +33,7 @@
 #include <sproto.h>
 
 static method_ret transport_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 static method_ret transport_type_process(ob_methods *context, object *op);
 
 /**
@@ -58,10 +58,10 @@ void init_type_transport(void)
  * @retval 1 If the applier was a player
  */
 static method_ret transport_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
-    object* old_transport = applier->contr->transport;
-    object* inv;
+    object *old_transport = applier->contr->transport;
+    object *inv;
     char name_op[MAX_BUF], name_old[MAX_BUF];
 
     /* Only players can use transports right now */

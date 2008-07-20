@@ -153,7 +153,7 @@ void link_player_skills(object *op) {
  * @todo
  * rewrite some.
  */
-static object* adjust_skill_tool(object* who, object* skill, object* skill_tool) {
+static object *adjust_skill_tool(object *who, object *skill, object *skill_tool) {
 
     if (!skill && !skill_tool)
         return NULL;
@@ -570,7 +570,7 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
  * used and modifications in the skills[] table.
  *
  * For now, monsters and players will be treated differently. Below I give
- * the algorithm for *PLAYER* experience gain. Monster exp gain is simpler.
+ * the algorithm for *PLAYER *experience gain. Monster exp gain is simpler.
  * Monsters just get 10% of the exp of the opponent.
  *
  * Players get a ratio, eg, opponent lvl / player level.  This is then
@@ -761,7 +761,7 @@ static int clipped_percent(sint64 a, sint64 b) {
  * @param search
  * optional string to restrict skills to show.
  */
-void show_skills(object *op, const char* search) {
+void show_skills(object *op, const char *search) {
     object *tmp=NULL;
     char buf[MAX_BUF];
     const char *cp;

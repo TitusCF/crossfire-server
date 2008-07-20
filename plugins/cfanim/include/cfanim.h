@@ -52,23 +52,23 @@ typedef enum anim_move_result {
 
 struct CFanimation_struct;
 struct CFmovement_struct;
-typedef anim_move_result (*CFAnimRunFunc) (struct CFanimation_struct* animation, long int id, void* parameters);
-typedef long int (*CFAnimInitFunc) (const char* name, char* parameters, struct CFmovement_struct*);
+typedef anim_move_result (*CFAnimRunFunc) (struct CFanimation_struct *animation, long int id, void *parameters);
+typedef long int (*CFAnimInitFunc) (const char *name, char *parameters, struct CFmovement_struct*);
 /** One move in an animation. */
 typedef struct CFmovement_struct
 {
-    struct CFanimation_struct* parent;  /**< Animation this move is linked to. */
+    struct CFanimation_struct *parent;  /**< Animation this move is linked to. */
     CFAnimRunFunc func;                 /**< Function to run for this move. */
-    void* parameters;                   /**< Parameters to the function. */
+    void *parameters;                   /**< Parameters to the function. */
     long int id;                        /**< Identifier, used for various things. */
     int tick;                           /**< Move duration, units depending on parent's time_representation. */
-    struct CFmovement_struct* next;     /**< Next move in the animation. */
+    struct CFmovement_struct *next;     /**< Next move in the animation. */
 } CFmovement;
 /** One full animation. */
 typedef struct CFanimation_struct
 {
-    char* name;
-    object* victim;
+    char *name;
+    object *victim;
     int paralyze;
     int invisible;
     int wizard;
@@ -76,11 +76,11 @@ typedef struct CFanimation_struct
     int verbose;
     int ghosted;
     int errors_allowed;
-    object* corpse;
+    object *corpse;
     long int tick_left;
     enum time_enum time_representation;
-    struct CFmovement_struct* nextmovement;
-    struct CFanimation_struct* nextanimation;
+    struct CFmovement_struct *nextmovement;
+    struct CFanimation_struct *nextanimation;
 } CFanimation;
 /** Available animation move. */
 typedef struct
@@ -91,7 +91,7 @@ typedef struct
 } CFanimationHook;
 extern CFanimationHook animationbox[];
 extern int animationcount;
-int get_boolean (char* strg,int* bl);
+int get_boolean (char *strg,int *bl);
 
 #ifndef __CEXTRACT__
 #include <cfanim_proto.h>

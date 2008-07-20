@@ -30,8 +30,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret altar_type_move_on(ob_methods* context, object* trap, object* victim,
-    object* originator);
+static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim,
+    object *originator);
 
 /**
  * Initializer for the ALTAR object type.
@@ -49,8 +49,8 @@ void init_type_altar(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret altar_type_move_on(ob_methods* context, object* trap, object* victim,
-    object* originator)
+static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim,
+    object *originator)
 {
     if (trap->head)
         trap = trap->head;

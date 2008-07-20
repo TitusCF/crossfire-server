@@ -93,7 +93,7 @@ sstring stringbuffer_finish_shared(StringBuffer *sb);
  * @param sb The string buffer to deallocate.
  * @param sl Result SockList. It's <code>buf</code> field must be <code>free()</code>'d.
  */
-void stringbuffer_finish_socklist(StringBuffer* sb, SockList* sl);
+void stringbuffer_finish_socklist(StringBuffer *sb, SockList *sl);
 
 /**
  * Append a string to a string buffer instance.

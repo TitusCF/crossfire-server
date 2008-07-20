@@ -34,8 +34,8 @@
 #include <plugin_template_proto.h>
 #endif
 
-CFPContext* context_stack;
-CFPContext* current_context;
+CFPContext *context_stack;
+CFPContext *current_context;
 static int current_command = -999;
 
 void initContextStack(void)
@@ -44,9 +44,9 @@ void initContextStack(void)
     context_stack = NULL;
 }
 
-void pushContext(CFPContext* context)
+void pushContext(CFPContext *context)
 {
-    CFPContext* stack_context;
+    CFPContext *stack_context;
     if (current_context == NULL)
     {
         context_stack = context;
@@ -59,9 +59,9 @@ void pushContext(CFPContext* context)
     current_context = context;
 }
 
-CFPContext* popContext(void)
+CFPContext *popContext(void)
 {
-    CFPContext* oldcontext;
+    CFPContext *oldcontext;
     if (current_context != NULL)
     {
         oldcontext = current_context;
@@ -72,9 +72,9 @@ CFPContext* popContext(void)
         return NULL;
 }
 
-CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
 {
-    cf_init_plugin( gethooksptr );
+    cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
@@ -82,19 +82,19 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
     return 0;
 }
 
-CF_PLUGIN void* getPluginProperty(int* type, ...)
+CF_PLUGIN void *getPluginProperty(int *type, ...)
 {
     va_list args;
-    const char* propname;
+    const char *propname;
     int i, size;
-    command_array_struct* rtn_cmd;
-    char* buf;
+    command_array_struct *rtn_cmd;
+    char *buf;
 
     va_start(args, type);
     propname = va_arg(args, const char *);
 
     if (!strcmp(propname, "command?")) {
-        const char* cmdname;
+        const char *cmdname;
         cmdname = va_arg(args, const char *);
         rtn_cmd = va_arg(args, command_array_struct*);
         va_end(args);
@@ -118,7 +118,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object *op, char *params)
 {
     return -1;
 }
@@ -148,15 +148,15 @@ CF_PLUGIN int postInitPlugin(void)
     return 0;
 }
 
-CF_PLUGIN void* globalEventListener(int* type, ...)
+CF_PLUGIN void *globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
-    CFPContext* context;
+    CFPContext *context;
     context = malloc(sizeof(CFPContext));
-    char* buf;
-    player* pl;
-    object* op;
+    char *buf;
+    player *pl;
+    object *op;
 
     va_start(args, type);
     context->event_code = va_arg(args, int);
@@ -254,12 +254,12 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
     return &rv;
 }
 
-CF_PLUGIN void* eventListener(int* type, ...)
+CF_PLUGIN void *eventListener(int *type, ...)
 {
     static int rv=0;
     va_list args;
-    char* buf;
-    CFPContext* context;
+    char *buf;
+    CFPContext *context;
 
     context = malloc(sizeof(CFPContext));
 

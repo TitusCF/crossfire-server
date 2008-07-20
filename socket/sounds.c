@@ -37,11 +37,11 @@
  * @param action
  * sound name to play.
  */
-void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action) {
+void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int dir, const char *action) {
     SockList sl;
     int volume = 50;
     sstring name;
-    object* source;
+    object *source;
 
     if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_EFFECTS))
         return;
@@ -90,9 +90,9 @@ void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int d
  * @param action
  * sound name to play.
  */
-void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action) {
+void play_sound_map(sint8 sound_type, object *emitter, int dir, const char *action) {
     player *pl;
-    object* source;
+    object *source;
 
     if ((RANDOM() % 100) >= emitter->sound_chance)
         return;
@@ -121,7 +121,7 @@ void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* acti
  * @param music
  * background music name. Can be NULL.
  */
-void send_background_music(player* pl, const char* music) {
+void send_background_music(player *pl, const char *music) {
     SockList sl;
 
     if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_MUSIC)) return;

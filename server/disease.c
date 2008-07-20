@@ -383,7 +383,7 @@ int infect_object(object *victim, object *disease, int force) {
     new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
 
     /* Unfortunately, set_owner does the wrong thing to the skills pointers
-     *  resulting in exp going into the owners *current* chosen skill.
+     *  resulting in exp going into the owners *current *chosen skill.
      */
 
     if (get_owner(disease)) {

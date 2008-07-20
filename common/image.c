@@ -415,7 +415,7 @@ int read_smooth(void) {
  *
  * @return 1=smooth face found, 0=no smooth face found
  */
-int find_smooth(uint16 face, uint16* smoothed) {
+int find_smooth(uint16 face, uint16 *smoothed) {
     struct smoothing *bp, tmp;
 
     tmp.id = face;

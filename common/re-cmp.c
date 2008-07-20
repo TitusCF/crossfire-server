@@ -69,7 +69,7 @@ static unsigned int re_token_depth;
  * @li no match or error in regexp.
  * @li pointer to beginning of matching string
  */
-const char* re_cmp(const char *str, const char *regexp) {
+const char *re_cmp(const char *str, const char *regexp) {
     const char *next_regexp;
     Boolean once = False;
     Boolean matched;
@@ -314,7 +314,7 @@ static Boolean re_match_token(uchar c, selection *sel) {
  * @li NULL: syntax error
  * @li pointer to first character past token.
  */
-static const char* re_get_token(selection *sel, const char *regexp) {
+static const char *re_get_token(selection *sel, const char *regexp) {
 
 #ifdef SAFE_CHECKS
 #   define exit_if_null if (*regexp == 0) return NULL

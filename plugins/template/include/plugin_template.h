@@ -52,7 +52,7 @@
 
 typedef struct _cfpcontext
 {
-    struct _cfpcontext* down;
+    struct _cfpcontext *down;
     object*     who;
     object*     activator;
     object*     third;
@@ -66,7 +66,7 @@ typedef struct _cfpcontext
 } CFPContext;
 
 extern f_plug_api  gethook;
-extern CFPContext* context_stack;
-extern CFPContext* current_context;
+extern CFPContext *context_stack;
+extern CFPContext *current_context;
 
 #endif /* PLUGIN_TEMPLATE_H */

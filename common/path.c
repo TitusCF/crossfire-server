@@ -61,7 +61,7 @@
  * @note
  * this doesn't handle the '..', check path_normalize().
  */
-char *path_combine(const char *src, const char *dst, char* path, int size) {
+char *path_combine(const char *src, const char *dst, char *path, int size) {
     char *p;
 
     if (*dst == '/') {
@@ -183,7 +183,7 @@ void path_normalize(char *path) {
  * @return
  * path
  */
-char *path_combine_and_normalize(const char *src, const char *dst, char* path, int size) {
+char *path_combine_and_normalize(const char *src, const char *dst, char *path, int size) {
     path_combine(src, dst, path, size);
     path_normalize(path);
     return(path);

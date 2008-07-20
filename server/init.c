@@ -379,7 +379,7 @@ static void load_materials(void) {
  * Frees all memory allocated to materials.
  */
 static void free_materials(void) {
-    materialtype_t* next;
+    materialtype_t *next;
     while (materialt) {
         next = materialt->next;
         free(materialt);
@@ -1294,8 +1294,8 @@ static void dump_races(void) {
  * Frees all race-related information.
  */
 static void free_races(void) {
-    racelink* race;
-    objectlink* link;
+    racelink *race;
+    objectlink *link;
     LOG(llevDebug, "Freeing race information.\n");
     while (first_race) {
         race = first_race->next;

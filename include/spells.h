@@ -67,7 +67,7 @@
 
 /** Number of spell paths. */
 #define NRSPELLPATHS    20
-extern const char* const spellpathnames[NRSPELLPATHS];
+extern const char *const spellpathnames[NRSPELLPATHS];
 
 /**
  * Number of spells.

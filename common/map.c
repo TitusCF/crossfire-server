@@ -109,7 +109,7 @@ mapstruct *has_been_loaded(const char *name) {
  * @return
  * buf.
  */
-char* create_pathname(const char *name, char* buf, int size) {
+char *create_pathname(const char *name, char *buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
@@ -131,7 +131,7 @@ char* create_pathname(const char *name, char* buf, int size) {
  * @param size
  * buffer's length.
  */
-void create_overlay_pathname(const char *name, char* buf, int size) {
+void create_overlay_pathname(const char *name, char *buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
@@ -152,7 +152,7 @@ void create_overlay_pathname(const char *name, char* buf, int size) {
  * @param size
  * buf's length
  */
-void create_template_pathname(const char *name, char* buf, int size) {
+void create_template_pathname(const char *name, char *buf, int size) {
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
      * someplace else in the code? msw 2-17-97
@@ -176,7 +176,7 @@ void create_template_pathname(const char *name, char* buf, int size) {
  * @param size
  * buffer's length.
  */
-static void create_items_path(const char *s, char* buf, int size) {
+static void create_items_path(const char *s, char *buf, int size) {
     char *t;
 
     if (*s == '/')

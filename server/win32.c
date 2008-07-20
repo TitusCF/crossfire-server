@@ -221,7 +221,7 @@ SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
 void service_register( ) {
     char strDir[1024];
     HANDLE schSCManager,schService;
-    char* strDescription = SERVICE_DESCRIPTION;
+    char *strDescription = SERVICE_DESCRIPTION;
 
     GetModuleFileName(NULL, strDir, 1024);
     strcat(strDir, " -srv");
@@ -230,7 +230,7 @@ void service_register( ) {
 
     if (schSCManager == NULL) {
         printf( "openscmanager failed" );
-        exit( 1 );
+        exit(1);
     }
 
     schService = CreateService(schSCManager,
@@ -346,7 +346,7 @@ extern int main(int argc, char** argv);
  */
 void WINAPI ServiceMain(DWORD argc, LPTSTR *argv) {
     char strDir[1024];
-    char* strSlash;
+    char *strSlash;
 
     GetModuleFileName(NULL, strDir, 1024);
     strSlash = strrchr(strDir, '\\');

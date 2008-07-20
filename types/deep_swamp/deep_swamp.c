@@ -31,8 +31,8 @@
 #include <sproto.h>
 
 static method_ret deep_swamp_type_process(ob_methods *context, object *op);
-static method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator);
+static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator);
 
 /**
  * Initializer for the DEEP_SWAMP object type.
@@ -70,7 +70,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
                     op->stats.food);
                 op->stats.food = 1;
             }
-            if ( op->stats.food < 10 )
+            if ( op->stats.food < 10)
             {
                 if (rndm(0, 2) == 0)
                 {
@@ -83,7 +83,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
                         above->speed_left -= op->move_slow_penalty;
                 }
             }
-            else if ( op->stats.food < 20 )
+            else if ( op->stats.food < 20)
             {
                 if (rndm(0, 2) == 0)
                 {
@@ -120,7 +120,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
         }
         above = nabove;
     }
-    if ( !got_player )
+    if ( !got_player)
         op->stats.food = 1;
     return METHOD_OK;
 }
@@ -133,8 +133,8 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret deep_swamp_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
+static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;

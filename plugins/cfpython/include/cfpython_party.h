@@ -32,7 +32,7 @@
 
 typedef struct {
     PyObject_HEAD
-    partylist* party;
+    partylist *party;
 } Crossfire_Party;
 extern PyTypeObject Crossfire_PartyType;
 

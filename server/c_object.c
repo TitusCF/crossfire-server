@@ -67,7 +67,7 @@ static void set_pickup_mode(const object *op, int i);
  * @return
  * matching object, or NULL if no suitable.
 **/
-static object *find_best_apply_object_match(object *start, object* pl, const char *params, int aflag) {
+static object *find_best_apply_object_match(object *start, object *pl, const char *params, int aflag) {
     object *tmp, *best=NULL;
     int match_val=0,tmpmatch;
 
@@ -410,7 +410,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
     query_name(tmp, name, MAX_BUF);
 
     if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
-        char* value = stringbuffer_finish(query_cost_string(tmp, pl,F_BUY | F_SHOP, NULL));
+        char *value = stringbuffer_finish(query_cost_string(tmp, pl,F_BUY | F_SHOP, NULL));
         snprintf(buf, sizeof(buf), "%s will cost you %s.", name, value);
         free(value);
     } else
@@ -1144,9 +1144,9 @@ int command_drop(object *op, char *params) {
  * @param pl
  * player to drop for.
  */
-static void empty_container(object* container, object* pl) {
-    object* inv;
-    object* next;
+static void empty_container(object *container, object *pl) {
+    object *inv;
+    object *next;
     int left = 0;
     char name[MAX_BUF];
 
@@ -1185,8 +1185,8 @@ static void empty_container(object* container, object* pl) {
  * 0.
  */
 int command_empty(object *op, char *params) {
-    object* inv;
-    object* container;
+    object *inv;
+    object *container;
 
     if (!params) {
         draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1509,7 +1509,7 @@ void examine(object *op, object *tmp) {
     in_shop = is_in_shop(op);
 
     if (tmp->value && !QUERY_FLAG(tmp, FLAG_STARTEQUIP) && !QUERY_FLAG(tmp, FLAG_NO_PICK)) {
-        char* value = stringbuffer_finish(query_cost_string(tmp,op,F_SELL | F_APPROX, NULL));
+        char *value = stringbuffer_finish(query_cost_string(tmp,op,F_SELL | F_APPROX, NULL));
         snprintf(buf, sizeof(buf), "You reckon %s worth %s.",
                  tmp->nrof>1?"they are":"it is",value);
         free(value);
@@ -1640,7 +1640,7 @@ void inventory(object *op,object *inv) {
  * @param op
  * must be a player.
  */
-static void display_new_pickup(const object* op) {
+static void display_new_pickup(const object *op) {
     int i = op->contr->mode;
 
     if (!(i & PU_NEWMODE)) return;
@@ -1785,7 +1785,7 @@ static void display_new_pickup(const object* op) {
  */
 int command_pickup(object *op, char *params) {
     uint32 i;
-    static const char* names[] = {
+    static const char *names[] = {
         "debug", "inhibit", "stop", "food", "drink", "valuables", "bow", "arrow", "helmet",
         "shield", "armour", "boots", "gloves", "cloak", "key", "missile", "allweapon",
         "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice",
@@ -2130,8 +2130,8 @@ int command_rename_item(object *op, char *params) {
  * sent command line.
  */
 int command_lock_item(object *op, char *params) {
-    object* item;
-    object* tmp;
+    object *item;
+    object *tmp;
     tag_t tag;
     char name[HUGE_BUF];
 
@@ -2177,10 +2177,10 @@ int command_lock_item(object *op, char *params) {
  * @return
  * 1.
  */
-int command_use(object* op, char* params) {
-    char* with, copy[MAX_BUF];
+int command_use(object *op, char *params) {
+    char *with, copy[MAX_BUF];
     object *first, *second, *add;
-    archetype* arch;
+    archetype *arch;
     int count;
     sstring data;
 

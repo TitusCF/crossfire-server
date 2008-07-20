@@ -44,7 +44,7 @@
 /**
  * Error messages to display.
  */
-static const char* const fatalmsgs[80]={
+static const char *const fatalmsgs[80]={
     "Failed to allocate memory",
     "Failed repeatedly to load maps",
     "Hashtable for archetypes is too small",

@@ -89,7 +89,7 @@ END_TEST
 
 START_TEST (test_query_refcount)
 {
-    const char* str1;
+    const char *str1;
     str1 = add_string("Hello World");
     fail_unless(query_refcount(str1) == 1,
                 "After add_string, query_refcount should return 1 but returned %d(0x%X) for %s",
@@ -107,9 +107,9 @@ END_TEST
 
 START_TEST (test_find_string)
 {
-    const char* str1;
-    const char* str2;
-    const char* result;
+    const char *str1;
+    const char *str2;
+    const char *result;
 
     str1 = add_string("Hello world");
     str2 = add_string("Bonjour le monde");
@@ -139,8 +139,8 @@ END_TEST
 
 START_TEST (test_free_string)
 {
-    const char* str1;
-    const char* str2;
+    const char *str1;
+    const char *str2;
     str1 = add_string("Cr0ssf1r3 r|_|1z");
     free_string(str1);
     str2=find_string("Cr0ssf1r3 r|_|1z");

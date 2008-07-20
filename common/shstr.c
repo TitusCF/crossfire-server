@@ -87,7 +87,7 @@ static int hashstr(const char *str) {
  * @return
  * sharing structure.
  */
-static shared_string* new_shared_string(const char *str) {
+static shared_string *new_shared_string(const char *str) {
     shared_string *ss;
 
     /* Allocate room for a struct which can hold str. Note
@@ -197,7 +197,7 @@ sstring add_string(const char *str) {
 /**
  * This will increase the refcount of the string str.
  * @param str
- * string which *must* have been returned from a previous add_string().
+ * string which *must *have been returned from a previous add_string().
  * @return
  * str
  */
@@ -211,7 +211,7 @@ sstring add_refcount(sstring str) {
  * This will return the refcount of the string str.
  *
  * @param str
- * string which *must* have been returned from a previous add_string().
+ * string which *must *have been returned from a previous add_string().
  * @return
  * refcount of the string.
  */
@@ -266,7 +266,7 @@ sstring find_string(const char *str) {
  *     be freed.
  *
  * @param str
- * string to release, which *must* have been returned from a previous add_string().
+ * string to release, which *must *have been returned from a previous add_string().
  *
  * @note
  * the memory pointed to by str can be freed after this call, so don't use str anymore.
@@ -314,7 +314,7 @@ void free_string(sstring str) {
  * @param size
  * buf's size.
  */
-void ss_dump_statistics(char* buf, int size) {
+void ss_dump_statistics(char *buf, int size) {
     static char line[80];
 
     snprintf(buf, size, "%-13s %6s %6s %6s %6s %6s\n",
@@ -350,7 +350,7 @@ void ss_dump_statistics(char* buf, int size) {
  * @return
  * buf if (what & SS_DUMP_TOTALS) or NULL.
  */
-char* ss_dump_table(int what, char* buf, int size) {
+char *ss_dump_table(int what, char *buf, int size) {
     int entries = 0, refs = 0, links = 0;
     int i;
 

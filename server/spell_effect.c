@@ -1009,7 +1009,7 @@ int perceive_self(object *op) {
     char cp[VERY_BIG_BUF], buf[MAX_BUF];
     archetype *at=find_archetype(ARCH_DEPLETION);
     object *tmp;
-    const object* god;
+    const object *god;
     int i;
     describe_item(op, op, cp, VERY_BIG_BUF);
 
@@ -1785,7 +1785,7 @@ int cast_heal(object *op,object *caster, object *spell, int dir) {
  * right now that icnrease wis/int/pow on a temp basis, so no
  * good comments for those.
  */
-static const char* const no_gain_msgs[NUM_STATS] = {
+static const char *const no_gain_msgs[NUM_STATS] = {
     "You grow no stronger.",
     "You grow no more agile.",
     "You don't feel any healthier.",
@@ -2361,8 +2361,8 @@ int remove_curse(object *op, object *caster, object *spell) {
  * @return
  * 1 if item was changed, 0 else.
  */
-int cast_item_curse_or_curse(object* op, object* caster, object* spell_ob) {
-    object* marked = find_marked_object(op);
+int cast_item_curse_or_curse(object *op, object *caster, object *spell_ob) {
+    object *marked = find_marked_object(op);
     char name[HUGE_BUF];
 
     if (!marked) {
@@ -2497,7 +2497,7 @@ int cast_identify(object *op, object *caster, object *spell) {
  */
 int cast_detection(object *op, object *caster, object *spell) {
     object *tmp, *last, *detect;
-    const object* god;
+    const object *god;
     int done_one, range, mflags, floor, level;
     sint16 x, y, nx, ny;
     mapstruct *m;
@@ -2884,9 +2884,9 @@ int cast_consecrate(object *op, object *caster, object *spell) {
                 return 0;
             } else {
                 /* If we got here, we are consecrating an altar */
-                object* new_altar;
+                object *new_altar;
                 int letter;
-                archetype* altar_arch;
+                archetype *altar_arch;
                 snprintf(buf,MAX_BUF,"altar_");
                 letter=strlen(buf);
                 strncpy(buf+letter,god->name,MAX_BUF-letter);
@@ -3191,7 +3191,7 @@ int create_aura(object *op, object *caster, object *spell) {
     else new_aura = arch_to_object(spell->other_arch);
 
     new_aura->duration  = spell->duration +
-                          10* SP_level_duration_adjust(caster,spell);
+                          10 *SP_level_duration_adjust(caster,spell);
     if (op->type == PLAYER)
         store_spell_expiry(new_aura);
 

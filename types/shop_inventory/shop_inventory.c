@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the SHOP_INVENTORY object type.
@@ -121,7 +121,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems)
  * @return
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
-static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object* applier, int aflags) {
+static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
     int i,j,numitems=0,numallocated=0;
     object      *stack;
     shopinv     *items;

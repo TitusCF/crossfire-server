@@ -30,7 +30,7 @@
 #include <sproto.h>
 
 static method_ret clock_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the CLOCK object type.
@@ -50,7 +50,7 @@ void init_type_clock(void)
  * @retval METHOD_OK If applier was a player
  */
 static method_ret clock_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     if (applier->type == PLAYER)
     {

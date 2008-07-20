@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret lighter_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the LIGHTER object type.
@@ -57,7 +57,7 @@ void init_type_lighter(void) {
  * @return
  * METHOD_UNHANDLED if the applier is not a player, METHOD_OK else..
  */
-static method_ret lighter_type_apply(ob_methods *context, object *lighter, object* applier, int aflags) {
+static method_ret lighter_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
     object *item;
     int is_player_env=0;
     uint32 nrof;

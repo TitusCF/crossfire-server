@@ -30,8 +30,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret shop_mat_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator);
+static method_ret shop_mat_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator);
 
 /**
  * Initializer for the SHOP_MAT object type.
@@ -48,8 +48,8 @@ void init_type_shop_mat(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret shop_mat_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
+static method_ret shop_mat_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator)
 {
     int rv = 0;
     double opinion;

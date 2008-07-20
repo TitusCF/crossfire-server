@@ -47,81 +47,81 @@ static void free_map_assoc(mapstruct *key) {
     free_ptr_assoc(map_assoc_table, key);
 }
 
-static PyObject* Map_GetDifficulty(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetDifficulty(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_difficulty(whoptr->map));
 }
-static PyObject* Map_GetPath(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetPath(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_map_get_sstring_property(whoptr->map, CFAPI_MAP_PROP_PATH));
 }
-static PyObject* Map_GetTempName(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetTempName(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_map_get_sstring_property(whoptr->map, CFAPI_MAP_PROP_TMPNAME));
 }
-static PyObject* Map_GetName(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetName(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_map_get_sstring_property(whoptr->map, CFAPI_MAP_PROP_NAME));
 }
-static PyObject* Map_GetResetTime(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetResetTime(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_reset_time(whoptr->map));
 }
-static PyObject* Map_GetResetTimeout(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetResetTimeout(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_reset_timeout(whoptr->map));
 }
-static PyObject* Map_GetPlayers(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetPlayers(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_players(whoptr->map));
 }
-static PyObject* Map_GetDarkness(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetDarkness(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_darkness(whoptr->map));
 }
-static PyObject* Map_GetWidth(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetWidth(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_width(whoptr->map));
 }
-static PyObject* Map_GetHeight(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetHeight(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_height(whoptr->map));
 }
-static PyObject* Map_GetEnterX(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetEnterX(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_int_property(whoptr->map, CFAPI_MAP_PROP_ENTER_X));
 }
-static PyObject* Map_GetEnterY(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetEnterY(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_enter_x(whoptr->map));
 }
-static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetMessage(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("s", cf_map_get_sstring_property(whoptr->map, CFAPI_MAP_PROP_MESSAGE));
 }
 
-static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure)
+static PyObject *Map_GetRegion(Crossfire_Map *whoptr, void *closure)
 {
     MAPEXISTCHECK(whoptr);
     return Crossfire_Region_wrap(cf_map_get_region_property(whoptr->map,CFAPI_MAP_PROP_REGION));
 }
 
-static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure)
+static int Map_SetPath(Crossfire_Map *whoptr, PyObject *value, void *closure)
 {
-    const char* val;
+    const char *val;
 
     MAPEXISTCHECK_INT(whoptr);
     if (!PyArg_Parse(value,"s",&val))
@@ -132,12 +132,12 @@ static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure)
 
 }
 
-static PyObject* Map_GetUnique(Crossfire_Map* whoptr, void* closure) {
+static PyObject *Map_GetUnique(Crossfire_Map *whoptr, void *closure) {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_int_property(whoptr->map, CFAPI_MAP_PROP_UNIQUE));
 }
 
-static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_Message(Crossfire_Map *map, PyObject *args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;
     char *message;
@@ -152,10 +152,10 @@ static PyObject* Map_Message(Crossfire_Map* map, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 }
-static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_GetFirstObjectAt(Crossfire_Map *map, PyObject *args)
 {
     int x, y;
-    object* val;
+    object *val;
 
     if (!PyArg_ParseTuple(args,"ii",&x,&y))
         return NULL;
@@ -165,11 +165,11 @@ static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args)
     val = cf_map_get_object_at(map->map,x,y);
     return Crossfire_Object_wrap(val);
 }
-static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_CreateObject(Crossfire_Map *map, PyObject *args)
 {
-    char* txt;
+    char *txt;
     int x,y;
-    object* op;
+    object *op;
     if (!PyArg_ParseTuple(args,"sii",&txt,&x,&y))
         return NULL;
 
@@ -181,11 +181,11 @@ static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args)
         op = cf_map_insert_object(map->map,op,x,y);
     return Crossfire_Object_wrap(op);
 }
-static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_Check(Crossfire_Map *map, PyObject *args)
 {
     char *what;
     int x, y;
-    object* foundob;
+    object *foundob;
     sint16 nx, ny;
     int mflags;
 
@@ -209,16 +209,16 @@ static PyObject* Map_Check(Crossfire_Map* map, PyObject* args)
     foundob = cf_map_present_arch_by_name(what, map->map, nx, ny);
     return Crossfire_Object_wrap(foundob);
 }
-static PyObject* Map_Next(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_Next(Crossfire_Map *map, PyObject *args)
 {
     MAPEXISTCHECK(map);
     return Crossfire_Map_wrap(cf_map_get_map_property(map->map,CFAPI_MAP_PROP_NEXT));
 }
 
-static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_Insert(Crossfire_Map *map, PyObject *args)
 {
     int x, y;
-    Crossfire_Object* what;
+    Crossfire_Object *what;
 
     if (!PyArg_ParseTuple(args,"O!ii", &Crossfire_ObjectType, &what, &x, &y))
         return NULL;
@@ -228,7 +228,7 @@ static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args)
     return Crossfire_Object_wrap(cf_map_insert_object(map->map, what->obj, x, y));
 }
 
-static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_ChangeLight(Crossfire_Map *map, PyObject *args)
 {
     int change;
     if (!PyArg_ParseTuple(args,"i", &change))
@@ -253,29 +253,29 @@ static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args)
  * @return
  * NULL if error, Py_None else.
  */
-static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args)
+static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args)
 {
-    objectlink* ol=NULL;
+    objectlink *ol=NULL;
     int connected;
     int state;
-    Crossfire_Object* cause=NULL;
-    oblinkpt* olp;
+    Crossfire_Object *cause=NULL;
+    oblinkpt *olp;
     if (!PyArg_ParseTuple(args,"ii|O!", &connected,&state,&Crossfire_ObjectType,&cause))
         return NULL;
 
     MAPEXISTCHECK(map);
     /* locate objectlink for this connected value */
-    if (!map->map->buttons){
+    if (!map->map->buttons) {
         cf_log(llevError, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH),connected);
         return NULL;
     }
-    for (olp=map->map->buttons;olp;olp=olp->next){
-        if (olp->value==connected){
+    for (olp=map->map->buttons;olp;olp=olp->next) {
+        if (olp->value==connected) {
             ol = olp->link;
             break;
         }
     }
-    if (ol==NULL){
+    if (ol==NULL) {
         cf_log(llevInfo, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH),connected);
         return NULL;
     }
@@ -285,21 +285,21 @@ static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 }
-static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right)
+static int Map_InternalCompare(Crossfire_Map *left, Crossfire_Map *right)
 {
     MAPEXISTCHECK_INT(left);
     MAPEXISTCHECK_INT(right);
-    return left->map < right->map ? -1 : ( left->map == right->map ? 0 : 1 );
+    return left->map < right->map ? -1 : ( left->map == right->map ? 0 : 1);
 }
 
 /* Legacy code: convert to long so that non-object functions work correctly */
-static PyObject* Crossfire_Map_Long( PyObject* obj )
+static PyObject *Crossfire_Map_Long(PyObject *obj)
 {
     MAPEXISTCHECK((Crossfire_Map*)obj);
     return Py_BuildValue("l", ((Crossfire_Map*)obj)->map);
 }
 
-static PyObject* Crossfire_Map_Int( PyObject* obj )
+static PyObject *Crossfire_Map_Int(PyObject *obj)
 {
     MAPEXISTCHECK((Crossfire_Map*)obj);
     return Py_BuildValue("i", ((Crossfire_Map*)obj)->map);

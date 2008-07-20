@@ -155,7 +155,7 @@ int find_animation(const char *name) {
  * animation number, or 0 if no match found (animation 0 is initialized as the 'bug' face).
  * @see find_animation
  */
-int try_find_animation(const char* name) {
+int try_find_animation(const char *name) {
     Animations search, *match;
 
     search.name = name;
@@ -276,9 +276,9 @@ void animate_object(object *op, int dir) {
  * @param suffix
  * animation suffix to apply. Must not be NULL.
  */
-void apply_anim_suffix(object* who, sstring suffix) {
+void apply_anim_suffix(object *who, sstring suffix) {
     int anim;
-    object* head, *orig;
+    object *head, *orig;
     char buf[MAX_BUF];
 
     assert(who);

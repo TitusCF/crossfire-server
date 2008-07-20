@@ -57,12 +57,12 @@ static int status_flag=0;
 /**
  * set the logdir to use
  */
-void cctk_setlog(char* logfile){
+void cctk_setlog(char *logfile) {
     settings.logfilename=logfile;
     SET_TKFLAG(STATUS_LOGDIR);
 }
 
-void cctk_setdatadir(char* datadir){
+void cctk_setdatadir(char *datadir) {
     settings.datadir=datadir;
     SET_TKFLAG(STATUS_DATADIR);
 }
@@ -71,7 +71,7 @@ void cctk_setdatadir(char* datadir){
  * tree. This function requires that cctk_setlog and cctk_setdatadir have both
  * been run already.
  */
-void cctk_init_std_archetypes(void){
+void cctk_init_std_archetypes(void) {
     CCTK_ASSERT((STATUS_LOGDIR|STATUS_DATADIR));
     settings.archetypes="archetypes";
     settings.treasures="treasures.bld";
@@ -94,7 +94,7 @@ void cctk_init_std_archetypes(void){
  * @param archname the archetype name to use (NULL= default one)
  * @return created object, including its more parts, or NULL if archetype doesn't exist.
  */
-object* cctk_create_game_object(const char* archname){
+object *cctk_create_game_object(const char *archname) {
   archetype *arch;
   object *obj;
   CCTK_ASSERT((STATUS_OBJECTS|STATUS_ARCH));
@@ -111,9 +111,9 @@ object* cctk_create_game_object(const char* archname){
  * Set all strings in given object to given parameter string, used for
  * checking cleaning of objects, mainly
  * @param op The object to initialize
- * @param string The string to set in all object's char* fields
+ * @param string The string to set in all object's char *fields
  */
-void cctk_set_object_strings(object* op, char* string){
+void cctk_set_object_strings(object *op, char *string) {
   op->name=add_string(string);
   op->name_pl=add_string(string);
   op->title=add_string(string);

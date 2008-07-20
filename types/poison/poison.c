@@ -31,7 +31,7 @@
 #include <sproto.h>
 
 static method_ret poison_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the POISON object type.
@@ -50,7 +50,7 @@ void init_type_poison(void)
  * @return The return value is always METHOD_OK
  */
 static method_ret poison_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     /* If a player, let's tell them what happened */
     if (applier->type == PLAYER) {

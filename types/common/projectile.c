@@ -192,7 +192,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
 		return METHOD_OK;
 	    }
 	    /* update object image for new facing */
-	    /* many thrown objects *don't* have more than one face */
+	    /* many thrown objects *don't *have more than one face */
 	    if(GET_ANIM_ID(op))
 		SET_ANIMATION(op, op->direction);
 	} /* object is reflected */
@@ -219,8 +219,8 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret common_projectile_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
+method_ret common_projectile_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;

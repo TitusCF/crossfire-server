@@ -65,7 +65,7 @@ void move_marker(object *op) {
     /*
     * markers not on a map for any reason should not crash server
     */
-    if (!op->map){
+    if (!op->map) {
         return;
     }
     for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
@@ -91,8 +91,8 @@ void move_marker(object *op) {
                 /* put in the lock code */
                 force->slaying = add_string(op->slaying);
 
-                if ( op->lore )
-                    force->lore = add_string( op->lore );
+                if ( op->lore)
+                    force->lore = add_string(op->lore);
 
                 insert_ob_in_ob(force,tmp);
                 if(op->msg)

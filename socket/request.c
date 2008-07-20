@@ -688,7 +688,7 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
         if (Old) free(Old);                                             \
         Old = strdup_local(New);                                        \
         SockList_AddChar(&sl, Type);                                    \
-        SockList_AddChar(&sl, ( char )strlen(New));                     \
+        SockList_AddChar(&sl, ( char)strlen(New));                     \
         strcpy((char*)sl.buf + sl.len, New);                            \
         sl.len += strlen(New);                                          \
     }
@@ -1507,9 +1507,9 @@ void send_spell_paths(socket_struct *ns, char *params) {
  * @return
  * suitable reply.
  */
-static char* build_race_list_reply(void) {
-    StringBuffer* buf = stringbuffer_new();
-    archetype* race;
+static char *build_race_list_reply(void) {
+    StringBuffer *buf = stringbuffer_new();
+    archetype *race;
 
     stringbuffer_append_string(buf, "replyinfo race_list ");
 
@@ -1531,7 +1531,7 @@ static char* build_race_list_reply(void) {
  * ignored.
  */
 void send_race_list(socket_struct *ns, char *params) {
-    static char* reply = NULL;
+    static char *reply = NULL;
     static int reply_length = 0;
     SockList sl;
 
@@ -1555,8 +1555,8 @@ void send_race_list(socket_struct *ns, char *params) {
  * @todo finish writing
  */
 void send_race_info(socket_struct *ns, char *params) {
-    archetype* race = try_find_archetype(params);
-    StringBuffer* buf;
+    archetype *race = try_find_archetype(params);
+    StringBuffer *buf;
     SockList sl;
 
     buf = stringbuffer_new();
@@ -1576,9 +1576,9 @@ void send_race_info(socket_struct *ns, char *params) {
  * @return
  * reply.
  */
-static char* build_class_list_reply(void) {
-    StringBuffer* buf = stringbuffer_new();
-    archetype* cl;
+static char *build_class_list_reply(void) {
+    StringBuffer *buf = stringbuffer_new();
+    archetype *cl;
 
     stringbuffer_append_string(buf, "replyinfo class_list ");
 
@@ -1600,7 +1600,7 @@ static char* build_class_list_reply(void) {
  * ignored.
  */
 void send_class_list(socket_struct *ns, char *params) {
-    static char* reply = NULL;
+    static char *reply = NULL;
     static int reply_length = 0;
     SockList sl;
 
@@ -1635,7 +1635,7 @@ void esrv_update_spells(player *pl) {
     SockList sl;
     int flags=0;
     object *spell;
-    client_spell* spell_info;
+    client_spell *spell_info;
 
     if (!pl->socket.monitor_spells) return;
 
@@ -1711,7 +1711,7 @@ void esrv_remove_spell(player *pl, object *spell) {
  * @param pl
  * player that just logged in.
  */
-void esrv_send_pickup(player* pl) {
+void esrv_send_pickup(player *pl) {
     SockList sl;
     if (!pl->socket.want_pickup)
         return;
@@ -1725,7 +1725,7 @@ void esrv_send_pickup(player* pl) {
 
 /** appends the spell *spell to the Socklist we will send the data to. */
 static void append_spell(player *pl, SockList *sl, object *spell) {
-    client_spell* spell_info;
+    client_spell *spell_info;
     int len, i, skill=0;
 
     if (!(spell->name)) {

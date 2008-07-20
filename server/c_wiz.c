@@ -280,7 +280,7 @@ int command_setgod(object *op, char *params) {
  *
  * I know most people have dynamic IPs but this is more of a short term
  * solution if they have to get a new IP to play maybe they'll calm down.
- * This uses the banish_file in the local directory *not* the ban_file
+ * This uses the banish_file in the local directory *not *the ban_file
  * The action is logged with a ! for easy searching. -tm
  *
  * @param op
@@ -428,7 +428,7 @@ int command_overlay_save(object *op, char *params) {
  * @return
  * 1.
  */
-int command_overlay_reset(object *op, char* params) {
+int command_overlay_reset(object *op, char *params) {
     char filename[MAX_BUF];
     struct stat stats;
     create_overlay_pathname(op->map->path, filename, MAX_BUF);
@@ -2334,7 +2334,7 @@ void dm_stack_pop(player *pl) {
  * item on top of stack, or NULL if deleted/stack empty.
  */
 object *dm_stack_peek(player *pl) {
-    object* ob;
+    object *ob;
 
     if (!pl->stack_position) {
         draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -2693,7 +2693,7 @@ int command_diff(object *op, char *params) {
  * @return
  * 0.
  */
-int command_insert_into(object* op, char *params) {
+int command_insert_into(object *op, char *params) {
     object *left, *right, *inserted;
     int left_from, right_from;
     char what[MAX_BUF], where[MAX_BUF];
@@ -2823,8 +2823,8 @@ int command_style_map_info(object *op, char *params) {
  * @return
  * 0.
  */
-int command_follow(object* op, char* params) {
-    player* other;
+int command_follow(object *op, char *params) {
+    player *other;
     if (!params) {
         if (op->contr->followed_player != NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);

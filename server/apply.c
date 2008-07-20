@@ -131,12 +131,12 @@ int should_director_abort(object *op, object *victim) {
  * @param tmp
  * item that was applied.
  */
-void handle_apply_yield(object* tmp) {
-    const char* yield;
+void handle_apply_yield(object *tmp) {
+    const char *yield;
 
     yield = get_ob_key_value(tmp,"on_use_yield");
     if (yield != NULL) {
-        object* drop = create_archetype(yield);
+        object *drop = create_archetype(yield);
         if (tmp->env) {
             drop = insert_ob_in_ob(drop,tmp->env);
         } else {
@@ -456,7 +456,7 @@ void do_forget_spell(object *op, const char *spell) {
  * @return
  * 0 if item can't be applied, 1 else.
  */
-static int check_race_restrictions(object* who, object* item) {
+static int check_race_restrictions(object *who, object *item) {
     char buf[MAX_BUF];
     sstring restriction;
 
@@ -1259,7 +1259,7 @@ int apply_special(object *who, object *op, int aflags) {
             const char *will = get_ob_key_value(op, "item_willpower");
             long item_will = 0;
             long margin = 0;
-            const char* msg = NULL;
+            const char *msg = NULL;
             int random_effect = 0;
             int damage_percentile = 0;
 
@@ -1326,7 +1326,7 @@ int apply_special(object *who, object *op, int aflags) {
     switch (op->type) {
         case WEAPON: {
             int ownerlen=0;
-            char* quotepos=NULL;
+            char *quotepos=NULL;
             if (!check_weapon_power(who, op->last_eat)) {
                 if (!(aflags & AP_NOPRINT))
                     draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY,
@@ -1591,7 +1591,7 @@ int auto_apply(object *op) {
             /* If we generated an object and put it in this object's
              * inventory, move it to the parent object as the current
              * object is about to disappear.  An example of this item
-             * is the random_* stuff that is put inside other objects.
+             * is the random_ *stuff that is put inside other objects.
              */
             for (tmp=op->inv; tmp; tmp=tmp2) {
                 tmp2 = tmp->below;
@@ -1888,6 +1888,6 @@ void apply_changes_to_player(object *pl, object *change) {
     }
 }
 
-void legacy_apply_container(object* op, object* sack) {
+void legacy_apply_container(object *op, object *sack) {
     apply_container(op, sack);
 }

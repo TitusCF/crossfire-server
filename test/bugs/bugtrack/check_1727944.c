@@ -46,9 +46,9 @@ void teardown(void)
 }
 
 #if 0
-static mapstruct* get_random_map(mapstruct* map) {
-    object* exit_ob;
-    mapstruct* random;
+static mapstruct *get_random_map(mapstruct *map) {
+    object *exit_ob;
+    mapstruct *random;
     RMParms rp;
     char newmap_name[HUGE_BUF], *cp;
     static int reference_number = 0;
@@ -103,11 +103,11 @@ static mapstruct* get_random_map(mapstruct* map) {
 }
 
 static void do_run() {
-    mapstruct* worldmap;
-    mapstruct* random;
-    mapstruct* old;
+    mapstruct *worldmap;
+    mapstruct *random;
+    mapstruct *old;
     int iteration, x, y, map;
-    object* check;
+    object *check;
     char path[150];
 
     for (map = 1; map <= 3; map++) {
@@ -144,9 +144,9 @@ static void do_run() {
 
 #if 0
 static void do_run() {
-    mapstruct* map, *overlay;
+    mapstruct *map, *overlay;
     int x, y, found = 0, test = 0;
-    object* check;
+    object *check;
 
     overlay = ready_map_name("../../rsc/bug_1727944_unique", MAP_PLAYER_UNIQUE);
     fail_unless(overlay != NULL, "Couldn't load unique map ../../rsc/bug_1727944_unique");
@@ -237,8 +237,8 @@ static void local_check_loaded_object(object *op) {
         (op->type == ARMOUR)   || (op->type == HELMET) ||
         (op->type == SHIELD)   || (op->type == RING) ||
         (op->type == BOOTS)    || (op->type == GLOVES) ||
-        (op->type == AMULET )  || (op->type == GIRDLE) ||
-        (op->type == BRACERS ) || (op->type == CLOAK)) {
+        (op->type == AMULET)  || (op->type == GIRDLE) ||
+        (op->type == BRACERS) || (op->type == CLOAK)) {
         if (op->last_heal) {
             LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
             op->name?op->name:"NULL");
@@ -313,7 +313,7 @@ static void local_check_loaded_object(object *op) {
      * Of course this doesn't apply when loading archetypes or artifacts.
      */
     if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && op->arch && !can_merge(op, &op->arch->clone)) {
-        archetype* temp = get_archetype_struct();
+        archetype *temp = get_archetype_struct();
         temp->reference_count++;
         temp->name = add_string(op->arch->name);
         temp->tail_x = op->arch->tail_x;
@@ -346,8 +346,8 @@ START_TEST (test_randommaps)
 {
 #if 0
     int test;
-    mapstruct* overlay;
-    object* check;
+    mapstruct *overlay;
+    object *check;
 
     for (test = 0; test < 50; test++)
         do_run();
@@ -369,21 +369,21 @@ START_TEST (test_randommaps)
 
 #if 0
     int test;
-    archetype* horn = find_archetype("horn");
+    archetype *horn = find_archetype("horn");
     fail_unless(horn != NULL, "couldn't find archetype horn.");
-    archetype* horn2 = find_archetype("horn2");
+    archetype *horn2 = find_archetype("horn2");
     fail_unless(horn2 != NULL, "couldn't find archetype horn2.");
 
     for (test = 0; test < 100000; test++) {
-        object* check = arch_to_object(RANDOM() % 2 ? horn : horn2);
+        object *check = arch_to_object(RANDOM() % 2 ? horn : horn2);
         generate_artifact(check, RANDOM() % 100);
         fail_unless(check->inv != NULL, "horn without inventory!");
     }
 #endif
 
     int test, level, found = 0;
-    object* the_chest, *check;
-    mapstruct* map;
+    object *the_chest, *check;
+    mapstruct *map;
     treasurelist *tlist=find_treasurelist("uncommon_items");
     fail_unless(tlist != NULL, "couldn't find treasure list uncommon_items");
 

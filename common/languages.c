@@ -31,7 +31,7 @@
 #include <global.h>
 
 /** List of available language codes. */
-const char* language_codes[] = {
+const char *language_codes[] = {
     "en",
     "fr",
     "nl",
@@ -40,7 +40,7 @@ const char* language_codes[] = {
 };
 
 /** Language names. */
-const char* language_names[] = {
+const char *language_names[] = {
     "English",
     "Français",
     "Nederlands",
@@ -48,7 +48,7 @@ const char* language_names[] = {
     "Deutsch"
 };
 /** All translated strings. */
-const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
+const char *i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
 
 /**
  * Returns the i18n language index associated with the given object.
@@ -56,7 +56,7 @@ const char* i18n_strings[NUM_LANGUAGES][NUM_I18N_STRINGS];
  * @param op The player object to get the language of
  * @return The language numerical code. If none is associated, get_language returns 0
  */
-int get_language(object* op) {
+int get_language(object *op) {
     if (!op->contr)
         return 0;
     if (op->contr->language < 0 || op->contr->language >= NUM_LANGUAGES)
@@ -70,7 +70,7 @@ int get_language(object* op) {
  * @param id The i18n string identifier
  * @return The translated string, or NULL if an error occured.
  */
-const char* i18n_translate(int language, int id) {
+const char *i18n_translate(int language, int id) {
     if (language >= NUM_LANGUAGES)
         return NULL;
     else if (id >= NUM_I18N_STRINGS)
@@ -91,8 +91,8 @@ const char* i18n_translate(int language, int id) {
  * @param line
  * text to replace into.
  */
-static void convert_newline(char* line) {
-    char* next;
+static void convert_newline(char *line) {
+    char *next;
     char buf[MAX_BUF];
 
     while ((next = strstr(line, "\\n")) != NULL) {
@@ -109,10 +109,10 @@ static void convert_newline(char* line) {
 void i18n_init(void) {
     char filename[MAX_BUF], line[HUGE_BUF];
     int i, entry;
-    FILE* fp;
-    char* token;
+    FILE *fp;
+    char *token;
     int counter;
-    char* buffer;
+    char *buffer;
     for (i=0;i<NUM_LANGUAGES;i++) {
         snprintf(filename, sizeof(filename), "%s/i18n/messages.%s", settings.datadir, language_codes[i]);
         if ((fp=fopen(filename, "r")) == NULL) {

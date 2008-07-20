@@ -31,7 +31,7 @@
 #include <math.h>
 
 static method_ret food_type_apply(ob_methods *context, object *food,
-    object* applier, int aflags);
+    object *applier, int aflags);
 static void eat_special_food(object *who, object *food);
 static int dragon_eat_flesh(object *op, object *meal);
 
@@ -55,7 +55,7 @@ void init_type_food(void)
  * @return METHOD_OK unless failure for some reason.
  */
 static method_ret food_type_apply(ob_methods *context, object *food,
-    object* applier, int aflags) {
+    object *applier, int aflags) {
     int capacity_remaining;
 
     if (QUERY_FLAG(food, FLAG_NO_PICK)) {
@@ -333,7 +333,7 @@ static int dragon_eat_flesh(object *op, object *meal) {
                 winners++;
             }
 
-            if (chance >= 0.01 ) totalchance *= 1 - chance/100;
+            if (chance >= 0.01) totalchance *= 1 - chance/100;
 
                 /*LOG(llevDebug, "   %s: bonus %.1f, chance %.1f\n", attacks[i], bonus, chance);*/
         }

@@ -30,27 +30,27 @@
 #include <cfpython.h>
 #include <cfpython_region_private.h>
 
-static PyObject* Crossfire_Region_GetName(Crossfire_Region* regionptr, void* closure)
+static PyObject *Crossfire_Region_GetName(Crossfire_Region *regionptr, void *closure)
 {
 	return Py_BuildValue("s",cf_region_get_name(regionptr->reg));
 }
 
-static PyObject* Crossfire_Region_GetLongname(Crossfire_Region* regionptr, void* closure)
+static PyObject *Crossfire_Region_GetLongname(Crossfire_Region *regionptr, void *closure)
 {
 	return Py_BuildValue("s",cf_region_get_longname(regionptr->reg));
 }
 
-static PyObject* Crossfire_Region_GetMessage(Crossfire_Region* regionptr, void* closure)
+static PyObject *Crossfire_Region_GetMessage(Crossfire_Region *regionptr, void *closure)
 {
 	return Py_BuildValue("s",cf_region_get_message(regionptr->reg));
 }
 
-static PyObject* Crossfire_Region_GetNext( Crossfire_Region* party, void* closure )
+static PyObject *Crossfire_Region_GetNext(Crossfire_Region *party, void *closure)
 {
 	return Crossfire_Region_wrap(cf_region_get_next(party->reg));
 }
 
-static PyObject* Crossfire_Region_GetParent( Crossfire_Region* party, PyObject* args )
+static PyObject *Crossfire_Region_GetParent(Crossfire_Region *party, PyObject *args)
 {
 	return Crossfire_Region_wrap(cf_region_get_parent(party->reg));
 }
@@ -71,7 +71,7 @@ PyObject *Crossfire_Region_wrap(region *what)
     return (PyObject *)wrapper;
 }
 
-static int Crossfire_Region_InternalCompare(Crossfire_Region* left, Crossfire_Region* right)
+static int Crossfire_Region_InternalCompare(Crossfire_Region *left, Crossfire_Region *right)
 {
-	return (left->reg < right->reg ? -1 : ( left->reg == right->reg ? 0 : 1 ) );
+	return (left->reg < right->reg ? -1 : ( left->reg == right->reg ? 0 : 1) );
 }

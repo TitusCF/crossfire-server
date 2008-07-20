@@ -30,7 +30,7 @@
 #include <sproto.h>
 
 static method_ret potion_type_apply(ob_methods *context, object *potion,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the potion object type.
@@ -49,7 +49,7 @@ void init_type_potion(void)
  * @return METHOD_OK unless failure for some reason.
  */
 static method_ret potion_type_apply(ob_methods *context, object *potion,
-    object* applier, int aflags) {
+    object *applier, int aflags) {
     int got_one=0,i;
     object *force;
 

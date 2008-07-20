@@ -1090,7 +1090,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 break;
 
             case SPELLBOOK:
-                op->value=op->value* op->inv->value;
+                op->value=op->value *op->inv->value;
                 /* add exp so learning gives xp */
                 op->level = op->inv->level;
                 op->stats.exp = op->value;
@@ -1121,7 +1121,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 if (op->inv->duration_modifier || op->inv->dam_modifier ||
                         op->inv->range_modifier) {
                     op->level = level_for_item(op, difficulty, 0);
-                    op->value= op->value* op->inv->value * (op->level +50)/
+                    op->value= op->value *op->inv->value * (op->level +50)/
                                (op->inv->level + 50);
                 } else {
                     op->level = op->inv->level;
@@ -1630,8 +1630,8 @@ void add_abilities(object *op, object *change) {
     }
 
     if (change->inv) {
-        object* inv = change->inv;
-        object* copy;
+        object *inv = change->inv;
+        object *copy;
         while (inv) {
             copy = get_object();
             copy_object(inv, copy);
@@ -1772,7 +1772,7 @@ void fix_flesh_item(object *item, object *donor) {
                  * the loader will not be able to resolve the other_arch at
                  * load time (server may has restarted, etc.)
                  */
-                archetype* original = find_archetype(donor->arch->name);
+                archetype *original = find_archetype(donor->arch->name);
 
                 if (original) item->other_arch = original;
                 else {
@@ -1868,7 +1868,7 @@ void free_charlinks(linked_char *lc) {
  * destroyed through free_object(). Note that it isn't on the usual item list, so some tweaking is required.
  */
 void free_artifact(artifact *at) {
-    object* next;
+    object *next;
     if (at->next) free_artifact(at->next);
     if (at->allowed) free_charlinks(at->allowed);
     while (at->item) {

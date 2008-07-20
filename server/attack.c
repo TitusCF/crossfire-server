@@ -855,7 +855,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam,
             }
         }
         if (! simple_attack) {
-            /* If you hit something, the victim should *always* wake up.
+            /* If you hit something, the victim should *always *wake up.
              * Before, invisible hitters could avoid doing this.
              * -b.t. */
             if (QUERY_FLAG(op, FLAG_SLEEP))
@@ -996,7 +996,7 @@ object *hit_with_arrow(object *op, object *victim) {
     tag_t victim_tag, hitter_tag;
     sint16 victim_x, victim_y;
     mapstruct *victim_map;
-    const char* old_skill=NULL;
+    const char *old_skill=NULL;
 
     /* Disassemble missile */
     for (hitter = op->inv; hitter; hitter = hitter->below) {
@@ -1557,7 +1557,7 @@ static int kill_object(object *op,int dam, object *hitter, int type) {
     execute_global_event(EVENT_GKILL, op, hitter);
 
     if ((op->map) && (death_animation = get_ob_key_value(op, "death_animation")) != NULL) {
-        object* death = create_archetype(death_animation);
+        object *death = create_archetype(death_animation);
         if (death) {
             death->map = op->map;
             death->x = op->x;

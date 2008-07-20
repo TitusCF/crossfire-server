@@ -30,7 +30,7 @@
 #include <sproto.h>
 
 static method_ret scroll_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the scroll object type.
@@ -57,7 +57,7 @@ void init_type_scroll(void)
  * Tweak failure parameters.
  */
 static method_ret scroll_type_apply(ob_methods *context, object *scroll,
-    object* applier, int aflags) {
+    object *applier, int aflags) {
     object *skapplier;
     object *head;
 

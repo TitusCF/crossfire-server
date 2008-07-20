@@ -77,7 +77,7 @@
 
 typedef struct _cfpcontext
 {
-    struct _cfpcontext* down;
+    struct _cfpcontext *down;
     PyObject*   who;
     PyObject*   activator;
     PyObject*   third;
@@ -92,8 +92,8 @@ typedef struct _cfpcontext
 } CFPContext;
 
 extern f_plug_api gethook;
-extern CFPContext* context_stack;
-extern CFPContext* current_context;
+extern CFPContext *context_stack;
+extern CFPContext *current_context;
 
 /* This structure is used to define one python-implemented crossfire command.*/
 typedef struct PythonCmdStruct

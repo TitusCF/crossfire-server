@@ -726,7 +726,7 @@ void drain_rod_charge(object *rod) {
  * @param wand
  * wand to drain. Must be of type WAND.
  */
-void drain_wand_charge(object* wand) {
+void drain_wand_charge(object *wand) {
     assert(wand->type == WAND);
 
     if (!(--wand->stats.food)) {
@@ -791,7 +791,7 @@ object *find_target_for_friendly_spell(object *op,int dir) {
                 break;
             /* Don't forget to browse inside transports ! - gros 2006/07/25 */
             if (tmp->type==TRANSPORT) {
-                object* inv;
+                object *inv;
                 for (inv=tmp->inv; inv; inv=inv->below) {
                     if ((inv->type == PLAYER)&&(op == inv))
                         return inv;
@@ -1102,11 +1102,11 @@ void spell_failure(object *op, int failure,int power, object *skill) {
  * @param op
  * player who is the victim.
  */
-static void transmute_item_to_flower(object* op) {
-    object* force;
-    object* item;
-    object* flower;
-    object* first = NULL;
+static void transmute_item_to_flower(object *op) {
+    object *force;
+    object *item;
+    object *flower;
+    object *first = NULL;
     int count = 0;
     char name[HUGE_BUF];
 
@@ -1169,8 +1169,8 @@ static void transmute_item_to_flower(object* op) {
  * @param op
  * player who is the victim.
  */
-static void swap_random_stats(object* op) {
-    object* force;
+static void swap_random_stats(object *op) {
+    object *force;
     int first, second;
 
     first = RANDOM()%NUM_STATS;
@@ -1205,7 +1205,7 @@ static void swap_random_stats(object* op) {
  * @param op
  * player for which to produce a random effect.
  */
-static void handle_spell_confusion(object* op) {
+static void handle_spell_confusion(object *op) {
     switch (RANDOM()%2) {
         case 0:
             transmute_item_to_flower(op);
@@ -1773,7 +1773,7 @@ int cast_spell(object *op, object *caster,int dir,object *spell_ob, char *string
  * @param spell
  * spell we're considering.
  */
-void store_spell_expiry(object* spell) {
+void store_spell_expiry(object *spell) {
     /* Keep when to warn the player of expiration */
     char dur[10];
     int i = spell->duration / 5;
@@ -1797,8 +1797,8 @@ void store_spell_expiry(object* spell) {
  * @param spell
  * force or spell whose effects will expire.
  */
-void check_spell_expiry(object* spell) {
-    const char* key;
+void check_spell_expiry(object *spell) {
+    const char *key;
 
     if (!spell->env || !spell->env->type == PLAYER)
         return;

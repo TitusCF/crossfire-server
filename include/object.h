@@ -145,7 +145,7 @@ typedef struct obj {
                                  * need to be gone through. */
     struct obj  *below;         /**< Pointer to the object stacked below this one */
     struct obj  *above;         /**< Pointer to the object stacked above this one */
-                                /* Note: stacked in the *same* environment*/
+                                /* Note: stacked in the *same *environment*/
     struct obj  *inv;           /**< Pointer to the first object in the inventory */
     struct obj  *container;     /**< Current container being used.  I think this
                                  * is only used by the player right now. */
@@ -156,7 +156,7 @@ typedef struct obj {
     struct mapdef *map;         /**< Pointer to the map in which this object is present */
 
     tag_t       count;          /**< Unique object number for this object */
-    struct struct_dialog_information* dialog_information; /**< Parsed dialog information for this object.
+    struct struct_dialog_information *dialog_information; /**< Parsed dialog information for this object.
                                                            * Valid if FLAG_DIALOG_PARSED is set (but can be NULL). */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
@@ -291,7 +291,7 @@ typedef struct obj {
     uint8       no_save;        /**< This field indicates that the object should never
                                  * be saved even for map swapout. Not handled by the
                                  * loading or saving code. */
-    sint16* discrete_damage;    /**< damage values, based on each attacktype. */
+    sint16 *discrete_damage;    /**< damage values, based on each attacktype. */
     tag_t   *spell_tags;
 } object;
 

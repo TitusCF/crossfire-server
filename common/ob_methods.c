@@ -56,9 +56,9 @@
  * @retval 1 has been applied, or there was an error applying the object
  * @retval 2 objects of that type can't be applied if not in inventory
  */
-method_ret ob_apply(object* op, object* applier, int aflags) {
+method_ret ob_apply(object *op, object *applier, int aflags) {
     method_ret ret;
-    ob_methods* methods;
+    ob_methods *methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->apply) {
             ret = methods->apply(methods, op, applier, aflags);
@@ -74,9 +74,9 @@ method_ret ob_apply(object* op, object* applier, int aflags) {
  * @param op The object to process
  * @retval METHOD_UNHANDLED if the process method does not exist for that objec,
  */
-method_ret ob_process(object* op) {
+method_ret ob_process(object *op) {
     method_ret ret;
-    ob_methods* methods;
+    ob_methods *methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->process) {
             ret = methods->process(methods, op);
@@ -95,8 +95,8 @@ method_ret ob_process(object* op) {
  * @return
  * buf.
  */
-char* ob_describe(const object* op, const object* observer, char* buf, int size) {
-    ob_methods* methods;
+char *ob_describe(const object *op, const object *observer, char *buf, int size) {
+    ob_methods *methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->describe) {
             methods->describe(methods, op, observer, buf, size);
@@ -113,9 +113,9 @@ char* ob_describe(const object* op, const object* observer, char* buf, int size)
  * @param originator The object that is the cause of the move
  * @retval METHOD_UNHANDLED if the process method does not exist for that object
  */
-method_ret ob_move_on(object* op, object* victim, object* originator) {
+method_ret ob_move_on(object *op, object *victim, object *originator) {
     method_ret ret;
-    ob_methods* methods;
+    ob_methods *methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->move_on) {
             ret = methods->move_on(methods, op, victim, originator);
@@ -134,9 +134,9 @@ method_ret ob_move_on(object* op, object* victim, object* originator) {
  * @retval METHOD_UNHANDLED if the process method does not exist for that object
  * @todo check the exact state values/meaning
  */
-method_ret ob_trigger(object* op, object* cause, int state) {
+method_ret ob_trigger(object *op, object *cause, int state) {
     method_ret ret;
-    ob_methods* methods;
+    ob_methods *methods;
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {
         if (methods->trigger) {
             ret = methods->trigger(methods, op, cause, state);

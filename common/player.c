@@ -41,7 +41,7 @@
  */
 void free_player(player *pl) {
     client_spell *info;
-    client_spell* next;
+    client_spell *next;
 
     if (first_player!=pl) {
         player *prev=first_player;
@@ -103,7 +103,7 @@ int atnr_is_dragon_enabled(int attacknr) {
  * @return
  * TRUE if the adressed object 'ob' is a player of the dragon race.
  */
-int is_dragon_pl(const object* op) {
+int is_dragon_pl(const object *op) {
     if (op != NULL && op->type == PLAYER && op->arch != NULL
         && op->arch->clone.race != NULL &&
         strcmp(op->arch->clone.race, "dragon")==0)
@@ -123,8 +123,8 @@ int is_dragon_pl(const object* op) {
  * @return
  * state information for that spell.
  */
-client_spell* get_client_spell_state(player* pl, object* spell) {
-    client_spell* info = pl->spell_state;
+client_spell *get_client_spell_state(player *pl, object *spell) {
+    client_spell *info = pl->spell_state;
     while (info) {
         if (info->spell == spell)
             return info;
@@ -148,7 +148,7 @@ client_spell* get_client_spell_state(player* pl, object* spell) {
  * @return
  * true if the adressed object 'ob' is a wraith player, false else.
  */
-int is_wraith_pl(object* op) {
+int is_wraith_pl(object *op) {
     object *item = NULL;
     if (op != NULL && op->type == PLAYER && op->arch != NULL)
         for (item = op->inv; item!=NULL && strcmp(item->name, "wraith feed"); item=item->below);
@@ -165,7 +165,7 @@ int is_wraith_pl(object* op) {
  * @return
  * true if the adressed object 'ob' is an old wraith player, false else.
  */
-int is_old_wraith_pl(object* op) {
+int is_old_wraith_pl(object *op) {
     object *item = NULL;
     if (op != NULL && op->type == PLAYER && op->arch != NULL)
         for (item = op->inv; item!=NULL && strcmp(item->name, "Wraith_Force"); item=item->below);

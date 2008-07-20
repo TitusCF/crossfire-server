@@ -119,11 +119,11 @@
 #define CFAPI_MOVETYPE 18 /* MoveType */
 
 /** General API function. */
-typedef void* (*f_plug_api) (int* type, ...);
+typedef void* (*f_plug_api) (int *type, ...);
 /** Function called after the plugin was initialized. */
 typedef int   (*f_plug_postinit) (void);
 /** First function called in a plugin. */
-typedef int   (*f_plug_init)(const char* iversion, f_plug_api gethooksptr);
+typedef int   (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
 
 #ifndef WIN32
 #define LIBPTRTYPE void*
@@ -146,7 +146,7 @@ typedef struct _crossfire_plugin {
 } crossfire_plugin;
 
 extern int plugin_number;
-extern crossfire_plugin* plugins_list;
+extern crossfire_plugin *plugins_list;
 
 #ifdef WIN32
 
@@ -326,11 +326,11 @@ extern crossfire_plugin* plugins_list;
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
-/*extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
-extern MODULEAPI CFParm* endPlugin(CFParm* PParm);
-extern MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
-extern MODULEAPI CFParm* registerHook(CFParm* PParm);
-extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+/*extern MODULEAPI CFParm *initPlugin(CFParm *PParm);
+extern MODULEAPI CFParm *endPlugin(CFParm *PParm);
+extern MODULEAPI CFParm *getPluginProperty(CFParm *PParm);
+extern MODULEAPI CFParm *registerHook(CFParm *PParm);
+extern MODULEAPI CFParm *triggerEvent(CFParm *PParm);
 */
 
 /** One function the server exposes to plugins. */

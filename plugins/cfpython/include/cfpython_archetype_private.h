@@ -1,12 +1,12 @@
-static PyObject* Crossfire_Archetype_GetName( Crossfire_Archetype* whoptr, void* closure);
-static PyObject* Crossfire_Archetype_GetNext( Crossfire_Archetype* who, void* closure );
-static PyObject* Crossfire_Archetype_GetMore( Crossfire_Archetype* who, void* closure );
-static PyObject* Crossfire_Archetype_GetHead( Crossfire_Archetype* who, void* closure );
-static PyObject* Crossfire_Archetype_GetClone( Crossfire_Archetype* who, void* closure );
+static PyObject *Crossfire_Archetype_GetName(Crossfire_Archetype *whoptr, void *closure);
+static PyObject *Crossfire_Archetype_GetNext(Crossfire_Archetype *who, void *closure);
+static PyObject *Crossfire_Archetype_GetMore(Crossfire_Archetype *who, void *closure);
+static PyObject *Crossfire_Archetype_GetHead(Crossfire_Archetype *who, void *closure);
+static PyObject *Crossfire_Archetype_GetClone(Crossfire_Archetype *who, void *closure);
 
-static PyObject* Crossfire_Archetype_GetNewObject( Crossfire_Archetype* who, PyObject* args );
+static PyObject *Crossfire_Archetype_GetNewObject(Crossfire_Archetype *who, PyObject *args);
 
-static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype* left, Crossfire_Archetype* right);
+static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype *left, Crossfire_Archetype *right);
 
 static PyGetSetDef Archetype_getseters[] = {
     { "Name",       (getter)Crossfire_Archetype_GetName,     NULL, NULL, NULL },

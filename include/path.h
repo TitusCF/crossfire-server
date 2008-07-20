@@ -11,7 +11,7 @@
 /**
  * Combine two paths and return the combined path. Returns path.
  */
-char *path_combine(const char *src, const char *dst, char* path, int size);
+char *path_combine(const char *src, const char *dst, char *path, int size);
 
 /**
  * Normalize a path; the passed in path is modified in-place.
@@ -23,6 +23,6 @@ void path_normalize(char *path);
  * it is valid until the next call to either this function or to
  * combine_path().
  */
-char *path_combine_and_normalize(const char *src, const char *dst, char* path, int size);
+char *path_combine_and_normalize(const char *src, const char *dst, char *path, int size);
 
 #endif /* PATH_H */

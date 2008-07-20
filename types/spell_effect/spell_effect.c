@@ -31,8 +31,8 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator);
+static method_ret spell_effect_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator);
 static method_ret spell_effect_type_process(ob_methods *context, object *op);
 
 static void move_bolt(object *op);
@@ -65,8 +65,8 @@ void init_type_spell_effect(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret spell_effect_type_move_on(ob_methods* context, object* trap,
-    object* victim, object* originator)
+static method_ret spell_effect_type_move_on(ob_methods *context, object *trap,
+    object *victim, object *originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;
@@ -230,7 +230,7 @@ static void move_bolt(object *op) {
                 else if(right)
                     op->direction = absdir(op->direction-2);
             }
-            update_turn_face(op); /* A bolt *must* be IS_TURNABLE */
+            update_turn_face(op); /* A bolt *must *be IS_TURNABLE */
             return;
         } else { /* Create a copy of this object and put it ahead */
             tmp = get_object();
@@ -534,7 +534,7 @@ static void move_missile(object *op) {
     op->y = new_y;
     op->map = m;
     i=spell_find_dir(op->map, op->x, op->y, get_owner(op));
-    if (i > 0 && i != op->direction){
+    if (i > 0 && i != op->direction) {
         op->direction = i;
         SET_ANIMATION(op, op->direction);
     }

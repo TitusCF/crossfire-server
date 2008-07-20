@@ -35,7 +35,7 @@
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void legacy_ob_describe(const ob_methods* context, const object* op, const object* observer, char* buf, int size)
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size)
 {
     buf[0]='\0';
     if(op==NULL)

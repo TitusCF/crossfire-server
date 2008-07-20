@@ -47,11 +47,11 @@ void teardown(void)
 
 START_TEST (test_hit_player)
 {
-    object* victim = NULL;
-    object* hitter = NULL;
-    object* floor = NULL;
-    mapstruct* map = NULL;
-    archetype* deplete = NULL;
+    object *victim = NULL;
+    object *hitter = NULL;
+    object *floor = NULL;
+    mapstruct *map = NULL;
+    archetype *deplete = NULL;
     int test;
 
     map = get_empty_map(5, 5);

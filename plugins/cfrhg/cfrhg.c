@@ -57,8 +57,8 @@
 
 /** Link between a map and the exits to generate for it. */
 typedef struct house_zone_struct {
-    const char* mappath;        /**< Full map path. */
-    const char* monsterstyle;   /**< Style of monsters. */
+    const char *mappath;        /**< Full map path. */
+    const char *monsterstyle;   /**< Style of monsters. */
 } house_zone_struct;
 
 /** Maps we work on. */
@@ -83,7 +83,7 @@ static const house_zone_struct zones[] = {
  * @return
  * NULL if the map shouldn't be processed, else its parameters.
  */
-static const house_zone_struct* get_map_zone(const mapstruct* map) {
+static const house_zone_struct *get_map_zone(const mapstruct *map) {
     int zone;
     for (zone = 0; zones[zone].mappath != NULL; zone++) {
         if (strcmp(zones[zone].mappath, map->path) == 0)
@@ -100,7 +100,7 @@ static const house_zone_struct* get_map_zone(const mapstruct* map) {
  * @return
  * 1 if a map should be set, 0 else.
  */
-static int is_suitable_exit(object* exit) {
+static int is_suitable_exit(object *exit) {
     assert(exit);
 
     if (cf_object_get_int_property(exit, CFAPI_OBJECT_PROP_TYPE) != EXIT)
@@ -120,7 +120,7 @@ static int is_suitable_exit(object* exit) {
  * @return
  * random seed.
  */
-static int get_exit_seed(const object* exit, const mapstruct* map) {
+static int get_exit_seed(const object *exit, const mapstruct *map) {
     char r[500];
     int seed = 0, len, w = 0;
 
@@ -146,7 +146,7 @@ static int get_exit_seed(const object* exit, const mapstruct* map) {
  * @param map
  * map the exit is on.
  */
-static void add_exit_to_item(object* exit, const house_zone_struct* zone, const mapstruct* map) {
+static void add_exit_to_item(object *exit, const house_zone_struct *zone, const mapstruct *map) {
     char params[MAX_BUF];
 
     assert(exit);
@@ -172,10 +172,10 @@ static void add_exit_to_item(object* exit, const house_zone_struct* zone, const 
  * @param map
  * map to work on.
  */
-static void add_exits_to_map(const mapstruct* map) {
+static void add_exits_to_map(const mapstruct *map) {
     int x, y;
-    object* item;
-    const house_zone_struct* zone = get_map_zone(map);
+    object *item;
+    const house_zone_struct *zone = get_map_zone(map);
     if (!zone)
         return;
 
@@ -199,11 +199,11 @@ static void add_exits_to_map(const mapstruct* map) {
  * @return
  * pointer to integer with value 0.
  */
-CF_PLUGIN void* globalEventListener(int* type, ...)
+CF_PLUGIN void *globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
-    mapstruct* map;
+    mapstruct *map;
     int code;
 
     va_start(args, type);
@@ -230,7 +230,7 @@ CF_PLUGIN void* globalEventListener(int* type, ...)
  * @return
  * NULL.
  */
-CF_PLUGIN void* eventListener(int* type, ...) {
+CF_PLUGIN void *eventListener(int *type, ...) {
     return NULL;
 }
 
@@ -243,9 +243,9 @@ CF_PLUGIN void* eventListener(int* type, ...) {
  * @return
  * 0.
  */
-CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
 {
-    cf_init_plugin( gethooksptr );
+    cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
 
@@ -259,13 +259,13 @@ CF_PLUGIN int initPlugin(const char* iversion, f_plug_api gethooksptr)
  * @return
  * NULL.
  */
-CF_PLUGIN void* getPluginProperty(int* type, ...)
+CF_PLUGIN void *getPluginProperty(int *type, ...)
 {
     va_list args;
-    const char* propname;
+    const char *propname;
     int i, size;
-    command_array_struct* rtn_cmd;
-    char* buf;
+    command_array_struct *rtn_cmd;
+    char *buf;
 
     va_start(args, type);
     propname = va_arg(args, const char *);
@@ -296,7 +296,7 @@ CF_PLUGIN void* getPluginProperty(int* type, ...)
  * @return
  * -1.
  */
-CF_PLUGIN int runPluginCommand(object* op, char* params)
+CF_PLUGIN int runPluginCommand(object *op, char *params)
 {
     return -1;
 }

@@ -30,7 +30,7 @@
 #include <sproto.h>
 
 static method_ret book_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the BOOK object type.
@@ -50,7 +50,7 @@ void init_type_book(void)
  * @retval METHOD_OK If applier was a player
  */
 static method_ret book_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     int lev_diff;
     object *skill_ob;
@@ -121,7 +121,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
     printf("Book applied: %s\n", tmp->name);*/
     {
         char desc[MAX_BUF];
-        readable_message_type* msgType = get_readable_message_type(op);
+        readable_message_type *msgType = get_readable_message_type(op);
         draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, applier,
             msgType->message_type, msgType->message_subtype,
             "You open the %s and start reading.\n%s",

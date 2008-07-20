@@ -36,8 +36,8 @@ Structures and functions used for the @ref page_dialog "dialog system".
  * Frees obj::dialog_information.
  * @param op what to clean for.
  */
-void free_dialog_information(object* op) {
-    struct_dialog_message* current, *next;
+void free_dialog_information(object *op) {
+    struct_dialog_message *current, *next;
     struct_dialog_reply *currep, *nextrep;
 
     if (!QUERY_FLAG(op, FLAG_DIALOG_PARSED))
@@ -79,7 +79,7 @@ void free_dialog_information(object* op) {
  * @param original item to duplicate.
  * @return copy of original.
  */
-struct_dialog_information* duplicate_dialog_information(struct_dialog_information* original) {
+struct_dialog_information *duplicate_dialog_information(struct_dialog_information *original) {
     return NULL;
 }
 
@@ -90,7 +90,7 @@ struct_dialog_information* duplicate_dialog_information(struct_dialog_informatio
  * @return 1 if match, 0 else.
  * @todo better * handling (incorrect now, will match even if trailing chars)
  */
-static int matches(const char* exp, const char* text) {
+static int matches(const char *exp, const char *text) {
     char *pipe, *save, *msg;
     int match = 0;
 
@@ -118,9 +118,9 @@ static int matches(const char* exp, const char* text) {
  *
  * @param op object to parse the obj::msg field.
  */
-void parse_dialog_information(object* op) {
-    struct_dialog_message* message = NULL, *last = NULL;
-    struct_dialog_reply* reply = NULL;
+void parse_dialog_information(object *op) {
+    struct_dialog_message *message = NULL, *last = NULL;
+    struct_dialog_reply *reply = NULL;
     char *current, *save, *msg, *cp;
     int len;
     /* Used for constructing message with */
@@ -218,7 +218,7 @@ void parse_dialog_information(object* op) {
  * @return 0 if no match, 1 if a message did match the text.
  * @todo smarter match, try to find exact before joker (*) one.
  */
-int get_dialog_message(object* op, const char* text, struct_dialog_message** message, struct_dialog_reply** reply) {
+int get_dialog_message(object *op, const char *text, struct_dialog_message** message, struct_dialog_reply** reply) {
     if (!QUERY_FLAG(op, FLAG_DIALOG_PARSED))
         parse_dialog_information(op);
 

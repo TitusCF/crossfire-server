@@ -1002,7 +1002,7 @@ int cast_curse(object *op, object *caster, object *spell_ob, int dir) {
  */
 int mood_change(object *op, object *caster, object *spell) {
     object *tmp, *head;
-    const object* god;
+    const object *god;
     int done_one, range, mflags, level, at, best_at;
     sint16 x, y, nx, ny;
     mapstruct *m;

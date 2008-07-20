@@ -42,15 +42,15 @@
 #include <stdlib.h>
 #include <global.h>
 
-char* monster_page_head;       /* Head of wiki page of monsters  */
-char* monster_page_foot;       /* Foot of wiki page of monsters  */
-char* monster_entry;           /* A single monster entry         */
-char* monster_canuse_row;      /* Can_use table row              */
-char* monster_protected_row;   /* Protected table row            */
-char* monster_vulnerable_row;  /* Vulnerable table row           */
-char* monster_special_row;     /* Special table row              */
-char* monster_attack_row;      /* Attack types table row         */
-char* monster_lore_row;        /* Lore table row                 */
+char *monster_page_head;       /* Head of wiki page of monsters  */
+char *monster_page_foot;       /* Foot of wiki page of monsters  */
+char *monster_entry;           /* A single monster entry         */
+char *monster_canuse_row;      /* Can_use table row              */
+char *monster_protected_row;   /* Protected table row            */
+char *monster_vulnerable_row;  /* Vulnerable table row           */
+char *monster_special_row;     /* Special table row              */
+char *monster_attack_row;      /* Attack types table row         */
+char *monster_lore_row;        /* Lore table row                 */
 
 typedef struct string_array {
     sint16 count;
@@ -109,7 +109,7 @@ const char *const flag_names[NUM_FLAGS+1] = {
  * @return
  * new string that should be free()d by caller.
  */
-static char* cat_template(char* source, char* add) {
+static char *cat_template(char *source, char *add) {
     if (!source)
         return add;
     source = realloc(source, strlen(source) + strlen(add) + 1);
@@ -128,8 +128,8 @@ static char* cat_template(char* source, char* add) {
  * @return
  * 1 if error, 0 else.
  */
-static int read_template(const char* name, char** buffer) {
-    FILE* file;
+static int read_template(const char *name, char** buffer) {
+    FILE *file;
     size_t size;
     struct stat info;
 
@@ -182,14 +182,14 @@ static int read_template(const char* name, char** buffer) {
  * @note
  * returned string will be a memory block larger than required, for performance reasons.
  */
-static char* do_template(const char* template, const char** vars, const char** values) {
+static char *do_template(const char *template, const char** vars, const char** values) {
     int count = 0;
-    const char* sharp = template;
+    const char *sharp = template;
     int maxlen = 0;
     int var = 0;
-    char* result;
-    char* current_result;
-    const char* end;
+    char *result;
+    char *current_result;
+    const char *end;
 
     while ((sharp = strchr(sharp, '#')) != NULL) {
         sharp++;
@@ -252,9 +252,9 @@ static char* do_template(const char* template, const char** vars, const char** v
  * Pointer to free memory from
  *
  */
-static void free_if_used(char *p){
+static void free_if_used(char *p) {
 
-    if(p && strlen(p) > 0){
+    if(p && strlen(p) > 0) {
         free(p);
     }
 }
@@ -271,7 +271,7 @@ static void free_if_used(char *p){
  * Second value
  *
  */
-static int sortbyname(const void *a, const void *b){
+static int sortbyname(const void *a, const void *b) {
     return (strcasecmp(*(const char**)a, *(const char**)b));
 }
 
@@ -288,7 +288,7 @@ static int sortbyname(const void *a, const void *b){
  * Second value
  *
  */
-static int sort_archetypes(const void *a, const void *b){
+static int sort_archetypes(const void *a, const void *b) {
     archetype *aa;
     archetype *bb;
 
@@ -310,7 +310,7 @@ static int sort_archetypes(const void *a, const void *b){
  * The new string to append
  *
  */
-void push(String_Array* array, const char* string){
+void push(String_Array *array, const char *string) {
     sint16 i = array->count;
 
     array->item[i] = strdup_local(string);
@@ -325,7 +325,7 @@ void push(String_Array* array, const char* string){
  * @param array
  * element we want to clean.
  */
-void free_data(String_Array* array) {
+void free_data(String_Array *array) {
     int item;
     for (item = 0; item < array->count; item++)
         free(array->item[item]);
@@ -343,19 +343,19 @@ void free_data(String_Array* array) {
  * Pointer to struct of type String_Array, containing strings to join
  *
  */
-const char* join_with_comma(String_Array* array){
+const char *join_with_comma(String_Array *array) {
     char *newtext;
     int i;
 
     newtext = calloc(1,1);
     qsort(array->item, array->count, sizeof(char *), sortbyname);
-    for(i=0;i<array->count;i++ ){
-        if(i){
-            newtext = realloc( newtext, strlen(newtext) + strlen(", ") +1 );
-            newtext = strncat( newtext, ", ", 2 );
+    for(i=0;i<array->count;i++ ) {
+        if(i) {
+            newtext = realloc(newtext, strlen(newtext) + strlen(", ") +1);
+            newtext = strncat(newtext, ", ", 2);
         }
-        newtext = realloc( newtext, strlen(newtext) + strlen(array->item[i]) +1 );
-        newtext = strncat( newtext, array->item[i], strlen(array->item[i]));
+        newtext = realloc(newtext, strlen(newtext) + strlen(array->item[i]) +1);
+        newtext = strncat(newtext, array->item[i], strlen(array->item[i]));
     }
     return newtext;
 }
@@ -376,7 +376,7 @@ int main(int argc, char *argv[]) {
     FILE *image_list;
     char image_list_path[128];
     char wikifile[128];
-    char* template;
+    char *template;
 
     const char *wikidir = "/tmp";  /* Should change this to come from command line? */
 
@@ -416,15 +416,15 @@ int main(int argc, char *argv[]) {
         return;
     sprintf(image_list_path, "%s/image_list", wikidir);
     image_list = fopen(image_list_path, "w");
-    if( !image_list){
+    if(!image_list) {
         LOG(llevError, "Unable to open image list file!\n");
         exit(1);
     }
 
         /* Pick out the monster archetypes and sort them into an array */
-    for(at=first_archetype; at!=NULL; at=at->next){
+    for(at=first_archetype; at!=NULL; at=at->next) {
         if(QUERY_FLAG(&at->clone, FLAG_MONSTER) &&
-           QUERY_FLAG(&at->clone,FLAG_ALIVE)){
+           QUERY_FLAG(&at->clone,FLAG_ALIVE)) {
             monster[archnum++] = at;
         }
     }
@@ -437,7 +437,7 @@ int main(int argc, char *argv[]) {
 
     for(i=0; i<archnum; i++) {
         at=monster[i];
-        if(at){
+        if(at) {
             const char *key[16] = {NULL,};
             const char *val[16] = {NULL,};
             char buf[16][MAX_BUF];
@@ -448,14 +448,14 @@ int main(int argc, char *argv[]) {
             LOG(llevInfo, "Doing archetype %s\n", at->name);
 
             if(letter != last_letter) {  /* New letter, new file */
-                if(fp){
+                if(fp) {
                     keycount = 0;
                     key[keycount] = NULL;
                     template = do_template(monster_page_foot, key, val);
                     res = fprintf(fp, "%s", template);
                     free(template);
                     template = NULL;
-                    if( res < 0 ){
+                    if(res < 0) {
                         LOG(llevError, "Unable to write to file!\n");
                     }
                     fclose(fp);
@@ -464,7 +464,7 @@ int main(int argc, char *argv[]) {
                 snprintf(wikifile, sizeof(wikifile),
                          "%s/%c", wikidir, letter);
                 fp = fopen(wikifile, "w");
-                if(! fp){
+                if(! fp) {
                     fprintf(stderr, "Unable to write to wiki file!\n");
                     exit(1);
                 }
@@ -472,8 +472,8 @@ int main(int argc, char *argv[]) {
                 char letterindexnext[7];
                 char li;
                 letterindexnext[0] = '\0';
-                for(li='a';li<='z';li++){
-                    if(li == letter){
+                for(li='a';li<='z';li++) {
+                    if(li == letter) {
                         sprintf(letterindexnext, "%c ", toupper(li));
                     } else {
                         sprintf(letterindexnext, "[[%c]] ", toupper(li));
@@ -491,7 +491,7 @@ int main(int argc, char *argv[]) {
                 template = do_template(monster_page_head, key, val);
                 res = fprintf(fp, template);
                 free(template);
-                if( res < 0 ){
+                if(res < 0) {
                     LOG(llevError, "Unable to write to file!");
                 }
                 last_letter = letter;
@@ -528,7 +528,7 @@ int main(int argc, char *argv[]) {
             special.item = calloc(1,sizeof(const char*)*(NROFATTACKS+1));
 
                 /* Do lore row */
-            if( at->clone.lore ) {
+            if(at->clone.lore) {
                 key[keycount] = "LORE";
                 key[keycount+1] = NULL;
                 val[keycount] = at->clone.lore;
@@ -541,14 +541,14 @@ int main(int argc, char *argv[]) {
                 /* Do canuse row */
             canuse.count = 0;
             keycount = 0;
-            for( j=1; j<= NUM_FLAGS; j++ ) {
-                if( QUERY_FLAG(&at->clone, j) &&
+            for(j=1; j<= NUM_FLAGS; j++ ) {
+                if(QUERY_FLAG(&at->clone, j) &&
                     flag_names[j] &&
                     ! strncmp(flag_names[j], "can_use_", 8) ) {
                     push(&canuse, flag_names[j]+8);
                 }
             }
-            if( canuse.count ){
+            if(canuse.count) {
                 key[keycount] = "CANUSE";
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&canuse);
@@ -561,11 +561,11 @@ int main(int argc, char *argv[]) {
                 /* Do protected/vulnerable rows */
             resist.count = 0;
             vulner.count = 0;
-            for( j=0; j<=NROFATTACKS; j++ ) {
-                if( at->clone.resist[j] && attacktype_desc[j] ){
+            for(j=0; j<=NROFATTACKS; j++ ) {
+                if(at->clone.resist[j] && attacktype_desc[j] ) {
                     char rowtext[32];
 
-                    if( at->clone.resist[j] < 0 ){
+                    if(at->clone.resist[j] < 0) {
                         sprintf(rowtext, "%s %i",
                                 attacktype_desc[j], at->clone.resist[j]);
                         push(&vulner, rowtext);
@@ -577,7 +577,7 @@ int main(int argc, char *argv[]) {
                 }
             }
             keycount = 0;
-            if( resist.count ){
+            if(resist.count) {
                 key[keycount] = "PROTECTED";
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&resist);
@@ -588,7 +588,7 @@ int main(int argc, char *argv[]) {
                 protected_row = strdup("");
 
             keycount = 0;
-            if( vulner.count ){
+            if(vulner.count) {
                 key[keycount] = "VULNERABLE";
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&vulner);
@@ -602,12 +602,12 @@ int main(int argc, char *argv[]) {
             attack.count = 0;
             keycount = 0;
             val[keycount]=NULL;
-            for( j=0; j<=NROFATTACKS; j++ ) {
-                if( at->clone.attacktype & (1U << j)) {
+            for(j=0; j<=NROFATTACKS; j++ ) {
+                if(at->clone.attacktype & (1U << j)) {
                     push(&attack, attacktype_desc[j]);
                 }
             }
-            if( attack.count ){
+            if(attack.count) {
                 key[keycount] = "ATTACKS";
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&attack);
@@ -621,12 +621,12 @@ int main(int argc, char *argv[]) {
             special.count = 0;
             keycount = 0;
             val[keycount]=NULL;
-            for( j=0; special_flags[j] >= 0; j++ ) {
-                if( QUERY_FLAG(&at->clone, special_flags[j])){
+            for(j=0; special_flags[j] >= 0; j++ ) {
+                if(QUERY_FLAG(&at->clone, special_flags[j])) {
                     push(&special, special_names[j]);
                 }
             }
-            if( special.count ){
+            if(special.count) {
                 key[keycount] = "SPECIAL";
                 key[keycount+1] = NULL;
                 val[keycount] = join_with_comma(&special);
@@ -661,12 +661,12 @@ int main(int argc, char *argv[]) {
             key[keycount]   = "NAME";
             val[keycount++] = at->clone.name;
             key[keycount]   = "RACE";
-            if(at->clone.race){
+            if(at->clone.race) {
                 val[keycount++] = at->clone.race;
             } else {
                 val[keycount++] = NA;
             }
-            if(at->clone.face->name){
+            if(at->clone.face->name) {
                 key[keycount]   = "FACE";
                 sprintf(buf[keycount], "{{http://aaron.baugher.biz/images/cf/%s.png}}",
                         at->clone.face->name);
@@ -680,7 +680,7 @@ int main(int argc, char *argv[]) {
             key[keycount]   = NULL;
 
             template = do_template(monster_entry, key, val);
-            fprintf(fp, template );
+            fprintf(fp, template);
             free(template);
             template = NULL;
 
@@ -775,7 +775,7 @@ void fix_auto_apply(mapstruct *m) {
                                             m->difficulty,0);
                 }
                 if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-                   tmp->randomitems){
+                   tmp->randomitems) {
                     if(tmp->type==CONTAINER) {
                         if (HAS_RANDOM_ITEMS(tmp))
                             while ((tmp->stats.hp--)>0)
@@ -804,16 +804,16 @@ void fix_auto_apply(mapstruct *m) {
  **/
 
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2){
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2) {
     fprintf(logfile, "%s\n", txt);
 }
 
 void draw_ext_info_format(
     int flags, int pri, const object *pl, uint8 type,
     uint8 subtype,
-    const char* new_format,
-    const char* old_format,
-    ...){
+    const char *new_format,
+    const char *old_format,
+    ...) {
 
     va_list ap;
     va_start(ap, old_format);
@@ -822,49 +822,49 @@ void draw_ext_info_format(
 }
 
 
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2){
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_firewall( object* ob){
+void move_firewall(object *ob) {
 }
 
-void emergency_save( int x ){
+void emergency_save(int x) {
 }
 
-void clean_tmp_files( void ){
+void clean_tmp_files(void) {
 }
 
-void esrv_send_item( object* ob, object* obx ){
+void esrv_send_item(object *ob, object *obx) {
 }
 
-void dragon_ability_gain( object* ob, int x, int y ){
+void dragon_ability_gain(object *ob, int x, int y) {
 }
 
-void set_darkness_map( mapstruct* m){
+void set_darkness_map(mapstruct *m) {
 }
 
-object* find_skill_by_number(object *who, int skillno){
+object *find_skill_by_number(object *who, int skillno) {
     return NULL;
 }
 
-void esrv_del_item(player *pl, int tag){
+void esrv_del_item(player *pl, int tag) {
 }
 
-void esrv_update_spells(player *pl){
+void esrv_update_spells(player *pl) {
 }
 
-void monster_check_apply( object* ob, object* obt ){
+void monster_check_apply(object *ob, object *obt) {
 }
 
-void trap_adjust( object* ob, int x ){
+void trap_adjust(object *ob, int x) {
 }
 
-int execute_event(object* op, int eventcode, object* activator, object* third, const char* message, int fix){
+int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
     return 0;
 }
 
-int execute_global_event(int eventcode, ...){
+int execute_global_event(int eventcode, ...) {
     return 0;
 }
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

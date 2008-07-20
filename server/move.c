@@ -625,7 +625,7 @@ int push_ob(object *who, int dir, object *pusher) {
  * @return
  * 0 if op is on the specified spot, 1 if it moved towards the goal, 2 if it didn't find any path to the goal.
  */
-int move_to(object* op, int x, int y) {
+int move_to(object *op, int x, int y) {
     int direction;
     if (op->x == x && op->y == y)
         return 0;

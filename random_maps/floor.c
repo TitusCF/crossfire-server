@@ -58,9 +58,9 @@ static int can_propagate(char item) {
  * @param floor_arch
  * what floor to use.
  */
-static void put_floor(mapstruct* map, char** layout, int x, int y, object* floor_arch) {
+static void put_floor(mapstruct *map, char** layout, int x, int y, object *floor_arch) {
     int dx, dy;
-    object* floor;
+    object *floor;
 
     floor = arch_to_object(floor_arch->arch);
     floor->x = x;

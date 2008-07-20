@@ -50,7 +50,7 @@ void teardown(void)
 
 START_TEST (test_find_archetype_by_object_name)
 {
-    archetype* arch;
+    archetype *arch;
     arch = find_archetype_by_object_name("large city");
     fail_unless(arch!=NULL,"Searching for an existing arch name (large city) should work");
     fail_unless(!strcmp(arch->clone.name,"large city"),
@@ -76,7 +76,7 @@ END_TEST
 
 START_TEST (test_find_archetype_by_object_type_name)
 {
-    archetype* arch;
+    archetype *arch;
     arch = find_archetype_by_object_type_name(66,"large city");
     fail_unless(arch!=NULL,"Searching for an existing arch name (large city) + type (66) should work");
     fail_unless(arch->clone.type==66,"Requested type 66 but got %d",arch->clone.type);
@@ -103,7 +103,7 @@ END_TEST
 
 START_TEST (test_get_archetype_by_skill_name)
 {
-    archetype* arch;
+    archetype *arch;
     arch = get_archetype_by_skill_name("alchemy",SKILL);
     fail_unless(arch!=NULL,"Should be able to discover the alchemy skill");
     fail_unless(!strcmp(arch->name,"skill_alchemy"), "should have returned skill_alchemy but returned %s",arch->name);
@@ -118,7 +118,7 @@ END_TEST
 
 START_TEST (test_get_archetype_by_type_subtype)
 {
-    archetype* arch;
+    archetype *arch;
     arch = get_archetype_by_type_subtype(SKILL,SK_LITERACY);
     fail_unless(arch!=NULL,"Should be able to find an arch of type SKILL, subtype SK_LITERACY");
     fail_unless(arch->clone.type==SKILL,"Arch of type SKILL, subtype SK_LITERACY shoud have type %d but has type %d",
@@ -145,7 +145,7 @@ END_TEST
 
 START_TEST (test_create_archetype_by_object_name)
 {
-    object* ob;
+    object *ob;
     ob = create_archetype_by_object_name("writing pen");
     fail_unless(ob!=NULL,"Should never return null");
     fail_unless(strncmp(ob->name,ARCH_SINGULARITY,strlen(ARCH_SINGULARITY)),
@@ -174,7 +174,7 @@ END_TEST
 START_TEST (test_init_archetypes)
 {
     /*init_archetypes is used by setup, just check it created the empty_archetype*/
-    archetype* arch = find_archetype("empty_archetype");
+    archetype *arch = find_archetype("empty_archetype");
     fail_unless(arch!=NULL,"init_archetype should have an 'empty_archetype' loaded");
 }
 END_TEST
@@ -187,7 +187,7 @@ END_TEST
 
 START_TEST(test_free_all_archs)
 {
-	archetype* arch ;
+	archetype *arch ;
     free_all_archs();
     arch = find_archetype("empty_archetype");
     fail_unless(arch==NULL,"init_archetype should not have an 'empty_archetype' loaded after call to free_all_archs");
@@ -199,7 +199,7 @@ END_TEST
 
 START_TEST(test_get_archetype_struct)
 {
-	archetype* arch = get_archetype_struct();
+	archetype *arch = get_archetype_struct();
 	fail_unless(arch!=NULL,"get_archetype_struct should not return NULL");
 	fail_unless(arch->name==NULL,"arch->name of get_archetype_struct should be inited to NULL");
 	fail_unless(arch->head==NULL,"arch->head of get_archetype_struct should be inited to NULL");
@@ -248,8 +248,8 @@ END_TEST
 
 START_TEST (test_arch_to_object)
 {
-	archetype* arch;
-	object* obj;
+	archetype *arch;
+	object *obj;
 	arch=find_archetype("empty_archetype");
 	obj=arch_to_object(arch);
 	fail_unless(obj!=NULL,"instanciating an arch should not return null");
@@ -258,7 +258,7 @@ END_TEST
 
 START_TEST (test_create_singularity)
 {
-    object* obj;
+    object *obj;
     obj = create_singularity("XYZABCD");
     fail_unless(obj!=NULL,"create_singularity should not return null");
     fail_unless(strstr(obj->name,"XYZABCD")!=NULL,"create_singularity(\"XYZABCD\") should put XYZABCD somewhere in singularity name");
@@ -268,7 +268,7 @@ END_TEST
 
 START_TEST (test_create_archetype)
 {
-    object* obj;
+    object *obj;
     obj=create_archetype("empty_archetype");
     fail_unless(obj!=NULL,"create_archetype(\"empty_archetype\") should not return null");
 }
@@ -276,7 +276,7 @@ END_TEST
 
 START_TEST (test_find_archetype)
 {
-    archetype* arch;
+    archetype *arch;
     arch=find_archetype("empty_archetype");
     fail_unless(arch!=NULL,"find_archetype(\"empty_archetype\") should not return null");
     arch = find_archetype("elvenboots");
@@ -288,8 +288,8 @@ END_TEST
 
 START_TEST (test_object_create_arch)
 {
-    archetype* arch;
-    object* obj;
+    archetype *arch;
+    object *obj;
     arch = find_archetype("dark_palace_4");
     obj = object_create_arch(arch);
     fail_unless(obj!=NULL,"Should be able to fully instanciate the dark_palace");

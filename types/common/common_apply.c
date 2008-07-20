@@ -38,8 +38,8 @@
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
  * However, some types of traps require an originator to function.
  */
-method_ret common_ob_move_on(ob_methods* context, object* trap, object* victim,
-    object* originator)
+method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim,
+    object *originator)
 {
     if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
         return METHOD_OK;
@@ -51,8 +51,8 @@ method_ret common_ob_move_on(ob_methods* context, object* trap, object* victim,
 
 static int ob_move_on_recursion_depth = 0;
 
-method_ret common_pre_ob_move_on(object* trap, object* victim,
-    object* originator)
+method_ret common_pre_ob_move_on(object *trap, object *victim,
+    object *originator)
 {
     /* If player is DM, only 2 cases to consider:
      * - exits
@@ -92,8 +92,8 @@ method_ret common_pre_ob_move_on(object* trap, object* victim,
     }
     return METHOD_OK;
 }
-void common_post_ob_move_on(object* trap, object* victim,
-    object* originator)
+void common_post_ob_move_on(object *trap, object *victim,
+    object *originator)
 {
     ob_move_on_recursion_depth--;
     if (ob_move_on_recursion_depth<0) /* Safety net :) */

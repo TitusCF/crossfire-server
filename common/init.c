@@ -117,7 +117,7 @@ struct Statistics statistics;
  * in some file in the common area so that standalone
  * programs, like the random map generator, can be built.
  */
-const char* const spellpathnames[NRSPELLPATHS] = {
+const char *const spellpathnames[NRSPELLPATHS] = {
     "Protection",
     "Fire",
     "Frost",
@@ -293,8 +293,8 @@ void init_globals(void) {
  */
 void free_globals(void) {
     int msg, attack;
-    objectlink* friend;
-    region* reg;
+    objectlink *friend;
+    region *reg;
 
     FREE_AND_CLEAR_STR(undead_name);
     for (msg = 0; msg < NROFATTACKMESS; msg++)
@@ -383,7 +383,7 @@ void init_dynamic(void) {
                 strcpy(first_map_ext_path, at->clone.race);
             }
             if (EXIT_PATH(&at->clone)) {
-                mapstruct* first;
+                mapstruct *first;
                 snprintf(first_map_path, sizeof(first_map_path), "%s", EXIT_PATH(&at->clone));
                 first = ready_map_name(first_map_path, 0);
                 if (!first) {

@@ -31,7 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret lamp_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret lamp_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the LAMP object type.
@@ -51,8 +51,8 @@ void init_type_lamp(void) {
  * @param onoff
  * string that will be appended to the 'turn' verb in the message.
  */
-static void do_turn(object* op, object* who, int aflags, const char* onoff) {
-    object* tmp2;
+static void do_turn(object *op, object *who, int aflags, const char *onoff) {
+    object *tmp2;
 
     if (!(aflags & AP_NOPRINT))
         draw_ext_info_format(NDI_UNIQUE, 0, who,
@@ -108,8 +108,8 @@ static void do_turn(object* op, object* who, int aflags, const char* onoff) {
  * @return
  * METHOD_ERROR if lamp can't be applied, METHOD_OK else.
  */
-static method_ret lamp_type_apply(ob_methods *context, object *lamp, object* applier, int aflags) {
-    object* tmp;
+static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *applier, int aflags) {
+    object *tmp;
 
     if (get_player_container(lamp) != applier) {
         draw_ext_info_format (NDI_UNIQUE, 0, applier,

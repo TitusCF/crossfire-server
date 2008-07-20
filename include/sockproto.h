@@ -95,6 +95,6 @@ void esrv_send_pickup(player *pl);
 void esrv_add_spells(player *pl, object *spell);
 void send_tick(player *pl);
 /* sounds.c */
-void play_sound_player_only(player *pl, sint8 sound_type, object* emitter, int dir, const char* action);
-void play_sound_map(sint8 sound_type, object* emitter, int dir, const char* action);
+void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int dir, const char *action);
+void play_sound_map(sint8 sound_type, object *emitter, int dir, const char *action);
 void send_background_music(player *pl, const char *music);

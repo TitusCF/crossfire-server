@@ -120,7 +120,7 @@ static int adj_stealchance(object *op, object *victim, int roll) {
  * @retval 1
  * something was stolen.
  */
-static int attempt_steal(object* op, object* who, object *skill) {
+static int attempt_steal(object *op, object *who, object *skill) {
     object *success=NULL, *tmp=NULL, *next;
     int roll=0, chance=0, stats_value;
     rv_vector rv;
@@ -278,7 +278,7 @@ static int attempt_steal(object* op, object* who, object *skill) {
  * @return
  * experience gained for stealing, 0 if nothing was stolen.
  */
-int steal(object* op, int dir, object *skill) {
+int steal(object *op, int dir, object *skill) {
     object *tmp, *next;
     sint16 x, y;
     mapstruct *m;

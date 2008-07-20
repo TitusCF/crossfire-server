@@ -77,7 +77,7 @@ void cftimer_process_timers(void) {
  * object tag to use.
  */
 static void cftimer_process_event(tag_t ob_tag) {
-    object* ob = find_object(ob_tag);
+    object *ob = find_object(ob_tag);
     if (ob)
         execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
 }
@@ -101,7 +101,7 @@ static void cftimer_process_event(tag_t ob_tag) {
  * @retval ::TIMER_ERR_OBJ
  * ob is NULL or has no ::EVENT_TIMER handler.
  */
-int cftimer_create(int id, long delay, object* ob, int mode) {
+int cftimer_create(int id, long delay, object *ob, int mode) {
     if (id >= MAX_TIMERS)
         return TIMER_ERR_ID;
     if (id < 0)

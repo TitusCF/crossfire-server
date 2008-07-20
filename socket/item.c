@@ -862,7 +862,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
     }
 }
 
-void inscribe_scroll_cmd(char* buf, int len, player* pl) {
+void inscribe_scroll_cmd(char *buf, int len, player *pl) {
     object *scroll, *spell, *marked, *inscription, *currentspell;
     tag_t tscroll, tspell, tmarked;
     char type;

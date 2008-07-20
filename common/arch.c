@@ -69,7 +69,7 @@ static void load_archetypes(void);
  */
 archetype *find_archetype_by_object_name(const char *name) {
     archetype *at;
-    const char* tmp;
+    const char *tmp;
 
     if (name == NULL)
         return (archetype *) NULL;
@@ -270,7 +270,7 @@ void dump_all_archetypes(void) {
  * @param at
  * archetype to free. Pointer becomes invalid after the call.
  */
-void free_arch(archetype* at) {
+void free_arch(archetype *at) {
     if (at->name) free_string(at->name);
     if (at->clone.name) free_string(at->clone.name);
     if (at->clone.name_pl) free_string(at->clone.name_pl);
@@ -424,7 +424,7 @@ static void first_arch_pass(FILE *fp) {
 static void second_arch_pass(FILE *fp) {
     char buf[MAX_BUF],*variable=buf,*argument,*cp;
     archetype *at=NULL,*other;
-    object* inv;
+    object *inv;
 
     while (fgets(buf,MAX_BUF,fp)!=NULL) {
         if (*buf=='#')

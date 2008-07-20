@@ -36,7 +36,7 @@
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void common_ob_describe(const ob_methods* context, const object* op, const object* observer, char* buf, int size)
+void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size)
 {
     char name[VERY_BIG_BUF];
 

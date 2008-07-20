@@ -83,7 +83,7 @@ typedef signed char     sint8;
 #define SINT8_MAX       127
 
 /** Strings that should be manipulated through add_string() and free_string(). */
-typedef const char* sstring;
+typedef const char *sstring;
 
 typedef unsigned short Fontindex;
 
@@ -99,8 +99,8 @@ typedef signed __int64          sint64;
 #define FMT64U                  "I64u"
 
 /* To reduce number of warnings */
-#pragma warning( disable: 4244 ) /* conversion from 'xxx' to 'yyy', possible loss of data */
-#pragma warning( disable: 4305 ) /* initializing float f = 0.05; instead of f = 0.05f; */
+#pragma warning(disable: 4244) /* conversion from 'xxx' to 'yyy', possible loss of data */
+#pragma warning(disable: 4305) /* initializing float f = 0.05; instead of f = 0.05f; */
 
 #else /* WIN32 */
 

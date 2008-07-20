@@ -210,7 +210,7 @@ static void set_wall(object *op,int x,int y) {
  * Values based on MAP_CLIENT_X and Y that index the blocked[][] arrays.
  *
  * @todo
- * use player* instead of object* to show it must be a player?
+ * use player *instead of object *to show it must be a player?
  */
 static void check_wall(object *op,int x,int y) {
     int ax, ay;
@@ -249,7 +249,7 @@ static void check_wall(object *op,int x,int y) {
  * player's object.
  *
  * @todo
- * use player* instead of object* to show it must be a player?
+ * use player *instead of object *to show it must be a player?
  */
 void clear_los(object *op) {
     /* This is safer than using the socket->mapx, mapy because
@@ -271,7 +271,7 @@ void clear_los(object *op) {
  * player's object to process.
  *
  * @todo
- * use player* instead of object* to show it must be a player? */
+ * use player *instead of object *to show it must be a player? */
 static void expand_sight(object *op) {
     int i,x,y, dx, dy;
 

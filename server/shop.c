@@ -68,7 +68,7 @@ static double shop_greed(const mapstruct *map);
 #define NUM_COINS 5     /**< Number of coin types */
 #define LARGEST_COIN_GIVEN 2 /**< Never give amber or jade, but accept them */
 /** Coins to use for shopping. */
-static const char* const coins[] = {"ambercoin", "jadecoin","platinacoin",
+static const char *const coins[] = {"ambercoin", "jadecoin","platinacoin",
                                     "goldcoin", "silvercoin", NULL};
 
 /**
@@ -120,7 +120,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     int shop;
     float diff;
     float ratio;
-    const char* key;
+    const char *key;
 
     no_bargain = flag & F_NO_BARGAIN;
     identified = flag & F_IDENTIFIED;
@@ -399,7 +399,7 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
  * @return
  * buffer containing the price, either buf or if NULL a new StringBuffer.
  */
-static StringBuffer* cost_string_from_value(uint64 cost, StringBuffer* buf) {
+static StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
     archetype *coin, *next_coin;
     uint32 num;
     int cointype = LARGEST_COIN_GIVEN;
@@ -470,7 +470,7 @@ static StringBuffer* cost_string_from_value(uint64 cost, StringBuffer* buf) {
  * @return
  * buf with the value.
  */
-static StringBuffer* real_money_value(const object* coin, StringBuffer* buf) {
+static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
     assert(coin->type == MONEY);
     assert(buf);
 
@@ -493,7 +493,7 @@ static StringBuffer* real_money_value(const object* coin, StringBuffer* buf) {
  * @return
  * buffer containing the price, new if buf was NULL.
  */
-StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBuffer* buf) {
+StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBuffer *buf) {
     uint64 real_value = query_cost(tmp,who,flag);
     int idskill1=0;
     int idskill2=0;
@@ -879,7 +879,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
  * @param coincount
  * array of NUM_COINS size, will contain how many coins of the type the player has.
  */
-static void count_unpaid(object* pl, object* item, int* unpaid_count, uint64* unpaid_price, uint32* coincount) {
+static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *unpaid_price, uint32 *coincount) {
     int i;
     for (;item;item = item->below) {
         if QUERY_FLAG(item, FLAG_UNPAID) {
@@ -931,7 +931,7 @@ int can_pay(object *pl) {
     if (unpaid_price > player_wealth) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
-        char* value = stringbuffer_finish(cost_string_from_value(unpaid_price, NULL));
+        char *value = stringbuffer_finish(cost_string_from_value(unpaid_price, NULL));
         snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ",
                  unpaid_count, value);
         free(value);
@@ -986,7 +986,7 @@ int get_payment(object *pl, object *op) {
     if (op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
         if (!pay_for_item(op,pl)) {
             uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
-            char* missing = stringbuffer_finish(cost_string_from_value(i, NULL));
+            char *missing = stringbuffer_finish(cost_string_from_value(i, NULL));
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
@@ -999,7 +999,7 @@ int get_payment(object *pl, object *op) {
             return 0;
         } else {
             object *tmp;
-            char* value = stringbuffer_finish(query_cost_string(op, pl, F_BUY | F_SHOP, NULL));
+            char *value = stringbuffer_finish(query_cost_string(op, pl, F_BUY | F_SHOP, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);

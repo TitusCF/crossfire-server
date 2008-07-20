@@ -464,11 +464,11 @@ int snprintf(char *dest, int max, const char *format, ...) {
  * @return
  * buf.
  */
-char *strerror_local(int errnum, char* buf, size_t size) {
+char *strerror_local(int errnum, char *buf, size_t size) {
 #if defined(HAVE_STRERROR_R)
     /* Then what flavour of strerror_r... */
 # if defined(STRERROR_R_CHAR_P)
-    char* bbuf;
+    char *bbuf;
     buf[0]=0;
     bbuf = (char*)strerror_r(errnum, buf, size);
     if ((buf[0]==0)&&(bbuf!=NULL))

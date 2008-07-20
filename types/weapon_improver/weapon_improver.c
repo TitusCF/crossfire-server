@@ -31,7 +31,7 @@
 #include <sproto.h>
 
 static method_ret weapon_improver_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 static int check_item(object *op, const char *item);
 static void eat_item(object *op, const char *item, uint32 nrof);
 static int check_sacrifice(object *op, const object *improver);
@@ -57,14 +57,14 @@ void init_type_weapon_improver(void)
  * @return The return value is METHOD_OK unless it fails to apply.
  */
 static method_ret weapon_improver_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     object *oop;
 
     if(applier->type!=PLAYER)
         return METHOD_ERROR;
     if (!QUERY_FLAG(applier, FLAG_WIZCAST) &&
-        (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL) & P_NO_MAGIC)){
+        (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL) & P_NO_MAGIC)) {
         draw_ext_info(NDI_UNIQUE, 0,applier,MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "Something blocks the magic of the scroll.", NULL);
         return METHOD_ERROR;
@@ -107,7 +107,7 @@ static int check_item(object *op, const char *item)
     if (item==NULL) return 0;
     op=op->below;
     while(op!=NULL) {
-        if (strcmp(op->arch->name,item)==0){
+        if (strcmp(op->arch->name,item)==0) {
             if (!QUERY_FLAG (op, FLAG_CURSED) && !QUERY_FLAG (op, FLAG_DAMNED)
                 /* Loophole bug? -FD- */ && !QUERY_FLAG (op, FLAG_UNPAID) )
             {

@@ -62,7 +62,7 @@ static void pace_moveh(object *ob);
 static void pace2_movev(object *ob);
 static void pace2_moveh(object *ob);
 static void rand_move(object *ob);
-static int talk_to_npc(object* op, object *npc, const char *txt, int* talked);
+static int talk_to_npc(object *op, object *npc, const char *txt, int *talked);
 
 
 #define MIN_MON_RADIUS 3 /* minimum monster detection radius */
@@ -364,8 +364,8 @@ static int move_randomly(object *op) {
  * direction to go into. Will be default_dir if no path found.
  * @todo cache path, smart ajustment and such things to not compute all the time ; try directions randomly.
  */
-int compute_path(object* source, object* target, int default_dir) {
-    char* path;
+int compute_path(object *source, object *target, int default_dir) {
+    char *path;
     int explore_x[MAX_EXPLORE], explore_y[MAX_EXPLORE];
     int current = 0, dir, max = 1, size, x, y, check_dir;
 
@@ -430,7 +430,7 @@ int compute_path(object* source, object* target, int default_dir) {
  * @param op
  * monster. Must have FLAG_MONSTER set.
  */
-static void monster_do_living(object* op) {
+static void monster_do_living(object *op) {
     assert(QUERY_FLAG(op, FLAG_MONSTER));
 
     /*  generate hp, if applicable */
@@ -491,7 +491,7 @@ static void monster_do_living(object* op) {
  * @return
  * 1 if monster was removed, 0 else.
  */
-static int monster_move_no_enemy(object* op) {
+static int monster_move_no_enemy(object *op) {
     assert(QUERY_FLAG(op, FLAG_MONSTER));
 
     if (QUERY_FLAG(op, FLAG_ONLY_ATTACK))  {
@@ -1224,7 +1224,7 @@ static int monster_use_bow(object *head, object *part, object *pl, int dir) {
     object *owner;
     rv_vector rv;
     sint16 x, y;
-    mapstruct* map;
+    mapstruct *map;
 
     get_rangevector(part, pl, &rv, 1);
     if (rv.distance > 100)
@@ -1847,11 +1847,11 @@ void communicate(object *op, const char *txt) {
  * @param talked did op already talk? Will be modified if this function makes op talk.
  * @return 1 if npc talked, 0 else.
  */
-static int do_talk_npc(object* op, object* npc, const char* txt, int* talked) {
+static int do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
     char buf[MAX_BUF];
 
-    struct_dialog_reply* reply;
-    struct_dialog_message* message;
+    struct_dialog_reply *reply;
+    struct_dialog_message *message;
 
     if (!get_dialog_message(npc, txt, &message, &reply))
         return 0;
@@ -1908,7 +1908,7 @@ void npc_say(object *npc, const char *cp) {
  * @param talked did op already talk? Can be modified by this function.
  * @return 0 if text was handled by a plugin or not handled, 1 if handled internally by the server.
  */
-static int talk_to_npc(object *op, object *npc, const char *txt, int* talked) {
+static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
     object *cobj;
 
     /* Move this commone area up here - shouldn't cost much extra cpu

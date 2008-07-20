@@ -321,8 +321,8 @@ static void remove_force(object *op) {
         case FORCE_TRANSFORMED_ITEM:
             /* The force is into the item that was created */
             if (op->env != NULL && op->inv != NULL) {
-                object* inv = op->inv;
-                object* pl = get_player_container(op);
+                object *inv = op->inv;
+                object *pl = get_player_container(op);
                 remove_ob(inv);
                 inv->weight = (inv->nrof ? (sint32)(op->env->weight / inv->nrof) : op->env->weight);
                 if (op->env->env) {

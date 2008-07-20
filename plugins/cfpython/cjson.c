@@ -19,22 +19,22 @@ typedef struct JSONData {
     int  all_unicode; // make all output strings unicode if true
 } JSONData;
 
-static PyObject* encode_object(PyObject *object);
-static PyObject* encode_string(PyObject *object);
-static PyObject* encode_unicode(PyObject *object);
-static PyObject* encode_tuple(PyObject *object);
-static PyObject* encode_list(PyObject *object);
-static PyObject* encode_dict(PyObject *object);
+static PyObject *encode_object(PyObject *object);
+static PyObject *encode_string(PyObject *object);
+static PyObject *encode_unicode(PyObject *object);
+static PyObject *encode_tuple(PyObject *object);
+static PyObject *encode_list(PyObject *object);
+static PyObject *encode_dict(PyObject *object);
 
-static PyObject* decode_json(JSONData *jsondata);
-static PyObject* decode_null(JSONData *jsondata);
-static PyObject* decode_bool(JSONData *jsondata);
-static PyObject* decode_string(JSONData *jsondata);
-static PyObject* decode_inf(JSONData *jsondata);
-static PyObject* decode_nan(JSONData *jsondata);
-static PyObject* decode_number(JSONData *jsondata);
-static PyObject* decode_array(JSONData *jsondata);
-static PyObject* decode_object(JSONData *jsondata);
+static PyObject *decode_json(JSONData *jsondata);
+static PyObject *decode_null(JSONData *jsondata);
+static PyObject *decode_bool(JSONData *jsondata);
+static PyObject *decode_string(JSONData *jsondata);
+static PyObject *decode_inf(JSONData *jsondata);
+static PyObject *decode_nan(JSONData *jsondata);
+static PyObject *decode_number(JSONData *jsondata);
+static PyObject *decode_array(JSONData *jsondata);
+static PyObject *decode_object(JSONData *jsondata);
 
 static PyObject *JSON_Error;
 static PyObject *JSON_EncodeError;
@@ -72,10 +72,10 @@ typedef int Py_ssize_t;
 /* ------------------------------ Decoding ----------------------------- */
 
 
-static void getRowAndCol(char* begin, char* current, int *row, int*col){
+static void getRowAndCol(char *begin, char *current, int *row, int*col) {
         *col=1;
         *row=1;
-        while (current>begin){
+        while (current>begin) {
             if (*current=='\n')
                 (*row)++;
             if (*row<2)
@@ -583,7 +583,7 @@ decode_json(JSONData *jsondata)
 static PyObject*
 encode_string(PyObject *string)
 {
-    register PyStringObject* op = (PyStringObject*) string;
+    register PyStringObject *op = (PyStringObject*) string;
     size_t newsize = 2 + 6 * op->ob_size;
     PyObject *v;
 
@@ -1164,7 +1164,7 @@ PyDoc_STRVAR(module_doc,
 "Fast JSON encoder/decoder module."
 );
 
-/* Initialization function for the module (*must* be called initcjson) */
+/* Initialization function for the module (*must *be called initcjson) */
 #define MODULE_VERSION "1.0.5"
 PyMODINIT_FUNC
 initcjson(void)

@@ -807,7 +807,7 @@ void check_login(object *op) {
 
     /* Rejoin party if needed. */
     if (pl->rejoin_party != party_rejoin_no && party_name != NULL) {
-        partylist* party;
+        partylist *party;
         for (party = get_firstparty(); party; party = party->next) {
             if (strcmp(party_name, party->partyname) == 0)
                 break;

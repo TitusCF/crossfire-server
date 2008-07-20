@@ -249,7 +249,7 @@ void init_formulae(void) {
  * formulae lists now, we have to be carefull that we dont have 2
  * formula with the exact same index value. Under the new nbatches
  * code, it is possible to have multiples of ingredients in a cauldron
- * which could result in an index formula mismatch. We *don't* check for
+ * which could result in an index formula mismatch. We *don't *check for
  * that possibility here. -b.t.
  *
  * LOG() to error level.
@@ -356,7 +356,7 @@ void dump_alchemy(void) {
  * @return
  * archetype with name, or NULL if nothing found.
  */
-archetype* find_treasure_by_name(const treasure *t, const char *name, int depth) {
+archetype *find_treasure_by_name(const treasure *t, const char *name, int depth) {
     treasurelist *tl;
     archetype    *at;
 
@@ -614,7 +614,7 @@ int strtoint(const char *buf) {
  * @return
  * artifact, or NULL if not found.
  */
-artifact* locate_recipe_artifact(const recipe *rp, size_t idx) {
+artifact *locate_recipe_artifact(const recipe *rp, size_t idx) {
     object *item=create_archetype(rp->arch_name[idx]);
     artifactlist *at=NULL;
     artifact *art=NULL;

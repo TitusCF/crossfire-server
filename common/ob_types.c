@@ -63,7 +63,7 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
  * @todo when migration is complete, the parameter should go, and this function should be called from
  * init_library() instead of init_ob_methods() in server/ob_methods.c.
  */
-void init_ob_types(ob_methods* base_type) {
+void init_ob_types(ob_methods *base_type) {
     int tmp;
     for (tmp=0; tmp < OBJECT_TYPE_MAX; tmp++)
         init_ob_method_struct(&type_methods[tmp], base_type);

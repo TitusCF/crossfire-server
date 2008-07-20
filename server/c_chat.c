@@ -101,7 +101,7 @@ int command_cointoss(object *op, char *params) {
 }
 
 /** Results for the "orcknucle" game. */
-static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
+static const char *const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
         "princess", "dragon", "orc"
                                          };
 
@@ -127,10 +127,10 @@ static const char* const orcknuckle[7] = {"none", "beholder", "ghost", "knight",
 int command_orcknuckle(object *op, char *params) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
-    object* dice[DICE];
-    object* ob;
+    object *dice[DICE];
+    object *ob;
     int i, j, k, l, dice_count, number_dice;
-    const char* name;
+    const char *name;
 
     /* We only use dice if the archetype is present ingame. */
     name = find_string("dice");
@@ -262,7 +262,7 @@ int command_chat(object *op, char *params) {
  * @return
  * 1.
  */
-static int do_tell(object* op, char* params, int adjust_listen) {
+static int do_tell(object *op, char *params, int adjust_listen) {
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
     player *pl;
     uint8 original_listen;

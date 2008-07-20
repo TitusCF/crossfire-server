@@ -42,14 +42,14 @@ typedef struct {
 } Crossfire_Player;
 extern PyTypeObject Crossfire_PlayerType;
 
-#define EXISTCHECK( ob ) \
+#define EXISTCHECK(ob) \
     { \
     if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return NULL; \
     } }
 
-#define EXISTCHECK_INT( ob ) \
+#define EXISTCHECK_INT(ob) \
     { \
     if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \

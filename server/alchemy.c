@@ -52,7 +52,7 @@
 #endif
 
 /** Random cauldrons effects */
-static const char* const cauldron_effect [] = {
+static const char *const cauldron_effect [] = {
     "vibrates briefly",
     "produces a cloud of steam",
     "emits bright flames",
@@ -99,7 +99,7 @@ static const char *cauldron_sound(void) {
  * If we get a match between the recipe indicated in cauldron contents and a
  * randomly chosen one, an item is created and experience awarded. Otherwise
  * various failure effects are possible (getting worse and worse w/ # cauldron
- * ingredients). Note that the 'item' to be made can be *anything* listed on
+ * ingredients). Note that the 'item' to be made can be *anything *listed on
  * the artifacts list in lib/artifacts which has a recipe listed in lib/formulae.
  *
  * To those wondering why I am using the funky formula index method:
@@ -696,7 +696,7 @@ static void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int da
     } else if (level==151) {               /* CREATE RANDOM ARTIFACT */
         object *tmp;
         /* this is meant to be better than prior possiblity,
-         * in this one, we allow *any* valid alchemy artifact
+         * in this one, we allow *any *valid alchemy artifact
            * to be made (rather than only those on the given
          * formulalist) */
         if (!rp) rp=get_random_recipe((recipelist *) NULL);
@@ -755,7 +755,7 @@ static void remove_contents(object *first_ob, object *save_item) {
  * the user's effective level, the user's Int and the enchantment on the
  * mixing device (aka "cauldron"). Higher values of 'danger' indicate more
  * danger. Note that we assume that we have had the caster ready the alchemy
- * skill *before* this routine is called. (no longer auto-readies that skill)
+ * skill *before *this routine is called. (no longer auto-readies that skill)
  * -b.t.
  *
  * @param caster
@@ -796,7 +796,7 @@ static int calc_alch_danger(object *caster,object *cauldron, recipe *rp) {
     else
         danger += rp->diff*3;
 
-    /* Using a bad device is *majorly* stupid */
+    /* Using a bad device is *majorly *stupid */
     if (QUERY_FLAG(cauldron,FLAG_CURSED)) danger +=80;
     if (QUERY_FLAG(cauldron,FLAG_DAMNED)) danger +=200;
 
@@ -987,10 +987,10 @@ static recipe *find_recipe(recipelist *fl, int formula, object *ingredients) {
  * @todo
  * check if no superflous message when 2 cauldrons on same spot, one unpaid? (shouldn't happen, but well).
  **/
-int use_alchemy(object* op) {
-    object* tmp, *item, *next;
-    object* unpaid_cauldron = NULL;
-    object* unpaid_item = NULL;
+int use_alchemy(object *op) {
+    object *tmp, *item, *next;
+    object *unpaid_cauldron = NULL;
+    object *unpaid_item = NULL;
     int did_alchemy = 0;
     char name[MAX_BUF];
 

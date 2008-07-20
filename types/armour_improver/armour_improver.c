@@ -30,7 +30,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret armour_improver_type_apply(ob_methods *context, object *lighter, object* applier, int aflags);
+static method_ret armour_improver_type_apply(ob_methods *context, object *lighter, object *applier, int aflags);
 
 /**
  * Initializer for the ARMOUR_IMPROVER object type.
@@ -103,38 +103,38 @@ static void improve_armour(object *op, object *improver, object *armour) {
 
     armour->magic++;
 
-    if ( !settings.armor_speed_linear ) {
+    if ( !settings.armor_speed_linear) {
         int base = 100;
         int pow = 0;
-        while ( pow < armour->magic ) {
-            base = base - ( base * settings.armor_speed_improvement )
+        while ( pow < armour->magic) {
+            base = base - ( base * settings.armor_speed_improvement)
                 / 100;
             pow++;
         }
 
-        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone ) *
-                                   base ) / 100;
+        ARMOUR_SPEED(armour) = ( ARMOUR_SPEED( &armour->arch->clone) *
+                                   base) / 100;
     } else
-        ARMOUR_SPEED( armour ) = ( ARMOUR_SPEED( &armour->arch->clone )
+        ARMOUR_SPEED(armour) = ( ARMOUR_SPEED( &armour->arch->clone)
                                    * ( 100 + armour->magic *
-                                       settings.armor_speed_improvement )
+                                       settings.armor_speed_improvement)
                                    )/100;
 
-    if ( !settings.armor_weight_linear ) {
+    if ( !settings.armor_weight_linear) {
         int base = 100;
         int pow = 0;
-        while ( pow < armour->magic ) {
-            base = base - ( base * settings.armor_weight_reduction ) / 100;
+        while ( pow < armour->magic) {
+            base = base - ( base * settings.armor_weight_reduction) / 100;
             pow++;
         }
-        armour->weight = ( armour->arch->clone.weight * base ) / 100;
+        armour->weight = ( armour->arch->clone.weight * base) / 100;
     } else
         armour->weight = ( armour->arch->clone.weight *
                            ( 100 - armour->magic *
-                             settings.armor_weight_reduction ) ) / 100;
+                             settings.armor_weight_reduction) ) / 100;
 
-    if ( armour->weight <= 0 ) {
-        LOG( llevInfo, "Warning: enchanted armours can have negative weight\n." );
+    if ( armour->weight <= 0) {
+        LOG(llevInfo, "Warning: enchanted armours can have negative weight\n." );
         armour->weight = 1;
     }
 
@@ -168,7 +168,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
  * @return
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
-static method_ret armour_improver_type_apply(ob_methods *context, object *scroll, object* applier, int aflags) {
+static method_ret armour_improver_type_apply(ob_methods *context, object *scroll, object *applier, int aflags) {
     object *armor;
 
     if (applier->type != PLAYER)

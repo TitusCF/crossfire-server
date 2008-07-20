@@ -100,7 +100,7 @@ struct player_cmd_mapping {
  *
  * CmdMapping is the dispatch table for the server, used in handle_client,
  * which gets called when the client has input.  All commands called here
- * use the same parameter form (char* data, int len, int clientnum.
+ * use the same parameter form (char *data, int len, int clientnum.
  * We do implicit casts, because the data that is being passed is
  * unsigned (pretty much needs to be for binary data), however, most
  * of these treat it only as strings, so it makes things easier

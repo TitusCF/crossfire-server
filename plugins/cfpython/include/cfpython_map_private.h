@@ -26,37 +26,37 @@
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
 /*                                                                           */
 /*****************************************************************************/
-static PyObject* Map_GetDifficulty(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetPath(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetTempName(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetName(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetResetTime(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetResetTimeout(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetPlayers(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetDarkness(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetWidth(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetHeight(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetEnterX(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetEnterY(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetMessage(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetRegion(Crossfire_Map* whoptr, void* closure);
-static PyObject* Map_GetUnique(Crossfire_Map* whoptr, void* closure);
+static PyObject *Map_GetDifficulty(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetPath(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetTempName(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetName(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetResetTime(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetResetTimeout(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetPlayers(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetDarkness(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetWidth(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetHeight(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetEnterX(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetEnterY(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetMessage(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetRegion(Crossfire_Map *whoptr, void *closure);
+static PyObject *Map_GetUnique(Crossfire_Map *whoptr, void *closure);
 
-static int Map_SetPath(Crossfire_Map* whoptr, PyObject* value, void* closure);
+static int Map_SetPath(Crossfire_Map *whoptr, PyObject *value, void *closure);
 
-static PyObject* Map_Message(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_GetFirstObjectAt(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_CreateObject(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_Check(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_Next(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_Insert(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_ChangeLight(Crossfire_Map* map, PyObject* args);
-static PyObject* Map_TriggerConnected(Crossfire_Map* map, PyObject* args);
+static PyObject *Map_Message(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_GetFirstObjectAt(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_CreateObject(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_Check(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_Next(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_Insert(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_ChangeLight(Crossfire_Map *map, PyObject *args);
+static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args);
 
-static int Map_InternalCompare(Crossfire_Map* left, Crossfire_Map* right);
+static int Map_InternalCompare(Crossfire_Map *left, Crossfire_Map *right);
 
-static PyObject* Crossfire_Map_Long( PyObject* obj );
-static PyObject* Crossfire_Map_Int( PyObject* obj );
+static PyObject *Crossfire_Map_Long(PyObject *obj);
+static PyObject *Crossfire_Map_Int(PyObject *obj);
 static void Crossfire_Map_dealloc(PyObject *obj);
 static PyObject *Crossfire_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 

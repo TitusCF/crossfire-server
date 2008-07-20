@@ -154,7 +154,7 @@ void clean_friendly_list(void) {
  * @return
  * 1 if on friendly list, 0 else
  */
-int is_friendly(const object* op) {
+int is_friendly(const object *op) {
     objectlink *ol;
 
     for (ol=first_friendly_object;ol!=NULL;ol=ol->next)

@@ -370,7 +370,7 @@ void set_map_timeout(mapstruct *oldmap) {
  * @return
  * newpath.
  */
-static char *clean_path(const char *file, char* newpath, int size) {
+static char *clean_path(const char *file, char *newpath, int size) {
     char *cp;
 
     snprintf(newpath, size, "%s", file);
@@ -399,7 +399,7 @@ static char *clean_path(const char *file, char* newpath, int size) {
  * @return
  * newpath.
  */
-static char *unclean_path(const char *src, char* newpath, int size) {
+static char *unclean_path(const char *src, char *newpath, int size) {
     char *cp;
 
     cp=strrchr(src, '/');
@@ -927,7 +927,7 @@ static void process_players1(void) {
 
             /** Handle DM follow command */
             if (pl->followed_player) {
-                player* followed = find_player_partial_name(pl->followed_player);
+                player *followed = find_player_partial_name(pl->followed_player);
                 if (followed && followed->ob && followed->ob->map) {
                     rv_vector rv;
                     get_rangevector(pl->ob, followed->ob, &rv, 0);

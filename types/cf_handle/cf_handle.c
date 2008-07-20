@@ -31,7 +31,7 @@
 #include <sproto.h>
 
 static method_ret cf_handle_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 
 /**
  * Initializer for the CF_HANDLE object type.
@@ -50,7 +50,7 @@ void init_type_cf_handle(void)
  * @return The return value is always METHOD_OK
  */
 static method_ret cf_handle_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     draw_ext_info(NDI_UNIQUE, 0,applier,
         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,

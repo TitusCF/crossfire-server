@@ -28,23 +28,23 @@
 
 #include "define.h"
 
-const char* destination_dir = "../doc/Developers"; /**< Root destination dir. */
-const char* field_dir = "fields"; /**< Where the files about the fields will be stored. */
-const char* type_dir = "types"; /**< Where the files about types will be stored. */
+const char *destination_dir = "../doc/Developers"; /**< Root destination dir. */
+const char *field_dir = "fields"; /**< Where the files about the fields will be stored. */
+const char *type_dir = "types"; /**< Where the files about types will be stored. */
 
 /** One attribute in a type. */
 typedef struct {
-    char* field;
-    char* name;
-    char* description;
+    char *field;
+    char *name;
+    char *description;
 } type_attribute;
 
 /** One object type. */
 typedef struct {
     int number;
-    char* name;
-    char* description;
-    char* use;
+    char *name;
+    char *description;
+    char *use;
     type_attribute** attributes;
     int attribute_count;
     char** required;
@@ -55,13 +55,13 @@ typedef struct {
 type_definition** types = NULL;
 int type_count = 0;
 /** Definitions all types have by default. */
-type_definition* default_type = NULL;
+type_definition *default_type = NULL;
 /** Dummy object type that non defined objects use. */
-type_definition* fallback_type = NULL;
+type_definition *fallback_type = NULL;
 
 /** One list of fields to ignore. */
 typedef struct {
-    char* name;
+    char *name;
     int count;
     char** fields;
 } ignore_list;
@@ -72,14 +72,14 @@ int list_count = 0;
 /** One type for an attribute. */
 typedef struct {
     char** type;
-    int* number;
+    int *number;
     int count;
-    char* description;
+    char *description;
 } attribute_type;
 
 /** One attribute. */
 typedef struct {
-    char* field;
+    char *field;
     attribute_type** types;
     int type_count;
 } attribute_definition;
@@ -89,8 +89,8 @@ int attribute_count = 0;
 
 /** One flag. */
 typedef struct {
-    const char* field;
-    const char* code_name;
+    const char *field;
+    const char *code_name;
 } flag_definition;
 
 /** Flag mapping. */
@@ -191,7 +191,7 @@ static const flag_definition flags[] = {
     { NULL, NULL } };
 
 /** Return flag if exists, NULL else. */
-const flag_definition* find_flag(const char* name) {
+const flag_definition *find_flag(const char *name) {
     int flag;
     for (flag = 0; flags[flag].field; flag++)
         if (!strcmp(flags[flag].field, name))
@@ -200,7 +200,7 @@ const flag_definition* find_flag(const char* name) {
 }
 
 typedef struct {
-    const char* code_name;
+    const char *code_name;
     int value;
 } type_name;
 
@@ -319,15 +319,15 @@ static type_name type_names[] = {
     { NULL, 0 } };
 
 
-type_attribute* duplicate_attribute(type_attribute* attr) {
-    type_attribute* ret = calloc(1, sizeof(type_attribute));
+type_attribute *duplicate_attribute(type_attribute *attr) {
+    type_attribute *ret = calloc(1, sizeof(type_attribute));
     ret->field = strdup(attr->field);
     ret->name = strdup(attr->name);
     ret->description = strdup(attr->description);
     return ret;
 }
 
-void free_attribute(type_attribute* attr) {
+void free_attribute(type_attribute *attr) {
     free(attr->field);
     free(attr->name);
     free(attr->description);
@@ -338,8 +338,8 @@ void free_attribute(type_attribute* attr) {
  * Gets the attribute for the specified type. If it doesn't exist, create it.
  * If the attribute is already defined, return the existing one, after cleaning its fields if clean is set.
  */
-type_attribute* get_attribute_for_type(type_definition* type, const char* attribute, int clean) {
-    type_attribute* ret;
+type_attribute *get_attribute_for_type(type_definition *type, const char *attribute, int clean) {
+    type_attribute *ret;
     int test;
 
     for (test = 0; test < type->attribute_count; test++) {
@@ -364,9 +364,9 @@ type_attribute* get_attribute_for_type(type_definition* type, const char* attrib
     return ret;
 }
 
-void copy_attributes(const type_definition* source, type_definition* type) {
+void copy_attributes(const type_definition *source, type_definition *type) {
     int attr;
-    type_attribute* add;
+    type_attribute *add;
     assert(source);
     if (source->attribute_count == 0)
         return;
@@ -379,7 +379,7 @@ void copy_attributes(const type_definition* source, type_definition* type) {
     }
 }
 
-void copy_default_attributes(type_definition* type) {
+void copy_default_attributes(type_definition *type) {
     if (!default_type)
         return;
     copy_attributes(default_type, type);
@@ -388,8 +388,8 @@ void copy_default_attributes(type_definition* type) {
 /**
  * Returns a new type_definition having the default attributes.
  */
-type_definition* get_type_definition(void) {
-    type_definition* ret = calloc(1, sizeof(type_definition));
+type_definition *get_type_definition(void) {
+    type_definition *ret = calloc(1, sizeof(type_definition));
     ret->attribute_count = 0;
     ret->attributes = NULL;
     assert(ret->description == NULL);
@@ -403,7 +403,7 @@ type_definition* get_type_definition(void) {
 /**
  * Used for type import.
  */
-type_definition* find_type_definition(const char* name) {
+type_definition *find_type_definition(const char *name) {
     int type;
     for (type = 0; type < type_count; type++) {
         if (!strcmp(types[type]->name, name))
@@ -414,13 +414,13 @@ type_definition* find_type_definition(const char* name) {
 }
 
 /** To sort attributes. */
-int sort_type_attribute(const void* a, const void* b) {
+int sort_type_attribute(const void *a, const void *b) {
     const type_attribute** la = (const type_attribute**)a;
     const type_attribute** lb = (const type_attribute**)b;
     return strcmp((*la)->name, (*lb)->name);
 }
 
-ignore_list* find_ignore_list(const char* name) {
+ignore_list *find_ignore_list(const char *name) {
     int list;
     for (list = 0; list < list_count; list++) {
         if (strcmp(lists[list]->name, name) == 0)
@@ -432,12 +432,12 @@ ignore_list* find_ignore_list(const char* name) {
 /**
  * @todo remove spaces at line start/end.
  */
-char* read_line(char* buffer, int size, FILE* file) {
+char *read_line(char *buffer, int size, FILE *file) {
     return fgets(buffer, 200, file);
 }
 
 /** Remove an attribute from the type. */
-void ignore_attribute(type_definition* type, const char* attribute) {
+void ignore_attribute(type_definition *type, const char *attribute) {
     int find;
     for (find = 0; find < type->attribute_count; find++) {
         if (!strcmp(attribute, type->attributes[find]->field)) {
@@ -452,7 +452,7 @@ void ignore_attribute(type_definition* type, const char* attribute) {
 }
 
 /** Remove all attributes in the specified list from the type. */
-void ignore_attributes(type_definition* type, ignore_list* list) {
+void ignore_attributes(type_definition *type, ignore_list *list) {
     int attr;
 
     if (!list) {
@@ -466,10 +466,10 @@ void ignore_attributes(type_definition* type, ignore_list* list) {
 }
 
 /** Add a required parameter to the specified type. buf is the line read from the file, non processed. */
-void add_required_parameter(type_definition* type, const char* buf) {
+void add_required_parameter(type_definition *type, const char *buf) {
     char *sn, *en, *sv, *ev;
     char value[200], name[200], temp[200];
-    const flag_definition* flag;
+    const flag_definition *flag;
 
     if (type == fallback_type)
         /* the "Misc" type has dummy requirements, don't take that into account. */
@@ -501,10 +501,10 @@ void add_required_parameter(type_definition* type, const char* buf) {
 }
 
 /** Read all lines related to a type, stop when "block_end" is found on a line. */
-void read_type(type_definition* type, FILE* file, const char* block_end) {
+void read_type(type_definition *type, FILE *file, const char *block_end) {
     char buf[200], tmp[200];
-    char* find, *end;
-    type_attribute* attr;
+    char *find, *end;
+    type_attribute *attr;
 
     while (read_line(buf, 200, file)) {
         if (strstr(buf, block_end) != NULL) {
@@ -575,7 +575,7 @@ void read_type(type_definition* type, FILE* file, const char* block_end) {
         }
 
         if (strstr(buf, "<import_type") != NULL) {
-            type_definition* import;
+            type_definition *import;
 
             find = strstr(buf, "name=");
             if (!find)
@@ -640,7 +640,7 @@ void read_type(type_definition* type, FILE* file, const char* block_end) {
     }
 }
 
-void dump_type(type_definition* type) {
+void dump_type(type_definition *type) {
     int attr;
 
     printf("type: %s [%d]\n", type->name, type->number);
@@ -653,7 +653,7 @@ void dump_type(type_definition* type) {
 
 void dump_types(void) {
     int t;
-    type_definition* type;
+    type_definition *type;
 
     for (t = 0; t < type_count; t++) {
         type = types[t];
@@ -662,9 +662,9 @@ void dump_types(void) {
 }
 
 /** Get an attribute, create it if it doesn't exist yet. */
-attribute_definition* get_attribute(const char* name) {
+attribute_definition *get_attribute(const char *name) {
     int attr;
-    attribute_definition* ret;
+    attribute_definition *ret;
 
     for (attr = 0; attr < attribute_count; attr++) {
         if (!strcmp(attributes[attr]->field, name))
@@ -682,9 +682,9 @@ attribute_definition* get_attribute(const char* name) {
 }
 
 /** Gets a type description for specified attribute, create it if doesn't exist. */
-attribute_type* get_description_for_attribute(attribute_definition* attribute, const char* description) {
+attribute_type *get_description_for_attribute(attribute_definition *attribute, const char *description) {
     int desc;
-    attribute_type* add;
+    attribute_type *add;
 
     for (desc = 0; desc < attribute->type_count; desc++) {
         if (!description && !attribute->types[desc]->description)
@@ -704,8 +704,8 @@ attribute_type* get_description_for_attribute(attribute_definition* attribute, c
     return add;
 }
 
-void add_type_to_attribute(attribute_definition* attribute, type_definition* type, int attr) {
-    attribute_type* att;
+void add_type_to_attribute(attribute_definition *attribute, type_definition *type, int attr) {
+    attribute_type *att;
 
     att = get_description_for_attribute(attribute, type->attributes[attr]->description);
     att->count++;
@@ -716,10 +716,10 @@ void add_type_to_attribute(attribute_definition* attribute, type_definition* typ
 }
 
 /** Read the contents of a <code>\<ignore_list\></code> tag. */
-void read_ignore_list(const char* name, FILE* file) {
+void read_ignore_list(const char *name, FILE *file) {
     char buf[200], tmp[200];
     char *start, *end;
-    ignore_list* list;
+    ignore_list *list;
 
     /*printf("il %s:", name);*/
     list = calloc(1, sizeof(ignore_list));
@@ -765,7 +765,7 @@ void dump_ignore_lists(void) {
 }
 
 /** Fields part of the living structure. */
-static const char* in_living[] = {
+static const char *in_living[] = {
     "Str",
     "Dex",
     "Con",
@@ -788,7 +788,7 @@ static const char* in_living[] = {
     NULL };
 
 /** Custom attributes we know about, to point to the right page. */
-static const char* custom_attributes[] = {
+static const char *custom_attributes[] = {
     /* transports */
     "weight_speed_ratio",
     "base_speed",
@@ -797,7 +797,7 @@ static const char* custom_attributes[] = {
     "anim_full",
     NULL };
 
-int is_custom_attribute(const char* attribute) {
+int is_custom_attribute(const char *attribute) {
     int val;
     for (val = 0; custom_attributes[val] != NULL; val++) {
         if (!strcmp(custom_attributes[val], attribute)) {
@@ -808,8 +808,8 @@ int is_custom_attribute(const char* attribute) {
 }
 
 /** Write the part to the right of a \@ref for the specified attribute. */
-void write_attribute_reference(const char* attribute, FILE* file) {
-    const flag_definition* flag = find_flag(attribute);
+void write_attribute_reference(const char *attribute, FILE *file) {
+    const flag_definition *flag = find_flag(attribute);
     int val;
 
     if (flag) {
@@ -838,8 +838,8 @@ void write_attribute_reference(const char* attribute, FILE* file) {
 }
 
 /** Write a type definition file. */
-void write_type_file(type_definition* type) {
-    FILE* file;
+void write_type_file(type_definition *type) {
+    FILE *file;
     char buf[200];
     int attr, req;
 
@@ -884,7 +884,7 @@ void write_type_file(type_definition* type) {
 
 /** Write index of all types. */
 void write_type_index(void) {
-    FILE* index;
+    FILE *index;
     int type;
     char buf[200];
 
@@ -904,11 +904,11 @@ void write_type_index(void) {
 }
 
 /** Write the description of a field. */
-void write_attribute_file(attribute_definition* attribute) {
-    FILE* file;
+void write_attribute_file(attribute_definition *attribute) {
+    FILE *file;
     char buf[200];
     int type, desc;
-    const char* end;
+    const char *end;
 
     snprintf(buf, 200, "%s/%s/field_%s.dox", destination_dir, field_dir, attribute->field);
     file = fopen(buf, "w+");
@@ -945,11 +945,11 @@ void write_attribute_file(attribute_definition* attribute) {
 }
 
 int main(int argc, char** argv) {
-    FILE* xml;
+    FILE *xml;
     int number, attr, dummy;
     char buf[200], tmp[200];
-    char* start, *end;
-    type_definition* type;
+    char *start, *end;
+    type_definition *type;
 
     if (argc < 2) {
         printf("Syntax: %s /path/to/Gridarta/types.xml\n", argv[0]);

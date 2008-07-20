@@ -382,7 +382,7 @@ END_TEST
 START_TEST (test_clear_object)
 {
   object *ob1;
-  const char* reference;
+  const char *reference;
   ob1 = cctk_create_game_object(NULL);
   cctk_set_object_strings(ob1,"This is a test String");
   reference=add_string("This is a test String");
@@ -409,7 +409,7 @@ START_TEST (test_copy_object)
 {
   object *ob1;
   object *ob2;
-  const char* reference;
+  const char *reference;
   ob1 = cctk_create_game_object(NULL);
   ob2 = cctk_create_game_object(NULL);
   cctk_set_object_strings(ob1,"test String1");
@@ -436,7 +436,7 @@ END_TEST
  */
 START_TEST (test_get_object)
 {
-  object* ob;
+  object *ob;
   long int i;
   ob=get_object();
   fail_unless(ob!=NULL,"Should get an object after calling get_object()");
@@ -454,7 +454,7 @@ START_TEST (test_get_object)
   fail_unless(ob->active_prev==NULL,"Field active_prev has not been nullified by get_object()");
   /* did you really thing i'll go with only one object? */
   /* let's go for about 2M allocations in a row, let's test roughness */
-  for(i=0;i<1U<<17;i++){
+  for(i=0;i<1U<<17;i++) {
     ob=get_object();
     fail_unless(ob!=NULL,"Should get an object after calling get_object() (iteration %l)",i);
     if (!(i&((1<<13)-1)))
@@ -709,9 +709,9 @@ END_TEST
  */
 START_TEST (test_insert_ob_in_map_at)
 {
-    mapstruct* map;
-    object* first = NULL;
-    object* got = NULL;
+    mapstruct *map;
+    object *first = NULL;
+    object *got = NULL;
 
     map = get_empty_map(5, 5);
     fail_unless(map != NULL, "get_empty_map returned NULL.");
@@ -742,12 +742,12 @@ END_TEST
  */
 START_TEST (test_insert_ob_in_map)
 {
-    mapstruct* map;
-    object* first = NULL;
-    object* second = NULL;
-    object* third = NULL;
-    object* floor = NULL;
-    object* got = NULL;
+    mapstruct *map;
+    object *first = NULL;
+    object *second = NULL;
+    object *third = NULL;
+    object *floor = NULL;
+    object *got = NULL;
 
     map = get_empty_map(5, 5);
     fail_unless(map != NULL, "get_empty_map returned NULL.");
@@ -849,10 +849,10 @@ END_TEST
  */
 START_TEST (test_replace_insert_ob_in_map)
 {
-    mapstruct* map;
-    object* first = NULL, *second = NULL, *third = NULL;
+    mapstruct *map;
+    object *first = NULL, *second = NULL, *third = NULL;
     tag_t tag_first, tag_second, tag_third;
-    object* got = NULL;
+    object *got = NULL;
 
     map = get_empty_map(5, 5);
     fail_unless(map != NULL, "get_empty_map returned NULL.");
@@ -902,8 +902,8 @@ END_TEST
  */
 START_TEST (test_get_split_ob)
 {
-    object* first = NULL;
-    object* second = NULL;
+    object *first = NULL;
+    object *second = NULL;
     char err[50];
 
     first = cctk_create_game_object("gem");
@@ -931,8 +931,8 @@ END_TEST
  */
 START_TEST (test_decrease_ob_nr)
 {
-    object* first = NULL;
-    object* second = NULL;
+    object *first = NULL;
+    object *second = NULL;
 
     first = cctk_create_game_object("gem");
     fail_unless(first != NULL, "create gem failed");
@@ -963,8 +963,8 @@ END_TEST
  */
 START_TEST (test_insert_ob_in_ob)
 {
-    object* container = NULL;
-    object* item = NULL;
+    object *container = NULL;
+    object *item = NULL;
 
     item = cctk_create_game_object("gem");
     fail_unless(item != NULL, "create gem failed");

@@ -160,17 +160,17 @@ EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 #ifndef INIT_C
 EXTERN Chaos_Attacks ATTACKS[22];
 EXTERN int resist_table[];
-EXTERN const char* const change_resist_msg[NROFATTACKS];
-EXTERN const char* const resist_plus[NROFATTACKS];
-EXTERN const char* const attacktype_desc[NROFATTACKS];
-EXTERN const char* const resist_save[NROFATTACKS];
+EXTERN const char *const change_resist_msg[NROFATTACKS];
+EXTERN const char *const resist_plus[NROFATTACKS];
+EXTERN const char *const attacktype_desc[NROFATTACKS];
+EXTERN const char *const resist_save[NROFATTACKS];
 
 /* Beware, names require an _ if there is a space, else they will be read
  * as for example: resist_life stealing 50!
  */
 #else
 /** Attack types. */
-EXTERN const char* const resist_save[NROFATTACKS] = {
+EXTERN const char *const resist_save[NROFATTACKS] = {
     "physical ", "magic ", "fire ", "electricity ", "cold ", "confusion ", "acid ",
     "drain ", "weaponmagic ", "ghosthit ", "poison ", "slow ", "paralyze ",
     "turn_undead ", "fear ", "cancellation ", "deplete ", "death ", "chaos ",
@@ -179,7 +179,7 @@ EXTERN const char* const resist_save[NROFATTACKS] = {
 };
 
 /** Short description of names of the attacktypes */
-EXTERN const char* const attacktype_desc[NROFATTACKS] = {
+EXTERN const char *const attacktype_desc[NROFATTACKS] = {
     "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
     "drain", "weapon magic", "ghost hit", "poison", "slow", "paralyze",
     "turn undead", "fear", "cancellation", "deplete", "death", "chaos",
@@ -188,7 +188,7 @@ EXTERN const char* const attacktype_desc[NROFATTACKS] = {
 };
 
 /** Attack types to show to the player. */
-EXTERN const char* const resist_plus[NROFATTACKS] = {
+EXTERN const char *const resist_plus[NROFATTACKS] = {
     "armour", "resist magic", "resist fire", "resist electricity", "resist cold",
     "resist confusion", "resist acid", "resist drain",
     "resist weaponmagic", "resist ghosthit", "resist poison", "resist slow",
@@ -203,7 +203,7 @@ EXTERN const char* const resist_plus[NROFATTACKS] = {
  * These are the descriptions of the resistances displayed when a
  * player puts on/takes off an item. See change_abil() in living.c.
  */
-EXTERN const char* const change_resist_msg[NROFATTACKS] = {
+EXTERN const char *const change_resist_msg[NROFATTACKS] = {
     "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
     "draining", "weapon magic", "ghosts", "poison", "slow", "paralyze",
     "turn undead", "fear", "cancellation", "depletion", "death attacks", "chaos",

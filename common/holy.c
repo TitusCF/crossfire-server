@@ -107,7 +107,7 @@ static void add_god_to_list(archetype *god_arch) {
  * @return
  * a random god, or NULL if no god was found.
  */
-godlink* get_rand_god(void) {
+godlink *get_rand_god(void) {
     godlink *god=first_god;
     int i;
 

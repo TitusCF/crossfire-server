@@ -47,14 +47,14 @@
 
 /* Define this if you want to archive book titles by contents.
  * This option should enforce UNIQUE combinations of titles,authors and
- * msg contents during and *between* game sessions.
+ * msg contents during and *between *game sessions.
  * Note: a slight degeneracy exists since books are archived based on an integer
  * index value calculated from the message text (similar to alchemy formulae).
  * Sometimes two widely different messages have the same index value (rare). In
  * this case,  it is possible to occasionally generate 2 books with same title and
  * different message content. Not really a bug, but rather a feature. This action
  * should  keeps player on their toes ;).
- * Also, note that there is *finite* space available for archiving message and titles.
+ * Also, note that there is *finite *space available for archiving message and titles.
  * Once this space is used, books will stop being archived. Not a serious problem
  * under the current regime, since there are generally fewer possible (random)
  * messages than space available on the titlelists.
@@ -63,7 +63,7 @@
  * before the monster titlelist space is run out. You can increase titlelist
  * space by increasing the array sizes for the monster book_authours and book_names
  * (see  max_titles[] array and include/read.h). Since the unique_book algorthm is
- * kinda stupid, this program *may* slow down program execution if defined (but I don't
+ * kinda stupid, this program *may *slow down program execution if defined (but I don't
  * think its a significant problem, at least, I have no problems running this option
  * on a Sparc 10! Also, once archive title lists are filled and/or all possible msg
  * combinations have been generated, unique_book isnt called anymore. It takes 5-10
@@ -161,7 +161,7 @@ static const uint32 spellpathdef[NRSPELLPATHS] = {
 };
 
 /** Book names for path information. */
-static const char* const path_book_name[] = {
+static const char *const path_book_name[] = {
     "codex",
     "compendium",
     "exposition",
@@ -170,7 +170,7 @@ static const char* const path_book_name[] = {
 };
 
 /** Used by spellpath texts */
-static const char* const path_author[] = {
+static const char *const path_author[] = {
     "aether",
     "astral byways",
     "connections",
@@ -213,7 +213,7 @@ static const arttypename art_name_array[] = {
 };
 
 /** Book titles for artifact information. */
-static const char* const art_book_name[] = {
+static const char *const art_book_name[] = {
     "collection",
     "file",
     "files",
@@ -228,7 +228,7 @@ static const char* const art_book_name[] = {
 };
 
 /** Used by artifact texts */
-static const char* const art_author[] = {
+static const char *const art_author[] = {
     "ancient things",
     "artifacts",
     "Havlor",   /* ancient warrior scribe :) */
@@ -241,7 +241,7 @@ static const char* const art_author[] = {
 /**
  * Monster book information.
  */
-static const char* const mon_book_name[] = {
+static const char *const mon_book_name[] = {
     "beastuary",
     "catalog",
     "compilation",
@@ -259,7 +259,7 @@ static const char* const mon_book_name[] = {
 
 
 /** Used by monster beastuary texts */
-static const char* const mon_author[] = {
+static const char *const mon_author[] = {
     "beasts",
     "creatures",
     "dezidens",
@@ -278,7 +278,7 @@ static const char* const mon_author[] = {
 /**
  * God book information
  */
-static const char* const gods_book_name[] = {
+static const char *const gods_book_name[] = {
     "devotional",
     "devout notes",
     "divine text",
@@ -292,7 +292,7 @@ static const char* const gods_book_name[] = {
 };
 
 /** Used by gods texts */
-static const char* const gods_author[] = {
+static const char *const gods_author[] = {
     "cults",
     "joy",
     "lasting curse",
@@ -311,7 +311,7 @@ static const char* const gods_author[] = {
 /**
  * Alchemy (formula) information
  */
-static const char* const formula_book_name[] = {
+static const char *const formula_book_name[] = {
     "cookbook",
     "formulary",
     "lab book",
@@ -323,7 +323,7 @@ static const char* const formula_book_name[] = {
 };
 
 /** This isn't used except for empty books */
-static const char* const formula_author[] = {
+static const char *const formula_author[] = {
     "Albertus Magnus",
     "alchemy",
     "balms",
@@ -345,7 +345,7 @@ static const char* const formula_author[] = {
  */
 
 /** Used by msg file and 'generic' books */
-static const char* const light_book_name[] = {
+static const char *const light_book_name[] = {
     "calendar",
     "datebook",
     "diary",
@@ -362,7 +362,7 @@ static const char* const light_book_name[] = {
 };
 
 /** Name for big books. */
-static const char* const heavy_book_name[] = {
+static const char *const heavy_book_name[] = {
     "catalog",
     "compendium",
     "guide",
@@ -376,7 +376,7 @@ static const char* const heavy_book_name[] = {
 
 
 /** Used by 'generic' books */
-static const char* const book_author[] = {
+static const char *const book_author[] = {
     "Abdulah",
     "Al'hezred",
     "Alywn",
@@ -422,7 +422,7 @@ static const char* const book_author[] = {
 };
 
 /** Book descriptions. */
-static const char* const book_descrpt[] = {
+static const char *const book_descrpt[] = {
     "ancient",
     "cryptic",
     "cryptical",
@@ -541,7 +541,7 @@ static int max_titles[6] = {
  * @note
  * if memory allocation failes, calls fatal().
  */
-static titlelist* get_empty_booklist(void) {
+static titlelist *get_empty_booklist(void) {
     titlelist *bl = (titlelist *) malloc(sizeof(titlelist));
     if (bl == NULL)
         fatal(OUT_OF_MEMORY);
@@ -560,7 +560,7 @@ static titlelist* get_empty_booklist(void) {
  * @note
  * if memory allocation failes, calls fatal().
  */
-static title* get_empty_book(void) {
+static title *get_empty_book(void) {
     title  *t = (title *) malloc(sizeof(title));
     if (t == NULL)
         fatal(OUT_OF_MEMORY);
@@ -585,7 +585,7 @@ static title* get_empty_book(void) {
  * pointer to the title list referenced by i. Will never be NULL.
  */
 
-static titlelist* get_titlelist(int i) {
+static titlelist *get_titlelist(int i) {
     titlelist *tl = booklist;
     int     number = i;
 
@@ -648,7 +648,7 @@ int nstrtok(const char *buf1, const char *buf2) {
  * @return
  * retbuf.
  */
-char* strtoktolin(const char *buf1, const char *buf2, char* retbuf, int size) {
+char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
     int     maxi, i = nstrtok(buf1, buf2);
     char   *tbuf, buf[MAX_BUF], sbuf[12];
 
@@ -902,7 +902,7 @@ void init_readable(void) {
  * @return
  * title if found, NULL if no match.
  */
-static title* find_title(const object *book, int msgtype) {
+static title *find_title(const object *book, int msgtype) {
     title  *t = NULL;
     titlelist *tl = get_titlelist(msgtype);
     int     length = strlen(book->msg);
@@ -1248,7 +1248,7 @@ void change_book(object *book, int msgtype) {
  * @return
  * random monster, or NULL if failure.
  */
-object* get_random_mon(int level) {
+object *get_random_mon(int level) {
     objectlink *mon = first_mon_info;
     int     i = 0, monnr;
 
@@ -1319,7 +1319,7 @@ object* get_random_mon(int level) {
  * @return
  * buf
  */
-char* mon_desc(const object *mon, char* buf, int size) {
+char *mon_desc(const object *mon, char *buf, int size) {
     snprintf(buf, size, " *** %s ***\n", mon->name);
     describe_item(mon, NULL, buf+strlen(buf), size-strlen(buf));
     return buf;
@@ -1337,7 +1337,7 @@ char* mon_desc(const object *mon, char* buf, int size) {
  * @note
  * list is considered circular, asking for the next of the last element will return the first one.
  */
-object* get_next_mon(object *tmp) {
+object *get_next_mon(object *tmp) {
     objectlink *mon;
 
     for (mon = first_mon_info; mon; mon = mon->next)
@@ -1368,7 +1368,7 @@ object* get_next_mon(object *tmp) {
  * @return
  * buf.
  */
-char* mon_info_msg(int level, char* buf, int booksize) {
+char *mon_info_msg(int level, char *buf, int booksize) {
     char    tmpbuf[HUGE_BUF], desc[MAX_BUF];
     object *tmp;
 
@@ -1422,7 +1422,7 @@ char* mon_info_msg(int level, char* buf, int booksize) {
  * @return
  * retbuf.
  */
-static char *artifact_msg(int level, char* retbuf, int booksize) {
+static char *artifact_msg(int level, char *retbuf, int booksize) {
     artifactlist *al = NULL;
     artifact *art;
     int     chance, i, type, index;
@@ -1555,7 +1555,7 @@ static char *artifact_msg(int level, char* retbuf, int booksize) {
  * @return
  * retbuf
  */
-char* spellpath_msg(int level, char* retbuf, int booksize) {
+char *spellpath_msg(int level, char *retbuf, int booksize) {
     int     path = RANDOM() % NRSPELLPATHS, prayers = RANDOM() % 2;
     int     did_first_sp = 0;
     uint32  pnum = (path == -1) ? PATH_NULL : spellpathdef[path];
@@ -1730,7 +1730,7 @@ void make_formula_book(object *book, int level) {
  * @param booksize
  * length of the book we want.
  */
-char* msgfile_msg(int level, int booksize) {
+char *msgfile_msg(int level, int booksize) {
     static char retbuf[BOOK_BUF];
     int     i, msgnum;
     linked_char *msg = NULL;
@@ -1770,7 +1770,7 @@ char* msgfile_msg(int level, int booksize) {
  * @return
  * retbuf.
  */
-char* god_info_msg(int level, char* retbuf, int booksize) {
+char *god_info_msg(int level, char *retbuf, int booksize) {
     const char   *name = NULL;
     char buf[BOOK_BUF];
     int     i, retlen, buflen;
@@ -2158,7 +2158,7 @@ void write_book_archive(void) {
  * @return
  * type of the book. Will never be NULL.
  */
-readable_message_type* get_readable_message_type(object* readable) {
+readable_message_type *get_readable_message_type(object *readable) {
     uint8 subtype = readable->subtype;
     if (subtype>last_readable_subtype)
         return &(readable_message_types[0]);

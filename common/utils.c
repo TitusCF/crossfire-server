@@ -381,8 +381,8 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt) {
  */
 void strip_media_tag(char *message) {
     int in_tag=0;
-    char* dest;
-    char* src;
+    char *dest;
+    char *src;
     src=dest=message;
     while (*src!='\0') {
         if (*src=='[') {
@@ -404,8 +404,8 @@ void strip_media_tag(char *message) {
  * @todo
  * isn't there another function (porting.c?) for that?
  */
-const char* strrstr(const char* haystack, const char* needle) {
-    const char* lastneedle;
+const char *strrstr(const char *haystack, const char *needle) {
+    const char *lastneedle;
     lastneedle=NULL;
     while ((haystack=strstr(haystack,needle))!=NULL) {
         lastneedle=haystack;
@@ -418,7 +418,7 @@ const char* strrstr(const char* haystack, const char* needle) {
 /**
  * Removes endline from buffer (modified in place).
  */
-void strip_endline(char* buf) {
+void strip_endline(char *buf) {
     if (strlen(buf)<sizeof("\n")) {
         return;
     }

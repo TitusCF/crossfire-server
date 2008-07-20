@@ -8,7 +8,7 @@ extern void roomify_layout(char **maze, RMParms *RP);
 extern int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP);
 extern int make_wall(char **maze, int x, int y, int dir);
 extern void doorify_layout(char **maze, RMParms *RP);
-extern void write_map_parameters_to_string(RMParms *RP, char* buf, int size);
+extern void write_map_parameters_to_string(RMParms *RP, char *buf, int size);
 extern void write_parameters_to_string(char *buf, int xsize_n, int ysize_n, const char *wallstyle_n, const char *floorstyle_n, const char *monsterstyle_n, const char *treasurestyle_n, const char *layoutstyle_n, const char *decorstyle_n, const char *doorstyle_n, const char *exitstyle_n, const char *final_map_n, const char *exit_on_final_map_n, const char *this_map_n, int layoutoptions1_n, int layoutoptions2_n, int layoutoptions3_n, int symmetry_n, int dungeon_depth_n, int dungeon_level_n, int difficulty_n, int difficulty_given_n, int decoroptions_n, int orientation_n, int origin_x_n, int origin_y_n, int random_seed_n, int treasureoptions_n, float difficulty_increase);
 /* room_gen_onion.c */
 extern char **map_gen_onion(int xsize, int ysize, int option, int layers);

@@ -32,7 +32,7 @@
 #include <sproto.h>
 
 static method_ret trigger_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 static method_ret trigger_type_process(ob_methods *context, object *op);
 
 /**
@@ -53,7 +53,7 @@ void init_type_trigger(void)
  * @return The return value is always 1
  */
 static method_ret trigger_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     if (check_trigger (op, applier))
     {

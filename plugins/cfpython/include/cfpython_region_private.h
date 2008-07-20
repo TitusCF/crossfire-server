@@ -1,10 +1,10 @@
-static PyObject* Crossfire_Region_GetName( Crossfire_Region* whoptr, void* closure);
-static PyObject* Crossfire_Region_GetLongname( Crossfire_Region* whoptr, void* closure);
-static PyObject* Crossfire_Region_GetMessage( Crossfire_Region* whoptr, void* closure);
-static PyObject* Crossfire_Region_GetNext( Crossfire_Region* who, void* closure );
-static PyObject* Crossfire_Region_GetParent( Crossfire_Region* who, PyObject* args );
+static PyObject *Crossfire_Region_GetName(Crossfire_Region *whoptr, void *closure);
+static PyObject *Crossfire_Region_GetLongname(Crossfire_Region *whoptr, void *closure);
+static PyObject *Crossfire_Region_GetMessage(Crossfire_Region *whoptr, void *closure);
+static PyObject *Crossfire_Region_GetNext(Crossfire_Region *who, void *closure);
+static PyObject *Crossfire_Region_GetParent(Crossfire_Region *who, PyObject *args);
 
-static int Crossfire_Region_InternalCompare(Crossfire_Region* left, Crossfire_Region* right);
+static int Crossfire_Region_InternalCompare(Crossfire_Region *left, Crossfire_Region *right);
 
 static PyGetSetDef Region_getseters[] = {
     { "Name",       (getter)Crossfire_Region_GetName,     NULL, NULL, NULL },

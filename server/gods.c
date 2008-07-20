@@ -207,7 +207,7 @@ static int same_string(const char *s1, const char *s2) {
 
 static void follower_remove_given_items(object *pl, object *op, const object *god) {
     object *tmp, *next;
-    const char* given_by;
+    const char *given_by;
 
     /* search the inventory */
     for (tmp = op->inv; tmp != NULL; tmp = next) {
@@ -773,8 +773,8 @@ static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
 archetype *determine_holy_arch(const object *god, const char *type) {
     treasure *tr;
     int count;
-    archetype* last;
-    object* item;
+    archetype *last;
+    object *item;
 
     if (! god || ! god->randomitems) {
         LOG(llevError, "BUG: determine_holy_arch(): no god or god without "
@@ -916,9 +916,9 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
      * weapon - nasty things may happen to those who do not deserve to use it ! :)
      */
     if (settings.personalized_blessings) {
-        const char* divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
-        const char* owner = get_ob_key_value(weapon, "item_owner");
-        object* skillop = NULL;
+        const char *divine_owner = get_ob_key_value(weapon, "divine_blessing_name");
+        const char *owner = get_ob_key_value(weapon, "item_owner");
+        object *skillop = NULL;
 
         if (divine_owner != NULL) {
             if (!strcmp(divine_owner, god->name)) {

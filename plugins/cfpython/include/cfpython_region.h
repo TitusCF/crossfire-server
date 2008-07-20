@@ -32,7 +32,7 @@
 
 typedef struct {
     PyObject_HEAD
-    region* reg;
+    region *reg;
 } Crossfire_Region;
 extern PyTypeObject Crossfire_RegionType;
 

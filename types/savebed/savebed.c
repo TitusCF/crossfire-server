@@ -31,7 +31,7 @@
 #include <sproto.h>
 
 static method_ret savebed_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags);
+    object *applier, int aflags);
 static void apply_savebed (object *pl);
 
 /**
@@ -52,7 +52,7 @@ void init_type_savebed(void)
  * @return The return value is always METHOD_OK
  */
 static method_ret savebed_type_apply(ob_methods *context, object *op,
-    object* applier, int aflags)
+    object *applier, int aflags)
 {
     if (applier->type == PLAYER)
         apply_savebed(applier);
