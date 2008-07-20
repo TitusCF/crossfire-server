@@ -1003,36 +1003,32 @@ static char* do_template(const char* template, const char** vars, const char** v
  * @warning
  * from and to must be absolute paths (starting with /).
  */
-static void relative_path(const char* from, const char* to, char* result)
-{
+static void relative_path(const char* from, const char* to, char* result) {
     const char* fslash;
     const char* rslash;
 
     result[0] = '\0';
 
     fslash = strchr(from + 1, '/');
-    if (!fslash)
-    {
+    if (!fslash) {
         strcpy(result, to + 1);
         return;
     }
 
     rslash = strchr(to + 1, '/');
-    while ( fslash && rslash && (fslash - from == rslash - to) && strncmp(from, to, fslash - from + 1) == 0)
-    {
+    while (fslash && rslash && (fslash - from == rslash - to) && strncmp(from, to, fslash - from + 1) == 0) {
         from = fslash + 1;
         to = rslash + 1;
         fslash = strchr(fslash + 1, '/');
         rslash = strchr(rslash + 1, '/');
     }
 
-    while (fslash)
-    {
+    while (fslash) {
         strcat(result, "../");
         fslash = strchr(fslash + 1, '/');
     }
-    if ( strlen( result ) && result[ strlen( result ) - 1 ] == '/' && *to == '/' )
-        result[ strlen( result ) - 1 ] = '\0';
+    if (strlen(result) && result[strlen(result) - 1] == '/' && *to == '/')
+        result[strlen(result) - 1] = '\0';
     strcat(result, to);
 }
 
@@ -1046,8 +1042,7 @@ static void relative_path(const char* from, const char* to, char* result)
  * @return
  * comparison on last element, and if equal then on whole string.
  */
-static int sort_mapname( const void* left, const void* right )
-{
+static int sort_mapname(const void* left, const void* right) {
     const char* l = *(const char**)left;
     const char* r = *(const char**)right;
     const char* sl = strrchr(l, '/');
@@ -1100,7 +1095,7 @@ static int compare_map_info(const struct_map_info* left, const struct_map_info* 
  * @return
  * comparison on name, and if equal then on whole path.
  */
-static int sort_map_info( const void* left, const void* right )
+static int sort_map_info(const void* left, const void* right)
 {
     const struct_map_info* l = *(const struct_map_info**)left;
     const struct_map_info* r = *(const struct_map_info**)right;
@@ -1117,8 +1112,7 @@ static int sort_map_info( const void* left, const void* right )
  * @return
  * comparison on name, and if equal then on whole path.
  */
-static int sort_map_info_by_level( const void* left, const void* right )
-{
+static int sort_map_info_by_level(const void* left, const void* right) {
     const struct_map_info* l = *(const struct_map_info**)left;
     const struct_map_info* r = *(const struct_map_info**)right;
     int c = l->level - r->level;
@@ -1137,8 +1131,7 @@ static int sort_map_info_by_level( const void* left, const void* right )
  * @return
  * result of strcmp() for names.
  */
-static int sort_region( const void* left, const void* right )
-{
+static int sort_region(const void* left, const void* right) {
     return strcmp((*((struct_region_info**)left))->reg->name, (*((struct_region_info**)right))->reg->name);
 }
 
@@ -1910,14 +1903,14 @@ void process_map(struct_map_info* info)
         needpic = 0;
 
     if (needpic) {
-        pic = gdImageCreateTrueColor( MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32 );
+        pic = gdImageCreateTrueColor(MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32);
         created_pics++;
     }
     else
         cached_pics++;
 
-    for ( x = 0; x < 4; x++ )
-        if ( m->tile_path[x] != NULL ) {
+    for (x = 0; x < 4; x++)
+        if (m->tile_path[x] != NULL) {
             path_combine_and_normalize(m->path, m->tile_path[x], exit_path, sizeof(exit_path));
             create_pathname(exit_path, tmppath, MAX_BUF);
             if (stat(tmppath, &stats)) {
@@ -1970,9 +1963,9 @@ void process_map(struct_map_info* info)
     info->width = MAP_WIDTH(m);
     info->height = MAP_HEIGHT(m);
 
-    for ( x = MAP_WIDTH(m) - 1; x >= 0; x-- )
-        for ( y = MAP_HEIGHT(m) - 1; y >= 0 ; y-- ) {
-            for ( item = GET_MAP_OB(m, x, y); item; item = item->above ) {
+    for (x = MAP_WIDTH(m) - 1; x >= 0; x--)
+        for (y = MAP_HEIGHT(m) - 1; y >= 0 ; y--) {
+            for (item = GET_MAP_OB(m, x, y); item; item = item->above) {
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
                     const char* start;
@@ -2078,7 +2071,7 @@ void process_map(struct_map_info* info)
         save_picture(out, pic);
         fclose(out);
 
-        small = gdImageCreateTrueColor( MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small );
+        small = gdImageCreateTrueColor(MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small);
         gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small, MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32 );
 
         out = fopen(smallpicpath, "wb+");
@@ -2203,7 +2196,7 @@ char* do_map_index(const char* dest, struct_map_list* maps_list, const char* tem
         idx_vars[basevalues+1] = "MAPNAME";
         idx_vars[basevalues+2] = "MAPPATH";
         idx_vars[basevalues+3] = "MAPHTML";
-        idx_values[basevalues+1] = last_group ? last_group->name : ( maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path );
+        idx_values[basevalues+1] = last_group ? last_group->name : (maps_list->maps[map]->name ? maps_list->maps[map]->name : maps_list->maps[map]->path);
         relative_path(index_path, last_group ? last_group->path : maps_list->maps[map]->path, mappath);
         strcpy(maphtml, mappath);
         strcat(maphtml, ".html");
@@ -3386,7 +3379,7 @@ static void write_one_slaying_info(FILE* file, struct_slaying_info* info, int it
  * @return
  * sort order.
  */
-static int sort_slaying( const void* left, const void* right )
+static int sort_slaying(const void* left, const void* right)
 {
     struct_slaying_info* l = *(struct_slaying_info**)left;
     struct_slaying_info* r = *(struct_slaying_info**)right;
@@ -3894,27 +3887,27 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_firewall( object* ob)
+void move_firewall(object* ob)
 {
 }
 
-void emergency_save( int x )
+void emergency_save(int x)
 {
 }
 
-void clean_tmp_files( void )
+void clean_tmp_files(void)
 {
 }
 
-void esrv_send_item( object* ob, object* obx )
+void esrv_send_item(object* ob, object* obx)
 {
 }
 
-void dragon_ability_gain( object* ob, int x, int y )
+void dragon_ability_gain(object* ob, int x, int y)
 {
 }
 
-void set_darkness_map( mapstruct* m)
+void set_darkness_map(mapstruct* m)
 {
 }
 
@@ -3935,11 +3928,11 @@ void esrv_update_spells(player *pl)
 {
 }
 
-void monster_check_apply( object* ob, object* obt )
+void monster_check_apply(object* ob, object* obt)
 {
 }
 
-void trap_adjust( object* ob, int x )
+void trap_adjust(object* ob, int x)
 {
 }
 

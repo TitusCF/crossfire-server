@@ -1311,8 +1311,8 @@ void free_object2(object *ob, int free_inventory) {
                         if (pos == -1)
                             free_object(op);
                         else {
-                            op->x=part->x + freearr_x[ pos ];
-                            op->y=part->y + freearr_y[ pos ];
+                            op->x=part->x + freearr_x[pos];
+                            op->y=part->y + freearr_y[pos];
                             insert_ob_in_map(op,part->map,NULL,0); /* Insert in same map as the envir */
                         }
                     } else {

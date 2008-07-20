@@ -1731,7 +1731,7 @@ int command_resistances(object *op, char *params) {
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                                              i18n_translate(get_language(op),I18N_MSG_CMISC_171),
                                              i18n_translate(get_language(op),I18N_MSG_CMISC_171),
-                                             change_resist_msg[ attack ], tmp->resist[ attack ]);
+                                             change_resist_msg[attack], tmp->resist[attack]);
                     }
                 }
                 break;

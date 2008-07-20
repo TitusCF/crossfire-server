@@ -233,7 +233,7 @@ void receive_party_password(object *op) {
 
     if (confirm_party_password(op) == 0) {
         partylist* joined_party = op->contr->party_to_join;
-        char buf[ MAX_BUF ];
+        char buf[MAX_BUF];
         op->contr->party = op->contr->party_to_join;
         op->contr->party_to_join = NULL;
         draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,

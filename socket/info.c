@@ -418,7 +418,7 @@ void rangetostring(const object *pl, char *obuf, size_t len) {
             break;
 
         case range_builder:
-            query_base_name(pl->contr->ranges[ range_builder ], 0, name, MAX_BUF);
+            query_base_name(pl->contr->ranges[range_builder], 0, name, MAX_BUF);
             snprintf(obuf, len, "Builder: %s", name);
             break;
 

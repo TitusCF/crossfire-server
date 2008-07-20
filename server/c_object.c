@@ -1785,13 +1785,13 @@ static void display_new_pickup(const object* op) {
  */
 int command_pickup(object *op, char *params) {
     uint32 i;
-    static const char* names[ ] = {
+    static const char* names[] = {
         "debug", "inhibit", "stop", "food", "drink", "valuables", "bow", "arrow", "helmet",
         "shield", "armour", "boots", "gloves", "cloak", "key", "missile", "allweapon",
         "magical", "potion", "spellbook", "skillscroll", "readables", "magicdevice",
         "notcursed", "jewels", "flesh", NULL
     };
-    static const uint32 modes[ ] = {
+    static const uint32 modes[] = {
         PU_DEBUG, PU_INHIBIT, PU_STOP, PU_FOOD, PU_DRINK, PU_VALUABLES, PU_BOW, PU_ARROW, PU_HELMET,
         PU_SHIELD, PU_ARMOUR, PU_BOOTS, PU_GLOVES, PU_CLOAK, PU_KEY, PU_MISSILEWEAPON, PU_ALLWEAPON,
         PU_MAGICAL, PU_POTION, PU_SPELLBOOK, PU_SKILLSCROLL, PU_READABLES, PU_MAGIC_DEVICE,
@@ -1814,15 +1814,15 @@ int command_pickup(object *op, char *params) {
 
     if (*params == '+' || *params == '-') {
         int mode;
-        for (mode = 0; names[ mode ]; mode++) {
-            if (!strcmp(names[ mode ], params + 1)) {
+        for (mode = 0; names[mode]; mode++) {
+            if (!strcmp(names[mode], params + 1)) {
                 i = op->contr->mode;
                 if (!(i & PU_NEWMODE))
                     i = PU_NEWMODE;
                 if (*params == '+')
-                    i = i | modes[ mode ];
+                    i = i | modes[mode];
                 else
-                    i = i & ~modes[ mode ];
+                    i = i & ~modes[mode];
                 op->contr->mode = i;
                 display_new_pickup(op);
                 return 1;

@@ -308,8 +308,8 @@ static void do_kills(char* buffer, int size, time_t start, time_t end, const cha
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
     }
-    if (nrow > 0 && results[ ncolumn ] != NULL)
-        deaths = atoi( results[ ncolumn ] );
+    if (nrow > 0 && results[ncolumn] != NULL)
+        deaths = atoi(results[ncolumn]);
     sqlite3_free_table(results);
 
     if (deaths == 0)
@@ -326,8 +326,8 @@ static void do_kills(char* buffer, int size, time_t start, time_t end, const cha
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
     }
-    if (nrow > 0 && results[ ncolumn ] != NULL)
-        deaths = atoi( results[ ncolumn ] );
+    if (nrow > 0 && results[ncolumn] != NULL)
+        deaths = atoi(results[ncolumn]);
     sqlite3_free_table(results);
 
     if (deaths == 0)
@@ -341,7 +341,7 @@ static void do_kills(char* buffer, int size, time_t start, time_t end, const cha
 
 static void do_region_kills(region* reg, char* buffer, int size, time_t start, time_t end) {
     kill_format f;
-    char where[ 50 ];
+    char where[50];
     int region_id;
     f.no_player_death = "No player died.";
     f.one_player_death = "Only one player died, May Fido(tm) Have Mercy.";
@@ -380,10 +380,10 @@ static void do_world(char* buffer, int size, time_t start, time_t end) {
 }
 
 static void get_newspaper_content(object* paper, paper_properties* properties, region* reg) {
-    char contents[ 5000 ];
+    char contents[5000];
     char* sql;
     char** results;
-    char date[ 50 ];
+    char date[50];
     int nrow, ncolumn;
     time_t start, end;
     timeofday_t tod;
@@ -402,13 +402,13 @@ static void get_newspaper_content(object* paper, paper_properties* properties, r
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
     }
-    if (nrow > 1 && results[ ncolumn + 1 ] != NULL) {
-        end = atol(results[ ncolumn + 1 ] );
-        if (nrow > 1 && results[ ncolumn + 2 ] != NULL)
-            start = atol(results[ ncolumn + 2 ] );
+    if (nrow > 1 && results[ncolumn + 1] != NULL) {
+        end = atol(results[ncolumn + 1]);
+        if (nrow > 1 && results[ncolumn + 2] != NULL)
+            start = atol(results[ncolumn + 2]);
     }
 
-    contents[ 0 ] = '\0';
+    contents[0] = '\0';
 
     if (properties->info_region)
         do_region(reg, contents, 5000, start, end);

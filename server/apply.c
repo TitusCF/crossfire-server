@@ -760,7 +760,7 @@ static int unapply_special(object *who, object *op, int aflags) {
                                      "You unready %s.",
                                      name);
             who->contr->shoottype = range_none;
-            who->contr->ranges[ range_builder ] = NULL;
+            who->contr->ranges[range_builder] = NULL;
             break;
 
         default:
@@ -1491,10 +1491,10 @@ int apply_special(object *who, object *op, int aflags) {
             break;
 
         case BUILDER:
-            if (who->contr->ranges[ range_builder ])
-                unapply_special(who, who->contr->ranges[ range_builder ], 0);
+            if (who->contr->ranges[range_builder])
+                unapply_special(who, who->contr->ranges[range_builder], 0);
             who->contr->shoottype = range_builder;
-            who->contr->ranges[ range_builder ] = op;
+            who->contr->ranges[range_builder] = op;
             if (!(aflags & AP_NOPRINT))
                 draw_ext_info_format(NDI_UNIQUE, 0, who,
                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
