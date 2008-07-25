@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/*/Makefile.am:  Remove  -Xlinker -export-dynamic -Xlinker -Bsymbolic
+    from extra LDFLAGS.  Those are gnu specific linker options which cause
+    the plugins to fail to compile when not using gld. I've tested the build
+    without those options with gld on linux, and all works fine, so not sure
+    if those are still needed - in theory, libtool should cover that.  If
+    those options are still needed, configure.ac should get updated with a
+    a better test.
+MSW 2008-07-24
+
 Automatic style fix: replace "foo* bar" by "foo *bar", remove extra spaces
 inside parentheses, etc.  This was done after an analysis of the code revealed
 that less than 20% of the pointer declarations were using the other style.

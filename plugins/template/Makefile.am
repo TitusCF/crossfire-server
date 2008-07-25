@@ -30,7 +30,7 @@ plugin_template_la_SOURCES = plugin_template.c\
 	../common/plugin_common.c
 
 plugin_template_la_LIBADD =
-plugin_template_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+plugin_template_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:

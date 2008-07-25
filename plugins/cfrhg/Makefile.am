@@ -30,7 +30,7 @@ cfrhg_la_SOURCES = cfrhg.c\
 	../common/plugin_common.c
 
 cfrhg_la_LIBADD =
-cfrhg_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+cfrhg_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:

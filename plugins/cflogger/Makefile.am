@@ -37,7 +37,7 @@ cflogger_la_SOURCES = cflogger.c\
 cflogger_la_CPSOURCES = cflogger.c
 
 cflogger_la_LIBADD = -lsqlite3
-cflogger_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+cflogger_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:

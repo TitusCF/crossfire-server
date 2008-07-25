@@ -37,7 +37,7 @@ cfnewspaper_la_SOURCES = cfnewspaper.c\
 cfnewspaper_la_CPSOURCES = cfnewspaper.c
 
 cfnewspaper_la_LIBADD = -lsqlite3
-cfnewspaper_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+cfnewspaper_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:

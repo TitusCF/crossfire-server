@@ -30,7 +30,7 @@ citylife_la_SOURCES = citylife.c\
 	../common/plugin_common.c
 
 citylife_la_LIBADD =
-citylife_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+citylife_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:

@@ -33,7 +33,7 @@ cfanim_la_CPSOURCES = cfanim.c
 SUBDIRS=include
 
 cfanim_la_LIBADD =
-cfanim_la_LDFLAGS = -module -avoid-version -Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+cfanim_la_LDFLAGS = -module -avoid-version -rdynamic
 AM_CPPFLAGS = -I$(srcdir)/include -I$(srcdir)/../common/include -I$(top_srcdir)/include
 
 proto:
