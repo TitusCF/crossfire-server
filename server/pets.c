@@ -1154,9 +1154,9 @@ int should_arena_attack(object *pet,object *owner,object *target) {
     if (rowner->contr->petmode != pet_arena) return 0;
 
     /* abort if the pet, it's owner, or the target is not on battleground*/
-    if (!(op_on_battleground(pet, NULL, NULL) &&
-          op_on_battleground(owner, NULL, NULL) &&
-          op_on_battleground(target, NULL, NULL)))
+    if (!(op_on_battleground(pet, NULL, NULL, NULL) &&
+          op_on_battleground(owner, NULL, NULL, NULL) &&
+          op_on_battleground(target, NULL, NULL, NULL)))
         return 0;
 
     /* if the target is a monster, make sure it's owner is not the same */

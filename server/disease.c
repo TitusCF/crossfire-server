@@ -348,8 +348,8 @@ int infect_object(object *victim, object *disease, int force) {
 
     /* If disease is on battleground, only infect other victims on battleground.
        Not checking results in spectators being infected, which could lead to PK. */
-    if ((disease->map && op_on_battleground(disease, NULL, NULL)) || (disease->env && op_on_battleground(disease->env, NULL, NULL)))
-        if (!op_on_battleground(victim, NULL, NULL))
+    if ((disease->map && op_on_battleground(disease, NULL, NULL, NULL)) || (disease->env && op_on_battleground(disease->env, NULL, NULL, NULL)))
+        if (!op_on_battleground(victim, NULL, NULL, NULL))
             return 0;
 
     /* roll the dice on infection before doing the inventory check!  */

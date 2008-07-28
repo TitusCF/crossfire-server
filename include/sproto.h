@@ -385,7 +385,7 @@ int hideability(object *ob);
 void do_hidden_move(object *op);
 int stand_near_hostile(object *who);
 int player_can_view(object *pl, object *op);
-int op_on_battleground(object *op, int *x, int *y);
+int op_on_battleground(object *op, int *x, int *y, archetype **trophy);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
 void remove_unpaid_objects(object *op, object *env, int free_items);

@@ -2287,7 +2287,7 @@ void move_player_attack(object *op, int dir) {
     nx=freearr_x[dir]+tpl->x;
     ny=freearr_y[dir]+tpl->y;
 
-    on_battleground = op_on_battleground(tpl, NULL, NULL);
+    on_battleground = op_on_battleground(tpl, NULL, NULL, NULL);
 
     /* If braced, or can't move to the square, and it is not out of the
      * map, attack it.  Note order of if statement is important - don't
@@ -2932,7 +2932,7 @@ static void loot_object(object *op) {
  */
 void kill_player(object *op) {
     char buf[MAX_BUF];
-    int x,y,i;
+    int x, y, i;
     mapstruct *map;  /*  this is for resurrection */
     int z;
     int num_stats_lose;
@@ -2942,6 +2942,7 @@ void kill_player(object *op) {
     int will_kill_again;
     archetype *at;
     object *tmp;
+    archetype *trophy;
 
     if (save_life(op))
         return;
@@ -2951,7 +2952,7 @@ void kill_player(object *op) {
      * in cities ONLY!!! It is very important that this doesn't get abused.
      * Look at op_on_battleground() for more info       --AndreasV
      */
-    if (op_on_battleground(op, &x, &y)) {
+    if (op_on_battleground(op, &x, &y, &trophy)) {
         draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0,op,
                       MSG_TYPE_VICTIM,  MSG_TYPE_VICTIM_DIED,
                       "You have been defeated in combat!\n"
@@ -2979,65 +2980,77 @@ void kill_player(object *op) {
                           "Your mind feels clearer", NULL);
         }
 
-        cure_disease(op,0);  /* remove any disease */
-        op->stats.hp=op->stats.maxhp;
-        if (op->stats.food<=0) op->stats.food=999;
+        cure_disease(op, 0);  /* remove any disease */
+        op->stats.hp = op->stats.maxhp;
+        if (op->stats.food <= 0)
+          op->stats.food = 999;
 
         /* create a bodypart-trophy to make the winner happy */
-        tmp=arch_to_object(find_archetype("finger"));
+        tmp = arch_to_object(trophy);
         if (tmp != NULL) {
-            snprintf(buf, sizeof(buf), "%s's finger",op->name);
+            snprintf(buf, sizeof(buf), "%s's %s", op->name, tmp->name);
             tmp->name = add_string(buf);
-            snprintf(buf, sizeof(buf), "  This finger has been cut off %s\n"
-                     "  the %s, when he was defeated at\n  level %d by %s.\n",
-                     op->name, op->contr->title, (int)(op->level),
-                     op->contr->killer);
-            tmp->msg=add_string(buf);
-            tmp->value=0, tmp->material=0, tmp->type=0;
+            if (tmp->type == FLESH)
+                snprintf(buf, sizeof(buf), "  This %s has been cut off %s\n"
+                         "  the %s, when he was defeated at\n"
+                         "  level %d by %s.\n",
+                         tmp->name, op->name, op->contr->title,
+                         (int)(op->level), op->contr->killer);
+            else
+                snprintf(buf, sizeof(buf), "  This %s has been taken from %s\n"
+                         "  the %s, when he was defeated at\n"
+                         "  level %d by %s.\n",
+                         tmp->name, op->name, op->contr->title,
+                         (int)(op->level), op->contr->killer);
+            tmp->msg = add_string(buf);
+            tmp->type = 0;
+            tmp->value = 0;
+            tmp->material = 0;
             tmp->materialname = NULL;
             tmp->x = op->x, tmp->y = op->y;
-            insert_ob_in_map(tmp,op->map,op,0);
+            insert_ob_in_map(tmp, op->map, op, 0);
         }
 
         /* teleport defeated player to new destination*/
         transfer_ob(op, x, y, 0, NULL);
-        op->contr->braced=0;
+        op->contr->braced = 0;
         return;
     }
 
     /* Lauwenmark: Handle for plugin death event */
-    if (execute_event(op, EVENT_DEATH,NULL,NULL,NULL,SCRIPT_FIX_ALL) != 0)
+    if (execute_event(op, EVENT_DEATH, NULL, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
     /* Lauwenmark: Handle for the global death event */
     execute_global_event(EVENT_PLAYER_DEATH, op);
-    if (op->stats.food<0) {
+    if (op->stats.food < 0) {
         if (op->contr->explore) {
-            draw_ext_info(NDI_UNIQUE, 0,op,
+            draw_ext_info(NDI_UNIQUE, 0, op,
                           MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
                           "You would have starved, but you are "
                           "in explore mode, so...", NULL);
-            op->stats.food=999;
+            op->stats.food = 999;
             return;
         }
-        snprintf(buf, sizeof(buf), "%s starved to death.",op->name);
-        strcpy(op->contr->killer,"starvation");
+        snprintf(buf, sizeof(buf), "%s starved to death.", op->name);
+        strcpy(op->contr->killer, "starvation");
     } else {
         if (op->contr->explore) {
-            draw_ext_info(NDI_UNIQUE, 0,op,
+            draw_ext_info(NDI_UNIQUE, 0, op,
                           MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_DIED,
                           "You would have died, but you are "
                           "in explore mode, so...", NULL);
-            op->stats.hp=op->stats.maxhp;
+            op->stats.hp = op->stats.maxhp;
             return;
         }
-        snprintf(buf, sizeof(buf), "%s died.",op->name);
+        snprintf(buf, sizeof(buf), "%s died.", op->name);
     }
     play_sound_player_only(op->contr, SOUND_TYPE_LIVING, op, 0, "death");
 
     /*  save the map location for corpse, gravestone*/
-    x=op->x;y=op->y;map=op->map;
-
+    x = op->x;
+    y = op->y;
+    map = op->map;
 
     if (settings.not_permadeth == TRUE) {
         /* NOT_PERMADEATH code.  This basically brings the character back to
@@ -3073,17 +3086,17 @@ void kill_player(object *op) {
                  * what he lost.
                  */
                 i = RANDOM() % 7;
-                change_attr_value(&(op->stats), i,-1);
+                change_attr_value(&(op->stats), i, -1);
                 check_stat_bounds(&(op->stats));
-                change_attr_value(&(op->contr->orig_stats), i,-1);
+                change_attr_value(&(op->contr->orig_stats), i, -1);
                 check_stat_bounds(&(op->contr->orig_stats));
-                draw_ext_info(NDI_UNIQUE, 0,op,
+                draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
                               lose_msg[i], lose_msg[i]);
                 lost_a_stat = 1;
             } else {
                 /* deplete a stat */
-                archetype *deparch=find_archetype("depletion");
+                archetype *deparch = find_archetype("depletion");
                 object *dep;
 
                 i = RANDOM() % 7;
@@ -3652,15 +3665,21 @@ static int action_makes_visible(object *op) {
  * and if those are all set and the player has a marker that matches the slaying send them to a different x, y
  * Default is to do the same as before, so only people wanting to have different points need worry about this
  *
+ * 28 July 2008 - Modified to allow other archetypes than fingers as trophies.
+ * If other_arch is specified in the battleground floor, then that archetype
+ * will be used instead of the default ("finger").  -R.Q.
+ *
  * @param op
  * object to check.
  * @param[out] x
  * @param[out] y
- * will contain the exit coordinates for the battleground if returns 1.
+ * if not null and if on battleground (return 1), will contain the exit coordinates for the battleground.
+ * @param[out] trophy
+ * if not null and if on battleground (return 1), will contain a pointer to the archetype that can be collected by the winner
  * @return
  * 1 if op is on battleground, 0 else.
  */
-int op_on_battleground(object *op, int *x, int *y) {
+int op_on_battleground(object *op, int *x, int *y, archetype **trophy) {
     object *tmp;
 
     /* A battleground-tile needs the following attributes to be valid:
@@ -3688,6 +3707,12 @@ int op_on_battleground(object *op, int *x, int *y) {
                 }
                 if (x != NULL && y != NULL)
                     *x=EXIT_X(tmp), *y=EXIT_Y(tmp);
+                if (trophy != NULL) {
+                    if (tmp->other_arch)
+                      *trophy = tmp->other_arch;
+                    else
+                      *trophy = find_archetype("finger");
+                }
                 return 1;
             }
         }

@@ -1304,7 +1304,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
 
             /* Items only get corroded if you're not on a battleground and
                     * if your acid resistance is below 50%. */
-            if (!op_on_battleground(op, NULL, NULL) &&
+            if (!op_on_battleground(op, NULL, NULL, NULL) &&
                 (op->resist[ATNR_ACID] < 50)) {
                 object *tmp;
                 for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
@@ -1389,7 +1389,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                  * Try to credit the owner.  We try to display player -> player drain
                  * attacks, hence all the != PLAYER checks.
                  */
-                if (!op_on_battleground(hitter, NULL, NULL) && !QUERY_FLAG(op,FLAG_WAS_WIZ)) {
+                if (!op_on_battleground(hitter, NULL, NULL, NULL) && !QUERY_FLAG(op,FLAG_WAS_WIZ)) {
                     object *owner = get_owner(hitter);
 
                     if (owner && owner != hitter) {
@@ -1599,13 +1599,15 @@ static int kill_object(object *op,int dam, object *hitter, int type) {
 
     owner=get_owner(hitter);
     if (owner==NULL)
-        owner=hitter;
+        owner = hitter;
 
     /* is the victim (op) standing on battleground? */
-    if (op_on_battleground(op, NULL, NULL)) battleg=1;
+    if (op_on_battleground(op, NULL, NULL, NULL))
+        battleg = 1;
 
     /* is this player killing?*/
-    if (op->type == PLAYER && owner->type == PLAYER) pk=1;
+    if (op->type == PLAYER && owner->type == PLAYER)
+        pk = 1;
 
     /* Player killed something */
     if (owner->type==PLAYER) {
