@@ -78,11 +78,11 @@ deep_swamp.111 deep_swamp_S.111
 deep_swamp.112 deep_swamp_S.112
 desert.111 desert_S.111
 dirtfloor.111 empty_S.111
-drift.111 empty_S.111
+drifts.111 empty_S.111
 dunes.111 dunes_S.111
 earth.111 empty_S.111
 evergreens.111 evergreens_S.111
-evergreens_1.111 empty_S.111
+evergreens_2.111 empty_S.111
 farmland.111 empty_S.111
 fcross-blue.111 empty_S.111
 fcross-white.111 empty_S.111
@@ -157,7 +157,7 @@ magentamarblemedium.111 empty_S.111
 marble.111 empty_S.111
 marble_blgr.111 empty_S.111
 marsh.111 marsh_S.111
-medium.111 empty_S.111
+mediumston.111 empty_S.111
 moun_cave1.111 mountain_S.111
 moun_cave2.111 mountain_S.111
 mountain1.111 mountain_S.111
