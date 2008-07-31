@@ -6,7 +6,7 @@
 /*
     CrossFire, A Multiplayer game for X-windows
 
-    Copyright (C) 2006 Mark Wedel & Crossfire Development Team
+    Copyright (C) 2006-2008 Mark Wedel & Crossfire Development Team
     Copyright (C) 1992 Frank Tore Johansen
 
     This program is free software; you can redistribute it and/or modify
@@ -429,16 +429,34 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
              * pass through this space.
              */
             if (tmp->last_sp) {
-                if (check_inv_recursive(ob,tmp)==NULL)
+                if (check_inv_recursive(ob, tmp) == NULL) {
+                    if (tmp->msg) {
+                        /* Optionally display the reason why one cannot move
+                         * there.  Note: emitting a message from this function
+                         * is not very elegant.  Ideally, this should be done
+                         * somewhere in server/player.c, but this is difficult
+                         * for objects of type CHECK_INV that are not alive.
+                         */
+                        draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, ob,
+                                      MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
+                                      tmp->msg, tmp->msg);
+                    }
                     return 1;
+                }
                 else
                     continue;
             } else {
                 /* In this case, the player must not have the object -
                  * if they do, they can't pass through.
                  */
-                if (check_inv_recursive(ob,tmp)!=NULL) /* player has object */
+                if (check_inv_recursive(ob, tmp) != NULL) {
+                    if (tmp->msg) {
+                        draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, ob,
+                                      MSG_TYPE_ATTACK, MSG_TYPE_ATTACK_NOKEY,
+                                      tmp->msg, tmp->msg);
+                    }
                     return 1;
+                }
                 else
                     continue;
             }
