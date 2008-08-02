@@ -1666,7 +1666,7 @@ void get_ob_diff(StringBuffer *sb, object *op,object *op2) {
     }
 
     if (op->move_slow_penalty != op2->move_slow_penalty) {
-        FAST_SAVE_LONG(sb, "move_slow_penalty ", op->move_slow_penalty);
+        FAST_SAVE_DOUBLE(sb, "move_slow_penalty ", op->move_slow_penalty);
     }
 
     if (!COMPARE_FLAGS(op,op2)) {

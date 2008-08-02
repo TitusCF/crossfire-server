@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2028541: Any object using a non-default move_slow_penalty was
+always saved with the value 0 because the code was using FAST_SAVE_LONG
+instead of FAST_SAVE_DOUBLE for a floating-point value.
+ common/loader.l
+Raphaël Quinet 2008-08-02
+
 Change regions file name to 'regions.reg'.
  include/config.h
 Nicolas Weeger 2008-08-02
@@ -22,7 +28,7 @@ If an object of type CHECK_INV blocks movement (e.g. move_block all) and if
 it contains a message, then display that message to those who are blocked.
 This allows the inventory checkers to behave a bit like locked doors.
  common/map.c
-Raphael Quinet 2008-07-31
+Raphaël Quinet 2008-07-31
 
 Allow other archetypes than fingers to be given as trophies in arena battles.
 In order to do that, the battleground should have other_arch set to the
@@ -35,10 +41,10 @@ material set to 0 so that they cannot be used nor destroyed.
  server/pets.c
  server/player.c
  server/spell_util.c
-Raphael Quinet 2008-07-28
+Raphaël Quinet 2008-07-28
 
 lib/smooth: updated by 'make collect' after Ryo's changes to the archetypes.
-Raphael Quinet 2008-07-28
+Raphaël Quinet 2008-07-28
 
 plugins/*/Makefile.am:  Remove  -Xlinker -export-dynamic -Xlinker -Bsymbolic
     from extra LDFLAGS.  Those are gnu specific linker options which cause
@@ -232,7 +238,7 @@ it a bit easier to maintain the code.
  utils/bwp.c
  utils/gridarta-types-convert.c
  utils/mapper.c
-Raphael Quinet 2008-07-20
+Raphaël Quinet 2008-07-20
 
 Style fixes in files that were using foo[ bar ] instead of foo[bar], slight
 reformatting of Win32 code.  There were only 30 occurences of foo[ bar ] among
@@ -247,7 +253,7 @@ style is to avoid spaces inside the brackets.
  server/apply.c
  socket/info.c
  utils/mapper.c
-Raphael Quinet 2008-07-20
+Raphaël Quinet 2008-07-20
 
 Win32 compilation fixes.
  include/win32.h: some #define to fix things.
@@ -263,7 +269,7 @@ from being rebuilt several times, do not remove the marking rune prematurely if
 a listening book cannot be built.
  include/sproto.h
  server/build_map.c
-Raphael Quinet 2008-07-19
+Raphaël Quinet 2008-07-19
 
 Fix bug #2009686 "party password does not work if 8 characters long". 8 chars
 long passwords broke with party_rejoin to auto rejoin on login due to 9 char
@@ -288,7 +294,7 @@ and dangerous casts to uint16 because both source and destination variables
 are of type int, and the experience points for several recipes do not fit in
 16 bits.
  common/recipe.c
-Raphael Quinet 2008-07-03
+Raphaël Quinet 2008-07-03
 
 Partially update metaserver specification.
  doc/metaserver
@@ -300,7 +306,7 @@ Nicolas Weeger 2008-06-21
 
 Fix for bug #1990016 "No message when using skills over an empty cauldron"
  server/alchemy.c
-Raphael Quinet 2008-06-14
+Raphaël Quinet 2008-06-14
 
 Add missing newlines in copyright header in some plugin source/header files.
  plugins/cfpython/include/cfpython.h
@@ -697,7 +703,7 @@ Update 'make collect' so that it does not complain about files that are not
 really junk: CHANGES, TODO, *.xcf* (including *.xcf.gz or *.xcf.bz2), *.doc
 and *.txt.
  lib/collect.pl.in
-Raphael Quinet 2008-06-01
+Raphaël Quinet 2008-06-01
 
 Scripted removal of trailing whitespaces, also removing excessive newlines at
 end of files (one final newline should be all).
@@ -5897,16 +5903,16 @@ Alex Schultz 2006-08-25
 
 check-fragment.am: Add some quotes to avoid problems with spaces appearing
   in macro expansions.
-Raphael Quinet 2006-08-25
+Raphaël Quinet 2006-08-25
 
 configure, aclocal.m4, utils/config.guess, utils/config.sub,
   utils/ltmain.sh, include/autoconf.h.in, */Makefile.in: regenerated using
   slightly newer versions of libtoolize, aclocal, automake and autoconf.
-Raphael Quinet 2006-08-25
+Raphaël Quinet 2006-08-25
 
 configure.ac: add option to disable unit tests, fix incorrect usage of
   AC_ARG_ENABLE for dmalloc, fix some typos.
-Raphael Quinet 2006-08-25
+Raphaël Quinet 2006-08-25
 
 common/map.c: static buffers are evil. This resulted in name weirdness, and
  strange results with overlays.
@@ -5984,7 +5990,7 @@ Ryo 2006-08-19
 Recollected archetypes in order to integrate fix for bug #1530006:
   lib/smooth, lib/faces, lib/bmaps.paths, lib/bmaps, lib/archetypes,
   lib/animations, lib/crossfire.1, lib/crossfire.0, lib/treasures.bld
-Raphael Quinet 2006-08-18
+Raphaël Quinet 2006-08-18
 
 Added a plugin function to get time. Add Python wrapper.
  include/plugin.h sproto.h
@@ -6004,7 +6010,7 @@ crossedit/stubs.c, include/funcpoint.h, random_maps/standalone.c,
     common.
 Alex Schultz 2006-08-12
 
-lib/artifacts: Add artifact descriptions, courtesy of Raphael Quinet. Applies patch
+lib/artifacts: Add artifact descriptions, courtesy of Raphaël Quinet. Applies patch
     from tracker item #1538983
 Alex Schultz 2006-08-12
 
@@ -15783,7 +15789,7 @@ current time, the logic probably isn't great, as all that is currently checked
 for is the head of monster being on a pit - in reality, probably all the
 monster parts need to be on a pit.
 
--m9 and -mt options added (Code from Raphael Quinet).  Formulas have
+-m9 and -mt options added (Code from Raphaël Quinet).  Formulas have
 been fixed such that all are now creatable (none missing archetypes).  However,
 the output still shows some formulas out of balance in terms of costs.
 
