@@ -648,7 +648,7 @@
 #define MAPDIR          "maps"
 #define TEMPLATE_DIR    "template-maps"
 #define ARCHETYPES      "archetypes"
-#define REGIONS         "regions"
+#define REGIONS         "regions.reg"
 #define HIGHSCORE       "highscore"
 #define TREASURES       "treasures"
 #define BANISHFILE      "banish_file"
