@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Bug fix: when building a new floor on top of an old floor, the old one was
+never removed, resulting in a stack of floors in some buildable areas.
+ server/build_map.c
+Raphaël Quinet 2008-08-03
+
 Fix for bug #2028541: Any object using a non-default move_slow_penalty was
 always saved with the value 0 because the code was using FAST_SAVE_LONG
 instead of FAST_SAVE_DOUBLE for a floating-point value.
