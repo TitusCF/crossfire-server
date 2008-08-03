@@ -536,6 +536,13 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
     new_floor->type = FLOOR;
     insert_ob_in_map_at(new_floor, pl->map, above_floor, above_floor ? INS_BELOW_ORIGINATOR : INS_ON_TOP, x, y);
 
+    /* if there was a floor, remove it */
+    if (floor) {
+        remove_ob(floor);
+        free_object(floor);
+        floor = NULL;
+    }
+
     /*
      * Next step: make sure there are either walls or floors around the new square
      * Since building, you can have: blocking view / floor / wall / nothing
