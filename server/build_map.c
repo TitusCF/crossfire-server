@@ -352,7 +352,9 @@ static void fix_walls(struct mapdef *map, int x, int y) {
     char *underscore;
     uint32 old_flags[4];
     struct archt *new_arch;
-    int flag, len;
+    int flag;
+    int len;
+    int has_window;
 
     /* First, find the wall on that spot */
     wall = get_wall(map, x, y);
@@ -362,9 +364,17 @@ static void fix_walls(struct mapdef *map, int x, int y) {
 
     /* Find base name */
     strncpy(archetype, wall->arch->name, sizeof(archetype));
+    archetype[sizeof(archetype) - 1] = '\0';
     underscore = strchr(archetype, '_');
-    if (!underscore || (!isdigit(*(underscore + 1))))
+    if (!underscore)
         /* Not in a format we can change, bail out */
+        return;
+    has_window = 0;
+    if (! strcmp(underscore + 1, "win1"))
+        has_window = 1;
+    else if (! strcmp(underscore + 1, "win2"))
+        has_window = 1;
+    else if (! isdigit(*(underscore + 1)))
         return;
 
     underscore++;
@@ -377,10 +387,8 @@ static void fix_walls(struct mapdef *map, int x, int y) {
         connect |= 1;
     if ((x < MAP_WIDTH(map) - 1) && get_wall(map, x + 1, y))
         connect |= 2;
-
     if ((y > 0) && get_wall(map, x, y - 1))
         connect |= 4;
-
     if ((y < MAP_HEIGHT(map) - 1) && get_wall(map, x, y + 1))
         connect |= 8;
 
@@ -395,7 +403,11 @@ static void fix_walls(struct mapdef *map, int x, int y) {
             strncat(archetype, "1_4", len);
             break;
         case 3:
-            strncat(archetype, "2_1_2", len);
+            if (has_window) {
+                strncat(archetype, "win2", len);
+            } else {
+                strncat(archetype, "2_1_2", len);
+            }
             break;
         case 4:
             strncat(archetype, "1_2", len);
@@ -422,7 +434,11 @@ static void fix_walls(struct mapdef *map, int x, int y) {
             strncat(archetype, "3_3", len);
             break;
         case 12:
-            strncat(archetype, "2_1_1", len);
+            if (has_window) {
+                strncat(archetype, "win1", len);
+            } else {
+                strncat(archetype, "2_1_1", len);
+            }
             break;
         case 13:
             strncat(archetype, "3_4", len);
@@ -434,6 +450,12 @@ static void fix_walls(struct mapdef *map, int x, int y) {
             strncat(archetype, "4", len);
             break;
     }
+
+    /*
+     * No need to change anything if the old and new names are identical.
+     */
+    if (! strncmp(archetype, wall->arch->name, sizeof(archetype)))
+        return;
 
     /*
      * Before anything, make sure the archetype does exist...
@@ -461,7 +483,7 @@ static void fix_walls(struct mapdef *map, int x, int y) {
 /**
  * Floor building function.
  *
- * Floors can be build:
+ * Floors can be built:
  *  - on existing floors, with or without a detector/button
  *  - on an existing wall, with or without a floor under it
  *
@@ -512,6 +534,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
             if (floor != NULL) {
                 remove_ob(floor);
                 free_object(floor);
+                floor = NULL;
             }
         } else if ((FLOOR == tmp->type) || (QUERY_FLAG(tmp, FLAG_IS_FLOOR))) {
             floor = tmp;
@@ -559,13 +582,13 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
             SET_FLAG(tmp, FLAG_UNIQUE);
             SET_FLAG(tmp, FLAG_IS_BUILDABLE);
             tmp->type = FLOOR;
-            insert_ob_in_map_at(tmp, pl->map, 0, 0, xt, yt);
+            insert_ob_in_map_at(tmp, pl->map, NULL, 0, xt, yt);
             /* Insert wall if exists. Note: if it doesn't, the map is weird... */
             if (new_wall) {
                 tmp = arch_to_object(new_wall);
                 SET_FLAG(tmp, FLAG_IS_BUILDABLE);
                 tmp->type = WALL;
-                insert_ob_in_map_at(tmp, pl->map, 0, 0, xt, yt);
+                insert_ob_in_map_at(tmp, pl->map, NULL, 0, xt, yt);
             }
         }
     }
@@ -589,7 +612,7 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
 /**
  * Wall building function
  *
- * Walls can be build:
+ * Walls can be built:
  *  - on a floor without anything else
  *  - on an existing wall, with or without a floor
  *
@@ -619,12 +642,14 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
         /* Check if the old and new archetypes have the same prefix */
         strncpy(current_basename, current_wall->arch->name,
                 sizeof(current_basename));
+        current_basename[sizeof(current_basename) - 1] = '\0';
         underscore = strchr(current_basename, '_');
         if (underscore && isdigit(*(underscore + 1))) {
             underscore++;
             *underscore = '\0';
         }
         strncpy(new_basename, new_wall->arch->name, sizeof(new_basename));
+        new_basename[sizeof(new_basename) - 1] = '\0';
         underscore = strchr(new_basename, '_');
         if (underscore && isdigit(*(underscore + 1))) {
             underscore++;
@@ -644,14 +669,14 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
         /* If existing wall, replace it, no need to fix other walls */
         remove_ob(current_wall);
         free_object(current_wall);
-        insert_ob_in_map_at(new_wall, pl->map, 0, INS_ABOVE_FLOOR_ONLY, x, y);
+        insert_ob_in_map_at(new_wall, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
         fix_walls(pl->map, x, y);
         snprintf(message, sizeof(message), "You redecorate the wall to better suit your tastes.");
     } else {
         int xt, yt;
 
         /* Else insert new wall and fix all walls around */
-        insert_ob_in_map_at(new_wall, pl->map, 0, INS_ABOVE_FLOOR_ONLY, x, y);
+        insert_ob_in_map_at(new_wall, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
         for (xt = x - 1; xt <= x + 1; xt++)
             for (yt = y - 1; yt <= y + 1; yt++) {
                 if (OUT_OF_REAL_MAP(pl->map, xt, yt))
@@ -663,6 +688,91 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
 
     /* Tell player what happened */
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, message, NULL);
+    return 1;
+}
+
+/**
+ * Window building function
+ *
+ * Windows can be built only on top of existing vertical or horizontal walls
+ * (*wall_2_1_1 or *wall_2_1_2).
+ *
+ * @param pl
+ * player building.
+ * @param new_wall_win
+ * new windowed wall object
+ * @param x
+ * @param y
+ * where to build.
+ * @return
+ * 1 if the window was built
+ */
+static int apply_builder_window(object *pl, object *new_wall_win, short x, short y) {
+    object *current_wall;
+    char archetype[MAX_BUF];
+    struct archt *new_arch;
+    object *window;
+    uint32 old_flags[4];
+    int flag;
+
+    /* Too bad, we never use the window contained in the building material */
+    free_object(new_wall_win);
+
+    current_wall = get_wall(pl->map, x, y);
+
+    if (current_wall) {
+        char *underscore;
+
+        strncpy(archetype, current_wall->arch->name, sizeof(archetype));
+        archetype[sizeof(archetype) - 1] = '\0';
+        underscore = strchr(archetype, '_');
+        if (underscore) {
+            underscore++;
+            /* Check if the current wall has a window */
+            if (!strcmp (underscore, "win1")
+                || !strcmp (underscore, "win2")) {
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the window.", NULL);
+                return 0;
+            }
+            if (!strcmp (underscore, "2_1_1"))
+                strcpy (underscore, "win1");
+            else if (!strcmp (underscore, "2_1_2"))
+                strcpy (underscore, "win2");
+            else {
+                /* Wrong wall orientation */
+                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.", NULL);
+                return 0;
+            }
+        }
+    } else {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                      "There is no wall there.", NULL);
+        return 0;
+    }
+
+    new_arch = find_archetype(archetype);
+    if (!new_arch) {
+        /* That type of wall doesn't have corresponding window archetypes */
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.", NULL);
+        return 0;
+    }
+
+    /* Now delete current wall, and insert new one with a window
+     * We save flags to avoid any trouble with buildable/non buildable, and so on
+     */
+    for (flag = 0; flag < 4; flag++)
+        old_flags[flag] = current_wall->flags[flag];
+    remove_ob(current_wall);
+    free_object(current_wall);
+
+    window = arch_to_object(new_arch);
+    window->type = WALL;
+    insert_ob_in_map_at(window, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
+    for (flag = 0; flag < 4; flag++)
+        window->flags[flag] = old_flags[flag];
+
+    /* Tell player what happened */
+    draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You build a window in the wall.", NULL);
     return 1;
 }
 
@@ -964,6 +1074,10 @@ void apply_map_builder(object *pl, int dir) {
 
             case ST_MAT_ITEM:
                 built = apply_builder_item(pl, new_item, x, y);
+                break;
+
+            case ST_MAT_WINDOW:
+                built = apply_builder_window(pl, new_item, x, y);
                 break;
 
             default:

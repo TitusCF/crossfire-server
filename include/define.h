@@ -317,7 +317,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 /*@{*/
 #define ST_MAT_FLOOR    1 /**< Floor. */
 #define ST_MAT_WALL     2 /**< Wall. */
-#define ST_MAT_ITEM     3 /**< All other items, including doors & such. */
+#define ST_MAT_ITEM     3 /**< Most other items, including doors & such. */
+#define ST_MAT_WINDOW   4 /**< Window. */
 /*@}*/
 
 /**
