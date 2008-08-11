@@ -784,7 +784,7 @@ static void move_aura(object *aura) {
 	ny = aura->y + freearr_y[i];
 	mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
 
-	/* Consider the movement tyep of the person with the aura as
+	/* Consider the movement type of the person with the aura as
 	 * movement type of the aura.  Eg, if the player is flying, the aura
 	 * is flying also, if player is walking, it is on the ground, etc.
 	 */
