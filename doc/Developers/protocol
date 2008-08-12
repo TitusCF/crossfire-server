@@ -613,7 +613,7 @@ S->C: player <tag><weight><face><name>
 	object it needs to care about.
 
 S->C: stats <stat1><val1><stat2><val2>...
-	The is a server message that tells the client values of the various
+	This is a server message that tells the client values of the various
 	stats.  All values are binary.  that <stat> values are listed in the
 	newclient.h file and are sent as 8bits. All the values sent are
 	16 bits with these exceptions:
