@@ -1914,8 +1914,6 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
     /* Move this commone area up here - shouldn't cost much extra cpu
      * time, and makes the function more readable */
     /* Lauwenmark: Handle for plugin say event */
-    if (op==npc)
-        return 0;
     if (execute_event(npc, EVENT_SAY,op,NULL,txt,SCRIPT_FIX_ALL)!=0)
         return 0;
     /* Lauwenmark - Here we let the objects inside inventories hear and answer, too. */
@@ -1924,6 +1922,8 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
         if (execute_event(cobj, EVENT_SAY,npc,NULL,txt,SCRIPT_FIX_ALL)!=0)
             return 0;
     }
+    if (op==npc)
+        return 0;
     return do_talk_npc(op, npc, txt, talked);
 }
 

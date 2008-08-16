@@ -786,6 +786,10 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
             return NULL;  /* can't unapply it */
     }
 
+    /* Lauwenmark: Handle for plugin drop event */
+    if (execute_event(tmp, EVENT_DROP,op,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
+        return NULL;
+
     /* We are only dropping some of the items.  We split the current objec
      * off
      */
@@ -800,10 +804,6 @@ object *drop_object(object *op, object *tmp, uint32 nrof) {
         }
     } else
         remove_ob(tmp);
-
-    /* Lauwenmark: Handle for plugin drop event */
-    if (execute_event(tmp, EVENT_DROP,op,NULL,NULL,SCRIPT_FIX_ALL)!= 0)
-        return NULL;
 
     if (QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
         char name[MAX_BUF];

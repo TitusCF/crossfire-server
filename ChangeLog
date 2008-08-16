@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Some plugin-related fixes.
+ server/c_object.c: EVENT_DROP should be called before the item is removed,
+  else can't prevent dropping.
+ server/monster.c: enable items in player/npc's inventory to react, too
+Nicolas Weeger 2008-08-16
+
 Added new subtype 4 ST_MAT_WINDOW for building materials.  This allows the
 player to build windows in existing walls (if these walls have a corresponding
 window archetype).  Fixed an issue in apply_builder_floor() that could cause a
