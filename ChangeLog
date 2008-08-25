@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Inform other party members when a player leaves a party by joining or
+creating another party, not only when the player uses "party leave".
+ server/c_party.c
+Raphaël Quinet 2008-08-25
+
 Some plugin-related fixes.
  server/c_object.c: EVENT_DROP should be called before the item is removed,
   else can't prevent dropping.

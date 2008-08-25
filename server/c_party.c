@@ -63,9 +63,14 @@ void remove_party(partylist *target_party);
  * new party.
  */
 partylist *form_party(object *op, const char *params) {
+    partylist *newparty;
 
-    partylist * newparty;
+    if (op->contr->party != NULL) {
+        char buf[MAX_BUF];
 
+        snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
+        send_party_message(op, buf);
+    }
     newparty = (partylist *)malloc(sizeof(partylist));
     newparty->partyname = strdup_local(params);
     newparty->total_exp=0;
@@ -234,6 +239,10 @@ void receive_party_password(object *op) {
     if (confirm_party_password(op) == 0) {
         partylist *joined_party = op->contr->party_to_join;
         char buf[MAX_BUF];
+        if (op->contr->party != NULL) {
+            snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
+            send_party_message(op, buf);
+        }
         op->contr->party = op->contr->party_to_join;
         op->contr->party_to_join = NULL;
         draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
@@ -602,6 +611,10 @@ int command_party(object *op, char *params) {
                     return 1;
                 } else {
                     if (tmpparty->passwd[0] == '\0') {
+                        if (op->contr->party != NULL) {
+                            snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
+                            send_party_message(op, buf);
+                        }
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                              "You have joined party: %s",
                                              "You have joined party: %s",
