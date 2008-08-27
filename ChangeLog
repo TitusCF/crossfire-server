@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Added %a in the default format string for the 'who' command, because the
+'afk' command is useless if nobody can see the AFK status of players who
+use it.
+ lib/settings
+Raphaël Quinet 2008-08-27
+
 Inform other party members when a player leaves a party by joining or
 creating another party, not only when the player uses "party leave".
  server/c_party.c
