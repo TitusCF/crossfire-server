@@ -402,7 +402,7 @@ int metaserver2_init(void) {
  * header data, and do something clever if we get 404 codes
  * or the like.
  */
-size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
+static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
     size_t realsize = size * nmemb;
 
     LOG(llevDebug,"metaserver2_writer- Start of text:\n%s\n", ptr);

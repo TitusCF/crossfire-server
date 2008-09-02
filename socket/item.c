@@ -316,7 +316,7 @@ void esrv_send_inventory(object *pl, object *op) {
 
     sl.buf=malloc(MAXSOCKSENDBUF);
 
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "delinv %d", op->count);
+    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "delinv %u", op->count);
     sl.len=strlen((char*)sl.buf);
     Send_With_Handling(&pl->contr->socket, &sl);
 

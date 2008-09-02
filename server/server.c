@@ -61,8 +61,6 @@
 #include <../random_maps/rproto.h>
 #include "path.h"
 
-void process_events(void);
-
 /** Ingame days. */
 static const char days[7][4] = {
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"

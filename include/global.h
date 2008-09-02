@@ -247,7 +247,7 @@ EXTERN int num_animations,animations_allocated, bmaps_checksum;
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
 
-#define SET_ANIMATION(ob,newanim) if(ob->temp_animation_id) { ob->face=&new_faces[animations[ob->temp_animation_id].faces[newanim]]; } else { ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]; }
+#define SET_ANIMATION(ob,newanim) { if(ob->temp_animation_id) { ob->face=&new_faces[animations[ob->temp_animation_id].faces[newanim]]; } else { ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]; } }
 #define GET_ANIMATION(ob,anim) (ob->temp_animation_id ? animations[ob->temp_animation_id].faces[anim] : animations[ob->animation_id].faces[anim])
 #define GET_ANIM_ID(ob) (ob->temp_animation_id ? ob->temp_animation_id : ob->animation_id)
 /* NUM_ANIMATIONS returns the number of animations allocated.  The last

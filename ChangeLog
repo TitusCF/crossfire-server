@@ -14,6 +14,21 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Small code fixes found using GCC compiler warnings (bad format strings,
+unreachable return, missing return, unclear {} in a #define when used in a if.)
+ include/global.h
+ socket/item.c
+ socket/loop.c
+ socket/metaserver.c
+ server/shop.c
+ server/swap.c
+ server/spell_util.c
+ server/resurrection.c
+ server/server.c
+ server/login.c
+ server/c_wiz.c
+Arvid Norlander 2008-09-02
+
 Added %a in the default format string for the 'who' command, because the
 'afk' command is useless if nobody can see the AFK status of players who
 use it.

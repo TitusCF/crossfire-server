@@ -255,8 +255,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
     } else {
         return resurrect_player(op,name_to_resurrect,spell);
     }
-
-    return 1;
+    /* Unreachable */
 }
 
 /**

@@ -914,6 +914,9 @@ static int put_a_monster(object *op, const char *monstername) {
         tmp->x=op->x+freearr_x[dir];
         tmp->y=op->y+freearr_y[dir];
         insert_ob_in_map(tmp,op->map,op,0);
+        return 1;
+    } else {
+        return 0;
     }
 }
 

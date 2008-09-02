@@ -289,7 +289,7 @@ int save_player(object *op, int flag) {
     fprintf(fp,"peaceful %d\n",pl->peaceful);
     fprintf(fp,"no_shout %d\n",pl->no_shout);
     fprintf(fp,"digestion %d\n",pl->digestion);
-    fprintf(fp,"pickup %d\n", pl->mode);
+    fprintf(fp,"pickup %u\n", pl->mode);
     fprintf(fp,"outputs_sync %d\n", pl->outputs_sync);
     fprintf(fp,"outputs_count %d\n", pl->outputs_count);
     /* Match the enumerations but in string form */

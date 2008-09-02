@@ -109,7 +109,7 @@ void read_map_log(void) {
          * We use it twice - second one is from encounter, but as we
          * don't care about the value, this works fine
          */
-        sscanf(cp1,"%d:%d:%d:%hd:%d:%d\n",
+        sscanf(cp1,"%u:%d:%d:%hu:%d:%d\n",
                &map->reset_time, &lock,
                &lock, &map->difficulty, &do_los,
                &darkness);

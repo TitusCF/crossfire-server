@@ -128,7 +128,7 @@ int command_loadtest(object *op, char *params) {
 
     for (x = 0; x < settings.worldmaptilesx; x++) {
         for (y = 0; y < settings.worldmaptilesy; y++) {
-            snprintf(buf, sizeof(buf), "/world/world_%d_%d", x+settings.worldmapstartx, y+settings.worldmapstarty);
+            snprintf(buf, sizeof(buf), "/world/world_%u_%u", x+settings.worldmapstartx, y+settings.worldmapstarty);
             command_goto(op, buf);
         }
     }
