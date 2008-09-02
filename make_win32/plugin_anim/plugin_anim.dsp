@@ -7,19 +7,19 @@
 CFG=plugin_animator - Win32 FullDebug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plugin_anim.mak".
-!MESSAGE 
+!MESSAGE
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plugin_anim.mak" CFG="plugin_animator - Win32 FullDebug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "plugin_animator - Win32 ReleaseLog" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE "plugin_animator - Win32 FullDebug" (based on "Win32 (x86) Dynamic-Link Library")
-!MESSAGE 
+!MESSAGE
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -89,7 +89,7 @@ SOURCE="$(InputPath)"
 PostBuild_Cmds=copy FullDebug\plugin_animator.dll ..\..\share\plugins\*.*
 # End Special Build Tool
 
-!ENDIF 
+!ENDIF
 
 # Begin Target
 

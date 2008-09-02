@@ -7,19 +7,19 @@
 CFG=plugin_common - Win32 FullDebug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plugin_common.mak".
-!MESSAGE 
+!MESSAGE
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plugin_common.mak" CFG="plugin_common - Win32 FullDebug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "plugin_common - Win32 FullDebug" (based on "Win32 (x86) Static Library")
 !MESSAGE "plugin_common - Win32 ReleaseLog" (based on "Win32 (x86) Static Library")
-!MESSAGE 
+!MESSAGE
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
@@ -74,7 +74,7 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ENDIF 
+!ENDIF
 
 # Begin Target
 
@@ -97,7 +97,7 @@ SOURCE=..\..\plugins\common\plugin_common.c
 
 !ELSEIF  "$(CFG)" == "plugin_common - Win32 ReleaseLog"
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 # End Group

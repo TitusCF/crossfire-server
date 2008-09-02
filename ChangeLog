@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Automatic strip of trailing whitespaces. This stripped a trailing whitespace in
+ChangeLog, that is why ChangeLog is listed too.
+ ChangeLog
+ make_win32/plugin_python/plugin_python.rc
+ make_win32/plugin_anim/plugin_anim.dsp
+ make_win32/crossfire.rc
+ make_win32/plugin_common/plugin_common.dsp
+ make_win32/INSTALL_WIN32.txt
+ make_win32/Release_notes.txt
+Arvid Norlander 2008-09-02
+
 Small code fixes found using GCC compiler warnings (bad format strings,
 unreachable return, missing return, unclear {} in a #define when used in a if.)
  include/global.h
@@ -325,7 +336,7 @@ Arvid Norlander 2008-07-18
 Fix bug #2017648 "applying devourer weap causes crash", this was a division by
 zero bug that affected any "personalized blessings" weapons with a willpower in
 the range 0-1000. Also fix some minor issues in the same code block (reordering
-tests and reusing a variable instead of fetching it using get_ob_key_value 
+tests and reusing a variable instead of fetching it using get_ob_key_value
 twice).
  server/apply.c
 Arvid Norlander 2008-07-17

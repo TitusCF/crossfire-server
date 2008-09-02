@@ -7,7 +7,7 @@ This is version 1.9.1 (snapshot) of the Crossfire server.
 For complete changes, see the Changelog file included with the software. Major
 changes since version 1.9.1:
 * add setting "create_home_portals" which allows server admins to allow town
-portals to be created in apartments. 
+portals to be created in apartments.
 * fix player count reporting to the metaserver. It now excludes connections with
 not-yet-logged-in players and AFK/WIZ/BOT players.
 * Python script caching.
@@ -17,7 +17,7 @@ not-yet-logged-in players and AFK/WIZ/BOT players.
 * added a plugin function to get time. Add Python wrapper.
 * scatter objects dropped from a multi-tile object being freed.
 * make counterspell not effect permenant spell effects.
-* swamp will now kill players with woodsman, but slower than players without that skill. 
+* swamp will now kill players with woodsman, but slower than players without that skill.
 * weather system is hopefully fixed.
 * misc bug fixes.
 --------------------------------------------------------------

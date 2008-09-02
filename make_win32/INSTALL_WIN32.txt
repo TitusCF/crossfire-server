@@ -24,7 +24,7 @@ o 2nd step: Go in make_win32 (this is the same folder where this
 o 3rd step: You must compile the program. You'll need
   Visual C++ to do this (or some other ANSI C-compiler that can
   read *.dsw files). After unpacking the crossfire package, doubleclick
-  on "crossfire32.dsw". 
+  on "crossfire32.dsw".
   There are 3 projects in your Workspace: Crossfire32 (the server),
   libcross.lib and plugin_python . You need to compile all 3. Easiest
   way is to select the plugin_python - ReleaseLog as active Project,
@@ -34,7 +34,7 @@ o 3rd step: You must compile the program. You'll need
   the binary (crossfire32.exe file and plugin_python.dll) from *somewhere*.
   After the compiler is successul, the VC copies the crossfire32.exe in the
   "crossfire" folder and the plugin_python.dll in the crossfire/share/plugins
-  folder.   
+  folder.
 
   NOTE: The compiling will give you >400 warning messages. Thats
   some casting warnings from the original unix source - they are
