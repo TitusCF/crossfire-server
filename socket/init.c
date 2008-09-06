@@ -124,6 +124,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->monitor_spells = 0;
     ns->tick=0;
     ns->is_bot = 0;
+    ns->num_look_objects = DEFAULT_NUM_LOOK_OBJECTS;
     ns->want_pickup = 0;
 
     /* we should really do some checking here - if total clients overflows

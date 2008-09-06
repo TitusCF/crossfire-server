@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add new setup option "num_look_objects": allows clients to set the size
+of the ground view. Clients not sending this option default to 50 which
+is the previously hard-coded size. Fixes some off-by-one issues; now
+always exactly the requested number of objects are sent.
+ trunk/include/newserver.h
+ trunk/socket/item.c
+ trunk/socket/init.c
+ trunk/socket/request.c
+ trunk/doc/Developers/protocol
+Andreas Kirschbaum 2008-09-06
+
 Automatic strip of trailing whitespaces. This stripped a trailing whitespace in
 ChangeLog, that is why ChangeLog is listed too.
  ChangeLog

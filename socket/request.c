@@ -233,6 +233,19 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"inscribe")) {
             safe_strcat(cmdback, atoi(param) != 0 ? "1" : "0", &slen, HUGE_BUF);
+        } else if (!strcmp(cmd,"num_look_objects")) {
+	    int tmp;
+	    char tmpbuf[20];
+
+	    tmp = atoi(param);
+	    if (tmp < MIN_NUM_LOOK_OBJECTS) {
+		tmp = MIN_NUM_LOOK_OBJECTS;
+	    } else if (tmp > MAX_NUM_LOOK_OBJECTS) {
+		tmp = MAX_NUM_LOOK_OBJECTS;
+	    }
+	    ns->num_look_objects = (uint8)tmp;
+	    snprintf(tmpbuf, sizeof(tmpbuf), "%d", tmp);
+            safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
         } else {
             /* Didn't get a setup command we understood -
              * report a failure to the client.

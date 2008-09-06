@@ -204,7 +204,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
 
 void esrv_draw_look(object *pl) {
     object *tmp, *last;
-    int got_one=0,start_look=0, end_look=0;
+    int got_one=0,start_look=0, end_look=0, objects_sent=0;
     SockList sl;
     char buf[MAX_BUF];
 
@@ -237,21 +237,25 @@ void esrv_draw_look(object *pl) {
         esrv_send_face(&pl->contr->socket, empty_face->number,0);
 
     if (pl->contr->socket.look_position) {
-        SockList_AddInt(&sl, 0x80000000 |
-                        (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
+        int overhead = 1 + (pl->contr->transport != NULL);
+        int prev_len = pl->contr->socket.num_look_objects - overhead - (pl->contr->socket.look_position > pl->contr->socket.num_look_objects - overhead);
+        SockList_AddInt(&sl, 0x80000000 | MAX(0, pl->contr->socket.look_position - prev_len));
         SockList_AddInt(&sl, 0);
         SockList_AddInt(&sl, -1);
         SockList_AddInt(&sl, empty_face->number);
-        snprintf(buf, sizeof(buf), "Click here to see %d previous items", NUM_LOOK_OBJECTS);
+        snprintf(buf, sizeof(buf), "Click here to see previous group of items");
         add_stringlen_to_sockbuf(buf, &sl);
         SockList_AddShort(&sl,0);
         SockList_AddChar(&sl, 0);
         SockList_AddInt(&sl, 0);
         SockList_AddShort(&sl, 0);
+        objects_sent++;
+        got_one++;
     }
 
     if (pl->contr->transport) {
         add_object_to_socklist(&pl->contr->socket, &sl, pl->contr->transport);
+        objects_sent++;
         got_one++;
     }
 
@@ -264,16 +268,17 @@ void esrv_draw_look(object *pl) {
                 last = last->below;
         }
         if (LOOK_OBJ(tmp)) {
-            if (++start_look < pl->contr->socket.look_position) continue;
+            if (start_look++ < pl->contr->socket.look_position) continue;
             end_look++;
-            if (end_look > NUM_LOOK_OBJECTS) {
+            objects_sent++;
+            if (objects_sent >= pl->contr->socket.num_look_objects) {
                 /* What we basically do is make a 'fake' object -
                  * when the user applies it, we notice the special
                  * tag the object has, and act accordingly.
                  */
                 SockList_AddInt(&sl, 0x80000000 |
                                 (pl->contr->socket.look_position +
-                                 NUM_LOOK_OBJECTS));
+                                 end_look - 1));
                 SockList_AddInt(&sl, 0);
                 SockList_AddInt(&sl, -1);
                 SockList_AddInt(&sl, empty_face->number);

@@ -1046,6 +1046,20 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    of war mode to receive newmap commands from the server each time
 	    the player changes maps.
 
+	num_look_objects (int value)
+	    The maximum number of objects shown in the ground view. If more
+	    objects are present, fake objects are created for selecting the
+	    previous/next group of items. Defaults to 50 if not set. The server
+	    may adjust the given value to a suitable one; this applies to both
+	    the lower and the upper limit. Returned is the number of items
+	    actually used; this value can differ from the given one if it has
+	    been adjusted.
+
+	    Note: the requested int value is the total number of objects
+	    including fake objects (prev/next group and transport icons). The
+	    intention for this option is to enable clients to use a fixed
+	    number of slots for displaying ground view objects.
+
 	sound (bitmask)
 	    Obsolete, server will return FALSE.
 

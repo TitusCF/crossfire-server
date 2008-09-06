@@ -38,9 +38,23 @@
 #define NEWSERVER_H
 
 /**
- * Maximum objects to send for the 'look' window (container or ground view).
+ * The lower bound for the number of objects to send for the 'look' window
+ * (container or ground view).
  */
-#define NUM_LOOK_OBJECTS 50
+#define MIN_NUM_LOOK_OBJECTS 3 /* 3=prev group, one object, next group */
+
+/**
+ * Default value for the number of objects to send for the 'look' window
+ * (container or ground view).
+ */
+#define DEFAULT_NUM_LOOK_OBJECTS 50
+
+/**
+ * The upper bound for the number of objects to send for the 'look' window
+ * (container or ground view).
+ */
+#define MAX_NUM_LOOK_OBJECTS 100
+
 
 /** One map cell, as sent to the client. */
 struct map_cell_struct {
@@ -139,6 +153,10 @@ typedef struct socket_struct {
     /* Below are flags for extedend infos to pass to client
      * with S->C mapextended command (note: this comment seems incorrect?) */
     sint8   sounds_this_tick;   /**< Number of sounds sent this tick. */
+    uint8       num_look_objects;       /**< The maximum number of objects to show on the ground view;
+                                             this number includes the prev/next group fake items.
+                                             Can be set through "num_look_objects" setup option;
+                                             defaults to DEFAULT_NUM_LOOK_OBJECTS. */
 } socket_struct;
 
 
