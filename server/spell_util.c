@@ -1094,6 +1094,21 @@ void spell_failure(object *op, int failure,int power, object *skill) {
 }
 
 /**
+Determines if an item can be transmuted after a cast failure.
+@param op item to check.
+@return 1 if op can be transmuted, 0 else.
+*/
+static int can_be_transmuted(object* op) {
+    if (op->invisible)
+        return 0;
+
+    if (op->type == POTION || op->type == SCROLL || op->type == WAND || op->type == ROD || op->type == WEAPON)
+        return 1;
+
+    return 0;
+}
+
+/**
  * This transforms one random item of op to a flower.
  *
  * Only some items are considered, mostly magical ones.
@@ -1114,7 +1129,7 @@ static void transmute_item_to_flower(object *op) {
     char name[HUGE_BUF];
 
     for (item = op->inv; item; item = item->below) {
-        if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
+        if (can_be_transmuted(item)) {
             if (!first)
                 first = item;
             count++;
@@ -1125,9 +1140,11 @@ static void transmute_item_to_flower(object *op) {
         return;
 
     count = rndm(0, count-1);
-    for (item = first; item && count>0; item = item->below) {
-        if (!item->invisible && (item->type == POTION || item->type == SCROLL || item->type == WAND || item->type == ROD || item->type == WEAPON)) {
+    for (item = first; item; item = item->below) {
+        if (can_be_transmuted(item)) {
             count--;
+            if (count < 0)
+                break;
         }
     }
 
