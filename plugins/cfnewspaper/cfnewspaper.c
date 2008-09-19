@@ -208,7 +208,7 @@ CF_PLUGIN int runPluginCommand(object *op, char *params)
     return -1;
 }
 
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *cfnewspaper_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;

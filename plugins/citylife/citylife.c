@@ -357,7 +357,7 @@ static void add_npc_to_random_map(void) {
     add_npc_to_point(&available_zones[zones[test]], list[test]);
 }
 
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *citylife_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
@@ -390,24 +390,24 @@ CF_PLUGIN int postInitPlugin(void)
 
     /* Pick the global events you want to monitor from this plugin */
 
-/*    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_CRASH,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_SHOUT,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_TELL,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,globalEventListener);
+/*    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_CRASH,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_SHOUT,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_TELL,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,citylife_globalEventListener);
     */
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME,globalEventListener);
-/*    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);*/
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, citylife_globalEventListener);
+    /*    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME, citylife_globalEventListener);*/
 
     return 0;
 }

@@ -199,7 +199,7 @@ static void add_exits_to_map(const mapstruct *map) {
  * @return
  * pointer to integer with value 0.
  */
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *cfrgh_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
@@ -310,7 +310,7 @@ CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
 
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, cfrgh_globalEventListener);
 
     return 0;
 }

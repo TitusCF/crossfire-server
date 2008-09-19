@@ -438,7 +438,7 @@ void *eventListener(int *type, ...)
  * @return
  * pointer to an int containing 0.
  */
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *cflogger_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
@@ -528,24 +528,24 @@ CF_PLUGIN int postInitPlugin(void)
 
     store_time();
 
-    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPUNLOAD,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPUNLOAD,PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME, cflogger_globalEventListener);
 
     return 0;
 }

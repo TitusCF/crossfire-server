@@ -191,7 +191,7 @@ static PyObject *registerGEvent(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "i", &eventcode))
         return NULL;
 
-    cf_system_register_global_event(eventcode, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(eventcode, PLUGIN_NAME, cfpython_globalEventListener);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1348,23 +1348,23 @@ CF_PLUGIN int postInitPlugin(void)
 
     cf_log(llevDebug, "CFPython 2.0a post init\n");
     initContextStack();
-    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, globalEventListener);
-    /*registerGlobalEvent(NULL, EVENT_CRASH, PLUGIN_NAME, globalEventListener);*/
-    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_SHOUT, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_TELL, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, cfpython_globalEventListener);
+    /*registerGlobalEvent(NULL, EVENT_CRASH, PLUGIN_NAME, cfpython_globalEventListener);*/
+    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_SHOUT, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_TELL, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, cfpython_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, cfpython_globalEventListener);
 
     scriptfile = PyFile_FromString(cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)), "r");
     if (scriptfile != NULL) {
@@ -1375,7 +1375,7 @@ CF_PLUGIN int postInitPlugin(void)
     return 0;
 }
 
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *cfpython_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv = 0;

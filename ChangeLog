@@ -14,6 +14,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2088893: Assertion in cfanim.c globalEventListener on client connect.
+Renamed all globalEventListener to put a plugin-specific prefix.
+ plugins/cfanim/include/cfanim_proto.h
+ plugins/cfanim/cfanim.c
+ plugins/cflogger/include/cflogger_proto.h
+ plugins/cflogger/cflogger.c
+ plugins/cfnewspaper/include/cfnewspaper_proto.h
+ plugins/cfnewspaper/cfnewspaper.c
+ plugins/cfpython/include/cfpython_proto.h
+ plugins/cfpython/cfpython.c
+ plugins/cfrhg/include/cfrhg_proto.h
+ plugins/cfrhg/cfrhg.c
+ plugins/citylife/include/citylife_proto.h
+ plugins/citylife/citylife.c
+Nicolas Weeger 2008-09-19
+
 Add new setup option "num_look_objects": allows clients to set the size
 of the ground view. Clients not sending this option default to 50 which
 is the previously hard-coded size. Fixes some off-by-one issues; now

@@ -1145,11 +1145,11 @@ CF_PLUGIN int postInitPlugin(void)
 {
     cf_log(llevDebug, "CFAnim 2.0a post init\n");
     /* Pick the global events you want to monitor from this plugin */
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME, cfanim_globalEventListener);
     return 0;
 }
 
-CF_PLUGIN void *globalEventListener(int *type, ...)
+CF_PLUGIN void *cfanim_globalEventListener(int *type, ...)
 {
     va_list args;
     static int rv=0;
