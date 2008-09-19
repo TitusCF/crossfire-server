@@ -1670,6 +1670,13 @@ int write_on_item(object *pl,const char *params, object *skill) {
         return 0;
     }
 
+    if (QUERY_FLAG(pl, FLAG_BLIND) && !QUERY_FLAG(pl, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
+            "You are unable to write while blind.", NULL);
+        return 0;
+    }
+
+
     /* if there is a message then it goes in a book and no message means
      * write active spell into the scroll
      */
