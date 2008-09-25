@@ -75,7 +75,8 @@ static unsigned int curtmp = 0;
 
 /**
  * A replacement for the tempnam() function since it's not defined
- * at some unix variants.
+ * at some unix variants. Do not use this function for new code, use
+ * tempnam_secure() instead.
  *
  * @param dir
  * directory where to create the file. Can be NULL, in which case NULL is returned.
@@ -117,7 +118,66 @@ char *tempnam_local(const char *dir, const char *pfx) {
     return(NULL);
 }
 
+/**
+ * A replacement for the tempnam_local() function since that one is not very
+ * secure. This one will open the file in an atomic way on platforms where it is
+ * possible.
+ *
+ * @param dir
+ * Directory where to create the file. Can be NULL, in which case NULL is returned.
+ * @param pfx
+ * Prefix to create unique name. Can be NULL.
+ * @param filename
+ * This should be a pointer to a char*, the function will overwrite the char*
+ * with the name of the resulting file. Must be freed by caller. Value is
+ * unchanged if the function returns NULL.
+ * @return
+ * A pointer to a FILE opened exclusively, or NULL if failure.
+ * It is up to the caller to properly close it.
+ * @note
+ * The file will be opened read-write.
+ *
+ * @todo
+ * Maybe adding some #ifdef for non-UNIX? I don't have any such system around
+ * to test with.
+ */
+FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
+    char *tempname = NULL;
+    int fd;
+    int i;
+    FILE *file = NULL;
+#define MAXTMPRETRY 10
+    /* Limit number of retries to MAXRETRY */
+    for (i=0; i < MAXTMPRETRY; i++) {
+        tempname=tempnam_local(dir, pfx);
+        /* tempnam_local only fails for really bad stuff, so lets bail out right
+         * away then.
+         */
+        if (!tempname)
+            return NULL;
 
+        fd=open(tempname, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);
+        if (fd != -1)
+            break;
+        if (errno == EEXIST)
+            LOG(llevError,
+                "Created file detected in tempnam_secure. Someone hoping for a race condition?\n");
+        free(tempname);
+    }
+    /* Check that we successfully got an fd. */
+    if (fd == -1)
+        return NULL;
+
+    file=fdopen(fd, "w+");
+    if (!file) {
+        LOG(llevError, "fdopen() failed in tempnam_secure()!\n");
+        free(tempname);
+        return NULL;
+    }
+
+    *filename=tempname;
+    return file;
+}
 
 /**
  * This function removes everything in the directory, and the directory itself.

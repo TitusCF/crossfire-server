@@ -14,9 +14,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Add a function called tempnam_secure(), unlike the old tempnam_local() it should
+be secure against race conditions. Replaced one of the two uses of tempnam_local
+with tempnam_secure, the other one is a bit tricker. It may or may not work on
+Windows, but it should be easy for someone with access to a Windows system to
+add an #ifdef for that.
+ include/libproto.h
+ common/porting.c
+ server/login.c
+Arvid Norlander 2008-09-25
+
 Fix for bug #1985944: problem with trigger_markers (object type 52).
  types/marker/marker.c
-Arvid Norlander: 2008-09-25
+Arvid Norlander 2008-09-25
 
 Fix for bug #2021042: level inscription indefinately with 1 scroll.
  server/skills.c: don't allow to write when blind.

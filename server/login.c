@@ -257,13 +257,11 @@ int save_player(object *op, int flag) {
 
     snprintf(filename, sizeof(filename), "%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
     make_path_to_file(filename);
-    tmpfilename = tempnam_local(settings.tmpdir,NULL);
-    fp=fopen(tmpfilename, "w");
+    fp = tempnam_secure(settings.tmpdir, NULL, &tmpfilename);
     if (!fp) {
         draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_LOADSAVE,
-                      "Can't open file for save.", NULL);
-        LOG(llevDebug,"Can't open file for save (%s).\n",tmpfilename);
-        free(tmpfilename);
+                      "Can't get secure temporary file for save.", NULL);
+        LOG(llevDebug,"Can't get secure temporary file for save.\n");
         return 0;
     }
 
@@ -418,8 +416,10 @@ int save_player(object *op, int flag) {
 static void copy_file(const char *filename, FILE *fpout) {
     FILE *fp;
     char buf[MAX_BUF];
-    if ((fp = fopen(filename,"r")) == NULL)
+    if ((fp = fopen(filename,"r")) == NULL) {
+        LOG(llevError, "copy_file failed to open \"%s\", player file(s) may be corrupt.\n", filename);
         return;
+    }
     while (fgets(buf,MAX_BUF,fp)!=NULL)
         fputs(buf,fpout);
     fclose(fp);

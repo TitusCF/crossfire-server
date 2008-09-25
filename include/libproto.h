@@ -284,6 +284,7 @@ extern void path_normalize(char *path);
 extern char *path_combine_and_normalize(const char *src, const char *dst, char *path, int size);
 /* porting.c */
 extern char *tempnam_local(const char *dir, const char *pfx);
+extern FILE *tempnam_secure(const char *dir, const char *pfx, char **filename);
 extern void remove_directory(const char *path);
 extern char *strdup_local(const char *str);
 extern const char *strcasestr_local(const char *s, const char *find);
