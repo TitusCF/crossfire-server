@@ -40,7 +40,7 @@ static method_ret marker_type_trigger(ob_methods *context, object *op, object *c
 void init_type_marker(void)
 {
     register_process(MARKER, marker_type_process);
-    register_trigger(MARKER, marker_type_trigger);
+    register_trigger(TRIGGER_MARKER, marker_type_trigger);
 }
 
 /**
