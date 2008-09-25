@@ -16,7 +16,7 @@ else.  With this, include the file(s) that you changed.
 
 Fix for bug #1985944: problem with trigger_markers (object type 52).
  types/marker/marker.c
-Arvid Norlander
+Arvid Norlander: 2008-09-25
 
 Fix for bug #2021042: level inscription indefinately with 1 scroll.
  server/skills.c: don't allow to write when blind.
