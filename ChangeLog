@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2140899: crash server by reading scroll on ground.
+ types/scroll/scroll.c: keep scroll's inventory name in case inventory
+  is removed.
+Nicolas Weeger 2008-10-05
+
 Add a function called tempnam_secure(), unlike the old tempnam_local() it should
 be secure against race conditions. Replaced one of the two uses of tempnam_local
 with tempnam_secure, the other one is a bit tricker. It may or may not work on

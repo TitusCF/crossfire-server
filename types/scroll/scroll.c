@@ -60,6 +60,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
     object *applier, int aflags) {
     object *skapplier;
     object *head;
+    sstring name;
 
     if (applier->head)
         head = applier->head;
@@ -117,6 +118,8 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
             change_exp(applier,exp_gain, skapplier->skill, 0);
     }
 
+    // need to keep the name, as the scroll may be destroyed when on the ground (reading a scroll of alchemy for instance)
+    name = scroll->inv->name;
     cast_spell(applier,scroll,head->facing,scroll->inv, NULL);
 
     if (QUERY_FLAG(scroll, FLAG_BLESSED) && die_roll(1,100,applier,1) < 10) {
@@ -124,7 +127,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
                              MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                              "Your scroll of %s glows for a second!",
                              "Your scroll of %s glows for a second!",
-                             scroll->inv->name);
+                             name);
     }
     else
     {
@@ -132,7 +135,7 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
                              MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                              "The scroll of %s turns to dust.",
                              "The scroll of %s turns to dust.",
-                             scroll->inv->name);
+                             name);
 
         decrease_ob(scroll);
     }
