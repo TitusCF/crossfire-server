@@ -83,7 +83,7 @@ typedef struct liv {
     sint16        maxsp;      /**< Max spell points. */
     sint16        grace;      /**< Grace.  Used to invoke clerical prayers. */
     sint16        maxgrace;   /**< Grace.  Used to invoke clerical prayers. */
-    sint16        food;       /**< How much food in stomach.  0 = starved. */
+    sint32        food;       /**< How much food in stomach.  0 = starved. */
     sint64        exp;        /**< Experience.  Killers gain 1/10. */
     sint16        dam;        /**< How much damage this object does when hitting */
     sint8         luck;       /**< Affects thaco and ac from time to time */

@@ -207,7 +207,7 @@ typedef struct obj {
     /* Note that the last_.. values are sometimes used for non obvious
      * meanings by some objects, eg, sp penalty, permanent exp.
      */
-    sint16      last_eat;       /**< How long since we last ate */
+    sint32      last_eat;       /**< How long since we last ate */
     sint32      last_heal;      /**< Last healed. Depends on constitution */
     sint32      last_sp;        /**< As last_heal, but for spell points */
     sint16      last_grace;     /**< As last_sp, except for grace */
