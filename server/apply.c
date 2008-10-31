@@ -159,7 +159,7 @@ int check_weapon_power(const object *who, int improvs);
  *
  * @return TRUE if face changed
  */
-static int set_object_face_main(object *op) {
+int set_object_face_main(object *op) {
     int newface = op->arch->clone.face->number;
     sstring saved = get_ob_key_value(op, "face_closed");
     if (saved) {
@@ -321,6 +321,15 @@ int apply_container(object *op, object *sack) {
                                  name_sack);
             return 0;
         }
+
+        if (sack->nrof > 1)
+        {
+            object* left = get_split_ob(sack, sack->nrof - 1, NULL, 0);
+            insert_ob_in_map_at(left, sack->map, NULL, INS_NO_MERGE, sack->x, sack->y);
+            // recompute the name so it's nice
+            query_name(sack, name_sack, MAX_BUF);
+        }
+
         /* set it so when the player walks off, we can unapply the sack */
         sack->move_off = MOVE_ALL;      /* trying force closing it */
 
@@ -356,6 +365,11 @@ int apply_container(object *op, object *sack) {
             }
             esrv_send_inventory(op, sack);
         } else {
+            object* left = NULL;
+            if (sack->nrof > 1) {
+                left = get_split_ob(sack, sack->nrof - 1, NULL, 1);
+            }
+
             CLEAR_FLAG(sack, FLAG_APPLIED);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
@@ -364,6 +378,11 @@ int apply_container(object *op, object *sack) {
                                  name_sack);
             SET_FLAG(sack, FLAG_APPLIED);
             esrv_update_item(UPD_FLAGS, op, sack);
+
+            if (left) {
+                insert_ob_in_ob(left, sack->env);
+                esrv_send_item(op, left);
+            }
         }
     }
     return 1;

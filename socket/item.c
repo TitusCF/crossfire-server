@@ -370,6 +370,9 @@ void esrv_send_inventory(object *pl, object *op) {
 void esrv_update_item(int flags, object *pl, object *op) {
     SockList sl;
 
+    if (!pl->contr)
+        return;
+
     /* If we have a request to send the player item, skip a few checks. */
     if (op!=pl) {
         if (! LOOK_OBJ(op))

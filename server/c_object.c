@@ -656,7 +656,7 @@ int command_take(object *op, char *params) {
  */
 void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
     tag_t tmp_tag, tmp2_tag;
-    object *tmp2, *sack2;
+    object *tmp2, *sack2, *orig = sack;
     char name_sack[MAX_BUF], name_tmp[MAX_BUF];
 
     if (sack==tmp) return; /* Can't put an object in itself */
@@ -734,6 +734,22 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
         }
     } else
         remove_ob(tmp);
+
+    if (sack->nrof > 1)
+    {
+        orig = get_split_ob(sack, sack->nrof - 1, NULL, 0);
+        set_object_face_main(orig);
+        CLEAR_FLAG(orig, FLAG_APPLIED);
+        if (sack->env)
+        {
+            insert_ob_in_ob(orig, sack->env);
+        }
+        else
+        {
+            insert_ob_in_map_at(orig, sack->map, NULL, 0, sack->x, sack->y);
+            orig->move_off = 0;
+        }
+    }
 
     query_name(tmp, name_tmp, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,

@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #2018391: Zero-cap or capless containers, also stacking containers.
+Split containers when reading/applying them (coherent with eg rings when applied).
+Also ensure that a sack is split when putting things into it anyway.
+ include/sproto.h: function now visible to others.
+ server/apply.c c_object.c: split containers
+ socket/item.c: don't crash if object isn't a player.
+ test/unit/server/check_c_object.c: write some tests for put_object_in_sack().
+Nicolas Weeger 2008-10-31
+
 Fix for bug #2081472: short int encoding for food value in payment altars.
  include/living.h object.h: make food and last_eat sint32 so no overflow.
 Nicolas Weeger 2008-10-31

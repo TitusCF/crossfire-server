@@ -38,21 +38,6 @@
 #include <sproto.h>
 
 void setup(void) {
-#if 0
-/*  settings.datadir="lib";
-  settings.logfilename="/unit/server/c_object.out";
-    settings.archetypes="archetypes";
-    settings.treasures="treasures.bld";
-    init_globals();
-    init_hash_table();
-    init_objects();
-    init_vars();
-    init_block();
-    read_bmap_names ();
-    read_smooth();
-    init_anim();
-    init_archetypes();*/
-#endif
 }
 
 void teardown(void)
@@ -107,6 +92,86 @@ START_TEST (test_find_best_apply_object_match)
 }
 END_TEST
 
+START_TEST(test_put_object_in_sack)
+{
+    mapstruct* test_map;
+    object* sack, *obj, *sack2, *dummy;
+
+    dummy = create_archetype("orc");
+
+    test_map = get_empty_map(5, 5);
+    fail_unless(test_map != NULL, "can't create test map");
+
+    sack = create_archetype("gem");
+    insert_ob_in_map_at(sack, test_map, NULL, 0, 0, 0);
+    fail_unless(GET_MAP_OB(test_map, 0, 0) == sack);
+
+    obj = create_archetype("gem");
+    obj->nrof = 1;
+    insert_ob_in_map_at(obj, test_map, NULL, 0, 1, 0);
+    put_object_in_sack(dummy, sack, obj, 1);
+    fail_unless(GET_MAP_OB(test_map, 1, 0) == obj, "object was removed from map?");
+    fail_unless(sack->inv == NULL, "sack's inventory isn't null?");
+
+    remove_ob(sack);
+    free_object(sack);
+
+    // basic insertion
+    sack = create_archetype("sack");
+    sack->nrof = 1;
+    fail_unless(sack->type == CONTAINER, "sack isn't a container?");
+    insert_ob_in_map_at(sack, test_map, NULL, 0, 0, 0);
+    fail_unless(GET_MAP_OB(test_map, 0, 0) == sack, "sack not put on map?");
+
+    SET_FLAG(sack, FLAG_APPLIED);
+    put_object_in_sack(dummy, sack, obj, 1);
+    fail_unless(sack->inv == obj, "object not inserted into sack?");
+    fail_unless(GET_MAP_OB(test_map, 1, 0) == NULL, "object wasn't removed from map?");
+
+    remove_ob(obj);
+    insert_ob_in_map_at(obj, test_map, NULL, 0, 1, 0);
+    sack->weight_limit = 1;
+    obj->weight = 5;
+
+    put_object_in_sack(dummy, sack, obj, 1);
+    fail_unless(sack->inv == NULL, "item was put in sack even if too heavy?");
+    fail_unless(GET_MAP_OB(test_map, 1, 0) == obj, "object was removed from map?");
+
+    // now for sack splitting
+    sack->nrof = 2;
+    obj->weight = 1;
+
+    put_object_in_sack(dummy, sack, obj, 1);
+    fail_unless(sack->nrof == 1, "sack wasn't split?");
+    fail_unless(sack->above != NULL, "no new sack created?");
+    fail_unless(sack->inv == obj, "object not inserted in old sack?");
+    fail_unless(sack == obj->env, "object's env not updated?");
+
+    // now moving to/from containers
+    obj->nrof = 2;
+    sack2 = sack->above;
+    SET_FLAG(sack2, FLAG_APPLIED);
+    dummy->container = sack;
+    put_object_in_sack(dummy, sack, sack2, 1);
+    fail_unless(sack2->inv == NULL, "sack2's not empty?");
+    fail_unless(sack->inv == obj, "obj wasn't transferred?");
+
+    // move between containers and split containers
+    remove_ob(sack2);
+    insert_ob_in_map_at(sack2, test_map, NULL, 0, 2, 0);
+    SET_FLAG(sack2, FLAG_APPLIED);
+    sack2->nrof = 2;
+    dummy->container = sack2;
+    put_object_in_sack(dummy, sack2, sack, 0);
+    fail_unless(sack->inv == NULL, "sack wasn't put into sack2?");
+    fail_unless(sack2->inv != NULL, "sack2 wasn't filled?");
+    fail_unless(sack2->above != NULL, "sack2 wasn't split?");
+    fail_unless(sack2->above->inv == NULL, "sack2's split was filled?");
+
+    free_map(test_map);
+}
+END_TEST
+
 Suite *c_object_suite(void)
 {
   Suite *s = suite_create("c_object");
@@ -116,6 +181,7 @@ Suite *c_object_suite(void)
 
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, test_find_best_apply_object_match);
+  tcase_add_test(tc_core, test_put_object_in_sack);
 
   return s;
 }
@@ -127,8 +193,10 @@ int main(void)
   SRunner *sr = srunner_create(s);
 
   settings.debug = 0;
-  settings.logfilename="/unit/server/c_object.out";
+  settings.logfilename="c_object.out";
   init(0, NULL);
+
+//  srunner_set_fork_status (sr, CK_NOFORK);
 
   srunner_set_xml(sr,LOGDIR "/unit/server/c_object.xml");
   srunner_set_log(sr,LOGDIR "/unit/server/c_object.out");
