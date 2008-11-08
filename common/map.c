@@ -1056,7 +1056,7 @@ static int load_map_header(FILE *fp, mapstruct *m) {
         } else if (!strcmp(key,"unique")) {
             m->unique = atoi(value);
         } else if (!strcmp(key,"template")) {
-            m->template = atoi(value);
+            m->is_template = atoi(value);
         } else if (!strcmp(key,"region")) {
             m->region = get_region_by_name(value);
         } else if (!strcmp(key,"shopitems")) {
@@ -1384,8 +1384,8 @@ int save_map(mapstruct *m, int flag) {
         return SAVE_ERROR_NO_PATH;
     }
 
-    if (flag != SAVE_MODE_NORMAL || (m->unique) || (m->template)) {
-        if (!m->unique && !m->template) { /* flag is set */
+    if (flag != SAVE_MODE_NORMAL || (m->unique) || (m->is_template)) {
+        if (!m->unique && !m->is_template) { /* flag is set */
             if (flag == SAVE_MODE_OVERLAY)
                 create_overlay_pathname(m->path, filename, MAX_BUF);
             else
@@ -1411,7 +1411,7 @@ int save_map(mapstruct *m, int flag) {
     m->in_memory = MAP_SAVING;
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (m->unique || m->template || flag != SAVE_MODE_NORMAL)) {
+    if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
         char buf[MAX_BUF];
         snprintf(buf, sizeof(buf), "%s > %s%s", uncomp[m->compressed][2], filename, TEMP_EXT);
         snprintf(final, sizeof(final), "%s", filename);
@@ -1454,7 +1454,7 @@ int save_map(mapstruct *m, int flag) {
     if (m->msg) fprintf(fp,"msg\n%sendmsg\n", m->msg);
     if (m->maplore) fprintf(fp,"maplore\n%sendmaplore\n", m->maplore);
     if (m->unique) fprintf(fp,"unique %d\n", m->unique);
-    if (m->template) fprintf(fp,"template %d\n", m->template);
+    if (m->is_template) fprintf(fp,"template %d\n", m->is_template);
     if (m->outdoor) fprintf(fp,"outdoor %d\n", m->outdoor);
     if (m->nosmooth) fprintf(fp, "nosmooth %d\n", m->nosmooth);
     if (m->last_reset_time.tv_sec) fprintf(fp, "first_load %d\n", (int)m->last_reset_time.tv_sec);
@@ -1474,7 +1474,7 @@ int save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if ((flag == SAVE_MODE_NORMAL || flag == SAVE_MODE_OVERLAY) && !m->unique && !m->template) {
+    if ((flag == SAVE_MODE_NORMAL || flag == SAVE_MODE_OVERLAY) && !m->unique && !m->is_template) {
         char name[MAX_BUF], final_unique[MAX_BUF];
 
         create_items_path(m->path, name, MAX_BUF);
@@ -1529,7 +1529,7 @@ int save_map(mapstruct *m, int flag) {
         free_all_objects(m);
     }
 
-    if (m->compressed && (m->unique || m->template || flag != SAVE_MODE_NORMAL)) {
+    if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
         fflush(fp);
         if (pclose(fp) == -1) {
             LOG(llevError, "pclose error!\n");

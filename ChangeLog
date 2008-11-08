@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Rename map's 'template' field which conflicts with C++ compilers.
+Also change 'region' and 'shopitems' in some structures to the underlying structure
+instead of the typedef, for the same confusion reason.
+ common/anim.c map.c
+ include/map.h
+ random_maps/random_map.h
+ server/server.c swap.c
+Nicolas Weeger 2008-11-08
+
 Tentative fix for bug #2018391: Zero-cap or capless containers, also stacking containers.
 Split containers when reading/applying them (coherent with eg rings when applied).
 Also ensure that a sack is split when putting things into it anyway.

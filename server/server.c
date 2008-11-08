@@ -516,7 +516,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     /* If we are not coming from a template map, we can use relative directories
      * for the map to generate from.
      */
-    if (!exit_ob->map->template) {
+    if (!exit_ob->map->is_template) {
         /* We can't use exitpath directly, as sourcemap points there. */
         path_combine_and_normalize(exit_ob->map->path, sourcemap, tmpstring, sizeof(tmpstring));
         snprintf(exitpath, sizeof(exitpath), "%s", tmpstring);
@@ -539,7 +539,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
     /* If we are coming from another template map, use reletive paths unless
      * indicated otherwise.
      */
-    if (exit_ob->map->template && (resultname[0] != '/')) {
+    if (exit_ob->map->is_template && (resultname[0] != '/')) {
         path_combine_and_normalize(exit_ob->map->path, resultname, new_map_name, sizeof(new_map_name));
     } else {
         create_template_pathname(resultname, new_map_name, sizeof(new_map_name));
@@ -561,7 +561,7 @@ static void enter_fixed_template_map(object *pl, object *exit_ob) {
          * so we don't just save over the source map.
          */
         snprintf(new_map->path, sizeof(new_map->path), "%s", new_map_name);
-        new_map->template = 1;
+        new_map->is_template = 1;
         enter_map(pl, new_map, EXIT_X(exit_ob), EXIT_Y(exit_ob));
     } else {
         draw_ext_info_format(NDI_UNIQUE, 0, pl,
@@ -608,7 +608,7 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
     /* If we are coming from another template map, use reletive paths unless
      * indicated otherwise.
      */
-    if (exit_ob->map->template && (resultname[0] != '/')) {
+    if (exit_ob->map->is_template && (resultname[0] != '/')) {
         path_combine_and_normalize(exit_ob->map->path, resultname, new_map_name, sizeof(new_map_name));
     } else {
         create_template_pathname(resultname, new_map_name, sizeof(new_map_name));
@@ -640,7 +640,7 @@ static void enter_random_template_map(object *pl, object *exit_ob) {
         int x, y;
         x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
         y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
-        new_map->template = 1;
+        new_map->is_template = 1;
         enter_map(pl, new_map,         x, y);
     }
 }

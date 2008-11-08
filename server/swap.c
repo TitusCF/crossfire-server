@@ -327,7 +327,7 @@ void flush_old_maps(void) {
          * the functions calling it may not expect the map list to change
          * underneath them.
          */
-        if ((m->unique || m->template) && m->in_memory == MAP_SWAPPED) {
+        if ((m->unique || m->is_template) && m->in_memory == MAP_SWAPPED) {
             LOG(llevDebug,"Resetting map %s.\n",m->path);
             oldmap = m;
             m = m->next;

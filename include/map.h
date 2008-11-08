@@ -347,7 +347,7 @@ typedef struct mapdef {
     struct mapdef *next;        /**< Next map, linked list. */
     char    *tmpname;           /**< Name of temporary file. */
     char    *name;              /**< Name of map as given by its creator. */
-    region  *region;            /**< What jurisdiction in the game world this map is ruled by
+    struct regiondef* region;            /**< What jurisdiction in the game world this map is ruled by
                                  * points to the struct containing all the properties of
                                  * the region. */
     uint32  reset_time;         /**< When this map should reset. */
@@ -356,7 +356,7 @@ typedef struct mapdef {
     uint32  fixed_resettime:1;  /**< If true, reset time is not affected by
                                  * players entering/exiting map. */
     uint32  unique:1;           /**< If set, this is a per player unique map. */
-    uint32  template:1;         /**< If set, this is a template map. */
+    uint32  is_template:1;         /**< If set, this is a template map. */
     uint32  nosmooth:1;         /**< If set the content of this map has smoothlevel=0 forced. */
     uint32  outdoor:1;          /**< True if an outdoor map. */
     sint32  timeout;            /**< Swapout is set to this. */
@@ -372,7 +372,7 @@ typedef struct mapdef {
     uint16  enter_y;            /**< on the map if none are set in the exit. */
     oblinkpt    *buttons;       /**< Linked list of linked lists of buttons. */
     MapSpace    *spaces;        /**< Array of spaces on this map. */
-    shopitems   *shopitems;     /**< List of item-types the map's shop will trade in. */
+    struct shopitem *shopitems;     /**< List of item-types the map's shop will trade in. */
     char    *shoprace;          /**< The preffered race of the local shopkeeper. */
     double  shopgreed;          /**< How much our shopkeeper overcharges. */
     uint64  shopmin;            /**< Minimum price a shop will trade for. */

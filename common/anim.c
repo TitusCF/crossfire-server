@@ -82,6 +82,8 @@ void init_anim(void) {
     }
     while (fgets(buf, MAX_BUF-1, fp)!=NULL) {
         if (*buf=='#') continue;
+        if (strlen(buf) == 0)
+            break;
         /* Kill the newline */
         buf[strlen(buf)-1] = '\0';
         if (!strncmp(buf,"anim ", 5)) {

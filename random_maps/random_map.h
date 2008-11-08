@@ -77,7 +77,7 @@ typedef struct RMParms {
     long unsigned int total_map_hp;
     int treasureoptions;
     int symmetry_used;
-    region *region;
+    struct regiondef *region;
     int multiple_floors;
 } RMParms;
 
