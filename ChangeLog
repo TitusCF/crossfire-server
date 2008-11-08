@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Initial import of Crossfire Resource Editor, tool to manage various resources like
+artifacts, archetypes, faces, animations, treasures.
+For now it only lets the user view, but edition is planned.
+This is a C++/Qt program, not part of the regular build system.
+ utils/cre/*cpp *h: CRE files.
+Nicolas Weeger 2008-11-08
+
 Rename map's 'template' field which conflicts with C++ compilers.
 Also change 'region' and 'shopitems' in some structures to the underlying structure
 instead of the typedef, for the same confusion reason.
