@@ -835,7 +835,8 @@ void copy_object(object *op2, object *op) {
         }
     }
 
-    op->dialog_information = duplicate_dialog_information(op2->dialog_information);
+    // This way, dialog information will be parsed again when/if needed.
+    CLEAR_FLAG(op, FLAG_DIALOG_PARSED);
 
     update_ob_speed(op);
 }

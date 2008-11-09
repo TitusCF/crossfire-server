@@ -48,7 +48,6 @@ extern void check_inv(object *op, object *trig);
 extern void verify_button_links(const mapstruct *map);
 /* dialog.c */
 extern void free_dialog_information(object *op);
-extern struct_dialog_information *duplicate_dialog_information(struct_dialog_information *original);
 extern void parse_dialog_information(object *op);
 extern int get_dialog_message(object *op, const char *text, struct_dialog_message** message, struct_dialog_reply** reply);
 /* exp.c */

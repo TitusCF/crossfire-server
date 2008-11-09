@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug #2249875: 2.0 random say crashes.
+Remove 'duplicate_dialog_information()', and merely clear FLAG_DIALOG_PARSED in
+object copy so dialog is correctly parsed again when needed.
+ common/dialog.c object.c
+ include/libproto.h
+Nicolas Weeger 2008-11-09
+
 Initial import of Crossfire Resource Editor, tool to manage various resources like
 artifacts, archetypes, faces, animations, treasures.
 For now it only lets the user view, but edition is planned.

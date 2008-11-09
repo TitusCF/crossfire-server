@@ -76,14 +76,6 @@ void free_dialog_information(object *op) {
 }
 
 /**
- * @param original item to duplicate.
- * @return copy of original.
- */
-struct_dialog_information *duplicate_dialog_information(struct_dialog_information *original) {
-    return NULL;
-}
-
-/**
  * Does the text match the expression?
  * @param exp expression to try to match.
  * @param text what to test.
