@@ -105,7 +105,6 @@ typedef struct PythonCmdStruct
 
 /* This plugin allows up to 1024 custom commands.                            */
 #define NR_CUSTOM_CMD 1024
-PythonCmd CustomCommand[NR_CUSTOM_CMD];
 #include <cfpython_proto.h>
 
 #endif /* PLUGIN_PYTHON_H */

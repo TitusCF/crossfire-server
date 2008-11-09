@@ -69,6 +69,8 @@ typedef struct {
     time_t cached_time, used_time;
 } pycode_cache_entry;
 
+PythonCmd CustomCommand[NR_CUSTOM_CMD];
+
 static pycode_cache_entry pycode_cache[PYTHON_CACHE_SIZE];
 
 static void set_exception(const char *fmt, ...);

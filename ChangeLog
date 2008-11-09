@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Apply patch #2040854: Patch to compile on OSX PPC, and to comply with ANSI C, by elliotbay.
+Basically put an array definition in the .c instead of the .h.
+ plugins/cfpython/include/cfpython.h
+ plugins/cfpython/cfpython.c
+Nicolas Weeger 2008-11-09
+
 Fix for bug #2249875: 2.0 random say crashes.
 Remove 'duplicate_dialog_information()', and merely clear FLAG_DIALOG_PARSED in
 object copy so dialog is correctly parsed again when needed.
