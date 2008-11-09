@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Merge smoothing information in New_Face, to simplify some.
+ common/image.c
+ include/face.h
+Nicolas Weeger 2008-11-09
+
 Apply patch #2040854: Patch to compile on OSX PPC, and to comply with ANSI C, by elliotbay.
 Basically put an array definition in the .c instead of the .h.
  plugins/cfpython/include/cfpython.h

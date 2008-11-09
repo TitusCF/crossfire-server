@@ -44,6 +44,7 @@ typedef struct new_face_struct {
                               * same value as its position in the array */
     uint8       visibility;
     uint8       magicmap;    /**< Color to show this in magic map */
+    uint16      smoothface;  /**< Smoothed face for this, (uint16)-1 for none. */
     const char  *name;       /**< Face name, as used by archetypes and such. */
 } New_Face;
 

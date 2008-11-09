@@ -76,21 +76,6 @@ static int nroffiles = 0;
 int nrofpixmaps = 0;
 
 /**
- * id is the face to smooth, smooth is the 16x2 face used to smooth id.
- */
-struct smoothing {
-    uint16 id;
-    uint16 smooth;
-};
-
-/**
- * Contains all defined smoothing entries. smooth is an array of nrofsmooth
- * entries. It is sorted by smooth[].id.
- */
-static struct smoothing *smooth=NULL;
-int nrofsmooth=0;
-
-/**
  * The only thing this table is used for now is to
  * translate the colorname in the magicmap field of the
  * face into a numeric index that is then sent to the
@@ -119,18 +104,6 @@ static const char *const colorname[] = {
 static int compar(const struct bmappair *a, const struct bmappair *b) {
     return strcmp(a->name, b->name);
 }
-
-/**
- * Used for bsearch searching.
- */
-static int compar_smooth(const struct smoothing *a, const struct smoothing *b) {
-    if (a->id<b->id)
-        return -1;
-    if (b->id<a->id)
-        return 1;
-    return 0;
-}
-
 
 /**
  * Finds a color by name.
@@ -296,6 +269,7 @@ void read_bmap_names(void) {
         new_faces[i].number = i;
         new_faces[i].visibility=0;
         new_faces[i].magicmap=255;
+        new_faces[i].smoothface = (uint16)-1;
     }
     for (i = 0; i < nroffiles; i++) {
         new_faces[xbm[i].number].name = xbm[i].name;
@@ -368,7 +342,7 @@ unsigned find_face(const char *name, unsigned error) {
 int read_smooth(void) {
     char buf[MAX_BUF], *p, *q;
     FILE *fp;
-    int smoothcount = 0;
+    int regular, smoothed, nrofsmooth = 0;
 
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
     LOG(llevDebug,"Reading smooth from %s...\n",buf);
@@ -377,32 +351,35 @@ int read_smooth(void) {
         exit(-1);
     }
 
-    /* First count how many smooth we have, so we can allocate correctly */
-    while (fgets(buf, MAX_BUF, fp)!=NULL)
-        if (buf[0] != '#' && buf[0] != '\n')
-            smoothcount++;
-    rewind(fp);
-
-    smooth = (struct smoothing *) malloc(sizeof(struct smoothing) * (smoothcount));
-    memset(smooth, 0, sizeof(struct smoothing) * (smoothcount));
-
-    while (nrofsmooth < smoothcount && fgets(buf, MAX_BUF, fp)!=NULL) {
+    while (fgets(buf, MAX_BUF, fp)!=NULL) {
         if (*buf == '#')
             continue;
+
         p=strchr(buf,' ');
         if (!p)
             continue;
+
         *p='\0';
-        q=buf;
-        smooth[nrofsmooth].id=find_face(q,0);
-        q=p+1;
-        smooth[nrofsmooth].smooth=find_face(q,0);
+        q = buf;
+        regular = find_face(q, (unsigned)-1);
+        if (regular == (unsigned)-1) {
+            LOG(llevError, "invalid regular face: %s\n", q);
+            continue;
+        }
+        q = p + 1;
+        smoothed = find_face(q,(unsigned)-1);
+        if (smoothed == (unsigned)-1) {
+            LOG(llevError, "invalid smoothed face: %s\n", q);
+            continue;
+        }
+
+        new_faces[regular].smoothface = smoothed;
+
         nrofsmooth++;
     }
     fclose(fp);
 
     LOG(llevDebug,"done (got %d smooth entries)\n",nrofsmooth);
-    qsort(smooth, nrofsmooth, sizeof(struct smoothing), (int (*)(const void*, const void*))compar_smooth);
     return nrofsmooth;
 }
 
@@ -416,15 +393,17 @@ int read_smooth(void) {
  * @return 1=smooth face found, 0=no smooth face found
  */
 int find_smooth(uint16 face, uint16 *smoothed) {
-    struct smoothing *bp, tmp;
+    (*smoothed) = 0;
 
-    tmp.id = face;
-    bp = (struct smoothing *)bsearch
-         (&tmp, smooth, nrofsmooth, sizeof(struct smoothing), (int (*)(const void*, const void*))compar_smooth);
-    (*smoothed)=0;
-    if (bp)
-        (*smoothed)=bp->smooth;
-    return bp ? 1 : 0;
+    if (face < nrofpixmaps) {
+        if (new_faces[face].smoothface == ((uint16)-1))
+            return 0;
+
+        (*smoothed) = new_faces[face].smoothface;
+        return 1;
+    }
+
+    return 0;
 }
 
 /**
@@ -437,7 +416,6 @@ void free_all_images(void) {
         free(xbm[i].name);
     free(xbm);
     free(new_faces);
-    free(smooth);
 }
 
 /**
