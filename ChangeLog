@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #2094038: Monk Confusion...
+ server/gods.c: don't try to update the 'no weapon' flag if the player is
+ forbidden weapons, that messes with things.
+Nicolas Weeger 2008-11-10
+
 Remove obsolete 'color_fg' handling.
  common/image.c
 Nicolas Weeger 2008-11-10

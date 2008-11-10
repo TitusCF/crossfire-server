@@ -642,12 +642,12 @@ void become_follower(object *op, const object *new_god) {
      * This also can happen for monks which cannot use weapons. In this case
      * do not allow to use weapons even if the god otherwise would allow it.
      */
-    if (!present_in_ob_by_name(FORCE, "no weapon force", op))
-        update_priest_flag(new_god,skop,FLAG_USE_WEAPON);
+    if (!present_in_ob_by_name(FORCE, "no weapon force", op)) {
+        if (worship_forbids_use(op,skop,FLAG_USE_WEAPON,"weapons"))
+            stop_using_item(op,WEAPON,2);
+    }
     update_priest_flag(new_god,skop,FLAG_USE_ARMOUR);
 
-    if (worship_forbids_use(op,skop,FLAG_USE_WEAPON,"weapons"))
-        stop_using_item(op,WEAPON,2);
 
     if (worship_forbids_use(op,skop,FLAG_USE_ARMOUR,"armour")) {
         stop_using_item(op,ARMOUR,1);
