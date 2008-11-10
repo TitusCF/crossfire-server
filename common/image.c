@@ -163,10 +163,6 @@ static void read_face_data(void) {
             on_face->visibility=0;
         } else if (on_face==NULL) {
             LOG(llevError,"Got line with no face set: %s\n", buf);
-        } else if (!strncmp(buf,"color_fg",8)) {
-            cp = buf + 9;
-            cp[strlen(cp)-1] = '\0';
-            if (on_face->magicmap==255) on_face->magicmap=find_color(cp);
         } else if (!strncmp(buf,"visibility",10)) {
             on_face->visibility = atoi(buf + 11);
         } else if (!strncmp(buf,"magicmap",8)) {
