@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Tentative fix for bug #1982043: Ruggilli immolation.
+ server/disease.c: don't remove god-diven diseases.
+Nicolas Weeger 2008-11-11
+
 Fix for bug #2259992: I dont know how to apply the ... * (unpaid).
  include/ob_methods.h: new return value for methods.
  server/apply.c: don't display anything if player already warned.

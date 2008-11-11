@@ -711,7 +711,8 @@ int cure_disease(object *sufferer,object *caster) {
     for (disease=sufferer->inv;disease;disease=next) {
         next=disease->below;
 
-        if (disease->type==DISEASE) { /* attempt to cure this disease */
+        if (disease->type==DISEASE && !QUERY_FLAG(disease, FLAG_STARTEQUIP)) {
+             /* attempt to cure this disease. God-given diseases are given by the god, so don't remove them */
             /* If caster lvel is higher than disease level, cure chance
              * is automatic.  If lower, then the chance is basically
              * 1 in level_diff - if there is a 5 level difference, chance
