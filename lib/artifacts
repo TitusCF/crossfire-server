@@ -3751,7 +3751,7 @@ Allowed mushroom_1, mushroom_2, mushroom_3
 chance 150
 Object Gourmet
 type 6
-value 200
+value 2
 food 250
 end
 #
