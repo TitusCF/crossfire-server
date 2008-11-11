@@ -523,13 +523,13 @@ int manual_apply(object *op, object *tmp, int aflag) {
             draw_ext_info(NDI_UNIQUE, 0, op,
                           MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "You should pay for it first.", NULL);
-            return 1;
+            return METHOD_SILENT_ERROR;
         }
         return 0;   /* monsters just skip unpaid items */
     }
 
     if (!check_race_restrictions(op, tmp))
-        return 1;
+        return METHOD_SILENT_ERROR;
 
     /* Lauwenmark: Handle for plugin apply event */
     if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
@@ -608,6 +608,8 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "You must get it first!\n", NULL);
+        else if (tmp == METHOD_SILENT_ERROR)
+            return tmp;
     }
     if (tmp == METHOD_OK) {
         if (op->anim_suffix!=NULL)

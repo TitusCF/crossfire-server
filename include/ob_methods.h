@@ -42,6 +42,7 @@ typedef char method_ret;
 #define METHOD_OK 0
 #define METHOD_UNHANDLED 1
 #define METHOD_ERROR 2
+#define METHOD_SILENT_ERROR 3   /**< Player was warned she can't use the item for now. */
 
 /**
  * Typedefs for ob_methods. Also used in ob_types.c for storing the pointers
