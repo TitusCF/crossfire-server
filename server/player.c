@@ -33,6 +33,7 @@
  */
 
 #include <global.h>
+#include <assert.h>
 #ifndef WIN32 /* ---win32 remove headers */
 #include <pwd.h>
 #endif
@@ -2435,6 +2436,149 @@ void move_player_attack(object *op, int dir) {
 }
 
 /**
+Update the move_type of a transport based on the direction. The transport MUST be square.
+Depending on the direction, the right column of tiles or the bottom line of tiles will have a move_type of 0.
+@param transport what to update.
+@param dir direction to update flags for.
+*/
+static void update_transport_block(object* transport, int dir) {
+    object* part;
+    int count = 0, sx, sy, up, x, y;
+
+    get_multi_size(transport, &sx, &sy, NULL, NULL);
+    assert(sx == sy);
+
+    if (dir == 1 || dir == 5) {
+        part = transport;
+        for (y = 0; y <= sy; y++) {
+            for (x = 0; x < sx; x++) {
+                part->move_type = transport->move_type;
+                part = part->more;
+            }
+            part->move_type = 0;
+            part = part->more;
+        }
+    } else if (dir == 3 || dir == 7) {
+        part = transport;
+        for (y = 0; y < sy; y++) {
+            for (x = 0; x <= sx; x++) {
+                part->move_type = transport->move_type;
+                part = part->more;
+            }
+        }
+        while (part) {
+            part->move_type = 0;
+            part = part->more;
+        }
+    } else {
+        for (part = transport; part; part = part->more) {
+            part->move_type = transport->move_type;
+        }
+    }
+}
+
+/**
+Turn a transport to an adjacent direction (+1 or -1), updating the move_type flags in the same process.
+@param transport what to turn. Must be of type TRANSPORT.
+@param captain who wants to turn the boat.
+@param dir direction to turn to.
+@return
+- 1 if the transport turned (so can't move anymore this tick)
+- 2 if the transport couldn't turn
+ */
+static int turn_one_transport(object* transport, object* captain, int dir) {
+    int x, y, scroll_dir = 0;
+
+    assert(transport->type == TRANSPORT);
+
+    x = transport->x;
+    y = transport->y;
+
+    if (transport->direction == 1 && dir == 8) {
+        x--;
+    } else if (transport->direction == 2 && dir == 3) {
+        y++;
+    } else if (transport->direction == 3 && dir == 2) {
+        y--;
+    } else if (transport->direction == 5 && dir == 6) {
+        x--;
+    } else if (transport->direction == 6 && dir == 5) {
+        x++;
+    } else if (transport->direction == 7 && dir == 8) {
+        y--;
+    } else if (transport->direction == 8 && dir == 7) {
+        y++;
+    } else if (transport->direction == 8 && dir == 1) {
+        x++;
+    }
+
+    update_transport_block(transport, dir);
+    remove_ob(transport);
+    if (ob_blocked(transport, transport->map, x, y)) {
+        update_transport_block(transport, transport->direction);
+        insert_ob_in_map(transport, transport->map, NULL, 0);
+        return 2;
+    }
+
+    if (x != transport->x || y != transport->y) {
+        object *pl;
+
+//        assert(scroll_dir != 0);
+
+        for (pl = transport->inv; pl; pl=pl->below) {
+            if (pl->type == PLAYER) {
+                pl->contr->do_los=1;
+                pl->map = transport->map;
+                pl->x = x;
+                pl->y = y;
+                esrv_map_scroll(&pl->contr->socket, freearr_x[scroll_dir],freearr_y[scroll_dir]);
+                pl->contr->socket.update_look=1;
+                pl->contr->socket.look_position=0;
+            }
+        }
+    }
+
+    insert_ob_in_map_at(transport, transport->map, NULL, 0, x, y);
+    transport->direction = dir;
+    transport->facing = dir;
+    animate_object(transport, dir);
+    captain->direction = dir;
+    return 1;
+}
+
+/**
+Try to turn a transport in the desired direction.
+This takes into account transports that turn and don't occupy the same space depending on the direction it is facing.
+The transport MUST be a square for it to turn correctly when adjusting tile occupation.
+@param transport what to turn. Must be of type TRANSPORT.
+@param captain who wants to turn the boat.
+@param dir direction to turn to.
+@return
+- 0 if transport is in the right direction
+- 1 if the transport turned (so can't move anymore this tick)
+- 2 if the transport couldn't turn
+*/
+static int turn_transport(object* transport, object* captain, int dir) {
+    assert(transport->type == TRANSPORT);
+
+    if (get_ob_key_value(transport, "turnable_transport") == NULL) {
+        transport->direction = dir;
+        transport->facing = dir;
+        animate_object(transport, dir);
+        captain->direction = dir;
+        return 0;
+    }
+
+    if (transport->direction == dir)
+        return 0;
+
+    if (absdir(transport->direction - dir) > 2)
+        return turn_one_transport(transport, captain, absdir(transport->direction + 1));
+    else
+        return turn_one_transport(transport, captain, absdir(transport->direction - 1));
+}
+
+/**
  * Player gave us a direction, check whether to move or fire.
  *
  * @param op
@@ -2466,6 +2610,8 @@ int move_player(object *op,int dir) {
     if (!transport && op->hide) do_hidden_move(op);
 
     if (transport) {
+        int turn;
+
         /* transport->contr is set up for the person in charge of the boat.
          * if that isn't this person, he can't steer it, etc
          */
@@ -2475,8 +2621,6 @@ int move_player(object *op,int dir) {
          * will point in the same direction if player is running.
          */
         if (transport->speed_left < 0.0) {
-            transport->direction = dir;
-            op->direction = dir;
             return 0;
         }
         /* Remove transport speed.  Give player just a little speed -
@@ -2485,6 +2629,9 @@ int move_player(object *op,int dir) {
         transport->speed_left -= 1.0;
         if (op->speed_left < 0.0) op->speed_left = -0.01;
 
+        turn = turn_transport(transport, op, dir);
+        if (turn != 0)
+            return 0;
     } else {
         /* it is important to change the animation now, as fire or move_player_attack can start a compound animation,
          * and leave us with state = 0, which we don't want to change again. */

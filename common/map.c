@@ -383,6 +383,10 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
         return 1;
     }
 
+    // special hack for transports: if it's a transport with a move_type of 0, it can do on the space anyway
+    if (ob->type == TRANSPORT && ob->move_type == 0)
+        return 0;
+
     /* Save some cycles - instead of calling get_map_flags(), just get the value
      * directly.
      */
@@ -520,6 +524,7 @@ int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
     int flag;
     mapstruct *m1;
     sint16  sx, sy;
+    const object* part;
 
     if (ob==NULL) {
         flag= get_map_flags(m,&m1, x,y, &sx, &sy);
@@ -529,7 +534,7 @@ int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
         return(GET_MAP_MOVE_BLOCK(m1, sx, sy));
     }
 
-    for (tmp=ob->arch; tmp!=NULL;tmp=tmp->more) {
+    for (tmp=ob->arch, part = ob; tmp!=NULL;tmp=tmp->more, part = part->more) {
         flag = get_map_flags(m, &m1, x+tmp->clone.x,y+tmp->clone.y, &sx, &sy);
 
         if (flag & P_OUT_OF_MAP) return P_OUT_OF_MAP;
@@ -541,6 +546,10 @@ int ob_blocked(const object *ob,mapstruct *m,sint16 x,sint16 y) {
         */
 
         if (ob->move_type == 0 && GET_MAP_MOVE_BLOCK(m1, sx, sy) != MOVE_ALL) continue;
+
+        // A transport without move_type for a part should go through everything for that part.
+        if (ob->type == TRANSPORT && part->move_type == 0)
+            continue;
 
         /* Note it is intentional that we check ob - the movement type of the
          * head of the object should correspond for the entire object.

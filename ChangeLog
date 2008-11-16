@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Allow transports to not occupy the same spaces depending on the facing direction.
+ common/map.c: tweak various move_type checks for transport
+ doc/Developers/objects: update with special flag
+ server/player.c: special handling for transport facings
+Nicolas Weeger 2008-11-16
+
 Reduce selling cost of Gourmet Mushrooms.  They were to easy to exploit
 and abuse for massive cash influx. Requested change by meflin.
  /lib/artifacts

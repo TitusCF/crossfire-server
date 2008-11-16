@@ -2028,6 +2028,12 @@ face_full
 		fall back to the archetype face.
 
 anim_full	Like face_full above, but for animated objects.
+turnable_transport
+		When set, the transport will change the space it occupies depending
+		on its facing direction. The transport MUST be a square (if not, game
+		will simple refuse to work - don't try to mess with this).
+		The pics for directions 5 and 7 must be on the top/left corner (leave blank space
+		at the right/bottom). See 'arch/transport/turningboat.arc' and associated pics.
 
 Usage/implementation details:
 To activate a transport, the player will apply it just like any other object.
