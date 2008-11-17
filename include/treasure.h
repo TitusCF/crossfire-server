@@ -41,7 +41,7 @@
 #define MAXMAGIC 4
 
 /** Maximum difficulty for difficulty/magic mapping. */
-#define DIFFLEVELS 31
+#define DIFFLEVELS 201
 
 /** Highest level of rods/staves/scrolls to generate. */
 #define MAX_SPELLITEM_LEVEL 110
