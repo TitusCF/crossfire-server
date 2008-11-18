@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+socket/request.c: Properly check input read from client socket.
+Andreas Kirschbaum 2008-11-18
+
 Apply patch #2305993: Random Item generation difficutly table expansion,
 courtesy meflin.
  common/treasure.c

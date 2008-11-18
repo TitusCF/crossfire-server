@@ -131,6 +131,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
         /* find the next space, and put a null there */
         for (;buf[s] && buf[s] != ' ';s++) ;
+        if (s>=len)
+            break;
         buf[s++]=0;
         while (buf[s] == ' ') s++;
 
@@ -141,7 +143,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 
         for (;buf[s] && buf[s] != ' ';s++) ;
         buf[s++]=0;
-        while (buf[s] == ' ') s++;
+        while (s<len && buf[s] == ' ') s++;
 
         slen = strlen(cmdback);
         safe_strcat(cmdback, " ", &slen, HUGE_BUF);
