@@ -272,8 +272,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
 		safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
 	    }
         } else if (!strcmp(cmd,"tick")) {
-            ns->tick = atoi(param);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+            int tick;
+
+            tick = atoi(param);
+            if (tick != 0 && tick != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->tick = tick;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", tick);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"bot")) {
             ns->is_bot = (atoi(param) != 0 ? 1 : 0);
             safe_strcat(cmdback, ns->is_bot ? "1" : "0", &slen, HUGE_BUF);
