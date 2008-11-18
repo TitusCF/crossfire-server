@@ -285,8 +285,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             }
         } else if (!strcmp(cmd,"bot")) {
-            ns->is_bot = (atoi(param) != 0 ? 1 : 0);
-            safe_strcat(cmdback, ns->is_bot ? "1" : "0", &slen, HUGE_BUF);
+            int is_bot;
+
+            is_bot = atoi(param);
+            if (is_bot != 0 && is_bot != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->is_bot = is_bot;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", is_bot);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"want_pickup")) {
             ns->want_pickup = (atoi(param) != 0 ? 1 : 0);
             safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
