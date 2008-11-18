@@ -1003,7 +1003,8 @@ S->C: setup <option1> <value1> <option2> <value2>
 	    Client will probably always send 1. Server will reply with 1 if it
 	    supports the 'inscribe' command, 0 else.
 
-	map2cmd: This indicates client support for the map2 protocol command.
+	map2cmd: (1)
+            This indicates client support for the map2 protocol command.
 	    See the map2 protocol details above for the main differences.
 	    Note that if map2 protocol is used, the following setup commands
 	    have no effect, either as being redundant or not applicable:
