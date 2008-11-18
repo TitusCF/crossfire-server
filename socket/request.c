@@ -173,9 +173,19 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 snprintf(tmpbuf, sizeof(tmpbuf), "%d", monitor_spells);
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             }
-        }  else if (!strcmp(cmd,"darkness")) {
-            ns->darkness = atoi(param);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+        } else if (!strcmp(cmd,"darkness")) {
+            int darkness;
+
+            darkness = atoi(param);
+            if (darkness != 0 && darkness != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->darkness = darkness;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", darkness);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"map2cmd")) {
             ns->mapmode = Map2Cmd;
             safe_strcat(cmdback, "1", &slen, HUGE_BUF);
