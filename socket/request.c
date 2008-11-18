@@ -259,18 +259,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
         } else if (!strcmp(cmd,"extendedMapInfos")) {
             safe_strcat(cmdback, "1", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"extendedTextInfos")) {
-	    int has_readable_type;
+            int has_readable_type;
 
-	    has_readable_type = atoi(param);
-	    if (has_readable_type != 0 && has_readable_type != 1) {
-		safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
-	    } else {
-		char tmpbuf[20];
+            has_readable_type = atoi(param);
+            if (has_readable_type != 0 && has_readable_type != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
 
-		ns->has_readable_type = has_readable_type;
-		snprintf(tmpbuf, sizeof(tmpbuf), "%d", has_readable_type);
-		safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
-	    }
+                ns->has_readable_type = has_readable_type;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", has_readable_type);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"tick")) {
             int tick;
 
