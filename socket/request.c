@@ -197,8 +197,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 safe_strcat(cmdback, "1", &slen, HUGE_BUF);
             }
         } else if (!strcmp(cmd,"newmapcmd")) {
-            ns->newmapcmd= atoi(param);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+            int newmapcmd;
+
+            newmapcmd = atoi(param);
+            if (newmapcmd != 0 && newmapcmd != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->newmapcmd = newmapcmd;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", newmapcmd);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"facecache")) {
             ns->facecache = atoi(param);
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
