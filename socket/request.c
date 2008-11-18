@@ -234,17 +234,15 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             /* client ignore the value anyway. */
             safe_strcat(cmdback, "2", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"mapsize")) {
-            int x, y=0;
-            char tmpbuf[MAX_BUF], *cp;
+            int x, y, n;
+            char tmpbuf[20];
 
-            x = atoi(param);
-            for (cp = param; *cp!=0; cp++)
-                if (*cp == 'x' || *cp == 'X') {
-                    y = atoi(cp+1);
-                    break;
-                }
-            if (x < 9 || y < 9 || x>MAP_CLIENT_X || y > MAP_CLIENT_Y) {
-                snprintf(tmpbuf, sizeof(tmpbuf), " %dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
+            if (sscanf(param, "%dx%d%n", &x, &y, &n) != 2 || n != (int)strlen(param)) {
+                x = 0;
+                y = 0;
+            }
+            if (x < 9 || y < 9 || x > MAP_CLIENT_X || y > MAP_CLIENT_Y) {
+                snprintf(tmpbuf, sizeof(tmpbuf), "%dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             } else {
                 ns->mapx = x;
