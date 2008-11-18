@@ -775,7 +775,7 @@ void make_path_to_file(const char *filename) {
     while ((cp = strchr(cp + 1, (int) '/'))) {
         *cp = '\0';
         if (stat(buf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
-            LOG(llevDebug, "Was not dir...\n");
+            LOG(llevDebug, "Was not dir: %s\n", buf);
             if (mkdir(buf, SAVE_DIR_MODE)) {
                 char err[MAX_BUF];
                 LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
