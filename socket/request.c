@@ -155,7 +155,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             ns->sound = 0;
             safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"sound2")) {
-            ns->sound = atoi(param);
+            ns->sound = atoi(param)&(SND_EFFECTS|SND_MUSIC|SND_MUTE);
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"exp64")) {
             /* for compatibility, return 1 since older clients can be confused else. */

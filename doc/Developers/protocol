@@ -1063,8 +1063,11 @@ S->C: setup <option1> <value1> <option2> <value2>
 	sound (bitmask)
 	    Obsolete, server will return FALSE.
 
-	sound2
+	sound2 (bitmask)
             New sound support. Check above for more information.
+	    1=send sound effects
+	    2=send music
+	    64=mute sound; same as "sound" ncom command
 
 	spellmon (0/1)
 	    If set to 1 the client has indicated that it wishes to be
