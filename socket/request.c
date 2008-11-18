@@ -301,7 +301,7 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             ns->want_pickup = (atoi(param) != 0 ? 1 : 0);
             safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"inscribe")) {
-            safe_strcat(cmdback, atoi(param) != 0 ? "1" : "0", &slen, HUGE_BUF);
+            safe_strcat(cmdback, "1", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"num_look_objects")) {
             int tmp;
             char tmpbuf[20];
