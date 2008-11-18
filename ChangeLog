@@ -14,6 +14,7 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+socket/request.c: Properly check "setup spellmon" settings.
 socket/request.c, doc/Developers/protocol: Properly check "setup sound"
  settings; document allowed values.
 socket/request.c: Properly check input read from client socket.
