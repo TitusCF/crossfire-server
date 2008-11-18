@@ -155,7 +155,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             ns->sound = 0;
             safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"sound2")) {
-            /* this is the old sound command, which means the client doesn't understand our sound => mute. */
             ns->sound = atoi(param);
             safe_strcat(cmdback, param, &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"exp64")) {
