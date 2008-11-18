@@ -298,8 +298,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             }
         } else if (!strcmp(cmd,"want_pickup")) {
-            ns->want_pickup = (atoi(param) != 0 ? 1 : 0);
-            safe_strcat(cmdback, ns->want_pickup ? "1" : "0", &slen, HUGE_BUF);
+            int want_pickup;
+
+            want_pickup = atoi(param);
+            if (want_pickup != 0 && want_pickup != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->want_pickup = want_pickup;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", want_pickup);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"inscribe")) {
             safe_strcat(cmdback, "1", &slen, HUGE_BUF);
         } else if (!strcmp(cmd,"num_look_objects")) {
