@@ -210,8 +210,18 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
             }
         } else if (!strcmp(cmd,"facecache")) {
-            ns->facecache = atoi(param);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+            int facecache;
+
+            facecache = atoi(param);
+            if (facecache != 0 && facecache != 1) {
+                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            } else {
+                char tmpbuf[20];
+
+                ns->facecache = facecache;
+                snprintf(tmpbuf, sizeof(tmpbuf), "%d", facecache);
+                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            }
         } else if (!strcmp(cmd,"faceset")) {
             char tmpbuf[20];
             int q = atoi(param);
