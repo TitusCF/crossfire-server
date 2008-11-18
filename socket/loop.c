@@ -189,7 +189,7 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
  * player associated to the socket. If NULL, only commands in client_cmd_mapping will be checked.
  */
 void handle_client(socket_struct *ns, player *pl) {
-    int len=0,i;
+    int len, i;
     unsigned char *data;
 
     /* Loop through this - maybe we have several complete packets here. */
