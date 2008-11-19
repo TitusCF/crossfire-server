@@ -1499,7 +1499,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
 
         /* include the message about the artifact, if exists, and book
         * level is kinda high */
-        if (art->item->msg && (RANDOM() % 4 + 1) < level &&
+        if (art->item->msg && RANDOM() % 4 + 1 < level &&
             !((strlen(art->item->msg) + strlen(buf)) > BOOK_BUF))
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s", art->item->msg);
 
@@ -1607,7 +1607,7 @@ void make_formula_book(object *book, int level) {
     /* the higher the book level, the more complex (ie number of
      * ingredients) the formula can be.
      */
-    fl = get_formulalist(((RANDOM() % level) / 3) + 1);
+    fl = get_formulalist((RANDOM() % level) / 3 + 1);
 
     if (!fl)
         fl = get_formulalist(1);  /* safety */
@@ -1985,7 +1985,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
  */
 void tailor_readable_ob(object *book, int msg_type) {
     char msgbuf[BOOK_BUF];
-    int level = book->level ? (RANDOM() % book->level) + 1 : 1;
+    int level = book->level ? RANDOM() % book->level + 1 : 1;
     int book_buf_size;
 
     /* safety */
@@ -2011,7 +2011,7 @@ void tailor_readable_ob(object *book, int msg_type) {
      * 4) you may want separate authour/book name arrays in read.h
      */
 
-    msg_type = msg_type > 0 ? msg_type : (RANDOM() % 6);
+    msg_type = msg_type > 0 ? msg_type : RANDOM() % 6;
     switch (msg_type) {
         case 1:   /* monster attrib */
             mon_info_msg(level, msgbuf, book_buf_size);
