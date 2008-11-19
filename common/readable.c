@@ -712,12 +712,14 @@ static void init_msgfile(void) {
     snprintf(fname, sizeof(fname), "%s/messages", settings.datadir);
     LOG(llevDebug, "Reading messages from %s...\n", fname);
 
-    if ((fp = open_and_uncompress(fname, 0, &comp)) != NULL) {
+    fp = open_and_uncompress(fname, 0, &comp);
+    if (fp != NULL) {
         linked_char *tmp = NULL;
         while (fgets(buf, MAX_BUF, fp) != NULL) {
             if (*buf == '#')
                 continue;
-            if ((cp = strchr(buf, '\n')) != NULL)
+            cp = strchr(buf, '\n');
+            if (cp != NULL)
                 *cp = '\0';
             cp = buf;
             while (*cp == ' ') /* Skip blanks */
@@ -774,14 +776,16 @@ static void init_book_archive(void) {
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, " Reading bookarch from %s...\n", fname);
 
-    if ((fp = open_and_uncompress(fname, 0, &comp)) != NULL) {
+    fp = open_and_uncompress(fname, 0, &comp);
+    if (fp != NULL) {
         int value, type = 0;
         size_t i;
 
         while (fgets(buf, MAX_BUF, fp) != NULL) {
             if (*buf == '#')
                 continue;
-            if ((cp = strchr(buf, '\n')) != NULL)
+            cp = strchr(buf, '\n');
+            if (cp != NULL)
                 *cp = '\0';
             cp = buf;
             while (*cp == ' ') /* Skip blanks */
@@ -1131,7 +1135,8 @@ void change_book(object *book, int msgtype) {
                 object *tmpbook;
 
                 /* alter book properties */
-                if ((tmpbook = create_archetype(t->archname)) != NULL) {
+                tmpbook = create_archetype(t->archname);
+                if (tmpbook != NULL) {
                     if (tmpbook->msg)
                         free_string(tmpbook->msg);
                     tmpbook->msg = add_string(book->msg);
@@ -1644,7 +1649,8 @@ void make_formula_book(object *book, int level) {
         snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s: \n",
             formula->skill?formula->skill : "an unknown skill");
 
-        if ((at = find_archetype(op_name)) != (archetype *) NULL)
+        at = find_archetype(op_name);
+        if (at != (archetype *) NULL)
             op_name = at->clone.name;
         else
             LOG(llevError, "formula_msg() can't find arch %s for formula.\n",
@@ -1853,7 +1859,8 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
             const char *race = god->race; /* aligned race */
 
             if (race && !(god->path_denied & PATH_SUMMON))
-                if ((i = nstrtok(race, ",")) > 0) {
+                i = nstrtok(race, ",");
+                if (i > 0) {
                     char tmpbuf[MAX_BUF];
 
                     snprintf(buf, BOOK_BUF,
@@ -2114,7 +2121,8 @@ void write_book_archive(void) {
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, "Updating book archive: %s...\n", fname);
 
-    if ((fp = fopen(fname, "w")) == NULL) {
+    fp = fopen(fname, "w");
+    if (fp == NULL) {
         LOG(llevDebug, "Can't open book archive file %s\n", fname);
     } else {
         for (bl = get_titlelist(0), index = 0; bl; bl = bl->next, index++) {
