@@ -715,32 +715,43 @@ static void init_msgfile(void) {
     fp = open_and_uncompress(fname, 0, &comp);
     if (fp != NULL) {
         linked_char *tmp = NULL;
-        while (fgets(buf, MAX_BUF, fp) != NULL) {
+        int lineno;
+        int error_lineno;
+
+        error_lineno = 0;
+        for (lineno = 1; fgets(buf, MAX_BUF, fp) != NULL; lineno++) {
             if (*buf == '#')
                 continue;
             cp = strchr(buf, '\n');
-            if (cp != NULL)
+            if (cp != NULL) {
+                while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
+                    cp--;
                 *cp = '\0';
-            cp = buf;
-            while (*cp == ' ') /* Skip blanks */
-                cp++;
-            if (!strncmp(cp, "ENDMSG", 6)) {
-                if (strlen(msgbuf) > BOOK_BUF) {
-                    LOG(llevDebug, "Warning: this string exceeded max book buf size:\n");
-                    LOG(llevDebug, "  %s\n", msgbuf);
+            }
+            if (tmp != NULL) {
+                if (strcmp(buf, "ENDMSG") == 0) {
+                    if (strlen(msgbuf) > BOOK_BUF) {
+                        LOG(llevDebug, "Warning: this string exceeded max book buf size:\n");
+                        LOG(llevDebug, "  %s\n", msgbuf);
+                    }
+                    tmp->name = add_string(msgbuf);
+                    tmp->next = first_msg;
+                    first_msg = tmp;
+                    nrofmsg++;
+                    tmp = NULL;
+                } else if (!buf_overflow(msgbuf, buf, HUGE_BUF - 1)) {
+                    strcat(msgbuf, buf);
+                    strcat(msgbuf, "\n");
+                } else if (error_lineno != 0) {
+                    LOG(llevInfo, "Warning: truncating book at %s, line %d\n", fname, error_lineno);
+                    error_lineno = 0;
                 }
-                tmp->name = add_string(msgbuf);
-                tmp->next = first_msg;
-                first_msg = tmp;
-                nrofmsg++;
-                continue;
-            } else if (!strncmp(cp, "MSG", 3)) {
+            } else if (strcmp(buf, "MSG") == 0) {
+                error_lineno = lineno;
                 tmp = (linked_char *) malloc(sizeof(linked_char));
                 strcpy(msgbuf, " ");  /* reset msgbuf for new message */
-                continue;
-            } else if (!buf_overflow(msgbuf, cp, HUGE_BUF - 1)) {
-                strcat(msgbuf, cp);
-                strcat(msgbuf, "\n");
+            } else {
+                LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
             }
         }
         close_and_delete(fp, comp);
