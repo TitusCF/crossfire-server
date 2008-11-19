@@ -1385,10 +1385,9 @@ char *mon_info_msg(int level, char *buf, int booksize) {
         /* monster description */
         snprintf(tmpbuf, sizeof(tmpbuf), "\n---\n%s", mon_desc(tmp, desc, sizeof(desc)));
 
-        if (!book_overflow(buf, tmpbuf, booksize))
-            snprintf(buf + strlen(buf), booksize - strlen(buf), "%s", tmpbuf);
-        else
+        if (book_overflow(buf, tmpbuf, booksize))
             break;
+        snprintf(buf + strlen(buf), booksize - strlen(buf), "%s", tmpbuf);
     }
 
 #ifdef BOOK_MSG_DEBUG
@@ -1517,10 +1516,9 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
                      sbuf);
         free_object(tmp);
         /* add the buf if it will fit */
-        if (!book_overflow(retbuf, buf, booksize))
-            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "%s", buf);
-        else
+        if (book_overflow(retbuf, buf, booksize))
             break;
+        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "%s", buf);
 
         art = art->next;
         book_entries--;
@@ -1955,7 +1953,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
         */
         if (book_overflow(retbuf, buf, booksize))
             break;
-        else if (strlen(buf) > 1)
+        if (strlen(buf) > 1)
             safe_strcat(retbuf, buf, &retlen, BOOK_BUF);
 
         level--;
