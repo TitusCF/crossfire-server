@@ -1127,7 +1127,7 @@ void change_book(object *book, int msgtype) {
             * room on the titlelist.
             */
 
-            if ((strlen(book->msg) > 5) && (t = find_title(book, msgtype))) {
+            if (strlen(book->msg) > 5 && (t = find_title(book, msgtype))) {
                 object *tmpbook;
 
                 /* alter book properties */
@@ -1323,7 +1323,7 @@ object *get_random_mon(int level) {
  */
 char *mon_desc(const object *mon, char *buf, int size) {
     snprintf(buf, size, " *** %s ***\n", mon->name);
-    describe_item(mon, NULL, buf+strlen(buf), size-strlen(buf));
+    describe_item(mon, NULL, buf + strlen(buf), size - strlen(buf));
     return buf;
 }
 
@@ -1474,7 +1474,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
             do {
                 temp = next;
                 next = next->next;
-            } while ((next != (linked_char *) NULL) && !RANDOM() % 2);
+            } while (next != (linked_char *) NULL && !RANDOM() % 2);
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " A %s of %s", temp->name, art->item->name);
         } else {  /* default name is used */
             /* use the base 'generic' name for our artifact */
@@ -1549,7 +1549,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
 char *spellpath_msg(int level, char *retbuf, int booksize) {
     int path = RANDOM() % NRSPELLPATHS, prayers = RANDOM() % 2;
     int did_first_sp = 0;
-    uint32 pnum = (path == -1) ? PATH_NULL : spellpathdef[path];
+    uint32 pnum = path == -1 ? PATH_NULL : spellpathdef[path];
     archetype *at;
 
     /* Preamble */
@@ -1568,7 +1568,7 @@ char *spellpath_msg(int level, char *retbuf, int booksize) {
          */
         if (at->clone.type == SPELL && at->clone.path_attuned & pnum &&
             ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers)) &&
-            (at->clone.level < (level * 8))) {
+            (at->clone.level < level * 8)) {
             if (book_overflow(retbuf, at->clone.name, booksize))
                 break;
 
@@ -1703,7 +1703,8 @@ void make_formula_book(object *book, int level) {
                 op_name, formula->title);
         if (retbuf[strlen(retbuf)-1] != '\n')
             snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
-        if (book->msg) free_string(book->msg);
+        if (book->msg)
+            free_string(book->msg);
         book->msg = add_string(retbuf);
     }
 }
@@ -2048,7 +2049,6 @@ void tailor_readable_ob(object *book, int msg_type) {
         /* lets give the "book" a new name, which may be a compound word */
         change_book(book, msg_type);
     }
-
 }
 
 /*****************************************************************************
@@ -2131,7 +2131,7 @@ void write_book_archive(void) {
                 }
         }
         if (!ferror(fp))
-            need_to_write_bookarchive=0;
+            need_to_write_bookarchive = 0;
         else
             LOG(llevError, "Error during book archive save.");
         fclose(fp);
@@ -2149,6 +2149,6 @@ void write_book_archive(void) {
 const readable_message_type *get_readable_message_type(object *readable) {
     uint8 subtype = readable->subtype;
     if (subtype>last_readable_subtype)
-        return &(readable_message_types[0]);
+        return &readable_message_types[0];
     return &(readable_message_types[subtype]);
 }
