@@ -59,7 +59,7 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
     object *walk;
     char c;
 
-    if (!op->above || !EXIT_PATH(op)) return;
+    if (!op->above || !EXIT_PATH(op)) return METHOD_OK;
 
     /* This isn't all that great - means that the player_mover
     * needs to be on top.
@@ -67,7 +67,7 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
     if(op->above->type==PLAYER) {
         /* Lauwenmark: Handle for plugin TRIGGER event */
         if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_NOTHING)!=0)
-            return;
+            return METHOD_OK;
         player=op->above;
         for(walk=op->inv;walk!=NULL;walk=walk->below)
             apply_changes_to_player(player,walk);
