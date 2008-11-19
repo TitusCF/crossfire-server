@@ -653,13 +653,12 @@ int nstrtok(const char *buf1, const char *buf2) {
  */
 char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
     int     maxi, i = nstrtok(buf1, buf2);
-    char   *tbuf, buf[MAX_BUF], sbuf[12];
+    char   *tbuf, buf[MAX_BUF];
 
     maxi = i;
     strcpy(buf, buf1);
-    strcpy(sbuf, buf2);
     snprintf(retbuf, size, " ");
-    for (tbuf = strtok(buf, sbuf); tbuf && i > 0; tbuf = strtok(NULL, sbuf)) {
+    for (tbuf = strtok(buf, buf2); tbuf && i > 0; tbuf = strtok(NULL, buf2)) {
         snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), "%s", tbuf);
         i--;
         if (i == 1 && maxi > 1)
