@@ -2443,7 +2443,7 @@ Depending on the direction, the right column of tiles or the bottom line of tile
 */
 static void update_transport_block(object* transport, int dir) {
     object* part;
-    int count = 0, sx, sy, up, x, y;
+    int sx, sy, x, y;
 
     get_multi_size(transport, &sx, &sy, NULL, NULL);
     assert(sx == sy);

@@ -263,8 +263,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
 {
     va_list args;
     const char *propname;
-    int i, size;
-    command_array_struct *rtn_cmd;
+    int size;
     char *buf;
 
     va_start(args, type);
