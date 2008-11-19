@@ -1203,7 +1203,7 @@ void change_book(object *book, int msgtype) {
                     free_string(book->name);
                     free_string(book->title);
                     book->title = NULL;
-                    if (old_title!=NULL)
+                    if (old_title != NULL)
                         book->title = add_string(old_title);
 
                     if (RANDOM() % 4) {
@@ -1445,7 +1445,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
         i++;
     } while ((al == NULL) && (i<10));
 
-    if (i==10) { /* Unable to find a message */
+    if (i == 10) { /* Unable to find a message */
         snprintf(retbuf, booksize, "None");
         return retbuf;
     }
@@ -1707,7 +1707,7 @@ void make_formula_book(object *book, int level) {
         } else
             LOG(llevError, "formula_msg() no ingredient list for object %s of %s\n",
                 op_name, formula->title);
-        if (retbuf[strlen(retbuf)-1] != '\n')
+        if (retbuf[strlen(retbuf) - 1] != '\n')
             snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
         if (book->msg)
             free_string(book->msg);
@@ -1773,7 +1773,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
     char en[BOOK_BUF];
 
     if (booksize > BOOK_BUF) {
-        LOG(llevError,"common/readable.c:god_info_msg() - passed in booksize (%d) is larger than book buffer (%d)\n",
+        LOG(llevError, "common/readable.c:god_info_msg() - passed in booksize (%d) is larger than book buffer (%d)\n",
             booksize, BOOK_BUF);
         booksize = BOOK_BUF;
     }
@@ -1906,7 +1906,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
             for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
                 if (god->resist[tmpvar] == 100) {
                     has_effect = 1;
-                    snprintf(tmpbuf, MAX_BUF,"Immunity to %s",
+                    snprintf(tmpbuf, MAX_BUF, "Immunity to %s",
                         attacktype_desc[tmpvar]);
                 }
             }
