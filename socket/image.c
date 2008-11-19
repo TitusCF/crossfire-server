@@ -176,7 +176,6 @@ void send_image_info(socket_struct *ns, char *params) {
 void send_image_sums(socket_struct *ns, char *params) {
     int start, stop;
     short i;
-    int qq;
     char *cp, buf[MAX_BUF];
     SockList sl;
 
@@ -198,6 +197,9 @@ void send_image_sums(socket_struct *ns, char *params) {
     sl.len = strlen((char*)sl.buf);
 
     for (i=start; i<=stop; i++) {
+        int faceset;
+        int len;
+
         if (sl.len+2+4+1+1+strlen(new_faces[i].name)+1 > MAXSOCKSENDBUF) {
             LOG(llevError,
                 "send_image_sums: buffer overflow, rejecting range %d..%d\n",
@@ -210,14 +212,14 @@ void send_image_sums(socket_struct *ns, char *params) {
         SockList_AddShort(&sl, i);
         ns->faces_sent[i] |= NS_FACESENT_FACE;
 
-        qq = get_face_fallback(ns->faceset, i);
-        SockList_AddInt(&sl, facesets[qq].faces[i].checksum);
-        SockList_AddChar(&sl, qq);
+        faceset = get_face_fallback(ns->faceset, i);
+        SockList_AddInt(&sl, facesets[faceset].faces[i].checksum);
+        SockList_AddChar(&sl, faceset);
 
-        qq = strlen(new_faces[i].name);
-        SockList_AddChar(&sl, (char)(qq + 1));
+        len = strlen(new_faces[i].name);
+        SockList_AddChar(&sl, (char)(len + 1));
         strcpy((char*)sl.buf + sl.len, new_faces[i].name);
-        sl.len += qq;
+        sl.len += len;
         SockList_AddChar(&sl, 0);
     }
     Send_With_Handling(ns, &sl);
