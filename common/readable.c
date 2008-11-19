@@ -594,17 +594,15 @@ static title *get_empty_book(void) {
  */
 
 static titlelist *get_titlelist(int i) {
-    titlelist *tl = booklist;
-    int     number = i;
+    titlelist *tl;
+    int number;
 
     if (number < 0)
         return tl;
 
-    while (tl && number) {
+    for (tl = booklist, number = i; tl && number; tl = tl->next, number--) {
         if (!tl->next)
             tl->next = get_empty_booklist();
-        tl = tl->next;
-        number--;
     }
 
     return tl;
@@ -632,10 +630,8 @@ int nstrtok(const char *buf1, const char *buf2) {
         return 0;
     snprintf(buf, sizeof(buf), "%s", buf1);
     snprintf(sbuf, sizeof(sbuf), "%s", buf2);
-    tbuf = strtok(buf, sbuf);
-    while (tbuf) {
+    for (tbuf = strtok(buf, sbuf); tbuf; tbuf = strtok(NULL, sbuf)) {
         number++;
-        tbuf = strtok(NULL, sbuf);
     }
     return number;
 }
@@ -664,8 +660,7 @@ char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
     strcpy(buf, buf1);
     strcpy(sbuf, buf2);
     snprintf(retbuf, size, " ");
-    tbuf = strtok(buf, sbuf);
-    while (tbuf && i > 0) {
+    for (tbuf = strtok(buf, sbuf); tbuf && i > 0; tbuf = strtok(NULL, sbuf)) {
         snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), "%s", tbuf);
         i--;
         if (i == 1 && maxi > 1)
@@ -674,7 +669,6 @@ char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
             snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), ", ");
         else
             snprintf(retbuf + strlen(retbuf), size - strlen(retbuf), ".");
-        tbuf = strtok(NULL, sbuf);
     }
     return retbuf;
 }
@@ -911,7 +905,7 @@ void init_readable(void) {
  * title if found, NULL if no match.
  */
 static title *find_title(const object *book, int msgtype) {
-    title  *t = NULL;
+    title  *t;
     titlelist *tl = get_titlelist(msgtype);
     int     length = strlen(book->msg);
     int     index = strtoint(book->msg);
@@ -919,13 +913,10 @@ static title *find_title(const object *book, int msgtype) {
     if (msgtype < 0)
         return (title *) NULL;
 
-    if (tl)
-        t = tl->first_book;
-    while (t)
+    ;
+    for (t = tl ? tl->first_book : NULL; t; t = t->next)
         if (t->size == length && t->msg_index == index)
             break;
-        else
-            t = t->next;
 
 #ifdef ARCHIVE_DEBUG
     if (t)
@@ -1390,8 +1381,7 @@ char *mon_info_msg(int level, char *buf, int booksize) {
      * of text! (and flood out the available number of titles
      * in the archive in a snap!) -b.t.
      */
-    tmp = get_random_mon(level * 3);
-    while (tmp) {
+    for (tmp = get_random_mon(level * 3); tmp; tmp = get_next_mon(tmp)) {
         /* monster description */
         snprintf(tmpbuf, sizeof(tmpbuf), "\n---\n%s", mon_desc(tmp, desc, sizeof(desc)));
 
@@ -1399,9 +1389,6 @@ char *mon_info_msg(int level, char *buf, int booksize) {
             snprintf(buf + strlen(buf), booksize - strlen(buf), "%s", tmpbuf);
         else
             break;
-
-        /* Note that the value this returns is not based on level */
-        tmp = get_next_mon(tmp);
     }
 
 #ifdef BOOK_MSG_DEBUG
@@ -2121,10 +2108,10 @@ void free_all_readable(void) {
  */
 void write_book_archive(void) {
     FILE   *fp;
-    int     index = 0;
+    int     index;
     char    fname[MAX_BUF];
-    title  *book = NULL;
-    titlelist *bl = get_titlelist(0);
+    title  *book;
+    titlelist *bl;
 
     /* If nothing changed, don't write anything */
     if (!need_to_write_bookarchive) return;
@@ -2135,7 +2122,7 @@ void write_book_archive(void) {
     if ((fp = fopen(fname, "w")) == NULL) {
         LOG(llevDebug, "Can't open book archive file %s\n", fname);
     } else {
-        while (bl) {
+        for (bl = get_titlelist(0), index = 0; bl; bl = bl->next, index++) {
             for (book = bl->first_book; book; book = book->next)
                 if (book && book->authour) {
                     fprintf(fp, "title %s\n", book->name);
@@ -2147,8 +2134,6 @@ void write_book_archive(void) {
                     fprintf(fp, "index %d\n", book->msg_index);
                     fprintf(fp, "end\n");
                 }
-            bl = bl->next;
-            index++;
         }
         if (!ferror(fp))
             need_to_write_bookarchive=0;
