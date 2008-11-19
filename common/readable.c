@@ -105,7 +105,7 @@ typedef struct titleliststruct {
 /** special structure, used only by art_name_array[] */
 typedef struct namebytype {
     const char *name;  /**< generic name to call artifacts of this type */
-    const int type;    /**< matching type */
+    int type;          /**< matching type */
 } arttypename;
 
 
