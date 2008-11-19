@@ -618,19 +618,18 @@ static titlelist *get_titlelist(int i) {
  * @param buf1
  * items we want to split.
  * @param buf2
- * what to split by. Must not have a lenght greater than 11.
+ * what to split by.
  * @return
  * number of elements.
  */
 int nstrtok(const char *buf1, const char *buf2) {
-    char   *tbuf, sbuf[12], buf[MAX_BUF];
+    char   *tbuf, buf[MAX_BUF];
     int     number = 0;
 
     if (!buf1 || !buf2)
         return 0;
     snprintf(buf, sizeof(buf), "%s", buf1);
-    snprintf(sbuf, sizeof(sbuf), "%s", buf2);
-    for (tbuf = strtok(buf, sbuf); tbuf; tbuf = strtok(NULL, sbuf)) {
+    for (tbuf = strtok(buf, buf2); tbuf; tbuf = strtok(NULL, buf2)) {
         number++;
     }
     return number;
