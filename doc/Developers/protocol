@@ -1166,7 +1166,7 @@ S->C: replyinfo <info_type>[options]<data>
 	the client can build all images before play starts and also request
 	any missing images.  The returned data is
 
-	image_sums <start> <stop> <imagenum><checksum><namelength><name>
+	image_sums <start> <stop> <imagenum><checksum><faceset><namelength><name>
 
 	There is an initial space after the stop value, but no spaces after
 	that point.  The <start> and <stop> values are ASCII text (same
@@ -1178,7 +1178,8 @@ S->C: replyinfo <info_type>[options]<data>
 	checksum is 32 bit binary data.  It contains the checksum for
 	the image in the current selected set, and will use whatever
 	fallback logic the imagesets specify.
-	facenum is 8 bit binary data.
+	faceset is 8 bit binary data.  It contains the actually selected
+	faceset.
 	namelength is 8 bit binary data.  It is the length of the
 	name field below, including the null terminator.
 	name is character data.  It is null terminated to make processing

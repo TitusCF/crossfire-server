@@ -218,9 +218,8 @@ void send_image_sums(socket_struct *ns, char *params) {
 
         len = strlen(new_faces[i].name);
         SockList_AddChar(&sl, (char)(len + 1));
-        strcpy((char*)sl.buf + sl.len, new_faces[i].name);
-        sl.len += len;
-        SockList_AddChar(&sl, 0);
+        memcpy(sl.buf + sl.len, new_faces[i].name, len + 1);
+        sl.len += len + 1;
     }
     Send_With_Handling(ns, &sl);
     free(sl.buf);

@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+socket/image.c: Accelerate "replyinfo image_sums" processing.
+doc/Developers/protocol: Fix documentation for "replyinfo image_sums"
+ format.
+Andreas Kirschbaum 2008-11-19
+
 socket/request.c, doc/Developers/protocol: Properly check "setup"
  settings; document allowed values.
 socket/request.c: Properly check input read from client socket.
