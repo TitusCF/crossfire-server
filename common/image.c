@@ -75,6 +75,8 @@ static int nroffiles = 0;
  */
 int nrofpixmaps = 0;
 
+face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
+
 /**
  * The only thing this table is used for now is to
  * translate the colorname in the magicmap field of the
@@ -560,8 +562,6 @@ void read_client_images(void) {
         close_and_delete(infile,compressed);
     } /* For fileno < MAX_FACE_SETS */
 }
-
-face_sets facesets[MAX_FACE_SETS];    /**< All facesets */
 
 /**
  * Checks specified faceset is valid
