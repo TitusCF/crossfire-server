@@ -80,6 +80,14 @@
 /* This flag is useful for debugging archiving action */
 /* #define ARCHIVE_DEBUG */
 
+/**
+ * Returns the element size of an array.
+ * @param arrayname the array's name
+ * @return the number of elements
+ */
+#define arraysize(arrayname) (sizeof(arrayname)/sizeof(*(arrayname)))
+
+
 /* Moved these structures from struct.h to this file in 0.94.3 - they
  * are not needed anyplace else, so why have them globally declared?
  */
@@ -514,16 +522,16 @@ static const readable_message_type readable_message_types[] =
                     {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3}
 };
 /** Number of elements in ::readable_message_types */
-static int last_readable_subtype = sizeof(readable_message_types)/sizeof(readable_message_type);
+static int last_readable_subtype = arraysize(readable_message_types);
 
 /** Number of titles for different name lists. */
 static int max_titles[6] = {
-    ((sizeof(light_book_name) / sizeof(char *)) + (sizeof(heavy_book_name) / sizeof(char *))) * (sizeof(book_author) / sizeof(char *)),
-    (sizeof(mon_book_name) / sizeof(char *)) * (sizeof(mon_author) / sizeof(char *)),
-    (sizeof(art_book_name) / sizeof(char *)) * (sizeof(art_author) / sizeof(char *)),
-    (sizeof(path_book_name) / sizeof(char *)) * (sizeof(path_author) / sizeof(char *)),
-    (sizeof(formula_book_name) / sizeof(char *)) * (sizeof(formula_author) / sizeof(char *)),
-    (sizeof(gods_book_name) / sizeof(char *)) * (sizeof(gods_author) / sizeof(char *))
+    (arraysize(light_book_name) + arraysize(heavy_book_name)) * arraysize(book_author),
+    arraysize(mon_book_name) * arraysize(mon_author),
+    arraysize(art_book_name) * arraysize(art_author),
+    arraysize(path_book_name) * arraysize(path_author),
+    arraysize(formula_book_name) * arraysize(formula_author),
+    arraysize(gods_book_name) * arraysize(gods_author),
 };
 
 /******************************************************************************
@@ -818,7 +826,7 @@ static void init_book_archive(void) {
             }
         }
         LOG(llevDebug, " book archives(used/avail):\n");
-        for (bl = booklist, i = 0; bl != NULL && i < sizeof(max_titles)/sizeof(*max_titles); bl = bl->next, i++) {
+        for (bl = booklist, i = 0; bl != NULL && i < arraysize(max_titles); bl = bl->next, i++) {
             LOG(llevDebug, "(%d/%d)\n", bl->number, max_titles[i]);
         }
         close_and_delete(fp, comp);
@@ -950,32 +958,32 @@ static void new_text_name(object *book, int msgtype) {
 
     switch (msgtype) {
         case 1:   /*monster */
-            nbr = sizeof(mon_book_name) / sizeof(char *);
+            nbr = arraysize(mon_book_name);
             strcpy(name, mon_book_name[RANDOM() % nbr]);
             break;
         case 2:   /*artifact */
-            nbr = sizeof(art_book_name) / sizeof(char *);
+            nbr = arraysize(art_book_name);
             strcpy(name, art_book_name[RANDOM() % nbr]);
             break;
         case 3:   /*spellpath */
-            nbr = sizeof(path_book_name) / sizeof(char *);
+            nbr = arraysize(path_book_name);
             strcpy(name, path_book_name[RANDOM() % nbr]);
             break;
         case 4:   /*alchemy */
-            nbr = sizeof(formula_book_name) / sizeof(char *);
+            nbr = arraysize(formula_book_name);
             strcpy(name, formula_book_name[RANDOM() % nbr]);
             break;
         case 5:   /*gods */
-            nbr = sizeof(gods_book_name) / sizeof(char *);
+            nbr = arraysize(gods_book_name);
             strcpy(name, gods_book_name[RANDOM() % nbr]);
             break;
         case 6:   /*msg file */
         default:
             if (book->weight > 2000) {  /* based on weight */
-                nbr = sizeof(heavy_book_name) / sizeof(char *);
+                nbr = arraysize(heavy_book_name);
                 strcpy(name, heavy_book_name[RANDOM() % nbr]);
             } else if (book->weight < 2001) {
-                nbr = sizeof(light_book_name) / sizeof(char *);
+                nbr = arraysize(light_book_name);
                 strcpy(name, light_book_name[RANDOM() % nbr]);
             }
             break;
@@ -995,30 +1003,30 @@ static void new_text_name(object *book, int msgtype) {
  */
 static void add_author(object *op, int msgtype) {
     char    title[MAX_BUF], name[MAX_BUF];
-    int     nbr = sizeof(book_author) / sizeof(char *);
+    int     nbr = arraysize(book_author);
 
     if (msgtype < 0 || strlen(op->msg) < 5)
         return;
 
     switch (msgtype) {
         case 1:   /* monster */
-            nbr = sizeof(mon_author) / sizeof(char *);
+            nbr = arraysize(mon_author);
             strcpy(name, mon_author[RANDOM() % nbr]);
             break;
         case 2:   /* artifacts */
-            nbr = sizeof(art_author) / sizeof(char *);
+            nbr = arraysize(art_author);
             strcpy(name, art_author[RANDOM() % nbr]);
             break;
         case 3:   /* spellpath */
-            nbr = sizeof(path_author) / sizeof(char *);
+            nbr = arraysize(path_author);
             strcpy(name, path_author[RANDOM() % nbr]);
             break;
         case 4:   /* alchemy */
-            nbr = sizeof(formula_author) / sizeof(char *);
+            nbr = arraysize(formula_author);
             strcpy(name, formula_author[RANDOM() % nbr]);
             break;
         case 5:   /* gods */
-            nbr = sizeof(gods_author) / sizeof(char *);
+            nbr = arraysize(gods_author);
             strcpy(name, gods_author[RANDOM() % nbr]);
             break;
         case 6:   /* msg file */
@@ -1113,7 +1121,7 @@ static void add_book_to_list(const object *book, int msgtype) {
  * what information the book contains.
  */
 void change_book(object *book, int msgtype) {
-    int     nbr = sizeof(book_descrpt) / sizeof(char *);
+    int     nbr = arraysize(book_descrpt);
 
     switch (book->type) {
         case BOOK: {
@@ -1441,7 +1449,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
      */
     i=0;
     do {
-        index = RANDOM() % (sizeof(art_name_array) / sizeof(arttypename));
+        index = RANDOM() % arraysize(art_name_array);
         type = art_name_array[index].type;
         al = find_artifactlist(type);
         i++;
@@ -1670,12 +1678,12 @@ void make_formula_book(object *book, int level) {
             * water of section.
             */
             snprintf(title, sizeof(title), "%s: %s of %s",
-                     formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
+                     formula_book_name[RANDOM() % arraysize(formula_book_name)],
                      op_name, formula->title);
         } else {
             snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s", op_name);
             snprintf(title, sizeof(title), "%s: %s",
-                     formula_book_name[RANDOM() % (sizeof(formula_book_name) / sizeof(char*))],
+                     formula_book_name[RANDOM() % arraysize(formula_book_name)],
                      op_name);
             if (at->clone.title) {
                 snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " %s", at->clone.title);
