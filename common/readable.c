@@ -1474,7 +1474,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
             do {
                 temp = next;
                 next = next->next;
-            } while (next != (linked_char *) NULL && !RANDOM() % 2);
+            } while (next != (linked_char *) NULL && RANDOM() % 2);
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " A %s of %s", temp->name, art->item->name);
         } else {  /* default name is used */
             /* use the base 'generic' name for our artifact */
