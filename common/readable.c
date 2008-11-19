@@ -448,7 +448,7 @@ static const char *const book_descrpt[] = {
  * at the bottom of the list. Never delete a subtype because index is used as
  * subtype parameter in arch files!
  */
-static readable_message_type readable_message_types[] =
+static const readable_message_type readable_message_types[] =
 {
     /*subtype 0  */ {0,0},
                     /* book messages subtypes */
@@ -2158,7 +2158,7 @@ void write_book_archive(void) {
  * @return
  * type of the book. Will never be NULL.
  */
-readable_message_type *get_readable_message_type(object *readable) {
+const readable_message_type *get_readable_message_type(object *readable) {
     uint8 subtype = readable->subtype;
     if (subtype>last_readable_subtype)
         return &(readable_message_types[0]);

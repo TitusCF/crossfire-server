@@ -318,7 +318,7 @@ extern char *god_info_msg(int level, char *retbuf, int booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);
-extern readable_message_type *get_readable_message_type(object *readable);
+extern const readable_message_type *get_readable_message_type(object *readable);
 /* recipe.c */
 extern recipelist *get_formulalist(int i);
 extern void init_formulae(void);

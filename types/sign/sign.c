@@ -53,7 +53,7 @@ void init_type_sign(void)
  */
 static void apply_sign(object *sign, object *op, int autoapply)
 {
-    readable_message_type *msgType;
+    const readable_message_type *msgType;
 
     if (sign->msg == NULL)
     {
