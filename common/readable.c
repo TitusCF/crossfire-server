@@ -1411,7 +1411,7 @@ char *mon_desc(const object *mon, char *buf, int size) {
  * @note
  * list is considered circular, asking for the next of the last element will return the first one.
  */
-object *get_next_mon(object *tmp) {
+object *get_next_mon(const object *tmp) {
     objectlink *mon;
 
     for (mon = first_mon_info; mon; mon = mon->next)

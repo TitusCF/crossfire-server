@@ -309,7 +309,7 @@ extern void init_readable(void);
 extern void change_book(object *book, int msgtype);
 extern object *get_random_mon(int level);
 extern char *mon_desc(const object *mon, char *buf, int size);
-extern object *get_next_mon(object *tmp);
+extern object *get_next_mon(const object *tmp);
 extern char *mon_info_msg(int level, char *buf, int booksize);
 extern char *spellpath_msg(int level, char *retbuf, int booksize);
 extern void make_formula_book(object *book, int level);
