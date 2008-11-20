@@ -1274,7 +1274,7 @@ void change_book(object *book, int msgtype) {
          * the list.
          */
 
-        if (tries == MAX_TITLE_CHECK || numb == maxnames) { /* got to check maxnames again */
+        if (tries == MAX_TITLE_CHECK) {
 #ifdef ARCHIVE_DEBUG
             LOG(llevDebug, "Failed to obtain unique title for %s %s (names:%d/%d)\n",
                 book->name, book->title, numb, maxnames);
