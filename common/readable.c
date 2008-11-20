@@ -1709,11 +1709,14 @@ void make_formula_book(object *book, int level) {
 
     op_name = formula->arch_name[RANDOM() % formula->arch_names];
     at = find_archetype(op_name);
-    if (at != (archetype *) NULL)
-        op_name = at->clone.name;
-    else
-        LOG(llevError, "formula_msg() can't find arch %s for formula.\n",
-            op_name);
+    if (at == (archetype *) NULL) {
+        LOG(llevError, "formula_msg() can't find arch %s for formula.\n", op_name);
+        book->msg = add_string(" <indecipherable text>\n");
+        new_text_name(book, MSGTYPE_ALCHEMY);
+        add_author(book, MSGTYPE_ALCHEMY);
+        return;
+    }
+    op_name = at->clone.name;
 
     /* item name */
     if (strcmp(formula->title, "NONE")) {
