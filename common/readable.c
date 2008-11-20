@@ -1257,7 +1257,7 @@ void change_book(object *book, int msgtype) {
             return;
         }
         /* shouldnt change map-maker books */
-        else if (!book->title)
+        if (!book->title)
             do {
                 /* random book name */
                 new_text_name(book, msgtype);
@@ -1660,8 +1660,8 @@ char *spellpath_msg(int level, char *retbuf, int booksize) {
     if (!did_first_sp) {
         if (RANDOM() % 4)  /* usually, lets make a recursive call... */
             return spellpath_msg(level, retbuf, booksize);
-        else /* give up, cause knowing no spells exist for path is info too. */
-            snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "\n - no known spells exist -\n");
+        /* give up, cause knowing no spells exist for path is info too. */
+        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "\n - no known spells exist -\n");
     } else {
         snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "\n");
     }
