@@ -1188,7 +1188,7 @@ static void add_book_to_list(const object *book, int msgtype) {
  * @param msgtype
  * what information the book contains.
  */
-void change_book(object *book, int msgtype) {
+static void change_book(object *book, int msgtype) {
     titlelist *tl;
     title *t;
     int tries;
@@ -1388,7 +1388,7 @@ object *get_random_mon(int level) {
  * @return
  * buf
  */
-char *mon_desc(const object *mon, char *buf, int size) {
+static char *mon_desc(const object *mon, char *buf, int size) {
     snprintf(buf, size, " *** %s ***\n", mon->name);
     describe_item(mon, NULL, buf + strlen(buf), size - strlen(buf));
     return buf;
@@ -1405,7 +1405,7 @@ char *mon_desc(const object *mon, char *buf, int size) {
  * @note
  * list is considered circular, asking for the next of the last element will return the first one.
  */
-object *get_next_mon(const object *tmp) {
+static object *get_next_mon(const object *tmp) {
     objectlink *mon;
 
     for (mon = first_mon_info; mon; mon = mon->next)
@@ -1613,7 +1613,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
  * @return
  * retbuf
  */
-char *spellpath_msg(int level, char *retbuf, int booksize) {
+static char *spellpath_msg(int level, char *retbuf, int booksize) {
     int path = RANDOM() % NRSPELLPATHS, prayers = RANDOM() % 2;
     int did_first_sp = 0;
     uint32 pnum = spellpathdef[path];
@@ -1662,7 +1662,7 @@ char *spellpath_msg(int level, char *retbuf, int booksize) {
  * @param level
  * level for formulaes and such.
  */
-void make_formula_book(object *book, int level) {
+static void make_formula_book(object *book, int level) {
     char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
     recipe *formula;
@@ -1786,7 +1786,7 @@ void make_formula_book(object *book, int level) {
  * @param booksize
  * length of the book we want.
  */
-char *msgfile_msg(int level, int booksize) {
+static char *msgfile_msg(int level, int booksize) {
     static char retbuf[BOOK_BUF];
     int i, msgnum;
     linked_char *msg = NULL;
@@ -1825,7 +1825,7 @@ char *msgfile_msg(int level, int booksize) {
  * @return
  * retbuf.
  */
-char *god_info_msg(int level, char *retbuf, int booksize) {
+static char *god_info_msg(int level, char *retbuf, int booksize) {
     const char *name;
     char buf[BOOK_BUF];
     int i, retlen, buflen;
