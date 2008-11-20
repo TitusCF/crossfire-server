@@ -1083,41 +1083,36 @@ static void new_text_name(object *book, int msgtype) {
  * information we want.
  */
 static void add_author(object *op, int msgtype) {
-    char title[MAX_BUF], name[MAX_BUF];
-    int nbr = arraysize(book_author);
+    char title[MAX_BUF];
+    const char *name;
 
     if (msgtype < 0 || strlen(op->msg) < 5)
         return;
 
     switch (msgtype) {
         case MSGTYPE_MONSTER:
-            nbr = arraysize(mon_author);
-            strcpy(name, mon_author[RANDOM() % nbr]);
+            name = mon_author[RANDOM() % arraysize(mon_author)];
             break;
 
         case MSGTYPE_ARTIFACT:
-            nbr = arraysize(art_author);
-            strcpy(name, art_author[RANDOM() % nbr]);
+            name = art_author[RANDOM() % arraysize(art_author)];
             break;
 
         case MSGTYPE_SPELLPATH:
-            nbr = arraysize(path_author);
-            strcpy(name, path_author[RANDOM() % nbr]);
+            name = path_author[RANDOM() % arraysize(path_author)];
             break;
 
         case MSGTYPE_ALCHEMY:
-            nbr = arraysize(formula_author);
-            strcpy(name, formula_author[RANDOM() % nbr]);
+            name = formula_author[RANDOM() % arraysize(formula_author)];
             break;
 
         case MSGTYPE_GODS:
-            nbr = arraysize(gods_author);
-            strcpy(name, gods_author[RANDOM() % nbr]);
+            name = gods_author[RANDOM() % arraysize(gods_author)];
             break;
 
         case MSGTYPE_MSGFILE:
         default:
-            strcpy(name, book_author[RANDOM() % nbr]);
+            name = book_author[RANDOM() % arraysize(book_author)];
     }
 
     snprintf(title, sizeof(title), "of %s", name);
