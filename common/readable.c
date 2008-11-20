@@ -1800,7 +1800,7 @@ static char *msgfile_msg(int level, int booksize) {
     }
 
     if (msg && !book_overflow(retbuf, msg->name, booksize))
-        strcpy(retbuf, msg->name);
+        snprintf(retbuf, sizeof(retbuf), "%s", msg->name);
     else
         snprintf(retbuf, sizeof(retbuf), "\n <undecipherable text>");
 
