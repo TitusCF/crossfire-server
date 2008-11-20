@@ -1705,7 +1705,7 @@ void make_formula_book(object *book, int level) {
 
     /* preamble */
     snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s:\n",
-        formula->skill?formula->skill : "an unknown skill");
+        formula->skill ? formula->skill : "an unknown skill");
 
     op_name = formula->arch_name[RANDOM() % formula->arch_names];
     at = find_archetype(op_name);
