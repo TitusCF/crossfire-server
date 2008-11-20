@@ -1029,38 +1029,38 @@ static title *find_title(const object *book, int msgtype) {
  * what information we want in the book.
  */
 static void new_text_name(object *book, int msgtype) {
-    char name[MAX_BUF];
+    const char *name;
 
     if (book->type != BOOK)
         return;
 
     switch (msgtype) {
         case MSGTYPE_MONSTER:
-            strcpy(name, mon_book_name[RANDOM() % arraysize(mon_book_name)]);
+            name = mon_book_name[RANDOM() % arraysize(mon_book_name)];
             break;
 
         case MSGTYPE_ARTIFACT:
-            strcpy(name, art_book_name[RANDOM() % arraysize(art_book_name)]);
+            name = art_book_name[RANDOM() % arraysize(art_book_name)];
             break;
 
         case MSGTYPE_SPELLPATH:
-            strcpy(name, path_book_name[RANDOM() % arraysize(path_book_name)]);
+            name = path_book_name[RANDOM() % arraysize(path_book_name)];
             break;
 
         case MSGTYPE_ALCHEMY:
-            strcpy(name, formula_book_name[RANDOM() % arraysize(formula_book_name)]);
+            name = formula_book_name[RANDOM() % arraysize(formula_book_name)];
             break;
 
         case MSGTYPE_GODS:
-            strcpy(name, gods_book_name[RANDOM() % arraysize(gods_book_name)]);
+            name = gods_book_name[RANDOM() % arraysize(gods_book_name)];
             break;
 
         case MSGTYPE_MSGFILE:
         default:
             if (book->weight > 2000) {  /* based on weight */
-                strcpy(name, heavy_book_name[RANDOM() % arraysize(heavy_book_name)]);
+                name = heavy_book_name[RANDOM() % arraysize(heavy_book_name)];
             } else if (book->weight < 2001) {
-                strcpy(name, light_book_name[RANDOM() % arraysize(light_book_name)]);
+                name = light_book_name[RANDOM() % arraysize(light_book_name)];
             }
             break;
     }
