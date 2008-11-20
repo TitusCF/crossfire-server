@@ -19,8 +19,8 @@ common/readable.c: Fix 'bookarch' parser to strip trailing spaces but not
  file.
 Andreas Kirschbaum 2008-11-20
 
-common/readable.c: Fix 'messages' file parser to strip leading spaces but
- not trailing spaces. Issue warning messages if messages are truncated.
+common/readable.c: Fix 'messages' file parser to strip trailing spaces but
+ not leading spaces. Issue warning messages if messages are truncated.
  Detect and report syntax errors rather than crash.
 common/readable.c: Fix incorrect random expression -- condition was always
  false.
