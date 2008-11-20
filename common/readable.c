@@ -1505,7 +1505,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
         type = art_name_array[index].type;
         al = find_artifactlist(type);
         i++;
-    } while ((al == NULL) && (i < 10));
+    } while (al == NULL && i < 10);
 
     if (i == 10) { /* Unable to find a message */
         snprintf(retbuf, booksize, "None");
@@ -1567,7 +1567,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
         /* include the message about the artifact, if exists, and book
         * level is kinda high */
         if (art->item->msg && RANDOM() % 4 + 1 < level &&
-            !((strlen(art->item->msg) + strlen(buf)) > BOOK_BUF))
+            !(strlen(art->item->msg) + strlen(buf) > BOOK_BUF))
             snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s", art->item->msg);
 
         /* properties of the artifact */
@@ -1632,7 +1632,7 @@ static char *spellpath_msg(int level, char *retbuf, int booksize) {
          */
         if (at->clone.type == SPELL && at->clone.path_attuned & pnum &&
             ((at->clone.stats.grace && prayers) || (at->clone.stats.sp && !prayers)) &&
-            (at->clone.level < level * 8)) {
+            at->clone.level < level * 8) {
             if (book_overflow(retbuf, at->clone.name, booksize))
                 break;
 
@@ -2225,5 +2225,5 @@ const readable_message_type *get_readable_message_type(object *readable) {
     uint8 subtype = readable->subtype;
     if (subtype > last_readable_subtype)
         return &readable_message_types[0];
-    return &(readable_message_types[subtype]);
+    return &readable_message_types[subtype];
 }
