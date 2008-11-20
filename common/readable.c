@@ -1282,9 +1282,7 @@ void change_book(object *book, int msgtype) {
             /* restore old book properties here */
             free_string(book->name);
             free_string(book->title);
-            book->title = NULL;
-            if (old_title != NULL)
-                book->title = add_string(old_title);
+            book->title = old_title != NULL ? add_string(old_title) : NULL;
 
             if (RANDOM() % 4) {
                 /* Lets give the book a description to individualize it some */
