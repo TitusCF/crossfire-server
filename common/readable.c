@@ -1673,6 +1673,8 @@ void make_formula_book(object *book, int level) {
     recipelist *fl;
     recipe *formula;
     int chance;
+    const char *op_name;
+    archetype *at;
 
     /* the higher the book level, the more complex (ie number of
      * ingredients) the formula can be.
@@ -1701,83 +1703,81 @@ void make_formula_book(object *book, int level) {
         book->msg = add_string(" <indecipherable text>\n");
         new_text_name(book, MSGTYPE_ALCHEMY);
         add_author(book, MSGTYPE_ALCHEMY);
-
-    } else {
-        /* looks like a formula was found. Base the amount
-         * of information on the booklevel and the spellevel
-         * of the formula. */
-
-        const char *op_name = formula->arch_name[RANDOM() % formula->arch_names];
-        archetype *at;
-
-        /* preamble */
-        snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s:\n",
-            formula->skill?formula->skill : "an unknown skill");
-
-        at = find_archetype(op_name);
-        if (at != (archetype *) NULL)
-            op_name = at->clone.name;
-        else
-            LOG(llevError, "formula_msg() can't find arch %s for formula.\n",
-                op_name);
-
-        /* item name */
-        if (strcmp(formula->title, "NONE")) {
-            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s of %s", op_name, formula->title);
-            /* This results in things like pile of philo. sulfur.
-            * while philo. sulfur may look better, without this,
-            * you get things like 'the wise' because its missing the
-            * water of section.
-            */
-            snprintf(title, sizeof(title), "%s: %s of %s",
-                formula_book_name[RANDOM() % arraysize(formula_book_name)],
-                op_name, formula->title);
-        } else {
-            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s", op_name);
-            snprintf(title, sizeof(title), "%s: %s",
-                formula_book_name[RANDOM() % arraysize(formula_book_name)],
-                op_name);
-            if (at->clone.title) {
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " %s", at->clone.title);
-                snprintf(title + strlen(title), sizeof(title) - strlen(title), " %s", at->clone.title);
-            }
-        }
-        /* Lets name the book something meaningful ! */
-        if (book->name)
-            free_string(book->name);
-        book->name = add_string(title);
-        if (book->title) {
-            free_string(book->title);
-            book->title = NULL;
-        }
-
-        /* ingredients to make it */
-        if (formula->ingred != NULL) {
-            linked_char *next;
-            archetype *at;
-            char name[MAX_BUF];
-
-            at = find_archetype(formula->cauldron);
-            if (at)
-                query_name(&at->clone, name, MAX_BUF);
-            else
-                snprintf(name, sizeof(name), "an unknown place");
-
-            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf),
-                " may be made at %s using the following ingredients:\n", name);
-
-            for (next = formula->ingred; next != NULL; next = next->next) {
-                snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "%s\n", next->name);
-            }
-        } else
-            LOG(llevError, "formula_msg() no ingredient list for object %s of %s\n",
-                op_name, formula->title);
-        if (retbuf[strlen(retbuf) - 1] != '\n')
-            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
-        if (book->msg)
-            free_string(book->msg);
-        book->msg = add_string(retbuf);
+        return;
     }
+
+    /* looks like a formula was found. Base the amount
+     * of information on the booklevel and the spellevel
+     * of the formula. */
+
+    /* preamble */
+    snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s:\n",
+        formula->skill?formula->skill : "an unknown skill");
+
+    op_name = formula->arch_name[RANDOM() % formula->arch_names];
+    at = find_archetype(op_name);
+    if (at != (archetype *) NULL)
+        op_name = at->clone.name;
+    else
+        LOG(llevError, "formula_msg() can't find arch %s for formula.\n",
+            op_name);
+
+    /* item name */
+    if (strcmp(formula->title, "NONE")) {
+        snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s of %s", op_name, formula->title);
+        /* This results in things like pile of philo. sulfur.
+        * while philo. sulfur may look better, without this,
+        * you get things like 'the wise' because its missing the
+        * water of section.
+        */
+        snprintf(title, sizeof(title), "%s: %s of %s",
+            formula_book_name[RANDOM() % arraysize(formula_book_name)],
+            op_name, formula->title);
+    } else {
+        snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "The %s", op_name);
+        snprintf(title, sizeof(title), "%s: %s",
+            formula_book_name[RANDOM() % arraysize(formula_book_name)],
+            op_name);
+        if (at->clone.title) {
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), " %s", at->clone.title);
+            snprintf(title + strlen(title), sizeof(title) - strlen(title), " %s", at->clone.title);
+        }
+    }
+    /* Lets name the book something meaningful ! */
+    if (book->name)
+        free_string(book->name);
+    book->name = add_string(title);
+    if (book->title) {
+        free_string(book->title);
+        book->title = NULL;
+    }
+
+    /* ingredients to make it */
+    if (formula->ingred != NULL) {
+        linked_char *next;
+        archetype *at;
+        char name[MAX_BUF];
+
+        at = find_archetype(formula->cauldron);
+        if (at)
+            query_name(&at->clone, name, MAX_BUF);
+        else
+            snprintf(name, sizeof(name), "an unknown place");
+
+        snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf),
+            " may be made at %s using the following ingredients:\n", name);
+
+        for (next = formula->ingred; next != NULL; next = next->next) {
+            snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "%s\n", next->name);
+        }
+    } else
+        LOG(llevError, "formula_msg() no ingredient list for object %s of %s\n",
+            op_name, formula->title);
+    if (retbuf[strlen(retbuf) - 1] != '\n')
+        snprintf(retbuf + strlen(retbuf), sizeof(retbuf) - strlen(retbuf), "\n");
+    if (book->msg)
+        free_string(book->msg);
+    book->msg = add_string(retbuf);
 }
 
 /**
