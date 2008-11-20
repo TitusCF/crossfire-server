@@ -1059,7 +1059,7 @@ static void new_text_name(object *book, int msgtype) {
         default:
             if (book->weight > 2000) {  /* based on weight */
                 name = heavy_book_name[RANDOM() % arraysize(heavy_book_name)];
-            } else if (book->weight < 2001) {
+            } else {
                 name = light_book_name[RANDOM() % arraysize(light_book_name)];
             }
             break;
