@@ -1489,12 +1489,12 @@ char *mon_info_msg(int level, char *buf, int booksize) {
  * retbuf.
  */
 static char *artifact_msg(int level, char *retbuf, int booksize) {
-    artifactlist *al = NULL;
+    artifactlist *al;
     artifact *art;
     int chance, i, type, index;
     int book_entries = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char buf[BOOK_BUF], sbuf[MAX_BUF];
-    object *tmp = NULL;
+    object *tmp;
 
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
@@ -1674,7 +1674,7 @@ char *spellpath_msg(int level, char *retbuf, int booksize) {
 void make_formula_book(object *book, int level) {
     char retbuf[BOOK_BUF], title[MAX_BUF];
     recipelist *fl;
-    recipe *formula = NULL;
+    recipe *formula;
     int chance;
 
     /* the higher the book level, the more complex (ie number of
@@ -1833,7 +1833,7 @@ char *msgfile_msg(int level, int booksize) {
  * retbuf.
  */
 char *god_info_msg(int level, char *retbuf, int booksize) {
-    const char *name = NULL;
+    const char *name;
     char buf[BOOK_BUF];
     int i, retlen, buflen;
     int introlen;
