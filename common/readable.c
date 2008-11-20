@@ -1622,17 +1622,14 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
 char *spellpath_msg(int level, char *retbuf, int booksize) {
     int path = RANDOM() % NRSPELLPATHS, prayers = RANDOM() % 2;
     int did_first_sp = 0;
-    uint32 pnum = path == -1 ? PATH_NULL : spellpathdef[path];
+    uint32 pnum = spellpathdef[path];
     archetype *at;
 
     /* Preamble */
     snprintf(retbuf, booksize, "Herein are detailed the names of %s\n",
         prayers ? "prayers": "incantations");
 
-    if (path == -1)
-        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "having no known spell path.\n");
-    else
-        snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "belonging to the path of %s:\n",  spellpathnames[path]);
+    snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "belonging to the path of %s:\n",  spellpathnames[path]);
 
     for (at = first_archetype; at != NULL; at = at->next) {
         /* Determine if this is an appropriate spell.  Must

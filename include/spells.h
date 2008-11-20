@@ -38,7 +38,6 @@
  * @defgroup PATH_xxx Spell path
  */
 /*@{*/
-#define PATH_NULL       0x00000000      /* 0 */
 #define PATH_PROT       0x00000001      /* 1 */
 #define PATH_FIRE       0x00000002      /* 2 */
 #define PATH_FROST      0x00000004      /* 4 */
