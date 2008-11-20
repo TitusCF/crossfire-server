@@ -118,7 +118,10 @@ typedef struct namebytype {
 
 static void add_book(title *book, int type, const char *fname, int lineno);
 
-/** booklist is the buffer of books read in from the bookarch file */
+/**
+ * booklist is the buffer of books read in from the bookarch file. It's element
+ * size does not exceed arraysize(max_titles).
+ */
 static titlelist *booklist = NULL;
 
 /** Information on monsters */
@@ -598,8 +601,10 @@ static titlelist *get_titlelist(int i) {
     titlelist *tl;
     int number;
 
-    if (number < 0)
-        return tl;
+    if (i < 0 || i >= (int)arraysize(max_titles)) {
+        LOG(llevInfo, "Warning: invalid book index %d, using 0 instead\n", i);
+        return booklist;
+    }
 
     for (tl = booklist, number = i; tl && number; tl = tl->next, number--) {
         if (!tl->next)
