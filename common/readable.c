@@ -120,7 +120,6 @@ typedef struct titleliststruct {
     struct titleliststruct *next;  /**< pointer to next book list */
 } titlelist;
 
-
 /** special structure, used only by art_name_array[] */
 typedef struct namebytype {
     const char *name;  /**< generic name to call artifacts of this type */
@@ -280,7 +279,6 @@ static const char *const mon_book_name[] = {
     "volume"
 };
 
-
 /** Used by monster beastuary texts */
 static const char *const mon_author[] = {
     "beasts",
@@ -329,7 +327,6 @@ static const char *const gods_author[] = {
     "pain",
     "white"
 };
-
 
 /**
  * Alchemy (formula) information
@@ -396,7 +393,6 @@ static const char *const heavy_book_name[] = {
     "volume",
     "work"
 };
-
 
 /** Used by 'generic' books */
 static const char *const book_author[] = {
@@ -584,7 +580,7 @@ static titlelist *get_empty_booklist(void) {
  * if memory allocation failes, calls fatal().
  */
 static title *get_empty_book(void) {
-    title  *t = (title *) malloc(sizeof(title));
+    title *t = (title *) malloc(sizeof(title));
     if (t == NULL)
         fatal(OUT_OF_MEMORY);
     t->name = NULL;
@@ -1126,7 +1122,7 @@ static void add_author(object *op, int msgtype) {
  * @return
  */
 static int unique_book(const object *book, int msgtype) {
-    title  *test;
+    title *test;
 
     if (!booklist)
         return 1;  /* No archival entries! Must be unique! */
@@ -1134,7 +1130,7 @@ static int unique_book(const object *book, int msgtype) {
     /* Go through the booklist.  If the author and name match, not unique so
      * return 0.
      */
-    for (test = get_titlelist(msgtype)->first_book; test; test=test->next) {
+    for (test = get_titlelist(msgtype)->first_book; test; test = test->next) {
         if (!strcmp(test->name, book->name) && !strcmp(book->title, test->authour))
             return 0;
     }
@@ -1171,13 +1167,12 @@ static void add_book_to_list(const object *book, int msgtype) {
     tl->number++;
 
     /* We have stuff we need to write now */
-    need_to_write_bookarchive=1;
+    need_to_write_bookarchive = 1;
 
 #ifdef ARCHIVE_DEBUG
     LOG(llevDebug, "Archiving new title: %s %s (%d)\n", book->name,
         book->title, msgtype);
 #endif
-
 }
 
 /**
@@ -1266,7 +1261,7 @@ void change_book(object *book, int msgtype) {
             } while (!unique_book(book, msgtype) && tries < MAX_TITLE_CHECK);
 
         /* Now deal with 2 cases.
-         * 1)If no space for a new title exists lets just restore
+         * 1) If no space for a new title exists lets just restore
          * the old book properties. Remember, if the book had
          * matchd an older entry on the titlelist, we shouldnt
          * have called this routine in the first place!
@@ -1300,7 +1295,6 @@ void change_book(object *book, int msgtype) {
         if (old_title != NULL)
             free_string(old_title);
         free_string(old_name);
-
     }
 }
 
@@ -1511,7 +1505,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
         type = art_name_array[index].type;
         al = find_artifactlist(type);
         i++;
-    } while ((al == NULL) && (i<10));
+    } while ((al == NULL) && (i < 10));
 
     if (i == 10) { /* Unable to find a message */
         snprintf(retbuf, booksize, "None");
@@ -1629,7 +1623,7 @@ char *spellpath_msg(int level, char *retbuf, int booksize) {
     snprintf(retbuf, booksize, "Herein are detailed the names of %s\n",
         prayers ? "prayers": "incantations");
 
-    snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "belonging to the path of %s:\n",  spellpathnames[path]);
+    snprintf(retbuf + strlen(retbuf), booksize - strlen(retbuf), "belonging to the path of %s:\n", spellpathnames[path]);
 
     for (at = first_archetype; at != NULL; at = at->next) {
         /* Determine if this is an appropriate spell.  Must
@@ -1680,7 +1674,6 @@ void make_formula_book(object *book, int level) {
      * ingredients) the formula can be.
      */
     fl = get_formulalist((RANDOM() % level) / 3 + 1);
-
     if (!fl)
         fl = get_formulalist(1);  /* safety */
 
@@ -1920,7 +1913,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
             }
         }
         if (level == 5 && RANDOM() % 2) {
-            /* aligned race, summoning  */
+            /* aligned race, summoning */
             const char *race = god->race; /* aligned race */
 
             if (race && !(god->path_denied & PATH_SUMMON))
