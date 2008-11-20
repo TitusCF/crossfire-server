@@ -1194,117 +1194,117 @@ static void add_book_to_list(const object *book, int msgtype) {
  * what information the book contains.
  */
 void change_book(object *book, int msgtype) {
-    switch (book->type) {
-        case BOOK: {
-            titlelist *tl = get_titlelist(msgtype);
-            title *t = NULL;
-            int tries = 0;
+    titlelist *tl;
+    title *t;
+    int tries;
 
-            /* look to see if our msg already been archived. If so, alter
-            * the book to match the archival text. If we fail to match,
-            * then we archive the new title/name/msg combo if there is
-            * room on the titlelist.
-            */
+    if (book->type != BOOK) {
+        LOG(llevError, "change_book_name() called w/ illegal obj type.\n");
+        return;
+    }
 
-            if (strlen(book->msg) > 5 && (t = find_title(book, msgtype))) {
-                object *tmpbook;
+    tl = get_titlelist(msgtype);
+    t = NULL;
+    tries = 0;
 
-                /* alter book properties */
-                tmpbook = create_archetype(t->archname);
-                if (tmpbook != NULL) {
-                    if (tmpbook->msg)
-                        free_string(tmpbook->msg);
-                    tmpbook->msg = add_string(book->msg);
-                    copy_object(tmpbook, book);
-                    free_object(tmpbook);
-                }
+    /* look to see if our msg already been archived. If so, alter
+     * the book to match the archival text. If we fail to match,
+     * then we archive the new title/name/msg combo if there is
+     * room on the titlelist.
+     */
 
-                book->title = add_string(t->authour);
-                free_string(book->name);
-                book->name = add_string(t->name);
-                book->level = t->level;
-            } else { /* Don't have any default title, so lets make up a new one */
-                int numb, maxnames = max_titles[msgtype];
-                const char *old_title;
-                const char *old_name;
+    if (strlen(book->msg) > 5 && (t = find_title(book, msgtype))) {
+        object *tmpbook;
 
-                old_title = book->title ? add_string(book->title) : NULL;
-                old_name = add_string(book->name);
-
-                /* some pre-generated books have title already set (from
-                * maps), also don't bother looking for unique title if
-                * we already used up all the available names! */
-
-                if (!tl) {
-                    LOG(llevError, "change_book_name(): can't find title list\n");
-                    numb = 0;
-                } else
-                    numb = tl->number;
-
-                if (numb == maxnames) {
-#ifdef ARCHIVE_DEBUG
-                    LOG(llevDebug, "titles for list %d full (%d possible).\n",
-                        msgtype, maxnames);
-#endif
-                    if (old_title != NULL)
-                        free_string(old_title);
-                    free_string(old_name);
-                    break;
-                }
-                /* shouldnt change map-maker books */
-                else if (!book->title)
-                    do {
-                        /* random book name */
-                        new_text_name(book, msgtype);
-                        add_author(book, msgtype);  /* random author */
-                        tries++;
-                    } while (!unique_book(book, msgtype) && tries < MAX_TITLE_CHECK);
-
-                /* Now deal with 2 cases.
-                 * 1)If no space for a new title exists lets just restore
-                 * the old book properties. Remember, if the book had
-                 * matchd an older entry on the titlelist, we shouldnt
-                 * have called this routine in the first place!
-                 * 2) If we got a unique title, we need to add it to
-                 * the list.
-                 */
-
-                if (tries == MAX_TITLE_CHECK || numb == maxnames) { /* got to check maxnames again */
-#ifdef ARCHIVE_DEBUG
-                    LOG(llevDebug, "Failed to obtain unique title for %s %s (names:%d/%d)\n",
-                        book->name, book->title, numb, maxnames);
-#endif
-                    /* restore old book properties here */
-                    free_string(book->name);
-                    free_string(book->title);
-                    book->title = NULL;
-                    if (old_title != NULL)
-                        book->title = add_string(old_title);
-
-                    if (RANDOM() % 4) {
-                        /* Lets give the book a description to individualize it some */
-                        char new_name[MAX_BUF];
-
-                        snprintf(new_name, MAX_BUF, "%s %s", book_descrpt[RANDOM() % arraysize(book_descrpt)], old_name);
-                        book->name = add_string(new_name);
-                    } else {
-                        book->name = add_string(old_name);
-                    }
-                } else if (book->title && strlen(book->msg) > 5) { /* archive if long msg texts */
-                    add_book_to_list(book, msgtype);
-                }
-
-                if (old_title != NULL)
-                    free_string(old_title);
-                free_string(old_name);
-
-            }
-            break;
+        /* alter book properties */
+        tmpbook = create_archetype(t->archname);
+        if (tmpbook != NULL) {
+            if (tmpbook->msg)
+                free_string(tmpbook->msg);
+            tmpbook->msg = add_string(book->msg);
+            copy_object(tmpbook, book);
+            free_object(tmpbook);
         }
 
-        default:
-            LOG(llevError, "change_book_name() called w/ illegal obj type.\n");
+        book->title = add_string(t->authour);
+        free_string(book->name);
+        book->name = add_string(t->name);
+        book->level = t->level;
+    } else { /* Don't have any default title, so lets make up a new one */
+        int numb, maxnames = max_titles[msgtype];
+        const char *old_title;
+        const char *old_name;
+
+        old_title = book->title ? add_string(book->title) : NULL;
+        old_name = add_string(book->name);
+
+        /* some pre-generated books have title already set (from
+         * maps), also don't bother looking for unique title if
+         * we already used up all the available names! */
+
+        if (!tl) {
+            LOG(llevError, "change_book_name(): can't find title list\n");
+            numb = 0;
+        } else
+            numb = tl->number;
+
+        if (numb == maxnames) {
+#ifdef ARCHIVE_DEBUG
+            LOG(llevDebug, "titles for list %d full (%d possible).\n",
+                msgtype, maxnames);
+#endif
+            if (old_title != NULL)
+                free_string(old_title);
+            free_string(old_name);
             return;
+        }
+        /* shouldnt change map-maker books */
+        else if (!book->title)
+            do {
+                /* random book name */
+                new_text_name(book, msgtype);
+                add_author(book, msgtype);  /* random author */
+                tries++;
+            } while (!unique_book(book, msgtype) && tries < MAX_TITLE_CHECK);
+
+        /* Now deal with 2 cases.
+         * 1)If no space for a new title exists lets just restore
+         * the old book properties. Remember, if the book had
+         * matchd an older entry on the titlelist, we shouldnt
+         * have called this routine in the first place!
+         * 2) If we got a unique title, we need to add it to
+         * the list.
+         */
+
+        if (tries == MAX_TITLE_CHECK || numb == maxnames) { /* got to check maxnames again */
+#ifdef ARCHIVE_DEBUG
+            LOG(llevDebug, "Failed to obtain unique title for %s %s (names:%d/%d)\n",
+                book->name, book->title, numb, maxnames);
+#endif
+            /* restore old book properties here */
+            free_string(book->name);
+            free_string(book->title);
+            book->title = NULL;
+            if (old_title != NULL)
+                book->title = add_string(old_title);
+
+            if (RANDOM() % 4) {
+                /* Lets give the book a description to individualize it some */
+                char new_name[MAX_BUF];
+
+                snprintf(new_name, MAX_BUF, "%s %s", book_descrpt[RANDOM() % arraysize(book_descrpt)], old_name);
+                book->name = add_string(new_name);
+            } else {
+                book->name = add_string(old_name);
+            }
+        } else if (book->title && strlen(book->msg) > 5) { /* archive if long msg texts */
+            add_book_to_list(book, msgtype);
+        }
+
+        if (old_title != NULL)
+            free_string(old_title);
+        free_string(old_name);
+
     }
 }
 
