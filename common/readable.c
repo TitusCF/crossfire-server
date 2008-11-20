@@ -537,10 +537,10 @@ static const readable_message_type readable_message_types[] =
                     {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3}
 };
 /** Number of elements in ::readable_message_types */
-static int last_readable_subtype = arraysize(readable_message_types);
+static const int last_readable_subtype = arraysize(readable_message_types);
 
 /** Number of titles for different name lists. */
-static int max_titles[6] = {
+static const int max_titles[6] = {
     (arraysize(light_book_name) + arraysize(heavy_book_name)) * arraysize(book_author), /* MSGTYPE_LIB */
     arraysize(mon_book_name) * arraysize(mon_author), /* MSGTYPE_MONSTER */
     arraysize(art_book_name) * arraysize(art_author), /* MSGTYPE_ARTIFACT */
