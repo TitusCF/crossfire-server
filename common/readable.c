@@ -774,7 +774,6 @@ static void init_book_archive(void) {
     int comp, nroftitle = 0;
     char buf[MAX_BUF], fname[MAX_BUF], *cp;
     title *book = NULL;
-    titlelist *bl = get_empty_booklist();
     static int did_init_barch;
 
     if (did_init_barch)
@@ -782,7 +781,7 @@ static void init_book_archive(void) {
     did_init_barch = 1;
 
     if (!booklist)
-        booklist = bl;
+        booklist = get_empty_booklist();
 
     snprintf(fname, sizeof(fname), "%s/bookarch", settings.localdir);
     LOG(llevDebug, " Reading bookarch from %s...\n", fname);
@@ -791,6 +790,7 @@ static void init_book_archive(void) {
     if (fp != NULL) {
         int value, type = 0;
         size_t i;
+        titlelist *bl;
 
         while (fgets(buf, MAX_BUF, fp) != NULL) {
             if (*buf == '#')
