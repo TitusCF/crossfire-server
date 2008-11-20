@@ -80,6 +80,9 @@
 /* This flag is useful for debugging archiving action */
 /* #define ARCHIVE_DEBUG */
 
+/** How many times to try to generate a unique name for a book. */
+#define MAX_TITLE_CHECK 20
+
 #define MSGTYPE_LIB 0
 #define MSGTYPE_MONSTER 1
 #define MSGTYPE_ARTIFACT 2
@@ -1184,9 +1187,6 @@ static void add_book_to_list(const object *book, int msgtype) {
 #endif
 
 }
-
-/** How many times to try to generate a unique name for a book. */
-#define MAX_TITLE_CHECK 20
 
 /**
  * Give a new, fancier name to generated
