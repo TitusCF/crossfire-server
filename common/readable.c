@@ -1218,13 +1218,11 @@ void change_book(object *book, int msgtype) {
 
         /* alter book properties */
         tmpbook = create_archetype(t->archname);
-        if (tmpbook != NULL) {
-            if (tmpbook->msg)
-                free_string(tmpbook->msg);
-            tmpbook->msg = add_string(book->msg);
-            copy_object(tmpbook, book);
-            free_object(tmpbook);
-        }
+        if (tmpbook->msg)
+            free_string(tmpbook->msg);
+        tmpbook->msg = add_string(book->msg);
+        copy_object(tmpbook, book);
+        free_object(tmpbook);
 
         book->title = add_string(t->authour);
         free_string(book->name);
