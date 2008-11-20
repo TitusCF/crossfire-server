@@ -1539,7 +1539,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
             art = al->items;
 
         /* separator of items */
-        snprintf(buf, sizeof(buf), "--- \n");
+        snprintf(buf, sizeof(buf), "---\n");
 
         /* Name */
         if (art->allowed != NULL && strcmp(art->allowed->name, "All")) {
@@ -1583,7 +1583,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
         SET_FLAG(tmp, FLAG_IDENTIFIED);
         describe_item(tmp, NULL, sbuf, sizeof(sbuf));
         if (strlen(sbuf) > 1)
-            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " Properties of this artifact include: \n %s \n",
+            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), " Properties of this artifact include:\n %s\n",
                      sbuf);
         free_object(tmp);
         /* add the buf if it will fit */
@@ -1714,7 +1714,7 @@ void make_formula_book(object *book, int level) {
         archetype *at;
 
         /* preamble */
-        snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s: \n",
+        snprintf(retbuf, sizeof(retbuf), "Herein is described a project using %s:\n",
             formula->skill?formula->skill : "an unknown skill");
 
         at = find_archetype(op_name);
@@ -1932,7 +1932,7 @@ char *god_info_msg(int level, char *retbuf, int booksize) {
                     char tmpbuf[MAX_BUF];
 
                     snprintf(buf, BOOK_BUF,
-                        "Creatures sacred to %s include the \n", name);
+                        "Creatures sacred to %s include the\n", name);
 
                     if (i > 1)
                         snprintf(tmpbuf, MAX_BUF,

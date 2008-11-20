@@ -14,6 +14,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c: Remove trailing whitespace from generated book
+ contents.
 common/readable.c: Do not call get_titlelist() for invalid indices.
 common/readable.c: Fix 'bookarch' parser to strip trailing spaces but not
  leading spaces. Fix possible memory leak when reading the 'bookarch'
