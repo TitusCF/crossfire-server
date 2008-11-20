@@ -80,6 +80,14 @@
 /* This flag is useful for debugging archiving action */
 /* #define ARCHIVE_DEBUG */
 
+#define MSGTYPE_LIB 0
+#define MSGTYPE_MONSTER 1
+#define MSGTYPE_ARTIFACT 2
+#define MSGTYPE_SPELLPATH 3
+#define MSGTYPE_ALCHEMY 4
+#define MSGTYPE_GODS 5
+#define MSGTYPE_MSGFILE 6
+
 /**
  * Returns the element size of an array.
  * @param arrayname the array's name
@@ -530,12 +538,12 @@ static int last_readable_subtype = arraysize(readable_message_types);
 
 /** Number of titles for different name lists. */
 static int max_titles[6] = {
-    (arraysize(light_book_name) + arraysize(heavy_book_name)) * arraysize(book_author),
-    arraysize(mon_book_name) * arraysize(mon_author),
-    arraysize(art_book_name) * arraysize(art_author),
-    arraysize(path_book_name) * arraysize(path_author),
-    arraysize(formula_book_name) * arraysize(formula_author),
-    arraysize(gods_book_name) * arraysize(gods_author),
+    (arraysize(light_book_name) + arraysize(heavy_book_name)) * arraysize(book_author), /* MSGTYPE_LIB */
+    arraysize(mon_book_name) * arraysize(mon_author), /* MSGTYPE_MONSTER */
+    arraysize(art_book_name) * arraysize(art_author), /* MSGTYPE_ARTIFACT */
+    arraysize(path_book_name) * arraysize(path_author), /* MSGTYPE_SPELLPATH */
+    arraysize(formula_book_name) * arraysize(formula_author), /* MSGTYPE_ALCHEMY */
+    arraysize(gods_book_name) * arraysize(gods_author), /* MSGTYPE_GODS */
 };
 
 /******************************************************************************
@@ -1025,32 +1033,32 @@ static void new_text_name(object *book, int msgtype) {
         return;
 
     switch (msgtype) {
-        case 1:   /*monster */
+        case MSGTYPE_MONSTER:
             nbr = arraysize(mon_book_name);
             strcpy(name, mon_book_name[RANDOM() % nbr]);
             break;
 
-        case 2:   /*artifact */
+        case MSGTYPE_ARTIFACT:
             nbr = arraysize(art_book_name);
             strcpy(name, art_book_name[RANDOM() % nbr]);
             break;
 
-        case 3:   /*spellpath */
+        case MSGTYPE_SPELLPATH:
             nbr = arraysize(path_book_name);
             strcpy(name, path_book_name[RANDOM() % nbr]);
             break;
 
-        case 4:   /*alchemy */
+        case MSGTYPE_ALCHEMY:
             nbr = arraysize(formula_book_name);
             strcpy(name, formula_book_name[RANDOM() % nbr]);
             break;
 
-        case 5:   /*gods */
+        case MSGTYPE_GODS:
             nbr = arraysize(gods_book_name);
             strcpy(name, gods_book_name[RANDOM() % nbr]);
             break;
 
-        case 6:   /*msg file */
+        case MSGTYPE_MSGFILE:
         default:
             if (book->weight > 2000) {  /* based on weight */
                 nbr = arraysize(heavy_book_name);
@@ -1082,32 +1090,32 @@ static void add_author(object *op, int msgtype) {
         return;
 
     switch (msgtype) {
-        case 1:   /* monster */
+        case MSGTYPE_MONSTER:
             nbr = arraysize(mon_author);
             strcpy(name, mon_author[RANDOM() % nbr]);
             break;
 
-        case 2:   /* artifacts */
+        case MSGTYPE_ARTIFACT:
             nbr = arraysize(art_author);
             strcpy(name, art_author[RANDOM() % nbr]);
             break;
 
-        case 3:   /* spellpath */
+        case MSGTYPE_SPELLPATH:
             nbr = arraysize(path_author);
             strcpy(name, path_author[RANDOM() % nbr]);
             break;
 
-        case 4:   /* alchemy */
+        case MSGTYPE_ALCHEMY:
             nbr = arraysize(formula_author);
             strcpy(name, formula_author[RANDOM() % nbr]);
             break;
 
-        case 5:   /* gods */
+        case MSGTYPE_GODS:
             nbr = arraysize(gods_author);
             strcpy(name, gods_author[RANDOM() % nbr]);
             break;
 
-        case 6:   /* msg file */
+        case MSGTYPE_MSGFILE:
         default:
             strcpy(name, book_author[RANDOM() % nbr]);
     }
@@ -1701,8 +1709,8 @@ void make_formula_book(object *book, int level) {
 
     if (fl->total_chance == 0) {
         book->msg = add_string(" <indecipherable text>\n");
-        new_text_name(book, 4);
-        add_author(book, 4);
+        new_text_name(book, MSGTYPE_ALCHEMY);
+        add_author(book, MSGTYPE_ALCHEMY);
         return;
     }
 
@@ -1716,8 +1724,8 @@ void make_formula_book(object *book, int level) {
 
     if (!formula || formula->arch_names <= 0) {
         book->msg = add_string(" <indecipherable text>\n");
-        new_text_name(book, 4);
-        add_author(book, 4);
+        new_text_name(book, MSGTYPE_ALCHEMY);
+        add_author(book, MSGTYPE_ALCHEMY);
 
     } else {
         /* looks like a formula was found. Base the amount
@@ -2102,29 +2110,29 @@ void tailor_readable_ob(object *book, int msg_type) {
 
     msg_type = msg_type > 0 ? msg_type : RANDOM() % 6;
     switch (msg_type) {
-        case 1:   /* monster attrib */
+        case MSGTYPE_MONSTER:
             mon_info_msg(level, msgbuf, book_buf_size);
             break;
 
-        case 2:   /* artifact attrib */
+        case MSGTYPE_ARTIFACT:
             artifact_msg(level, msgbuf, book_buf_size);
             break;
 
-        case 3:   /* grouping incantations/prayers by path */
+        case MSGTYPE_SPELLPATH: /* grouping incantations/prayers by path */
             spellpath_msg(level, msgbuf, book_buf_size);
             break;
 
-        case 4:   /* describe an alchemy formula */
+        case MSGTYPE_ALCHEMY: /* describe an alchemy formula */
             make_formula_book(book, level);
             /* make_formula_book already gives title */
             return;
             break;
 
-        case 5:   /* bits of information about a god */
+        case MSGTYPE_GODS: /* bits of information about a god */
             god_info_msg(level, msgbuf, book_buf_size);
             break;
 
-        case 0:   /* use info list in lib/ */
+        case MSGTYPE_LIB: /* use info list in lib/ */
         default:
             strcpy(msgbuf, msgfile_msg(level, book_buf_size));
             break;
