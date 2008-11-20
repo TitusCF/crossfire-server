@@ -1029,7 +1029,6 @@ static title *find_title(const object *book, int msgtype) {
  * what information we want in the book.
  */
 static void new_text_name(object *book, int msgtype) {
-    int nbr;
     char name[MAX_BUF];
 
     if (book->type != BOOK)
@@ -1037,38 +1036,31 @@ static void new_text_name(object *book, int msgtype) {
 
     switch (msgtype) {
         case MSGTYPE_MONSTER:
-            nbr = arraysize(mon_book_name);
-            strcpy(name, mon_book_name[RANDOM() % nbr]);
+            strcpy(name, mon_book_name[RANDOM() % arraysize(mon_book_name)]);
             break;
 
         case MSGTYPE_ARTIFACT:
-            nbr = arraysize(art_book_name);
-            strcpy(name, art_book_name[RANDOM() % nbr]);
+            strcpy(name, art_book_name[RANDOM() % arraysize(art_book_name)]);
             break;
 
         case MSGTYPE_SPELLPATH:
-            nbr = arraysize(path_book_name);
-            strcpy(name, path_book_name[RANDOM() % nbr]);
+            strcpy(name, path_book_name[RANDOM() % arraysize(path_book_name)]);
             break;
 
         case MSGTYPE_ALCHEMY:
-            nbr = arraysize(formula_book_name);
-            strcpy(name, formula_book_name[RANDOM() % nbr]);
+            strcpy(name, formula_book_name[RANDOM() % arraysize(formula_book_name)]);
             break;
 
         case MSGTYPE_GODS:
-            nbr = arraysize(gods_book_name);
-            strcpy(name, gods_book_name[RANDOM() % nbr]);
+            strcpy(name, gods_book_name[RANDOM() % arraysize(gods_book_name)]);
             break;
 
         case MSGTYPE_MSGFILE:
         default:
             if (book->weight > 2000) {  /* based on weight */
-                nbr = arraysize(heavy_book_name);
-                strcpy(name, heavy_book_name[RANDOM() % nbr]);
+                strcpy(name, heavy_book_name[RANDOM() % arraysize(heavy_book_name)]);
             } else if (book->weight < 2001) {
-                nbr = arraysize(light_book_name);
-                strcpy(name, light_book_name[RANDOM() % nbr]);
+                strcpy(name, light_book_name[RANDOM() % arraysize(light_book_name)]);
             }
             break;
     }
@@ -1202,8 +1194,6 @@ static void add_book_to_list(const object *book, int msgtype) {
  * what information the book contains.
  */
 void change_book(object *book, int msgtype) {
-    int nbr = arraysize(book_descrpt);
-
     switch (book->type) {
         case BOOK: {
             titlelist *tl = get_titlelist(msgtype);
@@ -1295,7 +1285,7 @@ void change_book(object *book, int msgtype) {
                         /* Lets give the book a description to individualize it some */
                         char new_name[MAX_BUF];
 
-                        snprintf(new_name, MAX_BUF, "%s %s", book_descrpt[RANDOM() % nbr], old_name);
+                        snprintf(new_name, MAX_BUF, "%s %s", book_descrpt[RANDOM() % arraysize(book_descrpt)], old_name);
                         book->name = add_string(new_name);
                     } else {
                         book->name = add_string(old_name);
