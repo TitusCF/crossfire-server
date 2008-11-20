@@ -703,7 +703,7 @@ static void init_msgfile(void) {
     FILE *fp;
     char buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
     int comp;
-    static int did_init_msgfile;
+    static int did_init_msgfile = 0;
 
     if (did_init_msgfile)
         return;
@@ -774,7 +774,7 @@ static void init_book_archive(void) {
     int comp, nroftitle = 0;
     char buf[MAX_BUF], fname[MAX_BUF], *cp;
     title *book = NULL;
-    static int did_init_barch;
+    static int did_init_barch = 0;
 
     if (did_init_barch)
         return;
@@ -880,7 +880,7 @@ static void init_mon_info(void) {
  * all the readable information.
  */
 void init_readable(void) {
-    static int did_this;
+    static int did_this = 0;
 
     if (did_this)
         return;
