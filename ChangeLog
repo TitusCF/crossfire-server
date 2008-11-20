@@ -14,7 +14,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
-common/readable.c: Fix possible memory leak when reading the 'bookarch'
+common/readable.c: Fix 'bookarch' parser to strip trailing spaces but not
+ leading spaces. Fix possible memory leak when reading the 'bookarch'
  file.
 Andreas Kirschbaum 2008-11-20
 

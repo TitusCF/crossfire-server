@@ -796,32 +796,33 @@ static void init_book_archive(void) {
             if (*buf == '#')
                 continue;
             cp = strchr(buf, '\n');
-            if (cp != NULL)
+            if (cp != NULL) {
+                while (cp > buf && (cp[-1] == ' ' || cp[-1] == '\t'))
+                    cp--;
                 *cp = '\0';
+            }
             cp = buf;
-            while (*cp == ' ') /* Skip blanks */
-                cp++;
-            if (!strncmp(cp, "title", 4)) {
+            if (!strncmp(buf, "title", 4)) {
                 book = get_empty_book();   /* init new book entry */
-                book->name = add_string(strchr(cp, ' ') + 1);
+                book->name = add_string(strchr(buf, ' ') + 1);
                 type = -1;
                 nroftitle++;
                 continue;
             }
-            if (!strncmp(cp, "authour", 4)) {
-                book->authour = add_string(strchr(cp, ' ') + 1);
+            if (!strncmp(buf, "authour", 4)) {
+                book->authour = add_string(strchr(buf, ' ') + 1);
             }
-            if (!strncmp(cp, "arch", 4)) {
-                book->archname = add_string(strchr(cp, ' ') + 1);
-            } else if (sscanf(cp, "level %d", &value)) {
+            if (!strncmp(buf, "arch", 4)) {
+                book->archname = add_string(strchr(buf, ' ') + 1);
+            } else if (sscanf(buf, "level %d", &value)) {
                 book->level = (uint16) value;
-            } else if (sscanf(cp, "type %d", &value)) {
+            } else if (sscanf(buf, "type %d", &value)) {
                 type = (uint16) value;
-            } else if (sscanf(cp, "size %d", &value)) {
+            } else if (sscanf(buf, "size %d", &value)) {
                 book->size = (uint16) value;
-            } else if (sscanf(cp, "index %d", &value)) {
+            } else if (sscanf(buf, "index %d", &value)) {
                 book->msg_index = (uint16) value;
-            } else if (!strncmp(cp, "end", 3)) { /* link it */
+            } else if (!strncmp(buf, "end", 3)) { /* link it */
                 bl = get_titlelist(type);
                 book->next = bl->first_book;
                 bl->first_book = book;
