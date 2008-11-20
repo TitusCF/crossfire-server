@@ -14,6 +14,7 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c: Detect and report errors when saving bookarch file.
 common/readable.c: Remove trailing whitespace from generated book
  contents.
 common/readable.c: Do not call get_titlelist() for invalid indices.

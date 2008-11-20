@@ -2185,27 +2185,33 @@ void write_book_archive(void) {
     fp = fopen(fname, "w");
     if (fp == NULL) {
         LOG(llevDebug, "Can't open book archive file %s\n", fname);
-    } else {
-        for (bl = get_titlelist(0), index = 0; bl; bl = bl->next, index++) {
-            for (book = bl->first_book; book; book = book->next)
-                if (book && book->authour) {
-                    fprintf(fp, "title %s\n", book->name);
-                    fprintf(fp, "authour %s\n", book->authour);
-                    fprintf(fp, "arch %s\n", book->archname);
-                    fprintf(fp, "level %d\n", book->level);
-                    fprintf(fp, "type %d\n", index);
-                    fprintf(fp, "size %d\n", book->size);
-                    fprintf(fp, "index %d\n", book->msg_index);
-                    fprintf(fp, "end\n");
-                }
-        }
-        if (!ferror(fp))
-            need_to_write_bookarchive = 0;
-        else
-            LOG(llevError, "Error during book archive save.");
-        fclose(fp);
-        chmod(fname, SAVE_MODE);
+        return;
     }
+
+    for (bl = get_titlelist(0), index = 0; bl; bl = bl->next, index++) {
+        for (book = bl->first_book; book; book = book->next)
+            if (book && book->authour) {
+                fprintf(fp, "title %s\n", book->name);
+                fprintf(fp, "authour %s\n", book->authour);
+                fprintf(fp, "arch %s\n", book->archname);
+                fprintf(fp, "level %d\n", book->level);
+                fprintf(fp, "type %d\n", index);
+                fprintf(fp, "size %d\n", book->size);
+                fprintf(fp, "index %d\n", book->msg_index);
+                fprintf(fp, "end\n");
+            }
+    }
+    if (ferror(fp)) {
+        LOG(llevError, "Error during book archive save.");
+        fclose(fp);
+        return;
+    }
+    if (fclose(fp) != 0) {
+        LOG(llevError, "Error during book archive save.");
+        return;
+    }
+    chmod(fname, SAVE_MODE);
+    need_to_write_bookarchive = 0;
 }
 
 /**
