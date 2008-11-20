@@ -1327,19 +1327,19 @@ void change_book(object *book, int msgtype) {
  * random monster, or NULL if failure.
  */
 object *get_random_mon(int level) {
-    objectlink *mon = first_mon_info;
-    int i = 0, monnr;
+    objectlink *mon;
+    int i, monnr;
 
     /* safety check.  Problem w/ init_mon_info list? */
-    if (!nrofmon || !mon)
+    if (!nrofmon || !first_mon_info)
         return (object *) NULL;
 
     if (!level) {
         /* lets get a random monster from the mon_info linked list */
         monnr = RANDOM() % nrofmon;
 
-        for (mon = first_mon_info, i = 0; mon; mon = mon->next)
-            if (i++ == monnr)
+        for (mon = first_mon_info, i = 0; mon; mon = mon->next, i++)
+            if (i == monnr)
                 break;
 
         if (!mon) {
@@ -1377,11 +1377,8 @@ object *get_random_mon(int level) {
         if (mon->ob->level >= level && monnr-- == 0)
             return mon->ob;
 
-    if (!mon) {
-        LOG(llevError, "get_random_mon(): didn't find a monster when we should have\n");
-        return NULL;
-    }
-    return NULL;  /* Should be unreached, but keeps warnings down */
+    LOG(llevError, "get_random_mon(): didn't find a monster when we should have\n");
+    return NULL;
 }
 
 /**
