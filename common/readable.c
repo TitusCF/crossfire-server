@@ -116,6 +116,7 @@ typedef struct namebytype {
     int type;          /**< matching type */
 } arttypename;
 
+static void add_book(title *book, int type, const char *fname, int lineno);
 
 /** booklist is the buffer of books read in from the bookarch file */
 static titlelist *booklist = NULL;
@@ -773,7 +774,6 @@ static void init_book_archive(void) {
     FILE *fp;
     int comp, nroftitle = 0;
     char buf[MAX_BUF], fname[MAX_BUF], *cp;
-    title *book = NULL;
     static int did_init_barch = 0;
 
     if (did_init_barch)
@@ -788,11 +788,20 @@ static void init_book_archive(void) {
 
     fp = open_and_uncompress(fname, 0, &comp);
     if (fp != NULL) {
-        int value, type = 0;
+        int type;
         size_t i;
         titlelist *bl;
+        int lineno;
+        title *book;
+        int skipping;
 
-        while (fgets(buf, MAX_BUF, fp) != NULL) {
+        skipping = 0;
+        book = NULL;
+        type = -1;
+        for (lineno = 1; fgets(buf, MAX_BUF, fp) != NULL; lineno++) {
+            int len;
+            int value;
+
             if (*buf == '#')
                 continue;
             cp = strchr(buf, '\n');
@@ -802,32 +811,62 @@ static void init_book_archive(void) {
                 *cp = '\0';
             }
             cp = buf;
-            if (!strncmp(buf, "title", 4)) {
-                book = get_empty_book();   /* init new book entry */
-                book->name = add_string(strchr(buf, ' ') + 1);
-                type = -1;
-                nroftitle++;
-                continue;
-            }
-            if (!strncmp(buf, "authour", 4)) {
-                book->authour = add_string(strchr(buf, ' ') + 1);
-            }
-            if (!strncmp(buf, "arch", 4)) {
-                book->archname = add_string(strchr(buf, ' ') + 1);
-            } else if (sscanf(buf, "level %d", &value)) {
+            if (strncmp(buf, "title ", 6) == 0) {
+                skipping = 0;
+                cp = buf + 6;
+                while (*cp == ' ' || *cp == '\t')
+                    cp++;
+                if (*cp == '\0') {
+                    LOG(llevInfo, "Warning: missing book title at %s, line %d\n", fname, lineno);
+                    book = NULL;
+                } else {
+                    book = get_empty_book();   /* init new book entry */
+                    book->name = add_string(cp);
+                    type = -1;
+                    nroftitle++;
+                }
+            } else if (book == NULL) {
+                if (!skipping) {
+                    skipping = 1;
+                    LOG(llevInfo, "Warning: expecting 'title' at %s, line %d\n", fname, lineno);
+                }
+            } else if (strncmp(buf, "authour ", 8) == 0) {
+                cp = buf + 8;
+                while (*cp == ' ' || *cp == '\t')
+                    cp++;
+                if (*cp == '\0') {
+                    LOG(llevInfo, "Warning: missing book authour at %s, line %d\n", fname, lineno);
+                } else {
+                    book->authour = add_string(cp);
+                }
+            } else if (strncmp(buf, "arch ", 5) == 0) {
+                cp = buf + 5;
+                while (*cp == ' ' || *cp == '\t')
+                    cp++;
+                if (*cp == '\0') {
+                    LOG(llevInfo, "Warning: missing book arch at %s, line %d\n", fname, lineno);
+                } else {
+                    book->archname = add_string(cp);
+                }
+            } else if (sscanf(buf, "level %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
                 book->level = (uint16) value;
-            } else if (sscanf(buf, "type %d", &value)) {
+            } else if (sscanf(buf, "type %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
                 type = (uint16) value;
-            } else if (sscanf(buf, "size %d", &value)) {
+            } else if (sscanf(buf, "size %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
                 book->size = (uint16) value;
-            } else if (sscanf(buf, "index %d", &value)) {
+            } else if (sscanf(buf, "index %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
                 book->msg_index = (uint16) value;
-            } else if (!strncmp(buf, "end", 3)) { /* link it */
-                bl = get_titlelist(type);
-                book->next = bl->first_book;
-                bl->first_book = book;
-                bl->number++;
+            } else if (strcmp(buf, "end") == 0) { /* link it */
+                add_book(book, type, fname, lineno);
+                book = NULL;
+                type = -1;
+            } else {
+                LOG(llevInfo, "Warning: syntax error at %s, line %d\n", fname, lineno);
             }
+        }
+        if (book != NULL) {
+            LOG(llevInfo, "Warning: missing 'end' at %s, line %d\n", fname, lineno);
+            add_book(book, type, fname, lineno);
         }
         LOG(llevDebug, " book archives(used/avail):\n");
         for (bl = booklist, i = 0; bl != NULL && i < arraysize(max_titles); bl = bl->next, i++) {
@@ -840,6 +879,27 @@ static void init_book_archive(void) {
     LOG(llevDebug, "\n init_book_archive() got %d titles.\n", nroftitle);
 #endif
     LOG(llevDebug, " done.\n");
+}
+
+/**
+ * Appends a book to the booklist.
+ * @param book the book to add
+ * @param type the book type
+ * @param fname the file name; for error messages
+ * @param lineno the line number; for error messages
+ */
+static void add_book(title *book, int type, const char *fname, int lineno) {
+    titlelist *bl;
+
+    if (type == -1) {
+        LOG(llevInfo, "Warning: book with no type at %s, line %d; using type 0\n", fname, lineno);
+        type = 0;
+    }
+
+    bl = get_titlelist(type);
+    book->next = bl->first_book;
+    bl->first_book = book;
+    bl->number++;
 }
 
 /**
