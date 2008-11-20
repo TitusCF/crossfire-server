@@ -979,24 +979,29 @@ void init_readable(void) {
  */
 static title *find_title(const object *book, int msgtype) {
     title *t;
-    titlelist *tl = get_titlelist(msgtype);
-    int length = strlen(book->msg);
-    int index = strtoint(book->msg);
+    titlelist *tl;
+    int length;
+    int index;
 
     if (msgtype < 0)
         return (title *) NULL;
 
-    for (t = tl ? tl->first_book : NULL; t; t = t->next)
-        if (t->size == length && t->msg_index == index)
-            break;
+    tl = get_titlelist(msgtype);
+    if (!tl)
+        return (title *) NULL;
 
+    length = strlen(book->msg);
+    index = strtoint(book->msg);
+    for (t = tl->first_book; t; t = t->next)
+        if (t->size == length && t->msg_index == index) {
 #ifdef ARCHIVE_DEBUG
-    if (t)
-        LOG(llevDebug, "Found title match (list %d): %s %s (%d)\n",
-            msgtype, t->name, t->authour, t->msg_index);
+            LOG(llevDebug, "Found title match (list %d): %s %s (%d)\n",
+                msgtype, t->name, t->authour, t->msg_index);
 #endif
+            return t;
+        }
 
-    return t;
+    return (title *) NULL;
 }
 
 /**
