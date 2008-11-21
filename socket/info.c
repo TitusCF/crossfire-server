@@ -49,11 +49,12 @@
  * replaced with this, just using black as the color.
  */
 static void esrv_print_msg(socket_struct *ns,int color, const char *str) {
-    char buf[HUGE_BUF];
+    SockList sl;
 
-    snprintf(buf,HUGE_BUF, "drawinfo %d %s", color, str);
-/*    LOG(llevDebug,"sending %s to socket, len=%d\n", buf, strlen(buf));*/
-    Write_String_To_Socket(ns, buf, strlen(buf));
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "drawinfo %d %s", color, str);
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
