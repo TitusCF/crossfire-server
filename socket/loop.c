@@ -231,7 +231,7 @@ void handle_client(socket_struct *ns, player *pl) {
         for (i=0; client_commands[i].cmdname !=NULL; i++) {
             if (strcmp((char*)ns->inbuf.buf+2,client_commands[i].cmdname)==0) {
                 client_commands[i].cmdproc((char*)data,len,ns);
-                SockList_Reset(&ns->inbuf);
+                SockList_ResetRead(&ns->inbuf);
                 return;
             }
         }
@@ -246,7 +246,7 @@ void handle_client(socket_struct *ns, player *pl) {
                 if (strcmp((char*)ns->inbuf.buf+2,player_commands[i].cmdname)==0) {
                     if (pl->state == ST_PLAYING || player_commands[i].flag == 0)
                         player_commands[i].cmdproc((char*)data,len,pl);
-                    SockList_Reset(&ns->inbuf);
+                    SockList_ResetRead(&ns->inbuf);
                     return;
                 }
             }
@@ -255,6 +255,7 @@ void handle_client(socket_struct *ns, player *pl) {
          * user could certainly send a whole bunch of invalid commands.
          */
         LOG(llevDebug,"Bad command from client (%s)\n",ns->inbuf.buf+2);
+        SockList_ResetRead(&ns->inbuf);
     }
 }
 

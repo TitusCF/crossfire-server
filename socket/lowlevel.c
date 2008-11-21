@@ -68,7 +68,7 @@ static void SockList_Ensure(const SockList *sl, size_t size);
  * @param sl the SockList instance to initialize
  */
 void SockList_Init(SockList *sl) {
-    sl->len = 0;
+    SockList_Reset(sl);
 }
 
 /**
@@ -81,11 +81,20 @@ void SockList_Term(SockList *sl) {
 }
 
 /**
- * Resets the length of the stored data. Does not free or re-allocate
- * resources.
+ * Resets the length of the stored data for writing. Does not free or
+ * re-allocate resources.
  * @param sl the SockList instance to reset
  */
 void SockList_Reset(SockList *sl) {
+    sl->len = 2;
+}
+
+/**
+ * Resets the length of the stored data for reading. Does not free or
+ * re-allocate resources.
+ * @param sl the SockList instance to reset
+ */
+void SockList_ResetRead(SockList *sl) {
     sl->len = 0;
 }
 
@@ -534,23 +543,13 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
  */
-void Send_With_Handling(socket_struct *ns, const SockList *sl) {
-    /* Buffer used to store temporary message in. */
-    unsigned char * buffer;
-
+void Send_With_Handling(socket_struct *ns, SockList *sl) {
     if (ns->status == Ns_Dead || sl == NULL)
         return;
 
-    /* TODO: This should use vectored IO (man writev)... */
-    buffer = malloc(2 + sl->len);
-    if (!buffer) {
-        fatal(OUT_OF_MEMORY);
-    }
-    buffer[0] = ((uint32)(sl->len) >> 8) & 0xFF;
-    buffer[1] = ((uint32)(sl->len)) & 0xFF;
-    memcpy(buffer+2, sl->buf, sl->len);
-    Write_To_Socket(ns, buffer, 2 + sl->len);
-    free(buffer);
+    sl->buf[0] = ((sl->len - 2) >> 8) & 0xFF;
+    sl->buf[1] = (sl->len - 2) & 0xFF;
+    Write_To_Socket(ns, sl->buf, sl->len);
 }
 
 /******************************************************************************

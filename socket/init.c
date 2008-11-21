@@ -132,6 +132,7 @@ void init_connection(socket_struct *ns, const char *from_ip) {
      * just open and close connections could get this total up.
      */
     SockList_Init(&ns->inbuf);
+    SockList_ResetRead(&ns->inbuf);
     /* Basic initialization. Needed because we do a check in
      * handle_client for oldsocketmode without checking the
      * length of data.

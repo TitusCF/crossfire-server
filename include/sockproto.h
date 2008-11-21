@@ -45,6 +45,7 @@ void do_server(void);
 void SockList_Init(SockList *sl);
 void SockList_Term(SockList *sl);
 void SockList_Reset(SockList *sl);
+void SockList_ResetRead(SockList *sl);
 void SockList_AddChar(SockList *sl, char c);
 void SockList_AddShort(SockList *sl, uint16 data);
 void SockList_AddInt(SockList *sl, uint32 data);
@@ -60,7 +61,7 @@ int GetInt_String(const unsigned char *data);
 short GetShort_String(const unsigned char *data);
 int SockList_ReadPacket(int fd, SockList *sl, int len);
 void write_socket_buffer(socket_struct *ns);
-void Send_With_Handling(socket_struct *ns, const SockList *msg);
+void Send_With_Handling(socket_struct *ns, SockList *sl);
 void write_cs_stats(void);
 /* metaserver.c */
 void metaserver_init(void);
