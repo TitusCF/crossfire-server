@@ -1502,7 +1502,7 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy) {
  * manage it !
  */
 void send_plugin_custom_message(object *pl, char *buf) {
-    cs_write_string(&pl->contr->socket,buf,strlen(buf));
+    Write_String_To_Socket(&pl->contr->socket, buf, strlen(buf));
 }
 
 /**

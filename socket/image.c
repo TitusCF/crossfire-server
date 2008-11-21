@@ -179,7 +179,7 @@ void send_image_sums(socket_struct *ns, char *params) {
     if (stop < start || *cp == '\0' || (stop-start)>1000 ||
         stop >= nrofpixmaps) {
         snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
-        cs_write_string(ns, buf, strlen(buf));
+        Write_String_To_Socket(ns, buf, strlen(buf));
         return;
     }
     SockList_AddPrintf(&sl, "replyinfo image_sums %d %d ", start, stop);
@@ -193,7 +193,7 @@ void send_image_sums(socket_struct *ns, char *params) {
                 "send_image_sums: buffer overflow, rejecting range %d..%d\n",
                 start, stop);
             snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
-            cs_write_string(ns, buf, strlen(buf));
+            Write_String_To_Socket(ns, buf, strlen(buf));
             return;
         }
 

@@ -528,23 +528,6 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
     }
 }
 
-
-/**
- * Takes a string of data, and writes it out to the socket. A very handy
- * shortcut function.
- *
- * @todo This is a duplicate of Write_String_To_Socket, one should be removed.
- */
-void cs_write_string(socket_struct *ns, const char *buf, int len) {
-    SockList sl;
-
-    SockList_Init(&sl);
-    SockList_AddData(&sl, buf, len);
-    Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
-}
-
-
 /**
  * Calls Write_To_Socket to send data to the client.
  *
@@ -573,8 +556,6 @@ void Send_With_Handling(socket_struct *ns, const SockList *sl) {
 /**
  * Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
- *
- * @todo This is a duplicate of cs_write_string, one should be removed.
  */
 void Write_String_To_Socket(socket_struct *ns, const char *buf, int len) {
     SockList sl;

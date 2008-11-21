@@ -60,7 +60,6 @@ int GetInt_String(const unsigned char *data);
 short GetShort_String(const unsigned char *data);
 int SockList_ReadPacket(int fd, SockList *sl, int len);
 void write_socket_buffer(socket_struct *ns);
-void cs_write_string(socket_struct *ns, const char *buf, int len);
 void Send_With_Handling(socket_struct *ns, const SockList *msg);
 void Write_String_To_Socket(socket_struct *ns, const char *buf, int len);
 void write_cs_stats(void);
