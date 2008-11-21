@@ -147,15 +147,14 @@ static const struct client_cmd_mapping client_commands[] = {
 void request_info_cmd(char *buf, int len, socket_struct *ns) {
     char    *params=NULL, *cp;
     /* No match */
-    char bigbuf[MAX_BUF];
-    int slen;
+    SockList sl;
 
     /* Set up replyinfo before we modify any of the buffers - this is used
      * if we don't find a match.
      */
-    strcpy(bigbuf,"replyinfo ");
-    slen = strlen(bigbuf);
-    safe_strcat(bigbuf, buf, &slen, MAX_BUF);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo ");
+    SockList_AddString(&sl, buf);
 
     /* find the first space, make it null, and update the
      * params pointer.
@@ -175,7 +174,8 @@ void request_info_cmd(char *buf, int len, socket_struct *ns) {
     else if (!strcmp(buf, "race_info")) send_race_info(ns, params);
     else if (!strcmp(buf, "class_list")) send_class_list(ns, params);
     else if (!strcmp(buf, "class_info")) send_class_info(ns, params);
-    else Write_String_To_Socket(ns, bigbuf, slen);
+    else Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
