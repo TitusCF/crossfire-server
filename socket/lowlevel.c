@@ -38,10 +38,22 @@
  * CFCLIENT defined as part of its compile flags.
  */
 
+#include <stdarg.h>
 #include <global.h>
 #include <newclient.h>
 #include <sproto.h>
 #include <errno.h>
+
+
+/**
+ * Checks that at least a given number of bytes is available in a SockList
+ * instance. Returns normal if the space is available. Otherwise calls
+ * fatal(OUT_OF_MEMORY);
+ * @param sl the SockList instance to check
+ * @param size the number of bytes to ensure
+ */
+static void SockList_Ensure(const SockList *sl, size_t size);
+
 
 /***********************************************************************
  *
@@ -49,44 +61,156 @@
  *
  **********************************************************************/
 
+/**
+ * Initializes the SockList instance. Must be called before other socklist
+ * functions are called.
+ * @param sl the SockList instance to initialize
+ */
 void SockList_Init(SockList *sl) {
-    sl->len=0;
-    sl->buf=NULL;
+    sl->len = 0;
 }
 
-void SockList_AddChar(SockList *sl, char c) {
-    sl->buf[sl->len]=c;
-    sl->len++;
+/**
+ * Frees all resources allocated by a SockList instance. Must be called when
+ * the instance is not needed anymore. Afterwards no socklist functions except
+ * SockList_Init may be called.
+ * @param sl the SockList instance to free
+ */
+void SockList_Term(SockList *sl) {
 }
 
+/**
+ * Resets the length of the stored data. Does not free or re-allocate
+ * resources.
+ * @param sl the SockList instance to reset
+ */
+void SockList_Reset(SockList *sl) {
+    sl->len = 0;
+}
+
+/**
+ * Adds an 8 bit value.
+ * @pram sl the SockList instance to add to
+ * @param c the value to add
+ */
+void SockList_AddChar(SockList *sl, char data) {
+    SockList_Ensure(sl, 1);
+    sl->buf[sl->len++] = data;
+}
+
+/**
+ * Adds a 16 bit value.
+ * @pram sl the SockList instance to add to
+ * @param data the value to add
+ */
 void SockList_AddShort(SockList *sl, uint16 data) {
+    SockList_Ensure(sl, 2);
     sl->buf[sl->len++]= (data>>8)&0xff;
     sl->buf[sl->len++] = data & 0xff;
 }
 
-
+/**
+ * Adds a 32 bit value.
+ * @pram sl the SockList instance to add to
+ * @param data the value to add
+ */
 void SockList_AddInt(SockList *sl, uint32 data) {
+    SockList_Ensure(sl, 4);
     sl->buf[sl->len++]= (data>>24)&0xff;
     sl->buf[sl->len++]= (data>>16)&0xff;
     sl->buf[sl->len++]= (data>>8)&0xff;
     sl->buf[sl->len++] = data & 0xff;
 }
 
+/**
+ * Adds a 64 bit value.
+ * @pram sl the SockList instance to add to
+ * @param data the value to add
+ */
 void SockList_AddInt64(SockList *sl, uint64 data) {
+    SockList_Ensure(sl, 8);
     sl->buf[sl->len++]= (char)((data>>56)&0xff);
     sl->buf[sl->len++]= (char)((data>>48)&0xff);
     sl->buf[sl->len++]= (char)((data>>40)&0xff);
     sl->buf[sl->len++]= (char)((data>>32)&0xff);
-
     sl->buf[sl->len++]= (char)((data>>24)&0xff);
     sl->buf[sl->len++]= (char)((data>>16)&0xff);
     sl->buf[sl->len++]= (char)((data>>8)&0xff);
     sl->buf[sl->len++] =(char)(data & 0xff);
 }
 
+/**
+ * Adds a string without length.
+ * @param sl the SockList instance to add to
+ * @param data the value to add
+ */
 void SockList_AddString(SockList *sl, const char *data) {
-    sprintf((char*)&sl->buf[sl->len], "%s", data);
-    sl->len += strlen(data);
+    SockList_AddData(sl, data, strlen(data));
+}
+
+/**
+ * Adds a data block.
+ * @param sl the SockList instance to add to
+ * @param data the value to add
+ * @param len the length in byte
+ */
+void SockList_AddData(SockList *sl, const void *data, size_t len) {
+    SockList_Ensure(sl, len);
+    memcpy(sl->buf + sl->len, data, len);
+    sl->len += len;
+}
+
+/**
+ * Adds a printf like formatted string.
+ * @param sl the SockList instance to add to
+ * @param format the format specifier
+ */
+void SockList_AddPrintf(SockList *sl, const char *format, ...) {
+    size_t size;
+    int n;
+    va_list arg;
+
+    size = sizeof(sl->buf) - sl->len;
+
+    va_start(arg, format);
+    n = vsnprintf((char *)sl->buf + sl->len, size, format, arg);
+    va_end(arg);
+
+    if (n <= -1 || (size_t)n >= size) {
+        fatal(OUT_OF_MEMORY);
+    }
+    sl->len += (size_t)n;
+}
+
+/**
+ * Deallocates string buffer instance and appends its contents. The passed
+ * StringBuffer must not be accessed afterwards.
+ * @param sl the SockList instance to add to
+ * @param sb the StringBuffer to deallocate
+ */
+void SockList_AddStringBuffer(SockList *sl, StringBuffer *sb) {
+    char *p;
+
+    p = stringbuffer_finish(sb);
+    SockList_AddString(sl, p);
+    free(p);
+}
+
+/**
+ * Adds a NUL byte without changing the length.
+ * @param sl the SockList instance to add to
+ */
+void SockList_NullTerminate(SockList *sl) {
+    SockList_Ensure(sl, 1);
+    sl->buf[sl->len] = '\0';
+}
+
+/**
+ * Returns the available bytes in a SockList instance.
+ * @return the available bytes
+ */
+size_t SockList_Avail(const SockList *sl) {
+    return sizeof(sl->buf) - sl->len;
 }
 
 /**
@@ -119,10 +243,6 @@ int SockList_ReadPacket(int fd, SockList *sl, int len) {
     int stat,toread;
     char err[MAX_BUF];
 
-    /* Sanity check - shouldn't happen */
-    if (sl->len < 0) {
-        abort();
-    }
     /* We already have a partial packet */
     if (sl->len<2) {
 #ifdef WIN32 /* ***WIN32 SockList_ReadPacket: change read() to recv() */
@@ -170,7 +290,7 @@ int SockList_ReadPacket(int fd, SockList *sl, int len) {
      * end of this - size header information is not included.
      */
     toread = 2+(sl->buf[0] << 8) + sl->buf[1] - sl->len;
-    if ((toread + sl->len) >= len) {
+    if ((toread + (int)sl->len) >= len) {
         LOG(llevError,"SockList_ReadPacket: Want to read more bytes than will fit in buffer (%d>=%d).\n",
             toread + sl->len, len);
         /* Quick hack in case for 'oldsocketmode' input.  If we are
@@ -405,9 +525,10 @@ static void Write_To_Socket(socket_struct *ns, const unsigned char *buf, int len
 void cs_write_string(socket_struct *ns, const char *buf, int len) {
     SockList sl;
 
-    sl.len = len;
-    sl.buf = (unsigned char *)buf;
+    SockList_Init(&sl);
+    SockList_AddData(&sl, buf, len);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 
@@ -417,30 +538,22 @@ void cs_write_string(socket_struct *ns, const char *buf, int len) {
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
  */
-void Send_With_Handling(socket_struct *ns, const SockList *msg) {
+void Send_With_Handling(socket_struct *ns, const SockList *sl) {
     /* Buffer used to store temporary message in. */
     unsigned char * buffer;
 
-    if (ns->status == Ns_Dead || !msg)
+    if (ns->status == Ns_Dead || sl == NULL)
         return;
 
-    if (msg->len > MAXSOCKSENDBUF) {
-        LOG(llevError,"Trying to send a buffer beyond properly size, len %d > max len %d\n",
-            msg->len, MAXSOCKSENDBUF);
-        /* Almost certainly we've overflowed a buffer, so quite now to make
-         * it easier to debug.
-         */
-        abort();
-    }
     /* TODO: This should use vectored IO (man writev)... */
-    buffer = malloc(2 + msg->len);
+    buffer = malloc(2 + sl->len);
     if (!buffer) {
         fatal(OUT_OF_MEMORY);
     }
-    buffer[0] = ((uint32)(msg->len) >> 8) & 0xFF;
-    buffer[1] = ((uint32)(msg->len)) & 0xFF;
-    memcpy(buffer+2, msg->buf, msg->len);
-    Write_To_Socket(ns, buffer, 2 + msg->len);
+    buffer[0] = ((uint32)(sl->len) >> 8) & 0xFF;
+    buffer[1] = ((uint32)(sl->len)) & 0xFF;
+    memcpy(buffer+2, sl->buf, sl->len);
+    Write_To_Socket(ns, buffer, 2 + sl->len);
     free(buffer);
 }
 
@@ -453,9 +566,10 @@ void Send_With_Handling(socket_struct *ns, const SockList *msg) {
 void Write_String_To_Socket(socket_struct *ns, const char *buf, int len) {
     SockList sl;
 
-    sl.len = len;
-    sl.buf = (unsigned char *)buf;
+    SockList_Init(&sl);
+    SockList_AddData(&sl, buf, len);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 
@@ -491,3 +605,9 @@ void write_cs_stats(void) {
     cst_lst.time_start=now;
 }
 #endif
+
+static void SockList_Ensure(const SockList *sl, size_t size) {
+    if (sl->len + size > sizeof(sl->buf)) {
+        fatal(OUT_OF_MEMORY);
+    }
+}

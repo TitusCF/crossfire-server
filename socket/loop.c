@@ -201,7 +201,7 @@ void handle_client(socket_struct *ns, player *pl) {
             return;
         }
 
-        i=SockList_ReadPacket(ns->fd, &ns->inbuf, MAXSOCKRECVBUF-1);
+        i=SockList_ReadPacket(ns->fd, &ns->inbuf, sizeof(ns->inbuf.buf) - 1);
 
         if (i<0) {
 #ifdef ESRV_DEBUG
@@ -214,7 +214,7 @@ void handle_client(socket_struct *ns, player *pl) {
         /* Still dont have a full packet */
         if (i==0) return;
 
-        ns->inbuf.buf[ns->inbuf.len]='\0';  /* Terminate buffer - useful for string data */
+        SockList_NullTerminate(&ns->inbuf); /* Terminate buffer - useful for string data */
 
         /* First, break out beginning word.  There are at least
          * a few commands that do not have any paremeters.  If
@@ -231,7 +231,7 @@ void handle_client(socket_struct *ns, player *pl) {
         for (i=0; client_commands[i].cmdname !=NULL; i++) {
             if (strcmp((char*)ns->inbuf.buf+2,client_commands[i].cmdname)==0) {
                 client_commands[i].cmdproc((char*)data,len,ns);
-                ns->inbuf.len=0;
+                SockList_Reset(&ns->inbuf);
                 return;
             }
         }
@@ -246,7 +246,7 @@ void handle_client(socket_struct *ns, player *pl) {
                 if (strcmp((char*)ns->inbuf.buf+2,player_commands[i].cmdname)==0) {
                     if (pl->state == ST_PLAYING || player_commands[i].flag == 0)
                         player_commands[i].cmdproc((char*)data,len,pl);
-                    ns->inbuf.len=0;
+                    SockList_Reset(&ns->inbuf);
                     return;
                 }
             }

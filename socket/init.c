@@ -75,7 +75,6 @@ socket_struct *init_sockets;
  */
 void init_connection(socket_struct *ns, const char *from_ip) {
     SockList sl;
-    unsigned char buf[256];
     int bufsize=65535; /*Supposed absolute upper limit */
     int oldbufsize;
     socklen_t buflen=sizeof(int);
@@ -132,13 +131,12 @@ void init_connection(socket_struct *ns, const char *from_ip) {
      * duplicating (not likely in normal cases, but malicous attacks that
      * just open and close connections could get this total up.
      */
-    ns->inbuf.len=0;
-    ns->inbuf.buf=malloc(MAXSOCKRECVBUF);
+    SockList_Init(&ns->inbuf);
     /* Basic initialization. Needed because we do a check in
      * handle_client for oldsocketmode without checking the
      * length of data.
      */
-    memset(ns->inbuf.buf, 0, MAXSOCKRECVBUF);
+    memset(ns->inbuf.buf, 0, sizeof(ns->inbuf.buf));
     memset(&ns->lastmap,0,sizeof(struct Map));
     if (!ns->faces_sent)
         ns->faces_sent =  calloc(sizeof(*ns->faces_sent),
@@ -161,10 +159,10 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->password_fails = 0;
 
     ns->host=strdup_local(from_ip);
-    snprintf((char*)buf, sizeof(buf), "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
-    sl.buf=buf;
-    sl.len=strlen((char*)buf);
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 #ifdef CS_LOGSTATS
     if (socket_info.nconns>cst_tot.max_conn)
         cst_tot.max_conn = socket_info.nconns;
@@ -328,8 +326,7 @@ void free_newsocket(socket_struct *ns) {
         FREE_AND_CLEAR(ns->stats.title);
     if (ns->host)
         FREE_AND_CLEAR(ns->host);
-    if (ns->inbuf.buf)
-        FREE_AND_CLEAR(ns->inbuf.buf);
+    SockList_Term(&ns->inbuf);
 }
 
 /** Sends the 'goodbye' command to the player, and closes connection. */

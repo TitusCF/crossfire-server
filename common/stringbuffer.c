@@ -94,11 +94,6 @@ sstring stringbuffer_finish_shared(StringBuffer *sb) {
     return result;
 }
 
-void stringbuffer_finish_socklist(StringBuffer *sb, SockList *sl) {
-    sl->len = sb->pos;
-    sl->buf = stringbuffer_finish(sb);
-}
-
 void stringbuffer_append_string(StringBuffer *sb, const char *str) {
     size_t len;
 

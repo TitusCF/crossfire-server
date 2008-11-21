@@ -589,18 +589,16 @@ void draw_magic_map(object *pl) {
         }
     }
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1),
-             MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1), MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
 
     for (y = ymin; y <= ymax; y++) {
         for (x = xmin; x <= xmax; x++) {
-            sl.buf[sl.len++]= map_mark[x+MAGIC_MAP_SIZE*y] & ~FACE_FLOOR;
+            SockList_AddChar(&sl, map_mark[x+MAGIC_MAP_SIZE*y] & ~FACE_FLOOR);
         } /* x loop */
     } /* y loop */
 
     Send_With_Handling(&pl->contr->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
     free(map_mark);
 }

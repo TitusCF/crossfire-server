@@ -103,7 +103,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache) {
         return;
     }
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
+    SockList_Init(&sl);
     fallback = get_face_fallback(ns->faceset, face_num);
 
     if (facesets[fallback].faces[face_num].data == NULL) {
@@ -112,28 +112,22 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache) {
     }
 
     if (ns->facecache && !nocache) {
-        strcpy((char*)sl.buf, "face2 ");
-
-        sl.len=strlen((char*)sl.buf);
+        SockList_AddString(&sl, "face2 ");
         SockList_AddShort(&sl, face_num);
         SockList_AddChar(&sl, fallback);
         SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
-        strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
-        sl.len += strlen(new_faces[face_num].name);
+        SockList_AddString(&sl, new_faces[face_num].name);
         Send_With_Handling(ns, &sl);
     } else {
-        strcpy((char*)sl.buf, "image2 ");
-        sl.len=strlen((char*)sl.buf);
+        SockList_AddString(&sl, "image2 ");
         SockList_AddInt(&sl, face_num);
         SockList_AddChar(&sl, fallback);
         SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
-        memcpy(sl.buf+sl.len, facesets[fallback].faces[face_num].data,
-               facesets[fallback].faces[face_num].datalen);
-        sl.len += facesets[fallback].faces[face_num].datalen;
+        SockList_AddData(&sl, facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
         Send_With_Handling(ns, &sl);
     }
     ns->faces_sent[face_num] |= NS_FACESENT_FACE;
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -146,22 +140,18 @@ void send_image_info(socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
-
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "replyinfo image_info\n%d\n%d\n",
-             nrofpixmaps-1, bmaps_checksum);
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
     for (i=0; i<MAX_FACE_SETS; i++) {
         if (facesets[i].prefix) {
-            snprintf((char*)sl.buf + strlen((char*)sl.buf), MAXSOCKSENDBUF-strlen((char*)sl.buf),
-                     "%d:%s:%s:%d:%s:%s:%s",
+            SockList_AddPrintf(&sl, "%d:%s:%s:%d:%s:%s:%s",
                      i,  facesets[i].prefix, facesets[i].fullname,
                      facesets[i].fallback, facesets[i].size,
                      facesets[i].extension, facesets[i].comment);
         }
     }
-    sl.len = strlen((char*)sl.buf);
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -179,7 +169,7 @@ void send_image_sums(socket_struct *ns, char *params) {
     char *cp, buf[MAX_BUF];
     SockList sl;
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
+    SockList_Init(&sl);
 
     start = atoi(params);
     for (cp = params; *cp != '\0'; cp++)
@@ -192,15 +182,14 @@ void send_image_sums(socket_struct *ns, char *params) {
         cs_write_string(ns, buf, strlen(buf));
         return;
     }
-    snprintf((char*)sl.buf, sizeof(buf), "replyinfo image_sums %d %d ", start, stop);
-
-    sl.len = strlen((char*)sl.buf);
+    SockList_AddPrintf(&sl, "replyinfo image_sums %d %d ", start, stop);
 
     for (i=start; i<=stop; i++) {
         int faceset;
         int len;
 
-        if (sl.len+2+4+1+1+strlen(new_faces[i].name)+1 > MAXSOCKSENDBUF) {
+        if (SockList_Avail(&sl) < 2+4+1+1+strlen(new_faces[i].name)+1) {
+            SockList_Term(&sl);
             LOG(llevError,
                 "send_image_sums: buffer overflow, rejecting range %d..%d\n",
                 start, stop);
@@ -218,9 +207,8 @@ void send_image_sums(socket_struct *ns, char *params) {
 
         len = strlen(new_faces[i].name);
         SockList_AddChar(&sl, (char)(len + 1));
-        memcpy(sl.buf + sl.len, new_faces[i].name, len + 1);
-        sl.len += len + 1;
+        SockList_AddData(&sl, new_faces[i].name, len + 1);
     }
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }

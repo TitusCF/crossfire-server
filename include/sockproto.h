@@ -43,11 +43,18 @@ void watchdog(void);
 void do_server(void);
 /* lowlevel.c */
 void SockList_Init(SockList *sl);
+void SockList_Term(SockList *sl);
+void SockList_Reset(SockList *sl);
 void SockList_AddChar(SockList *sl, char c);
 void SockList_AddShort(SockList *sl, uint16 data);
 void SockList_AddInt(SockList *sl, uint32 data);
 void SockList_AddInt64(SockList *sl, uint64 data);
+size_t SockList_Avail(const SockList *sl);
 void SockList_AddString(SockList *sl, const char *data);
+void SockList_AddData(SockList *sl, const void *data, size_t len);
+void SockList_AddPrintf(SockList *sl, const char *format, ...);
+void SockList_AddStringBuffer(SockList *sl, StringBuffer *sb);
+void SockList_NullTerminate(SockList *sl);
 int GetInt_String(const unsigned char *data);
 short GetShort_String(const unsigned char *data);
 int SockList_ReadPacket(int fd, SockList *sl, int len);

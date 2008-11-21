@@ -456,7 +456,6 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
  */
 static void send_smooth(socket_struct *ns, uint16 face) {
     uint16 smoothface;
-    uint8 reply[MAX_BUF];
     SockList sl;
 
     /* If we can't find a face, return and set it so we won't
@@ -476,12 +475,12 @@ static void send_smooth(socket_struct *ns, uint16 face) {
 
     ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
 
-    sl.buf=reply;
-    strcpy((char*)sl.buf,"smooth ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "smooth ");
     SockList_AddShort(&sl, face);
     SockList_AddShort(&sl, smoothface);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
@@ -557,9 +556,8 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     pl->count=0;
 
     /* Send confirmation of command execution now */
-    sl.buf = (uint8*)command;
-    strcpy((char*)sl.buf,"comc ");
-    sl.len=5;
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "comc ");
     SockList_AddShort(&sl,packet);
     if (FABS(pl->ob->speed) < 0.001)
         time=MAX_TIME * 100;
@@ -567,6 +565,7 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
         time = (int)(MAX_TIME/ FABS(pl->ob->speed));
     SockList_AddInt(&sl,time);
     Send_With_Handling(&pl->socket, &sl);
+    SockList_Term(&sl);
 }
 
 
@@ -777,12 +776,13 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
     }
 
 #define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) { \
+        size_t len;                                                     \
         if (Old) free(Old);                                             \
         Old = strdup_local(New);                                        \
         SockList_AddChar(&sl, Type);                                    \
-        SockList_AddChar(&sl, ( char)strlen(New));                     \
-        strcpy((char*)sl.buf + sl.len, New);                            \
-        sl.len += strlen(New);                                          \
+        len = strlen(New);                                              \
+        SockList_AddChar(&sl, len);                                     \
+        SockList_AddData(&sl, New, len);                                \
     }
 
 /**
@@ -797,9 +797,8 @@ void esrv_update_stats(player *pl) {
     uint16 flags;
     uint8 s;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"stats ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "stats ");
 
     if (pl->ob != NULL) {
         AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
@@ -880,7 +879,7 @@ void esrv_update_stats(player *pl) {
 #endif
         Send_With_Handling(&pl->socket, &sl);
     }
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 
@@ -889,26 +888,25 @@ void esrv_update_stats(player *pl) {
  */
 void esrv_new_player(player *pl, uint32 weight) {
     SockList    sl;
+    size_t len;
 
     pl->last_weight = weight;
 
     if (!(pl->socket.faces_sent[pl->ob->face->number] & NS_FACESENT_FACE))
         esrv_send_face(&pl->socket, pl->ob->face->number, 0);
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-
-    strcpy((char*)sl.buf,"player ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "player ");
     SockList_AddInt(&sl, pl->ob->count);
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
 
-    SockList_AddChar(&sl, (char)strlen(pl->ob->name));
-    strcpy((char*)sl.buf+sl.len, pl->ob->name);
-    sl.len += strlen(pl->ob->name);
+    len = strlen(pl->ob->name);
+    SockList_AddChar(&sl, len);
+    SockList_AddData(&sl, pl->ob->name, len);
 
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
     SET_FLAG(pl->ob, FLAG_CLIENT_SENT);
 }
 
@@ -933,9 +931,8 @@ void esrv_send_animation(socket_struct *ns, short anim_num) {
         return;
     }
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf, "anim ");
-    sl.len=5;
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "anim ");
     SockList_AddShort(&sl, anim_num);
     SockList_AddShort(&sl, 0);  /* flags - not used right now */
     /* Build up the list of faces.  Also, send any information (ie, the
@@ -949,7 +946,7 @@ void esrv_send_animation(socket_struct *ns, short anim_num) {
         SockList_AddShort(&sl, animations[anim_num].faces[i]);
     }
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
     ns->anims_sent[anim_num] = 1;
 }
 
@@ -1217,16 +1214,16 @@ static void check_space_for_heads(int ax, int ay,
 }
 
 void draw_client_map2(object *pl) {
-    int x,y,ax, ay, d, startlen, max_x, max_y, oldlen, layer;
+    int x,y,ax, ay, d, max_x, max_y, oldlen, layer;
+    size_t startlen;
     sint16 nx, ny;
     SockList sl;
     uint16  coord;
     mapstruct *m;
     object *ob;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"map2 ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "map2 ");
     startlen = sl.len;
 
     /* Init data to zero */
@@ -1401,7 +1398,7 @@ void draw_client_map2(object *pl) {
     if (sl.len > startlen) {
         Send_With_Handling(&pl->contr->socket, &sl);
     }
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 
@@ -1523,19 +1520,18 @@ void send_exp_table(socket_struct *ns, char *params) {
     int i;
     extern sint64 *levels;
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"replyinfo exp_table\n");
-    sl.len = strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo exp_table\n");
     SockList_AddShort(&sl, settings.max_level+1);
     for (i=1; i<= settings.max_level; i++) {
-        if (sl.len+8 > MAXSOCKSENDBUF) {
+        if (SockList_Avail(&sl) < 8) {
             LOG(llevError, "Buffer overflow in send_exp_table, not sending all information\n");
             break;
         }
         SockList_AddInt64(&sl, levels[i]);
     }
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1546,24 +1542,21 @@ void send_skill_info(socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"replyinfo skill_info\n");
-    sl.len = strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo skill_info\n");
     for (i=1; i< NUM_SKILLS; i++) {
-        int len;
+        size_t len;
 
         len = 16+strlen(skill_names[i]); /* upper bound for length */
-        if (sl.len+len > MAXSOCKSENDBUF) {
+        if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_skill_info, not sending all skill information\n");
             break;
         }
 
-        snprintf((char*)sl.buf+sl.len, MAXSOCKSENDBUF-sl.len, "%d:%s\n",
-                 i+CS_STAT_SKILLINFO, skill_names[i]);
-        sl.len += strlen((char*)sl.buf+sl.len);
+        SockList_AddPrintf(&sl, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
     }
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1574,23 +1567,21 @@ void send_spell_paths(socket_struct *ns, char *params) {
     SockList sl;
     int i;
 
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"replyinfo spell_paths\n");
-    sl.len = strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "replyinfo spell_paths\n");
     for (i=0; i<NRSPELLPATHS; i++) {
-        int len;
+        size_t len;
 
         len = 16+strlen(spellpathnames[i]); /* upper bound for length */
-        if (sl.len+len > MAXSOCKSENDBUF) {
+        if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_spell_paths, not sending all spell information\n");
             break;
         }
 
-        snprintf((char*)sl.buf+sl.len, MAXSOCKSENDBUF-sl.len, "%d:%s\n", 1<<i, spellpathnames[i]);
-        sl.len += strlen((char*)sl.buf+sl.len);
+        SockList_AddPrintf(&sl, "%d:%s\n", 1<<i, spellpathnames[i]);
     }
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1632,9 +1623,10 @@ void send_race_list(socket_struct *ns, char *params) {
         reply_length = strlen(reply);
     }
 
-    sl.buf = reply;
-    sl.len = reply_length;
+    SockList_Init(&sl);
+    SockList_AddData(&sl, reply, reply_length);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1657,9 +1649,10 @@ void send_race_info(socket_struct *ns, char *params) {
     if (race) {
     }
 
-    stringbuffer_finish_socklist(buf, &sl);
+    SockList_Init(&sl);
+    SockList_AddStringBuffer(&sl, buf);
     Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1701,9 +1694,10 @@ void send_class_list(socket_struct *ns, char *params) {
         reply_length = strlen(reply);
     }
 
-    sl.buf = reply;
-    sl.len = reply_length;
+    SockList_Init(&sl);
+    SockList_AddData(&sl, reply, reply_length);
     Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1762,9 +1756,8 @@ void esrv_update_spells(player *pl) {
                 flags |= UPD_SP_DAMAGE;
             }
             if (flags !=0) {
-                sl.buf = malloc(MAXSOCKSENDBUF);
-                strcpy((char*)sl.buf,"updspell ");
-                sl.len=strlen((char*)sl.buf);
+                SockList_Init(&sl);
+                SockList_AddString(&sl, "updspell ");
                 SockList_AddChar(&sl, flags);
                 SockList_AddInt(&sl, spell->count);
                 if (flags & UPD_SP_MANA)
@@ -1775,7 +1768,7 @@ void esrv_update_spells(player *pl) {
                     SockList_AddShort(&sl, spell_info->last_dam);
                 flags = 0;
                 Send_With_Handling(&pl->socket, &sl);
-                free(sl.buf);
+                SockList_Term(&sl);
             }
         }
     }
@@ -1789,12 +1782,11 @@ void esrv_remove_spell(player *pl, object *spell) {
         LOG(llevError, "Invalid call to esrv_remove_spell\n");
         return;
     }
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"delspell ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "delspell ");
     SockList_AddInt(&sl, spell->count);
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -1807,12 +1799,11 @@ void esrv_send_pickup(player *pl) {
     SockList sl;
     if (!pl->socket.want_pickup)
         return;
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"pickup ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "pickup ");
     SockList_AddInt(&sl, pl->mode);
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /** appends the spell *spell to the Socklist we will send the data to. */
@@ -1858,16 +1849,14 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
 
     len = strlen(spell->name);
     SockList_AddChar(sl, (char)len);
-    memcpy(sl->buf+sl->len, spell->name, len);
-    sl->len+=len;
+    SockList_AddData(sl, spell->name, len);
 
     if (!spell->msg) {
         SockList_AddShort(sl, 0);
     } else {
         len = strlen(spell->msg);
         SockList_AddShort(sl, len);
-        memcpy(sl->buf+sl->len, spell->msg, len);
-        sl->len+=len;
+        SockList_AddData(sl, spell->msg, len);
     }
 }
 
@@ -1882,14 +1871,13 @@ void esrv_add_spells(player *pl, object *spell) {
         return;
     }
     if (!pl->socket.monitor_spells) return;
-    sl.buf = malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"addspell ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "addspell ");
     if (!spell) {
         for (spell=pl->ob->inv; spell!=NULL; spell=spell->below) {
             if (spell->type != SPELL) continue;
             /* Were we to simply keep appending data here, we could
-             * exceed MAXSOCKSENDBUF if the player has enough spells
+             * exceed the SockList buffer if the player has enough spells
              * to add.  We know that append_spell will always append
              * 23 data bytes, plus 3 length bytes and 2 strings
              * (because that is the spec) so we need to check that
@@ -1898,12 +1886,10 @@ void esrv_add_spells(player *pl, object *spell) {
              * If it does, we need to send what we already have,
              * and restart packet formation.
              */
-            if (sl.len >
-                    (MAXSOCKSENDBUF - (26 + strlen(spell->name) +
-                                       (spell->msg?strlen(spell->msg):0)))) {
+            if (SockList_Avail(&sl) < 26 + strlen(spell->name) + (spell->msg ? strlen(spell->msg) : 0)) {
                 Send_With_Handling(&pl->socket, &sl);
-                strcpy((char*)sl.buf,"addspell ");
-                sl.len=strlen((char*)sl.buf);
+                SockList_Reset(&sl);
+                SockList_AddString(&sl, "addspell ");
             }
             append_spell(pl, &sl, spell);
         }
@@ -1911,13 +1897,9 @@ void esrv_add_spells(player *pl, object *spell) {
         LOG(llevError, "Asked to send a non-spell object as a spell\n");
         return;
     } else append_spell(pl, &sl, spell);
-    if (sl.len > MAXSOCKSENDBUF) {
-        LOG(llevError,"Buffer overflow in esrv_add_spells!\n");
-        fatal(0);
-    }
     /* finally, we can send the packet */
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 
@@ -1932,9 +1914,8 @@ void send_tick(player *pl) {
     SockList sl;
     int tmp;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf,"tick ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "tick ");
     SockList_AddInt(&sl, pticks);
     tmp = 1;
     if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp)))
@@ -1944,5 +1925,5 @@ void send_tick(player *pl) {
     tmp = 0;
     if (setsockopt(pl->socket.fd, IPPROTO_TCP,TCP_NODELAY, &tmp, sizeof(tmp)))
         LOG(llevError,"send_tick: Unable to turn off TCP_NODELAY\n");
-    free(sl.buf);
+    SockList_Term(&sl);
 }

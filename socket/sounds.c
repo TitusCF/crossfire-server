@@ -61,9 +61,8 @@ void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int d
     if (!source)
         source = emitter;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf, "sound2 ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "sound2 ");
     SockList_AddChar(&sl, (sint8)(source->x - pl->ob->x));
     SockList_AddChar(&sl, (sint8)(source->y - pl->ob->y));
     SockList_AddChar(&sl, dir);
@@ -74,7 +73,7 @@ void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int d
     SockList_AddChar(&sl, strlen(name));
     SockList_AddString(&sl, name);
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 #define POW2(x) ((x) * (x))
@@ -126,14 +125,9 @@ void send_background_music(player *pl, const char *music) {
 
     if (pl->socket.sound & SND_MUTE || !(pl->socket.sound & SND_MUSIC)) return;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-    strcpy((char*)sl.buf, "music ");
-    sl.len=strlen((char*)sl.buf);
-    if (music)
-        SockList_AddString(&sl, music);
-    else
-        SockList_AddString(&sl, "NONE");
-
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "music ");
+    SockList_AddString(&sl, music == NULL ? "NONE" : music);
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }

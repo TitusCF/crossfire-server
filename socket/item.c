@@ -63,13 +63,12 @@
  * truncated approprately.
  */
 static inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl) {
-    int len;
+    size_t len;
 
     len=strlen(buf);
     if (len>255) len=255;
-    SockList_AddChar(sl, (char) len);
-    strncpy((char*)sl->buf+sl->len, buf,len);
-    sl->len += len;
+    SockList_AddChar(sl, len);
+    SockList_AddData(sl, buf, len);
 }
 
 /**
@@ -173,8 +172,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     item_n[len+1+127]=0;
     len += strlen(item_n+1+len) + 1;
     SockList_AddChar(sl, (char) len);
-    memcpy(sl->buf+sl->len, item_n, len);
-    sl->len += len;
+    SockList_AddData(sl, item_n, len);
 
     SockList_AddShort(sl,head->animation_id);
     anim_speed=0;
@@ -225,12 +223,9 @@ void esrv_draw_look(object *pl) {
         for (tmp=GET_MAP_OB(pl->map,pl->x,pl->y);
              tmp && tmp->above;tmp=tmp->above) ;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-
     Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
-    sl.len=strlen((char*)sl.buf);
-
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "item2 ");
     SockList_AddInt(&sl, 0);
 
     if (!(pl->contr->socket.faces_sent[empty_face->number]&NS_FACESENT_FACE))
@@ -296,10 +291,10 @@ void esrv_draw_look(object *pl) {
             add_object_to_socklist(&pl->contr->socket, &sl, head);
             got_one++;
 
-            if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
+            if (SockList_Avail(&sl) < MAXITEMLEN) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
-                sl.len=strlen((char*)sl.buf);
+                SockList_Reset(&sl);
+                SockList_AddPrintf(&sl, "item2 ");
                 SockList_AddInt(&sl, 0);
                 got_one=0;
             }
@@ -308,7 +303,7 @@ void esrv_draw_look(object *pl) {
     if (got_one)
         Send_With_Handling(&pl->contr->socket, &sl);
 
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -319,15 +314,12 @@ void esrv_send_inventory(object *pl, object *op) {
     int got_one=0;
     SockList sl;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "delinv %u", op->count);
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "delinv %u", op->count);
     Send_With_Handling(&pl->contr->socket, &sl);
 
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
-    sl.len=strlen((char*)sl.buf);
-
+    SockList_Reset(&sl);
+    SockList_AddString(&sl, "item2 ");
     SockList_AddInt(&sl, op->count);
 
     for (tmp=op->inv; tmp; tmp=tmp->below) {
@@ -345,10 +337,10 @@ void esrv_send_inventory(object *pl, object *op) {
              * items (especially with some of the bags out there) to
              * overflow the buffer.  IF so, send multiple item commands.
              */
-            if (sl.len > (MAXSOCKSENDBUF-MAXITEMLEN)) {
+            if (SockList_Avail(&sl) < MAXITEMLEN) {
                 Send_With_Handling(&pl->contr->socket, &sl);
-                snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
-                sl.len=strlen((char*)sl.buf);
+                SockList_Reset(&sl);
+                SockList_AddString(&sl, "item2 ");
                 SockList_AddInt(&sl, op->count);
                 got_one=0;
             }
@@ -356,7 +348,7 @@ void esrv_send_inventory(object *pl, object *op) {
     }
     if (got_one)
         Send_With_Handling(&pl->contr->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -389,11 +381,9 @@ void esrv_update_item(int flags, object *pl, object *op) {
          */
         LOG(llevDebug,"We have not sent item %s (%d)\n", op->name, op->count);
     }
-    sl.buf=malloc(MAXSOCKSENDBUF);
 
-    strcpy((char*)sl.buf,"upditem ");
-    sl.len=strlen((char*)sl.buf);
-
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "upditem ");
     SockList_AddChar(&sl, (char) flags);
 
     if (op->head) op=op->head;
@@ -447,8 +437,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
         item_n[254]=0;
         len += strlen(item_n+1+len) + 1;
         SockList_AddChar(&sl, (char)len);
-        memcpy(sl.buf+sl.len, item_n, len);
-        sl.len += len;
+        SockList_AddData(&sl, item_n, len);
     }
     if (flags & UPD_ANIM)
         SockList_AddShort(&sl,op->animation_id);
@@ -470,7 +459,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
         SockList_AddInt(&sl, op->nrof);
 
     Send_With_Handling(&pl->contr->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -493,10 +482,8 @@ void esrv_send_item(object *pl, object*op) {
         }
     }
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-
-    snprintf((char*)sl.buf, MAXSOCKSENDBUF, "item2 ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "item2 ");
 
     if (op->head) op=op->head;
 
@@ -506,7 +493,7 @@ void esrv_send_item(object *pl, object*op) {
 
     Send_With_Handling(&pl->contr->socket, &sl);
     SET_FLAG(op, FLAG_CLIENT_SENT);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 /**
@@ -517,14 +504,11 @@ void esrv_send_item(object *pl, object*op) {
 void esrv_del_item(player *pl, int tag) {
     SockList sl;
 
-    sl.buf=malloc(MAXSOCKSENDBUF);
-
-    strcpy((char*)sl.buf,"delitem ");
-    sl.len=strlen((char*)sl.buf);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "delitem ");
     SockList_AddInt(&sl, tag);
-
     Send_With_Handling(&pl->socket, &sl);
-    free(sl.buf);
+    SockList_Term(&sl);
 }
 
 

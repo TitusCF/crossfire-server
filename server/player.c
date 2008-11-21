@@ -391,7 +391,7 @@ void add_player(socket_struct *ns) {
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
      */
-    p->socket.inbuf.len = 0;
+    SockList_Reset(&p->socket.inbuf);
     set_first_map(p->ob);
 
     CLEAR_FLAG(p->ob, FLAG_FRIENDLY);

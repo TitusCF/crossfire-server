@@ -53,32 +53,7 @@
 #ifndef NEWCLIENT_H
 #define NEWCLIENT_H
 
-/* MAXSOCKRECVBUF and MAXSOCKSENDBUF are used on the server
- * MAXSOCKBUF is used by the client.
- */
-
-/**
- * Maximum size of any packet we expect. This number includes both the length
- * bytes (2 bytes) at the start of each packet and the trailing 0 (1 byte)
- * at the end of each packet.
- */
-#define MAXSOCKRECVBUF (2+65535+1)
-
-/**
- * Maximum size of any packet we send. This number does not include the length
- * bytes at the start of each packet. The value is chosen to not overflow the
- * input buffer of old clients (2006-05-21).
- */
-#define MAXSOCKSENDBUF 10239
-
-/**
- * Maximum size of any packet we expect.  Using this makes it so we don't need to
- * allocate and deallocate the same buffer over and over again and the price
- * of using a bit of extra memory.  It also makes the code simpler.
- * The size is big enough to receive any valid packet: 2 bytes for length,
- * 65535 for max. packet size, 1 for appended trailing 0.
- */
-#define MAXSOCKBUF (2+65535+1)
+#include <stddef.h>
 
 
 /**
@@ -585,8 +560,8 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 
 /** Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList {
-    int len;
-    unsigned char *buf;
+    size_t len;
+    unsigned char buf[2+65536UL+1]; /* 2=length, 65536=content, 1=trailing NUL */
 } SockList;
 
 /** Statistics on server. */
