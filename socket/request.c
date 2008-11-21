@@ -314,9 +314,14 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
  */
 void add_me_cmd(char *buf, int len, socket_struct *ns) {
     Settings oldsettings;
+    SockList sl;
+
     oldsettings=settings;
     if (ns->status != Ns_Add) {
-        Write_String_To_Socket(ns, "addme_failed",12);
+        SockList_Init(&sl);
+        SockList_AddString(&sl, "addme_failed");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
     } else {
         add_player(ns);
         /* Basically, the add_player copies the socket structure into
@@ -324,14 +329,19 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
          * is not needed anymore.  The write below should still work,
          * as the stuff in ns is still relevant.
          */
-        Write_String_To_Socket(ns, "addme_success",13);
+        SockList_Init(&sl);
+        SockList_AddString(&sl, "addme_success");
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
         if (ns->sc_version < 1027 || ns->cs_version < 1023) {
             /* The space in the link isn't correct, but in my
              * quick test with client 1.1.0, it didn't print it
              * out correctly when done as a single line.
              */
-            const char *buf= "drawinfo 3 Warning: Your client is too old to receive map data.  Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833";
-            Write_String_To_Socket(ns, buf, strlen(buf));
+            SockList_Init(&sl);
+            SockList_AddString(&sl, "drawinfo 3 Warning: Your client is too old to receive map data.  Please update to a new client at http://sourceforge.net/project/showfiles.php ?group_id=13833");
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
         }
 
         socket_info.nconns--;
@@ -342,10 +352,10 @@ void add_me_cmd(char *buf, int len, socket_struct *ns) {
 
 /** Reply to ExtendedInfos command */
 void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
-    char cmdback[MAX_BUF];
+    SockList sl;
     char command[50];
     int info,nextinfo, smooth = 0;
-    cmdback[0]='\0';
+
     nextinfo=0;
     while (1) {
         /* 1. Extract an info*/
@@ -369,21 +379,21 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
         }
         /*3. Next info*/
     }
-    strcpy(cmdback,"ExtendedInfoSet");
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "ExtendedInfoSet");
     if (smooth) {
-        strcat(cmdback," ");
-        strcat(cmdback,"smoothing");
+        SockList_AddString(&sl, " smoothing");
     }
-    Write_String_To_Socket(ns, cmdback,strlen(cmdback));
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /** Reply to ExtendedInfos command */
 void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
-    char cmdback[MAX_BUF];
-    char temp[10];
+    SockList sl;
     char command[50];
     int info,nextinfo,i,flag;
-    cmdback[0]='\0';
+
     nextinfo=0;
     while (1) {
         /* 1. Extract an info*/
@@ -405,14 +415,14 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
         /*3. Next info*/
     }
     /* Send resulting state */
-    strcpy(cmdback,"ExtendedTextSet");
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "ExtendedTextSet");
     for (i=0;i<=MSG_TYPE_LAST;i++)
         if (ns->supported_readables &(1<<i)) {
-            strcat(cmdback," ");
-            snprintf(temp,sizeof(temp),"%d",i);
-            strcat(cmdback,temp);
+            SockList_AddPrintf(&sl, " %d", i);
         }
-    Write_String_To_Socket(ns, cmdback,strlen(cmdback));
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
@@ -666,8 +676,13 @@ void map_newmap_cmd(player *pl) {
     pl->socket.map_scroll_y = 0;
 
     if (pl->socket.newmapcmd == 1) {
+        SockList sl;
+
         memset(&pl->socket.lastmap, 0, sizeof(pl->socket.lastmap));
-        Write_String_To_Socket(&pl->socket, "newmap", 6);
+        SockList_Init(&sl);
+        SockList_AddString(&sl, "newmap");
+        Send_With_Handling(&pl->socket, &sl);
+        SockList_Term(&sl);
     }
 }
 
@@ -713,10 +728,12 @@ void move_cmd(char *buf, int len,player *pl) {
  * it needs to send something back (vs just printing out a message)
  */
 void send_query(socket_struct *ns, uint8 flags, const char *text) {
-    char buf[MAX_BUF];
+    SockList sl;
 
-    snprintf(buf, sizeof(buf), "query %d %s", flags, text?text:"");
-    Write_String_To_Socket(ns, buf, strlen(buf));
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "query %d %s", flags, text ? text : "");
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 #define AddIfInt64(Old,New,Type) if (Old != New) {  \
@@ -1470,7 +1487,12 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy) {
  * manage it !
  */
 void send_plugin_custom_message(object *pl, char *buf) {
-    Write_String_To_Socket(&pl->contr->socket, buf, strlen(buf));
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, buf);
+    Send_With_Handling(&pl->contr->socket, &sl);
+    SockList_Term(&sl);
 }
 
 /**
