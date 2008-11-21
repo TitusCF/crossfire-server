@@ -205,8 +205,11 @@ void esrv_draw_look(object *pl) {
         for (tmp=GET_MAP_OB(pl->map,pl->x,pl->y);
              tmp && tmp->above;tmp=tmp->above) ;
 
-    Write_String_To_Socket(&pl->contr->socket, "delinv 0", strlen("delinv 0"));
     SockList_Init(&sl);
+    SockList_AddString(&sl, "delinv 0");
+    Send_With_Handling(&pl->contr->socket, &sl);
+
+    SockList_Reset(&sl);
     SockList_AddPrintf(&sl, "item2 ");
     SockList_AddInt(&sl, 0);
 
