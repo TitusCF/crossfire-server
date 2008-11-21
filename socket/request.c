@@ -112,8 +112,9 @@ static const short atnr_cs_stat[NROFATTACKS] = {CS_STAT_RES_PHYS, CS_STAT_RES_MA
 
 /** This is the Setup cmd - easy first implementation */
 void set_up_cmd(char *buf, int len, socket_struct *ns) {
-    int s, slen;
-    char *cmd, *param, cmdback[HUGE_BUF];
+    int s;
+    char *cmd, *param;
+    SockList sl;
 
     /* run through the cmds of setup
      * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
@@ -124,8 +125,8 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
      */
 
     LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
-    strcpy(cmdback,"setup");
-    slen = strlen(cmdback);
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "setup");
     for (s=0;s<len;) {
 
         cmd = &buf[s];
@@ -146,175 +147,143 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
         buf[s++]=0;
         while (s<len && buf[s] == ' ') s++;
 
-        safe_strcat(cmdback, " ", &slen, HUGE_BUF);
-        safe_strcat(cmdback, cmd, &slen, HUGE_BUF);
-        safe_strcat(cmdback, " ", &slen, HUGE_BUF);
+        SockList_AddPrintf(&sl, " %s ", cmd);
 
         if (!strcmp(cmd,"sound")) {
             /* this is the old sound command, which means the client doesn't understand our sound => mute. */
             ns->sound = 0;
-            safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "FALSE");
         } else if (!strcmp(cmd,"sound2")) {
             ns->sound = atoi(param)&(SND_EFFECTS|SND_MUSIC|SND_MUTE);
-            safe_strcat(cmdback, param, &slen, HUGE_BUF);
+            SockList_AddString(&sl, param);
         } else if (!strcmp(cmd,"exp64")) {
             /* for compatibility, return 1 since older clients can be confused else. */
-            safe_strcat(cmdback, "1", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "1");
         } else if (!strcmp(cmd, "spellmon")) {
             int monitor_spells;
 
             monitor_spells = atoi(param);
             if (monitor_spells != 0 && monitor_spells != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->monitor_spells = monitor_spells;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", monitor_spells);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", monitor_spells);
             }
         } else if (!strcmp(cmd,"darkness")) {
             int darkness;
 
             darkness = atoi(param);
             if (darkness != 0 && darkness != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->darkness = darkness;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", darkness);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", darkness);
             }
         } else if (!strcmp(cmd,"map2cmd")) {
             int map2cmd;
 
             map2cmd = atoi(param);
             if (map2cmd != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
                 ns->mapmode = Map2Cmd;
-                safe_strcat(cmdback, "1", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "1");
             }
         } else if (!strcmp(cmd,"newmapcmd")) {
             int newmapcmd;
 
             newmapcmd = atoi(param);
             if (newmapcmd != 0 && newmapcmd != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->newmapcmd = newmapcmd;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", newmapcmd);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", newmapcmd);
             }
         } else if (!strcmp(cmd,"facecache")) {
             int facecache;
 
             facecache = atoi(param);
             if (facecache != 0 && facecache != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->facecache = facecache;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", facecache);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", facecache);
             }
         } else if (!strcmp(cmd,"faceset")) {
-            char tmpbuf[20];
             int q = atoi(param);
 
             if (is_valid_faceset(q))
                 ns->faceset=q;
-            snprintf(tmpbuf, sizeof(tmpbuf), "%d", ns->faceset);
-            safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            SockList_AddPrintf(&sl, "%d", ns->faceset);
         } else if (!strcmp(cmd,"itemcmd")) {
             /* client ignore the value anyway. */
-            safe_strcat(cmdback, "2", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "2");
         } else if (!strcmp(cmd,"mapsize")) {
             int x, y, n;
-            char tmpbuf[20];
 
             if (sscanf(param, "%dx%d%n", &x, &y, &n) != 2 || n != (int)strlen(param)) {
                 x = 0;
                 y = 0;
             }
             if (x < 9 || y < 9 || x > MAP_CLIENT_X || y > MAP_CLIENT_Y) {
-                snprintf(tmpbuf, sizeof(tmpbuf), "%dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%dx%d", MAP_CLIENT_X, MAP_CLIENT_Y);
             } else {
                 ns->mapx = x;
                 ns->mapy = y;
                 /* better to send back what we are really using and not the
                  * param as given to us in case it gets parsed differently.
                  */
-                snprintf(tmpbuf, sizeof(tmpbuf), "%dx%d", x,y);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%dx%d", x, y);
                 /* If beyond this size and still using orig map
                  * command, need to go to map1cmd.
                  */
             }
         } else if (!strcmp(cmd,"extendedMapInfos")) {
-            safe_strcat(cmdback, "1", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "1");
         } else if (!strcmp(cmd,"extendedTextInfos")) {
             int has_readable_type;
 
             has_readable_type = atoi(param);
             if (has_readable_type != 0 && has_readable_type != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->has_readable_type = has_readable_type;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", has_readable_type);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", has_readable_type);
             }
         } else if (!strcmp(cmd,"tick")) {
             int tick;
 
             tick = atoi(param);
             if (tick != 0 && tick != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->tick = tick;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", tick);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", tick);
             }
         } else if (!strcmp(cmd,"bot")) {
             int is_bot;
 
             is_bot = atoi(param);
             if (is_bot != 0 && is_bot != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->is_bot = is_bot;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", is_bot);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", is_bot);
             }
         } else if (!strcmp(cmd,"want_pickup")) {
             int want_pickup;
 
             want_pickup = atoi(param);
             if (want_pickup != 0 && want_pickup != 1) {
-                safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+                SockList_AddString(&sl, "FALSE");
             } else {
-                char tmpbuf[20];
-
                 ns->want_pickup = want_pickup;
-                snprintf(tmpbuf, sizeof(tmpbuf), "%d", want_pickup);
-                safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+                SockList_AddPrintf(&sl, "%d", want_pickup);
             }
         } else if (!strcmp(cmd,"inscribe")) {
-            safe_strcat(cmdback, "1", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "1");
         } else if (!strcmp(cmd,"num_look_objects")) {
             int tmp;
-            char tmpbuf[20];
 
             tmp = atoi(param);
             if (tmp < MIN_NUM_LOOK_OBJECTS) {
@@ -323,17 +292,16 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                 tmp = MAX_NUM_LOOK_OBJECTS;
             }
             ns->num_look_objects = (uint8)tmp;
-            snprintf(tmpbuf, sizeof(tmpbuf), "%d", tmp);
-            safe_strcat(cmdback, tmpbuf, &slen, HUGE_BUF);
+            SockList_AddPrintf(&sl, "%d", tmp);
         } else {
             /* Didn't get a setup command we understood -
              * report a failure to the client.
              */
-            safe_strcat(cmdback, "FALSE", &slen, HUGE_BUF);
+            SockList_AddString(&sl, "FALSE");
         }
     } /* for processing all the setup commands */
-    LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);
-    Write_String_To_Socket(ns, cmdback, strlen(cmdback));
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
@@ -779,7 +747,7 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
         if (Old) free(Old);                                             \
         Old = strdup_local(New);                                        \
         SockList_AddChar(&sl, Type);                                    \
-        SockList_AddLen8Data(&sl, New, strlen(New));			\
+        SockList_AddLen8Data(&sl, New, strlen(New));                    \
     }
 
 /**
