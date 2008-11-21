@@ -553,20 +553,6 @@ void Send_With_Handling(socket_struct *ns, const SockList *sl) {
     free(buffer);
 }
 
-/**
- * Takes a string of data, and writes it out to the socket. A very handy
- * shortcut function.
- */
-void Write_String_To_Socket(socket_struct *ns, const char *buf, int len) {
-    SockList sl;
-
-    SockList_Init(&sl);
-    SockList_AddData(&sl, buf, len);
-    Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
-}
-
-
 /******************************************************************************
  *
  * statistics logging functions.
