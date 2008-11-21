@@ -67,10 +67,12 @@ static void esrv_print_msg(socket_struct *ns,int color, const char *str) {
  * message The main message
  */
 static void esrv_print_ext_msg(socket_struct *ns,int color,uint8 type, uint8 subtype, const char *message) {
-    char buf[HUGE_BUF];
-    snprintf(buf,HUGE_BUF, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
-    Write_String_To_Socket(ns, buf, strlen(buf));
-/*    LOG(llevDebug,"sending %s to socket, len=%d\n", buf, strlen(buf));*/
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "drawextinfo %d %hhu %hhu %s", color, type, subtype, message);
+    Send_With_Handling(ns, &sl);
+    SockList_Term(&sl);
 }
 
 /**
