@@ -581,7 +581,7 @@ void draw_magic_map(object *pl) {
     ymax = 0;
     for (x = 0; x < MAGIC_MAP_SIZE ; x++) {
         for (y = 0; y < MAGIC_MAP_SIZE; y++) {
-            if (map_mark[x + MAP_WIDTH(pl->map) * y] | FACE_FLOOR) {
+            if (map_mark[x + MAP_WIDTH(pl->map) * y] & ~FACE_FLOOR) {
                 xmin = MIN(x, xmin);
                 xmax = MAX(x, xmax);
                 ymin = MIN(y, ymin);
