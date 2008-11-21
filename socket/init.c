@@ -331,7 +331,12 @@ void free_newsocket(socket_struct *ns) {
 
 /** Sends the 'goodbye' command to the player, and closes connection. */
 void final_free_player(player *pl) {
-    Write_String_To_Socket(&pl->socket, "goodbye", 8);
+    SockList sl;
+
+    SockList_Init(&sl);
+    SockList_AddString(&sl, "goodbye");
+    Send_With_Handling(&pl->socket, &sl);
+    SockList_Term(&sl);
     free_newsocket(&pl->socket);
     free_player(pl);
 }
