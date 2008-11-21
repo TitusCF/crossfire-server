@@ -55,23 +55,6 @@
  */
 
 /**
- * Adds string to socklist.
- *
- * This is a simple function that we use a lot here.  It basically
- * adds the specified buffer into the socklist, but prepends a
- * single byte in length.  If the data is longer than that byte, it is
- * truncated approprately.
- */
-static inline void add_stringlen_to_sockbuf(const char *buf, SockList *sl) {
-    size_t len;
-
-    len=strlen(buf);
-    if (len>255) len=255;
-    SockList_AddChar(sl, len);
-    SockList_AddData(sl, buf, len);
-}
-
-/**
  *  This is a similar to query_name, but returns flags
  *  to be sended to client.
  */
@@ -171,8 +154,7 @@ static void add_object_to_socklist(socket_struct *ns, SockList *sl, object *head
     /* This is needed because strncpy may not add a ending \0 if the string is long enough. */
     item_n[len+1+127]=0;
     len += strlen(item_n+1+len) + 1;
-    SockList_AddChar(sl, (char) len);
-    SockList_AddData(sl, item_n, len);
+    SockList_AddLen8Data(sl, item_n, len);
 
     SockList_AddShort(sl,head->animation_id);
     anim_speed=0;
@@ -239,7 +221,7 @@ void esrv_draw_look(object *pl) {
         SockList_AddInt(&sl, -1);
         SockList_AddInt(&sl, empty_face->number);
         snprintf(buf, sizeof(buf), "Click here to see previous group of items");
-        add_stringlen_to_sockbuf(buf, &sl);
+        SockList_AddLen8Data(&sl, buf, MIN(strlen(buf), 255));
         SockList_AddShort(&sl,0);
         SockList_AddChar(&sl, 0);
         SockList_AddInt(&sl, 0);
@@ -278,7 +260,7 @@ void esrv_draw_look(object *pl) {
                 SockList_AddInt(&sl, -1);
                 SockList_AddInt(&sl, empty_face->number);
                 snprintf(buf, sizeof(buf), "Click here to see next group of items");
-                add_stringlen_to_sockbuf(buf, &sl);
+                SockList_AddLen8Data(&sl, buf, MIN(strlen(buf), 255));
                 SockList_AddShort(&sl,0);
                 SockList_AddChar(&sl, 0);
                 SockList_AddInt(&sl, 0);
@@ -436,8 +418,7 @@ void esrv_update_item(int flags, object *pl, object *op) {
         strncpy(item_n+len+1, item_p, 127);
         item_n[254]=0;
         len += strlen(item_n+1+len) + 1;
-        SockList_AddChar(&sl, (char)len);
-        SockList_AddData(&sl, item_n, len);
+        SockList_AddLen8Data(&sl, item_n, len);
     }
     if (flags & UPD_ANIM)
         SockList_AddShort(&sl,op->animation_id);

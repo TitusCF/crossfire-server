@@ -68,10 +68,8 @@ void play_sound_player_only(player *pl, sint8 sound_type, object *emitter, int d
     SockList_AddChar(&sl, dir);
     SockList_AddChar(&sl, volume);
     SockList_AddChar(&sl, sound_type);
-    SockList_AddChar(&sl, strlen(action));
-    SockList_AddString(&sl, action);
-    SockList_AddChar(&sl, strlen(name));
-    SockList_AddString(&sl, name);
+    SockList_AddLen8Data(&sl, action, strlen(action));
+    SockList_AddLen8Data(&sl, name, strlen(name));
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
 }

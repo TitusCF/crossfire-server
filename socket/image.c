@@ -186,7 +186,6 @@ void send_image_sums(socket_struct *ns, char *params) {
 
     for (i=start; i<=stop; i++) {
         int faceset;
-        int len;
 
         if (SockList_Avail(&sl) < 2+4+1+1+strlen(new_faces[i].name)+1) {
             SockList_Term(&sl);
@@ -204,10 +203,7 @@ void send_image_sums(socket_struct *ns, char *params) {
         faceset = get_face_fallback(ns->faceset, i);
         SockList_AddInt(&sl, facesets[faceset].faces[i].checksum);
         SockList_AddChar(&sl, faceset);
-
-        len = strlen(new_faces[i].name);
-        SockList_AddChar(&sl, (char)(len + 1));
-        SockList_AddData(&sl, new_faces[i].name, len + 1);
+        SockList_AddLen8Data(&sl, new_faces[i].name, strlen(new_faces[i].name) + 1);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

@@ -38,6 +38,7 @@
  * CFCLIENT defined as part of its compile flags.
  */
 
+#include <assert.h>
 #include <stdarg.h>
 #include <global.h>
 #include <newclient.h>
@@ -158,6 +159,18 @@ void SockList_AddData(SockList *sl, const void *data, size_t len) {
     SockList_Ensure(sl, len);
     memcpy(sl->buf + sl->len, data, len);
     sl->len += len;
+}
+
+/**
+ * Adds a data block prepended with an 8 bit length field.
+ * @param sl the SockList instance to add to
+ * @param data the value to add
+ * @param len the length in byte; must not exceed 255
+ */
+void SockList_AddLen8Data(SockList *sl, const void *data, size_t len) {
+    assert(len <= 255);
+    SockList_AddChar(sl, len);
+    SockList_AddData(sl, data, len);
 }
 
 /**

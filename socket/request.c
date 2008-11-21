@@ -776,13 +776,10 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
     }
 
 #define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) { \
-        size_t len;                                                     \
         if (Old) free(Old);                                             \
         Old = strdup_local(New);                                        \
         SockList_AddChar(&sl, Type);                                    \
-        len = strlen(New);                                              \
-        SockList_AddChar(&sl, len);                                     \
-        SockList_AddData(&sl, New, len);                                \
+        SockList_AddLen8Data(&sl, New, strlen(New));			\
     }
 
 /**
@@ -888,7 +885,6 @@ void esrv_update_stats(player *pl) {
  */
 void esrv_new_player(player *pl, uint32 weight) {
     SockList    sl;
-    size_t len;
 
     pl->last_weight = weight;
 
@@ -900,10 +896,7 @@ void esrv_new_player(player *pl, uint32 weight) {
     SockList_AddInt(&sl, pl->ob->count);
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
-
-    len = strlen(pl->ob->name);
-    SockList_AddChar(&sl, len);
-    SockList_AddData(&sl, pl->ob->name, len);
+    SockList_AddLen8Data(&sl, pl->ob->name, strlen(pl->ob->name));
 
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
@@ -1834,10 +1827,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
 
     SockList_AddInt(sl, spell->path_attuned);
     SockList_AddInt(sl, (spell->face)?spell->face->number:0);
-
-    len = strlen(spell->name);
-    SockList_AddChar(sl, (char)len);
-    SockList_AddData(sl, spell->name, len);
+    SockList_AddLen8Data(sl, spell->name, strlen(spell->name));
 
     if (!spell->msg) {
         SockList_AddShort(sl, 0);
