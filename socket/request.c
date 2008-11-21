@@ -1587,21 +1587,19 @@ void send_spell_paths(socket_struct *ns, char *params) {
 /**
  * Creates the appropriate reply to the 'race_list' request info.
  *
- * @return
+ * @param sl
  * suitable reply.
  */
-static char *build_race_list_reply(void) {
-    StringBuffer *buf = stringbuffer_new();
+static void build_race_list_reply(SockList *sl) {
     archetype *race;
 
-    stringbuffer_append_string(buf, "replyinfo race_list ");
+    SockList_AddString(sl, "replyinfo race_list ");
 
     for (race = first_archetype; race; race = race->next) {
         if (race->clone.type == PLAYER) {
-            stringbuffer_append_printf(buf, "|%s", race->name);
+            SockList_AddPrintf(sl, "|%s", race->name);
         }
     }
-    return stringbuffer_finish(buf);
 }
 
 /**
@@ -1614,19 +1612,16 @@ static char *build_race_list_reply(void) {
  * ignored.
  */
 void send_race_list(socket_struct *ns, char *params) {
-    static char *reply = NULL;
-    static int reply_length = 0;
-    SockList sl;
+    static SockList sl;
+    static int sl_initialized = 0;
 
-    if (!reply) {
-        reply = build_race_list_reply();
-        reply_length = strlen(reply);
+    if (!sl_initialized) {
+        sl_initialized = 1;
+        SockList_Init(&sl);
+        build_race_list_reply(&sl);
     }
 
-    SockList_Init(&sl);
-    SockList_AddData(&sl, reply, reply_length);
     Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
 }
 
 /**
@@ -1640,17 +1635,14 @@ void send_race_list(socket_struct *ns, char *params) {
  */
 void send_race_info(socket_struct *ns, char *params) {
     archetype *race = try_find_archetype(params);
-    StringBuffer *buf;
     SockList sl;
 
-    buf = stringbuffer_new();
-    stringbuffer_append_printf(buf, "replyinfo race_info %s", params);
+    SockList_Init(&sl);
+    SockList_AddPrintf(&sl, "replyinfo race_info %s", params);
 
     if (race) {
     }
 
-    SockList_Init(&sl);
-    SockList_AddStringBuffer(&sl, buf);
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 }
@@ -1658,21 +1650,20 @@ void send_race_info(socket_struct *ns, char *params) {
 /**
  * Creates the appropriate reply to the 'class_list' request info.
  *
- * @return
+ * @param sl
  * reply.
  */
-static char *build_class_list_reply(void) {
-    StringBuffer *buf = stringbuffer_new();
+static void build_class_list_reply(SockList *sl) {
     archetype *cl;
 
-    stringbuffer_append_string(buf, "replyinfo class_list ");
+    SockList_Reset(sl);
+    SockList_AddString(sl, "replyinfo class_list ");
 
     for (cl = first_archetype; cl; cl = cl->next) {
         if (cl->clone.type == CLASS) {
-            stringbuffer_append_printf(buf, "|%s", cl->name);
+            SockList_AddPrintf(sl, "|%s", cl->name);
         }
     }
-    return stringbuffer_finish(buf);
 }
 
 /**
@@ -1685,19 +1676,16 @@ static char *build_class_list_reply(void) {
  * ignored.
  */
 void send_class_list(socket_struct *ns, char *params) {
-    static char *reply = NULL;
-    static int reply_length = 0;
-    SockList sl;
+    static SockList sl;
+    static int sl_initialized = 0;
 
-    if (!reply) {
-        reply = build_class_list_reply();
-        reply_length = strlen(reply);
+    if (!sl_initialized) {
+        sl_initialized = 1;
+        SockList_Init(&sl);
+        build_class_list_reply(&sl);
     }
 
-    SockList_Init(&sl);
-    SockList_AddData(&sl, reply, reply_length);
     Send_With_Handling(ns, &sl);
-    SockList_Term(&sl);
 }
 
 /**
