@@ -557,7 +557,7 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength) {
 
 void draw_magic_map(object *pl) {
     int x,y;
-    char *map_mark = (char *) calloc(MAGIC_MAP_SIZE*MAGIC_MAP_SIZE, 1);
+    char map_mark[MAGIC_MAP_SIZE*MAGIC_MAP_SIZE];
     int xmin, xmax, ymin, ymax;
     SockList sl;
 
@@ -567,6 +567,7 @@ void draw_magic_map(object *pl) {
     }
 
     /* First, we figure out what spaces are 'reachable' by the player */
+    memset(map_mark, 0, MAGIC_MAP_SIZE*MAGIC_MAP_SIZE);
     magic_mapping_mark(pl, map_mark, 3);
 
     /* We now go through and figure out what spaces have been
@@ -600,5 +601,4 @@ void draw_magic_map(object *pl) {
 
     Send_With_Handling(&pl->contr->socket, &sl);
     SockList_Term(&sl);
-    free(map_mark);
 }
