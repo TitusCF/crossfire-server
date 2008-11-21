@@ -51,16 +51,18 @@
  */
 
 void set_face_mode_cmd(char *buf, int len, socket_struct *ns) {
-    char tmp[256];
-
     int mask =(atoi(buf) & CF_FACE_CACHE), mode=(atoi(buf) & ~CF_FACE_CACHE);
 
     if (mode==CF_FACE_NONE) {
         ns->facecache=1;
     } else if (mode!=CF_FACE_PNG) {
-        snprintf(tmp, sizeof(tmp), "drawinfo %d %s", NDI_RED,
+        SockList sl;
+
+        SockList_Init(&sl);
+        SockList_AddPrintf(&sl, "drawinfo %d %s", NDI_RED,
                  "Warning - send unsupported face mode.  Will use Png");
-        Write_String_To_Socket(ns, tmp, strlen(tmp));
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
 #ifdef ESRV_DEBUG
         LOG(llevDebug,"set_face_mode_cmd: Invalid mode from client: %d\n",
             mode);
@@ -166,7 +168,7 @@ void send_image_info(socket_struct *ns, char *params) {
 void send_image_sums(socket_struct *ns, char *params) {
     int start, stop;
     short i;
-    char *cp, buf[MAX_BUF];
+    char *cp;
     SockList sl;
 
     SockList_Init(&sl);
@@ -178,8 +180,9 @@ void send_image_sums(socket_struct *ns, char *params) {
     stop = atoi(cp);
     if (stop < start || *cp == '\0' || (stop-start)>1000 ||
         stop >= nrofpixmaps) {
-        snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
-        Write_String_To_Socket(ns, buf, strlen(buf));
+        SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
+        Send_With_Handling(ns, &sl);
+        SockList_Term(&sl);
         return;
     }
     SockList_AddPrintf(&sl, "replyinfo image_sums %d %d ", start, stop);
@@ -188,12 +191,13 @@ void send_image_sums(socket_struct *ns, char *params) {
         int faceset;
 
         if (SockList_Avail(&sl) < 2+4+1+1+strlen(new_faces[i].name)+1) {
-            SockList_Term(&sl);
             LOG(llevError,
                 "send_image_sums: buffer overflow, rejecting range %d..%d\n",
                 start, stop);
-            snprintf(buf, sizeof(buf), "replyinfo image_sums %d %d", start, stop);
-            Write_String_To_Socket(ns, buf, strlen(buf));
+            SockList_Reset(&sl);
+            SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
+            Send_With_Handling(ns, &sl);
+            SockList_Term(&sl);
             return;
         }
 
