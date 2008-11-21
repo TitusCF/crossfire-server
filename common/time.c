@@ -380,9 +380,9 @@ void time_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "Time last %d ticks:",
                          "Time last %d ticks:",
-                         pticks > PBUFLEN ? PBUFLEN : pticks);
+                         MIN(pticks, PBUFLEN));
 
-    for (i = 0; i < (pticks > PBUFLEN ? PBUFLEN : pticks); i++) {
+    for (i = 0; i < MIN(pticks, PBUFLEN); i++) {
         tot += process_utime_save[i];
         if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
         if (process_utime_save[i] < mint) mint = process_utime_save[i];
@@ -392,14 +392,14 @@ void time_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "avg time=%dms  max time=%dms  min time=%dms",
                          "avg time=%dms  max time=%dms  min time=%dms",
-                         tot/(pticks > PBUFLEN ? PBUFLEN : pticks)/1000, maxt/1000,
+                         tot/MIN(pticks, PBUFLEN)/1000, maxt/1000,
                          mint/1000);
 
     draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          max_time/1000, long_count,
-                         100*long_count/(pticks > PBUFLEN ? PBUFLEN : pticks));
+                         100*long_count/MIN(pticks, PBUFLEN));
 }
 
 /**

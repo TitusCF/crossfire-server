@@ -135,12 +135,12 @@ sint64 new_exp(const object *ob) {
                  (0.2*(QUERY_FLAG(ob,FLAG_USE_RANGE)!= FALSE)) +
                  (0.1*(QUERY_FLAG(ob,FLAG_USE_BOW)!= FALSE));
 
-    exp = (ob->stats.maxhp<5) ? 5 : ob->stats.maxhp;
+    exp = MAX(ob->stats.maxhp, 5);
     exp *= (QUERY_FLAG(ob,FLAG_CAST_SPELL) && has_ability(ob))
-       ? (40+(ob->stats.maxsp>80?80:ob->stats.maxsp))/40 : 1;
+        ? (40+MIN(ob->stats.maxsp, 80))/40 : 1;
     exp *= (80.0/(70.0+ob->stats.wc)) * (80.0/(70.0+ob->stats.ac)) * (50.0+ob->stats.dam)/50.0;
     exp *= att_mult * prot_mult * spec_mult;
-    /*    exp *= 2.0/(2.0-((FABS(ob->speed)<0.95)?FABS(ob->speed):0.95));*/
+    /*    exp *= 2.0/(2.0-(MIN(FABS(ob->speed), 0.95)));*/
     exp *= 2.0/(2.0-FABS(ob->speed));
     exp *= (20.0+ob->stats.Con)/20.0;
     if (QUERY_FLAG(ob, FLAG_STAND_STILL))

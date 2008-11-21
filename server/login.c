@@ -318,7 +318,7 @@ int save_player(object *op, int flag) {
     fprintf(fp,"Wis %d\n",pl->orig_stats.Wis);
     fprintf(fp,"Cha %d\n",pl->orig_stats.Cha);
 
-    fprintf(fp,"lev_array %d\n",op->level>10?10:op->level);
+    fprintf(fp,"lev_array %d\n", MIN(op->level, 10));
     for (i=1;i<=pl->last_level&&i<=10;i++) {
         fprintf(fp,"%d\n",pl->levhp[i]);
         fprintf(fp,"%d\n",pl->levsp[i]);

@@ -312,7 +312,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     /* Unidentified stuff won't sell for more than 60gp */
     if (flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
         need_identify(tmp) && !identified) {
-        val = (val > 600)? 600:val;
+        val = MIN(val, 600);
     }
 
     /* if in a shop, check how the type of shop should affect the price */

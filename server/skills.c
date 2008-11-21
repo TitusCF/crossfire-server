@@ -1915,7 +1915,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
         return 0;
     }
 
-    eff_str = str * (load_factor<1.0?load_factor:1.0);
+    eff_str = str * MIN(load_factor, 1.0);
     eff_str = (float) eff_str * item_factor * str_factor;
 
     /* alas, arrays limit us to a value of MAX_STAT (30). Use str_factor to
@@ -2019,7 +2019,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->speed = MIN(1.0,throw_ob->speed); /* no faster than an arrow! */
 
     /* item damage. Eff_str and item weight influence damage done */
-    weight_f = (throw_ob->weight/2000)>MAX_STAT?MAX_STAT:(throw_ob->weight/2000);
+    weight_f = MIN(throw_ob->weight/2000, MAX_STAT);
     throw_ob->stats.dam += (dam/3) + dam_bonus[weight_f]
                            + (throw_ob->weight/15000) - 2;
 

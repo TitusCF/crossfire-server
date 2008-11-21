@@ -560,7 +560,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
     m=mon->map;
     dir = rv.direction;
     lastdir = firstdir = rv.direction; /* perhaps we stand next to pl, init firstdir too */
-    diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
+    diff = MAX(FABS(rv.distance_x), FABS(rv.distance_y));
     /* If we can't solve it within the search distance, return now. */
     if (diff>max) return 0;
     while (diff >1 && max>0) {
@@ -645,7 +645,7 @@ int path_to_player(object *mon, object *pl, unsigned mindiff) {
              * headed toward player for entire distance.
              */
             get_rangevector_from_mapcoord(m, x, y, pl, &rv, 0);
-            diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
+            diff = MAX(FABS(rv.distance_x), FABS(rv.distance_y));
         }
         if (diff>max) return 0;
     }
@@ -2900,7 +2900,7 @@ void do_some_living(object *op) {
 
         /* Regenerate Spell Points */
         if (op->contr->ranges[range_golem]==NULL && --op->last_sp<0) {
-            gen_sp = gen_sp * 10 / (op->contr->gen_sp_armour < 10? 10 : op->contr->gen_sp_armour);
+            gen_sp = gen_sp * 10 / MAX(op->contr->gen_sp_armour, 10);
             if (op->stats.sp<op->stats.maxsp) {
                 op->stats.sp++;
                 /* dms do not consume food */
@@ -2917,7 +2917,7 @@ void do_some_living(object *op) {
                 over_sp = (gen_sp+10)/rate_sp;
                 if (over_sp > 0) {
                     if (op->stats.sp<op->stats.maxsp) {
-                        op->stats.sp += over_sp>max_sp ? max_sp : over_sp;
+                        op->stats.sp += MIN(over_sp, max_sp);
                         if (random_roll(0, rate_sp-1, op, PREFER_LOW) > ((gen_sp+10)%rate_sp))
                             op->stats.sp--;
                         if (op->stats.sp>op->stats.maxsp)
@@ -2925,10 +2925,10 @@ void do_some_living(object *op) {
                     }
                     op->last_sp=0;
                 } else {
-                    op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
+                    op->last_sp=rate_sp/(MAX(gen_sp, 20) + 10);
                 }
             } else {
-                op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
+                op->last_sp=rate_sp/(MAX(gen_sp, 20) + 10);
             }
         }
 
@@ -2938,16 +2938,16 @@ void do_some_living(object *op) {
             if (op->stats.grace<op->stats.maxgrace/2)
                 op->stats.grace++; /* no penalty in food for regaining grace */
             if (max_grace>1) {
-                over_grace = (gen_grace<20 ? 30 : gen_grace+10)/rate_grace;
+                over_grace = (MAX(gen_grace, 20) + 10)/rate_grace;
                 if (over_grace > 0) {
                     op->stats.sp += over_grace
-                                    + (random_roll(0, rate_grace-1, op, PREFER_HIGH) > ((gen_grace<20 ? 30 : gen_grace+10)%rate_grace))? -1 : 0;
+                        + (random_roll(0, rate_grace-1, op, PREFER_HIGH) > ((MAX(gen_grace, 20) + 10)%rate_grace))? -1 : 0;
                     op->last_grace=0;
                 } else {
-                    op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+                    op->last_grace=rate_grace/(MAX(gen_grace, 20) + 10);
                 }
             } else {
-                op->last_grace=rate_grace/(gen_grace<20 ? 30 : gen_grace+10);
+                op->last_grace=rate_grace/(MAX(gen_grace, 20) + 10);
             }
             /* wearing stuff doesn't detract from grace generation. */
         }
@@ -2967,23 +2967,23 @@ void do_some_living(object *op) {
                 }
             }
             if (max_hp>1 && !is_wraith_pl(op)) {
-                over_hp = (gen_hp<20 ? 30 : gen_hp+10)/rate_hp;
+                over_hp = (MAX(gen_hp, 20) + 10) / rate_hp;
                 if (over_hp > 0) {
                     op->stats.sp += over_hp
-                                    + (RANDOM()%rate_hp > ((gen_hp<20 ? 30 : gen_hp+10)%rate_hp))? -1 : 0;
+                                    + (RANDOM()%rate_hp > ((MAX(gen_hp, 20) + 10)%rate_hp))? -1 : 0;
                     op->last_heal=0;
                 } else {
-                    op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
+                    op->last_heal=rate_hp/(MAX(gen_hp, 20) + 10);
                 }
             } else {
-                op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
+                op->last_heal=rate_hp/(MAX(gen_hp, 20) + 10);
             }
         }
 
         /* Digestion */
         if (--op->last_eat<0) {
-            int bonus=op->contr->digestion>0?op->contr->digestion:0,
-                      penalty=op->contr->digestion<0?-op->contr->digestion:0;
+            int bonus = MAX(op->contr->digestion, 0);
+            int penalty = MAX(-op->contr->digestion, 0);
             if (op->contr->gen_hp > 0)
                 op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
             else

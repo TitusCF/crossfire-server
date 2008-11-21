@@ -582,10 +582,10 @@ void draw_magic_map(object *pl) {
     for (x = 0; x < MAGIC_MAP_SIZE ; x++) {
         for (y = 0; y < MAGIC_MAP_SIZE; y++) {
             if (map_mark[x + MAP_WIDTH(pl->map) * y] | FACE_FLOOR) {
-                xmin = x < xmin ? x : xmin;
-                xmax = x > xmax ? x : xmax;
-                ymin = y < ymin ? y : ymin;
-                ymax = y > ymax ? y : ymax;
+                xmin = MIN(x, xmin);
+                xmax = MAX(x, xmax);
+                ymin = MIN(y, ymin);
+                ymax = MAX(y, ymax);
             }
         }
     }

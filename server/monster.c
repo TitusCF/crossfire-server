@@ -297,7 +297,7 @@ static object *find_enemy(object *npc, rv_vector *rv) {
  * will return 0 if enemy is NULL.
  */
 static int check_wakeup(object *op, object *enemy, rv_vector *rv) {
-    int radius = op->stats.Wis>MIN_MON_RADIUS?op->stats.Wis:MIN_MON_RADIUS;
+    int radius = MAX(op->stats.Wis, MIN_MON_RADIUS);
 
     /* Trim work - if no enemy, no need to do anything below */
     if (!enemy) return 0;
@@ -2012,7 +2012,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
 
     /* Determine Detection radii */
     if (!enemy->hide) /* to detect non-hidden (eg dark/invis enemy) */
-        radius = (op->stats.Wis/5)+1>MIN_MON_RADIUS?(op->stats.Wis/5)+1:MIN_MON_RADIUS;
+        radius = MAX((op->stats.Wis / 5) + 1, MIN_MON_RADIUS);
     else { /* a level/INT/Dex adjustment for hiding */
         object *sk_hide;
         int bonus = (op->level/2) + (op->stats.Int/5);
@@ -2023,7 +2023,7 @@ int can_detect_enemy(object *op, object *enemy, rv_vector *rv) {
             else {
                 LOG(llevError,"can_detect_enemy() got hidden player w/o hiding skill!\n");
                 make_visible(enemy);
-                radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
+                radius = MAX(radius, MIN_MON_RADIUS);
             }
         } else /* enemy is not a player */
             bonus -= enemy->level;

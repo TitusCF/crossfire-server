@@ -210,7 +210,7 @@ int min_casting_level(const object *caster, const object *spell) {
     new_level = spell->level
                 + ((caster->path_repelled & spell->path_attuned) ? +2 : 0)
                 + ((caster->path_attuned & spell->path_attuned) ? -2 : 0);
-    return (new_level < 1) ? 1 : new_level;
+    return MAX(new_level, 1);
 }
 
 

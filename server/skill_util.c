@@ -607,7 +607,7 @@ sint64 calc_skill_exp(object *who, object *op, object *skill) {
      */
 
     if (!op) {  /* no item/creature */
-        op_lvl= who->map->difficulty < 1 ? 1: who->map->difficulty;
+        op_lvl = MAX(who->map->difficulty, 1);
         op_exp = 0;
     } else if (op->type==RUNE || op->type==TRAP) { /* all traps. If stats.Cha > 1 we use that
      * for the amount of experience */
