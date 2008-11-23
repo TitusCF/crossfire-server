@@ -308,9 +308,9 @@ line:	while(<ARC>) {
 		$lface[$#lface++] = $values[0]
 	    }
 	    elsif ($var eq "anim") {
-		if ($anim{$arch}) {
-		    &warn("$arch is a duplicate animation name");
-		    $anim{$arch}="";
+		if ($anim{"_$arch"}) {
+		    &warn("_$arch is a duplicate animation name");
+		    $anim{"_$arch"}="";
 		}
 		while (<ARC>) {
 		    chomp;
@@ -323,9 +323,9 @@ line:	while(<ARC>) {
 		    else {
 			$lface[$#lface++] = $var;
 		    }
-		    $anim{$arch} .= "$var\n";
+		    $anim{"_$arch"} .= "$var\n";
 		}
-		print ARCH "animation $arch\n";
+		print ARCH "animation _$arch\n";
 		next line;	# don't want the mina
 	    }
 	    if ($var eq "face" && ! $faces{$values[0]}) {
