@@ -49,6 +49,33 @@ static void free_object_assoc(object *key) {
 }
 
 
+static PyObject *Player_GetTitle(Crossfire_Object *whoptr, void *closure)
+{
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("s", cf_player_get_title(whoptr->obj));
+}
+
+static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *closure)
+{
+    char *val;
+    EXISTCHECK_INT(whoptr);
+    if (value==NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the Title attribute");
+        return -1;
+    }
+    if (!PyString_Check(value))
+    {
+        PyErr_SetString(PyExc_TypeError, "The Title attribute must be a string");
+        return -1;
+    }
+    if (!PyArg_Parse(value,"s",&val))
+        return -1;
+
+    cf_player_set_title(whoptr->obj, val);
+    return 0;
+}
+
 static PyObject *Player_GetIP(Crossfire_Player *whoptr, void *closure)
 {
     EXISTCHECK(whoptr);

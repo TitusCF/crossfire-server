@@ -529,6 +529,8 @@ PyTypeObject Crossfire_ObjectType = {
 
 
 
+static PyObject *Player_GetTitle(Crossfire_Object *whoptr, void *closure);
+static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static PyObject *Player_GetIP(Crossfire_Player *whoptr, void *closure);
 static PyObject *Player_GetMarkedItem(Crossfire_Player *whoptr, void *closure);
 static int Player_SetMarkedItem(Crossfire_Player *whoptr, PyObject *value, void *closure);
@@ -544,6 +546,7 @@ static int Player_SetBedX(Crossfire_Player *whoptr, PyObject *value, void *closu
 static int Player_SetBedY(Crossfire_Player *whoptr, PyObject *value, void *closure);
 
 static PyGetSetDef Player_getseters[] = {
+    { "Title",         (getter)Player_GetTitle,         (setter)Player_SetTitle, NULL, NULL },
     { "IP",            (getter)Player_GetIP,            NULL, NULL, NULL },
 	{ "MarkedItem",    (getter)Player_GetMarkedItem,    (setter)Player_SetMarkedItem, NULL, NULL },
 	{ "Party",         (getter)Player_GetParty,         (setter)Player_SetParty,      NULL, NULL },

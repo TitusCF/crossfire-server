@@ -2320,6 +2320,12 @@ void *cfapi_object_get_property(int *type, ...) {
                 *robject = first_player ? first_player->ob : NULL;
             *type = CFAPI_POBJECT;
             break;
+        case CFAPI_PLAYER_PROP_TITLE:
+            rsstring = va_arg(args, sstring*);
+            *rsstring = op->contr->title;
+            *type = CFAPI_SSTRING;
+            break;
+
         case CFAPI_OBJECT_PROP_NO_SAVE:
             rint = va_arg(args, int*);
             *rint = op->no_save;
@@ -2997,6 +3003,13 @@ void *cfapi_object_set_property(int *type, ...) {
                 *type = CFAPI_INT;
                 op->contr->bed_y = iarg;
                 break;
+
+            case CFAPI_PLAYER_PROP_TITLE:
+                sarg = va_arg(args, char*);
+                *type = CFAPI_STRING;
+                snprintf(op->contr->title, sizeof(op->contr->title), sarg);
+                break;
+
             default:
                 break;
         }

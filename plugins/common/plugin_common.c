@@ -692,6 +692,19 @@ player *cf_player_find(const char *plname)
     assert(type == CFAPI_PPLAYER);
     return value;
 }
+sstring cf_player_get_title(object *op)
+{
+    int type;
+    sstring value;
+    cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_TITLE, &value);
+    assert(type == CFAPI_SSTRING);
+    return value;
+}
+void cf_player_set_title(object *op, const char* title)
+{
+    int type;
+    cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_TITLE, title);
+}
 sstring cf_player_get_ip(object *op)
 {
     int type;
