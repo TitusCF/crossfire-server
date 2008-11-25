@@ -757,6 +757,9 @@ int get_button_value(const object *button) {
  *		slaying = match object slaying flag
  *		race = match object archetype name flag
  *		hp = match object type (excpt type '0'== PLAYER)
+ *      title = match object title
+ * Searching by title only is not recommended, as it can be a rather slow
+ * operation; use it in combination with archetype or type.
 
  * @param op
  * object of which to search inventory
@@ -769,18 +772,20 @@ object * check_inv_recursive(object *op, const object *trig) {
     object *tmp,*ret=NULL;
 
     /* First check the object itself. */
-    if ((trig->stats.hp && (op->type == trig->stats.hp))
-            || (trig->slaying && (op->slaying == trig->slaying))
-            || (trig->race && (op->arch->name == trig->race)))
+    if ((!trig->stats.hp || (op->type == trig->stats.hp))
+            && (!trig->slaying || (op->slaying == trig->slaying))
+            && (!trig->race || (op->arch->name == trig->race))
+            && (!trig->title || (op->title == trig->title)))
         return op;
 
     for (tmp=op->inv; tmp; tmp=tmp->below) {
         if (tmp->inv) {
             ret=check_inv_recursive(tmp, trig);
             if (ret) return ret;
-        } else if ((trig->stats.hp && (tmp->type == trig->stats.hp))
-                   || (trig->slaying && (tmp->slaying == trig->slaying))
-                   || (trig->race && (tmp->arch->name == trig->race)))
+        } else if ((!trig->stats.hp || (tmp->type == trig->stats.hp))
+                   && (!trig->slaying || (tmp->slaying == trig->slaying))
+                   && (!trig->race || (tmp->arch->name == trig->race))
+                   && (!trig->title || (tmp->title == trig->title)))
             return tmp;
     }
     return NULL;
