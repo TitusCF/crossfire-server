@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/login.c: Clear shootype value when player leaves game - otherwise
+   it will point to bad value in ranges[] array.
+MSW 2008-11-25
+
 lib/collect.pl.in: Prepend an underscore to names generated for implicitly
  defined animations.
 Andreas Kirschbaum 2008-11-23

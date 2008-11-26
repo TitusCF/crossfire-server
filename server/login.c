@@ -367,9 +367,15 @@ int save_player(object *op, int flag) {
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
-    if (!flag)
+    if (!flag) {
         while ((tmp = op->inv))
             destroy_object(tmp);
+
+	/* destroying objects will most likely destroy the pointer
+         * in op->contr->ranges[], so clear the range to a safe value.
+         */
+        op->contr->shoottype = range_none;
+    }
 
     checksum = 0;
     snprintf(backupfile, sizeof(backupfile), "%s.tmp", filename);
