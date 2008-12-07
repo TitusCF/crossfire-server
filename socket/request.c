@@ -56,6 +56,7 @@
  * fix comments for this file.
  */
 
+#include <assert.h>
 #include <global.h>
 #include <sproto.h>
 
@@ -981,15 +982,15 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
     uint8 nlayer, smoothlevel = 0;
     object *head;
 
-    head = ob->head;
-    if (!head)
-        head = ob;
+    assert(ob != NULL);
+
+    head = ob->head ? ob->head : ob;
     face_num = ob->face->number;
 
     /* This is a multipart object, and we are not at the lower
      * right corner. So we need to store away the lower right corner.
      */
-    if (!is_head && head && (head->arch->tail_x || head->arch->tail_y)
+    if (!is_head && (head->arch->tail_x || head->arch->tail_y)
     && (head->arch->tail_x != ob->arch->clone.x || head->arch->tail_y != ob->arch->clone.y)) {
         int bx, by, l;
 
