@@ -1159,13 +1159,14 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
     SockList_AddShort(sl, coord);
 
     for (layer = 0; layer < MAP_LAYERS; layer++) {
-        if (heads[(ay * MAX_HEAD_POS + ax) * MAP_LAYERS + layer]) {
+        object *head;
+
+        head = heads[(ay * MAX_HEAD_POS + ax) * MAP_LAYERS + layer];
+        if (head) {
             /* in this context, got_one should always increase
              * because heads should always point to data to really send.
              */
-            got_one += map2_add_ob(ax, ay, layer,
-                                   heads[(ay * MAX_HEAD_POS + ax) * MAP_LAYERS + layer],
-                                   sl, ns, &has_obj, 1);
+            got_one += map2_add_ob(ax, ay, layer, head, sl, ns, &has_obj, 1);
         } else {
             del_one += map2_delete_layer(ax, ay, layer, sl, ns);
         }
