@@ -1205,8 +1205,7 @@ void draw_client_map2(object *pl) {
     startlen = sl.len;
 
     /* Init data to zero */
-    memset(heads, 0,
-           sizeof(object *) * MAX_HEAD_POS * MAX_HEAD_POS * MAP_LAYERS);
+    memset(heads, 0, sizeof(heads));
 
     /* x,y are the real map locations.  ax, ay are viewport relative
      * locations.
@@ -1464,21 +1463,20 @@ void esrv_map_scroll(socket_struct *ns,int dx,int dy) {
         for (y=0; y<my; y++) {
             if (x >= ns->mapx || y >= ns->mapy) {
                 /* clear cells outside the viewable area */
-                memset(&newmap.cells[x][y], 0, sizeof(struct map_cell_struct));
+                memset(&newmap.cells[x][y], 0, sizeof(newmap.cells[x][y]));
             } else if ((x+dx) < 0 || (x+dx) >= ns->mapx ||
                        (y+dy) < 0 || (y + dy) >= ns->mapy) {
                 /* clear newly visible tiles within the viewable area */
-                memset(&(newmap.cells[x][y]), 0,
-                       sizeof(struct map_cell_struct));
+                memset(&(newmap.cells[x][y]), 0, sizeof(newmap.cells[x][y]));
             } else {
                 memcpy(&(newmap.cells[x][y]),
                        &(ns->lastmap.cells[x+dx][y+dy]),
-                       sizeof(struct map_cell_struct));
+                       sizeof(newmap.cells[x][y]));
             }
         }
     }
 
-    memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));
+    memcpy(&(ns->lastmap), &newmap,sizeof(ns->lastmap));
 }
 
 /**
