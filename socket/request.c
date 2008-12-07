@@ -1139,7 +1139,16 @@ static int map2_delete_layer(int ax, int ay, int layer, SockList *sl, socket_str
  * This function is used to check a space (ax, ay) whose only
  * data we may care about are any heads. Basically, this
  * space is out of direct view. This is only used with the
- * Map2 protocol
+ * Map2 protocol.
+ *
+ * @param ax
+ * viewport relative x-coordinate
+ * @param ay
+ * viewport relative y-coordinate
+ * @param sl
+ * the reply to append to
+ * @param ns
+ * the client socket
  */
 static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *ns) {
     int layer, got_one = 0, del_one = 0, oldlen, has_obj = 0;
