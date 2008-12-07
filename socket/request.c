@@ -1188,7 +1188,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
 }
 
 void draw_client_map2(object *pl) {
-    int x, y, ax, ay, d, max_x, max_y, oldlen, layer;
+    int x, y, ax, ay, d, min_x, max_x, min_y, max_y, oldlen, layer;
     size_t startlen;
     sint16 nx, ny;
     SockList sl;
@@ -1216,6 +1216,8 @@ void draw_client_map2(object *pl) {
     /* We could do this logic as conditionals in the if statement,
      * but that started to get a bit messy to look at.
      */
+    min_x = pl->x - pl->contr->socket.mapx / 2;
+    min_y = pl->y - pl->contr->socket.mapy / 2;
     max_x = pl->x + (pl->contr->socket.mapx + 1) / 2 + MAX_HEAD_OFFSET;
     max_y = pl->y + (pl->contr->socket.mapy + 1) / 2 + MAX_HEAD_OFFSET;
 
@@ -1223,9 +1225,9 @@ void draw_client_map2(object *pl) {
      * locations.
      */
     ay = 0;
-    for (y = pl->y - pl->contr->socket.mapy / 2; y < max_y; y++, ay++) {
+    for (y = min_y; y < max_y; y++, ay++) {
         ax = 0;
-        for (x = pl->x - pl->contr->socket.mapx / 2; x < max_x ; x++, ax++) {
+        for (x = min_x; x < max_x ; x++, ax++) {
 
             /* If this space is out of the normal viewable area,
              * we only check the heads value. This is used to
@@ -1372,6 +1374,7 @@ void draw_client_map(object *pl) {
     sint16 ax, ay;
     int mflags;
     mapstruct *m, *pm;
+    int min_x, min_y, max_x, max_y;
 
     if (pl->type != PLAYER) {
         LOG(llevError, "draw_client_map called with non player/non eric-server\n");
@@ -1394,8 +1397,12 @@ void draw_client_map(object *pl) {
      * This block just makes sure all the spaces are properly
      * updated in terms of what they look like.
      */
-    for (j = pl->y - pl->contr->socket.mapy / 2; j < pl->y + (pl->contr->socket.mapy + 1) / 2; j++) {
-        for (i = pl->x - pl->contr->socket.mapx / 2; i < pl->x + (pl->contr->socket.mapx + 1) / 2; i++) {
+    min_x = pl->x - pl->contr->socket.mapx / 2;
+    min_y = pl->y - pl->contr->socket.mapy / 2;
+    max_x = pl->x + (pl->contr->socket.mapx + 1) / 2;
+    max_y = pl->y + (pl->contr->socket.mapy + 1) / 2;
+    for (j = min_y; j < max_y; j++) {
+        for (i = min_x; i < max_x; i++) {
             ax = i;
             ay = j;
             m = pm;
