@@ -948,7 +948,7 @@ static void map_clearcell(struct map_cell_struct *cell, int face, int count) {
  * re-examined.
  */
 
-static object *heads[MAX_HEAD_POS * MAX_HEAD_POS * MAP_LAYERS];
+static object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
 
 /****************************************************************************
  * This block is for map2 drawing related commands.
@@ -1019,17 +1019,17 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         for (l = layer - 1; l <= layer + 1; l++) {
             if (l < 0 || l >= MAP_LAYERS)
                 continue;
-            if (heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + l] == head)
+            if (heads[by][bx][l] == head)
                 break;
         }
         /* Didn't find it.  So we need to store it away. Try to store it
          * on our original layer, and then move up a layer.
          */
         if (l == layer + 2) {
-            if (!heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer])
-                heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer] = head;
-            else if (layer + 1 <MAP_LAYERS && !heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1])
-                heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1] =head;
+            if (!heads[by][bx][layer])
+                heads[by][bx][layer] = head;
+            else if (layer + 1 < MAP_LAYERS && !heads[by][bx][layer + 1])
+                heads[by][bx][layer + 1] = head;
         }
         return 0;
         /* Ok - All done storing away the head for future use */
@@ -1161,7 +1161,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
     for (layer = 0; layer < MAP_LAYERS; layer++) {
         object *head;
 
-        head = heads[(ay * MAX_HEAD_POS + ax) * MAP_LAYERS + layer];
+        head = heads[ay][ax][layer];
         if (head) {
             /* in this context, got_one should always increase
              * because heads should always point to data to really send.
