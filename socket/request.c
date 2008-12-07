@@ -364,16 +364,16 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
     while (1) {
         /* 1. Extract an info*/
         info = nextinfo;
-        while ((info < len) && (buf[info] == ' '))
+        while (info < len && buf[info] == ' ')
             info++;
         if (info >= len)
             break;
         nextinfo = info + 1;
-        while ((nextinfo < len) && (buf[nextinfo] != ' '))
+        while (nextinfo < len && buf[nextinfo] != ' ')
             nextinfo++;
         if (nextinfo - info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &(buf[info]), nextinfo - info);
+        strncpy(command, &buf[info], nextinfo - info);
         command[nextinfo - info] = '\0';
         /* 2. Interpret info*/
         if (!strcmp("smooth", command)) {
@@ -403,20 +403,20 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
     while (1) {
         /* 1. Extract an info*/
         info = nextinfo;
-        while ((info < len) && (buf[info] == ' '))
+        while (info < len && buf[info] == ' ')
             info++;
         if (info >= len)
             break;
         nextinfo = info + 1;
-        while ((nextinfo < len) && (buf[nextinfo] != ' '))
+        while (nextinfo < len && buf[nextinfo] != ' ')
             nextinfo++;
         if (nextinfo - info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &(buf[info]), nextinfo - info);
+        strncpy(command, &buf[info], nextinfo - info);
         command[nextinfo - info] = '\0';
         /* 2. Interpret info*/
         i = sscanf(command, "%d", &flag);
-        if ((i == 1) && (flag > 0) && (flag <= MSG_TYPE_LAST))
+        if (i == 1 && flag > 0 && flag <= MSG_TYPE_LAST)
             ns->supported_readables |= (1 << flag);
         /*3. Next info*/
     }
@@ -445,8 +445,8 @@ static void send_smooth(socket_struct *ns, uint16 face) {
     /* If we can't find a face, return and set it so we won't
      * try to send this again.
      */
-    if ((!find_smooth(face, &smoothface))
-    && (!find_smooth(smooth_face->number, &smoothface))) {
+    if (!find_smooth(face, &smoothface)
+    && !find_smooth(smooth_face->number, &smoothface)) {
 
         LOG(llevError, "could not findsmooth for %d. Neither default (%s)\n", face, smooth_face->name);
         ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
@@ -506,7 +506,7 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     if (repeat != -1) {
         pl->count = repeat;
     }
-    if ((len - 4) >= MAX_BUF)
+    if (len - 4 >= MAX_BUF)
         len = MAX_BUF - 5;
 
     strncpy(command, (char*)buf + 6, len - 4);
@@ -990,7 +990,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
      * right corner. So we need to store away the lower right corner.
      */
     if (!is_head && head && (head->arch->tail_x || head->arch->tail_y)
-    && (head->arch->tail_x != ob->arch->clone.x || (head->arch->tail_y != ob->arch->clone.y))) {
+    && (head->arch->tail_x != ob->arch->clone.x || head->arch->tail_y != ob->arch->clone.y)) {
         int bx, by, l;
 
         /* Basically figure out where the offset is from where we
@@ -1025,10 +1025,10 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         /* Didn't find it.  So we need to store it away. Try to store it
          * on our original layer, and then move up a layer.
          */
-        if (l == (layer + 2)) {
+        if (l == layer + 2) {
             if (!heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer])
                 heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer] = head;
-            else if ((layer + 1) <MAP_LAYERS && !heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1])
+            else if (layer + 1 <MAP_LAYERS && !heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1])
                 heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1] =head;
         }
         return 0;
@@ -1223,9 +1223,9 @@ void draw_client_map2(object *pl) {
      * locations.
      */
     ay = 0;
-    for (y = (pl->y - pl->contr->socket.mapy / 2); y < max_y; y++, ay++) {
+    for (y = pl->y - pl->contr->socket.mapy / 2; y < max_y; y++, ay++) {
         ax = 0;
-        for (x = (pl->x - pl->contr->socket.mapx / 2); x < max_x ; x++, ax++) {
+        for (x = pl->x - pl->contr->socket.mapx / 2; x < max_x ; x++, ax++) {
 
             /* If this space is out of the normal viewable area,
              * we only check the heads value. This is used to
@@ -1394,8 +1394,8 @@ void draw_client_map(object *pl) {
      * This block just makes sure all the spaces are properly
      * updated in terms of what they look like.
      */
-    for (j = (pl->y - pl->contr->socket.mapy / 2); j < (pl->y + (pl->contr->socket.mapy + 1) / 2); j++) {
-        for (i = (pl->x - pl->contr->socket.mapx / 2); i < (pl->x + (pl->contr->socket.mapx + 1) / 2); i++) {
+    for (j = pl->y - pl->contr->socket.mapy / 2; j < pl->y + (pl->contr->socket.mapy + 1) / 2; j++) {
+        for (i = pl->x - pl->contr->socket.mapx / 2; i < pl->x + (pl->contr->socket.mapx + 1) / 2; i++) {
             ax = i;
             ay = j;
             m = pm;
@@ -1444,16 +1444,16 @@ void esrv_map_scroll(socket_struct *ns, int dx, int dy) {
             if (x >= ns->mapx || y >= ns->mapy) {
                 /* clear cells outside the viewable area */
                 memset(&newmap.cells[x][y], 0, sizeof(newmap.cells[x][y]));
-            } else if ((x + dx) < 0 || (x + dx) >= ns->mapx || (y + dy) < 0 || (y + dy) >= ns->mapy) {
+            } else if (x + dx < 0 || x + dx >= ns->mapx || y + dy < 0 || y + dy >= ns->mapy) {
                 /* clear newly visible tiles within the viewable area */
-                memset(&(newmap.cells[x][y]), 0, sizeof(newmap.cells[x][y]));
+                memset(&newmap.cells[x][y], 0, sizeof(newmap.cells[x][y]));
             } else {
-                memcpy(&(newmap.cells[x][y]), &(ns->lastmap.cells[x + dx][y + dy]), sizeof(newmap.cells[x][y]));
+                memcpy(&newmap.cells[x][y], &ns->lastmap.cells[x + dx][y + dy], sizeof(newmap.cells[x][y]));
             }
         }
     }
 
-    memcpy(&(ns->lastmap), &newmap, sizeof(ns->lastmap));
+    memcpy(&ns->lastmap, &newmap, sizeof(ns->lastmap));
 }
 
 /**
@@ -1755,7 +1755,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     client_spell *spell_info;
     int len, i, skill = 0;
 
-    if (!(spell->name)) {
+    if (!spell->name) {
         LOG(llevError, "item number %d is a spell with no name.\n", spell->count);
         return;
     }
@@ -1787,7 +1787,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     SockList_AddChar(sl, skill);
 
     SockList_AddInt(sl, spell->path_attuned);
-    SockList_AddInt(sl, (spell->face) ? spell->face->number : 0);
+    SockList_AddInt(sl, spell->face ? spell->face->number : 0);
     SockList_AddLen8Data(sl, spell->name, strlen(spell->name));
 
     if (!spell->msg) {
