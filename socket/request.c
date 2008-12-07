@@ -1033,7 +1033,6 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         }
         return 0;
         /* Ok - All done storing away the head for future use */
-
     } else {
         (*has_obj)++;
         if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC)
@@ -1235,7 +1234,6 @@ void draw_client_map2(object *pl) {
              */
             if (ax >= pl->contr->socket.mapx || ay >= pl->contr->socket.mapy) {
                 check_space_for_heads(ax, ay, &sl, &pl->contr->socket);
-
             } else {
                 /* This space is within the viewport of the client. Due
                  * to walls or darkness, it may still not be visible.
