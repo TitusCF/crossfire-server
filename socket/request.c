@@ -1154,8 +1154,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
     int layer, got_one = 0, del_one = 0, oldlen, has_obj = 0;
     uint16 coord;
 
-    coord = ((ax + MAP2_COORD_OFFSET) & 0x3f) << 10
-        | ((ay + MAP2_COORD_OFFSET)& 0x3f) << 4;
+    coord = MAP2_COORD_ENCODE(ax, ay, 0);
     oldlen = sl->len;
     SockList_AddShort(sl, coord);
 
@@ -1211,9 +1210,7 @@ void draw_client_map2(object *pl) {
 
     /* Handle map scroll */
     if (pl->contr->socket.map_scroll_x || pl->contr->socket.map_scroll_y) {
-        coord = ((pl->contr->socket.map_scroll_x + MAP2_COORD_OFFSET) & 0x3f) << 10
-              | ((pl->contr->socket.map_scroll_y + MAP2_COORD_OFFSET) & 0x3f) << 4
-              | 1;
+        coord = MAP2_COORD_ENCODE(pl->contr->socket.map_scroll_x, pl->contr->socket.map_scroll_y, 1);
         pl->contr->socket.map_scroll_x = 0;
         pl->contr->socket.map_scroll_y = 0;
         SockList_AddShort(&sl, coord);
@@ -1265,8 +1262,7 @@ void draw_client_map2(object *pl) {
                 nx = x;
                 ny = y;
                 m = get_map_from_coord(pl->map, &nx, &ny);
-                coord = ((ax + MAP2_COORD_OFFSET) & 0x3f) << 10
-                      | ((ay + MAP2_COORD_OFFSET) & 0x3f) << 4;
+                coord = MAP2_COORD_ENCODE(ax, ay, 0);
 
                 if (!m) {
                     /* space is out of map. Update space and clear

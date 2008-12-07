@@ -63,6 +63,16 @@
  */
 #define MAP2_COORD_OFFSET   15
 
+/**
+ * Encodes a (x, y) pair suitable for map2 parameters. The coordinates must be
+ * between [-MAP2_COORD_OFFSET..63-MAP2_COORD_OFFSET]. The flags value must be
+ * between [0..15].
+ *
+ * @param x the x-coordinate
+ * @param y the y-coordinate
+ * @param flags the flags value
+ */
+#define MAP2_COORD_ENCODE(x, y, flags) ((((x) + MAP2_COORD_OFFSET) & 0x3f) << 10 | (((y) + MAP2_COORD_OFFSET) & 0x3f) << 4 | (flags & 0x0f))
 
 #define CS_QUERY_YESNO  0x1     /**< Yes/no question. */
 #define CS_QUERY_SINGLECHAR 0x2 /**< Single character response expected. */
