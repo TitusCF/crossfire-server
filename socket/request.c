@@ -371,10 +371,10 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
         nextinfo = info + 1;
         while ((nextinfo < len) && (buf[nextinfo] != ' '))
             nextinfo++;
-        if (nextinfo-info >= 49) /*Erroneous info asked*/
+        if (nextinfo - info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &(buf[info]), nextinfo-info);
-        command[nextinfo-info] = '\0';
+        strncpy(command, &(buf[info]), nextinfo - info);
+        command[nextinfo - info] = '\0';
         /* 2. Interpret info*/
         if (!strcmp("smooth", command)) {
             /* Toggle smoothing*/
@@ -403,16 +403,17 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
     while (1) {
         /* 1. Extract an info*/
         info = nextinfo;
-        while ((info < len) && (buf[info] == ' ')) info++;
+        while ((info < len) && (buf[info] == ' '))
+            info++;
         if (info >= len)
             break;
         nextinfo = info + 1;
         while ((nextinfo < len) && (buf[nextinfo] != ' '))
             nextinfo++;
-        if (nextinfo-info >= 49) /*Erroneous info asked*/
+        if (nextinfo - info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &(buf[info]), nextinfo-info);
-        command[nextinfo-info] = '\0';
+        strncpy(command, &(buf[info]), nextinfo - info);
+        command[nextinfo - info] = '\0';
         /* 2. Interpret info*/
         i = sscanf(command, "%d", &flag);
         if ((i == 1) && (flag > 0) && (flag <= MSG_TYPE_LAST))
@@ -502,10 +503,10 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     packet = GetShort_String(buf);
     repeat = GetInt_String(buf + 2);
     /* -1 is special - no repeat, but don't update */
-    if (repeat!=-1) {
+    if (repeat != -1) {
         pl->count = repeat;
     }
-    if ((len-4) >= MAX_BUF)
+    if ((len - 4) >= MAX_BUF)
         len = MAX_BUF - 5;
 
     strncpy(command, (char*)buf + 6, len - 4);
@@ -1015,7 +1016,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
          * layer as the layers are defined. We are basically checking
          * to see if we have already stored this object away.
          */
-        for (l = layer - 1; l <= layer+1; l++) {
+        for (l = layer - 1; l <= layer + 1; l++) {
             if (l < 0 || l >= MAP_LAYERS)
                 continue;
             if (heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + l] == head)
@@ -1024,7 +1025,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         /* Didn't find it.  So we need to store it away. Try to store it
          * on our original layer, and then move up a layer.
          */
-        if (l == (layer+2)) {
+        if (l == (layer + 2)) {
             if (!heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer])
                 heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer] = head;
             else if ((layer + 1) <MAP_LAYERS && !heads[(by * MAX_HEAD_POS + bx) * MAP_LAYERS + layer + 1])
@@ -1304,7 +1305,7 @@ void draw_client_map2(object *pl) {
                         pl->contr->socket.lastmap.cells[ax][ay].darkness = d;
                         /* Darkness tag & length*/
                         SockList_AddChar(&sl, 0x1 | 1 << 5);
-                        SockList_AddChar(&sl, 255 - d * (256/MAX_LIGHT_RADII));
+                        SockList_AddChar(&sl, 255 - d * (256 / MAX_LIGHT_RADII));
                         have_darkness = 1;
                     }
 
@@ -1396,8 +1397,8 @@ void draw_client_map(object *pl) {
      * This block just makes sure all the spaces are properly
      * updated in terms of what they look like.
      */
-    for (j = (pl->y - pl->contr->socket.mapy/2); j < (pl->y + (pl->contr->socket.mapy+1)/2); j++) {
-        for (i = (pl->x - pl->contr->socket.mapx/2); i < (pl->x + (pl->contr->socket.mapx+1)/2); i++) {
+    for (j = (pl->y - pl->contr->socket.mapy / 2); j < (pl->y + (pl->contr->socket.mapy + 1) / 2); j++) {
+        for (i = (pl->x - pl->contr->socket.mapx / 2); i < (pl->x + (pl->contr->socket.mapx + 1) / 2); i++) {
             ax = i;
             ay = j;
             m = pm;
@@ -1482,7 +1483,7 @@ void send_exp_table(socket_struct *ns, char *params) {
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo exp_table\n");
-    SockList_AddShort(&sl, settings.max_level+1);
+    SockList_AddShort(&sl, settings.max_level + 1);
     for (i = 1; i <= settings.max_level; i++) {
         if (SockList_Avail(&sl) < 8) {
             LOG(llevError, "Buffer overflow in send_exp_table, not sending all information\n");
@@ -1507,7 +1508,7 @@ void send_skill_info(socket_struct *ns, char *params) {
     for (i = 1; i < NUM_SKILLS; i++) {
         size_t len;
 
-        len = 16+strlen(skill_names[i]); /* upper bound for length */
+        len = 16 + strlen(skill_names[i]); /* upper bound for length */
         if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_skill_info, not sending all skill information\n");
             break;
@@ -1532,7 +1533,7 @@ void send_spell_paths(socket_struct *ns, char *params) {
     for (i = 0; i < NRSPELLPATHS; i++) {
         size_t len;
 
-        len = 16+strlen(spellpathnames[i]); /* upper bound for length */
+        len = 16 + strlen(spellpathnames[i]); /* upper bound for length */
         if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_spell_paths, not sending all spell information\n");
             break;
@@ -1696,7 +1697,7 @@ void esrv_update_spells(player *pl) {
                 flags |= UPD_SP_GRACE;
             }
             if (spell_info->last_dam != spell->stats.dam + SP_level_dam_adjust(pl->ob, spell)) {
-                spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+                spell_info->last_dam = spell->stats.dam + SP_level_dam_adjust(pl->ob, spell);
                 flags |= UPD_SP_DAMAGE;
             }
             if (flags != 0) {
@@ -1772,7 +1773,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     /* store costs and damage in the object struct, to compare to later */
     spell_info->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
     spell_info->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
-    spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
+    spell_info->last_dam = spell->stats.dam + SP_level_dam_adjust(pl->ob, spell);
     /* send the current values */
     SockList_AddShort(sl, spell_info->last_sp);
     SockList_AddShort(sl, spell_info->last_grace);
@@ -1782,7 +1783,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     if (spell->skill) {
         for (i = 1; i < NUM_SKILLS; i++)
             if (!strcmp(spell->skill, skill_names[i])) {
-                skill = i+CS_STAT_SKILLINFO;
+                skill = i + CS_STAT_SKILLINFO;
                 break;
             }
     }
