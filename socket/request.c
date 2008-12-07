@@ -1201,20 +1201,6 @@ void draw_client_map2(object *pl) {
     SockList_AddString(&sl, "map2 ");
     startlen = sl.len;
 
-    /* Init data to zero */
-    memset(heads, 0, sizeof(heads));
-
-    /* x, y are the real map locations. ax, ay are viewport relative
-     * locations.
-     */
-    ay = 0;
-
-    /* We could do this logic as conditionals in the if statement,
-     * but that started to get a bit messy to look at.
-     */
-    max_x = pl->x + (pl->contr->socket.mapx + 1) / 2 + MAX_HEAD_OFFSET;
-    max_y = pl->y + (pl->contr->socket.mapy + 1) / 2 + MAX_HEAD_OFFSET;
-
     /* Handle map scroll */
     if (pl->contr->socket.map_scroll_x || pl->contr->socket.map_scroll_y) {
         coord = ((pl->contr->socket.map_scroll_x + MAP2_COORD_OFFSET) & 0x3f) << 10
@@ -1225,6 +1211,19 @@ void draw_client_map2(object *pl) {
         SockList_AddShort(&sl, coord);
     }
 
+    /* Init data to zero */
+    memset(heads, 0, sizeof(heads));
+
+    /* We could do this logic as conditionals in the if statement,
+     * but that started to get a bit messy to look at.
+     */
+    max_x = pl->x + (pl->contr->socket.mapx + 1) / 2 + MAX_HEAD_OFFSET;
+    max_y = pl->y + (pl->contr->socket.mapy + 1) / 2 + MAX_HEAD_OFFSET;
+
+    /* x, y are the real map locations. ax, ay are viewport relative
+     * locations.
+     */
+    ay = 0;
     for (y = (pl->y - pl->contr->socket.mapy / 2); y < max_y; y++, ay++) {
         ax = 0;
         for (x = (pl->x - pl->contr->socket.mapx / 2); x < max_x ; x++, ax++) {
