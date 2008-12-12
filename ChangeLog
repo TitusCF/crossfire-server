@@ -14,6 +14,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+doc/Developers/objects, lib/artifacts: Remove obsolete fields color_fg and
+ color_bg.
 lib/adm/map_info: Remove support for color_fg/color_bg fields.
 Andreas Kirschbaum 2008-12-12
 

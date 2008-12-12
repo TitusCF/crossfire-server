@@ -1637,7 +1637,6 @@ Allowed all
 chance 33
 Object Ice
 face ring.117
-#color_fg light_blue
 type 70
 value 30
 resist_cold 30
@@ -1658,7 +1657,6 @@ Allowed all
 chance 28
 Object Fire
 face ring.117
-#color_fg red
 type 70
 value 35
 resist_fire 30

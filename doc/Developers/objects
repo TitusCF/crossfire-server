@@ -2182,8 +2182,6 @@ undead <1>              set if O is undead.
 scared <1>              internal (O is running away from players right now)
 unaggressive <1>        internal (not used yet)
 
-color_fg <no>           foreground color of O. Remember to set face/anim first!
-color_bg <no>           background -"-         - "" -
 reflect_missile <1>     set if O throws back missiles.
 reflect_spell <1>       set if O throws back spells (some).
 no_magic <1>            set if O totally resists magic (*use with care*)
