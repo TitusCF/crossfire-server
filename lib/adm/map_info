@@ -226,11 +226,6 @@ sub check_obj {
 #	print "  Warning: ring/amulet found ($x,$y:$parent), should be random_talisman?\n";
     }
     $objects{$1}++;
-    if (/^color_fg (\S+)$/ || /^color_bg (\S+)$/) {
-	$last = $arch;
-	if ($printmap) { print "$mapname"; $printmap=0;}
-	print "  Warning:  Object ".$arch." is setting color ($1), $x,$y\n";
-    }
     if (/^animation (\S+)$/) {
 	if (! $anim{$1}) {
 	    if ($printmap) { print "$mapname"; $printmap=0;}
