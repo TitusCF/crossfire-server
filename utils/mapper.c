@@ -3591,6 +3591,7 @@ int main(int argc, char** argv)
 {
     int current_map = 0, i;
     char max[50];
+    region* dummy;
 
     init_map_list(&maps_list);
     init_map_list(&tiled_map_list);
@@ -3613,6 +3614,15 @@ int main(int argc, char** argv)
 
     init_gods();
     read_client_images();
+
+    //Add a dummy region so unlinked maps can be identified
+    dummy = get_region_struct();
+    dummy->fallback = 1;
+    dummy->name = add_string("unlinked");
+    dummy->longname = add_string("This dummy region contains all maps without a region set.");
+    dummy->longname = add_string("This dummy region contains all maps without a region set.");
+    dummy->next = first_region;
+    first_region = dummy;
 
     printf("\n\n done.\n\n");
 
