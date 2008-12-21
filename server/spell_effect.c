@@ -352,7 +352,7 @@ static void polymorph_item(object *who, object *op, int level) {
             new_ob->nrof -= rndm(0, op->nrof/2-1);
     }
 
-    /* We don't want rings to keep sustenance/hungry status. There are propably
+    /* We don't want rings to keep sustenance/hungry status. There are probably
      *  other cases too that should be checked.
      */
     if (charges && op->type != RING && op->type != FOOD)
