@@ -3,7 +3,6 @@
  *   "$Id$";
  */
 
-
 /**
  * @file re-cmp.c
  * Pattern match a string, parsing some of the common RE-metacharacters.
@@ -14,8 +13,8 @@
  * Deliberate BUGS:
  *    - These tokens are not supported: | ( )
  *    - You will get the longest expansion of the _first_ string which
- *	matches the RE, not the longest string which would be the proper
- *	behaviour for a RE-matcher.
+ *      matches the RE, not the longest string which would be the proper
+ *      behaviour for a RE-matcher.
  *
  * Author: Kjetil T. Homme (kjetilho@ifi.uio.no) May 1993
  */
@@ -35,7 +34,6 @@
 #  include <sys/time.h>
 #  include "sunos.h"   /* Prototypes for standard libraries, sunos lack those */
 #endif
-
 
 /*   P r o t o t y p e s
  */
@@ -106,44 +104,50 @@ const char *re_cmp(const char *str, const char *regexp) {
      */
     if (once) {
         switch (re_token[0]->repeat) {
-            case rep_once:
-                if (matched == False)
-                    return NULL;
-                break;
-            case rep_once_or_more:
-                if (matched == False)
-                    return NULL;
+        case rep_once:
+            if (matched == False)
+                return NULL;
+            break;
 
+        case rep_once_or_more:
+            if (matched == False)
+                return NULL;
+
+            if (re_cmp_step(str+1, regexp, 0, 1))
+                return str;
+            break;
+
+        case rep_null_or_once:
+            if (matched == False)
+                return re_cmp_step(str, next_regexp, 1, 0) ? str : NULL;
+            break;
+
+        case rep_null_or_more:
+            if (matched) {
                 if (re_cmp_step(str+1, regexp, 0, 1))
                     return str;
-                break;
-            case rep_null_or_once:
-                if (matched == False)
-                    return re_cmp_step(str, next_regexp, 1, 0) ? str : NULL;
-                break;
-            case rep_null_or_more:
-                if (matched) {
-                    if (re_cmp_step(str+1, regexp, 0, 1))
-                        return str;
-                } else {
-                    return re_cmp_step(str, next_regexp, 1, 0) ? str : NULL;
-                }
-                break;
+            } else {
+                return re_cmp_step(str, next_regexp, 1, 0) ? str : NULL;
+            }
+            break;
         }
+
         return re_cmp_step(str+1, next_regexp, 1, 0) ? str : NULL;
     }
 
     if (matched) {
         switch (re_token[0]->repeat) {
-            case rep_once:
-            case rep_null_or_once:
-                break;
-            case rep_once_or_more:
-            case rep_null_or_more:
-                if (re_cmp_step(str+1, regexp, 0, 1))
-                    return str;
-                break;
+        case rep_once:
+        case rep_null_or_once:
+            break;
+
+        case rep_once_or_more:
+        case rep_null_or_more:
+            if (re_cmp_step(str+1, regexp, 0, 1))
+                return str;
+            break;
         }
+
         /* The logic here is that re_match_token only sees
          * if the one letter matches.  Thus, if the
          * regex is like '@match eureca', and the
@@ -203,7 +207,7 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
     if (slot > re_token_depth) {
         re_token_depth = slot;
         if (re_token[slot] == NULL)
-            re_token[slot] = (selection *) malloc(sizeof(selection));
+            re_token[slot] = (selection *)malloc(sizeof(selection));
         next_regexp = re_get_token(re_token[slot], regexp);
         if (next_regexp == NULL) {
             /* Syntax error, what else can we do? */
@@ -222,36 +226,40 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
         return (*next_regexp == 0 || re_token[slot]->type == sel_end) && matched;
 
     switch (re_token[slot]->repeat) {
-        case rep_once:
-            if (matches == 1) { /* (matches == 1) => (matched == True) */
-                return re_cmp_step(str+1, next_regexp, slot+1, 0);
-            }
-            return False;
-        case rep_once_or_more:
-            if (matched) { /* (matched == True) => (matches >= 1) */
-                /* First check if the current token repeats more */
-                if (re_cmp_step(str+1, regexp, slot, matches))
-                    return True;
-                return re_cmp_step(str+1, next_regexp, slot+1, 0);
-            }
-            return False;
-        case rep_null_or_once:
-            /* We must go on to the next token, but should we advance str? */
-            if (matches == 0) {
-                return re_cmp_step(str, next_regexp, slot+1, 0);
-            } else if (matches == 1) {
-                return re_cmp_step(str+1, next_regexp, slot+1, 0);
-            }
-            return False; /* Not reached */
-        case rep_null_or_more:
-            if (matched) {
-                /* Look for further repeats, advance str */
-                if (re_cmp_step(str+1, regexp, slot, matches))
-                    return True;
-                return re_cmp_step(str, next_regexp, slot+1, 0);
-            }
+    case rep_once:
+        if (matches == 1) { /* (matches == 1) => (matched == True) */
+            return re_cmp_step(str+1, next_regexp, slot+1, 0);
+        }
+        return False;
+
+    case rep_once_or_more:
+        if (matched) { /* (matched == True) => (matches >= 1) */
+            /* First check if the current token repeats more */
+            if (re_cmp_step(str+1, regexp, slot, matches))
+                return True;
+            return re_cmp_step(str+1, next_regexp, slot+1, 0);
+        }
+        return False;
+
+    case rep_null_or_once:
+        /* We must go on to the next token, but should we advance str? */
+        if (matches == 0) {
             return re_cmp_step(str, next_regexp, slot+1, 0);
+            } else if (matches == 1) {
+            return re_cmp_step(str+1, next_regexp, slot+1, 0);
+        }
+        return False; /* Not reached */
+
+    case rep_null_or_more:
+        if (matched) {
+            /* Look for further repeats, advance str */
+            if (re_cmp_step(str+1, regexp, slot, matches))
+                return True;
+            return re_cmp_step(str, next_regexp, slot+1, 0);
+        }
+        return re_cmp_step(str, next_regexp, slot+1, 0);
     }
+
     return False;
 }
 
@@ -264,7 +272,7 @@ static Boolean re_cmp_step(const char *str, const char *regexp, unsigned slot, i
 static void re_init(void) {
     int i;
 
-    re_token[0] = (selection *) malloc(sizeof(selection));
+    re_token[0] = (selection *)malloc(sizeof(selection));
     if (re_token[0] == NULL)
         fatal(OUT_OF_MEMORY);
     for (i = 1; i < RE_TOKEN_MAX; i++)
@@ -285,21 +293,28 @@ static void re_init(void) {
  */
 static Boolean re_match_token(uchar c, selection *sel) {
     switch (sel->type) {
-        case sel_any:
-            return True;
-        case sel_end:
-            return (c == 0);
-        case sel_single:
-            return (tolower(c) == tolower(sel->u.single));
-        case sel_range:
-            return (c >= sel->u.range.low && c <= sel->u.range.high);
-        case sel_array:
-            return (sel->u.array[c]);
-        case sel_not_single:
-            return (tolower(c) != tolower(sel->u.single));
-        case sel_not_range:
-            return (c < sel->u.range.low && c > sel->u.range.high);
+    case sel_any:
+        return True;
+
+    case sel_end:
+        return (c == 0);
+
+    case sel_single:
+        return (tolower(c) == tolower(sel->u.single));
+
+    case sel_range:
+        return (c >= sel->u.range.low && c <= sel->u.range.high);
+
+    case sel_array:
+        return (sel->u.array[c]);
+
+    case sel_not_single:
+        return (tolower(c) != tolower(sel->u.single));
+
+    case sel_not_range:
+        return (c < sel->u.range.low && c > sel->u.range.high);
     }
+
     return False;
 }
 
@@ -315,13 +330,11 @@ static Boolean re_match_token(uchar c, selection *sel) {
  * @li pointer to first character past token.
  */
 static const char *re_get_token(selection *sel, const char *regexp) {
-
 #ifdef SAFE_CHECKS
 #   define exit_if_null if (*regexp == 0) return NULL
 #else
 #   define exit_if_null
 #endif
-
     Boolean quoted = False;
     uchar looking_at;
 
@@ -333,159 +346,163 @@ static const char *re_get_token(selection *sel, const char *regexp) {
     do {
         looking_at = *regexp++;
         switch (looking_at) {
-            case '$':
-                if (quoted) {
-                    quoted = False;
-                    sel->type = sel_single;
-                    sel->u.single = looking_at;
-                } else {
-                    sel->type = sel_end;
-                }
-                break;
-            case '.':
-                if (quoted) {
-                    quoted = False;
-                    sel->type = sel_single;
-                    sel->u.single = looking_at;
-                } else {
-                    sel->type = sel_any;
-                }
-                break;
-            case '[':
-                /* The fun stuff... perhaps a little obfuscated since I
-                * don't trust the compiler to analyse liveness.
-                */
-                if (quoted) {
-                    quoted = False;
-                    sel->type = sel_single;
-                    sel->u.single = looking_at;
-                } else {
-                    Boolean neg = False;
-                    uchar first, last = 0;
+        case '$':
+            if (quoted) {
+                quoted = False;
+                sel->type = sel_single;
+                sel->u.single = looking_at;
+            } else {
+                sel->type = sel_end;
+            }
+            break;
 
+        case '.':
+            if (quoted) {
+                quoted = False;
+                sel->type = sel_single;
+                sel->u.single = looking_at;
+            } else {
+                sel->type = sel_any;
+            }
+            break;
+
+        case '[':
+            /* The fun stuff... perhaps a little obfuscated since I
+             * don't trust the compiler to analyse liveness.
+             */
+            if (quoted) {
+                quoted = False;
+                sel->type = sel_single;
+                sel->u.single = looking_at;
+            } else {
+                Boolean neg = False;
+                uchar first, last = 0;
+
+                exit_if_null;
+                looking_at = *regexp++;
+
+                if (looking_at == '^') {
+                    neg = True;
                     exit_if_null;
                     looking_at = *regexp++;
-
-                    if (looking_at == '^') {
-                        neg = True;
-                        exit_if_null;
-                        looking_at = *regexp++;
-                    }
-                    first = looking_at;
+                }
+                first = looking_at;
+                exit_if_null;
+                looking_at = *regexp++;
+                if (looking_at == ']') {
+                    /* On the form [q] or [^q] */
+                    sel->type = neg ? sel_not_single : sel_single;
+                    sel->u.single = first;
+                    break;
+                } else if (looking_at == '-') {
                     exit_if_null;
-                    looking_at = *regexp++;
-                    if (looking_at == ']') {
-                        /* On the form [q] or [^q] */
-                        sel->type = neg ? sel_not_single : sel_single;
-                        sel->u.single = first;
-                        break;
-                    } else if (looking_at == '-') {
-                        exit_if_null;
-                        last = *regexp++;
-                        if (last == ']') {
-                            /* On the form [A-] or [^A-]. Checking for
-                             * [,-] and making it a range is probably not
-                             * worth it :-)
-                             */
-                            sel->type = sel_array;
-                            memset(sel->u.array, neg, sizeof(sel->u.array));
-                            sel->u.array[first] = sel->u.array['-'] = !neg;
-                            break;
-                        } else {
-                            exit_if_null;
-                            looking_at = *regexp++;
-                            if (looking_at == ']') {
-                                /* On the form [A-G] or [^A-G]. Note that [G-A]
-                                 * is a syntax error. Fair enough, I think.
-                                 */
-#ifdef SAFE_CHECK
-                                if (first > last)
-                                    return NULL;
-#endif
-                                sel->type = neg ? sel_not_range : sel_range;
-                                sel->u.range.low = first;
-                                sel->u.range.high = last;
-                                break;
-                            }
-                        }
-                    }
-                    {
-                        /* The datastructure can only represent a RE this
-                         * complex with an array.
+                    last = *regexp++;
+                    if (last == ']') {
+                        /* On the form [A-] or [^A-]. Checking for
+                         * [,-] and making it a range is probably not
+                         * worth it :-)
                          */
-                        int i;
-                        uchar previous;
-
                         sel->type = sel_array;
                         memset(sel->u.array, neg, sizeof(sel->u.array));
-                        if (last) {
-                            /* It starts with a range */
+                        sel->u.array[first] = sel->u.array['-'] = !neg;
+                        break;
+                    } else {
+                        exit_if_null;
+                        looking_at = *regexp++;
+                        if (looking_at == ']') {
+                            /* On the form [A-G] or [^A-G]. Note that [G-A]
+                             * is a syntax error. Fair enough, I think.
+                             */
 #ifdef SAFE_CHECK
                             if (first > last)
                                 return NULL;
 #endif
-                            for (i = first; i <= last; i++) {
-                                sel->u.array[i] = !neg;
-                            }
-                        } else {
-                            /* It begins with a "random" character */
-                            sel->u.array[first] = !neg;
-                        }
-                        sel->u.array[looking_at] = !neg;
-
-                        exit_if_null;
-                        previous = looking_at;
-                        looking_at = *regexp++;
-
-                        /* Add more characters to the array until we reach
-                         * ]. Quoting doesn't and shouldn't work in here.
-                         * ("]" should be put first, and "-" last if they
-                         * are needed inside this construct.)
-                         * Look for ranges as we go along.
-                         */
-                        while (looking_at != ']') {
-                            if (looking_at == '-') {
-                                exit_if_null;
-                                looking_at = *regexp++;
-                                if (looking_at != ']') {
-#ifdef SAFE_CHECK
-                                    if (previous > looking_at)
-                                        return NULL;
-#endif
-                                    for (i = previous+1; i < looking_at; i++) {
-                                        /* previous has already been set and
-                                         * looking_at is set below.
-                                         */
-                                        sel->u.array[i] = !neg;
-                                    }
-                                    exit_if_null;
-                                } else {
-                                    sel->u.array['-'] = !neg;
-                                    break;
-                                }
-                            }
-                            sel->u.array[looking_at] = !neg;
-                            previous = looking_at;
-                            exit_if_null;
-                            looking_at = *regexp++;
+                            sel->type = neg ? sel_not_range : sel_range;
+                            sel->u.range.low = first;
+                            sel->u.range.high = last;
+                            break;
                         }
                     }
                 }
-                break;
-            case '\\':
-                if (quoted) {
-                    quoted = False;
-                    sel->type = sel_single;
-                    sel->u.single = looking_at;
-                } else {
-                    quoted = True;
+                {
+                    /* The datastructure can only represent a RE this
+                     * complex with an array.
+                     */
+                    int i;
+                    uchar previous;
+
+                    sel->type = sel_array;
+                    memset(sel->u.array, neg, sizeof(sel->u.array));
+                    if (last) {
+                        /* It starts with a range */
+#ifdef SAFE_CHECK
+                        if (first > last)
+                            return NULL;
+#endif
+                        for (i = first; i <= last; i++) {
+                            sel->u.array[i] = !neg;
+                        }
+                    } else {
+                        /* It begins with a "random" character */
+                        sel->u.array[first] = !neg;
+                    }
+                    sel->u.array[looking_at] = !neg;
+
+                    exit_if_null;
+                    previous = looking_at;
+                    looking_at = *regexp++;
+
+                    /* Add more characters to the array until we reach
+                     * ]. Quoting doesn't and shouldn't work in here.
+                     * ("]" should be put first, and "-" last if they
+                     * are needed inside this construct.)
+                     * Look for ranges as we go along.
+                     */
+                    while (looking_at != ']') {
+                        if (looking_at == '-') {
+                            exit_if_null;
+                            looking_at = *regexp++;
+                            if (looking_at != ']') {
+#ifdef SAFE_CHECK
+                                if (previous > looking_at)
+                                    return NULL;
+#endif
+                                for (i = previous+1; i < looking_at; i++) {
+                                    /* previous has already been set and
+                                     * looking_at is set below.
+                                     */
+                                    sel->u.array[i] = !neg;
+                                }
+                                exit_if_null;
+                            } else {
+                                sel->u.array['-'] = !neg;
+                                break;
+                            }
+                        }
+                        sel->u.array[looking_at] = !neg;
+                        previous = looking_at;
+                        exit_if_null;
+                        looking_at = *regexp++;
+                    }
                 }
-                break;
-            default:
+            }
+            break;
+
+        case '\\':
+            if (quoted) {
                 quoted = False;
                 sel->type = sel_single;
                 sel->u.single = looking_at;
-                break;
+            } else {
+                quoted = True;
+            }
+            break;
+
+        default:
+            quoted = False;
+            sel->type = sel_single;
+            sel->u.single = looking_at;
+            break;
         }
     } while (quoted);
 
@@ -516,19 +533,23 @@ static const char *re_get_token(selection *sel, const char *regexp) {
  */
 static void re_dump_sel(selection *sel) {
     switch (sel->type) {
-        case sel_any:
-            printf(".");
-            break;
-        case sel_end:
-            printf("$");
-            break;
-        case sel_single:
-            printf("<%c>", sel->u.single);
-            break;
-        case sel_range:
-            printf("[%c-%c]", sel->u.range.low, sel->u.range.high);
-            break;
-        case sel_array: {
+    case sel_any:
+        printf(".");
+        break;
+
+    case sel_end:
+        printf("$");
+        break;
+
+    case sel_single:
+        printf("<%c>", sel->u.single);
+        break;
+
+    case sel_range:
+        printf("[%c-%c]", sel->u.range.low, sel->u.range.high);
+        break;
+
+    case sel_array: {
             int i;
             printf("[");
             for (i = 0; i < UCHAR_MAX; i++) {
@@ -539,31 +560,39 @@ static void re_dump_sel(selection *sel) {
             printf("]");
         }
         break;
-        case sel_not_single:
-            printf("[^%c]", sel->u.single);
-            break;
-        case sel_not_range:
-            printf("[^%c-%c]", sel->u.range.low, sel->u.range.high);
-            break;
-        default:
-            printf("<UNKNOWN TOKEN!>");
-            break;
+
+    case sel_not_single:
+        printf("[^%c]", sel->u.single);
+        break;
+
+    case sel_not_range:
+        printf("[^%c-%c]", sel->u.range.low, sel->u.range.high);
+        break;
+
+    default:
+        printf("<UNKNOWN TOKEN!>");
+        break;
     }
+
     switch (sel->repeat) {
-        case rep_once:
-            break;
-        case rep_null_or_once:
-            printf("?");
-            break;
-        case rep_null_or_more:
-            printf("*");
-            break;
-        case rep_once_or_more:
-            printf("+");
-            break;
-        default:
-            printf("<UNKNOWN REP-TOKEN!>");
-            break;
+    case rep_once:
+        break;
+
+    case rep_null_or_once:
+        printf("?");
+        break;
+
+    case rep_null_or_more:
+        printf("*");
+        break;
+
+    case rep_once_or_more:
+        printf("+");
+        break;
+
+    default:
+        printf("<UNKNOWN REP-TOKEN!>");
+        break;
     }
 }
 

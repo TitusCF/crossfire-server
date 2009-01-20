@@ -53,7 +53,6 @@
 #include <autoconf.h>
 #endif
 
-
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
@@ -87,7 +86,7 @@ static unsigned int curtmp = 0;
  */
 char *tempnam_local(const char *dir, const char *pfx) {
     char *name;
-    pid_t pid=getpid();
+    pid_t pid = getpid();
 
 /* HURD does not have a hard limit, but we do */
 #ifndef MAXPATHLEN
@@ -102,17 +101,17 @@ char *tempnam_local(const char *dir, const char *pfx) {
      * already exists - if so, we'll just keep looking - eventually we should
      * find one that is free.
      */
-    if (dir!=NULL) {
-        if (!(name = (char *) malloc(MAXPATHLEN)))
+    if (dir != NULL) {
+        if (!(name = (char *)malloc(MAXPATHLEN)))
             return(NULL);
         do {
 #ifdef HAVE_SNPRINTF
             (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", dir, pfx, pid, curtmp);
 #else
-            (void)sprintf(name,"%s/%s%hx%d", dir, pfx, pid, curtmp);
+            (void)sprintf(name, "%s/%s%hx%d", dir, pfx, pid, curtmp);
 #endif
             curtmp++;
-        } while (access(name, F_OK)!=-1);
+        } while (access(name, F_OK) != -1);
         return(name);
     }
     return(NULL);
@@ -147,35 +146,35 @@ FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
     int i;
     FILE *file = NULL;
 #define MAXTMPRETRY 10
+
     /* Limit number of retries to MAXRETRY */
-    for (i=0; i < MAXTMPRETRY; i++) {
-        tempname=tempnam_local(dir, pfx);
+    for (i = 0; i < MAXTMPRETRY; i++) {
+        tempname = tempnam_local(dir, pfx);
         /* tempnam_local only fails for really bad stuff, so lets bail out right
          * away then.
          */
         if (!tempname)
             return NULL;
 
-        fd=open(tempname, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR);
+        fd=open(tempname, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
         if (fd != -1)
             break;
         if (errno == EEXIST)
-            LOG(llevError,
-                "Created file detected in tempnam_secure. Someone hoping for a race condition?\n");
+            LOG(llevError, "Created file detected in tempnam_secure. Someone hoping for a race condition?\n");
         free(tempname);
     }
     /* Check that we successfully got an fd. */
     if (fd == -1)
         return NULL;
 
-    file=fdopen(fd, "w+");
+    file = fdopen(fd, "w+");
     if (!file) {
         LOG(llevError, "fdopen() failed in tempnam_secure()!\n");
         free(tempname);
         return NULL;
     }
 
-    *filename=tempname;
+    *filename = tempname;
     return file;
 }
 
@@ -196,34 +195,35 @@ void remove_directory(const char *path) {
     struct stat statbuf;
     int status;
 
-    if ((dirp=opendir(path))!=NULL) {
+    if ((dirp = opendir(path)) != NULL) {
         struct dirent *de;
 
-        for (de=readdir(dirp); de; de = readdir(dirp)) {
+        for (de = readdir(dirp); de; de = readdir(dirp)) {
             /* Don't remove '.' or '..'  In  theory we should do a better
              * check for .., but the directories we are removing are fairly
              * limited and should not have dot files in them.
              */
-            if (de->d_name[0] == '.') continue;
+            if (de->d_name[0] == '.')
+                continue;
 
             /* Linux actually has a type field in the dirent structure,
              * but that is not portable - stat should be portable
              */
-            status=stat(de->d_name, &statbuf);
-            if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+            status = stat(de->d_name, &statbuf);
+            if ((status != -1) && (S_ISDIR(statbuf.st_mode))) {
                 snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
                 remove_directory(buf);
                 continue;
             }
             snprintf(buf, sizeof(buf), "%s/%s", path, de->d_name);
             if (unlink(buf)) {
-                LOG(llevError,"Unable to remove %s\n", path);
+                LOG(llevError, "Unable to remove %s\n", path);
             }
         }
         closedir(dirp);
     }
     if (rmdir(path)) {
-        LOG(llevError,"Unable to remove directory %s\n", path);
+        LOG(llevError, "Unable to remove directory %s\n", path);
     }
 }
 
@@ -251,40 +251,42 @@ void remove_directory(const char *path) {
  * is this actually used?
  */
 FILE *popen_local(const char *command, const char *type) {
-    int     fd[2];
-    int     pd;
-    FILE    *ret;
-    if (!strcmp(type,"r")) {
-        pd=STDOUT_FILENO;
-    } else if (!strcmp(type,"w")) {
-        pd=STDIN_FILENO;
+    int fd[2];
+    int pd;
+    FILE *ret;
+    if (!strcmp(type, "r")) {
+        pd = STDOUT_FILENO;
+    } else if (!strcmp(type, "w")) {
+        pd = STDIN_FILENO;
     } else {
         return NULL;
     }
-    if (pipe(fd)!=-1) {
+    if (pipe(fd) != -1) {
         switch (fork()) {
-            case -1:
-                close(fd[0]);
-                close(fd[1]);
-                break;
-            case 0:
-                close(fd[0]);
-                if ((fd[1]==pd)||(dup2(fd[1],pd)==pd)) {
-                    if (fd[1]!=pd) {
-                        close(fd[1]);
-                    }
-                    execl("/bin/sh","sh","-c",command,NULL);
-                    close(pd);
+        case -1:
+            close(fd[0]);
+            close(fd[1]);
+            break;
+
+        case 0:
+            close(fd[0]);
+            if ((fd[1] == pd) || (dup2(fd[1], pd) == pd)) {
+                if (fd[1] != pd) {
+                    close(fd[1]);
                 }
-                exit(1);
-                break;
-            default:
-                close(fd[1]);
-                if (ret=fdopen(fd[0],type)) {
-                    return ret;
-                }
-                close(fd[0]);
-                break;
+                execl("/bin/sh", "sh", "-c", command, NULL);
+                close(pd);
+            }
+            exit(1);
+            break;
+
+        default:
+            close(fd[1]);
+            if (ret = fdopen(fd[0], type)) {
+                return ret;
+            }
+            close(fd[0]);
+            break;
         }
     }
     return NULL;
@@ -292,12 +294,9 @@ FILE *popen_local(const char *command, const char *type) {
 
 #endif /* defined(sgi) */
 
-
 /*****************************************************************************
  * String related function
  ****************************************************************************/
-
-
 
 /**
  * A replacement of strdup(), since it's not defined at some
@@ -309,16 +308,16 @@ FILE *popen_local(const char *command, const char *type) {
  * copy, needs to be freed by caller. NULL on memory allocation error.
  */
 char *strdup_local(const char *str) {
-    char *c=(char *)malloc(strlen(str)+1);
-    if (c!=NULL)
-        strcpy(c,str);
+    char *c = (char *)malloc(strlen(str)+1);
+    if (c != NULL)
+        strcpy(c, str);
     return c;
 }
 
 /** Converts x to number */
-#define DIGIT(x)        (isdigit(x) ? (x) - '0' : \
-islower (x) ? (x) + 10 - 'a' : (x) + 10 - 'A')
-#define MBASE ('z' - 'a' + 1 + 10)
+#define DIGIT(x) (isdigit(x) ? (x)-'0' : \
+islower(x) ? (x)+10-'a' : (x)+10-'A')
+#define MBASE ('z'-'a'+1+10)
 
 #if !defined(HAVE_STRTOL)
 /**
@@ -342,7 +341,7 @@ long strtol(register char *str, char **ptr, register int base) {
     register int c;
     int xx, neg = 0;
 
-    if (ptr != (char **) 0)
+    if (ptr != (char **)0)
         *ptr = str;         /* in case no number is formed */
     if (base < 0 || base > MBASE)
         return (0);         /* base is invalid */
@@ -350,10 +349,10 @@ long strtol(register char *str, char **ptr, register int base) {
         while (isspace(c))
             c = *++str;
         switch (c) {
-            case '-':
-                neg++;
-            case '+':
-                c = *++str;
+        case '-':
+            neg++;
+        case '+':
+            c = *++str;
         }
     }
     if (base == 0) {
@@ -372,14 +371,13 @@ long strtol(register char *str, char **ptr, register int base) {
     */
     if (!isalnum(c) || (xx = DIGIT(c)) >= base)
         return 0;           /* no number formed */
-    if (base == 16 && c == '0' && isxdigit(str[2]) &&
-            (str[1] == 'x' || str[1] == 'X'))
+    if (base == 16 && c == '0' && isxdigit(str[2]) && (str[1] == 'x' || str[1] == 'X'))
         c = *(str += 2);    /* skip over leading "0x" or "0X" */
-    for (val = -DIGIT(c); isalnum(c = *++str) && (xx = DIGIT(c)) < base;)
+    for (val = -DIGIT(c); isalnum(c = *++str) && (xx = DIGIT(c)) < base; )
         /* accumulate neg avoids surprises near
         MAXLONG */
-        val = base * val - xx;
-    if (ptr != (char **) 0)
+        val = base*val-xx;
+    if (ptr != (char **)0)
         *ptr = str;
     return (neg ? val : -val);
 }
@@ -408,14 +406,14 @@ int strncasecmp(const char *s1, const char *s2, int n) {
         c1 = tolower(*s1);
         c2 = tolower(*s2);
         if (c1 != c2)
-            return (c1 - c2);
+            return (c1-c2);
         s1++;
         s2++;
         n--;
     }
     if (!n)
-        return(0);
-    return (int)(*s1 - *s2);
+        return (0);
+    return (int)(*s1-*s2);
 }
 #endif
 
@@ -433,20 +431,20 @@ int strncasecmp(const char *s1, const char *s2, int n) {
  * @li 0 if s1 equals s2
  * @li 1 if s1 is greater than s2
  */
-int strcasecmp(const char *s1, const char*s2) {
+int strcasecmp(const char *s1, const char *s2) {
     register int c1, c2;
 
     while (*s1 && *s2) {
         c1 = tolower(*s1);
         c2 = tolower(*s2);
         if (c1 != c2)
-            return (c1 - c2);
+            return (c1-c2);
         s1++;
         s2++;
     }
-    if (*s1=='\0' && *s2=='\0')
+    if (*s1 == '\0' && *s2 == '\0')
         return 0;
-    return (int)(*s1 - *s2);
+    return (int)(*s1-*s2);
 }
 #endif
 
@@ -504,12 +502,12 @@ int snprintf(char *dest, int max, const char *format, ...) {
     va_start(var, format);
     ret = vsprintf(dest, format, var);
     va_end(var);
-    if (ret > max) abort();
+    if (ret > max)
+        abort();
 
     return ret;
 }
 #endif
-
 
 /**
  * This takes an err number and returns a string with a description of
@@ -529,10 +527,11 @@ char *strerror_local(int errnum, char *buf, size_t size) {
     /* Then what flavour of strerror_r... */
 # if defined(STRERROR_R_CHAR_P)
     char *bbuf;
-    buf[0]=0;
+
+    buf[0] = 0;
     bbuf = (char*)strerror_r(errnum, buf, size);
-    if ((buf[0]==0)&&(bbuf!=NULL))
-        strncpy(buf,bbuf,size);
+    if ((buf[0] == 0) && (bbuf != NULL))
+        strncpy(buf, bbuf, size);
 # else
     if (strerror_r(errnum, buf, size) != 0) {
         /* EINVAL and ERANGE are possible errors from this strerror_r */
@@ -558,11 +557,11 @@ char *strerror_local(int errnum, char *buf, size_t size) {
 /**
  * Computes the square root.
  * Based on (n+1)^2 = n^2 + 2n + 1
- * given that	1^2 = 1, then
- *		2^2 = 1 + (2 + 1) = 1 + 3 = 4
- *		3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
- *		4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
- *		...
+ * given that   1^2 = 1, then
+ *              2^2 = 1 + (2 + 1) = 1 + 3 = 4
+ *              3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
+ *              4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
+ *              ...
  * In other words, a square number can be express as the sum of the
  * series n^2 = 1 + 3 + ... + (2n-1)
  *
@@ -573,6 +572,7 @@ char *strerror_local(int errnum, char *buf, size_t size) {
  */
 int isqrt(int n) {
     int result, sum, prev;
+
     result = 0;
     prev = sum = 1;
     while (sum <= n) {
@@ -596,7 +596,6 @@ const char *uncomp[NROF_COMPRESS_METHODS][3] = {
     {".gz", GUNZIP, GZIP},
     {".bz2", BUNZIP, BZIP}
 };
-
 
 /**
  * Open and possibly uncompress a file.
@@ -646,7 +645,6 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
 
     if (uncompressor == NULL) {
         /* open without uncompression */
-
         return fopen(buf, "rb");
     }
 
@@ -667,7 +665,6 @@ static FILE *open_and_uncompress_file(const char *ext, const char *uncompressor,
             return NULL;
         }
         snprintf(buf2, sizeof(buf2), "%s < '%s'", uncompressor, buf);
-
         return popen(buf2, "r");
     }
 
@@ -770,14 +767,16 @@ void make_path_to_file(const char *filename) {
 
     if (!filename || !*filename)
         return;
+
     strcpy(buf, filename);
     LOG(llevDebug, "make_path_tofile %s...\n", filename);
-    while ((cp = strchr(cp + 1, (int) '/'))) {
+    while ((cp = strchr(cp+1, (int)'/'))) {
         *cp = '\0';
         if (stat(buf, &statbuf) || !S_ISDIR(statbuf.st_mode)) {
             LOG(llevDebug, "Was not dir: %s\n", buf);
             if (mkdir(buf, SAVE_DIR_MODE)) {
                 char err[MAX_BUF];
+
                 LOG(llevError, "Cannot mkdir %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
                 return;
             }

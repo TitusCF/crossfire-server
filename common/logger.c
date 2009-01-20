@@ -40,10 +40,12 @@ int reopen_logfile = 0; /* May be set in SIGHUP handler */
 /**
  * Human-readable name of log levels.
  */
-static const char *const loglevel_names[] = {"[Error]   ",
-                                             "[Info]    ",
-                                             "[Debug]   ",
-                                             "[Monster] "};
+static const char *const loglevel_names[] = {
+    "[Error]   ",
+    "[Info]    ",
+    "[Debug]   ",
+    "[Monster] "
+};
 
 /**
  * Logs a message to stderr, or to file.
@@ -120,7 +122,7 @@ void LOG(LogLevel logLevel, const char *format, ...) {
                 exit(1);
             }
             setvbuf(logfile, NULL, _IOLBF, 0);
-            LOG(llevInfo,"logfile reopened\n");
+            LOG(llevInfo, "logfile reopened\n");
         }
 
         if (time_buf[0] != 0) {
@@ -131,8 +133,10 @@ void LOG(LogLevel logLevel, const char *format, ...) {
         fputs(buf, logfile);
 #endif
     }
-    if (!exiting && !trying_emergency_save &&
-            logLevel == llevError && ++nroferrors > MAX_ERRORS) {
+    if (!exiting
+    && !trying_emergency_save
+    && logLevel == llevError
+    && ++nroferrors > MAX_ERRORS) {
         exiting = 1;
         if (!trying_emergency_save)
             emergency_save(0);

@@ -49,8 +49,8 @@
 static void add_arch(archetype *at);
 
 static archetype *arch_table[ARCHTABLE];
-int arch_cmp=0;  /**< How many strcmp's */
-int arch_search=0; /**< How many searches */
+int arch_cmp = 0;  /**< How many strcmp's */
+int arch_search = 0; /**< How many searches */
 int arch_init;  /**< True if doing arch initialization */
 
 static void load_archetypes(void);
@@ -72,10 +72,10 @@ archetype *find_archetype_by_object_name(const char *name) {
     const char *tmp;
 
     if (name == NULL)
-        return (archetype *) NULL;
-    tmp=add_string(name);
-    for (at = first_archetype;at!=NULL;at=at->next) {
-        if (at->clone.name==tmp) {
+        return (archetype *)NULL;
+    tmp = add_string(name);
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (at->clone.name == tmp) {
             free_string(tmp);
             return at;
         }
@@ -123,9 +123,9 @@ archetype *get_archetype_by_skill_name(const char *skill, int type) {
     if (skill == NULL)
         return NULL;
 
-    for (at = first_archetype;at!=NULL;at=at->next) {
-        if (((type == -1) || (type == at->clone.type)) &&
-                (at->clone.skill) &&(!strcmp(at->clone.skill, skill)))
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (((type == -1) || (type == at->clone.type))
+        && (at->clone.skill) && (!strcmp(at->clone.skill, skill)))
             return at;
     }
     return NULL;
@@ -149,9 +149,9 @@ archetype *get_archetype_by_skill_name(const char *skill, int type) {
 archetype *get_archetype_by_type_subtype(int type, int subtype) {
     archetype *at;
 
-    for (at = first_archetype;at!=NULL;at=at->next) {
-        if (((type == -1) || (type == at->clone.type)) &&
-                (subtype == -1 || subtype == at->clone.subtype))
+    for (at = first_archetype; at != NULL; at = at->next) {
+        if (((type == -1) || (type == at->clone.type))
+        && (subtype == -1 || subtype == at->clone.subtype))
             return at;
     }
     return NULL;
@@ -175,12 +175,12 @@ object *create_archetype_by_object_name(const char *name) {
     char tmpname[MAX_BUF];
     int i;
 
-    strncpy(tmpname,name,MAX_BUF-1);
+    strncpy(tmpname, name, MAX_BUF-1);
     tmpname[MAX_BUF-1] = 0;
-    for (i=strlen(tmpname); i>0; i--) {
+    for (i = strlen(tmpname); i > 0; i--) {
         tmpname[i] = 0;
         at = find_archetype_by_object_name(tmpname);
-        if (at !=NULL) {
+        if (at != NULL) {
             return arch_to_object(at);
         }
     }
@@ -193,12 +193,12 @@ object *create_archetype_by_object_name(const char *name) {
  * Can be called multiple times, will just return.
  */
 void init_archetypes(void) {
-    if (first_archetype!=NULL) /* Only do this once */
+    if (first_archetype != NULL) /* Only do this once */
         return;
     arch_init = 1;
     load_archetypes();
     arch_init = 0;
-    empty_archetype=find_archetype("empty_archetype");
+    empty_archetype = find_archetype("empty_archetype");
     /*  init_blocksview();*/
 }
 
@@ -208,16 +208,16 @@ void init_archetypes(void) {
  */
 void arch_info(object *op) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
-                         "%d searches and %d strcmp()'s",
-                         "%d searches and %d strcmp()'s",
-                         arch_search,arch_cmp);
+        "%d searches and %d strcmp()'s",
+        "%d searches and %d strcmp()'s",
+        arch_search, arch_cmp);
 }
 
 /**
  * Initialise the hashtable used by the archetypes.
  */
 void clear_archetable(void) {
-    memset((void *) arch_table,0,ARCHTABLE*sizeof(archetype *));
+    memset((void *) arch_table, 0, ARCHTABLE*sizeof(archetype *));
 }
 
 /**
@@ -226,10 +226,11 @@ void clear_archetable(void) {
 
 void init_archetable(void) {
     archetype *at;
-    LOG(llevDebug," Setting up archetable...\n");
-    for (at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more)
+
+    LOG(llevDebug, " Setting up archetable...\n");
+    for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more)
         add_arch(at);
-    LOG(llevDebug,"done\n");
+    LOG(llevDebug, "done\n");
 }
 
 /**
@@ -252,7 +253,7 @@ void dump_arch(archetype *at, StringBuffer *sb) {
 void dump_all_archetypes(void) {
     archetype *at;
 
-    for (at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
+    for (at = first_archetype; at != NULL; at = (at->more == NULL) ? at->next : at->more) {
         StringBuffer *sb;
         char *diff;
 
@@ -271,13 +272,20 @@ void dump_all_archetypes(void) {
  * archetype to free. Pointer becomes invalid after the call.
  */
 void free_arch(archetype *at) {
-    if (at->name) free_string(at->name);
-    if (at->clone.name) free_string(at->clone.name);
-    if (at->clone.name_pl) free_string(at->clone.name_pl);
-    if (at->clone.title) free_string(at->clone.title);
-    if (at->clone.race) free_string(at->clone.race);
-    if (at->clone.slaying) free_string(at->clone.slaying);
-    if (at->clone.msg) free_string(at->clone.msg);
+    if (at->name)
+        free_string(at->name);
+    if (at->clone.name)
+        free_string(at->clone.name);
+    if (at->clone.name_pl)
+        free_string(at->clone.name_pl);
+    if (at->clone.title)
+        free_string(at->clone.title);
+    if (at->clone.race)
+        free_string(at->clone.race);
+    if (at->clone.slaying)
+        free_string(at->clone.slaying);
+    if (at->clone.msg)
+        free_string(at->clone.msg);
     free_key_values(&at->clone);
     free(at);
 }
@@ -288,16 +296,18 @@ void free_arch(archetype *at) {
  */
 void free_all_archs(void) {
     archetype *at, *next;
-    int i=0;
+    int i = 0;
 
-    for (at=first_archetype; at!=NULL; at=next) {
-        if (at->more) next=at->more;
-        else next=at->next;
+    for (at = first_archetype; at != NULL; at = next) {
+        if (at->more)
+            next = at->more;
+        else
+            next = at->next;
         free_arch(at);
         i++;
     }
     first_archetype = NULL;
-    LOG(llevDebug,"Freed %d archetypes\n", i);
+    LOG(llevDebug, "Freed %d archetypes\n", i);
 }
 
 /**
@@ -310,24 +320,24 @@ void free_all_archs(void) {
 archetype *get_archetype_struct(void) {
     archetype *new;
 
-    new=(archetype *)CALLOC(1,sizeof(archetype));
-    if (new==NULL)
+    new = (archetype *)CALLOC(1, sizeof(archetype));
+    if (new == NULL)
         fatal(OUT_OF_MEMORY);
-    new->next=NULL;
-    new->name=NULL;
-    new->clone.other_arch=NULL;
-    new->clone.name=NULL;
-    new->clone.name_pl=NULL;
-    new->clone.title=NULL;
-    new->clone.race=NULL;
-    new->clone.slaying=NULL;
-    new->clone.msg=NULL;
+    new->next = NULL;
+    new->name = NULL;
+    new->clone.other_arch = NULL;
+    new->clone.name = NULL;
+    new->clone.name_pl = NULL;
+    new->clone.title = NULL;
+    new->clone.race = NULL;
+    new->clone.slaying = NULL;
+    new->clone.msg = NULL;
     clear_object(&new->clone);  /* to initial state other also */
-    CLEAR_FLAG((&new->clone),FLAG_FREED); /* This shouldn't matter, since copy_object() */
+    CLEAR_FLAG((&new->clone), FLAG_FREED); /* This shouldn't matter, since copy_object() */
     SET_FLAG((&new->clone), FLAG_REMOVED); /* doesn't copy these flags... */
-    new->head=NULL;
-    new->more=NULL;
-    new->clone.arch=new;
+    new->head = NULL;
+    new->more = NULL;
+    new->clone.arch = new;
     return new;
 }
 
@@ -343,16 +353,16 @@ archetype *get_archetype_struct(void) {
  */
 static void first_arch_pass(FILE *fp) {
     object *op;
-    archetype *at,*head=NULL,*last_more=NULL;
-    int i,first=2;
+    archetype *at, *head = NULL, *last_more = NULL;
+    int i, first = 2;
 
-    op=get_object();
-    op->arch=first_archetype=at=get_archetype_struct();
+    op = get_object();
+    op->arch = first_archetype = at = get_archetype_struct();
 
-    while ((i=load_object(fp,op,first,0))) {
-        first=0;
-        copy_object(op,&at->clone);
-        at->clone.speed_left= (float)(-0.1);
+    while ((i = load_object(fp, op, first, 0))) {
+        first = 0;
+        copy_object(op, &at->clone);
+        at->clone.speed_left = (float)(-0.1);
         /* copy the body_info to the body_used - this is only really
          * need for monsters, but doesn't hurt to do it for everything.
          * by doing so, when a monster is created, it has good starting
@@ -362,50 +372,50 @@ static void first_arch_pass(FILE *fp) {
         memcpy(&at->clone.body_used, &op->body_info, sizeof(op->body_info));
 
         switch (i) {
-            case LL_NORMAL: /* A new archetype, just link it with the previous */
-                if (last_more!=NULL)
-                    last_more->next=at;
-                if (head!=NULL)
-                    head->next=at;
-                head=last_more=at;
-                at->tail_x = 0;
-                at->tail_y = 0;
-                break;
+        case LL_NORMAL: /* A new archetype, just link it with the previous */
+            if (last_more != NULL)
+                last_more->next = at;
+            if (head != NULL)
+                head->next = at;
+            head=last_more = at;
+            at->tail_x = 0;
+            at->tail_y = 0;
+            break;
 
-            case LL_MORE: /* Another part of the previous archetype, link it correctly */
+        case LL_MORE: /* Another part of the previous archetype, link it correctly */
+            at->head = head;
+            at->clone.head = &head->clone;
+            if (last_more != NULL) {
+                last_more->more = at;
+                last_more->clone.more = &at->clone;
+            }
+            last_more = at;
 
-                at->head=head;
-                at->clone.head = &head->clone;
-                if (last_more!=NULL) {
-                    last_more->more=at;
-                    last_more->clone.more = &at->clone;
-                }
-                last_more=at;
+            /* Set FLAG_MONSTER throughout parts if head has it */
+            if (QUERY_FLAG(&head->clone, FLAG_MONSTER)) {
+                SET_FLAG(&at->clone, FLAG_MONSTER);
+            }
 
-                /* Set FLAG_MONSTER throughout parts if head has it */
-                if (QUERY_FLAG(&head->clone, FLAG_MONSTER)) {
-                    SET_FLAG(&at->clone, FLAG_MONSTER);
-                }
-
-                /* If this multipart image is still composed of individual small
-                 * images, don't set the tail_.. values.  We can't use them anyways,
-                 * and setting these to zero makes the map sending to the client much
-                 * easier as just looking at the head, we know what to do.
-                 */
-                if (at->clone.face != head->clone.face) {
-                    head->tail_x = 0;
-                    head->tail_y = 0;
-                } else {
-                    if (at->clone.x > head->tail_x) head->tail_x = at->clone.x;
-                    if (at->clone.y > head->tail_y) head->tail_y = at->clone.y;
-                }
-                break;
-
+            /* If this multipart image is still composed of individual small
+             * images, don't set the tail_.. values.  We can't use them anyways,
+             * and setting these to zero makes the map sending to the client much
+             * easier as just looking at the head, we know what to do.
+             */
+            if (at->clone.face != head->clone.face) {
+                head->tail_x = 0;
+                head->tail_y = 0;
+            } else {
+                if (at->clone.x > head->tail_x)
+                    head->tail_x = at->clone.x;
+                if (at->clone.y > head->tail_y)
+                    head->tail_y = at->clone.y;
+            }
+            break;
         }
 
-        at=get_archetype_struct();
+        at = get_archetype_struct();
         clear_object(op);
-        op->arch=at;
+        op->arch = at;
     }
     free_object(op);
     op->arch = NULL; /* arch is checked for temporary archetypes if not NULL. */
@@ -422,38 +432,38 @@ static void first_arch_pass(FILE *fp) {
  * file fron which to read. Won't be rewinded.
  */
 static void second_arch_pass(FILE *fp) {
-    char buf[MAX_BUF],*variable=buf,*argument,*cp;
-    archetype *at=NULL,*other;
+    char buf[MAX_BUF], *variable = buf, *argument, *cp;
+    archetype *at = NULL, *other;
     object *inv;
 
-    while (fgets(buf,MAX_BUF,fp)!=NULL) {
-        if (*buf=='#')
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (*buf == '#')
             continue;
-        if ((argument=strchr(buf,' '))!=NULL) {
-            *argument='\0',argument++;
-            cp = argument + strlen(argument)-1;
+        if ((argument = strchr(buf, ' ')) != NULL) {
+            *argument = '\0', argument++;
+            cp = argument+strlen(argument)-1;
             while (isspace(*cp)) {
-                *cp='\0';
+                *cp = '\0';
                 cp--;
             }
         }
-        if (!strcmp("Object",variable)) {
-            if ((at=find_archetype(argument))==NULL)
-                LOG(llevError,"Warning: failed to find arch %s\n",argument);
-        } else if (!strcmp("other_arch",variable)) {
-            if (at!=NULL&&at->clone.other_arch==NULL) {
-                if ((other=find_archetype(argument))==NULL)
-                    LOG(llevError,"Warning: failed to find other_arch %s\n",argument);
-                else if (at!=NULL)
-                    at->clone.other_arch=other;
+        if (!strcmp("Object", variable)) {
+            if ((at = find_archetype(argument)) == NULL)
+                LOG(llevError, "Warning: failed to find arch %s\n", argument);
+        } else if (!strcmp("other_arch", variable)) {
+            if (at != NULL && at->clone.other_arch == NULL) {
+                if ((other = find_archetype(argument)) == NULL)
+                    LOG(llevError, "Warning: failed to find other_arch %s\n", argument);
+                else if (at != NULL)
+                    at->clone.other_arch = other;
             }
-        } else if (!strcmp("randomitems",variable)) {
-            if (at!=NULL) {
-                treasurelist *tl=find_treasurelist(argument);
-                if (tl==NULL)
-                    LOG(llevError,"Failed to link treasure to arch (%s): %s\n",at->name, argument);
+        } else if (!strcmp("randomitems", variable)) {
+            if (at != NULL) {
+                treasurelist *tl = find_treasurelist(argument);
+                if (tl == NULL)
+                    LOG(llevError, "Failed to link treasure to arch (%s): %s\n", at->name, argument);
                 else
-                    at->clone.randomitems=tl;
+                    at->clone.randomitems = tl;
             }
         } else if (!strcmp("arch", variable)) {
             inv = create_archetype(argument);
@@ -477,10 +487,10 @@ static void second_arch_pass(FILE *fp) {
  */
 void check_generators(void) {
     archetype *at;
-    for (at=first_archetype;at!=NULL;at=at->next)
-        if (QUERY_FLAG(&at->clone,FLAG_GENERATOR)&&at->clone.other_arch==NULL)
-            LOG(llevError,"Warning: %s is generator but lacks other_arch.\n",
-                at->name);
+
+    for (at = first_archetype; at != NULL; at = at->next)
+        if (QUERY_FLAG(&at->clone, FLAG_GENERATOR) && at->clone.other_arch == NULL)
+            LOG(llevError, "Warning: %s is generator but lacks other_arch.\n", at->name);
 }
 #endif
 
@@ -491,23 +501,22 @@ void check_generators(void) {
  * functions).
  * Then initialises treasures by calling load_treasures().
  */
-
 static void load_archetypes(void) {
     FILE *fp;
     char filename[MAX_BUF];
     int comp;
 #if TIME_ARCH_LOAD
-    struct timeval tv1,tv2;
+    struct timeval tv1, tv2;
 #endif
 
-    snprintf(filename, sizeof(filename), "%s/%s",settings.datadir,settings.archetypes);
-    LOG(llevDebug,"Reading archetypes from %s...\n",filename);
-    if ((fp=open_and_uncompress(filename,0,&comp))==NULL) {
-        LOG(llevError," Can't open archetype file.\n");
+    snprintf(filename, sizeof(filename), "%s/%s", settings.datadir, settings.archetypes);
+    LOG(llevDebug, "Reading archetypes from %s...\n", filename);
+    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+        LOG(llevError, " Can't open archetype file.\n");
         return;
     }
     clear_archetable();
-    LOG(llevDebug," arch-pass 1...\n");
+    LOG(llevDebug, " arch-pass 1...\n");
 #if TIME_ARCH_LOAD
     GETTIMEOFDAY(&tv1);
 #endif
@@ -516,34 +525,37 @@ static void load_archetypes(void) {
     {
         int sec, usec;
         GETTIMEOFDAY(&tv2);
-        sec = tv2.tv_sec - tv1.tv_sec;
-        usec = tv2.tv_usec - tv1.tv_usec;
-        if (usec<0) { usec +=1000000; sec--;}
-        LOG(llevDebug,"Load took %d.%06d seconds\n", sec, usec);
+        sec = tv2.tv_sec-tv1.tv_sec;
+        usec = tv2.tv_usec-tv1.tv_usec;
+        if (usec < 0) {
+            usec += 1000000;
+            sec--;
+        }
+        LOG(llevDebug, "Load took %d.%06d seconds\n", sec, usec);
     }
 #endif
 
-    LOG(llevDebug," done\n");
+    LOG(llevDebug, " done\n");
     init_archetable();
-    warn_archetypes=1;
+    warn_archetypes = 1;
 
     /* do a close and reopen instead of a rewind - necessary in case the
      * file has been compressed.
      */
     close_and_delete(fp, comp);
-    fp=open_and_uncompress(filename,0,&comp);
+    fp=open_and_uncompress(filename, 0, &comp);
 
-    LOG(llevDebug," loading treasure...\n");
+    LOG(llevDebug, " loading treasure...\n");
     load_treasures();
-    LOG(llevDebug," done\n");
+    LOG(llevDebug, " done\n");
     LOG(llevDebug, "arch-pass 2...\n");
     second_arch_pass(fp);
-    LOG(llevDebug," done\n");
+    LOG(llevDebug, " done\n");
 #ifdef DEBUG
     check_generators();
 #endif
     close_and_delete(fp, comp);
-    LOG(llevDebug," done\n");
+    LOG(llevDebug, " done\n");
 }
 
 /**
@@ -559,14 +571,15 @@ static void load_archetypes(void) {
  */
 object *arch_to_object(archetype *at) {
     object *op;
-    if (at==NULL) {
+
+    if (at == NULL) {
         if (warn_archetypes)
-            LOG(llevError,"Couldn't find archetype.\n");
+            LOG(llevError, "Couldn't find archetype.\n");
         return NULL;
     }
-    op=get_object();
-    copy_object_with_inv(&at->clone,op);
-    op->arch=at;
+    op = get_object();
+    copy_object_with_inv(&at->clone, op);
+    op->arch = at;
     return op;
 }
 
@@ -586,11 +599,12 @@ object *arch_to_object(archetype *at) {
 object *create_singularity(const char *name) {
     object *op;
     char buf[MAX_BUF];
-    snprintf(buf, sizeof(buf), "%s (%s)",ARCH_SINGULARITY,name);
+
+    snprintf(buf, sizeof(buf), "%s (%s)", ARCH_SINGULARITY, name);
     op = get_object();
     op->name = add_string(buf);
     op->name_pl = add_string(buf);
-    SET_FLAG(op,FLAG_NO_PICK);
+    SET_FLAG(op, FLAG_NO_PICK);
     return op;
 }
 
@@ -606,6 +620,7 @@ object *create_singularity(const char *name) {
  */
 object *create_archetype(const char *name) {
     archetype *at;
+
     at = find_archetype(name);
     if (at == NULL)
         return create_singularity(name);
@@ -634,13 +649,13 @@ hasharch(const char *str, int tablesize) {
      */
     for (p = str; i < MAXSTRING && *p; p++, i++) {
         hash += *p;
-        hash += hash << 10;
-        hash ^= hash >>  6;
+        hash += hash<<10;
+        hash ^= hash>>6;
     }
-    hash += hash <<  3;
-    hash ^= hash >> 11;
-    hash += hash << 15;
-    return hash % tablesize;
+    hash += hash<<3;
+    hash ^= hash>>11;
+    hash += hash<<15;
+    return hash%tablesize;
 }
 
 /**
@@ -654,20 +669,20 @@ archetype *try_find_archetype(const char *name) {
     unsigned long index;
 
     if (name == NULL)
-        return (archetype *) NULL;
+        return (archetype *)NULL;
 
     index=hasharch(name, ARCHTABLE);
     arch_search++;
     for (;;) {
         at = arch_table[index];
-        if (at==NULL) {
+        if (at == NULL) {
             return NULL;
         }
         arch_cmp++;
-        if (!strcmp(at->name,name))
+        if (!strcmp(at->name, name))
             return at;
-        if (++index>=ARCHTABLE)
-            index=0;
+        if (++index >= ARCHTABLE)
+            index = 0;
     }
 }
 
@@ -682,10 +697,10 @@ archetype *find_archetype(const char *name) {
     archetype *at;
 
     if (name == NULL)
-        return (archetype *) NULL;
+        return (archetype *)NULL;
     at = try_find_archetype(name);
-    if (at==NULL && warn_archetypes)
-        LOG(llevError,"Couldn't find archetype %s\n",name);
+    if (at == NULL && warn_archetypes)
+        LOG(llevError, "Couldn't find archetype %s\n", name);
     return at;
 }
 
@@ -694,15 +709,16 @@ archetype *find_archetype(const char *name) {
  * Will call fatal() if archetype table is too small to contain archetypes.
  */
 static void add_arch(archetype *at) {
-    int index=hasharch(at->name, ARCHTABLE),org_index=index;
+    int index = hasharch(at->name, ARCHTABLE), org_index = index;
+
     for (;;) {
-        if (arch_table[index]==NULL) {
-            arch_table[index]=at;
+        if (arch_table[index] == NULL) {
+            arch_table[index] = at;
             return;
         }
-        if (++index==ARCHTABLE)
+        if (++index == ARCHTABLE)
             index=0;
-        if (index==org_index)
+        if (index == org_index)
             fatal(ARCHTABLE_TOO_SMALL);
     }
 }
@@ -718,7 +734,7 @@ static void add_arch(archetype *at) {
  * @note
  * will never return NULL.
  */
-object *object_create_arch(archetype * at) {
+object *object_create_arch(archetype *at) {
     object *op, *prev = NULL, *head = NULL;
 
     while (at) {

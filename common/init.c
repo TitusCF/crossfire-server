@@ -55,7 +55,7 @@ struct Settings settings = {
     CONFDIR,
     DATADIR,
     LOCALDIR,
-    PLAYERDIR, MAPDIR, ARCHETYPES,REGIONS,TREASURES,
+    PLAYERDIR, MAPDIR, ARCHETYPES, REGIONS, TREASURES,
     UNIQUE_DIR, TEMPLATE_DIR,
     TMPDIR,
     STAT_LOSS_ON_DEATH,
@@ -89,7 +89,7 @@ struct Settings settings = {
     "",
     0,
     "",
-    0,0,0,0,0,0,0,  /* worldmap settings*/
+    0, 0, 0, 0, 0, 0, 0,  /* worldmap settings*/
     EMERGENCY_MAPPATH, EMERGENCY_X, EMERGENCY_Y,
     0,
     1.0,
@@ -154,14 +154,15 @@ const char *const spellpathnames[NRSPELLPATHS] = {
  */
 static void init_emergency_mappath(void) {
     char filename[MAX_BUF], tmpbuf[MAX_BUF];
-    FILE    *fp;
-    int online=0;
+    FILE *fp;
+    int online = 0;
 
     /* If this file doesn't exist, not a big deal */
     snprintf(filename, sizeof(filename), "%s/%s/.emergency", settings.datadir, settings.mapdir);
-    if ((fp = fopen(filename, "r"))!=NULL) {
+    if ((fp = fopen(filename, "r")) != NULL) {
         while (fgets(tmpbuf, MAX_BUF-1, fp)) {
-            if (tmpbuf[0] == '#') continue; /* ignore comments */
+            if (tmpbuf[0] == '#')
+                continue; /* ignore comments */
 
             if (online == 0) {
                 tmpbuf[strlen(tmpbuf)-1] = 0; /* kill newline */
@@ -172,13 +173,13 @@ static void init_emergency_mappath(void) {
                 settings.emergency_y = atoi(tmpbuf);
             }
             online++;
-            if (online>2) break;
+            if (online > 2)
+                break;
         }
         fclose(fp);
-        if (online<=2)
-            LOG(llevError,"Online read partial data from %s\n", filename);
-        LOG(llevDebug,"Emergency mappath reset to %s (%d, %d)\n", settings.emergency_mapname,
-            settings.emergency_x, settings.emergency_y);
+        if (online <= 2)
+            LOG(llevError, "Online read partial data from %s\n", filename);
+        LOG(llevDebug, "Emergency mappath reset to %s (%d, %d)\n", settings.emergency_mapname, settings.emergency_x, settings.emergency_y);
     }
 }
 
@@ -210,7 +211,6 @@ void init_library(void) {
     init_dynamic();
 }
 
-
 /**
  * Initializes values from the environmental variables.
  * it needs to be called very early, since command line options should
@@ -219,26 +219,34 @@ void init_library(void) {
 void init_environ(void) {
     char *cp;
 
-    cp=getenv("CROSSFIRE_LIBDIR");
-    if (cp) settings.datadir=cp;
-    cp=getenv("CROSSFIRE_LOCALDIR");
-    if (cp) settings.localdir=cp;
-    cp=getenv("CROSSFIRE_PLAYERDIR");
-    if (cp) settings.playerdir=cp;
-    cp=getenv("CROSSFIRE_MAPDIR");
-    if (cp) settings.mapdir=cp;
-    cp=getenv("CROSSFIRE_ARCHETYPES");
-    if (cp) settings.archetypes=cp;
-    cp=getenv("CROSSFIRE_TREASURES");
-    if (cp) settings.treasures=cp;
-    cp=getenv("CROSSFIRE_UNIQUEDIR");
-    if (cp) settings.uniquedir=cp;
-    cp=getenv("CROSSFIRE_TEMPLATEDIR");
-    if (cp) settings.templatedir=cp;
-    cp=getenv("CROSSFIRE_TMPDIR");
-    if (cp) settings.tmpdir=cp;
+    cp = getenv("CROSSFIRE_LIBDIR");
+    if (cp)
+        settings.datadir = cp;
+    cp = getenv("CROSSFIRE_LOCALDIR");
+    if (cp)
+        settings.localdir = cp;
+    cp = getenv("CROSSFIRE_PLAYERDIR");
+    if (cp)
+        settings.playerdir = cp;
+    cp = getenv("CROSSFIRE_MAPDIR");
+    if (cp)
+        settings.mapdir = cp;
+    cp = getenv("CROSSFIRE_ARCHETYPES");
+    if (cp)
+        settings.archetypes = cp;
+    cp = getenv("CROSSFIRE_TREASURES");
+    if (cp)
+        settings.treasures = cp;
+    cp = getenv("CROSSFIRE_UNIQUEDIR");
+    if (cp)
+        settings.uniquedir = cp;
+    cp = getenv("CROSSFIRE_TEMPLATEDIR");
+    if (cp)
+        settings.templatedir = cp;
+    cp = getenv("CROSSFIRE_TMPDIR");
+    if (cp)
+        settings.tmpdir = cp;
 }
-
 
 /**
  * Initialises all global variables.
@@ -251,33 +259,32 @@ void init_globals(void) {
     memset(&statistics, 0, sizeof(struct Statistics));
     if (settings.logfilename[0] == 0) {
         logfile = stderr;
-    } else if ((logfile=fopen(settings.logfilename, "a"))==NULL) {
-        fprintf(stderr,"Unable to open %s as the logfile - will use stderr instead\n",
-                settings.logfilename);
+    } else if ((logfile=fopen(settings.logfilename, "a")) == NULL) {
+        fprintf(stderr, "Unable to open %s as the logfile - will use stderr instead\n", settings.logfilename);
         logfile = stderr;
     } else {
         setvbuf(logfile, NULL, _IOLBF, 0);
     }
     exiting = 0;
-    first_player=NULL;
-    first_friendly_object=NULL;
-    first_map=NULL;
-    first_treasurelist=NULL;
-    first_artifactlist=NULL;
-    first_archetype=NULL;
-    *first_map_ext_path=0;
-    warn_archetypes=0;
+    first_player = NULL;
+    first_friendly_object = NULL;
+    first_map = NULL;
+    first_treasurelist = NULL;
+    first_artifactlist = NULL;
+    first_archetype = NULL;
+    *first_map_ext_path = 0;
+    warn_archetypes = 0;
     nroftreasures = 0;
     nrofartifacts = 0;
-    nrofallowedstr=0;
+    nrofallowedstr = 0;
     ring_arch = NULL;
     amulet_arch = NULL;
     staff_arch = NULL;
     undead_name = add_string("undead");
     trying_emergency_save = 0;
-    num_animations=0;
-    animations=NULL;
-    animations_allocated=0;
+    num_animations = 0;
+    animations = NULL;
+    animations_allocated = 0;
     init_defaults();
 }
 
@@ -334,25 +341,25 @@ void free_globals(void) {
 void init_objects(void) {
     int i;
     /* Initialize all objects: */
-    objects=NULL;
+    objects = NULL;
     active_objects = NULL;
 
 #ifdef MEMORY_DEBUG
-    free_objects=NULL;
+    free_objects = NULL;
 #else
-    free_objects=objarray;
+    free_objects = objarray;
     objarray[0].prev = NULL,
     objarray[0].next = &objarray[1],
     SET_FLAG(&objarray[0], FLAG_REMOVED);
     SET_FLAG(&objarray[0], FLAG_FREED);
-    for (i=1;i<STARTMAX-1;i++) {
+    for (i = 1; i < STARTMAX-1; i++) {
         objarray[i].next= &objarray[i+1];
         objarray[i].prev= &objarray[i-1];
         SET_FLAG(&objarray[i], FLAG_REMOVED);
         SET_FLAG(&objarray[i], FLAG_FREED);
     }
-    objarray[STARTMAX-1].next=NULL;
-    objarray[STARTMAX-1].prev= &objarray[STARTMAX-2];
+    objarray[STARTMAX-1].next = NULL;
+    objarray[STARTMAX-1].prev = &objarray[STARTMAX-2];
     SET_FLAG(&objarray[STARTMAX-1], FLAG_REMOVED);
     SET_FLAG(&objarray[STARTMAX-1], FLAG_FREED);
 #endif
@@ -362,9 +369,8 @@ void init_objects(void) {
  * Initialises global variables which can be changed by options.
  * Called by init_library().
  */
-
 void init_defaults(void) {
-    nroferrors=0;
+    nroferrors = 0;
 }
 
 /**
@@ -384,6 +390,7 @@ void init_dynamic(void) {
             }
             if (EXIT_PATH(&at->clone)) {
                 mapstruct *first;
+
                 snprintf(first_map_path, sizeof(first_map_path), "%s", EXIT_PATH(&at->clone));
                 first = ready_map_name(first_map_path, 0);
                 if (!first) {
@@ -397,7 +404,7 @@ void init_dynamic(void) {
         }
         at = at->next;
     }
-    LOG(llevError,"You need a archetype called 'map' and it have to contain start map\n");
+    LOG(llevError, "You need a archetype called 'map' and it have to contain start map\n");
     exit(-1);
 }
 
@@ -428,7 +435,7 @@ void write_todclock(void) {
 void init_clocks(void) {
     char filename[MAX_BUF];
     FILE *fp;
-    static int has_been_done=0;
+    static int has_been_done = 0;
 
     if (has_been_done)
         return;
@@ -462,9 +469,9 @@ void init_attackmess(void) {
     char filename[MAX_BUF];
     char *cp, *p;
     FILE *fp;
-    static int has_been_done=0;
+    static int has_been_done = 0;
     int mess, level, comp;
-    int mode=0, total=0;
+    int mode = 0, total = 0;
 
     if (has_been_done)
         return;
@@ -479,15 +486,16 @@ void init_attackmess(void) {
     }
 
     level = 0;
-    while (fgets(buf, MAX_BUF, fp)!=NULL) {
-        if (*buf=='#') continue;
-        if ((cp=strchr(buf,'\n'))!=NULL)
-            *cp='\0';
-        cp=buf;
-        while (*cp==' ') /* Skip blanks */
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (*buf == '#')
+            continue;
+        if ((cp = strchr(buf, '\n')) != NULL)
+            *cp = '\0';
+        cp = buf;
+        while (*cp == ' ') /* Skip blanks */
             cp++;
 
-        if (strncmp(cp, "TYPE:", 5)==0) {
+        if (strncmp(cp, "TYPE:", 5) == 0) {
             p = strtok(buf, ":");
             p = strtok(NULL, ":");
             if (mode == 1) {
@@ -501,7 +509,7 @@ void init_attackmess(void) {
             mode = 1;
             continue;
         }
-        if (mode==1) {
+        if (mode == 1) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");
@@ -511,7 +519,7 @@ void init_attackmess(void) {
                 attack_mess[mess][level].buf1 = strdup_local("");
             mode = 2;
             continue;
-        } else if (mode==2) {
+        } else if (mode == 2) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");
@@ -521,7 +529,7 @@ void init_attackmess(void) {
                 attack_mess[mess][level].buf2 = strdup_local("");
             mode = 3;
             continue;
-        } else if (mode==3) {
+        } else if (mode == 3) {
             p = strtok(buf, "=");
             attack_mess[mess][level].level = atoi(buf);
             p = strtok(NULL, "=");

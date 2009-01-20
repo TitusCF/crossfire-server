@@ -40,15 +40,16 @@
 void dump_abilities(void) {
     archetype *at;
     char name[VERY_BIG_BUF];
-    for (at = first_archetype; at; at=at->next) {
+
+    for (at = first_archetype; at; at = at->next) {
         const char *gen_name = "";
         archetype *gen;
 
-        if (!QUERY_FLAG(&at->clone,FLAG_MONSTER))
+        if (!QUERY_FLAG(&at->clone, FLAG_MONSTER))
             continue;
 
         /* Get rid of e.g. multiple black puddings */
-        if (QUERY_FLAG(&at->clone,FLAG_CHANGING))
+        if (QUERY_FLAG(&at->clone, FLAG_CHANGING))
             continue;
 
         for (gen = first_archetype; gen; gen = gen->next) {
@@ -59,8 +60,8 @@ void dump_abilities(void) {
         }
 
         describe_item(&at->clone, NULL, name, VERY_BIG_BUF);
-        printf("%-16s|%6" FMT64 "|%4d|%3d|%s|%s|%s\n",at->clone.name,at->clone.stats.exp,
-               at->clone.stats.hp,at->clone.stats.ac,name,at->name,gen_name);
+        printf("%-16s|%6"FMT64"|%4d|%3d|%s|%s|%s\n", at->clone.name, at->clone.stats.exp,
+               at->clone.stats.hp, at->clone.stats.ac, name, at->name, gen_name);
     }
 }
 
@@ -70,22 +71,22 @@ void dump_abilities(void) {
 void print_monsters(void) {
     archetype *at;
     object *op;
-    char   attbuf[34];
+    char attbuf[34];
     int i;
 
     printf("               |     |   |    |    |      attack       |                        resistances                                                                       |\n");
     printf("monster        | hp  |dam| ac | wc |pmf ecw adw gpd ptf|phy mag fir ele cld cfs acd drn wmg ght poi slo par tud fer cnc dep dth chs csp gpw hwd bln int |  exp   | new exp |\n");
     printf("---------------------------------------------------------------------------------------------------------------------------------------------------\n");
-    for (at=first_archetype;at!=NULL;at=at->next) {
+    for (at = first_archetype; at != NULL; at = at->next) {
         op = arch_to_object(at);
-        if (QUERY_FLAG(op,FLAG_MONSTER)) {
+        if (QUERY_FLAG(op, FLAG_MONSTER)) {
             bitstostring((long)op->attacktype, NROFATTACKS, attbuf);
             printf("%-15s|%5d|%3d|%4d|%4d|%s|",
                    op->arch->name, op->stats.maxhp, op->stats.dam, op->stats.ac,
-                   op->stats.wc,attbuf);
-            for (i=0; i<NROFATTACKS; i++)
+                   op->stats.wc, attbuf);
+            for (i = 0; i < NROFATTACKS; i++)
                 printf("%4d", op->resist[i]);
-            printf("|%8" FMT64 "|%9" FMT64 "|\n",op->stats.exp, new_exp(op));
+            printf("|%8"FMT64"|%9"FMT64"|\n", op->stats.exp, new_exp(op));
         }
         free_object(op);
     }
@@ -107,13 +108,13 @@ void print_monsters(void) {
  * Final \\0 is appended to str.
  */
 void bitstostring(long bits, int num, char *str) {
-    int i,j=0;
+    int i, j = 0;
 
     if (num > 32)
         num = 32;
 
-    for (i=0;i<num;i++) {
-        if (i && (i%3)==0) {
+    for (i = 0; i < num; i++) {
+        if (i && (i%3) == 0) {
             str[i+j] = ' ';
             j++;
         }

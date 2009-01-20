@@ -122,10 +122,12 @@ static int compar(const struct bmappair *a, const struct bmappair *b) {
  */
 static uint8 find_color(const char *name) {
     uint8 i;
-    for (i=0;i<sizeof(colorname)/sizeof(*colorname);i++)
-        if (!strcmp(name,colorname[i]))
+
+    for (i = 0; i < sizeof(colorname)/sizeof(*colorname); i++)
+        if (!strcmp(name, colorname[i]))
             return i;
-    LOG(llevError,"Unknown color: %s\n",name);
+
+    LOG(llevError, "Unknown color: %s\n", name);
     return 0;
 }
 
@@ -138,45 +140,49 @@ static uint8 find_color(const char *name) {
  */
 static void read_face_data(void) {
     char buf[MAX_BUF], *cp;
-    New_Face *on_face=NULL;
+    New_Face *on_face = NULL;
     FILE *fp;
 
     snprintf(buf, sizeof(buf), "%s/faces", settings.datadir);
-    LOG(llevDebug,"Reading faces from %s...\n",buf);
-    if ((fp=fopen(buf,"r"))==NULL) {
+    LOG(llevDebug, "Reading faces from %s...\n", buf);
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open faces file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
-    while (fgets(buf, MAX_BUF, fp)!=NULL) {
-        if (*buf=='#') continue;
-        if (!strncmp(buf,"end",3)) {
+
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (*buf == '#')
+            continue;
+        if (!strncmp(buf, "end", 3)) {
             on_face = NULL;
-        } else if (!strncmp(buf,"face",4)) {
+        } else if (!strncmp(buf, "face", 4)) {
             unsigned tmp;
 
-            cp = buf + 5;
+            cp = buf+5;
             cp[strlen(cp)-1] = '\0'; /* remove newline */
 
             if ((tmp = find_face(cp, (unsigned)-1)) == (unsigned)-1) {
-                LOG(llevError,"Could not find face %s\n", cp);
+                LOG(llevError, "Could not find face %s\n", cp);
                 continue;
             }
             on_face = &new_faces[tmp];
-            on_face->visibility=0;
-        } else if (on_face==NULL) {
-            LOG(llevError,"Got line with no face set: %s\n", buf);
-        } else if (!strncmp(buf,"visibility",10)) {
-            on_face->visibility = atoi(buf + 11);
-        } else if (!strncmp(buf,"magicmap",8)) {
-            cp=buf+9;
+            on_face->visibility = 0;
+        } else if (on_face == NULL) {
+            LOG(llevError, "Got line with no face set: %s\n", buf);
+        } else if (!strncmp(buf, "visibility", 10)) {
+            on_face->visibility = atoi(buf+11);
+        } else if (!strncmp(buf, "magicmap", 8)) {
+            cp = buf+9;
             cp[strlen(cp)-1] = '\0';
-            on_face->magicmap=find_color(cp);
-        } else if (!strncmp(buf,"is_floor",8)) {
+            on_face->magicmap = find_color(cp);
+        } else if (!strncmp(buf, "is_floor", 8)) {
             int value = atoi(buf+9);
-            if (value) on_face->magicmap |= FACE_FLOOR;
-        } else LOG(llevDebug,"Got unknown line in faces file: %s\n", buf);
+            if (value)
+                on_face->magicmap |= FACE_FLOOR;
+        } else
+            LOG(llevDebug, "Got unknown line in faces file: %s\n", buf);
     }
-    LOG(llevDebug,"done\n");
+    LOG(llevDebug, "done\n");
     fclose(fp);
 }
 
@@ -195,34 +201,34 @@ void read_bmap_names(void) {
     int value, nrofbmaps = 0, i;
     size_t l;
 
-    bmaps_checksum=0;
+    bmaps_checksum = 0;
     snprintf(buf, sizeof(buf), "%s/bmaps", settings.datadir);
-    LOG(llevDebug,"Reading bmaps from %s...\n",buf);
-    if ((fp=fopen(buf,"r"))==NULL) {
+    LOG(llevDebug, "Reading bmaps from %s...\n", buf);
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open bmaps file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 
     /* First count how many bitmaps we have, so we can allocate correctly */
-    while (fgets(buf, MAX_BUF, fp)!=NULL)
+    while (fgets(buf, MAX_BUF, fp) != NULL)
         if (buf[0] != '#' && buf[0] != '\n')
             nrofbmaps++;
     rewind(fp);
 
-    xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * nrofbmaps);
+    xbm = (struct bmappair *)malloc(sizeof(struct bmappair)*nrofbmaps);
     if (xbm == NULL) {
         LOG(llevError, "read_bmap_names: xbm memory allocation failure.");
         abort();
     }
-    memset(xbm, 0, sizeof(struct bmappair) * nrofbmaps);
+    memset(xbm, 0, sizeof(struct bmappair)*nrofbmaps);
 
     while (nroffiles < nrofbmaps && fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
 
-        p = (*buf == '\\') ? (buf + 1): buf;
-        if (!(p = strtok(p , " \t")) || !(q = strtok(NULL , " \t\n"))) {
-            LOG(llevDebug,"Warning, syntax error: %s\n", buf);
+        p = (*buf == '\\') ? (buf+1): buf;
+        if (!(p = strtok(p, " \t")) || !(q = strtok(NULL, " \t\n"))) {
+            LOG(llevDebug, "Warning, syntax error: %s\n", buf);
             continue;
         }
         value = atoi(p);
@@ -236,13 +242,13 @@ void read_bmap_names(void) {
          * the file has the same data or not.
          */
         ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += value & 0xff;
+        bmaps_checksum += value&0xff;
         bmaps_checksum &= 0xffffffff;
 
         ROTATE_RIGHT(bmaps_checksum);
-        bmaps_checksum += (value >> 8) & 0xff;
+        bmaps_checksum += (value>>8)&0xff;
         bmaps_checksum &= 0xffffffff;
-        for (l=0; l<strlen(q); l++) {
+        for (l = 0; l < strlen(q); l++) {
             ROTATE_RIGHT(bmaps_checksum);
             bmaps_checksum += q[l];
             bmaps_checksum &= 0xffffffff;
@@ -255,42 +261,44 @@ void read_bmap_names(void) {
     }
     fclose(fp);
 
-    LOG(llevDebug,"done (got %d/%d/%d)\n",nrofpixmaps,nrofbmaps,nroffiles);
+    LOG(llevDebug, "done (got %d/%d/%d)\n", nrofpixmaps, nrofbmaps, nroffiles);
 
-    new_faces = (New_Face *)malloc(sizeof(New_Face) * nrofpixmaps);
+    new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
     if (new_faces == NULL) {
         LOG(llevError, "read_bmap_names: new_faces memory allocation failure.");
         abort();
     }
+
     for (i = 0; i < nrofpixmaps; i++) {
         new_faces[i].name = "";
         new_faces[i].number = i;
-        new_faces[i].visibility=0;
-        new_faces[i].magicmap=255;
+        new_faces[i].visibility = 0;
+        new_faces[i].magicmap = 255;
         new_faces[i].smoothface = (uint16)-1;
     }
+
     for (i = 0; i < nroffiles; i++) {
         new_faces[xbm[i].number].name = xbm[i].name;
     }
 
-    qsort(xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
+    qsort(xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void *, const void *))compar);
 
     read_face_data();
 
     for (i = 0; i < nrofpixmaps; i++) {
-        if (new_faces[i].magicmap==255) {
-            new_faces[i].magicmap=0;
+        if (new_faces[i].magicmap == 255) {
+            new_faces[i].magicmap = 0;
         }
     }
     /* Actually forcefully setting the colors here probably should not
      * be done - it could easily create confusion.
      */
     blank_face = &new_faces[find_face(BLANK_FACE_NAME, 0)];
-    blank_face->magicmap = find_color("khaki") | FACE_FLOOR;
+    blank_face->magicmap = find_color("khaki")|FACE_FLOOR;
 
     empty_face = &new_faces[find_face(EMPTY_FACE_NAME, 0)];
 
-    smooth_face = &new_faces[find_face(SMOOTH_FACE_NAME,0)];
+    smooth_face = &new_faces[find_face(SMOOTH_FACE_NAME, 0)];
 }
 
 /**
@@ -320,8 +328,7 @@ unsigned find_face(const char *name, unsigned error) {
         *p = '\0';
 
     tmp.name = (char *)name;
-    bp = (struct bmappair *)bsearch
-         (&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void*, const void*))compar);
+    bp = (struct bmappair *)bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (int (*)(const void *, const void *))compar);
 
     return bp ? bp->number : error;
 }
@@ -343,29 +350,29 @@ int read_smooth(void) {
     int regular, smoothed, nrofsmooth = 0;
 
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
-    LOG(llevDebug,"Reading smooth from %s...\n",buf);
-    if ((fp=fopen(buf,"r"))==NULL) {
+    LOG(llevDebug, "Reading smooth from %s...\n", buf);
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open smooth file %s: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 
-    while (fgets(buf, MAX_BUF, fp)!=NULL) {
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;
 
-        p=strchr(buf,' ');
+        p = strchr(buf, ' ');
         if (!p)
             continue;
 
-        *p='\0';
+        *p = '\0';
         q = buf;
         regular = find_face(q, (unsigned)-1);
         if (regular == (unsigned)-1) {
             LOG(llevError, "invalid regular face: %s\n", q);
             continue;
         }
-        q = p + 1;
-        smoothed = find_face(q,(unsigned)-1);
+        q = p+1;
+        smoothed = find_face(q, (unsigned)-1);
         if (smoothed == (unsigned)-1) {
             LOG(llevError, "invalid smoothed face: %s\n", q);
             continue;
@@ -377,7 +384,7 @@ int read_smooth(void) {
     }
     fclose(fp);
 
-    LOG(llevDebug,"done (got %d smooth entries)\n",nrofsmooth);
+    LOG(llevDebug, "done (got %d smooth entries)\n", nrofsmooth);
     return nrofsmooth;
 }
 
@@ -410,7 +417,7 @@ int find_smooth(uint16 face, uint16 *smoothed) {
 void free_all_images(void) {
     int i;
 
-    for (i=0; i<nroffiles; i++)
+    for (i = 0; i <nroffiles; i++)
         free(xbm[i].name);
     free(xbm);
     free(new_faces);
@@ -428,16 +435,16 @@ static void check_faceset_fallback(int faceset, int togo) {
     int fallback = facesets[faceset].fallback;
 
     /* proper case - falls back to base set */
-    if (fallback == 0) return;
+    if (fallback == 0)
+        return;
 
     if (!facesets[fallback].prefix) {
-        LOG(llevError,"Face set %d falls to non set faceset %d\n",
-            faceset, fallback);
+        LOG(llevError, "Face set %d falls to non set faceset %d\n", faceset, fallback);
         abort();
     }
     togo--;
     if (togo == 0) {
-        LOG(llevError,"Infinite loop found in facesets. aborting.\n");
+        LOG(llevError, "Infinite loop found in facesets. aborting.\n");
         abort();
     }
     check_faceset_fallback(fallback, togo);
@@ -465,30 +472,31 @@ void read_client_images(void) {
     char buf[HUGE_BUF];
     char *cp, *cps[7];
     FILE *infile;
-    int num,len,compressed, fileno,i, badline;
+    int num, len, compressed, fileno, i, badline;
 
     memset(facesets, 0, sizeof(facesets));
-    snprintf(filename, sizeof(filename), "%s/image_info",settings.datadir);
-    if ((infile=open_and_uncompress(filename, 0, &compressed))==NULL) {
-        LOG(llevError,"Unable to open %s\n", filename);
+    snprintf(filename, sizeof(filename), "%s/image_info", settings.datadir);
+    if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL) {
+        LOG(llevError, "Unable to open %s\n", filename);
         abort();
     }
-    while (fgets(buf, HUGE_BUF-1, infile)!=NULL) {
-        badline=0;
+    while (fgets(buf, HUGE_BUF-1, infile) != NULL) {
+        badline = 0;
 
-        if (buf[0] == '#') continue;
-        if (!(cps[0] = strtok(buf, ":"))) badline=1;
-        for (i=1; i<7; i++) {
-            if (!(cps[i] = strtok(NULL, ":"))) badline=1;
+        if (buf[0] == '#')
+            continue;
+        if (!(cps[0] = strtok(buf, ":")))
+            badline = 1;
+        for (i = 1; i < 7; i++) {
+            if (!(cps[i] = strtok(NULL, ":")))
+                badline = 1;
         }
         if (badline) {
-            LOG(llevError,"Bad line in image_info file, ignoring line:\n  %s",
-                buf);
+            LOG(llevError, "Bad line in image_info file, ignoring line:\n  %s", buf);
         } else {
             len = atoi(cps[0]);
-            if (len >=MAX_FACE_SETS) {
-                LOG(llevError,"To high a setnum in image_info file: %d > %d\n",
-                    len, MAX_FACE_SETS);
+            if (len >= MAX_FACE_SETS) {
+                LOG(llevError, "To high a setnum in image_info file: %d > %d\n", len, MAX_FACE_SETS);
                 abort();
             }
             facesets[len].prefix = strdup_local(cps[1]);
@@ -499,45 +507,44 @@ void read_client_images(void) {
             facesets[len].comment = strdup_local(cps[6]);
         }
     }
-    close_and_delete(infile,compressed);
-    for (i=0; i<MAX_FACE_SETS; i++) {
-        if (facesets[i].prefix) check_faceset_fallback(i, MAX_FACE_SETS);
+    close_and_delete(infile, compressed);
+    for (i = 0; i < MAX_FACE_SETS; i++) {
+        if (facesets[i].prefix)
+            check_faceset_fallback(i, MAX_FACE_SETS);
     }
     /* Loaded the faceset information - now need to load up the
      * actual faces.
      */
 
-    for (fileno=0; fileno<MAX_FACE_SETS; fileno++) {
+    for (fileno = 0; fileno < MAX_FACE_SETS; fileno++) {
         /* if prefix is not set, this is not used */
-        if (!facesets[fileno].prefix) continue;
+        if (!facesets[fileno].prefix)
+            continue;
         facesets[fileno].faces = calloc(nrofpixmaps, sizeof(face_info));
 
-        snprintf(filename, sizeof(filename), "%s/crossfire.%d",settings.datadir, fileno);
-        LOG(llevDebug,"Loading image file %s\n", filename);
+        snprintf(filename, sizeof(filename), "%s/crossfire.%d", settings.datadir, fileno);
+        LOG(llevDebug, "Loading image file %s\n", filename);
 
-        if ((infile = open_and_uncompress(filename,0,&compressed))==NULL) {
-            LOG(llevError,"Unable to open %s\n", filename);
+        if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL) {
+            LOG(llevError, "Unable to open %s\n", filename);
             abort();
         }
-        while (fgets(buf, HUGE_BUF-1, infile)!=NULL) {
-            if (strncmp(buf,"IMAGE ",6)!=0) {
-                LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
+        while (fgets(buf, HUGE_BUF-1, infile) != NULL) {
+            if (strncmp(buf, "IMAGE ", 6) != 0) {
+                LOG(llevError, "read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
                 abort();
             }
             num = atoi(buf+6);
-            if (num<0 || num>=nrofpixmaps) {
-                LOG(llevError,
-                    "read_client_images: Image num %d not in 0..%d\n%s",
-                    num,nrofpixmaps,buf);
+            if (num < 0 || num >= nrofpixmaps) {
+                LOG(llevError, "read_client_images: Image num %d not in 0..%d\n%s", num, nrofpixmaps, buf);
                 abort();
             }
             /* Skip accross the number data */
-            for (cp=buf+6; *cp!=' '; cp++) ;
+            for (cp = buf+6; *cp != ' '; cp++)
+                ;
             len = atoi(cp);
-            if (len==0 || len>MAX_IMAGE_SIZE) {
-                LOG(llevError,
-                    "read_client_images: length not valid: %d > %d \n%s",
-                    len,MAX_IMAGE_SIZE,buf);
+            if (len == 0 || len > MAX_IMAGE_SIZE) {
+                LOG(llevError, "read_client_images: length not valid: %d > %d \n%s", len, MAX_IMAGE_SIZE, buf);
                 abort();
             }
             /* We don't actualy care about the name if the image that
@@ -545,21 +552,18 @@ void read_client_images(void) {
              */
             facesets[fileno].faces[num].datalen = len;
             facesets[fileno].faces[num].data = malloc(len);
-            if ((i=fread(facesets[fileno].faces[num].data,
-                         len, 1, infile)) != 1) {
-                LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",
-                    len, i, buf);
+            if ((i = fread(facesets[fileno].faces[num].data, len, 1, infile)) != 1) {
+                LOG(llevError, "read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s", len, i, buf);
                 abort();
             }
-            facesets[fileno].faces[num].checksum=0;
-            for (i=0; i<len; i++) {
+            facesets[fileno].faces[num].checksum = 0;
+            for (i = 0; i < len; i++) {
                 ROTATE_RIGHT(facesets[fileno].faces[num].checksum);
-                facesets[fileno].faces[num].checksum +=
-                    facesets[fileno].faces[num].data[i];
+                facesets[fileno].faces[num].checksum += facesets[fileno].faces[num].data[i];
                 facesets[fileno].faces[num].checksum &= 0xffffffff;
             }
         }
-        close_and_delete(infile,compressed);
+        close_and_delete(infile, compressed);
     } /* For fileno < MAX_FACE_SETS */
 }
 
@@ -568,7 +572,8 @@ void read_client_images(void) {
  * \param fsn faceset number
  */
 int is_valid_faceset(int fsn) {
-    if (fsn >=0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix) return TRUE;
+    if (fsn >= 0 && fsn < MAX_FACE_SETS && facesets[fsn].prefix)
+        return TRUE;
     return FALSE;
 }
 
@@ -576,11 +581,11 @@ int is_valid_faceset(int fsn) {
  * Frees all faceset information
  */
 void free_socket_images(void) {
-    int num,q;
+    int num, q;
 
-    for (num=0;num<MAX_FACE_SETS; num++) {
+    for (num = 0; num < MAX_FACE_SETS; num++) {
         if (facesets[num].prefix) {
-            for (q=0; q<nrofpixmaps; q++)
+            for (q = 0; q < nrofpixmaps; q++)
                 if (facesets[num].faces[q].data)
                     free(facesets[num].faces[q].data);
             free(facesets[num].prefix);
@@ -612,13 +617,14 @@ int get_face_fallback(int faceset, int imageno) {
      * to access the data, but that is probably preferable to an infinite
      * loop.
      */
-    if (faceset==0) return 0;
+    if (faceset == 0)
+        return 0;
 
     if (!facesets[faceset].prefix) {
-        LOG(llevError,"get_face_fallback called with unused set (%d)?\n",
-            faceset);
+        LOG(llevError, "get_face_fallback called with unused set (%d)?\n", faceset);
         return 0;   /* use default set */
     }
-    if (facesets[faceset].faces[imageno].data) return faceset;
+    if (facesets[faceset].faces[imageno].data)
+        return faceset;
     return get_face_fallback(facesets[faceset].fallback, imageno);
 }

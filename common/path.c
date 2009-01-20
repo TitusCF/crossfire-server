@@ -36,7 +36,6 @@
 #include "define.h"
 #include "path.h"
 
-
 #if 0
 /**
  * Define DEBUG_PATH to enable debug output.
@@ -78,7 +77,7 @@ char *path_combine(const char *src, const char *dst, char *path, int size) {
             if (*src == '/')
                 *p++ = '/';
         }
-        snprintf(p, size - (p - path), "%s", dst);
+        snprintf(p, size-(p-path), "%s", dst);
     }
 
 #if defined(DEBUG_PATH)
@@ -110,7 +109,6 @@ void path_normalize(char *path) {
     p = path;
     w = p;
     while (*p != '\0') {
-
         if (*p == '/') {
             if ((w == path && *path == '/') || (w > path && w[-1] != '/'))
                 *w++ = '/';

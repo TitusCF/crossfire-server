@@ -55,8 +55,6 @@ static void expand_objects(void);
 static void permute(int *, int, int);
 static int set_ob_key_value_s(object *, const char *, const char *, int);
 
-
-
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;  /**< Number of free objects. */
 int nrofallocobjects = 0; /**< Number of allocated objects. */
@@ -74,28 +72,27 @@ object *active_objects;    /**< List of active objects that need to be processed
 
 /** X offset when searching around a spot. */
 short freearr_x[SIZEOFFREE] = {
-    0,0,1,1,1,0,-1,-1,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,-2,-2,-2,-1,
-    0,1,2,3,3,3,3,3,3,3,2,1,0,-1,-2,-3,-3,-3,-3,-3,-3,-3,-2,-1
+    0, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2, -2, -2, -2, -1,
+    0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -3, -3, -3, -3, -2, -1
 };
 
 /** Y offset when searching around a spot. */
 short freearr_y[SIZEOFFREE] = {
-    0,-1,-1,0,1,1,1,0,-1,-2,-2,-2,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,
-    -3,-3,-3,-3,-2,-1,0,1,2,3,3,3,3,3,3,3,2,1,0,-1,-2,-3,-3,-3
+    0, -1, -1, 0, 1, 1, 1, 0, -1, -2, -2, -2, -1, 0, 1, 2, 2, 2, 2, 2, 1, 0, -1, -2, -2,
+    -3, -3, -3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3
 };
 
 /** Number of spots around a location, including that location (except for 0) */
 int maxfree[SIZEOFFREE] = {
-    0,9,10,13,14,17,18,21,22,25,26,27,30,31,32,33,36,37,39,39,42,43,44,45,
-    48,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49,49
+    0, 9, 10, 13, 14, 17, 18, 21, 22, 25, 26, 27, 30, 31, 32, 33, 36, 37, 39, 39, 42, 43, 44, 45,
+    48, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49
 };
 
 /** Direction we're pointing on this spot. */
 int freedir[SIZEOFFREE] = {
-    0,1,2,3,4,5,6,7,8,1,2,2,2,3,4,4,4,5,6,6,6,7,8,8,8,
-    1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 2, 2, 3, 4, 4, 4, 5, 6, 6, 6, 7, 8, 8, 8,
+    1, 2, 2, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6, 6, 6, 6, 7, 8, 8, 8, 8, 8
 };
-
 
 /**
  * Compares value lists.
@@ -107,8 +104,8 @@ int freedir[SIZEOFFREE] = {
  * @return
  * TRUE if every key_values in wants has a partner with the same value in has.
  */
-static int compare_ob_value_lists_one(const object * wants, const object * has) {
-    key_value * wants_field;
+static int compare_ob_value_lists_one(const object *wants, const object *has) {
+    key_value *wants_field;
 
     /* n-squared behaviour (see get_ob_key_link()), but I'm hoping both
      * objects with lists are rare, and lists stay short. If not, use a
@@ -117,7 +114,7 @@ static int compare_ob_value_lists_one(const object * wants, const object * has) 
 
     /* For each field in wants, */
     for (wants_field = wants->key_values; wants_field != NULL; wants_field = wants_field->next) {
-        key_value * has_field;
+        key_value *has_field;
 
         /* Look for a field in has with the same key. */
         has_field = get_ob_key_link(has, wants_field->key);
@@ -148,7 +145,7 @@ static int compare_ob_value_lists_one(const object * wants, const object * has) 
  * @return
  * TRUE if ob1 has the same key_values as ob2.
  */
-static int compare_ob_value_lists(const object * ob1, const object * ob2) {
+static int compare_ob_value_lists(const object *ob1, const object *ob2) {
     /* However, there may be fields in has which aren't partnered in wants,
      * so we need to run the comparison *twice*. :(
      */
@@ -180,15 +177,17 @@ static int compare_ob_value_lists(const object * ob1, const object * ob2) {
 int can_merge(object *ob1, object *ob2) {
 
     /* A couple quicksanity checks */
-    if ((ob1 == ob2) || (ob1->type != ob2->type)) return 0;
+    if ((ob1 == ob2) || (ob1->type != ob2->type))
+        return 0;
 
-    if (ob1->speed != ob2->speed) return 0;
+    if (ob1->speed != ob2->speed)
+        return 0;
     /* Note sure why the following is the case - either the object has to
      * be animated or have a very low speed.  Is this an attempted monster
      * check?
      */
     /*TODO is this check really needed?*/
-    if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
+    if (!QUERY_FLAG(ob1, FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
         return 0;
 
     /* Do not merge objects if nrof would overflow. We use 1UL<<31 since that
@@ -204,10 +203,12 @@ int can_merge(object *ob1, object *ob2) {
     /*TODO is this check really needed?*/
     if (ob1->inv || ob2->inv) {
         /* if one object has inventory but the other doesn't, not equiv */
-        if ((ob1->inv && !ob2->inv) || (ob2->inv && !ob1->inv)) return 0;
+        if ((ob1->inv && !ob2->inv) || (ob2->inv && !ob1->inv))
+            return 0;
 
         /* Now check to see if the two inventory objects could merge */
-        if (!can_merge(ob1->inv, ob2->inv)) return 0;
+        if (!can_merge(ob1->inv, ob2->inv))
+            return 0;
 
         /* inventory ok - still need to check rest of this object to see
          * if it is valid.
@@ -230,36 +231,36 @@ int can_merge(object *ob1, object *ob2) {
 
 
     /* Note: FLAG_INV_LOCKED is ignored for merging purposes */
-    if ((ob1->arch != ob2->arch) ||
-        (ob1->flags[0] != ob2->flags[0]) ||
-        (ob1->flags[1] != ob2->flags[1]) ||
-        (ob1->flags[2] != ob2->flags[2]) ||
-        ((ob1->flags[3] & ~0x4) != (ob2->flags[3] & ~0x4)) || /* ignore CLIENT_SENT */
-        (ob1->name != ob2->name) ||
-        (ob1->title != ob2->title) ||
-        (ob1->msg != ob2->msg) ||
-        (ob1->weight != ob2->weight) ||
-        (ob1->item_power != ob2->item_power) ||
-        (memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
-        (memcmp(&ob1->stats, &ob2->stats, sizeof(ob1->stats))!=0) ||
-        (ob1->attacktype != ob2->attacktype) ||
-        (ob1->magic != ob2->magic) ||
-        (ob1->slaying != ob2->slaying) ||
-        (ob1->skill != ob2->skill) ||
-        (ob1->value != ob2->value) ||
-        (ob1->animation_id != ob2->animation_id) ||
-        (ob1->client_type != ob2->client_type) ||
-        (ob1->materialname != ob2->materialname) ||
-        (ob1->lore != ob2->lore) ||
-        (ob1->subtype != ob2->subtype) ||
-        (ob1->move_type != ob2->move_type) ||
-        (ob1->move_block != ob2->move_block) ||
-        (ob1->move_allow != ob2->move_allow) ||
-        (ob1->move_on != ob2->move_on) ||
-        (ob1->move_off != ob2->move_off) ||
-        (ob1->move_slow != ob2->move_slow) ||
-        (ob1->move_slow_penalty != ob2->move_slow_penalty) ||
-        (ob1->map_layer != ob2->map_layer)
+    if ((ob1->arch != ob2->arch)
+    || (ob1->flags[0] != ob2->flags[0])
+    || (ob1->flags[1] != ob2->flags[1])
+    || (ob1->flags[2] != ob2->flags[2])
+    || ((ob1->flags[3]&~0x4) != (ob2->flags[3]&~0x4)) /* ignore CLIENT_SENT */
+    || (ob1->name != ob2->name)
+    || (ob1->title != ob2->title)
+    || (ob1->msg != ob2->msg)
+    || (ob1->weight != ob2->weight)
+    || (ob1->item_power != ob2->item_power)
+    || (memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist)) != 0)
+    || (memcmp(&ob1->stats, &ob2->stats, sizeof(ob1->stats)) != 0)
+    || (ob1->attacktype != ob2->attacktype)
+    || (ob1->magic != ob2->magic)
+    || (ob1->slaying != ob2->slaying)
+    || (ob1->skill != ob2->skill)
+    || (ob1->value != ob2->value)
+    || (ob1->animation_id != ob2->animation_id)
+    || (ob1->client_type != ob2->client_type)
+    || (ob1->materialname != ob2->materialname)
+    || (ob1->lore != ob2->lore)
+    || (ob1->subtype != ob2->subtype)
+    || (ob1->move_type != ob2->move_type)
+    || (ob1->move_block != ob2->move_block)
+    || (ob1->move_allow != ob2->move_allow)
+    || (ob1->move_on != ob2->move_on)
+    || (ob1->move_off != ob2->move_off)
+    || (ob1->move_slow != ob2->move_slow)
+    || (ob1->move_slow_penalty != ob2->move_slow_penalty)
+    || (ob1->map_layer != ob2->map_layer)
     )
         return 0;
 
@@ -282,14 +283,16 @@ int can_merge(object *ob1, object *ob2) {
 
     /*TODO should this really be limited to scrolls?*/
     switch (ob1->type) {
-        case SCROLL:
-            if (ob1->level != ob2->level) return 0;
-            break;
+    case SCROLL:
+        if (ob1->level != ob2->level)
+            return 0;
+        break;
 
     }
 
     /* Don't merge items with differing custom names. */
-    if (ob1->custom_name != ob2->custom_name) return 0;
+    if (ob1->custom_name != ob2->custom_name)
+        return 0;
 
     /* Everything passes, must be OK. */
     return 1;
@@ -314,13 +317,14 @@ int can_merge(object *ob1, object *ob2) {
 signed long sum_weight(object *op) {
     signed long sum;
     object *inv;
+
     for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
         if (inv->inv)
             sum_weight(inv);
-        sum += inv->carrying + inv->weight * (inv->nrof ? inv->nrof : 1);
+        sum += inv->carrying+inv->weight*(inv->nrof ? inv->nrof : 1);
     }
     if (op->type == CONTAINER && op->stats.Str)
-        sum = (sum * (100 - op->stats.Str))/100;
+        sum = (sum*(100-op->stats.Str))/100;
     op->carrying = sum;
     return sum;
 }
@@ -350,9 +354,9 @@ object *object_get_env_recursive(object *op) {
  * this function is badly named. Fix patching on the fly.
  */
 object *get_player_container(object *op) {
-    for (;op!=NULL&&op->type!=PLAYER; op=op->env)
+    for (; op != NULL && op->type != PLAYER; op = op->env)
         /*TODO this is patching the structure on the flight as side effect. Shoudln't be needed in clean code */
-        if (op->env==op)
+        if (op->env == op)
             op->env = NULL;
     return op;
 }
@@ -366,14 +370,14 @@ object *get_player_container(object *op) {
  * buffer that will contain object information. Must not be NULL.
  */
 void dump_object(object *op, StringBuffer *sb) {
-    if (op==NULL) {
+    if (op == NULL) {
         stringbuffer_append_string(sb, "[NULL pointer]");
         return;
     }
 
     /*  object *tmp;*/
 
-    if (op->arch!=NULL) {
+    if (op->arch != NULL) {
         stringbuffer_append_string(sb, "arch ");
         stringbuffer_append_string(sb, op->arch->name ? op->arch->name : "(null)");
         stringbuffer_append_string(sb, "\n");
@@ -412,7 +416,7 @@ void dump_object(object *op, StringBuffer *sb) {
 void dump_all_objects(void) {
     object *op;
 
-    for (op=objects;op!=NULL;op=op->next) {
+    for (op = objects; op != NULL; op = op->next) {
         StringBuffer *sb;
         char *diff;
 
@@ -424,7 +428,6 @@ void dump_all_objects(void) {
     }
 }
 
-
 /**
  * Returns the object which has the count-variable equal to the argument.
  *
@@ -435,8 +438,9 @@ void dump_all_objects(void) {
  */
 object *find_object(tag_t i) {
     object *op;
-    for (op=objects;op!=NULL;op=op->next)
-        if (op->count==i)
+
+    for (op = objects; op != NULL; op = op->next)
+        if (op->count == i)
             break;
     return op;
 }
@@ -453,10 +457,11 @@ object *find_object(tag_t i) {
  * the first object which has a name equal to the argument.
  */
 object *find_object_name(const char *str) {
-    const char *name=add_string(str);
+    const char *name = add_string(str);
     object *op;
-    for (op=objects;op!=NULL;op=op->next)
-        if (op->name==name)
+
+    for (op = objects; op != NULL; op = op->next)
+        if (op->name == name)
             break;
     free_string(name);
     return op;
@@ -475,25 +480,24 @@ void free_all_object_data(void) {
 #ifdef MEMORY_DEBUG
     object *op, *next;
 
-    for (op=free_objects; op!=NULL;) {
-        next=op->next;
+    for (op = free_objects; op != NULL; ) {
+        next = op->next;
         free(op);
         nrofallocobjects--;
         nroffreeobjects--;
-        op=next;
+        op = next;
     }
 
-    for (op=objects; op!= NULL;) {
-        next=op->next;
+    for (op = objects; op != NULL; ) {
+        next = op->next;
         if (!QUERY_FLAG(op, FLAG_FREED)) {
             LOG(llevDebug, "non freed object: %s", op->name);
         }
-        op=next;
+        op = next;
     }
 #endif
 
-    LOG(llevDebug,"%d allocated objects, %d free objects, STARMAX=%d\n",
-        nrofallocobjects, nroffreeobjects,STARTMAX);
+    LOG(llevDebug, "%d allocated objects, %d free objects, STARMAX=%d\n", nrofallocobjects, nroffreeobjects, STARTMAX);
 }
 
 /**
@@ -518,15 +522,16 @@ void free_all_object_data(void) {
  * This is not the place to do such a cleaning
  */
 object *get_owner(object *op) {
-    if (op->owner==NULL)
+    if (op->owner == NULL)
         return NULL;
 
-    if (!QUERY_FLAG(op->owner,FLAG_FREED) && !QUERY_FLAG(op->owner, FLAG_REMOVED) &&
-        op->owner->count==op->ownercount)
+    if (!QUERY_FLAG(op->owner, FLAG_FREED)
+    && !QUERY_FLAG(op->owner, FLAG_REMOVED)
+    && op->owner->count == op->ownercount)
         return op->owner;
-    LOG(llevError,"I had to clean an owner when in get_owner, this isn't my job.\n");
-    op->owner=NULL;
-    op->ownercount=0;
+    LOG(llevError, "I had to clean an owner when in get_owner, this isn't my job.\n");
+    op->owner = NULL;
+    op->ownercount = 0;
     return NULL;
 }
 
@@ -537,13 +542,12 @@ object *get_owner(object *op) {
  * object we want to clear the owner of. Can be NULL.
  */
 void clear_owner(object *op) {
-    if (!op) return;
+    if (!op)
+        return;
 
     op->owner = NULL;
     op->ownercount = 0;
 }
-
-
 
 /**
  * Sets the owner and sets the skill and exp pointers to owner's current
@@ -558,7 +562,7 @@ void clear_owner(object *op) {
  * replace owner serching loop with a call to get_owner()?
  */
 void set_owner(object *op, object *owner) {
-    if (op==NULL)
+    if (op == NULL)
         return;
     if (owner == NULL) {
         clear_owner(op);
@@ -572,22 +576,23 @@ void set_owner(object *op, object *owner) {
      * freed and then another object replacing it.  Since the ownercounts
      * didn't match, this check is valid and I believe that cause is valid.
      */
-    while (owner->owner && owner!=owner->owner &&
-           owner->ownercount==owner->owner->count) owner=owner->owner;
+    while (owner->owner
+    && owner != owner->owner
+    && owner->ownercount == owner->owner->count)
+        owner = owner->owner;
 
     /* IF the owner still has an owner, we did not resolve to a final owner.
      * so lets not add to that.
      */
     if (owner->owner) {
-        LOG(llevError,"owner id %d could not be resolved to a parent owner in set_owner(). This is bad!"
+        LOG(llevError, "owner id %d could not be resolved to a parent owner in set_owner(). This is bad!"
             "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d\n",
-            owner,owner->owner,owner->ownercount, owner->owner->count);
+            owner, owner->owner, owner->ownercount, owner->owner->count);
         return;
     }
 
-    op->owner=owner;
-
-    op->ownercount=owner->count;
+    op->owner = owner;
+    op->ownercount = owner->count;
 }
 
 /**
@@ -613,8 +618,10 @@ void copy_owner(object *op, object *clone) {
          * as appropriate.
          */
         /*TODO owner=self is dangerous and should be avoided*/
-        if (clone->type == PLAYER) owner=clone;
-        else return;
+        if (clone->type == PLAYER)
+            owner = clone;
+        else
+            return;
     }
     set_owner(op, owner);
 
@@ -630,7 +637,6 @@ void copy_owner(object *op, object *clone) {
  * this doesn't free associated memory for object.
  */
 void reset_object(object *op) {
-
     op->name = NULL;
     op->name_pl = NULL;
     op->title = NULL;
@@ -650,25 +656,27 @@ void reset_object(object *op) {
  * @param op
  * object to clear.
  */
-void free_key_values(object * op) {
-    key_value * i;
-    key_value * next = NULL;
+void free_key_values(object *op) {
+    key_value *i;
+    key_value *next = NULL;
 
-    if (op->key_values == NULL) return;
+    if (op->key_values == NULL)
+        return;
 
     for (i = op->key_values; i != NULL; i = next) {
         /* Store next *first*. */
         next = i->next;
 
-        if (i->key) FREE_AND_CLEAR_STR(i->key);
-        if (i->value) FREE_AND_CLEAR_STR(i->value);
+        if (i->key)
+            FREE_AND_CLEAR_STR(i->key);
+        if (i->value)
+            FREE_AND_CLEAR_STR(i->value);
         i->next = NULL;
         free(i);
     }
 
     op->key_values = NULL;
 }
-
 
 /**
  * Frees everything allocated by an object, and also
@@ -691,19 +699,18 @@ void clear_object(object *op) {
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
-    if (op->name!=NULL)     FREE_AND_CLEAR_STR(op->name);
-    if (op->name_pl!=NULL)  FREE_AND_CLEAR_STR(op->name_pl);
-    if (op->title != NULL)  FREE_AND_CLEAR_STR(op->title);
-    if (op->race!=NULL)     FREE_AND_CLEAR_STR(op->race);
-    if (op->slaying!=NULL)  FREE_AND_CLEAR_STR(op->slaying);
-    if (op->skill!=NULL)    FREE_AND_CLEAR_STR(op->skill);
-    if (op->msg!=NULL)      FREE_AND_CLEAR_STR(op->msg);
-    if (op->lore!=NULL)     FREE_AND_CLEAR_STR(op->lore);
-    if (op->materialname!= NULL)     FREE_AND_CLEAR_STR(op->materialname);
+    if (op->name != NULL) FREE_AND_CLEAR_STR(op->name);
+    if (op->name_pl != NULL) FREE_AND_CLEAR_STR(op->name_pl);
+    if (op->title != NULL) FREE_AND_CLEAR_STR(op->title);
+    if (op->race != NULL) FREE_AND_CLEAR_STR(op->race);
+    if (op->slaying != NULL) FREE_AND_CLEAR_STR(op->slaying);
+    if (op->skill != NULL) FREE_AND_CLEAR_STR(op->skill);
+    if (op->msg != NULL) FREE_AND_CLEAR_STR(op->msg);
+    if (op->lore != NULL) FREE_AND_CLEAR_STR(op->lore);
+    if (op->materialname != NULL) FREE_AND_CLEAR_STR(op->materialname);
     if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
 
-    memset((void*)((char*)op + offsetof(object, name)),
-           0, sizeof(object)-offsetof(object, name));
+    memset((void*)((char*)op+offsetof(object, name)), 0, sizeof(object)-offsetof(object, name));
     /* Below here, we clear things that are not done by the memset,
      * or set default values that are not zero.
      */
@@ -712,24 +719,23 @@ void clear_object(object *op) {
 
 
     op->contr = NULL;
-    op->below=NULL;
-    op->above=NULL;
-    op->inv=NULL;
-    op->container=NULL;
-    op->env=NULL;
-    op->more=NULL;
-    op->head=NULL;
-    op->map=NULL;
+    op->below = NULL;
+    op->above = NULL;
+    op->inv = NULL;
+    op->container = NULL;
+    op->env = NULL;
+    op->more = NULL;
+    op->head = NULL;
+    op->map = NULL;
     op->active_next = NULL;
     op->active_prev = NULL;
     /* What is not cleared is next, prev, and count */
 
-    op->expmul=1.0;
+    op->expmul = 1.0;
     op->face = blank_face;
-    op->attacked_by_count= -1;
+    op->attacked_by_count = -1;
     if (settings.casting_time)
         op->casting_time = -1;
-
 }
 
 /**
@@ -745,25 +751,24 @@ void clear_object(object *op) {
  * @param op
  * object that we copy to.
  */
-
 void copy_object(object *op2, object *op) {
-    int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED);
+    int is_freed = QUERY_FLAG(op, FLAG_FREED), is_removed = QUERY_FLAG(op, FLAG_REMOVED);
 
     /* Decrement the refcounts, but don't bother zeroing the fields;
     they'll be overwritten by memcpy. */
-    if (op->name!=NULL)                 free_string(op->name);
-    if (op->name_pl!=NULL)              free_string(op->name_pl);
-    if (op->anim_suffix!=NULL)          free_string(op->anim_suffix);
-    if (op->title!=NULL)                free_string(op->title);
-    if (op->race!=NULL)                 free_string(op->race);
-    if (op->slaying!=NULL)              free_string(op->slaying);
-    if (op->skill!=NULL)                free_string(op->skill);
-    if (op->msg!=NULL)                  free_string(op->msg);
-    if (op->lore!=NULL)                 free_string(op->lore);
-    if (op->materialname != NULL)       free_string(op->materialname);
-    if (op->custom_name != NULL)        free_string(op->custom_name);
-    if (op->discrete_damage != NULL)    FREE_AND_CLEAR(op->discrete_damage);
-    if (op->spell_tags != NULL)         FREE_AND_CLEAR(op->spell_tags);
+    if (op->name != NULL) free_string(op->name);
+    if (op->name_pl != NULL) free_string(op->name_pl);
+    if (op->anim_suffix != NULL) free_string(op->anim_suffix);
+    if (op->title != NULL) free_string(op->title);
+    if (op->race != NULL) free_string(op->race);
+    if (op->slaying != NULL) free_string(op->slaying);
+    if (op->skill != NULL) free_string(op->skill);
+    if (op->msg != NULL) free_string(op->msg);
+    if (op->lore != NULL) free_string(op->lore);
+    if (op->materialname != NULL) free_string(op->materialname);
+    if (op->custom_name != NULL) free_string(op->custom_name);
+    if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
+    if (op->spell_tags != NULL) FREE_AND_CLEAR(op->spell_tags);
 
     /* Basically, same code as from clear_object() */
 
@@ -771,31 +776,31 @@ void copy_object(object *op2, object *op) {
     free_dialog_information(op);
 
     /* op is the destination, op2 is the source. */
-    (void) memcpy((void *)((char *) op +offsetof(object,name)),
-                  (void *)((char *) op2+offsetof(object,name)),
-                  sizeof(object)-offsetof(object, name));
+    (void)memcpy((void *)((char *)op+offsetof(object, name)),
+                (void *)((char *)op2+offsetof(object, name)),
+                sizeof(object)-offsetof(object, name));
 
-    if (is_freed)                 SET_FLAG(op,FLAG_FREED);
-    if (is_removed)               SET_FLAG(op,FLAG_REMOVED);
-    if (op->name!=NULL)           add_refcount(op->name);
-    if (op->name_pl!=NULL)        add_refcount(op->name_pl);
-    if (op->anim_suffix!=NULL)    add_refcount(op->anim_suffix);
-    if (op->title!=NULL)          add_refcount(op->title);
-    if (op->race!=NULL)           add_refcount(op->race);
-    if (op->slaying!=NULL)        add_refcount(op->slaying);
-    if (op->skill!=NULL)          add_refcount(op->skill);
-    if (op->lore!=NULL)           add_refcount(op->lore);
-    if (op->msg!=NULL)            add_refcount(op->msg);
-    if (op->custom_name!=NULL)    add_refcount(op->custom_name);
+    if (is_freed) SET_FLAG(op, FLAG_FREED);
+    if (is_removed) SET_FLAG(op, FLAG_REMOVED);
+    if (op->name != NULL) add_refcount(op->name);
+    if (op->name_pl != NULL) add_refcount(op->name_pl);
+    if (op->anim_suffix != NULL) add_refcount(op->anim_suffix);
+    if (op->title != NULL) add_refcount(op->title);
+    if (op->race != NULL) add_refcount(op->race);
+    if (op->slaying != NULL) add_refcount(op->slaying);
+    if (op->skill != NULL) add_refcount(op->skill);
+    if (op->lore != NULL) add_refcount(op->lore);
+    if (op->msg != NULL) add_refcount(op->msg);
+    if (op->custom_name != NULL) add_refcount(op->custom_name);
     if (op->materialname != NULL) add_refcount(op->materialname);
     if (op->discrete_damage != NULL) {
-        op->discrete_damage = malloc(sizeof(sint16) * NROFATTACKS);
-        memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16) * NROFATTACKS);
+        op->discrete_damage = malloc(sizeof(sint16)*NROFATTACKS);
+        memcpy(op->discrete_damage, op2->discrete_damage, sizeof(sint16)*NROFATTACKS);
     }
 
     if (op->spell_tags != NULL) {
-        op->spell_tags = malloc(sizeof(tag_t) * SPELL_TAG_SIZE);
-        memcpy(op->spell_tags, op2->spell_tags, sizeof(tag_t) * SPELL_TAG_SIZE);
+        op->spell_tags = malloc(sizeof(tag_t)*SPELL_TAG_SIZE);
+        memcpy(op->spell_tags, op2->spell_tags, sizeof(tag_t)*SPELL_TAG_SIZE);
     }
 
     /* If archetype is a temporary one, we need to update reference count, because
@@ -804,18 +809,18 @@ void copy_object(object *op2, object *op) {
     if (op->arch->reference_count > 0)
         op->arch->reference_count++;
 
-    if (op2->speed<0)
+    if (op2->speed < 0)
         op->speed_left=op2->speed_left-RANDOM()%200/100.0;
 
     /* Copy over key_values, if any. */
     if (op2->key_values != NULL) {
-        key_value * tail = NULL;
-        key_value * i;
+        key_value *tail = NULL;
+        key_value *i;
 
         op->key_values = NULL;
 
         for (i = op2->key_values; i != NULL; i = i->next) {
-            key_value * new_link = malloc(sizeof(key_value));
+            key_value *new_link = malloc(sizeof(key_value));
 
             new_link->next = NULL;
             new_link->key = add_refcount(i->key);
@@ -851,13 +856,13 @@ void copy_object(object *op2, object *op) {
  * replace with a function in common library (there is certainly one).
  */
 void copy_object_with_inv(object *src_ob, object *dest_ob) {
-    object *walk,*tmp;
-    copy_object(src_ob,dest_ob);
+    object *walk, *tmp;
+    copy_object(src_ob, dest_ob);
 
-    for (walk=src_ob->inv;walk!=NULL;walk=walk->below) {
+    for (walk = src_ob->inv; walk != NULL; walk = walk->below) {
         tmp=get_object();
-        copy_object(walk,tmp);
-        insert_ob_in_ob(tmp,dest_ob);
+        copy_object(walk, tmp);
+        insert_ob_in_ob(tmp, dest_ob);
     }
 }
 
@@ -871,24 +876,25 @@ void copy_object_with_inv(object *src_ob, object *dest_ob) {
 static void expand_objects(void) {
     int i;
     object *new;
-    new = (object *) CALLOC(OBJ_EXPAND,sizeof(object));
 
-    if (new==NULL)
+    new = (object *)CALLOC(OBJ_EXPAND, sizeof(object));
+
+    if (new == NULL)
         fatal(OUT_OF_MEMORY);
-    free_objects=new;
-    new[0].prev=NULL;
-    new[0].next= &new[1],
+    free_objects = new;
+    new[0].prev = NULL;
+    new[0].next = &new[1],
     SET_FLAG(&(new[0]), FLAG_REMOVED);
     SET_FLAG(&(new[0]), FLAG_FREED);
 
-    for (i=1;i<OBJ_EXPAND-1;i++) {
-        new[i].next= &new[i+1],
-        new[i].prev= &new[i-1],
+    for (i = 1; i < OBJ_EXPAND-1; i++) {
+        new[i].next = &new[i+1],
+        new[i].prev = &new[i-1],
         SET_FLAG(&(new[i]), FLAG_REMOVED);
         SET_FLAG(&(new[i]), FLAG_FREED);
     }
-    new[OBJ_EXPAND-1].prev= &new[OBJ_EXPAND-2],
-    new[OBJ_EXPAND-1].next=NULL,
+    new[OBJ_EXPAND-1].prev = &new[OBJ_EXPAND-2],
+    new[OBJ_EXPAND-1].next = NULL,
     SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_REMOVED);
     SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_FREED);
 
@@ -911,10 +917,10 @@ static void expand_objects(void) {
 object *get_object(void) {
     object *op;
 
-    if (free_objects==NULL) {
+    if (free_objects == NULL) {
         expand_objects();
     }
-    op=free_objects;
+    op = free_objects;
 #ifdef MEMORY_DEBUG
     /* The idea is hopefully by doing a realloc, the memory
     * debugging program will now use the current stack trace to
@@ -925,33 +931,33 @@ object *get_object(void) {
     SET_FLAG(op, FLAG_FREED);
 #endif
 
-    if (!QUERY_FLAG(op,FLAG_FREED)) {
-        LOG(llevError,"Fatal: Getting busy object.\n");
+    if (!QUERY_FLAG(op, FLAG_FREED)) {
+        LOG(llevError, "Fatal: Getting busy object.\n");
     }
-    free_objects=op->next;
-    if (free_objects!=NULL)
-        free_objects->prev=NULL;
-    op->count= ++ob_count;
-    op->name=NULL;
-    op->name_pl=NULL;
-    op->title=NULL;
-    op->race=NULL;
-    op->slaying=NULL;
+    free_objects = op->next;
+    if (free_objects != NULL)
+        free_objects->prev = NULL;
+    op->count = ++ob_count;
+    op->name = NULL;
+    op->name_pl = NULL;
+    op->title = NULL;
+    op->race = NULL;
+    op->slaying = NULL;
     op->skill = NULL;
-    op->lore=NULL;
-    op->msg=NULL;
-    op->materialname=NULL;
-    op->next=objects;
-    op->prev=NULL;
+    op->lore = NULL;
+    op->msg = NULL;
+    op->materialname = NULL;
+    op->next = objects;
+    op->prev = NULL;
     op->active_next = NULL;
     op->active_prev = NULL;
     op->discrete_damage = NULL;
-    op->spell_tags=NULL;
-    if (objects!=NULL)
-        objects->prev=op;
-    objects=op;
+    op->spell_tags = NULL;
+    if (objects != NULL)
+        objects->prev = op;
+    objects = op;
     clear_object(op);
-    SET_FLAG(op,FLAG_REMOVED);
+    SET_FLAG(op, FLAG_REMOVED);
     nroffreeobjects--;
     return op;
 }
@@ -965,10 +971,10 @@ object *get_object(void) {
  * object to update.
  */
 void update_turn_face(object *op) {
-    if (!QUERY_FLAG(op,FLAG_IS_TURNABLE)||op->arch==NULL)
+    if (!QUERY_FLAG(op, FLAG_IS_TURNABLE) || op->arch == NULL)
         return;
     SET_ANIMATION(op, op->direction);
-    update_object(op,UP_OBJ_FACE);
+    update_object(op, UP_OBJ_FACE);
 }
 
 /**
@@ -991,7 +997,7 @@ void update_ob_speed(object *op) {
      */
 
     if (QUERY_FLAG(op, FLAG_FREED) && op->speed) {
-        LOG(llevError,"Object %s is freed but has speed.\n", op->name);
+        LOG(llevError, "Object %s is freed but has speed.\n", op->name);
 #ifdef MANY_CORES
         abort();
 #else
@@ -1001,26 +1007,26 @@ void update_ob_speed(object *op) {
     if (arch_init) {
         return;
     }
-    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
+    if (FABS(op->speed) > MIN_ACTIVE_SPEED) {
         /* If already on active list, don't do anything */
         /* TODO this check can probably be simplified a lot */
-        if (op->active_next || op->active_prev || op==active_objects)
+        if (op->active_next || op->active_prev || op == active_objects)
             return;
 
         /* process_events() expects us to insert the object at the beginning
          * of the list. */
         op->active_next = active_objects;
-        if (op->active_next!=NULL)
+        if (op->active_next != NULL)
             op->active_next->active_prev = op;
         active_objects = op;
     } else {
         /* If not on the active list, nothing needs to be done */
-        if (!op->active_next && !op->active_prev && op!=active_objects)
+        if (!op->active_next && !op->active_prev && op != active_objects)
             return;
 
-        if (op->active_prev==NULL) {
+        if (op->active_prev == NULL) {
             active_objects = op->active_next;
-            if (op->active_next!=NULL)
+            if (op->active_next != NULL)
                 op->active_next->active_prev = NULL;
         } else {
             op->active_prev->active_next = op->active_next;
@@ -1046,12 +1052,12 @@ void update_ob_speed(object *op) {
  */
 void remove_from_active_list(object *op) {
     /* If not on the active list, nothing needs to be done */
-    if (!op->active_next && !op->active_prev && op!=active_objects)
+    if (!op->active_next && !op->active_prev && op != active_objects)
         return;
 
-    if (op->active_prev==NULL) {
+    if (op->active_prev == NULL) {
         active_objects = op->active_next;
-        if (op->active_next!=NULL)
+        if (op->active_next != NULL)
             op->active_next->active_prev = NULL;
     } else {
         op->active_prev->active_next = op->active_next;
@@ -1087,17 +1093,17 @@ void remove_from_active_list(object *op) {
  * Also it might be worth moving it to map.c
  */
 void update_object(object *op, int action) {
-    int update_now=0, flags;
+    int update_now = 0, flags;
     MoveType move_on, move_off, move_block, move_slow;
-    object  *pl;
+    object *pl;
 
     if (op == NULL) {
         /* this should never happen */
-        LOG(llevDebug,"update_object() called for NULL object.\n");
+        LOG(llevDebug, "update_object() called for NULL object.\n");
         return;
     }
 
-    if (op->env!=NULL) {
+    if (op->env != NULL) {
         /* Animation is currently handled by client, so nothing
         * to do in this case.
         */
@@ -1107,12 +1113,13 @@ void update_object(object *op, int action) {
     /* If the map is saving, don't do anything as everything is
      * going to get freed anyways.
      */
-    if (!op->map || op->map->in_memory == MAP_SAVING) return;
+    if (!op->map || op->map->in_memory == MAP_SAVING)
+        return;
 
     /* make sure the object is within map boundaries */
-    if (op->x < 0 || op->x >= MAP_WIDTH(op->map) ||
-        op->y < 0 || op->y >= MAP_HEIGHT(op->map)) {
-        LOG(llevError,"update_object() called for object out of map!\n");
+    if (op->x < 0 || op->x >= MAP_WIDTH(op->map)
+    || op->y < 0 || op->y >= MAP_HEIGHT(op->map)) {
+        LOG(llevError, "update_object() called for object out of map!\n");
 #ifdef MANY_CORES
         abort();
 #endif
@@ -1120,48 +1127,51 @@ void update_object(object *op, int action) {
     }
 
     flags = GET_MAP_FLAGS(op->map, op->x, op->y);
-    SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NEED_UPDATE);
+    SET_MAP_FLAGS(op->map, op->x, op->y, flags|P_NEED_UPDATE);
     move_slow = GET_MAP_MOVE_SLOW(op->map, op->x, op->y);
     move_on = GET_MAP_MOVE_ON(op->map, op->x, op->y);
     move_block = GET_MAP_MOVE_BLOCK(op->map, op->x, op->y);
     move_off = GET_MAP_MOVE_OFF(op->map, op->x, op->y);
 
     if (action == UP_OBJ_INSERT) {
-        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && !(flags & P_BLOCKSVIEW))
-            update_now=1;
+        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && !(flags&P_BLOCKSVIEW))
+            update_now = 1;
 
-        if (QUERY_FLAG(op, FLAG_NO_MAGIC) && !(flags & P_NO_MAGIC))
-            update_now=1;
+        if (QUERY_FLAG(op, FLAG_NO_MAGIC) && !(flags&P_NO_MAGIC))
+            update_now = 1;
 
-        if (QUERY_FLAG(op, FLAG_DAMNED) && !(flags & P_NO_CLERIC))
-            update_now=1;
+        if (QUERY_FLAG(op, FLAG_DAMNED) && !(flags&P_NO_CLERIC))
+            update_now = 1;
 
-        if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags & P_IS_ALIVE))
-            update_now=1;
+        if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags&P_IS_ALIVE))
+            update_now = 1;
 
-        if ((move_on | op->move_on) != move_on) update_now=1;
-        if ((move_off | op->move_off) != move_off) update_now=1;
+        if ((move_on|op->move_on) != move_on)
+            update_now = 1;
+        if ((move_off|op->move_off) != move_off)
+            update_now = 1;
         /* This isn't perfect, but I don't expect a lot of objects to
          * to have move_allow right now.
          */
-        if (((move_block | op->move_block) & ~op->move_allow) != move_block)
-            update_now=1;
-        if ((move_slow | op->move_slow) != move_slow) update_now=1;
+        if (((move_block|op->move_block)&~op->move_allow) != move_block)
+            update_now = 1;
+        if ((move_slow|op->move_slow) != move_slow)
+            update_now = 1;
 
-        if (op->type == PLAYER) update_now=1;
-    }
+        if (op->type == PLAYER)
+            update_now = 1;
     /* if the object is being removed, we can't make intelligent
      * decisions, because remove_ob can't really pass the object
      * that is being removed.
      */
-    else if (action == UP_OBJ_REMOVE) {
-        update_now=1;
+    } else if (action == UP_OBJ_REMOVE) {
+        update_now = 1;
     } else if (action == UP_OBJ_FACE || action == UP_OBJ_CHANGE) {
-
         /* In addition to sending info to client, need to update space
          * information.
          */
-        if (action == UP_OBJ_CHANGE) update_now=1;
+        if (action == UP_OBJ_CHANGE)
+            update_now = 1;
 
         /* There is a player on this space - we may need to send an
          * update to the client.
@@ -1171,31 +1181,30 @@ void update_object(object *op, int action) {
          * all objects with multiple faces, regardless if they are animated.
          * (levers have it set for example).
          */
-        if (flags & P_PLAYER &&
-                !QUERY_FLAG(op, FLAG_CLIENT_ANIM_SYNC) &&
-                !QUERY_FLAG(op, FLAG_CLIENT_ANIM_RANDOM)) {
+        if (flags&P_PLAYER
+        && !QUERY_FLAG(op, FLAG_CLIENT_ANIM_SYNC)
+        && !QUERY_FLAG(op, FLAG_CLIENT_ANIM_RANDOM)) {
             pl = GET_MAP_PLAYER(op->map, op->x, op->y);
 
             /* If update_look is set, we're going to send this entire space
              * to the client, so no reason to send face information now.
              */
             if (!pl->contr->socket.update_look) {
-                esrv_update_item(UPD_FACE,pl, op);
+                esrv_update_item(UPD_FACE, pl, op);
             }
         }
     } else {
-        LOG(llevError,"update_object called with invalid action: %d\n", action);
+        LOG(llevError, "update_object called with invalid action: %d\n", action);
     }
 
     if (update_now) {
-        SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NO_ERROR | P_NEED_UPDATE);
+        SET_MAP_FLAGS(op->map, op->x, op->y, flags|P_NO_ERROR|P_NEED_UPDATE);
         update_position(op->map, op->x, op->y);
     }
 
-    if (op->more!=NULL)
+    if (op->more != NULL)
         update_object(op->more, action);
 }
-
 
 /**
  * Frees everything allocated by an object, removes
@@ -1230,13 +1239,13 @@ void free_object(object *ob) {
  * the object's archetype should be a valid pointer, or NULL.
  */
 void free_object2(object *ob, int free_inventory) {
-    object *tmp,*op;
+    object *tmp, *op;
 
-    if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
+    if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
 
-        LOG(llevDebug,"Free object called with non removed object\n");
+        LOG(llevDebug, "Free object called with non removed object\n");
         sb = stringbuffer_new();
         dump_object(ob, sb);
         diff = stringbuffer_finish(sb);
@@ -1246,49 +1255,54 @@ void free_object2(object *ob, int free_inventory) {
         abort();
 #endif
     }
-    if (QUERY_FLAG(ob,FLAG_FRIENDLY)) {
-        LOG(llevMonster,"Warning: tried to free friendly object.\n");
+    if (QUERY_FLAG(ob, FLAG_FRIENDLY)) {
+        LOG(llevMonster, "Warning: tried to free friendly object.\n");
         remove_friendly_object(ob);
     }
-    if (QUERY_FLAG(ob,FLAG_FREED)) {
+    if (QUERY_FLAG(ob, FLAG_FREED)) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(ob, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to free freed object.\n%s\n", diff);
+        LOG(llevError, "Trying to free freed object.\n%s\n", diff);
         free(diff);
         return;
     }
 
     /* Handle for plugin destroy event */
-    execute_event(ob, EVENT_DESTROY,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
+    execute_event(ob, EVENT_DESTROY, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
     if (ob->inv) {
         /* Only if the space blocks everything do we not process -
          * if some form of movemnt is allowed, let objects
          * drop on that space.
          */
-        if (free_inventory || ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-            (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
-            op=ob->inv;
-            while (op!=NULL) {
-                tmp=op->below;
+        if (free_inventory
+        || ob->map == NULL
+        || ob->map->in_memory != MAP_IN_MEMORY
+        || (GET_MAP_MOVE_BLOCK(ob->map, ob->x, ob->y) == MOVE_ALL)) {
+            op = ob->inv;
+            while (op != NULL) {
+                tmp = op->below;
                 remove_ob(op);
                 free_object2(op, free_inventory);
-                op=tmp;
+                op = tmp;
             }
         } else { /* Put objects in inventory onto this space */
-            op=ob->inv;
-            while (op!=NULL) {
-                tmp=op->below;
+            op = ob->inv;
+            while (op != NULL) {
+                tmp = op->below;
                 remove_ob(op);
-                if (QUERY_FLAG(op,FLAG_STARTEQUIP)||QUERY_FLAG(op,FLAG_NO_DROP) ||
-                    op->type==RUNE || op->type==TRAP || QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+                if (QUERY_FLAG(op, FLAG_STARTEQUIP)||QUERY_FLAG(op, FLAG_NO_DROP)
+                || op->type == RUNE
+                || op->type == TRAP
+                || QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
                     free_object(op);
                 else {
                     object *part;
+
                     /* If it's a multi-tile object, scatter dropped items randomly */
                     if (ob->more) {
                         int partcount = 0;
@@ -1305,31 +1319,31 @@ void free_object2(object *ob, int free_inventory) {
                         part = ob;
                     }
 
-                    if (QUERY_FLAG(op,FLAG_ALIVE)) {
+                    if (QUERY_FLAG(op, FLAG_ALIVE)) {
                         int pos;
 
-                        pos = find_free_spot(op,part->map,part->x, part->y, 0, SIZEOFFREE);
+                        pos = find_free_spot(op, part->map, part->x, part->y, 0, SIZEOFFREE);
                         if (pos == -1)
                             free_object(op);
                         else {
-                            op->x=part->x + freearr_x[pos];
-                            op->y=part->y + freearr_y[pos];
-                            insert_ob_in_map(op,part->map,NULL,0); /* Insert in same map as the envir */
+                            op->x = part->x+freearr_x[pos];
+                            op->y = part->y+freearr_y[pos];
+                            insert_ob_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
                         }
                     } else {
-                        op->x=part->x;
-                        op->y=part->y;
-                        insert_ob_in_map(op,part->map,NULL,0); /* Insert in same map as the envir */
+                        op->x = part->x;
+                        op->y = part->y;
+                        insert_ob_in_map(op, part->map, NULL, 0); /* Insert in same map as the envir */
                     }
                 }
-                op=tmp;
+                op = tmp;
             }
         }
     }
 
-    if (ob->more!=NULL) {
+    if (ob->more != NULL) {
         free_object2(ob->more, free_inventory);
-        ob->more=NULL;
+        ob->more = NULL;
     }
 
     /* Remove object from the active list */
@@ -1340,27 +1354,27 @@ void free_object2(object *ob, int free_inventory) {
     ob->count = 0;
 
     /* Remove this object from the list of used objects */
-    if (ob->prev==NULL) {
-        objects=ob->next;
-        if (objects!=NULL)
-            objects->prev=NULL;
+    if (ob->prev == NULL) {
+        objects = ob->next;
+        if (objects != NULL)
+            objects->prev = NULL;
     } else {
-        ob->prev->next=ob->next;
-        if (ob->next!=NULL)
-            ob->next->prev=ob->prev;
+        ob->prev->next = ob->next;
+        if (ob->next != NULL)
+            ob->next->prev = ob->prev;
     }
 
-    if (ob->name!=NULL)              FREE_AND_CLEAR_STR(ob->name);
-    if (ob->name_pl!=NULL)           FREE_AND_CLEAR_STR(ob->name_pl);
-    if (ob->title!=NULL)             FREE_AND_CLEAR_STR(ob->title);
-    if (ob->race!=NULL)              FREE_AND_CLEAR_STR(ob->race);
-    if (ob->slaying!=NULL)           FREE_AND_CLEAR_STR(ob->slaying);
-    if (ob->skill!=NULL)             FREE_AND_CLEAR_STR(ob->skill);
-    if (ob->lore!=NULL)              FREE_AND_CLEAR_STR(ob->lore);
-    if (ob->msg!=NULL)               FREE_AND_CLEAR_STR(ob->msg);
-    if (ob->materialname!=NULL)      FREE_AND_CLEAR_STR(ob->materialname);
+    if (ob->name != NULL) FREE_AND_CLEAR_STR(ob->name);
+    if (ob->name_pl != NULL) FREE_AND_CLEAR_STR(ob->name_pl);
+    if (ob->title != NULL) FREE_AND_CLEAR_STR(ob->title);
+    if (ob->race != NULL) FREE_AND_CLEAR_STR(ob->race);
+    if (ob->slaying != NULL) FREE_AND_CLEAR_STR(ob->slaying);
+    if (ob->skill != NULL) FREE_AND_CLEAR_STR(ob->skill);
+    if (ob->lore != NULL) FREE_AND_CLEAR_STR(ob->lore);
+    if (ob->msg != NULL) FREE_AND_CLEAR_STR(ob->msg);
+    if (ob->materialname != NULL) FREE_AND_CLEAR_STR(ob->materialname);
     if (ob->discrete_damage != NULL) FREE_AND_CLEAR(ob->discrete_damage);
-    if (ob->spell_tags)              FREE_AND_CLEAR(ob->spell_tags);
+    if (ob->spell_tags) FREE_AND_CLEAR(ob->spell_tags);
 
     /* Why aren't events freed? */
     free_key_values(ob);
@@ -1375,11 +1389,11 @@ void free_object2(object *ob, int free_inventory) {
     }
 
     /* Now link it with the free_objects list: */
-    ob->prev=NULL;
-    ob->next=free_objects;
-    if (free_objects!=NULL)
-        free_objects->prev=ob;
-    free_objects=ob;
+    ob->prev = NULL;
+    ob->next = free_objects;
+    if (free_objects != NULL)
+        free_objects->prev = ob;
+    free_objects = ob;
     nroffreeobjects++;
 }
 
@@ -1390,10 +1404,12 @@ void free_object2(object *ob, int free_inventory) {
  * number of objects on the list of free objects.
  */
 int count_free(void) {
-    int i=0;
-    object *tmp=free_objects;
-    while (tmp!=NULL)
-        tmp=tmp->next, i++;
+    int i = 0;
+    object *tmp = free_objects;
+
+    while (tmp != NULL)
+        tmp = tmp->next,
+        i++;
     return i;
 }
 
@@ -1404,10 +1420,12 @@ int count_free(void) {
  * number of objects on the list of used objects.
  */
 int count_used(void) {
-    int i=0;
-    object *tmp=objects;
-    while (tmp!=NULL)
-        tmp=tmp->next, i++;
+    int i = 0;
+    object *tmp = objects;
+
+    while (tmp != NULL)
+        tmp = tmp->next,
+        i++;
     return i;
 }
 
@@ -1418,10 +1436,12 @@ int count_used(void) {
  * number of objects on the list of active objects.
  */
 int count_active(void) {
-    int i=0;
-    object *tmp=active_objects;
-    while (tmp!=NULL)
-        tmp=tmp->active_next, i++;
+    int i = 0;
+    object *tmp = active_objects;
+
+    while (tmp != NULL)
+        tmp = tmp->active_next,
+        i++;
     return i;
 }
 
@@ -1442,9 +1462,9 @@ int count_active(void) {
 void sub_weight(object *op, signed long weight) {
     while (op != NULL) {
         if (op->type == CONTAINER) {
-            weight=(signed long)(weight*(100-op->stats.Str)/100);
+            weight = (signed long)(weight*(100-op->stats.Str)/100);
         }
-        op->carrying-=weight;
+        op->carrying -= weight;
         op = op->env;
     }
 }
@@ -1466,25 +1486,25 @@ void sub_weight(object *op, signed long weight) {
  * look like need cleanup it does to much different things.
  */
 void remove_ob(object *op) {
-    object *tmp,*last=NULL;
+    object *tmp, *last = NULL;
     object *otmp;
     tag_t tag;
     int check_walk_off;
     mapstruct *m;
-    sint16 x,y;
+    sint16 x, y;
 
-    if (QUERY_FLAG(op,FLAG_REMOVED)) {
+    if (QUERY_FLAG(op, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to remove removed object.\n%s\n", diff);
+        LOG(llevError, "Trying to remove removed object.\n%s\n", diff);
         free(diff);
         abort();
     }
-    if (op->more!=NULL)
+    if (op->more != NULL)
         remove_ob(op->more);
 
     SET_FLAG(op, FLAG_REMOVED);
@@ -1494,7 +1514,7 @@ void remove_ob(object *op) {
      * inventory.
      */
     /* TODO try to call a generic inventory weight adjusting function like sub_weight */
-    if (op->env!=NULL) {
+    if (op->env != NULL) {
         if (op->nrof)
             sub_weight(op->env, op->weight*op->nrof);
         else
@@ -1506,12 +1526,14 @@ void remove_ob(object *op) {
                 esrv_del_item(op->env->contr, op->count);
         } else if (op->env->type == CONTAINER && QUERY_FLAG(op->env, FLAG_APPLIED)) {
             player *pl = NULL;
+
             if (op->env->env && op->env->env->contr)
                 /* Container is in player's inventory. */
                 pl = op->env->env->contr;
             else if (op->env->map) {
                 /* Container on map, look above for player. */
                 object *above = op->env->above;
+
                 while (above && !above->contr)
                     above = above->above;
                 if (above)
@@ -1525,35 +1547,37 @@ void remove_ob(object *op) {
          * made to players inventory.  If set, avoiding the call
          * to save cpu time.
          */
-        if ((otmp=get_player_container(op->env))!=NULL && otmp->contr &&
-            !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+        if ((otmp = get_player_container(op->env)) != NULL
+        && otmp->contr
+        && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_object(otmp);
 
-        if (op->above!=NULL)
-            op->above->below=op->below;
+        if (op->above != NULL)
+            op->above->below = op->below;
         else
-            op->env->inv=op->below;
+            op->env->inv = op->below;
 
-        if (op->below!=NULL)
-            op->below->above=op->above;
+        if (op->below != NULL)
+            op->below->above = op->above;
 
         /* we set up values so that it could be inserted into
          * the map, but we don't actually do that - it is up
          * to the caller to decide what we want to do.
          */
-        op->x=op->env->x;
-        op->y=op->env->y;
-        op->ox=op->x;
-        op->oy=op->y;
-        op->map=op->env->map;
-        op->above=NULL;
-        op->below=NULL;
-        op->env=NULL;
+        op->x = op->env->x;
+        op->y = op->env->y;
+        op->ox = op->x;
+        op->oy = op->y;
+        op->map = op->env->map;
+        op->above = NULL;
+        op->below = NULL;
+        op->env = NULL;
         return;
     }
 
     /* If we get here, we are removing it from a map */
-    if (op->map == NULL) return;
+    if (op->map == NULL)
+        return;
 
     if (op->contr != NULL && !op->contr->hidden)
         op->map->players--;
@@ -1563,90 +1587,86 @@ void remove_ob(object *op) {
     m = get_map_from_coord(op->map, &x, &y);
 
     if (!m) {
-        LOG(llevError,"remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n",
-            op->map->path, op->x, op->y);
+        LOG(llevError, "remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n", op->map->path, op->x, op->y);
         abort();
     }
     if (op->map != m) {
-        LOG(llevError,"remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n",
-            op->map->path, m->path, op->x, op->y, x, y);
+        LOG(llevError, "remove_ob: Object not really on map it claimed to be on? %s != %s, %d,%d != %d,%d\n", op->map->path, m->path, op->x, op->y, x, y);
     }
 
     /* link the object above us */
     if (op->above)
         op->above->below=op->below;
     else
-        SET_MAP_TOP(m,x,y,op->below); /* we were top, set new top */
+        SET_MAP_TOP(m, x, y, op->below); /* we were top, set new top */
 
     /* Relink the object below us, if there is one */
     if (op->below) {
-        op->below->above=op->above;
+        op->below->above = op->above;
     } else {
         /* Nothing below, which means we need to relink map object for this space
          * use translated coordinates in case some oddness with map tiling is
          * evident
          */
         /*TODO is this check really needed?*/
-        if (GET_MAP_OB(m,x,y)!=op) {
+        if (GET_MAP_OB(m, x, y) != op) {
             StringBuffer *sb;
             char *diff;
 
             sb = stringbuffer_new();
             dump_object(op, sb);
             diff = stringbuffer_finish(sb);
-            LOG(llevError,"remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
+            LOG(llevError, "remove_ob: GET_MAP_OB does not return object to be removed even though it appears to be on the bottom?\n%s\n", diff);
             free(diff);
 
             sb = stringbuffer_new();
-            dump_object(GET_MAP_OB(m,x,y), sb);
+            dump_object(GET_MAP_OB(m, x, y), sb);
             diff = stringbuffer_finish(sb);
-            LOG(llevError,"%s\n", diff);
+            LOG(llevError, "%s\n", diff);
             free(diff);
         }
-        SET_MAP_OB(m,x,y,op->above);  /* goes on above it. */
+        SET_MAP_OB(m, x, y, op->above);  /* goes on above it. */
     }
-    op->above=NULL;
-    op->below=NULL;
+    op->above = NULL;
+    op->below = NULL;
 
     if (op->map->in_memory == MAP_SAVING)
         return;
 
     tag = op->count;
     check_walk_off = ! QUERY_FLAG(op, FLAG_NO_APPLY);
-    for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above) {
+    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
         /* No point updating the players look faces if he is the object
          * being removed.
          */
 
-        if (tmp->type==PLAYER && tmp!=op) {
+        if (tmp->type == PLAYER && tmp != op) {
             /* If a container that the player is currently using somehow gets
              * removed (most likely destroyed), update the player view
              * appropriately.
             */
-            if (tmp->container==op) {
+            if (tmp->container == op) {
                 CLEAR_FLAG(op, FLAG_APPLIED);
-                tmp->container=NULL;
+                tmp->container = NULL;
             }
-            tmp->contr->socket.update_look=1;
+            tmp->contr->socket.update_look = 1;
         }
         /* See if player moving off should effect something */
-        if (check_walk_off && ((op->move_type & tmp->move_off) &&
-                               (op->move_type & ~tmp->move_off & ~tmp->move_block)==0)) {
-
+        if (check_walk_off
+        && ((op->move_type&tmp->move_off) && (op->move_type&~tmp->move_off&~tmp->move_block) == 0)) {
             ob_move_on(tmp, op, NULL);
             if (was_destroyed(op, tag)) {
-                LOG(llevError, "BUG: remove_ob(): name %s, archname %s destroyed "
-                    "leaving object\n", tmp->name, tmp->arch->name);
+                LOG(llevError, "BUG: remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
             }
         }
 
         /* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
         if (tmp->above == tmp)
             tmp->above = NULL;
-        last=tmp;
+        last = tmp;
     }
     /* last == NULL or there are no objects on this space */
-    if (last==NULL) {
+    if (last == NULL) {
         /* set P_NEED_UPDATE, otherwise update_position will complain.  In theory,
         * we could preserve the flags (GET_MAP_FLAGS), but update_position figures
         * those out anyways, and if there are any flags set right now, they won't
@@ -1657,7 +1677,7 @@ void remove_ob(object *op) {
     } else
         update_object(last, UP_OBJ_REMOVE);
 
-    if (QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius != 0))
+    if (QUERY_FLAG(op, FLAG_BLOCKSVIEW)|| (op->glow_radius != 0))
         update_all_los(op->map, op->x, op->y);
 }
 
@@ -1677,12 +1697,14 @@ void remove_ob(object *op) {
 object *merge_ob(object *op, object *top) {
     if (!op->nrof)
         return 0;
-    if (top==NULL)
-        for (top=op;top!=NULL&&top->above!=NULL;top=top->above);
-    for (;top!=NULL;top=top->below) {
-        if (top==op)
+
+    if (top == NULL)
+        for (top = op; top != NULL && top->above != NULL; top = top->above)
+            ;
+    for (; top != NULL; top = top->below) {
+        if (top == op)
             continue;
-        if (can_merge(op,top)) {
+        if (can_merge(op, top)) {
             increase_ob_nr(top, op->nrof);
             op->weight = 0; /* Don't want any adjustements now */
             remove_ob(op);
@@ -1711,17 +1733,17 @@ object *merge_ob(object *op, object *top) {
  */
 object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     object *tmp;
+
     if (op->head)
-        op=op->head;
-    for (tmp=op;tmp;tmp=tmp->more) {
-        tmp->x=x+tmp->arch->clone.x;
-        tmp->y=y+tmp->arch->clone.y;
+        op = op->head;
+    for (tmp = op; tmp; tmp = tmp->more) {
+        tmp->x = x+tmp->arch->clone.x;
+        tmp->y = y+tmp->arch->clone.y;
         if (op != tmp && !tmp->map)
             tmp->map = op->map ? op->map : m;
     }
     return insert_ob_in_map(op, m, originator, flag);
 }
-
 
 /**
  * This sees if there are any objects on the space that can
@@ -1758,20 +1780,21 @@ void merge_spell(object *op, sint16 x, sint16 y) {
      * of a case where tmp would normally get processed this tick, but
      * get merges with op, which does not get processed.
      */
-    for (tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=above) {
+    for (tmp = GET_MAP_OB(op->map, x, y); tmp != NULL; tmp = above) {
         above = tmp->above;
 
-        if (op->type == tmp->type &&
-            op->subtype == tmp->subtype &&
-            op->direction == tmp->direction &&
-            op->owner == tmp->owner && op->ownercount == tmp->ownercount &&
-            op->range == tmp->range &&
-            op->stats.wc == tmp->stats.wc && op->level == tmp->level &&
-            op->attacktype == tmp->attacktype && op->speed == tmp->speed &&
-            !tmp->other_arch && (tmp->speed_left +tmp->speed) < 0.0 &&
-            op!=tmp) {
-
-
+        if (op->type == tmp->type
+        && op->subtype == tmp->subtype
+        && op->direction == tmp->direction
+        && op->owner == tmp->owner && op->ownercount == tmp->ownercount
+        && op->range == tmp->range
+        && op->stats.wc == tmp->stats.wc
+        && op->level == tmp->level
+        && op->attacktype == tmp->attacktype
+        && op->speed == tmp->speed
+        && !tmp->other_arch
+        && (tmp->speed_left+tmp->speed) < 0.0
+        && op != tmp) {
             /* Quick test - if one or the other objects already have hash tables
              * set up, and that hash bucket contains a value that doesn't
              * match what we want to set it up, we won't be able to merge.
@@ -1781,31 +1804,37 @@ void merge_spell(object *op, sint16 x, sint16 y) {
              * that IMO it would become difficult to read the different clauses
              * so its cleaner just to do 2 statements - MSW
              */
-            if (op->spell_tags && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp) &&
-                OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0) continue;
+            if (op->spell_tags
+            && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)
+            && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0)
+                continue;
 
-            if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp) &&
-                OB_SPELL_TAG_HASH(tmp, op->stats.maxhp) != 0) continue;
+            if (tmp->spell_tags
+            && !OB_SPELL_TAG_MATCH(tmp, op->stats.maxhp)
+            && OB_SPELL_TAG_HASH(tmp, op->stats.maxhp) != 0)
+                continue;
 
             /* If we merge, the data from tmp->spell_tags gets copied into op.
              * so we need to make sure that slot isn't filled up.
              */
-            if (tmp->spell_tags && !OB_SPELL_TAG_MATCH(tmp, tmp->stats.maxhp) &&
-                    OB_SPELL_TAG_HASH(tmp, tmp->stats.maxhp) != 0) continue;
+            if (tmp->spell_tags
+            && !OB_SPELL_TAG_MATCH(tmp, tmp->stats.maxhp)
+            && OB_SPELL_TAG_HASH(tmp, tmp->stats.maxhp) != 0)
+                continue;
 
             /* If both objects have spell_tags, we need to see if there are conflicting
              * values - if there are, we won't be able to merge then.
              */
             if (tmp->spell_tags && op->spell_tags) {
-                int need_copy=0;
+                int need_copy = 0;
 
-                for (i=0; i< SPELL_TAG_SIZE; i++) {
+                for (i = 0; i < SPELL_TAG_SIZE; i++) {
                     /* If the two tag values in the hash are set, but are
                      * not set to the same value, then these objects
                      * can not be merged.
                      */
-                    if (op->spell_tags[i] && tmp->spell_tags[i] &&
-                        op->spell_tags[i] != tmp->spell_tags[i]) {
+                    if (op->spell_tags[i] && tmp->spell_tags[i]
+                    && op->spell_tags[i] != tmp->spell_tags[i]) {
                         statistics.spell_hash_full++;
                         break;
                     }
@@ -1813,9 +1842,9 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                      * fine, but we have to note that we need to copy
                      * the data in that case.
                      */
-                    if ((!op->spell_tags[i] && tmp->spell_tags[i]) ||
-                        (op->spell_tags[i] && !tmp->spell_tags[i])) {
-                        need_copy=1;
+                    if ((!op->spell_tags[i] && tmp->spell_tags[i])
+                    || (op->spell_tags[i] && !tmp->spell_tags[i])) {
+                        need_copy = 1;
                     }
                 }
                 /* If we did not get through entire array, it means
@@ -1823,7 +1852,8 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                  * able to merge these - just continue processing
                  * object on this space.
                  */
-                if (i <= SPELL_TAG_SIZE) continue;
+                if (i <= SPELL_TAG_SIZE)
+                    continue;
 
                 /* Ok - everything checked out - we should be able to
                  * merge tmp in op.  So lets copy the tag data if
@@ -1831,8 +1861,10 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                  * we don't want to clear values that may be set in op.
                  */
                 if (need_copy) {
-                    for (i=0; i< SPELL_TAG_SIZE; i++)
-                        if (!op->spell_tags[i] && tmp->spell_tags[i] && tmp->spell_tags[i]!=op->stats.maxhp)
+                    for (i = 0; i < SPELL_TAG_SIZE; i++)
+                        if (!op->spell_tags[i]
+                        && tmp->spell_tags[i]
+                        && tmp->spell_tags[i] != op->stats.maxhp)
                             op->spell_tags[i] = tmp->spell_tags[i];
                 }
                 FREE_AND_CLEAR(tmp->spell_tags);
@@ -1863,14 +1895,14 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                  * just bail out.
                  */
 
-                if (op->spell_tags && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0 &&
-                    !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)) {
-                    LOG(llevError,"insert_ob_in_map: Got non matching spell tags: %d != %d\n",
-                        OB_SPELL_TAG_HASH(op, tmp->stats.maxhp),  tmp->stats.maxhp);
+                if (op->spell_tags
+                && OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) != 0
+                && !OB_SPELL_TAG_MATCH(op, tmp->stats.maxhp)) {
+                    LOG(llevError, "insert_ob_in_map: Got non matching spell tags: %d != %d\n", OB_SPELL_TAG_HASH(op, tmp->stats.maxhp), tmp->stats.maxhp);
                 }
 #endif
                 if (!op->spell_tags)
-                    op->spell_tags = calloc(1, SPELL_TAG_SIZE * sizeof(tag_t));
+                    op->spell_tags = calloc(1, SPELL_TAG_SIZE*sizeof(tag_t));
 
                 OB_SPELL_TAG_HASH(op, tmp->stats.maxhp) = tmp->stats.maxhp;
             }
@@ -1882,12 +1914,12 @@ void merge_spell(object *op, sint16 x, sint16 y) {
                 /* We need to use tmp_dam here because otherwise the
                  * calculations can overflow the size of stats.dam.
                  */
-                int tmp_dam = tmp->stats.dam * (tmp->duration + 1)+
-                              op->stats.dam * (op->duration + 1);
+                int tmp_dam = tmp->stats.dam*(tmp->duration+1)+
+                              op->stats.dam*(op->duration+1);
 
                 op->duration = MAX(op->duration, tmp->duration);
-                tmp_dam /= (op->duration + 1);
-                op->stats.dam = tmp_dam + 1;
+                tmp_dam /= (op->duration+1);
+                op->stats.dam = tmp_dam+1;
             } else {
                 /* in this case, duration is the same, so simply adding
                  * up damage works.
@@ -1900,7 +1932,6 @@ void merge_spell(object *op, sint16 x, sint16 y) {
         }
     }
 }
-
 
 /**
  * This function inserts the object in the two-way linked list
@@ -1932,32 +1963,32 @@ void merge_spell(object *op, sint16 x, sint16 y) {
  */
 
 object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag) {
-    object *tmp, *top, *floor=NULL;
-    sint16 x,y;
+    object *tmp, *top, *floor = NULL;
+    sint16 x, y;
 
     if (QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "Trying to insert freed object!\n");
         return NULL;
     }
-    if (m==NULL) {
+    if (m == NULL) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to insert in null-map!\n%s\n", diff);
+        LOG(llevError, "Trying to insert in null-map!\n%s\n", diff);
         free(diff);
         return op;
     }
-    if (out_of_map(m,op->x,op->y)) {
+    if (out_of_map(m, op->x, op->y)) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to insert object outside the map.\n%s\n", diff);
+        LOG(llevError, "Trying to insert object outside the map.\n%s\n", diff);
         free(diff);
 #ifdef MANY_CORES
         /* Better to catch this here, as otherwise the next use of this object
@@ -1968,18 +1999,18 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
 #endif
         return op;
     }
-    if (!QUERY_FLAG(op,FLAG_REMOVED)) {
+    if (!QUERY_FLAG(op, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to insert (map) inserted object.\n%s\n", diff);
+        LOG(llevError, "Trying to insert (map) inserted object.\n%s\n", diff);
         free(diff);
         return op;
     }
-    if (op->more!=NULL) {
+    if (op->more != NULL) {
         /* The part may be on a different map. */
 
         object *more = op->more;
@@ -2002,30 +2033,35 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
         }
 
         if (insert_ob_in_map(more, more->map, originator, flag) == NULL) {
-            if (! op->head)
+            if (!op->head)
                 LOG(llevError, "BUG: insert_ob_in_map(): inserting op->more killed op\n");
             return NULL;
         }
     }
-    CLEAR_FLAG(op,FLAG_REMOVED);
+    CLEAR_FLAG(op, FLAG_REMOVED);
 
     /* Debugging information so you can see the last coordinates this object had */
-    op->ox=op->x;
-    op->oy=op->y;
+    op->ox = op->x;
+    op->oy = op->y;
     x = op->x;
     y = op->y;
-    op->map=get_map_from_coord(m, &x, &y);
+    op->map = get_map_from_coord(m, &x, &y);
 
     /* this has to be done after we translate the coordinates. */
-    if (op->nrof && !(flag & INS_NO_MERGE) && op->type != SPELL_EFFECT) {
-        for (tmp=GET_MAP_OB(op->map,x,y);tmp!=NULL;tmp=tmp->above) {
-            if (can_merge(op,tmp)) {
-                op->nrof+=tmp->nrof;
+    if (op->nrof
+    && !(flag&INS_NO_MERGE)
+    && op->type != SPELL_EFFECT) {
+        for (tmp = GET_MAP_OB(op->map, x, y); tmp != NULL; tmp = tmp->above) {
+            if (can_merge(op, tmp)) {
+                op->nrof += tmp->nrof;
                 remove_ob(tmp);
                 free_object(tmp);
             }
         }
-    } else if (op->type == SPELL_EFFECT && !op->range && !op->other_arch  && (op->speed_left + op->speed) < 0.0) {
+    } else if (op->type == SPELL_EFFECT
+    && !op->range
+    && !op->other_arch
+    && (op->speed_left+op->speed) < 0.0) {
         merge_spell(op, x, y);
     }
 
@@ -2042,7 +2078,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
     if (op->type != LAMP)
         /* lamps use the FLAG_APPLIED to keep the light/unlit status, so don't reset it.
          Other objects just get unapplied, since the container "drops" them. */
-        CLEAR_FLAG(op,FLAG_APPLIED);
+        CLEAR_FLAG(op, FLAG_APPLIED);
     CLEAR_FLAG(op, FLAG_INV_LOCKED);
     if (!QUERY_FLAG(op, FLAG_ALIVE))
         CLEAR_FLAG(op, FLAG_NO_STEAL);
@@ -2055,25 +2091,29 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
     if (originator && originator->contr && originator->contr->transport)
         originator=originator->contr->transport;
 
-    if (flag & INS_BELOW_ORIGINATOR) {
-        if (originator->map != op->map || originator->x != op->x ||
-                originator->y != op->y) {
-            LOG(llevError,"insert_ob_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
+    if (flag&INS_BELOW_ORIGINATOR) {
+        if (originator->map != op->map
+        || originator->x != op->x
+        || originator->y != op->y) {
+            LOG(llevError, "insert_ob_in_map called with INS_BELOW_ORIGINATOR when originator not on same space!\n");
             abort();
         }
         op->above = originator;
         op->below = originator->below;
-        if (op->below) op->below->above = op;
-        else SET_MAP_OB(op->map, op->x, op->y, op);
+        if (op->below)
+            op->below->above = op;
+        else
+            SET_MAP_OB(op->map, op->x, op->y, op);
         /* since *below *originator, no need to update top */
         originator->below = op;
     } else {
         /* If there are other objects, then */
         /* This test is incorrect i think, as ins_above_floor_only needs the floor variable
-        if((! (flag & INS_MAP_LOAD)) && ((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
+        if ((!(flag&INS_MAP_LOAD)) && ((top = GET_MAP_OB(op->map, op->x, op->y)) != NULL)) {
         */
-        if (((top=GET_MAP_OB(op->map,op->x,op->y))!=NULL)) {
-            object *last=NULL;
+        if (((top = GET_MAP_OB(op->map, op->x, op->y)) != NULL)) {
+            object *last = NULL;
+
             /*
              * If there are multiple objects on this space, we do some trickier handling.
              * We've already dealt with merging if appropriate.
@@ -2088,14 +2128,15 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
              */
 
             while (top != NULL) {
-                if (QUERY_FLAG(top, FLAG_IS_FLOOR) ||
-                    QUERY_FLAG(top, FLAG_OVERLAY_FLOOR)) floor = top;
+                if (QUERY_FLAG(top, FLAG_IS_FLOOR)
+                || QUERY_FLAG(top, FLAG_OVERLAY_FLOOR))
+                    floor = top;
 
-                if (QUERY_FLAG(top, FLAG_NO_PICK) &&
-                    (top->move_type & (MOVE_FLY_LOW |MOVE_FLY_HIGH)) &&
-                    !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
+                if (QUERY_FLAG(top, FLAG_NO_PICK)
+                && (top->move_type&(MOVE_FLY_LOW |MOVE_FLY_HIGH))
+                && !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
                     /* We insert above top, so we want this object below this */
-                    top=top->below;
+                    top = top->below;
                     break;
                 }
                 last = top;
@@ -2110,38 +2151,41 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
              */
 
         } /* If objects on this space */
-        if (flag & INS_MAP_LOAD)
-            top = GET_MAP_TOP(op->map,op->x,op->y);
-        if (flag & INS_ABOVE_FLOOR_ONLY) top = floor;
+        if (flag&INS_MAP_LOAD)
+            top = GET_MAP_TOP(op->map, op->x, op->y);
+        if (flag&INS_ABOVE_FLOOR_ONLY)
+            top = floor;
 
         /* Top is the object that our object (op) is going to get inserted above. */
 
         /* First object on this space */
         if (!top) {
             op->above = GET_MAP_OB(op->map, op->x, op->y);
-            if (op->above) op->above->below = op;
+            if (op->above)
+                op->above->below = op;
             op->below = NULL;
             SET_MAP_OB(op->map, op->x, op->y, op);
         } else { /* get inserted into the stack above top */
             op->above = top->above;
-            if (op->above) op->above->below = op;
+            if (op->above)
+                op->above->below = op;
             op->below = top;
             top->above = op;
         }
-        if (op->above==NULL)
-            SET_MAP_TOP(op->map,op->x, op->y, op);
+        if (op->above == NULL)
+            SET_MAP_TOP(op->map, op->x, op->y, op);
     } /* else not INS_BELOW_ORIGINATOR */
 
-    if (op->type==PLAYER)
-        op->contr->do_los=1;
+    if (op->type == PLAYER)
+        op->contr->do_los = 1;
 
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.
      */
-    if (!(flag & INS_MAP_LOAD))
-        for (tmp=floor?floor:GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
+    if (!(flag&INS_MAP_LOAD))
+        for (tmp = floor ? floor : GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
             if (tmp->type == PLAYER)
-                tmp->contr->socket.update_look=1;
+                tmp->contr->socket.update_look = 1;
         }
 
     /* If this object glows, it may affect lighting conditions that are
@@ -2158,7 +2202,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
 
 
     /* updates flags (blocked, alive, no magic, etc) for this map space */
-    update_object(op,UP_OBJ_INSERT);
+    update_object(op, UP_OBJ_INSERT);
 
     if (op->contr && !op->contr->hidden)
         op->map->players++;
@@ -2174,14 +2218,14 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
 
     /* if this is not the head or flag has been passed, don't check walk on status */
 
-    if (!(flag & INS_NO_WALK_ON) && !op->head) {
+    if (!(flag&INS_NO_WALK_ON) && !op->head) {
         if (check_move_on(op, originator))
             return NULL;
 
         /* If we are a multi part object, lets work our way through the check
          * walk on's.
          */
-        for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
+        for (tmp = op->more; tmp != NULL; tmp = tmp->more)
             if (check_move_on(tmp, originator))
                 return NULL;
     }
@@ -2202,18 +2246,19 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
     object *tmp1;
 
     /* first search for itself and remove any old instances */
-    for (tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp1) {
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp1) {
         tmp1 = tmp->above;
-        if (!strcmp(tmp->arch->name,arch_string)) { /* same archetype */
+        if (!strcmp(tmp->arch->name, arch_string)) { /* same archetype */
             remove_ob(tmp);
             free_object(tmp);
         }
     }
 
-    tmp1=arch_to_object(find_archetype(arch_string));
+    tmp1 = arch_to_object(find_archetype(arch_string));
 
-    tmp1->x = op->x; tmp1->y = op->y;
-    insert_ob_in_map(tmp1,op->map,op,INS_BELOW_ORIGINATOR);
+    tmp1->x = op->x;
+    tmp1->y = op->y;
+    insert_ob_in_map(tmp1, op->map, op, INS_BELOW_ORIGINATOR);
 }
 
 /**
@@ -2241,16 +2286,16 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
 object *get_split_ob(object *orig_ob, uint32 nr, char *err, int size) {
     object *newob;
 
-    if (orig_ob->nrof<nr) {
+    if (orig_ob->nrof < nr) {
         /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
         if (err)
-            snprintf(err, size, "There are only %d %ss.", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+            snprintf(err, size, "There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
         else
-            LOG(llevDebug,"There are only %d %ss.\n", orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+            LOG(llevDebug, "There are only %d %ss.\n", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
         return NULL;
     }
     newob = object_create_clone(orig_ob);
-    newob->nrof=nr;
+    newob->nrof = nr;
     decrease_ob_nr(orig_ob, nr);
 
     return newob;
@@ -2294,14 +2339,17 @@ object *decrease_ob_nr(object *op, uint32 i) {
          * and then searching the map for a player.
          */
         if (!tmp) {
-            for (pl=first_player; pl; pl=pl->next)
-                if (pl->ob->container == op->env) break;
-            if (pl) tmp=pl->ob;
-            else tmp=NULL;
+            for (pl = first_player; pl; pl = pl->next)
+                if (pl->ob->container == op->env)
+                    break;
+            if (pl)
+                tmp = pl->ob;
+            else
+                tmp = NULL;
         }
 
         if (i < op->nrof) {
-            sub_weight(op->env, op->weight * i);
+            sub_weight(op->env, op->weight*i);
             op->nrof -= i;
             if (tmp) {
                 esrv_update_item(UPD_NROF, tmp, op);
@@ -2366,14 +2414,16 @@ void increase_ob_nr(object *op, uint32 i) {
          * and then searching the map for a player.
          */
         if (!tmp) {
-            for (pl=first_player; pl; pl=pl->next)
-                if (pl->ob->container == op->env) break;
+            for (pl = first_player; pl; pl = pl->next)
+                if (pl->ob->container == op->env)
+                    break;
             if (pl)
-                tmp=pl->ob;
-            else tmp=NULL;
+                tmp = pl->ob;
+            else
+                tmp = NULL;
         }
 
-        add_weight(op->env, op->weight * i);
+        add_weight(op->env, op->weight*i);
         op->nrof += i;
         if (tmp) {
             esrv_update_item(UPD_NROF, tmp, op);
@@ -2381,6 +2431,7 @@ void increase_ob_nr(object *op, uint32 i) {
     } else {
         /* On a map. */
         object *pl;
+
         op->nrof += i;
 
         pl = GET_MAP_OB(op->map, op->x, op->y);
@@ -2406,12 +2457,12 @@ void increase_ob_nr(object *op, uint32 i) {
  * check if mergeable with sub_weight().
  */
 void add_weight(object *op, signed long weight) {
-    while (op!=NULL) {
+    while (op != NULL) {
         if (op->type == CONTAINER) {
-            weight=(signed long)(weight*(100-op->stats.Str)/100);
+            weight = (signed long)(weight*(100-op->stats.Str)/100);
         }
-        op->carrying+=weight;
-        op=op->env;
+        op->carrying += weight;
+        op = op->env;
     }
 }
 
@@ -2429,46 +2480,45 @@ void add_weight(object *op, signed long weight) {
  * @return
  * pointer to inserted item, which will be different than op if object was merged.
  */
-object *insert_ob_in_ob(object *op,object *where) {
+object *insert_ob_in_ob(object *op, object *where) {
     object *tmp, *otmp;
 
-    if (!QUERY_FLAG(op,FLAG_REMOVED)) {
+    if (!QUERY_FLAG(op, FLAG_REMOVED)) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to insert (ob) inserted object.\n%s\n", diff);
+        LOG(llevError, "Trying to insert (ob) inserted object.\n%s\n", diff);
         free(diff);
         return op;
     }
-    if (where==NULL) {
+
+    if (where == NULL) {
         StringBuffer *sb;
         char *diff;
 
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError,"Trying to put object in NULL.\n%s\n", diff);
+        LOG(llevError, "Trying to put object in NULL.\n%s\n", diff);
         free(diff);
         return op;
     }
     if (where->head) {
-        LOG(llevDebug,
-            "Warning: Tried to insert object wrong part of multipart object.\n");
+        LOG(llevDebug, "Warning: Tried to insert object wrong part of multipart object.\n");
         where = where->head;
     }
     if (op->more) {
-        LOG(llevError, "Tried to insert multipart object %s (%d)\n",
-            op->name, op->count);
+        LOG(llevError, "Tried to insert multipart object %s (%d)\n", op->name, op->count);
         return op;
     }
     CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);
     CLEAR_FLAG(op, FLAG_REMOVED);
     if (op->nrof) {
-        for (tmp=where->inv;tmp!=NULL;tmp=tmp->below)
-            if (can_merge(tmp,op)) {
+        for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
+            if (can_merge(tmp, op)) {
                 /* return the original object and remove inserted object
                  * (client needs the original object) */
                 increase_ob_nr(tmp, op->nrof);
@@ -2482,18 +2532,20 @@ object *insert_ob_in_ob(object *op,object *where) {
     } else
         add_weight(where, (op->weight+op->carrying));
 
-    op->map=NULL;
-    op->env=where;
-    op->above=NULL;
-    op->below=NULL;
-    op->x=0,op->y=0;
-    op->ox=0,op->oy=0;
+    op->map = NULL;
+    op->env = where;
+    op->above = NULL;
+    op->below = NULL;
+    op->x = 0,
+    op->y = 0;
+    op->ox = 0,
+    op->oy = 0;
 
     /* Client has no idea of ordering so lets not bother ordering it here.
      * It sure simplifies this function...
      */
-    if (where->inv==NULL)
-        where->inv=op;
+    if (where->inv == NULL)
+        where->inv = op;
     else {
         op->below = where->inv;
         op->below->above = op;
@@ -2506,12 +2558,14 @@ object *insert_ob_in_ob(object *op,object *where) {
         esrv_send_item(where, op);
     else if (where->type == CONTAINER && QUERY_FLAG(where, FLAG_APPLIED)) {
         object *pl = NULL;
+
         if (op->env->env && op->env->env->contr)
             /* Container is in player's inventory. */
             pl = op->env->env;
         else if (op->env->map) {
             /* Container on map, look above for player. */
             object *above = op->env->above;
+
             while (above && !above->contr)
                 above = above->above;
             if (above)
@@ -2521,19 +2575,19 @@ object *insert_ob_in_ob(object *op,object *where) {
             esrv_send_item(pl, op);
     }
 
-    otmp=get_player_container(where);
-    if (otmp&&otmp->contr!=NULL) {
-        if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER) && (QUERY_FLAG(op, FLAG_APPLIED) || (op->type == SKILL) || (op->glow_radius != 0)))
+    otmp = get_player_container(where);
+    if (otmp && otmp->contr != NULL) {
+        if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER)
+        && (QUERY_FLAG(op, FLAG_APPLIED) || (op->type == SKILL) || (op->glow_radius != 0)))
             /* fix_object will only consider applied items, or skills, or items with a glow radius.
                thus no need to call it if our object hasn't that. */
             fix_object(otmp);
     }
 
     /* reset the light list and los of the players on the map */
-    if ((op->glow_radius!=0)&&where->map) {
+    if ((op->glow_radius != 0) && where->map) {
 #ifdef DEBUG_LIGHTS
-        LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
-            op->name);
+        LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n", op->name);
 #endif /* DEBUG_LIGHTS */
         if (MAP_DARKNESS(where->map)) {
             SET_MAP_FLAGS(where->map, where->x, where->y,  P_NEED_UPDATE);
@@ -2570,11 +2624,11 @@ object *insert_ob_in_ob(object *op,object *where) {
 int check_move_on(object *op, object *originator) {
     object *tmp;
     tag_t tag;
-    mapstruct *m=op->map;
-    int x=op->x, y=op->y;
+    mapstruct *m = op->map;
+    int x = op->x, y = op->y;
     MoveType move_on, move_slow, move_block;
 
-    if (QUERY_FLAG(op,FLAG_NO_APPLY))
+    if (QUERY_FLAG(op, FLAG_NO_APPLY))
         return 0;
 
     tag = op->count;
@@ -2588,7 +2642,9 @@ int check_move_on(object *op, object *originator) {
      * is set, as lots of objects don't have it set - we treat that
      * as walking.
      */
-    if (op->move_type && !(op->move_type & move_on) && !(op->move_type & move_slow))
+    if (op->move_type
+    && !(op->move_type&move_on)
+    && !(op->move_type&move_slow))
         return 0;
 
     /* This is basically inverse logic of that below - basically,
@@ -2596,23 +2652,25 @@ int check_move_on(object *op, object *originator) {
      * but can't do it if the alternate movement they are using is
      * blocked.  Logic on this seems confusing, but does seem correct.
      */
-    if ((op->move_type & ~move_on & ~move_block) != 0 &&
-        (op->move_type & ~move_slow & ~move_block) != 0) return 0;
+    if ((op->move_type&~move_on&~move_block) != 0
+    && (op->move_type&~move_slow&~move_block) != 0)
+        return 0;
 
     /* The objects have to be checked from top to bottom.
      * Hence, we first go to the top:
      */
 
-    for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL &&
-         tmp->above!=NULL; tmp=tmp->above) {
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL && tmp->above != NULL; tmp = tmp->above) {
         /* Trim the search when we find the first other spell effect
          * this helps performance so that if a space has 50 spell objects,
          * we don't need to check all of them.
          */
-        if ((tmp->move_type & MOVE_FLY_LOW) && QUERY_FLAG(tmp, FLAG_NO_PICK)) break;
+        if ((tmp->move_type&MOVE_FLY_LOW) && QUERY_FLAG(tmp, FLAG_NO_PICK))
+            break;
     }
-    for (;tmp!=NULL; tmp=tmp->below) {
-        if (tmp == op) continue;    /* Can't apply yourself */
+    for (; tmp != NULL; tmp = tmp->below) {
+        if (tmp == op)
+            continue;    /* Can't apply yourself */
 
         /* Check to see if one of the movement types should be slowed down.
          * Second check makes sure that the movement types not being slowed
@@ -2621,16 +2679,14 @@ int check_move_on(object *op, object *originator) {
          * swim on that space, can't use it to avoid the penalty.
          */
         if (!QUERY_FLAG(op, FLAG_WIZPASS)) {
-            if ((!op->move_type && tmp->move_slow & MOVE_WALK) ||
-                ((op->move_type & tmp->move_slow) &&
-                 (op->move_type & ~tmp->move_slow & ~tmp->move_block) == 0)) {
-
+            if ((!op->move_type && tmp->move_slow&MOVE_WALK)
+            || ((op->move_type&tmp->move_slow) && (op->move_type&~tmp->move_slow&~tmp->move_block) == 0)) {
                 float diff;
 
                 diff = tmp->move_slow_penalty*FABS(op->speed);
                 if (op->type == PLAYER) {
-                    if ((QUERY_FLAG(tmp, FLAG_IS_HILLY) && find_skill_by_number(op, SK_CLIMBING)) ||
-                            (QUERY_FLAG(tmp, FLAG_IS_WOODED) && find_skill_by_number(op, SK_WOODSMAN))) {
+                    if ((QUERY_FLAG(tmp, FLAG_IS_HILLY) && find_skill_by_number(op, SK_CLIMBING))
+                    || (QUERY_FLAG(tmp, FLAG_IS_WOODED) && find_skill_by_number(op, SK_WOODSMAN))) {
                         diff /= 4.0;
                     }
                 }
@@ -2639,9 +2695,8 @@ int check_move_on(object *op, object *originator) {
         }
 
         /* Basically same logic as above, except now for actual apply. */
-        if ((!op->move_type && tmp->move_on & MOVE_WALK) ||
-            ((op->move_type & tmp->move_on) &&
-             (op->move_type & ~tmp->move_on & ~tmp->move_block)==0)) {
+        if ((!op->move_type && tmp->move_on&MOVE_WALK)
+        || ((op->move_type&tmp->move_on) && (op->move_type&~tmp->move_on&~tmp->move_block) == 0)) {
 
             ob_move_on(tmp, op, originator);
             if (was_destroyed(op, tag))
@@ -2651,7 +2706,8 @@ int check_move_on(object *op, object *originator) {
              * someplace new.  Don't process any further - if we did,
              * have a feeling strange problems would result.
              */
-            if (op->map != m || op->x != x || op->y != y) return 0;
+            if (op->map != m || op->x != x || op->y != y)
+                return 0;
         }
     }
     return 0;
@@ -2669,14 +2725,15 @@ int check_move_on(object *op, object *originator) {
  * @return
  * first matching object, or NULL if none matches.
  */
-
 object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
     object *tmp;
-    if (m==NULL || out_of_map(m,x,y)) {
-        LOG(llevError,"Present_arch called outside map.\n");
+
+    if (m == NULL || out_of_map(m, x, y)) {
+        LOG(llevError, "Present_arch called outside map.\n");
         return NULL;
     }
-    for (tmp=GET_MAP_OB(m,x,y); tmp != NULL; tmp = tmp->above)
+
+    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
         if (tmp->arch == at)
             return tmp;
     return NULL;
@@ -2695,14 +2752,16 @@ object *present_arch(const archetype *at, mapstruct *m, int x, int y) {
  * @return
  * first matching object, or NULL if none matches.
  */
-object *present(uint8 type,mapstruct *m, int x,int y) {
+object *present(uint8 type, mapstruct *m, int x, int y) {
     object *tmp;
-    if (out_of_map(m,x,y)) {
-        LOG(llevError,"Present called outside map.\n");
+
+    if (out_of_map(m, x, y)) {
+        LOG(llevError, "Present called outside map.\n");
         return NULL;
     }
-    for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
-        if (tmp->type==type)
+
+    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+        if (tmp->type == type)
             return tmp;
     return NULL;
 }
@@ -2719,8 +2778,9 @@ object *present(uint8 type,mapstruct *m, int x,int y) {
  */
 object *present_in_ob(uint8 type, const object *op) {
     object *tmp;
-    for (tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-        if (tmp->type==type)
+
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == type)
             return tmp;
     return NULL;
 }
@@ -2750,12 +2810,11 @@ object *present_in_ob(uint8 type, const object *op) {
  * @todo
  * use add_string() hack to avoid the strcmp?
  */
-
 object *present_in_ob_by_name(int type, const char *str, const object *op) {
     object *tmp;
 
-    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
-        if ((type==-1 || tmp->type==type) && (!strcmp(str, tmp->name)))
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
+        if ((type == -1 || tmp->type == type) && (!strcmp(str, tmp->name)))
             return tmp;
     }
     return NULL;
@@ -2772,7 +2831,8 @@ object *present_in_ob_by_name(int type, const char *str, const object *op) {
  */
 object *present_arch_in_ob(const archetype *at, const object *op)  {
     object *tmp;
-    for (tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         if (tmp->arch == at)
             return tmp;
     return NULL;
@@ -2788,10 +2848,11 @@ object *present_arch_in_ob(const archetype *at, const object *op)  {
  */
 void flag_inv(object*op, int flag) {
     object *tmp;
+
     if (op->inv)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
             SET_FLAG(tmp, flag);
-            flag_inv(tmp,flag);
+            flag_inv(tmp, flag);
         }
 }
 
@@ -2805,10 +2866,11 @@ void flag_inv(object*op, int flag) {
  */
 void unflag_inv(object*op, int flag) {
     object *tmp;
+
     if (op->inv)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
             CLEAR_FLAG(tmp, flag);
-            unflag_inv(tmp,flag);
+            unflag_inv(tmp, flag);
         }
 }
 
@@ -2845,7 +2907,7 @@ void set_cheat(object *op) {
  */
 int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
-    int freecount=0;
+    int freecount = 0;
 
     if (ob->head)
         ob = ob->head;
@@ -2868,10 +2930,10 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
      * the head.
      */
 
-    ix = gen->x - sx - genx2;
-    iy = gen->y - sy - geny2;
-    sx += genx + sx2;
-    sy += geny + sy2;
+    ix = gen->x-sx-genx2;
+    iy = gen->y-sy-geny2;
+    sx += genx+sx2;
+    sy += geny+sy2;
     /*
      * ix and iy are the map coords of the top left square where the head of ob could possibly
      * be placed. sx and sy are now the size of the square to search for placement of the head
@@ -2885,18 +2947,18 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
         if (i <= sx) {
             nx = i+ix;
             ny = iy;
-        } else if (i <= (sx + sy)) {
-            nx = ix + sx;
-            ny = iy + i - sx;
-        } else if (i <= (sx + sy + sx)) {
-            nx = ix + sx - (i - (sx + sy));
-            ny = iy + sy;
+        } else if (i <= (sx+sy)) {
+            nx = ix+sx;
+            ny = iy+i-sx;
+        } else if (i <= (sx+sy+sx)) {
+            nx = ix+sx-(i-(sx+sy));
+            ny = iy+sy;
         } else {
             nx = ix;
-            ny = iy + sy  - (i - (sx + sy + sx));
+            ny = iy+sy-(i-(sx+sy+sx));
         }
         /* Check if the spot is free. */
-        flag = ob_blocked(ob,gen->map,nx,ny);
+        flag = ob_blocked(ob, gen->map, nx, ny);
         if (!flag) {
             freecount++;
         }
@@ -2911,24 +2973,24 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
         if (i <= sx) {
             nx = i+ix;
             ny = iy;
-        } else if (i <= (sx + sy)) {
-            nx = ix + sx;
-            ny = iy + i - sx;
-        } else if (i <= (sx + sy + sx)) {
-            nx = ix + sx - (i - (sx + sy));
-            ny = iy + sy;
+        } else if (i <= (sx+sy)) {
+            nx = ix+sx;
+            ny = iy+i-sx;
+        } else if (i <= (sx+sy+sx)) {
+            nx = ix+sx-(i-(sx+sy));
+            ny = iy+sy;
         } else {
             nx = ix;
-            ny = iy + sy  - (i - (sx + sy + sx));
+            ny = iy+sy-(i-(sx+sy+sx));
         }
 
         /* Make sure it's within map. */
-        if (nx < 0 || nx >= MAP_WIDTH(gen->map) ||
-                ny < 0 || ny >= MAP_HEIGHT(gen->map))
+        if (nx < 0 || nx >= MAP_WIDTH(gen->map)
+        || ny < 0 || ny >= MAP_HEIGHT(gen->map))
             continue;
 
         /* Check if the spot is free.*/
-        flag = ob_blocked(ob,gen->map,nx,ny);
+        flag = ob_blocked(ob, gen->map, nx, ny);
         if (!flag) {
             freecount--;
             if (freecount <= 0) {
@@ -2963,11 +3025,10 @@ int find_multi_free_spot_around(object *ob, object *gen, int *hx, int *hy) {
 int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy) {
     int genx, geny, genx2, geny2, sx, sy, sx2, sy2, ix, iy, nx, ny, i, flag;
     sint8 x, y, radius;
-    int freecount=0, freecountstop=0;
+    int freecount = 0, freecountstop = 0;
     const char *value;
     sint8 *x_array;
     sint8 *y_array;
-
 
     /* If radius is not set, default to 1 */
     value = get_ob_key_value(gen, "generator_radius");
@@ -3005,10 +3066,10 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
      * excluding parts left and above the head.
      */
 
-    ix = gen->x - sx - genx2 - radius + 1;
-    iy = gen->y - sy - geny2 - radius + 1;
-    sx += genx + sx2 + radius * 2 - 1;
-    sy += geny + sy2 + radius * 2 - 1;
+    ix = gen->x-sx-genx2-radius+1;
+    iy = gen->y-sy-geny2-radius+1;
+    sx += genx+sx2+radius*2-1;
+    sy += geny+sy2+radius*2-1;
 
     /*
      * ix and iy are the map coords of the top left square where
@@ -3018,26 +3079,25 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
      */
 
     /* Create arrays large enough to hold free space coordinates */
-    x_array = malloc(sx*sy * sizeof(sint8));
-    y_array = malloc(sx*sy * sizeof(sint8));
+    x_array = malloc(sx*sy*sizeof(sint8));
+    y_array = malloc(sx*sy*sizeof(sint8));
 
     /*
      * Loop through the area of possible positions for the head of ob object:
      */
     for (x = 0; x < sx; x++) {
         for (y = 0; y < sy; y++) {
-            nx = ix + x;
-            ny = iy + y;
+            nx = ix+x;
+            ny = iy+y;
 
 
             /* Make sure it's within map. */
-            if (get_map_flags(gen->map, NULL, nx, ny, NULL, NULL)
-                    & P_OUT_OF_MAP) {
+            if (get_map_flags(gen->map, NULL, nx, ny, NULL, NULL)&P_OUT_OF_MAP) {
                 continue;
             }
 
             /* Check if the spot is free. */
-            flag = ob_blocked(ob,gen->map,nx,ny);
+            flag = ob_blocked(ob, gen->map, nx, ny);
             if (!flag) {
                 x_array[freecount] = nx;
                 y_array[freecount] = ny;
@@ -3059,7 +3119,7 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
         ny = y_array[i];
 
         /* Check if the spot is free.*/
-        flag = ob_blocked(ob,gen->map,nx,ny);
+        flag = ob_blocked(ob, gen->map, nx, ny);
         if (!flag) {
             freecountstop--;
             if (freecountstop <= 0) {
@@ -3110,15 +3170,14 @@ int find_multi_free_spot_within_radius(object *ob, object *gen, int *hx, int *hy
  * the archetype because that isn't correct if the monster has been
  * customized, changed states, etc.
  */
-
-int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop) {
-    int i,index=0, flag;
+int find_free_spot(const object *ob, mapstruct *m, int x, int y, int start, int stop) {
+    int i, index = 0, flag;
     static int altern[SIZEOFFREE];
 
-    for (i=start;i<stop;i++) {
-        flag = ob_blocked(ob,m,x+freearr_x[i],y+freearr_y[i]);
+    for (i = start; i < stop; i++) {
+        flag = ob_blocked(ob, m, x+freearr_x[i], y+freearr_y[i]);
         if (!flag)
-            altern[index++]=i;
+            altern[index++] = i;
 
         /* Basically, if we find a wall on a space, we cut down the search size.
          * In this way, we won't return spaces that are on another side of a wall.
@@ -3128,10 +3187,11 @@ int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop
          * to only the spaces immediately surrounding the target area, and
          * won't look 2 spaces south of the target space.
          */
-        else if ((flag & AB_NO_PASS) && maxfree[i]<stop)
-            stop=maxfree[i];
+        else if ((flag&AB_NO_PASS) && maxfree[i] < stop)
+            stop = maxfree[i];
     }
-    if (!index) return -1;
+    if (!index)
+        return -1;
     return altern[RANDOM()%index];
 }
 
@@ -3150,10 +3210,11 @@ int find_free_spot(const object *ob, mapstruct *m,int x,int y,int start,int stop
  * @return
  * index into ::freearr_x and ::freearr_y, -1 if no spot available (dir 0 = x,y)
  */
-int find_first_free_spot(const object *ob, mapstruct *m,int x,int y) {
+int find_first_free_spot(const object *ob, mapstruct *m, int x, int y) {
     int i;
-    for (i=0;i<SIZEOFFREE;i++) {
-        if (!ob_blocked(ob,m,x+freearr_x[i],y+freearr_y[i]))
+
+    for (i = 0; i < SIZEOFFREE; i++) {
+        if (!ob_blocked(ob, m, x+freearr_x[i], y+freearr_y[i]))
             return i;
     }
     return -1;
@@ -3223,7 +3284,7 @@ void get_search_arr(int *search_arr) {
  * there is capable of.
  */
 int find_dir(mapstruct *m, int x, int y, object *exclude) {
-    int i,max=SIZEOFFREE, mflags;
+    int i, max = SIZEOFFREE, mflags;
     sint16 nx, ny;
     object *tmp;
     mapstruct *mp;
@@ -3234,26 +3295,26 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
         move_type = exclude->move_type;
     } else {
         /* If we don't have anything, presume it can use all movement types. */
-        move_type=MOVE_ALL;
+        move_type = MOVE_ALL;
     }
 
-    for (i=1;i<max;i++) {
+    for (i = 1; i < max; i++) {
         mp = m;
-        nx = x + freearr_x[i];
-        ny = y + freearr_y[i];
+        nx = x+freearr_x[i];
+        ny = y+freearr_y[i];
 
         mflags = get_map_flags(m, &mp, nx, ny, &nx, &ny);
-        if (mflags & P_OUT_OF_MAP) {
+        if (mflags&P_OUT_OF_MAP) {
             max = maxfree[i];
         } else {
             blocked = GET_MAP_MOVE_BLOCK(mp, nx, ny);
 
-            if ((move_type & blocked) == move_type) {
-                max=maxfree[i];
-            } else if (mflags & P_IS_ALIVE) {
-                for (tmp=GET_MAP_OB(mp,nx,ny); tmp!= NULL; tmp=tmp->above) {
-                    if ((QUERY_FLAG(tmp,FLAG_MONSTER) ||  tmp->type==PLAYER) &&
-                        (tmp != exclude ||(tmp->head && tmp->head != exclude))) {
+            if ((move_type&blocked) == move_type) {
+                max = maxfree[i];
+            } else if (mflags&P_IS_ALIVE) {
+                for (tmp = GET_MAP_OB(mp, nx, ny); tmp != NULL; tmp = tmp->above) {
+                    if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
+                    && (tmp != exclude ||(tmp->head && tmp->head != exclude))) {
                         break;
                     }
                 }
@@ -3275,8 +3336,9 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
  */
 int distance(const object *ob1, const object *ob2) {
     int i;
-    i= (ob1->x - ob2->x)*(ob1->x - ob2->x)+
-       (ob1->y - ob2->y)*(ob1->y - ob2->y);
+
+    i = (ob1->x-ob2->x)*(ob1->x-ob2->x)+
+        (ob1->y-ob2->y)*(ob1->y-ob2->y);
     return i;
 }
 
@@ -3290,29 +3352,30 @@ int distance(const object *ob1, const object *ob2) {
  */
 int find_dir_2(int x, int y) {
     int q;
+
     if (!y)
-        q= -300*x;
+        q = -300*x;
     else
-        q=x*100/y;
-    if (y>0) {
+        q = x*100/y;
+    if (y > 0) {
         if (q < -242)
-            return 3 ;
+            return 3;
         if (q < -41)
-            return 2 ;
+            return 2;
         if (q < 41)
-            return 1 ;
+            return 1;
         if (q < 242)
-            return 8 ;
-        return 7 ;
+            return 8;
+        return 7;
     }
     if (q < -242)
-        return 7 ;
+        return 7;
     if (q < -41)
-        return 6 ;
+        return 6;
     if (q < 41)
-        return 5 ;
+        return 5;
     if (q < 242)
-        return 4 ;
+        return 4;
     return 3 ;
 }
 
@@ -3325,8 +3388,10 @@ int find_dir_2(int x, int y) {
  * takes care of "overflow" in previous calculations of a direction).
  */
 int absdir(int d) {
-    while (d<1) d+=8;
-    while (d>8) d-=8;
+    while (d < 1)
+        d += 8;
+    while (d > 8)
+        d -= 8;
     return d;
 }
 
@@ -3341,9 +3406,10 @@ int absdir(int d) {
  */
 int dirdiff(int dir1, int dir2) {
     int d;
-    d = abs(dir1 - dir2);
-    if (d>4)
-        d = 8 - d;
+
+    d = abs(dir1-dir2);
+    if (d > 4)
+        d = 8-d;
     return d;
 }
 
@@ -3428,14 +3494,15 @@ const int reduction_dir[SIZEOFFREE][3] = {
  * @todo
  * better document, can't figure what it does :)
  */
-int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
+int can_see_monsterP(mapstruct *m, int x, int y, int dir) {
     sint16 dx, dy;
     int mflags;
 
-    if (dir<0) return 0; /* exit condition:  invalid direction */
+    if (dir < 0)
+        return 0; /* exit condition:  invalid direction */
 
-    dx = x + freearr_x[dir];
-    dy = y + freearr_y[dir];
+    dx = x+freearr_x[dir];
+    dy = y+freearr_y[dir];
 
     mflags = get_map_flags(m, &m, dx, dy, &dx, &dy);
 
@@ -3446,16 +3513,16 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
      * move to the monster, we'd need the monster passed in or
      * at least its move type.
      */
-    if (mflags & (P_OUT_OF_MAP | P_BLOCKSVIEW)) return 0;
+    if (mflags&(P_OUT_OF_MAP|P_BLOCKSVIEW))
+        return 0;
 
     /* yes, can see. */
-    if (dir < 9) return 1;
-    return can_see_monsterP(m, x, y, reduction_dir[dir][0]) |
-           can_see_monsterP(m,x,y, reduction_dir[dir][1]) |
-           can_see_monsterP(m,x,y, reduction_dir[dir][2]);
+    if (dir < 9)
+        return 1;
+    return can_see_monsterP(m, x, y, reduction_dir[dir][0])|
+           can_see_monsterP(m, x, y, reduction_dir[dir][1])|
+           can_see_monsterP(m, x, y, reduction_dir[dir][2]);
 }
-
-
 
 /**
  * Finds out if an object can be picked up.
@@ -3473,28 +3540,32 @@ int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
  * this introduces a weight limitation for monsters.
  */
 int can_pick(const object *who, const object *item) {
-
     /* I re-wrote this as a series of if statements
      * instead of a nested return (foo & bar && yaz)
      * - I think this is much more readable,
      * and likely compiler effectively optimizes it the
      * same.
      */
-    if (item->weight <= 0) return 0;
-    if (QUERY_FLAG(item, FLAG_NO_PICK)) return 0;
-    if (QUERY_FLAG(item, FLAG_ALIVE)) return 0;
-    if (item->invisible) return 0;
+    if (item->weight <= 0)
+        return 0;
+    if (QUERY_FLAG(item, FLAG_NO_PICK))
+        return 0;
+    if (QUERY_FLAG(item, FLAG_ALIVE))
+        return 0;
+    if (item->invisible)
+        return 0;
 
     /* Weight limit for monsters */
-    if (who->type != PLAYER && item->weight > (who->weight/3)) return 0;
+    if (who->type != PLAYER && item->weight > (who->weight/3))
+        return 0;
 
     /* Can not pick up multipart objects */
-    if (item->head || item->more) return 0;
+    if (item->head || item->more)
+        return 0;
 
     /* Everything passes, so OK to pick up */
     return 1;
 }
-
 
 /**
  * Create clone from object to another.
@@ -3508,9 +3579,10 @@ int can_pick(const object *who, const object *item) {
  * this function will return NULL only if asrc is NULL. If there is a memory allocation error, get_object() calls fatal().
  */
 object *object_create_clone(object *asrc) {
-    object *dst = NULL,*tmp,*src,*part,*prev, *item;
+    object *dst = NULL, *tmp, *src, *part, *prev, *item;
 
-    if (!asrc) return NULL;
+    if (!asrc)
+        return NULL;
     src = asrc;
     if (src->head)
         src = src->head;
@@ -3518,7 +3590,7 @@ object *object_create_clone(object *asrc) {
     prev = NULL;
     for (part = src; part; part = part->more) {
         tmp = get_object();
-        copy_object(part,tmp);
+        copy_object(part, tmp);
         tmp->x -= src->x;
         tmp->y -= src->y;
         if (!part->head) {
@@ -3534,7 +3606,7 @@ object *object_create_clone(object *asrc) {
     }
     /*** copy inventory ***/
     for (item = src->inv; item; item = item->below) {
-        (void) insert_ob_in_ob(object_create_clone(item),dst);
+        (void)insert_ob_in_ob(object_create_clone(item), dst);
     }
 
     return dst;
@@ -3557,8 +3629,9 @@ object *object_create_clone(object *asrc) {
 object *find_obj_by_type_subtype(const object *who, int type, int subtype) {
     object *tmp;
 
-    for (tmp=who->inv; tmp; tmp=tmp->below)
-        if (tmp->type == type && tmp->subtype == subtype) return tmp;
+    for (tmp = who->inv; tmp; tmp = tmp->below)
+        if (tmp->type == type && tmp->subtype == subtype)
+            return tmp;
 
     return NULL;
 }
@@ -3573,8 +3646,8 @@ object *find_obj_by_type_subtype(const object *who, int type, int subtype) {
  * @return
  * the link from the list if ob has a field named key, otherwise NULL.
  */
-key_value * get_ob_key_link(const object * ob, const char * key) {
-    key_value * link;
+key_value *get_ob_key_link(const object *ob, const char *key) {
+    key_value *link;
 
     for (link = ob->key_values; link != NULL; link = link->next) {
         if (link->key == key) {
@@ -3598,9 +3671,9 @@ key_value * get_ob_key_link(const object * ob, const char * key) {
  * @note
  * The returned string is shared.
  */
-const char * get_ob_key_value(const object * op, const char * const key) {
-    key_value * link;
-    const char * canonical_key;
+const char *get_ob_key_value(const object *op, const char *const key) {
+    key_value *link;
+    const char *canonical_key;
 
     canonical_key = find_string(key);
 
@@ -3624,7 +3697,6 @@ const char * get_ob_key_value(const object * op, const char * const key) {
     return NULL;
 }
 
-
 /**
  * Updates or sets a key value.
  *
@@ -3639,18 +3711,19 @@ const char * get_ob_key_value(const object * op, const char * const key) {
  * @return
  * TRUE if key was updated or added, FALSE else.
  */
-static int set_ob_key_value_s(object * op, const char * canonical_key, const char * value, int add_key) {
-    key_value * field = NULL, *last=NULL;
+static int set_ob_key_value_s(object *op, const char *canonical_key, const char *value, int add_key) {
+    key_value *field = NULL, *last = NULL;
 
-    LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value?value:"null", add_key);
+    LOG(llevDebug, "set_ob_value_s: '%s' '%s' %d\n", canonical_key, value ? value : "null", add_key);
 
-    for (field=op->key_values; field != NULL; field=field->next) {
+    for (field = op->key_values; field != NULL; field = field->next) {
         if (field->key != canonical_key) {
             last = field;
             continue;
         }
 
-        if (field->value) FREE_AND_CLEAR_STR(field->value);
+        if (field->value)
+            FREE_AND_CLEAR_STR(field->value);
         if (value)
             field->value = add_string(value);
         else {
@@ -3663,10 +3736,14 @@ static int set_ob_key_value_s(object * op, const char * canonical_key, const cha
                 field->value = NULL;
             else {
                 /* Delete this link */
-                if (field->key) FREE_AND_CLEAR_STR(field->key);
-                if (field->value) FREE_AND_CLEAR_STR(field->value);
-                if (last) last->next = field->next;
-                else op->key_values = field->next;
+                if (field->key)
+                    FREE_AND_CLEAR_STR(field->key);
+                if (field->value)
+                    FREE_AND_CLEAR_STR(field->value);
+                if (last)
+                    last->next = field->next;
+                else
+                    op->key_values = field->next;
                 free(field);
             }
         }
@@ -3685,7 +3762,8 @@ static int set_ob_key_value_s(object * op, const char * canonical_key, const cha
      * be here.  If user wants to store empty strings,
      * should pass in ""
      */
-    if (value == NULL) return TRUE;
+    if (value == NULL)
+        return TRUE;
 
     field = malloc(sizeof(key_value));
 
@@ -3718,8 +3796,8 @@ static int set_ob_key_value_s(object * op, const char * canonical_key, const cha
  * @note
  * In general, should be little reason FALSE is ever passed in for add_key
 */
-int set_ob_key_value(object * op, const char * key, const char * value, int add_key) {
-    const char * canonical_key = NULL;
+int set_ob_key_value(object *op, const char *key, const char *value, int add_key) {
+    const char *canonical_key = NULL;
     int floating_ref = FALSE;
     int ret;
 
@@ -3795,38 +3873,43 @@ int set_ob_key_value(object * op, const char * key, const char * value, int add_
  */
 int item_matched_string(object *pl, object *op, const char *name) {
     char *cp, local_name[MAX_BUF], name_op[MAX_BUF], name_short[HUGE_BUF], bname_s[MAX_BUF], bname_p[MAX_BUF];
-    int count,retval=0;
+    int count, retval = 0;
     strcpy(local_name, name);   /* strtok is destructive to name */
 
-    for (cp=strtok(local_name,","); cp; cp=strtok(NULL,",")) {
-        while (cp[0]==' ') ++cp;    /* get rid of spaces */
+    for (cp = strtok(local_name, ","); cp; cp = strtok(NULL, ",")) {
+        while (cp[0] == ' ')
+            ++cp;    /* get rid of spaces */
 
-        /*  LOG(llevDebug,"Trying to match %s\n", cp);*/
+        /*  LOG(llevDebug, "Trying to match %s\n", cp);*/
         /* All is a very generic match - low match value */
-        if (!strcmp(cp,"all")) return 1;
+        if (!strcmp(cp, "all"))
+            return 1;
 
         /* unpaid is a little more specific */
-        if (!strcmp(cp,"unpaid") && QUERY_FLAG(op,FLAG_UNPAID)) return 2;
-        if (!strcmp(cp,"cursed") && QUERY_FLAG(op,FLAG_KNOWN_CURSED) &&
-                (QUERY_FLAG(op,FLAG_CURSED) ||QUERY_FLAG(op,FLAG_DAMNED)))
+        if (!strcmp(cp, "unpaid") && QUERY_FLAG(op, FLAG_UNPAID))
+            return 2;
+        if (!strcmp(cp, "cursed")
+        && QUERY_FLAG(op, FLAG_KNOWN_CURSED)
+        && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
             return 2;
 
-        if (!strcmp(cp,"unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
+        if (!strcmp(cp, "unlocked") && !QUERY_FLAG(op, FLAG_INV_LOCKED))
             return 2;
 
         /* Allow for things like '100 arrows' */
-        if ((count=atoi(cp))!=0) {
-            cp=strchr(cp, ' ');
-            while (cp && cp[0]==' ') ++cp;  /* get rid of spaces */
+        if ((count = atoi(cp)) != 0) {
+            cp = strchr(cp, ' ');
+            while (cp && cp[0] == ' ')
+                ++cp;  /* get rid of spaces */
         } else {
-            if (pl->type==PLAYER)
-                count=pl->contr->count;
+            if (pl->type == PLAYER)
+                count = pl->contr->count;
             else
                 count = 0;
         }
 
-        if (!cp || cp[0]=='\0' || count<0) return 0;
-
+        if (!cp || cp[0] == '\0' || count < 0)
+            return 0;
 
         /* The code here should go from highest retval to lowest.  That
          * is because of the 'else' handling - we don't want to match on
@@ -3836,42 +3919,50 @@ int item_matched_string(object *pl, object *op, const char *name) {
          */
         query_name(op, name_op, MAX_BUF);
         query_short_name(op, name_short, HUGE_BUF);
-        query_base_name(op,0, bname_s, MAX_BUF);
-        query_base_name(op,1, bname_p, MAX_BUF);
+        query_base_name(op, 0, bname_s, MAX_BUF);
+        query_base_name(op, 1, bname_p, MAX_BUF);
 
-        if (!strcasecmp(cp,name_op)) retval=20;
-        else if (!strcasecmp(cp,name_short)) retval=18;
-        else if (!strcasecmp(cp,bname_s)) retval=16;
-        else if (!strcasecmp(cp,bname_p)) retval=16;
-        else if (op->custom_name && !strcasecmp(cp,op->custom_name)) retval=15;
-        else if (!strncasecmp(cp,bname_s,
-                              strlen(cp))) retval=14;
-        else if (!strncasecmp(cp,bname_p,
-                              strlen(cp))) retval=14;
-
+        if (!strcasecmp(cp, name_op))
+            retval = 20;
+        else if (!strcasecmp(cp, name_short))
+            retval = 18;
+        else if (!strcasecmp(cp, bname_s))
+            retval = 16;
+        else if (!strcasecmp(cp, bname_p))
+            retval = 16;
+        else if (op->custom_name && !strcasecmp(cp, op->custom_name))
+            retval = 15;
+        else if (!strncasecmp(cp, bname_s, strlen(cp)))
+            retval = 14;
+        else if (!strncasecmp(cp, bname_p, strlen(cp)))
+            retval = 14;
         /* Do substring checks, so things like 'Str+1' will match.
          * retval of these should perhaps be lower - they are lower
          * then the specific strcasecmp aboves, but still higher than
          * some other match criteria.
          */
-        else if (strstr(bname_p, cp)) retval = 12;
-        else if (strstr(bname_s, cp)) retval = 12;
-        else if (strstr(name_short, cp)) retval = 12;
-
+        else if (strstr(bname_p, cp))
+            retval = 12;
+        else if (strstr(bname_s, cp))
+            retval = 12;
+        else if (strstr(name_short, cp))
+            retval = 12;
         /* Check against plural/non plural based on count. */
-        else if (count>1 && !strcasecmp(cp,op->name_pl)) {
-            retval=6;
-        } else if (count==1 && !strcasecmp(op->name,cp)) {
-            retval=6;
+        else if (count > 1 && !strcasecmp(cp, op->name_pl)) {
+            retval = 6;
+        } else if (count == 1 && !strcasecmp(op->name, cp)) {
+            retval = 6;
         }
         /* base name matched - not bad */
-        else if (strcasecmp(cp,op->name)==0 && !count) retval=4;
+        else if (strcasecmp(cp, op->name) == 0 && !count)
+            retval = 4;
         /* Check for partial custom name, but give a real low priority */
-        else if (op->custom_name && strstr(op->custom_name, cp)) retval = 3;
+        else if (op->custom_name && strstr(op->custom_name, cp))
+            retval = 3;
 
         if (retval) {
             if (pl->type == PLAYER)
-                pl->contr->count=count;
+                pl->contr->count = count;
             return retval;
         }
     }
@@ -3912,11 +4003,13 @@ void fix_multipart_object(object *tmp) {
         op->map = tmp->map;
         last->more = op;
         if (tmp->name != op->name) {
-            if (op->name) free_string(op->name);
+            if (op->name)
+                free_string(op->name);
             op->name = add_string(tmp->name);
         }
         if (tmp->title != op->title) {
-            if (op->title) free_string(op->title);
+            if (op->title)
+                free_string(op->title);
             op->title = add_string(tmp->title);
         }
         /* we could link all the parts onto tmp, and then just
@@ -3924,7 +4017,7 @@ void fix_multipart_object(object *tmp) {
          * as insert_ob_in_map will call itself with each part, and
          * the coding is simpler to just to it here with each part.
          */
-        insert_ob_in_map(op, op->map, tmp,INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
+        insert_ob_in_map(op, op->map, tmp, INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
     } /* for at = tmp->arch->more */
 }
 
@@ -3945,7 +4038,8 @@ void fix_multipart_object(object *tmp) {
  */
 void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
     archetype *part;
-    int maxx=0, maxy=0, minx=0, miny=0;
+    int maxx = 0, maxy = 0, minx = 0, miny = 0;
+
     if (ob->head)
         ob = ob->head;
     *sx = 1;

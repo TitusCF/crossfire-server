@@ -81,13 +81,13 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
 
 /** Tens */
 static const char numbers_10[10][20] = {
-    "zero","ten","twenty","thirty","fourty","fifty","sixty","seventy",
-    "eighty","ninety"
+    "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy",
+    "eighty", "ninety"
 };
 
 /** Levels as a full name and not a number. */
 static const char levelnumbers[21][20] = {
-    "zeroth","first", "second", "third", "fourth", "fifth", "sixth", "seventh",
+    "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
     "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
     "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteen",
     "nineteen", "twentieth"
@@ -95,8 +95,8 @@ static const char levelnumbers[21][20] = {
 
 /** Tens for levels */
 static const char levelnumbers_10[11][20] = {
-    "zeroth","tenth","twentieth","thirtieth","fortieth","fiftieth","sixtieth",
-    "seventieth","eightieth","ninetieth"
+    "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
+    "seventieth", "eightieth", "ninetieth"
 };
 
 /**
@@ -219,7 +219,7 @@ static const typedata item_types[] = {
 };
 
 /** Number of items in ::item_types array. */
-const int item_types_size=sizeof(item_types)/sizeof(*item_types);
+const int item_types_size = sizeof(item_types)/sizeof(*item_types);
 
 /** This curve may be too steep.  But the point is that there should
  * be tough choices - there is no real point to this if everyone can
@@ -238,8 +238,10 @@ static const int enc_to_item_power[21] = {
 };
 
 int get_power_from_ench(int ench) {
-    if (ench < 0)  ench = 0;
-    if (ench > 20) ench = 20;
+    if (ench < 0)
+        ench = 0;
+    if (ench > 20)
+        ench = 20;
     return enc_to_item_power[ench];
 }
 
@@ -263,7 +265,7 @@ int calc_item_power(const object *op, int flag) {
     int i, tmp, enc;
 
     enc = 0;
-    for (i=0; i<NUM_STATS; i++)
+    for (i = 0; i < NUM_STATS; i++)
         enc += get_attr_value(&op->stats, i);
 
     /* This protection logic is pretty flawed.  20% fire resistance
@@ -272,12 +274,14 @@ int calc_item_power(const object *op, int flag) {
      * armour shouldn't be counted against
      */
     tmp = 0;
-    for (i=1; i<NROFATTACKS; i++)
+    for (i = 1; i < NROFATTACKS; i++)
         tmp += op->resist[i];
 
     /* Add/substract 10 so that the rounding works out right */
-    if (tmp>0) enc += (tmp+10)/20;
-    else if (tmp<0) enc += (tmp - 10) / 20;
+    if (tmp > 0)
+        enc += (tmp+10)/20;
+    else if (tmp<0)
+        enc += (tmp-10)/20;
 
     enc += op->magic;
 
@@ -285,16 +289,24 @@ int calc_item_power(const object *op, int flag) {
      * physical doesn't count against total.
      */
     if (op->type == WEAPON) {
-        for (i=1; i<NROFATTACKS; i++)
-            if (op->attacktype & (1 << i)) enc++;
-        if (op->slaying) enc += 2;     /* What it slays is probably more relevent */
+        for (i = 1; i < NROFATTACKS; i++)
+            if (op->attacktype&(1<<i))
+                enc++;
+        if (op->slaying)
+            enc += 2;     /* What it slays is probably more relevent */
     }
     /* Items the player can equip */
-    if ((op->type == WEAPON) || (op->type == ARMOUR)   || (op->type == HELMET) ||
-        (op->type == SHIELD)   || (op->type == RING) ||
-        (op->type == BOOTS)    || (op->type == GLOVES) ||
-        (op->type == AMULET)  || (op->type == GIRDLE) ||
-        (op->type == BRACERS) || (op->type == CLOAK)) {
+    if ((op->type == WEAPON)
+    || (op->type == ARMOUR)
+    || (op->type == HELMET)
+    || (op->type == SHIELD)
+    || (op->type == RING)
+    || (op->type == BOOTS)
+    || (op->type == GLOVES)
+    || (op->type == AMULET)
+    || (op->type == GIRDLE)
+    || (op->type == BRACERS)
+    || (op->type == CLOAK)) {
         enc += op->stats.food;     /* sustenance */
         enc += op->stats.hp;       /* hp regen */
         enc += op->stats.sp;       /* mana regen */
@@ -304,19 +316,29 @@ int calc_item_power(const object *op, int flag) {
     enc += op->stats.luck;
 
     /* Do spell paths now */
-    for (i=1; i<NRSPELLPATHS; i++) {
-        if (op->path_attuned& (1 << i)) enc++;
-        else if (op->path_denied & (1 << i)) enc-=2;
-        else if (op->path_repelled & (1 << i)) enc--;
+    for (i = 1; i < NRSPELLPATHS; i++) {
+        if (op->path_attuned&(1<<i))
+            enc++;
+        else if (op->path_denied&(1<<i))
+            enc -= 2;
+        else if (op->path_repelled&(1<<i))
+            enc--;
     }
 
-    if (QUERY_FLAG(op,FLAG_LIFESAVE))      enc += 5;
-    if (QUERY_FLAG(op,FLAG_REFL_SPELL))    enc += 3;
-    if (QUERY_FLAG(op,FLAG_REFL_MISSILE))  enc += 2;
-    if (QUERY_FLAG(op,FLAG_STEALTH))       enc += 1;
-    if (QUERY_FLAG(op,FLAG_XRAYS))         enc += 2;
-    if (QUERY_FLAG(op,FLAG_SEE_IN_DARK))   enc += 1;
-    if (QUERY_FLAG(op,FLAG_MAKE_INVIS))    enc += 1;
+    if (QUERY_FLAG(op, FLAG_LIFESAVE))
+        enc += 5;
+    if (QUERY_FLAG(op, FLAG_REFL_SPELL))
+        enc += 3;
+    if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
+        enc += 2;
+    if (QUERY_FLAG(op, FLAG_STEALTH))
+        enc += 1;
+    if (QUERY_FLAG(op, FLAG_XRAYS))
+        enc += 2;
+    if (QUERY_FLAG(op, FLAG_SEE_IN_DARK))
+        enc += 1;
+    if (QUERY_FLAG(op, FLAG_MAKE_INVIS))
+        enc += 1;
 
     return get_power_from_ench(enc);
 }
@@ -329,8 +351,10 @@ int calc_item_power(const object *op, int flag) {
  * isn't one, returns NULL */
 const typedata *get_typedata(int itemtype) {
     int i;
-    for (i=0;i<item_types_size;i++)
-        if (item_types[i].number==itemtype) return &item_types[i];
+
+    for (i = 0; i < item_types_size; i++)
+        if (item_types[i].number == itemtype)
+            return &item_types[i];
     return NULL;
 }
 
@@ -347,17 +371,18 @@ const typedata *get_typedata(int itemtype) {
  */
 const typedata *get_typedata_by_name(const char *name) {
     int i;
-    for (i=0;i<item_types_size;i++)
-        if (!strcmp(item_types[i].name, name)) return &item_types[i];
-    for (i=0;i<item_types_size;i++)
+
+    for (i = 0; i < item_types_size; i++)
+        if (!strcmp(item_types[i].name, name))
+            return &item_types[i];
+    for (i = 0; i < item_types_size; i++)
         if (!strcmp(item_types[i].name_pl, name)) {
-            LOG(llevInfo,
-                "get_typedata_by_name: I have been sent the plural %s, the singular form %s is preffered\n",
-                name, item_types[i].name);
+            LOG(llevInfo, "get_typedata_by_name: I have been sent the plural %s, the singular form %s is preffered\n", name, item_types[i].name);
             return &item_types[i];
         }
     return NULL;
 }
+
 /**
  * Generates the visible naming for resistances.
  *
@@ -376,8 +401,8 @@ void describe_resistance(const object *op, int newline, char *buf, int size) {
     int tmpvar;
 
     p = buf;
-    for (tmpvar=0; tmpvar<NROFATTACKS; tmpvar++) {
-        if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar)==1)) {
+    for (tmpvar = 0; tmpvar < NROFATTACKS; tmpvar++) {
+        if (op->resist[tmpvar] && (op->type != FLESH || atnr_is_dragon_enabled(tmpvar) == 1)) {
             if (!newline)
                 snprintf(p, buf+size-p, "(%s %+d)", resist_plus[tmpvar], op->resist[tmpvar]);
             else
@@ -397,14 +422,14 @@ void describe_resistance(const object *op, int newline, char *buf, int size) {
  * buffer size.
  */
 void query_weight(const object *op, char *buf, int size) {
-    sint32 i=(op->nrof?op->nrof:1)*op->weight+op->carrying;
+    sint32 i = (op->nrof ? op->nrof : 1)*op->weight+op->carrying;
 
-    if (op->weight<0)
+    if (op->weight < 0)
         snprintf(buf, size, "      ");
     else if (i%1000)
-        snprintf(buf, size, "%6.1f",i/1000.0);
+        snprintf(buf, size, "%6.1f", i/1000.0);
     else
-        snprintf(buf, size, "%4d  ",i/1000);
+        snprintf(buf, size, "%4d  ", i/1000);
 }
 
 /**
@@ -456,20 +481,20 @@ void get_levelnumber(int i, char *buf, int size) {
  Use safe string functions. Check if really ring/amulet?
  */
 static void ring_desc(const object *op, char *buf, int size) {
-    int attr, val,len;
+    int attr, val, len;
 
     buf[0] = 0;
 
-    if (! QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (!QUERY_FLAG(op, FLAG_IDENTIFIED))
         return;
 
-    for (attr=0; attr<NUM_STATS; attr++) {
-        if ((val=get_attr_value(&(op->stats),attr))!=0) {
+    for (attr = 0; attr < NUM_STATS; attr++) {
+        if ((val = get_attr_value(&(op->stats), attr)) != 0) {
             snprintf(buf+strlen(buf), size-strlen(buf), "(%s%+d)", short_stat_name[attr], val);
         }
     }
     if (op->stats.exp)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+" FMT64 ")", op->stats.exp);
+        snprintf(buf+strlen(buf), size-strlen(buf), "(speed %+"FMT64")", op->stats.exp);
     if (op->stats.wc)
         snprintf(buf+strlen(buf), size-strlen(buf), "(wc%+d)", op->stats.wc);
     if (op->stats.dam)
@@ -481,34 +506,33 @@ static void ring_desc(const object *op, char *buf, int size) {
 
     if (op->stats.food != 0)
         snprintf(buf+strlen(buf), size-strlen(buf), "(sustenance%+d)", op->stats.food);
-    /* else if (op->stats.food < 0)
+/*  else if (op->stats.food < 0)
         snprintf(buf+strlen(buf), size-strlen(buf), "(hunger%+d)", op->stats.food); */
     if (op->stats.grace)
         snprintf(buf+strlen(buf), size-strlen(buf), "(grace%+d)", op->stats.grace);
-    if (op->stats.sp && op->type!=SKILL)
+    if (op->stats.sp && op->type != SKILL)
         snprintf(buf+strlen(buf), size-strlen(buf), "(magic%+d)", op->stats.sp);
     if (op->stats.hp)
         snprintf(buf+strlen(buf), size-strlen(buf), "(regeneration%+d)", op->stats.hp);
     if (op->stats.luck)
         snprintf(buf+strlen(buf), size-strlen(buf), "(luck%+d)", op->stats.luck);
-    if (QUERY_FLAG(op,FLAG_LIFESAVE))
+    if (QUERY_FLAG(op, FLAG_LIFESAVE))
         snprintf(buf+strlen(buf), size-strlen(buf), "(lifesaving)");
-    if (QUERY_FLAG(op,FLAG_REFL_SPELL))
+    if (QUERY_FLAG(op, FLAG_REFL_SPELL))
         snprintf(buf+strlen(buf), size-strlen(buf), "(reflect spells)");
-    if (QUERY_FLAG(op,FLAG_REFL_MISSILE))
+    if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
         snprintf(buf+strlen(buf), size-strlen(buf), "(reflect missiles)");
-    if (QUERY_FLAG(op,FLAG_STEALTH))
+    if (QUERY_FLAG(op, FLAG_STEALTH))
         snprintf(buf+strlen(buf), size-strlen(buf), "(stealth)");
     /* Shorten some of the names, so they appear better in the windows */
-    len=strlen(buf);
+    len = strlen(buf);
     DESCRIBE_PATH_SAFE(buf, op->path_attuned, "Attuned", &len, size);
     DESCRIBE_PATH_SAFE(buf, op->path_repelled, "Repelled", &len, size);
     DESCRIBE_PATH_SAFE(buf, op->path_denied, "Denied", &len, size);
 
-    /*    if(op->item_power)
-        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);
-    */
-    if (buf[0] == 0 && op->type!=SKILL)
+/*  if (op->item_power)
+        snprintf(buf+strlen(buf), size-strlen(buf), "(item_power %+d)", op->item_power);*/
+    if (buf[0] == 0 && op->type != SKILL)
         snprintf(buf, size, "of adornment");
 }
 
@@ -524,7 +548,7 @@ static void ring_desc(const object *op, char *buf, int size) {
  * buffer length.
  */
 void query_short_name(const object *op, char *buf, int size) {
-    int len=0;
+    int len = 0;
 
     if (op->name == NULL) {
         snprintf(buf, size, "(null)");
@@ -541,51 +565,52 @@ void query_short_name(const object *op, char *buf, int size) {
     else
         safe_strcat(buf, op->name_pl, &len, size);
 
-    if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
+    if (op->title && QUERY_FLAG(op, FLAG_IDENTIFIED)) {
         safe_strcat(buf, " ", &len, size);
         safe_strcat(buf, op->title, &len, size);
     }
 
     switch (op->type) {
-        case SPELLBOOK:
-        case SCROLL:
-        case WAND:
-        case ROD:
-            if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                if (!op->title) {
-                    safe_strcat(buf," of ", &len, size);
-                    if (op->inv)
-                        safe_strcat(buf,op->inv->name, &len, size);
-                    else
-                        LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
-                }
-                if (op->type != SPELLBOOK) {
-                    snprintf(buf+len, size-len, " (lvl %d)", op->level);
-                    len += strlen(buf+len);
-                }
-            }
-            break;
-
-        case SKILL:
-        case AMULET:
-        case RING:
+    case SPELLBOOK:
+    case SCROLL:
+    case WAND:
+    case ROD:
+        if (QUERY_FLAG(op, FLAG_IDENTIFIED)||QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
             if (!op->title) {
-                /* If ring has a title, full description isn't so useful */
-                char desc[VERY_BIG_BUF];
-                ring_desc(op, desc, VERY_BIG_BUF);
-                if (desc[0]) {
-                    safe_strcat(buf, " ", &len, size);
-                    safe_strcat(buf, desc, &len, size);
-                }
+                safe_strcat(buf, " of ", &len, size);
+                if (op->inv)
+                    safe_strcat(buf, op->inv->name, &len, size);
+                else
+                    LOG(llevError, "Spellbook %s lacks inventory\n", op->name);
             }
-            break;
-
-        default:
-            if (op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
-                               need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
-                snprintf(buf+len, size-len, " %+d", op->magic);
+            if (op->type != SPELLBOOK) {
+                snprintf(buf+len, size-len, " (lvl %d)", op->level);
                 len += strlen(buf+len);
             }
+        }
+        break;
+
+    case SKILL:
+    case AMULET:
+    case RING:
+        if (!op->title) {
+            /* If ring has a title, full description isn't so useful */
+            char desc[VERY_BIG_BUF];
+
+            ring_desc(op, desc, VERY_BIG_BUF);
+            if (desc[0]) {
+                safe_strcat(buf, " ", &len, size);
+                safe_strcat(buf, desc, &len, size);
+            }
+        }
+        break;
+
+    default:
+        if (op->magic
+        && ((QUERY_FLAG(op, FLAG_BEEN_APPLIED) && need_identify(op)) || QUERY_FLAG(op, FLAG_IDENTIFIED))) {
+            snprintf(buf+len, size-len, " %+d", op->magic);
+            len += strlen(buf+len);
+        }
     }
 }
 
@@ -600,7 +625,7 @@ void query_short_name(const object *op, char *buf, int size) {
  * size of buffer.
  */
 void query_name(const object *op, char *buf, int size) {
-    int len=0;
+    int len = 0;
 #ifdef NEW_MATERIAL_CODE
     materialtype_t *mt;
 #endif
@@ -620,19 +645,19 @@ void query_name(const object *op, char *buf, int size) {
     query_short_name(op, buf+len, size-len);
     len += strlen(buf+len);
 
-    if (QUERY_FLAG(op,FLAG_INV_LOCKED))
+    if (QUERY_FLAG(op, FLAG_INV_LOCKED))
         safe_strcat(buf, " *", &len, size);
-    if (op->type == CONTAINER && ((op->env && op->env->container == op) ||
-                                  (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
-        safe_strcat(buf," (open)", &len, size);
+    if (op->type == CONTAINER
+    && ((op->env && op->env->container == op) || (!op->env && QUERY_FLAG(op, FLAG_APPLIED))))
+        safe_strcat(buf, " (open)", &len, size);
 
-    if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
-        if (QUERY_FLAG(op,FLAG_DAMNED))
+    if (QUERY_FLAG(op, FLAG_KNOWN_CURSED)) {
+        if (QUERY_FLAG(op, FLAG_DAMNED))
             safe_strcat(buf, " (damned)", &len, size);
-        else if (QUERY_FLAG(op,FLAG_CURSED))
+        else if (QUERY_FLAG(op, FLAG_CURSED))
             safe_strcat(buf, " (cursed)", &len, size);
     }
-    if (QUERY_FLAG(op,FLAG_BLESSED) && QUERY_FLAG(op,FLAG_KNOWN_BLESSED))
+    if (QUERY_FLAG(op, FLAG_BLESSED) && QUERY_FLAG(op, FLAG_KNOWN_BLESSED))
         safe_strcat(buf, " (blessed)", &len, size);
 
     /* Basically, if the object is known magical (detect magic spell on it),
@@ -644,42 +669,46 @@ void query_name(const object *op, char *buf, int size) {
      * if it has been applied.  Equipping an item does not tell full
      * abilities, especially for artifact items.
      */
-    if (QUERY_FLAG(op,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op,FLAG_IDENTIFIED))
+    if (QUERY_FLAG(op, FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(op, FLAG_IDENTIFIED))
         safe_strcat(buf, " (magic)", &len, size);
 
-    if (QUERY_FLAG(op,FLAG_APPLIED)) {
+    if (QUERY_FLAG(op, FLAG_APPLIED)) {
         switch (op->type) {
-            case BOW:
-            case WAND:
-            case ROD:
-            case HORN:
-                safe_strcat(buf," (readied)", &len, size);
-                break;
-            case WEAPON:
-                safe_strcat(buf," (wielded)", &len, size);
-                break;
-            case ARMOUR:
-            case HELMET:
-            case SHIELD:
-            case RING:
-            case BOOTS:
-            case GLOVES:
-            case AMULET:
-            case GIRDLE:
-            case BRACERS:
-            case CLOAK:
-                safe_strcat(buf," (worn)", &len, size);
-                break;
-            case CONTAINER:
-                safe_strcat(buf," (active)", &len, size);
-                break;
-            case SKILL:
-            default:
-                safe_strcat(buf," (applied)", &len, size);
+        case BOW:
+        case WAND:
+        case ROD:
+        case HORN:
+            safe_strcat(buf, " (readied)", &len, size);
+            break;
+
+        case WEAPON:
+            safe_strcat(buf, " (wielded)", &len, size);
+            break;
+
+        case ARMOUR:
+        case HELMET:
+        case SHIELD:
+        case RING:
+        case BOOTS:
+        case GLOVES:
+        case AMULET:
+        case GIRDLE:
+        case BRACERS:
+        case CLOAK:
+            safe_strcat(buf, " (worn)", &len, size);
+            break;
+
+        case CONTAINER:
+            safe_strcat(buf, " (active)", &len, size);
+            break;
+
+        case SKILL:
+        default:
+            safe_strcat(buf, " (applied)", &len, size);
         }
     }
     if (QUERY_FLAG(op, FLAG_UNPAID))
-        safe_strcat(buf," (unpaid)", &len, size);
+        safe_strcat(buf, " (unpaid)", &len, size);
 }
 
 /**
@@ -705,7 +734,8 @@ void query_base_name(const object *op, int plural, char *buf, int size) {
     materialtype_t *mt;
 #endif
 
-    if ((!plural && !op->name) || (plural && !op->name_pl)) {
+    if ((!plural && !op->name)
+    || (plural && !op->name_pl)) {
         strncpy(buf, "(null)", size);
         return;
     }
@@ -723,9 +753,9 @@ void query_base_name(const object *op, int plural, char *buf, int size) {
     else
         mt = NULL;
 
-    if (mt &&
-            op->arch->clone.materialname != mt->name &&
-            !(op->material & M_SPECIAL)) {
+    if (mt
+    && op->arch->clone.materialname != mt->name
+    && !(op->material&M_SPECIAL)) {
         snprintf(buf, size, "%s", mt->description);
         len=strlen(buf);
         safe_strcat(buf, " ", &len, size);
@@ -733,55 +763,56 @@ void query_base_name(const object *op, int plural, char *buf, int size) {
     } else {
 #endif
         snprintf(buf, size, "%s", plural ? op->name_pl : op->name);
-        len=strlen(buf);
+        len = strlen(buf);
 #ifdef NEW_MATERIAL_CODE
     }
 #endif
 
-    if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) {
+    if (op->title && QUERY_FLAG(op, FLAG_IDENTIFIED)) {
         safe_strcat(buf, " ", &len, size);
         safe_strcat(buf, op->title, &len, size);
     }
 
     switch (op->type) {
-        case SPELLBOOK:
-        case SCROLL:
-        case WAND:
-        case ROD:
-            if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                if (!op->title) {
-                    safe_strcat(buf," of ", &len, size);
-                    if (op->inv)
-                        safe_strcat(buf,op->inv->name, &len, size);
-                    else
-                        LOG(llevError,"Spellbook %s lacks inventory\n", op->name);
-                }
-                if (op->type != SPELLBOOK) {
-                    snprintf(buf+len, size-len, " (lvl %d)", op->level);
-                    len += strlen(buf+len);
-                }
-            }
-            break;
-
-        case SKILL:
-        case AMULET:
-        case RING:
+    case SPELLBOOK:
+    case SCROLL:
+    case WAND:
+    case ROD:
+        if (QUERY_FLAG(op, FLAG_IDENTIFIED)||QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
             if (!op->title) {
-                /* If ring has a title, full description isn't so useful */
-                char s[MAX_BUF];
-                ring_desc(op, s, MAX_BUF);
-                if (s[0]) {
-                    safe_strcat(buf, " ", &len, size);
-                    safe_strcat(buf, s, &len, size);
-                }
+                safe_strcat(buf, " of ", &len, size);
+                if (op->inv)
+                    safe_strcat(buf, op->inv->name, &len, size);
+                else
+                    LOG(llevError, "Spellbook %s lacks inventory\n", op->name);
             }
-            break;
+            if (op->type != SPELLBOOK) {
+                snprintf(buf+len, size-len, " (lvl %d)", op->level);
+                len += strlen(buf+len);
+            }
+        }
+        break;
 
-        default:
-            if (op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) &&
-                               need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED))) {
-                snprintf(buf+strlen(buf), size-strlen(buf), " %+d", op->magic);
+    case SKILL:
+    case AMULET:
+    case RING:
+        if (!op->title) {
+            /* If ring has a title, full description isn't so useful */
+            char s[MAX_BUF];
+
+            ring_desc(op, s, MAX_BUF);
+            if (s[0]) {
+                safe_strcat(buf, " ", &len, size);
+                safe_strcat(buf, s, &len, size);
             }
+        }
+        break;
+
+    default:
+        if (op->magic
+        && ((QUERY_FLAG(op, FLAG_BEEN_APPLIED) && need_identify(op)) || QUERY_FLAG(op, FLAG_IDENTIFIED))) {
+            snprintf(buf+strlen(buf), size-strlen(buf), " %+d", op->magic);
+        }
     }
 }
 
@@ -809,74 +840,81 @@ void describe_monster(const object *op, char *retbuf, int size) {
     int i;
     int len;
 
-    retbuf[0]='\0';
+    retbuf[0] = '\0';
 
     /* Note that the resolution this provides for players really isn't
      * very good.  Any player with a speed greater than .67 will
      * fall into the 'lightning fast movement' category.
      */
-    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
+    if (FABS(op->speed) > MIN_ACTIVE_SPEED) {
         switch ((int)((FABS(op->speed))*15)) {
-            case 0:
-                snprintf(retbuf, size,"(very slow movement)");
-                break;
-            case 1:
-                snprintf(retbuf, size, "(slow movement)");
-                break;
-            case 2:
-                snprintf(retbuf, size, "(normal movement)");
-                break;
-            case 3:
-            case 4:
-                snprintf(retbuf, size, "(fast movement)");
-                break;
-            case 5:
-            case 6:
-                snprintf(retbuf, size, "(very fast movement)");
-                break;
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                snprintf(retbuf, size, "(extremely fast movement)");
-                break;
-            default:
-                snprintf(retbuf, size, "(lightning fast movement)");
-                break;
+        case 0:
+            snprintf(retbuf, size, "(very slow movement)");
+            break;
+
+        case 1:
+            snprintf(retbuf, size, "(slow movement)");
+            break;
+
+        case 2:
+            snprintf(retbuf, size, "(normal movement)");
+            break;
+
+        case 3:
+        case 4:
+            snprintf(retbuf, size, "(fast movement)");
+            break;
+
+        case 5:
+        case 6:
+            snprintf(retbuf, size, "(very fast movement)");
+            break;
+
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            snprintf(retbuf, size, "(extremely fast movement)");
+            break;
+
+        default:
+            snprintf(retbuf, size, "(lightning fast movement)");
+            break;
         }
     }
-    if (QUERY_FLAG(op,FLAG_UNDEAD))
+    if (QUERY_FLAG(op, FLAG_UNDEAD))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(undead)");
-    if (QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
+    if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(see invisible)");
-    if (QUERY_FLAG(op,FLAG_USE_WEAPON))
+    if (QUERY_FLAG(op, FLAG_USE_WEAPON))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wield weapon)");
-    if (QUERY_FLAG(op,FLAG_USE_BOW))
+    if (QUERY_FLAG(op, FLAG_USE_BOW))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(archer)");
-    if (QUERY_FLAG(op,FLAG_USE_ARMOUR))
+    if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear armour)");
-    if (QUERY_FLAG(op,FLAG_USE_RING))
+    if (QUERY_FLAG(op, FLAG_USE_RING))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wear ring)");
-    if (QUERY_FLAG(op,FLAG_USE_SCROLL))
+    if (QUERY_FLAG(op, FLAG_USE_SCROLL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(read scroll)");
-    if (QUERY_FLAG(op,FLAG_USE_RANGE))
+    if (QUERY_FLAG(op, FLAG_USE_RANGE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fires wand/rod/horn)");
-    if (QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
+    if (QUERY_FLAG(op, FLAG_CAN_USE_SKILL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(skill user)");
-    if (QUERY_FLAG(op,FLAG_CAST_SPELL))
+    if (QUERY_FLAG(op, FLAG_CAST_SPELL))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellcaster)");
-    if (QUERY_FLAG(op,FLAG_FRIENDLY))
+    if (QUERY_FLAG(op, FLAG_FRIENDLY))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(friendly)");
-    if (QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
+    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(unaggressive)");
-    if (QUERY_FLAG(op,FLAG_HITBACK))
+    if (QUERY_FLAG(op, FLAG_HITBACK))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(hitback)");
-    if (QUERY_FLAG(op,FLAG_STEALTH))
+    if (QUERY_FLAG(op, FLAG_STEALTH))
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealthy)");
     if (op->randomitems != NULL) {
         treasure *t;
         int first = 1;
-        for (t=op->randomitems->items; t != NULL; t=t->next)
+
+        for (t = op->randomitems->items; t != NULL; t = t->next)
             if (t->item && (t->item->clone.type == SPELL)) {
                 if (first) {
                     first = 0;
@@ -887,7 +925,7 @@ void describe_monster(const object *op, char *retbuf, int size) {
     }
     if (op->type == PLAYER) {
         if (op->contr->digestion) {
-            if (op->contr->digestion!=0)
+            if (op->contr->digestion != 0)
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->contr->digestion);
         }
         if (op->contr->gen_grace) {
@@ -900,7 +938,7 @@ void describe_monster(const object *op, char *retbuf, int size) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(regeneration%+d)", op->contr->gen_hp);
         }
         if (op->stats.luck) {
-            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)",op->stats.luck);
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
         }
     }
 
@@ -913,10 +951,11 @@ void describe_monster(const object *op, char *retbuf, int size) {
          */
         object *tmp;
 
-        for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
-            if (tmp->type == SKILL && !strcmp(tmp->name, "clawing")) break;
+        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+            if (tmp->type == SKILL && !strcmp(tmp->name, "clawing"))
+                break;
 
-        if (tmp && tmp->attacktype!=0) {
+        if (tmp && tmp->attacktype != 0) {
             DESCRIBE_ABILITY_SAFE(retbuf, tmp->attacktype, "Claws", &len, size);
         } else {
             DESCRIBE_ABILITY_SAFE(retbuf, op->attacktype, "Attacks", &len, size);
@@ -927,13 +966,12 @@ void describe_monster(const object *op, char *retbuf, int size) {
     DESCRIBE_PATH_SAFE(retbuf, op->path_attuned, "Attuned", &len, size);
     DESCRIBE_PATH_SAFE(retbuf, op->path_repelled, "Repelled", &len, size);
     DESCRIBE_PATH_SAFE(retbuf, op->path_denied, "Denied", &len, size);
-    for (i=0; i < NROFATTACKS; i++) {
+    for (i = 0; i < NROFATTACKS; i++) {
         if (op->resist[i]) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s %+d)", resist_plus[i], op->resist[i]);
         }
     }
 }
-
 
 /**
  * Describes an item, in all its details.
@@ -977,120 +1015,121 @@ void describe_monster(const object *op, char *retbuf, int size) {
  * Check spurious food logic.
  */
 void describe_item(const object *op, const object *owner, char *retbuf, int size) {
-    int identified,i;
+    int identified, i;
 
-    retbuf[0]='\0';
-    if (QUERY_FLAG(op,FLAG_MONSTER) || op->type==PLAYER) {
+    retbuf[0] = '\0';
+    if (QUERY_FLAG(op, FLAG_MONSTER) || op->type == PLAYER) {
         describe_monster(op, retbuf, size);
         return;
     }
     /* figure this out once, instead of making multiple calls to need_identify.
      * also makes the code easier to read.
      */
-    if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED)) identified = 1;
+    if (!need_identify(op) || QUERY_FLAG(op, FLAG_IDENTIFIED))
+        identified = 1;
     else {
         snprintf(retbuf, size, "(unidentified)");
         identified = 0;
     }
     switch (op->type) {
-        case BOW:
-        case ARROW:
-        case WAND:
-        case ROD:
-        case HORN:
-        case WEAPON:
-        case ARMOUR:
-        case HELMET:
-        case SHIELD:
-        case BOOTS:
-        case GLOVES:
-        case GIRDLE:
-        case BRACERS:
-        case CLOAK:
-        case SKILL_TOOL:
-            break;  /* We have more information to do below this switch */
+    case BOW:
+    case ARROW:
+    case WAND:
+    case ROD:
+    case HORN:
+    case WEAPON:
+    case ARMOUR:
+    case HELMET:
+    case SHIELD:
+    case BOOTS:
+    case GLOVES:
+    case GIRDLE:
+    case BRACERS:
+    case CLOAK:
+    case SKILL_TOOL:
+        break;  /* We have more information to do below this switch */
 
-        case LAMP:
-            break; /* just so we get the "glowing" part. */
+    case LAMP:
+        break; /* just so we get the "glowing" part. */
 
-        case POWER_CRYSTAL:
-            /* Avoid division by zero... */
-            if (op->stats.maxsp == 0) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d).", op->stats.maxsp);
-            } else {
-                if (op->stats.maxsp>1000) { /*higher capacity crystals*/
-                    i = (op->stats.maxsp%1000)/100;
-                    if (i)
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000,i);
-                    else
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
-                } else
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
-                i = (op->stats.sp*10)/op->stats.maxsp;
-                if (op->stats.sp==0)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
-                else if (i==0)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
-                else if (i<3)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
-                else if (i<6)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
-                else if (i<9)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
-                else if (op->stats.sp == op->stats.maxsp)
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
+    case POWER_CRYSTAL:
+        /* Avoid division by zero... */
+        if (op->stats.maxsp == 0) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d).", op->stats.maxsp);
+        } else {
+            if (op->stats.maxsp > 1000) { /*higher capacity crystals*/
+                i = (op->stats.maxsp%1000)/100;
+                if (i)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d.%dk). It is ", op->stats.maxsp/1000, i);
                 else
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %dk). It is ", op->stats.maxsp/1000);
+            } else
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(capacity %d). It is ", op->stats.maxsp);
+            i = (op->stats.sp*10)/op->stats.maxsp;
+            if (op->stats.sp == 0)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "empty.");
+            else if (i == 0)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost empty.");
+            else if (i < 3)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "partially filled.");
+            else if (i < 6)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "half full.");
+            else if (i < 9)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "well charged.");
+            else if (op->stats.sp == op->stats.maxsp)
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "fully charged.");
+            else
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "almost full.");
+        }
+        break;
+
+    case FOOD:
+    case FLESH:
+    case DRINK:
+        if (identified || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
+
+            if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s metabolism)", change_resist_msg[op->last_eat]);
             }
-            break;
 
-        case FOOD:
-        case FLESH:
-        case DRINK:
-            if (identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
-
-                if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s metabolism)", change_resist_msg[op->last_eat]);
-                }
-
-                if (!QUERY_FLAG(op,FLAG_CURSED)) {
-                    if (op->stats.hp)
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(heals)");
-                    if (op->stats.sp)
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint regen)");
-                } else {
-                    if (op->stats.hp)
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(damages)");
-                    if (op->stats.sp)
-                        snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint depletion)");
-                }
+            if (!QUERY_FLAG(op, FLAG_CURSED)) {
+                if (op->stats.hp)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(heals)");
+                if (op->stats.sp)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint regen)");
+            } else {
+                if (op->stats.hp)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(damages)");
+                if (op->stats.sp)
+                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(spellpoint depletion)");
             }
-            break;
+        }
+        break;
 
-        case SKILL:
-        case RING:
-        case AMULET:
-            if (op->item_power) {
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
-            }
-            if (op->title) {
-                ring_desc(op, retbuf+strlen(retbuf), size-strlen(retbuf));
-            }
-            return;
+    case SKILL:
+    case RING:
+    case AMULET:
+        if (op->item_power) {
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(item_power %+d)", op->item_power);
+        }
+        if (op->title) {
+            ring_desc(op, retbuf+strlen(retbuf), size-strlen(retbuf));
+        }
+        return;
 
-        default:
-            return;
+    default:
+        return;
     }
 
     /* Down here, we more further describe equipment type items.
      * only describe them if they have been identified or the like.
      */
-    if (identified || QUERY_FLAG(op,FLAG_BEEN_APPLIED)) {
-        int attr,val;
+    if (identified || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
+        int attr, val;
 
-        for (attr=0; attr<NUM_STATS; attr++) {
-            if ((val=get_attr_value(&(op->stats),attr))!=0) {
+        for (attr = 0; attr < NUM_STATS; attr++) {
+            if ((val = get_attr_value(&(op->stats), attr)) != 0) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s%+d)", short_stat_name[attr], val);
             }
         }
@@ -1098,60 +1137,61 @@ void describe_item(const object *op, const object *owner, char *retbuf, int size
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(glowing)");
 
         switch (op->type) {
-            case FLESH:
-                break;
-            default:
-                if (op->stats.exp) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(speed %+" FMT64 ")", op->stats.exp);
-                }
-                break;
+        case FLESH:
+            break;
+
+        default:
+            if (op->stats.exp) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(speed %+"FMT64")", op->stats.exp);
+            }
+            break;
         }
         switch (op->type) {
-            case BOW:
-            case ARROW:
-            case GIRDLE:
-            case HELMET:
-            case SHIELD:
-            case BOOTS:
-            case GLOVES:
-            case WEAPON:
-            case SKILL:
-            case RING:
-            case AMULET:
-            case ARMOUR:
-            case BRACERS:
-            case FORCE:
-            case CLOAK:
-                if (op->stats.wc) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wc%+d)", op->stats.wc);
-                }
-                if (op->stats.dam) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(dam%+d)", op->stats.dam);
-                }
-                if (op->stats.ac) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(ac%+d)", op->stats.ac);
-                }
-                if ((op->type==WEAPON || op->type == BOW) && op->level>0) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(improved %d/%d)", op->last_eat, op->level);
-                }
-                break;
+        case BOW:
+        case ARROW:
+        case GIRDLE:
+        case HELMET:
+        case SHIELD:
+        case BOOTS:
+        case GLOVES:
+        case WEAPON:
+        case SKILL:
+        case RING:
+        case AMULET:
+        case ARMOUR:
+        case BRACERS:
+        case FORCE:
+        case CLOAK:
+            if (op->stats.wc) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(wc%+d)", op->stats.wc);
+            }
+            if (op->stats.dam) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(dam%+d)", op->stats.dam);
+            }
+            if (op->stats.ac) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(ac%+d)", op->stats.ac);
+            }
+            if ((op->type == WEAPON || op->type == BOW) && op->level > 0) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(improved %d/%d)", op->last_eat, op->level);
+            }
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
-        if (QUERY_FLAG(op,FLAG_XRAYS))
+        if (QUERY_FLAG(op, FLAG_XRAYS))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(xray-vision)");
-        if (QUERY_FLAG(op,FLAG_SEE_IN_DARK))
+        if (QUERY_FLAG(op, FLAG_SEE_IN_DARK))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(infravision)");
 
         /* levitate was what is was before, so we'll keep it */
-        if (op->move_type & MOVE_FLY_LOW)
+        if (op->move_type&MOVE_FLY_LOW)
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(levitate)");
 
-        if (op->move_type & MOVE_FLY_HIGH)
+        if (op->move_type&MOVE_FLY_HIGH)
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(fly)");
 
-        if (op->move_type & MOVE_SWIM)
+        if (op->move_type&MOVE_SWIM)
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(swim)");
 
         /* walking is presumed as 'normal', so doesn't need mentioning */
@@ -1170,49 +1210,50 @@ void describe_item(const object *op, const object *owner, char *retbuf, int size
         int len;
 
         switch (op->type) {
-            case ROD:  /* These use stats.sp for spell selection and stats.food */
-            case HORN: /* and stats.hp for spell-point regeneration... */
-            case BOW:
-            case ARROW:
-            case WAND:
-            case FOOD:
-            case FLESH:
-            case DRINK:
-                more_info = 0;
-                break;
+        case ROD:  /* These use stats.sp for spell selection and stats.food */
+        case HORN: /* and stats.hp for spell-point regeneration... */
+        case BOW:
+        case ARROW:
+        case WAND:
+        case FOOD:
+        case FLESH:
+        case DRINK:
+            more_info = 0;
+            break;
 
             /* Armor type objects */
-            case ARMOUR:
-            case HELMET:
-            case SHIELD:
-            case BOOTS:
-            case GLOVES:
-            case GIRDLE:
-            case BRACERS:
-            case CLOAK:
-                if (ARMOUR_SPEED(op)) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Max speed %1.2f)", ARMOUR_SPEED(op)/10.0);
-                }
-                if (ARMOUR_SPELLS(op)) {
-                    snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell regen penalty %d)", ARMOUR_SPELLS(op));
-                }
-                more_info=1;
-                break;
+        case ARMOUR:
+        case HELMET:
+        case SHIELD:
+        case BOOTS:
+        case GLOVES:
+        case GIRDLE:
+        case BRACERS:
+        case CLOAK:
+            if (ARMOUR_SPEED(op)) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Max speed %1.2f)", ARMOUR_SPEED(op)/10.0);
+            }
+            if (ARMOUR_SPELLS(op)) {
+                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(Spell regen penalty %d)", ARMOUR_SPELLS(op));
+            }
+            more_info = 1;
+            break;
 
-            case WEAPON:
-                /* Calculate it the same way fix_object does so the results
-                 * make sense.
-                 */
-                i = (WEAPON_SPEED(op)*2-op->magic)/2;
-                if (i<0) i=0;
+        case WEAPON:
+            /* Calculate it the same way fix_object does so the results
+             * make sense.
+             */
+            i = (WEAPON_SPEED(op)*2-op->magic)/2;
+            if (i < 0)
+                i=0;
 
-                snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(weapon speed %d)", i);
-                more_info=1;
-                break;
+            snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(weapon speed %d)", i);
+            more_info = 1;
+            break;
         }
         if (more_info) {
             if (op->stats.food) {
-                if (op->stats.food!=0)
+                if (op->stats.food != 0)
                     snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(sustenance%+d)", op->stats.food);
             }
             if (op->stats.grace) {
@@ -1229,15 +1270,15 @@ void describe_item(const object *op, const object *owner, char *retbuf, int size
         if (op->stats.luck) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(luck%+d)", op->stats.luck);
         }
-        if (QUERY_FLAG(op,FLAG_LIFESAVE))
+        if (QUERY_FLAG(op, FLAG_LIFESAVE))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(lifesaving)");
-        if (QUERY_FLAG(op,FLAG_REFL_SPELL))
+        if (QUERY_FLAG(op, FLAG_REFL_SPELL))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect spells)");
-        if (QUERY_FLAG(op,FLAG_REFL_MISSILE))
+        if (QUERY_FLAG(op, FLAG_REFL_MISSILE))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(reflect missiles)");
-        if (QUERY_FLAG(op,FLAG_STEALTH))
+        if (QUERY_FLAG(op, FLAG_STEALTH))
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(stealth)");
-        if (op->slaying!=NULL && op->type != FOOD) {
+        if (op->slaying != NULL && op->type != FOOD) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(slay %s)", op->slaying);
         }
         len = strlen(retbuf);
@@ -1271,62 +1312,73 @@ int is_magical(const object *op) {
     int i;
 
     /* living creatures are considered non magical */
-    if (QUERY_FLAG(op, FLAG_ALIVE)) return 0;
+    if (QUERY_FLAG(op, FLAG_ALIVE))
+        return 0;
 
     /* This is a test for it being an artifact, as artifacts have titles */
-    if (op->title!=NULL) return 1;
+    if (op->title != NULL)
+        return 1;
 
     /* Handle rings and amulets specially.  If they change any of these
      * values, it means they are magical.
      */
-    if ((op->type==AMULET || op->type==RING) &&
-            (op->stats.ac || op->stats.food || op->stats.exp || op->stats.dam ||
-             op->stats.wc || op->stats.sp || op->stats.hp || op->stats.luck))
+    if ((op->type == AMULET || op->type == RING)
+    && (op->stats.ac || op->stats.food || op->stats.exp || op->stats.dam || op->stats.wc || op->stats.sp || op->stats.hp || op->stats.luck))
         return 1;
 
     /* Check for stealty, speed, flying, or just plain magic in the boots */
     /* Presume any boots that have a move_type are special. */
-    if (op->type== BOOTS &&
-            ((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type ||  op->stats.exp)))
+    if (op->type == BOOTS
+    && ((QUERY_FLAG(op, FLAG_STEALTH) || op->move_type || op->stats.exp)))
         return 1;
 
     /* Take care of amulet/shield that reflects spells/missiles */
-    if ((op->type==AMULET || op->type==SHIELD) &&
-            (QUERY_FLAG(op, FLAG_REFL_SPELL) || QUERY_FLAG(op, FLAG_REFL_MISSILE)))
+    if ((op->type == AMULET || op->type == SHIELD)
+    && (QUERY_FLAG(op, FLAG_REFL_SPELL) || QUERY_FLAG(op, FLAG_REFL_MISSILE)))
         return 1;
 
     /* Take care of helmet of xrays */
-    if (op->type==HELMET && QUERY_FLAG(op,FLAG_XRAYS)) return 1;
+    if (op->type == HELMET
+    && QUERY_FLAG(op, FLAG_XRAYS))
+        return 1;
 
     /* Potions & rods are always magical.  Wands/staves are also magical,
      * assuming they still have any charges left.
      */
-    if (op->type==POTION || op->type==ROD ||
-            (op->type==WAND && op->stats.food))
+    if (op->type == POTION || op->type == ROD || (op->type == WAND && op->stats.food))
         return 1;
 
     /* if something gives a protection, either positive or negative, its magical */
     /* This is really a pretty bad hack - as of now, ATNR_PHYSICAL is 0,
      * so this always works out fine.
      */
-    for (i=ATNR_PHYSICAL+1; i<NROFATTACKS; i++)
-        if (op->resist[i]) return 1;
+    for (i = ATNR_PHYSICAL+1; i < NROFATTACKS; i++)
+        if (op->resist[i])
+            return 1;
 
     /* Physical protection is expected on some item types, so they should
      * not be considered magical.
      */
-    if (op->resist[ATNR_PHYSICAL] && op->type != HELMET && op->type != SHIELD &&
-            op->type != BOOTS && op->type != GLOVES && op->type != ARMOUR)
+    if (op->resist[ATNR_PHYSICAL]
+    && op->type != HELMET
+    && op->type != SHIELD
+    && op->type != BOOTS
+    && op->type != GLOVES
+    && op->type != ARMOUR)
         return 1;
 
     /* power crystal, spellbooks, and scrolls are always magical.  */
-    if (op->magic || op->type==POWER_CRYSTAL || op->type==SPELLBOOK ||
-            op->type==SCROLL || op->type==GIRDLE)
+    if (op->magic
+    || op->type == POWER_CRYSTAL
+    || op->type == SPELLBOOK
+    || op->type == SCROLL
+    || op->type == GIRDLE)
         return 1;
 
     /* Check to see if it increases/decreases any stats */
-    for (i=0; i<NUM_STATS; i++)
-        if (get_attr_value(&(op->stats),i)!=0) return 1;
+    for (i = 0; i < NUM_STATS; i++)
+        if (get_attr_value(&(op->stats), i) != 0)
+            return 1;
 
     /* If it doesn't fall into any of the above categories, must
      * be non magical.
@@ -1347,43 +1399,42 @@ int is_magical(const object *op) {
  */
 int need_identify(const object *op) {
     switch (op->type) {
-        case RING:
-        case WAND:
-        case ROD:
-        case HORN:
-        case SCROLL:
-        case SKILL:
-        case SKILLSCROLL:
-        case SPELLBOOK:
-        case FOOD:
-        case POTION:
-        case BOW:
-        case ARROW:
-        case WEAPON:
-        case ARMOUR:
-        case SHIELD:
-        case HELMET:
-        case AMULET:
-        case BOOTS:
-        case GLOVES:
-        case BRACERS:
-        case GIRDLE:
-        case CONTAINER:
-        case DRINK:
-        case FLESH:
-        case INORGANIC:
-        case CLOSE_CON:
-        case CLOAK:
-        case GEM:
-        case POWER_CRYSTAL:
-        case POISON:
-        case BOOK:
-        case SKILL_TOOL:
-            return 1;
+    case RING:
+    case WAND:
+    case ROD:
+    case HORN:
+    case SCROLL:
+    case SKILL:
+    case SKILLSCROLL:
+    case SPELLBOOK:
+    case FOOD:
+    case POTION:
+    case BOW:
+    case ARROW:
+    case WEAPON:
+    case ARMOUR:
+    case SHIELD:
+    case HELMET:
+    case AMULET:
+    case BOOTS:
+    case GLOVES:
+    case BRACERS:
+    case GIRDLE:
+    case CONTAINER:
+    case DRINK:
+    case FLESH:
+    case INORGANIC:
+    case CLOSE_CON:
+    case CLOAK:
+    case GEM:
+    case POWER_CRYSTAL:
+    case POISON:
+    case BOOK:
+    case SKILL_TOOL:
+        return 1;
     }
     return 0;
 }
-
 
 /**
  * Identifies an item.
@@ -1395,18 +1446,18 @@ int need_identify(const object *op) {
 void identify(object *op) {
     object *pl;
 
-    SET_FLAG(op,FLAG_IDENTIFIED);
+    SET_FLAG(op, FLAG_IDENTIFIED);
     CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL);
     CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT);
 
     /*
      * We want autojoining of equal objects:
      */
-    if (QUERY_FLAG(op,FLAG_CURSED) || QUERY_FLAG(op,FLAG_DAMNED))
-        SET_FLAG(op,FLAG_KNOWN_CURSED);
+    if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))
+        SET_FLAG(op, FLAG_KNOWN_CURSED);
 
-    if (QUERY_FLAG(op,FLAG_BLESSED))
-        SET_FLAG(op,FLAG_KNOWN_BLESSED);
+    if (QUERY_FLAG(op, FLAG_BLESSED))
+        SET_FLAG(op, FLAG_KNOWN_BLESSED);
 
     if (op->type == POTION) {
         if (op->inv && op->randomitems) {
@@ -1422,7 +1473,7 @@ void identify(object *op) {
 
     /* If the object is on a map, make sure we update its face */
     if (op->map)
-        update_object(op,UP_OBJ_FACE);
+        update_object(op, UP_OBJ_FACE);
     else {
         pl = get_player_container(op->env);
         if (pl)

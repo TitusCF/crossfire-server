@@ -57,7 +57,7 @@ uint32 pticks;                         /**< ? */
 uint32 process_utime_long_count;       /**< ? */
 
 /** Ingame seasons. */
-const char * const season_name[SEASONS_PER_YEAR+1] = {
+const char *const season_name[SEASONS_PER_YEAR+1] = {
     "The Season of New Year",
     "The Season of Growth",
     "The Season of Harvest",
@@ -67,7 +67,7 @@ const char * const season_name[SEASONS_PER_YEAR+1] = {
 };
 
 /** Days of the week. */
-const char * const weekdays[DAYS_PER_WEEK] = {
+const char *const weekdays[DAYS_PER_WEEK] = {
     "the Day of the Moon",
     "the Day of the Bull",
     "the Day of the Deception",
@@ -78,7 +78,7 @@ const char * const weekdays[DAYS_PER_WEEK] = {
 };
 
 /** Months. */
-const char * const month_name[MONTHS_PER_YEAR] = {
+const char *const month_name[MONTHS_PER_YEAR] = {
     "Month of Winter",           /* 0 */
     "Month of the Ice Dragon",
     "Month of the Frost Giant",
@@ -98,7 +98,7 @@ const char * const month_name[MONTHS_PER_YEAR] = {
     "Month of Gorokh"
 };
 
-const char * const periodsofday[PERIODS_PER_DAY] = {
+const char *const periodsofday[PERIODS_PER_DAY] = {
     "Night",
     "Dawn",
     "Morning",
@@ -111,26 +111,26 @@ const char * const periodsofday[PERIODS_PER_DAY] = {
  * give access to weekday names
  */
 const char *get_periodofday(const int index) {
-    return ((index>=0) && (index < PERIODS_PER_DAY))?periodsofday[index]:NULL;
+    return ((index >= 0) && (index < PERIODS_PER_DAY)) ? periodsofday[index] : NULL;
 }
 /* *
  * give access to month names
  */
 const char *get_month_name(const int index) {
-    return ((index>=0) && (index < MONTHS_PER_YEAR))?month_name[index]:NULL;
+    return ((index >= 0) && (index < MONTHS_PER_YEAR)) ? month_name[index] : NULL;
 }
 
 /**
  * give access to weekday names
  */
 const char *get_weekday(const int index) {
-    return ((index>=0) && (index < DAYS_PER_WEEK))?weekdays[index]:NULL;
+    return ((index >= 0) && (index < DAYS_PER_WEEK)) ? weekdays[index] : NULL;
 }
 /**
  * give access to season names
  */
 const char *get_season_name(const int index) {
-    return ((index>=0) && (index < (SEASONS_PER_YEAR+1)))?season_name[index]:NULL;
+    return ((index >= 0) && (index < (SEASONS_PER_YEAR+1))) ? season_name[index] : NULL;
 }
 
 /**
@@ -138,6 +138,7 @@ const char *get_season_name(const int index) {
  */
 void reset_sleep(void) {
     int i;
+
     for (i = 0; i < PBUFLEN; i++)
         process_utime_save[i] = 0;
     psaveind = 0;
@@ -146,7 +147,7 @@ void reset_sleep(void) {
     process_tot_mtime = 0;
     pticks = 0;
 
-    (void) GETTIMEOFDAY(&last_time);
+    (void)GETTIMEOFDAY(&last_time);
 }
 
 /**
@@ -173,10 +174,9 @@ int enough_elapsed_time(void) {
     static struct timeval new_time;
     uint32 elapsed_utime;
 
-    (void) GETTIMEOFDAY(&new_time);
+    (void)GETTIMEOFDAY(&new_time);
 
-    elapsed_utime = (new_time.tv_sec - last_time.tv_sec) * 1000000 +
-                    new_time.tv_usec - last_time.tv_usec;
+    elapsed_utime = (new_time.tv_sec-last_time.tv_sec)*1000000+new_time.tv_usec-last_time.tv_usec;
     if (elapsed_utime > max_time) {
         log_time(elapsed_utime);
         last_time.tv_sec = new_time.tv_sec;
@@ -194,10 +194,10 @@ void sleep_delta(void) {
     static struct timeval new_time;
     long sleep_sec, sleep_usec;
 
-    (void) GETTIMEOFDAY(&new_time);
+    (void)GETTIMEOFDAY(&new_time);
 
-    sleep_sec = last_time.tv_sec - new_time.tv_sec;
-    sleep_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
+    sleep_sec = last_time.tv_sec-new_time.tv_sec;
+    sleep_usec = max_time-(new_time.tv_usec-last_time.tv_usec);
 
     /* This is very ugly, but probably the fastest for our use: */
     while (sleep_usec < 0) {
@@ -209,18 +209,19 @@ void sleep_delta(void) {
         sleep_sec +=1;
     }
 
-    log_time((new_time.tv_sec - last_time.tv_sec)*1000000
-             + new_time.tv_usec - last_time.tv_usec);
+    log_time((new_time.tv_sec-last_time.tv_sec)*1000000+new_time.tv_usec-last_time.tv_usec);
 
     if (sleep_sec >= 0 && sleep_usec > 0) {
         static struct timeval sleep_time;
+
         sleep_time.tv_sec = sleep_sec;
         sleep_time.tv_usec = sleep_usec;
 
 #ifndef WIN32 /* 'select' doesn't work on Windows, 'Sleep' is used instead */
         select(0, NULL, NULL, NULL, &sleep_time);
 #else
-        if (sleep_time.tv_sec) Sleep(sleep_time.tv_sec*1000);
+        if (sleep_time.tv_sec)
+            Sleep(sleep_time.tv_sec*1000);
         Sleep((int)(sleep_time.tv_usec/1000.));
 #endif
     } else
@@ -237,8 +238,8 @@ void sleep_delta(void) {
      * Don't do too much catching up:
      * (Things can still get jerky on a slow/loaded computer)
      */
-    if (last_time.tv_sec * 1000000 + last_time.tv_usec <
-            new_time.tv_sec * 1000000 + new_time.tv_usec) {
+    if (last_time.tv_sec*1000000+last_time.tv_usec <
+            new_time.tv_sec*1000000+new_time.tv_usec) {
         last_time.tv_sec = new_time.tv_sec;
         last_time.tv_usec = new_time.tv_usec;
     }
@@ -283,20 +284,20 @@ void get_tod(timeofday_t *tod) {
     else
         tod->season = 4;
 
-    if (tod ->hour <5) /*until 4:59*/
-        tod->periodofday=0;
-    else if (tod ->hour <8)
-        tod->periodofday=1;
-    else if (tod ->hour <13)
-        tod->periodofday=2;
-    else if (tod ->hour <15)
-        tod->periodofday=3;
-    else if (tod ->hour <20)
-        tod->periodofday=4;
-    else if (tod ->hour <23)
-        tod->periodofday=5;
+    if (tod ->hour < 5) /*until 4:59*/
+        tod->periodofday = 0;
+    else if (tod ->hour < 8)
+        tod->periodofday = 1;
+    else if (tod ->hour < 13)
+        tod->periodofday = 2;
+    else if (tod ->hour < 15)
+        tod->periodofday = 3;
+    else if (tod ->hour < 20)
+        tod->periodofday = 4;
+    else if (tod ->hour < 23)
+        tod->periodofday = 5;
     else /*back to night*/
-        tod->periodofday=0;
+        tod->periodofday = 0;
 }
 
 /**
@@ -312,30 +313,30 @@ void print_tod(object *op) {
 
     get_tod(&tod);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "It is %d minute%s past %d o'clock %s, on %s",
                          "It is %d minute%s past %d o'clock %s, on %s",
                          tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-                         ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+                         ((tod.hour%14 == 0) ? 14 : ((tod.hour)%14)),
                          ((tod.hour >= 14) ? "pm" : "am"),
                          weekdays[tod.dayofweek]);
 
-    day = tod.day + 1;
-    if (day == 1 || ((day % 10) == 1 && day > 20))
+    day = tod.day+1;
+    if (day == 1 || ((day%10) == 1 && day > 20))
         suf = "st";
-    else if (day == 2 || ((day % 10) == 2 && day > 20))
+    else if (day == 2 || ((day%10) == 2 && day > 20))
         suf = "nd";
-    else if (day == 3 || ((day % 10) == 3 && day > 20))
+    else if (day == 3 || ((day%10) == 3 && day > 20))
         suf = "rd";
     else
         suf = "th";
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "The %d%s Day of the %s, Year %d",
                          "The %d%s Day of the %s, Year %d",
                          day, suf, month_name[tod.month], tod.year+1);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                          "Time of Year: %s",
                          "Time of Year: %s",
                          season_name[tod.season]);
@@ -353,49 +354,52 @@ void time_info(object *op) {
 
     print_tod(op);
 
-    if (!QUERY_FLAG(op,FLAG_WIZ))
+    if (!QUERY_FLAG(op, FLAG_WIZ))
         return;
 
-    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                   "Total time:", NULL);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "ticks=%d  time=%d.%2d",
                          "ticks=%d  time=%d.%2d",
                          pticks, process_tot_mtime/1000, process_tot_mtime%1000);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "avg time=%dms  max time=%dms  min time=%dms",
                          "avg time=%dms  max time=%dms  min time=%dms",
                          process_tot_mtime/pticks, process_max_utime/1000,
                          process_min_utime/1000);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          max_time/1000,
                          process_utime_long_count, 100*process_utime_long_count/pticks);
 
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "Time last %d ticks:",
                          "Time last %d ticks:",
                          MIN(pticks, PBUFLEN));
 
     for (i = 0; i < MIN(pticks, PBUFLEN); i++) {
         tot += process_utime_save[i];
-        if (process_utime_save[i] > maxt) maxt = process_utime_save[i];
-        if (process_utime_save[i] < mint) mint = process_utime_save[i];
-        if (process_utime_save[i] > max_time) long_count++;
+        if (process_utime_save[i] > maxt)
+            maxt = process_utime_save[i];
+        if (process_utime_save[i] < mint)
+            mint = process_utime_save[i];
+        if (process_utime_save[i] > max_time)
+            long_count++;
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "avg time=%dms  max time=%dms  min time=%dms",
                          "avg time=%dms  max time=%dms  min time=%dms",
                          tot/MIN(pticks, PBUFLEN)/1000, maxt/1000,
                          mint/1000);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          "ticks longer than max time (%dms) = %d (%d%%)",
                          max_time/1000, long_count,
@@ -411,6 +415,6 @@ void time_info(object *op) {
 long seconds(void) {
     struct timeval now;
 
-    (void) GETTIMEOFDAY(&now);
+    (void)GETTIMEOFDAY(&now);
     return now.tv_sec;
 }

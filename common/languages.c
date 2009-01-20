@@ -76,12 +76,11 @@ const char *i18n_translate(int language, int id) {
     else if (id >= NUM_I18N_STRINGS)
         return NULL;
 
-    if (i18n_strings[language][id]==NULL)
+    if (i18n_strings[language][id] == NULL)
         return i18n_strings[0][id];
     else
         return i18n_strings[language][id];
 }
-
 
 /**
  * Replaces '\n' by a newline char.
@@ -97,8 +96,8 @@ static void convert_newline(char *line) {
 
     while ((next = strstr(line, "\\n")) != NULL) {
         *next = '\n';
-        *(next + 1) = '\0';
-        snprintf(buf, MAX_BUF, "%s%s", line, next + 2);
+        *(next+1) = '\0';
+        snprintf(buf, MAX_BUF, "%s%s", line, next+2);
         strcpy(line, buf);
     }
 }
@@ -113,30 +112,29 @@ void i18n_init(void) {
     char *token;
     int counter;
     char *buffer;
-    for (i=0;i<NUM_LANGUAGES;i++) {
+
+    for (i = 0; i < NUM_LANGUAGES; i++) {
         snprintf(filename, sizeof(filename), "%s/i18n/messages.%s", settings.datadir, language_codes[i]);
-        if ((fp=fopen(filename, "r")) == NULL) {
-            LOG(llevError, "Cannot open i18n file %s: %s\n",
-                filename, strerror_local(errno, line, sizeof(line)));
-            if (i==0)
+        if ((fp = fopen(filename, "r")) == NULL) {
+            LOG(llevError, "Cannot open i18n file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
+            if (i == 0)
                 exit(1);
         } else {
             counter = 0;
             while (fgets(line, MAX_BUF, fp)) {
-                if (strstr(line,"#")!=line) {
-                    line[strlen(line) - 1] = '\0'; /* erase the final newline that messes things. */
+                if (strstr(line, "#") != line) {
+                    line[strlen(line)-1] = '\0'; /* erase the final newline that messes things. */
                     token = strtok(line, "|");
                     entry = atoi(token);
                     token = strtok(NULL, "|");
                     buffer = malloc(sizeof(char)*(strlen(token)+1));
-                    strcpy(buffer,token);
+                    strcpy(buffer, token);
                     convert_newline(buffer);
-                    i18n_strings[i][entry]=buffer;
+                    i18n_strings[i][entry] = buffer;
                 }
                 counter++;
             }
-            LOG(llevDebug, "Read %i strings for language: %s\n",
-                counter, language_codes[i]);
+            LOG(llevDebug, "Read %i strings for language: %s\n", counter, language_codes[i]);
             fclose(fp);
         }
     }

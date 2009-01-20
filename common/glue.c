@@ -44,7 +44,7 @@
 /**
  * Error messages to display.
  */
-static const char *const fatalmsgs[80]={
+static const char *const fatalmsgs[80] = {
     "Failed to allocate memory",
     "Failed repeatedly to load maps",
     "Hashtable for archetypes is too small",
@@ -58,9 +58,9 @@ static const char *const fatalmsgs[80]={
  * this function never returns, as it calls exit().
  */
 void fatal(int err) {
-    fprintf(logfile,"Fatal: %s\n",fatalmsgs[err]);
+    fprintf(logfile, "Fatal: %s\n", fatalmsgs[err]);
     emergency_save(0);
     clean_tmp_files();
-    fprintf(logfile,"Exiting...\n");
+    fprintf(logfile, "Exiting...\n");
     exit(err);
 }

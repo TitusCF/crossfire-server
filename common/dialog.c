@@ -42,6 +42,7 @@ void free_dialog_information(object *op) {
 
     if (!QUERY_FLAG(op, FLAG_DIALOG_PARSED))
         return;
+
     CLEAR_FLAG(op, FLAG_DIALOG_PARSED);
     if (!op->dialog_information)
         return;
@@ -123,7 +124,7 @@ void parse_dialog_information(object *op) {
         return;
     SET_FLAG(op, FLAG_DIALOG_PARSED);
 
-    op->dialog_information = (struct_dialog_information*)calloc(1, sizeof(struct_dialog_information));
+    op->dialog_information = (struct_dialog_information *)calloc(1, sizeof(struct_dialog_information));
 
     if (!op->msg)
         return;
@@ -139,32 +140,32 @@ void parse_dialog_information(object *op) {
                 tmplen = 0;
             }
 
-            message = (struct_dialog_message*)calloc(1, sizeof(struct_dialog_message));
+            message = (struct_dialog_message *)calloc(1, sizeof(struct_dialog_message));
             if (last)
                 last->next = message;
             else
                 op->dialog_information->all_messages = message;
             last = message;
 
-            message->match = strdup(current + 7);
+            message->match = strdup(current+7);
         } else if ((strncmp(current, "@reply ", 7) == 0 && (len = 7)) || (strncmp(current, "@question ", 10) == 0 && (len = 10))) {
             if (message) {
-                reply = (struct_dialog_reply*)calloc(1, sizeof(struct_dialog_reply));
+                reply = (struct_dialog_reply *)calloc(1, sizeof(struct_dialog_reply));
                 reply->type = (len == 7 ? rt_reply : rt_question);
-                cp = strchr(current + len, ' ');
+                cp = strchr(current+len, ' ');
                 if (cp) {
                     *cp = '\0';
-                    reply->reply = strdup(current + len);
-                    reply->message = strdup(cp + 1);
+                    reply->reply = strdup(current+len);
+                    reply->message = strdup(cp+1);
                 } else {
-                    reply->reply = strdup(current + len);
+                    reply->reply = strdup(current+len);
                     reply->message = strdup(reply->reply);
                     LOG(llevDebug, "Warning: @reply/@question without message for %s!", op->name);
                 }
                 reply->next = message->replies;
                 message->replies = reply;
 
-                reply = (struct_dialog_reply*)calloc(1, sizeof(struct_dialog_reply));
+                reply = (struct_dialog_reply *)calloc(1, sizeof(struct_dialog_reply));
                 reply->reply = strdup(message->replies->reply);
                 reply->message = strdup(message->replies->message);
                 reply->type = message->replies->type;
@@ -175,16 +176,16 @@ void parse_dialog_information(object *op) {
         } else if (message) {
             /* Needed to set initial \0 */
             int wasnull = FALSE;
-            tmplen += strlen(current) + 2;
+            tmplen += strlen(current)+2;
             if (!tmp)
                 wasnull = TRUE;
-            tmp = realloc(tmp, tmplen * sizeof(char));
+            tmp = realloc(tmp, tmplen*sizeof(char));
             if (!tmp)
                 fatal(OUT_OF_MEMORY);
             if (wasnull)
                 tmp[0] = 0;
-            strncat(tmp, current, tmplen - strlen(tmp) - 1);
-            strncat(tmp, "\n", tmplen - strlen(tmp) - 1);
+            strncat(tmp, current, tmplen-strlen(tmp)-1);
+            strncat(tmp, "\n", tmplen-strlen(tmp)-1);
         }
         current = strtok_r(NULL, "\n", &save);
     }

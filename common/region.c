@@ -54,16 +54,17 @@
 region *get_region_by_name(const char *region_name) {
     region *reg;
 
-    for (reg=first_region;reg!=NULL;reg=reg->next)
-        if (!strcmp(reg->name, region_name)) return reg;
+    for (reg = first_region; reg != NULL; reg = reg->next)
+        if (!strcmp(reg->name, region_name))
+            return reg;
 
-    for (reg=first_region;reg!=NULL;reg=reg->next) {
+    for (reg = first_region; reg != NULL; reg = reg->next) {
         if (reg->fallback) {
-            LOG(llevDebug,"region called %s requested, but not found, fallback used.\n", region_name);
+            LOG(llevDebug, "region called %s requested, but not found, fallback used.\n", region_name);
             return reg;
         }
     }
-    LOG(llevInfo,"Got no region or fallback for region %s.\n", region_name);
+    LOG(llevInfo, "Got no region or fallback for region %s.\n", region_name);
     return NULL;
 }
 
@@ -98,11 +99,14 @@ region *get_region_by_map(mapstruct *m) {
  */
 const char *get_name_of_region_for_map(const mapstruct  *m) {
     region *reg;
-    if (m->region!=NULL) return m->region->name;
-    for (reg=first_region;reg!=NULL;reg=reg->next) {
-        if (reg->fallback) return reg->name;
+
+    if (m->region != NULL)
+        return m->region->name;
+    for (reg = first_region; reg != NULL; reg = reg->next) {
+        if (reg->fallback)
+            return reg->name;
     }
-    LOG(llevInfo,"map %s had no region and I couldn't find a fallback to use.\n", m->name);
+    LOG(llevInfo, "map %s had no region and I couldn't find a fallback to use.\n", m->name);
     return "unknown";
 }
 
@@ -131,27 +135,32 @@ region *get_region_from_string(const char *name) {
         return NULL;
     }
 
-    if (name==NULL) {
-        for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
+    if (name == NULL) {
+        for (reg = first_region; reg->parent != NULL; reg = reg->parent)
+            ;
         return reg;
     }
     p = strchr(name, '\n');
-    if (p) *p = '\0';
-    for (reg=first_region;reg!=NULL;reg=reg->next)
-        if (!strcasecmp(reg->name, name)) return reg;
+    if (p)
+        *p = '\0';
+    for (reg = first_region; reg != NULL; reg = reg->next)
+        if (!strcasecmp(reg->name, name))
+            return reg;
 
-    for (reg=first_region;reg!=NULL;reg=reg->next)
+    for (reg = first_region; reg != NULL; reg = reg->next)
         if (reg->longname != NULL) {
-            if (!strcasecmp(reg->longname, name)) return reg;
+            if (!strcasecmp(reg->longname, name))
+                return reg;
         }
 
-    substr=NULL;
-    for (reg=first_region;reg!=NULL;reg=reg->next)
+    substr = NULL;
+    for (reg = first_region; reg != NULL; reg = reg->next)
         if (reg->longname != NULL) {
-            substr=strstr(reg->longname, name);
-            if (substr != NULL) return reg;
+            substr = strstr(reg->longname, name);
+            if (substr != NULL)
+                return reg;
         }
-    for (reg=first_region;reg!=NULL;reg=reg->next)
+    for (reg = first_region; reg != NULL; reg = reg->next)
         if (reg->longname != NULL) {
             /*
              * This is not a bug, we want the region that is  most identifiably a discrete
@@ -159,15 +168,18 @@ region *get_region_from_string(const char *name) {
              * 'scornarena', regardless of their order on the list so we only look at those
              * regions with a longname set.
              */
-            substr=strstr(reg->name, name);
-            if (substr != NULL) return reg;
+            substr = strstr(reg->name, name);
+            if (substr != NULL)
+                return reg;
         }
-    for (reg=first_region;reg!=NULL;reg=reg->next) {
-        substr=strstr(reg->name, name);
-        if (substr != NULL) return reg;
+    for (reg = first_region; reg != NULL; reg = reg->next) {
+        substr = strstr(reg->name, name);
+        if (substr != NULL)
+            return reg;
     }
     /* if we are still here, we are going to have to give up, and give the top level region */
-    for (reg=first_region;reg->parent!=NULL;reg=reg->parent);
+    for (reg = first_region; reg->parent != NULL; reg = reg->parent)
+        ;
     return reg;
 }
 
@@ -185,15 +197,16 @@ region *get_region_from_string(const char *name) {
  */
 int region_is_child_of_region(const region *child, const region *r) {
 
-    if (r==NULL)
+    if (r == NULL)
         return -1;
     if (child == NULL)
         return 0;
     if (!strcmp(child->name, r->name))
         return 1;
-    else if (child->parent!=NULL)
-        return region_is_child_of_region(child->parent,r);
-    else return 0;
+    else if (child->parent != NULL)
+        return region_is_child_of_region(child->parent, r);
+    else
+        return 0;
 }
 
 /**
@@ -211,13 +224,12 @@ int region_is_child_of_region(const region *child, const region *r) {
  *   never happen. We also LOG() a debug message.
  */
 const char *get_region_longname(const region *r) {
-
-    if (r->longname!=NULL)
+    if (r->longname != NULL)
         return r->longname;
-    else if (r->parent!=NULL)
+    else if (r->parent != NULL)
         return get_region_longname(r->parent);
     else {
-        LOG(llevDebug,"NOTICE region %s has no parent and no longname.\n", r->name);
+        LOG(llevDebug, "NOTICE region %s has no parent and no longname.\n", r->name);
         return "no name can be found for the current region";
     }
 }
@@ -233,12 +245,12 @@ const char *get_region_longname(const region *r) {
  * @li obviously wrong message if no parent, and we LOG() a debug message.
  */
 const char *get_region_msg(const region *r) {
-    if (r->msg!=NULL)
+    if (r->msg != NULL)
         return r->msg;
-    else if (r->parent!=NULL)
+    else if (r->parent != NULL)
         return get_region_msg(r->parent);
     else {
-        LOG(llevDebug,"NOTICE region %s has no parent and no msg.\n", r->name);
+        LOG(llevDebug, "NOTICE region %s has no parent and no msg.\n", r->name);
         return "no description can be found for the current region";
     }
 }
@@ -257,23 +269,26 @@ const char *get_region_msg(const region *r) {
 object *get_jail_exit(object *op) {
     region *reg;
     object *exit;
+
     if (op->type != PLAYER) {
         LOG(llevError, "region.c: get_jail_exit called against non-player object.\n");
         return NULL;
     }
-    reg=get_region_by_map(op->map);
-    while (reg!=NULL) {
+
+    reg = get_region_by_map(op->map);
+    while (reg != NULL) {
         if (reg->jailmap) {
-            exit=get_object();
-            EXIT_PATH(exit)=add_string(reg->jailmap);
+            exit = get_object();
+            EXIT_PATH(exit) = add_string(reg->jailmap);
             /* damned exits reset savebed and remove teleports, so the prisoner can't escape */
             SET_FLAG(exit, FLAG_DAMNED);
             EXIT_X(exit) = reg->jailx;
             EXIT_Y(exit) = reg->jaily;
             return exit;
-        } else reg=reg->parent;
+        } else
+            reg = reg->parent;
     }
-    LOG(llevDebug,"No suitable jailmap for region %s was found.\n", reg->name);
+    LOG(llevDebug, "No suitable jailmap for region %s was found.\n", reg->name);
     return NULL;
 }
 
@@ -285,18 +300,18 @@ void init_regions(void) {
     char filename[MAX_BUF];
     int comp;
 
-    if (first_region!=NULL) /* Only do this once */
+    if (first_region != NULL) /* Only do this once */
         return;
 
-    snprintf(filename, sizeof(filename), "%s/%s/%s",settings.datadir,settings.mapdir,settings.regions);
-    LOG(llevDebug,"Reading regions from %s...\n",filename);
-    if ((fp=open_and_uncompress(filename,0,&comp))==NULL) {
-        LOG(llevError," Can't open regions file %s in init_regions.\n", filename);
+    snprintf(filename, sizeof(filename), "%s/%s/%s", settings.datadir, settings.mapdir, settings.regions);
+    LOG(llevDebug, "Reading regions from %s...\n", filename);
+    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL) {
+        LOG(llevError, " Can't open regions file %s in init_regions.\n", filename);
         return;
     }
     parse_regions(fp);
     assign_region_parents();
-    LOG(llevDebug," done\n");
+    LOG(llevDebug, " done\n");
 
     close_and_delete(fp, comp);
 }
@@ -318,8 +333,8 @@ void init_regions(void) {
 region *get_region_struct(void) {
     region *new;
 
-    new=(region *)CALLOC(1,sizeof(region));
-    if (new==NULL)
+    new=(region *)CALLOC(1, sizeof(region));
+    if (new == NULL)
         fatal(OUT_OF_MEMORY);
 
     memset(new, '\0', sizeof(region));
@@ -338,23 +353,26 @@ void parse_regions(FILE *fp) {
     region *new;
     region *reg;
 
-    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key=NULL, *value, *end;
+    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key = NULL, *value, *end;
     int msgpos=0;
 
     new = NULL;
-    while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
+    while (fgets(buf, HUGE_BUF-1, fp) != NULL) {
         buf[HUGE_BUF-1] = 0;
         key = buf;
-        while (isspace(*key)) key++;
-        if (*key == 0) continue;    /* empty line */
+        while (isspace(*key))
+            key++;
+        if (*key == 0)
+            continue;    /* empty line */
         value = strchr(key, ' ');
         if (!value) {
             end = strchr(key, '\n');
-            *end=0;
+            *end = 0;
         } else {
             *value = 0;
             value++;
-            while (isspace(*value)) value++;
+            while (isspace(*value))
+                value++;
             end = strchr(value, '\n');
         }
 
@@ -371,25 +389,26 @@ void parse_regions(FILE *fp) {
          * this to "" to prevent cores, but that would let more errors slide
          * through.
          */
-        if (!strcmp(key,"region")) {
-            *end=0;
-            new=get_region_struct();
+        if (!strcmp(key, "region")) {
+            *end = 0;
+            new = get_region_struct();
             new->name = strdup_local(value);
-        } else if (!strcmp(key,"parent")) {
+        } else if (!strcmp(key, "parent")) {
             /*
              * Note that this is in the initialisation code, so we don't actually
              * assign the pointer to the parent yet, because it might not have been
              * parsed.
              */
-            *end=0;
+            *end = 0;
             new->parent_name = strdup_local(value);
-        } else if (!strcmp(key,"longname")) {
-            *end=0;
+        } else if (!strcmp(key, "longname")) {
+            *end = 0;
             new->longname = strdup_local(value);
-        } else if (!strcmp(key,"jail")) {
+        } else if (!strcmp(key, "jail")) {
             /* jail entries are of the form: /path/to/map x y */
             char path[MAX_BUF];
-            int x,y;
+            int x, y;
+
             if (sscanf(value, "%[^ ] %d %d\n", path, &x, &y) != 3) {
                 LOG(llevError, "region.c: malformated regions entry: jail %s\n", value);
                 continue;
@@ -397,9 +416,10 @@ void parse_regions(FILE *fp) {
             new->jailmap = strdup_local(path);
             new->jailx = x;
             new->jaily = y;
-        } else if (!strcmp(key,"msg")) {
-            while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
-                if (!strcmp(buf,"endmsg\n")) break;
+        } else if (!strcmp(key, "msg")) {
+            while (fgets(buf, HUGE_BUF-1, fp) != NULL) {
+                if (!strcmp(buf, "endmsg\n"))
+                    break;
                 else {
                     strcpy(msgbuf+msgpos, buf);
                     msgpos += strlen(buf);
@@ -414,18 +434,21 @@ void parse_regions(FILE *fp) {
                 new->msg = strdup_local(msgbuf);
 
             /* we have to reset msgpos, or the next region will store both msg blocks.*/
-            msgpos=0;
-        } else if (!strcmp(key,"fallback")) {
-            *end=0;
+            msgpos = 0;
+        } else if (!strcmp(key, "fallback")) {
+            *end = 0;
             new->fallback = atoi(value);
-        } else if (!strcmp(key,"end")) {
+        } else if (!strcmp(key, "end")) {
             /* Place this new region last on the list, if the list is empty put it first */
-            for (reg=first_region;reg!=NULL&&reg->next!=NULL;reg=reg->next);
+            for (reg = first_region; reg != NULL && reg->next != NULL; reg = reg->next)
+                ;
 
-            if (reg==NULL) first_region=new;
-            else reg->next=new;
+            if (reg == NULL)
+                first_region = new;
+            else
+                reg->next = new;
             new = NULL;
-        } else if (!strcmp(key,"nomore")) {
+        } else if (!strcmp(key, "nomore")) {
             /* we have reached the end of the region specs....*/
             break;
         } else {
@@ -433,7 +456,7 @@ void parse_regions(FILE *fp) {
             LOG(llevError, "Got unknown value in region file: %s %s\n", key, value);
         }
     }
-    if (!key || strcmp(key,"nomore"))
+    if (!key || strcmp(key, "nomore"))
         LOG(llevError, "Got premature eof on regions file!\n");
 }
 
@@ -442,11 +465,12 @@ void parse_regions(FILE *fp) {
  */
 void assign_region_parents(void) {
     region *reg;
-    uint32 parent_count=0;
-    uint32 region_count=0;
-    for (reg=first_region;reg!=NULL&&reg->next!=NULL;reg=reg->next) {
-        if (reg->parent_name!=NULL) {
-            reg->parent=get_region_by_name(reg->parent_name);
+    uint32 parent_count = 0;
+    uint32 region_count = 0;
+
+    for (reg = first_region; reg != NULL && reg->next != NULL; reg = reg->next) {
+        if (reg->parent_name != NULL) {
+            reg->parent = get_region_by_name(reg->parent_name);
             parent_count++;
         }
         region_count++;

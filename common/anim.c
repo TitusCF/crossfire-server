@@ -41,7 +41,7 @@
 void free_all_anim(void) {
     int i;
 
-    for (i=0; i<=num_animations; i++) {
+    for (i = 0; i <= num_animations; i++) {
         free_string(animations[i].name);
         free(animations[i].faces);
     }
@@ -55,10 +55,10 @@ void free_all_anim(void) {
 void init_anim(void) {
     char buf[MAX_BUF];
     FILE *fp;
-    int num_frames=0,faces[MAX_ANIMATIONS],i;
+    int num_frames = 0, faces[MAX_ANIMATIONS], i;
 
-    animations_allocated=9;
-    num_animations=0;
+    animations_allocated = 9;
+    num_animations = 0;
     /* Make a default.  New animations start at one, so if something
      * thinks it is animated but hasn't set the animation_id properly,
      * it will have a default value that should be pretty obvious.
@@ -68,62 +68,63 @@ void init_anim(void) {
      * Put # at start so it will be first in alphabetical
      * order.
      */
-    animations[0].name=add_string("###none");
-    animations[0].num_animations=1;
+    animations[0].name = add_string("###none");
+    animations[0].num_animations = 1;
     animations[0].faces = malloc(sizeof(Fontindex));
-    animations[0].faces[0]=0;
-    animations[0].facings=0;
+    animations[0].faces[0] = 0;
+    animations[0].facings = 0;
 
     snprintf(buf, sizeof(buf), "%s/animations", settings.datadir);
-    LOG(llevDebug,"Reading animations from %s...\n", buf);
-    if ((fp=fopen(buf,"r")) ==NULL) {
+    LOG(llevDebug, "Reading animations from %s...\n", buf);
+    if ((fp = fopen(buf, "r")) == NULL) {
         LOG(llevError, "Cannot open animations file %s: %s\n", buf, strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
-    while (fgets(buf, MAX_BUF-1, fp)!=NULL) {
-        if (*buf=='#') continue;
+    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+        if (*buf == '#')
+            continue;
         if (strlen(buf) == 0)
             break;
         /* Kill the newline */
         buf[strlen(buf)-1] = '\0';
-        if (!strncmp(buf,"anim ", 5)) {
+        if (!strncmp(buf, "anim ", 5)) {
             if (num_frames) {
-                LOG(llevError,"Didn't get a mina before %s\n", buf);
+                LOG(llevError, "Didn't get a mina before %s\n", buf);
                 num_frames=0;
             }
             num_animations++;
-            if (num_animations==animations_allocated) {
+            if (num_animations == animations_allocated) {
                 animations=realloc(animations, sizeof(Animations)*(animations_allocated+10));
-                animations_allocated+=10;
+                animations_allocated += 10;
             }
             animations[num_animations].name = add_string(buf+5);
             animations[num_animations].num = num_animations; /* for bsearch */
             animations[num_animations].facings = 1;
-        } else if (!strncmp(buf,"mina",4)) {
+        } else if (!strncmp(buf, "mina", 4)) {
             animations[num_animations].faces = malloc(sizeof(Fontindex)*num_frames);
             for (i=0; i<num_frames; i++)
                 animations[num_animations].faces[i]=faces[i];
             animations[num_animations].num_animations = num_frames;
-            if (num_frames % animations[num_animations].facings) {
-                LOG(llevDebug,"Animation %s frame numbers (%d) is not a multiple of facings (%d)\n",
+            if (num_frames%animations[num_animations].facings) {
+                LOG(llevDebug, "Animation %s frame numbers (%d) is not a multiple of facings (%d)\n",
                     animations[num_animations].name, num_frames, animations[num_animations].facings);
             }
             num_frames=0;
-        } else if (!strncmp(buf,"facings",7)) {
+        } else if (!strncmp(buf, "facings", 7)) {
             if (!(animations[num_animations].facings = atoi(buf+7))) {
-                LOG(llevDebug,"Animation %s has 0 facings, line=%s\n",
+                LOG(llevDebug, "Animation %s has 0 facings, line=%s\n",
                     animations[num_animations].name, buf);
                 animations[num_animations].facings=1;
             }
 
         } else {
-            if (!(faces[num_frames++] = find_face(buf,0)))
-                LOG(llevDebug,"Could not find face %s for animation %s\n",
+            if (!(faces[num_frames++] = find_face(buf, 0)))
+                LOG(llevDebug, "Could not find face %s for animation %s\n",
                     buf, animations[num_animations].name);
         }
     }
     fclose(fp);
-    LOG(llevDebug,"done. got (%d)\n", num_animations);
+    LOG(llevDebug, "done. got (%d)\n", num_animations);
 }
 
 /**
@@ -145,7 +146,7 @@ static int anim_compare(const Animations *a, const Animations *b) {
 int find_animation(const char *name) {
     int face = try_find_animation(name);
     if (!face)
-        LOG(llevError,"Unable to find animation %s\n", name);
+        LOG(llevError, "Unable to find animation %s\n", name);
     return face;
 }
 
@@ -187,11 +188,12 @@ void animate_object(object *op, int dir) {
     int max_state;  /* Max animation state object should be drawn in */
     int base_state; /* starting index # to draw from */
     int oldface = op->face->number;
+
     if (!op->animation_id || !NUM_ANIMATIONS(op)) {
         StringBuffer *sb;
         char *diff;
 
-        LOG(llevError,"Object lacks animation.\n");
+        LOG(llevError, "Object lacks animation.\n");
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
@@ -199,8 +201,9 @@ void animate_object(object *op, int dir) {
         free(diff);
         return;
     }
+
     if (op->head) {
-        dir=op->head->direction;
+        dir = op->head->direction;
 
         if (NUM_ANIMATIONS(op) == NUM_ANIMATIONS(op->head))
             op->state = op->head->state;
@@ -209,28 +212,34 @@ void animate_object(object *op, int dir) {
     /* If object is turning, then max animation state is half through the
      * animations.  Otherwise, we can use all the animations.
      */
-    max_state=NUM_ANIMATIONS(op)/ NUM_FACINGS(op);
-    base_state=0;
+    max_state = NUM_ANIMATIONS(op)/NUM_FACINGS(op);
+    base_state = 0;
     /* at least in the older aniamtions that used is_turning, the first half
      * of the animations were left facing, the second half right facing.
      * Note in old the is_turning, it was set so that the animation for a monster
      * was always towards the enemy - now it is whatever direction the monster
      * is facing.
      */
-    if (NUM_FACINGS(op)==2) {
-        if (dir<5) base_state=0;
-        else base_state=NUM_ANIMATIONS(op)/2;
-    } else if (NUM_FACINGS(op)==4) {
-        if (dir==0) base_state=0;
-        else base_state = ((dir-1)/2) * (NUM_ANIMATIONS(op)/4);
-    } else if (NUM_FACINGS(op)==8) {
-        if (dir==0) base_state=0;
-        else base_state = (dir-1)*(NUM_ANIMATIONS(op)/8);
+    if (NUM_FACINGS(op) == 2) {
+        if (dir < 5)
+            base_state = 0;
+        else
+            base_state = NUM_ANIMATIONS(op)/2;
+    } else if (NUM_FACINGS(op) == 4) {
+        if (dir == 0)
+            base_state = 0;
+        else
+            base_state = ((dir-1)/2)*(NUM_ANIMATIONS(op)/4);
+    } else if (NUM_FACINGS(op) == 8) {
+        if (dir == 0)
+            base_state = 0;
+        else
+            base_state = (dir-1)*(NUM_ANIMATIONS(op)/8);
     }
 
     /* If beyond drawable states, reset */
-    if (op->state>=max_state) {
-        op->state=0;
+    if (op->state >= max_state) {
+        op->state = 0;
         if (op->temp_animation_id) {
             op->temp_animation_id = 0;
             /* op->last_anim = 0; */
@@ -239,22 +248,22 @@ void animate_object(object *op, int dir) {
             return;
         }
     }
-    SET_ANIMATION(op, op->state + base_state);
+    SET_ANIMATION(op, op->state+base_state);
 
-    if (op->face==blank_face)
-        op->invisible=1;
+    if (op->face == blank_face)
+        op->invisible = 1;
 
     /* This block covers monsters (eg, pixies) which are supposed to
      * cycle from visible to invisible and back to being visible.
      * as such, disable it for players, as then players would become
      * visible.
      */
-    else if (op->type != PLAYER && QUERY_FLAG((&op->arch->clone),FLAG_ALIVE)) {
-        if (op->face->number==0) {
-            op->invisible=1;
+    else if (op->type != PLAYER && QUERY_FLAG((&op->arch->clone), FLAG_ALIVE)) {
+        if (op->face->number == 0) {
+            op->invisible = 1;
             CLEAR_FLAG(op, FLAG_ALIVE);
         } else {
-            op->invisible=0;
+            op->invisible = 0;
             SET_FLAG(op, FLAG_ALIVE);
         }
     }
@@ -298,10 +307,9 @@ void apply_anim_suffix(object *who, sstring suffix) {
     snprintf(buf, MAX_BUF, "%s_%s", animations[head->animation_id].name, suffix);
     anim = try_find_animation(buf);
     if (anim) {
-        for (;head!=NULL;head=head->more) {
+        for (; head != NULL; head = head->more) {
             head->temp_animation_id = anim;
-            head->temp_anim_speed =
-                animations[anim].num_animations/animations[anim].facings;
+            head->temp_anim_speed = animations[anim].num_animations/animations[anim].facings;
             head->temp_last_anim = 0;
             head->last_anim = 0;
             head->state = 0;

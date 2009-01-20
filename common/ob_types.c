@@ -48,11 +48,11 @@ ob_methods type_methods[OBJECT_TYPE_MAX];
  */
 void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
     methods->fallback = fallback;
-    methods->apply    = NULL;
-    methods->process  = NULL;
+    methods->apply = NULL;
+    methods->process = NULL;
     methods->describe = NULL;
-    methods->move_on  = NULL;
-    methods->trigger  = NULL;
+    methods->move_on = NULL;
+    methods->trigger = NULL;
 }
 
 /**
@@ -65,7 +65,8 @@ void init_ob_method_struct(ob_methods *methods, ob_methods *fallback) {
  */
 void init_ob_types(ob_methods *base_type) {
     int tmp;
-    for (tmp=0; tmp < OBJECT_TYPE_MAX; tmp++)
+
+    for (tmp = 0; tmp < OBJECT_TYPE_MAX; tmp++)
         init_ob_method_struct(&type_methods[tmp], base_type);
 }
 
@@ -78,6 +79,7 @@ void init_ob_types(ob_methods *base_type) {
 void register_apply(int ob_type, apply_func method) {
     type_methods[ob_type].apply = method;
 }
+
 /**
  * Registers the process method for the given type.
  * @param ob_type The type of object to register this method to
@@ -86,6 +88,7 @@ void register_apply(int ob_type, apply_func method) {
 void register_process(int ob_type, process_func method) {
     type_methods[ob_type].process = method;
 }
+
 /**
  * Registers the describe method for the given type.
  * @param ob_type The type of object to register this method to
@@ -94,6 +97,7 @@ void register_process(int ob_type, process_func method) {
 void register_describe(int ob_type, describe_func method) {
     type_methods[ob_type].describe = method;
 }
+
 /**
  * Registers the move_on method for the given type.
  * @param ob_type The type of object to register this method to
