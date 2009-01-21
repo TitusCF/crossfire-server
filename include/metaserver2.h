@@ -36,7 +36,6 @@
 #ifndef METASERVER2_H
 #define METASERVER2_H
 
-
 /**
  * The current implementation of crossfire is not very thread
  * friendly/safe - in fact, metaserver2 is the first part to

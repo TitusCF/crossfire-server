@@ -49,16 +49,15 @@
  * spaces - this is more efficient as we already have up to date
  * map pointers.
  */
-#define MAGIC_MAP_SIZE  50
-#define MAGIC_MAP_HALF  MAGIC_MAP_SIZE/2
-
+#define MAGIC_MAP_SIZE 50
+#define MAGIC_MAP_HALF MAGIC_MAP_SIZE/2
 
 /* This correspondes to the map layers in the map2 protocol.
  * The MAP_LAYER_... correspond to what goes on what layer -
  * this removes the need for hardcoding, and also makes sure
  * we don't overstep the number of layers.
  */
-#define MAP_LAYERS              10
+#define MAP_LAYERS 10
 
 extern const char *map_layer_name[MAP_LAYERS];
 
@@ -180,55 +179,55 @@ extern const char *map_layer_name[MAP_LAYERS];
  * consistent (eg, op->map, op->x, op->y)
  */
 /** Gets map flags. Not multitile aware. */
-#define GET_MAP_FLAGS(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].flags)
+#define GET_MAP_FLAGS(M, X, Y)  ((M)->spaces[(X)+(M)->width*(Y)].flags)
 /** Sets map flags. Not multitile aware. */
-#define SET_MAP_FLAGS(M,X,Y,C)  ( (M)->spaces[(X) + (M)->width * (Y)].flags = C)
+#define SET_MAP_FLAGS(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].flags = C)
 /** Gets map light. Not multitile aware. */
-#define GET_MAP_LIGHT(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].light)
+#define GET_MAP_LIGHT(M, X, Y)  ((M)->spaces[(X)+(M)->width*(Y)].light)
 /** Sets map lighe. Not multitile aware. */
-#define SET_MAP_LIGHT(M,X,Y,L)  ( (M)->spaces[(X) + (M)->width * (Y)].light = L)
-#define GET_MAP_PLAYER(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].pl)
-#define SET_MAP_PLAYER(M,X,Y,C) ( (M)->spaces[(X) + (M)->width * (Y)].pl = C)
+#define SET_MAP_LIGHT(M, X, Y, L) ((M)->spaces[(X)+(M)->width*(Y)].light = L)
+#define GET_MAP_PLAYER(M, X, Y) ((M)->spaces[(X)+(M)->width*(Y)].pl)
+#define SET_MAP_PLAYER(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].pl = C)
 
 /** Gets the bottom object on a map. Not multitile aware. */
-#define GET_MAP_OB(M,X,Y)       ( (M)->spaces[(X) + (M)->width * (Y)].bottom)
+#define GET_MAP_OB(M, X, Y)     ((M)->spaces[(X)+(M)->width*(Y)].bottom)
 /** Gets the top object on a map. Not multitile aware. */
-#define GET_MAP_TOP(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].top)
+#define GET_MAP_TOP(M, X, Y)    ((M)->spaces[(X)+(M)->width*(Y)].top)
 
 /** Sets the bottom object on a map. Not multitile aware. */
-#define SET_MAP_OB(M,X,Y,tmp)   ( (M)->spaces[(X) + (M)->width * (Y)].bottom = (tmp) )
+#define SET_MAP_OB(M, X, Y, tmp) ((M)->spaces[(X)+(M)->width*(Y)].bottom = (tmp))
 /** Sets the top object on a map. Not multitile aware. */
-#define SET_MAP_TOP(M,X,Y,tmp)  ( (M)->spaces[(X) + (M)->width * (Y)].top = (tmp) )
+#define SET_MAP_TOP(M, X, Y, tmp) ((M)->spaces[(X)+(M)->width*(Y)].top = (tmp))
 
 /** Sets the layer face of specified square. Not multitile aware. */
-#define SET_MAP_FACE_OBJ(M,X,Y,C,L) ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L] = C)
+#define SET_MAP_FACE_OBJ(M, X, Y, C, L) ((M)->spaces[(X)+(M)->width*(Y)].faces_obj[L] = C)
 /** Gets the layer face of specified square. Not multitile aware. */
-#define GET_MAP_FACE_OBJ(M,X,Y,L)   ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj[L]  )
+#define GET_MAP_FACE_OBJ(M, X, Y, L) ((M)->spaces[(X)+(M)->width*(Y)].faces_obj[L])
 /**
  * Returns the layers array so update_position can just copy
  * the entire array over.
  */
-#define GET_MAP_FACE_OBJS(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].faces_obj  )
+#define GET_MAP_FACE_OBJS(M, X, Y) ((M)->spaces[(X)+(M)->width*(Y)].faces_obj)
 
 /** Gets the blocking state of a square. Not multitile aware. */
-#define GET_MAP_MOVE_BLOCK(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].move_block)
+#define GET_MAP_MOVE_BLOCK(M, X, Y) ((M)->spaces[(X)+(M)->width*(Y)].move_block)
 /** Sets the blocking state of a square. Not multitile aware. */
-#define SET_MAP_MOVE_BLOCK(M,X,Y,C) ( (M)->spaces[(X) + (M)->width * (Y)].move_block = C)
+#define SET_MAP_MOVE_BLOCK(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].move_block = C)
 
 /** Gets the slowing state of a square. Not multitile aware. */
-#define GET_MAP_MOVE_SLOW(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].move_slow)
+#define GET_MAP_MOVE_SLOW(M, X, Y)  ((M)->spaces[(X)+(M)->width*(Y)].move_slow)
 /** Sets the slowing state of a square. Not multitile aware. */
-#define SET_MAP_MOVE_SLOW(M,X,Y,C)  ( (M)->spaces[(X) + (M)->width * (Y)].move_slow = C)
+#define SET_MAP_MOVE_SLOW(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].move_slow = C)
 
 /** Gets the move_on state of a square. Not multitile aware. */
-#define GET_MAP_MOVE_ON(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].move_on)
+#define GET_MAP_MOVE_ON(M, X, Y)    ((M)->spaces[(X)+(M)->width*(Y)].move_on)
 /** Sets the move_on state of a square. Not multitile aware. */
-#define SET_MAP_MOVE_ON(M,X,Y,C)    ( (M)->spaces[(X) + (M)->width * (Y)].move_on = C)
+#define SET_MAP_MOVE_ON(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].move_on = C)
 
 /** Gets the move_off state of a square. Not multitile aware. */
-#define GET_MAP_MOVE_OFF(M,X,Y)      ( (M)->spaces[(X) + (M)->width * (Y)].move_off)
+#define GET_MAP_MOVE_OFF(M, X, Y)    ((M)->spaces[(X)+(M)->width*(Y)].move_off)
 /** Sets the move_off state of a square. Not multitile aware. */
-#define SET_MAP_MOVE_OFF(M,X,Y,C)    ( (M)->spaces[(X) + (M)->width * (Y)].move_off = C)
+#define SET_MAP_MOVE_OFF(M, X, Y, C) ((M)->spaces[(X)+(M)->width*(Y)].move_off = C)
 
 /**
  * Checks if a square is out of the map.
@@ -236,7 +235,7 @@ extern const char *map_layer_name[MAP_LAYERS];
  * should almost always be using out_of_map() instead, which takes into account
  * map tiling.
  */
-#define OUT_OF_REAL_MAP(M,X,Y) ((X)<0 || (Y)<0 || (X)>=(M)->width || (Y)>=(M)->height)
+#define OUT_OF_REAL_MAP(M, X, Y) ((X) < 0 || (Y) < 0 || (X) >= (M)->width || (Y) >= (M)->height)
 
 /**
  * @defgroup P_xxx Square flags.
@@ -254,7 +253,6 @@ extern const char *map_layer_name[MAP_LAYERS];
  * is using the P_NO_PASS.  AB_.. should only be used for
  * arch_blocked and functions that examine the return value.
  */
-
 #define AB_NO_PASS      0x04
 #define P_PLAYER        0x08    /**< There is a player on this space */
 #define P_IS_ALIVE      0x10    /**< Something alive is on this space. */
@@ -295,7 +293,7 @@ typedef struct MapSpace {
  * they have to appear here in the headers, before the mapdef
  */
 typedef struct regiondef {
-    struct      regiondef *next; /**< Pointer to next region, NULL for the last one */
+    struct regiondef *next;      /**< Pointer to next region, NULL for the last one */
     const char  *name;           /**< Shortend name of the region as maps refer to it */
     const char  *parent_name;    /**<
                                   * So that parent and child regions can be defined in
@@ -304,7 +302,7 @@ typedef struct regiondef {
                                   * parents later. (before runtime on the server though)
                                   * nothing outside the init code should ever use this value.
                                   */
-    struct     regiondef *parent;/**<
+    struct regiondef *parent;   /**<
                                   * Pointer to the region that is a parent of the current
                                   * region, if a value isn't defined in the current region
                                   * we traverse this series of pointers until it is.
@@ -347,7 +345,7 @@ typedef struct mapdef {
     struct mapdef *next;        /**< Next map, linked list. */
     char    *tmpname;           /**< Name of temporary file. */
     char    *name;              /**< Name of map as given by its creator. */
-    struct regiondef* region;            /**< What jurisdiction in the game world this map is ruled by
+    struct regiondef *region;   /**< What jurisdiction in the game world this map is ruled by
                                  * points to the struct containing all the properties of
                                  * the region. */
     uint32  reset_time;         /**< When this map should reset. */
@@ -367,11 +365,11 @@ typedef struct mapdef {
     uint8   compressed;         /**< Compression method used. */
 
     uint8   darkness;           /**< Indicates level of darkness of map. */
-    uint16  width,height;       /**< Width and height of map. */
+    uint16  width, height;      /**< Width and height of map. */
     uint16  enter_x;            /**< Enter_x and enter_y are default entrance location. */
     uint16  enter_y;            /**< on the map if none are set in the exit. */
-    oblinkpt    *buttons;       /**< Linked list of linked lists of buttons. */
-    MapSpace    *spaces;        /**< Array of spaces on this map. */
+    oblinkpt *buttons;          /**< Linked list of linked lists of buttons. */
+    MapSpace *spaces;           /**< Array of spaces on this map. */
     struct shopitem *shopitems;     /**< List of item-types the map's shop will trade in. */
     char    *shoprace;          /**< The preffered race of the local shopkeeper. */
     double  shopgreed;          /**< How much our shopkeeper overcharges. */
@@ -383,7 +381,7 @@ typedef struct mapdef {
     struct mapdef *tile_map[4]; /**< Adjoining maps. */
     char    path[HUGE_BUF];     /**< Filename of the map. */
     struct timeval last_reset_time; /**< A timestamp of the last original map loading. */
-    char*   background_music;   /**< Background music to use for this map. */
+    char    *background_music;  /**< Background music to use for this map. */
 } mapstruct;
 
 /**

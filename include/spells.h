@@ -61,8 +61,8 @@
 /*@}*/
 
 /** Multiplier for spell points / grace based on the attenuation. */
-#define PATH_SP_MULT(op,spell) (((op->path_attuned & spell->path_attuned) ? 0.8 : 1) * \
-                                ((op->path_repelled & spell->path_attuned) ? 1.25 : 1))
+#define PATH_SP_MULT(op, spell) (((op->path_attuned&spell->path_attuned) ? 0.8 : 1) * \
+                                 ((op->path_repelled&spell->path_attuned) ? 1.25 : 1))
 
 /** Number of spell paths. */
 #define NRSPELLPATHS    20
@@ -176,8 +176,8 @@ extern const char *const spellpathnames[NRSPELLPATHS];
 /**
  * Multiplier for the casting time based on path attenuation.
  */
-#define PATH_TIME_MULT(op,spell) (((op->path_attuned & spell->path_attuned) ? 0.8 : 1) * \
-                                ((op->path_repelled & spell->path_attuned) ? 1.25 : 1))
+#define PATH_TIME_MULT(op, spell) (((op->path_attuned&spell->path_attuned) ? 0.8 : 1)* \
+                                  ((op->path_repelled&spell->path_attuned) ? 1.25 : 1))
 
 /**
  * These are some hard coded values that are used within the code

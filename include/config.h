@@ -121,7 +121,6 @@
  * typically it is low level characters that have this issue
  * more, so I think this will improve playing quality.
  */
-
 #define MIN_PLAYER_SPEED    0.25
 #define MAX_PLAYER_SPEED    0.75
 #define FREE_PLAYER_LOAD_PERCENT    0.50
@@ -172,7 +171,6 @@
 #define BALSL_NUMBER_LOSSES_RATIO  6
 #define BALSL_MAX_LOSS_RATIO       2
 
-
 /* Don't edit these values.  They are configured in lib/settings.  These are
    Simply the defaults. */
 
@@ -195,14 +193,13 @@
 #define PK_LUCK_PENALTY 1
 #define CASTING_TIME FALSE
 #define SET_FRIENDLY_FIRE 5
-#define ARMOR_MAX_ENCHANT   5
-#define ARMOR_WEIGHT_REDUCTION  10
+#define ARMOR_MAX_ENCHANT 5
+#define ARMOR_WEIGHT_REDUCTION 10
 #define ARMOR_WEIGHT_LINEAR TRUE
 #define ARMOR_SPEED_IMPROVEMENT 10
-#define ARMOR_SPEED_LINEAR  TRUE
+#define ARMOR_SPEED_LINEAR TRUE
 
 /* you can edit the ones below */
-
 
 /**
  * CS_LOGSTATS will cause the server to log various usage stats
@@ -274,7 +271,6 @@
  * The length of a tick is MAX_TIME microseconds.  During a tick,
  * players, monsters, or items with speed 1 can do one thing.
  */
-
 #define MAX_TIME        120000
 
 /**
@@ -283,7 +279,6 @@
  * it can be abused in various ways.
  */
 #define NO_POLYMORPH
-
 
 /**
  * This determine how many entries are stored in the kill log.  You
@@ -424,16 +419,13 @@
  */
 #define CSPORT 13327 /* old port + 1 */
 
-
 /**
  * File containing valid names that can be dm, one on each line.  See
  * example dm_file for syntax help.
  */
-
 #ifndef DMFILE
 #define DMFILE "dm_file"
 #endif
-
 
 /**
  * LOGFILE specifies which file to log to when playing with the
@@ -529,7 +521,6 @@
  * a lot of new objects and go above MAX_OBJECTS, it may have to swap out
  * many maps to get below the low water mark.
  */
-
 /*#define MAX_OBJECTS_LWM       MAX_OBJECTS/2*/
 
 /**
@@ -545,9 +536,7 @@
  * is being used - otherwise, turning this on will cause some performance
  * hit with no useful advantage.
  */
-
 /*#define MEMORY_DEBUG*/
-
 
 /**
  * If you want to have a Message Of The Day file, define MOTD to be
@@ -572,7 +561,6 @@
 #ifndef SHUTDOWN_FILE
 #define SHUTDOWN_FILE "shutdown"
 #endif
-
 
 /**
  * SOCKETBUFSIZE is the size of the buffer used internally by the server for
@@ -603,7 +591,6 @@
 #define TMPDIR "/tmp"
 #endif
 
-
 /**
  * Directory to use for unique items. This is placed into the 'lib'
  * directory.  Changing this will cause any old unique items file
@@ -625,7 +612,6 @@
  */
 #define USE_CALLOC
 
-
 /**
  * These define the players starting map and location on that map, and where
  * emergency saves are defined.  This should be left as is unless you make
@@ -639,12 +625,10 @@
 #  define EMERGENCY_X 5
 #  define EMERGENCY_Y 37
 
-
 /**
  * These defines tells where, relative to LIBDIR, the maps, the map-index,
  * archetypes highscore and treaures files and directories can be found.
  */
-
 #define MAPDIR          "maps"
 #define TEMPLATE_DIR    "template-maps"
 #define ARCHETYPES      "archetypes"
@@ -663,8 +647,6 @@
 #define MAXSTRING 20
 
 #define COMMAND_HASH_SIZE 107   /**< If you change this, delete all characters :) */
-
-
 
 /***********************************************************************
  * Section 4 - save player options.
@@ -718,7 +700,6 @@
  * you are not spending too much time saving the characters.
  * This option should now work (Crossfire 0.90.5)
  */
-
 /*#define SAVE_INTERVAL 300*/
 
 /**
@@ -731,7 +712,6 @@
  * just set the base tick of when they log on, which should keep the
  * saves pretty well spread out (in a fairly random fashion.)
  */
-
 #define AUTOSAVE 5000
 
 /**
@@ -740,7 +720,6 @@
  * to disable emergency saves.  This actually does
  * prevent emergency saves now (Version 0.90.5).
  */
-
 #define NO_EMERGENCY_SAVE
 
 /**
@@ -749,7 +728,6 @@
  * information that is specified later).  If this is not set, the player
  * will be saved at his present location.
  */
-
 /*#define BACKUP_SAVE_AT_HOME*/
 
 /**
@@ -769,7 +747,6 @@
  *
  * Set to one hour as default
  */
-
 #define RESET_LOCATION_TIME     3600
 
 #endif /* CONFIG_H */

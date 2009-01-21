@@ -40,7 +40,6 @@
 
 #include "includes.h"
 
-
 /* Type defines for specific signed/unsigned variables of a certain number
  * of bits.  Not really used anyplace, but if a certain number of bits
  * is required, these type defines should then be used.  This will make
@@ -55,7 +54,6 @@
  * The signedness for char is probably not universal, and using char
  * will probably be more portable than sint8/unit8
  */
-
 
 typedef unsigned int    uint32;
 
@@ -237,18 +235,17 @@ EXTERN long ob_count;
 /*
  * Used in treasure.c
  */
-EXTERN archetype *ring_arch,*amulet_arch,*staff_arch,*crown_arch;
+EXTERN archetype *ring_arch, *amulet_arch, *staff_arch, *crown_arch;
 EXTERN const char *undead_name; /* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
-EXTERN int num_animations,animations_allocated, bmaps_checksum;
+EXTERN int num_animations, animations_allocated, bmaps_checksum;
 
 /* Rotate right from bsd sum. This is used in various places for checksumming */
-#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
+#define ROTATE_RIGHT(c) if ((c)&01) (c) = ((c)>>1)+0x80000000; else (c) >>= 1;
 
-
-#define SET_ANIMATION(ob,newanim) { if(ob->temp_animation_id) { ob->face=&new_faces[animations[ob->temp_animation_id].faces[newanim]]; } else { ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]; } }
-#define GET_ANIMATION(ob,anim) (ob->temp_animation_id ? animations[ob->temp_animation_id].faces[anim] : animations[ob->animation_id].faces[anim])
+#define SET_ANIMATION(ob, newanim) { if (ob->temp_animation_id) { ob->face = &new_faces[animations[ob->temp_animation_id].faces[newanim]]; } else { ob->face = &new_faces[animations[ob->animation_id].faces[newanim]]; } }
+#define GET_ANIMATION(ob, anim) (ob->temp_animation_id ? animations[ob->temp_animation_id].faces[anim] : animations[ob->animation_id].faces[anim])
 #define GET_ANIM_ID(ob) (ob->temp_animation_id ? ob->temp_animation_id : ob->animation_id)
 /* NUM_ANIMATIONS returns the number of animations allocated.  The last
  * usuable animation will be NUM_ANIMATIONS-1 (for example, if an object
@@ -266,10 +263,8 @@ extern int leftof_x[9], leftof_y[9];
 extern New_Face *blank_face, *empty_face;
 extern New_Face *smooth_face;
 
-
 extern uint32 max_time; /* loop time */
 extern socket_struct *init_sockets;
-
 
 #ifndef __CEXTRACT__
 #include "stringbuffer.h"
@@ -278,30 +273,29 @@ extern socket_struct *init_sockets;
 #include "typesproto.h"
 #endif
 
-
-#define decrease_ob(xyz) decrease_ob_nr(xyz,1)
+#define decrease_ob(xyz) decrease_ob_nr(xyz, 1)
 
 /* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
  * This is generally done as a safety, and having this macro
  * makes the code a bit cleaner when doing so.
  */
-#define FREE_AND_CLEAR(xyz) {free((void*)xyz); xyz=NULL; }
-#define FREE_AND_CLEAR_STR(xyz) {free_string(xyz); xyz=NULL; }
+#define FREE_AND_CLEAR(xyz) { free((void*)xyz); xyz = NULL; }
+#define FREE_AND_CLEAR_STR(xyz) { free_string(xyz); xyz = NULL; }
 
 /* FREE_AND_COPY is for the shared string - it is handy enough
  * to use all over the place.
  */
-#define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
+#define FREE_AND_COPY(sv, nv) { if (sv) free_string(sv); sv = add_string(nv); }
 
 #ifdef CALLOC
 #undef CALLOC
 #endif
 
 #ifdef USE_CALLOC
-# define CALLOC(x,y)    calloc(x,y)
+# define CALLOC(x, y)   calloc(x, y)
 # define CFREE(x)       free(x)
 #else
-# define CALLOC(x,y)    malloc(x*y)
+# define CALLOC(x, y)   malloc(x*y)
 # define CFREE(x)       free(x)
 #endif
 
@@ -427,9 +421,9 @@ extern Settings settings;
  * just a memset.
  */
 typedef struct Statistics {
-    uint64  spell_merges;       /**< Number of spell merges done */
-    uint64  spell_hash_full;    /**< Number of times spell hash was full*/
-    uint64  spell_suppressions; /**< Number of times ok_to_put_more() returned FALSE*/
+    uint64 spell_merges;        /**< Number of spell merges done */
+    uint64 spell_hash_full;     /**< Number of times spell hash was full*/
+    uint64 spell_suppressions;  /**< Number of times ok_to_put_more() returned FALSE*/
 } Statistics;
 
 extern Statistics statistics;
@@ -443,7 +437,7 @@ extern Statistics statistics;
  */
 
 #ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *) NULL);
+#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *)NULL);
 #else
 #define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif

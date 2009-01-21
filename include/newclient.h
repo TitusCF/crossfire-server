@@ -55,7 +55,6 @@
 
 #include <stddef.h>
 
-
 /**
  * How much the x,y coordinates in the map2 are off from
  * actual upper left corner.  Necessary for light sources
@@ -72,7 +71,7 @@
  * @param y the y-coordinate
  * @param flags the flags value
  */
-#define MAP2_COORD_ENCODE(x, y, flags) ((((x) + MAP2_COORD_OFFSET) & 0x3f) << 10 | (((y) + MAP2_COORD_OFFSET) & 0x3f) << 4 | (flags & 0x0f))
+#define MAP2_COORD_ENCODE(x, y, flags) ((((x)+MAP2_COORD_OFFSET)&0x3f)<<10|(((y)+MAP2_COORD_OFFSET)&0x3f)<<4|(flags&0x0f))
 
 #define CS_QUERY_YESNO  0x1     /**< Yes/no question. */
 #define CS_QUERY_SINGLECHAR 0x2 /**< Single character response expected. */
@@ -581,7 +580,6 @@ typedef struct CS_Stats {
     short   max_conn;   /**< Maximum connections received. */
     time_t  time_start; /**< When we started logging this. */
 } CS_Stats;
-
 
 extern CS_Stats cst_tot, cst_lst;
 

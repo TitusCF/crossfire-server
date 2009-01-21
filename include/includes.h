@@ -119,5 +119,4 @@ size_t strftime(char *, size_t, const char *, const struct tm *);
 time_t mktime(struct tm *);
 #endif
 
-
 #endif /* INCLUDES_H */

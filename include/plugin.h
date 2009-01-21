@@ -44,7 +44,6 @@
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 
-
 /*******************************************************************************/
 /* This one does not exist under Win32.                                        */
 /*******************************************************************************/
@@ -119,14 +118,14 @@
 #define CFAPI_MOVETYPE 18 /* MoveType */
 
 /** General API function. */
-typedef void* (*f_plug_api) (int *type, ...);
+typedef void *(*f_plug_api)(int *type, ...);
 /** Function called after the plugin was initialized. */
-typedef int   (*f_plug_postinit) (void);
+typedef int (*f_plug_postinit)(void);
 /** First function called in a plugin. */
-typedef int   (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
+typedef int (*f_plug_init)(const char *iversion, f_plug_api gethooksptr);
 
 #ifndef WIN32
-#define LIBPTRTYPE void*
+#define LIBPTRTYPE void *
 #else
 /** Library handle. */
 #define LIBPTRTYPE HMODULE
@@ -152,16 +151,15 @@ extern crossfire_plugin *plugins_list;
 
 #define plugins_dlopen(fname) LoadLibrary(fname)
 #define plugins_dlclose(lib) FreeLibrary(lib)
-#define plugins_dlsym(lib,name) GetProcAddress(lib,name)
+#define plugins_dlsym(lib, name) GetProcAddress(lib, name)
 
 #else /*WIN32 */
 
-#define plugins_dlopen(fname) dlopen(fname,RTLD_NOW|RTLD_GLOBAL)    /**< Load a shared library. */
+#define plugins_dlopen(fname) dlopen(fname, RTLD_NOW|RTLD_GLOBAL)   /**< Load a shared library. */
 #define plugins_dlclose(lib) dlclose(lib)                           /**< Unload a shared library. */
-#define plugins_dlsym(lib,name) dlsym(lib,name)                     /**< Get a function from a shared library. */
+#define plugins_dlsym(lib, name) dlsym(lib, name)                   /**< Get a function from a shared library. */
 #define plugins_dlerror() dlerror()                                 /**< Library error. */
 #endif /* WIN32 */
-
 
 /* OBJECT-RELATED HOOKS */
 

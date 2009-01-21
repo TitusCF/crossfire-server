@@ -77,8 +77,8 @@
 
 #define PREFIXDIR ""
 
-#define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
-#define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
+#define S_ISDIR(x) (((x)&S_IFMT) == S_IFDIR)
+#define S_ISREG(x) (((x)&S_IFMT) == S_IFREG)
 
 #ifndef S_ISGID
 #define S_ISGID 0002000
@@ -102,8 +102,8 @@
 #define S_IRUSR 0000004
 #endif
 
-#define WIFEXITED(x)    1
-#define WEXITSTATUS(x)  x
+#define WIFEXITED(x) 1
+#define WEXITSTATUS(x) x
 
 /* Location of read-only machine independent data */
 #define DATADIR "share"
@@ -121,7 +121,7 @@
 #define BUNZIP "/usr/bin/bunzip2"
 
 /* Suffix for libraries */
-#define PLUGIN_SUFFIX   ".dll"
+#define PLUGIN_SUFFIX ".dll"
 
 /* struct dirent - same as Unix */
 
@@ -129,7 +129,7 @@ typedef struct dirent {
     long d_ino;                         /* inode (always 1 in WIN32) */
     off_t d_off;                        /* offset to this dirent */
     unsigned short d_reclen;            /* length of d_name */
-    char d_name[_MAX_FNAME + 1];        /* filename (null terminated) */
+    char d_name[_MAX_FNAME+1];          /* filename (null terminated) */
 }dirent;
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
@@ -164,6 +164,6 @@ extern void service_handle( );
 extern int bRunning;
 
 /* Win32's Sleep takes milliseconds, not seconds. */
-#define sleep(x) Sleep(x * 1000)
+#define sleep(x) Sleep(x*1000)
 
 #endif /* WIN32_H */

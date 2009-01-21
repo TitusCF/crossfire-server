@@ -58,16 +58,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 #endif
 
 /** Decstations have trouble with fabs()... */
-#define FABS(x) ((x)<0?-(x):(x))
+#define FABS(x) ((x) < 0 ? -(x) : (x))
 
 #ifdef __NetBSD__
 #include <sys/param.h>
 #endif
 #ifndef MIN
-#define MIN(x,y) ((x)<(y)?(x):(y))
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
 #endif
 #ifndef MAX
-#define MAX(x,y) ((x)>(y)?(x):(y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
 #endif
 
 /** NAME_MAX used by random maps may not be defined on pure ansi systems */
@@ -307,7 +307,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * @defgroup TYPE_BUILDER Subtypes for ::BUILDER objects.
  */
 /*@{*/
-#define ST_BD_BUILD    1 /**< Builds an item */
+#define ST_BD_BUILD      1 /**< Builds an item */
 #define ST_BD_REMOVE     2 /**< Removes an item */
 /*@}*/
 
@@ -403,7 +403,7 @@ typedef struct typedata {
 #define SIZEOFFREE2 24
 #define SIZEOFFREE 49
 
-#define NROF_SOUNDS (23 + NROFREALSPELLS) /* Number of sounds */
+#define NROF_SOUNDS (23+NROFREALSPELLS) /* Number of sounds */
 
 /**
  * @defgroup IS_xxx Convenience macros to determine what kind of things we are dealing with.
@@ -422,7 +422,7 @@ typedef struct typedata {
 #define IS_LIVE(op) \
         ((op->type == PLAYER || QUERY_FLAG(op, FLAG_MONSTER) || \
         (QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-        !op->type == DOOR)) && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
+        !op->type == DOOR)) && (!QUERY_FLAG(op, FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
         (op->type==ARROW || \
@@ -431,7 +431,7 @@ typedef struct typedata {
 /*@}*/
 
 /** This return TRUE if object has still randomitems which could be expanded. */
-#define HAS_RANDOM_ITEMS(op) (op->randomitems && (!QUERY_FLAG(op,FLAG_IS_A_TEMPLATE)))
+#define HAS_RANDOM_ITEMS(op) (op->randomitems && (!QUERY_FLAG(op, FLAG_IS_A_TEMPLATE)))
 
 /**
  * @defgroup FLAG_xxx Object flags
@@ -472,18 +472,18 @@ typedef struct typedata {
  */
 /*@{*/
 #define SET_FLAG(xyz, p) \
-        ((xyz)->flags[p/32] |= (1U << (p % 32)))
+    ((xyz)->flags[p/32] |= (1U<<(p%32)))
 #define CLEAR_FLAG(xyz, p) \
-        ((xyz)->flags[p/32] &= ~(1U << (p % 32)))
+    ((xyz)->flags[p/32] &= ~(1U<<(p%32)))
 #define QUERY_FLAG(xyz, p) \
-        ((xyz)->flags[p/32] & (1U << (p % 32)))
-#define COMPARE_FLAGS(p,q) \
-        (                                            \
-                ((p)->flags[0] == (q)->flags[0]) &&  \
-                ((p)->flags[1] == (q)->flags[1]) &&  \
-                ((p)->flags[2] == (q)->flags[2]) &&  \
-                ((p)->flags[3] == (q)->flags[3])     \
-        )
+    ((xyz)->flags[p/32] & (1U<<(p%32)))
+#define COMPARE_FLAGS(p, q) \
+    (                                                \
+        ((p)->flags[0] == (q)->flags[0]) &&          \
+        ((p)->flags[1] == (q)->flags[1]) &&          \
+        ((p)->flags[2] == (q)->flags[2]) &&          \
+        ((p)->flags[3] == (q)->flags[3])             \
+    )
 
 /* the flags themselves. */
 
@@ -665,7 +665,7 @@ typedef struct typedata {
  * movement - anything but swimming right now.  If you really
  * want nothing at all, then can always set move_block to 0
  */
-#define MOVE_BLOCK_DEFAULT  MOVE_SWIM
+#define MOVE_BLOCK_DEFAULT MOVE_SWIM
 
 /**
  * Typdef here to define type large enough to hold bitmask of
@@ -673,14 +673,14 @@ typedef struct typedata {
  * uint8 is defined yet, so just use what that would define it
  * at anyways.
  */
-typedef unsigned char   MoveType;
+typedef unsigned char MoveType;
 
 /**
  * Basic macro to see if ob2 blocks ob1 from moving onto this space.
  * Basically, ob2 has to block all of ob1 movement types.
  */
 #define OB_MOVE_BLOCK(ob1, ob2) \
-    ((ob1->move_type & ob2->move_block) == ob1->move_type)
+    ((ob1->move_type&ob2->move_block) == ob1->move_type)
 
 /**
  * Basic macro to see if if ob1 can not move onto a space based
@@ -689,10 +689,10 @@ typedef unsigned char   MoveType;
  * onto it.
  */
 #define OB_TYPE_MOVE_BLOCK(ob1, type) \
-    ( (type != 0) && (ob1->move_type & type) == ob1->move_type)
+    ((type != 0) && (ob1->move_type&type) == ob1->move_type)
 /*@}*/
 
-#define SET_GENERATE_TYPE(xyz,va)       (xyz)->stats.sp=(va)
+#define SET_GENERATE_TYPE(xyz, va) (xyz)->stats.sp=(va)
 #define GENERATE_TYPE(xyz)      ((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz)     ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
 
@@ -828,7 +828,7 @@ typedef unsigned char   MoveType;
 
 #define BLANK_FACE_NAME "blank.111"
 #define EMPTY_FACE_NAME "empty.111"
-#define SMOOTH_FACE_NAME        "default_smoothed.111"
+#define SMOOTH_FACE_NAME "default_smoothed.111"
 
 /*
  * Defines for the luck/random functions to make things more readable
@@ -852,13 +852,14 @@ typedef unsigned char   MoveType;
  */
 static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen)
 {
-    if (*curlen == (maxlen-1)) return;
+    if (*curlen == (maxlen-1))
+        return;
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
-    dest[maxlen-1]=0;
+    dest[maxlen-1] = 0;
     *curlen += strlen(orig);
-    if (*curlen>(maxlen-1)) *curlen=maxlen-1;
+    if (*curlen > (maxlen-1))
+        *curlen = maxlen-1;
 }
-
 
 /* The SAFE versions of these call the safe_strcat function above.
  * Ideally, all functions should use the SAFE functions, but they
@@ -866,68 +867,65 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  * efficient.
  */
 #define DESCRIBE_ABILITY_SAFE(retbuf, variable, name, len, maxlen) \
-    if(variable) { \
-      int i,j=0; \
-      safe_strcat(retbuf,"(" name ": ", len, maxlen); \
-      for(i=0; i<NROFATTACKS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            safe_strcat(retbuf,", ", len, maxlen); \
-          else \
-            j = 1; \
-          safe_strcat(retbuf, attacks[i], len, maxlen); \
-        } \
-      safe_strcat(retbuf,")",len,maxlen); \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
+        for(i = 0; i < NROFATTACKS; i++)                           \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    safe_strcat(retbuf, ", ", len, maxlen);        \
+                else                                               \
+                    j = 1;                                         \
+                safe_strcat(retbuf, attacks[i], len, maxlen);      \
+            }                                                      \
+        safe_strcat(retbuf, ")", len, maxlen);                     \
     }
-
 
 /* separated this from the common/item.c file. b.t. Dec 1995 */
 
-#define DESCRIBE_ABILITY(retbuf, variable, name) \
-    if(variable) { \
-      int i,j=0; \
-      strcat(retbuf,"(" name ": "); \
-      for(i=0; i<NROFATTACKS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            strcat(retbuf,", "); \
-          else \
-            j = 1; \
-          strcat(retbuf, attacks[i]); \
-        } \
-      strcat(retbuf,")"); \
+#define DESCRIBE_ABILITY(retbuf, variable, name)                   \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        strcat(retbuf, "(" name ": ");                             \
+        for (i = 0; i < NROFATTACKS; i++)                          \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    strcat(retbuf, ", ");                          \
+                else                                               \
+                    j = 1;                                         \
+                strcat(retbuf, attacks[i]);                        \
+            }                                                      \
+        strcat(retbuf, ")");                                       \
     }
 
-
-#define DESCRIBE_PATH(retbuf, variable, name) \
-    if(variable) { \
-      int i,j=0; \
-      strcat(retbuf,"(" name ": "); \
-      for(i=0; i<NRSPELLPATHS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            strcat(retbuf,", "); \
-          else \
-            j = 1; \
-          strcat(retbuf, spellpathnames[i]); \
-        } \
-      strcat(retbuf,")"); \
+#define DESCRIBE_PATH(retbuf, variable, name)                      \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        strcat(retbuf, "(" name ": ");                             \
+        for (i = 0; i < NRSPELLPATHS; i++)                         \
+            if (variable&(1<<i)) {                                 \
+                if (j)                                             \
+                    strcat(retbuf, ", ");                          \
+                else                                               \
+                    j = 1;                                         \
+                strcat(retbuf, spellpathnames[i]);                 \
+            }                                                      \
+        strcat(retbuf, ")");                                       \
     }
 
-
-#define DESCRIBE_PATH_SAFE(retbuf, variable, name, len, maxlen) \
-    if(variable) { \
-      int i,j=0; \
-      safe_strcat(retbuf,"(" name ": ", len, maxlen); \
-      for(i=0; i<NRSPELLPATHS; i++) \
-        if(variable & (1<<i)) { \
-          if (j) \
-            safe_strcat(retbuf,", ", len, maxlen); \
-          else \
-            j = 1; \
-          safe_strcat(retbuf, spellpathnames[i], len, maxlen); \
-        } \
-      safe_strcat(retbuf,")", len, maxlen); \
+#define DESCRIBE_PATH_SAFE(retbuf, variable, name, len, maxlen)    \
+    if (variable) {                                                \
+        int i, j = 0;                                              \
+        safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
+        for (i = 0; i < NRSPELLPATHS; i++)                         \
+            if(variable&(1<<i)) {                                  \
+                if (j)                                             \
+                    safe_strcat(retbuf, ", ", len, maxlen);        \
+                else                                               \
+                    j = 1;                                         \
+                safe_strcat(retbuf, spellpathnames[i], len, maxlen); \
+            }                                                      \
+        safe_strcat(retbuf, ")", len, maxlen);                     \
     }
 
 /**
@@ -1025,8 +1023,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  * Returns the weight of the given object. Note: it does not take the number of
  * items (nrof) into account.
  */
-#define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
-
+#define WEIGHT(op) (op->nrof ? op->weight : op->weight+op->carrying)
 
 /**
  * @defgroup FASTCAT_xxx Code fastening defines
@@ -1042,15 +1039,15 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
  */
 /*@{*/
 #define PREPARE_FASTCAT(buf__) buf__+strlen(buf__)
-#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;}
-#define FAST_STRCAT(buf__,buf2__) {memcpy (buf__,buf2__,strlen(buf2__));buf__+=strlen(buf2__);}
-#define FINISH_FASTCAT(buf__) buf__[0]='\0';
+#define FAST_STRNCAT(buf__, buf2__, size__) { memcpy(buf__, buf2__, size__); buf__ += size__; }
+#define FAST_STRCAT(buf__, buf2__) { memcpy(buf__, buf2__, strlen(buf2__)); buf__ += strlen(buf2__); }
+#define FINISH_FASTCAT(buf__) buf__[0] = '\0';
 
 /* You may uncomment following define to check sanity of code.
  * But use as debug only (loses all speed gained by those macros)
  */
-/*#define FAST_STRNCAT(buf__,buf2__,size__) {memcpy (buf__,buf2__,size__);buf__+=size__;\
- if (size__!=strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n",buf2__);}*/
+/*#define FAST_STRNCAT(buf__, buf2__, size__) { memcpy (buf__, buf2__, size__); buf__ += size__; \
+  if (size__ != strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n", buf2__); }*/
 /*@}*/
 
 #endif /* DEFINE_H */

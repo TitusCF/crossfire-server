@@ -94,7 +94,6 @@
  */
 #define NUM_SKILLS              40
 
-
 /**
  * @defgroup SK_EXP_xxx Experience flags
  * This is used in the exp functions - basically what to do if
@@ -115,26 +114,31 @@
  * that should be used to calculate wc's and the like.
  */
 #define IS_COMBAT_SKILL(num) \
-    ((num==SK_PUNCHING) || (num==SK_FLAME_TOUCH) || (num==SK_KARATE) || \
-     (num==SK_ONE_HANDED_WEAPON) || (num==SK_MISSILE_WEAPON) || \
-     (num==SK_THROWING) || (num==SK_CLAWING) || (num==SK_TWO_HANDED_WEAPON) || \
-     (num==SK_WRAITH_FEED))
+    ((num == SK_PUNCHING) \
+    || (num == SK_FLAME_TOUCH) \
+    || (num == SK_KARATE) \
+    || (num == SK_ONE_HANDED_WEAPON) \
+    || (num == SK_MISSILE_WEAPON) \
+    || (num == SK_THROWING) \
+    || (num == SK_CLAWING) \
+    || (num == SK_TWO_HANDED_WEAPON) \
+    || (num == SK_WRAITH_FEED))
 
 /**
  * Like IS_COMBAT_SKILL above, but instead this is used to determine
  * how many mana points the player has.
  */
 #define IS_MANA_SKILL(num) \
-    ((num==SK_SORCERY) || (num==SK_EVOCATION) || \
-     (num==SK_PYROMANCY) || (num==SK_SUMMONING))
+    ((num == SK_SORCERY) \
+    || (num == SK_EVOCATION) \
+    || (num == SK_PYROMANCY) \
+    || (num == SK_SUMMONING))
 
 /**
  * Currently only one of these, but put the define here to make
  * it easier to expand it in the future */
 #define IS_GRACE_SKILL(num) \
-    (num==SK_PRAYING)
-
-
+    (num == SK_PRAYING)
 
 extern const char *skill_names[NUM_SKILLS];
 

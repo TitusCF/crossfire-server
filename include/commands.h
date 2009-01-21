@@ -61,8 +61,7 @@ typedef struct {
     float time;               /**< How long it takes to execute this command. */
 } command_array_struct;
 
-
-extern command_array_struct Commands[], WizCommands [], CommunicationCommands[];
+extern command_array_struct Commands[], WizCommands[], CommunicationCommands[];
 
 extern const int CommandsSize, WizCommandsSize, CommunicationCommandSize;
 

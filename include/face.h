@@ -40,12 +40,12 @@
  * create a new face with that color.
  */
 typedef struct new_face_struct {
-    uint16      number;      /**< This is the image id.  It should be the
+    uint16 number;           /**< This is the image id.  It should be the
                               * same value as its position in the array */
-    uint8       visibility;
-    uint8       magicmap;    /**< Color to show this in magic map */
-    uint16      smoothface;  /**< Smoothed face for this, (uint16)-1 for none. */
-    const char  *name;       /**< Face name, as used by archetypes and such. */
+    uint8 visibility;
+    uint8 magicmap;          /**< Color to show this in magic map */
+    uint16 smoothface;       /**< Smoothed face for this, (uint16)-1 for none. */
+    const char *name;        /**< Face name, as used by archetypes and such. */
 } New_Face;
 
 /**
@@ -55,7 +55,7 @@ typedef struct animations_struct {
     const char *name;       /**< Name of the animation sequence */
     uint8 num_animations;   /**< How many different faces to animate */
     uint8 facings;          /**< How many facings (1,2,4,8) */
-    uint16  num;            /**< Where we are in the array */
+    uint16 num;             /**< Where we are in the array */
     Fontindex *faces;       /**< The different animations */
 } Animations;
 

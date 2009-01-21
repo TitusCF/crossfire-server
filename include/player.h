@@ -43,7 +43,6 @@ typedef struct {
     uint16 count;           /**< How many times we got this message. */
 } Output_Buf;
 
-
 /**
  * What range is currntly selected by the player.
  *
@@ -88,9 +87,9 @@ typedef enum _petmode {
 
 /** How to use keys. @todo document. */
 typedef enum usekeytype {
-    key_inventory=0,
-    keyrings=1,
-    containers=2
+    key_inventory = 0,
+    keyrings = 1,
+    containers = 2
 } usekeytype;
 
 /**
@@ -98,9 +97,9 @@ typedef enum usekeytype {
  * an object before we can apply another one.
  */
 typedef enum unapplymode {
-    unapply_nochoice=0,     /**< Will unapply objects when there no choice to unapply. */
-    unapply_never=1,        /**< Will not unapply objects automatically. */
-    unapply_always=2        /**< Will unapply whatever is necessary - this goes beyond
+    unapply_nochoice = 0,   /**< Will unapply objects when there no choice to unapply. */
+    unapply_never = 1,      /**< Will not unapply objects automatically. */
+    unapply_always = 2      /**< Will unapply whatever is necessary - this goes beyond
                              * no choice - if there are multiple ojbect of the same type
                              * that need to be unapplied, there is no way for the player
                              * to control which of these will be unapplied. */
@@ -119,14 +118,14 @@ typedef struct client_spell {
 
 /** One party. First item is ::firstparty. */
 typedef struct party_struct {
-    char * partyleader;         /**< Who is the leader. */
+    char *partyleader;          /**< Who is the leader. */
     char passwd[9];             /**< Party password. */
     struct party_struct *next;  /**< Next party in list. */
     char *partyname;            /**< Party name. */
 
 #ifdef PARTY_KILL_LOG
     struct party_kill {
-        char killer[MAX_NAME+1],dead[MAX_NAME+1];
+        char killer[MAX_NAME+1], dead[MAX_NAME+1];
         sint64 exp;
     } party_kills[PARTY_KILL_LOG];
 #endif
@@ -145,8 +144,8 @@ typedef enum party_rejoin_mode {
 
 /** One player. */
 typedef struct pl {
-    struct pl      *next;               /**< Pointer to next player, NULL if this is last. */
-    socket_struct  socket;              /**< Socket information for this player.  See the page on
+    struct pl   *next;                  /**< Pointer to next player, NULL if this is last. */
+    socket_struct socket;               /**< Socket information for this player.  See the page on
                                          * @ref page_connection "the login process" for a description of its use. */
     char        maplevel[MAX_BUF];      /**< On which level is the player? */
     char        savebed_map[MAX_BUF];   /**< Map where player will respawn after death. */
@@ -233,26 +232,26 @@ typedef struct pl {
 #ifdef AUTOSAVE
     uint32      last_save_tick;      /**< Last tick the player was saved. */
 #endif
-    partylist    *party;             /**< Party this player is part of. */
-    partylist    *party_to_join;     /**< Used when player wants to join a party
+    partylist   *party;              /**< Party this player is part of. */
+    partylist   *party_to_join;      /**< Used when player wants to join a party
                                       * but we will have to get password first
                                       * so we have to remember which party to
                                       * join. */
     party_rejoin_mode rejoin_party;  /**< Whether to rejoin or not party at login. */
-    char    search_str[MAX_BUF];     /**< Item we are looking for. */
-    sint16  encumbrance;             /**< How much our player is encumbered. */
-    Output_Buf  outputs[NUM_OUTPUT_BUFS];   /**< Holds output strings to send to client. */
-    uint16  outputs_sync;            /**< How often to print, no matter what. */
-    uint16  outputs_count;           /**< Print if this count is exceeded. */
-    uint32  mark_count;              /**< Count of marked object. */
-    object  *mark;                   /**< Marked object. */
-    object  *transport;              /**< Transport the player is in. */
+    char        search_str[MAX_BUF]; /**< Item we are looking for. */
+    sint16      encumbrance;         /**< How much our player is encumbered. */
+    Output_Buf  outputs[NUM_OUTPUT_BUFS]; /**< Holds output strings to send to client. */
+    uint16      outputs_sync;        /**< How often to print, no matter what. */
+    uint16      outputs_count;       /**< Print if this count is exceeded. */
+    uint32      mark_count;          /**< Count of marked object. */
+    object      *mark;               /**< Marked object. */
+    object      *transport;          /**< Transport the player is in. */
     client_spell *spell_state;       /**< Spell information sent to client. */
     /* Special DM fields */
-    tag_t*  stack_items;             /**< Item stack for patch/dump/... commands. */
-    sstring followed_player;         /**< Player the DM is following. */
-    int     stack_position;          /**< Current stack position, 0 for no item. */
-    int     language;                /**< The language the player wishes to use. */
+    tag_t*      stack_items;         /**< Item stack for patch/dump/... commands. */
+    sstring     followed_player;     /**< Player the DM is following. */
+    int         stack_position;      /**< Current stack position, 0 for no item. */
+    int         language;            /**< The language the player wishes to use. */
 } player;
 
 #endif /* PLAYER_H */

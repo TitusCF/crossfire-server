@@ -49,25 +49,25 @@
 /*@}*/
 
 /** Maximum level a player can reach. */
-#define MAXLEVEL      115
+#define MAXLEVEL 115
 
 extern const char *const attacks[NROFATTACKS];
 
-extern const float cha_bonus[MAX_STAT + 1];
-extern const int dex_bonus[MAX_STAT + 1];
-extern const int thaco_bonus[MAX_STAT + 1];
-extern const int turn_bonus[MAX_STAT + 1];
-extern const int max_carry[MAX_STAT + 1];
-extern const int dam_bonus[MAX_STAT + 1];
+extern const float cha_bonus[MAX_STAT+1];
+extern const int dex_bonus[MAX_STAT+1];
+extern const int thaco_bonus[MAX_STAT+1];
+extern const int turn_bonus[MAX_STAT+1];
+extern const int max_carry[MAX_STAT+1];
+extern const int dam_bonus[MAX_STAT+1];
 extern const int learn_spell[];
 extern const char *const restore_msg[NUM_STATS];
 extern const char *const statname[NUM_STATS];
 extern const char *const short_stat_name[NUM_STATS];
 extern const char *const lose_msg[NUM_STATS];
-extern const float speed_bonus[MAX_STAT + 1];
-extern const uint32 weight_limit[MAX_STAT + 1];
-extern const int cleric_chance[MAX_STAT + 1];
-extern const int fear_bonus[MAX_STAT + 1];
+extern const float speed_bonus[MAX_STAT+1];
+extern const uint32 weight_limit[MAX_STAT+1];
+extern const int cleric_chance[MAX_STAT+1];
+extern const int fear_bonus[MAX_STAT+1];
 
 /**
  * Mostly used by "alive" objects
@@ -75,8 +75,8 @@ extern const int fear_bonus[MAX_STAT + 1];
  * also fix comments for fields (should probably be in a separate file).
  */
 typedef struct liv {
-    sint8         Str,Dex,Con,Wis,Cha,Int,Pow;
-    sint8         wc,ac;      /**< Weapon Class and Armour Class */
+    sint8         Str, Dex, Con, Wis, Cha, Int, Pow;
+    sint8         wc, ac;     /**< Weapon Class and Armour Class */
     sint16        hp;         /**< Hit Points. */
     sint16        maxhp;      /**< Max hit points. */
     sint16        sp;         /**< Spell points.  Used to cast mage spells. */

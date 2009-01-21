@@ -64,11 +64,10 @@ extern body_locations_struct body_locations[NUM_BODY_LOCATIONS];
  * Exception is if you want to walk this list for some reason.
  */
 typedef struct _key_value {
-    const char * key;
-    const char * value;
-    struct _key_value * next;
+    const char *key;
+    const char *value;
+    struct _key_value *next;
 } key_value;
-
 
 /**
  * @defgroup WILL_APPLY_xxx What monsters apply
@@ -105,9 +104,9 @@ typedef struct _key_value {
  * least in the low bits.  And a size of 16 lets us do a very
  * fast operation.
  */
-#define SPELL_TAG_SIZE  16
-#define OB_SPELL_TAG_HASH(op, count)    (op->spell_tags[count & 0xf])
-#define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count & 0xf] == count)
+#define SPELL_TAG_SIZE 16
+#define OB_SPELL_TAG_HASH(op, count)    (op->spell_tags[count&0xf])
+#define OB_SPELL_TAG_MATCH(op, count)   (op->spell_tags[count&0xf] == count)
 
 /**
  * Main Crossfire structure, one ingame object.
@@ -177,8 +176,8 @@ typedef struct obj {
     const char  *lore;          /**< Obscure information about this object,
                                  * to get put into books and the like. */
 
-    sint16      x,y;            /**< Position in the map for this object */
-    sint16      ox,oy;          /**< For debugging: Where it was last inserted */
+    sint16      x, y;           /**< Position in the map for this object */
+    sint16      ox, oy;         /**< For debugging: Where it was last inserted */
     float       speed;          /**< The overall speed of this object */
     float       speed_left;     /**< How much speed is left to spend this round */
     float       weapon_speed;   /**< The overall speed of this object */
@@ -271,28 +270,28 @@ typedef struct obj {
     uint8       anim_speed;     /**< Ticks between animation-frames */
     uint8       last_anim;      /**< Last sequence used to draw face */
     uint16      temp_animation_id; /**< An index into the temporary animation array */
-    uint8       temp_anim_speed;   /**< Ticks between temporary animation-frames */
+    uint8       temp_anim_speed; /**< Ticks between temporary animation-frames */
     uint8       temp_last_anim; /**< Last sequence used to draw temporary animation face */
     sint32      elevation;      /**< Elevation of this terrain - used in weather code */
     uint8       smoothlevel;    /**< how to smooth this square around*/
     uint8       map_layer;      /**< What level to draw this on the map */
 
-    MoveType   move_type;       /**< Type of movement this object uses */
-    MoveType   move_block;      /**< What movement types this blocks */
-    MoveType   move_allow;      /**< What movement types explicitly allowed */
-    MoveType   move_on;         /**< Move types affected moving on to this space */
-    MoveType   move_off;        /**< Move types affected moving off this space */
-    MoveType   move_slow;       /**< Movement types this slows down */
-    float   move_slow_penalty;  /**< How much this slows down the object */
+    MoveType    move_type;      /**< Type of movement this object uses */
+    MoveType    move_block;     /**< What movement types this blocks */
+    MoveType    move_allow;     /**< What movement types explicitly allowed */
+    MoveType    move_on;        /**< Move types affected moving on to this space */
+    MoveType    move_off;       /**< Move types affected moving off this space */
+    MoveType    move_slow;      /**< Movement types this slows down */
+    float       move_slow_penalty; /**< How much this slows down the object */
 
     const char  *custom_name;   /**< Custom name assigned by player */
-    key_value *key_values;      /**< Fields not explictly known by the loader. */
+    key_value   *key_values;    /**< Fields not explictly known by the loader. */
 
     uint8       no_save;        /**< This field indicates that the object should never
                                  * be saved even for map swapout. Not handled by the
                                  * loading or saving code. */
-    sint16 *discrete_damage;    /**< damage values, based on each attacktype. */
-    tag_t   *spell_tags;
+    sint16      *discrete_damage; /**< damage values, based on each attacktype. */
+    tag_t       *spell_tags;
 } object;
 
 /**
@@ -321,14 +320,13 @@ typedef struct oblinkpt {
  * object and pointers.  This structure should get removed, and just replaced
  * by the object structure
  */
-
 typedef struct archt {
     const char *name;       /**< More definite name, like "generate_kobold" */
     struct archt *next;     /**< Next archetype in a linked list */
     struct archt *head;     /**< The main part of a linked object */
     struct archt *more;     /**< Next part of a linked object */
     object clone;           /**< An object from which to do copy_object() */
-    sint8   tail_x, tail_y; /**< Where the lower right most portion of the object is
+    sint8 tail_x, tail_y;   /**< Where the lower right most portion of the object is
                              * in comparison to the head. */
     int reference_count;    /**< How many times this temporary archetype is used. If 0, "permanent" archetype. */
 } archetype;
@@ -345,7 +343,7 @@ extern int nroffreeobjects;
  * This returns TRUE if the object is somethign that
  * should be displayed in the look window
  */
-#define LOOK_OBJ(ob) (!ob->invisible && ob->type!=PLAYER && ob->type!=EVENT_CONNECTOR)
+#define LOOK_OBJ(ob) (!ob->invisible && ob->type != PLAYER && ob->type != EVENT_CONNECTOR)
 
 /**
  * @defgroup UP_OBJ_xxx Object update flags

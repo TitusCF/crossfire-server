@@ -65,7 +65,6 @@ enum {
     GT_MINIMAL = 0x0040         /**< Do minimal adjustments, don't make artifacts, and so on. */
 };
 
-
 /**
  * when a treasure got cloned from archlist, we want perhaps change some default
  * values. All values in this structure will override the default arch.
@@ -83,7 +82,6 @@ typedef struct _change_arch {
     const char *title;             /**< is != NULL, copy this over the original arch name */
     const char *slaying;           /**< is != NULL, copy this over the original arch name */
 } _change_arch;
-
 
 /**
  * treasure is one element in a linked list, which together consist of a
@@ -120,7 +118,5 @@ typedef struct treasureliststruct {
     struct treasureliststruct *next;    /**< Next treasure-item in linked list */
     struct treasurestruct *items;       /**< Items in this list, linked */
 } treasurelist;
-
-
 
 #endif /* TREASURE_H */

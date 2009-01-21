@@ -55,7 +55,6 @@
  */
 #define MAX_NUM_LOOK_OBJECTS 100
 
-
 /** One map cell, as sent to the client. */
 struct map_cell_struct {
     uint16 faces[MAP_LAYERS];
@@ -69,10 +68,10 @@ struct map_cell_struct {
  * some structures, as well as determining how far
  * we should look for the heads of big images.
  */
-#define MAX_HEAD_OFFSET     8
+#define MAX_HEAD_OFFSET 8
 
-#define MAX_CLIENT_X (MAP_CLIENT_X + MAX_HEAD_OFFSET)
-#define MAX_CLIENT_Y (MAP_CLIENT_Y + MAX_HEAD_OFFSET)
+#define MAX_CLIENT_X (MAP_CLIENT_X+MAX_HEAD_OFFSET)
+#define MAX_CLIENT_Y (MAP_CLIENT_Y+MAX_HEAD_OFFSET)
 
 /** One map for a player. */
 struct Map {
@@ -91,7 +90,11 @@ struct statsinfo {
 /**
  * What state a socket is in.
  */
-enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
+enum Sock_Status {
+    Ns_Avail,
+    Ns_Add,
+    Ns_Dead
+};
 
 /**
  * Only one map mode can actually be used, so lets make it a switch
@@ -100,7 +103,9 @@ enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
  * This way, when a new feature is
  * added, a simple > compare can be done instead a bunch of ==
  */
-enum MapMode { Map2Cmd = 0 };
+enum MapMode {
+    Map2Cmd = 0
+};
 
 /**
  * The following is the setup for a ring buffer for storing outbut
@@ -152,18 +157,17 @@ typedef struct socket_struct {
 
     /* Below are flags for extedend infos to pass to client
      * with S->C mapextended command (note: this comment seems incorrect?) */
-    sint8   sounds_this_tick;   /**< Number of sounds sent this tick. */
+    sint8       sounds_this_tick;       /**< Number of sounds sent this tick. */
     uint8       num_look_objects;       /**< The maximum number of objects to show on the ground view;
                                              this number includes the prev/next group fake items.
                                              Can be set through "num_look_objects" setup option;
                                              defaults to DEFAULT_NUM_LOOK_OBJECTS. */
 } socket_struct;
 
-
-#define CLIENT_SUPPORT_READABLES(__sockPtr,__type)\
-        ( ((__type)>0) &&\
-          ((__sockPtr)->has_readable_type) && \
-          ((__sockPtr)->supported_readables & (1<<(__type))) )
+#define CLIENT_SUPPORT_READABLES(__sockPtr, __type)\
+        (((__type) > 0) && \
+         ((__sockPtr)->has_readable_type) && \
+         ((__sockPtr)->supported_readables&(1<<(__type))) )
 
 /**
  * Bitmask for the faces_sent[] array - what
