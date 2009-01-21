@@ -1889,7 +1889,7 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
             /* aligned race, summoning */
             const char *race = god->race; /* aligned race */
 
-            if (race && !(god->path_denied & PATH_SUMMON))
+            if (race && !(god->path_denied & PATH_SUMMON)) {
                 i = nstrtok(race, ",");
                 if (i > 0) {
                     char tmpbuf[MAX_BUF];
@@ -1904,6 +1904,7 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
                     buflen = strlen(buf);
                     safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
                 }
+            }
         }
         if (level == 6 && RANDOM()%2) {
             /* blessing,curse properties of the god */

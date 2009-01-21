@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c: Fix a rare bug that caused the use of an uninitialised
+  variable in god_info_msg() for gods denies summoning (such as valkyrie).
+Arvid Norlander 2009-01-21
+
 doc/Developers/objects, lib/artifacts: Remove obsolete fields color_fg and
  color_bg.
 lib/adm/map_info: Remove support for color_fg/color_bg fields.
