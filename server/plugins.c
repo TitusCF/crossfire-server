@@ -491,13 +491,7 @@ int plugins_init_plugin(const char *libfile) {
         return -1;
     }
     closefunc = (f_plug_postinit)plugins_dlsym(ptr, "closePlugin");
-    if (postfunc == NULL) {
-        LOG(llevError, "Plugin error while requesting %s.closePlugin: %s\n",
-            libfile, plugins_dlerror());
-        plugins_dlclose(ptr);
-        return -1;
-    }
-    if (postfunc == NULL) {
+    if (closefunc == NULL) {
         LOG(llevError, "Plugin error while requesting %s.closePlugin: %s\n",
             libfile, plugins_dlerror());
         plugins_dlclose(ptr);
