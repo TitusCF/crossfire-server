@@ -43,7 +43,7 @@
  * we are now using 64 bit values, I'm not all concerned about overflow issues
  * with exptotal wrapping.  exptotal is typically op->exp, or op->perm_exp
  */
-#define ADD_EXP(exptotal, exp) {exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
+#define ADD_EXP(exptotal, exp) { exptotal += exp; if (exptotal > MAX_EXPERIENCE) exptotal = MAX_EXPERIENCE; }
 
 /**
  * Constitution bonus
@@ -637,12 +637,12 @@ int change_abil(object *op, object *tmp) {
      * from fly high)
      */
     if (tmp->move_type && op->move_type != refop.move_type) {
-        success =1;
+        success = 1;
 
         /* MOVE_FLY_HIGH trumps MOVE_FLY_LOW - changing your move_fly_low
          * status doesn't make a difference if you are flying high
          */
-        if (tmp->move_type&MOVE_FLY_LOW && !(op->move_type & MOVE_FLY_HIGH)) {
+        if (tmp->move_type&MOVE_FLY_LOW && !(op->move_type&MOVE_FLY_HIGH)) {
             DIFF_MSG(flag, MSG_TYPE_ATTRIBUTE_MOVE, MSG_TYPE_ATTRIBUTE_MOVE,
                      "You start to float in the air!.",
                      "You float down to the ground.");
@@ -798,7 +798,7 @@ int change_abil(object *op, object *tmp) {
             continue; /* Don't display about armour */
 
         if (op->resist[i] != refop.resist[i]) {
-            success=1;
+            success = 1;
             if (op->resist[i] > refop.resist[i])
                 draw_ext_info_format(NDI_UNIQUE|NDI_BLUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_PROTECTION_GAIN,
                                      "Your resistance to %s rises to %d%%.",
@@ -997,7 +997,7 @@ void fix_object(object *op) {
             set_attr_value(&(op->stats), i, get_attr_value(&(op->contr->orig_stats), i));
         }
         if (settings.spell_encumbrance == TRUE)
-            op->contr->encumbrance=0;
+            op->contr->encumbrance = 0;
 
         op->attacktype = 0;
         op->contr->digestion = 0;
@@ -1107,7 +1107,7 @@ void fix_object(object *op) {
             }
             if (IS_GRACE_SKILL(tmp->subtype)) {
                 if (!grace_obj)
-                    grace_obj=tmp;
+                    grace_obj = tmp;
                 else if (tmp->level > grace_obj->level)
                     grace_obj = tmp;
             }
@@ -1157,7 +1157,7 @@ void fix_object(object *op) {
                     op->contr->gen_hp += tmp->stats.hp;
                     op->contr->gen_sp += tmp->stats.sp;
                     op->contr->gen_grace += tmp->stats.grace;
-                    op->contr->gen_sp_armour+= tmp->gen_sp_armour;
+                    op->contr->gen_sp_armour += tmp->gen_sp_armour;
                     op->contr->item_power += tmp->item_power;
                 }
             } /* if this is a player */
@@ -1350,7 +1350,7 @@ void fix_object(object *op) {
                     wc -= (tmp->stats.wc+tmp->magic);
                 if (tmp->stats.ac)
                     ac -= (tmp->stats.ac+tmp->magic);
-                if (ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0<max)
+                if (ARMOUR_SPEED(tmp) && ARMOUR_SPEED(tmp)/10.0 < max)
                     max = ARMOUR_SPEED(tmp)/10.0;
                 break;
             } /* switch tmp->type */
@@ -1845,7 +1845,7 @@ void player_lvl_adj(object *who, object *op) {
         if (who && op == who && (who->level < 11) && who->type == PLAYER) {
             who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
             who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
-            who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
+            who->contr->levgrace[who->level] = die_roll(2, 2, who, PREFER_HIGH)-1;
         }
 
         if (who)
@@ -2290,7 +2290,7 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
                 given += nexp;
             }
         }
-        exp-=given;
+        exp -= given;
         /* give any remainder to the player */
         change_exp(op, exp, skill, flag);
     }

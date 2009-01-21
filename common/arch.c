@@ -217,7 +217,7 @@ void arch_info(object *op) {
  * Initialise the hashtable used by the archetypes.
  */
 void clear_archetable(void) {
-    memset((void *) arch_table, 0, ARCHTABLE*sizeof(archetype *));
+    memset((void *)arch_table, 0, ARCHTABLE*sizeof(archetype *));
 }
 
 /**
@@ -377,7 +377,7 @@ static void first_arch_pass(FILE *fp) {
                 last_more->next = at;
             if (head != NULL)
                 head->next = at;
-            head=last_more = at;
+            head = last_more = at;
             at->tail_x = 0;
             at->tail_y = 0;
             break;
@@ -524,6 +524,7 @@ static void load_archetypes(void) {
 #if TIME_ARCH_LOAD
     {
         int sec, usec;
+
         GETTIMEOFDAY(&tv2);
         sec = tv2.tv_sec-tv1.tv_sec;
         usec = tv2.tv_usec-tv1.tv_usec;
@@ -543,7 +544,7 @@ static void load_archetypes(void) {
      * file has been compressed.
      */
     close_and_delete(fp, comp);
-    fp=open_and_uncompress(filename, 0, &comp);
+    fp = open_and_uncompress(filename, 0, &comp);
 
     LOG(llevDebug, " loading treasure...\n");
     load_treasures();
@@ -671,7 +672,7 @@ archetype *try_find_archetype(const char *name) {
     if (name == NULL)
         return (archetype *)NULL;
 
-    index=hasharch(name, ARCHTABLE);
+    index = hasharch(name, ARCHTABLE);
     arch_search++;
     for (;;) {
         at = arch_table[index];
@@ -717,7 +718,7 @@ static void add_arch(archetype *at) {
             return;
         }
         if (++index == ARCHTABLE)
-            index=0;
+            index = 0;
         if (index == org_index)
             fatal(ARCHTABLE_TOO_SMALL);
     }

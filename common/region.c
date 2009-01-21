@@ -333,7 +333,7 @@ void init_regions(void) {
 region *get_region_struct(void) {
     region *new;
 
-    new=(region *)CALLOC(1, sizeof(region));
+    new = (region *)CALLOC(1, sizeof(region));
     if (new == NULL)
         fatal(OUT_OF_MEMORY);
 
@@ -354,7 +354,7 @@ void parse_regions(FILE *fp) {
     region *reg;
 
     char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key = NULL, *value, *end;
-    int msgpos=0;
+    int msgpos = 0;
 
     new = NULL;
     while (fgets(buf, HUGE_BUF-1, fp) != NULL) {

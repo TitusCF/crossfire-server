@@ -211,7 +211,7 @@ void parse_dialog_information(object *op) {
  * @return 0 if no match, 1 if a message did match the text.
  * @todo smarter match, try to find exact before joker (*) one.
  */
-int get_dialog_message(object *op, const char *text, struct_dialog_message** message, struct_dialog_reply** reply) {
+int get_dialog_message(object *op, const char *text, struct_dialog_message **message, struct_dialog_reply **reply) {
     if (!QUERY_FLAG(op, FLAG_DIALOG_PARSED))
         parse_dialog_information(op);
 

@@ -212,22 +212,22 @@ static const char *const path_author[] = {
  * a message for this type of artifact. -b.t.
  */
 static const arttypename art_name_array[] = {
-    {"Helmet", HELMET},
-    {"Amulet", AMULET},
-    {"Shield", SHIELD},
-    {"Bracers", BRACERS},
-    {"Boots", BOOTS},
-    {"Cloak", CLOAK},
-    {"Gloves", GLOVES},
-    {"Gridle", GIRDLE},
-    {"Ring", RING},
-    {"Horn", HORN},
-    {"Missile Weapon", BOW},
-    {"Missile", ARROW},
-    {"Hand Weapon", WEAPON},
-    {"Artifact", SKILL},
-    {"Food", FOOD},
-    {"Body Armour", ARMOUR}
+    { "Helmet", HELMET },
+    { "Amulet", AMULET },
+    { "Shield", SHIELD },
+    { "Bracers", BRACERS },
+    { "Boots", BOOTS },
+    { "Cloak", CLOAK },
+    { "Gloves", GLOVES },
+    { "Gridle", GIRDLE },
+    { "Ring", RING },
+    { "Horn", HORN },
+    { "Missile Weapon", BOW },
+    { "Missile", ARROW },
+    { "Hand Weapon", WEAPON },
+    { "Artifact", SKILL },
+    { "Food", FOOD },
+    { "Body Armour", ARMOUR }
 };
 
 /** Book titles for artifact information. */
@@ -465,68 +465,68 @@ static const char *const book_descrpt[] = {
  * subtype parameter in arch files!
  */
 static const readable_message_type readable_message_types[] = {
-    /*subtype 0  */ {0,0},
+    /*subtype 0  */ { 0, 0 },
                     /* book messages subtypes */
-    /*subtype 1  */ {MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_1},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_2},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_1},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_2},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_1},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_2},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_EVOKER},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PRAYER},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PYRO},
-    /*subtype 10 */ {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SORCERER},
-                    {MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SUMMONER},
+    /*subtype 1  */ { MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_1 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_CLASP_2 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_1 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_ELEGANT_2 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_1 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_QUARTO_2 },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_EVOKER },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PRAYER },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_PYRO },
+    /*subtype 10 */ { MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SORCERER },
+                    { MSG_TYPE_BOOK, MSG_TYPE_BOOK_SPELL_SUMMONER },
                     /* card messages subtypes*/
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_1},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_2},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_3},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_1},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_2},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_3},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_1},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_2},
-    /*subtype 20 */ {MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_3},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_1},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_2},
-                    {MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_3},
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_1 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_2 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_SIMPLE_3 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_1 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_2 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_ELEGANT_3 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_1 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_2 },
+    /*subtype 20 */ { MSG_TYPE_CARD, MSG_TYPE_CARD_STRANGE_3 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_1 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_2 },
+                    { MSG_TYPE_CARD, MSG_TYPE_CARD_MONEY_3 },
 
                     /* Paper messages subtypes */
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_1},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_3},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_1},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_1},
-    /*subtype 30 */ {MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_1},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_1},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_1},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_2},
-                    {MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_MAGIC},
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_1 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_NOTE_3 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_1 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_OLD_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_1 },
+    /*subtype 30 */ { MSG_TYPE_PAPER, MSG_TYPE_PAPER_LETTER_NEW_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_1 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_ENVELOPE_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_1 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_OLD_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_1 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_NEW_2 },
+                    { MSG_TYPE_PAPER, MSG_TYPE_PAPER_SCROLL_MAGIC },
 
                     /* road signs messages subtypes */
-                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_BASIC},
-                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_LEFT},
-    /*subtype 40 */ {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_RIGHT},
-                    {MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_BOTH},
+                    { MSG_TYPE_SIGN, MSG_TYPE_SIGN_BASIC },
+                    { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_LEFT },
+    /*subtype 40 */ { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_RIGHT },
+                    { MSG_TYPE_SIGN, MSG_TYPE_SIGN_DIR_BOTH },
 
                     /* stones and monument messages */
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_1},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_2},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_3},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_1},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_2},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_3},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_1},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_2},
-    /*subtype 50 */ {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_3},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_1},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_2},
-                    {MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3}
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_1 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_2 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STONE_3 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_1 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_2 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_STATUE_3 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_1 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_2 },
+    /*subtype 50 */ { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_GRAVESTONE_3 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_1 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_2 },
+                    { MSG_TYPE_MONUMENT, MSG_TYPE_MONUMENT_WALL_3 }
 };
 
 /** Number of elements in ::readable_message_types */
@@ -860,13 +860,13 @@ static void init_book_archive(void) {
                     book->archname = add_string(cp);
                 }
             } else if (sscanf(buf, "level %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->level = (uint16) value;
+                book->level = (uint16)value;
             } else if (sscanf(buf, "type %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                type = (uint16) value;
+                type = (uint16)value;
             } else if (sscanf(buf, "size %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->size = (uint16) value;
+                book->size = (uint16)value;
             } else if (sscanf(buf, "index %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->msg_index = (uint16) value;
+                book->msg_index = (uint16)value;
             } else if (strcmp(buf, "end") == 0) { /* link it */
                 add_book(book, type, fname, lineno);
                 book = NULL;
@@ -1889,7 +1889,7 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
             /* aligned race, summoning */
             const char *race = god->race; /* aligned race */
 
-            if (race && !(god->path_denied & PATH_SUMMON)) {
+            if (race && !(god->path_denied&PATH_SUMMON)) {
                 i = nstrtok(race, ",");
                 if (i > 0) {
                     char tmpbuf[MAX_BUF];

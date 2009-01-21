@@ -52,7 +52,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
 
     for (; ol; ol = ol->next) {
         if (!ol->ob || ol->ob->count != ol->id) {
-            LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%d) (cause='%s'.\n", ol->id, (cause && cause->name)?cause->name:"");
+            LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%d) (cause='%s'.\n", ol->id, (cause && cause->name) ? cause->name : "");
             continue;
         }
         /* a button link object can become freed when the map is saving.  As
@@ -531,7 +531,7 @@ int check_trigger(object *op, object *cause) {
                      * this means that more work is needed to make buttons
                      * that are only triggered by flying objects.
                      */
-                    if ((tmp->move_type & op->move_on) || tmp->move_type == 0) {
+                    if ((tmp->move_type&op->move_on) || tmp->move_type == 0) {
                         tot += tmp->weight*(tmp->nrof ? tmp->nrof : 1)+tmp->carrying;
                     }
                 if (tot >= op->weight)

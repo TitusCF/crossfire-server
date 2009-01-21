@@ -67,11 +67,11 @@ typedef struct Map_Layer_Info {
  * so that it doesn't need to be hardcoded.
  */
 static Map_Layer_Info map_layer_info[MAP_LAYERS] = {
-    {MAP_LAYER_FLOOR, 1},
-    {MAP_LAYER_NO_PICK2, 0}, {MAP_LAYER_NO_PICK2, 0},
-    {MAP_LAYER_ITEM3, 1}, {MAP_LAYER_ITEM3, 1}, {MAP_LAYER_ITEM3, 1},
-    {MAP_LAYER_LIVING2, 1}, {MAP_LAYER_LIVING2, 1},
-    {MAP_LAYER_FLY2, 1}, {MAP_LAYER_FLY2, 1}
+    { MAP_LAYER_FLOOR, 1 },
+    { MAP_LAYER_NO_PICK2, 0 }, { MAP_LAYER_NO_PICK2, 0 },
+    { MAP_LAYER_ITEM3, 1 }, { MAP_LAYER_ITEM3, 1 }, { MAP_LAYER_ITEM3, 1 },
+    { MAP_LAYER_LIVING2, 1 }, { MAP_LAYER_LIVING2, 1 },
+    { MAP_LAYER_FLY2, 1 }, { MAP_LAYER_FLY2, 1 }
 };
 
 /**
@@ -380,7 +380,7 @@ int blocked_link(object *ob, mapstruct *m, int sx, int sy) {
         return 1;
     }
 
-    // special hack for transports: if it's a transport with a move_type of 0, it can do on the space anyway
+    /* special hack for transports: if it's a transport with a move_type of 0, it can do on the space anyway */
     if (ob->type == TRANSPORT && ob->move_type == 0)
         return 0;
 
@@ -552,7 +552,7 @@ int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
         if (ob->move_type == 0 && GET_MAP_MOVE_BLOCK(m1, sx, sy) != MOVE_ALL)
             continue;
 
-        // A transport without move_type for a part should go through everything for that part.
+        /* A transport without move_type for a part should go through everything for that part. */
         if (ob->type == TRANSPORT && part->move_type == 0)
             continue;
 
@@ -877,7 +877,7 @@ static shopitems *parse_shop_string(const char *input_string) {
         next_semicolon = strchr(p, ';');
         next_colon = strchr(p, ':');
         /* if there is a stregth specified, figure out what it is, we'll need it soon. */
-        if (next_colon &&(!next_semicolon || next_colon<next_semicolon))
+        if (next_colon &&(!next_semicolon || next_colon < next_semicolon))
             items[i].strength = atoi(strchr(p, ':')+1);
 
         if (isdigit(*p) || *p == '*') {
@@ -1188,7 +1188,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     if ((fp = open_and_uncompress(pathname, 0, &comp)) == NULL) {
         char err[MAX_BUF];
 
-        LOG((flags&MAP_PLAYER_UNIQUE)?llevDebug:llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
+        LOG((flags&MAP_PLAYER_UNIQUE) ? llevDebug : llevError, "Can't open %s: %s\n", pathname, strerror_local(errno, err, sizeof(err)));
         return (NULL);
     }
 
@@ -1205,7 +1205,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     m->compressed = comp;
 
     m->in_memory = MAP_LOADING;
-    load_objects(m, fp, flags & (MAP_BLOCK|MAP_STYLE));
+    load_objects(m, fp, flags&(MAP_BLOCK|MAP_STYLE));
     close_and_delete(fp, comp);
     m->in_memory = MAP_IN_MEMORY;
     if (!MAP_DIFFICULTY(m))
@@ -1380,7 +1380,7 @@ static void load_unique_objects(mapstruct *m) {
     load_object(fp, NULL, LO_NOREAD, 0);
     load_objects(m, fp, 0);
     close_and_delete(fp, comp);
-    m->in_memory=MAP_IN_MEMORY;
+    m->in_memory = MAP_IN_MEMORY;
 }
 
 /**
@@ -1806,7 +1806,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
             load_unique_objects(m);
 
         if (!(flags&(MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
-            m=load_overlay_map(name, m);
+            m = load_overlay_map(name, m);
             if (m == NULL)
                 return NULL;
         }
@@ -1881,7 +1881,7 @@ int calculate_difficulty(mapstruct *m) {
                     total_exp += op->stats.exp;
                 if (QUERY_FLAG(op, FLAG_GENERATOR)) {
                     total_exp += op->stats.exp;
-                    at=get_archetype_by_type_subtype(GENERATE_TYPE(op), -1);
+                    at = get_archetype_by_type_subtype(GENERATE_TYPE(op), -1);
                     if (at != NULL)
                         total_exp += at->clone.stats.exp*8;
                 }

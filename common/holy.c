@@ -208,21 +208,21 @@ void dump_gods(void) {
         fprintf(stderr, "%s\n", tmpbuf);
         fprintf(stderr, " Desc: %s", god->msg ? god->msg : "---\n");
         fprintf(stderr, " Priest gifts/limitations: ");
-        if (!QUERY_FLAG(god, FLAG_USE_WEAPON)) {gifts = 1; fprintf(stderr, "\n  weapon use is forbidden");}
-        if (!QUERY_FLAG(god, FLAG_USE_ARMOUR)) {gifts = 1; fprintf(stderr, "\n  no armour may be worn");}
-        if (QUERY_FLAG(god, FLAG_UNDEAD)) {gifts = 1; fprintf(stderr, "\n  is undead");}
-        if (QUERY_FLAG(god, FLAG_SEE_IN_DARK)) {gifts = 1; fprintf(stderr, "\n  has infravision ");}
-        if (QUERY_FLAG(god, FLAG_XRAYS)) {gifts = 1; fprintf(stderr, "\n  has X-ray vision");}
-        if (QUERY_FLAG(god, FLAG_REFL_MISSILE)) {gifts = 1; fprintf(stderr, "\n  reflect missiles");}
-        if (QUERY_FLAG(god, FLAG_REFL_SPELL)) {gifts = 1; fprintf(stderr, "\n  reflect spells");}
-        if (QUERY_FLAG(god, FLAG_STEALTH)) {gifts = 1; fprintf(stderr, "\n  is stealthy");}
-        if (QUERY_FLAG(god, FLAG_MAKE_INVIS)) {gifts = 1; fprintf(stderr, "\n  is (permanently) invisible");}
-        if (QUERY_FLAG(god, FLAG_BLIND)) {gifts = 1; fprintf(stderr, "\n  is blind");}
-        if (god->last_heal) {gifts = 1; fprintf(stderr, "\n  hp regenerate at %d", god->last_heal);}
-        if (god->last_sp) {gifts = 1; fprintf(stderr, "\n  sp regenerate at %d", god->last_sp);}
-        if (god->last_eat) {gifts = 1; fprintf(stderr, "\n  digestion is %s (%d)", god->last_eat < 0?"slowed":"faster", god->last_eat);}
-        if (god->last_grace) {gifts=1; fprintf(stderr, "\n  grace regenerates at %d", god->last_grace);}
-        if (god->stats.luck) {gifts=1; fprintf(stderr, "\n  luck is %d", god->stats.luck);}
+        if (!QUERY_FLAG(god, FLAG_USE_WEAPON)) { gifts = 1; fprintf(stderr, "\n  weapon use is forbidden"); }
+        if (!QUERY_FLAG(god, FLAG_USE_ARMOUR)) { gifts = 1; fprintf(stderr, "\n  no armour may be worn"); }
+        if (QUERY_FLAG(god, FLAG_UNDEAD)) { gifts = 1; fprintf(stderr, "\n  is undead"); }
+        if (QUERY_FLAG(god, FLAG_SEE_IN_DARK)) { gifts = 1; fprintf(stderr, "\n  has infravision "); }
+        if (QUERY_FLAG(god, FLAG_XRAYS)) { gifts = 1; fprintf(stderr, "\n  has X-ray vision"); }
+        if (QUERY_FLAG(god, FLAG_REFL_MISSILE)) { gifts = 1; fprintf(stderr, "\n  reflect missiles"); }
+        if (QUERY_FLAG(god, FLAG_REFL_SPELL)) { gifts = 1; fprintf(stderr, "\n  reflect spells"); }
+        if (QUERY_FLAG(god, FLAG_STEALTH)) { gifts = 1; fprintf(stderr, "\n  is stealthy"); }
+        if (QUERY_FLAG(god, FLAG_MAKE_INVIS)) { gifts = 1; fprintf(stderr, "\n  is (permanently) invisible"); }
+        if (QUERY_FLAG(god, FLAG_BLIND)) { gifts = 1; fprintf(stderr, "\n  is blind"); }
+        if (god->last_heal) { gifts = 1; fprintf(stderr, "\n  hp regenerate at %d", god->last_heal); }
+        if (god->last_sp) { gifts = 1; fprintf(stderr, "\n  sp regenerate at %d", god->last_sp); }
+        if (god->last_eat) { gifts = 1; fprintf(stderr, "\n  digestion is %s (%d)", god->last_eat < 0 ? "slowed" : "faster", god->last_eat); }
+        if (god->last_grace) { gifts = 1; fprintf(stderr, "\n  grace regenerates at %d", god->last_grace); }
+        if (god->stats.luck) { gifts = 1; fprintf(stderr, "\n  luck is %d", god->stats.luck); }
         if (!gifts) fprintf(stderr, "NONE");
         fprintf(stderr, "\n\n");
     }

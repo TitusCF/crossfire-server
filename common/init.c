@@ -259,7 +259,7 @@ void init_globals(void) {
     memset(&statistics, 0, sizeof(struct Statistics));
     if (settings.logfilename[0] == 0) {
         logfile = stderr;
-    } else if ((logfile=fopen(settings.logfilename, "a")) == NULL) {
+    } else if ((logfile = fopen(settings.logfilename, "a")) == NULL) {
         fprintf(stderr, "Unable to open %s as the logfile - will use stderr instead\n", settings.logfilename);
         logfile = stderr;
     } else {
@@ -353,8 +353,8 @@ void init_objects(void) {
     SET_FLAG(&objarray[0], FLAG_REMOVED);
     SET_FLAG(&objarray[0], FLAG_FREED);
     for (i = 1; i < STARTMAX-1; i++) {
-        objarray[i].next= &objarray[i+1];
-        objarray[i].prev= &objarray[i-1];
+        objarray[i].next = &objarray[i+1];
+        objarray[i].prev = &objarray[i-1];
         SET_FLAG(&objarray[i], FLAG_REMOVED);
         SET_FLAG(&objarray[i], FLAG_FREED);
     }

@@ -156,7 +156,7 @@ FILE *tempnam_secure(const char *dir, const char *pfx, char **filename) {
         if (!tempname)
             return NULL;
 
-        fd=open(tempname, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
+        fd = open(tempname, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
         if (fd != -1)
             break;
         if (errno == EEXIST)
@@ -529,7 +529,7 @@ char *strerror_local(int errnum, char *buf, size_t size) {
     char *bbuf;
 
     buf[0] = 0;
-    bbuf = (char*)strerror_r(errnum, buf, size);
+    bbuf = (char *)strerror_r(errnum, buf, size);
     if ((buf[0] == 0) && (bbuf != NULL))
         strncpy(buf, bbuf, size);
 # else
@@ -591,10 +591,10 @@ int isqrt(int n) {
  * compressed files.
  */
 const char *uncomp[NROF_COMPRESS_METHODS][3] = {
-    {NULL, NULL, NULL},
-    {".Z", UNCOMPRESS, COMPRESS},
-    {".gz", GUNZIP, GZIP},
-    {".bz2", BUNZIP, BZIP}
+    { NULL, NULL, NULL },
+    { ".Z", UNCOMPRESS, COMPRESS },
+    { ".gz", GUNZIP, GZIP },
+    { ".bz2", BUNZIP, BZIP }
 };
 
 /**

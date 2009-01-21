@@ -19,7 +19,7 @@
 #include <global.h>
 #include <libproto.h> /* For LOG */
 
-#if defined (__sun__) && defined (StupidSunHeaders)
+#if defined(__sun__) && defined(StupidSunHeaders)
 #include <sys/time.h>
 #include "sunos.h"
 #endif
@@ -68,7 +68,7 @@ static int hashstr(const char *str) {
     GATHER(hash_stats.calls);
 
     for (p = str; i < MAXSTRING && *p; p++, i++) {
-        hash ^= (unsigned long) *p << rot;
+        hash ^= (unsigned long)*p<<rot;
         rot += 2;
         if (rot >= (sizeof(long)-sizeof(char))*CHAR_BIT)
             rot = 0;
@@ -214,7 +214,7 @@ sstring add_refcount(sstring str) {
  * refcount of the string.
  */
 int query_refcount(sstring str) {
-    return (SS(str)->refcount) & ~TOPBIT;
+    return (SS(str)->refcount)&~TOPBIT;
 }
 
 /**
@@ -354,7 +354,7 @@ char *ss_dump_table(int what, char *buf, int size) {
             ++entries;
             refs += (ss->refcount&~TOPBIT);
             /* Can't use stderr any longer, need to include global.h and
-              if (what & SS_DUMP_TABLE)
+              if (what&SS_DUMP_TABLE)
               * use logfile. */
             LOG(llevDebug, "%4d -- %4d refs '%s' %c\n", i, (ss->refcount&~TOPBIT), ss->string, (ss->refcount&TOPBIT ? ' ' : '#'));
 

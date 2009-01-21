@@ -260,8 +260,7 @@ int can_merge(object *ob1, object *ob2) {
     || (ob1->move_off != ob2->move_off)
     || (ob1->move_slow != ob2->move_slow)
     || (ob1->move_slow_penalty != ob2->move_slow_penalty)
-    || (ob1->map_layer != ob2->map_layer)
-    )
+    || (ob1->map_layer != ob2->map_layer))
         return 0;
 
     /* Don't merge objects that are applied.  With the new 'body' code,
@@ -710,7 +709,7 @@ void clear_object(object *op) {
     if (op->materialname != NULL) FREE_AND_CLEAR_STR(op->materialname);
     if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
 
-    memset((void*)((char*)op+offsetof(object, name)), 0, sizeof(object)-offsetof(object, name));
+    memset((void *)((char *)op+offsetof(object, name)), 0, sizeof(object)-offsetof(object, name));
     /* Below here, we clear things that are not done by the memset,
      * or set default values that are not zero.
      */
@@ -810,7 +809,7 @@ void copy_object(object *op2, object *op) {
         op->arch->reference_count++;
 
     if (op2->speed < 0)
-        op->speed_left=op2->speed_left-RANDOM()%200/100.0;
+        op->speed_left = op2->speed_left-RANDOM()%200/100.0;
 
     /* Copy over key_values, if any. */
     if (op2->key_values != NULL) {
@@ -840,7 +839,7 @@ void copy_object(object *op2, object *op) {
         }
     }
 
-    // This way, dialog information will be parsed again when/if needed.
+    /* This way, dialog information will be parsed again when/if needed. */
     CLEAR_FLAG(op, FLAG_DIALOG_PARSED);
 
     update_ob_speed(op);
@@ -860,7 +859,7 @@ void copy_object_with_inv(object *src_ob, object *dest_ob) {
     copy_object(src_ob, dest_ob);
 
     for (walk = src_ob->inv; walk != NULL; walk = walk->below) {
-        tmp=get_object();
+        tmp = get_object();
         copy_object(walk, tmp);
         insert_ob_in_ob(tmp, dest_ob);
     }
@@ -1312,7 +1311,7 @@ void free_object2(object *ob, int free_inventory) {
                         }
                         /* Select a random part */
                         partcount = RANDOM()%partcount;
-                        for (part = ob; partcount>0; partcount--) {
+                        for (part = ob; partcount > 0; partcount--) {
                             part = part->more;
                         }
                     } else {
@@ -1596,7 +1595,7 @@ void remove_ob(object *op) {
 
     /* link the object above us */
     if (op->above)
-        op->above->below=op->below;
+        op->above->below = op->below;
     else
         SET_MAP_TOP(m, x, y, op->below); /* we were top, set new top */
 
@@ -2089,7 +2088,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
      * nor should the walk on function below use them either.
      */
     if (originator && originator->contr && originator->contr->transport)
-        originator=originator->contr->transport;
+        originator = originator->contr->transport;
 
     if (flag&INS_BELOW_ORIGINATOR) {
         if (originator->map != op->map
@@ -2133,7 +2132,7 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
                     floor = top;
 
                 if (QUERY_FLAG(top, FLAG_NO_PICK)
-                && (top->move_type&(MOVE_FLY_LOW |MOVE_FLY_HIGH))
+                && (top->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
                 && !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
                     /* We insert above top, so we want this object below this */
                     top = top->below;
@@ -3425,55 +3424,55 @@ int dirdiff(int dir1, int dir2) {
  * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
  */
 const int reduction_dir[SIZEOFFREE][3] = {
-    { 0, 0, 0}, /* 0 */
-    { 0, 0, 0}, /* 1 */
-    { 0, 0, 0}, /* 2 */
-    { 0, 0, 0}, /* 3 */
-    { 0, 0, 0}, /* 4 */
-    { 0, 0, 0}, /* 5 */
-    { 0, 0, 0}, /* 6 */
-    { 0, 0, 0}, /* 7 */
-    { 0, 0, 0}, /* 8 */
-    { 8, 1, 2}, /* 9 */
-    { 1, 2,-1}, /* 10 */
-    { 2,10,12}, /* 11 */
-    { 2, 3,-1}, /* 12 */
-    { 2, 3, 4}, /* 13 */
-    { 3, 4,-1}, /* 14 */
-    { 4,14,16}, /* 15 */
-    { 5, 4,-1}, /* 16 */
-    { 4, 5, 6}, /* 17 */
-    { 6, 5,-1}, /* 18 */
-    { 6,20,18}, /* 19 */
-    { 7, 6,-1}, /* 20 */
-    { 6, 7, 8}, /* 21 */
-    { 7, 8,-1}, /* 22 */
-    { 8,22,24}, /* 23 */
-    { 8, 1,-1}, /* 24 */
-    {24, 9,10}, /* 25 */
-    { 9,10,-1}, /* 26 */
-    {10,11,-1}, /* 27 */
-    {27,11,29}, /* 28 */
-    {11,12,-1}, /* 29 */
-    {12,13,-1}, /* 30 */
-    {12,13,14}, /* 31 */
-    {13,14,-1}, /* 32 */
-    {14,15,-1}, /* 33 */
-    {33,15,35}, /* 34 */
-    {16,15,-1}, /* 35 */
-    {17,16,-1}, /* 36 */
-    {18,17,16}, /* 37 */
-    {18,17,-1}, /* 38 */
-    {18,19,-1}, /* 39 */
-    {41,19,39}, /* 40 */
-    {19,20,-1}, /* 41 */
-    {20,21,-1}, /* 42 */
-    {20,21,22}, /* 43 */
-    {21,22,-1}, /* 44 */
-    {23,22,-1}, /* 45 */
-    {45,47,23}, /* 46 */
-    {23,24,-1}, /* 47 */
-    {24, 9,-1}  /* 48 */
+    {  0,  0,  0 }, /* 0 */
+    {  0,  0,  0 }, /* 1 */
+    {  0,  0,  0 }, /* 2 */
+    {  0,  0,  0 }, /* 3 */
+    {  0,  0,  0 }, /* 4 */
+    {  0,  0,  0 }, /* 5 */
+    {  0,  0,  0 }, /* 6 */
+    {  0,  0,  0 }, /* 7 */
+    {  0,  0,  0 }, /* 8 */
+    {  8,  1,  2 }, /* 9 */
+    {  1,  2, -1 }, /* 10 */
+    {  2, 10, 12 }, /* 11 */
+    {  2,  3, -1 }, /* 12 */
+    {  2,  3,  4 }, /* 13 */
+    {  3,  4, -1 }, /* 14 */
+    {  4, 14, 16 }, /* 15 */
+    {  5,  4, -1 }, /* 16 */
+    {  4,  5,  6 }, /* 17 */
+    {  6,  5, -1 }, /* 18 */
+    {  6, 20, 18 }, /* 19 */
+    {  7,  6, -1 }, /* 20 */
+    {  6,  7,  8 }, /* 21 */
+    {  7,  8, -1 }, /* 22 */
+    {  8, 22, 24 }, /* 23 */
+    {  8,  1, -1 }, /* 24 */
+    { 24,  9, 10 }, /* 25 */
+    {  9, 10, -1 }, /* 26 */
+    { 10, 11, -1 }, /* 27 */
+    { 27, 11, 29 }, /* 28 */
+    { 11, 12, -1 }, /* 29 */
+    { 12, 13, -1 }, /* 30 */
+    { 12, 13, 14 }, /* 31 */
+    { 13, 14, -1 }, /* 32 */
+    { 14, 15, -1 }, /* 33 */
+    { 33, 15, 35 }, /* 34 */
+    { 16, 15, -1 }, /* 35 */
+    { 17, 16, -1 }, /* 36 */
+    { 18, 17, 16 }, /* 37 */
+    { 18, 17, -1 }, /* 38 */
+    { 18, 19, -1 }, /* 39 */
+    { 41, 19, 39 }, /* 40 */
+    { 19, 20, -1 }, /* 41 */
+    { 20, 21, -1 }, /* 42 */
+    { 20, 21, 22 }, /* 43 */
+    { 21, 22, -1 }, /* 44 */
+    { 23, 22, -1 }, /* 45 */
+    { 45, 47, 23 }, /* 46 */
+    { 23, 24, -1 }, /* 47 */
+    { 24,  9, -1 }  /* 48 */
 };
 
 /**
@@ -3993,7 +3992,7 @@ void fix_multipart_object(object *tmp) {
     /* If there is nothing more to this object, this for loop
      * won't do anything.
      */
-    for (at = tmp->arch->more, last=tmp; at != NULL; at=at->more, last=op) {
+    for (at = tmp->arch->more, last = tmp; at != NULL; at = at->more, last = op) {
         op = arch_to_object(at);
 
         /* update x,y coordinates */
@@ -4056,8 +4055,12 @@ void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy) {
                 miny = part->clone.y;
         }
     }
-    if (sx) *sx = maxx;
-    if (sy) *sy = maxy;
-    if (hx) *hx = -minx;
-    if (hy) *hy = -miny;
+    if (sx)
+        *sx = maxx;
+    if (sy)
+        *sy = maxy;
+    if (hx)
+        *hx = -minx;
+    if (hy)
+        *hy = -miny;
 }

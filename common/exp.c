@@ -107,7 +107,7 @@ sint64 new_exp(const object *ob) {
     int i;
     long mask = 1;
 
-    att_mult = prot_mult =spec_mult = 1.0;
+    att_mult = prot_mult = spec_mult = 1.0;
     for (i = 0; i < NROFATTACKS; i++) {
         mask = 1<<i;
         att_mult += (exp_att_mult[i]*((ob->attacktype&mask) != FALSE));

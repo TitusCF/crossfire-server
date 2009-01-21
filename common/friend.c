@@ -137,9 +137,9 @@ void clean_friendly_list(void) {
             }
             count++;
             free(this);
-        }
         /* If we removed the object, then prev is still valid.  */
-        else prev=this;
+        } else
+            prev = this;
     }
     if (count)
         LOG(llevDebug, "clean_friendly_list: Removed %d bogus links\n", count);

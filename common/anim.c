@@ -90,11 +90,11 @@ void init_anim(void) {
         if (!strncmp(buf, "anim ", 5)) {
             if (num_frames) {
                 LOG(llevError, "Didn't get a mina before %s\n", buf);
-                num_frames=0;
+                num_frames = 0;
             }
             num_animations++;
             if (num_animations == animations_allocated) {
-                animations=realloc(animations, sizeof(Animations)*(animations_allocated+10));
+                animations = realloc(animations, sizeof(Animations)*(animations_allocated+10));
                 animations_allocated += 10;
             }
             animations[num_animations].name = add_string(buf+5);
@@ -102,19 +102,19 @@ void init_anim(void) {
             animations[num_animations].facings = 1;
         } else if (!strncmp(buf, "mina", 4)) {
             animations[num_animations].faces = malloc(sizeof(Fontindex)*num_frames);
-            for (i=0; i<num_frames; i++)
-                animations[num_animations].faces[i]=faces[i];
+            for (i = 0; i < num_frames; i++)
+                animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;
             if (num_frames%animations[num_animations].facings) {
                 LOG(llevDebug, "Animation %s frame numbers (%d) is not a multiple of facings (%d)\n",
                     animations[num_animations].name, num_frames, animations[num_animations].facings);
             }
-            num_frames=0;
+            num_frames = 0;
         } else if (!strncmp(buf, "facings", 7)) {
             if (!(animations[num_animations].facings = atoi(buf+7))) {
                 LOG(llevDebug, "Animation %s has 0 facings, line=%s\n",
                     animations[num_animations].name, buf);
-                animations[num_animations].facings=1;
+                animations[num_animations].facings = 1;
             }
 
         } else {
@@ -163,8 +163,7 @@ int try_find_animation(const char *name) {
 
     search.name = name;
 
-    match = (Animations*)bsearch(&search, animations, (num_animations+1),
-                                 sizeof(Animations), (int (*)(const void*, const void*))anim_compare);
+    match = (Animations *)bsearch(&search, animations, (num_animations+1), sizeof(Animations), (int (*)(const void *, const void *))anim_compare);
 
 
     if (match)

@@ -113,7 +113,8 @@ const char *const periodsofday[PERIODS_PER_DAY] = {
 const char *get_periodofday(const int index) {
     return ((index >= 0) && (index < PERIODS_PER_DAY)) ? periodsofday[index] : NULL;
 }
-/* *
+
+/**
  * give access to month names
  */
 const char *get_month_name(const int index) {
@@ -126,6 +127,7 @@ const char *get_month_name(const int index) {
 const char *get_weekday(const int index) {
     return ((index >= 0) && (index < DAYS_PER_WEEK)) ? weekdays[index] : NULL;
 }
+
 /**
  * give access to season names
  */
@@ -206,7 +208,7 @@ void sleep_delta(void) {
     }
     while (sleep_usec > 1000000) {
         sleep_usec -= 1000000;
-        sleep_sec +=1;
+        sleep_sec += 1;
     }
 
     log_time((new_time.tv_sec-last_time.tv_sec)*1000000+new_time.tv_usec-last_time.tv_usec);
@@ -284,17 +286,17 @@ void get_tod(timeofday_t *tod) {
     else
         tod->season = 4;
 
-    if (tod ->hour < 5) /*until 4:59*/
+    if (tod->hour < 5) /*until 4:59*/
         tod->periodofday = 0;
-    else if (tod ->hour < 8)
+    else if (tod->hour < 8)
         tod->periodofday = 1;
-    else if (tod ->hour < 13)
+    else if (tod->hour < 13)
         tod->periodofday = 2;
-    else if (tod ->hour < 15)
+    else if (tod->hour < 15)
         tod->periodofday = 3;
-    else if (tod ->hour < 20)
+    else if (tod->hour < 20)
         tod->periodofday = 4;
-    else if (tod ->hour < 23)
+    else if (tod->hour < 23)
         tod->periodofday = 5;
     else /*back to night*/
         tod->periodofday = 0;
@@ -357,7 +359,7 @@ void time_info(object *op) {
     if (!QUERY_FLAG(op, FLAG_WIZ))
         return;
 
-    draw_ext_info(NDI_UNIQUE, 0, op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,
                   "Total time:", NULL);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DEBUG,

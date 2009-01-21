@@ -62,19 +62,19 @@
  * "This item goes %s\n", with the use/nonuse values filling in the %s
  */
 body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
-    {"body_range",    "in your range slot",     "in a human's range slot"},
-    {"body_arm",      "on your arm",            "on a human's arm"},
-    {"body_torso",    "on your body",           "on a human's torso"},
-    {"body_head",     "on your head",           "on a human's head"},
-    {"body_neck",     "around your neck",       "around a humans neck"},
-    {"body_skill",    "in your skill slot",     "in a human's skill slot"},
-    {"body_finger",   "on your finger",         "on a human's finger"},
-    {"body_shoulder", "around your shoulders",  "around a human's shoulders"},
-    {"body_foot",     "on your feet",           "on a human's feet"},
-    {"body_hand",     "on your hands",          "on a human's hands"},
-    {"body_wrist",    "around your wrists",     "around a human's wrist"},
-    {"body_waist",    "around your waist",      "around a human's waist"},
-    {"body_leg",      "around your legs",       "around a human's legs"},
+    { "body_range",    "in your range slot",     "in a human's range slot" },
+    { "body_arm",      "on your arm",            "on a human's arm" },
+    { "body_torso",    "on your body",           "on a human's torso" },
+    { "body_head",     "on your head",           "on a human's head" },
+    { "body_neck",     "around your neck",       "around a humans neck" },
+    { "body_skill",    "in your skill slot",     "in a human's skill slot" },
+    { "body_finger",   "on your finger",         "on a human's finger" },
+    { "body_shoulder", "around your shoulders",  "around a human's shoulders" },
+    { "body_foot",     "on your feet",           "on a human's feet" },
+    { "body_hand",     "on your hands",          "on a human's hands" },
+    { "body_wrist",    "around your wrists",     "around a human's wrist" },
+    { "body_waist",    "around your waist",      "around a human's waist" },
+    { "body_leg",      "around your legs",       "around a human's legs" },
 
     /*{"body_dragon_torso", "your body", "a dragon's body"} */
 };
@@ -107,115 +107,115 @@ static const char levelnumbers_10[11][20] = {
  * define.h
  */
 static const typedata item_types[] = {
-    {PLAYER, "player", "players", 0, 0},
-    {ROD, "rod", "rods", SK_THAUMATURGY, 0},
-    {TREASURE, "treasure", "treasure", 0, 0},
-    {POTION, "potion", "potions", SK_ALCHEMY, 0},
-    {FOOD, "food", "food", SK_WOODSMAN, 0},
-    {POISON, "poison", "poisons", SK_ALCHEMY, 0},
-    {BOOK, "book", "books", SK_LITERACY, 0},
-    {CLOCK, "clock", "clocks", 0, 0},
-    {ARROW, "arrow", "arrows", SK_BOWYER, 0},
-    {BOW, "bow", "bows", SK_BOWYER, 0},
-    {WEAPON, "weapon", "weapons", SK_SMITHERY, 0},
-    {ARMOUR, "armour", "armour", SK_SMITHERY, 0},
-    {PEDESTAL, "pedestal", "pedestals", 0, 0},
-    {ALTAR, "altar", "altars", 0, 0},
-    {LOCKED_DOOR, "locked door", "locked doors", 0, 0},
-    {SPECIAL_KEY, "special key", "special keys", 0, 0},
-    {MAP, "map", "maps", 0, 0},
-    {DOOR, "door", "doors", 0, 0},
-    {KEY, "key", "keys", 0, 0},
-    {TIMED_GATE, "timed_gate", "timed_gates", 0, 0},
-    {TRIGGER, "trigger", "triggers", 0, 0},
-    {GRIMREAPER, "grimreaper", "grimreapers", 0, 0},
-    {MAGIC_EAR, "magic ear", "magic ears", 0, 0},
-    {TRIGGER_BUTTON, "trigger button", "trigger buttons", 0, 0},
-    {TRIGGER_ALTAR, "trigger altar", "trigger altars", 0, 0},
-    {TRIGGER_PEDESTAL, "trigger pedestal", "trigger pedestals", 0, 0},
-    {SHIELD, "shield", "shields", SK_SMITHERY, 0},
-    {HELMET, "helmet", "helmets", SK_SMITHERY, 0},
-    {HORN, "horn", "horns", SK_THAUMATURGY, 0},
-    {MONEY, "money", "money", 0, 0},
-    {CLASS, "class", "classes", 0, 0},
-    {AMULET, "amulet", "amulets", SK_JEWELER, 0},
-    {PLAYERMOVER, "player mover", "player movers", 0, 0},
-    {TELEPORTER, "teleporter", "teleporters", 0, 0},
-    {CREATOR, "creator", "creators", 0, 0},
-    {SKILL, "skill", "skills", 0, 0},
-    {EXPERIENCE, "experience", "experience", 0, 0},
-    {EARTHWALL, "earthwall", "earthwalls", 0, 0},
-    {GOLEM, "golem", "golems", 0, 0},
-    {THROWN_OBJ, "projectile", "projectiles", 0, 0},
-    {BLINDNESS, "blindness", "blindness", 0, 0},
-    {GOD, "god", "gods", 0, 0},
-    {DETECTOR, "detector", "detectors", 0, 0},
-    {TRIGGER_MARKER, "trigger marker", "trigger markers", 0, 0},
-    {DEAD_OBJECT, "dead object", "dead objects", 0, 0},
-    {DRINK, "drink", "drinks", SK_WOODSMAN, SK_ALCHEMY},
-    {MARKER, "marker", "markers", 0, 0},
-    {HOLY_ALTAR, "holy altar", "holy altars", 0, 0},
-    {PLAYER_CHANGER, "player changer", "player changers", 0, 0},
-    {BATTLEGROUND, "battleground", "battlegrounds", 0, 0},
-    {PEACEMAKER, "peacemaker", "peacemakers", 0, 0},
-    {GEM, "gem", "gems", SK_JEWELER, 0},
-    {FIREWALL, "firewall", "firewalls", 0, 0},
-    {CHECK_INV, "inventory checker", "inventory checkers", 0, 0},
-    {MOOD_FLOOR, "mood floor", "mood floors", 0, 0},
-    {EXIT, "exit", "exits", 0, 0},
-    {ENCOUNTER, "encounter", "encounters", 0, 0},
-    {SHOP_FLOOR, "shop floor", "shop floors", 0, 0},
-    {SHOP_MAT, "shop mat", "shop mats", 0, 0},
-    {RING, "ring", "rings", SK_JEWELER, 0},
-    {FLOOR, "floor", "floors", 0, 0},
-    {FLESH, "flesh", "flesh", SK_WOODSMAN, 0},
-    {INORGANIC, "inorganic", "inorganics", SK_ALCHEMY, 0},
-    {SKILL_TOOL, "skill tool", "skill tools", 0, 0},
-    {LIGHTER, "lighter", "lighters", 0, 0},
-    {WALL, "wall", "walls", 0, 0},
-    {MISC_OBJECT, "bric-a-brac", "bric-a-brac", 0, 0},
-    {MONSTER, "monster", "monsters", 0, 0},
-    {LAMP, "lamp", "lamps", 0, 0},
-    {DUPLICATOR, "duplicator", "duplicators", 0, 0},
-    {SPELLBOOK, "spellbook", "spellbooks", SK_LITERACY, 0},
-    {CLOAK, "cloak", "cloaks", SK_SMITHERY, 0},
-    {SPINNER, "spinner", "spinners", 0, 0},
-    {GATE, "gate", "gates", 0, 0},
-    {BUTTON, "button", "buttons", 0, 0},
-    {CF_HANDLE, "cf handle", "cf handles", 0, 0},
-    {HOLE, "hole", "holes", 0, 0},
-    {TRAPDOOR, "trapdoor", "trapdoors", 0, 0},
-    {SIGN, "sign", "signs", 0, 0},
-    {BOOTS, "boots", "boots", SK_SMITHERY, 0},
-    {GLOVES, "gloves", "gloves", SK_SMITHERY, 0},
-    {SPELL, "spell", "spells", 0, 0},
-    {SPELL_EFFECT, "spell effect", "spell effects", 0, 0},
-    {CONVERTER, "converter", "converters", 0, 0},
-    {BRACERS, "bracers", "bracers", SK_SMITHERY, 0},
-    {POISONING, "poisoning", "poisonings", 0, 0},
-    {SAVEBED, "savebed", "savebeds", 0, 0},
-    {WAND, "wand", "wands", SK_THAUMATURGY, 0},
-    {SCROLL, "scroll", "scrolls", SK_LITERACY, 0},
-    {DIRECTOR, "director", "directors", 0, 0},
-    {GIRDLE, "girdle", "girdles", SK_SMITHERY, 0},
-    {FORCE, "force", "forces", 0, 0},
-    {POTION_EFFECT, "potion effect", "potion effects", 0, 0},
-    {CLOSE_CON, "closed container", "closed container", 0, 0},
-    {CONTAINER, "container", "containers", SK_ALCHEMY, 0},
-    {ARMOUR_IMPROVER, "armour improver", "armour improvers", 0, 0},
-    {WEAPON_IMPROVER, "weapon improver", "weapon improvers", 0, 0},
-    {SKILLSCROLL, "skillscroll", "skillscrolls", 0, 0},
-    {DEEP_SWAMP, "deep swamp", "deep swamps", 0, 0},
-    {IDENTIFY_ALTAR, "identify altar", "identify altars", 0, 0},
-    {SHOP_INVENTORY, "inventory list", "inventory lists", 0, 0},
-    {RUNE, "rune", "runes", 0, 0},
-    {TRAP, "trap", "traps", 0, 0},
-    {POWER_CRYSTAL, "power_crystal", "power_crystals", 0, 0},
-    {CORPSE, "corpse", "corpses", 0, 0},
-    {DISEASE, "disease", "diseases", 0, 0},
-    {SYMPTOM, "symptom", "symptoms", 0, 0},
-    {BUILDER, "item builder", "item builders", 0, 0},
-    {MATERIAL, "building material", "building materials", 0, 0},
+    { PLAYER, "player", "players", 0, 0 },
+    { ROD, "rod", "rods", SK_THAUMATURGY, 0 },
+    { TREASURE, "treasure", "treasure", 0, 0 },
+    { POTION, "potion", "potions", SK_ALCHEMY, 0 },
+    { FOOD, "food", "food", SK_WOODSMAN, 0 },
+    { POISON, "poison", "poisons", SK_ALCHEMY, 0 },
+    { BOOK, "book", "books", SK_LITERACY, 0 },
+    { CLOCK, "clock", "clocks", 0, 0 },
+    { ARROW, "arrow", "arrows", SK_BOWYER, 0 },
+    { BOW, "bow", "bows", SK_BOWYER, 0 },
+    { WEAPON, "weapon", "weapons", SK_SMITHERY, 0 },
+    { ARMOUR, "armour", "armour", SK_SMITHERY, 0 },
+    { PEDESTAL, "pedestal", "pedestals", 0, 0 },
+    { ALTAR, "altar", "altars", 0, 0 },
+    { LOCKED_DOOR, "locked door", "locked doors", 0, 0 },
+    { SPECIAL_KEY, "special key", "special keys", 0, 0 },
+    { MAP, "map", "maps", 0, 0 },
+    { DOOR, "door", "doors", 0, 0 },
+    { KEY, "key", "keys", 0, 0 },
+    { TIMED_GATE, "timed_gate", "timed_gates", 0, 0 },
+    { TRIGGER, "trigger", "triggers", 0, 0 },
+    { GRIMREAPER, "grimreaper", "grimreapers", 0, 0 },
+    { MAGIC_EAR, "magic ear", "magic ears", 0, 0 },
+    { TRIGGER_BUTTON, "trigger button", "trigger buttons", 0, 0 },
+    { TRIGGER_ALTAR, "trigger altar", "trigger altars", 0, 0 },
+    { TRIGGER_PEDESTAL, "trigger pedestal", "trigger pedestals", 0, 0 },
+    { SHIELD, "shield", "shields", SK_SMITHERY, 0 },
+    { HELMET, "helmet", "helmets", SK_SMITHERY, 0 },
+    { HORN, "horn", "horns", SK_THAUMATURGY, 0 },
+    { MONEY, "money", "money", 0, 0 },
+    { CLASS, "class", "classes", 0, 0 },
+    { AMULET, "amulet", "amulets", SK_JEWELER, 0 },
+    { PLAYERMOVER, "player mover", "player movers", 0, 0 },
+    { TELEPORTER, "teleporter", "teleporters", 0, 0 },
+    { CREATOR, "creator", "creators", 0, 0 },
+    { SKILL, "skill", "skills", 0, 0 },
+    { EXPERIENCE, "experience", "experience", 0, 0 },
+    { EARTHWALL, "earthwall", "earthwalls", 0, 0 },
+    { GOLEM, "golem", "golems", 0, 0 },
+    { THROWN_OBJ, "projectile", "projectiles", 0, 0 },
+    { BLINDNESS, "blindness", "blindness", 0, 0 },
+    { GOD, "god", "gods", 0, 0 },
+    { DETECTOR, "detector", "detectors", 0, 0 },
+    { TRIGGER_MARKER, "trigger marker", "trigger markers", 0, 0 },
+    { DEAD_OBJECT, "dead object", "dead objects", 0, 0 },
+    { DRINK, "drink", "drinks", SK_WOODSMAN, SK_ALCHEMY },
+    { MARKER, "marker", "markers", 0, 0 },
+    { HOLY_ALTAR, "holy altar", "holy altars", 0, 0 },
+    { PLAYER_CHANGER, "player changer", "player changers", 0, 0 },
+    { BATTLEGROUND, "battleground", "battlegrounds", 0, 0 },
+    { PEACEMAKER, "peacemaker", "peacemakers", 0, 0 },
+    { GEM, "gem", "gems", SK_JEWELER, 0 },
+    { FIREWALL, "firewall", "firewalls", 0, 0 },
+    { CHECK_INV, "inventory checker", "inventory checkers", 0, 0 },
+    { MOOD_FLOOR, "mood floor", "mood floors", 0, 0 },
+    { EXIT, "exit", "exits", 0, 0 },
+    { ENCOUNTER, "encounter", "encounters", 0, 0 },
+    { SHOP_FLOOR, "shop floor", "shop floors", 0, 0 },
+    { SHOP_MAT, "shop mat", "shop mats", 0, 0 },
+    { RING, "ring", "rings", SK_JEWELER, 0 },
+    { FLOOR, "floor", "floors", 0, 0 },
+    { FLESH, "flesh", "flesh", SK_WOODSMAN, 0 },
+    { INORGANIC, "inorganic", "inorganics", SK_ALCHEMY, 0 },
+    { SKILL_TOOL, "skill tool", "skill tools", 0, 0 },
+    { LIGHTER, "lighter", "lighters", 0, 0 },
+    { WALL, "wall", "walls", 0, 0 },
+    { MISC_OBJECT, "bric-a-brac", "bric-a-brac", 0, 0 },
+    { MONSTER, "monster", "monsters", 0, 0 },
+    { LAMP, "lamp", "lamps", 0, 0 },
+    { DUPLICATOR, "duplicator", "duplicators", 0, 0 },
+    { SPELLBOOK, "spellbook", "spellbooks", SK_LITERACY, 0 },
+    { CLOAK, "cloak", "cloaks", SK_SMITHERY, 0 },
+    { SPINNER, "spinner", "spinners", 0, 0 },
+    { GATE, "gate", "gates", 0, 0 },
+    { BUTTON, "button", "buttons", 0, 0 },
+    { CF_HANDLE, "cf handle", "cf handles", 0, 0 },
+    { HOLE, "hole", "holes", 0, 0 },
+    { TRAPDOOR, "trapdoor", "trapdoors", 0, 0 },
+    { SIGN, "sign", "signs", 0, 0 },
+    { BOOTS, "boots", "boots", SK_SMITHERY, 0 },
+    { GLOVES, "gloves", "gloves", SK_SMITHERY, 0 },
+    { SPELL, "spell", "spells", 0, 0 },
+    { SPELL_EFFECT, "spell effect", "spell effects", 0, 0 },
+    { CONVERTER, "converter", "converters", 0, 0 },
+    { BRACERS, "bracers", "bracers", SK_SMITHERY, 0 },
+    { POISONING, "poisoning", "poisonings", 0, 0 },
+    { SAVEBED, "savebed", "savebeds", 0, 0 },
+    { WAND, "wand", "wands", SK_THAUMATURGY, 0 },
+    { SCROLL, "scroll", "scrolls", SK_LITERACY, 0 },
+    { DIRECTOR, "director", "directors", 0, 0 },
+    { GIRDLE, "girdle", "girdles", SK_SMITHERY, 0 },
+    { FORCE, "force", "forces", 0, 0 },
+    { POTION_EFFECT, "potion effect", "potion effects", 0, 0 },
+    { CLOSE_CON, "closed container", "closed container", 0, 0 },
+    { CONTAINER, "container", "containers", SK_ALCHEMY, 0 },
+    { ARMOUR_IMPROVER, "armour improver", "armour improvers", 0, 0 },
+    { WEAPON_IMPROVER, "weapon improver", "weapon improvers", 0, 0 },
+    { SKILLSCROLL, "skillscroll", "skillscrolls", 0, 0 },
+    { DEEP_SWAMP, "deep swamp", "deep swamps", 0, 0 },
+    { IDENTIFY_ALTAR, "identify altar", "identify altars", 0, 0 },
+    { SHOP_INVENTORY, "inventory list", "inventory lists", 0, 0 },
+    { RUNE, "rune", "runes", 0, 0 },
+    { TRAP, "trap", "traps", 0, 0 },
+    { POWER_CRYSTAL, "power_crystal", "power_crystals", 0, 0 },
+    { CORPSE, "corpse", "corpses", 0, 0 },
+    { DISEASE, "disease", "diseases", 0, 0 },
+    { SYMPTOM, "symptom", "symptoms", 0, 0 },
+    { BUILDER, "item builder", "item builders", 0, 0 },
+    { MATERIAL, "building material", "building materials", 0, 0 },
 };
 
 /** Number of items in ::item_types array. */
@@ -280,7 +280,7 @@ int calc_item_power(const object *op, int flag) {
     /* Add/substract 10 so that the rounding works out right */
     if (tmp > 0)
         enc += (tmp+10)/20;
-    else if (tmp<0)
+    else if (tmp < 0)
         enc += (tmp-10)/20;
 
     enc += op->magic;
@@ -478,7 +478,7 @@ void get_levelnumber(int i, char *buf, int size) {
  * from stats.sp - b.t.
  *
  * @todo
- Use safe string functions. Check if really ring/amulet?
+ * Use safe string functions. Check if really ring/amulet?
  */
 static void ring_desc(const object *op, char *buf, int size) {
     int attr, val, len;
@@ -757,7 +757,7 @@ void query_base_name(const object *op, int plural, char *buf, int size) {
     && op->arch->clone.materialname != mt->name
     && !(op->material&M_SPECIAL)) {
         snprintf(buf, size, "%s", mt->description);
-        len=strlen(buf);
+        len = strlen(buf);
         safe_strcat(buf, " ", &len, size);
         safe_strcat(buf, plural ? op->name_pl : op->name, &len, size);
     } else {
@@ -1089,7 +1089,7 @@ void describe_item(const object *op, const object *owner, char *retbuf, int size
         if (identified || QUERY_FLAG(op, FLAG_BEEN_APPLIED)) {
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(food+%d)", op->stats.food);
 
-            if (op->type == FLESH && op->last_eat>0 && atnr_is_dragon_enabled(op->last_eat)) {
+            if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat)) {
                 snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(%s metabolism)", change_resist_msg[op->last_eat]);
             }
 
@@ -1245,7 +1245,7 @@ void describe_item(const object *op, const object *owner, char *retbuf, int size
              */
             i = (WEAPON_SPEED(op)*2-op->magic)/2;
             if (i < 0)
-                i=0;
+                i = 0;
 
             snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "(weapon speed %d)", i);
             more_info = 1;
@@ -1461,7 +1461,8 @@ void identify(object *op) {
 
     if (op->type == POTION) {
         if (op->inv && op->randomitems) {
-            if (op->title) free_string(op->title);
+            if (op->title)
+                free_string(op->title);
             op->title = add_refcount(op->inv->name);
         } else if (op->arch) {
             free_string(op->name);

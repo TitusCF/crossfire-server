@@ -63,7 +63,7 @@ objectlink *get_objectlink(void) {
  * new link pointer.
  */
 oblinkpt *get_objectlinkpt(void) {
-    oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
+    oblinkpt *obp = (oblinkpt *)malloc(sizeof(oblinkpt));
 
     if (!obp)
         fatal(OUT_OF_MEMORY);

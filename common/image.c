@@ -57,7 +57,7 @@ struct bmappair {
  * The xbm array (which contains name and number information, and
  * is then sorted) contains nroffiles entries.
  */
-static struct bmappair *xbm=NULL;
+static struct bmappair *xbm = NULL;
 
 /**
  * Following can just as easily be pointers, but
@@ -226,7 +226,7 @@ void read_bmap_names(void) {
         if (*buf == '#')
             continue;
 
-        p = (*buf == '\\') ? (buf+1): buf;
+        p = (*buf == '\\') ? (buf+1) : buf;
         if (!(p = strtok(p, " \t")) || !(q = strtok(NULL, " \t\n"))) {
             LOG(llevDebug, "Warning, syntax error: %s\n", buf);
             continue;
@@ -417,7 +417,7 @@ int find_smooth(uint16 face, uint16 *smoothed) {
 void free_all_images(void) {
     int i;
 
-    for (i = 0; i <nroffiles; i++)
+    for (i = 0; i < nroffiles; i++)
         free(xbm[i].name);
     free(xbm);
     free(new_faces);

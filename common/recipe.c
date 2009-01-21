@@ -211,7 +211,7 @@ void init_formulae(void) {
                     *(next++) = '\0';
                     numb_ingred++;
                 }
-                tmp = (linked_char*)malloc(sizeof(linked_char));
+                tmp = (linked_char *)malloc(sizeof(linked_char));
                 tmp->name = add_string(cp);
                 tmp->next = formula->ingred;
                 formula->ingred = tmp;
@@ -222,7 +222,7 @@ void init_formulae(void) {
                 formula->index += strtoint(cp);
             } while ((cp = next) != NULL);
             /* now find the correct (# of ingred ordered) formulalist */
-            fl=formulalist;
+            fl = formulalist;
             while (numb_ingred != 1) {
                 if (!fl->next)
                     fl->next = init_recipelist();

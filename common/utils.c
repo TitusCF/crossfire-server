@@ -321,7 +321,7 @@ void set_materialname(object *op, int difficulty, materialtype_t *nmt) {
         lmt = NULL;
 #ifndef NEW_MATERIAL_CODE
         for (mt = materialt; mt != NULL && mt->next != NULL; mt = mt->next) {
-            if (op->material & mt->material) {
+            if (op->material&mt->material) {
                 lmt = mt;
                 break;
             }
@@ -415,14 +415,16 @@ const char *strrstr(const char *haystack, const char *needle) {
     const char *lastneedle;
 
     lastneedle = NULL;
-    while ((haystack  =strstr(haystack, needle)) != NULL) {
+    while ((haystack = strstr(haystack, needle)) != NULL) {
         lastneedle = haystack;
         haystack++;
     }
     return lastneedle;
 
 }
+
 #define EOL_SIZE (sizeof("\n")-1)
+
 /**
  * Removes endline from buffer (modified in place).
  */

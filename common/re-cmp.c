@@ -29,7 +29,7 @@
 #include <define.h> /* Needed for OUT_OF_MEMORY. */
 
 /* Get prototype functions to prevent warnings. */
-#if defined (__sun__) && defined(StupidSunHeaders)
+#if defined(__sun__) && defined(StupidSunHeaders)
 #  include <sys/types.h>
 #  include <sys/time.h>
 #  include "sunos.h"   /* Prototypes for standard libraries, sunos lack those */

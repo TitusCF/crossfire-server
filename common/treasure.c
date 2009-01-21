@@ -641,7 +641,7 @@ static const int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] = {
     { 70, 2, 9, 10, 9 }, /*48*/
     { 70, 2, 9, 10, 9 }, /*49*/
     { 70, 2, 9, 10, 9 }, /*50*/
-    { 70, 2, 7, 11, 10}, /*51*/
+    { 70, 2, 7, 11, 10 }, /*51*/
     { 70, 2, 7, 11, 10 }, /*52*/
     { 70, 2, 7, 11, 10 }, /*53*/
     { 70, 2, 7, 11, 10 }, /*54*/
@@ -821,7 +821,7 @@ int magic_from_difficulty(int difficulty) {
     }
     if (loop == (MAXMAGIC+1)) {
         LOG(llevError, "Warning, table for difficulty %d bad.\n", difficulty);
-        loop=0;
+        loop = 0;
     }
     /*  LOG(llevDebug, "Chose magic %d for difficulty %d\n", loop, difficulty);*/
     return (RANDOM()%3) ? loop : -loop;
@@ -904,7 +904,7 @@ static void set_magic(int difficulty, object *op, int max_magic, int flags) {
  * bonus to add to item.
  */
 void set_ring_bonus(object *op, int bonus) {
-    int r = RANDOM()%(bonus>0?25:11);
+    int r = RANDOM()%(bonus > 0 ? 25 : 11);
 
     if (op->type == AMULET) {
         if (!(RANDOM()%21))
@@ -1301,7 +1301,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             || op->inv->dam_modifier
             || op->inv->range_modifier) {
                 op->level = level_for_item(op, difficulty, 0);
-                op->value= op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
+                op->value = op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
             } else {
                 op->level = op->inv->level;
                 op->value = op->value*op->inv->value;
@@ -1329,7 +1329,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
 
         case SCROLL:
             op->level = level_for_item(op, difficulty, 0);
-            op->value= op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
+            op->value = op->value*op->inv->value*(op->level+50)/(op->inv->level+50);
             /* add exp so reading them properly gives xp */
             op->stats.exp = op->value/5;
             op->nrof = op->inv->nrof;
@@ -1586,7 +1586,7 @@ void init_artifacts(void) {
                 nrofallowedstr++;
                 if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
-                tmp = (linked_char*)malloc(sizeof(linked_char));
+                tmp = (linked_char *)malloc(sizeof(linked_char));
                 tmp->name = add_string(cp);
                 tmp->next = art->allowed;
                 art->allowed = tmp;
@@ -1669,20 +1669,30 @@ void add_abilities(object *op, object *change) {
     op->move_type |= change->move_type;
     op->stats.luck += change->stats.luck;
 
-    if (QUERY_FLAG(change, FLAG_CURSED)) SET_FLAG(op, FLAG_CURSED);
-    if (QUERY_FLAG(change, FLAG_DAMNED)) SET_FLAG(op, FLAG_DAMNED);
+    if (QUERY_FLAG(change, FLAG_CURSED))
+        SET_FLAG(op, FLAG_CURSED);
+    if (QUERY_FLAG(change, FLAG_DAMNED))
+        SET_FLAG(op, FLAG_DAMNED);
     if ((QUERY_FLAG(change, FLAG_CURSED) || QUERY_FLAG(change, FLAG_DAMNED))
     && op->magic > 0)
         set_abs_magic(op, -op->magic);
 
-    if (QUERY_FLAG(change, FLAG_LIFESAVE)) SET_FLAG(op, FLAG_LIFESAVE);
-    if (QUERY_FLAG(change, FLAG_REFL_SPELL)) SET_FLAG(op, FLAG_REFL_SPELL);
-    if (QUERY_FLAG(change, FLAG_STEALTH)) SET_FLAG(op, FLAG_STEALTH);
-    if (QUERY_FLAG(change, FLAG_XRAYS)) SET_FLAG(op, FLAG_XRAYS);
-    if (QUERY_FLAG(change, FLAG_BLIND)) SET_FLAG(op, FLAG_BLIND);
-    if (QUERY_FLAG(change, FLAG_SEE_IN_DARK)) SET_FLAG(op, FLAG_SEE_IN_DARK);
-    if (QUERY_FLAG(change, FLAG_REFL_MISSILE)) SET_FLAG(op, FLAG_REFL_MISSILE);
-    if (QUERY_FLAG(change, FLAG_MAKE_INVIS)) SET_FLAG(op, FLAG_MAKE_INVIS);
+    if (QUERY_FLAG(change, FLAG_LIFESAVE))
+        SET_FLAG(op, FLAG_LIFESAVE);
+    if (QUERY_FLAG(change, FLAG_REFL_SPELL))
+        SET_FLAG(op, FLAG_REFL_SPELL);
+    if (QUERY_FLAG(change, FLAG_STEALTH))
+        SET_FLAG(op, FLAG_STEALTH);
+    if (QUERY_FLAG(change, FLAG_XRAYS))
+        SET_FLAG(op, FLAG_XRAYS);
+    if (QUERY_FLAG(change, FLAG_BLIND))
+        SET_FLAG(op, FLAG_BLIND);
+    if (QUERY_FLAG(change, FLAG_SEE_IN_DARK))
+        SET_FLAG(op, FLAG_SEE_IN_DARK);
+    if (QUERY_FLAG(change, FLAG_REFL_MISSILE))
+        SET_FLAG(op, FLAG_REFL_MISSILE);
+    if (QUERY_FLAG(change, FLAG_MAKE_INVIS))
+        SET_FLAG(op, FLAG_MAKE_INVIS);
 
     if (QUERY_FLAG(change, FLAG_STAND_STILL)) {
         CLEAR_FLAG(op, FLAG_ANIMATE);
@@ -1692,7 +1702,7 @@ void add_abilities(object *op, object *change) {
         update_ob_speed(op);
     }
     if (change->nrof)
-        op->nrof=RANDOM()%((int) change->nrof)+1;
+        op->nrof = RANDOM()%((int)change->nrof)+1;
     op->stats.exp += change->stats.exp; /* Speed modifier */
     op->stats.wc += change->stats.wc;
     op->stats.ac += change->stats.ac;
