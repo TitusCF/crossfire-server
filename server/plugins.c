@@ -4579,7 +4579,6 @@ void cleanupPlugins(void) {
 
     for (cp = plugins_list; cp != NULL;) {
         crossfire_plugin *next = cp->next;
-        LOG(llevInfo, "----------------- Freeing: %s\n", cp->fullname);
         if (cp->closefunc)
             cp->closefunc();
         /* Don't actually unload plugins, it makes backtraces for memory

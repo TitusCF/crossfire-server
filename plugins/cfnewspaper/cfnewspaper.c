@@ -465,10 +465,14 @@ CF_PLUGIN void *eventListener(int *type, ...) {
 }
 
 CF_PLUGIN int closePlugin(void) {
-    cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
+    cf_log(llevInfo, "%s closing.\n", PLUGIN_VERSION);
     if (logger_database) {
         sqlite3_close(logger_database);
         logger_database = NULL;
+    }
+    if (newspaper_database) {
+        sqlite3_close(newspaper_database);
+        newspaper_database = NULL;
     }
     return 0;
 }

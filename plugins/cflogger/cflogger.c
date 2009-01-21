@@ -552,7 +552,7 @@ CF_PLUGIN int postInitPlugin(void) {
  * 0.
  */
 CF_PLUGIN int closePlugin(void) {
-    cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
+    cf_log(llevInfo, "%s closing.\n", PLUGIN_VERSION);
     if (database) {
         sqlite3_close(database);
         database = NULL;
