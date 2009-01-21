@@ -33,6 +33,7 @@
 /*  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.                */
 /*                                                                           */
 /*****************************************************************************/
+
 #include <plugin_common.h>
 #include <assert.h>
 
@@ -122,16 +123,17 @@ static f_plug_api cfapiSystem_get_weekday_name = NULL;
 static f_plug_api cfapiSystem_get_periodofday_name = NULL;
 static f_plug_api cfapiObject_user_event = NULL;
 
-#define GET_HOOK(x, y, z) \
-    { \
-    getHooks( &z, 1, y, &x); \
-    if ( z != CFAPI_FUNC) {\
-        printf( "unable to find hook %s!\n", y); return 0; \
-    } }
+#define GET_HOOK(x, y, z) { \
+    getHooks(&z, 1, y, &x); \
+    if (z != CFAPI_FUNC) { \
+        printf("unable to find hook %s!\n", y); \
+        return 0;				\
+    } \
+}
 
-int cf_init_plugin(f_plug_api getHooks)
-{
+int cf_init_plugin(f_plug_api getHooks) {
     int z;
+
     GET_HOOK(cfapiSystem_strdup_local, "cfapi_system_strdup_local", z);
     GET_HOOK(cfapiSystem_add_string, "cfapi_system_add_string", z);
     GET_HOOK(cfapiSystem_register_global_event, "cfapi_system_register_global_event", z);
@@ -164,14 +166,14 @@ int cf_init_plugin(f_plug_api getHooks)
     GET_HOOK(cfapiObject_reset, "cfapi_object_reset", z);
     GET_HOOK(cfapiObject_activate_rune, "cfapi_object_spring_trap", z);
     GET_HOOK(cfapiObject_check_trigger, "cfapi_object_check_trigger", z);
-    GET_HOOK(cfapiObject_query_money,"cfapi_object_query_money", z);
-    GET_HOOK(cfapiObject_query_cost,"cfapi_object_query_cost", z);
-    GET_HOOK(cfapiObject_cast,"cfapi_object_cast", z);
-    GET_HOOK(cfapiObject_learn_spell,"cfapi_object_learn_spell", z);
-    GET_HOOK(cfapiObject_forget_spell,"cfapi_object_forget_spell", z);
-    GET_HOOK(cfapiObject_check_spell,"cfapi_object_check_spell", z);
-    GET_HOOK(cfapiObject_pay_amount,"cfapi_object_pay_amount", z);
-    GET_HOOK(cfapiObject_pay_item,"cfapi_object_pay_item", z);
+    GET_HOOK(cfapiObject_query_money, "cfapi_object_query_money", z);
+    GET_HOOK(cfapiObject_query_cost, "cfapi_object_query_cost", z);
+    GET_HOOK(cfapiObject_cast, "cfapi_object_cast", z);
+    GET_HOOK(cfapiObject_learn_spell, "cfapi_object_learn_spell", z);
+    GET_HOOK(cfapiObject_forget_spell, "cfapi_object_forget_spell", z);
+    GET_HOOK(cfapiObject_check_spell, "cfapi_object_check_spell", z);
+    GET_HOOK(cfapiObject_pay_amount, "cfapi_object_pay_amount", z);
+    GET_HOOK(cfapiObject_pay_item, "cfapi_object_pay_item", z);
     GET_HOOK(cfapiObject_transfer, "cfapi_object_transfer", z);
     GET_HOOK(cfapiObject_find_archetype_inside, "cfapi_object_find_archetype_inside", z);
     GET_HOOK(cfapiObject_remove, "cfapi_object_remove", z);
@@ -181,8 +183,8 @@ int cf_init_plugin(f_plug_api getHooks)
     GET_HOOK(cfapiObject_change_abil, "cfapi_object_change_abil", z);
     GET_HOOK(cfapiObject_say, "cfapi_object_say", z);
     GET_HOOK(cfapiMap_create_path, "cfapi_map_create_path", z);
-    GET_HOOK(cfapiMap_get_property,"cfapi_map_get_property", z);
-    GET_HOOK(cfapiMap_set_property,"cfapi_map_set_property", z);
+    GET_HOOK(cfapiMap_get_property, "cfapi_map_get_property", z);
+    GET_HOOK(cfapiMap_set_property, "cfapi_map_set_property", z);
     GET_HOOK(cfapiMap_get_map, "cfapi_map_get_map", z);
     GET_HOOK(cfapiMap_message, "cfapi_map_message", z);
     GET_HOOK(cfapiMap_get_object_at, "cfapi_map_get_object_at", z);
@@ -220,223 +222,222 @@ int cf_init_plugin(f_plug_api getHooks)
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-/*void *cf_map_get_property(mapstruct *map, int propcode)
-{
+/*void *cf_map_get_property(mapstruct *map, int propcode) {
     int type;
     return cfapiMap_get_property(&type, propcode, map);
 }*/
 
-int cf_map_get_int_property(mapstruct *map, int property)
-{
+int cf_map_get_int_property(mapstruct *map, int property) {
     int type, value;
+
     cfapiMap_get_property(&type, map, property, &value);
     assert(type == CFAPI_INT);
     return value;
 }
 
-int cf_object_user_event(object *op, object *activator, object *third, const char *message, int fix)
-{
+int cf_object_user_event(object *op, object *activator, object *third, const char *message, int fix) {
     int type, value;
+
     cfapiObject_user_event(&type, op, activator, third, message, fix, &value);
     assert(type == CFAPI_INT);
     return value;
 }
 
-sstring cf_map_get_sstring_property(mapstruct *map, int propcode)
-{
+sstring cf_map_get_sstring_property(mapstruct *map, int propcode) {
     int type;
     sstring value;
+
     cfapiMap_get_property(&type, map, propcode, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
 
-mapstruct *cf_map_get_map_property(mapstruct *map, int propcode)
-{
+mapstruct *cf_map_get_map_property(mapstruct *map, int propcode) {
     int type;
     mapstruct *value;
+
     cfapiMap_get_property(&type, map, propcode, &value);
     assert(type == CFAPI_PMAP);
     return value;
 }
 
-region *cf_map_get_region_property(mapstruct *map, int propcode)
-{
+region *cf_map_get_region_property(mapstruct *map, int propcode) {
     int type;
     region *value;
+
     cfapiMap_get_property(&type, map, propcode, &value);
     assert(type == CFAPI_PREGION);
     return value;
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-void cf_map_set_int_property(mapstruct *map, int propcode, int value)
-{
+void cf_map_set_int_property(mapstruct *map, int propcode, int value) {
     int type;
-    cfapiMap_set_property(&type, map, propcode,value);
+
+    cfapiMap_set_property(&type, map, propcode, value);
     assert(type == CFAPI_INT);
 }
 
-void cf_map_set_string_property(mapstruct *map, int propcode, const char *value)
-{
+void cf_map_set_string_property(mapstruct *map, int propcode, const char *value) {
     int type;
-    cfapiMap_set_property(&type, map, propcode,value);
+
+    cfapiMap_set_property(&type, map, propcode, value);
     assert(type == CFAPI_STRING);
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-sint16 cf_object_get_resistance(object *op, int rtype)
-{
+sint16 cf_object_get_resistance(object *op, int rtype) {
     int type;
     sint16 resist;
+
     cfapiObject_get_property(&type, op, CFAPI_OBJECT_PROP_RESIST, rtype, &resist);
     assert(type == CFAPI_INT16);
     return resist;
 }
-void cf_object_set_resistance(object *op, int rtype, sint16 value)
-{
+void cf_object_set_resistance(object *op, int rtype, sint16 value) {
     int type;
+
     cfapiObject_set_property(&type, op, CFAPI_OBJECT_PROP_RESIST, rtype, value);
     assert(type == CFAPI_INT16);
 }
 
 /* Should get replaced by tons of more explicit wrappers */
-void cf_object_set_int_property(object *op, int propcode, int value)
-{
+void cf_object_set_int_property(object *op, int propcode, int value) {
     int type;
-    cfapiObject_set_property(&type, op, propcode,value);
+
+    cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_INT);
 }
-int cf_object_get_int_property(object *op, int propcode)
-{
+int cf_object_get_int_property(object *op, int propcode) {
     int type, value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_INT);
     return value;
 }
-long cf_object_get_long_property(object *op, long propcode)
-{
+long cf_object_get_long_property(object *op, long propcode) {
     int type;
     long value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_LONG);
     return value;
 }
-void cf_object_set_movetype_property(object *op, int propcode, MoveType value)
-{
+void cf_object_set_movetype_property(object *op, int propcode, MoveType value) {
     int type;
+
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_MOVETYPE);
 }
-MoveType cf_object_get_movetype_property(object *op, int propcode)
-{
+MoveType cf_object_get_movetype_property(object *op, int propcode) {
     int type;
     MoveType value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_MOVETYPE);
     return value;
 }
-object *cf_object_get_object_property(object *op, int propcode)
-{
+object *cf_object_get_object_property(object *op, int propcode) {
     int type;
     object *value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
-mapstruct *cf_object_get_map_property(object *op, int propcode)
-{
+mapstruct *cf_object_get_map_property(object *op, int propcode) {
     int type;
     mapstruct *value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_PMAP);
     return value;
 }
-sint64 cf_object_get_int64_property(object *op, int propcode)
-{
+sint64 cf_object_get_int64_property(object *op, int propcode) {
     int type;
     sint64 value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_SINT64);
     return value;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void cf_object_set_long_property(object *op, int propcode, long value)
-{
+void cf_object_set_long_property(object *op, int propcode, long value) {
     int type;
-    cfapiObject_set_property(&type, op, propcode,value);
+
+    cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_LONG);
 }
-void cf_object_set_float_property(object *op, int propcode, float value)
-{
+void cf_object_set_float_property(object *op, int propcode, float value) {
     int type;
+
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_FLOAT);
 }
-void cf_object_set_int64_property(object *op, int propcode, sint64 value)
-{
+void cf_object_set_int64_property(object *op, int propcode, sint64 value) {
     int type;
+
     cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_SINT64);
 }
-float cf_object_get_float_property(object *op, int propcode)
-{
+float cf_object_get_float_property(object *op, int propcode) {
     int type;
     float value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_FLOAT);
     return value;
 }
-archetype *cf_object_get_archetype_property(object *op, int propcode)
-{
+archetype *cf_object_get_archetype_property(object *op, int propcode) {
     int type;
     archetype *value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_PARCH);
     return value;
 }
-partylist *cf_object_get_partylist_property(object *op, int propcode)
-{
+partylist *cf_object_get_partylist_property(object *op, int propcode) {
     int type;
     partylist *value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_PPARTY);
     return value;
 }
-double cf_object_get_double_property(object *op, int propcode)
-{
+double cf_object_get_double_property(object *op, int propcode) {
     int type;
     double value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_DOUBLE);
     return value;
 }
-sstring cf_object_get_sstring_property(object *op, int propcode)
-{
+sstring cf_object_get_sstring_property(object *op, int propcode) {
     int type;
     sstring value;
+
     cfapiObject_get_property(&type, op, propcode, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
-char *cf_object_get_string_property(object *op, int propcode, char *buf, int size)
-{
+char *cf_object_get_string_property(object *op, int propcode, char *buf, int size) {
     int type;
+
     cfapiObject_get_property(&type, op, propcode, buf, size);
     assert(type == CFAPI_STRING);
     return buf;
 }
 /* Should get replaced by tons of more explicit wrappers */
-void cf_object_set_string_property(object *op, int propcode, const char *value)
-{
+void cf_object_set_string_property(object *op, int propcode, const char *value) {
     int type;
-    cfapiObject_set_property(&type, op, propcode,value);
+
+    cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_STRING);
 }
-void cf_object_set_object_property(object *op, int propcode, object *value)
-{
+void cf_object_set_object_property(object *op, int propcode, object *value) {
     int type;
-    cfapiObject_set_property(&type, op, propcode,value);
+
+    cfapiObject_set_property(&type, op, propcode, value);
     assert(type == CFAPI_POBJECT);
 }
 
@@ -444,23 +445,23 @@ void cf_object_set_object_property(object *op, int propcode, object *value)
  * Wrapper for change_exp().
  * @copydoc change_exp().
  */
-void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag)
-{
+void cf_object_change_exp(object *op, sint64 exp, const char *skill_name, int flag) {
     int type;
+
     cfapiObject_change_exp(&type, op, exp, skill_name && strlen(skill_name) > 0 ? skill_name : NULL, flag);
     assert(type == CFAPI_NONE);
 }
-int cf_player_move(player *pl, int dir)
-{
+int cf_player_move(player *pl, int dir) {
     int type, ret;
-    cfapiObject_move(&type,1,pl,dir, &ret);
+
+    cfapiObject_move(&type, 1, pl, dir, &ret);
     assert(type == CFAPI_INT);
     return ret;
 }
-int cf_object_move(object *op, int dir, object*originator)
-{
+int cf_object_move(object *op, int dir, object*originator) {
     int type, ret;
-    cfapiObject_move(&type,0,op,dir,originator, &ret);
+
+    cfapiObject_move(&type, 0, op, dir, originator, &ret);
     assert(type == CFAPI_INT);
     return ret;
 }
@@ -468,9 +469,9 @@ int cf_object_move(object *op, int dir, object*originator)
  * Wrapper for manual_apply().
  * @copydoc manual_apply()
  */
-int cf_object_apply(object *op, object *tmp, int aflag)
-{
+int cf_object_apply(object *op, object *tmp, int aflag) {
     int type, ret;
+
     cfapiObject_apply(&type, op, tmp, aflag, &ret);
     return ret;
 }
@@ -479,36 +480,36 @@ int cf_object_apply(object *op, object *tmp, int aflag)
  * Wrapper for player_apply_below().
  * @copydoc player_apply_below()
  */
-void cf_object_apply_below(object *pl)
-{
+void cf_object_apply_below(object *pl) {
     int type;
+
     cfapiObject_apply_below(&type, pl);
 }
 /**
  * Wrapper for remove_ob().
  * @copydoc remove_ob()
  */
-void cf_object_remove(object *op)
-{
+void cf_object_remove(object *op) {
     int type;
+
     cfapiObject_remove(&type, op);
 }
 /**
  * Wrapper for free_object().
  * @copydoc free_object()
  */
-void cf_object_free(object *ob)
-{
+void cf_object_free(object *ob) {
     int type;
+
     cfapiObject_delete(&type, ob);
 }
 /**
  * Kinda wrapper for present_arch_in_ob().
  */
-object *cf_object_present_archname_inside(object *op, char *whatstr)
-{
+object *cf_object_present_archname_inside(object *op, char *whatstr) {
     int type;
     object *value;
+
     cfapiObject_find_archetype_inside(&type, op, whatstr, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -518,10 +519,10 @@ object *cf_object_present_archname_inside(object *op, char *whatstr)
  * Wrapper for transfer_ob().
  * @copydoc transfer_ob()
  */
-int cf_object_transfer(object *op, int x, int y, int randomly, object *originator)
-{
+int cf_object_transfer(object *op, int x, int y, int randomly, object *originator) {
     int type, value;
-    cfapiObject_transfer(&type,op,0,x,y,randomly,originator, &value);
+
+    cfapiObject_transfer(&type, op, 0, x, y, randomly, originator, &value);
     assert(type == CFAPI_INT);
     return value;
 }
@@ -532,6 +533,7 @@ int cf_object_transfer(object *op, int x, int y, int randomly, object *originato
  */
 int cf_object_move_to(object *op, int x, int y) {
     int type, value;
+
     cfapiObject_transfer(&type, op, 2, x, y, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -541,10 +543,10 @@ int cf_object_move_to(object *op, int x, int y) {
  * Wrapper for insert_ob_in_map_at().
  * @copydoc insert_ob_in_map_at().
  */
-object *cf_object_change_map(object *op, mapstruct *m, object *originator, int flag, int x, int y)
-{
+object *cf_object_change_map(object *op, mapstruct *m, object *originator, int flag, int x, int y) {
     int type;
     object *value;
+
     cfapiObject_transfer(&type, op, 1, m, originator, flag, x, y, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -554,10 +556,10 @@ object *cf_object_change_map(object *op, mapstruct *m, object *originator, int f
  * Wrapper for GET_MAP_OB().
  * @copydoc GET_MAP_OB()
  */
-object *cf_map_get_object_at(mapstruct *m, int x, int y)
-{
+object *cf_map_get_object_at(mapstruct *m, int x, int y) {
     int type;
     object *value;
+
     cfapiMap_get_object_at(&type, m, x, y, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -566,9 +568,9 @@ object *cf_map_get_object_at(mapstruct *m, int x, int y)
  * Partial wrapper for ext_info_map().
  * @todo add missing parameters.
  */
-void cf_map_message(mapstruct *m, const char *msg, int color)
-{
+void cf_map_message(mapstruct *m, const char *msg, int color) {
     int type;
+
     cfapiMap_message(&type, m, msg, color);
 }
 
@@ -582,10 +584,10 @@ void cf_map_message(mapstruct *m, const char *msg, int color)
  * @return
  * clone.
  */
-object *cf_object_clone(object *op, int clonetype)
-{
+object *cf_object_clone(object *op, int clonetype) {
     int type;
     object *value;
+
     cfapiObject_clone(&type, op, clonetype, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -595,9 +597,9 @@ object *cf_object_clone(object *op, int clonetype)
  * Wrapper for pay_for_item().
  * @copydoc pay_for_item().
  */
-int cf_object_pay_item(object *op,object *pl)
-{
+int cf_object_pay_item(object *op, object *pl) {
     int type, value;
+
     cfapiObject_pay_item(&type, op, pl, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -607,9 +609,9 @@ int cf_object_pay_item(object *op,object *pl)
  * Wrapper for pay_for_amount().
  * @copydoc pay_for_amount().
  */
-int cf_object_pay_amount(object *pl, uint64 to_pay)
-{
+int cf_object_pay_amount(object *pl, uint64 to_pay) {
     int type, value;
+
     cfapiObject_pay_amount(&type, pl, to_pay, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -619,9 +621,9 @@ int cf_object_pay_amount(object *pl, uint64 to_pay)
  * Wrapper for cast_spell().
  * @copydoc cast_spell().
  */
-int cf_object_cast_spell(object *op, object *caster,int dir,object *spell_ob, char *stringarg)
-{
+int cf_object_cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg) {
     int type, value;
+
     cfapiObject_cast(&type, op, caster, dir, spell_ob, stringarg, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -631,9 +633,9 @@ int cf_object_cast_spell(object *op, object *caster,int dir,object *spell_ob, ch
  * @todo
  * either totally remove or replace by cf_object_cast_spell().
  */
-int cf_object_cast_ability(object *caster, object *ctoo, int dir, object *sp, char *flags)
-{
+int cf_object_cast_ability(object *caster, object *ctoo, int dir, object *sp, char *flags) {
     int type, value;
+
     cfapiObject_cast(&type, caster, ctoo, dir, sp, flags, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -643,9 +645,9 @@ int cf_object_cast_ability(object *caster, object *ctoo, int dir, object *sp, ch
  * Wrapper for do_learn_spell().
  * @copydoc do_learn_spell().
  */
-void cf_object_learn_spell(object *op, object *spell, int special_prayer)
-{
+void cf_object_learn_spell(object *op, object *spell, int special_prayer) {
     int type;
+
     cfapiObject_learn_spell(&type, op, spell, special_prayer);
     assert(type == CFAPI_NONE);
 }
@@ -655,9 +657,9 @@ void cf_object_learn_spell(object *op, object *spell, int special_prayer)
  * @todo
  * make coherent with do_forget_spell() (string instead of ob).
  */
-void cf_object_forget_spell(object *op, object *sp)
-{
+void cf_object_forget_spell(object *op, object *sp) {
     int type;
+
     cfapiObject_forget_spell(&type, op, sp);
 }
 
@@ -665,17 +667,18 @@ void cf_object_forget_spell(object *op, object *sp)
  * Wrapper for check_spell_known().
  * @copydoc check_spell_known()
  */
-object *cf_object_check_for_spell(object *op, const char *name)
-{
+object *cf_object_check_for_spell(object *op, const char *name) {
     int type;
     object *value;
+
     cfapiObject_check_spell(&type, op, name, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
-void cf_player_message(object *op, char *txt, int flags)
-{
+
+void cf_player_message(object *op, char *txt, int flags) {
     int type;
+
     cfapiPlayer_message(&type, flags, 0, op, txt);
     assert(type == CFAPI_NONE);
 }
@@ -684,55 +687,61 @@ void cf_player_message(object *op, char *txt, int flags)
  * Wrapper for find_player_partial_name().
  * @copydoc find_player_partial_name().
  */
-player *cf_player_find(const char *plname)
-{
+player *cf_player_find(const char *plname) {
     int type;
     player *value;
+
     cfapiPlayer_find(&type, plname, &value);
     assert(type == CFAPI_PPLAYER);
     return value;
 }
-sstring cf_player_get_title(object *op)
-{
+
+sstring cf_player_get_title(object *op) {
     int type;
     sstring value;
+
     cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_TITLE, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
-void cf_player_set_title(object *op, const char* title)
-{
+
+void cf_player_set_title(object *op, const char *title) {
     int type;
+
     cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_TITLE, title);
 }
-sstring cf_player_get_ip(object *op)
-{
+
+sstring cf_player_get_ip(object *op) {
     int type;
     sstring value;
+
     cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_IP, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
-object *cf_player_get_marked_item(object *op)
-{
+
+object *cf_player_get_marked_item(object *op) {
     int type;
     object *value;
+
     cfapiObject_get_property(&type, op, CFAPI_PLAYER_PROP_MARKED_ITEM, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
-void cf_player_set_marked_item(object *op, object *ob)
-{
+
+void cf_player_set_marked_item(object *op, object *ob) {
     int type;
+
     cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_MARKED_ITEM, ob);
 }
-partylist *cf_player_get_party(object *op)
-{
+
+partylist *cf_player_get_party(object *op) {
     return cf_object_get_partylist_property(op, CFAPI_PLAYER_PROP_PARTY);
 }
-void cf_player_set_party(object *op, partylist *party)
-{
+
+void cf_player_set_party(object *op, partylist *party) {
     int type;
+
     cfapiObject_set_property(&type, op, CFAPI_PLAYER_PROP_PARTY, party);
 }
 
@@ -740,9 +749,9 @@ void cf_player_set_party(object *op, partylist *party)
  * Wrapper for can_pay().
  * @copydoc can_pay().
  */
-int cf_player_can_pay(object *pl)
-{
+int cf_player_can_pay(object *pl) {
     int type, value;
+
     cfapiPlayer_can_pay(&type, pl, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -752,10 +761,10 @@ int cf_player_can_pay(object *pl)
  * Wrapper for ready_map_name().
  * @copydoc ready_map_name()
  */
-mapstruct *cf_map_get_map(const char *name, int flags)
-{
+mapstruct *cf_map_get_map(const char *name, int flags) {
     int type;
     mapstruct *ret;
+
     cfapiMap_get_map(&type, 1, name, flags, &ret);
     assert(type == CFAPI_PMAP);
     return ret;
@@ -765,10 +774,10 @@ mapstruct *cf_map_get_map(const char *name, int flags)
  * Wrapper for get_empty_map().
  * @copydoc get_empty_map().
  */
-mapstruct *cf_get_empty_map(int sizex, int sizey)
-{
+mapstruct *cf_get_empty_map(int sizex, int sizey) {
     int type;
     mapstruct *ret;
+
     cfapiMap_get_map(&type, 0, sizex, sizey, &ret);
     assert(type == CFAPI_PMAP);
     return ret;
@@ -778,10 +787,10 @@ mapstruct *cf_get_empty_map(int sizex, int sizey)
  * Wrapper for has_been_loaded().
  * @copydoc has_been_loaded()
  */
-mapstruct *cf_map_has_been_loaded(const char *name)
-{
+mapstruct *cf_map_has_been_loaded(const char *name) {
     int type;
     mapstruct *ret;
+
     cfapiMap_has_been_loaded(&type, name, &ret);
     assert(type == CFAPI_PMAP);
     return ret;
@@ -792,8 +801,7 @@ mapstruct *cf_map_has_been_loaded(const char *name)
  * @return
  * ::first_map.
  */
-mapstruct *cf_map_get_first(void)
-{
+mapstruct *cf_map_get_first(void) {
     return cf_map_get_map_property(NULL, CFAPI_MAP_PROP_NEXT);
 }
 
@@ -801,9 +809,9 @@ mapstruct *cf_map_get_first(void)
  * Wrapper for query_money().
  * @copydoc query_money().
  */
-int cf_object_query_money(const object *op)
-{
+int cf_object_query_money(const object *op) {
     int type, value;
+
     cfapiObject_query_money(&type, op, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -813,79 +821,87 @@ int cf_object_query_money(const object *op)
  * Wrapper for query_cost().
  * @copydoc query_cost().
  */
-int cf_object_query_cost(const object *tmp, object *who, int flag)
-{
+int cf_object_query_cost(const object *tmp, object *who, int flag) {
     int type, value;
+
     cfapiObject_query_cost(&type, tmp, who, flag, &value);
     assert(type == CFAPI_INT);
     return value;
 }
+
 /**
  * Wrapper for spring_trap().
  * @copydoc spring_trap().
  */
-void cf_spring_trap(object *trap , object *victim)
-{
+void cf_spring_trap(object *trap, object *victim) {
     int type;
+
     if (trap)
-        cfapiObject_activate_rune( &type, trap, victim);
+        cfapiObject_activate_rune(&type, trap, victim);
 }
+
 /**
  * Wrapper for check_trigger().
  * @copydoc check_trigger().
  */
-int cf_object_check_trigger(object *op, object *cause)
-{
+int cf_object_check_trigger(object *op, object *cause) {
     int type, value;
+
     cfapiObject_check_trigger(&type, op, cause, &value);
     assert(type == CFAPI_INT);
     return value;
 }
+
 /**
  * Wrapper for trigger_connected().
  * @copydoc trigger_connected().
  */
-void cf_map_trigger_connected(objectlink *ol, object *cause, int state)
-{
+void cf_map_trigger_connected(objectlink *ol, object *cause, int state) {
     int type;
+
     cfapiMap_trigger_connected(&type, ol, cause, state);
     assert(type == CFAPI_NONE);
 }
-int cf_object_out_of_map(object *op, int x, int y)
-{
+
+int cf_object_out_of_map(object *op, int x, int y) {
     int type, value;
-    cfapiObject_out_of_map(&type,op->map,x,y, &value);
+
+    cfapiObject_out_of_map(&type, op->map, x, y, &value);
     assert(type == CFAPI_INT);
     return value;
 }
-void cf_object_drop(object *op, object *author)
-{
+
+void cf_object_drop(object *op, object *author) {
     int type;
-    cfapiObject_drop( &type, op, author);
+
+    cfapiObject_drop(&type, op, author);
 }
-void cf_object_say(object *op, char *msg)
-{
+
+void cf_object_say(object *op, char *msg) {
     int type, value;
-    cfapiObject_say( &type, op, msg, &value);
+
+    cfapiObject_say(&type, op, msg, &value);
     assert(type == CFAPI_INT);
 }
-object *cf_object_insert_object(object *op, object *container)
-{
+
+object *cf_object_insert_object(object *op, object *container) {
     int type;
     object *value;
+
     cfapiObject_insert(&type, op, 3, container, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
+
 /**
  * Wrapper for create_pathname().
  * @copydoc create_pathname()
  */
-char *cf_get_maps_directory(const char *name, char *buf, int size)
-{
+char *cf_get_maps_directory(const char *name, char *buf, int size) {
     int type;
+
     cfapiMap_create_path(&type, 0, name, buf, size);
-    assert(type== CFAPI_STRING);
+    assert(type == CFAPI_STRING);
     return buf;
 }
 
@@ -893,10 +909,10 @@ char *cf_get_maps_directory(const char *name, char *buf, int size)
  * Wrapper for get_object().
  * @copydoc get_object().
  */
-object *cf_create_object(void)
-{
+object *cf_create_object(void) {
     int type;
     object *value;
+
     cfapiObject_create(&type, 0, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -905,26 +921,26 @@ object *cf_create_object(void)
 /**
  * Wrapper for create_archetype() and create_archetype_by_object_name().
  */
-object *cf_create_object_by_name(const char *name)
-{
+object *cf_create_object_by_name(const char *name) {
     int type;
     object *value;
+
     cfapiObject_create(&type, 1, name, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
 
-void cf_system_register_global_event(int event, const char *name, f_plug_api hook)
-{
+void cf_system_register_global_event(int event, const char *name, f_plug_api hook) {
     int type;
-    cfapiSystem_register_global_event( &type, event, name, hook);
+
+    cfapiSystem_register_global_event(&type, event, name, hook);
     assert(type == CFAPI_NONE);
 }
 
-void cf_system_unregister_global_event(int event, const char *name)
-{
+void cf_system_unregister_global_event(int event, const char *name) {
     int type;
-    cfapiSystem_unregister_global_event( &type, event, name);
+
+    cfapiSystem_unregister_global_event(&type, event, name);
     assert(type == CFAPI_NONE);
 }
 
@@ -942,10 +958,10 @@ void cf_system_unregister_global_event(int event, const char *name)
  * @return
  * directory. Must not be altered. NULL if invalid value.
  */
-const char *cf_get_directory(int id)
-{
+const char *cf_get_directory(int id) {
     int type;
     const char *ret;
+
     cfapiSystem_directory(&type, id, &ret);
     assert(type == CFAPI_STRING);
     return ret;
@@ -955,10 +971,10 @@ const char *cf_get_directory(int id)
  * Wrapper for re_cmp().
  * @copydoc re_cmp()
  */
-const char *cf_re_cmp(const char *str, const char *regexp)
-{
+const char *cf_re_cmp(const char *str, const char *regexp) {
     int type;
     const char *result;
+
     cfapiSystem_re_cmp(&type, str, regexp, &result);
     assert(type == CFAPI_STRING);
     return result;
@@ -968,9 +984,9 @@ const char *cf_re_cmp(const char *str, const char *regexp)
  * Wrapper for fix_object().
  * @copydoc fix_object()
  */
-void cf_fix_object(object *op)
-{
+void cf_fix_object(object *op) {
     int type;
+
     if (op)
         cfapiObject_fix(&type, op);
 }
@@ -979,11 +995,11 @@ void cf_fix_object(object *op)
  * Wrapper for add_string().
  * @copydoc add_string()
  */
-sstring cf_add_string(const char *str)
-{
+sstring cf_add_string(const char *str) {
     int type;
     sstring ret;
-    if ( !str)
+
+    if (!str)
         return NULL;
     cfapiSystem_add_string(&type, str, &ret);
     assert(type == CFAPI_SSTRING);
@@ -994,11 +1010,11 @@ sstring cf_add_string(const char *str)
  * Wrapper for free_string().
  * @copydoc free_string()
  */
-void cf_free_string(sstring str)
-{
+void cf_free_string(sstring str) {
     int type;
-    if ( str)
-        cfapiSystem_remove_string( &type, str);
+
+    if (str)
+        cfapiSystem_remove_string(&type, str);
 }
 
 sstring cf_find_string(const char *str) {
@@ -1013,66 +1029,66 @@ sstring cf_find_string(const char *str) {
     return ret;
 }
 
-char *cf_query_name(object *ob, char *name, int size)
-{
+char *cf_query_name(object *ob, char *name, int size) {
     int type;
+
     cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_NAME, name, size);
     assert(type == CFAPI_STRING);
     return name;
 }
 
-sstring cf_query_name_pl(object *ob)
-{
+sstring cf_query_name_pl(object *ob) {
     int type;
     sstring value;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_NAME_PLURAL, &value);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_NAME_PLURAL, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
 
-char *cf_query_base_name(object *ob, int plural, char *name, int size)
-{
+char *cf_query_base_name(object *ob, int plural, char *name, int size) {
     int type;
+
     cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_BASE_NAME, name, size);
     assert(type == CFAPI_STRING);
     return name;
 }
 
-sstring cf_object_get_msg(object *ob)
-{
+sstring cf_object_get_msg(object *ob) {
     int type;
     sstring value;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_MESSAGE, &value);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_MESSAGE, &value);
     assert(type == CFAPI_SSTRING);
     return value;
 }
 
-void cf_object_set_weight(object *ob, int weight)
-{
+void cf_object_set_weight(object *ob, int weight) {
     int type;
-    cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT, weight);
+
+    cfapiObject_set_property(&type, ob, CFAPI_OBJECT_PROP_WEIGHT, weight);
     assert(type == CFAPI_INT);
 }
 
-void cf_object_set_weight_limit(object *ob, int weight_limit)
-{
+void cf_object_set_weight_limit(object *ob, int weight_limit) {
     int type;
-    cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, weight_limit);
+
+    cfapiObject_set_property(&type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, weight_limit);
     assert(type == CFAPI_INT);
 }
 
-int cf_object_get_weight(object *ob)
-{
+int cf_object_get_weight(object *ob) {
     int type, weight;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT, &weight);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_WEIGHT, &weight);
     assert(type == CFAPI_INT);
     return weight;
 }
 
-int cf_object_get_weight_limit(object *ob)
-{
+int cf_object_get_weight_limit(object *ob) {
     int type, limit;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, &limit);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_WEIGHT_LIMIT, &limit);
     assert(type == CFAPI_INT);
     return limit;
 }
@@ -1080,53 +1096,50 @@ int cf_object_get_weight_limit(object *ob)
 /**
  * @return -1=nrof is invalid, 0=nrof is ok#
  */
-int cf_object_set_nrof(object *ob, int nrof)
-{
+int cf_object_set_nrof(object *ob, int nrof) {
     int type;
 
     if (nrof < 0)
         return -1;
 
-    cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_NROF, nrof);
+    cfapiObject_set_property(&type, ob, CFAPI_OBJECT_PROP_NROF, nrof);
     return 0;
 }
 
-int cf_object_get_nrof(object *ob)
-{
+int cf_object_get_nrof(object *ob) {
     int type, nrof;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_NROF, &nrof);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_NROF, &nrof);
     return nrof;
 }
 
-int cf_object_get_flag(object *ob, int flag)
-{
+int cf_object_get_flag(object *ob, int flag) {
     int type;
     int rv;
-    cfapiObject_get_property( &type, ob, CFAPI_OBJECT_PROP_FLAGS, flag, &rv);
+
+    cfapiObject_get_property(&type, ob, CFAPI_OBJECT_PROP_FLAGS, flag, &rv);
     if (rv != 0)
         return 1;
     else
         return 0;
 }
 
-void cf_object_set_flag(object *ob, int flag, int value)
-{
+void cf_object_set_flag(object *ob, int flag, int value) {
     int type;
-    cfapiObject_set_property( &type, ob, CFAPI_OBJECT_PROP_FLAGS, flag, value ? 1 : 0);
+
+    cfapiObject_set_property(&type, ob, CFAPI_OBJECT_PROP_FLAGS, flag, value ? 1 : 0);
 }
 
 /**
  * Wrapper for insert_ob_in_ob().
  * @copydoc insert_ob_in_ob().
  */
-object *cf_object_insert_in_ob(object *op, object *where)
-{
+object *cf_object_insert_in_ob(object *op, object *where) {
     int type;
     object *value;
 
-    if (!cf_object_get_flag(op,FLAG_REMOVED))
-    {
-        cfapiObject_remove( &type, op);
+    if (!cf_object_get_flag(op, FLAG_REMOVED)) {
+        cfapiObject_remove(&type, op);
     }
 
     cfapiObject_insert(&type, op, 3, where, &value);
@@ -1138,10 +1151,10 @@ object *cf_object_insert_in_ob(object *op, object *where)
  * Wrapper for insert_ob_in_map().
  * @copydoc insert_ob_in_map().
  */
-object *cf_map_insert_object_there(object *op, mapstruct *m, object *originator, int flag)
-{
+object *cf_map_insert_object_there(object *op, mapstruct *m, object *originator, int flag) {
     int type;
     object *value;
+
     cfapiObject_insert(&type, op, 1, m, originator, flag, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -1152,98 +1165,92 @@ object *cf_map_insert_object_there(object *op, mapstruct *m, object *originator,
  * @todo
  * merge/replace with cf_object_change_map
  */
-object *cf_map_insert_object(mapstruct *where , object *op, int x, int y)
-{
+object *cf_map_insert_object(mapstruct *where, object *op, int x, int y) {
     int type;
     object *value;
-    cfapiObject_insert( &type, op, 0, where, NULL, 0 , x, y, &value);
+
+    cfapiObject_insert(&type, op, 0, where, NULL, 0 , x, y, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
-int cf_object_teleport(object *op, mapstruct *map, int x, int y)
-{
+
+int cf_object_teleport(object *op, mapstruct *map, int x, int y) {
     int type, value;
-    cfapiObject_teleport( &type, op, map, x, y, &value);
+
+    cfapiObject_teleport(&type, op, map, x, y, &value);
     assert(type == CFAPI_INT);
     return value;
 }
+
 /**
  * Kinda wrapper for arch_present().
  */
-object *cf_map_present_arch_by_name(const char *str, mapstruct *map, int nx, int ny)
-{
+object *cf_map_present_arch_by_name(const char *str, mapstruct *map, int nx, int ny) {
     int type;
     object *value;
-    cfapiMap_present_arch_by_name(&type, str,map,nx,ny, &value);
+
+    cfapiMap_present_arch_by_name(&type, str, map, nx, ny, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
 
-int cf_map_get_difficulty(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_DIFFICULTY);
+int cf_map_get_difficulty(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_DIFFICULTY);
 }
 
-int cf_map_get_reset_time(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_RESET_TIME);
+int cf_map_get_reset_time(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_RESET_TIME);
 }
 
-int cf_map_get_reset_timeout(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_RESET_TIMEOUT);
+int cf_map_get_reset_timeout(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_RESET_TIMEOUT);
 }
 
-int cf_map_get_players(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_PLAYERS);
+int cf_map_get_players(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_PLAYERS);
 }
 
-int cf_map_get_darkness(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_DARKNESS);
+int cf_map_get_darkness(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_DARKNESS);
 }
 
-int cf_map_get_width(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_WIDTH);
+int cf_map_get_width(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_WIDTH);
 }
 
-int cf_map_get_height(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_HEIGHT);
+int cf_map_get_height(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_HEIGHT);
 }
 
-int cf_map_get_enter_x(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_ENTER_X);
+int cf_map_get_enter_x(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_ENTER_X);
 }
 
-int cf_map_get_enter_y(mapstruct *map)
-{
-    return cf_map_get_int_property(map,CFAPI_MAP_PROP_ENTER_Y);
+int cf_map_get_enter_y(mapstruct *map) {
+    return cf_map_get_int_property(map, CFAPI_MAP_PROP_ENTER_Y);
 }
 
 /**
  * Wrapper for change_map_light().
  * @copydoc change_map_light().
  */
-int cf_map_change_light(mapstruct *m, int change)
-{
+int cf_map_change_light(mapstruct *m, int change) {
     int type, value;
+
     cfapiMap_change_light(&type, m, change, &value);
     assert(type == CFAPI_INT);
     return value;
 }
 
-void cf_object_update(object *op, int flags)
-{
+void cf_object_update(object *op, int flags) {
     int type;
+
     cfapiObject_update(&type, op, flags);
 }
-void cf_object_pickup(object *op, object *what)
-{
+
+void cf_object_pickup(object *op, object *what) {
     int type;
+
     cfapiObject_pickup(&type, op, what);
     assert(type == CFAPI_NONE);
 }
@@ -1253,10 +1260,10 @@ void cf_object_pickup(object *op, object *what)
  *
  * @copydoc strdup_local().
  */
-char *cf_strdup_local(const char *str)
-{
+char *cf_strdup_local(const char *str) {
     int type;
     char *dup;
+
     if (str == NULL)
         return NULL;
     cfapiSystem_strdup_local(&type, str, &dup);
@@ -1268,9 +1275,9 @@ char *cf_strdup_local(const char *str)
  * Wrapper for get_map_flags().
  * @copydoc get_map_flags()
  */
-int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny)
-{
+int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sint16 *nx, sint16 *ny) {
     int type, value;
+
     cfapiMap_get_property(&type, oldmap, CFAPI_MAP_PROP_FLAGS, newmap, x, y, nx, ny, &value);
     assert(type == CFAPI_INT);
     return value;
@@ -1280,9 +1287,9 @@ int cf_map_get_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, 
  * Wrapper for set_random_map_variable().
  * @copydoc set_random_map_variable()
  */
-int cf_random_map_set_variable(RMParms *rp, const char *buf)
-{
+int cf_random_map_set_variable(RMParms *rp, const char *buf) {
     int type, ret;
+
     cfapiSet_random_map_variable(&type, rp, buf, &ret);
     assert(type == CFAPI_INT);
     return ret;
@@ -1292,23 +1299,22 @@ int cf_random_map_set_variable(RMParms *rp, const char *buf)
  * Wrapper for generate_random_map().
  * @copydoc generate_random_map()
  */
-mapstruct *cf_random_map_generate(const char *OutFileName, RMParms *RP, char** use_layout)
-{
+mapstruct *cf_random_map_generate(const char *OutFileName, RMParms *RP, char **use_layout) {
     int type;
     mapstruct *map;
+
     cfapiGenerate_random_map(&type, OutFileName, RP, use_layout, &map);
     assert(type == CFAPI_PMAP);
     return map;
 }
 
-
 /**
  * Wrapper for find_animation().
  * @copydoc find_animation().
  */
-int cf_find_animation(const char *name)
-{
+int cf_find_animation(const char *name) {
     int type, anim;
+
     cfapiSystem_find_animation(&type, name, &anim);
     assert(type == CFAPI_INT);
     return anim;
@@ -1318,9 +1324,9 @@ int cf_find_animation(const char *name)
  * Wrapper for find_face().
  * @copydoc find_face().
  */
-int cf_find_face(const char *name, int error)
-{
+int cf_find_face(const char *name, int error) {
     int type, anim;
+
     cfapiSystem_find_face(&type, name, error, &anim);
     assert(type == CFAPI_INT);
     return anim;
@@ -1330,14 +1336,13 @@ int cf_find_face(const char *name, int error)
  * Wrapper for LOG().
  * @copydoc LOG().
  */
-void cf_log(LogLevel logLevel, const char *format, ... )
-{
+void cf_log(LogLevel logLevel, const char *format, ...) {
     int type;
-
     /* Copied from common/logger.c */
     char buf[20480];  /* This needs to be really really big - larger than any other buffer, since that buffer may
-    	need to be put in this one. */
+        need to be put in this one. */
     va_list ap;
+
     va_start(ap, format);
     buf[0] = '\0';
     vsprintf(buf, format, ap);
@@ -1346,58 +1351,60 @@ void cf_log(LogLevel logLevel, const char *format, ... )
     cfapiSystem_log(&type, logLevel, buf);
     assert(type == CFAPI_NONE);
 }
+
 /**
  * Wrapper for LOG() that
  * uses directly a buffer, without format
  */
 void cf_log_plain(LogLevel logLevel, const char *message) {
     int type;
+
     cfapiSystem_log(&type, logLevel, message);
     assert(type == CFAPI_NONE);
 }
-void cf_get_time(timeofday_t *tod)
-{
+
+void cf_get_time(timeofday_t *tod) {
     int type;
+
     cfapiSystem_get_time(&type, tod);
     assert(type == CFAPI_NONE);
 }
 
-const char *cf_get_season_name(int index)
-{
+const char *cf_get_season_name(int index) {
     int type;
     char *result;
+
     cfapiSystem_get_season_name(&type, index, &result);
     assert(type == CFAPI_STRING);
     return result;
 }
 
-const char *cf_get_month_name(int index)
-{
+const char *cf_get_month_name(int index) {
     int type;
     char *result;
+
     cfapiSystem_get_month_name(&type, index, &result);
     assert(type == CFAPI_STRING);
     return result;
 }
 
-const char *cf_get_weekday_name(int index)
-{
+const char *cf_get_weekday_name(int index) {
     int type;
     char *result;
+
     cfapiSystem_get_weekday_name(&type, index, &result);
     assert(type == CFAPI_STRING);
     return result;
 }
 
-const char *cf_get_periodofday_name(int index)
-{
+const char *cf_get_periodofday_name(int index) {
     int type;
     char *result;
+
     cfapiSystem_get_periodofday_name(&type, index, &result);
     assert(type == CFAPI_STRING);
     return result;
 }
-
 
 /**
  * Creates a timer, equivalent of calling cftimer_create().
@@ -1411,9 +1418,9 @@ const char *cf_get_periodofday_name(int index)
  * @return
  * timer identifier, or one of ::TIMER_ERR_ID, ::TIMER_ERR_OBJ or ::TIMER_ERR_MODE
  */
-int cf_timer_create(object *ob, long delay, int mode)
-{
+int cf_timer_create(object *ob, long delay, int mode) {
     int type, timer;
+
     cfapiSystem_timer_create(&type, ob, delay, mode, &timer);
     assert(type == CFAPI_INT);
     return timer;
@@ -1427,9 +1434,9 @@ int cf_timer_create(object *ob, long delay, int mode)
  * @return
  * ::TIMER_ERR_ID if invalid id, ::TIMER_ERR_NONE else.
  */
-int cf_timer_destroy(int id)
-{
+int cf_timer_destroy(int id) {
     int type, code;
+
     cfapiSystem_timer_destroy(&type, id, &code);
     assert(type == CFAPI_INT);
     return code;
@@ -1444,10 +1451,10 @@ int cf_timer_destroy(int id)
  * @return
  * value (shared string), or NULL if not found.
  */
-const char *cf_object_get_key(object *op, const char *keyname)
-{
+const char *cf_object_get_key(object *op, const char *keyname) {
     int type;
     const char *value;
+
     cfapiObject_get_key(&type, op, keyname, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1466,9 +1473,9 @@ const char *cf_object_get_key(object *op, const char *keyname)
  * @return
  * TRUE or FALSE.
  */
-int cf_object_set_key(object *op, const char *keyname, const char *value, int add_key)
-{
+int cf_object_set_key(object *op, const char *keyname, const char *value, int add_key) {
     int type, ret;
+
     cfapiObject_set_key(&type, op, keyname, value, add_key, &ret);
     assert(type == CFAPI_INT);
     return ret;
@@ -1480,6 +1487,7 @@ int cf_object_set_key(object *op, const char *keyname, const char *value, int ad
  */
 int cf_object_change_abil(object *op, object *tmp) {
     int type, ret;
+
     cfapiObject_change_abil(&type, op, tmp, &ret);
     assert(type == CFAPI_INT);
     return ret;
@@ -1492,10 +1500,10 @@ int cf_object_change_abil(object *op, object *tmp) {
  * @return
  * first archetype in the archetype list.
  */
-archetype *cf_archetype_get_first(void)
-{
+archetype *cf_archetype_get_first(void) {
     int type;
     archetype *value;
+
     cfapiArchetype_get_property(&type, NULL, CFAPI_ARCH_PROP_NEXT, &value);
     assert(type == CFAPI_PARCH);
     return value;
@@ -1508,10 +1516,10 @@ archetype *cf_archetype_get_first(void)
  * @return
  * archetype's name.
  */
-sstring cf_archetype_get_name(archetype *arch)
-{
+sstring cf_archetype_get_name(archetype *arch) {
     int type;
     sstring name;
+
     cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NAME, &name);
     assert(type == CFAPI_SSTRING);
     return name;
@@ -1525,10 +1533,10 @@ sstring cf_archetype_get_name(archetype *arch)
  * @return
  * next archetype.
  */
-archetype *cf_archetype_get_next(archetype *arch)
-{
+archetype *cf_archetype_get_next(archetype *arch) {
     int type;
     archetype *value;
+
     cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_NEXT, &value);
     assert(type == CFAPI_PARCH);
     return value;
@@ -1541,10 +1549,10 @@ archetype *cf_archetype_get_next(archetype *arch)
  * @return
  * archetype's more field.
  */
-archetype *cf_archetype_get_more(archetype *arch)
-{
+archetype *cf_archetype_get_more(archetype *arch) {
     int type;
     archetype *value;
+
     cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_MORE, &value);
     assert(type == CFAPI_PARCH);
     return value;
@@ -1557,10 +1565,10 @@ archetype *cf_archetype_get_more(archetype *arch)
  * @return
  * archetype's head field.
  */
-archetype *cf_archetype_get_head(archetype *arch)
-{
+archetype *cf_archetype_get_head(archetype *arch) {
     int type;
     archetype *value;
+
     cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_HEAD, &value);
     assert(type == CFAPI_PARCH);
     return value;
@@ -1573,10 +1581,10 @@ archetype *cf_archetype_get_head(archetype *arch)
  * @return
  * archetype's clone. Will never be NULL.
  */
-object *cf_archetype_get_clone(archetype *arch)
-{
+object *cf_archetype_get_clone(archetype *arch) {
     int type;
     object *value;
+
     cfapiArchetype_get_property(&type, arch, CFAPI_ARCH_PROP_CLONE, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -1589,10 +1597,10 @@ object *cf_archetype_get_clone(archetype *arch)
  * @return
  * first party in partylist.
  */
-partylist *cf_party_get_first(void)
-{
+partylist *cf_party_get_first(void) {
     int type;
     partylist *value;
+
     cfapiParty_get_property(&type, NULL, CFAPI_PARTY_PROP_NEXT, &value);
     assert(type == CFAPI_PPARTY);
     return value;
@@ -1604,10 +1612,10 @@ partylist *cf_party_get_first(void)
  * @return
  * party's name.
  */
-const char *cf_party_get_name(partylist *party)
-{
+const char *cf_party_get_name(partylist *party) {
     int type;
     sstring value;
+
     cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NAME, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1620,10 +1628,10 @@ const char *cf_party_get_name(partylist *party)
  * @return
  * party's next field.
  */
-partylist *cf_party_get_next(partylist *party)
-{
+partylist *cf_party_get_next(partylist *party) {
     int type;
     partylist *value;
+
     cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_NEXT, &value);
     assert(type == CFAPI_PPARTY);
     return value;
@@ -1636,10 +1644,10 @@ partylist *cf_party_get_next(partylist *party)
  * @return
  * party's password field.
  */
-const char *cf_party_get_password(partylist *party)
-{
+const char *cf_party_get_password(partylist *party) {
     int type;
     sstring value;
+
     cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PASSWORD, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1652,10 +1660,10 @@ const char *cf_party_get_password(partylist *party)
  * @return
  * party's first player.
  */
-player *cf_party_get_first_player(partylist *party)
-{
+player *cf_party_get_first_player(partylist *party) {
     int type;
     player *value;
+
     cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, NULL, &value);
     assert(type == CFAPI_PPLAYER);
     return value;
@@ -1670,10 +1678,10 @@ player *cf_party_get_first_player(partylist *party)
  * @return
  * party's name.
  */
-player *cf_party_get_next_player(partylist *party, player *op)
-{
+player *cf_party_get_next_player(partylist *party, player *op) {
     int type;
     player *value;
+
     cfapiParty_get_property(&type, party, CFAPI_PARTY_PROP_PLAYER, op, &value);
     assert(type == CFAPI_PPLAYER);
     return value;
@@ -1684,10 +1692,10 @@ player *cf_party_get_next_player(partylist *party, player *op)
  * @return
  * first region.
  */
-region *cf_region_get_first(void)
-{
+region *cf_region_get_first(void) {
     int type;
     region *value;
+
     cfapiRegion_get_property(&type, NULL, CFAPI_REGION_PROP_NEXT, &value);
     assert(type == CFAPI_PREGION);
     return value;
@@ -1700,10 +1708,10 @@ region *cf_region_get_first(void)
  * @return
  * region's name.
  */
-const char *cf_region_get_name(region *reg)
-{
+const char *cf_region_get_name(region *reg) {
     int type;
     sstring value;
+
     cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NAME, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1716,10 +1724,10 @@ const char *cf_region_get_name(region *reg)
  * @return
  * next region.
  */
-region *cf_region_get_next(region *reg)
-{
+region *cf_region_get_next(region *reg) {
     int type;
     region *value;
+
     cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_NEXT, &value);
     assert(type == CFAPI_PREGION);
     return value;
@@ -1732,10 +1740,10 @@ region *cf_region_get_next(region *reg)
  * @return
  * region's parent.
  */
-region *cf_region_get_parent(region *reg)
-{
+region *cf_region_get_parent(region *reg) {
     int type;
     region *value;
+
     cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_PARENT, &value);
     assert(type == CFAPI_PREGION);
     return value;
@@ -1748,10 +1756,10 @@ region *cf_region_get_parent(region *reg)
  * @return
  * region's longname.
  */
-const char *cf_region_get_longname(region *reg)
-{
+const char *cf_region_get_longname(region *reg) {
     int type;
     sstring value;
+
     cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_LONGNAME, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1764,10 +1772,10 @@ const char *cf_region_get_longname(region *reg)
  * @return
  * region's message.
  */
-const char *cf_region_get_message(region *reg)
-{
+const char *cf_region_get_message(region *reg) {
     int type;
     sstring value;
+
     cfapiRegion_get_property(&type, reg, CFAPI_REGION_PROP_MESSAGE, &value);
     assert(type == CFAPI_SSTRING);
     return value;
@@ -1780,10 +1788,10 @@ const char *cf_region_get_message(region *reg)
  * @return
  * first object on friendly list.
  */
-object *cf_friendlylist_get_first(void)
-{
+object *cf_friendlylist_get_first(void) {
     int type;
     object *value;
+
     cfapiFriendlylist_get_next(&type, NULL, &value);
     assert(type == CFAPI_POBJECT);
     return value;
@@ -1796,31 +1804,29 @@ object *cf_friendlylist_get_first(void)
  * @return
  * next object.
  */
-object *cf_friendlylist_get_next(object *ob)
-{
+object *cf_friendlylist_get_next(object *ob) {
     int type;
     object *value;
+
     cfapiFriendlylist_get_next(&type, ob, &value);
     assert(type == CFAPI_POBJECT);
     return value;
 }
 
-
 #ifdef WIN32
-int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
-{
-	/* Get the time, if they want it */
-	if (time_Info != NULL) {
-		time_Info->tv_sec = time(NULL);
-		time_Info->tv_usec = timeGetTime()*1000;
-	}
-	/* Get the timezone, if they want it */
-	if (timezone_Info != NULL) {
-		_tzset();
-		timezone_Info->tz_minuteswest = _timezone;
-		timezone_Info->tz_dsttime = _daylight;
-	}
-	/* And return */
-	return 0;
+int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info) {
+    /* Get the time, if they want it */
+    if (time_Info != NULL) {
+        time_Info->tv_sec = time(NULL);
+        time_Info->tv_usec = timeGetTime()*1000;
+    }
+    /* Get the timezone, if they want it */
+    if (timezone_Info != NULL) {
+        _tzset();
+        timezone_Info->tz_minuteswest = _timezone;
+        timezone_Info->tz_dsttime = _daylight;
+    }
+    /* And return */
+    return 0;
 }
 #endif

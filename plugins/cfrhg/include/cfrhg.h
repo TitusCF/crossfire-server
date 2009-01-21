@@ -59,7 +59,7 @@
 #include <plugin_common.h>
 #include <cfrhg.h>
 
-extern f_plug_api  gethook;
+extern f_plug_api gethook;
 
 /*@}*/
 

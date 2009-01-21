@@ -55,6 +55,7 @@
 
 /** Pointer to the logging database. */
 static sqlite3 *database;
+
 /** To keep track of stored ingame/real time matching. */
 int last_stored_day = -1;
 
@@ -74,8 +75,9 @@ int last_stored_day = -1;
  * always returns 0 to continue the execution.
  */
 static int check_tables_callback(void *param, int argc, char **argv, char **azColName) {
-    int *format = (int*)param;
-    *format = atoi(argv[0] );
+    int *format = (int *)param;
+
+    *format = atoi(argv[0]);
     return 0;
 }
 
@@ -108,13 +110,14 @@ static void check_tables(void) {
     int format;
     int err;
     format = 0;
+
     err = sqlite3_exec(database, "select param_value from parameters where param_name = 'version';", check_tables_callback, &format, NULL);
 
     if (format < 1) {
         do_sql("create table living(liv_id integer primary key autoincrement, liv_name text, liv_is_player integer, liv_level integer);");
         do_sql("create table region(reg_id integer primary key autoincrement, reg_name text);");
         do_sql("create table map(map_id integer primary key autoincrement, map_path text, map_reg_id integer);");
-        do_sql("create table time(time_real integer, time_ingame text);" );
+        do_sql("create table time(time_real integer, time_ingame text);");
 
         do_sql("create table living_event(le_liv_id integer, le_time integer, le_code integer, le_map_id integer);");
         do_sql("create table map_event(me_map_id integer, me_time integer, me_code integer, me_living_id integer);");
@@ -141,7 +144,7 @@ static void check_tables(void) {
  * unique identifier in the 'living' table.
  */
 static int get_living_id(object *living) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id;
 
@@ -152,7 +155,7 @@ static int get_living_id(object *living) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into living(liv_name, liv_is_player, liv_level) values('%q', %d, %d)", living->name, living->type == PLAYER ? 1 : 0, living->level);
@@ -175,7 +178,7 @@ static int get_living_id(object *living) {
  * unique region identifier, or 0 if reg is NULL.
  */
 static int get_region_id(region *reg) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id;
 
@@ -186,7 +189,7 @@ static int get_region_id(region *reg) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into region(reg_name) values( '%q' )", reg->name);
@@ -211,7 +214,7 @@ static int get_region_id(region *reg) {
  * unique map identifier.
  */
 static int get_map_id(mapstruct *map) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id, reg_id;
     const char *path = map->path;
@@ -224,7 +227,7 @@ static int get_map_id(mapstruct *map) {
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", map->path, reg_id);
@@ -244,7 +247,7 @@ static int get_map_id(mapstruct *map) {
  * 1 if a line was inserted, 0 if the current ingame time was already logged.
  */
 static int store_time(void) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn;
     char date[50];
@@ -329,6 +332,7 @@ static void add_map_event(mapstruct *map, int event_code, object *pl) {
 static void add_death(object *victim, object *killer) {
     int vid, kid, map_id;
     char *sql;
+
     if (!victim || !killer)
         return;
     if (victim->type != PLAYER && killer->type != PLAYER)
@@ -352,12 +356,9 @@ static void add_death(object *victim, object *killer) {
  * @return
  * always 0.
  */
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
-{
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);
-
     cf_log(llevInfo, "%s init\n", PLUGIN_VERSION);
-
     return 0;
 }
 
@@ -371,27 +372,23 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
  * @li the version, if asked for 'FullName'.
  * @li NULL else.
  */
-CF_PLUGIN void *getPluginProperty(int *type, ...)
-{
+CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
     char *buf;
     int size;
 
     va_start(args, type);
-    propname = va_arg(args, const char*);
+    propname = va_arg(args, const char *);
 
-    if (!strcmp(propname, "Identification"))
-    {
-        buf = va_arg(args, char*);
+    if (!strcmp(propname, "Identification")) {
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_NAME);
         return NULL;
-    }
-    else if (!strcmp(propname, "FullName"))
-    {
-        buf = va_arg(args, char*);
+    } else if (!strcmp(propname, "FullName")) {
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_VERSION);
@@ -411,8 +408,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
  * @return
  * -1.
  */
-CF_PLUGIN int runPluginCommand(object *op, char *params)
-{
+CF_PLUGIN int runPluginCommand(object *op, char *params) {
     return -1;
 }
 
@@ -424,9 +420,9 @@ CF_PLUGIN int runPluginCommand(object *op, char *params)
  * @return
  * pointer to an int containing 0.
  */
-void *eventListener(int *type, ...)
-{
-    static int rv=0;
+void *eventListener(int *type, ...) {
+    static int rv = 0;
+
     return &rv;
 }
 
@@ -438,10 +434,9 @@ void *eventListener(int *type, ...)
  * @return
  * pointer to an int containing 0.
  */
-CF_PLUGIN void *cflogger_globalEventListener(int *type, ...)
-{
+CF_PLUGIN void *cflogger_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     player *pl;
     object *op;
     int event_code;
@@ -450,48 +445,47 @@ CF_PLUGIN void *cflogger_globalEventListener(int *type, ...)
     va_start(args, type);
     event_code = va_arg(args, int);
 
-    switch(event_code)
-    {
-        case EVENT_BORN:
-        case EVENT_PLAYER_DEATH:
-        case EVENT_REMOVE:
-        case EVENT_MUZZLE:
-        case EVENT_KICK:
-            op = va_arg(args, object*);
-            add_player_event(op, event_code);
-            break;
-        case EVENT_LOGIN:
-        case EVENT_LOGOUT:
-            pl = va_arg(args, player*);
-            add_player_event(pl->ob, event_code);
-            break;
+    switch (event_code) {
+    case EVENT_BORN:
+    case EVENT_PLAYER_DEATH:
+    case EVENT_REMOVE:
+    case EVENT_MUZZLE:
+    case EVENT_KICK:
+        op = va_arg(args, object *);
+        add_player_event(op, event_code);
+        break;
 
-        case EVENT_MAPENTER:
-        case EVENT_MAPLEAVE:
-            op = va_arg(args, object*);
-            map = va_arg(args, mapstruct*);
-            add_map_event(map, event_code, op);
-            break;
+    case EVENT_LOGIN:
+    case EVENT_LOGOUT:
+        pl = va_arg(args, player *);
+        add_player_event(pl->ob, event_code);
+        break;
 
-        case EVENT_MAPLOAD:
-        case EVENT_MAPUNLOAD:
-        case EVENT_MAPRESET:
-            map = va_arg(args, mapstruct*);
-            add_map_event(map, event_code, 0);
-            break;
+    case EVENT_MAPENTER:
+    case EVENT_MAPLEAVE:
+        op = va_arg(args, object *);
+        map = va_arg(args, mapstruct *);
+        add_map_event(map, event_code, op);
+        break;
 
-        case EVENT_GKILL:
-            {
-                object *killer;
-                op = va_arg(args, object*);
-                killer = va_arg(args, object*);
-                add_death(op, killer);
-            }
-            break;
+    case EVENT_MAPLOAD:
+    case EVENT_MAPUNLOAD:
+    case EVENT_MAPRESET:
+        map = va_arg(args, mapstruct *);
+        add_map_event(map, event_code, 0);
+        break;
 
-        case EVENT_CLOCK:
-            store_time();
-            break;
+    case EVENT_GKILL: {
+            object *killer;
+            op = va_arg(args, object *);
+            killer = va_arg(args, object *);
+            add_death(op, killer);
+        }
+        break;
+
+    case EVENT_CLOCK:
+        store_time();
+        break;
     }
     va_end(args);
 
@@ -506,8 +500,7 @@ CF_PLUGIN void *cflogger_globalEventListener(int *type, ...)
  * @return
  * 0.
  */
-CF_PLUGIN int postInitPlugin(void)
-{
+CF_PLUGIN int postInitPlugin(void) {
     char path[500];
     const char *dir;
 
@@ -528,24 +521,24 @@ CF_PLUGIN int postInitPlugin(void)
 
     store_time();
 
-    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPUNLOAD,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME, cflogger_globalEventListener);
-    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, cflogger_globalEventListener);
 
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME, cflogger_globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, cflogger_globalEventListener);
 
     return 0;
 }
@@ -558,8 +551,7 @@ CF_PLUGIN int postInitPlugin(void)
  * @return
  * 0.
  */
-CF_PLUGIN int closePlugin(void)
-{
+CF_PLUGIN int closePlugin(void) {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (database) {
         sqlite3_close(database);

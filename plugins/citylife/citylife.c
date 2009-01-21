@@ -64,8 +64,7 @@
 #include <citylife_proto.h>
 #endif
 
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
-{
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
@@ -73,8 +72,7 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
     return 0;
 }
 
-CF_PLUGIN void *getPluginProperty(int *type, ...)
-{
+CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
     int size;
@@ -84,13 +82,13 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     propname = va_arg(args, const char *);
 
     if (!strcmp(propname, "Identification")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_NAME);
         return NULL;
     } else if (!strcmp(propname, "FullName")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_VERSION);
@@ -100,8 +98,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object *op, char *params)
-{
+CF_PLUGIN int runPluginCommand(object *op, char *params) {
     return -1;
 }
 
@@ -134,7 +131,7 @@ typedef struct {
     int count_zones;                           /**< How many items in zones. */
     int population;                            /**< Maximum of NPCs to add at load time. */
     const char *mapname;                       /**< Map path. */
-    const char *const * available_archetypes;  /**< What archetypes can we chose from for an NPC? */
+    const char *const *available_archetypes;   /**< What archetypes can we chose from for an NPC? */
     int archetypes_count;                      /**< Number of items in available_archetypes. */
 } mapzone;
 /*@}*/
@@ -227,7 +224,7 @@ static const mapzone available_zones[] = {
     { scorn_sw_points, 3, scorn_sw_zones, 1, 5, "/world/world_104_116", scorn_archs, 12 },
     { scorn_se_points, 1, scorn_se_zones, 1, 5, "/world/world_105_116", scorn_archs, 12 },
     { NULL, -1, NULL, -1, 1, "", NULL, 0 },
-    };
+};
 
 /**
  * Finds if a map has a zone defined.
@@ -239,6 +236,7 @@ static const mapzone available_zones[] = {
  */
 static const mapzone *get_zone_for_map(mapstruct *map) {
     int test;
+
     for (test = 0; available_zones[test].count_points != -1; test++) {
         if (strcmp(available_zones[test].mapname, map->path) == 0)
             return &available_zones[test];
@@ -254,7 +252,7 @@ static const mapzone *get_zone_for_map(mapstruct *map) {
  * new NPC, with event handled for time. NULL if invalid archetype in the zone.
  */
 static object *get_npc(const mapzone *zone) {
-    int arch = RANDOM() % zone->archetypes_count;
+    int arch = RANDOM()%zone->archetypes_count;
     object *npc = cf_create_object_by_name(zone->available_archetypes[arch]);
     object *evt;
 
@@ -286,12 +284,12 @@ static object *get_npc(const mapzone *zone) {
  */
 static void add_npc_to_zone(const mapzone *zone, mapstruct *map) {
     int which;
-
     object *npc = get_npc(zone);
+
     if (!npc)
         return;
-    which = RANDOM() % zone->count_zones;
-    if (cf_object_teleport(npc, map, zone->zones[which].sx + RANDOM() % (zone->zones[which].ex - zone->zones[which].sx), zone->zones[which].sy + RANDOM() % (zone->zones[which].ey - zone->zones[which].sy))) {
+    which = RANDOM()%zone->count_zones;
+    if (cf_object_teleport(npc, map, zone->zones[which].sx+RANDOM()%(zone->zones[which].ex-zone->zones[which].sx), zone->zones[which].sy+RANDOM()%(zone->zones[which].ey-zone->zones[which].sy))) {
         cf_object_free(npc);
     }
 }
@@ -305,9 +303,9 @@ static void add_npc_to_zone(const mapzone *zone, mapstruct *map) {
  */
 static void add_npc_to_point(const mapzone *zone, mapstruct *map) {
     int which;
-
     object *npc = get_npc(zone);
-    which = RANDOM() % zone->count_points;
+
+    which = RANDOM()%zone->count_points;
     if (cf_object_teleport(npc, map, zone->points[which].x, zone->points[which].y)) {
         cf_object_free(npc);
     }
@@ -325,7 +323,7 @@ static void add_npcs_to_map(mapstruct *map) {
     if (!zone)
         return;
 
-    add = 1 + RANDOM() % zone->population;
+    add = 1+RANDOM()%zone->population;
     cf_log(llevDebug, PLUGIN_NAME ": adding %d NPC to map %s.\n", add, map->path);
 
     while (add-- >= 0) {
@@ -353,14 +351,13 @@ static void add_npc_to_random_map(void) {
     if (!count)
         return;
 
-    test = RANDOM() % count;
+    test = RANDOM()%count;
     add_npc_to_point(&available_zones[zones[test]], list[test]);
 }
 
-CF_PLUGIN void *citylife_globalEventListener(int *type, ...)
-{
+CF_PLUGIN void *citylife_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     mapstruct *map;
     int code;
 
@@ -369,70 +366,71 @@ CF_PLUGIN void *citylife_globalEventListener(int *type, ...)
 
     rv = 0;
 
-    switch(code)
-    {
-        case EVENT_MAPLOAD:
-            map = va_arg(args, mapstruct*);
-            add_npcs_to_map(map);
-            break;
-        case EVENT_CLOCK:
-            if (RANDOM() % 40 == 0)
-                add_npc_to_random_map();
+    switch (code) {
+    case EVENT_MAPLOAD:
+        map = va_arg(args, mapstruct *);
+        add_npcs_to_map(map);
+        break;
+
+    case EVENT_CLOCK:
+        if (RANDOM()%40 == 0)
+            add_npc_to_random_map();
     }
     va_end(args);
 
     return &rv;
 }
 
-CF_PLUGIN int postInitPlugin(void)
-{
+CF_PLUGIN int postInitPlugin(void) {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
 
     /* Pick the global events you want to monitor from this plugin */
 
-/*    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_CRASH,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_SHOUT,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_TELL,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,citylife_globalEventListener);
-    */
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME, citylife_globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, citylife_globalEventListener);
-    /*    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME, citylife_globalEventListener);*/
+/*
+    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_CRASH, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_SHOUT, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_TELL, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, citylife_globalEventListener);
+*/
+    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, citylife_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, citylife_globalEventListener);
+/*
+    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, citylife_globalEventListener);
+*/
 
     return 0;
 }
 
-CF_PLUGIN void *eventListener(int *type, ...)
-{
-    static int rv=1;
+CF_PLUGIN void *eventListener(int *type, ...) {
+    static int rv = 1;
     va_list args;
     char *buf;
     object *ground, *who, *activator, *third, *event;
     int fix;
     const char *value;
 
-    va_start(args,type);
+    va_start(args, type);
 
-    who         = va_arg(args, object*);
-    activator   = va_arg(args, object*);
-    third       = va_arg(args, object*);
-    buf         = va_arg(args, char*);
-    fix         = va_arg(args, int);
-    event       = va_arg(args, object*);
+    who = va_arg(args, object *);
+    activator = va_arg(args, object *);
+    third = va_arg(args, object *);
+    buf = va_arg(args, char *);
+    fix = va_arg(args, int);
+    event = va_arg(args, object *);
     va_end(args);
 
     /* should our npc disappear? */
-    if (RANDOM() % 100 < 30) {
+    if (RANDOM()%100 < 30) {
         for (ground = cf_map_get_object_at(who->map, who->x, who->y); ground; ground = cf_object_get_object_property(ground, CFAPI_OBJECT_PROP_OB_ABOVE)) {
             if (ground->type == EXIT) {
                 object *inv;
@@ -456,13 +454,12 @@ CF_PLUGIN void *eventListener(int *type, ...)
     }
 
     /* we have to move manually, because during the night NPCs don't move. */
-    cf_object_move(who, 1 + RANDOM() % 8, NULL);
+    cf_object_move(who, 1+RANDOM()%8, NULL);
 
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin(void)
-{
+CF_PLUGIN int   closePlugin(void) {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }

@@ -13,10 +13,10 @@
 #include <math.h>
 
 typedef struct JSONData {
-    char *str; // the actual json string
-    char *end; // pointer to the string end
-    char *ptr; // pointer to the current parsing position
-    int  all_unicode; // make all output strings unicode if true
+    char *str; /* the actual json string */
+    char *end; /* pointer to the string end */
+    char *ptr; /* pointer to the current parsing position */
+    int  all_unicode; /* make all output strings unicode if true */
 } JSONData;
 
 static PyObject *encode_object(PyObject *object);
@@ -40,9 +40,9 @@ static PyObject *JSON_Error;
 static PyObject *JSON_EncodeError;
 static PyObject *JSON_DecodeError;
 
-
 #if PY_VERSION_HEX < 0x02050000
 typedef int Py_ssize_t;
+
 #define PY_SSIZE_T_MAX INT_MAX
 #define PY_SSIZE_T_MIN INT_MIN
 
@@ -59,94 +59,86 @@ typedef int Py_ssize_t;
 #endif
 
 #ifndef NAN
-#define NAN (HUGE_VAL - HUGE_VAL)
+#define NAN (HUGE_VAL-HUGE_VAL)
 #endif
 
 #ifndef Py_IS_NAN
 #define Py_IS_NAN(X) ((X) != (X))
 #endif
 
-#define skipSpaces(d) while(*((d)->ptr) && isspace(*((d)->ptr))) (d)->ptr++
-
+#define skipSpaces(d) while (*((d)->ptr) && isspace(*((d)->ptr))) (d)->ptr++
 
 /* ------------------------------ Decoding ----------------------------- */
 
-
-static void getRowAndCol(char *begin, char *current, int *row, int*col) {
-        *col=1;
-        *row=1;
-        while (current>begin) {
-            if (*current=='\n')
-                (*row)++;
-            if (*row<2)
-                (*col)++;
-            current--;
-        }
+static void getRowAndCol(char *begin, char *current, int *row, int *col) {
+    *col = 1;
+    *row = 1;
+    while (current > begin) {
+        if (*current == '\n')
+            (*row)++;
+        if (*row < 2)
+            (*col)++;
+        current--;
+    }
 }
-static PyObject*
-decode_null(JSONData *jsondata)
-{
+static PyObject *decode_null(JSONData *jsondata) {
     ptrdiff_t left;
 
-    left = jsondata->end - jsondata->ptr;
+    left = jsondata->end-jsondata->ptr;
 
-    if (left >= 4 && strncmp(jsondata->ptr, "null", 4)==0) {
+    if (left >= 4 && strncmp(jsondata->ptr, "null", 4) == 0) {
         jsondata->ptr += 4;
         Py_INCREF(Py_None);
         return Py_None;
     } else {
-        int row,col;
-        getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
-        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s" "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                     jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
+        int row, col;
+
+        getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
+        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s" "(row "SSIZE_T_F", col "SSIZE_T_F")", jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
         return NULL;
     }
 }
 
-
-static PyObject*
-decode_bool(JSONData *jsondata)
-{
+static PyObject *decode_bool(JSONData *jsondata) {
     ptrdiff_t left;
 
-    left = jsondata->end - jsondata->ptr;
+    left = jsondata->end-jsondata->ptr;
 
-    if (left >= 4 && strncmp(jsondata->ptr, "true", 4)==0) {
+    if (left >= 4 && strncmp(jsondata->ptr, "true", 4) == 0) {
         jsondata->ptr += 4;
         Py_INCREF(Py_True);
         return Py_True;
-    } else if (left >= 5 && strncmp(jsondata->ptr, "false", 5)==0) {
+    } else if (left >= 5 && strncmp(jsondata->ptr, "false", 5) == 0) {
         jsondata->ptr += 5;
         Py_INCREF(Py_False);
         return Py_False;
     } else {
-        int row,col;
-        getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
-        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s" "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                     jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
+        int row, col;
+
+        getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
+        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s" "(row "SSIZE_T_F", col "SSIZE_T_F")", jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
         return NULL;
     }
 }
 
-static PyObject*
-decode_string(JSONData *jsondata)
-{
+static PyObject *decode_string(JSONData *jsondata) {
     PyObject *object;
     int c, escaping, has_unicode, string_escape;
     Py_ssize_t len;
     char *ptr;
 
-    // look for the closing quote
+    /* look for the closing quote */
     escaping = has_unicode = string_escape = False;
-    ptr = jsondata->ptr + 1;
+    ptr = jsondata->ptr+1;
     while (True) {
         c = *ptr;
         if (c == 0) {
-            int row,col;
-            getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            int row, col;
+
+            getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError,
-                         "unterminated string starting at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                         (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                         "unterminated string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                         (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             return NULL;
         }
         if (!escaping) {
@@ -158,7 +150,7 @@ decode_string(JSONData *jsondata)
                 has_unicode = True;
             }
         } else {
-            switch(c) {
+            switch (c) {
             case 'u':
                 has_unicode = True;
                 break;
@@ -177,7 +169,7 @@ decode_string(JSONData *jsondata)
         ptr++;
     }
 
-    len = ptr - jsondata->ptr - 1;
+    len = ptr-jsondata->ptr-1;
 
     if (has_unicode || jsondata->all_unicode)
         object = PyUnicode_DecodeUnicodeEscape(jsondata->ptr+1, len, NULL);
@@ -191,27 +183,30 @@ decode_string(JSONData *jsondata)
 
         PyErr_Fetch(&type, &value, &tb);
         if (type == NULL) {
-            int row,col;
-            getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            int row, col;
+
+            getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError,
-                         "invalid string starting at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                         (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                         "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                         (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
         } else {
             if (PyErr_GivenExceptionMatches(type, PyExc_UnicodeDecodeError)) {
-                int row,col;
+                int row, col;
+
                 reason = PyObject_GetAttrString(value, "reason");
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "cannot decode string starting"
-                             " at position " SSIZE_T_F  "(row " SSIZE_T_F ", col " SSIZE_T_F "): %s",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col,
+                             " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F"): %s",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col,
                              reason ? PyString_AsString(reason) : "bad format");
                 Py_XDECREF(reason);
             } else {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError,
-                             "invalid string starting at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             }
         }
         Py_XDECREF(type);
@@ -224,74 +219,64 @@ decode_string(JSONData *jsondata)
     return object;
 }
 
-
-static PyObject*
-decode_inf(JSONData *jsondata)
-{
+static PyObject *decode_inf(JSONData *jsondata) {
     PyObject *object;
     ptrdiff_t left;
 
-    left = jsondata->end - jsondata->ptr;
+    left = jsondata->end-jsondata->ptr;
 
-    if (left >= 8 && strncmp(jsondata->ptr, "Infinity", 8)==0) {
+    if (left >= 8 && strncmp(jsondata->ptr, "Infinity", 8) == 0) {
         jsondata->ptr += 8;
         object = PyFloat_FromDouble(INFINITY);
         return object;
-    } else if (left >= 9 && strncmp(jsondata->ptr, "+Infinity", 9)==0) {
+    } else if (left >= 9 && strncmp(jsondata->ptr, "+Infinity", 9) == 0) {
         jsondata->ptr += 9;
         object = PyFloat_FromDouble(INFINITY);
         return object;
-    } else if (left >= 9 && strncmp(jsondata->ptr, "-Infinity", 9)==0) {
+    } else if (left >= 9 && strncmp(jsondata->ptr, "-Infinity", 9) == 0) {
         jsondata->ptr += 9;
         object = PyFloat_FromDouble(-INFINITY);
         return object;
     } else {
-        int row,col;
-        getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
-        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s (row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                     jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
+        int row, col;
+
+        getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
+        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s (row "SSIZE_T_F", col "SSIZE_T_F")", jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
         return NULL;
     }
 }
 
-
-static PyObject*
-decode_nan(JSONData *jsondata)
-{
+static PyObject *decode_nan(JSONData *jsondata) {
     PyObject *object;
     ptrdiff_t left;
 
-    left = jsondata->end - jsondata->ptr;
+    left = jsondata->end-jsondata->ptr;
 
-    if (left >= 3 && strncmp(jsondata->ptr, "NaN", 3)==0) {
+    if (left >= 3 && strncmp(jsondata->ptr, "NaN", 3) == 0) {
         jsondata->ptr += 3;
         object = PyFloat_FromDouble(NAN);
         return object;
     } else {
-        int row,col;
-        getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
-        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                     jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
+        int row, col;
+        getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
+        PyErr_Format(JSON_DecodeError, "cannot parse JSON description: %.20s(row "SSIZE_T_F", col "SSIZE_T_F")", jsondata->ptr, (Py_ssize_t)row, (Py_ssize_t)col);
         return NULL;
     }
 }
 
-
-static PyObject*
-decode_number(JSONData *jsondata)
-{
+static PyObject *decode_number(JSONData *jsondata) {
     PyObject *object, *str;
     int c, is_float, should_stop;
     char *ptr;
 
-    // check if we got a floating point number
+    /* check if we got a floating point number */
     ptr = jsondata->ptr;
     is_float = should_stop = False;
     while (True) {
         c = *ptr;
         if (c == 0)
             break;
-        switch(c) {
+        switch (c) {
         case '0':
         case '1':
         case '2':
@@ -305,11 +290,13 @@ decode_number(JSONData *jsondata)
         case '-':
         case '+':
             break;
+
         case '.':
         case 'e':
         case 'E':
             is_float = True;
             break;
+
         default:
             should_stop = True;
         }
@@ -319,7 +306,7 @@ decode_number(JSONData *jsondata)
         ptr++;
     }
 
-    str = PyString_FromStringAndSize(jsondata->ptr, ptr - jsondata->ptr);
+    str = PyString_FromStringAndSize(jsondata->ptr, ptr-jsondata->ptr);
     if (str == NULL)
         return NULL;
 
@@ -332,10 +319,10 @@ decode_number(JSONData *jsondata)
     Py_DECREF(str);
 
     if (object == NULL) {
-        int row,col;
-        getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
-        PyErr_Format(JSON_DecodeError, "invalid number starting at position "
-                     SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")", (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+        int row, col;
+
+        getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
+        PyErr_Format(JSON_DecodeError, "invalid number starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")", (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
     } else {
         jsondata->ptr = ptr;
     }
@@ -343,10 +330,7 @@ decode_number(JSONData *jsondata)
     return object;
 }
 
-
-static PyObject*
-decode_array(JSONData *jsondata)
-{
+static PyObject *decode_array(JSONData *jsondata) {
     PyObject *object, *item;
     int c, expect_item, items, result;
     char *start;
@@ -361,30 +345,33 @@ decode_array(JSONData *jsondata)
         skipSpaces(jsondata);
         c = *jsondata->ptr;
         if (c == 0) {
-            int row,col;
-            getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            int row, col;
+
+            getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError, "unterminated array starting at "
-                         "position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                         (Py_ssize_t)(start - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                         "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                         (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             goto failure;;
         } else if (c == ']') {
-            if (expect_item && items>0) {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            if (expect_item && items > 0) {
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "expecting array item at "
-                             "position " SSIZE_T_F  "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
             jsondata->ptr++;
             break;
         } else if (c == ',') {
             if (expect_item) {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "expecting array item at "
-                             "position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
             expect_item = True;
@@ -410,10 +397,7 @@ failure:
     return NULL;
 }
 
-
-static PyObject*
-decode_object(JSONData *jsondata)
-{
+static PyObject *decode_object(JSONData *jsondata) {
     PyObject *object, *key, *value;
     int c, expect_key, items, result;
     char *start;
@@ -429,30 +413,33 @@ decode_object(JSONData *jsondata)
         skipSpaces(jsondata);
         c = *jsondata->ptr;
         if (c == 0) {
-            int row,col;
-            getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            int row, col;
+
+            getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError, "unterminated object starting at "
-                         "position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                         (Py_ssize_t)(start - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                         "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                         (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             goto failure;;
         } else if (c == '}') {
-            if (expect_key && items>0) {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+            if (expect_key && items > 0) {
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             " at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
             jsondata->ptr++;
             break;
         } else if (c == ',') {
             if (expect_key) {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             "at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
             expect_key = True;
@@ -460,11 +447,12 @@ decode_object(JSONData *jsondata)
             continue;
         } else {
             if (c != '"') {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "expecting property name in "
-                             "object at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "object at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
 
@@ -474,11 +462,12 @@ decode_object(JSONData *jsondata)
 
             skipSpaces(jsondata);
             if (*jsondata->ptr != ':') {
-                int row,col;
-                getRowAndCol(jsondata->str,jsondata->ptr,&row,&col);
+                int row, col;
+
+                getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
                 PyErr_Format(JSON_DecodeError, "missing colon after object "
-                             "property name at position " SSIZE_T_F "(row " SSIZE_T_F ", col " SSIZE_T_F ")",
-                             (Py_ssize_t)(jsondata->ptr - jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
+                             "property name at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                             (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 Py_DECREF(key);
                 goto failure;
             } else {
@@ -508,39 +497,44 @@ failure:
     return NULL;
 }
 
-
-static PyObject*
-decode_json(JSONData *jsondata)
-{
+static PyObject *decode_json(JSONData *jsondata) {
     PyObject *object;
 
     skipSpaces(jsondata);
-    switch(*jsondata->ptr) {
+    switch (*jsondata->ptr) {
     case 0:
         PyErr_SetString(JSON_DecodeError, "empty JSON description");
         return NULL;
+
     case '{':
         object = decode_object(jsondata);
         break;
+
     case '[':
         object = decode_array(jsondata);
         break;
+
     case '"':
         object = decode_string(jsondata);
         break;
+
     case 't':
     case 'f':
         object = decode_bool(jsondata);
         break;
+
     case 'n':
         object = decode_null(jsondata);
         break;
+
     case 'N':
         object = decode_nan(jsondata);
         break;
+
     case 'I':
         object = decode_inf(jsondata);
         break;
+
     case '+':
     case '-':
         if (*(jsondata->ptr+1) == 'I') {
@@ -549,6 +543,7 @@ decode_json(JSONData *jsondata)
             object = decode_number(jsondata);
         }
         break;
+
     case '0':
     case '1':
     case '2':
@@ -561,6 +556,7 @@ decode_json(JSONData *jsondata)
     case '9':
         object = decode_number(jsondata);
         break;
+
     default:
         PyErr_SetString(JSON_DecodeError, "cannot parse JSON description");
         return NULL;
@@ -568,7 +564,6 @@ decode_json(JSONData *jsondata)
 
     return object;
 }
-
 
 /* ------------------------------ Encoding ----------------------------- */
 
@@ -580,23 +575,19 @@ decode_json(JSONData *jsondata)
  * - it also quotes \b and \f
  * - it replaces any non ASCII character hh with \u00hh instead of \xhh
  */
-static PyObject*
-encode_string(PyObject *string)
-{
-    register PyStringObject *op = (PyStringObject*) string;
-    size_t newsize = 2 + 6 * op->ob_size;
+static PyObject *encode_string(PyObject *string) {
+    register PyStringObject *op = (PyStringObject *)string;
+    size_t newsize = 2+6*op->ob_size;
     PyObject *v;
 
     if (op->ob_size > (PY_SSIZE_T_MAX-2)/6) {
-        PyErr_SetString(PyExc_OverflowError,
-                        "string is too large to make repr");
+        PyErr_SetString(PyExc_OverflowError, "string is too large to make repr");
         return NULL;
     }
     v = PyString_FromStringAndSize((char *)NULL, newsize);
     if (v == NULL) {
         return NULL;
-    }
-    else {
+    } else {
         register Py_ssize_t i;
         register char c;
         register char *p;
@@ -609,7 +600,7 @@ encode_string(PyObject *string)
         for (i = 0; i < op->ob_size; i++) {
             /* There's at least enough room for a hex escape
              and a closing quote. */
-            assert(newsize - (p - PyString_AS_STRING(v)) >= 7);
+            assert(newsize-(p-PyString_AS_STRING(v)) >= 7);
             c = op->ob_sval[i];
             if (c == quote || c == '\\')
                 *p++ = '\\', *p++ = c;
@@ -627,16 +618,16 @@ encode_string(PyObject *string)
                 /* For performance, we don't want to call
                  * PyOS_snprintf here (extra layers of
                  * function call). */
-                sprintf(p, "\\u%04x", c & 0xff);
+                sprintf(p, "\\u%04x", c&0xff);
                 p += 6;
             }
             else
                 *p++ = c;
         }
-        assert(newsize - (p - PyString_AS_STRING(v)) >= 1);
+        assert(newsize-(p-PyString_AS_STRING(v)) >= 1);
         *p++ = quote;
         *p = '\0';
-        _PyString_Resize(&v, (int) (p - PyString_AS_STRING(v)));
+        _PyString_Resize(&v, (int) (p-PyString_AS_STRING(v)));
         return v;
     }
 }
@@ -649,26 +640,22 @@ encode_string(PyObject *string)
  * - it uses \u00hh instead of \xhh in output.
  * - it also quotes \b and \f
  */
-static PyObject*
-encode_unicode(PyObject *unicode)
-{
+static PyObject *encode_unicode(PyObject *unicode) {
     PyObject *repr;
     Py_UNICODE *s;
     Py_ssize_t size;
     char *p;
-
     static const char *hexdigit = "0123456789abcdef";
 
     s = PyUnicode_AS_UNICODE(unicode);
     size = PyUnicode_GET_SIZE(unicode);
 
     if (size > (PY_SSIZE_T_MAX-2-1)/6) {
-        PyErr_SetString(PyExc_OverflowError,
-                        "unicode object is too large to make repr");
+        PyErr_SetString(PyExc_OverflowError, "unicode object is too large to make repr");
         return NULL;
     }
 
-    repr = PyString_FromStringAndSize(NULL, 2 + 6*size + 1);
+    repr = PyString_FromStringAndSize(NULL, 2+6*size+1);
     if (repr == NULL)
         return NULL;
 
@@ -680,91 +667,80 @@ encode_unicode(PyObject *unicode)
         Py_UNICODE ch = *s++;
 
         /* Escape quotes */
-        if ((ch == (Py_UNICODE) PyString_AS_STRING(repr)[0] || ch == '\\')) {
+        if ((ch == (Py_UNICODE)PyString_AS_STRING(repr)[0] || ch == '\\')) {
             *p++ = '\\';
-            *p++ = (char) ch;
+            *p++ = (char)ch;
             continue;
-        }
-
 #ifdef Py_UNICODE_WIDE
         /* Map 21-bit characters to '\U00xxxxxx' */
-        else if (ch >= 0x10000) {
-            int offset = p - PyString_AS_STRING(repr);
+        } else if (ch >= 0x10000) {
+            int offset = p-PyString_AS_STRING(repr);
 
             /* Resize the string if necessary */
-            if (offset + 12 > PyString_GET_SIZE(repr)) {
-                if (_PyString_Resize(&repr, PyString_GET_SIZE(repr) + 100))
+            if (offset+12 > PyString_GET_SIZE(repr)) {
+                if (_PyString_Resize(&repr, PyString_GET_SIZE(repr)+100))
                     return NULL;
-                p = PyString_AS_STRING(repr) + offset;
+                p = PyString_AS_STRING(repr)+offset;
             }
 
             *p++ = '\\';
             *p++ = 'U';
-            *p++ = hexdigit[(ch >> 28) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 24) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 20) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 16) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 12) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 8) & 0x0000000F];
-            *p++ = hexdigit[(ch >> 4) & 0x0000000F];
-            *p++ = hexdigit[ch & 0x0000000F];
+            *p++ = hexdigit[(ch>>28)&0x0000000F];
+            *p++ = hexdigit[(ch>>24)&0x0000000F];
+            *p++ = hexdigit[(ch>>20)&0x0000000F];
+            *p++ = hexdigit[(ch>>16)&0x0000000F];
+            *p++ = hexdigit[(ch>>12)&0x0000000F];
+            *p++ = hexdigit[(ch>>8)&0x0000000F];
+            *p++ = hexdigit[(ch>>4)&0x0000000F];
+            *p++ = hexdigit[ch&0x0000000F];
             continue;
-        }
 #endif
         /* Map UTF-16 surrogate pairs to Unicode \UXXXXXXXX escapes */
-        else if (ch >= 0xD800 && ch < 0xDC00) {
+        } else if (ch >= 0xD800 && ch < 0xDC00) {
             Py_UNICODE ch2;
             Py_UCS4 ucs;
 
             ch2 = *s++;
             size--;
             if (ch2 >= 0xDC00 && ch2 <= 0xDFFF) {
-                ucs = (((ch & 0x03FF) << 10) | (ch2 & 0x03FF)) + 0x00010000;
+                ucs = (((ch&0x03FF)<<10)|(ch2&0x03FF))+0x00010000;
                 *p++ = '\\';
                 *p++ = 'U';
-                *p++ = hexdigit[(ucs >> 28) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 24) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 20) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 16) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 12) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 8) & 0x0000000F];
-                *p++ = hexdigit[(ucs >> 4) & 0x0000000F];
-                *p++ = hexdigit[ucs & 0x0000000F];
+                *p++ = hexdigit[(ucs>>28)&0x0000000F];
+                *p++ = hexdigit[(ucs>>24)&0x0000000F];
+                *p++ = hexdigit[(ucs>>20)&0x0000000F];
+                *p++ = hexdigit[(ucs>>16)&0x0000000F];
+                *p++ = hexdigit[(ucs>>12)&0x0000000F];
+                *p++ = hexdigit[(ucs>>8)&0x0000000F];
+                *p++ = hexdigit[(ucs>>4)&0x0000000F];
+                *p++ = hexdigit[ucs&0x0000000F];
                 continue;
             }
             /* Fall through: isolated surrogates are copied as-is */
             s--;
             size++;
-        }
-
         /* Map 16-bit characters to '\uxxxx' */
-        if (ch >= 256) {
+        } if (ch >= 256) {
             *p++ = '\\';
             *p++ = 'u';
-            *p++ = hexdigit[(ch >> 12) & 0x000F];
-            *p++ = hexdigit[(ch >> 8) & 0x000F];
-            *p++ = hexdigit[(ch >> 4) & 0x000F];
-            *p++ = hexdigit[ch & 0x000F];
-        }
-
+            *p++ = hexdigit[(ch>>12)&0x000F];
+            *p++ = hexdigit[(ch>>8)&0x000F];
+            *p++ = hexdigit[(ch>>4)&0x000F];
+            *p++ = hexdigit[ch&0x000F];
         /* Map special whitespace to '\t', \n', '\r', '\f', '\b' */
-        else if (ch == '\t') {
+        } else if (ch == '\t') {
             *p++ = '\\';
             *p++ = 't';
-        }
-        else if (ch == '\n') {
+        } else if (ch == '\n') {
             *p++ = '\\';
             *p++ = 'n';
-        }
-        else if (ch == '\r') {
+        } else if (ch == '\r') {
             *p++ = '\\';
             *p++ = 'r';
-        }
-        else if (ch == '\f') {
+        } else if (ch == '\f') {
             *p++ = '\\';
             *p++ = 'f';
-        }
-        else if (ch == '\b') {
+        } else if (ch == '\b') {
             *p++ = '\\';
             *p++ = 'b';
         }
@@ -775,22 +751,21 @@ encode_unicode(PyObject *unicode)
             *p++ = 'u';
             *p++ = '0';
             *p++ = '0';
-            *p++ = hexdigit[(ch >> 4) & 0x000F];
-            *p++ = hexdigit[ch & 0x000F];
+            *p++ = hexdigit[(ch>>4)&0x000F];
+            *p++ = hexdigit[ch&0x000F];
         }
 
         /* Copy everything else as-is */
         else
-            *p++ = (char) ch;
+            *p++ = (char)ch;
     }
 
     *p++ = PyString_AS_STRING(repr)[0];
 
     *p = '\0';
-    _PyString_Resize(&repr, p - PyString_AS_STRING(repr));
+    _PyString_Resize(&repr, p-PyString_AS_STRING(repr));
     return repr;
 }
-
 
 /*
  * This function is an almost verbatim copy of tuplerepr() from
@@ -800,13 +775,11 @@ encode_unicode(PyObject *unicode)
  * - it uses [] as decorations isntead of () (to masquerade as a JSON array).
  */
 
-static PyObject*
-encode_tuple(PyObject *tuple)
-{
+static PyObject *encode_tuple(PyObject *tuple) {
     Py_ssize_t i, n;
     PyObject *s, *temp;
     PyObject *pieces, *result = NULL;
-    PyTupleObject *v = (PyTupleObject*) tuple;
+    PyTupleObject *v = (PyTupleObject *)tuple;
 
     n = v->ob_size;
     if (n == 0)
@@ -865,19 +838,16 @@ Done:
  *   to itself, instead it raises an exception as such lists cannot be
  *   represented in JSON.
  */
-static PyObject*
-encode_list(PyObject *list)
-{
+static PyObject *encode_list(PyObject *list) {
     Py_ssize_t i;
     PyObject *s, *temp;
     PyObject *pieces = NULL, *result = NULL;
-    PyListObject *v = (PyListObject*) list;
+    PyListObject *v = (PyListObject *)list;
 
-    i = Py_ReprEnter((PyObject*)v);
+    i = Py_ReprEnter((PyObject *)v);
     if (i != 0) {
         if (i > 0) {
-            PyErr_SetString(JSON_EncodeError, "a list with references to "
-                            "itself is not JSON encodable");
+            PyErr_SetString(JSON_EncodeError, "a list with references to itself is not JSON encodable");
         }
         return NULL;
     }
@@ -918,9 +888,9 @@ encode_list(PyObject *list)
     s = PyString_FromString("]");
     if (s == NULL)
         goto Done;
-    temp = PyList_GET_ITEM(pieces, PyList_GET_SIZE(pieces) - 1);
+    temp = PyList_GET_ITEM(pieces, PyList_GET_SIZE(pieces)-1);
     PyString_ConcatAndDel(&temp, s);
-    PyList_SET_ITEM(pieces, PyList_GET_SIZE(pieces) - 1, temp);
+    PyList_SET_ITEM(pieces, PyList_GET_SIZE(pieces)-1, temp);
     if (temp == NULL)
         goto Done;
 
@@ -937,7 +907,6 @@ Done:
     return result;
 }
 
-
 /*
  * This function is an almost verbatim copy of dict_repr() from
  * Python's dictobject.c with the following differences:
@@ -948,14 +917,12 @@ Done:
  *   to itself, instead it raises an exception as such dictionaries cannot
  *   be represented in JSON.
  */
-static PyObject*
-encode_dict(PyObject *dict)
-{
+static PyObject *encode_dict(PyObject *dict) {
     Py_ssize_t i;
     PyObject *s, *temp, *colon = NULL;
     PyObject *pieces = NULL, *result = NULL;
     PyObject *key, *value;
-    PyDictObject *mp = (PyDictObject*) dict;
+    PyDictObject *mp = (PyDictObject *)dict;
 
     i = Py_ReprEnter((PyObject *)mp);
     if (i != 0) {
@@ -986,8 +953,7 @@ encode_dict(PyObject *dict)
         int status;
 
         if (!PyString_Check(key) && !PyUnicode_Check(key)) {
-            PyErr_SetString(JSON_EncodeError, "JSON encodable dictionaries "
-                            "must have string/unicode keys");
+            PyErr_SetString(JSON_EncodeError, "JSON encodable dictionaries must have string/unicode keys");
             goto Done;
         }
 
@@ -1019,9 +985,9 @@ encode_dict(PyObject *dict)
     s = PyString_FromString("}");
     if (s == NULL)
         goto Done;
-    temp = PyList_GET_ITEM(pieces, PyList_GET_SIZE(pieces) - 1);
+    temp = PyList_GET_ITEM(pieces, PyList_GET_SIZE(pieces)-1);
     PyString_ConcatAndDel(&temp, s);
-    PyList_SET_ITEM(pieces, PyList_GET_SIZE(pieces) - 1, temp);
+    PyList_SET_ITEM(pieces, PyList_GET_SIZE(pieces)-1, temp);
     if (temp == NULL)
         goto Done;
 
@@ -1039,10 +1005,7 @@ Done:
     return result;
 }
 
-
-static PyObject*
-encode_object(PyObject *object)
-{
+static PyObject *encode_object(PyObject *object) {
     if (object == Py_True) {
         return PyString_FromString("true");
     } else if (object == Py_False) {
@@ -1072,7 +1035,7 @@ encode_object(PyObject *object)
         return encode_list(object);
     } else if (PyTuple_Check(object)) {
         return encode_tuple(object);
-    } else if (PyDict_Check(object)) { // use PyMapping_Check(object) instead? -Dan
+    } else if (PyDict_Check(object)) { /* use PyMapping_Check(object) instead? -Dan */
         return encode_dict(object);
     } else {
         PyErr_SetString(JSON_EncodeError, "object is not JSON encodable");
@@ -1080,28 +1043,21 @@ encode_object(PyObject *object)
     }
 }
 
-
 /* Encode object into its JSON representation */
 
-static PyObject*
-JSON_encode(PyObject *self, PyObject *object)
-{
+static PyObject *JSON_encode(PyObject *self, PyObject *object) {
     return encode_object(object);
 }
 
-
 /* Decode JSON representation into pyhton objects */
 
-static PyObject*
-JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
-{
-    static char *kwlist[] = {"json", "all_unicode", NULL};
-    int all_unicode = False; // by default return unicode only when needed
+static PyObject *JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs) {
+    static char *kwlist[] = { "json", "all_unicode", NULL };
+    int all_unicode = False; /* by default return unicode only when needed */
     PyObject *object, *string, *str;
     JSONData jsondata;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i:decode", kwlist,
-                                     &string, &all_unicode))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i:decode", kwlist, &string, &all_unicode))
         return NULL;
 
     if (PyUnicode_Check(string)) {
@@ -1116,11 +1072,11 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
 
     if (PyString_AsStringAndSize(str, &(jsondata.str), NULL) == -1) {
         Py_DECREF(str);
-        return NULL; // not a string object or it contains null bytes
+        return NULL; /* not a string object or it contains null bytes */
     }
 
     jsondata.ptr = jsondata.str;
-    jsondata.end = jsondata.str + strlen(jsondata.str);
+    jsondata.end = jsondata.str+strlen(jsondata.str);
     jsondata.all_unicode = all_unicode;
 
     object = decode_json(&jsondata);
@@ -1128,9 +1084,7 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
     if (object != NULL) {
         skipSpaces(&jsondata);
         if (jsondata.ptr < jsondata.end) {
-            PyErr_Format(JSON_DecodeError, "extra data after JSON description"
-                         " at position " SSIZE_T_F,
-                         (Py_ssize_t)(jsondata.ptr - jsondata.str));
+            PyErr_Format(JSON_DecodeError, "extra data after JSON description at position "SSIZE_T_F, (Py_ssize_t)(jsondata.ptr-jsondata.str));
             Py_DECREF(str);
             Py_DECREF(object);
             return NULL;
@@ -1142,33 +1096,28 @@ JSON_decode(PyObject *self, PyObject *args, PyObject *kwargs)
     return object;
 }
 
-
 /* List of functions defined in the module */
 
 static PyMethodDef cjson_methods[] = {
-    {"encode", (PyCFunction)JSON_encode,  METH_O,
-    PyDoc_STR("encode(object) -> generate the JSON representation for object.")},
+    { "encode", (PyCFunction)JSON_encode,  METH_O,
+    PyDoc_STR("encode(object) -> generate the JSON representation for object.") },
 
-    {"decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
+    { "decode", (PyCFunction)JSON_decode,  METH_VARARGS|METH_KEYWORDS,
     PyDoc_STR("decode(string, all_unicode=False) -> parse the JSON representation into\n"
               "python objects. The optional argument `all_unicode', specifies how to\n"
               "convert the strings in the JSON representation into python objects.\n"
               "If it is False (default), it will return strings everywhere possible\n"
               "and unicode objects only where necessary, else it will return unicode\n"
-              "objects everywhere (this is slower).")},
+              "objects everywhere (this is slower).") },
 
-    {NULL, NULL}  // sentinel
+    { NULL, NULL }  /* sentinel */
 };
 
-PyDoc_STRVAR(module_doc,
-"Fast JSON encoder/decoder module."
-);
+PyDoc_STRVAR(module_doc, "Fast JSON encoder/decoder module.");
 
 /* Initialization function for the module (*must *be called initcjson) */
 #define MODULE_VERSION "1.0.5"
-PyMODINIT_FUNC
-initcjson(void)
-{
+PyMODINIT_FUNC initcjson(void) {
     PyObject *m;
 
     m = Py_InitModule3("cjson", cjson_methods, module_doc);
@@ -1194,7 +1143,6 @@ initcjson(void)
     Py_INCREF(JSON_DecodeError);
     PyModule_AddObject(m, "DecodeError", JSON_DecodeError);
 
-    // Module version (the MODULE_VERSION macro is defined by setup.py)
+    /* Module version (the MODULE_VERSION macro is defined by setup.py) */
     PyModule_AddStringConstant(m, "__version__", MODULE_VERSION);
-
 }

@@ -34,6 +34,7 @@ typedef struct {
     PyObject_HEAD
     partylist *party;
 } Crossfire_Party;
+
 extern PyTypeObject Crossfire_PartyType;
 
 extern PyObject *Crossfire_Party_wrap(partylist *what);

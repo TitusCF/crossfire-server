@@ -28,29 +28,30 @@
 /*****************************************************************************/
 #ifndef CFPYTHON_OBJECT_H
 #define CFPYTHON_OBJECT_H
+
 typedef struct {
     PyObject_HEAD
-            object *obj;
-            tag_t count;
+    object *obj;
+    tag_t count;
 } Crossfire_Object;
+
 extern PyTypeObject Crossfire_ObjectType;
 
 typedef struct {
     PyObject_HEAD
-            object *obj;
-            tag_t count;
+    object *obj;
+    tag_t count;
 } Crossfire_Player;
+
 extern PyTypeObject Crossfire_PlayerType;
 
-#define EXISTCHECK(ob) \
-    { \
+#define EXISTCHECK(ob) { \
     if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return NULL; \
     } }
 
-#define EXISTCHECK_INT(ob) \
-    { \
+#define EXISTCHECK_INT(ob) { \
     if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \
         return -1; \

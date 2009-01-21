@@ -75,13 +75,12 @@
 #include <cfpython_party.h>
 #include <cfpython_region.h>
 
-typedef struct _cfpcontext
-{
+typedef struct _cfpcontext {
     struct _cfpcontext *down;
-    PyObject*   who;
-    PyObject*   activator;
-    PyObject*   third;
-    PyObject*   event;
+    PyObject   *who;
+    PyObject   *activator;
+    PyObject   *third;
+    PyObject   *event;
     char        message[1024];
     int         fix;
     int         event_code;
@@ -92,12 +91,13 @@ typedef struct _cfpcontext
 } CFPContext;
 
 extern f_plug_api gethook;
+
 extern CFPContext *context_stack;
+
 extern CFPContext *current_context;
 
 /* This structure is used to define one python-implemented crossfire command.*/
-typedef struct PythonCmdStruct
-{
+typedef struct PythonCmdStruct {
     char *name;    /* The name of the command, as known in the game.         */
     char *script;  /* The name of the script file to bind.                   */
     double speed;  /* The speed of the command execution.                    */

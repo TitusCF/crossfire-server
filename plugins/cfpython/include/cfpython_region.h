@@ -34,6 +34,7 @@ typedef struct {
     PyObject_HEAD
     region *reg;
 } Crossfire_Region;
+
 extern PyTypeObject Crossfire_RegionType;
 
 extern PyObject *Crossfire_Region_wrap(region *what);

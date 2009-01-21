@@ -30,53 +30,45 @@
 #include <cfpython.h>
 #include <cfpython_archetype_private.h>
 
-static PyObject *Crossfire_Archetype_GetName(Crossfire_Archetype *whoptr, void *closure)
-{
-	return Py_BuildValue("s",cf_archetype_get_name(whoptr->arch));
+static PyObject *Crossfire_Archetype_GetName(Crossfire_Archetype *whoptr, void *closure) {
+    return Py_BuildValue("s", cf_archetype_get_name(whoptr->arch));
 }
 
-static PyObject *Crossfire_Archetype_GetNext(Crossfire_Archetype *who, void *closure)
-{
-	return Crossfire_Archetype_wrap(cf_archetype_get_next(who->arch));
+static PyObject *Crossfire_Archetype_GetNext(Crossfire_Archetype *who, void *closure) {
+    return Crossfire_Archetype_wrap(cf_archetype_get_next(who->arch));
 }
 
-static PyObject *Crossfire_Archetype_GetMore(Crossfire_Archetype *who, void *closure)
-{
-	return Crossfire_Archetype_wrap(cf_archetype_get_more(who->arch));
+static PyObject *Crossfire_Archetype_GetMore(Crossfire_Archetype *who, void *closure) {
+    return Crossfire_Archetype_wrap(cf_archetype_get_more(who->arch));
 }
 
-static PyObject *Crossfire_Archetype_GetHead(Crossfire_Archetype *who, void *closure)
-{
-	return Crossfire_Archetype_wrap(cf_archetype_get_head(who->arch));
+static PyObject *Crossfire_Archetype_GetHead(Crossfire_Archetype *who, void *closure) {
+    return Crossfire_Archetype_wrap(cf_archetype_get_head(who->arch));
 }
 
-static PyObject *Crossfire_Archetype_GetClone(Crossfire_Archetype *who, void *closure)
-{
-	return Crossfire_Object_wrap(cf_archetype_get_clone(who->arch));
+static PyObject *Crossfire_Archetype_GetClone(Crossfire_Archetype *who, void *closure) {
+    return Crossfire_Object_wrap(cf_archetype_get_clone(who->arch));
 }
 
-static PyObject *Crossfire_Archetype_GetNewObject(Crossfire_Archetype *who, PyObject *args)
-{
-	return Crossfire_Object_wrap(cf_create_object_by_name(cf_archetype_get_name(who->arch)));
+static PyObject *Crossfire_Archetype_GetNewObject(Crossfire_Archetype *who, PyObject *args) {
+    return Crossfire_Object_wrap(cf_create_object_by_name(cf_archetype_get_name(who->arch)));
 }
 
-PyObject *Crossfire_Archetype_wrap(archetype *what)
-{
+PyObject *Crossfire_Archetype_wrap(archetype *what) {
     Crossfire_Archetype *wrapper;
 
     /* return None if no object was to be wrapped */
-    if(what == NULL) {
+    if (what == NULL) {
         Py_INCREF(Py_None);
         return Py_None;
     }
 
     wrapper = PyObject_NEW(Crossfire_Archetype, &Crossfire_ArchetypeType);
-    if(wrapper != NULL)
+    if (wrapper != NULL)
         wrapper->arch = what;
     return (PyObject *)wrapper;
 }
 
-static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype *left, Crossfire_Archetype *right)
-{
-	return (left->arch < right->arch ? -1 : ( left->arch == right->arch ? 0 : 1) );
+static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype *left, Crossfire_Archetype *right) {
+    return (left->arch < right->arch ? -1 : (left->arch == right->arch ? 0 : 1));
 }

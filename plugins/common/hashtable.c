@@ -54,7 +54,7 @@ typedef UINT_PTR uintptr_t;
  *  - ptr_assoc** hash_table: Pointer to the hash table to initialise.
  */
 void init_ptr_assoc_table(ptr_assoc **hash_table) {
-    (void) memset((void *) hash_table, 0, PTR_ASSOC_TABLESIZE * sizeof(ptr_assoc *));
+    (void)memset((void *)hash_table, 0, PTR_ASSOC_TABLESIZE*sizeof(ptr_assoc *));
 }
 
 /*
@@ -67,7 +67,7 @@ void init_ptr_assoc_table(ptr_assoc **hash_table) {
  *  - int: The returned hash value.
  */
 static int hashptr(void *ptr) {
-    return (int)((uintptr_t)ptr % PTR_ASSOC_TABLESIZE);
+    return (int)((uintptr_t)ptr%PTR_ASSOC_TABLESIZE);
 }
 
 /*
@@ -81,7 +81,7 @@ static int hashptr(void *ptr) {
 static ptr_assoc *new_ptr_assoc(void *key, void *value) {
     ptr_assoc *assoc;
 
-    assoc = (ptr_assoc *) malloc(sizeof(ptr_assoc));
+    assoc = (ptr_assoc *)malloc(sizeof(ptr_assoc));
     assoc->previous = NULL;
     assoc->array = NULL;
     assoc->next = NULL;
@@ -106,8 +106,8 @@ void add_ptr_assoc(ptr_assoc **hash_table, void *key, void *value) {
 
     /* Is there an entry for that hash? */
     if (assoc) {
-	/* Simple case first: See if the first pointer matches. */
-	if (key != assoc->key) {
+        /* Simple case first: See if the first pointer matches. */
+        if (key != assoc->key) {
             /* Apparantly, a association with the same hash value has this
              * slot. We must see in the list if this perticular key has
              * been registered before.
@@ -133,15 +133,15 @@ void add_ptr_assoc(ptr_assoc **hash_table, void *key, void *value) {
                 new_assoc->previous = assoc;
                 return;
             }
-	}
-	return;
+        }
+        return;
     } else {
-	/* The string isn't registered, and the slot is empty. */
-	hash_table[ind] = new_ptr_assoc(key, value);
+        /* The string isn't registered, and the slot is empty. */
+        hash_table[ind] = new_ptr_assoc(key, value);
 
-	hash_table[ind]->array = &(hash_table[ind]);
+        hash_table[ind]->array = &(hash_table[ind]);
 
-	return;
+        return;
     }
 }
 
@@ -162,19 +162,19 @@ static ptr_assoc *find_ptr_assoc(ptr_assoc **hash_table, void *key) {
 
     /* Is there an entry for that hash? */
     if (assoc) {
-	/* Simple case first: Is the first key the right one? */
-	if (assoc->key == key) {
-	    return assoc;
-	} else {
-	    /* Recurse through the linked list, if there's one. */
-	    while (assoc->next) {
-		assoc = assoc->next;
-		if (assoc->key == key) {
-		    return assoc;
-		}
-	    }
-	    /* No match. Fall through. */
-	}
+        /* Simple case first: Is the first key the right one? */
+        if (assoc->key == key) {
+            return assoc;
+        } else {
+            /* Recurse through the linked list, if there's one. */
+            while (assoc->next) {
+                assoc = assoc->next;
+                if (assoc->key == key) {
+                    return assoc;
+                }
+            }
+            /* No match. Fall through. */
+        }
     }
     return NULL;
 }
@@ -189,6 +189,7 @@ static ptr_assoc *find_ptr_assoc(ptr_assoc **hash_table, void *key) {
  */
 void *find_assoc_value(ptr_assoc **hash_table, void *key) {
     ptr_assoc *assoc;
+
     assoc = find_ptr_assoc(hash_table, key);
     if (!assoc)
         return NULL;

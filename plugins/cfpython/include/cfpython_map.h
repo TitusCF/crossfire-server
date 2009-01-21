@@ -28,26 +28,28 @@
 /*****************************************************************************/
 #ifndef CFPYTHON_MAP_H
 #define CFPYTHON_MAP_H
+
 typedef struct {
     PyObject_HEAD
-            mapstruct *map;
-            int valid;
+    mapstruct *map;
+    int valid;
 } Crossfire_Map;
+
 extern PyTypeObject Crossfire_MapType;
 
-#define MAPEXISTCHECK(map) \
-    { \
+#define MAPEXISTCHECK(map) { \
     if (!(map) || ((map)->valid == 0)) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire map no longer exists"); \
         return NULL; \
-    } }
+    } \
+}
 
-#define MAPEXISTCHECK_INT(map) \
-    { \
+#define MAPEXISTCHECK_INT(map) { \
     if (!(map) || ((map)->valid == 0)) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire map no longer exists"); \
         return -1; \
-    } }
+    } \
+}
 
 extern PyObject *Crossfire_Map_wrap(mapstruct *what);
 

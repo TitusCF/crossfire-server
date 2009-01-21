@@ -85,6 +85,7 @@ static const house_zone_struct zones[] = {
  */
 static const house_zone_struct *get_map_zone(const mapstruct *map) {
     int zone;
+
     for (zone = 0; zones[zone].mappath != NULL; zone++) {
         if (strcmp(zones[zone].mappath, map->path) == 0)
             return &zones[zone];
@@ -126,11 +127,11 @@ static int get_exit_seed(const object *exit, const mapstruct *map) {
 
     snprintf(r, sizeof(r), "%s!%d,%d*%s", exit->arch->name, exit->x, exit->y, map->path);
 
-    len = strlen(r) - 1;
+    len = strlen(r)-1;
     while (len >= 0) {
-        seed ^= ((int)r[len]) << w;
+        seed ^= ((int)r[len])<<w;
         w += 8;
-        w = w % 32;
+        w = w%32;
         len--;
     }
 
@@ -176,6 +177,7 @@ static void add_exits_to_map(const mapstruct *map) {
     int x, y;
     object *item;
     const house_zone_struct *zone = get_map_zone(map);
+
     if (!zone)
         return;
 
@@ -199,10 +201,9 @@ static void add_exits_to_map(const mapstruct *map) {
  * @return
  * pointer to integer with value 0.
  */
-CF_PLUGIN void *cfrgh_globalEventListener(int *type, ...)
-{
+CF_PLUGIN void *cfrgh_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     mapstruct *map;
     int code;
 
@@ -211,12 +212,11 @@ CF_PLUGIN void *cfrgh_globalEventListener(int *type, ...)
 
     rv = 0;
 
-    switch(code)
-    {
-        case EVENT_MAPLOAD:
-            map = va_arg(args, mapstruct*);
-            add_exits_to_map(map);
-            break;
+    switch (code) {
+    case EVENT_MAPLOAD:
+        map = va_arg(args, mapstruct *);
+        add_exits_to_map(map);
+        break;
     }
     va_end(args);
 
@@ -243,8 +243,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
  * @return
  * 0.
  */
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
-{
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
@@ -259,8 +258,7 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
  * @return
  * NULL.
  */
-CF_PLUGIN void *getPluginProperty(int *type, ...)
-{
+CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
     int size;
@@ -270,13 +268,13 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     propname = va_arg(args, const char *);
 
     if (!strcmp(propname, "Identification")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_NAME);
         return NULL;
     } else if (!strcmp(propname, "FullName")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_VERSION);
@@ -295,8 +293,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
  * @return
  * -1.
  */
-CF_PLUGIN int runPluginCommand(object *op, char *params)
-{
+CF_PLUGIN int runPluginCommand(object *op, char *params) {
     return -1;
 }
 
@@ -305,11 +302,10 @@ CF_PLUGIN int runPluginCommand(object *op, char *params)
  * @return
  * 0.
  */
-CF_PLUGIN int postInitPlugin(void)
-{
+CF_PLUGIN int postInitPlugin(void) {
     cf_log(llevDebug, PLUGIN_VERSION " post init\n");
 
-    cf_system_register_global_event(EVENT_MAPLOAD,PLUGIN_NAME, cfrgh_globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, cfrgh_globalEventListener);
 
     return 0;
 }
@@ -319,8 +315,7 @@ CF_PLUGIN int postInitPlugin(void)
  * @return
  * 0.
  */
-CF_PLUGIN int closePlugin(void)
-{
+CF_PLUGIN int closePlugin(void) {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }

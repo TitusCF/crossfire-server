@@ -35,45 +35,40 @@
 #endif
 
 CFPContext *context_stack;
+
 CFPContext *current_context;
+
 static int current_command = -999;
 
-void initContextStack(void)
-{
+void initContextStack(void) {
     current_context = NULL;
     context_stack = NULL;
 }
 
-void pushContext(CFPContext *context)
-{
+void pushContext(CFPContext *context) {
     CFPContext *stack_context;
-    if (current_context == NULL)
-    {
+
+    if (current_context == NULL) {
         context_stack = context;
         context->down = NULL;
-    }
-    else
-    {
+    } else {
         context->down = current_context;
     }
     current_context = context;
 }
 
-CFPContext *popContext(void)
-{
+CFPContext *popContext(void) {
     CFPContext *oldcontext;
-    if (current_context != NULL)
-    {
+
+    if (current_context != NULL) {
         oldcontext = current_context;
         current_context = current_context->down;
         return oldcontext;
-    }
-    else
+    } else
         return NULL;
 }
 
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
-{
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);
 
     cf_log(llevDebug, PLUGIN_VERSION " init\n");
@@ -82,8 +77,7 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
     return 0;
 }
 
-CF_PLUGIN void *getPluginProperty(int *type, ...)
-{
+CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
     int i, size;
@@ -96,19 +90,19 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     if (!strcmp(propname, "command?")) {
         const char *cmdname;
         cmdname = va_arg(args, const char *);
-        rtn_cmd = va_arg(args, command_array_struct*);
+        rtn_cmd = va_arg(args, command_array_struct *);
         va_end(args);
 
         /** Check if plugin handles custom command */
         return NULL;
     } else if (!strcmp(propname, "Identification")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_NAME);
         return NULL;
     } else if (!strcmp(propname, "FullName")) {
-        buf = va_arg(args, char*);
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_VERSION);
@@ -118,40 +112,37 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object *op, char *params)
-{
+CF_PLUGIN int runPluginCommand(object *op, char *params) {
     return -1;
 }
 
-CF_PLUGIN int postInitPlugin(void)
-{
-    cf_log(llevDebug, PLUGIN_VERSION " post init\n");
+CF_PLUGIN int postInitPlugin(void) {
+    cf_log(llevDebug, PLUGIN_VERSION" post init\n");
     initContextStack();
     /* Pick the global events you want to monitor from this plugin */
-    /*
-    cf_system_register_global_event(EVENT_BORN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_CLOCK,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_CRASH,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_PLAYER_DEATH,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_GKILL,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGIN,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_LOGOUT,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPENTER,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPLEAVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MAPRESET,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_REMOVE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_SHOUT,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_TELL,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_MUZZLE,PLUGIN_NAME,globalEventListener);
-    cf_system_register_global_event(EVENT_KICK,PLUGIN_NAME,globalEventListener);
-    */
+/*
+    cf_system_register_global_event(EVENT_BORN, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_CLOCK, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_CRASH, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_PLAYER_DEATH, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_GKILL, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_LOGIN, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_LOGOUT, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_MAPENTER, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_MAPLEAVE, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_MAPRESET, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_REMOVE, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_SHOUT, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_TELL, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_MUZZLE, PLUGIN_NAME, globalEventListener);
+    cf_system_register_global_event(EVENT_KICK, PLUGIN_NAME, globalEventListener);
+*/
     return 0;
 }
 
-CF_PLUGIN void *globalEventListener(int *type, ...)
-{
+CF_PLUGIN void *globalEventListener(int *type, ...) {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     CFPContext *context;
     context = malloc(sizeof(CFPContext));
     char *buf;
@@ -163,83 +154,96 @@ CF_PLUGIN void *globalEventListener(int *type, ...)
     printf("****** Global event listener called ***********\n");
     printf("- Event code: %d\n", context->event_code);
 
-    context->message[0]=0;
+    context->message[0] = 0;
 
-    context->who         = NULL;
-    context->activator   = NULL;
-    context->third       = NULL;
-    context->event       = NULL;
+    context->who = NULL;
+    context->activator = NULL;
+    context->third = NULL;
+    context->event = NULL;
     rv = context->returnvalue = 0;
-    switch(context->event_code)
-    {
-        case EVENT_CRASH:
-            printf( "Unimplemented for now\n");
-            break;
-        case EVENT_BORN:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_PLAYER_DEATH:
-            context->who = va_arg(args, object*);
-            break;
-        case EVENT_GKILL:
-            context->who = va_arg(args, object*);
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_LOGIN:
-            pl = va_arg(args, player*);
-            context->activator = pl->ob;
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_LOGOUT:
-            pl = va_arg(args, player*);
-            context->activator = pl->ob;
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_REMOVE:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_SHOUT:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_MUZZLE:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_KICK:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_MAPENTER:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_MAPLEAVE:
-            context->activator = va_arg(args, object*);
-            break;
-        case EVENT_CLOCK:
-            break;
-        case EVENT_MAPRESET:
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            break;
-        case EVENT_TELL:
-            context->activator = va_arg(args, object*);
-            buf = va_arg(args, char*);
-            if (buf !=0)
-                strcpy(context->message,buf);
-            context->third = va_arg(args, object*);
-            break;
+    switch (context->event_code) {
+    case EVENT_CRASH:
+        printf("Unimplemented for now\n");
+        break;
+
+    case EVENT_BORN:
+        context->activator = va_arg(args, object *);
+        break;
+
+    case EVENT_PLAYER_DEATH:
+        context->who = va_arg(args, object *);
+        break;
+
+    case EVENT_GKILL:
+        context->who = va_arg(args, object *);
+        context->activator = va_arg(args, object *);
+        break;
+
+    case EVENT_LOGIN:
+        pl = va_arg(args, player *);
+        context->activator = pl->ob;
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_LOGOUT:
+        pl = va_arg(args, player *);
+        context->activator = pl->ob;
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_REMOVE:
+        context->activator = va_arg(args, object *);
+        break;
+
+    case EVENT_SHOUT:
+        context->activator = va_arg(args, object *);
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_MUZZLE:
+        context->activator = va_arg(args, object *);
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_KICK:
+        context->activator = va_arg(args, object *);
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_MAPENTER:
+        context->activator = va_arg(args, object *);
+        break;
+
+    case EVENT_MAPLEAVE:
+        context->activator = va_arg(args, object *);
+        break;
+
+    case EVENT_CLOCK:
+        break;
+
+    case EVENT_MAPRESET:
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        break;
+
+    case EVENT_TELL:
+        context->activator = va_arg(args, object *);
+        buf = va_arg(args, char *);
+        if (buf != 0)
+            strcpy(context->message, buf);
+        context->third = va_arg(args, object *);
+        break;
     }
     va_end(args);
     context->returnvalue = 0;
@@ -254,28 +258,27 @@ CF_PLUGIN void *globalEventListener(int *type, ...)
     return &rv;
 }
 
-CF_PLUGIN void *eventListener(int *type, ...)
-{
-    static int rv=0;
+CF_PLUGIN void *eventListener(int *type, ...) {
+    static int rv = 0;
     va_list args;
     char *buf;
     CFPContext *context;
 
     context = malloc(sizeof(CFPContext));
 
-    context->message[0]=0;
+    context->message[0] = 0;
 
-    va_start(args,type);
+    va_start(args, type);
 
-    context->who         = va_arg(args, object*);
-    context->activator   = va_arg(args, object*);
-    context->third       = va_arg(args, object*);
-    buf                  = va_arg(args, char*);
-    if (buf !=0)
-        strcpy(context->message,buf);
-    context->fix         = va_arg(args, int);
-    context->event       = va_arg(args, object*);
-    context->event_code  = context->event->subtype;
+    context->who = va_arg(args, object *);
+    context->activator = va_arg(args, object *);
+    context->third = va_arg(args, object *);
+    buf = va_arg(args, char *);
+    if (buf != 0)
+        strcpy(context->message, buf);
+    context->fix = va_arg(args, int);
+    context->event = va_arg(args, object *);
+    context->event_code = context->event->subtype;
     strncpy(context->options, context->event->name, sizeof(context->options));
     context->returnvalue = 0;
     va_end(args);
@@ -289,8 +292,7 @@ CF_PLUGIN void *eventListener(int *type, ...)
     return &rv;
 }
 
-CF_PLUGIN int   closePlugin(void)
-{
+CF_PLUGIN int closePlugin(void) {
     cf_log(llevDebug, PLUGIN_VERSION " closing\n");
     return 0;
 }

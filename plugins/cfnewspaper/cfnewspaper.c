@@ -36,11 +36,15 @@
 #include <sqlite3.h>
 
 f_plug_api gethook;
+
 f_plug_api registerGlobalEvent;
+
 f_plug_api unregisterGlobalEvent;
+
 f_plug_api reCmp;
 
 static sqlite3 *logger_database;
+
 static sqlite3 *newspaper_database;
 
 static void do_sql(const char *sql, sqlite3 *base) {
@@ -58,7 +62,7 @@ static void do_sql(const char *sql, sqlite3 *base) {
 }
 
 static int get_living_id(object *living) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id;
 
@@ -69,7 +73,7 @@ static int get_living_id(object *living) {
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
     /* printf("get_table: nrow = %d, ncolumn = %d\n", nrow, ncolumn); */
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into living(liv_name, liv_is_player, liv_level) values('%q', %d, %d)", living->name, living->type == PLAYER ? 1 : 0, living->level);
@@ -82,7 +86,7 @@ static int get_living_id(object *living) {
 }
 
 static int get_region_id(region *reg) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id;
 
@@ -93,7 +97,7 @@ static int get_region_id(region *reg) {
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into region(reg_name) values( '%q' )", reg->name);
@@ -106,7 +110,7 @@ static int get_region_id(region *reg) {
 }
 
 static int get_map_id(mapstruct *map) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id, reg_id;
     const char *path = map->path;
@@ -119,7 +123,7 @@ static int get_map_id(mapstruct *map) {
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", map->path, reg_id);
@@ -137,7 +141,7 @@ static void format_time(timeofday_t *tod, char *buffer, int size) {
 }
 
 static int get_time_id(timeofday_t *tod, int create) {
-    char** line;
+    char **line;
     char *sql;
     int nrow, ncolumn, id = 0;
     char date[50];
@@ -147,7 +151,7 @@ static int get_time_id(timeofday_t *tod, int create) {
     sql = sqlite3_mprintf("select time_id from time where time_time='%q'", date);
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
     if (nrow > 0)
-        id = atoi(line[ncolumn] );
+        id = atoi(line[ncolumn]);
     else if (create) {
         sqlite3_free(sql);
         sql = sqlite3_mprintf("insert into time(time_time) values( '%q' )", date);
@@ -162,37 +166,31 @@ static int get_time_id(timeofday_t *tod, int create) {
 static void read_parameters(void) {
 }
 
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr)
-{
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     cf_init_plugin(gethooksptr);
-
     cf_log(llevInfo, "%s init\n", PLUGIN_VERSION);
-
     return 0;
 }
 
-CF_PLUGIN void *getPluginProperty(int *type, ...)
-{
+CF_PLUGIN void *getPluginProperty(int *type, ...) {
     va_list args;
     const char *propname;
     int size;
     char *buf;
 
     va_start(args, type);
-    propname = va_arg(args, const char*);
+    propname = va_arg(args, const char *);
 
-    if (!strcmp(propname, "Identification"))
-    {
-        buf = va_arg(args, char*);
+    if (!strcmp(propname, "Identification")) {
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_NAME);
         return NULL;
     }
 
-    if (!strcmp(propname, "FullName"))
-    {
-        buf = va_arg(args, char*);
+    if (!strcmp(propname, "FullName")) {
+        buf = va_arg(args, char *);
         size = va_arg(args, int);
         va_end(args);
         snprintf(buf, size, PLUGIN_VERSION);
@@ -203,30 +201,26 @@ CF_PLUGIN void *getPluginProperty(int *type, ...)
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object *op, char *params)
-{
+CF_PLUGIN int runPluginCommand(object *op, char *params) {
     return -1;
 }
 
-CF_PLUGIN void *cfnewspaper_globalEventListener(int *type, ...)
-{
+CF_PLUGIN void *cfnewspaper_globalEventListener(int *type, ...) {
     va_list args;
-    static int rv=0;
+    static int rv = 0;
     int event_code;
 
     va_start(args, type);
     event_code = va_arg(args, int);
 
-    switch(event_code)
-    {
+    switch (event_code) {
     }
     va_end(args);
 
     return &rv;
 }
 
-CF_PLUGIN int postInitPlugin(void)
-{
+CF_PLUGIN int postInitPlugin(void) {
     char path[500];
     const char *dir;
 
@@ -285,7 +279,7 @@ static paper_properties *get_newspaper(const char *name) {
 static void news_cat(char *buffer, int size, const char *format, ...) {
     va_list args;
 
-    size -= strlen(buffer) - 1;
+    size -= strlen(buffer)-1;
     buffer += strlen(buffer);
 
     va_start(args, format);
@@ -295,7 +289,7 @@ static void news_cat(char *buffer, int size, const char *format, ...) {
 
 static void do_kills(char *buffer, int size, time_t start, time_t end, const char *reg,  kill_format *format) {
     char *sql;
-    char** results;
+    char **results;
     int deaths = 0;
     int nrow, ncolumn;
     int err;
@@ -343,12 +337,13 @@ static void do_region_kills(region *reg, char *buffer, int size, time_t start, t
     kill_format f;
     char where[50];
     int region_id;
+
     f.no_player_death = "No player died.";
     f.one_player_death = "Only one player died, May Fido(tm) Have Mercy.";
-    f.many_player_death ="Monsters were busy, %d players died.";
+    f.many_player_death = "Monsters were busy, %d players died.";
     f.no_monster_death = "No monster was killed, players were lazy around here.";
     f.one_monster_death = "One poor monster was killed.";
-    f.many_monster_death ="Players tried hard to kill monsters, with %d victims.";
+    f.many_monster_death = "Players tried hard to kill monsters, with %d victims.";
 
     region_id = get_region_id(reg);
     snprintf(where, 50, "and map_reg_id = %d", region_id);
@@ -364,12 +359,13 @@ static void do_region(region *reg, char *buffer, int size, time_t start, time_t 
 
 static void do_world_kills(char *buffer, int size, time_t start, time_t end) {
     kill_format f;
+
     f.no_player_death = "No player died at all.";
     f.one_player_death = "Only one player died in the whole world, May Fido(tm) Have Mercy.";
-    f.many_player_death ="Monsters all around the world were busy, %d players died.";
+    f.many_player_death = "Monsters all around the world were busy, %d players died.";
     f.no_monster_death = "No monster was killed at all, players must be tired!";
     f.one_monster_death = "One poor monster was killed in the whole, too bad for it.";
-    f.many_monster_death ="Bad day for monsters, with %d dead in their ranks.";
+    f.many_monster_death = "Bad day for monsters, with %d dead in their ranks.";
     do_kills(buffer, size, start, end, "", &f);
 }
 
@@ -382,7 +378,7 @@ static void do_world(char *buffer, int size, time_t start, time_t end) {
 static void get_newspaper_content(object *paper, paper_properties *properties, region *reg) {
     char contents[5000];
     char *sql;
-    char** results;
+    char **results;
     char date[50];
     int nrow, ncolumn;
     time_t start, end;
@@ -402,10 +398,10 @@ static void get_newspaper_content(object *paper, paper_properties *properties, r
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);
         sqlite3_free(msg);
     }
-    if (nrow > 1 && results[ncolumn + 1] != NULL) {
-        end = atol(results[ncolumn + 1]);
-        if (nrow > 1 && results[ncolumn + 2] != NULL)
-            start = atol(results[ncolumn + 2]);
+    if (nrow > 1 && results[ncolumn+1] != NULL) {
+        end = atol(results[ncolumn+1]);
+        if (nrow > 1 && results[ncolumn+2] != NULL)
+            start = atol(results[ncolumn+2]);
     }
 
     contents[0] = '\0';
@@ -419,9 +415,8 @@ static void get_newspaper_content(object *paper, paper_properties *properties, r
     cf_object_set_string_property(paper, CFAPI_OBJECT_PROP_MESSAGE, contents);
 }
 
-CF_PLUGIN void *eventListener(int *type, ...)
-{
-    static int rv=0;
+CF_PLUGIN void *eventListener(int *type, ...) {
+    static int rv = 0;
     va_list args;
     object *who;
     int event_code;
@@ -435,14 +430,14 @@ CF_PLUGIN void *eventListener(int *type, ...)
     region *reg;
 
     va_start(args, type);
-    who = va_arg(args, object*);
-    /*event_code = va_arg(args,int);*/
-    activator = va_arg(args, object*);
-    third = va_arg(args, object*);
-    buf = va_arg(args, char*);
+    who = va_arg(args, object *);
+    /*event_code = va_arg(args, int);*/
+    activator = va_arg(args, object *);
+    third = va_arg(args, object *);
+    buf = va_arg(args, char *);
     fix = va_arg(args, int);
-    /*buf = va_arg(args, char*);*/
-    event = va_arg(args, object*);
+    /*buf = va_arg(args, char *);*/
+    event = va_arg(args, object *);
     event_code = event->subtype;
 
     va_end(args);
@@ -458,7 +453,7 @@ CF_PLUGIN void *eventListener(int *type, ...)
     cf_object_set_string_property(newspaper, CFAPI_OBJECT_PROP_NAME_PLURAL, paper->name);
 
     if (activator->map)
-        reg = cf_map_get_region_property(activator->map,CFAPI_MAP_PROP_REGION);
+        reg = cf_map_get_region_property(activator->map, CFAPI_MAP_PROP_REGION);
     else
         reg = NULL;
 
@@ -469,8 +464,7 @@ CF_PLUGIN void *eventListener(int *type, ...)
     return &rv;
 }
 
-CF_PLUGIN int closePlugin(void)
-{
+CF_PLUGIN int closePlugin(void) {
     cf_log(llevInfo, "%s closing.", PLUGIN_VERSION);
     if (logger_database) {
         sqlite3_close(logger_database);

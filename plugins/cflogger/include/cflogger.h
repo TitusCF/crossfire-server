@@ -51,6 +51,6 @@
 
 #include <plugin_common.h>
 
-extern f_plug_api  gethook;
+extern f_plug_api gethook;
 
 #endif /* PLUGIN_TEMPLATE_H */
