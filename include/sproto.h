@@ -4,6 +4,7 @@ int use_alchemy(object *op);
 int transport_can_hold(const object *transport, const object *op, int nrof);
 int should_director_abort(object *op, object *victim);
 void handle_apply_yield(object *tmp);
+int set_object_face_main(object *op);
 int apply_container(object *op, object *sack);
 void do_learn_spell(object *op, object *spell, int special_prayer);
 void do_forget_spell(object *op, const char *spell);
@@ -18,7 +19,6 @@ void fix_auto_apply(mapstruct *m);
 void scroll_failure(object *op, int failure, int power);
 void apply_changes_to_player(object *pl, object *change);
 void legacy_apply_container(object *op, object *sack);
-int set_object_face_main(object *op);
 /* attack.c */
 void save_throw_object(object *op, int type, object *originator);
 int hit_map(object *op, int dir, int type, int full_hit);
@@ -32,6 +32,7 @@ void paralyze_living(object *op, object *hitter, int dam);
 /* ban.c */
 int checkbanned(const char *login, const char *host);
 /* build_map.c */
+void apply_builder_remove(object *pl, int dir);
 void apply_map_builder(object *pl, int dir);
 /* c_chat.c */
 int command_say(object *op, char *params);
@@ -310,6 +311,7 @@ void check_login(object *op);
 /* monster.c */
 object *check_enemy(object *npc, rv_vector *rv);
 object *find_nearest_living_creature(object *npc);
+int compute_path(object *source, object *target, int default_dir);
 int move_monster(object *op);
 void monster_check_apply(object *mon, object *item);
 void npc_call_help(object *op);
@@ -321,15 +323,14 @@ object *find_mon_throw_ob(object *op);
 int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 int stand_in_light(object *op);
 int can_see_enemy(object *op, object *enemy);
-int compute_path(object *source, object *target, int default_dir);
 /* move.c */
 int move_object(object *op, int dir);
 int move_ob(object *op, int dir, object *originator);
-int move_to(object *op, int x, int y);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator);
 int teleport(object *teleporter, uint8 tele_type, object *user);
 void recursive_roll(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
+int move_to(object *op, int x, int y);
 /* ob_methods.c */
 void init_ob_methods(void);
 /* ob_types.c */
@@ -375,6 +376,7 @@ object *find_key(object *pl, object *container, object *door);
 void move_player_attack(object *op, int dir);
 int move_player(object *op, int dir);
 int handle_newcs_player(object *op);
+void remove_unpaid_objects(object *op, object *env, int free_items);
 void do_some_living(object *op);
 void kill_player(object *op);
 void fix_weight(void);
@@ -389,7 +391,6 @@ int player_can_view(object *pl, object *op);
 int op_on_battleground(object *op, int *x, int *y, archetype **trophy);
 void dragon_ability_gain(object *who, int atnr, int level);
 void player_unready_range_ob(player *pl, object *ob);
-void remove_unpaid_objects(object *op, object *env, int free_items);
 /* plugins.c */
 int user_event(object *op, object *activator, object *third, const char *message, int fix);
 int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix);
@@ -489,6 +490,7 @@ void *cfapi_generate_random_map(int *type, ...);
 void *cfapi_object_user_event(int *type, ...);
 command_array_struct *find_plugin_command(char *cmd, object *op);
 int initPlugins(void);
+void cleanupPlugins(void);
 /* resurrection.c */
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg);
 void dead_player(object *op);

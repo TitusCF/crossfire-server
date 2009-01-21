@@ -1217,6 +1217,9 @@ void cleanup(void) {
 #ifdef MEMORY_DEBUG
     free_all_maps();
     free_style_maps();
+#endif
+    cleanupPlugins();
+#ifdef MEMORY_DEBUG
     free_all_archs();
     free_all_treasures();
     free_all_images();

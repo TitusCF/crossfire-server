@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/plugins.c, server/server.c: Run closePlugin() in the various plugins at
+  server shutdown. Previously it was only run when the wiz command plugout was
+  used. This change is needed to properly close the sqlite database handles in
+  cflogger and cfnewspaper.
+include/sproto.h: Run make proto in server/ to include the newly added
+  cleanupPlugins() in server/plugins.c. This caused some other changes, such as
+  reordering and adding some other functions.
+Arvid Norlander 2009-01-21
+
 server/plugins.c: Fix broken error checking in plugin loading code.
 Arvid Norlander 2009-01-21
 

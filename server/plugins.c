@@ -4567,3 +4567,27 @@ int initPlugins(void) {
     closedir(plugdir);
     return result;
 }
+
+/**
+ * Call closePlugin() on the various plugins, used at server shutdown.
+ */
+void cleanupPlugins(void) {
+    crossfire_plugin *cp;
+
+    if (!plugins_list)
+        return;
+
+    for (cp = plugins_list; cp != NULL;) {
+        crossfire_plugin *next = cp->next;
+        LOG(llevInfo, "----------------- Freeing: %s\n", cp->fullname);
+        if (cp->closefunc)
+            cp->closefunc();
+        /* Don't actually unload plugins, it makes backtraces for memory
+         * debugging (printed at exit) messed up. And it doesn't matter if we
+         * don't free it here. The OS will do it for us.
+         */
+        /* plugins_dlclose(cp->libptr); */
+        free(cp);
+        cp = next;
+    }
+}
