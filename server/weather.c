@@ -45,11 +45,11 @@ static void dawn_to_dusk(const timeofday_t *tod);
 /** How to alter darkness, based on time of day and season. */
 static const int season_timechange[5][HOURS_PER_DAY] = {
 /*    0  1  2  3  4  5  6  7  8  9 10 11 12 13 14  1  2  3  4  5  6  7  8  9 10 11 12 13 */
-    { 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
-    { 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0},
-    { 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
-    { 0, 0, 0, 0, 0,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0},
-    { 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0}
+    { 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 },
+    { 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0 },
+    { 0, 0, 0, 0, 0,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0 },
+    { 0, 0, 0, 0, 0, 0,-1,-1,-1,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0 }
 };
 
 /**
@@ -135,14 +135,14 @@ int similar_direction(int a, int b) {
         return 1;
 
     switch (a) {
-        case 1: if (b <= 2 || b == 8) return 1; break;
-        case 2: if (b > 0 && b < 4) return 1; break;
-        case 3: if (b > 1 && b < 5) return 1; break;
-        case 4: if (b > 2 && b < 6) return 1; break;
-        case 5: if (b > 3 && b < 7) return 1; break;
-        case 6: if (b > 4 && b < 8) return 1; break;
-        case 7: if (b > 5) return 1; break;
-        case 8: if (b > 6 || b == 1) return 1; break;
+    case 1: if (b <= 2 || b == 8) return 1; break;
+    case 2: if (b > 0 && b < 4) return 1; break;
+    case 3: if (b > 1 && b < 5) return 1; break;
+    case 4: if (b > 2 && b < 6) return 1; break;
+    case 5: if (b > 3 && b < 7) return 1; break;
+    case 6: if (b > 4 && b < 8) return 1; break;
+    case 7: if (b > 5) return 1; break;
+    case 8: if (b > 6 || b == 1) return 1; break;
     }
     return 0;
 }

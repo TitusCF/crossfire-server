@@ -37,8 +37,8 @@
 #endif
 #include <spells.h>
 
-static partylist * firstparty=NULL; /**< Keeps track of first party in list */
-static partylist * lastparty=NULL;  /**< Keeps track of last party in list */
+static partylist *firstparty = NULL; /**< Keeps track of first party in list */
+static partylist *lastparty = NULL;  /**< Keeps track of last party in list */
 
 /**
  * Simple wrapper to get ::firstparty.
@@ -73,8 +73,8 @@ partylist *form_party(object *op, const char *params) {
     }
     newparty = (partylist *)malloc(sizeof(partylist));
     newparty->partyname = strdup_local(params);
-    newparty->total_exp=0;
-    newparty->kills=0;
+    newparty->total_exp = 0;
+    newparty->kills = 0;
     newparty->passwd[0] = '\0';
     newparty->next = NULL;
     newparty->partyleader = strdup_local(op->name);
@@ -82,14 +82,14 @@ partylist *form_party(object *op, const char *params) {
                          "You have formed party: %s",
                          "You have formed party: %s",
                          newparty->partyname);
-    op->contr->party=newparty;
+    op->contr->party = newparty;
 
     if (lastparty) {
-        lastparty->next=newparty;
+        lastparty->next = newparty;
         lastparty = lastparty->next;
     } else {
-        firstparty=newparty;
-        lastparty=firstparty;
+        firstparty = newparty;
+        lastparty = firstparty;
     }
 
     return newparty;
@@ -108,44 +108,51 @@ void remove_party(partylist *target_party) {
     partylist *nextparty;
     player *pl;
 
-    if (firstparty==NULL) {
+    if (firstparty == NULL) {
         LOG(llevError, "remove_party(): I was asked to remove party %s, but no parties are defined\n",
             target_party->partyname);
         return;
     }
-    for (pl=first_player;pl!=NULL;pl=pl->next)
-        if (pl->party==target_party) pl->party=NULL;
+    for (pl = first_player; pl != NULL; pl = pl->next)
+        if (pl->party == target_party)
+            pl->party = NULL;
 
     /* special case-ism for parties at the beginning and end of the list */
-    if (target_party==firstparty) {
+    if (target_party == firstparty) {
         if (lastparty == target_party)
             lastparty = NULL;
-        firstparty=firstparty->next;
-        if (target_party->partyleader) free(target_party->partyleader);
-        if (target_party->partyname) free(target_party->partyname);
+        firstparty = firstparty->next;
+        if (target_party->partyleader)
+            free(target_party->partyleader);
+        if (target_party->partyname)
+            free(target_party->partyname);
         free(target_party);
         return;
     } else if (target_party == lastparty) {
-        for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty=tmpparty->next) {
-            if (tmpparty->next==target_party) {
-                lastparty=tmpparty;
-                if (target_party->partyleader) free(target_party->partyleader);
-                if (target_party->partyname) free(target_party->partyname);
+        for (tmpparty = firstparty; tmpparty->next != NULL; tmpparty = tmpparty->next) {
+            if (tmpparty->next == target_party) {
+                lastparty = tmpparty;
+                if (target_party->partyleader)
+                    free(target_party->partyleader);
+                if (target_party->partyname)
+                    free(target_party->partyname);
                 free(target_party);
-                lastparty->next=NULL;
+                lastparty->next = NULL;
                 return;
             }
         }
     }
-    for (tmpparty=firstparty;tmpparty->next!=NULL;tmpparty=tmpparty->next)
+    for (tmpparty = firstparty; tmpparty->next != NULL; tmpparty = tmpparty->next)
         if (tmpparty->next == target_party) {
-            previousparty=tmpparty;
-            nextparty=tmpparty->next->next;
+            previousparty = tmpparty;
+            nextparty = tmpparty->next->next;
             /* this should be safe, because we already dealt with the lastparty case */
 
-            previousparty->next=nextparty;
-            if (target_party->partyleader) free(target_party->partyleader);
-            if (target_party->partyname) free(target_party->partyname);
+            previousparty->next = nextparty;
+            if (target_party->partyleader)
+                free(target_party->partyleader);
+            if (target_party->partyname)
+                free(target_party->partyname);
             free(target_party);
             return;
         }
@@ -160,12 +167,14 @@ void obsolete_parties(void) {
     partylist *party;
     partylist *next = NULL;
 
-    if (!firstparty) return; /* we can't obsolete parties if there aren't any */
-    for (party=firstparty; party!=NULL; party=next) {
+    if (!firstparty)
+        return; /* we can't obsolete parties if there aren't any */
+    for (party = firstparty; party != NULL; party = next) {
         next = party->next;
-        player_count=0;
-        for (pl=first_player;pl!=NULL;pl=pl->next)
-            if (pl->party==party) player_count++;
+        player_count = 0;
+        for (pl = first_player; pl != NULL; pl = pl->next)
+            if (pl->party == party)
+                player_count++;
         if (player_count == 0)
             remove_party(party);
     }
@@ -185,23 +194,23 @@ void obsolete_parties(void) {
  * how much experience was gained.
  */
 void add_kill_to_party(partylist *party, const char *killer, const char *dead, long exp) {
-    int i,pos;
+    int i, pos;
 
-    if (party==NULL) return;
-    if (party->kills>=PARTY_KILL_LOG) {
-        pos=PARTY_KILL_LOG-1;
-        for (i=0;i<PARTY_KILL_LOG-1;i++)
-            memcpy(&(party->party_kills[i]),&(party->party_kills[i+1]),
-                   sizeof(party->party_kills[0]));
+    if (party == NULL)
+        return;
+    if (party->kills >= PARTY_KILL_LOG) {
+        pos = PARTY_KILL_LOG-1;
+        for (i = 0; i < PARTY_KILL_LOG-1; i++)
+            memcpy(&(party->party_kills[i]), &(party->party_kills[i+1]), sizeof(party->party_kills[0]));
     } else
-        pos=party->kills;
+        pos = party->kills;
     party->kills++;
-    party->total_exp+=exp;
-    party->party_kills[pos].exp=exp;
-    strncpy(party->party_kills[pos].killer,killer,MAX_NAME);
-    strncpy(party->party_kills[pos].dead,dead,MAX_NAME);
-    party->party_kills[pos].killer[MAX_NAME]=0;
-    party->party_kills[pos].dead[MAX_NAME]=0;
+    party->total_exp += exp;
+    party->party_kills[pos].exp = exp;
+    strncpy(party->party_kills[pos].killer, killer, MAX_NAME);
+    strncpy(party->party_kills[pos].dead, dead, MAX_NAME);
+    party->party_kills[pos].killer[MAX_NAME] = 0;
+    party->party_kills[pos].dead[MAX_NAME] = 0;
 }
 #endif
 
@@ -217,9 +226,10 @@ void add_kill_to_party(partylist *party, const char *killer, const char *dead, l
  */
 int confirm_party_password(object *op) {
     partylist *tmppartylist;
-    for (tmppartylist = firstparty; tmppartylist != NULL;tmppartylist = tmppartylist->next) {
+
+    for (tmppartylist = firstparty; tmppartylist != NULL; tmppartylist = tmppartylist->next) {
         if (!strcmp(op->contr->party_to_join->partyname, tmppartylist->partyname)) {
-            if (strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
+            if (strcmp(op->contr->write_buf+1, tmppartylist->passwd) == 0)
                 return 0;
             else
                 return 1;
@@ -239,13 +249,14 @@ void receive_party_password(object *op) {
     if (confirm_party_password(op) == 0) {
         partylist *joined_party = op->contr->party_to_join;
         char buf[MAX_BUF];
+
         if (op->contr->party != NULL) {
             snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, op->contr->party->partyname);
             send_party_message(op, buf);
         }
         op->contr->party = op->contr->party_to_join;
         op->contr->party_to_join = NULL;
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You have joined party: %s\n",
                              "You have joined party: %s\n",
                              joined_party->partyname);
@@ -254,7 +265,7 @@ void receive_party_password(object *op) {
         op->contr->state = ST_PLAYING;
         return;
     } else {
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You entered the wrong password", NULL);
         op->contr->party_to_join = NULL;
         op->contr->state = ST_PLAYING;
@@ -270,10 +281,11 @@ void receive_party_password(object *op) {
  * @param msg
  * message to send.
  */
-void send_party_message(object *op,char *msg) {
+void send_party_message(object *op, char *msg) {
     player *pl;
-    for (pl=first_player;pl!=NULL;pl=pl->next)
-        if (pl->ob->contr->party==op->contr->party && pl->ob!=op)
+
+    for (pl = first_player; pl != NULL; pl = pl->next)
+        if (pl->ob->contr->party == op->contr->party && pl->ob != op)
             draw_ext_info(NDI_WHITE, 0, pl->ob, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
                           msg, NULL);
 }
@@ -296,8 +308,8 @@ int command_gsay(object *op, char *params) {
         return 0;
     }
     strcpy(party_params, "say ");
-    strcat(party_params,params);
-    command_party(op,party_params);
+    strcat(party_params, params);
+    command_party(op, party_params);
     return 0;
 }
 
@@ -308,7 +320,7 @@ int command_gsay(object *op, char *params) {
  * player.
  */
 static void party_help(object *op) {
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_HELP,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_HELP,
                   "To form a party type: party form <partyname>. "
                   "To join a party type: party join <partyname> "
                   "If the party has a passwd, it will you prompt you for it. "
@@ -337,11 +349,11 @@ static void party_help(object *op) {
 int command_party(object *op, char *params) {
     char buf[MAX_BUF];
     partylist *tmpparty, *oldparty;  /* For iterating over linked list */
-    char * currentparty;   /* For iterating over linked list */
+    char *currentparty;   /* For iterating over linked list */
 
     if (params == NULL) {
-        if (op->contr->party==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        if (op->contr->party == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party. "
                           "For help try: party help", NULL);
         } else {
@@ -353,95 +365,106 @@ int command_party(object *op, char *params) {
         }
         return 1;
     }
-    if (strcmp(params, "help")==0) {
+    if (strcmp(params, "help") == 0) {
         party_help(op);
         return 1;
     }
 #ifdef PARTY_KILL_LOG
-    if (!strncmp(params, "kills",5)) {
-        int i,max;
+    if (!strncmp(params, "kills", 5)) {
+        int i, max;
         char chr;
         char buffer[80];
         float exp;
 
-        if (op->contr->party==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        if (op->contr->party == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party.", NULL);
             return 1;
         }
         tmpparty = op->contr->party;
         if (!tmpparty->kills) {
-            draw_ext_info(NDI_UNIQUE,0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                           "You haven't killed anything yet.", NULL);
             return 1;
         }
-        max=tmpparty->kills-1;
-        if (max>PARTY_KILL_LOG-1) max=PARTY_KILL_LOG-1;
-        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        max = tmpparty->kills-1;
+        if (max > PARTY_KILL_LOG-1)
+            max = PARTY_KILL_LOG-1;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       "[fixed]Killed          |          Killer|     Exp\n----------------+----------------+--------"
                       "Killed          |          Killer|     Exp\n----------------+----------------+--------",
                       NULL);
 
 
-        for (i=0;i<=max;i++) {
-            exp=tmpparty->party_kills[i].exp;
-            chr=' ';
-            if (exp>1000000) { exp/=1000000; chr='M'; }
-            else
-                if (exp>1000) { exp/=1000; chr='k'; }
+        for (i = 0; i <= max; i++) {
+            exp = tmpparty->party_kills[i].exp;
+            chr = ' ';
+            if (exp > 1000000) {
+                exp /= 1000000;
+                chr = 'M';
+            } else if (exp > 1000) {
+                exp /= 1000;
+                chr = 'k';
+            }
 
-            draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "[fixed]%16s|%16s|%6.1f%c",
                                  "%16s|%16s|%6.1f%c",
                                  tmpparty->party_kills[i].dead,
-                                 tmpparty->party_kills[i].killer,exp,chr);
+                                 tmpparty->party_kills[i].killer, exp, chr);
 
         }
-        exp=tmpparty->total_exp;
-        chr=' ';
-        if (exp>1000000) { exp/=1000000; chr='M'; }
-        else
-            if (exp>1000) { exp/=1000; chr='k'; }
+        exp = tmpparty->total_exp;
+        chr = ' ';
+        if (exp > 1000000) {
+            exp /= 1000000;
+            chr = 'M';
+        } else if (exp > 1000) {
+            exp /= 1000;
+            chr = 'k';
+        }
 
-        draw_ext_info(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       "[fixed]----------------+----------------+--------",
                       "----------------+----------------+--------");
-        draw_ext_info_format(NDI_UNIQUE,0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
-                             "Totals: %d kills, %.1f%c exp",tmpparty->kills,
-                             "Totals: %d kills, %.1f%c exp",tmpparty->kills,
-                             exp,chr);
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+                             "Totals: %d kills, %.1f%c exp", tmpparty->kills,
+                             "Totals: %d kills, %.1f%c exp", tmpparty->kills,
+                             exp, chr);
         return 1;
     }
 #endif /* PARTY_KILL_LOG */
-    if (strncmp(params, "say ", 4)==0) {
-        if (op->contr->party==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+    if (strncmp(params, "say ", 4) == 0) {
+        if (op->contr->party == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party.", NULL);
             return 1;
         }
         params += 4;
         currentparty = op->contr->party->partyname;
-        snprintf(buf,MAX_BUF-1, "<%s> %s says: %s", currentparty, op->name, params);
-        send_party_message(op,buf);
-        draw_ext_info_format(NDI_WHITE, 0,op,MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
+        snprintf(buf, MAX_BUF-1, "<%s> %s says: %s", currentparty, op->name, params);
+        send_party_message(op, buf);
+        draw_ext_info_format(NDI_WHITE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_PARTY,
                              "<%s> You say: %s",
                              "<%s> You say: %s",
                              currentparty, params);
         return 1;
     }
 
-    if (strncmp(params, "form ",5) == 0) {
+    if (strncmp(params, "form ", 5) == 0) {
         int player_count;
         player *pl;
 
         params += 5;
-        if (op->contr->party) oldparty = op->contr->party;
-        else oldparty = NULL;
+        if (op->contr->party)
+            oldparty = op->contr->party;
+        else
+            oldparty = NULL;
 
         if (firstparty) {
-            for (tmpparty = firstparty; tmpparty != NULL;tmpparty = tmpparty->next) {
+            for (tmpparty = firstparty; tmpparty != NULL; tmpparty = tmpparty->next) {
                 if (!strcmp(tmpparty->partyname, params)) {
-                    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                          "The party %s already exists, pick another name",
                                          "The party %s already exists, pick another name",
                                          params);
@@ -456,10 +479,11 @@ int command_party(object *op, char *params) {
          * The player might have previously been a member of a party, if so, he will be leaving
          * it, so check if there are any other members and if not, delete the party
          */
-        player_count=0;
+        player_count = 0;
         if (oldparty) {
-            for (pl=first_player;pl->next!=NULL;pl=pl->next) {
-                if (pl->party==oldparty) player_count++;
+            for (pl = first_player; pl->next != NULL; pl = pl->next) {
+                if (pl->party == oldparty)
+                    player_count++;
             }
             if (player_count == 0)
                 remove_party(oldparty);
@@ -467,9 +491,9 @@ int command_party(object *op, char *params) {
         return 0;
     } /* form */
 
-    if (strcmp(params, "leave")==0) {
-        if (op->contr->party==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+    if (strcmp(params, "leave") == 0) {
+        if (op->contr->party == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party.", NULL);
             return 1;
         }
@@ -478,14 +502,14 @@ int command_party(object *op, char *params) {
                              "You leave party %s.",
                              "You leave party %s.",
                              currentparty);
-        snprintf(buf, sizeof(buf), "%s leaves party %s.",op->name,currentparty);
-        send_party_message(op,buf);
-        op->contr->party=NULL;
+        snprintf(buf, sizeof(buf), "%s leaves party %s.", op->name, currentparty);
+        send_party_message(op, buf);
+        op->contr->party = NULL;
         return 1;
     }
-    if (strcmp(params, "who")==0) {
-        if (op->contr->party==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+    if (strcmp(params, "who") == 0) {
+        if (op->contr->party == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of any party.", NULL);
             return 1;
         }
@@ -499,13 +523,13 @@ int command_party(object *op, char *params) {
         params += 7;
 
         if (op->contr->party == NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "You are not a member of a party", NULL);
             return 1;
         }
 
         if (strlen(params) > 8) {
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "The password must not exceed 8 characters", NULL);
             return 1;
         }
@@ -513,15 +537,15 @@ int command_party(object *op, char *params) {
         tmplist = firstparty;
         while (tmplist != NULL) {
             if (tmplist == op->contr->party) {
-                strcpy(tmplist->passwd,params);
+                strcpy(tmplist->passwd, params);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                      "The password for party %s is %s",
                                      "The password for party %s is %s",
-                                     tmplist->partyname,tmplist->passwd);
+                                     tmplist->partyname, tmplist->passwd);
 
                 snprintf(buf, MAX_BUF, "Password for party %s is now %s, changed by %s",
                          tmplist->partyname, tmplist->passwd, op->name);
-                send_party_message(op,buf);
+                send_party_message(op, buf);
                 return 0;
             }
             tmplist = tmplist->next;
@@ -530,22 +554,22 @@ int command_party(object *op, char *params) {
     } /* passwd */
 
     if (strcmp(params, "list") == 0) {
-        partylist * tmplist;
+        partylist *tmplist;
 
         tmplist = firstparty;
 
         if (firstparty == NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There are no parties active right now", NULL);
             return 1;
         }
 
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       "[fixed]Party name                       Leader\n----------                       ------",
                       "Party name                       Leader\n----------                       ------");
 
         while (tmplist != NULL) {
-            draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                                  "[fixed]%-32s %s",
                                  "%-32s %s",
                                  tmplist->partyname, tmplist->partyleader);
@@ -554,8 +578,7 @@ int command_party(object *op, char *params) {
         return 0;
     } /* list */
 
-    if (strncmp(params,"join ",5) == 0) {
-
+    if (strncmp(params, "join ", 5) == 0) {
         params += 5;
 
         /* Can't join a party cause non exist */
@@ -569,8 +592,8 @@ int command_party(object *op, char *params) {
 
         /* Special case if thier is only one party */
         if (firstparty->next == NULL) {
-            if (strcmp(firstparty->partyname,params) != 0) {
-                draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            if (strcmp(firstparty->partyname, params) != 0) {
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                      "Party: %s does not exist. You must form it first",
                                      "Party: %s does not exist. You must form it first",
                                      params);
@@ -594,7 +617,7 @@ int command_party(object *op, char *params) {
                     send_party_message(op, buf);
                     return 0;
                 } else {
-                    get_party_password(op,firstparty);
+                    get_party_password(op, firstparty);
                     return 0;
                 }
             }
@@ -602,7 +625,7 @@ int command_party(object *op, char *params) {
 
         tmpparty = firstparty;
         while (tmpparty != NULL) {
-            if (strcmp(tmpparty->partyname,params) == 0) {
+            if (strcmp(tmpparty->partyname, params) == 0) {
                 if (op->contr->party == tmpparty) {
                     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                          "You are already a member of party: %s",
@@ -632,7 +655,7 @@ int command_party(object *op, char *params) {
                 tmpparty = tmpparty->next;
         }
 
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Party %s does not exist.  You must form it first.",
                              "Party %s does not exist.  You must form it first.",
                              params);
@@ -662,6 +685,7 @@ static const char *rejoin_modes[] = {
  */
 int command_party_rejoin(object *op, char *params) {
     int mode;
+
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "party rejoin: %s", NULL, rejoin_modes[op->contr->rejoin_party]);

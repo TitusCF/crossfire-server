@@ -81,14 +81,14 @@ DIR *opendir(const char *dir) {
     long handle;
     int index;
 
-    filespec = malloc(strlen(dir) + 2 + 1);
+    filespec = malloc(strlen(dir)+2+1);
     strcpy(filespec, dir);
-    index = strlen(filespec) - 1;
+    index = strlen(filespec)-1;
     if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
         filespec[index] = '\0';
     strcat(filespec, "/*");
 
-    dp = (DIR *) malloc(sizeof(DIR));
+    dp = (DIR *)malloc(sizeof(DIR));
     dp->offset = 0;
     dp->finished = 0;
     dp->dir = strdup(dir);
@@ -113,7 +113,7 @@ DIR *opendir(const char *dir) {
  * @return
  * next file/directory, NULL if end reached.
  */
-struct dirent *readdir(DIR * dp) {
+struct dirent *readdir(DIR *dp) {
     if (!dp || dp->finished)
         return NULL;
 
@@ -132,7 +132,7 @@ struct dirent *readdir(DIR * dp) {
     dp->dent.d_name[_MAX_FNAME] = '\0';
     dp->dent.d_ino = 1;
     /* reclen is used as meaning the length of the whole record */
-    dp->dent.d_reclen = strlen(dp->dent.d_name) + sizeof(char) + sizeof(dp->dent.d_ino) + sizeof(dp->dent.d_reclen) + sizeof(dp->dent.d_off);
+    dp->dent.d_reclen = strlen(dp->dent.d_name)+sizeof(char)+sizeof(dp->dent.d_ino)+sizeof(dp->dent.d_reclen)+sizeof(dp->dent.d_off);
     dp->dent.d_off = dp->offset;
 
     return &(dp->dent);
@@ -146,7 +146,7 @@ struct dirent *readdir(DIR * dp) {
  * @return
  * 0.
  */
-int closedir(DIR * dp) {
+int closedir(DIR *dp) {
     if (!dp)
         return 0;
     _findclose(dp->handle);
@@ -174,9 +174,9 @@ void rewinddir(DIR *dir_Info) {
     dir_Info->offset = 0;
     dir_Info->finished = 0;
 
-    filespec = malloc(strlen(dir_Info->dir) + 2 + 1);
+    filespec = malloc(strlen(dir_Info->dir)+2+1);
     strcpy(filespec, dir_Info->dir);
-    index = strlen(filespec) - 1;
+    index = strlen(filespec)-1;
     if (index >= 0 && (filespec[index] == '/' || filespec[index] == '\\'))
         filespec[index] = '\0';
     strcat(filespec, "/*");
@@ -218,9 +218,9 @@ SERVICE_STATUS_HANDLE m_ServiceStatusHandle;
  * Registers the server to the service manager.
  * @sa service_unregister().
  */
-void service_register( ) {
+void service_register() {
     char strDir[1024];
-    HANDLE schSCManager,schService;
+    HANDLE schSCManager, schService;
     char *strDescription = SERVICE_DESCRIPTION;
 
     GetModuleFileName(NULL, strDir, 1024);
@@ -229,23 +229,23 @@ void service_register( ) {
     schSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 
     if (schSCManager == NULL) {
-        printf( "openscmanager failed" );
+        printf("openscmanager failed");
         exit(1);
     }
 
     schService = CreateService(schSCManager,
         SERVICE_NAME,
-        SERVICE_DISPLAY,           // service name to display
-        SERVICE_ALL_ACCESS,        // desired access
-        SERVICE_WIN32_OWN_PROCESS, // service type
-        SERVICE_DEMAND_START,      // start type
-        SERVICE_ERROR_NORMAL,      // error control type
-        strDir,                    // service's binary
-        NULL,                      // no load ordering group
-        NULL,                      // no tag identifier
-        NULL,                      // no dependencies
-        NULL,                      // LocalSystem account
-        NULL);                     // no password
+        SERVICE_DISPLAY,           /* service name to display */
+        SERVICE_ALL_ACCESS,        /* desired access */
+        SERVICE_WIN32_OWN_PROCESS, /* service type */
+        SERVICE_DEMAND_START,      /* start type */
+        SERVICE_ERROR_NORMAL,      /* error control type */
+        strDir,                    /* service's binary */
+        NULL,                      /* no load ordering group */
+        NULL,                      /* no tag identifier */
+        NULL,                      /* no dependencies */
+        NULL,                      /* LocalSystem account */
+        NULL);                     /* no password */
 
     if (schService == NULL) {
         printf("createservice failed");
@@ -263,18 +263,18 @@ void service_register( ) {
  * Removes the Crossfire service from the service manager.
  * @sa service_register().
  */
-void service_unregister( ) {
+void service_unregister() {
     HANDLE schSCManager;
     SC_HANDLE hService;
 
-    schSCManager = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
+    schSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 
     if (schSCManager == NULL) {
         printf("open failed");
         exit(1);
     }
 
-    hService=OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
+    hService = OpenService(schSCManager, SERVICE_NAME, SERVICE_ALL_ACCESS);
 
     if (hService == NULL) {
         printf("openservice failed");
@@ -306,36 +306,36 @@ void service_unregister( ) {
  * service operation, like pause/start/stop.
  */
 void WINAPI ServiceCtrlHandler(DWORD Opcode) {
-    switch(Opcode) {
-        case SERVICE_CONTROL_PAUSE:
-            m_ServiceStatus.dwCurrentState = SERVICE_PAUSED;
-            break;
+    switch (Opcode) {
+    case SERVICE_CONTROL_PAUSE:
+        m_ServiceStatus.dwCurrentState = SERVICE_PAUSED;
+        break;
 
-        case SERVICE_CONTROL_CONTINUE:
-            m_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
-            break;
+    case SERVICE_CONTROL_CONTINUE:
+        m_ServiceStatus.dwCurrentState = SERVICE_RUNNING;
+        break;
 
-        case SERVICE_CONTROL_STOP:
-            m_ServiceStatus.dwWin32ExitCode = 0;
-            m_ServiceStatus.dwCurrentState  = SERVICE_STOPPED;
-            m_ServiceStatus.dwCheckPoint    = 0;
-            m_ServiceStatus.dwWaitHint      = 0;
+    case SERVICE_CONTROL_STOP:
+        m_ServiceStatus.dwWin32ExitCode = 0;
+        m_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
+        m_ServiceStatus.dwCheckPoint = 0;
+        m_ServiceStatus.dwWaitHint = 0;
 
-            SetServiceStatus (m_ServiceStatusHandle,&m_ServiceStatus);
+        SetServiceStatus(m_ServiceStatusHandle, &m_ServiceStatus);
 
-            bRunning = 0;
+        bRunning = 0;
 
-            LOG(llevInfo, "Service stopped.\n");
+        LOG(llevInfo, "Service stopped.\n");
 
-            break;
+        break;
 
-        case SERVICE_CONTROL_INTERROGATE:
-            break;
+    case SERVICE_CONTROL_INTERROGATE:
+        break;
     }
     return;
 }
 
-extern int main(int argc, char** argv);
+extern int main(int argc, char **argv);
 
 /**
  * Main service entrypoint.
@@ -370,7 +370,7 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv) {
     m_ServiceStatus.dwCurrentState       = SERVICE_RUNNING;
     m_ServiceStatus.dwCheckPoint         = 0;
     m_ServiceStatus.dwWaitHint           = 0;
-    SetServiceStatus (m_ServiceStatusHandle, &m_ServiceStatus);
+    SetServiceStatus(m_ServiceStatusHandle, &m_ServiceStatus);
 
     bRunning = 1;
     main(0, NULL);
@@ -382,7 +382,10 @@ void WINAPI ServiceMain(DWORD argc, LPTSTR *argv) {
  * Service entry point.
  */
 void service_handle() {
-    SERVICE_TABLE_ENTRY DispatchTable[] = {{SERVICE_NAME, ServiceMain}, {NULL, NULL}};
+    SERVICE_TABLE_ENTRY DispatchTable[] = {
+        { SERVICE_NAME, ServiceMain },
+        { NULL, NULL }
+    };
     StartServiceCtrlDispatcher(DispatchTable);
     exit(0);
 }

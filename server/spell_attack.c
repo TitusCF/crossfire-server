@@ -265,7 +265,7 @@ void check_bullet(object *op) {
         if (QUERY_FLAG(tmp, FLAG_ALIVE)) {
             tmp_tag = tmp->count;
             dam = hit_player(tmp, op->stats.dam, op, op->attacktype, 1);
-            if (was_destroyed(op, op_tag) || ! was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0) {
+            if (was_destroyed(op, op_tag) || !was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0) {
                 if (!QUERY_FLAG(op, FLAG_REMOVED)) {
                     remove_ob(op);
                     free_object(op);
@@ -1083,17 +1083,17 @@ int mood_change(object *op, object *caster, object *spell) {
                     continue;
             } else {   /* spell->attacktype */
                 /*
-                  Spell has no attacktype (charm&such), so we'll have a specific saving:
-                  * if spell level < monster level, no go
-                  * else, chance of effect = 20+min(50, 2*(spell level-monster level))
-
-                  The chance will then be in the range [20-70] percent, not too bad.
-
-                  This is required to fix the 'charm monster' abuse, where a player level 1 can
-                  charm a level 125 monster...
-
-                  Ryo, august 14th
-                */
+                 * Spell has no attacktype (charm&such), so we'll have a specific saving:
+                 * if spell level < monster level, no go
+                 * else, chance of effect = 20+min(50, 2*(spell level-monster level))
+                 *
+                 * The chance will then be in the range [20-70] percent, not too bad.
+                 *
+                 * This is required to fix the 'charm monster' abuse, where a player level 1 can
+                 * charm a level 125 monster...
+                 *
+                 * Ryo, august 14th
+                 */
                 if (head->level > level)
                     continue;
                 if (random_roll(0, 100, caster, PREFER_LOW) >= (20+MIN(50, 2*(level-head->level))))
@@ -1227,7 +1227,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
     int dam, mflags;
     mapstruct *m;
 
-    dam = spell->stats.dam+ SP_level_dam_adjust(caster, spell);
+    dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
 
     if (!dir) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR, "In what direction?", NULL);
@@ -1251,7 +1251,7 @@ int cast_light(object *op, object *caster, object *spell, int dir) {
                 /* oky doky. got a target monster. Lets make a blinding attack */
                 if (target->head)
                     target = target->head;
-                (void) hit_player(target, dam, op, spell->attacktype, 1);
+                (void)hit_player(target, dam, op, spell->attacktype, 1);
                 return 1; /* one success only! */
             }
     }

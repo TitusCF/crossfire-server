@@ -53,39 +53,130 @@ static void fatal_signal(int make_core);
 /** Filename when in daemon mode. */
 static char default_daemon_log[] = "logfile";
 
-static void set_logfile(char *val) { settings.logfilename=val; }
-static void call_version(void) { version(NULL); exit(0); }
-static void showscores(void) { display_high_score(NULL,9999,NULL); exit(0); }
-static void set_debug(void) { settings.debug=llevDebug; }
-static void unset_debug(void) { settings.debug=llevInfo; }
-static void set_mondebug(void) { settings.debug=llevMonster; }
-static void set_dumpmon1(void) {settings.dumpvalues=1; }
-static void set_dumpmon2(void) {settings.dumpvalues=2; }
-static void set_dumpmon3(void) {settings.dumpvalues=3; }
-static void set_dumpmon4(void) {settings.dumpvalues=4; }
-static void set_dumpmon5(void) {settings.dumpvalues=5; }
-static void set_dumpmon6(void) {settings.dumpvalues=6; }
-static void set_dumpmon7(void) {settings.dumpvalues=7; }
-static void set_dumpmon8(void) {settings.dumpvalues=8; }
-static void set_dumpmon9(void) {settings.dumpvalues=9; }
-static void set_dumpmont(char *name) {settings.dumpvalues=10; settings.dumparg=name; }
-static void set_daemon(void) {settings.daemonmode=1; if (settings.logfilename[0] == '\0') {settings.logfilename=default_daemon_log;}}
-static void set_datadir(char *path) { settings.datadir=path; }
-static void set_confdir(char *path) { settings.confdir=path; }
-static void set_localdir(char *path) { settings.localdir=path; }
-static void set_mapdir(char *path) { settings.mapdir=path; }
-static void set_archetypes(char *path) { settings.archetypes=path; }
-static void set_regions(char *path) { settings.regions=path; }
-static void set_treasures(char *path) { settings.treasures=path; }
-static void set_uniquedir(char *path) { settings.uniquedir=path; }
-static void set_templatedir(char *path) { settings.templatedir=path; }
-static void set_playerdir(char *path) { settings.playerdir=path; }
-static void set_tmpdir(char *path) { settings.tmpdir=path; }
+static void set_logfile(char *val) {
+    settings.logfilename = val;
+}
+
+static void call_version(void) {
+    version(NULL);
+    exit(0);
+}
+
+static void showscores(void) {
+    display_high_score(NULL, 9999, NULL);
+    exit(0);
+}
+
+static void set_debug(void) {
+    settings.debug = llevDebug;
+}
+
+static void unset_debug(void) {
+    settings.debug = llevInfo;
+}
+
+static void set_mondebug(void) {
+    settings.debug = llevMonster;
+}
+
+static void set_dumpmon1(void) {
+    settings.dumpvalues = 1;
+}
+
+static void set_dumpmon2(void) {
+    settings.dumpvalues = 2;
+}
+
+static void set_dumpmon3(void) {
+    settings.dumpvalues = 3;
+}
+
+static void set_dumpmon4(void) {
+    settings.dumpvalues = 4;
+}
+
+static void set_dumpmon5(void) {
+    settings.dumpvalues = 5;
+}
+
+static void set_dumpmon6(void) {
+    settings.dumpvalues = 6;
+}
+
+static void set_dumpmon7(void) {
+    settings.dumpvalues = 7;
+}
+
+static void set_dumpmon8(void) {
+    settings.dumpvalues = 8;
+}
+
+static void set_dumpmon9(void) {
+    settings.dumpvalues = 9;
+}
+
+static void set_dumpmont(char *name) {
+    settings.dumpvalues = 10;
+    settings.dumparg = name;
+}
+
+static void set_daemon(void) {
+    settings.daemonmode = 1;
+    if (settings.logfilename[0] == '\0') {
+        settings.logfilename = default_daemon_log;
+    }
+}
+
+static void set_datadir(char *path) {
+    settings.datadir = path;
+}
+
+static void set_confdir(char *path) {
+    settings.confdir = path;
+}
+
+static void set_localdir(char *path) {
+    settings.localdir = path;
+}
+
+static void set_mapdir(char *path) {
+    settings.mapdir = path;
+}
+
+static void set_archetypes(char *path) {
+    settings.archetypes = path;
+}
+
+static void set_regions(char *path) {
+    settings.regions = path;
+}
+
+static void set_treasures(char *path) {
+    settings.treasures = path;
+}
+
+static void set_uniquedir(char *path) {
+    settings.uniquedir = path;
+}
+
+static void set_templatedir(char *path) {
+    settings.templatedir = path;
+}
+
+static void set_playerdir(char *path) {
+    settings.playerdir = path;
+}
+
+static void set_tmpdir(char *path) {
+    settings.tmpdir = path;
+}
+
 static void free_races(void);
+
 static void free_materials(void);
 
 static void showscoresparm(char *data) {
-    display_high_score(NULL,9999,data);
+    display_high_score(NULL, 9999, data);
     exit(0);
 }
 
@@ -96,10 +187,11 @@ static void showscoresparm(char *data) {
  * port to use. Must be a valid one, between 1 and 32765 inclusive.
  */
 static void set_csport(char *val) {
-    settings.csport=atoi(val);
+    settings.csport = atoi(val);
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
-    if (settings.csport<=0 || settings.csport>32765 ||
-        (settings.csport<1024 && getuid()!=0)) {
+    if (settings.csport <= 0
+    || settings.csport > 32765
+    || (settings.csport < 1024 && getuid() != 0)) {
         LOG(llevError, "%d is an invalid csport number.\n", settings.csport);
         exit(1);
     }
@@ -113,12 +205,12 @@ static void set_csport(char *val) {
  */
 struct Command_Line_Options {
     const char *cmd_option; /**< How it is called on the command line. */
-    uint8   num_args;     /**< Number or args it takes. */
-    uint8   pass;           /**< What pass this should be processed on. @todo describe passes :) */
-    void (*func)();      /**< function to call when we match this.
-        * if num_args is true, than that gets passed
-        * to the function, otherwise nothing is passed
-        */
+    uint8 num_args  ;       /**< Number or args it takes. */
+    uint8 pass;             /**< What pass this should be processed on. @todo describe passes :) */
+    void (*func)();         /**< function to call when we match this.
+                             * if num_args is true, than that gets passed
+                             * to the function, otherwise nothing is passed
+                             */
 };
 
 /**
@@ -130,62 +222,60 @@ struct Command_Line_Options {
  * pass system very easy, and it is very easy to add in new options.
  */
 struct Command_Line_Options options[] = {
-
     /** Pass 1 functions - Stuff that can/should be called before we actually
      * initialize any data.
      */
-    {"-h", 0, 1, help},
+    { "-h", 0, 1, help },
     /* Honor -help also, since it is somewhat common */
-    {"-help", 0, 1, help},
-    {"-v", 0, 1, call_version},
-    {"-d", 0, 1, set_debug},
-    {"+d", 0, 1, unset_debug},
-    {"-mon", 0, 1, set_mondebug},
-    {"-data",1,1, set_datadir},
-    {"-conf",1,1, set_confdir},
-    {"-local",1,1, set_localdir},
-    {"-maps", 1, 1, set_mapdir},
-    {"-arch", 1, 1, set_archetypes},
-    {"-regions", 1, 1, set_regions},
-    {"-playerdir", 1, 1, set_playerdir},
-    {"-treasures", 1, 1, set_treasures},
-    {"-uniquedir", 1, 1, set_uniquedir},
-    {"-templatedir", 1, 1, set_templatedir},
-    {"-tmpdir", 1, 1, set_tmpdir},
-    {"-log", 1, 1, set_logfile},
-    {"-detach", 0, 1, set_daemon},
+    { "-help", 0, 1, help },
+    { "-v", 0, 1, call_version },
+    { "-d", 0, 1, set_debug },
+    { "+d", 0, 1, unset_debug },
+    { "-mon", 0, 1, set_mondebug },
+    { "-data", 1, 1, set_datadir },
+    { "-conf", 1, 1, set_confdir },
+    { "-local", 1, 1, set_localdir },
+    { "-maps", 1, 1, set_mapdir },
+    { "-arch", 1, 1, set_archetypes },
+    { "-regions", 1, 1, set_regions },
+    { "-playerdir", 1, 1, set_playerdir },
+    { "-treasures", 1, 1, set_treasures },
+    { "-uniquedir", 1, 1, set_uniquedir },
+    { "-templatedir", 1, 1, set_templatedir },
+    { "-tmpdir", 1, 1, set_tmpdir },
+    { "-log", 1, 1, set_logfile },
+    { "-detach", 0, 1, set_daemon },
 
 #ifdef WIN32
     /* Windows service stuff */
-    {"-regsrv", 0, 1, service_register},
-    {"-unregsrv", 0, 1, service_unregister},
-    {"-srv", 0, 1, service_handle},
+    { "-regsrv", 0, 1, service_register },
+    { "-unregsrv", 0, 1, service_unregister },
+    { "-srv", 0, 1, service_handle },
 #endif
 
     /** Pass 2 functions.  Most of these could probably be in pass 1,
      * as they don't require much of anything to bet set up.
      */
-    {"-csport", 1, 2, set_csport},
+    { "-csport", 1, 2, set_csport },
 
     /** Start of pass 3 information. In theory, by pass 3, all data paths
      * and defaults should have been set up.
      */
-    {"-o", 0, 3, compile_info},
-    {"-m", 0, 3, set_dumpmon1},
-    {"-m2", 0, 3, set_dumpmon2},
-    {"-m3", 0, 3, set_dumpmon3},
-    {"-m4", 0, 3, set_dumpmon4},
-    {"-m5", 0, 3, set_dumpmon5},
-    {"-m6", 0, 3, set_dumpmon6},
-    {"-m7", 0, 3, set_dumpmon7},
-    {"-m8", 0, 3, set_dumpmon8},
-    {"-m9", 0, 3, set_dumpmon9},
-    {"-mt", 1, 3, set_dumpmont},
-    {"-mexp", 0, 3, dump_experience},
-    {"-s", 0, 3, showscores},
-    {"-score", 1, 3, showscoresparm}
+    { "-o", 0, 3, compile_info },
+    { "-m", 0, 3, set_dumpmon1 },
+    { "-m2", 0, 3, set_dumpmon2 },
+    { "-m3", 0, 3, set_dumpmon3 },
+    { "-m4", 0, 3, set_dumpmon4 },
+    { "-m5", 0, 3, set_dumpmon5 },
+    { "-m6", 0, 3, set_dumpmon6 },
+    { "-m7", 0, 3, set_dumpmon7 },
+    { "-m8", 0, 3, set_dumpmon8 },
+    { "-m9", 0, 3, set_dumpmon9 },
+    { "-mt", 1, 3, set_dumpmont },
+    { "-mexp", 0, 3, dump_experience },
+    { "-s", 0, 3, showscores },
+    { "-score", 1, 3, showscoresparm }
 };
-
 
 /**
  * Parse command line arguments.
@@ -203,10 +293,10 @@ struct Command_Line_Options options[] = {
  */
 static void parse_args(int argc, char *argv[], int pass) {
     size_t i;
-    int on_arg=1;
+    int on_arg = 1;
 
-    while (on_arg<argc) {
-        for (i=0; i<sizeof(options)/sizeof(struct Command_Line_Options); i++) {
+    while (on_arg < argc) {
+        for (i = 0; i < sizeof(options)/sizeof(struct Command_Line_Options); i++) {
             if (!strcmp(options[i].cmd_option, argv[on_arg])) {
                 /* Found a matching option, but should not be processed on
                  * this pass.  Just skip over it
@@ -216,15 +306,15 @@ static void parse_args(int argc, char *argv[], int pass) {
                     break;
                 }
                 if (options[i].num_args) {
-                    if ((on_arg+options[i].num_args)>=argc) {
-                        fprintf(stderr,"%s requires an argument.\n", options[i].cmd_option);
+                    if ((on_arg+options[i].num_args) >= argc) {
+                        fprintf(stderr, "%s requires an argument.\n", options[i].cmd_option);
                         exit(1);
                     } else {
-                        if (options[i].num_args==1)
+                        if (options[i].num_args == 1)
                             options[i].func(argv[on_arg+1]);
-                        if (options[i].num_args==2)
-                            options[i].func(argv[on_arg+1],argv[on_arg+2]);
-                        on_arg +=options[i].num_args+1;
+                        if (options[i].num_args == 2)
+                            options[i].func(argv[on_arg+1], argv[on_arg+2]);
+                        on_arg += options[i].num_args+1;
                     }
                 } else { /* takes no args */
                     options[i].func();
@@ -233,8 +323,8 @@ static void parse_args(int argc, char *argv[], int pass) {
                 break;
             }
         }
-        if (i==sizeof(options)/sizeof(struct Command_Line_Options)) {
-            fprintf(stderr,"Unknown option: %s\n", argv[on_arg]);
+        if (i == sizeof(options)/sizeof(struct Command_Line_Options)) {
+            fprintf(stderr, "Unknown option: %s\n", argv[on_arg]);
             usage();
             exit(1);
         }
@@ -261,7 +351,7 @@ static materialtype_t *get_empty_mat(void) {
         fatal(OUT_OF_MEMORY);
     mt->name = NULL;
     mt->description = NULL;
-    for (i=0; i < NROFATTACKS; i++) {
+    for (i = 0; i < NROFATTACKS; i++) {
         mt->save[i] = 0;
         mt->mod[i] = 0;
     }
@@ -300,12 +390,12 @@ static void load_materials(void) {
     mt = get_empty_mat();
     materialt = mt;
     while (fgets(buf, MAX_BUF, fp) != NULL) {
-        if (*buf=='#')
+        if (*buf == '#')
             continue;
-        if ((cp=strchr(buf, '\n'))!=NULL)
-            *cp='\0';
-        cp=buf;
-        while (*cp==' ') /* Skip blanks */
+        if ((cp = strchr(buf, '\n')) != NULL)
+            *cp = '\0';
+        cp = buf;
+        while (*cp == ' ') /* Skip blanks */
             cp++;
         if (!strncmp(cp, "name", 4)) {
             /* clean up the previous entry */
@@ -315,32 +405,32 @@ static void load_materials(void) {
                 mt = mt->next;
             }
             mt->next = get_empty_mat();
-            mt->name = add_string(strchr(cp, ' ') + 1);
+            mt->name = add_string(strchr(cp, ' ')+1);
         } else if (!strncmp(cp, "description", 11)) {
-            mt->description = add_string(strchr(cp, ' ') + 1);
+            mt->description = add_string(strchr(cp, ' ')+1);
         } else if (sscanf(cp, "material %d", &value)) {
             mt->material = value;
         } else if (!strncmp(cp, "saves", 5)) {
-            cp = strchr(cp, ' ') + 1;
-            for (i=0; i < NROFATTACKS; i++) {
+            cp = strchr(cp, ' ')+1;
+            for (i = 0; i < NROFATTACKS; i++) {
                 if (cp == NULL) {
                     mt->save[i] = 0;
                     continue;
                 }
-                if ((next=strchr(cp,',')) != NULL)
+                if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
                 sscanf(cp, "%d", &value);
                 mt->save[i] = (sint8)value;
                 cp = next;
             }
         } else if (!strncmp(cp, "mods", 4)) {
-            cp = strchr(cp, ' ') + 1;
-            for (i=0; i < NROFATTACKS; i++) {
+            cp = strchr(cp, ' ')+1;
+            for (i = 0; i < NROFATTACKS; i++) {
                 if (cp == NULL) {
                     mt->save[i] = 0;
                     continue;
                 }
-                if ((next=strchr(cp,',')) != NULL)
+                if ((next = strchr(cp, ',')) != NULL)
                     *(next++) = '\0';
                 sscanf(cp, "%d", &value);
                 mt->mod[i] = (sint8)value;
@@ -353,7 +443,7 @@ static void load_materials(void) {
         } else if (sscanf(cp, "magic %d\n", &value)) {
             mt->magic = (sint8)value;
         } else if (sscanf(cp, "damage %d\n", &value)) {
-            mt->damage= (sint8)value;
+            mt->damage = (sint8)value;
         } else if (sscanf(cp, "wc %d\n", &value)) {
             mt->wc = (sint8)value;
         } else if (sscanf(cp, "ac %d\n", &value)) {
@@ -380,6 +470,7 @@ static void load_materials(void) {
  */
 static void free_materials(void) {
     materialtype_t *next;
+
     while (materialt) {
         next = materialt->next;
         free(materialt);
@@ -394,310 +485,287 @@ static void free_materials(void) {
  * information, having it here probably makes more sense.
  */
 static void load_settings(void) {
-    char buf[MAX_BUF],*cp;
-    int has_val,comp;
-    FILE    *fp;
+    char buf[MAX_BUF], *cp;
+    int has_val, comp;
+    FILE *fp;
 
-    snprintf(buf, sizeof(buf), "%s/settings",settings.confdir);
+    snprintf(buf, sizeof(buf), "%s/settings", settings.confdir);
 
     /* We don't require a settings file at current time, but down the road,
      * there will probably be so many values that not having a settings file
      * will not be a good thing.
      */
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
-        LOG(llevError,"Warning: No settings file found\n");
+        LOG(llevError, "Warning: No settings file found\n");
         return;
     }
     while (fgets(buf, MAX_BUF-1, fp) != NULL) {
-        if (buf[0] == '#') continue;
+        if (buf[0] == '#')
+            continue;
         /* eliminate newline */
-        if ((cp=strrchr(buf,'\n'))!=NULL) *cp='\0';
+        if ((cp = strrchr(buf, '\n')) != NULL)
+            *cp = '\0';
 
         /* Skip over empty lines */
-        if (buf[0] == 0) continue;
+        if (buf[0] == 0)
+            continue;
 
         /* Skip all the spaces and set them to nulls.  If not space,
          * set cp to "" to make strcpy's and the like easier down below.
          */
-        if ((cp = strchr(buf,' '))!=NULL) {
-            while (*cp==' ') *cp++=0;
-            has_val=1;
+        if ((cp = strchr(buf, ' ')) != NULL) {
+            while (*cp == ' ')
+                *cp++ = 0;
+            has_val = 1;
         } else {
-            cp="";
-            has_val=0;
+            cp = "";
+            has_val = 0;
         }
 
-        if (!strcasecmp(buf,"metaserver_notification")) {
-            if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
-                settings.meta_on=TRUE;
-            } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
-                settings.meta_on=FALSE;
+        if (!strcasecmp(buf, "metaserver_notification")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.meta_on = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.meta_on = FALSE;
             } else {
-                LOG(llevError,"load_settings: Unknown value for metaserver_notification: %s\n",
-                    cp);
+                LOG(llevError, "load_settings: Unknown value for metaserver_notification: %s\n", cp);
             }
-        } else if (!strcasecmp(buf,"metaserver_server")) {
-            if (has_val) strcpy(settings.meta_server, cp);
+        } else if (!strcasecmp(buf, "metaserver_server")) {
+            if (has_val)
+                strcpy(settings.meta_server, cp);
             else
-                LOG(llevError,"load_settings: metaserver_server must have a value.\n");
-        } else if (!strcasecmp(buf,"motd")) {
+                LOG(llevError, "load_settings: metaserver_server must have a value.\n");
+        } else if (!strcasecmp(buf, "motd")) {
             if (has_val)
                 strcpy(settings.motd, cp);
             else
-                LOG(llevError,"load_settings: motd must have a value.\n");
-        } else if (!strcasecmp(buf,"dm_mail")) {
+                LOG(llevError, "load_settings: motd must have a value.\n");
+        } else if (!strcasecmp(buf, "dm_mail")) {
             if (has_val)
                 strcpy(settings.dm_mail, cp);
             else
-                LOG(llevError,"load_settings: dm_mail must have a value.\n");
-        } else if (!strcasecmp(buf,"metaserver_host")) {
-            if (has_val) strcpy(settings.meta_host, cp);
+                LOG(llevError, "load_settings: dm_mail must have a value.\n");
+        } else if (!strcasecmp(buf, "metaserver_host")) {
+            if (has_val)
+                strcpy(settings.meta_host, cp);
             else
-                LOG(llevError,"load_settings: metaserver_host must have a value.\n");
-        } else if (!strcasecmp(buf,"port")) {
+                LOG(llevError, "load_settings: metaserver_host must have a value.\n");
+        } else if (!strcasecmp(buf, "port")) {
             set_csport(cp);
-        } else if (!strcasecmp(buf,"metaserver_port")) {
+        } else if (!strcasecmp(buf, "metaserver_port")) {
             int port = atoi(cp);
 
-            if (port<1 || port>65535)
-                LOG(llevError,"load_settings: metaserver_port must be between 1 and 65535, %d is invalid\n",
-                    port);
-            else settings.meta_port = port;
-        } else if (!strcasecmp(buf,"metaserver_comment")) {
+            if (port < 1 || port > 65535)
+                LOG(llevError, "load_settings: metaserver_port must be between 1 and 65535, %d is invalid\n", port);
+            else
+                settings.meta_port = port;
+        } else if (!strcasecmp(buf, "metaserver_comment")) {
             strcpy(settings.meta_comment, cp);
         } else if (!strcasecmp(buf, "worldmapstartx")) {
             int size = atoi(cp);
 
             if (size < 0)
-                LOG(llevError, "load_settings: worldmapstartx must be at least "
-                    "0, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmapstartx must be at least 0, %d is invalid\n", size);
             else
                 settings.worldmapstartx = size;
         } else if (!strcasecmp(buf, "worldmapstarty")) {
             int size = atoi(cp);
 
             if (size < 0)
-                LOG(llevError, "load_settings: worldmapstarty must be at least "
-                    "0, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmapstarty must be at least 0, %d is invalid\n", size);
             else
                 settings.worldmapstarty = size;
         } else if (!strcasecmp(buf, "worldmaptilesx")) {
             int size = atoi(cp);
 
             if (size < 1)
-                LOG(llevError, "load_settings: worldmaptilesx must be greater "
-                    "than 1, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmaptilesx must be greater than 1, %d is invalid\n", size);
             else
                 settings.worldmaptilesx = size;
         } else if (!strcasecmp(buf, "worldmaptilesy")) {
             int size = atoi(cp);
 
             if (size < 1)
-                LOG(llevError, "load_settings: worldmaptilesy must be greater "
-                    "than 1, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmaptilesy must be greater than 1, %d is invalid\n", size);
             else
                 settings.worldmaptilesy = size;
         } else if (!strcasecmp(buf, "worldmaptilesizex")) {
             int size = atoi(cp);
 
             if (size < 1)
-                LOG(llevError, "load_settings: worldmaptilesizex must be "
-                    "greater than 1, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmaptilesizex must be greater than 1, %d is invalid\n", size);
             else
                 settings.worldmaptilesizex = size;
         } else if (!strcasecmp(buf, "worldmaptilesizey")) {
             int size = atoi(cp);
 
             if (size < 1)
-                LOG(llevError, "load_settings: worldmaptilesizey must be "
-                    "greater than 1, %d is invalid\n", size);
+                LOG(llevError, "load_settings: worldmaptilesizey must be greater than 1, %d is invalid\n", size);
             else
                 settings.worldmaptilesizey = size;
         } else if (!strcasecmp(buf, "fastclock")) {
             int lev = atoi(cp);
 
             if (lev < 0)
-                LOG(llevError, "load_settings: fastclock must be at least 0"
-                    ", %d is invalid\n", lev);
+                LOG(llevError, "load_settings: fastclock must be at least 0, %d is invalid\n", lev);
             else
                 settings.fastclock = lev;
         } else if (!strcasecmp(buf, "not_permadeth")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.not_permadeth=TRUE;
+                settings.not_permadeth = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.not_permadeth=FALSE;
+                settings.not_permadeth = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for not_permadeth"
-                    ": %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for not_permadeth: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "resurrection")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.resurrection=TRUE;
+                settings.resurrection = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.resurrection=FALSE;
+                settings.resurrection = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for resurrection"
-                    ": %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for resurrection: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "set_title")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.set_title=TRUE;
+                settings.set_title = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.set_title=FALSE;
+                settings.set_title = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for set_title"
-                    ": %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for set_title: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "search_items")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.search_items=TRUE;
+                settings.search_items = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.search_items=FALSE;
+                settings.search_items = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for search_items"
-                    ": %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for search_items: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "spell_encumbrance")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.spell_encumbrance=TRUE;
+                settings.spell_encumbrance = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.spell_encumbrance=FALSE;
+                settings.spell_encumbrance = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "spell_encumbrance: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for spell_encumbrance: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "spell_failure_effects")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.spell_failure_effects=TRUE;
+                settings.spell_failure_effects = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.spell_failure_effects=FALSE;
+                settings.spell_failure_effects = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "spell_failure_effects: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for spell_failure_effects: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "casting_time")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.casting_time=TRUE;
+                settings.casting_time = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.casting_time=FALSE;
+                settings.casting_time = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "casting_time: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for casting_time: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "real_wiz")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.real_wiz=TRUE;
+                settings.real_wiz = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.real_wiz=FALSE;
+                settings.real_wiz = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "real_wiz: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for real_wiz: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "recycle_tmp_maps")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.recycle_tmp_maps=TRUE;
+                settings.recycle_tmp_maps = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.recycle_tmp_maps=FALSE;
+                settings.recycle_tmp_maps = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "recycle_tmp_maps: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for recycle_tmp_maps: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "explore_mode")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.explore_mode=TRUE;
+                settings.explore_mode = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.explore_mode=FALSE;
+                settings.explore_mode = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "explore_mode: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for explore_mode: %s\n", cp);
             }
-        } else if (!strcasecmp(buf,"who_format")) {
+        } else if (!strcasecmp(buf, "who_format")) {
             if (has_val)
                 strcpy(settings.who_format, cp);
-        } else if (!strcasecmp(buf,"who_wiz_format")) {
+        } else if (!strcasecmp(buf, "who_wiz_format")) {
             if (has_val)
                 strcpy(settings.who_wiz_format, cp);
         } else if (!strcasecmp(buf, "spellpoint_level_depend")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.spellpoint_level_depend=TRUE;
+                settings.spellpoint_level_depend = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.spellpoint_level_depend=FALSE;
+                settings.spellpoint_level_depend = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "spellpoint_level_depend: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for spellpoint_level_depend: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "stat_loss_on_death")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.stat_loss_on_death=TRUE;
+                settings.stat_loss_on_death = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.stat_loss_on_death=FALSE;
+                settings.stat_loss_on_death = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "stat_loss_on_death: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for stat_loss_on_death: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "use_permanent_experience")) {
-            LOG(llevError, "use_permanent_experience is deprecated, use"
-                "permenent_experience_percentage instead\n");
+            LOG(llevError, "use_permanent_experience is deprecated, usepermenent_experience_percentage instead\n");
         } else if (!strcasecmp(buf, "permanent_experience_percentage")) {
             int val = atoi(cp);
-            if (val < 0 || val >100)
-                LOG(llevError, "load_settings: permenent_experience_percentage"
-                    "must be between 0 and 100, %d is invalid\n", val);
+            if (val < 0 || val > 100)
+                LOG(llevError, "load_settings: permenent_experience_percentage must be between 0 and 100, %d is invalid\n", val);
             else
                 settings.permanent_exp_ratio = val;
         } else if (!strcasecmp(buf, "death_penalty_percentage")) {
             int val = atoi(cp);
-            if (val < 0 || val >100)
-                LOG(llevError, "load_settings: death_penalty_percentage"
-                    "must be between 0 and 100, %d is invalid\n", val);
+            if (val < 0 || val > 100)
+                LOG(llevError, "load_settings: death_penalty_percentage must be between 0 and 100, %d is invalid\n", val);
             else
                 settings.death_penalty_ratio = val;
         } else if (!strcasecmp(buf, "death_penalty_levels")) {
             int val = atoi(cp);
             if (val < 0 || val > 255)
-                LOG(llevError, "load_settings: death_penalty_levels"
-                    "can not be negative, %d is invalid\n", val);
+                LOG(llevError, "load_settings: death_penalty_levels can not be negative, %d is invalid\n", val);
             else
                 settings.death_penalty_level = val;
         } else if (!strcasecmp(buf, "balanced_stat_loss")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.balanced_stat_loss=TRUE;
+                settings.balanced_stat_loss = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.balanced_stat_loss=FALSE;
+                settings.balanced_stat_loss = FALSE;
             } else {
-                LOG(llevError, "load_settings: Unknown value for "
-                    "balanced_stat_loss: %s\n", cp);
+                LOG(llevError, "load_settings: Unknown value for balanced_stat_loss: %s\n", cp);
             }
-        } else if (!strcasecmp(buf,"simple_exp")) {
-            if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
-                settings.simple_exp=TRUE;
-            } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
-                settings.simple_exp=FALSE;
+        } else if (!strcasecmp(buf, "simple_exp")) {
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                settings.simple_exp = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                settings.simple_exp = FALSE;
             } else {
-                LOG(llevError,"load_settings: Unknown value for simple_exp: %s\n",
-                    cp);
+                LOG(llevError, "load_settings: Unknown value for simple_exp: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "item_power_factor")) {
             float tmp = atof(cp);
             if (tmp < 0)
-                LOG(llevError, "load_settings: item_power_factor must be a positive number (%f < 0)\n",
-                    tmp);
+                LOG(llevError, "load_settings: item_power_factor must be a positive number (%f < 0)\n", tmp);
             else
                 settings.item_power_factor = tmp;
         } else if (!strcasecmp(buf, "pk_luck_penalty")) {
             sint16 val = atoi(cp);
 
-            if (val < -100 || val >100)
-                LOG(llevError, "load_settings: pk_luck_penalty must be between -100 and 100"
-                    ", %d is invalid\n", val);
+            if (val < -100 || val > 100)
+                LOG(llevError, "load_settings: pk_luck_penalty must be between -100 and 100, %d is invalid\n", val);
             else
                 settings.pk_luck_penalty = val;
         } else if (!strcasecmp(buf, "set_friendly_fire")) {
             int val = atoi(cp);
 
-            if (val < 1 || val >100)
-                LOG(llevError, "load_settings: set_friendly_fire must be between 1 an 100"
-                    ", %d is invalid\n", val);
+            if (val < 1 || val > 100)
+                LOG(llevError, "load_settings: set_friendly_fire must be between 1 an 100, %d is invalid\n", val);
             else
                 settings.set_friendly_fire = val;
         } else if (!strcasecmp(buf, "armor_max_enchant")) {
@@ -714,9 +782,9 @@ static void load_settings(void) {
                 settings.armor_weight_reduction = wr;
         } else if (!strcasecmp(buf, "armor_weight_linear")) {
             if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
-                settings.armor_weight_linear=TRUE;
+                settings.armor_weight_linear = TRUE;
             } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
-                settings.armor_weight_linear=FALSE;
+                settings.armor_weight_linear = FALSE;
             } else {
                 LOG(llevError, "load_settings: unknown value for armor_weight_linear: %s\n", cp);
             }
@@ -800,7 +868,7 @@ static void load_settings(void) {
             free(settings.log_timestamp_format);
             settings.log_timestamp_format = strdup_local(cp);
         } else {
-            LOG(llevError,"Unknown value in settings file: %s\n", buf);
+            LOG(llevError, "Unknown value in settings file: %s\n", buf);
         }
     }
     close_and_delete(fp, comp);
@@ -813,23 +881,21 @@ static void load_settings(void) {
     * have stayed blank. Since this probably isn't what is wanted, we will check if
     * new formats have been specified, and if not we will use the old defaults.
     */
-    if (!strcmp(settings.who_format,""))
+    if (!strcmp(settings.who_format, ""))
         strcpy(settings.who_format, "%N_%T%t%h%d%b%n<%m>");
-    if (!strcmp(settings.who_wiz_format,""))
+    if (!strcmp(settings.who_wiz_format, ""))
         strcpy(settings.who_wiz_format, "%N_%T%t%h%d%b%nLevel %l <%m>(@%i)(%c)");
 }
-
 
 /**
  * This is the main server initialisation function.
  *
  * Called only once, when starting the program.
  */
-
 void init(int argc, char **argv) {
 
-    init_done=0;  /* Must be done before init_signal() */
-    logfile=stderr;
+    init_done = 0;  /* Must be done before init_signal() */
+    logfile = stderr;
     parse_args(argc, argv, 1); /* First arg pass - right now it does
      * nothing, but in future specifying the
      * LibDir in this pass would be reasonable*/
@@ -838,13 +904,13 @@ void init(int argc, char **argv) {
     load_settings(); /* Load the settings file */
     load_materials();
     parse_args(argc, argv, 2);
-    fprintf(logfile,"Welcome to CrossFire, v%s\n",FULL_VERSION);
-    fprintf(logfile,"Copyright (C) 1994 Mark Wedel.\n");
-    fprintf(logfile,"Copyright (C) 1992 Frank Tore Johansen.\n");
+    fprintf(logfile, "Welcome to CrossFire, v%s\n", FULL_VERSION);
+    fprintf(logfile, "Copyright (C) 1994 Mark Wedel.\n");
+    fprintf(logfile, "Copyright (C) 1992 Frank Tore Johansen.\n");
 
     if (strcmp(settings.dm_mail, "") != 0) {
-        fprintf(logfile,"Maintained locally by: %s\n", settings.dm_mail);
-        fprintf(logfile,"Questions and bugs should be mailed to above address.\n");
+        fprintf(logfile, "Maintained locally by: %s\n", settings.dm_mail);
+        fprintf(logfile, "Questions and bugs should be mailed to above address.\n");
     }
     SRANDOM(time(NULL));
 
@@ -868,7 +934,7 @@ void init(int argc, char **argv) {
     metaserver_init();
     metaserver2_init();
     reset_sleep();
-    init_done=1;
+    init_done = 1;
 }
 
 /**
@@ -882,8 +948,7 @@ void free_server(void) {
 }
 
 static void usage(void) {
-    (void) fprintf(logfile,
-                   "Usage: crossfire [-h] [-<flags>]...\n");
+    (void)fprintf(logfile, "Usage: crossfire [-h] [-<flags>]...\n");
 }
 
 static void help(void) {
@@ -940,35 +1005,44 @@ static void init_beforeplay(void) {
     init_formulae();  /* If not called before, reads formulae from file */
 
     switch (settings.dumpvalues) {
-        case 1:
-            print_monsters();
-            cleanup();
-        case 2:
-            dump_abilities();
-            cleanup();
-        case 3:
-            dump_artifacts();
-            cleanup();
-        case 4:
-            dump_spells();
-            cleanup();
-        case 5:
-            cleanup();
-        case 6:
-            dump_races();
-            cleanup();
-        case 7:
-            dump_alchemy();
-            cleanup();
-        case 8:
-            dump_gods();
-            cleanup();
-        case 9:
-            dump_alchemy_costs();
-            cleanup();
-        case 10:
-            dump_monster_treasure(settings.dumparg);
-            cleanup();
+    case 1:
+        print_monsters();
+        cleanup();
+
+    case 2:
+        dump_abilities();
+        cleanup();
+
+    case 3:
+        dump_artifacts();
+        cleanup();
+
+    case 4:
+        dump_spells();
+        cleanup();
+
+    case 5:
+        cleanup();
+
+    case 6:
+        dump_races();
+        cleanup();
+
+    case 7:
+        dump_alchemy();
+        cleanup();
+
+    case 8:
+        dump_gods();
+        cleanup();
+
+    case 9:
+        dump_alchemy_costs();
+        cleanup();
+
+    case 10:
+        dump_monster_treasure(settings.dumparg);
+        cleanup();
     }
 }
 
@@ -983,7 +1057,7 @@ static void init_startup(void) {
     int comp;
 
 #ifdef SHUTDOWN_FILE
-    snprintf(buf, sizeof(buf), "%s/%s",settings.confdir,SHUTDOWN_FILE);
+    snprintf(buf, sizeof(buf), "%s/%s", settings.confdir, SHUTDOWN_FILE);
     if ((fp = open_and_uncompress(buf, 0, &comp)) != NULL) {
         while (fgets(buf, MAX_BUF-1, fp) != NULL)
             printf("%s", buf);
@@ -1004,58 +1078,58 @@ static void init_startup(void) {
  * It writes out information on how Imakefile and config.h was configured
  * at compile time.
  */
-
 static void compile_info(void) {
-    int i=0;
+    int i = 0;
     char err[MAX_BUF];
+
     printf("Non-standard include files:\n");
-#if !defined (__STRICT_ANSI__) || defined (__sun__)
-#if !defined (Mips)
+#if !defined(__STRICT_ANSI__) || defined(__sun__)
+#if !defined(Mips)
     printf("<stdlib.h>\n");
-    i=1;
+    i = 1;
 #endif
-#if !defined (MACH) && !defined (sony)
+#if !defined(MACH) && !defined(sony)
     printf("<malloc.h>\n");
-    i=1;
+    i = 1;
 #endif
 #endif
 #ifndef __STRICT_ANSI__
 #ifndef MACH
     printf("<memory.h\n");
-    i=1;
+    i = 1;
 #endif
 #endif
 #ifndef sgi
     printf("<sys/timeb.h>\n");
-    i=1;
+    i = 1;
 #endif
     if (!i)
         printf("(none)\n");
-    printf("Datadir:\t\t%s\n",settings.datadir);
-    printf("Localdir:\t\t%s\n",settings.localdir);
+    printf("Datadir:\t\t%s\n", settings.datadir);
+    printf("Localdir:\t\t%s\n", settings.localdir);
 #ifdef PERM_FILE
-    printf("Perm file:\t<ETC>/%s\n",PERM_FILE);
+    printf("Perm file:\t<ETC>/%s\n", PERM_FILE);
 #endif
 #ifdef SHUTDOWN_FILE
-    printf("Shutdown file:\t<ETC>/%s\n",SHUTDOWN_FILE);
+    printf("Shutdown file:\t<ETC>/%s\n", SHUTDOWN_FILE);
 #endif
     printf("Save player:\t<true>\n");
-    printf("Save mode:\t%4.4o\n",SAVE_MODE);
-    printf("Playerdir:\t<VAR>/%s\n",settings.playerdir);
+    printf("Save mode:\t%4.4o\n", SAVE_MODE);
+    printf("Playerdir:\t<VAR>/%s\n", settings.playerdir);
     printf("Itemsdir:\t<VAR>/%s\n", settings.uniquedir);
-    printf("Tmpdir:\t\t%s\n",settings.tmpdir);
-    printf("Map max timeout:\t%d\n",MAP_MAXTIMEOUT);
-    printf("Max objects:\t%d\n",MAX_OBJECTS);
+    printf("Tmpdir:\t\t%s\n", settings.tmpdir);
+    printf("Map max timeout:\t%d\n", MAP_MAXTIMEOUT);
+    printf("Max objects:\t%d\n", MAX_OBJECTS);
 #ifdef USE_CALLOC
     printf("Use_calloc:\t<true>\n");
 #else
     printf("Use_calloc:\t<false>\n");
 #endif
 
-    printf("Max_time:\t%d\n",MAX_TIME);
+    printf("Max_time:\t%d\n", MAX_TIME);
 
 #ifdef WIN32 /* ***win32 compile_info(): remove execl... */
-    printf("Logfilename:\t%s\n",settings.logfilename);
+    printf("Logfilename:\t%s\n", settings.logfilename);
     exit(0);
 #else
     execl("/bin/uname", "uname", "-a", NULL);
@@ -1072,7 +1146,7 @@ static void compile_info(void) {
  * unused.
  */
 static void rec_sigsegv(int i) {
-    LOG(llevError,"\nSIGSEGV received.\n");
+    LOG(llevError, "\nSIGSEGV received.\n");
     fatal_signal(1);
 }
 
@@ -1082,7 +1156,7 @@ static void rec_sigsegv(int i) {
  * unused.
  */
 static void rec_sigint(int i) {
-    LOG(llevInfo,"\nSIGINT received.\n");
+    LOG(llevInfo, "\nSIGINT received.\n");
     fatal_signal(0);
 }
 
@@ -1113,7 +1187,7 @@ static void rec_sighup(int i) {
  * unused.
  */
 static void rec_sigquit(int i) {
-    LOG(llevInfo,"\nSIGQUIT received\n");
+    LOG(llevInfo, "\nSIGQUIT received\n");
     fatal_signal(1);
 }
 
@@ -1131,13 +1205,12 @@ static void rec_sigquit(int i) {
  * unused.
  */
 static void rec_sigpipe(int i) {
-
-    LOG(llevError,"\nSIGPIPE--------------\n------------\n--------\n---\n");
+    LOG(llevError, "\nSIGPIPE--------------\n------------\n--------\n---\n");
 #if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
-    LOG(llevInfo,"\nReceived SIGPIPE, ignoring...\n");
-    signal(SIGPIPE,rec_sigpipe);/* hocky-pux clears signal handlers */
+    LOG(llevInfo, "\nReceived SIGPIPE, ignoring...\n");
+    signal(SIGPIPE, rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
-    LOG(llevError,"\nSIGPIPE received, not ignoring...\n");
+    LOG(llevError, "\nSIGPIPE received, not ignoring...\n");
     fatal_signal(1); /*Might consider to uncomment this line */
 #endif
 }
@@ -1150,7 +1223,7 @@ static void rec_sigpipe(int i) {
  */
 static void rec_sigbus(int i) {
 #ifdef SIGBUS
-    LOG(llevError,"\nSIGBUS received\n");
+    LOG(llevError, "\nSIGBUS received\n");
     fatal_signal(1);
 #endif
 }
@@ -1162,7 +1235,7 @@ static void rec_sigbus(int i) {
  * unused.
  */
 static void rec_sigterm(int i) {
-    LOG(llevInfo,"\nSIGTERM received\n");
+    LOG(llevInfo, "\nSIGTERM received\n");
     fatal_signal(0);
 }
 
@@ -1188,21 +1261,22 @@ static void fatal_signal(int make_core) {
 static void init_signals(void) {
 #ifndef WIN32 /* init_signals() remove signals */
     struct sigaction sa;
-    sa.sa_sigaction=NULL;
+
+    sa.sa_sigaction = NULL;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags=0;
+    sa.sa_flags = 0;
     sa.sa_handler = rec_sighup;
     sigaction(SIGHUP, &sa, NULL);
-    signal(SIGINT,rec_sigint);
+    signal(SIGINT, rec_sigint);
 #ifndef DEBUG
-    signal(SIGQUIT,rec_sigquit);
-    signal(SIGSEGV,rec_sigsegv);
-    LOG(llevInfo,"\n---------registering SIGPIPE\n");
-    signal(SIGPIPE,rec_sigpipe);
+    signal(SIGQUIT, rec_sigquit);
+    signal(SIGSEGV, rec_sigsegv);
+    LOG(llevInfo, "\n---------registering SIGPIPE\n");
+    signal(SIGPIPE, rec_sigpipe);
 #ifdef SIGBUS
-    signal(SIGBUS,rec_sigbus);
+    signal(SIGBUS, rec_sigbus);
 #endif
-    signal(SIGTERM,rec_sigterm);
+    signal(SIGTERM, rec_sigterm);
 #endif
 #endif /* win32 */
 }
@@ -1216,64 +1290,71 @@ static void init_signals(void) {
 static void init_races(void) {
     FILE *file;
     char race[MAX_BUF], fname[MAX_BUF], buf[MAX_BUF], *cp, variable[MAX_BUF];
-    archetype *mon=NULL;
-    static int init_done=0;
+    archetype *mon = NULL;
+    static int init_done = 0;
 
-    if (init_done) return;
-    init_done=1;
-    first_race=NULL;
+    if (init_done)
+        return;
+    init_done = 1;
+    first_race = NULL;
 
-    snprintf(fname, sizeof(fname), "%s/races",settings.datadir);
-    LOG(llevDebug, "Reading races from %s...\n",fname);
-    if (!(file=fopen(fname,"r"))) {
+    snprintf(fname, sizeof(fname), "%s/races", settings.datadir);
+    LOG(llevDebug, "Reading races from %s...\n", fname);
+    if (!(file = fopen(fname, "r"))) {
         LOG(llevError, "Cannot open races file %s: %s\n", fname, strerror_local(errno, buf, sizeof(buf)));
         return;
     }
 
-    while (fgets(buf,MAX_BUF,file)!=NULL) {
-        int set_race=1,set_list=1;
-        if (*buf=='#') continue;
-        if ((cp=strchr(buf,'\n'))!=NULL)
-            *cp='\0';
-        cp=buf;
-        while (*cp==' '||*cp=='!'||*cp=='@') {
-            if (*cp=='!') set_race=0;
-            if (*cp=='@') set_list=0;
+    while (fgets(buf, MAX_BUF, file) != NULL) {
+        int set_race = 1, set_list = 1;
+        if (*buf == '#')
+            continue;
+        if ((cp = strchr(buf, '\n')) != NULL)
+            *cp = '\0';
+        cp = buf;
+        while (*cp == ' ' || *cp == '!' || *cp == '@') {
+            if (*cp == '!')
+                set_race = 0;
+            if (*cp == '@')
+                set_list = 0;
             cp++;
         }
-        if (sscanf(cp,"RACE %s",variable)) { /* set new race value */
-            strcpy(race,variable);
+        if (sscanf(cp, "RACE %s", variable)) { /* set new race value */
+            strcpy(race, variable);
         } else {
             char *cp1;
+
             /* Take out beginning spaces */
-            for (cp1 = cp; *cp1==' '; cp1++);
+            for (cp1 = cp; *cp1 == ' '; cp1++)
+                ;
             /* Remove newline and trailing spaces */
-            for (cp1 = cp + strlen(cp) -1; *cp1 == '\n' || *cp1 == ' '; cp1 --) {
-                *cp1='\0';
-                if (cp==cp1) break;
+            for (cp1 = cp+strlen(cp)-1; *cp1 == '\n' || *cp1 == ' '; cp1--) {
+                *cp1 = '\0';
+                if (cp == cp1)
+                    break;
             }
 
-            if (cp[strlen(cp)-1]=='\n') cp[strlen(cp)-1]='\0';
+            if (cp[strlen(cp)-1] == '\n')
+                cp[strlen(cp)-1] = '\0';
             /* set creature race to race value */
-            if ((mon=find_archetype(cp))==NULL)
-                LOG(llevError,"Creature %s in race file lacks archetype\n",cp);
+            if ((mon = find_archetype(cp)) == NULL)
+                LOG(llevError, "Creature %s in race file lacks archetype\n", cp);
             else {
-                if (set_race&&(!mon->clone.race||strcmp(mon->clone.race,race))) {
+                if (set_race && (!mon->clone.race || strcmp(mon->clone.race, race))) {
                     if (mon->clone.race) {
-                        LOG(llevDebug," Resetting race to %s from %s for archetype %s\n",
-                            race,mon->clone.race,mon->name);
+                        LOG(llevDebug, " Resetting race to %s from %s for archetype %s\n", race, mon->clone.race, mon->name);
                         free_string(mon->clone.race);
                     }
-                    mon->clone.race=add_string(race);
+                    mon->clone.race = add_string(race);
                 }
                 /* if the arch is a monster, add it to the race list */
-                if (set_list&&QUERY_FLAG(&mon->clone,FLAG_MONSTER))
+                if (set_list && QUERY_FLAG(&mon->clone, FLAG_MONSTER))
                     add_to_racelist(race, &mon->clone);
             }
         }
     }
     fclose(file);
-    LOG(llevDebug,"done races.\n");
+    LOG(llevDebug, "done races.\n");
 }
 
 /**
@@ -1282,12 +1363,13 @@ static void init_races(void) {
 static void dump_races(void) {
     racelink *list;
     objectlink *tmp;
-    for (list=first_race;list;list=list->next) {
-        fprintf(stderr,"\nRACE %s:\t",list->name);
-        for (tmp=list->member;tmp;tmp=tmp->next)
-            fprintf(stderr,"%s(%d), ",tmp->ob->arch->name,tmp->ob->level);
+
+    for (list = first_race; list; list = list->next) {
+        fprintf(stderr, "\nRACE %s:\t", list->name);
+        for (tmp = list->member; tmp; tmp = tmp->next)
+            fprintf(stderr, "%s(%d), ", tmp->ob->arch->name, tmp->ob->level);
     }
-    fprintf(stderr,"\n");
+    fprintf(stderr, "\n");
 }
 
 /**
@@ -1296,6 +1378,7 @@ static void dump_races(void) {
 static void free_races(void) {
     racelink *race;
     objectlink *link;
+
     LOG(llevDebug, "Freeing race information.\n");
     while (first_race) {
         race = first_race->next;
@@ -1321,19 +1404,21 @@ static void free_races(void) {
 static void add_to_racelist(const char *race_name, object *op) {
     racelink *race;
 
-    if (!op||!race_name) return;
-    race=find_racelink(race_name);
+    if (!op || !race_name)
+        return;
+    race = find_racelink(race_name);
 
     if (!race) { /* add in a new race list */
         race = get_racelist();
         race->next = first_race;
         first_race = race;
-        race->name=add_string(race_name);
+        race->name = add_string(race_name);
     }
 
     if (race->member->ob) {
         objectlink *tmp = get_objectlink();
-        tmp->next=race->member;
+
+        tmp->next = race->member;
         race->member = tmp;
     }
     race->nrof++;
@@ -1348,16 +1433,16 @@ static void add_to_racelist(const char *race_name, object *op) {
  * @return
  * empty structure.
  */
-static racelink * get_racelist(void) {
+static racelink *get_racelist(void) {
     racelink *list;
 
-    list = (racelink *) malloc(sizeof(racelink));
+    list = (racelink *)malloc(sizeof(racelink));
     if (!list)
         fatal(OUT_OF_MEMORY);
-    list->name=NULL;
-    list->nrof=0;
-    list->member=get_objectlink();
-    list->next=NULL;
+    list->name = NULL;
+    list->nrof = 0;
+    list->member = get_objectlink();
+    list->next = NULL;
 
     return list;
 }
@@ -1370,12 +1455,13 @@ static racelink * get_racelist(void) {
  * @return
  * race structure, NULL if not found.
  */
-racelink * find_racelink(const char *name) {
-    racelink *test=NULL;
+racelink *find_racelink(const char *name) {
+    racelink *test = NULL;
 
-    if (name&&first_race)
-        for (test=first_race;test&&test!=test->next;test=test->next)
-            if (!test->name||!strcmp(name,test->name)) break;
+    if (name && first_race)
+        for (test = first_race; test && test != test->next; test = test->next)
+            if (!test->name || !strcmp(name, test->name))
+                break;
 
     return test;
 }

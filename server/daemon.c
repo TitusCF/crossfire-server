@@ -73,9 +73,9 @@ void become_daemon(void) {
     register int i;
     int forkresult;
 
-    fputs("\n========================\n",logfile);
-    fputs("Begin New Server Session\n",logfile);
-    fputs("========================\n\n",logfile);
+    fputs("\n========================\n", logfile);
+    fputs("Begin New Server Session\n", logfile);
+    fputs("========================\n\n", logfile);
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by
@@ -100,14 +100,14 @@ void become_daemon(void) {
     /*
      * Set up the standard file descriptors.
      */
-    (void) open("/dev/null", O_RDONLY);  /* root inode already in core */
-    (void) dup2(0, 1);
-    (void) dup2(0, 2);
+    (void)open("/dev/null", O_RDONLY);  /* root inode already in core */
+    (void)dup2(0, 1);
+    (void)dup2(0, 2);
 
     if ((i = open("/dev/tty", O_RDWR)) >= 0) {  /* did open succeed? */
 #if (defined(SYSV) || defined(hpux)) && defined(TIOCTTY)
         int zero = 0;
-        (void) ioctl(i, TIOCTTY, &zero);
+        (void)ioctl(i, TIOCTTY, &zero);
 #else
 
 #  ifdef HAVE_SYS_TERMIOS_H
@@ -117,11 +117,10 @@ void become_daemon(void) {
 #      include <sys/ttycom.h>
 #    endif
 #  endif
-        (void) ioctl(i, TIOCNOTTY, (char *) 0);     /* detach, BSD style */
+        (void)ioctl(i, TIOCNOTTY, (char *)0);     /* detach, BSD style */
 #endif
-        (void) close(i);
+        (void)close(i);
     }
-
 
 #ifdef HAVE_SETSID
     setsid();

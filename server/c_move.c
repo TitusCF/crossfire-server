@@ -53,13 +53,13 @@ static int move_internal(object *op, char *params, int dir) {
     if (params) {
         if (params[0] == 'f') {
             if (!op->contr->fire_on) {
-                op->contr->fire_on =1;
+                op->contr->fire_on = 1;
                 move_player(op, dir);
-                op->contr->fire_on =0;
+                op->contr->fire_on = 0;
                 return 0;
             }
         } else if (params[0] == 'r' && !op->contr->run_on)
-            op->contr->run_on =1;
+            op->contr->run_on = 1;
     }
     move_player(op, dir);
     return 0;

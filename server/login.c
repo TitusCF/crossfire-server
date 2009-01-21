@@ -371,7 +371,7 @@ int save_player(object *op, int flag) {
         while ((tmp = op->inv))
             destroy_object(tmp);
 
-	/* destroying objects will most likely destroy the pointer
+        /* destroying objects will most likely destroy the pointer
          * in op->contr->ranges[], so clear the range to a safe value.
          */
         op->contr->shoottype = range_none;

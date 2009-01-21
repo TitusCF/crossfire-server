@@ -66,10 +66,18 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
 static double shop_greed(const mapstruct *map);
 
 #define NUM_COINS 5     /**< Number of coin types */
+
 #define LARGEST_COIN_GIVEN 2 /**< Never give amber or jade, but accept them */
+
 /** Coins to use for shopping. */
-static const char *const coins[] = {"ambercoin", "jadecoin","platinacoin",
-                                    "goldcoin", "silvercoin", NULL};
+static const char *const coins[] = {
+    "ambercoin",
+    "jadecoin",
+    "platinacoin",
+    "goldcoin",
+    "silvercoin",
+    NULL
+};
 
 /**
  * Return the price of an item for a character.
@@ -122,72 +130,76 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
     float ratio;
     const char *key;
 
-    no_bargain = flag & F_NO_BARGAIN;
-    identified = flag & F_IDENTIFIED;
-    not_cursed = flag & F_NOT_CURSED;
-    approximate = flag & F_APPROX;
-    shop = flag & F_SHOP;
+    no_bargain = flag&F_NO_BARGAIN;
+    identified = flag&F_IDENTIFIED;
+    not_cursed = flag&F_NOT_CURSED;
+    approximate = flag&F_APPROX;
+    shop = flag&F_SHOP;
     flag &= ~(F_NO_BARGAIN|F_IDENTIFIED|F_NOT_CURSED|F_APPROX|F_SHOP);
 
     number = tmp->nrof;
-    if (number==0)
-        number=1;
+    if (number == 0)
+        number = 1;
 
     if ((key = get_ob_key_value(tmp, "price_adjustment")) != NULL) {
         ratio = atof(key);
-        return tmp->value * number * ratio;
+        return tmp->value*number*ratio;
     }
     if ((flag == F_BUY) && ((key = get_ob_key_value(tmp, "price_adjustment_buy")) != NULL)) {
         ratio = atof(key);
-        return tmp->value * number * ratio;
+        return tmp->value*number*ratio;
     }
     if ((flag == F_SELL) && ((key = get_ob_key_value(tmp, "price_adjustment_sell")) != NULL)) {
         ratio = atof(key);
-        return tmp->value * number * ratio;
+        return tmp->value*number*ratio;
     }
 
-    if (tmp->type==MONEY) return (tmp->nrof * tmp->value);
-    if (tmp->type==GEM) {
-        if (flag==F_TRUE) return number * tmp->value;
-        if (flag==F_BUY) return (1.03 * tmp->nrof * tmp->value);
-        if (flag==F_SELL) return (0.97 * tmp->nrof * tmp->value);
-        LOG(llevError,"Query_cost: Gem type with unknown flag : %d\n", flag);
+    if (tmp->type == MONEY)
+        return (tmp->nrof*tmp->value);
+    if (tmp->type == GEM) {
+        if (flag == F_TRUE)
+            return number*tmp->value;
+        if (flag == F_BUY)
+            return (1.03*tmp->nrof*tmp->value);
+        if (flag == F_SELL)
+            return (0.97*tmp->nrof*tmp->value);
+        LOG(llevError, "Query_cost: Gem type with unknown flag : %d\n", flag);
         return 0;
     }
-    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) ||
-        !need_identify(tmp) || identified) {
-        if (!not_cursed &&
-            (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
+    if (QUERY_FLAG(tmp, FLAG_IDENTIFIED)
+    || !need_identify(tmp)
+    || identified) {
+        if (!not_cursed
+        && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
             return 0;
         else
-            val=tmp->value * number;
-    }
+            val = tmp->value*number;
     /* This area deals with objects that are not identified, but can be */
-    else {
+    } else {
         if (tmp->arch != NULL) {
             if (flag == F_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object.\n");
-                val = tmp->arch->clone.value * 50 * number;
+                val = tmp->arch->clone.value*50*number;
             } else {     /* Trying to sell something, or get true value */
                 if (tmp->type == POTION)
-                    val = number * 1000; /* Don't want to give anything away */
+                    val = number*1000; /* Don't want to give anything away */
                 else {
                     /* Get 2/3 value for applied objects, 1/3 for totally
                      * unknown objects
                      */
                     if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
-                        val = number * tmp->arch->clone.value *2 / 3;
+                        val = number*tmp->arch->clone.value*2/3;
                     else
-                        val = number * tmp->arch->clone.value / 3;
+                        val = number*tmp->arch->clone.value/3;
                 }
             }
         } else { /* No archetype with this object */
-            LOG(llevDebug,"In sell item: Have object with no archetype: %s\n", tmp->name);
+            LOG(llevDebug, "In sell item: Have object with no archetype: %s\n", tmp->name);
             if (flag == F_BUY) {
                 LOG(llevError, "Asking for buy-value of unidentified object without arch.\n");
-                val = number * tmp->value * 10;
+                val = number*tmp->value*10;
             } else
-                val = number * tmp->value / 5;
+                val = number*tmp->value/5;
         }
     }
 
@@ -200,33 +212,34 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
      * default magical.  This is because the archetype value should have
      * already figured in that value.
      */
-    if ((QUERY_FLAG(tmp, FLAG_IDENTIFIED)||!need_identify(tmp)||identified||
-         QUERY_FLAG(tmp, FLAG_BEEN_APPLIED)) &&
-        tmp->magic&&(tmp->arch==NULL||!tmp->arch->clone.magic)) {
-        if (tmp->magic>0)
-            val*=(3*tmp->magic*tmp->magic*tmp->magic);
+    if ((QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp) || identified || QUERY_FLAG(tmp, FLAG_BEEN_APPLIED))
+    && tmp->magic
+    && (tmp->arch == NULL || !tmp->arch->clone.magic)) {
+        if (tmp->magic > 0)
+            val *= (3*tmp->magic*tmp->magic*tmp->magic);
         else
             /* Note that tmp->magic is negative, so that this
              * will actually be something like val /=2, /=3, etc.
              */
-            val/=(1-tmp->magic);
+            val /= (1-tmp->magic);
     }
 
-    if (tmp->type==WAND) {
+    if (tmp->type == WAND) {
         /* Value of the wand is multiplied by the number of
          * charges.  the treasure code already sets up the value
          * 50 charges is used as the baseline.
          */
-        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) ||
-            !need_identify(tmp) || identified)
-            val=(val*tmp->stats.food) / 50;
+        if (QUERY_FLAG(tmp, FLAG_IDENTIFIED)
+        || !need_identify(tmp)
+        || identified)
+            val = (val*tmp->stats.food)/50;
         else /* if not identified, presume one charge */
-            val/=50;
+            val /= 50;
     }
 
     /* Limit amount of money you can get for really great items. */
-    if (flag==F_TRUE || flag==F_SELL)
-        val=value_limit(val, number, who, shop);
+    if (flag == F_TRUE || flag == F_SELL)
+        val = value_limit(val, number, who, shop);
 
     /* we need to multiply these by 4.0 to keep buy costs roughly the same
      * (otherwise, you could buy a potion of charisma for around 400 pp.
@@ -242,11 +255,11 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
      * -b.e. edler@heydernet.de
      */
 
-    if (who!=NULL && who->type==PLAYER) {
+    if (who != NULL && who->type == PLAYER) {
         int lev_bargain = 0;
         int lev_identify = 0;
-        int idskill1=0;
-        int idskill2=0;
+        int idskill1 = 0;
+        int idskill2 = 0;
         const typedata *tmptype;
 
         /* ratio determines how much of the price modification
@@ -254,38 +267,38 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * the rest will come from the level in bargaining skill
          */
         ratio = 0.5;
-        tmptype=get_typedata(tmp->type);
+        tmptype = get_typedata(tmp->type);
 
-        if (find_skill_by_number(who,SK_BARGAINING)) {
-            lev_bargain = find_skill_by_number(who,SK_BARGAINING)->level;
+        if (find_skill_by_number(who, SK_BARGAINING)) {
+            lev_bargain = find_skill_by_number(who, SK_BARGAINING)->level;
         }
         if (tmptype) {
-            idskill1=tmptype->identifyskill;
+            idskill1 = tmptype->identifyskill;
             if (idskill1) {
-                idskill2=tmptype->identifyskill2;
-                if (find_skill_by_number(who,idskill1)) {
-                    lev_identify = find_skill_by_number(who,idskill1)->level;
+                idskill2 = tmptype->identifyskill2;
+                if (find_skill_by_number(who, idskill1)) {
+                    lev_identify = find_skill_by_number(who, idskill1)->level;
                 }
-                if (idskill2 && find_skill_by_number(who,idskill2)) {
-                    lev_identify += find_skill_by_number(who,idskill2)->level;
+                if (idskill2 && find_skill_by_number(who, idskill2)) {
+                    lev_identify += find_skill_by_number(who, idskill2)->level;
                 }
             }
-        } else LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
-        if (!no_bargain && (lev_bargain>0))
-            diff = (0.8 - 0.6*((lev_bargain+settings.max_level*0.05)
-                               /(settings.max_level*1.05)));
+        } else
+            LOG(llevError, "Query_cost: item %s hasn't got a valid type\n", tmp->name);
+        if (!no_bargain && (lev_bargain > 0))
+            diff = (0.8-0.6*((lev_bargain+settings.max_level*0.05)/(settings.max_level*1.05)));
         else
             diff = 0.8;
 
         diff *= 1-ratio;
 
         /* Diff is now a float between 0.2 and 0.8 */
-        diff+=(cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
+        diff += (cha_bonus[who->stats.Cha]-1)/(1+cha_bonus[who->stats.Cha])*ratio;
 
-        if (flag==F_BUY)
-            val=(val*(long)(1000*(1+diff)))/1000;
-        else if (flag==F_SELL)
-            val=(val*(long)(1000*(1-diff)))/1000;
+        if (flag == F_BUY)
+            val = (val*(long)(1000*(1+diff)))/1000;
+        else if (flag == F_SELL)
+            val = (val*(long)(1000*(1-diff)))/1000;
 
         /* If we are approximating, then the value returned should
          * be allowed to be wrong however merely using a random number
@@ -298,7 +311,7 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * prevent dividing by zero.)
          */
         if (approximate)
-            val = (sint64)val + (sint64)((sint64)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
+            val = (sint64)val+(sint64)((sint64)val*(sin(tmp->count)/sqrt(lev_bargain+lev_identify*2+1.0)));
     }
 
     /* I don't think this should really happen - if it does,
@@ -306,21 +319,23 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
      * happen if we are selling objects - in that case, the person
      * just gets no money.
      */
-    if ((sint64)val<0)
-        val=0;
+    if ((sint64)val < 0)
+        val = 0;
 
     /* Unidentified stuff won't sell for more than 60gp */
-    if (flag==F_SELL && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) &&
-        need_identify(tmp) && !identified) {
+    if (flag == F_SELL
+    && !QUERY_FLAG(tmp, FLAG_IDENTIFIED)
+    && need_identify(tmp)
+    && !identified) {
         val = MIN(val, 600);
     }
 
     /* if in a shop, check how the type of shop should affect the price */
     if (shop && who) {
-        if (flag==F_SELL)
-            val=(sint64)val*shop_specialisation_ratio(tmp, who->map)
+        if (flag == F_SELL)
+            val = (sint64)val*shop_specialisation_ratio(tmp, who->map)
                 *shopkeeper_approval(who->map, who)/shop_greed(who->map);
-        else if (flag==F_BUY) {
+        else if (flag == F_BUY) {
             /*
              * When buying, if the item was sold by another player, it is
              * ok to let the item be sold cheaper, according to the
@@ -337,11 +352,11 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
              * sometimes find antiques in a junk shop in real life).
              */
             if (QUERY_FLAG(tmp, FLAG_PLAYER_SOLD))
-                val=(sint64)val*shop_greed(who->map)
+                val = (sint64)val*shop_greed(who->map)
                     *shop_specialisation_ratio(tmp, who->map)
                     /shopkeeper_approval(who->map, who);
             else
-                val=(sint64)val*shop_greed(who->map)
+                val = (sint64)val*shop_greed(who->map)
                     /(shop_specialisation_ratio(tmp, who->map)
                       *shopkeeper_approval(who->map, who));
         }
@@ -350,9 +365,8 @@ uint64 query_cost(const object *tmp, object *who, int flag) {
          * effect wouldn't be very meaningful, and could give fun with
          * rounding.
          */
-        if (who->map->path!=NULL && val > 50)
-            val=(sint64)val+0.05*(sint64)val
-                *cos(tmp->count+strlen(who->map->path));
+        if (who->map->path != NULL && val > 50)
+            val = (sint64)val+0.05*(sint64)val*cos(tmp->count+strlen(who->map->path));
     }
     return val;
 }
@@ -372,7 +386,8 @@ static archetype *find_next_coin(uint64 c, int *cointype) {
     archetype *coin;
 
     do {
-        if (coins[*cointype]==NULL) return NULL;
+        if (coins[*cointype] == NULL)
+            return NULL;
         coin = find_archetype(coins[*cointype]);
         if (coin == NULL)
             return NULL;
@@ -413,17 +428,17 @@ static StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
         return buf;
     }
 
-    num = cost / coin->clone.value;
+    num = cost/coin->clone.value;
     /* so long as nrof is 32 bit, this is true.
      * If it takes more coins than a person can possibly carry, this
      * is basically true.
      */
-    if ((cost / coin->clone.value) > UINT32_MAX) {
+    if ((cost/coin->clone.value) > UINT32_MAX) {
         stringbuffer_append_string(buf, "an unimaginable sum of money.");
         return buf;
     }
 
-    cost -= (uint64)num * (uint64)coin->clone.value;
+    cost -= (uint64)num*(uint64)coin->clone.value;
     if (num == 1)
         stringbuffer_append_printf(buf, "1 %s", coin->clone.name);
     else
@@ -435,8 +450,8 @@ static StringBuffer *cost_string_from_value(uint64 cost, StringBuffer *buf) {
 
     do {
         coin = next_coin;
-        num = cost / coin->clone.value;
-        cost -= (uint64)num * (uint64)coin->clone.value;
+        num = cost/coin->clone.value;
+        cost -= (uint64)num*(uint64)coin->clone.value;
 
         if (cost == 0)
             next_coin = NULL;
@@ -493,10 +508,10 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
  * @return
  * buffer containing the price, new if buf was NULL.
  */
-StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBuffer *buf) {
-    uint64 real_value = query_cost(tmp,who,flag);
-    int idskill1=0;
-    int idskill2=0;
+StringBuffer *query_cost_string(const object *tmp, object *who, int flag, StringBuffer *buf) {
+    uint64 real_value = query_cost(tmp, who, flag);
+    int idskill1 = 0;
+    int idskill2 = 0;
     const typedata *tmptype;
 
     if (!buf)
@@ -507,10 +522,10 @@ StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBu
         return real_money_value(tmp, buf);
     }
 
-    tmptype=get_typedata(tmp->type);
+    tmptype = get_typedata(tmp->type);
     if (tmptype) {
-        idskill1=tmptype->identifyskill;
-        idskill2=tmptype->identifyskill2;
+        idskill1 = tmptype->identifyskill;
+        idskill2 = tmptype->identifyskill2;
     }
 
     /* we show an approximate price if
@@ -518,10 +533,10 @@ StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBu
      * 2) there either is no id skill(s) for the item, or we don't have them
      * 3) we don't have bargaining skill either
      */
-    if (flag & F_APPROX) {
+    if (flag&F_APPROX) {
         if (!idskill1 || !find_skill_by_number(who, idskill1)) {
             if (!idskill2 || !find_skill_by_number(who, idskill2)) {
-                if (!find_skill_by_number(who,SK_BARGAINING)) {
+                if (!find_skill_by_number(who, SK_BARGAINING)) {
                     int num;
                     int cointype = LARGEST_COIN_GIVEN;
                     archetype *coin = find_next_coin(real_value, &cointype);
@@ -531,7 +546,7 @@ StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBu
                         return buf;
                     }
 
-                    num = real_value / coin->clone.value;
+                    num = real_value/coin->clone.value;
                     if (num == 1)
                         stringbuffer_append_printf(buf, "about one %s", coin->clone.name);
                     else if (num < 5)
@@ -565,23 +580,24 @@ StringBuffer *query_cost_string(const object *tmp,object *who,int flag, StringBu
  */
 uint64 query_money(const object *op) {
     object *tmp;
-    uint64 total=0;
+    uint64 total = 0;
 
-    if (op->type!=PLAYER && op->type!=CONTAINER) {
+    if (op->type != PLAYER && op->type != CONTAINER) {
         LOG(llevError, "Query money called with non player/container\n");
         return 0;
     }
-    for (tmp = op->inv; tmp; tmp= tmp->below) {
-        if (tmp->type==MONEY) {
-            total += (uint64)tmp->nrof * (uint64)tmp->value;
-        } else if (tmp->type==CONTAINER &&
-                   QUERY_FLAG(tmp,FLAG_APPLIED) &&
-                   (tmp->race==NULL || strstr(tmp->race,"gold"))) {
+    for (tmp = op->inv; tmp; tmp = tmp->below) {
+        if (tmp->type == MONEY) {
+            total += (uint64)tmp->nrof*(uint64)tmp->value;
+        } else if (tmp->type == CONTAINER
+        && QUERY_FLAG(tmp, FLAG_APPLIED)
+        && (tmp->race == NULL || strstr(tmp->race, "gold"))) {
             total += query_money(tmp);
         }
     }
     return total;
 }
+
 /**
  * Takes the amount of money from the the player inventory and from it's various
  * pouches using the pay_from_container() function.
@@ -594,18 +610,20 @@ uint64 query_money(const object *op) {
  * 0 if not enough money, in which case nothing is removed, 1 if money was removed.
  * @todo check if pl is a player, as query_money() expects that. Check if fix_object() call is required.
  */
-int pay_for_amount(uint64 to_pay,object *pl) {
+int pay_for_amount(uint64 to_pay, object *pl) {
     object *pouch;
 
-    if (to_pay==0) return 1;
-    if (to_pay > query_money(pl)) return 0;
+    if (to_pay == 0)
+        return 1;
+    if (to_pay > query_money(pl))
+        return 0;
 
     to_pay = pay_from_container(pl, pl, to_pay);
 
-    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
+    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below) {
         if (pouch->type == CONTAINER
-            && QUERY_FLAG(pouch, FLAG_APPLIED)
-            && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+        && QUERY_FLAG(pouch, FLAG_APPLIED)
+        && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
     }
@@ -631,29 +649,31 @@ int pay_for_amount(uint64 to_pay,object *pl) {
  * 1 if object was bought, 0 else.
  * @todo check if pl is a player, as query_money() expects a player.
  */
-int pay_for_item(object *op,object *pl) {
-    uint64 to_pay = query_cost(op,pl,F_BUY | F_SHOP);
+int pay_for_item(object *op, object *pl) {
+    uint64 to_pay = query_cost(op, pl, F_BUY|F_SHOP);
     object *pouch;
     uint64 saved_money;
 
-    if (to_pay==0) return 1;
-    if (to_pay>query_money(pl)) return 0;
+    if (to_pay == 0)
+        return 1;
+    if (to_pay > query_money(pl))
+        return 0;
 
     /* We compare the paid price with the one for a player
      * without bargaining skill.
      * This determins the amount of exp (if any) gained for bargaining.
      */
-    saved_money = query_cost(op,pl,F_BUY | F_NO_BARGAIN | F_SHOP) - to_pay;
+    saved_money = query_cost(op, pl, F_BUY|F_NO_BARGAIN|F_SHOP)-to_pay;
 
     if (saved_money > 0)
-        change_exp(pl,saved_money,"bargaining",SK_EXP_NONE);
+        change_exp(pl, saved_money, "bargaining", SK_EXP_NONE);
 
     to_pay = pay_from_container(pl, pl, to_pay);
 
-    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
+    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below) {
         if (pouch->type == CONTAINER
-            && QUERY_FLAG(pouch, FLAG_APPLIED)
-            && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
+        && QUERY_FLAG(pouch, FLAG_APPLIED)
+        && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
             to_pay = pay_from_container(pl, pouch, to_pay);
         }
     }
@@ -781,26 +801,27 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
     size_t other_money_len; /* number of allocated entries in other_money[] */
     archetype *at;
 
-    if (pouch->type != PLAYER && pouch->type != CONTAINER) return to_pay;
+    if (pouch->type != PLAYER && pouch->type != CONTAINER)
+        return to_pay;
 
     remain = to_pay;
-    for (i=0; i<NUM_COINS; i++) coin_objs[i] = NULL;
+    for (i = 0; i < NUM_COINS; i++)
+        coin_objs[i] = NULL;
 
     /* This hunk should remove all the money objects from the player/container */
     other_money_len = 0;
-    for (tmp=pouch->inv; tmp; tmp=next) {
+    for (tmp = pouch->inv; tmp; tmp = next) {
         next = tmp->below;
         if (tmp->type == MONEY) {
-            for (i=0; i<NUM_COINS; i++) {
-                if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name) &&
-                    (tmp->value == tmp->arch->clone.value)) {
+            for (i = 0; i < NUM_COINS; i++) {
+                if (!strcmp(coins[NUM_COINS-1-i], tmp->arch->name)
+                && (tmp->value == tmp->arch->clone.value)) {
 
-                    /* This should not happen, but if it does, just             *
+                    /* This should not happen, but if it does, just
                      * merge the two.
                      */
-                    if (coin_objs[i]!=NULL) {
-                        LOG(llevError,"%s has two money entries of (%s)\n",
-                            pouch->name, coins[NUM_COINS-1-i]);
+                    if (coin_objs[i] != NULL) {
+                        LOG(llevError, "%s has two money entries of (%s)\n", pouch->name, coins[NUM_COINS-1-i]);
                         remove_ob(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
                         free_object(tmp);
@@ -811,7 +832,7 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
                     break;
                 }
             }
-            if (i==NUM_COINS) {
+            if (i == NUM_COINS) {
                 if (other_money_len >= sizeof(other_money)/sizeof(*other_money)) {
                     LOG(llevError, "pay_for_item: Cannot store non-standard money object %s\n", tmp->arch->name);
                 } else {
@@ -824,10 +845,11 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
 
     /* Fill in any gaps in the coin_objs array - needed to make change.      */
     /* Note that the coin_objs array goes from least value to greatest value */
-    for (i=0; i<NUM_COINS; i++)
-        if (coin_objs[i]==NULL) {
+    for (i = 0; i < NUM_COINS; i++)
+        if (coin_objs[i] == NULL) {
             at = find_archetype(coins[NUM_COINS-1-i]);
-            if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
+            if (at == NULL)
+                LOG(llevError, "Could not find %s archetype\n", coins[NUM_COINS-1-i]);
             coin_objs[i] = get_object();
             copy_object(&at->clone, coin_objs[i]);
             coin_objs[i]->nrof = 0;
@@ -881,16 +903,17 @@ static uint64 pay_from_container(object *pl, object *pouch, uint64 to_pay) {
  */
 static void count_unpaid(object *pl, object *item, int *unpaid_count, uint64 *unpaid_price, uint32 *coincount) {
     int i;
-    for (;item;item = item->below) {
+
+    for (; item; item = item->below) {
         if QUERY_FLAG(item, FLAG_UNPAID) {
             (*unpaid_count)++;
-            (*unpaid_price) += query_cost(item, pl, F_BUY | F_SHOP);
+            (*unpaid_price) += query_cost(item, pl, F_BUY|F_SHOP);
         }
         /* Merely converting the player's monetary wealth won't do.
          * If we did that, we could print the wrong numbers for the
          * coins, so we count the money instead.
          */
-        for (i=0; i< NUM_COINS; i++)
+        for (i = 0; i < NUM_COINS; i++)
             if (!strcmp(coins[i], item->arch->name)) {
                 coincount[i] += item->nrof;
                 break;
@@ -923,7 +946,7 @@ int can_pay(object *pl) {
         return 0;
     }
 
-    for (i=0; i< NUM_COINS; i++)
+    for (i = 0; i < NUM_COINS; i++)
         coincount[i] = 0;
 
     count_unpaid(pl, pl->inv, &unpaid_count, &unpaid_price, coincount);
@@ -932,29 +955,28 @@ int can_pay(object *pl) {
         char buf[MAX_BUF], coinbuf[MAX_BUF];
         int denominations = 0;
         char *value = stringbuffer_finish(cost_string_from_value(unpaid_price, NULL));
-        snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ",
-                 unpaid_count, value);
+
+        snprintf(buf, sizeof(buf), "You have %d unpaid items that would cost you %s, ", unpaid_count, value);
         free(value);
-        for (i=0; i< NUM_COINS; i++) {
+        for (i = 0; i < NUM_COINS; i++) {
             if (coincount[i] > 0 && coins[i]) {
                 if (denominations == 0)
-                    snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "but you only have");
+                    snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "but you only have");
                 denominations++;
-                snprintf(coinbuf, sizeof(coinbuf), " %u %s,", coincount[i],
-                         find_archetype(coins[i])->clone.name_pl);
-                snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s", coinbuf);
+                snprintf(coinbuf, sizeof(coinbuf), " %u %s,", coincount[i], find_archetype(coins[i])->clone.name_pl);
+                snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "%s", coinbuf);
             }
         }
         if (denominations == 0)
-            snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), "but you don't have any money.");
+            snprintf(buf+strlen(buf), sizeof(buf)-strlen(buf), "but you don't have any money.");
         else if (denominations > 1)
             make_list_like(buf);
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP,
                       MSG_TYPE_SHOP_PAYMENT, buf, NULL);
         return 0;
-    } else return 1;
+    } else
+        return 1;
 }
-
 
 /**
  * Descends containers looking for unpaid items, and pays for them.
@@ -969,24 +991,25 @@ int can_pay(object *pl) {
  */
 int get_payment(object *pl, object *op) {
     char name_op[MAX_BUF];
-    int ret=1;
+    int ret = 1;
 
-    if (op!=NULL&&op->inv)
+    if (op != NULL && op->inv)
         ret = get_payment(pl, op->inv);
 
     if (!ret)
         return 0;
 
-    if (op!=NULL&&op->below)
+    if (op != NULL && op->below)
         ret = get_payment(pl, op->below);
 
     if (!ret)
         return 0;
 
-    if (op!=NULL&&QUERY_FLAG(op,FLAG_UNPAID)) {
-        if (!pay_for_item(op,pl)) {
-            uint64 i=query_cost(op,pl,F_BUY | F_SHOP) - query_money(pl);
+    if (op != NULL && QUERY_FLAG(op, FLAG_UNPAID)) {
+        if (!pay_for_item(op, pl)) {
+            uint64 i = query_cost(op, pl, F_BUY|F_SHOP)-query_money(pl);
             char *missing = stringbuffer_finish(cost_string_from_value(i, NULL));
+
             CLEAR_FLAG(op, FLAG_UNPAID);
             query_name(op, name_op, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, pl,
@@ -999,7 +1022,7 @@ int get_payment(object *pl, object *op) {
             return 0;
         } else {
             object *tmp;
-            char *value = stringbuffer_finish(query_cost_string(op, pl, F_BUY | F_SHOP, NULL));
+            char *value = stringbuffer_finish(query_cost_string(op, pl, F_BUY|F_SHOP, NULL));
 
             CLEAR_FLAG(op, FLAG_UNPAID);
             CLEAR_FLAG(op, FLAG_PLAYER_SOLD);
@@ -1008,12 +1031,12 @@ int get_payment(object *pl, object *op) {
                                  MSG_TYPE_SHOP, MSG_TYPE_SHOP_PAYMENT,
                                  "You paid %s for %s.",
                                  "You paid %s for %s.",
-                                 value,name_op);
+                                 value, name_op);
             free(value);
-            tmp=merge_ob(op,NULL);
+            tmp = merge_ob(op, NULL);
             if (pl->type == PLAYER && !tmp) {
                 /* If item wasn't merged we update it. If merged, merge_ob handled everything for us. */
-                esrv_update_item(UPD_FLAGS | UPD_NAME, pl, op);
+                esrv_update_item(UPD_FLAGS|UPD_NAME, pl, op);
             }
         }
     }
@@ -1034,18 +1057,19 @@ int get_payment(object *pl, object *op) {
  * player. Shouldn't be NULL or non player.
  */
 void sell_item(object *op, object *pl) {
-    uint64 i=query_cost(op,pl,F_SELL | F_SHOP), extra_gain;
+    uint64 i = query_cost(op, pl, F_SELL|F_SHOP), extra_gain;
     int count;
     object *tmp, *pouch;
     archetype *at;
     char name_op[MAX_BUF], *value;
 
-    if (pl==NULL||pl->type!=PLAYER) {
-        LOG(llevDebug,"Object other than player tried to sell something.\n");
+    if (pl == NULL || pl->type != PLAYER) {
+        LOG(llevDebug, "Object other than player tried to sell something.\n");
         return;
     }
 
-    if (op->custom_name) FREE_AND_CLEAR_STR(op->custom_name);
+    if (op->custom_name)
+        FREE_AND_CLEAR_STR(op->custom_name);
 
     if (!i) {
         query_name(op, name_op, MAX_BUF);
@@ -1071,32 +1095,36 @@ void sell_item(object *op, object *pl) {
      * This determins the amount of exp (if any) gained for bargaining.
      * exp/10 -> 1 for each gold coin
      */
-    extra_gain = i - query_cost(op,pl,F_SELL | F_NO_BARGAIN | F_SHOP);
+    extra_gain = i-query_cost(op, pl, F_SELL|F_NO_BARGAIN|F_SHOP);
 
     if (extra_gain > 0)
-        change_exp(pl,extra_gain/10,"bargaining",SK_EXP_NONE);
+        change_exp(pl, extra_gain/10, "bargaining", SK_EXP_NONE);
 
-    for (count=LARGEST_COIN_GIVEN; coins[count]!=NULL; count++) {
+    for (count = LARGEST_COIN_GIVEN; coins[count] != NULL; count++) {
         at = find_archetype(coins[count]);
-        if (at==NULL) LOG(llevError, "Could not find %s archetype\n", coins[count]);
+        if (at == NULL)
+            LOG(llevError, "Could not find %s archetype\n", coins[count]);
         else if ((i/at->clone.value) > 0) {
-            for (pouch=pl->inv ; pouch ; pouch=pouch->below) {
-                if (pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED)
-                    && pouch->race && strstr(pouch->race, "gold")) {
-                    int w = at->clone.weight * (100-pouch->stats.Str)/100;
+            for (pouch = pl->inv ; pouch; pouch = pouch->below) {
+                if (pouch->type == CONTAINER
+                && QUERY_FLAG(pouch, FLAG_APPLIED)
+                && pouch->race
+                && strstr(pouch->race, "gold")) {
+                    int w = at->clone.weight*(100-pouch->stats.Str)/100;
                     int n = i/at->clone.value;
 
-                    if (w==0) w=1;    /* Prevent divide by zero */
-                    if (n>0 && (!pouch->weight_limit
-                                || pouch->carrying+w<=pouch->weight_limit)) {
+                    if (w == 0)
+                        w = 1;    /* Prevent divide by zero */
+                    if (n > 0
+                    && (!pouch->weight_limit || pouch->carrying+w <= pouch->weight_limit)) {
                         if (pouch->weight_limit
-                            && (pouch->weight_limit-pouch->carrying)/w<n)
+                        && (pouch->weight_limit-pouch->carrying)/w < n)
                             n = (pouch->weight_limit-pouch->carrying)/w;
 
                         tmp = get_object();
                         copy_object(&at->clone, tmp);
                         tmp->nrof = n;
-                        i -= (uint64)tmp->nrof * (uint64)tmp->value;
+                        i -= (uint64)tmp->nrof*(uint64)tmp->value;
                         tmp = insert_ob_in_ob(tmp, pouch);
                         esrv_update_item(UPD_WEIGHT, pl, pl);
                     }
@@ -1106,22 +1134,22 @@ void sell_item(object *op, object *pl) {
                 tmp = get_object();
                 copy_object(&at->clone, tmp);
                 tmp->nrof = i/tmp->value;
-                i -= (uint64)tmp->nrof * (uint64)tmp->value;
+                i -= (uint64)tmp->nrof*(uint64)tmp->value;
                 tmp = insert_ob_in_ob(tmp, pl);
                 esrv_update_item(UPD_WEIGHT, pl, pl);
             }
         }
     }
 
-    if (i!=0)
+    if (i != 0)
 #ifndef WIN32
-        LOG(llevError,"Warning - payment not zero: %llu\n", i);
+        LOG(llevError, "Warning - payment not zero: %llu\n", i);
 #else
-        LOG(llevError,"Warning - payment not zero: %I64u\n", i);
+        LOG(llevError, "Warning - payment not zero: %I64u\n", i);
 #endif
 
     query_name(op, name_op, MAX_BUF);
-    value = stringbuffer_finish(query_cost_string(op, pl, F_SELL | F_SHOP, NULL));
+    value = stringbuffer_finish(query_cost_string(op, pl, F_SELL|F_SHOP, NULL));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_SHOP, MSG_TYPE_SHOP_SELL,
                          "You receive %s for %s.",
@@ -1149,11 +1177,11 @@ void sell_item(object *op, object *pl) {
  * ratio specialisation for the item.
  */
 static double shop_specialisation_ratio(const object *item, const mapstruct *map) {
-    shopitems *items=map->shopitems;
-    double ratio = SPECIALISATION_EFFECT, likedness=0.001;
+    shopitems *items = map->shopitems;
+    double ratio = SPECIALISATION_EFFECT, likedness = 0.001;
     int i;
 
-    if (item==NULL) {
+    if (item == NULL) {
         LOG(llevError, "shop_specialisation_ratio: passed a NULL item for map %s\n", map->path);
         return 0;
     }
@@ -1167,22 +1195,21 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
         return ratio;
     }
     if (map->shopitems) {
-        for (i=0; i<items[0].index; i++)
-            if (items[i].typenum==item->type || (!items[i].typenum && likedness == 0.001))
+        for (i = 0; i < items[0].index; i++)
+            if (items[i].typenum == item->type || (!items[i].typenum && likedness == 0.001))
                 likedness = items[i].strength/100.0;
     }
     if (likedness > 1.0) { /* someone has been rather silly with the map headers. */
-        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is above 100%%\n",
-            item->type, map->path);
+        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is above 100%%\n", item->type, map->path);
         likedness = 1.0;
     }
     if (likedness < -1.0) {
-        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is below -100%%\n",
-            item->type, map->path);
+        LOG(llevDebug, "shop_specialisation ratio: item type %d on map %s is below -100%%\n", item->type, map->path);
         likedness = -1.0;
     }
-    ratio = ratio + (1.0-ratio) * likedness;
-    if (ratio <= 0.1) ratio=0.1; /* if the ratio were much lower than this, we would get silly prices */
+    ratio = ratio+(1.0-ratio)*likedness;
+    if (ratio <= 0.1)
+        ratio = 0.1; /* if the ratio were much lower than this, we would get silly prices */
     return ratio;
 }
 
@@ -1195,7 +1222,8 @@ static double shop_specialisation_ratio(const object *item, const mapstruct *map
  * greed of the shop on map, or 1 if it isn't specified.
  */
 static double shop_greed(const mapstruct *map) {
-    double greed=1.0;
+    double greed = 1.0;
+
     if (map->shopgreed)
         return map->shopgreed;
     return greed;
@@ -1213,11 +1241,12 @@ static double shop_greed(const mapstruct *map) {
  * approval ratio.
  */
 double shopkeeper_approval(const mapstruct *map, const object *player) {
-    double approval=1.0;
+    double approval = 1.0;
 
     if (map->shoprace) {
-        approval=NEUTRAL_RATIO;
-        if (player->race && !strcmp(player->race, map->shoprace)) approval = 1.0;
+        approval = NEUTRAL_RATIO;
+        if (player->race && !strcmp(player->race, map->shoprace))
+            approval = 1.0;
     }
     return approval;
 }
@@ -1244,26 +1273,27 @@ double shopkeeper_approval(const mapstruct *map, const object *player) {
 static uint64 value_limit(uint64 val, int quantity, const object *who, int isshop) {
     uint64 newval, unit_price;
     mapstruct *map;
-    unit_price=val/quantity;
+
+    unit_price = val/quantity;
     if (!isshop || !who) {
         if (unit_price > 10000)
-            newval=8000+isqrt(unit_price)*20;
+            newval = 8000+isqrt(unit_price)*20;
         else
-            newval=unit_price;
+            newval = unit_price;
     } else {
         if (!who->map) {
             LOG(llevError, "value_limit: asked shop price for ob %s on NULL map\n", who->name);
             return val;
         }
-        map=who->map;
-        if (map->shopmin && unit_price < map->shopmin) return 0;
+        map = who->map;
+        if (map->shopmin && unit_price < map->shopmin)
+            return 0;
         else if (map->shopmax && unit_price > map->shopmax/2)
-            newval=MIN((map->shopmax/2)+isqrt(unit_price-map->shopmax/2),
-                       map->shopmax);
-        else if (unit_price>10000)
-            newval=8000+isqrt(unit_price)*20;
+            newval = MIN((map->shopmax/2)+isqrt(unit_price-map->shopmax/2), map->shopmax);
+        else if (unit_price > 10000)
+            newval = 8000+isqrt(unit_price)*20;
         else
-            newval=unit_price;
+            newval = unit_price;
     }
     newval *= quantity;
     return newval;
@@ -1281,29 +1311,33 @@ static uint64 value_limit(uint64 val, int quantity, const object *who, int issho
 int describe_shop(const object *op) {
     mapstruct *map = op->map;
     /*shopitems *items=map->shopitems;*/
-    int pos=0, i;
-    double opinion=0;
-    char tmp[MAX_BUF]="\0", *value;
+    int pos = 0, i;
+    double opinion = 0;
+    char tmp[MAX_BUF] = "\0", *value;
 
-    if (op->type != PLAYER) return 0;
+    if (op->type != PLAYER)
+        return 0;
 
     /*check if there is a shop specified for this map */
-    if (map->shopitems || map->shopgreed || map->shoprace
-        || map->shopmin || map->shopmax) {
+    if (map->shopitems
+    || map->shopgreed
+    || map->shoprace
+    || map->shopmin
+    || map->shopmax) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
                       "From looking at the nearby shop you determine that it trades in:",
                       NULL);
 
         if (map->shopitems) {
-            for (i=0; i < map->shopitems[0].index; i++) {
+            for (i = 0; i < map->shopitems[0].index; i++) {
                 if (map->shopitems[i].name && map->shopitems[i].strength > 10) {
-                    snprintf(tmp+pos, sizeof(tmp)-pos, "%s, ",
-                             map->shopitems[i].name_pl);
+                    snprintf(tmp+pos, sizeof(tmp)-pos, "%s, ", map->shopitems[i].name_pl);
                     pos += strlen(tmp+pos);
                 }
             }
         }
-        if (!pos) strcpy(tmp, "a little of everything.");
+        if (!pos)
+            strcpy(tmp, "a little of everything.");
 
         /* format the string into a list */
         make_list_like(tmp);
@@ -1331,25 +1365,25 @@ int describe_shop(const object *op) {
         }
 
         if (map->shopgreed) {
-            if (map->shopgreed >2.0)
+            if (map->shopgreed > 2.0)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge massively.", NULL);
-            else if (map->shopgreed >1.5)
+            else if (map->shopgreed > 1.5)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge substantially.", NULL);
-            else if (map->shopgreed >1.1)
+            else if (map->shopgreed > 1.1)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to overcharge slightly.", NULL);
-            else if (map->shopgreed <0.9)
+            else if (map->shopgreed < 0.9)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                               "It tends to undercharge.", NULL);
         }
         if (map->shoprace) {
-            opinion=shopkeeper_approval(map, op);
+            opinion = shopkeeper_approval(map, op);
             if (opinion > 0.8)
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
@@ -1394,6 +1428,7 @@ int is_in_shop(object *ob) {
  */
 int coords_in_shop(mapstruct *map, int x, int y) {
     object *floor;
+
     for (floor = GET_MAP_OB(map, x, y); floor; floor = floor->above)
         if (floor->type == SHOP_FLOOR)
             return 1;

@@ -52,9 +52,10 @@ static void cftimer_process_event(tag_t ob_tag);
  */
 void cftimer_process_timers(void) {
     int i;
-    for (i=0;i<MAX_TIMERS;i++) {
+
+    for (i = 0; i < MAX_TIMERS; i++) {
         if (timers_table[i].mode == TIMER_MODE_CYCLES) {
-            timers_table[i].delay --;
+            timers_table[i].delay--;
             if (timers_table[i].delay == 0) {
                 /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
@@ -78,8 +79,9 @@ void cftimer_process_timers(void) {
  */
 static void cftimer_process_event(tag_t ob_tag) {
     object *ob = find_object(ob_tag);
+
     if (ob)
-        execute_event(ob, EVENT_TIMER,NULL,NULL,NULL,SCRIPT_FIX_ALL);
+        execute_event(ob, EVENT_TIMER, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 }
 
 /**
@@ -119,7 +121,7 @@ int cftimer_create(int id, long delay, object *ob, int mode) {
     if (mode == TIMER_MODE_CYCLES)
         timers_table[id].delay = delay;
     else
-        timers_table[id].delay = seconds() + delay;
+        timers_table[id].delay = seconds()+delay;
     return TIMER_ERR_NONE;
 }
 
@@ -150,7 +152,8 @@ int cftimer_destroy(int id) {
  */
 int cftimer_find_free_id(void) {
     int i;
-    for (i=0;i<MAX_TIMERS;i++) {
+
+    for (i = 0; i < MAX_TIMERS; i++) {
         if (timers_table[i].mode == TIMER_MODE_DEAD)
             return i;
     }
@@ -161,5 +164,5 @@ int cftimer_find_free_id(void) {
  * Initialize timers.
  */
 void cftimer_init(void) {
-    memset(&timers_table[0], 0, sizeof(cftimer) * MAX_TIMERS);
+    memset(&timers_table[0], 0, sizeof(cftimer)*MAX_TIMERS);
 }

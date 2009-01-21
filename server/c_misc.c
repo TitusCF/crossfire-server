@@ -688,23 +688,23 @@ void display_who_entry(object *op, player *pl, const char *format) {
  * Returns the value of the escape code used in the who format specifier.
  *
  * Specifier values are:
- * - N	Name of character
- * - t	title of character
- * - T	the optional "the " sequence value (depend if player has own_title or not)
- * - c	count
- * - n	newline
- * - h	\<Hostile\> if character is hostile, nothing otherwise
- * - d	\<WIZ\> if character is a dm, nothing otherwise
- * - a	\<AFK\> if character is afk, nothing otherwise
- * - b	\<BOT\> if character is a bot, nothing otherwise
- * - l	the level of the character
- * - m	the map path the character is currently on
- * - M	the map name of the map the character is currently on
- * - r	the region name (eg scorn, wolfsburg)
- * - R	the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
- * - i	player's ip address
- * - %	a literal %
- * - _	a literal underscore
+ * - N  Name of character
+ * - t  title of character
+ * - T  the optional "the " sequence value (depend if player has own_title or not)
+ * - c  count
+ * - n  newline
+ * - h  \<Hostile\> if character is hostile, nothing otherwise
+ * - d  \<WIZ\> if character is a dm, nothing otherwise
+ * - a  \<AFK\> if character is afk, nothing otherwise
+ * - b  \<BOT\> if character is a bot, nothing otherwise
+ * - l  the level of the character
+ * - m  the map path the character is currently on
+ * - M  the map name of the map the character is currently on
+ * - r  the region name (eg scorn, wolfsburg)
+ * - R  the regional title (eg The Kingdom of Scorn, The Port of Wolfsburg)
+ * - i  player's ip address
+ * - %  a literal %
+ * - _  a literal underscore
  *
  * @param[out] return_val
  * buffer that will contain the information.
