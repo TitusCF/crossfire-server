@@ -490,7 +490,7 @@ void free_all_object_data(void) {
     for (op = objects; op != NULL; ) {
         next = op->next;
         if (!QUERY_FLAG(op, FLAG_FREED)) {
-            LOG(llevDebug, "non freed object: %s", op->name);
+            LOG(llevDebug, "non freed object: %s\n", op->name);
         }
         op = next;
     }

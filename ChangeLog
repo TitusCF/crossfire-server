@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/object.c: Add missing newline to log message that is shown if
+  MEMORY_DEBUG is defined.
+Arvid Norlander 2009-01-21
+
 common/arch.c: Fix memory leak in archetypes when discrete damage is used.
 Arvid Norlander 2009-01-21
 
