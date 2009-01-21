@@ -174,7 +174,7 @@ EXTERN const char *const resist_save[NROFATTACKS] = {
     "physical ", "magic ", "fire ", "electricity ", "cold ", "confusion ", "acid ",
     "drain ", "weaponmagic ", "ghosthit ", "poison ", "slow ", "paralyze ",
     "turn_undead ", "fear ", "cancellation ", "deplete ", "death ", "chaos ",
-    "counterspell ", "godpower ", "holyword ", "blind " , "internal ", "life_stealing ",
+    "counterspell ", "godpower ", "holyword ", "blind ", "internal ", "life_stealing ",
     "disease "
 };
 
@@ -183,7 +183,7 @@ EXTERN const char *const attacktype_desc[NROFATTACKS] = {
     "physical", "magic", "fire", "electricity", "cold", "confusion", "acid",
     "drain", "weapon magic", "ghost hit", "poison", "slow", "paralyze",
     "turn undead", "fear", "cancellation", "deplete", "death", "chaos",
-    "counterspell", "god power", "holy word", "blind" , "internal", "life stealing",
+    "counterspell", "god power", "holy word", "blind", "internal", "life stealing",
     "disease"
 };
 
@@ -195,7 +195,7 @@ EXTERN const char *const resist_plus[NROFATTACKS] = {
     "resist paralyzation", "resist turn undead", "resist fear",
     "resist cancellation", "resist depletion", "resist death", "resist chaos",
     "resist counterspell", "resist god power", "resist holy word",
-    "resist blindness" ,  "resist internal", "resist life stealing",
+    "resist blindness", "resist internal", "resist life stealing",
     "resist diseases"
 };
 
@@ -239,7 +239,7 @@ EXTERN Chaos_Attacks ATTACKS[22] = {
     { AT_FIRE, 2 },
     { AT_ELECTRICITY, 3 },
     { AT_ELECTRICITY, 3 },  /* ball_lightning */
-    { AT_ELECTRICITY, 3} ,
+    { AT_ELECTRICITY, 3 },
     { AT_COLD, 4 },
     { AT_COLD, 4 },    /* face=icestorm*/
     { AT_COLD, 4 },

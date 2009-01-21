@@ -425,9 +425,8 @@ typedef struct typedata {
         !op->type == DOOR)) && (!QUERY_FLAG(op, FLAG_IS_A_TEMPLATE)))
 
 #define IS_ARROW(op) \
-        (op->type==ARROW || \
-        (op->type==SPELL_EFFECT && \
-             (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
+        (op->type == ARROW || \
+        (op->type == SPELL_EFFECT && (op->subtype == SP_BULLET || op->subtype == SP_MAGIC_MISSILE)))
 /*@}*/
 
 /** This return TRUE if object has still randomitems which could be expanded. */
@@ -476,7 +475,7 @@ typedef struct typedata {
 #define CLEAR_FLAG(xyz, p) \
     ((xyz)->flags[p/32] &= ~(1U<<(p%32)))
 #define QUERY_FLAG(xyz, p) \
-    ((xyz)->flags[p/32] & (1U<<(p%32)))
+    ((xyz)->flags[p/32]&(1U<<(p%32)))
 #define COMPARE_FLAGS(p, q) \
     (                                                \
         ((p)->flags[0] == (q)->flags[0]) &&          \
@@ -692,7 +691,7 @@ typedef unsigned char MoveType;
     ((type != 0) && (ob1->move_type&type) == ob1->move_type)
 /*@}*/
 
-#define SET_GENERATE_TYPE(xyz, va) (xyz)->stats.sp=(va)
+#define SET_GENERATE_TYPE(xyz, va) (xyz)->stats.sp = (va)
 #define GENERATE_TYPE(xyz)      ((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz)     ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */
 
@@ -850,8 +849,7 @@ typedef unsigned char MoveType;
  * @param maxlen
  * maximum length of dest buffer.
  */
-static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen)
-{
+static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen) {
     if (*curlen == (maxlen-1))
         return;
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
@@ -870,7 +868,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
     if (variable) {                                                \
         int i, j = 0;                                              \
         safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
-        for(i = 0; i < NROFATTACKS; i++)                           \
+        for (i = 0; i < NROFATTACKS; i++)                          \
             if (variable&(1<<i)) {                                 \
                 if (j)                                             \
                     safe_strcat(retbuf, ", ", len, maxlen);        \
@@ -918,7 +916,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
         int i, j = 0;                                              \
         safe_strcat(retbuf, "(" name ": ", len, maxlen);           \
         for (i = 0; i < NRSPELLPATHS; i++)                         \
-            if(variable&(1<<i)) {                                  \
+            if (variable&(1<<i)) {                                 \
                 if (j)                                             \
                     safe_strcat(retbuf, ", ", len, maxlen);        \
                 else                                               \
@@ -1046,8 +1044,12 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
 /* You may uncomment following define to check sanity of code.
  * But use as debug only (loses all speed gained by those macros)
  */
-/*#define FAST_STRNCAT(buf__, buf2__, size__) { memcpy (buf__, buf2__, size__); buf__ += size__; \
-  if (size__ != strlen(buf2__)) LOG(llevError, "Error, bad length for %s\n", buf2__); }*/
+/*#define FAST_STRNCAT(buf__, buf2__, size__) { \
+    memcpy (buf__, buf2__, size__); \
+    buf__ += size__; \
+    if (size__ != strlen(buf2__)) \
+        LOG(llevError, "Error, bad length for %s\n", buf2__); \
+}*/
 /*@}*/
 
 #endif /* DEFINE_H */

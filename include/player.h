@@ -248,7 +248,7 @@ typedef struct pl {
     object      *transport;          /**< Transport the player is in. */
     client_spell *spell_state;       /**< Spell information sent to client. */
     /* Special DM fields */
-    tag_t*      stack_items;         /**< Item stack for patch/dump/... commands. */
+    tag_t       *stack_items;        /**< Item stack for patch/dump/... commands. */
     sstring     followed_player;     /**< Player the DM is following. */
     int         stack_position;      /**< Current stack position, 0 for no item. */
     int         language;            /**< The language the player wishes to use. */

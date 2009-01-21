@@ -92,7 +92,7 @@ typedef struct _key_value {
  * true if the object was destroyed, 0 otherwise
  */
 #define was_destroyed(op, old_tag) \
-    (op->count != old_tag || QUERY_FLAG (op, FLAG_FREED))
+    (op->count != old_tag || QUERY_FLAG(op, FLAG_FREED))
 
 
 /**
@@ -245,7 +245,7 @@ typedef struct obj {
     uint8       will_apply;     /**< See crossfire.doc and @ref WILL_APPLY_xxx */
     sint8       sound_chance;   /**< Probability, 0 to 100, of the object emitting a sound. */
     struct obj  *spellitem;     /**< Spell ability monster is choosing to use */
-    double      expmul;         /**< needed experience = (calc_exp*expmul) - means some *
+    double      expmul;         /**< needed experience = (calc_exp*expmul) - means some
                                  * races/classes can need less/more exp to gain levels */
 
     /* Spell related information, may be useful elsewhere

@@ -279,7 +279,7 @@ extern socket_struct *init_sockets;
  * This is generally done as a safety, and having this macro
  * makes the code a bit cleaner when doing so.
  */
-#define FREE_AND_CLEAR(xyz) { free((void*)xyz); xyz = NULL; }
+#define FREE_AND_CLEAR(xyz) { free((void *)xyz); xyz = NULL; }
 #define FREE_AND_CLEAR_STR(xyz) { free_string(xyz); xyz = NULL; }
 
 /* FREE_AND_COPY is for the shared string - it is handy enough
@@ -400,12 +400,12 @@ typedef struct Settings {
     uint8   create_home_portals;      /**< If 1, can create portals in unique maps (apartments) */
     uint8   personalized_blessings;   /**< If 1, blessed weapons get an owner and a willpower value */
     sint64  pk_max_experience;        /**< Maximum experience one can get for PKing. Ignore if negative. */
-    int     pk_max_experience_percent;   /**< Percentage of experience of victim the killer gets. */
+    int     pk_max_experience_percent; /**< Percentage of experience of victim the killer gets. */
     int     allow_denied_spells_writing; /**< If set, players can write spells they can't cast. */
-    int     allow_broken_converters;     /**< If set, converters will work even if price of generated item is higher
+    int     allow_broken_converters;  /**< If set, converters will work even if price of generated item is higher
                                           * than the price of converted items. */
-    int     log_timestamp;        /**< If set, log will comport a timestamp. */
-    char*   log_timestamp_format; /**< Format for timestap, if log_timestamp is set. */
+    int     log_timestamp;            /**< If set, log will comport a timestamp. */
+    char    *log_timestamp_format;    /**< Format for timestap, if log_timestamp is set. */
 } Settings;
 
 extern Settings settings;

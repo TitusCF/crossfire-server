@@ -98,7 +98,7 @@ extern const char *map_layer_name[MAP_LAYERS];
 /** Map height. */
 #define MAP_HEIGHT(m)           (m)->height
 /** Convenient function - total number of spaces is used in many places. */
-#define MAP_SIZE(m)             ((m)->width * (m)->height)
+#define MAP_SIZE(m)             ((m)->width*(m)->height)
 
 /** Default X coordinate for map enter. */
 #define MAP_ENTER_X(m)          (m)->enter_x

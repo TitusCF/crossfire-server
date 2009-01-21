@@ -33,7 +33,7 @@
  * The offsetof macro is part of ANSI C, but many compilers lack it, for
  * example "gcc -ansi"
  */
-#if !defined (offsetof)
+#if !defined(offsetof)
 #define offsetof(type, member) (int)&(((type *)0)->member)
 #endif
 

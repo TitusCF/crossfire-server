@@ -61,7 +61,7 @@
 /*@}*/
 
 /** Multiplier for spell points / grace based on the attenuation. */
-#define PATH_SP_MULT(op, spell) (((op->path_attuned&spell->path_attuned) ? 0.8 : 1) * \
+#define PATH_SP_MULT(op, spell) (((op->path_attuned&spell->path_attuned) ? 0.8 : 1)* \
                                  ((op->path_repelled&spell->path_attuned) ? 1.25 : 1))
 
 /** Number of spell paths. */

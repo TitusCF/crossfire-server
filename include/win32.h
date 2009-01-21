@@ -155,10 +155,10 @@ extern struct dirent *readdir(DIR *);
 extern int closedir(DIR *);
 extern void rewinddir(DIR *);
 extern int strncasecmp(const char *s1, const char *s2, int n);
-extern int strcasecmp(const char *s1, const char*s2);
-extern void service_register( );
-extern void service_unregister( );
-extern void service_handle( );
+extern int strcasecmp(const char *s1, const char *s2);
+extern void service_register();
+extern void service_unregister();
+extern void service_handle();
 
 /* For Win32 service */
 extern int bRunning;
