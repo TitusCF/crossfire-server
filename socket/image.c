@@ -51,25 +51,23 @@
  */
 
 void set_face_mode_cmd(char *buf, int len, socket_struct *ns) {
-    int mask =(atoi(buf) & CF_FACE_CACHE), mode=(atoi(buf) & ~CF_FACE_CACHE);
+    int mask = (atoi(buf)&CF_FACE_CACHE), mode = (atoi(buf)&~CF_FACE_CACHE);
 
-    if (mode==CF_FACE_NONE) {
-        ns->facecache=1;
-    } else if (mode!=CF_FACE_PNG) {
+    if (mode == CF_FACE_NONE) {
+        ns->facecache = 1;
+    } else if (mode != CF_FACE_PNG) {
         SockList sl;
 
         SockList_Init(&sl);
-        SockList_AddPrintf(&sl, "drawinfo %d %s", NDI_RED,
-                 "Warning - send unsupported face mode.  Will use Png");
+        SockList_AddPrintf(&sl, "drawinfo %d %s", NDI_RED, "Warning - send unsupported face mode.  Will use Png");
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
 #ifdef ESRV_DEBUG
-        LOG(llevDebug,"set_face_mode_cmd: Invalid mode from client: %d\n",
-            mode);
+        LOG(llevDebug, "set_face_mode_cmd: Invalid mode from client: %d\n", mode);
 #endif
     }
     if (mask) {
-        ns->facecache=1;
+        ns->facecache = 1;
     }
 }
 
@@ -81,10 +79,10 @@ void set_face_mode_cmd(char *buf, int len, socket_struct *ns) {
 
 void send_face_cmd(char *buff, int len, socket_struct *ns) {
     long tmpnum = atoi(buff);
-    short facenum=tmpnum & 0xffff;
+    short facenum = tmpnum&0xffff;
 
-    if (facenum!=0)
-        esrv_send_face(ns, facenum,1);
+    if (facenum != 0)
+        esrv_send_face(ns, facenum, 1);
 }
 
 /**
@@ -95,13 +93,12 @@ void send_face_cmd(char *buff, int len, socket_struct *ns) {
  * face (and askface is the only place that should be setting it).  Otherwise,
  * we look at the facecache, and if set, send the image name.
  */
-
-void esrv_send_face(socket_struct *ns,short face_num, int nocache) {
+void esrv_send_face(socket_struct *ns, short face_num, int nocache) {
     SockList sl;
     int fallback;
 
     if (face_num <= 0 || face_num >= nrofpixmaps) {
-        LOG(llevError,"esrv_send_face (%d) out of bounds??\n",face_num);
+        LOG(llevError, "esrv_send_face (%d) out of bounds??\n", face_num);
         return;
     }
 
@@ -109,7 +106,7 @@ void esrv_send_face(socket_struct *ns,short face_num, int nocache) {
     fallback = get_face_fallback(ns->faceset, face_num);
 
     if (facesets[fallback].faces[face_num].data == NULL) {
-        LOG(llevError,"esrv_send_face: faces[%d].data == NULL\n",face_num);
+        LOG(llevError, "esrv_send_face: faces[%d].data == NULL\n", face_num);
         return;
     }
 
@@ -144,10 +141,10 @@ void send_image_info(socket_struct *ns, char *params) {
 
     SockList_Init(&sl);
     SockList_AddPrintf(&sl, "replyinfo image_info\n%d\n%d\n", nrofpixmaps-1, bmaps_checksum);
-    for (i=0; i<MAX_FACE_SETS; i++) {
+    for (i = 0; i < MAX_FACE_SETS; i++) {
         if (facesets[i].prefix) {
             SockList_AddPrintf(&sl, "%d:%s:%s:%d:%s:%s:%s",
-                     i,  facesets[i].prefix, facesets[i].fullname,
+                     i, facesets[i].prefix, facesets[i].fullname,
                      facesets[i].fallback, facesets[i].size,
                      facesets[i].extension, facesets[i].comment);
         }
@@ -175,11 +172,14 @@ void send_image_sums(socket_struct *ns, char *params) {
 
     start = atoi(params);
     for (cp = params; *cp != '\0'; cp++)
-        if (*cp == ' ') break;
+        if (*cp == ' ')
+            break;
 
     stop = atoi(cp);
-    if (stop < start || *cp == '\0' || (stop-start)>1000 ||
-        stop >= nrofpixmaps) {
+    if (stop < start
+    || *cp == '\0'
+    || (stop-start) > 1000
+    || stop >= nrofpixmaps) {
         SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
         Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
@@ -187,13 +187,11 @@ void send_image_sums(socket_struct *ns, char *params) {
     }
     SockList_AddPrintf(&sl, "replyinfo image_sums %d %d ", start, stop);
 
-    for (i=start; i<=stop; i++) {
+    for (i = start; i <= stop; i++) {
         int faceset;
 
         if (SockList_Avail(&sl) < 2+4+1+1+strlen(new_faces[i].name)+1) {
-            LOG(llevError,
-                "send_image_sums: buffer overflow, rejecting range %d..%d\n",
-                start, stop);
+            LOG(llevError, "send_image_sums: buffer overflow, rejecting range %d..%d\n", start, stop);
             SockList_Reset(&sl);
             SockList_AddPrintf(&sl, "replyinfo image_sums %d %d", start, stop);
             Send_With_Handling(ns, &sl);
@@ -207,7 +205,7 @@ void send_image_sums(socket_struct *ns, char *params) {
         faceset = get_face_fallback(ns->faceset, i);
         SockList_AddInt(&sl, facesets[faceset].faces[i].checksum);
         SockList_AddChar(&sl, faceset);
-        SockList_AddLen8Data(&sl, new_faces[i].name, strlen(new_faces[i].name) + 1);
+        SockList_AddLen8Data(&sl, new_faces[i].name, strlen(new_faces[i].name)+1);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);

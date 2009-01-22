@@ -37,7 +37,6 @@
  * The reading of data is handled in ericserver.c
  */
 
-
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
@@ -75,33 +74,33 @@ socket_struct *init_sockets;
  */
 void init_connection(socket_struct *ns, const char *from_ip) {
     SockList sl;
-    int bufsize=65535; /*Supposed absolute upper limit */
+    int bufsize = 65535; /*Supposed absolute upper limit */
     int oldbufsize;
-    socklen_t buflen=sizeof(int);
+    socklen_t buflen = sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
     int temp = 1;
 
     if (ioctlsocket(ns->fd, FIONBIO , &temp) == -1)
-        LOG(llevError,"init_connection:  Error on ioctlsocket.\n");
+        LOG(llevError, "init_connection:  Error on ioctlsocket.\n");
 #else
-    if (fcntl(ns->fd, F_SETFL, O_NONBLOCK)==-1) {
-        LOG(llevError,"init_connection:  Error on fcntl.\n");
+    if (fcntl(ns->fd, F_SETFL, O_NONBLOCK) == -1) {
+        LOG(llevError, "init_connection:  Error on fcntl.\n");
     }
 #endif /* end win32 */
 
-    if (getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen)==-1)
-        oldbufsize=0;
-    if (oldbufsize<bufsize) {
+    if (getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *)&oldbufsize, &buflen) == -1)
+        oldbufsize = 0;
+    if (oldbufsize < bufsize) {
 #ifdef ESRV_DEBUG
         LOG(llevDebug, "Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
-        if (setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(bufsize))) {
-            LOG(llevError,"init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
+        if (setsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *)&bufsize, sizeof(bufsize))) {
+            LOG(llevError, "init_connection: setsockopt unable to set output buf size to %d\n", bufsize);
         }
     }
-    buflen=sizeof(oldbufsize);
-    getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen);
+    buflen = sizeof(oldbufsize);
+    getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *)&oldbufsize, &buflen);
 #ifdef ESRV_DEBUG
     LOG(llevDebug, "Socket buffer size now %d bytes\n", oldbufsize);
 #endif
@@ -115,13 +114,13 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->status = Ns_Add;
     ns->mapx = 11;
     ns->mapy = 11;
-    ns->newmapcmd= 0;
+    ns->newmapcmd = 0;
     ns->look_position = 0;
     ns->update_look = 0;
     ns->has_readable_type = 0;
     ns->supported_readables = 0;
     ns->monitor_spells = 0;
-    ns->tick=0;
+    ns->tick = 0;
     ns->is_bot = 0;
     ns->num_look_objects = DEFAULT_NUM_LOOK_OBJECTS;
     ns->want_pickup = 0;
@@ -138,45 +137,43 @@ void init_connection(socket_struct *ns, const char *from_ip) {
      * length of data.
      */
     memset(ns->inbuf.buf, 0, sizeof(ns->inbuf.buf));
-    memset(&ns->lastmap,0,sizeof(struct Map));
+    memset(&ns->lastmap, 0, sizeof(struct Map));
     if (!ns->faces_sent)
-        ns->faces_sent =  calloc(sizeof(*ns->faces_sent),
-                                 nrofpixmaps);
+        ns->faces_sent = calloc(sizeof(*ns->faces_sent), nrofpixmaps);
     ns->faces_sent_len = nrofpixmaps;
 
-    memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
-    memset(&ns->stats,0,sizeof(struct statsinfo));
-    ns->map_scroll_x=0;
-    ns->map_scroll_y=0;
+    memset(&ns->anims_sent, 0, sizeof(ns->anims_sent));
+    memset(&ns->stats, 0, sizeof(struct statsinfo));
+    ns->map_scroll_x = 0;
+    ns->map_scroll_y = 0;
     /* Do this so we don't send a face command for the client for
      * this face.  Face 0 is sent to the client to say clear
      * face information.
      */
     ns->faces_sent[0] = NS_FACESENT_FACE;
 
-    ns->outputbuffer.start=0;
-    ns->outputbuffer.len=0;
-    ns->can_write=1;
+    ns->outputbuffer.start = 0;
+    ns->outputbuffer.len = 0;
+    ns->can_write = 1;
     ns->password_fails = 0;
 
-    ns->host=strdup_local(from_ip);
+    ns->host = strdup_local(from_ip);
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
+    SockList_AddPrintf(&sl, "version %d %d %s\n", VERSION_CS, VERSION_SC, VERSION_INFO);
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
 #ifdef CS_LOGSTATS
-    if (socket_info.nconns>cst_tot.max_conn)
+    if (socket_info.nconns > cst_tot.max_conn)
         cst_tot.max_conn = socket_info.nconns;
-    if (socket_info.nconns>cst_lst.max_conn)
+    if (socket_info.nconns > cst_lst.max_conn)
         cst_lst.max_conn = socket_info.nconns;
 #endif
 }
 
-
 /** This sets up the socket and reads all the image information into memory. */
 void init_server(void) {
     struct sockaddr_in insock;
-    struct protoent  *protox;
+    struct protoent *protox;
     struct linger linger_opt;
     char err[MAX_BUF];
 
@@ -184,7 +181,7 @@ void init_server(void) {
     WSADATA w;
 
     socket_info.max_filedescriptor = 1; /* used in select, ignored in winsockets */
-    WSAStartup(0x0101,&w);     /* this setup all socket stuff */
+    WSAStartup(0x0101, &w);     /* this setup all socket stuff */
     /* ill include no error tests here, winsocket 1.1 should always work */
     /* except some old win95 versions without tcp/ip stack */
 #else /* non windows */
@@ -202,24 +199,24 @@ void init_server(void) {
 
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
-    socket_info.nconns=0;
+    socket_info.nconns = 0;
 
 #ifdef CS_LOGSTATS
     memset(&cst_tot, 0, sizeof(CS_Stats));
     memset(&cst_lst, 0, sizeof(CS_Stats));
-    cst_tot.time_start=time(NULL);
-    cst_lst.time_start=time(NULL);
+    cst_tot.time_start = time(NULL);
+    cst_lst.time_start = time(NULL);
 #endif
 
-    LOG(llevDebug,"Initialize new client/server data\n");
+    LOG(llevDebug, "Initialize new client/server data\n");
     socket_info.nconns = 1;
     init_sockets = malloc(sizeof(socket_struct));
     init_sockets[0].faces_sent = NULL; /* unused */
-    socket_info.allocated_sockets=1;
+    socket_info.allocated_sockets = 1;
 
     protox = getprotobyname("tcp");
-    if (protox==NULL) {
-        LOG(llevError,"init_server: Error getting protox\n");
+    if (protox == NULL) {
+        LOG(llevError, "init_server: Error getting protox\n");
         return;
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
@@ -233,8 +230,7 @@ void init_server(void) {
 
     linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
-    if (setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
-                   sizeof(struct linger))) {
+    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_LINGER, (char *)&linger_opt, sizeof(struct linger))) {
         LOG(llevError, "Cannot setsockopt(SO_LINGER): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 /* Would be nice to have an autoconf check for this.  It appears that
@@ -242,51 +238,50 @@ void init_server(void) {
  * of them needs extra valus passed.
  */
 #if defined(__osf__) || defined(hpux) || defined(sgi) || defined(NeXT) || \
-        defined(__sun__) || defined(__linux__) || defined(SVR4) || \
-        defined(__FreeBSD__) || defined(__OpenBSD__) || \
-        defined(WIN32) /* ---win32 add this here */  || \
-        defined(__GNU__) /* HURD */
+    defined(__sun__) || defined(__linux__) || defined(SVR4) ||          \
+    defined(__FreeBSD__) || defined(__OpenBSD__) ||                     \
+    defined(WIN32) /* ---win32 add this here */  ||                     \
+    defined(__GNU__) /* HURD */
     {
 #ifdef WIN32
         char tmp = 1;
 #else
-        int tmp =1;
+        int tmp = 1;
 #endif
 
-        if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, &tmp, sizeof(tmp))) {
+        if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, &tmp, sizeof(tmp))) {
             LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
         }
     }
 #else
-    if (setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
+    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, (char *)NULL, 0)) {
         LOG(llevError, "Cannot setsockopt(SO_REUSEADDR): %s\n", strerror_local(errno, err, sizeof(err)));
     }
 #endif
 
-    if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
+    if (bind(init_sockets[0].fd, (struct sockaddr *)&insock, sizeof(insock)) == (-1)) {
         LOG(llevError, "Cannot bind socket to port %d: %s\n", ntohs(insock.sin_port), strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd,SD_BOTH);
+        shutdown(init_sockets[0].fd, SD_BOTH);
         closesocket(init_sockets[0].fd);
 #else
         close(init_sockets[0].fd);
 #endif /* win32 */
         exit(-1);
     }
-    if (listen(init_sockets[0].fd,5) == (-1))  {
+    if (listen(init_sockets[0].fd, 5) == (-1))  {
         LOG(llevError, "Cannot listen on socket: %s\n", strerror_local(errno, err, sizeof(err)));
 #ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd,SD_BOTH);
+        shutdown(init_sockets[0].fd, SD_BOTH);
         closesocket(init_sockets[0].fd);
 #else
         close(init_sockets[0].fd);
 #endif /* win32 */
         exit(-1);
     }
-    init_sockets[0].status=Ns_Add;
+    init_sockets[0].status = Ns_Add;
     read_client_images();
 }
-
 
 /*******************************************************************************
  *
@@ -296,7 +291,7 @@ void init_server(void) {
 
 /** Free's all the memory that ericserver allocates. */
 void free_all_newserver(void) {
-    LOG(llevDebug,"Freeing all new client/server information.\n");
+    LOG(llevDebug, "Freeing all new client/server information.\n");
     free_socket_images();
     free(init_sockets);
 }
@@ -310,14 +305,14 @@ void free_all_newserver(void) {
 
 void free_newsocket(socket_struct *ns) {
 #ifdef WIN32 /* ***win32: closesocket in windows style */
-    shutdown(ns->fd,SD_BOTH);
+    shutdown(ns->fd, SD_BOTH);
     if (closesocket(ns->fd)) {
 #else
     if (close(ns->fd)) {
 #endif /* win32 */
 
 #ifdef ESRV_DEBUG
-        LOG(llevDebug,"Error closing socket %d\n", ns->fd);
+        LOG(llevDebug, "Error closing socket %d\n", ns->fd);
 #endif
     }
     ns->fd = -1;

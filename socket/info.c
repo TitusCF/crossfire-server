@@ -48,7 +48,7 @@
  * parameter.  the esrv_drawinfo functions should probably be
  * replaced with this, just using black as the color.
  */
-static void esrv_print_msg(socket_struct *ns,int color, const char *str) {
+static void esrv_print_msg(socket_struct *ns, int color, const char *str) {
     SockList sl;
 
     SockList_Init(&sl);
@@ -66,7 +66,7 @@ static void esrv_print_msg(socket_struct *ns,int color, const char *str) {
  * intro   Intro message to send with main message if client does not support the message type
  * message The main message
  */
-static void esrv_print_ext_msg(socket_struct *ns,int color,uint8 type, uint8 subtype, const char *message) {
+static void esrv_print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 subtype, const char *message) {
     SockList sl;
 
     SockList_Init(&sl);
@@ -87,40 +87,38 @@ static void esrv_print_ext_msg(socket_struct *ns,int color,uint8 type, uint8 sub
  */
 
 static void print_message(int colr, const object *pl, const char *tmp) {
-
-    if (tmp == (char *) NULL) {
-        tmp="[NULL]";
+    if (tmp == (char *)NULL) {
+        tmp = "[NULL]";
     }
 
-    if (!pl || (pl->type==PLAYER && pl->contr==NULL)) {
-        fprintf(logfile,"%s\n",tmp);
+    if (!pl || (pl->type == PLAYER && pl->contr == NULL)) {
+        fprintf(logfile, "%s\n", tmp);
         return;
     }
     if (pl->type == PLAYER) {
-        esrv_print_msg(&pl->contr->socket,colr,(char*) tmp);
+        esrv_print_msg(&pl->contr->socket, colr, (char *)tmp);
         return;
     }
 }
-
 
 /**
  * Prints out the contents of specified buffer structures,
  * and clears the string.
  */
-
 void flush_output_element(const object *pl, Output_Buf *outputs) {
     char tbuf[MAX_BUF];
 
-    if (outputs->buf==NULL) return;
+    if (outputs->buf == NULL)
+        return;
     if (outputs->count > 1) {
-        snprintf(tbuf,MAX_BUF, "%d times %s", outputs->count, outputs->buf);
+        snprintf(tbuf, MAX_BUF, "%d times %s", outputs->count, outputs->buf);
         print_message(NDI_BLACK, pl, tbuf);
     } else {
         print_message(NDI_BLACK, pl, outputs->buf);
     }
     free_string(outputs->buf);
-    outputs->buf=NULL;
-    outputs->first_update=0; /* This way, it will be reused */
+    outputs->buf = NULL;
+    outputs->first_update = 0; /* This way, it will be reused */
 }
 
 /**
@@ -137,25 +135,24 @@ void flush_output_element(const object *pl, Output_Buf *outputs) {
  * If message not already in buffers, flushes olders buffer,
  * and adds message to queue.
  */
-
 static void check_output_buffers(const object *pl, const char *buf) {
-    int i, oldest=0;
+    int i, oldest = 0;
 
-    if (pl->contr->outputs_count<2) {
+    if (pl->contr->outputs_count < 2) {
         print_message(NDI_BLACK, pl, buf);
         return;
     } else {
-        for (i=0; i<NUM_OUTPUT_BUFS; i++) {
-            if (pl->contr->outputs[i].buf &&
-                    !strcmp(buf, pl->contr->outputs[i].buf)) break;
-            else if (pl->contr->outputs[i].first_update <
-                     pl->contr->outputs[oldest].first_update)
-                oldest=i;
+        for (i = 0; i < NUM_OUTPUT_BUFS; i++) {
+            if (pl->contr->outputs[i].buf
+            && !strcmp(buf, pl->contr->outputs[i].buf))
+                break;
+            else if (pl->contr->outputs[i].first_update < pl->contr->outputs[oldest].first_update)
+                oldest = i;
         }
         /* We found a match */
-        if (i<NUM_OUTPUT_BUFS) {
+        if (i < NUM_OUTPUT_BUFS) {
             pl->contr->outputs[i].count++;
-            if (pl->contr->outputs[i].count>=pl->contr->outputs_count) {
+            if (pl->contr->outputs[i].count >= pl->contr->outputs_count) {
                 flush_output_element(pl, &pl->contr->outputs[i]);
             }
         }
@@ -165,7 +162,7 @@ static void check_output_buffers(const object *pl, const char *buf) {
 
             pl->contr->outputs[oldest].first_update = pticks;
             pl->contr->outputs[oldest].count = 1;
-            if (pl->contr->outputs[oldest].buf!=NULL)
+            if (pl->contr->outputs[oldest].buf != NULL)
                 free_string(pl->contr->outputs[oldest].buf);
             pl->contr->outputs[oldest].buf = add_string(buf);
         }
@@ -202,38 +199,38 @@ void draw_ext_info(
     int flags, int pri, const object *pl, uint8 type,
     uint8 subtype, const char *message, const char *oldmessage) {
 
-
-    if ((flags & NDI_ALL) || (flags & NDI_ALL_DMS)) {
+    if ((flags&NDI_ALL) || (flags&NDI_ALL_DMS)) {
         player *tmppl;
 
-        for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next) {
-            if ((flags & NDI_ALL_DMS) && !QUERY_FLAG(tmppl->ob, FLAG_WIZ))
+        for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next) {
+            if ((flags&NDI_ALL_DMS) && !QUERY_FLAG(tmppl->ob, FLAG_WIZ))
                 continue;
-            draw_ext_info((flags & ~NDI_ALL & ~NDI_ALL_DMS), pri, tmppl->ob, type, subtype,
-                          message, oldmessage);
+            draw_ext_info((flags&~NDI_ALL&~NDI_ALL_DMS), pri, tmppl->ob, type, subtype, message, oldmessage);
         }
 
         return;
     }
 
-    if (!pl || (pl->type==PLAYER && pl->contr==NULL)) {
+    if (!pl || (pl->type == PLAYER && pl->contr == NULL)) {
         /* Write to the socket? */
         print_message(0, NULL, oldmessage);
         return;
     }
-    if (pl->type!=PLAYER) return;
-    if (pri>=pl->contr->listening) return;
+    if (pl->type != PLAYER)
+        return;
+    if (pri >= pl->contr->listening)
+        return;
 
     /* If the client doesn't support the readables, need to convert
      * it to old format.  If oldmessage is specified, it is presumed
      * that no conversion is needed (if the caller isn't sure, it
      * should pass NULL for oldmessage).
      */
-    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket,type)) {
+    if (!CLIENT_SUPPORT_READABLES(&pl->contr->socket, type)) {
         char *buf;
 
         if (oldmessage) {
-            buf = (char*)oldmessage;
+            buf = (char *)oldmessage;
         } else {
             buf = strdup_local(message);
             if (buf == NULL) {
@@ -242,16 +239,16 @@ void draw_ext_info(
             }
             strip_media_tag(buf);
         }
-        if ((flags&NDI_COLOR_MASK)==NDI_BLACK && !(flags &NDI_UNIQUE)) {
+        if ((flags&NDI_COLOR_MASK) == NDI_BLACK && !(flags&NDI_UNIQUE)) {
             /* following prints stuff out, as appropriate */
             check_output_buffers(pl, buf);
         } else {
-            print_message(flags & NDI_COLOR_MASK, pl, buf);
+            print_message(flags&NDI_COLOR_MASK, pl, buf);
         }
         if (!oldmessage)
             free(buf);
     } else {
-        esrv_print_ext_msg(&pl->contr->socket,flags&NDI_COLOR_MASK,type,subtype,message);
+        esrv_print_ext_msg(&pl->contr->socket, flags&NDI_COLOR_MASK, type, subtype, message);
     }
 }
 
@@ -286,13 +283,7 @@ void draw_ext_info(
  *
  * @param old_format
  */
-void draw_ext_info_format(
-    int flags, int pri, const object *pl, uint8 type,
-    uint8 subtype,
-    const char *new_format,
-    const char *old_format,
-    ...) {
-
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...) {
     char newbuf[HUGE_BUF], oldbuf[HUGE_BUF];
     va_list ap;
 
@@ -312,7 +303,6 @@ void draw_ext_info_format(
 /**
  * Writes to everyone on the specified map
  */
-
 void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
     player *pl;
 
@@ -325,9 +315,7 @@ void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, co
 /**
  * Writes to everyone on the map *except *op.  This is useful for emotions.
  */
-
-void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type,
-                         uint8 subtype, const char *str1, const char *str2) {
+void ext_info_map_except(int color, const mapstruct *map, const object *op, uint8 type, uint8 subtype, const char *str1, const char *str2) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
@@ -339,9 +327,7 @@ void ext_info_map_except(int color, const mapstruct *map, const object *op, uint
 /**
  * Writes to everyone on the map except op1 and op2
  */
-
-void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2,
-                          int type, int subtype, const char *str1, const char *str2) {
+void ext_info_map_except2(int color, const mapstruct *map, const object *op1, const object *op2, int type, int subtype, const char *str1, const char *str2) {
     player *pl;
 
     for (pl = first_player; pl != NULL; pl = pl->next)
@@ -349,84 +335,77 @@ void ext_info_map_except2(int color, const mapstruct *map, const object *op1, co
                 && pl->ob != op1 && pl->ob != op2) {
             draw_ext_info(color, 0, pl->ob, type, subtype, str1, str2);
         }
-
 }
-
 
 /**
  * Get player's current range attack in obuf.
  */
 void rangetostring(const object *pl, char *obuf, size_t len) {
     char name[MAX_BUF];
-    switch (pl->contr->shoottype) {
-        case range_none:
-            strncpy(obuf, "Range: nothing", len);
-            break;
 
-        case range_bow: {
+    switch (pl->contr->shoottype) {
+    case range_none:
+        strncpy(obuf, "Range: nothing", len);
+        break;
+
+    case range_bow: {
             object *op;
 
-            for (op = pl->inv; op; op=op->below)
+            for (op = pl->inv; op; op = op->below)
                 if (op->type == BOW && QUERY_FLAG(op, FLAG_APPLIED))
                     break;
-            if (op==NULL)
+            if (op == NULL)
                 break;
 
             query_base_name(op, 0, name, MAX_BUF);
-            snprintf(obuf, len, "Range: %s (%s)", name,
-                     op->race ? op->race : "nothing");
+            snprintf(obuf, len, "Range: %s (%s)", name, op->race ? op->race : "nothing");
         }
         break;
 
-        case range_magic:
-            if (settings.casting_time == TRUE) {
-                if (pl->casting_time > -1) {
-                    if (pl->casting_time == 0)
-                        snprintf(obuf, len, "Range: Holding spell (%s)",
-                                 pl->spell->name);
-                    else
-                        snprintf(obuf, len, "Range: Casting spell (%s)",
-                                 pl->spell->name);
-                } else
-                    snprintf(obuf, len, "Range: spell (%s)",
-                             pl->contr->ranges[range_magic]->name);
+    case range_magic:
+        if (settings.casting_time == TRUE) {
+            if (pl->casting_time > -1) {
+                if (pl->casting_time == 0)
+                    snprintf(obuf, len, "Range: Holding spell (%s)", pl->spell->name);
+                else
+                    snprintf(obuf, len, "Range: Casting spell (%s)", pl->spell->name);
             } else
-                snprintf(obuf, len, "Range: spell (%s)",
-                         pl->contr->ranges[range_magic]->name);
-            break;
+                snprintf(obuf, len, "Range: spell (%s)", pl->contr->ranges[range_magic]->name);
+        } else
+            snprintf(obuf, len, "Range: spell (%s)", pl->contr->ranges[range_magic]->name);
+        break;
 
-        case range_misc:
-            if (pl->contr->ranges[range_misc])
-                query_base_name(pl->contr->ranges[range_misc],0, name, MAX_BUF);
-            else
-                strncpy(name, "none", MAX_BUF);
-            snprintf(obuf, len, "Range: %s", name);
-            break;
+    case range_misc:
+        if (pl->contr->ranges[range_misc])
+            query_base_name(pl->contr->ranges[range_misc], 0, name, MAX_BUF);
+        else
+            strncpy(name, "none", MAX_BUF);
+        snprintf(obuf, len, "Range: %s", name);
+        break;
 
         /* range_scroll is only used for controlling golems.  If the
          * the player does not have a golem, reset some things.
          */
-        case range_golem:
-            if (pl->contr->ranges[range_golem]!=NULL)
-                snprintf(obuf, len, "Range: golem (%s)",pl->contr->ranges[range_golem]->name);
-            else {
-                pl->contr->shoottype = range_none;
-                strncpy(obuf, "Range: nothing", len);
-            }
-            break;
+    case range_golem:
+        if (pl->contr->ranges[range_golem] != NULL)
+            snprintf(obuf, len, "Range: golem (%s)", pl->contr->ranges[range_golem]->name);
+        else {
+            pl->contr->shoottype = range_none;
+            strncpy(obuf, "Range: nothing", len);
+        }
+        break;
 
-        case range_skill:
-            snprintf(obuf, len, "Skill: %s", pl->chosen_skill!=NULL ?
-                     pl->chosen_skill->name : "none");
-            break;
+    case range_skill:
+        snprintf(obuf, len, "Skill: %s", pl->chosen_skill != NULL ? pl->chosen_skill->name : "none");
+        break;
 
-        case range_builder:
-            query_base_name(pl->contr->ranges[range_builder], 0, name, MAX_BUF);
-            snprintf(obuf, len, "Builder: %s", name);
-            break;
+    case range_builder:
+        query_base_name(pl->contr->ranges[range_builder], 0, name, MAX_BUF);
+        snprintf(obuf, len, "Builder: %s", name);
+        break;
 
-        default:
-            strncpy(obuf, "Range: illegal", len);
+    default:
+        strncpy(obuf, "Range: illegal", len);
     }
 }
 
@@ -435,12 +414,11 @@ void rangetostring(const object *pl, char *obuf, size_t len) {
  */
 void set_title(const object *pl, char *buf, size_t len) {
     /* Eneq(@csd.uu.se): Let players define their own titles. */
-    if (pl->contr->own_title[0]=='\0')
-        snprintf(buf, len, "Player: %s the %s",pl->name,pl->contr->title);
+    if (pl->contr->own_title[0] == '\0')
+        snprintf(buf, len, "Player: %s the %s", pl->name, pl->contr->title);
     else
-        snprintf(buf, len, "Player: %s %s",pl->name,pl->contr->own_title);
+        snprintf(buf, len, "Player: %s %s", pl->name, pl->contr->own_title);
 }
-
 
 /**
  * Helper for magic map creation.
@@ -454,7 +432,7 @@ void set_title(const object *pl, char *buf, size_t len) {
  * for various code values.
  */
 static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int py) {
-    int x, y, dx, dy,mflags, l;
+    int x, y, dx, dy, mflags, l;
     sint16 nx, ny;
     mapstruct *mp;
     New_Face *f;
@@ -462,41 +440,44 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
 
     for (dx = -1; dx <= 1; dx++) {
         for (dy = -1; dy <= 1; dy++) {
-            x = px + dx;
-            y = py + dy;
+            x = px+dx;
+            y = py+dy;
 
-            if (FABS(x) >= MAGIC_MAP_HALF || FABS(y) >= MAGIC_MAP_HALF) continue;
+            if (FABS(x) >= MAGIC_MAP_HALF || FABS(y) >= MAGIC_MAP_HALF)
+                continue;
 
             mp = pl->map;
-            nx = pl->x + x;
-            ny = pl->y + y;
+            nx = pl->x+x;
+            ny = pl->y+y;
 
             mflags = get_map_flags(pl->map, &mp, nx, ny, &nx, &ny);
-            if (mflags & P_OUT_OF_MAP) continue;
+            if (mflags&P_OUT_OF_MAP)
+                continue;
 
-            if (map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE*(MAGIC_MAP_HALF + y)] == 0) {
-                for (l=0; l < MAP_LAYERS; l++) {
+            if (map_mark[MAGIC_MAP_HALF+x+MAGIC_MAP_SIZE*(MAGIC_MAP_HALF+y)] == 0) {
+                for (l = 0; l < MAP_LAYERS; l++) {
                     ob = GET_MAP_FACE_OBJ(mp, nx, ny, l);
-                    if (ob && !ob->invisible && ob->face != blank_face) break;
+                    if (ob && !ob->invisible && ob->face != blank_face)
+                        break;
                 }
-                if (ob) f = ob->face;
-                else f = blank_face;
+                if (ob)
+                    f = ob->face;
+                else
+                    f = blank_face;
 
                 /* Should probably have P_NO_MAGIC here also, but then shops don't
                  * work.
                  */
-                if (mflags & P_BLOCKSVIEW)
-                    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE*(MAGIC_MAP_HALF + y)] =
-                        FACE_WALL | (f?f->magicmap:0);
+                if (mflags&P_BLOCKSVIEW)
+                    map_mark[MAGIC_MAP_HALF+x+MAGIC_MAP_SIZE*(MAGIC_MAP_HALF+y)] = FACE_WALL|(f ? f->magicmap : 0);
                 else {
-                    map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE*(MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
+                    map_mark[MAGIC_MAP_HALF+x+MAGIC_MAP_SIZE*(MAGIC_MAP_HALF+y)] = FACE_FLOOR|(f ? f->magicmap : 0);
                     magic_mapping_mark_recursive(pl, map_mark, x, y);
                 }
             }
         }
     }
 }
-
 
 /**
  * Creates magic map for player.
@@ -513,7 +494,6 @@ static void magic_mapping_mark_recursive(object *pl, char *map_mark, int px, int
  * strength is an initial strength*2 rectangular area that we automatically
  * see in/penetrate through.
  */
-
 void magic_mapping_mark(object *pl, char *map_mark, int strength) {
     int x, y, mflags, l;
     sint16 nx, ny;
@@ -521,33 +501,35 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength) {
     New_Face *f;
     object *ob;
 
-    for (x = -strength; x <strength; x++) {
-        for (y = -strength; y <strength; y++) {
+    for (x = -strength; x < strength; x++) {
+        for (y = -strength; y < strength; y++) {
             mp = pl->map;
-            nx = pl->x + x;
-            ny = pl->y + y;
+            nx = pl->x+x;
+            ny = pl->y+y;
             mflags = get_map_flags(pl->map, &mp, nx, ny, &nx, &ny);
-            if (mflags & P_OUT_OF_MAP)
+            if (mflags&P_OUT_OF_MAP)
                 continue;
             else {
-                for (l=0; l < MAP_LAYERS; l++) {
+                for (l = 0; l < MAP_LAYERS; l++) {
                     ob = GET_MAP_FACE_OBJ(mp, nx, ny, l);
-                    if (ob && !ob->invisible && ob->face != blank_face) break;
+                    if (ob && !ob->invisible && ob->face != blank_face)
+                        break;
                 }
-                if (ob) f = ob->face;
-                else f = blank_face;
+                if (ob)
+                    f = ob->face;
+                else
+                    f = blank_face;
             }
 
-            if (mflags & P_BLOCKSVIEW)
-                map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE*(MAGIC_MAP_HALF + y)] = FACE_WALL | (f?f->magicmap:0);
+            if (mflags&P_BLOCKSVIEW)
+                map_mark[MAGIC_MAP_HALF+x+MAGIC_MAP_SIZE*(MAGIC_MAP_HALF+y)] = FACE_WALL|(f ? f->magicmap : 0);
             else {
-                map_mark[MAGIC_MAP_HALF + x + MAGIC_MAP_SIZE*(MAGIC_MAP_HALF + y)] = FACE_FLOOR | (f?f->magicmap:0);
+                map_mark[MAGIC_MAP_HALF+x+MAGIC_MAP_SIZE*(MAGIC_MAP_HALF+y)] = FACE_FLOOR|(f ? f->magicmap : 0);
                 magic_mapping_mark_recursive(pl, map_mark, x, y);
             }
         }
     }
 }
-
 
 /**
  * Creates and sends magic map to player.
@@ -557,15 +539,14 @@ void magic_mapping_mark(object *pl, char *map_mark, int strength) {
  *
  * Mark Wedel
  */
-
 void draw_magic_map(object *pl) {
-    int x,y;
+    int x, y;
     char map_mark[MAGIC_MAP_SIZE*MAGIC_MAP_SIZE];
     int xmin, xmax, ymin, ymax;
     SockList sl;
 
-    if (pl->type!=PLAYER) {
-        LOG(llevError,"Non player object called draw_map.\n");
+    if (pl->type != PLAYER) {
+        LOG(llevError, "Non player object called draw_map.\n");
         return;
     }
 
@@ -582,9 +563,9 @@ void draw_magic_map(object *pl) {
     ymin = MAGIC_MAP_SIZE;
     xmax = 0;
     ymax = 0;
-    for (x = 0; x < MAGIC_MAP_SIZE ; x++) {
+    for (x = 0; x < MAGIC_MAP_SIZE; x++) {
         for (y = 0; y < MAGIC_MAP_SIZE; y++) {
-            if (map_mark[x + MAP_WIDTH(pl->map) * y] & ~FACE_FLOOR) {
+            if (map_mark[x+MAP_WIDTH(pl->map)*y]&~FACE_FLOOR) {
                 xmin = MIN(x, xmin);
                 xmax = MAX(x, xmax);
                 ymin = MIN(y, ymin);
@@ -594,11 +575,11 @@ void draw_magic_map(object *pl) {
     }
 
     SockList_Init(&sl);
-    SockList_AddPrintf(&sl, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1), MAGIC_MAP_HALF - xmin, MAGIC_MAP_HALF - ymin);
+    SockList_AddPrintf(&sl, "magicmap %d %d %d %d ", (xmax-xmin+1), (ymax-ymin+1), MAGIC_MAP_HALF-xmin, MAGIC_MAP_HALF-ymin);
 
     for (y = ymin; y <= ymax; y++) {
         for (x = xmin; x <= xmax; x++) {
-            SockList_AddChar(&sl, map_mark[x+MAGIC_MAP_SIZE*y] & ~FACE_FLOOR);
+            SockList_AddChar(&sl, map_mark[x+MAGIC_MAP_SIZE*y]&~FACE_FLOOR);
         } /* x loop */
     } /* y loop */
 

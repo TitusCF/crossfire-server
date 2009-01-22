@@ -369,13 +369,13 @@ void toggle_extended_infos_cmd(char *buf, int len, socket_struct *ns) {
             info++;
         if (info >= len)
             break;
-        nextinfo = info + 1;
+        nextinfo = info+1;
         while (nextinfo < len && buf[nextinfo] != ' ')
             nextinfo++;
-        if (nextinfo - info >= 49) /*Erroneous info asked*/
+        if (nextinfo-info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &buf[info], nextinfo - info);
-        command[nextinfo - info] = '\0';
+        strncpy(command, &buf[info], nextinfo-info);
+        command[nextinfo-info] = '\0';
         /* 2. Interpret info*/
         if (!strcmp("smooth", command)) {
             /* Toggle smoothing*/
@@ -408,24 +408,24 @@ void toggle_extended_text_cmd(char *buf, int len, socket_struct *ns) {
             info++;
         if (info >= len)
             break;
-        nextinfo = info + 1;
+        nextinfo = info+1;
         while (nextinfo < len && buf[nextinfo] != ' ')
             nextinfo++;
-        if (nextinfo - info >= 49) /*Erroneous info asked*/
+        if (nextinfo-info >= 49) /*Erroneous info asked*/
             continue;
-        strncpy(command, &buf[info], nextinfo - info);
-        command[nextinfo - info] = '\0';
+        strncpy(command, &buf[info], nextinfo-info);
+        command[nextinfo-info] = '\0';
         /* 2. Interpret info*/
         i = sscanf(command, "%d", &flag);
         if (i == 1 && flag > 0 && flag <= MSG_TYPE_LAST)
-            ns->supported_readables |= (1 << flag);
+            ns->supported_readables |= (1<<flag);
         /*3. Next info*/
     }
     /* Send resulting state */
     SockList_Init(&sl);
     SockList_AddString(&sl, "ExtendedTextSet");
     for (i = 0; i <= MSG_TYPE_LAST; i++)
-        if (ns->supported_readables & (1 << i)) {
+        if (ns->supported_readables&(1<<i)) {
             SockList_AddPrintf(&sl, " %d", i);
         }
     Send_With_Handling(ns, &sl);
@@ -448,13 +448,12 @@ static void send_smooth(socket_struct *ns, uint16 face) {
      */
     if (!find_smooth(face, &smoothface)
     && !find_smooth(smooth_face->number, &smoothface)) {
-
         LOG(llevError, "could not findsmooth for %d. Neither default (%s)\n", face, smooth_face->name);
         ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
         return;
     }
 
-    if (!(ns->faces_sent[smoothface] & NS_FACESENT_FACE))
+    if (!(ns->faces_sent[smoothface]&NS_FACESENT_FACE))
         esrv_send_face(ns, smoothface, 0);
 
     ns->faces_sent[face] |= NS_FACESENT_SMOOTH;
@@ -502,16 +501,16 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     }
 
     packet = GetShort_String(buf);
-    repeat = GetInt_String(buf + 2);
+    repeat = GetInt_String(buf+2);
     /* -1 is special - no repeat, but don't update */
     if (repeat != -1) {
         pl->count = repeat;
     }
-    if (len - 4 >= MAX_BUF)
-        len = MAX_BUF - 5;
+    if (len-4 >= MAX_BUF)
+        len = MAX_BUF-5;
 
-    strncpy(command, (char*)buf + 6, len - 4);
-    command[len - 4] = '\0';
+    strncpy(command, (char *)buf+6, len-4);
+    command[len-4] = '\0';
 
     /* The following should never happen with a proper or honest client.
      * Therefore, the error message doesn't have to be too clear - if
@@ -519,8 +518,7 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
      * an idea of the problem, but they deserve what they get
      */
     if (pl->state != ST_PLAYING) {
-        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob,
-                             MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "You can not issue commands - state is not ST_PLAYING (%s)",
                              "You can not issue commands - state is not ST_PLAYING (%s)",
                              buf);
@@ -545,9 +543,9 @@ void new_player_cmd(uint8 *buf, int len, player *pl) {
     SockList_AddString(&sl, "comc ");
     SockList_AddShort(&sl, packet);
     if (FABS(pl->ob->speed) < 0.001)
-        time = MAX_TIME * 100;
+        time = MAX_TIME*100;
     else
-        time = (int)(MAX_TIME / FABS(pl->ob->speed));
+        time = (int)(MAX_TIME/FABS(pl->ob->speed));
     SockList_AddInt(&sl, time);
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);
@@ -635,7 +633,7 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
         LOG(llevDebug, "CS: csversion mismatch (%d,%d)\n", VERSION_CS, ns->cs_version);
 #endif
     }
-    cp = strchr(buf + 1, ' ');
+    cp = strchr(buf+1, ' ');
     if (!cp)
         return;
     ns->sc_version = atoi(cp);
@@ -644,7 +642,7 @@ void version_cmd(char *buf, int len, socket_struct *ns) {
         LOG(llevDebug, "CS: scversion mismatch (%d,%d)\n", VERSION_SC, ns->sc_version);
 #endif
     }
-    cp = strchr(cp + 1, ' ');
+    cp = strchr(cp+1, ' ');
     if (cp) {
         LOG(llevDebug, "CS: connection from client of type <%s>, ip %s\n", cp, ns->host);
     }
@@ -661,7 +659,6 @@ void set_sound_cmd(char *buf, int len, socket_struct *ns) {
 /** client wants the map resent
  * @todo remove
 */
-
 void map_redraw_cmd(char *buf, int len, player *pl) {
     /* This function is currently disabled; just clearing the
      * map state results in display errors. It should clear the
@@ -761,7 +758,7 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
     if (Old != New) {                               \
         Old = New;                                  \
         SockList_AddChar(&sl, Type);                \
-        SockList_AddInt(&sl, (long)(New * FLOAT_MULTI));\
+        SockList_AddInt(&sl, (long)(New*FLOAT_MULTI));\
     }
 
 #define AddIfString(Old, New, Type)                 \
@@ -807,11 +804,10 @@ void esrv_update_stats(player *pl) {
     for (s = 0; s < NUM_SKILLS; s++) {
         if (pl->last_skill_ob[s]
         && pl->last_skill_exp[s] != pl->last_skill_ob[s]->stats.exp) {
-
             /* Always send along the level if exp changes. This
              * is only 1 extra byte, but keeps processing simpler.
              */
-            SockList_AddChar(&sl, (char)(s + CS_STAT_SKILLINFO));
+            SockList_AddChar(&sl, (char)(s+CS_STAT_SKILLINFO));
             SockList_AddChar(&sl, (char)pl->last_skill_ob[s]->level);
             SockList_AddInt64(&sl, pl->last_skill_ob[s]->stats.exp);
             pl->last_skill_exp[s] = pl->last_skill_ob[s]->stats.exp;
@@ -857,7 +853,7 @@ void esrv_update_stats(player *pl) {
     AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
 
     /* Only send it away if we have some actual data */
-    if (sl.len>6) {
+    if (sl.len > 6) {
 #ifdef ESRV_DEBUG
         LOG(llevDebug, "Sending stats command, %d bytes long.\n", sl.len);
 #endif
@@ -874,7 +870,7 @@ void esrv_new_player(player *pl, uint32 weight) {
 
     pl->last_weight = weight;
 
-    if (!(pl->socket.faces_sent[pl->ob->face->number] & NS_FACESENT_FACE))
+    if (!(pl->socket.faces_sent[pl->ob->face->number]&NS_FACESENT_FACE))
         esrv_send_face(&pl->socket, pl->ob->face->number, 0);
 
     SockList_Init(&sl);
@@ -917,8 +913,7 @@ void esrv_send_animation(socket_struct *ns, short anim_num) {
      * the face itself) down to the client.
      */
     for (i = 0; i < animations[anim_num].num_animations; i++) {
-        if (!(ns->faces_sent[animations[anim_num].faces[i]] &
-              NS_FACESENT_FACE))
+        if (!(ns->faces_sent[animations[anim_num].faces[i]]&NS_FACESENT_FACE))
             esrv_send_face(ns, animations[anim_num].faces[i], 0);
         /* flags - not used right now */
         SockList_AddShort(&sl, animations[anim_num].faces[i]);
@@ -976,8 +971,7 @@ static object *heads[MAX_HEAD_POS][MAX_HEAD_POS][MAP_LAYERS];
  *    with the function returning zero - this means there are objects
  *    on the space we have already sent to the client.
  */
-static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
-                       socket_struct *ns, int *has_obj, int is_head) {
+static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl, socket_struct *ns, int *has_obj, int is_head) {
     uint16 face_num;
     uint8 nlayer, smoothlevel = 0;
     object *head;
@@ -1003,8 +997,8 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
          * the head, the clone values will be zero, so the right
          * thing will still happen.
          */
-        bx = ax + head->arch->tail_x - ob->arch->clone.x;
-        by = ay + head->arch->tail_y - ob->arch->clone.y;
+        bx = ax+head->arch->tail_x-ob->arch->clone.x;
+        by = ay+head->arch->tail_y-ob->arch->clone.y;
 
         /* I don't think this can ever happen, but better to check
          * for it just in case.
@@ -1017,7 +1011,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
          * layer as the layers are defined. We are basically checking
          * to see if we have already stored this object away.
          */
-        for (l = layer - 1; l <= layer + 1; l++) {
+        for (l = layer-1; l <= layer+1; l++) {
             if (l < 0 || l >= MAP_LAYERS)
                 continue;
             if (heads[by][bx][l] == head)
@@ -1026,11 +1020,11 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         /* Didn't find it.  So we need to store it away. Try to store it
          * on our original layer, and then move up a layer.
          */
-        if (l == layer + 2) {
+        if (l == layer+2) {
             if (!heads[by][bx][layer])
                 heads[by][bx][layer] = head;
-            else if (layer + 1 < MAP_LAYERS && !heads[by][bx][layer + 1])
-                heads[by][bx][layer + 1] = head;
+            else if (layer+1 < MAP_LAYERS && !heads[by][bx][layer+1])
+                heads[by][bx][layer+1] = head;
         }
         return 0;
         /* Ok - All done storing away the head for future use */
@@ -1038,7 +1032,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
         (*has_obj)++;
         if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC)
         || QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM)) {
-            face_num = ob->animation_id | (1 << 15);
+            face_num = ob->animation_id|(1<<15);
             if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_SYNC))
                 face_num |= ANIM_SYNC;
             else if (QUERY_FLAG(ob, FLAG_CLIENT_ANIM_RANDOM))
@@ -1057,7 +1051,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
             ns->lastmap.cells[ax][ay].faces[layer] = face_num;
 
             /* Now form the data packet */
-            nlayer = 0x10 + layer;
+            nlayer = 0x10+layer;
 
             len = 2;
 
@@ -1079,7 +1073,7 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
                 else if (FABS(ob->speed) >= 1.0)
                     anim_speed = 1;
                 else
-                    anim_speed = (int)(1.0 / FABS(ob->speed));
+                    anim_speed = (int)(1.0/FABS(ob->speed));
 
                 if (!ns->anims_sent[ob->animation_id])
                     esrv_send_animation(ns, ob->animation_id);
@@ -1091,20 +1085,20 @@ static int map2_add_ob(int ax, int ay, int layer, object *ob, SockList *sl,
                  */
                 if (smoothlevel) {
                     for (i = 0; i < NUM_ANIMATIONS(ob); i++) {
-                        if (!(ns->faces_sent[animations[ob->animation_id].faces[i]] & NS_FACESENT_SMOOTH))
+                        if (!(ns->faces_sent[animations[ob->animation_id].faces[i]]&NS_FACESENT_SMOOTH))
                             send_smooth(ns, animations[ob->animation_id].faces[i]);
                     }
                 }
-            } else if (!(ns->faces_sent[face_num] & NS_FACESENT_FACE)) {
+            } else if (!(ns->faces_sent[face_num]&NS_FACESENT_FACE)) {
                 esrv_send_face(ns, face_num, 0);
             }
 
             if (smoothlevel
-            && !(ns->faces_sent[ob->face->number] & NS_FACESENT_SMOOTH))
+            && !(ns->faces_sent[ob->face->number]&NS_FACESENT_SMOOTH))
                 send_smooth(ns, ob->face->number);
 
             /* Length of packet */
-            nlayer |= len << 5;
+            nlayer |= len<<5;
 
             SockList_AddChar(sl, nlayer);
             SockList_AddShort(sl, face_num);
@@ -1127,7 +1121,7 @@ static int map2_delete_layer(int ax, int ay, int layer, SockList *sl, socket_str
 
     if (ns->lastmap.cells[ax][ay].faces[layer] != 0) {
         /* Now form the data packet */
-        nlayer = 0x10 + layer + (2 << 5);
+        nlayer = 0x10+layer+(2<<5);
         SockList_AddChar(sl, nlayer);
         SockList_AddShort(sl, 0);
         ns->lastmap.cells[ax][ay].faces[layer] = 0;
@@ -1188,7 +1182,7 @@ static void check_space_for_heads(int ax, int ay, SockList *sl, socket_struct *n
          * more efficient
          * to send 0 as the type/len field.
          */
-        sl->len = oldlen + 2;       /* 2 bytes for coordinate */
+        sl->len = oldlen+2;         /* 2 bytes for coordinate */
         SockList_AddChar(sl, 0);    /* Clear byte */
         SockList_AddChar(sl, 255);  /* Termination byte */
         map_clearcell(&ns->lastmap.cells[ax][ay], 0, 0);
@@ -1224,10 +1218,10 @@ void draw_client_map2(object *pl) {
     /* We could do this logic as conditionals in the if statement,
      * but that started to get a bit messy to look at.
      */
-    min_x = pl->x - pl->contr->socket.mapx / 2;
-    min_y = pl->y - pl->contr->socket.mapy / 2;
-    max_x = pl->x + (pl->contr->socket.mapx + 1) / 2 + MAX_HEAD_OFFSET;
-    max_y = pl->y + (pl->contr->socket.mapy + 1) / 2 + MAX_HEAD_OFFSET;
+    min_x = pl->x-pl->contr->socket.mapx/2;
+    min_y = pl->y-pl->contr->socket.mapy/2;
+    max_x = pl->x+(pl->contr->socket.mapx+1)/2+MAX_HEAD_OFFSET;
+    max_y = pl->y+(pl->contr->socket.mapy+1)/2+MAX_HEAD_OFFSET;
 
     /* x, y are the real map locations. ax, ay are viewport relative
      * locations.
@@ -1236,7 +1230,6 @@ void draw_client_map2(object *pl) {
     for (y = min_y; y < max_y; y++, ay++) {
         ax = 0;
         for (x = min_x; x < max_x ; x++, ax++) {
-
             /* If this space is out of the normal viewable area,
              * we only check the heads value. This is used to
              * handle big images - if they extend to a viewable
@@ -1310,8 +1303,8 @@ void draw_client_map2(object *pl) {
                     && pl->contr->socket.darkness) {
                         pl->contr->socket.lastmap.cells[ax][ay].darkness = d;
                         /* Darkness tag & length*/
-                        SockList_AddChar(&sl, 0x1 | 1 << 5);
-                        SockList_AddChar(&sl, 255 - d * (256 / MAX_LIGHT_RADII));
+                        SockList_AddChar(&sl, 0x1|1<<5);
+                        SockList_AddChar(&sl, 255-d*(256/MAX_LIGHT_RADII));
                         have_darkness = 1;
                     }
 
@@ -1322,7 +1315,7 @@ void draw_client_map2(object *pl) {
                         if (!ob
                         && x == pl->x
                         && y == pl->y
-                        && (pl->invisible & (pl->invisible < 50 ? 4:1))
+                        && (pl->invisible&(pl->invisible < 50 ? 4 : 1))
                         && (layer == MAP_LAYER_LIVING1 || layer == MAP_LAYER_LIVING2))
                             ob = pl;
 
@@ -1337,8 +1330,7 @@ void draw_client_map2(object *pl) {
                             if (g1 == has_obj)
                                 del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
                         } else {
-                            del_one +=
-                                map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
+                            del_one += map2_delete_layer(ax, ay, layer, &sl, &pl->contr->socket);
                         }
                     }
                     /* If nothing to do for this space, we
@@ -1354,7 +1346,7 @@ void draw_client_map2(object *pl) {
                          * space, darkness isn't all that interesting
                          * - we can send it when an object shows up.
                          */
-                        sl.len = oldlen +2;     /* 2 bytes for coordinate */
+                        sl.len = oldlen+2;          /* 2 bytes for coordinate */
                         SockList_AddChar(&sl, 0);   /* Clear byte */
                         SockList_AddChar(&sl, 255); /* Termination byte */
                         map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay], 0, 0);
@@ -1404,26 +1396,26 @@ void draw_client_map(object *pl) {
      * This block just makes sure all the spaces are properly
      * updated in terms of what they look like.
      */
-    min_x = pl->x - pl->contr->socket.mapx / 2;
-    min_y = pl->y - pl->contr->socket.mapy / 2;
-    max_x = pl->x + (pl->contr->socket.mapx + 1) / 2;
-    max_y = pl->y + (pl->contr->socket.mapy + 1) / 2;
+    min_x = pl->x-pl->contr->socket.mapx/2;
+    min_y = pl->y-pl->contr->socket.mapy/2;
+    max_x = pl->x+(pl->contr->socket.mapx+1)/2;
+    max_y = pl->y+(pl->contr->socket.mapy+1)/2;
     for (j = min_y; j < max_y; j++) {
         for (i = min_x; i < max_x; i++) {
             ax = i;
             ay = j;
             m = pm;
             mflags = get_map_flags(m, &m, ax, ay, &ax, &ay);
-            if (mflags & P_OUT_OF_MAP)
+            if (mflags&P_OUT_OF_MAP)
                 continue;
-            if (mflags & P_NEED_UPDATE)
+            if (mflags&P_NEED_UPDATE)
                 update_position(m, ax, ay);
             /* If a map is visible to the player, we don't want
              * to swap it out just to reload it. This should
              * really call something like swap_map, but this is
              * much more efficient and 'good enough'
              */
-            if (mflags & P_NEW_MAP)
+            if (mflags&P_NEW_MAP)
                 m->timeout = 50;
         }
     }
@@ -1444,8 +1436,8 @@ void esrv_map_scroll(socket_struct *ns, int dx, int dy) {
     ns->map_scroll_x += dx;
     ns->map_scroll_y += dy;
 
-    mx = ns->mapx + MAX_HEAD_OFFSET;
-    my = ns->mapy + MAX_HEAD_OFFSET;
+    mx = ns->mapx+MAX_HEAD_OFFSET;
+    my = ns->mapy+MAX_HEAD_OFFSET;
 
     /* the x and y here are coordinates for the new map, i.e. if we moved
      * (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy]. For this reason,
@@ -1458,11 +1450,11 @@ void esrv_map_scroll(socket_struct *ns, int dx, int dy) {
             if (x >= ns->mapx || y >= ns->mapy) {
                 /* clear cells outside the viewable area */
                 memset(&newmap.cells[x][y], 0, sizeof(newmap.cells[x][y]));
-            } else if (x + dx < 0 || x + dx >= ns->mapx || y + dy < 0 || y + dy >= ns->mapy) {
+            } else if (x+dx < 0 || x+dx >= ns->mapx || y+dy < 0 || y+dy >= ns->mapy) {
                 /* clear newly visible tiles within the viewable area */
                 memset(&newmap.cells[x][y], 0, sizeof(newmap.cells[x][y]));
             } else {
-                memcpy(&newmap.cells[x][y], &ns->lastmap.cells[x + dx][y + dy], sizeof(newmap.cells[x][y]));
+                memcpy(&newmap.cells[x][y], &ns->lastmap.cells[x+dx][y+dy], sizeof(newmap.cells[x][y]));
             }
         }
     }
@@ -1494,7 +1486,7 @@ void send_exp_table(socket_struct *ns, char *params) {
 
     SockList_Init(&sl);
     SockList_AddString(&sl, "replyinfo exp_table\n");
-    SockList_AddShort(&sl, settings.max_level + 1);
+    SockList_AddShort(&sl, settings.max_level+1);
     for (i = 1; i <= settings.max_level; i++) {
         if (SockList_Avail(&sl) < 8) {
             LOG(llevError, "Buffer overflow in send_exp_table, not sending all information\n");
@@ -1519,13 +1511,13 @@ void send_skill_info(socket_struct *ns, char *params) {
     for (i = 1; i < NUM_SKILLS; i++) {
         size_t len;
 
-        len = 16 + strlen(skill_names[i]); /* upper bound for length */
+        len = 16+strlen(skill_names[i]); /* upper bound for length */
         if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_skill_info, not sending all skill information\n");
             break;
         }
 
-        SockList_AddPrintf(&sl, "%d:%s\n", i + CS_STAT_SKILLINFO, skill_names[i]);
+        SockList_AddPrintf(&sl, "%d:%s\n", i+CS_STAT_SKILLINFO, skill_names[i]);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
@@ -1544,13 +1536,13 @@ void send_spell_paths(socket_struct *ns, char *params) {
     for (i = 0; i < NRSPELLPATHS; i++) {
         size_t len;
 
-        len = 16 + strlen(spellpathnames[i]); /* upper bound for length */
+        len = 16+strlen(spellpathnames[i]); /* upper bound for length */
         if (SockList_Avail(&sl) < len) {
             LOG(llevError, "Buffer overflow in send_spell_paths, not sending all spell information\n");
             break;
         }
 
-        SockList_AddPrintf(&sl, "%d:%s\n", 1 << i, spellpathnames[i]);
+        SockList_AddPrintf(&sl, "%d:%s\n", 1<<i, spellpathnames[i]);
     }
     Send_With_Handling(ns, &sl);
     SockList_Term(&sl);
@@ -1707,8 +1699,8 @@ void esrv_update_spells(player *pl) {
                 spell_info->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
                 flags |= UPD_SP_GRACE;
             }
-            if (spell_info->last_dam != spell->stats.dam + SP_level_dam_adjust(pl->ob, spell)) {
-                spell_info->last_dam = spell->stats.dam + SP_level_dam_adjust(pl->ob, spell);
+            if (spell_info->last_dam != spell->stats.dam+SP_level_dam_adjust(pl->ob, spell)) {
+                spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
                 flags |= UPD_SP_DAMAGE;
             }
             if (flags != 0) {
@@ -1716,11 +1708,11 @@ void esrv_update_spells(player *pl) {
                 SockList_AddString(&sl, "updspell ");
                 SockList_AddChar(&sl, flags);
                 SockList_AddInt(&sl, spell->count);
-                if (flags & UPD_SP_MANA)
+                if (flags&UPD_SP_MANA)
                     SockList_AddShort(&sl, spell_info->last_sp);
-                if (flags & UPD_SP_GRACE)
+                if (flags&UPD_SP_GRACE)
                     SockList_AddShort(&sl, spell_info->last_grace);
-                if (flags & UPD_SP_DAMAGE)
+                if (flags&UPD_SP_DAMAGE)
                     SockList_AddShort(&sl, spell_info->last_dam);
                 flags = 0;
                 Send_With_Handling(&pl->socket, &sl);
@@ -1774,7 +1766,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
         return;
     }
 
-    if (spell->face && !(pl->socket.faces_sent[spell->face->number] & NS_FACESENT_FACE))
+    if (spell->face && !(pl->socket.faces_sent[spell->face->number]&NS_FACESENT_FACE))
         esrv_send_face(&pl->socket, spell->face->number, 0);
 
     spell_info = get_client_spell_state(pl, spell);
@@ -1784,7 +1776,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     /* store costs and damage in the object struct, to compare to later */
     spell_info->last_sp = SP_level_spellpoint_cost(pl->ob, spell, SPELL_MANA);
     spell_info->last_grace = SP_level_spellpoint_cost(pl->ob, spell, SPELL_GRACE);
-    spell_info->last_dam = spell->stats.dam + SP_level_dam_adjust(pl->ob, spell);
+    spell_info->last_dam = spell->stats.dam+SP_level_dam_adjust(pl->ob, spell);
     /* send the current values */
     SockList_AddShort(sl, spell_info->last_sp);
     SockList_AddShort(sl, spell_info->last_grace);
@@ -1794,7 +1786,7 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
     if (spell->skill) {
         for (i = 1; i < NUM_SKILLS; i++)
             if (!strcmp(spell->skill, skill_names[i])) {
-                skill = i + CS_STAT_SKILLINFO;
+                skill = i+CS_STAT_SKILLINFO;
                 break;
             }
     }
@@ -1819,12 +1811,15 @@ static void append_spell(player *pl, SockList *sl, object *spell) {
  */
 void esrv_add_spells(player *pl, object *spell) {
     SockList sl;
+
     if (!pl) {
         LOG(llevError, "esrv_add_spells, tried to add a spell to a NULL player\n");
         return;
     }
+
     if (!pl->socket.monitor_spells)
         return;
+
     SockList_Init(&sl);
     SockList_AddString(&sl, "addspell ");
     if (!spell) {
@@ -1841,7 +1836,7 @@ void esrv_add_spells(player *pl, object *spell) {
              * If it does, we need to send what we already have,
              * and restart packet formation.
              */
-            if (SockList_Avail(&sl) < 26 + strlen(spell->name) + (spell->msg ? strlen(spell->msg) : 0)) {
+            if (SockList_Avail(&sl) < 26+strlen(spell->name)+(spell->msg ? strlen(spell->msg) : 0)) {
                 Send_With_Handling(&pl->socket, &sl);
                 SockList_Reset(&sl);
                 SockList_AddString(&sl, "addspell ");
@@ -1851,7 +1846,8 @@ void esrv_add_spells(player *pl, object *spell) {
     } else if (spell->type != SPELL) {
         LOG(llevError, "Asked to send a non-spell object as a spell\n");
         return;
-    } else append_spell(pl, &sl, spell);
+    } else
+        append_spell(pl, &sl, spell);
     /* finally, we can send the packet */
     Send_With_Handling(&pl->socket, &sl);
     SockList_Term(&sl);

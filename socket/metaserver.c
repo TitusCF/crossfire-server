@@ -53,7 +53,8 @@
 #include <curl/easy.h>
 #endif
 
-static int metafd=-1;
+static int metafd = -1;
+
 static struct sockaddr_in sock;
 
 /**
@@ -65,14 +66,13 @@ static struct sockaddr_in sock;
  * that can be examined to at least see what the user was trying to do.
  */
 void metaserver_init(void) {
-
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
     struct hostent *hostbn;
     int temp = 1;
 #endif
 
     if (!settings.meta_on) {
-        metafd=-1;
+        metafd = -1;
         return;
     }
 
@@ -80,8 +80,9 @@ void metaserver_init(void) {
         sock.sin_addr.s_addr = inet_addr(settings.meta_server);
     else {
         struct hostent *hostbn = gethostbyname(settings.meta_server);
+
         if (hostbn == NULL) {
-            LOG(llevDebug,"metaserver_init: Unable to resolve hostname %s\n", settings.meta_server);
+            LOG(llevDebug, "metaserver_init: Unable to resolve hostname %s\n", settings.meta_server);
             return;
         }
         memcpy(&sock.sin_addr, hostbn->h_addr, hostbn->h_length);
@@ -91,35 +92,36 @@ void metaserver_init(void) {
 #else
     fcntl(metafd, F_SETFL, O_NONBLOCK);
 #endif
-    if ((metafd=socket(AF_INET, SOCK_DGRAM, 0))==-1) {
-        LOG(llevDebug,"metaserver_init: Unable to create socket, err %d\n", errno);
+    if ((metafd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+        LOG(llevDebug, "metaserver_init: Unable to create socket, err %d\n", errno);
         return;
     }
     sock.sin_family = AF_INET;
     sock.sin_port = htons(settings.meta_port);
 
     /* No hostname specified, so lets try to figure one out */
-    if (settings.meta_host[0]==0) {
+    if (settings.meta_host[0] == 0) {
         char hostname[MAX_BUF], domain[MAX_BUF];
+
         if (gethostname(hostname, MAX_BUF-1)) {
-            LOG(llevDebug,"metaserver_init: gethostname failed - will not report hostname\n");
+            LOG(llevDebug, "metaserver_init: gethostname failed - will not report hostname\n");
             return;
         }
 
 #ifdef WIN32 /* ***win32 metaserver_init(): gethostbyname! */
         hostbn = gethostbyname(hostname);
-        if (hostbn != (struct hostent *) NULL) /* quick hack */
+        if (hostbn != (struct hostent *)NULL) /* quick hack */
             memcpy(domain, hostbn->h_addr, hostbn->h_length);
 
-        if (hostbn == (struct hostent *) NULL) {
+        if (hostbn == (struct hostent *)NULL) {
 #else
         if (getdomainname(domain, MAX_BUF-1)) {
 #endif /* win32 */
-            LOG(llevDebug,"metaserver_init: getdomainname failed - will not report hostname\n");
+            LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
             return;
         }
         /* Potential overrun here but unlikely to occur */
-        sprintf(settings.meta_host,"%s.%s", hostname, domain);
+        sprintf(settings.meta_host, "%s.%s", hostname, domain);
     }
 }
 
@@ -130,7 +132,7 @@ void metaserver_init(void) {
  * data structure, doing locking in the process.
  */
 void metaserver_update(void) {
-    char data[MAX_BUF], num_players=0;
+    char data[MAX_BUF], num_players = 0;
     player *pl;
 
     /* We could use socket_info.nconns, but that is not quite as accurate,
@@ -139,13 +141,19 @@ void metaserver_update(void) {
      * same as for the who commands with the addition that WIZ, AFK, and BOT
      * players are not counted.
      */
-    for (pl=first_player; pl!=NULL; pl=pl->next) {
-        if (pl->ob->map == NULL) continue;
-        if (pl->hidden) continue;
-        if (QUERY_FLAG(pl->ob, FLAG_WIZ)) continue;
-        if (QUERY_FLAG(pl->ob, FLAG_AFK)) continue;
-        if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD) continue;
-        if (pl->socket.is_bot) continue;
+    for (pl = first_player; pl != NULL; pl = pl->next) {
+        if (pl->ob->map == NULL)
+            continue;
+        if (pl->hidden)
+            continue;
+        if (QUERY_FLAG(pl->ob, FLAG_WIZ))
+            continue;
+        if (QUERY_FLAG(pl->ob, FLAG_AFK))
+            continue;
+        if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD)
+            continue;
+        if (pl->socket.is_bot)
+            continue;
         num_players++;
     }
 
@@ -154,9 +162,9 @@ void metaserver_update(void) {
         snprintf(data, sizeof(data), "%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players,
                  FULL_VERSION,
                  settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
-                 (long)time(NULL) - cst_tot.time_start);
-        if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0) {
-            LOG(llevDebug,"metaserver_update: sendto failed, err = %d\n", errno);
+                 (long)time(NULL)-cst_tot.time_start);
+        if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock)) < 0) {
+            LOG(llevDebug, "metaserver_update: sendto failed, err = %d\n", errno);
         }
     }
 
@@ -167,7 +175,7 @@ void metaserver_update(void) {
     metaserver2_updateinfo.num_players = num_players;
     metaserver2_updateinfo.in_bytes = cst_tot.ibytes;
     metaserver2_updateinfo.out_bytes = cst_tot.obytes;
-    metaserver2_updateinfo.uptime  = (long)time(NULL) - cst_tot.time_start;
+    metaserver2_updateinfo.uptime  = (long)time(NULL)-cst_tot.time_start;
     pthread_mutex_unlock(&ms2_info_mutex);
 
 }
@@ -186,7 +194,7 @@ void metaserver_update(void) {
  */
 
 typedef struct _MetaServer2 {
-    char                *hostname;
+    char *hostname;
     struct _MetaServer2 *next;
 } MetaServer2;
 
@@ -216,8 +224,8 @@ static LocalMeta2Info local_info;
 
 /* These two are globals, but we declare them here. */
 pthread_mutex_t ms2_info_mutex;
-MetaServer2_UpdateInfo metaserver2_updateinfo;
 
+MetaServer2_UpdateInfo metaserver2_updateinfo;
 
 /**
  * This frees any data associated with the MetaServer2 info,
@@ -229,7 +237,6 @@ static void free_metaserver2(MetaServer2 *ms) {
     free(ms->hostname);
     free(ms);
 }
-
 
 /**
  * This initializes the metaserver2 logic - it reads
@@ -245,14 +252,13 @@ static void free_metaserver2(MetaServer2 *ms) {
  * 1 if we will be updating the metaserver, 0 if no
  * metaserver updates
  */
-
 int metaserver2_init(void) {
-    static int  has_init=0;
-    FILE        *fp;
-    char        buf[MAX_BUF], *cp;
+    static int has_init = 0;
+    FILE *fp;
+    char buf[MAX_BUF], *cp;
     MetaServer2 *ms2, *msnext;
-    int         comp;
-    pthread_t   thread_id;
+    int comp;
+    pthread_t thread_id;
 
 #ifdef HAVE_CURL_CURL_H
     if (!has_init) {
@@ -260,19 +266,26 @@ int metaserver2_init(void) {
         memset(&metaserver2_updateinfo, 0, sizeof(MetaServer2_UpdateInfo));
 
         local_info.portnumber = settings.csport;
-        metaserver2=NULL;
+        metaserver2 = NULL;
         pthread_mutex_init(&ms2_info_mutex, NULL);
         curl_global_init(CURL_GLOBAL_ALL);
     } else {
-        local_info.notification=0;
-        if (local_info.hostname) FREE_AND_CLEAR(local_info.hostname);
-        if (local_info.html_comment) FREE_AND_CLEAR(local_info.html_comment);
-        if (local_info.text_comment) FREE_AND_CLEAR(local_info.text_comment);
-        if (local_info.archbase) FREE_AND_CLEAR(local_info.archbase);
-        if (local_info.mapbase) FREE_AND_CLEAR(local_info.mapbase);
-        if (local_info.codebase) FREE_AND_CLEAR(local_info.codebase);
-        if (local_info.flags) FREE_AND_CLEAR(local_info.flags);
-        for (ms2 = metaserver2; ms2; ms2=msnext) {
+        local_info.notification = 0;
+        if (local_info.hostname)
+            FREE_AND_CLEAR(local_info.hostname);
+        if (local_info.html_comment)
+            FREE_AND_CLEAR(local_info.html_comment);
+        if (local_info.text_comment)
+            FREE_AND_CLEAR(local_info.text_comment);
+        if (local_info.archbase)
+            FREE_AND_CLEAR(local_info.archbase);
+        if (local_info.mapbase)
+            FREE_AND_CLEAR(local_info.mapbase);
+        if (local_info.codebase)
+            FREE_AND_CLEAR(local_info.codebase);
+        if (local_info.flags)
+            FREE_AND_CLEAR(local_info.flags);
+        for (ms2 = metaserver2; ms2; ms2 = msnext) {
             msnext = ms2->next;
             free_metaserver2(ms2);
         }
@@ -281,39 +294,42 @@ int metaserver2_init(void) {
 #endif
 
     /* Now load up the values from the file */
-    snprintf(buf, sizeof(buf), "%s/metaserver2",settings.confdir);
+    snprintf(buf, sizeof(buf), "%s/metaserver2", settings.confdir);
 
     if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
-        LOG(llevError,"Warning: No metaserver2 file found\n");
+        LOG(llevError, "Warning: No metaserver2 file found\n");
         return 0;
     }
     while (fgets(buf, MAX_BUF-1, fp) != NULL) {
-        if (buf[0] == '#') continue;
+        if (buf[0] == '#')
+            continue;
         /* eliminate newline */
-        if ((cp=strrchr(buf,'\n'))!=NULL) *cp='\0';
+        if ((cp = strrchr(buf, '\n')) != NULL)
+            *cp = '\0';
 
         /* Skip over empty lines */
-        if (buf[0] == 0) continue;
+        if (buf[0] == 0)
+            continue;
 
         /* Find variable pairs */
 
-        if ((cp = strpbrk(buf," \t"))!=NULL) {
-            while (isspace(*cp)) *cp++=0;
+        if ((cp = strpbrk(buf, " \t")) != NULL) {
+            while (isspace(*cp))
+                *cp++ = 0;
         } else {
             /* This makes it so we don't have to do NULL checks against
              * cp everyplace
              */
-            cp="";
+            cp = "";
         }
 
         if (!strcasecmp(buf, "metaserver2_notification")) {
-            if (!strcasecmp(cp,"on") || !strcasecmp(cp,"true")) {
-                local_info.notification=TRUE;
-            } else if (!strcasecmp(cp,"off") || !strcasecmp(cp,"false")) {
-                local_info.notification=FALSE;
+            if (!strcasecmp(cp, "on") || !strcasecmp(cp, "true")) {
+                local_info.notification = TRUE;
+            } else if (!strcasecmp(cp, "off") || !strcasecmp(cp, "false")) {
+                local_info.notification = FALSE;
             } else {
-                LOG(llevError,"metaserver2: Unknown value for metaserver2_notification: %s\n",
-                    cp);
+                LOG(llevError, "metaserver2: Unknown value for metaserver2_notification: %s\n", cp);
             }
         } else if (!strcasecmp(buf, "metaserver2_server")) {
             if (*cp != 0) {
@@ -322,26 +338,25 @@ int metaserver2_init(void) {
                 ms2->next = metaserver2;
                 metaserver2 = ms2;
             } else {
-                LOG(llevError,"metaserver2: metaserver2_server must have a value.\n");
+                LOG(llevError, "metaserver2: metaserver2_server must have a value.\n");
             }
         } else if (!strcasecmp(buf, "localhostname")) {
             if (*cp != 0) {
                 local_info.hostname = strdup_local(cp);
             } else {
-                LOG(llevError,"metaserver2: localhostname must have a value.\n");
+                LOG(llevError, "metaserver2: localhostname must have a value.\n");
             }
         } else if (!strcasecmp(buf, "portnumber")) {
             if (*cp != 0) {
                 local_info.portnumber = atoi(cp);
             } else {
-                LOG(llevError,"metaserver2: portnumber must have a value.\n");
+                LOG(llevError, "metaserver2: portnumber must have a value.\n");
             }
-        }
         /* For the following values, it is easier to make sure
          * the pointers are set to something, even if it is a blank
          * string, so don't care if there is data in the string or not.
          */
-        else if (!strcasecmp(buf, "html_comment")) {
+        } else if (!strcasecmp(buf, "html_comment")) {
             local_info.html_comment = strdup(cp);
         } else if (!strcasecmp(buf, "text_comment")) {
             local_info.text_comment = strdup(cp);
@@ -354,20 +369,21 @@ int metaserver2_init(void) {
         } else if (!strcasecmp(buf, "flags")) {
             local_info.flags = strdup(cp);
         } else {
-            LOG(llevError,"Unknown value in metaserver2 file: %s\n", buf);
+            LOG(llevError, "Unknown value in metaserver2 file: %s\n", buf);
         }
     }
     close_and_delete(fp, comp);
 
     /* If no hostname is set, can't do updates */
-    if (!local_info.hostname) local_info.notification=0;
+    if (!local_info.hostname)
+        local_info.notification = 0;
 
 #ifndef HAVE_CURL_CURL_H
     if (local_info.notification) {
-        LOG(llevError,"metaserver2 file is set to do notification, but libcurl is not found.\n");
-        LOG(llevError,"Either fix your compilation, or turn of metaserver2 notification in \n");
-        LOG(llevError,"the %s/metaserver2 file.\n", settings.confdir);
-        LOG(llevError,"Exiting program.\n");
+        LOG(llevError, "metaserver2 file is set to do notification, but libcurl is not found.\n");
+        LOG(llevError, "Either fix your compilation, or turn of metaserver2 notification in \n");
+        LOG(llevError, "the %s/metaserver2 file.\n", settings.confdir);
+        LOG(llevError, "Exiting program.\n");
         exit(1);
     }
 #endif
@@ -378,19 +394,25 @@ int metaserver2_init(void) {
          * here, and anything that is null, we just allocate
          * an empty string.
         */
-        if (!local_info.html_comment) local_info.html_comment=strdup("");
-        if (!local_info.text_comment) local_info.text_comment=strdup("");
-        if (!local_info.archbase) local_info.archbase=strdup("");
-        if (!local_info.mapbase) local_info.mapbase=strdup("");
-        if (!local_info.codebase) local_info.codebase=strdup("");
-        if (!local_info.flags) local_info.flags=strdup("");
+        if (!local_info.html_comment)
+            local_info.html_comment = strdup("");
+        if (!local_info.text_comment)
+            local_info.text_comment = strdup("");
+        if (!local_info.archbase)
+            local_info.archbase = strdup("");
+        if (!local_info.mapbase)
+            local_info.mapbase = strdup("");
+        if (!local_info.codebase)
+            local_info.codebase = strdup("");
+        if (!local_info.flags)
+            local_info.flags = strdup("");
 
-        comp=pthread_create(&thread_id, NULL, metaserver2_thread, NULL);
+        comp = pthread_create(&thread_id, NULL, metaserver2_thread, NULL);
         if (comp) {
             LOG(llevError, "metaserver2_init: return code from pthread_create() is %d\n", comp);
 
             /* Effectively true - we're not going to update the metaserver */
-            local_info.notification=0;
+            local_info.notification = 0;
         }
     }
     return local_info.notification;
@@ -403,10 +425,10 @@ int metaserver2_init(void) {
  * or the like.
  */
 static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *data) {
-    size_t realsize = size * nmemb;
+    size_t realsize = size*nmemb;
 
-    LOG(llevDebug,"metaserver2_writer- Start of text:\n%s\n", ptr);
-    LOG(llevDebug,"metaserver2_writer- End of text:\n");
+    LOG(llevDebug, "metaserver2_writer- Start of text:\n%s\n", ptr);
+    LOG(llevDebug, "metaserver2_writer- End of text:\n");
 
     return realsize;
 }
@@ -420,9 +442,9 @@ static size_t metaserver2_writer(void *ptr, size_t size, size_t nmemb, void *dat
 static void metaserver2_updates(void) {
 #ifdef HAVE_CURL_CURL_H
     MetaServer2 *ms2;
-    struct curl_httppost *formpost=NULL;
-    struct curl_httppost *lastptr=NULL;
-    char    buf[MAX_BUF];
+    struct curl_httppost *formpost = NULL;
+    struct curl_httppost *lastptr = NULL;
+    char buf[MAX_BUF];
 
     /* First, fill in the form - note that everything has to be a string,
      * so we convert as needed with snprintf.
@@ -430,7 +452,6 @@ static void metaserver2_updates(void) {
      * The string after CURLFORM_COPYNAME is the name of the POST variable
      * as the
      */
-
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "hostname",
                  CURLFORM_COPYCONTENTS, local_info.hostname,
@@ -520,7 +541,7 @@ static void metaserver2_updates(void) {
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    for (ms2=metaserver2; ms2; ms2=ms2->next) {
+    for (ms2 = metaserver2; ms2; ms2 = ms2->next) {
         CURL *curl;
         CURLcode res;
 
@@ -537,7 +558,8 @@ static void metaserver2_updates(void) {
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, metaserver2_writer);
             res = curl_easy_perform(curl);
 
-            if (res) fprintf(stderr,"easy_perform got error %d\n", res);
+            if (res)
+                fprintf(stderr, "easy_perform got error %d\n", res);
 
             /* always cleanup */
             curl_easy_cleanup(curl);
@@ -562,7 +584,6 @@ static void metaserver2_updates(void) {
  */
 
 void *metaserver2_thread(void *junk) {
-
     while (1) {
         metaserver2_updates();
         sleep(60);
