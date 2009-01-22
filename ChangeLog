@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cflogger/cflogger.c: Clean out some of the messy and broken SQL (didn't
+  use indexes, was missing important constraints and so on) in cflogger. This
+  includes introducing a new version of the SQL schema used. The database will
+  be automatically upgraded at next run. Be aware of that older versions were
+  missing a check for too new format, thus once you upgraded the format you
+  should not run it with an older version of the server. Changes to the schema
+  includes adding some indexes and similar.
+Arvid Norlander 2009-01-22
+
 plugins/cflogger/cflogger.c, plugins/cfnewspaper/cfnewspaper.c: Now handles
   random maps the way the source code comments claims it does.
 plugins/cfnewspaper/cfnewspaper.c: Make info about kills from a specific region
