@@ -118,7 +118,7 @@ int checkbanned(const char *login, const char *host) {
               LOG(llevDebug, "    Checking Banned <%s> and <%s>.\n", log_buf, host_buf);
             */
 
-            if (*log_buf=='*')
+            if (*log_buf == '*')
                 hits = 1;
             else if (login != NULL && strcmp(login, log_buf) == 0)
                 hits = 1;

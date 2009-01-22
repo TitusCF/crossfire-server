@@ -58,7 +58,6 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
     object *ob;
 
     for (ob = GET_MAP_OB(map, x, y); ob; ob = ob->above) {
-
         if (strcmp(ob->arch->name, "rune_mark") == 0)
             /* you can always build on marking runes, used for connected building things. */
             continue;
@@ -70,30 +69,30 @@ static int can_build_over(struct mapdef *map, object *new_item, short x, short y
             continue;
 
         switch (new_item->type) {
-            case SIGN:
-            case MAGIC_EAR:
-                /* Allow signs and magic ears to be built on books */
-                if (ob->type != BOOK)
-                    return 0;
-                break;
-
-            case BUTTON:
-            case DETECTOR:
-            case PEDESTAL:
-            case CF_HANDLE:
-                /* Allow buttons and levers to be built under gates */
-                if (ob->type != GATE && ob->type != DOOR)
-                    return 0;
-                break;
-
-            default:
+        case SIGN:
+        case MAGIC_EAR:
+            /* Allow signs and magic ears to be built on books */
+            if (ob->type != BOOK)
                 return 0;
+            break;
+
+        case BUTTON:
+        case DETECTOR:
+        case PEDESTAL:
+        case CF_HANDLE:
+            /* Allow buttons and levers to be built under gates */
+            if (ob->type != GATE && ob->type != DOOR)
+                return 0;
+            break;
+
+        default:
+            return 0;
         }
     }
 
     /* If item being built is multi-tile, need to check other parts too. */
     if (new_item->more)
-        return can_build_over(map, new_item->more, x + new_item->more->arch->clone.x - new_item->arch->clone.x, y + new_item->more->arch->clone.y - new_item->arch->clone.y);
+        return can_build_over(map, new_item->more, x+new_item->more->arch->clone.x-new_item->arch->clone.x, y+new_item->more->arch->clone.y-new_item->arch->clone.y);
 
     return 1;
 }
@@ -256,8 +255,9 @@ static int find_unused_connected_value(struct mapdef *map) {
     oblinkpt *obp;
 
     while (itest++ < 1000) {
-        connected = 1 + rand() % 20000;
-        for (obp = map->buttons; obp && (obp->value != connected); obp = obp->next);
+        connected = 1+rand()%20000;
+        for (obp = map->buttons; obp && (obp->value != connected); obp = obp->next)
+            ;
 
         if (!obp)
             return connected;
@@ -364,97 +364,112 @@ static void fix_walls(struct mapdef *map, int x, int y) {
 
     /* Find base name */
     strncpy(archetype, wall->arch->name, sizeof(archetype));
-    archetype[sizeof(archetype) - 1] = '\0';
+    archetype[sizeof(archetype)-1] = '\0';
     underscore = strchr(archetype, '_');
     if (!underscore)
         /* Not in a format we can change, bail out */
         return;
     has_window = 0;
-    if (! strcmp(underscore + 1, "win1"))
+    if (!strcmp(underscore+1, "win1"))
         has_window = 1;
-    else if (! strcmp(underscore + 1, "win2"))
+    else if (!strcmp(underscore+1, "win2"))
         has_window = 1;
-    else if (! isdigit(*(underscore + 1)))
+    else if (!isdigit(*(underscore+1)))
         return;
 
     underscore++;
     *underscore = '\0';
-    len = sizeof(archetype) - strlen(archetype) - 2;
+    len = sizeof(archetype)-strlen(archetype)-2;
 
     connect = 0;
 
-    if ((x > 0) && get_wall(map, x - 1, y))
+    if ((x > 0) && get_wall(map, x-1, y))
         connect |= 1;
-    if ((x < MAP_WIDTH(map) - 1) && get_wall(map, x + 1, y))
+    if ((x < MAP_WIDTH(map)-1) && get_wall(map, x+1, y))
         connect |= 2;
-    if ((y > 0) && get_wall(map, x, y - 1))
+    if ((y > 0) && get_wall(map, x, y-1))
         connect |= 4;
-    if ((y < MAP_HEIGHT(map) - 1) && get_wall(map, x, y + 1))
+    if ((y < MAP_HEIGHT(map)-1) && get_wall(map, x, y+1))
         connect |= 8;
 
     switch (connect) {
-        case 0:
-            strncat(archetype, "0", len);
-            break;
-        case 1:
-            strncat(archetype, "1_3", len);
-            break;
-        case 2:
-            strncat(archetype, "1_4", len);
-            break;
-        case 3:
-            if (has_window) {
-                strncat(archetype, "win2", len);
-            } else {
-                strncat(archetype, "2_1_2", len);
-            }
-            break;
-        case 4:
-            strncat(archetype, "1_2", len);
-            break;
-        case 5:
-            strncat(archetype, "2_2_4", len);
-            break;
-        case 6:
-            strncat(archetype, "2_2_1", len);
-            break;
-        case 7:
-            strncat(archetype, "3_1", len);
-            break;
-        case 8:
-            strncat(archetype, "1_1", len);
-            break;
-        case 9:
-            strncat(archetype, "2_2_3", len);
-            break;
-        case 10:
-            strncat(archetype, "2_2_2", len);
-            break;
-        case 11:
-            strncat(archetype, "3_3", len);
-            break;
-        case 12:
-            if (has_window) {
-                strncat(archetype, "win1", len);
-            } else {
-                strncat(archetype, "2_1_1", len);
-            }
-            break;
-        case 13:
-            strncat(archetype, "3_4", len);
-            break;
-        case 14:
-            strncat(archetype, "3_2", len);
-            break;
-        case 15:
-            strncat(archetype, "4", len);
-            break;
+    case 0:
+        strncat(archetype, "0", len);
+        break;
+
+    case 1:
+        strncat(archetype, "1_3", len);
+        break;
+
+    case 2:
+        strncat(archetype, "1_4", len);
+        break;
+
+    case 3:
+        if (has_window) {
+            strncat(archetype, "win2", len);
+        } else {
+            strncat(archetype, "2_1_2", len);
+        }
+        break;
+
+    case 4:
+        strncat(archetype, "1_2", len);
+        break;
+
+    case 5:
+        strncat(archetype, "2_2_4", len);
+        break;
+
+    case 6:
+        strncat(archetype, "2_2_1", len);
+        break;
+
+    case 7:
+        strncat(archetype, "3_1", len);
+        break;
+
+    case 8:
+        strncat(archetype, "1_1", len);
+        break;
+
+    case 9:
+        strncat(archetype, "2_2_3", len);
+        break;
+
+    case 10:
+        strncat(archetype, "2_2_2", len);
+        break;
+
+    case 11:
+        strncat(archetype, "3_3", len);
+        break;
+
+    case 12:
+        if (has_window) {
+            strncat(archetype, "win1", len);
+        } else {
+            strncat(archetype, "2_1_1", len);
+        }
+        break;
+
+    case 13:
+        strncat(archetype, "3_4", len);
+        break;
+
+    case 14:
+        strncat(archetype, "3_2", len);
+        break;
+
+    case 15:
+        strncat(archetype, "4", len);
+        break;
     }
 
     /*
      * No need to change anything if the old and new names are identical.
      */
-    if (! strncmp(archetype, wall->arch->name, sizeof(archetype)))
+    if (!strncmp(archetype, wall->arch->name, sizeof(archetype)))
         return;
 
     /*
@@ -571,8 +586,8 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
      * Since building, you can have: blocking view / floor / wall / nothing
      */
     for (i = 1; i <= 8; i++) {
-        xt = x + freearr_x[i];
-        yt = y + freearr_y[i];
+        xt = x+freearr_x[i];
+        yt = y+freearr_y[i];
         tmp = GET_MAP_OB(pl->map, xt, yt);
         if (!tmp) {
             /* Must insert floor & wall */
@@ -598,8 +613,8 @@ static int apply_builder_floor(object *pl, object *new_floor, short x, short y) 
      * around the building spot, so need to check that those new walls connect
      * correctly
      */
-    for (xt = x - 2; xt <= x + 2; xt++)
-        for (yt = y - 2; yt <= y + 2; yt++) {
+    for (xt = x-2; xt <= x+2; xt++)
+        for (yt = y-2; yt <= y+2; yt++) {
             if (!OUT_OF_REAL_MAP(pl->map, xt, yt))
                 fix_walls(pl->map, xt, yt);
         }
@@ -640,22 +655,21 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
         char *underscore;
 
         /* Check if the old and new archetypes have the same prefix */
-        strncpy(current_basename, current_wall->arch->name,
-                sizeof(current_basename));
-        current_basename[sizeof(current_basename) - 1] = '\0';
+        strncpy(current_basename, current_wall->arch->name, sizeof(current_basename));
+        current_basename[sizeof(current_basename)-1] = '\0';
         underscore = strchr(current_basename, '_');
-        if (underscore && isdigit(*(underscore + 1))) {
+        if (underscore && isdigit(*(underscore+1))) {
             underscore++;
             *underscore = '\0';
         }
         strncpy(new_basename, new_wall->arch->name, sizeof(new_basename));
-        new_basename[sizeof(new_basename) - 1] = '\0';
+        new_basename[sizeof(new_basename)-1] = '\0';
         underscore = strchr(new_basename, '_');
-        if (underscore && isdigit(*(underscore + 1))) {
+        if (underscore && isdigit(*(underscore+1))) {
             underscore++;
             *underscore = '\0';
         }
-        if (!strncmp (current_basename, new_basename, sizeof(new_basename))) {
+        if (!strncmp(current_basename, new_basename, sizeof(new_basename))) {
             draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the exact same wall.", NULL);
             free_object(new_wall);
             return 0;
@@ -677,8 +691,8 @@ static int apply_builder_wall(object *pl, object *new_wall, short x, short y) {
 
         /* Else insert new wall and fix all walls around */
         insert_ob_in_map_at(new_wall, pl->map, NULL, INS_ABOVE_FLOOR_ONLY, x, y);
-        for (xt = x - 1; xt <= x + 1; xt++)
-            for (yt = y - 1; yt <= y + 1; yt++) {
+        for (xt = x-1; xt <= x+1; xt++)
+            for (yt = y-1; yt <= y+1; yt++) {
                 if (OUT_OF_REAL_MAP(pl->map, xt, yt))
                     continue;
 
@@ -724,20 +738,20 @@ static int apply_builder_window(object *pl, object *new_wall_win, short x, short
         char *underscore;
 
         strncpy(archetype, current_wall->arch->name, sizeof(archetype));
-        archetype[sizeof(archetype) - 1] = '\0';
+        archetype[sizeof(archetype)-1] = '\0';
         underscore = strchr(archetype, '_');
         if (underscore) {
             underscore++;
             /* Check if the current wall has a window */
-            if (!strcmp (underscore, "win1")
-                || !strcmp (underscore, "win2")) {
+            if (!strcmp(underscore, "win1")
+            || !strcmp(underscore, "win2")) {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You feel too lazy to redo the window.", NULL);
                 return 0;
             }
-            if (!strcmp (underscore, "2_1_1"))
-                strcpy (underscore, "win1");
-            else if (!strcmp (underscore, "2_1_2"))
-                strcpy (underscore, "win2");
+            if (!strcmp(underscore, "2_1_1"))
+                strcpy(underscore, "win1");
+            else if (!strcmp(underscore, "2_1_2"))
+                strcpy(underscore, "win2");
             else {
                 /* Wrong wall orientation */
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD, "You cannot build a window in that wall.", NULL);
@@ -826,32 +840,32 @@ static int apply_builder_item(object *pl, object *new_item, short x, short y) {
 
     /*
      * This doesn't work on non unique maps. pedestals under floor will not be saved...
-    insert_flag = ( material->stats.Str == 1) ? INS_BELOW_ORIGINATOR : INS_ABOVE_FLOOR_ONLY;
-    */
+     * insert_flag = (material->stats.Str == 1) ? INS_BELOW_ORIGINATOR : INS_ABOVE_FLOOR_ONLY;
+     */
     insert_flag = INS_ABOVE_FLOOR_ONLY;
 
     connected = 0;
     con_rune = NULL;
     switch (new_item->type) {
-        case DOOR:
-        case GATE:
-        case BUTTON:
-        case DETECTOR:
-        case TIMED_GATE:
-        case PEDESTAL:
-        case CF_HANDLE:
-        case MAGIC_EAR:
-        case SIGN:
-            /* Signs don't need a connection, but but magic mouths do. */
-            if (new_item->type == SIGN && strcmp(new_item->arch->name, "magic_mouth"))
-                break;
-            con_rune = get_connection_rune(pl, x, y);
-            connected = find_or_create_connection_for_map(pl, x, y, con_rune);
-            if (connected == -1) {
-                /* Player already informed of failure by the previous function */
-                free_object(new_item);
-                return 0;
-            }
+    case DOOR:
+    case GATE:
+    case BUTTON:
+    case DETECTOR:
+    case TIMED_GATE:
+    case PEDESTAL:
+    case CF_HANDLE:
+    case MAGIC_EAR:
+    case SIGN:
+        /* Signs don't need a connection, but but magic mouths do. */
+        if (new_item->type == SIGN && strcmp(new_item->arch->name, "magic_mouth"))
+            break;
+        con_rune = get_connection_rune(pl, x, y);
+        connected = find_or_create_connection_for_map(pl, x, y, con_rune);
+        if (connected == -1) {
+            /* Player already informed of failure by the previous function */
+            free_object(new_item);
+            return 0;
+        }
     }
 
     /* For magic mouths/ears, and signs, take the msg from a book of scroll */
@@ -895,8 +909,8 @@ void apply_builder_remove(object *pl, int dir) {
     short x, y;
     char name[MAX_BUF];
 
-    x = pl->x + freearr_x[dir];
-    y = pl->y + freearr_y[dir];
+    x = pl->x+freearr_x[dir];
+    y = pl->y+freearr_y[dir];
 
     /* Check square */
     item = GET_MAP_OB(pl->map, x, y);
@@ -908,7 +922,7 @@ void apply_builder_remove(object *pl, int dir) {
         return;
     }
 
-    if (item->type == FLOOR || QUERY_FLAG(item,FLAG_IS_FLOOR))
+    if (item->type == FLOOR || QUERY_FLAG(item, FLAG_IS_FLOOR))
         item = item->above;
 
     if (!item) {
@@ -919,35 +933,34 @@ void apply_builder_remove(object *pl, int dir) {
 
     /* Now remove object, with special cases (buttons & such) */
     switch (item->type) {
-        case WALL:
-            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                          "Can't remove a wall with that, build a floor.", NULL);
-            return;
+    case WALL:
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                      "Can't remove a wall with that, build a floor.", NULL);
+        return;
 
-        case DOOR:
-        case BUTTON:
-        case GATE:
-        case TIMED_GATE:
-        case DETECTOR:
-        case PEDESTAL:
-        case CF_HANDLE:
-        case MAGIC_EAR:
-        case SIGN:
-            /* Special case: must unconnect */
-            if (QUERY_FLAG(item,FLAG_IS_LINKED))
-                remove_button_link(item);
+    case DOOR:
+    case BUTTON:
+    case GATE:
+    case TIMED_GATE:
+    case DETECTOR:
+    case PEDESTAL:
+    case CF_HANDLE:
+    case MAGIC_EAR:
+    case SIGN:
+        /* Special case: must unconnect */
+        if (QUERY_FLAG(item, FLAG_IS_LINKED))
+            remove_button_link(item);
 
-            /* Fall through */
-
-        default:
-            /* Remove generic item */
-            query_name(item, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                                 "You remove the %s",
-                                 "You remove the %s",
-                                 name);
-            remove_ob(item);
-            free_object(item);
+        /* Fall through */
+    default:
+        /* Remove generic item */
+        query_name(item, name, MAX_BUF);
+        draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                             "You remove the %s",
+                             "You remove the %s",
+                             name);
+        remove_ob(item);
+        free_object(item);
     }
 }
 
@@ -976,11 +989,11 @@ void apply_map_builder(object *pl, int dir) {
         return;
     }
 
-    x = pl->x + freearr_x[dir];
-    y = pl->y + freearr_y[dir];
+    x = pl->x+freearr_x[dir];
+    y = pl->y+freearr_y[dir];
 
     if ((1 > x) || (1 > y)
-        || ((MAP_WIDTH(pl->map) - 2) < x) || ((MAP_HEIGHT(pl->map) - 2) < y)) {
+    || ((MAP_WIDTH(pl->map)-2) < x) || ((MAP_HEIGHT(pl->map)-2) < y)) {
         draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                       "Can't build on map edge.", NULL);
         return;
@@ -1006,8 +1019,8 @@ void apply_map_builder(object *pl, int dir) {
 
     if (builder->subtype != ST_BD_BUILD) {
         while (tmp) {
-            if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE) && ((tmp->type != SIGN)
-                    || (strcmp(tmp->arch->name, "rune_mark")))) {
+            if (!QUERY_FLAG(tmp, FLAG_IS_BUILDABLE)
+            && ((tmp->type != SIGN) || (strcmp(tmp->arch->name, "rune_mark")))) {
                 draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
                               "You can't build here.", NULL);
                 return;
@@ -1064,27 +1077,27 @@ void apply_map_builder(object *pl, int dir) {
 
         /* insert the new object in the map */
         switch (material->subtype) {
-            case ST_MAT_FLOOR:
-                built = apply_builder_floor(pl, new_item, x, y);
-                break;
+        case ST_MAT_FLOOR:
+            built = apply_builder_floor(pl, new_item, x, y);
+            break;
 
-            case ST_MAT_WALL:
-                built = apply_builder_wall(pl, new_item, x, y);
-                break;
+        case ST_MAT_WALL:
+            built = apply_builder_wall(pl, new_item, x, y);
+            break;
 
-            case ST_MAT_ITEM:
-                built = apply_builder_item(pl, new_item, x, y);
-                break;
+        case ST_MAT_ITEM:
+            built = apply_builder_item(pl, new_item, x, y);
+            break;
 
-            case ST_MAT_WINDOW:
-                built = apply_builder_window(pl, new_item, x, y);
-                break;
+        case ST_MAT_WINDOW:
+            built = apply_builder_window(pl, new_item, x, y);
+            break;
 
-            default:
-                draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
-                              "Don't know how to apply this material, sorry.", NULL);
-                LOG(llevError, "apply_map_builder: invalid material subtype %d\n", material->subtype);
-                break;
+        default:
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BUILD,
+                          "Don't know how to apply this material, sorry.", NULL);
+            LOG(llevError, "apply_map_builder: invalid material subtype %d\n", material->subtype);
+            break;
         }
         if (built)
           decrease_ob(material);

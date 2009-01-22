@@ -263,7 +263,7 @@ int command_setgod(object *op, char *params) {
     }
 
     god = find_god(str);
-    if (god==NULL) {
+    if (god == NULL) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "No such god %s.",
                              "No such god %s.",
@@ -320,8 +320,7 @@ int command_banish(object *op, char *params) {
      * Record this as a comment - then we don't have to worry about changing
      * the parsing code.
      */
-    fprintf(banishfile, "# %s (%s) banned by %s at %s\n", pl->ob->name,
-            pl->socket.host, op->name, ctime(&now));
+    fprintf(banishfile, "# %s (%s) banned by %s at %s\n", pl->ob->name, pl->socket.host, op->name, ctime(&now));
     fprintf(banishfile, "*@%s\n", pl->socket.host);
     fclose(banishfile);
 
@@ -371,7 +370,7 @@ int command_kick(object *op, const char *params) {
                                  "%s is kicked out of the game.",
                                  op->name);
             strcpy(op->contr->killer, "left");
-            check_score(op,0); /* Always check score */
+            check_score(op, 0); /* Always check score */
 
             /*
              * not sure how the player would be freed, but did see
@@ -431,6 +430,7 @@ int command_overlay_save(object *op, char *params) {
 int command_overlay_reset(object *op, char *params) {
     char filename[MAX_BUF];
     struct stat stats;
+
     create_overlay_pathname(op->map->path, filename, MAX_BUF);
     if (!stat(filename, &stats))
         if (!unlink(filename))
@@ -511,7 +511,7 @@ int command_shutdown(object *op, char *params) {
      * the op won't get kicked off, so we do it ourselves
      */
     command_kick(op, NULL);
-    check_score(op,0); /* Always check score */
+    check_score(op, 0); /* Always check score */
     (void)save_player(op, 0);
     play_again(op);
     cleanup();
@@ -543,7 +543,7 @@ int command_goto(object *op, char *params) {
     }
 
     name = params;
-    dummy=get_object();
+    dummy = get_object();
     dummy->map = op->map;
     EXIT_PATH(dummy) = add_string(name);
     dummy->name = add_string(name);
@@ -619,26 +619,29 @@ int command_freeze(object *op, char *params) {
 int command_arrest(object *op, char *params) {
     object *dummy;
     player *pl;
-    if (!op) return 0;
-    if (params==NULL) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+
+    if (!op)
+        return 0;
+    if (params == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: arrest <player>.", NULL);
         return 1;
     }
     pl = get_other_player_from_name(op, params);
-    if (!pl) return 1;
-    dummy=get_jail_exit(pl->ob);
+    if (!pl)
+        return 1;
+    dummy = get_jail_exit(pl->ob);
     if (!dummy) {
         /* we have nowhere to send the prisoner....*/
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't jail player, there is no map to hold them", NULL);
         return 0;
     }
     enter_exit(pl->ob, dummy);
     free_object(dummy);
-    draw_ext_info(NDI_UNIQUE, 0,pl->ob,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
+    draw_ext_info(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM,
                   "You have been arrested.", NULL);
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "Jailed %s",
                          "Jailed %s",
                          pl->ob->name);
@@ -736,8 +739,8 @@ int command_teleport(object *op, char *params) {
 
     dummy = get_object();
     EXIT_PATH(dummy) = add_string(pl->ob->map->path);
-    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
-    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
+    EXIT_X(dummy) = pl->ob->x+freearr_x[i];
+    EXIT_Y(dummy) = pl->ob->y+freearr_y[i];
     enter_exit(op, dummy);
     free_object(dummy);
     if (!op->contr->hidden)
@@ -892,13 +895,12 @@ int command_create(object *op, char *params) {
                                          at->clone.type, cp);
                 }
             }
-            LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name,
-                set_nrof ? nrof : 0, set_magic ? magic : 0, bp, cp);
+            LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name, set_nrof ? nrof : 0, set_magic ? magic : 0, bp, cp);
         }
     } /* if cp */
 
-    if ((at->clone.type == ROD || at->clone.type == WAND || at->clone.type == SCROLL ||
-         at->clone.type == HORN || at->clone.type == SPELLBOOK) && !at_spell) {
+    if ((at->clone.type == ROD || at->clone.type == WAND || at->clone.type == SCROLL || at->clone.type == HORN || at->clone.type == SPELLBOOK)
+    && !at_spell) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "Unable to find spell %s for object that needs it, or it is of wrong type",
                              "Unable to find spell %s for object that needs it, or it is of wrong type",
@@ -950,7 +952,7 @@ int command_create(object *op, char *params) {
                     } else
                         bp3++;
                 }
-            } else if (*bp3==' ') {
+            } else if (*bp3 == ' ') {
                 gotspace++;
             }
         }
@@ -963,10 +965,11 @@ int command_create(object *op, char *params) {
         if (gotspace == 2 || gotquote == 2) {
             bp3--;      /* Undo the extra increment */
             *bp3 = '\0';
-        } else if (*bp3=='\0')
+        } else if (*bp3 == '\0')
             gotspace++;
 
-        if ((gotquote && gotquote != 2) || (gotspace != 2 && gotquote != 2)) {
+        if ((gotquote && gotquote != 2)
+        || (gotspace != 2 && gotquote != 2)) {
             /*
              * Unfortunately, we've clobbered lots of values, so printing
              * out what we have probably isn't useful.  Break out, because
@@ -1037,7 +1040,7 @@ int command_create(object *op, char *params) {
                  * so just copying it over should be fine.
                  */
                 if (head == NULL) {
-                    head=dup;
+                    head = dup;
                     copy_object(tmp, dup);
                 }
                 if (settings.real_wiz == FALSE)
@@ -1093,8 +1096,7 @@ int command_create(object *op, char *params) {
             dm_stack_push(op->contr, head->count);
 
             if (at->clone.randomitems != NULL && !at_spell)
-                create_treasure(at->clone.randomitems, head, GT_APPLY,
-                                op->map->difficulty, 0);
+                create_treasure(at->clone.randomitems, head, GT_APPLY, op->map->difficulty, 0);
         }
 
         /* free the one we used to copy */
@@ -1356,6 +1358,7 @@ int command_remove(object *op, char *params) {
 
     if (QUERY_FLAG(tmp, FLAG_REMOVED)) {
         char name[MAX_BUF];
+
         query_name(tmp, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "%s is already removed!",
@@ -1434,7 +1437,9 @@ int command_addexp(object *op, char *params) {
     player *pl;
 
     skill[0] = '\0';
-    if ((params == NULL) || (strlen(params) > MAX_BUF) || ((q = sscanf(params, "%s %d %s", buf, &i, skill)) < 2)) {
+    if ((params == NULL)
+    || (strlen(params) > MAX_BUF)
+    || ((q = sscanf(params, "%s %d %s", buf, &i, skill)) < 2)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Usage: addexp player quantity [skill].", NULL);
         return 1;
@@ -1560,8 +1565,8 @@ int command_stats(object *op, char *params) {
                          pl->ob->stats.Int, pl->ob->stats.dam);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
-                         "[fixed]Wis : %-2d       EXP : %" FMT64,
-                         "Wis : %-2d       EXP : %" FMT64,
+                         "[fixed]Wis : %-2d       EXP : %"FMT64,
+                         "Wis : %-2d       EXP : %"FMT64,
                          pl->ob->stats.Wis, pl->ob->stats.exp);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
@@ -1595,8 +1600,9 @@ int command_abil(object *op, char *params) {
     iii = 0;
     thing[0] = '\0';
     thing2[0] = '\0';
-    if (params == NULL || !sscanf(params, "%s %s %d", thing, thing2, &iii) ||
-        thing==NULL) {
+    if (params == NULL
+    || !sscanf(params, "%s %s %d", thing, thing2, &iii)
+    || thing == NULL) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Who?", NULL);
         return 1;
@@ -1682,7 +1688,7 @@ int command_reset(object *op, char *params) {
     /* Forbid using reset on our own map when we're in a transport, as
      * it has the displeasant effect of crashing the server.
      * - gros, July 25th 2006 */
-    if ((op->contr && op->contr->transport)&&(op->map == m)) {
+    if ((op->contr && op->contr->transport) && (op->map == m)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You need to disembark first.", NULL);
         return 1;
@@ -1701,7 +1707,7 @@ int command_reset(object *op, char *params) {
          * players or wiz's.
          */
         if (op->map == m) {
-            if (strncmp(m->path, "/random/", 8)==0) {
+            if (strncmp(m->path, "/random/", 8) == 0) {
                 /* This is not a very satisfying solution - it would be much better
                  * to recreate a random map with the same seed value as the old one.
                  * Unfortunately, I think recreating the map would require some
@@ -1739,7 +1745,7 @@ int command_reset(object *op, char *params) {
 
         if (res < 0 && res != SAVE_ERROR_PLAYER)
             /* no need to warn if player on map, code below checks that. */
-            draw_ext_info_format(NDI_UNIQUE | NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                                  "Reset failed, error code: %d.", NULL, res);
         else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
@@ -1806,8 +1812,7 @@ int command_nowiz(object *op, char *params) { /* 'noadm' is alias */
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                       "You are no longer hidden from other players", NULL);
         op->map->players++;
-        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL,
-                             MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+        draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                              "%s has entered the game.",
                              "%s has entered the game.",
                              op->name);
@@ -1863,8 +1868,8 @@ static int checkdm(object *op, const char *pl_name, const char *pl_passwd, const
         if (sscanf(line_buf, "%[^:]:%[^:]:%s\n", name, passwd, host) != 3) {
             LOG(llevError, "Warning - malformed dm file entry: %s\n", line_buf);
         } else if ((!strcmp(name, "*") || (pl_name && !strcmp(pl_name, name)))
-                   && (!strcmp(passwd, "*") || !strcmp(passwd, pl_passwd)) &&
-                   (!strcmp(host, "*") || !strcmp(host, pl_host))) {
+        && (!strcmp(passwd, "*") || !strcmp(passwd, pl_passwd))
+        && (!strcmp(host, "*") || !strcmp(host, pl_host))) {
             fclose(dmfile);
             return (1);
         }
@@ -1897,8 +1902,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
         return 0;
     }
 
-    if (checkdm(op, op->name,
-                (params ? params : "*"), op->contr->socket.host)) {
+    if (checkdm(op, op->name, (params ? params : "*"), op->contr->socket.host)) {
         SET_FLAG(op, FLAG_WIZ);
         SET_FLAG(op, FLAG_WAS_WIZ);
         SET_FLAG(op, FLAG_WIZPASS);
@@ -1912,7 +1916,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
          * other desired abilities.
          */
         clear_los(op);
-        op->contr->write_buf[0] ='\0';
+        op->contr->write_buf[0] = '\0';
 
         if (!silent)
             draw_ext_info(NDI_UNIQUE|NDI_ALL|NDI_LT_GREEN, 1, NULL,
@@ -1923,7 +1927,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
     } else {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Sorry Pal, I don't think so.", NULL);
-        op->contr->write_buf[0] ='\0';
+        op->contr->write_buf[0] = '\0';
         return 0;
     }
 }
@@ -1940,9 +1944,7 @@ int do_wizard_dm(object *op, char *params, int silent) {
  * 0 unless op isn't a player.
  */
 int command_dm(object *op, char *params) {
-
     do_wizard_dm(op, params, 0);
-
     return 1;
 }
 
@@ -2099,8 +2101,7 @@ static object *get_spell_by_name(object *op, const char *spell_name) {
  * @retval 1
  * spell learned.
  */
-static int command_learn_spell_or_prayer(object *op, char *params,
-        int special_prayer) {
+static int command_learn_spell_or_prayer(object *op, char *params, int special_prayer) {
     object *tmp;
 
     if (op->contr == NULL || params == NULL) {
@@ -2297,7 +2298,6 @@ int command_dmhide(object *op, char *params) {
         return 0;
 
     do_wizard_hide(op, 1);
-
     return 1;
 }
 
@@ -2747,20 +2747,20 @@ int command_insert_into(object *op, char *params) {
         return 0;
     }
 
-    if (!QUERY_FLAG(right,FLAG_REMOVED))
+    if (!QUERY_FLAG(right, FLAG_REMOVED))
         remove_ob(right);
-    inserted = insert_ob_in_ob(right,left);
+    inserted = insert_ob_in_ob(right, left);
     if (left->type == PLAYER) {
         if (inserted != right)
             /* item was merged, so updating name and such. */
-            esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF,left,inserted);
+            esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF, left, inserted);
     }
     query_name(inserted, what, MAX_BUF);
     query_name(left, where, MAX_BUF);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "Inserted %s in %s",
                          "Inserted %s in %s",
-                         what,where);
+                         what, where);
     return 0;
 
 }
@@ -2778,15 +2778,15 @@ int command_insert_into(object *op, char *params) {
 int command_style_map_info(object *op, char *params) {
     extern mapstruct *styles;
     mapstruct *mp;
-    int     maps_used=0, mapmem=0, objects_used=0, x,y;
-    object  *tmp;
+    int maps_used = 0, mapmem = 0, objects_used = 0, x, y;
+    object *tmp;
 
-    for (mp = styles; mp!=NULL; mp=mp->next) {
+    for (mp = styles; mp != NULL; mp = mp->next) {
         maps_used++;
-        mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace)) + sizeof(mapstruct);
-        for (x=0; x<MAP_WIDTH(mp); x++) {
-            for (y=0; y<MAP_HEIGHT(mp); y++) {
-                for (tmp=GET_MAP_OB(mp, x, y); tmp!=NULL; tmp=tmp->above)
+        mapmem += MAP_WIDTH(mp)*MAP_HEIGHT(mp)*(sizeof(object *)+sizeof(MapSpace))+sizeof(mapstruct);
+        for (x = 0; x < MAP_WIDTH(mp); x++) {
+            for (y = 0; y < MAP_HEIGHT(mp); y++) {
+                for (tmp = GET_MAP_OB(mp, x, y); tmp != NULL; tmp = tmp->above)
                     objects_used++;
             }
         }
@@ -2809,7 +2809,7 @@ int command_style_map_info(object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
                          "Mem for objects:      %d",
                          "Mem for objects:      %d",
-                         objects_used * sizeof(object));
+                         objects_used*sizeof(object));
     return 0;
 }
 
@@ -2825,6 +2825,7 @@ int command_style_map_info(object *op, char *params) {
  */
 int command_follow(object *op, char *params) {
     player *other;
+
     if (!params) {
         if (op->contr->followed_player != NULL) {
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "You stop following %s.", NULL, op->contr->followed_player);

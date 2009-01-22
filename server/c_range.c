@@ -294,8 +294,8 @@ int legal_range(object *op, int r) {
             return 0;
 
     case range_golem: /* Use scrolls */
-        if (op->contr->ranges[range_golem] &&
-            op->contr->ranges[range_golem]->count == op->contr->golem_count)
+        if (op->contr->ranges[range_golem]
+        && op->contr->ranges[range_golem]->count == op->contr->golem_count)
             return 1;
         else
             return 0;

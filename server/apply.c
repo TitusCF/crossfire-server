@@ -62,7 +62,7 @@
  * 1 if can hold, 0 else.
  */
 int transport_can_hold(const object *transport, const object *op, int nrof) {
-    if ((op->weight *nrof + transport->carrying) > transport->weight_limit)
+    if ((op->weight*nrof+transport->carrying) > transport->weight_limit)
         return 0;
     else
         return 1;
@@ -91,9 +91,9 @@ int should_director_abort(object *op, object *victim) {
      * subtype 7: all three
      */
     if (op->subtype) {
-        arch_flag = (op->subtype & 1);
-        name_flag = (op->subtype & 2);
-        race_flag = (op->subtype & 4);
+        arch_flag = (op->subtype&1);
+        name_flag = (op->subtype&2);
+        race_flag = (op->subtype&4);
     } else {
         arch_flag = 1;
         name_flag = 1;
@@ -102,23 +102,20 @@ int should_director_abort(object *op, object *victim) {
     /* If the director has race set, only affect objects with a arch,
      * name or race that matches.
      */
-    if ((op->race) &&
-        ((!(victim->arch && arch_flag && victim->arch->name) ||
-          strcmp(op->race, victim->arch->name))) &&
-        ((!(victim->name && name_flag) || strcmp(op->race, victim->name))) &&
-        ((!(victim->race && race_flag) || strcmp(op->race, victim->race)))) {
+    if ((op->race)
+    && ((!(victim->arch && arch_flag && victim->arch->name) || strcmp(op->race, victim->arch->name)))
+    && ((!(victim->name && name_flag) || strcmp(op->race, victim->name)))
+    && ((!(victim->race && race_flag) || strcmp(op->race, victim->race)))) {
         return 1;
     }
+
     /* If the director has slaying set, only affect objects where none
      * of arch, name, or race match.
      */
-    if ((op->slaying) && (
-            ((victim->arch && arch_flag && victim->arch->name &&
-              !strcmp(op->slaying, victim->arch->name))) ||
-            ((victim->name && name_flag &&
-              !strcmp(op->slaying, victim->name))) ||
-            ((victim->race && race_flag &&
-              !strcmp(op->slaying, victim->race))))) {
+    if ((op->slaying)
+    && (((victim->arch && arch_flag && victim->arch->name && !strcmp(op->slaying, victim->arch->name)))
+        || ((victim->name && name_flag && !strcmp(op->slaying, victim->name)))
+        || ((victim->race && race_flag && !strcmp(op->slaying, victim->race))))) {
         return 1;
     }
     return 0;
@@ -134,18 +131,19 @@ int should_director_abort(object *op, object *victim) {
 void handle_apply_yield(object *tmp) {
     const char *yield;
 
-    yield = get_ob_key_value(tmp,"on_use_yield");
+    yield = get_ob_key_value(tmp, "on_use_yield");
     if (yield != NULL) {
         object *drop = create_archetype(yield);
         if (tmp->env) {
-            drop = insert_ob_in_ob(drop,tmp->env);
+            drop = insert_ob_in_ob(drop, tmp->env);
         } else {
             drop->x = tmp->x;
             drop->y = tmp->y;
-            insert_ob_in_map(drop,tmp->map,tmp,INS_BELOW_ORIGINATOR);
+            insert_ob_in_map(drop, tmp->map, tmp, INS_BELOW_ORIGINATOR);
         }
     }
 }
+
 int check_weapon_power(const object *who, int improvs);
 
 /**
@@ -162,11 +160,12 @@ int check_weapon_power(const object *who, int improvs);
 int set_object_face_main(object *op) {
     int newface = op->arch->clone.face->number;
     sstring saved = get_ob_key_value(op, "face_closed");
+
     if (saved) {
         newface = find_face(saved, newface);
     }
     if (newface && op->face != &new_faces[newface]) {
-        op->face =  &new_faces[newface];
+        op->face = &new_faces[newface];
         return TRUE;
     }
     return FALSE;
@@ -186,6 +185,7 @@ int set_object_face_main(object *op) {
 static int set_object_face_other(object *op) {
     sstring custom;
     int newface = 0;
+
     if (op->face && op->other_arch && op->other_arch->clone.face)
         newface = op->other_arch->clone.face->number;
 
@@ -200,7 +200,7 @@ static int set_object_face_other(object *op) {
     }
 
     if (newface && op->face->number != newface) {
-        op->face =  &new_faces[newface];
+        op->face = &new_faces[newface];
         return TRUE;
     }
     return FALSE;
@@ -229,14 +229,13 @@ static int set_object_face_other(object *op) {
  */
 int apply_container(object *op, object *sack) {
     char name_sack[MAX_BUF], name_tmp[MAX_BUF];
-    object *tmp=op->container;
-    if (op->type!=PLAYER)
+    object *tmp = op->container;
+
+    if (op->type != PLAYER)
         return 0; /* This might change */
 
-    if (sack==NULL || sack->type != CONTAINER) {
-        LOG(llevError,
-            "apply_container: %s is not container!\n",
-            sack?sack->name:"NULL");
+    if (sack == NULL || sack->type != CONTAINER) {
+        LOG(llevError, "apply_container: %s is not container!\n", sack ? sack->name : "NULL");
         return 0;
     }
 
@@ -250,7 +249,7 @@ int apply_container(object *op, object *sack) {
             op->container->move_off = 0;
         }
         /* Lauwenmark: Handle for plugin close event */
-        if (execute_event(tmp, EVENT_CLOSE,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+        if (execute_event(tmp, EVENT_CLOSE, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             return 1;
 
         query_name(op->container, name_tmp, MAX_BUF);
@@ -260,13 +259,14 @@ int apply_container(object *op, object *sack) {
                              "You close %s.",
                              name_tmp);
         CLEAR_FLAG(op->container, FLAG_APPLIED);
-        op->container=NULL;
+        op->container = NULL;
         if (set_object_face_main(tmp)) {
             esrv_update_item(UPD_FLAGS|UPD_FACE, op, tmp);
         } else {
             esrv_update_item(UPD_FLAGS, op, tmp);
         }
-        if (tmp == sack) return 1;
+        if (tmp == sack)
+            return 1;
     }
 
     query_name(sack, name_sack, MAX_BUF);
@@ -277,7 +277,7 @@ int apply_container(object *op, object *sack) {
      */
 
     if (sack->slaying) { /* it's locked */
-        tmp=find_key(op, op, sack);
+        tmp = find_key(op, op, sack);
         if (tmp) {
             query_name(tmp, name_tmp, MAX_BUF);
             draw_ext_info_format(NDI_UNIQUE, 0, op,
@@ -314,19 +314,18 @@ int apply_container(object *op, object *sack) {
          * try to do it, so let's handle it gracefully.
          */
         if (sack->env) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "You can't open %s",
                                  "You can't open %s",
                                  name_sack);
             return 0;
         }
 
-        if (sack->nrof > 1)
-        {
-            object* left = get_split_ob(sack, sack->nrof - 1, NULL, 0);
+        if (sack->nrof > 1) {
+            object *left = get_split_ob(sack, sack->nrof-1, NULL, 0);
+
             insert_ob_in_map_at(left, sack->map, NULL, INS_NO_MERGE, sack->x, sack->y);
-            // recompute the name so it's nice
+            /* recompute the name so it's nice */
             query_name(sack, name_sack, MAX_BUF);
         }
 
@@ -334,8 +333,7 @@ int apply_container(object *op, object *sack) {
         sack->move_off = MOVE_ALL;      /* trying force closing it */
 
         CLEAR_FLAG(sack, FLAG_APPLIED);
-        draw_ext_info_format(NDI_UNIQUE, 0, op,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                              "You open %s.",
                              "You open %s.",
                              name_sack);
@@ -347,12 +345,10 @@ int apply_container(object *op, object *sack) {
             esrv_update_item(UPD_FLAGS, op, sack);
         }
         esrv_send_inventory(op, sack);
-
     } else { /* sack is in players inventory */
         if (QUERY_FLAG(sack, FLAG_APPLIED)) {  /* readied sack becoming open */
             CLEAR_FLAG(sack, FLAG_APPLIED);
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You open %s.",
                                  "You open %s.",
                                  name_sack);
@@ -365,14 +361,14 @@ int apply_container(object *op, object *sack) {
             }
             esrv_send_inventory(op, sack);
         } else {
-            object* left = NULL;
+            object *left = NULL;
+
             if (sack->nrof > 1) {
-                left = get_split_ob(sack, sack->nrof - 1, NULL, 1);
+                left = get_split_ob(sack, sack->nrof-1, NULL, 1);
             }
 
             CLEAR_FLAG(sack, FLAG_APPLIED);
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                  "You readied %s.",
                                  "You readied %s.",
                                  name_sack);
@@ -408,7 +404,7 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
     }
 
     /* Upgrade special prayers to normal prayers */
-    if ((tmp=check_spell_known(op, spell->name))!=NULL) {
+    if ((tmp = check_spell_known(op, spell->name)) != NULL) {
         if (special_prayer && !QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
             LOG(llevError, "BUG: do_learn_spell(): spell already known, but not marked as startequip\n");
             return;
@@ -425,8 +421,7 @@ void do_learn_spell(object *op, object *spell, int special_prayer) {
         SET_FLAG(tmp, FLAG_STARTEQUIP);
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op,
-                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                          "Type 'bind cast %s to store the spell in a key.",
                          "Type 'bind cast %s to store the spell in a key.",
                          spell->name);
@@ -449,13 +444,12 @@ void do_forget_spell(object *op, const char *spell) {
         LOG(llevError, "BUG: do_forget_spell(): not a player\n");
         return;
     }
-    if ((spob=check_spell_known(op, spell)) == NULL) {
+    if ((spob = check_spell_known(op, spell)) == NULL) {
         LOG(llevError, "BUG: do_forget_spell(): spell not known\n");
         return;
     }
 
-    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
-                         MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                          "You lose knowledge of %s.",
                          "You lose knowledge of %s.",
                          spell);
@@ -487,7 +481,7 @@ static int check_race_restrictions(object *who, object *item) {
         return 1;
 
     snprintf(buf, sizeof(buf), ":%s:", who->race);
-    buf[sizeof(buf) - 1] = '\0';
+    buf[sizeof(buf)-1] = '\0';
 
     if (strstr(restriction, buf) != NULL)
         return 1;
@@ -516,12 +510,12 @@ static int check_race_restrictions(object *who, object *item) {
  * - 2: objects of that type can't be applied if not in inventory
  */
 int manual_apply(object *op, object *tmp, int aflag) {
-    if (tmp->head) tmp=tmp->head;
+    if (tmp->head)
+        tmp = tmp->head;
 
-    if (QUERY_FLAG(tmp, FLAG_UNPAID) && ! QUERY_FLAG(tmp, FLAG_APPLIED)) {
+    if (QUERY_FLAG(tmp, FLAG_UNPAID) && !QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (op->type == PLAYER) {
-            draw_ext_info(NDI_UNIQUE, 0, op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "You should pay for it first.", NULL);
             return METHOD_SILENT_ERROR;
         }
@@ -532,15 +526,14 @@ int manual_apply(object *op, object *tmp, int aflag) {
         return METHOD_SILENT_ERROR;
 
     /* Lauwenmark: Handle for plugin apply event */
-    if (execute_event(tmp, EVENT_APPLY,op,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+    if (execute_event(tmp, EVENT_APPLY, op, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return METHOD_OK;
 
     if (op->contr)
         play_sound_player_only(op->contr, SOUND_TYPE_ITEM, tmp, 0, "apply");
 
-    return ob_apply(tmp,op,aflag);
+    return ob_apply(tmp, op, aflag);
 }
-
 
 /**
  * Living thing is applying an object.
@@ -564,11 +557,10 @@ int manual_apply(object *op, object *tmp, int aflag) {
 int player_apply(object *pl, object *op, int aflag, int quiet) {
     int tmp;
 
-    if (op->env == NULL && (pl->move_type & MOVE_FLYING)) {
+    if (op->env == NULL && (pl->move_type&MOVE_FLYING)) {
         /* player is flying and applying object not in inventory */
-        if (! QUERY_FLAG(pl, FLAG_WIZ) && !(op->move_type & MOVE_FLYING)) {
-            draw_ext_info(NDI_UNIQUE, 0, pl,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        if (!QUERY_FLAG(pl, FLAG_WIZ) && !(op->move_type&MOVE_FLYING)) {
+            draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "But you are floating high above the ground!", NULL);
             return 0;
         }
@@ -577,14 +569,13 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
     /* Check for PLAYER to avoid a DM to disappear in a puff of smoke if
      * applied.
      */
-    if (op->type != PLAYER &&
-        QUERY_FLAG(op, FLAG_WAS_WIZ) && ! QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
+    if (op->type != PLAYER
+    && QUERY_FLAG(op, FLAG_WAS_WIZ)
+    && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
         play_sound_map(SOUND_TYPE_ITEM, op, 0, "evaporate");
-        draw_ext_info(NDI_UNIQUE, 0, pl,
-                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "The object disappears in a puff of smoke!", NULL);
-        draw_ext_info(NDI_UNIQUE, 0, pl,
-                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "It must have been an illusion.", NULL);
         remove_ob(op);
         free_object(op);
@@ -595,24 +586,23 @@ int player_apply(object *pl, object *op, int aflag, int quiet) {
     pl->contr->last_used_id = op->count;
 
     tmp = manual_apply(pl, op, aflag);
-    if (! quiet) {
+    if (!quiet) {
         if (tmp == METHOD_UNHANDLED) {
             char name[MAX_BUF];
+
             query_name(op, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "I don't know how to apply the %s.",
                                  "I don't know how to apply the %s.",
                                  name);
         } else if (tmp == METHOD_ERROR)
-            draw_ext_info_format(NDI_UNIQUE, 0, pl,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                  "You must get it first!\n", NULL);
         else if (tmp == METHOD_SILENT_ERROR)
             return tmp;
     }
     if (tmp == METHOD_OK) {
-        if (op->anim_suffix!=NULL)
+        if (op->anim_suffix != NULL)
             apply_anim_suffix(pl, op->anim_suffix);
     }
     return tmp;
@@ -631,7 +621,7 @@ void player_apply_below(object *pl) {
     int floors;
 
     if (pl->contr->transport && pl->contr->transport->type == TRANSPORT) {
-        ob_apply(pl->contr->transport,pl,0);
+        ob_apply(pl->contr->transport, pl, 0);
         return;
     }
 
@@ -646,7 +636,7 @@ void player_apply_below(object *pl) {
      * problem if player_apply() has a bug in that it uses the object but
      * does not return a proper value.
      */
-    for (floors = 0; tmp!=NULL; tmp=next) {
+    for (floors = 0; tmp != NULL; tmp = next) {
         next = tmp->below;
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
             floors++;
@@ -658,7 +648,7 @@ void player_apply_below(object *pl) {
          * so that at least one of players movement types be that which
          * the item needs.
          */
-        if (! tmp->invisible || (tmp->move_on & pl->move_type)) {
+        if (!tmp->invisible || (tmp->move_on&pl->move_type)) {
             if (player_apply(pl, tmp, 0, 1) == METHOD_OK)
                 return;
         }
@@ -689,114 +679,106 @@ static int unapply_special(object *who, object *op, int aflags) {
         CLEAR_FLAG(op, FLAG_APPLIED);
     query_name(op, name, MAX_BUF);
     switch (op->type) {
-        case WEAPON:
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You unwield %s.",
-                                     "You unwield %s.",
-                                     name);
-            (void) change_abil(who,op);
-            if (QUERY_FLAG(who,FLAG_READY_WEAPON))
-                CLEAR_FLAG(who,FLAG_READY_WEAPON);
-            who->current_weapon = NULL;
-            clear_skill(who);
-            break;
+    case WEAPON:
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                 "You unwield %s.",
+                                 "You unwield %s.",
+                                 name);
+        (void)change_abil(who, op);
+        if (QUERY_FLAG(who, FLAG_READY_WEAPON))
+            CLEAR_FLAG(who, FLAG_READY_WEAPON);
+        who->current_weapon = NULL;
+        clear_skill(who);
+        break;
 
-        case SKILL:         /* allows objects to impart skills */
-        case SKILL_TOOL:
-            if (op != who->chosen_skill) {
-                LOG(llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
-            }
-            if (who->type==PLAYER) {
-                if (who->contr->shoottype == range_skill)
-                    who->contr->shoottype = range_none;
-                if (! op->invisible) {
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_UNAPPLY,
-                                             "You stop using the %s.",
-                                             "You stop using the %s.",
-                                             name);
-                } else {
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_UNAPPLY,
-                                             "You can no longer use the skill: %s.",
-                                             "You can no longer use the skill: %s.",
-                                             op->skill);
-                }
-            }
-            (void) change_abil(who, op);
-            who->chosen_skill = NULL;
-            CLEAR_FLAG(who, FLAG_READY_SKILL);
-            break;
-
-        case ARMOUR:
-        case HELMET:
-        case SHIELD:
-        case RING:
-        case BOOTS:
-        case GLOVES:
-        case AMULET:
-        case GIRDLE:
-        case BRACERS:
-        case CLOAK:
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You unwear %s.",
-                                     "You unwear %s.",
-                                     name);
-            (void) change_abil(who,op);
-            break;
-        case BOW:
-        case WAND:
-        case ROD:
-        case HORN:
-            clear_skill(who);
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You unready %s.",
-                                     "You unready %s.",
-                                     name);
-            if (who->type==PLAYER) {
+    case SKILL:         /* allows objects to impart skills */
+    case SKILL_TOOL:
+        if (op != who->chosen_skill) {
+            LOG(llevError, "BUG: apply_special(): applied skill is not a chosen skill\n");
+        }
+        if (who->type == PLAYER) {
+            if (who->contr->shoottype == range_skill)
                 who->contr->shoottype = range_none;
+            if (!op->invisible) {
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                         "You stop using the %s.",
+                                         "You stop using the %s.",
+                                         name);
             } else {
-                if (op->type == BOW)
-                    CLEAR_FLAG(who, FLAG_READY_BOW);
-                else
-                    CLEAR_FLAG(who, FLAG_READY_RANGE);
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                         "You can no longer use the skill: %s.",
+                                         "You can no longer use the skill: %s.",
+                                         op->skill);
             }
-            break;
+        }
+        (void)change_abil(who, op);
+        who->chosen_skill = NULL;
+        CLEAR_FLAG(who, FLAG_READY_SKILL);
+        break;
 
-        case BUILDER:
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You unready %s.",
-                                     "You unready %s.",
-                                     name);
+    case ARMOUR:
+    case HELMET:
+    case SHIELD:
+    case RING:
+    case BOOTS:
+    case GLOVES:
+    case AMULET:
+    case GIRDLE:
+    case BRACERS:
+    case CLOAK:
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                 "You unwear %s.",
+                                 "You unwear %s.",
+                                 name);
+        (void)change_abil(who, op);
+        break;
+
+    case BOW:
+    case WAND:
+    case ROD:
+    case HORN:
+        clear_skill(who);
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                 "You unready %s.",
+                                 "You unready %s.",
+                                 name);
+        if (who->type == PLAYER) {
             who->contr->shoottype = range_none;
-            who->contr->ranges[range_builder] = NULL;
-            break;
+        } else {
+            if (op->type == BOW)
+                CLEAR_FLAG(who, FLAG_READY_BOW);
+            else
+                CLEAR_FLAG(who, FLAG_READY_RANGE);
+        }
+        break;
 
-        default:
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
-                                     "You unapply %s.",
-                                     "You unapply %s.",
-                                     name);
-            break;
+    case BUILDER:
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                 "You unready %s.",
+                                 "You unready %s.",
+                                 name);
+        who->contr->shoottype = range_none;
+        who->contr->ranges[range_builder] = NULL;
+        break;
+
+    default:
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                                 "You unapply %s.",
+                                 "You unapply %s.",
+                                 name);
+        break;
     }
 
     fix_object(who);
 
-    if (!(aflags & AP_NO_MERGE)) {
+    if (!(aflags&AP_NO_MERGE)) {
         object *tmp;
 
         tmp = merge_ob(op, NULL);
@@ -832,16 +814,17 @@ static int unapply_special(object *who, object *op, int aflags) {
 static object *get_item_from_body_location(object *start, int loc) {
     object *tmp;
 
-    if (!start) return NULL;
+    if (!start)
+        return NULL;
 
-    for (tmp=start; tmp; tmp=tmp->below)
-        if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->body_info[loc] &&
-            (!tmp->invisible || tmp->type==SKILL)) return tmp;
+    for (tmp = start; tmp; tmp = tmp->below)
+        if (QUERY_FLAG(tmp, FLAG_APPLIED)
+        && tmp->body_info[loc]
+        && (!tmp->invisible || tmp->type == SKILL))
+            return tmp;
 
     return NULL;
 }
-
-
 
 /**
  * Remove equipment so an object can be applied.
@@ -866,22 +849,21 @@ static object *get_item_from_body_location(object *start, int loc) {
  */
 static int unapply_for_ob(object *who, object *op, int aflags) {
     int i;
-    object *tmp=NULL, *last;
+    object *tmp = NULL, *last;
     char name[MAX_BUF];
 
     /* If we are applying a shield or weapon, unapply any equipped shield
      * or weapons first - only allowed to use one weapon/shield at a time.
      */
     if (op->type == WEAPON || op->type == SHIELD) {
-        for (tmp=who->inv; tmp; tmp=tmp->below) {
+        for (tmp = who->inv; tmp; tmp = tmp->below) {
             if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
-                if ((aflags & AP_IGNORE_CURSE) || (aflags & AP_PRINT) ||
-                    (!QUERY_FLAG(tmp, FLAG_CURSED) &&
-                     !QUERY_FLAG(tmp, FLAG_DAMNED))) {
-                    if (aflags & AP_PRINT) {
+                if ((aflags&AP_IGNORE_CURSE)
+                || (aflags&AP_PRINT)
+                || (!QUERY_FLAG(tmp, FLAG_CURSED) && !QUERY_FLAG(tmp, FLAG_DAMNED))) {
+                    if (aflags&AP_PRINT) {
                         query_name(tmp, name, MAX_BUF);
-                        draw_ext_info(NDI_UNIQUE, 0, who,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                       name, NULL);
                     } else
                         unapply_special(who, tmp, aflags);
@@ -891,11 +873,9 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                      * want unapply_special to at least generate the
                      * message.
                      */
-                    if (!(aflags & AP_NOPRINT)) {
+                    if (!(aflags&AP_NOPRINT)) {
                         query_name(tmp, name, MAX_BUF);
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_UNAPPLY,
+                        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                              "No matter how hard you try, you just can't remove %s.",
                                              "No matter how hard you try, you just can't remove %s.",
                                              name);
@@ -907,7 +887,7 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
         }
     }
 
-    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+    for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
         /* this used up a slot that we need to free */
         if (op->body_info[i]) {
             last = who->inv;
@@ -915,19 +895,19 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
             /* We do a while loop - may need to remove several items
              * in order to free up enough slots.
              */
-            while ((who->body_used[i] + op->body_info[i]) < 0) {
+            while ((who->body_used[i]+op->body_info[i]) < 0) {
                 tmp = get_item_from_body_location(last, i);
                 if (!tmp) {
                     return 1;
                 }
+
                 /* If just printing, we don't care about cursed status */
-                if ((aflags & AP_IGNORE_CURSE) || (aflags & AP_PRINT) ||
-                    (!(QUERY_FLAG(tmp, FLAG_CURSED) ||
-                       QUERY_FLAG(tmp, FLAG_DAMNED)))) {
-                    if (aflags & AP_PRINT) {
+                if ((aflags&AP_IGNORE_CURSE)
+                || (aflags&AP_PRINT)
+                || (!(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))) {
+                    if (aflags&AP_PRINT) {
                         query_name(tmp, name, MAX_BUF);
-                        draw_ext_info(NDI_UNIQUE, 0, who,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+                        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                       name, NULL);
                     } else
                         unapply_special(who, tmp, aflags);
@@ -937,11 +917,9 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
                      * few, so it may not be critical (eg, putting on a
                      * ring and you have one cursed ring.)
                      */
-                    if (!(aflags & AP_NOPRINT)) {
+                    if (!(aflags&AP_NOPRINT)) {
                         query_name(tmp, name, MAX_BUF);
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_UNAPPLY,
+                        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                              "The %s just won't come off",
                                              "The %s just won't come off",
                                              name);
@@ -975,8 +953,8 @@ static int unapply_for_ob(object *who, object *op, int aflags) {
  * these return values.
  */
 int can_apply_object(object *who, object *op) {
-    int i, retval=0;
-    object *tmp=NULL, *ws=NULL;
+    int i, retval = 0;
+    object *tmp = NULL, *ws = NULL;
 
     /* Players have 2 'arm's, so they could in theory equip 2 shields or
      * 2 weapons, but we don't want to let them do that.  So if they are
@@ -984,7 +962,7 @@ int can_apply_object(object *who, object *op) {
      * in place and store that way.
      */
     if (op->type == WEAPON || op->type == SHIELD) {
-        for (tmp=who->inv; tmp && !ws; tmp=tmp->below) {
+        for (tmp = who->inv; tmp && !ws; tmp = tmp->below) {
             if (QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == op->type) {
                 retval = CAN_APPLY_UNAPPLY;
                 ws = tmp;
@@ -992,8 +970,7 @@ int can_apply_object(object *who, object *op) {
         }
     }
 
-
-    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+    for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
         if (op->body_info[i]) {
             /* Item uses more slots than we have */
             if (FABS(op->body_info[i]) > who->body_info[i]) {
@@ -1001,12 +978,11 @@ int can_apply_object(object *who, object *op) {
                  * below isn't really needed.
                  */
                 retval |= CAN_APPLY_NEVER;
-            } else if ((who->body_used[i] + op->body_info[i]) < 0) {
+            } else if ((who->body_used[i]+op->body_info[i]) < 0) {
                 /* in this case, equipping this would use more free
                  * spots than we have.
                  */
                 object *tmp1;
-
 
                 /* if we have an applied weapon/shield, and unapply
                  * it would free enough slots to equip the new item,
@@ -1018,8 +994,7 @@ int can_apply_object(object *who, object *op) {
                  * is being applied may be two handed for example.
                  */
                 if (ws) {
-                    if ((who->body_used[i] - ws->body_info[i] +
-                         op->body_info[i]) >=0) {
+                    if ((who->body_used[i]-ws->body_info[i]+op->body_info[i]) >= 0) {
                         retval |= CAN_APPLY_UNAPPLY;
                         continue;
                     }
@@ -1034,7 +1009,8 @@ int can_apply_object(object *who, object *op) {
                      * it means they need to apply multiple objects
                      */
                     retval |= CAN_APPLY_UNAPPLY;
-                    if (!tmp) tmp = tmp1;
+                    if (!tmp)
+                        tmp = tmp1;
                     else if (tmp != tmp1) {
                         retval |= CAN_APPLY_UNAPPLY_MULT;
                     }
@@ -1043,17 +1019,15 @@ int can_apply_object(object *who, object *op) {
                      * item doesn't need all the slots, the player
                      * then has a choice.
                      */
-                    if (((who->body_used[i] - tmp1->body_info[i]) !=
-                         who->body_info[i]) &&
-                        (FABS(op->body_info[i]) < who->body_info[i]))
+                    if (((who->body_used[i]-tmp1->body_info[i]) != who->body_info[i])
+                    && (FABS(op->body_info[i]) < who->body_info[i]))
                         retval |= CAN_APPLY_UNAPPLY_CHOICE;
 
                     /* Does unequipping 'tmp1' free up enough slots
                      * for this to be equipped?  If not, there must
                      * be something else to unapply.
                      */
-                    if ((who->body_used[i] + op->body_info[i] -
-                         tmp1->body_info[i]) < 0)
+                    if ((who->body_used[i]+op->body_info[i]-tmp1->body_info[i]) < 0)
                         retval |= CAN_APPLY_UNAPPLY_MULT;
                 }
             } /* if not enough free slots */
@@ -1061,17 +1035,16 @@ int can_apply_object(object *who, object *op) {
     } /* for i -> num_body_locations loop */
 
     /* Do checks for can_use_weapon/shield/armour. */
-    if (IS_WEAPON(op) && !QUERY_FLAG(who,FLAG_USE_WEAPON))
+    if (IS_WEAPON(op) && !QUERY_FLAG(who, FLAG_USE_WEAPON))
         retval |= CAN_APPLY_RESTRICTION;
-    if (IS_SHIELD(op) && !QUERY_FLAG(who,FLAG_USE_SHIELD))
+    if (IS_SHIELD(op) && !QUERY_FLAG(who, FLAG_USE_SHIELD))
         retval |= CAN_APPLY_RESTRICTION;
-    if (IS_ARMOR(op) && !QUERY_FLAG(who,FLAG_USE_ARMOUR))
+    if (IS_ARMOR(op) && !QUERY_FLAG(who, FLAG_USE_ARMOUR))
         retval |= CAN_APPLY_RESTRICTION;
-
 
     if (who->type != PLAYER) {
-        if ((op->type == WAND || op->type == HORN || op->type==ROD)
-            && !QUERY_FLAG(who, FLAG_USE_RANGE))
+        if ((op->type == WAND || op->type == HORN || op->type == ROD)
+        && !QUERY_FLAG(who, FLAG_USE_RANGE))
             retval |= CAN_APPLY_RESTRICTION;
         if (op->type == BOW && !QUERY_FLAG(who, FLAG_USE_BOW))
             retval |= CAN_APPLY_RESTRICTION;
@@ -1107,11 +1080,13 @@ int check_weapon_power(const object *who, int improvs) {
      * so we just use overall level.
      */
 #if 1
-    if (((who->level/5)+5) >= improvs) return 1;
-    else return 0;
+    if (((who->level/5)+5) >= improvs)
+        return 1;
+    else
+        return 0;
 
 #else
-    int level=0;
+    int level = 0;
 
     /* The skill system hands out wc and dam bonuses to fighters
      * more generously than the old system (see fix_object). Thus
@@ -1121,21 +1096,20 @@ int check_weapon_power(const object *who, int improvs) {
      * different or using normal level - it is just a matter of play
      * balance.
      */
-    if (who->type==PLAYER) {
-        object *wc_obj=NULL;
+    if (who->type == PLAYER) {
+        object *wc_obj = NULL;
 
-        for (wc_obj=who->inv;wc_obj;wc_obj=wc_obj->below)
+        for (wc_obj = who->inv; wc_obj; wc_obj = wc_obj->below)
             if (wc_obj->type == SKILL && IS_COMBAT_SKILL(wc_obj->subtype)
-                && wc_obj->level > level)
-                level  = wc_obj->level;
+            && wc_obj->level > level)
+                level = wc_obj->level;
 
         if (!level)  {
-            LOG(llevError,"Error: Player: %s lacks wc experience object\n",
-                who->name);
+            LOG(llevError, "Error: Player: %s lacks wc experience object\n", who->name);
             level = who->level;
         }
     } else
-        level=who->level;
+        level = who->level;
 
     return (improvs <= ((level/5)+5));
 #endif
@@ -1163,31 +1137,31 @@ int check_weapon_power(const object *who, int improvs) {
  * nothing is done, and 0 is returned.
  */
 int apply_special(object *who, object *op, int aflags) {
-    int basic_flag = aflags & AP_BASIC_FLAGS;
-    object *tmp, *skop=NULL;
+    int basic_flag = aflags&AP_BASIC_FLAGS;
+    object *tmp, *skop = NULL;
     int i;
     char name_op[MAX_BUF];
 
-    if (who==NULL) {
-        LOG(llevError,"apply_special() from object without environment.\n");
+    if (who == NULL) {
+        LOG(llevError, "apply_special() from object without environment.\n");
         return 1;
     }
 
     query_name(op, name_op, MAX_BUF);
 
-    if (op->env!=who)
+    if (op->env != who)
         return 1;   /* op is not in inventory */
 
     /* trying to unequip op */
-    if (QUERY_FLAG(op,FLAG_APPLIED)) {
+    if (QUERY_FLAG(op, FLAG_APPLIED)) {
         /* always apply, so no reason to unapply */
-        if (basic_flag == AP_APPLY) return 0;
+        if (basic_flag == AP_APPLY)
+            return 0;
 
-        if (!(aflags & AP_IGNORE_CURSE)
-            && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+        if (!(aflags&AP_IGNORE_CURSE)
+        && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED))) {
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                      "No matter how hard you try, you just can't remove %s.",
                                      "No matter how hard you try, you just can't remove %s.",
                                      name_op);
@@ -1196,25 +1170,23 @@ int apply_special(object *who, object *op, int aflags) {
         return unapply_special(who, op, aflags);
     }
 
-    if (basic_flag == AP_UNAPPLY) return 0;
+    if (basic_flag == AP_UNAPPLY)
+        return 0;
 
     i = can_apply_object(who, op);
 
     /* Can't just apply this object.  Lets see what not and what to do */
     if (i) {
-        if (i & CAN_APPLY_NEVER) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
+        if (i&CAN_APPLY_NEVER) {
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_BADBODY,
                                      "You don't have the body to use a %s",
                                      "You don't have the body to use a %s",
                                      name_op);
             return 1;
-        } else if (i & CAN_APPLY_RESTRICTION) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY,
-                                     MSG_TYPE_APPLY_PROHIBITION,
+        } else if (i&CAN_APPLY_RESTRICTION) {
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_PROHIBITION,
                                      "You have a prohibition against using a %s",
                                      "You have a prohibition against using a %s",
                                      name_op);
@@ -1222,30 +1194,29 @@ int apply_special(object *who, object *op, int aflags) {
         }
         if (who->type != PLAYER) {
             /* Some error, so don't try to equip something more */
-            if (unapply_for_ob(who, op, aflags)) return 1;
+            if (unapply_for_ob(who, op, aflags))
+                return 1;
         } else {
-            if (who->contr->unapply == unapply_never ||
-                (i & CAN_APPLY_UNAPPLY_CHOICE &&
-                 who->contr->unapply == unapply_nochoice)) {
-                if (!(aflags & AP_NOPRINT))
-                    draw_ext_info(NDI_UNIQUE, 0, who,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
+            if (who->contr->unapply == unapply_never
+            || (i&CAN_APPLY_UNAPPLY_CHOICE && who->contr->unapply == unapply_nochoice)) {
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
                                   "You need to unapply some item(s):", NULL);
                 unapply_for_ob(who, op, AP_PRINT);
                 return 1;
-            } else if (who->contr->unapply == unapply_always ||
-                       !(i & CAN_APPLY_UNAPPLY_CHOICE)) {
+            } else if (who->contr->unapply == unapply_always
+            || !(i&CAN_APPLY_UNAPPLY_CHOICE)) {
                 i = unapply_for_ob(who, op, aflags);
-                if (i) return 1;
+                if (i)
+                    return 1;
             }
         }
     }
     if (op->skill && op->type != SKILL && op->type != SKILL_TOOL) {
-        skop=find_skill_by_name(who, op->skill);
+        skop = find_skill_by_name(who, op->skill);
         if (!skop) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                      "You need the %s skill to use this item!",
                                      "You need the %s skill to use this item!",
                                      op->skill);
@@ -1254,16 +1225,15 @@ int apply_special(object *who, object *op, int aflags) {
             /* While experience will be credited properly, we want to
              * change the skill so that the dam and wc get updated
              */
-            change_skill(who, skop, (aflags & AP_NOPRINT));
+            change_skill(who, skop, (aflags&AP_NOPRINT));
         }
     }
 
-    if (who->type == PLAYER && op->item_power &&
-        (op->item_power + who->contr->item_power) >
-        (settings.item_power_factor * who->level)) {
-        if (!(aflags & AP_NOPRINT))
-            draw_ext_info(NDI_UNIQUE, 0, who,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+    if (who->type == PLAYER
+    && op->item_power
+    && (op->item_power+who->contr->item_power) > (settings.item_power_factor*who->level)) {
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "Equipping that combined with other items would consume your soul!", NULL);
         return 1;
     }
@@ -1276,7 +1246,7 @@ int apply_special(object *who, object *op, int aflags) {
      */
     if (settings.personalized_blessings) {
         const char *owner = get_ob_key_value(op, "item_owner");
-        if ((owner!=NULL)&&(strcmp(owner, who->name))) {
+        if ((owner != NULL) && (strcmp(owner, who->name))) {
             const char *will = get_ob_key_value(op, "item_willpower");
             long item_will = 0;
             long margin = 0;
@@ -1284,49 +1254,45 @@ int apply_special(object *who, object *op, int aflags) {
             int random_effect = 0;
             int damage_percentile = 0;
 
-            if (will!=NULL)
+            if (will != NULL)
                 item_will = atol(will);
             if (item_will > who->stats.exp) {
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                      "This %s refuses to serve you - it keeps evading your hand !",
                                      "This %s refuses to serve you - it keeps evading your hand !",
                                      op->name);
                 return 1;
             }
             if (item_will != 0)
-                margin = who->stats.exp / item_will;
+                margin = who->stats.exp/item_will;
             else
                 margin = who->stats.exp;
             random_effect = (random_roll(0, 100, who, 1)-(margin*20));
-            if (random_effect>80) {
+            if (random_effect > 80) {
                 msg = "You don't know why, but you have the feeling that the %s is angry at you !";
                 damage_percentile = 60;
-            } else if (random_effect>60) {
+            } else if (random_effect > 60) {
                 msg = "The %s seems to look at you nastily !";
                 damage_percentile = 45;
-            } else if (random_effect>40) {
+            } else if (random_effect > 40) {
                 msg = "You have the strange feeling that the %s is annoyed...";
                 damage_percentile = 30;
-            } else if (random_effect>20) {
+            } else if (random_effect > 20) {
                 msg = "The %s seems tired, or bored, in a way. Very strange !";
                 damage_percentile = 15;
-            } else if (random_effect>0) {
+            } else if (random_effect > 0) {
                 msg = "You hear the %s sighing !";
                 damage_percentile = 0;
             }
             if (msg != NULL)
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                      msg, msg, op->name);
             if (damage_percentile > 0) {
-                int weapon_bite = (who->stats.hp * damage_percentile)/100;
+                int weapon_bite = (who->stats.hp*damage_percentile)/100;
                 if (weapon_bite < 1)
                     weapon_bite = 1;
                 who->stats.hp -= weapon_bite;
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_VICTIM,
-                                     MSG_TYPE_VICTIM_WAS_HIT,
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_WAS_HIT,
                                      "You get a nasty bite in the hand !",
                                      "You get a nasty bite in the hand !");
             }
@@ -1338,204 +1304,191 @@ int apply_special(object *who, object *op, int aflags) {
      * below - that is already taken care of by can_apply_object.
      */
 
-
     if (op->nrof > 1)
-        tmp = get_split_ob(op,op->nrof - 1, NULL, 0);
+        tmp = get_split_ob(op, op->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
     switch (op->type) {
-        case WEAPON: {
-            int ownerlen=0;
-            char *quotepos=NULL;
+    case WEAPON: {
+            int ownerlen = 0;
+            char *quotepos = NULL;
+
             if (!check_weapon_power(who, op->last_eat)) {
-                if (!(aflags & AP_NOPRINT))
-                    draw_ext_info(NDI_UNIQUE, 0,who, MSG_TYPE_APPLY,
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY,
                                   MSG_TYPE_APPLY_ERROR,
                                   "That weapon is too powerful for you to use.  It would consume your soul!",
                                   NULL);
 
-                if (tmp!=NULL)
-                    (void) insert_ob_in_ob(tmp,who);
+                if (tmp != NULL)
+                    (void)insert_ob_in_ob(tmp, who);
                 return 1;
             }
-            if ((quotepos=strstr(op->name, "'"))!=NULL) {
+            if ((quotepos = strstr(op->name, "'")) != NULL) {
                 ownerlen = (strstr(op->name, "'")-op->name);
-                if (op->level && (strncmp(op->name,who->name,ownerlen))) {
+                if (op->level && (strncmp(op->name, who->name, ownerlen))) {
                     /* if the weapon does not have the name as the
                      * character, can't use it. (Ragnarok's sword
                      * attempted to be used by Foo: won't work) */
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info(NDI_UNIQUE, 0,who,
-                                      MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    if (!(aflags&AP_NOPRINT))
+                        draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                                       "The weapon does not recognize you as its owner.", NULL);
-                    if (tmp!=NULL)
-                        (void) insert_ob_in_ob(tmp,who);
+                    if (tmp != NULL)
+                        (void)insert_ob_in_ob(tmp, who);
                     return 1;
                 }
             }
             SET_FLAG(op, FLAG_APPLIED);
 
-            if (skop) change_skill(who, skop, 1);
-            if (!QUERY_FLAG(who,FLAG_READY_WEAPON))
+            if (skop)
+                change_skill(who, skop, 1);
+            if (!QUERY_FLAG(who, FLAG_READY_WEAPON))
                 SET_FLAG(who, FLAG_READY_WEAPON);
 
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                                      "You wield %s.", "You wield %s.",
                                      name_op);
 
-            (void) change_abil(who,op);
+            (void)change_abil(who, op);
             break;
         }
-        case ARMOUR:
-        case HELMET:
-        case SHIELD:
-        case BOOTS:
-        case GLOVES:
-        case GIRDLE:
-        case BRACERS:
-        case CLOAK:
-        case RING:
-        case AMULET:
-            SET_FLAG(op, FLAG_APPLIED);
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You wear %s.",
-                                     "You wear %s.",
-                                     name_op);
-            (void) change_abil(who,op);
-            break;
 
-            /* this part is needed for skill-tools */
-        case SKILL:
-        case SKILL_TOOL:
-            if (who->chosen_skill) {
-                LOG(llevError, "BUG: apply_special(): can't apply two skills\n");
-                return 1;
-            }
-            if (who->type == PLAYER) {
-                who->contr->shoottype = range_skill;
-                who->contr->ranges[range_skill] = op;
-                if (! op->invisible) {
-                    if (!(aflags & AP_NOPRINT)) {
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_SUCCESS,
-                                             "You ready %s.",
-                                             "You ready %s.",
-                                             name_op);
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_SUCCESS,
-                                             "You can now use the skill: %s.",
-                                             "You can now use the skill: %s.",
-                                             op->skill);
-                    }
-                } else {
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_SUCCESS,
-                                             "Readied skill: %s.",
-                                             "Readied skill: %s.",
-                                             op->skill? op->skill:op->name);
-                }
-            }
-            SET_FLAG(op, FLAG_APPLIED);
-            (void) change_abil(who, op);
-            who->chosen_skill = op;
-            SET_FLAG(who, FLAG_READY_SKILL);
-            break;
+    case ARMOUR:
+    case HELMET:
+    case SHIELD:
+    case BOOTS:
+    case GLOVES:
+    case GIRDLE:
+    case BRACERS:
+    case CLOAK:
+    case RING:
+    case AMULET:
+        SET_FLAG(op, FLAG_APPLIED);
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                 "You wear %s.",
+                                 "You wear %s.",
+                                 name_op);
+        (void)change_abil(who, op);
+        break;
 
-        case BOW:
-            if (!check_weapon_power(who, op->last_eat)) {
-                if (!(aflags & AP_NOPRINT)) {
-                    draw_ext_info(NDI_UNIQUE, 0, who,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                  "That item is too powerful for you to use.",
-                                  NULL);
-                    draw_ext_info(NDI_UNIQUE, 0, who,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                  "It would consume your soul!.", NULL);
-                }
-                if (tmp != NULL)
-                    (void)insert_ob_in_ob(tmp,who);
-                return 1;
-            }
-            if (op->level && (strncmp(op->name,who->name,strlen(who->name)))) {
-                if (!(aflags & AP_NOPRINT)) {
-                    draw_ext_info(NDI_UNIQUE, 0, who,
-                                  MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                  "The weapon does not recognize you as its owner.", NULL);
-                }
-                if (tmp != NULL)
-                    (void)insert_ob_in_ob(tmp,who);
-                return 1;
-            }
-            /*FALLTHROUGH*/
-        case WAND:
-        case ROD:
-        case HORN:
-            /* check for skill, alter player status */
-            SET_FLAG(op, FLAG_APPLIED);
-            if (skop) change_skill(who, skop, 0);
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You ready %s.",
-                                     "You ready %s.",
-                                     name_op);
-            if (who->type==PLAYER) {
-                if (op->type == BOW) {
-                    (void)change_abil(who, op);
-                    if (!(aflags & AP_NOPRINT))
-                        draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                             MSG_TYPE_APPLY,
-                                             MSG_TYPE_APPLY_SUCCESS,
-                                             "You will now fire %s with %s.",
-                                             "You will now fire %s with %s.",
-                                             op->race ? op->race : "nothing",
-                                             name_op);
-                    who->contr->shoottype = range_bow;
-                } else {
-                    who->contr->shoottype = range_misc;
+        /* this part is needed for skill-tools */
+    case SKILL:
+    case SKILL_TOOL:
+        if (who->chosen_skill) {
+            LOG(llevError, "BUG: apply_special(): can't apply two skills\n");
+            return 1;
+        }
+
+        if (who->type == PLAYER) {
+            who->contr->shoottype = range_skill;
+            who->contr->ranges[range_skill] = op;
+            if (!op->invisible) {
+                if (!(aflags&AP_NOPRINT)) {
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                         "You ready %s.",
+                                         "You ready %s.",
+                                         name_op);
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                         "You can now use the skill: %s.",
+                                         "You can now use the skill: %s.",
+                                         op->skill);
                 }
             } else {
-                if (op->type == BOW)
-                    SET_FLAG(who, FLAG_READY_BOW);
-                else
-                    SET_FLAG(who, FLAG_READY_RANGE);
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                         "Readied skill: %s.",
+                                         "Readied skill: %s.",
+                                         op->skill ? op->skill : op->name);
             }
-            break;
+        }
+        SET_FLAG(op, FLAG_APPLIED);
+        (void)change_abil(who, op);
+        who->chosen_skill = op;
+        SET_FLAG(who, FLAG_READY_SKILL);
+        break;
 
-        case BUILDER:
-            if (who->contr->ranges[range_builder])
-                unapply_special(who, who->contr->ranges[range_builder], 0);
-            who->contr->shoottype = range_builder;
-            who->contr->ranges[range_builder] = op;
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You ready your %s.",
-                                     "You ready your %s.",
-                                     name_op);
-            break;
-
-        default:
-            draw_ext_info_format(NDI_UNIQUE, 0, who,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You apply %s.",
-                                 "You apply %s.",
+    case BOW:
+        if (!check_weapon_power(who, op->last_eat)) {
+            if (!(aflags&AP_NOPRINT)) {
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                              "That item is too powerful for you to use.",
+                              NULL);
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                              "It would consume your soul!.", NULL);
+            }
+            if (tmp != NULL)
+                (void)insert_ob_in_ob(tmp, who);
+            return 1;
+        }
+        if (op->level && (strncmp(op->name, who->name, strlen(who->name)))) {
+            if (!(aflags&AP_NOPRINT)) {
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                              "The weapon does not recognize you as its owner.", NULL);
+            }
+            if (tmp != NULL)
+                (void)insert_ob_in_ob(tmp, who);
+            return 1;
+        }
+        /*FALLTHROUGH*/
+    case WAND:
+    case ROD:
+    case HORN:
+        /* check for skill, alter player status */
+        SET_FLAG(op, FLAG_APPLIED);
+        if (skop)
+            change_skill(who, skop, 0);
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                 "You ready %s.",
+                                 "You ready %s.",
                                  name_op);
+        if (who->type == PLAYER) {
+            if (op->type == BOW) {
+                (void)change_abil(who, op);
+                if (!(aflags&AP_NOPRINT))
+                    draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                         "You will now fire %s with %s.",
+                                         "You will now fire %s with %s.",
+                                         op->race ? op->race : "nothing",
+                                         name_op);
+                who->contr->shoottype = range_bow;
+            } else {
+                who->contr->shoottype = range_misc;
+            }
+        } else {
+            if (op->type == BOW)
+                SET_FLAG(who, FLAG_READY_BOW);
+            else
+                SET_FLAG(who, FLAG_READY_RANGE);
+        }
+        break;
+
+    case BUILDER:
+        if (who->contr->ranges[range_builder])
+            unapply_special(who, who->contr->ranges[range_builder], 0);
+        who->contr->shoottype = range_builder;
+        who->contr->ranges[range_builder] = op;
+        if (!(aflags&AP_NOPRINT))
+            draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                                 "You ready your %s.",
+                                 "You ready your %s.",
+                                 name_op);
+        break;
+
+    default:
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                             "You apply %s.",
+                             "You apply %s.",
+                             name_op);
     } /* end of switch op->type */
 
     SET_FLAG(op, FLAG_APPLIED);
 
-    if (tmp!=NULL)
-        tmp = insert_ob_in_ob(tmp,who);
+    if (tmp != NULL)
+        tmp = insert_ob_in_ob(tmp, who);
 
     fix_object(who);
 
@@ -1543,24 +1496,21 @@ int apply_special(object *who, object *op, int aflags) {
      * been applied flag when they are used - until that point,
      * you don't know anything about them.
      */
-    if (who->type == PLAYER && op->type!=WAND && op->type!=HORN &&
-        op->type!=ROD)
-        SET_FLAG(op,FLAG_BEEN_APPLIED);
+    if (who->type == PLAYER && op->type != WAND && op->type != HORN && op->type != ROD)
+        SET_FLAG(op, FLAG_BEEN_APPLIED);
 
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
         if (who->type == PLAYER) {
-            draw_ext_info(NDI_UNIQUE, 0,who,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+            draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                           "Oops, it feels deadly cold!", NULL);
-            SET_FLAG(op,FLAG_KNOWN_CURSED);
+            SET_FLAG(op, FLAG_KNOWN_CURSED);
         }
     }
-    if (who->type==PLAYER) {
-        esrv_update_item(UPD_NROF | UPD_FLAGS | UPD_WEIGHT, who, op);
+    if (who->type == PLAYER) {
+        esrv_update_item(UPD_NROF|UPD_FLAGS|UPD_WEIGHT, who, op);
     }
     return 0;
 }
-
 
 /**
  * Map was just loaded, handle op's initialisation.
@@ -1577,52 +1527,51 @@ int auto_apply(object *op) {
     int i;
 
     switch (op->type) {
-        case SHOP_FLOOR:
-            if (!HAS_RANDOM_ITEMS(op)) return 0;
-            do {
-                i=10; /* let's give it 10 tries */
-                while ((tmp=generate_treasure(op->randomitems,
-                                              op->stats.exp?
-                                              (int)op->stats.exp:
-                                              MAX(op->map->difficulty, 5)))==NULL
-                       &&--i);
-                if (tmp==NULL)
-                    return 0;
-                if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                    free_object(tmp);
-                    tmp = NULL;
-                }
-            } while (!tmp);
-            tmp->x=op->x;
-            tmp->y=op->y;
-            SET_FLAG(tmp,FLAG_UNPAID);
-            insert_ob_in_map(tmp,op->map,NULL,0);
-            CLEAR_FLAG(op,FLAG_AUTO_APPLY);
-            identify(tmp);
-            break;
-
-        case TREASURE:
-            if (QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+    case SHOP_FLOOR:
+        if (!HAS_RANDOM_ITEMS(op))
+            return 0;
+        do {
+            i = 10; /* let's give it 10 tries */
+            while ((tmp = generate_treasure(op->randomitems, op->stats.exp ? (int)op->stats.exp : MAX(op->map->difficulty, 5))) == NULL
+            && --i)
+                ;
+            if (tmp == NULL)
                 return 0;
-            while ((op->stats.hp--)>0)
-                create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-                                op->stats.exp ? (int)op->stats.exp :
-                                op->map == NULL ?  14: op->map->difficulty,0);
-
-            /* If we generated an object and put it in this object's
-             * inventory, move it to the parent object as the current
-             * object is about to disappear.  An example of this item
-             * is the random_ *stuff that is put inside other objects.
-             */
-            for (tmp=op->inv; tmp; tmp=tmp2) {
-                tmp2 = tmp->below;
-                remove_ob(tmp);
-                if (op->env) insert_ob_in_ob(tmp, op->env);
-                else free_object(tmp);
+            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+                free_object(tmp);
+                tmp = NULL;
             }
-            remove_ob(op);
-            free_object(op);
-            break;
+        } while (!tmp);
+        tmp->x = op->x;
+        tmp->y = op->y;
+        SET_FLAG(tmp, FLAG_UNPAID);
+        insert_ob_in_map(tmp, op->map, NULL, 0);
+        CLEAR_FLAG(op, FLAG_AUTO_APPLY);
+        identify(tmp);
+        break;
+
+    case TREASURE:
+        if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
+            return 0;
+        while ((op->stats.hp--) > 0)
+            create_treasure(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
+
+        /* If we generated an object and put it in this object's
+         * inventory, move it to the parent object as the current
+         * object is about to disappear.  An example of this item
+         * is the random_ *stuff that is put inside other objects.
+         */
+        for (tmp = op->inv; tmp; tmp = tmp2) {
+            tmp2 = tmp->below;
+            remove_ob(tmp);
+            if (op->env)
+                insert_ob_in_ob(tmp, op->env);
+            else
+                free_object(tmp);
+        }
+        remove_ob(op);
+        free_object(op);
+        break;
     }
     return tmp ? 1 : 0;
 }
@@ -1638,37 +1587,35 @@ int auto_apply(object *op) {
  */
 
 void fix_auto_apply(mapstruct *m) {
-    object *tmp,*above=NULL;
-    int x,y;
+    object *tmp, *above = NULL;
+    int x, y;
 
-    if (m==NULL) return;
+    if (m == NULL)
+        return;
 
-    for (x=0;x<MAP_WIDTH(m);x++)
-        for (y=0;y<MAP_HEIGHT(m);y++)
-            for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
-                above=tmp->above;
+    for (x = 0; x < MAP_WIDTH(m); x++)
+        for (y = 0; y < MAP_HEIGHT(m); y++)
+            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
+                above = tmp->above;
 
                 if (tmp->inv) {
                     object *invtmp, *invnext;
 
-                    for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
+                    for (invtmp = tmp->inv; invtmp != NULL; invtmp = invnext) {
                         invnext = invtmp->below;
 
-                        if (QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
+                        if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
                             auto_apply(invtmp);
-                        else if (invtmp->type==TREASURE &&
-                                 HAS_RANDOM_ITEMS(invtmp)) {
-                            while ((invtmp->stats.hp--)>0)
-                                create_treasure(invtmp->randomitems, invtmp, 0,
-                                                m->difficulty,0);
+                        else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
+                            while ((invtmp->stats.hp--) > 0)
+                                create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
                             invtmp->randomitems = NULL;
-                        } else if (invtmp && invtmp->arch &&
-                                   invtmp->type!=TREASURE &&
-                                   invtmp->type != SPELL &&
-                                   invtmp->type != CLASS &&
-                                   HAS_RANDOM_ITEMS(invtmp)) {
-                            create_treasure(invtmp->randomitems, invtmp, 0,
-                                            m->difficulty,0);
+                        } else if (invtmp && invtmp->arch
+                        && invtmp->type != TREASURE
+                        && invtmp->type != SPELL
+                        && invtmp->type != CLASS
+                        && HAS_RANDOM_ITEMS(invtmp)) {
+                            create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
                             /* Need to clear this so that we never try to
                              * create treasure again for this object
                              */
@@ -1688,23 +1635,27 @@ void fix_auto_apply(mapstruct *m) {
                      * in the book ^_-
                      * Ryo 2004-08-16
                      */
-                    if (tmp->type == WAND || tmp->type == ROD ||
-                        tmp->type == SCROLL || tmp->type == HORN ||
-                        tmp->type == FIREWALL || tmp->type == POTION ||
-                        tmp->type == ALTAR || tmp->type == SPELLBOOK)
+                    if (tmp->type == WAND
+                    || tmp->type == ROD
+                    || tmp->type == SCROLL
+                    || tmp->type == HORN
+                    || tmp->type == FIREWALL
+                    || tmp->type == POTION
+                    || tmp->type == ALTAR
+                    || tmp->type == SPELLBOOK)
                         tmp->randomitems = NULL;
                 }
 
-                if (QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
+                if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
                     auto_apply(tmp);
-                else if ((tmp->type==TREASURE || (tmp->type==CONTAINER))
-                         && HAS_RANDOM_ITEMS(tmp)) {
-                    while ((tmp->stats.hp--)>0)
-                        create_treasure(tmp->randomitems, tmp, 0,
-                                        m->difficulty,0);
+                else if ((tmp->type == TREASURE || (tmp->type == CONTAINER))
+                && HAS_RANDOM_ITEMS(tmp)) {
+                    while ((tmp->stats.hp--) > 0)
+                        create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
                     tmp->randomitems = NULL;
-                } else if (tmp->type==TIMED_GATE) {
+                } else if (tmp->type == TIMED_GATE) {
                     object *head = tmp->head != NULL ? tmp->head : tmp;
+
                     if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
                         tmp->speed = 0;
                         update_ob_speed(tmp);
@@ -1718,22 +1669,24 @@ void fix_auto_apply(mapstruct *m) {
                  * problem for the above objects, because they have
                  * counters which say how many times to make the treasure.
                  */
-                else if (tmp && tmp->arch && tmp->type!=PLAYER &&
-                         tmp->type!=TREASURE && tmp->type != SPELL &&
-                         tmp->type != PLAYER_CHANGER && tmp->type != CLASS &&
-                         HAS_RANDOM_ITEMS(tmp)) {
-                    create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                                    m->difficulty,0);
+                else if (tmp
+                && tmp->arch
+                && tmp->type != PLAYER
+                && tmp->type != TREASURE
+                && tmp->type != SPELL
+                && tmp->type != PLAYER_CHANGER
+                && tmp->type != CLASS
+                && HAS_RANDOM_ITEMS(tmp)) {
+                    create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 }
             }
 
-    for (x=0;x<MAP_WIDTH(m);x++)
-        for (y=0;y<MAP_HEIGHT(m);y++)
-            for (tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
-                if (tmp->above &&
-                    (tmp->type == TRIGGER_BUTTON ||
-                     tmp->type == TRIGGER_PEDESTAL))
+    for (x = 0; x < MAP_WIDTH(m); x++)
+        for (y = 0; y < MAP_HEIGHT(m); y++)
+            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+                if (tmp->above
+                && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
                     check_trigger(tmp, tmp->above);
 }
 
@@ -1752,14 +1705,15 @@ void fix_auto_apply(mapstruct *m) {
  * the higher the value, the worse the thing that happens.
  */
 void scroll_failure(object *op, int failure, int power) {
-    if (abs(failure/4)>power) power=abs(failure/4); /* set minimum effect */
+    if (abs(failure/4) > power)
+        power = abs(failure/4); /* set minimum effect */
 
-    if (failure<= -1&&failure > -15) {/* wonder */
+    if (failure <= -1 && failure > -15) {/* wonder */
         object *tmp;
 
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                       "Your spell warps!", NULL);
-        tmp=create_archetype(SPELL_WONDER);
+        tmp = create_archetype(SPELL_WONDER);
         cast_wonder(op, op, 0, tmp);
         if (op->stats.sp < 0)
             /* For some reason the sp can become negative here. */
@@ -1769,36 +1723,33 @@ void scroll_failure(object *op, int failure, int power) {
     }
 
     if (settings.spell_failure_effects == TRUE) {
-        if (failure <= -35&&failure > -60) { /* confusion */
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        if (failure <= -35 && failure > -60) { /* confusion */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils on you!", NULL);
-            confuse_living(op,op,power);
+            confuse_living(op, op, power);
             return;
         }
 
-        if (failure <= -60&&failure> -70) {/* paralysis */
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        if (failure <= -60 && failure > -70) {/* paralysis */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils and paralyzes you!", NULL);
-            paralyze_living(op,op,power);
+            paralyze_living(op, op, power);
             return;
         }
 
-        if (failure <= -70&&failure> -80) {/* blind */
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        if (failure <= -70 && failure > -80) {/* blind */
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "The magic recoils on you!", NULL);
-            blind_living(op,op,power);
+            blind_living(op, op, power);
             return;
         }
 
         if (failure <= -80) {/* blast the immediate area */
             object *tmp;
-            tmp=create_archetype(LOOSE_MANA);
-            cast_magic_storm(op,tmp, power);
-            draw_ext_info(NDI_UNIQUE, 0,op,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+
+            tmp = create_archetype(LOOSE_MANA);
+            cast_magic_storm(op, tmp, power);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                           "You unlease uncontrolled mana!", NULL);
             free_object(tmp);
             return;
@@ -1807,10 +1758,11 @@ void scroll_failure(object *op, int failure, int power) {
     /* Either no spell failure on this server, or wrong values,
      * in any case let's punish.
      */
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                   "Your mana is drained!", NULL);
     op->stats.sp -= random_roll(0, power-1, op, PREFER_LOW);
-    if (op->stats.sp<0) op->stats.sp = 0;
+    if (op->stats.sp < 0)
+        op->stats.sp = 0;
 }
 
 /**
@@ -1821,41 +1773,45 @@ void scroll_failure(object *op, int failure, int power) {
  * what kind of changes to apply. Should be of type CLASS.
  */
 void apply_changes_to_player(object *pl, object *change) {
-    int excess_stat=0;  /* if the stat goes over the maximum
-                           for the race, put the excess stat some
-                           where else. */
+    int excess_stat = 0;  /* if the stat goes over the maximum
+                           * for the race, put the excess stat some
+                           * where else.
+                           */
 
     switch (change->type) {
-        case CLASS: {
+    case CLASS: {
             living *stats = &(pl->contr->orig_stats);
             living *ns = &(change->stats);
             object *walk;
-            int flag_change_face=1;
+            int flag_change_face = 1;
 
             /* the following code assigns stats up to the stat max
              * for the race, and if the stat max is exceeded,
              * tries to randomly reassign the excess stat
              */
-            int i,j;
-            for (i=0;i<NUM_STATS;i++) {
-                sint8 stat=get_attr_value(stats,i);
-                int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
-                stat += get_attr_value(ns,i);
-                if (stat > 20 + race_bonus) {
+            int i, j;
+            for (i = 0; i < NUM_STATS; i++) {
+                sint8 stat = get_attr_value(stats, i);
+                int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
+
+                stat += get_attr_value(ns, i);
+                if (stat > 20+race_bonus) {
                     excess_stat++;
                     stat = 20+race_bonus;
                 }
-                set_attr_value(stats,i,stat);
+                set_attr_value(stats, i, stat);
             }
 
-            for (j=0;excess_stat >0 && j<100;j++) {
+            for (j = 0; excess_stat > 0 && j < 100; j++) {
                 /* try 100 times to assign excess stats */
                 int i = rndm(0, 6);
-                int stat=get_attr_value(stats,i);
-                int race_bonus = get_attr_value(&(pl->arch->clone.stats),i);
-                if (i==CHA) continue; /* exclude cha from this */
-                if (stat < 20 + race_bonus) {
-                    change_attr_value(stats,i,1);
+                int stat = get_attr_value(stats, i);
+                int race_bonus = get_attr_value(&(pl->arch->clone.stats), i);
+
+                if (i == CHA)
+                    continue; /* exclude cha from this */
+                if (stat < 20+race_bonus) {
+                    change_attr_value(stats, i, 1);
                     excess_stat--;
                 }
             }
@@ -1863,8 +1819,8 @@ void apply_changes_to_player(object *pl, object *change) {
             /* insert the randomitems from the change's treasurelist into
              * the player ref: player.c
              */
-            if (change->randomitems!=NULL)
-                give_initial_items(pl,change->randomitems);
+            if (change->randomitems != NULL)
+                give_initial_items(pl, change->randomitems);
 
 
             /* set up the face, for some races. */
@@ -1872,18 +1828,18 @@ void apply_changes_to_player(object *pl, object *change) {
             /* first, look for the force object banning changing the
              * face.  Certain races never change face with class.
              */
-            for (walk=pl->inv;walk!=NULL;walk=walk->below)
-                if (!strcmp(walk->name,"NOCLASSFACECHANGE"))
-                    flag_change_face=0;
+            for (walk = pl->inv; walk != NULL; walk = walk->below)
+                if (!strcmp(walk->name, "NOCLASSFACECHANGE"))
+                    flag_change_face = 0;
 
             if (flag_change_face) {
                 pl->animation_id = GET_ANIM_ID(change);
                 pl->face = change->face;
 
-                if (QUERY_FLAG(change,FLAG_ANIMATE))
-                    SET_FLAG(pl,FLAG_ANIMATE);
+                if (QUERY_FLAG(change, FLAG_ANIMATE))
+                    SET_FLAG(pl, FLAG_ANIMATE);
                 else
-                    CLEAR_FLAG(pl,FLAG_ANIMATE);
+                    CLEAR_FLAG(pl, FLAG_ANIMATE);
             }
 
             if (change->anim_suffix) {
@@ -1895,14 +1851,17 @@ void apply_changes_to_player(object *pl, object *change) {
                 if (anim) {
                     pl->animation_id = anim;
                     pl->anim_speed = -1;
-                    CLEAR_FLAG(pl,FLAG_ANIMATE);
+                    CLEAR_FLAG(pl, FLAG_ANIMATE);
                     animate_object(pl, pl->facing);
                 }
             }
 
             /* check the special case of can't use weapons */
-            /*if(QUERY_FLAG(change,FLAG_USE_WEAPON)) CLEAR_FLAG(pl,FLAG_USE_WEAPON);*/
-            if (!strcmp(change->name,"monk")) CLEAR_FLAG(pl,FLAG_USE_WEAPON);
+            /*if(QUERY_FLAG(change, FLAG_USE_WEAPON))
+             *    CLEAR_FLAG(pl, FLAG_USE_WEAPON);
+             */
+            if (!strcmp(change->name, "monk"))
+                CLEAR_FLAG(pl, FLAG_USE_WEAPON);
 
             break;
         }

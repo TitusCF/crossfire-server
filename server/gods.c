@@ -64,15 +64,16 @@ static const char *get_god_for_race(const char *race);
  * couldn't == be used for comparison, if name is a shared string?
  */
 static int lookup_god_by_name(const char *name) {
-    int godnr=-1;
+    int godnr = -1;
     size_t nmlen = strlen(name);
 
-    if (name && strcmp(name,"none")) {
+    if (name && strcmp(name, "none")) {
         godlink *gl;
-        for (gl=first_god;gl;gl=gl->next)
-            if (!strncmp(name,gl->name,MIN(strlen(gl->name),nmlen)))
+        for (gl = first_god; gl; gl = gl->next)
+            if (!strncmp(name, gl->name, MIN(strlen(gl->name), nmlen)))
                 break;
-        if (gl) godnr=gl->id;
+        if (gl)
+            godnr = gl->id;
     }
     return godnr;
 }
@@ -95,7 +96,7 @@ const object *find_god(const char *name) {
         return NULL;
 
     for (gl = first_god; gl; gl = gl->next) {
-        if (!strcmp(name,gl->name))
+        if (!strcmp(name, gl->name))
             return pntr_to_god_obj(gl);
     }
 
@@ -119,18 +120,18 @@ const char *determine_god(object *op) {
     const char *godname;
 
     /* spells */
-    if ((op->type == SPELL || op->type == SPELL_EFFECT) &&
-        op->title) {
-        if (lookup_god_by_name(op->title)>=0) return op->title;
+    if ((op->type == SPELL || op->type == SPELL_EFFECT)
+    && op->title) {
+        if (lookup_god_by_name(op->title) >= 0)
+            return op->title;
     }
 
-    if (op->type!= PLAYER && QUERY_FLAG(op,FLAG_ALIVE)) {
-
+    if (op->type != PLAYER && QUERY_FLAG(op, FLAG_ALIVE)) {
         /* find a god based on race */
         if (!op->title) {
-            if (op->race !=NULL) {
-                godname=get_god_for_race(op->race);
-                if (godname!=NULL) {
+            if (op->race != NULL) {
+                godname = get_god_for_race(op->race);
+                if (godname != NULL) {
                     op->title = add_string(godname);
                 }
             }
@@ -142,8 +143,9 @@ const char *determine_god(object *op) {
 
             godnr = rndm(1, gl->id);
             while (gl) {
-                if (gl->id == godnr) break;
-                gl=gl->next;
+                if (gl->id == godnr)
+                    break;
+                gl = gl->next;
             }
             op->title = add_string(gl->name);
         }
@@ -151,18 +153,20 @@ const char *determine_god(object *op) {
         return op->title;
     }
 
-
     /* The god the player worships is in the praying skill (native skill
      * not skill tool).  Since a player can only have one instance of
      * that skill, once we find it, we can return, either with the
      * title or "none".
      */
-    if (op->type==PLAYER) {
+    if (op->type == PLAYER) {
         object *tmp;
-        for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
+
+        for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
             if (tmp->type == SKILL && tmp->subtype == SK_PRAYING) {
-                if (tmp->title) return (tmp->title);
-                else return("none");
+                if (tmp->title)
+                    return (tmp->title);
+                else
+                    return("none");
             }
     }
     return ("none");
@@ -204,7 +208,6 @@ static int same_string(const char *s1, const char *s2) {
  *     the god whose objects to remove
  *
  */
-
 static void follower_remove_given_items(object *pl, object *op, const object *god) {
     object *tmp, *next;
     const char *given_by;
@@ -216,15 +219,16 @@ static void follower_remove_given_items(object *pl, object *op, const object *go
         given_by = get_ob_key_value(tmp, "divine_giver_name");
         if (given_by == god->name) {
             char name[HUGE_BUF];
+
             query_short_name(tmp, name, HUGE_BUF);
             /* Send the client a message. */
             if (tmp->nrof > 1)
-                draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                      "The %s crumble to dust!",
                                      "The %s crumble to dust!",
                                      name);
             else
-                draw_ext_info_format(NDI_UNIQUE,0,pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
+                draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_ITEM, MSG_TYPE_ITEM_REMOVE,
                                      "The %s crumbles to dust!",
                                      "The %s crumbles to dust!",
                                      name);
@@ -250,10 +254,10 @@ static int follower_has_similar_item(object *op, object *item) {
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
         if (tmp->type == item->type
-            && same_string(tmp->name, item->name)
-            && same_string(tmp->title, item->title)
-            && same_string(tmp->msg, item->msg)
-            && same_string(tmp->slaying, item->slaying))
+        && same_string(tmp->name, item->name)
+        && same_string(tmp->title, item->title)
+        && same_string(tmp->msg, item->msg)
+        && same_string(tmp->slaying, item->slaying))
             return 1;
         if (tmp->inv && follower_has_similar_item(tmp, item))
             return 1;
@@ -309,43 +313,44 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
     const object *pl_god = find_god(determine_god(pl));
 
     /* Lauwenmark: Handle for plugin altar-praying (apply) event */
-    if (execute_event(altar, EVENT_APPLY,pl,NULL,NULL,SCRIPT_FIX_ALL)!=0)
+    if (execute_event(altar, EVENT_APPLY, pl, NULL, NULL, SCRIPT_FIX_ALL) != 0)
         return;
 
     /* If non consecrate altar, don't do anything */
-    if (!altar->other_arch) return;
+    if (!altar->other_arch)
+        return;
 
     /* hmm. what happend depends on pl's current god, level, etc */
     if (!pl_god) { /*new convert */
-        become_follower(pl,&altar->other_arch->clone);
+        become_follower(pl, &altar->other_arch->clone);
         return;
 
-    } else if (!strcmp(pl_god->name,altar->other_arch->clone.name)) {
+    } else if (!strcmp(pl_god->name, altar->other_arch->clone.name)) {
         /* pray at your gods altar */
         int bonus = (pl->stats.Wis+skill->level)/10;
 
         /* we can get neg grace up faster */
-        if (pl->stats.grace<0) pl->stats.grace+=(bonus>-1*(pl->stats.grace/10) ?
-                                                    bonus : -1*(pl->stats.grace/10));
+        if (pl->stats.grace < 0)
+            pl->stats.grace += (bonus > -1*(pl->stats.grace/10) ? bonus : -1*(pl->stats.grace/10));
         /* we can super-charge grace to 2x max */
-        if (pl->stats.grace<(2*pl->stats.maxgrace)) {
-            pl->stats.grace+=bonus/2;
+        if (pl->stats.grace < (2*pl->stats.maxgrace)) {
+            pl->stats.grace += bonus/2;
         }
-        if (pl->stats.grace>(2*pl->stats.maxgrace)) {
-            pl->stats.grace=(2*pl->stats.maxgrace);
+        if (pl->stats.grace > (2*pl->stats.maxgrace)) {
+            pl->stats.grace = (2*pl->stats.maxgrace);
         }
 
         /* Every once in a while, the god decides to checkup on their
          * follower, and may intervene to help them out.
          */
-        bonus = MAX(1, bonus + MAX(pl->stats.luck, -3)); /* -- DAMN -- */
+        bonus = MAX(1, bonus+MAX(pl->stats.luck, -3)); /* -- DAMN -- */
 
-        if (((random_roll(0, 399, pl, PREFER_LOW))-bonus)<0)
-            god_intervention(pl,pl_god, skill);
+        if (((random_roll(0, 399, pl, PREFER_LOW))-bonus) < 0)
+            god_intervention(pl, pl_god, skill);
 
     } else { /* praying to another god! */
         uint64 loss = 0;
-        int angry=1;
+        int angry = 1;
 
         /* I believe the logic for detecting opposing gods was completely
          * broken - I think it should work now.  altar->other_arch
@@ -354,30 +359,27 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
          * is the opposing god - we need to verify that exists before
          * using its values.
          */
-        if (pl_god->other_arch &&
-            (altar->other_arch->name==pl_god->other_arch->name)) {
-            angry=2;
+        if (pl_god->other_arch
+        && (altar->other_arch->name == pl_god->other_arch->name)) {
+            angry = 2;
             if (random_roll(0, skill->level+2, pl, PREFER_LOW)-5 > 0) {
                 object *tmp;
 
                 /* you really screwed up */
-                angry=3;
-                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                angry = 3;
+                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "Foul Priest! %s punishes you!",
                                      "Foul Priest! %s punishes you!",
                                      pl_god->name);
-                tmp=create_archetype(LOOSE_MANA);
-                cast_magic_storm(pl,tmp, pl_god->level+20);
+                tmp = create_archetype(LOOSE_MANA);
+                cast_magic_storm(pl, tmp, pl_god->level+20);
             } else
-                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "Foolish heretic! %s is livid!",
                                      "Foolish heretic! %s is livid!",
                                      pl_god->name);
         } else
-            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,pl,
-                                 MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+            draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                  "Heretic! %s is angered!",
                                  "Heretic! %s is angered!",
                                  pl_god->name);
@@ -386,23 +388,21 @@ void pray_at_altar(object *pl, object *altar, object *skill) {
          * we lose experience from the clerical experience obj
          */
 
-        loss = angry * (skill->stats.exp / 10);
+        loss = angry*(skill->stats.exp/10);
         if (loss)
-            change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW),
-                       skill?skill->skill:"none", SK_SUBTRACT_SKILL_EXP);
+            change_exp(pl, -random_roll64(0, loss, pl, PREFER_LOW), skill ? skill->skill : "none", SK_SUBTRACT_SKILL_EXP);
 
         /* May switch Gods, but its random chance based on our current level
          * note it gets harder to swap gods the higher we get
          */
-        if ((angry==1) && !(random_roll(0, skill->level, pl, PREFER_LOW))) {
-            become_follower(pl,&altar->other_arch->clone);
+        if ((angry == 1) && !(random_roll(0, skill->level, pl, PREFER_LOW))) {
+            become_follower(pl, &altar->other_arch->clone);
         } else {
             /* toss this player off the altar.  He can try again. */
-            draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,pl,
-                          MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+            draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, pl, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                           "A divine force pushes you off the altar.", NULL);
 
-            move_player(pl,absdir(pl->facing + 4)); /* back him off the way he came. */
+            move_player(pl, absdir(pl->facing+4)); /* back him off the way he came. */
         }
     }
 }
@@ -421,7 +421,7 @@ static void check_special_prayers(object *op, const object *god) {
      */
     treasure *tr;
     object *tmp, *next_tmp;
-    int remove=0;
+    int remove = 0;
 
     /* Outer loop iterates over all special prayer marks */
     for (tmp = op->inv; tmp; tmp = next_tmp) {
@@ -442,7 +442,7 @@ static void check_special_prayers(object *op, const object *god) {
         /* Inner loop tries to find the special prayer in the god's treasure
          * list. We default that the spell should be removed.
         */
-        remove=1;
+        remove = 1;
         for (tr = god->randomitems->items; tr; tr = tr->next) {
             object *item;
 
@@ -453,7 +453,7 @@ static void check_special_prayers(object *op, const object *god) {
             /* Basically, see if the matching spell is granted by this god. */
 
             if (tr->item->clone.type == SPELL && tr->item->clone.name == tmp->name) {
-                remove=0;
+                remove = 0;
                 break;
             }
         }
@@ -490,24 +490,24 @@ void become_follower(object *op, const object *new_god) {
     const object *old_god = NULL;                      /* old god */
     treasure *tr;
     object *item, *skop, *next;
-    int i,sk_applied;
+    int i, sk_applied;
     int undeadified = 0; /* Turns to true if changing god can changes the undead
                           * status of the player.*/
     old_god = find_god(determine_god(op));
 
     /* take away any special god-characteristic items. */
-    for (item=op->inv;item!=NULL;item=next) {
+    for (item = op->inv; item != NULL; item = next) {
         next = item->below;
         /* remove all invisible startequip items which are
          *  not skill, exp or force
           */
-        if (QUERY_FLAG(item,FLAG_STARTEQUIP) && item->invisible &&
-            (item->type != SKILL) && (item->type != EXPERIENCE) &&
-            (item->type != FORCE)) {
-
+        if (QUERY_FLAG(item, FLAG_STARTEQUIP)
+        && item->invisible
+        && (item->type != SKILL)
+        && (item->type != EXPERIENCE)
+        && (item->type != FORCE)) {
             if (item->type == SPELL)
-                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "You lose knowledge of %s.",
                                      "You lose knowledge of %s.",
                                      item->name);
@@ -527,38 +527,39 @@ void become_follower(object *op, const object *new_god) {
         follower_remove_given_items(op, op, old_god);
     }
 
-    if (!op||!new_god) return;
+    if (!op || !new_god)
+        return;
 
-    if (op->race && new_god->slaying && strstr(op->race,new_god->slaying)) {
-        draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
-                             MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+    if (op->race && new_god->slaying && strstr(op->race, new_god->slaying)) {
+        draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                              "Fool! %s detests your kind!",
                              "Fool! %s detests your kind!",
                              new_god->name);
-        if (random_roll(0, op->level-1, op, PREFER_LOW)-5>0) {
+        if (random_roll(0, op->level-1, op, PREFER_LOW)-5 > 0) {
             object *tmp = create_archetype(LOOSE_MANA);
-            cast_magic_storm(op,tmp, new_god->level+10);
+            cast_magic_storm(op, tmp, new_god->level+10);
         }
         return;
     }
 
-
     /* give the player any special god-characteristic-items. */
-    for (tr=new_god->randomitems->items; tr!=NULL; tr = tr->next) {
-        if (tr->item && tr->item->clone.invisible && tr->item->clone.type != SPELLBOOK &&
-            tr->item->clone.type != BOOK && tr->item->clone.type != SPELL)
-            god_gives_present(op,new_god,tr);
+    for (tr = new_god->randomitems->items; tr != NULL; tr = tr->next) {
+        if (tr->item
+        && tr->item->clone.invisible
+        && tr->item->clone.type != SPELLBOOK
+        && tr->item->clone.type != BOOK
+        && tr->item->clone.type != SPELL)
+            god_gives_present(op, new_god, tr);
     }
 
-
-    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op,
-                         MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+    draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                          "You become a follower of %s!",
                          "You become a follower of %s!",
                          new_god->name);
 
-    for (skop = op->inv; skop != NULL; skop=skop->below)
-        if (skop->type == SKILL && skop->subtype == SK_PRAYING) break;
+    for (skop = op->inv; skop != NULL; skop = skop->below)
+        if (skop->type == SKILL && skop->subtype == SK_PRAYING)
+            break;
 
     /* Player has no skill - give them the skill */
     if (!skop) {
@@ -569,68 +570,66 @@ void become_follower(object *op, const object *new_god) {
         link_player_skills(op);
     }
 
-    sk_applied=QUERY_FLAG(skop,FLAG_APPLIED); /* save skill status */
+    sk_applied = QUERY_FLAG(skop, FLAG_APPLIED); /* save skill status */
 
     /* Clear the "undead" status. We also need to force a call to change_abil,
      * so I set undeadified for that.
      * - gros, 21th July 2006.
      */
-    if ((old_god)&&(QUERY_FLAG(old_god,FLAG_UNDEAD))) {
-        CLEAR_FLAG(skop,FLAG_UNDEAD);
-        undeadified=1;
+    if ((old_god) && (QUERY_FLAG(old_god, FLAG_UNDEAD))) {
+        CLEAR_FLAG(skop, FLAG_UNDEAD);
+        undeadified = 1;
     }
 
     if (skop->title) { /* get rid of old god */
-        draw_ext_info_format(NDI_UNIQUE,0,op,
-                             MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                              "%s's blessing is withdrawn from you.",
                              "%s's blessing is withdrawn from you.",
                              skop->title);
 
         /* The point of this is to really show what abilities the player just lost */
-        if (sk_applied||undeadified) {
-            CLEAR_FLAG(skop,FLAG_APPLIED);
-            (void) change_abil(op,skop);
+        if (sk_applied || undeadified) {
+            CLEAR_FLAG(skop, FLAG_APPLIED);
+            (void)change_abil(op, skop);
         }
         free_string(skop->title);
     }
 
     /* now change to the new gods attributes to exp_obj */
     skop->title = add_string(new_god->name);
-    skop->path_attuned=new_god->path_attuned;
-    skop->path_repelled=new_god->path_repelled;
-    skop->path_denied=new_god->path_denied;
+    skop->path_attuned = new_god->path_attuned;
+    skop->path_repelled = new_god->path_repelled;
+    skop->path_denied = new_god->path_denied;
     /* copy god's resistances */
     memcpy(skop->resist, new_god->resist, sizeof(new_god->resist));
 
     /* make sure that certain immunities do NOT get passed
      * to the follower!
      */
-    for (i=0; i<NROFATTACKS; i++)
-        if (skop->resist[i] > 30 && (i==ATNR_FIRE || i==ATNR_COLD ||
-                                     i==ATNR_ELECTRICITY || i==ATNR_POISON))
+    for (i = 0; i < NROFATTACKS; i++)
+        if (skop->resist[i] > 30
+        && (i == ATNR_FIRE || i == ATNR_COLD || i == ATNR_ELECTRICITY || i == ATNR_POISON))
             skop->resist[i] = 30;
 
-    skop->stats.hp= (sint16) new_god->last_heal;
-    skop->stats.sp= (sint16) new_god->last_sp;
-    skop->stats.grace= (sint16) new_god->last_grace;
-    skop->stats.food= (sint16) new_god->last_eat;
-    skop->stats.luck= (sint8) new_god->stats.luck;
+    skop->stats.hp = (sint16)new_god->last_heal;
+    skop->stats.sp = (sint16)new_god->last_sp;
+    skop->stats.grace = (sint16)new_god->last_grace;
+    skop->stats.food = (sint16)new_god->last_eat;
+    skop->stats.luck = (sint8)new_god->stats.luck;
     /* gods may pass on certain flag properties */
-    update_priest_flag(new_god,skop,FLAG_SEE_IN_DARK);
-    update_priest_flag(new_god,skop,FLAG_REFL_SPELL);
-    update_priest_flag(new_god,skop,FLAG_REFL_MISSILE);
-    update_priest_flag(new_god,skop,FLAG_STEALTH);
-    update_priest_flag(new_god,skop,FLAG_MAKE_INVIS);
-    update_priest_flag(new_god,skop,FLAG_UNDEAD);
-    update_priest_flag(new_god,skop,FLAG_BLIND);
-    update_priest_flag(new_god,skop,FLAG_XRAYS); /* better have this if blind! */
-    update_priest_flag(new_god,skop,FLAG_USE_WEAPON);
-    update_priest_flag(new_god,skop,FLAG_USE_ARMOUR);
-    update_priest_flag(new_god,skop,FLAG_USE_SHIELD);
+    update_priest_flag(new_god, skop, FLAG_SEE_IN_DARK);
+    update_priest_flag(new_god, skop, FLAG_REFL_SPELL);
+    update_priest_flag(new_god, skop, FLAG_REFL_MISSILE);
+    update_priest_flag(new_god, skop, FLAG_STEALTH);
+    update_priest_flag(new_god, skop, FLAG_MAKE_INVIS);
+    update_priest_flag(new_god, skop, FLAG_UNDEAD);
+    update_priest_flag(new_god, skop, FLAG_BLIND);
+    update_priest_flag(new_god, skop, FLAG_XRAYS); /* better have this if blind! */
+    update_priest_flag(new_god, skop, FLAG_USE_WEAPON);
+    update_priest_flag(new_god, skop, FLAG_USE_ARMOUR);
+    update_priest_flag(new_god, skop, FLAG_USE_SHIELD);
 
-    draw_ext_info_format(NDI_UNIQUE,0,op,
-                         MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                          "You are bathed in %s's aura.",
                          "You are bathed in %s's aura.",
                          new_god->name);
@@ -643,27 +642,27 @@ void become_follower(object *op, const object *new_god) {
      * do not allow to use weapons even if the god otherwise would allow it.
      */
     if (!present_in_ob_by_name(FORCE, "no weapon force", op)) {
-        if (worship_forbids_use(op,skop,FLAG_USE_WEAPON,"weapons"))
-            stop_using_item(op,WEAPON,2);
+        if (worship_forbids_use(op, skop, FLAG_USE_WEAPON, "weapons"))
+            stop_using_item(op, WEAPON, 2);
     }
-    update_priest_flag(new_god,skop,FLAG_USE_ARMOUR);
+    update_priest_flag(new_god, skop, FLAG_USE_ARMOUR);
 
-
-    if (worship_forbids_use(op,skop,FLAG_USE_ARMOUR,"armour")) {
-        stop_using_item(op,ARMOUR,1);
-        stop_using_item(op,HELMET,1);
-        stop_using_item(op,BOOTS,1);
-        stop_using_item(op,GLOVES,1);
+    if (worship_forbids_use(op, skop, FLAG_USE_ARMOUR, "armour")) {
+        stop_using_item(op, ARMOUR, 1);
+        stop_using_item(op, HELMET, 1);
+        stop_using_item(op, BOOTS, 1);
+        stop_using_item(op, GLOVES, 1);
     }
 
-    if (worship_forbids_use(op,skop,FLAG_USE_SHIELD,"shield"))
-        stop_using_item(op,SHIELD,1);
+    if (worship_forbids_use(op, skop, FLAG_USE_SHIELD, "shield"))
+        stop_using_item(op, SHIELD, 1);
 
-    SET_FLAG(skop,FLAG_APPLIED);
-    (void) change_abil(op,skop);
+    SET_FLAG(skop, FLAG_APPLIED);
+    (void)change_abil(op, skop);
 
     /* return to previous skill status */
-    if (!sk_applied) CLEAR_FLAG(skop,FLAG_APPLIED);
+    if (!sk_applied)
+        CLEAR_FLAG(skop, FLAG_APPLIED);
 
     check_special_prayers(op, new_god);
 }
@@ -682,19 +681,16 @@ void become_follower(object *op, const object *new_god) {
  * 1 if player was changed, 0 if no change.
  */
 static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const char *string) {
-
-    if (QUERY_FLAG(&op->arch->clone,flag)) {
-        if (QUERY_FLAG(op,flag)!=QUERY_FLAG(exp_obj,flag)) {
-            update_priest_flag(exp_obj,op,flag);
-            if (QUERY_FLAG(op,flag))
-                draw_ext_info_format(NDI_UNIQUE,0,op,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+    if (QUERY_FLAG(&op->arch->clone, flag)) {
+        if (QUERY_FLAG(op, flag) != QUERY_FLAG(exp_obj, flag)) {
+            update_priest_flag(exp_obj, op, flag);
+            if (QUERY_FLAG(op, flag))
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "You may use %s again.",
                                      "You may use %s again.",
                                      string);
             else {
-                draw_ext_info_format(NDI_UNIQUE,0,op,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "You are forbidden to use %s.",
                                      "You are forbidden to use %s.",
                                      string);
@@ -719,9 +715,9 @@ static int worship_forbids_use(object *op, object *exp_obj, uint32 flag, const c
 static void stop_using_item(object *op, int type, int number) {
     object *tmp;
 
-    for (tmp=op->inv;tmp&&number;tmp=tmp->below)
-        if (tmp->type==type&&QUERY_FLAG(tmp,FLAG_APPLIED)) {
-            apply_special(op, tmp, AP_UNAPPLY | AP_IGNORE_CURSE);
+    for (tmp = op->inv; tmp && number; tmp = tmp->below)
+        if (tmp->type == type && QUERY_FLAG(tmp, FLAG_APPLIED)) {
+            apply_special(op, tmp, AP_UNAPPLY|AP_IGNORE_CURSE);
             number--;
         }
 }
@@ -739,9 +735,9 @@ static void stop_using_item(object *op, int type, int number) {
  * flag to consider.
  */
 static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
-    if (QUERY_FLAG(god,flag)&&!QUERY_FLAG(exp_ob,flag))
-        SET_FLAG(exp_ob,flag);
-    else if (QUERY_FLAG(exp_ob,flag)&&!QUERY_FLAG(god,flag)) {
+    if (QUERY_FLAG(god, flag) && !QUERY_FLAG(exp_ob, flag))
+        SET_FLAG(exp_ob, flag);
+    else if (QUERY_FLAG(exp_ob, flag) && !QUERY_FLAG(god, flag)) {
         /*  When this is called with the exp_ob set to the player,
          * this check is broken, because most all players arch
          * allow use of weapons.  I'm not actually sure why this
@@ -751,8 +747,8 @@ static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
          * there is any case like that.
          */
 
-        /*        if (!(QUERY_FLAG(&(exp_ob->arch->clone),flag)))*/
-        CLEAR_FLAG(exp_ob,flag);
+/*      if (!(QUERY_FLAG(&(exp_ob->arch->clone), flag)))*/
+        CLEAR_FLAG(exp_ob, flag);
     };
 }
 
@@ -776,9 +772,8 @@ archetype *determine_holy_arch(const object *god, const char *type) {
     archetype *last;
     object *item;
 
-    if (! god || ! god->randomitems) {
-        LOG(llevError, "BUG: determine_holy_arch(): no god or god without "
-            "randomitems\n");
+    if (!god || !god->randomitems) {
+        LOG(llevError, "BUG: determine_holy_arch(): no god or god without randomitems\n");
         return NULL;
     }
 
@@ -828,7 +823,7 @@ static int god_removes_curse(object *op, int remove_damnation) {
     for (tmp = op->inv; tmp; tmp = tmp->below) {
         if (tmp->invisible)
             continue;
-        if (QUERY_FLAG(tmp, FLAG_DAMNED) && ! remove_damnation)
+        if (QUERY_FLAG(tmp, FLAG_DAMNED) && !remove_damnation)
             continue;
         if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
             success = 1;
@@ -857,16 +852,15 @@ static int god_removes_curse(object *op, int remove_damnation) {
  */
 static int follower_level_to_enchantments(int level, int difficulty) {
     if (difficulty < 1) {
-        LOG(llevError, "follower_level_to_enchantments(): "
-            "difficulty %d is invalid\n", difficulty);
+        LOG(llevError, "follower_level_to_enchantments(): difficulty %d is invalid\n", difficulty);
         return 0;
     }
 
     if (level <= 20)
-        return level / difficulty;
+        return level/difficulty;
     if (level <= 40)
-        return (20 + (level - 20) / 2) / difficulty;
-    return (30 + (level - 40) / 4) / difficulty;
+        return (20+(level-20)/2)/difficulty;
+    return (30+(level-40)/4)/difficulty;
 }
 
 /**
@@ -894,7 +888,7 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
 
     for (weapon = op->inv; weapon; weapon = weapon->below)
         if ((weapon->type == WEAPON || weapon->type == BOW)
-            && QUERY_FLAG(weapon, FLAG_APPLIED))
+        && QUERY_FLAG(weapon, FLAG_APPLIED))
             break;
     if (weapon == NULL || god_examines_item(god, weapon) <= 0)
         return 0;
@@ -923,42 +917,39 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
         if (divine_owner != NULL) {
             if (!strcmp(divine_owner, god->name)) {
                 /* It already belongs to this god - do not go further. */
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
-                                     MSG_TYPE_ITEM_INFO,
+                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                      "Your %s is radiating a joyful warmth !",
                                      "Your %s is radiating a joyful warmth !",
                                      weapon->name);
                 return 0;
             }
             /* Huho... Another god already blessed this one ! */
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
-                                 MSG_TYPE_ITEM_INFO,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "Your %s already belongs to %s !",
                                  "Your %s already belongs to %s !",
                                  weapon->name, divine_owner);
             return 0;
-        } else if ((owner != NULL)&&(!strcmp(owner, op->name))) {
+        } else if ((owner != NULL) && (!strcmp(owner, op->name))) {
             /* Maybe the weapon itself will not agree ? */
-            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM,
-                                 MSG_TYPE_ITEM_INFO,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "The %s is not yours, and is magically protected against such changes !",
                                  "The %s is not yours, and is magically protected against such changes !",
                                  weapon->name);
             return 0;
         }
         skillop = find_skill_by_number(op, SK_PRAYING);
-        if (skillop==NULL) {
+        if (skillop == NULL) {
             LOG(llevError, "god_enchants_weapon: no praying skill object found ?!\n");
             snprintf(buf, sizeof(buf), "%d", 1);
         } else
-            snprintf(buf, sizeof(buf), "%" FMT64, skillop->stats.exp);
+            snprintf(buf, sizeof(buf), "%"FMT64, skillop->stats.exp);
         set_ob_key_value(weapon, "divine_blessing_name", god->name, TRUE);
         set_ob_key_value(weapon, "item_owner", op->name, TRUE);
         set_ob_key_value(weapon, "item_willpower", buf, TRUE);
     }
 
     /* First give it a title, so other gods won't touch it */
-    if (! weapon->title) {
+    if (!weapon->title) {
         snprintf(buf, sizeof(buf), "of %s", god->name);
         weapon->title = add_string(buf);
         if (op->type == PLAYER)
@@ -968,7 +959,7 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
     }
 
     /* Allow the weapon to slay enemies */
-    if (! weapon->slaying && god->slaying) {
+    if (!weapon->slaying && god->slaying) {
         weapon->slaying = add_string(god->slaying);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
                              "Your %s now hungers to slay enemies of your god!",
@@ -980,10 +971,10 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
 
     /* Add the gods attacktype */
     attacktype = (weapon->attacktype == 0) ? AT_PHYSICAL : weapon->attacktype;
-    if ((attacktype & god->attacktype) != god->attacktype) {
+    if ((attacktype&god->attacktype) != god->attacktype) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
                       "Your weapon suddenly glows!", NULL);
-        weapon->attacktype = attacktype | god->attacktype;
+        weapon->attacktype = attacktype|god->attacktype;
         weapon->item_power++;
         return 1;
     }
@@ -1003,7 +994,6 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
     return 0;
 }
 
-
 /**
  * Every once in a while the god will intervene to help the worshiper.
  * Later, this fctn can be used to supply quests, etc for the
@@ -1020,9 +1010,8 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
 static void god_intervention(object *op, const object *god, object *skill) {
     treasure *tr;
 
-    if (! god || ! god->randomitems) {
-        LOG(llevError,
-            "BUG: god_intervention(): no god or god without randomitems\n");
+    if (!god || !god->randomitems) {
+        LOG(llevError, "BUG: god_intervention(): no god or god without randomitems\n");
         return;
     }
 
@@ -1051,23 +1040,21 @@ static void god_intervention(object *op, const object *god, object *skill) {
                           "Something appears before your eyes.  You catch it before it falls to the ground.",
                           NULL);
 
-            create_treasure(tl, op, GT_STARTEQUIP | GT_ONLY_GOOD
-                            | GT_UPDATE_INV, skill->level, 0);
+            create_treasure(tl, op, GT_STARTEQUIP|GT_ONLY_GOOD|GT_UPDATE_INV, skill->level, 0);
             return;
         }
 
-        if (! tr->item) {
-            LOG(llevError, "BUG: empty entry in %s's treasure list\n",
-                god->name);
+        if (!tr->item) {
+            LOG(llevError, "BUG: empty entry in %s's treasure list\n", god->name);
             continue;
         }
         item = &tr->item->clone;
 
         /* Grace limit */
         if (item->type == BOOK && item->invisible
-            && strcmp(item->name, "grace limit") == 0) {
+        && strcmp(item->name, "grace limit") == 0) {
             if (op->stats.grace < item->stats.grace
-                || op->stats.grace < op->stats.maxgrace) {
+            || op->stats.grace < op->stats.maxgrace) {
                 object *tmp;
 
                 /* Follower lacks the required grace for the following
@@ -1083,7 +1070,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
 
         /* Restore grace */
         if (item->type == BOOK && item->invisible
-            && strcmp(item->name, "restore grace") == 0) {
+        && strcmp(item->name, "restore grace") == 0) {
             if (op->stats.grace >= 0)
                 continue;
             op->stats.grace = random_roll(0, 9, op, PREFER_HIGH);
@@ -1104,12 +1091,13 @@ static void god_intervention(object *op, const object *god, object *skill) {
         }
 
         /* Restore spellpoints */
-        if (item->type == BOOK && item->invisible
-            && strcmp(item->name, "restore spellpoints") == 0) {
-            int max = op->stats.maxsp * (item->stats.maxsp / 100.0);
+        if (item->type == BOOK
+        && item->invisible
+        && strcmp(item->name, "restore spellpoints") == 0) {
+            int max = op->stats.maxsp*(item->stats.maxsp/100.0);
             /* Restore to 50 .. 100%, if sp < 50% */
-            int new_sp = random_roll(1000, 1999, op, PREFER_HIGH) / 2000.0 * max;
-            if (op->stats.sp >= max / 2)
+            int new_sp = random_roll(1000, 1999, op, PREFER_HIGH)/2000.0*max;
+            if (op->stats.sp >= max/2)
                 continue;
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_PRAY,
                           "A blue lightning strikes your head but doesn't hurt you!", NULL);
@@ -1126,8 +1114,10 @@ static void god_intervention(object *op, const object *god, object *skill) {
 
             success = cast_heal(op, op, tmp, 0);
             free_object(tmp);
-            if (success) return;
-            else continue;
+            if (success)
+                return;
+            else
+                continue;
         }
 
         /* Remove curse */
@@ -1220,7 +1210,7 @@ static void god_intervention(object *op, const object *god, object *skill) {
         }
 
         /* Other gifts */
-        if (! item->invisible) {
+        if (!item->invisible) {
             if (god_gives_present(op, god, tr))
                 return;
             else
@@ -1246,32 +1236,33 @@ static void god_intervention(object *op, const object *god, object *skill) {
  * negative value is god is not pleased, else positive value, the higher the better.
  */
 static int god_examines_priest(object *op, const object *god) {
-    int reaction=1;
-    object *item=NULL, *skop;
+    int reaction = 1;
+    object *item = NULL, *skop;
 
-    for (item=op->inv;item;item=item->below) {
-        if (QUERY_FLAG(item,FLAG_APPLIED)) {
-            reaction+=god_examines_item(god,item)*(item->magic?abs(item->magic):1);
+    for (item = op->inv; item; item = item->below) {
+        if (QUERY_FLAG(item, FLAG_APPLIED)) {
+            reaction += god_examines_item(god, item)*(item->magic ? abs(item->magic) : 1);
         }
     }
 
     /* well, well. Looks like we screwed up. Time for god's revenge */
-    if (reaction<0) {
+    if (reaction < 0) {
         int loss = 10000000;
         int angry = abs(reaction);
 
-        for (skop = op->inv; skop != NULL; skop=skop->below)
-            if (skop->type == SKILL && skop->subtype == SK_PRAYING) break;
+        for (skop = op->inv; skop != NULL; skop = skop->below)
+            if (skop->type == SKILL && skop->subtype == SK_PRAYING)
+                break;
 
         if (skop)
-            loss = 0.05 * (float) skop->stats.exp;
-        change_exp(op, -random_roll(0, loss*angry-1, op, PREFER_LOW),
-                   skop?skop->skill:"none", SK_SUBTRACT_SKILL_EXP);
+            loss = 0.05*(float)skop->stats.exp;
+        change_exp(op, -random_roll(0, loss*angry-1, op, PREFER_LOW), skop ? skop->skill : "none", SK_SUBTRACT_SKILL_EXP);
         if (random_roll(0, angry, op, PREFER_LOW)) {
             object *tmp = create_archetype(LOOSE_MANA);
-            cast_magic_storm(op,tmp,op->level+(angry*3));
+
+            cast_magic_storm(op, tmp, op->level+(angry*3));
         }
-        draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+        draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, op, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                              "%s becomes angry and punishes you!",
                              "%s becomes angry and punishes you!",
                              god->name);
@@ -1298,21 +1289,24 @@ static int god_examines_priest(object *op, const object *god) {
 static int god_examines_item(const object *god, object *item) {
     char buf[MAX_BUF];
 
-    if (!god||!item) return 0;
+    if (!god || !item)
+        return 0;
 
-    if (!item->title) return 1; /* unclaimed item are ok */
+    if (!item->title)
+        return 1; /* unclaimed item are ok */
 
-    snprintf(buf, sizeof(buf), "of %s",god->name);
-    if (!strcmp(item->title,buf)) return 1; /* belongs to that God */
+    snprintf(buf, sizeof(buf), "of %s", god->name);
+    if (!strcmp(item->title, buf))
+        return 1; /* belongs to that God */
 
     if (god->title) { /* check if we have any enemy blessed item*/
-        snprintf(buf, sizeof(buf), "of %s",god->title);
-        if (!strcmp(item->title,buf)) {
+        snprintf(buf, sizeof(buf), "of %s", god->title);
+        if (!strcmp(item->title, buf)) {
             if (item->env) {
                 char name[MAX_BUF];
+
                 query_name(item, name, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY,0,item->env,
-                                     MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
+                draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, item->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                                      "Heretic! You are using %s!",
                                      "Heretic! You are using %s!",
                                      name);
@@ -1322,7 +1316,6 @@ static int god_examines_item(const object *god, object *item) {
     }
     return 0; /* item is sacred to a non-enemy god/or is otherwise magical */
 }
-
 
 /**
  * Returns a string that is the name of the god that should be natively worshipped by a
@@ -1335,16 +1328,17 @@ static int god_examines_item(const object *god, object *item) {
  * NULL if no matching race, else god's name.
  */
 static const char *get_god_for_race(const char *race) {
-    godlink *gl=first_god;
-    const char *godname=NULL;
+    godlink *gl = first_god;
+    const char *godname = NULL;
 
-    if (race == NULL) return NULL;
+    if (race == NULL)
+        return NULL;
     while (gl) {
         if (gl->arch->clone.race && !strcasecmp(gl->arch->clone.race, race)) {
-            godname=gl->name;
+            godname = gl->name;
             break;
         }
-        gl=gl->next;
+        gl = gl->next;
     }
     return godname;
 }
@@ -1361,19 +1355,21 @@ static const char *get_god_for_race(const char *race) {
  * the spell attacktype contains AT_HOLYWORD, 1 else.
  */
 int tailor_god_spell(object *spellop, object *caster) {
-    const object *god=find_god(determine_god(caster));
-    int caster_is_spell=0;
+    const object *god = find_god(determine_god(caster));
+    int caster_is_spell = 0;
 
-    if (caster->type==SPELL_EFFECT || caster->type == SPELL) caster_is_spell=1;
+    if (caster->type == SPELL_EFFECT || caster->type == SPELL)
+        caster_is_spell = 1;
 
     /* if caster is a rune or the like, it doesn't worship anything.  However,
      * if this object is owned by someone, then the god that they worship
      * is relevant, so use that.
      */
-    if (!god && get_owner(caster)) god=find_god(determine_god(get_owner(caster)));
+    if (!god && get_owner(caster))
+        god = find_god(determine_god(get_owner(caster)));
 
-    if (! god || (spellop->attacktype & AT_HOLYWORD && !god->race)) {
-        if (! caster_is_spell)
+    if (!god || (spellop->attacktype&AT_HOLYWORD && !god->race)) {
+        if (!caster_is_spell)
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_GOD,
                           "This prayer is useless unless you worship an appropriate god", NULL);
         else
@@ -1383,7 +1379,7 @@ int tailor_god_spell(object *spellop, object *caster) {
     }
 
     /* either holy word or godpower attacks will set the slaying field */
-    if (spellop->attacktype & AT_HOLYWORD || spellop->attacktype & AT_GODPOWER) {
+    if (spellop->attacktype&AT_HOLYWORD || spellop->attacktype&AT_GODPOWER) {
         if (spellop->slaying) {
             free_string(spellop->slaying);
             spellop->slaying = NULL;
@@ -1395,17 +1391,18 @@ int tailor_god_spell(object *spellop, object *caster) {
     }
 
     /* only the godpower attacktype adds the god's attack onto the spell */
-    if (spellop->attacktype & AT_GODPOWER)
-        spellop->attacktype=spellop->attacktype|god->attacktype;
+    if (spellop->attacktype&AT_GODPOWER)
+        spellop->attacktype = spellop->attacktype|god->attacktype;
 
     /* tack on the god's name to the spell */
-    if (spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) {
+    if (spellop->attacktype&AT_HOLYWORD || spellop->attacktype&AT_GODPOWER) {
         if (spellop->title)
             free_string(spellop->title);
-        spellop->title=add_string(god->name);
+        spellop->title = add_string(god->name);
         if (spellop->title) {
             char buf[MAX_BUF];
-            snprintf(buf, sizeof(buf), "%s of %s",spellop->name,spellop->title);
+
+            snprintf(buf, sizeof(buf), "%s of %s", spellop->name, spellop->title);
             FREE_AND_COPY(spellop->name, buf);
             FREE_AND_COPY(spellop->name_pl, buf);
         }

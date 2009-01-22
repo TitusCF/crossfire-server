@@ -39,7 +39,7 @@
 
 #ifndef tolower
 /** Simple macro to convert a letter to lowercase. */
-#define tolower(C)      (((C) >= 'A' && (C) <= 'Z')? (C) - 'A' + 'a': (C))
+#define tolower(C) (((C) >= 'A' && (C) <= 'Z') ? (C)-'A'+'a' : (C))
 #endif
 
 /**
@@ -72,16 +72,14 @@ static int compare_A(const void *a, const void *b) {
  * @return
  * matching command, NULL for no match.
  */
-static command_array_struct *find_command_element(const char *cmd,
-        command_array_struct *commarray,
-        int commsize) {
+static command_array_struct *find_command_element(const char *cmd, command_array_struct *commarray, int commsize) {
     command_array_struct *asp, dummy;
 
-    dummy.name =cmd;
-    asp =(command_array_struct *)bsearch((void *)&dummy,
-                                         (void *)commarray, commsize,
-                                         sizeof(command_array_struct),
-                                         compare_A);
+    dummy.name = cmd;
+    asp = (command_array_struct *)bsearch((void *)&dummy,
+                                          (void *)commarray, commsize,
+                                          sizeof(command_array_struct),
+                                          compare_A);
     return asp;
 }
 
@@ -101,27 +99,27 @@ int execute_newserver_command(object *pl, char *command) {
     command_array_struct *csp;
     char *cp, *low;
 
-    pl->contr->has_hit=0;
+    pl->contr->has_hit = 0;
 
     /*
      * remove trailing spaces from commant
      */
-    cp=command+strlen(command)-1;
-    while ((cp>=command) && (*cp==' ')) {
-        *cp='\0';
+    cp = command+strlen(command)-1;
+    while ((cp >= command) && (*cp == ' ')) {
+        *cp = '\0';
         cp--;
     }
-    cp=strchr(command, ' ');
+    cp = strchr(command, ' ');
     if (cp) {
-        *(cp++) ='\0';
-        while (*cp==' ') cp++;
+        *(cp++) = '\0';
+        while (*cp == ' ')
+            cp++;
     }
 
     for (low = command; *low; low++)
         *low = tolower(*low);
 
-    csp = find_plugin_command(command,pl);
-
+    csp = find_plugin_command(command, pl);
     if (!csp)
         csp = find_command_element(command, Commands, CommandsSize);
     if (!csp)
@@ -130,8 +128,8 @@ int execute_newserver_command(object *pl, char *command) {
     if (!csp && QUERY_FLAG(pl, FLAG_WIZ))
         csp = find_command_element(command, WizCommands, WizCommandsSize);
 
-    if (csp==NULL) {
-        draw_ext_info_format(NDI_UNIQUE, 0,pl,
+    if (csp == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0, pl,
                              MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                              "'%s' is not a valid command.",
                              "'%s' is not a valid command.",
@@ -151,8 +149,8 @@ int execute_newserver_command(object *pl, char *command) {
      * new client/server.  In theory, it shouldn't make much difference.
      */
 
-    if (csp->time && pl->speed_left<-2.0) {
-        LOG(llevDebug,"execute_newclient_command: Player issued command that takes more time than he has left.\n");
+    if (csp->time && pl->speed_left < -2.0) {
+        LOG(llevDebug, "execute_newclient_command: Player issued command that takes more time than he has left.\n");
     }
     return csp->func(pl, cp);
 }
@@ -169,14 +167,14 @@ int execute_newserver_command(object *pl, char *command) {
  */
 int command_run(object *op, char *params) {
     int dir;
-    dir = params?atoi(params):0;
-    if (dir<0 || dir>=9) {
-        draw_ext_info(NDI_UNIQUE, 0,op,
-                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+
+    dir = params ? atoi(params) : 0;
+    if (dir < 0 || dir >= 9) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't run into a non adjacent square.", NULL);
         return 0;
     }
-    op->contr->run_on=1;
+    op->contr->run_on = 1;
     return move_player(op, dir);
 }
 
@@ -191,7 +189,7 @@ int command_run(object *op, char *params) {
  * 1.
  */
 int command_run_stop(object *op, char *params) {
-    op->contr->run_on=0;
+    op->contr->run_on = 0;
     return 1;
 }
 
@@ -207,14 +205,14 @@ int command_run_stop(object *op, char *params) {
  */
 int command_fire(object *op, char *params) {
     int dir;
-    dir = params?atoi(params):0;
-    if (dir<0 || dir>=9) {
-        draw_ext_info(NDI_UNIQUE, 0,op,
-                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+
+    dir = params ? atoi(params) : 0;
+    if (dir < 0 || dir >= 9) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't fire to a non adjacent square.", NULL);
         return 0;
     };
-    op->contr->fire_on=1;
+    op->contr->fire_on = 1;
     return move_player(op, dir);
 }
 
@@ -229,6 +227,6 @@ int command_fire(object *op, char *params) {
  * 0.
  */
 int command_fire_stop(object *op, char *params) {
-    op->contr->fire_on=0;
+    op->contr->fire_on = 0;
     return 1;
 }

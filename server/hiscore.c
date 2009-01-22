@@ -46,7 +46,7 @@ typedef struct scr {
     char killer[BIG_NAME];    /**< Name (+ title) or "left". */
     sint64 exp;               /**< Experience. */
     char maplevel[BIG_NAME];  /**< Killed on what level. */
-    int maxhp,maxsp,maxgrace; /**< Max hp, sp, grace when killed. */
+    int maxhp, maxsp, maxgrace; /**< Max hp, sp, grace when killed. */
     int position;             /**< Position in the highscore list. */
 } score;
 
@@ -65,10 +65,10 @@ typedef struct scr {
 static char *spool(char *bp, const char *error) {
     static char *prev_pos = NULL;
     char *next_pos;
+
     if (bp == NULL) {
         if (prev_pos == NULL) {
-            LOG(llevError, "Called spool (%s) with NULL without previous call.\n",
-                error);
+            LOG(llevError, "Called spool (%s) with NULL without previous call.\n", error);
             return NULL;
         }
         bp = prev_pos;
@@ -79,7 +79,7 @@ static char *spool(char *bp, const char *error) {
     }
     if ((next_pos = strchr(bp, ':')) != NULL) {
         *next_pos = '\0';
-        prev_pos = next_pos + 1;
+        prev_pos = next_pos+1;
     } else
         prev_pos = NULL;
     return bp;
@@ -96,13 +96,13 @@ static char *spool(char *bp, const char *error) {
  */
 static void copy_score(const score *sc1, score *sc2) {
     strncpy(sc2->name, sc1->name, BIG_NAME);
-    sc2->name[BIG_NAME - 1] = '\0';
+    sc2->name[BIG_NAME-1] = '\0';
     strncpy(sc2->title, sc1->title, BIG_NAME);
-    sc2->title[BIG_NAME - 1] = '\0';
+    sc2->title[BIG_NAME-1] = '\0';
     strncpy(sc2->killer, sc1->killer, BIG_NAME);
-    sc2->killer[BIG_NAME - 1] = '\0';
+    sc2->killer[BIG_NAME-1] = '\0';
     sc2->exp = sc1->exp;
-    strcpy(sc2->maplevel,sc1->maplevel);
+    strcpy(sc2->maplevel, sc1->maplevel);
     sc2->maxhp = sc1->maxhp;
     sc2->maxsp = sc1->maxsp;
     sc2->maxgrace = sc1->maxgrace;
@@ -119,9 +119,7 @@ static void copy_score(const score *sc1, score *sc2) {
  * buf's size.
  */
 static void put_score(const score *sc, char *buf, int size) {
-    snprintf(buf, size,
-             "%s:%s:%" FMT64 ":%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
-             sc->maxhp,sc->maxsp,sc->maxgrace);
+    snprintf(buf, size, "%s:%s:%"FMT64":%s:%s:%d:%d:%d", sc->name, sc->title, sc->exp, sc->killer, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
 }
 
 /**
@@ -139,33 +137,33 @@ static score *get_score(char *bp) {
     static score sc;
     char *cp;
 
-    if ((cp=strchr(bp,'\n'))!=NULL)
-        *cp='\0';
+    if ((cp = strchr(bp, '\n')) != NULL)
+        *cp = '\0';
 
     if ((cp = spool(bp, "name")) == NULL)
         return NULL;
-    strncpy(sc.name,cp,BIG_NAME);
-    sc.name[BIG_NAME - 1] = '\0';
+    strncpy(sc.name, cp, BIG_NAME);
+    sc.name[BIG_NAME-1] = '\0';
 
     if ((cp = spool(NULL, "title")) == NULL)
         return NULL;
-    strncpy(sc.title,cp,BIG_NAME);
-    sc.title[BIG_NAME - 1] = '\0';
+    strncpy(sc.title, cp, BIG_NAME);
+    sc.title[BIG_NAME-1] = '\0';
 
     if ((cp = spool(NULL, "score")) == NULL)
         return NULL;
 
-    sscanf(cp,"%" FMT64,&sc.exp);
+    sscanf(cp, "%"FMT64, &sc.exp);
 
     if ((cp = spool(NULL, "killer")) == NULL)
         return NULL;
     strncpy(sc.killer, cp, BIG_NAME);
-    sc.killer[BIG_NAME - 1] = '\0';
+    sc.killer[BIG_NAME-1] = '\0';
 
     if ((cp = spool(NULL, "map")) == NULL)
         return NULL;
     strncpy(sc.maplevel, cp, BIG_NAME);
-    sc.maplevel[BIG_NAME - 1] = '\0';
+    sc.maplevel[BIG_NAME-1] = '\0';
 
     if ((cp = spool(NULL, "maxhp")) == NULL)
         return NULL;
@@ -193,21 +191,19 @@ static score *get_score(char *bp) {
  * @return
  * buf.
  */
-static char * draw_one_high_score(const score *sc, char *buf, int size) {
-    if (!strncmp(sc->killer,"quit",MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s quit the game on map %s <%d><%d><%d>.",
-                 sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
-                 sc->maxgrace);
-    else if (!strncmp(sc->killer,"left",MAX_NAME))
-        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s left the game on map %s <%d><%d><%d>.",
-                 sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
-                 sc->maxgrace);
+static char *draw_one_high_score(const score *sc, char *buf, int size) {
+    if (!strncmp(sc->killer, "quit", MAX_NAME))
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s quit the game on map %s <%d><%d><%d>.",
+                 sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
+    else if (!strncmp(sc->killer, "left", MAX_NAME))
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s left the game on map %s <%d><%d><%d>.",
+                 sc->position, sc->exp, sc->name, sc->title, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     else
-        snprintf(buf, size, "[Fixed]%3d %10" FMT64 "[Print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
-                 sc->position,sc->exp,sc->name,sc->title,sc->killer,sc->maplevel,
-                 sc->maxhp,sc->maxsp,sc->maxgrace);
+        snprintf(buf, size, "[Fixed]%3d %10"FMT64"[Print] %s the %s was killed by %s on map %s <%d><%d><%d>.",
+                 sc->position, sc->exp, sc->name, sc->title, sc->killer, sc->maplevel, sc->maxhp, sc->maxsp, sc->maxgrace);
     return buf;
 }
+
 /**
  * Adds the given score-structure to the high-score list, but
  * only if it was good enough to deserve a place.
@@ -221,61 +217,62 @@ static char * draw_one_high_score(const score *sc, char *buf, int size) {
 static score *add_score(score *new_score) {
     FILE *fp;
     static score old_score;
-    score *tmp_score,pscore[HIGHSCORE_LENGTH];
+    score *tmp_score, pscore[HIGHSCORE_LENGTH];
     char buf[MAX_BUF], filename[MAX_BUF], bp[MAX_BUF];
-    int nrofscores=0,flag=0,i,comp;
+    int nrofscores = 0, flag = 0, i, comp;
 
-    new_score->position=HIGHSCORE_LENGTH+1;
-    old_score.position= -1;
-    snprintf(filename, sizeof(filename), "%s/%s",settings.localdir,HIGHSCORE);
-    if ((fp=open_and_uncompress(filename,1,&comp))!=NULL) {
-        while (fgets(buf,MAX_BUF,fp)!=NULL&&nrofscores<HIGHSCORE_LENGTH) {
-            if ((tmp_score=get_score(buf))==NULL) break;
-            if (!flag&&new_score->exp>=tmp_score->exp) {
-                copy_score(new_score,&pscore[nrofscores]);
-                new_score->position=nrofscores;
-                flag=1;
-                if (++nrofscores>=HIGHSCORE_LENGTH)
+    new_score->position = HIGHSCORE_LENGTH+1;
+    old_score.position = -1;
+    snprintf(filename, sizeof(filename), "%s/%s", settings.localdir, HIGHSCORE);
+    if ((fp = open_and_uncompress(filename, 1, &comp)) != NULL) {
+        while (fgets(buf, MAX_BUF, fp) != NULL && nrofscores < HIGHSCORE_LENGTH) {
+            if ((tmp_score = get_score(buf)) == NULL)
+                break;
+            if (!flag && new_score->exp >= tmp_score->exp) {
+                copy_score(new_score, &pscore[nrofscores]);
+                new_score->position = nrofscores;
+                flag = 1;
+                if (++nrofscores >= HIGHSCORE_LENGTH)
                     break;
             }
-            if (!strcmp(new_score->name,tmp_score->name)) { /* Another entry */
-                copy_score(tmp_score,&old_score);
-                old_score.position=nrofscores;
+            if (!strcmp(new_score->name, tmp_score->name)) { /* Another entry */
+                copy_score(tmp_score, &old_score);
+                old_score.position = nrofscores;
                 if (flag)
                     continue;
             }
-            copy_score(tmp_score,&pscore[nrofscores++]);
+            copy_score(tmp_score, &pscore[nrofscores++]);
         }
         close_and_delete(fp, comp);
     }
-    if (old_score.position!=-1&&old_score.exp>=new_score->exp)
+    if (old_score.position != -1 && old_score.exp >= new_score->exp)
         return &old_score; /* Did not beat old score */
-    if (!flag&&nrofscores<HIGHSCORE_LENGTH)
-        copy_score(new_score,&pscore[nrofscores++]);
-    if ((fp=fopen(filename,"w"))==NULL) {
+    if (!flag && nrofscores < HIGHSCORE_LENGTH)
+        copy_score(new_score, &pscore[nrofscores++]);
+    if ((fp = fopen(filename, "w")) == NULL) {
         LOG(llevError, "Cannot write to highscore file %s: %s\n", filename, strerror_local(errno, buf, sizeof(buf)));
         return NULL;
     }
-    for (i=0;i<nrofscores;i++) {
+    for (i = 0; i < nrofscores; i++) {
         put_score(&pscore[i], bp, sizeof(bp));
-        fprintf(fp,"%s\n",bp);
+        fprintf(fp, "%s\n", bp);
     }
     fclose(fp);
     if (flag) {
         /* Eneq(@csd.uu.se): Patch to fix error in adding a new score to the
            hiscore-list */
-        if (old_score.position==-1)
+        if (old_score.position == -1)
             return new_score;
         return &old_score;
     }
-    new_score->position= -1;
-    if (old_score.position!=-1)
+    new_score->position = -1;
+    if (old_score.position != -1)
         return &old_score;
     if (nrofscores) {
-        copy_score(&pscore[nrofscores-1],&old_score);
+        copy_score(&pscore[nrofscores-1], &old_score);
         return &old_score;
     }
-    LOG(llevError,"Highscore error.\n");
+    LOG(llevError, "Highscore error.\n");
     return NULL;
 }
 
@@ -294,64 +291,62 @@ void check_score(object *op, int quiet) {
     score *old_score;
     char bufscore[MAX_BUF];
 
-    if (op->stats.exp==0)
+    if (op->stats.exp == 0)
         return;
 
     if (!op->contr->name_changed) {
-        if (op->stats.exp>0) {
+        if (op->stats.exp > 0) {
             if (!quiet)
-                draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                               "As you haven't changed your name, you won't "
                               "get into the high-score list.", NULL);
         }
         return;
     }
-    if (QUERY_FLAG(op,FLAG_WAS_WIZ)) {
+    if (QUERY_FLAG(op, FLAG_WAS_WIZ)) {
         if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Since you have been in wizard mode, "
                           "you can't enter the high-score list.", NULL);
         return;
     }
     if (op->contr->explore) {
         if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Since you were in explore mode, "
                           "you can't enter the high-score list.", NULL);
         return;
     }
     if (!op->stats.exp) {
         if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                           "You don't deserve to save your character yet.", NULL);
         return;
     }
 
-    strncpy(new_score.name,op->name,BIG_NAME);
+    strncpy(new_score.name, op->name, BIG_NAME);
     new_score.name[BIG_NAME-1] = '\0';
-    strncpy(new_score.title,op->contr->own_title,BIG_NAME);
-    if (new_score.title[0]=='\0')
-        strncpy(new_score.title,op->contr->title,BIG_NAME);
+    strncpy(new_score.title, op->contr->own_title, BIG_NAME);
+    if (new_score.title[0] == '\0')
+        strncpy(new_score.title, op->contr->title, BIG_NAME);
     new_score.title[BIG_NAME-1] = '\0';
-    strncpy(new_score.killer,op->contr->killer,BIG_NAME);
-    if (new_score.killer[0]=='\0')
-        strcpy(new_score.killer,"a dungeon collapse");
+    strncpy(new_score.killer, op->contr->killer, BIG_NAME);
+    if (new_score.killer[0] == '\0')
+        strcpy(new_score.killer, "a dungeon collapse");
     new_score.killer[BIG_NAME-1] = '\0';
-    new_score.exp=op->stats.exp;
+    new_score.exp = op->stats.exp;
     if (op->map == NULL)
         *new_score.maplevel = '\0';
     else {
-        strncpy(new_score.maplevel,
-                op->map->name?op->map->name:op->map->path,
-                BIG_NAME-1);
+        strncpy(new_score.maplevel, op->map->name ? op->map->name : op->map->path, BIG_NAME-1);
         new_score.maplevel[BIG_NAME-1] = '\0';
     }
-    new_score.maxhp=(int) op->stats.maxhp;
-    new_score.maxsp=(int) op->stats.maxsp;
-    new_score.maxgrace=(int) op->stats.maxgrace;
-    if ((old_score=add_score(&new_score))==NULL) {
+    new_score.maxhp = (int)op->stats.maxhp;
+    new_score.maxsp = (int)op->stats.maxsp;
+    new_score.maxgrace = (int)op->stats.maxgrace;
+    if ((old_score = add_score(&new_score)) == NULL) {
         if (!quiet)
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "Error in the highscore list.", NULL);
         return;
     }
@@ -359,35 +354,36 @@ void check_score(object *op, int quiet) {
      * to the player.  If quiet is set, we can just return
      * now.
      */
-    if (quiet) return;
+    if (quiet)
+        return;
 
     if (new_score.position == -1) {
         new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
 
-        if (!strcmp(old_score->name,new_score.name))
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+        if (!strcmp(old_score->name, new_score.name))
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                           "You didn't beat your last highscore:", NULL);
         else
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                           "You didn't enter the highscore list:", NULL);
 
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                       draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
 
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                       draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
         return;
     }
-    if (old_score->exp>=new_score.exp)
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+    if (old_score->exp >= new_score.exp)
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                       "You didn't beat your last score:", NULL);
     else
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                       "You beat your last score:", NULL);
 
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                   draw_one_high_score(old_score, bufscore, sizeof(bufscore)), NULL);
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                          draw_one_high_score(&new_score, bufscore, sizeof(bufscore)), NULL);
 }
 
@@ -403,33 +399,36 @@ void check_score(object *op, int quiet) {
  * @param match
  * if set, will only print players with name or title containing the string (non case-sensitive).
  */
-void display_high_score(object *op,int max, const char *match) {
+void display_high_score(object *op, int max, const char *match) {
     FILE *fp;
     char buf[MAX_BUF], scorebuf[MAX_BUF];
-    int i=0,j=0,comp;
+    int i = 0, j = 0, comp;
     score *sc;
 
-    snprintf(buf, sizeof(buf), "%s/%s",settings.localdir,HIGHSCORE);
-    if ((fp=open_and_uncompress(buf,0,&comp))==NULL) {
+    snprintf(buf, sizeof(buf), "%s/%s", settings.localdir, HIGHSCORE);
+    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL) {
         char err[MAX_BUF];
+
         LOG(llevError, "Cannot open highscore file %s: %s\n", buf, strerror_local(errno, err, sizeof(err)));
-        if (op!=NULL)
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+        if (op != NULL)
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There is no highscore file.", NULL);
         return;
     }
 
-    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE,
                   "[Fixed]Nr    Score    Who <max hp><max sp><max grace>",
                   "Nr    Score    Who <max hp><max sp><max grace>");
 
-    while (fgets(buf,MAX_BUF,fp)!=NULL) {
-        if (j>=HIGHSCORE_LENGTH||i>=(max-1))
+    while (fgets(buf, MAX_BUF, fp) != NULL) {
+        if (j >= HIGHSCORE_LENGTH || i >= (max-1))
             break;
-        if ((sc=get_score(buf))==NULL)
+        if ((sc = get_score(buf)) == NULL)
             break;
-        sc->position=++j;
-        if (match == NULL || strcasestr_local(sc->name, match) || strcasestr_local(sc->title, match)) {
+        sc->position = ++j;
+        if (match == NULL
+        || strcasestr_local(sc->name, match)
+        || strcasestr_local(sc->title, match)) {
             draw_one_high_score(sc, scorebuf, sizeof(scorebuf));
             i++;
         } else
@@ -438,7 +437,7 @@ void display_high_score(object *op,int max, const char *match) {
         if (op == NULL)
             LOG(llevDebug, "%s\n", scorebuf);
         else
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_HISCORE, scorebuf, NULL);
 
     }
     close_and_delete(fp, comp);

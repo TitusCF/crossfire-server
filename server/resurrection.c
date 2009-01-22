@@ -43,8 +43,7 @@
 #include <spells.h>
 #include <errno.h>
 
-static int resurrection_fails(int levelcaster,int leveldead);
-
+static int resurrection_fails(int levelcaster, int leveldead);
 
 /**
  * Resurrect a player. This may change the player's race, or reduce experience.
@@ -60,51 +59,51 @@ static int resurrection_fails(int levelcaster,int leveldead);
  * @retval 1
  * playername is living again.
  */
-static int resurrect_player(object *op,char *playername,object *spell) {
-    FILE *deadplayer,*liveplayer;
+static int resurrect_player(object *op, char *playername, object *spell) {
+    FILE *deadplayer, *liveplayer;
 
     char oldname[MAX_BUF];
     char newname[MAX_BUF];
     char path[MAX_BUF];
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
-    const char *race=NULL;
+    const char *race = NULL;
     sint64 exp;
     int Con;
-
 
     /* reincarnation, which changes the race */
     if (spell->race) {
         treasurelist *tl = find_treasurelist(spell->race);
         treasure *t;
         int value;
+
         if (!tl) {
-            LOG(llevError,"resurrect_player: race set to %s, but no treasurelist of that name!\n", spell->race);
+            LOG(llevError, "resurrect_player: race set to %s, but no treasurelist of that name!\n", spell->race);
             return 0;
         }
-        value = RANDOM() % tl->total_chance;
-        for (t=tl->items; t; t=t->next) {
+        value = RANDOM()%tl->total_chance;
+        for (t = tl->items; t; t = t->next) {
             value -= t->chance;
-            if (value<0) break;
+            if (value < 0)
+                break;
         }
         if (!t) {
-            LOG(llevError,"resurrect_player: got null treasure from treasurelist %s!\n", spell->race);
+            LOG(llevError, "resurrect_player: got null treasure from treasurelist %s!\n", spell->race);
             return 0;
         }
         race = t->item->name;
     }
 
     /*  set up our paths/strings...  */
-    snprintf(path, sizeof(path), "%s/%s/%s/%s",settings.localdir,settings.playerdir,playername,
-             playername);
+    snprintf(path, sizeof(path), "%s/%s/%s/%s", settings.localdir, settings.playerdir, playername, playername);
 
-    strcpy(newname,path);
-    strcat(newname,".pl");
+    strcpy(newname, path);
+    strcat(newname, ".pl");
 
-    strcpy(oldname,newname);
-    strcat(oldname,".dead");
+    strcpy(oldname, newname);
+    strcat(oldname, ".dead");
 
-    if (!(deadplayer=fopen(oldname,"r"))) {
+    if (!(deadplayer = fopen(oldname, "r"))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The soul of %s cannot be reached.",
                              "The soul of %s cannot be reached.",
@@ -112,7 +111,7 @@ static int resurrect_player(object *op,char *playername,object *spell) {
         return 0;
     }
 
-    if (!access(newname,0)) {
+    if (!access(newname, 0)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The soul of %s has already been reborn!",
                              "The soul of %s has already been reborn!",
@@ -121,36 +120,37 @@ static int resurrect_player(object *op,char *playername,object *spell) {
         return 0;
     }
 
-    if (!(liveplayer=fopen(newname,"w"))) {
+    if (!(liveplayer = fopen(newname, "w"))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                              "The soul of %s cannot be re-embodied at the moment.",
                              "The soul of %s cannot be re-embodied at the moment.",
                              playername);
-        LOG(llevError,"Cannot write player in resurrect_player!\n");
+        LOG(llevError, "Cannot write player in resurrect_player!\n");
         fclose(deadplayer);
         return 0;
     }
 
     while (!feof(deadplayer)) {
-        fgets(buf,255,deadplayer);
-        sscanf(buf,"%s",buf2);
-        if (!(strcmp(buf2,"exp"))) {
-            sscanf(buf,"%s %" FMT64, buf2, &exp);
+        fgets(buf, 255, deadplayer);
+        sscanf(buf, "%s", buf2);
+        if (!(strcmp(buf2, "exp"))) {
+            sscanf(buf, "%s %"FMT64, buf2, &exp);
             if (spell->stats.exp) {
-                exp-=exp/spell->stats.exp;
-                snprintf(buf, sizeof(buf), "exp %" FMT64 "\n",exp);
+                exp -= exp/spell->stats.exp;
+                snprintf(buf, sizeof(buf), "exp %"FMT64"\n", exp);
             }
         }
-        if (!(strcmp(buf2,"Con"))) {
-            sscanf(buf,"%s %d",buf2,&Con);
+        if (!(strcmp(buf2, "Con"))) {
+            sscanf(buf, "%s %d", buf2, &Con);
             Con -= spell->stats.Con;
-            if (Con < 1) Con = 1;
-            snprintf(buf, sizeof(buf), "Con %d\n",Con);
+            if (Con < 1)
+                Con = 1;
+            snprintf(buf, sizeof(buf), "Con %d\n", Con);
         }
-        if (race && !strcmp(buf2,"race")) {
-            snprintf(buf, sizeof(buf), "race %s\n",race);
+        if (race && !strcmp(buf2, "race")) {
+            snprintf(buf, sizeof(buf), "race %s\n", race);
         }
-        fputs(buf,liveplayer);
+        fputs(buf, liveplayer);
     }
     fclose(liveplayer);
     fclose(deadplayer);
@@ -162,7 +162,6 @@ static int resurrect_player(object *op,char *playername,object *spell) {
 
     return 1;
 }
-
 
 /**
  * This handles the raise dead / resurrection spells. So try to revive a player.
@@ -187,7 +186,7 @@ static int resurrect_player(object *op,char *playername,object *spell) {
 int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, const char *arg) {
     object *temp, *newob;
     char name_to_resurrect[MAX_BUF];
-    int leveldead=25, mflags, clevel;
+    int leveldead = 25, mflags, clevel;
     sint16 sx, sy;
     mapstruct *m;
 
@@ -195,7 +194,7 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
 
     if (spell->last_heal) {
         if (!arg) {
-            draw_ext_info_format(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                                  "Cast %s on who?",
                                  "Cast %s on who?",
                                  spell->name);
@@ -208,19 +207,19 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
         sy = op->y+freearr_y[dir];
         m = op->map;
         mflags = get_map_flags(m, &m, sx, sy, &sx, &sy);
-        if (mflags & P_OUT_OF_MAP)
-            temp=NULL;
+        if (mflags&P_OUT_OF_MAP)
+            temp = NULL;
         else {
             /*  First we need to find a corpse, if any.  */
             /* If no object, temp will be set to NULL */
-            for (temp=GET_MAP_OB(m, sx, sy); temp!=NULL; temp=temp->above)
+            for (temp = GET_MAP_OB(m, sx, sy); temp != NULL; temp = temp->above)
                 /* If it is corpse, this must be what we want to raise */
                 if (temp->type == CORPSE)
                     break;
         }
 
         if (temp == NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
                           "You need a body for this spell.", NULL);
             return 0;
         }
@@ -234,26 +233,25 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
         if (newob != NULL) {
             newob->x = temp->x;
             newob->y = temp->y;
-            insert_ob_in_map(newob, temp->map, op,0);
+            insert_ob_in_map(newob, temp->map, op, 0);
         }
-        leveldead=temp->level;
+        leveldead = temp->level;
         remove_ob(temp);
         free_object(temp);
     }
 
-    if (resurrection_fails(clevel,leveldead)) {
+    if (resurrection_fails(clevel, leveldead)) {
         if (spell->randomitems) {
             treasure *t;
 
-            for (t=spell->randomitems->items; t; t=t->next) {
+            for (t = spell->randomitems->items; t; t = t->next) {
                 summon_hostile_monsters(op, t->nrof, t->item->name);
             }
 
         }
         return 1;
-
     } else {
-        return resurrect_player(op,name_to_resurrect,spell);
+        return resurrect_player(op, name_to_resurrect, spell);
     }
     /* Unreachable */
 }
@@ -273,11 +271,14 @@ int cast_raise_dead_spell(object *op, object *caster, object *spell, int dir, co
  * @return
  * 0 if succees, 1 if failure.
  */
-static int resurrection_fails(int levelcaster,int leveldead) {
-    int chance=9;
-    chance+=levelcaster-leveldead;
-    if (chance<4) chance=4;
-    if (chance>rndm(0, 19)) return 0; /* resurrection succeeds */
+static int resurrection_fails(int levelcaster, int leveldead) {
+    int chance = 9;
+
+    chance += levelcaster-leveldead;
+    if (chance < 4)
+        chance = 4;
+    if (chance > rndm(0, 19))
+        return 0; /* resurrection succeeds */
     return 1;
 }
 
@@ -293,15 +294,14 @@ void dead_player(object *op) {
     char path[MAX_BUF];
 
     /*  set up our paths/strings...  */
-    snprintf(path, sizeof(path), "%s/%s/%s/%s",settings.localdir,settings.playerdir,op->name,
-             op->name);
+    snprintf(path, sizeof(path), "%s/%s/%s/%s", settings.localdir, settings.playerdir, op->name, op->name);
 
-    strcpy(filename,path);
-    strcat(filename,".pl");
-    strcpy(newname,filename);
-    strcat(newname,".dead");
+    strcpy(filename, path);
+    strcat(filename, ".pl");
+    strcpy(newname, filename);
+    strcat(newname, ".dead");
 
-    if (rename(filename,newname) != 0) {
+    if (rename(filename, newname) != 0) {
         LOG(llevError, "Cannot rename dead player's file %s into %s: %s\n", filename, newname, strerror_local(errno, path, sizeof(path)));
     }
 }

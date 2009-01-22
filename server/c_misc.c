@@ -57,32 +57,31 @@ void map_info(object *op, char *search) {
     char map_path[MAX_BUF];
     long sec = seconds();
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op,
-                         MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_000),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_000),
-                         (sec%86400)/3600,(sec%3600)/60,sec%60);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_000),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_000),
+                         (sec%86400)/3600, (sec%3600)/60, sec%60);
 
-    draw_ext_info(NDI_UNIQUE, 0,op,
-                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_001),
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_002));
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_001),
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_002));
 
-    for (m=first_map;m!=NULL;m=m->next) {
-
-        if (search && strstr(m->path,search)==NULL) continue;   /* Skip unwanted maps */
+    for (m = first_map; m != NULL; m = m->next) {
+        if (search && strstr(m->path, search) == NULL)
+            continue;   /* Skip unwanted maps */
 
         /* Print out the last 18 characters of the map name... */
-        if (strlen(m->path)<=18) strcpy(map_path, m->path);
-        else strcpy(map_path, m->path + strlen(m->path) - 18);
+        if (strlen(m->path) <= 18)
+            strcpy(map_path, m->path);
+        else
+            strcpy(map_path, m->path+strlen(m->path)-18);
 
-        draw_ext_info_format(NDI_UNIQUE,0,op,
-                             MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_003),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_004),
-                             map_path, m->players,players_on_map(m,FALSE),
-                             m->in_memory,m->timeout,m->difficulty,
-                             (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_003),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_004),
+                             map_path, m->players, players_on_map(m, FALSE),
+                             m->in_memory, m->timeout, m->difficulty,
+                             (MAP_WHEN_RESET(m)%86400)/3600, (MAP_WHEN_RESET(m)%3600)/60,
                              MAP_WHEN_RESET(m)%60);
     }
 }
@@ -99,25 +98,23 @@ int command_language(object *op, char *params) {
     const char *language_str;
     int language;
     int i;
+
     if (!op->contr)
         return 0;
 
     language_str = language_names[get_language(op)];
 
-    if (!params||(!strcmp(params, ""))) {
-        draw_ext_info_format(NDI_UNIQUE,0,op,
-                             MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_005),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_005),
+    if (!params || (!strcmp(params, ""))) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_005),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_005),
                              language_str);
-        draw_ext_info_format(NDI_UNIQUE,0,op,
-                             MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_051),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_051),
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_051),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_051),
                              language_str);
-        for (i=0;i<NUM_LANGUAGES; i++) {
-            draw_ext_info_format(NDI_UNIQUE,0,op,
-                                 MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+        for (i = 0; i < NUM_LANGUAGES; i++) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                                  "[fixed]%s: %s",
                                  "%s: %s",
                                  language_codes[i],
@@ -125,7 +122,7 @@ int command_language(object *op, char *params) {
         }
         return 0;
     } else {
-        for (i=0;i<NUM_LANGUAGES; i++) {
+        for (i = 0; i < NUM_LANGUAGES; i++) {
             if (!strcmp(language_codes[i], params)) {
                 language = i;
                 i = NUM_LANGUAGES;
@@ -134,10 +131,9 @@ int command_language(object *op, char *params) {
         op->contr->language = language;
         language_str = language_names[language];
 
-        draw_ext_info_format(NDI_UNIQUE,0,op,
-                             MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(language,I18N_MSG_CMISC_006),
-                             i18n_translate(language,I18N_MSG_CMISC_006),
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                             i18n_translate(language, I18N_MSG_CMISC_006),
+                             i18n_translate(language, I18N_MSG_CMISC_006),
                              language_str);
         return 0;
     }
@@ -164,38 +160,32 @@ int command_body(object *op, char *params) {
     /* Too hard to try and make a header that lines everything up, so just
      * give a description.
      */
-    draw_ext_info(NDI_UNIQUE, 0, op,
-                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_007), NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_007), NULL);
 
-    draw_ext_info(NDI_UNIQUE, 0, op,
-                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_008), NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_008), NULL);
 
-    draw_ext_info(NDI_UNIQUE, 0, op,
-                  MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_009), NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_009), NULL);
 
-    for (i=0; i<NUM_BODY_LOCATIONS; i++) {
+    for (i = 0; i < NUM_BODY_LOCATIONS; i++) {
         /* really debugging - normally body_used should not be set to anything
          * if body_info isn't also set.
          */
         if (op->body_info[i] || op->body_used[i]) {
-            draw_ext_info_format(NDI_UNIQUE, 0, op,
-                                 MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_010),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_011),
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_010),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_011),
                                  body_locations[i].use_name, op->body_info[i], op->body_used[i]);
         }
     }
     if (!QUERY_FLAG(op, FLAG_USE_ARMOUR))
-        draw_ext_info(NDI_UNIQUE, 0, op,
-                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_012), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_012), NULL);
     if (!QUERY_FLAG(op, FLAG_USE_WEAPON))
-        draw_ext_info(NDI_UNIQUE, 0, op,
-                      MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_013), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_BODY,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_013), NULL);
 
     return 1;
 }
@@ -252,144 +242,146 @@ int command_news(object *op, char *params) {
  * player requesting the information.
  */
 void malloc_info(object *op) {
-    int ob_used=count_used(),ob_free=count_free(),players,nrofmaps;
-    int nrm=0,mapmem=0,anr,anims,sum_alloc=0,sum_used=0,i,tlnr, alnr;
+    int ob_used = count_used(), ob_free = count_free(), players, nrofmaps;
+    int nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
     treasurelist *tl;
     player *pl;
     mapstruct *m;
     archetype *at;
     artifactlist *al;
 
-    for (tl=first_treasurelist,tlnr=0;tl!=NULL;tl=tl->next,tlnr++);
-    for (al=first_artifactlist, alnr=0; al!=NULL; al=al->next, alnr++);
+    for (tl = first_treasurelist, tlnr = 0; tl != NULL; tl = tl->next, tlnr++)
+        ;
+    for (al = first_artifactlist, alnr = 0; al != NULL; al = al->next, alnr++)
+        ;
 
-    for (at=first_archetype,anr=0,anims=0;at!=NULL;
-         at=at->more==NULL?at->next:at->more,anr++);
+    for (at = first_archetype, anr = 0, anims = 0; at != NULL; at = at->more == NULL ? at->next : at->more, anr++)
+        ;
 
-    for (i=1; i<num_animations; i++)
+    for (i = 1; i < num_animations; i++)
         anims += animations[i].num_animations;
 
-    for (pl=first_player,players=0;pl!=NULL;pl=pl->next,players++);
+    for (pl = first_player, players = 0; pl != NULL; pl = pl->next, players++)
+        ;
 
-    for (m=first_map,nrofmaps=0;m!=NULL;m=m->next,nrofmaps++)
+    for (m = first_map, nrofmaps = 0; m != NULL; m = m->next, nrofmaps++)
         if (m->in_memory == MAP_IN_MEMORY) {
-            mapmem+=MAP_WIDTH(m)*MAP_HEIGHT(m)*(sizeof(object *)+sizeof(MapSpace));
+            mapmem += MAP_WIDTH(m)*MAP_HEIGHT(m)*(sizeof(object *)+sizeof(MapSpace));
             nrm++;
         }
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_014),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_014),
-                         sizeof(object),sizeof(player),sizeof(mapstruct));
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_014),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_014),
+                         sizeof(object), sizeof(player), sizeof(mapstruct));
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_015),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_016),
-                         ob_used,i=(ob_used*sizeof(object)));
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_015),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_016),
+                         ob_used, i = (ob_used*sizeof(object)));
 
-    sum_used+=i;
-    sum_alloc+=i;
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_017),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_018),
-                         ob_free,i=(ob_free*sizeof(object)));
+    sum_used += i;
+    sum_alloc += i;
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_017),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_018),
+                         ob_free, i = (ob_free*sizeof(object)));
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_019),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_020),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_019),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_020),
                          count_active(), 0);
 
-    sum_alloc+=i;
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_021),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_022),
-                         players,i=(players*sizeof(player)));
-
-    sum_alloc+=i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_023),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_024),
-                         nrofmaps, i=(nrofmaps*sizeof(mapstruct)));
-
-    sum_alloc+=i;
-    sum_used+=nrm*sizeof(mapstruct);
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_025),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_026),
-                         nrm,mapmem);
-
-    sum_alloc+=mapmem;
-    sum_used+=mapmem;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_027),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_028),
-                         anr,i=(anr*sizeof(archetype)));
-
-    sum_alloc+=i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_029),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_030),
-                         anims,i=(anims*sizeof(Fontindex)));
-
-    sum_alloc+=i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_031),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_032),
-                         tlnr,i=(tlnr*sizeof(treasurelist)));
-
-    sum_alloc+=i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_033),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_034),
-                         nroftreasures, i=(nroftreasures*sizeof(treasure)));
-
-    sum_alloc+=i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_035),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_036),
-                         nrofartifacts, i=(nrofartifacts*sizeof(artifact)));
-
-    sum_alloc+=i;
-    sum_used +=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_037),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_038),
-                         nrofallowedstr, i=(nrofallowedstr*sizeof(linked_char)));
-
     sum_alloc += i;
-    sum_used+=i;
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_039),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_040),
-                         alnr,i=(alnr*sizeof(artifactlist)));
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_021),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_022),
+                         players, i = (players*sizeof(player)));
 
     sum_alloc += i;
     sum_used += i;
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_041),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_042),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_023),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_024),
+                         nrofmaps, i = (nrofmaps*sizeof(mapstruct)));
+
+    sum_alloc += i;
+    sum_used += nrm*sizeof(mapstruct);
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_025),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_026),
+                         nrm, mapmem);
+
+    sum_alloc += mapmem;
+    sum_used += mapmem;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_027),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_028),
+                         anr, i = (anr*sizeof(archetype)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_029),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_030),
+                         anims, i = (anims*sizeof(Fontindex)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_031),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_032),
+                         tlnr, i = (tlnr*sizeof(treasurelist)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_033),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_034),
+                         nroftreasures, i = (nroftreasures*sizeof(treasure)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_035),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_036),
+                         nrofartifacts, i = (nrofartifacts*sizeof(artifact)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_037),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_038),
+                         nrofallowedstr, i = (nrofallowedstr*sizeof(linked_char)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_039),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_040),
+                         alnr, i = (alnr*sizeof(artifactlist)));
+
+    sum_alloc += i;
+    sum_used += i;
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_041),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_042),
                          sum_alloc);
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_043),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_044),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MALLOC,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_043),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_044),
                          sum_used);
-
 }
 
 /**
@@ -414,9 +406,9 @@ void current_region_info(object *op) {
     if (!r)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_045),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_045),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_045),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_045),
                          get_region_longname(r), get_region_msg(r));
 }
 
@@ -432,15 +424,15 @@ void current_map_info(object *op) {
     if (!m)
         return;
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
                          "%s (%s) in %s",
                          "%s (%s) in %s",
                          m->name, m->path, get_region_longname(get_region_by_map(m)));
 
-    if (QUERY_FLAG(op,FLAG_WIZ)) {
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_046),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_046),
+    if (QUERY_FLAG(op, FLAG_WIZ)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_046),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_046),
                              m->players, m->difficulty,
                              MAP_WIDTH(m), MAP_HEIGHT(m),
                              MAP_ENTER_X(m), MAP_ENTER_Y(m),
@@ -448,7 +440,7 @@ void current_map_info(object *op) {
 
     }
     if (m->msg)
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, m->msg, NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, m->msg, NULL);
 }
 
 #ifdef DEBUG_MALLOC_LEVEL
@@ -465,11 +457,11 @@ int command_malloc_verify(object *op, char *parms) {
     extern int malloc_verify(void);
 
     if (!malloc_verify())
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_047), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_047), NULL);
     else
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_048), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_048), NULL);
 
     return 1;
 }
@@ -488,7 +480,6 @@ int command_malloc_verify(object *op, char *parms) {
  * 1.
  */
 int command_whereabouts(object *op, char *params) {
-
     region *reg;
     player *pl;
 
@@ -497,31 +488,31 @@ int command_whereabouts(object *op, char *params) {
      * players there.
      * I don't know how thread-safe this would be, I suspect not very....
      */
-    for (reg=first_region;reg!=NULL;reg=reg->next) {
-        reg->counter=0;
+    for (reg = first_region; reg != NULL; reg = reg->next) {
+        reg->counter = 0;
     }
-    for (pl=first_player;pl!=NULL;pl=pl->next)
-        if (pl->ob->map!=NULL)
+    for (pl = first_player; pl != NULL; pl = pl->next)
+        if (pl->ob->map != NULL)
             get_region_by_map(pl->ob->map)->counter++;
 
     /* we only want to print out by places with a 'longname' field...*/
-    for (reg=first_region;reg!=NULL;reg=reg->next) {
-        if (reg->longname==NULL && reg->counter>0) {
-            if (reg->parent !=NULL) {
-                reg->parent->counter+=reg->counter;
-                reg->counter=0;
+    for (reg = first_region; reg != NULL; reg = reg->next) {
+        if (reg->longname == NULL && reg->counter > 0) {
+            if (reg->parent != NULL) {
+                reg->parent->counter += reg->counter;
+                reg->counter = 0;
             } else /*uh oh, we shouldn't be here. */
-                LOG(llevError,"command_whereabouts() Region %s with no longname has no parent\n", reg->name);
+                LOG(llevError, "command_whereabouts() Region %s with no longname has no parent\n", reg->name);
         }
     }
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                  i18n_translate(get_language(op),I18N_MSG_CMISC_049), NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                  i18n_translate(get_language(op), I18N_MSG_CMISC_049), NULL);
 
-    for (reg=first_region;reg!=NULL;reg=reg->next)
-        if (reg->counter>0) {
-            draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_050),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_050),
+    for (reg = first_region; reg != NULL; reg = reg->next)
+        if (reg->counter > 0) {
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_050),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_050),
                                  reg->counter, get_region_longname(reg));
         }
     return 1;
@@ -564,63 +555,63 @@ void list_players(object *op, region *reg, partylist *party) {
     chars_names *chars = NULL;
 
     if (op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-        format=settings.who_wiz_format;
+        format = settings.who_wiz_format;
     else
-        format=settings.who_format;
+        format = settings.who_format;
 
-    for (pl=first_player;pl!=NULL;pl=pl->next) {
+    for (pl = first_player; pl != NULL; pl = pl->next) {
         if (pl->ob->map == NULL)
             continue;
         if (pl->hidden && !QUERY_FLAG(op, FLAG_WIZ))
             continue;
 
-        if (reg && !region_is_child_of_region(get_region_by_map(pl->ob->map),reg))
+        if (reg && !region_is_child_of_region(get_region_by_map(pl->ob->map), reg))
             continue;
         if (party && pl->party != party)
             continue;
 
-        if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
+        if (pl->state == ST_PLAYING || pl->state == ST_GET_PARTY_PASSWORD) {
 
             num_players++;
-            chars = (chars_names *) realloc(chars, num_players*sizeof(chars_names));
+            chars = (chars_names *)realloc(chars, num_players*sizeof(chars_names));
             if (chars == NULL) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                              i18n_translate(get_language(op),I18N_MSG_CMISC_052), NULL);
+                              i18n_translate(get_language(op), I18N_MSG_CMISC_052), NULL);
                 return;
             }
             sprintf(chars[num_players-1].namebuf, "%s", pl->ob->name);
             chars[num_players-1].login_order = num_players;
 
             /* Check for WIZ's & AFK's*/
-            if (QUERY_FLAG(pl->ob,FLAG_WIZ))
+            if (QUERY_FLAG(pl->ob, FLAG_WIZ))
                 num_wiz++;
 
-            if (QUERY_FLAG(pl->ob,FLAG_AFK))
+            if (QUERY_FLAG(pl->ob, FLAG_AFK))
                 num_afk++;
 
             if (pl->socket.is_bot)
                 num_bot++;
         }
     }
-    if (first_player != (player *) NULL) {
+    if (first_player != (player *)NULL) {
         if (reg == NULL && party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_053),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_053),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_053),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_053),
                                  num_players, num_wiz, num_afk, num_bot);
         else if (party == NULL)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_054),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_054),
-                                 reg->longname?reg->longname:reg->name, num_players, num_wiz, num_afk, num_bot);
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_054),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_054),
+                                 reg->longname ? reg->longname : reg->name, num_players, num_wiz, num_afk, num_bot);
         else
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_055),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_055),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_055),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_055),
                                  party->partyname, num_players, num_wiz, num_afk, num_bot);
     }
     qsort(chars, num_players, sizeof(chars_names), (int (*)(const void *, const void *))name_cmp);
-    for (i=0;i<num_players;i++)
+    for (i = 0; i < num_players; i++)
         display_who_entry(op, find_player(chars[i].namebuf), format);
     free(chars);
 }
@@ -637,8 +628,8 @@ void list_players(object *op, region *reg, partylist *party) {
  */
 int command_who(object *op, char *params) {
     region *reg;
-    reg=get_region_from_string(params);
 
+    reg = get_region_from_string(params);
     list_players(op, reg, NULL);
 
     return 1;
@@ -662,23 +653,23 @@ void display_who_entry(object *op, player *pl, const char *format) {
     strcpy(outbuf, "[fixed]");
     outbuf1[0] = '\0';
 
-    if (pl==NULL) {
-        LOG(llevError,"display_who_entry(): I was passed a null player\n");
+    if (pl == NULL) {
+        LOG(llevError, "display_who_entry(): I was passed a null player\n");
         return;
     }
-    for (i=0;i<=strlen(format);i++) {
-        if (format[i]=='%') {
+    for (i = 0; i <= strlen(format); i++) {
+        if (format[i] == '%') {
             i++;
-            get_who_escape_code_value(tmpbuf,sizeof(tmpbuf), format[i],pl);
+            get_who_escape_code_value(tmpbuf, sizeof(tmpbuf), format[i], pl);
             strcat(outbuf, tmpbuf);
             strcat(outbuf1, tmpbuf);
-        } else if (format[i]=='_') {
-            strcat(outbuf," "); /* allow '_' to be used in place of spaces */
-            strcat(outbuf1," "); /* allow '_' to be used in place of spaces */
+        } else if (format[i] == '_') {
+            strcat(outbuf, " "); /* allow '_' to be used in place of spaces */
+            strcat(outbuf1, " "); /* allow '_' to be used in place of spaces */
         } else {
-            snprintf(tmpbuf, sizeof(tmpbuf), "%c",format[i]);
-            strcat(outbuf,tmpbuf);
-            strcat(outbuf1,tmpbuf);
+            snprintf(tmpbuf, sizeof(tmpbuf), "%c", format[i]);
+            strcat(outbuf, tmpbuf);
+            strcat(outbuf1, tmpbuf);
         }
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_WHO, outbuf, outbuf1);
@@ -718,59 +709,76 @@ void display_who_entry(object *op, player *pl, const char *format) {
 void get_who_escape_code_value(char *return_val, int size, const char letter, player *pl) {
 
     switch (letter) {
-        case 'N' : snprintf(return_val, size, "%s", pl->ob->name);
+    case 'N':
+        snprintf(return_val, size, "%s", pl->ob->name);
+        break;
+
+    case 't':
+        snprintf(return_val, size, "%s", (pl->own_title[0] == '\0' ? pl->title : pl->own_title));
+        break;
+
+    case 'T':
+        if (pl->own_title[0] == '\0')
+            snprintf(return_val, size, "the ");
+        else
+            *return_val = '\0';
+        break;
+
+    case 'c':
+        snprintf(return_val, size, "%d", pl->ob->count);
+        break;
+
+    case 'n':
+        snprintf(return_val, size, "\n");
+        break;
+
+    case 'h':
+        snprintf(return_val, size, "%s", pl->peaceful ? "" : " <Hostile>");
+        break;
+
+    case 'l':
+        snprintf(return_val, size, "%d", pl->ob->level);
+        break;
+
+    case 'd':
+        snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob, FLAG_WIZ) ? " <WIZ>" : ""));
+        break;
+
+    case 'a':
+        snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob, FLAG_AFK) ? " <AFK>" : ""));
+        break;
+
+    case 'b':
+        snprintf(return_val, size, "%s", (pl->socket.is_bot == 1) ? " <BOT>" : "");
+        break;
+
+    case 'm':
+        snprintf(return_val, size, "%s", pl->ob->map->path);
+        break;
+
+    case 'M':
+        snprintf(return_val, size, "%s", pl->ob->map->name ? pl->ob->map->name : "Untitled");
+        break;
+
+    case 'r':
+        snprintf(return_val, size, "%s", get_name_of_region_for_map(pl->ob->map));
             break;
 
-        case 't' : snprintf(return_val, size, "%s", (pl->own_title[0]=='\0'?pl->title:pl->own_title));
-            break;
+    case 'R':
+        snprintf(return_val, size, "%s", get_region_longname(get_region_by_map(pl->ob->map)));
+        break;
 
-        case 'T' : if (pl->own_title[0]=='\0')
-                snprintf(return_val, size, "the ");
-            else
-                *return_val='\0';
-            break;
+    case 'i':
+        snprintf(return_val, size, "%s", pl->socket.host);
+        break;
 
-        case 'c' : snprintf(return_val, size, "%d", pl->ob->count);
-            break;
+    case '%':
+        snprintf(return_val, size, "%%");
+        break;
 
-        case 'n' : snprintf(return_val, size, "\n");
-            break;
-
-        case 'h' : snprintf(return_val, size, "%s", pl->peaceful?"":" <Hostile>");
-            break;
-
-        case 'l' : snprintf(return_val, size, "%d", pl->ob->level);
-            break;
-
-        case 'd' : snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob,FLAG_WIZ)?" <WIZ>":""));
-            break;
-
-        case 'a' : snprintf(return_val, size, "%s", (QUERY_FLAG(pl->ob,FLAG_AFK)?" <AFK>":""));
-            break;
-
-        case 'b' : snprintf(return_val, size, "%s", (pl->socket.is_bot == 1)?" <BOT>":"");
-            break;
-
-        case 'm' : snprintf(return_val, size, "%s", pl->ob->map->path);
-            break;
-
-        case 'M' : snprintf(return_val, size, "%s", pl->ob->map->name?pl->ob->map->name:"Untitled");
-            break;
-
-        case 'r' : snprintf(return_val, size, "%s", get_name_of_region_for_map(pl->ob->map));
-            break;
-
-        case 'R' : snprintf(return_val, size, "%s", get_region_longname(get_region_by_map(pl->ob->map)));
-            break;
-
-        case 'i' : snprintf(return_val, size, "%s", pl->socket.host);
-            break;
-
-        case '%' : snprintf(return_val, size, "%%");
-            break;
-
-        case '_' : snprintf(return_val, size, "_");
-            break;
+    case '_':
+        snprintf(return_val, size, "_");
+        break;
     }
 }
 
@@ -785,14 +793,14 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
  * 1.
  */
 int command_afk(object *op, char *params) {
-    if QUERY_FLAG(op,FLAG_AFK) {
-        CLEAR_FLAG(op,FLAG_AFK);
+    if QUERY_FLAG(op, FLAG_AFK) {
+        CLEAR_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_056), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_056), NULL);
     } else {
-        SET_FLAG(op,FLAG_AFK);
+        SET_FLAG(op, FLAG_AFK);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_057), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_057), NULL);
     }
     return 1;
 }
@@ -851,7 +859,7 @@ int command_whereami(object *op, char *params) {
  * region to restrict to.
  */
 int command_maps(object *op, char *params) {
-    map_info(op,params);
+    map_info(op, params);
     return 1;
 }
 
@@ -867,13 +875,14 @@ int command_maps(object *op, char *params) {
  */
 int command_strings(object *op, char *params) {
     char stats[HUGE_BUF];
+
     ss_dump_statistics(stats, sizeof(stats));
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
                          "[fixed]%s\n",
                          "%s",
                          stats);
 
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_LAST,
                   ss_dump_table(SS_DUMP_TOTALS, stats, sizeof(stats)), NULL);
     return 1;
 }
@@ -919,7 +928,7 @@ int command_archs(object *op, char *params) {
  * 1.
  */
 int command_hiscore(object *op, char *params) {
-    display_high_score(op,op==NULL?9999:50, params);
+    display_high_score(op, op == NULL ? 9999 : 50, params);
     return 1;
 }
 
@@ -936,22 +945,22 @@ int command_hiscore(object *op, char *params) {
 int command_debug(object *op, char *params) {
     int i;
 
-    if (params==NULL || !sscanf(params, "%d", &i)) {
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_092),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_092),
+    if (params == NULL || !sscanf(params, "%d", &i)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_092),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_092),
                              settings.debug);
         return 1;
     }
     if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_093), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_093), NULL);
         return 1;
     }
-    settings.debug = (enum LogLevel) FABS(i);
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_094),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_094),
+    settings.debug = (enum LogLevel)FABS(i);
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_094),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_094),
                          i);
     return 1;
 }
@@ -1003,15 +1012,15 @@ int command_wizpass(object *op, char *params) {
     if (!params)
         i = (QUERY_FLAG(op, FLAG_WIZPASS)) ? 0 : 1;
     else
-        i =onoff_value(params);
+        i = onoff_value(params);
 
     if (i) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_095), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_095), NULL);
         SET_FLAG(op, FLAG_WIZPASS);
     } else {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_096), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_096), NULL);
         CLEAR_FLAG(op, FLAG_WIZPASS);
     }
     return 0;
@@ -1039,12 +1048,12 @@ int command_wizcast(object *op, char *params) {
         i = onoff_value(params);
 
     if (i) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_097), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_097), NULL);
         SET_FLAG(op, FLAG_WIZCAST);
     } else {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_098), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_098), NULL);
         CLEAR_FLAG(op, FLAG_WIZCAST);
     }
     return 0;
@@ -1189,21 +1198,21 @@ int command_output_sync(object *op, char *params) {
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_099),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_099),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_099),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_099),
                              op->contr->outputs_sync);
         return 1;
     }
-    val=atoi(params);
-    if (val>0) {
+    val = atoi(params);
+    if (val > 0) {
         op->contr->outputs_sync = val;
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_100),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_100),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_100),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_100),
                              op->contr->outputs_sync);
     } else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_101), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_101), NULL);
 
     return 1;
 }
@@ -1223,21 +1232,21 @@ int command_output_count(object *op, char *params) {
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_102),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_102),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_102),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_102),
                              op->contr->outputs_count);
         return 1;
     }
-    val=atoi(params);
-    if (val>0) {
+    val = atoi(params);
+    if (val > 0) {
         op->contr->outputs_count = val;
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_103),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_103),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_103),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_103),
                              op->contr->outputs_count);
     } else
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_104), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_104), NULL);
 
     return 1;
 }
@@ -1255,22 +1264,22 @@ int command_output_count(object *op, char *params) {
 int command_listen(object *op, char *params) {
     int i;
 
-    if (params==NULL || !sscanf(params, "%d", &i)) {
+    if (params == NULL || !sscanf(params, "%d", &i)) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_105),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_105),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_105),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_105),
                              op->contr->listening);
         return 1;
     }
     if (i < 0) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_106), NULL);
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_106), NULL);
         return 1;
     }
-    op->contr->listening=(char) i;
+    op->contr->listening = (char)i;
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_107),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_107),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_107),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_107),
                          i);
     return 1;
 }
@@ -1292,17 +1301,18 @@ int command_statistics(object *pl, char *params) {
     char buf[MAX_BUF];
     char buf2[MAX_BUF];
 
-    if (!pl->contr) return 1;
-    strcpy(buf, i18n_translate(get_language(pl),I18N_MSG_CMISC_108));
-    strcpy(buf2, i18n_translate(get_language(pl),I18N_MSG_CMISC_109));
+    if (!pl->contr)
+        return 1;
+    strcpy(buf, i18n_translate(get_language(pl), I18N_MSG_CMISC_108));
+    strcpy(buf2, i18n_translate(get_language(pl), I18N_MSG_CMISC_109));
     strcat(buf, FMT64);
     strcat(buf2, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
                          buf,
                          buf2,
                          pl->stats.exp);
-    strcpy(buf, i18n_translate(get_language(pl),I18N_MSG_CMISC_110));
-    strcpy(buf2, i18n_translate(get_language(pl),I18N_MSG_CMISC_111));
+    strcpy(buf, i18n_translate(get_language(pl), I18N_MSG_CMISC_110));
+    strcpy(buf2, i18n_translate(get_language(pl), I18N_MSG_CMISC_111));
     strcat(buf, FMT64);
     strcat(buf2, FMT64);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
@@ -1311,41 +1321,41 @@ int command_statistics(object *pl, char *params) {
                          level_exp(pl->level+1, pl->expmul));
 
     draw_ext_info(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                  i18n_translate(get_language(pl),I18N_MSG_CMISC_112),
-                  i18n_translate(get_language(pl),I18N_MSG_CMISC_113));
+                  i18n_translate(get_language(pl), I18N_MSG_CMISC_112),
+                  i18n_translate(get_language(pl), I18N_MSG_CMISC_113));
 
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_114),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_115),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_114),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_115),
                          pl->contr->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_116),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_117),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_116),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_117),
                          pl->contr->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_118),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_119),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_118),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_119),
                          pl->contr->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_120),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_121),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_120),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_121),
                          pl->contr->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_122),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_123),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_122),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_123),
                          pl->contr->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_124),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_125),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_124),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_125),
                          pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_126),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_127),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_126),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_127),
                          pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
     draw_ext_info_format(NDI_UNIQUE, 0, pl, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_STATISTICS,
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_128),
-                         i18n_translate(get_language(pl),I18N_MSG_CMISC_129),
-                         pl->contr->peaceful? "Peaceful":"Hostile");
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_128),
+                         i18n_translate(get_language(pl), I18N_MSG_CMISC_129),
+                         pl->contr->peaceful ?  "Peaceful" : "Hostile");
 
     /* Can't think of anything else to print right now */
     return 0;
@@ -1382,28 +1392,28 @@ int command_players(object *op, char *params) {
     char *t;
     DIR *Dir;
 
-    snprintf(buf, sizeof(buf), "%s/%s/",settings.localdir,settings.playerdir);
-    t=buf+strlen(buf);
-    if ((Dir=opendir(buf))!=NULL) {
+    snprintf(buf, sizeof(buf), "%s/%s/", settings.localdir, settings.playerdir);
+    t = buf+strlen(buf);
+    if ((Dir = opendir(buf)) != NULL) {
         const struct dirent *Entry;
 
-        while ((Entry=readdir(Dir))!=NULL) {
+        while ((Entry = readdir(Dir)) != NULL) {
             /* skip '.' , '..' */
-            if (!((Entry->d_name[0]=='.' && Entry->d_name[1]=='\0') ||
-                  (Entry->d_name[0]=='.' && Entry->d_name[1]=='.' && Entry->d_name[2]=='\0'))) {
+            if (!((Entry->d_name[0] == '.' && Entry->d_name[1] == '\0')
+                || (Entry->d_name[0] == '.' && Entry->d_name[1] == '.' && Entry->d_name[2] == '\0'))) {
                 struct stat Stat;
 
-                strcpy(t,Entry->d_name);
-                if (stat(buf,&Stat)==0) {
+                strcpy(t, Entry->d_name);
+                if (stat(buf, &Stat) == 0) {
                     /* This was not posix compatible
-                           * if ((Stat.st_mode & S_IFMT)==S_IFDIR) {
-                           */
+                     * if ((Stat.st_mode & S_IFMT)==S_IFDIR) {
+                     */
                     if (S_ISDIR(Stat.st_mode)) {
-                        struct tm *tm=localtime(&Stat.st_mtime);
+                        struct tm *tm = localtime(&Stat.st_mtime);
 
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                             i18n_translate(get_language(op),I18N_MSG_CMISC_130),
-                                             i18n_translate(get_language(op),I18N_MSG_CMISC_131),
+                                             i18n_translate(get_language(op), I18N_MSG_CMISC_130),
+                                             i18n_translate(get_language(op), I18N_MSG_CMISC_131),
                                              Entry->d_name,
                                              1900+tm->tm_year,
                                              1+tm->tm_mon,
@@ -1432,33 +1442,37 @@ int command_players(object *op, char *params) {
  */
 int command_applymode(object *op, char *params) {
     unapplymode unapply = op->contr->unapply;
-    static const char *const types[]={"nochoice", "never", "always"};
+    static const char *const types[] = {
+        "nochoice",
+        "never",
+        "always"
+    };
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_132),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_133),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_132),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_133),
                              types[op->contr->unapply]);
         return 1;
     }
 
-    if (!strcmp(params,"nochoice"))
-        op->contr->unapply=unapply_nochoice;
-    else if (!strcmp(params,"never"))
-        op->contr->unapply=unapply_never;
-    else if (!strcmp(params,"always"))
-        op->contr->unapply=unapply_always;
+    if (!strcmp(params, "nochoice"))
+        op->contr->unapply = unapply_nochoice;
+    else if (!strcmp(params, "never"))
+        op->contr->unapply = unapply_never;
+    else if (!strcmp(params, "always"))
+        op->contr->unapply = unapply_always;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_134),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_134),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_134),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_134),
                              params);
         return 0;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_135),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_135),
-                         (unapply==op->contr->unapply?"":" now"),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_135),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_135),
+                         (unapply == op->contr->unapply ? "" : " now"),
                          types[op->contr->unapply]);
 
     return 1;
@@ -1475,32 +1489,42 @@ int command_applymode(object *op, char *params) {
  * 1.
  */
 int command_bowmode(object *op, char *params) {
-    bowtype_t oldtype=op->contr->bowtype;
-    static const char *const types[] = {"normal", "threewide", "spreadshot", "firenorth",
-                                        "firene", "fireeast", "firese", "firesouth",
-                                        "firesw", "firewest", "firenw", "bestarrow"
-                                       };
+    bowtype_t oldtype = op->contr->bowtype;
+    static const char *const types[] = {
+        "normal",
+        "threewide",
+        "spreadshot",
+        "firenorth",
+        "firene",
+        "fireeast",
+        "firese",
+        "firesouth",
+        "firesw",
+        "firewest",
+        "firenw",
+        "bestarrow"
+    };
     char buf[MAX_BUF];
     int i, found;
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_136),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_136),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_136),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_136),
                              types[op->contr->bowtype]);
         return 1;
     }
 
-    for (i=0,found=0; i<=bow_bestarrow; i++) {
+    for (i = 0, found = 0; i <= bow_bestarrow; i++) {
         if (!strcmp(params, types[i])) {
             found++;
-            op->contr->bowtype=i;
+            op->contr->bowtype = i;
             break;
         }
     }
     if (!found) {
         snprintf(buf, sizeof(buf), "bowmode: Unknown options %s, valid options are:", params);
-        for (i=0; i<=bow_bestarrow; i++) {
+        for (i = 0; i <= bow_bestarrow; i++) {
             strcat(buf, " ");
             strcat(buf, types[i]);
             if (i < bow_nw)
@@ -1512,9 +1536,9 @@ int command_bowmode(object *op, char *params) {
         return 0;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_137),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_137),
-                         (oldtype==op->contr->bowtype?"":"now"),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_137),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_137),
+                         (oldtype == op->contr->bowtype ? "" : "now"),
                          types[op->contr->bowtype]);
     return 1;
 }
@@ -1530,36 +1554,41 @@ int command_bowmode(object *op, char *params) {
  * 1.
  */
 int command_petmode(object *op, char *params) {
-    petmode_t oldtype=op->contr->petmode;
-    static const char *const types[]={"normal", "sad", "defend", "arena"};
+    petmode_t oldtype = op->contr->petmode;
+    static const char *const types[] = {
+        "normal",
+        "sad",
+        "defend",
+        "arena"
+    };
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_138),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_138),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_138),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_138),
                              types[op->contr->petmode]);
         return 1;
     }
 
-    if (!strcmp(params,"normal"))
-        op->contr->petmode=pet_normal;
-    else if (!strcmp(params,"sad"))
-        op->contr->petmode=pet_sad;
-    else if (!strcmp(params,"defend"))
-        op->contr->petmode=pet_defend;
-    else if (!strcmp(params,"arena"))
-        op->contr->petmode=pet_arena;
+    if (!strcmp(params, "normal"))
+        op->contr->petmode = pet_normal;
+    else if (!strcmp(params, "sad"))
+        op->contr->petmode = pet_sad;
+    else if (!strcmp(params, "defend"))
+        op->contr->petmode = pet_defend;
+    else if (!strcmp(params, "arena"))
+        op->contr->petmode = pet_arena;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_139),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_139),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_139),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_139),
                              params);
         return 0;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_140),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_140),
-                         (oldtype==op->contr->petmode?"":"now"),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_140),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_140),
+                         (oldtype == op->contr->petmode ? "" : "now"),
                          types[op->contr->petmode]);
     return 1;
 }
@@ -1576,75 +1605,77 @@ int command_petmode(object *op, char *params) {
  */
 int command_showpets(object *op, char *params) {
     objectlink *obl, *next;
-    int counter=0, target=0;
-    int have_shown_pet=0;
-    if (params !=NULL) target= atoi(params);
+    int counter = 0, target = 0;
+    int have_shown_pet = 0;
+    if (params != NULL)
+        target = atoi(params);
 
     for (obl = first_friendly_object; obl != NULL; obl = next) {
         object *ob = obl->ob;
+
         next = obl->next;
         if (get_owner(ob) == op) {
-            if (target ==0) {
-                if (counter==0)
+            if (target == 0) {
+                if (counter == 0)
                     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                  i18n_translate(get_language(op),I18N_MSG_CMISC_141), NULL);
+                                  i18n_translate(get_language(op), I18N_MSG_CMISC_141), NULL);
                 draw_ext_info_format(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_142),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_142),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_142),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_142),
                                      ++counter, ob->name, ob->level);
-            } else if (!have_shown_pet && ++counter==target) {
+            } else if (!have_shown_pet && ++counter == target) {
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_143),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_144),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_143),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_144),
                                      ob->level, ob->name);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_145),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_146),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_145),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_146),
                                      ob->stats.hp, ob->stats.maxhp, ob->stats.sp, ob->stats.maxsp);
 
                 /* this is not a nice way to do this, it should be made to be more like the statistics command */
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_147),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_148),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_147),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_148),
                                      ob->stats.Str);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_149),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_150),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_149),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_150),
                                      ob->stats.Dex);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_151),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_152),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_151),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_152),
                                      ob->stats.Con);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_153),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_154),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_153),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_154),
                                      ob->stats.Int);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_155),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_156),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_155),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_156),
                                      ob->stats.Wis);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_157),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_158),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_157),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_158),
                                      ob->stats.Cha);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_159),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_160),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_159),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_160),
                                      ob->stats.Pow);
                 draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_161),
-                                     i18n_translate(get_language(op),I18N_MSG_CMISC_162),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_161),
+                                     i18n_translate(get_language(op), I18N_MSG_CMISC_162),
                                      ob->stats.wc, ob->stats.dam, ob->stats.ac);
-                have_shown_pet=1;
+                have_shown_pet = 1;
             }
         }
     }
     if (counter == 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_163), NULL);
-    else if (target !=0 && have_shown_pet==0)
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_163), NULL);
+    else if (target != 0 && have_shown_pet == 0)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_164), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_164), NULL);
     return 0;
 }
 
@@ -1659,34 +1690,38 @@ int command_showpets(object *op, char *params) {
  * 1.
  */
 int command_usekeys(object *op, char *params) {
-    usekeytype oldtype=op->contr->usekeys;
-    static const char *const types[]={"inventory", "keyrings", "containers"};
+    usekeytype oldtype = op->contr->usekeys;
+    static const char *const types[] = {
+        "inventory",
+        "keyrings",
+        "containers"
+    };
 
     if (!params) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_165),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_165),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_165),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_165),
                              types[op->contr->usekeys]);
         return 1;
     }
 
-    if (!strcmp(params,"inventory"))
-        op->contr->usekeys=key_inventory;
-    else if (!strcmp(params,"keyrings"))
-        op->contr->usekeys=keyrings;
-    else if (!strcmp(params,"containers"))
-        op->contr->usekeys=containers;
+    if (!strcmp(params, "inventory"))
+        op->contr->usekeys = key_inventory;
+    else if (!strcmp(params, "keyrings"))
+        op->contr->usekeys = keyrings;
+    else if (!strcmp(params, "containers"))
+        op->contr->usekeys = containers;
     else {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_166),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_166),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_166),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_166),
                              params);
         return 0;
     }
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_167),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_167),
-                         (oldtype==op->contr->usekeys?"":"now"),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_167),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_167),
+                         (oldtype == op->contr->usekeys ? "" : "now"),
                          types[op->contr->usekeys]);
 
     return 1;
@@ -1707,12 +1742,13 @@ int command_resistances(object *op, char *params) {
     if (!op)
         return 0;
 
-    for (i=0; i<NROFATTACKS; i++) {
-        if (i==ATNR_INTERNAL) continue;
+    for (i = 0; i < NROFATTACKS; i++) {
+        if (i == ATNR_INTERNAL)
+            continue;
 
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_168),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_169),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_168),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_169),
                              attacktype_desc[i], op->resist[i]);
     }
 
@@ -1722,15 +1758,15 @@ int command_resistances(object *op, char *params) {
         object *tmp;
 
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below) {
-            if ((tmp->type == FORCE) && (strcmp(tmp->arch->name, "dragon_skin_force")== 0)) {
+            if ((tmp->type == FORCE) && (strcmp(tmp->arch->name, "dragon_skin_force") == 0)) {
                 draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                              i18n_translate(get_language(op),I18N_MSG_CMISC_170), NULL);
+                              i18n_translate(get_language(op), I18N_MSG_CMISC_170), NULL);
 
                 for (attack = 0; attack < NROFATTACKS; attack++) {
                     if (atnr_is_dragon_enabled(attack)) {
                         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                                             i18n_translate(get_language(op),I18N_MSG_CMISC_171),
-                                             i18n_translate(get_language(op),I18N_MSG_CMISC_171),
+                                             i18n_translate(get_language(op), I18N_MSG_CMISC_171),
+                                             i18n_translate(get_language(op), I18N_MSG_CMISC_171),
                                              change_resist_msg[attack], tmp->resist[attack]);
                     }
                 }
@@ -1764,38 +1800,41 @@ static void help_topics(object *op, int what) {
     snprintf(suffix, sizeof(suffix), ".%s", language);
 
     switch (what) {
-        case 1:
-            snprintf(filename, sizeof(filename), "%s/wizhelp", settings.datadir);
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_172), NULL);
-            break;
-        case 3:
-            snprintf(filename, sizeof(filename), "%s/mischelp", settings.datadir);
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_173), NULL);
-            break;
-        default:
-            snprintf(filename, sizeof(filename), "%s/help", settings.datadir);
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_174), NULL);
-            break;
+    case 1:
+        snprintf(filename, sizeof(filename), "%s/wizhelp", settings.datadir);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_172), NULL);
+        break;
+
+    case 3:
+        snprintf(filename, sizeof(filename), "%s/mischelp", settings.datadir);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_173), NULL);
+        break;
+
+    default:
+        snprintf(filename, sizeof(filename), "%s/help", settings.datadir);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_174), NULL);
+        break;
     }
-    if (!(dirp=opendir(filename)))
+    if (!(dirp = opendir(filename)))
         return;
 
-    line[0] ='\0';
+    line[0] = '\0';
     for (de = readdir(dirp); de; de = readdir(dirp)) {
         namelen = NAMLEN(de);
 
-        if (namelen <= 2 && *de->d_name == '.' &&
-            (namelen == 1 || de->d_name[1] == '.'))
+        if (namelen <= 2
+        && *de->d_name == '.'
+        && (namelen == 1 || de->d_name[1] == '.'))
             continue;
-        if (strstr(de->d_name,suffix)) {
-            strcat(line, strtok(de->d_name,"."));
+        if (strstr(de->d_name, suffix)) {
+            strcat(line, strtok(de->d_name, "."));
             strcat(line, " ");
         }
     }
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
                   line, line);
     closedir(dirp);
 }
@@ -1816,36 +1855,36 @@ static void show_commands(object *op, int what) {
     command_array_struct *ap;
 
     switch (what) {
-        case 1:
-            ap =WizCommands;
-            size =WizCommandsSize;
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_175), NULL);
-            break;
+    case 1:
+        ap = WizCommands;
+        size = WizCommandsSize;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_175), NULL);
+        break;
 
-        case 2:
-            ap= CommunicationCommands;
-            size= CommunicationCommandSize;
-            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_176), NULL);
-            break;
+    case 2:
+        ap = CommunicationCommands;
+        size = CommunicationCommandSize;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_176), NULL);
+        break;
 
-        default:
-            ap =Commands;
-            size =CommandsSize;
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_177), NULL);
-            break;
+    default:
+        ap = Commands;
+        size = CommandsSize;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_177), NULL);
+        break;
     }
 
-    line[0] ='\0';
-    for (i=0; i<size; i++) {
+    line[0] = '\0';
+    for (i = 0; i < size; i++) {
         namelen = strlen(ap[i].name);
 
         strcat(line, ap[i].name);
         strcat(line, " ");
     }
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, line);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, line);
 }
 
 /**
@@ -1870,19 +1909,18 @@ int command_help(object *op, char *params) {
     /*
      * Main help page?
      */
-
     if (!params) {
         snprintf(filename, sizeof(filename), "%s/def_help", settings.datadir);
-        if ((fp=fopen(filename, "r")) == NULL) {
+        if ((fp = fopen(filename, "r")) == NULL) {
             LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
             return 0;
         }
         while (fgets(line, MAX_BUF, fp)) {
-            line[MAX_BUF-1] ='\0';
-            len =strlen(line)-1;
+            line[MAX_BUF-1] = '\0';
+            len = strlen(line)-1;
             if (line[len] == '\n')
-                line[len] ='\0';
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, NULL);
+                line[len] = '\0';
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, NULL);
         }
         fclose(fp);
         return 0;
@@ -1904,10 +1942,10 @@ int command_help(object *op, char *params) {
      */
     if (!strcmp(params, "commands")) {
         show_commands(op, 0);
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n", NULL);
         show_commands(op, 2); /* show comm commands */
         if (QUERY_FLAG(op, FLAG_WIZ)) {
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, "\n", NULL);
             show_commands(op, 1);
         }
         return 0;
@@ -1917,9 +1955,9 @@ int command_help(object *op, char *params) {
      * User wants info about command
      */
     if (strchr(params, '.') || strchr(params, ' ') || strchr(params, '/')) {
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_178),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_178),
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_178),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_178),
                              params);
         return 0;
     }
@@ -1942,22 +1980,22 @@ int command_help(object *op, char *params) {
     /*
      * Found that. Just cat it to screen.
      */
-    if ((fp=fopen(filename, "r")) == NULL) {
+    if ((fp = fopen(filename, "r")) == NULL) {
         LOG(llevError, "Cannot open help file %s: %s\n", filename, strerror_local(errno, line, sizeof(line)));
         return 0;
     }
 
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_179),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_179),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_179),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_179),
                          params);
 
     while (fgets(line, MAX_BUF, fp)) {
-        line[MAX_BUF-1] ='\0';
-        len =strlen(line)-1;
+        line[MAX_BUF-1] = '\0';
+        len = strlen(line)-1;
         if (line[len] == '\n')
-            line[len] ='\0';
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, NULL);
+            line[len] = '\0';
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO, line, NULL);
     }
     fclose(fp);
     return 0;
@@ -1967,10 +2005,9 @@ int command_help(object *op, char *params) {
      */
 
 nohelp:
-
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_180),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_180),
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_INFO,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_180),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_180),
                          params);
 
     return 0;
@@ -1993,22 +2030,25 @@ int onoff_value(const char *line) {
         return (i != 0);
 
     switch (line[0]) {
-        case 'o':
-            switch (line[1]) {
-                case 'n': return 1;  /* on */
-                default:  return 0;  /* o[ff] */
-            }
-        case 'y':   /* y[es] */
-        case 'k':   /* k[ylla] */
-        case 's':
-        case 'd':
-            return 1;
-
-        case 'n':   /* n[o] */
-        case 'e':   /* e[i] */
-        case 'u':
+    case 'o':
+        switch (line[1]) {
+        case 'n':
+            return 1;  /* on */
         default:
-            return 0;
+            return 0;  /* o[ff] */
+        }
+
+    case 'y':   /* y[es] */
+    case 'k':   /* k[ylla] */
+    case 's':
+    case 'd':
+        return 1;
+
+    case 'n':   /* n[o] */
+    case 'e':   /* e[i] */
+    case 'u':
+    default:
+        return 0;
     }
 }
 
@@ -2023,8 +2063,8 @@ int onoff_value(const char *line) {
  * 1.
  */
 int command_quit(object *op, char *params) {
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,
-               i18n_translate(get_language(op),I18N_MSG_CMISC_181));
+    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR,
+               i18n_translate(get_language(op), I18N_MSG_CMISC_181));
 
     op->contr->state = ST_CONFIRM_QUIT;
     return 1;
@@ -2045,24 +2085,24 @@ int command_quit(object *op, char *params) {
  */
 int command_explore(object *op, char *params) {
     if (settings.explore_mode == FALSE) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_182), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_182), NULL);
         return 1;
     }
     /*
      * I guess this is the best way to see if we are solo or not.  Actually,
      * are there any cases when first_player->next==NULL and we are not solo?
      */
-    if ((first_player!=op->contr) || (first_player->next!=NULL)) {
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_183), NULL);
+    if ((first_player != op->contr) || (first_player->next != NULL)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_183), NULL);
     } else if (op->contr->explore)
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_184), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_184), NULL);
     else {
-        op->contr->explore=1;
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_185), NULL);
+        op->contr->explore = 1;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_185), NULL);
     }
     return 1;
 }
@@ -2078,14 +2118,14 @@ int command_explore(object *op, char *params) {
  * 1.
  */
 int command_sound(object *op, char *params) {
-    if (!(op->contr->socket.sound & SND_MUTE)) {
-        op->contr->socket.sound=op->contr->socket.sound | SND_MUTE;
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_186), NULL);
+    if (!(op->contr->socket.sound&SND_MUTE)) {
+        op->contr->socket.sound = op->contr->socket.sound|SND_MUTE;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_186), NULL);
     } else {
-        op->contr->socket.sound=op->contr->socket.sound & ~SND_MUTE;
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_187), NULL);
+        op->contr->socket.sound = op->contr->socket.sound&~SND_MUTE;
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_187), NULL);
     }
     return 1;
 }
@@ -2100,15 +2140,14 @@ int command_sound(object *op, char *params) {
  * player we're getting the name of.
  */
 void receive_player_name(object *op) {
-
-    if (!check_name(op->contr,op->contr->write_buf+1)) {
+    if (!check_name(op->contr, op->contr->write_buf+1)) {
         get_name(op);
         return;
     }
     FREE_AND_COPY(op->name, op->contr->write_buf+1);
     FREE_AND_COPY(op->name_pl, op->contr->write_buf+1);
-    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, op->contr->write_buf, NULL);
-    op->contr->name_changed=1;
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, op->contr->write_buf, NULL);
+    op->contr->name_changed = 1;
     get_password(op);
 }
 
@@ -2119,13 +2158,14 @@ void receive_player_name(object *op) {
  * player.
  */
 void receive_player_password(object *op) {
+    unsigned int pwd_len = strlen(op->contr->write_buf);
 
-    unsigned int pwd_len=strlen(op->contr->write_buf);
-
-    if (pwd_len<=1||pwd_len>17) {
-        if (op->contr->state == ST_CHANGE_PASSWORD_OLD || op->contr->state == ST_CHANGE_PASSWORD_NEW || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
+    if (pwd_len <= 1 || pwd_len > 17) {
+        if (op->contr->state == ST_CHANGE_PASSWORD_OLD
+        || op->contr->state == ST_CHANGE_PASSWORD_NEW
+        || op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_188), NULL);
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_188), NULL);
             op->contr->state = ST_PLAYING;
         } else
             get_name(op);
@@ -2133,66 +2173,66 @@ void receive_player_password(object *op) {
     }
     /* To hide the password better */
     /* With currently clients, not sure if this is really the case - MSW */
-    draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,"          ", NULL);
+    draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE, "          ", NULL);
 
     if (checkbanned(op->name, op->contr->socket.host)) {
         LOG(llevInfo, "Banned player tried to add: [%s@%s]\n", op->name, op->contr->socket.host);
         draw_ext_info(NDI_UNIQUE|NDI_RED, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_189), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_189), NULL);
         get_name(op);
         return;
     }
 
-    if (op->contr->state==ST_CONFIRM_PASSWORD) {
-        if (!check_password(op->contr->write_buf+1,op->contr->password)) {
-            draw_ext_info(NDI_UNIQUE, 0,op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_190), NULL);
+    if (op->contr->state == ST_CONFIRM_PASSWORD) {
+        if (!check_password(op->contr->write_buf+1, op->contr->password)) {
+            draw_ext_info(NDI_UNIQUE, 0, op,  MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_190), NULL);
             get_name(op);
             return;
         }
-        LOG(llevInfo,"LOGIN: New player named %s from ip %s\n", op->name, op->contr->socket.host);
+        LOG(llevInfo, "LOGIN: New player named %s from ip %s\n", op->name, op->contr->socket.host);
         display_motd(op);
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_191), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_191), NULL);
         roll_again(op);
-        op->contr->state=ST_ROLL_STAT;
+        op->contr->state = ST_ROLL_STAT;
         return;
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_OLD) {
-        if (!check_password(op->contr->write_buf + 1, op->contr->password)) {
+        if (!check_password(op->contr->write_buf+1, op->contr->password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_192), NULL);
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_192), NULL);
             op->contr->state = ST_PLAYING;
         } else {
-            send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op),I18N_MSG_CMISC_193));
+            send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op), I18N_MSG_CMISC_193));
             op->contr->state = ST_CHANGE_PASSWORD_NEW;
         }
         return;
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_NEW) {
-        strcpy(op->contr->new_password, crypt_string(op->contr->write_buf + 1, NULL));
-        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op),I18N_MSG_CMISC_194));
+        strcpy(op->contr->new_password, crypt_string(op->contr->write_buf+1, NULL));
+        send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(op), I18N_MSG_CMISC_194));
         op->contr->state = ST_CHANGE_PASSWORD_CONFIRM;
         return;
     }
 
     if (op->contr->state == ST_CHANGE_PASSWORD_CONFIRM) {
-        if (strcmp(crypt_string(op->contr->write_buf + 1, op->contr->new_password), op->contr->new_password)) {
+        if (strcmp(crypt_string(op->contr->write_buf+1, op->contr->new_password), op->contr->new_password)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_195), NULL);
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_195), NULL);
         } else {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_196), NULL);
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_196), NULL);
             strncpy(op->contr->password, op->contr->new_password, 13);
         }
         op->contr->state = ST_PLAYING;
         return;
     }
 
-    strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
-    op->contr->state=ST_ROLL_STAT;
+    strcpy(op->contr->password, crypt_string(op->contr->write_buf+1, NULL));
+    op->contr->state = ST_ROLL_STAT;
     check_login(op);
     return;
 }
@@ -2212,39 +2252,39 @@ int command_title(object *op, char *params) {
 
     if (settings.set_title == FALSE) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_197), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_197), NULL);
         return 1;
     }
 
     /* dragon players cannot change titles */
     if (is_dragon_pl(op)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_198), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_198), NULL);
         return 1;
     }
 
     if (params == NULL) {
-        if (op->contr->own_title[0]=='\0')
-            snprintf(buf, sizeof(buf), i18n_translate(get_language(op),I18N_MSG_CMISC_199), op->contr->title);
+        if (op->contr->own_title[0] == '\0')
+            snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_199), op->contr->title);
         else
-            snprintf(buf, sizeof(buf), i18n_translate(get_language(op),I18N_MSG_CMISC_200), op->contr->own_title);
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,buf, NULL);
+            snprintf(buf, sizeof(buf), i18n_translate(get_language(op), I18N_MSG_CMISC_200), op->contr->own_title);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG, buf, NULL);
         return 1;
     }
-    if (strcmp(params, "clear")==0 || strcmp(params, "default")==0) {
-        if (op->contr->own_title[0]=='\0')
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_201), NULL);
+    if (strcmp(params, "clear") == 0 || strcmp(params, "default") == 0) {
+        if (op->contr->own_title[0] == '\0')
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_201), NULL);
         else
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_202), NULL);
-        op->contr->own_title[0]='\0';
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_202), NULL);
+        op->contr->own_title[0] = '\0';
         return 1;
     }
 
     if ((int)strlen(params) >= MAX_NAME) {
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_203), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_203), NULL);
         return 1;
     }
     strcpy(op->contr->own_title, params);
@@ -2262,19 +2302,19 @@ int command_title(object *op, char *params) {
  * 1.
  */
 int command_save(object *op, char *params) {
-    if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) {
+    if (get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_204), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_204), NULL);
     } else if (!op->stats.exp) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_205), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_205), NULL);
     } else {
-        if (save_player(op,1))
-            draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_206), NULL);
+        if (save_player(op, 1))
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_206), NULL);
         else
-            draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_207), NULL);
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_207), NULL);
     }
     return 1;
 }
@@ -2290,12 +2330,12 @@ int command_save(object *op, char *params) {
  * 1.
  */
 int command_peaceful(object *op, char *params) {
-    if ((op->contr->peaceful=!op->contr->peaceful))
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_208), NULL);
+    if ((op->contr->peaceful = !op->contr->peaceful))
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_208), NULL);
     else
-        draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_209), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_209), NULL);
     return 1;
 }
 
@@ -2312,16 +2352,17 @@ int command_peaceful(object *op, char *params) {
 int command_wimpy(object *op, char *params) {
     int i;
 
-    if (params==NULL || !sscanf(params, "%d", &i)) {
-        draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_210),
-                             i18n_translate(get_language(op),I18N_MSG_CMISC_210),
+    if (params == NULL || !sscanf(params, "%d", &i)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_210),
+                             i18n_translate(get_language(op), I18N_MSG_CMISC_210),
                              op->run_away);
         return 1;
     }
-    draw_ext_info_format(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_211),
-                         i18n_translate(get_language(op),I18N_MSG_CMISC_211),
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_CONFIG,
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_211),
+                         i18n_translate(get_language(op), I18N_MSG_CMISC_211),
                          i);
     op->run_away = i;
     return 1;
@@ -2339,16 +2380,16 @@ int command_wimpy(object *op, char *params) {
  */
 int command_brace(object *op, char *params) {
     if (!params)
-        op->contr->braced =!op->contr->braced;
+        op->contr->braced = !op->contr->braced;
     else
-        op->contr->braced =onoff_value(params);
+        op->contr->braced = onoff_value(params);
 
     if (op->contr->braced)
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_212), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_212), NULL);
     else
-        draw_ext_info(NDI_UNIQUE, 0,op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_213), NULL);
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_213), NULL);
 
     fix_object(op);
 
@@ -2367,18 +2408,19 @@ int command_brace(object *op, char *params) {
  */
 int command_kill_pets(object *op, char *params) {
     objectlink *obl, *next;
-    int counter=0, removecount=0;
+    int counter = 0, removecount = 0;
+
     if (params == NULL) {
         terminate_all_pets(op);
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                      i18n_translate(get_language(op),I18N_MSG_CMISC_214), NULL);
+                      i18n_translate(get_language(op), I18N_MSG_CMISC_214), NULL);
     } else {
         int target = atoi(params);
         for (obl = first_friendly_object; obl != NULL; obl = next) {
             object *ob = obl->ob;
             next = obl->next;
             if (get_owner(ob) == op)
-                if (++counter==target || (target==0 && !strcasecmp(ob->name, params)))  {
+                if (++counter == target || (target == 0 && !strcasecmp(ob->name, params)))  {
                     if (!QUERY_FLAG(ob, FLAG_REMOVED))
                         remove_ob(ob);
                     remove_friendly_object(ob);
@@ -2386,14 +2428,14 @@ int command_kill_pets(object *op, char *params) {
                     removecount++;
                 }
         }
-        if (removecount!=0)
+        if (removecount != 0)
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_215),
-                                 i18n_translate(get_language(op),I18N_MSG_CMISC_215),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_215),
+                                 i18n_translate(get_language(op), I18N_MSG_CMISC_215),
                                  removecount);
         else
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
-                          i18n_translate(get_language(op),I18N_MSG_CMISC_216),NULL);
+                          i18n_translate(get_language(op), I18N_MSG_CMISC_216), NULL);
     }
     return 0;
 }
@@ -2409,8 +2451,7 @@ int command_kill_pets(object *op, char *params) {
  * 1.
  */
 int command_passwd(object *pl, char *params) {
-    send_query(&pl->contr->socket,CS_QUERY_HIDEINPUT,
-               i18n_translate(get_language(pl),I18N_MSG_CMISC_217));
+    send_query(&pl->contr->socket, CS_QUERY_HIDEINPUT, i18n_translate(get_language(pl), I18N_MSG_CMISC_217));
 
     pl->contr->state = ST_CHANGE_PASSWORD_OLD;
     return 1;
@@ -2437,8 +2478,8 @@ int do_harvest(object *pl, int dir, object *skill) {
     sstring trace, ttool, tspeed, race, tool, slevel, sexp;
     float speed;
 
-    x = pl->x + freearr_x[dir];
-    y = pl->y + freearr_y[dir];
+    x = pl->x+freearr_x[dir];
+    y = pl->y+freearr_y[dir];
     map = pl->map;
 
     if (!pl->type == PLAYER)
@@ -2447,7 +2488,7 @@ int do_harvest(object *pl, int dir, object *skill) {
     if (!map)
         return 0;
 
-    if (get_map_flags(map, &map, x, y, &x, &y) & P_OUT_OF_MAP) {
+    if (get_map_flags(map, &map, x, y, &x, &y)&P_OUT_OF_MAP) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You can't %s anything here.", NULL, skill->slaying);
         return 0;
     }
@@ -2487,7 +2528,7 @@ int do_harvest(object *pl, int dir, object *skill) {
         return 0;
     }
 
-    inv = found[rndm(0, count - 1)];
+    inv = found[rndm(0, count-1)];
     assert(inv);
 
     slevel = get_ob_key_value(inv, "harvest_level");
@@ -2497,21 +2538,21 @@ int do_harvest(object *pl, int dir, object *skill) {
 
     speed = atof(tspeed);
     if (speed < 0)
-        speed = - speed * pl->speed;
+        speed = -speed*pl->speed;
     pl->speed_left -= speed;
 
 
     /* Now we found something to harvest, randomly try to get it. */
-    if (level > skill->level + 10) {
+    if (level > skill->level+10) {
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
         return 0;
     }
 
     if (level >= skill->level)
         /* Up to 10 more levels, 1 to 11 percent probability. */
-        proba = 10 + skill->level - level;
-    else if (skill->level <= level + 10)
-        proba = 10 + (skill->level - level) * 2;
+        proba = 10+skill->level-level;
+    else if (skill->level <= level+10)
+        proba = 10+(skill->level-level)*2;
     else
         proba = 30;
 
@@ -2532,8 +2573,8 @@ int do_harvest(object *pl, int dir, object *skill) {
             draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You fail to %s anything.", NULL, skill->slaying);
             return 0;
         }
-        item->x = pl->x + freearr_x[spot];
-        item->y = pl->y + freearr_y[spot];
+        item->x = pl->x+freearr_x[spot];
+        item->y = pl->y+freearr_y[spot];
         insert_ob_in_map(item, pl->map, NULL, 0);
         draw_ext_info_format(NDI_WHITE, 0, pl, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE, "You %s a %s!", NULL, skill->slaying, item->name);
     } else {

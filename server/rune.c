@@ -238,8 +238,7 @@ void spring_trap(object *trap, object *victim) {
         use_trigger(trap);
 
     /* Check if this trap casts a spell */
-    has_spell = ((trap->inv && trap->inv->type == SPELL) ||
-                 (trap->other_arch && trap->other_arch->clone.type == SPELL));
+    has_spell = ((trap->inv && trap->inv->type == SPELL) || (trap->other_arch && trap->other_arch->clone.type == SPELL));
 
     env = object_get_env_recursive(trap);
 

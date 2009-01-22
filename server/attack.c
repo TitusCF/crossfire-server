@@ -598,8 +598,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     }
 
     /* bail out if a monster is casting spells */
-    if (!(hitter->type == PLAYER ||
-          (get_owner(hitter) != NULL && hitter->owner->type == PLAYER)))
+    if (!(hitter->type == PLAYER || (get_owner(hitter) != NULL && hitter->owner->type == PLAYER)))
         return;
 
     /* scale down magic considerably. */
@@ -647,10 +646,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
                       buf, NULL);
     } else if (get_owner(hitter) != NULL && hitter->owner->type == PLAYER) {
         /* look for stacked spells and start reducing the message chances */
-        if (hitter->type == SPELL_EFFECT &&
-            (hitter->subtype == SP_EXPLOSION ||
-             hitter->subtype == SP_BULLET ||
-             hitter->subtype == SP_CONE)) {
+        if (hitter->type == SPELL_EFFECT
+        && (hitter->subtype == SP_EXPLOSION || hitter->subtype == SP_BULLET || hitter->subtype == SP_CONE)) {
             i = 4;
             map = hitter->map;
             if (out_of_map(map, hitter->x, hitter->y))
@@ -658,9 +655,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             next = GET_MAP_OB(map, hitter->x, hitter->y);
             if (next)
                 while (next) {
-                    if (next->type == SPELL_EFFECT &&
-                        (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET ||
-                         next->subtype == SP_CONE))
+                    if (next->type == SPELL_EFFECT
+                    && (next->subtype == SP_EXPLOSION || next->subtype == SP_BULLET || next->subtype == SP_CONE))
                         i *= 3;
                     tmp = next;
                     next = tmp->above;
@@ -1205,9 +1201,8 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
         return dam;
 
     if (hitter->slaying) {
-        if (((op->race != NULL) && strstr(hitter->slaying, op->race)) ||
-            (op->arch && (op->arch->name != NULL) &&
-             strstr(op->arch->name, hitter->slaying))) {
+        if (((op->race != NULL) && strstr(hitter->slaying, op->race))
+        || (op->arch && (op->arch->name != NULL) && strstr(op->arch->name, hitter->slaying))) {
             doesnt_slay = 0;
             dam *= 3;
         }
@@ -1229,8 +1224,9 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
      * it can still damage your items.  Only include attacktypes if
      * special processing is needed */
 
-    if ((op->resist[attacknum] >= 100) &&
-        doesnt_slay && (attacknum != ATNR_ACID))
+    if ((op->resist[attacknum] >= 100)
+    && doesnt_slay
+    && (attacknum != ATNR_ACID))
         return 0;
 
     /* Keep this in order - makes things easier to find */
@@ -1410,8 +1406,9 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
 
                 /* if undead are not an enemy of your god, you turn them
                         * at half strength */
-                if (!god || !god->slaying ||
-                    strstr(god->slaying, undead_name) == NULL)
+                if (!god
+                || !god->slaying
+                || strstr(god->slaying, undead_name) == NULL)
                     div = 2;
                 /* Give a bonus if you resist turn undead */
                 if (op->level*div < (turn_bonus[owner->stats.Wis]+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100)))
@@ -1957,10 +1954,9 @@ int hit_player(object *op, int dam, object *hitter, int type, int full_hit) {
     if (type&AT_HOLYWORD) {
         const object *god;
 
-        if ((!hitter->slaying || (!(op->race && strstr(hitter->slaying, op->race)) &&
-                    !(op->name && strstr(hitter->slaying, op->name)))) &&
-            (!QUERY_FLAG(op, FLAG_UNDEAD) ||
-                (hitter->title != NULL
+        if ((!hitter->slaying || (!(op->race && strstr(hitter->slaying, op->race))
+                    && !(op->name && strstr(hitter->slaying, op->name))))
+        && (!QUERY_FLAG(op, FLAG_UNDEAD) || (hitter->title != NULL
                     && (god = find_god(determine_god(hitter))) != NULL
                     && god->race != NULL
                     && strstr(god->race, undead_name) != NULL)))
