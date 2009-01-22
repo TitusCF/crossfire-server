@@ -1,6 +1,6 @@
 /*****************************************************************************/
 /* Newspaper plugin version 1.0 alpha.                                       */
-/* Contact:                                      */
+/* Contact:                                                                  */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
 /* (C)2007 by Weeger Nicolas (Feel free to deliver your complaints)          */
@@ -119,14 +119,14 @@ static int get_map_id(mapstruct *map) {
         path = "/random/";
 
     reg_id = get_region_id(map->region);
-    sql = sqlite3_mprintf("select map_id from map where map_path='%q' and map_reg_id = %d", map->path, reg_id);
+    sql = sqlite3_mprintf("select map_id from map where map_path='%q' and map_reg_id = %d", path, reg_id);
     sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
         id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", map->path, reg_id);
+        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", path, reg_id);
         do_sql(sql, logger_database);
         id = sqlite3_last_insert_rowid(logger_database);
     }
@@ -294,9 +294,9 @@ static void do_kills(char *buffer, int size, time_t start, time_t end, const cha
     int nrow, ncolumn;
     int err;
     char *msg;
-    const char *raw = "select sum(1) as deaths from kill_event inner join living on liv_id = ke_victim_id where liv_is_player = %d and ke_time >= %d and ke_time < %d";
+    const char *raw = "select sum(1) as deaths from kill_event inner join living on liv_id = ke_victim_id where liv_is_player = %d and ke_time >= %d and ke_time < %d %s";
 
-    sql = sqlite3_mprintf(raw, 1, start, end);
+    sql = sqlite3_mprintf(raw, 1, start, end, reg);
     err = sqlite3_get_table(logger_database, sql, &results, &nrow, &ncolumn, &msg);
     if (err != SQLITE_OK) {
         cf_log(llevError, " [%s] error: %d [%s] for sql = %s\n", PLUGIN_NAME, err, msg, sql);

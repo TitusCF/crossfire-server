@@ -1,6 +1,6 @@
 /*****************************************************************************/
-/* Newspaper plugin version 1.0 alpha.                                       */
-/* Contact:                                      */
+/* Logger plugin version 1.0 alpha.                                          */
+/* Contact:                                                                  */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
 /* (C)2007 by Weeger Nicolas (Feel free to deliver your complaints)          */
@@ -223,14 +223,14 @@ static int get_map_id(mapstruct *map) {
         path = "/random/";
 
     reg_id = get_region_id(map->region);
-    sql = sqlite3_mprintf("select map_id from map where map_path='%q' and map_reg_id = %d", map->path, reg_id);
+    sql = sqlite3_mprintf("select map_id from map where map_path='%q' and map_reg_id = %d", path, reg_id);
     sqlite3_get_table(database, sql, &line, &nrow, &ncolumn, NULL);
 
     if (nrow > 0)
         id = atoi(line[ncolumn]);
     else {
         sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", map->path, reg_id);
+        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", path, reg_id);
         do_sql(sql);
         id = sqlite3_last_insert_rowid(database);
     }
