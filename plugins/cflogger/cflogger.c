@@ -54,7 +54,7 @@
 #include <sqlite3.h>
 
 /** Current database format */
-#define CFLOGGER_CURRENT_FORMAT 2
+#define CFLOGGER_CURRENT_FORMAT 3
 
 /** Pointer to the logging database. */
 static sqlite3 *database;
@@ -123,6 +123,9 @@ static int do_sql(const char *sql) {
  * @param newschema
  * This is the new table format. Will be inserted into the parantheses of
  * "create table table_name()".
+ * @param select_columns
+ * This is inserted into "INSERT INTO table_name SELECT _ FROM ..." to allow
+ * changing order of columns, or skipping some. Normally it should be "*".
  *
  * @warning
  * This function should only be used in check_tables() below.
@@ -137,7 +140,8 @@ static int do_sql(const char *sql) {
  * SQLITE_OK if no error, non-zero if error. This SHOULD be rollback any
  * transaction this function is called in.
  */
-static int update_table_format(const char *table, const char *newschema) {
+static int update_table_format(const char *table, const char *newschema,
+                               const char *select_columns) {
     char *sql;
     int err;
 
@@ -153,7 +157,8 @@ static int update_table_format(const char *table, const char *newschema) {
     if (err != SQLITE_OK)
         return err;
 
-    sql = sqlite3_mprintf("INSERT INTO %s SELECT * FROM %s_old;", table, table);
+    sql = sqlite3_mprintf("INSERT INTO %s SELECT %s FROM %s_old;",
+                          table, select_columns, table);
     err = do_sql(sql);
     sqlite3_free(sql);
     if (err != SQLITE_OK)
@@ -181,8 +186,8 @@ static int update_table_format(const char *table, const char *newschema) {
         return; \
     }
 
-#define UPDATE_OR_ROLLBACK(tbl, newschema) \
-    if (update_table_format((tbl), (newschema)) != SQLITE_OK) { \
+#define UPDATE_OR_ROLLBACK(tbl, newschema, select_columns) \
+    if (update_table_format((tbl), (newschema), (select_columns)) != SQLITE_OK) { \
         do_sql("rollback transaction;"); \
         cf_log(llevError, " [%s] Logger database format update failed! Couldn't upgrade from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);\
         sqlite3_close(database); \
@@ -213,7 +218,12 @@ static void check_tables(void) {
     /* Check if we need to upgrade/create database. */
     if (format < 1) {
         cf_log(llevDebug, " [%s] Creating logger database schema (format 1).\n", PLUGIN_NAME);
-        do_sql("BEGIN TRANSACTION;");
+        if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            sqlite3_close(database);
+            database = NULL;
+            return;
+        }
         DO_OR_ROLLBACK("create table living(liv_id integer primary key autoincrement, liv_name text, liv_is_player integer, liv_level integer);");
         DO_OR_ROLLBACK("create table region(reg_id integer primary key autoincrement, reg_name text);");
         DO_OR_ROLLBACK("create table map(map_id integer primary key autoincrement, map_path text, map_reg_id integer);");
@@ -235,18 +245,25 @@ static void check_tables(void) {
      */
     if (format < 2) {
         cf_log(llevDebug, " [%s] Upgrading logger database schema (to format 2).\n", PLUGIN_NAME);
-        do_sql("BEGIN TRANSACTION;");
+        if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            sqlite3_close(database);
+            database = NULL;
+            return;
+        }
         /* Update schema for various tables. Why so complex? Because ALTER TABLE
          * can't add the "primary key" bit or other constraints...
          */
-        UPDATE_OR_ROLLBACK("living", "liv_id INTEGER PRIMARY KEY AUTOINCREMENT, liv_name TEXT NOT NULL, liv_is_player INTEGER NOT NULL, liv_level INTEGER NOT NULL");
-        UPDATE_OR_ROLLBACK("region", "reg_id INTEGER PRIMARY KEY AUTOINCREMENT, reg_name TEXT UNIQUE NOT NULL");
-        UPDATE_OR_ROLLBACK("map",    "map_id INTEGER PRIMARY KEY AUTOINCREMENT, map_path TEXT NOT NULL, map_reg_id INTEGER NOT NULL, CONSTRAINT map_path_reg_id UNIQUE(map_path, map_reg_id)");
+        UPDATE_OR_ROLLBACK("living", "liv_id INTEGER PRIMARY KEY AUTOINCREMENT, liv_name TEXT NOT NULL, liv_is_player INTEGER NOT NULL, liv_level INTEGER NOT NULL", "*");
+        UPDATE_OR_ROLLBACK("region", "reg_id INTEGER PRIMARY KEY AUTOINCREMENT, reg_name TEXT UNIQUE NOT NULL", "*");
+        UPDATE_OR_ROLLBACK("map",    "map_id INTEGER PRIMARY KEY AUTOINCREMENT, map_path TEXT NOT NULL, map_reg_id INTEGER NOT NULL, CONSTRAINT map_path_reg_id UNIQUE(map_path, map_reg_id)", "*");
+#if 0
+        /* Turned out this was incorrect. And version 1 -> 3 directly works for this. */
         UPDATE_OR_ROLLBACK("time",   "time_real INTEGER PRIMARY KEY, time_ingame TEXT UNIQUE NOT NULL");
-
-        UPDATE_OR_ROLLBACK("living_event", "le_liv_id INTEGER NOT NULL, le_time INTEGER NOT NULL, le_code INTEGER NOT NULL, le_map_id INTEGER NOT NULL");
-        UPDATE_OR_ROLLBACK("map_event",    "me_map_id INTEGER NOT NULL, me_time INTEGER NOT NULL, me_code INTEGER NOT NULL, me_living_id INTEGER NOT NULL");
-        UPDATE_OR_ROLLBACK("kill_event",   "ke_time INTEGER NOT NULL, ke_victim_id INTEGER NOT NULL, ke_victim_level INTEGER NOT NULL, ke_map_id INTEGER NOT NULL, ke_killer_id INTEGER NOT NULL, ke_killer_level INTEGER NOT NULL");
+#endif
+        UPDATE_OR_ROLLBACK("living_event", "le_liv_id INTEGER NOT NULL, le_time INTEGER NOT NULL, le_code INTEGER NOT NULL, le_map_id INTEGER NOT NULL", "*");
+        UPDATE_OR_ROLLBACK("map_event",    "me_map_id INTEGER NOT NULL, me_time INTEGER NOT NULL, me_code INTEGER NOT NULL, me_living_id INTEGER NOT NULL", "*");
+        UPDATE_OR_ROLLBACK("kill_event",   "ke_time INTEGER NOT NULL, ke_victim_id INTEGER NOT NULL, ke_victim_level INTEGER NOT NULL, ke_map_id INTEGER NOT NULL, ke_killer_id INTEGER NOT NULL, ke_killer_level INTEGER NOT NULL", "*");
 
         /* Handle changed parameters table format: */
         /* Due to backward compatiblity "primary key" in SQLite doesn't imply
@@ -269,7 +286,19 @@ static void check_tables(void) {
 
         /* Finally commit the transaction. */
         do_sql("COMMIT TRANSACTION;");
+    }
 
+    if (format < 3) {
+        cf_log(llevDebug, " [%s] Upgrading logger database schema (to format 3).\n", PLUGIN_NAME);
+        if (do_sql("BEGIN EXCLUSIVE TRANSACTION;") != SQLITE_OK) {
+            cf_log(llevError, " [%s] Logger database format update failed! Couldn't acquire exclusive lock to database when upgrading from format %d to fromat %d!. Won't log.\n", PLUGIN_NAME, format, CFLOGGER_CURRENT_FORMAT);
+            sqlite3_close(database);
+            database = NULL;
+            return;
+        }
+        UPDATE_OR_ROLLBACK("time",   "time_ingame TEXT NOT NULL PRIMARY KEY, time_real INTEGER NOT NULL", "time_ingame, time_real");
+        DO_OR_ROLLBACK("UPDATE parameters SET param_value = '3' WHERE param_name = 'version';");
+        do_sql("COMMIT TRANSACTION;");
         /* After all these changes better vacuum... The tables could have been
          * huge, and since we recreated several of them above there could be a
          * lot of wasted space.
@@ -401,9 +430,11 @@ static int store_time(void) {
     char *sql;
     int nrow, ncolumn;
     char date[50];
+    time_t now;
     timeofday_t tod;
 
     cf_get_time(&tod);
+    now = time(NULL);
 
     if (tod.day == last_stored_day)
         return 0;
@@ -418,7 +449,7 @@ static int store_time(void) {
     if (nrow > 0)
         return 0;
 
-    sql = sqlite3_mprintf("insert into time values( %d, '%s' )", time(NULL), date);
+    sql = sqlite3_mprintf("insert into time (time_ingame, time_real) values( '%s', %d )", date, now);
     do_sql(sql);
     sqlite3_free(sql);
     return 1;
