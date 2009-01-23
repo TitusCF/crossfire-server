@@ -516,8 +516,14 @@ static void add_death(object *victim, object *killer) {
 
     if (!victim || !killer)
         return;
-    if (victim->type != PLAYER && killer->type != PLAYER)
-        return;
+    if (victim->type != PLAYER && killer->type != PLAYER) {
+        /* Killer might be a bullet, which might be owned by the player. */
+        object *owner = cf_object_get_object_property(killer, CFAPI_OBJECT_PROP_OWNER);
+        if (owner != NULL && owner->type == PLAYER)
+            killer = owner;
+        else
+            return;
+    }
 
     vid = get_living_id(victim);
     kid = get_living_id(killer);
