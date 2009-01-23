@@ -48,35 +48,41 @@ typedef UINT_PTR uintptr_t;
 
 #include <hashtable.h>
 
-/*
+/**
  * Initialises the hash table for a pointer association table.
- * Parameters:
- *  - ptr_assoc** hash_table: Pointer to the hash table to initialise.
+ *
+ * @param hash_table
+ * Pointer to the hash table to initialise.
  */
 void init_ptr_assoc_table(ptr_assoc **hash_table) {
     (void)memset((void *)hash_table, 0, PTR_ASSOC_TABLESIZE*sizeof(ptr_assoc *));
 }
 
-/*
+/**
  * Hashing-function used by the pointer association library. Currently
  * just takes the pointer modulus the table size (which should be a prime
  * number).
- * Parameters:
- *  - void *ptr: The pointer to hash.
- * Returns:
- *  - int: The returned hash value.
+ *
+ * @param ptr
+ * The pointer to hash.
+ *
+ * @return
+ * The returned hash value.
  */
 static int hashptr(void *ptr) {
     return (int)((uintptr_t)ptr%PTR_ASSOC_TABLESIZE);
 }
 
-/*
+/**
  * Allocates and initialises a new ptr_assoc structure.
- * Parameters:
- *  - void *key: The key to lookup by in the association.
- *  - void *value: The value to store with the key.
- * Returns:
- *  - ptr_assoc*: The new ptr_assoc structure.
+ *
+ * @param key
+ * The key to lookup by in the association.
+ * @param value
+ * The value to store with the key.
+ *
+ * @return
+ * The new ptr_assoc structure.
  */
 static ptr_assoc *new_ptr_assoc(void *key, void *value) {
     ptr_assoc *assoc;
@@ -90,12 +96,15 @@ static ptr_assoc *new_ptr_assoc(void *key, void *value) {
     return assoc;
 }
 
-/*
+/**
  * Adds a value to a hash table which one can lookup with key.
- * Parameters:
- *  - ptr_assoc** hash_table: Pointer to the hash table to add to.
- *  - void *key: The key to lookup by in the association.
- *  - void *value: The value to store with the key.
+ *
+ * @param hash_table
+ * Pointer to the hash table to add to.
+ * @param key
+ * The key to lookup by in the association.
+ * @param value
+ * The value to store with the key.
  */
 void add_ptr_assoc(ptr_assoc **hash_table, void *key, void *value) {
     ptr_assoc *assoc;
@@ -145,13 +154,16 @@ void add_ptr_assoc(ptr_assoc **hash_table, void *key, void *value) {
     }
 }
 
-/*
+/**
  * Find the ptr_assoc with a given key.
- * Parameters:
- *  - ptr_assoc** hash_table: Pointer to the hash table to search.
- *  - void *key: The key to lookup by in the association.
- * Returns:
- *  - ptr_assoc*: The ptr_assoc that is found, or null if none is found
+ *
+ * @param hash_table
+ * Pointer to the hash table to search.
+ * @param key
+ * The key to lookup by in the association.
+ *
+ * @return
+ * The ptr_assoc that is found, or null if none is found.
  */
 static ptr_assoc *find_ptr_assoc(ptr_assoc **hash_table, void *key) {
     ptr_assoc *assoc;
@@ -179,13 +191,16 @@ static ptr_assoc *find_ptr_assoc(ptr_assoc **hash_table, void *key) {
     return NULL;
 }
 
-/*
+/**
  * Find the value associated with a given key.
- * Parameters:
- *  - ptr_assoc** hash_table: Pointer to the hash table to search.
- *  - void *key: The key to lookup by in the association.
- * Returns:
- *  - void*: The value associated with the key.
+ *
+ * @param hash_table
+ * Pointer to the hash table to search.
+ * @param key
+ * The key to lookup by in the association.
+ *
+ * @return
+ * The value associated with the key.
  */
 void *find_assoc_value(ptr_assoc **hash_table, void *key) {
     ptr_assoc *assoc;
@@ -196,11 +211,13 @@ void *find_assoc_value(ptr_assoc **hash_table, void *key) {
     return assoc->value;
 }
 
-/*
+/**
  * Remove the association with a given key.
- * Parameters:
- *  - ptr_assoc** hash_table: Pointer to the hash table to search.
- *  - void *key: The key to lookup by in the association.
+ *
+ * @param hash_table
+ * Pointer to the hash table to search.
+ * @param key
+ * The key to lookup by in the association.
  */
 void free_ptr_assoc(ptr_assoc **hash_table, void *key) {
     ptr_assoc *assoc;

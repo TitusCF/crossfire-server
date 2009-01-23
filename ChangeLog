@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/common/hashtable.c: Rewrite the code documentation to doxygen style.
+Arvid Norlander 2009-01-23
+
 plugins/cflogger/cflogger.c: Make non-direct kills (kill by spell, kill by
   poison, kill by golem and so on) register properly.
 Arvid Norlander 2009-01-23
