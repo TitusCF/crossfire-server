@@ -212,9 +212,9 @@ void update_button(object *op) {
                 head = ab->head ? ab->head : ab;
                 /* Same note regarding move_type for buttons above apply here. */
                 if (((head->move_type&tmp->move_on) || ab->move_type == 0)
-                && (head->race == tmp->slaying ||
-                    ((head->type == SPECIAL_KEY) && (head->slaying == tmp->slaying)) ||
-                    (!strcmp(tmp->slaying, "player") && head->type == PLAYER)))
+                && (head->race == tmp->slaying
+                    || ((head->type == SPECIAL_KEY) && (head->slaying == tmp->slaying))
+                    || (!strcmp(tmp->slaying, "player") && head->type == PLAYER)))
                     tmp->value = 1;
             }
             if (tmp->value)
@@ -462,7 +462,7 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
 int operate_altar(object *altar, object **sacrifice) {
     int number;
 
-    if (! altar->map) {
+    if (!altar->map) {
         LOG(llevError, "BUG: operate_altar(): altar has no map\n");
         return 0;
     }
@@ -470,7 +470,7 @@ int operate_altar(object *altar, object **sacrifice) {
     if (!altar->slaying || altar->value)
         return 0;
 
-    if (! check_altar_sacrifice(altar, *sacrifice, 1, &number))
+    if (!check_altar_sacrifice(altar, *sacrifice, 1, &number))
         return 0;
 
     /* check_altar_sacrifice fills in number for us. */

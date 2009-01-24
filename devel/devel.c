@@ -22,21 +22,21 @@
 */
 
 /*
-   Little program aimed at giving information to plugin about config of the crossfire server.
-   Simply invoke with the config parameter to get. Only the most common parameters (those
-   that could be needed by an independent configure script) are available. The rest is available
-   in config.h andd should be included in any plugin needing it.
-*/
+ * Little program aimed at giving information to plugin about config of the crossfire server.
+ * Simply invoke with the config parameter to get. Only the most common parameters (those
+ * that could be needed by an independent configure script) are available. The rest is available
+ * in config.h andd should be included in any plugin needing it.
+ */
 
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 
-typedef struct
-{
+typedef struct {
     const char *name;
     const char *value;
 } cf_parameter;
+
 const cf_parameter cf_parameter_list[] = {
     { "CONFDIR", CONFDIR },
     { "DATADIR", DATADIR },
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
       }
       /*Special case, handle plugin installation dir, which is most likeley why
         user wants to use crossfire-config in a configure script*/
-      if (!strcmp (argv[1], "PLUGININSTALLDIR")) {
+      if (!strcmp(argv[1], "PLUGININSTALLDIR")) {
           printf("%s/plugins/\n", LIBDIR);
           return 0;
       }
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
       }
       for (i = 0; i < cf_parameter_list_size; i++) {
         if (!strcmp(argv[1], cf_parameter_list[i].name)) {
-          printf ("%s\n", cf_parameter_list[i].value);
+          printf("%s\n", cf_parameter_list[i].value);
           return 0;
         }
       }

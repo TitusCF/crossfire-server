@@ -366,9 +366,9 @@ long strtol(register char *str, char **ptr, register int base) {
         }
     }
     /*
-    ** For any base > 10, the digits incrementally following
-    ** 9 are assumed to be "abc...z" or "ABC...Z"
-    */
+     * For any base > 10, the digits incrementally following
+     * 9 are assumed to be "abc...z" or "ABC...Z"
+     */
     if (!isalnum(c) || (xx = DIGIT(c)) >= base)
         return 0;           /* no number formed */
     if (base == 16 && c == '0' && isxdigit(str[2]) && (str[1] == 'x' || str[1] == 'X'))

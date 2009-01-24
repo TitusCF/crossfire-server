@@ -167,7 +167,7 @@ typedef struct socket_struct {
 #define CLIENT_SUPPORT_READABLES(__sockPtr, __type)\
         (((__type) > 0) && \
          ((__sockPtr)->has_readable_type) && \
-         ((__sockPtr)->supported_readables&(1<<(__type))) )
+         ((__sockPtr)->supported_readables&(1<<(__type))))
 
 /**
  * Bitmask for the faces_sent[] array - what

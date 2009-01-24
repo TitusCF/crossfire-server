@@ -239,8 +239,8 @@ void decay_objects(mapstruct *m) {
                         destroy = 1;
                     if ((op->material&M_STONE || op->material&M_ADAMANT) && rndm(1, 10) == 1)
                         destroy = 1;
-                    if ((op->material&M_SOFT_METAL || op->material&M_BONE) &&
-                            rndm(1, 3) == 1)
+                    if ((op->material&M_SOFT_METAL || op->material&M_BONE)
+                    && rndm(1, 3) == 1)
                         destroy = 1;
                     if (op->material&M_ICE && rndm(0, 100) > 70)
                         destroy = 1;

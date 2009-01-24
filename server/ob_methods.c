@@ -39,6 +39,7 @@
 #endif
 
 static ob_methods base_type;
+
 static ob_methods legacy_type;
 
 /**
@@ -51,10 +52,10 @@ void init_ob_methods(void) {
      * ob_methods struct should be removed.
      */
     init_ob_method_struct(&legacy_type, NULL);
-    legacy_type.apply    = legacy_ob_apply;
-    legacy_type.process  = legacy_ob_process;
+    legacy_type.apply = legacy_ob_apply;
+    legacy_type.process = legacy_ob_process;
     legacy_type.describe = legacy_ob_describe;
-    legacy_type.move_on  = NULL;
+    legacy_type.move_on = NULL;
 
     /* Init base_type, inheriting from legacy_type. The base_type is susposed to
      * be a base class of object that all other object types inherit methods

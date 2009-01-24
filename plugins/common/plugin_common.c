@@ -127,7 +127,7 @@ static f_plug_api cfapiObject_user_event = NULL;
     getHooks(&z, 1, y, &x); \
     if (z != CFAPI_FUNC) { \
         printf("unable to find hook %s!\n", y); \
-        return 0;				\
+        return 0;                               \
     } \
 }
 

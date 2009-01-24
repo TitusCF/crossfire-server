@@ -1633,7 +1633,7 @@ void remove_ob(object *op) {
         return;
 
     tag = op->count;
-    check_walk_off = ! QUERY_FLAG(op, FLAG_NO_APPLY);
+    check_walk_off = !QUERY_FLAG(op, FLAG_NO_APPLY);
     for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above) {
         /* No point updating the players look faces if he is the object
          * being removed.
