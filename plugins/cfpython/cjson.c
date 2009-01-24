@@ -1110,7 +1110,7 @@ static PyMethodDef cjson_methods[] = {
               "and unicode objects only where necessary, else it will return unicode\n"
               "objects everywhere (this is slower).") },
 
-    { NULL, NULL }  /* sentinel */
+    { NULL, NULL, 0, NULL }  /* sentinel */
 };
 
 PyDoc_STRVAR(module_doc, "Fast JSON encoder/decoder module.");

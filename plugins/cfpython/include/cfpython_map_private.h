@@ -82,18 +82,18 @@ static PyGetSetDef Map_getseters[] = {
 };
 
 static PyMethodDef MapMethods[] = {
-    { "Print",    (PyCFunction)Map_Message, METH_VARARGS },
-    { "ObjectAt", (PyCFunction)Map_GetFirstObjectAt, METH_VARARGS },
-    { "CreateObject", (PyCFunction)Map_CreateObject, METH_VARARGS },
-    { "Check",    (PyCFunction)Map_Check, METH_VARARGS },
-    { "Next",     (PyCFunction)Map_Next, METH_VARARGS },
-    { "Insert",   (PyCFunction)Map_Insert, METH_VARARGS },
-    { "ChangeLight", (PyCFunction)Map_ChangeLight, METH_VARARGS },
-    { "TriggerConnected", (PyCFunction)Map_TriggerConnected, METH_VARARGS },
-    { NULL, NULL, 0 }
+    { "Print",    (PyCFunction)Map_Message, METH_VARARGS, NULL },
+    { "ObjectAt", (PyCFunction)Map_GetFirstObjectAt, METH_VARARGS, NULL },
+    { "CreateObject", (PyCFunction)Map_CreateObject, METH_VARARGS, NULL },
+    { "Check",    (PyCFunction)Map_Check, METH_VARARGS, NULL },
+    { "Next",     (PyCFunction)Map_Next, METH_VARARGS, NULL },
+    { "Insert",   (PyCFunction)Map_Insert, METH_VARARGS, NULL },
+    { "ChangeLight", (PyCFunction)Map_ChangeLight, METH_VARARGS, NULL },
+    { "TriggerConnected", (PyCFunction)Map_TriggerConnected, METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
 };
 
-static PyNumberMethods MapConvert[ ] = {
+static PyNumberMethods MapConvert = {
     0,               /* binaryfunc nb_add; */        /* __add__ */
     0,               /* binaryfunc nb_subtract; */   /* __sub__ */
     0,               /* binaryfunc nb_multiply; */   /* __mul__ */
@@ -114,7 +114,9 @@ static PyNumberMethods MapConvert[ ] = {
     0,               /* coercion nb_coerce; */       /* __coerce__ */
     Crossfire_Map_Int, /* unaryfunc nb_int; */       /* __int__ */
     Crossfire_Map_Long, /* unaryfunc nb_long; */     /* __long__ */
-    0
+    0,               /* unaryfunc nb_float; */       /* __float__ */
+    0,               /* unaryfunc nb_oct; */         /* __oct__ */
+    0,               /* unaryfunc nb_hex; */         /* __hex__ */
 };
 
 /* Our actual Python MapType */
@@ -130,7 +132,7 @@ PyTypeObject Crossfire_MapType = {
     0,                         /* tp_setattr*/
     (cmpfunc)Map_InternalCompare, /* tp_compare*/
     0,                         /* tp_repr*/
-    MapConvert,                /* tp_as_number*/
+    &MapConvert,               /* tp_as_number*/
     0,                         /* tp_as_sequence*/
     0,                         /* tp_as_mapping*/
     0,                         /* tp_hash */
@@ -158,4 +160,12 @@ PyTypeObject Crossfire_MapType = {
     0,                         /* tp_init */
     0,                         /* tp_alloc */
     Crossfire_Map_new,         /* tp_new */
+    0,                         /* tp_free */
+    0,                         /* tp_is_gc */
+    0,                         /* tp_bases */
+    0,                         /* tp_mro */
+    0,                         /* tp_cache */
+    0,                         /* tp_subclasses */
+    0,                         /* tp_weaklist */
+    0,                         /* tp_del */
 };

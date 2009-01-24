@@ -16,8 +16,8 @@ static PyGetSetDef Archetype_getseters[] = {
 };
 
 static PyMethodDef ArchetypeMethods[] = {
-    { "NewObject",         (PyCFunction)Crossfire_Archetype_GetNewObject,       METH_VARARGS},
-    { NULL, NULL, 0 }
+    { "NewObject",         (PyCFunction)Crossfire_Archetype_GetNewObject,       METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
 };
 
 /* Our actual Python ArchetypeType */
@@ -53,4 +53,20 @@ PyTypeObject Crossfire_ArchetypeType = {
     ArchetypeMethods,          /* tp_methods */
     0,                         /* tp_members */
     Archetype_getseters,       /* tp_getset */
+    0,                         /* tp_base */
+    0,                         /* tp_dict */
+    0,                         /* tp_descr_get */
+    0,                         /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    0,                         /* tp_init */
+    0,                         /* tp_alloc */
+    0,                         /* tp_new */
+    0,                         /* tp_free */
+    0,                         /* tp_is_gc */
+    0,                         /* tp_bases */
+    0,                         /* tp_mro */
+    0,                         /* tp_cache */
+    0,                         /* tp_subclasses */
+    0,                         /* tp_weaklist */
+    0,                         /* tp_del */
 };

@@ -419,44 +419,44 @@ static PyGetSetDef Object_getseters[] = {
 };
 
 static PyMethodDef ObjectMethods[] = {
-    { "Remove",         (PyCFunction)Crossfire_Object_Remove,       METH_VARARGS },
-    { "Apply",          (PyCFunction)Crossfire_Object_Apply,        METH_VARARGS },
-    { "Drop",           (PyCFunction)Crossfire_Object_Drop,         METH_VARARGS },
-    { "Fix",            (PyCFunction)Crossfire_Object_Fix,          METH_VARARGS },
-    { "Say",            (PyCFunction)Crossfire_Object_Say,          METH_VARARGS },
-    { "Speak",          (PyCFunction)Crossfire_Object_Say,          METH_VARARGS },
-    { "Take",           (PyCFunction)Crossfire_Object_Take,         METH_VARARGS },
-    { "Teleport",       (PyCFunction)Crossfire_Object_Teleport,     METH_VARARGS },
-    { "Reposition",     (PyCFunction)Crossfire_Object_Reposition,   METH_VARARGS },
-    { "QueryName",      (PyCFunction)Crossfire_Object_QueryName,    METH_VARARGS },
-    { "GetResist",      (PyCFunction)Crossfire_Object_GetResist,    METH_VARARGS },
-    { "SetResist",      (PyCFunction)Crossfire_Object_SetResist,    METH_VARARGS },
-    { "ActivateRune",   (PyCFunction)Crossfire_Object_ActivateRune, METH_VARARGS },
-    { "CheckTrigger",   (PyCFunction)Crossfire_Object_CheckTrigger, METH_VARARGS },
-    { "QueryCost",      (PyCFunction)Crossfire_Object_QueryCost,    METH_VARARGS },
-    { "Cast",           (PyCFunction)Crossfire_Object_Cast,         METH_VARARGS },
-    { "LearnSpell",     (PyCFunction)Crossfire_Object_LearnSpell,   METH_VARARGS },
-    { "ForgetSpell",    (PyCFunction)Crossfire_Object_ForgetSpell,  METH_VARARGS },
-    { "KnowSpell",      (PyCFunction)Crossfire_Object_KnowSpell,    METH_VARARGS },
-    { "CastAbility",    (PyCFunction)Crossfire_Object_CastAbility,  METH_VARARGS },
-    { "PayAmount",      (PyCFunction)Crossfire_Object_PayAmount,    METH_VARARGS },
-    { "Pay",            (PyCFunction)Crossfire_Object_Pay,          METH_VARARGS },
-    { "CheckInventory", (PyCFunction)Crossfire_Object_CheckInventory, METH_VARARGS },
-    { "CheckArchInventory", (PyCFunction)Crossfire_Object_CheckArchInventory, METH_VARARGS },
-    { "OutOfMap",       (PyCFunction)Crossfire_Object_GetOutOfMap,  METH_VARARGS },
-    { "CreateObject",   (PyCFunction)Crossfire_Object_CreateInside, METH_VARARGS },
-    { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_VARARGS },
-    { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS },
-    { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS },
-    { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS },
-    { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS },
-    { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS },
-    { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_VARARGS },
-    { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS },
-    { NULL, NULL, 0 }
+    { "Remove",         (PyCFunction)Crossfire_Object_Remove,       METH_VARARGS, NULL },
+    { "Apply",          (PyCFunction)Crossfire_Object_Apply,        METH_VARARGS, NULL },
+    { "Drop",           (PyCFunction)Crossfire_Object_Drop,         METH_VARARGS, NULL },
+    { "Fix",            (PyCFunction)Crossfire_Object_Fix,          METH_VARARGS, NULL },
+    { "Say",            (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
+    { "Speak",          (PyCFunction)Crossfire_Object_Say,          METH_VARARGS, NULL },
+    { "Take",           (PyCFunction)Crossfire_Object_Take,         METH_VARARGS, NULL },
+    { "Teleport",       (PyCFunction)Crossfire_Object_Teleport,     METH_VARARGS, NULL },
+    { "Reposition",     (PyCFunction)Crossfire_Object_Reposition,   METH_VARARGS, NULL },
+    { "QueryName",      (PyCFunction)Crossfire_Object_QueryName,    METH_VARARGS, NULL },
+    { "GetResist",      (PyCFunction)Crossfire_Object_GetResist,    METH_VARARGS, NULL },
+    { "SetResist",      (PyCFunction)Crossfire_Object_SetResist,    METH_VARARGS, NULL },
+    { "ActivateRune",   (PyCFunction)Crossfire_Object_ActivateRune, METH_VARARGS, NULL },
+    { "CheckTrigger",   (PyCFunction)Crossfire_Object_CheckTrigger, METH_VARARGS, NULL },
+    { "QueryCost",      (PyCFunction)Crossfire_Object_QueryCost,    METH_VARARGS, NULL },
+    { "Cast",           (PyCFunction)Crossfire_Object_Cast,         METH_VARARGS, NULL },
+    { "LearnSpell",     (PyCFunction)Crossfire_Object_LearnSpell,   METH_VARARGS, NULL },
+    { "ForgetSpell",    (PyCFunction)Crossfire_Object_ForgetSpell,  METH_VARARGS, NULL },
+    { "KnowSpell",      (PyCFunction)Crossfire_Object_KnowSpell,    METH_VARARGS, NULL },
+    { "CastAbility",    (PyCFunction)Crossfire_Object_CastAbility,  METH_VARARGS, NULL },
+    { "PayAmount",      (PyCFunction)Crossfire_Object_PayAmount,    METH_VARARGS, NULL },
+    { "Pay",            (PyCFunction)Crossfire_Object_Pay,          METH_VARARGS, NULL },
+    { "CheckInventory", (PyCFunction)Crossfire_Object_CheckInventory, METH_VARARGS, NULL },
+    { "CheckArchInventory", (PyCFunction)Crossfire_Object_CheckArchInventory, METH_VARARGS, NULL },
+    { "OutOfMap",       (PyCFunction)Crossfire_Object_GetOutOfMap,  METH_VARARGS, NULL },
+    { "CreateObject",   (PyCFunction)Crossfire_Object_CreateInside, METH_VARARGS, NULL },
+    { "InsertInto",     (PyCFunction)Crossfire_Object_InsertInto,   METH_VARARGS, NULL },
+    { "ReadKey",        (PyCFunction)Crossfire_Object_ReadKey,      METH_VARARGS, NULL },
+    { "WriteKey",       (PyCFunction)Crossfire_Object_WriteKey,     METH_VARARGS, NULL },
+    { "CreateTimer",    (PyCFunction)Crossfire_Object_CreateTimer,  METH_VARARGS, NULL },
+    { "AddExp",         (PyCFunction)Crossfire_Object_AddExp,       METH_VARARGS, NULL },
+    { "Move",           (PyCFunction)Crossfire_Object_Move,         METH_VARARGS, NULL },
+    { "ChangeAbil",     (PyCFunction)Crossfire_Object_ChangeAbil,   METH_VARARGS, NULL },
+    { "Event",          (PyCFunction)Crossfire_Object_Event,        METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
 };
 
-static PyNumberMethods ObjectConvert[ ] = {
+static PyNumberMethods ObjectConvert = {
     0,               /* binaryfunc nb_add; */        /* __add__ */
     0,               /* binaryfunc nb_subtract; */   /* __sub__ */
     0,               /* binaryfunc nb_multiply; */   /* __mul__ */
@@ -477,7 +477,9 @@ static PyNumberMethods ObjectConvert[ ] = {
     0,               /* coercion nb_coerce; */       /* __coerce__ */
     Crossfire_Object_Int, /* unaryfunc nb_int; */    /* __int__ */
     Crossfire_Object_Long, /* unaryfunc nb_long; */  /* __long__ */
-    0
+    0,               /* unaryfunc nb_float; */       /* __float__ */
+    0,               /* unaryfunc nb_oct; */         /* __oct__ */
+    0,               /* unaryfunc nb_hex; */         /* __hex__ */
 };
 
 static void Crossfire_Object_dealloc(PyObject *obj);
@@ -497,7 +499,7 @@ PyTypeObject Crossfire_ObjectType = {
     0,                         /* tp_setattr*/
     (cmpfunc)Crossfire_Object_InternalCompare, /* tp_compare*/
     0,                         /* tp_repr*/
-    ObjectConvert,             /* tp_as_number*/
+    &ObjectConvert,            /* tp_as_number*/
     0,                         /* tp_as_sequence*/
     0,                         /* tp_as_mapping*/
     0,                         /* tp_hash */
@@ -525,6 +527,14 @@ PyTypeObject Crossfire_ObjectType = {
     0,                         /* tp_init */
     0,                         /* tp_alloc */
     Crossfire_Object_new,      /* tp_new */
+    0,                         /* tp_free */
+    0,                         /* tp_is_gc */
+    0,                         /* tp_bases */
+    0,                         /* tp_mro */
+    0,                         /* tp_cache */
+    0,                         /* tp_subclasses */
+    0,                         /* tp_weaklist */
+    0,                         /* tp_del */
 };
 
 static PyObject *Player_GetTitle(Crossfire_Object *whoptr, void *closure);
@@ -555,10 +565,10 @@ static PyGetSetDef Player_getseters[] = {
 };
 
 static PyMethodDef PlayerMethods[] = {
-    { "Message",        (PyCFunction)Crossfire_Player_Message, METH_VARARGS },
-    { "Write",          (PyCFunction)Crossfire_Player_Message, METH_VARARGS },
-    { "CanPay",         (PyCFunction)Crossfire_Player_CanPay, METH_VARARGS },
-    { NULL, NULL }
+    { "Message",        (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
+    { "Write",          (PyCFunction)Crossfire_Player_Message, METH_VARARGS, NULL },
+    { "CanPay",         (PyCFunction)Crossfire_Player_CanPay, METH_VARARGS, NULL },
+    { NULL, NULL, 0, NULL }
 };
 
 static void Crossfire_Player_dealloc(PyObject *obj);
@@ -606,4 +616,12 @@ PyTypeObject Crossfire_PlayerType = {
     0,                         /* tp_init */
     0,                         /* tp_alloc */
     Crossfire_Player_new,      /* tp_new */
+    0,                         /* tp_free */
+    0,                         /* tp_is_gc */
+    0,                         /* tp_bases */
+    0,                         /* tp_mro */
+    0,                         /* tp_cache */
+    0,                         /* tp_subclasses */
+    0,                         /* tp_weaklist */
+    0,                         /* tp_del */
 };
