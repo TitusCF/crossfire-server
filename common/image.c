@@ -222,6 +222,7 @@ void read_bmap_names(void) {
     }
     memset(xbm, 0, sizeof(struct bmappair)*nrofbmaps);
 
+    nroffiles = 0;
     while (nroffiles < nrofbmaps && fgets(buf, MAX_BUF, fp) != NULL) {
         if (*buf == '#')
             continue;

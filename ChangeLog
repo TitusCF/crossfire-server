@@ -14,6 +14,8 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/image.c: Fix crash if read_bmap_names() is called more than once.
+  Needed for debugging regression tests.
 test/unit/common/check_object.c: Fix failing regression test. (Access to
   non-existent face.)
 Andreas Kirschbaum 2009-01-24
