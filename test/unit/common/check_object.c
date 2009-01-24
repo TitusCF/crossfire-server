@@ -453,7 +453,7 @@ START_TEST(test_update_turn_face) {
     ob1->direction = 1;
     update_turn_face(ob1);
     face1 = ob1->face;
-    ob1->direction = 5;
+    ob1->direction = 0;
     update_turn_face(ob1);
     face2 = ob1->face;
     fail_unless(face2 != face1, "2 opposite direction should provide different faces after update_turn_face");
