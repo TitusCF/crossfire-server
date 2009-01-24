@@ -543,6 +543,8 @@ void draw_magic_map(object *pl) {
     int x, y;
     char map_mark[MAGIC_MAP_SIZE*MAGIC_MAP_SIZE];
     int xmin, xmax, ymin, ymax;
+    /* This is to prevent stack smashing below. */
+    int max_width;
     SockList sl;
 
     if (pl->type != PLAYER) {
@@ -563,9 +565,10 @@ void draw_magic_map(object *pl) {
     ymin = MAGIC_MAP_SIZE;
     xmax = 0;
     ymax = 0;
+    max_width = (MAP_WIDTH(pl->map) > MAGIC_MAP_SIZE) ? MAGIC_MAP_SIZE : MAP_WIDTH(pl->map);
     for (x = 0; x < MAGIC_MAP_SIZE; x++) {
         for (y = 0; y < MAGIC_MAP_SIZE; y++) {
-            if (map_mark[x+MAP_WIDTH(pl->map)*y]&~FACE_FLOOR) {
+            if (map_mark[x+max_width*y]&~FACE_FLOOR) {
                 xmin = MIN(x, xmin);
                 xmax = MAX(x, xmax);
                 ymin = MIN(y, ymin);
