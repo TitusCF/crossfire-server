@@ -4,27 +4,27 @@
  */
 
 /*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
+ * CrossFire, A Multiplayer game for X-windows
+ *
+ * Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+ * Copyright (C) 1992 Frank Tore Johansen
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * The authors can be reached via e-mail at crossfire-devel@real-time.com
+ */
 
 /*
  * This is the unit tests file for common/path.c
@@ -41,19 +41,20 @@ void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void)
-{
+void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-static void check_combine(const char * src, const char * dst, const char * exp) {
+static void check_combine(const char *src, const char *dst, const char *exp) {
     char res[HUGE_BUF];
+
     path_combine(src, dst, res, HUGE_BUF);
     fail_unless(strcmp(res, exp) == 0, "path_combine(%s, %s) = %s but should be %s", src, dst, res, exp);
 }
 
 static void check_normalize(const char *path, const char *exp) {
     char tmp[HUGE_BUF];
+
     /* This is needed as path_normalize modifies in place. */
     strncpy(tmp, path, sizeof(tmp));
     tmp[HUGE_BUF-1] = '\0';
@@ -63,14 +64,12 @@ static void check_normalize(const char *path, const char *exp) {
 
 static void check_combine_and_normalize(const char *src, const char *dst, const char *exp) {
     char res[HUGE_BUF];
+
     path_combine_and_normalize(src, dst, res, sizeof(res));
     fail_unless(strcmp(res, exp) == 0, "path_combine_and_normalize(%s, %s) = %s but should be %s", src, dst, res, exp);
 }
 
-
-
-START_TEST (test_path_combine)
-{
+START_TEST(test_path_combine) {
     check_combine("/path1/file1", "/path2/file2", "/path2/file2");
     check_combine("path1/file1", "/path2/file2", "/path2/file2");
     check_combine("/path1/file1", "path2/file2", "/path1/path2/file2");
@@ -82,8 +81,7 @@ START_TEST (test_path_combine)
 }
 END_TEST
 
-START_TEST (test_path_normalize)
-{
+START_TEST(test_path_normalize) {
     check_normalize("", "");
     check_normalize("/", "/");
     check_normalize("path1/file1", "path1/file1");
@@ -111,8 +109,7 @@ START_TEST (test_path_normalize)
 }
 END_TEST
 
-START_TEST (test_path_combine_and_normalize)
-{
+START_TEST(test_path_combine_and_normalize) {
     check_combine_and_normalize("/path1/file1", "/path2/file2", "/path2/file2");
     check_combine_and_normalize("path1/file1", "/path2/file2", "/path2/file2");
     check_combine_and_normalize("/path1/file1", "path2/file2", "/path1/path2/file2");
@@ -128,30 +125,30 @@ START_TEST (test_path_combine_and_normalize)
 }
 END_TEST
 
-Suite *path_suite(void)
-{
-  Suite *s = suite_create("path");
-  TCase *tc_core = tcase_create("Core");
+Suite *path_suite(void) {
+    Suite *s = suite_create("path");
+    TCase *tc_core = tcase_create("Core");
+
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown);
+    tcase_add_checked_fixture(tc_core, setup, teardown);
 
-  suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_path_combine);
-  tcase_add_test(tc_core, test_path_normalize);
-  tcase_add_test(tc_core, test_path_combine_and_normalize);
+    suite_add_tcase(s, tc_core);
+    tcase_add_test(tc_core, test_path_combine);
+    tcase_add_test(tc_core, test_path_normalize);
+    tcase_add_test(tc_core, test_path_combine_and_normalize);
 
-  return s;
+    return s;
 }
 
-int main(void)
-{
-  int nf;
-  Suite *s = path_suite();
-  SRunner *sr = srunner_create(s);
-  srunner_set_xml(sr,LOGDIR "/unit/common/path.xml");
-  srunner_set_log(sr,LOGDIR "/unit/common/path.out");
-  srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
-  nf = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+int main(void) {
+    int nf;
+    Suite *s = path_suite();
+    SRunner *sr = srunner_create(s);
+
+    srunner_set_xml(sr, LOGDIR "/unit/common/path.xml");
+    srunner_set_log(sr, LOGDIR "/unit/common/path.out");
+    srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
+    nf = srunner_ntests_failed(sr);
+    srunner_free(sr);
+    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

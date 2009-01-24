@@ -1,25 +1,25 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2007 Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
+ * CrossFire, A Multiplayer game for X-windows
+ *
+ * Copyright (C) 2007 Crossfire Development Team
+ * Copyright (C) 1992 Frank Tore Johansen
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * The authors can be reached via e-mail at crossfire-devel@real-time.com
+ */
 
 /**
  * @file
@@ -35,13 +35,11 @@
 #include <check.h>
 #include <global.h>
 
-
 void setup(void) {
     /* put any initialisation steps here, they will be run before each testcase */
 }
 
-void teardown(void)
-{
+void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
@@ -69,10 +67,11 @@ static mapstruct *get_random_map(mapstruct *map) {
 
     /* copied from server/server.c:enter_random_map(). */
     memset(&rp, 0, sizeof(RMParms));
-    rp.Xsize=-1;
-    rp.Ysize=-1;
-    rp.region=get_region_by_map(exit_ob->map);
-    if (exit_ob->msg) set_random_map_variable(&rp,exit_ob->msg);
+    rp.Xsize = -1;
+    rp.Ysize = -1;
+    rp.region = get_region_by_map(exit_ob->map);
+    if (exit_ob->msg)
+        set_random_map_variable(&rp, exit_ob->msg);
     rp.origin_x = exit_ob->x;
     rp.origin_y = exit_ob->y;
     strcpy(rp.origin_map, map->path);
@@ -83,23 +82,24 @@ static mapstruct *get_random_map(mapstruct *map) {
      * shorter names without bogus slashes.
      */
     if (rp.final_map[0]) {
-	cp = strrchr(rp.final_map, '/');
-	if (!cp) cp = rp.final_map;
+        cp = strrchr(rp.final_map, '/');
+        if (!cp)
+            cp = rp.final_map;
     } else {
-	char buf[HUGE_BUF];
+        char buf[HUGE_BUF];
 
-	cp = strrchr(rp.origin_map, '/');
-	if (!cp) cp = rp.origin_map;
-	/* Need to strip of any trailing digits, if it has them */
-	snprintf(buf, sizeof(buf), "%s", cp);
-	while (isdigit(buf[strlen(buf) - 1]))
-	    buf[strlen(buf) - 1] = 0;
-	cp = buf;
+        cp = strrchr(rp.origin_map, '/');
+        if (!cp)
+            cp = rp.origin_map;
+        /* Need to strip of any trailing digits, if it has them */
+        snprintf(buf, sizeof(buf), "%s", cp);
+        while (isdigit(buf[strlen(buf)-1]))
+            buf[strlen(buf)-1] = 0;
+        cp = buf;
     }
     snprintf(newmap_name, sizeof(newmap_name), "/random/%s%04d", cp+1, reference_number++);
     /* now to generate the actual map. */
-    return generate_random_map(newmap_name,&rp, NULL);
-
+    return generate_random_map(newmap_name, &rp, NULL);
 }
 
 static void do_run() {
@@ -184,6 +184,7 @@ extern int arch_init;
 
 /* Copied from loader.l */
 extern const char *const spell_mapping[];
+
 static void local_check_loaded_object(object *op) {
     int ip;
 
@@ -201,8 +202,9 @@ static void local_check_loaded_object(object *op) {
      * information (appear as just 'hearts' and not 'goblins heart')
      */
     if (op->arch && op->name != op->arch->clone.name && op->name_pl == op->arch->clone.name_pl) {
-        if (op->name_pl) free_string(op->name_pl);
-            op->name_pl = NULL;
+        if (op->name_pl)
+            free_string(op->name_pl);
+        op->name_pl = NULL;
     }
     if (!op->name_pl && op->name)
         op->name_pl = add_string(op->name);
@@ -219,12 +221,12 @@ static void local_check_loaded_object(object *op) {
      * really just to catch any errors - program will still run, but
      * not in the ideal fashion.
      */
-    if ((op->type == WEAPON || op->type==BOW) && arch_init) {
+    if ((op->type == WEAPON || op->type == BOW) && arch_init) {
         if (!op->skill) {
-            LOG(llevError,"Weapon %s lacks a skill.\n", op->name);
-        } else if ((!strcmp(op->skill,"one handed weapons") && op->body_info[1] != -1) ||
-            (!strcmp(op->skill,"two handed weapons") && op->body_info[1] != -2)) {
-            LOG(llevError,"weapon %s arm usage does not match skill: %d, %s\n",
+            LOG(llevError, "Weapon %s lacks a skill.\n", op->name);
+        } else if ((!strcmp(op->skill, "one handed weapons") && op->body_info[1] != -1)
+        || (!strcmp(op->skill, "two handed weapons") && op->body_info[1] != -2)) {
+            LOG(llevError, "weapon %s arm usage does not match skill: %d, %s\n",
             op->name, op->body_info[1], op->skill);
         }
     }
@@ -233,15 +235,19 @@ static void local_check_loaded_object(object *op) {
      * really does for many objects.  Need to catch any in maps
      * that may have an old value.
      */
-    if ((op->type == WEAPON) ||
-        (op->type == ARMOUR)   || (op->type == HELMET) ||
-        (op->type == SHIELD)   || (op->type == RING) ||
-        (op->type == BOOTS)    || (op->type == GLOVES) ||
-        (op->type == AMULET)  || (op->type == GIRDLE) ||
-        (op->type == BRACERS) || (op->type == CLOAK)) {
+    if ((op->type == WEAPON)
+    || (op->type == ARMOUR)
+    || (op->type == HELMET)
+    || (op->type == SHIELD)
+    || (op->type == RING)
+    || (op->type == BOOTS)
+    || (op->type == GLOVES)
+    || (op->type == AMULET)
+    || (op->type == GIRDLE)
+    || (op->type == BRACERS)
+    || (op->type == CLOAK)) {
         if (op->last_heal) {
-            LOG(llevDebug,"Object %s still has last_heal set, not gen_sp_armour\n",
-            op->name?op->name:"NULL");
+            LOG(llevDebug, "Object %s still has last_heal set, not gen_sp_armour\n", op->name ? op->name : "NULL");
             op->gen_sp_armour = op->last_heal;
             op->last_heal = 0;
         }
@@ -249,8 +255,7 @@ static void local_check_loaded_object(object *op) {
         /* Legacy objects from before item power was in the game */
         if (!op->item_power && ip) {
             if (ip > 3) {
-            LOG(llevDebug,"Object %s had no item power, using %d\n",
-                op->name?op->name:"NULL", ip);
+                LOG(llevDebug, "Object %s had no item power, using %d\n", op->name ? op->name : "NULL", ip);
             }
             op->item_power = ip;
         }
@@ -260,24 +265,22 @@ static void local_check_loaded_object(object *op) {
         * similarly, it item_power is 0, the first check will always pass,
         * but not the second one.
         */
-        if (ip > 2 *op->item_power && ip > (op->item_power + 3)) {
-            LOG(llevDebug,"Object %s seems to have too low item power? %d > %d\n",
-            op->name?op->name:"NULL", ip, op->item_power);
+        if (ip > 2*op->item_power && ip > (op->item_power+3)) {
+            LOG(llevDebug, "Object %s seems to have too low item power? %d > %d\n", op->name ? op->name : "NULL", ip, op->item_power);
         }
     }
     /* Old spellcasting object - need to load in the appropiate object */
-    if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN
-        || op->type == FIREWALL ||
-        /* POTIONS and ALTARS don't always cast spells, but if they do, update them */
-        ((op->type == POTION || op->type == ALTAR) && op->stats.sp)) && !op->inv && !arch_init)  {
+    if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN || op->type == FIREWALL || /* POTIONS and ALTARS don't always cast spells, but if they do, update them */ ((op->type == POTION || op->type == ALTAR) && op->stats.sp))
+    && !op->inv
+    && !arch_init)  {
         object *tmp;
 
     /* Fireall is bizarre in that spell type was stored in dam.  Rest are 'normal'
      * in that spell was stored in sp.
      */
-        tmp = create_archetype(spell_mapping[op->type == FIREWALL?op->stats.dam:op->stats.sp]);
+        tmp = create_archetype(spell_mapping[op->type == FIREWALL ? op->stats.dam : op->stats.sp]);
         insert_ob_in_ob(tmp, op);
-        op->randomitems = NULL;	/* So another spell isn't created for this object */
+        op->randomitems = NULL; /* So another spell isn't created for this object */
     }
 
     /* spellbooks & runes use slaying.  But not to arch name, but to spell name */
@@ -286,18 +289,16 @@ static void local_check_loaded_object(object *op) {
 
         tmp = create_archetype_by_object_name(op->slaying);
         insert_ob_in_ob(tmp, op);
-        op->randomitems = NULL;	/* So another spell isn't created for this object */
+        op->randomitems = NULL; /* So another spell isn't created for this object */
         /* without this, value is all screwed up */
-        op->value = op->arch->clone.value * op->inv->value;
+        op->value = op->arch->clone.value*op->inv->value;
     }
 
     if (QUERY_FLAG(op, FLAG_MONSTER)) {
         if (op->stats.hp > op->stats.maxhp)
-            LOG(llevDebug,"Monster %s has hp set higher than maxhp (%d>%d)\n",
-            op->name,
-            op->stats.hp, op->stats.maxhp);
+            LOG(llevDebug, "Monster %s has hp set higher than maxhp (%d>%d)\n", op->name, op->stats.hp, op->stats.maxhp);
         }
-    if ((QUERY_FLAG(op,FLAG_GENERATOR) && QUERY_FLAG(op,FLAG_CONTENT_ON_GEN))
+    if ((QUERY_FLAG(op, FLAG_GENERATOR) && QUERY_FLAG(op, FLAG_CONTENT_ON_GEN))
         || op->type == CREATOR
         || op->type == CONVERTER) {
         /* Object will duplicate it's content as part of the
@@ -305,7 +306,7 @@ static void local_check_loaded_object(object *op) {
          * so it remains unevaluated concerning the randomitems and
          * the living (a demonlord shouldn't cast from inside generator!)
          */
-        flag_inv(op,FLAG_IS_A_TEMPLATE);
+        flag_inv(op, FLAG_IS_A_TEMPLATE);
     }
 
     /* Here we'll handle custom monsters. In order to handle them correctly, especially in the fix_object
@@ -314,6 +315,7 @@ static void local_check_loaded_object(object *op) {
      */
     if (arch_init == 0 && artifact_init == 0 && QUERY_FLAG(op, FLAG_MONSTER) && op->arch && !can_merge(op, &op->arch->clone)) {
         archetype *temp = get_archetype_struct();
+
         temp->reference_count++;
         temp->name = add_string(op->arch->name);
         temp->tail_x = op->arch->tail_x;
@@ -324,7 +326,7 @@ static void local_check_loaded_object(object *op) {
         temp->clone.x = 0;
         temp->clone.y = 0;
         temp->clone.map = NULL;
-        if (FABS(temp->clone.speed)>MIN_ACTIVE_SPEED) {
+        if (FABS(temp->clone.speed) > MIN_ACTIVE_SPEED) {
             /* Clone has a speed, so need to clear that because it isn't on a map.
              * But we need to keep the value, because otherwise the customized object
              * will have no speed (fix_player() will use the 0 value).  So set it
@@ -342,8 +344,7 @@ static void local_check_loaded_object(object *op) {
     }
 }
 
-START_TEST (test_randommaps)
-{
+START_TEST(test_randommaps) {
 #if 0
     int test;
     mapstruct *overlay;
@@ -375,8 +376,9 @@ START_TEST (test_randommaps)
     fail_unless(horn2 != NULL, "couldn't find archetype horn2.");
 
     for (test = 0; test < 100000; test++) {
-        object *check = arch_to_object(RANDOM() % 2 ? horn : horn2);
-        generate_artifact(check, RANDOM() % 100);
+        object *check = arch_to_object(RANDOM()%2 ? horn : horn2);
+
+        generate_artifact(check, RANDOM()%100);
         fail_unless(check->inv != NULL, "horn without inventory!");
     }
 #endif
@@ -384,7 +386,7 @@ START_TEST (test_randommaps)
     int test, level, found = 0;
     object *the_chest, *check;
     mapstruct *map;
-    treasurelist *tlist=find_treasurelist("uncommon_items");
+    treasurelist *tlist = find_treasurelist("uncommon_items");
     fail_unless(tlist != NULL, "couldn't find treasure list uncommon_items");
 
     for (test = 0; test < 10; test++) {
@@ -395,7 +397,7 @@ START_TEST (test_randommaps)
 
             the_chest = create_archetype("chest");  /* was "chest_2" */
             fail_unless(the_chest != NULL, "failed to get chest");
-            the_chest->randomitems=tlist;
+            the_chest->randomitems = tlist;
             the_chest->stats.hp = RANDOM()%100;
             insert_ob_in_map_at(the_chest, map, NULL, 0, 0, 0);
             fix_auto_apply(map);
@@ -418,33 +420,32 @@ START_TEST (test_randommaps)
 }
 END_TEST
 
-Suite *bug_suite(void)
-{
-  Suite *s = suite_create("bug");
-  TCase *tc_core = tcase_create("Core");
+Suite *bug_suite(void) {
+    Suite *s = suite_create("bug");
+    TCase *tc_core = tcase_create("Core");
+
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown);
+    tcase_add_checked_fixture(tc_core, setup, teardown);
 
-  suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_randommaps);
-  tcase_set_timeout(tc_core, 0);
+    suite_add_tcase(s, tc_core);
+    tcase_add_test(tc_core, test_randommaps);
+    tcase_set_timeout(tc_core, 0);
 
-  return s;
+    return s;
 }
 
-int main(void)
-{
-  int nf;
-  Suite *s = bug_suite();
-  SRunner *sr = srunner_create(s);
+int main(void) {
+    int nf;
+    Suite *s = bug_suite();
+    SRunner *sr = srunner_create(s);
 
-  srunner_set_fork_status (sr, CK_NOFORK);
-  init(0, NULL);
+    srunner_set_fork_status(sr, CK_NOFORK);
+    init(0, NULL);
 
-  srunner_set_xml(sr,LOGDIR "/bugs/bugtrack/1727944.xml");
-  srunner_set_log(sr,LOGDIR "/bugs/bugtrack/1727944.out");
-  srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
-  nf = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    srunner_set_xml(sr, LOGDIR "/bugs/bugtrack/1727944.xml");
+    srunner_set_log(sr, LOGDIR "/bugs/bugtrack/1727944.out");
+    srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
+    nf = srunner_ntests_failed(sr);
+    srunner_free(sr);
+    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

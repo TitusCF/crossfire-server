@@ -4,27 +4,27 @@
  */
 
 /*
-    CrossFire, A Multiplayer game for X-windows
-
-    Copyright (C) 2002 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
-*/
+ * CrossFire, A Multiplayer game for X-windows
+ *
+ * Copyright (C) 2002 Mark Wedel & Crossfire Development Team
+ * Copyright (C) 1992 Frank Tore Johansen
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * The authors can be reached via e-mail at crossfire-devel@real-time.com
+ */
 
 /*
  * This is the unit tests file for server/attack.c
@@ -40,13 +40,11 @@
 void setup(void) {
 }
 
-void teardown(void)
-{
+void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-START_TEST (test_hit_player)
-{
+START_TEST(test_hit_player) {
     object *victim = NULL;
     object *hitter = NULL;
     object *floor = NULL;
@@ -75,7 +73,7 @@ START_TEST (test_hit_player)
     insert_ob_in_map_at(victim, map, NULL, 0, 0, 0);
     hitter = create_archetype("sword");
     fail_unless(hitter != NULL, "couldn't create sword");
-    hitter->attacktype = AT_DEPLETE | AT_FIRE;
+    hitter->attacktype = AT_DEPLETE|AT_FIRE;
     hitter->stats.dam = 100;
     hitter->map = map;
     insert_ob_in_map_at(hitter, map, NULL, 0, 1, 0);
@@ -99,35 +97,34 @@ START_TEST (test_hit_player)
 }
 END_TEST
 
-Suite *attack_suite(void)
-{
-  Suite *s = suite_create("attack");
-  TCase *tc_core = tcase_create("Core");
+Suite *attack_suite(void) {
+    Suite *s = suite_create("attack");
+    TCase *tc_core = tcase_create("Core");
+
     /*setup and teardown will be called before each test in testcase 'tc_core' */
-  tcase_add_checked_fixture(tc_core,setup,teardown);
+    tcase_add_checked_fixture(tc_core, setup, teardown);
 
-  suite_add_tcase (s, tc_core);
-  tcase_add_test(tc_core, test_hit_player);
+    suite_add_tcase(s, tc_core);
+    tcase_add_test(tc_core, test_hit_player);
 
-  return s;
+    return s;
 }
 
-int main(void)
-{
-  int nf;
-  Suite *s = attack_suite();
-  SRunner *sr = srunner_create(s);
+int main(void) {
+    int nf;
+    Suite *s = attack_suite();
+    SRunner *sr = srunner_create(s);
 
-  /* If you wish to debug the program, uncomment this line. */
-  /*srunner_set_fork_status (sr, CK_NOFORK); */
+    /* If you wish to debug the program, uncomment this line. */
+    /*srunner_set_fork_status (sr, CK_NOFORK); */
 
-  settings.debug = 0;
-  init(0, NULL);
+    settings.debug = 0;
+    init(0, NULL);
 
-  srunner_set_xml(sr,LOGDIR "/unit/server/attack.xml");
-  srunner_set_log(sr,LOGDIR "/unit/server/attack.out");
-  srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
-  nf = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+    srunner_set_xml(sr, LOGDIR "/unit/server/attack.xml");
+    srunner_set_log(sr, LOGDIR "/unit/server/attack.out");
+    srunner_run_all(sr, CK_ENV); /*verbosity from env variable*/
+    nf = srunner_ntests_failed(sr);
+    srunner_free(sr);
+    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
