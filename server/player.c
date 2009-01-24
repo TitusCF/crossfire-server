@@ -2420,7 +2420,7 @@ void move_player_attack(object *op, int dir) {
     if (op->contr->transport)
         tpl = op->contr->transport;
     else
-	tpl = op;
+        tpl = op;
     nx = freearr_x[dir]+tpl->x;
     ny = freearr_y[dir]+tpl->y;
 
