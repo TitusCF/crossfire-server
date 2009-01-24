@@ -46,7 +46,6 @@ void teardown(void) {
     /* put any cleanup steps here, they will be run after each testcase */
 }
 
-
 START_TEST(test_find_archetype_by_object_name) {
     archetype *arch;
 
