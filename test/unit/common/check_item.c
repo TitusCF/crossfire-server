@@ -146,9 +146,9 @@ START_TEST(test_describe_item) {
     };
     static const char *treasure_results[] = {
         "",
-        "(wc+1)(dam+2)(item_power +2)(Attacks: physical)",
+        "(wc+1)(dam+2)(Attacks: physical)",
         "",
-        "(dam+6)(item_power +3)(weapon speed 7)(Attacks: physical)",
+        "(dam+6)(weapon speed 9)(Attacks: physical)",
         "(food+200)",
         "(Con+2)(Cha-1)(dam+10)(item_power +15)(weapon speed 5)(regeneration+1)(Attacks: weaponmagic)(resist drain +100)(resist poison +30)",
         "",

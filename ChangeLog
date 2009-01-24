@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+test/unit/common/check_item.c: Fix failing regression test.
+Andreas Kirschbaum 2009-01-24
+
 plugins/common/hashtable.c: Rewrite the code documentation to doxygen style.
 Arvid Norlander 2009-01-23
 
