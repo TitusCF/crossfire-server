@@ -2152,12 +2152,12 @@ void write_book_archive(void) {
             }
     }
     if (ferror(fp)) {
-        LOG(llevError, "Error during book archive save.");
+        LOG(llevError, "Error during book archive save.\n");
         fclose(fp);
         return;
     }
     if (fclose(fp) != 0) {
-        LOG(llevError, "Error during book archive save.");
+        LOG(llevError, "Error during book archive save.\n");
         return;
     }
     chmod(fname, SAVE_MODE);

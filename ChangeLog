@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c, common/dialog.c, common/loader.l, common/treasure.c,
+  common/image.c, socket/item.c: Add missing ending \n to LOG() calls.
+Arvid Norlander 2009-01-24
+
 socket/info.c: Fix stack smashing in magic_mapping_mark() on maps wider than 50
   tiles.
 Arvid Norlander 2009-01-24

@@ -564,7 +564,7 @@ void examine_cmd(char *buf, int len, player *pl) {
     object *op;
 
     if (len <= 0 || !buf) {
-        LOG(llevDebug, "Player '%s' sent bogus examine_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus examine_cmd information\n", pl->ob->name);
         return;
     }
 
@@ -583,7 +583,7 @@ void apply_cmd(char *buf, int len, player *pl) {
     object *op;
 
     if (!buf || len <= 0) {
-        LOG(llevDebug, "Player '%s' sent bogus apply_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus apply_cmd information\n", pl->ob->name);
         return;
     }
 
@@ -618,7 +618,7 @@ void lock_item_cmd(uint8 *data, int len, player *pl) {
     object *tmp;
 
     if (len != 5) {
-        LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus lock_item_cmd information\n", pl->ob->name);
         return;
     }
     flag = data[0];
@@ -658,7 +658,7 @@ void mark_item_cmd(uint8 *data, int len, player *pl) {
     char name[MAX_BUF];
 
     if (len != 4) {
-        LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information", pl->ob->name);
+        LOG(llevDebug, "Player '%s' sent bogus mark_item_cmd information\n", pl->ob->name);
         return;
     }
 

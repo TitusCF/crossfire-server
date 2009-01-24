@@ -1974,7 +1974,7 @@ void fix_flesh_item(object *item, object *donor) {
                 if (original)
                     item->other_arch = original;
                 else {
-                    LOG(llevError, "could not find original archetype %s for custom monster!", donor->arch->name);
+                    LOG(llevError, "could not find original archetype %s for custom monster!\n", donor->arch->name);
                     abort();
                 }
             }

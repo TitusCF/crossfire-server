@@ -217,7 +217,7 @@ void read_bmap_names(void) {
 
     xbm = (struct bmappair *)malloc(sizeof(struct bmappair)*nrofbmaps);
     if (xbm == NULL) {
-        LOG(llevError, "read_bmap_names: xbm memory allocation failure.");
+        LOG(llevError, "read_bmap_names: xbm memory allocation failure.\n");
         abort();
     }
     memset(xbm, 0, sizeof(struct bmappair)*nrofbmaps);
@@ -265,7 +265,7 @@ void read_bmap_names(void) {
 
     new_faces = (New_Face *)malloc(sizeof(New_Face)*nrofpixmaps);
     if (new_faces == NULL) {
-        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.");
+        LOG(llevError, "read_bmap_names: new_faces memory allocation failure.\n");
         abort();
     }
 

@@ -1793,7 +1793,7 @@ int save_object(FILE *fp, object *op, int flag) {
          */
         archetype *original = find_archetype(op->arch->name);
         if (!original) {
-            LOG(llevError, "could not find original archetype %s for custom monster!", op->arch->name);
+            LOG(llevError, "could not find original archetype %s for custom monster!\n", op->arch->name);
             abort();
         }
         get_ob_diff(sb, &op->arch->clone, &original->clone);

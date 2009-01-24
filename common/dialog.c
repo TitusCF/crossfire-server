@@ -160,7 +160,7 @@ void parse_dialog_information(object *op) {
                 } else {
                     reply->reply = strdup(current+len);
                     reply->message = strdup(reply->reply);
-                    LOG(llevDebug, "Warning: @reply/@question without message for %s!", op->name);
+                    LOG(llevDebug, "Warning: @reply/@question without message for %s!\n", op->name);
                 }
                 reply->next = message->replies;
                 message->replies = reply;
@@ -172,7 +172,7 @@ void parse_dialog_information(object *op) {
                 reply->next = op->dialog_information->all_replies;
                 op->dialog_information->all_replies = reply;
             } else
-                LOG(llevDebug, "Warning: @reply not in @match block for %s!", op->name);
+                LOG(llevDebug, "Warning: @reply not in @match block for %s!\n", op->name);
         } else if (message) {
             /* Needed to set initial \0 */
             int wasnull = FALSE;
