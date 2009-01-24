@@ -55,6 +55,7 @@ START_TEST(test_party) {
     pl->contr = calloc(1, sizeof(player));
     fail_unless(pl->contr != NULL, "memory allocation failure");
     first_player = pl->contr; /* needed because obsolete parties uses this. */
+    pl->contr->ob = pl;
 
     p1 = form_party(pl, "test1");
     fail_unless(p1 != NULL, "form_party failed.");
