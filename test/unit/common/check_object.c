@@ -557,7 +557,14 @@ START_TEST(test_count_free) {
     free1 = count_free();
     ob1 = cctk_create_game_object(NULL);
     free2 = count_free();
+    /* Behaviour under MEMORY_DEBUG is to allocate each object separately so
+     * both will be 0. Allow test suite to pass with this option.
+     */
+#ifdef MEMORY_DEBUG
+    fail_unless(((free2 == 0) && (free1 == 0)), "after creating an object, the count_free() should return 0 (compiled with MEMORY_DEBUG)", free1-1, free2);
+#else
     fail_unless((free2 == free1-1), "after creating an object, the count_free() should return one less (%d) but returned %d", free1-1, free2);
+#endif
 }
 END_TEST
 

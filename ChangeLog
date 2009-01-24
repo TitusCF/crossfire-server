@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+test/unit/common/check_object.c: Make the test_count_free test work in a build
+  with MEMORY_DEBUG turned on as well.
+Arvid Norlander 2009-01-24
+
 common/image.c: Fix crash if read_bmap_names() is called more than once.
   Needed for debugging regression tests.
 test/unit/common/check_object.c: Fix failing regression test. (Access to
