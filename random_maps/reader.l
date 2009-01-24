@@ -27,13 +27,10 @@
     The author can be reached via e-mail to mark@pyramid.com
 */
 
-
-
 #include <global.h>
 #include <loader.h>
 #include <newserver.h>
 #include <random_map.h>
-
 
 #define YY_DECL int rmap_lex_read(RMParms *RP)
 
@@ -41,16 +38,13 @@ static char *rmap_yval(void);
 
 static int rmap_lex_error;
 
-
-#define IVAL	atoi(rmap_yval())
-#define FVAL	atof(rmap_yval())
+#define IVAL atoi(rmap_yval())
+#define FVAL atof(rmap_yval())
 
 %}
 
-
-
-S	[ \t]+.+
-WS	[ \t]*
+S       [ \t]+.+
+WS      [ \t]*
 
 %x MESSAGE
 
@@ -65,55 +59,51 @@ WS	[ \t]*
 %{
 /* Declare some local variables */
 
-    rmap_lex_error=0;
+    rmap_lex_error = 0;
 
 %}
 
-
-
-
-^wallstyle{S}	    strncpy(RP->wallstyle,rmap_yval(),RM_SIZE);
-^floorstyle{S}	    strncpy(RP->floorstyle,rmap_yval(),RM_SIZE);
-^monsterstyle{S}    strncpy(RP->monsterstyle,rmap_yval(),RM_SIZE);
-^treasurestyle{S}   strncpy(RP->treasurestyle,rmap_yval(),RM_SIZE);
-^layoutstyle{S}	    strncpy(RP->layoutstyle,rmap_yval(),RM_SIZE);
-^doorstyle{S}	    strncpy(RP->doorstyle,rmap_yval(),RM_SIZE);
-^decorstyle{S}	    strncpy(RP->decorstyle,rmap_yval(),RM_SIZE);
-^xsize{S}	    RP->Xsize = IVAL;
-^ysize{S}	    RP->Ysize = IVAL;
-^expand2x{S}        RP->expand2x = IVAL;
-^layoutoptions1{S}  RP->layoutoptions1 = IVAL;
-^layoutoptions2{S}  RP->layoutoptions2 = IVAL;
-^layoutoptions3{S}  RP->layoutoptions3 = IVAL;
-^symmetry{S}        RP->symmetry = IVAL;
-^difficulty{S}        RP->difficulty = IVAL;
-^difficulty_increase{S}        RP->difficulty_increase = FVAL;
-^decoroptions{S}      RP->decoroptions = IVAL;
-^exitstyle{S}       strncpy(RP->exitstyle,rmap_yval(),RM_SIZE);
-^dungeon_level{S}   RP->dungeon_level = IVAL;
-^dungeon_name{S}	strncpy(RP->dungeon_name, rmap_yval(),RM_SIZE);
-^dungeon_depth{S}   RP->dungeon_depth = IVAL;
-^final_map{S}       strncpy(RP->final_map,rmap_yval(),RM_SIZE);
+^wallstyle{S}            strncpy(RP->wallstyle, rmap_yval(), RM_SIZE);
+^floorstyle{S}           strncpy(RP->floorstyle, rmap_yval(), RM_SIZE);
+^monsterstyle{S}         strncpy(RP->monsterstyle, rmap_yval(), RM_SIZE);
+^treasurestyle{S}        strncpy(RP->treasurestyle, rmap_yval(), RM_SIZE);
+^layoutstyle{S}          strncpy(RP->layoutstyle, rmap_yval(), RM_SIZE);
+^doorstyle{S}            strncpy(RP->doorstyle, rmap_yval(), RM_SIZE);
+^decorstyle{S}           strncpy(RP->decorstyle, rmap_yval(), RM_SIZE);
+^xsize{S}                RP->Xsize = IVAL;
+^ysize{S}                RP->Ysize = IVAL;
+^expand2x{S}             RP->expand2x = IVAL;
+^layoutoptions1{S}       RP->layoutoptions1 = IVAL;
+^layoutoptions2{S}       RP->layoutoptions2 = IVAL;
+^layoutoptions3{S}       RP->layoutoptions3 = IVAL;
+^symmetry{S}             RP->symmetry = IVAL;
+^difficulty{S}           RP->difficulty = IVAL;
+^difficulty_increase{S}  RP->difficulty_increase = FVAL;
+^decoroptions{S}         RP->decoroptions = IVAL;
+^exitstyle{S}            strncpy(RP->exitstyle, rmap_yval(), RM_SIZE);
+^dungeon_level{S}        RP->dungeon_level = IVAL;
+^dungeon_name{S}         strncpy(RP->dungeon_name, rmap_yval(), RM_SIZE);
+^dungeon_depth{S}        RP->dungeon_depth = IVAL;
+^final_map{S}            strncpy(RP->final_map, rmap_yval(), RM_SIZE);
 ^final_exit_archetype{S} strncpy(RP->final_exit_archetype, rmap_yval(), RM_SIZE);
-^orientation{S}    RP-> orientation = IVAL;
-^origin_x{S}        RP->origin_x = IVAL;
-^origin_y{S}       RP-> origin_y = IVAL;
-^origin_map{S}       strncpy(RP->origin_map,rmap_yval(),RM_SIZE);
-^random_seed{S}        RP->random_seed = IVAL;
-^treasureoptions{S}    RP->treasureoptions = IVAL;
-^exit_on_final_map{S} strncpy(RP->exit_on_final_map,rmap_yval(),RM_SIZE);
-^multiple_floors{S} RP->multiple_floors = IVAL;
+^orientation{S}          RP-> orientation = IVAL;
+^origin_x{S}             RP->origin_x = IVAL;
+^origin_y{S}             RP-> origin_y = IVAL;
+^origin_map{S}           strncpy(RP->origin_map, rmap_yval(), RM_SIZE);
+^random_seed{S}          RP->random_seed = IVAL;
+^treasureoptions{S}      RP->treasureoptions = IVAL;
+^exit_on_final_map{S}    strncpy(RP->exit_on_final_map, rmap_yval(), RM_SIZE);
+^multiple_floors{S}      RP->multiple_floors = IVAL;
 
-<*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
-#.*\n			{}
+<*>(^{WS}$)|\n           {/* ignore empty lines, newlines we don't do above */}
+#.*\n                    { }
 
-<<EOF>>			{/* If we got an error, return the error.  Otherwise, return that we got EOF */
-			    if (rmap_lex_error!=0) return rmap_lex_error; else return LL_EOF;}
-.*			{ yyerror( "Unrecognized string"); rmap_lex_error= -1; }
+<<EOF>>                  {/* If we got an error, return the error.  Otherwise, return that we got EOF */
+                             if (rmap_lex_error != 0) return rmap_lex_error; else return LL_EOF;}
+.*                       { yyerror( "Unrecognized string"); rmap_lex_error= -1; }
 %%
 
-/*int yyerror(char *s)
-{
+/*int yyerror(char *s) {
   return -1;
 }
 */
@@ -123,41 +113,41 @@ WS	[ \t]*
  * This skips over the space and returns the value, or "" if no value
  * is found.
  */
-static char *rmap_yval(void)
-{
-    static char *em="";
+static char *rmap_yval(void) {
+    static char *em = "";
     char *cp;
 
-    cp=strchr(yytext,' ');
-    if (cp) return cp+1;
-    else return em;
+    cp = strchr(yytext, ' ');
+    if (cp)
+        return cp+1;
+    else
+        return em;
 }
 
-
-
-
-int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
+int load_parameters(FILE *fp, int bufstate, RMParms *RP) {
     int retval;
     char inbuf[MAX_BUF];
 
-    if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD) {
+    if (bufstate == LO_NEWFILE || bufstate == LO_NOREAD) {
         yy_delete_buffer(YY_CURRENT_BUFFER);
         yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
-        if (bufstate==LO_NOREAD) return LL_NORMAL;
+        if (bufstate == LO_NOREAD)
+            return LL_NORMAL;
     }
-    if (bufstate==LO_LINEMODE) {
-        YY_BUFFER_STATE  yybufstate;
+    if (bufstate == LO_LINEMODE) {
+        YY_BUFFER_STATE yybufstate;
         while (fgets(inbuf, MAX_BUF-3, fp)) {
-            yybufstate=yy_scan_string(inbuf);
-            retval=rmap_lex_read(RP);
+            yybufstate = yy_scan_string(inbuf);
+            retval = rmap_lex_read(RP);
             yy_delete_buffer(yybufstate);
-            if (retval==LL_NORMAL) return retval;
+            if (retval == LL_NORMAL)
+                return retval;
         }
         return LL_EOF;
     }
 
-    retval=rmap_lex_read(RP);
-/*    LOG(llevDebug," load completed, object=%s\n",op->name);*/
+    retval = rmap_lex_read(RP);
+/*    LOG(llevDebug, " load completed, object=%s\n", op->name);*/
     return retval;
 }
 
@@ -168,12 +158,12 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP) {
  * This function appears to be used in only 2 places - in crossedit to
  * override values and in c_wiz to mutate values.
  */
-int set_random_map_variable(RMParms *rp,const char *buf) {
-    YY_BUFFER_STATE  yybufstate;
+int set_random_map_variable(RMParms *rp, const char *buf) {
+    YY_BUFFER_STATE yybufstate;
     int retval;
 
-    yybufstate=yy_scan_string(buf);
-    retval=rmap_lex_read(rp);
+    yybufstate = yy_scan_string(buf);
+    retval = rmap_lex_read(rp);
     yy_delete_buffer(yybufstate);
     return retval;
 }

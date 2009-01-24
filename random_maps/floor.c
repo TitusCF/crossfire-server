@@ -58,19 +58,19 @@ static int can_propagate(char item) {
  * @param floor_arch
  * what floor to use.
  */
-static void put_floor(mapstruct *map, char** layout, int x, int y, object *floor_arch) {
+static void put_floor(mapstruct *map, char **layout, int x, int y, object *floor_arch) {
     int dx, dy;
     object *floor;
 
     floor = arch_to_object(floor_arch->arch);
     floor->x = x;
     floor->y = y;
-    insert_ob_in_map(floor,map,floor,INS_NO_MERGE | INS_NO_WALK_ON);
+    insert_ob_in_map(floor, map, floor, INS_NO_MERGE|INS_NO_WALK_ON);
 
     for (dx = -1; dx < 2; dx++) {
         for (dy = -1; dy < 2; dy++) {
-            if (GET_MAP_OB(map, x + dx, y + dy) == NULL && can_propagate(layout[x + dx][y + dy]))
-                put_floor(map, layout, x + dx, y + dy, floor_arch);
+            if (GET_MAP_OB(map, x+dx, y+dy) == NULL && can_propagate(layout[x+dx][y+dy]))
+                put_floor(map, layout, x+dx, y+dy, floor_arch);
         }
     }
 }
@@ -86,22 +86,23 @@ static void put_floor(mapstruct *map, char** layout, int x, int y, object *floor
  * @return
  * Crossfire map.
  */
-mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
+mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP) {
     char styledirname[256];
     char stylefilepath[256];
-    mapstruct *style_map=0;
+    mapstruct *style_map = 0;
     object *the_floor;
-    mapstruct *newMap =0;
+    mapstruct *newMap = 0;
     int x, y;
 
     /* allocate the map */
     newMap = get_empty_map(RP->Xsize, RP->Ysize);
 
     /* get the style map */
-    snprintf(styledirname, sizeof(styledirname), "%s","/styles/floorstyles");
-    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s",styledirname,floorstyle);
-    style_map = find_style(styledirname,floorstyle,-1);
-    if (style_map == 0) return newMap;
+    snprintf(styledirname, sizeof(styledirname), "%s", "/styles/floorstyles");
+    snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s", styledirname, floorstyle);
+    style_map = find_style(styledirname, floorstyle, -1);
+    if (style_map == 0)
+        return newMap;
 
     if (RP->multiple_floors) {
         for (x = 0; x < RP->Xsize; x++) {
@@ -113,15 +114,17 @@ mapstruct *make_map_floor(char **layout, char *floorstyle,RMParms *RP) {
     }
 
     /* fill up the map with the given floor style */
-    if ((the_floor=pick_random_object(style_map))!=NULL) {
+    if ((the_floor = pick_random_object(style_map)) != NULL) {
         object *thisfloor;
-        for (x=0;x<RP->Xsize;x++)
-            for (y=0;y<RP->Ysize;y++) {
+
+        for (x = 0; x < RP->Xsize; x++)
+            for (y = 0; y < RP->Ysize; y++) {
                 if (GET_MAP_OB(newMap, x, y) != NULL)
                     continue;
                 thisfloor = arch_to_object(the_floor->arch);
-                thisfloor->x = x; thisfloor->y = y;
-                insert_ob_in_map(thisfloor,newMap,thisfloor,INS_NO_MERGE | INS_NO_WALK_ON);
+                thisfloor->x = x;
+                thisfloor->y = y;
+                insert_ob_in_map(thisfloor, newMap, thisfloor, INS_NO_MERGE|INS_NO_WALK_ON);
             }
     }
     return newMap;

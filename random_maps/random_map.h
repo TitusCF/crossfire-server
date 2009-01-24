@@ -34,7 +34,7 @@
 #ifndef RANDOM_MAP_H
 #define RANDOM_MAP_H
 
-#define RM_SIZE		512
+#define RM_SIZE         512
 
 /**
  * Random map parameters.
@@ -81,7 +81,7 @@ typedef struct RMParms {
     int multiple_floors;
 } RMParms;
 
-int load_parameters(FILE *fp, int bufstate,RMParms *RP);
+int load_parameters(FILE *fp, int bufstate, RMParms *RP);
 
 /**
  * @defgroup RM_LAYOUT Random map layout
@@ -103,15 +103,15 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
  * other files (like square_spiral) also uses them.
  */
 /*@{*/
-#define OPT_RANDOM    0     /**< Random option. */
-#define OPT_CENTERED  1     /**< Centered. */
-#define OPT_LINEAR    2     /**< Linear doors (default is nonlinear). */
-#define OPT_BOTTOM_C  4     /**< Bottom-centered. */
-#define OPT_BOTTOM_R  8     /**< Bottom-right centered. */
-#define OPT_IRR_SPACE 16    /**< Irregularly/randomly spaced layers (default: regular). */
-#define OPT_WALL_OFF 32     /**< No outer wall. */
-#define OPT_WALLS_ONLY 64   /**< Only walls. */
-#define OPT_NO_DOORS 256    /**< Place walls insead of doors.  Produces broken map. */
+#define OPT_RANDOM     0     /**< Random option. */
+#define OPT_CENTERED   1     /**< Centered. */
+#define OPT_LINEAR     2     /**< Linear doors (default is nonlinear). */
+#define OPT_BOTTOM_C   4     /**< Bottom-centered. */
+#define OPT_BOTTOM_R   8     /**< Bottom-right centered. */
+#define OPT_IRR_SPACE  16    /**< Irregularly/randomly spaced layers (default: regular). */
+#define OPT_WALL_OFF   32    /**< No outer wall. */
+#define OPT_WALLS_ONLY 64    /**< Only walls. */
+#define OPT_NO_DOORS   256   /**< Place walls insead of doors.  Produces broken map. */
 /*@}*/
 
 /**
@@ -133,8 +133,8 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
 /**
  * Macro to get a strongly centered random distribution,
  * from 0 to x, centered at x/2 */
-#define BC_RANDOM(x) ((int) ((RANDOM() % (x)+RANDOM()%(x)+RANDOM()%(x))/3.))
+#define BC_RANDOM(x) ((int) ((RANDOM()%(x)+RANDOM()%(x)+RANDOM()%(x))/3.))
 
-int set_random_map_variable(RMParms *rp,const char *buf);
+int set_random_map_variable(RMParms *rp, const char *buf);
 
 #endif
