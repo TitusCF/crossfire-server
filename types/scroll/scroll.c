@@ -29,14 +29,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret scroll_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret scroll_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
 /**
  * Initializer for the scroll object type.
  */
-void init_type_scroll(void)
-{
+void init_type_scroll(void) {
     register_apply(SCROLL, scroll_type_apply);
 }
 
@@ -67,32 +65,30 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
     else
         head = applier;
 
-    if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ)) {
-        draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                      "You are unable to read while blind.", NULL);
+    if (QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+            "You are unable to read while blind.", NULL);
         return METHOD_OK;
     }
 
     if (!scroll->inv || scroll->inv->type != SPELL) {
-        draw_ext_info (NDI_UNIQUE, 0, applier,
-                       MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                       "The scroll just doesn't make sense!", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "The scroll just doesn't make sense!", NULL);
         return METHOD_OK;
     }
 
-    if(applier->type==PLAYER) {
-            /* players need a literacy skill to read stuff! */
-        int exp_gain=0;
+    if (applier->type == PLAYER) {
+        /* players need a literacy skill to read stuff! */
+        int exp_gain = 0;
 
-            /* hard code literacy - scroll->skill points to where the exp
-             * should go for anything killed by the spell.
-             */
+        /* hard code literacy - scroll->skill points to where the exp
+         * should go for anything killed by the spell.
+         */
         skapplier = find_skill_by_name(applier, skill_names[SK_LITERACY]);
 
         if (!skapplier) {
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                          MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You are unable to decipher the strange symbols.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You are unable to decipher the strange symbols.", NULL);
             return METHOD_OK;
         }
 
@@ -100,42 +96,39 @@ static method_ret scroll_type_apply(ob_methods *context, object *scroll,
             identify(scroll);
 
         if (QUERY_FLAG(scroll, FLAG_CURSED) || QUERY_FLAG(scroll, FLAG_DAMNED)) {
-                /* Player made a mistake, let's shake her/him :)
-                 * a failure of -35 means merely mana drain, -80 means
-                 * mana blast. But if server settings say 'no failure effect',
-                 * we still want to drain mana.
-                 * As for power, hey, better take care what you apply :)
-                 */
+            /* Player made a mistake, let's shake her/him :)
+             * a failure of -35 means merely mana drain, -80 means
+             * mana blast. But if server settings say 'no failure effect',
+             * we still want to drain mana.
+             * As for power, hey, better take care what you apply :)
+             */
             int failure = -35;
+
             if (settings.spell_failure_effects == TRUE)
                 failure = -rndm(35, 100);
-            scroll_failure(applier, failure, MAX(20, (scroll->level-skapplier->level) * 5));
+            scroll_failure(applier, failure, MAX(20, (scroll->level-skapplier->level)*5));
             decrease_ob(scroll);
             return METHOD_OK;
         }
 
-        if((exp_gain = calc_skill_exp(applier,scroll, skapplier)))
-            change_exp(applier,exp_gain, skapplier->skill, 0);
+        if ((exp_gain = calc_skill_exp(applier, scroll, skapplier)))
+            change_exp(applier, exp_gain, skapplier->skill, 0);
     }
 
-    // need to keep the name, as the scroll may be destroyed when on the ground (reading a scroll of alchemy for instance)
+    /* need to keep the name, as the scroll may be destroyed when on the ground (reading a scroll of alchemy for instance) */
     name = scroll->inv->name;
-    cast_spell(applier,scroll,head->facing,scroll->inv, NULL);
+    cast_spell(applier, scroll, head->facing, scroll->inv, NULL);
 
-    if (QUERY_FLAG(scroll, FLAG_BLESSED) && die_roll(1,100,applier,1) < 10) {
-        draw_ext_info_format(NDI_BLACK, 0, applier,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "Your scroll of %s glows for a second!",
-                             "Your scroll of %s glows for a second!",
-                             name);
-    }
-    else
-    {
-        draw_ext_info_format(NDI_BLACK, 0, applier,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "The scroll of %s turns to dust.",
-                             "The scroll of %s turns to dust.",
-                             name);
+    if (QUERY_FLAG(scroll, FLAG_BLESSED) && die_roll(1, 100, applier, 1) < 10) {
+        draw_ext_info_format(NDI_BLACK, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "Your scroll of %s glows for a second!",
+            "Your scroll of %s glows for a second!",
+            name);
+    } else {
+        draw_ext_info_format(NDI_BLACK, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "The scroll of %s turns to dust.",
+            "The scroll of %s turns to dust.",
+            name);
 
         decrease_ob(scroll);
     }

@@ -38,12 +38,10 @@
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret common_trap_type_move_on(ob_methods *context, object *trap, object*
-    victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+method_ret common_trap_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
+    if (trap->level && QUERY_FLAG(victim, FLAG_ALIVE))
         spring_trap(trap, victim);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
@@ -52,12 +50,12 @@ method_ret common_trap_type_move_on(ob_methods *context, object *trap, object*
 /**
  * Processes a Rune or Trap.
  * Comments on runes (and traps):
- *    rune->level     :	    level at which rune will cast its spell.
- *    rune->hp	      :	    number of detonations before rune goes away
- *    rune->msg	      :	    message the rune displays when it goes off
- *    rune->direction :	    direction it will cast a spell in
- *    rune->dam	      :	    damage the rune will do if it doesn't cast spells
- *    rune->attacktype:	    type of damage it does, if not casting spells
+ *    rune->level     :     level at which rune will cast its spell.
+ *    rune->hp        :     number of detonations before rune goes away
+ *    rune->msg       :     message the rune displays when it goes off
+ *    rune->direction :     direction it will cast a spell in
+ *    rune->dam       :     damage the rune will do if it doesn't cast spells
+ *    rune->attacktype:     type of damage it does, if not casting spells
  *    rune->other_arch:       spell in the rune
  *    rune->Cha       :       how hidden the rune is
  *    rune->maxhp     :       number of spells the rune casts
@@ -65,18 +63,20 @@ method_ret common_trap_type_move_on(ob_methods *context, object *trap, object*
  * @param op The rune or trap to process
  * @return Always METHOD_OK
  */
-method_ret common_trap_type_process(ob_methods *context, object *op)
-{
-    int det=0;
-    if(!op->level) {return METHOD_OK;}  /* runes of level zero cannot detonate. */
-    det=op->invisible;
-    if(!(rndm(0, MAX(1,(op->stats.Cha))-1))) {
-	op->invisible=0;
-	op->speed_left-=1;
+method_ret common_trap_type_process(ob_methods *context, object *op) {
+    int det = 0;
+
+    if (!op->level) {
+        return METHOD_OK;  /* runes of level zero cannot detonate. */
     }
-    else
-	op->invisible=1;
-    if(op->invisible!=det)
-	update_object(op,UP_OBJ_FACE);
+
+    det = op->invisible;
+    if (!(rndm(0, MAX(1, (op->stats.Cha))-1))) {
+        op->invisible = 0;
+        op->speed_left -= 1;
+    } else
+        op->invisible = 1;
+    if (op->invisible != det)
+        update_object(op, UP_OBJ_FACE);
     return METHOD_OK;
 }

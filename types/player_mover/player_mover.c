@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret player_mover_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret player_mover_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the PLAYERMOVER object type.
  */
-void init_type_player_mover(void)
-{
+void init_type_player_mover(void) {
     register_move_on(PLAYERMOVER, player_mover_type_move_on);
 }
 /**
@@ -48,15 +46,14 @@ void init_type_player_mover(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret player_mover_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret player_mover_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (trap->attacktype && (trap->level || victim->type!=PLAYER) &&
-        !should_director_abort(trap, victim))
-    {
-        if (!trap->stats.maxsp) trap->stats.maxsp=2.0;
+    if (trap->attacktype
+    && (trap->level || victim->type != PLAYER)
+    && !should_director_abort(trap, victim)) {
+        if (!trap->stats.maxsp)
+            trap->stats.maxsp = 2.0;
 
         /* Is this correct?  From the docs, it doesn't look like it
          * should be divided by trap->speed
@@ -67,7 +64,8 @@ static method_ret player_mover_type_move_on(ob_methods *context, object *trap,
          * above with some objects have zero speed, and thus the player
          * getting permanently paralyzed.
          */
-        if (victim->speed_left<-50.0) victim->speed_left=-50.0;
+        if (victim->speed_left < -50.0)
+            victim->speed_left = -50.0;
     }
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

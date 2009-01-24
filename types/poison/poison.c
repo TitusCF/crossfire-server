@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret poison_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret poison_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
 /**
  * Initializer for the POISON object type.
  */
-void init_type_poison(void)
-{
+void init_type_poison(void) {
     register_apply(POISON, poison_type_apply);
 }
 
@@ -49,24 +47,21 @@ void init_type_poison(void)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret poison_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
+static method_ret poison_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     /* If a player, let's tell them what happened */
     if (applier->type == PLAYER) {
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "poison");
-        draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
-                      "Yech!  That tasted poisonous!", NULL);
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+            "Yech!  That tasted poisonous!", NULL);
         snprintf(applier->contr->killer, BIG_NAME, "poisonous %s", op->name);
     }
     /* If the 'hp' of the poison is greater than zero, use poison attacktype */
     if (op->stats.hp > 0) {
-        LOG(llevDebug,"Trying to poison player/monster for %d hp\n",
-            op->stats.hp);
+        LOG(llevDebug, "Trying to poison player/monster for %d hp\n", op->stats.hp);
         hit_player(applier, op->stats.hp, op, AT_POISON, 1);
     }
     /* Reduce the applier's food to one quarter of what it was */
-    applier->stats.food-=applier->stats.food/4;
+    applier->stats.food -= applier->stats.food/4;
     handle_apply_yield(op);
     decrease_ob(op);
     return METHOD_OK;

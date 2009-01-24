@@ -30,15 +30,13 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret savebed_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
-static void apply_savebed (object *pl);
+static method_ret savebed_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static void apply_savebed(object *pl);
 
 /**
  * Initializer for the SAVEBED object type.
  */
-void init_type_savebed(void)
-{
+void init_type_savebed(void) {
     register_apply(SAVEBED, savebed_type_apply);
 }
 
@@ -51,9 +49,7 @@ void init_type_savebed(void)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret savebed_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
+static method_ret savebed_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     if (applier->type == PLAYER)
         apply_savebed(applier);
     return METHOD_OK;
@@ -65,30 +61,27 @@ static method_ret savebed_type_apply(ob_methods *context, object *op,
  * @param pl
  * player who is applying the bed.
  */
-static void apply_savebed (object *pl)
-{
-
+static void apply_savebed(object *pl) {
     /* Lauwenmark : Here we handle the LOGOUT global event */
     execute_global_event(EVENT_LOGOUT, pl->contr, pl->contr->socket.host);
 
     /* Need to call terminate_all_pets()  before we remove the player ob */
     terminate_all_pets(pl);
     remove_ob(pl);
-    pl->direction=0;
-    draw_ext_info_format(NDI_UNIQUE | NDI_ALL | NDI_DK_ORANGE, 5, pl,
-                         MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
-                         "%s leaves the game.",
-                         "%s leaves the game.",
-                         pl->name);
+    pl->direction = 0;
+    draw_ext_info_format(NDI_UNIQUE|NDI_ALL|NDI_DK_ORANGE, 5, pl, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+        "%s leaves the game.",
+        "%s leaves the game.",
+        pl->name);
 
     /* update respawn position */
     strcpy(pl->contr->savebed_map, pl->map->path);
     pl->contr->bed_x = pl->x;
     pl->contr->bed_y = pl->y;
 
-    strcpy(pl->contr->killer,"left");
-    check_score(pl,0); /* Always check score */
-    (void)save_player(pl,0);
+    strcpy(pl->contr->killer, "left");
+    check_score(pl, 0); /* Always check score */
+    (void)save_player(pl, 0);
 #if MAP_MAXTIMEOUT
     MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
 #endif

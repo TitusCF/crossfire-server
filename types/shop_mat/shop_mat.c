@@ -30,16 +30,15 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret shop_mat_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the SHOP_MAT object type.
  */
-void init_type_shop_mat(void)
-{
+void init_type_shop_mat(void) {
     register_move_on(SHOP_MAT, shop_mat_type_move_on);
 }
+
 /**
  * Move on this Shop Mat object.
  * @param context The method context
@@ -48,37 +47,31 @@ void init_type_shop_mat(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret shop_mat_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
+static method_ret shop_mat_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
     int rv = 0;
     double opinion;
     object *tmp, *next;
 
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
 
-    SET_FLAG(victim,FLAG_NO_APPLY);   /* prevent loops */
+    SET_FLAG(victim, FLAG_NO_APPLY);   /* prevent loops */
 
-    if (victim->type != PLAYER)
-    {
+    if (victim->type != PLAYER) {
         /* Remove all the unpaid objects that may be carried here.
          * This could be pets or monsters that are somehow in
          * the shop.
          */
-        for (tmp=victim->inv; tmp; tmp=next)
-        {
+        for (tmp = victim->inv; tmp; tmp = next) {
             next = tmp->below;
-            if (QUERY_FLAG(tmp, FLAG_UNPAID))
-            {
-                int i = find_free_spot(tmp, victim->map, victim->x, victim->y,
-                    1, 9);
+            if (QUERY_FLAG(tmp, FLAG_UNPAID)) {
+                int i = find_free_spot(tmp, victim->map, victim->x, victim->y, 1, 9);
                 remove_ob(tmp);
-                if (i==-1)
-                    i=0;
+                if (i == -1)
+                    i = 0;
                 tmp->map = victim->map;
-                tmp->x = victim->x + freearr_x[i];
-                tmp->y = victim->y + freearr_y[i];
+                tmp->x = victim->x+freearr_x[i];
+                tmp->y = victim->y+freearr_y[i];
                 insert_ob_in_map(tmp, victim->map, victim, 0);
             }
         }
@@ -90,73 +83,58 @@ static method_ret shop_mat_type_move_on(ob_methods *context, object *trap,
         /* unpaid objects, or non living objects, can't transfer by
          * shop mats.  Instead, put it on a nearby space.
          */
-        if (QUERY_FLAG(victim, FLAG_UNPAID) || !QUERY_FLAG(victim, FLAG_ALIVE))
-        {
+        if (QUERY_FLAG(victim, FLAG_UNPAID) || !QUERY_FLAG(victim, FLAG_ALIVE)) {
             /* Somebody dropped an unpaid item, just move to an adjacent place. */
-            int i = find_free_spot (victim, victim->map, victim->x, victim->y,
-                1, 9);
-            if (i != -1)
-            {
-                rv = transfer_ob(victim, victim->x + freearr_x[i],
-                    victim->y + freearr_y[i], 0, trap);
+            int i = find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
+            if (i != -1) {
+                rv = transfer_ob(victim, victim->x+freearr_x[i], victim->y+freearr_y[i], 0, trap);
             }
             goto leave;
         }
         rv = teleport(trap, SHOP_MAT, victim);
-    }
     /* immediate block below is only used for players */
-    else if (can_pay(victim))
-    {
+    } else if (can_pay(victim)) {
         get_payment(victim, victim->inv);
         rv = teleport(trap, SHOP_MAT, victim);
-        if (trap->msg)
-        {
-            draw_ext_info (NDI_UNIQUE, 0, victim,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, trap->msg, NULL);
+        if (trap->msg) {
+            draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                trap->msg, NULL);
         }
         /* This check below is a bit simplistic - generally it should be correct,
          * but there is never a guarantee that the bottom space on the map is
          * actually the shop floor.
          */
-        else if ( !rv && !is_in_shop(victim))
-        {
+        else if (!rv && !is_in_shop(victim)) {
             opinion = shopkeeper_approval(victim->map, victim);
-            if ( opinion > 0.9)
-                draw_ext_info(NDI_UNIQUE, 0, victim,
-                    MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+            if (opinion > 0.9)
+                draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                     "The shopkeeper gives you a friendly wave.", NULL);
-            else if ( opinion > 0.75)
-                draw_ext_info(NDI_UNIQUE, 0, victim,
-                    MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+            else if (opinion > 0.75)
+                draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                     "The shopkeeper waves to you.", NULL);
-            else if ( opinion > 0.5)
-                draw_ext_info(NDI_UNIQUE, 0, victim,
-                    MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+            else if (opinion > 0.5)
+                draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                     "The shopkeeper ignores you.", NULL);
             else
-                draw_ext_info(NDI_UNIQUE, 0, victim,
-                    MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
+                draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_SHOP, MSG_TYPE_SHOP_MISC,
                     "The shopkeeper glares at you with contempt.", NULL);
         }
-    }
-    else
-    {
+    } else {
         /* if we get here, a player tried to leave a shop but was not able
          * to afford the items he has.  We try to move the player so that
          * they are not on the mat anymore
          */
         int i = find_free_spot(victim, victim->map, victim->x, victim->y, 1, 9);
-        if(i == -1)
-            LOG (llevError, "Internal shop-mat problem.\n");
-        else
-        {
+        if (i == -1)
+            LOG(llevError, "Internal shop-mat problem.\n");
+        else {
             remove_ob(victim);
             victim->x += freearr_x[i];
             victim->y += freearr_y[i];
-            rv = insert_ob_in_map(victim, victim->map, trap,0) == NULL;
-            esrv_map_scroll(&victim->contr->socket, freearr_x[i],freearr_y[i]);
-            victim->contr->socket.update_look=1;
-            victim->contr->socket.look_position=0;
+            rv = insert_ob_in_map(victim, victim->map, trap, 0) == NULL;
+            esrv_map_scroll(&victim->contr->socket, freearr_x[i], freearr_y[i]);
+            victim->contr->socket.update_look = 1;
+            victim->contr->socket.look_position = 0;
         }
     }
     CLEAR_FLAG(victim, FLAG_NO_APPLY);

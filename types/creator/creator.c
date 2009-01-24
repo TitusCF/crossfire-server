@@ -37,8 +37,7 @@ static method_ret creator_type_trigger(ob_methods *context, object *op, object *
 /**
  * Initializer for the @ref page_type_42 "creator" object type.
  */
-void init_type_creator(void)
-{
+void init_type_creator(void) {
     register_process(CREATOR, creator_type_process);
     register_trigger(CREATOR, creator_type_trigger);
 }
@@ -65,8 +64,8 @@ void init_type_creator(void)
 static void move_creator(object *creator) {
     object *new_ob;
 
-    if(!QUERY_FLAG(creator, FLAG_LIFESAVE) && --creator->stats.hp < 0) {
-        creator->stats.hp=-1;
+    if (!QUERY_FLAG(creator, FLAG_LIFESAVE) && --creator->stats.hp < 0) {
+        creator->stats.hp = -1;
         return;
     }
 
@@ -87,7 +86,7 @@ static void move_creator(object *creator) {
         unflag_inv(new_ob, FLAG_IS_A_TEMPLATE);
     } else {
         if (creator->other_arch == NULL) {
-            LOG(llevError,"move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n", creator->name ? creator->name : "(null)", creator->map->path, creator->x, creator->y);
+            LOG(llevError, "move_creator: Creator doesn't have other arch set: %s (%s, %d, %d)\n", creator->name ? creator->name : "(null)", creator->map->path, creator->x, creator->y);
             return;
         }
 
@@ -114,15 +113,13 @@ static void move_creator(object *creator) {
     }
 }
 
-
 /**
  * Processes a @ref page_type_42 "creator".
  * @param context The method context
  * @param op The teleporter to process
  * @retval METHOD_OK
  */
-static method_ret creator_type_process(ob_methods *context, object *op)
-{
+static method_ret creator_type_process(ob_methods *context, object *op) {
     move_creator(op);
     return METHOD_OK;
 }
@@ -135,8 +132,7 @@ static method_ret creator_type_process(ob_methods *context, object *op)
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret creator_type_trigger(ob_methods *context, object *op, object *cause, int state)
-{
+static method_ret creator_type_trigger(ob_methods *context, object *op, object *cause, int state) {
     move_creator(op);
     return METHOD_OK;
 }

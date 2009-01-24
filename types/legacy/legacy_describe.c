@@ -35,41 +35,39 @@
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size)
-{
-    buf[0]='\0';
-    if(op==NULL)
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size) {
+    buf[0] = '\0';
+    if (op == NULL)
         return;
 
-    switch(op->type)
-    {
-        case RING:
-        case SKILL:
-        case WEAPON:
-        case ARMOUR:
-        case BRACERS:
-        case HELMET:
-        case SHIELD:
-        case BOOTS:
-        case GLOVES:
-        case AMULET:
-        case GIRDLE:
-        case BOW:
-        case ARROW:
-        case CLOAK:
-        case FOOD:
-        case DRINK:
-        case FLESH:
-        case SKILL_TOOL:
-        case LAMP:
-            common_ob_describe(context, op, observer, buf, size);
-            return;
-        default:
-            if(buf[0]=='\0')
-            {
-                query_name(op, buf, size-1);
-                buf[size-1]=0;
-            }
-            return;
+    switch (op->type) {
+    case RING:
+    case SKILL:
+    case WEAPON:
+    case ARMOUR:
+    case BRACERS:
+    case HELMET:
+    case SHIELD:
+    case BOOTS:
+    case GLOVES:
+    case AMULET:
+    case GIRDLE:
+    case BOW:
+    case ARROW:
+    case CLOAK:
+    case FOOD:
+    case DRINK:
+    case FLESH:
+    case SKILL_TOOL:
+    case LAMP:
+        common_ob_describe(context, op, observer, buf, size);
+        return;
+
+    default:
+        if (buf[0] == '\0') {
+            query_name(op, buf, size-1);
+            buf[size-1] = 0;
+        }
+        return;
     }
 }

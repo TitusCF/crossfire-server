@@ -35,18 +35,19 @@
  */
 void stop_projectile(object *op) {
     /* Lauwenmark: Handle for plugin stop event */
-    execute_event(op, EVENT_STOP,NULL,NULL,NULL,SCRIPT_FIX_NOTHING);
+    execute_event(op, EVENT_STOP, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
     if (op->inv) {
-	object *payload = op->inv;
-	remove_ob (payload);
-	clear_owner(payload);
-        insert_ob_in_map (payload, op->map, payload,0);
-        remove_ob (op);
-	free_object (op);
+        object *payload = op->inv;
+
+        remove_ob(payload);
+        clear_owner(payload);
+        insert_ob_in_map(payload, op->map, payload, 0);
+        remove_ob(op);
+        free_object(op);
     } else {
         op = fix_stopped_arrow(op);
         if (op)
-            merge_ob (op, NULL);
+            merge_ob(op, NULL);
     }
 }
 
@@ -64,142 +65,138 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
     int was_reflected, mflags;
     mapstruct *m;
 
-    if(op->map==NULL) {
-	LOG (llevError, "BUG: Projectile had no map.\n");
-	remove_ob(op);
-	free_object(op);
-	return METHOD_ERROR;
+    if (op->map == NULL) {
+        LOG(llevError, "BUG: Projectile had no map.\n");
+        remove_ob(op);
+        free_object(op);
+        return METHOD_ERROR;
     }
 
     /* Calculate target map square */
-    new_x = op->x + DIRX(op);
-    new_y = op->y + DIRY(op);
+    new_x = op->x+DIRX(op);
+    new_y = op->y+DIRY(op);
     was_reflected = 0;
 
     m = op->map;
     mflags = get_map_flags(m, &m, new_x, new_y, &new_x, &new_y);
 
-    if (mflags & P_OUT_OF_MAP) {
-	stop_projectile(op);
-	return METHOD_OK;
+    if (mflags&P_OUT_OF_MAP) {
+        stop_projectile(op);
+        return METHOD_OK;
     }
 
     /* only need to look for living creatures if this flag is set */
-    if (mflags & P_IS_ALIVE) {
-	for (tmp = GET_MAP_OB(m, new_x, new_y); tmp != NULL; tmp=tmp->above)
-	     if (QUERY_FLAG(tmp, FLAG_ALIVE)) break;
+    if (mflags&P_IS_ALIVE) {
+        for (tmp = GET_MAP_OB(m, new_x, new_y); tmp != NULL; tmp = tmp->above)
+             if (QUERY_FLAG(tmp, FLAG_ALIVE))
+                 break;
 
 
-	/* Not really fair, but don't let monsters hit themselves with
-	 * their own arrow - this can be because they fire it then
-	 * move into it.
-	 */
+        /* Not really fair, but don't let monsters hit themselves with
+         * their own arrow - this can be because they fire it then
+         * move into it.
+         */
 
-	if (tmp != NULL && tmp != op->owner) {
-	    /* Found living object, but it is reflecting the missile.  Update
-	     * as below. (Note that for living creatures there is a small
-	     * chance that reflect_missile fails.)
-	     */
+        if (tmp != NULL && tmp != op->owner) {
+            /* Found living object, but it is reflecting the missile.  Update
+             * as below. (Note that for living creatures there is a small
+             * chance that reflect_missile fails.)
+             */
 
-	    if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE)  &&
-		(rndm(0, 99)) < (90-op->level/10)) {
+            if (QUERY_FLAG(tmp, FLAG_REFL_MISSILE)
+            && (rndm(0, 99)) < (90-op->level/10)) {
+                int number = op->face->number;
 
-		int number = op->face->number;
-
-		op->direction = absdir (op->direction + 4);
-		op->state = 0;
-		if (GET_ANIM_ID (op)) {
-		    number += 4;
-		    if (number > GET_ANIMATION (op, 8))
-			number -= 8;
-		    op->face = &new_faces[number];
-		}
-		was_reflected = 1;   /* skip normal movement calculations */
-	    }
-	     else {
-		/* Attack the object. */
-		op = hit_with_arrow(op, tmp);
-		if (op == NULL)
-		    return METHOD_OK;
-	     }
-	} /* if this is not hitting its owner */
+                op->direction = absdir(op->direction+4);
+                op->state = 0;
+                if (GET_ANIM_ID(op)) {
+                    number += 4;
+                    if (number > GET_ANIMATION(op, 8))
+                        number -= 8;
+                    op->face = &new_faces[number];
+                }
+                was_reflected = 1;   /* skip normal movement calculations */
+            } else {
+                /* Attack the object. */
+                op = hit_with_arrow(op, tmp);
+                if (op == NULL)
+                    return METHOD_OK;
+             }
+        } /* if this is not hitting its owner */
     } /* if there is something alive on this space */
 
-
     if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y))) {
-	int retry=0;
+        int retry = 0;
 
-	/* if the object doesn't reflect, stop the arrow from moving
-	 * note that this code will now catch cases where a monster is
-	 * on a wall but has reflecting - the arrow won't reflect.
-	 * Mapmakers shouldn't put monsters on top of wall in the first
-	 * place, so I don't consider that a problem.
-	 */
-	if(!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19))) {
-	    stop_projectile (op);
-	    return METHOD_OK;
-	} else {
-	    /* If one of the major directions (n,s,e,w), just reverse it */
-	    if(op->direction&1) {
-		op->direction=absdir(op->direction+4);
-		retry=1;
-	    }
-	    /* There were two blocks with identical code -
-	     * use this retry here to make this one block
-	     * that did the same thing.
-	     */
-	    while (retry<2) {
-		int left, right, mflags;
-		mapstruct *m1;
-		sint16	x1, y1;
+        /* if the object doesn't reflect, stop the arrow from moving
+         * note that this code will now catch cases where a monster is
+         * on a wall but has reflecting - the arrow won't reflect.
+         * Mapmakers shouldn't put monsters on top of wall in the first
+         * place, so I don't consider that a problem.
+         */
+        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19))) {
+            stop_projectile(op);
+            return METHOD_OK;
+        } else {
+            /* If one of the major directions (n,s,e,w), just reverse it */
+            if (op->direction&1) {
+                op->direction = absdir(op->direction+4);
+                retry = 1;
+            }
+            /* There were two blocks with identical code -
+             * use this retry here to make this one block
+             * that did the same thing.
+             */
+            while (retry < 2) {
+                int left, right, mflags;
+                mapstruct *m1;
+                sint16  x1, y1;
 
-		retry++;
+                retry++;
 
-		/* Need to check for P_OUT_OF_MAP: if the arrow is tavelling
-		 * over a corner in a tiled map, it is possible that
-		 * op->direction is within an adjacent map but either
-		 * op->direction-1 or op->direction+1 does not exist.
-		 */
-		mflags = get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction-1)],
-		       op->y+freearr_y[absdir(op->direction-1)], &x1, &y1);
-		left = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
+                /* Need to check for P_OUT_OF_MAP: if the arrow is tavelling
+                 * over a corner in a tiled map, it is possible that
+                 * op->direction is within an adjacent map but either
+                 * op->direction-1 or op->direction+1 does not exist.
+                 */
+                mflags = get_map_flags(op->map, &m1, op->x+freearr_x[absdir(op->direction-1)], op->y+freearr_y[absdir(op->direction-1)], &x1, &y1);
+                left = (mflags&P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
 
-		mflags = get_map_flags(op->map,&m1, op->x+freearr_x[absdir(op->direction+1)],
-		   op->y+freearr_y[absdir(op->direction+1)], &x1, &y1);
-		right = (mflags & P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
+                mflags = get_map_flags(op->map, &m1, op->x+freearr_x[absdir(op->direction+1)], op->y+freearr_y[absdir(op->direction+1)], &x1, &y1);
+                right = (mflags&P_OUT_OF_MAP) ? 0 : OB_TYPE_MOVE_BLOCK(op, (GET_MAP_MOVE_BLOCK(m1, x1, y1)));
 
-		if(left==right)
-		    op->direction=absdir(op->direction+4);
-		else if(left)
-		    op->direction=absdir(op->direction+2);
-		else if(right)
-		    op->direction=absdir(op->direction-2);
+                if (left == right)
+                    op->direction = absdir(op->direction+4);
+                else if (left)
+                    op->direction = absdir(op->direction+2);
+                else if (right)
+                    op->direction = absdir(op->direction-2);
 
-		mflags = get_map_flags(op->map,&m1, op->x+DIRX(op),op->y+DIRY(op), &x1, &y1);
+                mflags = get_map_flags(op->map, &m1, op->x+DIRX(op), op->y+DIRY(op), &x1, &y1);
 
-		/* If this space is not out of the map and not blocked, valid space -
-		 * don't need to retry again.
-		 */
-		if (!(mflags & P_OUT_OF_MAP) &&
-		  !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1))) break;
-
-	    }
-	    /* Couldn't find a direction to move the arrow to - just
-	     * top it from moving.
-	     */
-	    if (retry==2) {
-		stop_projectile (op);
-		return METHOD_OK;
-	    }
-	    /* update object image for new facing */
-	    /* many thrown objects *don't *have more than one face */
-	    if(GET_ANIM_ID(op))
-		SET_ANIMATION(op, op->direction);
-	} /* object is reflected */
+                /* If this space is not out of the map and not blocked, valid space -
+                 * don't need to retry again.
+                 */
+                if (!(mflags&P_OUT_OF_MAP)
+                && !OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m1, x1, y1)))
+                    break;
+            }
+            /* Couldn't find a direction to move the arrow to - just
+             * top it from moving.
+             */
+            if (retry == 2) {
+                stop_projectile(op);
+                return METHOD_OK;
+            }
+            /* update object image for new facing */
+            /* many thrown objects *don't *have more than one face */
+            if (GET_ANIM_ID(op))
+                SET_ANIMATION(op, op->direction);
+        } /* object is reflected */
     } /* object ran into a wall */
 
     /* Move the arrow. */
-    remove_ob (op);
+    remove_ob(op);
     op->x = new_x;
     op->y = new_y;
 
@@ -207,7 +204,7 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
      * about 17 squares. Tune as needed.
      */
     op->speed -= 0.05;
-    insert_ob_in_map (op, m, op,0);
+    insert_ob_in_map(op, m, op, 0);
     return METHOD_OK;
 }
 
@@ -219,24 +216,22 @@ method_ret common_process_projectile(ob_methods *context, object *op) {
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-method_ret common_projectile_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+method_ret common_projectile_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (trap->inv == NULL)
-    {
+    if (trap->inv == NULL) {
         common_post_ob_move_on(trap, victim, originator);
         return METHOD_OK;
     }
+
     /* bad bug: monster throw a object, make a step forwards, step on object ,
      * trigger this here and get hit by own missile - and will be own enemy.
      * Victim then is his own enemy and will start to kill herself (this is
      * removed) but we have not synced victim and his missile. To avoid senseless
      * action, we avoid hits here
      */
-    if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) &&
-        trap->owner != victim)
+    if ((QUERY_FLAG(victim, FLAG_ALIVE) && trap->speed)
+    && trap->owner != victim)
         hit_with_arrow(trap, victim);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;

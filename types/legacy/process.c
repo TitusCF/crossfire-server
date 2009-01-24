@@ -28,68 +28,66 @@
 /** @file process.c
  * Legacy implementation of the process method.
  */
-method_ret legacy_ob_process(ob_methods *context, object *op)
-{
-    switch(op->type)
-    {
-        case ROD:
-        case HORN:
-            regenerate_rod(op);
-            return METHOD_OK;
+method_ret legacy_ob_process(ob_methods *context, object *op) {
+    switch (op->type) {
+    case ROD:
+    case HORN:
+        regenerate_rod(op);
+        return METHOD_OK;
 
-        case FORCE:
-        case POTION_EFFECT:
-            legacy_remove_force(op);
-            return METHOD_OK;
+    case FORCE:
+    case POTION_EFFECT:
+        legacy_remove_force(op);
+        return METHOD_OK;
 
-        case DISEASE:
-            move_disease(op);
-            return METHOD_OK;
+    case DISEASE:
+        move_disease(op);
+        return METHOD_OK;
 
-        case SYMPTOM:
-            move_symptom(op);
-            return METHOD_OK;
+    case SYMPTOM:
+        move_symptom(op);
+        return METHOD_OK;
 
-        case DOOR:
-            remove_door(op);
-            return METHOD_OK;
+    case DOOR:
+        remove_door(op);
+        return METHOD_OK;
 
-        case LOCKED_DOOR:
-            remove_locked_door(op);
-            return METHOD_OK;
+    case LOCKED_DOOR:
+        remove_locked_door(op);
+        return METHOD_OK;
 
-        case GOLEM:
-            move_golem(op);
-            return METHOD_OK;
+    case GOLEM:
+        move_golem(op);
+        return METHOD_OK;
 
-        case EARTHWALL:
-            hit_player(op, 2, op, AT_PHYSICAL, 1);
-            return METHOD_OK;
+    case EARTHWALL:
+        hit_player(op, 2, op, AT_PHYSICAL, 1);
+        return METHOD_OK;
 
-        case FIREWALL:
-            move_firewall(op);
-            if (op->stats.maxsp)
-                animate_turning(op);
-            return METHOD_OK;
+    case FIREWALL:
+        move_firewall(op);
+        if (op->stats.maxsp)
+            animate_turning(op);
+        return METHOD_OK;
 
-        case TRIGGER_BUTTON:
-        case TRIGGER_PEDESTAL:
-        case TRIGGER_ALTAR:
-            legacy_animate_trigger(op);
-            return METHOD_OK;
+    case TRIGGER_BUTTON:
+    case TRIGGER_PEDESTAL:
+    case TRIGGER_ALTAR:
+        legacy_animate_trigger(op);
+        return METHOD_OK;
 
-        case DIRECTOR:
-            if (op->stats.maxsp)
-                animate_turning(op);
-            return METHOD_OK;
+    case DIRECTOR:
+        if (op->stats.maxsp)
+            animate_turning(op);
+        return METHOD_OK;
 
-        case HOLE:
-            legacy_move_hole(op);
-            return METHOD_OK;
+    case HOLE:
+        legacy_move_hole(op);
+        return METHOD_OK;
 
-        case PLAYERMOVER:
-            move_player_mover(op);
-            return METHOD_OK;
+    case PLAYERMOVER:
+        move_player_mover(op);
+        return METHOD_OK;
     }
     return METHOD_UNHANDLED;
 }

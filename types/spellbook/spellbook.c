@@ -68,9 +68,9 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
 
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {
-        if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ)) {
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You are unable to read while blind.", NULL);
+        if (QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier, FLAG_WIZ)) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You are unable to read while blind.", NULL);
             return METHOD_OK;
         }
 
@@ -79,38 +79,36 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
         /* need a literacy skill to learn spells. Also, having a literacy level
          * lower than the spell will make learning the spell more difficult */
         if (!skapplier) {
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                          "You can't read! Your attempt fails.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You can't read! Your attempt fails.", NULL);
             return METHOD_OK;
         }
         read_level = skapplier->level;
 
         spell = book->inv;
         if (!spell) {
-            LOG(llevError,"apply_spellbook: Book %s has no spell in it!\n",
-                book->name);
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "The spellbook symbols make no sense.", NULL);
+            LOG(llevError, "apply_spellbook: Book %s has no spell in it!\n", book->name);
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The spellbook symbols make no sense.", NULL);
             return METHOD_OK;
         }
 
         if (QUERY_FLAG(book, FLAG_CURSED) || QUERY_FLAG(book, FLAG_DAMNED)) {
             char name[MAX_BUF];
-                /* Player made a mistake, let's shake her/him :) */
+            /* Player made a mistake, let's shake her/him :) */
             int failure = -35;
+
             if (settings.spell_failure_effects == TRUE)
                 failure = -rndm(35, 100);
             query_name(book, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                 "The %s was %s!",
-                                 "The %s was %s!",
-                                 name,
-                                 QUERY_FLAG(book,FLAG_DAMNED)?"damned":"cursed");
-            scroll_failure(applier, failure, (spell->level + 4) * 7);
-            if (QUERY_FLAG(book, FLAG_DAMNED) &&
-                check_spell_known (applier, spell->name) &&
-                die_roll(1, 10, applier, 1) < 2)
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "The %s was %s!",
+                "The %s was %s!",
+                name, QUERY_FLAG(book, FLAG_DAMNED) ? "damned" : "cursed");
+            scroll_failure(applier, failure, (spell->level+4)*7);
+            if (QUERY_FLAG(book, FLAG_DAMNED)
+            && check_spell_known(applier, spell->name)
+            && die_roll(1, 10, applier, 1) < 2)
                 /* Really unlucky player, better luck next time */
                 do_forget_spell(applier, spell->name);
             book = decrease_ob(book);
@@ -119,9 +117,9 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
                  * book is cursed/damned. */
                 identify(book);
                 if (book->env)
-                    esrv_update_item(UPD_FLAGS|UPD_NAME,applier,book);
+                    esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
                 else
-                    applier->contr->socket.update_look=1;
+                    applier->contr->socket.update_look = 1;
             }
             return METHOD_OK;
         }
@@ -130,24 +128,23 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             read_level += 5;
 
         if (spell->level > (read_level+10)) {
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You are unable to decipher the strange symbols.", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You are unable to decipher the strange symbols.", NULL);
             return METHOD_OK;
         }
 
         get_levelnumber(spell->level, level, sizeof(level));
-        draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                             "The spellbook contains the %s level spell %s.",
-                             "The spellbook contains the %s level spell %s.",
-                             level, spell->name);
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "The spellbook contains the %s level spell %s.",
+            "The spellbook contains the %s level spell %s.",
+            level, spell->name);
 
         if (!QUERY_FLAG(book, FLAG_IDENTIFIED)) {
             identify(book);
             if (book->env)
-                esrv_update_item(UPD_FLAGS|UPD_NAME,applier,book);
+                esrv_update_item(UPD_FLAGS|UPD_NAME, applier, book);
             else
-                applier->contr->socket.update_look=1;
+                applier->contr->socket.update_look = 1;
         }
 
         /* I removed the check for special_prayer_mark here - it didn't make
@@ -155,9 +152,9 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
          * if the player doesn't know the spell, doesn't make a lot of sense
          * that they would have a special prayer mark.
          */
-        if (check_spell_known (applier, spell->name)) {
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You already know that spell.\n", NULL);
+        if (check_spell_known(applier, spell->name)) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You already know that spell.\n", NULL);
             return METHOD_OK;
         }
 
@@ -165,18 +162,18 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
             spell_skill = find_skill_by_name(applier, spell->skill);
             if (!spell_skill) {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                     "You lack the skill %s to use this spell",
-                                     "You lack the skill %s to use this spell",
-                                     spell->skill);
+                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You lack the skill %s to use this spell",
+                    "You lack the skill %s to use this spell",
+                    spell->skill);
                 return METHOD_OK;
             }
             if (spell_skill->level < spell->level) {
                 draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                     "You need to be level %d in %s to learn this spell.",
-                                     "You need to be level %d in %s to learn this spell.",
-                                     spell->level, spell->skill);
+                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                    "You need to be level %d in %s to learn this spell.",
+                    "You need to be level %d in %s to learn this spell.",
+                    spell->level, spell->skill);
                 return METHOD_OK;
             }
         }
@@ -193,26 +190,23 @@ static method_ret spellbook_type_apply(ob_methods *context, object *book, object
          * Overall, chances are the same but a player will find having a high
          * literacy rate very useful!  -b.t.
          */
-        if(QUERY_FLAG(applier,FLAG_CONFUSED)) {
-            draw_ext_info(NDI_UNIQUE,0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "In your confused state you flub the wording of the text!", NULL);
-            scroll_failure(applier, 0 - random_roll(0, spell->level, applier, PREFER_LOW),
-                           MAX(spell->stats.sp, spell->stats.grace));
-        } else if(QUERY_FLAG(book,FLAG_STARTEQUIP) ||
-                  (random_roll(0, 100, applier, PREFER_LOW)-(5*read_level)) <
-                  learn_spell[spell->stats.grace ? applier->stats.Wis:applier->stats.Int]) {
-
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                          "You succeed in learning the spell!", NULL);
-            do_learn_spell (applier, spell, 0);
+        if (QUERY_FLAG(applier, FLAG_CONFUSED)) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "In your confused state you flub the wording of the text!", NULL);
+            scroll_failure(applier, 0-random_roll(0, spell->level, applier, PREFER_LOW), MAX(spell->stats.sp, spell->stats.grace));
+        } else if (QUERY_FLAG(book, FLAG_STARTEQUIP)
+        || (random_roll(0, 100, applier, PREFER_LOW)-(5*read_level)) < learn_spell[spell->stats.grace ? applier->stats.Wis : applier->stats.Int]) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You succeed in learning the spell!", NULL);
+            do_learn_spell(applier, spell, 0);
 
             /* xp gain to literacy for spell learning */
-            if ( ! QUERY_FLAG (book, FLAG_STARTEQUIP))
-                change_exp(applier,calc_skill_exp(applier,book,skapplier), skapplier->skill, 0);
+            if (!QUERY_FLAG(book, FLAG_STARTEQUIP))
+                change_exp(applier, calc_skill_exp(applier, book, skapplier), skapplier->skill, 0);
         } else {
             play_sound_player_only(applier->contr, SOUND_TYPE_SPELL, book, 0, "fumble");
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "You fail to learn the spell.\n", NULL);
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You fail to learn the spell.\n", NULL);
         }
         decrease_ob(book);
     }

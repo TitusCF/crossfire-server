@@ -33,8 +33,7 @@
 /**
  * Initializer for the RUNE object type.
  */
-void init_type_rune(void)
-{
+void init_type_rune(void) {
     register_move_on(RUNE, common_trap_type_move_on);
     register_process(RUNE, common_trap_type_process);
 }

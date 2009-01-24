@@ -46,46 +46,43 @@
  * them in this function - they are passed to apply_special
  */
 
-method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier,
-    int aflags)
-{
-    switch (op->type)
-    {
+method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags) {
+    switch (op->type) {
         /* Eneq(at)(csd.uu.se): Handle apply on containers. */
-        case CLOSE_CON:
-            if (applier->type==PLAYER)
-                legacy_apply_container (applier, op->env);
-            return METHOD_OK;
+    case CLOSE_CON:
+        if (applier->type == PLAYER)
+            legacy_apply_container(applier, op->env);
+        return METHOD_OK;
 
-        case CONTAINER:
-            if (applier->type==PLAYER)
-                legacy_apply_container (applier, op);
-            return METHOD_OK;
+    case CONTAINER:
+        if (applier->type == PLAYER)
+            legacy_apply_container(applier, op);
+        return METHOD_OK;
 
-        case WEAPON:
-        case ARMOUR:
-        case BOOTS:
-        case GLOVES:
-        case AMULET:
-        case GIRDLE:
-        case BRACERS:
-        case SHIELD:
-        case HELMET:
-        case RING:
-        case CLOAK:
-        case WAND:
-        case ROD:
-        case HORN:
-        case SKILL:
-        case BOW:
-        case BUILDER:
-        case SKILL_TOOL:
-            if (op->env != applier)
-                return METHOD_ERROR;   /* not in inventory */
-            (void) apply_special (applier, op, aflags);
-            return METHOD_OK;
+    case WEAPON:
+    case ARMOUR:
+    case BOOTS:
+    case GLOVES:
+    case AMULET:
+    case GIRDLE:
+    case BRACERS:
+    case SHIELD:
+    case HELMET:
+    case RING:
+    case CLOAK:
+    case WAND:
+    case ROD:
+    case HORN:
+    case SKILL:
+    case BOW:
+    case BUILDER:
+    case SKILL_TOOL:
+        if (op->env != applier)
+            return METHOD_ERROR;   /* not in inventory */
+        (void)apply_special(applier, op, aflags);
+        return METHOD_OK;
 
-        default:
-            return METHOD_UNHANDLED;
+    default:
+        return METHOD_UNHANDLED;
     }
 }

@@ -60,8 +60,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
     int oldmagic = armour->magic;
 
     if (armour->magic >= settings.armor_max_enchant) {
-        draw_ext_info(NDI_UNIQUE, 0,op,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "This armour can not be enchanted any further.",
             NULL);
         return;
@@ -73,8 +72,7 @@ static void improve_armour(object *op, object *improver, object *armour) {
      * make the random artifact versions (eg, armour of gnarg and
      * what not?) */
     if (armour->title) {
-        draw_ext_info(NDI_UNIQUE, 0, op,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "This armour will not accept further enchantment.",
             NULL);
         return;
@@ -82,8 +80,9 @@ static void improve_armour(object *op, object *improver, object *armour) {
 
     /* Check item power: if player has it equipped, unequip if armor
      * would become unwearable. */
-    if (QUERY_FLAG(armour, FLAG_APPLIED) && op->type == PLAYER &&
-        (op->contr->item_power+1) > (settings.item_power_factor * op->level)) {
+    if (QUERY_FLAG(armour, FLAG_APPLIED)
+    && op->type == PLAYER
+    && (op->contr->item_power+1) > (settings.item_power_factor*op->level)) {
         apply_special(op, armour, AP_UNAPPLY);
         if (QUERY_FLAG(armour, FLAG_APPLIED)) {
                 /* Armour is cursed, too bad */
@@ -96,45 +95,40 @@ static void improve_armour(object *op, object *improver, object *armour) {
 
     /* Split objects if needed.  Can't insert tmp until the
      * end of this function - otherwise it will just re-merge. */
-    if(armour->nrof > 1)
-        tmp = get_split_ob(armour,armour->nrof - 1, NULL, 0);
+    if (armour->nrof > 1)
+        tmp = get_split_ob(armour, armour->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
     armour->magic++;
 
-    if ( !settings.armor_speed_linear) {
+    if (!settings.armor_speed_linear) {
         int base = 100;
         int pow = 0;
-        while ( pow < armour->magic) {
-            base = base - ( base * settings.armor_speed_improvement)
-                / 100;
+
+        while (pow < armour->magic) {
+            base = base-(base*settings.armor_speed_improvement)/100;
             pow++;
         }
 
-        ARMOUR_SPEED(armour) = ( ARMOUR_SPEED( &armour->arch->clone) *
-                                   base) / 100;
+        ARMOUR_SPEED(armour) = (ARMOUR_SPEED(&armour->arch->clone)*base)/100;
     } else
-        ARMOUR_SPEED(armour) = ( ARMOUR_SPEED( &armour->arch->clone)
-                                   * ( 100 + armour->magic *
-                                       settings.armor_speed_improvement)
-                                   )/100;
+        ARMOUR_SPEED(armour) = (ARMOUR_SPEED(&armour->arch->clone)*(100+armour->magic*settings.armor_speed_improvement))/100;
 
-    if ( !settings.armor_weight_linear) {
+    if (!settings.armor_weight_linear) {
         int base = 100;
         int pow = 0;
-        while ( pow < armour->magic) {
-            base = base - ( base * settings.armor_weight_reduction) / 100;
+
+        while (pow < armour->magic) {
+            base = base-(base*settings.armor_weight_reduction)/100;
             pow++;
         }
-        armour->weight = ( armour->arch->clone.weight * base) / 100;
+        armour->weight = (armour->arch->clone.weight*base)/100;
     } else
-        armour->weight = ( armour->arch->clone.weight *
-                           ( 100 - armour->magic *
-                             settings.armor_weight_reduction) ) / 100;
+        armour->weight = (armour->arch->clone.weight*(100-armour->magic*settings.armor_weight_reduction))/100;
 
-    if ( armour->weight <= 0) {
-        LOG(llevInfo, "Warning: enchanted armours can have negative weight\n." );
+    if (armour->weight <= 0) {
+        LOG(llevInfo, "Warning: enchanted armours can have negative weight\n.");
         armour->weight = 1;
     }
 
@@ -143,8 +137,8 @@ static void improve_armour(object *op, object *improver, object *armour) {
         armour->item_power = 0;
 
     if (op->type == PLAYER) {
-        esrv_update_item(UPD_WEIGHT | UPD_NAME | UPD_NROF, op, armour);
-        if(QUERY_FLAG(armour, FLAG_APPLIED))
+        esrv_update_item(UPD_WEIGHT|UPD_NAME|UPD_NROF, op, armour);
+        if (QUERY_FLAG(armour, FLAG_APPLIED))
             fix_object(op);
     }
     decrease_ob(improver);
@@ -174,32 +168,32 @@ static method_ret armour_improver_type_apply(ob_methods *context, object *scroll
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;
 
-    if (!QUERY_FLAG(applier, FLAG_WIZCAST) &&
-        (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL) &
-         P_NO_MAGIC)) {
-        draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+    if (!QUERY_FLAG(applier, FLAG_WIZCAST)
+    && (get_map_flags(applier->map, NULL, applier->x, applier->y, NULL, NULL)&P_NO_MAGIC)) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "Something blocks the magic of the scroll.", NULL);
         return METHOD_OK;
     }
-    armor=find_marked_object(applier);
+    armor = find_marked_object(applier);
     if (!armor) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
                       "You need to mark an armor object.", NULL);
         return METHOD_OK;
     }
     if (armor->type != ARMOUR
-        && armor->type != CLOAK
-        && armor->type != BOOTS && armor->type != GLOVES
-        && armor->type != BRACERS && armor->type != SHIELD
-        && armor->type != HELMET) {
-        draw_ext_info(NDI_UNIQUE, 0,applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+    && armor->type != CLOAK
+    && armor->type != BOOTS
+    && armor->type != GLOVES
+    && armor->type != BRACERS
+    && armor->type != SHIELD
+    && armor->type != HELMET) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "Your marked item is not armour!", NULL);
         return METHOD_OK;
     }
 
-    draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "Applying armour enchantment.", NULL);
-    improve_armour(applier,scroll,armor);
+    improve_armour(applier, scroll, armor);
     return METHOD_OK;
 }

@@ -36,18 +36,17 @@
  */
 #define CONV_FROM(xyz)  xyz->slaying
 #define CONV_TO(xyz)    xyz->other_arch
-#define CONV_NR(xyz)    (unsigned char) xyz->stats.sp
-#define CONV_NEED(xyz)  (unsigned long) xyz->stats.food
+#define CONV_NR(xyz)    (unsigned char)xyz->stats.sp
+#define CONV_NEED(xyz)  (unsigned long)xyz->stats.food
 
 static int convert_item(object *item, object *converter);
-static method_ret converter_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+
+static method_ret converter_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the CONVERTER object type.
  */
-void init_type_converter(void)
-{
+void init_type_converter(void) {
     register_move_on(CONVERTER, converter_type_move_on);
 }
 
@@ -60,111 +59,93 @@ void init_type_converter(void)
  * @retval 0 If the item was not converted
  * @retval 1 If the item got converted
  */
-static int convert_item(object *item, object *converter)
-{
-    int nr=0;
+static int convert_item(object *item, object *converter) {
+    int nr = 0;
     uint32 price_in;
 
     /* We make some assumptions - we assume if it takes money as it type,
      * it wants some amount.  We don't make change (ie, if something costs
      * 3 gp and player drops a platinum, tough luck)
      */
-    if (!strcmp(CONV_FROM(converter),"money"))
-    {
+    if (!strcmp(CONV_FROM(converter), "money")) {
         int cost;
 
-        if(item->type!=MONEY)
+        if (item->type != MONEY)
             return 0;
 
-        nr=(item->nrof*item->value)/CONV_NEED(converter);
-        if (!nr) return 0;
-        cost=nr*CONV_NEED(converter)/item->value;
+        nr = (item->nrof*item->value)/CONV_NEED(converter);
+        if (!nr)
+            return 0;
+
+        cost = nr*CONV_NEED(converter)/item->value;
         /* take into account rounding errors */
-        if (nr*CONV_NEED(converter)%item->value) cost++;
+        if (nr*CONV_NEED(converter)%item->value)
+            cost++;
         decrease_ob_nr(item, cost);
 
         price_in = cost*item->value;
-    }
-    else
-    {
-        if(item->type==PLAYER||CONV_FROM(converter)!=item->arch->name||
-            (CONV_NEED(converter)&&CONV_NEED(converter)>item->nrof))
+    } else {
+        if (item->type == PLAYER
+        || CONV_FROM(converter) != item->arch->name
+        || (CONV_NEED(converter) && CONV_NEED(converter) > item->nrof))
             return 0;
 
         /* silently burn unpaid items (only if they match what we want) */
-        if(QUERY_FLAG(item, FLAG_UNPAID))
-        {
+        if (QUERY_FLAG(item, FLAG_UNPAID)) {
             remove_ob(item);
             free_object(item);
             item = create_archetype("burnout");
             if (item != NULL)
-                insert_ob_in_map_at(item, converter->map, converter,
-                                    0, converter->x, converter->y);
+                insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
             return 1;
         }
 
-        if(CONV_NEED(converter))
-        {
-            nr=item->nrof/CONV_NEED(converter);
-            decrease_ob_nr(item,nr*CONV_NEED(converter));
+        if (CONV_NEED(converter)) {
+            nr = item->nrof/CONV_NEED(converter);
+            decrease_ob_nr(item, nr*CONV_NEED(converter));
             price_in = nr*CONV_NEED(converter)*item->value;
-        }
-        else
-        {
+        } else {
             price_in = item->value;
             remove_ob(item);
             free_object(item);
         }
     }
 
-    if (converter->inv != NULL)
-    {
+    if (converter->inv != NULL) {
         object *ob;
         int i;
         object *ob_to_copy;
 
         /* select random object from inventory to copy */
         ob_to_copy = converter->inv;
-        for (ob = converter->inv->below, i = 1; ob != NULL;
-            ob = ob->below, i++)
-        {
+        for (ob = converter->inv->below, i = 1; ob != NULL; ob = ob->below, i++) {
             if (rndm(0, i) == 0)
-            ob_to_copy = ob;
+                ob_to_copy = ob;
         }
         item = object_create_clone(ob_to_copy);
         CLEAR_FLAG(item, FLAG_IS_A_TEMPLATE);
         unflag_inv(item, FLAG_IS_A_TEMPLATE);
-    }
-    else
-    {
-        if (converter->other_arch == NULL)
-        {
-            LOG(llevError, "move_creator: Converter doesn't have other arch set: %s (%s, %d, %d)\n",
-                converter->name ? converter->name : "(null)",
-                converter->map->path, converter->x, converter->y);
+    } else {
+        if (converter->other_arch == NULL) {
+            LOG(llevError, "move_creator: Converter doesn't have other arch set: %s (%s, %d, %d)\n", converter->name ? converter->name : "(null)", converter->map->path, converter->x, converter->y);
             return -1;
         }
         item = object_create_arch(converter->other_arch);
         fix_generated_item(item, converter, 0, 0, GT_MINIMAL);
     }
 
-    if(CONV_NR(converter))
-        item->nrof=CONV_NR(converter);
-    if(nr)
-        item->nrof*=nr;
-    if(is_in_shop(converter))
-        SET_FLAG(item,FLAG_UNPAID);
-    else if(price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE)
-    {
-        LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n",
-            converter->name, converter->map->path,
-            converter->x, converter->y, price_in,
-            item->nrof*item->value, item->name);
+    if (CONV_NR(converter))
+        item->nrof = CONV_NR(converter);
+    if (nr)
+        item->nrof *= nr;
+    if (is_in_shop(converter))
+        SET_FLAG(item, FLAG_UNPAID);
+    else if (price_in < item->nrof*item->value && settings.allow_broken_converters == FALSE) {
+        LOG(llevError, "Broken converter %s at %s (%d, %d) in value %d, out value %d for %s\n", converter->name, converter->map->path, converter->x, converter->y, price_in, item->nrof*item->value, item->name);
         free_object(item);
         return -1;
     }
-    insert_ob_in_map_at(item, converter->map, converter, 0,
-        converter->x, converter->y);
+    insert_ob_in_map_at(item, converter->map, converter, 0, converter->x, converter->y);
     return 1;
 }
 
@@ -176,25 +157,20 @@ static int convert_item(object *item, object *converter)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret converter_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret converter_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (convert_item (victim, trap) < 0)
-    {
+    if (convert_item(victim, trap) < 0) {
         object *op;
         char name[MAX_BUF];
 
         query_name(trap, name, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, originator,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "The %s seems to be broken!", "The %s seems to be broken!",
             name);
 
         op = create_archetype("burnout");
-        if (op != NULL)
-        {
+        if (op != NULL) {
             op->x = trap->x;
             op->y = trap->y;
             insert_ob_in_map(op, trap->map, trap, 0);

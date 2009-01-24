@@ -37,8 +37,7 @@ static method_ret mood_floor_type_trigger(ob_methods *context, object *op, objec
 /**
  * Initializer for the @ref page_type_65 "mood floor" object type.
  */
-void init_type_mood_floor(void)
-{
+void init_type_mood_floor(void) {
     register_process(MOOD_FLOOR, mood_floor_type_process);
     register_trigger(MOOD_FLOOR, mood_floor_type_trigger);
 }
@@ -64,74 +63,77 @@ static void do_mood_floor(object *op, object *op2) {
     object *tmp;
     object *tmp2;
 
-    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp=tmp->above)
-        if (QUERY_FLAG(tmp, FLAG_MONSTER)) break;
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp; tmp = tmp->above)
+        if (QUERY_FLAG(tmp, FLAG_MONSTER))
+            break;
 
     /* doesn't effect players, and if there is a player on this space, won't also
     * be a monster here.
     */
-    if (!tmp || tmp->type == PLAYER) return;
+    if (!tmp || tmp->type == PLAYER)
+        return;
 
-    switch(op->last_sp) {
-        case 0:			/* furious--make all monsters mad */
-            if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
-                CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
-            if(QUERY_FLAG(tmp, FLAG_FRIENDLY)) {
-                CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-                remove_friendly_object(tmp);
-                tmp->attack_movement = 0;
-                /* lots of checks here, but want to make sure we don't
-                * dereference a null value
-                */
-                if (tmp->type == GOLEM && tmp->owner && tmp->owner->type==PLAYER &&
-                    tmp->owner->contr->ranges[range_golem]==tmp) {
-                    tmp->owner->contr->ranges[range_golem]=NULL;
-                    tmp->owner->contr->golem_count = 0;
-                    }
-                    tmp->owner = 0;
+    switch (op->last_sp) {
+    case 0:                     /* furious--make all monsters mad */
+        if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
+            CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
+        if (QUERY_FLAG(tmp, FLAG_FRIENDLY)) {
+            CLEAR_FLAG(tmp, FLAG_FRIENDLY);
+            remove_friendly_object(tmp);
+            tmp->attack_movement = 0;
+            /* lots of checks here, but want to make sure we don't
+             * dereference a null value
+             */
+            if (tmp->type == GOLEM
+            && tmp->owner
+            && tmp->owner->type == PLAYER
+            && tmp->owner->contr->ranges[range_golem] == tmp) {
+                tmp->owner->contr->ranges[range_golem] = NULL;
+                tmp->owner->contr->golem_count = 0;
             }
-            break;
+            tmp->owner = 0;
+        }
+        break;
 
-            case 1: 			/* angry -- get neutral monsters mad */
-                if(QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)&&
-                   !QUERY_FLAG(tmp, FLAG_FRIENDLY))
-                    CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
+    case 1:                     /* angry -- get neutral monsters mad */
+        if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)
+        && !QUERY_FLAG(tmp, FLAG_FRIENDLY))
+            CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
+        break;
+
+    case 2:                     /* calm -- pacify unfriendly monsters */
+        if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) {
+            SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
+            tmp->enemy = NULL;
+        }
+        break;
+
+    case 3:                     /* make all monsters fall asleep */
+        if (!QUERY_FLAG(tmp, FLAG_SLEEP))
+            SET_FLAG(tmp, FLAG_SLEEP);
+        break;
+
+    case 4:                     /* charm all monsters */
+        if (op == op2)
+            break;           /* only if 'connected' */
+
+        for (tmp2 = GET_MAP_OB(op2->map, op2->x, op2->y); tmp2->type != PLAYER; tmp2 = tmp2->above)
+            if (tmp2->above == NULL)
                 break;
-
-                case 2:			/* calm -- pacify unfriendly monsters */
-                    if(!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE)) {
-                        SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-                        tmp->enemy = NULL;
-                    }
-                    break;
-
-                    case 3:			/* make all monsters fall asleep */
-                        if(!QUERY_FLAG(tmp, FLAG_SLEEP))
-                            SET_FLAG(tmp, FLAG_SLEEP);
-                        break;
-
-                        case 4:			/* charm all monsters */
-                            if(op == op2) break; 	     /* only if 'connected' */
-
-                            for(tmp2=GET_MAP_OB(op2->map,op2->x,op2->y); /* finding an owner */
-                                tmp2->type!=PLAYER;tmp2=tmp2->above)
-                                if(tmp2->above==NULL) break;
-
-                            if (tmp2->type != PLAYER)
-                                break;
-                            set_owner(tmp,tmp2);
-                            SET_FLAG(tmp,FLAG_MONSTER);
-                            tmp->stats.exp = 0;
-                            SET_FLAG(tmp, FLAG_FRIENDLY);
-                            add_friendly_object (tmp);
-                            tmp->attack_movement = PETMOVE;
-                            break;
-
-        default:
+        if (tmp2->type != PLAYER)
             break;
+        set_owner(tmp, tmp2);
+        SET_FLAG(tmp, FLAG_MONSTER);
+        tmp->stats.exp = 0;
+        SET_FLAG(tmp, FLAG_FRIENDLY);
+        add_friendly_object(tmp);
+        tmp->attack_movement = PETMOVE;
+        break;
+
+    default:
+        break;
     }
 }
-
 
 /**
  * Processes a @ref page_type_65 "mood floor".
@@ -139,8 +141,7 @@ static void do_mood_floor(object *op, object *op2) {
  * @param op The mood_floor to process
  * @retval METHOD_OK
  */
-static method_ret mood_floor_type_process(ob_methods *context, object *op)
-{
+static method_ret mood_floor_type_process(ob_methods *context, object *op) {
     do_mood_floor(op, op);
     return METHOD_OK;
 }
@@ -153,8 +154,7 @@ static method_ret mood_floor_type_process(ob_methods *context, object *op)
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret mood_floor_type_trigger(ob_methods *context, object *op, object *cause, int state)
-{
+static method_ret mood_floor_type_trigger(ob_methods *context, object *op, object *cause, int state) {
     do_mood_floor(op, cause);
     return METHOD_OK;
 }

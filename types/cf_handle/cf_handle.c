@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret cf_handle_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
 /**
  * Initializer for the CF_HANDLE object type.
  */
-void init_type_cf_handle(void)
-{
+void init_type_cf_handle(void) {
     register_apply(CF_HANDLE, cf_handle_type_apply);
 }
 
@@ -49,16 +47,13 @@ void init_type_cf_handle(void)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret cf_handle_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
-    draw_ext_info(NDI_UNIQUE, 0,applier,
-        MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+static method_ret cf_handle_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+    draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "You turn the handle.", NULL);
     play_sound_map(SOUND_TYPE_ITEM, op, 0, "turn handle");
-    op->value=op->value?0:1;
+    op->value = op->value ? 0 : 1;
     SET_ANIMATION(op, op->value);
-    update_object(op,UP_OBJ_FACE);
+    update_object(op, UP_OBJ_FACE);
     push_button(op);
     return METHOD_OK;
 }

@@ -38,29 +38,26 @@
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
  * However, some types of traps require an originator to function.
  */
-method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim,
-    object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    LOG (llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
-        "handled in move_apply()\n", trap->name, trap->arch->name, trap->type);
+    LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not handled in move_apply()\n", trap->name, trap->arch->name, trap->type);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
 }
 
 static int ob_move_on_recursion_depth = 0;
 
-method_ret common_pre_ob_move_on(object *trap, object *victim,
-    object *originator)
-{
+method_ret common_pre_ob_move_on(object *trap, object *victim, object *originator) {
     /* If player is DM, only 2 cases to consider:
      * - exits
      * - opened containers on the ground, which should be closed.
      */
-    if (QUERY_FLAG(victim, FLAG_WIZPASS) && trap->type != EXIT
-        && trap->type != SIGN && trap->type != CONTAINER
-        && !QUERY_FLAG(trap, FLAG_APPLIED))
+    if (QUERY_FLAG(victim, FLAG_WIZPASS)
+    && trap->type != EXIT
+    && trap->type != SIGN
+    && trap->type != CONTAINER
+    && !QUERY_FLAG(trap, FLAG_APPLIED))
         return METHOD_ERROR;
 
     /* common_ob_move_on() is the most likely candidate for causing unwanted and
@@ -72,30 +69,24 @@ method_ret common_pre_ob_move_on(object *trap, object *victim,
      * nearby rune detonates.  This sort of recursion is expected and
      * proper.  This code was causing needless crashes.
      */
-    if (ob_move_on_recursion_depth >= 500)
-    {
-        LOG (llevDebug, "WARNING: move_apply(): aborting recursion "
-            "[trap arch %s, name %s; victim arch %s, name %s]\n",
-            trap->arch->name, trap->name, victim->arch->name, victim->name);
+    if (ob_move_on_recursion_depth >= 500) {
+        LOG(llevDebug, "WARNING: move_apply(): aborting recursion [trap arch %s, name %s; victim arch %s, name %s]\n", trap->arch->name, trap->name, victim->arch->name, victim->name);
         return METHOD_ERROR;
     }
     ob_move_on_recursion_depth++;
     if (trap->head)
-        trap=trap->head;
+        trap = trap->head;
 
     /* Lauwenmark: Handle for plugin trigger event */
-    if (execute_event(trap, EVENT_TRIGGER,originator,victim,NULL,SCRIPT_FIX_ALL)
-        !=0)
-    {
+    if (execute_event(trap, EVENT_TRIGGER, originator, victim, NULL, SCRIPT_FIX_ALL) != 0) {
         ob_move_on_recursion_depth--;
         return METHOD_ERROR;
     }
     return METHOD_OK;
 }
-void common_post_ob_move_on(object *trap, object *victim,
-    object *originator)
-{
+
+void common_post_ob_move_on(object *trap, object *victim, object *originator) {
     ob_move_on_recursion_depth--;
-    if (ob_move_on_recursion_depth<0) /* Safety net :) */
-        ob_move_on_recursion_depth=0;
+    if (ob_move_on_recursion_depth < 0) /* Safety net :) */
+        ob_move_on_recursion_depth = 0;
 }

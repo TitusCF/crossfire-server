@@ -37,8 +37,7 @@ static method_ret detector_type_trigger(ob_methods *context, object *op, object 
 /**
  * Initializer for the @ref page_type_51 "detector" object type.
  */
-void init_type_detector(void)
-{
+void init_type_detector(void) {
     register_process(DETECTOR, detector_type_process);
 }
 
@@ -54,8 +53,7 @@ void init_type_detector(void)
  * @param op
  * detector to move.
  */
-static void move_detector(object *op)
-{
+static void move_detector(object *op) {
     object *tmp, *tmp2;
     int last = op->value;
     int detected;
@@ -73,15 +71,15 @@ static void move_detector(object *op)
         return;
     }
 
-    for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL ;tmp = tmp->above) {
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
         if (op->stats.hp) {
-            for(tmp2= tmp->inv;tmp2;tmp2=tmp2->below) {
+            for (tmp2 = tmp->inv; tmp2; tmp2 = tmp2->below) {
                 if (op->slaying == tmp2->name) {
-                    detected=1;
+                    detected = 1;
                     break;
                 }
-                if (tmp2->type==FORCE && tmp2->slaying == op->slaying) {
-                    detected=1;
+                if (tmp2->type == FORCE && tmp2->slaying == op->slaying) {
+                    detected = 1;
                     break;
                 }
             }
@@ -94,29 +92,28 @@ static void move_detector(object *op)
             detected = 1;
             break;
         }
-        if (tmp->type==SPECIAL_KEY && tmp->slaying==op->slaying) {
-            detected=1;
+        if (tmp->type == SPECIAL_KEY && tmp->slaying == op->slaying) {
+            detected = 1;
             break;
         }
     }
 
     /* the detector sets the button if detection is found */
-    if(op->stats.sp == 1)  {
-        if(detected && last == 0) {
+    if (op->stats.sp == 1)  {
+        if (detected && last == 0) {
             op->value = 1;
             push_button(op);
         }
-        if(!detected && last == 1) {
+        if (!detected && last == 1) {
             op->value = 0;
             push_button(op);
         }
-    }
-    else { /* in this case, we unset buttons */
-        if(detected && last == 1) {
+    } else { /* in this case, we unset buttons */
+        if (detected && last == 1) {
             op->value = 0;
             push_button(op);
         }
-        if(!detected && last == 0) {
+        if (!detected && last == 0) {
             op->value = 1;
             push_button(op);
         }
@@ -129,8 +126,7 @@ static void move_detector(object *op)
  * @param op The detector to process
  * @retval METHOD_OK
  */
-static method_ret detector_type_process(ob_methods *context, object *op)
-{
+static method_ret detector_type_process(ob_methods *context, object *op) {
     move_detector(op);
     return METHOD_OK;
 }

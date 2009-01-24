@@ -31,14 +31,12 @@
 #include <sproto.h>
 
 static method_ret deep_swamp_type_process(ob_methods *context, object *op);
-static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the DEEP_SWAMP object type.
  */
-void init_type_deep_swamp(void)
-{
+void init_type_deep_swamp(void) {
     register_move_on(DEEP_SWAMP, deep_swamp_type_move_on);
     register_process(DEEP_SWAMP, deep_swamp_type_process);
 }
@@ -49,78 +47,63 @@ void init_type_deep_swamp(void)
  * @param op The swamp to process
  * @return Always METHOD_OK
  */
-static method_ret deep_swamp_type_process(ob_methods *context, object *op)
-{
+static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
     object *above = op->above;
     object *nabove;
     int got_player = 0;
 
-    while(above)
-    {
+    while (above) {
         nabove = above->above;
-        if (above->type == PLAYER && !(above->move_type & MOVE_FLYING)
-            && above->stats.hp >= 0 && !QUERY_FLAG(above,FLAG_WIZ))
-        {
+        if (above->type == PLAYER
+        && !(above->move_type&MOVE_FLYING)
+        && above->stats.hp >= 0
+        && !QUERY_FLAG(above, FLAG_WIZ)) {
             object *woodsman = find_obj_by_type_subtype(above, SKILL, SK_WOODSMAN);
             got_player = 1;
-            if (op->stats.food < 1)
-            {
-                LOG (llevDebug,
-                    "move_deep_swamp(): player is here, but state is %d\n",
-                    op->stats.food);
+            if (op->stats.food < 1) {
+                LOG(llevDebug, "move_deep_swamp(): player is here, but state is %d\n", op->stats.food);
                 op->stats.food = 1;
             }
-            if ( op->stats.food < 10)
-            {
-                if (rndm(0, 2) == 0)
-                {
-                    draw_ext_info_format(NDI_UNIQUE, 0,above,
-                        MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+            if (op->stats.food < 10) {
+                if (rndm(0, 2) == 0) {
+                    draw_ext_info_format(NDI_UNIQUE, 0, above, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
                         "You are down to your waist in the wet %s.",
                         "You are down to your waist in the wet %s.",
                         op->name);
-                        op->stats.food = woodsman ? op->stats.food + 1 : 10;
+                        op->stats.food = woodsman ? op->stats.food+1 : 10;
                         above->speed_left -= op->move_slow_penalty;
                 }
-            }
-            else if ( op->stats.food < 20)
-            {
-                if (rndm(0, 2) == 0)
-                {
-                    draw_ext_info_format(NDI_UNIQUE | NDI_RED, 0,above,
-                        MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+            } else if (op->stats.food < 20) {
+                if (rndm(0, 2) == 0) {
+                    draw_ext_info_format(NDI_UNIQUE|NDI_RED, 0, above, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
                         "You are down to your NECK in the dangerous %s.",
                         "You are down to your NECK in the dangerous %s.",
                         op->name);
-                    op->stats.food = woodsman ? op->stats.food + 1 : 20;
-                    sprintf(above->contr->killer,"drowning in a %s", op->name);
+                    op->stats.food = woodsman ? op->stats.food+1 : 20;
+                    sprintf(above->contr->killer, "drowning in a %s", op->name);
                     above->stats.hp--;
                     above->speed_left -= op->move_slow_penalty;
                 }
-            }
-            else if (rndm(0, 4) == 0)
-            {
+            } else if (rndm(0, 4) == 0) {
                 op->stats.food = 0;
-                draw_ext_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL,
-                    MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
+                draw_ext_info_format(NDI_UNIQUE|NDI_ALL, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                     "%s disappeared into a %s.", "%s disappeared into a %s.",
                     above->name, op->name);
-                sprintf(above->contr->killer,"drowning in a %s", op->name);
+                sprintf(above->contr->killer, "drowning in a %s", op->name);
                 above->stats.hp = -1;
                 kill_player(above); /* player dies in the swamp */
             }
-        }
-        else if (!QUERY_FLAG(above, FLAG_ALIVE) &&
-            !(above->move_type & MOVE_FLYING) &&
-            !(QUERY_FLAG(above,FLAG_IS_FLOOR)) &&
-            !(QUERY_FLAG(above,FLAG_OVERLAY_FLOOR)) &&
-            !(QUERY_FLAG(above, FLAG_NO_PICK)))
-        {
-            if (rndm(0, 2) == 0) decrease_ob(above);
+        } else if (!QUERY_FLAG(above, FLAG_ALIVE)
+        && !(above->move_type&MOVE_FLYING)
+        && !(QUERY_FLAG(above, FLAG_IS_FLOOR))
+        && !(QUERY_FLAG(above, FLAG_OVERLAY_FLOOR))
+        && !(QUERY_FLAG(above, FLAG_NO_PICK))) {
+            if (rndm(0, 2) == 0)
+                decrease_ob(above);
         }
         above = nabove;
     }
-    if ( !got_player)
+    if (!got_player)
         op->stats.food = 1;
     return METHOD_OK;
 }
@@ -133,16 +116,13 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret deep_swamp_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (victim->type == PLAYER && victim->stats.hp >= 0
-        && !(victim->move_type & MOVE_FLYING))
-    {
-        draw_ext_info_format(NDI_UNIQUE, 0, victim,
-            MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
+    if (victim->type == PLAYER
+    && victim->stats.hp >= 0
+    && !(victim->move_type&MOVE_FLYING)) {
+        draw_ext_info_format(NDI_UNIQUE, 0, victim, MSG_TYPE_VICTIM, MSG_TYPE_VICTIM_SWAMP,
             "You are down to your knees in the %s.",
             "You are down to your knees in the %s.", trap->name);
         trap->stats.food = 1;

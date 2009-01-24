@@ -36,8 +36,7 @@ static method_ret player_changer_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the player changer object type.
  */
-void init_type_player_changer(void)
-{
+void init_type_player_changer(void) {
     register_process(PLAYER_CHANGER, player_changer_type_process);
 }
 
@@ -59,21 +58,22 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
     object *walk;
     char c;
 
-    if (!op->above || !EXIT_PATH(op)) return METHOD_OK;
+    if (!op->above || !EXIT_PATH(op))
+        return METHOD_OK;
 
     /* This isn't all that great - means that the player_mover
     * needs to be on top.
     */
-    if(op->above->type==PLAYER) {
+    if (op->above->type == PLAYER) {
         /* Lauwenmark: Handle for plugin TRIGGER event */
-        if (execute_event(op, EVENT_TRIGGER,op->above,NULL,NULL,SCRIPT_FIX_NOTHING)!=0)
+        if (execute_event(op, EVENT_TRIGGER, op->above, NULL, NULL, SCRIPT_FIX_NOTHING) != 0)
             return METHOD_OK;
-        player=op->above;
-        for(walk=op->inv;walk!=NULL;walk=walk->below)
-            apply_changes_to_player(player,walk);
+        player = op->above;
+        for (walk = op->inv; walk != NULL; walk = walk->below)
+            apply_changes_to_player(player, walk);
 
         fix_object(player);
-        esrv_send_inventory(op->above,op->above);
+        esrv_send_inventory(op->above, op->above);
         esrv_update_item(UPD_FACE, op->above, op->above);
 
         /* update players death & WoR home-position */
@@ -82,13 +82,10 @@ static method_ret player_changer_type_process(ob_methods *context, object *op) {
             strcpy(player->contr->savebed_map, EXIT_PATH(op));
             player->contr->bed_x = EXIT_X(op);
             player->contr->bed_y = EXIT_Y(op);
-        }
-        else
-            LOG(llevDebug,
-                "WARNING: destination '%s' in player_changer must be an absolute path!\n",
-                EXIT_PATH(op));
+        } else
+            LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!\n", EXIT_PATH(op));
 
-        enter_exit(op->above,op);
+        enter_exit(op->above, op);
         save_player(player, 1);
     }
 

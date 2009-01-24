@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret treasure_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret treasure_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
 /**
  * Initializer for the TREASURE object type.
  */
-void init_type_treasure(void)
-{
+void init_type_treasure(void) {
     register_apply(TREASURE, treasure_type_apply);
 }
 
@@ -50,15 +48,12 @@ void init_type_treasure(void)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret treasure_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
+static method_ret treasure_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     object *treas;
     tag_t op_tag = op->count, applier_tag = applier->count;
     char name[MAX_BUF];
 
     if (applier->type == PLAYER) {
-
          /* Nice side effect of new treasure creation method is that the
          * treasure for the chest is done when the chest is created,
          * and put into the chest inventory.  So that when the chest
@@ -67,9 +62,9 @@ static method_ret treasure_type_apply(ob_methods *context, object *op,
          */
 
         treas = op->inv;
-        if(treas==NULL) {
-            draw_ext_info(NDI_UNIQUE, 0,applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                          "The chest was empty.", NULL);
+        if (treas == NULL) {
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "The chest was empty.", NULL);
             decrease_ob(op);
             return METHOD_OK;
         }
@@ -78,30 +73,30 @@ static method_ret treasure_type_apply(ob_methods *context, object *op,
 
             remove_ob(treas);
             query_name(treas, name, MAX_BUF);
-            draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                 MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                 "You find %s in the chest.",
-                                 "You find %s in the chest.",
-                                 name);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You find %s in the chest.",
+                "You find %s in the chest.",
+                name);
 
-            treas->x=applier->x;
-            treas->y=applier->y;
-            treas = insert_ob_in_map (treas, applier->map, applier,INS_BELOW_ORIGINATOR);
+            treas->x = applier->x;
+            treas->y = applier->y;
+            treas = insert_ob_in_map(treas, applier->map, applier, INS_BELOW_ORIGINATOR);
 
-            if (treas && (treas->type == RUNE || treas->type == TRAP) &&
-                treas->level && QUERY_FLAG (applier, FLAG_ALIVE))
-                spring_trap (treas, applier);
+            if (treas
+            && (treas->type == RUNE || treas->type == TRAP)
+            && treas->level && QUERY_FLAG(applier, FLAG_ALIVE))
+                spring_trap(treas, applier);
                 /* If either player or container was destroyed, no need to do
                  * further processing.  I think this should be enclused with
                  * spring trap above, as I don't think there is otherwise
                  * any way for the treasure chest or player to get killed
                  */
-            if (was_destroyed (applier, applier_tag) || was_destroyed (op, op_tag))
+            if (was_destroyed(applier, applier_tag) || was_destroyed(op, op_tag))
                 break;
         }
 
-        if ( ! was_destroyed (op, op_tag) && op->inv == NULL)
-            decrease_ob (op);
+        if (!was_destroyed(op, op_tag) && op->inv == NULL)
+            decrease_ob(op);
     }
     return METHOD_OK;
 }

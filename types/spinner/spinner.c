@@ -30,16 +30,15 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret spinner_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret spinner_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the SPINNER object type.
  */
-void init_type_spinner(void)
-{
+void init_type_spinner(void) {
     register_move_on(SPINNER, spinner_type_move_on);
 }
+
 /**
  * Move on this Spinner object.
  * @param context The method context
@@ -48,14 +47,11 @@ void init_type_spinner(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret spinner_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret spinner_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if(victim->direction)
-    {
-        victim->direction=absdir(victim->direction-trap->stats.sp);
+    if (victim->direction) {
+        victim->direction = absdir(victim->direction-trap->stats.sp);
         update_turn_face(victim);
     }
     common_post_ob_move_on(trap, victim, originator);

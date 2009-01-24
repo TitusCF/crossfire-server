@@ -29,14 +29,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret clock_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret clock_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 
 /**
  * Initializer for the CLOCK object type.
  */
-void init_type_clock(void)
-{
+void init_type_clock(void) {
     register_apply(CLOCK, clock_type_apply);
 }
 
@@ -49,21 +47,17 @@ void init_type_clock(void)
  * @retval METHOD_UNHANDLED If the clock wasn't viewed by a player
  * @retval METHOD_OK If applier was a player
  */
-static method_ret clock_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
-    if (applier->type == PLAYER)
-    {
+static method_ret clock_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+    if (applier->type == PLAYER) {
         timeofday_t tod;
 
         get_tod(&tod);
         play_sound_player_only(applier->contr, SOUND_TYPE_ITEM, op, 0, "tick");
-        draw_ext_info_format(NDI_UNIQUE, 0,applier,
-             MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
              "It is %d minute%s past %d o'clock %s",
              "It is %d minute%s past %d o'clock %s",
              tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-             ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
+             ((tod.hour%14 == 0) ? 14 : ((tod.hour)%14)),
              ((tod.hour >= 14) ? "pm" : "am"));
         return METHOD_OK;
     }

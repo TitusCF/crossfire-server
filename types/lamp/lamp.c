@@ -54,13 +54,11 @@ void init_type_lamp(void) {
 static void do_turn(object *op, object *who, int aflags, const char *onoff) {
     object *tmp2;
 
-    if (!(aflags & AP_NOPRINT))
-        draw_ext_info_format(NDI_UNIQUE, 0, who,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+    if (!(aflags&AP_NOPRINT))
+        draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
             "You turn %s your %s.",
             NULL,
-            onoff,
-            op->name);
+            onoff, op->name);
 
     tmp2 = arch_to_object(op->other_arch);
     tmp2->stats.food = op->stats.food;
@@ -79,16 +77,15 @@ static void do_turn(object *op, object *who, int aflags, const char *onoff) {
 
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
         if (who->type == PLAYER) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info(NDI_UNIQUE, 0,who,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_CURSED,
                     "Oops, it feels deadly cold!", NULL);
             SET_FLAG(tmp2, FLAG_KNOWN_CURSED);
         }
     }
 
     if (who->map) {
-        SET_MAP_FLAGS(who->map, who->x, who->y,  P_NEED_UPDATE);
+        SET_MAP_FLAGS(who->map, who->x, who->y, P_NEED_UPDATE);
         update_position(who->map, who->x, who->y);
         update_all_los(who->map, who->x, who->y);
     }
@@ -112,14 +109,13 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *app
     object *tmp;
 
     if (get_player_container(lamp) != applier) {
-        draw_ext_info_format (NDI_UNIQUE, 0, applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You must get it first!\n", NULL);
         return METHOD_ERROR;
     }
 
     if (lamp->nrof > 1)
-        tmp = get_split_ob(lamp,lamp->nrof - 1, NULL, 0);
+        tmp = get_split_ob(lamp, lamp->nrof-1, NULL, 0);
     else
         tmp = NULL;
 
@@ -127,21 +123,19 @@ static method_ret lamp_type_apply(ob_methods *context, object *lamp, object *app
         do_turn(lamp, applier, aflags, "off");
     else {
         if (lamp->stats.food < 1) {
-            if (!(aflags & AP_NOPRINT))
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY,
-                    MSG_TYPE_APPLY_FAILURE,
+            if (!(aflags&AP_NOPRINT))
+                draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                     "Your %s is out of fuel!",
                     NULL,
                     lamp->name);
-        return METHOD_OK;
+            return METHOD_OK;
         }
         do_turn(lamp, applier, aflags, "on");
     }
 
     /* insert the portion that was split off. */
-    if(tmp!=NULL) {
-        insert_ob_in_ob(tmp,applier);
+    if (tmp != NULL) {
+        insert_ob_in_ob(tmp, applier);
     }
 
     return METHOD_OK;

@@ -35,8 +35,7 @@ static method_ret thrown_object_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the THROWN_OBJ object type.
  */
-void init_type_thrown_object(void)
-{
+void init_type_thrown_object(void) {
     register_move_on(THROWN_OBJ, common_projectile_move_on);
     register_process(THROWN_OBJ, thrown_object_type_process);
 }
@@ -48,32 +47,32 @@ void init_type_thrown_object(void)
  * @return METHOD_ERROR if op is not in a map, otherwise METHOD_OK
  */
 static method_ret thrown_object_type_process(ob_methods *context, object *op) {
-    if(op->map==NULL) {
-	LOG (llevError, "BUG: Thrown object had no map.\n");
-	remove_ob(op);
-	free_object(op);
-	return METHOD_ERROR;
+    if (op->map == NULL) {
+        LOG(llevError, "BUG: Thrown object had no map.\n");
+        remove_ob(op);
+        free_object(op);
+        return METHOD_ERROR;
     }
 
     /* we need to stop thrown objects at some point. Like here. */
-    if(op->type==THROWN_OBJ) {
-	/* If the object that the THROWN_OBJ encapsulates disappears,
-	 * we need to have this object go away also - otherwise, you get
-	 * left over remnants on the map.  Where this currently happens
-	 * is if the player throws a bomb - the bomb explodes on its own,
-	 * but this object sticks around.  We could handle the cleanup in the
-	 * bomb code, but there are potential other cases where that could happen,
-	 * and it is easy enough to clean it up here.
-	 */
+    if (op->type == THROWN_OBJ) {
+        /* If the object that the THROWN_OBJ encapsulates disappears,
+         * we need to have this object go away also - otherwise, you get
+         * left over remnants on the map.  Where this currently happens
+         * is if the player throws a bomb - the bomb explodes on its own,
+         * but this object sticks around.  We could handle the cleanup in the
+         * bomb code, but there are potential other cases where that could happen,
+         * and it is easy enough to clean it up here.
+         */
         if (op->inv == NULL) {
-	    remove_ob(op);
-	    free_object(op);
+            remove_ob(op);
+            free_object(op);
             return METHOD_OK;
-	}
-	if(op->last_sp-- < 0) {
-	    stop_projectile (op);
-	    return METHOD_OK;
-	}
+        }
+        if (op->last_sp-- < 0) {
+            stop_projectile(op);
+            return METHOD_OK;
+        }
     }
 
     return common_process_projectile(context, op);

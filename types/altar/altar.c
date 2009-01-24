@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim,
-    object *originator);
+static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the ALTAR object type.
  */
-void init_type_altar(void)
-{
+void init_type_altar(void) {
     register_move_on(ALTAR, altar_type_move_on);
 }
 
@@ -49,37 +47,29 @@ void init_type_altar(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim,
-    object *originator)
-{
+static method_ret altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
     if (trap->head)
         trap = trap->head;
 
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
 
     /* sacrifice victim on trap */
     /* Only players can make sacrifices on spell casting altars. */
-    if (trap->inv && ( ! originator || originator->type != PLAYER))
-    {
+    if (trap->inv && (!originator || originator->type != PLAYER)) {
         common_post_ob_move_on(trap, victim, originator);
         return METHOD_OK;
     }
-    if (operate_altar(trap, &victim))
-    {
+    if (operate_altar(trap, &victim)) {
         /* Simple check.  Unfortunately, it means you can't cast magic bullet
          * with an altar.  We call it a Potion - altars are stationary - it
          * is up to map designers to use them properly.
          */
-        if (trap->inv && trap->inv->type==SPELL)
-        {
-            draw_ext_info_format (NDI_BLACK, 0, originator,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+        if (trap->inv && trap->inv->type == SPELL) {
+            draw_ext_info_format(NDI_BLACK, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                 "The altar casts %s.", "The altar casts %s.", trap->inv->name);
             cast_spell(originator, trap, 0, trap->inv, NULL);
-        }
-        else
-        {
+        } else {
             trap->value = 1;  /* works only once */
             push_button(trap);
         }

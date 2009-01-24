@@ -30,16 +30,15 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret trigger_altar_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret trigger_altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the TRIGGER_ALTAR object type.
  */
-void init_type_trigger_altar(void)
-{
+void init_type_trigger_altar(void) {
     register_move_on(TRIGGER_ALTAR, trigger_altar_type_move_on);
 }
+
 /**
  * Move on this Trigger Altar object.
  * @param context The method context
@@ -48,13 +47,11 @@ void init_type_trigger_altar(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret trigger_altar_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
+static method_ret trigger_altar_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
     if (trap->head)
         trap = trap->head;
 
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     check_trigger(trap, victim);
     common_post_ob_move_on(trap, victim, originator);

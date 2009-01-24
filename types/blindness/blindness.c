@@ -36,8 +36,7 @@ static method_ret blindness_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the blindness object type.
  */
-void init_type_blindness(void)
-{
+void init_type_blindness(void) {
     register_process(BLINDNESS, blindness_type_process);
 }
 
@@ -50,11 +49,11 @@ void init_type_blindness(void)
  * @return METHOD_OK
  */
 static method_ret blindness_type_process(ob_methods *context, object *op) {
-    if(--op->stats.food > 0)
+    if (--op->stats.food > 0)
         return METHOD_OK;
     CLEAR_FLAG(op, FLAG_APPLIED);
-    if(op->env!=NULL) {
-        change_abil(op->env,op);
+    if (op->env != NULL) {
+        change_abil(op->env, op);
         fix_object(op->env);
     }
     remove_ob(op);

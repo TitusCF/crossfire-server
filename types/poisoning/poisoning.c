@@ -35,8 +35,7 @@ static method_ret poisoning_type_process(ob_methods *context, object *op);
 /**
  * Initializer for the poisoning object type.
  */
-void init_type_poisoning(void)
-{
+void init_type_poisoning(void) {
     register_process(POISONING, poisoning_type_process);
 }
 
@@ -47,36 +46,36 @@ void init_type_poisoning(void)
  * @return METHOD_OK normally. METHOD_ERROR if POISONING is in an invalid env.
  */
 static method_ret poisoning_type_process(ob_methods *context, object *op) {
-  if(op->env==NULL||!QUERY_FLAG(op->env,FLAG_ALIVE)||op->env->stats.hp<0) {
-    remove_ob(op);
-    free_object(op);
-    LOG(llevDebug, "Found POISONING with invalid env. Removing...\n");
-    return METHOD_ERROR;
-  }
-  if(op->stats.food==1) {
-    /* need to remove the object before fix_player is called, else fix_object
-     * will not do anything.
-     */
-    if(op->env->type==PLAYER) {
-      CLEAR_FLAG(op, FLAG_APPLIED);
-      fix_object(op->env);
-      draw_ext_info(NDI_UNIQUE, 0,op->env,
-		    MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
-		    "You feel much better now.", NULL);
+    if (op->env == NULL
+    || !QUERY_FLAG(op->env, FLAG_ALIVE)
+    || op->env->stats.hp < 0) {
+        remove_ob(op);
+        free_object(op);
+        LOG(llevDebug, "Found POISONING with invalid env. Removing...\n");
+        return METHOD_ERROR;
     }
-    remove_ob(op);
-    free_object(op);
+
+    if (op->stats.food == 1) {
+        /* need to remove the object before fix_player is called, else fix_object
+         * will not do anything.
+         */
+        if (op->env->type == PLAYER) {
+            CLEAR_FLAG(op, FLAG_APPLIED);
+            fix_object(op->env);
+            draw_ext_info(NDI_UNIQUE, 0, op->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
+                "You feel much better now.", NULL);
+        }
+        remove_ob(op);
+        free_object(op);
+        return METHOD_OK;
+    }
+
+    if (op->env->type == PLAYER) {
+        op->env->stats.food--;
+        /* Not really the start of a bad effect, more the continuing effect */
+        draw_ext_info(NDI_UNIQUE, 0, op->env, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
+            "You feel very sick...", NULL);
+    }
+    (void)hit_player(op->env, op->stats.dam, op, AT_INTERNAL, 1);
     return METHOD_OK;
-  }
-  if(op->env->type==PLAYER) {
-    op->env->stats.food--;
-    /* Not really the start of a bad effect, more the continuing effect */
-    draw_ext_info(NDI_UNIQUE, 0,op->env,
-		  MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_START,
-		  "You feel very sick...", NULL);
-  }
-  (void)hit_player(op->env,
-                   op->stats.dam,
-                   op,AT_INTERNAL,1);
-  return METHOD_OK;
 }

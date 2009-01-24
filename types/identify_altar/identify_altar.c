@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret identify_altar_type_move_on(ob_methods *context, object *altar,
-    object *money, object *originator);
+static method_ret identify_altar_type_move_on(ob_methods *context, object *altar, object *money, object *originator);
 
 /**
  * Initializer for the IDENTIFY_ALTAR object type.
  */
-void init_type_identify_altar(void)
-{
+void init_type_identify_altar(void) {
     register_move_on(IDENTIFY_ALTAR, identify_altar_type_move_on);
 }
 
@@ -49,27 +47,23 @@ void init_type_identify_altar(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret identify_altar_type_move_on(ob_methods *context, object *altar,
-    object *money, object *originator)
-{
+static method_ret identify_altar_type_move_on(ob_methods *context, object *altar, object *money, object *originator) {
     object *id;
     object *marked;
-    int success=0;
+    int success = 0;
     char desc[MAX_BUF];
 
-    if (common_pre_ob_move_on(altar, money, originator)==METHOD_ERROR)
+    if (common_pre_ob_move_on(altar, money, originator) == METHOD_ERROR)
         return METHOD_OK;
 
-    if (originator == NULL || originator->type != PLAYER)
-    {
+    if (originator == NULL || originator->type != PLAYER) {
         common_post_ob_move_on(altar, money, originator);
         return METHOD_OK;
     }
     /* Check for MONEY type is a special hack - it prevents 'nothing needs
      * identifying' from being printed out more than it needs to be.
      */
-    if (money->type != MONEY || !check_altar_sacrifice(altar, money, 0, NULL))
-    {
+    if (money->type != MONEY || !check_altar_sacrifice(altar, money, 0, NULL)) {
         common_post_ob_move_on(altar, money, originator);
         return METHOD_OK;
     }
@@ -77,64 +71,53 @@ static method_ret identify_altar_type_move_on(ob_methods *context, object *altar
     /* if the player has a marked item, identify that if it needs to be
      * identified.  IF it doesn't, then go through the player inventory.
      */
-    if (marked && ! QUERY_FLAG(marked, FLAG_IDENTIFIED)
-        && need_identify (marked))
-    {
-        if (operate_altar (altar, &money))
-        {
+    if (marked
+    && !QUERY_FLAG(marked, FLAG_IDENTIFIED)
+    && need_identify(marked)) {
+        if (operate_altar(altar, &money)) {
             identify(marked);
-            draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY,
-                MSG_TYPE_APPLY_SUCCESS, "You have %s.",
+            draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You have %s.",
                 NULL,
                 ob_describe(marked, originator, desc, sizeof(desc)));
 
-            if (marked->msg)
-            {
-                draw_ext_info(NDI_UNIQUE, 0,originator,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            if (marked->msg) {
+                draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                     "The item has a story:", NULL);
-                draw_ext_info(NDI_UNIQUE, 0,originator,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, marked->msg, NULL);
+                draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                    marked->msg, NULL);
             }
             common_post_ob_move_on(altar, money, originator);
             return METHOD_OK;
         }
     }
 
-    for (id=originator->inv; id; id=id->below)
-    {
-        if (!QUERY_FLAG(id, FLAG_IDENTIFIED) && !id->invisible &&
-            need_identify(id))
-        {
-            if (operate_altar(altar,&money))
-            {
+    for (id = originator->inv; id; id = id->below) {
+        if (!QUERY_FLAG(id, FLAG_IDENTIFIED)
+        && !id->invisible
+        && need_identify(id)) {
+            if (operate_altar(altar, &money)) {
                 identify(id);
-                draw_ext_info_format(NDI_UNIQUE, 0, originator,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                draw_ext_info_format(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                     "You have %s.", "You have %s.", ob_describe(id, originator, desc, sizeof(desc)));
-                if (id->msg)
-                {
-                    draw_ext_info(NDI_UNIQUE, 0,originator,
-                        MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                if (id->msg) {
+                    draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
                         "The item has a story:", NULL);
-                    draw_ext_info(NDI_UNIQUE, 0,originator,
-                        MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS, id->msg, NULL);
+                    draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                        id->msg, NULL);
                 }
-                success=1;
+                success = 1;
                 /* If no more money, might as well quit now */
-                if (money == NULL||!check_altar_sacrifice(altar,money, 0, NULL))
+                if (money == NULL || !check_altar_sacrifice(altar, money, 0, NULL))
                     break;
-            }
-            else
-            {
-                LOG(llevError,"check_id_altar:  Couldn't do sacrifice when we should have been able to\n");
+            } else {
+                LOG(llevError, "check_id_altar:  Couldn't do sacrifice when we should have been able to\n");
                 break;
             }
         }
     }
     if (!success)
-        draw_ext_info(NDI_UNIQUE, 0,originator,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+        draw_ext_info(NDI_UNIQUE, 0, originator, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You have nothing that needs identifying", NULL);
     common_post_ob_move_on(altar, money, originator);
     return METHOD_OK;

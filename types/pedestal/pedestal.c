@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret pedestal_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret pedestal_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the PEDESTAL object type.
  */
-void init_type_pedestal(void)
-{
+void init_type_pedestal(void) {
     register_move_on(PEDESTAL, pedestal_type_move_on);
 }
 /**
@@ -48,10 +46,8 @@ void init_type_pedestal(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret pedestal_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret pedestal_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     update_button(trap);
     common_post_ob_move_on(trap, victim, originator);

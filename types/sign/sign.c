@@ -31,16 +31,13 @@
 #include <sproto.h>
 
 static void apply_sign(object *sign, object *op, int autoapply);
-static method_ret sign_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
-static method_ret sign_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret sign_type_apply(ob_methods *context, object *op, object *applier, int aflags);
+static method_ret sign_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the SIGN object type.
  */
-void init_type_sign(void)
-{
+void init_type_sign(void) {
     register_move_on(SIGN, sign_type_move_on);
     register_apply(SIGN, sign_type_apply);
 }
@@ -51,24 +48,19 @@ void init_type_sign(void)
  * @param op The object applying the sign
  * @param autoapply Set this to 1 to automatically apply the sign
  */
-static void apply_sign(object *sign, object *op, int autoapply)
-{
+static void apply_sign(object *sign, object *op, int autoapply) {
     const readable_message_type *msgType;
 
-    if (sign->msg == NULL)
-    {
-        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY,
-            MSG_TYPE_APPLY_FAILURE, "Nothing is written on it.", NULL);
+    if (sign->msg == NULL) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            "Nothing is written on it.", NULL);
         return;
     }
 
-    if (sign->stats.food)
-    {
-        if (sign->last_eat >= sign->stats.food)
-        {
+    if (sign->stats.food) {
+        if (sign->last_eat >= sign->stats.food) {
             if (!sign->move_on)
-                draw_ext_info (NDI_UNIQUE, 0, op,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                     "You cannot read it anymore.", NULL);
             return;
         }
@@ -82,16 +74,16 @@ static void apply_sign(object *sign, object *op, int autoapply)
      * move_on is zero, it needs to be manually applied (doesn't talk
      * to us).
      */
-    if (QUERY_FLAG (op, FLAG_BLIND) && ! QUERY_FLAG (op, FLAG_WIZ)
-        && !sign->move_on)
-    {
-        draw_ext_info (NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+    if (QUERY_FLAG(op, FLAG_BLIND)
+    && !QUERY_FLAG(op, FLAG_WIZ)
+    && !sign->move_on) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You are unable to read while blind.", NULL);
         return;
     }
-    msgType=get_readable_message_type(sign);
-    draw_ext_info(NDI_UNIQUE | NDI_NAVY, 0, op, msgType->message_type,
-        msgType->message_subtype, sign->msg, sign->msg);
+    msgType = get_readable_message_type(sign);
+    draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, op, msgType->message_type, msgType->message_subtype,
+        sign->msg, sign->msg);
 }
 
 /**
@@ -102,9 +94,7 @@ static void apply_sign(object *sign, object *op, int autoapply)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always METHOD_OK
  */
-static method_ret sign_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
+static method_ret sign_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     apply_sign(op, applier, 0);
     return METHOD_OK;
 }
@@ -117,13 +107,10 @@ static method_ret sign_type_apply(ob_methods *context, object *op,
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret sign_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret sign_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
-    if (victim->type != PLAYER && trap->stats.food > 0)
-    {
+    if (victim->type != PLAYER && trap->stats.food > 0) {
         common_post_ob_move_on(trap, victim, originator);
         return METHOD_OK; /* monsters musn't apply magic_mouths with counters */
     }

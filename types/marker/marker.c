@@ -37,8 +37,7 @@ static method_ret marker_type_trigger(ob_methods *context, object *op, object *c
 /**
  * Initializer for the @ref page_type_55 "marker" object type.
  */
-void init_type_marker(void)
-{
+void init_type_marker(void) {
     register_process(MARKER, marker_type_process);
     register_trigger(TRIGGER_MARKER, marker_type_trigger);
 }
@@ -60,7 +59,7 @@ void init_type_marker(void)
  * marker to move. Can be removed if it reached its marking limit.
  */
 void move_marker(object *op) {
-    object *tmp,*tmp2;
+    object *tmp, *tmp2;
 
     /*
     * markers not on a map for any reason should not crash server
@@ -68,41 +67,41 @@ void move_marker(object *op) {
     if (!op->map) {
         return;
     }
-    for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above) {
-        if(tmp->type == PLAYER) { /* we've got someone to MARK */
 
-	    /* cycle through his inventory to look for the MARK we want to
+    for (tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above) {
+        if (tmp->type == PLAYER) { /* we've got someone to MARK */
+            /* cycle through his inventory to look for the MARK we want to
             * place
             */
-            for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
-                if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->slaying)) break;
+            for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below) {
+                if (tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying, op->slaying))
+                    break;
             }
 
             /* if we didn't find our own MARK */
-            if(tmp2==NULL) {
+            if (tmp2 == NULL) {
                 object *force = create_archetype(FORCE_NAME);
 
                 force->speed = 0;
-                if(op->stats.food) {
+                if (op->stats.food) {
                     force->speed = 0.01;
                     force->speed_left = -op->stats.food;
                 }
-                update_ob_speed (force);
+                update_ob_speed(force);
                 /* put in the lock code */
                 force->slaying = add_string(op->slaying);
 
-                if ( op->lore)
+                if (op->lore)
                     force->lore = add_string(op->lore);
 
-                insert_ob_in_ob(force,tmp);
-                if(op->msg)
-                    draw_ext_info(NDI_UNIQUE|NDI_NAVY,0,tmp,
-                                  MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
-                                  op->msg, op->msg);
+                insert_ob_in_ob(force, tmp);
+                if (op->msg)
+                    draw_ext_info(NDI_UNIQUE|NDI_NAVY, 0, tmp, MSG_TYPE_MISC, MSG_SUBTYPE_NONE,
+                        op->msg, op->msg);
 
-                if(op->stats.hp > 0) {
+                if (op->stats.hp > 0) {
                     op->stats.hp--;
-                    if(op->stats.hp==0) {
+                    if (op->stats.hp == 0) {
                         /* marker expires--granted mark number limit */
                         remove_ob(op);
                         free_object(op);
@@ -120,8 +119,7 @@ void move_marker(object *op) {
  * @param op The marker to process
  * @retval METHOD_OK
  */
-static method_ret marker_type_process(ob_methods *context, object *op)
-{
+static method_ret marker_type_process(ob_methods *context, object *op) {
     move_marker(op);
     return METHOD_OK;
 }
@@ -134,8 +132,7 @@ static method_ret marker_type_process(ob_methods *context, object *op)
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret marker_type_trigger(ob_methods *context, object *op, object *cause, int state)
-{
+static method_ret marker_type_trigger(ob_methods *context, object *op, object *cause, int state) {
     move_marker(op);
     return METHOD_OK;
 }

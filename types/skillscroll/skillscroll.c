@@ -59,39 +59,35 @@ static method_ret skillscroll_type_apply(ob_methods *context, object *scroll, ob
 
     /* Must be applied by a player. */
     if (applier->type == PLAYER) {
-        switch ((int) learn_skill (applier, scroll)) {
-            case 0:
-                query_name(scroll, name, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE, 0,applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
-                                     "You already possess the knowledge held within the %s.",
-                                     "You already possess the knowledge held within the %s.",
-                                     name);
-                return METHOD_OK;
+        switch ((int)learn_skill(applier, scroll)) {
+        case 0:
+            query_name(scroll, name, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+                "You already possess the knowledge held within the %s.",
+                "You already possess the knowledge held within the %s.",
+                name);
+            return METHOD_OK;
 
-            case 1:
-                draw_ext_info_format(NDI_UNIQUE, 0,applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "You succeed in learning %s",
-                                     "You succeed in learning %s",
-                                     scroll->skill);
-                draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                                     "Type 'bind ready_skill %s to store the skill in a key.",
-                                     "Type 'bind ready_skill %s to store the skill in a key.",
-                                     scroll->skill);
-                decrease_ob(scroll);
-                return METHOD_OK;
+        case 1:
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "You succeed in learning %s",
+                "You succeed in learning %s",
+                scroll->skill);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+                "Type 'bind ready_skill %s to store the skill in a key.",
+                "Type 'bind ready_skill %s to store the skill in a key.",
+                scroll->skill);
+            decrease_ob(scroll);
+            return METHOD_OK;
 
-            default:
-                query_name(scroll, name, MAX_BUF);
-                draw_ext_info_format(NDI_UNIQUE,0,applier,
-                                     MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
-                                     "You fail to learn the knowledge of the %s.\n",
-                                     "You fail to learn the knowledge of the %s.\n",
-                                     name);
-                decrease_ob(scroll);
-                return METHOD_OK;
+        default:
+            query_name(scroll, name, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+                "You fail to learn the knowledge of the %s.\n",
+                "You fail to learn the knowledge of the %s.\n",
+                name);
+            decrease_ob(scroll);
+            return METHOD_OK;
         }
     }
     return METHOD_OK;

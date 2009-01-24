@@ -36,8 +36,7 @@ static method_ret duplicator_type_trigger(ob_methods *context, object *op, objec
 /**
  * Initializer for the @ref page_type_83 "duplicator" object type.
  */
-void init_type_duplicator(void)
-{
+void init_type_duplicator(void) {
     register_trigger(DUPLICATOR, duplicator_type_trigger);
 }
 
@@ -62,13 +61,14 @@ void move_duplicator(object *op) {
 
     if (op->above == NULL)
         return;
-    for (tmp=op->above; tmp != NULL; tmp=tmp->above) {
+    for (tmp = op->above; tmp != NULL; tmp = tmp->above) {
         if (strcmp(op->other_arch->name, tmp->arch->name) == 0) {
             if (op->level <= 0) {
                 remove_ob(tmp);
                 free_object(tmp);
             } else {
                 uint64 new_nrof = (uint64)tmp->nrof*op->level;
+
                 if (new_nrof >= 1UL<<31)
                     new_nrof = 1UL<<31;
                 tmp->nrof = new_nrof;
@@ -78,7 +78,6 @@ void move_duplicator(object *op) {
     }
 }
 
-
 /**
  * A @ref page_type_83 "duplicator" is triggered.
  * @param context Ignored.
@@ -87,8 +86,7 @@ void move_duplicator(object *op) {
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret duplicator_type_trigger(ob_methods *context, object *op, object *cause, int state)
-{
+static method_ret duplicator_type_trigger(ob_methods *context, object *op, object *cause, int state) {
     move_duplicator(op);
     return METHOD_OK;
 }

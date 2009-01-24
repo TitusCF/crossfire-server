@@ -35,8 +35,7 @@ static method_ret book_type_apply(ob_methods *context, object *op,
 /**
  * Initializer for the BOOK object type.
  */
-void init_type_book(void)
-{
+void init_type_book(void) {
     register_apply(BOOK, book_type_apply);
 }
 
@@ -49,26 +48,20 @@ void init_type_book(void)
  * @retval METHOD_UNHANDLED If the Book wasn't read by a player
  * @retval METHOD_OK If applier was a player
  */
-static method_ret book_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
+static method_ret book_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
     int lev_diff;
     object *skill_ob;
 
     if (applier->type != PLAYER)
         return METHOD_UNHANDLED;
 
-    if(QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier,FLAG_WIZ))
-    {
-        draw_ext_info(NDI_UNIQUE, 0,applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
+    if (QUERY_FLAG(applier, FLAG_BLIND)&&!QUERY_FLAG(applier, FLAG_WIZ)) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_ERROR,
             "You are unable to read while blind.", NULL);
         return METHOD_OK;
     }
-    if(op->msg==NULL)
-    {
-        draw_ext_info_format(NDI_UNIQUE, 0, applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+    if (op->msg == NULL) {
+        draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You open the %s and find it empty.",
             "You open the %s and find it empty.",
             op->name);
@@ -77,75 +70,65 @@ static method_ret book_type_apply(ob_methods *context, object *op,
 
     /* need a literacy skill to read stuff! */
     skill_ob = find_skill_by_name(applier, op->skill);
-    if ( ! skill_ob)
-    {
-        draw_ext_info(NDI_UNIQUE, 0,applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+    if (!skill_ob) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "You are unable to decipher the strange symbols.", NULL);
         return METHOD_OK;
     }
-    lev_diff = op->level - (skill_ob->level + 5);
-    if (!QUERY_FLAG(applier, FLAG_WIZ) && lev_diff > 0)
-    {
+    lev_diff = op->level-(skill_ob->level+5);
+    if (!QUERY_FLAG(applier, FLAG_WIZ) && lev_diff > 0) {
         if (lev_diff < 2)
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is just barely beyond your comprehension.", NULL);
         else if (lev_diff < 3)
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is slightly beyond your comprehension.", NULL);
         else if (lev_diff < 5)
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is beyond your comprehension.", NULL);
         else if (lev_diff < 8)
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is quite a bit beyond your comprehension.", NULL);
         else if (lev_diff < 15)
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is way beyond your comprehension.", NULL);
         else
-            draw_ext_info(NDI_UNIQUE, 0,applier,
-                MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+            draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
                 "This book is totally beyond your comprehension.", NULL);
         return METHOD_OK;
     }
 
-
     /* Lauwenmark: Handle for plugin book event */
     /*printf("Book apply: %s\n", tmp->name);
-    execute_event(tmp, EVENT_APPLY,op,NULL,SCRIPT_FIX_ALL);
+    execute_event(tmp, EVENT_APPLY, op, NULL, SCRIPT_FIX_ALL);
     printf("Book applied: %s\n", tmp->name);*/
     {
         char desc[MAX_BUF];
         const readable_message_type *msgType = get_readable_message_type(op);
-        draw_ext_info_format(NDI_UNIQUE | NDI_NAVY, 0, applier,
-            msgType->message_type, msgType->message_subtype,
+
+        draw_ext_info_format(NDI_UNIQUE|NDI_NAVY, 0, applier, msgType->message_type, msgType->message_subtype,
             "You open the %s and start reading.\n%s",
             "You open the %s and start reading.\n%s",
-            ob_describe(op,applier, desc, sizeof(desc)), op->msg);
+            ob_describe(op, applier, desc, sizeof(desc)), op->msg);
     }
 
     /* gain xp from reading */
-    if(!QUERY_FLAG(op,FLAG_NO_SKILL_IDENT))
-    { /* only if not read before */
-        int exp_gain=calc_skill_exp(applier,op, skill_ob);
-        if(!QUERY_FLAG(op,FLAG_IDENTIFIED))
-        {
+    if (!QUERY_FLAG(op, FLAG_NO_SKILL_IDENT)) {
+        /* only if not read before */
+        int exp_gain = calc_skill_exp(applier, op, skill_ob);
+
+        if (!QUERY_FLAG(op, FLAG_IDENTIFIED)) {
             /*exp_gain *= 2; because they just identified it too */
-            SET_FLAG(op,FLAG_IDENTIFIED);
+            SET_FLAG(op, FLAG_IDENTIFIED);
             /* If in a container, update how it looks */
-            if(op->env)
-                esrv_update_item(UPD_FLAGS|UPD_NAME, applier,op);
+            if (op->env)
+                esrv_update_item(UPD_FLAGS|UPD_NAME, applier, op);
             else
-                applier->contr->socket.update_look=1;
+                applier->contr->socket.update_look = 1;
         }
-        change_exp(applier,exp_gain, skill_ob->skill, 0);
+        change_exp(applier, exp_gain, skill_ob->skill, 0);
         /* so no more xp gained from this book */
-        SET_FLAG(op,FLAG_NO_SKILL_IDENT);
+        SET_FLAG(op, FLAG_NO_SKILL_IDENT);
     }
     return METHOD_OK;
 }

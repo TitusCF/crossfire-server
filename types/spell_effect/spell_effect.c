@@ -31,8 +31,7 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret spell_effect_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 static method_ret spell_effect_type_process(ob_methods *context, object *op);
 
 static void move_bolt(object *op);
@@ -52,11 +51,11 @@ static void check_spell_knockback(object *op);
 /**
  * Initializer for the SPELL_EFFECT object type.
  */
-void init_type_spell_effect(void)
-{
+void init_type_spell_effect(void) {
     register_move_on(SPELL_EFFECT, spell_effect_type_move_on);
     register_process(SPELL_EFFECT, spell_effect_type_process);
 }
+
 /**
  * Move on this Spell Effect object.
  * @param context The method context
@@ -65,39 +64,36 @@ void init_type_spell_effect(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret spell_effect_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret spell_effect_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
 
-    switch (trap->subtype)
-    {
-        case SP_CONE:
-            if (QUERY_FLAG(victim, FLAG_ALIVE) && trap->speed
-                && trap->attacktype)
-                hit_player(victim, trap->stats.dam, trap, trap->attacktype, 0);
-            break;
+    switch (trap->subtype) {
+    case SP_CONE:
+        if (QUERY_FLAG(victim, FLAG_ALIVE)
+        && trap->speed
+        && trap->attacktype)
+            hit_player(victim, trap->stats.dam, trap, trap->attacktype, 0);
+        break;
 
-        case SP_MAGIC_MISSILE:
-            if (QUERY_FLAG (victim, FLAG_ALIVE))
-            {
-                tag_t spell_tag = trap->count;
-                hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
-                if (!was_destroyed(trap, spell_tag))
-                {
-                    remove_ob(trap);
-                    free_object (trap);
-                }
+    case SP_MAGIC_MISSILE:
+        if (QUERY_FLAG(victim, FLAG_ALIVE)) {
+            tag_t spell_tag = trap->count;
+
+            hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
+            if (!was_destroyed(trap, spell_tag)) {
+                remove_ob(trap);
+                free_object(trap);
             }
-            break;
+        }
+        break;
 
-        case SP_MOVING_BALL:
-            if (QUERY_FLAG (victim, FLAG_ALIVE))
-                hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
-            else if (victim->material || victim->materialname)
-                save_throw_object(victim, trap->attacktype, trap);
-            break;
+    case SP_MOVING_BALL:
+        if (QUERY_FLAG(victim, FLAG_ALIVE))
+            hit_player(victim, trap->stats.dam, trap, trap->attacktype, 1);
+        else if (victim->material || victim->materialname)
+            save_throw_object(victim, trap->attacktype, trap);
+        break;
     }
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
@@ -111,45 +107,45 @@ static method_ret spell_effect_type_move_on(ob_methods *context, object *trap,
  */
 static method_ret spell_effect_type_process(ob_methods *context, object *op) {
     switch (op->subtype) {
-	case SP_BOLT:
-	    move_bolt(op);
-	    break;
+    case SP_BOLT:
+        move_bolt(op);
+        break;
 
-	case SP_BULLET:
-	    move_bullet(op);
-	    break;
+    case SP_BULLET:
+        move_bullet(op);
+        break;
 
-	case SP_EXPLOSION:
-	    explosion(op);
-	    break;
+    case SP_EXPLOSION:
+        explosion(op);
+        break;
 
-	case SP_CONE:
-	    move_cone(op);
-	    break;
+    case SP_CONE:
+        move_cone(op);
+        break;
 
-	case SP_BOMB:
-	    animate_bomb(op);
-	    break;
+    case SP_BOMB:
+        animate_bomb(op);
+        break;
 
-	case SP_MAGIC_MISSILE:
-	    move_missile(op);
-	    break;
+    case SP_MAGIC_MISSILE:
+        move_missile(op);
+        break;
 
-	case SP_WORD_OF_RECALL:
-	    execute_word_of_recall(op);
-	    break;
+    case SP_WORD_OF_RECALL:
+        execute_word_of_recall(op);
+        break;
 
-	case SP_MOVING_BALL:
-	    move_ball_spell(op);
-	    break;
+    case SP_MOVING_BALL:
+        move_ball_spell(op);
+        break;
 
-	case SP_SWARM:
-	    move_swarm_spell(op);
-	    break;
+    case SP_SWARM:
+        move_swarm_spell(op);
+        break;
 
-	case SP_AURA:
-	    move_aura(op);
-	    break;
+    case SP_AURA:
+        move_aura(op);
+        break;
     }
     return METHOD_OK;
 }
@@ -193,8 +189,7 @@ static void move_bolt(object *op) {
          */
         if (OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, x, y))
         || ((mflags&P_IS_ALIVE) && reflwall(m, x, y, op))) {
-
-            if(!QUERY_FLAG(op, FLAG_REFLECTING))
+            if (!QUERY_FLAG(op, FLAG_REFLECTING))
                 return;
 
             /* Since walls don't run diagonal, if the bolt is in
@@ -225,9 +220,9 @@ static void move_bolt(object *op) {
 
                 if (left == right)
                     op->direction = absdir(op->direction+4);
-                else if(left)
+                else if (left)
                     op->direction = absdir(op->direction+2);
-                else if(right)
+                else if (right)
                     op->direction = absdir(op->direction-2);
             }
             update_turn_face(op); /* A bolt *must *be IS_TURNABLE */
@@ -236,7 +231,8 @@ static void move_bolt(object *op) {
             tmp = get_object();
             copy_object(op, tmp);
             tmp->speed_left = -0.1;
-            tmp->x += DIRX(tmp), tmp->y += DIRY(tmp);
+            tmp->x += DIRX(tmp),
+            tmp->y += DIRY(tmp);
             tmp = insert_ob_in_map(tmp, op->map, op, 0);
             /* To make up for the decrease at the top of the function */
             tmp->duration++;
@@ -245,7 +241,7 @@ static void move_bolt(object *op) {
              * going off in other directions.
              */
 
-            if (rndm(0, 99)< tmp->stats.Dex) {  /* stats.Dex % of forking */
+            if (rndm(0, 99) < tmp->stats.Dex) {  /* stats.Dex % of forking */
                 forklightning(op, tmp);
             }
             /* In this way, the object left behind sticks on the space, but
@@ -340,7 +336,7 @@ static void explosion(object *op) {
              * out of map, etc.
              */
             if (ok_to_put_more(op->map, dx, dy, op, op->attacktype)) {
-                tmp=get_object();
+                tmp = get_object();
                 copy_object(op, tmp);
                 tmp->state = 0;
                 tmp->speed_left = -0.21;
@@ -351,12 +347,12 @@ static void explosion(object *op) {
                 insert_ob_in_map(tmp, m, op, 0);
             }
         }
-	/* Reset range so we don't try to propogate anymore.
-	 * Call merge_spell to see if we can merge with another
-	 * spell on the space.
+        /* Reset range so we don't try to propogate anymore.
+         * Call merge_spell to see if we can merge with another
+         * spell on the space.
          */
-	op->range = 0;
-	merge_spell(op, op->x, op->y);
+        op->range = 0;
+        merge_spell(op, op->x, op->y);
     }
 }
 
@@ -415,6 +411,7 @@ static void move_cone(object *op) {
 
         if (ok_to_put_more(op->map, x, y, op, op->attacktype)) {
             object *tmp = get_object();
+
             copy_object(op, tmp);
             tmp->x = x;
             tmp->y = y;
@@ -514,7 +511,8 @@ static void move_missile(object *op) {
     if (!(mflags&P_OUT_OF_MAP)
     && ((mflags&P_IS_ALIVE) || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, new_x, new_y)))) {
         tag_t tag = op->count;
-        hit_map (op, op->direction, AT_MAGIC, 1);
+
+        hit_map(op, op->direction, AT_MAGIC, 1);
         /* Basically, missile only hits one thing then goes away.
          * we need to remove it if someone hasn't already done so.
          */
@@ -533,7 +531,7 @@ static void move_missile(object *op) {
     op->x = new_x;
     op->y = new_y;
     op->map = m;
-    i=spell_find_dir(op->map, op->x, op->y, get_owner(op));
+    i = spell_find_dir(op->map, op->x, op->y, get_owner(op));
     if (i > 0 && i != op->direction) {
         op->direction = i;
         SET_ANIMATION(op, op->direction);
@@ -546,16 +544,17 @@ static void move_missile(object *op) {
  * @param op The word of recall effect activating.
  */
 static void execute_word_of_recall(object *op) {
-    object *wor=op;
-    while(op!=NULL && op->type!=PLAYER)
-	op=op->env;
+    object *wor = op;
 
-    if(op!=NULL && op->map) {
-	if ((get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL) & P_NO_CLERIC) && (!QUERY_FLAG(op,FLAG_WIZCAST)))
-	    draw_ext_info(NDI_UNIQUE, 0,op,MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
-			  "You feel something fizzle inside you.", NULL);
-	else
-	    enter_exit(op,wor);
+    while (op != NULL && op->type != PLAYER)
+        op = op->env;
+
+    if (op != NULL && op->map) {
+        if ((get_map_flags(op->map, NULL, op->x, op->y, NULL, NULL)&P_NO_CLERIC) && (!QUERY_FLAG(op, FLAG_WIZCAST)))
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_FAILURE,
+                "You feel something fizzle inside you.", NULL);
+        else
+            enter_exit(op, wor);
     }
     remove_ob(wor);
     free_object(wor);
@@ -637,7 +636,7 @@ static void move_ball_spell(object *op) {
          * of the map either.
          */
 
-        if ((mflags&P_IS_ALIVE) && (!owner || owner->x!=hx || owner->y != hy || !on_same_map(owner, op))) {
+        if ((mflags&P_IS_ALIVE) && (!owner || owner->x != hx || owner->y != hy || !on_same_map(owner, op))) {
             if (j)
                 op->stats.dam = dam_save/2;
             hit_map(op, j, op->attacktype, 1);
@@ -660,8 +659,8 @@ static void move_ball_spell(object *op) {
 
     if (i >= 0) { /* we have a preferred direction!  */
         /* pick another direction if the preferred dir is blocked. */
-        if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP ||
-           OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy))) {
+        if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP
+        || OB_TYPE_MOVE_BLOCK(op, GET_MAP_MOVE_BLOCK(m, hx, hy))) {
             i = absdir(i+rndm(0, 2)-1);  /* -1, 0, +1 */
         }
         op->direction = i;
@@ -760,15 +759,15 @@ static void move_aura(object *aura) {
     remove_ob(aura);
 
     /* exit if we're out of gas */
-    if(aura->duration--< 0) {
-	free_object(aura);
-	return;
+    if (aura->duration-- < 0) {
+        free_object(aura);
+        return;
     }
 
     /* auras only exist in inventories */
-    if(env == NULL || env->map==NULL) {
-	free_object(aura);
-	return;
+    if (env == NULL || env->map == NULL) {
+        free_object(aura);
+        return;
     }
     aura->x = env->x;
     aura->y = env->y;
@@ -776,31 +775,33 @@ static void move_aura(object *aura) {
     /* we need to jump out of the inventory for a bit
      * in order to hit the map conveniently.
      */
-    insert_ob_in_map(aura,env->map,aura,0);
+    insert_ob_in_map(aura, env->map, aura, 0);
 
-    for(i=1;i<9;i++) {
-	sint16 nx, ny;
-	nx = aura->x + freearr_x[i];
-	ny = aura->y + freearr_y[i];
-	mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
+    for (i = 1; i < 9; i++) {
+        sint16 nx, ny;
 
-	/* Consider the movement type of the person with the aura as
-	 * movement type of the aura.  Eg, if the player is flying, the aura
-	 * is flying also, if player is walking, it is on the ground, etc.
-	 */
-	if (!(mflags & P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
-	    hit_map(aura,i,aura->attacktype,0);
+        nx = aura->x+freearr_x[i];
+        ny = aura->y+freearr_y[i];
+        mflags = get_map_flags(env->map, &m, nx, ny, &nx, &ny);
 
-	    if(aura->other_arch) {
-		object *new_ob;
+        /* Consider the movement type of the person with the aura as
+         * movement type of the aura.  Eg, if the player is flying, the aura
+         * is flying also, if player is walking, it is on the ground, etc.
+         */
+        if (!(mflags&P_OUT_OF_MAP) && !(OB_TYPE_MOVE_BLOCK(env, GET_MAP_MOVE_BLOCK(m, nx, ny)))) {
+            hit_map(aura, i, aura->attacktype, 0);
 
-		new_ob = arch_to_object(aura->other_arch);
-		new_ob->x = nx;
-		new_ob->y = ny;
-		insert_ob_in_map(new_ob,m,aura,0);
-	    }
-	}
+            if (aura->other_arch) {
+                object *new_ob;
+
+                new_ob = arch_to_object(aura->other_arch);
+                new_ob->x = nx;
+                new_ob->y = ny;
+                insert_ob_in_map(new_ob, m, aura, 0);
+            }
+        }
     }
+
     /* put the aura back in the player's inventory */
     remove_ob(aura);
     insert_ob_in_ob(aura, env);
@@ -917,6 +918,5 @@ static void check_spell_knockback(object *op) {
              */
             move_object(tmp, absdir(op->stats.sp));
         }
-
     }
 }

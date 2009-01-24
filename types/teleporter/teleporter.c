@@ -37,8 +37,7 @@ static method_ret teleporter_type_trigger(ob_methods *context, object *op, objec
 /**
  * Initializer for the @ref page_type_41 "teleporter" object type.
  */
-void init_type_teleporter(void)
-{
+void init_type_teleporter(void) {
     register_process(TELEPORTER, teleporter_type_process);
     register_trigger(TELEPORTER, teleporter_type_trigger);
 }
@@ -50,7 +49,7 @@ void init_type_teleporter(void)
  * teleporter.
  */
 static void move_teleporter(object *op) {
-    object *tmp, *head=op;
+    object *tmp, *head = op;
 
     /* if this is a multipart teleporter, handle the other parts
     * The check for speed isn't strictly needed - basically, if
@@ -59,18 +58,22 @@ static void move_teleporter(object *op) {
     * function - in fact, as written below, part N would get called
     * N times without the speed check.
     */
-    if (op->more && FABS(op->more->speed)<MIN_ACTIVE_SPEED) move_teleporter(op->more);
+    if (op->more && FABS(op->more->speed) < MIN_ACTIVE_SPEED)
+        move_teleporter(op->more);
 
-    if (op->head) head=op->head;
+    if (op->head)
+        head = op->head;
 
-    for (tmp=op->above; tmp!=NULL; tmp=tmp->above)
-        if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
+    for (tmp = op->above; tmp != NULL; tmp = tmp->above)
+        if (!QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+            break;
 
     /* If nothing above us to move, nothing to do */
-    if (!tmp || QUERY_FLAG(tmp, FLAG_WIZPASS)) return;
+    if (!tmp || QUERY_FLAG(tmp, FLAG_WIZPASS))
+        return;
 
-    if(EXIT_PATH(head)) {
-        if(tmp->type==PLAYER) {
+    if (EXIT_PATH(head)) {
+        if (tmp->type == PLAYER) {
             /* Lauwenmark: Handle for plugin TRIGGER event */
             if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
                 return;
@@ -79,8 +82,7 @@ static void move_teleporter(object *op) {
         else
             /* Currently only players can transfer maps */
             return;
-    }
-    else if(EXIT_X(head)||EXIT_Y(head)) {
+    } else if (EXIT_X(head)||EXIT_Y(head)) {
         if (out_of_map(head->map, EXIT_X(head), EXIT_Y(head))) {
             LOG(llevError, "Removed illegal teleporter.\n");
             remove_ob(head);
@@ -90,9 +92,8 @@ static void move_teleporter(object *op) {
         /* Lauwenmark: Handle for plugin TRIGGER event */
         if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
             return;
-        transfer_ob(tmp,EXIT_X(head),EXIT_Y(head),0,head);
-    }
-    else {
+        transfer_ob(tmp, EXIT_X(head), EXIT_Y(head), 0, head);
+    } else {
         /* Random teleporter */
         /* Lauwenmark: Handle for plugin TRIGGER event */
         if (execute_event(op, EVENT_TRIGGER, tmp, NULL, NULL, SCRIPT_FIX_ALL) != 0)
@@ -107,8 +108,7 @@ static void move_teleporter(object *op) {
  * @param op The teleporter to process
  * @retval METHOD_OK
  */
-static method_ret teleporter_type_process(ob_methods *context, object *op)
-{
+static method_ret teleporter_type_process(ob_methods *context, object *op) {
     move_teleporter(op);
     return METHOD_OK;
 }
@@ -121,8 +121,7 @@ static method_ret teleporter_type_process(ob_methods *context, object *op)
  * @param state Ignored.
  * @retval METHOD_OK
  */
-static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state)
-{
+static method_ret teleporter_type_trigger(ob_methods *context, object *op, object *cause, int state) {
     move_teleporter(op);
     return METHOD_OK;
 }

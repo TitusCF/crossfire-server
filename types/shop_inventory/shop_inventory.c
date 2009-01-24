@@ -62,12 +62,13 @@ typedef struct shopinv {
  * @return
  * -1 is a1 is less than a2, 1 if the opposite, 0 if equals.
  */
-static int shop_sort(const void *a1, const void *a2)
-{
-    const shopinv *s1 = (const shopinv*)a1, *s2= (const shopinv*)a2;
+static int shop_sort(const void *a1, const void *a2) {
+    const shopinv *s1 = (const shopinv *)a1, *s2 = (const shopinv *)a2;
 
-    if (s1->type<s2->type) return -1;
-    if (s1->type>s2->type) return 1;
+    if (s1->type < s2->type)
+        return -1;
+    if (s1->type > s2->type)
+        return 1;
     /* the type is the same (what atoi gets), so do a strcasecmp to sort
      * via alphabetical order
      */
@@ -83,8 +84,7 @@ static int shop_sort(const void *a1, const void *a2)
  * @param numitems
  * how many items items contains.
  */
-static void add_shop_item(object *tmp, shopinv *items, int *numitems)
-{
+static void add_shop_item(object *tmp, shopinv *items, int *numitems) {
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.
@@ -92,12 +92,13 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems)
     char name[MAX_BUF];
 
     CLEAR_FLAG(tmp, FLAG_UNPAID);
-    items[*numitems].nrof=tmp->nrof;
+    items[*numitems].nrof = tmp->nrof;
     /* Non mergable items have nrof of 0, but count them as one
      * so the display is properly.
      */
-    if (tmp->nrof == 0) items[*numitems].nrof++;
-    items[*numitems].type=tmp->type;
+    if (tmp->nrof == 0)
+        items[*numitems].nrof++;
+    items[*numitems].type = tmp->type;
     query_base_name(tmp, 0, name, MAX_BUF);
     items[*numitems].item_sort = strdup_local(name);
     query_base_name(tmp, 1, name, MAX_BUF);
@@ -122,30 +123,29 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems)
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
 static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
-    int i,j,numitems=0,numallocated=0;
-    object      *stack;
-    shopinv     *items;
+    int i, j, numitems = 0, numallocated = 0;
+    object *stack;
+    shopinv *items;
 
-    if (applier->type!=PLAYER)
+    if (applier->type != PLAYER)
         return METHOD_UNHANDLED;
 
     draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
         "\nThe shop contains:", NULL);
 
-    items=malloc(40*sizeof(shopinv));
-    numallocated=40;
+    items = malloc(40*sizeof(shopinv));
+    numallocated = 40;
 
     /* Find all the appropriate items */
-    for (i=0; i<MAP_WIDTH(applier->map); i++) {
-        for (j=0; j<MAP_HEIGHT(applier->map); j++) {
-
-            stack  = GET_MAP_OB(applier->map,i,j);
+    for (i = 0; i < MAP_WIDTH(applier->map); i++) {
+        for (j = 0; j < MAP_HEIGHT(applier->map); j++) {
+            stack = GET_MAP_OB(applier->map, i, j);
 
             while (stack) {
                 if (QUERY_FLAG(stack, FLAG_UNPAID)) {
-                    if (numitems==numallocated) {
-                        items=realloc(items, sizeof(shopinv)*(numallocated+10));
-                        numallocated+=10;
+                    if (numitems == numallocated) {
+                        items = realloc(items, sizeof(shopinv)*(numallocated+10));
+                        numallocated += 10;
                     }
                     add_shop_item(stack, items, &numitems);
                 }
@@ -155,25 +155,23 @@ static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter
     }
     if (numitems == 0) {
         draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
-                      "The shop is currently empty.\n", NULL);
+            "The shop is currently empty.\n", NULL);
         free(items);
         return METHOD_OK;
     }
-    qsort(items, numitems, sizeof(shopinv),
-          (int (*)(const void*, const void*))shop_sort);
+    qsort(items, numitems, sizeof(shopinv), (int (*)(const void *, const void *))shop_sort);
 
-    for (i=0; i<numitems; i++) {
+    for (i = 0; i < numitems; i++) {
         /* Collapse items of the same name together */
-        if ((i+1)<numitems && !strcmp(items[i].item_real, items[i+1].item_real)) {
+        if ((i+1) < numitems && !strcmp(items[i].item_real, items[i+1].item_real)) {
             items[i+1].nrof += items[i].nrof;
             free(items[i].item_sort);
             free(items[i].item_real);
         } else {
-            draw_ext_info_format(NDI_UNIQUE, 0, applier,
-                                 MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
-                                 "%d %s", "%d %s",
-                                 items[i].nrof? items[i].nrof:1,
-                                 items[i].nrof==1?items[i].item_sort: items[i].item_real);
+            draw_ext_info_format(NDI_UNIQUE, 0, applier, MSG_TYPE_SHOP, MSG_TYPE_SHOP_LISTING,
+                "%d %s", "%d %s",
+                items[i].nrof ? items[i].nrof : 1,
+                items[i].nrof == 1 ? items[i].item_sort : items[i].item_real);
             free(items[i].item_sort);
             free(items[i].item_real);
         }

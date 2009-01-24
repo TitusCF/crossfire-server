@@ -31,15 +31,13 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret trigger_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags);
+static method_ret trigger_type_apply(ob_methods *context, object *op, object *applier, int aflags);
 static method_ret trigger_type_process(ob_methods *context, object *op);
 
 /**
  * Initializer for the TRIGGER object type.
  */
-void init_type_trigger(void)
-{
+void init_type_trigger(void) {
     register_apply(TRIGGER, trigger_type_apply);
     register_process(TRIGGER, trigger_type_process);
 }
@@ -52,20 +50,13 @@ void init_type_trigger(void)
  * @param aflags Special flags (always apply/unapply)
  * @return The return value is always 1
  */
-static method_ret trigger_type_apply(ob_methods *context, object *op,
-    object *applier, int aflags)
-{
-    if (check_trigger (op, applier))
-    {
-        draw_ext_info (NDI_UNIQUE, 0, applier,
-                    MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-                    "You turn the handle.", NULL);
+static method_ret trigger_type_apply(ob_methods *context, object *op, object *applier, int aflags) {
+    if (check_trigger(op, applier)) {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+            "You turn the handle.", NULL);
         play_sound_map(SOUND_TYPE_GROUND, op, 0, "turn handle");
-    }
-    else
-    {
-        draw_ext_info (NDI_UNIQUE, 0, applier,
-            MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
+    } else {
+        draw_ext_info(NDI_UNIQUE, 0, applier, MSG_TYPE_APPLY, MSG_TYPE_APPLY_FAILURE,
             "The handle doesn't move.", NULL);
     }
     return 1;
@@ -77,17 +68,13 @@ static method_ret trigger_type_apply(ob_methods *context, object *op,
  * @param op The Trigger to process
  * @return Always METHOD_OK
  */
-static method_ret trigger_type_process(ob_methods *context, object *op)
-{
-    if((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op))
-    {
+static method_ret trigger_type_process(ob_methods *context, object *op) {
+    if ((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op)) {
         op->stats.wc = 0;
-        check_trigger(op,NULL);
-    }
-    else
-    {
+        check_trigger(op, NULL);
+    } else {
         SET_ANIMATION(op, op->stats.wc);
-        update_object(op,UP_OBJ_FACE);
+        update_object(op, UP_OBJ_FACE);
     }
     return METHOD_OK;
 }

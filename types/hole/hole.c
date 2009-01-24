@@ -30,14 +30,12 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret hole_type_move_on(ob_methods *context, object *trap, object *victim,
-    object *originator);
+static method_ret hole_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the HOLE object type.
  */
-void init_type_hole(void)
-{
+void init_type_hole(void) {
     register_move_on(HOLE, hole_type_move_on);
 }
 /**
@@ -48,29 +46,25 @@ void init_type_hole(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret hole_type_move_on(ob_methods *context, object *trap, object *victim,
-    object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret hole_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     /* Hole not open? */
-    if(trap->stats.wc > 0)
-    {
+    if (trap->stats.wc > 0) {
         common_post_ob_move_on(trap, victim, originator);
         return METHOD_OK;
     }
     /* Is this a multipart monster and not the head?  If so, return.
      * Processing will happen if the head runs into the pit
      */
-    if (victim->head)
-    {
+    if (victim->head) {
         common_post_ob_move_on(trap, victim, originator);
         return METHOD_OK;
     }
     play_sound_map(SOUND_TYPE_GROUND, trap, 0, "fall hole");
-    draw_ext_info (NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
+    draw_ext_info(NDI_UNIQUE, 0, victim, MSG_TYPE_APPLY, MSG_TYPE_APPLY_TRAP,
        "You fall through the hole!", NULL);
-    transfer_ob (victim, EXIT_X (trap), EXIT_Y (trap), 1, victim);
+    transfer_ob(victim, EXIT_X(trap), EXIT_Y(trap), 1, victim);
     common_post_ob_move_on(trap, victim, originator);
     return METHOD_OK;
 }

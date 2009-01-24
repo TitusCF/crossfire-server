@@ -30,16 +30,15 @@
 #include <sounds.h>
 #include <sproto.h>
 
-static method_ret trigger_button_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator);
+static method_ret trigger_button_type_move_on(ob_methods *context, object *trap, object *victim, object *originator);
 
 /**
  * Initializer for the TRIGGER_BUTTON object type.
  */
-void init_type_trigger_button(void)
-{
+void init_type_trigger_button(void) {
     register_move_on(TRIGGER_BUTTON, trigger_button_type_move_on);
 }
+
 /**
  * Move on this Trigger Button object.
  * @param context The method context
@@ -48,10 +47,8 @@ void init_type_trigger_button(void)
  * @param originator The object that caused the move_on event
  * @return METHOD_OK
  */
-static method_ret trigger_button_type_move_on(ob_methods *context, object *trap,
-    object *victim, object *originator)
-{
-    if (common_pre_ob_move_on(trap, victim, originator)==METHOD_ERROR)
+static method_ret trigger_button_type_move_on(ob_methods *context, object *trap, object *victim, object *originator) {
+    if (common_pre_ob_move_on(trap, victim, originator) == METHOD_ERROR)
         return METHOD_OK;
     check_trigger(trap, victim);
     common_post_ob_move_on(trap, victim, originator);

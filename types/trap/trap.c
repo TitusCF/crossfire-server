@@ -33,8 +33,7 @@
 /**
  * Initializer for the TRAP object type.
  */
-void init_type_trap(void)
-{
+void init_type_trap(void) {
     register_move_on(TRAP, common_trap_type_move_on);
     register_process(TRAP, common_trap_type_process);
 }
