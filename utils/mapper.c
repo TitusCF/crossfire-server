@@ -1,22 +1,22 @@
 /*
-    Crossfire map browser generator.
-
-    Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006, 2007, 2008.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
+ * Crossfire map browser generator.
+ *
+ * Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2006, 2007, 2008.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 /**
  * @file mapper.c
@@ -223,6 +223,7 @@
 #include <gdfontg.h>
 
 gdImagePtr *gdfaces;
+
 extern int nrofpixmaps; /* Found in common/image.c */
 
 /** Information about a NPC with a custom message. */
@@ -234,29 +235,28 @@ typedef struct struct_npc_info {
 
 /** List of NPCs with a custom message. */
 typedef struct struct_npc_list {
-    struct_npc_info** npc;
+    struct_npc_info **npc;
     int count;
     int allocated;
 } struct_npc_list;
 
 /** Collection of races. */
 typedef struct struct_race_list {
-    struct struct_race** races; /**< Races on the list. */
+    struct struct_race **races; /**< Races on the list. */
     int count;                  /**< Number of races. */
     int allocated;              /**< Allocated space. */
 } struct_race_list;
 
-
 /** Utility structure to group map-quest link structure. */
 typedef struct {
-    struct struct_map_in_quest** list;
+    struct struct_map_in_quest **list;
     int count;
     int allocated;
 } struct_map_in_quest_list;
 
 /** List of maps. */
 typedef struct {
-    struct struct_map_info** maps;
+    struct struct_map_info **maps;
     int count;
     int allocated;
 } struct_map_list;
@@ -300,8 +300,10 @@ typedef struct struct_equipment {
     struct_map_list origin; /**< Map(s) this item is found in. */
 } struct_equipment;
 
-struct_equipment** special_equipment = NULL;    /**< Special equipment list. */
+struct_equipment **special_equipment = NULL;    /**< Special equipment list. */
+
 int equipment_count = 0;                        /**< Number of items in special_equipment. */
+
 int equipment_allocated = 0;                    /**< Allocated items in special_equipment. */
 
 
@@ -338,6 +340,7 @@ void init_race_list(struct_race_list *list) {
 void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
     if (check) {
         int test;
+
         for (test = 0; test < list->count; test++) {
             if (list->races[test] == race)
                 return;
@@ -346,7 +349,7 @@ void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
 
     if (list->allocated == list->count) {
         list->allocated += 50;
-        list->races = realloc(list->races, sizeof(struct_race*) * list->allocated);
+        list->races = realloc(list->races, sizeof(struct_race *)*list->allocated);
     }
     list->races[list->count] = race;
     list->count++;
@@ -354,6 +357,7 @@ void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
 
 /** Path to store generated files. Relative or absolute, shouldn't end with a / */
 char root[500];
+
 /** Number of created pictures for GD. */
 int pics_allocated;
 
@@ -421,7 +425,10 @@ enum output_format_type {
 };
 
 /** Extensions depending on output format. */
-const char *output_extensions[] = { ".png", ".jpg" };
+const char *output_extensions[] = {
+    ".png",
+    ".jpg"
+};
 
 /** Selected output format. */
 enum output_format_type output_format = OF_PNG;
@@ -443,12 +450,12 @@ typedef struct struct_region_info {
     int is_world;               /**< If set, this region has at least one map part of the world, thus region name should be written. */
 } struct_region_info;
 
-struct struct_region_info** regions = NULL; /**< Found regions. */
+struct struct_region_info **regions = NULL; /**< Found regions. */
 int region_count = 0;                       /**< Count of regions. */
 int region_allocated = 0;                   /**< Allocated size of regions. */
 
 int list_unused_maps = 0;       /**< If set, program will list maps found in directory but not linked from the first maps. */
-char** found_maps = NULL;       /**< Maps found in directories. */
+char **found_maps = NULL;       /**< Maps found in directories. */
 int found_maps_count = 0;       /**< Number of items in found_maps. */
 int found_maps_allocated = 0;   /**< Allocated size of found_maps. */
 
@@ -460,13 +467,13 @@ int color_road;             /**< Road or equivalent. */
 int color_blocking;         /**< Block all movement. */
 int color_slowing;          /**< Slows movement. */
 
-int** elevation_info;       /**< All elevation spots in the "world_" maps. */
+int **elevation_info;       /**< All elevation spots in the "world_" maps. */
 int elevation_min;          /**< Maximal elevation found. */
 int elevation_max;          /**< Lowest elevation found. */
 
 /* Links between regions */
 int do_regions_link = 0;
-char** regions_link;
+char **regions_link;
 int regions_link_count = 0;
 int regions_link_allocated = 0;
 
@@ -484,7 +491,7 @@ typedef struct {
     struct_map_list maps[S_MAX];
 } struct_slaying_info;
 
-struct_slaying_info** slaying_info = NULL;  /**< Found slaying fields. */
+struct_slaying_info **slaying_info = NULL;  /**< Found slaying fields. */
 int slaying_count = 0;                      /**< Count of items in slaying_info. */
 int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
 
@@ -522,6 +529,7 @@ static int is_special_equipment(object *item) {
  */
 static struct_equipment *get_equipment(void) {
     struct_equipment *add = calloc(1, sizeof(struct_equipment));
+
     init_map_list(&add->origin);
     return add;
 }
@@ -568,7 +576,7 @@ static struct_equipment *ensure_unique(struct_equipment *item) {
 
     if (equipment_count == equipment_allocated) {
         equipment_allocated += 50;
-        special_equipment = realloc(special_equipment, sizeof(struct_equipment*) * equipment_allocated);
+        special_equipment = realloc(special_equipment, sizeof(struct_equipment *)*equipment_allocated);
     }
     special_equipment[equipment_count] = item;
     equipment_count++;
@@ -649,9 +657,9 @@ static void check_equipment(object *item, struct_map_info *map) {
  * -1, 0 or 1.
  */
 static int sort_equipment(const void *a, const void *b) {
-    const struct_equipment *l = *(const struct_equipment**)a;
-    const struct_equipment *r = *(const struct_equipment**)b;
-    int c = l->power - r->power;
+    const struct_equipment *l = *(const struct_equipment **)a;
+    const struct_equipment *r = *(const struct_equipment **)b;
+    int c = l->power-r->power;
 
     if (c)
         return c;
@@ -719,8 +727,8 @@ static void add_monster(object *monster, struct_map_info *map) {
  * -1, 0 or 1.
  */
 static int sort_race(const void *a, const void *b) {
-    const struct_race *l = *(const struct_race**)a;
-    const struct_race *r = *(const struct_race**)b;
+    const struct_race *l = *(const struct_race **)a;
+    const struct_race *r = *(const struct_race **)b;
     return strcasecmp(l->name, r->name);
 }
 
@@ -783,9 +791,9 @@ static int is_blocking(object *item) {
  */
 static int get_elevation_color(int elevation, gdImagePtr elevationmap) {
     if (elevation > 0)
-        return gdImageColorResolve(elevationmap, 200 * elevation / elevation_max, 0, 0);
+        return gdImageColorResolve(elevationmap, 200*elevation/elevation_max, 0, 0);
     else
-        return gdImageColorResolve(elevationmap, 0, 0, 200 * elevation / elevation_min);
+        return gdImageColorResolve(elevationmap, 0, 0, 200*elevation/elevation_min);
 }
 
 /**
@@ -800,7 +808,7 @@ void do_exit_map(mapstruct *map) {
     int tx, ty, x, y;
     object *item, *test;
 
-    if (sscanf(map->path, "/world/world_%d_%d",&x,&y) != 2)
+    if (sscanf(map->path, "/world/world_%d_%d", &x, &y) != 2)
         return;
 
     x -= 100;
@@ -814,22 +822,22 @@ void do_exit_map(mapstruct *map) {
 
                 if (test->type == EXIT || test->type == TELEPORTER) {
                     if (!test->slaying)
-                        gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_unlinked_exit);
+                        gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_unlinked_exit);
                     else
-                        gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_linked_exit);
+                        gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_linked_exit);
                 } else if (is_road(test))
-                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_road);
+                    gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_road);
                 else if (is_blocking(test)) {
-                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_blocking);
+                    gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_blocking);
                     /* can't get on the spot, so no need to go on. */
                     break;
                 } else if (test->move_slow != 0)
-                    gdImageSetPixel(infomap, x * 50 + tx, y * 50 + ty, color_slowing);
+                    gdImageSetPixel(infomap, x*50+tx, y*50+ty, color_slowing);
 
                 if (item->elevation) {
                     elevation_min = MIN(elevation_min, item->elevation);
                     elevation_max = MAX(elevation_max, item->elevation);
-                    elevation_info[x * 50 + tx][y * 50 + ty] = item->elevation;
+                    elevation_info[x*50+tx][y*50+ty] = item->elevation;
                 }
 
                 item = item->above;
@@ -838,7 +846,7 @@ void do_exit_map(mapstruct *map) {
     }
 }
 
-void do_auto_apply(mapstruct * m);
+void do_auto_apply(mapstruct *m);
 
 /**
  * Sort values alphabetically
@@ -851,7 +859,7 @@ void do_auto_apply(mapstruct * m);
  * -1 if a is less than b, 0 if a equals b, 1 else.
  */
 static int sortbyname(const void *a, const void *b) {
-    return (strcmp(*(const char**)a, *(const char**)b));
+    return (strcmp(*(const char **)a, *(const char **)b));
 }
 
 /**
@@ -867,7 +875,7 @@ static int sortbyname(const void *a, const void *b) {
 static char *cat_template(char *source, char *add) {
     if (!source)
         return add;
-    source = realloc(source, strlen(source) + strlen(add) + 1);
+    source = realloc(source, strlen(source)+strlen(add)+1);
     strcat(source, add);
     free(add);
     return source;
@@ -883,7 +891,7 @@ static char *cat_template(char *source, char *add) {
  * @note
  * will exit() with code 1 if any error occurs or if the file doesn't exist.
  */
-static void read_template(const char *name, char** buffer) {
+static void read_template(const char *name, char **buffer) {
     FILE *file;
     struct stat info;
 
@@ -892,7 +900,7 @@ static void read_template(const char *name, char** buffer) {
         exit(1);
     }
 
-    (*buffer) = calloc(1, info.st_size + 1);
+    (*buffer) = calloc(1, info.st_size+1);
     if (!(*buffer)) {
         printf("Template %s calloc failed!\n", name);
         exit(1);
@@ -935,7 +943,7 @@ static void read_template(const char *name, char** buffer) {
  * @note
  * returned string will be a memory block larger than required, for performance reasons.
  */
-static char *do_template(const char *template, const char** vars, const char** values) {
+static char *do_template(const char *template, const char **vars, const char **values) {
     int count = 0;
     const char *sharp = template;
     int maxlen = 0;
@@ -950,7 +958,7 @@ static char *do_template(const char *template, const char** vars, const char** v
     }
     if (!count)
         return strdup(template);
-    if (count % 2) {
+    if (count%2) {
         printf("Malformed template, mismatched #!\n");
         return strdup(template);
     }
@@ -960,22 +968,22 @@ static char *do_template(const char *template, const char** vars, const char** v
             maxlen = strlen(values[var]);
         var++;
     }
-    result = calloc(1, strlen(template) + maxlen * (count / 2) + 1);
+    result = calloc(1, strlen(template)+maxlen*(count/2)+1);
     if (!result)
         return NULL;
     current_result = result;
 
     sharp = template;
     while ((sharp = strchr(sharp, '#')) != NULL) {
-        end = strchr(sharp + 1, '#');
-        strncpy(current_result, template, sharp - template);
+        end = strchr(sharp+1, '#');
+        strncpy(current_result, template, sharp-template);
         if (end == sharp+1) {
             strcat(current_result, "#");
         }
         else {
-        current_result = current_result + strlen(current_result);
+        current_result = current_result+strlen(current_result);
         var = 0;
-        while (vars[var] != 0 && (strncmp(vars[var], sharp + 1, end - sharp - 1) || (strlen(vars[var]) != end - sharp - 1)))
+        while (vars[var] != 0 && (strncmp(vars[var], sharp+1, end-sharp-1) || (strlen(vars[var]) != end-sharp-1)))
             /* tag must be the same length, else can take a wrong tag */
             var++;
         if (vars[var] == 0)
@@ -983,8 +991,8 @@ static char *do_template(const char *template, const char** vars, const char** v
         else
             strcpy(current_result, values[var]);
         }
-        current_result = current_result + strlen(current_result);
-        sharp = end + 1;
+        current_result = current_result+strlen(current_result);
+        sharp = end+1;
         template = sharp;
     }
     strcat(current_result, template);
@@ -1009,26 +1017,26 @@ static void relative_path(const char *from, const char *to, char *result) {
 
     result[0] = '\0';
 
-    fslash = strchr(from + 1, '/');
+    fslash = strchr(from+1, '/');
     if (!fslash) {
-        strcpy(result, to + 1);
+        strcpy(result, to+1);
         return;
     }
 
-    rslash = strchr(to + 1, '/');
-    while (fslash && rslash && (fslash - from == rslash - to) && strncmp(from, to, fslash - from + 1) == 0) {
-        from = fslash + 1;
-        to = rslash + 1;
-        fslash = strchr(fslash + 1, '/');
-        rslash = strchr(rslash + 1, '/');
+    rslash = strchr(to+1, '/');
+    while (fslash && rslash && (fslash-from == rslash-to) && strncmp(from, to, fslash-from+1) == 0) {
+        from = fslash+1;
+        to = rslash+1;
+        fslash = strchr(fslash+1, '/');
+        rslash = strchr(rslash+1, '/');
     }
 
     while (fslash) {
         strcat(result, "../");
-        fslash = strchr(fslash + 1, '/');
+        fslash = strchr(fslash+1, '/');
     }
-    if (strlen(result) && result[strlen(result) - 1] == '/' && *to == '/')
-        result[strlen(result) - 1] = '\0';
+    if (strlen(result) && result[strlen(result)-1] == '/' && *to == '/')
+        result[strlen(result)-1] = '\0';
     strcat(result, to);
 }
 
@@ -1043,8 +1051,8 @@ static void relative_path(const char *from, const char *to, char *result) {
  * comparison on last element, and if equal then on whole string.
  */
 static int sort_mapname(const void *left, const void *right) {
-    const char *l = *(const char**)left;
-    const char *r = *(const char**)right;
+    const char *l = *(const char **)left;
+    const char *r = *(const char **)right;
     const char *sl = strrchr(l, '/');
     const char *sr = strrchr(r, '/');
     int c;
@@ -1095,10 +1103,9 @@ static int compare_map_info(const struct_map_info *left, const struct_map_info *
  * @return
  * comparison on name, and if equal then on whole path.
  */
-static int sort_map_info(const void *left, const void *right)
-{
-    const struct_map_info *l = *(const struct_map_info**)left;
-    const struct_map_info *r = *(const struct_map_info**)right;
+static int sort_map_info(const void *left, const void *right) {
+    const struct_map_info *l = *(const struct_map_info **)left;
+    const struct_map_info *r = *(const struct_map_info **)right;
     return compare_map_info(l, r);
 }
 
@@ -1113,9 +1120,9 @@ static int sort_map_info(const void *left, const void *right)
  * comparison on name, and if equal then on whole path.
  */
 static int sort_map_info_by_level(const void *left, const void *right) {
-    const struct_map_info *l = *(const struct_map_info**)left;
-    const struct_map_info *r = *(const struct_map_info**)right;
-    int c = l->level - r->level;
+    const struct_map_info *l = *(const struct_map_info **)left;
+    const struct_map_info *r = *(const struct_map_info **)right;
+    int c = l->level-r->level;
     if (c)
         return c;
     return compare_map_info(l, r);
@@ -1132,7 +1139,7 @@ static int sort_map_info_by_level(const void *left, const void *right) {
  * result of strcmp() for names.
  */
 static int sort_region(const void *left, const void *right) {
-    return strcmp((*((struct_region_info**)left))->reg->name, (*((struct_region_info**)right))->reg->name);
+    return strcmp((*((struct_region_info **)left))->reg->name, (*((struct_region_info **)right))->reg->name);
 }
 
 /************************************
@@ -1155,8 +1162,10 @@ typedef struct struct_quest {
     struct_map_in_quest_list maps;  /**< Maps part of this quest. */
 } struct_quest;
 
-struct_quest** quests = NULL;   /**< All quests in the game. */
+struct_quest **quests = NULL;   /**< All quests in the game. */
+
 int quests_count = 0;           /**< Count of quests. */
+
 int quests_allocated = 0;       /**< Allocated items in quests. */
 
 static void init_struct_map_in_quest_list(struct_map_in_quest_list *list) {
@@ -1168,7 +1177,7 @@ static void init_struct_map_in_quest_list(struct_map_in_quest_list *list) {
 static void add_to_struct_map_in_quest_list(struct_map_in_quest_list *list, struct_map_in_quest *item) {
     if (list->count == list->allocated) {
         list->allocated += 10;
-        list->list = realloc(list->list, sizeof(struct_map_in_quest*) * list->allocated);
+        list->list = realloc(list->list, sizeof(struct_map_in_quest *)*list->allocated);
     }
     list->list[list->count++] = item;
 }
@@ -1192,7 +1201,7 @@ static struct_quest *get_quest_info(const char *name) {
 
     if (quests_count == quests_allocated) {
         quests_allocated += 10;
-        quests = realloc(quests, sizeof(struct_quest*) * quests_allocated);
+        quests = realloc(quests, sizeof(struct_quest *)*quests_allocated);
     }
     add = calloc(1, sizeof(struct_quest));
     add->name = strdup(name);
@@ -1221,8 +1230,8 @@ static void add_map_to_quest(struct_map_info *map, const char *name, const char 
     add->map = map;
     add->quest = quest;
     add->description = strdup(description);
-    while (strlen(add->description) && add->description[strlen(add->description) - 1] == '\n')
-        add->description[strlen(add->description) - 1] = '\0';
+    while (strlen(add->description) && add->description[strlen(add->description)-1] == '\n')
+        add->description[strlen(add->description)-1] = '\0';
     add_to_struct_map_in_quest_list(&quest->maps, add);
     add_to_struct_map_in_quest_list(&map->quests, add);
 }
@@ -1238,8 +1247,8 @@ static void add_map_to_quest(struct_map_info *map, const char *name, const char 
 static int sort_struct_map_in_quest(const void *left, const void *right) {
     int c;
 
-    const struct_map_in_quest *l = *(const struct_map_in_quest**)left;
-    const struct_map_in_quest *r = *(const struct_map_in_quest**)right;
+    const struct_map_in_quest *l = *(const struct_map_in_quest **)left;
+    const struct_map_in_quest *r = *(const struct_map_in_quest **)right;
     const struct_map_info *ml = l->map;
     const struct_map_info *mr = r->map;
 
@@ -1267,13 +1276,14 @@ static int sort_struct_map_in_quest(const void *left, const void *right) {
  */
 static void define_quest(const char *name, struct_map_info *mainmap, const char *description) {
     struct_quest *quest = get_quest_info(name);
+
     if (quest->description || quest->mainmap) {
         printf("warning, multiple quest definition for %s, found in %s and %s.\n", quest->name, quest->mainmap ? quest->mainmap->path : "(unknown map)", mainmap->path);
         return;
     }
     quest->description = strdup(description);
-    while (strlen(quest->description) && quest->description[strlen(quest->description) - 1] == '\n')
-        quest->description[strlen(quest->description) - 1] = '\0';
+    while (strlen(quest->description) && quest->description[strlen(quest->description)-1] == '\n')
+        quest->description[strlen(quest->description)-1] = '\0';
     quest->mainmap = mainmap;
 }
 
@@ -1294,15 +1304,15 @@ void process_map_lore(struct_map_info *map) {
         /* find name */
         end = strstr(start, "\n");
         if (end) {
-            strncpy(name, start + 5, end - start - 5);
-            name[end - start - 5] = '\0';
-            next = end + 1;
+            strncpy(name, start+5, end-start-5);
+            name[end-start-5] = '\0';
+            next = end+1;
             end = strstr(next, "@end");
             if (end) {
-                strncpy(description, next, end - next);
-                description[end - next] = '\0';
+                strncpy(description, next, end-next);
+                description[end-next] = '\0';
                 /* need to erase the text. */
-                memcpy(start, end + 4, strlen(map->lore) - (end - start + 3));
+                memcpy(start, end+4, strlen(map->lore)-(end-start+3));
                 end = start;
             }
             else {
@@ -1326,15 +1336,15 @@ void process_map_lore(struct_map_info *map) {
         /* find name */
         end = strstr(start, "\n");
         if (end) {
-            strncpy(name, start + 7, end - start - 7);
-            name[end - start - 7] = '\0';
-            next = end + 1;
+            strncpy(name, start+7, end-start-7);
+            name[end-start-7] = '\0';
+            next = end+1;
             end = strstr(next, "@end");
             if (end) {
-                strncpy(description, next, end - next);
-                description[end - next] = '\0';
+                strncpy(description, next, end-next);
+                description[end-next] = '\0';
                 /* need to erase the text. */
-                memcpy(start, end + 4, strlen(map->lore) - (end - start + 3));
+                memcpy(start, end+4, strlen(map->lore)-(end-start+3));
                 end = start;
             }
             else {
@@ -1376,9 +1386,9 @@ static void write_quests_page(void) {
     printf("Writing quest index...");
 
     for (quest = 0; quest < quests_count; quest++) {
-        qsort(quests[quest]->maps.list, quests[quest]->maps.count, sizeof(struct_map_in_quest*), sort_struct_map_in_quest);
+        qsort(quests[quest]->maps.list, quests[quest]->maps.count, sizeof(struct_map_in_quest *), sort_struct_map_in_quest);
         for (map = 0; map < quests[quest]->maps.count; map++) {
-            snprintf(mappath, sizeof(mappath), "%s.html", quests[quest]->maps.list[map]->map->path + 1);
+            snprintf(mappath, sizeof(mappath), "%s.html", quests[quest]->maps.list[map]->map->path+1);
             map_vals[1] = quests[quest]->maps.list[map]->map->name;
             map_vals[2] = quests[quest]->maps.list[map]->description ? quests[quest]->maps.list[map]->description : "(no description)";
             text_map = cat_template(text_map, do_template(quest_map_template, map_vars, map_vals));
@@ -1391,10 +1401,9 @@ static void write_quests_page(void) {
         quest_vals[2] = text_map;
         snprintf(questid, sizeof(questid), "quest_%d", quests[quest]->number);
         if (quests[quest]->mainmap) {
-            snprintf(mainmappath, sizeof(mainmappath), "%s.html", quests[quest]->mainmap->path + 1);
+            snprintf(mainmappath, sizeof(mainmappath), "%s.html", quests[quest]->mainmap->path+1);
             quest_vals[5] = quests[quest]->mainmap->name;
-        }
-        else {
+        } else {
             snprintf(mainmappath, sizeof(mainmappath), "#");
             quest_vals[5] = "";
         }
@@ -1466,7 +1475,7 @@ static struct_npc_info *create_npc_info(const object *npc) {
 static void add_npc_to_map(struct_map_info *map, const object *npc) {
     if (map->npcs.count == map->npcs.allocated) {
         map->npcs.allocated += 50;
-        map->npcs.npc = realloc(map->npcs.npc, map->npcs.allocated * sizeof(struct_npc_info*));
+        map->npcs.npc = realloc(map->npcs.npc, map->npcs.allocated*sizeof(struct_npc_info *));
     }
 
     map->npcs.npc[map->npcs.count] = create_npc_info(npc);
@@ -1485,16 +1494,16 @@ static void add_npc_to_map(struct_map_info *map, const object *npc) {
  * @note
  * will allocate memory and update variables when required.
  */
-void add_map(struct_map_info *info, struct_map_list *list)
-{
+void add_map(struct_map_info *info, struct_map_list *list) {
     int map;
+
     for (map = 0; map < list->count; map++)
         if (list->maps[map] == info)
             return;
 
     if (list->count == list->allocated) {
         list->allocated += 50;
-        list->maps = realloc(list->maps, list->allocated * sizeof(struct_map_info*));
+        list->maps = realloc(list->maps, list->allocated*sizeof(struct_map_info *));
     }
     list->maps[list->count] = info;
     list->count++;
@@ -1512,6 +1521,7 @@ void add_map(struct_map_info *info, struct_map_list *list)
  */
 void replace_map(struct_map_info *find, struct_map_info *replace_by, struct_map_list *list) {
     int map;
+
     for (map = 0; map < list->count; map++) {
         if (list->maps[map] == find) {
             list->maps[map] = replace_by;
@@ -1550,6 +1560,7 @@ struct_map_info *create_map_info(void) {
  */
 struct_map_info *create_tiled_map(void) {
     struct_map_info *add = create_map_info();
+
     add_map(add, &tiled_map_list);
     return add;
 }
@@ -1571,7 +1582,7 @@ void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map
     struct_map_info *change;
 
     while (group->tiled_maps.count > 0) {
-        change = group->tiled_maps.maps[group->tiled_maps.count - 1];
+        change = group->tiled_maps.maps[group->tiled_maps.count-1];
         change->tiled_group = map->tiled_group;
         add_map(change, &map->tiled_group->tiled_maps);
         group->tiled_maps.count--;
@@ -1579,8 +1590,8 @@ void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map
 
     for (g = 0; g < tiled_map_list.count; g++) {
         if (tiled_map_list.maps[g] == group) {
-            if (g < tiled_map_list.count - 1)
-                tiled_map_list.maps[g] = tiled_map_list.maps[tiled_map_list.count - 1];
+            if (g < tiled_map_list.count-1)
+                tiled_map_list.maps[g] = tiled_map_list.maps[tiled_map_list.count-1];
             tiled_map_list.count--;
             free(group);
             return;
@@ -1613,7 +1624,7 @@ struct_map_info *get_map_info(const char *path) {
     add->path = strdup(path);
     tmp = strrchr(path, '/');
     if (tmp)
-        add->filename = strdup(tmp + 1);
+        add->filename = strdup(tmp+1);
     else
         add->filename = strdup(path);
 
@@ -1629,6 +1640,7 @@ struct_map_info *get_map_info(const char *path) {
  */
 void list_map(const char *path) {
     int index;
+
     for (index = 0; index < found_maps_count; index++) {
         if (found_maps[index] && strcmp(path, found_maps[index]) == 0) {
             free(found_maps[index]);
@@ -1652,6 +1664,7 @@ void list_map(const char *path) {
 void add_map_to_region(struct_map_info *map, region *reg) {
     int test;
     int x, y;
+
     for (test = 0; test < region_count; test++) {
         if (regions[test]->reg == reg)
             break;
@@ -1659,14 +1672,14 @@ void add_map_to_region(struct_map_info *map, region *reg) {
     if (test == region_count) {
         if (test == region_allocated) {
             region_allocated++;
-            regions = realloc(regions, sizeof(struct_region_info*) * region_allocated);
+            regions = realloc(regions, sizeof(struct_region_info *)*region_allocated);
             regions[test] = calloc(1, sizeof(struct_region_info));
         }
         region_count++;
         regions[test]->reg = reg;
     }
     add_map(map, &regions[test]->maps_list);
-    if (sscanf(map->path, "/world/world_%d_%d",&x,&y) == 2) {
+    if (sscanf(map->path, "/world/world_%d_%d", &x, &y) == 2) {
         regions[test]->sum_x += (x-100);
         regions[test]->sum_y += (y-100);
         regions[test]->sum++;
@@ -1720,7 +1733,7 @@ static void add_region_link(mapstruct *source, mapstruct *dest, const char *link
 
     if (regions_link_count == regions_link_allocated) {
         regions_link_allocated += 10;
-        regions_link = realloc(regions_link, sizeof(const char*) * regions_link_allocated);
+        regions_link = realloc(regions_link, sizeof(const char *)*regions_link_allocated);
     }
     regions_link[regions_link_count] = strdup(entry);
     regions_link_count++;
@@ -1750,16 +1763,17 @@ static int is_slaying(object *item) {
 static struct_slaying_info *get_slaying_struct(const char *slaying) {
     struct_slaying_info *add;
     int l;
+
     for (l = 0; l < slaying_count; l++) {
         if (!strcmp(slaying_info[l]->slaying, slaying))
             return slaying_info[l];
     }
     if (slaying_count == slaying_allocated) {
         slaying_allocated += 10;
-        slaying_info = (struct_slaying_info**)realloc(slaying_info, sizeof(struct_slaying_info*) * slaying_allocated);
+        slaying_info = (struct_slaying_info **)realloc(slaying_info, sizeof(struct_slaying_info *)*slaying_allocated);
     }
 
-    add = (struct_slaying_info*)calloc(1, sizeof(struct_slaying_info));
+    add = (struct_slaying_info *)calloc(1, sizeof(struct_slaying_info));
     add->slaying = strdup(slaying);
     for (l = 0; l < S_MAX; l++)
         init_map_list(&add->maps[l]);
@@ -1836,8 +1850,7 @@ static void check_slaying_inventory(struct_map_info *map, object *item) {
  * @param info
  * map to process.
  */
-void process_map(struct_map_info *info)
-{
+void process_map(struct_map_info *info) {
     mapstruct *m;
     int x, y, isworld;
     object *item;
@@ -1849,7 +1862,6 @@ void process_map(struct_map_info *info)
     char exit_path[500];
     char tmppath[MAX_BUF];
     char picpath[MAX_BUF], smallpicpath[MAX_BUF];
-
     int needpic = 0;
     struct_map_info *link;
 
@@ -1859,7 +1871,7 @@ void process_map(struct_map_info *info)
     if (show_maps)
         printf(" processing map %s\n", info->path);
 
-    m = ready_map_name(info->path ,0);
+    m = ready_map_name(info->path, 0);
     if (!m) {
         printf("couldn't load map %s\n", info->path);
         return;
@@ -1876,7 +1888,7 @@ void process_map(struct_map_info *info)
         process_map_lore(info);
     }
 
-    isworld = (sscanf(info->path, "/world/world_%d_%d",&x,&y) == 2);
+    isworld = (sscanf(info->path, "/world/world_%d_%d", &x, &y) == 2);
 
     if (m->name)
         info->name = strdup(m->name);
@@ -1903,7 +1915,7 @@ void process_map(struct_map_info *info)
         needpic = 0;
 
     if (needpic) {
-        pic = gdImageCreateTrueColor(MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32);
+        pic = gdImageCreateTrueColor(MAP_WIDTH(m)*32, MAP_HEIGHT(m)*32);
         created_pics++;
     }
     else
@@ -1924,6 +1936,7 @@ void process_map(struct_map_info *info)
 
                 if (do_regions_link) {
                     mapstruct *link = ready_map_name(exit_path, 0);
+
                     if (link && link != m) {
                         /* no need to link a map with itself. Also, if the exit points to the same map, we don't
                         * want to reset it. */
@@ -1933,8 +1946,7 @@ void process_map(struct_map_info *info)
                         delete_map(link);
                     }
                 }
-            }
-            else {
+            } else {
                 link = get_map_info(exit_path);
                 info->tiles[x] = link;
                 if (link->tiled_group) {
@@ -1963,8 +1975,8 @@ void process_map(struct_map_info *info)
     info->width = MAP_WIDTH(m);
     info->height = MAP_HEIGHT(m);
 
-    for (x = MAP_WIDTH(m) - 1; x >= 0; x--)
-        for (y = MAP_HEIGHT(m) - 1; y >= 0 ; y--) {
+    for (x = MAP_WIDTH(m)-1; x >= 0; x--)
+        for (y = MAP_HEIGHT(m)-1; y >= 0 ; y--) {
             for (item = GET_MAP_OB(m, x, y); item; item = item->above) {
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];
@@ -1975,14 +1987,11 @@ void process_map(struct_map_info *info)
                         if (warn_no_path)
                             printf(" exit without any path at %d, %d on %s\n", item->x, item->y, info->path);
                     } else {
-
                         memset(ep, 0, 500);
                         if (strcmp(item->slaying, "/!"))
                             strcpy(ep, EXIT_PATH(item));
-                        else
-                        {
-                            if (!item->msg)
-                            {
+                        else {
+                            if (!item->msg) {
                                 printf("  random map without message in %s at %d, %d\n", info->path, item->x, item->y);
                             } else {
                                 /* Some maps have a 'exit_on_final_map' flag, ignore it. */
@@ -1990,11 +1999,11 @@ void process_map(struct_map_info *info)
                                 if (!start && strncmp(item->msg, "final_map", strlen("final_map")) == 0)
                                     /* Message start is final_map, nice */
                                     start = item->msg;
-                                if (start)
-                                {
-                                    char *end = strchr(start + 1, '\n');
-                                    start += strlen("final_map") + 2;
-                                    strncpy(ep, start, end - start);
+                                if (start) {
+                                    char *end = strchr(start+1, '\n');
+
+                                    start += strlen("final_map")+2;
+                                    strncpy(ep, start, end-start);
                                 }
                             }
                         }
@@ -2004,15 +2013,14 @@ void process_map(struct_map_info *info)
                             create_pathname(exit_path, tmppath, MAX_BUF);
                             if (stat(tmppath, &stats)) {
                                 printf("  map %s doesn't exist in map %s, at %d, %d.\n", ep, info->path, item->x, item->y);
-                            }
-                            else
-                            {
+                            } else {
                                 link = get_map_info(exit_path);
                                 add_map(link, &info->exits_from);
                                 add_map(info, &link->exits_to);
 
                                 if (do_regions_link) {
                                     mapstruct *link = ready_map_name(exit_path, 0);
+
                                     if (link && link != m) {
                                         /* no need to link a map with itself. Also, if the exit points to the same map, we don't
                                          * want to reset it. */
@@ -2035,6 +2043,7 @@ void process_map(struct_map_info *info)
                 if (QUERY_FLAG(item, FLAG_MONSTER)) {
                     /* need to get the "real" archetype, as the item's archetype can certainly be a temporary one. */
                     archetype *arch = find_archetype(item->arch->name);
+
                     add_monster(item, info);
                     if ((QUERY_FLAG(item, FLAG_UNAGGRESSIVE) || QUERY_FLAG(item, FLAG_FRIENDLY)) && (item->msg != arch->clone.msg) && (item->msg != NULL))
                         add_npc_to_map(info, item);
@@ -2045,9 +2054,10 @@ void process_map(struct_map_info *info)
 
                 if (needpic) {
                     int sx, sy, hx, hy;
-                    if (gdfaces[item->face->number] == NULL)
-                    {
+
+                    if (gdfaces[item->face->number] == NULL) {
                         int set = get_face_fallback(tileset, item->face->number);
+
                         gdfaces[item->face->number] = gdImageCreateFromPngPtr(facesets[set].faces[item->face->number].datalen, facesets[set].faces[item->face->number].data);
                         pics_allocated++;
                     }
@@ -2057,9 +2067,8 @@ void process_map(struct_map_info *info)
                         hx = 0;
                         hy = 0;
                     }
-                    if (gdfaces[item->face->number] != 0 && ((!item->head && !item->more) || (item->arch->clone.x + hx == 0 && item->arch->clone.y + hy == 0)))
-                    {
-                        gdImageCopy(pic, gdfaces[item->face->number], x * 32, y * 32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
+                    if (gdfaces[item->face->number] != 0 && ((!item->head && !item->more) || (item->arch->clone.x+hx == 0 && item->arch->clone.y+hy == 0))) {
+                        gdImageCopy(pic, gdfaces[item->face->number], x*32, y*32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
                     }
                 }
             }
@@ -2071,8 +2080,8 @@ void process_map(struct_map_info *info)
         save_picture(out, pic);
         fclose(out);
 
-        small = gdImageCreateTrueColor(MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small);
-        gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m) * size_small, MAP_HEIGHT(m) * size_small, MAP_WIDTH(m) * 32, MAP_HEIGHT(m) * 32);
+        small = gdImageCreateTrueColor(MAP_WIDTH(m)*size_small, MAP_HEIGHT(m)*size_small);
+        gdImageCopyResampled(small, pic, 0, 0, 0, 0, MAP_WIDTH(m)*size_small, MAP_HEIGHT(m)*size_small, MAP_WIDTH(m)*32, MAP_HEIGHT(m)*32);
 
         out = fopen(smallpicpath, "wb+");
         save_picture(out, small);
@@ -2109,7 +2118,7 @@ void process_map(struct_map_info *info)
  * @return
  * processed template. Should be free() by the caller.
  */
-char *do_map_index(const char *dest, struct_map_list *maps_list, const char *template_page, const char *template_letter, const char *template_map, const char** vars, const char** values) {
+char *do_map_index(const char *dest, struct_map_list *maps_list, const char *template_page, const char *template_letter, const char *template_map, const char **vars, const char **values) {
 #define VARSADD 6
     int map;
     char *string;
@@ -2118,8 +2127,8 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
     char count[50];
     char lettercount[50];
     char *tmp;
-    const char** idx_vars;
-    const char** idx_values;
+    const char **idx_vars;
+    const char **idx_values;
     char str_letter[2];
     char last_letter;
     char index_path[500];
@@ -2132,17 +2141,18 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
         return strdup("");
 
     if (vars)
-        for (basevalues = 0; vars[basevalues] != NULL; basevalues++) ;
+        for (basevalues = 0; vars[basevalues] != NULL; basevalues++)
+            ;
     else
         basevalues = 0;
 
-    idx_vars = malloc(sizeof(char*) * (basevalues+VARSADD));
+    idx_vars = malloc(sizeof(char *)*(basevalues+VARSADD));
     idx_vars[0] = "MAPCOUNT";
-    memcpy(&idx_vars[1], vars, sizeof(char*) * basevalues);
+    memcpy(&idx_vars[1], vars, sizeof(char *)*basevalues);
     idx_vars[basevalues+VARSADD-1] = NULL;
 
-    idx_values = malloc(sizeof(char*) * (basevalues+VARSADD-1));
-    memcpy(&idx_values[1], values, sizeof(char*) * basevalues);
+    idx_values = malloc(sizeof(char *)*(basevalues+VARSADD-1));
+    memcpy(&idx_values[1], values, sizeof(char *)*basevalues);
 
     string = NULL;
 
@@ -2155,7 +2165,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
     idx_vars[basevalues+3] = "MAPHTML";
     idx_vars[basevalues+4] = NULL;
 
-    qsort(maps_list->maps, maps_list->count, sizeof(const char*), sort_map_info);
+    qsort(maps_list->maps, maps_list->count, sizeof(const char *), sort_map_info);
 
     last_letter = '\0';
     str_letter[0] = '\0';
@@ -2165,7 +2175,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
     strcat(index_path, dest);
 
     string = NULL;
-    for (map = 0; map < maps_list->count; map++ ) {
+    for (map = 0; map < maps_list->count; map++) {
         if (tolower(maps_list->maps[map]->name[0]) != last_letter) {
             if (mapstext != NULL) {
                 idx_vars[basevalues+1] = "MAPS";
@@ -2244,7 +2254,6 @@ void write_region_page(struct_region_info *reg) {
     char *string;
     FILE *index;
     char html[500];
-
     const char *vars[] = { "REGIONNAME", "REGIONHTML", "REGIONLONGNAME", "REGIONDESC", NULL };
     const char *values[] = { reg->reg->name, html, NULL, NULL };
 
@@ -2277,9 +2286,9 @@ void write_region_page(struct_region_info *reg) {
 void write_all_regions(void) {
     int reg;
 
-    qsort(regions, region_count, sizeof(struct_region_info*), sort_region);
+    qsort(regions, region_count, sizeof(struct_region_info *), sort_region);
 
-    for (reg = 0; reg < region_count; reg++ )
+    for (reg = 0; reg < region_count; reg++)
         write_region_page(regions[reg]);
 }
 
@@ -2315,8 +2324,8 @@ void write_region_index(void) {
     struct_region_info *region;
     int reg;
     char file[500];
-    const char *vars[] = {"REGIONCOUNT", "REGIONFILE", "REGIONNAME", NULL};
-    const char *values[] = {count, file, NULL};
+    const char *vars[] = { "REGIONCOUNT", "REGIONFILE", "REGIONNAME", NULL };
+    const char *values[] = { count, file, NULL };
     FILE *out;
 
     printf("Generating regions index in regions.html...");
@@ -2344,7 +2353,6 @@ void write_region_index(void) {
     free(final);
 
     printf(" done.\n");
-
 }
 
 /**
@@ -2457,14 +2465,14 @@ void write_world_map(void) {
         if (!regions[region]->is_world || regions[region]->sum == 0)
             continue;
 
-        x = regions[region]->sum_x * SIZE / regions[region]->sum + SIZE / 2 - strlen(regions[region]->reg->name) * font->w / 2;
-        y = regions[region]->sum_y * SIZE / regions[region]->sum + SIZE / 2 - font->h / 2;
+        x = regions[region]->sum_x*SIZE/regions[region]->sum+SIZE/2-strlen(regions[region]->reg->name)*font->w/2;
+        y = regions[region]->sum_y*SIZE/regions[region]->sum+SIZE/2-font->h/2;
         gdImageString(small, font, x, y, regions[region]->reg->name, color);
         gdImageString(pic, font, x, y, regions[region]->reg->name, color);
 
         /* For exit/road map, size isn't the same. */
-        x = regions[region]->sum_x * 50 / regions[region]->sum + 50 / 2 - strlen(regions[region]->reg->name) * font->w / 2;
-        y = regions[region]->sum_y * 50 / regions[region]->sum + 50 / 2 - font->h / 2;
+        x = regions[region]->sum_x*50/regions[region]->sum+50/2-strlen(regions[region]->reg->name)*font->w/2;
+        y = regions[region]->sum_y*50/regions[region]->sum+50/2-font->h/2;
         gdImageString(infomap, font, x, y, regions[region]->reg->name, color);
     }
 
@@ -2510,14 +2518,12 @@ void write_map_page(struct_map_info *map) {
     char maplevel[5], minmonster[5], maxmonster[5];
     FILE *out;
     char questpath[500], questtemp[500];
-
     const char *quest_vars[] = { "NAME", "PATH", "TEXT", NULL };
     const char *quest_vals[] = { NULL, questpath, NULL, NULL };
     const char *q_vars[] = { "QUESTS", NULL };
     const char *q_vals[] = { NULL, NULL };
     const char *m_vars[] = { "NAME", NULL };
     const char *m_vals[] = { NULL, NULL };
-
     const char *vars[] = { "NAME", "MAPPATH", "MAPNAME", "MAPPIC", "MAPSMALLPIC", "MAPEXITFROM", "INDEXPATH", "REGIONPATH", "REGIONNAME", "REGIONINDEXPATH", "WORLDMAPPATH", "MAPLORE", "MAPEXITTO", "MAPLEVEL", "QUESTS", "MONSTERS", "MINMONSTER", "MAXMONSTER", NULL, NULL, NULL };
     const char *values[] = { map->path, htmlpath, map->name, mappic, mapsmallpic, "", indexpath, regionpath, regionname, regionindexpath, worldmappath, "", "", maplevel, NULL, "", minmonster, maxmonster, NULL, NULL, NULL };
     int vars_count = 0;
@@ -2538,8 +2544,7 @@ void write_map_page(struct_map_info *map) {
         strcat(exit_path, map->cfregion->name);
         strcat(exit_path, ".html");
         relative_path(map->path, exit_path, regionpath);
-    }
-    else {
+    } else {
         snprintf(regionpath, sizeof(regionpath), "");
         snprintf(regionname, sizeof(regionname), "(map was not processed)");
     }
@@ -2556,14 +2561,12 @@ void write_map_page(struct_map_info *map) {
     if (map->lore && map->lore[0] != '\0') {
         values[11] = map->lore;
         maplore = do_template(map_lore_template, vars, values);
-    }
-    else {
+    } else {
         maplore = do_template(map_no_lore_template, vars, values);
     }
     values[11] = maplore;
 
-    if (map->exits_from.count)
-    {
+    if (map->exits_from.count) {
         char *one_exit = NULL;
         int exit;
         char relative[500];
@@ -2571,9 +2574,8 @@ void write_map_page(struct_map_info *map) {
         vars[vars_count] = "EXITNAME";
         vars[vars_count+1] = "EXITFILE";
 
-        qsort(map->exits_from.maps, map->exits_from.count, sizeof(const char*), sort_map_info);
-        for (exit = 0; exit < map->exits_from.count; exit++)
-        {
+        qsort(map->exits_from.maps, map->exits_from.count, sizeof(const char *), sort_map_info);
+        for (exit = 0; exit < map->exits_from.count; exit++) {
             relative_path(map->path, map->exits_from.maps[exit]->path, relative);
             values[vars_count] = map->exits_from.maps[exit]->name;
             strcat(relative, ".html");
@@ -2591,8 +2593,7 @@ void write_map_page(struct_map_info *map) {
 
     values[5] = exits_text;
 
-    if (map->exits_to.count)
-    {
+    if (map->exits_to.count) {
         char *one_exit = NULL;
         int exit;
         char relative[500];
@@ -2600,9 +2601,8 @@ void write_map_page(struct_map_info *map) {
         vars[vars_count] = "EXITNAME";
         vars[vars_count+1] = "EXITFILE";
 
-        qsort(map->exits_to.maps, map->exits_to.count, sizeof(struct_map_info*), sort_map_info);
-        for (exit = 0; exit < map->exits_to.count; exit++)
-        {
+        qsort(map->exits_to.maps, map->exits_to.count, sizeof(struct_map_info *), sort_map_info);
+        for (exit = 0; exit < map->exits_to.count; exit++) {
             relative_path(map->path, map->exits_to.maps[exit]->path, relative);
             values[vars_count] = map->exits_to.maps[exit]->name;
             strcat(relative, ".html");
@@ -2614,14 +2614,14 @@ void write_map_page(struct_map_info *map) {
         values[vars_count] = one_exit;
         exits_to = do_template(map_with_exit_to_template, vars, values);
         free(one_exit);
-    }
-    else
+    } else
         exits_to = do_template(map_no_exit_to_template, vars, values);
 
     values[12] = exits_to;
 
     if (map->quests.count) {
         int q;
+
         quest = NULL;
         for (q = 0; q < map->quests.count; q++) {
             quest_vals[0] = map->quests.list[q]->quest->name;
@@ -2635,26 +2635,24 @@ void write_map_page(struct_map_info *map) {
         quests = do_template(map_with_quests_template, q_vars, q_vals);
         free(quest);
         quest = NULL;
-    }
-    else
+    } else
         quests = strdup(map_no_quest_template);
     values[14] = quests;
 
     if (map->monsters.count) {
         int m;
 
-        qsort(map->monsters.races, map->monsters.count, sizeof(struct_race*), sort_race);
+        qsort(map->monsters.races, map->monsters.count, sizeof(struct_race *), sort_race);
 
         monsters = do_template(map_monster_before_template, vars, values);
         for (m = 0; m < map->monsters.count; m++) {
             m_vals[0] = map->monsters.races[m]->name;
             monsters = cat_template(monsters, do_template(map_monster_one_template, m_vars, m_vals));
-            if (m != map->monsters.count - 1)
+            if (m != map->monsters.count-1)
                 monsters = cat_template(monsters, do_template(map_monster_between_template, vars, values));
         }
         monsters = cat_template(monsters, do_template(map_monster_after_template, vars, values));
-    }
-    else
+    } else
         monsters = do_template(map_no_monster_template, vars, values);
     values[15] = monsters;
 
@@ -2745,7 +2743,7 @@ void fix_tiled_map(void) {
         if (!slash)
             snprintf(name, sizeof(name), "/");
         else
-            *(slash + 1) = '\0';
+            *(slash+1) = '\0';
         strncat(name, tiled_map_list.maps[map]->filename, sizeof(name));
         tiled_map_list.maps[map]->path = strdup(name);
     }
@@ -2764,8 +2762,8 @@ void fix_tiled_map(void) {
 void fix_exits_for_map(struct_map_info *current, struct_map_list *from, int is_from) {
     int map, max;
     struct_map_info *group;
-    max = from->count - 1;
 
+    max = from->count-1;
     for (map = max; map >= 0; map--) {
         if (from->maps[map]->tiled_group) {
             group = from->maps[map]->tiled_group;
@@ -2790,7 +2788,7 @@ void fix_exits_to_tiled_maps(void) {
     }
 
     for (region = 0; region < region_count; region++) {
-        max = regions[region]->maps_list.count - 1;
+        max = regions[region]->maps_list.count-1;
         for (map = max; map >= 0; map--) {
             if (regions[region]->maps_list.maps[map]->tiled_group) {
                 group = regions[region]->maps_list.maps[map]->tiled_group;
@@ -2813,7 +2811,7 @@ void fix_tiled_map_monsters(void) {
     struct_map_info *group;
 
     for (race = 0; race < races.count; race++) {
-        max = races.races[race]->origin.count - 1;
+        max = races.races[race]->origin.count-1;
         for (map = max; map >= 0; map--) {
             if (races.races[race]->origin.maps[map]->tiled_group) {
                 group = races.races[race]->origin.maps[map]->tiled_group;
@@ -2920,21 +2918,21 @@ void do_tiled_map_picture(struct_map_info *map) {
             if ((current->tiles[0]) && (current->tiles[0]->processed == 0)) {
                 current->tiles[0]->processed = 1;
                 current->tiles[0]->tiled_x_from = current->tiled_x_from;
-                current->tiles[0]->tiled_y_from = current->tiled_y_from - current->tiles[0]->height;
+                current->tiles[0]->tiled_y_from = current->tiled_y_from-current->tiles[0]->height;
             }
             if ((current->tiles[1]) && (current->tiles[1]->processed == 0)) {
                 current->tiles[1]->processed = 1;
-                current->tiles[1]->tiled_x_from = current->tiled_x_from + current->width;
+                current->tiles[1]->tiled_x_from = current->tiled_x_from+current->width;
                 current->tiles[1]->tiled_y_from = current->tiled_y_from;
             }
             if ((current->tiles[2]) && (current->tiles[2]->processed == 0)) {
                 current->tiles[2]->processed = 1;
                 current->tiles[2]->tiled_x_from = current->tiled_x_from;
-                current->tiles[2]->tiled_y_from = current->tiled_y_from + current->height;
+                current->tiles[2]->tiled_y_from = current->tiled_y_from+current->height;
             }
             if ((current->tiles[3]) && (current->tiles[3]->processed == 0)) {
                 current->tiles[3]->processed = 1;
-                current->tiles[3]->tiled_x_from = current->tiled_x_from - current->tiles[3]->width;
+                current->tiles[3]->tiled_x_from = current->tiled_x_from-current->tiles[3]->width;
                 current->tiles[3]->tiled_y_from = current->tiled_y_from;
             }
         }
@@ -2950,14 +2948,14 @@ void do_tiled_map_picture(struct_map_info *map) {
             xmin = map->tiled_maps.maps[tiled]->tiled_x_from;
         if (map->tiled_maps.maps[tiled]->tiled_y_from < ymin)
             ymin = map->tiled_maps.maps[tiled]->tiled_y_from;
-        if (map->tiled_maps.maps[tiled]->tiled_x_from + map->tiled_maps.maps[tiled]->width > xmax)
-            xmax = map->tiled_maps.maps[tiled]->tiled_x_from + map->tiled_maps.maps[tiled]->width;
-        if (map->tiled_maps.maps[tiled]->tiled_y_from + map->tiled_maps.maps[tiled]->height > ymax)
-            ymax = map->tiled_maps.maps[tiled]->tiled_y_from + map->tiled_maps.maps[tiled]->height;
+        if (map->tiled_maps.maps[tiled]->tiled_x_from+map->tiled_maps.maps[tiled]->width > xmax)
+            xmax = map->tiled_maps.maps[tiled]->tiled_x_from+map->tiled_maps.maps[tiled]->width;
+        if (map->tiled_maps.maps[tiled]->tiled_y_from+map->tiled_maps.maps[tiled]->height > ymax)
+            ymax = map->tiled_maps.maps[tiled]->tiled_y_from+map->tiled_maps.maps[tiled]->height;
     }
 
-    large = gdImageCreateTrueColor(32 * (xmax - xmin), 32 * (ymax - ymin));
-    small = gdImageCreateTrueColor(size_small * (xmax - xmin), size_small * (ymax - ymin));
+    large = gdImageCreateTrueColor(32*(xmax-xmin), 32*(ymax-ymin));
+    small = gdImageCreateTrueColor(size_small*(xmax-xmin), size_small*(ymax-ymin));
 
     for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
         sprintf(picpath, "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
@@ -2972,7 +2970,7 @@ void do_tiled_map_picture(struct_map_info *map) {
             printf("\n  do_tiled_map_picture: warning: pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
             continue;
         }
-        gdImageCopy(large, load, 32*(map->tiled_maps.maps[tiled]->tiled_x_from - xmin), 32*(map->tiled_maps.maps[tiled]->tiled_y_from - ymin), 0, 0, load->sx, load->sy);
+        gdImageCopy(large, load, 32*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), 32*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
         gdImageDestroy(load);
 
         sprintf(picpath, "%s%s.small%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
@@ -2986,7 +2984,7 @@ void do_tiled_map_picture(struct_map_info *map) {
             printf("\n  do_tiled_map_picture: warning: small pic not found for %s\n", map->tiled_maps.maps[tiled]->path);
             continue;
         }
-        gdImageCopy(small, load, size_small*(map->tiled_maps.maps[tiled]->tiled_x_from - xmin), size_small*(map->tiled_maps.maps[tiled]->tiled_y_from - ymin), 0, 0, load->sx, load->sy);
+        gdImageCopy(small, load, size_small*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), size_small*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
         gdImageDestroy(load);
     }
 
@@ -3029,8 +3027,7 @@ void write_tiled_maps(void) {
 }
 
 /** Outputs the list of maps sorted by level. */
-void write_maps_by_level(void)
-{
+void write_maps_by_level(void) {
     int map;
     FILE *out;
     char name[500];
@@ -3055,7 +3052,7 @@ void write_maps_by_level(void)
 
     snprintf(name, sizeof(name), "%s/index_by_level.html", root);
 
-    qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info*), sort_map_info_by_level);
+    qsort(maps_list.maps, maps_list.count, sizeof(struct_map_info *), sort_map_info_by_level);
 
     for (map = 0; map < maps_list.count; map++) {
         process = maps_list.maps[map];
@@ -3070,8 +3067,7 @@ void write_maps_by_level(void)
             lastlevel = process->level;
             levelcount++;
             last_tiled = NULL;
-        }
-        else
+        } else
             if (last_tiled && last_tiled == process->tiled_group)
                 /* Group maps of same tiled group and level, but make them appear in different levels if applicable. */
                 continue;
@@ -3083,7 +3079,7 @@ void write_maps_by_level(void)
             last_tiled = process->tiled_group;
 
         map_values[0] = process->name;
-        snprintf(mappath, sizeof(mappath), "%s.html", process->path + 1); /* don't want the leading / */
+        snprintf(mappath, sizeof(mappath), "%s.html", process->path+1); /* don't want the leading / */
         maps = cat_template(maps, do_template(level_map_template, map_vars, map_values));
     }
 
@@ -3117,7 +3113,7 @@ void write_equipment_index(void) {
     printf("Generating special equipment list..");
     fflush(stdout);
 
-    qsort(special_equipment, equipment_count, sizeof(struct_equipment*), sort_equipment);
+    qsort(special_equipment, equipment_count, sizeof(struct_equipment *), sort_equipment);
 
     snprintf(name, sizeof(name), "%s/items.html", root);
     out = fopen(name, "w+");
@@ -3150,7 +3146,7 @@ static void write_race_index(void) {
     printf("Generating monster list...");
     fflush(stdout);
 
-    qsort(races.races, races.count, sizeof(struct_race*), sort_race);
+    qsort(races.races, races.count, sizeof(struct_race *), sort_race);
 
     snprintf(name, sizeof(name), "%s/monsters.html", root);
     out = fopen(name, "w+");
@@ -3161,7 +3157,7 @@ static void write_race_index(void) {
     for (item = 0; item < races.count; item++) {
         fprintf(out, "<tr><td>%s</td><td>%d</td><td>Found on %d maps:<ul>", races.races[item]->name, races.races[item]->count, races.races[item]->origin.count);
 
-        qsort(races.races[item]->origin.maps, races.races[item]->origin.count, sizeof(struct_map_info*), sort_map_info);
+        qsort(races.races[item]->origin.maps, races.races[item]->origin.count, sizeof(struct_map_info *), sort_map_info);
 
         for (map = 0; map < races.races[item]->origin.count; map++)
             fprintf(out, "<li>%s</li>\n", races.races[item]->origin.maps[map]->path);
@@ -3227,14 +3223,14 @@ void find_maps(const char *from) {
             snprintf(full, sizeof(full), "%s/%s", path, file->d_name);
 
             status = stat(full, &statbuf);
-            if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+            if ((status != -1) && (S_ISDIR(statbuf.st_mode))) {
                 snprintf(full, sizeof(full), "%s/%s", from, file->d_name);
                 find_maps(full);
                 continue;
             }
             if (found_maps_count == found_maps_allocated) {
                 found_maps_allocated += 50;
-                found_maps = realloc(found_maps, found_maps_allocated * sizeof(char*));
+                found_maps = realloc(found_maps, found_maps_allocated*sizeof(char *));
             }
             snprintf(full, sizeof(full), "%s/%s", from, file->d_name);
             found_maps[found_maps_count++] = strdup(full);
@@ -3285,10 +3281,10 @@ void write_world_info(void) {
     gdImageDestroy(infomap);
     infomap = NULL;
 
-    elevationmap = gdImageCreateTrueColor(30 * 50, 30 * 50);;
+    elevationmap = gdImageCreateTrueColor(30*50, 30*50);;
 
-    for (x = 0; x < 30 * 50; x++) {
-        for (y = 0; y < 30 * 50; y++) {
+    for (x = 0; x < 30*50; x++) {
+        for (y = 0; y < 30*50; y++) {
             gdImageSetPixel(elevationmap, x, y, get_elevation_color(elevation_info[x][y], elevationmap));
         }
     }
@@ -3332,7 +3328,7 @@ void write_regions_link(void) {
  * map info to write.
  */
 static void write_slaying_map_name(FILE *file, struct_map_info *map) {
-    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->tiled_group ? map->tiled_group->path + 1 : map->path + 1, map->name, map->path);
+    fprintf(file, "<a href=\"%s.html\">%s</a> (full map path: %s)", map->tiled_group ? map->tiled_group->path+1 : map->path+1, map->name, map->path);
 }
 
 /**
@@ -3351,13 +3347,14 @@ static void write_slaying_map_name(FILE *file, struct_map_info *map) {
  */
 static void write_one_slaying_info(FILE *file, struct_slaying_info *info, int item, const char *with, const char *without) {
     int map;
+
     if (info->maps[item].count == 0) {
         if (without)
             fprintf(file, without);
         return;
     }
 
-    qsort(info->maps[item].maps, info->maps[item].count, sizeof(const char*), sort_mapname);
+    qsort(info->maps[item].maps, info->maps[item].count, sizeof(const char *), sort_mapname);
 
     fprintf(file, with);
     fprintf(file, "<ul>\n");
@@ -3379,10 +3376,10 @@ static void write_one_slaying_info(FILE *file, struct_slaying_info *info, int it
  * @return
  * sort order.
  */
-static int sort_slaying(const void *left, const void *right)
-{
-    struct_slaying_info *l = *(struct_slaying_info**)left;
-    struct_slaying_info *r = *(struct_slaying_info**)right;
+static int sort_slaying(const void *left, const void *right) {
+    struct_slaying_info *l = *(struct_slaying_info **)left;
+    struct_slaying_info *r = *(struct_slaying_info **)right;
+
     return strcasecmp(l->slaying, r->slaying);
 }
 
@@ -3397,7 +3394,7 @@ void write_slaying_info(void) {
 
     printf("Writing slaying info file...");
 
-    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info*), sort_slaying);
+    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info *), sort_slaying);
 
     snprintf(path, sizeof(path), "%s/%s", root, "slaying_info.html");
     file = fopen(path, "wb+");
@@ -3435,7 +3432,7 @@ static void write_npc_list(void) {
 
     printf("Writing NPC info file...");
 
-    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info*), sort_slaying);
+    qsort(slaying_info, slaying_count, sizeof(struct_slaying_info *), sort_slaying);
 
     snprintf(path, sizeof(path), "%s/%s", root, "npc_info.html");
     file = fopen(path, "wb+");
@@ -3500,7 +3497,7 @@ void do_help(const char *program) {
  * @param argv
  * arguments, including program name.
  */
-void do_parameters(int argc, char** argv) {
+void do_parameters(int argc, char **argv) {
     int arg = 1;
     char path[500];
 
@@ -3512,15 +3509,15 @@ void do_parameters(int argc, char** argv) {
         else if (strcmp(argv[arg], "-noindex") == 0)
             generate_index = 0;
         else if (strncmp(argv[arg], "-root=", 6) == 0)
-            strncpy(root, argv[arg] + 6, 500);
+            strncpy(root, argv[arg]+6, 500);
         else if (strncmp(argv[arg], "-limit=", 7) == 0)
-            map_limit = atoi(argv[arg] + 7);
+            map_limit = atoi(argv[arg]+7);
         else if (strcmp(argv[arg], "-showmaps") == 0)
             show_maps = 1;
         else if (strcmp(argv[arg], "-jpg") == 0) {
             output_format = OF_JPG;
             if (argv[arg][4] == '=') {
-                jpeg_quality = atoi(argv[arg] + 5);
+                jpeg_quality = atoi(argv[arg]+5);
                 if (jpeg_quality < 0)
                     jpeg_quality = -1;
             }
@@ -3528,10 +3525,10 @@ void do_parameters(int argc, char** argv) {
         else if (strcmp(argv[arg], "-forcepics") == 0)
             force_pics = 1;
         else if (strncmp(argv[arg], "-addmap=", 8) == 0) {
-            if (*(argv[arg] + 8) == '/')
-                strncpy(path, argv[arg] + 8, 500);
+            if (*(argv[arg]+8) == '/')
+                strncpy(path, argv[arg]+8, 500);
             else
-                snprintf(path, 500, "/%s", argv[arg] + 8);
+                snprintf(path, 500, "/%s", argv[arg]+8);
             add_map(get_map_info(path), &maps_list);
         }
         else if (strcmp(argv[arg], "-rawmaps") == 0)
@@ -3551,7 +3548,7 @@ void do_parameters(int argc, char** argv) {
         else if (strcmp(argv[arg], "-exitmap") == 0)
             world_exit_info = 1;
         else if (strncmp(argv[arg], "-tileset=", 9) == 0) {
-            tileset = atoi(argv[arg] + 9);
+            tileset = atoi(argv[arg]+9);
             /* check of validity is done in main() as we need to actually have the sets loaded. */
         } else
             do_help(argv[0]);
@@ -3559,8 +3556,8 @@ void do_parameters(int argc, char** argv) {
     }
     if (!strlen(root))
         strcpy(root, "html");
-    if (root[strlen(root) - 1] == '/')
-        root[strlen(root) - 1] = '\0';
+    if (root[strlen(root)-1] == '/')
+        root[strlen(root)-1] = '\0';
     if (map_limit < -1)
         map_limit = -1;
 }
@@ -3570,6 +3567,7 @@ void do_parameters(int argc, char** argv) {
  */
 void create_destination(void) {
     char dummy[502];
+
     strcpy(dummy, root);
     strcat(dummy, "/a");
     make_path_to_file(dummy);
@@ -3587,11 +3585,10 @@ static const char *yesno(int value) {
     return (value ? "yes" : "no");
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     int current_map = 0, i;
     char max[50];
-    region* dummy;
+    region *dummy;
 
     init_map_list(&maps_list);
     init_map_list(&tiled_map_list);
@@ -3632,7 +3629,7 @@ int main(int argc, char** argv)
     }
 
     create_destination();
-    gdfaces = calloc(1, sizeof(gdImagePtr) * nrofpixmaps);
+    gdfaces = calloc(1, sizeof(gdImagePtr)*nrofpixmaps);
 
     read_template("templates/map.template", &map_template);
     read_template("templates/map_no_exit.template", &map_no_exit_template);
@@ -3705,19 +3702,19 @@ int main(int argc, char** argv)
         printf("listing all maps...");
         find_maps("");
         printf("done, %d maps found.\n", found_maps_count);
-        qsort(found_maps, found_maps_count, sizeof(char*), sortbyname);
+        qsort(found_maps, found_maps_count, sizeof(char *), sortbyname);
     }
 
     /* exit/blocking information. */
-    infomap = gdImageCreateTrueColor(30 * 50, 30 * 50);
+    infomap = gdImageCreateTrueColor(30*50, 30*50);
     color_unlinked_exit = gdImageColorResolve(infomap, 255, 0, 0);
     color_linked_exit = gdImageColorResolve(infomap, 255, 255, 255);
     color_road = gdImageColorResolve(infomap, 0, 255, 0);
     color_blocking = gdImageColorResolve(infomap, 0, 0, 255);
     color_slowing = gdImageColorResolve(infomap, 0, 0, 127);
-    elevation_info = calloc(50 * 30, sizeof(int*));
-    for (i = 0; i < 50 * 30; i++)
-        elevation_info[i] = calloc(50 * 30, sizeof(int));
+    elevation_info = calloc(50*30, sizeof(int *));
+    for (i = 0; i < 50*30; i++)
+        elevation_info[i] = calloc(50*30, sizeof(int));
     elevation_min = 0;
     elevation_max = 0;
 
@@ -3725,15 +3722,12 @@ int main(int argc, char** argv)
 
     get_map_info(first_map_path);
 
-    while (current_map < maps_list.count)
-    {
+    while (current_map < maps_list.count) {
         process_map(maps_list.maps[current_map++]);
-        if (current_map % 100 == 0)
-        {
+        if (current_map%100 == 0) {
             printf(" %d maps processed, %d map pictures created, %d map pictures were uptodate. %d faces used.\n", current_map, created_pics, cached_pics, pics_allocated);
         }
-        if ((map_limit != -1) && (current_map == map_limit))
-        {
+        if ((map_limit != -1) && (current_map == map_limit)) {
             printf(" --- map limit reached, stopping ---\n");
             break;
         }
@@ -3772,99 +3766,103 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void do_auto_apply(mapstruct * m)
-{
-    object *tmp,*above=NULL;
-    int x,y;
+void do_auto_apply(mapstruct *m) {
+    object *tmp, *above = NULL;
+    int x, y;
 
-    if(m==NULL) return;
+    if (m == NULL)
+        return;
 
-    for(x=0;x<MAP_WIDTH(m);x++)
-        for(y=0;y<MAP_HEIGHT(m);y++)
-            for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=above) {
-        above=tmp->above;
+    for (x = 0; x < MAP_WIDTH(m); x++)
+        for (y = 0; y < MAP_HEIGHT(m); y++)
+            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
+                above = tmp->above;
 
-        if (tmp->inv) {
-            object *invtmp, *invnext;
+                if (tmp->inv) {
+                    object *invtmp, *invnext;
 
-            for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext) {
-                invnext = invtmp->below;
+                    for (invtmp = tmp->inv; invtmp != NULL; invtmp = invnext) {
+                        invnext = invtmp->below;
 
-                if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
-                    auto_apply(invtmp);
-                else if(invtmp->type==TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
-                    while ((invtmp->stats.hp--)>0)
-                        create_treasure(invtmp->randomitems, invtmp, 0,
-                                        m->difficulty,0);
-                    invtmp->randomitems = NULL;
+                        if (QUERY_FLAG(invtmp, FLAG_AUTO_APPLY))
+                            auto_apply(invtmp);
+                        else if (invtmp->type == TREASURE && HAS_RANDOM_ITEMS(invtmp)) {
+                            while ((invtmp->stats.hp--) > 0)
+                                create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
+                            invtmp->randomitems = NULL;
+                        } else if (invtmp
+                        && invtmp->arch
+                        && invtmp->type != TREASURE
+                        && invtmp->type != SPELL
+                        && invtmp->type != CLASS
+                        && HAS_RANDOM_ITEMS(invtmp)) {
+                            create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty, 0);
+                            /* Need to clear this so that we never try to create
+                             * treasure again for this object
+                             */
+                            invtmp->randomitems = NULL;
+                        }
+                    }
+                    /* This is really temporary - the code at the bottom will
+                     * also set randomitems to null.  The problem is there are bunches
+                     * of maps/players already out there with items that have spells
+                     * which haven't had the randomitems set to null yet.
+                     * MSW 2004-05-13
+                     *
+                     * And if it's a spellbook, it's better to set randomitems to NULL too,
+                     * else you get two spells in the book ^_-
+                     * Ryo 2004-08-16
+                     */
+                    if (tmp->type == WAND
+                    || tmp->type == ROD
+                    || tmp->type == SCROLL
+                    || tmp->type == HORN
+                    || tmp->type == FIREWALL
+                    || tmp->type == POTION
+                    || tmp->type == ALTAR
+                    || tmp->type == SPELLBOOK)
+                        tmp->randomitems = NULL;
                 }
-                else if (invtmp && invtmp->arch &&
-                         invtmp->type!=TREASURE &&
-                         invtmp->type != SPELL &&
-                         invtmp->type != CLASS &&
-                         HAS_RANDOM_ITEMS(invtmp)) {
-                    create_treasure(invtmp->randomitems, invtmp, 0,
-                                    m->difficulty,0);
-                /* Need to clear this so that we never try to create
-                    * treasure again for this object
-                */
-                    invtmp->randomitems = NULL;
-                         }
-            }
-            /* This is really temporary - the code at the bottom will
-            * also set randomitems to null.  The problem is there are bunches
-            * of maps/players already out there with items that have spells
-            * which haven't had the randomitems set to null yet.
-            * MSW 2004-05-13
-            *
-            * And if it's a spellbook, it's better to set randomitems to NULL too,
-            * else you get two spells in the book ^_-
-            * Ryo 2004-08-16
-            */
-            if (tmp->type == WAND || tmp->type == ROD || tmp->type == SCROLL ||
-                tmp->type == HORN || tmp->type == FIREWALL || tmp->type == POTION ||
-                tmp->type == ALTAR || tmp->type == SPELLBOOK)
-                tmp->randomitems = NULL;
 
-        }
+                if (QUERY_FLAG(tmp, FLAG_AUTO_APPLY))
+                    auto_apply(tmp);
+                else if ((tmp->type == TREASURE || (tmp->type == CONTAINER)) && HAS_RANDOM_ITEMS(tmp)) {
+                    while ((tmp->stats.hp--) > 0)
+                        create_treasure(tmp->randomitems, tmp, 0, m->difficulty, 0);
+                    tmp->randomitems = NULL;
+                } else if (tmp->type == TIMED_GATE) {
+                    object *head = tmp->head != NULL ? tmp->head : tmp;
 
-        if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-            auto_apply(tmp);
-        else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&& HAS_RANDOM_ITEMS(tmp)) {
-            while ((tmp->stats.hp--)>0)
-                create_treasure(tmp->randomitems, tmp, 0,
-                                m->difficulty,0);
-            tmp->randomitems = NULL;
-        }
-        else if(tmp->type==TIMED_GATE) {
-            object *head = tmp->head != NULL ? tmp->head : tmp;
-            if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
-                tmp->speed = 0;
-                update_ob_speed(tmp);
-            }
-        }
-        /* This function can be called everytime a map is loaded, even when
-        * swapping back in.  As such, we don't want to create the treasure
-        * over and ove again, so after we generate the treasure, blank out
-        * randomitems so if it is swapped in again, it won't make anything.
-        * This is a problem for the above objects, because they have counters
-        * which say how many times to make the treasure.
-        */
-        else if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-                tmp->type != SPELL && tmp->type != PLAYER_CHANGER && tmp->type != CLASS &&
-                HAS_RANDOM_ITEMS(tmp)) {
-            create_treasure(tmp->randomitems, tmp, GT_APPLY,
-                            m->difficulty,0);
-            tmp->randomitems = NULL;
+                    if (QUERY_FLAG(head, FLAG_IS_LINKED)) {
+                        tmp->speed = 0;
+                        update_ob_speed(tmp);
+                    }
+                    /* This function can be called everytime a map is loaded, even when
+                     * swapping back in.  As such, we don't want to create the treasure
+                     * over and ove again, so after we generate the treasure, blank out
+                     * randomitems so if it is swapped in again, it won't make anything.
+                     * This is a problem for the above objects, because they have counters
+                     * which say how many times to make the treasure.
+                     */
+                } else if (tmp
+                && tmp->arch
+                && tmp->type != PLAYER
+                && tmp->type != TREASURE
+                && tmp->type != SPELL
+                && tmp->type != PLAYER_CHANGER
+                && tmp->type != CLASS
+                && HAS_RANDOM_ITEMS(tmp)) {
+                    create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
+                    tmp->randomitems = NULL;
                 }
             }
 
-            for(x=0;x<MAP_WIDTH(m);x++)
-                for(y=0;y<MAP_HEIGHT(m);y++)
-                    for(tmp=GET_MAP_OB(m,x,y);tmp!=NULL;tmp=tmp->above)
-                        if (tmp->above &&
-                            (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-                            check_trigger (tmp, tmp->above);
+    for (x = 0; x < MAP_WIDTH(m); x++)
+        for (y = 0; y < MAP_HEIGHT(m); y++)
+            for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
+                if (tmp->above
+                && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
+                    check_trigger(tmp, tmp->above);
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -3873,144 +3871,122 @@ void do_auto_apply(mapstruct * m)
  * Dummy functions to link the library.
  */
 
-void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2)
-{
+void draw_ext_info(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *txt, const char *txt2) {
     fprintf(logfile, "%s\n", txt);
 }
 
-void draw_ext_info_format(
-        int flags, int pri, const object *pl, uint8 type,
-        uint8 subtype,
-        const char *new_format,
-        const char *old_format,
-        ...)
-{
+void draw_ext_info_format(int flags, int pri, const object *pl, uint8 type, uint8 subtype, const char *new_format, const char *old_format, ...) {
     va_list ap;
+
     va_start(ap, old_format);
     vfprintf(logfile, old_format, ap);
     va_end(ap);
 }
 
-
-void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2)
-{
+void ext_info_map(int color, const mapstruct *map, uint8 type, uint8 subtype, const char *str1, const char *str2) {
     fprintf(logfile, "ext_info_map: %s\n", str2);
 }
 
-void move_firewall(object *ob)
-{
+void move_firewall(object *ob) {
 }
 
-void emergency_save(int x)
-{
+void emergency_save(int x) {
 }
 
-void clean_tmp_files(void)
-{
+void clean_tmp_files(void) {
 }
 
-void esrv_send_item(object *ob, object *obx)
-{
+void esrv_send_item(object *ob, object *obx) {
 }
 
-void dragon_ability_gain(object *ob, int x, int y)
-{
+void dragon_ability_gain(object *ob, int x, int y) {
 }
 
-void set_darkness_map(mapstruct *m)
-{
+void set_darkness_map(mapstruct *m) {
 }
 
-object *find_skill_by_number(object *who, int skillno)
-{
+object *find_skill_by_number(object *who, int skillno) {
     return NULL;
 }
 
-void esrv_del_item(player *pl, int tag)
-{
+void esrv_del_item(player *pl, int tag) {
 }
 
-void esrv_update_item(int flags, object *pl, object *op)
-{
+void esrv_update_item(int flags, object *pl, object *op) {
 }
 
-void esrv_update_spells(player *pl)
-{
+void esrv_update_spells(player *pl) {
 }
 
-void monster_check_apply(object *ob, object *obt)
-{
+void monster_check_apply(object *ob, object *obt) {
 }
 
-void trap_adjust(object *ob, int x)
-{
+void trap_adjust(object *ob, int x) {
 }
 
-int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix)
-{
+int execute_event(object *op, int eventcode, object *activator, object *third, const char *message, int fix) {
     return 0;
 }
 
-int execute_global_event(int eventcode, ...)
-{
+int execute_global_event(int eventcode, ...) {
     return 0;
 }
 
-
-int auto_apply (object *op) {
+int auto_apply(object *op) {
     object *tmp = NULL, *tmp2;
     int i;
 
-    switch(op->type) {
-        case SHOP_FLOOR:
-            if (!HAS_RANDOM_ITEMS(op)) return 0;
-            do {
-                i=10; /* let's give it 10 tries */
-                while((tmp=generate_treasure(op->randomitems,
-                       op->stats.exp?(int)op->stats.exp:MAX(op->map->difficulty, 5)))==NULL&&--i);
-                if(tmp==NULL)
-                    return 0;
-                if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-                    free_object(tmp);
-                    tmp = NULL;
-                }
-            } while(!tmp);
-            tmp->x=op->x;
-            tmp->y=op->y;
-            SET_FLAG(tmp,FLAG_UNPAID);
-            insert_ob_in_map(tmp,op->map,NULL,0);
-            CLEAR_FLAG(op,FLAG_AUTO_APPLY);
-            identify(tmp);
-            break;
-
-        case TREASURE:
-            if (QUERY_FLAG(op,FLAG_IS_A_TEMPLATE))
+    switch (op->type) {
+    case SHOP_FLOOR:
+        if (!HAS_RANDOM_ITEMS(op))
+            return 0;
+        do {
+            i = 10; /* let's give it 10 tries */
+            while ((tmp = generate_treasure(op->randomitems, op->stats.exp ? (int)op->stats.exp : MAX(op->map->difficulty, 5))) == NULL && --i)
+                ;
+            if (tmp == NULL)
                 return 0;
-            while ((op->stats.hp--)>0)
-                create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-                op->stats.exp ? (int)op->stats.exp :
-                        op->map == NULL ?  14: op->map->difficulty,0);
+            if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
+                free_object(tmp);
+                tmp = NULL;
+            }
+        } while (!tmp);
+        tmp->x = op->x;
+        tmp->y = op->y;
+        SET_FLAG(tmp, FLAG_UNPAID);
+        insert_ob_in_map(tmp, op->map, NULL, 0);
+        CLEAR_FLAG(op, FLAG_AUTO_APPLY);
+        identify(tmp);
+        break;
+
+    case TREASURE:
+        if (QUERY_FLAG(op, FLAG_IS_A_TEMPLATE))
+            return 0;
+
+        while ((op->stats.hp--) > 0)
+            create_treasure(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, op->stats.exp ? (int)op->stats.exp : op->map == NULL ? 14 : op->map->difficulty, 0);
 
         /* If we generated an object and put it in this object inventory,
-            * move it to the parent object as the current object is about
-            * to disappear.  An example of this item is the random_ *stuff
-            * that is put inside other objects.
-        */
-            for (tmp=op->inv; tmp; tmp=tmp2) {
-                tmp2 = tmp->below;
-                remove_ob(tmp);
-                if (op->env) insert_ob_in_ob(tmp, op->env);
-                else free_object(tmp);
+         * move it to the parent object as the current object is about
+         * to disappear.  An example of this item is the random_ *stuff
+         * that is put inside other objects.
+         */
+        for (tmp = op->inv; tmp; tmp = tmp2) {
+            tmp2 = tmp->below;
+            remove_ob(tmp);
+            if (op->env)
+                insert_ob_in_ob(tmp, op->env);
+            else
+                free_object(tmp);
             }
-            remove_ob(op);
-            free_object(op);
-            break;
+        remove_ob(op);
+        free_object(op);
+        break;
     }
     return tmp ? 1 : 0;
 }
 
-void fix_auto_apply(mapstruct * m)
-{
+void fix_auto_apply(mapstruct *m) {
 }
 
 #endif /* dummy DOXYGEN_SHOULD_SKIP_THIS */

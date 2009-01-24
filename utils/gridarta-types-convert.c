@@ -45,17 +45,20 @@ typedef struct {
     char *name;
     char *description;
     char *use;
-    type_attribute** attributes;
+    type_attribute **attributes;
     int attribute_count;
-    char** required;
+    char **required;
     int require_count;
 } type_definition;
 
 /** Defined types. */
-type_definition** types = NULL;
+type_definition **types = NULL;
+
 int type_count = 0;
+
 /** Definitions all types have by default. */
 type_definition *default_type = NULL;
+
 /** Dummy object type that non defined objects use. */
 type_definition *fallback_type = NULL;
 
@@ -63,15 +66,15 @@ type_definition *fallback_type = NULL;
 typedef struct {
     char *name;
     int count;
-    char** fields;
+    char **fields;
 } ignore_list;
 
-ignore_list** lists = NULL;
+ignore_list **lists = NULL;
 int list_count = 0;
 
 /** One type for an attribute. */
 typedef struct {
-    char** type;
+    char **type;
     int *number;
     int count;
     char *description;
@@ -80,11 +83,11 @@ typedef struct {
 /** One attribute. */
 typedef struct {
     char *field;
-    attribute_type** types;
+    attribute_type **types;
     int type_count;
 } attribute_definition;
 
-attribute_definition** attributes = NULL;
+attribute_definition **attributes = NULL;
 int attribute_count = 0;
 
 /** One flag. */
@@ -188,11 +191,13 @@ static const flag_definition flags[] = {
     { "is_buildable", "FLAG_IS_BUILDABLE" },
     { "blessed", "FLAG_BLESSED" },
     { "known_blessed", "FLAG_KNOWN_BLESSED" },
-    { NULL, NULL } };
+    { NULL, NULL }
+};
 
 /** Return flag if exists, NULL else. */
 const flag_definition *find_flag(const char *name) {
     int flag;
+
     for (flag = 0; flags[flag].field; flag++)
         if (!strcmp(flags[flag].field, name))
             return &flags[flag];
@@ -316,8 +321,8 @@ static type_name type_names[] = {
     { "SYMPTOM", SYMPTOM },
     { "BUILDER", BUILDER },
     { "MATERIAL", MATERIAL },
-    { NULL, 0 } };
-
+    { NULL, 0 }
+};
 
 type_attribute *duplicate_attribute(type_attribute *attr) {
     type_attribute *ret = calloc(1, sizeof(type_attribute));
@@ -358,8 +363,8 @@ type_attribute *get_attribute_for_type(type_definition *type, const char *attrib
     ret->field = strdup(attribute);
 
     type->attribute_count++;
-    type->attributes = realloc(type->attributes, type->attribute_count * sizeof(type_attribute*));
-    type->attributes[type->attribute_count - 1] = ret;
+    type->attributes = realloc(type->attributes, type->attribute_count*sizeof(type_attribute *));
+    type->attributes[type->attribute_count-1] = ret;
 
     return ret;
 }
@@ -367,6 +372,7 @@ type_attribute *get_attribute_for_type(type_definition *type, const char *attrib
 void copy_attributes(const type_definition *source, type_definition *type) {
     int attr;
     type_attribute *add;
+
     assert(source);
     if (source->attribute_count == 0)
         return;
@@ -390,6 +396,7 @@ void copy_default_attributes(type_definition *type) {
  */
 type_definition *get_type_definition(void) {
     type_definition *ret = calloc(1, sizeof(type_definition));
+
     ret->attribute_count = 0;
     ret->attributes = NULL;
     assert(ret->description == NULL);
@@ -405,6 +412,7 @@ type_definition *get_type_definition(void) {
  */
 type_definition *find_type_definition(const char *name) {
     int type;
+
     for (type = 0; type < type_count; type++) {
         if (!strcmp(types[type]->name, name))
             return types[type];
@@ -415,13 +423,15 @@ type_definition *find_type_definition(const char *name) {
 
 /** To sort attributes. */
 int sort_type_attribute(const void *a, const void *b) {
-    const type_attribute** la = (const type_attribute**)a;
-    const type_attribute** lb = (const type_attribute**)b;
+    const type_attribute **la = (const type_attribute **)a;
+    const type_attribute **lb = (const type_attribute **)b;
+
     return strcmp((*la)->name, (*lb)->name);
 }
 
 ignore_list *find_ignore_list(const char *name) {
     int list;
+
     for (list = 0; list < list_count; list++) {
         if (strcmp(lists[list]->name, name) == 0)
             return lists[list];
@@ -439,12 +449,13 @@ char *read_line(char *buffer, int size, FILE *file) {
 /** Remove an attribute from the type. */
 void ignore_attribute(type_definition *type, const char *attribute) {
     int find;
+
     for (find = 0; find < type->attribute_count; find++) {
         if (!strcmp(attribute, type->attributes[find]->field)) {
             /*printf("rem %s from %s\n", list->fields[attr], type->name);*/
             free_attribute(type->attributes[find]);
-            if (find < type->attribute_count - 1)
-                type->attributes[find] = type->attributes[type->attribute_count - 1];
+            if (find < type->attribute_count-1)
+                type->attributes[find] = type->attributes[type->attribute_count-1];
             type->attribute_count--;
             return;
         }
@@ -479,25 +490,25 @@ void add_required_parameter(type_definition *type, const char *buf) {
     if (!sn)
         return;
     sn = strchr(sn, '"');
-    en = strchr(sn + 1, '"');
+    en = strchr(sn+1, '"');
     sv = strstr(buf, "value");
     sv = strchr(sv, '"');
-    ev = strchr(sv + 1, '"');
+    ev = strchr(sv+1, '"');
 
-    name[en - sn - 1] = '\0';
-    strncpy(name, sn + 1, en - sn - 1);
-    value[ev - sv - 1] = '\0';
-    strncpy(value, sv + 1, ev - sv - 1);
+    name[en-sn-1] = '\0';
+    strncpy(name, sn+1, en-sn-1);
+    value[ev-sv-1] = '\0';
+    strncpy(value, sv+1, ev-sv-1);
 
     type->require_count++;
-    type->required = realloc(type->required, type->require_count * sizeof(char*));
+    type->required = realloc(type->required, type->require_count*sizeof(char *));
 
     flag = find_flag(name);
     if (flag)
         snprintf(temp, 200, "@ref %s %s", flag->code_name, strcmp(value, "0") ? "set" : "unset");
     else
         snprintf(temp, 200, "@ref object::%s = %s", name, value);
-    type->required[type->require_count - 1] = strdup(temp);
+    type->required[type->require_count-1] = strdup(temp);
 }
 
 /** Read all lines related to a type, stop when "block_end" is found on a line. */
@@ -509,7 +520,7 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
     while (read_line(buf, 200, file)) {
         if (strstr(buf, block_end) != NULL) {
             if (type->attribute_count)
-                qsort(type->attributes, type->attribute_count, sizeof(type_attribute*), sort_type_attribute);
+                qsort(type->attributes, type->attribute_count, sizeof(type_attribute *), sort_type_attribute);
             return;
         }
         if (strstr(buf, "<description>") != NULL) {
@@ -518,7 +529,7 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
                     break;
 
                 if (type->description) {
-                    type->description = realloc(type->description, strlen(type->description) + strlen(buf) + 1);
+                    type->description = realloc(type->description, strlen(type->description)+strlen(buf)+1);
                     strcat(type->description, buf);
                 }
                 else
@@ -526,9 +537,9 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             }
             find = strstr(type->description, "]]>");
             if (find)
-                type->description[find - type->description] = '\0';
-            while (type->description[strlen(type->description) - 1] == '\n')
-                type->description[strlen(type->description) - 1] = '\0';
+                type->description[find-type->description] = '\0';
+            while (type->description[strlen(type->description)-1] == '\n')
+                type->description[strlen(type->description)-1] = '\0';
             /*printf(" => desc = %s\n", type->description);*/
         }
 
@@ -536,14 +547,14 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             find = strstr(buf, "name=");
             if (!find)
                 return;
-            find = strchr(find + 1, '"');
+            find = strchr(find+1, '"');
             if (!find)
                 return;
-            end = strchr(find + 1, '"');
+            end = strchr(find+1, '"');
             if (!end)
                 return;
-            tmp[end - find - 1] = '\0';
-            strncpy(tmp, find + 1, end - find - 1);
+            tmp[end-find-1] = '\0';
+            strncpy(tmp, find+1, end-find-1);
             ignore_attributes(type, find_ignore_list(tmp));
         }
 
@@ -554,14 +565,14 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
                 find = strstr(buf, "arch=");
                 if (!find)
                     continue;
-                find = strchr(find + 1, '"');
+                find = strchr(find+1, '"');
                 if (!find)
                     continue;
-                end = strchr(find + 1, '"');
+                end = strchr(find+1, '"');
                 if (!end)
                     continue;
-                tmp[end - find - 1] = '\0';
-                strncpy(tmp, find + 1, end - find - 1);
+                tmp[end-find-1] = '\0';
+                strncpy(tmp, find+1, end-find-1);
                 ignore_attribute(type, tmp);
             }
         }
@@ -580,14 +591,14 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             find = strstr(buf, "name=");
             if (!find)
                 return;
-            find = strchr(find + 1, '"');
+            find = strchr(find+1, '"');
             if (!find)
                 return;
-            end = strchr(find + 1, '"');
+            end = strchr(find+1, '"');
             if (!end)
                 return;
-            tmp[end - find - 1] = '\0';
-            strncpy(tmp, find + 1, end - find - 1);
+            tmp[end-find-1] = '\0';
+            strncpy(tmp, find+1, end-find-1);
             import = find_type_definition(tmp);
             if (import) {
                 /*printf("%s import %s\n", type->name, tmp);*/
@@ -604,37 +615,37 @@ void read_type(type_definition *type, FILE *file, const char *block_end) {
             if (!find)
                 continue;
             find = strchr(find, '"');
-            end = strchr(find + 1, '"');
-            if (end == find + 1)
+            end = strchr(find+1, '"');
+            if (end == find+1)
                 /* empty arch, meaning inventory or such, ignore. */
                 continue;
 
-            tmp[end - find - 1] = '\0';
-            strncpy(tmp, find + 1, end - find - 1);
+            tmp[end-find-1] = '\0';
+            strncpy(tmp, find+1, end-find-1);
             /*printf(" => attr %s\n", tmp);*/
 
             attr = get_attribute_for_type(type, tmp, 1);
 
             find = strstr(buf, "editor");
             find = strchr(find, '"');
-            end = strchr(find + 1, '"');
-            tmp[end - find - 1] = '\0';
-            strncpy(tmp, find + 1, end - find - 1);
+            end = strchr(find+1, '"');
+            tmp[end-find-1] = '\0';
+            strncpy(tmp, find+1, end-find-1);
             attr->name = strdup(tmp);
 
             while (read_line(buf, 200, file)) {
                 if (strstr(buf, "</attribute>") != NULL)
                     break;
                 if (attr->description) {
-                    attr->description = realloc(attr->description, strlen(attr->description) + strlen(buf) + 1);
+                    attr->description = realloc(attr->description, strlen(attr->description)+strlen(buf)+1);
                     strcat(attr->description, buf);
                 }
                 else
                     attr->description = strdup(buf);
             }
             if (attr->description)
-                while (attr->description[strlen(attr->description) - 1] == '\n')
-                    attr->description[strlen(attr->description) - 1] = '\0';
+                while (attr->description[strlen(attr->description)-1] == '\n')
+                    attr->description[strlen(attr->description)-1] = '\0';
 
         }
     }
@@ -673,8 +684,8 @@ attribute_definition *get_attribute(const char *name) {
 
     ret = calloc(1, sizeof(attribute_definition));
     attribute_count++;
-    attributes = realloc(attributes, attribute_count * sizeof(attribute_definition*));
-    attributes[attribute_count - 1] = ret;
+    attributes = realloc(attributes, attribute_count*sizeof(attribute_definition *));
+    attributes[attribute_count-1] = ret;
 
     ret->field = strdup(name);
 
@@ -695,8 +706,8 @@ attribute_type *get_description_for_attribute(attribute_definition *attribute, c
 
     add = calloc(1, sizeof(attribute_type));
     attribute->type_count++;
-    attribute->types = realloc(attribute->types, attribute->type_count * sizeof(attribute_type));
-    attribute->types[attribute->type_count - 1] = add;
+    attribute->types = realloc(attribute->types, attribute->type_count*sizeof(attribute_type));
+    attribute->types[attribute->type_count-1] = add;
 
     if (description)
         add->description = strdup(description);
@@ -709,10 +720,10 @@ void add_type_to_attribute(attribute_definition *attribute, type_definition *typ
 
     att = get_description_for_attribute(attribute, type->attributes[attr]->description);
     att->count++;
-    att->type = realloc(att->type, att->count * sizeof(const char*));
-    att->number = realloc(att->number, att->count * sizeof(int));
-    att->type[att->count - 1] = strdup(type->name);
-    att->number[att->count - 1] = type->number;
+    att->type = realloc(att->type, att->count*sizeof(const char *));
+    att->number = realloc(att->number, att->count*sizeof(int));
+    att->type[att->count-1] = strdup(type->name);
+    att->number[att->count-1] = type->number;
 }
 
 /** Read the contents of a <code>\<ignore_list\></code> tag. */
@@ -724,8 +735,8 @@ void read_ignore_list(const char *name, FILE *file) {
     /*printf("il %s:", name);*/
     list = calloc(1, sizeof(ignore_list));
     list_count++;
-    lists = realloc(lists, list_count * sizeof(ignore_list*));
-    lists[list_count - 1] = list;
+    lists = realloc(lists, list_count*sizeof(ignore_list *));
+    lists[list_count-1] = list;
     list->name = strdup(name);
 
     while (read_line(buf, 200, file)) {
@@ -736,25 +747,26 @@ void read_ignore_list(const char *name, FILE *file) {
         start = strstr(buf, "arch=");
         if (!start)
             continue;
-        start = strchr(start + 1, '"');
+        start = strchr(start+1, '"');
         if (!start)
             continue;
-        end = strchr(start + 1, '"');
+        end = strchr(start+1, '"');
         if (!end)
             continue;
 
-        tmp[end - start - 1] = '\0';
-        strncpy(tmp, start + 1, end - start - 1);
+        tmp[end-start-1] = '\0';
+        strncpy(tmp, start+1, end-start-1);
         /*printf(" %s", tmp);*/
 
         list->count++;
-        list->fields = realloc(list->fields, list->count * sizeof(char*));
-        list->fields[list->count - 1] = strdup(tmp);
+        list->fields = realloc(list->fields, list->count*sizeof(char *));
+        list->fields[list->count-1] = strdup(tmp);
     }
 }
 
 void dump_ignore_lists(void) {
     int list, field;
+
     printf("ignore lists:\n");
     for (list = 0; list < list_count; list++) {
         printf(" %s:", lists[list]->name);
@@ -785,7 +797,8 @@ static const char *in_living[] = {
     "food",
     "dam",
     "luck",
-    NULL };
+    NULL
+};
 
 /** Custom attributes we know about, to point to the right page. */
 static const char *custom_attributes[] = {
@@ -795,10 +808,12 @@ static const char *custom_attributes[] = {
     "passenger_limit",
     "face_full",
     "anim_full",
-    NULL };
+    NULL
+};
 
 int is_custom_attribute(const char *attribute) {
     int val;
+
     for (val = 0; custom_attributes[val] != NULL; val++) {
         if (!strcmp(custom_attributes[val], attribute)) {
             return 1;
@@ -852,7 +867,7 @@ void write_type_file(type_definition *type) {
     if (type->number > 0) {
         for (req = 0; type_names[req].code_name != NULL; req++) {
             if (type_names[req].value == type->number) {
-                fprintf(file, "@var %s\nSee @ref page_type_%d\n*/\n\n/**\n", type_names[req].code_name, type->number);
+                fprintf(file, "@var %s\nSee @ref page_type_%d\n*/\n\n/**\n", type_names[req].qcode_name, type->number);
                 break;
             }
         }
@@ -895,7 +910,7 @@ void write_type_index(void) {
     fprintf(index, "Types not listed here have the attributes defined in @ref page_type_0 \"this page\".\n\n");
 
     for (type = 0; type < type_count; type++) {
-        fprintf(index, " - @ref page_type_%d \"%s\"\n", types[type]->number, types[type]->name);
+        fprintf(index, "-@ref page_type_%d \"%s\"\n", types[type]->number, types[type]->name);
     }
 
     fprintf(index, "*/\n");
@@ -918,7 +933,7 @@ void write_attribute_file(attribute_definition *attribute) {
 
     /* resistances are special, they'll be merged in the obj::resist paragraph, so specify the name. */
     if (strstr(attribute->field, "resist_"))
-        fprintf(file, "\n@section %s %s resistance\n", attribute->field, attribute->field + 7);
+        fprintf(file, "\n@section %s %s resistance\n", attribute->field, attribute->field+7);
     else
         fprintf(file, "\n@section Use\n");
 
@@ -930,7 +945,7 @@ void write_attribute_file(attribute_definition *attribute) {
         fprintf(file, "\t<tr>\n\t\t<td>\n");
 
         for (type = 0; type < attribute->types[desc]->count; type++) {
-            if (type < attribute->types[desc]->count - 1)
+            if (type < attribute->types[desc]->count-1)
                 end = ", ";
             else
                 end = "\n";
@@ -944,7 +959,7 @@ void write_attribute_file(attribute_definition *attribute) {
     fclose(file);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     FILE *xml;
     int number, attr, dummy;
     char buf[200], tmp[200];
@@ -957,7 +972,7 @@ int main(int argc, char** argv) {
     }
 
     /* dummy type number for special types. */
-    dummy = OBJECT_TYPE_MAX + 50;
+    dummy = OBJECT_TYPE_MAX+50;
 
     xml = fopen(argv[1], "r");
     while (read_line(buf, 200, xml) != NULL) {
@@ -972,10 +987,10 @@ int main(int argc, char** argv) {
 
         if (strstr(buf, "<ignore_list") != NULL) {
             start = strstr(buf, "name=");
-            start = strchr(start + 1, '"');
-            end = strchr(start + 1, '"');
-            tmp[end - start - 1] = '\0';
-            strncpy(tmp, start + 1, end - start - 1);
+            start = strchr(start+1, '"');
+            end = strchr(start+1, '"');
+            tmp[end-start-1] = '\0';
+            strncpy(tmp, start+1, end-start-1);
             read_ignore_list(tmp, xml);
             continue;
         }
@@ -985,19 +1000,19 @@ int main(int argc, char** argv) {
             start = strchr(start, '"');
             /*if (!start)
                 break;*/
-            end = strchr(start + 1, '"');
+            end = strchr(start+1, '"');
             /*if (!end)
                 break;*/
-            tmp[end - start - 1] = '\0';
-            strncpy(tmp, start + 1, end - start - 1);
+            tmp[end-start-1] = '\0';
+            strncpy(tmp, start+1, end-start-1);
             /*printf("type %s ", tmp);*/
 
             number = atoi(tmp);
             start = strstr(end, "name=");
             start = strchr(start, '"');
-            end = strchr(start + 1, '"');
-            tmp[end - start - 1] = '\0';
-            strncpy(tmp, start + 1, end - start - 1);
+            end = strchr(start+1, '"');
+            tmp[end-start-1] = '\0';
+            strncpy(tmp, start+1, end-start-1);
 
             if (!strcmp(tmp, "Misc")) {
                 fallback_type = get_type_definition();
@@ -1008,8 +1023,8 @@ int main(int argc, char** argv) {
                     number = dummy++;
                 type = get_type_definition();
                 type_count++;
-                types = realloc(types, type_count * sizeof(type_definition*));
-                types[type_count - 1] = type;
+                types = realloc(types, type_count*sizeof(type_definition *));
+                types[type_count-1] = type;
             }
 
 #if 0
