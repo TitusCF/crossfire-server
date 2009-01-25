@@ -934,7 +934,7 @@ int summon_object(object *op, object *caster, object *spell_ob, int dir, const c
         summon_arch = spell_ob->other_arch;
     } else if (spell_ob->randomitems) {
         int level = caster_level(caster, spell_ob);
-        treasure *tr, *lasttr = NULL;;
+        treasure *tr, *lasttr = NULL;
 
         /* In old code, this was a very convuluted for statement,
          * with all the checks in the 'for' portion itself.  Much

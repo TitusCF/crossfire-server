@@ -346,7 +346,7 @@ static PyObject *decode_array(JSONData *jsondata) {
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError, "unterminated array starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
-            goto failure;;
+            goto failure;
         } else if (c == ']') {
             if (expect_item && items > 0) {
                 int row, col;
@@ -411,7 +411,7 @@ static PyObject *decode_object(JSONData *jsondata) {
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
             PyErr_Format(JSON_DecodeError, "unterminated object starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
-            goto failure;;
+            goto failure;
         } else if (c == '}') {
             if (expect_key && items > 0) {
                 int row, col;

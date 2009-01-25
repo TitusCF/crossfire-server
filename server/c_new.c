@@ -211,7 +211,7 @@ int command_fire(object *op, char *params) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "Can't fire to a non adjacent square.", NULL);
         return 0;
-    };
+    }
     op->contr->fire_on = 1;
     return move_player(op, dir);
 }

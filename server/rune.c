@@ -403,7 +403,7 @@ int dispel_rune(object *op, object *caster, object *spell, object *skill, int di
 int trap_see(object *op, object *trap) {
     int chance;
 
-    chance = random_roll(0, 99, op, PREFER_HIGH);;
+    chance = random_roll(0, 99, op, PREFER_HIGH);
 
     /* decide if we see the rune or not */
     if ((trap->stats.Cha == 1)

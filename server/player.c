@@ -69,7 +69,7 @@ player *find_player(const char *plname) {
             if (!strcmp(name, plname))
                 return pl;
         }
-    };
+    }
     return NULL;
 }
 

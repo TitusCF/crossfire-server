@@ -749,7 +749,7 @@ static void update_priest_flag(const object *god, object *exp_ob, uint32 flag) {
 
 /*      if (!(QUERY_FLAG(&(exp_ob->arch->clone), flag)))*/
         CLEAR_FLAG(exp_ob, flag);
-    };
+    }
 }
 
 
