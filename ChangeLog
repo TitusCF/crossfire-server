@@ -14,6 +14,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Server part of client window resizing.  When server gets a mapsize request,
+it now clears its map data so it does a complete refresh of the map to the
+client.  This fixes drawing issues.
+---
+include/sockproto.h: Change map_newmap_cmd() definition
+server/move.c, server/plugins.c, server/server.c, server/spell_effect.c:
+    Change call to map_newmap_cmd()
+socket/request.c: Add call to map_new_cmd() in setup area.  Change
+    map_newmap_cmd() to take a socket structure instead of player -
+    the setup only has socket pointer and not player pointer to use.
+---
+MSW 2009-01-24
+
 test/unit/server/check_c_party.c: Fix failing regression test. (Access to
   uninitialized variable.)
 Andreas Kirschbaum 2009-01-24

@@ -321,7 +321,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y) {
     swap_below_max(newmap->path);
 
     if (op->type == PLAYER)
-        map_newmap_cmd(op->contr);
+        map_newmap_cmd(&op->contr->socket);
 }
 
 /**
@@ -932,7 +932,7 @@ static void process_players1(void) {
                             space = 0;
                         remove_ob(pl->ob);
                         insert_ob_in_map_at(pl->ob, followed->ob->map, NULL, 0, followed->ob->x+freearr_x[space], followed->ob->y+freearr_y[space]);
-                        map_newmap_cmd(pl);
+                        map_newmap_cmd(&pl->socket);
                     }
                 } else {
                     draw_ext_info_format(NDI_UNIQUE, 0, pl->ob, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_DM, "Player %s left or ambiguous name.", NULL, pl->followed_player);

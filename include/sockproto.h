@@ -79,7 +79,7 @@ void reply_cmd(char *buf, int len, player *pl);
 void version_cmd(char *buf, int len, socket_struct *ns);
 void set_sound_cmd(char *buf, int len, socket_struct *ns);
 void map_redraw_cmd(char *buf, int len, player *pl);
-void map_newmap_cmd(player *pl);
+void map_newmap_cmd(socket_struct *ns);
 void move_cmd(char *buf, int len, player *pl);
 void send_query(socket_struct *ns, uint8 flags, const char *text);
 void esrv_update_stats(player *pl);

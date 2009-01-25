@@ -4235,7 +4235,7 @@ void *cfapi_object_teleport(int *type, ...) {
 
         insert_ob_in_map_at(who, map, NULL, 0, x, y);
         if (who->type == PLAYER)
-            map_newmap_cmd(who->contr);
+            map_newmap_cmd(&who->contr->socket);
         *res = 0;
     }
 

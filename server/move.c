@@ -215,7 +215,7 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator) {
 
     tmp = insert_ob_in_map(op, op->map, originator, 0);
     if (op && op->type == PLAYER)
-        map_newmap_cmd(op->contr);
+        map_newmap_cmd(&op->contr->socket);
     if (tmp)
         return 0;
     else
@@ -323,7 +323,7 @@ int teleport(object *teleporter, uint8 tele_type, object *user) {
     }
     tmp = insert_ob_in_map(user, other_teleporter->map, NULL, 0);
     if (tmp && tmp->type == PLAYER)
-        map_newmap_cmd(tmp->contr);
+        map_newmap_cmd(&tmp->contr->socket);
     return (tmp == NULL);
 }
 

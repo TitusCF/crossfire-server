@@ -1658,7 +1658,7 @@ int dimension_door(object *op, object *caster, object *spob, int dir) {
         return 1;
 
     if (op->type == PLAYER)
-        map_newmap_cmd(op->contr);
+        map_newmap_cmd(&op->contr->socket);
     op->speed_left = -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }

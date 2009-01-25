@@ -239,9 +239,10 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
                  * param as given to us in case it gets parsed differently.
                  */
                 SockList_AddPrintf(&sl, "%dx%d", x, y);
-                /* If beyond this size and still using orig map
-                 * command, need to go to map1cmd.
+                /* Client and server need to resynchronize on data - treating it as
+                 * a new map is best way to go.
                  */
+                map_newmap_cmd(ns);
             }
         } else if (!strcmp(cmd, "extendedMapInfos")) {
             SockList_AddString(&sl, "1");
@@ -669,20 +670,20 @@ void map_redraw_cmd(char *buf, int len, player *pl) {
 }
 
 /** Newmap command */
-void map_newmap_cmd(player *pl) {
+void map_newmap_cmd(socket_struct *ns) {
     /* If getting a newmap command, this scroll information
      * is no longer relevant.
      */
-    pl->socket.map_scroll_x = 0;
-    pl->socket.map_scroll_y = 0;
+    ns->map_scroll_x = 0;
+    ns->map_scroll_y = 0;
 
-    if (pl->socket.newmapcmd == 1) {
+    if (ns->newmapcmd == 1) {
         SockList sl;
 
-        memset(&pl->socket.lastmap, 0, sizeof(pl->socket.lastmap));
+        memset(&ns->lastmap, 0, sizeof(ns->lastmap));
         SockList_Init(&sl);
         SockList_AddString(&sl, "newmap");
-        Send_With_Handling(&pl->socket, &sl);
+        Send_With_Handling(ns, &sl);
         SockList_Term(&sl);
     }
 }
