@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+lib/Makefile.am, lib/adm/collect_images.pl: Make out of tree builds work. Note
+  that the arch symlink in lib should be placed in the build tree. Further: the
+  Perl script change might be suboptimal, I'm not a Perl expert.
+Arvid Norlander 2009-01-25
+
 types/transport/transport.c: Add missing braces to if clause in
     transport_type_process().
 MSW 2009-01-24

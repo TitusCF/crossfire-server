@@ -115,17 +115,17 @@ MAINTAINERCLEANFILES = archetypes bmaps faces .collect-stamp
 PERL = @PERL@
 
 crossfire.0: bmaps.paths
-	$(PERL) $(srcdir)/adm/collect_images.pl -png
+	$(PERL) $(srcdir)/adm/collect_images.pl -src $(srcdir) -png
 
 .collect-stamp:
 	touch .collect-stamp
 
 collect:
-	$(PERL) -I$(srcdir) collect.pl $(srcdir)/arch
-	$(PERL) $(srcdir)/adm/collect_images.pl -png
+	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch
+	$(PERL) $(srcdir)/adm/collect_images.pl -src $(srcdir) -png
 
 archonly:
-	$(PERL) -I$(srcdir) collect.pl $(srcdir)/arch ARCHONLY
+	$(PERL) -I$(srcdir) collect.pl $(builddir)/arch ARCHONLY
 
 archetypes: .collect-stamp
 	make collect
@@ -166,7 +166,7 @@ install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
 		echo "Creating directory $(pkgdatadir)/$$i"; \
 		$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/$$i; \
 	fi; \
-	$(INSTALL_DATA) $(srcdir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
+	$(INSTALL_DATA) $(builddir)/treasures.bld $(DESTDIR)$(pkgdatadir)/treasures
 
 
 # Uninstall unchanged config/var files so make distcheck is happy

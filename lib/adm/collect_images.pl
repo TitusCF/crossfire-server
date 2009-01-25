@@ -15,6 +15,7 @@ use FileHandle;
 die("No arch directory - will not rebuild $mode image file") if (! -e "arch");
 
 $archive = 0;
+$src_path = ".";
 $TMPDIR="/tmp";
 
 # What we will call the collection of images.
@@ -24,6 +25,14 @@ $DESTDIR="$TMPDIR/$ARCHNAME";
 # Maximum expected file
 $MAXFILESIZE=100000;
 
+if ($ARGV[0] eq "-src") {
+	$src_path = $ARGV[1];
+	print "Using $ARGV[1] as source directory\n";
+	die("$src_path doesn't exist.") if (! -d $src_path);
+	shift;
+	shift;
+}
+
 if ($ARGV[0] eq "-archive") {
 	$archive =1;
 	print "Will generate appropriate files for image archive\n";
@@ -31,7 +40,7 @@ if ($ARGV[0] eq "-archive") {
 	die("$0: unable to mkdir $DESTDIR: $1\n") if (!mkdir($DESTDIR, 0755));
 }
 
-open(IMAGEINFO,"image_info") || die("Can't open image_info file: $!\n");
+open(IMAGEINFO,"$src_path/image_info") || die("Can't open image_info file: $!\n");
 binmode(IMAGEINFO);
 while (<IMAGEINFO>) {
     # Ignore lines that start with comments or just empty lines
