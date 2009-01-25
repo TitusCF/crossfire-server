@@ -136,8 +136,7 @@ static PyObject *decode_string(JSONData *jsondata) {
             int row, col;
 
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-            PyErr_Format(JSON_DecodeError,
-                         "unterminated string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+            PyErr_Format(JSON_DecodeError, "unterminated string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             return NULL;
         }
@@ -186,8 +185,7 @@ static PyObject *decode_string(JSONData *jsondata) {
             int row, col;
 
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-            PyErr_Format(JSON_DecodeError,
-                         "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+            PyErr_Format(JSON_DecodeError, "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
         } else {
             if (PyErr_GivenExceptionMatches(type, PyExc_UnicodeDecodeError)) {
@@ -195,8 +193,7 @@ static PyObject *decode_string(JSONData *jsondata) {
 
                 reason = PyObject_GetAttrString(value, "reason");
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "cannot decode string starting"
-                             " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F"): %s",
+                PyErr_Format(JSON_DecodeError, "cannot decode string starting" " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F"): %s",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col,
                              reason ? PyString_AsString(reason) : "bad format");
                 Py_XDECREF(reason);
@@ -204,8 +201,7 @@ static PyObject *decode_string(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError,
-                             "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "invalid string starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             }
         }
@@ -348,8 +344,7 @@ static PyObject *decode_array(JSONData *jsondata) {
             int row, col;
 
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-            PyErr_Format(JSON_DecodeError, "unterminated array starting at "
-                         "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+            PyErr_Format(JSON_DecodeError, "unterminated array starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             goto failure;;
         } else if (c == ']') {
@@ -357,8 +352,7 @@ static PyObject *decode_array(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "expecting array item at "
-                             "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "expecting array item at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
@@ -369,8 +363,7 @@ static PyObject *decode_array(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "expecting array item at "
-                             "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "expecting array item at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
@@ -416,8 +409,7 @@ static PyObject *decode_object(JSONData *jsondata) {
             int row, col;
 
             getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-            PyErr_Format(JSON_DecodeError, "unterminated object starting at "
-                         "position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+            PyErr_Format(JSON_DecodeError, "unterminated object starting at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                          (Py_ssize_t)(start-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
             goto failure;;
         } else if (c == '}') {
@@ -425,8 +417,7 @@ static PyObject *decode_object(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             " at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "expecting object property name at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
@@ -437,8 +428,7 @@ static PyObject *decode_object(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "expecting object property name"
-                             "at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "expecting object property name at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
@@ -450,8 +440,7 @@ static PyObject *decode_object(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "expecting property name in "
-                             "object at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "expecting property name in object at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 goto failure;
             }
@@ -465,8 +454,7 @@ static PyObject *decode_object(JSONData *jsondata) {
                 int row, col;
 
                 getRowAndCol(jsondata->str, jsondata->ptr, &row, &col);
-                PyErr_Format(JSON_DecodeError, "missing colon after object "
-                             "property name at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
+                PyErr_Format(JSON_DecodeError, "missing colon after object property name at position "SSIZE_T_F"(row "SSIZE_T_F", col "SSIZE_T_F")",
                              (Py_ssize_t)(jsondata->ptr-jsondata->str), (Py_ssize_t)row, (Py_ssize_t)col);
                 Py_DECREF(key);
                 goto failure;
