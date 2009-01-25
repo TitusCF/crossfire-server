@@ -1105,7 +1105,7 @@ void sell_item(object *op, object *pl) {
         if (at == NULL)
             LOG(llevError, "Could not find %s archetype\n", coins[count]);
         else if ((i/at->clone.value) > 0) {
-            for (pouch = pl->inv ; pouch; pouch = pouch->below) {
+            for (pouch = pl->inv; pouch; pouch = pouch->below) {
                 if (pouch->type == CONTAINER
                 && QUERY_FLAG(pouch, FLAG_APPLIED)
                 && pouch->race

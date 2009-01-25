@@ -1025,7 +1025,7 @@ int command_create(object *op, char *params) {
 
         return 1;
     } else {
-        for (i = 0 ; i < (set_nrof ? nrof : 1); i++) {
+        for (i = 0; i < (set_nrof ? nrof : 1); i++) {
             archetype *atmp;
             object *prev = NULL, *head = NULL, *dup;
 
@@ -1557,7 +1557,7 @@ int command_stats(object *op, char *params) {
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Con : %-2d        AC : %-4d  WC  : %d",
                          "Con : %-2d        AC : %-4d  WC  : %d",
-                         pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc) ;
+                         pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc);
 
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_DM,
                          "[fixed]Int : %-2d    Damage : %d",

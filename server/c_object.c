@@ -47,8 +47,8 @@ static void set_pickup_mode(const object *op, int i);
  */
 
 /** Simple ::objectlink allocation, fail-safe. */
-#define OBLINKMALLOC(p) if(!((p) = (objectlink *)malloc(sizeof(objectlink)))) \
-                          fatal(OUT_OF_MEMORY);
+#define OBLINKMALLOC(p) if (!((p) = (objectlink *)malloc(sizeof(objectlink)))) \
+                            fatal(OUT_OF_MEMORY);
 
 /**
  * Search from start and through below for what matches best with params.

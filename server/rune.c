@@ -405,7 +405,7 @@ int trap_see(object *op, object *trap) {
 
     chance = random_roll(0, 99, op, PREFER_HIGH);;
 
-    /*  decide if we see the rune or not */
+    /* decide if we see the rune or not */
     if ((trap->stats.Cha == 1)
     || (chance > MIN(95, MAX(5, ((int)((float)(op->map->difficulty+trap->level+trap->stats.Cha-op->level)/10.0*50.0)))))) {
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,

@@ -454,7 +454,7 @@ static void blinded_sight(object *op) {
         for (y = 0; y <  op->contr->socket.mapy; y++)
             op->contr->blocked_los[x][y] = 100;
 
-    op->contr->blocked_los[ op->contr->socket.mapx/2][ op->contr->socket.mapy/2] = 0;
+    op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] = 0;
 }
 
 /**

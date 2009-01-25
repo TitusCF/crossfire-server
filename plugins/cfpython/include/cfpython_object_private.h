@@ -387,7 +387,7 @@ static PyGetSetDef Object_getseters[] = {
     { "HitBack",        (getter)Object_GetHitBack,      (setter)Object_SetHitBack, NULL, NULL },
     { "StandStill",     (getter)Object_GetStandStill,   (setter)Object_SetStandStill, NULL, NULL },
     { "OnlyAttack",     (getter)Object_GetOnlyAttack,   (setter)Object_SetOnlyAttack, NULL, NULL },
-    { "MakeInvisible",  (getter)Object_GetMakeInvisible,(setter)Object_SetMakeInvisible, NULL, NULL },
+    { "MakeInvisible",  (getter)Object_GetMakeInvisible, (setter)Object_SetMakeInvisible, NULL, NULL },
     { "Money",          (getter)Object_GetMoney,        NULL, NULL, NULL },
     { "Type",           (getter)Object_GetType,         NULL, NULL, NULL },
     { "Subtype",        (getter)Object_GetSubtype,      NULL, NULL, NULL },

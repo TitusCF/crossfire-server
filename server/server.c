@@ -1411,7 +1411,7 @@ static void do_specials(void) {
  */
 int server_main(int argc, char **argv) {
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
-    _fmode = _O_BINARY ;
+    _fmode = _O_BINARY;
     bRunning = 1;
 #endif
 

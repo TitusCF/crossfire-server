@@ -3375,7 +3375,7 @@ int find_dir_2(int x, int y) {
         return 5;
     if (q < 242)
         return 4;
-    return 3 ;
+    return 3;
 }
 
 /**

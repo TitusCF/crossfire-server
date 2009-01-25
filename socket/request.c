@@ -1230,7 +1230,7 @@ void draw_client_map2(object *pl) {
     ay = 0;
     for (y = min_y; y < max_y; y++, ay++) {
         ax = 0;
-        for (x = min_x; x < max_x ; x++, ax++) {
+        for (x = min_x; x < max_x; x++, ax++) {
             /* If this space is out of the normal viewable area,
              * we only check the heads value. This is used to
              * handle big images - if they extend to a viewable

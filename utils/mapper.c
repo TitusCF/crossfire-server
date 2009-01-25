@@ -1976,7 +1976,7 @@ void process_map(struct_map_info *info) {
     info->height = MAP_HEIGHT(m);
 
     for (x = MAP_WIDTH(m)-1; x >= 0; x--)
-        for (y = MAP_HEIGHT(m)-1; y >= 0 ; y--) {
+        for (y = MAP_HEIGHT(m)-1; y >= 0; y--) {
             for (item = GET_MAP_OB(m, x, y); item; item = item->above) {
                 if (item->type == EXIT || item->type == TELEPORTER || item->type == PLAYER_CHANGER) {
                     char ep[500];

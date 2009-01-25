@@ -190,7 +190,7 @@ static void polymorph_living(object *op, int level) {
     remove_ob(op);
 
     /* First, count up the number of legal matches */
-    for (at = first_archetype ; at != NULL; at = at->next)
+    for (at = first_archetype; at != NULL; at = at->next)
         if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER))
         && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             numat++;
@@ -202,7 +202,7 @@ static void polymorph_living(object *op, int level) {
 
     /* Next make a choice, and loop through until we get to it */
     choice = rndm(0, numat-1);
-    for (at = first_archetype ; at != NULL; at = at->next)
+    for (at = first_archetype; at != NULL; at = at->next)
         if ((QUERY_FLAG((&at->clone), FLAG_MONSTER) == QUERY_FLAG(op, FLAG_MONSTER)) && (find_free_spot(&at->clone, map, x, y, 0, SIZEOFFREE) != -1)) {
             if (!choice)
                 break;
@@ -251,7 +251,7 @@ static void polymorph_living(object *op, int level) {
         create_treasure(op->randomitems, op, GT_INVISIBLE, map->difficulty, 0);
 
     /* Apply any objects. */
-    for (tmp = op->inv; tmp != NULL ; tmp = next) {
+    for (tmp = op->inv; tmp != NULL; tmp = next) {
         next = tmp->below;
         monster_check_apply(op, tmp);
     }
@@ -313,7 +313,7 @@ static void polymorph_item(object *who, object *op, int level) {
      * invisible.  Also, if the value is too high now, it would almost
      * certainly be too high below.
      */
-    for (at = first_archetype ; at != NULL; at = at->next) {
+    for (at = first_archetype; at != NULL; at = at->next) {
         if (at->clone.type == op->type
         && !at->clone.invisible
         && at->clone.value > 0
@@ -332,7 +332,7 @@ static void polymorph_item(object *who, object *op, int level) {
     new_ob = get_object();
     do {
         choice = rndm(0, numat-1);
-        for (at = first_archetype ; at != NULL; at = at->next) {
+        for (at = first_archetype; at != NULL; at = at->next) {
             if (at->clone.type == op->type
             && !at->clone.invisible
             && at->clone.value > 0
@@ -2426,7 +2426,7 @@ int cast_identify(object *op, object *caster, object *spell) {
     if (num_ident < 1)
         num_ident = 1;
 
-    for (tmp = op->inv; tmp ; tmp = tmp->below) {
+    for (tmp = op->inv; tmp; tmp = tmp->below) {
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !tmp->invisible &&  need_identify(tmp)) {
             identify(tmp);
             if (op->type == PLAYER) {

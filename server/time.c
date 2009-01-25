@@ -698,7 +698,7 @@ void move_player_mover(object *op) {
             m = op->map;
             if (get_map_flags(m, &m, nx, ny, &nx, &ny)&P_OUT_OF_MAP) {
                 LOG(llevError, "move_player_mover: Trying to push player off the map! map=%s (%d, %d)\n", m->path, op->x, op->y);
-                return ;
+                return;
             }
 
             if (should_director_abort(op, victim))

@@ -811,7 +811,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
 
         pl->contr->count = nrof;
         pick_up(pl, op);
-        return ;
+        return;
     }
     /* If not dropped or picked up, we are putting it into a sack */
     if (pl->contr->transport) {
