@@ -261,8 +261,9 @@ static method_ret transport_type_process(ob_methods *context, object *op) {
      * So give them back there speed here, since process_objects()
      * has decremented it.
      */
-    if (op->speed_left < 0.0)
+    if (op->speed_left < 0.0) {
         op->speed_left += 1.0;
         return 1;
+    }
     return 0;
 }
