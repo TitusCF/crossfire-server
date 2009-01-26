@@ -10,6 +10,8 @@ EXTRA_DIST = AUTHORS ChangeLog COPYING DEVELOPERS autogen.sh run_win32.bat
 
 DISTCHECK_CONFIGURE_FLAGS = --localstatedir=$$dc_install_base/var --mandir=$$dc_install_base/man
 
+ACLOCAL_AMFLAGS = -I macros --install
+
 archives: dist
 	(cd doc; make archive)
 	(cd lib; make archive)

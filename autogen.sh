@@ -1,7 +1,6 @@
 #!/bin/sh
 libtoolize -f -c
-mv -f ltmain.sh utils
-aclocal
+aclocal -I macros --install
 autoheader
 automake -a -c
 autoconf
