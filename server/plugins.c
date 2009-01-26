@@ -4638,6 +4638,8 @@ void cleanupPlugins(void) {
          */
         /* plugins_dlclose(cp->libptr); */
         free(cp);
+        plugin_number--;
         cp = next;
     }
+    plugins_list = NULL;
 }

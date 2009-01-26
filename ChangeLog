@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/plugins.c: Set plugins_list to NULL when unloading plugins at exit to
+  prevent some possible issues if someone tries to mess with plugins afterwards.
+Arvid Norlander 2009-01-26
+
 include/libproto.h, common/arch.c: Make hasharch() in arch.c static since it
   wasn't (and shouldn't be) used anywhere else.
 Arvid Norlander 2009-01-26
