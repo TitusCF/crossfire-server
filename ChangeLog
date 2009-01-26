@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/libproto.h, common/arch.c: Make hasharch() in arch.c static since it
+  wasn't (and shouldn't be) used anywhere else.
+Arvid Norlander 2009-01-26
+
 test/unit/common/check_shstr.c: Fix small memory leak in the shstr unit test.
 common/arch.c: Make free_all_archs() also clear the hash table for archetypes,
   this fixes an invalid read in test/unit/common/check_arch.c.

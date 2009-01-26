@@ -641,7 +641,7 @@ object *create_archetype(const char *name) {
  * @return
  * hash of the archetype name
  */
-unsigned long
+static unsigned long
 hasharch(const char *str, int tablesize) {
     unsigned long hash = 0;
     int i = 0;

@@ -24,7 +24,6 @@ extern void check_generators(void);
 extern object *arch_to_object(archetype *at);
 extern object *create_singularity(const char *name);
 extern object *create_archetype(const char *name);
-extern unsigned long hasharch(const char *str, int tablesize);
 extern archetype *try_find_archetype(const char *name);
 extern archetype *find_archetype(const char *name);
 extern object *object_create_arch(archetype *at);
