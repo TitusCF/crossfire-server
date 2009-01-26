@@ -309,6 +309,8 @@ void free_all_archs(void) {
         i++;
     }
     first_archetype = NULL;
+    /* Reset the hashtable */
+    clear_archetable();
     LOG(llevDebug, "Freed %d archetypes\n", i);
 }
 

@@ -68,6 +68,7 @@ START_TEST(test_add_string) {
     fail_unless(str2 == str1, "add_string should return same pointer for 2 same strings but str1 (%p -> '%s') != str2 (%p -> '%s').", str1, str1, str2, str2);
     str3 = add_string("");
     fail_unless(str3 != NULL, "add_string should handle gracefully empty non null strings.");
+    free(temp);
 }
 END_TEST
 
