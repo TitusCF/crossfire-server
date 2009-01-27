@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+macros/libtool.m4: Removed this file as it depends on which libtool version is
+  installed on the system running autogen.sh. configure will fail with an error
+  if version doesn't match between this file and the generated (non-versioned)
+  file utils/ltmain.sh. autogen.sh will install the correct version of
+  macros/libtool.m4 as long as a newer version doesn't exist. Thus removing this
+  file from SVN is the correct way to solve the issue. This file _should_
+  however be included in release tarballs since utils/ltmain.sh will also be
+  included there.
+macros/: Added svn:ignore for libtool.m4
+Arvid Norlander 2009-01-27
+
 server/plugins.c: Set plugins_list to NULL when unloading plugins at exit to
   prevent some possible issues if someone tries to mess with plugins afterwards.
 Arvid Norlander 2009-01-26
