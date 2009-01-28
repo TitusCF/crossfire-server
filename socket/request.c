@@ -191,7 +191,6 @@ void set_up_cmd(char *buf, int len, socket_struct *ns) {
             if (map2cmd != 1) {
                 SockList_AddString(&sl, "FALSE");
             } else {
-                ns->mapmode = Map2Cmd;
                 SockList_AddString(&sl, "1");
             }
         } else if (!strcmp(cmd, "newmapcmd")) {

@@ -109,7 +109,6 @@ void init_connection(socket_struct *ns, const char *from_ip) {
     ns->facecache = 0;
     ns->sound = 0;
     ns->monitor_spells = 0;
-    ns->mapmode = Map2Cmd;
     ns->darkness = 1;
     ns->status = Ns_Add;
     ns->mapx = 11;

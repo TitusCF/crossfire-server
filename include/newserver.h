@@ -97,17 +97,6 @@ enum Sock_Status {
 };
 
 /**
- * Only one map mode can actually be used, so lets make it a switch
- * instead of having a bunch of different fields that needed to
- * get toggled.  Note ordering here is important -
- * This way, when a new feature is
- * added, a simple > compare can be done instead a bunch of ==
- */
-enum MapMode {
-    Map2Cmd = 0
-};
-
-/**
  * The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
  */
@@ -150,7 +139,6 @@ typedef struct socket_struct {
     uint32      sound;                  /**< Client sound mode. */
     uint32      supported_readables;    /**< Each bit is a readable supported by client. */
     uint32      cs_version, sc_version; /**< Versions of the client. */
-    enum MapMode mapmode;               /**< Type of map commands the client wants. */
     uint16      look_position;          /**< Start of drawing of look window. */
     uint8       mapx, mapy;             /**< How large a map the client wants. */
     uint8       faceset;                /**< Set the client is using, default 0. */

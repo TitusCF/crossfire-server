@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/newserver.h, socket/init.c, socket/request.c: Remove MapMode
+  type/mapmode field since only one mode is supported.
+Andreas Kirschbaum 2009-01-28
+
 common/shstr.c, common/arch.c, common/path.c: Fix some int that should have been
   size_t, found using splint.
 common/arch.c: Also fix an "int" that should have been "unsigned long".
