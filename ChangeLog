@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/shstr.c, common/arch.c, common/path.c: Fix some int that should have been
+  size_t, found using splint.
+common/arch.c: Also fix an "int" that should have been "unsigned long".
+include/libproto.h, include/path.h: Update prototypes where needed for these int
+  to size_t changes.
+Arvid Norlander 2009-01-28
+
 macros/libtool.m4: Removed this file as it depends on which libtool version is
   installed on the system running autogen.sh. configure will fail with an error
   if version doesn't match between this file and the generated (non-versioned)

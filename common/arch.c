@@ -173,7 +173,7 @@ archetype *get_archetype_by_type_subtype(int type, int subtype) {
 object *create_archetype_by_object_name(const char *name) {
     archetype *at;
     char tmpname[MAX_BUF];
-    int i;
+    size_t i;
 
     strncpy(tmpname, name, MAX_BUF-1);
     tmpname[MAX_BUF-1] = 0;
@@ -714,7 +714,7 @@ archetype *find_archetype(const char *name) {
  * Will call fatal() if archetype table is too small to contain archetypes.
  */
 static void add_arch(archetype *at) {
-    int index = hasharch(at->name, ARCHTABLE), org_index = index;
+    unsigned long index = hasharch(at->name, ARCHTABLE), org_index = index;
 
     for (;;) {
         if (arch_table[index] == NULL) {

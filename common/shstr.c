@@ -312,7 +312,7 @@ void free_string(sstring str) {
  * @param size
  * buf's size.
  */
-void ss_dump_statistics(char *buf, int size) {
+void ss_dump_statistics(char *buf, size_t size) {
     static char line[80];
 
     snprintf(buf, size, "%-13s %6s %6s %6s %6s %6s\n", "", "calls", "hashed", "strcmp", "search", "linked");
@@ -343,7 +343,7 @@ void ss_dump_statistics(char *buf, int size) {
  * @return
  * buf if (what & SS_DUMP_TOTALS) or NULL.
  */
-char *ss_dump_table(int what, char *buf, int size) {
+char *ss_dump_table(int what, char *buf, size_t size) {
     int entries = 0, refs = 0, links = 0;
     int i;
 
@@ -387,8 +387,8 @@ char *ss_dump_table(int what, char *buf, int size) {
  * @return
  * true if overflow will occur.
  */
-int buf_overflow(const char *buf1, const char *buf2, int bufsize) {
-    int len1 = 0, len2 = 0;
+int buf_overflow(const char *buf1, const char *buf2, size_t bufsize) {
+    size_t len1 = 0, len2 = 0;
 
     if (buf1)
         len1 = strlen(buf1);

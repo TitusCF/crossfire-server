@@ -277,9 +277,9 @@ extern int item_matched_string(object *pl, object *op, const char *name);
 extern void fix_multipart_object(object *tmp);
 extern void get_multi_size(object *ob, int *sx, int *sy, int *hx, int *hy);
 /* path.c */
-extern char *path_combine(const char *src, const char *dst, char *path, int size);
+extern char *path_combine(const char *src, const char *dst, char *path, size_t size);
 extern void path_normalize(char *path);
-extern char *path_combine_and_normalize(const char *src, const char *dst, char *path, int size);
+extern char *path_combine_and_normalize(const char *src, const char *dst, char *path, size_t size);
 /* porting.c */
 extern char *tempnam_local(const char *dir, const char *pfx);
 extern FILE *tempnam_secure(const char *dir, const char *pfx, char **filename);
@@ -346,9 +346,9 @@ extern sstring add_refcount(sstring str);
 extern int query_refcount(sstring str);
 extern sstring find_string(const char *str);
 extern void free_string(sstring str);
-extern void ss_dump_statistics(char *buf, int size);
-extern char *ss_dump_table(int what, char *buf, int size);
-extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
+extern void ss_dump_statistics(char *buf, size_t size);
+extern char *ss_dump_table(int what, char *buf, size_t size);
+extern int buf_overflow(const char *buf1, const char *buf2, size_t bufsize);
 /* stringbuffer.c */
 extern StringBuffer *stringbuffer_new(void);
 extern char *stringbuffer_finish(StringBuffer *sb);
