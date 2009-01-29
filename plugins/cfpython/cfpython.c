@@ -721,7 +721,7 @@ void freeContext(CFPContext *context) {
     free(context);
 }
 
-/* Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
+/** Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
     PyObject *scriptfile;
     sstring sh_path;
@@ -873,7 +873,10 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
+    /* This cause assert() in debug builds if enabled. */
+#if 0
     Py_DECREF(new);
+#endif
 
     strncpy(tmp, name, sizeof(tmp));
     strncat(tmp, "Name", sizeof(tmp)-strlen(tmp));
@@ -901,7 +904,10 @@ static void addSimpleConstants(PyObject *module, const char *name, const CFConst
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
+    /* This cause assert() in debug builds if enabled. */
+#if 0
     Py_DECREF(new);
+#endif
 }
 
 static void initConstants(PyObject *module) {
