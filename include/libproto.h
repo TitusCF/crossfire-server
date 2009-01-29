@@ -292,6 +292,7 @@ extern FILE *open_and_uncompress(const char *name, int flag, int *compressed);
 extern void close_and_delete(FILE *fp, int compressed);
 extern void make_path_to_file(const char *filename);
 /* player.c */
+extern void clear_player(player *pl);
 extern void free_player(player *pl);
 extern int atnr_is_dragon_enabled(int attacknr);
 extern int is_dragon_pl(const object *op);

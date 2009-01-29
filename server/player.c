@@ -281,6 +281,9 @@ static player *get_player(player *p) {
             first_player = p;
 
         p->next = NULL;
+    } else {
+        /* Only needed when reusing existing player. */
+        clear_player(p);
     }
 
     /* Clears basically the entire player structure except

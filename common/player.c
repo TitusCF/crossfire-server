@@ -34,6 +34,32 @@
 #include <global.h>
 
 /**
+ * Clears data in player structure.
+ *
+ * Socket isn't touched. Nor is anything that doesn't need to be freed. So you
+ * may need to do a memset() to clear out values.
+ *
+ * @param pl
+ * player to clear. Pointer is still valid, and can be reused for "play again".
+ */
+void clear_player(player *pl) {
+    client_spell *info;
+    client_spell *next;
+
+    /* Clear item stack (used by DMs only) */
+    if (pl->stack_items)
+        free(pl->stack_items);
+    pl->stack_position = 0;
+
+    info = pl->spell_state;
+    while (info) {
+        next = info->next;
+        free(info);
+        info = next;
+    }
+}
+
+/**
  * Clears player structure, including pointed object (through free_object()).
  *
  * @param pl
@@ -61,16 +87,8 @@ void free_player(player *pl) {
             remove_ob(pl->ob);
         free_object(pl->ob);
     }
-    /* Clear item stack (used by DMs only) */
-    if (pl->stack_items)
-        free(pl->stack_items);
 
-    info = pl->spell_state;
-    while (info) {
-        next = info->next;
-        free(info);
-        info = next;
-    }
+    clear_player(pl);
 
     free(pl->socket.faces_sent);
 

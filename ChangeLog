@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/player.c, include/libproto.h, server/player.c: Fix a few memory leaks
+  if player selects "play again" after logging out.
+Arvid Norlander 2009-01-29
+
 plugins/cfpython/cfpython.c: Remove some Py_DECREF() calls in the python module.
   This fixes bug #2459929 (DECREF error, bombs server if python is strict).
   However, I'm not sure this is the correct way to fix that bug.
