@@ -208,7 +208,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define RING                        70
 #define FLOOR                       71    /**< Floor tile -> native layer 0 */
 #define FLESH                       72    /**< animal 'body parts' -b.t. */
-#define INORGANIC                   73    /**< metals and minerals */
+#define INORGANIC                   73    /**< metals, minerals, dragon scales */
 #define SKILL_TOOL                  74    /**< Allows the use of a skill */
 #define LIGHTER                     75
 

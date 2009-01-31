@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/define.h: Update comment about INORGANIC (type 73) including
+  dragon scales. Making them type flesh had negative consequences such
+  as making them edible and causing them to weigh 50000Kg instead of 25Kg
+  each.
+Rick Tanner 2009-01-31
+
 common/player.c, include/libproto.h, server/player.c: Fix a few memory leaks
   if player selects "play again" after logging out.
 Arvid Norlander 2009-01-29
