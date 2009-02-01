@@ -1404,6 +1404,15 @@ void free_object2(object *ob, int free_inventory) {
         }
     }
 
+#if defined(MEMORY_DEBUG) && (MEMORY_DEBUG > 2)
+    /* memset() to clear it then set flags and finally free it. This will
+     * help detect bad use after return.
+     */
+    memset(ob, 0, sizeof(object));
+    SET_FLAG(ob, FLAG_REMOVED);
+    SET_FLAG(ob, FLAG_FREED);
+    free(ob);
+#else
     /* Now link it with the free_objects list: */
     ob->prev = NULL;
     ob->next = free_objects;
@@ -1411,6 +1420,7 @@ void free_object2(object *ob, int free_inventory) {
         free_objects->prev = ob;
     free_objects = ob;
     nroffreeobjects++;
+#endif
 }
 
 /**

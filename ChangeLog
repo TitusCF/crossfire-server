@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/object.c, include/config.h: Document the different levels of MEMORY_DEBUG
+  and add a third level that calls free() instead of adding back to free list
+  in order to more properly detect use after free.
+Arvid Norlander 2009-02-01
+
 common/object.c, include/config.h: Workaround to make MEMORY_DEBUG usable,
   currently we can't realloc on allocation to ensure the backtrace is correct
   (as the comment in the code described) since a lot of stuff access objects

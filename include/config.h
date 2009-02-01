@@ -535,6 +535,9 @@
  * This should only be turned on if some form of memory debugging tool
  * is being used - otherwise, turning this on will cause some performance
  * hit with no useful advantage.
+ *
+ * Define to 2 for stricter checks (known to currently break).
+ * Define to 3 for even stricter checks (known to currently break even more).
  */
 /*#define MEMORY_DEBUG 1*/
 
