@@ -413,7 +413,7 @@ static const char *re_get_token(selection *sel, const char *regexp) {
                             /* On the form [A-G] or [^A-G]. Note that [G-A]
                              * is a syntax error. Fair enough, I think.
                              */
-#ifdef SAFE_CHECK
+#ifdef SAFE_CHECKS
                             if (first > last)
                                 return NULL;
 #endif
@@ -435,7 +435,7 @@ static const char *re_get_token(selection *sel, const char *regexp) {
                     memset(sel->u.array, neg, sizeof(sel->u.array));
                     if (last) {
                         /* It starts with a range */
-#ifdef SAFE_CHECK
+#ifdef SAFE_CHECKS
                         if (first > last)
                             return NULL;
 #endif
@@ -463,7 +463,7 @@ static const char *re_get_token(selection *sel, const char *regexp) {
                             exit_if_null;
                             looking_at = *regexp++;
                             if (looking_at != ']') {
-#ifdef SAFE_CHECK
+#ifdef SAFE_CHECKS
                                 if (previous > looking_at)
                                     return NULL;
 #endif

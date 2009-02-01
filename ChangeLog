@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/re-cmp.c: Correct some #ifdef to use the correct variable name
+  (SAFE_CHECKS not SAFE_CHECK).
+Arvid Norlander 2009-02-01
+
 include/define.h: Update comment about INORGANIC (type 73) including
   dragon scales. Making them type flesh had negative consequences such
   as making them edible and causing them to weigh 50000Kg instead of 25Kg
