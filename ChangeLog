@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/object.c, include/config.h: Workaround to make MEMORY_DEBUG usable,
+  currently we can't realloc on allocation to ensure the backtrace is correct
+  (as the comment in the code described) since a lot of stuff access objects
+  after freeing and fixing these are non-trivial. So disable realloc() for now
+  unless MEMORY_DEBUG is defined to a value greater than 1. Also fix one of the
+  accesses after free_object() (was in clean_friendly_list()).
+Arvid Norlander 2009-02-01
+
 common/re-cmp.c: Correct some #ifdef to use the correct variable name
   (SAFE_CHECKS not SAFE_CHECK).
 Arvid Norlander 2009-02-01

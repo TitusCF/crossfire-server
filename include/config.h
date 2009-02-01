@@ -536,7 +536,7 @@
  * is being used - otherwise, turning this on will cause some performance
  * hit with no useful advantage.
  */
-/*#define MEMORY_DEBUG*/
+/*#define MEMORY_DEBUG 1*/
 
 /**
  * If you want to have a Message Of The Day file, define MOTD to be

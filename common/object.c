@@ -709,6 +709,10 @@ void clear_object(object *op) {
     if (op->materialname != NULL) FREE_AND_CLEAR_STR(op->materialname);
     if (op->discrete_damage != NULL) FREE_AND_CLEAR(op->discrete_damage);
 
+    /* Remove object from friendly list if needed. */
+    if (QUERY_FLAG(op, FLAG_FRIENDLY))
+        remove_friendly_object(op);
+
     memset((void *)((char *)op+offsetof(object, name)), 0, sizeof(object)-offsetof(object, name));
     /* Below here, we clear things that are not done by the memset,
      * or set default values that are not zero.
@@ -922,16 +926,29 @@ object *get_object(void) {
     op = free_objects;
 #ifdef MEMORY_DEBUG
     /* The idea is hopefully by doing a realloc, the memory
-    * debugging program will now use the current stack trace to
-    * report leaks.
-    */
+     * debugging program will now use the current stack trace to
+     * report leaks.
+     */
+    /* FIXME: However this doesn't work since free_object2() sometimes add
+     * objects back to the free_objects linked list, and some functions mess
+     * with the object after return of free_object2(). This is bad and should be
+     * fixed. But it would need fairly extensive changes and a lot of debugging.
+     * So until that is fixed, skip realloc() here unless MEMORY_DEBUG is set to
+     * a value greater than 1. We do this in order at least make MEMORY_DEBUG
+     * slightly useful.
+     */
+#if MEMORY_DEBUG > 1
     op = realloc(op, sizeof(object));
+#endif
     SET_FLAG(op, FLAG_REMOVED);
     SET_FLAG(op, FLAG_FREED);
 #endif
 
     if (!QUERY_FLAG(op, FLAG_FREED)) {
         LOG(llevError, "Fatal: Getting busy object.\n");
+#ifdef MANY_CORES
+        abort();
+#endif
     }
     free_objects = op->next;
     if (free_objects != NULL)
