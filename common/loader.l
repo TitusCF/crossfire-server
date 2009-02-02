@@ -46,7 +46,7 @@ static char *yval(void);
 
 static int lex_error;
 static char msgbuf[HUGE_BUF];
-int msglen = 0, total_msglen = 0;
+size_t msglen = 0, total_msglen = 0;
 static char lorebuf[HUGE_BUF];
 
 /** Maps the MOVE_* values to names */

@@ -1813,8 +1813,9 @@ static char *msgfile_msg(int level, int booksize) {
 static char *god_info_msg(int level, char *retbuf, int booksize) {
     const char *name;
     char buf[BOOK_BUF];
-    int i, retlen, buflen;
-    int introlen;
+    int i;
+    size_t retlen, buflen;
+    size_t introlen;
     const object *god = pntr_to_god_obj(get_rand_god());
     char en[BOOK_BUF];
 

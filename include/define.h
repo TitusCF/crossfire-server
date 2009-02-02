@@ -849,7 +849,7 @@ typedef unsigned char MoveType;
  * @param maxlen
  * maximum length of dest buffer.
  */
-static inline void safe_strcat(char *dest, const char *orig, int *curlen, int maxlen) {
+static inline void safe_strcat(char *dest, const char *orig, size_t *curlen, size_t maxlen) {
     if (*curlen == (maxlen-1))
         return;
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
