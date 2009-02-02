@@ -139,8 +139,7 @@ const float speed_bonus[MAX_STAT+1] = {
 };
 
 /**
- * dam_bonus, thaco_bonus, max_carry, weight limit all are based on
- * strength.
+ * dam_bonus, thaco_bonus, weight limit all are based on strength.
  */
 const int dam_bonus[MAX_STAT+1] = {
     -2,

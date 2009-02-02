@@ -57,7 +57,6 @@ extern const float cha_bonus[MAX_STAT+1];
 extern const int dex_bonus[MAX_STAT+1];
 extern const int thaco_bonus[MAX_STAT+1];
 extern const int turn_bonus[MAX_STAT+1];
-extern const int max_carry[MAX_STAT+1];
 extern const int dam_bonus[MAX_STAT+1];
 extern const int learn_spell[];
 extern const char *const restore_msg[NUM_STATS];

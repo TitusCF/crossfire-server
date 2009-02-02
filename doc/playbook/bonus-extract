@@ -30,10 +30,6 @@ BEGIN {
                         get_values(buff);
                         for(i=1;i<=30;i++) speed[i]= 1 + array[i];
                 }
-                if (buff ~ /max_carry\[/) {
-			get_values(buff);
-		        for(i=1;i<=30;i++) carry[i]=array[i];	
-                }
                 if (buff ~ /thaco_bonus\[/) {
                         get_values(buff);
                         for(i=1;i<=30;i++) thaco[i]=array[i];
@@ -47,7 +43,7 @@ BEGIN {
 	# print it out
 	for(i=1; i<=30 ; i++) {
         	printf("%d & %s & %s & %s & %s & %s & %s & %s & %s & %6.3f/%6.3f \\\\ \n",i,
-		con[i],sp[i],ac[i],dam[i],thaco[i],carry[i],speed[i],learn[i],buy[i],sell[i]); 
+		con[i],sp[i],ac[i],dam[i],thaco[i],"",speed[i],learn[i],buy[i],sell[i]); 
 	}
 	
         close(living_c);
