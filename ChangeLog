@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/plugins.c: Fix possible buffer overflow when initializing plugins.
+Andreas Kirschbaum 2009-02-03
+
 doc/Developers/smooth.pdf, doc/Developers/img/sgrass.base.111.eps,
   doc/Developers/img/smoothlevel.eps, doc/Developers/img/canvas_smooth.eps,
   doc/Developers/smooth.tex: smooth.pdf was broken (due to someone using
