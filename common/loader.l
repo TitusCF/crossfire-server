@@ -1121,7 +1121,7 @@ A       .+
  * @param s
  * lex-generated error message.
  */
-int yyerror(const char *s)
+static int yyerror(const char *s)
 {
     LOG(llevError, "%s: %s\n", s, yytext);
     return -1;

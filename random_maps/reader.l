@@ -41,6 +41,18 @@ static int rmap_lex_error;
 #define IVAL atoi(rmap_yval())
 #define FVAL atof(rmap_yval())
 
+/**
+ * Error handler.
+ *
+ * @param s
+ * lex-generated error message.
+ */
+static int yyerror(const char *s)
+{
+    LOG(llevError, "%s: %s\n", s, yytext);
+    return -1;
+}
+
 %}
 
 S       [ \t]+.+
@@ -102,11 +114,6 @@ WS      [ \t]*
                              if (rmap_lex_error != 0) return rmap_lex_error; else return LL_EOF;}
 .*                       { yyerror( "Unrecognized string"); rmap_lex_error= -1; }
 %%
-
-/*int yyerror(char *s) {
-  return -1;
-}
-*/
 
 /* Our save file syntax is very simple, so we can use a very simple
  * processing mechanism here instead using something like bison

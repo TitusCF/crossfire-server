@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+random_maps/reader.l, common/loader.l, include/libproto.h: The shared yyerror()
+  in loader.l didn't work properly in reader.l (which was the intention).
+  Instead it caused memory errors (and potentially segfaults) when called. This
+  was due to yyerror() accessing the static variable yytext, which is unique to
+  each file. Since yytext in loader.l was often freed already when yyerror() in
+  reader.l was called this would cause memory errors. If it wasn't yet freed it
+  would instead report irrelevant data in the error message. Thus duplicate the
+  routine to both of the files, and make them both static.
+Arvid Norlander 2009-02-03
+
 Encapsulate access to xxx_bonus[] (and similar) arrays with accessor functions
 get_xxx_bonus().
 ---
