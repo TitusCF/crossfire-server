@@ -1953,11 +1953,11 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         return 0;
     }
 
-    bowspeed = bow->stats.sp+dex_bonus[op->stats.Dex];
+    bowspeed = bow->stats.sp+get_dex_bonus(op->stats.Dex);
 
     /* penalize ROF for bestarrow */
     if (op->type == PLAYER && op->contr->bowtype == bow_bestarrow)
-        bowspeed -= dex_bonus[op->stats.Dex]+5;
+        bowspeed -= get_dex_bonus(op->stats.Dex)+5;
     if (bowspeed < 1)
         bowspeed = 1;
 
@@ -2025,13 +2025,13 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
      * added to the damage.  I think the strength bonus is more proper.
      */
 
-    arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ? 0 : dam_bonus[op->stats.Str])
+    arrow->stats.dam += (QUERY_FLAG(bow, FLAG_NO_STRENGTH) ? 0 : get_dam_bonus(op->stats.Str))
         +bow->stats.dam
         +bow->magic
         +arrow->magic;
 
     /* update the speed */
-    arrow->speed = (float)((QUERY_FLAG(bow, FLAG_NO_STRENGTH) ? 0 : dam_bonus[op->stats.Str])+bow->magic+arrow->magic)/5.0
+    arrow->speed = (float)((QUERY_FLAG(bow, FLAG_NO_STRENGTH) ? 0 : get_dam_bonus(op->stats.Str))+bow->magic+arrow->magic)/5.0
         +(float)bow->stats.dam/7.0;
 
     if (arrow->speed < 1.0)
@@ -2043,8 +2043,8 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
         /* we don't want overflows of wc (sint), so cap the value - mod and pl should be substracted */
         int mod = bow->magic
             +arrow->magic
-            +dex_bonus[op->stats.Dex]
-            +thaco_bonus[op->stats.Str]
+            +get_dex_bonus(op->stats.Dex)
+            +get_thaco_bonus(op->stats.Str)
             +arrow->stats.wc
             +bow->stats.wc
             -wc_mod;

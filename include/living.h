@@ -53,20 +53,10 @@
 
 extern const char *const attacks[NROFATTACKS];
 
-extern const float cha_bonus[MAX_STAT+1];
-extern const int dex_bonus[MAX_STAT+1];
-extern const int thaco_bonus[MAX_STAT+1];
-extern const int turn_bonus[MAX_STAT+1];
-extern const int dam_bonus[MAX_STAT+1];
-extern const int learn_spell[];
 extern const char *const restore_msg[NUM_STATS];
 extern const char *const statname[NUM_STATS];
 extern const char *const short_stat_name[NUM_STATS];
 extern const char *const lose_msg[NUM_STATS];
-extern const float speed_bonus[MAX_STAT+1];
-extern const uint32 weight_limit[MAX_STAT+1];
-extern const int cleric_chance[MAX_STAT+1];
-extern const int fear_bonus[MAX_STAT+1];
 
 /**
  * Mostly used by "alive" objects
@@ -87,5 +77,16 @@ typedef struct liv {
     sint16        dam;        /**< How much damage this object does when hitting */
     sint8         luck;       /**< Affects thaco and ac from time to time */
 } living;
+
+float get_cha_bonus(int stat);
+int get_dex_bonus(int stat);
+int get_thaco_bonus(int stat);
+uint32 get_weight_limit(int stat);
+int get_learn_spell(int stat);
+int get_cleric_chance(int stat);
+int get_turn_bonus(int stat);
+int get_dam_bonus(int stat);
+float get_speed_bonus(int stat);
+int get_fear_bonus(int stat);
 
 #endif /* LIVING_H */

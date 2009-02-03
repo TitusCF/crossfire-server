@@ -497,13 +497,13 @@ int cast_cone(object *op, object *caster, int dir, object *spell) {
         /* Special bonus for fear attacks */
         if (tmp->attacktype&AT_FEAR) {
             if (caster->type == PLAYER)
-                tmp->duration += fear_bonus[caster->stats.Cha];
+                tmp->duration += get_fear_bonus(caster->stats.Cha);
             else
                 tmp->duration += caster->level/3;
         }
         if (tmp->attacktype&(AT_HOLYWORD|AT_TURN_UNDEAD)) {
             if (caster->type == PLAYER)
-                tmp->duration += turn_bonus[caster->stats.Wis]/5;
+                tmp->duration += get_turn_bonus(caster->stats.Wis)/5;
             else
                 tmp->duration += caster->level/3;
         }

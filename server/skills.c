@@ -1942,16 +1942,16 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     /* the more we carry, the less we can throw. Limit only on players */
     /* This logic is basically grabbed right out of fix_object() */
     if (op->type == PLAYER
-    && op->carrying > (weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT)
+    && op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
     && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
 
-        int extra_weight = op->carrying-weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT;
-        load_factor = (float)extra_weight/(float)(weight_limit[op->stats.Str]*(1.0-FREE_PLAYER_LOAD_PERCENT));
+        int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
+        load_factor = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
     }
 
     /* lighter items are thrown harder, farther, faster */
     if (throw_ob->weight > 0)
-        item_factor = (float)(weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT)/(float)(3.0*throw_ob->weight);
+        item_factor = (float)(get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)/(float)(3.0*throw_ob->weight);
     else { /* 0 or negative weight?!? Odd object, can't throw it */
         query_name(throw_ob, name, MAX_BUF);
         draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
@@ -1971,7 +1971,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
 
 #ifdef DEBUG_THROW
     LOG(llevDebug, "%s carries %d, eff_str=%d\n", op->name, op->carrying, eff_str);
-    LOG(llevDebug, " max_c=%d, item_f=%f, load_f=%f, str=%d\n", (weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT), item_factor, load_factor, op->stats.Str);
+    LOG(llevDebug, " max_c=%d, item_f=%f, load_f=%f, str=%d\n", (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT), item_factor, load_factor, op->stats.Str);
     LOG(llevDebug, " str_factor=%f\n", str_factor);
     LOG(llevDebug, " item %s weight= %d\n", throw_ob->name, throw_ob->weight);
 #endif
@@ -2054,7 +2054,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->y = part->y;
 
     /* the damage bonus from the force of the throw */
-    dam = str_factor*dam_bonus[eff_str];
+    dam = str_factor*get_dam_bonus(eff_str);
 
     /* Now, lets adjust the properties of the thrown_ob. */
 
@@ -2062,18 +2062,18 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     throw_ob->last_sp = (eff_str*3)/5;
 
     /* speed */
-    throw_ob->speed = (speed_bonus[eff_str]+1.0)/1.5;
+    throw_ob->speed = (get_speed_bonus(eff_str)+1.0)/1.5;
     throw_ob->speed = MIN(1.0, throw_ob->speed); /* no faster than an arrow! */
 
     /* item damage. Eff_str and item weight influence damage done */
     weight_f = MIN(throw_ob->weight/2000, MAX_STAT);
-    throw_ob->stats.dam += (dam/3)+dam_bonus[weight_f]+(throw_ob->weight/15000)-2;
+    throw_ob->stats.dam += (dam/3)+get_dam_bonus(weight_f)+(throw_ob->weight/15000)-2;
 
     /* chance of breaking. Proportional to force used and weight of item */
     throw_ob->stats.food = (dam/2)+(throw_ob->weight/60000);
 
     /* replace 25 with a call to clone.arch wc? messes up w/ NPC */
-    throw_ob->stats.wc = 25-dex_bonus[op->stats.Dex]-thaco_bonus[eff_str]-skill->level;
+    throw_ob->stats.wc = 25-get_dex_bonus(op->stats.Dex)-get_thaco_bonus(eff_str)-skill->level;
 
 
     /* the properties of objects which are meant to be thrown (ie dart,

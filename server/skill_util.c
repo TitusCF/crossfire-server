@@ -711,7 +711,7 @@ int learn_skill(object *pl, object *scroll) {
      * give bonus based on level - otherwise stupid characters
      * might never be able to learn anything.
      */
-    if (random_roll(0, 99, pl, PREFER_LOW) > (learn_spell[pl->stats.Int]+(pl->level/5)))
+    if (random_roll(0, 99, pl, PREFER_LOW) > (get_learn_spell(pl->stats.Int)+(pl->level/5)))
         return 2; /* failure :< */
 
     if (!tmp)

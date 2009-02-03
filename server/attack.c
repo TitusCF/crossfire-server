@@ -1411,7 +1411,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                 || strstr(god->slaying, undead_name) == NULL)
                     div = 2;
                 /* Give a bonus if you resist turn undead */
-                if (op->level*div < (turn_bonus[owner->stats.Wis]+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100)))
+                if (op->level*div < (get_turn_bonus(owner->stats.Wis)+owner->level+(op->resist[ATNR_TURN_UNDEAD]/100)))
                     scare_creature(op, owner);
             } else
                 dam = 0; /* don't damage non undead - should we damage undead? */
@@ -1447,7 +1447,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
             object *owner = get_owner(hitter) == NULL ? hitter : get_owner(hitter);
 
             /* As with turn undead above, give a bonus on the saving throw */
-            if ((op->level+(op->resist[ATNR_HOLYWORD]/100)) < owner->level+turn_bonus[owner->stats.Wis])
+            if ((op->level+(op->resist[ATNR_HOLYWORD]/100)) < owner->level+get_turn_bonus(owner->stats.Wis))
                 scare_creature(op, owner);
         }
         break;

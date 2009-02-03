@@ -38,6 +38,12 @@
 #include <global.h>
 #include <sproto.h>
 
+#include "living.h"
+
+static int get_con_bonus(int stat);
+static int get_sp_bonus(int stat);
+static int get_grace_bonus(int stat);
+
 /**
  * Handy little macro that adds exp and keeps it within bounds.  Since
  * we are now using 64 bit values, I'm not all concerned about overflow issues
@@ -106,7 +112,7 @@ static const int grace_bonus[MAX_STAT+1] = {
  * This is figured by diff=(y-1)/(1+y), and for buy, it is 1+diff, for sell
  * it is 1-diff
  */
-const float cha_bonus[MAX_STAT+1] = {
+static const float cha_bonus[MAX_STAT+1] = {
     10.0,
     10.0, 9.0, 8.0, 7.0, 6.0,       /*<-5*/
     5.0, 4.5, 4.0, 3.5, 3.0,        /*<-10*/
@@ -117,7 +123,7 @@ const float cha_bonus[MAX_STAT+1] = {
 };
 
 /** Dexterity bonus */
-const int dex_bonus[MAX_STAT+1] = {
+static const int dex_bonus[MAX_STAT+1] = {
     -4,
     -3, -2, -2, -1, -1,
     -1, 0, 0, 0, 0,
@@ -128,7 +134,7 @@ const int dex_bonus[MAX_STAT+1] = {
 };
 
 /** speed_bonus, which uses dex as its stat */
-const float speed_bonus[MAX_STAT+1] = {
+static const float speed_bonus[MAX_STAT+1] = {
     -0.1,                            /* 0 */
     -0.1, -0.1, -0.05, -0.05, -0.05, /* 5 */
     -0.05, 0.0, 0.0, 0.0, 0.0,       /* 10 */
@@ -141,7 +147,7 @@ const float speed_bonus[MAX_STAT+1] = {
 /**
  * dam_bonus, thaco_bonus, weight limit all are based on strength.
  */
-const int dam_bonus[MAX_STAT+1] = {
+static const int dam_bonus[MAX_STAT+1] = {
     -2,
     -2, -2, -1, -1, -1,
     0, 0, 0, 0, 0,
@@ -152,7 +158,7 @@ const int dam_bonus[MAX_STAT+1] = {
 };
 
 /** THAC0 bonus */
-const int thaco_bonus[MAX_STAT+1] = {
+static const int thaco_bonus[MAX_STAT+1] = {
     -2,
     -2, -2, -2, -1, -1,    /* 5 */
     -1, -1, 0, 0, 0,       /* 10 */
@@ -171,7 +177,7 @@ const int thaco_bonus[MAX_STAT+1] = {
  * These limits are probably overly generous, but being there were no values
  * before, you need to start someplace.
  */
-const uint32 weight_limit[MAX_STAT+1] = {
+static const uint32 weight_limit[MAX_STAT+1] = {
     200000,  /* 0 */
     250000, 300000, 350000, 400000, 500000,      /* 5*/
     600000, 700000, 800000, 900000, 1000000,     /* 10 */
@@ -182,7 +188,7 @@ const uint32 weight_limit[MAX_STAT+1] = {
 };
 
 /** Probability to learn a spell or skill, based on intelligence or wisdom. */
-const int learn_spell[MAX_STAT+1] = {
+static const int learn_spell[MAX_STAT+1] = {
     0,
     0, 0, 1, 2, 4,
     8, 12, 16, 25, 36,
@@ -193,7 +199,7 @@ const int learn_spell[MAX_STAT+1] = {
 };
 
 /** Probability of messing a divine spell. Based on wisdom. */
-const int cleric_chance[MAX_STAT+1] = {
+static const int cleric_chance[MAX_STAT+1] = {
     100,
     100, 100, 100, 90, 80,
     70, 60, 50, 40, 35,
@@ -204,7 +210,7 @@ const int cleric_chance[MAX_STAT+1] = {
 };
 
 /** Bonus for spell duration (holyword and turn undead), bonus for resistance to these spells. */
-const int turn_bonus[MAX_STAT+1] = {
+static const int turn_bonus[MAX_STAT+1] = {
     -1,
     -1, -1, -1, -1, -1,
     -1, -1, 0, 0, 0,
@@ -215,7 +221,7 @@ const int turn_bonus[MAX_STAT+1] = {
 };
 
 /** Bonus for fear resistance for players. */
-const int fear_bonus[MAX_STAT+1] = {
+static const int fear_bonus[MAX_STAT+1] = {
     3,
     3, 3, 3, 2, 2,
     2, 1, 1, 1, 0,
@@ -1387,9 +1393,9 @@ void fix_object(object *op) {
          * so if your bonus is 7, you still get 7 worth of bonus every 2 levels.
          */
         for (i = 1, op->stats.maxhp = 0; i <= pl_level && i <= 10; i++) {
-            j = op->contr->levhp[i]+con_bonus[op->stats.Con]/2;
-            if (i%2 && con_bonus[op->stats.Con]%2) {
-                if (con_bonus[op->stats.Con] > 0)
+            j = op->contr->levhp[i]+get_con_bonus(op->stats.Con)/2;
+            if (i%2 && get_con_bonus(op->stats.Con)%2) {
+                if (get_con_bonus(op->stats.Con) > 0)
                     j++;
                 else
                     j--;
@@ -1427,9 +1433,9 @@ void fix_object(object *op) {
 
                 /* Got some extra bonus at first level */
                 if (i < 2) {
-                    stmp = op->contr->levsp[i]+((2.0*(float)sp_bonus[op->stats.Pow]+(float)sp_bonus[op->stats.Int])/6.0);
+                    stmp = op->contr->levsp[i]+((2.0*(float)get_sp_bonus(op->stats.Pow)+(float)get_sp_bonus(op->stats.Int))/6.0);
                 } else {
-                    stmp = (float)op->contr->levsp[i]+(2.0*(float)sp_bonus[op->stats.Pow]+(float)sp_bonus[op->stats.Int])/12.0;
+                    stmp = (float)op->contr->levsp[i]+(2.0*(float)get_sp_bonus(op->stats.Pow)+(float)get_sp_bonus(op->stats.Int))/12.0;
                 }
                 if (stmp < 1.0)
                     stmp = 1.0;
@@ -1463,9 +1469,9 @@ void fix_object(object *op) {
 
                 /* Got some extra bonus at first level */
                 if (i < 2) {
-                    grace_tmp = op->contr->levgrace[i]+(((float)grace_bonus[op->stats.Pow]+2.0*(float)grace_bonus[op->stats.Wis])/6.0);
+                    grace_tmp = op->contr->levgrace[i]+(((float)get_grace_bonus(op->stats.Pow)+2.0*(float)get_grace_bonus(op->stats.Wis))/6.0);
                 } else {
-                    grace_tmp = (float)op->contr->levgrace[i]+((float)grace_bonus[op->stats.Pow]+2.0*(float)grace_bonus[op->stats.Wis])/12.0;
+                    grace_tmp = (float)op->contr->levgrace[i]+((float)get_grace_bonus(op->stats.Pow)+2.0*(float)get_grace_bonus(op->stats.Wis))/12.0;
                 }
                 if (grace_tmp < 1.0)
                     grace_tmp = 1.0;
@@ -1483,7 +1489,7 @@ void fix_object(object *op) {
             ac += 2;
             wc += 4;
         } else
-            ac -= dex_bonus[op->stats.Dex];
+            ac -= get_dex_bonus(op->stats.Dex);
 
         /* In new exp/skills system, wc bonuses are related to
          * the players level in a relevant exp object (wc_obj)
@@ -1498,18 +1504,18 @@ void fix_object(object *op) {
          */
 
         if (op->type == PLAYER && wc_obj && wc_obj->level > 1) {
-            wc -= thaco_bonus[op->stats.Str];
+            wc -= get_thaco_bonus(op->stats.Str);
             wc -= (wc_obj->level-1)/5;
             op->stats.dam += (wc_obj->level-1)/4;
         } else {
-            wc -= (op->level+thaco_bonus[op->stats.Str]);
+            wc -= (op->level+get_thaco_bonus(op->stats.Str));
         }
-        op->stats.dam += dam_bonus[op->stats.Str];
+        op->stats.dam += get_dam_bonus(op->stats.Str);
 
         if (op->stats.dam < 1)
             op->stats.dam = 1;
 
-        op->speed = MAX_PLAYER_SPEED+speed_bonus[op->stats.Dex];
+        op->speed = MAX_PLAYER_SPEED+get_speed_bonus(op->stats.Dex);
 
         if (settings.search_items && op->contr->search_str[0])
             op->speed -= 0.25;
@@ -1529,11 +1535,11 @@ void fix_object(object *op) {
          * would be above the limit.  But it could be if character is weakened and
          * was otherwise at limit.  Without that safety, could get divide by zeros.
          */
-        if (op->carrying > (weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT)
+        if (op->carrying > (get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT)
         && (FREE_PLAYER_LOAD_PERCENT < 1.0)) {
-            int extra_weight = op->carrying-weight_limit[op->stats.Str]*FREE_PLAYER_LOAD_PERCENT;
+            int extra_weight = op->carrying-get_weight_limit(op->stats.Str)*FREE_PLAYER_LOAD_PERCENT;
 
-            character_load = (float)extra_weight/(float)(weight_limit[op->stats.Str]*(1.0-FREE_PLAYER_LOAD_PERCENT));
+            character_load = (float)extra_weight/(float)(get_weight_limit(op->stats.Str)*(1.0-FREE_PLAYER_LOAD_PERCENT));
 
             /* character_load is used for weapon speed below, so sanitize value */
             if (character_load >= 1.0)
@@ -1550,7 +1556,7 @@ void fix_object(object *op) {
         }
 
         /* This block is for weapon speed */
-        op->weapon_speed = BASE_WEAPON_SPEED+speed_bonus[op->stats.Dex]-weapon_speed/20.0+added_speed/10.0;
+        op->weapon_speed = BASE_WEAPON_SPEED+get_speed_bonus(op->stats.Dex)-weapon_speed/20.0+added_speed/10.0;
         if (wc_obj) {
             op->weapon_speed += 0.005*wc_obj->level;
         } else
@@ -2293,4 +2299,56 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
         /* give any remainder to the player */
         change_exp(op, exp, skill, flag);
     }
+}
+
+float get_cha_bonus(int stat) {
+    return cha_bonus[stat];
+}
+
+int get_dex_bonus(int stat) {
+    return dex_bonus[stat];
+}
+
+int get_thaco_bonus(int stat) {
+    return thaco_bonus[stat];
+}
+
+uint32 get_weight_limit(int stat) {
+    return weight_limit[stat];
+}
+
+int get_learn_spell(int stat) {
+    return learn_spell[stat];
+}
+
+int get_cleric_chance(int stat) {
+    return cleric_chance[stat];
+}
+
+int get_turn_bonus(int stat) {
+    return turn_bonus[stat];
+}
+
+int get_dam_bonus(int stat) {
+    return dam_bonus[stat];
+}
+
+float get_speed_bonus(int stat) {
+    return speed_bonus[stat];
+}
+
+int get_fear_bonus(int stat) {
+    return fear_bonus[stat];
+}
+
+static int get_con_bonus(int stat) {
+    return con_bonus[stat];
+}
+
+static int get_sp_bonus(int stat) {
+    return sp_bonus[stat];
+}
+
+static int get_grace_bonus(int stat) {
+    return grace_bonus[stat];
 }
