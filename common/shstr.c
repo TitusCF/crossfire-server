@@ -59,7 +59,7 @@ void init_hash_table(void) {
  * @return
  * hash of string, suitable for use in ::hash_table.
  */
-static int hashstr(const char *str) {
+static unsigned long hashstr(const char *str) {
     unsigned long hash = 0;
     int i = 0;
     unsigned rot = 0;
@@ -70,7 +70,7 @@ static int hashstr(const char *str) {
     for (p = str; i < MAXSTRING && *p; p++, i++) {
         hash ^= (unsigned long)*p<<rot;
         rot += 2;
-        if (rot >= (sizeof(long)-sizeof(char))*CHAR_BIT)
+        if (rot >= (sizeof(unsigned long)-sizeof(char))*CHAR_BIT)
             rot = 0;
     }
     return (hash%TABLESIZE);
@@ -115,7 +115,7 @@ static shared_string *new_shared_string(const char *str) {
  */
 sstring add_string(const char *str) {
     shared_string *ss;
-    int ind;
+    unsigned long ind;
 
     GATHER(add_stats.calls);
 
@@ -227,7 +227,7 @@ int query_refcount(sstring str) {
  */
 sstring find_string(const char *str) {
     shared_string *ss;
-    int ind;
+    unsigned long ind;
 
     GATHER(find_stats.calls);
 
@@ -386,6 +386,9 @@ char *ss_dump_table(int what, char *buf, size_t size) {
  * size of buf1. Can be NULL.
  * @return
  * true if overflow will occur.
+ *
+ * @todo
+ * This could maybe overflow. Make sure it doesn't.
  */
 int buf_overflow(const char *buf1, const char *buf2, size_t bufsize) {
     size_t len1 = 0, len2 = 0;

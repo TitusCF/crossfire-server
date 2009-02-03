@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/shstr.c: Use the correct return type from hashstr() current code assumed
+  sizeof(int) == sizeof(long) == sizeof(void*) which is incorrect for many
+  systems (such as x86_64). There was another potential (as in: would not happen
+  with current hash table size) issue in the same code with mixing signed and
+  unsigned. Also fixed.
+Arvid Norlander 2009-02-03
+
 server/plugins.c: Fix possible buffer overflow when initializing plugins.
 Andreas Kirschbaum 2009-02-03
 
