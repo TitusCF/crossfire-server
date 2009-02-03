@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+doc/Developers/smooth.pdf, doc/Developers/img/sgrass.base.111.eps,
+  doc/Developers/img/smoothlevel.eps, doc/Developers/img/canvas_smooth.eps,
+  doc/Developers/smooth.tex: smooth.pdf was broken (due to someone using
+  svn:eol-style on it [as far as I can tell], pdf are binary files and shouldn't
+  be mangled like that!). Also the pdf couldn't be re-generated from smooth.tex
+  since some of the image files were missing. (They were erroneously removed in
+  revision 3560). Add the three *.eps needed back. Then regenerate the pdf.
+  Also some cosmetic changes to the file.
+Arvid Norlander 2009-02-03
+
 doc/Developers/sound, doc/Developers/*.dox, doc/Developers/types/*.dox,
   doc/Developers/fields/*.dox: Set svn:eol-style to native. Correct a few files
   that were stored with CRLF.

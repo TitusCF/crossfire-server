@@ -28,8 +28,8 @@ Draft}
 
 The crossfire graphical interface and internal map handling relies
 on a map made of square. No object can lies between squares. A typical
-square has the size of a standing player or other humanoïd sized creature
-(Goblins, Orcs, Gnolls, Dwarvens, Elves, ...). This lead to an awfull
+square has the size of a standing player or other humanoid sized creature
+(Goblins, Orcs, Gnolls, Dwarvens, Elves,\ldots). This lead to an awfull
 interface concerning terrains transitions (Sea shores, road borders,
 mountains, a.s.o)
 
@@ -90,7 +90,7 @@ this doc, nothing fixed yet). Now let's say you want the moutains
 above the grass but, for graphical reasons, you want the trees above
 the mountains. You Choose a value between 10 and 100, not included.
 But mountains is a thing that goes above a lot of thing (grass, hills,
-swamps, brush, rocks, desert,...). So to keep the place for adding
+swamps, brush, rocks, desert,\ldots). So to keep the place for adding
 new elements in the future, you rather choose a high value for mountains
 (90 seems a good value according to these conditions).
 
@@ -133,7 +133,7 @@ set this information. Each line in the file beginning with \emph{\#}
 is a comment. Other line should be made of 2 elements:
 
 The first is the picture you want to smooth (here it is grass.111%
-\footnote{Please note we suppressed the .png and the .base. elements of grass.base.111.png
+\footnote{Please note we suppressed the .png and the .base.\ elements of grass.base.111.png
 filename. Since what the server needs is the internal names. Take
 care of this. If the new picture you drawn didn't appear on the GUI,
 this is perhaps due to error in this file. And don't forget to copy
@@ -154,7 +154,7 @@ part.
 
 \subsection{Smoothing in the code}
 
-Guess what...
+Guess what\ldots
 
 TODO
 \end{document}
