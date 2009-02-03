@@ -59,6 +59,7 @@
 
 #include <cfpython.h>
 #include <stdarg.h>
+#include <node.h>
 
 #define PYTHON_DEBUG   /* give us some general infos out */
 #define PYTHON_CACHE_SIZE 16    /* number of python scripts to store the bytecode of at a time */
@@ -1205,6 +1206,10 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
 
     init_object_assoc_table();
     init_map_assoc_table();
+
+#ifdef IS_PY26
+    Py_Py3kWarningFlag++;
+#endif
 
     Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;

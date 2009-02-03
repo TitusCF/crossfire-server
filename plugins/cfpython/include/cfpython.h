@@ -42,6 +42,13 @@
     #include <Python.h>
 #endif
 
+/* This is for allowing both python 3 and python 2. */
+#if PY_MAJOR_VERSION >= 3
+#  define IS_PY3K
+#elif PY_MINOR_VERSION == 6
+#  define IS_PY26
+#endif
+
 /* Python can define HAVE_GETTIMEOFDAY, but we have our own later on. */
 #ifdef HAVE_GETTIMEOFDAY
 #undef HAVE_GETTIMEOFDAY

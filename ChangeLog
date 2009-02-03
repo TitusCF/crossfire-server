@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cfpython/include/cfpython.h, plugins/cfpython/cfpython.c:
+  To make porting to Python 3 in the future easier, enable the forward
+  compatibility warning flag if crossfire is compiled against Python 2.6, this
+  will result in warnings to stderr about "DeprecationWarning" if incompatible
+  code is found. Several issues has already been fixed recently (thanks to
+  having this enabled locally). Compiling Crossfire against Python 2.5 or older
+  still works (of course). Also add a missing include causing warnings under
+  Python 2.6.
+Arvid Norlander 2009-02-03
+
 common/shstr.c: Use the correct return type from hashstr() current code assumed
   sizeof(int) == sizeof(long) == sizeof(void*) which is incorrect for many
   systems (such as x86_64). There was another potential (as in: would not happen
