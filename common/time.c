@@ -48,16 +48,16 @@ struct timeval last_time;
 
 /** Size of history buffer. */
 #define PBUFLEN 100
-uint32 process_utime_save[PBUFLEN];    /**< Historic data. */
-uint32 psaveind;                       /**< Index in ::process_utime_save. */
-uint32 process_max_utime = 0;          /**< Longest cycle time. */
-uint32 process_min_utime = 999999999;  /**< Shortest cycle time. */
-uint32 process_tot_mtime;              /**< ? */
-uint32 pticks;                         /**< ? */
-uint32 process_utime_long_count;       /**< ? */
+static uint32 process_utime_save[PBUFLEN];   /**< Historic data. */
+static uint32 psaveind;                      /**< Index in ::process_utime_save. */
+static uint32 process_max_utime = 0;         /**< Longest cycle time. */
+static uint32 process_min_utime = 999999999; /**< Shortest cycle time. */
+static uint32 process_tot_mtime;             /**< ? */
+uint32 pticks;                               /**< ? */
+static uint32 process_utime_long_count;      /**< ? */
 
 /** Ingame seasons. */
-const char *const season_name[SEASONS_PER_YEAR+1] = {
+static const char *const season_name[SEASONS_PER_YEAR+1] = {
     "The Season of New Year",
     "The Season of Growth",
     "The Season of Harvest",
@@ -67,7 +67,7 @@ const char *const season_name[SEASONS_PER_YEAR+1] = {
 };
 
 /** Days of the week. */
-const char *const weekdays[DAYS_PER_WEEK] = {
+static const char *const weekdays[DAYS_PER_WEEK] = {
     "the Day of the Moon",
     "the Day of the Bull",
     "the Day of the Deception",
@@ -78,7 +78,7 @@ const char *const weekdays[DAYS_PER_WEEK] = {
 };
 
 /** Months. */
-const char *const month_name[MONTHS_PER_YEAR] = {
+static const char *const month_name[MONTHS_PER_YEAR] = {
     "Month of Winter",           /* 0 */
     "Month of the Ice Dragon",
     "Month of the Frost Giant",
@@ -98,7 +98,7 @@ const char *const month_name[MONTHS_PER_YEAR] = {
     "Month of Gorokh"
 };
 
-const char *const periodsofday[PERIODS_PER_DAY] = {
+static const char *const periodsofday[PERIODS_PER_DAY] = {
     "Night",
     "Dawn",
     "Morning",

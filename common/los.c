@@ -50,7 +50,7 @@ typedef struct blstr {
     int index;
 } blocks;
 
-blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
+static blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
 static void expand_lighted_sight(object *op);
 

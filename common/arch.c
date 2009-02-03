@@ -49,8 +49,8 @@
 static void add_arch(archetype *at);
 
 static archetype *arch_table[ARCHTABLE];
-int arch_cmp = 0;  /**< How many strcmp's */
-int arch_search = 0; /**< How many searches */
+static int arch_cmp = 0;  /**< How many strcmp's */
+static int arch_search = 0; /**< How many searches */
 int arch_init;  /**< True if doing arch initialization */
 
 static void load_archetypes(void);

@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/object.c, common/exp.c, common/time.c, common/recipe.c, common/arch.c,
+  common/map.c, common/los.c: Fix some minor issues (variables that should have
+  been static, using 0 instead of NULL, leading to more confusing code) found
+  using the static analysis tool "sparse" (made for Linux kernel originally).
+Arvid Norlander 2009-02-03
+
 plugins/cfpython/include/cfpython.h, plugins/cfpython/cfpython.c:
   To make porting to Python 3 in the future easier, enable the forward
   compatibility warning flag if crossfire is compiled against Python 2.6, this

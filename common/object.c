@@ -1722,7 +1722,7 @@ void remove_ob(object *op) {
  */
 object *merge_ob(object *op, object *top) {
     if (!op->nrof)
-        return 0;
+        return NULL;
 
     if (top == NULL)
         for (top = op; top != NULL && top->above != NULL; top = top->above)
@@ -3450,7 +3450,7 @@ int dirdiff(int dir1, int dir2) {
  * peterm:
  * do LOS stuff for ball lightning.  Go after the closest VISIBLE monster.
  */
-const int reduction_dir[SIZEOFFREE][3] = {
+static const int reduction_dir[SIZEOFFREE][3] = {
     {  0,  0,  0 }, /* 0 */
     {  0,  0,  0 }, /* 1 */
     {  0,  0,  0 }, /* 2 */

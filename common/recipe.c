@@ -88,7 +88,7 @@ static recipe *get_empty_formula(void) {
     t->yield = 0;
     t->diff = 0;
     t->exp = 0;
-    t->keycode = 0;
+    t->keycode = NULL;
     t->title = NULL;
     t->arch_names = 0;
     t->arch_name = NULL;

@@ -86,7 +86,7 @@ mapstruct *has_been_loaded(const char *name) {
     mapstruct *map;
 
     if (!name || !*name)
-        return 0;
+        return NULL;
 
     for (map = first_map; map; map = map->next)
         if (!strcmp(name, map->path))
@@ -2456,7 +2456,7 @@ void get_rangevector(object *op1, const object *op2, rv_vector *retval, int flag
         retval->distance_x = 32767;
         retval->distance_y = 32767;
         retval->direction = 0;
-        retval->part = 0;
+        retval->part = NULL;
     } else {
         object *best;
 
@@ -2525,7 +2525,7 @@ void get_rangevector_from_mapcoord(const mapstruct *m, int x, int y, const objec
         retval->distance_x = 32767;
         retval->distance_y = 32767;
         retval->direction = 0;
-        retval->part = 0;
+        retval->part = NULL;
     } else {
         retval->distance_x += op2->x-x;
         retval->distance_y += op2->y-y;
