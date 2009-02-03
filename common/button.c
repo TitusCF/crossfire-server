@@ -360,6 +360,11 @@ int check_altar_sacrifice(const object *altar, const object *sacrifice, int remo
          * activate altar, else they would have disappeared. */
         return 0;
 
+    /* Check item is paid for. */
+    if (QUERY_FLAG(sacrifice, FLAG_UNPAID)) {
+        return 0;
+    }
+
     money = (strcmp(ARCH_SACRIFICE(altar), "money") == 0) ? 1 : 0;
 
     /* Easy checks: newly dropped object is enough for sacrifice. */
