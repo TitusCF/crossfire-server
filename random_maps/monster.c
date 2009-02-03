@@ -88,7 +88,7 @@ void  insert_multisquare_ob_in_map(object *new_obj, mapstruct *map) {
  */
 void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms *RP) {
     char styledirname[256];
-    mapstruct *style_map = 0;
+    mapstruct *style_map = NULL;
     int failed_placements;
     sint64 exp_per_sq, total_experience;
     int number_monsters = 0;
@@ -96,7 +96,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
 
     snprintf(styledirname, sizeof(styledirname), "%s", "/styles/monsterstyles");
     style_map = find_style(styledirname, monsterstyle, difficulty);
-    if (style_map == 0)
+    if (style_map == NULL)
         return;
 
     /* fill up the map with random monsters from the monster style*/

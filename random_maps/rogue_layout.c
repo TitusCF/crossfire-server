@@ -68,7 +68,7 @@ int surround_check(char **layout, int i, int j, int Xsize, int Ysize) {
  */
 char **roguelike_layout_gen(int xsize, int ysize, int options) {
     int i, j;
-    Room *Rooms = 0;
+    Room *Rooms = NULL;
     Room *walk;
     int nrooms = 0;
     int tries = 0;

@@ -152,14 +152,14 @@ void find_in_layout(int mode, char target, int *fx, int *fy, char **layout, RMPa
  */
 void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, RMParms *RP) {
     char styledirname[256];
-    mapstruct *style_map_down = 0; /* harder maze */
-    mapstruct *style_map_up = 0;   /* easier maze */
-    object *the_exit_down;         /* harder maze */
-    object *the_exit_up;           /* easier maze */
-    object *random_sign;           /* magic mouth saying this is a random map. */
+    mapstruct *style_map_down = NULL; /* harder maze */
+    mapstruct *style_map_up = NULL;   /* easier maze */
+    object *the_exit_down;            /* harder maze */
+    object *the_exit_up;              /* easier maze */
+    object *random_sign;              /* magic mouth saying this is a random map. */
     char buf[512];
-    int cx = -1, cy = -1;          /* location of a map center */
-    int upx = -1, upy = -1;        /* location of up exit */
+    int cx = -1, cy = -1;             /* location of a map center */
+    int upx = -1, upy = -1;           /* location of up exit */
     int downx = -1, downy = -1;
     int final_map_exit = 1;
     int i, j;
@@ -197,7 +197,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     }
     }
 
-    if (style_map_up == 0)
+    if (style_map_up == NULL)
         the_exit_up = arch_to_object(find_archetype("exit"));
     else {
         object *tmp;
@@ -210,7 +210,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
     if (RP->dungeon_level < RP->dungeon_depth || RP->final_map[0] != 0)
         if (RP->dungeon_level >= RP->dungeon_depth && RP->final_exit_archetype[0] != 0)
             the_exit_down = arch_to_object(find_archetype(RP->final_exit_archetype));
-        else if (style_map_down == 0)
+        else if (style_map_down == NULL)
             the_exit_down = arch_to_object(find_archetype("exit"));
         else {
             object *tmp;
@@ -219,7 +219,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
             the_exit_down = arch_to_object(tmp->arch);
         }
     else
-        the_exit_down = 0;
+        the_exit_down = NULL;
 
     /* set up the up exit */
     the_exit_up->stats.hp = RP->origin_x;

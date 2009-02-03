@@ -93,7 +93,7 @@ void put_doors(mapstruct *the_map, char **maze, const char *doorstyle, RMParms *
         if (!vdoors)
             return;
         snprintf(doorpath, sizeof(doorpath), "/styles/doorstyles/hdoors%s", strrchr(vdoors->path, '/'));
-        hdoors = find_style(doorpath, 0, -1);
+        hdoors = find_style(doorpath, NULL, -1);
     }
 
     for (i = 0; i < RP->Xsize; i++)

@@ -51,8 +51,8 @@
  * return of strcmp() on pointed strings.
  */
 static int pointer_strcmp(const void *p1, const void *p2) {
-    const char *s1 = *(const char **)p1;
-    const char *s2 = *(const char **)p2;
+    const char *s1 = *(const char * const *)p1;
+    const char *s2 = *(const char * const *)p2;
 
     return(strcmp(s1, s2));
 }
@@ -211,7 +211,7 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
         }
 
         if (n <= 0)
-            return 0; /* nothing to load.  Bye. */
+            return NULL; /* nothing to load.  Bye. */
 
         /* Picks a random map.  Note that if this is all directories,
          * we know it won't be able to load, so save a few ticks.

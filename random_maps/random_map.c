@@ -84,7 +84,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
 
     /* pick a random seed, or use the one from the input file */
     if (RP->random_seed == 0)
-        RP->random_seed = time(0);
+        RP->random_seed = time(NULL);
 
     SRANDOM(RP->random_seed);
 
@@ -201,7 +201,7 @@ mapstruct *generate_random_map(const char *OutFileName, RMParms *RP, char **use_
  * (will make it easier to override later on).
  */
 char **layoutgen(RMParms *RP) {
-    char **maze = 0;
+    char **maze = NULL;
     int oxsize = RP->Xsize, oysize = RP->Ysize;
 
     if (RP->symmetry == RANDOM_SYM)

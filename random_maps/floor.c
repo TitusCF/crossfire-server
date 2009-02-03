@@ -89,9 +89,9 @@ static void put_floor(mapstruct *map, char **layout, int x, int y, object *floor
 mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP) {
     char styledirname[256];
     char stylefilepath[256];
-    mapstruct *style_map = 0;
+    mapstruct *style_map = NULL;
     object *the_floor;
-    mapstruct *newMap = 0;
+    mapstruct *newMap = NULL;
     int x, y;
 
     /* allocate the map */
@@ -101,7 +101,7 @@ mapstruct *make_map_floor(char **layout, char *floorstyle, RMParms *RP) {
     snprintf(styledirname, sizeof(styledirname), "%s", "/styles/floorstyles");
     snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s", styledirname, floorstyle);
     style_map = find_style(styledirname, floorstyle, -1);
-    if (style_map == 0)
+    if (style_map == NULL)
         return newMap;
 
     if (RP->multiple_floors) {

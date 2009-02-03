@@ -101,7 +101,7 @@ int wall_blocked(mapstruct *m, int x, int y) {
 void place_treasure(mapstruct *map, char **layout, char *treasure_style, int treasureoptions, RMParms *RP) {
     char styledirname[256];
     char stylefilepath[256];
-    mapstruct *style_map = 0;
+    mapstruct *style_map = NULL;
     int num_treasures;
 
     /* bail out if treasure isn't wanted. */
@@ -248,7 +248,7 @@ object *place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruct
     /* if the placement is blocked, return a fail. */
     if (wall_blocked(map, xl, yl)) {
         free_object(the_chest);
-        return 0;
+        return NULL;
     }
 
     tlist = find_treasurelist("chest");
@@ -754,7 +754,7 @@ void remove_monsters(int x, int y, mapstruct *map) {
  */
 static object **surround_by_doors(mapstruct *map, char **layout, int x, int y, int opts) {
     int i;
-    char *doors[2];
+    const char *doors[2];
     object **doorlist;
     int ndoors_made = 0;
     doorlist = (object **)calloc(9, sizeof(object *)); /* 9 doors so we can hold termination null */

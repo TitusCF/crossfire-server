@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+random_maps/wall.c, random_maps/style.c, random_maps/door.c, random_maps/exit.c,
+  random_maps/random_map.c, random_maps/rogue_layout.c, random_maps/test.c,
+  random_maps/special.c, random_maps/floor.c, random_maps/monster.c,
+  random_maps/standalone.c, random_maps/treasure.c: Fix some minor issues
+  (variables that should have been static, using 0 instead of NULL [leading to
+  more confusing code], mismatching prototype and so on) found  using the static
+  analysis tool "sparse" (made for Linux kernel originally).
+Arvid Norlander 2009-02-03
+
 random_maps/reader.l, common/loader.l, include/libproto.h: The shared yyerror()
   in loader.l didn't work properly in reader.l (which was the intention).
   Instead it caused memory errors (and potentially segfaults) when called. This

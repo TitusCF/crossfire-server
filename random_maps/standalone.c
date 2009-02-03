@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     exit(0);
 }
 
-void set_map_timeout(void) {
+void set_map_timeout(mapstruct *oldmap) {
     /* doesn't need to do anything */
 }
 

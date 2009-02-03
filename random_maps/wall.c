@@ -180,7 +180,7 @@ int surround_flag4(mapstruct *map, int i, int j, RMParms *RP) {
 void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
     char styledirname[256];
     char stylefilepath[256];
-    mapstruct *style_map = 0;
+    mapstruct *style_map = NULL;
     object *the_wall;
 
     /* get the style map */
@@ -189,7 +189,7 @@ void make_map_walls(mapstruct *map, char **layout, char *w_style, RMParms *RP) {
     snprintf(styledirname, sizeof(styledirname), "%s", "/styles/wallstyles");
     snprintf(stylefilepath, sizeof(stylefilepath), "%s/%s", styledirname, w_style);
     style_map = find_style(styledirname, w_style, -1);
-    if (style_map == 0)
+    if (style_map == NULL)
         return;
 
     /* fill up the map with the given floor style */
@@ -246,7 +246,7 @@ object *pick_joined_wall(object *the_wall, char **layout, int i, int j, RMParms 
     int surround_index = 0;
     int l;
     char wall_name[64];
-    archetype *wall_arch = 0;
+    archetype *wall_arch = NULL;
 
     strncpy(wall_name, the_wall->arch->name, sizeof(wall_name));
 
@@ -367,9 +367,9 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
      */
     int surround_index = 0;
     int l;
-    object *the_wall = 0;
-    object *new_wall = 0;
-    archetype *wall_arch = 0;
+    object *the_wall = NULL;
+    object *new_wall = NULL;
+    archetype *wall_arch = NULL;
 
     /* first find the wall */
     for (the_wall = GET_MAP_OB(the_map, i, j); the_wall != NULL; the_wall = the_wall->above)
@@ -386,7 +386,7 @@ object *retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag, 
          * we've gotta leave.
          */
         if (insert_flag == 0)
-            return 0;
+            return NULL;
     } else if (the_wall == NULL)
         return NULL;
 
