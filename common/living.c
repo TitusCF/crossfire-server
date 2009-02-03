@@ -43,6 +43,7 @@
 static int get_con_bonus(int stat);
 static int get_sp_bonus(int stat);
 static int get_grace_bonus(int stat);
+static size_t get_index(int stat, size_t max_index);
 
 /**
  * Handy little macro that adds exp and keeps it within bounds.  Since
@@ -2302,53 +2303,70 @@ void share_exp(object *op, sint64 exp, const char *skill, int flag) {
 }
 
 float get_cha_bonus(int stat) {
-    return cha_bonus[stat];
+    return cha_bonus[get_index(stat, sizeof(cha_bonus)/sizeof(*cha_bonus))];
 }
 
 int get_dex_bonus(int stat) {
-    return dex_bonus[stat];
+    return dex_bonus[get_index(stat, sizeof(dex_bonus)/sizeof(*dex_bonus))];
 }
 
 int get_thaco_bonus(int stat) {
-    return thaco_bonus[stat];
+    return thaco_bonus[get_index(stat, sizeof(thaco_bonus)/sizeof(*thaco_bonus))];
 }
 
 uint32 get_weight_limit(int stat) {
-    return weight_limit[stat];
+    return weight_limit[get_index(stat, sizeof(weight_limit)/sizeof(*weight_limit))];
 }
 
 int get_learn_spell(int stat) {
-    return learn_spell[stat];
+    return learn_spell[get_index(stat, sizeof(learn_spell)/sizeof(*learn_spell))];
 }
 
 int get_cleric_chance(int stat) {
-    return cleric_chance[stat];
+    return cleric_chance[get_index(stat, sizeof(cleric_chance)/sizeof(*cleric_chance))];
 }
 
 int get_turn_bonus(int stat) {
-    return turn_bonus[stat];
+    return turn_bonus[get_index(stat, sizeof(turn_bonus)/sizeof(*turn_bonus))];
 }
 
 int get_dam_bonus(int stat) {
-    return dam_bonus[stat];
+    return dam_bonus[get_index(stat, sizeof(dam_bonus)/sizeof(*dam_bonus))];
 }
 
 float get_speed_bonus(int stat) {
-    return speed_bonus[stat];
+    return speed_bonus[get_index(stat, sizeof(speed_bonus)/sizeof(*speed_bonus))];
 }
 
 int get_fear_bonus(int stat) {
-    return fear_bonus[stat];
+    return fear_bonus[get_index(stat, sizeof(fear_bonus)/sizeof(*fear_bonus))];
 }
 
 static int get_con_bonus(int stat) {
-    return con_bonus[stat];
+    return con_bonus[get_index(stat, sizeof(con_bonus)/sizeof(*con_bonus))];
 }
 
 static int get_sp_bonus(int stat) {
-    return sp_bonus[stat];
+    return sp_bonus[get_index(stat, sizeof(sp_bonus)/sizeof(*sp_bonus))];
 }
 
 static int get_grace_bonus(int stat) {
-    return grace_bonus[stat];
+    return grace_bonus[get_index(stat, sizeof(grace_bonus)/sizeof(*grace_bonus))];
+}
+
+/**
+ * Limits a stat value to [0..<code>max_index</code>].
+ * @param max_index
+ * the maximum index (inclusive)
+ * @return the limited index
+ */
+static size_t get_index(int stat, size_t max_index) {
+    size_t index;
+
+    if (stat < 0) {
+	return 0;
+    }
+
+    index = (size_t)stat;
+    return MIN(index, max_index);
 }
