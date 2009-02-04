@@ -1056,7 +1056,12 @@ static void prayer_failure(object *op, int failure, int power) {
                              "%s smites you!",
                              "%s smites you!",
                              godname);
-        cast_magic_storm(op, tmp, power);
+        /* Put a cap on power - this is effectively cost of the spell minus
+         * characters current grace.  Thus, if spell costs 30 grace and
+         * character has -100 grace, this is cast as a level 130 spell.
+         * Things start to break in those cases.
+         */
+        cast_magic_storm(op, tmp, power>50?50:power);
     }
 }
 
