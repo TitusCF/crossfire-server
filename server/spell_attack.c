@@ -730,6 +730,16 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
         effect->stats.dam = spell->stats.dam+SP_level_dam_adjust(caster, spell);
     }
 
+    if (effect->type == SPELL_EFFECT && effect->subtype == SP_EXPLOSION) {
+        /* Used for spell tracking - just need a unique val for this spell -
+         * the count of the parent should work fine.
+         *
+         * Without this the server can easily get overloaded at high level
+         * spells.
+         */
+        effect->stats.maxhp = spell->count;
+    }
+
     set_owner(effect, op);
     set_spell_skill(op, caster, spell, effect);
 
