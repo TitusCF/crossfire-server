@@ -380,6 +380,9 @@ int hit_map(object *op, int dir, int type, int full_hit) {
         if (tmp->map != map || tmp->x != x || tmp->y != y)
             continue;
 
+        if (tmp->head)
+            tmp = tmp->head;
+
         /* Need to hit everyone in the transport with this spell */
         if (tmp->type == TRANSPORT) {
             object *pl;

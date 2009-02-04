@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Fix rare abort() with spells like dragonfire on multi-tile
+  objects. Required some single tile object to be on top of the multi-tile
+  object.
+Arvid Norlander 2009-02-04
+
 server/spell_attack.c: Fix bug #2353025 "2.0, holy wrath and ret. strike freeze
   server". This happened because explosion spells use stats.maxhp as a unique ID
   to avoid running out of control. This one was properly set by bullet spells,
