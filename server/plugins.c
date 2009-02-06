@@ -1029,7 +1029,7 @@ void *cfapi_timer_create(int *type, ...) {
         if (res != TIMER_ERR_NONE)
             *timer = res;
     }
-    return 0;
+    return NULL;
 }
 
 /**
@@ -1056,7 +1056,7 @@ void *cfapi_timer_destroy(int *type, ...) {
 
     *err = cftimer_destroy(id);
 
-    return 0;
+    return NULL;
 }
 
 /**
@@ -3037,7 +3037,8 @@ void *cfapi_object_set_property(int *type, ...) {
         case CFAPI_PLAYER_PROP_TITLE:
             sarg = va_arg(args, char *);
             *type = CFAPI_STRING;
-            snprintf(op->contr->title, sizeof(op->contr->title), sarg);
+            strncpy(op->contr->title, sarg, sizeof(op->contr->title));
+            op->contr->title[sizeof(op->contr->title) - 1]= '\0';
             break;
 
         default:

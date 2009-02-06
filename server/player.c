@@ -3278,7 +3278,7 @@ void kill_player(object *op) {
                           "Your mind feels clearer", NULL);
         }
 
-        cure_disease(op, 0);  /* remove any disease */
+        cure_disease(op, NULL);  /* remove any disease */
         op->stats.hp = op->stats.maxhp;
         if (op->stats.food <= 0)
           op->stats.food = 999;
@@ -3503,7 +3503,7 @@ void kill_player(object *op) {
             draw_ext_info(NDI_UNIQUE, 0, tmp, MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_BAD_EFFECT_END,
                           "Your mind feels clearer", NULL);
         }
-        cure_disease(op, 0);  /* remove any disease */
+        cure_disease(op, NULL);  /* remove any disease */
 
         /* Subtract the experience points, if we died cause of food, give
          * us food, and reset HP's...

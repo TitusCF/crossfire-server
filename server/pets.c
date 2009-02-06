@@ -346,7 +346,8 @@ void follow_owner(object *ob, object *owner) {
  * pet to move.
  */
 void pet_move(object *ob) {
-    int dir, tag, i;
+    int dir, i;
+    tag_t tag;
     sint16 dx, dy;
     object *ob2, *owner;
     mapstruct *m;
@@ -873,7 +874,7 @@ static object *choose_cult_monster(object *pl, const object *god, int summon_lev
                              "The spell fails! %s's creatures are beyond the range of your summons",
                              god->name);
         LOG(llevDebug, "choose_cult_monster() requested non-existent aligned race!\n");
-        return 0;
+        return NULL;
     }
 
     /* search for an apprplritate monster on this race list */
@@ -1155,7 +1156,7 @@ int should_arena_attack(object *pet, object *owner, object *target) {
     if (target->type != PLAYER) {
         towner = get_real_owner(target);
     } else {
-        towner = 0;
+        towner = NULL;
     }
 
     /* if the pet has no owner, exit with error */
