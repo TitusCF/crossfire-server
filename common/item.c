@@ -219,7 +219,7 @@ static const typedata item_types[] = {
 };
 
 /** Number of items in ::item_types array. */
-const int item_types_size = sizeof(item_types)/sizeof(*item_types);
+static const int item_types_size = sizeof(item_types)/sizeof(*item_types);
 
 /** This curve may be too steep.  But the point is that there should
  * be tough choices - there is no real point to this if everyone can
