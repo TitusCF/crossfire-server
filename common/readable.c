@@ -1914,7 +1914,7 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
             describe_resistance(god, 1, cp, MAX_BUF);
 
             if (*cp) {  /* This god does have protections */
-                snprintf(buf, MAX_BUF, "%s\nThe priests of %s are known to be able to bestow a blessing which makes the recipient %s\n ---\n", buf, name, cp);
+                snprintf(buf, MAX_BUF, "\nThe priests of %s are known to be able to bestow a blessing which makes the recipient %s\n ---\n", name, cp);
             }
         }
         if (level == 8 && RANDOM()%2) {
