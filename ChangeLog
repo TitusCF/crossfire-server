@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/init.c: Avoid some warnings by casting function to one with the right
+  type before calling. Also convert some char* to const char* and make the
+  variable options static.
+Arvid Norlander 2009-02-06
+
 server/pets.c, server/player.c, server/plugins.c: Fix some minor issues (such as
   using 0 instead of NULL [leading to more confusing code], using snprintf with
   no format arguments [use strncpy instead], using int instead of tag_t [which

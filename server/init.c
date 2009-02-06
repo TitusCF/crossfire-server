@@ -38,6 +38,9 @@
 #include <sproto.h>
 #endif
 
+/* Needed for strcasecmp(). */
+#include <strings.h>
+
 static void help(void);
 static void usage(void);
 static void init_beforeplay(void);
@@ -115,7 +118,7 @@ static void set_dumpmon9(void) {
     settings.dumpvalues = 9;
 }
 
-static void set_dumpmont(char *name) {
+static void set_dumpmont(const char *name) {
     settings.dumpvalues = 10;
     settings.dumparg = name;
 }
@@ -127,47 +130,47 @@ static void set_daemon(void) {
     }
 }
 
-static void set_datadir(char *path) {
+static void set_datadir(const char *path) {
     settings.datadir = path;
 }
 
-static void set_confdir(char *path) {
+static void set_confdir(const char *path) {
     settings.confdir = path;
 }
 
-static void set_localdir(char *path) {
+static void set_localdir(const char *path) {
     settings.localdir = path;
 }
 
-static void set_mapdir(char *path) {
+static void set_mapdir(const char *path) {
     settings.mapdir = path;
 }
 
-static void set_archetypes(char *path) {
+static void set_archetypes(const char *path) {
     settings.archetypes = path;
 }
 
-static void set_regions(char *path) {
+static void set_regions(const char *path) {
     settings.regions = path;
 }
 
-static void set_treasures(char *path) {
+static void set_treasures(const char *path) {
     settings.treasures = path;
 }
 
-static void set_uniquedir(char *path) {
+static void set_uniquedir(const char *path) {
     settings.uniquedir = path;
 }
 
-static void set_templatedir(char *path) {
+static void set_templatedir(const char *path) {
     settings.templatedir = path;
 }
 
-static void set_playerdir(char *path) {
+static void set_playerdir(const char *path) {
     settings.playerdir = path;
 }
 
-static void set_tmpdir(char *path) {
+static void set_tmpdir(const char *path) {
     settings.tmpdir = path;
 }
 
@@ -175,7 +178,7 @@ static void free_races(void);
 
 static void free_materials(void);
 
-static void showscoresparm(char *data) {
+static void showscoresparm(const char *data) {
     display_high_score(NULL, 9999, data);
     exit(0);
 }
@@ -186,7 +189,7 @@ static void showscoresparm(char *data) {
  * @param val
  * port to use. Must be a valid one, between 1 and 32765 inclusive.
  */
-static void set_csport(char *val) {
+static void set_csport(const char *val) {
     settings.csport = atoi(val);
 #ifndef WIN32 /* ***win32: set_csport: we remove csport error secure check here, do this later */
     if (settings.csport <= 0
@@ -197,6 +200,13 @@ static void set_csport(char *val) {
     }
 #endif /* win32 */
 }
+
+/** Typedefs used when calling option handlers. */
+/*@{*/
+typedef void (*cmdlinefunc_args0)(void);
+typedef void (*cmdlinefunc_args1)(const char* arg1);
+typedef void (*cmdlinefunc_args2)(const char* arg1, const char* arg2);
+/*@}*/
 
 /**
  * One command line option definition.
@@ -221,7 +231,7 @@ struct Command_Line_Options {
  * we call the associated function.  This makes writing a multi
  * pass system very easy, and it is very easy to add in new options.
  */
-struct Command_Line_Options options[] = {
+static struct Command_Line_Options options[] = {
     /** Pass 1 functions - Stuff that can/should be called before we actually
      * initialize any data.
      */
@@ -311,13 +321,13 @@ static void parse_args(int argc, char *argv[], int pass) {
                         exit(1);
                     } else {
                         if (options[i].num_args == 1)
-                            options[i].func(argv[on_arg+1]);
+                            ((cmdlinefunc_args1)options[i].func)(argv[on_arg+1]);
                         if (options[i].num_args == 2)
-                            options[i].func(argv[on_arg+1], argv[on_arg+2]);
+                            ((cmdlinefunc_args2)options[i].func)(argv[on_arg+1], argv[on_arg+2]);
                         on_arg += options[i].num_args+1;
                     }
                 } else { /* takes no args */
-                    options[i].func();
+                    ((cmdlinefunc_args0)options[i].func)();
                     on_arg++;
                 }
                 break;
