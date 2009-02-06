@@ -87,7 +87,7 @@ static void esrv_print_ext_msg(socket_struct *ns, int color, uint8 type, uint8 s
  */
 
 static void print_message(int colr, const object *pl, const char *tmp) {
-    if (tmp == (char *)NULL) {
+    if (tmp == NULL) {
         tmp = "[NULL]";
     }
 
@@ -96,7 +96,7 @@ static void print_message(int colr, const object *pl, const char *tmp) {
         return;
     }
     if (pl->type == PLAYER) {
-        esrv_print_msg(&pl->contr->socket, colr, (char *)tmp);
+        esrv_print_msg(&pl->contr->socket, colr, tmp);
         return;
     }
 }

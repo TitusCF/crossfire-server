@@ -778,7 +778,7 @@ archetype *determine_holy_arch(const object *god, const char *type) {
     }
 
     count = 0;
-    last = 0;
+    last = NULL;
     for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
         if (!tr->item)
             continue;

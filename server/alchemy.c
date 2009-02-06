@@ -311,13 +311,13 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
     if (!ignore_cauldron && (strcmp(rp->cauldron, cauldron->arch->name) != 0)) {
         draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "You are not using the proper facilities for this formula.", NULL);
-        return 0;
+        return NULL;
     }
 
     skop = find_skill_by_name(caster, rp->skill);
     /* does the caster have the skill? */
     if (!skop)
-        return 0;
+        return NULL;
 
     /* code required for this recipe, search the caster */
     if (rp->keycode) {
@@ -333,7 +333,7 @@ static object *attempt_recipe(object *caster, object *cauldron, int ability, rec
             draw_ext_info(NDI_UNIQUE, 0, caster, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                           "You know the ingredients, but not the technique.  Go learn how to do this recipe.",
                           NULL);
-            return 0;
+            return NULL;
         }
     }
 
