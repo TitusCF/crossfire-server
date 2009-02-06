@@ -322,25 +322,25 @@ extern socket_struct *init_sockets;
  * Server settings.
  */
 typedef struct Settings {
-    char    *logfilename;       /**< Logfile to use */
+    const char *logfilename;    /**< Logfile to use */
     uint16  csport;             /**< Port for new client/server */
     LogLevel debug;             /**< Default debugging level */
     uint8   dumpvalues;         /**< Set to dump various values/tables */
-    char    *dumparg;           /**< Additional argument for some dump functions */
+    const char *dumparg;        /**< Additional argument for some dump functions */
     uint8   daemonmode;         /**< If true, detach and become daemon */
     int     argc;               /**< Parameters that were passed to the program */
     char    **argv;             /**< Only used by xio.c, so will go away at some time */
-    char    *confdir;           /**< Configuration files */
-    char    *datadir;           /**< Read only data files */
-    char    *localdir;          /**< Read/write data files */
-    char    *playerdir;         /**< Where the player files are */
-    char    *mapdir;            /**< Where the map files are */
-    char    *archetypes;        /**< Name of the archetypes file - libdir is prepended */
-    char    *regions;           /**< Name of the regions file - libdir is prepended */
-    char    *treasures;         /**< Location of the treasures file. */
-    char    *uniquedir;         /**< Directory for the unique items */
-    char    *templatedir;       /**< Directory for the template map */
-    char    *tmpdir;            /**< Directory to use for temporary files */
+    const char *confdir;        /**< Configuration files */
+    const char *datadir;        /**< Read only data files */
+    const char *localdir;       /**< Read/write data files */
+    const char *playerdir;      /**< Where the player files are */
+    const char *mapdir;         /**< Where the map files are */
+    const char *archetypes;     /**< Name of the archetypes file - libdir is prepended */
+    const char *regions;        /**< Name of the regions file - libdir is prepended */
+    const char *treasures;      /**< Location of the treasures file. */
+    const char *uniquedir;      /**< Directory for the unique items */
+    const char *templatedir;    /**< Directory for the template map */
+    const char *tmpdir;         /**< Directory to use for temporary files */
     uint8   stat_loss_on_death; /**< If true, chars lose a random stat when they die */
     sint16  pk_luck_penalty;    /**< Amount by which player luck is reduced if they PK */
     uint8   permanent_exp_ratio; /**< How much exp should be 'permenant' and unable to be lost*/
@@ -364,8 +364,8 @@ typedef struct Settings {
     char    who_format[MAX_BUF];     /**< The format that the who command should use */
     char    who_wiz_format[MAX_BUF]; /**< The format that the who command should use when called by a dm*/
     char    motd[MAX_BUF];      /**< Name of the motd file */
-    char    *rules;             /**< Name of rules file*/
-    char    *news;              /**< Name of news file*/
+    const char *rules;          /**< Name of rules file*/
+    const char *news;           /**< Name of news file*/
     char    dm_mail[MAX_BUF];   /**< DM's Email address */
 
     /* The meta_ is information for the metaserver.  These are set in
