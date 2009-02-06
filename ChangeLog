@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/spell_effect.c: Fix part of bug #2457751
+  "Unpaid items work for some things...". Staff to snake and animate weapon no
+  longer works on unpaid items.
+Arvid Norlander 2009-02-06
+
 common/readable.c: Passing the same buffer as both the output buffer as a
   parameter in the format to s(n)printf invokes undefined behaviour. Avoid doing
   that. Tests showed that glibc treated the buffer as empty, resulting in

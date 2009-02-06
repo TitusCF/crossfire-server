@@ -3011,6 +3011,11 @@ int animate_weapon(object *op, object *caster, object *spell, int dir) {
                       "You need to mark a weapon to animate it.", NULL);
         return 0;
     }
+    if (QUERY_FLAG(weapon, FLAG_UNPAID)) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_ERROR,
+                      "You need to pay for the weapon to animate it.", NULL);
+        return 0;
+    }
     if (QUERY_FLAG(weapon, FLAG_APPLIED)) {
         char wn[MAX_BUF];
 
