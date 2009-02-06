@@ -3518,9 +3518,14 @@ void kill_player(object *op) {
         /* Check to see if the player is in a shop. IF so, then check to see if
          * the player has any unpaid items.  If so, remove them and put them back
          * in the map.
+         *
+         * If they are not in a shop, just free the unpaid items instead of
+         * putting them back on map.
          */
         if (is_in_shop(op))
             remove_unpaid_objects(op->inv, op, 0);
+        else
+            remove_unpaid_objects(op->inv, op, 1);
 
         /* Move player to his current respawn-position (usually last savebed) */
         enter_player_savebed(op);
