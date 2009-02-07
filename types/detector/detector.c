@@ -32,7 +32,6 @@
 #include <sproto.h>
 
 static method_ret detector_type_process(ob_methods *context, object *op);
-static method_ret detector_type_trigger(ob_methods *context, object *op, object *cause, int state);
 
 /**
  * Initializer for the @ref page_type_51 "detector" object type.

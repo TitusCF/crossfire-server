@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+types/detector/detector.c: Fix GCC warning caused by a declaration of an
+  unimplemented, unused static function.
+Arvid Norlander 2009-02-07
+
 plugins/cfpython/include/cfpython_object_private.h,
   plugins/cfpython/include/cfpython_map_private.h,
   plugins/cfpython/include/cfpython_party_private.h,
