@@ -507,7 +507,7 @@ CFanimationHook animationbox[] = {
 
 int animationcount = sizeof(animationbox)/sizeof(CFanimationHook);
 
-int ordered_commands = 0;
+static int ordered_commands = 0;
 
 static int compareAnims(const void *a, const void *b) {
     return strcmp(((const CFanimationHook *)a)->name, ((const CFanimationHook *)b)->name);
@@ -1137,7 +1137,7 @@ CF_PLUGIN void *eventListener(int *type, ...) {
     third = va_arg(args, object *);
     buf = va_arg(args, char *);
 
-    if (buf != 0)
+    if (buf != NULL)
         strcpy(message, buf);
     else
         message[0] = '\0';

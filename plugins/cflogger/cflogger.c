@@ -60,7 +60,7 @@
 static sqlite3 *database;
 
 /** To keep track of stored ingame/real time matching. */
-int last_stored_day = -1;
+static int last_stored_day = -1;
 
 /**
  * Simple callback to get an integer from a query.
@@ -659,7 +659,7 @@ CF_PLUGIN void *cflogger_globalEventListener(int *type, ...) {
     case EVENT_MAPUNLOAD:
     case EVENT_MAPRESET:
         map = va_arg(args, mapstruct *);
-        add_map_event(map, event_code, 0);
+        add_map_event(map, event_code, NULL);
         break;
 
     case EVENT_GKILL: {
