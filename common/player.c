@@ -66,9 +66,6 @@ void clear_player(player *pl) {
  * player to clear. Pointer is invalid after this call.
  */
 void free_player(player *pl) {
-    client_spell *info;
-    client_spell *next;
-
     if (first_player != pl) {
         player *prev = first_player;
 

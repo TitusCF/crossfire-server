@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/player.c: Remove unused variables.
+Arvid Norlander 2009-02-07
+
 types/mood_floor/mood_floor.c: Use NULL instead of 0 for pointers.
 types/player_mover/player_mover.c: Assigning a floating point constant to an
   integer variable makes no sense.
