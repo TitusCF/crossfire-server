@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c, common/object.c, common/map.c, include/libproto.h: Use size_t
+  instead of int for buffer sizes.
+common/readable.c, include/libproto.h: Make some functions not used elsewhere
+  static.
+common/readable.c: Get rid of sprintf().
+Arvid Norlander 2009-02-07
+
 common/porting.c: Fix format string.
 Arvid Norlander 2009-02-07
 

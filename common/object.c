@@ -2309,7 +2309,7 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * @todo
  * handle case orig_ob->nrof == 0 (meaning 1).
  */
-object *get_split_ob(object *orig_ob, uint32 nr, char *err, int size) {
+object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
     object *newob;
 
     if (orig_ob->nrof < nr) {

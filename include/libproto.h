@@ -158,9 +158,9 @@ extern void make_sure_seen(const object *op);
 extern void make_sure_not_seen(const object *op);
 /* map.c */
 extern mapstruct *has_been_loaded(const char *name);
-extern char *create_pathname(const char *name, char *buf, int size);
-extern void create_overlay_pathname(const char *name, char *buf, int size);
-extern void create_template_pathname(const char *name, char *buf, int size);
+extern char *create_pathname(const char *name, char *buf, size_t size);
+extern void create_overlay_pathname(const char *name, char *buf, size_t size);
+extern void create_template_pathname(const char *name, char *buf, size_t size);
 extern int check_path(const char *name, int prepend_dir);
 extern void dump_map(const mapstruct *m);
 extern void dump_all_maps(void);
@@ -242,7 +242,7 @@ extern object *insert_ob_in_map_at(object *op, mapstruct *m, object *originator,
 extern void merge_spell(object *op, sint16 x, sint16 y);
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(const char *arch_string, object *op);
-extern object *get_split_ob(object *orig_ob, uint32 nr, char *err, int size);
+extern object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size);
 extern object *decrease_ob_nr(object *op, uint32 i);
 extern void increase_ob_nr(object *op, uint32 i);
 extern void add_weight(object *op, signed long weight);
@@ -302,12 +302,9 @@ extern int is_old_wraith_pl(object *op);
 /* re-cmp.c */
 extern const char *re_cmp(const char *str, const char *regexp);
 /* readable.c */
-extern int nstrtok(const char *buf1, const char *buf2);
-extern char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size);
-extern int book_overflow(const char *buf1, const char *buf2, int booksize);
+extern int book_overflow(const char *buf1, const char *buf2, size_t booksize);
 extern void init_readable(void);
 extern object *get_random_mon(int level);
-extern char *mon_info_msg(int level, char *buf, int booksize);
 extern void tailor_readable_ob(object *book, int msg_type);
 extern void free_all_readable(void);
 extern void write_book_archive(void);

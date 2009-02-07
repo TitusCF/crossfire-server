@@ -102,12 +102,12 @@
 
 /** 'title' and 'titlelist' are used by the readable code */
 typedef struct titlestruct {
-    const char *name;     /**< the name of the book */
-    const char *authour;  /**< the name of the book authour */
+    const char *name;      /**< the name of the book */
+    const char *authour;   /**< the name of the book authour */
     const char *archname;  /**< the archetype name of the book */
-    int level;       /**< level of difficulty of this message */
-    int size;       /**< size of the book message */
-    int msg_index;  /**< an index value derived from book message */
+    int level;             /**< level of difficulty of this message */
+    size_t size;           /**< size of the book message */
+    int msg_index;         /**< an index value derived from book message */
     struct titlestruct *next;
 } title;
 
@@ -633,7 +633,7 @@ static titlelist *get_titlelist(int i) {
  * @return
  * number of elements.
  */
-int nstrtok(const char *buf1, const char *buf2) {
+static int nstrtok(const char *buf1, const char *buf2) {
     char *tbuf, buf[MAX_BUF];
     int number = 0;
 
@@ -663,7 +663,7 @@ int nstrtok(const char *buf1, const char *buf2) {
  * @return
  * retbuf.
  */
-char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
+static char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, size_t size) {
     int maxi, i = nstrtok(buf1, buf2);
     char *tbuf, buf[MAX_BUF];
 
@@ -693,7 +693,7 @@ char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
  * @return
  * 0 if buffers can be combined, 1 else.
  */
-int book_overflow(const char *buf1, const char *buf2, int booksize) {
+int book_overflow(const char *buf1, const char *buf2, size_t booksize) {
     if (buf_overflow(buf1, buf2, BOOK_BUF-2)   /* 2 less so always room for trailing \n */
     || buf_overflow(buf1, buf2, booksize))
         return 1;
@@ -860,13 +860,13 @@ static void init_book_archive(void) {
                     book->archname = add_string(cp);
                 }
             } else if (sscanf(buf, "level %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->level = (uint16)value;
+                book->level = value;
             } else if (sscanf(buf, "type %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                type = (uint16)value;
+                type = value;
             } else if (sscanf(buf, "size %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->size = (uint16)value;
+                book->size = value;
             } else if (sscanf(buf, "index %d%n", &value, &len) == 1 && len == (int)strlen(buf)) {
-                book->msg_index = (uint16)value;
+                book->msg_index = value;
             } else if (strcmp(buf, "end") == 0) { /* link it */
                 add_book(book, type, fname, lineno);
                 book = NULL;
@@ -984,7 +984,7 @@ void init_readable(void) {
 static title *find_title(const object *book, int msgtype) {
     title *t;
     titlelist *tl;
-    int length;
+    size_t length;
     int index;
 
     if (msgtype < 0)
@@ -1380,7 +1380,7 @@ object *get_random_mon(int level) {
  * @return
  * buf
  */
-static char *mon_desc(const object *mon, char *buf, int size) {
+static char *mon_desc(const object *mon, char *buf, size_t size) {
     snprintf(buf, size, " *** %s ***\n", mon->name);
     describe_item(mon, NULL, buf+strlen(buf), size-strlen(buf));
     return buf;
@@ -1426,7 +1426,7 @@ static object *get_next_mon(const object *tmp) {
  * @return
  * buf.
  */
-char *mon_info_msg(int level, char *buf, int booksize) {
+static char *mon_info_msg(int level, char *buf, size_t booksize) {
     char tmpbuf[HUGE_BUF], desc[MAX_BUF];
     object *tmp;
 
@@ -1474,7 +1474,7 @@ char *mon_info_msg(int level, char *buf, int booksize) {
  * @return
  * retbuf.
  */
-static char *artifact_msg(int level, char *retbuf, int booksize) {
+static char *artifact_msg(int level, char *retbuf, size_t booksize) {
     artifactlist *al;
     artifact *art;
     int chance, i, type, index;
@@ -1604,7 +1604,7 @@ static char *artifact_msg(int level, char *retbuf, int booksize) {
  * @return
  * retbuf
  */
-static char *spellpath_msg(int level, char *retbuf, int booksize) {
+static char *spellpath_msg(int level, char *retbuf, size_t booksize) {
     int path = RANDOM()%NRSPELLPATHS, prayers = RANDOM()%2;
     int did_first_sp = 0;
     uint32 pnum = spellpathdef[path];
@@ -1771,7 +1771,7 @@ static void make_formula_book(object *book, int level) {
  * @param booksize
  * length of the book we want.
  */
-static char *msgfile_msg(int level, int booksize) {
+static char *msgfile_msg(int level, size_t booksize) {
     static char retbuf[BOOK_BUF];
     int i, msgnum;
     linked_char *msg = NULL;
@@ -1810,7 +1810,7 @@ static char *msgfile_msg(int level, int booksize) {
  * @return
  * retbuf.
  */
-static char *god_info_msg(int level, char *retbuf, int booksize) {
+static char *god_info_msg(int level, char *retbuf, size_t booksize) {
     const char *name;
     char buf[BOOK_BUF];
     int i;
@@ -1851,7 +1851,8 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
      */
 
     while (level > 0) {
-        sprintf(buf, " ");
+        buf[0]=' ';
+        buf[1]='\0';
         if (level == 2 && RANDOM()%2) {
             /* enemy god */
 
@@ -1934,8 +1935,10 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
                 buflen = strlen(buf);
                 safe_strcat(buf, tmpbuf, &buflen, BOOK_BUF);
                 safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
-            } else
-                sprintf(buf, " ");
+            } else {
+                buf[0]=' ';
+                buf[1]='\0';
+            }
         }
         if (level == 12 && RANDOM()%2) {
             /* spell paths */
@@ -1958,8 +1961,10 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
             }
             if (has_effect) {
                 safe_strcat(buf, "\n ---\n", &buflen, BOOK_BUF);
-            } else
-                sprintf(buf, " ");
+            } else {
+                buf[0]=' ';
+                buf[1]='\0';
+            }
         }
 
         /* check to be sure new buffer size dont exceed either
@@ -2005,7 +2010,7 @@ static char *god_info_msg(int level, char *retbuf, int booksize) {
 void tailor_readable_ob(object *book, int msg_type) {
     char msgbuf[BOOK_BUF];
     int level = book->level ? RANDOM()%book->level+1 : 1;
-    int book_buf_size;
+    size_t book_buf_size;
 
     /* safety */
     if (book->type != BOOK)
@@ -2147,7 +2152,8 @@ void write_book_archive(void) {
                 fprintf(fp, "arch %s\n", book->archname);
                 fprintf(fp, "level %d\n", book->level);
                 fprintf(fp, "type %d\n", index);
-                fprintf(fp, "size %d\n", book->size);
+                /* C89 doesn't have %zu... */
+                fprintf(fp, "size %lu\n", (unsigned long)book->size);
                 fprintf(fp, "index %d\n", book->msg_index);
                 fprintf(fp, "end\n");
             }
