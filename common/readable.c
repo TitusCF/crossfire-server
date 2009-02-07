@@ -668,7 +668,7 @@ char *strtoktolin(const char *buf1, const char *buf2, char *retbuf, int size) {
     char *tbuf, buf[MAX_BUF];
 
     maxi = i;
-    snprintf(buf, sizeof(buf), buf1);
+    snprintf(buf, sizeof(buf), "%s", buf1);
     snprintf(retbuf, size, " ");
     for (tbuf = strtok(buf, buf2); tbuf && i > 0; tbuf = strtok(NULL, buf2)) {
         snprintf(retbuf+strlen(retbuf), size-strlen(retbuf), "%s", tbuf);

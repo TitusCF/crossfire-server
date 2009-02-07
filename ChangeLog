@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/readable.c: Fix a snprintf() with non-constant format string and no
+  parameters passed.
+Arvid Norlander 2009-02-07
+
 types/detector/detector.c: Fix GCC warning caused by a declaration of an
   unimplemented, unused static function.
 Arvid Norlander 2009-02-07
