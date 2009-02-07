@@ -168,7 +168,7 @@ static int did_make_save_item(object *op, int type, object *originator) {
  * @param originator
  * what is attacking.
  */
-void save_throw_object(object *op, int type, object *originator) {
+void save_throw_object(object *op, uint32 type, object *originator) {
     if (!did_make_save_item(op, type, originator)) {
         object *env = op->env;
         object *inv;
@@ -289,7 +289,7 @@ void save_throw_object(object *op, int type, object *originator) {
  * @return
  * 1 if it hits something, 0 otherwise.
  */
-int hit_map(object *op, int dir, int type, int full_hit) {
+int hit_map(object *op, int dir, uint32 type, int full_hit) {
     object *tmp, *next;
     mapstruct *map;
     sint16 x, y;
@@ -1866,7 +1866,7 @@ int friendly_fire(object *op, object *hitter) {
  * @todo
  * rename to something more meaningful.
  */
-int hit_player(object *op, int dam, object *hitter, int type, int full_hit) {
+int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
     int maxdam = 0, ndam = 0, attacktype = 1, magic = (type&AT_MAGIC);
     int maxattacktype, attacknum;
     int body_attack = op && op->head;   /* Did we hit op's head? */

@@ -554,7 +554,7 @@ int cast_create_obj(object *op, object *new_op, int dir) {
  * @return
  * 1 if we can add op, 0 else.
  */
-int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, int immune_stop) {
+int ok_to_put_more(mapstruct *m, sint16 x, sint16 y, object *op, uint32 immune_stop) {
     object *tmp;
     int mflags;
     mapstruct *mp;

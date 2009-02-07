@@ -36,7 +36,7 @@
  * @param buf Buffer that will contain the description
  * @param size buf's size.
  */
-void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size) {
+void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, size_t size) {
     char name[VERY_BIG_BUF];
 
     buf[0] = '\0';
@@ -46,12 +46,12 @@ void common_ob_describe(const ob_methods *context, const object *op, const objec
 
     describe_item(op, observer, name, VERY_BIG_BUF);
     if (name[0] != '\0') {
-        int len;
+        size_t len;
 
         query_name(op, buf, size-1);
         buf[size-1] = 0;
         len = strlen(buf);
-        if (len < size-5) {
+        if ((len+5) < size) {
             /* Since we know the length, we save a few cpu cycles by using
              * it instead of calling strcat */
             strcpy(buf+len, " ");

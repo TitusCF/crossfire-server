@@ -195,7 +195,7 @@ extern int on_same_map(const object *op1, const object *op2);
 /* ob_methods.c */
 extern method_ret ob_apply(object *op, object *applier, int aflags);
 extern method_ret ob_process(object *op);
-extern char *ob_describe(const object *op, const object *observer, char *buf, int size);
+extern char *ob_describe(const object *op, const object *observer, char *buf, size_t size);
 extern method_ret ob_move_on(object *op, object *victim, object *originator);
 extern method_ret ob_trigger(object *op, object *cause, int state);
 /* ob_types.c */

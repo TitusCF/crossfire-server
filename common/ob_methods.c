@@ -99,7 +99,7 @@ method_ret ob_process(object *op) {
  * @return
  * buf.
  */
-char *ob_describe(const object *op, const object *observer, char *buf, int size) {
+char *ob_describe(const object *op, const object *observer, char *buf, size_t size) {
     ob_methods *methods;
 
     for (methods = &type_methods[op->type]; methods; methods = methods->fallback) {

@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/libproto.h, include/ob_methods.h, include/typesproto.h,
+  common/ob_methods.c, types/common/describe.c, types/legacy/legacy_describe.c:
+  Use size_t when working with buffer sizes.
+include/sproto.h, server/attack.c, server/spell_util.c: Attack type should be
+  uint32 and not int.
+Arvid Norlander 2009-02-07
+
 types/shop_inventory/shop_inventory.c: Use size_t not int when working with
   list sizes. The variable i is used for several things, but using size_t should
   be safe for all uses of it.

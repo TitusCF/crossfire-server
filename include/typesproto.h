@@ -116,7 +116,7 @@ method_ret common_ob_move_on(ob_methods *context, object *trap, object *victim, 
 method_ret common_pre_ob_move_on(object *trap, object *victim, object *originator);
 void common_post_ob_move_on(object *trap, object *victim, object *originator);
 /* common/describe.c */
-void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
+void common_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, size_t size);
 /* common/projectile.c */
 void stop_projectile(object *op);
 method_ret common_process_projectile(ob_methods *context, object *op);
@@ -124,6 +124,6 @@ method_ret common_projectile_move_on(ob_methods *context, object *trap, object *
 /* legacy/apply.c */
 method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int aflags);
 /* legacy/legacy_describe.c */
-void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, int size);
+void legacy_ob_describe(const ob_methods *context, const object *op, const object *observer, char *buf, size_t size);
 /* legacy/process.c */
 method_ret legacy_ob_process(ob_methods *context, object *op);
