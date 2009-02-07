@@ -91,7 +91,7 @@ static void do_mood_floor(object *op, object *op2) {
                 tmp->owner->contr->ranges[range_golem] = NULL;
                 tmp->owner->contr->golem_count = 0;
             }
-            tmp->owner = 0;
+            tmp->owner = NULL;
         }
         break;
 

@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+types/mood_floor/mood_floor.c: Use NULL instead of 0 for pointers.
+types/player_mover/player_mover.c: Assigning a floating point constant to an
+  integer variable makes no sense.
+Arvid Norlander 2009-02-07
+
 include/libproto.h, include/ob_methods.h, include/typesproto.h,
   common/ob_methods.c, types/common/describe.c, types/legacy/legacy_describe.c:
   Use size_t when working with buffer sizes.

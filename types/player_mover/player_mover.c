@@ -53,7 +53,7 @@ static method_ret player_mover_type_move_on(ob_methods *context, object *trap, o
     && (trap->level || victim->type != PLAYER)
     && !should_director_abort(trap, victim)) {
         if (!trap->stats.maxsp)
-            trap->stats.maxsp = 2.0;
+            trap->stats.maxsp = 2;
 
         /* Is this correct?  From the docs, it doesn't look like it
          * should be divided by trap->speed
