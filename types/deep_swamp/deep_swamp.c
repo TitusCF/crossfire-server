@@ -80,7 +80,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
                         "You are down to your NECK in the dangerous %s.",
                         op->name);
                     op->stats.food = woodsman ? op->stats.food+1 : 20;
-                    sprintf(above->contr->killer, "drowning in a %s", op->name);
+                    snprintf(above->contr->killer, sizeof(above->contr->killer), "drowning in a %s", op->name);
                     above->stats.hp--;
                     above->speed_left -= op->move_slow_penalty;
                 }
@@ -89,7 +89,7 @@ static method_ret deep_swamp_type_process(ob_methods *context, object *op) {
                 draw_ext_info_format(NDI_UNIQUE|NDI_ALL, 1, NULL, MSG_TYPE_ADMIN, MSG_TYPE_ADMIN_PLAYER,
                     "%s disappeared into a %s.", "%s disappeared into a %s.",
                     above->name, op->name);
-                sprintf(above->contr->killer, "drowning in a %s", op->name);
+                snprintf(above->contr->killer, sizeof(above->contr->killer), "drowning in a %s", op->name);
                 above->stats.hp = -1;
                 kill_player(above); /* player dies in the swamp */
             }
