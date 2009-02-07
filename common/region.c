@@ -39,6 +39,9 @@
 #include <unistd.h>
 #endif /* win32 */
 
+static void parse_regions(FILE *fp);
+static void assign_region_parents(void);
+
 /**
  * Gets a region by name.
  *
@@ -349,7 +352,7 @@ region *get_region_struct(void) {
  * @param fp
  * opened file to read from.
  */
-void parse_regions(FILE *fp) {
+static void parse_regions(FILE *fp) {
     region *new;
     region *reg;
 
@@ -463,7 +466,7 @@ void parse_regions(FILE *fp) {
 /**
  * Links child with their parent from the parent_name field.
  */
-void assign_region_parents(void) {
+static void assign_region_parents(void) {
     region *reg;
     uint32 parent_count = 0;
     uint32 region_count = 0;

@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/libproto.h, common/dialog.c, common/init.c, common/object.c,
+  common/button.c, common/region.c, common/living.c, common/time.c,
+  common/recipe.c, common/map.c, common/arch.c, common/treasure.c: Make a lot
+  of functions that aren't used outside one file in common/ static.
+Arvid Norlander 2009-02-07
+
 common/readable.c, common/object.c, common/map.c, include/libproto.h: Use size_t
   instead of int for buffer sizes.
 common/readable.c, include/libproto.h: Make some functions not used elsewhere

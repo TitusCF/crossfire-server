@@ -1728,7 +1728,7 @@ void set_dragon_name(object *pl, const object *abil, const object *skin) {
  * @param who
  * dragon's object.
  */
-void dragon_level_gain(object *who) {
+static void dragon_level_gain(object *who) {
     object *abil = NULL;    /* pointer to dragon ability force*/
     object *skin = NULL;    /* pointer to dragon skin force*/
     object *tmp = NULL;     /* tmp. object */

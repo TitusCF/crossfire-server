@@ -47,6 +47,7 @@
 #include <ctype.h>
 
 static void build_stringlist(const char *str, char ***result_list, size_t *result_size);
+static void check_formulae(void);
 
 /** Pointer to first recipelist. */
 static recipelist *formulalist;
@@ -261,7 +262,7 @@ void init_formulae(void) {
  *
  * LOG() to error level.
  */
-void check_formulae(void) {
+static void check_formulae(void) {
     recipelist *fl;
     recipe *check, *formula;
     int numb = 1;
@@ -412,7 +413,7 @@ archetype *find_treasure_by_name(const treasure *t, const char *name, int depth)
  * @return
  * cost of ingredient, -1 if wasn't found.
  */
-long find_ingred_cost(const char *name) {
+static long find_ingred_cost(const char *name) {
     archetype *at;
     archetype *at2;
     artifactlist *al;
@@ -577,12 +578,29 @@ void dump_alchemy_costs(void) {
  * @return
  * pointer in name to the first character of the ingredient's name.
  */
-const char *ingred_name(const char *name) {
+static const char *ingred_name(const char *name) {
     const char *cp = name;
 
     if (atoi(cp))
         cp = strchr(cp, ' ')+1;
     return cp;
+}
+
+/**
+ * Extracts the number part of an ingredient.
+ *
+ * @param buf
+ * ingredient.
+ * @return
+ * number part of an ingredient.
+ */
+static int numb_ingred(const char *buf) {
+    int numb;
+
+    if ((numb = atoi(buf)))
+        return numb;
+    else
+        return 1;
 }
 
 /**
@@ -635,29 +653,12 @@ artifact *locate_recipe_artifact(const recipe *rp, size_t idx) {
 }
 
 /**
- * Extracts the number part of an ingredient.
- *
- * @param buf
- * ingredient.
- * @return
- * number part of an ingredient.
- */
-int numb_ingred(const char *buf) {
-    int numb;
-
-    if ((numb = atoi(buf)))
-        return numb;
-    else
-        return 1;
-}
-
-/**
  * Gets a random recipe list.
  *
  * @return
  * random recipe list.
  */
-recipelist *get_random_recipelist(void) {
+static recipelist *get_random_recipelist(void) {
     recipelist *fl = NULL;
     int number = 0, roll = 0;
 

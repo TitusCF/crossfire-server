@@ -54,6 +54,9 @@
 
 
 static void change_treasure(treasure *t, object *op); /* overrule default values */
+static int special_potion(object *op);
+static void fix_flesh_item(object *item, object *donor);
+
 extern const char *const spell_mapping[];
 int artifact_init;  /**< 1 if doing archetypes initialization */
 
@@ -384,7 +387,7 @@ static void change_treasure(treasure *t, object *op) {
  * to avoid infinite recursion.
  * @ingroup page_treasure_list
  */
-void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
+static void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) {
     object *tmp;
 
 
@@ -429,7 +432,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
  * can abort() if treasure has errors.
  * @ingroup page_treasure_list
  */
-void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int tries) {
+static void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int tries) {
     int value = RANDOM()%tl->total_chance;
     treasure *t;
 
@@ -548,7 +551,7 @@ object *generate_treasure(treasurelist *t, int difficulty) {
  * @return
  * generated level, 0 if invalid item.
  */
-int level_for_item(const object *op, int difficulty, int retmult) {
+static int level_for_item(const object *op, int difficulty, int retmult) {
     int level, mult, olevel;
 
     mult = 0;
@@ -802,7 +805,7 @@ static const int difftomagic_list[DIFFLEVELS][MAXMAGIC+1] = {
  * @return
  * random magic bonus.
  */
-int magic_from_difficulty(int difficulty) {
+static int magic_from_difficulty(int difficulty) {
     int percent, loop;
 
     difficulty--;
@@ -903,7 +906,7 @@ static void set_magic(int difficulty, object *op, int max_magic, int flags) {
  * @param bonus
  * bonus to add to item.
  */
-void set_ring_bonus(object *op, int bonus) {
+static void set_ring_bonus(object *op, int bonus) {
     int r = RANDOM()%(bonus > 0 ? 25 : 11);
 
     if (op->type == AMULET) {
@@ -1024,7 +1027,7 @@ void set_ring_bonus(object *op, int bonus) {
  * rings and amulets.
  * Another scheme is used to calculate the magic of weapons and armours.
  */
-int get_magic(int diff) {
+static int get_magic(int diff) {
     int i;
 
     if (diff < 3)
@@ -1461,7 +1464,7 @@ void dump_artifacts(void) {
 /**
  * For debugging purposes.  Dumps all treasures recursively (see below).
  */
-void dump_monster_treasure_rec(const char *name, treasure *t, int depth) {
+static void dump_monster_treasure_rec(const char *name, treasure *t, int depth) {
     treasurelist *tl;
     int i;
 
@@ -1946,7 +1949,7 @@ void generate_artifact(object *op, int difficulty) {
  * FOOD, except they inherit properties (name, food value, etc).
  * based on the original owner (or 'donor' if you like). -b.t.
  */
-void fix_flesh_item(object *item, object *donor) {
+static void fix_flesh_item(object *item, object *donor) {
     char tmpbuf[MAX_BUF];
     int i;
 
@@ -2015,7 +2018,7 @@ void fix_flesh_item(object *item, object *donor) {
  * @return
  * 1 if op is a special potion (resistance, attribute, ...), 0 else.
  */
-int special_potion(object *op) {
+static int special_potion(object *op) {
     int i;
 
     if (op->attacktype)
@@ -2043,7 +2046,7 @@ int special_potion(object *op) {
  * @param t
  * treasure to free. Pointer is free()d too, so becomes invalid.
  */
-void free_treasurestruct(treasure *t) {
+static void free_treasurestruct(treasure *t) {
     if (t->next)
         free_treasurestruct(t->next);
     if (t->next_yes)
@@ -2059,7 +2062,7 @@ void free_treasurestruct(treasure *t) {
  * @param lc
  * item to free. Pointer is free()d too, so becomes invalid.
  */
-void free_charlinks(linked_char *lc) {
+static void free_charlinks(linked_char *lc) {
     if (lc->next)
         free_charlinks(lc->next);
     free(lc);
@@ -2077,7 +2080,7 @@ void free_charlinks(linked_char *lc) {
  * But artifact inventory is a 'real' object, that may be created for 'old' objects. So should be
  * destroyed through free_object(). Note that it isn't on the usual item list, so some tweaking is required.
  */
-void free_artifact(artifact *at) {
+static void free_artifact(artifact *at) {
     object *next;
 
     if (at->next)
@@ -2107,7 +2110,7 @@ void free_artifact(artifact *at) {
  * @param al
  * list to free. Pointer is free()d too, so becomes invalid.
  */
-void free_artifactlist(artifactlist *al) {
+static void free_artifactlist(artifactlist *al) {
     artifactlist *nextal;
 
     for (; al != NULL; al = nextal) {

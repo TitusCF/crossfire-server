@@ -54,6 +54,7 @@ static int compare_ob_value_lists(const object *, const object *);
 static void expand_objects(void);
 static void permute(int *, int, int);
 static int set_ob_key_value_s(object *, const char *, const char *, int);
+static void increase_ob_nr(object *op, uint32 i);
 
 #ifdef MEMORY_DEBUG
 int nroffreeobjects = 0;  /**< Number of free objects. */
@@ -2419,7 +2420,7 @@ object *decrease_ob_nr(object *op, uint32 i) {
  * @param i
  * number to add.
  */
-void increase_ob_nr(object *op, uint32 i) {
+static void increase_ob_nr(object *op, uint32 i) {
     object *tmp;
     player *pl;
 

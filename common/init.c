@@ -36,6 +36,12 @@
 #include <global.h>
 #include <object.h>
 
+static void init_environ(void);
+static void init_defaults(void);
+static void init_dynamic(void);
+static void init_clocks(void);
+static void init_attackmess(void);
+
 /** You unforunately need to looking in include/global.h to see what these
  * correspond to.
  */
@@ -216,7 +222,7 @@ void init_library(void) {
  * it needs to be called very early, since command line options should
  * overwrite these if specified.
  */
-void init_environ(void) {
+static void init_environ(void) {
     char *cp;
 
     cp = getenv("CROSSFIRE_LIBDIR");
@@ -369,7 +375,7 @@ void init_objects(void) {
  * Initialises global variables which can be changed by options.
  * Called by init_library().
  */
-void init_defaults(void) {
+static void init_defaults(void) {
     nroferrors = 0;
 }
 
@@ -381,7 +387,7 @@ void init_defaults(void) {
  * @note
  * will call exit() if no MAP archetype was found.
  */
-void init_dynamic(void) {
+static void init_dynamic(void) {
     archetype *at = first_archetype;
     while (at) {
         if (at->clone.type == MAP) {
@@ -432,7 +438,7 @@ void write_todclock(void) {
  * Initializes the gametime and TOD counters
  * Called by init_library().
  */
-void init_clocks(void) {
+static void init_clocks(void) {
     char filename[MAX_BUF];
     FILE *fp;
     static int has_been_done = 0;
@@ -464,7 +470,7 @@ attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
  *
  * Memory will be cleared by free_globals().
  */
-void init_attackmess(void) {
+static void init_attackmess(void) {
     char buf[MAX_BUF];
     char filename[MAX_BUF];
     char *cp, *p;

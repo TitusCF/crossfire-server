@@ -308,7 +308,7 @@ void get_tod(timeofday_t *tod) {
  * @param op
  * player who requested time.
  */
-void print_tod(object *op) {
+static void print_tod(object *op) {
     timeofday_t tod;
     const char *suf;
     int day;

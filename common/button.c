@@ -34,6 +34,8 @@
 #include <global.h>
 #include <sproto.h>
 
+static objectlink *get_button_links(const object *button);
+
 /**
  * Trigger every object in an objectlink. This was originally
  * part of push_button but has been extracted to make it
@@ -151,6 +153,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
         }
     }
 }
+
 /**
  * Push the specified object.  This can affect other buttons/gates/handles
  * altars/pedestals/holes in the whole map.
@@ -489,7 +492,7 @@ int operate_altar(object *altar, object **sacrifice) {
 /**
  * @todo document?
  */
-void trigger_move(object *op, int state) { /* 1 down and 0 up */
+static void trigger_move(object *op, int state) { /* 1 down and 0 up */
     op->stats.wc = state;
     if (state) {
         use_trigger(op);
@@ -728,7 +731,7 @@ void remove_button_link(object *op) {
  * @return
  * ::objectlink for this object, or NULL.
  */
-objectlink *get_button_links(const object *button) {
+static objectlink *get_button_links(const object *button) {
     oblinkpt *obp;
     objectlink *ol;
 

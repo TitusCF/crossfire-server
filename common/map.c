@@ -44,6 +44,8 @@
 
 extern int nrofallocobjects, nroffreeobjects;
 
+static void free_all_objects(mapstruct *m);
+
 /**
  * These correspond to the layer names in map.h -
  * since some of the types can be on multiple layers,
@@ -627,7 +629,7 @@ static void link_multipart_objects(mapstruct *m) {
  * @param mapflags
  * the same as we get with load_original_map()
  */
-void load_objects(mapstruct *m, FILE *fp, int mapflags) {
+static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
     int i, j, bufstate = LO_NEWFILE;
     int unique;
     object *op, *prev = NULL, *last_more = NULL, *otmp;
@@ -713,7 +715,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags) {
  * @return
  * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" value.
  */
-int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
+static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int i, j = 0, unique = 0, res;
     object *op,  *otmp;
 
@@ -799,7 +801,7 @@ mapstruct *get_linked_map(void) {
  * @note
  * will never fail, since it calls fatal() if memory allocation failure.
  */
-void allocate_map(mapstruct *m) {
+static void allocate_map(mapstruct *m) {
     m->in_memory = MAP_IN_MEMORY;
     /* Log this condition and free the storage.  We could I suppose
      * realloc, but if the caller is presuming the data will be intact,
@@ -1286,7 +1288,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
  * map object we load into (this can change from the passed
  * option if we can't find the original map)
  */
-mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
+static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
     FILE *fp;
     int comp;
     char pathname[MAX_BUF];
@@ -1604,7 +1606,7 @@ void clean_object(object *op) {
  * @param m
  * map to free.
  */
-void free_all_objects(mapstruct *m) {
+static void free_all_objects(mapstruct *m) {
     int i, j;
     object *op;
 

@@ -223,8 +223,7 @@ void clear_archetable(void) {
 /**
  * An alternative way to init the hashtable which is slower, but _works_...
  */
-
-void init_archetable(void) {
+static void init_archetable(void) {
     archetype *at;
 
     LOG(llevDebug, " Setting up archetable...\n");

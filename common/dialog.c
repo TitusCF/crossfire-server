@@ -111,7 +111,7 @@ static int matches(const char *exp, const char *text) {
  *
  * @param op object to parse the obj::msg field.
  */
-void parse_dialog_information(object *op) {
+static void parse_dialog_information(object *op) {
     struct_dialog_message *message = NULL, *last = NULL;
     struct_dialog_reply *reply = NULL;
     char *current, *save, *msg, *cp;
