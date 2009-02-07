@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+types/shop_inventory/shop_inventory.c: Use size_t not int when working with
+  list sizes. The variable i is used for several things, but using size_t should
+  be safe for all uses of it.
+Arvid Norlander 2009-02-07
+
 types/deep_swamp/deep_swamp.c: Replace sprintf() with snprintf().
 Arvid Norlander 2009-02-07
 

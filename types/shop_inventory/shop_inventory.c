@@ -84,7 +84,7 @@ static int shop_sort(const void *a1, const void *a2) {
  * @param numitems
  * how many items items contains.
  */
-static void add_shop_item(object *tmp, shopinv *items, int *numitems) {
+static void add_shop_item(object *tmp, shopinv *items, size_t *numitems) {
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.
@@ -123,7 +123,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems) {
  * METHOD_OK if applier is a player, METHOD_UNHANDLED else.
  */
 static method_ret shop_inventory_type_apply(ob_methods *context, object *lighter, object *applier, int aflags) {
-    int i, j, numitems = 0, numallocated = 0;
+    size_t i, j, numitems = 0, numallocated = 0;
     object *stack;
     shopinv *items;
 
