@@ -705,7 +705,6 @@ static struct_race *get_race(const char *name) {
  */
 static void add_monster(object *monster, struct_map_info *map) {
     struct_race *race;
-    int test;
 
     if (monster->head && monster != monster->head)
         return;
@@ -1577,7 +1576,7 @@ struct_map_info *create_tiled_map(void) {
  * the map tiled to another group. Its group will disappear.
  */
 void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map) {
-    int dec_x, dec_y, g;
+    int g;
     struct_map_info *group = tiled_map->tiled_group;
     struct_map_info *change;
 
@@ -2545,7 +2544,7 @@ void write_map_page(struct_map_info *map) {
         strcat(exit_path, ".html");
         relative_path(map->path, exit_path, regionpath);
     } else {
-        snprintf(regionpath, sizeof(regionpath), "");
+        regionpath[0]='\0';
         snprintf(regionname, sizeof(regionname), "(map was not processed)");
     }
 

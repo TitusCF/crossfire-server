@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+utils/mapper.c: Remove some unused variables. Get rid of zero length snprintf()
+  (caused GCC warning).
+Arvid Norlander 2009-02-08
+
 include/libproto.h, common/dialog.c, common/init.c, common/object.c,
   common/button.c, common/region.c, common/living.c, common/time.c,
   common/recipe.c, common/map.c, common/arch.c, common/treasure.c: Make a lot
