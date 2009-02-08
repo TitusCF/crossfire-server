@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+utils/mapper.c: Fix a segfault when generating world map and not all input maps
+  was found (could happen using -limit).
+Arvid Norlander 2009-02-08
+
 utils/mapper.c: Change // style comment to /**/ style. Add missing include. Make
   some variables and functions static (fixing GCC warnings about missing
   prototypes). Change some 0 to NULL for pointers to make code clearer.

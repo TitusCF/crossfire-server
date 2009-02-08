@@ -2413,6 +2413,11 @@ static void write_world_map(void) {
             snprintf(mappath, sizeof(mappath), "%s/world/%s%s", root, name, output_extensions[output_format]);
 
             out = fopen(mappath, "rb");
+            if (!out) {
+                printf("\n  warning: large pic not found for world_%d_%d", wx, wy);
+                wx++;
+                continue;
+            }
             if (output_format == OF_PNG)
                 small = gdImageCreateFromPng(out);
             else
@@ -2420,6 +2425,7 @@ static void write_world_map(void) {
             fclose(out);
             if (!small) {
                 printf("\n  warning: pic not found for world_%d_%d", wx, wy);
+                wx++;
                 continue;
             }
             gdImageCopyResized(pic, small, SIZE*x, SIZE*y, 0, 0, SIZE, SIZE, small->sx, small->sy);
