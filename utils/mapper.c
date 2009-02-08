@@ -2183,7 +2183,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
                 idx_vars[basevalues+4] = NULL;
                 idx_values[basevalues+1] = mapstext;
                 idx_values[basevalues+2] = str_letter;
-                sprintf(lettercount, "%d", byletter);
+                snprintf(lettercount, sizeof(lettercount), "%d", byletter);
                 idx_values[basevalues+3] = lettercount;
                 string = cat_template(string, do_template(template_letter, idx_vars, idx_values));
                 free(mapstext);
@@ -2221,7 +2221,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
         idx_vars[basevalues+4] = NULL;
         idx_values[basevalues+1] = mapstext;
         idx_values[basevalues+2] = str_letter;
-        sprintf(lettercount, "%d", byletter);
+        snprintf(lettercount, sizeof(lettercount), "%d", byletter);
         idx_values[basevalues+3] = lettercount;
         string = cat_template(string, do_template(template_letter, idx_vars, idx_values));
         free(mapstext);
@@ -2229,7 +2229,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
         idx_values[basevalues+2] = NULL;
     }
 
-    sprintf(count, "%d", realcount);
+    snprintf(count, sizeof(count), "%d", realcount);
     idx_values[basevalues+1] = string;
     idx_vars[basevalues+1] = "LETTERS";
     idx_vars[basevalues+2] = NULL;
@@ -2329,12 +2329,12 @@ void write_region_index(void) {
 
     printf("Generating regions index in regions.html...");
 
-    sprintf(count, "%d", region_count);
+    snprintf(count, sizeof(count), "%d", region_count);
     txt = NULL;
 
     for (reg = 0; reg < region_count; reg++) {
         region = regions[reg];
-        sprintf(file, "%s.html", region->reg->name);
+        snprintf(file, sizeof(file), "%s.html", region->reg->name);
         values[2] = get_region_longname(region->reg);
         txt = cat_template(txt, do_template(index_region_region_template, vars, values));
     }
@@ -2396,16 +2396,16 @@ void write_world_map(void) {
             vars[0] = "MAPNAME";
             vars[1] = "MAPPATH";
             values[1] = mappath,
-            sprintf(name, "world_%d_%d", wx, wy);
-            sprintf(mappath, "world/%s.html", name);
-            sprintf(mapleft, "%d", SIZE*x);
-            sprintf(maptop, "%d", SIZE*y);
-            sprintf(mapright, "%d", SIZE*(x+1)-1);
-            sprintf(mapbottom, "%d", SIZE*(y+1)-1);
+            snprintf(name, sizeof(name), "world_%d_%d", wx, wy);
+            snprintf(mappath, sizeof(mappath), "world/%s.html", name);
+            snprintf(mapleft, sizeof(mapleft), "%d", SIZE*x);
+            snprintf(maptop, sizeof(maptop), "%d", SIZE*y);
+            snprintf(mapright, sizeof(mapright), "%d", SIZE*(x+1)-1);
+            snprintf(mapbottom, sizeof(mapbottom), "%d", SIZE*(y+1)-1);
 
             map = cat_template(map, do_template(world_map_template, vars, values));
 
-            sprintf(mappath, "%s/world/%s%s", root, name, output_extensions[output_format]);
+            snprintf(mappath, sizeof(mappath), "%s/world/%s%s", root, name, output_extensions[output_format]);
 
             out = fopen(mappath, "rb");
             if (output_format == OF_PNG)
@@ -2431,9 +2431,9 @@ void write_world_map(void) {
         free(map);
         map = NULL;
     }
-    sprintf(mappath, "world%s", output_extensions[output_format]);
-    sprintf(mapraw, "world_raw%s", output_extensions[output_format]);
-    sprintf(mapregion, "world_regions%s", output_extensions[output_format]);
+    snprintf(mappath, sizeof(mappath), "world%s", output_extensions[output_format]);
+    snprintf(mapraw, sizeof(mapraw), "world_raw%s", output_extensions[output_format]);
+    snprintf(mapregion, sizeof(mapregion), "world_regions%s", output_extensions[output_format]);
 
     values[0] = row;
     vars[0] = "MAPS";
@@ -2451,7 +2451,7 @@ void write_world_map(void) {
     free(total);
     fclose(out);
 
-    sprintf(mappath, "%s/world_raw%s", root, output_extensions[output_format]);
+    snprintf(mappath, sizeof(mappath), "%s/world_raw%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
     save_picture(out, pic);
     fclose(out);
@@ -2475,13 +2475,13 @@ void write_world_map(void) {
         gdImageString(infomap, font, x, y, regions[region]->reg->name, color);
     }
 
-    sprintf(mappath, "%s/world_regions%s", root, output_extensions[output_format]);
+    snprintf(mappath, sizeof(mappath), "%s/world_regions%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
     save_picture(out, small);
     fclose(out);
     gdImageDestroy(small);
 
-    sprintf(mappath, "%s/world%s", root, output_extensions[output_format]);
+    snprintf(mappath, sizeof(mappath), "%s/world%s", root, output_extensions[output_format]);
     out = fopen(mappath, "wb+");
     save_picture(out, pic);
     fclose(out);
@@ -2850,11 +2850,11 @@ static int tiled_map_need_pic(struct_map_info *map) {
     char picpath[500];
     struct stat stats;
 
-    sprintf(picpath, "%s%s%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->path, output_extensions[output_format]);
     if (stat(picpath, &stats))
         return 1;
 
-    sprintf(picpath, "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->path, output_extensions[output_format]);
     if (stat(picpath, &stats))
         return 1;
 
@@ -2957,7 +2957,7 @@ void do_tiled_map_picture(struct_map_info *map) {
     small = gdImageCreateTrueColor(size_small*(xmax-xmin), size_small*(ymax-ymin));
 
     for (tiled = 0; tiled < map->tiled_maps.count; tiled++) {
-        sprintf(picpath, "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
 
         out = fopen(picpath, "rb");
         if (output_format == OF_PNG)
@@ -2972,7 +2972,7 @@ void do_tiled_map_picture(struct_map_info *map) {
         gdImageCopy(large, load, 32*(map->tiled_maps.maps[tiled]->tiled_x_from-xmin), 32*(map->tiled_maps.maps[tiled]->tiled_y_from-ymin), 0, 0, load->sx, load->sy);
         gdImageDestroy(load);
 
-        sprintf(picpath, "%s%s.small%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
+        snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
         out = fopen(picpath, "rb");
         if (output_format == OF_PNG)
             load = gdImageCreateFromPng(out);
@@ -2987,12 +2987,12 @@ void do_tiled_map_picture(struct_map_info *map) {
         gdImageDestroy(load);
     }
 
-    sprintf(picpath, "%s%s%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->path, output_extensions[output_format]);
     out = fopen(picpath, "wb+");
     save_picture(out, large);
     fclose(out);
 
-    sprintf(picpath, "%s%s.small%s", root, map->path, output_extensions[output_format]);
+    snprintf(picpath, sizeof(picpath), "%s%s.small%s", root, map->path, output_extensions[output_format]);
     out = fopen(picpath, "wb+");
     save_picture(out, small);
     fclose(out);
@@ -3279,6 +3279,11 @@ void write_world_info(void) {
     printf("done.\n");
     gdImageDestroy(infomap);
     infomap = NULL;
+
+   if (elevation_min == 0 || elevation_max == 0) {
+       puts("Error: Could not save elevation world map due to not finding any minimum or maximum elevation.");
+       return;
+   }
 
     elevationmap = gdImageCreateTrueColor(30*50, 30*50);;
 
@@ -3673,7 +3678,7 @@ int main(int argc, char **argv) {
     read_template("templates/map_no_quest.template", &map_no_quest_template);
 
     if (map_limit != -1)
-        sprintf(max, "%d", map_limit);
+        snprintf(max, sizeof(max), "%d", map_limit);
     else
         strcpy(max, "(none)");
     printf("Crossfire map browser generator\n");
