@@ -212,6 +212,8 @@
 
 #include <time.h>
 #include <stdio.h>
+/* For strcasecmp(). */
+#include <strings.h>
 
 #include <global.h>
 #include <sproto.h>
@@ -222,7 +224,7 @@
 #include <gdfontl.h>
 #include <gdfontg.h>
 
-gdImagePtr *gdfaces;
+static gdImagePtr *gdfaces;
 
 extern int nrofpixmaps; /* Found in common/image.c */
 
@@ -286,10 +288,10 @@ typedef struct struct_map_info {
 } struct_map_info;
 
 /** Maps to process or found. */
-struct_map_list maps_list;
+static struct_map_list maps_list;
 
 /** Pseudo-maps grouping other maps. */
-struct_map_list tiled_map_list;
+static struct_map_list tiled_map_list;
 
 /** One special item (weapon, shield, ...). */
 typedef struct struct_equipment {
@@ -300,11 +302,11 @@ typedef struct struct_equipment {
     struct_map_list origin; /**< Map(s) this item is found in. */
 } struct_equipment;
 
-struct_equipment **special_equipment = NULL;    /**< Special equipment list. */
+static struct_equipment **special_equipment = NULL;    /**< Special equipment list. */
 
-int equipment_count = 0;                        /**< Number of items in special_equipment. */
+static int equipment_count = 0;                        /**< Number of items in special_equipment. */
 
-int equipment_allocated = 0;                    /**< Allocated items in special_equipment. */
+static int equipment_allocated = 0;                    /**< Allocated items in special_equipment. */
 
 
 /** One monster race in the maps. */
@@ -314,14 +316,14 @@ typedef struct struct_race {
     struct_map_list origin; /**< Maps to find said monster. */
 } struct_race;
 
-struct_race_list races;     /**< Monsters found in maps. */
+static struct_race_list races;     /**< Monsters found in maps. */
 
 /**
  * Blanks a struct_race_list.
  * @param list
  * list to blank.
  */
-void init_race_list(struct_race_list *list) {
+static void init_race_list(struct_race_list *list) {
     list->races = NULL;
     list->count = 0;
     list->allocated = 0;
@@ -337,7 +339,7 @@ void init_race_list(struct_race_list *list) {
  * @param check
  * if 0, don't check if race is already on the list ; else don't make duplicated entries.
  */
-void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
+static void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
     if (check) {
         int test;
 
@@ -356,67 +358,67 @@ void add_race_to_list(struct_race *race, struct_race_list *list, int check) {
 }
 
 /** Path to store generated files. Relative or absolute, shouldn't end with a / */
-char root[500];
+static char root[500];
 
 /** Number of created pictures for GD. */
-int pics_allocated;
+static int pics_allocated;
 
 /* Options */
-int generate_pics = 1;     /**< Whether to generate the picture or not. */
-int force_pics = 0;        /**< To force picture regeneration even if map didn't change. */
-int generate_index = 1;    /**< Whether to do the map index or not. */
-int size_small = 16;       /**< Tile size for small map */
-int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
-int show_maps = 0;         /**< If set, will generate much information on map loaded. */
-int world_map = 1;         /**< If set, will generate a world map. */
-int world_exit_info = 1;   /**< If set, will generate a world map of exits. */
-int tileset = 0;           /**< Tileset to use to generate pics. */
+static int generate_pics = 1;     /**< Whether to generate the picture or not. */
+static int force_pics = 0;        /**< To force picture regeneration even if map didn't change. */
+static int generate_index = 1;    /**< Whether to do the map index or not. */
+static int size_small = 16;       /**< Tile size for small map */
+static int map_limit = -1;        /**< Maximum number of maps to browse, -1 for all. */
+static int show_maps = 0;         /**< If set, will generate much information on map loaded. */
+static int world_map = 1;         /**< If set, will generate a world map. */
+static int world_exit_info = 1;   /**< If set, will generate a world map of exits. */
+static int tileset = 0;           /**< Tileset to use to generate pics. */
 
-char *world_template;                 /**< World map template. */
-char *world_row_template;             /**< One row in the world map. */
-char *world_map_template;             /**< One map in a row. */
+static char *world_template;               /**< World map template. */
+static char *world_row_template;           /**< One row in the world map. */
+static char *world_map_template;           /**< One map in a row. */
 
-char *map_template;                 /**< Map template. */
-char *map_no_exit_template;         /**< World map template: no exit. */
-char *map_with_exit_template;       /**< Map template: exit template. */
-char *map_exit_template;            /**< Map template: one exit. */
-char *map_no_exit_to_template;      /**< World map template: no exit leading to this map. */
-char *map_with_exit_to_template;    /**< Map template: exits leading to this map. */
-char *map_exit_to_template;         /**< Map template: one exit leading to this map. */
-char *map_lore_template;            /**< Map template: lore. */
-char *map_no_lore_template;         /**< Map template: no lore. */
-char *map_no_monster_template;      /**< Map template: no monster. */
-char *map_monster_before_template;  /**< Map template: before the monster list. */
-char *map_monster_between_template; /**< Map template: between each monster. */
-char *map_monster_one_template;     /**< Map template: one monster. */
-char *map_monster_after_template;   /**< Map template: after the monster list. */
+static char *map_template;                 /**< Map template. */
+static char *map_no_exit_template;         /**< World map template: no exit. */
+static char *map_with_exit_template;       /**< Map template: exit template. */
+static char *map_exit_template;            /**< Map template: one exit. */
+static char *map_no_exit_to_template;      /**< World map template: no exit leading to this map. */
+static char *map_with_exit_to_template;    /**< Map template: exits leading to this map. */
+static char *map_exit_to_template;         /**< Map template: one exit leading to this map. */
+static char *map_lore_template;            /**< Map template: lore. */
+static char *map_no_lore_template;         /**< Map template: no lore. */
+static char *map_no_monster_template;      /**< Map template: no monster. */
+static char *map_monster_before_template;  /**< Map template: before the monster list. */
+static char *map_monster_between_template; /**< Map template: between each monster. */
+static char *map_monster_one_template;     /**< Map template: one monster. */
+static char *map_monster_after_template;   /**< Map template: after the monster list. */
 
-char *index_template;           /**< Index page template. */
-char *index_letter;             /**< Index page template: one letter, including the maps it contains. */
-char *index_map;                /**< Index page template: one map. */
+static char *index_template;           /**< Index page template. */
+static char *index_letter;             /**< Index page template: one letter, including the maps it contains. */
+static char *index_map;                /**< Index page template: one map. */
 
-char *region_template;          /**< Region page template. */
-char *region_letter_template;   /**< One letter for the region. */
-char *region_map_template;      /**< Region page template: one map. */
+static char *region_template;          /**< Region page template. */
+static char *region_letter_template;   /**< One letter for the region. */
+static char *region_map_template;      /**< Region page template: one map. */
 
-char *index_region_template;        /**< Region index template. */
-char *index_region_region_template; /**< One region in the region index template. */
+static char *index_region_template;        /**< Region index template. */
+static char *index_region_region_template; /**< One region in the region index template. */
 
-char *level_template;
-char *level_value_template;
-char *level_map_template;
+static char *level_template;
+static char *level_value_template;
+static char *level_map_template;
 
-char *index_quest_template;
-char *quest_template;
-char *quest_map_template;
+static char *index_quest_template;
+static char *quest_template;
+static char *quest_map_template;
 
-char *map_no_quest_template;
-char *map_with_quests_template;
-char *map_one_quest_template;
+static char *map_no_quest_template;
+static char *map_with_quests_template;
+static char *map_one_quest_template;
 
 /** Picture statistics. */
-int created_pics = 0; /**< Total created pics. */
-int cached_pics = 0;  /**< Non recreated pics. */
+static int created_pics = 0; /**< Total created pics. */
+static int cached_pics = 0;  /**< Non recreated pics. */
 
 /** Map output formats. */
 enum output_format_type {
@@ -425,22 +427,22 @@ enum output_format_type {
 };
 
 /** Extensions depending on output format. */
-const char *output_extensions[] = {
+static const char *output_extensions[] = {
     ".png",
     ".jpg"
 };
 
 /** Selected output format. */
-enum output_format_type output_format = OF_PNG;
+static enum output_format_type output_format = OF_PNG;
 
 /** Quality for jpg pictures. */
-int jpeg_quality = -1;
+static int jpeg_quality = -1;
 
 /** Whether to generate raw pics or instancied ones. */
-int rawmaps = 0;
+static int rawmaps = 0;
 
 /** Whether to warn of exits without a path */
-int warn_no_path = 0;
+static int warn_no_path = 0;
 
 /** Region information. */
 typedef struct struct_region_info {
@@ -450,32 +452,32 @@ typedef struct struct_region_info {
     int is_world;               /**< If set, this region has at least one map part of the world, thus region name should be written. */
 } struct_region_info;
 
-struct struct_region_info **regions = NULL; /**< Found regions. */
-int region_count = 0;                       /**< Count of regions. */
-int region_allocated = 0;                   /**< Allocated size of regions. */
+static struct struct_region_info **regions = NULL; /**< Found regions. */
+static int region_count = 0;                /**< Count of regions. */
+static int region_allocated = 0;            /**< Allocated size of regions. */
 
-int list_unused_maps = 0;       /**< If set, program will list maps found in directory but not linked from the first maps. */
-char **found_maps = NULL;       /**< Maps found in directories. */
-int found_maps_count = 0;       /**< Number of items in found_maps. */
-int found_maps_allocated = 0;   /**< Allocated size of found_maps. */
+static int list_unused_maps = 0;       /**< If set, program will list maps found in directory but not linked from the first maps. */
+static char **found_maps = NULL;       /**< Maps found in directories. */
+static int found_maps_count = 0;       /**< Number of items in found_maps. */
+static int found_maps_allocated = 0;   /**< Allocated size of found_maps. */
 
 /* Path/exit info */
-gdImagePtr infomap;         /**< World map with exits / roads / blocking / ... */
-int color_unlinked_exit;    /**< Color for exits without a path set. */
-int color_linked_exit;      /**< Exit leading to another map. */
-int color_road;             /**< Road or equivalent. */
-int color_blocking;         /**< Block all movement. */
-int color_slowing;          /**< Slows movement. */
+static gdImagePtr infomap;         /**< World map with exits / roads / blocking / ... */
+static int color_unlinked_exit;    /**< Color for exits without a path set. */
+static int color_linked_exit;      /**< Exit leading to another map. */
+static int color_road;             /**< Road or equivalent. */
+static int color_blocking;         /**< Block all movement. */
+static int color_slowing;          /**< Slows movement. */
 
-int **elevation_info;       /**< All elevation spots in the "world_" maps. */
-int elevation_min;          /**< Maximal elevation found. */
-int elevation_max;          /**< Lowest elevation found. */
+static int **elevation_info;       /**< All elevation spots in the "world_" maps. */
+static int elevation_min;          /**< Maximal elevation found. */
+static int elevation_max;          /**< Lowest elevation found. */
 
 /* Links between regions */
-int do_regions_link = 0;
-char **regions_link;
-int regions_link_count = 0;
-int regions_link_allocated = 0;
+static int do_regions_link = 0;
+static char **regions_link;
+static int regions_link_count = 0;
+static int regions_link_allocated = 0;
 
 /** Connection/slaying information. */
 #define S_DOOR      0
@@ -491,9 +493,9 @@ typedef struct {
     struct_map_list maps[S_MAX];
 } struct_slaying_info;
 
-struct_slaying_info **slaying_info = NULL;  /**< Found slaying fields. */
-int slaying_count = 0;                      /**< Count of items in slaying_info. */
-int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
+static struct_slaying_info **slaying_info = NULL;  /**< Found slaying fields. */
+static int slaying_count = 0;                      /**< Count of items in slaying_info. */
+static int slaying_allocated = 0;                  /**< Allocated size of slaying_info. */
 
 /**
  * Initialises a list structure.
@@ -506,7 +508,7 @@ static void init_map_list(struct_map_list *list) {
     list->allocated = 0;
 }
 
-void add_map(struct_map_info *info, struct_map_list *list);
+static void add_map(struct_map_info *info, struct_map_list *list);
 
 static int is_special_equipment(object *item) {
     if (item->name == item->arch->clone.name)
@@ -803,7 +805,7 @@ static int get_elevation_color(int elevation, gdImagePtr elevationmap) {
  * @param map
  * map to write info for.
  */
-void do_exit_map(mapstruct *map) {
+static void do_exit_map(mapstruct *map) {
     int tx, ty, x, y;
     object *item, *test;
 
@@ -982,10 +984,10 @@ static char *do_template(const char *template, const char **vars, const char **v
         else {
         current_result = current_result+strlen(current_result);
         var = 0;
-        while (vars[var] != 0 && (strncmp(vars[var], sharp+1, end-sharp-1) || (strlen(vars[var]) != end-sharp-1)))
+        while (vars[var] != NULL && (strncmp(vars[var], sharp+1, end-sharp-1) || (strlen(vars[var]) != end-sharp-1)))
             /* tag must be the same length, else can take a wrong tag */
             var++;
-        if (vars[var] == 0)
+        if (vars[var] == NULL)
             printf("Wrong tag: %s\n", sharp);
         else
             strcpy(current_result, values[var]);
@@ -1161,11 +1163,11 @@ typedef struct struct_quest {
     struct_map_in_quest_list maps;  /**< Maps part of this quest. */
 } struct_quest;
 
-struct_quest **quests = NULL;   /**< All quests in the game. */
+static struct_quest **quests = NULL;   /**< All quests in the game. */
 
-int quests_count = 0;           /**< Count of quests. */
+static int quests_count = 0;           /**< Count of quests. */
 
-int quests_allocated = 0;       /**< Allocated items in quests. */
+static int quests_allocated = 0;       /**< Allocated items in quests. */
 
 static void init_struct_map_in_quest_list(struct_map_in_quest_list *list) {
     list->list = NULL;
@@ -1292,7 +1294,7 @@ static void define_quest(const char *name, struct_map_info *mainmap, const char 
  * @param map
  * map to process.
  */
-void process_map_lore(struct_map_info *map) {
+static void process_map_lore(struct_map_info *map) {
     char *start, *end, *next;
     char name[500];
     char description[500];
@@ -1493,7 +1495,7 @@ static void add_npc_to_map(struct_map_info *map, const object *npc) {
  * @note
  * will allocate memory and update variables when required.
  */
-void add_map(struct_map_info *info, struct_map_list *list) {
+static void add_map(struct_map_info *info, struct_map_list *list) {
     int map;
 
     for (map = 0; map < list->count; map++)
@@ -1518,7 +1520,7 @@ void add_map(struct_map_info *info, struct_map_list *list) {
  * @param list
  * where to search.
  */
-void replace_map(struct_map_info *find, struct_map_info *replace_by, struct_map_list *list) {
+static void replace_map(struct_map_info *find, struct_map_info *replace_by, struct_map_list *list) {
     int map;
 
     for (map = 0; map < list->count; map++) {
@@ -1536,7 +1538,7 @@ void replace_map(struct_map_info *find, struct_map_info *replace_by, struct_map_
  * @return
  * new struct_map_info.
  */
-struct_map_info *create_map_info(void) {
+static struct_map_info *create_map_info(void) {
     struct_map_info *add = calloc(1, sizeof(struct_map_info));
 
     add->min_monster = 2000;
@@ -1557,7 +1559,7 @@ struct_map_info *create_map_info(void) {
  * @return
  * new tiled map.
  */
-struct_map_info *create_tiled_map(void) {
+static struct_map_info *create_tiled_map(void) {
     struct_map_info *add = create_map_info();
 
     add_map(add, &tiled_map_list);
@@ -1575,7 +1577,7 @@ struct_map_info *create_tiled_map(void) {
  * @param tiled_map
  * the map tiled to another group. Its group will disappear.
  */
-void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map) {
+static void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map) {
     int g;
     struct_map_info *group = tiled_map->tiled_group;
     struct_map_info *change;
@@ -1609,7 +1611,7 @@ void merge_tiled_maps(struct_map_info *map, int tile, struct_map_info *tiled_map
  * @return
  * associated structure.
  */
-struct_map_info *get_map_info(const char *path) {
+static struct_map_info *get_map_info(const char *path) {
     int map;
     struct_map_info *add;
     char *tmp;
@@ -1637,7 +1639,7 @@ struct_map_info *get_map_info(const char *path) {
  * @param path
  * map to remove.
  */
-void list_map(const char *path) {
+static void list_map(const char *path) {
     int index;
 
     for (index = 0; index < found_maps_count; index++) {
@@ -1660,7 +1662,7 @@ void list_map(const char *path) {
  * @param reg
  * region to link the map to.
  */
-void add_map_to_region(struct_map_info *map, region *reg) {
+static void add_map_to_region(struct_map_info *map, region *reg) {
     int test;
     int x, y;
 
@@ -1849,7 +1851,7 @@ static void check_slaying_inventory(struct_map_info *map, object *item) {
  * @param info
  * map to process.
  */
-void process_map(struct_map_info *info) {
+static void process_map(struct_map_info *info) {
     mapstruct *m;
     int x, y, isworld;
     object *item;
@@ -2066,7 +2068,7 @@ void process_map(struct_map_info *info) {
                         hx = 0;
                         hy = 0;
                     }
-                    if (gdfaces[item->face->number] != 0 && ((!item->head && !item->more) || (item->arch->clone.x+hx == 0 && item->arch->clone.y+hy == 0))) {
+                    if (gdfaces[item->face->number] != NULL && ((!item->head && !item->more) || (item->arch->clone.x+hx == 0 && item->arch->clone.y+hy == 0))) {
                         gdImageCopy(pic, gdfaces[item->face->number], x*32, y*32, 0, 0, gdfaces[item->face->number]->sx, gdfaces[item->face->number]->sy);
                     }
                 }
@@ -2117,7 +2119,10 @@ void process_map(struct_map_info *info) {
  * @return
  * processed template. Should be free() by the caller.
  */
-char *do_map_index(const char *dest, struct_map_list *maps_list, const char *template_page, const char *template_letter, const char *template_map, const char **vars, const char **values) {
+static char *do_map_index(const char *dest, struct_map_list *maps_list,
+                          const char *template_page, const char *template_letter,
+                          const char *template_map, const char **vars,
+                          const char **values) {
 #define VARSADD 6
     int map;
     char *string;
@@ -2249,7 +2254,7 @@ char *do_map_index(const char *dest, struct_map_list *maps_list, const char *tem
  * @note
  * will sort the maps.
  */
-void write_region_page(struct_region_info *reg) {
+static void write_region_page(struct_region_info *reg) {
     char *string;
     FILE *index;
     char html[500];
@@ -2282,7 +2287,7 @@ void write_region_page(struct_region_info *reg) {
 /**
  * Generates all map indexes for a region.
  */
-void write_all_regions(void) {
+static void write_all_regions(void) {
     int reg;
 
     qsort(regions, region_count, sizeof(struct_region_info *), sort_region);
@@ -2294,7 +2299,7 @@ void write_all_regions(void) {
 /**
  * Generates global map index, file maps.html.
  */
-void write_maps_index(void) {
+static void write_maps_index(void) {
     char index_path[500];
     char *tmp;
     FILE *index;
@@ -2316,7 +2321,7 @@ void write_maps_index(void) {
 /**
  * Generates region index.
  */
-void write_region_index(void) {
+static void write_region_index(void) {
     char *txt;
     char *final;
     char count[10];
@@ -2357,7 +2362,7 @@ void write_region_index(void) {
 /**
  * Generates a big world map.
  */
-void write_world_map(void) {
+static void write_world_map(void) {
 #define SIZE 50
     int x, y;
     FILE *out;
@@ -2497,7 +2502,7 @@ void write_world_map(void) {
  * @param map
  * map to write page of.
  */
-void write_map_page(struct_map_info *map) {
+static void write_map_page(struct_map_info *map) {
     char *exits_text;
     char *exits_to;
     char *maplore;
@@ -2669,7 +2674,7 @@ void write_map_page(struct_map_info *map) {
 }
 
 /** Ensures all maps have a name (if there was a limit to map processing, some maps will have a NULL name which causes issues). */
-void fix_map_names(void) {
+static void fix_map_names(void) {
     int map;
 
     for (map = 0; map < maps_list.count; map++) {
@@ -2689,7 +2694,7 @@ void fix_map_names(void) {
  * @todo
  * use a better filename, try to get the start of the map filenames.
  */
-void fix_tiled_map(void) {
+static void fix_tiled_map(void) {
     int map, tile;
     char name[500];
     char *slash, *test;
@@ -2758,7 +2763,7 @@ void fix_tiled_map(void) {
  * @param is_from
  * if non zero, <code>from</code> is exit_from field, else it is an exit_to.
  */
-void fix_exits_for_map(struct_map_info *current, struct_map_list *from, int is_from) {
+static void fix_exits_for_map(struct_map_info *current, struct_map_list *from, int is_from) {
     int map, max;
     struct_map_info *group;
 
@@ -2777,7 +2782,7 @@ void fix_exits_for_map(struct_map_info *current, struct_map_list *from, int is_f
 }
 
 /** Changes all exits to maps in a tiled map to point directly to the tiled map. Same for region lists. */
-void fix_exits_to_tiled_maps(void) {
+static void fix_exits_to_tiled_maps(void) {
     int map, region, max;
     struct_map_info *group;
 
@@ -2805,7 +2810,7 @@ void fix_exits_to_tiled_maps(void) {
  * Makes all monsters point to tiled maps instead of map when appliable, and merge
  * map monster to tiled map.
  */
-void fix_tiled_map_monsters(void) {
+static void fix_tiled_map_monsters(void) {
     int map, race, max;
     struct_map_info *group;
 
@@ -2833,7 +2838,7 @@ void fix_tiled_map_monsters(void) {
 }
 
 /** Ensures all maps have a name, and writes all map pages. */
-void write_all_maps(void) {
+static void write_all_maps(void) {
     int map;
 
     printf("Writing map pages...");
@@ -2877,7 +2882,7 @@ static int tiled_map_need_pic(struct_map_info *map) {
  * add a field to struct_map_info to remember if pic was updated or not, and update the tiled map
  * only if one map has changed / the pic doesn't exist.
  */
-void do_tiled_map_picture(struct_map_info *map) {
+static void do_tiled_map_picture(struct_map_info *map) {
     int xmin = 0, xmax = 0, ymin = 0, ymax = 0, tiled, count, last;
     char picpath[500];
     gdImagePtr small, large, load;
@@ -3004,7 +3009,7 @@ void do_tiled_map_picture(struct_map_info *map) {
 }
 
 /** Writes the page for a tiled map group. */
-void write_tiled_map_page(struct_map_info *map) {
+static void write_tiled_map_page(struct_map_info *map) {
 
     do_tiled_map_picture(map);
 
@@ -3014,7 +3019,7 @@ void write_tiled_map_page(struct_map_info *map) {
 }
 
 /** Outputs all tiled map pages. */
-void write_tiled_maps(void) {
+static void write_tiled_maps(void) {
     int map;
 
     printf("Writing tiled map information...\n");
@@ -3026,7 +3031,7 @@ void write_tiled_maps(void) {
 }
 
 /** Outputs the list of maps sorted by level. */
-void write_maps_by_level(void) {
+static void write_maps_by_level(void) {
     int map;
     FILE *out;
     char name[500];
@@ -3104,7 +3109,7 @@ void write_maps_by_level(void) {
 /**
  * Writes the item page.
  */
-void write_equipment_index(void) {
+static void write_equipment_index(void) {
     int item, map;
     FILE *out;
     char name[500];
@@ -3170,7 +3175,7 @@ static void write_race_index(void) {
 }
 
 /** Directories to ignore for map search. */
-const char *ignore_path[] = {
+static const char *ignore_path[] = {
     "/Info",
     "/editor",
     "/python",
@@ -3181,7 +3186,7 @@ const char *ignore_path[] = {
     NULL };
 
 /** File names to ignore for map search. */
-const char *ignore_name[] = {
+static const char *ignore_name[] = {
     ".",
     "..",
     ".svn",
@@ -3194,7 +3199,7 @@ const char *ignore_name[] = {
  * @param from
  * path to search from, without trailing /.
  */
-void find_maps(const char *from) {
+static void find_maps(const char *from) {
     struct dirent *file;
     struct stat statbuf;
     int status, ignore;
@@ -3239,7 +3244,7 @@ void find_maps(const char *from) {
 }
 
 /** Writes the list of unused maps, maps found in the directories but not linked from the other maps. */
-void dump_unused_maps(void) {
+static void dump_unused_maps(void) {
     FILE *dump;
     char path[1024];
     int index, found = 0;
@@ -3262,7 +3267,7 @@ void dump_unused_maps(void) {
 }
 
 /** Writes the exit information world map. */
-void write_world_info(void) {
+static void write_world_info(void) {
     FILE *file;
     char path[MAX_BUF];
     int x, y;
@@ -3304,7 +3309,7 @@ void write_world_info(void) {
 }
 
 /** Write the .dot file representing links between regions. */
-void write_regions_link(void) {
+static void write_regions_link(void) {
     FILE *file;
     char path[MAX_BUF];
     int link;
@@ -3390,7 +3395,7 @@ static int sort_slaying(const void *left, const void *right) {
 /**
  * Writes all slaying info to file.
  */
-void write_slaying_info(void) {
+static void write_slaying_info(void) {
     FILE *file;
     char path[MAX_BUF];
     int lock;
@@ -3468,7 +3473,7 @@ static void write_npc_list(void) {
  * @param program
  * program path.
  */
-void do_help(const char *program) {
+static void do_help(const char *program) {
     printf("Crossfire Mapper will generate pictures of maps, and create indexes for all maps and regions.\n\n");
     printf("Syntax: %s\n\n", program);
     printf("Optional arguments:\n");
@@ -3501,7 +3506,7 @@ void do_help(const char *program) {
  * @param argv
  * arguments, including program name.
  */
-void do_parameters(int argc, char **argv) {
+static void do_parameters(int argc, char **argv) {
     int arg = 1;
     char path[500];
 
@@ -3569,7 +3574,7 @@ void do_parameters(int argc, char **argv) {
 /**
  * Ensures destination directory exists.
  */
-void create_destination(void) {
+static void create_destination(void) {
     char dummy[502];
 
     strcpy(dummy, root);
@@ -3616,7 +3621,7 @@ int main(int argc, char **argv) {
     init_gods();
     read_client_images();
 
-    //Add a dummy region so unlinked maps can be identified
+    /* Add a dummy region so unlinked maps can be identified. */
     dummy = get_region_struct();
     dummy->fallback = 1;
     dummy->name = add_string("unlinked");
