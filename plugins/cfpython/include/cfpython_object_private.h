@@ -197,6 +197,7 @@ static int Object_SetLastSP(Crossfire_Object *whoptr, PyObject *value, void *clo
 static int Object_SetLastGrace(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetLastEat(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetAttackType(Crossfire_Object *whoptr, PyObject *value, void *closure);
+static int Object_SetIdentified(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetUnaggressive(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetPickable(Crossfire_Object *whoptr, PyObject *value, void *closure);
 static int Object_SetInvisible(Crossfire_Object *whoptr, PyObject *value, void *closure);
@@ -342,7 +343,7 @@ static PyGetSetDef Object_getseters[] = {
     { "AnimSpeed",      (getter)Object_GetAnimSpeed,    (setter)Object_SetAnimSpeed, NULL, NULL },
     { "AttackType",     (getter)Object_GetAttackType,   (setter)Object_SetAttackType, NULL, NULL },
     { "BeenApplied",    (getter)Object_GetBeenApplied,  NULL, NULL, NULL },
-    { "Identified",     (getter)Object_GetIdentified,   NULL, NULL, NULL },
+    { "Identified",     (getter)Object_GetIdentified,   (setter)Object_SetIdentified, NULL, NULL },
     { "Alive",          (getter)Object_GetAlive,        NULL, NULL, NULL },
     { "DungeonMaster",  (getter)Object_GetDM,           NULL, NULL, NULL },
     { "WasDungeonMaster", (getter)Object_GetWasDM,      NULL, NULL, NULL },

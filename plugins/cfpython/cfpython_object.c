@@ -1396,6 +1396,17 @@ static int Object_SetAttackType(Crossfire_Object *whoptr, PyObject *value, void 
     return 0;
 }
 
+static int Object_SetIdentified(Crossfire_Object *whoptr, PyObject *value, void *closure) {
+    int val;
+
+    EXISTCHECK_INT(whoptr);
+    if (!PyArg_Parse(value, "i", &val))
+        return -1;
+
+    cf_object_set_flag(whoptr->obj, FLAG_IDENTIFIED, val);
+    return 0;
+}
+
 static int Object_SetUnaggressive(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     int val;
 

@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cfpython/cfpython_object.c,
+  plugins/cfpython/include/cfpython_object_private.h: Make it possible to set
+  Object.Identified as well as get it. This was used by some python scripts
+  (though it didn't actually work).
+Arvid Norlander 2009-02-09
+
 utils/mapper.c: Fix a segfault when generating world map and not all input maps
   was found (could happen using -limit).
 Arvid Norlander 2009-02-08
