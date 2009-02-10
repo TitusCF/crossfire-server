@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/living.h, include/player.h: Rearrange member order in some structs to
+  reduce wasted space due to alignment.
+Arvid Norlander 2009-02-10
+
 plugins/cfnewspaper/cfnewspaper.c: Remove unused function.
 Arvid Norlander 2009-02-10
 

@@ -198,11 +198,11 @@ typedef struct pl {
     uint32      last_path_attuned;   /**< Last spell attunment sent to client. */
     uint32      last_path_repelled;  /**< Last spell repelled sent to client. */
     uint32      last_path_denied;    /**< Last spell denied sent to client. */
+    int         Swap_First;          /**< First stat player has selected to swap. */
     living      orig_stats;          /**< Permanent real stats of player. */
     living      last_stats;          /**< Last stats as sent to client. */
     float       last_speed;          /**< Last speed as sent to client. */
     sint16      last_resist[NROFATTACKS];       /**< last resist values sent to client. */
-    int         Swap_First;          /**< First stat player has selected to swap. */
     object      *ob;                 /**< The object representing the player. */
     object      *last_used;          /**< Pointer to object last picked or applied. */
     uint32      last_used_id;        /**< Safety measures to be sure it's the same. */
@@ -226,6 +226,7 @@ typedef struct pl {
     char        password[16];        /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
     char        new_password[16];    /**< 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 
+    sint16      encumbrance;         /**< How much our player is encumbered. */
 #ifdef SAVE_INTERVAL
     time_t      last_save_time;      /**< Last time the player was saved. */
 #endif /* SAVE_INTERVAL */
@@ -239,7 +240,6 @@ typedef struct pl {
                                       * join. */
     party_rejoin_mode rejoin_party;  /**< Whether to rejoin or not party at login. */
     char        search_str[MAX_BUF]; /**< Item we are looking for. */
-    sint16      encumbrance;         /**< How much our player is encumbered. */
     Output_Buf  outputs[NUM_OUTPUT_BUFS]; /**< Holds output strings to send to client. */
     uint16      outputs_sync;        /**< How often to print, no matter what. */
     uint16      outputs_count;       /**< Print if this count is exceeded. */
