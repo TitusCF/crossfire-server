@@ -340,7 +340,7 @@ extern int nrofallocobjects;
 extern int nroffreeobjects;
 
 /**
- * This returns TRUE if the object is somethign that
+ * This returns TRUE if the object is something that
  * should be displayed in the look window
  */
 #define LOOK_OBJ(ob) (!ob->invisible && ob->type != PLAYER && ob->type != EVENT_CONNECTOR)

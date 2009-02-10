@@ -2971,6 +2971,10 @@ static void do_tiled_map_picture(struct_map_info *map) {
         snprintf(picpath, sizeof(picpath), "%s%s%s", root, map->tiled_maps.maps[tiled]->path, output_extensions[output_format]);
 
         out = fopen(picpath, "rb");
+        if (!out) {
+            printf("\n  do_tiled_map_picture: warning: pic file not found for %s (errno=%d)\n", map->tiled_maps.maps[tiled]->path, errno);
+            continue;
+        }
         if (output_format == OF_PNG)
             load = gdImageCreateFromPng(out);
         else

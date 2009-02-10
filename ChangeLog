@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/object.h: Small spelling correction in comment.
+utils/mapper.c: Fix a crash when generating tiled (non-world) maps (such as for
+  greenway) and the user used -limit.
+Arvid Norlander 2009-02-10
+
 plugins/cfpython/cfpython_object.c,
   plugins/cfpython/include/cfpython_object_private.h: Add Object_GetAnimated()
   to be able to read this property (it used to be write only from python).
