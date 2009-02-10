@@ -15,6 +15,11 @@ else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
 plugins/cfpython/cfpython_object.c,
+  plugins/cfpython/include/cfpython_object_private.h: Add Object_GetAnimated()
+  to be able to read this property (it used to be write only from python).
+Arvid Norlander 2009-02-10
+
+plugins/cfpython/cfpython_object.c,
   plugins/cfpython/include/cfpython_object_private.h: Make it possible to set
   Object.Identified as well as get it. This was used by some python scripts
   (though it didn't actually work).

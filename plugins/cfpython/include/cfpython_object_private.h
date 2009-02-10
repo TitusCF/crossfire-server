@@ -153,6 +153,7 @@ static PyObject *Object_GetIsPet(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetAttackMovement(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetDuration(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetGlowRadius(Crossfire_Object *whoptr, void *closure);
+static PyObject *Object_GetAnimated(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetNoDamage(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetRandomMovement(Crossfire_Object *whoptr, void *closure);
 
@@ -327,7 +328,7 @@ static PyGetSetDef Object_getseters[] = {
     { "Y",              (getter)Object_GetY,            NULL, NULL, NULL },
     { "Direction",      (getter)Object_GetDirection,    (setter)Object_SetDirection, NULL, NULL },
     { "Facing",         (getter)Object_GetFacing,       (setter)Object_SetFacing, NULL, NULL },
-    { "Unaggressive", (getter)Object_GetUnaggressive,   (setter)Object_SetUnaggressive, NULL, NULL },
+    { "Unaggressive",   (getter)Object_GetUnaggressive, (setter)Object_SetUnaggressive, NULL, NULL },
     { "God",            (getter)Object_GetGod,          (setter)Object_SetGod, NULL, NULL },
     { "Pickable",       (getter)Object_GetPickable,     (setter)Object_SetPickable, NULL, NULL },
     { "Quantity",       (getter)Object_GetQuantity,     (setter)Object_SetQuantity, NULL, NULL },
@@ -413,7 +414,7 @@ static PyGetSetDef Object_getseters[] = {
     { "AttackMovement", (getter)Object_GetAttackMovement, (setter)Object_SetAttackMovement, NULL, NULL },
     { "Duration",       (getter)Object_GetDuration,     (setter)Object_SetDuration, NULL, NULL },
     { "GlowRadius",     (getter)Object_GetGlowRadius,   (setter)Object_SetGlowRadius, NULL, NULL },
-    { "Animated",       NULL,                           (setter)Object_SetAnimated, NULL, NULL },
+    { "Animated",       (getter)Object_GetAnimated,     (setter)Object_SetAnimated, NULL, NULL },
     { "NoDamage",       (getter)Object_GetNoDamage,     (setter)Object_SetNoDamage, NULL, NULL },
     { "RandomMovement", (getter)Object_GetRandomMovement, (setter)Object_SetRandomMovement, NULL, NULL },
     { NULL, NULL, NULL, NULL, NULL }

@@ -834,6 +834,11 @@ static PyObject *Object_GetGlowRadius(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("i", cf_object_get_int_property(whoptr->obj, CFAPI_OBJECT_PROP_GLOW_RADIUS));
 }
 
+static PyObject *Object_GetAnimated(Crossfire_Object *whoptr, void *closure) {
+    EXISTCHECK(whoptr);
+    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_ANIMATE));
+}
+
 /** Setters */
 static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *closure) {
     char *val;
