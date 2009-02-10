@@ -11,7 +11,7 @@ xmlns:check="http://check.sourceforge.net/ns">
     <!-- ok, first read the configuration -->
     <html><head>
         <title>Automated test result</title>
-	<xsl:element name="LINK">
+	<xsl:element name="link">
 		<xsl:attribute name="rel">stylesheet</xsl:attribute>
 		<xsl:attribute name="type">text/css</xsl:attribute>
 		<xsl:attribute name="href"><xsl:value-of select="$baseUri"/>checkReport.css</xsl:attribute>
