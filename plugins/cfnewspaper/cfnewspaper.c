@@ -109,33 +109,6 @@ static int get_region_id(region *reg) {
     return id;
 }
 
-static int get_map_id(mapstruct *map) {
-    char **line;
-    char *sql;
-    int nrow, ncolumn, id, reg_id;
-    const char *path = map->path;
-
-    if (strncmp(path, "/random/", 7) == 0)
-        path = "/random/";
-
-    reg_id = get_region_id(map->region);
-    sql = sqlite3_mprintf("select map_id from map where map_path='%q' and map_reg_id = %d", path, reg_id);
-    sqlite3_get_table(logger_database, sql, &line, &nrow, &ncolumn, NULL);
-
-    if (nrow > 0)
-        id = atoi(line[ncolumn]);
-    else {
-        sqlite3_free(sql);
-        sql = sqlite3_mprintf("insert into map(map_path, map_reg_id) values( '%q', %d)", path, reg_id);
-        do_sql(sql, logger_database);
-        id = sqlite3_last_insert_rowid(logger_database);
-    }
-    sqlite3_free(sql);
-    sqlite3_free_table(line);
-
-    return id;
-}
-
 static void format_time(timeofday_t *tod, char *buffer, int size) {
     snprintf(buffer, size, "%10d-%2d-%2d %2d:%2d", tod->year, tod->month, tod->day, tod->hour, tod->minute);
 }
