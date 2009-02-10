@@ -110,7 +110,8 @@ i18ndir=$(pkgdatadir)/i18n
 dist_i18n_DATA = i18n/messages.en \
 	i18n/messages.fr
 
-MAINTAINERCLEANFILES = archetypes bmaps faces .collect-stamp
+MAINTAINERCLEANFILES = archetypes bmaps faces .collect-stamp \
+	animations smooth treasures.bld bmaps.paths crossfire.0 crossfire.1
 
 PERL = @PERL@
 
@@ -139,7 +140,10 @@ animations: .collect-stamp
 bmaps.paths bmaps: .collect-stamp
 	make collect
 
-install-data-local: archetypes crossfire.0 faces animations collect.pl util.pl
+smooth: .collect-stamp
+	make collect
+
+install-data-local: archetypes crossfire.0 faces animations smooth collect.pl util.pl
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for i in $(CONF_FILES); do \
