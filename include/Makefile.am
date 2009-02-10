@@ -21,8 +21,8 @@ svnversion.h: FORCE
 	else \
 		echo_n() { echo -n $${1+"$$@"}; } \
 	fi; \
-	if test -n "$(SVNVERSION)" -a -d .svn; \
-	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; $(SVNVERSION) -n`'"'; \
+	if test -n "$(SVNVERSION)" -a -d "$(top_srcdir)/.svn"; \
+	then OUTPUT_DATA=`echo "$$OUTPUT_DATA"; echo_n '#define SVN_REV "'; $(SVNVERSION) -n "$(top_srcdir)"`'"'; \
 	fi; \
 	if test ! -e svnversion.h; then \
 		echo "$$OUTPUT_DATA" > svnversion.h; \
