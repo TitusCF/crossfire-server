@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+check-fragment.am: Add a define -DBUILD_ROOT to support out of tree builds
+  properly.
+test/unit/common/check_object.c, test/unit/common/check_loader.c,
+  test/unit/common/check_arch.c, test/unit/common/check_item.c: make check
+  should now works for out of tree builds. Not well tested yet. Not functional
+  changes for in-tree builds.
+Arvid Norlander 2009-02-10
+
 include/Makefile.am: Make svnversion.h work properly when the build tree is
   not the source tree.
 Arvid Norlander 2009-02-10

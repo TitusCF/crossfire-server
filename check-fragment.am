@@ -1,7 +1,7 @@
 LOGDIR=$(top_builddir)/test/logs/$(CHECK_FOLDER)
 XSLTENGINE= @XSLTENGINE@
 BUILT_SOURCES=$(LOGDIR)
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/test/include -DRESSOURCES=\"$(srcdir)/../../resources\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(srcdir)/../../../\"
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/test/include -DRESSOURCES=\"$(srcdir)/../../resources\" -DBUILD_ROOT=\"$(top_builddir)/\" -DLOGDIR=\"$(top_builddir)/test/logs\" -DSOURCE_ROOT=\"$(top_srcdir)/\"
 $(LOGDIR):
 	mkdir -p $(LOGDIR)
 automenu:

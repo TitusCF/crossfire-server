@@ -39,7 +39,7 @@
 #include "stringbuffer.h"
 
 void setup(void) {
-    cctk_setdatadir(SOURCE_ROOT "lib");
+    cctk_setdatadir(BUILD_ROOT "lib");
     cctk_setlog(LOGDIR "/unit/common/object.out");
     printf("set log to %s\n", LOGDIR"/unit/common/object.out");
     cctk_init_std_archetypes();

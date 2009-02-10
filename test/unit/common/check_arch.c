@@ -37,7 +37,7 @@
 #include <toolkit_common.h>
 
 void setup(void) {
-    cctk_setdatadir(SOURCE_ROOT"lib");
+    cctk_setdatadir(BUILD_ROOT"lib");
     cctk_setlog(LOGDIR"/unit/common/arch.out");
     cctk_init_std_archetypes();
 }
