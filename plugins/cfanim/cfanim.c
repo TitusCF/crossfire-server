@@ -35,6 +35,8 @@
 
 static CFanimation *first_animation = NULL;  /**< Animations we're currently processing. */
 
+static int get_boolean(const char *strg, int *bl);
+
 /**
  * Returns the direction from its name.
  * @param name direction's name
@@ -652,7 +654,7 @@ static int equality_split(char *buffer, char **variable, char **value) {
  * @param bl value strg meant.
  * @return 1 if strg was processed, 0 else.
  */
-int get_boolean(char *strg, int *bl) {
+static int get_boolean(const char *strg, int *bl) {
     if (!strncmp(strg, "y", 1))
         *bl = 1;
     else if (!strncmp(strg, "n", 1))
@@ -675,7 +677,7 @@ int get_boolean(char *strg, int *bl) {
  * @param pl player to search for.
  * @return 1 if pl is part of animation, 0 else.
  */
-int is_animated_player(object *pl) {
+static int is_animated_player(object *pl) {
     CFanimation *current;
 
     for (current = first_animation; current; current++)
@@ -1097,7 +1099,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
     return NULL;
 }
 
-CF_PLUGIN anim_move_result runPluginCommand(object *op, char *params) {
+CF_PLUGIN anim_move_result cfanim_runPluginCommand(object *op, char *params) {
     return -1;
 }
 

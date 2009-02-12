@@ -595,7 +595,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
  * @return
  * -1.
  */
-CF_PLUGIN int runPluginCommand(object *op, char *params) {
+CF_PLUGIN int cflogger_runPluginCommand(object *op, char *params) {
     return -1;
 }
 

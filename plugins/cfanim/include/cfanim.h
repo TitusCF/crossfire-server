@@ -96,8 +96,6 @@ extern CFanimationHook animationbox[];
 
 extern int animationcount;
 
-int get_boolean(char *strg, int *bl);
-
 #ifndef __CEXTRACT__
 #include <cfanim_proto.h>
 #endif

@@ -687,12 +687,12 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
         return NULL;
     return Py_BuildValue("s", cf_get_periodofday_name(i));
 }
-void initContextStack(void) {
+static void initContextStack(void) {
     current_context = NULL;
     context_stack = NULL;
 }
 
-void pushContext(CFPContext *context) {
+static void pushContext(CFPContext *context) {
     if (current_context == NULL) {
         context_stack = context;
         context->down = NULL;
@@ -702,7 +702,7 @@ void pushContext(CFPContext *context) {
     current_context = context;
 }
 
-CFPContext *popContext(void) {
+static CFPContext *popContext(void) {
     CFPContext *oldcontext;
 
     if (current_context != NULL) {
@@ -714,7 +714,7 @@ CFPContext *popContext(void) {
         return NULL;
 }
 
-void freeContext(CFPContext *context) {
+static void freeContext(CFPContext *context) {
     Py_XDECREF(context->event);
     Py_XDECREF(context->third);
     Py_XDECREF(context->who);
@@ -1283,7 +1283,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
                 if (!strcmp(CustomCommand[i].name, cmdname)) {
                     rtn_cmd->name = CustomCommand[i].name;
                     rtn_cmd->time = (float)CustomCommand[i].speed;
-                    rtn_cmd->func = runPluginCommand;
+                    rtn_cmd->func = cfpython_runPluginCommand;
                     current_command = i;
                     return rtn_cmd;
                 }
@@ -1307,7 +1307,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object *op, char *params) {
+CF_PLUGIN int cfpython_runPluginCommand(object *op, char *params) {
     char buf[1024], path[1024];
     CFPContext *context;
     static int rv = 0;
@@ -1315,7 +1315,7 @@ CF_PLUGIN int runPluginCommand(object *op, char *params) {
     rv = 0;
 
     if (current_command < 0) {
-        cf_log(llevError, "Illegal call of runPluginCommand, call find_plugin_command first.\n");
+        cf_log(llevError, "Illegal call of cfpython_runPluginCommand, call find_plugin_command first.\n");
         return 1;
     }
     snprintf(buf, sizeof(buf), "%s.py", cf_get_maps_directory(CustomCommand[current_command].script, path, sizeof(path)));

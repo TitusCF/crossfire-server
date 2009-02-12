@@ -14,6 +14,22 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cfpython/include/cfpython_proto.h, plugins/cfpython/cfpython.c: Fix
+  broken give command. Was broken due to MSW removing -Bsymbolic when building
+  plugins about half a year ago. Also change some other symbols to static in the
+  plugins to avoid more issues like this.
+plugins/cflogger/include/cflogger_proto.h, plugins/cflogger/cflogger.c,
+  plugins/citylife/include/citylife_proto.h, plugins/citylife/citylife.c,
+  plugins/cfrhg/include/cfrhg_proto.h, plugins/cfrhg/cfrhg.c,
+  plugins/cfanim/include/cfanim.h, plugins/cfanim/include/cfanim_proto.h,
+  plugins/cfanim/cfanim.c, plugins/cfnewspaper/include/cfnewspaper_proto.h,
+  plugins/cfnewspaper/cfnewspaper.c: More changes in the same style as the above
+  python changes to reduce possible symbol lookup conflicts. Also make some
+  functions static.
+plugins/cfrhg/include/cfrhg_proto.h, plugins/cfrhg/cfrhg.c: Fix a typo in cfrhg
+  (was "cfrgh" in one place).
+Arvid Norlander 2009-02-12
+
 common/treasure.c: Restore item_power if GT_MINIMAL is passed into
     fix_generated_item().  Fixes bug 2590465: Anvils making items without
     item power

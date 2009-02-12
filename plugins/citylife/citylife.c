@@ -98,7 +98,7 @@ CF_PLUGIN void *getPluginProperty(int *type, ...) {
     return NULL;
 }
 
-CF_PLUGIN int runPluginCommand(object *op, char *params) {
+CF_PLUGIN int citylife_runPluginCommand(object *op, char *params) {
     return -1;
 }
 
