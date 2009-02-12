@@ -1135,6 +1135,9 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
             save_item_power = op->item_power; /* Just in case it would get used
                                                * again below */
         }
+    } else {
+        /* If flag is GT_MINIMAL, we want to restore item power */
+        op->item_power = save_item_power;
     }
 
     /* materialtype modifications.  Note we allow this on artifacts. */
