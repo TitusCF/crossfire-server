@@ -2316,9 +2316,9 @@ object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
     if (orig_ob->nrof < nr) {
         /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
         if (err)
-            snprintf(err, size, "There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
+            snprintf(err, size, "There are only %u %ss.", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
         else
-            LOG(llevDebug, "There are only %d %ss.\n", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
+            LOG(llevDebug, "There are only %u %ss.\n", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
         return NULL;
     }
     newob = object_create_clone(orig_ob);

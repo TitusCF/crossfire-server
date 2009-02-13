@@ -657,6 +657,7 @@ int cast_smite_spell(object *op, object *caster, int dir, object *spell) {
     const object *god = find_god(determine_god(op));
     int range;
 
+    /* BUG? The value in range doesn't seem to be used. */
     range = spell->range+SP_level_range_adjust(caster, spell);
     target = get_pointed_target(op, dir, 50, spell->stats.grace ? SPELL_GRACE : SPELL_MANA);
 

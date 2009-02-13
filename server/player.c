@@ -1991,6 +1991,7 @@ int fire_bow(object *op, object *arrow, int dir, int wc_mod, sint16 sx, sint16 s
     }
 
     left = arrow; /* these are arrows left to the player */
+    /* BUG? The value in left_tag doesn't seem to be used. */
     left_tag = left->count;
     arrow = get_split_ob(arrow, 1, NULL, 0);
     if (arrow == NULL) {
@@ -2216,6 +2217,7 @@ void fire(object *op, int dir) {
         return;
 
     case range_magic: /* Casting spells */
+        /* BUG? The value in spellcost is never used again it seems. */
         spellcost = (cast_spell(op, op, dir, op->contr->ranges[range_magic], op->contr->spellparam[0] ? op->contr->spellparam : NULL));
         return;
 

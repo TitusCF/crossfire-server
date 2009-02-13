@@ -1457,7 +1457,7 @@ int save_map(mapstruct *m, int flag) {
     fprintf(fp, "arch map\n");
     if (m->name) fprintf(fp, "name %s\n", m->name);
     if (!flag) fprintf(fp, "swap_time %d\n", m->swap_time);
-    if (m->reset_timeout) fprintf(fp, "reset_timeout %d\n", m->reset_timeout);
+    if (m->reset_timeout) fprintf(fp, "reset_timeout %u\n", m->reset_timeout);
     if (m->fixed_resettime) fprintf(fp, "fixed_resettime %d\n", m->fixed_resettime);
     /* we unfortunately have no idea if this is a value the creator set
      * or a difficulty value we generated when the map was first loaded

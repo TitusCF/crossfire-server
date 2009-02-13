@@ -1325,6 +1325,7 @@ int apply_special(object *who, object *op, int aflags) {
                     (void)insert_ob_in_ob(tmp, who);
                 return 1;
             }
+            /* BUG? It seems the value of quotepos is never used. */
             if ((quotepos = strstr(op->name, "'")) != NULL) {
                 ownerlen = (strstr(op->name, "'")-op->name);
                 if (op->level && (strncmp(op->name, who->name, ownerlen))) {

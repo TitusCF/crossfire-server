@@ -725,7 +725,7 @@ void get_who_escape_code_value(char *return_val, int size, const char letter, pl
         break;
 
     case 'c':
-        snprintf(return_val, size, "%d", pl->ob->count);
+        snprintf(return_val, size, "%u", pl->ob->count);
         break;
 
     case 'n':

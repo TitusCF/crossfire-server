@@ -2012,6 +2012,7 @@ static int do_throw(object *op, object *part, object *toss_item, int dir, object
     } /* if object can't be thrown */
 
     left = throw_ob; /* these are throwing objects left to the player */
+    /* BUG? The value in left_tag doesn't seem to be used. */
     left_tag = left->count;
 
     /* sometimes get_split_ob can't split an object (because op->nrof==0?)
