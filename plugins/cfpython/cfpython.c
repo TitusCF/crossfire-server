@@ -687,6 +687,7 @@ static PyObject *getPeriodofdayName(PyObject *self, PyObject *args) {
         return NULL;
     return Py_BuildValue("s", cf_get_periodofday_name(i));
 }
+
 static void initContextStack(void) {
     current_context = NULL;
     context_stack = NULL;

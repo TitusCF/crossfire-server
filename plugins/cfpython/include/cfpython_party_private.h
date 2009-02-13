@@ -20,7 +20,9 @@ static PyMethodDef PartyMethods[] = {
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_PartyType = {
     PyObject_HEAD_INIT(NULL)
+#ifndef IS_PY3K
     0,                         /* ob_size*/
+#endif
     "Crossfire.Party",         /* tp_name*/
     sizeof(Crossfire_Party),   /* tp_basicsize*/
     0,                         /* tp_itemsize*/
@@ -33,7 +35,7 @@ PyTypeObject Crossfire_PartyType = {
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
     NULL,                      /* tp_as_mapping*/
-    NULL,                      /* tp_hash */
+    PyObject_HashNotImplemented, /* tp_hash */
     NULL,                      /* tp_call*/
     NULL,                      /* tp_str*/
     PyObject_GenericGetAttr,   /* tp_getattro*/

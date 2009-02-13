@@ -64,7 +64,7 @@ static int Player_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *clos
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Title attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Title attribute must be a string");
         return -1;
     }
@@ -848,7 +848,7 @@ static int Object_SetMessage(Crossfire_Object *whoptr, PyObject *value, void *cl
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Message attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Message attribute must be a string");
         return -1;
     }
@@ -867,7 +867,7 @@ static int Object_SetName(Crossfire_Object *whoptr, PyObject *value, void *closu
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Name attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Name attribute must be a string");
         return -1;
     }
@@ -887,7 +887,7 @@ static int Object_SetNamePl(Crossfire_Object *whoptr, PyObject *value, void *clo
         PyErr_SetString(PyExc_TypeError, "Cannot delete the NamePl attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The NamePl attribute must be a string");
         return -1;
     }
@@ -906,7 +906,7 @@ static int Object_SetTitle(Crossfire_Object *whoptr, PyObject *value, void *clos
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Title attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Title attribute must be a string");
         return -1;
     }
@@ -925,7 +925,7 @@ static int Object_SetRace(Crossfire_Object *whoptr, PyObject *value, void *closu
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Race attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Race attribute must be a string");
         return -1;
     }
@@ -955,7 +955,7 @@ static int Object_SetSlaying(Crossfire_Object *whoptr, PyObject *value, void *cl
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Slaying attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Slaying attribute must be a string");
         return -1;
     }
@@ -974,7 +974,7 @@ static int Object_SetSkill(Crossfire_Object *whoptr, PyObject *value, void *clos
         PyErr_SetString(PyExc_TypeError, "Cannot delete the Skill attribute");
         return -1;
     }
-    if (!PyString_Check(value)) {
+    if (!CF_IS_PYSTR(value)) {
         PyErr_SetString(PyExc_TypeError, "The Skill attribute must be a string");
         return -1;
     }
@@ -2378,7 +2378,7 @@ static void Crossfire_Object_dealloc(PyObject *obj) {
         if (self->obj) {
             free_object_assoc(self->obj);
         }
-        self->ob_type->tp_free(obj);
+        Py_TYPE(self)->tp_free(obj);
     }
 }
 
@@ -2390,7 +2390,7 @@ static void Crossfire_Player_dealloc(PyObject *obj) {
         if (self->obj) {
             free_object_assoc(self->obj);
         }
-        self->ob_type->tp_free(obj);
+        Py_TYPE(self)->tp_free(obj);
     }
 }
 

@@ -23,7 +23,9 @@ static PyMethodDef ArchetypeMethods[] = {
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_ArchetypeType = {
     PyObject_HEAD_INIT(NULL)
+#ifndef IS_PY3K
     0,                         /* ob_size*/
+#endif
     "Crossfire.Archetype",     /* tp_name*/
     sizeof(Crossfire_Archetype), /* tp_basicsize*/
     0,                         /* tp_itemsize*/
@@ -36,7 +38,7 @@ PyTypeObject Crossfire_ArchetypeType = {
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
     NULL,                      /* tp_as_mapping*/
-    NULL,                      /* tp_hash */
+    PyObject_HashNotImplemented, /* tp_hash */
     NULL,                      /* tp_call*/
     NULL,                      /* tp_str*/
     PyObject_GenericGetAttr,   /* tp_getattro*/

@@ -42,11 +42,37 @@
     #include <Python.h>
 #endif
 
-/* This is for allowing both python 3 and python 2. */
+/* This is for allowing both python 3 and python 2.
+ * We also use some warnings and such with python 2.6 (and later 2.x).
+ */
 #if PY_MAJOR_VERSION >= 3
-#  define IS_PY3K
-#elif PY_MINOR_VERSION == 6
-#  define IS_PY26
+#    define IS_PY3K
+#elif PY_MINOR_VERSION >= 6
+#    define IS_PY26
+#else
+#    define IS_PY_LEGACY
+#endif
+
+/* Python 2.5 or older doesn't define these. */
+#ifndef Py_SIZE
+#    define Py_SIZE(ob)         (((PyVarObject*)(ob))->ob_size)
+#endif
+#ifndef Py_TYPE
+#    define Py_TYPE(ob)         (((PyObject*)(ob))->ob_type)
+#endif
+
+/* Python 2.6 and later use PyObject_HashNotImplemented to indicate no support
+ * for hash.
+ */
+#ifdef IS_PY_LEGACY
+#  define PyObject_HashNotImplemented NULL
+#endif
+
+/* Handle Bytes vs. String */
+#ifdef IS_PY3K
+#    define CF_IS_PYSTR(cfpy_obj) (PyUnicode_Check(cfpy_obj))
+#else
+#    define CF_IS_PYSTR(cfpy_obj) (PyString_Check(cfpy_obj) || PyUnicode_Check(cfpy_obj))
 #endif
 
 /* Python can define HAVE_GETTIMEOFDAY, but we have our own later on. */

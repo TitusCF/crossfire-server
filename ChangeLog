@@ -14,6 +14,19 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cfpython/cfpython.c, plugins/cfpython/cfpython_map.c,
+  plugins/cfpython/include/cfpython_archetype_private.h,
+  plugins/cfpython/include/cfpython_region_private.h,
+  plugins/cfpython/include/cfpython_party_private.h,
+  plugins/cfpython/include/cfpython_map_private.h,
+  plugins/cfpython/include/cfpython_object_private.h,
+  plugins/cfpython/include/cfpython.h, plugins/cfpython/cfpython_object.c: Some
+  of the changes needed to support Python 3: Adding some compatibility defines
+  to support some stuff on both Python 2 and Python 3. This also means we now
+  support unicode strings in a few places we didn't before. Also properly handle
+  "hash not supported" under Python 2.6 or later.
+Arvid Norlander 2009-02-13
+
 server/apply.c, server/skills.c, server/player.c, server/spell_attack.c: Add a
   comment marking some variables set but then never used (found with compiler
   warnings). Unsure about what the correct way to solve them are (that is:

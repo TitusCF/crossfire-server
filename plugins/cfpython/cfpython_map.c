@@ -322,7 +322,7 @@ static void Crossfire_Map_dealloc(PyObject *obj) {
         if (self->map && self->valid) {
             free_map_assoc(self->map);
         }
-        self->ob_type->tp_free(obj);
+        Py_TYPE(self)->tp_free(obj);
     }
 }
 
