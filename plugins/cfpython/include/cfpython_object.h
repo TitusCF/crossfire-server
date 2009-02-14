@@ -51,6 +51,17 @@ extern PyTypeObject Crossfire_PlayerType;
         return NULL; \
     } }
 
+/**
+ * This is meant to be used for parameters where you don't know if the type of
+ * the object is correct. It should NOT be used for the self pointer, since that
+ * will always be a compatible type.
+ */
+#define TYPEEXISTCHECK(ob) { \
+    if (!ob || !PyObject_TypeCheck((PyObject*)ob, &Crossfire_ObjectType) || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
+        PyErr_SetString(PyExc_ReferenceError, "Not a Crossfire object or Crossfire object no longer exists"); \
+        return NULL; \
+    } }
+
 #define EXISTCHECK_INT(ob) { \
     if (!ob || !ob->obj || (was_destroyed(ob->obj, ob->obj->count))) { \
         PyErr_SetString(PyExc_ReferenceError, "Crossfire object no longer exists"); \

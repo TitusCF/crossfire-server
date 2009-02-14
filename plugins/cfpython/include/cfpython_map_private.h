@@ -56,7 +56,9 @@ static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args);
 static int Map_InternalCompare(Crossfire_Map *left, Crossfire_Map *right);
 
 static PyObject *Crossfire_Map_Long(PyObject *obj);
+#ifndef IS_PY3K
 static PyObject *Crossfire_Map_Int(PyObject *obj);
+#endif
 static void Crossfire_Map_dealloc(PyObject *obj);
 static PyObject *Crossfire_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 
@@ -82,13 +84,13 @@ static PyGetSetDef Map_getseters[] = {
 };
 
 static PyMethodDef MapMethods[] = {
-    { "Print",    (PyCFunction)Map_Message, METH_VARARGS, NULL },
-    { "ObjectAt", (PyCFunction)Map_GetFirstObjectAt, METH_VARARGS, NULL },
-    { "CreateObject", (PyCFunction)Map_CreateObject, METH_VARARGS, NULL },
-    { "Check",    (PyCFunction)Map_Check, METH_VARARGS, NULL },
-    { "Next",     (PyCFunction)Map_Next, METH_VARARGS, NULL },
-    { "Insert",   (PyCFunction)Map_Insert, METH_VARARGS, NULL },
-    { "ChangeLight", (PyCFunction)Map_ChangeLight, METH_VARARGS, NULL },
+    { "Print",            (PyCFunction)Map_Message,          METH_VARARGS, NULL },
+    { "ObjectAt",         (PyCFunction)Map_GetFirstObjectAt, METH_VARARGS, NULL },
+    { "CreateObject",     (PyCFunction)Map_CreateObject,     METH_VARARGS, NULL },
+    { "Check",            (PyCFunction)Map_Check,            METH_VARARGS, NULL },
+    { "Next",             (PyCFunction)Map_Next,             METH_NOARGS,  NULL },
+    { "Insert",           (PyCFunction)Map_Insert,           METH_VARARGS, NULL },
+    { "ChangeLight",      (PyCFunction)Map_ChangeLight,      METH_VARARGS, NULL },
     { "TriggerConnected", (PyCFunction)Map_TriggerConnected, METH_VARARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -97,26 +99,65 @@ static PyNumberMethods MapConvert = {
     NULL,            /* binaryfunc nb_add; */        /* __add__ */
     NULL,            /* binaryfunc nb_subtract; */   /* __sub__ */
     NULL,            /* binaryfunc nb_multiply; */   /* __mul__ */
+#ifndef IS_PY3K
     NULL,            /* binaryfunc nb_divide; */     /* __div__ */
+#endif
     NULL,            /* binaryfunc nb_remainder; */  /* __mod__ */
     NULL,            /* binaryfunc nb_divmod; */     /* __divmod__ */
     NULL,            /* ternaryfunc nb_power; */     /* __pow__ */
     NULL,            /* unaryfunc nb_negative; */    /* __neg__ */
     NULL,            /* unaryfunc nb_positive; */    /* __pos__ */
     NULL,            /* unaryfunc nb_absolute; */    /* __abs__ */
+#ifdef IS_PY3K
+    NULL,            /* inquiry nb_bool; */          /* __bool__ */
+#else
     NULL,            /* inquiry nb_nonzero; */       /* __nonzero__ */
+#endif
     NULL,            /* unaryfunc nb_invert; */      /* __invert__ */
     NULL,            /* binaryfunc nb_lshift; */     /* __lshift__ */
     NULL,            /* binaryfunc nb_rshift; */     /* __rshift__ */
     NULL,            /* binaryfunc nb_and; */        /* __and__ */
     NULL,            /* binaryfunc nb_xor; */        /* __xor__ */
     NULL,            /* binaryfunc nb_or; */         /* __or__ */
+#ifndef IS_PY3K
     NULL,            /* coercion nb_coerce; */       /* __coerce__ */
-    Crossfire_Map_Int, /* unaryfunc nb_int; */       /* __int__ */
+#endif
+#ifdef IS_PY3K
+    /* This is not a typo. For Py3k it should be Crossfire_Map_Long
+     * and NOT Crossfire_Map_Int.
+     */
+    Crossfire_Map_Long, /* unaryfunc nb_int; */      /* __int__ */
+    NULL,               /* void *nb_reserved; */
+#else
+    Crossfire_Map_Int,  /* unaryfunc nb_int; */      /* __int__ */
     Crossfire_Map_Long, /* unaryfunc nb_long; */     /* __long__ */
+#endif
     NULL,            /* unaryfunc nb_float; */       /* __float__ */
+#ifndef IS_PY3K
     NULL,            /* unaryfunc nb_oct; */         /* __oct__ */
     NULL,            /* unaryfunc nb_hex; */         /* __hex__ */
+#endif
+    NULL,            /* binaryfunc nb_inplace_add; */
+    NULL,            /* binaryfunc nb_inplace_subtract; */
+    NULL,            /* binaryfunc nb_inplace_multiply; */
+#ifndef IS_PY3K
+    NULL,            /* binaryfunc nb_inplace_divide; */
+#endif
+    NULL,            /* binaryfunc nb_inplace_remainder; */
+    NULL,            /* ternaryfunc nb_inplace_power; */
+    NULL,            /* binaryfunc nb_inplace_lshift; */
+    NULL,            /* binaryfunc nb_inplace_rshift; */
+    NULL,            /* binaryfunc nb_inplace_and; */
+    NULL,            /* binaryfunc nb_inplace_xor; */
+    NULL,            /* binaryfunc nb_inplace_or; */
+
+    NULL,            /* binaryfunc nb_floor_divide; */
+    NULL,            /* binaryfunc nb_true_divide; */
+    NULL,            /* binaryfunc nb_inplace_floor_divide; */
+    NULL,            /* binaryfunc nb_inplace_true_divide; */
+#if defined(IS_PY25) || defined(IS_PY3K)
+    NULL             /* unaryfunc nb_index; */
+#endif
 };
 
 /* Our actual Python MapType */

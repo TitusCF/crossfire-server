@@ -134,41 +134,41 @@ static void set_exception(const char *fmt, ...) {
 }
 
 static PyMethodDef CFPythonMethods[] = {
-    { "WhoAmI",              getWhoAmI,              METH_VARARGS, NULL },
-    { "WhoIsActivator",      getWhoIsActivator,      METH_VARARGS, NULL },
-    { "WhoIsOther",          getWhoIsThird,          METH_VARARGS, NULL },
-    { "WhatIsMessage",       getWhatIsMessage,       METH_VARARGS, NULL },
-    { "ScriptName",          getScriptName,          METH_VARARGS, NULL },
-    { "ScriptParameters",    getScriptParameters,    METH_VARARGS, NULL },
-    { "WhatIsEvent",         getEvent,               METH_VARARGS, NULL },
-    { "MapDirectory",        getMapDirectory,        METH_VARARGS, NULL },
-    { "UniqueDirectory",     getUniqueDirectory,     METH_VARARGS, NULL },
-    { "TempDirectory",       getTempDirectory,       METH_VARARGS, NULL },
-    { "ConfigDirectory",     getConfigDirectory,     METH_VARARGS, NULL },
-    { "LocalDirectory",      getLocalDirectory,      METH_VARARGS, NULL },
-    { "PlayerDirectory",     getPlayerDirectory,     METH_VARARGS, NULL },
-    { "DataDirectory",       getDataDirectory,       METH_VARARGS, NULL },
+    { "WhoAmI",              getWhoAmI,              METH_NOARGS,  NULL },
+    { "WhoIsActivator",      getWhoIsActivator,      METH_NOARGS,  NULL },
+    { "WhoIsOther",          getWhoIsThird,          METH_NOARGS,  NULL },
+    { "WhatIsMessage",       getWhatIsMessage,       METH_NOARGS,  NULL },
+    { "ScriptName",          getScriptName,          METH_NOARGS,  NULL },
+    { "ScriptParameters",    getScriptParameters,    METH_NOARGS,  NULL },
+    { "WhatIsEvent",         getEvent,               METH_NOARGS,  NULL },
+    { "MapDirectory",        getMapDirectory,        METH_NOARGS,  NULL },
+    { "UniqueDirectory",     getUniqueDirectory,     METH_NOARGS,  NULL },
+    { "TempDirectory",       getTempDirectory,       METH_NOARGS,  NULL },
+    { "ConfigDirectory",     getConfigDirectory,     METH_NOARGS,  NULL },
+    { "LocalDirectory",      getLocalDirectory,      METH_NOARGS,  NULL },
+    { "PlayerDirectory",     getPlayerDirectory,     METH_NOARGS,  NULL },
+    { "DataDirectory",       getDataDirectory,       METH_NOARGS,  NULL },
     { "ReadyMap",            readyMap,               METH_VARARGS, NULL },
     { "CreateMap",           createMap,              METH_VARARGS, NULL },
     { "FindPlayer",          findPlayer,             METH_VARARGS, NULL },
     { "MatchString",         matchString,            METH_VARARGS, NULL },
-    { "GetReturnValue",      getReturnValue,         METH_VARARGS, NULL },
+    { "GetReturnValue",      getReturnValue,         METH_NOARGS,  NULL },
     { "SetReturnValue",      setReturnValue,         METH_VARARGS, NULL },
-    { "PluginVersion",       getCFPythonVersion,     METH_VARARGS, NULL },
-    { "CreateObject",        createCFObject,         METH_VARARGS, NULL },
+    { "PluginVersion",       getCFPythonVersion,     METH_NOARGS,  NULL },
+    { "CreateObject",        createCFObject,         METH_NOARGS,  NULL },
     { "CreateObjectByName",  createCFObjectByName,   METH_VARARGS, NULL },
-    { "GetPrivateDictionary", getPrivateDictionary,  METH_VARARGS, NULL },
-    { "GetSharedDictionary", getSharedDictionary,    METH_VARARGS, NULL },
-    { "GetPlayers",          getPlayers,             METH_VARARGS, NULL },
-    { "GetArchetypes",       getArchetypes,          METH_VARARGS, NULL },
-    { "GetMaps",             getMaps,                METH_VARARGS, NULL },
-    { "GetParties",          getParties,             METH_VARARGS, NULL },
-    { "GetRegions",          getRegions,             METH_VARARGS, NULL },
-    { "GetFriendlyList",     getFriendlyList,        METH_VARARGS, NULL },
+    { "GetPrivateDictionary", getPrivateDictionary,  METH_NOARGS,  NULL },
+    { "GetSharedDictionary", getSharedDictionary,    METH_NOARGS,  NULL },
+    { "GetPlayers",          getPlayers,             METH_NOARGS,  NULL },
+    { "GetArchetypes",       getArchetypes,          METH_NOARGS,  NULL },
+    { "GetMaps",             getMaps,                METH_NOARGS,  NULL },
+    { "GetParties",          getParties,             METH_NOARGS,  NULL },
+    { "GetRegions",          getRegions,             METH_NOARGS,  NULL },
+    { "GetFriendlyList",     getFriendlyList,        METH_NOARGS,  NULL },
     { "RegisterCommand",     registerCommand,        METH_VARARGS, NULL },
     { "RegisterGlobalEvent", registerGEvent,         METH_VARARGS, NULL },
     { "UnregisterGlobalEvent", unregisterGEvent,     METH_VARARGS, NULL },
-    { "GetTime",             getTime,                METH_VARARGS, NULL },
+    { "GetTime",             getTime,                METH_NOARGS,  NULL },
     { "DestroyTimer",        destroyTimer,           METH_VARARGS, NULL },
     { "MapHasBeenLoaded",    getMapHasBeenLoaded,    METH_VARARGS, NULL },
     { "Log",                 log_message,            METH_VARARGS, NULL },
@@ -238,14 +238,10 @@ static PyObject *createCFObjectByName(PyObject *self, PyObject *args) {
 static PyObject *getCFPythonVersion(PyObject *self, PyObject *args) {
     int i = 2044;
 
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("i", i);
 }
 
 static PyObject *getReturnValue(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("i", current_context->returnvalue);
 }
 
@@ -317,50 +313,34 @@ static PyObject *createMap(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getMapDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(0));
 }
 
 static PyObject *getUniqueDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(1));
 }
 
 static PyObject *getTempDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(2));
 }
 
 static PyObject *getConfigDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(3));
 }
 
 static PyObject *getLocalDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(4));
 }
 
 static PyObject *getPlayerDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(5));
 }
 
 static PyObject *getDataDirectory(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", cf_get_directory(6));
 }
 
 static PyObject *getWhoAmI(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     if (!current_context->who) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -370,8 +350,6 @@ static PyObject *getWhoAmI(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhoIsActivator(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     if (!current_context->activator) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -381,8 +359,6 @@ static PyObject *getWhoIsActivator(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhoIsThird(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     if (!current_context->third) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -392,9 +368,6 @@ static PyObject *getWhoIsThird(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getWhatIsMessage(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-
     if (current_context->message == NULL)
         return Py_BuildValue("");
     else
@@ -402,14 +375,10 @@ static PyObject *getWhatIsMessage(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getScriptName(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     return Py_BuildValue("s", current_context->script);
 }
 
 static PyObject *getScriptParameters(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     if (!current_context->options) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -418,8 +387,6 @@ static PyObject *getScriptParameters(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getEvent(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
     if (!current_context->event) {
         Py_INCREF(Py_None);
         return Py_None;
@@ -430,9 +397,6 @@ static PyObject *getEvent(PyObject *self, PyObject *args) {
 
 static PyObject *getPrivateDictionary(PyObject *self, PyObject *args) {
     PyObject *data;
-
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
 
     data = PyDict_GetItemString(private_data, current_context->script);
     if (!data) {
@@ -445,9 +409,6 @@ static PyObject *getPrivateDictionary(PyObject *self, PyObject *args) {
 }
 
 static PyObject *getSharedDictionary(PyObject *self, PyObject *args) {
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
-
     Py_INCREF(shared_data);
     return shared_data;
 }
@@ -568,9 +529,6 @@ static PyObject *registerCommand(PyObject *self, PyObject *args) {
 static PyObject *getTime(PyObject *self, PyObject *args) {
     PyObject *list;
     timeofday_t tod;
-
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
 
     cf_get_time(&tod);
 

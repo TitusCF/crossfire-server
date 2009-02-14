@@ -14,6 +14,33 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+This is another step towards Python 3.x support, however in this commit there
+are mostly fixes for various bugs in the existing found when working on the
+porting. Also this commit drops support for Python 2.3 and older. This support
+was already broken (some code already used modern features).
+---
+plugins/cfpython/include/cfpython.h: We need more python-version dependant
+  defines so rewrite the checks to be cleaner as well.
+plugins/cfpython/include/cfpython_object.h: Add a variant of the EXISTCHECK()
+  macro that also verifies that the type matches (to fix some crashes).
+plugins/cfpython/include/cfpython_party_private.h,
+  plugins/cfpython/include/cfpython_region_private.h,
+  plugins/cfpython/include/cfpython_archetype_private.h: Fix the method calling
+  conventions to match was actually being done in the code.
+plugins/cfpython/include/cfpython_object_private.h,
+  plugins/cfpython/include/cfpython_map_private.h,
+  plugins/cfpython/cfpython_object.c, plugins/cfpython/cfpython_map.c: Fix out
+  of date PyNumberMethods structs. Handle the int/long unification in Python 3
+  as well. Change to calling convention METH_NOARGS when no arguments were
+  passed to the methods. Change to METH_O when a single object argument was
+  passed. Add checks for correct type of objects where that was missing (could
+  result in crashes before, if there were bugs in the python scripts, now such
+  bugs will just throw a python exception).
+plugins/cfpython/cfpython.c: Change to calling convention METH_NOARGS when no
+  arguments were passed to the methods.
+macros/cf_python.m4: Remove checks for Python 2.3 and older.
+Arvid Norlander 2009-02-14
+
 plugins/cfpython/cfpython.c, plugins/cfpython/cfpython_map.c,
   plugins/cfpython/include/cfpython_archetype_private.h,
   plugins/cfpython/include/cfpython_region_private.h,

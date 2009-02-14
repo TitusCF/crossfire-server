@@ -13,7 +13,7 @@ static PyGetSetDef Party_getseters[] = {
 };
 
 static PyMethodDef PartyMethods[] = {
-    { "GetPlayers",     (PyCFunction)Crossfire_Party_GetPlayers,        METH_VARARGS, NULL },
+    { "GetPlayers", (PyCFunction)Crossfire_Party_GetPlayers, METH_NOARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 

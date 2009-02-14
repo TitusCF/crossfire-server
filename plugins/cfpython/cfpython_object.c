@@ -940,7 +940,7 @@ static int Object_SetMap(Crossfire_Object *whoptr, PyObject *value, void *closur
     Crossfire_Map *val;
 
     EXISTCHECK_INT(whoptr);
-    if (!PyArg_Parse(value, "O", &val))
+    if (!PyArg_Parse(value, "O!", &Crossfire_MapType, &val))
         return -1;
 
     cf_object_change_map(whoptr->obj, val->map, NULL, 0, -1, -1);
@@ -1886,8 +1886,6 @@ static int Object_SetAnimated(Crossfire_Object *whoptr, PyObject *value, void *c
 
 static PyObject *Crossfire_Object_Remove(Crossfire_Object *who, PyObject *args) {
     EXISTCHECK(who);
-    if (!PyArg_ParseTuple(args, "", NULL))
-        return NULL;
 
     if ((current_context->who != NULL) && (((Crossfire_Object *)current_context->who)->obj == who->obj))
         current_context->who = NULL;
@@ -1905,7 +1903,7 @@ static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args) {
     Crossfire_Object *whoptr;
     int flags;
 
-    if (!PyArg_ParseTuple(args, "Oi", &whoptr, &flags))
+    if (!PyArg_ParseTuple(args, "O!i", &Crossfire_ObjectType, &whoptr, &flags))
         return NULL;
     EXISTCHECK(who);
     EXISTCHECK(whoptr);
@@ -1914,12 +1912,11 @@ static PyObject *Crossfire_Object_Apply(Crossfire_Object *who, PyObject *args) {
 }
 
 static PyObject *Crossfire_Object_Drop(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *whoptr;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *whoptr = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &whoptr))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(whoptr);
+    TYPEEXISTCHECK(whoptr);
 
     cf_object_drop(whoptr->obj, who->obj);
     Py_INCREF(Py_None);
@@ -1933,12 +1930,11 @@ static PyObject *Crossfire_Object_Fix(Crossfire_Object *who, PyObject *args) {
 }
 
 static PyObject *Crossfire_Object_Take(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *whoptr;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *whoptr = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &whoptr))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(whoptr);
+    TYPEEXISTCHECK(whoptr);
 
     cf_object_pickup(whoptr->obj, who->obj);
     Py_INCREF(Py_None);
@@ -1951,7 +1947,7 @@ static PyObject *Crossfire_Object_Teleport(Crossfire_Object *who, PyObject *args
     int val;
 
     EXISTCHECK(who);
-    if (!PyArg_ParseTuple(args, "Oii", &where, &x, &y))
+    if (!PyArg_ParseTuple(args, "O!ii", &Crossfire_MapType, &where, &x, &y))
         return NULL;
 
     val = cf_object_teleport(who->obj, where->map, x, y);
@@ -1960,14 +1956,13 @@ static PyObject *Crossfire_Object_Teleport(Crossfire_Object *who, PyObject *args
 }
 
 static PyObject *Crossfire_Object_ActivateRune(Crossfire_Object *who, PyObject *args) {
+    /* Note that this function uses the METH_O calling convention. */
     object *trap;
     object *victim;
-    Crossfire_Object *pcause;
+    Crossfire_Object *pcause = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &pcause))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(pcause);
+    TYPEEXISTCHECK(pcause);
     trap = who->obj;
     victim = pcause->obj;
     cf_spring_trap(trap, victim);
@@ -1976,15 +1971,14 @@ static PyObject *Crossfire_Object_ActivateRune(Crossfire_Object *who, PyObject *
 }
 
 static PyObject *Crossfire_Object_CheckTrigger(Crossfire_Object *who, PyObject *args) {
+    /* Note that this function uses the METH_O calling convention. */
     object *trigger;
     object *cause;
     int result;
-    Crossfire_Object *pcause;
+    Crossfire_Object *pcause = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &pcause))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(pcause);
+    TYPEEXISTCHECK(pcause);
     trigger = who->obj;
     cause = pcause->obj;
     result = cf_object_check_trigger(trigger, cause);
@@ -2050,7 +2044,7 @@ static PyObject *Crossfire_Object_QueryCost(Crossfire_Object *who, PyObject *arg
     int flags;
     Crossfire_Object *pcause;
 
-    if (!PyArg_ParseTuple(args, "Oi", &pcause, &flags))
+    if (!PyArg_ParseTuple(args, "O!i", &Crossfire_ObjectType, &pcause, &flags))
         return NULL;
     EXISTCHECK(who);
     EXISTCHECK(pcause);
@@ -2062,7 +2056,7 @@ static PyObject *Crossfire_Object_Cast(Crossfire_Object *who, PyObject *args) {
     char *op;
     Crossfire_Object *pspell;
 
-    if (!PyArg_ParseTuple(args, "Ois", &pspell, &dir, &op))
+    if (!PyArg_ParseTuple(args, "O!is", &Crossfire_ObjectType, &pspell, &dir, &op))
         return NULL;
     EXISTCHECK(who);
     EXISTCHECK(pspell);
@@ -2074,12 +2068,11 @@ static PyObject *Crossfire_Object_Cast(Crossfire_Object *who, PyObject *args) {
 }
 
 static PyObject *Crossfire_Object_LearnSpell(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *pspell;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *pspell = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &pspell))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(pspell);
+    TYPEEXISTCHECK(pspell);
 
     cf_object_learn_spell(who->obj, pspell->obj, 0);
 
@@ -2088,12 +2081,11 @@ static PyObject *Crossfire_Object_LearnSpell(Crossfire_Object *who, PyObject *ar
 }
 
 static PyObject *Crossfire_Object_ForgetSpell(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *pspell;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *pspell = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &pspell))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(pspell);
+    TYPEEXISTCHECK(pspell);
 
     cf_object_forget_spell(who->obj, pspell->obj);
     Py_INCREF(Py_None);
@@ -2118,7 +2110,7 @@ static PyObject *Crossfire_Object_CastAbility(Crossfire_Object *who, PyObject *a
     int dir;
     char *str;
 
-    if (!PyArg_ParseTuple(args, "Ois", &pspell, &dir, &str))
+    if (!PyArg_ParseTuple(args, "O!is", &Crossfire_ObjectType, &pspell, &dir, &str))
         return NULL;
     EXISTCHECK(who);
     EXISTCHECK(pspell);
@@ -2143,13 +2135,12 @@ static PyObject *Crossfire_Object_PayAmount(Crossfire_Object *who, PyObject *arg
 }
 
 static PyObject *Crossfire_Object_Pay(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *op;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *op = (Crossfire_Object*)args;
     int val;
 
-    if (!PyArg_ParseTuple(args, "O", &op))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(op);
+    TYPEEXISTCHECK(op);
 
     val = cf_object_pay_item(who->obj, op->obj);
 
@@ -2256,13 +2247,12 @@ static PyObject *Crossfire_Object_CreateInside(Crossfire_Object *who, PyObject *
 }
 
 static PyObject *Crossfire_Object_InsertInto(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *op;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *op = (Crossfire_Object*)args;
     object *myob;
 
-    if (!PyArg_ParseTuple(args, "O", &op))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(op);
+    TYPEEXISTCHECK(op);
 
     /* we can only insert removed object, so first remove it
      * from it's current container
@@ -2276,12 +2266,11 @@ static PyObject *Crossfire_Object_InsertInto(Crossfire_Object *who, PyObject *ar
 }
 
 static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *args) {
-    Crossfire_Object *op;
+    /* Note that this function uses the METH_O calling convention. */
+    Crossfire_Object *op = (Crossfire_Object*)args;
 
-    if (!PyArg_ParseTuple(args, "O", &op))
-        return NULL;
     EXISTCHECK(who);
-    EXISTCHECK(op);
+    TYPEEXISTCHECK(op);
 
     return Py_BuildValue("i", cf_object_change_abil(who->obj, op->obj));
 }
@@ -2317,7 +2306,7 @@ static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args) {
     Crossfire_Object *activator = NULL;
     Crossfire_Object *third = NULL;
 
-    if (!PyArg_ParseTuple(args, "OOsi", &activator, &third, &message, &fix))
+    if (!PyArg_ParseTuple(args, "O!O!si", &Crossfire_ObjectType, &activator, &Crossfire_ObjectType, &third, &message, &fix))
         return NULL;
     EXISTCHECK(who);
     EXISTCHECK(activator);
@@ -2339,9 +2328,11 @@ static PyObject *Crossfire_Object_Long(PyObject *obj) {
     return Py_BuildValue("l", ((Crossfire_Object *)obj)->obj);
 }
 
+#ifndef IS_PY3K
 static PyObject *Crossfire_Object_Int(PyObject *obj) {
     return Py_BuildValue("i", ((Crossfire_Object *)obj)->obj);
 }
+#endif
 
 /**
  * Python initialized.

@@ -47,10 +47,15 @@
  */
 #if PY_MAJOR_VERSION >= 3
 #    define IS_PY3K
-#elif PY_MINOR_VERSION >= 6
-#    define IS_PY26
-#else
-#    define IS_PY_LEGACY
+#else /* Python 2.x */
+#    if PY_MINOR_VERSION >= 6 /* 2.6 or later */
+#        define IS_PY26
+#    else
+#        define IS_PY_LEGACY  /* Pre-2.6 lack forward compat. changes for Py3 */
+#    endif
+#    if PY_MINOR_VERSION >= 5 /* PyNumberMethods changed in 2.5 */
+#        define IS_PY25
+#    endif
 #endif
 
 /* Python 2.5 or older doesn't define these. */

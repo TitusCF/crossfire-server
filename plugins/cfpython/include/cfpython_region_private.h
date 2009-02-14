@@ -15,7 +15,7 @@ static PyGetSetDef Region_getseters[] = {
 };
 
 static PyMethodDef RegionMethods[] = {
-    { "GetParent",      (PyCFunction)Crossfire_Region_GetParent,         METH_VARARGS, NULL },
+    { "GetParent", (PyCFunction)Crossfire_Region_GetParent, METH_NOARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 

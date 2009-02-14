@@ -296,10 +296,12 @@ static PyObject *Crossfire_Map_Long(PyObject *obj) {
     return Py_BuildValue("l", ((Crossfire_Map *)obj)->map);
 }
 
+#ifndef IS_PY3K
 static PyObject *Crossfire_Map_Int(PyObject *obj) {
     MAPEXISTCHECK((Crossfire_Map *)obj);
     return Py_BuildValue("i", ((Crossfire_Map *)obj)->map);
 }
+#endif
 
 /**
  * Python initialized.

@@ -16,7 +16,7 @@ static PyGetSetDef Archetype_getseters[] = {
 };
 
 static PyMethodDef ArchetypeMethods[] = {
-    { "NewObject",         (PyCFunction)Crossfire_Archetype_GetNewObject,       METH_VARARGS, NULL },
+    { "NewObject", (PyCFunction)Crossfire_Archetype_GetNewObject, METH_NOARGS, NULL },
     { NULL, NULL, 0, NULL }
 };
 
