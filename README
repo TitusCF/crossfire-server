@@ -12,23 +12,36 @@ WHAT IS CROSSFIRE?
   and using items and battle monsters.  They can choose to cooperate
   or compete in the same "world".
 
+  This README is for the server, the client, which is downloaded
+  separately, has it's own README.
+
 REQUIREMENTS
 
-  For UNIX, X-windows and an ANSI C compiler to compile this game.
-  A window system is not needed if you don't want to compile the
-  map editor.
+  For UNIX, an ANSI C compiler (with some C99 features, such as
+  snprintf()) is needed to compile the server. GCC is recommended.
 
-  For Windows 9x, you need Visual C++ (or some other ANSI C
-  compiler that can read ".dsw"-files).
+  You also need Perl to generate the archetype files. This is only
+  done at build time.
+
+  There are some optional dependencies:
+  * Support for dynamically loaded libraries. Most modern systems
+    have this.
+  * SQLite3 - For cflogger and cfnewspaper.
+  * Python 2.4 or later - For cfpython. This is highly recommended.
+    A lot of items, maps and quests won't work without Python.
+  * Check - For unit tests. This is required for developers, normal
+    users don't need to bother about this.
+
+  For Windows: Someone with Windows: please fill this in.
 
 COMPILING
 
   Crossfire has been known to compile on a wide variety of
-  systems.  It should compile and most all ANSI C and Posix
+  systems.  It should compile on most all ANSI C and POSIX
   compliant systems.
 
   To get directions on compilation for UNIX/LINUX, read the INSTALL file.
-  For Win9x, read INSTALL_WIN32.txt.
+  For Windows: Someone with Windows: please fill this in.
 
 USAGE
 
@@ -61,15 +74,13 @@ MAILING LIST
 FTP SITES
 
   FTP-sites where you can look for the latest versions are:
-
     http://prdownloads.sourceforge.net/crossfire/
     ftp://ftp.real-time.com/pub/games/crossfire
 
-  Changes made since the latest release can be found at the CVS
-  repository.  Information on anonymous CVS access as
-  the download CVS snapshots and browsing the repository can be
-  found at:
-	http://sourceforge.net/cvs/?group_id=13833
+  Changes made since the latest release can be found at the SVN
+  repository.  Information on anonymous SVN access and browsing
+  the repository can be found at:
+    http://sourceforge.net/svn/?group_id=13833
 
 
 WEB SITES:
@@ -87,26 +98,27 @@ REPORTING BUGS
   mentioned.
 
   Bugs should be filed at the sourceforge web site:
-        http://sourceforge.net/cvs/?group_id=13833
+        http//sourceforge.net/tracker/?group_id=13833&atid=113833
 
   When reporting bugs, make sure you include the following:
-  o If you have a sourceforge login, make sure you are logged in.  In this
-    way, if there are questions about the bug, you will be notified about
-    the request for more information.
+  o If you have a sourceforge login, make sure you are logged in.  This way,
+    if there are questions about the bug, you will be notified about the
+    request for more information.
   o What version of crossfire did you use?
   o What type of computer did you use (CPU type)
   o What is the version of the OS?
-  o What windowing system are you using (Ie, openwindows, X11R6, etc)
-  o What compiler (and its version) did you use (ie, gcc, acc, etc)?
+  o What compiler (and its version) did you use (ie, gcc, icc, etc)?
   o Which flags did you give it?
   o If the bug happens when compiling crossfire, send an EXACT copy of
     the compiler line, as well as the errors it puts out.  Sending bugs
-    of the sort 'it failed with a line like ...' doesn't help any.
+    of the sort 'it failed with a line like ...' doesn't help at all.
+  o If you are using any of the plugins, what version(s) of Python and SQLite
+    do you have installed?
   o If the bug happened while running crossfire:
     - Include any output before to the bug.
     - Give a description of what you did before the bug occurred.  The better
-	detailed the description, the better chance I have of figuring
-	out where the bug happened, or how I can recreate the bug.
+      detailed the description, the better chance we have of figuring
+      out where the bug happened, or how we can recreate the bug.
     - If possible, a stack trace from gdb (or other debugger) is very
       helpful.
 
@@ -119,7 +131,7 @@ http://crossfire.real-time.com/debugging_tips.html
 ------------------------------------------------------------------------------
 SUBMITTING PATCHES:  See the doc/programming_guide file.
    The patches should be submitted to the patch tracker on sourceforge:
-        http://sourceforge.net/cvs/?group_id=13833
+        http://sourceforge.net/tracker/?group_id=13833&atid=313833
 
 PUBLIC SERVERS:
 
