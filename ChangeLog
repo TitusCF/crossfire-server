@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/map.c: Properly fill in op->more for multipart objects in containers.
+  Multipart objects in containers can happen for customised monsters in
+  generator inventories. This happened on /darcap/raffle/raffle1_u3.
+Arvid Norlander 2009-02-17
+
 README: Update the README file somewhat. It mentioned CVS and various other
   outdated things.
 Arvid Norlander 2009-02-16

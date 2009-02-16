@@ -573,6 +573,9 @@ int ob_blocked(const object *ob, mapstruct *m, sint16 x, sint16 y) {
  * and insert them properly.
  * @param container
  * object that contains the inventory. This is needed so that we can update the containers weight.
+ *
+ * @todo
+ * This is unusued, should it be used somewhere?
  */
 void fix_container(object *container) {
     object *tmp = container->inv, *next;
@@ -589,6 +592,51 @@ void fix_container(object *container) {
      * carrying.
      */
     sum_weight(container);
+}
+
+/**
+ * Go through all the objects in a container (recursively) looking
+ * for objects whose arch says they are multipart yet according to the
+ * info we have, they only have the head (as would be expected when
+ * they are saved).  We do have to look for the old maps that did save
+ * the more sections and not re-add sections for them.
+ *
+ * @param container
+ * object that contains the inventory.
+ */
+void fix_container_multipart(object *container) {
+    object *tmp = container->inv, *next;
+
+    while (tmp != NULL) {
+        archetype *at;
+        object *op, *last;
+
+        next = tmp->below;
+        if (tmp->inv)
+            fix_container_multipart(tmp);
+        /* already multipart, or non-multipart arch - don't do anything more */
+        for (at = tmp->arch->more, last = tmp; at != NULL; at = at->more, last = op) {
+            /* FIXME: We can't reuse fix_multipart_object() since that only
+             * works for items directly on maps. Maybe factor out common code?
+             */
+            op = arch_to_object(at);
+            op->head = tmp;
+            op->env = tmp->env;
+            last->more = op;
+            if (tmp->name != op->name) {
+                if (op->name)
+                    free_string(op->name);
+                op->name = add_string(tmp->name);
+            }
+            if (tmp->title != op->title) {
+                if (op->title)
+                    free_string(op->title);
+                op->title = add_string(tmp->title);
+            }
+            CLEAR_FLAG(op, FLAG_REMOVED);
+        }
+        tmp = next;
+    }
 }
 
 /**
@@ -609,6 +657,8 @@ static void link_multipart_objects(mapstruct *m) {
         for (y = 0; y < MAP_HEIGHT(m); y++)
             for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = above) {
                 above = tmp->above;
+                if (tmp->inv)
+                    fix_container_multipart(tmp);
 
                 /* already multipart - don't do anything more */
                 if (tmp->head || tmp->more)
