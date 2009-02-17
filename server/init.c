@@ -847,7 +847,7 @@ static void load_settings(void) {
         } else if (!strcasecmp(buf, "pk_max_experience_percent")) {
             int pkmep = atoi(cp);
             if (pkmep < 0) {
-                LOG(llevError, "load_settings: pk_max_experience_percent should be positive or zero\n", cp);
+                LOG(llevError, "load_settings: pk_max_experience_percent should be positive or zero (was \"%s\")\n", cp);
             } else
                 settings.pk_max_experience_percent = pkmep;
         } else if (!strcasecmp(buf, "allow_denied_spells_writing")) {

@@ -2803,13 +2803,13 @@ int command_style_map_info(object *op, char *params) {
                          "including objects:    %d",
                          mapmem);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                         "Style objects:        %d",
+                         "[fixed]Style objects:        %d",
                          "Style objects:        %d",
                          objects_used);
     draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_MAPS,
-                         "Mem for objects:      %d",
-                         "Mem for objects:      %d",
-                         objects_used*sizeof(object));
+                         "[fixed]Mem for objects:      %lu",
+                         "Mem for objects:      %lu",
+                         (unsigned long)(objects_used*sizeof(object)));
     return 0;
 }
 

@@ -489,7 +489,7 @@ static StringBuffer *real_money_value(const object *coin, StringBuffer *buf) {
     assert(coin->type == MONEY);
     assert(buf);
 
-    stringbuffer_append_printf(buf, "%ld %s", coin->nrof, coin->nrof == 1 ? coin->name : coin->name_pl);
+    stringbuffer_append_printf(buf, "%ld %s", (long)coin->nrof, coin->nrof == 1 ? coin->name : coin->name_pl);
     return buf;
 }
 
