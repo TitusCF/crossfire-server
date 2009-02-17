@@ -622,8 +622,8 @@ A       .+
                          * about not overflowing the buffer.
                          */
                         if (total_msglen > (HUGE_BUF/2))
-                            LOG(llevDebug, "\n\tWarning message length > %d (max allowed=%d): %d\n>%.80s<\n",
-                                HUGE_BUF/2, HUGE_BUF, total_msglen, op->msg);
+                            LOG(llevDebug, "\n\tWarning message length > %d (max allowed=%d): %lu\n>%.80s<\n",
+                                HUGE_BUF/2, HUGE_BUF, (unsigned long)total_msglen, op->msg);
                     }
 <MESSAGE>.*         {   safe_strcat(msgbuf, yytext, &msglen, HUGE_BUF);
                         safe_strcat(msgbuf, "\n", &msglen, HUGE_BUF);
@@ -637,8 +637,8 @@ A       .+
                          * about not overflowing the buffer.
                          */
                         if (strlen(op->lore) > (HUGE_BUF/2))
-                            LOG(llevDebug, "\n\tWarning lore length > %d (max allowed=%d): %d\n>%.80s<\n",
-                                HUGE_BUF/2, HUGE_BUF, strlen(op->lore), op->lore);
+                            LOG(llevDebug, "\n\tWarning lore length > %d (max allowed=%d): %lu\n>%.80s<\n",
+                                HUGE_BUF/2, HUGE_BUF, (unsigned long)strlen(op->lore), op->lore);
                     }
 <LORE>.*            { strcat(lorebuf, yytext); strcat(lorebuf, "\n"); }
 
@@ -1394,7 +1394,7 @@ static void get_string_move_type(StringBuffer *sb, MoveType mt)
     } while (0)
 /** Adds a long to the buffer.  entryname__ must have a space at the end. */
 #define FAST_SAVE_LONG(sb__, entryname__, entryvalue__) \
-    stringbuffer_append_printf(sb__, "%s%ld\n", entryname__, entryvalue__)
+    stringbuffer_append_printf(sb__, "%s%ld\n", entryname__, (long int)entryvalue__)
 /** Adds a double to the buffer. entryname__ must have a space at the end. */
 #define FAST_SAVE_DOUBLE(sb__, entryname__, entryvalue__) \
     stringbuffer_append_printf(sb__, "%s%f\n", entryname__, entryvalue__)

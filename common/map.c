@@ -604,7 +604,7 @@ void fix_container(object *container) {
  * @param container
  * object that contains the inventory.
  */
-void fix_container_multipart(object *container) {
+static void fix_container_multipart(object *container) {
     object *tmp = container->inv, *next;
 
     while (tmp != NULL) {

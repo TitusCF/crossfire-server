@@ -1820,7 +1820,7 @@ static char *god_info_msg(int level, char *retbuf, size_t booksize) {
     char en[BOOK_BUF];
 
     if (booksize > BOOK_BUF) {
-        LOG(llevError, "common/readable.c:god_info_msg() - passed in booksize (%d) is larger than book buffer (%d)\n", booksize, BOOK_BUF);
+        LOG(llevError, "common/readable.c:god_info_msg() - passed in booksize (%lu) is larger than book buffer (%d)\n", (unsigned long)booksize, BOOK_BUF);
         booksize = BOOK_BUF;
     }
 

@@ -384,19 +384,19 @@ void dump_object(object *op, StringBuffer *sb) {
 
         get_ob_diff(sb, op, &empty_archetype->clone);
         if (op->more) {
-            stringbuffer_append_printf(sb, "more %ld\n", op->more->count);
+            stringbuffer_append_printf(sb, "more %u\n", op->more->count);
         }
         if (op->head) {
-            stringbuffer_append_printf(sb, "head %ld\n", op->head->count);
+            stringbuffer_append_printf(sb, "head %u\n", op->head->count);
         }
         if (op->env) {
-            stringbuffer_append_printf(sb, "env %ld\n", op->env->count);
+            stringbuffer_append_printf(sb, "env %u\n", op->env->count);
         }
         if (op->inv) {
-            stringbuffer_append_printf(sb, "inv %ld\n", op->inv->count);
+            stringbuffer_append_printf(sb, "inv %u\n", op->inv->count);
         }
         if (op->owner) {
-            stringbuffer_append_printf(sb, "owner %ld\n", op->owner->count);
+            stringbuffer_append_printf(sb, "owner %u\n", op->owner->count);
         }
         stringbuffer_append_string(sb, "end\n");
     } else {
@@ -587,7 +587,7 @@ void set_owner(object *op, object *owner) {
     if (owner->owner) {
         LOG(llevError, "owner id %d could not be resolved to a parent owner in set_owner(). This is bad!"
             "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d\n",
-            owner, owner->owner, owner->ownercount, owner->owner->count);
+            owner->count, owner, owner->owner, owner->ownercount, owner->owner->count);
         return;
     }
 
