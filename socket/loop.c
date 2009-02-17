@@ -593,7 +593,7 @@ void do_server(void) {
                 if (pl->last_weight != -1 && pl->last_weight != WEIGHT(pl->ob)) {
                     esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
                     if (pl->last_weight != WEIGHT(pl->ob))
-                        LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, WEIGHT(pl->ob));
+                        LOG(llevError, "esrv_update_item(UPD_WEIGHT) did not set player weight: is %lu, should be %lu\n", (unsigned long)pl->last_weight, (unsigned long)WEIGHT(pl->ob));
                 }
                 /* draw_client_map does sanity checking that map is
                  * valid, so don't do it here.

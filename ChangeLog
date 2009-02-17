@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+socket/item.c, socket/loop.c, socket/lowlevel.c, socket/metaserver.c: Fix some
+  format string bugs (found using the GCC format __attribute__ for some
+  crossfire functions).
+Arvid Norlander 2009-02-17
+
 common/map.c: Make a function static.
 common/loader.l, common/object.c, common/readable.c: Fix some format string bugs
   (found using the GCC format __attribute__ for some crossfire functions).

@@ -311,7 +311,7 @@ int SockList_ReadPacket(int fd, SockList *sl, int len) {
      */
     toread = 2+(sl->buf[0]<<8)+sl->buf[1]-sl->len;
     if ((toread+(int)sl->len) >= len) {
-        LOG(llevError, "SockList_ReadPacket: Want to read more bytes than will fit in buffer (%d>=%d).\n", toread+sl->len, len);
+        LOG(llevError, "SockList_ReadPacket: Want to read more bytes than will fit in buffer (%lu>=%lu).\n", (unsigned long)toread+sl->len, (unsigned long)len);
         /* Quick hack in case for 'oldsocketmode' input.  If we are
          * closing the socket anyways, then reading this extra 100 bytes
          * shouldn't hurt.
@@ -570,10 +570,10 @@ void write_cs_stats(void) {
         return;
 
     /* CSSTAT is put in so scripts can easily find the line */
-    LOG(llevInfo, "CSSTAT: %.16s tot %d %d %d %d inc %d %d %d %d\n",
+    LOG(llevInfo, "CSSTAT: %.16s tot %d %d %d %ld inc %d %d %d %ld\n",
         ctime(&now), cst_tot.ibytes, cst_tot.obytes, cst_tot.max_conn,
-        now-cst_tot.time_start, cst_lst.ibytes, cst_lst.obytes,
-        cst_lst.max_conn, now-cst_lst.time_start);
+        (long)(now-cst_tot.time_start), cst_lst.ibytes, cst_lst.obytes,
+        cst_lst.max_conn, (long)(now-cst_lst.time_start));
     cst_lst.ibytes = 0;
     cst_lst.obytes = 0;
     cst_lst.max_conn = socket_info.nconns;

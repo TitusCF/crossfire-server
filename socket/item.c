@@ -775,7 +775,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof) {
 
     op = esrv_get_ob_from_count(pl, tag);
     if (!op) {
-        LOG(llevDebug, "Player '%s' tried to move an unknown object (%ld)\n", pl->name, tag);
+        LOG(llevDebug, "Player '%s' tried to move an unknown object (%lu)\n", pl->name, (unsigned long)tag);
         return;
     }
 
