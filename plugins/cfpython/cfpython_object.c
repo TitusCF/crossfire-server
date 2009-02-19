@@ -2323,6 +2323,43 @@ static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Ob
     return (left->obj < right->obj ? -1 : (left->obj == right->obj ? 0 : 1));
 }
 
+static PyObject *Crossfire_Object_RichCompare(Crossfire_Object *left, Crossfire_Object *right, int op) {
+    int result;
+    if (!left
+        || !right
+        || !PyObject_TypeCheck((PyObject*)left, &Crossfire_ObjectType)
+        || !PyObject_TypeCheck((PyObject*)right, &Crossfire_ObjectType)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    result = Crossfire_Object_InternalCompare(left, right);
+    /* Handle removed objects. */
+    if (result == -1 && PyErr_Occurred())
+        return NULL;
+    /* Based on how Python 3.0 (GPL compatible) implements it for internal types: */
+    switch (op) {
+        case Py_EQ:
+            result = (result == 0);
+            break;
+        case Py_NE:
+            result = (result != 0);
+            break;
+        case Py_LE:
+            result = (result <= 0);
+            break;
+        case Py_GE:
+            result = (result >= 0);
+            break;
+        case Py_LT:
+            result = (result == -1);
+            break;
+        case Py_GT:
+            result = (result == 1);
+            break;
+    }
+    return PyBool_FromLong(result);
+}
+
 /* Legacy code: convert to long so that non-object functions work correctly */
 static PyObject *Crossfire_Object_Long(PyObject *obj) {
     return Py_BuildValue("l", ((Crossfire_Object *)obj)->obj);

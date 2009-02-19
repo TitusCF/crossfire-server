@@ -5,6 +5,7 @@ static PyObject *Crossfire_Archetype_GetHead(Crossfire_Archetype *who, void *clo
 static PyObject *Crossfire_Archetype_GetClone(Crossfire_Archetype *who, void *closure);
 static PyObject *Crossfire_Archetype_GetNewObject(Crossfire_Archetype *who, PyObject *args);
 static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype *left, Crossfire_Archetype *right);
+static PyObject *Crossfire_Archetype_RichCompare(Crossfire_Archetype *left, Crossfire_Archetype *right, int op);
 
 static PyGetSetDef Archetype_getseters[] = {
     { "Name",       (getter)Crossfire_Archetype_GetName,     NULL, NULL, NULL },
@@ -22,8 +23,11 @@ static PyMethodDef ArchetypeMethods[] = {
 
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_ArchetypeType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
     "Crossfire.Archetype",     /* tp_name*/
@@ -33,7 +37,11 @@ PyTypeObject Crossfire_ArchetypeType = {
     NULL,                      /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
     (cmpfunc)Crossfire_Archetype_InternalCompare, /* tp_compare*/
+#endif
     NULL,                      /* tp_repr*/
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -48,7 +56,7 @@ PyTypeObject Crossfire_ArchetypeType = {
     "Crossfire archetypes",    /* tp_doc */
     NULL,                      /* tp_traverse */
     NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
+    (richcmpfunc)Crossfire_Archetype_RichCompare, /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     NULL,                      /* tp_iter */
     NULL,                      /* tp_iternext */

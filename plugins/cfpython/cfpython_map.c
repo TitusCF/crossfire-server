@@ -51,6 +51,32 @@ static void free_map_assoc(mapstruct *key) {
     free_ptr_assoc(map_assoc_table, key);
 }
 
+
+/** This makes sure the map is in memory and not swapped out. */
+static void ensure_map_in_memory(Crossfire_Map *map) {
+    assert(map->map != NULL);
+    if (map->map->in_memory != MAP_IN_MEMORY) {
+        char* mapname = map->map->path;
+        int is_unique = cf_map_get_int_property(map->map, CFAPI_MAP_PROP_UNIQUE);
+        /* If the map is unique the path name will be freed. We need to handle that. */
+        if (is_unique) {
+            char* tmp = strdup(mapname);
+            if (!tmp) {
+                /* FIXME: We should fatal() here, but that doesn't exist in plugins. */
+                cf_log(llevError, "Out of memory in ensure_map_in_memory()!\n");
+                abort();
+            }
+            mapname = tmp;
+        }
+        cf_log(llevDebug, "MAP %s AIN'T READY ! Loading it...\n", mapname);
+        /* Map pointer may change for player unique maps. */
+        /* Also, is the MAP_PLAYER_UNIQUE logic correct? */
+        map->map = cf_map_get_map(mapname, is_unique ? MAP_PLAYER_UNIQUE : 0);
+        if (is_unique)
+            free(mapname);
+    }
+}
+
 static PyObject *Map_GetDifficulty(Crossfire_Map *whoptr, void *closure) {
     MAPEXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_map_get_difficulty(whoptr->map));
@@ -162,6 +188,9 @@ static PyObject *Map_GetFirstObjectAt(Crossfire_Map *map, PyObject *args) {
 
     MAPEXISTCHECK(map);
 
+    /* make sure the map is swapped in */
+    ensure_map_in_memory(map);
+
     val = cf_map_get_object_at(map->map, x, y);
     return Crossfire_Object_wrap(val);
 }
@@ -175,6 +204,9 @@ static PyObject *Map_CreateObject(Crossfire_Map *map, PyObject *args) {
         return NULL;
 
     MAPEXISTCHECK(map);
+
+    /* make sure the map is swapped in */
+    ensure_map_in_memory(map);
 
     op = cf_create_object_by_name(txt);
 
@@ -196,9 +228,7 @@ static PyObject *Map_Check(Crossfire_Map *map, PyObject *args) {
     MAPEXISTCHECK(map);
 
     /* make sure the map is swapped in */
-    if (map->map->in_memory != MAP_IN_MEMORY) {
-        cf_log(llevError, "MAP AIN'T READY !\n");
-    }
+    ensure_map_in_memory(map);
 
     mflags = cf_map_get_flags(map->map, &(map->map), (sint16)x, (sint16)y, &nx, &ny);
     if (mflags&P_OUT_OF_MAP) {
@@ -222,6 +252,9 @@ static PyObject *Map_Insert(Crossfire_Map *map, PyObject *args) {
         return NULL;
 
     MAPEXISTCHECK(map);
+
+    /* make sure the map is swapped in */
+    ensure_map_in_memory(map);
 
     return Crossfire_Object_wrap(cf_map_insert_object(map->map, what->obj, x, y));
 }
@@ -262,9 +295,14 @@ static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args) {
         return NULL;
 
     MAPEXISTCHECK(map);
+
+    /* make sure the map is swapped in */
+    ensure_map_in_memory(map);
+
     /* locate objectlink for this connected value */
     if (!map->map->buttons) {
         cf_log(llevError, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH), connected);
+        PyErr_SetString(PyExc_ReferenceError, "No objects connected to that ID on this map.");
         return NULL;
     }
     for (olp = map->map->buttons; olp; olp = olp->next) {
@@ -275,6 +313,8 @@ static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args) {
     }
     if (ol == NULL) {
         cf_log(llevInfo, "Map %s called for trigger on connected %d but there ain't any button list for that map!\n", cf_map_get_sstring_property(map->map, CFAPI_MAP_PROP_PATH), connected);
+        /* FIXME: I'm not sure about this message... */
+        PyErr_SetString(PyExc_ReferenceError, "No objects with that connection ID on this map.");
         return NULL;
     }
     /* run the object link */
@@ -288,6 +328,43 @@ static int Map_InternalCompare(Crossfire_Map *left, Crossfire_Map *right) {
     MAPEXISTCHECK_INT(left);
     MAPEXISTCHECK_INT(right);
     return left->map < right->map ? -1 : (left->map == right->map ? 0 : 1);
+}
+
+static PyObject *Crossfire_Map_RichCompare(Crossfire_Map *left, Crossfire_Map *right, int op) {
+    int result;
+    if (!left
+        || !right
+        || !PyObject_TypeCheck((PyObject*)left, &Crossfire_MapType)
+        || !PyObject_TypeCheck((PyObject*)right, &Crossfire_MapType)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    result = Map_InternalCompare(left, right);
+    /* Handle removed maps. */
+    if (result == -1 && PyErr_Occurred())
+        return NULL;
+    /* Based on how Python 3.0 (GPL compatible) implements it for internal types: */
+    switch (op) {
+        case Py_EQ:
+            result = (result == 0);
+            break;
+        case Py_NE:
+            result = (result != 0);
+            break;
+        case Py_LE:
+            result = (result <= 0);
+            break;
+        case Py_GE:
+            result = (result >= 0);
+            break;
+        case Py_LT:
+            result = (result == -1);
+            break;
+        case Py_GT:
+            result = (result == 1);
+            break;
+    }
+    return PyBool_FromLong(result);
 }
 
 /* Legacy code: convert to long so that non-object functions work correctly */

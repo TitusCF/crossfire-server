@@ -68,3 +68,37 @@ PyObject *Crossfire_Region_wrap(region *what) {
 static int Crossfire_Region_InternalCompare(Crossfire_Region *left, Crossfire_Region *right) {
     return (left->reg < right->reg ? -1 : (left->reg == right->reg ? 0 : 1));
 }
+
+static PyObject *Crossfire_Region_RichCompare(Crossfire_Region *left, Crossfire_Region *right, int op) {
+    int result;
+    if (!left
+        || !right
+        || !PyObject_TypeCheck((PyObject*)left, &Crossfire_RegionType)
+        || !PyObject_TypeCheck((PyObject*)right, &Crossfire_RegionType)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    result = Crossfire_Region_InternalCompare(left, right);
+    /* Based on how Python 3.0 (GPL compatible) implements it for internal types: */
+    switch (op) {
+        case Py_EQ:
+            result = (result == 0);
+            break;
+        case Py_NE:
+            result = (result != 0);
+            break;
+        case Py_LE:
+            result = (result <= 0);
+            break;
+        case Py_GE:
+            result = (result >= 0);
+            break;
+        case Py_LT:
+            result = (result == -1);
+            break;
+        case Py_GT:
+            result = (result == 1);
+            break;
+    }
+    return PyBool_FromLong(result);
+}

@@ -73,3 +73,37 @@ PyObject *Crossfire_Party_wrap(partylist *what) {
 static int Crossfire_Party_InternalCompare(Crossfire_Party *left, Crossfire_Party *right) {
     return (left->party < right->party ? -1 : (left->party == right->party ? 0 : 1));
 }
+
+static PyObject *Crossfire_Party_RichCompare(Crossfire_Party *left, Crossfire_Party *right, int op) {
+    int result;
+    if (!left
+        || !right
+        || !PyObject_TypeCheck((PyObject*)left, &Crossfire_PartyType)
+        || !PyObject_TypeCheck((PyObject*)right, &Crossfire_PartyType)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    result = Crossfire_Party_InternalCompare(left, right);
+    /* Based on how Python 3.0 (GPL compatible) implements it for internal types: */
+    switch (op) {
+        case Py_EQ:
+            result = (result == 0);
+            break;
+        case Py_NE:
+            result = (result != 0);
+            break;
+        case Py_LE:
+            result = (result <= 0);
+            break;
+        case Py_GE:
+            result = (result >= 0);
+            break;
+        case Py_LT:
+            result = (result == -1);
+            break;
+        case Py_GT:
+            result = (result == 1);
+            break;
+    }
+    return PyBool_FromLong(result);
+}

@@ -54,6 +54,7 @@ static PyObject *Map_ChangeLight(Crossfire_Map *map, PyObject *args);
 static PyObject *Map_TriggerConnected(Crossfire_Map *map, PyObject *args);
 
 static int Map_InternalCompare(Crossfire_Map *left, Crossfire_Map *right);
+static PyObject *Crossfire_Map_RichCompare(Crossfire_Map *left, Crossfire_Map *right, int op);
 
 static PyObject *Crossfire_Map_Long(PyObject *obj);
 #ifndef IS_PY3K
@@ -162,8 +163,11 @@ static PyNumberMethods MapConvert = {
 
 /* Our actual Python MapType */
 PyTypeObject Crossfire_MapType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
     "Crossfire.Map",           /* tp_name*/
@@ -173,7 +177,11 @@ PyTypeObject Crossfire_MapType = {
     NULL,                      /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
     (cmpfunc)Map_InternalCompare, /* tp_compare*/
+#endif
     NULL,                      /* tp_repr*/
     &MapConvert,               /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -188,7 +196,7 @@ PyTypeObject Crossfire_MapType = {
     "Crossfire maps",          /* tp_doc */
     NULL,                      /* tp_traverse */
     NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
+    (richcmpfunc)Crossfire_Map_RichCompare, /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     NULL,                      /* tp_iter */
     NULL,                      /* tp_iternext */

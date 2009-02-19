@@ -72,3 +72,37 @@ PyObject *Crossfire_Archetype_wrap(archetype *what) {
 static int Crossfire_Archetype_InternalCompare(Crossfire_Archetype *left, Crossfire_Archetype *right) {
     return (left->arch < right->arch ? -1 : (left->arch == right->arch ? 0 : 1));
 }
+
+static PyObject *Crossfire_Archetype_RichCompare(Crossfire_Archetype *left, Crossfire_Archetype *right, int op) {
+    int result;
+    if (!left
+        || !right
+        || !PyObject_TypeCheck((PyObject*)left, &Crossfire_ArchetypeType)
+        || !PyObject_TypeCheck((PyObject*)right, &Crossfire_ArchetypeType)) {
+        Py_INCREF(Py_NotImplemented);
+        return Py_NotImplemented;
+    }
+    result = Crossfire_Archetype_InternalCompare(left, right);
+    /* Based on how Python 3.0 (GPL compatible) implements it for internal types: */
+    switch (op) {
+        case Py_EQ:
+            result = (result == 0);
+            break;
+        case Py_NE:
+            result = (result != 0);
+            break;
+        case Py_LE:
+            result = (result <= 0);
+            break;
+        case Py_GE:
+            result = (result >= 0);
+            break;
+        case Py_LT:
+            result = (result == -1);
+            break;
+        case Py_GT:
+            result = (result == 1);
+            break;
+    }
+    return PyBool_FromLong(result);
+}

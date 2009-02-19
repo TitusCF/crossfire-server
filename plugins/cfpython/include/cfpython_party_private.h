@@ -4,6 +4,7 @@ static PyObject *Crossfire_Party_GetNext(Crossfire_Party *who, void *closure);
 static PyObject *Crossfire_Party_GetPlayers(Crossfire_Party *who, PyObject *args);
 
 static int Crossfire_Party_InternalCompare(Crossfire_Party *left, Crossfire_Party *right);
+static PyObject *Crossfire_Party_RichCompare(Crossfire_Party *left, Crossfire_Party *right, int op);
 
 static PyGetSetDef Party_getseters[] = {
     { "Name",       (getter)Crossfire_Party_GetName,     NULL, NULL, NULL },
@@ -19,8 +20,11 @@ static PyMethodDef PartyMethods[] = {
 
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_PartyType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
     "Crossfire.Party",         /* tp_name*/
@@ -30,7 +34,11 @@ PyTypeObject Crossfire_PartyType = {
     NULL,                      /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
     (cmpfunc)Crossfire_Party_InternalCompare, /* tp_compare*/
+#endif
     NULL,                      /* tp_repr*/
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -45,7 +53,7 @@ PyTypeObject Crossfire_PartyType = {
     "Crossfire parties",       /* tp_doc */
     NULL,                      /* tp_traverse */
     NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
+    (richcmpfunc)Crossfire_Party_RichCompare, /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     NULL,                      /* tp_iter */
     NULL,                      /* tp_iternext */

@@ -5,6 +5,7 @@ static PyObject *Crossfire_Region_GetNext(Crossfire_Region *who, void *closure);
 static PyObject *Crossfire_Region_GetParent(Crossfire_Region *who, PyObject *args);
 
 static int Crossfire_Region_InternalCompare(Crossfire_Region *left, Crossfire_Region *right);
+static PyObject *Crossfire_Region_RichCompare(Crossfire_Region *left, Crossfire_Region *right, int op);
 
 static PyGetSetDef Region_getseters[] = {
     { "Name",       (getter)Crossfire_Region_GetName,     NULL, NULL, NULL },
@@ -21,18 +22,25 @@ static PyMethodDef RegionMethods[] = {
 
 /* Our actual Python ArchetypeType */
 PyTypeObject Crossfire_RegionType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
-    "Crossfire.Party",         /* tp_name*/
+    "Crossfire.Region",        /* tp_name*/
     sizeof(Crossfire_Region),  /* tp_basicsize*/
     0,                         /* tp_itemsize*/
     NULL,                      /* tp_dealloc*/
     NULL,                      /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
     (cmpfunc)Crossfire_Region_InternalCompare, /* tp_compare*/
+#endif
     NULL,                      /* tp_repr*/
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -47,7 +55,7 @@ PyTypeObject Crossfire_RegionType = {
     "Crossfire regions",       /* tp_doc */
     NULL,                      /* tp_traverse */
     NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
+    (richcmpfunc)Crossfire_Region_RichCompare, /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     NULL,                      /* tp_iter */
     NULL,                      /* tp_iternext */

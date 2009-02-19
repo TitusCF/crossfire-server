@@ -281,6 +281,7 @@ static PyObject *Crossfire_Object_ChangeAbil(Crossfire_Object *who, PyObject *ar
 static PyObject *Crossfire_Object_Event(Crossfire_Object *who, PyObject *args);
 
 static int Crossfire_Object_InternalCompare(Crossfire_Object *left, Crossfire_Object *right);
+static PyObject *Crossfire_Object_RichCompare(Crossfire_Object *left, Crossfire_Object *right, int op);
 
 static PyObject *Crossfire_Object_Long(PyObject *obj);
 #ifndef IS_PY3K
@@ -531,8 +532,11 @@ static PyObject *Crossfire_Object_new(PyTypeObject *type, PyObject *args, PyObje
 
 /* Our actual Python ObjectType */
 PyTypeObject Crossfire_ObjectType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
     "Crossfire.Object",        /* tp_name*/
@@ -542,7 +546,11 @@ PyTypeObject Crossfire_ObjectType = {
     NULL,                      /* tp_print*/
     NULL,                      /* tp_getattr*/
     NULL,                      /* tp_setattr*/
+#ifdef IS_PY3K
+    NULL,                      /* tp_reserved */
+#else
     (cmpfunc)Crossfire_Object_InternalCompare, /* tp_compare*/
+#endif
     NULL,                      /* tp_repr*/
     &ObjectConvert,            /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
@@ -557,7 +565,7 @@ PyTypeObject Crossfire_ObjectType = {
     "Crossfire objects",       /* tp_doc */
     NULL,                      /* tp_traverse */
     NULL,                      /* tp_clear */
-    NULL,                      /* tp_richcompare */
+    (richcmpfunc)Crossfire_Object_RichCompare, /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     NULL,                      /* tp_iter */
     NULL,                      /* tp_iternext */
@@ -622,8 +630,11 @@ static PyObject *Crossfire_Player_new(PyTypeObject *type, PyObject *args, PyObje
 
 /* Our actual Python ObjectPlayerType */
 PyTypeObject Crossfire_PlayerType = {
+#ifdef IS_PY3K
+    /* See http://bugs.python.org/issue4385 */
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
-#ifndef IS_PY3K
     0,                         /* ob_size*/
 #endif
     "Crossfire.Player",        /* tp_name*/
@@ -638,7 +649,8 @@ PyTypeObject Crossfire_PlayerType = {
     NULL,                      /* tp_as_number*/
     NULL,                      /* tp_as_sequence*/
     NULL,                      /* tp_as_mapping*/
-    PyObject_HashNotImplemented, /* tp_hash */
+    /* Should be NULL to inherit tp_richcompare and tp_compare from Crossfire_ObjectType. */
+    NULL,                      /* tp_hash */
     NULL,                      /* tp_call*/
     NULL,                      /* tp_str*/
     PyObject_GenericGetAttr,   /* tp_getattro*/
