@@ -14,6 +14,18 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug 1988417 - rebalanced WC bug.
+common/living.c: Remove unneeded if op->type==PLAYER right after closing
+    brace for same if clause.  Move character_load to top of that code
+    block.  Fix wc calculation so now if skill_level>=1 and not >1.
+    Fix fallback method to divide characters overall level in calculating
+    wc to give more sane results.  Add key/value wc_increase_rate so
+    skills can be better tuned instead of having it hardcoded (it is
+    still hardcoded as a fallback if that isn't set)
+doc/Developers/skills: Update some notes on values in combat skills,
+    especially the wc_increase_rate.
+MSW 2009-02-22
+
 plugins/cfpython/cfpython_archetype.c, plugins/cfpython/cfpython_object.c,
   plugins/cfpython/cfpython_party.c, plugins/cfpython/cfpython_region.c,
   plugins/cfpython/cfpython_map.c,

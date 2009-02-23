@@ -152,6 +152,16 @@ can_use_skill (flag): If this is set, the player knows the skill natively
    use that praying skill without a holy symbole until they learn it from a
    skill scroll.
 
+Note that specific skills may use other fields to convey more information
+about the skills.
+
+For combat skills (karate, punching, one handed weapons, etc):
+dam: Every 10 levels of the skill, characters does 'dam' more damage.
+wc: Increases characters wc by this amount.
+wc_increase_rate: This is a divisor - skill level is divided by this
+    to determine improvement to wc.  Lower values are better.
+
+
 
 4. Skill Tools
 -----------------

@@ -1380,9 +1380,13 @@ void fix_object(object *op) {
             op->resist[i] = potion_resist[i];
     }
 
-    /* Figure out the players sp/mana/hp totals. */
+    /* Figure out the players sp/mana/hp totals.
+     * Also do encumberance.  This entire blob should
+     * probably be its own function.
+     */
     if (op->type == PLAYER) {
         int pl_level;
+        float character_load = 0.0;
 
         check_stat_bounds(&(op->stats));
         pl_level = op->level;
@@ -1504,12 +1508,16 @@ void fix_object(object *op) {
          * monster bonus the same as before. -b.t.
          */
 
-        if (op->type == PLAYER && wc_obj && wc_obj->level > 1) {
+        if (op->type == PLAYER && wc_obj && wc_obj->level >= 1) {
+            const  char *wc_in = get_ob_key_value(wc_obj, "wc_increase_rate");
+            int wc_increase_rate;
+
+            wc_increase_rate = wc_in?atoi(wc_in):5;
             wc -= get_thaco_bonus(op->stats.Str);
-            wc -= (wc_obj->level-1)/5;
+            wc -= (wc_obj->level-1)/wc_increase_rate;
             op->stats.dam += (wc_obj->level-1)/4;
         } else {
-            wc -= (op->level+get_thaco_bonus(op->stats.Str));
+            wc -= (((op->level-1)/5)+get_thaco_bonus(op->stats.Str));
         }
         op->stats.dam += get_dam_bonus(op->stats.Str);
 
@@ -1524,12 +1532,8 @@ void fix_object(object *op) {
         if (op->attacktype == 0)
             op->attacktype = op->arch->clone.attacktype;
 
-    } /* End if player */
 
-    if (op->type == PLAYER) {
         /* First block is for encumbrance of the player */
-
-        float character_load = 0.0;
 
         /* The check for FREE_PLAYER_LOAD_PERCENT < 1.0 is really a safety.  One would
          * think that it should never be the case if that is set to 1.0, that carrying
