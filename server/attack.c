@@ -1996,18 +1996,26 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
         }
     }
 
+
     /* if this is friendly fire then do a set % of damage only
      * Note - put a check in to make sure this attack is actually
      * doing damage - otherwise, the +1 in the coe below will make
      * an attack do damage before when it otherwise didn't
+     * Only reduce damage if not on battlground - if in arena, do
+     * full damage.  Note that it is intentional that the check for
+     * battleground is inside the friendlyfire if statement - op_on_battleground()
+     * is a fairly costly function to call, and we don't want to call it for
+     * every attack - by doing it only for friendlyfire, it shouldn't get called
+     * that often
      */
     friendlyfire = friendly_fire(op, hitter);
     if (friendlyfire && maxdam) {
-        maxdam = ((dam*settings.set_friendly_fire)/100)+1;
-
+        if (!op_on_battleground(op, NULL, NULL, NULL)) {
+            maxdam = ((dam*settings.set_friendly_fire)/100)+1;
 #ifdef ATTACK_DEBUG
-        LOG(llevDebug, "Friendly fire (type:%d setting: %d%) did %d damage dropped to %d\n", friendlyfire, settings.set_friendly_fire, dam, maxdam);
+            LOG(llevDebug, "Friendly fire (type:%d setting: %d%) did %d damage dropped to %d\n", friendlyfire, settings.set_friendly_fire, dam, maxdam);
 #endif
+        }
     }
 
     if (!full_hit) {

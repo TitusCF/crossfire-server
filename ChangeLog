@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Fix for bug 2021012: Do insane damage in arena - if
+    characters are on battleground, do not reduce damage for them
+    being friendly.
+MSW 2009-02-24
+
 Fix for bug 1988417 - rebalanced WC bug.
 common/living.c: Remove unneeded if op->type==PLAYER right after closing
     brace for same if clause.  Move character_load to top of that code
