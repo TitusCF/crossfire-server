@@ -1383,15 +1383,18 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                  */
                 if (!op_on_battleground(hitter, NULL, NULL, NULL) && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
                     object *owner = get_owner(hitter);
+                    sint64 orig_exp = op->stats.exp;
+                
+                    change_exp(op, -op->stats.exp/rate, NULL, 0);
 
                     if (owner && owner != hitter) {
                         if (op->type != PLAYER || owner->type != PLAYER)
-                            change_exp(owner, op->stats.exp/(rate*2),
+                            change_exp(owner, MIN(op->stats.exp/(rate*2), orig_exp - op->stats.exp),
                                        hitter->chosen_skill ? hitter->chosen_skill->skill : NULL, SK_EXP_TOTAL);
                     } else if (op->type != PLAYER || hitter->type != PLAYER) {
-                        change_exp(hitter, op->stats.exp/(rate*2), hitter->chosen_skill ? hitter->chosen_skill->skill : NULL, 0);
+                        change_exp(hitter, MIN(op->stats.exp/(rate*2), orig_exp - op->stats.exp),
+                                   hitter->chosen_skill ? hitter->chosen_skill->skill : NULL, 0);
                     }
-                    change_exp(op, -op->stats.exp/rate, NULL, 0);
                 }
                 dam = 1; /* Drain is an effect.  Still return 1 - otherwise, if you have pure
                           * drain attack, you won't know that you are actually sucking out EXP,
