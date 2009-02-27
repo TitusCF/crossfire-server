@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+macros/cf_python.m4: Support Python 3 but prefer Python 2 when possible. This
+  is because Python 3 is still rather experimental. To force building against a
+  specific Python version use --with-python=path where path is replaced with the
+  install prefix for Python.
+Arvid Norlander 2009-02-27
+
 plugins/cfpython/cjson.c: Add support for Python 3. For Python 3 we always
   encode to Bytes but can decode both Bytes and Unicode. For decoded strings the
   default is to use Unicode under Python 3 (and under 2.x we still default to

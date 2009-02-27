@@ -1,3 +1,7 @@
+# Check for Python.
+# For now we prefer Python 2.x rather than 3.x
+#
+
 AC_DEFUN([CF_CHECK_PYTHON],
 [
 	PYTHON_LIB=""
@@ -5,7 +9,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	PY_INCLUDES=""
 	dir=""
 	if test "x$PYTHON_HOME" != "x"; then
-		for dir in $PYTHON_HOME/include/python{,2.6,2.5,2.4} ; do
+		for dir in $PYTHON_HOME/include/python{,2.6,2.5,2.4,3.0} ; do
 			AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 			if test "x$cf_have_python_h" != "x" ; then
 				PY_INCLUDES="-I$dir"
@@ -16,7 +20,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 	else
 		AC_CHECK_HEADERS([Python.h],[cf_have_python_h=yes])
 		if test "x$cf_have_python_h" = "x"  ; then
-			for dir in  /usr{,/local}/include/python{,2.6,2.5,2.4} ; do
+			for dir in  /usr{,/local}/include/python{,2.6,2.5,2.4,3.0} ; do
 				AC_CHECK_HEADERS(["$dir/Python.h"],[cf_have_python_h=yes])
 				if test "x$cf_have_python_h" != "x" ; then
 					PY_INCLUDES="-I$dir"
@@ -36,7 +40,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 			# find the one in the stanard location, which is what we
 			# want to avoid.
 			python=`echo $dir | awk -F/ '{print $NF}'`;
-			AC_MSG_CHECKING([For python lib in various places])
+			AC_MSG_CHECKING([for python lib in various places])
 			if test -f $PYTHON_HOME/lib/lib$python.so ; then
 				# Hopefully -R is a universal option
 				AC_MSG_RESULT([found in $PYTHON_HOME/lib/])
@@ -45,7 +49,7 @@ AC_DEFUN([CF_CHECK_PYTHON],
 					libdir="$PYTHON_HOME/lib/"
 					rpath=`eval echo $hardcode_libdir_flag_spec`
 					PYTHON_LIB="$rpath -L$PYTHON_HOME/lib/ -l$python"
-					echo "rpath=$rpath"
+					echo "         rpath=$rpath"
 					libdir=$oldlibdir
 				else
 					PYTHON_LIB="-L$PYTHON_HOME/lib/ -l$python"
@@ -60,12 +64,12 @@ AC_DEFUN([CF_CHECK_PYTHON],
 			fi
 
 		else
-	                for lib in python{,2.6,2.5,2.4} ; do
-	                        AC_CHECK_LIB($lib, PyArg_ParseTuple,[PYTHON_LIB="-l$lib"])
-	                        if test "x$PYTHON_LIB" != "x" ; then
-	                                break
-	                        fi
-	                done
+			for lib in python{,2.6,2.5,2.4,3.0} ; do
+				AC_CHECK_LIB($lib, PyArg_ParseTuple,[PYTHON_LIB="-l$lib"])
+				if test "x$PYTHON_LIB" != "x" ; then
+					break
+				fi
+			done
 
 			# These checks are a bit bogus - would be better to use AC_CHECK_LIB,
 			# but it caches the result of the first check, even if we run AC_CHECK_LIB
@@ -96,27 +100,49 @@ AC_DEFUN([CF_CHECK_PYTHON],
 #include <Python.h>
 #include <stdlib.h>
 
+#if PY_MAJOR_VERSION >= 3
+#define IS_PY3K
+#endif
+
 static PyObject *callback(PyObject *self, PyObject *args)
 {
     long long val;
 
     if (!PyArg_ParseTuple(args, "L", &val))
-	return NULL;
+        return NULL;
     if (val != 1)
-	exit(1);
+        exit(1);
     Py_INCREF(Py_None);
     return Py_None;
 }
 
-static PyMethodDef methods[] = {
+static PyMethodDef TestMethods[] = {
     {"callback", callback, METH_VARARGS},
     {NULL, NULL, 0, NULL},
 };
 
+#ifdef IS_PY3K
+static PyModuleDef TestModule = {
+    PyModuleDef_HEAD_INIT, "test", NULL, -1, TestMethods,
+    NULL, NULL, NULL, NULL
+};
+
+
+static PyObject* PyInit_test(void) {
+    PyObject *module = PyModule_Create(&TestModule);
+    return module;
+}
+#endif
+
 int main()
 {
+#ifdef IS_PY3K
+    PyImport_AppendInittab("test", &PyInit_test);
+#endif
     Py_Initialize();
-    Py_InitModule("test", methods);
+#ifndef IS_PY3K
+    Py_InitModule("test", TestMethods);
+#endif
     return(PyRun_SimpleString("import test\ntest.callback(1)\n") != 0);
 }
 				]])],[
