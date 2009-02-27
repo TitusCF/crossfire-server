@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Fix for bug 1922771: xp non zero in meditation.  In 
+    poison_living(), do some more work to find proper skill to set to credit
+    the exp gain - for players, op->skill doesn't look like it is set,
+    but op->chosen_skill is.
+MSW 2009-02-26
+	
 autogen.sh: Error out if the various programs called aren't successful. This
   means we can hopefully get the first error in bug reports instead of errors
   caused by the first error later.

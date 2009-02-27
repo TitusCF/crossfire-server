@@ -2149,6 +2149,7 @@ int hit_player(object *op, int dam, object *hitter, uint32 type, int full_hit) {
 static void poison_living(object *op, object *hitter, int dam) {
     archetype *at = find_archetype("poisoning");
     object *tmp = present_arch_in_ob(at, op);
+    const char *skill;
 
     if (tmp == NULL) {
         if ((tmp = arch_to_object(at)) == NULL)
@@ -2169,10 +2170,13 @@ static void poison_living(object *op, object *hitter, int dam) {
                 tmp->stats.dam = dam;
 
             copy_owner(tmp, hitter);   /*  so we get credit for poisoning kills */
-            if (hitter->skill && hitter->skill != tmp->skill) {
+            skill = hitter->skill;
+            if (!skill) skill = hitter->chosen_skill->name;
+
+            if (skill && skill != tmp->skill) {
                 if (tmp->skill)
                     free_string(tmp->skill);
-                tmp->skill = add_refcount(hitter->skill);
+                tmp->skill = add_refcount(skill);
             }
 
             tmp->stats.food += dam;  /*  more damage, longer poisoning */
