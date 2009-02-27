@@ -14,6 +14,17 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+plugins/cfpython/cjson.c: Add support for Python 3. For Python 3 we always
+  encode to Bytes but can decode both Bytes and Unicode. For decoded strings the
+  default is to use Unicode under Python 3 (and under 2.x we still default to
+  String).
+plugins/cfpython/cfpython: Support for Python 3. This involves some changes for
+  Python 2.x too in order to make it possible to maintain the code. Some of the
+  Python 3.x specific code for caching bytecode is rather messy and could be
+  probably be improved. The way the constant modules are created has been
+  changed to support both Python 2.x and 3.x (now using PyModule_New()).
+Arvid Norlander 2009-02-27
+
 server/attack.c: Fix for bug 1922771: xp non zero in meditation.  In 
     poison_living(), do some more work to find proper skill to set to credit
     the exp gain - for players, op->skill doesn't look like it is set,

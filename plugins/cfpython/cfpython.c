@@ -681,6 +681,39 @@ static void freeContext(CFPContext *context) {
     free(context);
 }
 
+/**
+ * Open a file in the way we need it for compilePython() and postInitPlugin().
+ */
+static PyObject* cfpython_openpyfile(char *filename) {
+    PyObject *scriptfile;
+#ifdef IS_PY3K
+    {
+        int fd;
+        fd = open(filename, O_RDONLY);
+        if (fd == -1)
+            return NULL;
+        scriptfile = PyFile_FromFd(fd, filename, "r", -1, NULL, NULL, NULL, 1);
+    }
+#else
+    if (!(scriptfile = PyFile_FromString(filename, "r"))) {
+        return NULL;
+    }
+#endif
+    return scriptfile;
+}
+
+/**
+ * Return a file object from a Python file (as needed for compilePython() and
+ * postInitPlugin())
+ */
+static FILE* cfpython_pyfile_asfile(PyObject* obj) {
+#ifdef IS_PY3K
+    return fdopen(PyObject_AsFileDescriptor(obj), "r");
+#else
+    return PyFile_AsFile(obj);
+#endif
+}
+
 /** Outputs the compiled bytecode for a given python file, using in-memory caching of bytecode */
 static PyCodeObject *compilePython(char *filename) {
     PyObject *scriptfile;
@@ -689,8 +722,7 @@ static PyCodeObject *compilePython(char *filename) {
     struct _node *n;
     int i;
     pycode_cache_entry *replace = NULL, *run = NULL;
-
-    if (!(scriptfile = PyFile_FromString(filename, "r"))) {
+    if (!(scriptfile = cfpython_openpyfile(filename))) {
         cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
         return NULL;
     }
@@ -744,12 +776,13 @@ static PyCodeObject *compilePython(char *filename) {
         }
 
         /* Load, parse and compile */
-        if (!scriptfile && !(scriptfile = PyFile_FromString(filename, "r"))) {
+        if (!scriptfile && !(scriptfile = cfpython_openpyfile(filename))) {
             cf_log(llevDebug, "cfpython - The Script file %s can't be opened\n", filename);
             replace->code = NULL;
             return NULL;
         } else {
-            if ((n = PyParser_SimpleParseFile(PyFile_AsFile(scriptfile), filename, Py_file_input))) {
+            FILE* pyfile = cfpython_pyfile_asfile(scriptfile);
+            if ((n = PyParser_SimpleParseFile(pyfile, filename, Py_file_input))) {
                 replace->code = PyNode_Compile(n, filename);
                 PyNode_Free(n);
             }
@@ -824,19 +857,19 @@ static void addConstants(PyObject *module, const char *name, const CFConstant *c
     strncpy(tmp, "Crossfire_", sizeof(tmp));
     strncat(tmp, name, sizeof(tmp)-strlen(tmp));
 
-    new = Py_InitModule(tmp, NULL);
+    new = PyModule_New(tmp);
     dict = PyDict_New();
 
     while (constants[i].name != NULL) {
         PyModule_AddIntConstant(new, (char *)constants[i].name, constants[i].value);
-        PyDict_SetItem(dict, PyInt_FromLong(constants[i].value), PyString_FromString(constants[i].name));
+#ifdef IS_PY3K
+        PyDict_SetItem(dict, PyLong_FromLong(constants[i].value), PyUnicode_FromString(constants[i].name));
+#else
+        PyDict_SetItem(dict, PyLong_FromLong(constants[i].value), PyString_FromString(constants[i].name));
+#endif
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
-    /* This cause assert() in debug builds if enabled. */
-#if 0
-    Py_DECREF(new);
-#endif
 
     strncpy(tmp, name, sizeof(tmp));
     strncat(tmp, "Name", sizeof(tmp)-strlen(tmp));
@@ -857,17 +890,13 @@ static void addSimpleConstants(PyObject *module, const char *name, const CFConst
     strncpy(tmp, "Crossfire_", sizeof(tmp));
     strncat(tmp, name, sizeof(tmp)-strlen(tmp));
 
-    new = Py_InitModule(tmp, NULL);
+    new = PyModule_New(tmp);
 
     while (constants[i].name != NULL) {
         PyModule_AddIntConstant(new, (char *)constants[i].name, constants[i].value);
         i++;
     }
     PyDict_SetItemString(PyModule_GetDict(module), name, new);
-    /* This cause assert() in debug builds if enabled. */
-#if 0
-    Py_DECREF(new);
-#endif
 }
 
 static void initConstants(PyObject *module) {
@@ -1154,23 +1183,17 @@ static void initConstants(PyObject *module) {
     addSimpleConstants(module, "Time", cstTime);
 }
 
-extern PyMODINIT_FUNC initcjson(void);
+/*
+ * Set up the main module and handle misc plugin loading stuff and such.
+ */
 
-CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
-    PyObject *m, *d;
-    int i;
+/**
+ * Set up the various types (map, object, archetype and so on) as well as some
+ * constants, and Crossfire.error.
+ */
+static void cfpython_init_types(PyObject* m) {
+    PyObject *d = PyModule_GetDict(m);
 
-    cf_init_plugin(gethooksptr);
-    cf_log(llevDebug, "CFPython 2.0a init\n");
-
-    init_object_assoc_table();
-    init_map_assoc_table();
-
-#ifdef IS_PY26
-    Py_Py3kWarningFlag++;
-#endif
-
-    Py_Initialize();
     Crossfire_ObjectType.tp_new = PyType_GenericNew;
     Crossfire_MapType.tp_new    = PyType_GenericNew;
     Crossfire_PlayerType.tp_new = PyType_GenericNew;
@@ -1184,8 +1207,6 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     PyType_Ready(&Crossfire_PartyType);
     PyType_Ready(&Crossfire_RegionType);
 
-    m = Py_InitModule("Crossfire", CFPythonMethods);
-    d = PyModule_GetDict(m);
     Py_INCREF(&Crossfire_ObjectType);
     Py_INCREF(&Crossfire_MapType);
     Py_INCREF(&Crossfire_PlayerType);
@@ -1207,6 +1228,64 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
 
     CFPythonError = PyErr_NewException("Crossfire.error", NULL, NULL);
     PyDict_SetItemString(d, "error", CFPythonError);
+}
+
+#ifdef IS_PY3K
+extern PyObject* PyInit_cjson(void);
+#else
+extern PyMODINIT_FUNC initcjson(void);
+#endif
+
+#ifdef IS_PY3K
+static PyModuleDef CrossfireModule = {
+    PyModuleDef_HEAD_INIT,
+    "Crossfire",       /* m_name     */
+    NULL,              /* m_doc      */
+    -1,                /* m_size     */
+    CFPythonMethods,   /* m_methods  */
+    NULL,              /* m_reload   */
+    NULL,              /* m_traverse */
+    NULL,              /* m_clear    */
+    NULL               /* m_free     */
+};
+
+static PyObject* PyInit_Crossfire(void)
+{
+    PyObject *m = PyModule_Create(&CrossfireModule);
+    Py_INCREF(m);
+    return m;
+}
+#endif
+
+CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
+    PyObject *m;
+    int i;
+
+    cf_init_plugin(gethooksptr);
+    cf_log(llevDebug, "CFPython 2.0a init\n");
+
+    init_object_assoc_table();
+    init_map_assoc_table();
+
+#ifdef IS_PY26
+    Py_Py3kWarningFlag++;
+#endif
+
+#ifdef IS_PY3K
+    PyImport_AppendInittab("Crossfire", &PyInit_Crossfire);
+    PyImport_AppendInittab("cjson", &PyInit_cjson);
+#endif
+
+    Py_Initialize();
+
+#ifdef IS_PY3K
+    m = PyImport_ImportModule("Crossfire");
+#else
+    m = Py_InitModule("Crossfire", CFPythonMethods);
+#endif
+
+    cfpython_init_types(m);
+
     for (i = 0; i < NR_CUSTOM_CMD; i++) {
         CustomCommand[i].name   = NULL;
         CustomCommand[i].script = NULL;
@@ -1216,8 +1295,10 @@ CF_PLUGIN int initPlugin(const char *iversion, f_plug_api gethooksptr) {
     private_data = PyDict_New();
     shared_data = PyDict_New();
 
+#ifndef IS_PY3K
     /* add cjson module*/
     initcjson();
+#endif
     return 0;
 }
 
@@ -1330,9 +1411,10 @@ CF_PLUGIN int postInitPlugin(void) {
     cf_system_register_global_event(EVENT_MAPUNLOAD, PLUGIN_NAME, cfpython_globalEventListener);
     cf_system_register_global_event(EVENT_MAPLOAD, PLUGIN_NAME, cfpython_globalEventListener);
 
-    scriptfile = PyFile_FromString(cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)), "r");
+    scriptfile = cfpython_openpyfile(cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
     if (scriptfile != NULL) {
-        PyRun_SimpleFile(PyFile_AsFile(scriptfile), cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
+        FILE* pyfile = cfpython_pyfile_asfile(scriptfile);
+        PyRun_SimpleFile(pyfile, cf_get_maps_directory("python/events/python_init.py", path, sizeof(path)));
         Py_DECREF(scriptfile);
     }
 
