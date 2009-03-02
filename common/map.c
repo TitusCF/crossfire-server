@@ -766,7 +766,7 @@ static void load_objects(mapstruct *m, FILE *fp, int mapflags) {
  * one of @ref SAVE_ERROR_xxx "SAVE_ERROR_xxx" value.
  */
 static int save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag) {
-    int i, j = 0, unique = 0, res;
+    int i, j = 0, unique = 0, res = 0;
     object *op,  *otmp;
 
     /* first pass - save one-part objects */

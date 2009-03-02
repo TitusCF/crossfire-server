@@ -14,6 +14,15 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/anim.c, Use "%s" to LOG() when dumping objects instead of passing
+  the dump as format string.
+common/image.c: Fix LOG() with too formatstring/parameter mismatch.
+common/init.c: Fix a compiler warning when using MEMORY_DEBUG, fix an
+  uninitialised read if tod data file exists but is invalid (default to sane
+  value instead, as is done if the file doesn't exist at all).
+common/map.c: Fix a potential uninitialised read.
+Arvid Norlander 2009-03-02
+
 macros/cf_python.m4: Support Python 3 but prefer Python 2 when possible. This
   is because Python 3 is still rather experimental. To force building against a
   specific Python version use --with-python=path where path is replaced with the

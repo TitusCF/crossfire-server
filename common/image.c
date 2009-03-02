@@ -353,7 +353,7 @@ int read_smooth(void) {
     snprintf(buf, sizeof(buf), "%s/smooth", settings.datadir);
     LOG(llevDebug, "Reading smooth from %s...\n", buf);
     if ((fp = fopen(buf, "r")) == NULL) {
-        LOG(llevError, "Cannot open smooth file %s: %s\n", strerror_local(errno, buf, sizeof(buf)));
+        LOG(llevError, "Cannot open smooth file: %s\n", strerror_local(errno, buf, sizeof(buf)));
         exit(-1);
     }
 

@@ -345,7 +345,9 @@ void free_globals(void) {
  * Called by init_library();
  */
 void init_objects(void) {
+#ifndef MEMORY_DEBUG
     int i;
+#endif
     /* Initialize all objects: */
     objects = NULL;
     active_objects = NULL;
@@ -456,9 +458,16 @@ static void init_clocks(void) {
         write_todclock();
         return;
     }
-    fscanf(fp, "%lu", &todtick);
-    LOG(llevDebug, "todtick=%lu\n", todtick);
-    fclose(fp);
+    /* Read TOD and default to 0 on failure. */
+    if (fscanf(fp, "%lu", &todtick) == 1) {
+        LOG(llevDebug, "todtick=%lu\n", todtick);
+        fclose(fp);
+    } else {
+        LOG(llevError, "Couldn't parse todtick, using default value 0\n");
+        todtick = 0;
+        fclose(fp);
+        write_todclock();
+    }
 }
 
 /** Attack messages the player gets when hitting/getting hit. */

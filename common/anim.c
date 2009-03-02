@@ -196,7 +196,7 @@ void animate_object(object *op, int dir) {
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError, diff);
+        LOG(llevError, "%s", diff);
         free(diff);
         return;
     }
