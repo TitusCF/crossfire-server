@@ -14,7 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
-common/anim.c, Use "%s" to LOG() when dumping objects instead of passing
+test/toolkit/toolkit_common.c, test/include/toolkit_common.h: Fix a lot of
+  compiler warnings in the unit tests by adding a missing prototype to a header
+  and correcting another prototype.
+server/c_misc.c: Fix trivially player triggered uninitialised read in the
+  language command.
+common/object.c: Use "%s" to LOG() when dumping objects instead of passing
+  the dump as format string. Fix some compile warnings about variable shadowing.
+Arvid Norlander 2009-03-02
+
+common/anim.c: Use "%s" to LOG() when dumping objects instead of passing
   the dump as format string.
 common/image.c: Fix LOG() with too formatstring/parameter mismatch.
 common/init.c: Fix a compiler warning when using MEMORY_DEBUG, fix an

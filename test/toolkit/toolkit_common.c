@@ -34,6 +34,9 @@
 #include <global.h>
 #include <stdlib.h>
 #include <check.h>
+#ifndef __CEXTRACT__
+#include "../include/toolkit_common.h"
+#endif
 
 #define STATUS_LOGDIR    0x0001
 #define STATUS_DATADIR   0x0002
@@ -117,7 +120,7 @@ object *cctk_create_game_object(const char *archname) {
  * @param op The object to initialize
  * @param string The string to set in all object's char *fields
  */
-void cctk_set_object_strings(object *op, char *string) {
+void cctk_set_object_strings(object *op, const char *string) {
     op->name = add_string(string);
     op->name_pl = add_string(string);
     op->title = add_string(string);

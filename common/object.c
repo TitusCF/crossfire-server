@@ -1266,7 +1266,7 @@ void free_object2(object *ob, int free_inventory) {
         sb = stringbuffer_new();
         dump_object(ob, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevError, diff);
+        LOG(llevError, "%s", diff);
         free(diff);
 #ifdef MANY_CORES
         abort();
@@ -2344,7 +2344,6 @@ object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
  */
 object *decrease_ob_nr(object *op, uint32 i) {
     object *tmp;
-    player *pl;
 
     if (i == 0)   /* objects with op->nrof require this check */
         return op;
@@ -2355,6 +2354,7 @@ object *decrease_ob_nr(object *op, uint32 i) {
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         op->nrof -= i;
     } else if (op->env != NULL) {
+        player *pl;
         /* is this object in the players inventory, or sub container
          * therein?
          */
@@ -2422,7 +2422,6 @@ object *decrease_ob_nr(object *op, uint32 i) {
  */
 static void increase_ob_nr(object *op, uint32 i) {
     object *tmp;
-    player *pl;
 
     if (i == 0)   /* objects with op->nrof require this check */
         return;
@@ -2430,6 +2429,7 @@ static void increase_ob_nr(object *op, uint32 i) {
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         op->nrof += i;
     } else if (op->env != NULL) {
+        player *pl;
         /* is this object in the players inventory, or sub container
          * therein?
          */

@@ -96,7 +96,7 @@ void map_info(object *op, char *search) {
  */
 int command_language(object *op, char *params) {
     const char *language_str;
-    int language;
+    int language = -1;
     int i;
 
     if (!op->contr)
@@ -127,6 +127,12 @@ int command_language(object *op, char *params) {
                 language = i;
                 i = NUM_LANGUAGES;
             }
+        }
+        /* Error out if unknown language. */
+        if (language == -1) {
+            draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_SUBTYPE_NONE,
+                          "Unknown language", NULL);
+            return 0;
         }
         op->contr->language = language;
         language_str = language_names[language];
