@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/attack.c: Fix crash bug introduced in r11584 (Fix for bug 1922771: xp non
+  zero in meditation). Bug triggered by charming chinese dragons.
+Arvid Norlander 2009-03-03
+
 Work in progress skill rebalance code.  This should not affect play in any
 way - while it introduces some new skills, those skills are not available
 right now (players need to choose class that doesn't exist).

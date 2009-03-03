@@ -2171,7 +2171,7 @@ static void poison_living(object *op, object *hitter, int dam) {
 
             copy_owner(tmp, hitter);   /*  so we get credit for poisoning kills */
             skill = hitter->skill;
-            if (!skill) skill = hitter->chosen_skill->name;
+            if (!skill && hitter->chosen_skill) skill = hitter->chosen_skill->name;
 
             if (skill && skill != tmp->skill) {
                 if (tmp->skill)
