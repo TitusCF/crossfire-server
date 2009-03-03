@@ -549,17 +549,19 @@ static void do_symptoms(object *disease) {
 
     if (disease->stats.ac != 0) {
         float scale;
+        int i;
+        sint8 cur_stat;
 
         symptom->value += disease->stats.ac;
         scale = 1.0+symptom->value/100.0;
         /* now rescale all the debilities */
-        symptom->stats.Str = (int)(scale*disease->stats.Str);
-        symptom->stats.Dex = (int)(scale*disease->stats.Dex);
-        symptom->stats.Con = (int)(scale*disease->stats.Con);
-        symptom->stats.Wis = (int)(scale*disease->stats.Wis);
-        symptom->stats.Int = (int)(scale*disease->stats.Int);
-        symptom->stats.Pow = (int)(scale*disease->stats.Pow);
-        symptom->stats.Cha = (int)(scale*disease->stats.Cha);
+        for (i=0; i<NUM_STATS; i++) {
+            cur_stat = get_attr_value(&disease->stats, i);
+            cur_stat = (int)(scale * cur_stat);
+            set_attr_value(&symptom->stats, i, cur_stat);
+        }
+        check_stat_bounds(&symptom->stats, -MAX_STAT, MAX_STAT);
+
         symptom->stats.dam = (int)(scale*disease->stats.dam);
         symptom->stats.sp = (int)(scale*disease->stats.sp);
         symptom->stats.food = (int)(scale*disease->last_eat);

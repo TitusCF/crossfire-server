@@ -494,19 +494,28 @@ sint8 get_attr_value(const living *stats, int attr) {
 
 /**
  * Ensures that all stats (str/dex/con/wis/cha/int) are within the
- * 1-30 stat limit.
+ * passed in range of min_stat and max_stat.  Often, the caller
+ * will pass in MIN_STAT and MAX_STAT, but in case of force objects
+ * or temporary calculations, we want things outside the range
+ * (force objects may have negative stats, but we don't want them
+ * too negative)
  *
  * @param stats
  * attributes to check.
+ * @param min_stat
+ * lowest the stat can be
+ * @param max_stat
+ * highest the stat can be
  */
-void check_stat_bounds(living *stats) {
+void check_stat_bounds(living *stats, sint8 min_stat, sint8 max_stat) {
     int i, v;
     for (i = 0; i < NUM_STATS; i++)
-        if ((v = get_attr_value(stats, i)) > MAX_STAT)
-            set_attr_value(stats, i, MAX_STAT);
-        else if (v < MIN_STAT)
-            set_attr_value(stats, i, MIN_STAT);
+        if ((v = get_attr_value(stats, i)) > max_stat)
+            set_attr_value(stats, i, max_stat);
+        else if (v < min_stat)
+            set_attr_value(stats, i, min_stat);
 }
+
 
 /**
  * Rather than having a whole bunch of if (flag) draw.. else _draw,
@@ -585,7 +594,7 @@ int change_abil(object *op, object *tmp) {
              */
             for (j = 0; j < NUM_STATS; j++)
                 change_attr_value(&(op->stats), j, flag*get_attr_value(&(tmp->stats), j));
-            check_stat_bounds(&(op->stats));
+            check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
         } /* end of potion handling code */
     }
 
@@ -1140,6 +1149,13 @@ void fix_object(object *op) {
                 for (i = 0; i < NUM_STATS; i++)
                     change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
+                /* For this temporary calculation, allow wider range of stat - if we have
+                 * having that gives +5 and different object that gives -5 and stat
+                 * is maxed, we don't want different results based on order of
+                 * inventory.
+                 */
+                check_stat_bounds(&(tmp->stats), -MAX_STAT, 2*MAX_STAT);
+
                 /* these are the items that currently can change digestion, regeneration,
                  * spell point recovery and mana point recovery.  Seems sort of an arbitary
                  * list, but other items store other info into stats array.
@@ -1388,7 +1404,7 @@ void fix_object(object *op) {
         int pl_level;
         float character_load = 0.0;
 
-        check_stat_bounds(&(op->stats));
+        check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
         pl_level = op->level;
 
         if (pl_level < 1)

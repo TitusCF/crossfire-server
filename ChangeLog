@@ -14,6 +14,20 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug 1830750: Buffer overflow with stat depletion via rabies
+(note it wasn't an actual buffer overflow by integer overflow).  Fix was to
+modify check_stat_bounds() to take parameters for valid range, and add check
+for it for the disease a well as temporary calculations in fix_object.
+---
+common/living.c: Modify check_stat_bounds() as described above.  Update
+    existing calls and add new call in fix_object()
+include/libproto.h: Update with no prototype.
+server/disease.c: Update disease function to use get_attr_value/
+    set_attr_value.  Add call to check_stat_bounds to make sure disease
+    stats are within range.
+server/player.c: Update calls to check_stat_bounds()
+MSW 2009-03-02
+
 test/toolkit/toolkit_common.c, test/include/toolkit_common.h: Fix a lot of
   compiler warnings in the unit tests by adding a missing prototype to a header
   and correcting another prototype.

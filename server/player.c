@@ -3388,9 +3388,9 @@ void kill_player(object *op) {
                  */
                 i = RANDOM()%7;
                 change_attr_value(&(op->stats), i, -1);
-                check_stat_bounds(&(op->stats));
+                check_stat_bounds(&(op->stats), MIN_STAT, MAX_STAT);
                 change_attr_value(&(op->contr->orig_stats), i, -1);
-                check_stat_bounds(&(op->contr->orig_stats));
+                check_stat_bounds(&(op->contr->orig_stats), MIN_STAT, MAX_STAT);
                 draw_ext_info(NDI_UNIQUE, 0, op,
                               MSG_TYPE_ATTRIBUTE, MSG_TYPE_ATTRIBUTE_STAT_LOSS,
                               lose_msg[i], lose_msg[i]);

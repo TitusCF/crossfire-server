@@ -114,7 +114,7 @@ extern void free_objectlinkpt(oblinkpt *obp);
 extern void set_attr_value(living *stats, int attr, sint8 value);
 extern void change_attr_value(living *stats, int attr, sint8 value);
 extern sint8 get_attr_value(const living *stats, int attr);
-extern void check_stat_bounds(living *stats);
+extern void check_stat_bounds(living *stats, sint8 min_stat, sint8 max_stat);
 extern int change_abil(object *op, object *tmp);
 extern void drain_stat(object *op);
 extern void drain_specific_stat(object *op, int deplete_stats);
