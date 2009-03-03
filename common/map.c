@@ -332,11 +332,11 @@ int get_map_flags(mapstruct *oldmap, mapstruct **newmap, sint16 x, sint16 y, sin
     int retval = 0;
     mapstruct *mp;
 
-    if (out_of_map(oldmap, x, y))
-        return P_OUT_OF_MAP;
     newx = x;
     newy = y;
     mp = get_map_from_coord(oldmap, &newx, &newy);
+    if (!mp)
+        return P_OUT_OF_MAP;
     if (mp != oldmap)
         retval |= P_NEW_MAP;
     if (newmap)
@@ -2352,7 +2352,7 @@ int out_of_map(mapstruct *m, int x, int y) {
  * out of bounds and no tiled map), otherwise it returns
  * the map as that the coordinates are really on, and
  * updates x and y to be the localized coordinates.
- * Using this is more efficient of calling out_of_map
+ * Using this is more efficient than calling out_of_map
  * and then figuring out what the real map is
  *
  * @param m
@@ -2361,9 +2361,15 @@ int out_of_map(mapstruct *m, int x, int y) {
  * @param y
  * coordinates, which will contain the real position that was checked.
  * @return
- * map that is at specified location. Should not be NULL.
+ * map that is at specified location. Will be NULL if not on any map.
  */
 mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y) {
+
+    /* m should never be null, but if a tiled map fails to load below, it could
+     * happen.
+     */
+    if (!m)
+        return NULL;
 
     /* Simple case - coordinates are within this local
      * map.
@@ -2408,7 +2414,7 @@ mapstruct *get_map_from_coord(mapstruct *m, sint16 *x, sint16 *y) {
         *y -= MAP_HEIGHT(m);
         return (get_map_from_coord(m->tile_map[2], x, y));
     }
-    return NULL;    /* Shouldn't get here */
+    return NULL;    /* Coordinates aren't valid if we got here */
 }
 
 /**

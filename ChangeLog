@@ -14,6 +14,12 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/map.c: Based on profiling of charm monster on a large map with Chinese
+  dragons, optimise get_map_flags() a bit by avoiding a call to out_of_map(),
+  get_map_from_coord() performs the needed checks and we need to call it anyway.
+  Also fix typos in the documentation for get_map_from_coord().
+Arvid Norlander 2009-03-03
+
 server/attack.c: Fix crash bug introduced in r11584 (Fix for bug 1922771: xp non
   zero in meditation). Bug triggered by charming chinese dragons.
 Arvid Norlander 2009-03-03
