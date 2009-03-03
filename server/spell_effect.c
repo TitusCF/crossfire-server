@@ -3200,6 +3200,8 @@ int cast_change_map_lightlevel(object *op, object *caster, object *spell) {
 
 /**
  * Create an aura spell object and put it in the player's inventory.
+ * This is also used for elemental shields - the creation is the same
+ * just the 'move' code is different.
  *
  * @param op
  * who is casting.
@@ -3211,7 +3213,7 @@ int cast_change_map_lightlevel(object *op, object *caster, object *spell) {
  * 1.
  */
 int create_aura(object *op, object *caster, object *spell) {
-    int refresh = 0;
+    int refresh = 0, i;
     object *new_aura;
 
     new_aura = present_arch_in_ob(spell->other_arch, op);
@@ -3231,6 +3233,43 @@ int create_aura(object *op, object *caster, object *spell) {
     new_aura->attacktype = spell->attacktype;
 
     new_aura->level = caster_level(caster, spell);
+
+    /* Code below is so that auras can also provide resistances.  For
+     * example, fire shield both does damage to nearby enemies and also
+     * provides some protection to fire.  We need to use a different
+     * FORCE object for this, as putting it in with the aura object
+     * just puts too many meanings into that one object.  Because
+     * the duration of this force object is the same, we don't need
+     * to set up spell expiry on it - this second object is really
+     * an internal mechanic that should be invisible to the player.
+     */
+    for (i=0; i < NROFATTACKS; i++) {
+        if (spell->resist[i]) {
+            int refresh1=1;
+            object *force;
+
+            force = present_in_ob_by_name(FORCE, spell->name, op);
+            if (!force) {
+                force=create_archetype(FORCE_NAME);
+                force->subtype = FORCE_CHANGE_ABILITY;
+                free_string(force->name);
+                force->name = add_refcount(spell->name);
+                free_string(force->name_pl);
+                force->name_pl = add_refcount(spell->name);
+                refresh1=0;
+            }
+            force->duration = new_aura->duration;
+            force->speed = new_aura->speed;
+            memcpy(&force->resist, spell->resist, sizeof(spell->resist));
+            SET_FLAG(force, FLAG_APPLIED);
+
+            if (!refresh1) insert_ob_in_ob(force, op);
+            change_abil(op, new_aura);
+            fix_object(op);
+            break;
+        }
+    }
+
     if (refresh)
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SPELL, MSG_TYPE_SPELL_SUCCESS,
                       "You recast the spell while in effect.", NULL);

@@ -749,11 +749,7 @@ void give_initial_items(object *pl, treasurelist *items) {
             CLEAR_FLAG(op, FLAG_CURSED);
             CLEAR_FLAG(op, FLAG_DAMNED);
         }
-        if (op->type == SPELL)  {
-            remove_ob(op);
-            free_object(op);
-            continue;
-        } else if (op->type == SKILL)  {
+	if (op->type==SKILL)  {
             SET_FLAG(op, FLAG_CAN_USE_SKILL);
             op->stats.exp = 0;
             op->level = 1;

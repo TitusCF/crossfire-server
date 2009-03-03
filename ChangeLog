@@ -14,6 +14,31 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Work in progress skill rebalance code.  This should not affect play in any
+way - while it introduces some new skills, those skills are not available
+right now (players need to choose class that doesn't exist).
+---
+doc/Developers/spells: Fix some typos, add info on elemental shield.
+include/skills.h: Add new magic skills.  Update defines related to that.
+   Change terminator of unarmed_skills[] to 0, so type is defined as
+   unsigned so -1 doesn't work.
+include/spells.h: Add new spell type - elemental shield.
+server/player.c: Don't remove spell objects from new characters - this
+   makes it possible to give starting characters set of spells.
+   This shouldn't make any difference - if characters have spells they
+   shouldn't, this suggests an issue with treasurelists.
+server/skill_util.c: Modify find_skill_by_name() to take comma separated
+   list of skill names.  This is used for common spells to all spell
+   casting skills (something like detect magic) - don't want 4 versions
+   of it, and don't want to require character to know a particular
+   skill for something basic.  Also add handling for new skills.
+server/skills.c: Add note about problems of raising monsters Wis on
+   failed steal attempt.  No actual code change.
+server/spell_effect.c: Update for auras that provide resistances.
+server/spell_util.c: Add handling for elemental shield spell.
+--
+MSW 2009-03-02
+
 Fix for bug 1830750: Buffer overflow with stat depletion via rabies
 (note it wasn't an actual buffer overflow by integer overflow).  Fix was to
 modify check_stat_bounds() to take parameters for valid range, and add check

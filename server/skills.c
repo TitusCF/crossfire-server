@@ -143,10 +143,16 @@ static int attempt_steal(object *op, object *who, object *skill) {
             draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,
                           "Your attempt is prevented!", NULL);
             return 0;
-        } else /* help npc to detect thief next time by raising its wisdom */
+        } else {
+            /* help npc to detect thief next time by raising its wisdom
+             * This probably isn't the right approach - we shouldn't be
+             * changing the stats of the monsters - better approach
+             * might be to use force objects for this - MSW 2009/02/24
+             */
             op->stats.Wis += (op->stats.Int/5)+1;
-        if (op->stats.Wis > MAX_STAT)
-            op->stats.Wis = MAX_STAT;
+            if (op->stats.Wis > MAX_STAT)
+                op->stats.Wis = MAX_STAT;
+        }
     }
     if (op->type == PLAYER && QUERY_FLAG(op, FLAG_WIZ)) {
         draw_ext_info(NDI_UNIQUE, 0, who, MSG_TYPE_SKILL, MSG_TYPE_SKILL_FAILURE,

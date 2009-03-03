@@ -1802,6 +1802,10 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         success = cast_item_curse_or_curse(op, caster, spell_ob);
         break;
 
+    case SP_ELEM_SHIELD:
+        success = create_aura(op, caster, spell_ob);
+        break;
+
     default:
         LOG(llevError, "cast_spell: Unhandled spell subtype %d\n", spell_ob->subtype);
     }

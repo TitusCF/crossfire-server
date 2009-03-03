@@ -83,7 +83,12 @@
 #define SK_SORCERY              36
 #define SK_TWO_HANDED_WEAPON    37
 #define SK_WRAITH_FEED          38
-#define SK_HARVESTING 39
+#define SK_HARVESTING           39
+#define SK_AIR_MAGIC            40
+#define SK_EARTH_MAGIC          41
+#define SK_WATER_MAGIC          42
+#define SK_FIRE_MAGIC           43
+
 /*@}*/
 
 /**
@@ -92,7 +97,7 @@
  * to make life easier, we use the value above as index,
  * eg, SK_EVOCATION (35) will be in last_skills[35].
  */
-#define NUM_SKILLS              40
+#define NUM_SKILLS              44
 
 /**
  * @defgroup SK_EXP_xxx Experience flags
@@ -132,7 +137,12 @@
     ((num == SK_SORCERY) \
     || (num == SK_EVOCATION) \
     || (num == SK_PYROMANCY) \
-    || (num == SK_SUMMONING))
+    || (num == SK_SUMMONING) \
+    || (num==SK_AIR_MAGIC) \
+    || (num==SK_EARTH_MAGIC) \
+    || (num==SK_FIRE_MAGIC) \
+    || (num==SK_WATER_MAGIC))
+
 
 /**
  * Currently only one of these, but put the define here to make
@@ -143,7 +153,7 @@
 extern const char *skill_names[NUM_SKILLS];
 
 #ifdef WANT_UNARMED_SKILLS
-/** Table of unarmed attack skills.  Terminated by -1.  This
+/** Table of unarmed attack skills.  Terminated by 0.  This
  * is also the list that we should try to use skills when
  * automatically applying one for the player.
  * Note it is hardcoded in the skill_util.c that dragons always
@@ -153,6 +163,7 @@ extern const char *skill_names[NUM_SKILLS];
  * updates easier and put it in a more central place - it shouldn't
  * change very often, but it make sense to have it with the enumerated
  * skill numbers above.
+ * This should probably be removed and made a player preferance instead.
  */
 static uint8 unarmed_skills[] = {
     SK_KARATE,
@@ -160,7 +171,7 @@ static uint8 unarmed_skills[] = {
     SK_FLAME_TOUCH,
     SK_PUNCHING,
     SK_WRAITH_FEED,
-    -1
+    0
 };
 
 /* Just in case one file includes this more than once */

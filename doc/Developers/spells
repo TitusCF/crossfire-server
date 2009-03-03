@@ -152,10 +152,10 @@ self.
 cleric is basically redundant now - the skill says what skill to use
 for this spell.  Note that a spell could in theory cost both mana
 and grace - what it costs is not necessarily tied to a skill.  However,
-it would be bad practice to make a wizardry spell use mana.  However,
+it would be bad practice to make a wizardry spell use grace.  However,
 I could potentially see hybrid skills that have some various benefits,
-or if we have say a 'magic' god, perhaps some special spells it provides
-a use mana.
+or if we have say a 'magic' god, perhaps some special spells it grants
+use mana and not grace.
 
 So lets next touch on the idea of treasurelist for spell objects.
 
@@ -985,15 +985,20 @@ SP_DISEASE (45)
     The disease code treats these modified values in its own way.
 
 
-SP_AURA (46):
+SP_AURA (46)/SP_ELEM_SHIELD(50):
     Auras create fields around the players that effect anyone that steps
-    into them.
+    into them.  Elemental shields work largely the same, but instead of
+    inserting a bunch of objects onto the map, instead the aura itself
+    (from the player arch) causes the damage.
 
     other_arch: aura type to insert
     duration: How long the aura lasts for.  For this spell, each
 	duration_modifier is 10 ticks.
     dam & modifier: How much damage the aura does.
     attacktype: Attacktype of the aura.
+    resist_*: resistance value to give to the player.  This is copied
+    into a separate FORCE object.
+
 
 SP_TOWN_PORTAL (47):
     This creates two linked portals which the player can use to get

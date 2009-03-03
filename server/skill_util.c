@@ -194,46 +194,102 @@ static object *adjust_skill_tool(object *who, object *skill, object *skill_tool)
  * This code is basically the same as find_skill_by_number() below,
  * but instead of a skill number, we search by the name.
  *
+ * Because a multiple skill names are allowed, we have to use arrays
+ * to store the intermediate results - we can't have skill_tool
+ * point to praying with skill pointing to fire magic.
+ *
  * @param who
  * Player to get skill.
  * @param name
- * skill to find. Needs not to be a shared string.
+ * skill to find. Needs not to be a shared string.  name can be a comma
+ * separated list of skill names - in that case, we will find the skill
+ * of the highest level.
  * @return
  * pointer to skill object, or NULL if player doesn't have it.
  *
  * @todo
- * check if name shouldn't be made a shared string.
+ * Maybe better selection of skill when choice of multiple skills is in
+ * use (highest level may not be the best answer?)
+ *
  */
 object *find_skill_by_name(object *who, const char *name) {
-    object *skill = NULL, *skill_tool = NULL, *tmp;
+    object *skill = NULL, *tmp, 
+       *skills[NUM_SKILLS], *skill_tools[NUM_SKILLS];
+    const char *skill_names[NUM_SKILLS];
+    char *ourname=NULL;
+    int num_names, highest_level_skill=0, i;
 
     if (!name)
         return NULL;
 
-    /* We make sure the length of the string in the object is greater
-     * in length than the passed string. Eg, if we have a skill called
-     * 'hi', we don't want to match if the user passed 'high'
-     */
-    for (tmp = who->inv; tmp != NULL; tmp = tmp->below) {
-        if (tmp->type == SKILL
-        && !strncasecmp(name, tmp->skill, strlen(name))
-        && strlen(tmp->skill) >= strlen(name))
-            skill = tmp;
+    /* Simple case - no commas in past in name, so don't need to tokenize */
+    if (!strchr(name, ',')) {
+        skill_names[0] = name;
+        skill_tools[0] = NULL;
+        skills[0] = NULL;
+        num_names=1;
+    } else {
+        /* strtok_r is destructive, so we need our own copy */
+        char *lasts;
+        ourname = strdup(name);
 
-        /* Try to find appropriate skilltool.  If the player has one already
-         * applied, we try to keep using that one.
-         */
-        else if (tmp->type == SKILL_TOOL
-        && !strncasecmp(name, tmp->skill, strlen(name))
-        && strlen(tmp->skill) >= strlen(name)) {
-            if (QUERY_FLAG(tmp, FLAG_APPLIED))
-                skill_tool = tmp;
-            else if (!skill_tool || !QUERY_FLAG(skill_tool, FLAG_APPLIED))
-                skill_tool = tmp;
+        if ((skill_names[0] = strtok_r(ourname, ",", &lasts))==NULL) {
+            /* This should really never happen */
+            LOG(llevError, "find_skill_by_name: strtok_r returned null, but strchr did not?\n");
+            return NULL;
+        } else {
+            skill_tools[0] = NULL;
+            skills[0] = NULL;
+            /* we already have the first name from the strtok_r above */
+            num_names=1;
+            while ((skill_names[num_names] = strtok_r(NULL, ",", &lasts)) != NULL) {
+                /* Clean out any leading spacing.  typical string would be
+                 * skill1, skill2, skill3, ...
+                 */
+                while (isspace(*skill_names[num_names])) skill_names[num_names]++;
+                skills[num_names] = NULL;
+                skill_tools[num_names] = NULL;
+                num_names++;
+            }
         }
+        /* While we don't use ourname below this point, the skill_names[] points into
+         * it, so we can't free it yet.
+         */
     }
 
-    return adjust_skill_tool(who, skill, skill_tool);
+    for (tmp=who->inv; tmp!=NULL; tmp=tmp->below) {
+       /* We make sure the length of the string in the object is greater
+        * in length than the passed string. Eg, if we have a skill called
+        * 'hi', we don't want to match if the user passed 'high'
+        */
+        if (tmp->type == SKILL || tmp->type == SKILL_TOOL) {
+            for (i=0; i<num_names; i++) {
+                if (!strncasecmp(skill_names[i], tmp->skill, strlen(skill_names[i])) &&
+                    strlen(tmp->skill) >= strlen(skill_names[i])) {
+                    if (tmp->type == SKILL) {
+                        skills[i] = tmp;
+                        if (!skill || tmp->level > skill->level) {
+                            skill = tmp;
+                            highest_level_skill=i;
+                        }
+                    }
+                    else {
+                        /* Skill tools don't have levels, so we basically find the
+                         * 'best' skill tool for this skill.
+                         */
+                        if (QUERY_FLAG(tmp, FLAG_APPLIED) || !skill_tools[i] ||
+                            !QUERY_FLAG(skill_tools[i], FLAG_APPLIED)) {
+                                skill_tools[i] = tmp;
+                            }
+                    }
+                    /* Got a matching name - no reason to look through rest of names */
+                    break;
+                }
+            }
+        }
+    }
+    if (ourname) free(ourname);
+    return adjust_skill_tool(who, skills[highest_level_skill], skill_tools[highest_level_skill]);
 }
 
 /**
@@ -526,6 +582,10 @@ int do_skill(object *op, object *part, object *skill, int dir, const char *strin
     case SK_PYROMANCY:
     case SK_SUMMONING:
     case SK_CLIMBING:
+    case SK_EARTH_MAGIC:
+    case SK_AIR_MAGIC:
+    case SK_FIRE_MAGIC:
+    case SK_WATER_MAGIC:
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_SKILL, MSG_TYPE_SKILL_ERROR,
                       "This skill is already in effect.", NULL);
         break;
