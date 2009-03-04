@@ -423,7 +423,7 @@ void dump_all_objects(void) {
         sb = stringbuffer_new();
         dump_object(op, sb);
         diff = stringbuffer_finish(sb);
-        LOG(llevDebug, "Object %d\n:%s\n", op->count, diff);
+        LOG(llevDebug, "Object %u\n:%s\n", op->count, diff);
         free(diff);
     }
 }
@@ -585,8 +585,8 @@ void set_owner(object *op, object *owner) {
      * so lets not add to that.
      */
     if (owner->owner) {
-        LOG(llevError, "owner id %d could not be resolved to a parent owner in set_owner(). This is bad!"
-            "owner=%p owner->owner=%p owner->ownercount=%d owner->owner->count=%d\n",
+        LOG(llevError, "owner id %u could not be resolved to a parent owner in set_owner(). This is bad!"
+            "owner=%p owner->owner=%p owner->ownercount=%u owner->owner->count=%u\n",
             owner->count, owner, owner->owner, owner->ownercount, owner->owner->count);
         return;
     }
@@ -2538,7 +2538,7 @@ object *insert_ob_in_ob(object *op, object *where) {
         where = where->head;
     }
     if (op->more) {
-        LOG(llevError, "Tried to insert multipart object %s (%d)\n", op->name, op->count);
+        LOG(llevError, "Tried to insert multipart object %s (%u)\n", op->name, op->count);
         return op;
     }
     CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);

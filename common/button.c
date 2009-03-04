@@ -54,7 +54,7 @@ void trigger_connected(objectlink *ol, object *cause, const int state) {
 
     for (; ol; ol = ol->next) {
         if (!ol->ob || ol->ob->count != ol->id) {
-            LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%d) (cause='%s'.\n", ol->id, (cause && cause->name) ? cause->name : "");
+            LOG(llevError, "Internal error in trigger_connect. No object associated with link id (%u) (cause='%s'.\n", ol->id, (cause && cause->name) ? cause->name : "");
             continue;
         }
         /* a button link object can become freed when the map is saving.  As
@@ -245,7 +245,7 @@ void update_buttons(mapstruct *m) {
     for (obp = m->buttons; obp; obp = obp->next)
         for (ol = obp->link; ol; ol = ol->next) {
             if (!ol->ob || ol->ob->count != ol->id) {
-                LOG(llevError, "Internal error in update_button (%s (%dx%d):%d, connected %ld).\n",
+                LOG(llevError, "Internal error in update_button (%s (%dx%d):%u, connected %ld).\n",
                     ol->ob ? ol->ob->name : "null",
                     ol->ob ? ol->ob->x : -1,
                     ol->ob ? ol->ob->y : -1,
@@ -860,7 +860,7 @@ void verify_button_links(const mapstruct *map) {
     for (obp = map->buttons; obp; obp = obp->next) {
         for (ol = obp->link; ol; ol = ol->next) {
             if (ol->id != ol->ob->count)
-                LOG(llevError, "verify_button_links: object %s on list is corrupt (%d!=%d)\n", ol->ob->name, ol->id, ol->ob->count);
+                LOG(llevError, "verify_button_links: object %s on list is corrupt (%u!=%u)\n", ol->ob->name, ol->id, ol->ob->count);
         }
     }
 }

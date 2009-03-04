@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+common/friend.c, common/exp.c, common/button.c, common/object.c, common/utils.c:
+  Fix some bad format strings for LOG().
+Arvid Norlander 2009-03-04
+
 common/map.c: Based on profiling of charm monster on a large map with Chinese
   dragons, optimise get_map_flags() a bit by avoiding a call to out_of_map(),
   get_map_from_coord() performs the needed checks and we need to call it anyway.
