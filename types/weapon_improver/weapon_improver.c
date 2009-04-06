@@ -282,22 +282,42 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
     if (sacrifice_count <= 0)
         return 0;
 
+    /* We do not allow improving stacks, so split this off from
+     * stack.  Only need to do this if weapon is part of a stack.
+     * We set nrof of weapon to zero so it can not merge with other
+     * items, so one can not do further improvements on a stack.
+     * side effect of doing it before the insert_ob_in_ob is that
+     * it won't merge back in.  We know from the code that marked
+     * objects must be in the players inventory, so we know where
+     * to put this.
+     */
+    if (weapon->nrof >1) {
+        weapon = get_split_ob(weapon,1, NULL, 0);
+        weapon->nrof = 0;
+        insert_ob_in_ob(weapon, op); 
+    } else {
+        weapon->nrof = 0;
+    }
+        
+
     weapon->level = isqrt(sacrifice_count);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
         "Your sacrifice was accepted.", NULL);
     eat_item(op, improver->slaying, sacrifice_count);
 
-    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
-        "Your *%s may be improved %d times.",
-        "Your *%s may be improved %d times.",
-        weapon->name, weapon->level);
 
     snprintf(buf, sizeof(buf), "%s's %s", op->name, weapon->name);
     FREE_AND_COPY(weapon->name, buf);
     FREE_AND_COPY(weapon->name_pl, buf);
-    weapon->nrof = 0;  /*  prevents preparing n weapons in the same slot at once! */
+
+    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,
+        "Your %s may be improved %d times.",
+        "Your %s may be improved %d times.",
+        weapon->name, weapon->level);
+
     decrease_ob(improver);
     weapon->last_eat = 0;
+    esrv_update_item(UPD_NAME | UPD_NROF, op, weapon);
     return 1;
 }
 

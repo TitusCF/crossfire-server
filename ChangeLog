@@ -14,6 +14,16 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug include/autoconf.h.in - customize stack of weapons bug.
+This commit also fixes some other things, like update name not getting
+sent to the client when doing the prepare.
+types/weapon_improver/weapon_improver.c: All changes in prepare_weapon():
+    Split stack of weapons so other items don't disappear.  Move the
+    draw_info() call after updating the weapon name, so it uses new
+    weapon name.  Add call to esrv_update_item() to update the name
+    of the weapon.
+MSW 2009-04-05
+
 common/friend.c, common/exp.c, common/button.c, common/object.c, common/utils.c:
   Fix some bad format strings for LOG().
 Arvid Norlander 2009-03-04
