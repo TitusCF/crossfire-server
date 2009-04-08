@@ -14,6 +14,13 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix for bug 2602566 - Players can nest containers.  pick_up() has largely
+same functionality, but lots of changes to remove the series of gotos and
+generally just clean it up.
+server/c_object.c: Clean up function pick_up().  Modify put_object_in_sack()
+   to not allow containers to be put in containers.
+MSW 2009-04-07
+
 Fix for bug include/autoconf.h.in - customize stack of weapons bug.
 This commit also fixes some other things, like update name not getting
 sent to the client when doing the prepare.

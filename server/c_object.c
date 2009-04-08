@@ -458,12 +458,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof) {
  * object trying to pick up.
  * @param alt
  * optional object op is trying to pick. If NULL, try to pick first item under op.
- * @todo remove goto that doesn't have any effect.
  */
 void pick_up(object *op, object *alt) {
 /* modified slightly to allow monsters use this -b.t. 5-31-95 */
-    int need_fix_tmp = 0;
-    object *tmp = NULL;
+    object *tmp = NULL, *tmp1;
     mapstruct *tmp_map = NULL;
     int count;
     tag_t tag;
@@ -475,27 +473,45 @@ void pick_up(object *op, object *alt) {
                                  "You can't pick up the %s.",
                                  "You can't pick up the %s.",
                                  alt->name);
-            goto leave;
+            return;
         }
         tmp = alt;
     } else {
         if (op->below == NULL || !can_pick(op, op->below)) {
             draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                           "There is nothing to pick up here.", NULL);
-            goto leave;
+            return;
         }
         tmp = op->below;
     }
 
-    /* Try to catch it. */
-    tmp_map = tmp->map;
-    tmp = stop_item(tmp);
-    if (tmp == NULL)
-        goto leave;
-    need_fix_tmp = 1;
-    if (!can_pick(op, tmp))
-        goto leave;
+    /* it is possible that the object is a thrown object and is flying about.
+     * in that case, what we want to pick up is the payload.  Objects
+     * that are thrown are encapsulated into a thrown object.
+     * stop_item() returns the payload (unlinked from map) and gets rid of the
+     * container object.  If this object isn't picked up, we need to insert
+     * it back on the map.
+     * A bug here is that even attempting to pick up one of these objects will
+     * result in this logic being called even if player is unable to pick it
+     * up.
+     */
 
+    tmp_map = tmp->map;
+    tmp1 = stop_item(tmp);
+
+    /* If it is a thrown object, insert it back into the map here.
+     * makes life easier further along.  Do no merge so pick up code
+     * behaves more sanely.
+     */
+    if (tmp1 != tmp) {
+        tmp = insert_ob_in_map(tmp1, tmp_map, op, INS_NO_MERGE);
+    }
+        
+    if (tmp == NULL) return;
+
+    if (!can_pick(op, tmp)) return;
+
+    /* Establish how many of the object we are picking up */
     if (op->type == PLAYER) {
         count = op->contr->count;
         if (count == 0)
@@ -506,56 +522,69 @@ void pick_up(object *op, object *alt) {
     /* container is open, so use it */
     if (op->container) {
         alt = op->container;
-        if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count))
-            goto leave;
-    } else { /* non container pickup */
-        for (alt = op->inv; alt; alt = alt->below)
+        if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count)) return;
+    } else { 
+        /* non container pickup.  See if player has any
+         * active containers.
+         */
+        object *container=NULL;
+
+        /* Look for any active containers that can hold this item.
+         * we cover two cases here - the perfect match case, where we
+         * break out of the loop, and the general case (have a container),
+         * Moved this into a single loop - reduces redundant code, is
+         * more efficient and easier to follow.  MSW 2009-04-06
+         */
+        for (alt = op->inv; alt; alt = alt->below) {
             if (alt->type == CONTAINER
             && QUERY_FLAG(alt, FLAG_APPLIED)
-            && alt->race
-            && alt->race == tmp->race
-            && sack_can_hold(NULL, alt, tmp, count))
-                break;  /* perfect match */
+            && sack_can_hold(NULL, alt, tmp, count)) {
+                if (alt->race && alt->race == tmp->race) {
+                    break;  /* perfect match */
+                }
+                else if (!container) {
+                    container = alt;
+                }
+            }
+        }
+        /* Note container could be null, but no reason to check for it */
+        if (!alt) alt=container;
 
-        if (!alt)
-            for (alt = op->inv; alt; alt = alt->below)
-                if (alt->type == CONTAINER
-                && QUERY_FLAG(alt, FLAG_APPLIED)
-                && sack_can_hold(NULL, alt, tmp, count))
-                    break;  /* General container comes next */
         if (!alt)
             alt = op; /* No free containers */
     }
+    /* see if this object is already in this container.  If so,
+     * move it to player inventory from this container.
+     */
     if (tmp->env == alt) {
-        /* here it could be possible to check rent,
-         * if someone wants to implement it
-         */
+        alt = op;
+    }
+
+    /* Don't allow players to be put into containers.  Instead,
+     * just put them in the players inventory.
+     */
+    if (tmp->type == CONTAINER && alt->type==CONTAINER) {
         alt = op;
     }
 #ifdef PICKUP_DEBUG
-    LOG(llevDebug, "Pick_up(): %s picks %s (%d) and inserts it %s.\n", op->name, tmp->name,  op->contr->count, alt->name);
+    LOG(llevDebug, "Pick_up(): %s picks %s (%d) and inserts it %s.\n", op->name, tmp->name, op->contr->count, alt->name);
 #endif
 
-    /* startequip items are not allowed to be put into containers: */
+    /* startequip items are not allowed to be put into containers
+     * Not sure why we have this limitation
+     */
     if (op->type == PLAYER
     && alt->type == CONTAINER
     && QUERY_FLAG(tmp, FLAG_STARTEQUIP)) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "This object cannot be put into containers!", NULL);
-        goto leave;
+        return;
     }
 
     tag = tmp->count;
     pick_up_object(op, alt, tmp, count);
-    if (was_destroyed(tmp, tag) || tmp->env)
-        need_fix_tmp = 0;
     if (op->type == PLAYER)
         op->contr->count = 0;
-    goto leave;
-
-leave:
-    if (need_fix_tmp)
-        fix_stopped_item(tmp, tmp_map, op);
 }
 
 /**
@@ -689,37 +718,49 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                              name_tmp, name_sack);
         return;
     }
-    if (tmp->type == CONTAINER && tmp->inv) {
-        if (tmp->slaying)
-            return;
-        /* Eneq(@csd.uu.se): If the object to be dropped is a container
-         * and does not require a key to be opened,
-         * we instead move the contents of that container into the active
-         * container, this is only done if the object has something in it.
-         * If object is container but need a key, just don't do anything
-         */
-        sack2 = tmp;
-        query_name(tmp, name_tmp, MAX_BUF);
-        draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
+    if (tmp->type == CONTAINER) {
+        if (tmp->inv) {
+            if (tmp->slaying)
+                return;
+            /* Eneq(@csd.uu.se): If the object to be dropped is a container
+             * and does not require a key to be opened,
+             * we instead move the contents of that container into the active
+             * container, this is only done if the object has something in it.
+             * If object is container but need a key, just don't do anything
+             */
+            sack2 = tmp;
+            query_name(tmp, name_tmp, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                              "You move the items from %s into %s.",
                              "You move the items from %s into %s.",
                              name_tmp, name_sack);
 
-        for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
-            tmp = tmp2->below;
-            if ((sack->type == CONTAINER && sack_can_hold(op, op->container, tmp2, tmp2->nrof))
-            || (sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
-                put_object_in_sack(op, sack, tmp2, 0);
-            } else {
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+            for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
+                tmp = tmp2->below;
+                if ((sack->type == CONTAINER && sack_can_hold(op, op->container, tmp2, tmp2->nrof))
+                   || (sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
+                    put_object_in_sack(op, sack, tmp2, 0);
+                } else {
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, 
+                                      MSG_TYPE_COMMAND_FAILURE,
                                      "Your %s fills up.",
                                      "Your %s fills up.",
                                      name_sack);
-                break;
+                    break;
+                }
             }
+            esrv_update_item(UPD_WEIGHT, op, sack2);
+            return;
+        } else {
+            query_name(tmp, name_tmp, MAX_BUF);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
+                                 "You can not put a %s into a %s",
+                                 "You can not put a %s into a %s",
+                                 name_tmp,
+                                 name_sack);
+            return;
         }
-        esrv_update_item(UPD_WEIGHT, op, sack2);
-        return;
+
     }
 
     /* Don't worry about this for containers - our caller should have
