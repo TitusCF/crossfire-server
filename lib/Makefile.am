@@ -58,6 +58,7 @@ dist_help_DATA = help/apply.en help/applymode.en \
 	help/statistics.en help/take.en help/traps.en \
 	help/unbind.en help/use.en help/usekeys.en \
 	help/whereabouts.en \
+	help/wimpy.en \
 	help/apply.fr \
 	help/bowmode.fr \
 	help/dropall.fr \
