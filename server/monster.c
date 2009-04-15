@@ -1813,7 +1813,7 @@ void check_doors(object *op, mapstruct *m, int x, int y) {
 /**
  * This function looks for an object or creature that is listening to said text.
  *
- * There is a rare even that the orig_map is used for - basically, if
+ * There is a rare event that the orig_map is used for - basically, if
  * a player says the magic word that gets him teleported off the map,
  * it can result in the new map putting the object count too high,
  * which forces the swap out of some other map.  In some cases, the
@@ -1835,6 +1835,17 @@ void communicate(object *op, const char *txt) {
     mapstruct *mp, *orig_map = op->map;
     char buf[MAX_BUF];
 
+    snprintf(buf, sizeof(buf), "%s says: %s", op->name, txt);
+    if (op->type == PLAYER) {
+        ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
+    }
+
+    /* Note that this loop looks pretty inefficient to me - we look and try to talk
+     * to every object within 2 spaces.  It would seem that if we trim this down to
+     * only try to talk to objects with npc->msg set, things would be a lot more efficient,
+     * but I'm not sure if there are any objects out there that don't have a message and instead
+     * rely sorely on events - MSW 2009-04-14
+     */
     for (i = 0; i <= SIZEOFFREE2; i++) {
         mp = op->map;
         x = op->x+freearr_x[i];
@@ -1853,9 +1864,10 @@ void communicate(object *op, const char *txt) {
         }
     }
 
+    /* if talked is set, then the talk_to_npc() wrote out this information, so
+     * don't do it again.
+     */
     if (!talked) {
-        snprintf(buf, sizeof(buf), "%s says: %s", op->name, txt);
-        ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
     }
 }
 
@@ -1880,11 +1892,19 @@ static int do_talk_npc(object *op, object *npc, const char *txt, int *talked) {
         snprintf(buf, sizeof(buf), "%s %s: %s", op->name, (reply->type == rt_reply ? "replies" : "asks"), reply->message);
         ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
         *talked = 1;
-    } else if (!*talked) {
+    }
+#if 0
+    /* let the caller handle this reply - no reason we need to.  Leaving this in for the
+     * time being, as I don't completely understand what all of this is trying to do.
+     * MSW 2009-04-14
+     */
+
+    else if (!*talked) {
         *talked = 1;
         snprintf(buf, sizeof(buf), "%s says: %s", op->name, txt);
         ext_info_map(NDI_WHITE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_SAY, buf, NULL);
     }
+#endif
 
     if (npc->type == MAGIC_EAR) {
         ext_info_map(NDI_NAVY|NDI_UNIQUE, npc->map, MSG_TYPE_DIALOG, MSG_TYPE_DIALOG_MAGIC_MOUTH, message->message, NULL);
