@@ -1812,7 +1812,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
 
     /* FIXME - we need some better sound suppport */
     /* free the spell arg */
-    if (settings.casting_time == TRUE && stringarg) {
+    if (settings.casting_time == TRUE) {
         free(stringarg);
         stringarg = NULL;
     }

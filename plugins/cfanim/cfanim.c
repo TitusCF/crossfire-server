@@ -1048,8 +1048,7 @@ static void animate(void) {
             else {
                 previous_anim->nextanimation = next;
             }
-            if (current->name)
-                free(current->name);
+            free(current->name);
             free(current);
             current = next;
         } else {

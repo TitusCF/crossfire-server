@@ -47,8 +47,7 @@ void clear_player(player *pl) {
     client_spell *next;
 
     /* Clear item stack (used by DMs only) */
-    if (pl->stack_items)
-        free(pl->stack_items);
+    free(pl->stack_items);
     pl->stack_position = 0;
 
     info = pl->spell_state;

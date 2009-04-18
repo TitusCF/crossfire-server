@@ -587,8 +587,7 @@ void free_socket_images(void) {
     for (num = 0; num < MAX_FACE_SETS; num++) {
         if (facesets[num].prefix) {
             for (q = 0; q < nrofpixmaps; q++)
-                if (facesets[num].faces[q].data)
-                    free(facesets[num].faces[q].data);
+                free(facesets[num].faces[q].data);
             free(facesets[num].prefix);
             free(facesets[num].fullname);
             free(facesets[num].size);

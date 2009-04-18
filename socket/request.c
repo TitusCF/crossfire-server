@@ -763,8 +763,7 @@ void send_query(socket_struct *ns, uint8 flags, const char *text) {
 
 #define AddIfString(Old, New, Type)                 \
     if (Old == NULL || strcmp(Old, New)) {          \
-        if (Old)                                    \
-            free(Old);                              \
+        free(Old);                                  \
         Old = strdup_local(New);                    \
         SockList_AddChar(&sl, Type);                \
         SockList_AddLen8Data(&sl, New, strlen(New));\

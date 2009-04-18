@@ -1782,10 +1782,8 @@ void delete_map(mapstruct *m) {
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.
      */
-    if (m->tmpname) {
-        free(m->tmpname);
-        m->tmpname = NULL;
-    }
+    free(m->tmpname);
+    m->tmpname = NULL;
     last = NULL;
     /* We need to look through all the maps and see if any maps
      * are pointing at this one for tiling information.  Since
@@ -1902,8 +1900,7 @@ mapstruct *ready_map_name(const char *name, int flags) {
         * temporary map, and so has reloaded a new map.  If that
         * is the case, tmpname is now null
         */
-        if (m->tmpname)
-            free(m->tmpname);
+        free(m->tmpname);
         m->tmpname = NULL;
         /* It's going to be saved anew anyway */
     }

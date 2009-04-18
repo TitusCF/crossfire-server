@@ -1046,8 +1046,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (fallback_type->description)
-        free(fallback_type->description);
+    free(fallback_type->description);
     fallback_type->description = strdup("This type regroups all types who don't have a specific definition.");
 
     for (number = 0; number < type_count; number++) {

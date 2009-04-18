@@ -466,10 +466,8 @@ static void load_materials(void) {
             mt->value = value;
         }
     }
-    if (mt->next) {
-        free(mt->next);
-        mt->next = NULL;
-    }
+    free(mt->next);
+    mt->next = NULL;
     LOG(llevDebug, "Done.\n");
     fclose(fp);
 
