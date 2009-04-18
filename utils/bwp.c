@@ -465,12 +465,15 @@ int main(int argc, char *argv[]) {
                 char li;
                 letterindexnext[0] = '\0';
                 for (li = 'a'; li <= 'z'; li++) {
+                    char *p;
+
                     if (li == letter) {
                         sprintf(letterindexnext, "%c ", toupper(li));
                     } else {
                         sprintf(letterindexnext, "[[%c]] ", toupper(li));
                     }
-                    strncat(letterindex, letterindexnext, 256);
+                    p = strchr(letterindex, '\0');
+                    snprintf(p, letterindex+sizeof(letterindex)-p, "%s", letterindexnext);
                 }
 
                 keycount = 0;
