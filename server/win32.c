@@ -150,10 +150,8 @@ int closedir(DIR *dp) {
     if (!dp)
         return 0;
     _findclose(dp->handle);
-    if (dp->dir)
-        free(dp->dir);
-    if (dp)
-        free(dp);
+    free(dp->dir);
+    free(dp);
 
     return 0;
 }

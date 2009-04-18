@@ -844,8 +844,7 @@ void check_login(object *op) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_SUCCESS,
                       buf, NULL);
     }
-    if (party_name)
-        free(party_name);
+    free(party_name);
 
     return;
 }

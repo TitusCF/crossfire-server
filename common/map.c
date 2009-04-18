@@ -1549,7 +1549,6 @@ int save_map(mapstruct *m, int flag) {
      * If unique map, save files in the proper destination (set by
      * player)
      */
-    fp2 = fp; /* save unique items into fp2 */
     if ((flag == SAVE_MODE_NORMAL || flag == SAVE_MODE_OVERLAY) && !m->unique && !m->is_template) {
         char name[MAX_BUF], final_unique[MAX_BUF];
 
@@ -1593,30 +1592,28 @@ int save_map(mapstruct *m, int flag) {
             }
             free_all_objects(m);
         }
-        if (fp2 != NULL) {
-            if (ftell(fp2) == 0) {
-                fclose(fp2);
-                unlink(buf);
-                /* If there are no unique items left on the map, we need to
-                 * unlink the original unique map so that the unique
-                 * items don't show up again.
-                 */
-                unlink(final_unique);
-            } else {
-                fflush(fp2);
-                fclose(fp2);
-                unlink(final_unique); /* failure isn't too bad, maybe the file doesn't exist. */
-                if (rename(buf, final_unique) == -1) {
-                    LOG(llevError, "Couldn't rename unique file %s to %s\n", buf, final_unique);
-                    if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
-                        pclose(fp);
-                    } else {
-                        fclose(fp);
-                    }
-                    return SAVE_ERROR_URENAME;
+        if (ftell(fp2) == 0) {
+            fclose(fp2);
+            unlink(buf);
+            /* If there are no unique items left on the map, we need to
+             * unlink the original unique map so that the unique
+             * items don't show up again.
+             */
+            unlink(final_unique);
+        } else {
+            fflush(fp2);
+            fclose(fp2);
+            unlink(final_unique); /* failure isn't too bad, maybe the file doesn't exist. */
+            if (rename(buf, final_unique) == -1) {
+                LOG(llevError, "Couldn't rename unique file %s to %s\n", buf, final_unique);
+                if (m->compressed && (m->unique || m->is_template || flag != SAVE_MODE_NORMAL)) {
+                    pclose(fp);
+                } else {
+                    fclose(fp);
                 }
-                chmod(final_unique, SAVE_MODE);
+                return SAVE_ERROR_URENAME;
             }
+            chmod(final_unique, SAVE_MODE);
         }
     } else { /* save same file when not playing, like in editor */
         res = save_objects(m, fp, fp, 0);

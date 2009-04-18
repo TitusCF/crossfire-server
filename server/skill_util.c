@@ -213,7 +213,7 @@ static object *adjust_skill_tool(object *who, object *skill, object *skill_tool)
  *
  */
 object *find_skill_by_name(object *who, const char *name) {
-    object *skill = NULL, *tmp, 
+    object *skill = NULL, *tmp,
        *skills[NUM_SKILLS], *skill_tools[NUM_SKILLS];
     const char *skill_names[NUM_SKILLS];
     char *ourname=NULL;
@@ -288,7 +288,7 @@ object *find_skill_by_name(object *who, const char *name) {
             }
         }
     }
-    if (ourname) free(ourname);
+    free(ourname);
     return adjust_skill_tool(who, skills[highest_level_skill], skill_tools[highest_level_skill]);
 }
 
