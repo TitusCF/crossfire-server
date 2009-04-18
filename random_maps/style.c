@@ -222,12 +222,15 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
             if (only_subdirs)
                 style_map = NULL;
             else {
-                strncat(style_file_path, "/", sizeof(style_file_path));
-                strncat(style_file_path, namelist[RANDOM()%n], sizeof(style_file_path));
+                char *p;
+
+                p = strchr(style_file_path, '\0');
+                snprintf(p, style_file_path+sizeof(style_file_path)-p, "/%s", namelist[RANDOM()%n]);
                 style_map = load_style_map(style_file_path);
             }
         } else { /* find the map closest in difficulty */
             int min_dist = 32000, min_index = -1;
+            char *p;
 
             for (i = 0; i < n; i++) {
                 int dist;
@@ -252,8 +255,8 @@ mapstruct *find_style(const char *dirname, const char *stylename, int difficulty
             }
             /* presumably now we've found the "best" match for the
                difficulty. */
-            strncat(style_file_path, "/", sizeof(style_file_path));
-            strncat(style_file_path, namelist[min_index], sizeof(style_file_path));
+            p = strchr(style_file_path, '\0');
+            snprintf(p, style_file_path+sizeof(style_file_path)-p, "/%s", namelist[min_index]);
             style_map = load_style_map(style_file_path);
         }
         for (i = 0; i < n; i++)
