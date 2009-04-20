@@ -507,9 +507,11 @@ void pick_up(object *op, object *alt) {
         tmp = insert_ob_in_map(tmp1, tmp_map, op, INS_NO_MERGE);
     }
 
-    if (tmp == NULL) return;
+    if (tmp == NULL)
+        return;
 
-    if (!can_pick(op, tmp)) return;
+    if (!can_pick(op, tmp))
+        return;
 
     /* Establish how many of the object we are picking up */
     if (op->type == PLAYER) {
@@ -522,12 +524,13 @@ void pick_up(object *op, object *alt) {
     /* container is open, so use it */
     if (op->container) {
         alt = op->container;
-        if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count)) return;
+        if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count))
+            return;
     } else {
         /* non container pickup.  See if player has any
          * active containers.
          */
-        object *container=NULL;
+        object *container = NULL;
 
         /* Look for any active containers that can hold this item.
          * we cover two cases here - the perfect match case, where we
@@ -548,7 +551,8 @@ void pick_up(object *op, object *alt) {
             }
         }
         /* Note container could be null, but no reason to check for it */
-        if (!alt) alt=container;
+        if (!alt)
+            alt = container;
 
         if (!alt)
             alt = op; /* No free containers */
