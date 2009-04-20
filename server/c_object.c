@@ -506,7 +506,7 @@ void pick_up(object *op, object *alt) {
     if (tmp1 != tmp) {
         tmp = insert_ob_in_map(tmp1, tmp_map, op, INS_NO_MERGE);
     }
-        
+
     if (tmp == NULL) return;
 
     if (!can_pick(op, tmp)) return;
@@ -523,7 +523,7 @@ void pick_up(object *op, object *alt) {
     if (op->container) {
         alt = op->container;
         if (alt != tmp->env && !sack_can_hold(op, alt, tmp, count)) return;
-    } else { 
+    } else {
         /* non container pickup.  See if player has any
          * active containers.
          */
@@ -741,7 +741,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, uint32 nrof) {
                    || (sack->type == TRANSPORT && transport_can_hold(sack, tmp2, tmp2->nrof))) {
                     put_object_in_sack(op, sack, tmp2, 0);
                 } else {
-                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, 
+                    draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND,
                                       MSG_TYPE_COMMAND_FAILURE,
                                      "Your %s fills up.",
                                      "Your %s fills up.",

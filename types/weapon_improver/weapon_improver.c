@@ -294,11 +294,11 @@ static int prepare_weapon(object *op, object *improver, object *weapon) {
     if (weapon->nrof >1) {
         weapon = get_split_ob(weapon,1, NULL, 0);
         weapon->nrof = 0;
-        insert_ob_in_ob(weapon, op); 
+        insert_ob_in_ob(weapon, op);
     } else {
         weapon->nrof = 0;
     }
-        
+
 
     weapon->level = isqrt(sacrifice_count);
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_APPLY, MSG_TYPE_APPLY_SUCCESS,

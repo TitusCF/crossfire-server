@@ -1384,7 +1384,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                 if (!op_on_battleground(hitter, NULL, NULL, NULL) && !QUERY_FLAG(op, FLAG_WAS_WIZ)) {
                     object *owner = get_owner(hitter);
                     sint64 orig_exp = op->stats.exp;
-                
+
                     change_exp(op, -op->stats.exp/rate, NULL, 0);
 
                     if (owner && owner != hitter) {

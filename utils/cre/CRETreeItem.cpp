@@ -1,7 +1,7 @@
 //
 // C++ Implementation: CRETreeItem
 //
-// Description: 
+// Description:
 //
 //
 // Author: Nicolas Weeger <nicolas.weeger@laposte.net>, (C) 2008
