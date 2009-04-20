@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+server/c_object.c: Fix crash when picking up some flying objects.
+Andreas Kirschbaum 2009-04-20
+
 Fix for bug 2281692 - CFDialog conversation NPC answer precedes PC speech.
 server/monster.c: ext_info_map() wasn't called until after the event logic.
 Instead, for players, we can draw it immediately - we only need to perhaps do

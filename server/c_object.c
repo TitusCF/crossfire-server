@@ -498,6 +498,8 @@ void pick_up(object *op, object *alt) {
 
     tmp_map = tmp->map;
     tmp1 = stop_item(tmp);
+    if (tmp1 == NULL)
+        return;
 
     /* If it is a thrown object, insert it back into the map here.
      * makes life easier further along.  Do no merge so pick up code
