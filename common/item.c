@@ -80,13 +80,13 @@ body_locations_struct body_locations[NUM_BODY_LOCATIONS] = {
 };
 
 /** Tens */
-static const char numbers_10[10][20] = {
+static const char *const numbers_10[] = {
     "zero", "ten", "twenty", "thirty", "fourty", "fifty", "sixty", "seventy",
     "eighty", "ninety"
 };
 
 /** Levels as a full name and not a number. */
-static const char levelnumbers[21][20] = {
+static const char *const levelnumbers[] = {
     "zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh",
     "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
     "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteen",
@@ -94,7 +94,7 @@ static const char levelnumbers[21][20] = {
 };
 
 /** Tens for levels */
-static const char levelnumbers_10[11][20] = {
+static const char *const levelnumbers_10[] = {
     "zeroth", "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
     "seventieth", "eightieth", "ninetieth"
 };
@@ -230,7 +230,7 @@ static const int item_types_size = sizeof(item_types)/sizeof(*item_types);
  * note that this table is only really used for program generated items -
  * custom objects can use whatever they want.
  */
-static const int enc_to_item_power[21] = {
+static const int enc_to_item_power[] = {
     0, 0, 1, 2, 3, 4,    /* 5 */
     5, 7, 9, 11, 13,    /* 10 */
     15, 18, 21, 24, 27, /* 15 */
@@ -240,8 +240,8 @@ static const int enc_to_item_power[21] = {
 int get_power_from_ench(int ench) {
     if (ench < 0)
         ench = 0;
-    if (ench > 20)
-        ench = 20;
+    if (ench > sizeof(enc_to_item_power)/sizeof(*enc_to_item_power)-1)
+        ench = sizeof(enc_to_item_power)/sizeof(*enc_to_item_power)-1;
     return enc_to_item_power[ench];
 }
 
