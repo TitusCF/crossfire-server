@@ -2703,8 +2703,8 @@ resist_fear 50
 speed 2
 msg
   These sure look like useful boots.
-  They feel alittle lighter and appear
-  abit sleeker.
+  They feel a little lighter and appear
+  a bit sleeker.
 endmsg
 stand_still 1
 item_power 4
@@ -2741,8 +2741,7 @@ materialname steel
 ac 1
 resist_physical 10
 msg
-  The metal exterior provides alittle
-  extra resistance.
+  The metal exterior provides a little extra resistance.
 endmsg
 stand_still 1
 item_power 2
