@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include: After advice of Ragnor against svn:externals without -r, deleted the
+  svn:externals pointing to client/trunk/common/shared, after also coming to
+  the conclusion that this needs to be controlled in server vs. client so that
+  any client software base that wants to use this file can specify the version
+  of the file they want instead of the server having to pick one from
+  somewhere else.
+Kevin Bulgrien 2009-05-09
+
 include: Added svn:externals pointing to client/trunk/common/shared
 include/includes.h
 include/Makefile.am
@@ -25,7 +33,7 @@ socket/lowlevel.c
 server/c_range.c
 server/shop.c
 server/player.c: changed references of newclient.h to shared/newclient.h.
-Kevin R. Bulgrien 2009-05-09
+Kevin Bulgrien 2009-05-09
 
 server/c_object.c: Fix crash when picking up some flying objects.
 Andreas Kirschbaum 2009-04-20
