@@ -45,7 +45,7 @@
 #include <object.h>
 #include <spells.h>
 #include <skills.h>
-#include <newclient.h>
+#include <shared/newclient.h>
 
 static archetype *get_player_archetype(archetype *at);
 

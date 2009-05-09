@@ -40,7 +40,7 @@
 #include <global.h>
 #include <sproto.h>
 
-#include <newclient.h>
+#include <shared/newclient.h>
 #include <newserver.h>
 #include <loader.h>
 #include <image.h>

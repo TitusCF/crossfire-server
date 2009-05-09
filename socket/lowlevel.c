@@ -40,7 +40,7 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <global.h>
-#include <newclient.h>
+#include <shared/newclient.h>
 #include <sproto.h>
 #include <errno.h>
 

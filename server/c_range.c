@@ -37,7 +37,7 @@
 #endif
 #include <spells.h>
 #include <skills.h>
-#include <newclient.h>
+#include <shared/newclient.h>
 #include <commands.h>
 
 /**

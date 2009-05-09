@@ -103,7 +103,7 @@
 #include "config.h"
 #include "define.h"
 #include "logger.h"
-#include "newclient.h"
+#include "shared/newclient.h"
 #include "languages.h"
 
 #ifndef TRUE

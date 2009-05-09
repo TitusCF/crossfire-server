@@ -39,7 +39,7 @@
 
 #include <global.h>
 #include <object.h> /* LOOK_OBJ */
-#include <newclient.h>
+#include <shared/newclient.h>
 #include <newserver.h>
 #include <sproto.h>
 

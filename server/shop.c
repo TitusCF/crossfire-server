@@ -38,7 +38,7 @@
 #include <spells.h>
 #include <skills.h>
 #include <living.h>
-#include <newclient.h>
+#include <shared/newclient.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif
