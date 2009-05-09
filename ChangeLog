@@ -14,6 +14,14 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+include/shared: Add as a non-external directory.
+include/shared/newclient.h: Added client/trunk/common/shared/newclient.h
+  revision 11674 to transfer control of newclient.h from client area to 
+  server area.
+include/shared/README: Add a file with a brief note stating that the client
+  references the files in this directory using an SVN external property.
+Kevin Bulgrien 2009-05-09
+
 include: After advice of Ragnor against svn:externals without -r, deleted the
   svn:externals pointing to client/trunk/common/shared, after also coming to
   the conclusion that this needs to be controlled in server vs. client so that
