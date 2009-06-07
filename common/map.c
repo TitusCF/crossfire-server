@@ -1371,7 +1371,7 @@ static mapstruct *load_overlay_map(const char *filename, mapstruct *m) {
  *****************************************************************************/
 
 /**
- * This goes through map 'm' and removed any unique items on the map.
+ * This goes through map 'm' and removes any unique items on the map.
  *
  * @param m
  * map to check.
