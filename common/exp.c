@@ -41,19 +41,19 @@ sint64 *levels; /**< Number of levels for which we have experience. */
 #define TRUE 1
 #define FALSE 0
 
-static const float exp_att_mult[NROFATTACKS+2] = {
+static const float exp_att_mult[NROFATTACKS] = {
     0.0,    /* AT_PHYSICAL */
     0.0,    /* AT_MAGIC */
     0.0,    /* AT_FIRE */
     0.0,    /* AT_ELECTRICITY */
     0.0,    /* AT_COLD */
-    0.0,    /* AT_WATER *//*AT_CONFUSION!*/
+    0.0,    /* AT_CONFUSION */
     0.4,    /* AT_ACID */
     1.5,    /* AT_DRAIN */
     0.0,    /* AT_WEAPONMAGIC */
     0.1,    /* AT_GHOSTHIT */
     0.3,    /* AT_POISON */
-    0.2,    /* AT_DISEASE */
+    0.1,    /* AT_SLOW */
     0.3,    /* AT_PARALYZE */
     0.0,    /* AT_TURN_UNDEAD */
     0.0,    /* AT_FEAR */
@@ -61,22 +61,28 @@ static const float exp_att_mult[NROFATTACKS+2] = {
     0.0,    /* AT_DEPLETE */
     0.0,    /* AT_DEATH */
     0.0,    /* AT_CHAOS */
-    0.0     /* AT_COUNTERSPELL */
+    0.0,    /* AT_COUNTERSPELL */
+    0.5,    /* AT_GODPOWER */
+    0.1,    /* AT_HOLYWORD */
+    0.2,    /* AT_BLIND */
+    0.0,    /* AT_INTERNAL */
+    0.5,    /* AT_LIFE_STEALING */
+    0.2,    /* AT_DISEASE */
 };
 
-static const float exp_prot_mult[NROFATTACKS+2] = {
+static const float exp_prot_mult[NROFATTACKS] = {
     0.4,    /* AT_PHYSICAL */
     0.5,    /* AT_MAGIC */
     0.1,    /* AT_FIRE */
     0.1,    /* AT_ELECTRICITY */
     0.1,    /* AT_COLD */
-    0.1,    /* AT_WATER */
+    0.1,    /* AT_CONFUSION */
     0.1,    /* AT_ACID */
     0.1,    /* AT_DRAIN */
     0.1,    /* AT_WEAPONMAGIC */
     0.1,    /* AT_GHOSTHIT */
     0.1,    /* AT_POISON */
-    0.1,    /* AT_DISEASE */
+    0.0,    /* AT_SLOW */
     0.1,    /* AT_PARALYZE */
     0.1,    /* AT_TURN_UNDEAD */
     0.1,    /* AT_FEAR */
@@ -84,7 +90,13 @@ static const float exp_prot_mult[NROFATTACKS+2] = {
     0.0,    /* AT_DEPLETE */
     0.0,    /* AT_DEATH */
     0.0,    /* AT_CHAOS */
-    0.0     /* AT_COUNTERSPELL */
+    0.0,    /* AT_COUNTERSPELL */
+    0.0,    /* AT_GODPOWER */
+    0.1,    /* AT_HOLYWORD */
+    0.0,    /* AT_BLIND */
+    0.0,    /* AT_INTERNAL */
+    0.0,    /* AT_LIFE_STEALING */
+    0.1,    /* AT_DISEASE */
 };
 
 /**
