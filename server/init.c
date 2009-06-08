@@ -1148,6 +1148,7 @@ static void compile_info(void) {
 
 /* Signal handlers: */
 
+#ifndef DEBUG
 /**
  * SIGSERV handler.
  * @param i
@@ -1157,6 +1158,7 @@ static void rec_sigsegv(int i) {
     LOG(llevError, "\nSIGSEGV received.\n");
     fatal_signal(1);
 }
+#endif
 
 /**
  * SIGINT handler.
@@ -1188,6 +1190,7 @@ static void rec_sighup(int i) {
     }
 }
 
+#ifndef DEBUG
 /**
  * SIGQUIT handler.
  *
@@ -1198,7 +1201,9 @@ static void rec_sigquit(int i) {
     LOG(llevInfo, "\nSIGQUIT received\n");
     fatal_signal(1);
 }
+#endif
 
+#ifndef DEBUG
 /**
  * SIGPIPE handler.
  *
@@ -1222,7 +1227,9 @@ static void rec_sigpipe(int i) {
     fatal_signal(1); /*Might consider to uncomment this line */
 #endif
 }
+#endif
 
+#ifdef SIGBUS
 /**
  * SIGBUS handler.
  *
@@ -1230,12 +1237,12 @@ static void rec_sigpipe(int i) {
  * unused.
  */
 static void rec_sigbus(int i) {
-#ifdef SIGBUS
     LOG(llevError, "\nSIGBUS received\n");
     fatal_signal(1);
-#endif
 }
+#endif
 
+#ifndef DEBUG
 /**
  * SIGTERM handler.
  *
@@ -1246,6 +1253,7 @@ static void rec_sigterm(int i) {
     LOG(llevInfo, "\nSIGTERM received\n");
     fatal_signal(0);
 }
+#endif
 
 /**
  * General signal handling. Will exit() in any case.
