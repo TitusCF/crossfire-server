@@ -470,9 +470,6 @@ static void init_clocks(void) {
     }
 }
 
-/** Attack messages the player gets when hitting/getting hit. */
-attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
-
 /**
  * Initializes the attack messages.
  * Called by init_library().

@@ -155,6 +155,7 @@ typedef struct {
     int face;
 } Chaos_Attacks;
 
+/** Attack messages the player gets when hitting/getting hit. */
 EXTERN attackmess_t attack_mess[NROFATTACKMESS][MAXATTACKMESS];
 
 #ifndef INIT_C
