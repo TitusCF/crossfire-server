@@ -442,17 +442,17 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
      */
 
     if (dam == 9998 && op->type == DOOR) {
-        sprintf(buf1, "unlock %s", op->name);
-        sprintf(buf2, " unlocks");
+        snprintf(buf1, sizeof(buf1), "unlock %s", op->name);
+        snprintf(buf2, sizeof(buf2), " unlocks");
         found++;
     }
     if (dam < 0) {
-        sprintf(buf1, "hit %s", op->name);
-        sprintf(buf2, " hits");
+        snprintf(buf1, sizeof(buf1), "hit %s", op->name);
+        snprintf(buf2, sizeof(buf2), " hits");
         found++;
     } else if (dam == 0) {
-        sprintf(buf1, "missed %s", op->name);
-        sprintf(buf2, " misses");
+        snprintf(buf1, sizeof(buf1), "missed %s", op->name);
+        snprintf(buf2, sizeof(buf2), " misses");
         found++;
     } else if ((hitter->type == DISEASE
         || hitter->type == SYMPTOM
@@ -461,8 +461,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_SUFFER][i].level != -1; i++)
             if (dam < attack_mess[ATM_SUFFER][i].level
             || attack_mess[ATM_SUFFER][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_SUFFER][i].buf1, op->name, attack_mess[ATM_SUFFER][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_SUFFER][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_SUFFER][i].buf1, op->name, attack_mess[ATM_SUFFER][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_SUFFER][i].buf3);
                 found++;
                 break;
             }
@@ -470,8 +470,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_DOOR][i].level != -1; i++)
             if (dam < attack_mess[ATM_DOOR][i].level
             || attack_mess[ATM_DOOR][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_DOOR][i].buf1, op->name, attack_mess[ATM_DOOR][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_DOOR][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_DOOR][i].buf1, op->name, attack_mess[ATM_DOOR][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_DOOR][i].buf3);
                 found++;
                 break;
             }
@@ -480,8 +480,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_KARATE][i].level != -1; i++)
                 if (dam < attack_mess[ATM_KARATE][i].level
                 || attack_mess[ATM_KARATE][i+1].level == -1) {
-                    sprintf(buf1, "%s %s%s", attack_mess[ATM_KARATE][i].buf1, op->name, attack_mess[ATM_KARATE][i].buf2);
-                    sprintf(buf2, "%s", attack_mess[ATM_KARATE][i].buf3);
+                    snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_KARATE][i].buf1, op->name, attack_mess[ATM_KARATE][i].buf2);
+                    snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_KARATE][i].buf3);
                     found++;
                     break;
                 }
@@ -489,8 +489,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_CLAW][i].level != -1; i++)
                 if (dam < attack_mess[ATM_CLAW][i].level
                 || attack_mess[ATM_CLAW][i+1].level == -1) {
-                    sprintf(buf1, "%s %s%s", attack_mess[ATM_CLAW][i].buf1, op->name, attack_mess[ATM_CLAW][i].buf2);
-                    sprintf(buf2, "%s", attack_mess[ATM_CLAW][i].buf3);
+                    snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_CLAW][i].buf1, op->name, attack_mess[ATM_CLAW][i].buf2);
+                    snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_CLAW][i].buf3);
                     found++;
                     break;
                 }
@@ -498,16 +498,16 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
             for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_PUNCH][i].level != -1; i++)
                 if (dam < attack_mess[ATM_PUNCH][i].level
                 || attack_mess[ATM_PUNCH][i+1].level == -1) {
-                    sprintf(buf1, "%s %s%s", attack_mess[ATM_PUNCH][i].buf1, op->name, attack_mess[ATM_PUNCH][i].buf2);
-                    sprintf(buf2, "%s", attack_mess[ATM_PUNCH][i].buf3);
+                    snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_PUNCH][i].buf1, op->name, attack_mess[ATM_PUNCH][i].buf2);
+                    snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_PUNCH][i].buf3);
                     found++;
                     break;
                 }
         } else if (USING_SKILL(hitter, SK_WRAITH_FEED)) {
             for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_WRAITH_FEED][i].level != -1; i++)
                 if (dam < attack_mess[ATM_WRAITH_FEED][i].level) {
-                    sprintf(buf1, "%s %s%s", attack_mess[ATM_WRAITH_FEED][i].buf1, op->name, attack_mess[ATM_WRAITH_FEED][i].buf2);
-                    sprintf(buf2, "%s", attack_mess[ATM_WRAITH_FEED][i].buf3);
+                    snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_WRAITH_FEED][i].buf1, op->name, attack_mess[ATM_WRAITH_FEED][i].buf2);
+                    snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_WRAITH_FEED][i].buf3);
                     found++;
                     break;
                 }
@@ -516,11 +516,11 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     if (found) {
         /* done */
     } else if (IS_ARROW(hitter) && (type == AT_PHYSICAL || type == AT_MAGIC)) {
-        sprintf(buf1, "hit"); /* just in case */
+        snprintf(buf1, sizeof(buf1), "hit"); /* just in case */
         for (i = 0; i < MAXATTACKMESS; i++)
             if (dam < attack_mess[ATM_ARROW][i].level
             || attack_mess[ATM_ARROW][i+1].level == -1) {
-                sprintf(buf2, "%s", attack_mess[ATM_ARROW][i].buf3);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_ARROW][i].buf3);
                 found++;
                 break;
             }
@@ -529,8 +529,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_DRAIN][i].level != -1; i++)
             if (dam < attack_mess[ATM_DRAIN][i].level
             || attack_mess[ATM_DRAIN][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_DRAIN][i].buf1, op->name, attack_mess[ATM_DRAIN][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_DRAIN][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_DRAIN][i].buf1, op->name, attack_mess[ATM_DRAIN][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_DRAIN][i].buf3);
                 found++;
                 break;
             }
@@ -538,8 +538,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_ELEC][i].level != -1; i++)
             if (dam < attack_mess[ATM_ELEC][i].level
             || attack_mess[ATM_ELEC][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_ELEC][i].buf1, op->name, attack_mess[ATM_ELEC][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_ELEC][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_ELEC][i].buf1, op->name, attack_mess[ATM_ELEC][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_ELEC][i].buf3);
                 found++;
                 break;
             }
@@ -547,8 +547,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_COLD][i].level != -1; i++)
             if (dam < attack_mess[ATM_COLD][i].level
             || attack_mess[ATM_COLD][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_COLD][i].buf1, op->name, attack_mess[ATM_COLD][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_COLD][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_COLD][i].buf1, op->name, attack_mess[ATM_COLD][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_COLD][i].buf3);
                 found++;
                 break;
             }
@@ -556,8 +556,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_FIRE][i].level != -1; i++)
             if (dam < attack_mess[ATM_FIRE][i].level
             || attack_mess[ATM_FIRE][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_FIRE][i].buf1, op->name, attack_mess[ATM_FIRE][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_FIRE][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_FIRE][i].buf1, op->name, attack_mess[ATM_FIRE][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_FIRE][i].buf3);
                 found++;
                 break;
             }
@@ -579,8 +579,8 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[mtype][i].level != -1; i++)
             if (dam < attack_mess[mtype][i].level
             || attack_mess[mtype][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[mtype][i].buf1, op->name, attack_mess[mtype][i].buf2);
-                sprintf(buf2, "%s", attack_mess[mtype][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[mtype][i].buf1, op->name, attack_mess[mtype][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[mtype][i].buf3);
                 found++;
                 break;
             }
@@ -588,16 +588,16 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
         for (i = 0; i < MAXATTACKMESS && attack_mess[ATM_BASIC][i].level != -1; i++)
             if (dam < attack_mess[ATM_BASIC][i].level
             || attack_mess[ATM_BASIC][i+1].level == -1) {
-                sprintf(buf1, "%s %s%s", attack_mess[ATM_BASIC][i].buf1, op->name, attack_mess[ATM_BASIC][i].buf2);
-                sprintf(buf2, "%s", attack_mess[ATM_BASIC][i].buf3);
+                snprintf(buf1, sizeof(buf1), "%s %s%s", attack_mess[ATM_BASIC][i].buf1, op->name, attack_mess[ATM_BASIC][i].buf2);
+                snprintf(buf2, sizeof(buf2), "%s", attack_mess[ATM_BASIC][i].buf3);
                 found++;
                 break;
             }
     }
 
     if (!found) {
-        sprintf(buf1, "hit");
-        sprintf(buf2, "hits");
+        snprintf(buf1, sizeof(buf1), "hit");
+        snprintf(buf2, sizeof(buf2), "hits");
     }
 
     /* bail out if a monster is casting spells */
@@ -614,9 +614,9 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     && rndm(0, 1)
     && (get_owner(hitter) == NULL ? hitter->type : hitter->owner->type) == PLAYER) {
         if (get_owner(hitter) != NULL)
-            sprintf(buf, "%s's %s %s you.", hitter->owner->name, hitter->name, buf2);
+            snprintf(buf, sizeof(buf), "%s's %s %s you.", hitter->owner->name, hitter->name, buf2);
         else {
-            sprintf(buf, "%s%s you.", hitter->name, buf2);
+            snprintf(buf, sizeof(buf), "%s%s you.", hitter->name, buf2);
             if (dam != 0) {
                 if (hitter->chosen_skill)
                     play_sound_player_only(op->contr, SOUND_TYPE_HIT_BY, op, 0, hitter->chosen_skill->name);
@@ -634,7 +634,7 @@ static void attack_message(int dam, int type, object *op, object *hitter) {
     /* scale down these messages too */
     /*if(hitter->type == PLAYER && rndm(0, 2) == 0) {*/
     if (hitter->type == PLAYER) {
-        sprintf(buf, "You %s.", buf1);
+        snprintf(buf, sizeof(buf), "You %s.", buf1);
         if (dam != 0) {
             if (hitter->chosen_skill)
                 play_sound_player_only(hitter->contr, SOUND_TYPE_HIT, hitter, 0, hitter->chosen_skill->name);
@@ -1630,7 +1630,7 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
             char name[MAX_BUF];
 
             tmv = localtime(&t);
-            strftime(buf, 256, "%a %b %d %H:%M:%S %Y", tmv);
+            strftime(buf, sizeof(buf), "%a %b %d %H:%M:%S %Y", tmv);
             query_name(op, name, MAX_BUF);
 
             LOG(llevInfo, "%s PLAYER_KILL_PLAYER: %s (%s) killed %s\n", buf, owner->name, owner->contr->socket.host, name);
@@ -1714,9 +1714,9 @@ static int kill_object(object *op, int dam, object *hitter, int type) {
 
         query_name(op, name_op, MAX_BUF);
         query_name(hitter, name_hitter, MAX_BUF);
-        (void)sprintf(buf, "%s killed %s with %s%s.", owner->name, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
+        snprintf(buf, sizeof(buf), "%s killed %s with %s%s.", owner->name, name_op, name_hitter, battleg ? " (duel)" : (pk ? " (pk)" : ""));
     } else {
-        (void)sprintf(buf, "%s killed %s%s%s.", hitter->name, op->name,
+        snprintf(buf, sizeof(buf), "%s killed %s%s%s.", hitter->name, op->name,
                       (QUERY_FLAG(hitter, FLAG_MONSTER)) || hitter->type == PLAYER ?
                       " in hand to hand combat" : "", battleg ? " (duel)" : (pk ? " (pk)" : ""));
     }
