@@ -581,9 +581,9 @@ typedef struct typedata {
 
 #define FLAG_BEEN_APPLIED       80 /**< The object has been applied */
 #define FLAG_READY_SCROLL       81 /**< monster has scroll in inv and can use it */
-#define FLAG_USE_ROD            82 /**< (Monster) can apply and use rods */
+/*#define FLAG_USE_ROD          82 unused (Monster) can apply and use rods */
 /*#define FLAG_READY_HORN       83 unused (Monster) has a horn readied */
-#define FLAG_USE_HORN           84 /**< (Monster) can apply and use horns */
+/*#define FLAG_USE_HORN         84 unused (Monster) can apply and use horns */
 #define FLAG_MAKE_INVIS         85 /**< (Item) gives invisibility when applied */
 #define FLAG_INV_LOCKED         86 /**< Item will not be dropped from inventory */
 #define FLAG_IS_WOODED          87 /**< Item is wooded terrain */

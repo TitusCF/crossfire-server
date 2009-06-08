@@ -166,8 +166,6 @@ static const flag_definition flags[] = {
     { "can_use_skill", "FLAG_CAN_USE_SKILL" },
     { "been_applied", "FLAG_BEEN_APPLIED" },
     { "has_ready_scroll", "FLAG_READY_SCROLL" },
-    { "can_use_rod", "FLAG_USE_ROD" },
-    { "can_use_horn", "FLAG_USE_HORN" },
     { "make_invisible", "FLAG_MAKE_INVIS" },
     { "inv_locked", "FLAG_INV_LOCKED" },
     { "is_wooded", "FLAG_IS_WOODED" },

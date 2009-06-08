@@ -14,6 +14,11 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Remove support for obsolete attributes can_use_rod, can_use_wand, and
+can_use_horn. These attributes have been read/written from/to map files but
+not used for anything.
+Andreas Kirschbaum 2009-06-09
+
 include/shared: Add as a non-external directory.
 include/shared/newclient.h: Added client/trunk/common/shared/newclient.h
   revision 11674 to transfer control of newclient.h from client area to 

@@ -9,7 +9,7 @@ See @ref page_type_28
 
 @section Description
     A grimreaper is a monster that vanishes after it did some number of
-    draining attacks. 
+    draining attacks.
 
 
 
@@ -118,8 +118,8 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>can use rods</td>
-		<td>@ref FLAG_USE_ROD</td>
-		<td>    Monster is able to use rods.
+		<td>@ref FLAG_USE_RANGE</td>
+		<td>    Monster is able to use wands, staves, and rods.
 		</td>
 	</tr>
 	<tr>
@@ -138,8 +138,8 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>can use wands</td>
-		<td>@ref obj::can_use_wand</td>
-		<td>    Monster is able to use wands and staves.
+		<td>@ref obj::can_use_range</td>
+		<td>    Monster is able to use wands, staves, and rods.
 		</td>
 	</tr>
 	<tr>

@@ -99,8 +99,6 @@ static PyObject *Object_GetTurnable(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetUsedUp(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetSplitting(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetBlind(Crossfire_Object *whoptr, void *closure);
-static PyObject *Object_GetCanUseHorn(Crossfire_Object *whoptr, void *closure);
-static PyObject *Object_GetCanUseRod(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetCanUseSkill(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetKnownCursed(Crossfire_Object *whoptr, void *closure);
 static PyObject *Object_GetStealthy(Crossfire_Object *whoptr, void *closure);
@@ -363,8 +361,6 @@ static PyGetSetDef Object_getseters[] = {
     { "UsedUp",         (getter)Object_GetUsedUp,       (setter)Object_SetUsedUp, NULL, NULL },
     { "Splitting",      (getter)Object_GetSplitting,    NULL, NULL, NULL },
     { "Blind",          (getter)Object_GetBlind,        (setter)Object_SetBlind, NULL, NULL },
-    { "CanUseHorn",     (getter)Object_GetCanUseHorn,   NULL, NULL, NULL },
-    { "CanUseRod",      (getter)Object_GetCanUseRod,    NULL, NULL, NULL },
     { "CanUseSkill",    (getter)Object_GetCanUseSkill,  NULL, NULL, NULL },
     { "KnownCursed",    (getter)Object_GetKnownCursed,  (setter)Object_SetKnownCursed, NULL, NULL },
     { "Stealthy",       (getter)Object_GetStealthy,     (setter)Object_SetStealthy, NULL, NULL },

@@ -1017,8 +1017,6 @@ A       .+
 ^can_use_skill{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_SKILL, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^has_ready_scroll{S} SET_OR_CLEAR_FLAG(op, FLAG_READY_SCROLL, IVAL);
-^can_use_rod{S}     SET_OR_CLEAR_FLAG(op, FLAG_USE_ROD, IVAL);
-^can_use_horn{S}    SET_OR_CLEAR_FLAG(op, FLAG_USE_HORN, IVAL);
 ^expmul{S}          op->expmul = FVAL;
 ^unique{S}          SET_OR_CLEAR_FLAG(op, FLAG_UNIQUE, IVAL);
 ^make_invisible{S}  SET_OR_CLEAR_FLAG(op, FLAG_MAKE_INVIS, IVAL);
@@ -1304,8 +1302,8 @@ static const char *const flag_names[NUM_FLAGS+1] = {
     "stealth", NULL, NULL, "cursed", "damned",
     "see_anywhere", "known_magical", "known_cursed",
     "can_use_skill", "been_applied",                                /* 80 */
-    "has_ready_scroll", "can_use_rod", NULL,
-    "can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
+    "has_ready_scroll", NULL, NULL,
+    NULL, "make_invisible",  "inv_locked", "is_wooded",
     "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
     "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
     "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",   /* 100 */

@@ -8,7 +8,7 @@
     helping the player - maybe joining him as pet.
     The unaggressive creatures who communicate with players are
     usually called "NPCs" (Non Player Character), a well-known
-    term in role-play environments. 
+    term in role-play environments.
 
 
 
@@ -113,8 +113,8 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>can use rods</td>
-		<td>@ref FLAG_USE_ROD</td>
-		<td>    Monster is able to use rods.
+		<td>@ref FLAG_USE_RANGE</td>
+		<td>    Monster is able to use wands, staves, and rods.
 		</td>
 	</tr>
 	<tr>
@@ -133,8 +133,8 @@ Type defined by:
 	</tr>
 	<tr>
 		<td>can use wands</td>
-		<td>@ref obj::can_use_wand</td>
-		<td>    Monster is able to use wands and staves.
+		<td>@ref obj::can_use_range</td>
+		<td>    Monster is able to use wands, staves, and rods.
 		</td>
 	</tr>
 	<tr>

@@ -89,8 +89,8 @@ const char *const flag_names[NUM_FLAGS+1] = {
     "stealth", NULL, NULL, "cursed", "damned",
     "see_anywhere", "known_magical", "known_cursed",
     "can_use_skill", "been_applied",                                /* 80 */
-    "has_ready_scroll", "can_use_rod", NULL,
-    "can_use_horn", "make_invisible",  "inv_locked", "is_wooded",
+    "has_ready_scroll", NULL, NULL,
+    NULL, "make_invisible",  "inv_locked", "is_wooded",
     "is_hilly", "has_ready_skill", "has_ready_weapon",              /* 90 */
     "no_skill_ident", "is_blind", "can_see_in_dark", "is_cauldron",
     "is_dust", "no_steal", "one_hit", NULL, "berserk", "neutral",       /* 100 */

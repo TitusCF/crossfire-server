@@ -276,7 +276,7 @@ All but those defined			32
 All					64
 
 Note also that if can_use_armor, can_use_weapon, can_use_ring,
-can_use_wand, can_cast_spell, can_use_bow are set, then the creature
+can_use_range, can_cast_spell, can_use_bow are set, then the creature
 will pick up the matching items even if the pick_up element is not
 set to pick up those items.
 
@@ -397,8 +397,7 @@ e.g.
 
 can_use_scroll 1
 can_use_skill 1
-can_use_wand 1
-can_use_rod 1
+can_use_range 1
 can_cast_spell 1
 can_use_bow 1
 can_use_armour 1
@@ -516,7 +515,7 @@ each time the monster moves there is a 5% chance.
 
 Making maxsp a higher value reduces the generation rate.
 
-Note - there is a bug here, in that a spellcasting creature can not 
+Note - there is a bug here, in that a spellcasting creature can not
 be effectively limited for generator rate, since maxsp is used for both
 its normal meaning in this case as well as generator limitation.  It is
 unlikely that one would want spell casting creature to also be a
@@ -1083,18 +1082,18 @@ formula is used:
     5        4
     6        4
     7        7
-    8        9 
-    9       11 
-   10       13 
-   11       15 
-   12       18 
-   13       21 
-   14       24 
-   15       27 
-   16       30 
-   17       35 
-   18       40 
-   19       45 
+    8        9
+    9       11
+   10       13
+   11       15
+   12       18
+   13       21
+   14       24
+   15       27
+   16       30
+   17       35
+   18       40
+   19       45
    20       50
 
 An enchantment is:
@@ -1105,14 +1104,14 @@ Each 20% protection an item gives (rounded normally, eg 0-9 counts as nothing,
 Each attacktype a weapon has.
 Spell path adjustments ( denied paths -2 )
 
-These properties have the following enchantment value 
-  *lifesaving 5 
-  *reflect spells 3 
-  *reflect missiles 2 
-  *stealth 1 
-  *xray vison 2 
-  *see in dark 1 
-  *invisibility 1 
+These properties have the following enchantment value
+  *lifesaving 5
+  *reflect spells 3
+  *reflect missiles 2
+  *stealth 1
+  *xray vison 2
+  *see in dark 1
+  *invisibility 1
   *slay 2
 
 This same formula can be used for custom objects to figure out their
@@ -1739,7 +1738,7 @@ container <xxx>         :  the maximum weight the container can hold
 Str <xx>                :  reduces the weight of the objects in the container
                            0 == no reduction,   100 = weightless
 
-slaying                 :  only let items of this type in the container 
+slaying                 :  only let items of this type in the container
 
 Key/value fields that can be used (trunk only):
 
@@ -2535,5 +2534,5 @@ available:
 
 Because shared strings will return a pointer to a string if it exists, one can
 see if the strings are equal by comparing the shared string address they point
-to (ie str == str2 directly). 
+to (ie str == str2 directly).
 

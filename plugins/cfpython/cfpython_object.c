@@ -549,16 +549,6 @@ static PyObject *Object_GetBlind(Crossfire_Object *whoptr, void *closure) {
     return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_BLIND));
 }
 
-static PyObject *Object_GetCanUseHorn(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_HORN));
-}
-
-static PyObject *Object_GetCanUseRod(Crossfire_Object *whoptr, void *closure) {
-    EXISTCHECK(whoptr);
-    return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_USE_ROD));
-}
-
 static PyObject *Object_GetCanUseSkill(Crossfire_Object *whoptr, void *closure) {
     EXISTCHECK(whoptr);
     return Py_BuildValue("i", cf_object_get_flag(whoptr->obj, FLAG_CAN_USE_SKILL));
