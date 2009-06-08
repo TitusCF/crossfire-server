@@ -1050,8 +1050,6 @@ int can_apply_object(object *who, object *op) {
             retval |= CAN_APPLY_RESTRICTION;
         if (op->type == RING && !QUERY_FLAG(who, FLAG_USE_RING))
             retval |= CAN_APPLY_RESTRICTION;
-        if (op->type == BOW && !QUERY_FLAG(who, FLAG_USE_BOW))
-            retval |= CAN_APPLY_RESTRICTION;
     }
     return retval;
 }
