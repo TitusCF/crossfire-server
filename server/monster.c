@@ -1519,6 +1519,20 @@ static void monster_apply_below(object *monster) {
     }
 }
 
+/**
+ * Calls #monster_check_apply() for all inventory objects.
+ * @param monster the monster to operate on
+ */
+void monster_check_apply_all(object *monster) {
+    object *inv;
+    object *next;
+
+    for (inv = monster->inv; inv != NULL; inv = next) {
+        next = inv->below;
+        monster_check_apply(monster, inv);
+    }
+}
+
 /*
  * monster_check_apply() is meant to be called after an item is
  * inserted in a monster.

@@ -313,6 +313,7 @@ object *check_enemy(object *npc, rv_vector *rv);
 object *find_nearest_living_creature(object *npc);
 int compute_path(object *source, object *target, int default_dir);
 int move_monster(object *op);
+void monster_check_apply_all(object *monster);
 void monster_check_apply(object *mon, object *item);
 void npc_call_help(object *op);
 void check_earthwalls(object *op, mapstruct *m, int x, int y);

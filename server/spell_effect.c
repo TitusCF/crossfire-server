@@ -251,10 +251,7 @@ static void polymorph_living(object *op, int level) {
         create_treasure(op->randomitems, op, GT_INVISIBLE, map->difficulty, 0);
 
     /* Apply any objects. */
-    for (tmp = op->inv; tmp != NULL; tmp = next) {
-        next = tmp->below;
-        monster_check_apply(op, tmp);
-    }
+    monster_check_apply_all(op);
 }
 
 
