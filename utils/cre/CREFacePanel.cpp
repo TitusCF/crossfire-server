@@ -11,19 +11,19 @@ extern "C" {
 
 /** @todo duplication with common/image */
 static const char *const colorname[] = {
-    "black",		/* 0  */
-    "white",		/* 1  */
-    "blue",			/* 2  */
-    "red",			/* 3  */
-    "orange",		/* 4  */
-    "light_blue",		/* 5  */
-    "dark_orange",		/* 6  */
-    "green",		/* 7  */
-    "light_green",		/* 8  */
-    "grey",			/* 9  */
-    "brown",		/* 10 */
-    "yellow",		/* 11 */
-    "khaki"			/* 12 */
+    "black",                    /* 0  */
+    "white",                    /* 1  */
+    "blue",                     /* 2  */
+    "red",                      /* 3  */
+    "orange",                   /* 4  */
+    "light_blue",               /* 5  */
+    "dark_orange",              /* 6  */
+    "green",                    /* 7  */
+    "light_green",              /* 8  */
+    "grey",                     /* 9  */
+    "brown",                    /* 10 */
+    "yellow",                   /* 11 */
+    "khaki"                     /* 12 */
 };
 
 

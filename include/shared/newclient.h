@@ -327,7 +327,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_PAPER              3
 #define MSG_TYPE_SIGN               4
 #define MSG_TYPE_MONUMENT           5
-#define MSG_TYPE_DIALOG		    6   /* NPCs, magic mouths, and altars */
+#define MSG_TYPE_DIALOG             6   /* NPCs, magic mouths, and altars */
 #define MSG_TYPE_MOTD               7
 #define MSG_TYPE_ADMIN              8
 #define MSG_TYPE_SHOP               9
@@ -341,9 +341,9 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_SPELL              16  /* Spell related info */
 #define MSG_TYPE_ITEM               17  /* Item related information */
 #define MSG_TYPE_MISC               18  /* Messages that don't go anyplace else */
-#define MSG_TYPE_VICTIM		    19	/* Something bad is happening to player */
-#define MSG_TYPE_CLIENT		    20	/* Messages originated by the client */
-#define MSG_TYPE_LAST		    21
+#define MSG_TYPE_VICTIM             19  /* Something bad is happening to player */
+#define MSG_TYPE_CLIENT             20  /* Messages originated by the client */
+#define MSG_TYPE_LAST               21
 
 #define MSG_SUBTYPE_NONE            0
 
@@ -566,7 +566,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define MSG_TYPE_ITEM_REMOVE            1   /* Item removed from inv */
 #define MSG_TYPE_ITEM_ADD               2   /* Item added to inv */
 #define MSG_TYPE_ITEM_CHANGE            3   /* Item has changed in some way */
-#define MSG_TYPE_ITEM_INFO		4   /* Information related to an item */
+#define MSG_TYPE_ITEM_INFO              4   /* Information related to an item */
 
 /* MSG_TYPE_MISC, by its very nature, doesn't really have subtypes.  It is
  * used for messages that really don't belong anyplace else

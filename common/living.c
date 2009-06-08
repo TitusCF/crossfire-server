@@ -2385,7 +2385,7 @@ static size_t get_index(int stat, size_t max_index) {
     size_t index;
 
     if (stat < 0) {
-	return 0;
+        return 0;
     }
 
     index = (size_t)stat;
