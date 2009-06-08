@@ -288,7 +288,8 @@ const char *const attacks[NROFATTACKS] = {
     "confusion", "acid", "drain", "weaponmagic", "ghosthit",
     "poison", "slow", "paralyze", "turn undead", "fear",
     "cancellation", "depletion", "death", "chaos", "counterspell",
-    "god power", "holy power", "blinding", "", "life stealing"
+    "god power", "holy power", "blinding", "", "life stealing",
+    "disease"
 };
 
 /** Message when a player is drained of a stat. */
