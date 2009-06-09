@@ -2140,13 +2140,12 @@ static void fire_misc_object(object *op, int dir) {
     object *item;
     char name[MAX_BUF];
 
-    if (!op->contr->ranges[range_misc]) {
+    item = op->contr->ranges[range_misc];
+    if (!item) {
         draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_ERROR,
                       "You have no range item readied.", NULL);
         return;
     }
-
-    item = op->contr->ranges[range_misc];
     if (!item->inv) {
         LOG(llevError, "Object %s lacks a spell\n", item->name);
         return;
