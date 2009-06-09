@@ -120,8 +120,7 @@ void metaserver_init(void) {
             LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
             return;
         }
-        /* Potential overrun here but unlikely to occur */
-        sprintf(settings.meta_host, "%s.%s", hostname, domain);
+        snprintf(settings.meta_host, sizeof(settings.meta_host), "%s.%s", hostname, domain);
     }
 }
 
