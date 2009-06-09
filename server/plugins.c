@@ -58,9 +58,9 @@
 #include <timers.h>
 #endif
 
-#define NR_OF_HOOKS 89
+#define NR_OF_HOOKS (sizeof(plug_hooks)/sizeof(*plug_hooks))
 
-static const hook_entry plug_hooks[NR_OF_HOOKS] = {
+static const hook_entry plug_hooks[] = {
     { cfapi_system_add_string,       0, "cfapi_system_add_string" },
     { cfapi_system_register_global_event,   1, "cfapi_system_register_global_event" },
     { cfapi_system_remove_string,    2, "cfapi_system_remove_string" },
