@@ -66,7 +66,7 @@ int command_me(object *op, char *params) {
 
     if (!params)
         return 0;
-    snprintf(buf, MAX_BUF-1, "%s %s", op->name, params);
+    snprintf(buf, sizeof(buf), "%s %s", op->name, params);
     ext_info_map(NDI_UNIQUE|NDI_BLUE, op->map, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_ME,
                  buf, NULL);
     return 0;
@@ -88,11 +88,11 @@ int command_cointoss(object *op, char *params) {
 
     i = rndm(1, 2);
     if (i == 1) {
-        snprintf(buf, MAX_BUF-1, "%s flips a coin.... Heads!", op->name);
-        snprintf(buf2, MAX_BUF-1, "You flip a coin.... Heads!");
+        snprintf(buf, sizeof(buf), "%s flips a coin.... Heads!", op->name);
+        snprintf(buf2, sizeof(buf2), "You flip a coin.... Heads!");
     } else {
-        snprintf(buf, MAX_BUF-1, "%s flips a coin.... Tails!", op->name);
-        snprintf(buf2, MAX_BUF-1, "You flip a coin.... Tails!");
+        snprintf(buf, sizeof(buf), "%s flips a coin.... Tails!", op->name);
+        snprintf(buf2, sizeof(buf2), "You flip a coin.... Tails!");
     }
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
                   buf2, NULL);
@@ -167,8 +167,8 @@ int command_orcknuckle(object *op, char *params) {
     k = rndm(1, 5);
     l = rndm(1, 6);
 
-    snprintf(buf2, MAX_BUF-1, "%s rolls %s, %s, %s, %s!", op->name, orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
-    snprintf(buf, MAX_BUF-1, "You roll %s, %s, %s, %s!", orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+    snprintf(buf2, sizeof(buf2), "%s rolls %s, %s, %s, %s!", op->name, orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
+    snprintf(buf, sizeof(buf), "You roll %s, %s, %s, %s!", orcknuckle[i], orcknuckle[j], orcknuckle[k], orcknuckle[l]);
 
     draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_COMMUNICATION, MSG_TYPE_COMMUNICATION_RANDOM,
                   buf, NULL);
@@ -294,7 +294,7 @@ static int do_tell(object *op, char *params, int adjust_listen) {
         return 1;
     }
 
-    snprintf(buf, MAX_BUF-1, "%s tells you: %s", op->name, msg);
+    snprintf(buf, sizeof(buf), "%s tells you: %s", op->name, msg);
 
     pl = find_player_partial_name(name);
     if (pl) {
