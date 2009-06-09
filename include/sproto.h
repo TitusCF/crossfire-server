@@ -544,7 +544,7 @@ void show_skills(object *op, const char *search);
 int use_skill(object *op, const char *string);
 int skill_attack(object *tmp, object *pl, int dir, const char *string, object *skill);
 /* spell_attack.c */
-int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill);
+int fire_bolt(object *op, object *caster, int dir, object *spob);
 void explode_bullet(object *op);
 void check_bullet(object *op);
 int fire_bullet(object *op, object *caster, int dir, object *spob);

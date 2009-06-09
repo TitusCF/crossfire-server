@@ -1598,7 +1598,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
         break;
 
     case SP_BOLT:
-        success = fire_bolt(op, caster, dir, spell_ob, skill);
+        success = fire_bolt(op, caster, dir, spell_ob);
         break;
 
     case SP_BULLET:

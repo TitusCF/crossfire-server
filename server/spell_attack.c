@@ -68,14 +68,12 @@
  * firing direction.
  * @param spob
  * spell object for the bolt.
- * @param skill
- * skill to credit kill experience to.
  * @retval 0
  * no bolt could be fired.
  * @retval 1
  * bolt was fired (but may have been destroyed already).
  */
-int fire_bolt(object *op, object *caster, int dir, object *spob, object *skill) {
+int fire_bolt(object *op, object *caster, int dir, object *spob) {
     object *tmp = NULL;
     int mflags;
 
