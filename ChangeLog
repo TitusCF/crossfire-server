@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix monsters not using wands/staffs/rods.
+Andreas Kirschbaum 2009-06-09
+
 Remove support for obsolete attributes can_use_rod, can_use_wand, and
 can_use_horn. These attributes have been read/written from/to map files but
 not used for anything.

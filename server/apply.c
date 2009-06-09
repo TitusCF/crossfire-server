@@ -1679,6 +1679,10 @@ void fix_auto_apply(mapstruct *m) {
                     create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty, 0);
                     tmp->randomitems = NULL;
                 }
+
+                if (QUERY_FLAG(tmp, FLAG_MONSTER)) {
+                    monster_check_apply_all(tmp);
+                }
             }
 
     for (x = 0; x < MAP_WIDTH(m); x++)

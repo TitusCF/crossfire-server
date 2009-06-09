@@ -1542,7 +1542,7 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
      * for spell casting objects, the exp goes to the skill the casting
      * object requires.
      */
-    if (op != caster && !skill && caster->skill) {
+    if (op != caster && !skill && caster->skill && !QUERY_FLAG(op, FLAG_MONSTER)) {
         skill = find_skill_by_name(op, caster->skill);
         if (!skill) {
             char name[MAX_BUF];
