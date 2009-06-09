@@ -341,9 +341,6 @@ static void parse_args(int argc, char *argv[], int pass) {
     }
 }
 
-/** Material types. */
-materialtype_t *materialt;
-
 /**
  * Creates an empty materialtype_t structure.
  *

@@ -77,6 +77,7 @@ typedef struct _materialtype {
     struct _materialtype *next;
 } materialtype_t;
 
+/** Material types. */
 EXTERN materialtype_t *materialt;
 
 #endif  /* MATERIAL_H */
