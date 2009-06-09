@@ -103,7 +103,7 @@ void metaserver_init(void) {
     if (settings.meta_host[0] == 0) {
         char hostname[MAX_BUF], domain[MAX_BUF];
 
-        if (gethostname(hostname, MAX_BUF-1)) {
+        if (gethostname(hostname, sizeof(hostname))) {
             LOG(llevDebug, "metaserver_init: gethostname failed - will not report hostname\n");
             return;
         }
@@ -115,7 +115,7 @@ void metaserver_init(void) {
 
         if (hostbn == (struct hostent *)NULL) {
 #else
-        if (getdomainname(domain, MAX_BUF-1)) {
+        if (getdomainname(domain, sizeof(domain))) {
 #endif /* win32 */
             LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
             return;
@@ -299,7 +299,7 @@ int metaserver2_init(void) {
         LOG(llevError, "Warning: No metaserver2 file found\n");
         return 0;
     }
-    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
+    while (fgets(buf, sizeof(buf), fp) != NULL) {
         if (buf[0] == '#')
             continue;
         /* eliminate newline */
@@ -456,7 +456,7 @@ static void metaserver2_updates(void) {
                  CURLFORM_COPYCONTENTS, local_info.hostname,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%d", local_info.portnumber);
+    snprintf(buf, sizeof(buf), "%d", local_info.portnumber);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "port",
                  CURLFORM_COPYCONTENTS, buf,
@@ -494,25 +494,25 @@ static void metaserver2_updates(void) {
 
     pthread_mutex_lock(&ms2_info_mutex);
 
-    snprintf(buf, MAX_BUF-1, "%d", metaserver2_updateinfo.num_players);
+    snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.num_players);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "num_players",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%d", metaserver2_updateinfo.in_bytes);
+    snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.in_bytes);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "in_bytes",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%d", metaserver2_updateinfo.out_bytes);
+    snprintf(buf, sizeof(buf), "%d", metaserver2_updateinfo.out_bytes);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "out_bytes",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%ld", metaserver2_updateinfo.uptime);
+    snprintf(buf, sizeof(buf), "%ld", metaserver2_updateinfo.uptime);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "uptime",
                  CURLFORM_COPYCONTENTS, buf,
@@ -528,13 +528,13 @@ static void metaserver2_updates(void) {
                  CURLFORM_COPYCONTENTS, FULL_VERSION,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%d", VERSION_SC);
+    snprintf(buf, sizeof(buf), "%d", VERSION_SC);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "sc_version",
                  CURLFORM_COPYCONTENTS, buf,
                  CURLFORM_END);
 
-    snprintf(buf, MAX_BUF-1, "%d", VERSION_CS);
+    snprintf(buf, sizeof(buf), "%d", VERSION_CS);
     curl_formadd(&formpost, &lastptr,
                  CURLFORM_COPYNAME, "cs_version",
                  CURLFORM_COPYCONTENTS, buf,
