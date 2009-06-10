@@ -640,7 +640,6 @@ static void move_ball_spell(object *op) {
             if (j)
                 op->stats.dam = dam_save/2;
             hit_map(op, j, op->attacktype, 1);
-
         }
 
         /* insert the other arch */
@@ -656,7 +655,6 @@ static void move_ball_spell(object *op) {
     op->stats.dam = dam_save;
 
     i = spell_find_dir(op->map, op->x, op->y, get_owner(op));
-
     if (i >= 0) { /* we have a preferred direction!  */
         /* pick another direction if the preferred dir is blocked. */
         if (get_map_flags(op->map, &m, nx+freearr_x[i], ny+freearr_y[i], &hx, &hy)&P_OUT_OF_MAP
