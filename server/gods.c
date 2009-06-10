@@ -864,6 +864,40 @@ static int follower_level_to_enchantments(int level, int difficulty) {
 }
 
 /**
+ * Utility function for improving the magic on a weapon.
+ * Affected weapon is the applied one (weapon or bow). This utility function
+ * improves the weapon magic on a weapon being enchanted by a god. This was
+ * necessary because the same block of the code was being called from two
+ * places in the god_enchants_weapon(...) function.
+ *
+ * @param op
+ * player
+ * @param tr
+ * treasure list item for enchanting weapon, contains the enchantment level.
+ * @param weapon
+ * weapon being modified
+ * @param skill
+ * praying skill of op.
+ * @return
+ * 0 if weapon wasn't changed, 1 if changed.
+ */
+static int improve_weapon_magic(object *op, object *tr, object *weapon, object *skill) {
+    int tmp = follower_level_to_enchantments(skill->level, tr->level);
+
+    if (weapon->magic < tmp) {
+        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
+                      "A phosphorescent glow envelops your weapon!", NULL);
+        weapon->magic++;
+        if (op->type == PLAYER)
+            esrv_update_item(UPD_NAME, op, weapon);
+        weapon->item_power++;
+        return 1;
+    }
+
+    return 0;
+}
+
+/**
  * God wants to enchant weapon.
  * Affected weapon is the applied one (weapon or bow). It's checked to make sure
  * it isn't a weapon for another god. If all is all right, update weapon with
@@ -884,7 +918,6 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
     char buf[MAX_BUF];
     object *weapon;
     uint32 attacktype;
-    int tmp;
 
     for (weapon = op->inv; weapon; weapon = weapon->below)
         if ((weapon->type == WEAPON || weapon->type == BOW)
@@ -917,12 +950,14 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
         if (divine_owner != NULL) {
             if (!strcmp(divine_owner, god->name)) {
                 /* It already belongs to this god - do not go further. */
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
-                                     "Your %s is radiating a joyful warmth !",
-                                     "Your %s is radiating a joyful warmth !",
-                                     weapon->name);
-                return 0;
+                /*
+                [DT] (2009-06-10): It is ok if the weapon has already been enchanted
+                one time, but in that particular case we only give out additional plusses.
+                No new slays or new attacktypes
+                */
+                return improve_weapon_magic(op, tr, weapon, skill);
             }
+
             /* Huho... Another god already blessed this one ! */
             draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_INFO,
                                  "Your %s already belongs to %s !",
@@ -980,18 +1015,7 @@ static int god_enchants_weapon(object *op, const object *god, object *tr, object
     }
 
     /* Higher magic value */
-    tmp = follower_level_to_enchantments(skill->level, tr->level);
-    if (weapon->magic < tmp) {
-        draw_ext_info(NDI_UNIQUE, 0, op, MSG_TYPE_ITEM, MSG_TYPE_ITEM_CHANGE,
-                      "A phosphorescent glow envelops your weapon!", NULL);
-        weapon->magic++;
-        if (op->type == PLAYER)
-            esrv_update_item(UPD_NAME, op, weapon);
-        weapon->item_power++;
-        return 1;
-    }
-
-    return 0;
+    return improve_weapon_magic(op, tr, weapon, skill);
 }
 
 /**
