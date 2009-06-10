@@ -1133,7 +1133,7 @@ Determines if an item can be transmuted after a cast failure.
 @param op item to check.
 @return 1 if op can be transmuted, 0 else.
 */
-static int can_be_transmuted(object *op) {
+static int can_be_transmuted_to_flower(object *op) {
     if (op->invisible)
         return 0;
 
@@ -1164,7 +1164,7 @@ static void transmute_item_to_flower(object *op) {
     char name[HUGE_BUF];
 
     for (item = op->inv; item; item = item->below) {
-        if (can_be_transmuted(item)) {
+        if (can_be_transmuted_to_flower(item)) {
             if (!first)
                 first = item;
             count++;
@@ -1176,7 +1176,7 @@ static void transmute_item_to_flower(object *op) {
 
     count = rndm(0, count-1);
     for (item = first; item; item = item->below) {
-        if (can_be_transmuted(item)) {
+        if (can_be_transmuted_to_flower(item)) {
             count--;
             if (count < 0)
                 break;
