@@ -144,8 +144,6 @@ void handle_apply_yield(object *tmp) {
     }
 }
 
-int check_weapon_power(const object *who, int improvs);
-
 /**
  * Makes an object's face the main face, which is supposed to be the "closed" one.
  *
