@@ -1879,6 +1879,13 @@ void check_spell_expiry(object *spell) {
     }
 }
 
+/**
+ * Adjusts rod attributes. This function must be called after a new rod has
+ * been created.
+ *
+ * @param rod
+ * the rod to update
+ */
 void rod_adjust(object *rod) {
     /*
      * Add 50 to both level an divisor to keep prices a little
