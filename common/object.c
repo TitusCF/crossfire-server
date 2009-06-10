@@ -2354,28 +2354,28 @@ object *decrease_ob_nr(object *op, uint32 i) {
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
         op->nrof -= i;
     } else if (op->env != NULL) {
-        player *pl;
-        /* is this object in the players inventory, or sub container
-         * therein?
-         */
-        tmp = get_player_container(op->env);
-        /* nope.  Is this a container the player has opened?
-         * If so, set tmp to that player.
-         * IMO, searching through all the players will mostly
-         * likely be quicker than following op->env to the map,
-         * and then searching the map for a player.
-         */
-        if (!tmp) {
-            for (pl = first_player; pl; pl = pl->next)
-                if (pl->ob->container == op->env)
-                    break;
-            if (pl)
-                tmp = pl->ob;
-            else
-                tmp = NULL;
-        }
-
         if (i < op->nrof) {
+            player *pl;
+            /* is this object in the players inventory, or sub container
+             * therein?
+             */
+            tmp = get_player_container(op->env);
+            /* nope.  Is this a container the player has opened?
+             * If so, set tmp to that player.
+             * IMO, searching through all the players will mostly
+             * likely be quicker than following op->env to the map,
+             * and then searching the map for a player.
+             */
+            if (!tmp) {
+                for (pl = first_player; pl; pl = pl->next)
+                    if (pl->ob->container == op->env)
+                        break;
+                if (pl)
+                    tmp = pl->ob;
+                else
+                    tmp = NULL;
+            }
+
             sub_weight(op->env, op->weight*i);
             op->nrof -= i;
             if (tmp) {
