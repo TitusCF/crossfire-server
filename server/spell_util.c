@@ -1899,9 +1899,6 @@ void rod_adjust(object *rod) {
      * Maxhp is used to denote how many 'charges' the rod holds
      * before.
      */
-    if (rod->stats.maxhp)
-        rod->stats.maxhp *= MAX(rod->inv->stats.sp, rod->inv->stats.grace);
-    else
-        rod->stats.maxhp = 2*MAX(rod->inv->stats.sp, rod->inv->stats.grace);
+    rod->stats.maxhp = MAX(rod->stats.maxhp, 2)*SP_level_spellpoint_cost(rod, rod->inv, SPELL_HIGHEST);
     rod->stats.hp = rod->stats.maxhp;
 }

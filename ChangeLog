@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix rod generation: make sure it can hold enough spell points. Now all light
+rods get spell points for 3 changes, heavy rods for 6 charges.
+Andreas Kirschbaum 2009-06-10
+
 Merge HORNs (type 35) into RODs (type 3).
 Andreas Kirschbaum 2009-06-10
 
