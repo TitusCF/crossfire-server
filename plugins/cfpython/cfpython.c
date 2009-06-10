@@ -942,7 +942,6 @@ static void initConstants(PyObject *module) {
         { "TRIGGER_PEDESTAL", TRIGGER_PEDESTAL },
         { "SHIELD", SHIELD },
         { "HELMET", HELMET },
-        { "HORN", HORN },
         { "MONEY", MONEY },
         { "CLASS", CLASS },
         { "AMULET", AMULET },

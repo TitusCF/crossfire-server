@@ -1524,7 +1524,6 @@ int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stri
                 && op->speed_left < -spell_ob->casting_time*PATH_TIME_MULT(op, spell_ob)*FABS(op->speed))
                     op->speed_left = -spell_ob->casting_time*PATH_TIME_MULT(op, spell_ob)*FABS(op->speed);
             } else if (caster->type == WAND
-            || caster->type == HORN
             || caster->type == ROD
             || caster->type == POTION
             || caster->type == SCROLL) {

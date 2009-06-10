@@ -135,7 +135,6 @@ static const typedata item_types[] = {
     { TRIGGER_PEDESTAL, "trigger pedestal", "trigger pedestals", 0, 0 },
     { SHIELD, "shield", "shields", SK_SMITHERY, 0 },
     { HELMET, "helmet", "helmets", SK_SMITHERY, 0 },
-    { HORN, "horn", "horns", SK_THAUMATURGY, 0 },
     { MONEY, "money", "money", 0, 0 },
     { CLASS, "class", "classes", 0, 0 },
     { AMULET, "amulet", "amulets", SK_JEWELER, 0 },
@@ -678,7 +677,6 @@ void query_name(const object *op, char *buf, size_t size) {
         case BOW:
         case WAND:
         case ROD:
-        case HORN:
             safe_strcat(buf, " (readied)", &len, size);
             break;
 
@@ -1037,7 +1035,6 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
     case ARROW:
     case WAND:
     case ROD:
-    case HORN:
     case WEAPON:
     case ARMOUR:
     case HELMET:
@@ -1212,8 +1209,7 @@ void describe_item(const object *op, const object *owner, char *retbuf, size_t s
 
         switch (op->type) {
         case ROD:  /* These use stats.sp for spell selection and stats.food */
-        case HORN: /* and stats.hp for spell-point regeneration... */
-        case BOW:
+        case BOW:  /* and stats.hp for spell-point regeneration... */
         case ARROW:
         case WAND:
         case FOOD:
@@ -1403,7 +1399,6 @@ int need_identify(const object *op) {
     case RING:
     case WAND:
     case ROD:
-    case HORN:
     case SCROLL:
     case SKILL:
     case SKILLSCROLL:

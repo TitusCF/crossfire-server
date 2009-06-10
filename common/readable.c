@@ -221,7 +221,7 @@ static const arttypename art_name_array[] = {
     { "Gloves", GLOVES },
     { "Gridle", GIRDLE },
     { "Ring", RING },
-    { "Horn", HORN },
+    { "Horn", ROD },
     { "Missile Weapon", BOW },
     { "Missile", ARROW },
     { "Hand Weapon", WEAPON },

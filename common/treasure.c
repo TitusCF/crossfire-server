@@ -1097,7 +1097,7 @@ void fix_generated_item(object *op, object *creator, int difficulty, int max_mag
                 set_magic(difficulty, op, max_magic, flags);
             num_enchantments = calc_item_power(op, 1);
             if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT))
-            || op->type == HORN
+            || op->type == ROD
             || difficulty >= 999)
                 generate_artifact(op, difficulty);
         }
@@ -1704,7 +1704,7 @@ void add_abilities(object *op, object *change) {
          * to cast.  So convert that to into a spell and put it into
          * this object.
          */
-        if (op->type == HORN || op->type == POTION) {
+        if (op->type == ROD || op->type == POTION) {
             object *tmp_obj;
 
             /* Remove any spells this object currently has in it */

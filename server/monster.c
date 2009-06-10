@@ -1148,7 +1148,7 @@ static int monster_use_skill(object *head, object *part, object *pl, int dir) {
 }
 
 /**
- * Monster will use a ranged attack (HORN, WAND, ...).
+ * Monster will use a ranged attack (ROD, WAND, ...).
  *
  * @param head
  * head of the monster.
@@ -1188,7 +1188,7 @@ static int monster_use_range(object *head, object *part, object *pl, int dir) {
 
             /* Success */
             return 1;
-        } else if (wand->type == ROD || wand->type == HORN) {
+        } else if (wand->type == ROD) {
             /* Found rod/horn, let's use it if possible */
             at_least_one = 1;
             if (wand->stats.hp < MAX(wand->inv->stats.sp, wand->inv->stats.grace))
@@ -1456,7 +1456,6 @@ static int monster_can_pick(object *monster, object *item) {
                 break;
 
             case WAND:
-            case HORN:
             case ROD:
                 flag = QUERY_FLAG(monster, FLAG_USE_RANGE);
                 break;
@@ -1594,7 +1593,7 @@ void monster_check_apply(object *mon, object *item) {
     /* Should do something more, like make sure this is a better item */
     else if (item->type == RING)
         flag = 1;
-    else if (item->type == WAND || item->type == ROD || item->type == HORN) {
+    else if (item->type == WAND || item->type == ROD) {
         /* We never really 'ready' the wand/rod/horn, because that would mean the
         * weapon would get undone.
         */

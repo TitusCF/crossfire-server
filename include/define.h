@@ -144,7 +144,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TRIGGER_PEDESTAL            32
 #define SHIELD                      33
 #define HELMET                      34
-#define HORN                        35
+/*#define HORN                      35    has been merged into ROD */
 #define MONEY                       36
 #define CLASS                       37    /**< Object for applying character class
                                            * modifications to someone */

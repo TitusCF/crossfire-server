@@ -930,8 +930,7 @@ int skill_ident(object *pl, object *skill) {
 
     case SK_THAUMATURGY:
         success += do_skill_ident(pl, WAND, skill)
-            +do_skill_ident(pl, ROD, skill)
-            +do_skill_ident(pl, HORN, skill);
+            +do_skill_ident(pl, ROD, skill);
         break;
 
     case SK_DET_CURSE:

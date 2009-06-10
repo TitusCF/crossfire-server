@@ -72,7 +72,6 @@ method_ret legacy_ob_apply(ob_methods *context, object *op, object *applier, int
     case CLOAK:
     case WAND:
     case ROD:
-    case HORN:
     case SKILL:
     case BOW:
     case BUILDER:

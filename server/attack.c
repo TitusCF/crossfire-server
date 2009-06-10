@@ -1317,8 +1317,7 @@ static int hit_with_one_attacktype(object *op, object *hitter, int dam, uint32 a
                     || tmp->type == GIRDLE
                     || tmp->type == AMULET
                     || tmp->type == WAND
-                    || tmp->type == ROD
-                    || tmp->type == HORN)
+                    || tmp->type == ROD)
                         continue; /* To avoid some strange effects */
 
                     /* High damage acid has better chance of corroding objects */

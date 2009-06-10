@@ -1578,7 +1578,7 @@ int check_pick(object *op) {
 
             /* wands/staves/rods/horns */
             if (op->contr->mode&PU_MAGIC_DEVICE)
-                if (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN) {
+                if (tmp->type == WAND || tmp->type == ROD) {
                     pick_up(op, tmp);
                     if (0)
                         fprintf(stderr, "MAGIC_DEVICE\n");
@@ -2160,20 +2160,14 @@ static void fire_misc_object(object *op, int dir) {
                                  name);
             return;
         }
-    } else if (item->type == ROD || item->type == HORN) {
+    } else if (item->type == ROD) {
         if (item->stats.hp < SP_level_spellpoint_cost(item, item->inv, SPELL_HIGHEST)) {
             play_sound_player_only(op->contr, SOUND_TYPE_ITEM, item, 0, "poof");
             query_base_name(item, 0, name, MAX_BUF);
-            if (item->type == ROD)
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                                     "The %s whines for a while, but nothing happens.",
-                                     "The %s whines for a while, but nothing happens.",
-                                     name);
-            else
-                draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
-                                     "The %s needs more time to charge.",
-                                     "The %s needs more time to charge.",
-                                     name);
+            draw_ext_info_format(NDI_UNIQUE, 0, op, MSG_TYPE_COMMAND, MSG_TYPE_COMMAND_FAILURE,
+                                 "The %s whines for a while, but nothing happens.",
+                                 "The %s whines for a while, but nothing happens.",
+                                 name);
             return;
         }
     }
@@ -2182,7 +2176,7 @@ static void fire_misc_object(object *op, int dir) {
         SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
         if (item->type == WAND) {
             drain_wand_charge(item);
-        } else if (item->type == ROD || item->type == HORN) {
+        } else if (item->type == ROD) {
             drain_rod_charge(item);
         }
     }

@@ -65,7 +65,6 @@ static unsigned int query_flags(const object *op) {
         case BOW:
         case WAND:
         case ROD:
-        case HORN:
             flags = a_readied;
             break;
 

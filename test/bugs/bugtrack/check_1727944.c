@@ -129,7 +129,7 @@ static void do_run() {
             for (x = 0; x < MAP_WIDTH(random); x++) {
                 for (y = 0; y < MAP_HEIGHT(random); y++) {
                     for (check = GET_MAP_OB(random, x, y); check; check = check->above) {
-                        if (check->type == HORN && check->title && strcmp(check->title, "of Plenty") == 0)
+                        if (check->type == ROD && check->title && strcmp(check->title, "of Plenty") == 0)
                             fail_unless(check->inv != NULL, "Horn has empty inventory!");
                     }
                 }
@@ -158,7 +158,7 @@ static void do_run() {
         for (x = 0; x < MAP_WIDTH(map); x++) {
             for (y = 0; y < MAP_HEIGHT(map); y++) {
                 for (check = GET_MAP_OB(map, x, y); check; check = check->above) {
-                    if (check->type == HORN) {
+                    if (check->type == ROD) {
                         fail_unless(check->inv != NULL, "Horn has empty inventory!");
                         fail_unless(check->inv->below == NULL, "Horn has 2 items in inventory!");
                         if (check->title && strcmp(check->title, "of Plenty") == 0) {
@@ -270,7 +270,7 @@ static void local_check_loaded_object(object *op) {
         }
     }
     /* Old spellcasting object - need to load in the appropiate object */
-    if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == HORN || op->type == FIREWALL || /* POTIONS and ALTARS don't always cast spells, but if they do, update them */ ((op->type == POTION || op->type == ALTAR) && op->stats.sp))
+    if ((op->type == ROD || op->type == WAND || op->type == SCROLL || op->type == FIREWALL || /* POTIONS and ALTARS don't always cast spells, but if they do, update them */ ((op->type == POTION || op->type == ALTAR) && op->stats.sp))
     && !op->inv
     && !arch_init)  {
         object *tmp;
@@ -359,7 +359,7 @@ START_TEST(test_randommaps) {
         fail_unless(GET_MAP_OB(overlay, 2, 3) != NULL, "No item on spot 2,3?");
 
         for (check = GET_MAP_OB(overlay, 2, 3)->above; check != NULL; check = check->above) {
-            fail_unless(check->type == HORN, "Found a non horn?");
+            fail_unless(check->type == ROD, "Found a non horn?");
             fail_unless(check->inv != NULL, "Horn without a spell!");
             fail_unless(check->inv->below == NULL, "Horn with 2 items in inventory.");
         }
@@ -404,7 +404,7 @@ START_TEST(test_randommaps) {
             the_chest = GET_MAP_OB(map, 0, 0);
             fail_unless(the_chest != NULL, "failed to recover chest?");
             for (check = the_chest->inv; check; check = check->below) {
-                if (check->type != HORN)
+                if (check->type != ROD)
                     continue;
                 local_check_loaded_object(check);
                 fail_unless(check->inv != NULL, "horn without inventory");

@@ -2192,11 +2192,11 @@ end
 #
 # Horns:
 #
-Allowed all
+Allowed horn,shell horn
 chance 17
 Object Plenty
 face horn2.111
-type 35
+type 3
 level -20
 hp -30
 maxhp -30
@@ -2204,30 +2204,30 @@ value 25
 other_arch spell_create_food
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 10
 Object Fire
-type 35
+type 3
 other_arch spell_firebolt
 hp -40
 maxhp -40
 value 10
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 10
 Object Frost
-type 35
+type 3
 other_arch spell_frostbolt
 hp -40
 maxhp -40
 value 10
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 33
 Object Aggravation
-type 35
+type 3
 other_arch spell_aggravation
 hp -10
 maxhp -10
@@ -2235,10 +2235,10 @@ value 3
 cursed 1
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 20
 Object Fools
-type 35
+type 3
 other_arch spell_aggravation
 hp -10
 maxhp -10
@@ -2248,13 +2248,13 @@ Int -2
 damned 1
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 5
 Object Sirens
 msg
   This is a charming little horn.
 endmsg
-type 35
+type 3
 other_arch spell_siren_call
 hp -20
 maxhp -20
@@ -2263,10 +2263,10 @@ Int -2
 value 30
 end
 #
-Allowed all
+Allowed horn,shell horn
 chance 3
 Object Eorlingas
-type 35
+type 3
 other_arch spell_firebolt
 hp -100
 maxhp -100

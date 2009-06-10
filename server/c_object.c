@@ -1123,7 +1123,6 @@ int command_dropall(object *op, char *params) {
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && !QUERY_FLAG(curinv, FLAG_APPLIED)) {
                 switch (curinv->type) {
-                case HORN:
                 case BOOK:
                 case SPELLBOOK:
                 case GIRDLE:

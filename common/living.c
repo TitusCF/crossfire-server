@@ -1144,7 +1144,7 @@ void fix_object(object *op) {
                 if (tmp->type == BOW)
                     op->contr->ranges[range_bow] = tmp;
 
-                if (tmp->type == WAND || tmp->type == ROD || tmp->type == HORN)
+                if (tmp->type == WAND || tmp->type == ROD)
                     op->contr->ranges[range_misc] = tmp;
 
                 for (i = 0; i < NUM_STATS; i++)

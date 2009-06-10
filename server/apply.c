@@ -740,7 +740,6 @@ static int unapply_special(object *who, object *op, int aflags) {
     case BOW:
     case WAND:
     case ROD:
-    case HORN:
         clear_skill(who);
         if (!(aflags&AP_NOPRINT))
             draw_ext_info_format(NDI_UNIQUE, 0, who, MSG_TYPE_APPLY, MSG_TYPE_APPLY_UNAPPLY,
@@ -1043,7 +1042,7 @@ int can_apply_object(object *who, object *op) {
         retval |= CAN_APPLY_RESTRICTION;
 
     if (who->type != PLAYER) {
-        if ((op->type == WAND || op->type == HORN || op->type == ROD)
+        if ((op->type == WAND || op->type == ROD)
         && !QUERY_FLAG(who, FLAG_USE_RANGE))
             retval |= CAN_APPLY_RESTRICTION;
         if (op->type == BOW && !QUERY_FLAG(who, FLAG_USE_BOW))
@@ -1434,7 +1433,6 @@ int apply_special(object *who, object *op, int aflags) {
         /*FALLTHROUGH*/
     case WAND:
     case ROD:
-    case HORN:
         /* check for skill, alter player status */
         SET_FLAG(op, FLAG_APPLIED);
         if (skop)
@@ -1495,7 +1493,7 @@ int apply_special(object *who, object *op, int aflags) {
      * been applied flag when they are used - until that point,
      * you don't know anything about them.
      */
-    if (who->type == PLAYER && op->type != WAND && op->type != HORN && op->type != ROD)
+    if (who->type == PLAYER && op->type != WAND && op->type != ROD)
         SET_FLAG(op, FLAG_BEEN_APPLIED);
 
     if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
@@ -1637,7 +1635,6 @@ void fix_auto_apply(mapstruct *m) {
                     if (tmp->type == WAND
                     || tmp->type == ROD
                     || tmp->type == SCROLL
-                    || tmp->type == HORN
                     || tmp->type == FIREWALL
                     || tmp->type == POTION
                     || tmp->type == ALTAR

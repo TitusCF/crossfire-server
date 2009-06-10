@@ -14,6 +14,9 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Merge HORNs (type 35) into RODs (type 3).
+Andreas Kirschbaum 2009-06-10
+
 Fix monsters not using wands/staffs/rods.
 Andreas Kirschbaum 2009-06-09
 

@@ -31,7 +31,6 @@
 method_ret legacy_ob_process(ob_methods *context, object *op) {
     switch (op->type) {
     case ROD:
-    case HORN:
         regenerate_rod(op);
         return METHOD_OK;
 
