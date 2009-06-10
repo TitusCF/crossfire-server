@@ -2307,13 +2307,11 @@ void replace_insert_ob_in_map(const char *arch_string, object *op) {
  * err's size
  * @return
  * split object, or NULL on failure.
- * @todo
- * handle case orig_ob->nrof == 0 (meaning 1).
  */
 object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
     object *newob;
 
-    if (orig_ob->nrof < nr) {
+    if (MAX(1, orig_ob->nrof) < nr) {
         /* If err is set, the caller knows that nr can be wrong (player trying to drop items), thus don't log that. */
         if (err)
             snprintf(err, size, "There are only %u %ss.", orig_ob->nrof ? orig_ob->nrof : 1, orig_ob->name);
@@ -2322,8 +2320,15 @@ object *get_split_ob(object *orig_ob, uint32 nr, char *err, size_t size) {
         return NULL;
     }
     newob = object_create_clone(orig_ob);
-    newob->nrof = nr;
-    decrease_ob_nr(orig_ob, nr);
+    if (orig_ob->nrof == 0) {
+        if (!QUERY_FLAG(orig_ob, FLAG_REMOVED)) {
+            remove_ob(orig_ob);
+        }
+        free_object(orig_ob);
+    } else {
+        newob->nrof = nr;
+        decrease_ob_nr(orig_ob, nr);
+    }
 
     return newob;
 }

@@ -14,6 +14,10 @@ small - this just lets others know that the file has changed if nothing
 else.  With this, include the file(s) that you changed.
 ------------------------------------------------------------------------------
 
+Fix #1961814 (scripting failing to drop items). Also fixes "drop 1 cauldron"
+command.
+Andreas Kirschbaum 2009-06-10
+
 Fix rod generation: make sure it can hold enough spell points. Now all light
 rods get spell points for 3 changes, heavy rods for 6 charges.
 Andreas Kirschbaum 2009-06-10
