@@ -1,32 +1,32 @@
-# List of artifact modifiers 
-# 
-# Note:  
-#	Attributes (str, dex, etc) are modifiers to the previous 
-#	value - positive will increase it by that much, negative 
-#	will decrease it.  
-# 
-#	cursed and damned flags will make the object cursed/damned.  
-#	no way to remove cursed/damnedness right now.  If the 
+# List of artifact modifiers
+#
+# Note:
+#	Attributes (str, dex, etc) are modifiers to the previous
+#	value - positive will increase it by that much, negative
+#	will decrease it.
+#
+#	cursed and damned flags will make the object cursed/damned.
+#	no way to remove cursed/damnedness right now.  If the
 #	object is cursed, the present magic value will become
-#	negative (ie, a +1 sword will become -1 cursed.)  
-# 
+#	negative (ie, a +1 sword will become -1 cursed.)
+#
 #	path_attuned, path_denied and path_repelled values are OR'd to existing values.
 #
 #	resistances are modifiers to the previous value.
-# 
-#	luck,exp, wc and ac  increase the value by that amount (which means 
+#
+#	luck,exp, wc and ac  increase the value by that amount (which means
 #	a negative value will decrease the value)
-# 
-#	lifesave, reflect_spell, reflect_missile, stealth, xrays, 
-#	and make_invisible invisible sets the appropriate value 
-#	in the new artifact.  No way to remove these abilities.  
-# 
-#	if stand_still is set, the object will not be animated 
+#
+#	lifesave, reflect_spell, reflect_missile, stealth, xrays,
+#	and make_invisible invisible sets the appropriate value
+#	in the new artifact.  No way to remove these abilities.
+#
+#	if stand_still is set, the object will not be animated
 #	(useful if giving an artifact a new image when the object
-#	it is being created from is animated.  
-# 
-#	nrof is the number of object to be created.  A range 
-#	of 1-nrof of objects will be created.  If 0, then the 
+#	it is being created from is animated.
+#
+#	nrof is the number of object to be created.  A range
+#	of 1-nrof of objects will be created.  If 0, then the
 #	default number will be used instead.
 #
 #	hp, maxhp, sp, maxsp, food, level have this:  If the value is
@@ -75,7 +75,7 @@
 # field is summed together.  Then, when an artifact is created,
 # a roll is made based on that sum, and the appropriate artifact
 # is chosen.  If the item being transformed can not turn into that
-# artifact (magic bonus, difficulty (see below), or just not 'Allowed'), 
+# artifact (magic bonus, difficulty (see below), or just not 'Allowed'),
 # it will be re-rolled, attempting to make an artifact again.  The number
 # of re-rolls attempted is determined in the treasure.c file.  IT is,
 # by default, 1.
@@ -822,7 +822,7 @@ end
 Allowed all
 chance 1
 Object Blindness
-type 34 
+type 34
 is_blind 1
 magic 1
 cursed 1
@@ -1036,7 +1036,7 @@ chance 10
 Object Ilrya
 type 33
 value 10
-weight 80 
+weight 80
 msg
   This shield is made of lighter and more expensive material.
 endmsg
@@ -1118,8 +1118,8 @@ face holyshield.111
 msg
   Passed down from one of the elder
   this shield is amazing. Its soft glow
-  hides a deep power which you feel 
-  you can almost taste. It soon dawns 
+  hides a deep power which you feel
+  you can almost taste. It soon dawns
   on you that this must be one of the
   most prized shields of all the lands.
 endmsg
@@ -1448,11 +1448,11 @@ resist_physical 20
 ac 1
 msg
   This extremely unique platemail was made
-  for the line of dwarven kings in one of the 
+  for the line of dwarven kings in one of the
   vanished northern kingdoms of old.
   Due to its magic, it will fit creatures of any size.
-  It is highly enchanted, increasing the strength of the 
-  wearer and protecting against fire.  
+  It is highly enchanted, increasing the strength of the
+  wearer and protecting against fire.
   Unfortunately it is also very heavy, limiting speed somewhat.
 endmsg
 item_power 4
@@ -1473,7 +1473,7 @@ value 100
 msg
   This very heavy armour gives protection
   greater than normal mail.  It is created
-  for fighters - the high weight and the fact 
+  for fighters - the high weight and the fact
   that it clouds the mind makes it unsuitable for
   mages.  It increases the wearer's strength and
   dexterity, making him even more fearsome in
@@ -1642,12 +1642,12 @@ value 30
 resist_cold 30
 path_attuned 4
 msg
-  This elemental ring is one of those made at 
-  the Guild of Magicks by the powerful wizards 
+  This elemental ring is one of those made at
+  the Guild of Magicks by the powerful wizards
   who survived the ancient war of the elementals.
-  The wielder is surrounded by a thin, almost 
-  invisible, globe of warmth; which protects 
-  against cold.  It also grants its holder 
+  The wielder is surrounded by a thin, almost
+  invisible, globe of warmth; which protects
+  against cold.  It also grants its holder
   greater control of cold spells.
 endmsg
 item_power 3
@@ -1662,14 +1662,14 @@ value 35
 resist_fire 30
 path_attuned 2
 msg
-  This elemental ring is one of those 
-  made at the Guild of Magicks by the 
-  powerful wizards who survived the 
+  This elemental ring is one of those
+  made at the Guild of Magicks by the
+  powerful wizards who survived the
   ancient war of the elementals.
-  The wielder is surrounded by a thin, 
-  almost invisible, globe of coolness; 
+  The wielder is surrounded by a thin,
+  almost invisible, globe of coolness;
   which protects against heat.  It also
-  grants the holder greater facility 
+  grants the holder greater facility
   with fire spells.
 endmsg
 item_power 3
@@ -1684,12 +1684,12 @@ value 25
 resist_electricity 30
 path_attuned 8
 msg
-  This elemental ring is one of those made 
-  at the Guild of Magicks by the powerful 
-  wizards who survived the ancient war 
-  of the elementals.  The wielder is 
-  surrounded by a thin, almost invisible, 
-  grid of force; which protects against 
+  This elemental ring is one of those made
+  at the Guild of Magicks by the powerful
+  wizards who survived the ancient war
+  of the elementals.  The wielder is
+  surrounded by a thin, almost invisible,
+  grid of force; which protects against
   electricity.  It also gives facility
   with electricity spells.
 endmsg
@@ -1706,8 +1706,8 @@ sp 1
 Pow 1
 resist_magic 20
 msg
-  Most highlevel wizards receive one of 
-  these from their guild when they become 
+  Most highlevel wizards receive one of
+  these from their guild when they become
   its leader.
 endmsg
 item_power 3
@@ -2056,13 +2056,13 @@ resist_acid 30
 material 256
 resist_physical 20
 msg
-  This elemental ring is one of those 
-  made at the Guild of Magicks by the 
-  powerful wizards who survived the 
+  This elemental ring is one of those
+  made at the Guild of Magicks by the
+  powerful wizards who survived the
   ancient war of the elementals.
-  The wielder is surrounded by a thin, 
+  The wielder is surrounded by a thin,
   almost invisible globe of base liquid;
-  which protects against acid. It also 
+  which protects against acid. It also
   gives a fair protection against normal attacks.
 endmsg
 item_power 3
@@ -2094,8 +2094,8 @@ msg
   This semi-elemental ring is one of those made
   at the Guild of Magics by the powerful wizards
   who survived the ancient war of the elementals.
-  The wielder is surrounded by a thin, almost 
-  invisible, globe of positive energy; which 
+  The wielder is surrounded by a thin, almost
+  invisible, globe of positive energy; which
   makes the wielder immune from life draining.
   It also grants an unnatural vitality.
 endmsg
@@ -2612,7 +2612,7 @@ Str -10
 Dex -10
 Con -10
 msg
-  This cloak sucks vitality from the 
+  This cloak sucks vitality from the
   wearer in order to maintain his
   invisibility.
 endmsg
@@ -2654,10 +2654,10 @@ Str -10
 Dex -12
 Con -10
 msg
-  These shoes prevent others from seeing 
-  your movements. Bewarned however that 
-  they slow you down and draw strength 
-  from you. Not only this but some 
+  These shoes prevent others from seeing
+  your movements. Bewarned however that
+  they slow you down and draw strength
+  from you. Not only this but some
   enemies can still see you with magic!
 endmsg
 make_invisible 1
@@ -2676,7 +2676,7 @@ material 8256
 materialname granite
 ac 5
 msg
-  What strange boots, they look very 
+  What strange boots, they look very
   protective, but amazingly heavy.
   There also doesn't appear to be
   any laces, you wonder how you're ever
@@ -2721,8 +2721,8 @@ material 8200
 materialname dragonhide
 dam 2
 msg
-  These boots have sharpened claws at the 
-  tips, which look like they would aid 
+  These boots have sharpened claws at the
+  tips, which look like they would aid
   greatly in combat.
 endmsg
 stand_still 1
@@ -2828,7 +2828,7 @@ value 10
 type 60
 weight 110
 end
-# 
+#
 Allowed sapphire
 chance 20
 difficulty 3
@@ -2862,7 +2862,7 @@ value 10
 type 60
 weight 110
 end
-# 
+#
 Allowed emerald
 chance 20
 difficulty 3
@@ -2896,7 +2896,7 @@ value 10
 type 60
 weight 110
 end
-# 
+#
 Allowed amethyst
 chance 20
 difficulty 3
@@ -3111,7 +3111,7 @@ path_denied 2048
 end
 #
 # Containers (the following is hack to get a quiver for bolts also)
-# It would be better that it would be possible to define object 
+# It would be better that it would be possible to define object
 # NONE also, and not use the fixed probability.
 #
 Allowed quiver
@@ -3230,8 +3230,8 @@ Object Assassinating Trolls
 slaying troll
 attacktype 131072
 msg
-  These missiles are inscribed with 
-  powerful runes for the bane of 
+  These missiles are inscribed with
+  powerful runes for the bane of
   trolls.  A scratch from one of
   these arrows could smite one dead.
 endmsg
@@ -3251,8 +3251,8 @@ Object Assassinating Dragons
 slaying dragon
 attacktype 131072
 msg
-  These missiles are inscribed with 
-  powerful runes for the bane of 
+  These missiles are inscribed with
+  powerful runes for the bane of
   dragons.  A scratch from one of
   these arrows could smite one dead.
 endmsg
@@ -3273,9 +3273,9 @@ difficulty 5
 Object Blessedness
 slaying undead,demon
 msg
-  These missiles are invested 
+  These missiles are invested
   with a great holiness so that
-  even a scratch might banish 
+  even a scratch might banish
   an undead creature or a demon
   back to the hell from which it
   came.
@@ -3483,8 +3483,8 @@ type 14
 weight 80
 msg
   This magical bow shoots with
-  such force that the arrows 
-  sometimes fly right through 
+  such force that the arrows
+  sometimes fly right through
   the target.
 endmsg
 value 100
@@ -3526,7 +3526,7 @@ value 10
 Dex 3
 end
 #
-# talismans - 
+# talismans -
 #
 Allowed talisman
 chance 50
@@ -3854,7 +3854,7 @@ resist_drain 30
 resist_deplete 30
 end
 #
-# Potions (incl. dusts, balms and figurine sub-types)  
+# Potions (incl. dusts, balms and figurine sub-types)
 #
 #
 # - attack potions
@@ -4274,7 +4274,7 @@ level -20
 value 1
 end
 #
-Allowed figurine_generic 
+Allowed figurine_generic
 chance 1
 Object whirlwind
 type 5
@@ -4283,7 +4283,7 @@ level -20
 value 1
 end
 #
-Allowed figurine_generic 
+Allowed figurine_generic
 chance 1
 Object a great wave
 type 5
@@ -4292,7 +4292,7 @@ level -20
 value 1
 end
 #
-Allowed figurine_generic 
+Allowed figurine_generic
 chance 1
 Object a flame
 type 5
@@ -4301,7 +4301,7 @@ value 1
 level -20
 end
 #
-Allowed figurine_generic 
+Allowed figurine_generic
 chance 1
 Object a clenched hand
 type 5
@@ -4310,7 +4310,7 @@ level -20
 value 1
 end
 #
-# Dusts. 
+# Dusts.
 #
 # - 360 deg effect
 #
