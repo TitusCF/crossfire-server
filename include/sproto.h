@@ -619,6 +619,7 @@ void spell_failure(object *op, int failure, int power, object *skill);
 int cast_spell(object *op, object *caster, int dir, object *spell_ob, char *stringarg);
 void store_spell_expiry(object *spell);
 void check_spell_expiry(object *spell);
+void rod_adjust(object *rod);
 /* swap.c */
 void read_map_log(void);
 int swap_map(mapstruct *map);

@@ -46,3 +46,6 @@ void monster_check_apply(object *ob, object *obt) {
 
 void trap_adjust(object *ob, int x) {
 }
+
+void rod_adjust(object *rod) {
+}

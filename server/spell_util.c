@@ -1878,3 +1878,24 @@ void check_spell_expiry(object *spell) {
         }
     }
 }
+
+void rod_adjust(object *rod) {
+    /*
+     * Add 50 to both level an divisor to keep prices a little
+     * more reasonable.  Otherwise, a high level version of a
+     * low level spell can be worth tons a money (eg, level 20
+     * rod, level 2 spell = 10 time multiplier).  This way, the
+     * value are a bit more reasonable.
+     */
+    rod->value = rod->value*rod->inv->value*(rod->level+50)/(rod->inv->level+50);
+
+    /*
+     * Maxhp is used to denote how many 'charges' the rod holds
+     * before.
+     */
+    if (rod->stats.maxhp)
+        rod->stats.maxhp *= MAX(rod->inv->stats.sp, rod->inv->stats.grace);
+    else
+        rod->stats.maxhp = 2*MAX(rod->inv->stats.sp, rod->inv->stats.grace);
+    rod->stats.hp = rod->stats.maxhp;
+}
