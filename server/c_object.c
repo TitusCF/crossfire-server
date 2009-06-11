@@ -1053,8 +1053,6 @@ int command_dropall(object *op, char *params) {
     if (params == NULL) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && curinv->type != MONEY
             && curinv->type != FOOD
@@ -1072,8 +1070,6 @@ int command_dropall(object *op, char *params) {
     } else if (strcmp(params, "weapons") == 0) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && ((curinv->type == WEAPON) || (curinv->type == BOW) || (curinv->type == ARROW))) {
                 drop(op, curinv);
@@ -1085,8 +1081,6 @@ int command_dropall(object *op, char *params) {
     } else if (strcmp(params, "armor") == 0 || strcmp(params, "armour") == 0) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && ((curinv->type == ARMOUR) || curinv->type == SHIELD || curinv->type == HELMET)) {
                 drop(op, curinv);
@@ -1118,8 +1112,6 @@ int command_dropall(object *op, char *params) {
     } else if (strcmp(params, "misc") == 0) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            while (nextinv && nextinv->type == MONEY)
-                nextinv = nextinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
             && !QUERY_FLAG(curinv, FLAG_APPLIED)) {
                 switch (curinv->type) {
@@ -1139,13 +1131,11 @@ int command_dropall(object *op, char *params) {
                 case ROD:
                 case POTION:
                     drop(op, curinv);
-                    curinv = nextinv;
                     if (op->contr)
                         op->contr->count = count;
                     break;
 
                 default:
-                    curinv = nextinv;
                     break;
                 }
             }
