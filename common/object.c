@@ -2163,7 +2163,6 @@ object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
                 && (top->move_type&(MOVE_FLY_LOW|MOVE_FLY_HIGH))
                 && !QUERY_FLAG(top, FLAG_IS_FLOOR)) {
                     /* We insert above top, so we want this object below this */
-                    top = top->below;
                     break;
                 }
                 last = top;
