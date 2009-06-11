@@ -2005,12 +2005,13 @@ object *find_mon_throw_ob(object *op) {
     }
 
 #ifdef DEBUG_THROW
-    {
+    if (tmp != NULL) {
         char what[MAX_BUF];
 
         query_name(tmp, what, MAX_BUF);
-        LOG(llevDebug, "%s chooses to throw: %s (%d)\n", op->name, !(tmp) ? "(nothing)" : what, tmp ? tmp->count : -1);
-    }
+        LOG(llevDebug, "%s chooses to throw: %s (%d)\n", op->name, what, tmp->count);
+    } else
+        LOG(llevDebug, "%s chooses to throw nothing\n", op->name);
 #endif
 
     return tmp;
