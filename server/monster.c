@@ -1997,24 +1997,21 @@ object *find_mon_throw_ob(object *op) {
 
     for (tmp = op->inv; tmp; tmp = tmp->below) {
         /* Can't throw invisible objects or items that are applied */
-        if (tmp->invisible || QUERY_FLAG(tmp, FLAG_APPLIED))
-            continue;
+        if (!tmp->invisible && !QUERY_FLAG(tmp, FLAG_APPLIED) && QUERY_FLAG(tmp, FLAG_IS_THROWN)) {
+#ifdef DEBUG_THROW
+            char what[MAX_BUF];
 
-        if (QUERY_FLAG(tmp, FLAG_IS_THROWN))
-            break;
+            query_name(tmp, what, MAX_BUF);
+            LOG(llevDebug, "%s chooses to throw: %s (%d)\n", op->name, what, tmp->count);
+#endif
+            return tmp;
+        }
     }
 
 #ifdef DEBUG_THROW
-    if (tmp != NULL) {
-        char what[MAX_BUF];
-
-        query_name(tmp, what, MAX_BUF);
-        LOG(llevDebug, "%s chooses to throw: %s (%d)\n", op->name, what, tmp->count);
-    } else
-        LOG(llevDebug, "%s chooses to throw nothing\n", op->name);
+    LOG(llevDebug, "%s chooses to throw nothing\n", op->name);
 #endif
-
-    return tmp;
+    return NULL;
 }
 
 /* determine if we can 'detect' the enemy. Check for walls blocking the
