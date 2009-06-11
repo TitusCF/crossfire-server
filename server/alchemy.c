@@ -723,21 +723,16 @@ static void alchemy_failure_effect(object *op, object *cauldron, recipe *rp, int
  * what item to not remove. Can be NULL.
  */
 static void remove_contents(object *first_ob, object *save_item) {
-    object *next, *tmp = first_ob;
+    object *next, *tmp;
 
-    while (tmp) {
+    for (tmp = first_ob; tmp != NULL; tmp = next) {
         next = tmp->below;
-        if (tmp == save_item) {
-            if (!(tmp = next))
-                break;
-            else
-                next = next->below;
+        if (tmp != save_item) {
+            if (tmp->inv)
+                remove_contents(tmp->inv, NULL);
+            remove_ob(tmp);
+            free_object(tmp);
         }
-        if (tmp->inv)
-            remove_contents(tmp->inv, NULL);
-        remove_ob(tmp);
-        free_object(tmp);
-        tmp = next;
     }
 }
 
