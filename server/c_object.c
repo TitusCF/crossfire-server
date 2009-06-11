@@ -1071,7 +1071,7 @@ int command_dropall(object *op, char *params) {
         while (curinv != NULL) {
             nextinv = curinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
-            && ((curinv->type == WEAPON) || (curinv->type == BOW) || (curinv->type == ARROW))) {
+            && (curinv->type == WEAPON || curinv->type == BOW || curinv->type == ARROW)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
@@ -1082,7 +1082,7 @@ int command_dropall(object *op, char *params) {
         while (curinv != NULL) {
             nextinv = curinv->below;
             if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
-            && ((curinv->type == ARMOUR) || curinv->type == SHIELD || curinv->type == HELMET)) {
+            && (curinv->type == ARMOUR || curinv->type == SHIELD || curinv->type == HELMET)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
@@ -1092,7 +1092,8 @@ int command_dropall(object *op, char *params) {
     } else if (strcmp(params, "food") == 0) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED) && (curinv->type == FOOD || curinv->type == DRINK)) {
+            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
+            && (curinv->type == FOOD || curinv->type == DRINK)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
@@ -1102,7 +1103,8 @@ int command_dropall(object *op, char *params) {
     } else if (strcmp(params, "flesh") == 0) {
         while (curinv != NULL) {
             nextinv = curinv->below;
-            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED) && (curinv->type == FLESH)) {
+            if (!QUERY_FLAG(curinv, FLAG_INV_LOCKED)
+            && (curinv->type == FLESH)) {
                 drop(op, curinv);
                 if (op->contr)
                     op->contr->count = count;
