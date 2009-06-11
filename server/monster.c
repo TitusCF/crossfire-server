@@ -1989,12 +1989,7 @@ static int talk_to_npc(object *op, object *npc, const char *txt, int *talked) {
  * first, then throw any non equipped weapon.
  */
 object *find_mon_throw_ob(object *op) {
-    object *tmp = NULL;
-
-    if (op->head)
-        tmp = op->head;
-    else
-        tmp = op;
+    object *tmp;
 
     /* New throw code: look through the inventory. Grap the first legal is_thrown
      * marked item and throw it to the enemy.
